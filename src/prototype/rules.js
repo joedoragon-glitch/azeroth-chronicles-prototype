@@ -1,0 +1,51 @@
+/* Explicit authored mechanics. Names and prose never determine gameplay behavior. */
+(function(root){
+'use strict';
+const attack=(kind,warning,recovery,extra={})=>({kind,warning,recovery,coefficient:1,...extra});
+const attacks={
+ thorn:[attack('cone',.8,.8),attack('circle',1.3,1.5,{landing:true,coefficient:1.4}),attack('line',1.2,1,{slow:true}),attack('summon',1.5,1.5,{species:'wolf',ranged:false})],
+ crypt:[attack('cone',1,1),attack('volley',1.2,1.4),attack('summon',1.6,1.4,{species:'skeleton',ranged:false}),attack('circle',1.6,1.4,{persistent:true})],
+ mire:[attack('cone',.9,1),attack('line',1.4,1.5,{charge:true,coefficient:1.4}),attack('circle',1.5,1.4,{count:3,persistent:true,slow:true}),attack('summon',1.6,1.5,{species:'mireling',ranged:false})],
+ archive:[attack('cone',1.1,1),attack('line',1.5,1.5,{count:2}),attack('circle',1.5,1.5,{slow:true,persistent:true}),attack('summon',1.7,1.5,{species:'wraith',ranged:true})],
+ ridge:[attack('cone',1,1),attack('circle',1.5,1.5,{coefficient:1.4}),attack('line',1.5,2,{charge:true,coefficient:1.4}),attack('summon',1.8,1.5,{species:'archer',ranged:true})],
+ mine:[attack('circle',1.6,2.5,{coefficient:1.4,opening:2.5}),attack('circle',1.7,1.5,{count:3,coefficient:1.4}),attack('ring',1.6,1.6),attack('line',1.7,3,{charge:true,coefficient:1.4,opening:3})],
+ warlord:[attack('cone',1.2,1.5,{combo:true}),attack('circle',1.8,1.5,{count:2}),attack('summon',1.8,1.5,{species:'orc',ranged:false}),attack('line',1.6,2.5,{charge:true,coefficient:1.4})],
+ abyss:[attack('cone',1.5,1.5),attack('ring',1.7,1.6),attack('circle',1.8,2,{count:2,sequential:true,landing:true,coefficient:1.4}),attack('summon',2,1.6,{species:'ashbeast',ranged:false})],
+ citadel:[attack('circle',1.6,3,{coefficient:1.4,opening:3}),attack('line',1.8,1.6,{count:2}),attack('line',1.8,2.5,{charge:true,advance:true,coefficient:1.4}),attack('circle',2,1.5,{count:3,sequential:true,persistent:true})],
+ darklord:[attack('cone',1.3,1.5,{combo:true}),attack('circle',1.9,1.6,{count:3,sequential:true}),attack('summon',2,1.6,{species:'crownguard',ranged:true}),attack('sector',2,2,{sequential:true,count:3})]
+};
+const sites=[
+ [['bridge-north','Mill bridge',1200,750],['bridge-south','Southern footbridge',1200,1750],['orchard','Abandoned orchard',1050,740],['den-ruins','Orchard den ruins',800,1280],['mill-pond','Mill pond',710,1260],['cache','Woodland supply cache',1550,1150]],
+ [['night-site','Lantern shore',1700,900],['wagon','Stranded supply wagon',1000,1150],['watch','Causeway watch platform',1700,1300],['dock','Sunken dock',2050,1800]],
+ [['bridge-north','Stone bridge',1300,950],['bridge-south','Timber crossing',1300,1870],['lookout','Highland lookout',1800,600],['ore','Stonecross ore vein',1100,1300],['tower','Ruined watchtower',1900,800]],
+ [['bridge-north','Guarded ravine bridge',1450,750],['bridge-south','Burned forest crossing',1450,2160],['shrine','Ruined shrine',1100,1080],['overlook','Ravine overlook',1350,1800],['checkpoint','Occupied checkpoint',1750,1400],['convoy','Supply convoy',1200,950]],
+ [['bridge-north','Lava ridge bridge',1350,1000],['bridge-south','Southern stone crossing',1350,2400],['foundry','Ruined foundry',850,1800],['shelf','Crystal shelf',1100,2100],['siege','Siege camp',2250,1850],['fortress-gate','Dark fortress gate',2350,2450]]
+];
+const quest=(kind,target,sites=[])=>({kind,target,sites});
+const quests=[
+ quest('rescue','thorn'),quest('patrol',5),quest('bundles',3),quest('rescue','crypt'),quest('sites',null,['bridge-north','port']),quest('sites',null,['den-ruins','bridge-south']),
+ quest('rescue','mire'),quest('patrol',6),quest('rescue','archive'),quest('bundles',3),quest('night',2,['night-site']),quest('sites',null,['port']),
+ quest('rescue','ridge'),quest('patrol',7),quest('rescue','mine'),quest('bundles',3),quest('sites',null,['bridge-north','bridge-south']),quest('sites',null,['port']),
+ quest('rescue','warlord'),quest('escort'),quest('rescue','abyss'),quest('patrol',8),quest('sites',null,['shrine','minor','overlook']),quest('sites',null,['port']),
+ quest('rescue','citadel'),quest('patrol',8),quest('rescue','darklord'),quest('bundles',3),quest('sites',null,['foundry','shelf','siege']),quest('sites',null,['fortress-gate'])
+];
+const terrain=[
+ [{x:630,y:1320,r:125}],[],[{x1:520,x2:650,y1:430,y2:1050}], [{x1:1740,x2:1810,y1:1020,y2:1220}], [{x1:2110,x2:2190,y1:2000,y2:2720,gaps:[[2260,2520]]}]
+];
+const dungeonWalls={crypt:[710,780,[[480,680],[870,1060]]],archive:[650,730,[[400,620],[980,1200]]],mine:[800,870,[[480,730],[1020,1250]]],abyss:[610,690,[[600,830],[1040,1260]]],citadel:[750,830,[[430,680],[900,1150]]]};
+const pillars={crypt:[[430,620],[1010,480]],archive:[[420,740],[1060,620]],mine:[[480,950],[1120,380]],abyss:[[420,530],[980,890]],citadel:[[400,750],[1080,450]]};
+const guardPosts=[[350,430],[490,700],[420,1030],[990,420],[1110,680],[1000,900],[1000,1200],[550,1190],[900,240],[1250,480],[380,850],[1190,950],[560,390]];
+const dungeonTraps={
+ crypt:[[520,470,'spikes'],[630,610,'spikes'],[1020,540,'spikes'],[930,850,'seal'],[1080,1010,'spikes'],[1190,1210,'seal']],
+ archive:[[500,430,'jet'],[560,680,'seal'],[770,520,'jet'],[900,720,'seal'],[1040,470,'jet'],[1150,890,'jet'],[1030,1040,'seal'],[1200,1220,'jet']],
+ mine:[[500,500,'spikes'],[640,750,'spikes'],[930,600,'spikes'],[1030,370,'jet'],[600,1030,'spikes'],[1040,840,'jet'],[1270,980,'spikes'],[1060,1190,'spikes'],[900,1210,'seal']],
+ abyss:[[440,450,'jet'],[560,690,'jet'],[770,740,'seal'],[980,460,'jet'],[440,950,'seal'],[900,940,'jet'],[1120,800,'jet'],[1250,1020,'seal'],[1040,1220,'jet'],[1290,1190,'jet']],
+ citadel:[[500,450,'spikes'],[660,530,'jet'],[870,610,'seal'],[1030,430,'jet'],[530,850,'seal'],[650,1060,'spikes'],[940,1010,'jet'],[1100,790,'seal'],[1300,960,'jet'],[1020,1210,'spikes'],[1270,1190,'seal'],[930,750,'jet']]
+};
+const decorTypes={crypt:['coffin','bones','torch','banner'],archive:['shelf','water','rune','torch'],mine:['crate','rail','torch','crystal'],abyss:['chain','ember','banner','torch'],citadel:['banner','armor','rune','torch']};
+const decorPosts=[[300,350],[460,300],[1050,300],[1280,650],[300,620],[450,1150],[950,1300],[1320,1300],[1300,1070],[1030,720],[570,900],[960,580],[340,1250],[550,530],[1280,380],[940,1150]];
+const rangedProfiles={goblin:{variant:'slinger',shotRange:240,shotSpeed:240,projectileStyle:'stone'},skeleton:{variant:'bow guard',shotRange:290,shotSpeed:280,projectileStyle:'arrow'},reedbeast:{variant:'spitter',hybrid:true,shotRange:250,shotSpeed:220,projectileStyle:'spit'},mireling:{variant:'spitter',hybrid:true,shotRange:230,shotSpeed:230,projectileStyle:'spit'},ogre:{variant:'stone thrower',hybrid:true,shotRange:260,shotSpeed:220,projectileStyle:'stone'},orc:{variant:'axe thrower',hybrid:true,shotRange:260,shotSpeed:250,projectileStyle:'stone'},ashbeast:{variant:'cinder spitter',hybrid:true,shotRange:270,shotSpeed:240,projectileStyle:'cinder'}};
+const forests=[[[470,850,210,280],[1850,1050,250,320],[550,1800,260,180]],[[650,1650,240,200],[1950,1000,200,300],[2050,2300,230,170]],[[850,600,150,210],[1900,1500,240,350],[650,2100,230,200]],[[600,1300,250,250],[2100,1900,270,260],[1100,2300,200,160]],[[800,1100,230,250],[1850,1600,240,300],[2400,1050,170,200]]];
+const R={rangedProfiles,guardPosts,dungeonTraps,decorTypes,decorPosts,forests,attacks,sites,quests,terrain,dungeonWalls,pillars};
+if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
+})(typeof window!=='undefined'?window:globalThis);

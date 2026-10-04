@@ -14,3 +14,7 @@ The expanded shell runs one shared Campaign state. `data.js` carries approved co
 - Offline exports are portable backups. Reloading the current Succession run cannot restore fallen classes, while deliberate imports of older exports can rewind it. There is no online anti-cheat service.
 
 The v0.6 expansion is promoted as the next main-branch release at the existing public game URL; legacy.html retains v0.5. Hosted updates require the player’s menu action and save before reloading. The portable HTML has no service-worker registration or external game assets.
+
+## v0.7.0 audit fixes
+
+Attack and quest prose no longer drives mechanics. Explicit rule tables define stages, motion, damage, recovery and authored sites. Existing version-4 saves remain compatible, with repaired road/site geometry and safe positions when changed terrain overlaps a saved actor. Legacy v2 exports remain backed up unchanged; their supply values, regional buildings and selectable weapons carry forward. See `AUDIT_FIXES_V070.md` for all 23 findings and the limits of automated acceptance.
