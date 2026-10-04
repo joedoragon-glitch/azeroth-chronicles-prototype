@@ -39,6 +39,8 @@ Defeated dungeon enemies stay defeated across reloads. Completion rewards pay on
 
 ## Saves and development
 
+Sprint code is present but deliberately disabled. Q remains unused and there is no player-facing sprint or stamina control. Developers can activate it using the single source flag and the instructions in [docs/SPRINT.md](docs/SPRINT.md).
+
 Validated local saves run every five seconds and when leaving/backgrounding. Prior RPG v2 saves migrate without losing class, level, inventory or quests; companions are added. Old sixth-power cooldowns reset because that slot changed. The former standalone RTS save is not imported into this adventure. Export/import the shared save to move devices. There is no cloud synchronization.
 
 No build step or runtime dependencies. Node 20+ runs `npm test`; serve the repository with an HTTP server. `src/world.js` contains dungeon data, `src/game.js` hero/world rules, `src/squad.js` shared strategy, `src/controls.js` fixed controls, and `src/app.js` touch/PWA integration. The earlier standalone RTS implementation remains archived in `src/rts-engine.js`/`src/rts.js` and is not loaded by the game.

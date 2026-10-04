@@ -1,7 +1,7 @@
 const fs = require('fs'), path = require('path'), vm = require('vm'), assert = require('assert/strict');
 const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'src/app.js'), 'utf8');
-function fresh({coarse = true, preference = null, storageDenied = false, controlled = true} = {}) {
+function fresh({coarse = true, preference = null, storageDenied = false, controlled = true, sprint = false} = {}) {
   const elements = new Map(), winEvents = {}, swEvents = {}, mediaEvents = {}, loadEvents = [];
   const input = {x:0,y:0,attack:false}, state = {paused:false,casts:[],interactions:0,saves:0,reloads:0,audio:0};
   function element() {
@@ -24,6 +24,7 @@ function fresh({coarse = true, preference = null, storageDenied = false, control
   const sandbox={window,document:{body:element(),getElementById(id){assert(elements.has(id),id);return elements.get(id)}},navigator:{serviceWorker},touchInput:input,activeWindow:null,KeyboardControls:{bindings:{moveUp:"KeyW",moveDown:"KeyS",moveLeft:"KeyA",moveRight:"KeyD"}},handleMenuKeyboard(){},
     isGamePaused(){return state.paused},AudioSys:{init(){state.audio++}},castSpell(n){state.casts.push(n)},interactWithNearby(){state.interactions++},manualPaused:false,
     saveGame(){state.saves++},togglePause(){sandbox.manualPaused=!sandbox.manualPaused;state.paused=sandbox.manualPaused;window.resetTouchControls()},closeAllWindows(){},console};
+  if(sprint) sandbox.Sprint={enabled:true,press(source,held){state.sprinting=held;}};
   vm.createContext(sandbox);vm.runInContext(source,sandbox);
   function emit(k,event={}) {return Promise.all((winEvents[k]||[]).map(fn=>fn(event)))}
   return {elements,input,state,sandbox,window,registration,media,emit,controllerChange(){for(const fn of swEvents.controllerchange||[])fn()},async settle(){await new Promise(resolve=>setImmediate(resolve))}};
@@ -31,6 +32,16 @@ function fresh({coarse = true, preference = null, storageDenied = false, control
 let passed=0;
 async function test(name,fn){try{await fn();passed++;console.log('PASS '+name)}catch(e){process.exitCode=1;console.error('FAIL '+name+': '+e.stack)}}
 (async()=>{
+  await test('Dormant touch sprint ignores pointer input; activated hold clears on cancel and pause reset',()=>{
+    const inactive=fresh();inactive.elements.get('sprint-button').emit('pointerdown',{pointerId:4});assert.equal(inactive.state.sprinting,undefined);
+    for(const event of ['pointerup','pointercancel','lostpointercapture']){
+      const a=fresh({sprint:true}),button=a.elements.get('sprint-button');button.emit('pointerdown',{pointerId:4});assert(a.state.sprinting);
+      button.emit(event,{pointerId:9});assert(a.state.sprinting);button.emit(event,{pointerId:4});assert(!a.state.sprinting);
+      button.emit('pointerdown',{pointerId:5});a.window.resetTouchControls();assert(!a.state.sprinting&&!button.hasPointerCapture(5));
+      button.emit('pointerdown',{pointerId:6});assert(a.state.sprinting);a.window.resetTouchControls();
+      a.state.paused=true;button.emit('pointerdown',{pointerId:7});assert(!a.state.sprinting);
+    }
+  });
   await test('Manifest, app resources and maskable PNG sizes are valid',()=>{
     const manifest=JSON.parse(fs.readFileSync(path.join(root,'manifest.webmanifest')));
     assert.equal(manifest.start_url,'./');assert.equal(manifest.scope,'./');assert.equal(manifest.display,'standalone');assert.equal(manifest.orientation,'any');

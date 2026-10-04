@@ -8,6 +8,7 @@
     <link rel="manifest" href="./manifest.webmanifest">
     <link rel="icon" href="./icons/icon-192.png" type="image/png">
     <link rel="apple-touch-icon" href="./icons/icon-192.png">
+    <script src="./src/sprint.js" defer></script>
     <script src="./src/controls.js" defer></script>
     <script src="./src/classes.js" defer></script>
     <script src="./src/world.js" defer></script>
@@ -39,6 +40,7 @@
     </div>
     <button id="squad-panel-button" onclick="openWindow('squad')"><span id="squad-status">Escuadrón</span><small>Tab: órdenes · `: grupo</small></button>
     <div id="objective-tracker" aria-live="polite"></div>
+    <output id="stamina-status" hidden aria-label="Resistencia"></output>
     <div id="interaction-hint"></div>
     <div id="event-feed" role="log" aria-live="polite"></div>
     <div id="pause-notice" hidden>PAUSA — Pulsa P para continuar</div>
@@ -156,6 +158,7 @@
             <button id="squad-all" class="wow-btn squad-input" aria-label="Seleccionar héroe y todo el escuadrón">👥<span>Grupo · `</span></button>
             <!-- Menu Hotkey Shortcuts Bar -->
             <button id="interact-button" class="wow-btn touch-only" aria-label="Interactuar: hablar, recoger oro o seleccionar enemigo">🤝<span>Interactuar</span></button>
+            <button id="sprint-button" class="wow-btn touch-only" hidden aria-label="Mantener para esprintar">🏃<span>Esprintar · Q</span></button>
             <div id="hotbar-divider" class="h-10 w-[2px] bg-amber-600/50 mx-1"></div>
             <div id="desktop-menus" class="flex gap-1.5 font-bold">
                 <button onclick="toggleWindow('inventory')" class="wow-btn px-2 py-2 rounded-lg flex flex-col items-center min-w-[38px]" title="Inventario / Bolsas (R / I)">

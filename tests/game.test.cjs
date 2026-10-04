@@ -2,10 +2,11 @@ const fs = require('fs');
 const vm = require('vm');
 const assert = require('assert/strict');
 const html = fs.readFileSync(require('path').join(__dirname, '../index.html'), 'utf8');
+const sprintCode=fs.readFileSync(require('path').join(__dirname,'../src/sprint.js'),'utf8');
 const code = fs.readFileSync(require('path').join(__dirname, '../src/controls.js'), 'utf8') + '\n' + fs.readFileSync(require('path').join(__dirname, '../src/classes.js'), 'utf8')+'\n'+fs.readFileSync(require('path').join(__dirname, '../src/world.js'), 'utf8')+'\n'+fs.readFileSync(require('path').join(__dirname, '../src/game.js'), 'utf8');
 const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map(m => m[1]));
 
-function fresh({ deniedStorage = false, saved = null, controls = null, withSquad = false } = {}) {
+function fresh({ deniedStorage = false, saved = null, controls = null, withSquad = false, sprint = false } = {}) {
   const elements = new Map(), events = {}, docEvents = {}, frames = [], drawings = [];
   const storage = new Map(saved ? [['azeroth-chronicles-prototype-save-v2', saved]] : []);
   if(controls) storage.set('azeroth-keyboard-controls-v1',controls);
@@ -39,7 +40,7 @@ function fresh({ deniedStorage = false, saved = null, controls = null, withSquad
     addEventListener(name,fn){(docEvents[name]??=[]).push(fn);}};
   const sandbox={window,document,performance:{now(){return 0;}},requestAnimationFrame(fn){frames.push(fn);},setTimeout(){},Blob,
     URL:{createObjectURL(){return 'blob:test';},revokeObjectURL(){}}, console};
-  vm.createContext(sandbox);vm.runInContext(code+(withSquad?'\n'+fs.readFileSync(require('path').join(__dirname,'../src/squad.js'),'utf8'):''),sandbox,{timeout:2000});
+  vm.createContext(sandbox);vm.runInContext((sprint?sprintCode.replace('const SPRINT_ENABLED = false;','const SPRINT_ENABLED = true;'):sprintCode)+'\n'+code+(withSquad?'\n'+fs.readFileSync(require('path').join(__dirname,'../src/squad.js'),'utf8'):''),sandbox,{timeout:2000});
   function run(body){return vm.runInContext(`(()=>{${body}})()`,sandbox,{timeout:5000});}
   function emit(name,properties={}){for(const fn of events[name]||[])fn({code:'',key:'',repeat:false,preventDefault(){},...properties});}
   function docEmit(name){for(const fn of docEvents[name]||[])fn();}
@@ -56,6 +57,55 @@ function ready(options){const g=fresh(options);g.run(`closeAllWindows();`);retur
 test('Offline bootstrap, help, HUD and finite canvas rendering',()=>{
   const g=fresh();assert(g.run(`return activeWindow==='help' && isGamePaused();`));g.run(`drawScene();renderMapUI();`);
   assert(!/(?:src|href)=['"]https?:/.test(html));assert(g.drawings.length>0);
+});
+test('Dormant sprint has no Q action, speed boost, stamina save field or visible controls',()=>{
+  const g=ready(),h=ready();
+  for(const a of [g,h]) a.run(`sceneryProps.length=0;enemies.forEach(e=>e.hp=0);player.wx=1800;player.wy=1800;`);
+  g.emit('keydown',{code:'KeyQ'});
+  for(const a of [g,h]) {a.emit('keydown',{code:'KeyD'});a.run(`for(let i=0;i<60;i++)updateGame(1/60);`);}
+  eq(g.run(`return [player.wx,player.wy,player.currentSpeed];`),JSON.parse(JSON.stringify(h.run(`return [player.wx,player.wy,player.currentSpeed];`))));
+  assert(g.run(`return !Sprint.enabled&&KeyboardControls.actionFor('KeyQ')===null&&!('sprint' in saveSnapshot())&&Sprint.snapshot().stamina===100;`));
+  assert(/id="sprint-button"[^>]*hidden/.test(html)&&/id="stamina-status"[^>]*hidden/.test(html));
+});
+test('Activated sprint uses Q, boosts direct movement 35 percent and spends 20 stamina per second',()=>{
+  const g=ready({sprint:true});g.run(`sceneryProps.length=0;enemies.forEach(e=>e.hp=0);player.wx=1800;player.wy=1800;`);
+  g.emit('keydown',{code:'KeyQ'});g.emit('keydown',{code:'KeyD'});g.run(`for(let i=0;i<60;i++)updateGame(1/60);`);
+  assert(g.run(`return KeyboardControls.actionFor('KeyQ')==='sprint'&&Math.abs(player.currentSpeed-player.maxSpeed*1.35)<1e-6&&Math.abs(Sprint.snapshot().stamina-80)<1e-6;`));
+  assert(!g.elements.get('sprint-button').hidden&&!g.elements.get('stamina-status').hidden);
+  assert(g.elements.get('keyboard-help-guide').textContent.includes('Mantén Q'));
+});
+test('Stamina exhaustion requires release and regeneration respects the complete delay',()=>{
+  const g=ready({sprint:true});assert(g.run(`Sprint.press('keyboard',true);for(let i=0;i<50;i++)Sprint.tick(.1,true);const empty=Sprint.snapshot();Sprint.tick(1,false);const waiting=Sprint.snapshot().stamina;Sprint.tick(1,false);const recovered=Sprint.snapshot().stamina;const blocked=Sprint.tick(.1,true);Sprint.press('keyboard',false);Sprint.press('keyboard',true);const resumed=Sprint.tick(.1,true);return empty.stamina<1e-6&&waiting<1e-6&&Math.abs(recovered-7.5)<1e-6&&blocked===1&&resumed>1;`));
+});
+test('Walking and standing cost no stamina; partial final sprint frames cannot overboost',()=>{
+  const g=ready({sprint:true});assert(g.run(`Sprint.tick(2,true);Sprint.press('keyboard',true);Sprint.tick(2,false);const full=Sprint.snapshot().stamina;Sprint.restore({stamina:1,recoveryDelay:0});Sprint.press('keyboard',true);const factor=Sprint.tick(.1,true);return full===100&&Math.abs(factor-1.175)<1e-6&&Sprint.snapshot().stamina===0;`));
+});
+test('Activated sprint freezes in menus/background, releases input and never stacks haste',()=>{
+  const g=ready({sprint:true});g.run(`sceneryProps.length=0;enemies.forEach(e=>e.hp=0);player.wx=1800;player.wy=1800;player.hasteTimer=6;`);
+  g.emit('keydown',{code:'KeyQ'});g.emit('keydown',{code:'KeyD'});g.run(`for(let i=0;i<60;i++)updateGame(1/60);`);
+  assert(g.run(`return Math.abs(player.currentSpeed-player.maxSpeed*1.5)<1e-6;`));
+  assert(g.run(`openWindow('inventory');const before=JSON.stringify(Sprint.snapshot());updateGame(10);return JSON.stringify(Sprint.snapshot())===before;`));
+  g.run(`closeAllWindows();`);g.emit('blur');assert(g.run(`const before=JSON.stringify(Sprint.snapshot());updateGame(10);return JSON.stringify(Sprint.snapshot())===before;`));
+  g.emit('focus');assert(g.run(`return Sprint.tick(.1,true)===1;`));
+});
+test('Sprint preserves validated saved stamina, migrates older saves and rejects imports atomically',()=>{
+  const g=ready({sprint:true});g.run(`Sprint.press('keyboard',true);Sprint.tick(2,true);saveGame();`);
+  const loaded=ready({sprint:true,saved:g.storage.get('azeroth-chronicles-prototype-save-v2')});eq(loaded.run(`return [Sprint.snapshot().stamina,Sprint.snapshot().recoveryDelay];`),[60,1.5]);
+  assert(loaded.run(`const before=JSON.stringify(saveSnapshot());const bad=saveSnapshot();bad.sprint.stamina=-1;try{applySave(bad);}catch(_){}return before===JSON.stringify(saveSnapshot());`));
+  const legacy=g.run(`const s=saveSnapshot();delete s.sprint;return JSON.stringify(s);`);
+  assert(ready({sprint:true,saved:legacy}).run(`return Sprint.snapshot().stamina===100;`));
+  assert(ready({saved:g.storage.get('azeroth-chronicles-prototype-save-v2')}).run(`return !('sprint' in saveSnapshot());`));
+});
+test('Squad cursor never spends stamina; ordered selected hero can sprint',()=>{
+  const g=ready({sprint:true,withSquad:true});g.run(`sceneryProps.length=0;enemies.forEach(e=>e.hp=0);player.wx=1800;player.wy=1800;Squad.toggle(true);`);
+  g.emit('keydown',{code:'KeyQ'});g.emit('keydown',{code:'KeyD'});
+  const before=g.run(`return [player.wx,player.wy,Squad.cursor.x];`);g.run(`updateGame(.2);`);
+  assert(g.run(`return Sprint.snapshot().stamina===100&&player.currentSpeed===0;`));assert(g.run(`return Squad.cursor.x;`)>before[2]);
+  g.emit('keyup',{code:'KeyD'});g.run(`Squad.selectAll();Squad.cursor.x+=100;Squad.order();updateGame(.1);`);
+  assert(g.run(`return Sprint.snapshot().stamina<100&&player.currentSpeed>0;`));
+});
+test('Death and dungeon travel clear sprint input without refilling stamina; new game refills',()=>{
+  const g=ready({sprint:true});assert(g.run(`Sprint.press('keyboard',true);Sprint.tick(2,true);changeRegion('crypt');const travel=Sprint.snapshot().stamina;Sprint.press('keyboard',true);player.hp=1;receiveDamage(999);const death=Sprint.snapshot().stamina;const released=Sprint.tick(.1,true)===1;newGame();return travel===60&&death===60&&released&&Sprint.snapshot().stamina===100;`));
 });
 test('Re-equipping and swapping weapons preserves one bonus',()=>{
   const g=ready();eq(g.run(`openWindow('inventory');menuIndex=2;executeMenuSelection();executeMenuSelection();executeMenuSelection();const first=player.spellPower;
