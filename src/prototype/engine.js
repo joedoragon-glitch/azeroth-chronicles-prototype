@@ -9,7 +9,7 @@ const ceilings={thorn:2,mire:3,ridge:4,warlord:6,citadel:8};
 const dungeonIds=D.bosses.filter(b=>b.kind==='dungeon').map(b=>b.id);
 const R=typeof PrototypeRules!=='undefined'?PrototypeRules:require('./rules.js');
 const roadPlans=new Map();
-const pursuitBurstSeconds=.8,pursuitBurstMultiplier=1.4;
+const pursuitBurstSeconds=1.2,pursuitBurstMultiplier=1.5;
 const costs=[0,0,15,10,25,40,20,45,60],cooldowns=[0,.85,3,8,14,9,4,15,24];
 class Campaign{
  constructor(mode='normal',heroClass='paladin',random=Math.random,options={}){
