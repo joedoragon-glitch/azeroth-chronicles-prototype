@@ -15,7 +15,7 @@ function overlap(a,b){return a.x<b.x+b.width&&a.x+a.width>b.x&&a.y<b.y+b.height&
   let browser;
   try{
     await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
-    const base=`http://127.0.0.1:${server.address().port}${prefix}`;
+    const base=process.env.LIVE_APP_URL||`http://127.0.0.1:${server.address().port}${prefix}`;
     browser=await chromium.launch();fs.mkdirSync(path.join(root,'test-results'),{recursive:true});
     const sizes=[{name:'desktop',width:1280,height:800,touch:false},{name:'chromebook-touch',width:1366,height:768,touch:true},{name:'phone',width:390,height:844,touch:true},{name:'small-phone',width:320,height:568,touch:true},{name:'landscape',width:844,height:390,touch:true}];
     for(const size of sizes){
