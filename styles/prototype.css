@@ -13,3 +13,25 @@
 #message{bottom:calc(90px + env(safe-area-inset-bottom))}
 @media(max-height:610px) and (min-width:600px){#skills{left:10px;bottom:128px}}
 #modal{touch-action:none}
+
+/* A restrained ink, stone and brass layer over the existing prototype layout. */
+button{background:linear-gradient(160deg,#344b3c,#25392f 58%,#213329);border-color:#879878a8;box-shadow:inset 0 1px #d8ddc01f,0 2px 6px #07120d88;text-shadow:0 1px #0c1713}
+button:hover{background:linear-gradient(160deg,#426249,#2d4836)}
+button.selected,button:focus-visible{border-color:#f2d28b;background:linear-gradient(155deg,#496046,#304735);box-shadow:inset 3px 0 #edc77b,inset 0 1px #f5e9bf33,0 0 0 2px #72572e88}
+button:disabled{background:#202c28;box-shadow:none;text-shadow:none}
+#hud,#modal,#message{background:linear-gradient(145deg,#1d3027f5,#101f1bed 72%);border:1px solid #9eaf8c9c;box-shadow:inset 0 1px #e8e6bf21,0 9px 28px #07120dcc}
+#hud{border-radius:12px}#hud h1{color:#f1deaa;letter-spacing:.025em;text-shadow:0 2px 6px #0008;border-bottom:1px solid #b2b68c55;padding-bottom:8px}
+#hud #menu-button{color:#f3d99c;border-color:#c5ac72a3}
+#hero-stats{line-height:1.35}#hero-stats .hero-title{display:flex;justify-content:space-between;align-items:center;gap:5px;color:#f2e9cb;font-weight:750;margin:3px 0 8px}#hero-stats .hero-title small{letter-spacing:.09em;color:#d9c288}
+.resource-line{display:block;margin:5px 0 7px;font-size:12px}.resource-line span{display:block;margin-bottom:3px}.resource-line i{display:block;height:6px;border:1px solid #c8d0b347;border-radius:8px;background:linear-gradient(to right,#88cc87 var(--fill),#314538 var(--fill));box-shadow:inset 0 1px 2px #06150d9c}.resource-line.mana i{background:linear-gradient(to right,#89bce2 var(--fill),#2d4253 var(--fill))}
+#hero-stats .wallet{display:flex;justify-content:space-between;gap:6px;color:#c7d6bf;font-size:11px;margin:8px 0}#hero-stats .restoring{display:block;color:#d7d6a0;margin:3px 0}
+#location{border-top:1px solid #a7b69740;padding-top:7px;color:#f0d695}#objective{border-left:2px solid #c5ae72;padding-left:8px}#status{color:#e2bd94}
+#skills button{border-color:#91a58d9c;background:linear-gradient(155deg,#3c5546,#24372e);box-shadow:inset 0 1px #e8eacc24,0 3px 8px #07120cbb;color:#f6ecd1;font-weight:650}
+#skills button small{font-weight:500;color:#d7d9b8}#skills .locked{background:linear-gradient(155deg,#28332d,#1d2924);color:#9fa99b}#skills .potion-button{background:linear-gradient(155deg,#42605c,#2b403e);border-color:#9bb8a7a8}
+#joystick{background:radial-gradient(circle at 45% 40%,#42634bba 0 22%,#243d30cc 24% 53%,#101f1be6 80%);border:3px solid #bed0a5;box-shadow:inset 0 0 0 7px #57746166,0 5px 15px #08150da8}
+#stick{background:radial-gradient(circle at 35% 30%,#b8d0a0,#6f9676 70%,#4f785e);border:2px solid #d2d8b4;box-shadow:0 3px 9px #07180eaa}
+#order-button{border-color:#e8ca8d;color:#fce9bb;background:linear-gradient(155deg,#69563b,#3e392d);font-weight:750;text-align:center;box-shadow:inset 0 1px #f5dfac66,0 3px 12px #07120dcc}
+#modal{border-color:#c6bb92;border-radius:14px}#modal h2{color:#f0d99b;letter-spacing:.015em;border-bottom:1px solid #bac7a14d;padding-bottom:10px}#modal-description{color:#d9e0cd}#modal-actions button{border-left:3px solid #829d82}#modal-actions button.selected{border-left-color:#f3d17d}#modal-actions .detail{color:#c1cdb4}#close-button{border-color:#d1b876;color:#f2d59a}
+#message{border-color:#abb99772;color:#f2ecd7;border-radius:9px}
+@media(max-width:600px){#hud h1{padding-bottom:5px;margin:5px 0}.resource-line{font-size:10px;margin:4px 0}.resource-line i{height:5px}#hero-stats .wallet{font-size:9px;margin:5px 0}#hero-stats .hero-title{margin:2px 0 5px}#modal h2{padding-bottom:6px}}
+@media(max-height:610px) and (min-width:600px){#hero-stats .hero-title{margin:2px 0}#hero-stats .wallet{margin:3px 0}.resource-line{margin:2px 0}.resource-line i{height:4px}#location{margin-top:3px;padding-top:3px}}
