@@ -38,3 +38,11 @@ Previously migrated v4 saves with the legacy inventory marker are audited once. 
 - Chromium cases verify rendered compounds across regions, screenshots at desktop size, individual rescue unlocks and the previous collection/map/journal checks. Source and portable builds run through the repository workflow.
 
 No automatic capture economy, building destruction, town siege simulation or additional instanced interiors are introduced. The implemented tactical defenses and clear objectives provide the requested small-dungeon mechanics within the existing adventure.
+
+## Quest-led progression
+
+Ordinary outdoor monsters now award 50% of their previous EXP at payout, including night patrols. Existing save reward bases are retained, so repeated reloads cannot apply the reduction twice. Outdoor ringleaders retain their authored 1.5× combat base (roughly three times an ordinary kill); bosses retain their authored EXP. Dungeon and miniature-dungeon guardians, including guardian elites, keep their already reduced guardian bases.
+
+All enemy XP and gold use the same stronger level-gap multiplier: equal/higher enemy level 100%; hero ahead by 1 level 75%, 2 levels 40%, 3 levels 10%, and 4+ levels 0%. Zero-gold kills create no loot pile. There is no minimum one-gold farming loophole. Quest, first-clear and finite resource rewards remain objective rewards and are not level-penalized. Quest boards and controls help explain the incentives.
+
+All 30 quests total 9,000 EXP. Even an unpenalized sweep of the original 240 ordinary enemy slots would now give only 5,616 EXP, before guardian conversion and level penalties. Quests are therefore the main source; challenging enemies supplement them. The normal Dark Lord remains level 16, TRUE level 18; awakening still anchors to the hero's victory level +2. There is no new level cap, and higher-level future foes still give full reward. Existing hero levels and EXP are not taken away. These budgets establish reward priorities, not a claim of a completed human campaign balance playtest.
