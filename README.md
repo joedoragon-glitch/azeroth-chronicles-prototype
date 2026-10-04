@@ -1,10 +1,10 @@
-# Azeroth Chronicles — expanded prototype v0.7.1
+# Azeroth Chronicles — expanded prototype v0.7.2
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families each have four warned attacks. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
 ## Play
 
-Play online at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ . This is the expanded v0.7.1 adventure. Existing installs can use the game update action in the menu; future updates save before reloading.
+Play online at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ . This is the expanded v0.7.2 adventure. Existing installs can use the game update action in the menu; future updates save before reloading.
 
 For an offline portable copy, download `release/Azeroth_Chronicles_Playtest.html` and open it in Chrome or another current browser. The whole game, music and sound are embedded; no installation, server or internet connection is needed. Press a key or tap to start sound. Download the HTML instead of viewing its source in GitHub. The earlier v0.5 adventure remains available at `legacy.html`.
 
@@ -66,3 +66,5 @@ Guardian gold and EXP are deliberately low: 35% of the regional midpoint and one
 After the TRUE Dark Lord falls, the hero’s level at that victory is saved. Unbeaten returning TRUE dungeon bosses are fixed at that level +2, and their guardian waves return once at the same level. Their health and damage also rise with the captured level above 18, retaining the original endgame values as minimums. Later level-ups, reloads and Succession do not change this tier.
 
 Ringleaders have twice the regular variant’s base health, 25% more damage and 10% faster movement. This applies to guardian ringleaders too. Existing elites retain their current health fraction when upgraded.
+
+Specialists have explicit learning and training catalogues: Mira teaches skill 2 and trains only 1–2; Sela teaches 3/4/6 and trains 1/2/3/4/6; Orin teaches 5 and trains 1–6; Lyss teaches 7 and trains 1–7; Tovan teaches 8 and trains 1–8. Rank caps remain 2/3/4/6/8. Future skill names stay hidden until their region is reached, their teacher is rescued, or the skill is already known. Existing learned skills remain available.
