@@ -22,8 +22,11 @@ function overlap(a,b){return a.x<b.x+b.width&&a.x+a.width>b.x&&a.y<b.y+b.height&
       const context=await browser.newContext({viewport:{width:size.width,height:size.height},hasTouch:size.touch,isMobile:size.touch&&size.width<900});
       const page=await context.newPage(),errors=[];page.on('pageerror',error=>errors.push(error.message));
       page.on('console',message=>{if(message.type()==='error')errors.push(message.text())});
+      if(process.env.LIVE_APP_URL){page.on('requestfailed',r=>console.log('LIVE request failed',r.url(),r.failure()));page.on('response',r=>{if(r.status()>=400)console.log('LIVE bad response',r.status(),r.url());});}
       await page.goto(base);if(!size.touch){await page.keyboard.press('2');assert.equal(await page.evaluate(()=>player.heroClass),'mage');}await page.getByRole('button',{name:'Jugar [Enter / ESC]',exact:true}).click();
-      await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
+      try{await page.waitForFunction(()=>!!navigator.serviceWorker.controller);}catch(error){
+        console.log('LIVE SW diagnostics',await page.evaluate(async()=>({secure:isSecureContext,status:document.querySelector('#app-status')?.textContent,registrations:await navigator.serviceWorker.getRegistrations().then(rs=>rs.map(r=>({scope:r.scope,active:r.active?.state,installing:r.installing?.state,waiting:r.waiting?.state}))),assets:await Promise.all(['sw.js','index.html','rts.html','src/game.js','src/app.js','src/controls.js','src/classes.js','src/rts-engine.js','src/rts.js','styles/game.css','styles/app.css','styles/keyboard.css','styles/rts.css','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png'].map(async url=>{try{const r=await fetch(url);return {url,status:r.status,type:r.headers.get('content-type')};}catch(e){return {url,error:e.message};}}))})));throw error;
+      }
       assert.equal(await page.evaluate(()=>document.body.classList.contains('touch-mode')),size.touch,size.name);
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'horizontal overflow: '+size.name);
       const mini=await page.locator('#mini-map-button').boundingBox(),objective=await page.locator('#objective-tracker').boundingBox();assert(!overlap(mini,objective),'RPG minimap overlaps objective: '+size.name);
