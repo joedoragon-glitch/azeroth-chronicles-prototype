@@ -35,6 +35,21 @@ button:disabled{background:#202c28;box-shadow:none;text-shadow:none}
 #modal{border-color:#c6bb92;border-radius:14px}#modal h2{color:#f0d99b;letter-spacing:.015em;border-bottom:1px solid #bac7a14d;padding-bottom:10px}#modal-description{color:#d9e0cd}#modal-actions button{border-left:3px solid #829d82}#modal-actions button.selected{border-left-color:#f3d17d}#modal-actions .detail{color:#c1cdb4}#close-button{border-color:#d1b876;color:#f2d59a}
 #message{border-color:#abb99772;color:#f2ecd7;border-radius:9px}
 @media(max-width:600px){#hud h1{padding-bottom:5px;margin:5px 0}.resource-line{font-size:10px;margin:4px 0}.resource-line i{height:5px}#hero-stats .wallet{font-size:9px;margin:5px 0}#hero-stats .hero-title{margin:2px 0 5px}#modal h2{padding-bottom:6px}}
+
+/* Phone reach: keep the toast below play, with the combat controls around the left stick. */
+@media(max-width:600px){
+ #message{left:50%;right:auto;bottom:calc(8px + env(safe-area-inset-bottom));width:min(88vw,440px);max-height:52px;overflow:hidden;transform:translateX(-50%);padding:6px 10px;text-align:center;font-size:10px;line-height:1.25;background:#102018dc;border-color:#9eaf8c55}
+ #skills{left:108px;bottom:calc(18px + env(safe-area-inset-bottom));width:min(174px,calc(100vw - 190px));grid-template-columns:repeat(2,minmax(58px,1fr));gap:4px}
+ #skills button{min-height:40px;font-size:12px;padding:4px 3px}
+ #skills button small{font-size:8px}
+ #quick-items{gap:3px}
+ #skills .potion-button{min-height:34px;font-size:10px}
+ #movement{left:10px;bottom:max(14px,env(safe-area-inset-bottom))}
+ #joystick{width:92px;height:92px}
+ #stick{width:38px;height:38px;left:24px;top:24px}
+ #sprint-button{left:112px;bottom:calc(116px + env(safe-area-inset-bottom))}
+}
+@media(max-width:390px){#skills{left:101px;width:min(154px,calc(100vw - 174px));gap:3px}#skills button{min-height:38px;font-size:11px}#joystick{width:84px;height:84px}#stick{left:21px;top:21px}}
 @media(max-height:610px) and (min-width:600px){#hero-stats .hero-title{margin:2px 0}#hero-stats .wallet{margin:3px 0}.resource-line{margin:2px 0}.resource-line i{height:4px}#location{margin-top:3px;padding-top:3px}}
 </style></head>
 <body><canvas id="world" aria-label="Isometric adventure world"></canvas>
