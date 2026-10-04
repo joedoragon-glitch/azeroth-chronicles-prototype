@@ -466,6 +466,7 @@
             }
 
             if (manualPaused || focusPaused || document.hidden) return;
+            if (action==='sprint') { Sprint.press('keyboard',true); return; }
             // Real-Time Game Key State Registration
             keys[code] = true;
 
@@ -480,6 +481,7 @@
 
         window.addEventListener('keyup', (e) => {
             keys[e.code] = false;
+            if (typeof Sprint!=='undefined'&&Sprint.enabled&&e.code==='KeyQ') Sprint.press('keyboard',false);
         });
         window.addEventListener('pointerdown', event => { if (event.pointerType === 'touch') document.body.classList.remove('keyboard-input'); });
 
@@ -736,6 +738,9 @@
             const text = `${key('moveUp')}/${key('moveLeft')}/${key('moveDown')}/${key('moveRight')}: mover/seleccionar · ${[1,2,3,4,5].map(n=>key('spell'+n)).join('/')}: habilidades · ${key('interact')}: interactuar · ${key('confirm')}: confirmar · ${key('menu')}: menú/volver. ${key('inventory')}: mochila · ${key('talents')}: talentos · ${key('spellbook')}: habilidades · ${key('quest')}: misión · ${key('map')}: mapa · ${key('pause')}: pausa · ${key('help')}: ayuda. Espacio: poder 6 (4 s). Mayús izq.: poder 7 (90 s). B: poder 8 (120 s). Ratón opcional. Q queda libre.`;
             document.getElementById('keyboard-menu-guide').textContent = text;
             document.getElementById('keyboard-help-guide').textContent = text;
+            if (typeof Sprint!=='undefined'&&Sprint.enabled) {
+                for (const id of ['keyboard-menu-guide','keyboard-help-guide']) document.getElementById(id).textContent=text.replace('Q queda libre.','Mantén Q para esprintar; consume resistencia. Caminar no la consume.');
+            }
         }
         function renderInventoryUI() {
             const grid = document.getElementById('inv-grid');
@@ -1249,7 +1254,7 @@
         function updateGame(dt) {
             if (isGamePaused()) return;
             if(typeof Squad!=='undefined')Squad.update(dt);
-            player.hasteTimer=Math.max(0,player.hasteTimer-dt);const speedLimit=player.maxSpeed*(player.hasteTimer>0?1.5:1);
+            player.hasteTimer=Math.max(0,player.hasteTimer-dt);let speedLimit=player.maxSpeed*(player.hasteTimer>0?1.5:1);
             // 1. WARCRAFT III VECTOR PHYSICS & TURNING SPEED ENGINE
             if (!activeWindow) {
                 const tactics=typeof Squad!=='undefined'&&Squad.active,command=typeof Squad!=='undefined'?Squad.heroVector():null;
@@ -1263,6 +1268,13 @@
                 if (!tactics&&!command&&keys[KeyboardControls.bindings.moveRight]) inputX += 1;
 
                 const inputLen = Math.hypot(inputX, inputY);
+                if (typeof Sprint!=='undefined'&&Sprint.enabled) {
+                    const eligible=!tactics||(!!command&&Squad.selected.includes('hero'));
+                    const sprintFactor=Sprint.tick(dt,inputLen>0&&eligible&&player.hp>0);
+                    // Use the larger mobility bonus; sprint never multiplies haste.
+                    speedLimit=player.maxSpeed*Math.max(player.hasteTimer>0?1.5:1,sprintFactor);
+                    Sprint.hud();
+                }
 
                 if (inputLen > 0) {
                     player.isMoving = true;
@@ -1669,6 +1681,7 @@
         }
         function clearMovement() {
             for (const code in keys) keys[code] = false;
+            if (typeof Sprint!=='undefined'&&Sprint.enabled) Sprint.release();
             touchInput.x = 0; touchInput.y = 0; touchInput.attack = false;
             if (window.resetTouchControls) window.resetTouchControls();
             player.vx = 0; player.vy = 0; player.currentSpeed = 0; player.isMoving = false;
@@ -1723,7 +1736,7 @@
         }
         function statusMessage(message) { document.getElementById('save-status').textContent = message; }
         function saveSnapshot() {
-            return { version: 2, powersVersion:2, squad:typeof Squad!=='undefined'?Squad.snapshot():undefined, activeRegion, expeditionState:JSON.parse(JSON.stringify(expeditionState)), dungeonFountains:{...dungeonFountains}, dungeonCleared:{...dungeonCleared}, bossDefeated, lastDamageTimer, player: JSON.parse(JSON.stringify(player)),
+            return { version: 2, powersVersion:2, ...(typeof Sprint!=='undefined'&&Sprint.enabled?{sprint:Sprint.snapshot()}:{}), squad:typeof Squad!=='undefined'?Squad.snapshot():undefined, activeRegion, expeditionState:JSON.parse(JSON.stringify(expeditionState)), dungeonFountains:{...dungeonFountains}, dungeonCleared:{...dungeonCleared}, bossDefeated, lastDamageTimer, player: JSON.parse(JSON.stringify(player)),
                 talents: talents.map(t => t.points), inventory: inventory.map(i => i.name),
                 equipped: equippedWeapon ? inventory.indexOf(equippedWeapon) : -1,
                 quest: { ...questState }, enemies: enemies.map(e => ({ id: e.id, wx: e.wx, wy: e.wy,
@@ -1797,6 +1810,7 @@
                 region:validateRegion(l.region||'world'),gold: number(l.gold, 0, 1e9, true), icon: '🪙', name: `${l.gold}g Monedas de Oro` }));
             const region=validateRegion(data.activeRegion||'world');
             const restoredSquad=typeof Squad!=='undefined'?Squad.validate(data.squad,restored.level,region):null;
+            const restoredSprint=typeof Sprint!=='undefined'&&Sprint.enabled?Sprint.validate(data.sprint):null;
             if(region!=='world'&&(restored.wx>1140||restored.wy>1140))throw new Error('Posición inválida');
             const cleared={};for(const d of RPG_DUNGEONS)if(data.dungeonCleared?.[d.id]===true){if(!mobs.filter(e=>e.region===d.id).every(e=>e.hp===0))throw new Error('Mazmorra inválida');cleared[d.id]=true;}
             const expeditions={};for(const [id,mission]of Object.entries(expeditionData)){
@@ -1814,6 +1828,7 @@
             Object.assign(questState, q);
             enemies = mobs; groundLoot = loot;if(typeof Squad!=='undefined')Squad.restore(restoredSquad);
             clearTransientState();
+            if (restoredSprint) { Sprint.restore(restoredSprint); Sprint.hud(); }
         }
         function clearTransientState() {
             closeAllWindows(); clearMovement();
@@ -1849,6 +1864,7 @@
         function newGame() {
             if (!window.confirm('¿Empezar de nuevo? Se reemplazará el guardado de este navegador. Puedes exportarlo primero.')) return;
             Object.assign(player, JSON.parse(JSON.stringify(initialPlayer)));
+            if (typeof Sprint!=='undefined'&&Sprint.enabled) { Sprint.reset(); Sprint.hud(); }
             inventory.splice(0, inventory.length, ...initialInventory.map(i => ({ ...i })));
             equippedWeapon = null; talents.forEach(t => t.points = 0);
             Object.assign(questState, { active: false, completed: false, rewardClaimed: false, requiredKills: 5, currentKills: 0 });
@@ -1881,6 +1897,7 @@
 
         window.onload = function() {
             resizeCanvas();
+            if (typeof Sprint!=='undefined') Sprint.init();
             if (window.matchMedia && !window.matchMedia('(any-pointer: coarse)').matches) document.body.classList.add('keyboard-input');
             updateKeyboardHints();
             if(typeof Squad!=='undefined')Squad.init();
