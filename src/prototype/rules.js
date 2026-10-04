@@ -29,6 +29,13 @@ const expeditions=[
  {resource:'shrine',supplies:[],name:'Shrine salvage'},
  {resource:'foundry',supplies:['foundry','shelf','siege'],name:'Foundry crystals'}
 ];
+// Two quest supplies are stored inside a nearby building; the first stays outdoors.
+const supplyRooms=[
+ {id:'supply-vale',region:'vale',site:'orchard',name:'Orchard watchtower cellar',objective:'Recover one orchard crate and two from the watchtower cellar'},
+ {id:'supply-march',region:'march',site:'wagon',name:'Stranded wagon hold',objective:'Recover one wagon bundle and two from its guarded hold'},
+ {id:'supply-highlands',region:'highlands',site:'ore',name:'Quarry storehouse',objective:'Recover one quarry bundle and two from the storehouse'},
+ {id:'supply-crown',region:'crown',site:'foundry',name:'Foundry storeroom',objective:'Recover one foundry cache and two from the storeroom'}
+];
 const miniPlans=[
  {field:'Orchard den stockade',resource:'Woodland cache ruins',theme:'stockade'},
  {field:'Mirejaw island redoubt',resource:'Stranded wagon enclosure',theme:'palisade'},
@@ -72,8 +79,9 @@ const rangedProfiles={goblin:{variant:'slinger',shotRange:240,shotSpeed:240,proj
 const forests=[[[470,850,210,280],[1850,1050,250,320],[550,1800,260,180]],[[650,1650,240,200],[1950,1000,200,300],[2050,2300,230,170]],[[850,600,150,210],[1900,1500,240,350],[650,2100,230,200]],[[600,1300,250,250],[2100,1900,270,260],[1100,2300,200,160]],[[800,1100,230,250],[1850,1600,240,300],[2400,1050,170,200]]];
 const teachers={thorn:{learn:[2],train:[1,2],maxRank:2},mire:{learn:[3,4,6],train:[1,2,3,4,6],maxRank:3},ridge:{learn:[5],train:[1,2,3,4,5,6],maxRank:4},warlord:{learn:[7],train:[1,2,3,4,5,6,7],maxRank:6},citadel:{learn:[8],train:[1,2,3,4,5,6,7,8],maxRank:8}};
 const progression={ordinaryXpMultiplier:.5,levelGapRewards:[1,.75,.4,.1,0]};
+const autoPotionThresholds={health:.35,mana:.35};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={movementBasicClasses,enemyProjectileMultiplier:1.15,progression,miniPlans,expeditions,teachers,rangedProfiles,guardPosts,dungeonTraps,decorTypes,decorPosts,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
+const R={autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,teachers,rangedProfiles,guardPosts,dungeonTraps,decorTypes,decorPosts,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);

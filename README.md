@@ -1,10 +1,10 @@
-# Azeroth Chronicles — expanded prototype v0.8.0
+# Azeroth Chronicles — expanded prototype v0.8.2
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families each have four warned attacks. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
 ## Play
 
-Play online at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ . This is the expanded v0.8.0 adventure. Existing installs can use the game update action in the menu; future updates save before reloading.
+The currently published game is at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ . This v0.8.2 build is prepared locally; the portable copy below contains its changes. Existing installs can use the game update action after a release is published.
 
 For an offline portable copy, download `release/Azeroth_Chronicles_Playtest.html` and open it in Chrome or another current browser. The whole game, music and sound are embedded; no installation, server or internet connection is needed. Press a key or tap to start sound. Download the HTML instead of viewing its source in GitHub. The earlier v0.5 adventure remains available at `legacy.html`.
 
@@ -18,20 +18,24 @@ Choose Standard or the optional **Succession challenge**, then Paladin, Mage or 
 | Interact | E or F / Interact |
 | Skills 1–5 | 1–5 / left skill buttons |
 | Skills 6–8 | Space, left Shift, B / left skill buttons |
+| Health / mana potion | Automatically at 35% HP or MP; H / M or left potion buttons to use earlier; restores over five seconds |
 | Hero / squad cursor | Tab / Squad button |
-| Select / give orders | E / F / Confirm-order / click / right click |
+| Select / give orders | E / F / right-side Confirm-order / click / right click |
 | Select whole party | Backtick / Companions menu |
 | Map / journal / inventory | Z / J / I / Menu |
 | Pause / menu | P / Escape / Menu |
 | Sprint | Q reserved; sprint deliberately unavailable |
 
-Menus pause play. WASD navigates and F/Enter confirms; touch buttons scroll. Use the map to walk to marked captives, services and transport. Regions connect through recognizable NPC transport, rather than walking across their boundaries. Companions, finite gathering, construction and training share this same adventure and save.
+Menus pause play. WASD or the joystick navigates and F/Enter confirms. Use the map to walk to marked captives, services and transport. Regions connect through recognizable NPC transport, rather than walking across their boundaries. Companions, finite gathering, construction and training share this same adventure and save.
+On phones, the status and menu sit on the right, powers above the left joystick, and Confirm/Order at the lower right. The joystick moves the menu selection; F/Confirm activates it. Touching menu entries does not activate them. The Back entry is selectable with the joystick.
 
 ## Progression and ending
 
 Start with skill 1; the other seven require rescued teachers, level requirements and payment. Enemy populations are larger with smaller individual drops. Enemies six or more levels below the hero give one gold and no XP. Night increases health and damage after distinct first boss victories, with unchanged gold and XP.
 
 Two hero-participating kills of one ordinary species summon one or, with a 50% chance, two ringleaders. Companion-only kills neither advance nor reset the streak. Two kills of a named field boss unlock exactly one TRUE form. A normal dungeon boss receives one saved 1-in-3 early TRUE roll and stays dead. Reenter a cleared dungeon to challenge an available TRUE form after preparing.
+
+Health and mana potions use themselves at or below 35% of the relevant maximum when available. Health takes priority if both are low, and both share the existing ten-second cooldown. Their recovery is delivered over five seconds of active play, survives reload, and stops if the resource reaches its maximum. H, M and the left-side buttons allow earlier use; the inventory menu still works. Automatic consumption saves immediately.
 
 The first TRUE Dark Lord defeat permanently removes his family and guarantees the remaining unbeaten TRUE dungeon encounters and returning guardians at the hero’s victory level +2. All five TRUE dungeon guardians must fall to end the war. The remaining creatures become harmless, neutral and invulnerable; fewer inhabit the countryside, and native species inhabit the reclaimed dungeons. Each place gains a hopeful arrangement of its original melody.
 
@@ -89,3 +93,7 @@ Presentation and awareness v0.7.8 gives all ten rescued specialists distinct cos
 Paladin basic attack v0.7.9 also triggers while a movement key or joystick is held and the hero actually moves. Existing skill 1 input still works for Paladin, Mage and Ranger, including manual stationary Paladin attacks. The new trigger uses the existing basic cooldown and target selection; pushing into a wall or moving the squad cursor does not trigger it. Skill slots and save formats are unchanged.
 
 Movement basic and pursuit trial v0.8.0 extends the actual-movement skill 1 trigger to Mage and Ranger, with independent class switches in `PrototypeRules.movementBasicClasses` so either can be disabled without changing combat code or saves. All three retain manual skill 1. Every hostile, including bosses, now has one visible 1.2-second 50% chase burst per engagement; it resets only after disengagement.
+
+Mechanics audit v0.8.1 tests one- and two-ringleader outcomes across all ordinary species, including night-only and guardian variants. Night-only leaders retain their original night strength when a delayed spawn crosses dawn. All five dungeon bosses have a single saved one-in-three early TRUE roll; success appears on reentry, failure remains recorded, and the later awakening grants missed TRUE encounters. See `docs/MECHANICS_AUDIT_V081.md` for scope and evidence.
+
+Quest and layout update v0.8.2 puts one crate outdoors and two in a nearby guarded interior for each of the four three-crate quests. The Vale entrance is the orchard watchtower cellar; the Marches, Highlands and Crown have themed storehouses. Interior guardians give reduced dungeon rewards, with one tougher captain. Existing collection facts and quest payments persist. Quest boards move clear of nearby buildings and display `!` for available quests or `?` for a reward to claim. The menu and status move right, Confirm/Order moves to the lower right, and touch menu entries require joystick selection plus Confirm. Potions now restore over five seconds. See `docs/QUEST_INTERIORS_V082.md`.
