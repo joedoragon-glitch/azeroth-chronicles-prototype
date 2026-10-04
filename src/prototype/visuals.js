@@ -213,7 +213,7 @@ function draw(ctx,e,p,region=0,rescued=false){
  }
  if(e.hybrid&&e.species==='reedbeast'){oval(0,0,6,3,'#628975');line([[2,1],[15,5]],'#c1a18e',2);}if(e.rangedAim){oval(0,-56,5,5,'#ead6a0');}
  if(e.form==='true'){ctx.save();ctx.globalAlpha=.35;ctx.strokeStyle='#e5c876';ctx.lineWidth=2;for(const r of [23,30]){ctx.beginPath();ctx.ellipse(0,11,r,r*.28,0,0,Math.PI*2);ctx.stroke();}ctx.restore();line([[-19,18],[-8,23],[9,23],[21,17]],'#e2c36f',2);for(const x of [-17,17])poly([[x,-36],[x*1.45,-54],[x*.48,-42]],'#e1bd6d');for(const x of [-11,0,11])glint(x,-47,'#ffe7a8',1.3);}
- else if(e.form==='ringleader'){rect(-4,-47,8,8,gold);poly([[-12,-40],[-15,-49],[-5,-45],[0,-53],[5,-45],[15,-49],[12,-40]],gold);for(const x of [-16,16])line([[x,-12],[x*1.2,-24]],'#d5b36e',2);glint(0,-51,'#fff0b7',1.5);}
+ else if(e.form==='ringleader'){rect(-4,-47,8,8,gold);poly([[-12,-40],[-15,-49],[-5,-45],[0,-53],[5,-45],[15,-49],[12,-40]],gold);for(const x of [-16,16])line([[x,-12],[x*1.2,-24]],'#d5b36e',2);glint(0,-51,'#fff0b7',1.5);if(e.frenzy){ctx.save();ctx.globalAlpha=.55;ctx.strokeStyle='#ef8c63';ctx.lineWidth=2.5;for(const r of [25,32]){ctx.beginPath();ctx.ellipse(0,10,r,r*.27,0,0,Math.PI*2);ctx.stroke();}ctx.restore();for(const x of [-19,19])glint(x,-21,'#ff9f6b',2);}}
  if(type==='hero'||type==='ally'||type==='enemy'){line([[-8,13],[0,15],[8,13]],type==='enemy'?'#d2aa87':'#c9d6ad',1.2);if(type==='hero')oval(0,-47,2,2,'#f6dfa0');}
  ctx.restore();
 }
