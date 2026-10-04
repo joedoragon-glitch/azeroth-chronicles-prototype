@@ -258,7 +258,7 @@ class Campaign{
   if(!dungeon)for(const [x,y]of [D.towns[i],D.minors[i]])for(const dx of [-240,-180,180,240])points.push({x:x+dx,y:y+260,r:18,icon:'🪵',structure:'fence'});for(const q of points){if(this.blocked(q.x,q.y,z.id,q.r+20)||z.npcs.some(n=>dist(n,q)<q.r+90)||z.enemies.some(e=>dist(e.home,q)<q.r+50)||nearRoad(q)||z.id===this.s.zone&&dist(this.hero,q)<q.r+40)continue;z.props.push({id:'structure-'+z.props.length,...q});}this.localSites(z);this.miniDungeons(z);
  }
  localSites(z){
-  if(dungeonIds.includes(z.id)||z.localSitesVersion===1)return;
+  if(dungeonIds.includes(z.id)||z.localSitesVersion===2)return;
   const i=this.regionIndex(z.id),plan=R.expeditions[i],refuges=[D.towns[i],D.minors[i]],oldZone=this.s.zone;this.s.zone=z.id;
   try{
    // Supply destinations must sit outside both refuges, even when a landmark borders a hamlet.
@@ -271,7 +271,7 @@ class Campaign{
    const targets=z.npcs.filter(n=>n.kind==='landmark'&&!n.id.startsWith('bridge-'));
    const packs=[...new Set(z.enemies.filter(e=>e.type==='mob'&&e.pack&&!e.guard&&!e.summon&&e.form==='normal').map(e=>e.pack))];
    targets.forEach((site,j)=>{const anchor=site.id===plan.resource&&node?node:z.npcs.find(n=>n.kind==='bundle'&&n.site===site.id)||fieldPoint(site);z.enemies.filter(e=>e.pack===packs[j]).forEach((e,k)=>{let p;for(let t=0;t<24;t++){const a=(t+k*3)*Math.PI/12,candidate={x:anchor.x+Math.cos(a)*(75+Math.floor(k/2)*35),y:anchor.y+Math.sin(a)*(75+Math.floor(k/2)*35)};if(!this.blocked(candidate.x,candidate.y,z.id)&&refuges.every(([x,y])=>dist(candidate,{x,y})>=260)&&this.line(candidate,anchor)){p=candidate;break;}}if(!p)p=fieldPoint(anchor,60);e.home=p;e.site=site.id;if(e.hp>0&&!e.aggro)Object.assign(e,p);});});
-   z.localSitesVersion=1;
+   z.localSitesVersion=2;
   }finally{this.s.zone=oldZone;}
  }
  miniDungeons(z){
