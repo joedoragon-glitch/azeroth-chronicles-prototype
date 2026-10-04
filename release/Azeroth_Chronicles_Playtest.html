@@ -13,7 +13,7 @@
 #order-button{position:fixed;left:auto;right:12px;bottom:max(14px,env(safe-area-inset-bottom));z-index:12}
 #message{bottom:calc(90px + env(safe-area-inset-bottom))}
 @media(max-height:610px) and (min-width:600px){#skills{left:10px;bottom:128px}}
-#modal{touch-action:none}
+#modal{touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 
 /* A restrained ink, stone and brass layer over the existing prototype layout. */
 button{background:linear-gradient(160deg,#344b3c,#25392f 58%,#213329);border-color:#879878a8;box-shadow:inset 0 1px #d8ddc01f,0 2px 6px #07120d88;text-shadow:0 1px #0c1713}
@@ -39,9 +39,9 @@ button:disabled{background:#202c28;box-shadow:none;text-shadow:none}
 /* Phone reach: keep the toast below play, with the combat controls around the left stick. */
 @media(max-width:600px){
  #message{left:50%;right:auto;bottom:0;width:min(88vw,440px);max-height:52px;overflow:hidden;transform:translateX(-50%);padding:6px 10px;text-align:center;font-size:10px;line-height:1.25;background:#102018dc;border-color:#9eaf8c55;border-bottom:0;border-radius:9px 9px 0 0}
- #skills{left:102px;bottom:calc(18px + env(safe-area-inset-bottom));width:min(174px,calc(50vw - 104px));grid-template-columns:repeat(2,minmax(48px,1fr));gap:4px}
- #skills button{min-height:40px;font-size:12px;padding:4px 3px}
- #skills button small{font-size:8px}
+ #skills{left:102px;bottom:calc(18px + env(safe-area-inset-bottom));width:min(174px,calc(50vw - 104px));grid-template-columns:repeat(2,minmax(48px,1fr));gap:5px}
+ #skills button{min-height:44px;font-size:12px;padding:4px 3px;touch-action:manipulation}
+ #skills button small{font-size:9px}
  #quick-items{gap:3px}
  #skills .potion-button{min-height:34px;font-size:10px}
  #movement{left:10px;bottom:max(14px,env(safe-area-inset-bottom))}
@@ -49,7 +49,7 @@ button:disabled{background:#202c28;box-shadow:none;text-shadow:none}
  #stick{width:38px;height:38px;left:24px;top:24px}
  #sprint-button{left:112px;bottom:calc(116px + env(safe-area-inset-bottom))}
 }
-@media(max-width:390px){#skills{left:95px;width:min(154px,calc(50vw - 97px));gap:3px}#skills button{min-height:38px;font-size:11px}#joystick{width:84px;height:84px}#stick{left:21px;top:21px}}
+@media(max-width:390px){#skills{left:95px;width:min(154px,calc(50vw - 97px));gap:4px}#skills button{min-height:42px;font-size:11px}#skills button small{font-size:9px}#joystick{width:84px;height:84px}#stick{left:21px;top:21px}}
 @media(max-height:610px) and (min-width:600px){#hero-stats .hero-title{margin:2px 0}#hero-stats .wallet{margin:3px 0}.resource-line{margin:2px 0}.resource-line i{height:4px}#location{margin-top:3px;padding-top:3px}}
 </style></head>
 <body><canvas id="world" aria-label="Isometric adventure world"></canvas>
