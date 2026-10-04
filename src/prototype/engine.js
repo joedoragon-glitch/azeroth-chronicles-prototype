@@ -6,6 +6,7 @@ const clone=x=>JSON.parse(JSON.stringify(x)), clamp=(n,a,b)=>Math.max(a,Math.min
 const classes={paladin:{icon:'🛡️',hp:120,mp:60,power:18,armor:8,speed:300},mage:{icon:'🧙‍♀️',hp:90,mp:100,power:22,armor:3,speed:300},ranger:{icon:'🏹',hp:105,mp:70,power:20,armor:5,speed:320}};
 const ceilings={thorn:2,mire:3,ridge:4,warlord:6,citadel:8};
 const dungeonIds=D.bosses.filter(b=>b.kind==='dungeon').map(b=>b.id);
+const roadPlans=new Map();
 const costs=[0,0,15,10,25,40,20,45,60],cooldowns=[0,.85,3,8,14,9,4,15,24];
 class Campaign{
  constructor(mode='normal',heroClass='paladin',random=Math.random,options={}){
@@ -26,7 +27,7 @@ class Campaign{
  say(text){this.messages.push(text);if(this.messages.length>7)this.messages.shift();}
  boss(id){return D.bosses.find(b=>b.id===id);}
  unit(type,x,y){const base={worker:[85,4,'👷'],soldier:[140,12,'⚔️'],archer:[100,15,'🏹']}[type];return {id:'ally-'+this.s.nextId++,type,x,y,hp:base[0]+12*this.hero.level,maxHp:base[0]+12*this.hero.level,damage:base[1],icon:base[2],cd:0,order:null,carry:0};}
- blocked(x,y,zone=this.s.zone,radius=15){
+ blocked(x,y,zone=this.s.zone,radius=15,terrainOnly=false){
   const i=this.regionIndex(zone),dungeon=dungeonIds.includes(zone),size=dungeon?1500:D.regions[i]?.size;
   if(!size||x<40+radius||y<40+radius||x>size-40-radius||y>size-40-radius)return true;
   if(dungeon){if(x>710-radius&&x<780+radius&&y>120&&y<1200&&!((y>480+radius&&y<680-radius)||(y>870+radius&&y<1060-radius)))return true;}
@@ -34,21 +35,32 @@ class Campaign{
    const strips=[[1160,1240,60,2300,[[660,840],[1660,1840]]],[1120,1690,1450,2070,[[1710,1850]]],[1250,1350,120,2400,[[860,1100],[1770,1980]]],[1400,1510,200,2450,[[630,870],[2070,2250]]],[1300,1410,300,2810,[[850,1150],[2260,2510]]]];
    const [a,b,c,e,gaps]=strips[i];if(x>a-radius&&x<b+radius&&y>c-radius&&y<e+radius&&!gaps.some(([l,h])=>y>l+radius&&y<h-radius))return true;
   }
-  const z=this.s.zones[zone];return z?.props.some(p=>Math.hypot(x-p.x,y-p.y)<p.r+radius)||false;
+  const z=this.s.zones[zone];return !terrainOnly&&z?.props.some(p=>Math.hypot(x-p.x,y-p.y)<p.r+radius)||false;
  }
  safe(x,y,zone=this.s.zone){if(!this.blocked(x,y,zone))return {x,y};for(let r=30;r<450;r+=30)for(let i=0;i<24;i++){const a=i*Math.PI/12,p={x:x+Math.cos(a)*r,y:y+Math.sin(a)*r};if(!this.blocked(p.x,p.y,zone))return p;}throw Error('No safe arrival');}
  line(a,b){const n=Math.ceil(dist(a,b)/20);for(let i=1;i<n;i++)if(this.blocked(a.x+(b.x-a.x)*i/n,a.y+(b.y-a.y)*i/n,this.s.zone,0))return false;return true;}
- route(a,b){
-  const target=this.safe(b.x,b.y),step=50,size=this.isDungeon()?1500:this.definition().size,n=Math.ceil(size/step),key=p=>Math.floor(p.y/step)*n+Math.floor(p.x/step),start=key(a),end=key(target),queue=[start],seen=new Set([start]),parents=new Map();
-  for(let at=0;at<queue.length&&at<n*n;at++){const id=queue[at];if(id===end){const path=[target];for(let j=id;j!==start;j=parents.get(j))path.push({x:(j%n)*step+25,y:Math.floor(j/n)*step+25});return path.reverse();}const x=id%n,y=Math.floor(id/n);for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const xx=x+dx,yy=y+dy,j=yy*n+xx;if(xx<0||yy<0||xx>=n||yy>=n||seen.has(j)||this.blocked(xx*step+25,yy*step+25))continue;seen.add(j);parents.set(j,id);queue.push(j);}}
+ clearSegment(a,b,radius=15,terrainOnly=false){const n=Math.max(1,Math.ceil(dist(a,b)/8));for(let j=0;j<=n;j++)if(this.blocked(a.x+(b.x-a.x)*j/n,a.y+(b.y-a.y)*j/n,this.s.zone,radius,terrainOnly))return false;return true;}
+ route(a,b,options={}){
+  const terrainOnly=!!options.terrainOnly,target=this.safe(b.x,b.y),step=50,size=this.isDungeon()?1500:this.definition().size,n=Math.ceil(size/step),point=id=>({x:(id%n)*step+25,y:Math.floor(id/n)*step+25});
+  if(!options.road&&this.clearSegment(a,target,15,terrainOnly))return [target];
+  const nearby=p=>{const out=[],cx=Math.floor(p.x/step),cy=Math.floor(p.y/step);for(let dx=-2;dx<=2;dx++)for(let dy=-2;dy<=2;dy++){const x=cx+dx,y=cy+dy;if(x<0||y<0||x>=n||y>=n)continue;const id=y*n+x,q=point(id);if(!this.blocked(q.x,q.y,this.s.zone,15,terrainOnly)&&this.clearSegment(p,q,15,terrainOnly))out.push(id);}return out.sort((x,y)=>dist(point(x),p)-dist(point(y),p));};
+  const starts=nearby(a),ends=nearby(target);if(!starts.length||!ends.length)return [];const start=starts[0],end=ends[0],queue=[start],parents=new Map([[start,null]]),valid=new Map();
+  const free=id=>{if(!valid.has(id)){const p=point(id);valid.set(id,!this.blocked(p.x,p.y,this.s.zone,15,terrainOnly));}return valid.get(id);};
+  for(let at=0;at<queue.length;at++){const id=queue[at];if(id===end){let path=[target];for(let j=id;j!==null;j=parents.get(j))path.push(point(j));path.reverse();if(options.road){const compact=[{x:a.x,y:a.y}];for(let j=0;j<path.length;j++){const prev=compact.at(-1),q=path[j],next=path[j+1];if(next&&((prev.x===q.x&&q.x===next.x)||(prev.y===q.y&&q.y===next.y)))continue;compact.push(q);}return compact;}const smooth=[];let current=a,j=0;while(j<path.length){let far=j;for(let k=j+1;k<path.length;k++){if(!this.clearSegment(current,path[k],15,terrainOnly))break;far=k;}smooth.push(path[far]);current=path[far];j=far+1;}return smooth;}
+   const x=id%n,y=Math.floor(id/n),from=point(id);for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const xx=x+dx,yy=y+dy,j=yy*n+xx;if(xx<0||yy<0||xx>=n||yy>=n||parents.has(j)||!free(j)||!this.clearSegment(from,point(j),15,terrainOnly))continue;parents.set(j,id);queue.push(j);}}
   return [];
  }
- move(entity,target,speed,dt,stop=0){const d=dist(entity,target);if(d<=stop)return true;const step=Math.min(d-stop,speed*dt),nx=entity.x+(target.x-entity.x)/d*step,ny=entity.y+(target.y-entity.y)/d*step;
-  if(!this.blocked(nx,ny)){entity.x=nx;entity.y=ny;return true;}let moved=false;if(!this.blocked(nx,entity.y)){entity.x=nx;moved=true;}if(!this.blocked(entity.x,ny)){entity.y=ny;moved=true;}return moved;
+ roadNetwork(z){if(z.roadVersion===2||dungeonIds.includes(z.id))return;const i=this.regionIndex(z.id),origin={x:D.towns[i][0],y:D.towns[i][1]},oldZone=this.s.zone;this.s.zone=z.id;
+  const destinations=[D.minors[i],D.ports[i],D.entrances[i],D.fields[i]];const props=z.props;z.props=[];try{if(roadPlans.has(z.id))z.roads=clone(roadPlans.get(z.id));else{z.roads=destinations.filter(([x,y])=>dist(origin,{x,y})>1).map(([x,y])=>this.route(origin,{x,y},{road:true,terrainOnly:true})).filter(p=>p.length>1);roadPlans.set(z.id,clone(z.roads));}}finally{z.props=props;this.s.zone=oldZone;}
+  const near=(p,a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,t=clamp(((p.x-a.x)*dx+(p.y-a.y)*dy)/(dx*dx+dy*dy||1),0,1);return Math.hypot(p.x-a.x-t*dx,p.y-a.y-t*dy);};
+  z.props=z.props.filter(p=>!z.roads.some(path=>path.some((b,j)=>j&&near(p,path[j-1],b)<p.r+60)));z.roadVersion=2;
  }
- follow(entity,target,speed,dt,stop=45){if(dist(entity,target)<=stop)return true;entity.routeAge=(entity.routeAge||0)-dt;if(!entity.path?.length||entity.routeAge<=0){entity.path=this.route(entity,target);entity.routeAge=1.3;}if(!entity.path.length)return false;this.move(entity,entity.path[0],speed,dt);if(dist(entity,entity.path[0])<22)entity.path.shift();return true;}
+ move(entity,target,speed,dt,stop=0){const d=dist(entity,target);if(d<=stop)return true;const step=Math.min(d-stop,speed*dt),nx=entity.x+(target.x-entity.x)/d*step,ny=entity.y+(target.y-entity.y)/d*step;
+  if(this.clearSegment(entity,{x:nx,y:ny})){entity.x=nx;entity.y=ny;return true;}let moved=false;if(this.clearSegment(entity,{x:nx,y:entity.y})){entity.x=nx;moved=true;}if(this.clearSegment(entity,{x:entity.x,y:ny})){entity.y=ny;moved=true;}return moved;
+ }
+ follow(entity,target,speed,dt,stop=45){if(dist(entity,target)<=stop)return true;if(this.clearSegment(entity,target)){entity.path=[];return this.move(entity,target,speed,dt,stop);}entity.routeAge=(entity.routeAge||0)-dt;if(!entity.path?.length||entity.routeAge<=0){entity.path=this.route(entity,target);entity.routeAge=1.3;}while(entity.path?.length&&dist(entity,entity.path[0])<1)entity.path.shift();if(!entity.path?.length)return false;const moved=this.move(entity,entity.path[0],speed,dt);if(dist(entity,entity.path[0])<1)entity.path.shift();if(!moved)entity.routeAge=0;return moved;}
  zone(){
-  if(this.s.zones[this.s.zone])return this.s.zones[this.s.zone];const i=this.regionIndex(),r=D.regions[i],dungeon=this.isDungeon(),id=this.s.zone;
+  if(this.s.zones[this.s.zone]){const z=this.s.zones[this.s.zone];this.roadNetwork(z);return z;}const i=this.regionIndex(),r=D.regions[i],dungeon=this.isDungeon(),id=this.s.zone;
   const z={id,enemies:[],props:[],npcs:[],buildings:[],nodes:[],packTimers:{},clock:0};this.s.zones[id]=z;
   const region=r.id,bosses=D.bosses.filter(b=>b.region===region),field=bosses.find(b=>b.kind==='field'),boss=dungeon?this.boss(id):field;
   if(dungeon){z.npcs.push({id:'exit',name:'Return to '+r.name,kind:'exit',x:160,y:240,icon:'🚪'},{id:'cage-'+boss.id,name:boss.captive,kind:'cage',family:boss.id,x:1200,y:1270,icon:'🔒'});
@@ -75,7 +87,7 @@ class Campaign{
   }
   const point=dungeon?{x:1160,y:1110}:{x:D.fields[i][0],y:D.fields[i][1]};if(dungeon&&this.s.normal[boss.id])z.enemies=z.enemies.filter(e=>!e.guard);
   if(!this.s.normal[boss.id]||boss.kind==='field'&&!(boss.id==='darklord'&&this.s.true.darklord)&& !this.s.pending[boss.id])z.enemies.push(this.bossEnemy(boss,'normal',point));
-  if(!dungeon){const origin={x:D.towns[i][0],y:D.towns[i][1]};z.roads=[D.minors[i],D.ports[i],D.entrances[i],D.fields[i]].map(([x,y])=>this.route(origin,{x,y}));z.props=z.props.filter(p=>!z.roads.some(path=>path.some(q=>dist(p,q)<55)));}
+  this.roadNetwork(z);
   this.refreshNPCs();if(this.peace)this.makeHabitat(z);return z;
  }
  makeEnemy(def,p){return {id:'enemy-'+this.s.nextId++,family:def.family||null,species:def.species||def.family,name:def.name,icon:def.icon||'👿',form:def.form||'normal',type:def.type||'mob',level:def.level,baseHp:def.hp,baseDamage:def.damage,hp:def.hp,maxHp:def.hp,damage:def.damage,gold:def.gold,xp:def.xp,x:p.x,y:p.y,home:{...p},cd:0,aggro:false,heroParticipated:false,noProgress:0,attackIndex:0,respawn:0,neutral:false,open:0,deathPaid:false};}
@@ -235,7 +247,7 @@ class Campaign{
   for(const p of Object.values(s.pending))if(p.kind!=='dungeon'){for(const f of ['level','baseHp','baseDamage','gold','xp'])finite(p.base[f],0,1e9);if(!p.base.home)throw Error('Invalid elite home');finite(p.base.home.x,0,5000);finite(p.base.home.y,0,5000);}
   return s;
  }
- static restore(data,random=Math.random){const s=Campaign.validate(data),c=new Campaign(s.mode,s.hero.class,random);c.s=s;c.s.projectiles=[];c.s.hazards=[];c.messages=[];c.effects=[];c.zone();return c;}
+ static restore(data,random=Math.random){const s=Campaign.validate(data),c=new Campaign(s.mode,s.hero.class,random);c.s=s;c.s.projectiles=[];c.s.hazards=[];c.messages=[];c.effects=[];for(const z of Object.values(c.s.zones))c.roadNetwork(z);c.zone();return c;}
  static migrate(old,random=Math.random){if(old?.version!==2||!old.player||!classes[old.player.heroClass||'paladin'])throw Error('Unknown legacy save');const c=new Campaign('normal',old.player.heroClass||'paladin',random),p=old.player,h=c.hero;for(const [a,b]of [['level','level'],['gold','gold'],['maxHp','maxHp'],['maxMp','maxMp'],['hp','hp'],['mp','mp'],['power','spellPower'],['armor','armor'],['speed','maxSpeed']])if(Number.isFinite(p[b])&&p[b]>=0)h[a]=p[b];h.xp=clamp(p.xp||0,0,120*h.level-1);h.skills=Array.from({length:8},(_,i)=>clamp(p.spellLevels?.[i+1]||1,1,8));h.talents=(old.talents||[0,0,0,0]).map((v,i)=>clamp(v,0,i===3?3:5));h.talentPoints=p.talentPoints||0;
   for(const id of ['thorn','mire','ridge','warlord','citadel','crypt','mine','abyss','darklord'])c.s.rescued[id]=true;
   for(const id of ['crypt','mine','abyss','citadel'])if(old.dungeonCleared?.[id]){c.victory(id,'normal');c.s.paid['clear:'+id]=true;c.s.earlyRoll[id]=random()<1/3;if(c.s.earlyRoll[id])c.s.pending[id]={kind:'dungeon',count:1};}if(old.bossDefeated)c.victory('darklord','normal');

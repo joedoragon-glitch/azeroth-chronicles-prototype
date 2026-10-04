@@ -91,6 +91,7 @@ const clone=x=>JSON.parse(JSON.stringify(x)), clamp=(n,a,b)=>Math.max(a,Math.min
 const classes={paladin:{icon:'🛡️',hp:120,mp:60,power:18,armor:8,speed:300},mage:{icon:'🧙‍♀️',hp:90,mp:100,power:22,armor:3,speed:300},ranger:{icon:'🏹',hp:105,mp:70,power:20,armor:5,speed:320}};
 const ceilings={thorn:2,mire:3,ridge:4,warlord:6,citadel:8};
 const dungeonIds=D.bosses.filter(b=>b.kind==='dungeon').map(b=>b.id);
+const roadPlans=new Map();
 const costs=[0,0,15,10,25,40,20,45,60],cooldowns=[0,.85,3,8,14,9,4,15,24];
 class Campaign{
  constructor(mode='normal',heroClass='paladin',random=Math.random,options={}){
@@ -111,7 +112,7 @@ class Campaign{
  say(text){this.messages.push(text);if(this.messages.length>7)this.messages.shift();}
  boss(id){return D.bosses.find(b=>b.id===id);}
  unit(type,x,y){const base={worker:[85,4,'👷'],soldier:[140,12,'⚔️'],archer:[100,15,'🏹']}[type];return {id:'ally-'+this.s.nextId++,type,x,y,hp:base[0]+12*this.hero.level,maxHp:base[0]+12*this.hero.level,damage:base[1],icon:base[2],cd:0,order:null,carry:0};}
- blocked(x,y,zone=this.s.zone,radius=15){
+ blocked(x,y,zone=this.s.zone,radius=15,terrainOnly=false){
   const i=this.regionIndex(zone),dungeon=dungeonIds.includes(zone),size=dungeon?1500:D.regions[i]?.size;
   if(!size||x<40+radius||y<40+radius||x>size-40-radius||y>size-40-radius)return true;
   if(dungeon){if(x>710-radius&&x<780+radius&&y>120&&y<1200&&!((y>480+radius&&y<680-radius)||(y>870+radius&&y<1060-radius)))return true;}
@@ -119,21 +120,32 @@ class Campaign{
    const strips=[[1160,1240,60,2300,[[660,840],[1660,1840]]],[1120,1690,1450,2070,[[1710,1850]]],[1250,1350,120,2400,[[860,1100],[1770,1980]]],[1400,1510,200,2450,[[630,870],[2070,2250]]],[1300,1410,300,2810,[[850,1150],[2260,2510]]]];
    const [a,b,c,e,gaps]=strips[i];if(x>a-radius&&x<b+radius&&y>c-radius&&y<e+radius&&!gaps.some(([l,h])=>y>l+radius&&y<h-radius))return true;
   }
-  const z=this.s.zones[zone];return z?.props.some(p=>Math.hypot(x-p.x,y-p.y)<p.r+radius)||false;
+  const z=this.s.zones[zone];return !terrainOnly&&z?.props.some(p=>Math.hypot(x-p.x,y-p.y)<p.r+radius)||false;
  }
  safe(x,y,zone=this.s.zone){if(!this.blocked(x,y,zone))return {x,y};for(let r=30;r<450;r+=30)for(let i=0;i<24;i++){const a=i*Math.PI/12,p={x:x+Math.cos(a)*r,y:y+Math.sin(a)*r};if(!this.blocked(p.x,p.y,zone))return p;}throw Error('No safe arrival');}
  line(a,b){const n=Math.ceil(dist(a,b)/20);for(let i=1;i<n;i++)if(this.blocked(a.x+(b.x-a.x)*i/n,a.y+(b.y-a.y)*i/n,this.s.zone,0))return false;return true;}
- route(a,b){
-  const target=this.safe(b.x,b.y),step=50,size=this.isDungeon()?1500:this.definition().size,n=Math.ceil(size/step),key=p=>Math.floor(p.y/step)*n+Math.floor(p.x/step),start=key(a),end=key(target),queue=[start],seen=new Set([start]),parents=new Map();
-  for(let at=0;at<queue.length&&at<n*n;at++){const id=queue[at];if(id===end){const path=[target];for(let j=id;j!==start;j=parents.get(j))path.push({x:(j%n)*step+25,y:Math.floor(j/n)*step+25});return path.reverse();}const x=id%n,y=Math.floor(id/n);for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const xx=x+dx,yy=y+dy,j=yy*n+xx;if(xx<0||yy<0||xx>=n||yy>=n||seen.has(j)||this.blocked(xx*step+25,yy*step+25))continue;seen.add(j);parents.set(j,id);queue.push(j);}}
+ clearSegment(a,b,radius=15,terrainOnly=false){const n=Math.max(1,Math.ceil(dist(a,b)/8));for(let j=0;j<=n;j++)if(this.blocked(a.x+(b.x-a.x)*j/n,a.y+(b.y-a.y)*j/n,this.s.zone,radius,terrainOnly))return false;return true;}
+ route(a,b,options={}){
+  const terrainOnly=!!options.terrainOnly,target=this.safe(b.x,b.y),step=50,size=this.isDungeon()?1500:this.definition().size,n=Math.ceil(size/step),point=id=>({x:(id%n)*step+25,y:Math.floor(id/n)*step+25});
+  if(!options.road&&this.clearSegment(a,target,15,terrainOnly))return [target];
+  const nearby=p=>{const out=[],cx=Math.floor(p.x/step),cy=Math.floor(p.y/step);for(let dx=-2;dx<=2;dx++)for(let dy=-2;dy<=2;dy++){const x=cx+dx,y=cy+dy;if(x<0||y<0||x>=n||y>=n)continue;const id=y*n+x,q=point(id);if(!this.blocked(q.x,q.y,this.s.zone,15,terrainOnly)&&this.clearSegment(p,q,15,terrainOnly))out.push(id);}return out.sort((x,y)=>dist(point(x),p)-dist(point(y),p));};
+  const starts=nearby(a),ends=nearby(target);if(!starts.length||!ends.length)return [];const start=starts[0],end=ends[0],queue=[start],parents=new Map([[start,null]]),valid=new Map();
+  const free=id=>{if(!valid.has(id)){const p=point(id);valid.set(id,!this.blocked(p.x,p.y,this.s.zone,15,terrainOnly));}return valid.get(id);};
+  for(let at=0;at<queue.length;at++){const id=queue[at];if(id===end){let path=[target];for(let j=id;j!==null;j=parents.get(j))path.push(point(j));path.reverse();if(options.road){const compact=[{x:a.x,y:a.y}];for(let j=0;j<path.length;j++){const prev=compact.at(-1),q=path[j],next=path[j+1];if(next&&((prev.x===q.x&&q.x===next.x)||(prev.y===q.y&&q.y===next.y)))continue;compact.push(q);}return compact;}const smooth=[];let current=a,j=0;while(j<path.length){let far=j;for(let k=j+1;k<path.length;k++){if(!this.clearSegment(current,path[k],15,terrainOnly))break;far=k;}smooth.push(path[far]);current=path[far];j=far+1;}return smooth;}
+   const x=id%n,y=Math.floor(id/n),from=point(id);for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const xx=x+dx,yy=y+dy,j=yy*n+xx;if(xx<0||yy<0||xx>=n||yy>=n||parents.has(j)||!free(j)||!this.clearSegment(from,point(j),15,terrainOnly))continue;parents.set(j,id);queue.push(j);}}
   return [];
  }
- move(entity,target,speed,dt,stop=0){const d=dist(entity,target);if(d<=stop)return true;const step=Math.min(d-stop,speed*dt),nx=entity.x+(target.x-entity.x)/d*step,ny=entity.y+(target.y-entity.y)/d*step;
-  if(!this.blocked(nx,ny)){entity.x=nx;entity.y=ny;return true;}let moved=false;if(!this.blocked(nx,entity.y)){entity.x=nx;moved=true;}if(!this.blocked(entity.x,ny)){entity.y=ny;moved=true;}return moved;
+ roadNetwork(z){if(z.roadVersion===2||dungeonIds.includes(z.id))return;const i=this.regionIndex(z.id),origin={x:D.towns[i][0],y:D.towns[i][1]},oldZone=this.s.zone;this.s.zone=z.id;
+  const destinations=[D.minors[i],D.ports[i],D.entrances[i],D.fields[i]];const props=z.props;z.props=[];try{if(roadPlans.has(z.id))z.roads=clone(roadPlans.get(z.id));else{z.roads=destinations.filter(([x,y])=>dist(origin,{x,y})>1).map(([x,y])=>this.route(origin,{x,y},{road:true,terrainOnly:true})).filter(p=>p.length>1);roadPlans.set(z.id,clone(z.roads));}}finally{z.props=props;this.s.zone=oldZone;}
+  const near=(p,a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,t=clamp(((p.x-a.x)*dx+(p.y-a.y)*dy)/(dx*dx+dy*dy||1),0,1);return Math.hypot(p.x-a.x-t*dx,p.y-a.y-t*dy);};
+  z.props=z.props.filter(p=>!z.roads.some(path=>path.some((b,j)=>j&&near(p,path[j-1],b)<p.r+60)));z.roadVersion=2;
  }
- follow(entity,target,speed,dt,stop=45){if(dist(entity,target)<=stop)return true;entity.routeAge=(entity.routeAge||0)-dt;if(!entity.path?.length||entity.routeAge<=0){entity.path=this.route(entity,target);entity.routeAge=1.3;}if(!entity.path.length)return false;this.move(entity,entity.path[0],speed,dt);if(dist(entity,entity.path[0])<22)entity.path.shift();return true;}
+ move(entity,target,speed,dt,stop=0){const d=dist(entity,target);if(d<=stop)return true;const step=Math.min(d-stop,speed*dt),nx=entity.x+(target.x-entity.x)/d*step,ny=entity.y+(target.y-entity.y)/d*step;
+  if(this.clearSegment(entity,{x:nx,y:ny})){entity.x=nx;entity.y=ny;return true;}let moved=false;if(this.clearSegment(entity,{x:nx,y:entity.y})){entity.x=nx;moved=true;}if(this.clearSegment(entity,{x:entity.x,y:ny})){entity.y=ny;moved=true;}return moved;
+ }
+ follow(entity,target,speed,dt,stop=45){if(dist(entity,target)<=stop)return true;if(this.clearSegment(entity,target)){entity.path=[];return this.move(entity,target,speed,dt,stop);}entity.routeAge=(entity.routeAge||0)-dt;if(!entity.path?.length||entity.routeAge<=0){entity.path=this.route(entity,target);entity.routeAge=1.3;}while(entity.path?.length&&dist(entity,entity.path[0])<1)entity.path.shift();if(!entity.path?.length)return false;const moved=this.move(entity,entity.path[0],speed,dt);if(dist(entity,entity.path[0])<1)entity.path.shift();if(!moved)entity.routeAge=0;return moved;}
  zone(){
-  if(this.s.zones[this.s.zone])return this.s.zones[this.s.zone];const i=this.regionIndex(),r=D.regions[i],dungeon=this.isDungeon(),id=this.s.zone;
+  if(this.s.zones[this.s.zone]){const z=this.s.zones[this.s.zone];this.roadNetwork(z);return z;}const i=this.regionIndex(),r=D.regions[i],dungeon=this.isDungeon(),id=this.s.zone;
   const z={id,enemies:[],props:[],npcs:[],buildings:[],nodes:[],packTimers:{},clock:0};this.s.zones[id]=z;
   const region=r.id,bosses=D.bosses.filter(b=>b.region===region),field=bosses.find(b=>b.kind==='field'),boss=dungeon?this.boss(id):field;
   if(dungeon){z.npcs.push({id:'exit',name:'Return to '+r.name,kind:'exit',x:160,y:240,icon:'🚪'},{id:'cage-'+boss.id,name:boss.captive,kind:'cage',family:boss.id,x:1200,y:1270,icon:'🔒'});
@@ -160,7 +172,7 @@ class Campaign{
   }
   const point=dungeon?{x:1160,y:1110}:{x:D.fields[i][0],y:D.fields[i][1]};if(dungeon&&this.s.normal[boss.id])z.enemies=z.enemies.filter(e=>!e.guard);
   if(!this.s.normal[boss.id]||boss.kind==='field'&&!(boss.id==='darklord'&&this.s.true.darklord)&& !this.s.pending[boss.id])z.enemies.push(this.bossEnemy(boss,'normal',point));
-  if(!dungeon){const origin={x:D.towns[i][0],y:D.towns[i][1]};z.roads=[D.minors[i],D.ports[i],D.entrances[i],D.fields[i]].map(([x,y])=>this.route(origin,{x,y}));z.props=z.props.filter(p=>!z.roads.some(path=>path.some(q=>dist(p,q)<55)));}
+  this.roadNetwork(z);
   this.refreshNPCs();if(this.peace)this.makeHabitat(z);return z;
  }
  makeEnemy(def,p){return {id:'enemy-'+this.s.nextId++,family:def.family||null,species:def.species||def.family,name:def.name,icon:def.icon||'👿',form:def.form||'normal',type:def.type||'mob',level:def.level,baseHp:def.hp,baseDamage:def.damage,hp:def.hp,maxHp:def.hp,damage:def.damage,gold:def.gold,xp:def.xp,x:p.x,y:p.y,home:{...p},cd:0,aggro:false,heroParticipated:false,noProgress:0,attackIndex:0,respawn:0,neutral:false,open:0,deathPaid:false};}
@@ -320,7 +332,7 @@ class Campaign{
   for(const p of Object.values(s.pending))if(p.kind!=='dungeon'){for(const f of ['level','baseHp','baseDamage','gold','xp'])finite(p.base[f],0,1e9);if(!p.base.home)throw Error('Invalid elite home');finite(p.base.home.x,0,5000);finite(p.base.home.y,0,5000);}
   return s;
  }
- static restore(data,random=Math.random){const s=Campaign.validate(data),c=new Campaign(s.mode,s.hero.class,random);c.s=s;c.s.projectiles=[];c.s.hazards=[];c.messages=[];c.effects=[];c.zone();return c;}
+ static restore(data,random=Math.random){const s=Campaign.validate(data),c=new Campaign(s.mode,s.hero.class,random);c.s=s;c.s.projectiles=[];c.s.hazards=[];c.messages=[];c.effects=[];for(const z of Object.values(c.s.zones))c.roadNetwork(z);c.zone();return c;}
  static migrate(old,random=Math.random){if(old?.version!==2||!old.player||!classes[old.player.heroClass||'paladin'])throw Error('Unknown legacy save');const c=new Campaign('normal',old.player.heroClass||'paladin',random),p=old.player,h=c.hero;for(const [a,b]of [['level','level'],['gold','gold'],['maxHp','maxHp'],['maxMp','maxMp'],['hp','hp'],['mp','mp'],['power','spellPower'],['armor','armor'],['speed','maxSpeed']])if(Number.isFinite(p[b])&&p[b]>=0)h[a]=p[b];h.xp=clamp(p.xp||0,0,120*h.level-1);h.skills=Array.from({length:8},(_,i)=>clamp(p.spellLevels?.[i+1]||1,1,8));h.talents=(old.talents||[0,0,0,0]).map((v,i)=>clamp(v,0,i===3?3:5));h.talentPoints=p.talentPoints||0;
   for(const id of ['thorn','mire','ridge','warlord','citadel','crypt','mine','abyss','darklord'])c.s.rescued[id]=true;
   for(const id of ['crypt','mine','abyss','citadel'])if(old.dungeonCleared?.[id]){c.victory(id,'normal');c.s.paid['clear:'+id]=true;c.s.earlyRoll[id]=random()<1/3;if(c.s.earlyRoll[id])c.s.pending[id]={kind:'dungeon',count:1};}if(old.bossDefeated)c.victory('darklord','normal');
@@ -456,7 +468,27 @@ function draw(ctx,e,p,region=0,rescued=false){
  ctx.restore();
 }
 function height(e){if(e.type==='boss')return 85;if(e.renderKind==='hero'&&e.class==='mage'||e.renderKind==='prop')return 64;if(['dungeon','exit','transport'].includes(e.kind))return 64;return 54;}
-root.PrototypeVisuals={draw,height};
+function roads(ctx,paths,screen,region=0){
+ const strips=[[1160,1240,60,2300],[1120,1690,1450,2070],[1250,1350,120,2400],[1400,1510,200,2450],[1300,1410,300,2810]],strip=strips[region];
+ const bridge=p=>p.x>=strip[0]-12&&p.x<=strip[1]+12&&p.y>=strip[2]&&p.y<=strip[3];
+ const polygon=(points,color)=>{ctx.fillStyle=color;ctx.beginPath();points.forEach((q,j)=>{const p=screen(q);j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);});ctx.closePath();ctx.fill();};
+ const segment=(a,b,w,color)=>{const d=Math.hypot(b.x-a.x,b.y-a.y);if(!d)return;const dx=-(b.y-a.y)/d*w,dy=(b.x-a.x)/d*w;polygon([{x:a.x+dx,y:a.y+dy},{x:b.x+dx,y:b.y+dy},{x:b.x-dx,y:b.y-dy},{x:a.x-dx,y:a.y-dy}],color);};
+ const stroke=(a,b,color,width=1)=>{a=screen(a);b=screen(b);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();};
+ const edges=[],seen=new Set();for(const path of paths)for(let j=1;j<path.length;j++){const a=path[j-1],b=path[j],key=[a.x,a.y,b.x,b.y].join(':');if(seen.has(key))continue;seen.add(key);edges.push([a,b]);}
+ ctx.save();ctx.lineJoin='round';ctx.lineCap='butt';
+ // Shared shoulders and pavement form junctions before individual slab seams.
+ for(const [a,b]of edges)segment(a,b,35,'#504d3c');
+ for(const path of paths)for(const q of path)polygon([{x:q.x-35,y:q.y-35},{x:q.x+35,y:q.y-35},{x:q.x+35,y:q.y+35},{x:q.x-35,y:q.y+35}],'#504d3c');
+ for(const [a,b]of edges)segment(a,b,29,'#a29677');
+ for(const path of paths)for(const q of path)polygon([{x:q.x-29,y:q.y-29},{x:q.x+29,y:q.y-29},{x:q.x+29,y:q.y+29},{x:q.x-29,y:q.y+29}],'#a29677');
+ const seams=new Set();for(const [a,b]of edges){const length=Math.hypot(b.x-a.x,b.y-a.y);if(!length)continue;const ux=(b.x-a.x)/length,uy=(b.y-a.y)/length,nx=-uy,ny=ux,steps=Math.max(1,Math.ceil(length/22));
+ for(let j=0;j<steps;j++){const p={x:a.x+(b.x-a.x)*j/steps,y:a.y+(b.y-a.y)*j/steps},q={x:a.x+(b.x-a.x)*(j+1)/steps,y:a.y+(b.y-a.y)*(j+1)/steps},mid={x:(p.x+q.x)/2,y:(p.y+q.y)/2};if(bridge(mid)){segment(p,q,28,'#b49468');for(const side of [-1,1])stroke({x:p.x+nx*side*31,y:p.y+ny*side*31},{x:q.x+nx*side*31,y:q.y+ny*side*31},'#d1b887',2);}}
+ const anchor=a.x*ux+a.y*uy,first=Math.ceil(anchor/44)*44-anchor;for(let t=first;t<length;t+=44){const p={x:a.x+ux*t,y:a.y+uy*t},key=Math.round(p.x)+':'+Math.round(p.y);if(seams.has(key))continue;seams.add(key);const wood=bridge(p);stroke({x:p.x+nx*26,y:p.y+ny*26},{x:p.x-nx*26,y:p.y-ny*26},wood?'#624b34':'#7e7865',1);if(!wood){const q={x:a.x+ux*Math.min(length,t+44),y:a.y+uy*Math.min(length,t+44)};stroke(p,q,'#888370',.8);}}
+ }
+
+ ctx.restore();
+}
+root.PrototypeVisuals={draw,height,roads};
 if(typeof module!=='undefined')module.exports=root.PrototypeVisuals;
 })(typeof window!=='undefined'?window:globalThis);
 
@@ -495,7 +527,7 @@ function start(mode,heroClass,succession){if(mode==='nightmare'&&!profile.nightm
 function chooseClass(mode,succession){if(succession===undefined){openMenu('Challenge condition','Succession is optional. Each fallen class is lost for this run; after three class deaths the run ends. World progress and gold pass to a level 1 successor.',[action('Standard death and refuge recovery',()=>chooseClass(mode,false)),action('Succession challenge',()=>chooseClass(mode,true))]);return;}
  openMenu('New '+(mode==='nightmare'?'Nightmare':'Normal')+' adventure','The Dark Lord’s armies have imprisoned the people who teach and equip heroes. Rescue them, learn your class skills and bring peace to the world. Start with one skill.',Object.entries(Campaign.classes).map(([id,c])=>action(c.icon+' '+id,()=>{let exists=false;try{exists=!!localStorage.getItem(saveKey(mode));}catch(_){}if(exists&&!confirm('Replace the existing '+mode+' run? Export it first to keep it.'))return;start(mode,id,succession);},id==='paladin'?'Melee, healing and brief immunity':id==='mage'?'Ranged magic, mana recovery and barriers':'Ranged bow, healing and mobility')));}
 function openMain(){openMenu('Adventure menu','WASD moves. E interacts. F confirms. Tab changes hero / squad cursor. Skills: 1–5, Space, Left Shift, B. Q is unavailable.',[
- action('Continue',()=>{paused=false;closeMenu();}),...(appRegistration?[action(appUpdateReady?'Install available game update':'Check for game update',updateApp)]:[]),action('Map and travel routes',showMap),action('Quest journal',()=>quests(false)),action('Skills and teachers',skillBook),action('Inventory and supplies',inventory),action('Companions and construction',partyMenu),action('Talents',talents),action('Sound settings',soundMenu),action(paused?'Resume play':'Pause play',()=>{paused=!paused;closeMenu();}),action('Save run',()=>{save();closeMenu();}),action('Export save',()=>exportJSON(game.snapshot(),'Azeroth_Chronicles_'+game.s.mode+'.json')),action('Import save',()=>$('import-file').click()),action('Export playtest report',()=>exportJSON({version:'0.6.0-prototype',mode:game.s.mode,phase:game.s.phase,hero:game.hero,statistics:game.s.statistics},'Azeroth_Playtest_Report.json')),action('New Normal game',()=>chooseClass('normal')),action('New game in Nightmare Mode',()=>chooseClass('nightmare'),'Unlocked by the peaceful ending',!profile.nightmareUnlocked),action('Load other mode run',()=>{const mode=game.s.mode==='normal'?'nightmare':'normal';if(load(mode)){save();closeMenu();}else game.say('No saved '+mode+' run yet.');})]);}
+ action('Continue',()=>{paused=false;closeMenu();}),...(appRegistration?[action(appUpdateReady?'Install available game update':'Check for game update',updateApp)]:[]),action('Map and travel routes',showMap),action('Quest journal',()=>quests(false)),action('Skills and teachers',skillBook),action('Inventory and supplies',inventory),action('Companions and construction',partyMenu),action('Talents',talents),action('Sound settings',soundMenu),action(paused?'Resume play':'Pause play',()=>{paused=!paused;closeMenu();}),action('Save run',()=>{save();closeMenu();}),action('Export save',()=>exportJSON(game.snapshot(),'Azeroth_Chronicles_'+game.s.mode+'.json')),action('Import save',()=>$('import-file').click()),action('Export playtest report',()=>exportJSON({version:'0.6.2-prototype',mode:game.s.mode,phase:game.s.phase,hero:game.hero,statistics:game.s.statistics},'Azeroth_Playtest_Report.json')),action('New Normal game',()=>chooseClass('normal')),action('New game in Nightmare Mode',()=>chooseClass('nightmare'),'Unlocked by the peaceful ending',!profile.nightmareUnlocked),action('Load other mode run',()=>{const mode=game.s.mode==='normal'?'nightmare':'normal';if(load(mode)){save();closeMenu();}else game.say('No saved '+mode+' run yet.');})]);}
 $('menu-button').onclick=()=>{audio.unlock();if(game.s.challenge.pending)successionMenu();else if(game.s.challenge.gameOver)gameOver();else openMain();};
 function ending(){profile.nightmareUnlocked=true;persistProfile();openMenu('Peace for everyone','The evil is defeated. Every dungeon guardian has fallen. The war is over for people and creatures alike.\n\nCreatures are neutral and cannot harm or be harmed. The reclaimed dungeons are their homes.',[action('Continue in the peaceful world',()=>{game.s.endingAck=true;save();closeMenu();}),action('New game in Nightmare Mode',()=>{game.s.endingAck=true;save();chooseClass('nightmare');}),action('Export completed run',()=>exportJSON(game.snapshot(),'Azeroth_Chronicles_Completed.json'))]);}
 function successionMenu(){openMenu('Choose your successor','The '+game.hero.class+' has fallen permanently. Gold, rescues, quests and boss progress survive. Your successor starts at level 1 in Millhaven and must learn their skills.',Object.entries(Campaign.classes).filter(([id])=>!game.s.challenge.fallen.includes(id)).map(([id,c])=>action(c.icon+' '+id+' successor',()=>{game.successor(id);save();closeMenu();})));}
@@ -534,8 +566,8 @@ function updateHUD(){const h=game.hero;$('hero-stats').innerHTML=Campaign.classe
  $('squad-button').textContent=squadMode?'Hero control · Tab':'Squad cursor · Tab';for(let i=0;i<8;i++){const b=$('skill-'+(i+1)),rank=h.skills[i];b.classList.toggle('locked',!rank);b.title=skillNames[i]+(rank?' · Rank '+rank:' · Not learned');b.querySelector('small').textContent=!rank?'Locked':h.cd[i]>0?h.cd[i].toFixed(1):skillKeys[i];}const n=nearestNPC();$('interact-button').title=n?n.name:'Find a marked person';$('message').textContent=game.messages.at(-1)||'Explore, prepare and rescue. Music starts with your first action.';}
 function diamond(x,y,size,color){const p=screen({x,y});ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x+size*.76,p.y+size*.27);ctx.lineTo(p.x,p.y+size*.54);ctx.lineTo(p.x-size*.76,p.y+size*.27);ctx.closePath();ctx.fill();}
 function sprite(e,p){PrototypeVisuals.draw(ctx,e,p,game.regionIndex(),!!game.s.rescued[e.family]);}
-function draw(){ctx.fillStyle='#0c1913';ctx.fillRect(0,0,canvas.width,canvas.height);const z=game.zone(),size=game.isDungeon()?1500:game.definition().size,i=game.regionIndex();for(let x=0;x<size;x+=80)for(let y=0;y<size;y+=80){const p=screen({x,y});if(p.x<-160||p.x>canvas.width+160||p.y<-100||p.y>canvas.height+100)continue;let color=game.isDungeon()?'#38433f':D.colors[i];if(game.blocked(x+40,y+40,game.zoneId,0)&&!z.props.some(p=>Math.hypot(x+40-p.x,y+40-p.y)<p.r))color=game.isDungeon()?'#737c70':i===4?'#914c30':i>=2?'#5c5b55':'#2e6170';else if(!game.isDungeon()&&(Math.abs(y-(D.towns[i][1]+150))<65||Math.abs(x-D.minors[i][0])<55))color='#806e4d';diamond(x,y,80,color);}
- for(const path of z.roads||[]){ctx.strokeStyle='#91805b';ctx.lineWidth=18;ctx.lineCap='round';ctx.beginPath();path.forEach((q,j)=>{const p=screen(q);j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);});ctx.stroke();}
+function draw(){ctx.fillStyle='#0c1913';ctx.fillRect(0,0,canvas.width,canvas.height);const z=game.zone(),size=game.isDungeon()?1500:game.definition().size,i=game.regionIndex();for(let x=0;x<size;x+=80)for(let y=0;y<size;y+=80){const p=screen({x,y});if(p.x<-160||p.x>canvas.width+160||p.y<-100||p.y>canvas.height+100)continue;let color=game.isDungeon()?'#38433f':D.colors[i];if(game.blocked(x+40,y+40,game.zoneId,0)&&!z.props.some(p=>Math.hypot(x+40-p.x,y+40-p.y)<p.r))color=game.isDungeon()?'#737c70':i===4?'#914c30':i>=2?'#5c5b55':'#2e6170';diamond(x,y,80,color);}
+ PrototypeVisuals.roads(ctx,z.roads||[],screen,i);
  for(const t of game.traps()){const p=screen(t);ctx.fillStyle=t.phase<1.5?'#ffcb5777':t.phase<2?'#ff4545aa':'#8a8a6640';ctx.beginPath();ctx.ellipse(p.x,p.y,38,14,0,0,Math.PI*2);ctx.fill();}
  for(const e of z.enemies.filter(e=>e.telegraph)){const a=e.telegraph,p=screen(a);ctx.strokeStyle='#ffd479';ctx.fillStyle='#ea664577';ctx.lineWidth=3;
   if(a.kind==='line'||a.kind==='volley'){for(const o of a.count===2?[-85,85]:[0]){const side={x:Math.cos(a.angle+Math.PI/2)*o,y:Math.sin(a.angle+Math.PI/2)*o},from=screen({x:a.fromX+side.x,y:a.fromY+side.y}),to=screen({x:a.x+side.x,y:a.y+side.y});ctx.beginPath();ctx.moveTo(from.x,from.y);ctx.lineTo(to.x,to.y);ctx.lineWidth=a.kind==='volley'?8:25;ctx.stroke();}}
