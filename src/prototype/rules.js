@@ -73,8 +73,21 @@ const dungeonTraps={
  abyss:[[440,450,'jet'],[560,690,'jet'],[770,740,'seal'],[980,460,'jet'],[440,950,'seal'],[900,940,'jet'],[1120,800,'jet'],[1250,1020,'seal'],[1040,1220,'jet'],[1290,1190,'jet']],
  citadel:[[500,450,'spikes'],[660,530,'jet'],[870,610,'seal'],[1030,430,'jet'],[530,850,'seal'],[650,1060,'spikes'],[940,1010,'jet'],[1100,790,'seal'],[1300,960,'jet'],[1020,1210,'spikes'],[1270,1190,'seal'],[930,750,'jet']]
 };
-const decorTypes={crypt:['coffin','bones','torch','banner'],archive:['shelf','water','rune','torch'],mine:['crate','rail','torch','crystal'],abyss:['chain','ember','banner','torch'],citadel:['banner','armor','rune','torch']};
-const decorPosts=[[300,350],[460,300],[1050,300],[1280,650],[300,620],[450,1150],[950,1300],[1320,1300],[1300,1070],[1030,720],[570,900],[960,580],[340,1250],[550,530],[1280,380],[940,1150]];
+// Curated occupied spaces: each dungeon has an entrance, work/ritual zone, command markers and a boss approach.
+const dungeonDecor={
+ crypt:[[300,330,'torch'],[430,330,'torch'],[350,520,'coffin'],[470,520,'coffin'],[350,660,'coffin'],[470,660,'coffin'],[580,780,'bones'],[620,850,'bones'],[930,320,'banner'],[1120,320,'banner'],[980,480,'torch'],[1220,480,'torch'],[930,980,'coffin'],[1040,1040,'bones'],[1180,980,'coffin'],[1000,1190,'torch'],[1280,1190,'torch'],[1110,1240,'banner'],[1300,1240,'banner'],[870,820,'bones']],
+ archive:[[300,330,'torch'],[500,330,'torch'],[330,520,'shelf'],[330,650,'shelf'],[520,520,'shelf'],[520,650,'shelf'],[900,340,'banner'],[1080,340,'banner'],[930,520,'shelf'],[1160,520,'shelf'],[850,760,'water'],[1040,760,'water'],[1220,760,'water'],[890,930,'rune'],[1120,930,'rune'],[980,1120,'torch'],[1240,1120,'torch'],[1070,1230,'shelf'],[1260,1230,'shelf'],[720,850,'rune']],
+ mine:[[280,330,'torch'],[480,330,'torch'],[300,530,'crate'],[410,530,'crate'],[520,530,'crate'],[650,760,'rail'],[650,860,'rail'],[650,960,'rail'],[930,330,'crystal'],[1080,330,'crystal'],[1230,330,'crystal'],[960,600,'banner'],[1200,600,'banner'],[970,820,'crate'],[1080,820,'crate'],[1190,820,'crate'],[960,1050,'crystal'],[1180,1050,'crystal'],[1080,1220,'torch'],[1280,1220,'torch']],
+ abyss:[[300,340,'torch'],[500,340,'torch'],[350,560,'chain'],[500,560,'chain'],[820,360,'banner'],[1060,360,'banner'],[930,570,'ember'],[1120,570,'ember'],[850,780,'chain'],[1080,780,'chain'],[1250,780,'chain'],[860,960,'ember'],[1060,960,'ember'],[1260,960,'ember'],[900,1140,'banner'],[1180,1140,'banner'],[980,1240,'torch'],[1260,1240,'torch'],[700,850,'chain'],[1140,860,'torch']],
+ citadel:[[300,330,'torch'],[500,330,'torch'],[340,520,'armor'],[500,520,'armor'],[900,340,'banner'],[1120,340,'banner'],[870,560,'rune'],[1000,650,'rune'],[1130,560,'rune'],[860,820,'armor'],[1140,820,'armor'],[900,980,'banner'],[1120,980,'banner'],[940,1130,'rune'],[1080,1130,'rune'],[980,1240,'torch'],[1240,1240,'torch'],[1260,600,'armor'],[780,1020,'banner'],[1260,1020,'banner']]
+};
+const dungeonTrapTuning={
+ crypt:{cycle:6.8,warning:1.4,active:.8,damage:.11,radius:44,sealRadius:60,jetLength:150,jetHalfWidth:30,slow:2.5,offset:1.10},
+ archive:{cycle:6.4,warning:1.35,active:.85,damage:.12,radius:45,sealRadius:62,jetLength:165,jetHalfWidth:31,slow:2.75,offset:1.05},
+ mine:{cycle:6.0,warning:1.30,active:.90,damage:.135,radius:47,sealRadius:64,jetLength:175,jetHalfWidth:32,slow:3.0,offset:1.00},
+ abyss:{cycle:5.7,warning:1.25,active:.95,damage:.15,radius:49,sealRadius:66,jetLength:185,jetHalfWidth:33,slow:3.25,offset:.95},
+ citadel:{cycle:5.4,warning:1.20,active:1.0,damage:.17,radius:51,sealRadius:68,jetLength:195,jetHalfWidth:34,slow:3.5,offset:.90}
+};
 const rangedProfiles={goblin:{variant:'slinger',shotRange:240,shotSpeed:240,projectileStyle:'stone'},skeleton:{variant:'bow guard',shotRange:290,shotSpeed:280,projectileStyle:'arrow'},reedbeast:{variant:'spitter',hybrid:true,shotRange:250,shotSpeed:220,projectileStyle:'spit'},mireling:{variant:'spitter',hybrid:true,shotRange:230,shotSpeed:230,projectileStyle:'spit'},ogre:{variant:'stone thrower',hybrid:true,shotRange:260,shotSpeed:220,projectileStyle:'stone'},orc:{variant:'axe thrower',hybrid:true,shotRange:260,shotSpeed:250,projectileStyle:'stone'},ashbeast:{variant:'cinder spitter',hybrid:true,shotRange:270,shotSpeed:240,projectileStyle:'cinder'}};
 const forests=[[[470,850,210,280],[1850,1050,250,320],[550,1800,260,180]],[[650,1650,240,200],[1950,1000,200,300],[2050,2300,230,170]],[[850,600,150,210],[1900,1500,240,350],[650,2100,230,200]],[[600,1300,250,250],[2100,1900,270,260],[1100,2300,200,160]],[[800,1100,230,250],[1850,1600,240,300],[2400,1050,170,200]]];
 const teachers={thorn:{learn:[2],train:[1,2],maxRank:2},mire:{learn:[3,4,6],train:[1,2,3,4,6],maxRank:3},ridge:{learn:[5],train:[1,2,3,4,5,6],maxRank:4},warlord:{learn:[7],train:[1,2,3,4,5,6,7],maxRank:6},citadel:{learn:[8],train:[1,2,3,4,5,6,7,8],maxRank:8}};
@@ -84,6 +97,6 @@ const autoPotionThresholds={health:.35,mana:.35};
 const bossCadence={specialRecoveryMultiplier:.25,basicCooldown:.75,skillsPerBasic:4,specialRange:560};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,teachers,rangedProfiles,guardPosts,dungeonTraps,decorTypes,decorPosts,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
+const R={bossCadence,dungeonTrapTuning,dungeonDecor,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,teachers,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
