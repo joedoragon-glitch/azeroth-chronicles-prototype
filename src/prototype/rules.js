@@ -109,8 +109,9 @@ const progression={ordinaryXpMultiplier:.5,levelGapRewards:[1,.75,.4,.1,0]};
 const autoPotionThresholds={health:.35,mana:.35};
 // Boss telegraphs stay readable, but idle gaps are short and basic attacks only interrupt sustained special pressure occasionally.
 const bossCadence={specialRecoveryMultiplier:.25,basicCooldown:.75,skillsPerBasic:4,specialRange:560};
+const rangedEnemyCombat={projectileMultiplier:1.7,aimTime:.35,cooldown:1.15};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,dungeonTrapTuning,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,teachers,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
+const R={bossCadence,rangedEnemyCombat,dungeonTrapTuning,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,teachers,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
