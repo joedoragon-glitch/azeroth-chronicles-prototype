@@ -13,7 +13,7 @@ await check('Movement basic uses per-class switches and keeps manual skill 1 '+t
  await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');c.zone().props=[];c.zone().enemies=[];c.s.party=[];Object.assign(c.hero,{x:600,y:900,order:null});const e=c.makeEnemy({species:'goblin',name:'Training target',level:1,hp:10000,damage:0,gold:0,xp:0},{x:680,y:900});c.zone().enemies=[e];});
  const reset=await page.evaluate(()=>{const c=Prototype.game,e=c.zone().enemies[0];e.aggro=false;e.hp=10000;Object.assign(e,{x:680,y:900,home:{x:680,y:900}});Object.assign(c.hero,{x:600,y:900,order:null});c.hero.cd[0]=0;return c.hero.x;});
  await page.waitForTimeout(80);assert.equal(await page.evaluate(()=>Prototype.game.zone().enemies[0].hp),10000,'no idle passive attack');
- await page.keyboard.down('d');await page.waitForTimeout(110);await page.keyboard.up('d');
+ await page.keyboard.down('d');await page.waitForFunction(start=>Prototype.game.hero.x>start,reset,{timeout:1500});await page.waitForFunction(()=>Prototype.game.zone().enemies[0].hp<10000,null,{timeout:1500});await page.keyboard.up('d');
  const moved=await page.evaluate(()=>({x:Prototype.game.hero.x,hp:Prototype.game.zone().enemies[0].hp}));assert(moved.x>reset&&moved.hp<10000,'Paladin attacks during actual movement');
  await page.evaluate(()=>{const c=Prototype.game,e=c.zone().enemies[0];Object.assign(c.hero,{x:600,y:900,order:null});c.hero.cd[0]=0;c.s.projectiles=[];e.hp=10000;e.aggro=false;Object.assign(e,{x:680,y:900,home:{x:680,y:900}});});
  await page.keyboard.press('1');assert(await page.evaluate(()=>Prototype.game.zone().enemies[0].hp)<10000,'Paladin can still attack manually while still');
