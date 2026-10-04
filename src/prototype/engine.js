@@ -14,9 +14,10 @@ const costs=[0,0,15,10,25,40,20,45,60],cooldowns=[0,.85,3,8,14,9,4,15,24];
 class Campaign{
  constructor(mode='normal',heroClass='paladin',random=Math.random,options={}){
   if(!['normal','nightmare'].includes(mode)||!classes[heroClass])throw Error('Unknown mode or class');
-  this.random=random;this.messages=[];this.effects=[];this.s={version:4,mode,phase:'adventure',clock:0,time:0,restCooldown:0,zone:'vale',refuge:'vale',nextId:1,normal:{},true:{},earlyRoll:{},pending:{},origins:{},late:{},victories:{},rescued:{},keys:{},paid:{},tickets:{},recovery:{},quests:{},discovered:{},gathered:{},fountains:{},zones:{},loot:[],projectiles:[],hazards:[],streak:{key:null,count:0},endingAck:false,holdFire:false,statistics:{kills:0,deaths:0,goldEarned:0,suppliesUsed:0,bossSeconds:{},events:[]}};
+  this.random=random;this.messages=[];this.effects=[];this.s={version:4,mode,phase:'adventure',clock:0,time:0,restCooldown:0,zone:'vale',refuge:'vale',nextId:1,normal:{},true:{},earlyRoll:{},pending:{},origins:{},late:{},victories:{},rescued:{},keys:{},paid:{},tickets:{},recovery:{},quests:{},discovered:{},gathered:{},fountains:{},zones:{},loot:[],projectiles:[],hazards:[],streak:{key:null,count:0},endingAck:false,awakeningAck:false,holdFire:false,statistics:{kills:0,deaths:0,goldEarned:0,suppliesUsed:0,bossSeconds:{},events:[]}};
   const c=classes[heroClass];this.s.hero={class:heroClass,x:300,y:350,hp:c.hp,maxHp:c.hp,mp:c.mp,maxMp:c.mp,level:1,xp:0,gold:30,power:c.power,armor:c.armor,speed:c.speed,skills:[1,0,0,0,0,0,0,0],cd:Array(8).fill(0),immune:0,haste:0,weapon:0,armorTier:0,reforges:{},potions:{health:1,mana:1},tonic:false,potionCd:0,slow:0,talents:[0,0,0,0],talentPoints:0};
   this.s.challenge={succession:options.succession===true,fallen:[],pending:false,gameOver:false};
+  this.initializeQuests();
   this.s.party=[this.unit('soldier',260,390),this.unit('worker',350,380)];this.zone();
  }
  get hero(){return this.s.hero;} get zoneId(){return this.s.zone;} get peace(){return this.s.phase==='peace';}
