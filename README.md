@@ -1,4 +1,4 @@
-# Azeroth Chronicles — expanded prototype v0.8.14
+# Azeroth Chronicles — expanded prototype v0.8.15
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families each have four warned attacks. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
@@ -117,3 +117,5 @@ Dungeon presentation and trap-pressure update v0.8.12 replaces the old repeated 
 Outdoor trap and visual-declutter update v0.8.13 gives every active outdoor mini-dungeon the same regional trap pressure tier as its corresponding indoor dungeon, including an introductory Greenwood Vale tier. Existing saves without Vale trap posts synthesize them from the mini-dungeon layout, while saved later-region trap positions keep their placement but inherit the stronger regional cadence, warning window, footprint and damage. World labels are quieter: hostile creature HP bars, names and levels appear only after aggro; NPC and player-built building names appear only within 220 world units of the hero. Quest/recruitment punctuation cues remain visible for navigation. Jet trap graphics now use the true hitbox width.
 
 Ranged-pressure update v0.8.14 makes ordinary hostile ranged attacks substantially faster without changing boss-volley tuning. Enemy arrows, stones, spit, cinders and thrown weapons now travel at 1.7× their authored base projectile speed, reduce the visible aim windup from 0.55 to 0.35 seconds, and reduce the post-shot cooldown from 1.8 to 1.15 seconds. Projectile lifetime scales inversely with speed so effective firing range does not silently increase. Damage and ranged attack ranges are unchanged.
+
+Melee-pressure update v0.8.15 strengthens ordinary non-ranged outdoor monsters to keep pace with hero levels, equipment, talents and skill ranks. Regional HP/damage multipliers rise from 1.25×/1.15× in Greenwood Vale through 1.4×/1.25×, 1.65×/1.4× and 1.9×/1.6× to 2.2×/1.8× in Dark Crown. Ranged variants, dungeon/mini guardians, bosses, summons and neutral residents are not directly modified by this pass. Existing saves upgrade once while preserving wounded or dead state. Gold and XP rewards are unchanged.
