@@ -1,9 +1,9 @@
 {
   "id": "./",
-  "name": "Azeroth Chronicles — Prototipo",
+  "name": "Azeroth Chronicles",
   "short_name": "Azeroth",
-  "description": "Una aventura con héroe, escuadrón, progresión RPG y órdenes RTS desde la mano izquierda.",
-  "lang": "es",
+  "description": "Offline installable RPG adventure with touch controls, progression, companions and RTS-style squad orders.",
+  "lang": "en",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -23,5 +23,13 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "display_override": [
+    "fullscreen",
+    "standalone"
+  ],
+  "categories": [
+    "games"
+  ],
+  "prefer_related_applications": false
 }
