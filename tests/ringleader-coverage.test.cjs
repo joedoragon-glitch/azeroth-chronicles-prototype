@@ -26,7 +26,7 @@ for(const zone of zones){
 assert(cases>=44,'all regional, night and guardian species were covered');
 
 for(const zone of ['march','frontier']){
- const c=new Campaign('normal','paladin',()=>.9);c.enter(zone);c.s.clock=719.9;c.updateNight();
+ const c=new Campaign('normal','paladin',()=>.9);c.enter(zone);c.s.clock=599.9;c.updateNight();
  const species=zone==='march'?'wraith':'stalker',victims=c.zone().enemies.filter(e=>e.species===species).slice(0,2);
  for(const e of victims){e.hp=0;e.heroParticipated=true;c.kill(e);}
  const nightBonus=c.s.pending[species].nightBonus;assert(nightBonus.hp>1&&nightBonus.damage>1);
