@@ -33,7 +33,7 @@ Start with skill 1; the other seven require rescued teachers, level requirements
 
 Two hero-participating kills of one ordinary species summon one or, with a 50% chance, two ringleaders. Companion-only kills neither advance nor reset the streak. Two kills of a named field boss unlock exactly one TRUE form. A normal dungeon boss receives one saved 1-in-3 early TRUE roll and stays dead. Reenter a cleared dungeon to challenge an available TRUE form after preparing.
 
-The first TRUE Dark Lord defeat permanently removes his family and guarantees the remaining unbeaten TRUE dungeon encounters at endgame strength. All five TRUE dungeon guardians must fall to end the war. The remaining creatures become harmless, neutral and invulnerable; fewer inhabit the countryside, and native species inhabit the reclaimed dungeons. Each place gains a hopeful arrangement of its original melody.
+The first TRUE Dark Lord defeat permanently removes his family and guarantees the remaining unbeaten TRUE dungeon encounters and returning guardians at the hero’s victory level +2. All five TRUE dungeon guardians must fall to end the war. The remaining creatures become harmless, neutral and invulnerable; fewer inhabit the countryside, and native species inhabit the reclaimed dungeons. Each place gains a hopeful arrangement of its original melody.
 
 Nightmare starts fresh and stays at night during the hostile campaign. Distinct first normal and TRUE boss defeats count independently without a formula cap; repeats do not count. Completing its finale restores the ordinary day/night cycle in a peaceful world, starting at sunset.
 
@@ -62,3 +62,5 @@ Thornfang now has 1,200 health instead of 260, with unchanged damage and readabl
 Dungeon interiors now have themed decorations, 10–26 guardians and engineered spike/jet/seal layouts with safe alternatives. Guardian ringleaders count toward clearing the dungeon. Field slingers, skeleton archers and selected melee/ranged hybrid creatures pressure distance fighting with visible, aimed projectiles.
 
 Guardian gold and EXP are deliberately low: 35% of the regional midpoint and one quarter of their previous EXP. Guardian elites inherit the reduced bases; boss, rescue and first-clear rewards remain the main dungeon incentives.
+
+After the TRUE Dark Lord falls, the hero’s level at that victory is saved. Unbeaten returning TRUE dungeon bosses are fixed at that level +2, and their guardian waves return once at the same level. Later level-ups, reloads and Succession do not change this tier.
