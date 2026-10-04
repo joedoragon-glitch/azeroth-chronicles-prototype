@@ -2,9 +2,11 @@
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families each have four warned attacks. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
-## Play the test copy
+## Play
 
-Download `release/Azeroth_Chronicles_Playtest.html` and open it in Chrome or another current browser. The whole game, music and sound are embedded; no installation, server or internet connection is needed. Press a key or tap to start sound. Download the HTML instead of viewing its source in GitHub. The existing public main-branch game remains separate from this test branch.
+Play online at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ . This is the expanded v0.6 adventure. Existing installs can use the game update action in the menu; future updates save before reloading.
+
+For an offline portable copy, download `release/Azeroth_Chronicles_Playtest.html` and open it in Chrome or another current browser. The whole game, music and sound are embedded; no installation, server or internet connection is needed. Press a key or tap to start sound. Download the HTML instead of viewing its source in GitHub. The earlier v0.5 adventure remains available at `legacy.html`.
 
 Choose Standard or the optional **Succession challenge**, then Paladin, Mage or Ranger. Succession retires fallen classes for that run. The first death offers the other two classes; the second automatically selects the last unused class; the third ends the run. A successor starts at level 1 in Millhaven, with zero XP, no talents and just their first skill. Gold, world progress, equipment, supplies and companions are inherited. Rescued teachers remain available, while new class training still has its level and gold requirements. Normal and Nightmare have separate saves.
 

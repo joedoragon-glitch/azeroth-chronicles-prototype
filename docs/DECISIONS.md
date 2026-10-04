@@ -13,4 +13,4 @@ The expanded shell runs one shared Campaign state. `data.js` carries approved co
 - Sprint remains dormant and unavailable. Q is reserved; no menu or saved setting enables it. Source and activation notes remain explicit.
 - Offline exports are portable backups. Reloading the current Succession run cannot restore fallen classes, while deliberate imports of older exports can rewind it. There is no online anti-cheat service.
 
-The public main branch is unchanged by the test branch. The portable HTML has no service-worker registration or external game assets.
+The v0.6 expansion is promoted as the next main-branch release at the existing public game URL; legacy.html retains v0.5. Hosted updates require the player’s menu action and save before reloading. The portable HTML has no service-worker registration or external game assets.
