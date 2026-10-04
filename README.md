@@ -63,4 +63,4 @@ Dungeon interiors now have themed decorations, 10–26 guardians and engineered 
 
 Guardian gold and EXP are deliberately low: 35% of the regional midpoint and one quarter of their previous EXP. Guardian elites inherit the reduced bases; boss, rescue and first-clear rewards remain the main dungeon incentives.
 
-After the TRUE Dark Lord falls, the hero’s level at that victory is saved. Unbeaten returning TRUE dungeon bosses are fixed at that level +2, and their guardian waves return once at the same level. Later level-ups, reloads and Succession do not change this tier.
+After the TRUE Dark Lord falls, the hero’s level at that victory is saved. Unbeaten returning TRUE dungeon bosses are fixed at that level +2, and their guardian waves return once at the same level. Their health and damage also rise with the captured level above 18, retaining the original endgame values as minimums. Later level-ups, reloads and Succession do not change this tier.
