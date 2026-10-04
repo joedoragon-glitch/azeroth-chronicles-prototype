@@ -36,11 +36,11 @@ button:disabled{background:#202c28;box-shadow:none;text-shadow:none}
 #message{border-color:#abb99772;color:#f2ecd7;border-radius:9px}
 @media(max-width:600px){#hud h1{padding-bottom:5px;margin:5px 0}.resource-line{font-size:10px;margin:4px 0}.resource-line i{height:5px}#hero-stats .wallet{font-size:9px;margin:5px 0}#hero-stats .hero-title{margin:2px 0 5px}#modal h2{padding-bottom:6px}}
 
-/* v0.8.20 phone controls: no transient bottom toast; large thumb targets own the left side. */
-@media(max-width:600px){
+/* v0.8.21 touch controls: transient toast removed everywhere; touch layout follows input capability as well as viewport. */
+#message{display:none!important}
+@media(max-width:600px), (pointer:coarse) and (hover:none){
  #hud{z-index:6}
  #hud button{min-height:42px;padding:7px 8px}
- #message{display:none!important}
  #movement{left:8px;bottom:max(8px,env(safe-area-inset-bottom));z-index:5}
  #joystick{width:104px;height:104px}
  #stick{width:44px;height:44px;left:27px;top:27px}
@@ -68,9 +68,8 @@ button:disabled{background:#202c28;box-shadow:none;text-shadow:none}
  #skills button{min-height:50px;font-size:12px}
  #order-button{width:86px;min-height:66px}
 }
-@media(max-height:500px) and (min-width:601px){
+@media(max-height:500px) and (min-width:601px), (pointer:coarse) and (hover:none) and (orientation:landscape){
  #hud{z-index:6}
- #message{display:none!important}
  #movement{left:8px;bottom:8px;z-index:5}
  #joystick{width:104px;height:104px}
  #stick{width:44px;height:44px;left:27px;top:27px}
@@ -1142,7 +1141,7 @@ function start(mode,heroClass,succession){if(mode==='nightmare'&&!profile.nightm
 function chooseClass(mode,succession){if(succession===undefined){openMenu('Challenge condition','The Dark Lord rules the land. To keep heroes from becoming strong enough to challenge him, his forces have captured the specialists who teach skills, forge equipment and prepare adventurers. Free them, rebuild your strength and confront his rule.\n\nSuccession is optional. Each fallen class is lost for this run; after three class deaths the run ends.',[action('Standard death and refuge recovery',()=>chooseClass(mode,false)),action('Succession challenge',()=>chooseClass(mode,true))]);return;}
  openMenu('New '+(mode==='nightmare'?'Nightmare':'Normal')+' adventure','Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.',Object.entries(Campaign.classes).map(([id,c])=>action(c.icon+' '+id,()=>{let exists=false;try{exists=!!localStorage.getItem(saveKey(mode));}catch(_){}if(exists&&!confirm('Replace the existing '+mode+' run? Export it first to keep it.'))return;start(mode,id,succession);},id==='paladin'?'Melee, healing and brief immunity':id==='mage'?'Ranged magic, mana recovery and barriers':'Ranged bow, healing and mobility')),()=>chooseClass(mode));}
 function openMain(){openMenu('Adventure menu','Choose an option. Controls are available below as a quick reference.',[
- action('Continue',()=>{paused=false;closeMenu();}),...(appRegistration?[action(appUpdateReady?'Install available game update':'Check for game update',updateApp)]:[]),action('Controls',help),action('Map and travel routes',showMap),action('Quest journal',()=>quests(false)),action('Skills and teachers',skillBook),action('Inventory and supplies',inventory),action('Companions and construction',partyMenu),action('Talents',talents),action('Sound settings',soundMenu),action(paused?'Resume play':'Pause play',()=>{paused=!paused;closeMenu();}),action('Save run',()=>{save();closeMenu();}),action('Export save',()=>exportJSON(game.snapshot(),'Azeroth_Chronicles_'+game.s.mode+'.json')),action('Import save',()=>$('import-file').click()),action('Export playtest report',()=>exportJSON({version:'0.8.20-prototype',mode:game.s.mode,phase:game.s.phase,hero:game.hero,statistics:game.s.statistics},'Azeroth_Playtest_Report.json')),action('New Normal game',()=>chooseClass('normal')),action('New game in Nightmare Mode',()=>chooseClass('nightmare'),'Unlocked by the peaceful ending',!profile.nightmareUnlocked),action('Load other mode run',()=>{const mode=game.s.mode==='normal'?'nightmare':'normal';if(load(mode)){save();closeMenu();}else game.say('No saved '+mode+' run yet.');})]);}
+ action('Continue',()=>{paused=false;closeMenu();}),...(appRegistration?[action(appUpdateReady?'Install available game update':'Check for game update',updateApp)]:[]),action('Controls',help),action('Map and travel routes',showMap),action('Quest journal',()=>quests(false)),action('Skills and teachers',skillBook),action('Inventory and supplies',inventory),action('Companions and construction',partyMenu),action('Talents',talents),action('Sound settings',soundMenu),action(paused?'Resume play':'Pause play',()=>{paused=!paused;closeMenu();}),action('Save run',()=>{save();closeMenu();}),action('Export save',()=>exportJSON(game.snapshot(),'Azeroth_Chronicles_'+game.s.mode+'.json')),action('Import save',()=>$('import-file').click()),action('Export playtest report',()=>exportJSON({version:'0.8.21-prototype',mode:game.s.mode,phase:game.s.phase,hero:game.hero,statistics:game.s.statistics},'Azeroth_Playtest_Report.json')),action('New Normal game',()=>chooseClass('normal')),action('New game in Nightmare Mode',()=>chooseClass('nightmare'),'Unlocked by the peaceful ending',!profile.nightmareUnlocked),action('Load other mode run',()=>{const mode=game.s.mode==='normal'?'nightmare':'normal';if(load(mode)){save();closeMenu();}else game.say('No saved '+mode+' run yet.');})]);}
 $('menu-button').onclick=()=>{audio.unlock();if(!started)chooseClass('normal');else if(game.s.challenge.pending)successionMenu();else if(game.s.challenge.gameOver)gameOver();else openMain();};
 $('talent-button').onclick=()=>{audio.unlock();if(started&&!game.s.challenge.pending&&!game.s.challenge.gameOver)talents();};
 function ending(){profile.nightmareUnlocked=true;persistProfile();openMenu('Peace for everyone','The evil is defeated. Every dungeon guardian has fallen. The war is over for people and creatures alike.\n\nCreatures are neutral and cannot harm or be harmed. The reclaimed dungeons are their homes.',[action('Continue in the peaceful world',()=>{game.s.endingAck=true;save();closeMenu();}),action('New game in Nightmare Mode',()=>{game.s.endingAck=true;save();chooseClass('nightmare');}),action('Export completed run',()=>exportJSON(game.snapshot(),'Azeroth_Chronicles_Completed.json'))]);}
