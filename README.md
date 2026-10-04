@@ -1,10 +1,10 @@
-# Azeroth Chronicles — expanded prototype v0.7.4
+# Azeroth Chronicles — expanded prototype v0.7.6
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families each have four warned attacks. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
 ## Play
 
-Play online at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ . This is the expanded v0.7.4 adventure. Existing installs can use the game update action in the menu; future updates save before reloading.
+Play online at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ . This is the expanded v0.7.6 adventure. Existing installs can use the game update action in the menu; future updates save before reloading.
 
 For an offline portable copy, download `release/Azeroth_Chronicles_Playtest.html` and open it in Chrome or another current browser. The whole game, music and sound are embedded; no installation, server or internet connection is needed. Press a key or tap to start sound. Download the HTML instead of viewing its source in GitHub. The earlier v0.5 adventure remains available at `legacy.html`.
 
@@ -76,3 +76,8 @@ Outdoor dungeon update v0.7.4 adds two miniature dungeons per region: a defended
 Specialist services now rebuild from individual rescue facts when a save loads. Importing a v2 save preserves learned skills and defeated bosses but no longer grants nine unrelated rescues. Imported completed dungeons provide their own keys, and their captives must still be freed. Previously imported saves remove unsupported automatic unlocks while retaining rescues with victory, key or recorded-rescue evidence. See `docs/FIELD_DUNGEONS_V074.md`.
 
 Progression in v0.7.4 favors one-time quests and challenging foes: ordinary monster XP is halved, while outdoor ringleaders and bosses keep their combat XP. Enemy XP and gold fall to 75%/40%/10% when the hero is 1/2/3 levels higher, and stop at a four-level gap. Quest and objective rewards remain worthwhile. The level 16 Dark Lord is still the normal campaign finale; progression has no new cap for future content.
+
+Refuge fix v0.7.5 gives all refuge restoration a shared 90-second cooldown in active game time. It persists through saves and travel, and rest is blocked while nearby enemies are engaged. Main-town passive healing also pauses during nearby combat. Orchard Hamlet cannot supply repeat full healing while tanking Thornfang.
+The Citadel preparation fountain retains its single-use and guardian-clear requirements, and also blocks restoration during nearby combat.
+
+Presentation update v0.7.6 adds restrained armor, cloth, equipment and creature detail to the three heroes and ten boss families. The environment, regular enemies, companions and NPCs retain their artwork. Landed hero, companion and enemy basic melee attacks and boss cleaves now have a short percussive impact sound on the Effects channel, with a short crowd throttle. Enemy projectiles travel 15% faster; their windups, damage and travel distance are unchanged. Saved enemy projectile bases are not multiplied repeatedly.
