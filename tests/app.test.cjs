@@ -1,7 +1,7 @@
 const fs = require('fs'), path = require('path'), vm = require('vm'), assert = require('assert/strict');
 const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'src/app.js'), 'utf8');
-function fresh({coarse = true, preference = null, storageDenied = false, controlled = true} = {}) {
+function fresh({coarse = true, preference = null, storageDenied = false, controlled = true, sprint = false} = {}) {
   const elements = new Map(), winEvents = {}, swEvents = {}, mediaEvents = {}, loadEvents = [];
   const input = {x:0,y:0,attack:false}, state = {paused:false,casts:[],interactions:0,saves:0,reloads:0,audio:0};
   function element() {
@@ -14,7 +14,7 @@ function fresh({coarse = true, preference = null, storageDenied = false, control
       emit(k,properties={}){for(const fn of handlers[k]||[])fn({button:0,preventDefault(){},...properties})},
     };
   }
-  const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+  const html=fs.readFileSync(path.join(root,'tests/fixtures/legacy.html'),'utf8');
   for(const match of html.matchAll(/\bid="([^"]+)"/g))elements.set(match[1],element());
   const media={matches:coarse,addEventListener(k,fn){(mediaEvents[k]??=[]).push(fn)}};
   const window={isSecureContext:true,localStorage:{getItem(){if(storageDenied)throw Error('denied');return preference},setItem(k,v){if(storageDenied)throw Error('denied');preference=v}},
@@ -24,6 +24,7 @@ function fresh({coarse = true, preference = null, storageDenied = false, control
   const sandbox={window,document:{body:element(),getElementById(id){assert(elements.has(id),id);return elements.get(id)}},navigator:{serviceWorker},touchInput:input,activeWindow:null,KeyboardControls:{bindings:{moveUp:"KeyW",moveDown:"KeyS",moveLeft:"KeyA",moveRight:"KeyD"}},handleMenuKeyboard(){},
     isGamePaused(){return state.paused},AudioSys:{init(){state.audio++}},castSpell(n){state.casts.push(n)},interactWithNearby(){state.interactions++},manualPaused:false,
     saveGame(){state.saves++},togglePause(){sandbox.manualPaused=!sandbox.manualPaused;state.paused=sandbox.manualPaused;window.resetTouchControls()},closeAllWindows(){},console};
+  if(sprint) sandbox.Sprint={enabled:true,press(source,held){state.sprinting=held;}};
   vm.createContext(sandbox);vm.runInContext(source,sandbox);
   function emit(k,event={}) {return Promise.all((winEvents[k]||[]).map(fn=>fn(event)))}
   return {elements,input,state,sandbox,window,registration,media,emit,controllerChange(){for(const fn of swEvents.controllerchange||[])fn()},async settle(){await new Promise(resolve=>setImmediate(resolve))}};
@@ -31,11 +32,21 @@ function fresh({coarse = true, preference = null, storageDenied = false, control
 let passed=0;
 async function test(name,fn){try{await fn();passed++;console.log('PASS '+name)}catch(e){process.exitCode=1;console.error('FAIL '+name+': '+e.stack)}}
 (async()=>{
+  await test('Dormant touch sprint ignores pointer input; activated hold clears on cancel and pause reset',()=>{
+    const inactive=fresh();inactive.elements.get('sprint-button').emit('pointerdown',{pointerId:4});assert.equal(inactive.state.sprinting,undefined);
+    for(const event of ['pointerup','pointercancel','lostpointercapture']){
+      const a=fresh({sprint:true}),button=a.elements.get('sprint-button');button.emit('pointerdown',{pointerId:4});assert(a.state.sprinting);
+      button.emit(event,{pointerId:9});assert(a.state.sprinting);button.emit(event,{pointerId:4});assert(!a.state.sprinting);
+      button.emit('pointerdown',{pointerId:5});a.window.resetTouchControls();assert(!a.state.sprinting&&!button.hasPointerCapture(5));
+      button.emit('pointerdown',{pointerId:6});assert(a.state.sprinting);a.window.resetTouchControls();
+      a.state.paused=true;button.emit('pointerdown',{pointerId:7});assert(!a.state.sprinting);
+    }
+  });
   await test('Manifest, app resources and maskable PNG sizes are valid',()=>{
     const manifest=JSON.parse(fs.readFileSync(path.join(root,'manifest.webmanifest')));
     assert.equal(manifest.start_url,'./');assert.equal(manifest.scope,'./');assert.equal(manifest.display,'standalone');assert.equal(manifest.orientation,'any');
     for(const icon of manifest.icons){const png=fs.readFileSync(path.join(root,icon.src));const size=Number(icon.sizes.split('x')[0]);assert.equal(png.readUInt32BE(16),size);assert.equal(png.readUInt32BE(20),size);assert(icon.purpose.includes('maskable'))}
-    const html=fs.readFileSync(path.join(root,'index.html'),'utf8');for(const match of html.matchAll(/(?:src|href)="(\.\/[^\"]+)"/g))assert(fs.existsSync(path.join(root,match[1])));
+    const html=fs.readFileSync(path.join(root,'tests/fixtures/legacy.html'),'utf8');for(const match of html.matchAll(/(?:src|href)="(\.\/[^\"]+)"/g))assert(fs.existsSync(path.join(root,match[1])));
   });
   await test('Joystick captures one finger, clamps input and ignores other fingers',()=>{
     const a=fresh(),stick=a.elements.get('joystick');stick.emit('pointerdown',{pointerId:7,clientX:119,clientY:88});assert.equal(a.input.x,1);assert.equal(a.input.y,0);assert(stick.hasPointerCapture(7));

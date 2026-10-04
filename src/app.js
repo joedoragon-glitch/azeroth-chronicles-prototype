@@ -19,6 +19,7 @@
         if (pointer !== null && element.hasPointerCapture(pointer)) element.releasePointerCapture(pointer);
     }
     window.resetTouchControls = () => {
+        if (typeof Sprint!=='undefined'&&Sprint.enabled) Sprint.press('touch',false);
         const move = movementPointer, attack = swordPointer;
         movementPointer = swordPointer = null;menuDirection=null;menuRepeatAt=0;
         touchInput.x = touchInput.y = 0; touchInput.attack = false;
@@ -72,6 +73,21 @@
         releaseCapture(sword, pointer);
     }
     for (const event of ['pointerup', 'pointercancel', 'lostpointercapture']) sword.addEventListener(event, stopSword);
+    // Dormant sprint: no handlers or visible control exist while disabled.
+    if (typeof Sprint!=='undefined'&&Sprint.enabled) {
+        const button=byId('sprint-button');let pointer=null;
+        button.addEventListener('pointerdown',event=>{
+            if (isGamePaused()||pointer!==null||event.button>0) return;
+            event.preventDefault();pointer=event.pointerId;button.setPointerCapture(pointer);Sprint.press('touch',true);
+        });
+        function stopSprint(event) {
+            if (event.pointerId!==pointer) return;
+            const previous=pointer;pointer=null;Sprint.press('touch',false);releaseCapture(button,previous);
+        }
+        for (const event of ['pointerup','pointercancel','lostpointercapture']) button.addEventListener(event,stopSprint);
+        const previousReset=window.resetTouchControls;
+        window.resetTouchControls=()=>{const previous=pointer;pointer=null;previousReset();releaseCapture(button,previous);};
+    }
     window.addEventListener('load', () => {
         // Pointer events cast on press; keyboard activation still casts on click.
         sword.onclick = event => { if (!event || event.detail === 0) { AudioSys.init(); castSpell(1); } };

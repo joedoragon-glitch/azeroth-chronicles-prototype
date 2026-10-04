@@ -1,6 +1,7 @@
 /* Physical keyboard codes: defaults favor the left hand, independent of case. */
 const KeyboardControls = (() => {
     const actions = [
+        ...(typeof Sprint!=='undefined'&&Sprint.enabled ? [['sprint','Esprintar','KeyQ']] : []),
         ['moveUp','Mover arriba','KeyW'], ['moveDown','Mover abajo','KeyS'],
         ['moveLeft','Mover a la izquierda','KeyA'], ['moveRight','Mover a la derecha','KeyD'],
         ['spell1','Espada','Digit1'], ['spell2','Fuego','Digit2'], ['spell3','Curar','Digit3'],
