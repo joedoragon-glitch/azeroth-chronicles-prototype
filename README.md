@@ -1,10 +1,10 @@
-# Azeroth Chronicles — expanded prototype v0.6.2
+# Azeroth Chronicles — expanded prototype v0.7.0
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families each have four warned attacks. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
 ## Play
 
-Play online at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ . This is the expanded v0.6.2 adventure. Existing installs can use the game update action in the menu; future updates save before reloading.
+Play online at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ . This is the expanded v0.7.0 adventure. Existing installs can use the game update action in the menu; future updates save before reloading.
 
 For an offline portable copy, download `release/Azeroth_Chronicles_Playtest.html` and open it in Chrome or another current browser. The whole game, music and sound are embedded; no installation, server or internet connection is needed. Press a key or tap to start sound. Download the HTML instead of viewing its source in GitHub. The earlier v0.5 adventure remains available at `legacy.html`.
 
@@ -54,3 +54,11 @@ The pure engine/content, browser shell and synthesized audio are separate module
 Visual polish v0.6.1 gives each hero class, companion role, creature species, boss family and settlement service a distinct schematic drawing. TRUE forms and ringleaders retain visible elite details. Gameplay and save formats are unchanged.
 
 Road update v0.6.2 rebuilds clear road corridors with joined stone paving and plank bridges. Pathfinding checks clearance along each movement segment, and existing saves upgrade their roads while retaining campaign progress.
+
+Audit fixes v0.7.0 implement the 23 mechanics/content findings: explicit attacks and staged warnings, restored class effects, exact quest objectives, safe saves and migration, campaign-wide squad reservations, minor refuges, transactional travel, restored controls, authored geography and bounded 32-bar soundtrack transitions. See `docs/AUDIT_FIXES_V070.md` for evidence and remaining human playtesting limits.
+
+Thornfang now has 1,200 health instead of 260, with unchanged damage and readable attacks. This gives the first rescue time to teach warning avoidance without adding phases, armor rules or required advanced skills. Existing saves receive the same adjustment.
+
+Dungeon interiors now have themed decorations, 10–26 guardians and engineered spike/jet/seal layouts with safe alternatives. Guardian ringleaders count toward clearing the dungeon. Field slingers, skeleton archers and selected melee/ranged hybrid creatures pressure distance fighting with visible, aimed projectiles.
+
+Guardian gold and EXP are deliberately low: 35% of the regional midpoint and one quarter of their previous EXP. Guardian elites inherit the reduced bases; boss, rescue and first-clear rewards remain the main dungeon incentives.
