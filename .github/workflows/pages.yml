@@ -66,7 +66,7 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Verify published adventure in clean browsers
         env:
-          LIVE_APP_URL: ${{ steps.deployment.outputs.page_url }}
+          PLAYTEST_URL: ${{ steps.deployment.outputs.page_url }}
         run: node tests/prototype-browser.test.cjs
       - uses: actions/upload-artifact@v4
         if: always()
