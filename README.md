@@ -24,7 +24,7 @@ The village is a safe refuge that restores health and mana. Ordinary enemies res
 
 **Guía breve en español para el autor y los jugadores: [CONTROLES.md](CONTROLES.md).** The prototype's keyboard design prioritizes the left hand. The mobile touch layout remains unchanged in v0.3.2.
 
-- **Touch:** drag the left joystick; tap the five abilities on the right. Hold **Espada** to repeat attacks at the normal cooldown. **Interactuar** talks, collects gold or selects a nearby enemy. **☰** opens all menus. Movement and combat support simultaneous fingers.
+- **Touch:** drag the left joystick; tap the class abilities on the right (including the occasional sixth power). Hold **Espada** to repeat attacks at the normal cooldown. **Interactuar** talks, collects gold or selects a nearby enemy. **☰** opens all menus. Movement and combat support simultaneous fingers.
 - **Keyboard defaults:** WASD moves; 1–5 cast the five abilities; E/F interacts. In menus, WASD selects and F/E confirms. Q opens the menu or returns to it; R inventory, C talents, X ability book, T quest, Z map, V pause, G help. Older shortcuts (I/B, K, M, P, H, Enter/Space, Escape) remain available.
 - Menus support touch, mouse and keyboard. **Menu → Mostrar/Ocultar controles táctiles** overrides automatic touch detection on hybrid Chromebooks.
 
@@ -71,7 +71,7 @@ The RTS has a paladin, workers and recruitable soldiers, two towns, resource gat
 
 Move the cursor with the **left joystick**. **Double-tap the left selection pad** to select under the cursor (one tap does not select). Toggle additive selection or select the whole group with the left buttons. The sole right button gives contextual orders: move, gather, resume building, or attack. Hold the joystick with one thumb while using the right order button. Moving the cursor to the field edge scrolls the camera. Cursor speed is adjustable in the left menu.
 
-Keyboard: WASD cursor, E select, F order, 1 all units, 2 construct / recruit / NPC service, 3 stop, Q menu. Custom bindings use the corresponding RPG actions. Mouse left-click selects and right-click orders. The simulation pauses in menus and when the app loses focus. Progress saves locally every five seconds; reopening safely stops previous orders. Restart affects only the RTS save.
+Keyboard: WASD cursor, E select, F order, 1 all units, 2 construct / recruit / NPC service, 3 stop, Q menu. The key layout is fixed. Mouse left-click selects and right-click orders. The simulation pauses in menus and when the app loses focus. Progress saves locally every five seconds; reopening safely stops previous orders. Restart affects only the RTS save.
 
 This is a small playable control experiment, without multiplayer, extensive art, or a finished campaign. Its purpose is to test comfort and gameplay, not establish a causal claim about which hand makes games commercially successful.
 
