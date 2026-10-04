@@ -1,10 +1,10 @@
-# Azeroth Chronicles — expanded prototype v0.8.22
+# Azeroth Chronicles — expanded prototype v0.8.23
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families each have four warned attacks. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
 ## Play
 
-Play the live game at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/. Existing installs can use **Menu → Game and settings → Check for game update** to save the run and install the latest version. The portable copy below runs offline.
+Play the live game at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/. Existing installs can use **Menu → Game and settings → Check for game update** to save the run and install the latest version. The portable copy below runs offline. On a phone, open **Menu → Game and settings → Install on phone**. Android/Chrome can launch the native install prompt; on iPhone/iPad the game gives the Safari **Share → Add to Home Screen** steps. Once installed, it launches from the home screen in app mode without normal browser chrome and can use the cached game offline after the first connected load.
 
 For an offline portable copy, download `release/Azeroth_Chronicles_Playtest.html` and open it in Chrome or another current browser. The whole game, music and sound are embedded; no installation, server or internet connection is needed. Press a key or tap to start sound. Download the HTML instead of viewing its source in GitHub. The earlier v0.5 adventure remains available at `legacy.html`.
 
