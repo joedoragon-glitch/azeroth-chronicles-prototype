@@ -1,4 +1,4 @@
-# Azeroth Chronicles — expanded prototype v0.8.10
+# Azeroth Chronicles — expanded prototype v0.8.11
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families each have four warned attacks. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
@@ -108,4 +108,6 @@ In v0.8.8, the Millhaven Captain displays a quest-style exclamation mark until t
 
 Visual ecology update v0.8.9 deepens ordinary monsters and all ten boss families with stronger species silhouettes, equipment/anatomy details, boss-scale ornament and clearer TRUE/ringleader identity. Regional wilderness props now vary by biome, and deterministic floor scatter adds grasses, reeds, flowers, mushrooms, stones, ash, bones, crystals and small debris without changing collision, combat, saves or rewards.
 
-Boss pressure update v0.8.10 makes warned boss skills substantially more frequent without shortening their telegraphs. Post-special recovery is 40% of the prior authored recovery, bosses can chain four specials before a close-range basic attack is required, that basic cooldown is 0.75 seconds, and the special-attempt range rises from 460 to 560 world units. Damage, warning durations, attack shapes, saves and rewards are unchanged.
+Boss pressure update v0.8.10 makes warned boss skills substantially more frequent without shortening their telegraphs. Post-special recovery is 25% of the prior authored recovery, bosses can chain four specials before a close-range basic attack is required, that basic cooldown is 0.75 seconds, and the special-attempt range rises from 460 to 560 world units. Damage, warning durations, attack shapes, saves and rewards are unchanged.
+
+Boss pressure finalization v0.8.11 restores the intended 25% post-special recovery. The preparation loop is authoritative: fresh daytime Thornfang remains a baseline check, while night Thornfang is tested with pre-fight Vale progression and extra basic health potions rather than assuming an unprepared level-1 hero should win.
