@@ -40,6 +40,41 @@ function draw(ctx,e,p,region=0,rescued=false){
    for(const x of [-19,-16,-13]){line([[x,-30],[x+2,-18]],'#d9caa3',1);poly([[x,-31],[x-3,-36],[x+1,-35]],'#d2d7bd');}oval(3,-6,2,2,gold);
   }
  }
+ function specialist(e){
+  const style={
+   thorn:{cloth:'#62856c',cape:'#435b4c',hair:'#765d43',trim:'#d0be78'},
+   crypt:{cloth:'#806f60',cape:'#514b45',hair:'#504739',trim:'#bcb2a0'},
+   mire:{cloth:'#538486',cape:'#355c62',hair:'#413c36',trim:'#a8ccbb'},
+   archive:{cloth:'#6a8393',cape:'#455766',hair:'#746755',trim:'#c9d1b3'},
+   ridge:{cloth:'#857d68',cape:'#586358',hair:'#5b5348',trim:'#c5b38a'},
+   mine:{cloth:'#787a70',cape:'#4f5550',hair:'#54483e',trim:'#c5ab7a'},
+   warlord:{cloth:'#936a63',cape:'#5c4147',hair:'#292d30',trim:'#d6b283'},
+   abyss:{cloth:'#69637f',cape:'#47405e',hair:'#5c5862',trim:'#c6a5ba'},
+   citadel:{cloth:'#77828d',cape:'#4b5765',hair:'#c7c2ae',trim:'#e2ce91'},
+   darklord:{cloth:'#957866',cape:'#4c4547',hair:'#ddd0ad',trim:'#e5c381'}
+  }[e.family];
+  if(!style){human(e.kind==='teacher'?'mage':'worker');return;}
+  const teacher=e.kind==='teacher',chemist=e.kind==='alchemist';
+  poly([[-12,-18],[-18,12],[0,8],[16,12],[12,-19]],style.cape);
+  humanoid(style.cloth,skin,1);
+  // Each service has its own headgear and a large, readable hand-held tool.
+  switch(e.family){
+   case 'thorn':poly([[-10,-34],[-9,-42],[0,-46],[10,-41],[10,-34]],style.hair);line([[-10,-35],[10,-35]],style.trim,2);line([[18,-36],[18,16]],'#9f845e',3);poly([[10,-37],[18,-43],[26,-37],[18,-32]],'#b6c894');rect(-17,-10,11,17,'#b6a17a');break;
+   case 'crypt':rect(-13,-18,26,28,'#5e5146');rect(-9,-10,18,13,'#826b51');line([[-12,-17],[12,-17]],style.trim,3);line([[21,-28],[15,15]],'#a38b63',4);rect(14,-32,17,8,steel);poly([[-10,-40],[10,-40],[11,-34],[-11,-34]],style.hair);break;
+   case 'mire':poly([[-12,-35],[0,-51],[12,-35]],style.cape);line([[-10,-33],[10,-33]],style.trim,2);line([[17,-34],[17,15]],'#9c8e70',3);oval(17,-37,7,7,'#79bdc4');line([[13,-39],[21,-39]],'#d0e4ca');break;
+   case 'archive':rect(-11,-44,22,5,style.hair);rect(-15,-39,30,4,'#647f83');rect(-18,-8,11,17,'#9c8060');oval(20,-4,7,10,'#74afb4');rect(15,-15,10,4,style.trim);line([[22,-17],[22,-11]],steel,2);break;
+   case 'ridge':poly([[-13,-33],[-10,-45],[9,-45],[14,-33]],'#68695f');line([[-12,-33],[13,-33]],style.trim,3);poly([[-14,-17],[0,-23],[14,-17]],'#a6aa91');line([[19,-35],[19,16]],'#9b815b',4);poly([[11,-37],[19,-48],[26,-37]],'#a9b0a0');break;
+   case 'mine':rect(-14,-20,28,30,'#5f5a4d');rect(-9,-12,18,14,'#806d53');rect(-12,-42,24,8,'#a1a59a');line([[-11,-41],[11,-41]],style.trim,2);line([[22,-27],[16,14]],'#947854',3);rect(16,-32,17,7,steel);break;
+   case 'warlord':poly([[-12,-41],[0,-47],[12,-41],[10,-31],[-10,-31]],'#56575a');poly([[-17,-17],[-10,-21],[-5,-12],[-15,-9]],steel);poly([[6,-15],[12,-22],[19,-14],[14,-9]],steel);line([[19,-36],[19,16]],'#8f7059',3);poly([[12,-37],[19,-43],[26,-37],[19,-32]],style.trim);break;
+   case 'abyss':poly([[-12,-39],[0,-49],[12,-39],[7,-33],[-7,-33]],style.hair);rect(-14,-10,12,18,'#765c64');line([[17,-35],[17,16]],'#928396',3);poly([[17,-44],[25,-35],[17,-27],[9,-35]],'#bd9abc');line([[17,-41],[17,-30]],'#dfc6cd',2);break;
+   case 'citadel':poly([[-12,-42],[0,-54],[12,-42],[9,-32],[-9,-32]],'#9da8ad');line([[-12,-37],[12,-37]],style.trim,2);line([[18,-44],[18,16]],'#b7a986',4);oval(18,-45,7,8,'#d4b66c');poly([[-6,-15],[0,-20],[6,-15],[0,-9]],style.trim);break;
+   case 'darklord':rect(-16,-18,32,28,'#665344');rect(-10,-8,20,16,'#8c694d');line([[-13,-17],[13,-17]],style.trim,3);poly([[-13,-41],[-7,-48],[10,-46],[14,-39]],'#e0d2b4');line([[20,-37],[14,16]],'#9e7f59',4);rect(14,-41,23,10,'#c0b9a4');rect(-7,-13,14,4,style.trim);break;
+  }
+  if(teacher){line([[-5,-16],[-5,-3]],style.trim,1.5);line([[5,-16],[5,-3]],style.trim,1.5);}
+  else if(chemist){oval(-9,-15,3,3,'#9bd2cf');oval(0,-15,3,3,'#c9a6a8');}
+  else{for(const x of [-5,0,5])oval(x,-13,1.5,1.5,style.trim);}
+  eye(-4,-28,'#433e34');eye(3,-28,'#433e34');
+ }
  function bossFinish(family){switch(family){
   case 'thorn':line([[-19,-10],[-9,-14],[-2,-12]],'#c0a378',2);line([[14,-22],[21,-19],[28,-15]],'#d2b98b',1.5);line([[18,-9],[29,-8]],'#594538',1.5);eye(24,-18,'#f2d680');poly([[-7,-17],[-4,-23],[0,-17]],'#d2bc80');break;
   case 'mire':for(const x of [-15,-5,5])poly([[x,-7],[x+4,-10],[x+7,-6],[x+3,-3]],'#9ba47b');line([[19,-8],[37,-7]],'#b0bd89',1.5);eye(25,-9,'#efcf72');line([[-24,5],[-36,5]],'#9daa76',2);break;
@@ -72,13 +107,13 @@ function draw(ctx,e,p,region=0,rescued=false){
  const type=e.renderKind;
  if(type==='prop'){if(e.decorative)decoration(e.structure);else if(e.structure==='fence'){for(const x of [-18,0,18])rect(x-2,-18,4,30,'#a48c69');line([[-23,-12],[23,-12]],'#9c835e',4);line([[-23,2],[23,2]],'#9c835e',4);}else if(e.structure==='house'||e.structure==='workshop'){building(e.structure);if(e.structure==='workshop'){rect(-25,-12,12,15,'#8e7150');line([[-26,-15],[-10,-15]],steel,4);}}else if(['stonewall','stockade','palisade'].includes(e.structure)){if(e.structure==='stonewall'){rect(-28,-28,56,42,'#858d85');for(const y of [-22,-10,2])line([[-27,y],[27,y]],'#59685e',2);for(const x of [-21,-3,15]){line([[x,-27],[x,-12]],'#59685e',2);line([[x+9,-10],[x+9,3]],'#59685e',2);}for(const x of [-28,-7,14])rect(x,-35,14,10,'#9ea79b');}else{for(const x of [-24,-12,0,12,24]){rect(x-4,-28,8,42,'#977752');poly([[x-4,-28],[x,-40],[x+4,-28]],'#b49465');}line([[-27,-16],[27,-16]],'#675c40',4);line([[-27,3],[27,3]],'#675c40',4);}}else if(e.structure==='pillar'){rect(-13,-44,26,58,'#9ca49a');rect(-18,-48,36,8,'#bac0ad');rect(-18,10,36,8,'#8a9488');for(const x of [-7,0,7])line([[x,-39],[x,6]],'#747f75',1);}else if(e.icon==='🪨'){poly([[-20,7],[-18,-12],[-3,-24],[14,-17],[24,4]],'#849183');poly([[-18,-12],[-3,-24],[3,-4],[-20,7]],'#a0ad9b');line([[3,-4],[14,-17]],'#647466');}else{rect(-4,-12,8,26,'#76583b');for(const [y,w,c]of [[-3,25,'#355b40'],[-19,21,'#426e49'],[-34,16,'#628450']])poly([[-w,y],[0,y-29],[w,y]],region===3?'#655e48':c);}}else if(type==='node'){if(e.icon==='🪵'){for(const [x,y]of [[-12,2],[2,-3],[10,7]]){rect(x-12,y-8,24,10,'#836244');oval(x+12,y-3,4,5,'#c9a572');oval(x+12,y-3,2,3,'#916b44');}}else if(e.icon==='🧺'){poly([[-19,-3],[19,-3],[13,14],[-13,14]],'#aa885e');line([[-13,-3],[-8,-17],[8,-17],[13,-3]],'#bca06d',3);for(const y of [1,5,9])line([[-14,y],[14,y]],'#795f42',1);}else if(e.icon==='💎'){for(const [x,y]of [[-10,2],[0,-7],[10,4]])poly([[x-6,y],[x-5,y-20],[x,y-28],[x+6,y-18],[x+6,y]],'#a89bcf');line([[0,-32],[0,-7]],'#e5ddf6',1);}else{poly([[-18,8],[-13,-12],[0,-23],[18,-9],[22,8]],'#7d8781');for(const [x,y]of [[-7,-8],[7,-12],[12,1]])poly([[x-4,y],[x,y-5],[x+5,y],[x,y+4]],'#c1a16b');}}
  else if(type==='building'||['rest','supplier','recruiter','quests'].includes(e.kind))building(type==='building'?'barracks':e.kind);
- else if(e.kind==='cage'){rect(-20,-35,40,49,'#746c58');rect(-17,-31,34,41,'#23302b');if(!rescued)human('worker');for(const x of [-16,-8,0,8,16])line([[x,-32],[x,12]],'#b3afa0',3);line([[-20,-17],[20,-17]],'#b3afa0');if(rescued){poly([[18,-32],[32,-26],[32,16],[18,12]],'#84887a');}else rect(-3,-8,7,8,gold);}
+ else if(e.kind==='cage'){rect(-20,-35,40,49,'#746c58');rect(-17,-31,34,41,'#23302b');if(!rescued)specialist({...e,kind:['archive'].includes(e.family)?'alchemist':['thorn','mire','ridge','warlord','citadel'].includes(e.family)?'teacher':'smith'});for(const x of [-16,-8,0,8,16])line([[x,-32],[x,12]],'#b3afa0',3);line([[-20,-17],[20,-17]],'#b3afa0');if(rescued){poly([[18,-32],[32,-26],[32,16],[18,12]],'#84887a');}else rect(-3,-8,7,8,gold);}
  else if(e.kind==='dungeon'||e.kind==='exit')gate(e.family);
  else if(e.kind==='transport'){if(e.icon==='🐉'||/Dragon/.test(e.name)) {dragon('#8f9470');rect(-9,-23,18,10,'#997148');}else if(e.icon==='⛵'){poly([[-39,0],[37,0],[22,17],[-24,17]],'#9a7954');line([[-31,5],[30,5]],'#c1a776');line([[0,-48],[0,2]],'#c2ab7c',3);poly([[3,-46],[3,-8],[31,-8]],'#e2d6b1');}else if(e.icon==='🐫'){oval(0,-3,27,15,'#a28d66');oval(-7,-14,10,10,'#ac9770');for(const x of [-17,13])line([[x,4],[x,25]],'#9c835e',5);line([[22,-5],[27,-33]],'#b39b6d',9);oval(32,-34,11,6,'#b39b6d');rect(-14,-25,25,13,'#876e52');rect(-24,-12,12,20,'#9d7155');}else{rect(-27,-13,54,23,'#a4845c');for(const x of [-17,17]){oval(x,12,8,8,'#4f564e');line([[x-5,12],[x+5,12]],'#b4a57d');}poly([[-30,-15],[-18,-37],[18,-37],[30,-15]],'#c9bc93');line([[-19,-35],[19,-35]],'#e1d3ab');}}
  else if(e.kind==='bundle'){rect(-15,-15,30,28,'#a78455');line([[-15,-15],[15,13]],'#d0b079',3);line([[15,-15],[-15,13]],'#d0b079',3);}
  else if(e.kind==='fountain'){oval(0,5,25,10,'#9aa7a5');oval(0,2,20,6,'#65999f');rect(-5,-24,10,26,'#adb6a9');oval(0,-23,13,5,'#bad1bd');line([[0,-38],[0,-24]],'#9ad7d4',3);}
  else if(e.kind==='mini'){rect(-24,-22,48,36,'#7e897f');rect(-12,-16,24,30,'#24372d');for(const x of [-24,12])rect(x,-37,12,50,'#9aa38e');rect(-29,-43,22,8,'#b4b99e');rect(7,-43,22,8,'#b4b99e');}else if(e.kind==='landmark'){if(/bridge|crossing/i.test(e.name)){for(const y of [-5,0,5,10])line([[-25,y],[25,y]],'#b29870',4);for(const x of [-27,27])line([[x,-20],[x,12]],'#8c7756',3);}else if(/pond|shore|dock/i.test(e.name)){oval(0,5,28,10,'#528b94');for(const x of [-16,0,16])line([[x,-6],[x,12]],'#b5a47a',3);}else if(e.icon==='🏕️')poly([[-24,12],[0,-30],[25,12]],'#b8aa7a');else{rect(-12,-25,24,38,'#999d8c');poly([[-15,-26],[0,-42],[16,-26]],'#b0b6a2');line([[-4,-22],[5,-10],[-3,3]],'#65736a');}}
- else if(type==='npc'){const smith=['smith','alchemist'].includes(e.kind);humanoid(smith?'#8b7770':'#8b9c7b');if(smith&&e.kind==='smith'){rect(-8,-15,16,19,'#675448');line([[18,-20],[12,13]],'#b29367',3);rect(13,-24,15,7,steel);poly([[19,9],[38,9],[32,16],[22,16]],steel);}else if(e.kind==='alchemist'){rect(12,-16,8,4,'#bed3cb');oval(16,-6,7,9,'#789ba1');rect(-8,-37,16,5,'#877a98');}else{line([[17,-31],[17,13]],'#baa373',3);oval(17,-33,4,4,'#c9d6ab');rect(-14,-10,8,14,'#cab483');}}
+ else if(type==='npc'){if(e.family&&['teacher','smith','alchemist'].includes(e.kind))specialist(e);else{const smith=['smith','alchemist'].includes(e.kind);humanoid(smith?'#8b7770':'#8b9c7b');if(smith&&e.kind==='smith'){rect(-8,-15,16,19,'#675448');line([[18,-20],[12,13]],'#b29367',3);rect(13,-24,15,7,steel);poly([[19,9],[38,9],[32,16],[22,16]],steel);}else if(e.kind==='alchemist'){rect(12,-16,8,4,'#bed3cb');oval(16,-6,7,9,'#789ba1');rect(-8,-37,16,5,'#c9d6ab');}else{line([[17,-31],[17,13]],'#baa373',3);oval(17,-33,4,4,'#c9d6ab');rect(-14,-10,8,14,'#cab483');}}}
  else if(type==='hero')hero(e.class||'paladin');
  else if(type==='ally')human(e.class||e.type||'worker');
  else if(e.type==='boss'){
