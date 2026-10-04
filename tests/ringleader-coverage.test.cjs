@@ -18,7 +18,7 @@ for(const zone of zones){
    const restored=Campaign.restore(c.snapshot(),()=>roll);restored.updateElites(3);
    const leaders=restored.zone().enemies.filter(e=>e.species===species&&e.form==='ringleader'&&e.hp>0);
    assert.equal(leaders.length,count,zone+' '+profile+' spawns the saved roll');
-   for(const e of leaders){assert.equal(!!e.guard,guard==='true');assert.equal(!!e.nightOnly,!!victims[1].nightOnly);assert.equal(e.baseHp,victims[1].baseHp*C.rules.ringleaderScaling.hp);assert.equal(e.baseDamage,victims[1].baseDamage*C.rules.ringleaderScaling.damage);assert.equal(e.gold,victims[1].gold*1.5);assert.equal(e.xp,victims[1].xp*1.5);assert.equal(!!e.ranged,!!victims[1].ranged);}
+   for(const e of leaders){assert.equal(!!e.guard,guard==='true');assert.equal(!!e.nightOnly,!!victims[1].nightOnly);assert.equal(e.baseHp,victims[1].baseHp*Campaign.rules.ringleaderScaling.hp);assert.equal(e.baseDamage,victims[1].baseDamage*Campaign.rules.ringleaderScaling.damage);assert.equal(e.gold,victims[1].gold*1.5);assert.equal(e.xp,victims[1].xp*1.5);assert.equal(!!e.ranged,!!victims[1].ranged);}
    cases++;
   }
  }
