@@ -1,4 +1,4 @@
-# Azeroth Chronicles — expanded prototype v0.8.7
+# Azeroth Chronicles — expanded prototype v0.8.8
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families each have four warned attacks. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
@@ -103,3 +103,5 @@ Whole-game visual pass v0.8.3 keeps the schematic prototype art and improves the
 Phone usability update v0.8.5–v0.8.6 anchors status messages flush to the bottom center, places larger skill touch targets beside the left joystick, and restores vertical touch scrolling throughout menus such as Help. The phone skill cluster stays within the left half of small screens. GitHub Actions verifies 320 px, 375 px and landscape phone layouts, the portable HTML build and the live Pages deployment.
 
 Update v0.8.7 refreshes the offline cache for these releases and fetches current assets during installation. The in-game update action waits for the new worker to finish installing before activating it.
+
+In v0.8.8, the Millhaven Captain displays a quest-style exclamation mark until the hero recruits another companion beyond the starting soldier and worker. The supplies kiosk moves farther from the quest board in the rendered view, including in existing saves. Recruitment costs and rules are unchanged.
