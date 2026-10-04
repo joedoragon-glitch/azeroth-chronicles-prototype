@@ -2,7 +2,7 @@ const fs = require('fs');
 const vm = require('vm');
 const assert = require('assert/strict');
 const html = fs.readFileSync(require('path').join(__dirname, '../index.html'), 'utf8');
-const code = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map(m => m[1]).join('\n');
+const code = fs.readFileSync(require('path').join(__dirname, '../src/game.js'), 'utf8');
 const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map(m => m[1]));
 
 function fresh({ deniedStorage = false, saved = null } = {}) {
@@ -51,7 +51,7 @@ function ready(options){const g=fresh(options);g.run(`closeAllWindows();`);retur
 
 test('Offline bootstrap, help, HUD and finite canvas rendering',()=>{
   const g=fresh();assert(g.run(`return activeWindow==='help' && isGamePaused();`));g.run(`drawScene();renderMapUI();`);
-  assert(!/<script[^>]+src=|<link[^>]+href=/.test(html));assert(g.drawings.length>0);
+  assert(!/(?:src|href)=['"]https?:/.test(html));assert(g.drawings.length>0);
 });
 test('Re-equipping and swapping weapons preserves one bonus',()=>{
   const g=ready();eq(g.run(`openWindow('inventory');menuIndex=2;executeMenuSelection();executeMenuSelection();executeMenuSelection();const first=player.spellPower;
@@ -169,4 +169,38 @@ test('End-to-end mission, reward, purchasing, training and boss victory',()=>{
     return questState.rewardClaimed && player.level>=3 && equippedWeapon.name==='Martillo del Juicio' && player.spellLevels[2]===2 && bossDefeated && boss.hp===0;`));
 });
 
+ test('Analog touch movement respects direction and speed, and pauses clear it',()=>{
+  const g=ready();const result=g.run(`player.wx=1900;player.wy=1900;touchInput.y=-.5;const start=worldToIso(player.wx,player.wy);for(let i=0;i<60;i++)updateGame(1/60);const end=worldToIso(player.wx,player.wy);const speed=player.currentSpeed;openWindow('appmenu');return [speed,end.y-start.y,end.x-start.x,touchInput.x,touchInput.y,touchInput.attack,isGamePaused()];`);
+  assert(Math.abs(result[0]-150)<1 && result[1]<0 && Math.abs(result[2])<10);eq(result.slice(3),[0,0,false,true]);
+ });
+ test('Held touch sword obeys cooldown and stops on release without idle feedback spam',()=>{
+  const g=ready();const result=g.run(`player.wx=700;player.wy=650;const e=enemies[0];e.hp=e.maxHp=1000;touchInput.attack=true;updateGame(.1);const first=e.hp;for(let i=0;i<4;i++)updateGame(.1);const during=e.hp;for(let i=0;i<2;i++)updateGame(.1);const after=e.hp;touchInput.attack=false;for(let i=0;i<10;i++)updateGame(.1);const released=e.hp;player.wx=1900;player.wy=1900;touchInput.attack=true;const count=floatingTexts.length;updateGame(.01);return [first,during,after,released,floatingTexts.length<=count];`);
+  assert(result[0]===result[1] && result[2]<result[1] && result[3]===result[2] && result[4]);
+ });
+
+test('Mission-to-boss combat works with real cooldowns, mana, damage and respawns',()=>{
+  const g=ready();const result=g.run(`
+    openWindow('inventory');menuIndex=2;executeMenuSelection();closeAllWindows();
+    player.wx=280;player.wy=380;handleQuestAction();closeAllWindows();
+    let elapsed=0, deaths=0;
+    function tick(dt){const before=player.hp;updateGame(dt);elapsed+=dt;if(player.hp>before&&player.wx===300&&player.wy===300)deaths++;}
+    for(let kill=0;kill<5;kill++){
+      const enemy=enemies[kill%4];
+      if(enemy.hp<=0){player.wx=300;player.wy=300;for(let wait=0;wait<200&&enemy.hp<=0;wait++)tick(.05);}
+      player.wx=enemy.wx-60;player.wy=enemy.wy;selectedTarget=enemy;touchInput.attack=true;
+      for(let step=0;step<400&&enemy.hp>0;step++){if(player.hp<player.maxHp*.5)castSpell(3);tick(.05);}
+      touchInput.attack=false;
+      if(enemy.hp>0)throw Error('Combat stalled');
+      player.wx=enemy.wx;player.wy=enemy.wy;tick(.05);
+    }
+    player.wx=280;player.wy=380;handleQuestAction();
+    openWindow('shop');menuIndex=2;executeMenuSelection();openWindow('inventory');menuIndex=inventory.findIndex(i=>i.name==='Martillo del Juicio');executeMenuSelection();
+    openWindow('trainer');menuIndex=1;executeMenuSelection();closeAllWindows();
+    player.wx=300;player.wy=300;for(let rest=0;rest<400;rest++)tick(.05);
+    const boss=enemies[4];player.wx=boss.wx-60;player.wy=boss.wy;selectedTarget=boss;castSpell(4);touchInput.attack=true;
+    for(let step=0;step<800&&boss.hp>0;step++){if(player.hp<player.maxHp*.5)castSpell(3);tick(.05);}
+    return {reward:questState.rewardClaimed,equipped:equippedWeapon.name,trained:player.spellLevels[2],won:bossDefeated,deaths,elapsed};
+  `);
+  assert(result.reward && result.equipped==='Martillo del Juicio' && result.trained===2 && result.won && result.deaths===0,JSON.stringify(result));
+});
 console.log(`\n${passed} gameplay checks passed${process.exitCode ? '; failures remain' : ''}.`);

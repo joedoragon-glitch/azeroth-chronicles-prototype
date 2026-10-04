@@ -1,31 +1,61 @@
-# Azeroth Chronicles — prototype
+# Azeroth Chronicles — prototype v0.3
 
-First checkpoint of the original author's HTML game, shared by Joel. The name and graphics remain provisional.
+A small RPG made by the original author with Gemini, then repaired and adapted for Chromebook and mobile with Joel. The title, emoji art and story remain provisional.
 
-## Current checkpoint: v0.2
+## Play and install
 
-Open `index.html` in a desktop browser. The game has no external asset or styling dependencies. Press **H** for instructions.
+Once GitHub Pages is enabled and deployment succeeds, open:
 
-The current loop is: accept the village mission → defeat ordinary enemies and collect gold → return for the reward → buy equipment and train abilities → challenge the boss.
+**https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/**
 
-Repairs cover weapon bonuses, targeting, resource spending, upgrade scaling, quest rewards, level progression, projectile processing, movement, scenery collisions, pauses and respawn timers. The village acts as a refuge. The boss announces an area attack that can be dodged or shielded.
+On Chromebook or Android, use Chrome's install option, or **Menu → Instalar aplicación** when that button is available. On iPhone/iPad, use Safari **Share → Add to Home Screen**. This is an installable web app (PWA); it opens in its own app window. An APK or app-store package is not included.
 
-Local saves are stored in the browser. Export/import transfers saves between copies or devices; browser storage is not cloud synchronization.
+Open the app with internet once and wait for the menu to report that offline mode is ready. After that, the game assets work offline. Updates wait for **Menu → Actualizar aplicación** so they do not interrupt combat.
+
+**Repository owner: one-time hosting setup.** Open **Settings → Pages → Build and deployment → Source → GitHub Actions**. The deployment workflow is already included. If the first deployment ran before enabling Pages, re-run the failed job under **Actions → Test and deploy app**.
+
+## The playable loop
+
+Talk to the village commander → accept the mission → defeat five ordinary enemies and collect gold → return to claim the reward → buy and equip a better weapon, train abilities and spend talent points → challenge the boss.
+
+The village is a safe refuge that restores health and mana. Ordinary enemies respawn after eight seconds of game time, so the five-kill mission is possible with four ordinary spawn points. Menus, pause and backgrounding freeze combat and respawn timers. The boss's red circle announces an attack: leave the circle or use the shield.
 
 ## Controls
 
-- WASD: move; E: interact or target.
-- 1 / Space: sword; 2: fireball; 3: heal; 4: immunity; 5: area attack.
-- I/B: inventory; C: talents; K: abilities; T: mission; M: map.
-- P: pause; H: help; Escape: close menu.
-- Menus pause the simulation and support mouse or keyboard selection.
+- **Touch:** drag the left joystick; tap the five abilities on the right. Hold **Espada** to repeat attacks at the normal cooldown. **Interactuar** talks, collects gold or selects a nearby enemy. **☰** opens all menus. Movement and combat support simultaneous fingers.
+- **Keyboard:** WASD moves; E interacts; 1/Space is sword, 2 fireball, 3 healing, 4 shield, 5 area attack. I/B inventory, C talents, K abilities, T mission, M map, P pause, H help, Escape closes menus.
+- Menus support touch, mouse and keyboard. **Menu → Mostrar/Ocultar controles táctiles** overrides automatic touch detection on hybrid Chromebooks.
 
-## Verification
+## Saves
 
-Run `npm test` or `node tests/game.test.cjs`. No dependencies need installation.
+Automatic local saves run every five seconds and when leaving the app. v0.2 save exports remain compatible. **Exportar partida / Importar partida** moves progress between browsers or devices. Browser storage is local, not cloud synchronization. A downloaded HTML copy and the hosted app have different storage locations; export from the old copy and import in the app.
 
-The 32 checks exercise the game logic with a lightweight DOM/canvas substitute, including a mission-to-boss scenario and save recovery. They are not a visual browser test or a device playtest.
+## Development
 
-## Next iteration
+No framework, build step or runtime dependencies. Node 20+ runs the logic tests:
 
-Add mobile touch controls, a responsive mobile layout, an app manifest and offline service worker, then publish an HTTPS version that can be installed on Chromebook and supported mobile browsers. This checkpoint is not yet the installable mobile app.
+```sh
+npm test
+python3 -m http.server 8000
+```
+
+Open `http://localhost:8000` for development. Serve the folder over HTTP; opening `index.html` as a local file is not the installation/offline workflow.
+
+| File | Purpose |
+| --- | --- |
+| `index.html` | Spanish UI and menus |
+| `src/game.js` | Game data, rules, input, simulation, drawing and saves |
+| `src/app.js` | Touch input, app installation and update UI |
+| `styles/game.css`, `styles/app.css` | Base theme and responsive app layout |
+| `manifest.webmanifest`, `icons/` | App identity and installation icons |
+| `sw.js` | Offline asset cache; bump `CACHE_VERSION` when changing app assets |
+| `tests/` | Gameplay, touch, offline and browser regression checks |
+| `.github/workflows/pages.yml` | Tests, then GitHub Pages deployment |
+
+## Verification and scope
+
+49 automated logic checks cover gameplay (35), app behavior (8) and offline caching (6). These use controlled DOM/canvas and service-worker substitutes. The full mission-to-boss simulation also runs with actual cooldowns, mana, incoming damage and respawns. These checks verify rules; device feel still needs playtesting.
+
+CI also runs Chromium checks at desktop, Chromebook-touch, phone portrait, small-phone and landscape sizes before deployment. To run those locally, install Playwright 1.62.1 and its Chromium browser, then run `node tests/browser.test.cjs`. Browser screenshots are saved as CI artifacts.
+
+Repairs include non-stacking equipment bonuses, target/range validation before spending mana, consistent potion values, upgrade scaling, one-time quest rewards, multiple level-ups, stable movement/friction, scenery collisions, safe projectile processing, pauses, respawns and validated save imports. v0.3 adds two-thumb controls, compact portrait/landscape layouts, install metadata and offline support. The repaired v0.2 checkpoint is preserved in Git history.

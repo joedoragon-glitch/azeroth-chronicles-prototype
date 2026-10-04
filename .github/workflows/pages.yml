@@ -1,0 +1,53 @@
+name: Test and deploy app
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm test
+      - name: Install browser test tools
+        run: |
+          npm install --no-save --package-lock=false playwright@1.62.1
+          npx playwright install --with-deps chromium
+      - name: Test desktop and mobile app in Chromium
+        run: node tests/browser.test.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: app-screenshots
+          path: test-results/
+          if-no-files-found: ignore
+      - name: Prepare app files
+        run: |
+          mkdir _site
+          cp index.html manifest.webmanifest sw.js _site/
+          cp -R styles src icons _site/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v5
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

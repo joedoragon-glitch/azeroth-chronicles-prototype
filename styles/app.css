@@ -1,0 +1,85 @@
+/* App shell: safe areas, compact HUD and two-thumb controls. */
+html, body {width:100%;height:100%;overscroll-behavior:none}
+body {height:100dvh}
+button, [role="button"] {touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+button[hidden], [hidden] {display:none!important}
+#canvas-container {touch-action:none}
+#app-menu-button {position:fixed;right:max(12px,env(safe-area-inset-right));top:max(12px,env(safe-area-inset-top));width:46px;height:46px;z-index:22;background:#16111ded;border:2px solid #9a732a;border-radius:12px;color:#fde68a;font-size:24px}
+#game-header {padding-right:72px;padding-top:max(12px,env(safe-area-inset-top))}
+#game-footer {padding-bottom:max(8px,env(safe-area-inset-bottom))}
+.touch-only, .touch-spell-name {display:none}
+.app-menu-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.app-menu-grid button, #win-appmenu > button {min-height:46px;padding:8px;border-radius:8px;font-size:13px}
+#app-status {font-size:12px;line-height:1.55;color:#bac6d9}
+#win-appmenu .app-resume {background:#243d53}
+#modal-container {padding:16px max(16px,env(safe-area-inset-right)) max(30px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));height:100dvh}
+#modal-container > div {max-height:calc(100dvh - 64px)}
+#modal-container button {min-height:44px}
+#modal-container [role="button"] {min-height:52px}
+#win-map > .relative {height:min(288px,45dvh)}
+#win-map > .flex:last-child {flex-wrap:wrap;gap:8px}
+#win-map > .flex:last-child > .flex {flex-wrap:wrap;gap:8px}
+#pause-notice {pointer-events:none;font-size:13px;max-width:calc(100vw - 32px)}
+#menu-pause-notice {bottom:max(5px,env(safe-area-inset-bottom));width:max-content;max-width:calc(100vw - 24px)}
+#joystick {position:fixed;left:max(14px,env(safe-area-inset-left));bottom:calc(56px + env(safe-area-inset-bottom));width:136px;height:136px;border-radius:50%;background:#0a0812aa;border:2px solid #9a732a9f;z-index:20;touch-action:none;align-items:center;justify-content:center}
+#joystick-knob {position:absolute;width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#d1af61,#715318);border:2px solid #f3e5ab99;box-shadow:0 3px 12px #0008;pointer-events:none;will-change:transform}
+.joystick-label {position:absolute;bottom:8px;color:#f3e5ab;font-size:10px;pointer-events:none}
+#interact-button {border-radius:10px;flex-direction:column;align-items:center;justify-content:center;font-size:22px}
+#interact-button span {font-size:9px}
+body.touch-mode #joystick {display:flex}
+body.touch-mode #interact-button {display:flex}
+body.touch-mode #desktop-menus, body.touch-mode #hotbar-divider {display:none}
+body.touch-mode #action-bar {position:fixed;right:max(12px,env(safe-area-inset-right));bottom:calc(54px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(3,56px);gap:5px;padding:6px;border-radius:14px;z-index:20}
+body.touch-mode #action-bar > [id^="slot-"], body.touch-mode #interact-button {width:56px;height:56px;touch-action:none}
+body.touch-mode .touch-spell-name {display:block;font-size:9px;color:#fde68a;line-height:1.2;pointer-events:none}
+body.touch-mode #action-bar .group > .absolute:last-child {display:none}
+body.touch-mode #interaction-hint {bottom:calc(204px + env(safe-area-inset-bottom));max-width:calc(100vw - 24px);text-align:center}
+body.touch-mode #event-feed {bottom:210px}
+body.touch-mode #session-tools {display:none}
+body.touch-mode #objective-tracker {top:calc(90px + env(safe-area-inset-top));right:12px;max-width:320px}
+body.touch-mode #game-footer {position:fixed;bottom:0}
+body.touch-mode #game-footer > .w-\[90\%\] {width:calc(100% - 28px);margin-bottom:9px}
+body.touch-mode [id^="slot-"] > span:nth-child(2) {display:none}
+@media (max-width:900px) {
+  #session-tools {display:none}
+  #player-frame {min-width:0;max-width:300px;width:100%;gap:8px;padding:8px}
+  #player-avatar {width:42px;height:42px}
+  #ui-player-name {font-size:12px}
+  #objective-tracker, body.touch-mode #objective-tracker {top:calc(84px + env(safe-area-inset-top));left:12px;right:auto;max-width:min(330px,calc(100vw - 24px));font-size:11px;padding:6px 9px}
+  #target-frame {position:absolute;right:72px;top:max(12px,env(safe-area-inset-top));min-width:0;width:190px;padding:8px;font-size:11px;gap:6px}
+  #target-frame > .w-12 {display:none}
+  #event-feed {display:none}
+  #game-footer #action-bar {max-width:calc(100vw - 12px);gap:4px;padding:6px}
+  #desktop-menus button {padding:4px;min-width:32px}
+}
+@media (max-width:600px) {
+  #game-header {padding-left:10px;padding-right:70px}
+  #player-frame {max-width:100%}
+  #player-avatar {width:36px;height:40px;border-radius:8px}
+  #ui-player-name {font-size:11px}
+  #target-frame {right:12px;top:calc(145px + env(safe-area-inset-top));width:170px}
+  #modal-container > div {padding:14px}
+  #modal-container h2 {font-size:17px}
+  #inv-grid {gap:6px}
+  #interaction-hint {font-size:10px}
+  body:not(.touch-mode) #desktop-menus {display:none}
+  body:not(.touch-mode) #hotbar-divider {display:none}
+}
+@media (max-width:360px) {
+  #joystick {width:112px;height:112px;left:10px}
+  body.touch-mode #action-bar {grid-template-columns:repeat(3,50px);gap:4px;right:8px;padding:5px}
+  body.touch-mode #action-bar > [id^="slot-"], body.touch-mode #interact-button {width:50px;height:52px}
+}
+@media (max-height:450px) and (min-width:601px) {
+  #game-header {padding-top:6px}
+  #player-frame {max-width:250px;padding:5px}
+  #player-avatar {width:32px;height:34px}
+  #app-menu-button {top:6px;height:40px}
+  #objective-tracker, body.touch-mode #objective-tracker {top:68px;max-width:290px}
+  #modal-container > div {max-height:calc(100dvh - 40px)}
+  #modal-container {padding-top:8px}
+  #joystick {width:112px;height:112px;bottom:38px}
+  body.touch-mode #action-bar {bottom:30px;grid-template-columns:repeat(3,50px)}
+  body.touch-mode #action-bar > [id^="slot-"], body.touch-mode #interact-button {width:50px;height:50px}
+  body.touch-mode #interaction-hint {bottom:158px}
+}

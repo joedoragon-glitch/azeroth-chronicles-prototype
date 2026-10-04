@@ -1,8 +1,12 @@
 {
   "name": "azeroth-chronicles-prototype",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
-  "description": "Repaired isometric RPG prototype; mobile app conversion in progress.",
-  "scripts": { "test": "node tests/game.test.cjs" },
-  "engines": { "node": ">=20" }
+  "description": "Offline installable RPG prototype for Chromebook and mobile.",
+  "scripts": {
+    "test": "node tests/game.test.cjs && node tests/app.test.cjs && node tests/service-worker.test.cjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
 }
