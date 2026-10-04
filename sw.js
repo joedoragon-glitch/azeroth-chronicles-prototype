@@ -1,5 +1,5 @@
 /* Bump CACHE_VERSION when app assets change. New releases wait for player consent. */
-const CACHE_VERSION = 'azeroth-app-v0.5.0';
+const CACHE_VERSION = 'azeroth-app-v0.5.1';
 const CACHE_PREFIX = 'azeroth-app-';
 const APP_FILES = ['./', './index.html', './rts.html', './styles/rts.css', './src/rts-engine.js', './src/rts.js', './styles/game.css', './styles/app.css', './styles/keyboard.css', './src/controls.js', './src/classes.js', './src/world.js', './src/squad.js', './src/game.js', './src/app.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 const appURL = path => new URL(path, self.registration.scope).href;
