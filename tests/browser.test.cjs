@@ -1,109 +1,41 @@
-/* Real Chromium smoke tests. CI installs Playwright; runtime app has no dependencies. */
-const {chromium}=require('playwright');
-const http=require('http'), fs=require('fs'), path=require('path'), assert=require('assert/strict');
-const root=path.resolve(__dirname,'..'), prefix='/azeroth-chronicles-prototype/';
-const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.webmanifest':'application/manifest+json','.png':'image/png'};
-const server=http.createServer((request,response)=>{
-  const url=new URL(request.url,'http://localhost');
-  if(!url.pathname.startsWith(prefix)){response.writeHead(404);response.end();return}
-  const file=path.resolve(root,decodeURIComponent(url.pathname.slice(prefix.length)||'index.html'));
-  if(!file.startsWith(root+path.sep)||!fs.existsSync(file)||!fs.statSync(file).isFile()){response.writeHead(404);response.end();return}
-  response.writeHead(200,{'Content-Type':mime[path.extname(file)]||'text/plain','Cache-Control':'no-cache'});fs.createReadStream(file).pipe(response);
-});
-function overlap(a,b){return a.x<b.x+b.width&&a.x+a.width>b.x&&a.y<b.y+b.height&&a.y+a.height>b.y}
-(async()=>{
-  let browser;
-  try{
-    await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
-    const base=process.env.LIVE_APP_URL||`http://127.0.0.1:${server.address().port}${prefix}`;
-    browser=await chromium.launch();fs.mkdirSync(path.join(root,'test-results'),{recursive:true});
-    const sizes=[{name:'desktop',width:1280,height:800,touch:false},{name:'chromebook-touch',width:1366,height:768,touch:true},{name:'phone',width:390,height:844,touch:true},{name:'small-phone',width:320,height:568,touch:true},{name:'landscape',width:844,height:390,touch:true}];
-    for(const size of sizes){
-      const context=await browser.newContext({viewport:{width:size.width,height:size.height},hasTouch:size.touch,isMobile:size.touch&&size.width<900});
-      const page=await context.newPage(),errors=[];page.on('pageerror',error=>errors.push(error.message));
-      page.on('console',message=>{if(message.type()==='error')errors.push(message.text())});
-      if(process.env.LIVE_APP_URL){page.on('requestfailed',r=>console.log('LIVE request failed',r.url(),r.failure()));page.on('response',r=>{if(r.status()>=400)console.log('LIVE bad response',r.status(),r.url());});}
-      await page.goto(base);if(!size.touch){await page.keyboard.press('2');assert.equal(await page.evaluate(()=>player.heroClass),'mage');}await page.getByRole('button',{name:'Jugar [Enter / ESC]',exact:true}).click();
-      try{await page.waitForFunction(()=>!!navigator.serviceWorker.controller);}catch(error){
-        console.log('LIVE SW diagnostics',await page.evaluate(async()=>({secure:isSecureContext,status:document.querySelector('#app-status')?.textContent,registrations:await navigator.serviceWorker.getRegistrations().then(rs=>rs.map(r=>({scope:r.scope,active:r.active?.state,installing:r.installing?.state,waiting:r.waiting?.state}))),assets:await Promise.all(['sw.js','index.html','rts.html','src/game.js','src/app.js','src/controls.js','src/classes.js','src/rts-engine.js','src/rts.js','styles/game.css','styles/app.css','styles/keyboard.css','styles/rts.css','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png'].map(async url=>{try{const r=await fetch(url);return {url,status:r.status,type:r.headers.get('content-type')};}catch(e){return {url,error:e.message};}}))})));throw error;
-      }
-      assert.equal(await page.evaluate(()=>document.body.classList.contains('touch-mode')),size.touch,size.name);
-      assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'horizontal overflow: '+size.name);
-      const mini=await page.locator('#mini-map-button').boundingBox(),objective=await page.locator('#objective-tracker').boundingBox();assert(!overlap(mini,objective),'RPG minimap overlaps objective: '+size.name);
-      if(size.touch){
-        const joystick=await page.locator('#joystick').boundingBox(),bar=await page.locator('#action-bar').boundingBox();
-        assert(joystick&&bar&&!overlap(joystick,bar),'thumb controls overlap: '+size.name);
-        for(const rect of [joystick,bar])assert(rect.x>=0&&rect.y>=0&&rect.x+rect.width<=size.width+1&&rect.y+rect.height<=size.height+1,'controls outside viewport: '+size.name);
-        // Real two-finger input gives the browser active pointer IDs for capture.
-        const session=await context.newCDPSession(page),sword=await page.locator('#slot-1').boundingBox();
-        const move={x:joystick.x+joystick.width*.8,y:joystick.y+joystick.height*.5,id:1};
-        const attack={x:sword.x+sword.width*.5,y:sword.y+sword.height*.5,id:2};
-        await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[move,attack]});
-        await page.waitForFunction(()=>touchInput.x>0&&touchInput.attack);
-        await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
-        await page.waitForFunction(()=>touchInput.x===0&&!touchInput.attack);
-        await session.detach();
-      } else {
-        const before=await page.evaluate(()=>[player.wx,player.wy]);await page.keyboard.down('d');await page.waitForFunction(([x,y])=>Math.hypot(player.wx-x,player.wy-y)>12,before);await page.keyboard.up('d');
-        // Complete menu flow with left-side keys, including a persisted rebind.
-        await page.keyboard.press('q');assert.equal(await page.evaluate(()=>activeWindow),'appmenu');
-        await page.keyboard.press('s');await page.keyboard.press('f');assert.equal(await page.evaluate(()=>activeWindow),'spells');
-        await page.keyboard.press('q');await page.keyboard.press('q');
-        await page.keyboard.press('r');await page.keyboard.press('d');await page.keyboard.press('d');await page.keyboard.press('f');
-        assert.equal(await page.evaluate(()=>equippedWeapon===inventory[2]),true);
-        await page.keyboard.press('q');await page.keyboard.press('q');
-        assert.equal(await page.getByRole('button',{name:'Personalizar teclas',exact:true}).count(),0);
-      }
-      await page.getByRole('button',{name:'Abrir menú del juego',exact:true}).click();
-      assert.equal(await page.evaluate(()=>isGamePaused()),true);
-      await page.getByRole('button',{name:'🎒 Mochila',exact:true}).click();
-      await page.getByRole('button',{name:'Cerrar',exact:true}).click();
-      await page.getByRole('button',{name:'Abrir menú del juego',exact:true}).click();
-      await page.getByRole('button',{name:'🗺️ Mapa',exact:true}).click();
-      assert((await page.locator('#mapCanvas').boundingBox()).height>0);
-      await page.keyboard.press('Escape');
-      await page.getByRole('button',{name:'Abrir menú del juego',exact:true}).click();
-      await page.locator('#win-appmenu').getByRole('button',{name:'Guardar',exact:true}).click();
-      await page.getByRole('button',{name:'Volver al juego',exact:true}).click();
-      await page.screenshot({path:path.join(root,'test-results',size.name+'.png')});
-      await context.setOffline(true);await page.reload();
-      assert.equal(await page.evaluate(()=>typeof updateGame),'function');
-      assert.equal(await page.evaluate(()=>activeWindow),null,'saved game should restore without help');
-      assert.deepEqual(errors,[],size.name+' browser errors');
-      console.log('PASS Chromium '+size.name+': input, menus, layout and offline reload');
-      // The RTS is a separate page in the same installable app and cache.
-      await context.setOffline(false);await page.goto(base+'rts.html');
-      await page.getByRole('button',{name:'Jugar / continuar',exact:true}).click();
-      assert((await page.locator('#rts-field').boundingBox()).height>=100,'RTS field too small: '+size.name);
-      assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'RTS overflow');
-      const primary=await page.locator('#rts-primary').boundingBox(),order=await page.locator('#rts-order').boundingBox(),stick=await page.locator('#rts-joystick').boundingBox();
-      assert(primary.x+primary.width/2<size.width/2,'primary action must stay left');
-      assert(order.x>size.width/2,'orders must stay right');
-      for(const id of ['rts-primary','rts-order','rts-joystick','rts-add']){const r=await page.locator('#'+id).boundingBox();assert(r.x>=0&&r.y>=0&&r.x+r.width<=size.width+1&&r.y+r.height<=size.height+1,'RTS control outside viewport: '+id+' '+size.name);}assert(!overlap(stick,primary)&&!overlap(stick,order),'RTS input overlap');
-      if(size.touch){
-        await page.touchscreen.tap(primary.x+primary.width/2,primary.y+primary.height/2);
-        assert.match(await page.locator('#rts-stats').innerText(),/0 seleccionadas/,'one tap must not select');
-        await page.touchscreen.tap(primary.x+primary.width/2,primary.y+primary.height/2);
-        await page.waitForFunction(()=>document.querySelector('#rts-stats').textContent.includes('1 seleccionadas'));
-        const session=await context.newCDPSession(page),move={x:stick.x+stick.width*.8,y:stick.y+stick.height*.5,id:1},command={x:order.x+order.width/2,y:order.y+order.height/2,id:2};
-        await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[move,command]});
-        await page.waitForFunction(()=>document.querySelector('#rts-knob').style.transform.includes('translate'));
-        await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
-        await page.waitForFunction(()=>document.querySelector('#rts-knob').style.transform==='');await session.detach();
-      }else{
-        await page.keyboard.press('e');assert.match(await page.locator('#rts-stats').innerText(),/1 seleccionadas/);
-        await page.keyboard.press('1');assert.match(await page.locator('#rts-stats').innerText(),/3 seleccionadas/);
-        await page.keyboard.press('f');assert.match(await page.locator('#rts-message').innerText(),/Orden: mover/);
-      }
-      await page.getByRole('button',{name:'Abrir menú RTS',exact:true}).click();
-      await page.getByRole('button',{name:'Jugar / continuar',exact:true}).click();
-      await page.screenshot({path:path.join(root,'test-results','rts-'+size.name+'.png')});
-      await context.setOffline(true);await page.reload();assert.match(await page.title(),/RTS/);
-      await page.getByRole('button',{name:'Jugar / continuar',exact:true}).click();
-      assert.match(await page.locator('#rts-stats').innerText(),/3\/12 tropas/);assert.deepEqual(errors,[],size.name+' RTS errors');
-      console.log('PASS Chromium RTS '+size.name+': virtual cursor, left selection, right orders and offline reload');
-      await context.close();
-    }
-  } catch(error){console.error(error.stack);process.exitCode=1}
-  finally{if(browser)await browser.close();await new Promise(resolve=>server.close(resolve))}
-})();
+/* Verify the single hero/RTS adventure in real desktop and touch browsers. */
+const {chromium}=require('playwright'),http=require('http'),fs=require('fs'),path=require('path'),assert=require('assert/strict');
+const root=path.resolve(__dirname,'..'),prefix='/azeroth-chronicles-prototype/';
+const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://localhost'),file=path.resolve(root,decodeURIComponent(url.pathname.slice(prefix.length)||'index.html'));if(!url.pathname.startsWith(prefix)||!file.startsWith(root+path.sep)||!fs.existsSync(file)){res.writeHead(404);res.end();return;}const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.webmanifest':'application/manifest+json','.png':'image/png'};res.writeHead(200,{'Content-Type':mime[path.extname(file)]||'text/plain'});fs.createReadStream(file).pipe(res);});
+const overlap=(a,b)=>a.x<b.x+b.width&&a.x+a.width>b.x&&a.y<b.y+b.height&&a.y+a.height>b.y;
+(async()=>{let browser;try{
+ await new Promise(r=>server.listen(0,'127.0.0.1',r));const base=process.env.LIVE_APP_URL||`http://127.0.0.1:${server.address().port}${prefix}`;browser=await chromium.launch();fs.mkdirSync(path.join(root,'test-results'),{recursive:true});
+ for(const size of [{name:'desktop',width:1280,height:800,touch:false},{name:'chromebook-touch',width:1366,height:768,touch:true},{name:'phone',width:390,height:844,touch:true},{name:'small-phone',width:320,height:568,touch:true},{name:'landscape',width:844,height:390,touch:true}]){
+  const context=await browser.newContext({viewport:{width:size.width,height:size.height},hasTouch:size.touch,isMobile:size.touch&&size.width<900}),page=await context.newPage(),errors=[];
+  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
+  await page.goto(base);assert.equal(await page.evaluate(()=>activeWindow),'help');
+  if(!size.touch){await page.keyboard.press('2');assert.equal(await page.evaluate(()=>player.heroClass),'mage');await page.keyboard.press('f');}else await page.getByRole('button',{name:'Jugar [Enter / ESC]',exact:true}).click();
+  await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
+  assert.equal(await page.evaluate(()=>Squad.units.length),2);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'overflow '+size.name);
+  const mini=await page.locator('#mini-map-button').boundingBox(),objective=await page.locator('#objective-tracker').boundingBox();assert(!overlap(mini,objective),'minimap overlap '+size.name);
+  if(size.touch){const stick=await page.locator('#joystick').boundingBox(),bar=await page.locator('#action-bar').boundingBox();assert(!overlap(stick,bar),'left controls overlap '+size.name);assert(bar.x+bar.width<=size.width/2,'powers must remain left');for(const r of [stick,bar])assert(r.y>=0&&r.x>=0&&r.y+r.height<=size.height+1,'controls clipped');
+   const sword=await page.locator('#slot-1').boundingBox(),session=await context.newCDPSession(page);await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:stick.x+stick.width*.8,y:stick.y+stick.height*.5,id:1},{x:sword.x+sword.width/2,y:sword.y+sword.height/2,id:2}]});await page.waitForFunction(()=>touchInput.x>0&&touchInput.attack);await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await page.waitForFunction(()=>touchInput.x===0&&!touchInput.attack);await session.detach();
+  }else{const before=await page.evaluate(()=>[player.wx,player.wy]);await page.keyboard.down('d');await page.waitForFunction(([x,y])=>Math.hypot(player.wx-x,player.wy-y)>10,before);await page.keyboard.up('d');}
+  // All eight powers and menu actions can use the left hand without a mouse.
+  await page.evaluate(()=>{player.wx=1050;player.wy=550;player.vx=player.vy=0;interactWithNearby();});assert.equal(await page.evaluate(()=>activeRegion),'crypt');assert.equal(await page.evaluate(()=>Squad.units.every(u=>u.region==='crypt')),true);
+  await page.evaluate(()=>{player.wx=450;player.wy=420;player.mp=player.maxMp=200;player.spellPower=1;});await page.keyboard.press('Space');await page.keyboard.press('ShiftLeft');await page.keyboard.press('b');assert.equal(await page.evaluate(()=>[6,7,8].every(n=>player.cds[n]>0)),true);
+  await page.keyboard.press('q');assert.equal(await page.evaluate(()=>activeWindow),null);await page.screenshot({path:path.join(root,'test-results','crypt-'+size.name+'.png')});
+  await page.evaluate(()=>{changeRegion('world');player.wx=300;player.wy=300;camera.wx=300;camera.wy=300;Squad.region();});
+  await page.keyboard.press('Escape');assert.equal(await page.evaluate(()=>activeWindow),'appmenu');
+  if(size.touch){const stick=await page.locator('#joystick').boundingBox(),button=await page.locator('#menu-confirm').boundingBox();assert(button.x+button.width<=size.width/2,'menu confirmation must stay left');const session=await context.newCDPSession(page);await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:stick.x+stick.width/2,y:stick.y+stick.height*.8,id:1}]});await page.waitForFunction(()=>menuIndex>=2);await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await session.detach();await page.evaluate(()=>{menuIndex=0;renderKeyboardMenu();});await page.getByRole('button',{name:'Confirmar · F',exact:true}).click();}else await page.keyboard.press('f');
+  assert.equal(await page.evaluate(()=>activeWindow),'inventory');await page.keyboard.press('d');await page.keyboard.press('d');await page.keyboard.press('f');assert.equal(await page.evaluate(()=>equippedWeapon===inventory[2]),true);await page.keyboard.press('Escape');await page.keyboard.press('Escape');
+  // Cursor and hero commands act on this same world and persistent squad.
+  await page.keyboard.press('Tab');assert.equal(await page.evaluate(()=>Squad.active),true);await page.keyboard.press('Backquote');assert.equal(await page.evaluate(()=>Squad.selected.length),3);
+  await page.evaluate(()=>{const p=Squad.screen(Squad.units[1]);Squad.cursor.x=p.x;Squad.cursor.y=p.y;});
+  if(size.touch){const select=await page.locator('#tactics-select').boundingBox();await page.touchscreen.tap(select.x+select.width/2,select.y+select.height/2);assert.equal(await page.evaluate(()=>Squad.selected.length),3);await page.touchscreen.tap(select.x+select.width/2,select.y+select.height/2);}else await page.keyboard.press('e');
+  assert.equal(await page.evaluate(()=>Squad.selected[0]===Squad.units[1].id),true);
+  await page.evaluate(()=>{const p=Squad.screen(Squad.nodes[0]);Squad.cursor.x=p.x;Squad.cursor.y=p.y;});await page.keyboard.press('f');assert.equal(await page.evaluate(()=>Squad.units[1].order.type),'gather');
+  await page.screenshot({path:path.join(root,'test-results','strategy-'+size.name+'.png')});
+  await page.keyboard.press('Tab');await page.keyboard.press('Escape');await page.getByRole('button',{name:'👥 Escuadrón y órdenes',exact:true}).click();assert.equal(await page.evaluate(()=>activeWindow),'squad');await page.screenshot({path:path.join(root,'test-results','squad-menu-'+size.name+'.png')});await page.keyboard.press('Escape');await page.keyboard.press('Escape');
+  // Inspect the new endgame terrain and traps without corrupting save stats.
+  await page.evaluate(()=>{changeRegion('citadel');player.wx=850;player.wy=800;camera.wx=850;camera.wy=800;dungeonClock=5.1;});await page.screenshot({path:path.join(root,'test-results','citadel-'+size.name+'.png')});
+  await page.evaluate(()=>{changeRegion('world');saveGame();});await context.setOffline(true);await page.reload();assert.equal(await page.evaluate(()=>activeWindow),null);assert.equal(await page.evaluate(()=>Squad.units.length),2);assert.equal(await page.evaluate(()=>typeof castSpell),'function');
+  await context.setOffline(false);await page.goto(base+'rts.html');await page.waitForURL(base);assert.equal(await page.evaluate(()=>typeof Squad.order),'function','legacy RTS link redirects to merged game');
+  assert.deepEqual(errors,[],size.name+' browser errors');console.log('PASS Chromium '+size.name+': one game, left input, squad commands, menus, dungeons, save and offline');await context.close();
+ }
+}catch(e){console.error(e.stack);process.exitCode=1;}finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}})();

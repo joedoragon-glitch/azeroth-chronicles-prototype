@@ -83,6 +83,41 @@ body.touch-mode [id^="slot-"] > span:nth-child(2) {display:none}
   body.touch-mode #action-bar > [id^="slot-"], body.touch-mode #interact-button {width:50px;height:50px}
   body.touch-mode #interaction-hint {bottom:158px}
 }
-/* Sixth, infrequent class ability: keep all touch actions within the viewport. */
-body.touch-mode #interaction-hint{bottom:calc(265px + env(safe-area-inset-bottom))}
-@media(max-height:450px) and (min-width:601px){body.touch-mode #action-bar{grid-template-columns:repeat(4,50px)}body.touch-mode #interaction-hint{bottom:158px}}
+
+/* All mobile combat and menu inputs belong to the left hand. */
+body.touch-mode #action-bar{left:max(10px,env(safe-area-inset-left));right:auto;bottom:calc(186px + env(safe-area-inset-bottom));grid-template-columns:repeat(3,44px);gap:4px;padding:5px}
+body.touch-mode #action-bar > [id^="slot-"],body.touch-mode #interact-button{width:44px;height:44px}
+body.touch-mode #joystick{left:max(10px,env(safe-area-inset-left));bottom:calc(56px + env(safe-area-inset-bottom));width:120px;height:120px}
+body.touch-mode #interaction-hint{bottom:calc(342px + env(safe-area-inset-bottom));font-size:10px}
+body.touch-mode.menu-open #action-bar{display:none}
+body.touch-mode.menu-open #joystick{z-index:45;width:100px;height:100px;bottom:calc(36px + env(safe-area-inset-bottom))}
+#left-menu-pad{display:none;position:fixed;z-index:45;left:max(10px,env(safe-area-inset-left));bottom:calc(146px + env(safe-area-inset-bottom));width:146px;gap:5px}
+#left-menu-pad button{min-height:44px;border:1px solid #d4af37;border-radius:8px;background:#282015;color:#fde68a;font-size:12px}
+body.touch-mode.menu-open #left-menu-pad{display:grid}
+body.touch-mode.menu-open #modal-container{align-items:flex-start;padding-top:12px;padding-bottom:234px}
+body.touch-mode.menu-open #modal-container > div{max-height:calc(100dvh - 250px);overflow-y:auto}
+.mode-card{padding:16px;text-align:left;border-radius:10px;min-height:74px;font-size:17px}
+.mode-card span{display:block;font-size:12px;line-height:1.5;margin-top:6px;color:#e8d8ac}
+#win-modes p{font-size:13px;line-height:1.5}
+.keyboard-selected{outline:2px solid #fde047;outline-offset:2px;background:#5a4010}
+body.menu-open #menu-back{visibility:visible}body.menu-open:has(#win-modes:not(.hidden)) #menu-back{visibility:hidden}
+@media(max-width:360px){body.touch-mode #joystick{width:112px;height:112px}body.touch-mode #action-bar{bottom:calc(178px + env(safe-area-inset-bottom))}}
+@media(max-height:450px) and (min-width:601px){
+ body.touch-mode #joystick{width:96px;height:96px;bottom:calc(34px + env(safe-area-inset-bottom))}
+ body.touch-mode #action-bar{left:116px;right:auto;bottom:calc(34px + env(safe-area-inset-bottom));grid-template-columns:repeat(3,44px)}
+ body.touch-mode #interaction-hint{bottom:184px}
+ body.touch-mode.menu-open #modal-container{padding-bottom:152px}
+ body.touch-mode.menu-open #modal-container > div{max-height:calc(100dvh - 168px)}
+ #left-menu-pad{left:120px;bottom:calc(36px + env(safe-area-inset-bottom))}
+}
+
+.squad-input{width:48px;height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;font-size:20px}.squad-input span{font-size:9px;line-height:1.1}
+body.touch-mode #action-bar>.squad-input{width:44px;height:44px;touch-action:manipulation}
+body:not(.tactics-active) #tactics-select{display:none}
+body:not(.touch-mode) #action-bar{gap:4px;padding:6px}
+#squad-panel-button{position:fixed;top:190px;left:12px;z-index:18;background:#0b1525ed;color:#b3ddff;border:1px solid #669bc0;border-radius:7px;padding:7px;max-width:calc(100vw - 24px);text-align:left;font-size:11px}
+#squad-panel-button small{display:block;font-size:9px;margin-top:3px}
+body.menu-open #squad-panel-button{display:none}
+#squad-summary,#win-expedition p{font-size:12px;line-height:1.5}
+body.touch-mode #interaction-hint{bottom:calc(388px + env(safe-area-inset-bottom))}
+@media(max-height:450px) and (min-width:601px){body.touch-mode #action-bar{grid-template-columns:repeat(4,44px)}body.touch-mode #interaction-hint{bottom:184px}#squad-panel-button{top:122px;font-size:10px}}

@@ -21,7 +21,7 @@ function fresh({coarse = true, preference = null, storageDenied = false, control
     matchMedia(){return media},addEventListener(k,fn){(winEvents[k]??=[]).push(fn)},location:{reload(){state.reloads++}}};
   const registration={waiting:null,installing:null,addEventListener(k,fn){(loadEvents[k]??=[]).push(fn)}};
   const serviceWorker={controller:controlled?{}:null,addEventListener(k,fn){(swEvents[k]??=[]).push(fn)},register:async(url,options)=>{assert.equal(url,'./sw.js');assert.equal(options.scope,'./');return registration},ready:Promise.resolve()};
-  const sandbox={window,document:{body:element(),getElementById(id){assert(elements.has(id),id);return elements.get(id)}},navigator:{serviceWorker},touchInput:input,
+  const sandbox={window,document:{body:element(),getElementById(id){assert(elements.has(id),id);return elements.get(id)}},navigator:{serviceWorker},touchInput:input,activeWindow:null,KeyboardControls:{bindings:{moveUp:"KeyW",moveDown:"KeyS",moveLeft:"KeyA",moveRight:"KeyD"}},handleMenuKeyboard(){},
     isGamePaused(){return state.paused},AudioSys:{init(){state.audio++}},castSpell(n){state.casts.push(n)},interactWithNearby(){state.interactions++},manualPaused:false,
     saveGame(){state.saves++},togglePause(){sandbox.manualPaused=!sandbox.manualPaused;state.paused=sandbox.manualPaused;window.resetTouchControls()},closeAllWindows(){},console};
   vm.createContext(sandbox);vm.runInContext(source,sandbox);

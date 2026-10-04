@@ -1,41 +1,29 @@
-# Prototipo: jugar con la mano izquierda
+# Controles · v0.5
 
-El objetivo del autor es que el jugador use la mano izquierda para moverse, lanzar poderes e interactuar. Esta versión refuerza el teclado. Los controles táctiles del móvil siguen como estaban.
+Abre https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ . Es una sola aventura: héroe, subordinados, progreso y mazmorras comparten mundo y partida.
 
-Abre https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ y pulsa **F** para empezar si aparece la ayuda.
+## Teclado fijo
 
-| Tecla inicial | Acción |
-| --- | --- |
-| W, A, S, D | Movimiento; selección dentro de los menús |
-| 1 | Espada (Espacio también funciona) |
-| 2 | Bola de fuego |
-| 3 | Curación |
-| 4 | Escudo |
-| 5 | Ataque de área |
-| E o F | Hablar, recoger oro o seleccionar un enemigo; confirmar dentro de los menús |
-| Q | Abrir el menú; volver desde un submenú; cerrar el menú principal |
-| R | Mochila |
-| C | Talentos |
-| X | Libro de habilidades |
-| T | Misión |
-| Z | Mapa |
-| V | Pausa |
-| G | Ayuda |
+- WASD: mover héroe/cursor; elegir opciones en menús.
+- Tab: alternar control directo del héroe y cursor de órdenes.
+- En órdenes: E selecciona; F manda mover/atacar/reunir recursos/interactuar; ` selecciona héroe y grupo; C construye cuartel con un trabajador (120g); R recluta sobre un cuartel terminado (60g).
+- 1–5: poderes normales; Espacio: sexto (10 maná / 4 s); Mayús izquierdo: séptimo (60 maná / 90 s); B: octavo (60 maná / 120 s).
+- En control directo: E/F interactúa; R mochila, C talentos, X habilidades, T misión, Z mapa, V pausa, G ayuda.
+- Menús: WASD elige; E/F confirma, compra, equipa, entrena o acepta misiones.
+- Escape: menú/volver. **Q queda libre**.
 
-Puedes mantener WASD mientras pulsas una habilidad. El juego elige un enemigo al alcance: no exige apuntar con el ratón. Hay cinco habilidades en este prototipo; hay además un sexto poder de uso ocasional.
+Los clics son atajos opcionales: poderes 7/8 en control directo, seleccionar/ordenar con el cursor. **Se puede jugar sin ratón**. No hay personalización de teclas. Los atajos del navegador con Ctrl, Alt o Cmd siguen disponibles.
 
-## Esquema fijo y poder especial
+## Móvil
 
-Por petición del autor, esta versión usa teclas fijas; ya no hay personalización. Los atajos antiguos I/B, K, M, P y H también funcionan. Enter y Esc sirven como respaldo.
+Palanca, ocho poderes y órdenes a la izquierda. Mantén el ataque básico para repetirlo. Órdenes cambia a cursor; dos toques en Seleccionar eligen una unidad; Grupo selecciona a todos; Ordenar da una orden contextual. Los poderes siguen disponibles. En los menús usa la palanca y **Confirmar**; **Volver** también está a la izquierda.
 
-El **sexto poder** se activa con **clic derecho** sobre el campo de juego o su botón. Cuesta 50 maná y tarda 90 segundos en recargar. Sus efectos dependen de la clase. No exige mantener el ratón pulsado.
+## Grupo y progreso
 
-En una partida nueva puedes elegir Paladín, Maga o Exploradora antes de empezar. El libro de habilidades muestra los poderes y costes de la clase elegida.
+Comienzas con un soldado y un trabajador. Habla con la Capitana o abre Escuadrón y órdenes para reclutar en refugios. Máximo seis subordinados vivos; los caídos se recuperan por 40g. Los trabajadores reúnen recursos y los depositan como oro en los pueblos. Todos viajan contigo a las mazmorras.
 
-Prueba breve: acepta la misión con E/F; equipa la espada con R, D, D, F; cierra los menús con Q; combate con WASD y 1–5; vuelve al comandante para cobrar. La villa permite descansar y recuperar vida y maná. Los menús pausan el juego.
+El instructor de la villa enseña hasta rango 2; la maestra de la frontera hasta 5; el maestro de las cumbres hasta 8. Te indican dónde seguir. Busca también comerciantes y encargados de expediciones en los pueblos posteriores.
 
-## RTS móvil
+Consulta Z: Cripta del Bosque (nivel 3), Mina de los Colosos (6), Bastión del Abismo (10), Ciudadela de las Cenizas (15). Entra con E/F cerca del portal. La puerta 🚪 permite salir. Derrota a los cuatro enemigos para cobrar una recompensa única. Se guarda el progreso; los derrotados no reaparecen dentro de las mazmorras.
 
-El menú del RPG permite abrir **Probar RTS · mano izquierda**. La palanca izquierda mueve el cursor; dos toques en el panel izquierdo seleccionan; el único botón derecho da órdenes. Las acciones de grupo, construcción, reclutamiento y NPC se concentran a la izquierda. En teclado: WASD cursor, E seleccionar, F ordenar, 1 grupo, 2 construir/reclutar, 3 detener, Q menú. La velocidad del cursor se ajusta en el menú.
-
-La prueba empieza con un paladín y dos trabajadores. Reúne recursos del bosque, construye un cuartel, recluta soldados, derrota al capitán del campamento, cruza uno de los puentes, recupera el poblado y prepara el asalto a la fortaleza del Señor Demonio. Los poblados aliados permiten recuperarse y acercar la recolección.
+Trampas: ámbar avisa, rojo daña. Evita las zonas marcadas de los jefes. En la Ciudadela, ataca al Centinela cuando abra su coraza después del impacto; la fuente de un solo uso se habilita tras vencer a los custodios. Lleva buen equipo, entrenamiento y consumibles.

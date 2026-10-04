@@ -3,6 +3,7 @@
     const byId = id => document.getElementById(id);
     const joystick = byId('joystick'), knob = byId('joystick-knob'), sword = byId('slot-1');
     const status = byId('app-status'), installButton = byId('install-button'), updateButton = byId('update-button');
+    let menuDirection = null, menuRepeatAt = 0;
     let movementPointer = null, swordPointer = null, installPrompt = null, registration = null;
     let touchPreference = null, reloading = false;
     try { touchPreference = window.localStorage.getItem('azeroth-touch-controls'); } catch (_) { /* Optional preference. */ }
@@ -19,7 +20,7 @@
     }
     window.resetTouchControls = () => {
         const move = movementPointer, attack = swordPointer;
-        movementPointer = swordPointer = null;
+        movementPointer = swordPointer = null;menuDirection=null;menuRepeatAt=0;
         touchInput.x = touchInput.y = 0; touchInput.attack = false;
         knob.style.transform = 'translate(0px, 0px)';
         releaseCapture(joystick, move); releaseCapture(sword, attack);
@@ -38,8 +39,15 @@
         touchInput.y = magnitude ? y * adjusted / Math.min(1, magnitude) : 0;
         knob.style.transform = `translate(${x * radius}px, ${y * radius}px)`;
     }
-    joystick.addEventListener('pointerdown', event => {
-        if (isGamePaused() || movementPointer !== null || event.button > 0) return;
+    window.navigateTouchMenu = now => {
+        if(!activeWindow){menuDirection=null;return;}
+        const x=touchInput.x,y=touchInput.y;
+        const direction=Math.max(Math.abs(x),Math.abs(y))<.4?null:Math.abs(y)>=Math.abs(x)?(y<0?'moveUp':'moveDown'):(x<0?'moveLeft':'moveRight');
+        if(!direction){menuDirection=null;return;}
+        if(direction!==menuDirection||now>=menuRepeatAt){menuDirection=direction;menuRepeatAt=now+240;handleMenuKeyboard(KeyboardControls.bindings[direction]);}
+    };
+    joystick.addEventListener('pointerdown' , event => {
+        if ((isGamePaused() && !activeWindow) || movementPointer !== null || event.button > 0) return;
         event.preventDefault(); AudioSys.init(); movementPointer = event.pointerId;
         joystick.setPointerCapture(event.pointerId); moveJoystick(event);
     });
@@ -68,7 +76,7 @@
         // Pointer events cast on press; keyboard activation still casts on click.
         sword.onclick = event => { if (!event || event.detail === 0) { AudioSys.init(); castSpell(1); } };
     });
-    byId('interact-button').addEventListener('click', () => { if (!isGamePaused()) { AudioSys.init(); interactWithNearby(); } });
+    byId('interact-button').addEventListener('click', () => { if (!isGamePaused()) { AudioSys.init(); if(typeof Squad!=='undefined'&&Squad.active)Squad.order();else interactWithNearby(); } });
     byId('touch-toggle').addEventListener('click', () => {
         const enabled = !document.body.classList.contains('touch-mode');
         touchPreference = enabled ? 'on' : 'off';

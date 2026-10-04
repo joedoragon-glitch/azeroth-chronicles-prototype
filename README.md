@@ -1,82 +1,46 @@
-# Azeroth Chronicles — prototype v0.3
+# Azeroth Chronicles — prototype v0.5
 
-A small RPG made by the original author with Gemini, then repaired and adapted for Chromebook and mobile with Joel. The title, emoji art and story remain provisional.
+One hero-led adventure combining RPG progression and RTS squad commands. The original author’s emoji style and three provisional classes remain. Hero and companions share the world, encounters, dungeons and one save.
 
-## Play and install
+## Play
 
-Once GitHub Pages is enabled and deployment succeeds, open:
+Open https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ . The old `rts.html` link redirects here.
 
-**https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/**
+Install from Chrome on Chromebook/Android, or Safari → Share → Add to Home Screen on iPhone/iPad. Open once online to prepare the offline cache. Existing installs can use **Actualizar aplicación** in the menu. This is a PWA, without an APK or store package.
 
-On Chromebook or Android, use Chrome's install option, or **Menu → Instalar aplicación** when that button is available. On iPhone/iPad, use Safari **Share → Add to Home Screen**. This is an installable web app (PWA); it opens in its own app window. An APK or app-store package is not included.
+## Left-hand controls
 
-Open the app with internet once and wait for the menu to report that offline mode is ready. After that, the game assets work offline. Updates wait for **Menu → Actualizar aplicación** so they do not interrupt combat.
+WASD moves the hero. **Tab** switches between direct movement and the squad cursor; it changes controls within the same adventure. In cursor control, **E** selects, **F** gives contextual move/attack/gather/interact orders, and **backtick (`)** selects the hero and all living companions. **C** builds a barracks with a selected worker (120 gold); **R** trains a soldier at the barracks under the cursor (60 gold).
 
-**Repository owner: one-time hosting setup.** Open **Settings → Pages → Build and deployment → Source → GitHub Actions**. The deployment workflow is already included. If the first deployment ran before enabling Pages, re-run the failed job under **Actions → Test and deploy app**.
+**1–5** cast regular powers; **Space** casts the frequent sixth power (10 mana / 4 seconds); **left Shift** casts the seventh (60 mana / 90 seconds); **B** casts the eighth (60 mana / 120 seconds). Powers remain available while commanding the squad. Mouse clicks are optional shortcuts: powers 7/8 in direct control, select/order in cursor control. No mouse is required.
 
-## The playable loop
+**Escape** opens the menu or goes back; **Q is unused**. In direct control: R inventory, C talents, X spellbook, T quest, Z map, V pause, G help. Menus use WASD and E/F to buy, equip, train or accept quests. I/K/M/P/H remain legacy menu shortcuts. Controls are fixed; browser Ctrl/Alt/Meta shortcuts still work.
 
-Talk to the village commander → accept the mission → defeat five ordinary enemies and collect gold → return to claim the reward → buy and equip a better weapon, train abilities and spend talent points → challenge the boss.
+On mobile, the joystick, all eight powers, selection, group commands and interaction are on the **left**. Switch to Órdenes to steer the cursor; double-tap Seleccionar, then use Ordenar. In menus, use the same joystick and the left Confirmar/Volver buttons. Hold the basic attack for repeated attacks. Touch controls can be shown/hidden on hybrid Chromebooks.
 
-The village is a safe refuge that restores health and mana. Ordinary enemies respawn after eight seconds of game time, so the five-kill mission is possible with four ordinary spawn points. Menus, pause and backgrounding freeze combat and respawn timers. The boss's red circle announces an attack: leave the circle or use the shield.
+## Shared adventure and strategy
 
-## Controls
+Start with a soldier and worker. Companions follow and defend the hero; explicit orders direct them independently. Recruit at refuges through Escuadrón y órdenes or the starting captain. The limit is **six living companions**, including queued recruits. Recover fallen companions at a refuge for 40 gold. Workers gather finite wood, ore and crystals, returning them to a settlement as gold. Build up to four barracks in the outdoor world. Everyone travels with the hero into dungeons.
 
-**Guía breve en español para el autor y los jugadores: [CONTROLES.md](CONTROLES.md).** The prototype's keyboard design prioritizes the left hand. The mobile touch layout remains unchanged in v0.3.2.
+Accept the commander’s mission, defeat five ordinary enemies and claim the reward. Explore the 4200×4200 world, its forests, paved settlements and distant Dark Lord’s fortress. The starting town, frontier and summit are refuges. Z labels entrances, settlements and teachers.
 
-- **Touch:** drag the left joystick; tap the class abilities on the right (including the occasional sixth power). Hold **Espada** to repeat attacks at the normal cooldown. **Interactuar** talks, collects gold or selects a nearby enemy. **☰** opens all menus. Movement and combat support simultaneous fingers.
-- **Keyboard defaults:** WASD moves; 1–5 cast the five abilities; E/F interacts. In menus, WASD selects and F/E confirms. Q opens the menu or returns to it; R inventory, C talents, X ability book, T quest, Z map, V pause, G help. Older shortcuts (I/B, K, M, P, H, Enter/Space, Escape) remain available.
-- Menus support touch, mouse and keyboard. **Menu → Mostrar/Ocultar controles táctiles** overrides automatic touch detection on hybrid Chromebooks.
+Training progresses through three teachers: starting village caps ranks at **2**, frontier at **5**, summit at **8**. Each explains their limit and where to continue. Later settlements offer stronger equipment and expedition quests; frontier quests lead to the crypt/mine, summit quests to the bastion/citadel. No extra classes or lengthy story have been added.
 
-## Saves
+| Dungeon | Recommended level | Encounters | Completion reward |
+| --- | --- | --- | --- |
+| Cripta del Bosque | 3 | Three skeletons and a guardian | 100 gold + 150 XP |
+| Mina de los Colosos | 6 | Three ogres and a stone colossus | 220 gold + 400 XP |
+| Bastión del Abismo | 10 | Three spectres and an abyss dragon | 450 gold + 1000 XP |
+| Ciudadela de las Cenizas | 15 | Three custodians and an armored sentinel | 900 gold + 2400 XP |
 
-Automatic local saves run every five seconds and when leaving the app. v0.2 save exports remain compatible. **Exportar partida / Importar partida** moves progress between browsers or devices. Browser storage is local, not cloud synchronization. A downloaded HTML copy and the hosted app have different storage locations; export from the old copy and import in the app.
+Enter/exit with E/F near the portal/door. Levels are recommendations. Traps warn in amber before a brief red damage pulse; a pulse removes a fraction of maximum health, never a full health bar. Pillars constrain movement, and boss attacks show their area before landing. The citadel sentinel opens its armor briefly after each slam; a one-use fountain becomes available after defeating its custodians and restores 60% health/mana, including living companions’ health. Prepare with advanced training, equipment and consumables.
 
-## Development
+Defeated dungeon enemies stay defeated across reloads. Completion rewards pay once after all four enemies die. Living enemies recover when leaving/re-entering. Falling returns the party to the starting town; fallen companions require recovery. Outdoor enemies and the Dark Lord respawn in game time. Menus and backgrounding pause combat, queues, cooldowns and trap clocks.
 
-No framework, build step or runtime dependencies. Node 20+ runs the logic tests:
+## Saves and development
 
-```sh
-npm test
-python3 -m http.server 8000
-```
+Validated local saves run every five seconds and when leaving/backgrounding. Prior RPG v2 saves migrate without losing class, level, inventory or quests; companions are added. Old sixth-power cooldowns reset because that slot changed. The former standalone RTS save is not imported into this adventure. Export/import the shared save to move devices. There is no cloud synchronization.
 
-Open `http://localhost:8000` for development. Serve the folder over HTTP; opening `index.html` as a local file is not the installation/offline workflow.
+No build step or runtime dependencies. Node 20+ runs `npm test`; serve the repository with an HTTP server. `src/world.js` contains dungeon data, `src/game.js` hero/world rules, `src/squad.js` shared strategy, `src/controls.js` fixed controls, and `src/app.js` touch/PWA integration. The earlier standalone RTS implementation remains archived in `src/rts-engine.js`/`src/rts.js` and is not loaded by the game.
 
-| File | Purpose |
-| --- | --- |
-| `index.html` | Spanish UI and menus |
-| `src/game.js` | Game data, rules, input, simulation, drawing and saves |
-| `src/controls.js` | Left-hand keyboard defaults and saved key bindings |
-| `src/app.js` | Touch input, app installation and update UI |
-| `styles/game.css`, `styles/app.css` | Base theme and responsive app layout |
-| `manifest.webmanifest`, `icons/` | App identity and installation icons |
-| `sw.js` | Offline asset cache; bump `CACHE_VERSION` when changing app assets |
-| `tests/` | Gameplay, touch, offline and browser regression checks |
-| `.github/workflows/pages.yml` | Tests, then GitHub Pages deployment |
-
-## Verification and scope
-
-55 automated logic checks cover gameplay/keyboard (41), app behavior (8) and offline caching (6). These use controlled DOM/canvas and service-worker substitutes. The full mission-to-boss simulation also runs with actual cooldowns, mana, incoming damage and respawns. Keyboard checks cover simultaneous movement/casting, menu actions, remapping, conflict rejection, reload persistence and reset. These checks verify rules; device feel still needs playtesting.
-
-CI also runs Chromium checks at desktop, Chromebook-touch, phone portrait, small-phone and landscape sizes before deployment. To run those locally, install Playwright 1.62.1 and its Chromium browser, then run `node tests/browser.test.cjs`. Browser screenshots are saved as CI artifacts.
-
-Repairs include non-stacking equipment bonuses, target/range validation before spending mana, consistent potion values, upgrade scaling, one-time quest rewards, multiple level-ups, stable movement/friction, scenery collisions, safe projectile processing, pauses, respawns and validated save imports. v0.3 adds two-thumb controls, compact portrait/landscape layouts, install metadata and offline support. The repaired v0.2 checkpoint is preserved in Git history.
-
-## RTS control laboratory (v0.4)
-
-Open [the RTS prototype](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/rts.html), or choose **Probar RTS · mano izquierda** in the RPG menu. The RPG remains available with its own save.
-
-The RTS has a paladin, workers and recruitable soldiers, two towns, resource gathering, barracks, weapon upgrades, stronger frontier enemies, a skeleton captain and the distant dark lord fortress. Forest scenery, rock barriers and a river with two bridges give the army a route across the map. A minimap shows the whole field. Trees are decorative; rocks and water block movement and units plan paths through the bridges.
-
-Move the cursor with the **left joystick**. **Double-tap the left selection pad** to select under the cursor (one tap does not select). Toggle additive selection or select the whole group with the left buttons. The sole right button gives contextual orders: move, gather, resume building, or attack. Hold the joystick with one thumb while using the right order button. Moving the cursor to the field edge scrolls the camera. Cursor speed is adjustable in the left menu.
-
-Keyboard: WASD cursor, E select, F order, 1 all units, 2 construct / recruit / NPC service, 3 stop, Q menu. The key layout is fixed. Mouse left-click selects and right-click orders. The simulation pauses in menus and when the app loses focus. Progress saves locally every five seconds; reopening safely stops previous orders. Restart affects only the RTS save.
-
-This is a small playable control experiment, without multiplayer, extensive art, or a finished campaign. Its purpose is to test comfort and gameplay, not establish a causal claim about which hand makes games commercially successful.
-
-## RPG feedback in v0.4
-
-Choose Paladin, Frost Mage or Ranger in the opening help before starting a new RPG save. Each has its own starter weapon and different skills: melee healing/invulnerability, ranged frost/mana recovery, or bow double shots/bandages/haste. The sixth power uses right-click or its touch button, costs 50 mana and has a 90-second cooldown. It is never required to hold the mouse. Older saves retain Paladin and are migrated safely. Changing classes requires a new RPG game; the RTS save is independent.
-
-The RPG now has a persistent upper-right minimap and desktop session tools in the lower-right. The latest author feedback supersedes v0.3.2: player key rebinding has been removed, and previously saved key preferences are ignored. WASD, 1–5, E/F and left-side menu keys remain fixed, with legacy shortcuts retained.
+GitHub Actions checks logic and Chromium behavior on desktop, touch Chromebook, two phone sizes and landscape, deploys Pages, then repeats browser checks on the public app. Screenshots are CI artifacts. Endgame tuning and the left-hand control experiment still need the author’s playtesting feedback.
