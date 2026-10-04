@@ -17,9 +17,24 @@ const attacks={
 const sites=[
  [['bridge-north','Mill bridge',1200,750],['bridge-south','Southern footbridge',1200,1750],['orchard','Abandoned orchard',1050,740],['den-ruins','Orchard den ruins',800,1280],['mill-pond','Mill pond',710,1260],['cache','Woodland supply cache',1550,1150]],
  [['night-site','Lantern shore',1700,900],['wagon','Stranded supply wagon',1000,1150],['watch','Causeway watch platform',1700,1300],['dock','Sunken dock',2050,1800]],
- [['bridge-north','Stone bridge',1300,950],['bridge-south','Timber crossing',1300,1870],['lookout','Highland lookout',1800,600],['ore','Stonecross ore vein',1100,1300],['tower','Ruined watchtower',1900,800]],
+ [['bridge-north','Stone bridge',1300,950],['bridge-south','Timber crossing',1300,1870],['lookout','Highland lookout',1800,600],['ore','Stonecross ore vein',1100,650],['tower','Ruined watchtower',1900,800]],
  [['bridge-north','Guarded ravine bridge',1450,750],['bridge-south','Burned forest crossing',1450,2160],['shrine','Ruined shrine',1100,1080],['overlook','Ravine overlook',1350,1800],['checkpoint','Occupied checkpoint',1750,1400],['convoy','Supply convoy',1200,950]],
  [['bridge-north','Lava ridge bridge',1350,1000],['bridge-south','Southern stone crossing',1350,2400],['foundry','Ruined foundry',850,1800],['shelf','Crystal shelf',1100,2100],['siege','Siege camp',2250,1850],['fortress-gate','Dark fortress gate',2350,2450]]
+];
+// Explicit destinations for supplies and finite worker expeditions. No town nodes.
+const expeditions=[
+ {resource:'cache',supplies:['orchard','den-ruins','cache'],name:'Woodland timber'},
+ {resource:'wagon',supplies:['wagon','watch','dock'],name:'Salvaged provisions'},
+ {resource:'ore',supplies:['ore','lookout','tower'],name:'Stonecross ore'},
+ {resource:'shrine',supplies:[],name:'Shrine salvage'},
+ {resource:'foundry',supplies:['foundry','shelf','siege'],name:'Foundry crystals'}
+];
+const miniPlans=[
+ {field:'Orchard den stockade',resource:'Woodland cache ruins',theme:'stockade'},
+ {field:'Mirejaw island redoubt',resource:'Stranded wagon enclosure',theme:'palisade'},
+ {field:'Mountain watchtower yard',resource:'Abandoned quarry works',theme:'stonewall'},
+ {field:'Warlord checkpoint',resource:'Ruined shrine courtyard',theme:'stonewall'},
+ {field:'Dark fortress courtyard',resource:'Ruined foundry works',theme:'stonewall'}
 ];
 const quest=(kind,target,sites=[])=>({kind,target,sites});
 const quests=[
@@ -29,6 +44,7 @@ const quests=[
  quest('rescue','warlord'),quest('escort'),quest('rescue','abyss'),quest('patrol',8),quest('sites',null,['shrine','minor','overlook']),quest('sites',null,['port']),
  quest('rescue','citadel'),quest('patrol',8),quest('rescue','darklord'),quest('bundles',3),quest('sites',null,['foundry','shelf','siege']),quest('sites',null,['fortress-gate'])
 ];
+for(const [index,family]of [[0,'thorn'],[6,'mire'],[12,'ridge'],[18,'warlord'],[26,'darklord']])quests[index].clear='field-'+family;
 const terrain=[
  [{x:630,y:1320,r:125}],[],[{x1:520,x2:650,y1:430,y2:1050}], [{x1:1740,x2:1810,y1:1020,y2:1220}], [{x1:2110,x2:2190,y1:2000,y2:2720,gaps:[[2260,2520]]}]
 ];
@@ -47,6 +63,7 @@ const decorPosts=[[300,350],[460,300],[1050,300],[1280,650],[300,620],[450,1150]
 const rangedProfiles={goblin:{variant:'slinger',shotRange:240,shotSpeed:240,projectileStyle:'stone'},skeleton:{variant:'bow guard',shotRange:290,shotSpeed:280,projectileStyle:'arrow'},reedbeast:{variant:'spitter',hybrid:true,shotRange:250,shotSpeed:220,projectileStyle:'spit'},mireling:{variant:'spitter',hybrid:true,shotRange:230,shotSpeed:230,projectileStyle:'spit'},ogre:{variant:'stone thrower',hybrid:true,shotRange:260,shotSpeed:220,projectileStyle:'stone'},orc:{variant:'axe thrower',hybrid:true,shotRange:260,shotSpeed:250,projectileStyle:'stone'},ashbeast:{variant:'cinder spitter',hybrid:true,shotRange:270,shotSpeed:240,projectileStyle:'cinder'}};
 const forests=[[[470,850,210,280],[1850,1050,250,320],[550,1800,260,180]],[[650,1650,240,200],[1950,1000,200,300],[2050,2300,230,170]],[[850,600,150,210],[1900,1500,240,350],[650,2100,230,200]],[[600,1300,250,250],[2100,1900,270,260],[1100,2300,200,160]],[[800,1100,230,250],[1850,1600,240,300],[2400,1050,170,200]]];
 const teachers={thorn:{learn:[2],train:[1,2],maxRank:2},mire:{learn:[3,4,6],train:[1,2,3,4,6],maxRank:3},ridge:{learn:[5],train:[1,2,3,4,5,6],maxRank:4},warlord:{learn:[7],train:[1,2,3,4,5,6,7],maxRank:6},citadel:{learn:[8],train:[1,2,3,4,5,6,7,8],maxRank:8}};
-const R={teachers,rangedProfiles,guardPosts,dungeonTraps,decorTypes,decorPosts,forests,attacks,sites,quests,terrain,dungeonWalls,pillars};
+const progression={ordinaryXpMultiplier:.5,levelGapRewards:[1,.75,.4,.1,0]};
+const R={progression,miniPlans,expeditions,teachers,rangedProfiles,guardPosts,dungeonTraps,decorTypes,decorPosts,forests,attacks,sites,quests,terrain,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
