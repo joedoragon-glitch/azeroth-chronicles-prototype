@@ -17,3 +17,12 @@ console.log('PASS ringleaders and bosses retain challenge rewards, guardians sta
  const questXP=D.quests.reduce((n,q)=>n+q[4],0),mobXP=D.regions.reduce((n,r)=>n+r.enemy_count*Math.floor(r.enemy_xp*.5),0);assert(questXP>mobXP*1.5);
 }
 console.log('PASS trivial farming pays nothing and one-time quests dominate a complete ordinary population sweep');
+{
+ const baselineHp=[65,170,275,380,485],baselineDamage=[7,15,23,31,39];
+ for(const [i,region] of D.regions.entries()){const c=new C('normal','paladin',()=>.9);c.enter(region.id);const cfg=C.rules.ordinaryMeleeScaling[i],melee=c.zone().enemies.find(e=>e.type==='mob'&&!e.guard&&!e.ranged&&!e.nightOnly&&e.form==='normal');assert(melee,region.id+' melee fixture');assert.equal(melee.baseHp,Math.round(baselineHp[i]*cfg.hp));assert.equal(melee.baseDamage,Math.round(baselineDamage[i]*cfg.damage));const ranged=c.zone().enemies.find(e=>e.type==='mob'&&!e.guard&&e.ranged&&!e.nightOnly&&e.form==='normal');if(ranged){assert.equal(ranged.baseHp,baselineHp[i]);assert.equal(ranged.baseDamage,baselineDamage[i]);}}
+}
+console.log('PASS ordinary melee durability and damage scale by region without buffing ranged variants');
+{
+ const c=new C('normal','paladin',()=>.9);c.enter('crown');const raw=JSON.parse(JSON.stringify(c.s)),z=raw.zones.crown,e=z.enemies.find(e=>e.type==='mob'&&!e.guard&&!e.ranged&&!e.nightOnly&&e.form==='normal'),cfg=C.rules.ordinaryMeleeScaling[4];delete z.meleeBalanceVersion;Object.assign(e,{baseHp:485,maxHp:485,hp:242.5,baseDamage:39,damage:39});delete e.meleeBalanceVersion;const r=C.restore(raw),m=r.zone().enemies.find(x=>x.id===e.id);assert.equal(m.baseHp,Math.round(485*cfg.hp));assert.equal(m.baseDamage,Math.round(39*cfg.damage));assert(Math.abs(m.hp/m.maxHp-.5)<1e-9);const again=C.restore(r.snapshot()),m2=again.zone().enemies.find(x=>x.id===e.id);assert.equal(m2.baseHp,m.baseHp);assert.equal(m2.baseDamage,m.baseDamage);
+}
+console.log('PASS existing saves upgrade melee stats once while preserving wounded state and avoiding compounding');
