@@ -1355,10 +1355,25 @@
             // 10. Render Floating Combat Damage / Text
             floatingTexts.forEach(ft => {
                 const ftIso = worldToIso(ft.wx, ft.wy);
-                ctx.font = '800 15px sans-serif';
+                const isMessage = ft.text.length > 24;
+                ctx.font = isMessage ? '700 12px sans-serif' : '800 15px sans-serif';
                 ctx.fillStyle = ft.color;
                 ctx.textAlign = 'center';
-                ctx.fillText(ft.text, ftIso.x, ftIso.y);
+                if (isMessage) {
+                    // Los avisos largos deben caber en una pantalla de teléfono.
+                    const width = Math.min(300, canvas.width - 24), lines = [];
+                    let line = '';
+                    for (const word of ft.text.split(/\s+/)) {
+                        const next = line ? line + ' ' + word : word;
+                        if (line && ctx.measureText(next).width > width) { lines.push(line); line = word; }
+                        else line = next;
+                    }
+                    if (line) lines.push(line);
+                    const screenX = Math.max(width / 2 + 12, Math.min(canvas.width - width / 2 - 12, ftIso.x + cameraX));
+                    ctx.save(); ctx.shadowColor = '#000'; ctx.shadowBlur = 5;
+                    lines.forEach((text, index) => ctx.fillText(text, screenX - cameraX, ftIso.y + index * 16, width));
+                    ctx.restore();
+                } else ctx.fillText(ft.text, ftIso.x, ftIso.y);
             });
 
             ctx.restore();

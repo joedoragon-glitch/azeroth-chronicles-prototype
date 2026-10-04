@@ -10,6 +10,7 @@ function fresh({ deniedStorage = false, saved = null } = {}) {
   const storage = new Map(saved ? [['azeroth-chronicles-prototype-save-v2', saved]] : []);
   const ctx = new Proxy({}, { get(target, name) {
     if (name in target) return target[name];
+    if (name === 'measureText') return text => ({width: String(text).length * 7});
     return (...args) => {
       for (const n of args) if (typeof n === 'number') assert(Number.isFinite(n), `Canvas ${name}: ${n}`);
       if (name === 'fillText') assert(typeof args[0] === 'string', 'Floating text must be a string');
