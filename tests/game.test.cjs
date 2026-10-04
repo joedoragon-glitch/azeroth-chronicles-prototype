@@ -351,6 +351,7 @@ test('Workers gather and deposit finite gold, build barracks and recruit only wi
 });
 test('Companions fight actual enemies, take boss/trap damage and preserve old RPG progress',()=>{
  const g=ready({withSquad:true});g.run(`player.wx=700;player.wy=650;Squad.region();const enemy=enemies[0],hp=enemy.hp;for(let n=0;n<60;n++)updateGame(.05);window.companionDamage=enemy.hp<hp;`);assert(g.run(`return window.companionDamage;`));
+ g.run(`player.wx=300;player.wy=300;const s=Squad.units[0],e=enemies[0];s.wx=e.wx+20;s.wy=e.wy;e.aggro=false;e.attackCd=0;window.hpBefore=s.hp;updateGame(.05);`);assert(g.run(`return Squad.units[0].hp<window.hpBefore;`),'enemies must fight ordered units while the hero stays in town');
  g.run(`changeRegion('citadel');const u=Squad.units[0];u.wx=550;u.wy=550;const t=dungeonTraps.find(inRegion);Squad.traps(t,0);window.trapHP=u.hp;Squad.traps(t,0);`);assert(g.run(`return Squad.units[0].hp===window.trapHP&&Squad.units[0].hp>0;`));
  g.run(`Squad.area(Squad.units[0],100,10000);`);assert(g.run(`return Squad.units[0].hp===0;`));
  const raw=g.run(`const s=saveSnapshot();delete s.squad;return JSON.stringify(s);`);const old=ready({withSquad:true,saved:raw});assert(old.run(`return activeRegion==='citadel'&&Squad.units.length===2&&player.level===1;`));

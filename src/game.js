@@ -1142,7 +1142,7 @@
                 const target=typeof Squad!=='undefined'?Squad.target(enemy):player;
                 const dist = Math.hypot(target.wx - enemy.wx, target.wy - enemy.wy);
                 const homeDist = Math.hypot(enemy.wx - enemy.spawnWx, enemy.wy - enemy.spawnWy);
-                if ((!enemy.region&&homeDist>600) || (enemy.aggro && (dist > (enemy.region?950:650) || isInTown()))) { enemy.returning = true; enemy.aggro = false; enemy.telegraph = null; }
+                if ((!enemy.region&&homeDist>600) || (enemy.aggro && (dist > (enemy.region?950:650) || isInTown(target.wx,target.wy)))) { enemy.returning = true; enemy.aggro = false; enemy.telegraph = null; }
                 if (enemy.returning) {
                     const dx = enemy.spawnWx - enemy.wx, dy = enemy.spawnWy - enemy.wy;
                     const home = Math.hypot(dx, dy), step = 190 * dt;
@@ -1150,7 +1150,7 @@
                     else moveEnemyToward(enemy, enemy.spawnWx, enemy.spawnWy, 190, dt);
                     continue;
                 }
-                if (dist <= (enemy.region?240:320) && !isInTown()) enemy.aggro = true;
+                if (dist <= (enemy.region?240:320) && !isInTown(target.wx,target.wy)) enemy.aggro = true;
                 if (!enemy.aggro) continue;
                 if (enemy.telegraph) {
                     enemy.telegraph.remaining -= dt;

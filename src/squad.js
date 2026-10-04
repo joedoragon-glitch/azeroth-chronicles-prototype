@@ -110,7 +110,7 @@ const Squad = (() => {
         }
         for(const b of buildings.filter(inRegion)){if(b.queue>0){b.queue=Math.max(0,b.queue-dt);if(b.queue===0)units.push(spawn('soldier',{wx:b.wx+75,wy:b.wy}));}}
     }
-    function target(enemy){return [player,...units.filter(u=>u.hp>0&&inRegion(u)&&!isInTown(u.wx,u.wy))].sort((a,b)=>Math.hypot(a.wx-enemy.wx,a.wy-enemy.wy)-Math.hypot(b.wx-enemy.wx,b.wy-enemy.wy))[0];}
+    function target(enemy){return ([player,...units.filter(u=>u.hp>0&&inRegion(u))].filter(u=>!isInTown(u.wx,u.wy))).sort((a,b)=>Math.hypot(a.wx-enemy.wx,a.wy-enemy.wy)-Math.hypot(b.wx-enemy.wx,b.wy-enemy.wy))[0]||player;}
     function hurt(u,amount){if(u.hp<=0)return;u.hp=Math.max(0,u.hp-amount);if(!u.hp){u.order=null;u.carry=0;selected=selected.filter(id=>id!==u.id);addFloatingText(u.name+' cayó. Recupéralo en un refugio (40g).',u.wx,u.wy,'#fca5a5');}}
     function area(p,r,damage){for(const u of units.filter(u=>u.hp>0&&inRegion(u)))if(Math.hypot(u.wx-p.wx,u.wy-p.wy)<=r)hurt(u,damage);}
     function traps(t,cycle){for(const u of units.filter(u=>u.hp>0&&inRegion(u))){const id=t.wx+':'+t.wy;if(u.trapHits[id]!==cycle&&Math.hypot(u.wx-t.wx,u.wy-t.wy)<=t.radius){u.trapHits[id]=cycle;hurt(u,u.maxHp*t.fraction);}}}
