@@ -234,6 +234,7 @@ test('Mage and ranger classes have unique weapons, abilities and saved progressi
 test('Sixth power validates targets and mana, pays once and pauses its long cooldown',()=>{
  const g=ready();g.run(`castSpell(6);`);assert(g.run(`return player.mp===60&&player.cds[6]===0;`));g.run(`player.wx=700;player.wy=650;castSpell(6);castSpell(6);`);assert(g.run(`return player.mp===10&&player.cds[6]===90;`));g.run(`openWindow('inventory');updateGame(5);`);assert(g.run(`return player.cds[6]===90;`));
 });
+test('The sixth ability button also works with keyboard activation',()=>{const g=ready();g.run(`player.wx=700;player.wy=650;`);g.emit('keydown',{code:'Enter',target:{tagName:'DIV',id:'slot-6'}});assert(g.run(`return player.cds[6]===90&&player.mp===10;`));});
 test('Older RPG saves without classes or a sixth cooldown still restore',()=>{
  const g=ready();const raw=g.run(`const s=saveSnapshot();delete s.player.heroClass;delete s.player.classChosen;delete s.player.hasteTimer;delete s.player.cds[6];delete s.player.spellLevels[6];return JSON.stringify(s);`);const old=ready({saved:raw});assert(old.run(`return player.heroClass==='paladin'&&player.cds[6]===0&&player.spellLevels[6]===1;`));
 });

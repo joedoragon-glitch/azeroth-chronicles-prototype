@@ -381,7 +381,7 @@
             if (e.ctrlKey || e.altKey || e.metaKey) return;
             // Dejar que los botones nativos respondan a Enter/Espacio, sin lanzar ataques.
             if (e.target && /^(BUTTON|A)$/.test(e.target.tagName) && ['Enter','Space'].includes(code)) return;
-            if (e.target && /^slot-[1-5]$/.test(e.target.id || '') && ['Enter','Space'].includes(code)) {
+            if (e.target && /^slot-[1-6]$/.test(e.target.id || '') && ['Enter','Space'].includes(code)) {
                 e.preventDefault(); if (!e.repeat) castSpell(Number(e.target.id.slice(-1))); return;
             }
             const action = KeyboardControls.actionFor(code);
