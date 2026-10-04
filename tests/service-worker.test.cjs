@@ -3,7 +3,7 @@ const source=fs.readFileSync(path.join(__dirname,'../sw.js'),'utf8');
 function fresh(){
   const handlers={},cache=new Map(),deleted=[],state={fetches:0,offline:false,claimed:0,skipped:0};
   const scope='https://example.test/azeroth-chronicles-prototype/';
-  const caches={async open(){return {async addAll(urls){for(const url of urls){const file=url===scope?'index.html':url.slice(scope.length);assert(fs.existsSync(path.join(__dirname,'..',file)),file);cache.set(url,new Response('cached:'+file))}},async match(key){return cache.get(key)}}},async keys(){return ['unrelated-cache','azeroth-app-old','azeroth-app-v0.4.0']},async delete(key){deleted.push(key);return true}};
+  const caches={async open(){return {async addAll(urls){for(const url of urls){const file=url===scope?'index.html':url.slice(scope.length);assert(fs.existsSync(path.join(__dirname,'..',file)),file);cache.set(url,new Response('cached:'+file))}},async match(key){return cache.get(key)}}},async keys(){return ['unrelated-cache','azeroth-app-old','azeroth-app-v0.4.1']},async delete(key){deleted.push(key);return true}};
   const self={registration:{scope},addEventListener(k,fn){handlers[k]=fn},clients:{async claim(){state.claimed++}},skipWaiting(){state.skipped++}};
   vm.runInNewContext(source,{self,caches,URL,Response,fetch:async()=>{state.fetches++;if(state.offline)throw Error('offline');return new Response('network')},console});
   return {state,cache,deleted,scope,async emit(name,props={}){let pending,response;handlers[name]({...props,waitUntil(p){pending=p},respondWith(p){response=p}});if(pending)await pending;return response?await response:undefined}};

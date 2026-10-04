@@ -375,6 +375,7 @@
 
         window.addEventListener('keydown', (e) => {
             const code = e.code;
+            if(activeWindow==='help'&&!player.classChosen&&!e.ctrlKey&&!e.altKey&&!e.metaKey&&['Digit1','Digit2','Digit3'].includes(code)){e.preventDefault();if(!e.repeat)chooseHeroClass({Digit1:'paladin',Digit2:'mage',Digit3:'ranger'}[code]);return;}
             if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
             // Conservar atajos del navegador (Ctrl, Alt, Cmd); Shift permite WASD normal.
             if (e.ctrlKey || e.altKey || e.metaKey) return;

@@ -22,10 +22,11 @@ function overlap(a,b){return a.x<b.x+b.width&&a.x+a.width>b.x&&a.y<b.y+b.height&
       const context=await browser.newContext({viewport:{width:size.width,height:size.height},hasTouch:size.touch,isMobile:size.touch&&size.width<900});
       const page=await context.newPage(),errors=[];page.on('pageerror',error=>errors.push(error.message));
       page.on('console',message=>{if(message.type()==='error')errors.push(message.text())});
-      await page.goto(base);await page.getByRole('button',{name:'Jugar [Enter / ESC]',exact:true}).click();
+      await page.goto(base);if(!size.touch){await page.keyboard.press('2');assert.equal(await page.evaluate(()=>player.heroClass),'mage');}await page.getByRole('button',{name:'Jugar [Enter / ESC]',exact:true}).click();
       await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
       assert.equal(await page.evaluate(()=>document.body.classList.contains('touch-mode')),size.touch,size.name);
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'horizontal overflow: '+size.name);
+      const mini=await page.locator('#mini-map-button').boundingBox(),objective=await page.locator('#objective-tracker').boundingBox();assert(!overlap(mini,objective),'RPG minimap overlaps objective: '+size.name);
       if(size.touch){
         const joystick=await page.locator('#joystick').boundingBox(),bar=await page.locator('#action-bar').boundingBox();
         assert(joystick&&bar&&!overlap(joystick,bar),'thumb controls overlap: '+size.name);
@@ -74,7 +75,8 @@ function overlap(a,b){return a.x<b.x+b.width&&a.x+a.width>b.x&&a.y<b.y+b.height&
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'RTS overflow');
       const primary=await page.locator('#rts-primary').boundingBox(),order=await page.locator('#rts-order').boundingBox(),stick=await page.locator('#rts-joystick').boundingBox();
       assert(primary.x+primary.width/2<size.width/2,'primary action must stay left');
-      assert(order.x>size.width/2,'orders must stay right');assert(!overlap(stick,primary)&&!overlap(stick,order),'RTS input overlap');
+      assert(order.x>size.width/2,'orders must stay right');
+      for(const id of ['rts-primary','rts-order','rts-joystick','rts-add']){const r=await page.locator('#'+id).boundingBox();assert(r.x>=0&&r.y>=0&&r.x+r.width<=size.width+1&&r.y+r.height<=size.height+1,'RTS control outside viewport: '+id+' '+size.name);}assert(!overlap(stick,primary)&&!overlap(stick,order),'RTS input overlap');
       if(size.touch){
         await page.touchscreen.tap(primary.x+primary.width/2,primary.y+primary.height/2);
         assert.match(await page.locator('#rts-stats').innerText(),/0 seleccionadas/,'one tap must not select');

@@ -12,3 +12,5 @@ body:not(.touch-mode) #session-tools{top:auto;left:auto;right:12px;bottom:110px;
 body[data-hero-class="mage"] [id^="slot-"]:not(#slot-6) > .absolute:last-child,body[data-hero-class="ranger"] [id^="slot-"]:not(#slot-6) > .absolute:last-child{display:none}
 
 #menu-rts{grid-column:1/-1;background:#253d38}
+
+@media(min-width:901px){body #objective-tracker{right:168px;max-width:300px}}
