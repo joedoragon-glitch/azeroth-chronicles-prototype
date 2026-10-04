@@ -1,7 +1,9 @@
 /* Small, deterministic canvas drawings. Appearance only: no campaign state changes. */
 (function(root){
 'use strict';
+const R=typeof PrototypeRules!=='undefined'?PrototypeRules:require('./rules.js');
 function draw(ctx,e,p,region=0,rescued=false){
+ if(e.kind==='landmark'&&e.id?.startsWith('bridge-'))return; // The full deck is drawn in world space.
  ctx.save();ctx.translate(p.x,p.y);ctx.lineJoin='round';ctx.lineCap='round';
  const ink='#25312d',bone='#e7ddbf',steel='#9eafb6',gold='#d3b46c',skin='#dfb18b';
  const poly=(v,c)=>{ctx.fillStyle=c;ctx.strokeStyle=ink;ctx.lineWidth=1.2;ctx.beginPath();v.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fill();ctx.stroke();};
@@ -117,8 +119,42 @@ function draw(ctx,e,p,region=0,rescued=false){
  ctx.restore();
 }
 function height(e){if(e.type==='boss')return 85;if(e.renderKind==='hero'&&e.class==='mage'||e.renderKind==='prop')return 64;if(['dungeon','exit','transport'].includes(e.kind))return 64;return 54;}
+// World-space surfaces avoid losing narrow barriers between coarse tile samples.
+function terrain(ctx,screen,region=0){
+ const {kind,bounds:[x1,x2,y1,y2]}=R.barriers[region];
+ const palette=kind==='water'?['#285d70','#397f92','#84b4b3']:kind==='lava'?['#753c2e','#d16c38','#e5a55b']:['#252a2c','#394044','#93917d'];
+ const polygon=(points,color)=>{ctx.fillStyle=color;ctx.beginPath();points.forEach((q,j)=>{const p=screen(q);j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);});ctx.closePath();ctx.fill();};
+ const rect=(a,b,c,d,color)=>polygon([{x:a,y:c},{x:b,y:c},{x:b,y:d},{x:a,y:d}],color);
+ const line=(a,b,color,width)=>{a=screen(a);b=screen(b);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();};
+ ctx.save();
+ rect(x1,x2,y1,y2,palette[0]);
+ rect(x1+8,x2-8,y1+8,y2-8,palette[1]);
+ for(const x of [x1,x2])line({x,y:y1},{x,y:y2},palette[2],2);
+ for(let y=y1+30;y<y2-20;y+=70){const inset=Math.min(22,(x2-x1)/4);line({x:x1+inset,y},{x:x2-inset,y:y+12},palette[2],kind==='ravine'?1:2);}
+ // Other authored ponds and walls also use exact shapes, independent of props.
+ for(const p of R.terrain[region]){
+  if(p.r){const points=[];for(let n=0;n<48;n++){const a=n*Math.PI/24;points.push({x:p.x+Math.cos(a)*p.r,y:p.y+Math.sin(a)*p.r});}polygon(points,'#397f92');}
+  else {let start=p.y1;for(const [lo,hi]of p.gaps||[]){rect(p.x1,p.x2,start,lo,'#62645b');start=hi;}rect(p.x1,p.x2,start,p.y2,'#62645b');}
+ }
+ ctx.restore();
+}
+function bridges(ctx,screen,region=0){
+ const {bounds:[x1,x2],gaps}=R.barriers[region],stone=region>=2;
+ const polygon=(points,color)=>{ctx.fillStyle=color;ctx.beginPath();points.forEach((q,j)=>{const p=screen(q);j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);});ctx.closePath();ctx.fill();};
+ const line=(a,b,color,width=1)=>{a=screen(a);b=screen(b);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();};
+ ctx.save();
+ for(const [lo,hi]of gaps){
+  polygon([{x:x1-18,y:lo},{x:x2+18,y:lo},{x:x2+18,y:hi},{x:x1-18,y:hi}],stone?'#a6a08c':'#b49468');
+  for(let x=x1-12;x<x2+18;x+=stone?40:18)line({x,y:lo},{x,y:hi},stone?'#716e61':'#705338');
+  for(const y of [lo,hi]){
+   line({x:x1-18,y},{x:x2+18,y},stone?'#d0cbb5':'#e0c394',3);
+   for(const x of [x1-12,x2+12]){const p=screen({x,y});ctx.strokeStyle=stone?'#bdb7a4':'#c5a577';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x,p.y-12);ctx.stroke();}
+  }
+ }
+ ctx.restore();
+}
 function roads(ctx,paths,screen,region=0){
- const strips=[[1160,1240,60,2300],[1120,1690,1450,2070],[1250,1350,120,2400],[1400,1510,200,2450],[1300,1410,300,2810]],strip=strips[region];
+ const strip=R.barriers[region].bounds;
  const bridge=p=>p.x>=strip[0]-12&&p.x<=strip[1]+12&&p.y>=strip[2]&&p.y<=strip[3];
  const polygon=(points,color)=>{ctx.fillStyle=color;ctx.beginPath();points.forEach((q,j)=>{const p=screen(q);j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);});ctx.closePath();ctx.fill();};
  const segment=(a,b,w,color)=>{const d=Math.hypot(b.x-a.x,b.y-a.y);if(!d)return;const dx=-(b.y-a.y)/d*w,dy=(b.x-a.x)/d*w;polygon([{x:a.x+dx,y:a.y+dy},{x:b.x+dx,y:b.y+dy},{x:b.x-dx,y:b.y-dy},{x:a.x-dx,y:a.y-dy}],color);};
@@ -137,6 +173,6 @@ function roads(ctx,paths,screen,region=0){
 
  ctx.restore();
 }
-root.PrototypeVisuals={draw,height,roads};
+root.PrototypeVisuals={draw,height,roads,terrain,bridges};
 if(typeof module!=='undefined')module.exports=root.PrototypeVisuals;
 })(typeof window!=='undefined'?window:globalThis);

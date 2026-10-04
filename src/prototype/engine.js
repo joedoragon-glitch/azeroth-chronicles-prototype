@@ -34,8 +34,7 @@ class Campaign{
   if(!size||x<40+radius||y<40+radius||x>size-40-radius||y>size-40-radius)return true;
   if(dungeon){const [a,b,gaps]=R.dungeonWalls[zone];if(x>a-radius&&x<b+radius&&y>120&&y<1260&&!gaps.some(([l,h])=>y>l+radius&&y<h-radius))return true;}
   else {
-   const strips=[[1160,1240,60,2300,[[660,840],[1660,1840]]],[1120,1690,1450,2070,[[1710,1850]]],[1250,1350,120,2400,[[860,1100],[1770,1980]]],[1400,1510,200,2450,[[630,870],[2070,2250]]],[1300,1410,300,2810,[[850,1150],[2260,2510]]]];
-   const [a,b,c,e,gaps]=strips[i];if(x>a-radius&&x<b+radius&&y>c-radius&&y<e+radius&&!gaps.some(([l,h])=>y>l+radius&&y<h-radius))return true;
+   const {bounds:[a,b,c,e],gaps}=R.barriers[i];if(x>a-radius&&x<b+radius&&y>c-radius&&y<e+radius&&!gaps.some(([l,h])=>y>l+radius&&y<h-radius))return true;
   }
   if(!dungeon)for(const p of R.terrain[i])if(p.r?Math.hypot(x-p.x,y-p.y)<p.r+radius:x>p.x1-radius&&x<p.x2+radius&&y>p.y1-radius&&y<p.y2+radius&&!(p.gaps||[]).some(([l,h])=>y>l+radius&&y<h-radius))return true;
   const z=this.s.zones[zone];return !terrainOnly&&z?.props.some(p=>!p.decorative&&Math.hypot(x-p.x,y-p.y)<p.r+radius)||false;

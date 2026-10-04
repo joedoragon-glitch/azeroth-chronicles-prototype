@@ -1,10 +1,10 @@
-# Azeroth Chronicles — expanded prototype v0.7.6
+# Azeroth Chronicles — expanded prototype v0.7.7
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families each have four warned attacks. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
 ## Play
 
-Play online at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ . This is the expanded v0.7.6 adventure. Existing installs can use the game update action in the menu; future updates save before reloading.
+Play online at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ . This is the expanded v0.7.7 adventure. Existing installs can use the game update action in the menu; future updates save before reloading.
 
 For an offline portable copy, download `release/Azeroth_Chronicles_Playtest.html` and open it in Chrome or another current browser. The whole game, music and sound are embedded; no installation, server or internet connection is needed. Press a key or tap to start sound. Download the HTML instead of viewing its source in GitHub. The earlier v0.5 adventure remains available at `legacy.html`.
 
@@ -81,3 +81,5 @@ Refuge fix v0.7.5 gives all refuge restoration a shared 90-second cooldown in ac
 The Citadel preparation fountain retains its single-use and guardian-clear requirements, and also blocks restoration during nearby combat.
 
 Presentation update v0.7.6 adds restrained armor, cloth, equipment and creature detail to the three heroes and ten boss families. The environment, regular enemies, companions and NPCs retain their artwork. Landed hero, companion and enemy basic melee attacks and boss cleaves now have a short percussive impact sound on the Effects channel, with a short crowd throttle. Enemy projectiles travel 15% faster; their windups, damage and travel distance are unchanged. Saved enemy projectile bases are not multiplied repeatedly.
+
+Terrain visibility fix v0.7.7 renders the Vale river, marsh water, highland/frontier ravines and Crown lava channel at their exact collision boundaries. All nine crossing gaps have full bridge decks, including the southern footbridge without a main road. Terrain rendering and collision share the same geometry; movement, crossing widths and saves are unchanged. Narrow waterways no longer disappear between grid samples, and nearby props no longer hide terrain.

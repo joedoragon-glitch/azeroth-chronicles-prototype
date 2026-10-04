@@ -45,6 +45,14 @@ const quests=[
  quest('rescue','citadel'),quest('patrol',8),quest('rescue','darklord'),quest('bundles',3),quest('sites',null,['foundry','shelf','siege']),quest('sites',null,['fortress-gate'])
 ];
 for(const [index,family]of [[0,'thorn'],[6,'mire'],[12,'ridge'],[18,'warlord'],[26,'darklord']])quests[index].clear='field-'+family;
+// The renderer and collision engine share these exact boundaries and crossing gaps.
+const barriers=[
+ {kind:'water',bounds:[1160,1240,60,2300],gaps:[[660,840],[1660,1840]]},
+ {kind:'water',bounds:[1120,1690,1450,2070],gaps:[[1710,1850]]},
+ {kind:'ravine',bounds:[1250,1350,120,2400],gaps:[[860,1100],[1770,1980]]},
+ {kind:'ravine',bounds:[1400,1510,200,2450],gaps:[[630,870],[2070,2250]]},
+ {kind:'lava',bounds:[1300,1410,300,2810],gaps:[[850,1150],[2260,2510]]}
+];
 const terrain=[
  [{x:630,y:1320,r:125}],[],[{x1:520,x2:650,y1:430,y2:1050}], [{x1:1740,x2:1810,y1:1020,y2:1220}], [{x1:2110,x2:2190,y1:2000,y2:2720,gaps:[[2260,2520]]}]
 ];
@@ -64,6 +72,6 @@ const rangedProfiles={goblin:{variant:'slinger',shotRange:240,shotSpeed:240,proj
 const forests=[[[470,850,210,280],[1850,1050,250,320],[550,1800,260,180]],[[650,1650,240,200],[1950,1000,200,300],[2050,2300,230,170]],[[850,600,150,210],[1900,1500,240,350],[650,2100,230,200]],[[600,1300,250,250],[2100,1900,270,260],[1100,2300,200,160]],[[800,1100,230,250],[1850,1600,240,300],[2400,1050,170,200]]];
 const teachers={thorn:{learn:[2],train:[1,2],maxRank:2},mire:{learn:[3,4,6],train:[1,2,3,4,6],maxRank:3},ridge:{learn:[5],train:[1,2,3,4,5,6],maxRank:4},warlord:{learn:[7],train:[1,2,3,4,5,6,7],maxRank:6},citadel:{learn:[8],train:[1,2,3,4,5,6,7,8],maxRank:8}};
 const progression={ordinaryXpMultiplier:.5,levelGapRewards:[1,.75,.4,.1,0]};
-const R={enemyProjectileMultiplier:1.15,progression,miniPlans,expeditions,teachers,rangedProfiles,guardPosts,dungeonTraps,decorTypes,decorPosts,forests,attacks,sites,quests,terrain,dungeonWalls,pillars};
+const R={enemyProjectileMultiplier:1.15,progression,miniPlans,expeditions,teachers,rangedProfiles,guardPosts,dungeonTraps,decorTypes,decorPosts,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
