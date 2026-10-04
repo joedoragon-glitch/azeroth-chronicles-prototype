@@ -1,10 +1,10 @@
-# Azeroth Chronicles — expanded prototype v0.8.6
+# Azeroth Chronicles — expanded prototype v0.8.7
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families each have four warned attacks. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
 ## Play
 
-The live game at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ is v0.8.6. It includes the whole-game visual pass, bottom-centered phone notification, touch-scrollable Help menu, and larger left-thumb skill buttons beside the joystick. The offline portable build below contains the same release.
+Play the live game at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/. Existing installs can use **Menu → Check for game update** to save the run and install the latest version. The portable copy below runs offline.
 
 For an offline portable copy, download `release/Azeroth_Chronicles_Playtest.html` and open it in Chrome or another current browser. The whole game, music and sound are embedded; no installation, server or internet connection is needed. Press a key or tap to start sound. Download the HTML instead of viewing its source in GitHub. The earlier v0.5 adventure remains available at `legacy.html`.
 
@@ -27,7 +27,7 @@ Choose Standard or the optional **Succession challenge**, then Paladin, Mage or 
 | Sprint | Q reserved; sprint deliberately unavailable |
 
 Menus pause play. WASD or the joystick navigates and F/Enter confirms. Use the map to walk to marked captives, services and transport. Regions connect through recognizable NPC transport, rather than walking across their boundaries. Companions, finite gathering, construction and training share this same adventure and save.
-On phones, the status and menu sit on the right, powers above the left joystick, and Confirm/Order at the lower right. The joystick moves the menu selection; F/Confirm activates it. Touching menu entries does not activate them. The Back entry is selectable with the joystick.
+On phones, the status sits at the bottom center, the menu sits at the upper right, and powers cluster above and beside the left joystick. Confirm/Order is at the lower right. The joystick moves the menu selection; F/Confirm activates it. Touching menu entries does not activate them. The Back entry is selectable with the joystick.
 
 ## Progression and ending
 
@@ -101,3 +101,5 @@ Quest and layout update v0.8.2 puts one crate outdoors and two in a nearby guard
 Whole-game visual pass v0.8.3 keeps the schematic prototype art and improves the five regional floors, dungeon and quest interiors, waterways, roads and bridges, town structures, shared character grounding, combat warnings, projectiles, loot, map and interface. Health and mana now have compact HUD bars. All visual changes use local canvas and CSS drawing; collision, saves, combat and rewards are unchanged. Representative desktop and phone screenshots are captured by the browser checks.
 
 Phone usability update v0.8.5–v0.8.6 anchors status messages flush to the bottom center, places larger skill touch targets beside the left joystick, and restores vertical touch scrolling throughout menus such as Help. The phone skill cluster stays within the left half of small screens. GitHub Actions verifies 320 px, 375 px and landscape phone layouts, the portable HTML build and the live Pages deployment.
+
+Update v0.8.7 refreshes the offline cache for these releases and fetches current assets during installation. The in-game update action waits for the new worker to finish installing before activating it.

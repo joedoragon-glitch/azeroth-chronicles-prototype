@@ -1,11 +1,11 @@
 /* Bump CACHE_VERSION when app assets change. New releases wait for player consent. */
-const CACHE_VERSION = 'azeroth-app-v0.8.3-visual';
+const CACHE_VERSION = 'azeroth-app-v0.8.7-mobile';
 const CACHE_PREFIX = 'azeroth-app-';
 const APP_FILES = ['./prototype.html', './legacy.html', './styles/prototype.css', './src/prototype/data.js', './src/prototype/rules.js', './src/prototype/engine.js', './src/prototype/audio.js', './src/prototype/visuals.js', './src/prototype/app.js', './', './index.html', './rts.html', './styles/rts.css', './src/rts-engine.js', './src/rts.js', './styles/game.css', './styles/app.css', './styles/keyboard.css', './src/sprint.js', './src/controls.js', './src/classes.js', './src/world.js', './src/squad.js', './src/game.js', './src/app.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 const appURL = path => new URL(path, self.registration.scope).href;
 const appFiles = new Set(APP_FILES.map(appURL));
 self.addEventListener('install', event => {
-    event.waitUntil(caches.open(CACHE_VERSION).then(cache => cache.addAll([...appFiles])));
+    event.waitUntil(caches.open(CACHE_VERSION).then(cache => cache.addAll([...appFiles].map(url => new Request(url, { cache: 'reload' })))));
 });
 self.addEventListener('activate', event => {
     event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE_VERSION).map(key => caches.delete(key)))).then(() => self.clients.claim()));
