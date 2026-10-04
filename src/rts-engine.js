@@ -98,7 +98,7 @@
                 if(advance(u,b,dt,38)){b.progress=Math.min(4,b.progress+dt);if(b.progress>=4){u.order=null;s.message='Cuartel listo. Selecciónalo para reclutar soldados.';}}
             }
         }
-        for(const b of s.buildings)if(b.queue>0){b.queue=Math.max(0,b.queue-dt);if(b.queue===0)s.units.push(unit(s.nextId++,'soldier',clamp(b.x+45,12,W-12),b.y));}
+        for(const b of s.buildings)if(b.queue>0){b.queue=Math.max(0,b.queue-dt);if(b.queue===0){const p=nearest({x:b.x+45,y:b.y});s.units.push(unit(s.nextId++,'soldier',p.x,p.y));};}
         for(const e of s.enemies){
             if(e.hp<=0)continue;e.cd=Math.max(0,e.cd-dt);
             if(e.type==='boss'&&e.warning>0){e.warning=Math.max(0,e.warning-dt);if(e.warning===0){for(const u of s.units)if(u.hp>0&&distance(u,e)<90)u.hp=Math.max(0,u.hp-35);e.burst=7;}}
