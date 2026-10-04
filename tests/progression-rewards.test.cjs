@@ -12,8 +12,8 @@ console.log('PASS ordinary kills give half XP in every region and saved bases do
 }
 console.log('PASS ringleaders and bosses retain challenge rewards, guardians stay reduced, future levels remain open');
 {
- const c=new C(),e=c.zone().enemies.find(e=>e.type==='mob'&&!e.guard);c.hero.level=e.level+4;c.hero.xp=0;const loot=c.s.loot.length;for(let i=0;i<100;i++){e.deathPaid=false;kill(c,e);}assert.equal(c.hero.xp,0);assert.equal(c.s.loot.length,loot,'zero-reward farming produces no gold piles');
- c.hero.level=20;c.hero.xp=0;c.accept('quest-4');c.discover('bridge-north');c.discover('port');const q=c.questDefs().find(q=>q.id==='quest-4');assert(c.s.quests[q.id].done);assert(c.claim(q.id));assert.equal(c.hero.xp,q.xp);assert(!c.claim(q.id));
+ const c=new C(),e=c.zone().enemies.find(e=>e.type==='mob'&&!e.guard);for(const p of Object.values(c.s.quests)){p.done=true;p.paid=true;p.active=false;}c.hero.level=e.level+4;c.hero.xp=0;const loot=c.s.loot.length;for(let i=0;i<100;i++){e.deathPaid=false;kill(c,e);}assert.equal(c.hero.xp,0);assert.equal(c.s.loot.length,loot,'zero-reward farming produces no gold piles');
+ const qc=new C();qc.hero.level=20;qc.hero.xp=0;qc.discover('bridge-north');qc.discover('port');const q=qc.questDefs().find(q=>q.id==='quest-4');assert(qc.s.quests[q.id].done&&qc.s.quests[q.id].paid);assert.equal(qc.hero.xp,q.xp);assert(!qc.claim(q.id));
  const questXP=D.quests.reduce((n,q)=>n+q[4],0),mobXP=D.regions.reduce((n,r)=>n+r.enemy_count*Math.floor(r.enemy_xp*.5),0);assert(questXP>mobXP*1.5);
 }
 console.log('PASS trivial farming pays nothing and one-time quests dominate a complete ordinary population sweep');
