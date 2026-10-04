@@ -81,7 +81,7 @@ const teachers={thorn:{learn:[2],train:[1,2],maxRank:2},mire:{learn:[3,4,6],trai
 const progression={ordinaryXpMultiplier:.5,levelGapRewards:[1,.75,.4,.1,0]};
 const autoPotionThresholds={health:.35,mana:.35};
 // Boss telegraphs stay readable, but idle gaps are short and basic attacks only interrupt sustained special pressure occasionally.
-const bossCadence={specialRecoveryMultiplier:.4,basicCooldown:.75,skillsPerBasic:4,specialRange:560};
+const bossCadence={specialRecoveryMultiplier:.25,basicCooldown:.75,skillsPerBasic:4,specialRange:560};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
 const R={bossCadence,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,teachers,rangedProfiles,guardPosts,dungeonTraps,decorTypes,decorPosts,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
