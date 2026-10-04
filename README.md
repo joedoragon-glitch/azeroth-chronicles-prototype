@@ -1,10 +1,10 @@
-# Azeroth Chronicles — expanded prototype v0.8.3
+# Azeroth Chronicles — expanded prototype v0.8.6
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families each have four warned attacks. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
 ## Play
 
-The live game at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ is v0.8.2. The v0.8.3 visual pass is available in the local portable copy below; it runs offline. After publication, existing installs can use the game update action in the menu.
+The live game at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ is v0.8.6. It includes the whole-game visual pass, bottom-centered phone notification, touch-scrollable Help menu, and larger left-thumb skill buttons beside the joystick. The offline portable build below contains the same release.
 
 For an offline portable copy, download `release/Azeroth_Chronicles_Playtest.html` and open it in Chrome or another current browser. The whole game, music and sound are embedded; no installation, server or internet connection is needed. Press a key or tap to start sound. Download the HTML instead of viewing its source in GitHub. The earlier v0.5 adventure remains available at `legacy.html`.
 
@@ -99,3 +99,5 @@ Mechanics audit v0.8.1 tests one- and two-ringleader outcomes across all ordinar
 Quest and layout update v0.8.2 puts one crate outdoors and two in a nearby guarded interior for each of the four three-crate quests. The Vale entrance is the orchard watchtower cellar; the Marches, Highlands and Crown have themed storehouses. Interior guardians give reduced dungeon rewards, with one tougher captain. Existing collection facts and quest payments persist. Quest boards move clear of nearby buildings and display `!` for available quests or `?` for a reward to claim. The menu and status move right, Confirm/Order moves to the lower right, and touch menu entries require joystick selection plus Confirm. Potions now restore over five seconds. See `docs/QUEST_INTERIORS_V082.md`.
 
 Whole-game visual pass v0.8.3 keeps the schematic prototype art and improves the five regional floors, dungeon and quest interiors, waterways, roads and bridges, town structures, shared character grounding, combat warnings, projectiles, loot, map and interface. Health and mana now have compact HUD bars. All visual changes use local canvas and CSS drawing; collision, saves, combat and rewards are unchanged. Representative desktop and phone screenshots are captured by the browser checks.
+
+Phone usability update v0.8.5–v0.8.6 anchors status messages flush to the bottom center, places larger skill touch targets beside the left joystick, and restores vertical touch scrolling throughout menus such as Help. The phone skill cluster stays within the left half of small screens. GitHub Actions verifies 320 px, 375 px and landscape phone layouts, the portable HTML build and the live Pages deployment.
