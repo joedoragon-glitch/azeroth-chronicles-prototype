@@ -41,6 +41,20 @@ function overlap(a,b){return a.x<b.x+b.width&&a.x+a.width>b.x&&a.y<b.y+b.height&
         await session.detach();
       } else {
         const before=await page.evaluate(()=>[player.wx,player.wy]);await page.keyboard.down('d');await page.waitForFunction(([x,y])=>Math.hypot(player.wx-x,player.wy-y)>12,before);await page.keyboard.up('d');
+        // Complete menu flow with left-side keys, including a persisted rebind.
+        await page.keyboard.press('q');assert.equal(await page.evaluate(()=>activeWindow),'appmenu');
+        await page.keyboard.press('s');await page.keyboard.press('f');assert.equal(await page.evaluate(()=>activeWindow),'spells');
+        await page.keyboard.press('q');await page.keyboard.press('q');
+        await page.keyboard.press('r');await page.keyboard.press('d');await page.keyboard.press('d');await page.keyboard.press('f');
+        assert.equal(await page.evaluate(()=>equippedWeapon===inventory[2]),true);
+        await page.keyboard.press('q');await page.getByRole('button',{name:'Personalizar teclas',exact:true}).click();
+        await page.locator('#controls-list').getByRole('button',{name:/^Mover arriba/}).click();
+        await page.keyboard.press('u');assert.equal(await page.evaluate(()=>KeyboardControls.bindings.moveUp),'KeyU');
+        await page.keyboard.press('q');await page.keyboard.press('q');
+        await page.reload();assert.equal(await page.evaluate(()=>KeyboardControls.bindings.moveUp),'KeyU');
+        await page.keyboard.press('q');await page.getByRole('button',{name:'Personalizar teclas',exact:true}).click();
+        await page.getByRole('button',{name:'Restablecer teclas iniciales',exact:true}).click();
+        assert.equal(await page.evaluate(()=>KeyboardControls.bindings.moveUp),'KeyW');await page.keyboard.press('q');await page.keyboard.press('q');
       }
       await page.getByRole('button',{name:'Abrir menú del juego',exact:true}).click();
       assert.equal(await page.evaluate(()=>isGamePaused()),true);

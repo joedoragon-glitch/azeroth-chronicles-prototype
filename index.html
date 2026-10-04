@@ -8,12 +8,14 @@
     <link rel="manifest" href="./manifest.webmanifest">
     <link rel="icon" href="./icons/icon-192.png" type="image/png">
     <link rel="apple-touch-icon" href="./icons/icon-192.png">
+    <script src="./src/controls.js" defer></script>
     <script src="./src/game.js" defer></script>
     <script src="./src/app.js" defer></script>
     <title>Azeroth Chronicles — Prototipo v0.3</title>
     
     <link rel="stylesheet" href="./styles/game.css">
     <link rel="stylesheet" href="./styles/app.css">
+    <link rel="stylesheet" href="./styles/keyboard.css">
 </head>
 <body class="w-screen h-screen relative flex flex-col justify-between overflow-hidden select-none">
 
@@ -175,26 +177,36 @@
         <div id="win-appmenu" class="wow-panel wow-border w-full max-w-md p-5 rounded-xl hidden flex-col gap-4">
             <div class="flex justify-between items-center"><h2 class="font-cinzel text-xl text-amber-300">Aventura · v0.3</h2><button onclick="closeAllWindows()" aria-label="Cerrar menú">✕</button></div>
             <div class="app-menu-grid">
-                <button class="wow-btn" onclick="openWindow('inventory')">🎒 Mochila</button>
-                <button class="wow-btn" onclick="openWindow('talents')">📜 Talentos</button>
-                <button class="wow-btn" onclick="openWindow('spells')">📖 Habilidades</button>
-                <button class="wow-btn" onclick="openWindow('quest')">🗡️ Misión</button>
-                <button class="wow-btn" onclick="openWindow('map')">🗺️ Mapa</button>
-                <button class="wow-btn" onclick="openWindow('help')">Ayuda</button>
+                <button id="menu-inventory" class="wow-btn" onclick="openWindow('inventory')">🎒 Mochila</button>
+                <button id="menu-talents" class="wow-btn" onclick="openWindow('talents')">📜 Talentos</button>
+                <button id="menu-spells" class="wow-btn" onclick="openWindow('spells')">📖 Habilidades</button>
+                <button id="menu-quest" class="wow-btn" onclick="openWindow('quest')">🗡️ Misión</button>
+                <button id="menu-map" class="wow-btn" onclick="openWindow('map')">🗺️ Mapa</button>
+                <button id="menu-help" class="wow-btn" onclick="openWindow('help')">Ayuda</button>
                 <button id="app-pause-button" class="wow-btn">Pausar</button>
-                <button class="wow-btn" onclick="saveGame(true)">Guardar</button>
-                <button class="wow-btn" onclick="exportSave()">Exportar partida</button>
-                <button class="wow-btn" onclick="document.getElementById('save-import').click()">Importar partida</button>
+                <button id="menu-save" class="wow-btn" onclick="saveGame(true)">Guardar</button>
+                <button id="menu-export" class="wow-btn" onclick="exportSave()">Exportar partida</button>
+                <button id="menu-import" class="wow-btn" onclick="document.getElementById('save-import').click()">Importar partida</button>
                 <button id="touch-toggle" class="wow-btn" aria-pressed="false">Controles táctiles</button>
-                <button class="wow-btn" onclick="newGame()">Nueva partida</button>
+                <button id="menu-new" class="wow-btn" onclick="newGame()">Nueva partida</button>
             </div>
             <button id="install-button" class="wow-btn" hidden>Instalar aplicación</button>
             <button id="update-button" class="wow-btn" hidden>Actualizar aplicación</button>
             <p id="app-status" role="status" aria-live="polite">Puedes instalar este juego desde el menú de Chrome cuando esté disponible. En iPhone/iPad: Compartir → Añadir a pantalla de inicio.</p>
-            <button onclick="if (manualPaused) togglePause(); closeAllWindows()" class="wow-btn app-resume">Volver al juego</button>
+            <p id="keyboard-menu-guide" class="keyboard-help">Mano izquierda: WASD selecciona · F o E confirma · Q vuelve/cierra.<br>R: mochila · C: talentos · X: habilidades · T: misión · Z: mapa · V: pausa · G: ayuda.</p>
+            <button id="menu-controls" onclick="openWindow('controls')" class="wow-btn keyboard-help">Personalizar teclas</button>
+            <button id="menu-resume" onclick="if (manualPaused) togglePause(); closeAllWindows()" class="wow-btn app-resume">Volver al juego</button>
+        </div>
+        <div id="win-controls" class="wow-panel wow-border w-full max-w-lg p-5 rounded-xl hidden flex-col gap-4">
+            <div class="flex justify-between items-center"><h2 class="font-cinzel text-xl text-amber-300">Controles del teclado</h2><button onclick="openWindow('appmenu')" aria-label="Volver al menú">✕</button></div>
+            <p class="text-xs">Elige una acción y pulsa la nueva tecla. Esc cancela la asignación. Las teclas duplicadas se rechazan. Enter y Esc siguen disponibles para confirmar y cerrar.</p>
+            <p id="control-status" role="status" aria-live="polite" class="text-xs text-amber-200"></p>
+            <div id="controls-list"></div>
+            <p id="controls-nav" class="text-xs text-amber-200"></p>
         </div>
         <div id="win-help" class="wow-panel wow-border w-full max-w-lg p-5 rounded-xl hidden flex-col gap-4">
             <h2 class="font-cinzel text-xl text-amber-300">Una pequeña aventura</h2>
+            <p id="keyboard-help-guide" class="keyboard-help">Todo cerca de WASD: 1–5 habilidades · E/F interactuar o confirmar · Q menú/volver · R mochila · C talentos · X habilidades · T misión · Z mapa · V pausa · G ayuda. En los menús, WASD selecciona. F empieza esta aventura.</p>
             <p>Habla con el comandante, vence a cinco enemigos comunes y vuelve por tu recompensa. Recoge oro, compra equipo y mejora tus habilidades antes de desafiar al Señor Demonio.</p>
             <p><b>WASD</b>: moverte en la dirección de la pantalla.<br><b>E</b>: hablar, recoger oro o fijar un objetivo cercano.<br><b>1 / Espacio</b>: espada. <b>2</b>: fuego. <b>3</b>: curar. <b>4</b>: inmunidad. <b>5</b>: ataque de área.</p>
             <p><b>I / B</b>: inventario. <b>C</b>: talentos. <b>K</b>: habilidades. <b>T</b>: misión. <b>M</b>: mapa. <b>P</b>: pausa. <b>H</b>: ayuda.</p>

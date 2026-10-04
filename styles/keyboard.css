@@ -1,0 +1,8 @@
+/* Keyboard hints: touch devices keep their existing layout until a keyboard is used. */
+.keyboard-help {display:none;font-size:12px;line-height:1.5;color:#fde68a}
+body.keyboard-input .keyboard-help {display:block}
+body.keyboard-input #win-appmenu .keyboard-selected {outline:2px solid #fde047;outline-offset:2px;background:#5a4010;box-shadow:0 0 10px #d4af3755}
+#controls-list {display:flex;flex-direction:column;gap:6px;max-height:48dvh;overflow-y:auto;padding:4px}
+#controls-list button {display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 12px;border-radius:6px;font-size:12px}
+#controls-list kbd {background:#0a0812;border:1px solid #9a732a;border-radius:4px;padding:3px 9px;min-width:35px;text-align:center}
+body.keyboard-input #controls-list .selected {outline:2px solid #fde047;outline-offset:1px}

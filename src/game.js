@@ -312,6 +312,23 @@
          * ------------------------------------------------------------- */
         let activeWindow = null; // 'inventory', 'talents', 'spells', 'shop', 'trainer', 'quest', 'map'
         let menuIndex = 0;
+        let pendingControlAction = null;
+        let controlNotice = '';
+        const keyboardMenuIds = ['menu-inventory','menu-talents','menu-spells','menu-quest','menu-map','menu-help','app-pause-button','menu-save','menu-export','menu-import','touch-toggle','menu-new','install-button','update-button','menu-controls','menu-resume'];
+        function keyboardMenuButtons() {
+            return keyboardMenuIds.map(id => document.getElementById(id)).filter(button => button && !button.hidden && !button.disabled && (button.id !== 'menu-controls' || document.body.classList.contains('keyboard-input')));
+        }
+        function renderKeyboardMenu() {
+            const buttons = keyboardMenuButtons();
+            menuIndex = Math.max(0, Math.min(menuIndex, buttons.length - 1));
+            buttons.forEach((button, index) => button.classList.toggle('keyboard-selected', index === menuIndex));
+            const selected = buttons[menuIndex];
+            if (selected && selected.scrollIntoView) selected.scrollIntoView({block:'nearest'});
+        }
+        function returnToGameMenu() {
+            if (activeWindow && activeWindow !== 'appmenu') openWindow('appmenu');
+            else toggleWindow('appmenu');
+        }
 
         function openWindow(winId) {
             closeAllWindows();
@@ -329,10 +346,11 @@
 
         function closeAllWindows() {
             activeWindow = null;
+            pendingControlAction = null;
             clearMovement();
             document.getElementById('modal-container').classList.add('hidden');
             document.getElementById('modal-container').classList.remove('flex');
-            const wins = ['inventory', 'talents', 'spells', 'shop', 'trainer', 'quest', 'map', 'help', 'appmenu'];
+            const wins = ['inventory', 'talents', 'spells', 'shop', 'trainer', 'quest', 'map', 'help', 'appmenu', 'controls'];
             wins.forEach(w => {
                 const el = document.getElementById(`win-${w}`);
                 if (el) {
@@ -358,23 +376,37 @@
         window.addEventListener('keydown', (e) => {
             const code = e.code;
             if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+            if (activeWindow === 'controls' && pendingControlAction) {
+                e.preventDefault();
+                document.body.classList.add('keyboard-input');
+                if (e.repeat) return;
+                if (code === 'Escape') { pendingControlAction = null; controlNotice = 'Asignación cancelada.'; }
+                else if (e.ctrlKey || e.altKey || e.metaKey) controlNotice = 'Usa una tecla sin Ctrl, Alt ni Cmd. Esc cancela.';
+                else {
+                    const error = KeyboardControls.assign(pendingControlAction,code);
+                    controlNotice = error || KeyboardControls.notice;
+                    if (!error) { pendingControlAction = null; clearMovement(); updateKeyboardHints(); }
+                }
+                renderControlsUI(); return;
+            }
+            // Conservar atajos del navegador (Ctrl, Alt, Cmd); Shift permite WASD normal.
+            if (e.ctrlKey || e.altKey || e.metaKey) return;
             // Dejar que los botones nativos respondan a Enter/Espacio, sin lanzar ataques.
             if (e.target && /^(BUTTON|A)$/.test(e.target.tagName) && ['Enter','Space'].includes(code)) return;
             if (e.target && /^slot-[1-5]$/.test(e.target.id || '') && ['Enter','Space'].includes(code)) {
                 e.preventDefault(); if (!e.repeat) castSpell(Number(e.target.id.slice(-1))); return;
             }
-            const handled = ['KeyW','KeyA','KeyS','KeyD','KeyI','KeyB','KeyC','KeyK','KeyT','KeyM','KeyP','KeyH','KeyE','Escape','Space','Enter','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Digit1','Digit2','Digit3','Digit4','Digit5'];
-            if (handled.includes(code)) e.preventDefault();
-            if (e.repeat && !['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(code)) return;
-            if (code === 'KeyP') { togglePause(); return; }
-            if (code === 'KeyH') { toggleWindow('help'); return; }
+            const action = KeyboardControls.actionFor(code);
+            const handled = action || ['Escape','Enter','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(code);
+            if (handled) { e.preventDefault(); document.body.classList.add('keyboard-input'); }
+            if (e.repeat && !(action && action.startsWith('move')) && !['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(code)) return;
+            if (action === 'pause') { togglePause(); return; }
+            if (action === 'help') { toggleWindow('help'); return; }
+            if (action === 'menu') { returnToGameMenu(); return; }
 
             // Direct Window Hotkeys (Left hand easily accessible)
-            if (code === 'KeyI' || code === 'KeyB') { toggleWindow('inventory'); return; }
-            if (code === 'KeyC') { toggleWindow('talents'); return; }
-            if (code === 'KeyK') { toggleWindow('spells'); return; }
-            if (code === 'KeyT') { toggleWindow('quest'); return; }
-            if (code === 'KeyM') { toggleWindow('map'); return; }
+            const windows = {inventory:'inventory',talents:'talents',spellbook:'spells',quest:'quest',map:'map'};
+            if (windows[action]) { toggleWindow(windows[action]); return; }
             if (code === 'Escape') { closeAllWindows(); return; }
 
             // Route Keyboard Input to Active Modal Menu if open
@@ -387,41 +419,42 @@
             // Real-Time Game Key State Registration
             keys[code] = true;
 
-            if (code === 'Space') castSpell(1);
             // Interaction Key E
-            if (code === 'KeyE') {
+            if (action === 'interact' || action === 'confirm') {
                 interactWithNearby();
             }
 
             // Ability Hotkeys 1-5
-            if (['Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5'].includes(code)) {
-                castSpell(Number(code.slice(-1)));
-            }
+            if (action && action.startsWith('spell') && action !== 'spellbook') castSpell(Number(action.slice(-1)));
         });
 
         window.addEventListener('keyup', (e) => {
             keys[e.code] = false;
         });
+        window.addEventListener('pointerdown', event => { if (event.pointerType === 'touch') document.body.classList.remove('keyboard-input'); });
 
         /* -------------------------------------------------------------
          * MENU NAVIGATION VIA WASD + ENTER
          * ------------------------------------------------------------- */
         function handleMenuKeyboard(code) {
-            if (code === 'KeyW' || code === 'ArrowUp') {
-                menuIndex = Math.max(0, menuIndex - (activeWindow === 'inventory' ? 4 : 1));
+            const action = KeyboardControls.actionFor(code);
+            const columns = activeWindow === 'inventory' ? 4 : (activeWindow === 'appmenu' ? 2 : 1);
+            if (action === 'moveUp' || (!action && code === 'ArrowUp')) {
+                menuIndex = Math.max(0, menuIndex - columns);
                 renderActiveWindowUI();
-            } else if (code === 'KeyS' || code === 'ArrowDown') {
-                menuIndex += activeWindow === 'inventory' ? 4 : 1;
+            } else if (action === 'moveDown' || (!action && code === 'ArrowDown')) {
+                menuIndex += columns;
                 renderActiveWindowUI();
-            } else if (code === 'KeyA' || code === 'ArrowLeft') {
+            } else if (action === 'moveLeft' || (!action && code === 'ArrowLeft')) {
                 menuIndex = Math.max(0, menuIndex - 1);
                 renderActiveWindowUI();
-            } else if (code === 'KeyD' || code === 'ArrowRight') {
+            } else if (action === 'moveRight' || (!action && code === 'ArrowRight')) {
                 menuIndex++;
                 renderActiveWindowUI();
-            } else if (code === 'Enter' || code === 'Space') {
+            } else if (action === 'confirm' || action === 'interact' || ['Enter','Space'].includes(code)) {
                 executeMenuSelection();
             }
+            if (activeWindow === 'appmenu') renderKeyboardMenu();
         }
 
         /* -------------------------------------------------------------
@@ -570,6 +603,32 @@
             else if (activeWindow === 'trainer') renderTrainerUI();
             else if (activeWindow === 'quest') renderQuestUI();
             else if (activeWindow === 'map') renderMapUI();
+            else if (activeWindow === 'controls') renderControlsUI();
+            else if (activeWindow === 'appmenu') renderKeyboardMenu();
+        }
+
+        function updateKeyboardHints() {
+            const key = id => KeyboardControls.label(KeyboardControls.bindings[id]);
+            const text = `${key('moveUp')}/${key('moveLeft')}/${key('moveDown')}/${key('moveRight')}: mover/seleccionar · ${[1,2,3,4,5].map(n=>key('spell'+n)).join('/')}: habilidades · ${key('interact')}: interactuar · ${key('confirm')}: confirmar · ${key('menu')}: menú/volver. ${key('inventory')}: mochila · ${key('talents')}: talentos · ${key('spellbook')}: habilidades · ${key('quest')}: misión · ${key('map')}: mapa · ${key('pause')}: pausa · ${key('help')}: ayuda. Personaliza las teclas en el menú.`;
+            document.getElementById('keyboard-menu-guide').textContent = text;
+            document.getElementById('keyboard-help-guide').textContent = text;
+        }
+        function renderControlsUI() {
+            const list = document.getElementById('controls-list'); list.innerHTML = '';
+            menuIndex = Math.max(0,Math.min(menuIndex,KeyboardControls.actions.length + 1));
+            const rows = [...KeyboardControls.actions, ['reset','Restablecer teclas iniciales'],['back','Volver al menú']];
+            rows.forEach(([id,label],index) => {
+                const button = document.createElement('button'); button.className = 'wow-btn' + (index === menuIndex ? ' selected' : '');
+                const name = document.createElement('span'); name.textContent = label; button.appendChild(name);
+                if (KeyboardControls.bindings[id]) { const badge = document.createElement('kbd'); badge.textContent = KeyboardControls.label(KeyboardControls.bindings[id]); button.appendChild(badge); }
+                button.onclick = () => { menuIndex=index; executeMenuSelection(); };
+                button.onfocus = () => { menuIndex=index; };
+                list.appendChild(button);
+            });
+            const selected = list.children[menuIndex]; if (selected && selected.scrollIntoView) selected.scrollIntoView({block:'nearest'});
+            document.getElementById('control-status').textContent = pendingControlAction ? `Pulsa una tecla para «${KeyboardControls.actions.find(([id])=>id===pendingControlAction)[1]}». Esc cancela. ${controlNotice}` : controlNotice || KeyboardControls.notice || 'Configuración inicial para la mano izquierda.';
+            const key = id => KeyboardControls.label(KeyboardControls.bindings[id]);
+            document.getElementById('controls-nav').textContent = `${key('moveUp')}/${key('moveDown')}: seleccionar · ${key('confirm')} o Enter: cambiar · ${key('menu')}: volver · Esc: cerrar`;
         }
 
         function renderInventoryUI() {
@@ -779,7 +838,16 @@
         }
 
         function executeMenuSelection() {
+            if (activeWindow === 'controls') {
+                const row = KeyboardControls.actions[menuIndex];
+                if (row) { pendingControlAction=row[0]; controlNotice=''; }
+                else if (menuIndex === KeyboardControls.actions.length) { KeyboardControls.reset(); clearMovement(); updateKeyboardHints(); controlNotice=KeyboardControls.notice; }
+                else { openWindow('appmenu'); return; }
+                renderControlsUI(); return;
+            }
+            if (activeWindow === 'appmenu') { const button = keyboardMenuButtons()[menuIndex]; if (button) button.click(); return; }
             if (activeWindow === 'help') { closeAllWindows(); return; }
+            if (activeWindow === 'map' || activeWindow === 'spells') { closeAllWindows(); return; }
             if (activeWindow === 'inventory') {
                 const item = inventory[menuIndex];
                 if (item) {
@@ -1028,10 +1096,10 @@
                 let inputY = touchInput.y;
 
                 // Entradas en coordenadas de pantalla; convertir a ejes del mundo.
-                if (keys['KeyW']) inputY -= 1;
-                if (keys['KeyS']) inputY += 1;
-                if (keys['KeyA']) inputX -= 1;
-                if (keys['KeyD']) inputX += 1;
+                if (keys[KeyboardControls.bindings.moveUp]) inputY -= 1;
+                if (keys[KeyboardControls.bindings.moveDown]) inputY += 1;
+                if (keys[KeyboardControls.bindings.moveLeft]) inputX -= 1;
+                if (keys[KeyboardControls.bindings.moveRight]) inputX += 1;
 
                 const inputLen = Math.hypot(inputX, inputY);
 
@@ -1607,6 +1675,8 @@
 
         window.onload = function() {
             resizeCanvas();
+            if (window.matchMedia && !window.matchMedia('(any-pointer: coarse)').matches) document.body.classList.add('keyboard-input');
+            updateKeyboardHints();
             const loaded = loadGame(); updateHUDUI(); updatePauseUI();
             for (const num of [1, 2, 3, 4, 5]) {
                 const slot = document.getElementById(`slot-${num}`);

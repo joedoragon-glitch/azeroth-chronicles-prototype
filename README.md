@@ -22,8 +22,11 @@ The village is a safe refuge that restores health and mana. Ordinary enemies res
 
 ## Controls
 
+**Guía breve en español para el autor y los jugadores: [CONTROLES.md](CONTROLES.md).** The prototype's keyboard design prioritizes the left hand. The mobile touch layout remains unchanged in v0.3.2.
+
 - **Touch:** drag the left joystick; tap the five abilities on the right. Hold **Espada** to repeat attacks at the normal cooldown. **Interactuar** talks, collects gold or selects a nearby enemy. **☰** opens all menus. Movement and combat support simultaneous fingers.
-- **Keyboard:** WASD moves; E interacts; 1/Space is sword, 2 fireball, 3 healing, 4 shield, 5 area attack. I/B inventory, C talents, K abilities, T mission, M map, P pause, H help, Escape closes menus.
+- **Keyboard defaults:** WASD moves; 1–5 cast the five abilities; E/F interacts. In menus, WASD selects and F/E confirms. Q opens the menu or returns to it; R inventory, C talents, X ability book, T quest, Z map, V pause, G help. Older shortcuts (I/B, K, M, P, H, Enter/Space, Escape) remain available.
+- **Customize:** Menu → Personalizar teclas. Select an action and press a new key; duplicates are rejected. Preferences persist in that browser. Escape cancels capture, and the reset button restores left-hand defaults. Ctrl/Alt/Cmd shortcuts remain available to the browser.
 - Menus support touch, mouse and keyboard. **Menu → Mostrar/Ocultar controles táctiles** overrides automatic touch detection on hybrid Chromebooks.
 
 ## Saves
@@ -45,6 +48,7 @@ Open `http://localhost:8000` for development. Serve the folder over HTTP; openin
 | --- | --- |
 | `index.html` | Spanish UI and menus |
 | `src/game.js` | Game data, rules, input, simulation, drawing and saves |
+| `src/controls.js` | Left-hand keyboard defaults and saved key bindings |
 | `src/app.js` | Touch input, app installation and update UI |
 | `styles/game.css`, `styles/app.css` | Base theme and responsive app layout |
 | `manifest.webmanifest`, `icons/` | App identity and installation icons |
@@ -54,7 +58,7 @@ Open `http://localhost:8000` for development. Serve the folder over HTTP; openin
 
 ## Verification and scope
 
-49 automated logic checks cover gameplay (35), app behavior (8) and offline caching (6). These use controlled DOM/canvas and service-worker substitutes. The full mission-to-boss simulation also runs with actual cooldowns, mana, incoming damage and respawns. These checks verify rules; device feel still needs playtesting.
+55 automated logic checks cover gameplay/keyboard (41), app behavior (8) and offline caching (6). These use controlled DOM/canvas and service-worker substitutes. The full mission-to-boss simulation also runs with actual cooldowns, mana, incoming damage and respawns. Keyboard checks cover simultaneous movement/casting, menu actions, remapping, conflict rejection, reload persistence and reset. These checks verify rules; device feel still needs playtesting.
 
 CI also runs Chromium checks at desktop, Chromebook-touch, phone portrait, small-phone and landscape sizes before deployment. To run those locally, install Playwright 1.62.1 and its Chromium browser, then run `node tests/browser.test.cjs`. Browser screenshots are saved as CI artifacts.
 

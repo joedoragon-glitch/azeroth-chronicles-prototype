@@ -2,12 +2,13 @@ const fs = require('fs');
 const vm = require('vm');
 const assert = require('assert/strict');
 const html = fs.readFileSync(require('path').join(__dirname, '../index.html'), 'utf8');
-const code = fs.readFileSync(require('path').join(__dirname, '../src/game.js'), 'utf8');
+const code = fs.readFileSync(require('path').join(__dirname, '../src/controls.js'), 'utf8') + '\n' + fs.readFileSync(require('path').join(__dirname, '../src/game.js'), 'utf8');
 const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map(m => m[1]));
 
-function fresh({ deniedStorage = false, saved = null } = {}) {
+function fresh({ deniedStorage = false, saved = null, controls = null } = {}) {
   const elements = new Map(), events = {}, docEvents = {}, frames = [], drawings = [];
   const storage = new Map(saved ? [['azeroth-chronicles-prototype-save-v2', saved]] : []);
+  if(controls) storage.set('azeroth-keyboard-controls-v1',controls);
   const ctx = new Proxy({}, { get(target, name) {
     if (name in target) return target[name];
     if (name === 'measureText') return text => ({width: String(text).length * 7});
@@ -30,10 +31,11 @@ function fresh({ deniedStorage = false, saved = null } = {}) {
       setAttribute(name,value){this.attributes[name]=value;},getContext(){return ctx;},click(){if(this.onclick)this.onclick();}
     };
   }
-  for(const id of ids) elements.set(id,element());
+  for(const id of ids) { const el=element(); el.id=id; elements.set(id,el); }
+  elements.get('install-button').hidden=true; elements.get('update-button').hidden=true;
   const window = {innerWidth:1280,innerHeight:720,addEventListener(name,fn){(events[name]??=[]).push(fn);},confirm(){return true;},
     localStorage: {getItem(key){if(deniedStorage)throw Error('Storage blocked');return storage.get(key)||null;},setItem(key,value){if(deniedStorage)throw Error('Storage blocked');storage.set(key,value);}}};
-  const document = {hidden:false,getElementById(id){assert(elements.has(id),`Missing HTML element ${id}`);return elements.get(id);},createElement:element,
+  const document = {hidden:false,body:element(),getElementById(id){assert(elements.has(id),`Missing HTML element ${id}`);return elements.get(id);},createElement:element,
     addEventListener(name,fn){(docEvents[name]??=[]).push(fn);}};
   const sandbox={window,document,performance:{now(){return 0;}},requestAnimationFrame(fn){frames.push(fn);},setTimeout(){},Blob,
     URL:{createObjectURL(){return 'blob:test';},revokeObjectURL(){}}, console};
@@ -203,5 +205,45 @@ test('Mission-to-boss combat works with real cooldowns, mana, damage and respawn
     return {reward:questState.rewardClaimed,equipped:equippedWeapon.name,trained:player.spellLevels[2],won:bossDefeated,deaths,elapsed};
   `);
   assert(result.reward && result.equipped==='Martillo del Juicio' && result.trained===2 && result.won && result.deaths===0,JSON.stringify(result));
+});
+test('WASD can remain held while all five keyboard abilities cast',()=>{
+  const g=ready();g.run(`player.wx=700;player.wy=650;player.hp=40;player.mp=player.maxMp=300;enemies[0].hp=enemies[0].maxHp=1000;`);
+  g.emit('keydown',{code:'KeyW'});
+  for(const code of ['Digit1','Digit2','Digit3','Digit4','Digit5'])g.emit('keydown',{code});
+  assert(g.run(`return keys.KeyW && Object.values(player.cds).every(cd=>cd>0) && player.hp>40 && player.shieldActive && activeProjectiles.length===1;`));
+  g.run(`updateGame(.05);`);assert(g.run(`return player.isMoving && keys.KeyW;`));
+});
+test('Left-hand confirm and return work through onboarding, menus, equipment and map',()=>{
+  const g=fresh();g.emit('keydown',{code:'KeyF'});assert(g.run(`return !isGamePaused();`));
+  g.emit('keydown',{code:'KeyQ'});assert(g.run(`return activeWindow==='appmenu' && menuIndex===0;`));
+  g.emit('keydown',{code:'KeyS'});assert(g.run(`return menuIndex===2;`));
+  g.elements.get('menu-spells').onclick=()=>g.run(`openWindow('spells');`);
+  g.emit('keydown',{code:'KeyF'});assert(g.run(`return activeWindow==='spells';`));g.emit('keydown',{code:'KeyF'});
+  g.emit('keydown',{code:'KeyR'});g.emit('keydown',{code:'KeyD'});g.emit('keydown',{code:'KeyD'});g.emit('keydown',{code:'KeyF'});assert(g.run(`return equippedWeapon===inventory[2];`));
+  g.emit('keydown',{code:'KeyQ'});assert(g.run(`return activeWindow==='appmenu';`));g.emit('keydown',{code:'KeyQ'});assert(g.run(`return !activeWindow;`));
+  g.emit('keydown',{code:'KeyZ'});assert(g.run(`return activeWindow==='map';`));g.emit('keydown',{code:'KeyF'});assert(g.run(`return !activeWindow;`));
+  g.emit('keydown',{code:'KeyV'});assert(g.run(`return manualPaused;`));g.emit('keydown',{code:'KeyV'});assert(g.run(`return !manualPaused;`));
+});
+test('Custom movement and spells replace their primary keys and survive reload',()=>{
+  const g=ready();g.run(`KeyboardControls.assign('moveUp','KeyU');KeyboardControls.assign('spell2','KeyJ');`);
+  const saved=g.storage.get('azeroth-keyboard-controls-v1');const restored=ready({controls:saved});
+  restored.run(`player.wx=1900;player.wy=1900;`);restored.emit('keydown',{code:'KeyW'});restored.run(`updateGame(.1);`);assert(restored.run(`return !player.isMoving;`));
+  restored.emit('keydown',{code:'KeyU'});restored.run(`updateGame(.1);`);assert(restored.run(`return player.isMoving;`));restored.emit('keyup',{code:'KeyU'});assert(restored.run(`return !keys.KeyU;`));
+  restored.run(`player.wx=700;player.wy=650;`);restored.emit('keydown',{code:'Digit2'});assert(restored.run(`return player.mp===60;`));restored.emit('keydown',{code:'KeyJ'});assert(restored.run(`return activeProjectiles.length===1 && player.mp===45;`));
+});
+test('Rebinding rejects collisions, Escape cancels capture and reset restores defaults',()=>{
+  const g=ready();g.run(`openWindow('controls');menuIndex=0;executeMenuSelection();`);g.emit('keydown',{code:'KeyS'});
+  assert(g.run(`return pendingControlAction==='moveUp' && KeyboardControls.bindings.moveUp==='KeyW' && controlNotice.includes('ya se usa');`));
+  g.emit('keydown',{code:'Escape'});assert(g.run(`return pendingControlAction===null && activeWindow==='controls';`));
+  g.run(`menuIndex=0;executeMenuSelection();`);g.emit('keydown',{code:'KeyU'});assert(g.run(`return pendingControlAction===null && KeyboardControls.bindings.moveUp==='KeyU';`));
+  g.run(`menuIndex=KeyboardControls.actions.length;executeMenuSelection();`);assert(g.run(`return KeyboardControls.bindings.moveUp==='KeyW';`));
+});
+test('Corrupt keyboard preferences and unavailable storage keep usable controls',()=>{
+  const g=ready({controls:'{"version":1,"bindings":{"moveUp":"KeyU"}}'});assert(g.run(`return KeyboardControls.bindings.moveUp==='KeyW';`));
+  const blocked=ready({deniedStorage:true});assert(blocked.run(`return KeyboardControls.assign('moveUp','KeyU')===null && KeyboardControls.bindings.moveUp==='KeyU' && KeyboardControls.notice.includes('sesión');`));
+});
+test('Browser modifier shortcuts are preserved and alias conflicts favor custom actions',()=>{
+  const g=ready();g.emit('keydown',{code:'KeyR',ctrlKey:true});g.emit('keydown',{code:'KeyW',metaKey:true});assert(g.run(`return !activeWindow && !keys.KeyW;`));
+  g.run(`KeyboardControls.assign('map','KeyI');`);g.emit('keydown',{code:'KeyI'});assert(g.run(`return activeWindow==='map';`));
 });
 console.log(`\n${passed} gameplay checks passed${process.exitCode ? '; failures remain' : ''}.`);
