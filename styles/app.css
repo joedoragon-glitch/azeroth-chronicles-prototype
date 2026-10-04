@@ -121,3 +121,5 @@ body.menu-open #squad-panel-button{display:none}
 #squad-summary,#win-expedition p{font-size:12px;line-height:1.5}
 body.touch-mode #interaction-hint{bottom:calc(388px + env(safe-area-inset-bottom))}
 @media(max-height:450px) and (min-width:601px){body.touch-mode #action-bar{grid-template-columns:repeat(4,44px)}body.touch-mode #interaction-hint{bottom:184px}#squad-panel-button{top:122px;font-size:10px}}
+
+@media(max-width:360px){body.touch-mode #action-bar{gap:3px;padding:4px}}
