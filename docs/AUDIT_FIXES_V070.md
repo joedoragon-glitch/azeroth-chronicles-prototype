@@ -53,3 +53,7 @@ The final author clarification overrides the old fixed level-18 awakening tier. 
 ## v0.7.1 author follow-up
 
 Ringleader base health increases from 1.6× to 2× its regular variant. Pursuit movement is 10% faster; damage remains 1.25×, level remains +2, and rewards remain 1.5× the appropriate regular base. Guardian ringleaders keep their reduced guardian rewards and trap immunity. Loaded elites receive the health increase once, preserving their health fraction and day/night multiplier, including dead elites staying dead. Three regressions cover outdoor/guardian spawning, actual pursuit movement, and idempotent save migration.
+
+## v0.7.2 specialist progression clarification
+
+Learning permission and training permission are separate authored catalogues shared by the engine and specialist UI. Mira offers only skills 1–2; Recovery moves to Sela, who also teaches 4/6. Higher instructors train only their stage and earlier skills, within the existing rank caps. Hero level, gold and rescue remain additional requirements and cannot bypass the catalogue. Future skills are hidden in the skill book and button names until their region is reached, teacher is rescued, or skill is known. Existing learned skills/ranks remain intact; early teachers cannot train them beyond their curricula.
