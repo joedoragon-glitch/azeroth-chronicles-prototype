@@ -13,4 +13,4 @@ body[data-hero-class="mage"] [id^="slot-"]:not(#slot-6) > .absolute:last-child,b
 
 #menu-rts{grid-column:1/-1;background:#253d38}
 
-@media(min-width:901px){body #objective-tracker{right:168px;max-width:300px}}
+@media(min-width:901px){body #objective-tracker,body.touch-mode #objective-tracker{right:168px;left:auto;max-width:300px}}
