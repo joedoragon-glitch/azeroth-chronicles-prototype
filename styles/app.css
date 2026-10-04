@@ -83,3 +83,6 @@ body.touch-mode [id^="slot-"] > span:nth-child(2) {display:none}
   body.touch-mode #action-bar > [id^="slot-"], body.touch-mode #interact-button {width:50px;height:50px}
   body.touch-mode #interaction-hint {bottom:158px}
 }
+/* Sixth, infrequent class ability: keep all touch actions within the viewport. */
+body.touch-mode #interaction-hint{bottom:calc(265px + env(safe-area-inset-bottom))}
+@media(max-height:450px) and (min-width:601px){body.touch-mode #action-bar{grid-template-columns:repeat(4,50px)}body.touch-mode #interaction-hint{bottom:158px}}

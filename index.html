@@ -9,9 +9,10 @@
     <link rel="icon" href="./icons/icon-192.png" type="image/png">
     <link rel="apple-touch-icon" href="./icons/icon-192.png">
     <script src="./src/controls.js" defer></script>
+    <script src="./src/classes.js" defer></script>
     <script src="./src/game.js" defer></script>
     <script src="./src/app.js" defer></script>
-    <title>Azeroth Chronicles — Prototipo v0.3</title>
+    <title>Azeroth Chronicles — Prototipo v0.4</title>
     
     <link rel="stylesheet" href="./styles/game.css">
     <link rel="stylesheet" href="./styles/app.css">
@@ -24,7 +25,7 @@
         <span id="joystick-knob"></span><span class="joystick-label">Mover</span>
     </div>
     <div id="session-tools" aria-label="Partida">
-        <span>Prototipo v0.3</span>
+        <span>Prototipo v0.4</span>
         <button onclick="openWindow('help')">Ayuda [H]</button>
         <button onclick="togglePause()" id="pause-button">Pausa [P]</button>
         <button onclick="saveGame(true)">Guardar</button>
@@ -38,6 +39,7 @@
     <div id="interaction-hint"></div>
     <div id="event-feed" role="log" aria-live="polite"></div>
     <div id="pause-notice" hidden>PAUSA — Pulsa P para continuar</div>
+    <button id="mini-map-button" onclick="openWindow('map')" aria-label="Abrir mapa desde el minimapa"><canvas id="mini-map" width="160" height="108"></canvas><span>Mapa · Z</span></button>
     <!-- Main Render Canvas -->
     <div id="canvas-container" class="absolute inset-0 w-full h-full bg-black z-0">
         <canvas id="gameCanvas" class="w-full h-full"></canvas>
@@ -49,7 +51,7 @@
         <div id="player-frame" class="flex items-center gap-3 bg-black/85 p-2.5 rounded-xl border-2 border-amber-600/70 backdrop-blur-md pointer-events-auto shadow-2xl min-w-[290px]">
             <!-- Hero Avatar Icon -->
             <div id="player-avatar" class="relative w-14 h-14 rounded-full border-2 border-amber-400 bg-slate-950 flex items-center justify-center overflow-hidden shrink-0 shadow-inner">
-                <span class="text-3xl">🛡️</span>
+                <span id="hero-icon" class="text-3xl">🛡️</span>
                 <span id="ui-player-level" class="absolute bottom-0 right-0 bg-amber-600 text-black font-extrabold text-xs px-1.5 py-0.5 rounded-tl border border-amber-300">1</span>
             </div>
             <!-- Player Status Bars -->
@@ -103,44 +105,46 @@
         <div id="action-bar" class="flex items-center gap-2 bg-black/90 p-2.5 rounded-2xl border-2 border-amber-600/80 shadow-2xl backdrop-blur-md pointer-events-auto">
             <!-- Slot 1: Melee / Cleave -->
             <div id="slot-1" class="relative w-12 h-12 rounded-lg bg-slate-900 border-2 border-amber-500 flex flex-col items-center justify-center overflow-hidden group">
-                <span class="text-2xl">⚔️</span>
+                <span id="spell-icon-1" class="text-2xl">⚔️</span>
                 <span class="absolute top-0.5 left-1 text-[10px] font-bold text-amber-300 font-mono">1</span>
-                <span class="touch-spell-name">Espada</span>
+                <span id="spell-short-1" class="touch-spell-name">Espada</span>
                 <div id="cd-1" class="absolute inset-0 bg-black/80 flex items-center justify-center text-white font-bold text-xs h-0 transition-all"></div>
                 <div class="absolute -top-9 bg-black/95 text-amber-200 text-[10px] px-2 py-1 rounded border border-amber-500 opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none shadow-lg">Golpe de Espada (0 MP)</div>
             </div>
             <!-- Slot 2: Fireball -->
             <div id="slot-2" class="relative w-12 h-12 rounded-lg bg-slate-900 border-2 border-amber-500 flex flex-col items-center justify-center overflow-hidden group">
-                <span class="text-2xl">🔥</span>
+                <span id="spell-icon-2" class="text-2xl">🔥</span>
                 <span class="absolute top-0.5 left-1 text-[10px] font-bold text-amber-300 font-mono">2</span>
-                <span class="touch-spell-name">Fuego</span>
+                <span id="spell-short-2" class="touch-spell-name">Fuego</span>
                 <div id="cd-2" class="absolute inset-0 bg-black/80 flex items-center justify-center text-white font-bold text-xs h-0 transition-all"></div>
                 <div class="absolute -top-9 bg-black/95 text-amber-200 text-[10px] px-2 py-1 rounded border border-amber-500 opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none shadow-lg">Bola de Fuego (15 MP)</div>
             </div>
             <!-- Slot 3: Holy Healing -->
             <div id="slot-3" class="relative w-12 h-12 rounded-lg bg-slate-900 border-2 border-amber-500 flex flex-col items-center justify-center overflow-hidden group">
-                <span class="text-2xl">✨</span>
+                <span id="spell-icon-3" class="text-2xl">✨</span>
                 <span class="absolute top-0.5 left-1 text-[10px] font-bold text-amber-300 font-mono">3</span>
-                <span class="touch-spell-name">Curar</span>
+                <span id="spell-short-3" class="touch-spell-name">Curar</span>
                 <div id="cd-3" class="absolute inset-0 bg-black/80 flex items-center justify-center text-white font-bold text-xs h-0 transition-all"></div>
                 <div class="absolute -top-9 bg-black/95 text-amber-200 text-[10px] px-2 py-1 rounded border border-amber-500 opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none shadow-lg">Luz Sagrada (25 MP)</div>
             </div>
             <!-- Slot 4: Divine Shield -->
             <div id="slot-4" class="relative w-12 h-12 rounded-lg bg-slate-900 border-2 border-amber-500 flex flex-col items-center justify-center overflow-hidden group">
-                <span class="text-2xl">🛡️</span>
+                <span id="spell-icon-4" class="text-2xl">🛡️</span>
                 <span class="absolute top-0.5 left-1 text-[10px] font-bold text-amber-300 font-mono">4</span>
-                <span class="touch-spell-name">Escudo</span>
+                <span id="spell-short-4" class="touch-spell-name">Escudo</span>
                 <div id="cd-4" class="absolute inset-0 bg-black/80 flex items-center justify-center text-white font-bold text-xs h-0 transition-all"></div>
                 <div class="absolute -top-9 bg-black/95 text-amber-200 text-[10px] px-2 py-1 rounded border border-amber-500 opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none shadow-lg">Escudo Divino (30 MP)</div>
             </div>
             <!-- Slot 5: Meteor Shower -->
             <div id="slot-5" class="relative w-12 h-12 rounded-lg bg-slate-900 border-2 border-amber-500 flex flex-col items-center justify-center overflow-hidden group">
-                <span class="text-2xl">☄️</span>
+                <span id="spell-icon-5" class="text-2xl">☄️</span>
                 <span class="absolute top-0.5 left-1 text-[10px] font-bold text-amber-300 font-mono">5</span>
-                <span class="touch-spell-name">Área</span>
+                <span id="spell-short-5" class="touch-spell-name">Área</span>
                 <div id="cd-5" class="absolute inset-0 bg-black/80 flex items-center justify-center text-white font-bold text-xs h-0 transition-all"></div>
                 <div class="absolute -top-9 bg-black/95 text-amber-200 text-[10px] px-2 py-1 rounded border border-amber-500 opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none shadow-lg">Meteorito Devastador (40 MP)</div>
             </div>
+
+            <div id="slot-6" class="relative w-12 h-12 rounded-lg bg-slate-900 border-2 border-amber-500 flex flex-col items-center justify-center overflow-hidden group"><span id="spell-icon-6" class="text-2xl">⚡</span><span class="absolute top-0.5 left-1 text-[10px] font-bold text-amber-300">RMB</span><span id="spell-short-6" class="touch-spell-name">Especial</span><div id="cd-6" class="absolute inset-0 bg-black/80 flex items-center justify-center text-white font-bold text-xs h-0"></div></div>
 
             <!-- Menu Hotkey Shortcuts Bar -->
             <button id="interact-button" class="wow-btn touch-only" aria-label="Interactuar: hablar, recoger oro o seleccionar enemigo">🤝<span>Interactuar</span></button>
@@ -175,8 +179,9 @@
     <div id="modal-container" class="absolute inset-0 bg-black/65 z-30 flex items-center justify-center p-4 hidden pointer-events-auto">
         
         <div id="win-appmenu" class="wow-panel wow-border w-full max-w-md p-5 rounded-xl hidden flex-col gap-4">
-            <div class="flex justify-between items-center"><h2 class="font-cinzel text-xl text-amber-300">Aventura · v0.3</h2><button onclick="closeAllWindows()" aria-label="Cerrar menú">✕</button></div>
+            <div class="flex justify-between items-center"><h2 class="font-cinzel text-xl text-amber-300">Aventura · v0.4</h2><button onclick="closeAllWindows()" aria-label="Cerrar menú">✕</button></div>
             <div class="app-menu-grid">
+                <button id="menu-rts" class="wow-btn" onclick="location.href='./rts.html'">🛡️ Probar RTS · mano izquierda</button>
                 <button id="menu-inventory" class="wow-btn" onclick="openWindow('inventory')">🎒 Mochila</button>
                 <button id="menu-talents" class="wow-btn" onclick="openWindow('talents')">📜 Talentos</button>
                 <button id="menu-spells" class="wow-btn" onclick="openWindow('spells')">📖 Habilidades</button>
@@ -194,24 +199,18 @@
             <button id="update-button" class="wow-btn" hidden>Actualizar aplicación</button>
             <p id="app-status" role="status" aria-live="polite">Puedes instalar este juego desde el menú de Chrome cuando esté disponible. En iPhone/iPad: Compartir → Añadir a pantalla de inicio.</p>
             <p id="keyboard-menu-guide" class="keyboard-help">Mano izquierda: WASD selecciona · F o E confirma · Q vuelve/cierra.<br>R: mochila · C: talentos · X: habilidades · T: misión · Z: mapa · V: pausa · G: ayuda.</p>
-            <button id="menu-controls" onclick="openWindow('controls')" class="wow-btn keyboard-help">Personalizar teclas</button>
+
             <button id="menu-resume" onclick="if (manualPaused) togglePause(); closeAllWindows()" class="wow-btn app-resume">Volver al juego</button>
-        </div>
-        <div id="win-controls" class="wow-panel wow-border w-full max-w-lg p-5 rounded-xl hidden flex-col gap-4">
-            <div class="flex justify-between items-center"><h2 class="font-cinzel text-xl text-amber-300">Controles del teclado</h2><button onclick="openWindow('appmenu')" aria-label="Volver al menú">✕</button></div>
-            <p class="text-xs">Elige una acción y pulsa la nueva tecla. Esc cancela la asignación. Las teclas duplicadas se rechazan. Enter y Esc siguen disponibles para confirmar y cerrar.</p>
-            <p id="control-status" role="status" aria-live="polite" class="text-xs text-amber-200"></p>
-            <div id="controls-list"></div>
-            <p id="controls-nav" class="text-xs text-amber-200"></p>
         </div>
         <div id="win-help" class="wow-panel wow-border w-full max-w-lg p-5 rounded-xl hidden flex-col gap-4">
             <h2 class="font-cinzel text-xl text-amber-300">Una pequeña aventura</h2>
+            <div id="class-choice"><label for="hero-class">Elige tu clase antes de empezar</label><select id="hero-class" onchange="chooseHeroClass(this.value)"><option value="paladin">🛡️ Paladín</option><option value="mage">🧙‍♀️ Maga</option><option value="ranger">🏹 Exploradora</option></select><p id="class-summary"></p></div>
             <p id="keyboard-help-guide" class="keyboard-help">Todo cerca de WASD: 1–5 habilidades · E/F interactuar o confirmar · Q menú/volver · R mochila · C talentos · X habilidades · T misión · Z mapa · V pausa · G ayuda. En los menús, WASD selecciona. F empieza esta aventura.</p>
             <p>Habla con el comandante, vence a cinco enemigos comunes y vuelve por tu recompensa. Recoge oro, compra equipo y mejora tus habilidades antes de desafiar al Señor Demonio.</p>
             <p><b>WASD</b>: moverte en la dirección de la pantalla.<br><b>E</b>: hablar, recoger oro o fijar un objetivo cercano.<br><b>1 / Espacio</b>: espada. <b>2</b>: fuego. <b>3</b>: curar. <b>4</b>: inmunidad. <b>5</b>: ataque de área.</p>
             <p><b>I / B</b>: inventario. <b>C</b>: talentos. <b>K</b>: habilidades. <b>T</b>: misión. <b>M</b>: mapa. <b>P</b>: pausa. <b>H</b>: ayuda.</p>
             <p>Los menús pausan el juego. Puedes tocar las opciones o usar el ratón, WASD y Enter en ellos. Los ataques eligen un enemigo al alcance. La villa es un refugio: combate fuera de ella y regresa para recuperar vida y maná. El círculo rojo del jefe anuncia un ataque: sal de él o usa tu escudo.</p>
-            <p>El guardado automático pertenece a este navegador. Usa <b>Exportar</b> para llevar tu partida a otra versión o equipo. En móvil, mueve la palanca con una mano y usa habilidades con la otra. Mantén <b>Espada</b> para atacar; suelta para detenerte. <b>Interactuar</b> permite hablar con los personajes. El menú reúne mochila, talentos, habilidades, misión y mapa.</p>
+            <p>El guardado automático pertenece a este navegador. Usa <b>Exportar</b> para llevar tu partida a otra versión o equipo. El sexto poder se activa con clic derecho o su botón y tarda 90 segundos en recargar. En móvil, mueve la palanca con una mano y usa habilidades con la otra. Mantén <b>Espada</b> para atacar; suelta para detenerte. <b>Interactuar</b> permite hablar con los personajes. El menú reúne mochila, talentos, habilidades, misión y mapa.</p>
             <button onclick="closeAllWindows()" class="wow-btn px-4 py-2 rounded">Jugar [Enter / ESC]</button>
         </div>
         <!-- 1. INVENTORY & BAGS WINDOW ('I' / 'B') -->

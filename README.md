@@ -26,7 +26,6 @@ The village is a safe refuge that restores health and mana. Ordinary enemies res
 
 - **Touch:** drag the left joystick; tap the five abilities on the right. Hold **Espada** to repeat attacks at the normal cooldown. **Interactuar** talks, collects gold or selects a nearby enemy. **☰** opens all menus. Movement and combat support simultaneous fingers.
 - **Keyboard defaults:** WASD moves; 1–5 cast the five abilities; E/F interacts. In menus, WASD selects and F/E confirms. Q opens the menu or returns to it; R inventory, C talents, X ability book, T quest, Z map, V pause, G help. Older shortcuts (I/B, K, M, P, H, Enter/Space, Escape) remain available.
-- **Customize:** Menu → Personalizar teclas. Select an action and press a new key; duplicates are rejected. Preferences persist in that browser. Escape cancels capture, and the reset button restores left-hand defaults. Ctrl/Alt/Cmd shortcuts remain available to the browser.
 - Menus support touch, mouse and keyboard. **Menu → Mostrar/Ocultar controles táctiles** overrides automatic touch detection on hybrid Chromebooks.
 
 ## Saves
@@ -63,3 +62,21 @@ Open `http://localhost:8000` for development. Serve the folder over HTTP; openin
 CI also runs Chromium checks at desktop, Chromebook-touch, phone portrait, small-phone and landscape sizes before deployment. To run those locally, install Playwright 1.62.1 and its Chromium browser, then run `node tests/browser.test.cjs`. Browser screenshots are saved as CI artifacts.
 
 Repairs include non-stacking equipment bonuses, target/range validation before spending mana, consistent potion values, upgrade scaling, one-time quest rewards, multiple level-ups, stable movement/friction, scenery collisions, safe projectile processing, pauses, respawns and validated save imports. v0.3 adds two-thumb controls, compact portrait/landscape layouts, install metadata and offline support. The repaired v0.2 checkpoint is preserved in Git history.
+
+## RTS control laboratory (v0.4)
+
+Open [the RTS prototype](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/rts.html), or choose **Probar RTS · mano izquierda** in the RPG menu. The RPG remains available with its own save.
+
+The RTS has a paladin, workers and recruitable soldiers, two towns, resource gathering, barracks, weapon upgrades, stronger frontier enemies, a skeleton captain and the distant dark lord fortress. Forest scenery, rock barriers and a river with two bridges give the army a route across the map. A minimap shows the whole field. Trees are decorative; rocks and water block movement and units plan paths through the bridges.
+
+Move the cursor with the **left joystick**. **Double-tap the left selection pad** to select under the cursor (one tap does not select). Toggle additive selection or select the whole group with the left buttons. The sole right button gives contextual orders: move, gather, resume building, or attack. Hold the joystick with one thumb while using the right order button. Moving the cursor to the field edge scrolls the camera. Cursor speed is adjustable in the left menu.
+
+Keyboard: WASD cursor, E select, F order, 1 all units, 2 construct / recruit / NPC service, 3 stop, Q menu. Custom bindings use the corresponding RPG actions. Mouse left-click selects and right-click orders. The simulation pauses in menus and when the app loses focus. Progress saves locally every five seconds; reopening safely stops previous orders. Restart affects only the RTS save.
+
+This is a small playable control experiment, without multiplayer, extensive art, or a finished campaign. Its purpose is to test comfort and gameplay, not establish a causal claim about which hand makes games commercially successful.
+
+## RPG feedback in v0.4
+
+Choose Paladin, Frost Mage or Ranger in the opening help before starting a new RPG save. Each has its own starter weapon and different skills: melee healing/invulnerability, ranged frost/mana recovery, or bow double shots/bandages/haste. The sixth power uses right-click or its touch button, costs 50 mana and has a 90-second cooldown. It is never required to hold the mouse. Older saves retain Paladin and are migrated safely. Changing classes requires a new RPG game; the RTS save is independent.
+
+The RPG now has a persistent upper-right minimap and desktop session tools in the lower-right. The latest author feedback supersedes v0.3.2: player key rebinding has been removed, and previously saved key preferences are ignored. WASD, 1–5, E/F and left-side menu keys remain fixed, with legacy shortcuts retained.

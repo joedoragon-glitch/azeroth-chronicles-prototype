@@ -1,7 +1,7 @@
 /* Bump CACHE_VERSION when app assets change. New releases wait for player consent. */
-const CACHE_VERSION = 'azeroth-app-v0.3.2';
+const CACHE_VERSION = 'azeroth-app-v0.4.0';
 const CACHE_PREFIX = 'azeroth-app-';
-const APP_FILES = ['./', './index.html', './styles/game.css', './styles/app.css', './styles/keyboard.css', './src/controls.js', './src/game.js', './src/app.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
+const APP_FILES = ['./', './index.html', './rts.html', './styles/rts.css', './src/rts-engine.js', './src/rts.js', './styles/game.css', './styles/app.css', './styles/keyboard.css', './src/controls.js', './src/classes.js', './src/game.js', './src/app.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 const appURL = path => new URL(path, self.registration.scope).href;
 const appFiles = new Set(APP_FILES.map(appURL));
 self.addEventListener('install', event => {
@@ -18,9 +18,10 @@ self.addEventListener('fetch', event => {
     if (request.method !== 'GET' || url.origin !== scope.origin || !url.pathname.startsWith(scope.pathname)) return;
     const key = new URL(url); key.search = ''; key.hash = '';
     const isNavigation = request.mode === 'navigate';
+    const navigationKey = key.pathname === appURL('./rts.html').replace(scope.origin, '') ? appURL('./rts.html') : appURL('./index.html');
     if (!isNavigation && !appFiles.has(key.href)) return;
     event.respondWith(caches.open(CACHE_VERSION).then(async cache => {
-        const cached = await cache.match(isNavigation ? appURL('./index.html') : key.href);
+        const cached = await cache.match(isNavigation ? navigationKey : key.href);
         if (cached) return cached;
         try { return await fetch(request); }
         catch (_) { return new Response('Abre el juego con conexión una vez para preparar el modo sin conexión.', { status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' } }); }

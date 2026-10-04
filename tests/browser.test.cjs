@@ -47,14 +47,8 @@ function overlap(a,b){return a.x<b.x+b.width&&a.x+a.width>b.x&&a.y<b.y+b.height&
         await page.keyboard.press('q');await page.keyboard.press('q');
         await page.keyboard.press('r');await page.keyboard.press('d');await page.keyboard.press('d');await page.keyboard.press('f');
         assert.equal(await page.evaluate(()=>equippedWeapon===inventory[2]),true);
-        await page.keyboard.press('q');await page.getByRole('button',{name:'Personalizar teclas',exact:true}).click();
-        await page.locator('#controls-list').getByRole('button',{name:/^Mover arriba/}).click();
-        await page.keyboard.press('u');assert.equal(await page.evaluate(()=>KeyboardControls.bindings.moveUp),'KeyU');
         await page.keyboard.press('q');await page.keyboard.press('q');
-        await page.reload();assert.equal(await page.evaluate(()=>KeyboardControls.bindings.moveUp),'KeyU');
-        await page.keyboard.press('q');await page.getByRole('button',{name:'Personalizar teclas',exact:true}).click();
-        await page.getByRole('button',{name:'Restablecer teclas iniciales',exact:true}).click();
-        assert.equal(await page.evaluate(()=>KeyboardControls.bindings.moveUp),'KeyW');await page.keyboard.press('q');await page.keyboard.press('q');
+        assert.equal(await page.getByRole('button',{name:'Personalizar teclas',exact:true}).count(),0);
       }
       await page.getByRole('button',{name:'Abrir menú del juego',exact:true}).click();
       assert.equal(await page.evaluate(()=>isGamePaused()),true);
@@ -73,6 +67,36 @@ function overlap(a,b){return a.x<b.x+b.width&&a.x+a.width>b.x&&a.y<b.y+b.height&
       assert.equal(await page.evaluate(()=>activeWindow),null,'saved game should restore without help');
       assert.deepEqual(errors,[],size.name+' browser errors');
       console.log('PASS Chromium '+size.name+': input, menus, layout and offline reload');
+      // The RTS is a separate page in the same installable app and cache.
+      await context.setOffline(false);await page.goto(base+'rts.html');
+      await page.getByRole('button',{name:'Jugar / continuar',exact:true}).click();
+      assert((await page.locator('#rts-field').boundingBox()).height>=100,'RTS field too small: '+size.name);
+      assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'RTS overflow');
+      const primary=await page.locator('#rts-primary').boundingBox(),order=await page.locator('#rts-order').boundingBox(),stick=await page.locator('#rts-joystick').boundingBox();
+      assert(primary.x+primary.width/2<size.width/2,'primary action must stay left');
+      assert(order.x>size.width/2,'orders must stay right');assert(!overlap(stick,primary)&&!overlap(stick,order),'RTS input overlap');
+      if(size.touch){
+        await page.touchscreen.tap(primary.x+primary.width/2,primary.y+primary.height/2);
+        assert.match(await page.locator('#rts-stats').innerText(),/0 seleccionadas/,'one tap must not select');
+        await page.touchscreen.tap(primary.x+primary.width/2,primary.y+primary.height/2);
+        await page.waitForFunction(()=>document.querySelector('#rts-stats').textContent.includes('1 seleccionadas'));
+        const session=await context.newCDPSession(page),move={x:stick.x+stick.width*.8,y:stick.y+stick.height*.5,id:1},command={x:order.x+order.width/2,y:order.y+order.height/2,id:2};
+        await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[move,command]});
+        await page.waitForFunction(()=>document.querySelector('#rts-knob').style.transform.includes('translate'));
+        await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+        await page.waitForFunction(()=>document.querySelector('#rts-knob').style.transform==='');await session.detach();
+      }else{
+        await page.keyboard.press('e');assert.match(await page.locator('#rts-stats').innerText(),/1 seleccionadas/);
+        await page.keyboard.press('1');assert.match(await page.locator('#rts-stats').innerText(),/3 seleccionadas/);
+        await page.keyboard.press('f');assert.match(await page.locator('#rts-message').innerText(),/Orden: mover/);
+      }
+      await page.getByRole('button',{name:'Abrir menú RTS',exact:true}).click();
+      await page.getByRole('button',{name:'Jugar / continuar',exact:true}).click();
+      await page.screenshot({path:path.join(root,'test-results','rts-'+size.name+'.png')});
+      await context.setOffline(true);await page.reload();assert.match(await page.title(),/RTS/);
+      await page.getByRole('button',{name:'Jugar / continuar',exact:true}).click();
+      assert.match(await page.locator('#rts-stats').innerText(),/3\/12 tropas/);assert.deepEqual(errors,[],size.name+' RTS errors');
+      console.log('PASS Chromium RTS '+size.name+': virtual cursor, left selection, right orders and offline reload');
       await context.close();
     }
   } catch(error){console.error(error.stack);process.exitCode=1}

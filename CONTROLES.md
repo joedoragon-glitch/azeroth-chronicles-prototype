@@ -22,15 +22,20 @@ Abre https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ y pulsa *
 | V | Pausa |
 | G | Ayuda |
 
-Puedes mantener WASD mientras pulsas una habilidad. El juego elige un enemigo al alcance: no exige apuntar con el ratón. Hay cinco habilidades en este prototipo; no se ha añadido una sexta.
+Puedes mantener WASD mientras pulsas una habilidad. El juego elige un enemigo al alcance: no exige apuntar con el ratón. Hay cinco habilidades en este prototipo; hay además un sexto poder de uso ocasional.
 
-## Cambiar las teclas
+## Esquema fijo y poder especial
 
-1. Pulsa **Q** y elige **Personalizar teclas**.
-2. Selecciona la acción que quieres cambiar con W/S y F, o haz clic sobre ella.
-3. Pulsa la nueva tecla. Si ya pertenece a otra acción, el juego te lo indica y espera otra tecla.
-4. **Esc** cancela una asignación. **Restablecer teclas iniciales** recupera el esquema de la tabla.
+Por petición del autor, esta versión usa teclas fijas; ya no hay personalización. Los atajos antiguos I/B, K, M, P y H también funcionan. Enter y Esc sirven como respaldo.
 
-El juego guarda esta configuración en el navegador del jugador. Las instrucciones del menú se actualizan al cambiar las teclas. Enter y Esc siguen disponibles como respaldo. Los atajos antiguos I/B, K, M, P y H también funcionan, salvo cuando esa tecla se reasigna expresamente a otra acción.
+El **sexto poder** se activa con **clic derecho** sobre el campo de juego o su botón. Cuesta 50 maná y tarda 90 segundos en recargar. Sus efectos dependen de la clase. No exige mantener el ratón pulsado.
+
+En una partida nueva puedes elegir Paladín, Maga o Exploradora antes de empezar. El libro de habilidades muestra los poderes y costes de la clase elegida.
 
 Prueba breve: acepta la misión con E/F; equipa la espada con R, D, D, F; cierra los menús con Q; combate con WASD y 1–5; vuelve al comandante para cobrar. La villa permite descansar y recuperar vida y maná. Los menús pausan el juego.
+
+## RTS móvil
+
+El menú del RPG permite abrir **Probar RTS · mano izquierda**. La palanca izquierda mueve el cursor; dos toques en el panel izquierdo seleccionan; el único botón derecho da órdenes. Las acciones de grupo, construcción, reclutamiento y NPC se concentran a la izquierda. En teclado: WASD cursor, E seleccionar, F ordenar, 1 grupo, 2 construir/reclutar, 3 detener, Q menú. La velocidad del cursor se ajusta en el menú.
+
+La prueba empieza con un paladín y dos trabajadores. Reúne recursos del bosque, construye un cuartel, recluta soldados, derrota al capitán del campamento, cruza uno de los puentes, recupera el poblado y prepara el asalto a la fortaleza del Señor Demonio. Los poblados aliados permiten recuperarse y acercar la recolección.

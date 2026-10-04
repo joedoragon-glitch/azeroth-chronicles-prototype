@@ -2,7 +2,7 @@ const fs = require('fs');
 const vm = require('vm');
 const assert = require('assert/strict');
 const html = fs.readFileSync(require('path').join(__dirname, '../index.html'), 'utf8');
-const code = fs.readFileSync(require('path').join(__dirname, '../src/controls.js'), 'utf8') + '\n' + fs.readFileSync(require('path').join(__dirname, '../src/game.js'), 'utf8');
+const code = fs.readFileSync(require('path').join(__dirname, '../src/controls.js'), 'utf8') + '\n' + fs.readFileSync(require('path').join(__dirname, '../src/classes.js'), 'utf8')+'\n'+fs.readFileSync(require('path').join(__dirname, '../src/game.js'), 'utf8');
 const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map(m => m[1]));
 
 function fresh({ deniedStorage = false, saved = null, controls = null } = {}) {
@@ -67,7 +67,7 @@ test('Interaction targets enemies without missing function',()=>{
   const g=ready();assert(g.run(`player.wx=700;player.wy=650;interactWithNearby();return selectedTarget===enemies[0];`));
 });
 test('Invalid spells, full-health heal and distant target spend no resources',()=>{
-  const g=ready();eq(g.run(`selectedTarget=enemies[0];castSpell(1);castSpell(2);castSpell(3);castSpell(5);castSpell(99);return [player.mp,...Object.values(player.cds),activeProjectiles.length];`),[60,0,0,0,0,0,0]);
+  const g=ready();eq(g.run(`selectedTarget=enemies[0];castSpell(1);castSpell(2);castSpell(3);castSpell(5);castSpell(99);return [player.mp,...Object.values(player.cds),activeProjectiles.length];`),[60,0,0,0,0,0,0,0]);
 });
 test('Fireball retargets a nearby enemy instead of a stale distant target',()=>{
   const g=ready();assert(g.run(`player.wx=700;player.wy=650;selectedTarget=enemies[4];castSpell(2);return activeProjectiles[0].targetEnemy===enemies[0] && player.mp===45;`));
@@ -210,7 +210,7 @@ test('WASD can remain held while all five keyboard abilities cast',()=>{
   const g=ready();g.run(`player.wx=700;player.wy=650;player.hp=40;player.mp=player.maxMp=300;enemies[0].hp=enemies[0].maxHp=1000;`);
   g.emit('keydown',{code:'KeyW'});
   for(const code of ['Digit1','Digit2','Digit3','Digit4','Digit5'])g.emit('keydown',{code});
-  assert(g.run(`return keys.KeyW && Object.values(player.cds).every(cd=>cd>0) && player.hp>40 && player.shieldActive && activeProjectiles.length===1;`));
+  assert(g.run(`return keys.KeyW && [1,2,3,4,5].every(n=>player.cds[n]>0) && player.hp>40 && player.shieldActive && activeProjectiles.length===1;`));
   g.run(`updateGame(.05);`);assert(g.run(`return player.isMoving && keys.KeyW;`));
 });
 test('Left-hand confirm and return work through onboarding, menus, equipment and map',()=>{
@@ -224,26 +224,17 @@ test('Left-hand confirm and return work through onboarding, menus, equipment and
   g.emit('keydown',{code:'KeyZ'});assert(g.run(`return activeWindow==='map';`));g.emit('keydown',{code:'KeyF'});assert(g.run(`return !activeWindow;`));
   g.emit('keydown',{code:'KeyV'});assert(g.run(`return manualPaused;`));g.emit('keydown',{code:'KeyV'});assert(g.run(`return !manualPaused;`));
 });
-test('Custom movement and spells replace their primary keys and survive reload',()=>{
-  const g=ready();g.run(`KeyboardControls.assign('moveUp','KeyU');KeyboardControls.assign('spell2','KeyJ');`);
-  const saved=g.storage.get('azeroth-keyboard-controls-v1');const restored=ready({controls:saved});
-  restored.run(`player.wx=1900;player.wy=1900;`);restored.emit('keydown',{code:'KeyW'});restored.run(`updateGame(.1);`);assert(restored.run(`return !player.isMoving;`));
-  restored.emit('keydown',{code:'KeyU'});restored.run(`updateGame(.1);`);assert(restored.run(`return player.isMoving;`));restored.emit('keyup',{code:'KeyU'});assert(restored.run(`return !keys.KeyU;`));
-  restored.run(`player.wx=700;player.wy=650;`);restored.emit('keydown',{code:'Digit2'});assert(restored.run(`return player.mp===60;`));restored.emit('keydown',{code:'KeyJ'});assert(restored.run(`return activeProjectiles.length===1 && player.mp===45;`));
+test('Keyboard bindings stay fixed despite old preferences; browser modifier shortcuts remain',()=>{
+ const g=ready({controls:'{"version":1,"bindings":{"moveUp":"KeyU"}}'});assert(g.run(`return KeyboardControls.bindings.moveUp==='KeyW';`));g.emit('keydown',{code:'KeyR',ctrlKey:true});g.emit('keydown',{code:'KeyW',metaKey:true});assert(g.run(`return !activeWindow && !keys.KeyW;`));assert(!html.includes('Personalizar teclas'));
 });
-test('Rebinding rejects collisions, Escape cancels capture and reset restores defaults',()=>{
-  const g=ready();g.run(`openWindow('controls');menuIndex=0;executeMenuSelection();`);g.emit('keydown',{code:'KeyS'});
-  assert(g.run(`return pendingControlAction==='moveUp' && KeyboardControls.bindings.moveUp==='KeyW' && controlNotice.includes('ya se usa');`));
-  g.emit('keydown',{code:'Escape'});assert(g.run(`return pendingControlAction===null && activeWindow==='controls';`));
-  g.run(`menuIndex=0;executeMenuSelection();`);g.emit('keydown',{code:'KeyU'});assert(g.run(`return pendingControlAction===null && KeyboardControls.bindings.moveUp==='KeyU';`));
-  g.run(`menuIndex=KeyboardControls.actions.length;executeMenuSelection();`);assert(g.run(`return KeyboardControls.bindings.moveUp==='KeyW';`));
+test('Mage and ranger classes have unique weapons, abilities and saved progression',()=>{
+ const mage=fresh();assert(mage.run(`return chooseHeroClass('mage') && inventory[2].name==='Bastón de Escarcha' && player.maxMp===100;`));mage.run(`closeAllWindows();player.mp=20;castSpell(3);`);assert(mage.run(`return player.mp===55 && player.cds[3]===6 && !chooseHeroClass('ranger');`));mage.run(`player.wx=700;player.wy=650;player.mp=100;castSpell(2);updateGame(.1);updateGame(.1);`);assert(mage.run(`return enemies[0].slowTimer>0;`));mage.run(`saveGame();`);const load=ready({saved:mage.storage.get('azeroth-chronicles-prototype-save-v2')});assert(load.run(`return player.heroClass==='mage'&&inventory[2].name==='Bastón de Escarcha';`));
+ const ranger=fresh();assert(ranger.run(`return chooseHeroClass('ranger') && inventory[2].name==='Arco de Exploradora';`));ranger.run(`closeAllWindows();player.wx=700;player.wy=650;castSpell(2);castSpell(4);`);assert(ranger.run(`return activeProjectiles.length===2&&player.hasteTimer===6;`));ranger.run(`updateGame(6);`);assert(ranger.run(`return player.hasteTimer===0&&player.maxSpeed===320;`));
 });
-test('Corrupt keyboard preferences and unavailable storage keep usable controls',()=>{
-  const g=ready({controls:'{"version":1,"bindings":{"moveUp":"KeyU"}}'});assert(g.run(`return KeyboardControls.bindings.moveUp==='KeyW';`));
-  const blocked=ready({deniedStorage:true});assert(blocked.run(`return KeyboardControls.assign('moveUp','KeyU')===null && KeyboardControls.bindings.moveUp==='KeyU' && KeyboardControls.notice.includes('sesión');`));
+test('Sixth power validates targets and mana, pays once and pauses its long cooldown',()=>{
+ const g=ready();g.run(`castSpell(6);`);assert(g.run(`return player.mp===60&&player.cds[6]===0;`));g.run(`player.wx=700;player.wy=650;castSpell(6);castSpell(6);`);assert(g.run(`return player.mp===10&&player.cds[6]===90;`));g.run(`openWindow('inventory');updateGame(5);`);assert(g.run(`return player.cds[6]===90;`));
 });
-test('Browser modifier shortcuts are preserved and alias conflicts favor custom actions',()=>{
-  const g=ready();g.emit('keydown',{code:'KeyR',ctrlKey:true});g.emit('keydown',{code:'KeyW',metaKey:true});assert(g.run(`return !activeWindow && !keys.KeyW;`));
-  g.run(`KeyboardControls.assign('map','KeyI');`);g.emit('keydown',{code:'KeyI'});assert(g.run(`return activeWindow==='map';`));
+test('Older RPG saves without classes or a sixth cooldown still restore',()=>{
+ const g=ready();const raw=g.run(`const s=saveSnapshot();delete s.player.heroClass;delete s.player.classChosen;delete s.player.hasteTimer;delete s.player.cds[6];delete s.player.spellLevels[6];return JSON.stringify(s);`);const old=ready({saved:raw});assert(old.run(`return player.heroClass==='paladin'&&player.cds[6]===0&&player.spellLevels[6]===1;`));
 });
 console.log(`\n${passed} gameplay checks passed${process.exitCode ? '; failures remain' : ''}.`);

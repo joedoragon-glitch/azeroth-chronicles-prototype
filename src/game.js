@@ -198,6 +198,7 @@
          * WARCRAFT III HERO PLAYER STATE & DYNAMICS
          * ------------------------------------------------------------- */
         const player = {
+            heroClass: 'paladin', classChosen: false, hasteTimer: 0,
             // World Continuous Floating Point Coordinates
             wx: 300,
             wy: 300,
@@ -235,8 +236,8 @@
             talentPoints: 0,
 
             // Spell Cooldowns (in seconds)
-            cds: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
-            spellLevels: { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1 },
+            cds: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 },
+            spellLevels: { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1 },
             shieldActive: false,
             shieldTimer: 0
         };
@@ -312,11 +313,9 @@
          * ------------------------------------------------------------- */
         let activeWindow = null; // 'inventory', 'talents', 'spells', 'shop', 'trainer', 'quest', 'map'
         let menuIndex = 0;
-        let pendingControlAction = null;
-        let controlNotice = '';
-        const keyboardMenuIds = ['menu-inventory','menu-talents','menu-spells','menu-quest','menu-map','menu-help','app-pause-button','menu-save','menu-export','menu-import','touch-toggle','menu-new','install-button','update-button','menu-controls','menu-resume'];
+        const keyboardMenuIds = ['menu-inventory','menu-talents','menu-spells','menu-quest','menu-map','menu-help','app-pause-button','menu-save','menu-export','menu-import','touch-toggle','menu-new','install-button','update-button','menu-rts','menu-resume'];
         function keyboardMenuButtons() {
-            return keyboardMenuIds.map(id => document.getElementById(id)).filter(button => button && !button.hidden && !button.disabled && (button.id !== 'menu-controls' || document.body.classList.contains('keyboard-input')));
+            return keyboardMenuIds.map(id => document.getElementById(id)).filter(button => button && !button.hidden && !button.disabled);
         }
         function renderKeyboardMenu() {
             const buttons = keyboardMenuButtons();
@@ -340,17 +339,18 @@
             document.getElementById(`win-${winId}`).classList.remove('hidden');
             document.getElementById(`win-${winId}`).classList.add('flex');
             if (winId === 'map') resizeMapCanvas();
+            if(winId==='help')refreshClassUI();
             renderActiveWindowUI();
             updatePauseUI();
         }
 
         function closeAllWindows() {
+            if(activeWindow==='help') player.classChosen=true;
             activeWindow = null;
-            pendingControlAction = null;
             clearMovement();
             document.getElementById('modal-container').classList.add('hidden');
             document.getElementById('modal-container').classList.remove('flex');
-            const wins = ['inventory', 'talents', 'spells', 'shop', 'trainer', 'quest', 'map', 'help', 'appmenu', 'controls'];
+            const wins = ['inventory', 'talents', 'spells', 'shop', 'trainer', 'quest', 'map', 'help', 'appmenu'];
             wins.forEach(w => {
                 const el = document.getElementById(`win-${w}`);
                 if (el) {
@@ -376,19 +376,6 @@
         window.addEventListener('keydown', (e) => {
             const code = e.code;
             if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
-            if (activeWindow === 'controls' && pendingControlAction) {
-                e.preventDefault();
-                document.body.classList.add('keyboard-input');
-                if (e.repeat) return;
-                if (code === 'Escape') { pendingControlAction = null; controlNotice = 'Asignación cancelada.'; }
-                else if (e.ctrlKey || e.altKey || e.metaKey) controlNotice = 'Usa una tecla sin Ctrl, Alt ni Cmd. Esc cancela.';
-                else {
-                    const error = KeyboardControls.assign(pendingControlAction,code);
-                    controlNotice = error || KeyboardControls.notice;
-                    if (!error) { pendingControlAction = null; clearMovement(); updateKeyboardHints(); }
-                }
-                renderControlsUI(); return;
-            }
             // Conservar atajos del navegador (Ctrl, Alt, Cmd); Shift permite WASD normal.
             if (e.ctrlKey || e.altKey || e.metaKey) return;
             // Dejar que los botones nativos respondan a Enter/Espacio, sin lanzar ataques.
@@ -509,11 +496,13 @@
          * SPELL CASTING MECHANICS (KEYS 1-5)
          * ------------------------------------------------------------- */
         // Reglas compartidas por las habilidades y la barra de recarga.
-        const SPELL_COSTS = { 1: 0, 2: 15, 3: 25, 4: 30, 5: 40 };
-        const SPELL_CDS = { 1: 0.5, 2: 2, 3: 6, 4: 12, 5: 10 };
+        const SPELL_COSTS = { 1: 0, 2: 15, 3: 25, 4: 30, 5: 40, 6:50 };
+        const SPELL_CDS = { 1: 0.5, 2: 2, 3: 6, 4: 12, 5: 10, 6:90 };
         function spellScale(num) { return 1 + 0.25 * (player.spellLevels[num] - 1); }
 
         function castSpell(num) {
+            if(num===6){castUltimate();return;}
+            if(player.heroClass!=='paladin') { castClassSpell(num); return; }
             if (!(num in SPELL_COSTS) || isGamePaused() || player.cds[num] > 0) return;
             if ([1, 2, 5].includes(num) && isInTown()) {
                 addFloatingText('La villa es un refugio. Sal de ella para combatir.', player.wx, player.wy, '#fde047'); return;
@@ -581,6 +570,52 @@
             updateHUDUI();
         }
 
+        function castUltimate(){
+            if(isGamePaused()||player.cds[6]>0)return;
+            const targets=enemies.filter(e=>e.hp>0&&!e.returning&&Math.hypot(e.wx-player.wx,e.wy-player.wy)<=500);
+            if(isInTown()||!targets.length){addFloatingText('El poder especial necesita enemigos fuera de la villa.',player.wx,player.wy,'#fde047');return;}
+            if(player.mp<50){addFloatingText('El poder especial necesita 50 maná.',player.wx,player.wy,'#60a5fa');return;}
+            player.mp-=50;player.cds[6]=90;AudioSys.playCastFire();
+            if(player.heroClass==='ranger'){const target=targets.sort((a,b)=>Math.hypot(a.wx-player.wx,a.wy-player.wy)-Math.hypot(b.wx-player.wx,b.wy-player.wy))[0];damageEnemy(target,player.spellPower*9,'#facc15');}
+            else targets.forEach(e=>{damageEnemy(e,player.spellPower*(player.heroClass==='mage'?6:5),'#c084fc');if(player.heroClass==='mage')e.slowTimer=6;createParticle(e.wx,e.wy,'#c084fc',120,12);});
+            if(player.heroClass==='paladin')player.hp=Math.min(player.maxHp,player.hp+30);
+            addFloatingText('¡Poder especial! Recarga: 90 segundos.',player.wx,player.wy,'#e9d5ff');updateHUDUI();
+        }
+
+        function chooseHeroClass(id) {
+            if(!HERO_CLASSES[id]||player.classChosen||activeWindow!=='help')return false;
+            player.heroClass=id;Object.assign(player,HERO_CLASSES[id].stats);player.hp=player.maxHp;player.mp=player.maxMp;player.hasteTimer=0;
+            inventory.splice(0,inventory.length,...initialInventory.map(i=>({...i})));inventory[2]={name:HERO_CLASSES[id].weapon,icon:HERO_CLASSES[id].weaponIcon,type:'gear',sp:10,desc:'+10 Poder de Ataque'};equippedWeapon=null;
+            refreshClassUI();updateHUDUI();saveGame();return true;
+        }
+        function refreshClassUI(){
+            const c=HERO_CLASSES[player.heroClass]||HERO_CLASSES.paladin;
+            if(c.spells)spellbookData.splice(0,6,...c.spells.map(([name,icon,,cost,desc],i)=>({name:`${i+1}: ${name}`,icon,desc:`${cost} maná · ${SPELL_CDS[i+1]} s de recarga · ${desc}`})));
+            else spellbookData.splice(0,6,...paladinSpellbook.slice(0,5).map(s=>({...s})));
+            spellbookData.push({name:'6: '+(player.heroClass==='mage'?'Cometa glacial':player.heroClass==='ranger'?'Disparo definitivo':'Juicio de la Luz'),icon:player.heroClass==='mage'?'🌠':player.heroClass==='ranger'?'🎯':'⚡',desc:'Clic derecho o botón · 50 maná · 90 s de recarga · alcance 500. Poder especial de la clase.'});
+            document.body.setAttribute('data-hero-class',player.heroClass);document.getElementById('hero-icon').textContent=c.icon;document.getElementById('ui-player-name').textContent=c.name;
+            const choice=document.getElementById('hero-class');choice.value=player.heroClass;choice.disabled=player.classChosen;
+            document.getElementById('class-summary').textContent=player.classChosen?'Clase elegida: '+c.name+'. Inicia una partida nueva para probar otra.':c.summary;
+            spellbookData.forEach((sb,i)=>{const slot=document.getElementById(`slot-${i+1}`);document.getElementById(`spell-icon-${i+1}`).textContent=sb.icon;document.getElementById(`spell-short-${i+1}`).textContent=i===5?'Especial':c.spells?c.spells[i][2]:['Espada','Fuego','Curar','Escudo','Área'][i];slot.setAttribute('aria-label',sb.name+'. '+sb.desc);slot.title=sb.desc;});
+        }
+        function abilityCost(num){return HERO_CLASSES[player.heroClass]?.spells?.[num-1]?.[3]??SPELL_COSTS[num];}
+        function castClassSpell(num){
+            if(!(num in SPELL_COSTS)||isGamePaused()||player.cds[num]>0)return;
+            const mage=player.heroClass==='mage',range=mage?400:450,cost=abilityCost(num);
+            if([1,2,5].includes(num)&&isInTown()){addFloatingText('Sal de la villa para combatir.',player.wx,player.wy,'#fde047');return;}
+            if([1,2].includes(num)){const valid=e=>e&&e.hp>0&&!e.returning&&Math.hypot(e.wx-player.wx,e.wy-player.wy)<=range;if(!valid(selectedTarget))selectedTarget=enemies.filter(valid).sort((a,b)=>Math.hypot(a.wx-player.wx,a.wy-player.wy)-Math.hypot(b.wx-player.wx,b.wy-player.wy))[0]||null;if(!selectedTarget){addFloatingText('Sin enemigo al alcance',player.wx,player.wy,'#f59e0b');return;}}
+            if(num===3&&(mage?player.mp>=player.maxMp:player.hp>=player.maxHp)){addFloatingText(mage?'Maná completo':'Vida completa',player.wx,player.wy,'#4ade80');return;}
+            const area=enemies.filter(e=>e.hp>0&&!e.returning&&Math.hypot(e.wx-player.wx,e.wy-player.wy)<=(mage?300:400));
+            if(num===5&&!area.length){addFloatingText('Sin enemigos cercanos',player.wx,player.wy,'#f59e0b');return;}
+            if(player.mp<cost){addFloatingText('¡Maná insuficiente!',player.wx,player.wy,'#3b82f6');return;}
+            player.mp-=cost;player.cds[num]=SPELL_CDS[num];
+            if(num===1||num===2){const count=!mage&&num===2?2:1;for(let i=0;i<count;i++)activeProjectiles.push({type:'fireball',wx:player.wx,wy:player.wy,targetEnemy:selectedTarget,speed:550,damage:(num===1?player.spellPower+12:player.spellPower*(mage?2.2:1.2))*spellScale(num),color:mage?'#8ed9ff':'#dfd09a',slow:mage&&num===2?4:0});selectedTarget.aggro=true;AudioSys.playCastFire();}
+            if(num===3){AudioSys.playHeal();if(mage){const before=player.mp;player.mp=Math.min(player.maxMp,player.mp+35*spellScale(3));addFloatingText(`+${Math.round(player.mp-before)} Maná`,player.wx,player.wy,'#60a5fa');}else{const before=player.hp;player.hp=Math.min(player.maxHp,player.hp+(35+player.spellPower*.5)*spellScale(3));addFloatingText(`+${Math.round(player.hp-before)} Vida`,player.wx,player.wy,'#4ade80');}}
+            if(num===4){if(mage){player.shieldActive=true;player.shieldTimer=3;}else player.hasteTimer=6;addFloatingText(mage?'Barrera arcana':'¡Paso veloz!',player.wx,player.wy,'#91c5ff');}
+            if(num===5){area.forEach(e=>{damageEnemy(e,player.spellPower*(mage?2.5:2.2)*spellScale(5),mage?'#8ed9ff':'#dfd09a');if(mage)e.slowTimer=5;createParticle(e.wx,e.wy,mage?'#8ed9ff':'#dfd09a',80,8);});AudioSys.playCastFire();}
+            updateHUDUI();
+        }
+
         function damageEnemy(enemy, damage, color) {
             if (!enemy || enemy.hp <= 0) return;
             if (enemy.returning) return;
@@ -603,34 +638,15 @@
             else if (activeWindow === 'trainer') renderTrainerUI();
             else if (activeWindow === 'quest') renderQuestUI();
             else if (activeWindow === 'map') renderMapUI();
-            else if (activeWindow === 'controls') renderControlsUI();
             else if (activeWindow === 'appmenu') renderKeyboardMenu();
         }
 
         function updateKeyboardHints() {
             const key = id => KeyboardControls.label(KeyboardControls.bindings[id]);
-            const text = `${key('moveUp')}/${key('moveLeft')}/${key('moveDown')}/${key('moveRight')}: mover/seleccionar · ${[1,2,3,4,5].map(n=>key('spell'+n)).join('/')}: habilidades · ${key('interact')}: interactuar · ${key('confirm')}: confirmar · ${key('menu')}: menú/volver. ${key('inventory')}: mochila · ${key('talents')}: talentos · ${key('spellbook')}: habilidades · ${key('quest')}: misión · ${key('map')}: mapa · ${key('pause')}: pausa · ${key('help')}: ayuda. Personaliza las teclas en el menú.`;
+            const text = `${key('moveUp')}/${key('moveLeft')}/${key('moveDown')}/${key('moveRight')}: mover/seleccionar · ${[1,2,3,4,5].map(n=>key('spell'+n)).join('/')}: habilidades · ${key('interact')}: interactuar · ${key('confirm')}: confirmar · ${key('menu')}: menú/volver. ${key('inventory')}: mochila · ${key('talents')}: talentos · ${key('spellbook')}: habilidades · ${key('quest')}: misión · ${key('map')}: mapa · ${key('pause')}: pausa · ${key('help')}: ayuda. Clic derecho: poder especial (90 s de recarga).`;
             document.getElementById('keyboard-menu-guide').textContent = text;
             document.getElementById('keyboard-help-guide').textContent = text;
         }
-        function renderControlsUI() {
-            const list = document.getElementById('controls-list'); list.innerHTML = '';
-            menuIndex = Math.max(0,Math.min(menuIndex,KeyboardControls.actions.length + 1));
-            const rows = [...KeyboardControls.actions, ['reset','Restablecer teclas iniciales'],['back','Volver al menú']];
-            rows.forEach(([id,label],index) => {
-                const button = document.createElement('button'); button.className = 'wow-btn' + (index === menuIndex ? ' selected' : '');
-                const name = document.createElement('span'); name.textContent = label; button.appendChild(name);
-                if (KeyboardControls.bindings[id]) { const badge = document.createElement('kbd'); badge.textContent = KeyboardControls.label(KeyboardControls.bindings[id]); button.appendChild(badge); }
-                button.onclick = () => { menuIndex=index; executeMenuSelection(); };
-                button.onfocus = () => { menuIndex=index; };
-                list.appendChild(button);
-            });
-            const selected = list.children[menuIndex]; if (selected && selected.scrollIntoView) selected.scrollIntoView({block:'nearest'});
-            document.getElementById('control-status').textContent = pendingControlAction ? `Pulsa una tecla para «${KeyboardControls.actions.find(([id])=>id===pendingControlAction)[1]}». Esc cancela. ${controlNotice}` : controlNotice || KeyboardControls.notice || 'Configuración inicial para la mano izquierda.';
-            const key = id => KeyboardControls.label(KeyboardControls.bindings[id]);
-            document.getElementById('controls-nav').textContent = `${key('moveUp')}/${key('moveDown')}: seleccionar · ${key('confirm')} o Enter: cambiar · ${key('menu')}: volver · Esc: cerrar`;
-        }
-
         function renderInventoryUI() {
             const grid = document.getElementById('inv-grid');
             grid.innerHTML = '';
@@ -691,9 +707,11 @@
             { name: '2: Bola de Fuego', icon: '🔥', desc: '15 maná · 2 s de recarga · alcance 400. Sigue al objetivo.' },
             { name: '3: Luz Sagrada', icon: '✨', desc: '25 maná · 6 s de recarga. Cura al instante; no se gasta si tienes toda la vida.' },
             { name: '4: Escudo Divino', icon: '🛡️', desc: '30 maná · 12 s de recarga. Inmunidad durante 6 segundos.' },
-            { name: '5: Meteorito Devastador', icon: '☄️', desc: '40 maná · 10 s de recarga. Daña a todos los enemigos a 300 de distancia.' }
+            { name: '5: Meteorito Devastador', icon: '☄️', desc: '40 maná · 10 s de recarga. Daña a todos los enemigos a 300 de distancia.' },
+            {name:'6: Juicio de la Luz',icon:'⚡',desc:'Clic derecho o botón · 50 maná · 90 s de recarga · alcance 500'}
         ];
 
+        const paladinSpellbook=spellbookData.map(s=>({...s}));
         function renderSpellbookUI() {
             const container = document.getElementById('spellbook-list');
             container.innerHTML = '';
@@ -838,13 +856,6 @@
         }
 
         function executeMenuSelection() {
-            if (activeWindow === 'controls') {
-                const row = KeyboardControls.actions[menuIndex];
-                if (row) { pendingControlAction=row[0]; controlNotice=''; }
-                else if (menuIndex === KeyboardControls.actions.length) { KeyboardControls.reset(); clearMovement(); updateKeyboardHints(); controlNotice=KeyboardControls.notice; }
-                else { openWindow('appmenu'); return; }
-                renderControlsUI(); return;
-            }
             if (activeWindow === 'appmenu') { const button = keyboardMenuButtons()[menuIndex]; if (button) button.click(); return; }
             if (activeWindow === 'help') { closeAllWindows(); return; }
             if (activeWindow === 'map' || activeWindow === 'spells') { closeAllWindows(); return; }
@@ -971,7 +982,7 @@
             AudioSys.playHit(); addFloatingText(`-${damage}`, player.wx, player.wy, '#ef4444');
             if (player.hp <= 0) {
                 player.hp = player.maxHp; player.mp = player.maxMp;
-                player.wx = 300; player.wy = 300; player.shieldActive = false; player.shieldTimer = 0;
+                player.wx = 300; player.wy = 300;player.hasteTimer=0; player.shieldActive = false; player.shieldTimer = 0;
                 clearMovement(); selectedTarget = null; activeProjectiles = [];
                 enemies.forEach(e => { if (e.hp > 0) e.returning = true; e.aggro = false; e.telegraph = null; });
                 addFloatingText('Has caído. Revives en la villa conservando tu progreso.', player.wx, player.wy, '#f87171');
@@ -989,6 +1000,7 @@
                     }
                     continue;
                 }
+                enemy.slowTimer=Math.max(0,(enemy.slowTimer||0)-dt);
                 enemy.attackCd = Math.max(0, (enemy.attackCd || 0) - dt);
                 enemy.smashCd = Math.max(0, (enemy.smashCd || 0) - dt);
                 const dist = Math.hypot(player.wx - enemy.wx, player.wy - enemy.wy);
@@ -1019,7 +1031,7 @@
                 }
                 if (dist > 45) {
                     const speed = enemy.type === 'boss' ? 130 : (enemy.lvl === 1 ? 165 : 145);
-                    moveEnemyToward(enemy, player.wx, player.wy, speed, dt, 40);
+                    moveEnemyToward(enemy, player.wx, player.wy, speed*(enemy.slowTimer>0?.5:1), dt, 40);
                 } else if (enemy.attackCd <= 0) {
                     enemy.attackCd = enemy.type === 'boss' ? 1.8 : 1.4;
                     if (receiveDamage(enemy.damage)) break;
@@ -1090,6 +1102,7 @@
 
         function updateGame(dt) {
             if (isGamePaused()) return;
+            player.hasteTimer=Math.max(0,player.hasteTimer-dt);const speedLimit=player.maxSpeed*(player.hasteTimer>0?1.5:1);
             // 1. WARCRAFT III VECTOR PHYSICS & TURNING SPEED ENGINE
             if (!activeWindow) {
                 let inputX = touchInput.x;
@@ -1133,7 +1146,7 @@
                     const forwardX = inputX;
                     const forwardY = inputY;
 
-                    const desiredVx = forwardX * player.maxSpeed * Math.min(1, inputLen), desiredVy = forwardY * player.maxSpeed * Math.min(1, inputLen);
+                    const desiredVx = forwardX * speedLimit * Math.min(1, inputLen), desiredVy = forwardY * speedLimit * Math.min(1, inputLen);
                     const dvx = desiredVx - player.vx, dvy = desiredVy - player.vy;
                     const delta = Math.hypot(dvx, dvy), step = player.acceleration * dt;
                     if (delta > 0) {
@@ -1168,10 +1181,10 @@
 
             // Cap Speed to Max Speed
             player.currentSpeed = Math.hypot(player.vx, player.vy);
-            if (player.currentSpeed > player.maxSpeed) {
-                player.vx = (player.vx / player.currentSpeed) * player.maxSpeed;
-                player.vy = (player.vy / player.currentSpeed) * player.maxSpeed;
-                player.currentSpeed = player.maxSpeed;
+            if (player.currentSpeed > speedLimit) {
+                player.vx = (player.vx / player.currentSpeed) * speedLimit;
+                player.vy = (player.vy / player.currentSpeed) * speedLimit;
+                player.currentSpeed = speedLimit;
             }
 
             // Update Player World Coordinates
@@ -1216,7 +1229,7 @@
 
             // Espada mantenida: una acción por recarga, sin mensajes por cada fotograma.
             if (touchInput.attack && player.cds[1] === 0 && !isInTown() &&
-                enemies.some(e => e.hp > 0 && !e.returning && Math.hypot(player.wx - e.wx, player.wy - e.wy) <= 125)) castSpell(1);
+                enemies.some(e => e.hp > 0 && !e.returning && Math.hypot(player.wx - e.wx, player.wy - e.wy) <= (player.heroClass==='paladin'?125:player.heroClass==='mage'?400:450))) castSpell(1);
 
             // Actualización sin eliminar elementos durante un recorrido hacia delante.
             footstepFX.forEach(fx => fx.life -= dt);
@@ -1231,7 +1244,7 @@
                 const distance = Math.hypot(dx, dy);
                 const step = p.speed * dt;
                 if (distance <= Math.max(20, step)) {
-                    damageEnemy(p.targetEnemy, p.damage, '#f97316');
+                    damageEnemy(p.targetEnemy, p.damage, p.color||'#f97316');if(p.slow)p.targetEnemy.slowTimer=p.slow;
                     for (let n = 0; n < 8; n++) createParticle(p.targetEnemy.wx, p.targetEnemy.wy, '#f97316', 80, 6);
                     activeProjectiles.splice(i, 1);
                 } else {
@@ -1256,14 +1269,22 @@
             if (saveTimer >= 5) { saveTimer = 0; saveGame(); }
         }
 
+        function renderMiniMap(){
+            const mini=document.getElementById('mini-map'),c=mini.getContext('2d'),w=mini.width,h=mini.height,scale=Math.min(w,h)/MAP_WORLD_SIZE;
+            c.fillStyle='#10291c';c.fillRect(0,0,w,h);const ox=(w-MAP_WORLD_SIZE*scale)/2,oy=(h-MAP_WORLD_SIZE*scale)/2;
+            c.save();c.translate(ox,oy);c.fillStyle='#284a2e';c.fillRect(0,0,500*scale,500*scale);
+            for(const [list,color,r]of [[npcs,'#e6cb74',2],[enemies.filter(e=>e.hp>0),'#ef706d',2],[groundLoot,'#efc849',1]])for(const e of list){c.fillStyle=e.type==='boss'?'#c897fa':color;c.beginPath();c.arc(e.wx*scale,e.wy*scale,e.type==='boss'?3:r,0,Math.PI*2);c.fill();}
+            c.fillStyle='#a9dbff';c.beginPath();c.arc(player.wx*scale,player.wy*scale,3,0,Math.PI*2);c.fill();c.restore();
+        }
         function updateHUDUI() {
+            renderMiniMap();
             updateGuidance();
             for (const k of Object.keys(SPELL_CDS)) {
                 const cd = document.getElementById(`cd-${k}`);
                 cd.style.height = `${player.cds[k] / SPELL_CDS[k] * 100}%`;
                 cd.textContent = player.cds[k] > 0 ? player.cds[k].toFixed(1) : '';
                 const slot = document.getElementById(`slot-${k}`);
-                slot.classList.toggle('unavailable', player.mp < SPELL_COSTS[k]);
+                slot.classList.toggle('unavailable', player.mp < abilityCost(Number(k)));
                 slot.classList.toggle('buff-active', k === '4' && player.shieldActive);
             }
             document.getElementById('ui-player-level').innerText = player.level;
@@ -1384,7 +1405,7 @@
                 }
                 ctx.font = `${kind === 'prop' ? Math.round(36 * e.scale) : (kind === 'player' ? 34 : (e.type === 'boss' ? 38 : 28))}px sans-serif`;
                 const bounce = kind === 'player' && e.isMoving ? Math.sin(e.animCycle) * 4 : 0;
-                ctx.fillText(kind === 'player' ? '🛡️' : e.icon, point.x, point.y + 4 + bounce);
+                ctx.fillText(kind === 'player' ? HERO_CLASSES[player.heroClass].icon : e.icon, point.x, point.y + 4 + bounce);
                 if (kind === 'npc') {
                     ctx.font = 'bold 12px sans-serif'; ctx.fillStyle = '#fde047'; ctx.fillText(e.name, point.x, point.y - 24);
                     if (e.id === 'questgiver') {
@@ -1414,7 +1435,7 @@
             // 9. Render Active Projectiles
             activeProjectiles.forEach(p => {
                 const prIso = worldToIso(p.wx, p.wy);
-                ctx.fillStyle = '#f97316';
+                ctx.fillStyle = p.color||'#f97316';
                 ctx.beginPath();
                 ctx.arc(prIso.x, prIso.y, 7, 0, Math.PI * 2);
                 ctx.fill();
@@ -1458,7 +1479,8 @@
         const initialPlayer = JSON.parse(JSON.stringify(player));
         const initialEnemies = enemies.map(e => ({ ...e, spawnWx: e.wx, spawnWy: e.wy, respawnRemaining: 0, attackCd: 0 }));
         enemies.forEach(e => { e.spawnWx = e.wx; e.spawnWy = e.wy; e.respawnRemaining = 0; e.attackCd = 0; });
-        const itemTemplates = [...inventory, ...shopCatalog].map(item => ({ ...item }));
+        const classWeapons=Object.values(HERO_CLASSES).map(c=>({name:c.weapon,icon:c.weaponIcon,type:'gear',sp:10,desc:'+10 Poder de Ataque'}));
+        const itemTemplates = [...inventory, ...shopCatalog,...classWeapons].map(item => ({ ...item }));
         const initialInventory = inventory.map(item => ({ ...item }));
 
         function updateGuidance() {
@@ -1564,6 +1586,7 @@
             const restoredDamageTimer = number(data.lastDamageTimer ?? 0, 0, 5);
             const p = data.player;
             const restored = { ...initialPlayer, cds: {}, spellLevels: {} };
+            if(p.heroClass!==undefined&&!HERO_CLASSES[p.heroClass])throw new Error('Clase inválida');restored.heroClass=p.heroClass||'paladin';restored.classChosen=p.classChosen!==false;restored.hasteTimer=number(p.hasteTimer??0,0,6);
             for (const key of ['wx','wy']) restored[key] = number(p[key], 60, MAP_WORLD_SIZE - 60);
             for (const key of ['level','nextXp']) restored[key] = number(p[key], 1, 1e15, true);
             for (const key of ['xp','gold','talentPoints']) restored[key] = number(p[key], 0, 1e15, true);
@@ -1576,8 +1599,8 @@
             if (typeof p.shieldActive !== 'boolean' || !p.cds || !p.spellLevels) throw new Error('Habilidades inválidas');
             restored.shieldActive = p.shieldActive && restored.shieldTimer > 0;
             for (const key of Object.keys(SPELL_COSTS)) {
-                restored.cds[key] = number(p.cds[key], 0, SPELL_CDS[key]);
-                restored.spellLevels[key] = number(p.spellLevels[key], 1, MAX_SPELL_LEVEL, true);
+                restored.cds[key] = number(key==='6'?(p.cds[key]??0):p.cds[key], 0, SPELL_CDS[key]);
+                restored.spellLevels[key] = number(key==='6'?(p.spellLevels[key]??1):p.spellLevels[key], 1, MAX_SPELL_LEVEL, true);
             }
             const points = data.talents.map((n, i) => number(n, 0, talents[i].maxPoints, true));
             const items = data.inventory.map(name => {
@@ -1615,7 +1638,7 @@
             closeAllWindows(); clearMovement();
             activeProjectiles = []; particles = []; floatingTexts = []; footstepFX = []; selectedTarget = null;
             camera.wx = player.wx; camera.wy = player.wy; saveTimer = 0;
-            updateHUDUI(); updatePauseUI();
+            refreshClassUI();updateHUDUI(); updatePauseUI();
         }
         function loadGame() {
             try {
@@ -1651,7 +1674,7 @@
             enemies = initialEnemies.map(e => ({ ...e })); groundLoot = [];
             manualPaused = false; bossDefeated = false; lastDamageTimer = 0;
             document.getElementById('event-feed').textContent = '';
-            clearTransientState(); saveGame(true); openWindow('help');
+            clearTransientState();player.classChosen=false; saveGame(true); openWindow('help');
         }
         window.addEventListener('blur', () => { focusPaused = true; clearMovement(); saveGame(); updatePauseUI(); });
         window.addEventListener('focus', () => { focusPaused = false; clearMovement(); lastTime = performance.now(); updatePauseUI(); });
@@ -1677,14 +1700,15 @@
             resizeCanvas();
             if (window.matchMedia && !window.matchMedia('(any-pointer: coarse)').matches) document.body.classList.add('keyboard-input');
             updateKeyboardHints();
-            const loaded = loadGame(); updateHUDUI(); updatePauseUI();
-            for (const num of [1, 2, 3, 4, 5]) {
+            const loaded = loadGame();refreshClassUI(); updateHUDUI(); updatePauseUI();
+            for (const num of [1, 2, 3, 4, 5, 6]) {
                 const slot = document.getElementById(`slot-${num}`);
                 slot.onclick = () => { AudioSys.init(); castSpell(num); };
                 slot.setAttribute('role', 'button'); slot.tabIndex = 0;
                 slot.setAttribute('aria-label', spellbookData[num - 1].name + '. ' + spellbookData[num - 1].desc);
                 slot.title = spellbookData[num - 1].desc;
             }
+            canvas.addEventListener?.('contextmenu',e=>{e.preventDefault();castSpell(6);});
             if (!loaded) openWindow('help');
             requestAnimationFrame(gameLoop);
         };

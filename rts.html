@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101d27"><meta name="description" content="Prototipo RTS: cursor con joystick izquierdo, selección a la izquierda y órdenes a la derecha.">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icons/icon-192.png">
+<title>RTS · Prueba de la mano izquierda</title>
+<link rel="stylesheet" href="./styles/rts.css">
+<script src="./src/controls.js" defer></script><script src="./src/rts-engine.js" defer></script><script src="./src/rts.js" defer></script>
+</head><body>
+<header><button id="rts-menu" aria-label="Abrir menú RTS">☰</button><div><strong>RTS · Laboratorio</strong><span id="rts-stats"></span></div><span class="prototype">PROTOTIPO</span></header>
+<main id="rts-field"><canvas id="rts-canvas" aria-label="Campo RTS: unidades azules, bosque verde y campamento rojo"></canvas><div id="rts-objective">Construye un cuartel, recupera la frontera y derrota al jefe.</div><div id="rts-message" role="status" aria-live="polite"></div><div id="rts-cursor-label"></div></main>
+<section id="rts-controls" aria-label="Controles RTS">
+ <div id="rts-left">
+  <div class="left-actions"><button id="rts-all">Grupo<br><small>1 · todos</small></button><button id="rts-build">Cuartel<br><small>2 · 50 recursos</small></button><button id="rts-stop">Detener<br><small>3</small></button></div>
+  <div class="left-input"><div id="rts-joystick" role="group" aria-label="Joystick izquierdo: mueve el cursor"><span id="rts-knob"></span><small>CURSOR</small></div><button id="rts-primary" aria-label="Doble toque izquierdo para seleccionar en el cursor">2 toques<br><small>Seleccionar · E</small></button></div>
+  <button id="rts-add" aria-pressed="false">Añadir a selección: no</button>
+ </div>
+ <div id="rts-right"><button id="rts-order">Ordenar<br><small>Mover / atacar<br>F</small></button><small>MANO DERECHA</small></div>
+</section>
+<dialog id="rts-dialog"><h1>Prueba RTS</h1><p>La mano izquierda mueve el cursor. Da <b>dos toques rápidos en la zona «2 toques»</b> para seleccionar lo que señala. «Añadir» permite seleccionar varias unidades. «Grupo» selecciona todas.</p><p>Con el botón derecho <b>Ordenar</b>: terreno → mover; bosque → recolectar (trabajadores); enemigo → atacar. Para construir: selecciona un trabajador, pulsa Cuartel, mueve el cursor y da dos toques. Selecciona un cuartel terminado para reclutar.</p><p id="rts-key-guide"></p><label for="rts-speed">Velocidad del cursor</label><input id="rts-speed" type="range" min="100" max="600" step="25" value="325"><output id="rts-speed-value">325</output><p id="rts-save-status">El progreso RTS se guarda en este dispositivo, separado del RPG.</p><button id="rts-resume">Jugar / continuar</button><button id="rts-reset">Reiniciar prueba RTS</button><button id="rts-update" hidden>Actualizar aplicación</button><a href="./">Volver al RPG</a></dialog>
+</body></html>
