@@ -6,6 +6,7 @@ const clone=x=>JSON.parse(JSON.stringify(x)), clamp=(n,a,b)=>Math.max(a,Math.min
 const classes={paladin:{icon:'🛡️',hp:120,mp:60,power:18,armor:8,speed:300},mage:{icon:'🧙‍♀️',hp:90,mp:100,power:22,armor:3,speed:300},ranger:{icon:'🏹',hp:105,mp:70,power:20,armor:5,speed:320}};
 const legacyWeapons={'Espada de Cruzado':10,'Bastón de Escarcha':10,'Arco de Exploradora':10,'Martillo del Juicio':18,'Arma de la Frontera':40,'Arma de las Cumbres':70};
 const ceilings={thorn:2,mire:3,ridge:4,warlord:6,citadel:8};
+const expeditionCeilings={thorn:2,mire:3,ridge:4,warlord:5,citadel:6};
 const dungeonIds=D.bosses.filter(b=>b.kind==='dungeon').map(b=>b.id);
 const R=typeof PrototypeRules!=='undefined'?PrototypeRules:require('./rules.js');
 const roadPlans=new Map();
@@ -14,7 +15,7 @@ const costs=[0,0,15,10,25,40,20,45,60],cooldowns=[0,.85,3,8,14,9,4,15,24];
 class Campaign{
  constructor(mode='normal',heroClass='paladin',random=Math.random,options={}){
   if(!['normal','nightmare'].includes(mode)||!classes[heroClass])throw Error('Unknown mode or class');
-  this.random=random;this.formationHeading={x:0,y:1};this.messages=[];this.effects=[];this.notices=[];this.noticeId=0;this.s={version:4,mode,phase:'adventure',clock:0,time:0,restCooldown:0,zone:'vale',refuge:'vale',nextId:1,manaBalanceVersion:1,normal:{},true:{},fieldBossKills:{},earlyRoll:{},pending:{},origins:{},late:{},victories:{},rescued:{},keys:{},paid:{},tickets:{},recovery:{},quests:{},discovered:{},gathered:{},fountains:{},zones:{},loot:[],projectiles:[],hazards:[],streak:{key:null,count:0},endingAck:false,awakeningAck:false,squadDoctrine:heroClass==='paladin'?'focus':'guard',squadEngagement:null,squadBoss:false,heroTarget:null,statistics:{kills:0,deaths:0,goldEarned:0,suppliesUsed:0,bossSeconds:{},events:[]}};
+  this.random=random;this.formationHeading={x:0,y:1};this.messages=[];this.effects=[];this.notices=[];this.noticeId=0;this.s={version:4,mode,phase:'adventure',clock:0,time:0,restCooldown:0,zone:'vale',refuge:'vale',nextId:1,manaBalanceVersion:1,normal:{},true:{},fieldBossKills:{},earlyRoll:{},pending:{},origins:{},late:{},victories:{},rescued:{},keys:{},paid:{},tickets:{},recovery:{},quests:{},discovered:{},gathered:{},fountains:{},zones:{},loot:[],projectiles:[],hazards:[],streak:{key:null,count:0},endingAck:false,awakeningAck:false,expeditionRank:1,squadDoctrine:heroClass==='paladin'?'focus':'guard',squadEngagement:null,squadBoss:false,heroTarget:null,statistics:{kills:0,deaths:0,goldEarned:0,suppliesUsed:0,bossSeconds:{},events:[]}};
   const c=classes[heroClass];this.s.hero={class:heroClass,x:300,y:350,hp:c.hp,maxHp:c.hp,mp:c.mp,maxMp:c.mp,level:1,xp:0,gold:30,power:c.power,armor:c.armor,speed:c.speed,skills:[1,0,0,0,0,0,0,0],cd:Array(8).fill(0),immune:0,haste:0,weapon:0,armorTier:0,reforges:{},potions:{health:1,mana:1},tonic:false,potionCd:0,slow:0,talents:[0,0,0,0],talentPoints:0};
   this.s.challenge={succession:options.succession===true,fallen:[],pending:false,gameOver:false};
   this.initializeQuests();
@@ -32,7 +33,7 @@ class Campaign{
  say(text){this.messages.push(text);if(this.messages.length>7)this.messages.shift();}
  notice(text,duration=5.5){this.notices.push({id:++this.noticeId,text,duration});if(this.notices.length>6)this.notices.shift();}
  boss(id){return D.bosses.find(b=>b.id===id);}
- unit(type,x,y){const base={soldier:[140,12,'⚔️'],archer:[100,15,'🏹']}[type];if(!base)throw Error('Unknown companion type');return {id:'ally-'+this.s.nextId++,type,x,y,hp:base[0]+12*this.hero.level,maxHp:base[0]+12*this.hero.level,damage:base[1],icon:base[2],cd:0,order:null,carry:0};}
+ unit(type,x,y){const base={soldier:[140,12,'⚔️'],archer:[100,15,'🏹']}[type];if(!base)throw Error('Unknown companion type');return {id:'ally-'+this.s.nextId++,type,x,y,hp:base[0]+12*this.hero.level,maxHp:base[0]+12*this.hero.level,damage:base[1],icon:base[2],cd:0,order:null,carry:0,active:true};}
  blocked(x,y,zone=this.s.zone,radius=15,terrainOnly=false){
   const i=this.regionIndex(zone),room=this.supplyRoom(zone),dungeon=dungeonIds.includes(zone),size=room?900:dungeon?1500:D.regions[i]?.size;
   if(!size||x<40+radius||y<40+radius||x>size-40-radius||y>size-40-radius)return true;
@@ -102,7 +103,17 @@ class Campaign{
  }
  idOrder(a,b){return a.id.localeCompare(b.id,undefined,{numeric:true});}
  queuedCompanions(){return Object.values(this.s.zones).reduce((n,z)=>n+z.buildings.filter(b=>b.queue>0).length,0);}
- depositSite(u){const z=this.isDungeon()?this.s.zones[this.definition().id]:this.zone(),i=this.regionIndex();return z?.npcs.filter(n=>n.kind==='rest').sort((a,b)=>dist(a,u)-dist(b,u))[0]||{x:D.towns[i][0],y:D.towns[i][1]};}
+ activeParty(){return this.s.party.filter(u=>u.active!==false);}
+ activeLivingParty(){return this.s.party.filter(u=>u.active!==false&&u.hp>0);}
+ expeditionPartyCap(rank=this.s.expeditionRank||1){return [0,2,3,3,4,5,6][clamp(rank,1,6)];}
+ expeditionInstructorCap(family){return expeditionCeilings[family]||0;}
+ expeditionNextInstructor(rank=this.s.expeditionRank||1){return Object.keys(expeditionCeilings).find(id=>expeditionCeilings[id]>rank)||null;}
+ expeditionUnlock(rank){return ({2:'Recruitment + resources · active group 3',3:'Manual squad doctrine',4:'Full barracks · active group 4',5:'Active group 5',6:'Active group 6'})[rank]||'';}
+ expeditionTrainer(){return Object.keys(expeditionCeilings).filter(id=>this.s.rescued[id]&&expeditionCeilings[id]>(this.s.expeditionRank||1)).sort((a,b)=>expeditionCeilings[a]-expeditionCeilings[b])[0]||null;}
+ trainExpedition(family){const cap=this.expeditionInstructorCap(family),rank=this.s.expeditionRank||1;if(!this.s.rescued[family]||!cap||rank>=cap||rank>=6)return false;this.s.expeditionRank=rank+1;this.say('Expedition Skill rank '+this.s.expeditionRank+' learned. '+this.expeditionUnlock(this.s.expeditionRank)+'.');this.notice('EXPEDITION '+this.s.expeditionRank+' · '+this.expeditionUnlock(this.s.expeditionRank),5.5);this.event('expeditionRank',{rank:this.s.expeditionRank,family});return true;}
+ barracksFieldCap(b){return b?.full?this.expeditionPartyCap():Math.min(3,this.expeditionPartyCap());}
+ rosterCount(){return this.s.party.length;}
+ depositSite(u){const z=this.isDungeon()?this.s.zones[this.definition().id]:this.zone(),i=this.regionIndex(),sites=[...(z?.npcs.filter(n=>n.kind==='rest')||[]),...(this.isDungeon()?[]:(z?.buildings.filter(b=>b.progress>=4&&b.full)||[])),{x:D.towns[i][0],y:D.towns[i][1]}];return sites.sort((a,b)=>dist(a,u)-dist(b,u))[0];}
  setRefuge(zone,id){const n=this.s.zones[zone]?.npcs.find(n=>n.id===id&&n.kind==='rest');if(n){this.s.refuge=zone;this.s.refugeSite={zone,id,x:n.x,y:n.y};}}
  arriveRefuge(site){const n=this.zone().npcs.find(n=>n.id===site.id&&n.kind==='rest');if(!n)return;Object.assign(this.hero,this.safe(n.x,n.y));for(const u of this.s.party)Object.assign(u,this.safe(n.x+40,n.y+30));}
  authoredPlaces(z){if(this.supplyRoom(z.id)){this.combatPopulation(z);this.guardianPopulation(z);return;}this.spaceQuestBoard(z);this.spaceMillhavenSupplier(z);this.combatPopulation(z);this.nightEnemyPopulation(z);if(dungeonIds.includes(z.id)){this.decorateDungeon(z);this.guardianRewards(z);}if(z.placesVersion===1){this.localSites(z);this.miniDungeons(z);this.supplyInteriors(z);this.ordinaryMeleePopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);return;}z.placesVersion=1;const i=this.regionIndex(z.id),dungeon=dungeonIds.includes(z.id);
