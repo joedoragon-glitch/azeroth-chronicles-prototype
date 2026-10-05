@@ -64,11 +64,6 @@ function supplier(n,back=closeMenu){const advanced=n.kind==='alchemist';openMenu
 function smith(n,back=closeMenu){const tier={crypt:1,mine:2,abyss:3,darklord:4}[n.family],weapon=[0,100,450,1000,2000][tier],armor=[0,80,300,700,1200][tier];openMenu(n.name,'Equipment replaces the earlier tier in its slot. Bonuses do not stack.',[
  action('Weapon tier '+tier+' · '+weapon+'g',()=>{game.gear(n.family,'weapon');smith(n,back);},'+'+[0,15,35,55,70][tier]+' power'),action('Armor tier '+tier+' · '+armor+'g',()=>{game.gear(n.family,'armor');smith(n,back);},'+'+[0,5,12,20,28][tier]+' armor'),action('Reforge weapon · '+Math.ceil(weapon/2)+'g',()=>{game.gear(n.family,'weapon',true);smith(n,back);},'+5 power once per tier'),action('Reforge armor · '+Math.ceil(armor/2)+'g',()=>{game.gear(n.family,'armor',true);smith(n,back);},'+3 armor once per tier')],back);}
 function unitLabel(type){return type==='worker'?'Worker / Builder':type==='archer'?'Archer':'Soldier';}
-function squadCommandMenu(back=closeMenu){openMenu('Squad command','Direct field control for the current party. Six living companions maximum.',[
- action('Recall and follow squad · Backtick',()=>{recallSquad();closeMenu();},'Cancel combat, movement and worker orders; regroup on the hero'),
- action(game.s.holdFire?'Allow companion attacks':'Hold fire',()=>{game.s.holdFire=!game.s.holdFire;squadCommandMenu(back);}),
- ...game.s.party.map(u=>action(u.icon+' '+unitLabel(u.type)+' · '+Math.ceil(u.hp)+' / '+u.maxHp,()=>{selection=[u.id];squadMode=true;closeMenu();},u.hp<=0?'Fallen':'Select companion',u.hp<=0))
- ],back);}
 function barracksSpecialistMenu(b,back){const specialists=game.barracksSpecialists(),returnHere=()=>barracksSpecialistMenu(b,back);openMenu('Rescued specialists','Only useful rescued specialists are shown. A more advanced specialist replaces an older one when the older specialist has no unique service left.',specialists.length?specialists.map(s=>action(s.name,()=>{const n={...s};s.kind==='teacher'?teacher(n,returnHere):s.kind==='smith'?smith(n,returnHere):supplier(n,returnHere);})): [action('No rescued specialists available',()=>{},'Free specialists to add their services here.',true)],back);}
 function barracksRecruitmentMenu(b,back){const full=game.s.party.filter(u=>u.hp>0).length+game.queuedCompanions()>=6,queueName=b.queue>0?unitLabel(b.queueType||'soldier'):null,wounded=game.s.party.some(u=>u.hp>0&&u.hp<u.maxHp);openMenu('Recruitment & recovery',(queueName?'Training '+queueName+' · '+b.queue.toFixed(1)+'s remaining':'Barracks recruitment ready')+' · Barracks rates are lower than town rates.',[
  ...[['worker','Worker / Builder'],['soldier','Soldier'],['archer','Archer']].map(([type,label])=>{const price=game.barracksRecruitPrice(type);return action('Recruit '+label+' · '+price+'g',()=>{game.train(b.id,type);barracksRecruitmentMenu(b,back);},b.queue>0?'Barracks queue occupied':'Barracks rate',b.queue>0||full||game.hero.gold<price);}),
@@ -85,12 +80,11 @@ function barracksMenu(ref,back=closeMenu){const b=game.zone().buildings.find(x=>
  action('Operations board',()=>barracksOperationsMenu(b,returnHere),'Map, routes and local objectives'),
  action('Rescued specialists',()=>barracksSpecialistMenu(b,returnHere),'Training, equipment and alchemy available in the field'),
  action('Recruitment & recovery',()=>barracksRecruitmentMenu(b,returnHere),'Worker / Builder 30g · Soldier 60g · Archer 85g'),
- action('Squad command',()=>squadCommandMenu(returnHere),'Recall, hold fire and unit selection'),
  action('Workers & resources',()=>barracksWorkersMenu(b,returnHere),'Regional gathering commands'),
  action('Inventory & supplies',()=>inventory(returnHere),'Carried potions and equipment')
  ],back);}
 function inventory(back=closeMenu){openMenu('Inventory','Gold '+Math.floor(game.hero.gold)+' · Weapon tier '+game.hero.weapon+' · Armor tier '+game.hero.armorTier,[action('Use health potion',()=>{game.potion('health');inventory(back);},'Saved bottles '+(game.hero.legacyPotions?.filter(p=>p.type==='health').length||0)+' · Normal '+(game.hero.potions.health||0)+' · Greater '+(game.hero.potions.greater_health||0)),action('Use mana potion',()=>{game.potion('mana');inventory(back);},'Saved bottles '+(game.hero.legacyPotions?.filter(p=>p.type==='mana').length||0)+' · Normal '+(game.hero.potions.mana||0)+' · Greater '+(game.hero.potions.greater_mana||0)),...Object.keys(Campaign.legacyWeapons).filter(name=>game.s.legacyInventory?.includes(name)).map(name=>action('Equip '+name,()=>{game.equipLegacy(name);inventory(back);},'Saved weapon · +'+Campaign.legacyWeapons[name]+' power')), ...(game.hero.weapon?[action('Equip current weapon tier '+game.hero.weapon,()=>{game.hero.legacyEquipped=false;inventory(back);})]:[])],back);}
-function recallSquad(){game.recallParty();selection=['hero',...game.s.party.filter(u=>u.hp>0).map(u=>u.id)];squadMode=false;targetId=null;document.body.classList.remove('squad-mode');updateHUD();}
+function recallSquad(){game.recallParty();updateHUD();}
 function townRecruitmentMenu(back){const full=game.s.party.filter(u=>u.hp>0).length+game.queuedCompanions()>=6;openMenu('Town recruitment','Standard town rates · six living companions maximum.',[
  ...[['worker','Worker / Builder',35],['soldier','Soldier',70],['archer','Archer',100]].map(([type,label,price])=>action('Recruit '+label+' · '+price+'g',()=>{game.recruit(type);townRecruitmentMenu(back);},'',full||game.hero.gold<price)),
  action('Recover fallen companion · 40g',()=>{game.recover();townRecruitmentMenu(back);},'',!game.s.party.some(u=>u.hp<=0)||full||game.hero.gold<40)
@@ -101,7 +95,6 @@ function townWorkersMenu(back){const nodes=game.zone().nodes.filter(n=>n.amount>
  ],back);}
 function partyMenu(back=closeMenu){const title=game.definition().town+' Captain',returnHere=()=>partyMenu(back);openMenu(title,'Town troop service. Barracks provide the same field-command functions away from the settlement, with discounted recruitment.',[
  action('Recruitment & recovery',()=>townRecruitmentMenu(returnHere),'Worker / Builder 35g · Soldier 70g · Archer 100g'),
- action('Squad command',()=>squadCommandMenu(returnHere),'Recall, hold fire and unit selection'),
  action('Construction & workers',()=>townWorkersMenu(returnHere),'Barracks construction and regional gathering')
  ],back);}
 function talents(back=closeMenu){openMenu('Talents','Available points '+game.hero.talentPoints,['Attack power +8','Mana regeneration +2','Maximum health +30','Movement speed +40'].map((name,i)=>action(name+' · '+game.hero.talents[i],()=>{game.talent(i);talents(back);})),back);}
