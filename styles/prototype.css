@@ -145,3 +145,12 @@ button:disabled{background:#202c28;box-shadow:none;text-shadow:none}
 @media(prefers-reduced-motion:reduce){
   #message{transition:none}
 }
+
+
+/* v0.8.33 desktop input identity: gameplay is keyboard-first, not point-and-click. */
+@media (hover:hover) and (pointer:fine){
+  #world,#joystick,#hud button,#skills button,#order-button,#modal button{
+    pointer-events:none;
+    cursor:default;
+  }
+}
