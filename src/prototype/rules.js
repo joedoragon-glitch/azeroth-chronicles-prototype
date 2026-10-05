@@ -111,6 +111,13 @@ const ordinaryMeleeScaling=[{hp:1.25,damage:1.15},{hp:1.4,damage:1.25},{hp:1.65,
 const guardianScaling=[{hp:1.15,damage:1.1},{hp:1.3,damage:1.2},{hp:1.5,damage:1.3},{hp:1.7,damage:1.45},{hp:1.9,damage:1.6}];
 const awakenedGuardianScaling={hp:1.35,damage:1.25};
 const summonScaling=[{hp:1.35,damage:1.15},{hp:1.5,damage:1.25},{hp:1.7,damage:1.4},{hp:1.9,damage:1.55},{hp:2.2,damage:1.75}];
+const trueBossSummons={cap:6,families:{
+ thorn:{species:'wolf',ranged:false},crypt:{species:'skeleton',ranged:false},
+ mire:{species:'mireling',ranged:false},archive:{species:'wraith',ranged:true},
+ ridge:{species:'archer',ranged:true},mine:{species:'ogre',ranged:false},
+ warlord:{species:'orc',ranged:false},abyss:{species:'ashbeast',ranged:false},
+ citadel:{species:'crownguard',ranged:true},darklord:{species:'crownguard',ranged:true}
+}};
 const ringleaderScaling={hp:2.5,damage:1.5,pursuit:1.2,frenzyThreshold:.5,frenzyCooldown:.6,frenzyAim:.75};
 const nightEnemyCombat={
  wraith:{hp:2.4,damage:1.8,skillCooldown:4.8,warning:.85,radius:210,coefficient:1.15,slow:2.5,heal:.08},
@@ -122,6 +129,6 @@ const bossCadence={specialRecoveryMultiplier:.25,basicCooldown:.75,skillsPerBasi
 const rangedEnemyCombat={projectileMultiplier:1.7,aimTime:.35,cooldown:1.15};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,rangedEnemyCombat,ordinaryMeleeScaling,guardianScaling,awakenedGuardianScaling,summonScaling,ringleaderScaling,nightEnemyCombat,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,teachers,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
+const R={bossCadence,rangedEnemyCombat,ordinaryMeleeScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,teachers,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
