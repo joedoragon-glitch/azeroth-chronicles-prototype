@@ -1,4 +1,4 @@
-# Azeroth Chronicles — expanded prototype v0.8.39
+# Azeroth Chronicles — expanded prototype v0.8.40
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families use readable but adaptive warned mechanics. Every boss can summon pressure units, while TRUE forms use six-unit elite warbands. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
@@ -70,6 +70,11 @@ Thornfang now has 1,200 health instead of 260, with unchanged damage and readabl
 Dungeon interiors now have themed decorations, 10–26 initial guardians and doubled engineered spike/jet/seal layouts placed along defensible routes while preserving safe approaches to the boss. While a dungeon boss lives, falling guardian populations begin reinforcing after 18 seconds and recover toward 50% of the dungeon's original guard count; heavy active combat delays reinforcement, and boss combat uses smaller reinforcement groups. Killing the boss permanently stops that encounter's replenishment. Main-dungeon guardians, awakened guardians, reinforcements and guardian ringleaders give no gold or EXP, so the pressure system cannot be farmed. Guardian ringleaders still count toward clearing the dungeon. Field slingers, skeleton archers and selected melee/ranged hybrid creatures pressure distance fighting with visible, aimed projectiles.
 
 The five main dungeons give no gold or EXP for any guardian-class enemy, including initial guards, reinforcements, awakened guards and guardian ringleaders. Base dungeon guardians are now deliberately stronger than equivalent regional field melee mobs—roughly 25–35% more HP and 12–20% more damage depending on region—before ringleader or Awakening multipliers. Existing saves upgrade old guardian stats once while preserving current health percentage.
+
+### Monster behavior pass
+Ordinary, Ringleader and guardian enemies now use more practical combat roles without changing their HP or damage. Pure ranged enemies backpedal when crowded instead of standing still at point-blank range. Mireling and Reed-beast spit applies a short slow. Ringleader hybrids commit to melee sooner, while melee Ringleaders rearm their existing pursuit burst after landing a hit so they are harder to kite indefinitely. Dungeon melee guardians screen the hero when a ranged guardian in the same pair is threatened, making guardian pairs act like a formation instead of two unrelated enemies.
+
+This pass deliberately stops short of adding bespoke Ringleader skills. A later tuning layer can give ordinary and guardian Ringleaders one warned ranged technique inspired by the boss of their zone without turning them into miniature bosses.
 
 ### Boss mechanics pass
 Bosses no longer follow a fixed 1 → 2 → 3 → 4 script. Attack choice is weighted by player distance, current phase and living summons, and the same move cannot immediately repeat. Selected control mechanics pressure the hero directly instead of always being absorbed by companions. Below half health, each boss can chain specific existing mechanics while keeping their normal warnings readable.
