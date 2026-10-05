@@ -377,30 +377,52 @@ class Campaign{
   try{return this.blocked(p.x,p.y)?this.safe(this.hero.x,this.hero.y):p;}catch(_){return this.hero;}
  }
  followPartyMember(u,living,dt){const d=dist(u,this.hero),speed=(d>650?500:d>350?390:d>200?315:255)*(u.slow>0?.65:1);return this.follow(u,this.partyFollowPoint(u,living),speed,dt,45);}
+ soldierScreenTarget(u,targets,living,claimed){
+  const protectedUnits=[this.hero,...living.filter(v=>v.type==='archer'&&!v.order)],pressure=e=>Math.min(...protectedUnits.map(p=>dist(e,p))),band=e=>pressure(e)<150?0:pressure(e)<280?1:2;
+  return targets.filter(e=>dist(u,e)<620).sort((a,b)=>band(a)-band(b)||(claimed.has(a.id)?1:0)-(claimed.has(b.id)?1:0)||pressure(a)-pressure(b)||dist(a,u)-dist(b,u))[0]||null;
+ }
+ archerCombatPoint(u,e,living){
+  const anchor=this.partyFollowPoint(u,living),preferred=250,anchorRange=dist(anchor,e);
+  if(anchorRange<=280&&this.line(anchor,e))return anchor;
+  const dx=anchor.x-e.x,dy=anchor.y-e.y,n=Math.hypot(dx,dy)||1,p={x:e.x+dx/n*preferred,y:e.y+dy/n*preferred};
+  try{return this.blocked(p.x,p.y)?this.safe(p.x,p.y):p;}catch(_){return anchor;}
+ }
+ archerFallbackPoint(u,e,living){
+  const anchor=this.partyFollowPoint(u,living),d=dist(anchor,e);if(d>=190)return anchor;
+  const dx=anchor.x-e.x,dy=anchor.y-e.y,n=Math.hypot(dx,dy)||1,p={x:anchor.x+dx/n*(190-d+55),y:anchor.y+dy/n*(190-d+55)};
+  try{return this.blocked(p.x,p.y)?anchor:p;}catch(_){return anchor;}
+ }
  updateParty(dt){
   const z=this.zone(),living=this.s.party.filter(u=>u.hp>0),context=this.syncSquadDoctrine(),claimed=new Set();
   if(this.s.recallActive&&living.every(u=>dist(u,this.hero)<165))this.s.recallActive=false;
   const crowdTarget=(u,targets)=>targets.filter(e=>dist(u,e)<620).sort((a,b)=>(claimed.has(a.id)?1:0)-(claimed.has(b.id)?1:0)||dist(a,this.hero)-dist(b,this.hero)||dist(a,u)-dist(b,u))[0]||null;
-  for(const [index,u]of living.entries()){u.slow=Math.max(0,(u.slow||0)-dt);u.cd=Math.max(0,u.cd-dt);
+  for(const u of living){u.slow=Math.max(0,(u.slow||0)-dt);u.cd=Math.max(0,u.cd-dt);
+   if(u.order?.type==='build'){const b=z.buildings.find(b=>b.id===u.order.id);if(b&&b.progress<4){if(dist(u,b)>85)this.follow(u,b,230*(u.slow>0?.65:1),dt,70);else{b.progress=Math.min(4,b.progress+dt);if(b.progress>=4){u.order=null;this.say('Barracks construction complete.');this.event('construction',{id:b.id});}}}else u.order=null;continue;}
    if(u.order?.type==='gather'){const n=z.nodes.find(n=>n.id===u.order.id);if(n&&n.amount>0&&(!n.mini||this.peace||this.miniCleared(n.mini))){if(dist(u,n)>60)this.follow(u,n,230*(u.slow>0?.65:1),dt);else{const amount=Math.min(n.amount,12*dt);n.amount=Math.max(0,n.amount-amount);u.carry+=amount;this.s.gathered[this.definition().id]=(this.s.gathered[this.definition().id]||0)+amount;}if(u.carry>=35||n.amount<=0)u.order={type:'deposit',id:n.id};}else u.order={type:'deposit'};continue;}
    if(u.order?.type==='deposit'){const deposit=this.depositSite(u);if(dist(u,deposit)>130)this.follow(u,deposit,230*(u.slow>0?.65:1),dt);else{const payout=Math.floor(u.carry+1e-7);this.grant(payout,0);u.carry=Math.max(0,u.carry-payout);const n=z.nodes.find(n=>n.id===u.order.id&&n.amount>0);u.order=n?{type:'gather',id:n.id}:null;}continue;}
    if(u.order)u.order=null;
-   if(this.peace||u.type==='worker'||this.s.recallActive){this.followPartyMember(u,living,dt);continue;}
+   if(this.peace||this.s.recallActive){this.followPartyMember(u,living,dt);continue;}
    let e=null;
    if(context.engaged){
     if(context.boss){
      if(this.s.squadDoctrine==='focus')e=context.bossEnemy;
-     else e=crowdTarget(u,context.threats.filter(x=>x.type!=='boss'));
+     else{const adds=context.threats.filter(x=>x.type!=='boss');e=u.type==='soldier'?this.soldierScreenTarget(u,adds,living,claimed):crowdTarget(u,adds);}
     }else if(this.s.squadDoctrine==='focus'){
      e=context.threats.find(x=>x.id===this.s.heroTarget)||context.threats.slice().sort((a,b)=>dist(a,this.hero)-dist(b,this.hero))[0]||null;
-    }else e=crowdTarget(u,context.threats);
+    }else e=u.type==='soldier'?this.soldierScreenTarget(u,context.threats,living,claimed):crowdTarget(u,context.threats);
    }
    if(!e){this.followPartyMember(u,living,dt);continue;}claimed.add(e.id);
-   const range=u.type==='archer'?280:65;if(dist(u,e)>range||!this.line(u,e))this.follow(u,e,250*(u.slow>0?.65:1),dt,this.line(u,e)?range-10:0);else if(u.cd<=0){u.cd=u.type==='archer'?1.3:1;if(u.type==='archer'){const d=Math.max(1,dist(u,e));this.s.projectiles.push({id:'projectile-'+this.s.nextId++,x:u.x,y:u.y,dx:(e.x-u.x)/d,dy:(e.y-u.y)/d,target:e.id,damage:u.damage+this.hero.level*2,source:u.id,speed:450,style:'arrow'});}else if(this.damage(e,u.damage+this.hero.level*2,u.id))this.event('melee');}
+   if(u.type==='archer'){
+    const d=dist(u,e),visible=this.line(u,e),anchor=this.partyFollowPoint(u,living);
+    if(d<150){this.follow(u,this.archerFallbackPoint(u,e,living),270*(u.slow>0?.65:1),dt,35);continue;}
+    if(d>280||!visible){this.follow(u,this.archerCombatPoint(u,e,living),260*(u.slow>0?.65:1),dt,35);continue;}
+    if(dist(u,anchor)>70&&dist(anchor,e)<=280&&this.line(anchor,e)){this.follow(u,anchor,245*(u.slow>0?.65:1),dt,35);continue;}
+    if(u.cd<=0){u.cd=1.3;const shot=Math.max(1,d);this.s.projectiles.push({id:'projectile-'+this.s.nextId++,x:u.x,y:u.y,dx:(e.x-u.x)/shot,dy:(e.y-u.y)/shot,target:e.id,damage:u.damage+this.hero.level*2,source:u.id,speed:450,style:'arrow'});}continue;
+   }
+   if(dist(u,e)>65||!this.line(u,e))this.follow(u,e,250*(u.slow>0?.65:1),dt,this.line(u,e)?55:0);else if(u.cd<=0){u.cd=1;if(this.damage(e,u.damage+this.hero.level*2,u.id))this.event('melee');}
   }
-  const finishRecruit=b=>{if(b.queue>0){b.queue=Math.max(0,b.queue-dt);if(b.queue===0&&this.s.party.filter(u=>u.hp>0).length<6){const p=this.safe(b.x+50,b.y+50),type=['worker','soldier','archer'].includes(b.queueType)?b.queueType:'soldier';this.s.party.push(this.unit(type,p.x,p.y));b.queueType=null;}}};
-  if(!this.s.recallActive)for(const b of z.buildings){if(b.progress<4){const worker=this.s.party.find(u=>u.hp>0&&u.type==='worker'&&!u.order);if(worker){if(dist(worker,b)>85)this.follow(worker,b,230,dt,70);else b.progress=Math.min(4,b.progress+dt);}}finishRecruit(b);}
-  else for(const b of z.buildings)finishRecruit(b);
+  const finishRecruit=b=>{if(b.queue>0){b.queue=Math.max(0,b.queue-dt);if(b.queue===0&&this.s.party.filter(u=>u.hp>0).length<6){const p=this.safe(b.x+50,b.y+50),type=['soldier','archer'].includes(b.queueType)?b.queueType:'soldier';this.s.party.push(this.unit(type,p.x,p.y));b.queueType=null;}}};
+  for(const b of z.buildings)finishRecruit(b);
  }
  startNightSkill(e,target){const cfg=R.nightEnemyCombat[e.species];if(!cfg)return false;if(e.species==='wraith'){e.telegraph={nightSkill:'drain',kind:'circle',name:'Soul Drain',x:e.x,y:e.y,radius:cfg.radius,coefficient:cfg.coefficient,slowDuration:cfg.slow,heal:cfg.heal,manaDrain:cfg.manaDrain||0,timer:cfg.warning,total:cfg.warning,recovery:.55};}
   else if(e.species==='stalker'){e.telegraph={nightSkill:'pounce',kind:'circle',name:'Shadow Pounce',x:target.x,y:target.y,radius:cfg.radius,coefficient:cfg.coefficient,slowDuration:cfg.slow,pounceSpeed:cfg.pounceSpeed,landing:true,timer:cfg.warning,total:cfg.warning,recovery:.6};}
