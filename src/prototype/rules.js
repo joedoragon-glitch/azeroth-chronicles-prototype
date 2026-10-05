@@ -112,7 +112,7 @@ const guardianLegacyScaling=[{hp:1.15,damage:1.1},{hp:1.3,damage:1.2},{hp:1.5,da
 const guardianScaling=[{hp:1.65,damage:1.35},{hp:1.85,damage:1.5},{hp:2.15,damage:1.65},{hp:2.45,damage:1.85},{hp:2.85,damage:2.1}];
 const awakenedGuardianScaling={hp:1.35,damage:1.25};
 const summonScaling=[{hp:1.35,damage:1.15},{hp:1.5,damage:1.25},{hp:1.7,damage:1.4},{hp:1.9,damage:1.55},{hp:2.2,damage:1.75}];
-const bossSummoning={normalCap:3,trueCap:6,normalCooldown:7,trueCooldown:5.5,pressureFloor:2};
+const bossSummoning={normalCap:3,trueCap:6,normalCooldown:7,trueCooldown:5.5,pressureFloor:2,overrides:{warlord:{normalCap:4,trueCap:8,minions:6,captains:2}}};
 const bossBehavior={
  thorn:{close:[0],far:[1,2],heroTarget:[1,2],phasePreferred:[2,1],combos:[{from:2,to:1,phase:'low',chance:.45}]},
  crypt:{close:[0],far:[1,3],heroTarget:[1,3],phasePreferred:[3,1],combos:[{from:3,to:1,phase:'low',chance:.45}]},
