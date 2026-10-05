@@ -106,7 +106,7 @@ Terrain visibility fix v0.7.7 renders the Vale river, marsh water, highland/fron
 
 Presentation and awareness v0.7.8 gives all ten rescued specialists distinct costumes and role tools, including their captive appearances. Ordinary and boss enemies now notice visible targets within 260 world units rather than 220. On their first clear pursuit of the hero in each engagement, they gain a visible 0.8-second 40% movement burst. Line of sight, town protection, attack range and chase territory stay the same.
 
-Paladin basic attack v0.7.9 also triggers while a movement key or joystick is held and the hero actually moves. Existing skill 1 input still works for Paladin, Mage and Ranger, including manual stationary Paladin attacks. The new trigger uses the existing basic cooldown and target selection; pushing into a wall or moving the squad cursor does not trigger it. Skill slots and save formats are unchanged.
+Paladin basic attack v0.7.9 also triggers while a movement key or joystick is held and the hero actually moves. Existing skill 1 input still works for Paladin, Mage and Ranger, including manual stationary Paladin attacks. The new trigger uses the existing basic cooldown and target selection; pushing into a wall does not trigger it. Skill slots and save formats are unchanged.
 
 Movement basic and pursuit trial v0.8.0 extends the actual-movement skill 1 trigger to Mage and Ranger, with independent class switches in `PrototypeRules.movementBasicClasses` so either can be disabled without changing combat code or saves. All three retain manual skill 1. Every hostile, including bosses, now has one visible 1.2-second 50% chase burst per engagement; it resets only after disengagement.
 
