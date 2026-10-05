@@ -14,7 +14,7 @@ const costs=[0,0,15,10,25,40,20,45,60],cooldowns=[0,.85,3,8,14,9,4,15,24];
 class Campaign{
  constructor(mode='normal',heroClass='paladin',random=Math.random,options={}){
   if(!['normal','nightmare'].includes(mode)||!classes[heroClass])throw Error('Unknown mode or class');
-  this.random=random;this.messages=[];this.effects=[];this.notices=[];this.noticeId=0;this.s={version:4,mode,phase:'adventure',clock:0,time:0,restCooldown:0,zone:'vale',refuge:'vale',nextId:1,manaBalanceVersion:1,normal:{},true:{},fieldBossKills:{},earlyRoll:{},pending:{},origins:{},late:{},victories:{},rescued:{},keys:{},paid:{},tickets:{},recovery:{},quests:{},discovered:{},gathered:{},fountains:{},zones:{},loot:[],projectiles:[],hazards:[],streak:{key:null,count:0},endingAck:false,awakeningAck:false,squadDoctrine:heroClass==='paladin'?'focus':'guard',squadEngagement:null,squadBoss:false,heroTarget:null,statistics:{kills:0,deaths:0,goldEarned:0,suppliesUsed:0,bossSeconds:{},events:[]}};
+  this.random=random;this.formationHeading={x:0,y:1};this.messages=[];this.effects=[];this.notices=[];this.noticeId=0;this.s={version:4,mode,phase:'adventure',clock:0,time:0,restCooldown:0,zone:'vale',refuge:'vale',nextId:1,manaBalanceVersion:1,normal:{},true:{},fieldBossKills:{},earlyRoll:{},pending:{},origins:{},late:{},victories:{},rescued:{},keys:{},paid:{},tickets:{},recovery:{},quests:{},discovered:{},gathered:{},fountains:{},zones:{},loot:[],projectiles:[],hazards:[],streak:{key:null,count:0},endingAck:false,awakeningAck:false,squadDoctrine:heroClass==='paladin'?'focus':'guard',squadEngagement:null,squadBoss:false,heroTarget:null,statistics:{kills:0,deaths:0,goldEarned:0,suppliesUsed:0,bossSeconds:{},events:[]}};
   const c=classes[heroClass];this.s.hero={class:heroClass,x:300,y:350,hp:c.hp,maxHp:c.hp,mp:c.mp,maxMp:c.mp,level:1,xp:0,gold:30,power:c.power,armor:c.armor,speed:c.speed,skills:[1,0,0,0,0,0,0,0],cd:Array(8).fill(0),immune:0,haste:0,weapon:0,armorTier:0,reforges:{},potions:{health:1,mana:1},tonic:false,potionCd:0,slow:0,talents:[0,0,0,0],talentPoints:0};
   this.s.challenge={succession:options.succession===true,fallen:[],pending:false,gameOver:false};
   this.initializeQuests();
@@ -327,9 +327,10 @@ class Campaign{
    this.say('The war is over for people and creatures alike. Nightmare Mode is unlocked.');this.event('peace');}}
  makeHabitat(z){if(z.habitat)return;z.habitat=true;z.enemies=[];if(this.supplyRoom(z.id))return;const i=this.regionIndex(z.id),dungeon=dungeonIds.includes(z.id),count=dungeon?4:[8,10,12,14,16][i];for(let j=0;j<count;j++){const sp=D.species[i][Math.floor(j/2)%2],size=dungeon?1500:D.regions[i].size,p=this.safe(350+(Math.floor(j/2)*337)%(size-600)+(j%2)*55,400+(Math.floor(j/2)*277)%(size-650),z.id);const e=this.makeEnemy({species:sp[0],name:sp[1]+' resident',icon:sp[2],level:1,hp:1,damage:0,gold:0,xp:0},p);e.neutral=true;z.enemies.push(e);}
   if(!dungeon){const b=D.bosses.find(b=>b.region===z.id&&b.kind==='field');if(b.id!=='darklord'){const p={x:D.fields[i][0],y:D.fields[i][1]},e=this.bossEnemy(b,'normal',p);e.neutral=true;z.enemies.push(e);}}}
- tick(dt,input={x:0,y:0}){if(!Number.isFinite(dt)||dt<=0||this.s.challenge?.pending||this.s.challenge?.gameOver)return;dt=Math.min(dt,.1);this.s.time+=dt;this.s.restCooldown=Math.max(0,(this.s.restCooldown||0)-dt);if(this.peace||this.s.mode==='normal')this.s.clock=(this.s.clock+dt)%600;const h=this.hero,z=this.zone();z.clock+=dt;h.cd=h.cd.map(c=>Math.max(0,c-dt));for(const f of ['immune','haste','potionCd','slow'])h[f]=Math.max(0,h[f]-dt);h.mp=Math.min(h.maxMp,h.mp+this.manaRegenRate()*dt);
+ tick(dt,input={x:0,y:0}){if(!Number.isFinite(dt)||dt<=0||this.s.challenge?.pending||this.s.challenge?.gameOver)return;dt=Math.min(dt,.1);this.s.time+=dt;this.s.restCooldown=Math.max(0,(this.s.restCooldown||0)-dt);if(this.peace||this.s.mode==='normal')this.s.clock=(this.s.clock+dt)%600;const h=this.hero,z=this.zone(),formationStart={x:h.x,y:h.y};z.clock+=dt;h.cd=h.cd.map(c=>Math.max(0,c-dt));for(const f of ['immune','haste','potionCd','slow'])h[f]=Math.max(0,h[f]-dt);h.mp=Math.min(h.maxMp,h.mp+this.manaRegenRate()*dt);
   if(input.x||input.y){h.order=null;const n=Math.hypot(input.x,input.y),speed=(h.speed+h.talents[3]*40)*(h.haste>0?1.25:1)*(h.slow>0?.65:1)*clamp(input.speedFactor||1,1,1.35);this.move(h,{x:h.x+input.x/n*speed,y:h.y+input.y/n*speed},speed,dt);}
   else if(h.order){const target=h.order.type==='attack'?z.enemies.find(e=>e.id===h.order.id):h.order;if(target&&!target.neutral){if(dist(h,target)>(h.order.type==='attack'?h.class==='paladin'?105:350:25))this.follow(h,target,h.speed*(h.slow>0?.65:1),dt,20);else if(h.order.type==='attack')this.cast(1,target.id);else h.order=null;}else h.order=null;}
+  const formationDx=h.x-formationStart.x,formationDy=h.y-formationStart.y,formationDistance=Math.hypot(formationDx,formationDy);if(formationDistance>.5)this.formationHeading={x:formationDx/formationDistance,y:formationDy/formationDistance};
   if(!this.isDungeon()){const [tx,ty]=D.towns[this.regionIndex()];if(dist(h,{x:tx,y:ty})<170){this.setRefuge(this.s.zone,'rest');if(!this.refugeThreat())h.hp=Math.min(h.maxHp,h.hp+8*dt);}for(const n of z.npcs.filter(n=>n.kind==='landmark'))if(dist(h,n)<120){const first=!this.s.discovered[this.definition().id+':'+n.id];this.discover(n.id);if(first)this.say(this.siteDescription(n));}const [px,py]=D.ports[this.regionIndex()];if(dist(h,{x:px,y:py})<140)this.discover('port');const minor=D.minors[this.regionIndex()];if(dist(h,{x:minor[0],y:minor[1]})<180){this.discover('minor');this.setRefuge(this.s.zone,'minor');}}
   this.updateParty(dt);this.updateEnemies(dt);if(h!==this.hero||z!==this.zone()||this.s.challenge.pending||this.s.challenge.gameOver)return;this.updateProjectiles(dt);if(h!==this.hero||z!==this.zone()||this.s.challenge.pending||this.s.challenge.gameOver)return;this.updateElites(dt);this.updatePacks(dt);this.updateGuardianReinforcements(dt);this.updateTraps(dt);if(h!==this.hero||z!==this.zone()||this.s.challenge.pending||this.s.challenge.gameOver)return;this.updatePotion(dt);this.autoPotions();this.updateNight();this.updateEscort(dt);this.checkClear();this.checkMinis();
   for(const l of [...this.s.loot])if(l.zone===this.s.zone&&dist(l,h)<65){this.grant(l.gold,0);this.s.loot.splice(this.s.loot.indexOf(l),1);this.event('gold');}
@@ -358,8 +359,24 @@ class Campaign{
   for(const u of this.s.party.filter(u=>u.hp>0)){u.order=null;u.path=[];u.routeAge=0;}
   this.say('Squad recalled. Companions are regrouping on the hero.');this.event('squadRecall');return true;
  }
- partyFollowPoint(index){const offsets=[[-62,58],[62,58],[-100,100],[100,100],[-45,135],[45,135]],o=offsets[index%offsets.length],p={x:this.hero.x+o[0],y:this.hero.y+o[1]};try{return this.blocked(p.x,p.y)?this.safe(this.hero.x,this.hero.y):p;}catch(_){return this.hero;}}
- followPartyMember(u,index,dt){const d=dist(u,this.hero),speed=(d>650?500:d>350?390:d>200?315:255)*(u.slow>0?.65:1);return this.follow(u,this.partyFollowPoint(index),speed,dt,45);}
+ partyFormationOffset(u,living=this.s.party.filter(v=>v.hp>0)){
+  const rangedHero=this.hero.class==='mage'||this.hero.class==='ranger',same=living.filter(v=>v.type===u.type),index=Math.max(0,same.findIndex(v=>v.id===u.id));
+  const ranged={
+   archer:[[-34,-24],[34,-24],[0,-52],[-62,-45],[62,-45],[0,-78]],
+   soldier:[[0,95],[-90,45],[90,45],[-110,-25],[110,-25],[0,-105]],
+   worker:[[-45,-165],[45,-165],[0,-195],[-80,-205],[80,-205],[0,-235]]
+  },melee={
+   soldier:[[-42,-20],[42,-20],[0,-55],[-68,-50],[68,-50],[0,35]],
+   archer:[[-65,-115],[65,-115],[0,-145],[-105,-145],[105,-145],[0,-175]],
+   worker:[[-50,-185],[50,-185],[0,-215],[-90,-225],[90,-225],[0,-255]]
+  },slots=(rangedHero?ranged:melee)[u.type]||[[0,-100]];
+  return slots[index%slots.length];
+ }
+ partyFollowPoint(u,living=this.s.party.filter(v=>v.hp>0)){
+  const [side,forward]=this.partyFormationOffset(u,living),heading=this.formationHeading||{x:0,y:1},n=Math.hypot(heading.x,heading.y)||1,fx=heading.x/n,fy=heading.y/n,rx=-fy,ry=fx,p={x:this.hero.x+fx*forward+rx*side,y:this.hero.y+fy*forward+ry*side};
+  try{return this.blocked(p.x,p.y)?this.safe(this.hero.x,this.hero.y):p;}catch(_){return this.hero;}
+ }
+ followPartyMember(u,living,dt){const d=dist(u,this.hero),speed=(d>650?500:d>350?390:d>200?315:255)*(u.slow>0?.65:1);return this.follow(u,this.partyFollowPoint(u,living),speed,dt,45);}
  updateParty(dt){
   const z=this.zone(),living=this.s.party.filter(u=>u.hp>0),context=this.syncSquadDoctrine(),claimed=new Set();
   if(this.s.recallActive&&living.every(u=>dist(u,this.hero)<165))this.s.recallActive=false;
@@ -368,7 +385,7 @@ class Campaign{
    if(u.order?.type==='gather'){const n=z.nodes.find(n=>n.id===u.order.id);if(n&&n.amount>0&&(!n.mini||this.peace||this.miniCleared(n.mini))){if(dist(u,n)>60)this.follow(u,n,230*(u.slow>0?.65:1),dt);else{const amount=Math.min(n.amount,12*dt);n.amount=Math.max(0,n.amount-amount);u.carry+=amount;this.s.gathered[this.definition().id]=(this.s.gathered[this.definition().id]||0)+amount;}if(u.carry>=35||n.amount<=0)u.order={type:'deposit',id:n.id};}else u.order={type:'deposit'};continue;}
    if(u.order?.type==='deposit'){const deposit=this.depositSite(u);if(dist(u,deposit)>130)this.follow(u,deposit,230*(u.slow>0?.65:1),dt);else{const payout=Math.floor(u.carry+1e-7);this.grant(payout,0);u.carry=Math.max(0,u.carry-payout);const n=z.nodes.find(n=>n.id===u.order.id&&n.amount>0);u.order=n?{type:'gather',id:n.id}:null;}continue;}
    if(u.order)u.order=null;
-   if(this.peace||u.type==='worker'||this.s.recallActive){this.followPartyMember(u,index,dt);continue;}
+   if(this.peace||u.type==='worker'||this.s.recallActive){this.followPartyMember(u,living,dt);continue;}
    let e=null;
    if(context.engaged){
     if(context.boss){
@@ -378,7 +395,7 @@ class Campaign{
      e=context.threats.find(x=>x.id===this.s.heroTarget)||context.threats.slice().sort((a,b)=>dist(a,this.hero)-dist(b,this.hero))[0]||null;
     }else e=crowdTarget(u,context.threats);
    }
-   if(!e){this.followPartyMember(u,index,dt);continue;}claimed.add(e.id);
+   if(!e){this.followPartyMember(u,living,dt);continue;}claimed.add(e.id);
    const range=u.type==='archer'?280:65;if(dist(u,e)>range||!this.line(u,e))this.follow(u,e,250*(u.slow>0?.65:1),dt,this.line(u,e)?range-10:0);else if(u.cd<=0){u.cd=u.type==='archer'?1.3:1;if(u.type==='archer'){const d=Math.max(1,dist(u,e));this.s.projectiles.push({id:'projectile-'+this.s.nextId++,x:u.x,y:u.y,dx:(e.x-u.x)/d,dy:(e.y-u.y)/d,target:e.id,damage:u.damage+this.hero.level*2,source:u.id,speed:450,style:'arrow'});}else if(this.damage(e,u.damage+this.hero.level*2,u.id))this.event('melee');}
   }
   const finishRecruit=b=>{if(b.queue>0){b.queue=Math.max(0,b.queue-dt);if(b.queue===0&&this.s.party.filter(u=>u.hp>0).length<6){const p=this.safe(b.x+50,b.y+50),type=['worker','soldier','archer'].includes(b.queueType)?b.queueType:'soldier';this.s.party.push(this.unit(type,p.x,p.y));b.queueType=null;}}};
