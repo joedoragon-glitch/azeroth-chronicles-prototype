@@ -88,6 +88,8 @@ jobs:
         env:
           PLAYTEST_URL: ${{ steps.deployment.outputs.page_url }}
         run: node tests/prototype-browser.test.cjs
+      - name: Build portable release from deployed commit
+        run: npm run release
       - name: Test portable release in Chromium
         env:
           PLAYTEST_FILE: release/Azeroth_Chronicles_Playtest.html
