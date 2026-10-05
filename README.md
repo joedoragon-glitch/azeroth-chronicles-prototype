@@ -1,4 +1,4 @@
-# Azeroth Chronicles — expanded prototype v0.8.28
+# Azeroth Chronicles — expanded prototype v0.8.29
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families each have four warned attacks. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
@@ -59,7 +59,7 @@ The pure engine/content, browser shell and synthesized audio are separate module
 
 Visual polish v0.6.1 gives each hero class, companion role, creature species, boss family and settlement service a distinct schematic drawing. TRUE forms and ringleaders retain visible elite details. Gameplay and save formats are unchanged.
 
-TRUE boss identity update v0.8.25 makes every boss nameplate visible before engagement and renders TRUE bosses with a larger silhouette, stronger gold aura, crown-like horns and an explicit TRUE badge. TRUE combat update v0.8.28 also gives every TRUE boss a six-minion warband on engagement; bosses with summon attacks replenish toward six, while TRUE bosses without summon attacks refill the warband once at half health. All boss summons give zero gold and EXP. The engine already created TRUE bosses as distinct `form: true` encounters with names ending in `TRUE`; regression tests now enforce that identity for both field and dungeon TRUE bosses.
+TRUE boss identity update v0.8.25 makes every boss nameplate visible before engagement and renders TRUE bosses with a larger silhouette, stronger gold aura, crown-like horns and an explicit TRUE badge. TRUE combat update v0.8.29 gives every TRUE boss a six-member warband on engagement: four enhanced regional minions at 1.5× summon health and 1.25× summon damage, plus two genuine ringleader captains using the existing ringleader health, damage, pursuit and Frenzy rules. Boss summon attacks restore the same four-plus-two composition; TRUE bosses without normal summon attacks refill it once at half health. All boss summons give zero gold and EXP. The engine already created TRUE bosses as distinct `form: true` encounters with names ending in `TRUE`; regression tests now enforce that identity for both field and dungeon TRUE bosses.
 
 Road update v0.6.2 rebuilds clear road corridors with joined stone paving and plank bridges. Pathfinding checks clearance along each movement segment, and existing saves upgrade their roads while retaining campaign progress.
 
