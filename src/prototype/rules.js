@@ -3,7 +3,7 @@
 'use strict';
 const attack=(kind,warning,recovery,extra={})=>({kind,warning,recovery,coefficient:1,...extra});
 const attacks={
- thorn:[attack('cone',.8,.8),attack('circle',1.3,1.5,{landing:true,coefficient:1.4}),attack('line',1.2,1,{slow:true}),attack('summon',1.5,1.5,{species:'wolf',ranged:false,normalHpScale:.65,normalDamageScale:.65})],
+ thorn:[attack('cone',.8,.8),attack('circle',1.3,1.5,{landing:true,coefficient:1.4}),attack('line',1.2,1,{slow:true}),attack('summon',1.5,1.5,{species:'wolf',ranged:false,normalHpScale:.65,normalDamageScale:.65,normalTarget:'squad'})],
  crypt:[attack('cone',1,1),attack('volley',1.2,1.4),attack('summon',1.6,1.4,{species:'skeleton',ranged:false}),attack('circle',1.6,1.4,{persistent:true,manaDrain:.05})],
  mire:[attack('cone',.9,1),attack('line',1.4,1.5,{charge:true,coefficient:1.4}),attack('circle',1.5,1.4,{count:3,persistent:true,slow:true}),attack('summon',1.6,1.5,{species:'mireling',ranged:false})],
  archive:[attack('cone',1.1,1),attack('line',1.5,1.5,{count:2,manaDrain:.08}),attack('circle',1.5,1.5,{slow:true,persistent:true,manaDrain:.04}),attack('summon',1.7,1.5,{species:'wraith',ranged:true})],
