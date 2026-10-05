@@ -14,7 +14,7 @@ const costs=[0,0,15,10,25,40,20,45,60],cooldowns=[0,.85,3,8,14,9,4,15,24];
 class Campaign{
  constructor(mode='normal',heroClass='paladin',random=Math.random,options={}){
   if(!['normal','nightmare'].includes(mode)||!classes[heroClass])throw Error('Unknown mode or class');
-  this.random=random;this.messages=[];this.effects=[];this.notices=[];this.noticeId=0;this.s={version:4,mode,phase:'adventure',clock:0,time:0,restCooldown:0,zone:'vale',refuge:'vale',nextId:1,manaBalanceVersion:1,normal:{},true:{},fieldBossKills:{},earlyRoll:{},pending:{},origins:{},late:{},victories:{},rescued:{},keys:{},paid:{},tickets:{},recovery:{},quests:{},discovered:{},gathered:{},fountains:{},zones:{},loot:[],projectiles:[],hazards:[],streak:{key:null,count:0},endingAck:false,awakeningAck:false,holdFire:false,statistics:{kills:0,deaths:0,goldEarned:0,suppliesUsed:0,bossSeconds:{},events:[]}};
+  this.random=random;this.messages=[];this.effects=[];this.notices=[];this.noticeId=0;this.s={version:4,mode,phase:'adventure',clock:0,time:0,restCooldown:0,zone:'vale',refuge:'vale',nextId:1,manaBalanceVersion:1,normal:{},true:{},fieldBossKills:{},earlyRoll:{},pending:{},origins:{},late:{},victories:{},rescued:{},keys:{},paid:{},tickets:{},recovery:{},quests:{},discovered:{},gathered:{},fountains:{},zones:{},loot:[],projectiles:[],hazards:[],streak:{key:null,count:0},endingAck:false,awakeningAck:false,holdFire:false,squadDoctrine:heroClass==='paladin'?'focus':'guard',squadEngagement:null,squadBoss:false,heroTarget:null,statistics:{kills:0,deaths:0,goldEarned:0,suppliesUsed:0,bossSeconds:{},events:[]}};
   const c=classes[heroClass];this.s.hero={class:heroClass,x:300,y:350,hp:c.hp,maxHp:c.hp,mp:c.mp,maxMp:c.mp,level:1,xp:0,gold:30,power:c.power,armor:c.armor,speed:c.speed,skills:[1,0,0,0,0,0,0,0],cd:Array(8).fill(0),immune:0,haste:0,weapon:0,armorTier:0,reforges:{},potions:{health:1,mana:1},tonic:false,potionCd:0,slow:0,talents:[0,0,0,0],talentPoints:0};
   this.s.challenge={succession:options.succession===true,fallen:[],pending:false,gameOver:false};
   this.initializeQuests();
@@ -290,7 +290,7 @@ class Campaign{
   this.hero.hp=this.hero.maxHp;this.hero.mp=this.hero.maxMp;this.hero.tonic=false;this.hero.immune=0;this.hero.slow=0;this.hero.haste=0;const refuge=clone(this.s.refugeSite||{zone:this.s.refuge,id:'rest'});this.enter(refuge.zone);this.arriveRefuge(refuge);this.say('Returned to your refuge. Learning and rescue progress are safe.');}
  successor(heroClass){if(!this.s.challenge.succession||!this.s.challenge.pending||this.s.challenge.fallen.includes(heroClass)||!classes[heroClass])return false;const old=this.hero,fresh=new Campaign(this.s.mode,heroClass,this.random,{succession:true}).hero;for(const key of ['gold','weapon','armorTier','reforges','potions'])fresh[key]=clone(old[key]);for(const key of ['legacyWeaponPower','legacyWeaponName','legacyPotions','legacyEquipped'])if(old[key]!==undefined)fresh[key]=clone(old[key]);this.s.hero=fresh;this.s.challenge.pending=false;this.s.refuge='vale';this.s.refugeSite={zone:'vale',id:'rest',x:300,y:350};this.s.party.forEach(u=>{u.cd=1;u.order=null;});this.enter('vale');this.event('successor',{class:heroClass});this.say('Your '+heroClass+' successor begins at level 1. The world remembers your progress.');return true;}
  cast(slot,targetId){const i=slot-1,rank=this.hero.skills[i];if(this.s.challenge.pending||this.s.challenge.gameOver)return false;if(!rank||this.hero.cd[i]>0||this.peace){if(!rank)this.say('This skill must be learned from a rescued instructor.');return false;}const scale=1+.15*(rank-1),range=this.hero.class==='paladin'&&slot<3?120:slot===1?this.hero.class==='mage'?400:450:480,targets=this.zone().enemies.filter(e=>e.hp>0&&!e.neutral&&dist(e,this.hero)<=range&&this.line(this.hero,e)),target=targets.find(e=>e.id===targetId)||targets.sort((a,b)=>dist(a,this.hero)-dist(b,this.hero))[0];
-  if([1,2,6,7,8].includes(slot)&&!target)return false;if(slot===3&&(this.hero.class==='mage'?this.hero.mp>=this.hero.maxMp:this.hero.hp>=this.hero.maxHp))return false;
+  if([1,2,6,7,8].includes(slot)&&!target)return false;if(target&&[1,2,6,7,8].includes(slot))this.s.heroTarget=target.id;if(slot===3&&(this.hero.class==='mage'?this.hero.mp>=this.hero.maxMp:this.hero.hp>=this.hero.maxHp))return false;
   const cost=this.skillManaCost(slot,rank);if(this.hero.mp<cost)return false;this.hero.mp-=cost;this.hero.cd[i]=cooldowns[slot];
   const power=this.power();if(slot===3){if(this.hero.class==='mage')this.hero.mp=Math.min(this.hero.maxMp,this.hero.mp+R.manaBalance.mageRecovery.base+R.manaBalance.mageRecovery.perRank*(rank-1));else this.hero.hp=Math.min(this.hero.maxHp,this.hero.hp+(45+power*.5)*scale);this.event('heal',{x:this.hero.x,y:this.hero.y,resource:this.hero.class==='mage'?'mana':'health'});}
   else if(slot===4){if(this.hero.class==='ranger')this.hero.haste=Math.min(6,4+.25*(rank-1));else this.hero.immune=Math.min(4,(this.hero.class==='paladin'?2.5:2)+.15*(rank-1));this.event('spell');}
@@ -334,10 +334,29 @@ class Campaign{
   this.updateParty(dt);this.updateEnemies(dt);if(h!==this.hero||z!==this.zone()||this.s.challenge.pending||this.s.challenge.gameOver)return;this.updateProjectiles(dt);if(h!==this.hero||z!==this.zone()||this.s.challenge.pending||this.s.challenge.gameOver)return;this.updateElites(dt);this.updatePacks(dt);this.updateGuardianReinforcements(dt);this.updateTraps(dt);if(h!==this.hero||z!==this.zone()||this.s.challenge.pending||this.s.challenge.gameOver)return;this.updatePotion(dt);this.autoPotions();this.updateNight();this.updateEscort(dt);this.checkClear();this.checkMinis();
   for(const l of [...this.s.loot])if(l.zone===this.s.zone&&dist(l,h)<65){this.grant(l.gold,0);this.s.loot.splice(this.s.loot.indexOf(l),1);this.event('gold');}
  }
+ squadDefaultDoctrine(){return this.hero.class==='paladin'?'focus':'guard';}
+ squadThreats(){return this.zone().enemies.filter(e=>e.hp>0&&!e.neutral&&!e.returning&&e.aggro&&dist(e,this.hero)<(e.type==='boss'||e.summon?720:540));}
+ squadContext(){
+  const threats=this.squadThreats(),bossEnemy=threats.filter(e=>e.type==='boss').sort((a,b)=>dist(a,this.hero)-dist(b,this.hero))[0]||null;
+  return {engaged:threats.length>0,boss:!!bossEnemy,bossEnemy,threats};
+ }
+ syncSquadDoctrine(){
+  const context=this.squadContext(),phase=context.engaged?(context.boss?'boss':'field'):null;
+  if(!phase){if(this.s.squadEngagement){this.s.squadEngagement=null;this.s.squadBoss=false;this.s.squadDoctrine=this.squadDefaultDoctrine();this.s.heroTarget=null;}return context;}
+  if(this.s.squadEngagement!==phase){this.s.squadEngagement=phase;this.s.squadBoss=context.boss;this.s.squadDoctrine=this.squadDefaultDoctrine();}
+  return context;
+ }
+ toggleSquadDoctrine(){
+  const context=this.syncSquadDoctrine();if(!context.engaged)return false;
+  this.s.squadDoctrine=this.s.squadDoctrine==='focus'?'guard':'focus';this.event('squadDoctrine',{mode:this.s.squadDoctrine,boss:context.boss});return true;
+ }
+ squadDoctrineLabel(){
+  const context=this.syncSquadDoctrine();return {active:context.engaged,boss:context.boss,mode:this.s.squadDoctrine,label:context.boss?(this.s.squadDoctrine==='focus'?'BOSS':'ADDS'):(this.s.squadDoctrine==='focus'?'TARGET':'THREATS')};
+ }
  recallParty(){
   this.s.recallActive=true;this.hero.order=null;
   for(const u of this.s.party.filter(u=>u.hp>0)){u.order=null;u.path=[];u.routeAge=0;}
-  this.say('Squad recalled. Companions are following the hero.');this.event('squadRecall');return true;
+  this.say('Squad recalled. Companions are regrouping on the hero.');this.event('squadRecall');return true;
  }
  partyFollowPoint(index){const offsets=[[-62,58],[62,58],[-100,100],[100,100],[-45,135],[45,135]],o=offsets[index%offsets.length],p={x:this.hero.x+o[0],y:this.hero.y+o[1]};try{return this.blocked(p.x,p.y)?this.safe(this.hero.x,this.hero.y):p;}catch(_){return this.hero;}}
  followPartyMember(u,index,dt){const d=dist(u,this.hero),speed=(d>650?500:d>350?390:d>200?315:255)*(u.slow>0?.65:1);return this.follow(u,this.partyFollowPoint(index),speed,dt,45);}
