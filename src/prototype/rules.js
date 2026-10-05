@@ -67,11 +67,11 @@ const dungeonWalls={crypt:[710,780,[[480,680],[870,1060]]],archive:[650,730,[[40
 const pillars={crypt:[[430,620],[1010,480]],archive:[[420,740],[1060,620]],mine:[[480,950],[1120,380]],abyss:[[420,530],[980,890]],citadel:[[400,750],[1080,450]]};
 const guardPosts=[[350,430],[490,700],[420,1030],[990,420],[1110,680],[1000,900],[1000,1200],[550,1190],[900,240],[1250,480],[380,850],[1190,950],[560,390]];
 const dungeonTraps={
- crypt:[[520,470,'spikes'],[630,610,'spikes'],[1020,540,'spikes'],[930,850,'seal'],[1080,1010,'spikes'],[1190,1210,'seal']],
- archive:[[500,430,'jet'],[560,680,'seal'],[770,520,'jet'],[900,720,'seal'],[1040,470,'jet'],[1150,890,'jet'],[1030,1040,'seal'],[1200,1220,'jet']],
- mine:[[500,500,'spikes'],[640,750,'spikes'],[930,600,'spikes'],[1030,370,'jet'],[600,1030,'spikes'],[1040,840,'jet'],[1270,980,'spikes'],[1060,1190,'spikes'],[900,1210,'seal']],
- abyss:[[440,450,'jet'],[560,690,'jet'],[770,740,'seal'],[980,460,'jet'],[440,950,'seal'],[900,940,'jet'],[1120,800,'jet'],[1250,1020,'seal'],[1040,1220,'jet'],[1290,1190,'jet']],
- citadel:[[500,450,'spikes'],[660,530,'jet'],[870,610,'seal'],[1030,430,'jet'],[530,850,'seal'],[650,1060,'spikes'],[940,1010,'jet'],[1100,790,'seal'],[1300,960,'jet'],[1020,1210,'spikes'],[1270,1190,'seal'],[930,750,'jet']]
+ crypt:[[520,470,'spikes'],[630,610,'spikes'],[1020,540,'spikes'],[930,850,'seal'],[1080,1010,'spikes'],[1190,1210,'seal'],[360,560,'spikes'],[520,900,'seal'],[860,370,'spikes'],[840,1080,'spikes'],[1240,700,'seal'],[830,1230,'spikes']],
+ archive:[[500,430,'jet'],[560,680,'seal'],[770,520,'jet'],[900,720,'seal'],[1040,470,'jet'],[1150,890,'jet'],[1030,1040,'seal'],[1200,1220,'jet'],[330,560,'seal'],[480,970,'jet'],[820,330,'seal'],[830,1080,'jet'],[1240,620,'seal'],[1280,780,'jet'],[850,1260,'seal'],[360,1180,'jet']],
+ mine:[[500,500,'spikes'],[640,750,'spikes'],[930,600,'spikes'],[1030,370,'jet'],[600,1030,'spikes'],[1040,840,'jet'],[1270,980,'spikes'],[1060,1190,'spikes'],[900,1210,'seal'],[360,650,'spikes'],[520,880,'jet'],[700,420,'seal'],[730,1150,'spikes'],[960,480,'seal'],[1180,560,'jet'],[1260,720,'spikes'],[720,1320,'jet'],[430,1210,'seal']],
+ abyss:[[440,450,'jet'],[560,690,'jet'],[770,740,'seal'],[980,460,'jet'],[440,950,'seal'],[900,940,'jet'],[1120,800,'jet'],[1250,1020,'seal'],[1040,1220,'jet'],[1290,1190,'jet'],[330,650,'seal'],[420,790,'jet'],[520,1120,'jet'],[760,460,'seal'],[800,900,'jet'],[940,650,'seal'],[1180,560,'jet'],[1270,700,'seal'],[820,1240,'jet'],[1320,860,'jet']],
+ citadel:[[500,450,'spikes'],[660,530,'jet'],[870,610,'seal'],[1030,430,'jet'],[530,850,'seal'],[650,1060,'spikes'],[940,1010,'jet'],[1100,790,'seal'],[1300,960,'jet'],[1020,1210,'spikes'],[1270,1190,'seal'],[930,750,'jet'],[340,430,'spikes'],[470,680,'seal'],[520,1180,'jet'],[650,780,'spikes'],[690,1240,'seal'],[890,390,'jet'],[980,520,'spikes'],[1190,520,'seal'],[1260,680,'jet'],[850,900,'spikes'],[880,1220,'seal'],[1320,820,'spikes']]
 };
 // Curated occupied spaces: each dungeon has an entrance, work/ritual zone, command markers and a boss approach.
 const dungeonDecor={
@@ -88,6 +88,7 @@ const dungeonTrapTuning={
  abyss:{cycle:5.7,warning:1.25,active:.95,damage:.15,radius:49,sealRadius:66,jetLength:185,jetHalfWidth:33,slow:3.25,offset:.95},
  citadel:{cycle:5.4,warning:1.20,active:1.0,damage:.17,radius:51,sealRadius:68,jetLength:195,jetHalfWidth:34,slow:3.5,offset:.90}
 };
+const dungeonReinforcement={delay:18,targetFraction:.5,engagedLimit:4,minGroup:2,maxGroup:4,bossMinGroup:1,bossMaxGroup:2,spawnDistance:320};
 const outdoorMiniTrapTuning={
  vale:dungeonTrapTuning.crypt,
  march:dungeonTrapTuning.archive,
@@ -120,6 +121,6 @@ const bossCadence={specialRecoveryMultiplier:.25,basicCooldown:.75,skillsPerBasi
 const rangedEnemyCombat={projectileMultiplier:1.7,aimTime:.35,cooldown:1.15};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,rangedEnemyCombat,ordinaryMeleeScaling,guardianScaling,summonScaling,ringleaderScaling,nightEnemyCombat,dungeonTrapTuning,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,teachers,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
+const R={bossCadence,rangedEnemyCombat,ordinaryMeleeScaling,guardianScaling,summonScaling,ringleaderScaling,nightEnemyCombat,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,teachers,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
