@@ -1,4 +1,4 @@
-# Azeroth Chronicles — expanded prototype v0.8.29
+# Azeroth Chronicles — expanded prototype v0.8.30
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families each have four warned attacks. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
@@ -21,13 +21,13 @@ Choose Standard or the optional **Succession challenge**, then Paladin, Mage or 
 | Health / mana potion | Automatically at 35% HP or MP; H / M or left potion buttons to use earlier; restores over five seconds |
 | Hero / squad cursor | Tab / Squad button |
 | Select / give orders | E / F / right-side Confirm-order / click / right click |
-| Select whole party | Backtick / Companions menu |
+| Recall / select whole party | Backtick / Recall squad button / Companions menu |
 | Map / journal / inventory | Z / J / I / Menu |
 | Pause / menu | P / Escape / Menu |
 | Sprint | Q reserved; sprint deliberately unavailable |
 
-Menus pause play. WASD or the joystick navigates and F/Enter confirms. The Adventure menu keeps Continue, Map, Quest journal, Inventory, Character and party, the Awakening finale when relevant, and Game and settings at the top level; controls, sound, backups, reports and new-run management are grouped in submenus. Use the map to walk to marked captives, services and transport. Regions connect through recognizable NPC transport, rather than walking across their boundaries. Companions, finite gathering, construction and training share this same adventure and save.
-The transient bottom message strip is visually removed on all layouts. Touch devices use the thumb-friendly controls even when the browser reports a desktop-like viewport: portrait/tall touch layouts use a large two-column power grid above the left joystick, while landscape touch layouts use four wide columns. Confirm/Order is a larger target at the lower right. The joystick moves the menu selection; F/Confirm activates it. Touching menu entries does not activate them. The Back entry is selectable with the joystick.
+Menus pause play. WASD or the joystick navigates and F/Enter confirms. The Adventure menu keeps Continue, Map, Quest journal, Inventory, Character and party, the Awakening finale when relevant, and Game and settings at the top level; controls, sound, backups, reports and new-run management are grouped in submenus. Use the map to walk to marked captives, services and transport. Regions connect through recognizable NPC transport, rather than walking across their boundaries. Companions, finite gathering, construction and training share this same adventure and save. Companions now follow the hero by default in a loose formation, catch up faster when separated, and only auto-attack enemies the hero is actively fighting. Explicit attack orders break automatically if the hero retreats too far. Recall cancels squad combat/movement/worker orders and regroups every living companion on the hero.
+The transient bottom message strip is visually removed on all layouts. On touch layouts, Interact owns the protected bottom-right primary slot during normal play; Order replaces it only in squad/menu mode, while Squad and Recall sit in separate fixed positions above it so the controls cannot overlap on short phones. Touch devices use the thumb-friendly controls even when the browser reports a desktop-like viewport: portrait/tall touch layouts use a large two-column power grid above the left joystick, while landscape touch layouts use four wide columns. Confirm/Order is a larger target at the lower right. The joystick moves the menu selection; F/Confirm activates it. Touching menu entries does not activate them. The Back entry is selectable with the joystick.
 
 ## Progression and ending
 
