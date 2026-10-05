@@ -21,7 +21,7 @@ Choose Standard or the optional **Succession challenge**, then Paladin, Mage or 
 | Health / mana potion | Auto at 35%; H / M; on PC left mouse = HP and right mouse = MP; touch potion buttons remain available |
 | Hero / squad cursor | Tab / Squad button |
 | Select / give orders | E / F / right-side Confirm-order |
-| Recall / select whole party | Backtick / Recall squad button / Companions menu |
+| Recall / select whole party | Backtick / Recall squad button / town Captain or barracks Squad command |
 | Map / journal / inventory | Z / J / I / Menu |
 | Pause / menu | P / Escape / Menu |
 | Sprint | Q reserved; sprint deliberately unavailable |
