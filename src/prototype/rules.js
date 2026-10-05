@@ -88,7 +88,7 @@ const dungeonTrapTuning={
  abyss:{cycle:5.7,warning:1.25,active:.95,damage:.15,radius:49,sealRadius:66,jetLength:185,jetHalfWidth:33,slow:3.25,offset:.95},
  citadel:{cycle:5.4,warning:1.20,active:1.0,damage:.17,radius:51,sealRadius:68,jetLength:195,jetHalfWidth:34,slow:3.5,offset:.90}
 };
-const dungeonReinforcement={delay:18,targetFraction:.5,engagedLimit:4,minGroup:2,maxGroup:4,bossMinGroup:1,bossMaxGroup:2,spawnDistance:320};
+const dungeonReinforcement={delay:18,targetFraction:.5,engagedLimit:3,minGroup:2,maxGroup:4,bossMinGroup:1,bossMaxGroup:2,spawnDistance:320};
 const outdoorMiniTrapTuning={
  vale:dungeonTrapTuning.crypt,
  march:dungeonTrapTuning.archive,
