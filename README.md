@@ -1,4 +1,4 @@
-# Azeroth Chronicles — expanded prototype v0.8.25
+# Azeroth Chronicles — expanded prototype v0.8.26
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families each have four warned attacks. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
@@ -35,7 +35,7 @@ Start with skill 1; the other seven require rescued teachers, level requirements
 
 All thirty quests are active from the start of a run. Quest boards are informational local-objective lists rather than accept/turn-in hubs, and gold/XP rewards are delivered automatically as soon as an objective completes. Existing saves activate unfinished quests and automatically deliver any already-earned unpaid rewards on load.
 
-Two hero-participating kills of one ordinary species summon one or, with a 50% chance, two ringleaders. Companion-only kills neither advance nor reset the streak. Two kills of a named field boss unlock exactly one TRUE form. A normal dungeon boss receives one saved 1-in-3 early TRUE roll and stays dead. Reenter a cleared dungeon to challenge an available TRUE form after preparing.
+Two hero-participating kills of one ordinary species summon one or, with a 50% chance, two ringleaders. Companion-only kills neither advance nor reset the streak. Two kills of a named field boss unlock exactly one TRUE form. The first normal field-boss defeat uses the regular 120-second respawn so the second fight can occur; after the second qualifying normal defeat, that respawn is cancelled and the TRUE form appears after exactly 30 seconds. This also applies to the Dark Lord. A normal dungeon boss receives one saved 1-in-3 early TRUE roll and stays dead. Reenter a cleared dungeon to challenge an available TRUE form after preparing.
 
 Health and mana potions use themselves at or below 35% of the relevant maximum when available. Health takes priority if both are low, and both share the existing ten-second cooldown. Their recovery is delivered over five seconds of active play, survives reload, and stops if the resource reaches its maximum. H, M and the left-side buttons allow earlier use; the inventory menu still works. Automatic consumption saves immediately.
 
