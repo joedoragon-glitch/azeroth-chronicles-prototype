@@ -4,15 +4,15 @@
 const attack=(kind,warning,recovery,extra={})=>({kind,warning,recovery,coefficient:1,...extra});
 const attacks={
  thorn:[attack('cone',.8,.8),attack('circle',1.3,1.5,{landing:true,coefficient:1.4}),attack('line',1.2,1,{slow:true}),attack('summon',1.5,1.5,{species:'wolf',ranged:false})],
- crypt:[attack('cone',1,1),attack('volley',1.2,1.4),attack('summon',1.6,1.4,{species:'skeleton',ranged:false}),attack('circle',1.6,1.4,{persistent:true})],
+ crypt:[attack('cone',1,1),attack('volley',1.2,1.4),attack('summon',1.6,1.4,{species:'skeleton',ranged:false}),attack('circle',1.6,1.4,{persistent:true,manaDrain:.05})],
  mire:[attack('cone',.9,1),attack('line',1.4,1.5,{charge:true,coefficient:1.4}),attack('circle',1.5,1.4,{count:3,persistent:true,slow:true}),attack('summon',1.6,1.5,{species:'mireling',ranged:false})],
- archive:[attack('cone',1.1,1),attack('line',1.5,1.5,{count:2}),attack('circle',1.5,1.5,{slow:true,persistent:true}),attack('summon',1.7,1.5,{species:'wraith',ranged:true})],
+ archive:[attack('cone',1.1,1),attack('line',1.5,1.5,{count:2,manaDrain:.08}),attack('circle',1.5,1.5,{slow:true,persistent:true,manaDrain:.04}),attack('summon',1.7,1.5,{species:'wraith',ranged:true})],
  ridge:[attack('cone',1,1),attack('circle',1.5,1.5,{coefficient:1.4}),attack('line',1.5,2,{charge:true,coefficient:1.4}),attack('summon',1.8,1.5,{species:'archer',ranged:true})],
  mine:[attack('circle',1.6,2.5,{coefficient:1.4,opening:2.5}),attack('circle',1.7,1.5,{count:3,coefficient:1.4}),attack('ring',1.6,1.6),attack('line',1.7,3,{charge:true,coefficient:1.4,opening:3})],
  warlord:[attack('cone',1.2,1.5,{combo:true}),attack('circle',1.8,1.5,{count:2}),attack('summon',1.8,1.5,{species:'orc',ranged:false}),attack('line',1.6,2.5,{charge:true,coefficient:1.4})],
- abyss:[attack('cone',1.5,1.5),attack('ring',1.7,1.6),attack('circle',1.8,2,{count:2,sequential:true,landing:true,coefficient:1.4}),attack('summon',2,1.6,{species:'ashbeast',ranged:false})],
- citadel:[attack('circle',1.6,3,{coefficient:1.4,opening:3}),attack('line',1.8,1.6,{count:2}),attack('line',1.8,2.5,{charge:true,advance:true,coefficient:1.4}),attack('circle',2,1.5,{count:3,sequential:true,persistent:true})],
- darklord:[attack('cone',1.3,1.5,{combo:true}),attack('circle',1.9,1.6,{count:3,sequential:true}),attack('summon',2,1.6,{species:'crownguard',ranged:true}),attack('sector',2,2,{sequential:true,count:3})]
+ abyss:[attack('cone',1.5,1.5,{manaDrain:.08}),attack('ring',1.7,1.6,{manaDrain:.10}),attack('circle',1.8,2,{count:2,sequential:true,landing:true,coefficient:1.4}),attack('summon',2,1.6,{species:'ashbeast',ranged:false})],
+ citadel:[attack('circle',1.6,3,{coefficient:1.4,opening:3}),attack('line',1.8,1.6,{count:2,manaDrain:.08}),attack('line',1.8,2.5,{charge:true,advance:true,coefficient:1.4}),attack('circle',2,1.5,{count:3,sequential:true,persistent:true,manaDrain:.10})],
+ darklord:[attack('cone',1.3,1.5,{combo:true,manaDrain:.08}),attack('circle',1.9,1.6,{count:3,sequential:true,manaDrain:.10}),attack('summon',2,1.6,{species:'crownguard',ranged:true}),attack('sector',2,2,{sequential:true,count:3,manaDrain:.12})]
 };
 const sites=[
  [['bridge-north','Mill bridge',1200,750],['bridge-south','Southern footbridge',1200,1750],['orchard','Abandoned orchard',1050,740],['den-ruins','Orchard den ruins',800,1280],['mill-pond','Mill pond',710,1260],['cache','Woodland supply cache',1550,1150]],
@@ -120,8 +120,15 @@ const trueBossSummons={cap:6,minions:4,captains:2,minionScaling:{hp:1.5,damage:1
 }};
 const ringleaderScaling={hp:2.5,damage:1.5,pursuit:1.2,frenzyThreshold:.5,frenzyCooldown:.6,frenzyAim:.75};
 const nightEnemyCombat={
- wraith:{hp:2.4,damage:1.8,skillCooldown:4.8,warning:.85,radius:210,coefficient:1.15,slow:2.5,heal:.08},
+ wraith:{hp:2.4,damage:1.8,skillCooldown:4.8,warning:.85,radius:210,coefficient:1.15,slow:2.5,heal:.08,manaDrain:.12},
  stalker:{hp:2.6,damage:2.0,skillCooldown:4.2,warning:.7,radius:78,coefficient:1.6,pounceSpeed:560,slow:3}
+};
+const manaBalance={
+ perLevel:5,
+ regen:{combat:1,outOfCombat:2.5,talentCombat:.25,talentOutOfCombat:.5},
+ rankCostGrowth:.08,
+ mageRecovery:{base:22,perRank:3},
+ rangedDrain:{wraith:.06,ashbeast:.04}
 };
 const autoPotionThresholds={health:.35,mana:.35};
 // Boss telegraphs stay readable, but idle gaps are short and basic attacks only interrupt sustained special pressure occasionally.
@@ -129,6 +136,6 @@ const bossCadence={specialRecoveryMultiplier:.25,basicCooldown:.75,skillsPerBasi
 const rangedEnemyCombat={projectileMultiplier:1.7,aimTime:.35,cooldown:1.15};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,rangedEnemyCombat,ordinaryMeleeScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,teachers,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
+const R={bossCadence,rangedEnemyCombat,ordinaryMeleeScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,teachers,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
