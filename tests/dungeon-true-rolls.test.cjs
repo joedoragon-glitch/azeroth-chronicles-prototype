@@ -23,6 +23,9 @@ for(const id of Campaign.dungeonIds){
   assert.equal(saved.zone().enemies.filter(e=>e.family===id&&e.form==='true'&&e.hp>0).length,won?1:0,id+' reentry follows saved result');
   if(won){
    const trueBoss=saved.zone().enemies.find(e=>e.family===id&&e.form==='true'&&e.hp>0);
+   assert.equal(trueBoss.type,'boss',id+' TRUE keeps boss role');
+   assert.equal(trueBoss.form,'true',id+' TRUE keeps true form');
+   assert.match(trueBoss.name,/ TRUE$/,id+' TRUE has an explicit TRUE name');
    trueBoss.hp=0;saved.kill(trueBoss);
    saved.enter(saved.definition().id);saved.enter(id);
    assert(!saved.zone().enemies.some(e=>e.family===id&&e.type==='boss'&&e.hp>0),id+' TRUE cannot repeat');
