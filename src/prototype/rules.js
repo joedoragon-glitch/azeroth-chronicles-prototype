@@ -8,10 +8,10 @@ const attacks={
  mire:[attack('cone',.9,1),attack('line',1.4,1.5,{charge:true,coefficient:1.4}),attack('circle',1.5,1.4,{count:3,persistent:true,slow:true}),attack('summon',1.6,1.5,{species:'mireling',ranged:false})],
  archive:[attack('cone',1.1,1),attack('line',1.5,1.5,{count:2,manaDrain:.08}),attack('circle',1.5,1.5,{slow:true,persistent:true,manaDrain:.04}),attack('summon',1.7,1.5,{species:'wraith',ranged:true})],
  ridge:[attack('cone',1,1),attack('circle',1.5,1.5,{coefficient:1.4}),attack('line',1.5,2,{charge:true,coefficient:1.4}),attack('summon',1.8,1.5,{species:'archer',ranged:true})],
- mine:[attack('circle',1.6,2.5,{coefficient:1.4,opening:2.5}),attack('circle',1.7,1.5,{count:3,coefficient:1.4}),attack('ring',1.6,1.6),attack('line',1.7,3,{charge:true,coefficient:1.4,opening:3})],
+ mine:[attack('circle',1.6,2.5,{coefficient:1.4,opening:2.5}),attack('circle',1.7,1.5,{count:3,coefficient:1.4}),attack('ring',1.6,1.6),attack('line',1.7,3,{charge:true,coefficient:1.4,opening:3}),attack('summon',1.8,1.5,{species:'ogre',ranged:false})],
  warlord:[attack('cone',1.2,1.5,{combo:true}),attack('circle',1.8,1.5,{count:2}),attack('summon',1.8,1.5,{species:'orc',ranged:false}),attack('line',1.6,2.5,{charge:true,coefficient:1.4})],
  abyss:[attack('cone',1.5,1.5,{manaDrain:.08}),attack('ring',1.7,1.6,{manaDrain:.10}),attack('circle',1.8,2,{count:2,sequential:true,landing:true,coefficient:1.4}),attack('summon',2,1.6,{species:'ashbeast',ranged:false})],
- citadel:[attack('circle',1.6,3,{coefficient:1.4,opening:3}),attack('line',1.8,1.6,{count:2,manaDrain:.08}),attack('line',1.8,2.5,{charge:true,advance:true,coefficient:1.4}),attack('circle',2,1.5,{count:3,sequential:true,persistent:true,manaDrain:.10})],
+ citadel:[attack('circle',1.6,3,{coefficient:1.4,opening:3}),attack('line',1.8,1.6,{count:2,manaDrain:.08}),attack('line',1.8,2.5,{charge:true,advance:true,coefficient:1.4}),attack('circle',2,1.5,{count:3,sequential:true,persistent:true,manaDrain:.10}),attack('summon',1.9,1.5,{species:'crownguard',ranged:true})],
  darklord:[attack('cone',1.3,1.5,{combo:true,manaDrain:.08}),attack('circle',1.9,1.6,{count:3,sequential:true,manaDrain:.10}),attack('summon',2,1.6,{species:'crownguard',ranged:true}),attack('sector',2,2,{sequential:true,count:3,manaDrain:.12})]
 };
 const sites=[
@@ -112,6 +112,19 @@ const guardianLegacyScaling=[{hp:1.15,damage:1.1},{hp:1.3,damage:1.2},{hp:1.5,da
 const guardianScaling=[{hp:1.65,damage:1.35},{hp:1.85,damage:1.5},{hp:2.15,damage:1.65},{hp:2.45,damage:1.85},{hp:2.85,damage:2.1}];
 const awakenedGuardianScaling={hp:1.35,damage:1.25};
 const summonScaling=[{hp:1.35,damage:1.15},{hp:1.5,damage:1.25},{hp:1.7,damage:1.4},{hp:1.9,damage:1.55},{hp:2.2,damage:1.75}];
+const bossSummoning={normalCap:3,trueCap:6,normalCooldown:7,trueCooldown:5.5,pressureFloor:2};
+const bossBehavior={
+ thorn:{close:[0],far:[1,2],heroTarget:[1,2],phasePreferred:[2,1],combos:[{from:2,to:1,phase:'low',chance:.45}]},
+ crypt:{close:[0],far:[1,3],heroTarget:[1,3],phasePreferred:[3,1],combos:[{from:3,to:1,phase:'low',chance:.45}]},
+ mire:{close:[0],far:[1,2],heroTarget:[1,2],phasePreferred:[2,1],combos:[{from:2,to:1,phase:'low',chance:.45}]},
+ archive:{close:[0],far:[1,2],heroTarget:[1,2],phasePreferred:[2,1],combos:[{from:2,to:1,phase:'low',chance:.45}]},
+ ridge:{close:[0],far:[1,2],heroTarget:[1,2],phasePreferred:[1,2],combos:[{from:1,to:2,phase:'low',chance:.45}]},
+ mine:{close:[0,2],far:[1,3],heroTarget:[1,3],phasePreferred:[2,1],combos:[{from:2,to:1,phase:'low',chance:.45}]},
+ warlord:{close:[0],far:[1,3],heroTarget:[1,3],phasePreferred:[2,1,3],combos:[{from:2,to:0,phase:'low',chance:.45},{from:1,to:3,phase:'low',chance:.35}]},
+ abyss:{close:[0,1],far:[2],heroTarget:[2],phasePreferred:[0,1,2],combos:[{from:0,to:1,phase:'low',chance:.4},{from:2,to:3,phase:'low',chance:.35}]},
+ citadel:{close:[0],far:[1,2,3],heroTarget:[1,2,3],phasePreferred:[1,2,4],combos:[{from:1,to:2,phase:'low',chance:.45}]},
+ darklord:{close:[0,3],far:[1,2,3],heroTarget:[0,1,3],phasePreferred:[3,1,2],combos:[{from:1,to:0,phase:'high',chance:.4}]}
+};
 const trueBossSummons={cap:6,minions:4,captains:2,minionScaling:{hp:1.5,damage:1.25},families:{
  thorn:{species:'wolf',ranged:false},crypt:{species:'skeleton',ranged:false},
  mire:{species:'mireling',ranged:false},archive:{species:'wraith',ranged:true},
@@ -137,6 +150,6 @@ const bossCadence={specialRecoveryMultiplier:.25,basicCooldown:.75,skillsPerBasi
 const rangedEnemyCombat={projectileMultiplier:1.7,aimTime:.35,cooldown:1.15};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,rangedEnemyCombat,ordinaryMeleeScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,teachers,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
+const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,ordinaryMeleeScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,teachers,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
