@@ -107,15 +107,15 @@ button:disabled{background:#202c28;box-shadow:none;text-shadow:none}
     min-height:68px;border-color:#e8ca8d;color:#fce9bb;
     background:linear-gradient(155deg,#69563b,#3e392d);
   }
-  #hud #squad-button{bottom:calc(84px + env(safe-area-inset-bottom))}
-  #hud #recall-button{bottom:calc(134px + env(safe-area-inset-bottom))}
+  #hud #recall-button{bottom:calc(84px + env(safe-area-inset-bottom))}
+  #hud #squad-button{bottom:calc(134px + env(safe-area-inset-bottom))}
+  #hud #squad-button[hidden]{display:none!important}
   #order-button{
     display:none;right:8px;bottom:max(8px,env(safe-area-inset-bottom));
     width:96px;min-height:68px;font-size:12px;padding:8px 6px;
   }
-  body.squad-mode #order-button,body.menu-open #order-button{display:block}
-  body.squad-mode #interact-button,body.menu-open #interact-button{display:none}
-  body.menu-open #squad-button,body.menu-open #recall-button{display:none}
+  body.menu-open #order-button{display:block}
+  body.menu-open #interact-button,body.menu-open #squad-button,body.menu-open #recall-button{display:none}
 }
 @media(max-width:340px){
   #hud #interact-button,#hud #squad-button,#hud #recall-button,#order-button{width:88px}
