@@ -93,7 +93,7 @@ function townWorkersMenu(back){const nodes=game.zone().nodes.filter(n=>n.amount>
  ...(canBuild?[action('Establish barracks here · 120g',()=>{game.build();townWorkersMenu(back);},'Creates a persistent regional field base',game.hero.gold<120)]:[]),
  ...nodes.map(n=>action('Gather '+n.name+' '+n.icon,()=>{game.gather(n.id);closeMenu();},Math.floor(n.amount)+' gold remaining · guarded worker expedition'))
  ],back);}
-function partyMenu(back=closeMenu){const title=game.definition().town+' Captain',returnHere=()=>partyMenu(back);openMenu(title,'Town troop service. Barracks provide the same field-command functions away from the settlement, with discounted recruitment.',[
+function partyMenu(back=closeMenu){const title=game.definition().town+' Captain',returnHere=()=>partyMenu(back);openMenu(title,'Town troop service. Barracks provide the same expedition logistics in the field, with discounted recruitment.',[
  action('Recruitment & recovery',()=>townRecruitmentMenu(returnHere),'Worker / Builder 35g · Soldier 70g · Archer 100g'),
  action('Construction & workers',()=>townWorkersMenu(returnHere),'Barracks construction and regional gathering')
  ],back);}
