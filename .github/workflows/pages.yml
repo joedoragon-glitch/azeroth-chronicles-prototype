@@ -69,6 +69,21 @@ jobs:
         run: |
           npm install --no-save --package-lock=false playwright@1.62.1
           npx playwright install --with-deps chromium
+      - name: Wait for the exact published build
+        env:
+          PLAYTEST_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          EXPECTED="version:'$(node -p "require('./package.json').version")-prototype'"
+          for attempt in {1..30}; do
+            if curl -fsSL -H 'Cache-Control: no-cache' "${PLAYTEST_URL}src/prototype/app.js?sha=${GITHUB_SHA}&attempt=${attempt}" | grep -Fq "${EXPECTED}"; then
+              echo "Published build matches ${EXPECTED}"
+              exit 0
+            fi
+            echo "Waiting for GitHub Pages propagation (${attempt}/30)…"
+            sleep 5
+          done
+          echo "Published site did not reach the expected build in time."
+          exit 1
       - name: Verify published adventure in clean browsers
         env:
           PLAYTEST_URL: ${{ steps.deployment.outputs.page_url }}
