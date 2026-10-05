@@ -47,7 +47,7 @@ await check('Automatic potion thresholds and direct buttons '+tag,async()=>{
  await page.evaluate(()=>{const h=Prototype.game.hero;h.hp=h.maxHp*.6;h.mp=h.maxMp;h.potionCd=0;});
  await page.keyboard.press('h');assert.equal(await page.evaluate(()=>Prototype.game.hero.potions.health),0,'H works above the automatic threshold');
  await page.evaluate(()=>{const h=Prototype.game.hero;h.mp=h.maxMp*.6;h.potionCd=0;});
- await page.locator('#mana-potion').evaluate(el=>el.click());assert.equal(await page.evaluate(()=>Prototype.game.hero.potions.mana),0,'touch button uses mana without Inventory');
+ if(v.touch){await page.waitForFunction(()=>!document.querySelector('#mana-potion').disabled);await page.locator('#mana-potion').evaluate(el=>el.click());}else await page.keyboard.press('m');assert.equal(await page.evaluate(()=>Prototype.game.hero.potions.mana),0,v.touch?'touch button uses mana without Inventory':'M uses mana without Inventory');
  assert((await page.locator('#health-potion').getAttribute('aria-label')).includes('health potion'));
  await page.evaluate(state=>{Prototype.game.s=state;},saved);
 });
