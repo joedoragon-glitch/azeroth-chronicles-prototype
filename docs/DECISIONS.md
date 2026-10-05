@@ -5,7 +5,7 @@ Design documents 01–08 define the world, economy, combat, ending and Nightmare
 The expanded shell runs one shared Campaign state. `data.js` carries approved content tables, `engine.js` owns progression/combat/saves, `app.js` owns controls/rendering and `audio.js` owns original local music and sound. The legacy implementation remains available independently.
 
 - Succession is optional for a fresh Normal or Nightmare run. Gold, boss facts, prisoners, services, quests, resources, equipment, supplies and party survive. Class, level, XP, learned skills, ranks, talents and temporary buffs reset. Inherited equipment and supplies are an interpretation of retained progress and a playtest tuning point.
-- New successors still meet the original learning level requirements. Freed instructors remain accessible; advanced training is not granted automatically.
+- Freed specialists never impose hero-level requirements, including for successors. Rescue access, gold, the instructor curriculum/rank ceiling, equipment tier offered and reforge ownership are the progression gates; advanced services are still not granted automatically.
 - Dungeon TRUE entitlements appear on reentry, leaving time to rescue captives and prepare. Bosses start away from the entrance and are announced.
 - Authored water/cliff partitions, bridge gaps, forest clusters and connected roads form five regions. Terrain checks cover every service, captive, entrance, transport stand and boss home.
 - Four boss slots combine cones, charges, circles, separated patches, projectiles, expanding rings and capped summons. Shared prototype primitives approximate some advanced animation descriptions while retaining readable warnings and safe routes.
