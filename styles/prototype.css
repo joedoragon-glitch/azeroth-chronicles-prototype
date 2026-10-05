@@ -154,3 +154,9 @@ button:disabled{background:#202c28;box-shadow:none;text-shadow:none}
     cursor:default;
   }
 }
+
+
+/* v0.8.44 unified squad doctrine: Confirm exists only for menus. */
+#order-button{display:none}
+body.menu-open #order-button{display:block}
+#squad-button[hidden]{display:none!important}
