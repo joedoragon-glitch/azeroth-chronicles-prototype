@@ -1,4 +1,4 @@
-# Azeroth Chronicles — expanded prototype v0.8.24
+# Azeroth Chronicles — expanded prototype v0.8.25
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families each have four warned attacks. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
@@ -58,6 +58,8 @@ Choose **Menu → Game and settings → Save and game management → Export play
 The pure engine/content, browser shell and synthesized audio are separate modules under `src/prototype`. `legacy.html` retains the earlier game. See `docs/DECISIONS.md`, `docs/PLAYTEST_AUDIT.md` and `docs/SPRINT.md` for implementation choices, verification limits and dormant sprint activation.
 
 Visual polish v0.6.1 gives each hero class, companion role, creature species, boss family and settlement service a distinct schematic drawing. TRUE forms and ringleaders retain visible elite details. Gameplay and save formats are unchanged.
+
+TRUE boss identity update v0.8.25 makes every boss nameplate visible before engagement and renders TRUE bosses with a larger silhouette, stronger gold aura, crown-like horns and an explicit TRUE badge. The engine already created TRUE bosses as distinct `form: true` encounters with names ending in `TRUE`; regression tests now enforce that identity for both field and dungeon TRUE bosses.
 
 Road update v0.6.2 rebuilds clear road corridors with joined stone paving and plank bridges. Pathfinding checks clearance along each movement segment, and existing saves upgrade their roads while retaining campaign progress.
 
