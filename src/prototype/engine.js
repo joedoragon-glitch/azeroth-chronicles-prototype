@@ -18,7 +18,7 @@ class Campaign{
   const c=classes[heroClass];this.s.hero={class:heroClass,x:300,y:350,hp:c.hp,maxHp:c.hp,mp:c.mp,maxMp:c.mp,level:1,xp:0,gold:30,power:c.power,armor:c.armor,speed:c.speed,skills:[1,0,0,0,0,0,0,0],cd:Array(8).fill(0),immune:0,haste:0,weapon:0,armorTier:0,reforges:{},potions:{health:1,mana:1},tonic:false,potionCd:0,slow:0,talents:[0,0,0,0],talentPoints:0};
   this.s.challenge={succession:options.succession===true,fallen:[],pending:false,gameOver:false};
   this.initializeQuests();
-  this.s.party=[this.unit('soldier',260,390),this.unit('worker',350,380)];this.zone();
+  this.s.party=[this.unit('soldier',260,390),this.unit('archer',350,380)];this.zone();
  }
  get hero(){return this.s.hero;} get zoneId(){return this.s.zone;} get peace(){return this.s.phase==='peace';}
  regionIndex(id=this.s.zone){const boss=D.bosses.find(b=>b.id===id),room=R.supplyRooms.find(r=>r.id===id);return D.regions.findIndex(r=>r.id===(boss?.region||room?.region||id));}
@@ -32,7 +32,7 @@ class Campaign{
  say(text){this.messages.push(text);if(this.messages.length>7)this.messages.shift();}
  notice(text,duration=5.5){this.notices.push({id:++this.noticeId,text,duration});if(this.notices.length>6)this.notices.shift();}
  boss(id){return D.bosses.find(b=>b.id===id);}
- unit(type,x,y){const base={worker:[85,4,'👷'],soldier:[140,12,'⚔️'],archer:[100,15,'🏹']}[type];return {id:'ally-'+this.s.nextId++,type,x,y,hp:base[0]+12*this.hero.level,maxHp:base[0]+12*this.hero.level,damage:base[1],icon:base[2],cd:0,order:null,carry:0};}
+ unit(type,x,y){const base={soldier:[140,12,'⚔️'],archer:[100,15,'🏹']}[type];if(!base)throw Error('Unknown companion type');return {id:'ally-'+this.s.nextId++,type,x,y,hp:base[0]+12*this.hero.level,maxHp:base[0]+12*this.hero.level,damage:base[1],icon:base[2],cd:0,order:null,carry:0};}
  blocked(x,y,zone=this.s.zone,radius=15,terrainOnly=false){
   const i=this.regionIndex(zone),room=this.supplyRoom(zone),dungeon=dungeonIds.includes(zone),size=room?900:dungeon?1500:D.regions[i]?.size;
   if(!size||x<40+radius||y<40+radius||x>size-40-radius||y>size-40-radius)return true;
@@ -216,7 +216,7 @@ class Campaign{
   const smithOrder=['crypt','mine','abyss','darklord'],highestSmith=smithOrder.filter(id=>this.s.rescued[id]).at(-1);if(highestSmith)keep.add(highestSmith);if(this.s.rescued.archive)keep.add('archive');
   return D.bosses.filter(b=>keep.has(b.id)).map(b=>({family:b.id,name:b.captive,kind:R.teachers[b.id]?'teacher':b.id==='archive'?'alchemist':'smith'}));
  }
- barracksRecruitPrice(type){return ({worker:30,soldier:60,archer:85})[type]||0;}
+ barracksRecruitPrice(type){return ({soldier:60,archer:85})[type]||0;}
  skillRevealed(slot){const def=D.skills.find(s=>s[0]===slot);return !!def&&(slot===1||!!this.hero.skills[slot-1]||!!this.s.rescued[def[4]]||!!this.s.zones[this.boss(def[4]).region]);}
  learn(slot,family){const def=D.skills.find(s=>s[0]===slot),index=slot-1;if(!def||this.hero.skills[index]||def[4]!==family||!this.teacherCatalog(family)?.learn.includes(slot)||!this.s.rescued[family]){this.say('Learning requires the correct rescued teacher and enough gold.');return false;}if(!this.spend(def[3]))return false;this.hero.skills[index]=1;this.event('learning',{slot});return true;}
  upgrade(slot,family){const def=D.skills.find(s=>s[0]===slot),rank=this.hero.skills[slot-1],next=rank+1;if(!def||!rank||!this.teacherCatalog(family)?.train.includes(slot)||!this.s.rescued[family]||next>(this.teacherCatalog(family)?.maxRank||0)){this.say('The rescued teacher or learned skill cannot support that rank.');return false;}if(!this.spend(def[5]*(next-1)))return false;this.hero.skills[slot-1]=next;this.event('upgrade',{slot,rank:next});return true;}
@@ -243,12 +243,14 @@ class Campaign{
  skillManaCost(slot,rank=this.hero.skills[slot-1]||1){if(slot===1||slot===3&&this.hero.class==='mage')return 0;return Math.ceil(costs[slot]*(1+R.manaBalance.rankCostGrowth*Math.max(0,rank-1)));}
  drainMana(u,fraction){if(u!==this.hero||!fraction||u.mp<=0||this.peace)return 0;const amount=Math.min(u.mp,Math.max(1,Math.round(u.maxMp*fraction)));u.mp=Math.max(0,u.mp-amount);if(amount>0)this.event('manaDrain',{amount});return amount;}
  talent(i){const max=i===3?3:5;if(!Number.isInteger(i)||i<0||i>3||!this.hero.talentPoints||this.hero.talents[i]>=max)return false;this.hero.talentPoints--;this.hero.talents[i]++;if(i===2){this.hero.maxHp+=30;this.hero.hp+=30;}return true;}
- recruit(type){const price={worker:35,soldier:70,archer:100}[type];if(!price||this.s.party.filter(u=>u.hp>0).length+this.queuedCompanions()>=6||!this.spend(price))return false;const p=this.safe(this.hero.x+50,this.hero.y+50);this.s.party.push(this.unit(type,p.x,p.y));return true;}
+ recruit(type){const price={soldier:70,archer:100}[type];if(!price||this.s.party.filter(u=>u.hp>0).length+this.queuedCompanions()>=6||!this.spend(price))return false;const p=this.safe(this.hero.x+50,this.hero.y+50);this.s.party.push(this.unit(type,p.x,p.y));return true;}
  recover(){const dead=this.s.party.find(u=>u.hp<=0);if(!dead||this.s.party.filter(u=>u.hp>0).length+this.queuedCompanions()>=6||!this.spend(40))return false;Object.assign(dead,this.unit(dead.type,this.hero.x+40,this.hero.y));return true;}
  treatCompanions(){const wounded=this.s.party.filter(u=>u.hp>0&&u.hp<u.maxHp);if(!wounded.length)return false;if(this.refugeThreat()){this.say('Cannot treat companions while nearby enemies are engaged. Retreat and end the fight first.');return false;}if(!this.spend(30))return false;for(const u of wounded)u.hp=u.maxHp;this.say('Living companions treated at the barracks. Fallen companions still require recovery.');this.event('heal',{target:'companions'});return true;}
- build(){if(this.isDungeon()||!this.s.party.some(u=>u.hp>0&&u.type==='worker')||!this.spend(120))return false;this.s.recallActive=false;const p=this.safe(this.hero.x+130,this.hero.y);this.zone().buildings.push({id:'barracks-'+this.s.nextId++,...p,progress:0,queue:0,queueType:null,kind:'barracks',name:'Barracks',theme:this.zoneId,icon:'🏗️'});return true;}
+ availableLabor(){return this.s.party.filter(u=>u.hp>0&&['soldier','archer'].includes(u.type)&&!u.order);}
+ build(){if(this.isDungeon())return false;const builder=this.availableLabor()[0];if(!builder||!this.spend(120))return false;this.s.recallActive=false;const p=this.safe(this.hero.x+130,this.hero.y),b={id:'barracks-'+this.s.nextId++,...p,progress:0,queue:0,queueType:null,kind:'barracks',name:'Barracks',theme:this.zoneId,icon:'🏗️'};this.zone().buildings.push(b);builder.order={type:'build',id:b.id};this.say((builder.type==='archer'?'Archer':'Soldier')+' assigned to build the barracks.');return true;}
+ assignBuilder(id){const b=this.zone().buildings.find(b=>b.id===id&&b.progress<4),builder=this.availableLabor()[0];if(!b||!builder)return false;this.s.recallActive=false;builder.order={type:'build',id:b.id};this.say((builder.type==='archer'?'Archer':'Soldier')+' assigned to resume construction.');return true;}
  train(id,type='soldier'){const b=this.zone().buildings.find(b=>b.id===id),price=this.barracksRecruitPrice(type);if(!b||b.progress<4||b.queue>0||!price||this.s.party.filter(u=>u.hp>0).length+this.queuedCompanions()>=6||!this.spend(price))return false;b.queue=4;b.queueType=type;return true;}
- gather(nodeId){this.checkMinis();const n=this.zone().nodes.find(n=>n.id===nodeId),worker=this.s.party.find(u=>u.hp>0&&u.type==='worker');if(n?.mini&&!this.peace&&!this.miniCleared(n.mini)){this.say(this.miniStatus(n.mini));return false;}if(!n||n.amount<=0||!worker){this.say('A living worker and an unexhausted deposit are required.');return false;}this.s.recallActive=false;worker.order={type:'gather',id:nodeId};this.say('Worker sent to '+n.name+'. Protect the gathering site and return route.');return true;}
+ gather(nodeId){this.checkMinis();const n=this.zone().nodes.find(n=>n.id===nodeId),labor=this.availableLabor();if(n?.mini&&!this.peace&&!this.miniCleared(n.mini)){this.say(this.miniStatus(n.mini));return false;}if(!n||n.amount<=0||!labor.length){this.say('At least one idle living troop and an unexhausted deposit are required.');return false;}this.s.recallActive=false;for(const u of labor)u.order={type:'gather',id:nodeId};this.say(labor.length+' troop'+(labor.length===1?'':'s')+' assigned to '+n.name+'. They will gather, deposit and return until it is exhausted.');return true;}
  enter(zone,arrival=null){if(!D.regions.some(r=>r.id===zone)&&!dungeonIds.includes(zone)&&!this.supplyRoom(zone))return false;const i=this.regionIndex(zone),p=arrival|| (this.supplyRoom(zone)?{x:125,y:155}:dungeonIds.includes(zone)?{x:160,y:240}:{x:D.towns[i][0],y:D.towns[i][1]});this.s.zone=zone;this.zone();this.s.recallActive=false;this.s.squadEngagement=null;this.s.squadBoss=false;this.s.squadDoctrine=this.squadDefaultDoctrine();this.s.heroTarget=null;const q=this.safe(p.x,p.y);Object.assign(this.hero,q);for(const u of this.s.party){Object.assign(u,this.safe(q.x+40,q.y+30));u.order=null;u.path=[];}this.hero.order=null;this.s.projectiles=[];this.s.hazards=[];for(const z of Object.values(this.s.zones))for(const e of z.enemies){e.aggro=false;e.telegraph=null;e.sequence=[];e.motion=null;e.rangedAim=null;e.frozen=false;if(e.hp>0){Object.assign(e,e.home);e.hp=e.baseHp;e.maxHp=e.baseHp;e.damage=e.baseDamage;}}this.activatePending();this.discover('arrival');return true;}
  travel(direction){if(this.isDungeon()||![1,-1].includes(direction))return false;const i=this.regionIndex(),j=i+direction;if(j<0||j>4)return false;const edge=direction===1?D.regions[i].id:D.regions[j].id;if(direction<0&&!this.s.tickets[edge])return false;const fare=direction===1&&!this.s.recovery[edge]?D.regions[i].fare:0;if(this.hero.gold<fare){this.say('Not enough gold.');return false;}
   const before=clone(this.s),messageCount=this.messages.length,effectCount=this.effects.length;try{if(!this.enter(D.regions[j].id))throw Error('Invalid destination');this.hero.gold-=fare;if(direction===1){delete this.s.recovery[edge];this.s.tickets[edge]=true;this.s.lastEdge=edge;}this.event('travel',{from:before.zone,to:this.s.zone});return true;}catch(_){this.s=before;this.messages.length=messageCount;this.effects.length=effectCount;this.say('Travel could not complete. Your fare and progress were kept.');return false;}
@@ -364,11 +366,9 @@ class Campaign{
   const ranged={
    archer:[[-34,-24],[34,-24],[0,-52],[-62,-45],[62,-45],[0,-78]],
    soldier:[[0,95],[-90,45],[90,45],[-110,-25],[110,-25],[0,-105]],
-   worker:[[-45,-165],[45,-165],[0,-195],[-80,-205],[80,-205],[0,-235]]
   },melee={
    soldier:[[-42,-20],[42,-20],[0,-55],[-68,-50],[68,-50],[0,35]],
-   archer:[[-65,-115],[65,-115],[0,-145],[-105,-145],[105,-145],[0,-175]],
-   worker:[[-50,-185],[50,-185],[0,-215],[-90,-225],[90,-225],[0,-255]]
+   archer:[[-65,-115],[65,-115],[0,-145],[-105,-145],[105,-145],[0,-175]]
   },slots=(rangedHero?ranged:melee)[u.type]||[[0,-100]];
   return slots[index%slots.length];
  }
