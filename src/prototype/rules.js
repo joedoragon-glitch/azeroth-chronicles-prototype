@@ -111,7 +111,7 @@ const ordinaryMeleeScaling=[{hp:1.25,damage:1.15},{hp:1.4,damage:1.25},{hp:1.65,
 const guardianScaling=[{hp:1.15,damage:1.1},{hp:1.3,damage:1.2},{hp:1.5,damage:1.3},{hp:1.7,damage:1.45},{hp:1.9,damage:1.6}];
 const awakenedGuardianScaling={hp:1.35,damage:1.25};
 const summonScaling=[{hp:1.35,damage:1.15},{hp:1.5,damage:1.25},{hp:1.7,damage:1.4},{hp:1.9,damage:1.55},{hp:2.2,damage:1.75}];
-const trueBossSummons={cap:6,families:{
+const trueBossSummons={cap:6,minions:4,captains:2,minionScaling:{hp:1.5,damage:1.25},families:{
  thorn:{species:'wolf',ranged:false},crypt:{species:'skeleton',ranged:false},
  mire:{species:'mireling',ranged:false},archive:{species:'wraith',ranged:true},
  ridge:{species:'archer',ranged:true},mine:{species:'ogre',ranged:false},
