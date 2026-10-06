@@ -192,13 +192,14 @@ class Campaign{
   }finally{this.s.zone=oldZone;}
  }
  harborLayout(z){
-  const h=R.harbors?.[z.id];if(!h||z.harborVersion===1)return;
+  const h=R.harbors?.[z.id];if(!h)return;
+  const transport=z.id==='march'?z.npcs.find(n=>n.id==='outbound'):z.id==='highlands'?z.npcs.find(n=>n.id==='return'):null;
+  if(transport){Object.assign(transport,h.boat);transport.name=z.id==='march'?'Ferry to Ironroot Highlands':'Ferry back to Flooded Marches';transport.harbor=true;}
+  if(z.harborVersion===1)return;
   const oldZone=this.s.zone;this.s.zone=z.id;try{
    const w=h.water,d=h.dock,insideHarbor=p=>p.x>w.x1-70&&p.x<w.x2+70&&p.y>w.y1-70&&p.y<w.y2+70;
    z.props=z.props.filter(p=>!String(p.id||'').startsWith('harbor-')&&!insideHarbor(p));
    for(const e of z.enemies.filter(e=>e.hp>0&&e.type==='mob'&&dist(e,h.arrival)<280)){const fallback=this.safe(z.id==='march'?1900:650,z.id==='march'?980:2180,z.id);e.home={...fallback};if(!e.aggro)Object.assign(e,fallback);}
-   const transport=z.id==='march'?z.npcs.find(n=>n.id==='outbound'):z.id==='highlands'?z.npcs.find(n=>n.id==='return'):null;
-   if(transport){Object.assign(transport,h.boat);transport.name=z.id==='march'?'Ferry to Ironroot Highlands':'Ferry back to Flooded Marches';transport.harbor=true;}
    const add=(id,x,y,structure,r=0)=>z.props.push({id:'harbor-'+id,x,y,r,decorative:true,structure});
    if(z.id==='march'){
     for(const [id,x,y,structure]of [
