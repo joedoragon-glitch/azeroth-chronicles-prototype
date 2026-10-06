@@ -46,15 +46,15 @@ function draw(ctx,e,p,region=0,rescued=false){
  }
  function enemyFinish(){
   switch(e.species){
-   case 'goblin':rect(-9,-14,18,5,'#6d5138');for(const x of [-6,0,6])glint(x,-11,x===0?'#d4b46b':'#98825b',1);if(e.ranged)line([[-13,-7],[-18,8]],'#5f4634',3);break;
-   case 'skeleton':for(const y of [-12,-7,-2])line([[-7,y],[7,y]],'#c9bea5',1);if(e.guard)poly([[-12,-18],[-17,-8],[-11,1],[-5,-9]],'#665f59');glint(-3,-28,'#e7c56f',1.4);glint(3,-28,'#e7c56f',1.4);break;
-   case 'wolf':line([[-16,-14],[-8,-9],[0,-15],[8,-9]],'#667873',2);for(const x of [-15,-5,7,17])line([[x,2],[x+flip*2,11]],'#d6cfb0',1);break;
-   case 'mireling':for(let x=-14;x<17;x+=8)poly([[x,-9],[x+3,-15],[x+7,-9]],'#52684f');for(const x of [17,25,33])glint(x,-5,'#d8cf8c',1);break;
+   case 'goblin':rect(-9,-14,18,5,'#6d5138');fillPoly([[-9,-14],[0,-14],[0,-9],[-9,-9]],'#2e3427',.2);for(const x of [-6,0,6])glint(x,-11,x===0?'#d4b46b':'#98825b',1);line([[-7,-25],[-3,-24]],'#e2d99d',1);line([[3,-24],[7,-25]],'#e2d99d',1);rect(-5,-3,5,5,'#785b40');if(e.ranged)line([[-13,-7],[-18,8]],'#5f4634',3);break;
+   case 'skeleton':for(const y of [-12,-7,-2])line([[-7,y],[7,y]],'#c9bea5',1);line([[-6,-16],[5,-16]],'#fff2cf',1);fillOval(-2,-29,7,7,'#fff4d2',.08);if(e.guard)poly([[-12,-18],[-17,-8],[-11,1],[-5,-9]],'#665f59');glint(-3,-28,'#e7c56f',1.4);glint(3,-28,'#e7c56f',1.4);break;
+   case 'wolf':line([[-16,-14],[-8,-9],[0,-15],[8,-9]],'#667873',2);line([[-28,-14],[-18,-18],[-7,-15]],'#c4c6ad',1.4);line([[8,-12],[20,-16],[29,-12]],'#bfc4ab',1.2);for(const x of [-15,-5,7,17])line([[x,2],[x+flip*2,11]],'#d6cfb0',1);break;
+   case 'mireling':for(let x=-14;x<17;x+=8)poly([[x,-9],[x+3,-15],[x+7,-9]],'#52684f');for(const x of [-14,-4,6,16])fillOval(x,0,3,2,'#b2c28e',.18);for(const x of [17,25,33])glint(x,-5,'#d8cf8c',1);break;
    case 'reedbeast':line([[-14,-4],[-6,3],[3,-4],[11,3]],'#65794f',2);for(const x of [-18,18])line([[x,8],[x+flip*5,15]],'#4e674a',3);if(e.hybrid)glint(13,-2,'#b9d6b4',1.8);break;
-   case 'ogre':poly([[-15,-17],[-23,-20],[-24,-8],[-14,-9]],'#77786d');line([[-8,-24],[7,-19]],'#735a48',2);for(const y of [-19,-13])line([[20,y],[31,y+2]],'#c2b28c',1.5);break;
-   case 'orc':for(const x of [-4,4])poly([[x,-23],[x+(x<0?-3:3),-18],[x,-17]],bone);rect(-11,-10,22,5,'#5d5549');line([[-8,-15],[8,-4]],'#a28c65',2);break;
+   case 'ogre':poly([[-15,-17],[-23,-20],[-24,-8],[-14,-9]],'#77786d');line([[-8,-24],[7,-19]],'#735a48',2);line([[-11,-31],[-3,-26],[5,-31]],'#d1c49d',1.3);line([[-5,-15],[7,-8]],'#684d44',1.5);for(const y of [-19,-13])line([[20,y],[31,y+2]],'#c2b28c',1.5);break;
+   case 'orc':for(const x of [-4,4])poly([[x,-23],[x+(x<0?-3:3),-18],[x,-17]],bone);rect(-11,-10,22,5,'#5d5549');fillPoly([[-11,-10],[0,-10],[0,-5],[-11,-5]],'#2b302b',.2);line([[-8,-15],[8,-4]],'#a28c65',2);for(const x of [-8,8])glint(x,-18,'#d8c28d',1);break;
    case 'archer':line([[-14,-28],[-18,-3]],'#725a3d',4);for(const y of [-22,-17,-12])line([[-17,y],[-11,y-5]],'#d9cba7',1);break;
-   case 'crownguard':poly([[-13,-35],[0,-47],[13,-35],[8,-31],[-8,-31]],'#7b6877');line([[-8,-17],[8,-17]],'#c4ae7a',2);for(const x of [-7,7])glint(x,-29,'#d9a87c',1);break;
+   case 'crownguard':poly([[-13,-35],[0,-47],[13,-35],[8,-31],[-8,-31]],'#7b6877');fillPoly([[-13,-35],[0,-47],[0,-32],[-8,-31]],'#302d3b',.24);line([[-8,-17],[8,-17]],'#c4ae7a',2);line([[-10,-13],[10,-5]],'#d6c39a',1);for(const x of [-7,7])glint(x,-29,'#d9a87c',1);break;
    case 'ashbeast':for(const [x,y]of [[-9,-2],[2,4],[12,-5]])line([[x-3,y],[x+3,y-4]],'#e0a06a',1.5);for(const x of [-22,22])glint(x,-13,'#efb071',1.5);break;
    case 'wraith':case 'stalker':ctx.save();ctx.globalAlpha=.35;for(const x of [-12,0,12])oval(x,7,8,4,e.species==='stalker'?'#8d6670':'#8db7b1');ctx.restore();glint(0,-24,e.species==='stalker'?'#e2a0a4':'#c6eee2',2);break;
   }
