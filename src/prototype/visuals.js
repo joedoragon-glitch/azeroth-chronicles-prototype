@@ -580,11 +580,19 @@ function terrain(ctx,screen,region=0){
  };
  const drawLandform=(f)=>{
   const colors=landformPalettes[f.kind]||['#555','#777'],pts=f.shape==='ellipse'?Array.from({length:40},(_,n)=>{const a=n*Math.PI/20;return{x:f.x+Math.cos(a)*f.rx,y:f.y+Math.sin(a)*f.ry};}):f.shape==='rect'?[{x:f.x1,y:f.y1},{x:f.x2,y:f.y1},{x:f.x2,y:f.y2},{x:f.x1,y:f.y2}]:(f.points||[]).map(([x,y])=>({x,y}));
-  if(pts.length<3)return;ctx.save();ctx.globalAlpha=.34;polygon(pts,colors[0]);ctx.globalAlpha=.26;
-  const cx=f.x??pts.reduce((a,p)=>a+p.x,0)/pts.length,cy=f.y??pts.reduce((a,p)=>a+p.y,0)/pts.length;
-  const inset=pts.map(q=>({x:q.x+(cx-q.x)*.08,y:q.y+(cy-q.y)*.08}));polygon(inset,colors[1]);ctx.globalAlpha=.52;
-  for(let j=0;j<pts.length;j+=Math.max(1,Math.floor(pts.length/8))){const a=pts[j],b=pts[(j+1)%pts.length];line(a,b,colors[1],1.4);}
-  if(/terrace|shelf|plateau|rise|apron/.test(f.kind)){ctx.globalAlpha=.35;for(let j=0;j<pts.length;j+=2){const a=pts[j],b=pts[(j+1)%pts.length];line({x:a.x,y:a.y+18},{x:b.x,y:b.y+18},'#282a2d',2);}}
+  if(pts.length<3)return;
+  const elevated=/terrace|shelf|plateau|rise|apron|quarry/.test(f.kind),cx=f.x??pts.reduce((a,p)=>a+p.x,0)/pts.length,cy=f.y??pts.reduce((a,p)=>a+p.y,0)/pts.length;
+  const inset=(amount)=>pts.map(q=>({x:q.x+(cx-q.x)*amount,y:q.y+(cy-q.y)*amount}));
+  ctx.save();
+  // Landforms are terrain texture, not painted polygons. Feather the tint inward so boundaries disappear into the base tiles.
+  ctx.globalAlpha=elevated?.07:.045;polygon(pts,colors[0]);
+  ctx.globalAlpha=elevated?.05:.035;polygon(inset(.06),colors[0]);
+  ctx.globalAlpha=elevated?.03:.025;polygon(inset(.14),colors[1]);
+  // Only raised geography keeps a restrained contour cue; flat basins/meadows/mudflats have no hard outline at all.
+  if(elevated){
+   ctx.globalAlpha=.14;for(let j=0;j<pts.length;j+=Math.max(2,Math.floor(pts.length/6))){const a=pts[j],b=pts[(j+1)%pts.length];line(a,b,colors[1],.9);}
+   ctx.globalAlpha=.11;for(let j=0;j<pts.length;j+=2){const a=pts[j],b=pts[(j+1)%pts.length];line({x:a.x,y:a.y+12},{x:b.x,y:b.y+12},'#202522',1.25);}
+  }
   ctx.restore();
  };
  for(const f of R.landforms?.[region]||[])drawLandform(f);
