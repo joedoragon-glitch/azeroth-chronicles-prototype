@@ -7,9 +7,9 @@ const classes={paladin:{icon:'🛡️',hp:120,mp:60,power:18,armor:8,speed:300},
 const talentMaxRanks=[5,5,5,3];
 // Rounded from the level-1 class stat ratios: talent growth reinforces each class's natural strengths while keeping the old average power budget.
 const talentProfiles={
- paladin:{power:7,hp:35,speed:40,manaCombat:.20,manaOut:.40},
- mage:{power:9,hp:25,speed:40,manaCombat:.30,manaOut:.60},
- ranger:{power:8,hp:30,speed:45,manaCombat:.25,manaOut:.50}
+ paladin:{power:7,mana:2,hp:33,speed:38},
+ mage:{power:9,mana:3,hp:27,speed:41},
+ ranger:{power:8,mana:2,hp:29,speed:41}
 };
 const legacyWeapons={'Espada de Cruzado':10,'Bastón de Escarcha':10,'Arco de Exploradora':10,'Martillo del Juicio':18,'Arma de la Frontera':40,'Arma de las Cumbres':70};
 const ceilings={thorn:2,mire:3,ridge:4,warlord:6,citadel:8};
@@ -512,7 +512,7 @@ class Campaign{
  expectedMaxMp(){return classes[this.hero.class].mp+R.manaBalance.perLevel*(this.hero.level-1);}
  normalizeManaProgression(force=false){if(!force&&this.s.manaBalanceVersion===1)return;const oldMax=Math.max(1,this.hero.maxMp||classes[this.hero.class].mp),ratio=clamp((this.hero.mp||0)/oldMax,0,1),next=this.expectedMaxMp();this.hero.maxMp=next;this.hero.mp=Math.min(next,next*ratio);this.s.manaBalanceVersion=1;}
  manaCombatActive(){return !this.peace&&this.zone().enemies.some(e=>e.hp>0&&!e.neutral&&e.aggro&&!e.returning&&dist(e,this.hero)<700);}
- manaRegenRate(){const cfg=R.manaBalance.regen,rank=this.hero.talents[1]||0,p=this.talentProfile();return this.manaCombatActive()?cfg.combat+rank*p.manaCombat:cfg.outOfCombat+rank*p.manaOut;}
+ manaRegenRate(){const cfg=R.manaBalance.regen,rank=this.hero.talents[1]||0,mana=this.talentProfile().mana;return this.manaCombatActive()?cfg.combat+rank*mana*.125:cfg.outOfCombat+rank*mana*.25;}
  skillManaCost(slot,rank=this.hero.skills[slot-1]||1,charged=false){if(charged){const fraction=R.chargedSkills?.manaFractions?.[slot];if(fraction)return Math.max(1,Math.ceil(this.hero.maxMp*fraction));}if(slot===1)return 0;return Math.ceil(costs[slot]*(1+R.manaBalance.rankCostGrowth*Math.max(0,rank-1)));}
  drainMana(u,fraction){if(u!==this.hero||!fraction||u.mp<=0||this.peace)return 0;const amount=Math.min(u.mp,Math.max(1,Math.round(u.maxMp*fraction)));u.mp=Math.max(0,u.mp-amount);if(amount>0)this.event('manaDrain',{amount});return amount;}
  talent(i){const max=this.talentMaxRank(i);if(!max||!this.hero.talentPoints||this.hero.talents[i]>=max)return false;this.hero.talentPoints--;this.hero.talents[i]++;if(i===2){const gain=this.talentProfile().hp;this.hero.maxHp+=gain;this.hero.hp+=gain;}this.syncCompanionLevelStats();return true;}
