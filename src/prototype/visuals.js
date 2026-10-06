@@ -200,18 +200,46 @@ function draw(ctx,e,p,region=0,rescued=false){
    if(region===4){for(const x of [-18,18])poly([[x-5,10],[x,-3],[x+5,10]],'#77718c');}
    return;
   }
-  rect(-23,-22,46,37,wall);poly([[23,-22],[35,-15],[35,10],[23,15]],'#737f75');poly([[-29,-22],[0,-47],[30,-22]],roof);poly([[0,-47],[12,-43],[36,-15],[30,-22]],'#4b5957');line([[-26,-23],[0,-44],[27,-22]],'#dfc9a0',2);line([[30,-20],[36,-15],[36,10]],'#8c9687',1.5);rect(-7,-5,14,20,'#504d40');rect(-18,-14,8,9,'#87a7a2');rect(11,-14,8,9,'#87a7a2');for(const x of [-17,12])line([[x,-12],[x+6,-12]],'#c8d7b9',1.5);line([[-23,2],[-9,2]],'#746b56',1);line([[-22,11],[22,11]],'#897f68',2);
   if(kind==='barracks'){
-   rect(11,-54,3,33,['#8d7652','#81775d','#77766d','#62544b','#676675'][region]);
-   poly([[14,-52],[34,-47],[14,-35]],[ '#738f69','#60858a','#7e856f','#825e55','#6b6178'][region]);
-   shield(0,-24,['#829879','#738f91','#8d9185','#8e6f62','#767487'][region]);
-   if(region===0){for(const [x,y]of [[-30,8],[-20,12]]){rect(x-8,y-6,17,7,'#826143');oval(x+9,y-3,3,3,'#c09a68');}line([[-27,-26],[-19,-38]],'#6f8c61',2);line([[-19,-38],[-13,-31]],'#6f8c61',2);}
-   else if(region===1){rect(-29,11,58,5,'#756c54');for(const x of [-24,-8,8,24])line([[x,14],[x,23]],'#6e6752',3);for(const x of [-20,-10,0,10,20])line([[x,-41],[x+4,-25]],'#8b8061',1.5);line([[-33,-3],[-28,-16]],'#b6aa80',2);line([[-28,-16],[-23,-3]],'#b6aa80',2);}
-   else if(region===2){for(const x of [-29,-12,5,22])rect(x,9,14,8,'#767d75');rect(-31,-20,10,18,'#837358');poly([[-28,-24],[-23,-34],[-18,-24]],'#9aa195');oval(29,7,5,4,'#a28d68');}
-   else if(region===3){for(const x of [-30,29]){rect(x-3,-27,6,42,'#514a43');poly([[x-4,-27],[x,-39],[x+4,-27]],'#79604e');}rect(-30,-10,10,15,'#776f66');line([[-27,-8],[-22,2]],'#aea08d',2);for(const x of [-17,17])oval(x,11,2.5,2.5,'#bf7955');}
-   else if(region===4){for(const x of [-29,24])rect(x,-27,7,42,'#5b5e6a');for(const x of [-18,18])poly([[x-6,11],[x,-7],[x+6,11]],'#77718c');poly([[-4,-34],[0,-43],[4,-34],[0,-27]],'#a18caf');line([[-19,8],[19,8]],'#8d8196',2);}
-   return;
+   // Completed barracks remain field-built military shelters: rough, useful and lived-in rather than upgraded houses.
+   if(region===0){
+    // Timber drill lodge with open muster bay, bedrolls, cookfire and weapon rack.
+    for(const x of [-31,-20,20,31])rect(x-3,-31,6,46,timber);poly([[-36,-30],[-23,-48],[25,-48],[37,-30]],roof);
+    rect(-31,-8,62,22,wall);rect(-13,-8,26,23,dark);line([[-29,-7],[29,-7]],trim,2);
+    for(const x of [-24,-12]){rect(x-5,5,11,5,'#8e704d');line([[x-4,4],[x+4,4]],'#c8ad7a',1);}
+    line([[19,-28],[19,10]],timber,3);for(const y of [-24,-10,4])line([[15,y],[28,y]],steel,2);
+    oval(27,7,7,4,'#5b4b3e');glint(27,4,'#e3ad62',1.7);
+   }else if(region===1){
+    // Raised reed-and-timber barracks above wet ground, with drying lines and a sheltered central stove.
+    for(const x of [-30,-14,14,30])line([[x,13],[x,24]],timber,4);rect(-34,6,68,9,dark);
+    for(const x of [-29,29])rect(x-3,-31,6,39,timber);poly([[-35,-30],[-22,-47],[23,-47],[35,-30]],roof);
+    rect(-30,-9,60,17,wall);rect(-12,-8,24,17,dark);for(const x of [-23,-8,8,23])line([[x,-43],[x+5,-26]],trim,1.5);
+    line([[-27,-17],[27,-17]],timber,2);for(const x of [-18,0,18])rect(x-5,-16,10,8,'#82725a');
+    oval(22,3,6,4,'#5d5547');glint(22,0,'#d4a869',1.5);
+   }else if(region===2){
+    // Low stone redoubt with timber roof, gear niches and a warm hearth.
+    rect(-35,-20,70,35,'#7f8279');for(const x of [-31,-14,4,22])rect(x,-14,13,10,'#97998d');
+    poly([[-38,-21],[-25,-41],[25,-41],[38,-21]],roof);for(const x of [-30,30])rect(x-4,-27,8,42,timber);
+    rect(-13,-10,26,25,dark);line([[-30,-18],[30,-18]],trim,2);shield(22,-27,wall);
+    rect(-30,5,18,7,timber);rect(14,4,15,8,timber);oval(-1,7,8,4,'#514b42');glint(-1,4,'#dda762',1.6);
+   }else if(region===3){
+    // Improvised stockade barracks: charred posts, patched awning, supply racks and ember brazier.
+    for(const x of [-34,-23,23,34]){rect(x-3,-29,6,44,timber);poly([[x-4,-29],[x,-40],[x+4,-29]],roof);}
+    poly([[-38,-27],[-20,-45],[21,-42],[38,-25]],roof);rect(-31,-8,62,23,wall);rect(-14,-8,28,23,dark);
+    line([[-29,-7],[29,-7]],trim,2);for(const y of [-25,-11,3])line([[19,y],[31,y]],'#a99a82',2);
+    rect(-31,4,14,9,'#786556');oval(25,7,8,4,'#4b423c');for(const x of [21,25,29])glint(x,3,'#c77b53',1.3);
+    line([[-19,-29],[-27,-39]],'#4a413c',3);line([[13,-30],[20,-38]],'#4a413c',3);
+   }else{
+    // Crown field bastion: obsidian braces and canvas-like dark shelter softened by bunks and a contained brazier.
+    rect(-35,-20,70,35,'#646570');for(const x of [-34,-18,18,34])rect(x-3,-31,6,46,timber);
+    poly([[-39,-29],[-24,-48],[25,-48],[39,-29]],roof);rect(-14,-10,28,25,dark);line([[-30,-18],[30,-18]],trim,2);
+    for(const x of [-25,25])poly([[x-6,12],[x,-5],[x+6,12]],'#747184');poly([[-5,-37],[0,-45],[5,-37],[0,-29]],'#9b87ad');
+    rect(-29,4,15,8,timber);rect(15,4,14,8,timber);oval(0,8,8,4,'#4a454d');glint(0,4,'#c89a72',1.5);
+   }
+   // Shared military readability: banner + rack, but the shelter itself is region-authored.
+   line([[32,-40],[32,13]],timber,3);poly([[34,-38],[48,-34],[34,-24]],trim);shield(-23,-25,wall);return;
   }
+  rect(-23,-22,46,37,wall);poly([[23,-22],[35,-15],[35,10],[23,15]],'#737f75');poly([[-29,-22],[0,-47],[30,-22]],roof);poly([[0,-47],[12,-43],[36,-15],[30,-22]],'#4b5957');line([[-26,-23],[0,-44],[27,-22]],'#dfc9a0',2);line([[30,-20],[36,-15],[36,10]],'#8c9687',1.5);rect(-7,-5,14,20,'#504d40');rect(-18,-14,8,9,'#87a7a2');rect(11,-14,8,9,'#87a7a2');for(const x of [-17,12])line([[x,-12],[x+6,-12]],'#c8d7b9',1.5);line([[-23,2],[-9,2]],'#746b56',1);line([[-22,11],[22,11]],'#897f68',2);
   rect(14,-43,7,17,'#9a8e7c');rect(-5,-24,10,8,gold);
  }
  function decoration(kind){const localWood=['#806044','#71654f','#71695b','#614f46','#555563'][region];switch(kind){
