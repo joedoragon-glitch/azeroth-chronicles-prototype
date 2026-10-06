@@ -208,8 +208,7 @@ class Campaign{
    }else if(z.id==='highlands'){
     for(const [id,x,y,structure]of [
      ['pine-a',170,1770,'pine-sapling'],['pine-b',185,2110,'pine-sapling'],['rock-a',405,1790,'rock-cluster'],
-     ['rock-b',410,2110,'rock-cluster'],['heather',485,1990,'heather'],
-     ['post-a',345,1860,'dock-post'],['post-b',345,1945,'dock-post'],['post-c',455,1860,'dock-post'],['post-d',455,1945,'dock-post']
+     ['rock-b',410,2110,'rock-cluster'],['heather',485,1990,'heather']
     ])add(id,x,y,structure);
    }
    z.harborVersion=1;
