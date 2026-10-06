@@ -17,9 +17,9 @@ const attacks={
 const sites=[
  [['bridge-north','Mill bridge',1200,750],['bridge-south','Southern footbridge',1200,1750],['orchard','Abandoned orchard',1050,740],['den-ruins','Orchard den ruins',650,1490],['mill-pond','Mill pond',780,1320],['cache','Woodland supply cache',1550,1150]],
  [['bridge-lake','Lake causeway',1405,1780],['night-site','Lantern shore',1700,900],['wagon','Stranded supply wagon',1000,1150],['watch','Causeway watch platform',1700,1300],['dock','Sunken dock',1760,1800]],
- [['bridge-north','Stone bridge',1300,950],['bridge-south','Timber crossing',1300,1870],['lookout','Highland lookout',1800,600],['ore','Stonecross ore vein',1100,650],['tower','Ruined watchtower',2020,800]],
- [['bridge-north','Guarded ravine bridge',1450,750],['bridge-south','Burned forest crossing',1450,2160],['shrine','Ruined shrine',1100,1080],['overlook','Ravine overlook',1350,1800],['checkpoint','Occupied checkpoint',1940,1500],['convoy','Supply convoy',1200,950]],
- [['bridge-north','Lava ridge bridge',1350,1000],['bridge-south','Southern stone crossing',1350,2400],['foundry','Ruined foundry',850,1800],['shelf','Crystal shelf',1100,2100],['siege','Siege camp',2250,1850],['fortress-gate','Dark fortress gate',2350,2450]]
+ [['bridge-north','Stone bridge',1300,950],['bridge-south','Timber crossing',1300,1870],['lookout','Highland lookout',2380,470],['ore','Stonecross ore vein',1100,650],['tower','Ruined watchtower',2530,830]],
+ [['bridge-north','Guarded ravine bridge',1450,750],['bridge-south','Burned forest crossing',1450,2160],['shrine','Ruined shrine',1140,1120],['overlook','Ravine overlook',1750,2050],['checkpoint','Occupied checkpoint',2430,1570],['convoy','Supply convoy',1260,980]],
+ [['bridge-north','Lava ridge bridge',1350,1000],['bridge-south','Southern stone crossing',1350,2400],['foundry','Ruined foundry',900,2050],['shelf','Crystal shelf',1250,2350],['siege','Siege camp',2700,2250],['fortress-gate','Dark fortress gate',3060,3040]]
 ];
 // Explicit finite worker expeditions. Treasury quest caches are not outdoor expedition supplies.
 const expeditions=[
@@ -33,9 +33,9 @@ const expeditions=[
 const fieldBossCenters=[
  [760,1750],
  [2180,1120],
- [2380,650],
- [2250,1620],
- [2750,2700]
+ [2700,700],
+ [2600,1650],
+ [3250,3200]
 ];
 // Remaining ordinary patrol packs are distributed across the wider countryside.
 // Local-site patrols and mini-dungeon guards keep their authored positions.
