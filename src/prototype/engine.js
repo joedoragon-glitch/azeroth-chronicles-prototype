@@ -443,7 +443,7 @@ class Campaign{
    else if(e.family==='darklord'&&e.form==='true'){delete this.s.pending.darklord;this.awaken(victoryLevel);}
    this.zone().enemies.forEach(a=>{if(a.summon&&a.owner===e.id)a.hp=0;});this.say(e.name+' defeated.');this.event('bossDefeat',{family:e.family,form:e.form});
   }
-  if(e.heroParticipated){if(e.type==='boss'&&e.form==='normal'&&this.boss(e.family)?.kind==='field')this.fieldBossStreak(e);else this.streak(e);}if(!this.peace&&e.type==='boss'&&this.boss(e.family).kind==='field'&&!(e.family==='darklord'&&this.s.true.darklord)&&e.form==='normal')e.respawn=120;
+  if(e.roomCaptain)this.s.streak={key:null,count:0};else if(e.heroParticipated){if(e.type==='boss'&&e.form==='normal'&&this.boss(e.family)?.kind==='field')this.fieldBossStreak(e);else this.streak(e);}if(!this.peace&&e.type==='boss'&&this.boss(e.family).kind==='field'&&!(e.family==='darklord'&&this.s.true.darklord)&&e.form==='normal')e.respawn=120;
   else if(!this.peace&&e.type==='boss'&&this.boss(e.family).kind==='field'&&e.family!=='darklord'&&e.form==='true')e.respawn=120;
   if(e.type==='boss'&&this.boss(e.family).kind==='field'){for(const other of this.zone().enemies)if(other!==e&&other.family===e.family)other.respawn=0;if(e.form==='true')delete this.s.pending[e.family];else if(this.s.pending[e.family])e.respawn=0;}
   this.checkClear();this.checkMinis();this.checkEnding();
