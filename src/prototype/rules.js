@@ -126,6 +126,22 @@ const supplyRooms=[
  {id:'supply-highlands',region:'highlands',site:'ore',boss:'ridge',count:3,name:"Ridge Tyrant's Treasury",objective:"Recover three caches from Ridge Tyrant's Treasury"},
  {id:'supply-crown',region:'crown',site:'foundry',boss:'darklord',count:3,name:"Dark Lord's Treasury",objective:"Recover three caches from the Dark Lord's Treasury"}
 ];
+const treasuryWalls={
+ 'supply-vale':[
+  {axis:'y',x1:405,x2:465,y1:175,y2:820,gaps:[[280,420],[630,770]]}
+ ],
+ 'supply-march':[
+  {axis:'x',x1:185,x2:835,y1:435,y2:495,gaps:[[285,430],[635,790]]}
+ ],
+ 'supply-highlands':[
+  {axis:'y',x1:385,x2:455,y1:150,y2:830,gaps:[[390,555],[675,790]]},
+  {axis:'x',x1:455,x2:805,y1:535,y2:590,gaps:[[570,690]]}
+ ],
+ 'supply-crown':[
+  {axis:'y',x1:420,x2:480,y1:145,y2:830,gaps:[[285,405],[635,755]]},
+  {axis:'x',x1:220,x2:790,y1:485,y2:540,gaps:[[315,425],[600,715]]}
+ ]
+};
 const treasuryDecor={
  'supply-vale':[
   [155,690,'thorn-bed',28],[265,205,'fang-trophy',0],[690,205,'treasure-hoard',22],[665,500,'root-table',22],[175,445,'warm-brazier',16],[785,760,'boss-chest',20],
@@ -403,6 +419,6 @@ const bossCadence={specialRecoveryMultiplier:.25,basicCooldown:.75,skillsPerBasi
 const rangedEnemyCombat={projectileMultiplier:1.7,aimTime:.35,cooldown:1.15,retreatFraction:.5,retreatSpeed:165,ringleaderRetreatMultiplier:1.2,ringleaderHybridMeleeRange:100,guardianScreenRange:220};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryDecor,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
+const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
