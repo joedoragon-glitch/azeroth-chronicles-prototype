@@ -25,7 +25,8 @@ test('Flooded Marches and Ironroot Highlands share a continuous ferry route',()=
 test('named landmarks sit beside the world feature their names describe',()=>{
  const vale=new Campaign();vale.enter('vale');let z=vale.zone(),pond=z.npcs.find(n=>n.id==='mill-pond'),water=R.terrain[0].find(p=>p.r);const pondDistance=distance(pond,water);assert(pondDistance>water.r&&pondDistance<water.r+70,'Mill pond marker belongs on the pond shore');
  const march=new Campaign();march.enter('march');z=march.zone();const dock=z.npcs.find(n=>n.id==='dock'),lake=R.barriers[1].bounds;assert(Math.min(Math.abs(dock.x-lake[0]),Math.abs(dock.x-lake[1]))<100&&dock.y>lake[2]&&dock.y<lake[3],'Sunken dock belongs on the lake shore');
- for(const [region,id,max] of [['highlands','tower',260],['frontier','checkpoint',220],['crown','fortress-gate',220]]){const c=new Campaign();c.enter(region);const n=c.zone().npcs.find(n=>n.id===id),f=c.fieldCenter();assert(distance(n,f)<max,region+' '+id+' belongs to its stronghold area');}
+ for(const [region,id,max] of [['highlands','tower',260],['frontier','checkpoint',220]]){const c=new Campaign();c.enter(region);const n=c.zone().npcs.find(n=>n.id===id),f=c.fieldCenter();assert(distance(n,f)<max,region+' '+id+' belongs to its stronghold area');}
+ const crown=new Campaign();crown.enter('crown');const gate=crown.zone().npcs.find(n=>n.id==='fortress-gate'),apron=R.landforms[4].find(l=>l.kind==='fortress-apron');assert(gate&&apron);assert(distance(gate,{x:apron.x,y:apron.y})<120,'crown fortress-gate belongs to the authored fortress apron');
 });
 
 
