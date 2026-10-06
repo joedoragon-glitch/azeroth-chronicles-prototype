@@ -15,11 +15,11 @@ const attacks={
  darklord:[attack('cone',1.3,1.5,{combo:true,manaDrain:.08}),attack('circle',1.9,1.6,{count:3,sequential:true,manaDrain:.10}),attack('summon',2,1.6,{species:'crownguard',ranged:true}),attack('sector',2,2,{sequential:true,count:3,manaDrain:.12})]
 };
 const sites=[
- [['bridge-north','Mill bridge',1200,750],['bridge-south','Southern footbridge',1200,1750],['orchard','Abandoned orchard',1050,740],['den-ruins','Orchard den ruins',800,1280],['mill-pond','Mill pond',710,1260],['cache','Woodland supply cache',1550,1150]],
- [['night-site','Lantern shore',1700,900],['wagon','Stranded supply wagon',1000,1150],['watch','Causeway watch platform',1700,1300],['dock','Sunken dock',2050,1800]],
- [['bridge-north','Stone bridge',1300,950],['bridge-south','Timber crossing',1300,1870],['lookout','Highland lookout',1800,600],['ore','Stonecross ore vein',1100,650],['tower','Ruined watchtower',1900,800]],
- [['bridge-north','Guarded ravine bridge',1450,750],['bridge-south','Burned forest crossing',1450,2160],['shrine','Ruined shrine',1100,1080],['overlook','Ravine overlook',1350,1800],['checkpoint','Occupied checkpoint',1750,1400],['convoy','Supply convoy',1200,950]],
- [['bridge-north','Lava ridge bridge',1350,1000],['bridge-south','Southern stone crossing',1350,2400],['foundry','Ruined foundry',850,1800],['shelf','Crystal shelf',1100,2100],['siege','Siege camp',2250,1850],['fortress-gate','Dark fortress gate',2350,2450]]
+ [['bridge-north','Mill bridge',1200,750],['bridge-south','Southern footbridge',1200,1750],['orchard','Abandoned orchard',760,780],['den-ruins','Orchard den ruins',650,1490],['mill-pond','Mill pond',630,1320],['cache','Woodland supply cache',1700,1150]],
+ [['night-site','Lantern shore',1740,1000],['wagon','Stranded supply wagon',850,1200],['watch','Causeway watch platform',1760,1420],['dock','Sunken dock',1760,1800]],
+ [['bridge-north','Stone bridge',1300,950],['bridge-south','Timber crossing',1300,1870],['lookout','Highland lookout',1900,500],['ore','Stonecross ore vein',1050,650],['tower','Ruined watchtower',2020,800]],
+ [['bridge-north','Guarded ravine bridge',1450,750],['bridge-south','Burned forest crossing',1450,2160],['shrine','Ruined shrine',980,1200],['overlook','Ravine overlook',1320,1780],['checkpoint','Occupied checkpoint',1940,1500],['convoy','Supply convoy',1180,900]],
+ [['bridge-north','Lava ridge bridge',1350,1000],['bridge-south','Southern stone crossing',1350,2400],['foundry','Ruined foundry',820,1860],['shelf','Crystal shelf',1080,2180],['siege','Siege camp',2200,1850],['fortress-gate','Dark fortress gate',2350,2450]]
 ];
 // Explicit destinations for supplies and finite worker expeditions. No town nodes.
 const expeditions=[
@@ -45,6 +45,32 @@ const occupationAnchors=[
  [[480,620],[520,1180],[610,2260],[980,2450],[1620,360],[2220,520],[2390,1120],[1810,1680],[2310,2240],[1630,2460]],
  [[620,980],[650,1840],[930,2440],[1180,430],[1740,420],[2290,760],[2390,1580],[2070,2160],[1660,2460],[1020,1460]],
  [[610,980],[690,2190],[1080,2630],[1690,430],[2210,650],[2580,1180],[1820,1710],[2490,1980],[1770,2640],[1040,1320]]
+];
+// Settlements use a deliberate ring: buildings define streets while the center stays readable for NPCs and labels.
+const settlementLayouts={
+ major:[
+  [-250,-145,'house'],[-95,-255,'house'],[120,-260,'workshop'],[270,-145,'house'],
+  [-265,150,'house'],[275,185,'house'],[-120,290,'workshop'],[120,300,'house']
+ ],
+ minor:[
+  [-185,-135,'house'],[180,-125,'house'],[-195,160,'house'],[190,165,'workshop'],[0,250,'house']
+ ],
+ majorLife:[
+  [-165,-15,'market'],[155,-115,'woodpile'],[-175,185,'laundry'],[110,205,'well'],
+  [225,20,'barrel'],[-225,20,'cart'],[10,250,'crate'],[-35,-185,'ration']
+ ],
+ minorLife:[
+  [-110,-10,'garden'],[115,-20,'woodpile'],[-125,120,'barrel'],[120,120,'well'],[0,195,'laundry']
+ ]
+};
+const serviceOffsets={teacher:[-155,-150],smith:[75,-175],alchemist:[105,-155]};
+// Deterministic regional nature dressing. Repeated entries are deliberate weighting.
+const natureThemes=[
+ ['grass','grass','bush','bush','wildflowers','sapling','stump','fallen-log'],
+ ['reeds','reeds','cattails','cattails','marsh-bush','driftwood','wet-grass'],
+ ['pine-sapling','pine-sapling','alpine-scrub','heather','rock-cluster','fallen-log'],
+ ['dead-tree','charred-stump','ash-patch','dry-scrub','burned-log','ember-pit'],
+ ['black-rock','black-rock','crystal-cluster','ash-patch','dead-shrub','fumarole','obsidian']
 ];
 // Two quest supplies are stored inside a nearby building; the first stays outdoors.
 const supplyRooms=[
@@ -172,6 +198,6 @@ const bossCadence={specialRecoveryMultiplier:.25,basicCooldown:.75,skillsPerBasi
 const rangedEnemyCombat={projectileMultiplier:1.7,aimTime:.35,cooldown:1.15,retreatFraction:.5,retreatSpeed:165,ringleaderRetreatMultiplier:1.2,ringleaderHybridMeleeRange:100,guardianScreenRange:220};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,fieldBossCenters,occupationAnchors,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
+const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
