@@ -139,7 +139,7 @@ class Campaign{
   }
   const point=dungeon?{x:1160,y:1110}:this.fieldCenter(i);if(dungeon&&this.s.normal[boss.id])z.enemies=z.enemies.filter(e=>!e.guard);
   if(!this.s.normal[boss.id]||boss.kind==='field'&&!(boss.id==='darklord'&&this.s.true.darklord)&& !this.s.pending[boss.id])z.enemies.push(this.bossEnemy(boss,'normal',point));
-  this.roadNetwork(z);this.authoredPlaces(z);
+  this.regionalDestinations(z);this.roadNetwork(z);this.authoredPlaces(z);
   this.refreshNPCs();if(this.peace)this.makeHabitat(z);return z;
  }
  idOrder(a,b){return a.id.localeCompare(b.id,undefined,{numeric:true});}
