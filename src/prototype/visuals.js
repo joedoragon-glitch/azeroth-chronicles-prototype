@@ -215,10 +215,17 @@ function draw(ctx,e,p,region=0,rescued=false){
  }
  function building(kind){
   const wall=['#baa888','#aab1a1','#a1aaa4','#a18e7b','#929ba5'][region],roof=['#9b6350','#618789','#727a73','#76585a','#596478'][region],timber=['#806044','#71654f','#71695b','#614f46','#555563'][region],trim=['#d8bd83','#abd0c0','#c8c4a3','#c69a75','#b6a5c2'][region],dark=['#594b3b','#465a57','#54574f','#4d403a','#454653'][region];
-  if(kind==='quests'){for(const x of [-20,20])rect(x-2,-38,4,52,timber);rect(-25,-38,50,5,roof);rect(-22,-32,44,31,wall);line([[-22,-27],[22,-27]],trim,2);for(const [x,y]of [[-16,-23],[-3,-25],[10,-22],[-11,-9],[5,-10]]){rect(x,y,10,9,'#e7d7ad');line([[x+2,y+3],[x+8,y+3]],'#8f765a',1);}for(const x of [-18,18])glint(x,-29,trim,1.5);return;}
-  if(kind==='supplier'){for(const x of [-25,25])rect(x-2,-28,4,43,timber);poly([[-31,-27],[-22,-45],[22,-45],[31,-27]],roof);rect(-28,-7,56,20,wall);line([[-27,-6],[27,-6]],trim,2);rect(-19,-18,13,11,dark);oval(0,-12,7,5,trim);rect(10,-20,13,13,timber);for(const x of [-17,0,17])oval(x,7,4,3,x===0?trim:'#8b9c72');return;}
-  if(kind==='recruiter'){rect(-29,5,58,9,dark);for(const x of [-25,25])rect(x-3,-34,6,40,timber);poly([[-31,-33],[-18,-48],[20,-48],[32,-33]],roof);line([[-26,-31],[26,-31]],trim,2);shield(-13,-10,wall);line([[8,-27],[8,9]],steel,3);line([[17,-27],[17,9]],timber,3);poly([[6,-29],[12,-42],[18,-29]],trim);rect(-3,-17,7,22,timber);return;}
-  if(kind==='rest'){rect(-30,-20,60,35,wall);poly([[-35,-21],[0,-50],[35,-21]],roof);rect(-8,-5,16,20,dark);rect(19,-42,8,23,timber);for(const y of [-39,-33])line([[20,y],[26,y]],'#d4c5a2',1);line([[-25,-16],[25,-16]],trim,2);oval(-18,-8,5,5,'#d6b56f');rect(-21,-7,6,12,timber);if(region===1){for(const x of [-28,-18,18,28])line([[x,14],[x,23]],timber,3);}else if(region===2){for(const x of [-25,-12,12,25])rect(x-3,7,6,8,'#85877f');}else if(region===3){for(const x of [-24,24])poly([[x-4,-20],[x,-31],[x+4,-20]],'#8c674f');}else if(region===4){poly([[-5,-34],[0,-43],[5,-34],[0,-27]],'#9b87ad');}return;}
+  const utilityFrame=()=>{
+   if(region===0){for(const x of [-31,31])line([[x,13],[x,-26]],timber,3);for(const x of [-24,24])oval(x,10,6,3,'#6c8a58');}
+   else if(region===1){for(const x of [-29,-14,14,29])line([[x,12],[x,27]],timber,4);line([[-34,15],[34,15]],'#867557',4);for(const x of [-29,-18,-7,5,17,29])line([[x,-39],[x+4,-50]],'#82946c',1.6);}
+   else if(region===2){rect(-36,7,72,9,'#777b73');for(const x of [-31,-13,8,27])rect(x,8,16,7,'#929389');rect(23,-48,9,28,'#74756d');}
+   else if(region===3){for(const x of [-35,35]){rect(x-3,-29,6,44,'#604f45');poly([[x-4,-29],[x,-39],[x+4,-29]],'#8a6b54');}line([[-36,7],[36,-3]],'#785d4f',3);}
+   else{for(const x of [-35,-22,22,35])rect(x-3,-31,6,46,'#555762');for(const x of [-29,29])poly([[x-5,-30],[x,-44],[x+5,-30]],'#71697e');poly([[-6,-44],[0,-54],[6,-44],[0,-35]],'#9b87ad');}
+  };
+  if(kind==='quests'){utilityFrame();for(const x of [-20,20])rect(x-2,-38,4,52,timber);rect(-25,-38,50,5,roof);rect(-22,-32,44,31,wall);line([[-22,-27],[22,-27]],trim,2);for(const [x,y]of [[-16,-23],[-3,-25],[10,-22],[-11,-9],[5,-10]]){rect(x,y,10,9,'#e7d7ad');line([[x+2,y+3],[x+8,y+3]],'#8f765a',1);}for(const x of [-18,18])glint(x,-29,trim,1.5);return;}
+  if(kind==='supplier'){utilityFrame();for(const x of [-25,25])rect(x-2,-28,4,43,timber);poly([[-31,-27],[-22,-45],[22,-45],[31,-27]],roof);rect(-28,-7,56,20,wall);line([[-27,-6],[27,-6]],trim,2);rect(-19,-18,13,11,dark);oval(0,-12,7,5,trim);rect(10,-20,13,13,timber);for(const x of [-17,0,17])oval(x,7,4,3,x===0?trim:'#8b9c72');return;}
+  if(kind==='recruiter'){utilityFrame();rect(-29,5,58,9,dark);for(const x of [-25,25])rect(x-3,-34,6,40,timber);poly([[-31,-33],[-18,-48],[20,-48],[32,-33]],roof);line([[-26,-31],[26,-31]],trim,2);shield(-13,-10,wall);line([[8,-27],[8,9]],steel,3);line([[17,-27],[17,9]],timber,3);poly([[6,-29],[12,-42],[18,-29]],trim);rect(-3,-17,7,22,timber);return;}
+  if(kind==='rest'){utilityFrame();rect(-30,-20,60,35,wall);poly([[-35,-21],[0,-50],[35,-21]],roof);rect(-8,-5,16,20,dark);rect(19,-42,8,23,timber);for(const y of [-39,-33])line([[20,y],[26,y]],'#d4c5a2',1);line([[-25,-16],[25,-16]],trim,2);oval(-18,-8,5,5,'#d6b56f');rect(-21,-7,6,12,timber);if(region===1){for(const x of [-28,-18,18,28])line([[x,14],[x,23]],timber,3);}else if(region===2){for(const x of [-25,-12,12,25])rect(x-3,7,6,8,'#85877f');}else if(region===3){for(const x of [-24,24])poly([[x-4,-20],[x,-31],[x+4,-20]],'#8c674f');}else if(region===4){poly([[-5,-34],[0,-43],[5,-34],[0,-27]],'#9b87ad');}return;}
   if(kind==='barracks'&&Number.isFinite(e.progress)&&e.progress<4){
    const timber=['#8a6a49','#7a7258','#7b6f58','#66564a','#555563'][region],base=['#6f765c','#667b78','#777a70','#65524a','#545867'][region];
    rect(-28,7,56,7,base);for(const x of [-23,0,23]){rect(x-3,-28,6,42,timber);poly([[x-4,-28],[x,-37],[x+4,-28]],roof);}
@@ -271,6 +278,41 @@ function draw(ctx,e,p,region=0,rescued=false){
   rect(-23,-22,46,37,wall);poly([[23,-22],[35,-15],[35,10],[23,15]],'#737f75');poly([[-29,-22],[0,-47],[30,-22]],roof);poly([[0,-47],[12,-43],[36,-15],[30,-22]],'#4b5957');line([[-26,-23],[0,-44],[27,-22]],'#dfc9a0',2);line([[30,-20],[36,-15],[36,10]],'#8c9687',1.5);rect(-7,-5,14,20,'#504d40');rect(-18,-14,8,9,'#87a7a2');rect(11,-14,8,9,'#87a7a2');for(const x of [-17,12])line([[x,-12],[x+6,-12]],'#c8d7b9',1.5);line([[-23,2],[-9,2]],'#746b56',1);line([[-22,11],[22,11]],'#897f68',2);
   rect(14,-43,7,17,'#9a8e7c');rect(-5,-24,10,8,gold);
  }
+ function settlementBuilding(kind){
+  const wood=['#806044','#71654f','#71695b','#614f46','#555563'][region],stone=['#9b9c8f','#7e8780','#85877f','#766c64','#666775'][region],roof=['#9b6350','#617f79','#727a73','#76585a','#596478'][region],trim=['#d8bd83','#abd0c0','#c8c4a3','#c69a75','#b6a5c2'][region],dark=['#594b3b','#465a57','#54574f','#4d403a','#454653'][region];
+  switch(kind){
+   case 'vale-cottage':
+    rect(-27,-18,54,33,'#c0ad8d');poly([[-34,-19],[0,-48],[34,-19]],'#a8684d');for(const x of [-20,0,20])line([[x,-18],[x,12]],wood,3);rect(-8,-4,16,19,dark);rect(14,-12,8,9,'#8aa2a0');line([[-24,-15],[24,-15]],trim,2);for(const x of [-18,17])glint(x,-11,'#e8d889',1.4);return;
+   case 'vale-workshop':
+    rect(-31,-13,62,28,'#ad956f');for(const x of [-27,-8,11,28])rect(x-3,-32,6,47,wood);poly([[-36,-31],[-18,-47],[25,-43],[36,-29]],'#8f5d47');rect(-18,-7,36,22,'#574b3d');line([[-28,-10],[28,-10]],trim,2);rect(18,-25,12,14,'#816245');return;
+   case 'vale-fence':
+    for(const x of [-22,-7,8,23])rect(x-2,-17,4,30,wood);line([[-27,-10],[28,-10]],'#a98a61',4);line([[-27,2],[28,2]],'#a98a61',4);return;
+   case 'march-stilt-house':
+    for(const x of [-23,-8,8,23])line([[x,11],[x,27]],wood,4);rect(-30,-14,60,27,'#9e9f84');poly([[-35,-15],[-22,-39],[24,-39],[35,-15]],'#6f8a76');for(const x of [-28,-18,-8,3,14,25])line([[x,-37],[x+4,-49]],'#83956d',2);rect(-9,-3,18,16,dark);line([[-26,9],[26,9]],'#c4b986',2);return;
+   case 'march-boathouse':
+    for(const x of [-28,-12,12,28])line([[x,12],[x,29]],wood,4);rect(-35,-9,70,23,'#8e947d');poly([[-39,-10],[-24,-34],[26,-34],[39,-10]],'#607d72');rect(-17,-5,34,18,'#40534e');line([[-30,-5],[30,-5]],trim,2);for(const x of [-25,-8,9,26])line([[x,-32],[x+3,-43]],'#8fa071',1.7);return;
+   case 'march-boardwalk':
+    rect(-31,2,62,12,'#897354');for(let x=-27;x<=27;x+=11)line([[x,2],[x,14]],'#5f513f',2);for(const x of [-25,25])line([[x,11],[x,24]],wood,3);return;
+   case 'highland-stone-house':
+    rect(-30,-19,60,34,'#8c8e84');for(const y of [-15,-4,7])line([[-28,y],[28,y]],'#656a64',1.4);poly([[-35,-20],[0,-48],[35,-20]],'#6d746f');rect(-8,-4,16,19,'#444741');rect(17,-43,8,23,'#77766d');line([[-26,-17],[26,-17]],trim,2);return;
+   case 'highland-smithy':
+    rect(-34,-17,68,32,'#777b75');for(const y of [-12,0,11])line([[-32,y],[32,y]],'#585e59',1.5);poly([[-37,-18],[-22,-40],[23,-40],[37,-18]],'#616a66');rect(16,-49,11,31,'#696a63');rect(-14,-5,28,20,'#454842');oval(20,8,8,4,'#4b443c');glint(20,4,'#e19c5e',1.7);return;
+   case 'highland-wall':
+    rect(-31,-14,62,28,'#777c75');for(const y of [-9,2,12])line([[-30,y],[30,y]],'#555d57',2);for(const x of [-22,-4,15])line([[x,-13],[x,0]],'#555d57',1.5);return;
+   case 'frontier-patched-house':
+    rect(-30,-19,60,34,'#9c826d');poly([[-36,-20],[-20,-43],[8,-48],[36,-20]],'#6f514d');rect(-8,-4,16,19,'#493f39');for(const [x,y]of [[-20,-12],[12,-14],[19,1]])rect(x,y,9,7,'#725f52');line([[-25,-16],[25,-16]],'#bd8f6f',2);line([[-29,-25],[-20,-38]],'#443d38',3);return;
+   case 'frontier-workshop':
+    for(const x of [-30,30])rect(x-3,-31,6,46,wood);poly([[-35,-30],[-19,-44],[23,-41],[36,-28]],'#654a47');rect(-31,-8,62,23,'#846e61');rect(-15,-8,30,23,dark);line([[-27,-7],[27,-7]],trim,2);oval(23,7,8,4,'#4b423c');for(const x of [19,23,27])glint(x,3,'#c77b53',1.3);return;
+   case 'frontier-palisade':
+    for(const x of [-24,-12,0,12,24]){rect(x-4,-28,8,42,'#665248');poly([[x-4,-28],[x,-40],[x+4,-28]],'#8b6f55');}line([[-27,-16],[27,-16]],'#54463e',4);return;
+   case 'crown-ash-house':
+    rect(-32,-21,64,36,'#666875');for(const x of [-29,-13,14,29])rect(x-3,-29,6,44,'#50515d');poly([[-37,-29],[-22,-47],[24,-47],[38,-29]],'#515a69');rect(-10,-7,20,22,'#2d2f38');poly([[-5,-37],[0,-45],[5,-37],[0,-29]],'#9b87ad');line([[-28,-18],[28,-18]],trim,2);glint(20,-9,'#d5a074',1.4);return;
+   case 'crown-forgehouse':
+    rect(-35,-20,70,35,'#5b5e69');for(const x of [-31,-14,5,24])rect(x,-14,13,10,'#737481');poly([[-38,-21],[-24,-42],[25,-42],[39,-21]],'#4f5867');rect(19,-52,11,32,'#555762');rect(-14,-8,28,23,'#2d3038');oval(24,7,8,4,'#3f3b43');for(const x of [20,24,28])glint(x,3,'#c88962',1.4);return;
+   case 'crown-wall':
+    rect(-32,-16,64,30,'#555762');for(const y of [-10,1,12])line([[-31,y],[31,y]],'#3c3e48',2);for(const x of [-23,-5,14])line([[x,-15],[x,0]],'#777381',1.5);for(const x of [-24,24])poly([[x-5,-16],[x,-27],[x+5,-16]],'#6d6878');return;
+  }
+ }
  function decoration(kind){const localWood=['#806044','#71654f','#71695b','#614f46','#555563'][region];switch(kind){
  case 'torch':line([[0,-6],[0,16]],'#807660',4);poly([[-8,-7],[-4,-24],[0,-16],[5,-29],[9,-7]],'#d99753');poly([[-3,-7],[0,-18],[4,-7]],'#f2cf7c');break;
  case 'coffin':poly([[-18,-14],[-12,-24],[12,-24],[19,-12],[15,16],[-15,16]],'#787e75');line([[-7,-17],[7,-17]],'#b3b6a1',2);line([[0,-21],[0,3]],'#b3b6a1',2);break;
@@ -304,6 +346,38 @@ function draw(ctx,e,p,region=0,rescued=false){
  case 'dark-throne':rect(-24,-11,48,27,'#555461');poly([[-20,-10],[-17,-39],[0,-51],[17,-39],[20,-10]],'#64616f');poly([[0,-39],[6,-29],[0,-19],[-6,-29]],'#9b82aa');for(const x of [-18,18])rect(x-5,-3,10,19,'#464752');break;
  case 'war-table':oval(0,4,29,11,'#5e554f');for(const x of [-18,18])line([[x,7],[x,18]],'#493f3b',4);line([[-18,-1],[18,7]],'#ad8b6d',1);for(const [x,y]of [[-10,0],[3,2],[12,5]])glint(x,y,'#d7b46d',1.3);break;
  case 'crown-banner':line([[0,-50],[0,14]],steel,3);poly([[3,-47],[27,-43],[23,-13],[12,-6],[3,-15]],'#71586f');poly([[14,-37],[20,-28],[14,-19],[8,-28]],'#a78ab1');break;
+ case 'animal-pen':for(const x of [-23,23])line([[x,12],[x,-18]],localWood,3);line([[-24,-13],[24,-13]],localWood,3);line([[-24,2],[24,2]],localWood,3);for(const [x,y]of [[-9,5],[7,7]])oval(x,y,7,4,'#8c8062');break;
+ case 'drying-rack':for(const x of [-22,22])line([[x,12],[x,-34]],localWood,3);line([[-23,-29],[23,-29]],localWood,3);for(const x of [-14,0,14]){line([[x,-28],[x,-10]],'#cdbf9f',1);rect(x-5,-10,10,12,x===0?'#8da0a0':'#a1846f');}break;
+ case 'tax-post':line([[0,-48],[0,14]],localWood,4);rect(-18,-43,36,25,'#8a7357');for(const y of [-37,-31,-25])line([[-13,y],[12,y]],'#d3c298',1);rect(7,-14,12,10,'#6f5541');break;
+ case 'lean-to':for(const x of [-24,24])line([[x,13],[x,-27]],localWood,4);poly([[-31,-25],[-12,-41],[28,-32],[31,-20]],'#8a7359');rect(-22,-5,44,17,'#665848');break;
+ case 'cookfire':for(const a of [-15,0,15])line([[-18,a/5+7],[18,a/5-4]],'#70543d',4);oval(0,7,16,6,'#4b443c');for(const x of [-8,0,8])poly([[x-4,6],[x,-9],[x+4,6]],'#c97d48');glint(0,-5,'#efbd72',2);break;
+ case 'sleep-roll':rect(-25,-8,50,18,'#7b6c58');line([[-23,-5],[23,-5]],'#b6a17d',2);oval(-18,-7,7,4,'#9b8566');break;
+ case 'game-table':oval(0,2,24,9,'#705740');for(const x of [-15,15])line([[x,5],[x,17]],localWood,4);for(const [x,y,c]of [[-7,0,'#d2bd7d'],[2,-2,'#8fa0a0'],[8,3,'#aa7c6f']])oval(x,y,2.5,2,c);break;
+ case 'stolen-goods':rect(-20,-10,24,23,'#8b6b49');rect(3,-5,21,18,'#9a7752');poly([[-8,-12],[-1,-25],[7,-13]],'#8d9b76');line([[12,-4],[22,-17]],steel,2);break;
+ case 'training-dummy':line([[0,-40],[0,15]],localWood,5);line([[-20,-24],[20,-24]],localWood,4);oval(0,-48,9,9,'#9b8060');rect(-12,-18,24,24,'#77614d');break;
+ case 'bone-pile':for(const [x,y]of [[-13,4],[-4,-1],[6,5],[14,0]]){line([[x-7,y-4],[x+7,y+4]],bone,3);oval(x+6,y+4,2.5,2.5,bone);}skull(-2,-7,5);break;
+ case 'grave-marker':rect(-11,-29,22,42,'#7a7f78');poly([[-13,-28],[0,-42],[13,-28]],'#8f958b');line([[0,-25],[0,2]],'#b5b5a5',2);line([[-6,-16],[6,-16]],'#b5b5a5',2);break;
+ case 'pup-nest':oval(0,7,28,11,'#7d7657');for(let x=-24;x<=24;x+=8)line([[x,10],[x+5,-2]],'#a28d62',2);for(const [x,y]of [[-8,3],[8,4]])oval(x,y,5,3,'#8c775d');break;
+ case 'fishing-net':for(const x of [-22,22])line([[x,13],[x,-31]],localWood,3);for(let y=-28;y<9;y+=8)line([[-20,y],[20,y+4]],'#b4b39a',1);for(let x=-18;x<=18;x+=9)line([[x,-29],[x+5,10]],'#b4b39a',1);break;
+ case 'mud-nest':oval(0,7,28,12,'#675e4b');oval(0,4,20,8,'#4d6655');for(const x of [-19,-8,10,21])line([[x,9],[x+4,-4]],'#7d7357',2);break;
+ case 'wallow':oval(0,7,29,12,'#5d6254');oval(0,5,23,8,'#4f6f69');for(const [x,y]of [[-9,3],[7,5],[13,1]])oval(x,y,3,2,'#7c8972');break;
+ case 'ore-cart':rect(-23,-11,46,18,'#806548');for(const x of [-15,15])oval(x,10,7,7,'#4f514c');for(const [x,y]of [[-12,-12],[0,-16],[12,-11]])oval(x,y,8,5,'#858880');line([[21,-7],[34,-15]],localWood,3);break;
+ case 'ore-crane':for(const x of [-25,25])line([[x,14],[x,-42]],localWood,5);line([[-27,-39],[28,-39]],localWood,4);line([[20,-38],[20,-5]],steel,2);oval(20,-2,6,4,'#777b75');line([[-25,-30],[25,-39]],'#9c805a',3);break;
+ case 'tool-rack':for(const x of [-22,22])line([[x,13],[x,-35]],localWood,3);line([[-23,-29],[23,-29]],localWood,3);for(const x of [-13,0,13]){line([[x,-27],[x,8]],steel,2);line([[x-5,-20],[x+5,-20]],'#9b805e',3);}break;
+ case 'stone-marker':for(const [x,y,r]of [[0,7,12],[-2,-8,9],[1,-20,6]])oval(x,y,r,r*.55,'#797d75');line([[-5,-9],[5,-13]],'#b4aa8e',1.5);break;
+ case 'field-kitchen':rect(-25,-8,50,21,'#7a6249');oval(0,-5,16,7,'#4e4840');for(const x of [-8,0,8])poly([[x-4,-2],[x,-16],[x+4,-2]],'#b96f47');line([[-30,-20],[30,-20]],localWood,3);for(const x of [-24,24])line([[x,13],[x,-28]],localWood,3);break;
+ case 'supply-stack':for(const [x,y]of [[-17,0],[5,2],[-6,-14],[15,-13]]){rect(x-10,y-8,20,17,'#8d6d4b');line([[x-9,y-7],[x+9,y+7]],'#b89565',2);}break;
+ case 'command-tent':poly([[-35,12],[0,-47],[36,12]],region===4?'#5d5668':'#7c5e53');line([[0,-44],[0,14]],localWood,4);rect(-12,-2,24,17,region===4?'#33313a':'#54463f');line([[-29,9],[29,9]],'#b79573',2);break;
+ case 'bunk':rect(-27,-8,54,18,'#6d5947');rect(-24,-6,48,10,'#837561');for(const x of [-23,23])line([[x,8],[x,17]],localWood,3);rect(-20,-5,11,7,'#b09a78');break;
+ case 'forge':rect(-26,-12,52,27,'#696863');rect(-18,-29,36,18,'#77736b');oval(0,4,16,6,'#403b38');for(const x of [-8,0,8])poly([[x-4,5],[x,-9],[x+4,5]],'#bd7148');rect(19,-42,9,31,'#5b5855');break;
+ case 'roost':oval(0,7,30,12,'#62594f');for(const x of [-24,-12,0,12,24])line([[x,10],[x+5,-6]],'#806a4e',2);for(const [x,y]of [[-9,1],[8,4]])poly([[x-5,y+6],[x,y-8],[x+5,y+6]],'#676b62');break;
+ case 'hatchery':oval(0,7,30,12,'#5a5049');for(const [x,y]of [[-12,3],[0,-1],[12,4]])oval(x,y,6,8,'#8d826d');for(const x of [-22,22])line([[x,10],[x+4,-7]],'#7b6750',2);break;
+ case 'scribe-desk':rect(-27,-8,54,17,'#725d47');for(const x of [-21,21])line([[x,6],[x,18]],localWood,3);rect(-18,-18,36,11,'#c5b88f');line([[-14,-14],[12,-14]],'#776b58',1);break;
+ case 'scroll-stack':for(const [x,y]of [[-13,5],[0,1],[13,6],[-5,-8],[8,-9]]){rect(x-8,y-3,16,6,'#c5b78e');oval(x-8,y,2,3,'#927a5e');}break;
+ case 'ossuary':rect(-24,-17,48,31,'#747872');for(const [x,y]of [[-12,-8],[0,-10],[12,-7],[-7,4],[8,3]])skull(x,y,4);line([[-22,-14],[22,-14]],'#a5aa9d',2);break;
+ case 'ritual-table':oval(0,3,27,10,'#6d5e50');for(const x of [-18,18])line([[x,6],[x,18]],localWood,4);poly([[-7,-3],[0,-11],[7,-3],[0,5]],'#9b8a73');glint(0,-6,'#d9bf86',1.5);break;
+ case 'grave-lamp':line([[0,-35],[0,13]],steel,3);poly([[-8,-33],[0,-43],[8,-33],[6,-18],[-6,-18]],'#7c7260');glint(0,-27,'#e0bd72',2);break;
+ case 'caretaker-table':rect(-24,-7,48,16,'#6f5a45');for(const x of [-18,18])line([[x,7],[x,18]],localWood,3);rect(-17,-14,15,7,'#9a8669');oval(10,-10,6,4,'#83725a');break;
  case 'grass':for(const x of [-7,0,7])line([[x,8],[x+(x?Math.sign(x)*3:1),-8-(variant%5)]],'#739266',1.5);break;
  case 'wet-grass':for(const x of [-8,-3,3,8])line([[x,9],[x+(x%3),-10-(variant%6)]],'#688c70',1.6);break;
  case 'bush':for(const [x,y,r]of [[-8,2,9],[0,-5,11],[9,2,8]])oval(x,y,r,r*.7,'#58784f');break;
@@ -362,11 +436,18 @@ function draw(ctx,e,p,region=0,rescued=false){
    case 'shelf':for(const [x,h,c]of [[-14,23,'#776a91'],[0,34,'#9a87b3'],[15,19,'#6b6384']])poly([[x-6,12],[x-5,12-h],[x,7-h],[x+6,12-h],[x+6,12]],c);glint(0,-25,'#d9c8e8',2);break;
    case 'siege':poly([[-27,13],[0,-34],[28,13]],'#8a6e60');line([[0,-31],[0,12]],'#5e5048',3);rect(19,-13,22,26,'#665047');line([[30,-13],[30,-40]],'#9b805b',3);poly([[31,-39],[48,-34],[31,-25]],'#795463');break;
    case 'fortress-gate':rect(-34,-35,68,50,'#565966');rect(-18,-23,36,38,'#252830');for(const x of [-31,24])rect(x,-45,8,60,'#707381');poly([[-38,-37],[0,-62],[38,-37]],'#656674');break;
+   case 'goblin-camp':poly([[-28,12],[-6,-29],[12,12]],'#8e7455');poly([[-5,12],[17,-24],[32,12]],'#756349');oval(-16,9,9,4,'#4e463d');glint(-16,5,'#e5a75e',1.6);rect(17,-2,15,13,'#8b6b49');break;
+   case 'mire-nests':oval(0,8,31,13,'#586a58');for(let x=-26;x<=26;x+=8)line([[x,10],[x+4,-4]],'#82785e',2);oval(-8,3,7,5,'#7c876d');oval(9,4,6,4,'#6f7c66');break;
+   case 'wolf-den':poly([[-31,11],[-22,-16],[-5,-32],[16,-25],[31,10]],'#747970');poly([[-17,10],[-12,-9],[0,-19],[14,-7],[19,10]],'#2e3732');for(const [x,y]of [[-23,5],[22,6]])oval(x,y,7,4,'#8c8978');break;
+   case 'ogre-hearth':oval(0,8,25,9,'#5a5147');for(const x of [-11,0,11])poly([[x-5,7],[x,-10],[x+5,7]],'#bd7b4f');rect(-30,-8,14,23,'#777a72');rect(18,-10,15,25,'#777a72');break;
+   case 'orc-bivouac':poly([[-30,12],[0,-39],[31,12]],'#77584f');line([[0,-36],[0,13]],'#614f46',3);rect(16,-8,20,20,'#665047');line([[26,-12],[26,-41]],'#9a825f',3);poly([[28,-39],[43,-35],[28,-28]],'#8b5f58');break;
+   case 'ash-roost':oval(0,8,31,13,'#4f4a51');for(const x of [-23,-11,0,12,24])line([[x,10],[x+4,-7]],'#6a5a50',2);poly([[-7,4],[0,-15],[8,4]],'#7a6d83');glint(0,-8,'#c58d67',1.6);break;
+   case 'crown-barracks':rect(-33,-19,66,34,'#5b5d68');for(const x of [-30,-14,14,30])rect(x-3,-29,6,44,'#4d4e59');poly([[-38,-28],[-22,-47],[24,-47],[38,-28]],'#505969');rect(-13,-8,26,23,'#2d3038');poly([[-5,-37],[0,-45],[5,-37],[0,-29]],'#9b87ad');break;
    default:if(/pond|shore|dock/i.test(e.name)){oval(0,5,28,10,'#528b94');for(const x of [-16,0,16])line([[x,-6],[x,12]],'#b5a47a',3);}else if(e.icon==='🏕️')poly([[-24,12],[0,-30],[25,12]],'#b8aa7a');else{rect(-12,-25,24,38,'#999d8c');poly([[-15,-26],[0,-42],[16,-26]],'#b0b6a2');line([[-4,-22],[5,-10],[-3,3]],'#65736a');}
   }
  }
  const type=e.renderKind;
- if(type==='prop'){if(e.treasuryBoss)decoration(e.structure);else if(e.decorative)decoration(e.structure);else if(e.structure==='fence'){for(const x of [-18,0,18])rect(x-2,-18,4,30,'#a48c69');line([[-23,-12],[23,-12]],'#9c835e',4);line([[-23,2],[23,2]],'#9c835e',4);}else if(e.structure==='house'||e.structure==='workshop'){building(e.structure);if(e.structure==='workshop'){rect(-25,-12,12,15,'#8e7150');line([[-26,-15],[-10,-15]],steel,4);}}else if(['stonewall','stockade','palisade'].includes(e.structure)){if(e.structure==='stonewall'){rect(-28,-28,56,42,'#858d85');for(const y of [-22,-10,2])line([[-27,y],[27,y]],'#59685e',2);for(const x of [-21,-3,15]){line([[x,-27],[x,-12]],'#59685e',2);line([[x+9,-10],[x+9,3]],'#59685e',2);}for(const x of [-28,-7,14])rect(x,-35,14,10,'#9ea79b');}else{for(const x of [-24,-12,0,12,24]){rect(x-4,-28,8,42,'#977752');poly([[x-4,-28],[x,-40],[x+4,-28]],'#b49465');}line([[-27,-16],[27,-16]],'#675c40',4);line([[-27,3],[27,3]],'#675c40',4);}}else if(e.structure==='pillar'){rect(-13,-44,26,58,'#9ca49a');rect(-18,-48,36,8,'#bac0ad');rect(-18,10,36,8,'#8a9488');for(const x of [-7,0,7])line([[x,-39],[x,6]],'#747f75',1);}else if(e.icon==='🪨'){poly([[-20,7],[-18,-12],[-3,-24],[14,-17],[24,4]],'#849183');poly([[-18,-12],[-3,-24],[3,-4],[-20,7]],'#a0ad9b');line([[3,-4],[14,-17]],'#647466');}else wildProp();}else if(type==='node'){if(e.icon==='🪵'){for(const [x,y]of [[-12,2],[2,-3],[10,7]]){rect(x-12,y-8,24,10,'#836244');oval(x+12,y-3,4,5,'#c9a572');oval(x+12,y-3,2,3,'#916b44');}}else if(e.icon==='🧺'){poly([[-19,-3],[19,-3],[13,14],[-13,14]],'#aa885e');line([[-13,-3],[-8,-17],[8,-17],[13,-3]],'#bca06d',3);for(const y of [1,5,9])line([[-14,y],[14,y]],'#795f42',1);}else if(e.icon==='💎'){for(const [x,y]of [[-10,2],[0,-7],[10,4]])poly([[x-6,y],[x-5,y-20],[x,y-28],[x+6,y-18],[x+6,y]],'#a89bcf');line([[0,-32],[0,-7]],'#e5ddf6',1);}else{poly([[-18,8],[-13,-12],[0,-23],[18,-9],[22,8]],'#7d8781');for(const [x,y]of [[-7,-8],[7,-12],[12,1]])poly([[x-4,y],[x,y-5],[x+5,y],[x,y+4]],'#c1a16b');}}
+ if(type==='prop'){if(e.treasuryBoss)decoration(e.structure);else if(e.decorative)decoration(e.structure);else if(/^(vale-|march-|highland-|frontier-|crown-)/.test(e.structure||'')){settlementBuilding(e.structure);}else if(e.structure==='fence'){for(const x of [-18,0,18])rect(x-2,-18,4,30,'#a48c69');line([[-23,-12],[23,-12]],'#9c835e',4);line([[-23,2],[23,2]],'#9c835e',4);}else if(e.structure==='house'||e.structure==='workshop'){building(e.structure);if(e.structure==='workshop'){rect(-25,-12,12,15,'#8e7150');line([[-26,-15],[-10,-15]],steel,4);}}else if(['stonewall','stockade','palisade'].includes(e.structure)){if(e.structure==='stonewall'){rect(-28,-28,56,42,'#858d85');for(const y of [-22,-10,2])line([[-27,y],[27,y]],'#59685e',2);for(const x of [-21,-3,15]){line([[x,-27],[x,-12]],'#59685e',2);line([[x+9,-10],[x+9,3]],'#59685e',2);}for(const x of [-28,-7,14])rect(x,-35,14,10,'#9ea79b');}else{for(const x of [-24,-12,0,12,24]){rect(x-4,-28,8,42,'#977752');poly([[x-4,-28],[x,-40],[x+4,-28]],'#b49465');}line([[-27,-16],[27,-16]],'#675c40',4);line([[-27,3],[27,3]],'#675c40',4);}}else if(e.structure==='pillar'){rect(-13,-44,26,58,'#9ca49a');rect(-18,-48,36,8,'#bac0ad');rect(-18,10,36,8,'#8a9488');for(const x of [-7,0,7])line([[x,-39],[x,6]],'#747f75',1);}else if(e.icon==='🪨'){poly([[-20,7],[-18,-12],[-3,-24],[14,-17],[24,4]],'#849183');poly([[-18,-12],[-3,-24],[3,-4],[-20,7]],'#a0ad9b');line([[3,-4],[14,-17]],'#647466');}else wildProp();}else if(type==='node'){if(e.icon==='🪵'){for(const [x,y]of [[-12,2],[2,-3],[10,7]]){rect(x-12,y-8,24,10,'#836244');oval(x+12,y-3,4,5,'#c9a572');oval(x+12,y-3,2,3,'#916b44');}}else if(e.icon==='🧺'){poly([[-19,-3],[19,-3],[13,14],[-13,14]],'#aa885e');line([[-13,-3],[-8,-17],[8,-17],[13,-3]],'#bca06d',3);for(const y of [1,5,9])line([[-14,y],[14,y]],'#795f42',1);}else if(e.icon==='💎'){for(const [x,y]of [[-10,2],[0,-7],[10,4]])poly([[x-6,y],[x-5,y-20],[x,y-28],[x+6,y-18],[x+6,y]],'#a89bcf');line([[0,-32],[0,-7]],'#e5ddf6',1);}else{poly([[-18,8],[-13,-12],[0,-23],[18,-9],[22,8]],'#7d8781');for(const [x,y]of [[-7,-8],[7,-12],[12,1]])poly([[x-4,y],[x,y-5],[x+5,y],[x,y+4]],'#c1a16b');}}
  else if(type==='building'||['rest','supplier','recruiter','quests'].includes(e.kind))building(type==='building'?'barracks':e.kind);
  else if(e.kind==='cage'){rect(-20,-35,40,49,'#746c58');rect(-17,-31,34,41,'#23302b');if(!rescued)specialist({...e,kind:['archive'].includes(e.family)?'alchemist':['thorn','mire','ridge','warlord','citadel'].includes(e.family)?'teacher':'smith'});for(const x of [-16,-8,0,8,16])line([[x,-32],[x,12]],'#b3afa0',3);line([[-20,-17],[20,-17]],'#b3afa0');if(rescued){poly([[18,-32],[32,-26],[32,16],[18,12]],'#84887a');}else rect(-3,-8,7,8,gold);}
  else if(e.kind==='dungeon'&&e.treasury)treasuryEntrance(e.treasuryBoss);else if(e.kind==='dungeon'||e.kind==='exit')gate(e.family);
@@ -490,6 +571,23 @@ function terrain(ctx,screen,region=0){
  const rect=(a,b,c,d,color)=>polygon([{x:a,y:c},{x:b,y:c},{x:b,y:d},{x:a,y:d}],color);
  const line=(a,b,color,width)=>{a=screen(a);b=screen(b);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();};
  ctx.save();
+ const landformPalettes={
+  meadow:['#557144','#78905b'], 'orchard-slope':['#5b7348','#8a9a60'], 'wooded-rise':['#425f42','#6f8456'], 'river-bank':['#5a7352','#87936f'],
+  'wet-basin':['#365f62','#6f8b7e'], mudflat:['#596353','#87866a'], 'reed-islands':['#46675a','#7d9272'], 'shore-shelf':['#4c6964','#82958a'],
+  'high-terrace':['#596054','#858779'], 'middle-terrace':['#4f584e','#787f70'], 'quarry-shelf':['#68675c','#989284'], 'pine-basin':['#44554b','#6e7863'],
+  'burn-scar':['#684d42','#926b55'], 'ravine-shelf':['#554944','#776159'], 'ash-lowland':['#5c5048','#857064'], 'war-road':['#60504a','#8b7468'],
+  'ash-plateau':['#494957','#6d6977'], 'obsidian-shelf':['#3d3e49','#5d5968'], 'crystal-field':['#49485b','#756b87'], 'fortress-apron':['#454650','#696672']
+ };
+ const drawLandform=(f)=>{
+  const colors=landformPalettes[f.kind]||['#555','#777'],pts=f.shape==='ellipse'?Array.from({length:40},(_,n)=>{const a=n*Math.PI/20;return{x:f.x+Math.cos(a)*f.rx,y:f.y+Math.sin(a)*f.ry};}):f.shape==='rect'?[{x:f.x1,y:f.y1},{x:f.x2,y:f.y1},{x:f.x2,y:f.y2},{x:f.x1,y:f.y2}]:(f.points||[]).map(([x,y])=>({x,y}));
+  if(pts.length<3)return;ctx.save();ctx.globalAlpha=.34;polygon(pts,colors[0]);ctx.globalAlpha=.26;
+  const cx=f.x??pts.reduce((a,p)=>a+p.x,0)/pts.length,cy=f.y??pts.reduce((a,p)=>a+p.y,0)/pts.length;
+  const inset=pts.map(q=>({x:q.x+(cx-q.x)*.08,y:q.y+(cy-q.y)*.08}));polygon(inset,colors[1]);ctx.globalAlpha=.52;
+  for(let j=0;j<pts.length;j+=Math.max(1,Math.floor(pts.length/8))){const a=pts[j],b=pts[(j+1)%pts.length];line(a,b,colors[1],1.4);}
+  if(/terrace|shelf|plateau|rise|apron/.test(f.kind)){ctx.globalAlpha=.35;for(let j=0;j<pts.length;j+=2){const a=pts[j],b=pts[(j+1)%pts.length];line({x:a.x,y:a.y+18},{x:b.x,y:b.y+18},'#282a2d',2);}}
+  ctx.restore();
+ };
+ for(const f of R.landforms?.[region]||[])drawLandform(f);
  rect(x1,x2,y1,y2,palette[0]);
  rect(x1+8,x2-8,y1+8,y2-8,palette[1]);
  for(const x of [x1,x2]){line({x:x+(x===x1?-10:10),y:y1},{x:x+(x===x1?-10:10),y:y2},'#16231c99',4);line({x,y:y1},{x,y:y2},palette[2],2);}
@@ -511,8 +609,19 @@ function terrain(ctx,screen,region=0){
  }
  // Other authored ponds and walls also use exact shapes, independent of props.
  for(const p of R.terrain[region]){
-  if(p.r){const points=[],inner=[];for(let n=0;n<48;n++){const a=n*Math.PI/24;points.push({x:p.x+Math.cos(a)*p.r,y:p.y+Math.sin(a)*p.r});inner.push({x:p.x+Math.cos(a)*(p.r-8),y:p.y+Math.sin(a)*(p.r-8)});}polygon(points,'#9aab9866');polygon(inner,'#397f92');for(const dy of [-p.r*.25,p.r*.25])line({x:p.x-p.r*.35,y:p.y+dy},{x:p.x+p.r*.25,y:p.y+dy+8},'#a1c8bf99',1.5);}
-  else {let start=p.y1;for(const [lo,hi]of p.gaps||[]){rect(p.x1,p.x2,start,lo,'#62645b');start=hi;}rect(p.x1,p.x2,start,p.y2,'#62645b');line({x:p.x1,y:p.y1},{x:p.x1,y:p.y2},'#a39e86',1);}
+  const feature=p.kind||'cliff';
+  if(p.r){
+   const points=[],inner=[];for(let n=0;n<48;n++){const a=n*Math.PI/24;points.push({x:p.x+Math.cos(a)*p.r,y:p.y+Math.sin(a)*p.r});inner.push({x:p.x+Math.cos(a)*(p.r-8),y:p.y+Math.sin(a)*(p.r-8)});}
+   const circular=feature==='water'?['#8fa79766','#397f92','#a1c8bf99']:feature==='obsidian'?['#46434f','#302f39','#8c7e99']:['#70685f','#514b46','#9e9488'];
+   polygon(points,circular[0]);polygon(inner,circular[1]);
+   if(feature==='water')for(const dy of [-p.r*.25,p.r*.25])line({x:p.x-p.r*.35,y:p.y+dy},{x:p.x+p.r*.25,y:p.y+dy+8},circular[2],1.5);
+   else for(let a=0;a<Math.PI*2;a+=Math.PI/3)line({x:p.x+Math.cos(a)*p.r*.25,y:p.y+Math.sin(a)*p.r*.25},{x:p.x+Math.cos(a)*p.r*.7,y:p.y+Math.sin(a)*p.r*.7},circular[2],1.2);
+  } else {
+   const colors=feature==='lava'?['#723d31','#d06c3c','#f0ae68']:feature==='ravine'?['#292b2d','#42464a','#85827a']:['#5d625b','#777c73','#aaa795'];
+   let start=p.y1;for(const [lo,hi]of p.gaps||[]){rect(p.x1,p.x2,start,lo,colors[0]);rect(p.x1+8,p.x2-8,start+8,lo-8,colors[1]);start=hi;}rect(p.x1,p.x2,start,p.y2,colors[0]);if(p.y2-start>16)rect(p.x1+8,p.x2-8,start+8,p.y2-8,colors[1]);
+   for(const x of [p.x1,p.x2])line({x,y:p.y1},{x,y:p.y2},colors[2],1.5);
+   if(feature==='lava')for(let y=p.y1+35;y<p.y2-20;y+=90)line({x:p.x1+18,y},{x:p.x2-18,y:y+10},'#ffc07877',1.2);
+  }
  }
  ctx.restore();
 }
