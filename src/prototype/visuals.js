@@ -59,7 +59,7 @@ function draw(ctx,e,p,region=0,rescued=false){
   if(e.guard){line([[-13,8],[0,12],[13,8]],'#a49573',1.5);rect(-3,-21,6,3,'#b6a373');}
  }
  function captainFinish(){
-  if(!e.roomCaptain)return;
+  if(!(e.captain||e.roomCaptain))return;
   switch(e.captainMentor){
    case 'thorn':
     // Goblin disciple: wolf trophies and claw marks, but still unmistakably goblin.
@@ -77,6 +77,11 @@ function draw(ctx,e,p,region=0,rescued=false){
     // Ash Beast disciple: obsidian harness and Crown sigil carried on its own carapace.
     poly([[-16,-9],[-7,-18],[0,-12],[7,-18],[16,-9],[10,-3],[-10,-3]],'#51495c');
     poly([[0,-16],[5,-10],[0,-4],[-5,-10]],'#9f79aa');line([[-11,2],[0,7],[11,2]],'#b39272',2);for(const x of [-18,18])glint(x,-12,'#d29ab5',1.5);break;
+   case 'warlord':
+    // Orc disciple: Warlord-style red authority marks, shoulder plates and tally-board trophies.
+    poly([[-15,-17],[-23,-21],[-20,-10],[-12,-8]],'#8f8f82');poly([[12,-18],[22,-22],[23,-10],[14,-8]],'#777b73');
+    line([[-9,-13],[10,-2]],'#9b5d52',4);rect(14,-5,13,16,'#806548');for(const y of [-1,4,9])line([[16,y],[24,y]],'#d7c69c',1);
+    line([[23,-30],[23,7]],'#8e704f',2);poly([[24,-29],[37,-25],[24,-17]],'#9a5c54');break;
   }
   ctx.save();ctx.globalAlpha=.35;ctx.strokeStyle='#e0b96f';ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(0,11,25,8,0,0,Math.PI*2);ctx.stroke();ctx.restore();
  }
@@ -303,7 +308,7 @@ function draw(ctx,e,p,region=0,rescued=false){
  }
  bossFinish(e.family);bossPolish(e.family);
  }else{
- if(e.roomCaptain){const s=e.visualScale||1.18;ctx.scale(s,s);}
+ if(e.captain||e.roomCaptain){const s=e.visualScale||1.18;ctx.scale(s,s);}
  switch(e.species){
  case 'skeleton':skull();line([[0,-18],[0,5]],bone,3);for(const y of [-14,-9,-4])line([[-8,y],[0,y+2],[8,y]],bone,2);line([[-7,-15],[-14,-2],[-16,6]],bone,3);line([[7,-15],[14,-4],[17,3]],bone,3);line([[0,3],[-7,9],[-8,16]],bone,3);line([[0,3],[7,9],[8,16]],bone,3);if(e.ranged)bow(17,-7);else sword(15,-9);break;
  case 'wolf':wolf();break;
@@ -326,7 +331,7 @@ function draw(ctx,e,p,region=0,rescued=false){
  if(type==='hero'||type==='ally'||type==='enemy'){line([[-8,13],[0,15],[8,13]],type==='enemy'?'#d2aa87':'#c9d6ad',1.2);if(type==='hero')oval(0,-47,2,2,'#f6dfa0');}
  ctx.restore();
 }
-function height(e){if(e.type==='boss')return 102;if(e.roomCaptain)return 68;if(e.renderKind==='hero'&&e.class==='mage'||e.renderKind==='prop')return 64;if(['dungeon','exit','transport'].includes(e.kind))return 64;return 54;}
+function height(e){if(e.type==='boss')return 102;if(e.captain||e.roomCaptain)return 68;if(e.renderKind==='hero'&&e.class==='mage'||e.renderKind==='prop')return 64;if(['dungeon','exit','transport'].includes(e.kind))return 64;return 54;}
 const floorPalettes=[['#294b36','#31583e','#203e30','#95ad80'],['#26444b','#31535a','#203b42','#85ada6'],['#485447','#56614d','#3b493f','#b1b59a'],['#50413b','#5d4b42','#423732','#b9987b'],['#343644','#414351','#2c2f3c','#a09b9e']];
 const dungeonFloors={crypt:['#343c39','#414945','#2b3331','#a9b1a0'],archive:['#30464a','#3b5558','#283d42','#8fb6b4'],mine:['#44433b','#524f43','#39382f','#ada88c'],abyss:['#44373b','#544349','#382f34','#c09a89'],citadel:['#3b414b','#494f59','#303640','#abb3b5']};
 function groundDetail(ctx,p,seed,region,room,dungeonId,colors){
