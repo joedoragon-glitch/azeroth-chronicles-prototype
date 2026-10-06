@@ -283,7 +283,7 @@ class Campaign{
  siteDescription(n){
   const z=this.zone(),guards=z.enemies.filter(e=>e.site===n.id&&e.hp>0&&!e.neutral).length,parts=[];
   if(n.id.startsWith('bridge-'))parts.push('A crossing through the regional terrain. Walk across the connected road; no separate entrance.');
-  const quests=this.questDefs().filter(q=>q.region===z.id&&q.sites.includes(n.id));if(quests.length)parts.push('Survey objective: '+quests.map(q=>q.name).join(', ')+'.');
+  const quests=this.questDefs().filter(q=>q.region===z.id&&q.sites?.includes(n.id));if(quests.length)parts.push('Survey objective: '+quests.map(q=>q.name).join(', ')+'.');
   const caches=z.npcs.filter(b=>b.kind==='bundle'&&b.site===n.id&&!this.bundleCollected(b));if(caches.length)parts.push('Recover the marked supplies here with Interact.');
   const room=R.supplyRooms.find(r=>r.region===z.id&&r.site===n.id);if(room)parts.push('The quest supplies are secured inside '+room.name+' nearby. Recover all '+room.count+' caches there after clearing its guards.');
   const node=z.nodes.find(a=>a.site===n.id);if(node)parts.push(node.amount>0?node.name+': '+Math.ceil(node.amount)+' left. Assign idle troops, clear the guards, and protect the return trip.':'The finite resource deposit is exhausted.');
