@@ -21,13 +21,13 @@ const sites=[
  [['bridge-north','Guarded ravine bridge',1450,750],['bridge-south','Burned forest crossing',1450,2160],['shrine','Ruined shrine',1100,1080],['overlook','Ravine overlook',1350,1800],['checkpoint','Occupied checkpoint',1940,1500],['convoy','Supply convoy',1200,950]],
  [['bridge-north','Lava ridge bridge',1350,1000],['bridge-south','Southern stone crossing',1350,2400],['foundry','Ruined foundry',850,1800],['shelf','Crystal shelf',1100,2100],['siege','Siege camp',2250,1850],['fortress-gate','Dark fortress gate',2350,2450]]
 ];
-// Explicit destinations for supplies and finite worker expeditions. No town nodes.
+// Explicit finite worker expeditions. Treasury quest caches are not outdoor expedition supplies.
 const expeditions=[
- {resource:'cache',supplies:['orchard','den-ruins','cache'],name:'Woodland timber'},
- {resource:'wagon',supplies:['wagon','watch','dock'],name:'Salvaged provisions'},
- {resource:'ore',supplies:['ore','lookout','tower'],name:'Stonecross ore'},
+ {resource:'cache',supplies:[],name:'Woodland timber'},
+ {resource:'wagon',supplies:[],name:'Salvaged provisions'},
+ {resource:'ore',supplies:[],name:'Stonecross ore'},
  {resource:'shrine',supplies:[],name:'Shrine salvage'},
- {resource:'foundry',supplies:['foundry','shelf','siege'],name:'Foundry crystals'}
+ {resource:'foundry',supplies:[],name:'Foundry crystals'}
 ];
 // Field-boss compounds sit away from the main town approach instead of sharing the central traffic band.
 const fieldBossCenters=[
