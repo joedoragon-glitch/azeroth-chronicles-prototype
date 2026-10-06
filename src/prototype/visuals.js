@@ -7,8 +7,10 @@ function draw(ctx,e,p,region=0,rescued=false){
  ctx.save();ctx.translate(p.x,p.y);ctx.lineJoin='round';ctx.lineCap='round';
  const ink='#25312d',bone='#e7ddbf',steel='#9eafb6',gold='#d3b46c',skin='#dfb18b';
  const poly=(v,c)=>{ctx.fillStyle=c;ctx.strokeStyle=ink;ctx.lineWidth=1.2;ctx.beginPath();v.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fill();ctx.stroke();};
+ const fillPoly=(v,c,a=1)=>{ctx.save();ctx.globalAlpha=a;ctx.fillStyle=c;ctx.beginPath();v.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fill();ctx.restore();};
  const rect=(x,y,w,h,c)=>poly([[x,y],[x+w,y],[x+w,y+h],[x,y+h]],c);
  const oval=(x,y,rx,ry,c)=>{ctx.fillStyle=c;ctx.strokeStyle=ink;ctx.lineWidth=1.2;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill();ctx.stroke();};
+ const fillOval=(x,y,rx,ry,c,a=1)=>{ctx.save();ctx.globalAlpha=a;ctx.fillStyle=c;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill();ctx.restore();};
  const line=(v,c,w=2)=>{ctx.strokeStyle=c;ctx.lineWidth=w;ctx.beginPath();v.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke();};
  const eye=(x,y,c='#f5df9a')=>rect(x,y,2,2,c);
  const hash=value=>{let h=2166136261>>>0;for(const ch of String(value||'')){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;};
@@ -103,12 +105,39 @@ function draw(ctx,e,p,region=0,rescued=false){
  function sword(x,y){poly([[x,y],[x+3,y-25],[x+6,y],[x+3,y+3]],steel);line([[x-3,y+3],[x+9,y+3]],gold,3);line([[x+3,y+3],[x+3,y+11]],'#75573c',3);}
  function shield(x,y,c){poly([[x-8,y-8],[x+8,y-8],[x+7,y+7],[x,y+14],[x-7,y+7]],c);line([[x,y-6],[x,y+9]],gold);}
  function bow(x,y){line([[x,y-19],[x+8,y-11],[x+10,y],[x+7,y+12],[x,y+19]],'#ba9562',3);line([[x,y-19],[x,y+19]],'#e9d7ac',1);line([[x-6,y],[x+17,y]],'#c5bb95',1.5);}
- function humanoid(color,head=skin,bulk=1){rect(-9*bulk,3,7*bulk,12,'#414744');rect(2*bulk,3,7*bulk,12,'#414744');poly([[-12*bulk,5],[-10*bulk,-18],[10*bulk,-18],[12*bulk,5]],color);oval(0,-28,8*bulk,9,head);line([[-9*bulk,-13],[-16*bulk,-1]],color,5);line([[9*bulk,-13],[15*bulk,-1]],color,5);rect(-9*bulk,-1,18*bulk,3,'#705c42');}
+ function humanoid(color,head=skin,bulk=1){
+  rect(-9*bulk,2,7*bulk,13,'#39423e');rect(2*bulk,2,7*bulk,13,'#39423e');
+  fillPoly([[-9*bulk,7],[-2*bulk,7],[-2*bulk,15],[-10*bulk,15]],'#17201d',.24);fillPoly([[2*bulk,7],[9*bulk,7],[10*bulk,15],[3*bulk,15]],'#dbe3d0',.08);
+  poly([[-12*bulk,5],[-10*bulk,-18],[10*bulk,-18],[12*bulk,5]],color);
+  fillPoly([[-12*bulk,5],[-10*bulk,-18],[0,-18],[0,5]],'#14211c',.18);fillPoly([[0,-17],[8*bulk,-17],[10*bulk,1],[0,1]],'#fff2c7',.09);
+  oval(0,-28,8*bulk,9,head);fillOval(-2.5*bulk,-31,3*bulk,4,'#fff3dc',.22);fillOval(3*bulk,-25,3*bulk,3,'#7c4f43',.08);
+  line([[-9*bulk,-13],[-16*bulk,-1]],color,5);line([[9*bulk,-13],[15*bulk,-1]],color,5);
+  line([[-8*bulk,-12],[-14*bulk,-2]],'#f6e7c7',1);rect(-9*bulk,-1,18*bulk,3,'#705c42');line([[-7*bulk,1],[7*bulk,1]],'#b59563',1);
+ }
  function skull(x=0,y=-28,r=8){oval(x,y,r,r,bone);rect(x-r*.6,y+4,r*1.2,6,bone);oval(x-3,y,2,2,ink);oval(x+3,y,2,2,ink);line([[x-3,y+7],[x+3,y+7]],ink,1);}
  function wolf(c='#8c9998',large=false){poly([[-24,0],[-20,-15],[-2,-19],[17,-12],[20,3]],c);poly([[-20,-11],[-35,-20],[-30,-5],[-21,1]],c);for(const x of [-17,-7,10,18])line([[x,0],[x-2,13]],c,5);poly([[9,-18],[12,-30],[19,-24],[23,-31],[27,-17],[35,-12],[31,-6],[17,-7]],c);eye(24,-18);poly([[28,-9],[31,-8],[29,-4]],bone);if(large){poly([[-22,-12],[-20,-28],[-10,-21],[-5,-29],[1,-17]],'#4e6246');line([[-11,-24],[-15,-35]],'#a0ae76',3);}}
  function crocodile(c='#71886a'){poly([[-18,2],[-38,-3],[-48,4],[-22,10]],c);oval(-2,0,25,13,c);poly([[12,-10],[34,-10],[45,-4],[44,5],[16,7]],c);for(const x of [-15,7]){poly([[x,3],[x-9,12],[x+3,12]],c);poly([[x,-5],[x-7,-16],[x+5,-14]],c);}for(let x=-19;x<13;x+=8)poly([[x,-10],[x+4,-18],[x+8,-10]],'#455b47');line([[20,1],[43,1]],ink);eye(25,-9);for(let x=24;x<43;x+=6)poly([[x,1],[x+3,5],[x+4,1]],bone);}
  function dragon(c='#765080'){poly([[-9,-12],[-26,-45],[-53,-30],[-39,-8],[-25,-16]],c);poly([[10,-13],[31,-44],[55,-22],[39,-7],[25,-15]],c);line([[-10,-12],[-26,-43],[-39,-9]],'#c39783');line([[10,-13],[31,-42],[39,-8]],'#c39783');oval(0,-7,15,22,c);poly([[-7,8],[-25,21],[-37,12],[-25,26],[1,19]],c);poly([[-5,-31],[0,-48],[14,-45],[26,-34],[18,-27],[1,-26]],c);poly([[3,-43],[-3,-56],[10,-46]],bone);poly([[12,-43],[16,-55],[20,-39]],bone);eye(15,-37);line([[-9,7],[-17,21]],c,7);line([[8,9],[18,22]],c,7);line([[-5,-12],[5,-12]],'#d1b18e',3);line([[-6,-4],[6,-4]],'#d1b18e',3);}
- function human(role){const cloth=role==='mage'?'#637ca5':role==='ranger'?'#6e9468':role==='archer'?'#5d865f':role==='worker'?'#af9063':'#708c9c';humanoid(cloth);if(role==='mage'){poly([[-13,-34],[0,-56],[13,-34]],'#677da7');poly([[-13,6],[-9,-16],[9,-16],[15,6]],'#536791');line([[17,-35],[17,14]],'#b19365',3);oval(17,-38,5,6,'#8cd2e1');rect(-3,-14,6,6,gold);}else if(role==='ranger'||role==='archer'){poly([[-10,-26],[-7,-39],[0,-44],[9,-37],[11,-26],[6,-32],[-5,-32]],role==='ranger'?'#557a52':'#466d4d');poly([[-11,-16],[-18,9],[-4,6]],role==='ranger'?'#587653':'#43644b');bow(14,-7);line([[-15,-27],[-19,4]],'#9c7953',5);line([[-19,-29],[-14,-26]],bone,2);if(role==='ranger'){oval(-10,-7,5,7,'#7aa99a');line([[-10,-14],[-10,-19]],'#d6c98a',2);poly([[-3,-18],[0,-24],[3,-18],[0,-14]],'#d8c47a');line([[6,-12],[10,-6]],'#a8d4b5',2);glint(10,-5,'#d8f2df',1.2);}}else if(role==='worker'){poly([[-10,-33],[-7,-40],[6,-40],[11,-33]],'#ceab64');rect(-6,-14,12,16,'#665343');line([[17,-28],[10,14]],'#ae8c60',3);line([[9,-28],[24,-24]],steel,4);rect(-15,-3,9,10,'#af8558');}else{poly([[-9,-30],[-7,-40],[6,-40],[10,-29]],steel);line([[-7,-28],[6,-28]],ink,2);rect(-7,-17,14,14,steel);oval(-11,-17,5,4,steel);oval(11,-17,5,4,steel);shield(-16,-1,role==='paladin'?'#497694':'#6a8178');sword(15,-6);if(role==='paladin'){line([[0,-16],[0,-5]],gold,3);line([[-4,-12],[4,-12]],gold,2);poly([[8,-16],[17,8],[8,5]],'#916854');}}}
+ function human(role){
+  const cloth=role==='mage'?'#637ca5':role==='ranger'?'#6e9468':role==='archer'?'#5d865f':role==='worker'?'#af9063':'#708c9c';humanoid(cloth);
+  if(role==='mage'){
+   poly([[-13,-34],[0,-56],[13,-34]],'#677da7');fillPoly([[-13,-34],[0,-56],[0,-34]],'#263b62',.24);poly([[-13,6],[-9,-16],[9,-16],[15,6]],'#536791');line([[-9,-11],[10,1]],'#89a6ca',1.4);line([[17,-35],[17,14]],'#b19365',3);oval(17,-38,5,6,'#8cd2e1');fillOval(15.5,-40,2,2,'#eaffff',.75);rect(-3,-14,6,6,gold);
+  }else if(role==='ranger'||role==='archer'){
+   const hood=role==='ranger'?'#557a52':'#466d4d',cloak=role==='ranger'?'#587653':'#43644b';
+   poly([[-10,-26],[-7,-39],[0,-44],[9,-37],[11,-26],[6,-32],[-5,-32]],hood);fillPoly([[-10,-26],[-7,-39],[0,-44],[0,-27]],'#1c3328',.22);
+   poly([[-11,-16],[-18,9],[-4,6]],cloak);fillPoly([[-11,-15],[-18,8],[-11,6]],'#21392c',.25);line([[-12,-12],[-6,5]],'#90aa78',1);
+   bow(14,-7);line([[-15,-27],[-19,4]],'#9c7953',5);line([[-19,-29],[-14,-26]],bone,2);for(const y of [-28,-23,-18])line([[-20,y],[-13,y-5]],'#e6d7ae',1);
+   if(role==='ranger'){oval(-10,-7,5,7,'#7aa99a');line([[-10,-14],[-10,-19]],'#d6c98a',2);poly([[-3,-18],[0,-24],[3,-18],[0,-14]],'#d8c47a');line([[6,-12],[10,-6]],'#a8d4b5',2);glint(10,-5,'#d8f2df',1.2);fillOval(-10,-7,2.5,4,'#b7ddd1',.2);}
+  }else if(role==='worker'){
+   poly([[-10,-33],[-7,-40],[6,-40],[11,-33]],'#ceab64');rect(-6,-14,12,16,'#665343');line([[17,-28],[10,14]],'#ae8c60',3);line([[9,-28],[24,-24]],steel,4);rect(-15,-3,9,10,'#af8558');
+  }else{
+   poly([[-9,-30],[-7,-40],[6,-40],[10,-29]],steel);fillPoly([[-9,-30],[-7,-40],[0,-40],[0,-29]],'#4e6268',.25);line([[-7,-28],[6,-28]],ink,2);
+   rect(-7,-17,14,14,steel);fillPoly([[-7,-17],[0,-17],[0,-3],[-7,-3]],'#53676d',.22);line([[-5,-13],[5,-13]],'#d8e1dc',1);
+   oval(-11,-17,5,4,steel);oval(11,-17,5,4,steel);shield(-16,-1,role==='paladin'?'#497694':'#6a8178');sword(15,-6);
+   if(role==='paladin'){line([[0,-16],[0,-5]],gold,3);line([[-4,-12],[4,-12]],gold,2);poly([[8,-16],[17,8],[8,5]],'#916854');}
+   else{poly([[-3,-41],[0,-47],[3,-41]],'#b99c68');line([[-4,-8],[5,-1]],'#a98a61',2);line([[5,-8],[-4,-1]],'#a98a61',2);}
+  }
+ }
  function hero(role){
   const cape=role==='paladin'?'#785848':role==='mage'?'#394f78':'#355643';
   poly([[-10,-21],[-18,11],[-7,8],[0,13],[12,8],[16,-18]],cape);human(role);
