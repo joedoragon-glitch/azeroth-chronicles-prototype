@@ -1,15 +1,47 @@
 'use strict';
 const assert=require('node:assert/strict'),Campaign=require('../src/prototype/engine');
-const c=new Campaign();c.zone().enemies=[];c.s.party=[];Object.assign(c.hero,{x:600,y:900});const h=c.hero;
-const hp=h.maxHp,mp=h.maxMp;
-h.hp=hp*.51;h.mp=mp*.36;c.tick(.1);assert.equal(h.potions.health,1,'health potion waits above 50%');assert.equal(h.potions.mana,1);
-h.hp=hp*.5;h.mp=mp*.2;c.tick(.1);assert.equal(h.potions.health,0,'health has priority when both are low');assert.equal(h.potions.mana,1,'shared cooldown blocks mana use');assert(h.potionCd>9);
-assert.equal(h.hp,hp*.5,'auto potion starts recovery without an instant heal');assert.equal(h.potionEffect.remaining,60);
-for(let i=0;i<25;i++)c.tick(.1);assert(Math.abs(h.hp-(hp*.5+30))<.001,'half the health arrives after 2.5 seconds');
-const restored=Campaign.restore(c.snapshot());restored.zone().enemies=[];restored.s.party=[];Object.assign(restored.hero,{x:600,y:900});restored.hero.hp=restored.hero.maxHp;restored.hero.mp=restored.hero.maxMp*.2;restored.tick(.1);assert.equal(restored.hero.potions.mana,1,'cooldown survives save/load');
-assert(!restored.hero.potionEffect,'healing ends when full');
-restored.hero.potionCd=.05;restored.tick(.1);assert.equal(restored.hero.potions.mana,0,'mana automatically uses when cooldown ends');assert(restored.hero.mp>mp*.2);
-const manual=new Campaign();manual.zone().enemies=[];manual.s.party=[];manual.hero.hp=manual.hero.maxHp*.65;assert(manual.potion('health'),'manual use works above automatic threshold');assert.equal(manual.hero.potions.health,0);assert(!manual.potion('mana'),'both potions share the cooldown');
-assert.equal(manual.hero.hp,manual.hero.maxHp*.65);manual.tick(.1);assert(manual.hero.hp>manual.hero.maxHp*.65);const half=manual.hero.hp;const resumed=Campaign.restore(manual.snapshot());assert(resumed.hero.potionEffect);resumed.zone().enemies=[];resumed.s.party=[];Object.assign(resumed.hero,{x:600,y:900});for(let i=0;i<50;i++)resumed.tick(.1);assert(resumed.hero.hp>half);assert(resumed.hero.hp<=resumed.hero.maxHp);assert(!resumed.hero.potionEffect);
-const noHealth=new Campaign();noHealth.zone().enemies=[];noHealth.s.party=[];Object.assign(noHealth.hero,{x:600,y:900});noHealth.hero.potions.health=0;noHealth.hero.hp=noHealth.hero.maxHp*.2;noHealth.hero.mp=noHealth.hero.maxMp*.2;noHealth.tick(.1);assert.equal(noHealth.hero.potions.mana,0,'missing health stock does not block mana');
-console.log('PASS 50% automatic health potions, 35% mana potions, health priority, shared saved cooldown and manual fallback');
+
+const combat=()=>{
+ const c=new Campaign('normal','paladin',()=>.9),e=c.zone().enemies.find(e=>e.type==='mob');
+ c.s.mercyTime=0;Object.assign(e,{x:c.hero.x+90,y:c.hero.y,home:{x:c.hero.x+90,y:c.hero.y},aggro:true,damage:0,baseDamage:0});
+ c.zone().enemies=[e];c.updateEnemies=()=>{};return c;
+};
+
+{
+ const c=combat(),ranger=c.s.party.find(u=>u.type==='archer'),soldier=c.s.party.find(u=>u.type==='soldier'),hp=c.hero.maxHp;
+ c.hero.hp=hp*.51;soldier.hp=soldier.maxHp*.8;c.tick(.1);assert.equal(ranger.healCd,0,'Ranger waits above the 50% combat trigger');
+ c.hero.hp=hp*.5;c.tick(.1);assert(ranger.healCd>9,'Ranger Heal receives its own ten-second cooldown');assert(c.hero.supportEffects.some(e=>e.type==='health'));assert(!soldier.supportEffects.length,'Heal is single-target and prioritizes the hero');
+ assert.equal(c.hero.hp,hp*.5,'Heal starts recovery over time rather than instantly');
+ for(let i=0;i<25;i++)c.tick(.1);assert(Math.abs(c.hero.hp-(hp*.5+30))<.01,'Rank 1 Heal restores half of its 60 HP after 2.5 seconds');
+ assert.equal(ranger.manaCd,0,'Heal does not place Mana Recovery on cooldown');
+ c.hero.mp=c.hero.maxMp*.35;c.tick(.1);assert(ranger.manaCd>9,'same Ranger can use independent Mana Recovery');assert(c.hero.supportEffects.some(e=>e.type==='mana'));
+}
+{
+ const c=combat(),first=c.s.party.find(u=>u.type==='archer'),second=c.unit('archer',c.hero.x+40,c.hero.y+40),soldier=c.s.party.find(u=>u.type==='soldier');c.s.party.push(second);
+ c.hero.hp=c.hero.maxHp*.5;soldier.hp=soldier.maxHp*.4;c.tick(.1);
+ assert(first.healCd>9&&second.healCd>9,'two Rangers can each spend their own Heal cooldown');
+ assert(c.hero.supportEffects.some(e=>e.type==='health'),'hero receives first Heal');
+ assert(soldier.supportEffects.some(e=>e.type==='health'),'second Ranger can heal another low ally in the same fight');
+}
+{
+ const c=new Campaign(),ranger=c.s.party.find(u=>u.type==='archer'),soldier=c.s.party.find(u=>u.type==='soldier');c.zone().enemies=[];c.updateEnemies=()=>{};
+ c.hero.hp=c.hero.maxHp*.9;soldier.hp=soldier.maxHp*.9;c.hero.mp=c.hero.maxMp*.8;c.tick(.1);
+ assert(ranger.healCd>9,'out of combat Ranger tops off health even above the combat threshold');
+ assert(c.hero.supportEffects.some(e=>e.type==='health'),'hero remains first healing priority out of combat');
+ assert(ranger.manaCd>9&&c.hero.supportEffects.some(e=>e.type==='mana'),'out of combat Ranger also tops off hero mana');
+ for(let i=0;i<101;i++)c.tick(.1);
+ assert(soldier.supportEffects.some(e=>e.type==='health')||soldier.hp===soldier.maxHp,'after cooldown the Ranger proceeds to wounded companions');
+}
+{
+ const c=new Campaign();c.hero.gold=500;c.s.rescued.archive=true;
+ assert.equal(c.rangerSupportAmount('health'),60);assert.equal(c.rangerSupportAmount('mana'),40);
+ assert(c.trainRangerSupport('health','archive'));assert(c.trainRangerSupport('mana','archive'));
+ assert.equal(c.rangerSupportAmount('health'),150);assert.equal(c.rangerSupportAmount('mana'),100);
+ assert(!c.trainRangerSupport('health','archive'),'Neri training is a one-time permanent upgrade');
+}
+{
+ const c=combat(),soldier=c.s.party.find(u=>u.type==='soldier');soldier.hp=soldier.maxHp*.5;c.updateParty(.1);
+ assert(soldier.immune>2.39&&soldier.survivalCd>13.8,'Soldier copies Paladin defense: 2.5s immunity on a 14s personal cooldown');
+ const hp=soldier.hp;assert(!c.hitParty(soldier,999));assert.equal(soldier.hp,hp,'Soldier Guard prevents incoming damage while active');
+}
+console.log('PASS Ranger single-target sustain, per-Ranger cooldown stacking, Neri upgrades and Soldier Guard survival');
