@@ -713,6 +713,6 @@ class Campaign{
   if(old.squad){for(const [region,nodeId]of [['vale','wood'],['highlands','ore'],['crown','crystal']]){c.s.zone=region;const zone=c.zone(),savedNode=old.squad.nodes?.find(n=>n.id===nodeId);zone.nodes[0].legacyCapacity=Math.min(900,Math.max(0,savedNode?.amount||0));zone.nodes[0].amount=zone.nodes[0].legacyCapacity;}c.s.zone='vale';}const origin=legacyRegion(old.activeRegion,p.wx);c.normalizeManaProgression(true);c.enter(origin);c.s.legacyInventory=clone(old.inventory||[]);c.autoEquipBestWeapon();c.s.legacyQuests=clone(old.quest||{});c.refreshNPCs();c.say('Legacy progression preserved. New regions and quests await.');Campaign.validate(c.snapshot());return c;
  }
 }
-Campaign.rules=R;Campaign.data=D;Campaign.classes=classes;Campaign.legacyWeapons=legacyWeapons;Campaign.dungeonIds=dungeonIds;
+Campaign.rules=R;Campaign.data=D;Campaign.classes=classes;Campaign.legacyWeapons=legacyWeapons;Campaign.dungeonIds=dungeonIds;Campaign.mercyStartRadius=mercyStartRadius;
 if(typeof module!=='undefined')module.exports=Campaign;else root.Campaign=Campaign;
 })(typeof window!=='undefined'?window:globalThis);
