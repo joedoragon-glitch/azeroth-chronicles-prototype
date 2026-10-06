@@ -218,7 +218,7 @@ class Campaign{
    const nearRoad=(p,margin=36)=>z.roads?.some(path=>path.some((b,j)=>j&&this.distanceToSegment(p,path[j-1],b)<margin));
    const add=(x,y,structure,scope='wild',allowRoad=false)=>{
     let p={x,y};if(this.blocked(x,y,z.id,8,true)){try{p=this.safe(x,y,z.id);}catch(_){return false;}}
-    if(!allowRoad&&nearRoad(p,scope==='civilian'?24:38))return false;
+    if(!allowRoad&&nearRoad(p,45))return false;
     if(z.npcs.some(n=>dist(n,p)<45)||z.nodes.some(n=>dist(n,p)<45))return false;
     z.props.push({id:'world-life-'+scope+'-'+serial++,...p,r:0,decorative:true,structure});return true;
    };
