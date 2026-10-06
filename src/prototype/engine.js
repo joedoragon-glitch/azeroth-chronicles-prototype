@@ -78,10 +78,25 @@ class Campaign{
    const x=id%n,y=Math.floor(id/n),from=point(id);for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const xx=x+dx,yy=y+dy,j=yy*n+xx;if(xx<0||yy<0||xx>=n||yy>=n||parents.has(j)||!free(j)||!this.clearSegment(from,point(j),15,terrainOnly))continue;parents.set(j,id);queue.push(j);}}
   return [];
  }
- roadNetwork(z){if(z.roadVersion===4||dungeonIds.includes(z.id)||this.supplyRoom(z.id))return;const i=this.regionIndex(z.id),origin={x:D.towns[i][0],y:D.towns[i][1]},field=this.fieldCenter(i),oldZone=this.s.zone;this.s.zone=z.id;
-  const destinations=[D.minors[i],D.ports[i],D.entrances[i],[field.x,field.y]];const props=z.props;z.props=[];try{if(roadPlans.has(z.id))z.roads=clone(roadPlans.get(z.id));else{z.roads=destinations.filter(([x,y])=>dist(origin,{x,y})>1).map(([x,y])=>this.route(origin,{x,y},{road:true,terrainOnly:true})).filter(p=>p.length>1);roadPlans.set(z.id,clone(z.roads));}}finally{z.props=props;this.s.zone=oldZone;}
+ settlementLayout(z){
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||z.settlementLayoutVersion===2)return;
+  const i=this.regionIndex(z.id),oldZone=this.s.zone;this.s.zone=z.id;
+  try{
+   const major={x:D.towns[i][0],y:D.towns[i][1]},minor={x:D.minors[i][0],y:D.minors[i][1]},keep=p=>!String(p.id||'').startsWith('structure-')&&!String(p.id||'').startsWith('settlement-')&&!(String(p.id||'').startsWith('forest-')&&(dist(p,major)<390||dist(p,minor)<330));
+   z.props=z.props.filter(keep);
+   const terrainSafe=(x,y,r)=>{if(!this.blocked(x,y,z.id,r,true))return {x,y};for(let d=30;d<=180;d+=30)for(let n=0;n<16;n++){const a=n*Math.PI/8,p={x:x+Math.cos(a)*d,y:y+Math.sin(a)*d};if(!this.blocked(p.x,p.y,z.id,r,true))return p;}return null;};
+   const add=(center,layout,prefix)=>{layout.forEach(([dx,dy,structure],j)=>{const p=terrainSafe(center.x+dx,center.y+dy,34);if(!p)return;z.props.push({id:'settlement-'+prefix+'-'+j,...p,r:32,structure,roadBlocker:true});});};
+   add(major,R.settlementLayouts.major,'major');add(minor,R.settlementLayouts.minor,'minor');
+   const by=id=>z.npcs.find(n=>n.id===id),place=(id,dx,dy)=>{const n=by(id);if(n)Object.assign(n,terrainSafe(major.x+dx,major.y+dy,8)||{x:major.x+dx,y:major.y+dy});};
+   place('supplier',115,-85);place('recruiter',-125,90);place('board',210,55);place('rest',0,0);place('return',150,175);
+   const minorRest=by('minor');if(minorRest)Object.assign(minorRest,terrainSafe(minor.x,minor.y,8)||minor);
+   z.boardPositionVersion=2;if(z.id==='vale')z.supplierPositionVersion=2;z.settlementLayoutVersion=2;
+  }finally{this.s.zone=oldZone;}
+ }
+ roadNetwork(z){if(dungeonIds.includes(z.id)||this.supplyRoom(z.id))return;this.settlementLayout(z);if(z.roadVersion===5)return;const i=this.regionIndex(z.id),origin={x:D.towns[i][0],y:D.towns[i][1]},field=this.fieldCenter(i),oldZone=this.s.zone,key=z.id+':v5';this.s.zone=z.id;
+  const destinations=[D.minors[i],D.ports[i],D.entrances[i],[field.x,field.y]],props=z.props,blockers=z.props.filter(p=>p.roadBlocker);z.props=blockers;try{if(roadPlans.has(key))z.roads=clone(roadPlans.get(key));else{z.roads=destinations.filter(([x,y])=>dist(origin,{x,y})>1).map(([x,y])=>this.route(origin,{x,y},{road:true})).filter(p=>p.length>1);roadPlans.set(key,clone(z.roads));}}finally{z.props=props;this.s.zone=oldZone;}
   const near=(p,a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,t=clamp(((p.x-a.x)*dx+(p.y-a.y)*dy)/(dx*dx+dy*dy||1),0,1);return Math.hypot(p.x-a.x-t*dx,p.y-a.y-t*dy);};
-  z.props=z.props.filter(p=>p.structure||!z.roads.some(path=>path.some((b,j)=>j&&near(p,path[j-1],b)<p.r+60)));z.roadVersion=4;
+  z.props=z.props.filter(p=>p.roadBlocker||p.structure||!z.roads.some(path=>path.some((b,j)=>j&&near(p,path[j-1],b)<(p.r||0)+60)));z.roadVersion=5;
  }
  move(entity,target,speed,dt,stop=0){const d=dist(entity,target);if(d<=stop)return true;const step=Math.min(d-stop,speed*dt),nx=entity.x+(target.x-entity.x)/d*step,ny=entity.y+(target.y-entity.y)/d*step;
   if(this.clearSegment(entity,{x:nx,y:ny})){entity.x=nx;entity.y=ny;return true;}let moved=false;if(this.clearSegment(entity,{x:nx,y:entity.y})){entity.x=nx;moved=true;}if(this.clearSegment(entity,{x:entity.x,y:ny})){entity.y=ny;moved=true;}return moved;
