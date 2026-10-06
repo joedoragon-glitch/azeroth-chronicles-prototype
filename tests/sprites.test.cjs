@@ -4,10 +4,11 @@ const fs=require('fs'),path=require('path'),assert=require('node:assert/strict')
 const diskManifest=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/sprites/manifest.json'),'utf8')),paladin=diskManifest.sprites['hero:paladin'];
 assert(paladin,'approved Paladin canary is registered');
 assert.equal(paladin.src,'./assets/sprites/paladin.png');
-assert.equal(paladin.displayWidth,100);
-assert.equal(paladin.displayHeight,112);
+assert.equal(paladin.displayWidth,82);
+assert.equal(paladin.displayHeight,92);
 assert.equal(paladin.anchorX,.52);
 assert.equal(paladin.anchorY,.88);
+assert.equal(paladin.labelHeight,82);
 assert(fs.existsSync(path.join(__dirname,'..',paladin.src.replace(/^\.\//,''))),'Paladin sprite file exists');
 
 assert.deepEqual(Sprites.candidateKeys({renderKind:'hero',class:'paladin'}),['hero:paladin']);
