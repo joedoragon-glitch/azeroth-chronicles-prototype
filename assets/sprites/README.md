@@ -16,6 +16,6 @@ Recommended fields:
 - `labelHeight`: vertical clearance used for health plates and labels.
 - `overlayScale`: optional scale for existing TRUE/ringleader/ranged-aim overlays.
 
-The hosted game loads these files normally. The portable release builder embeds every manifest-referenced image as a data URI automatically, so the single-file offline build remains portable.
+The hosted game loads these files normally. The service worker caches the sprite manifest and its referenced images so the installed/PWA game remains available offline after its first connected load.
 
 Do not bake health bars, attack telegraphs, TRUE/ringleader state effects, target rings, or other gameplay overlays into the base sprite art. Those remain procedural.
