@@ -185,6 +185,44 @@ const nightEnemyCombat={
  wraith:{hp:2.4,damage:1.8,skillCooldown:4.8,warning:.85,radius:210,coefficient:1.15,slow:2.5,heal:.08,manaDrain:.12},
  stalker:{hp:2.6,damage:2.0,skillCooldown:4.2,warning:.7,radius:78,coefficient:1.6,pounceSpeed:560,slow:3}
 };
+const roomCaptains={
+ 'supply-vale':{
+  mentor:'thorn',name:'Fangbound Goblin Captain',visualScale:1.16,specialRange:420,specialCooldown:4.2,
+  phase:{threshold:.42,name:"Scavenger's Nerve",kind:'scramble'},
+  attacks:[
+   {name:'Hookfang Rush',kind:'line',warning:.9,recovery:1.15,coefficient:1.15,charge:true},
+   {name:'Briar Pot',kind:'circle',warning:1.15,recovery:1.15,coefficient:.75,persistent:true,slow:true,radius:82},
+   {name:'Pocket Sand',kind:'cone',warning:.7,recovery:.95,coefficient:.55,slow:true,radius:135}
+  ]
+ },
+ 'supply-march':{
+  mentor:'mire',name:'Mirejaw Mireling Captain',visualScale:1.18,specialRange:390,specialCooldown:4.4,
+  phase:{threshold:.45,name:'Sloughskin',kind:'molt'},
+  attacks:[
+   {name:'Bog Skitter',kind:'line',warning:.9,recovery:1.2,coefficient:1.2,charge:true},
+   {name:'Spatter Fan',kind:'cone',warning:1.0,recovery:1.05,coefficient:.8,slow:true,radius:150},
+   {name:'Silt Slick',kind:'circle',warning:1.2,recovery:1.1,coefficient:.65,persistent:true,slow:true,radius:88}
+  ]
+ },
+ 'supply-highlands':{
+  mentor:'ridge',name:'Ridgebound Wolf Captain',visualScale:1.2,specialRange:430,specialCooldown:4.1,
+  phase:{threshold:.44,name:'Lone Howl',kind:'howl'},
+  attacks:[
+   {name:'Shoulder Rush',kind:'line',warning:.95,recovery:1.25,coefficient:1.25,charge:true},
+   {name:'Scree Kick',kind:'circle',warning:1.15,recovery:1.05,coefficient:1.15,radius:86},
+   {name:'Ridge Feint',kind:'cone',warning:.8,recovery:1.0,coefficient:.85,radius:145}
+  ]
+ },
+ 'supply-crown':{
+  mentor:'darklord',name:'Crown-marked Ash Beast Captain',visualScale:1.19,specialRange:440,specialCooldown:4.0,
+  phase:{threshold:.45,name:'Ash Carapace',kind:'carapace'},
+  attacks:[
+   {name:'Cinder Mark',kind:'circle',warning:1.15,recovery:1.0,coefficient:1.0,count:2,sequential:true,radius:78},
+   {name:'Blackline Rush',kind:'line',warning:1.0,recovery:1.2,coefficient:1.2,charge:true},
+   {name:'Ember Veil',kind:'cone',warning:.85,recovery:1.0,coefficient:.75,slow:true,radius:155}
+  ]
+ }
+};
 const manaBalance={
  perLevel:5,
  regen:{combat:1,outOfCombat:2.5,talentCombat:.25,talentOutOfCombat:.5},
@@ -198,6 +236,6 @@ const bossCadence={specialRecoveryMultiplier:.25,basicCooldown:.75,skillsPerBasi
 const rangedEnemyCombat={projectileMultiplier:1.7,aimTime:.35,cooldown:1.15,retreatFraction:.5,retreatSpeed:165,ringleaderRetreatMultiplier:1.2,ringleaderHybridMeleeRange:100,guardianScreenRange:220};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
+const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
