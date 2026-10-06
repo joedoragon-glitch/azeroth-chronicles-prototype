@@ -473,8 +473,11 @@ function floor(ctx,p,x,y,region=0,room=false,dungeonId='',blocked=false){
  const tileX=Math.floor(x/80),tileY=Math.floor(y/80),seed=(Math.imul(tileX+19,73856093)^Math.imul(tileY+37,19349663))>>>0;
  const color=blocked?'#737c70':seed%7===0?colors[1]:seed%11===0?colors[2]:colors[0];
  ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x+60.8,p.y+21.6);ctx.lineTo(p.x,p.y+43.2);ctx.lineTo(p.x-60.8,p.y+21.6);ctx.closePath();ctx.fill();
- ctx.strokeStyle='#e7e3c614';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.x-60.8,p.y+21.6);ctx.lineTo(p.x,p.y);ctx.lineTo(p.x+60.8,p.y+21.6);ctx.stroke();
- ctx.strokeStyle='#0d1c1940';ctx.beginPath();ctx.moveTo(p.x-60.8,p.y+21.6);ctx.lineTo(p.x,p.y+43.2);ctx.lineTo(p.x+60.8,p.y+21.6);ctx.stroke();
+ // Painterly tile plane: a faint warm/cool face break gives the isometric ground volume without obvious grid noise.
+ ctx.save();ctx.globalAlpha=blocked?.055:.035;ctx.fillStyle=colors[3]||'#d8d2aa';ctx.beginPath();ctx.moveTo(p.x,p.y+1);ctx.lineTo(p.x+58,p.y+21.6);ctx.lineTo(p.x,p.y+25);ctx.lineTo(p.x-58,p.y+21.6);ctx.closePath();ctx.fill();ctx.restore();
+ ctx.strokeStyle='#f0ead01a';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.x-60.8,p.y+21.6);ctx.lineTo(p.x,p.y);ctx.lineTo(p.x+60.8,p.y+21.6);ctx.stroke();
+ ctx.strokeStyle='#08161145';ctx.beginPath();ctx.moveTo(p.x-60.8,p.y+21.6);ctx.lineTo(p.x,p.y+43.2);ctx.lineTo(p.x+60.8,p.y+21.6);ctx.stroke();
+ if(blocked&&seed%4===0){ctx.strokeStyle='#303a3566';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.x-14,p.y+18);ctx.lineTo(p.x-4,p.y+14);ctx.lineTo(p.x+5,p.y+19);ctx.lineTo(p.x+14,p.y+15);ctx.stroke();}
  if(!blocked)groundDetail(ctx,p,seed,region,room,dungeonId,colors);
 }
 // World-space surfaces avoid losing narrow barriers between coarse tile samples.
