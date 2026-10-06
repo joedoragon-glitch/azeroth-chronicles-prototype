@@ -2,7 +2,7 @@
 
 ## Direction
 
-The visual identity is **Warcraft shapes, Ragnarok heart**: original Azeroth Chronicles designs with chunky readable fantasy silhouettes, oversized equipment and strong monster identity, softened by friendly anime-influenced faces and the inviting warmth of classic Korean/Japanese online RPGs. It is painted 2D illustration, not pixel art, photorealism, grimdark realism or glossy mobile-game 3D.
+The visual identity is **Warcraft shapes, Ragnarok heart**: original Azeroth Chronicles designs with chunky readable fantasy silhouettes, oversized equipment and strong monster identity, softened by friendly anime-influenced faces and the inviting warmth of classic Korean/Japanese online RPGs. It is modern retro pixel art, not photorealism, grimdark realism or glossy mobile-game 3D. The target is detailed 16/32-bit-era RPG charm at approximately native gameplay resolution.
 
 The current procedural drawings are design blueprints. New artwork is a professional illustrated interpretation of the same design, not a reinvention.
 
@@ -15,17 +15,17 @@ Gameplay geometry is unchanged. Collision, AI, pathfinding, attack reach, world 
 ## Locked production specification
 
 - **View:** single three-quarter front view, body oriented slightly toward screen-right, with a mild elevated camera so the feet/ground contact are visible. Do not generate alternate facings in Phase 2.
-- **Master canvas:** 1024×1024 transparent master for characters, creatures, NPCs and ordinary props. Large buildings may use a wider transparent master if needed, but the displayed proportions are controlled by the manifest.
+- **Master canvas:** work close to the intended gameplay resolution. Heroes and specialists generally use about 96×112 px transparent canvases; ordinary creatures about 72–96 px; bosses about 140–180 px; buildings and entrances about 160–220 px as needed. Avoid giant illustration masters that are later crushed down.
 - **Background:** fully transparent. No scenery, horizon, floor patch, frame or text.
 - **Shadow:** no baked shadow. The game already draws a procedural ground shadow under entities.
 - **Effects:** no baked targeting rings, glows used only to denote TRUE/ringleader state, attack warnings, health bars or UI. Intrinsic material glow on a magical object is allowed if it is part of the object itself.
 - **Padding:** keep roughly 8–12% transparent safety margin around the silhouette, with extra headroom for antlers, hats, banners and raised weapons.
 - **Anchor:** ground/feet contact is approximately `(0.50, 0.88)`. Horizontal creatures may vary only when manifest tuning proves necessary.
 - **Readability:** silhouette and equipment must read at phone scale. Remove micro-detail before increasing display size.
-- **Export:** transparent WebP preferred; PNG allowed when edge quality/transparency is better.
+- **Export:** transparent lossless WebP preferred; PNG allowed when edge quality/transparency is better. Canvas smoothing stays disabled for sprite drawing.
 
-Initial logical display targets are starting points for the canary, not immutable art sizes:
-- hero: roughly 84×108 px
+Initial logical/native targets are starting points, not immutable art sizes:
+- hero: roughly 96×112 px
 - companion: roughly 80×100 px
 - small ordinary creature: roughly 64–76 px high
 - humanoid ordinary enemy: roughly 72–88 px high
@@ -43,7 +43,7 @@ Named captain minibosses are not part of the first vertical slice. Until captain
 
 ## Phase 2 canary
 
-The first real image is the **Paladin only**. It proves the full path: transparent master → repository asset → manifest → hosted Pages deployment → service-worker cache → desktop and phone rendering → label/shadow/anchor readability. Only after that canary looks correct do we generate the rest of the vertical slice.
+The first real image is the **Paladin only**. It proves the full path: native-resolution transparent pixel sprite → repository asset → manifest → hosted Pages deployment → service-worker cache → crisp desktop and phone rendering → label/shadow/anchor readability. Only after that canary looks correct do we generate the rest of the vertical slice.
 
 ## Phase 2 vertical slice
 
