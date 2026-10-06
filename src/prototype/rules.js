@@ -29,6 +29,23 @@ const expeditions=[
  {resource:'shrine',supplies:[],name:'Shrine salvage'},
  {resource:'foundry',supplies:['foundry','shelf','siege'],name:'Foundry crystals'}
 ];
+// Field-boss compounds sit away from the main town approach instead of sharing the central traffic band.
+const fieldBossCenters=[
+ [720,1580],
+ [2050,1180],
+ [2120,620],
+ [2050,1520],
+ [2420,2450]
+];
+// Remaining ordinary patrol packs are distributed across the wider countryside.
+// Local-site patrols and mini-dungeon guards keep their authored positions.
+const occupationAnchors=[
+ [[520,1050],[430,1900],[900,2100],[1500,420],[1870,620],[2080,1080],[1680,2020],[2130,2050],[1510,920],[870,1420]],
+ [[620,420],[620,1900],[900,2320],[1780,420],[2140,760],[2280,1320],[2150,2200],[1510,700],[1940,1120],[880,1320]],
+ [[480,620],[520,1180],[610,2260],[980,2450],[1620,360],[2220,520],[2390,1120],[1810,1680],[2310,2240],[1630,2460]],
+ [[620,980],[650,1840],[930,2440],[1180,430],[1740,420],[2290,760],[2390,1580],[2070,2160],[1660,2460],[1020,1460]],
+ [[610,980],[690,2190],[1080,2630],[1690,430],[2210,650],[2580,1180],[1820,1710],[2490,1980],[1770,2640],[1040,1320]]
+];
 // Two quest supplies are stored inside a nearby building; the first stays outdoors.
 const supplyRooms=[
  {id:'supply-vale',region:'vale',site:'orchard',name:'Orchard watchtower cellar',objective:'Recover one orchard crate and two from the watchtower cellar'},
@@ -155,6 +172,6 @@ const bossCadence={specialRecoveryMultiplier:.25,basicCooldown:.75,skillsPerBasi
 const rangedEnemyCombat={projectileMultiplier:1.7,aimTime:.35,cooldown:1.15,retreatFraction:.5,retreatSpeed:165,ringleaderRetreatMultiplier:1.2,ringleaderHybridMeleeRange:100,guardianScreenRange:220};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
+const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,fieldBossCenters,occupationAnchors,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
