@@ -203,8 +203,7 @@ class Campaign{
    if(z.id==='march'){
     for(const [id,x,y,structure]of [
      ['mangrove-a',2180,535,'mangrove'],['mangrove-b',2415,520,'mangrove'],['mangrove-c',2470,790,'mangrove'],
-     ['reeds-a',2160,790,'reeds'],['reeds-b',2380,830,'cattails'],['drift',2085,780,'driftwood'],
-     ['post-a',2085,625,'dock-post'],['post-b',2085,725,'dock-post'],['post-c',2235,625,'dock-post'],['post-d',2235,725,'dock-post']
+     ['reeds-a',2160,790,'reeds'],['reeds-b',2380,830,'cattails'],['drift',2085,780,'driftwood']
     ])add(id,x,y,structure);
    }else if(z.id==='highlands'){
     for(const [id,x,y,structure]of [
