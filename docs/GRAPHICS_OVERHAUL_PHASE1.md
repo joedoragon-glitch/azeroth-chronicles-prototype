@@ -100,4 +100,4 @@ The purpose is to prove that the style works together in an actual gameplay scre
 
 The application attempts the illustrated sprite first. If the asset is absent, still loading or failed to decode, the existing procedural renderer draws the entity instead. This makes the overhaul incremental and keeps partially converted builds playable.
 
-The portable single-file release embeds manifest-referenced sprite assets automatically. The hosted/PWA build caches the sprite manifest and its referenced files for offline use.
+The hosted/PWA build is the only supported game target. Its service worker caches the sprite manifest and referenced files for offline use after the first connected load.
