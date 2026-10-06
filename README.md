@@ -1,4 +1,4 @@
-# Azeroth Chronicles — expanded prototype v0.8.58
+# Azeroth Chronicles — expanded prototype v0.8.59
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families use readable but adaptive warned mechanics. Every boss can summon pressure units, while TRUE forms use six-unit elite warbands. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
@@ -52,7 +52,7 @@ Choose **Menu → Game and settings → Save and game management → Export play
 
 ## Development
 
-Playtest deployment in v0.8.58 favors rapid iteration: pushes to `main` cancel superseded in-progress Pages workflows instead of queueing every obsolete build. The newest successful commit is the one allowed to finish deployment. Installed/live playtest clients also activate a newly published service worker immediately and reload once after saving when replacing an existing controller; first-time installs do not receive the extra reload.
+Playtest deployment in v0.8.59 favors rapid iteration: pushes to `main` cancel superseded in-progress Pages workflows instead of queueing every obsolete build. The newest successful commit is the one allowed to finish deployment. Installed/live playtest clients also activate a newly published service worker immediately and reload once after saving when replacing an existing controller; first-time installs do not receive the extra reload.
 
 
 `npm test` runs legacy regressions, expanded campaign and soundtrack checks, plus all 1,024 ending-state combinations. `npm run test:browser` requires Playwright and Chromium. Set `PLAYTEST_FILE=release/Azeroth_Chronicles_Playtest.html` to verify the portable release or `PLAYTEST_URL` to verify a hosted copy. `npm run release` builds the portable HTML and checksum.
