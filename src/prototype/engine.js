@@ -242,7 +242,8 @@ class Campaign{
    const w=h.water,d=h.dock,insideHarbor=p=>p.x>w.x1-70&&p.x<w.x2+70&&p.y>w.y1-70&&p.y<w.y2+70;
    z.props=z.props.filter(p=>!String(p.id||'').startsWith('harbor-')&&!insideHarbor(p));
    for(const e of z.enemies.filter(e=>e.hp>0&&e.type==='mob'&&dist(e,h.arrival)<280)){const fallback=this.safe(z.id==='march'?1900:650,z.id==='march'?980:2180,z.id);e.home={...fallback};if(!e.aggro)Object.assign(e,fallback);}
-   const add=(id,x,y,structure,r=0)=>z.props.push({id:'harbor-'+id,x,y,r,decorative:true,structure});
+   const roadDistance=p=>{let nearest=Infinity;for(const path of z.roads||[])for(let j=1;j<path.length;j++)nearest=Math.min(nearest,this.distanceToSegment(p,path[j-1],path[j]));return nearest;};
+   const add=(id,x,y,structure,r=0)=>{let p={x,y};if(roadDistance(p)<=70||this.blocked(p.x,p.y,z.id,8,true)){let found=null;for(const radius of [90,130,170,220]){for(let n=0;n<24;n++){const a=n*Math.PI/12,q={x:x+Math.cos(a)*radius,y:y+Math.sin(a)*radius};if(this.blocked(q.x,q.y,z.id,8,true)||roadDistance(q)<=70)continue;found=q;break;}if(found)break;}if(found)p=found;else return;}z.props.push({id:'harbor-'+id,...p,r,decorative:true,structure});};
    if(z.id==='march'){
     for(const [id,x,y,structure]of [
      ['mangrove-a',2320,500,'mangrove'],['mangrove-b',2470,560,'mangrove'],['mangrove-c',2490,820,'mangrove'],
