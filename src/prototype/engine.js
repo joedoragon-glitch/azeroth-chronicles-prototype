@@ -203,13 +203,13 @@ class Campaign{
    const add=(id,x,y,structure,r=0)=>z.props.push({id:'harbor-'+id,x,y,r,decorative:true,structure});
    if(z.id==='march'){
     for(const [id,x,y,structure]of [
-     ['mangrove-a',2180,535,'mangrove'],['mangrove-b',2415,520,'mangrove'],['mangrove-c',2470,790,'mangrove'],
-     ['reeds-a',2160,790,'reeds'],['reeds-b',2380,830,'cattails'],['drift',2085,780,'driftwood']
+     ['mangrove-a',2320,500,'mangrove'],['mangrove-b',2470,560,'mangrove'],['mangrove-c',2490,820,'mangrove'],
+     ['reeds-a',2460,700,'reeds'],['reeds-b',2370,860,'cattails'],['drift',2500,870,'driftwood']
     ])add(id,x,y,structure);
    }else if(z.id==='highlands'){
     for(const [id,x,y,structure]of [
-     ['pine-a',170,1770,'pine-sapling'],['pine-b',185,2110,'pine-sapling'],['rock-a',405,1790,'rock-cluster'],
-     ['rock-b',410,2110,'rock-cluster'],['heather',485,1990,'heather']
+     ['pine-a',120,1765,'pine-sapling'],['pine-b',130,2140,'pine-sapling'],['rock-a',125,1860,'rock-cluster'],
+     ['rock-b',115,2070,'rock-cluster'],['heather',210,2170,'heather']
     ])add(id,x,y,structure);
    }
    z.harborVersion=1;
