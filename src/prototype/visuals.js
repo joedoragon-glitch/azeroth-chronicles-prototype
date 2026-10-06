@@ -315,6 +315,8 @@ function draw(ctx,e,p,region=0,rescued=false){
  case 'reeds':for(const x of [-10,-6,-1,4,9])line([[x,10],[x+(x%2),-15-(variant+x)%7]],'#748c62',1.6);break;
  case 'cattails':for(const x of [-9,-3,4,10]){line([[x,10],[x,-16]],'#71875e',1.5);oval(x,-17,2.2,5,'#796245');}break;
  case 'driftwood':line([[-20,8],[19,-2]],'#776752',5);line([[-5,3],[-11,-6]],'#776752',2);line([[7,1],[14,-7]],'#776752',2);break;
+ case 'mangrove':rect(-4,-5,8,22,'#625442');for(const [x,y]of [[-13,-14],[-3,-21],[10,-15],[3,-8]])oval(x,y,12,8,'#4d735f');for(const side of [-1,1]){line([[side*2,9],[side*11,17]],'#6c5b45',2);line([[side*1,9],[side*6,20]],'#6c5b45',1.5);}for(const x of [-8,7])glint(x,-14,'#91b69a',1);break;
+ case 'dock-post':rect(-3,-25,6,38,'#6b543d');oval(0,-25,4,2,'#9b7954');line([[-2,-17],[2,-17]],'#b89669',1);break;
  case 'pine-sapling':rect(-2,-4,4,16,'#65533d');for(const [y,w]of [[1,12],[-7,10],[-15,7]])poly([[-w,y],[0,y-15],[w,y]],'#526c50');break;
  case 'alpine-scrub':for(const [x,y,r]of [[-7,3,7],[1,-1,8],[8,4,6]])oval(x,y,r,r*.55,'#778166');break;
  case 'heather':for(const x of [-8,-3,2,7]){line([[x,9],[x,-5]],'#778067',1);glint(x,-6,x%2?'#b79ab9':'#a99bc6',1.6);}break;
@@ -493,6 +495,19 @@ function terrain(ctx,screen,region=0){
  for(const x of [x1,x2]){line({x:x+(x===x1?-10:10),y:y1},{x:x+(x===x1?-10:10),y:y2},'#16231c99',4);line({x,y:y1},{x,y:y2},palette[2],2);}
  const t=(typeof performance!=='undefined'?performance.now():0)/1000;
  for(let y=y1+30;y<y2-20;y+=70){const inset=Math.min(22,(x2-x1)/4),wave=kind==='ravine'?0:Math.sin(t*1.35+y*.027)*5;line({x:x1+inset,y:y+wave},{x:x2-inset,y:y+12+wave},palette[2],kind==='ravine'?1:2);if(kind==='water')line({x:x1+inset+8,y:y+16-wave*.25},{x:x1+inset+24,y:y+19-wave*.25},'#c5ebe066',1);else if(kind==='lava')line({x:x1+inset+3,y:y+17+wave*.2},{x:x2-inset-5,y:y+22+wave*.2},'#ffc07877',1);}
+ // Authored arrival harbors make ferry travel physically continuous between regions.
+ const harbor=R.harbors?.[['vale','march','highlands','frontier','crown'][region]];
+ if(harbor){
+  const w=harbor.water,d=harbor.dock,waterBase=region===1?'#315f67':'#426e79',waterInner=region===1?'#3f7a7c':'#527f8c',shore=region===1?'#6e806b':'#7c8177';
+  rect(w.x1-10,w.x2+10,w.y1-10,w.y2+10,shore);rect(w.x1,w.x2,w.y1,w.y2,waterBase);rect(w.x1+10,w.x2-10,w.y1+10,w.y2-10,waterInner);
+  for(let y=w.y1+35;y<w.y2-20;y+=55){const wave=Math.sin(t*1.4+y*.025)*5;line({x:w.x1+24,y:y+wave},{x:w.x2-28,y:y+8+wave},region===1?'#9ed0c788':'#b6d4d188',1.4);}
+  // Dock deck is world-space so collision and artwork agree about where the hero can walk over water.
+  rect(d.x1,d.x2,d.y1,d.y2,'#6a5139');rect(d.x1+4,d.x2-4,d.y1+4,d.y2-4,region===1?'#a1855c':'#968265');
+  const horizontal=(d.x2-d.x1)>=(d.y2-d.y1),step=horizontal?24:22;
+  if(horizontal)for(let x=d.x1+10;x<d.x2-6;x+=step)line({x,y:d.y1+4},{x,y:d.y2-4},'#6f563d',1);
+  else for(let y=d.y1+10;y<d.y2-6;y+=step)line({x:d.x1+4,y},{x:d.x2-4,y},'#6f563d',1);
+  line({x:d.x1,y:d.y1},{x:d.x2,y:d.y1},'#d0b17a',2);line({x:d.x1,y:d.y2},{x:d.x2,y:d.y2},'#5a4534',2);
+ }
  // Other authored ponds and walls also use exact shapes, independent of props.
  for(const p of R.terrain[region]){
   if(p.r){const points=[],inner=[];for(let n=0;n<48;n++){const a=n*Math.PI/24;points.push({x:p.x+Math.cos(a)*p.r,y:p.y+Math.sin(a)*p.r});inner.push({x:p.x+Math.cos(a)*(p.r-8),y:p.y+Math.sin(a)*(p.r-8)});}polygon(points,'#9aab9866');polygon(inner,'#397f92');for(const dy of [-p.r*.25,p.r*.25])line({x:p.x-p.r*.35,y:p.y+dy},{x:p.x+p.r*.25,y:p.y+dy+8},'#a1c8bf99',1.5);}
