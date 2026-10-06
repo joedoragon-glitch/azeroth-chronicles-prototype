@@ -38,12 +38,14 @@ class Campaign{
  heroTalentDamageBonus(){return (this.hero.talents?.[0]||0)*8;}
  heroOtherHpBonus(){return Math.max(0,this.hero.maxHp-this.heroNaturalMaxHp()-this.heroTalentHpBonus());}
  heroOtherDamageBonus(){return Math.max(0,this.power()-classes[this.hero.class].power-this.heroTalentDamageBonus());}
+ heroEquipmentArmorBonus(){return Math.max(0,this.armor()-this.hero.armor);}
  expeditionSupportRank(id){return this.s.expeditionSkills?.[id]||0;}
  expeditionSupportFraction(id){return this.expeditionSupportRank(id)*.25;}
  companionInheritedHpBonus(){return Math.round(this.heroTalentHpBonus()*this.expeditionSupportFraction('sharedTraining')+this.heroOtherHpBonus()*this.expeditionSupportFraction('sharedStrength'));}
  companionInheritedDamageBonus(){return Math.round(this.heroTalentDamageBonus()*this.expeditionSupportFraction('sharedTraining')+this.heroOtherDamageBonus()*this.expeditionSupportFraction('sharedStrength'));}
+ companionInheritedArmorBonus(){return this.heroEquipmentArmorBonus()*this.expeditionSupportFraction('sharedStrength');}
  companionMaxHp(type,level=this.hero.level){const base={soldier:120,archer:105}[type];if(!base)throw Error('Unknown companion type');return base+12*Math.max(0,level-1)+this.companionInheritedHpBonus();}
- companionArmor(type,level=this.hero.level){const base={soldier:8,archer:5}[type];if(base===undefined)throw Error('Unknown companion type');return base+.5*Math.max(0,level-1);}
+ companionArmor(type){const base={soldier:8,archer:5}[type];if(base===undefined)throw Error('Unknown companion type');return base+this.companionInheritedArmorBonus();}
  unit(type,x,y){const base={soldier:[120,12,'⚔️'],archer:[105,15,'🏹']}[type];if(!base)throw Error('Unknown companion type');const maxHp=this.companionMaxHp(type);return {id:'ally-'+this.s.nextId++,type,x,y,hp:maxHp,maxHp,damage:base[1],icon:base[2],cd:0,order:null,carry:0,active:true};}
  syncCompanionLevelStats(){for(const u of this.s.party){if(!['soldier','archer'].includes(u.type))continue;const next=this.companionMaxHp(u.type),gain=next-u.maxHp;u.maxHp=next;if(u.hp>0&&gain!==0)u.hp=clamp(u.hp+gain,1,next);}}
  blocked(x,y,zone=this.s.zone,radius=15,terrainOnly=false){
