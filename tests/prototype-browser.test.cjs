@@ -1,7 +1,7 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const pw=require(process.env.PLAYWRIGHT_MODULE||'playwright'),root=path.resolve(__dirname,'..'),results=path.join(root,'test-results');fs.mkdirSync(results,{recursive:true});
-const executable=process.env.CHROMIUM_EXECUTABLE,smoke=process.env.BROWSER_SMOKE==='1',launch={headless:true};if(executable){launch.executablePath=executable;launch.args=['--no-sandbox','--single-process','--no-zygote','--disable-gpu'];}
+const executable=process.env.CHROMIUM_EXECUTABLE,smoke=process.env.BROWSER_SMOKE==='1',launch={headless:true};if(executable){launch.executablePath=executable;launch.args=['--no-sandbox','--disable-dev-shm-usage','--disable-gpu'];}
 let passed=0;async function check(name,fn){await fn();passed++;console.log('PASS '+name);}
 (async()=>{let server=null,baseURL=process.env.PLAYTEST_URL;
 if(!baseURL){
