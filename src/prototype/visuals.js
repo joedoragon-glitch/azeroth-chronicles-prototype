@@ -193,7 +193,65 @@ function draw(ctx,e,p,region=0,rescued=false){
  case 'chain':for(let y=-48;y<12;y+=9)oval(0,y,4,6,'#9ca59e');oval(0,13,12,7,'#6c7674');break;
  case 'ember':oval(0,5,27,12,'#4d4945');for(const x of [-13,0,13])poly([[x-5,8],[x,-9],[x+7,8]],'#b7784e');break;
  case 'armor':humanoid('#88999d',steel);rect(-25,7,50,9,'#6b756f');shield(-19,-1,'#626f79');break;
+ case 'grass':for(const x of [-7,0,7])line([[x,8],[x+(x?Math.sign(x)*3:1),-8-(variant%5)]],'#739266',1.5);break;
+ case 'wet-grass':for(const x of [-8,-3,3,8])line([[x,9],[x+(x%3),-10-(variant%6)]],'#688c70',1.6);break;
+ case 'bush':for(const [x,y,r]of [[-8,2,9],[0,-5,11],[9,2,8]])oval(x,y,r,r*.7,'#58784f');break;
+ case 'marsh-bush':for(const [x,y,r]of [[-8,3,8],[0,-4,10],[9,2,8]])oval(x,y,r,r*.65,'#5d7662');for(const x of [-5,5])glint(x,-4,'#b7c69d',1);break;
+ case 'wildflowers':for(const [x,c]of [[-8,'#d8b47a'],[-2,'#d6a4b1'],[5,'#ded9a6'],[10,'#b8c9d4']]){line([[x,9],[x,-3]],'#6f8b62',1);glint(x,-5,c,1.8);}break;
+ case 'sapling':rect(-2,-8,4,20,'#74583e');for(const [x,y]of [[-7,-15],[3,-20],[9,-11]])oval(x,y,9,7,'#52794f');break;
+ case 'stump':rect(-8,-5,16,15,'#76563c');oval(0,-6,9,4,'#b38b5d');line([[-4,-6],[3,-4]],'#75573e',1);break;
+ case 'fallen-log':line([[-22,8],[20,-5]],'#76563c',8);oval(21,-5,5,5,'#b79061');for(const x of [-9,3])line([[x,2],[x-5,-6]],'#5f4b38',2);break;
+ case 'reeds':for(const x of [-10,-6,-1,4,9])line([[x,10],[x+(x%2),-15-(variant+x)%7]],'#748c62',1.6);break;
+ case 'cattails':for(const x of [-9,-3,4,10]){line([[x,10],[x,-16]],'#71875e',1.5);oval(x,-17,2.2,5,'#796245');}break;
+ case 'driftwood':line([[-20,8],[19,-2]],'#776752',5);line([[-5,3],[-11,-6]],'#776752',2);line([[7,1],[14,-7]],'#776752',2);break;
+ case 'pine-sapling':rect(-2,-4,4,16,'#65533d');for(const [y,w]of [[1,12],[-7,10],[-15,7]])poly([[-w,y],[0,y-15],[w,y]],'#526c50');break;
+ case 'alpine-scrub':for(const [x,y,r]of [[-7,3,7],[1,-1,8],[8,4,6]])oval(x,y,r,r*.55,'#778166');break;
+ case 'heather':for(const x of [-8,-3,2,7]){line([[x,9],[x,-5]],'#778067',1);glint(x,-6,x%2?'#b79ab9':'#a99bc6',1.6);}break;
+ case 'rock-cluster':for(const [x,y,r,c]of [[-9,4,8,'#797d75'],[2,-2,10,'#90928a'],[11,5,7,'#666b66']])oval(x,y,r,r*.55,c);break;
+ case 'dead-tree':rect(-3,-14,6,28,'#5f4b40');line([[0,-8],[-14,-24]],'#5f4b40',4);line([[0,-5],[13,-21]],'#5f4b40',4);line([[-13,-24],[-18,-29]],'#5f4b40',2);break;
+ case 'charred-stump':rect(-8,-5,16,15,'#4a403a');oval(0,-6,9,4,'#6c5545');line([[-3,-7],[4,-4]],'#2e2c29',2);break;
+ case 'ash-patch':ctx.save();ctx.globalAlpha=.55;oval(0,6,18,7,'#55504d');for(const [x,y]of [[-8,5],[1,2],[9,7]])glint(x,y,'#8d8179',1);ctx.restore();break;
+ case 'dry-scrub':for(const x of [-8,-3,3,8]){line([[x,9],[x+(x<0?-4:4),-7]],'#78614f',1.5);line([[x,1],[x+(x<0?4:-4),-3]],'#78614f',1);}break;
+ case 'burned-log':line([[-22,8],[21,-4]],'#4a403a',8);for(const x of [-8,6])line([[x,3],[x-4,-6]],'#2f2d2b',2);break;
+ case 'ember-pit':oval(0,6,17,7,'#49423e');for(const x of [-7,0,7]){poly([[x-4,7],[x,-6],[x+4,7]],'#a55f42');glint(x,-2,'#efb36d',1.3);}break;
+ case 'black-rock':for(const [x,y,r,c]of [[-8,4,9,'#4e4a54'],[3,-2,11,'#625a69'],[11,5,7,'#403f48']])oval(x,y,r,r*.55,c);break;
+ case 'crystal-cluster':for(const [x,h,c]of [[-9,20,'#766a91'],[0,28,'#9382ac'],[10,17,'#6f6488']])poly([[x-5,10],[x-4,10-h],[x,5-h],[x+5,10-h],[x+5,10]],c);glint(0,-21,'#d8c7e9',1.5);break;
+ case 'dead-shrub':for(const x of [-8,-3,3,8]){line([[x,9],[x+(x<0?-3:3),-6]],'#62534e',1.3);line([[x,0],[x+(x<0?4:-4),-4]],'#62534e',1);}break;
+ case 'fumarole':oval(0,7,13,5,'#4d484f');ctx.save();ctx.globalAlpha=.35;for(const [x,y,r]of [[-3,-4,5],[3,-13,7],[-1,-23,9]])oval(x,y,r,r*.7,'#b9aebb');ctx.restore();break;
+ case 'obsidian':poly([[-12,9],[-9,-10],[0,-23],[11,-8],[14,9]],'#373740');line([[-7,-8],[0,-19],[5,-7]],'#8b789a',1.5);break;
+ case 'market':rect(-24,3,48,11,'#8d704d');for(const x of [-20,20])rect(x-2,-25,4,29,'#776043');poly([[-27,-23],[-17,-37],[19,-37],[27,-23]],region===3?'#8c6259':'#c4ad77');for(const x of [-13,0,13])oval(x,0,4,3,'#8f9d69');break;
+ case 'woodpile':for(const [x,y]of [[-13,5],[0,2],[12,6],[-7,-3],[7,-5]]){line([[x-10,y],[x+10,y]],'#806044',6);oval(x+10,y,3,3,'#c09a68');}break;
+ case 'laundry':for(const x of [-19,19])line([[x,12],[x,-30]],'#75654e',3);line([[-19,-21],[19,-21]],'#d7c8a0',1);rect(-13,-20,9,13,'#8ba0a2');rect(1,-20,11,15,'#a77f74');break;
+ case 'well':oval(0,7,20,9,'#858b80');oval(0,4,15,6,'#3f6d73');for(const x of [-15,15])line([[x,5],[x,-28]],'#806a4d',3);poly([[-20,-26],[0,-39],[20,-26]],'#9a7355');break;
+ case 'barrel':oval(0,-8,9,5,'#a48158');rect(-9,-8,18,20,'#8b6b49');oval(0,12,9,5,'#72573e');for(const y of [-5,7])line([[-8,y],[8,y]],'#b7aa8a',2);break;
+ case 'cart':rect(-22,-9,44,17,'#987752');for(const x of [-14,14])oval(x,10,7,7,'#53564f');line([[20,-5],[34,-13]],'#80654a',3);rect(-15,-19,30,10,'#b08b5d');break;
+ case 'ration':for(const [x,y]of [[-10,3],[4,5],[-2,-7]]){rect(x-8,y-7,16,13,'#96734d');line([[x-7,y-6],[x+7,y+5]],'#c1a170',2);}break;
+ case 'garden':for(const x of [-14,-7,0,7,14]){line([[x,9],[x,-3]],'#66845d',1.4);oval(x,-5,3,2,x%2?'#bb966d':'#799b68');}line([[-20,11],[20,11]],'#755c43',2);break;
+ case 'watchpost':for(const x of [-13,13])line([[x,12],[x,-27]],'#776047',4);rect(-18,-29,36,8,'#997954');poly([[-20,-30],[0,-43],[20,-30]],'#84644b');line([[0,-29],[0,-48]],'#ad9a72',2);break;
+ case 'barricade':for(const x of [-18,-6,6,18]){rect(x-3,-11,6,24,'#665248');poly([[x-3,-11],[x,-21],[x+3,-11]],'#8b6f55');}line([[-22,-4],[22,5]],'#8a6d53',4);break;
  }}
+ function landmark(){
+  switch(e.id){
+   case 'orchard':for(const x of [-18,0,18]){rect(x-2,-9,4,21,'#76573d');oval(x,-18,10,8,'#58794f');glint(x+3,-18,'#cf8a67',1.6);}line([[-30,12],[30,12]],'#8f7656',2);break;
+   case 'den-ruins':rect(-24,-12,15,26,'#878b80');rect(8,-22,17,36,'#777d76');line([[-25,-13],[-12,-26],[0,-16],[14,-29],[27,-18]],'#a3a895',3);break;
+   case 'mill-pond':case 'night-site':oval(0,7,31,12,'#538c94');for(const x of [-23,-15,17,24])line([[x,10],[x,-9]],'#718b66',2);if(e.id==='night-site'){line([[0,-4],[0,-30]],'#9b835d',3);glint(0,-33,'#e7c46f',3);}break;
+   case 'cache':rect(-17,-12,34,25,'#8f704d');line([[-17,-12],[17,13]],'#c1a170',3);line([[17,-12],[-17,13]],'#c1a170',3);line([[-29,10],[-8,2]],'#75583f',6);break;
+   case 'wagon':case 'convoy':rect(-28,-10,56,19,'#987752');for(const x of [-18,18])oval(x,11,8,8,'#4f534d');poly([[-25,-12],[-17,-31],[18,-31],[26,-12]],'#b9a274');line([[26,-5],[41,-14]],'#80654a',3);break;
+   case 'watch':for(const x of [-20,20])line([[x,13],[x,-34]],'#796246',4);rect(-27,-37,54,9,'#a3845d');line([[-24,-19],[24,-19]],'#a3845d',3);line([[0,-36],[0,-55]],'#c0a979',2);break;
+   case 'dock':oval(-20,9,18,7,'#527f87');for(const y of [-6,1,8])line([[-6,y],[30,y]],'#a0835c',4);for(const x of [-5,30])line([[x,-10],[x,13]],'#765f48',3);break;
+   case 'lookout':for(const [x,y,r]of [[-9,6,9],[2,-1,11],[12,6,8]])oval(x,y,r,r*.55,'#7f8278');line([[0,-10],[0,-45]],'#8e7b5d',3);poly([[2,-44],[24,-40],[2,-28]],'#8c765c');break;
+   case 'ore':for(const [x,y]of [[-12,4],[0,-5],[12,5]])poly([[x-7,y+7],[x-5,y-11],[x,y-19],[x+7,y-8],[x+8,y+7]],'#8b8c82');for(const x of [-11,2,12])glint(x,-4,'#c2a878',1.4);break;
+   case 'tower':rect(-18,-34,36,49,'#858b83');rect(-23,-42,13,11,'#a0a493');rect(9,-42,14,11,'#a0a493');poly([[-8,-33],[5,-47],[17,-31],[7,-20]],'#536157');break;
+   case 'shrine':rect(-23,-16,46,30,'#746e69');for(const x of [-17,11])rect(x,-34,7,22,'#8c877e');poly([[-26,-18],[0,-42],[27,-18]],'#8d8172');line([[-6,-17],[7,-5],[-5,7]],'#a26d57',2);break;
+   case 'overlook':for(const x of [-24,0,24])line([[x,13],[x,-16]],'#85715b',3);line([[-26,-12],[26,-12]],'#b29b73',3);for(const [x,y,r]of [[-10,7,7],[5,4,8]])oval(x,y,r,r*.5,'#6d6a63');break;
+   case 'checkpoint':for(const x of [-26,-9,9,26]){rect(x-3,-14,6,29,'#665048');poly([[x-3,-14],[x,-25],[x+3,-14]],'#896a53');}line([[-30,-5],[30,5]],'#a48462',5);line([[21,-23],[21,-47]],'#9a825f',3);poly([[23,-45],[42,-41],[23,-31]],'#8b5f58');break;
+   case 'foundry':rect(-26,-15,52,30,'#67645f');rect(-19,-30,15,18,'#80776c');rect(7,-37,14,25,'#746f69');oval(0,6,19,7,'#4f4742');for(const x of [-8,0,8])glint(x,1,'#db8751',2);break;
+   case 'shelf':for(const [x,h,c]of [[-14,23,'#776a91'],[0,34,'#9a87b3'],[15,19,'#6b6384']])poly([[x-6,12],[x-5,12-h],[x,7-h],[x+6,12-h],[x+6,12]],c);glint(0,-25,'#d9c8e8',2);break;
+   case 'siege':poly([[-27,13],[0,-34],[28,13]],'#8a6e60');line([[0,-31],[0,12]],'#5e5048',3);rect(19,-13,22,26,'#665047');line([[30,-13],[30,-40]],'#9b805b',3);poly([[31,-39],[48,-34],[31,-25]],'#795463');break;
+   case 'fortress-gate':rect(-34,-35,68,50,'#565966');rect(-18,-23,36,38,'#252830');for(const x of [-31,24])rect(x,-45,8,60,'#707381');poly([[-38,-37],[0,-62],[38,-37]],'#656674');break;
+   default:if(/pond|shore|dock/i.test(e.name)){oval(0,5,28,10,'#528b94');for(const x of [-16,0,16])line([[x,-6],[x,12]],'#b5a47a',3);}else if(e.icon==='🏕️')poly([[-24,12],[0,-30],[25,12]],'#b8aa7a');else{rect(-12,-25,24,38,'#999d8c');poly([[-15,-26],[0,-42],[16,-26]],'#b0b6a2');line([[-4,-22],[5,-10],[-3,3]],'#65736a');}
+  }
+ }
  const type=e.renderKind;
  if(type==='prop'){if(e.decorative)decoration(e.structure);else if(e.structure==='fence'){for(const x of [-18,0,18])rect(x-2,-18,4,30,'#a48c69');line([[-23,-12],[23,-12]],'#9c835e',4);line([[-23,2],[23,2]],'#9c835e',4);}else if(e.structure==='house'||e.structure==='workshop'){building(e.structure);if(e.structure==='workshop'){rect(-25,-12,12,15,'#8e7150');line([[-26,-15],[-10,-15]],steel,4);}}else if(['stonewall','stockade','palisade'].includes(e.structure)){if(e.structure==='stonewall'){rect(-28,-28,56,42,'#858d85');for(const y of [-22,-10,2])line([[-27,y],[27,y]],'#59685e',2);for(const x of [-21,-3,15]){line([[x,-27],[x,-12]],'#59685e',2);line([[x+9,-10],[x+9,3]],'#59685e',2);}for(const x of [-28,-7,14])rect(x,-35,14,10,'#9ea79b');}else{for(const x of [-24,-12,0,12,24]){rect(x-4,-28,8,42,'#977752');poly([[x-4,-28],[x,-40],[x+4,-28]],'#b49465');}line([[-27,-16],[27,-16]],'#675c40',4);line([[-27,3],[27,3]],'#675c40',4);}}else if(e.structure==='pillar'){rect(-13,-44,26,58,'#9ca49a');rect(-18,-48,36,8,'#bac0ad');rect(-18,10,36,8,'#8a9488');for(const x of [-7,0,7])line([[x,-39],[x,6]],'#747f75',1);}else if(e.icon==='🪨'){poly([[-20,7],[-18,-12],[-3,-24],[14,-17],[24,4]],'#849183');poly([[-18,-12],[-3,-24],[3,-4],[-20,7]],'#a0ad9b');line([[3,-4],[14,-17]],'#647466');}else wildProp();}else if(type==='node'){if(e.icon==='🪵'){for(const [x,y]of [[-12,2],[2,-3],[10,7]]){rect(x-12,y-8,24,10,'#836244');oval(x+12,y-3,4,5,'#c9a572');oval(x+12,y-3,2,3,'#916b44');}}else if(e.icon==='🧺'){poly([[-19,-3],[19,-3],[13,14],[-13,14]],'#aa885e');line([[-13,-3],[-8,-17],[8,-17],[13,-3]],'#bca06d',3);for(const y of [1,5,9])line([[-14,y],[14,y]],'#795f42',1);}else if(e.icon==='💎'){for(const [x,y]of [[-10,2],[0,-7],[10,4]])poly([[x-6,y],[x-5,y-20],[x,y-28],[x+6,y-18],[x+6,y]],'#a89bcf');line([[0,-32],[0,-7]],'#e5ddf6',1);}else{poly([[-18,8],[-13,-12],[0,-23],[18,-9],[22,8]],'#7d8781');for(const [x,y]of [[-7,-8],[7,-12],[12,1]])poly([[x-4,y],[x,y-5],[x+5,y],[x,y+4]],'#c1a16b');}}
  else if(type==='building'||['rest','supplier','recruiter','quests'].includes(e.kind))building(type==='building'?'barracks':e.kind);
@@ -202,7 +260,7 @@ function draw(ctx,e,p,region=0,rescued=false){
  else if(e.kind==='transport'){if(e.icon==='🐉'||/Dragon/.test(e.name)) {dragon('#8f9470');rect(-9,-23,18,10,'#997148');}else if(e.icon==='⛵'){poly([[-39,0],[37,0],[22,17],[-24,17]],'#9a7954');line([[-31,5],[30,5]],'#c1a776');line([[0,-48],[0,2]],'#c2ab7c',3);poly([[3,-46],[3,-8],[31,-8]],'#e2d6b1');}else if(e.icon==='🐫'){oval(0,-3,27,15,'#a28d66');oval(-7,-14,10,10,'#ac9770');for(const x of [-17,13])line([[x,4],[x,25]],'#9c835e',5);line([[22,-5],[27,-33]],'#b39b6d',9);oval(32,-34,11,6,'#b39b6d');rect(-14,-25,25,13,'#876e52');rect(-24,-12,12,20,'#9d7155');}else{rect(-27,-13,54,23,'#a4845c');for(const x of [-17,17]){oval(x,12,8,8,'#4f564e');line([[x-5,12],[x+5,12]],'#b4a57d');}poly([[-30,-15],[-18,-37],[18,-37],[30,-15]],'#c9bc93');line([[-19,-35],[19,-35]],'#e1d3ab');}}
  else if(e.kind==='bundle'){rect(-15,-15,30,28,'#a78455');line([[-15,-15],[15,13]],'#d0b079',3);line([[15,-15],[-15,13]],'#d0b079',3);}
  else if(e.kind==='fountain'){oval(0,5,25,10,'#9aa7a5');oval(0,2,20,6,'#65999f');rect(-5,-24,10,26,'#adb6a9');oval(0,-23,13,5,'#bad1bd');line([[0,-38],[0,-24]],'#9ad7d4',3);}
- else if(e.kind==='mini'){rect(-24,-22,48,36,'#7e897f');rect(-12,-16,24,30,'#24372d');for(const x of [-24,12])rect(x,-37,12,50,'#9aa38e');rect(-29,-43,22,8,'#b4b99e');rect(7,-43,22,8,'#b4b99e');}else if(e.kind==='landmark'){if(/bridge|crossing/i.test(e.name)){for(const y of [-5,0,5,10])line([[-25,y],[25,y]],'#b29870',4);for(const x of [-27,27])line([[x,-20],[x,12]],'#8c7756',3);}else if(/pond|shore|dock/i.test(e.name)){oval(0,5,28,10,'#528b94');for(const x of [-16,0,16])line([[x,-6],[x,12]],'#b5a47a',3);}else if(e.icon==='🏕️')poly([[-24,12],[0,-30],[25,12]],'#b8aa7a');else{rect(-12,-25,24,38,'#999d8c');poly([[-15,-26],[0,-42],[16,-26]],'#b0b6a2');line([[-4,-22],[5,-10],[-3,3]],'#65736a');}}
+ else if(e.kind==='mini'){rect(-24,-22,48,36,'#7e897f');rect(-12,-16,24,30,'#24372d');for(const x of [-24,12])rect(x,-37,12,50,'#9aa38e');rect(-29,-43,22,8,'#b4b99e');rect(7,-43,22,8,'#b4b99e');}else if(e.kind==='landmark'){landmark();}
  else if(type==='npc'){if(e.family&&['teacher','smith','alchemist'].includes(e.kind))specialist(e);else{const smith=['smith','alchemist'].includes(e.kind);humanoid(smith?'#8b7770':'#8b9c7b');if(smith&&e.kind==='smith'){rect(-8,-15,16,19,'#675448');line([[18,-20],[12,13]],'#b29367',3);rect(13,-24,15,7,steel);poly([[19,9],[38,9],[32,16],[22,16]],steel);}else if(e.kind==='alchemist'){rect(12,-16,8,4,'#bed3cb');oval(16,-6,7,9,'#789ba1');rect(-8,-37,16,5,'#c9d6ab');}else{line([[17,-31],[17,13]],'#baa373',3);oval(17,-33,4,4,'#c9d6ab');rect(-14,-10,8,14,'#cab483');}}}
  else if(type==='hero')hero(e.class||'paladin');
  else if(type==='ally')human(e.class||e.type||'worker');
@@ -338,7 +396,13 @@ function bridges(ctx,screen,region=0){
  ctx.restore();
 }
 function roads(ctx,paths,screen,region=0){
- const strip=R.barriers[region].bounds;
+ const strip=R.barriers[region].bounds,palettes=[
+  {shoulder:'#564834',base:'#8e7758',inner:'#a18b68',seam:'#6f604c'},
+  {shoulder:'#4b5043',base:'#83775e',inner:'#9c8e70',seam:'#6b6b58'},
+  {shoulder:'#4e4d46',base:'#87857a',inner:'#aaa695',seam:'#6e6d66'},
+  {shoulder:'#51443e',base:'#7c6c61',inner:'#978678',seam:'#625750'},
+  {shoulder:'#3f3d45',base:'#66636e',inner:'#87818e',seam:'#55525d'}
+ ],road=palettes[region]||palettes[0];
  const bridge=p=>p.x>=strip[0]-12&&p.x<=strip[1]+12&&p.y>=strip[2]&&p.y<=strip[3];
  const polygon=(points,color)=>{ctx.fillStyle=color;ctx.beginPath();points.forEach((q,j)=>{const p=screen(q);j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);});ctx.closePath();ctx.fill();};
  const segment=(a,b,w,color)=>{const d=Math.hypot(b.x-a.x,b.y-a.y);if(!d)return;const dx=-(b.y-a.y)/d*w,dy=(b.x-a.x)/d*w;polygon([{x:a.x+dx,y:a.y+dy},{x:b.x+dx,y:b.y+dy},{x:b.x-dx,y:b.y-dy},{x:a.x-dx,y:a.y-dy}],color);};
@@ -346,14 +410,14 @@ function roads(ctx,paths,screen,region=0){
  const edges=[],seen=new Set();for(const path of paths)for(let j=1;j<path.length;j++){const a=path[j-1],b=path[j],key=[a.x,a.y,b.x,b.y].join(':');if(seen.has(key))continue;seen.add(key);edges.push([a,b]);}
  ctx.save();ctx.lineJoin='round';ctx.lineCap='butt';
  // Shared shoulders and pavement form junctions before individual slab seams.
- for(const [a,b]of edges)segment(a,b,35,'#504d3c');
- for(const path of paths)for(const q of path)polygon([{x:q.x-35,y:q.y-35},{x:q.x+35,y:q.y-35},{x:q.x+35,y:q.y+35},{x:q.x-35,y:q.y+35}],'#504d3c');
- for(const [a,b]of edges)segment(a,b,29,'#a29677');
- for(const path of paths)for(const q of path)polygon([{x:q.x-29,y:q.y-29},{x:q.x+29,y:q.y-29},{x:q.x+29,y:q.y+29},{x:q.x-29,y:q.y+29}],'#a29677');
- for(const [a,b]of edges)segment(a,b,23,'#b1a586');
+ for(const [a,b]of edges)segment(a,b,35,road.shoulder);
+ for(const path of paths)for(const q of path)polygon([{x:q.x-35,y:q.y-35},{x:q.x+35,y:q.y-35},{x:q.x+35,y:q.y+35},{x:q.x-35,y:q.y+35}],road.shoulder);
+ for(const [a,b]of edges)segment(a,b,29,road.base);
+ for(const path of paths)for(const q of path)polygon([{x:q.x-29,y:q.y-29},{x:q.x+29,y:q.y-29},{x:q.x+29,y:q.y+29},{x:q.x-29,y:q.y+29}],road.base);
+ for(const [a,b]of edges)segment(a,b,23,road.inner);
  const seams=new Set();for(const [a,b]of edges){const length=Math.hypot(b.x-a.x,b.y-a.y);if(!length)continue;const ux=(b.x-a.x)/length,uy=(b.y-a.y)/length,nx=-uy,ny=ux,steps=Math.max(1,Math.ceil(length/22));
  for(let j=0;j<steps;j++){const p={x:a.x+(b.x-a.x)*j/steps,y:a.y+(b.y-a.y)*j/steps},q={x:a.x+(b.x-a.x)*(j+1)/steps,y:a.y+(b.y-a.y)*(j+1)/steps},mid={x:(p.x+q.x)/2,y:(p.y+q.y)/2};if(bridge(mid)){segment(p,q,28,'#b49468');for(const side of [-1,1])stroke({x:p.x+nx*side*31,y:p.y+ny*side*31},{x:q.x+nx*side*31,y:q.y+ny*side*31},'#d1b887',2);}}
- const anchor=a.x*ux+a.y*uy,first=Math.ceil(anchor/44)*44-anchor;for(let t=first;t<length;t+=44){const p={x:a.x+ux*t,y:a.y+uy*t},key=Math.round(p.x)+':'+Math.round(p.y);if(seams.has(key))continue;seams.add(key);const wood=bridge(p);stroke({x:p.x+nx*26,y:p.y+ny*26},{x:p.x-nx*26,y:p.y-ny*26},wood?'#624b34':'#7e7865',1);if(!wood){const q={x:a.x+ux*Math.min(length,t+44),y:a.y+uy*Math.min(length,t+44)};stroke(p,q,'#888370',.8);}}
+ const anchor=a.x*ux+a.y*uy,first=Math.ceil(anchor/44)*44-anchor;for(let t=first;t<length;t+=44){const p={x:a.x+ux*t,y:a.y+uy*t},key=Math.round(p.x)+':'+Math.round(p.y);if(seams.has(key))continue;seams.add(key);const wood=bridge(p);stroke({x:p.x+nx*26,y:p.y+ny*26},{x:p.x-nx*26,y:p.y-ny*26},wood?'#624b34':road.seam,1);if(!wood){const q={x:a.x+ux*Math.min(length,t+44),y:a.y+uy*Math.min(length,t+44)};stroke(p,q,road.seam,.8);}}
  }
 
  ctx.restore();

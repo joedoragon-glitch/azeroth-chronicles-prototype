@@ -78,10 +78,25 @@ class Campaign{
    const x=id%n,y=Math.floor(id/n),from=point(id);for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const xx=x+dx,yy=y+dy,j=yy*n+xx;if(xx<0||yy<0||xx>=n||yy>=n||parents.has(j)||!free(j)||!this.clearSegment(from,point(j),15,terrainOnly))continue;parents.set(j,id);queue.push(j);}}
   return [];
  }
- roadNetwork(z){if(z.roadVersion===4||dungeonIds.includes(z.id)||this.supplyRoom(z.id))return;const i=this.regionIndex(z.id),origin={x:D.towns[i][0],y:D.towns[i][1]},field=this.fieldCenter(i),oldZone=this.s.zone;this.s.zone=z.id;
-  const destinations=[D.minors[i],D.ports[i],D.entrances[i],[field.x,field.y]];const props=z.props;z.props=[];try{if(roadPlans.has(z.id))z.roads=clone(roadPlans.get(z.id));else{z.roads=destinations.filter(([x,y])=>dist(origin,{x,y})>1).map(([x,y])=>this.route(origin,{x,y},{road:true,terrainOnly:true})).filter(p=>p.length>1);roadPlans.set(z.id,clone(z.roads));}}finally{z.props=props;this.s.zone=oldZone;}
+ settlementLayout(z){
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||z.settlementLayoutVersion===2)return;
+  const i=this.regionIndex(z.id),oldZone=this.s.zone;this.s.zone=z.id;
+  try{
+   const major={x:D.towns[i][0],y:D.towns[i][1]},minor={x:D.minors[i][0],y:D.minors[i][1]},keep=p=>!String(p.id||'').startsWith('structure-')&&!String(p.id||'').startsWith('settlement-')&&!(String(p.id||'').startsWith('forest-')&&(dist(p,major)<390||dist(p,minor)<330));
+   z.props=z.props.filter(keep);
+   const terrainSafe=(x,y,r)=>{if(!this.blocked(x,y,z.id,r,true))return {x,y};for(let d=30;d<=180;d+=30)for(let n=0;n<16;n++){const a=n*Math.PI/8,p={x:x+Math.cos(a)*d,y:y+Math.sin(a)*d};if(!this.blocked(p.x,p.y,z.id,r,true))return p;}return null;};
+   const add=(center,layout,prefix)=>{layout.forEach(([dx,dy,structure],j)=>{const p=terrainSafe(center.x+dx,center.y+dy,34);if(!p)return;z.props.push({id:'settlement-'+prefix+'-'+j,...p,r:32,structure,roadBlocker:true});});};
+   add(major,R.settlementLayouts.major,'major');add(minor,R.settlementLayouts.minor,'minor');
+   const by=id=>z.npcs.find(n=>n.id===id),place=(id,dx,dy)=>{const n=by(id);if(n)Object.assign(n,terrainSafe(major.x+dx,major.y+dy,8)||{x:major.x+dx,y:major.y+dy});};
+   place('supplier',115,-85);place('recruiter',-125,90);place('board',210,55);place('rest',0,0);place('return',150,175);
+   const minorRest=by('minor');if(minorRest)Object.assign(minorRest,terrainSafe(minor.x,minor.y,8)||minor);
+   z.boardPositionVersion=2;if(z.id==='vale')z.supplierPositionVersion=2;z.settlementLayoutVersion=2;
+  }finally{this.s.zone=oldZone;}
+ }
+ roadNetwork(z){if(dungeonIds.includes(z.id)||this.supplyRoom(z.id))return;this.settlementLayout(z);if(z.roadVersion===5)return;const i=this.regionIndex(z.id),origin={x:D.towns[i][0],y:D.towns[i][1]},field=this.fieldCenter(i),oldZone=this.s.zone,key=z.id+':v5';this.s.zone=z.id;
+  const destinations=[D.minors[i],D.ports[i],D.entrances[i],[field.x,field.y]],props=z.props,blockers=z.props.filter(p=>p.roadBlocker).map(p=>({...p,r:(p.r||0)+30}));z.props=blockers;try{if(roadPlans.has(key))z.roads=clone(roadPlans.get(key));else{z.roads=destinations.filter(([x,y])=>dist(origin,{x,y})>1).map(([x,y])=>this.route(origin,{x,y},{road:true})).filter(p=>p.length>1);roadPlans.set(key,clone(z.roads));}}finally{z.props=props;this.s.zone=oldZone;}
   const near=(p,a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,t=clamp(((p.x-a.x)*dx+(p.y-a.y)*dy)/(dx*dx+dy*dy||1),0,1);return Math.hypot(p.x-a.x-t*dx,p.y-a.y-t*dy);};
-  z.props=z.props.filter(p=>p.structure||!z.roads.some(path=>path.some((b,j)=>j&&near(p,path[j-1],b)<p.r+60)));z.roadVersion=4;
+  z.props=z.props.filter(p=>p.roadBlocker||p.structure||!z.roads.some(path=>path.some((b,j)=>j&&near(p,path[j-1],b)<(p.r||0)+60)));z.roadVersion=5;
  }
  move(entity,target,speed,dt,stop=0){const d=dist(entity,target);if(d<=stop)return true;const step=Math.min(d-stop,speed*dt),nx=entity.x+(target.x-entity.x)/d*step,ny=entity.y+(target.y-entity.y)/d*step;
   if(this.clearSegment(entity,{x:nx,y:ny})){entity.x=nx;entity.y=ny;return true;}let moved=false;if(this.clearSegment(entity,{x:nx,y:entity.y})){entity.x=nx;moved=true;}if(this.clearSegment(entity,{x:entity.x,y:ny})){entity.y=ny;moved=true;}return moved;
@@ -136,14 +151,55 @@ class Campaign{
  depositSite(u){const z=this.isDungeon()?this.s.zones[this.definition().id]:this.zone(),i=this.regionIndex(),sites=[...(z?.npcs.filter(n=>n.kind==='rest')||[]),...(this.isDungeon()?[]:(z?.buildings.filter(b=>b.progress>=4&&b.full)||[])),{x:D.towns[i][0],y:D.towns[i][1]}];return sites.sort((a,b)=>dist(a,u)-dist(b,u))[0];}
  setRefuge(zone,id){const n=this.s.zones[zone]?.npcs.find(n=>n.id===id&&n.kind==='rest');if(n){this.s.refuge=zone;this.s.refugeSite={zone,id,x:n.x,y:n.y};}}
  arriveRefuge(site){const n=this.zone().npcs.find(n=>n.id===site.id&&n.kind==='rest');if(!n)return;Object.assign(this.hero,this.safe(n.x,n.y));for(const u of this.activeParty())Object.assign(u,this.safe(n.x+40,n.y+30));}
- authoredPlaces(z){if(this.supplyRoom(z.id)){this.combatPopulation(z);this.guardianPopulation(z);return;}this.spaceQuestBoard(z);this.spaceMillhavenSupplier(z);this.combatPopulation(z);this.nightEnemyPopulation(z);if(dungeonIds.includes(z.id)){this.decorateDungeon(z);this.guardianRewards(z);}if(z.placesVersion===1){this.localSites(z);this.miniDungeons(z);this.spreadOutdoorForces(z);this.supplyInteriors(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);return;}z.placesVersion=1;const i=this.regionIndex(z.id),dungeon=dungeonIds.includes(z.id);
+ alignLandmarks(z){
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||z.landmarkLayoutVersion===2)return;
+  const i=this.regionIndex(z.id),oldZone=this.s.zone;this.s.zone=z.id;
+  try{
+   for(const [id,,x,y]of R.sites[i]){
+    const n=z.npcs.find(n=>n.kind==='landmark'&&n.id===id);if(!n)continue;const target=this.safe(x,y,z.id),dx=target.x-n.x,dy=target.y-n.y;if(Math.hypot(dx,dy)<1)continue;
+    Object.assign(n,target);
+    for(const e of z.enemies.filter(e=>e.site===id&&!e.mini)){const q=this.safe(e.home.x+dx,e.home.y+dy,z.id);e.home={...q};if(e.hp>0&&!e.aggro)Object.assign(e,q);}
+    for(const b of z.npcs.filter(b=>b.kind==='bundle'&&b.site===id)){const q=this.safe(b.x+dx,b.y+dy,z.id);Object.assign(b,q);}
+   }
+   z.landmarkLayoutVersion=2;
+  }finally{this.s.zone=oldZone;}
+ }
+ regionalAesthetics(z){
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||z.aestheticVersion===2)return;
+  const i=this.regionIndex(z.id),size=D.regions[i].size,major={x:D.towns[i][0],y:D.towns[i][1]},minor={x:D.minors[i][0],y:D.minors[i][1]},field=this.fieldCenter(i),theme=R.natureThemes[i],oldZone=this.s.zone;this.s.zone=z.id;
+  try{
+   z.props=z.props.filter(p=>!String(p.id||'').startsWith('aesthetic-'));
+   let serial=0,natureCount=0;
+   const nearRoad=(p,margin=70)=>z.roads?.some(path=>path.some((b,j)=>j&&this.distanceToSegment(p,path[j-1],b)<margin));
+   const clear=(p,margin=55)=>!this.blocked(p.x,p.y,z.id,8,true)&&!nearRoad(p,margin)&&!z.npcs.some(n=>dist(n,p)<75)&&!z.nodes.some(n=>dist(n,p)<70)&&!z.buildings.some(n=>dist(n,p)<70)&&!z.props.some(q=>q.roadBlocker&&dist(q,p)<q.r+45);
+   const add=(p,structure,prefix='nature')=>{if(!clear(p,prefix==='town'?48:65))return false;z.props.push({id:'aesthetic-'+prefix+'-'+serial++,...p,r:0,decorative:true,structure});return true;};
+   const townLife=(center,layout,prefix)=>{for(const [dx,dy,structure]of layout)add({x:center.x+dx,y:center.y+dy},structure,prefix);};
+   townLife(major,R.settlementLayouts.majorLife,'town');townLife(minor,R.settlementLayouts.minorLife,'hamlet');
+   for(let gx=150;gx<size-120&&natureCount<52;gx+=245)for(let gy=170;gy<size-120&&natureCount<52;gy+=235){
+    const seed=(Math.imul(gx+i*97,73856093)^Math.imul(gy+i*131,19349663))>>>0,x=gx+(seed%101)-50,y=gy+((seed>>>8)%91)-45,p={x,y};
+    if(dist(p,major)<390||dist(p,minor)<330||dist(p,field)<320||z.enemies.some(e=>e.hp>0&&dist(e.home,p)<55))continue;
+    if(add(p,theme[seed%theme.length]))natureCount++;
+   }
+   const {bounds:[x1,x2,y1,y2],gaps}=R.barriers[i],edgeKinds=i===0?['bush','reeds']:i===1?['reeds','cattails']:i===2?['rock-cluster','alpine-scrub']:i===3?['dead-tree','dry-scrub']:['black-rock','crystal-cluster'];
+   let edgeIndex=0;for(let y=y1+120;y<y2-100&&edgeIndex<14;y+=Math.max(130,Math.floor((y2-y1)/12))){if(gaps.some(([lo,hi])=>y>lo-110&&y<hi+110))continue;for(const x of [x1-38,x2+38]){const p={x,y:y+((edgeIndex*37)%51)-25};if(add(p,edgeKinds[edgeIndex%edgeKinds.length],'bank'))edgeIndex++;}}
+   const scenery={orchard:['sapling','wildflowers'], 'den-ruins':['stump','fallen-log'], 'mill-pond':['reeds','bush'],cache:['bush','fallen-log'],
+    'night-site':['reeds','cattails'],wagon:['driftwood','reeds'],watch:['watchpost','reeds'],dock:['cattails','driftwood'],
+    lookout:['alpine-scrub','rock-cluster'],ore:['rock-cluster','heather'],tower:['rock-cluster','pine-sapling'],
+    shrine:['dead-tree','ash-patch'],overlook:['dry-scrub','rock-cluster'],checkpoint:['barricade','banner'],convoy:['cart','crate'],
+    foundry:['ember-pit','black-rock'],shelf:['crystal-cluster','black-rock'],siege:['barricade','banner'],'fortress-gate':['black-rock','banner']};
+   for(const n of z.npcs.filter(n=>n.kind==='landmark'&&scenery[n.id]))for(const [j,structure]of scenery[n.id].entries()){const a=(j?2.4:-.6)+(i*.23),p={x:n.x+Math.cos(a)*70,y:n.y+Math.sin(a)*70};add(p,structure,'site');}
+   const oppression=i<2?'ration':i===2?'watchpost':i===3?'barricade':'banner';add({x:major.x-300,y:major.y+15},oppression,'town');add({x:major.x+300,y:major.y+15},oppression,'town');
+   z.aestheticVersion=2;
+  }finally{this.s.zone=oldZone;}
+ }
+ authoredPlaces(z){if(this.supplyRoom(z.id)){this.combatPopulation(z);this.guardianPopulation(z);return;}this.spaceQuestBoard(z);this.spaceMillhavenSupplier(z);this.combatPopulation(z);this.nightEnemyPopulation(z);if(dungeonIds.includes(z.id)){this.decorateDungeon(z);this.guardianRewards(z);}if(z.placesVersion===1){this.localSites(z);this.miniDungeons(z);this.spreadOutdoorForces(z);this.alignLandmarks(z);this.supplyInteriors(z);this.regionalAesthetics(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);return;}z.placesVersion=1;const i=this.regionIndex(z.id),dungeon=dungeonIds.includes(z.id);
   if(!dungeon){z.npcs=z.npcs.filter(n=>!n.id.startsWith('landmark-'));for(const [id,name,x,y]of R.sites[i])z.npcs.push({id,name,kind:'landmark',...this.safe(x,y,z.id),icon:/bridge|crossing/i.test(name)?'🪵':/camp|convoy|wagon/i.test(name)?'🏕️':'🏚️'});}
   const nearRoad=p=>z.roads?.some(path=>path.some((b,j)=>j&&this.distanceToSegment(p,path[j-1],b)<p.r+85));
-  const points=dungeon?R.pillars[z.id].map(([x,y])=>({x,y,r:30,icon:'🪨',structure:'pillar'})):[D.towns[i],D.minors[i]].flatMap(([x,y])=>[[-215,-150],[220,230],[-210,190],[190,-200]].map(([dx,dy],j)=>({x:x+dx,y:y+dy,r:32,icon:'🏠',structure:j%2?'workshop':'house'})));
-  if(!dungeon)for(const [x,y]of [D.towns[i],D.minors[i]])for(const dx of [-240,-180,180,240])points.push({x:x+dx,y:y+260,r:18,icon:'🪵',structure:'fence'});for(const q of points){if(this.blocked(q.x,q.y,z.id,q.r+20)||z.npcs.some(n=>dist(n,q)<q.r+90)||z.enemies.some(e=>dist(e.home,q)<q.r+50)||nearRoad(q)||z.id===this.s.zone&&dist(this.hero,q)<q.r+40)continue;z.props.push({id:'structure-'+z.props.length,...q});}this.localSites(z);this.miniDungeons(z);this.spreadOutdoorForces(z);this.supplyInteriors(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);
+  const points=dungeon?R.pillars[z.id].map(([x,y])=>({x,y,r:30,icon:'🪨',structure:'pillar'})):[];
+  for(const q of points){if(this.blocked(q.x,q.y,z.id,q.r+20)||z.npcs.some(n=>dist(n,q)<q.r+90)||z.enemies.some(e=>dist(e.home,q)<q.r+50)||nearRoad(q)||z.id===this.s.zone&&dist(this.hero,q)<q.r+40)continue;z.props.push({id:'structure-'+z.props.length,...q});}this.localSites(z);this.miniDungeons(z);this.spreadOutdoorForces(z);this.alignLandmarks(z);this.supplyInteriors(z);this.regionalAesthetics(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);
  }
- spaceQuestBoard(z){if(dungeonIds.includes(z.id)||z.boardPositionVersion===1)return;const board=z.npcs.find(n=>n.kind==='quests');if(!board)return;const i=this.regionIndex(z.id),[x,y]=D.towns[i],p=this.safe(x+190,y+70,z.id);Object.assign(board,p);z.boardPositionVersion=1;}
- spaceMillhavenSupplier(z){if(z.id!=='vale'||z.supplierPositionVersion===1)return;const supplier=z.npcs.find(n=>n.id==='supplier');if(!supplier)return;const [x,y]=D.towns[0];Object.assign(supplier,this.safe(x+85,y-95,z.id));z.supplierPositionVersion=1;}
+ spaceQuestBoard(z){if(dungeonIds.includes(z.id)||z.boardPositionVersion===2)return;const board=z.npcs.find(n=>n.kind==='quests');if(!board)return;const i=this.regionIndex(z.id),[x,y]=D.towns[i],p=this.safe(x+210,y+55,z.id);Object.assign(board,p);z.boardPositionVersion=2;}
+ spaceMillhavenSupplier(z){if(z.id!=='vale'||z.supplierPositionVersion===2)return;const supplier=z.npcs.find(n=>n.id==='supplier');if(!supplier)return;const [x,y]=D.towns[0];Object.assign(supplier,this.safe(x+115,y-85,z.id));z.supplierPositionVersion=2;}
  supplyInteriors(z){const room=R.supplyRooms.find(r=>r.region===z.id);if(!room||z.supplyRoomVersion===1)return;z.npcs=z.npcs.filter(n=>n.kind!=='bundle'||n.index===0);const site=z.npcs.find(n=>n.id===room.site),p=this.safe(site.x+100,site.y-90,z.id);z.npcs.push({id:'supply-entrance',name:room.name,kind:'dungeon',family:room.id,...p,icon:'🏚️'});z.supplyRoomVersion=1;}
  localSites(z){
   if(dungeonIds.includes(z.id)||z.localSitesVersion===2)return;
@@ -268,7 +324,7 @@ class Campaign{
  bossEnemy(b,form,p){let hp=b.hp,damage=b.damage,gold=b.gold,xp=b.xp,level=b.level;if(form==='true'){hp*=1.8;damage*=1.25;gold*=2;xp*=2;level+=2;if(b.kind==='dungeon'&&this.s.phase!=='adventure'){const i=dungeonIds.indexOf(b.id);level=this.s.awakeningLevel||this.hero.level+2;const scale=Math.max(1,level/18);hp=Math.round((13000+i*1000)*scale);damage=Math.round((70+i*2)*scale);gold=[500,600,700,800,1000][i];xp=[1000,1250,1500,1750,2000][i];level=this.s.awakeningLevel||this.hero.level+2;}}
   return this.makeEnemy({family:b.id,name:b.name+(form==='true'?' TRUE':''),icon:b.kind==='field'?b.id==='darklord'?'😈':'👹':'💀',form,type:'boss',level,hp,damage,gold,xp},p);
  }
- refreshNPCs(){for(const [id,z]of Object.entries(this.s.zones)){if(dungeonIds.includes(id)||this.supplyRoom(id))continue;const i=this.regionIndex(id),[x,y]=D.towns[i];z.npcs=z.npcs.filter(n=>!['teacher','smith','alchemist'].includes(n.kind)&&!n.id.startsWith('service-'));for(const b of D.bosses.filter(b=>b.region===id)){const exists=z.npcs.some(n=>n.id==='service-'+b.id);if(this.s.rescued[b.id]&&!exists){const p=this.safe(x-125+(b.kind==='field'?0:70),y-105,id);z.npcs.push({id:'service-'+b.id,name:b.captive,kind:ceilings[b.id]?'teacher':b.id==='archive'?'alchemist':'smith',family:b.id,...p,icon:ceilings[b.id]?'🧙':'⚒️'});}}}}
+ refreshNPCs(){for(const [id,z]of Object.entries(this.s.zones)){if(dungeonIds.includes(id)||this.supplyRoom(id))continue;const i=this.regionIndex(id),[x,y]=D.towns[i];z.npcs=z.npcs.filter(n=>!['teacher','smith','alchemist'].includes(n.kind)&&!n.id.startsWith('service-'));for(const b of D.bosses.filter(b=>b.region===id)){const kind=ceilings[b.id]?'teacher':b.id==='archive'?'alchemist':'smith',offset=R.serviceOffsets[kind]||[-120,-120],exists=z.npcs.some(n=>n.id==='service-'+b.id);if(this.s.rescued[b.id]&&!exists){const p=this.safe(x+offset[0],y+offset[1],id);z.npcs.push({id:'service-'+b.id,name:b.captive,kind,family:b.id,...p,icon:kind==='teacher'?'🧙':kind==='alchemist'?'⚗️':'⚒️'});}}}}
  clearTonic(){if(this.hero.tonic){this.hero.maxHp-=this.hero.tonicBonus||0;this.hero.hp=Math.min(this.hero.hp,this.hero.maxHp);this.hero.tonic=false;this.hero.tonicBonus=0;this.syncCompanionLevelStats();}}
  refugeThreat(){return !this.peace&&this.zone().enemies.some(e=>e.hp>0&&!e.neutral&&e.aggro&&dist(e,this.hero)<700);}
  rest(){const site=this.zone().npcs.filter(n=>n.kind==='rest'&&dist(n,this.hero)<=115).sort((a,b)=>dist(a,this.hero)-dist(b,this.hero))[0];if(!site)return false;if(this.refugeThreat()){this.say('Cannot rest while nearby enemies are engaged. Retreat and end the fight first.');return false;}if(this.s.restCooldown>0){this.say('Refuge restoration ready in '+Math.ceil(this.s.restCooldown)+' seconds.');return false;}this.clearTonic();delete this.hero.potionEffect;this.hero.hp=this.hero.maxHp;this.hero.mp=this.hero.maxMp;for(const u of this.activeParty())if(u.hp>0)u.hp=u.maxHp;this.s.restCooldown=90;this.setRefuge(this.s.zone,site.id);this.say('Rested at the refuge. Hero and all living companions restored. Fallen companions require recovery through the Captain or a barracks.');this.event('rest');return true;}
