@@ -58,6 +58,28 @@ function draw(ctx,e,p,region=0,rescued=false){
   }
   if(e.guard){line([[-13,8],[0,12],[13,8]],'#a49573',1.5);rect(-3,-21,6,3,'#b6a373');}
  }
+ function captainFinish(){
+  if(!e.roomCaptain)return;
+  switch(e.captainMentor){
+   case 'thorn':
+    // Goblin disciple: wolf trophies and claw marks, but still unmistakably goblin.
+    poly([[-14,-18],[-19,-28],[-11,-26],[-6,-18]],'#8f8063');for(const [x,y]of [[-8,-8],[0,-10],[8,-8]])poly([[x-2,y],[x,y-5],[x+2,y]],bone);
+    line([[-10,-3],[9,2]],'#5f7b50',2);line([[-8,1],[11,6]],'#5f7b50',2);glint(14,-16,'#d9c173',1.5);break;
+   case 'mire':
+    // Mireling disciple: heavier jaw-band and Mirejaw-like dorsal trophies, no foreign anatomy.
+    for(const x of [-16,-5,6])poly([[x,-8],[x+5,-18],[x+10,-8]],'#7c765b');line([[16,-7],[35,-5]],'#b9aa78',2);
+    for(const x of [19,27,35])glint(x,-3,'#d9c984',1.2);break;
+   case 'ridge':
+    // Wolf disciple: quarry-metal collar and stone brow plates instead of humanoid armor.
+    line([[-20,-8],[18,-7]],'#938b78',4);for(const x of [-11,0,11])rect(x-3,-11,6,6,'#6f7470');
+    poly([[10,-23],[18,-28],[25,-22],[18,-18]],'#9a9b8d');line([[19,-26],[27,-31]],'#c9c3a4',2);break;
+   case 'darklord':
+    // Ash Beast disciple: obsidian harness and Crown sigil carried on its own carapace.
+    poly([[-16,-9],[-7,-18],[0,-12],[7,-18],[16,-9],[10,-3],[-10,-3]],'#51495c');
+    poly([[0,-16],[5,-10],[0,-4],[-5,-10]],'#9f79aa');line([[-11,2],[0,7],[11,2]],'#b39272',2);for(const x of [-18,18])glint(x,-12,'#d29ab5',1.5);break;
+  }
+  ctx.save();ctx.globalAlpha=.35;ctx.strokeStyle='#e0b96f';ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(0,11,25,8,0,0,Math.PI*2);ctx.stroke();ctx.restore();
+ }
  function bossPolish(family){
   switch(family){
    case 'thorn':for(const side of [-1,1]){line([[side*10,-23],[side*19,-40],[side*27,-45]],'#79664c',3);line([[side*19,-39],[side*30,-35]],'#79664c',2);}for(const x of [-18,-8,4,15])poly([[x,-8],[x+4,-14],[x+8,-7]],'#58704b');break;
@@ -281,6 +303,7 @@ function draw(ctx,e,p,region=0,rescued=false){
  }
  bossFinish(e.family);bossPolish(e.family);
  }else{
+ if(e.roomCaptain){const s=e.visualScale||1.18;ctx.scale(s,s);}
  switch(e.species){
  case 'skeleton':skull();line([[0,-18],[0,5]],bone,3);for(const y of [-14,-9,-4])line([[-8,y],[0,y+2],[8,y]],bone,2);line([[-7,-15],[-14,-2],[-16,6]],bone,3);line([[7,-15],[14,-4],[17,3]],bone,3);line([[0,3],[-7,9],[-8,16]],bone,3);line([[0,3],[7,9],[8,16]],bone,3);if(e.ranged)bow(17,-7);else sword(15,-9);break;
  case 'wolf':wolf();break;
@@ -295,7 +318,7 @@ function draw(ctx,e,p,region=0,rescued=false){
  case 'wraith':case 'stalker':case 'summon':poly([[-16,12],[-10,-24],[0,-40],[11,-25],[17,12],[8,7],[0,14],[-7,7]],e.species==='stalker'?'#877179':'#87a9a6');oval(0,-23,6,8,'#354c50');eye(-4,-25);eye(2,-25);if(e.species==='wraith'){line([[12,-10],[22,-5]],'#a6bbae');rect(18,-4,9,12,'#6b7769');rect(20,-2,5,7,'#dfc980');}break;
  default:humanoid('#919b81');
  }
-  enemyFinish();
+  enemyFinish();captainFinish();
  }
  if(e.hybrid&&e.species==='reedbeast'){oval(0,0,6,3,'#628975');line([[2,1],[15,5]],'#c1a18e',2);}if(e.rangedAim){oval(0,-56,5,5,'#ead6a0');}
  if(e.form==='true'){ctx.save();ctx.globalAlpha=.48;ctx.strokeStyle=e.type==='boss'?'#fff0a6':'#e5c876';ctx.lineWidth=e.type==='boss'?3:2;for(const r of e.type==='boss'?[30,40,50]:[23,30]){ctx.beginPath();ctx.ellipse(0,11,r,r*.28,0,0,Math.PI*2);ctx.stroke();}if(e.type==='boss'){ctx.globalAlpha=.18;ctx.fillStyle='#f1c75e';ctx.beginPath();ctx.ellipse(0,-11,34,52,0,0,Math.PI*2);ctx.fill();}ctx.restore();line([[-19,18],[-8,23],[9,23],[21,17]],'#e2c36f',e.type==='boss'?3:2);for(const x of [-17,17])poly([[x,-36],[x*1.45,-54],[x*.48,-42]],'#e1bd6d');for(const x of [-11,0,11])glint(x,-47,'#ffe7a8',e.type==='boss'?2.4:1.3);if(e.type==='boss'){poly([[-22,-52],[-14,-66],[-7,-56],[0,-70],[7,-56],[14,-66],[22,-52]],'#d7ad42');for(const x of [-26,26])glint(x,-28,'#fff4bd',2.8);}}
@@ -303,7 +326,7 @@ function draw(ctx,e,p,region=0,rescued=false){
  if(type==='hero'||type==='ally'||type==='enemy'){line([[-8,13],[0,15],[8,13]],type==='enemy'?'#d2aa87':'#c9d6ad',1.2);if(type==='hero')oval(0,-47,2,2,'#f6dfa0');}
  ctx.restore();
 }
-function height(e){if(e.type==='boss')return 102;if(e.renderKind==='hero'&&e.class==='mage'||e.renderKind==='prop')return 64;if(['dungeon','exit','transport'].includes(e.kind))return 64;return 54;}
+function height(e){if(e.type==='boss')return 102;if(e.roomCaptain)return 68;if(e.renderKind==='hero'&&e.class==='mage'||e.renderKind==='prop')return 64;if(['dungeon','exit','transport'].includes(e.kind))return 64;return 54;}
 const floorPalettes=[['#294b36','#31583e','#203e30','#95ad80'],['#26444b','#31535a','#203b42','#85ada6'],['#485447','#56614d','#3b493f','#b1b59a'],['#50413b','#5d4b42','#423732','#b9987b'],['#343644','#414351','#2c2f3c','#a09b9e']];
 const dungeonFloors={crypt:['#343c39','#414945','#2b3331','#a9b1a0'],archive:['#30464a','#3b5558','#283d42','#8fb6b4'],mine:['#44433b','#524f43','#39382f','#ada88c'],abyss:['#44373b','#544349','#382f34','#c09a89'],citadel:['#3b414b','#494f59','#303640','#abb3b5']};
 function groundDetail(ctx,p,seed,region,room,dungeonId,colors){
