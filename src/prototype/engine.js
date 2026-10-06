@@ -10,7 +10,7 @@ const expeditionCeilings={thorn:2,mire:3,ridge:4,warlord:5,citadel:6};
 const dungeonIds=D.bosses.filter(b=>b.kind==='dungeon').map(b=>b.id);
 const R=typeof PrototypeRules!=='undefined'?PrototypeRules:require('./rules.js');
 const roadPlans=new Map();
-const pursuitBurstSeconds=1.2,pursuitBurstMultiplier=1.5;
+const pursuitBurstSeconds=1.2,pursuitBurstMultiplier=1.5,mercyStartRadius=300;
 const costs=[0,0,15,10,25,40,20,45,60],cooldowns=[0,.85,3,8,14,9,4,15,24];
 class Campaign{
  constructor(mode='normal',heroClass='paladin',random=Math.random,options={}){
@@ -469,6 +469,7 @@ class Campaign{
   if(input.x||input.y){h.order=null;const n=Math.hypot(input.x,input.y),speed=(h.speed+h.talents[3]*40)*(h.haste>0?1.25:1)*(h.slow>0?.65:1)*clamp(input.speedFactor||1,1,1.35);this.move(h,{x:h.x+input.x/n*speed,y:h.y+input.y/n*speed},speed,dt);}
   else if(h.order){const target=h.order.type==='attack'?z.enemies.find(e=>e.id===h.order.id):h.order;if(target&&!target.neutral){if(dist(h,target)>(h.order.type==='attack'?h.class==='paladin'?105:350:25))this.follow(h,target,h.speed*(h.slow>0?.65:1),dt,20);else if(h.order.type==='attack')this.cast(1,target.id);else h.order=null;}else h.order=null;}
   const formationDx=h.x-formationStart.x,formationDy=h.y-formationStart.y,formationDistance=Math.hypot(formationDx,formationDy);if(formationDistance>.5)this.formationHeading={x:formationDx/formationDistance,y:formationDy/formationDistance};
+  if(this.s.mercyTime>0){const [mx,my]=D.towns[0];if(this.s.zone!=='vale'||dist(h,{x:mx,y:my})>mercyStartRadius)this.s.mercyTime=0;}
   if(!this.isDungeon()){const [tx,ty]=D.towns[this.regionIndex()];if(dist(h,{x:tx,y:ty})<170){this.setRefuge(this.s.zone,'rest');if(!this.refugeThreat())h.hp=Math.min(h.maxHp,h.hp+8*dt);}for(const n of z.npcs.filter(n=>n.kind==='landmark'))if(dist(h,n)<120){const first=!this.s.discovered[this.definition().id+':'+n.id];this.discover(n.id);if(first)this.say(this.siteDescription(n));}const [px,py]=D.ports[this.regionIndex()];if(dist(h,{x:px,y:py})<140)this.discover('port');const minor=D.minors[this.regionIndex()];if(dist(h,{x:minor[0],y:minor[1]})<180){this.discover('minor');this.setRefuge(this.s.zone,'minor');}}
   this.updateParty(dt);this.updateEnemies(dt);if(h!==this.hero||z!==this.zone()||this.s.challenge.pending||this.s.challenge.gameOver)return;this.updateProjectiles(dt);if(h!==this.hero||z!==this.zone()||this.s.challenge.pending||this.s.challenge.gameOver)return;this.updateElites(dt);this.updatePacks(dt);this.updateGuardianReinforcements(dt);this.updateTraps(dt);if(h!==this.hero||z!==this.zone()||this.s.challenge.pending||this.s.challenge.gameOver)return;this.updatePotion(dt);this.autoPotions();this.updateNight();this.updateEscort(dt);this.checkClear();this.checkMinis();
   for(const l of [...this.s.loot])if(l.zone===this.s.zone&&dist(l,h)<65){this.grant(l.gold,0);this.s.loot.splice(this.s.loot.indexOf(l),1);this.event('gold');}
