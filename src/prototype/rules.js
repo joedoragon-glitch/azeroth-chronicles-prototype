@@ -127,7 +127,7 @@ const harbors={
   water:{x1:2140,x2:2550,y1:470,y2:900},
   dock:{x1:2075,x2:2255,y1:615,y2:735},
   arrival:{x:2115,y:675},
-  boat:{x:2285,y:675},
+  boat:{x:2200,y:735},
   shore:{x:2140,y:675},
   name:'Reedport Mangrove Ferry',
   vegetation:'mangrove'
@@ -136,15 +136,15 @@ const harbors={
   id:'stonecross-ferry',
   water:{x1:70,x2:390,y1:1740,y2:2190},
   dock:{x1:325,x2:470,y1:1845,y2:1955},
-  arrival:{x:438,y:1900},
-  boat:{x:285,y:1900},
+  arrival:{x:425,y:1900},
+  boat:{x:340,y:1960},
   shore:{x:390,y:1900},
   name:'Stonecross Ferry Landing',
   vegetation:'pine'
  }
 };
 const travelArrivals={
- 'march>highlands':{x:438,y:1900},
+ 'march>highlands':{x:425,y:1900},
  'highlands>march':{x:2115,y:675}
 };
 const dungeonWalls={crypt:[710,780,[[480,680],[870,1060]]],archive:[650,730,[[400,620],[980,1200]]],mine:[800,870,[[480,730],[1020,1250]]],abyss:[610,690,[[600,830],[1040,1260]]],citadel:[750,830,[[430,680],[900,1150]]]};
