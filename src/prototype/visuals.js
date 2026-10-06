@@ -595,7 +595,7 @@ function terrain(ctx,screen,region=0){
   }
   ctx.restore();
  };
- for(const f of R.landforms?.[region]||[])drawLandform(f);
+ // Large-scale landforms guide authored placement only; visible geography comes from terrain, vegetation, roads and structures.
  rect(x1,x2,y1,y2,palette[0]);
  rect(x1+8,x2-8,y1+8,y2-8,palette[1]);
  for(const x of [x1,x2]){line({x:x+(x===x1?-10:10),y:y1},{x:x+(x===x1?-10:10),y:y2},'#16231c99',4);line({x,y:y1},{x,y:y2},palette[2],2);}
