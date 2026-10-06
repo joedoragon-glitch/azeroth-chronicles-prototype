@@ -1,5 +1,5 @@
 /* Bump CACHE_VERSION when app assets change. Tester builds activate immediately. */
-const CACHE_VERSION = 'azeroth-app-v0.8.63-charged-skills';
+const CACHE_VERSION = 'azeroth-app-v0.8.64-charge-aoe-feedback';
 const CACHE_PREFIX = 'azeroth-app-';
 const APP_FILES = ['./prototype.html', './legacy.html', './styles/prototype.css', './src/prototype/data.js', './src/prototype/rules.js', './src/prototype/engine.js', './src/prototype/audio.js', './src/prototype/visuals.js', './src/prototype/sprites.js', './src/prototype/app.js', './', './index.html', './rts.html', './styles/rts.css', './src/rts-engine.js', './src/rts.js', './styles/game.css', './styles/app.css', './styles/keyboard.css', './src/sprint.js', './src/controls.js', './src/classes.js', './src/world.js', './src/squad.js', './src/game.js', './src/app.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './assets/sprites/manifest.json'];
 const appURL = path => new URL(path, self.registration.scope).href;
