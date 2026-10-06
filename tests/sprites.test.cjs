@@ -6,8 +6,8 @@ assert(paladin,'approved Paladin canary is registered');
 assert.equal(paladin.src,'./assets/sprites/paladin.png');
 assert.equal(paladin.displayWidth,100);
 assert.equal(paladin.displayHeight,112);
-assert.equal(paladin.anchorX,.56);
-assert.equal(paladin.anchorY,.90);
+assert.equal(paladin.anchorX,.52);
+assert.equal(paladin.anchorY,.88);
 assert(fs.existsSync(path.join(__dirname,'..',paladin.src.replace(/^\.\//,''))),'Paladin sprite file exists');
 
 assert.deepEqual(Sprites.candidateKeys({renderKind:'hero',class:'paladin'}),['hero:paladin']);
