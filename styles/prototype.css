@@ -160,3 +160,35 @@ button:disabled{background:#202c28;box-shadow:none;text-shadow:none}
 #order-button{display:none}
 body.menu-open #order-button{display:block}
 #squad-button[hidden]{display:none!important}
+
+
+/* Dedicated phone interaction control: keep gameplay Interact out of the HUD. */
+#touch-interact-button{display:none}
+@media(max-width:600px), (pointer:coarse) and (hover:none){
+  #touch-interact-button{
+    display:block;position:fixed;right:8px;bottom:max(8px,env(safe-area-inset-bottom));
+    width:96px;min-height:68px;z-index:12;margin:0;padding:8px 6px;
+    border-color:#e8ca8d;color:#fce9bb;
+    background:linear-gradient(155deg,#69563b,#3e392d);
+    font-size:12px;font-weight:750;text-align:center;
+    box-shadow:inset 0 1px #f5dfac66,0 3px 12px #07120dcc;
+    touch-action:manipulation;
+  }
+  #touch-interact-button small{font-size:10px}
+  #hud #recall-button{position:static;width:100%;margin-top:6px}
+  #hud #squad-button{position:static;width:100%;margin-top:6px}
+  body.menu-open #touch-interact-button{display:none}
+  body.menu-open #order-button{
+    display:block;right:8px;bottom:max(8px,env(safe-area-inset-bottom));
+    width:96px;min-height:68px;font-size:12px;padding:8px 6px;
+  }
+}
+@media(max-width:340px){
+  #touch-interact-button,body.menu-open #order-button{width:88px}
+}
+@media(max-height:500px) and (min-width:601px), (pointer:coarse) and (hover:none) and (orientation:landscape){
+  #touch-interact-button,body.menu-open #order-button{width:96px}
+}
+@media (hover:hover) and (pointer:fine){
+  #touch-interact-button{display:none!important}
+}
