@@ -77,6 +77,7 @@ jobs:
           cp index.html rts.html manifest.webmanifest sw.js _site/
           cp legacy.html prototype.html _site/
           cp -R styles src icons assets _site/
+          printf '%s\n' "$GITHUB_SHA" > _site/build.txt
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
@@ -114,16 +115,16 @@ jobs:
         env:
           PLAYTEST_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
-          EXPECTED="version:'$(node -p "require('./package.json').version")-prototype'"
-          for attempt in {1..20}; do
-            if curl -fsSL -H 'Cache-Control: no-cache' "${PLAYTEST_URL}src/prototype/app.js?sha=${GITHUB_SHA}&attempt=${attempt}" | grep -Fq "${EXPECTED}"; then
-              echo "Published build matches ${EXPECTED}"
+          for attempt in {1..30}; do
+            PUBLISHED="$(curl -fsSL -H 'Cache-Control: no-cache' "${PLAYTEST_URL}build.txt?sha=${GITHUB_SHA}&attempt=${attempt}" || true)"
+            if [ "${PUBLISHED}" = "${GITHUB_SHA}" ]; then
+              echo "Published build matches commit ${GITHUB_SHA}"
               exit 0
             fi
-            echo "Waiting for GitHub Pages propagation (${attempt}/20)…"
+            echo "Waiting for GitHub Pages propagation (${attempt}/30)…"
             sleep 4
           done
-          echo "Published site did not reach the expected build in time."
+          echo "Published site did not reach commit ${GITHUB_SHA} in time."
           exit 1
       - name: Verify published desktop and phone smoke paths
         env:
