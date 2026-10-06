@@ -400,7 +400,6 @@ const manaBalance={
  perLevel:5,
  regen:{combat:1,outOfCombat:2.5,talentCombat:.25,talentOutOfCombat:.5},
  rankCostGrowth:.08,
- mageRecovery:{base:22,perRank:3},
  rangedDrain:{wraith:.06,ashbeast:.04}
 };
 const idleWander={
