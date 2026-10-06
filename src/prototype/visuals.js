@@ -507,6 +507,7 @@ function terrain(ctx,screen,region=0){
   if(horizontal)for(let x=d.x1+10;x<d.x2-6;x+=step)line({x,y:d.y1+4},{x,y:d.y2-4},'#6f563d',1);
   else for(let y=d.y1+10;y<d.y2-6;y+=step)line({x:d.x1+4,y},{x:d.x2-4,y},'#6f563d',1);
   line({x:d.x1,y:d.y1},{x:d.x2,y:d.y1},'#d0b17a',2);line({x:d.x1,y:d.y2},{x:d.x2,y:d.y2},'#5a4534',2);
+  for(const q of [{x:d.x1+10,y:d.y1+10},{x:d.x1+10,y:d.y2-10},{x:d.x2-10,y:d.y1+10},{x:d.x2-10,y:d.y2-10}]){const p=screen(q);ctx.strokeStyle='#5d4735';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(p.x,p.y+7);ctx.lineTo(p.x,p.y-12);ctx.stroke();ctx.fillStyle='#a17b55';ctx.beginPath();ctx.arc(p.x,p.y-12,2.5,0,Math.PI*2);ctx.fill();}
  }
  // Other authored ponds and walls also use exact shapes, independent of props.
  for(const p of R.terrain[region]){
