@@ -10,7 +10,7 @@ for(const entry of Object.values(spriteManifest.sprites||{})){
   if(!mime)throw new Error('Unsupported sprite format '+entry.src);
   embeddedSprites[entry.src]='data:'+mime+';base64,'+fs.readFileSync(file).toString('base64');
 }
-html=html.replace('</head>','<script>window.__AZEROTH_SPRITE_MANIFEST__='+JSON.stringify(spriteManifest)+';window.__AZEROTH_EMBEDDED_SPRITES__='+JSON.stringify(embeddedSprites)+';<\\/script></head>');
+html=html.replace('</head>','<script>window.__AZEROTH_SPRITE_MANIFEST__='+JSON.stringify(spriteManifest)+';window.__AZEROTH_EMBEDDED_SPRITES__='+JSON.stringify(embeddedSprites)+'</script></head>');
 html=html.replace(/<link rel="stylesheet" href="\.\/([^\"]+)">/g,(_,f)=>'<style>'+fs.readFileSync(path.join(root,f),'utf8')+'</style>');
 html=html.replace(/<script src="\.\/([^\"]+)"><\/script>/g,(_,f)=>'<script>\n'+fs.readFileSync(path.join(root,f),'utf8').replace(/<\/script/gi,'<\\/script')+'\n</script>');
 html=html.replace("if(location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1')",'if(false)');
