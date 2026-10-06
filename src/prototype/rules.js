@@ -15,11 +15,11 @@ const attacks={
  darklord:[attack('cone',1.3,1.5,{combo:true,manaDrain:.08}),attack('circle',1.9,1.6,{count:3,sequential:true,manaDrain:.10}),attack('summon',2,1.6,{species:'crownguard',ranged:true}),attack('sector',2,2,{sequential:true,count:3,manaDrain:.12})]
 };
 const sites=[
- [['bridge-north','Mill bridge',1200,750],['bridge-south','Southern footbridge',1200,1750],['orchard','Abandoned orchard',760,780],['den-ruins','Orchard den ruins',650,1490],['mill-pond','Mill pond',630,1320],['cache','Woodland supply cache',1700,1150]],
- [['night-site','Lantern shore',1740,1000],['wagon','Stranded supply wagon',850,1200],['watch','Causeway watch platform',1760,1420],['dock','Sunken dock',1760,1800]],
- [['bridge-north','Stone bridge',1300,950],['bridge-south','Timber crossing',1300,1870],['lookout','Highland lookout',1900,500],['ore','Stonecross ore vein',1050,650],['tower','Ruined watchtower',2020,800]],
- [['bridge-north','Guarded ravine bridge',1450,750],['bridge-south','Burned forest crossing',1450,2160],['shrine','Ruined shrine',980,1200],['overlook','Ravine overlook',1320,1780],['checkpoint','Occupied checkpoint',1940,1500],['convoy','Supply convoy',1180,900]],
- [['bridge-north','Lava ridge bridge',1350,1000],['bridge-south','Southern stone crossing',1350,2400],['foundry','Ruined foundry',820,1860],['shelf','Crystal shelf',1080,2180],['siege','Siege camp',2200,1850],['fortress-gate','Dark fortress gate',2350,2450]]
+ [['bridge-north','Mill bridge',1200,750],['bridge-south','Southern footbridge',1200,1750],['orchard','Abandoned orchard',1050,740],['den-ruins','Orchard den ruins',650,1490],['mill-pond','Mill pond',630,1320],['cache','Woodland supply cache',1550,1150]],
+ [['night-site','Lantern shore',1700,900],['wagon','Stranded supply wagon',1000,1150],['watch','Causeway watch platform',1700,1300],['dock','Sunken dock',1760,1800]],
+ [['bridge-north','Stone bridge',1300,950],['bridge-south','Timber crossing',1300,1870],['lookout','Highland lookout',1800,600],['ore','Stonecross ore vein',1100,650],['tower','Ruined watchtower',2020,800]],
+ [['bridge-north','Guarded ravine bridge',1450,750],['bridge-south','Burned forest crossing',1450,2160],['shrine','Ruined shrine',1100,1080],['overlook','Ravine overlook',1350,1800],['checkpoint','Occupied checkpoint',1940,1500],['convoy','Supply convoy',1200,950]],
+ [['bridge-north','Lava ridge bridge',1350,1000],['bridge-south','Southern stone crossing',1350,2400],['foundry','Ruined foundry',850,1800],['shelf','Crystal shelf',1100,2100],['siege','Siege camp',2250,1850],['fortress-gate','Dark fortress gate',2350,2450]]
 ];
 // Explicit destinations for supplies and finite worker expeditions. No town nodes.
 const expeditions=[
