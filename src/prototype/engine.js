@@ -111,7 +111,7 @@ class Campaign{
  }
  follow(entity,target,speed,dt,stop=45){if(dist(entity,target)<=stop)return true;if(this.clearSegment(entity,target)){entity.path=[];return this.move(entity,target,speed,dt,stop);}entity.routeAge=(entity.routeAge||0)-dt;if(!entity.path?.length||entity.routeAge<=0){entity.path=this.route(entity,target);entity.routeAge=1.3;}while(entity.path?.length&&dist(entity,entity.path[0])<1)entity.path.shift();if(!entity.path?.length)return false;const moved=this.move(entity,entity.path[0],speed,dt);if(dist(entity,entity.path[0])<1)entity.path.shift();if(!moved)entity.routeAge=0;return moved;}
  zone(){
-  if(this.s.zones[this.s.zone]){const z=this.s.zones[this.s.zone];this.roadNetwork(z);this.authoredPlaces(z);return z;}const i=this.regionIndex(),r=D.regions[i],dungeon=this.isDungeon(),id=this.s.zone;
+  if(this.s.zones[this.s.zone]){const z=this.s.zones[this.s.zone];this.regionalDestinations(z);this.regionalDestinations(z);this.roadNetwork(z);this.authoredPlaces(z);return z;}const i=this.regionIndex(),r=D.regions[i],dungeon=this.isDungeon(),id=this.s.zone;
   const z={id,enemies:[],props:[],npcs:[],buildings:[],nodes:[],packTimers:{},clock:0};this.s.zones[id]=z;
   const room=this.supplyRoom();if(room){z.room=true;z.treasury=room.boss;z.npcs.push({id:'exit',name:'Leave '+room.name,kind:'exit',x:125,y:155,icon:'🚪'});const cacheSpots=[[650,365],[720,690],[545,760]];for(let j=0;j<room.count;j++){const [x,y]=cacheSpots[j];z.npcs.push({id:'bundle-'+j,name:room.name+' cache '+(j+1),kind:'bundle',index:j,x,y,icon:'📦'});}
    if(!this.peace){const i=this.regionIndex(),r=D.regions[i],sp=D.species[i][0],gold=Math.max(1,Math.floor((r.gold_range[0]+r.gold_range[1])/2*.35)),captainProfile=R.roomCaptains?.[id];for(const [j,[x,y]]of [[320,340],[530,360],[590,655],[745,590]].entries()){const captain=j===3&&captainProfile,e=this.makeEnemy({species:sp[0],name:captain?captainProfile.name:sp[1]+' treasury guard',icon:sp[2],level:i*3+2,hp:(65+i*105)*(captain?2:1),damage:(7+i*8)*(captain?1.25:1),gold,xp:r.guard_xp},{x,y});e.guard=true;e.roomGuard=true;e.pack=id+'-guard-'+j;if(captain){e.captain=true;e.roomCaptain=true;e.captainProfile=id;e.captainMentor=captainProfile.mentor;e.visualScale=captainProfile.visualScale||1.16;e.specialCd=1.25;e.roomCaptainVersion=1;}this.configureEnemy(e,j);z.enemies.push(e);}}
@@ -157,8 +157,19 @@ class Campaign{
  depositSite(u){const z=this.isDungeon()?this.s.zones[this.definition().id]:this.zone(),i=this.regionIndex(),sites=[...(z?.npcs.filter(n=>n.kind==='rest')||[]),...(this.isDungeon()?[]:(z?.buildings.filter(b=>b.progress>=4&&b.full)||[])),{x:D.towns[i][0],y:D.towns[i][1]}];return sites.sort((a,b)=>dist(a,u)-dist(b,u))[0];}
  setRefuge(zone,id){const n=this.s.zones[zone]?.npcs.find(n=>n.id===id&&n.kind==='rest');if(n){this.s.refuge=zone;this.s.refugeSite={zone,id,x:n.x,y:n.y};}}
  arriveRefuge(site){const n=this.zone().npcs.find(n=>n.id===site.id&&n.kind==='rest');if(!n)return;Object.assign(this.hero,this.safe(n.x,n.y));for(const u of this.activeParty())Object.assign(u,this.safe(n.x+40,n.y+30));}
+ regionalDestinations(z){
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||z.destinationLayoutVersion===2)return;
+  const i=this.regionIndex(z.id),oldZone=this.s.zone;this.s.zone=z.id;
+  try{
+   const move=(id,raw)=>{const n=z.npcs.find(n=>n.id===id);if(!n||!raw)return;Object.assign(n,this.safe(raw[0],raw[1],z.id));};
+   move('entrance',D.entrances[i]);
+   if(!R.harbors?.[z.id])move('outbound',D.ports[i]);
+   const minor=z.npcs.find(n=>n.id==='minor');if(minor)Object.assign(minor,this.safe(D.minors[i][0],D.minors[i][1],z.id));
+   z.destinationLayoutVersion=2;
+  }finally{this.s.zone=oldZone;}
+ }
  alignLandmarks(z){
-  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||z.landmarkLayoutVersion===2)return;
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||z.landmarkLayoutVersion===3)return;
   const i=this.regionIndex(z.id),oldZone=this.s.zone;this.s.zone=z.id;
   try{
    for(const [id,,x,y]of R.sites[i]){
@@ -167,7 +178,7 @@ class Campaign{
     for(const e of z.enemies.filter(e=>e.site===id&&!e.mini)){const q=this.safe(e.home.x+dx,e.home.y+dy,z.id);e.home={...q};if(e.hp>0&&!e.aggro)Object.assign(e,q);}
     for(const b of z.npcs.filter(b=>b.kind==='bundle'&&b.site===id)){const q=this.safe(b.x+dx,b.y+dy,z.id);Object.assign(b,q);}
    }
-   z.landmarkLayoutVersion=2;
+   z.landmarkLayoutVersion=3;
   }finally{this.s.zone=oldZone;}
  }
  regionalAesthetics(z){
