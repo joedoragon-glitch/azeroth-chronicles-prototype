@@ -240,12 +240,22 @@ const manaBalance={
  mageRecovery:{base:22,perRank:3},
  rangedDrain:{wraith:.06,ashbeast:.04}
 };
+const idleWander={
+ ordinary:{radius:58,speed:34,minPause:2.4,maxPause:6.5},
+ ranged:{radius:52,speed:31,minPause:2.8,maxPause:7},
+ guardian:{radius:38,speed:28,minPause:3,maxPause:7.5},
+ captain:{radius:34,speed:30,minPause:2.4,maxPause:6},
+ ringleader:{radius:52,speed:38,minPause:2,maxPause:5},
+ boss:{radius:32,speed:24,minPause:3.2,maxPause:7.5},
+ night:{radius:54,speed:36,minPause:2.2,maxPause:5.5},
+ summon:{radius:28,speed:30,minPause:2,maxPause:5}
+};
 const autoPotionThresholds={health:.35,mana:.35};
 // Boss telegraphs stay readable, but idle gaps are short and basic attacks only interrupt sustained special pressure occasionally.
 const bossCadence={specialRecoveryMultiplier:.25,basicCooldown:.75,skillsPerBasic:4,specialRange:560};
 const rangedEnemyCombat={projectileMultiplier:1.7,aimTime:.35,cooldown:1.15,retreatFraction:.5,retreatSpeed:165,ringleaderRetreatMultiplier:1.2,ringleaderHybridMeleeRange:100,guardianScreenRange:220};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
+const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
