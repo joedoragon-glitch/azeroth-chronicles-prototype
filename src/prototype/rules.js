@@ -172,13 +172,13 @@ const quests=[
  quest('rescue','thorn'),quest('patrol',5),quest('bundles',2),quest('rescue','crypt'),quest('sites',null,['bridge-north','port']),quest('sites',null,['goblin-camp','den-ruins','bridge-south']),
  quest('rescue','mire'),quest('patrol',6),quest('rescue','archive'),quest('bundles',3),quest('night',2,['night-site']),quest('sites',null,['port']),
  quest('rescue','ridge'),quest('patrol',7),quest('rescue','mine'),quest('bundles',3),quest('sites',null,['bridge-north','wolf-den','ogre-hearth','bridge-south']),quest('sites',null,['port']),
- quest('rescue','warlord'),quest('escort'),quest('rescue','abyss'),quest('patrol',8),quest('sites',null,['shrine','minor','orc-bivouac','overlook']),quest('sites',null,['port']),
+ quest('rescue','warlord'),quest('sites',null,['convoy','bridge-north','checkpoint']),quest('rescue','abyss'),quest('patrol',8),quest('sites',null,['shrine','minor','orc-bivouac','overlook']),quest('sites',null,['port']),
  quest('rescue','citadel'),quest('patrol',8),quest('rescue','darklord'),quest('bundles',3),quest('sites',null,['foundry','shelf','ash-roost','crown-barracks','siege']),quest('sites',null,['fortress-gate'])
 ];
 for(const [index,family]of [[0,'thorn'],[6,'mire'],[12,'ridge'],[18,'warlord'],[26,'darklord']])quests[index].clear='field-'+family;
 // The renderer and collision engine share these exact boundaries and crossing gaps.
 const barriers=[
- {kind:'water',bounds:[1160,1240,60,2300],gaps:[[660,840],[1660,1840]]},
+ {kind:'water',bounds:[1160,1240,0,2700],gaps:[[660,840],[1660,1840]]},
  {kind:'water',bounds:[1120,1690,1450,2070],gaps:[[1710,1850]]},
  {kind:'ravine',bounds:[1250,1350,120,2400],gaps:[[860,1100],[1770,1980]]},
  {kind:'ravine',bounds:[1400,1510,200,2450],gaps:[[630,870],[2070,2250]]},
@@ -245,7 +245,7 @@ const landforms=[
 const harbors={
  march:{
   id:'reedport-ferry',
-  water:{x1:2140,x2:2550,y1:470,y2:900},
+  water:{x1:2140,x2:3000,y1:470,y2:900},
   dock:{x1:2075,x2:2255,y1:615,y2:735},
   arrival:{x:2115,y:675},
   boat:{x:2200,y:735},
@@ -255,7 +255,7 @@ const harbors={
  },
  highlands:{
   id:'stonecross-ferry',
-  water:{x1:70,x2:390,y1:1740,y2:2190},
+  water:{x1:0,x2:390,y1:1740,y2:2190},
   dock:{x1:325,x2:470,y1:1845,y2:1955},
   arrival:{x:425,y:1900},
   boat:{x:340,y:1960},
@@ -309,7 +309,8 @@ const outdoorMiniTrapKinds={
  crown:['jet','seal']
 };
 const rangedProfiles={goblin:{variant:'slinger',shotRange:240,shotSpeed:240,projectileStyle:'stone'},skeleton:{variant:'bow guard',shotRange:290,shotSpeed:280,projectileStyle:'arrow'},reedbeast:{variant:'spitter',hybrid:true,shotRange:250,shotSpeed:220,projectileStyle:'spit',projectileSlow:1.6},mireling:{variant:'spitter',hybrid:true,shotRange:230,shotSpeed:230,projectileStyle:'spit',projectileSlow:1.6},ogre:{variant:'stone thrower',hybrid:true,shotRange:260,shotSpeed:220,projectileStyle:'stone'},orc:{variant:'axe thrower',hybrid:true,shotRange:260,shotSpeed:250,projectileStyle:'axe'},ashbeast:{variant:'cinder spitter',hybrid:true,shotRange:270,shotSpeed:240,projectileStyle:'cinder'}};
-const forests=[[[470,850,210,280],[1850,1050,250,320],[550,1800,260,180]],[[650,1650,240,200],[1950,1000,200,300],[2050,2300,230,170]],[[850,600,150,210],[1900,1500,240,350],[650,2100,230,200]],[[600,1300,250,250],[2100,1900,270,260],[1100,2300,200,160]],[[800,1100,230,250],[1850,1600,240,300],[2400,1050,170,200]]];
+const forests=[[[470,850,210,280],[1850,1050,250,320],[550,1800,260,180]],[[650,1650,240,200],[1950,1000,200,300],[2050,2300,230,170]],[[850,600,150,210],[1900,1500,240,350],[650,2100,230,200],[1200,2700,260,180],[2750,1750,220,240]],[[600,1300,250,250],[2100,1900,270,260],[1100,2300,200,160]],[[800,1100,230,250],[1850,1600,240,300],[2400,1050,170,200]]];
+const resourceDepositCounts=[2,3,4,4,4];
 const teachers={thorn:{learn:[2],train:[1,2],maxRank:2},mire:{learn:[3,4,6],train:[1,2,3,4,6],maxRank:3},ridge:{learn:[5],train:[1,2,3,4,5,6],maxRank:4},warlord:{learn:[7],train:[1,2,3,4,5,6,7],maxRank:6},citadel:{learn:[8],train:[1,2,3,4,5,6,7,8],maxRank:8}};
 const expeditionSupportSkills={
  sharedTraining:{name:'Shared Training',trainers:{thorn:1,mire:2,ridge:3,warlord:4,citadel:5},maxRank:5,costs:[0,280,280,280,280,280],detail:'Companions inherit applicable talent-derived HP, damage and movement speed.'},
@@ -420,6 +421,6 @@ const rangedEnemyCombat={projectileMultiplier:1.7,aimTime:.35,cooldown:1.15,retr
 const chargedSkills={holdSeconds:.65,basicDamageMultiplier:3,secondRadius:145};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
+const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);

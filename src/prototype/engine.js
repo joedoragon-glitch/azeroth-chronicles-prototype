@@ -182,7 +182,7 @@ class Campaign{
   }finally{this.s.zone=oldZone;}
  }
  regionalAesthetics(z){
-  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||z.aestheticVersion===3)return;
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||z.aestheticVersion===4)return;
   const i=this.regionIndex(z.id),size=D.regions[i].size,major={x:D.towns[i][0],y:D.towns[i][1]},minor={x:D.minors[i][0],y:D.minors[i][1]},field=this.fieldCenter(i),theme=R.natureThemes[i],oldZone=this.s.zone;this.s.zone=z.id;
   try{
    z.props=z.props.filter(p=>!String(p.id||'').startsWith('aesthetic-'));
@@ -192,7 +192,8 @@ class Campaign{
    const add=(p,structure,prefix='nature')=>{if(!clear(p,prefix==='town'?48:65))return false;z.props.push({id:'aesthetic-'+prefix+'-'+serial++,...p,r:0,decorative:true,structure});return true;};
    const townLife=(center,layout,prefix)=>{for(const [dx,dy,structure]of layout)add({x:center.x+dx,y:center.y+dy},structure,prefix);};
    townLife(major,R.settlementLayouts.majorLife,'town');townLife(minor,R.settlementLayouts.minorLife,'hamlet');
-   for(let gx=170;gx<size-140&&natureCount<64;gx+=285)for(let gy=190;gy<size-140&&natureCount<64;gy+=275){
+   const natureTargets=[72,88,120,88,90],natureSteps=[270,250,215,250,250],natureTarget=natureTargets[i],natureStep=natureSteps[i];
+   for(let gx=170;gx<size-140&&natureCount<natureTarget;gx+=natureStep)for(let gy=190;gy<size-140&&natureCount<natureTarget;gy+=natureStep){
     const seed=(Math.imul(gx+i*97,73856093)^Math.imul(gy+i*131,19349663))>>>0,x=gx+(seed%101)-50,y=gy+((seed>>>8)%91)-45,p={x,y};
     if(dist(p,major)<390||dist(p,minor)<330||dist(p,field)<320||z.enemies.some(e=>e.hp>0&&dist(e.home,p)<55))continue;
     if(add(p,theme[seed%theme.length]))natureCount++;
@@ -206,7 +207,7 @@ class Campaign{
     foundry:['ember-pit','black-rock'],shelf:['crystal-cluster','black-rock'],siege:['barricade','banner'],'fortress-gate':['black-rock','banner']};
    for(const n of z.npcs.filter(n=>n.kind==='landmark'&&scenery[n.id]))for(const [j,structure]of scenery[n.id].entries()){const a=(j?2.4:-.6)+(i*.23),p={x:n.x+Math.cos(a)*70,y:n.y+Math.sin(a)*70};add(p,structure,'site');}
    const oppression=i<2?'ration':i===2?'watchpost':i===3?'barricade':'banner';add({x:major.x-300,y:major.y+15},oppression,'town');add({x:major.x+300,y:major.y+15},oppression,'town');
-   z.aestheticVersion=3;
+   z.aestheticVersion=4;
   }finally{this.s.zone=oldZone;}
  }
  worldLife(z){
@@ -236,12 +237,13 @@ class Campaign{
   const h=R.harbors?.[z.id];if(!h)return;
   const transport=z.id==='march'?z.npcs.find(n=>n.id==='outbound'):z.id==='highlands'?z.npcs.find(n=>n.id==='return'):null;
   if(transport){Object.assign(transport,h.boat);transport.name=z.id==='march'?'Ferry to Ironroot Highlands':'Ferry back to Flooded Marches';transport.harbor=true;}
-  if(z.harborVersion===1)return;
+  if(z.harborVersion===2)return;
   const oldZone=this.s.zone;this.s.zone=z.id;try{
    const w=h.water,d=h.dock,insideHarbor=p=>p.x>w.x1-70&&p.x<w.x2+70&&p.y>w.y1-70&&p.y<w.y2+70;
    z.props=z.props.filter(p=>!String(p.id||'').startsWith('harbor-')&&!insideHarbor(p));
    for(const e of z.enemies.filter(e=>e.hp>0&&e.type==='mob'&&dist(e,h.arrival)<280)){const fallback=this.safe(z.id==='march'?1900:650,z.id==='march'?980:2180,z.id);e.home={...fallback};if(!e.aggro)Object.assign(e,fallback);}
-   const add=(id,x,y,structure,r=0)=>z.props.push({id:'harbor-'+id,x,y,r,decorative:true,structure});
+   const roadDistance=p=>{let nearest=Infinity;for(const path of z.roads||[])for(let j=1;j<path.length;j++)nearest=Math.min(nearest,this.distanceToSegment(p,path[j-1],path[j]));return nearest;};
+   const add=(id,x,y,structure,r=0)=>{let p={x,y};if(roadDistance(p)<=70||this.blocked(p.x,p.y,z.id,8,true)){let found=null;for(const radius of [90,130,170,220]){for(let n=0;n<24;n++){const a=n*Math.PI/12,q={x:x+Math.cos(a)*radius,y:y+Math.sin(a)*radius};if(this.blocked(q.x,q.y,z.id,8,true)||roadDistance(q)<=70)continue;found=q;break;}if(found)break;}if(found)p=found;else return;}z.props.push({id:'harbor-'+id,...p,r,decorative:true,structure});};
    if(z.id==='march'){
     for(const [id,x,y,structure]of [
      ['mangrove-a',2320,500,'mangrove'],['mangrove-b',2470,560,'mangrove'],['mangrove-c',2490,820,'mangrove'],
@@ -249,18 +251,18 @@ class Campaign{
     ])add(id,x,y,structure);
    }else if(z.id==='highlands'){
     for(const [id,x,y,structure]of [
-     ['pine-a',120,1765,'pine-sapling'],['pine-b',130,2140,'pine-sapling'],['rock-a',125,1860,'rock-cluster'],
-     ['rock-b',115,2070,'rock-cluster'],['heather',210,2170,'heather']
+     ['pine-a',470,1765,'pine-sapling'],['pine-b',510,2140,'pine-sapling'],['rock-a',455,1840,'rock-cluster'],
+     ['rock-b',480,2070,'rock-cluster'],['heather',560,2170,'heather']
     ])add(id,x,y,structure);
    }
-   z.harborVersion=1;
+   z.harborVersion=2;
   }finally{this.s.zone=oldZone;}
  }
- authoredPlaces(z){if(this.supplyRoom(z.id)){this.treasuryInterior(z);this.combatPopulation(z);this.guardianPopulation(z);this.roomCaptainPopulation(z);return;}this.harborLayout(z);this.repairMiniGuardianReachability(z);this.spaceQuestBoard(z);this.spaceMillhavenSupplier(z);this.combatPopulation(z);this.nightEnemyPopulation(z);if(dungeonIds.includes(z.id)){this.decorateDungeon(z);this.guardianRewards(z);}if(z.placesVersion===1){this.localSites(z);this.miniDungeons(z);this.spreadOutdoorForces(z);this.alignLandmarks(z);this.supplyInteriors(z);this.regionalAesthetics(z);this.worldLife(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);this.fieldCaptainPopulation(z);return;}z.placesVersion=1;const i=this.regionIndex(z.id),dungeon=dungeonIds.includes(z.id);
+ authoredPlaces(z){if(this.supplyRoom(z.id)){this.treasuryInterior(z);this.combatPopulation(z);this.guardianPopulation(z);this.roomCaptainPopulation(z);return;}this.harborLayout(z);this.repairMiniGuardianReachability(z);this.spaceQuestBoard(z);this.spaceMillhavenSupplier(z);this.combatPopulation(z);this.nightEnemyPopulation(z);if(dungeonIds.includes(z.id)){this.decorateDungeon(z);this.guardianRewards(z);}if(z.placesVersion===1){this.localSites(z);this.openResourceMini(z);this.resourceDeposits(z);this.miniDungeons(z);this.openResourceMini(z);this.spreadOutdoorForces(z);this.alignLandmarks(z);this.supplyInteriors(z);this.regionalAesthetics(z);this.worldLife(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);this.fieldCaptainPopulation(z);return;}z.placesVersion=1;const i=this.regionIndex(z.id),dungeon=dungeonIds.includes(z.id);
   if(!dungeon){z.npcs=z.npcs.filter(n=>!n.id.startsWith('landmark-'));for(const [id,name,x,y]of R.sites[i])z.npcs.push({id,name,kind:'landmark',...this.safe(x,y,z.id),icon:/bridge|crossing/i.test(name)?'🪵':/camp|convoy|wagon/i.test(name)?'🏕️':'🏚️'});}
   const nearRoad=p=>z.roads?.some(path=>path.some((b,j)=>j&&this.distanceToSegment(p,path[j-1],b)<p.r+85));
   const points=dungeon?R.pillars[z.id].map(([x,y])=>({x,y,r:30,icon:'🪨',structure:'pillar'})):[];
-  for(const q of points){if(this.blocked(q.x,q.y,z.id,q.r+20)||z.npcs.some(n=>dist(n,q)<q.r+90)||z.enemies.some(e=>dist(e.home,q)<q.r+50)||nearRoad(q)||z.id===this.s.zone&&dist(this.hero,q)<q.r+40)continue;z.props.push({id:'structure-'+z.props.length,...q});}this.localSites(z);this.miniDungeons(z);this.spreadOutdoorForces(z);this.alignLandmarks(z);this.supplyInteriors(z);this.regionalAesthetics(z);this.worldLife(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);this.fieldCaptainPopulation(z);
+  for(const q of points){if(this.blocked(q.x,q.y,z.id,q.r+20)||z.npcs.some(n=>dist(n,q)<q.r+90)||z.enemies.some(e=>dist(e.home,q)<q.r+50)||nearRoad(q)||z.id===this.s.zone&&dist(this.hero,q)<q.r+40)continue;z.props.push({id:'structure-'+z.props.length,...q});}this.localSites(z);this.openResourceMini(z);this.resourceDeposits(z);this.miniDungeons(z);this.openResourceMini(z);this.spreadOutdoorForces(z);this.alignLandmarks(z);this.supplyInteriors(z);this.regionalAesthetics(z);this.worldLife(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);this.fieldCaptainPopulation(z);
  }
  spaceQuestBoard(z){if(dungeonIds.includes(z.id)||z.boardPositionVersion===2)return;const board=z.npcs.find(n=>n.kind==='quests');if(!board)return;const i=this.regionIndex(z.id),[x,y]=D.towns[i],p=this.safe(x+210,y+55,z.id);Object.assign(board,p);z.boardPositionVersion=2;}
  spaceMillhavenSupplier(z){if(z.id!=='vale'||z.supplierPositionVersion===2)return;const supplier=z.npcs.find(n=>n.id==='supplier');if(!supplier)return;const [x,y]=D.towns[0];Object.assign(supplier,this.safe(x+115,y-85,z.id));z.supplierPositionVersion=2;}
@@ -281,6 +283,31 @@ class Campaign{
    targets.forEach((site,j)=>{const pack=packs[j];if(!pack)return;const anchor=site.id===plan.resource&&node?node:z.npcs.find(n=>n.kind==='bundle'&&n.site===site.id)||fieldPoint(site);z.enemies.filter(e=>e.pack===pack).forEach((e,k)=>{let p;for(let t=0;t<24;t++){const a=(t+k*3)*Math.PI/12,candidate={x:anchor.x+Math.cos(a)*(75+Math.floor(k/2)*35),y:anchor.y+Math.sin(a)*(75+Math.floor(k/2)*35)};if(!this.blocked(candidate.x,candidate.y,z.id)&&refuges.every(([x,y])=>dist(candidate,{x,y})>=260)&&this.line(candidate,anchor)){p=candidate;break;}}if(!p)p=fieldPoint(anchor,60);e.home=p;e.site=site.id;if(e.hp>0&&!e.aggro)Object.assign(e,p);});});
    z.localSitesVersion=2;
   }finally{this.s.zone=oldZone;}
+ }
+ resourceDeposits(z){
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||z.resourceDepositsVersion===1||!z.nodes?.length)return;
+  const i=this.regionIndex(z.id),count=R.resourceDepositCounts?.[i]||1,plan=R.expeditions[i],primary=z.nodes[0],total=Math.max(0,Math.round(z.nodes.reduce((sum,n)=>sum+(Number(n.amount)||0),0))),group='resource-'+z.id,oldZone=this.s.zone;this.s.zone=z.id;
+  try{
+   const anchor={x:primary.x,y:primary.y},town={x:D.towns[i][0],y:D.towns[i][1]},icon=primary.icon,mini=primary.mini,positions=[];
+   const preferred=[[-170,-90],[170,-90],[-175,135],[175,135],[0,-210],[0,220]];
+   const usable=p=>!this.blocked(p.x,p.y,z.id,18)&&positions.every(q=>dist(q,p)>105)&&!!this.route(town,p).length;
+   for(let j=0;j<count;j++){
+    let p=null;const [dx,dy]=preferred[j%preferred.length],candidate={x:anchor.x+dx,y:anchor.y+dy};
+    try{const safe=this.safe(candidate.x,candidate.y,z.id);if(usable(safe))p=safe;}catch(_){}
+    if(!p)for(const radius of [130,180,230,280]){for(let n=0;n<24;n++){const a=(n+j*5)*Math.PI/12,c={x:anchor.x+Math.cos(a)*radius,y:anchor.y+Math.sin(a)*radius};if(!usable(c))continue;p=c;break;}if(p)break;}
+    positions.push(p||this.safe(anchor.x,anchor.y,z.id));
+   }
+   const base=Math.floor(total/count),remainder=total-base*count;
+   z.nodes=positions.map((p,j)=>({id:j===0?primary.id:'gather-'+z.id+'-'+(j+1),...p,amount:base+(j<remainder?1:0),icon,site:primary.site,name:count>1?plan.name+' deposit '+(j+1):plan.name,kind:'resource',resourceGroup:group,...(mini?{mini}:{} )}));
+   z.resourceDepositsVersion=1;
+  }finally{this.s.zone=oldZone;}
+ }
+ openResourceMini(z){
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||z.resourceMiniOpenVersion===1)return;
+  const id='resource-'+z.id,mini=z.minis?.find(m=>m.id===id);if(!mini)return;
+  const keep=new Set([0,5,9,14]);
+  z.props=z.props.filter(p=>{if(p.mini!==id||!String(p.id||'').startsWith('mini-wall-'+id+'-'))return true;const n=Number(String(p.id).split('-').at(-1));return keep.has(n);});
+  z.resourceMiniOpenVersion=1;
  }
  spreadOutdoorForces(z){
   if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||z.outdoorOccupationVersion===2)return;
@@ -335,21 +362,21 @@ class Campaign{
   if(dungeonIds.includes(z.id)||z.minisVersion===1)return;
   const i=this.regionIndex(z.id),r=D.regions[i],plan=R.miniPlans[i],oldZone=this.s.zone;this.s.zone=z.id;
   try{
-   const family=D.bosses.find(b=>b.region===z.id&&b.kind==='field').id,field=this.fieldCenter(i),resource=z.nodes[0];
+   const family=D.bosses.find(b=>b.region===z.id&&b.kind==='field').id,field=this.fieldCenter(i),resource=z.nodes[0],resourceNodes=z.nodes.filter(n=>n.resourceGroup===resource.resourceGroup||n.site===resource.site),resourceCenter={x:resourceNodes.reduce((a,n)=>a+n.x,0)/resourceNodes.length,y:resourceNodes.reduce((a,n)=>a+n.y,0)/resourceNodes.length};
    z.minis=[];
-   for(const [type,center,count]of [['resource',resource,3+i],['field',field,4+i*2]]){
+   for(const [type,center,count]of [['resource',resourceCenter,3+i],['field',field,4+i*2]]){
     const id=type==='field'?'field-'+family:'resource-'+z.id,site=type==='resource'?resource.site:null;
-    const inherited=type==='field'?!!this.s.normal[family]||!!this.s.rescued[family]:resource.amount<r.resource||z.npcs.some(n=>n.kind==='bundle'&&n.site===site&&this.s.discovered[z.id+':bundle-'+n.index]);
+    const inherited=type==='field'?!!this.s.normal[family]||!!this.s.rescued[family]:resourceNodes.reduce((sum,n)=>sum+n.amount,0)<r.resource||z.npcs.some(n=>n.kind==='bundle'&&n.site===site&&this.s.discovered[z.id+':bundle-'+n.index]);
     const mini={id,type,family:type==='field'?family:null,site,name:plan[type],x:center.x,y:center.y,cleared:!!inherited,trapPosts:[]};z.minis.push(mini);
     const roads=p=>z.roads.some(path=>path.some((b,j)=>j&&this.distanceToSegment(p,path[j-1],b)<p.r+60));
-    const posts=[[-190,-190],[-120,-190],[-50,-190],[70,-190],[140,-190],[190,-190],[-190,-120],[-190,0],[-190,120],[-190,190],[-120,190],[-50,190],[70,190],[140,190],[190,190],[190,120],[190,0],[190,-120],[-95,-65],[90,-75],[0,140]];
+    const posts=type==='resource'?[[-260,-180],[-260,180],[260,-180],[260,180],[-80,-240],[80,-240],[-80,240],[80,240]]:[[-190,-190],[-120,-190],[-50,-190],[70,-190],[140,-190],[190,-190],[-190,-120],[-190,0],[-190,120],[-190,190],[-120,190],[-50,190],[70,190],[140,190],[190,190],[190,120],[190,0],[190,-120],[-95,-65],[90,-75],[0,140]];
     for(const [j,[dx,dy]]of posts.entries()){const p={x:center.x+dx,y:center.y+dy,r:j<18?27:30};if(this.blocked(p.x,p.y,z.id,p.r+15)||roads(p)||z.npcs.some(n=>dist(n,p)<p.r+65)||z.nodes.some(n=>dist(n,p)<p.r+65)||z.enemies.some(e=>e.type==='boss'&&dist(e.home,p)<90)||z.id===oldZone&&dist(this.hero,p)<80)continue;z.props.push({id:'mini-wall-'+id+'-'+j,...p,structure:j<18?plan.theme:'pillar',mini:id,icon:'🪨'});}
     const pool=z.enemies.filter(e=>e.type==='mob'&&!e.guard&&!e.summon&&!e.mini&&!e.nightOnly&&e.form==='normal'),preferredSpecies=D.species[i][type==='resource'?0:1][0],score=e=>type==='resource'?(e.site===site?0:!e.site?1:2):!e.site?0:1,preferred=pool.filter(e=>e.species===preferredSpecies).sort((a,b)=>score(a)-score(b)||this.idOrder(a,b)),candidates=(preferred.length>=count?preferred:pool.sort((a,b)=>score(a)-score(b)||this.idOrder(a,b))).slice(0,count);
-    const offsets=type==='field'?[[-250,-100],[-250,-25],[-110,-250],[-25,-250],[150,110],[180,40],[30,180],[-60,160],[100,-10],[70,70],[-120,60],[-100,-90]]:[[-120,-100],[-80,-120],[100,-100],[110,20],[-110,90],[40,110],[0,-80]];
+    const offsets=type==='field'?[[-250,-100],[-250,-25],[-110,-250],[-25,-250],[150,110],[180,40],[30,180],[-60,160],[100,-10],[70,70],[-120,60],[-100,-90]]:[[-210,-135],[210,-135],[-220,95],[220,95],[-95,210],[95,210],[0,-205]];
     candidates.forEach((e,j)=>{const [dx,dy]=offsets[j%offsets.length],p=this.safe(center.x+dx,center.y+dy);Object.assign(e,p);e.home={...p};e.guard=true;e.mini=id;e.site=site;e.pack=id+'-guard-pair-'+Math.floor(j/2);e.name=e.name.replace(/ guardian$/,'')+' guardian';e.gold=Math.max(1,Math.floor((r.gold_range[0]+r.gold_range[1])/2*.35));e.xp=r.guard_xp;e.miniRewardVersion=1;if(inherited){e.hp=0;e.deathPaid=true;}this.configureEnemy(e,j);});
     for(const [j,[dx,dy]]of [[50,65],[-65,75]].slice(0,type==='field'?1:2).entries()){const p={x:center.x+dx,y:center.y+dy},kinds=R.outdoorMiniTrapKinds[z.id]||['spikes','spikes'];if(!this.blocked(p.x,p.y)&&!roads({...p,r:20})&&!z.npcs.some(n=>dist(n,p)<65))mini.trapPosts.push({...p,kind:kinds[Math.min(j,kinds.length-1)],index:100+z.minis.length*10+j});}
     const marker=this.safe(center.x-130,center.y-10);z.npcs.push({id:'mini-'+id,name:mini.name,kind:'mini',mini:id,...marker,icon:'🏚️'});
-    if(type==='resource'){resource.mini=id;for(const n of z.npcs.filter(n=>n.kind==='bundle'&&n.site===site))n.mini=id;}
+    if(type==='resource'){for(const n of resourceNodes)n.mini=id;for(const n of z.npcs.filter(n=>n.kind==='bundle'&&n.site===site))n.mini=id;z.resourceMiniOpenVersion=1;}
    }
    z.minisVersion=1;
    // New cover cannot seal existing arrivals, captives, patrol homes or expedition troops.
@@ -485,7 +512,7 @@ class Campaign{
  assignBuilder(id){const b=this.zone().buildings.find(b=>b.id===id&&b.progress<4),already=this.activeLivingParty().some(u=>u.order?.type==='build'&&u.order.id===id),builder=this.availableLabor()[0];if(!b||already||!builder)return false;this.s.recallActive=false;builder.order={type:'build',id:b.id};this.say((builder.type==='archer'?'Ranger':'Soldier')+' assigned to resume construction.');return true;}
  upgradeBarracks(id){const b=this.zone().buildings.find(b=>b.id===id&&b.progress>=4&&!b.full),already=this.activeLivingParty().some(u=>u.order?.type==='upgrade'&&u.order.id===id),builder=this.availableLabor()[0];if(!b||(this.s.expeditionRank||1)<4||already||!builder)return false;if(!b.upgradePaid){if(!this.spend(100))return false;b.upgradePaid=true;b.upgradeProgress=b.upgradeProgress||0;}this.s.recallActive=false;builder.order={type:'upgrade',id:b.id};this.say((builder.type==='archer'?'Ranger':'Soldier')+' assigned to upgrade the barracks.');return true;}
  train(id,type='soldier'){const b=this.zone().buildings.find(b=>b.id===id),price=this.barracksRecruitPrice(type);if((this.s.expeditionRank||1)<2){this.say('Recruitment unlocks at Expedition 2.');return false;}if(!b||b.progress<4||b.queue>0||!price||this.rosterCount()+this.queuedCompanions()>=200||!this.spend(price))return false;b.queue=4;b.queueType=type;return true;}
- gather(nodeId){if((this.s.expeditionRank||1)<2){this.say('Resource gathering unlocks at Expedition 2. Rescue Mira and train the Expedition Skill.');return false;}this.checkMinis();const n=this.zone().nodes.find(n=>n.id===nodeId),labor=this.availableLabor();if(n?.mini&&!this.peace&&!this.miniCleared(n.mini)){this.say(this.miniStatus(n.mini));return false;}if(!n||n.amount<=0||!labor.length){this.say('At least one idle living troop and an unexhausted deposit are required.');return false;}this.s.recallActive=false;for(const u of labor)u.order={type:'gather',id:nodeId};this.say(labor.length+' troop'+(labor.length===1?'':'s')+' assigned to '+n.name+'. They will gather, deposit and return until it is exhausted.');return true;}
+ gather(nodeId){if((this.s.expeditionRank||1)<2){this.say('Resource gathering unlocks at Expedition 2. Rescue Mira and train the Expedition Skill.');return false;}this.checkMinis();const n=this.zone().nodes.find(n=>n.id===nodeId),labor=this.availableLabor();if(n?.mini&&!this.peace&&!this.miniCleared(n.mini)){this.say(this.miniStatus(n.mini));return false;}if(!n||n.amount<=0||!labor.length){this.say('At least one idle living troop and an unexhausted deposit are required.');return false;}this.s.recallActive=false;for(const u of labor)u.order={type:'gather',id:nodeId,group:n.resourceGroup};this.say(labor.length+' troop'+(labor.length===1?'':'s')+' assigned to '+n.name+'. They will gather, deposit and continue through nearby deposits until the resource group is exhausted.');return true;}
  restCompanion(id){const u=this.s.party.find(u=>u.id===id&&u.active!==false);if(!u||this.refugeThreat())return false;u.active=false;u.order=null;u.path=[];return true;}
  activateCompanion(id,barracksId){const u=this.s.party.find(u=>u.id===id&&u.active===false),b=this.zone().buildings.find(b=>b.id===barracksId&&b.progress>=4);if(!u||!b||u.hp<=0||this.refugeThreat()||this.activeParty().length>=this.barracksFieldCap(b))return false;u.active=true;Object.assign(u,this.safe(b.x+45,b.y+45));u.order=null;return true;}
  dismissCompanion(id){const i=this.s.party.findIndex(u=>u.id===id&&u.active===false);if(i<0)return false;this.s.party.splice(i,1);return true;}
@@ -654,8 +681,8 @@ class Campaign{
   for(const u of living){u.slow=Math.max(0,(u.slow||0)-dt);u.cd=Math.max(0,u.cd-dt);
    if(u.order?.type==='build'){const b=z.buildings.find(b=>b.id===u.order.id);if(b&&b.progress<4){if(dist(u,b)>85)this.follow(u,b,this.companionMoveSpeed(230)*(u.slow>0?.65:1),dt,70);else{b.progress=Math.min(4,b.progress+dt);if(b.progress>=4){u.order=null;this.say('Barracks construction complete.');this.event('construction',{id:b.id});this.checkQuests();}}}else u.order=null;continue;}
    if(u.order?.type==='upgrade'){const b=z.buildings.find(b=>b.id===u.order.id);if(b&&b.progress>=4&&!b.full&&b.upgradePaid){if(dist(u,b)>85)this.follow(u,b,this.companionMoveSpeed(230)*(u.slow>0?.65:1),dt,70);else{b.upgradeProgress=Math.min(4,(b.upgradeProgress||0)+dt);if(b.upgradeProgress>=4){b.full=true;b.upgradeProgress=4;u.order=null;this.say('Full barracks ready.');this.event('barracksUpgrade',{id:b.id});}}}else u.order=null;continue;}
-   if(u.order?.type==='gather'){const n=z.nodes.find(n=>n.id===u.order.id);if(n&&n.amount>0&&(!n.mini||this.peace||this.miniCleared(n.mini))){if(dist(u,n)>60)this.follow(u,n,this.companionMoveSpeed(230)*(u.slow>0?.65:1),dt);else{const amount=Math.min(n.amount,12*dt);n.amount=Math.max(0,n.amount-amount);u.carry+=amount;this.s.gathered[this.definition().id]=(this.s.gathered[this.definition().id]||0)+amount;}if(u.carry>=35||n.amount<=0)u.order={type:'deposit',id:n.id};}else u.order={type:'deposit'};continue;}
-   if(u.order?.type==='deposit'){const deposit=this.depositSite(u);if(dist(u,deposit)>130)this.follow(u,deposit,this.companionMoveSpeed(230)*(u.slow>0?.65:1),dt);else{const payout=Math.floor(u.carry+1e-7);this.grant(payout,0);u.carry=Math.max(0,u.carry-payout);const n=z.nodes.find(n=>n.id===u.order.id&&n.amount>0);u.order=n?{type:'gather',id:n.id}:null;}continue;}
+   if(u.order?.type==='gather'){const n=z.nodes.find(n=>n.id===u.order.id);if(n&&n.amount>0&&(!n.mini||this.peace||this.miniCleared(n.mini))){if(dist(u,n)>60)this.follow(u,n,this.companionMoveSpeed(230)*(u.slow>0?.65:1),dt);else{const amount=Math.min(n.amount,12*dt);n.amount=Math.max(0,n.amount-amount);u.carry+=amount;this.s.gathered[this.definition().id]=(this.s.gathered[this.definition().id]||0)+amount;}if(u.carry>=35||n.amount<=0)u.order={type:'deposit',id:n.id,group:n.resourceGroup};}else u.order={type:'deposit',id:u.order.id,group:u.order.group};continue;}
+   if(u.order?.type==='deposit'){const deposit=this.depositSite(u);if(dist(u,deposit)>130)this.follow(u,deposit,this.companionMoveSpeed(230)*(u.slow>0?.65:1),dt);else{const payout=Math.floor(u.carry+1e-7);this.grant(payout,0);u.carry=Math.max(0,u.carry-payout);const current=z.nodes.find(n=>n.id===u.order.id&&n.amount>0),next=current||z.nodes.find(n=>u.order.group&&n.resourceGroup===u.order.group&&n.amount>0);u.order=next?{type:'gather',id:next.id,group:next.resourceGroup}:null;}continue;}
    if(u.order)u.order=null;
    if(this.peace||this.s.recallActive){this.followPartyMember(u,living,dt);continue;}
    let e=null;
@@ -771,7 +798,7 @@ class Campaign{
  trapContains(t,u){return t.kind==='jet'?this.distanceToSegment(u,{x:t.x-t.length/2,y:t.y}, {x:t.x+t.length/2,y:t.y})<(t.halfWidth||28):dist(u,t)<t.radius;}
  updateTraps(dt){const hero=this.hero,zone=this.zoneId;for(const t of this.traps())if(t.phase>=t.warningTime&&t.phase<t.warningTime+t.activeTime)for(const u of [this.hero,...this.activeLivingParty()]){u.trapHits=u.trapHits||{};const key=this.s.zone+':layout2:'+t.index;if(u.trapHits[key]!==t.cycle&&this.trapContains(t,u)){u.trapHits[key]=t.cycle;this.hitParty(u,u.maxHp*t.damageFraction);if(t.kind==='seal')u.slow=t.slowSeconds;if(this.hero!==hero||this.zoneId!==zone||this.s.challenge.pending||this.s.challenge.gameOver)return;}}}
  updateNight(){if(this.peace)return;const i=this.regionIndex();if(this.isDungeon()||![1,3].includes(i))return;const z=this.zone();if(this.night()){if(!z.enemies.some(e=>e.nightOnly&&e.hp>0)&&!z.nightSpawned){for(let j=0;j<4;j++){const p=this.safe(1700+j*65,900+j*80);const species=i===1?'wraith':'stalker',cfg=R.nightEnemyCombat[species],e=this.makeEnemy({species,name:i===1?'Lantern wraith':'Ash stalker',icon:'👻',level:i*3+2,hp:Math.round((120+i*100)*cfg.hp),damage:Math.round((12+i*7)*cfg.damage),gold:D.regions[i].gold_range[0],xp:D.regions[i].enemy_xp},p);e.nightOnly=true;e.nightBalanceVersion=1;e.specialCd=1+j*.35;z.enemies.push(e);}z.nightSpawned=true;}}else{z.enemies=z.enemies.filter(e=>!e.nightOnly||e.aggro||e.form==='ringleader');z.nightSpawned=false;}}
- updateEscort(dt){if(this.s.zone!=='frontier'||this.peace)return;const quest=this.s.quests['quest-19'];if(!quest?.active||quest.done)return;const z=this.zone();if(!z.escort)z.escort={id:'supply-escort',...this.safe(1200,950),hp:250,maxHp:250};if(z.escort.hp<=0){z.escort={id:'supply-escort',...this.safe(1200,950),hp:250,maxHp:250};this.say('The supplier is ready to try the escort again.');}if(dist(z.escort,this.hero)<220){const [x,y]=D.towns[3];this.follow(z.escort,{x,y},130,dt);if(dist(z.escort,{x,y})<160){this.discover('escort');delete z.escort;}}}
+ updateEscort(dt){const z=this.s.zones.frontier;if(z?.escort)delete z.escort;}
  snapshot(){const out=clone(this.s);out.recallActive=false;out.squadDoctrine=this.squadDefaultDoctrine();out.squadEngagement=null;out.squadBoss=false;out.heroTarget=null;delete out.holdFire;out.projectiles=[];out.hazards=[];out.party.forEach(u=>{delete u.path;u.order=null;});for(const z of Object.values(out.zones))for(const e of z.enemies){e.telegraph=null;e.motion=null;e.sequence=[];e.rangedAim=null;e.aggro=false;e.frenzy=false;delete e.path;delete e.idleWanderTarget;delete e.idleWanderWait;e.returning=0;if(e.hp>0&&!e.neutral){Object.assign(e,e.home);e.hp=e.maxHp;e.heroParticipated=false;e.mercyProvoked=false;}}return out;}
  static validate(data){const s=clone(data);if(!s||s.version!==4||!['normal','nightmare'].includes(s.mode)||!['adventure','awakening','peace'].includes(s.phase)||!classes[s.hero?.class])throw Error('Invalid save');
   if(Array.isArray(s.party))for(const u of s.party)if(u.active===undefined)u.active=true;
