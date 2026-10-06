@@ -50,10 +50,10 @@ const occupationAnchors=[
 const settlementLayouts={
  major:[
   [-250,-145,'house'],[-95,-255,'house'],[120,-260,'workshop'],[270,-145,'house'],
-  [-265,150,'house'],[275,185,'house'],[-120,290,'workshop'],[120,300,'house']
+  [-265,150,'house'],[275,185,'house'],[-120,290,'workshop'],[120,300,'house'],[-300,245,'fence']
  ],
  minor:[
-  [-185,-135,'house'],[180,-125,'house'],[-195,160,'house'],[190,165,'workshop'],[0,250,'house']
+  [-185,-135,'house'],[180,-125,'house'],[-195,160,'house'],[190,165,'workshop'],[0,250,'house'],[250,220,'fence']
  ],
  majorLife:[
   [-165,-15,'market'],[155,-115,'woodpile'],[-175,185,'laundry'],[110,205,'well'],
