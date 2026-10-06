@@ -171,6 +171,38 @@ const barriers=[
 const terrain=[
  [{x:630,y:1320,r:125}],[],[{x1:520,x2:650,y1:430,y2:1050}], [{x1:1740,x2:1810,y1:1020,y2:1220}], [{x1:2110,x2:2190,y1:2000,y2:2720,gaps:[[2260,2520]]}]
 ];
+const landforms=[
+ [
+  {kind:'meadow',shape:'ellipse',x:620,y:520,rx:430,ry:300},
+  {kind:'orchard-slope',shape:'rect',x1:720,y1:520,x2:1180,y2:910},
+  {kind:'wooded-rise',shape:'poly',points:[[160,1480],[620,1260],[980,1530],[730,2040],[250,2100]]},
+  {kind:'river-bank',shape:'rect',x1:1030,y1:120,x2:1160,y2:2280}
+ ],
+ [
+  {kind:'wet-basin',shape:'ellipse',x:1430,y:1750,rx:760,ry:600},
+  {kind:'mudflat',shape:'poly',points:[[1580,720],[2180,560],[2670,920],[2380,1380],[1800,1260]]},
+  {kind:'reed-islands',shape:'ellipse',x:760,y:2050,rx:420,ry:300},
+  {kind:'shore-shelf',shape:'rect',x1:1900,y1:350,x2:2860,y2:920}
+ ],
+ [
+  {kind:'high-terrace',shape:'poly',points:[[1450,180],[3280,180],[3280,1180],[2150,1260],[1550,920]]},
+  {kind:'middle-terrace',shape:'poly',points:[[1460,1250],[3300,1180],[3300,2240],[2500,2300],[1900,1960]]},
+  {kind:'quarry-shelf',shape:'ellipse',x:1700,y:1020,rx:520,ry:350},
+  {kind:'pine-basin',shape:'ellipse',x:850,y:2450,rx:650,ry:480}
+ ],
+ [
+  {kind:'burn-scar',shape:'poly',points:[[760,720],[1600,520],[2170,980],[1840,1440],[1030,1390]]},
+  {kind:'ravine-shelf',shape:'poly',points:[[1540,260],[3280,260],[3280,1120],[2400,1260],[1650,980]]},
+  {kind:'ash-lowland',shape:'ellipse',x:980,y:2500,rx:720,ry:520},
+  {kind:'war-road',shape:'rect',x1:1750,y1:1250,x2:3180,y2:1900}
+ ],
+ [
+  {kind:'ash-plateau',shape:'poly',points:[[1500,180],[3620,180],[3620,1500],[2860,1650],[1850,1300]]},
+  {kind:'obsidian-shelf',shape:'poly',points:[[1540,1650],[3650,1520],[3650,3550],[2650,3560],[2040,2860]]},
+  {kind:'crystal-field',shape:'ellipse',x:1180,y:2200,rx:560,ry:440},
+  {kind:'fortress-apron',shape:'ellipse',x:3080,y:3090,rx:600,ry:520}
+ ]
+];
 // Small authored arrival harbors supplement the region-scale barriers. Their dock rectangles are walkable over the water.
 const harbors={
  march:{
@@ -349,6 +381,6 @@ const bossCadence={specialRecoveryMultiplier:.25,basicCooldown:.75,skillsPerBasi
 const rangedEnemyCombat={projectileMultiplier:1.7,aimTime:.35,cooldown:1.15,retreatFraction:.5,retreatSpeed:165,ringleaderRetreatMultiplier:1.2,ringleaderHybridMeleeRange:100,guardianScreenRange:220};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryDecor,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,harbors,travelArrivals,dungeonWalls,pillars};
+const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryDecor,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
