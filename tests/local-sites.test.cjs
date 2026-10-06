@@ -12,6 +12,7 @@ for(const r of C.data.regions)test(r.id+' quests: physical objectives, automatic
   else if(q.kind==='sites'){for(const id of q.sites){if(id==='port'){Object.assign(c.hero,{x:C.data.ports[c.regionIndex()][0],y:C.data.ports[c.regionIndex()][1]});c.tick(.01);}else if(id==='minor'){const n=c.zone().npcs.find(n=>n.id===id);Object.assign(c.hero,{x:n.x,y:n.y});c.tick(.01);}else{const n=c.zone().npcs.find(n=>n.id===id);Object.assign(c.hero,{x:n.x,y:n.y});assert(c.interact(n));}}}
   else if(q.kind==='night'){const n=c.zone().npcs.find(n=>n.id==='night-site');c.s.clock=0;Object.assign(c.hero,{x:n.x,y:n.y});c.interact(n);assert(!c.s.discovered[r.id+':night-site']);c.s.clock=500;c.updateNight();c.interact(n);const es=c.zone().enemies.filter(e=>e.nightOnly&&e.species==='wraith').slice(0,2);es.forEach(e=>kill(c,e));}
   else if(q.kind==='escort'){const z=c.zone();z.enemies.forEach(e=>e.hp=0);c.updateEscort(.1);for(let t=0;t<2000&&!c.s.quests[q.id].done;t++){if(z.escort)Object.assign(c.hero,{x:z.escort.x,y:z.escort.y});c.updateEscort(.1);}assert(!z.escort);}
+  else if(q.kind==='barracks'){assert.equal(c.barracksBuildCost(),0);assert(c.build());for(let t=0;t<100&&!c.s.quests[q.id].done;t++)c.updateParty(.1);assert(c.hasCompletedBarracks());}
   assert(c.s.quests[q.id].done,q.name);assert(c.s.quests[q.id].paid,q.name+' reward auto-paid');const restored=C.restore(c.snapshot());assert(restored.s.quests[q.id].done&&restored.s.quests[q.id].paid);assert(!c.claim(q.id));
  }
 });
