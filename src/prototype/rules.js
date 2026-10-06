@@ -313,7 +313,7 @@ const forests=[[[470,850,210,280],[1850,1050,250,320],[550,1800,260,180]],[[650,
 const resourceDepositCounts=[2,3,4,4,4];
 const teachers={thorn:{learn:[2],train:[1,2],maxRank:2},mire:{learn:[3,4,6],train:[1,2,3,4,6],maxRank:3},ridge:{learn:[5],train:[1,2,3,4,5,6],maxRank:4},warlord:{learn:[7],train:[1,2,3,4,5,6,7],maxRank:6},citadel:{learn:[8],train:[1,2,3,4,5,6,7,8],maxRank:8}};
 const expeditionSupportSkills={
- sharedTraining:{name:'Shared Training',trainers:{thorn:1,mire:2,ridge:3,warlord:4,citadel:5},maxRank:5,costs:[0,140,140,140,140,140],detail:'Companions inherit applicable talent-derived HP, damage and movement speed.'},
+ sharedTraining:{name:'Shared Training',trainers:{thorn:1,mire:2,ridge:3,warlord:4,citadel:5},maxRank:5,costs:[0,140,140,140,140,140],detail:'Companions inherit applicable discipline-training HP, damage and movement speed.'},
  sharedStrength:{name:'Shared Strength',trainers:{crypt:1,mine:2,abyss:3,darklord:4},laterTrainerCap:4,maxRank:4,costs:[0,125,200,300,425],detail:'Companions inherit other bonus HP and damage plus armor-tier and reforge defense bonuses.'}
 };
 const progression={ordinaryXpMultiplier:.5,levelGapRewards:[1,.75,.4,.1,0]};
