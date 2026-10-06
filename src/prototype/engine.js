@@ -36,6 +36,7 @@ class Campaign{
  heroNaturalMaxHp(){return classes[this.hero.class].hp+25*(this.hero.level-1);}
  heroTalentHpBonus(){return (this.hero.talents?.[2]||0)*30;}
  heroTalentDamageBonus(){return (this.hero.talents?.[0]||0)*8;}
+ heroTalentSpeedBonus(){return (this.hero.talents?.[3]||0)*40;}
  heroOtherHpBonus(){return Math.max(0,this.hero.maxHp-this.heroNaturalMaxHp()-this.heroTalentHpBonus());}
  heroOtherDamageBonus(){return Math.max(0,this.power()-classes[this.hero.class].power-this.heroTalentDamageBonus());}
  heroEquipmentArmorBonus(){return Math.max(0,this.armor()-this.hero.armor);}
@@ -43,6 +44,8 @@ class Campaign{
  expeditionSupportFraction(id){const def=R.expeditionSupportSkills?.[id];return def?this.expeditionSupportRank(id)/def.maxRank:0;}
  companionInheritedHpBonus(){return Math.round(this.heroTalentHpBonus()*this.expeditionSupportFraction('sharedTraining')+this.heroOtherHpBonus()*this.expeditionSupportFraction('sharedStrength'));}
  companionInheritedDamageBonus(){return Math.round(this.heroTalentDamageBonus()*this.expeditionSupportFraction('sharedTraining')+this.heroOtherDamageBonus()*this.expeditionSupportFraction('sharedStrength'));}
+ companionInheritedSpeedBonus(){return this.heroTalentSpeedBonus()*this.expeditionSupportFraction('sharedTraining');}
+ companionMoveSpeed(base){return base+this.companionInheritedSpeedBonus();}
  companionInheritedArmorBonus(){return this.heroEquipmentArmorBonus()*this.expeditionSupportFraction('sharedStrength');}
  companionVitalityRank(){return this.s.companionVitalityRank||0;}
  companionVitalityFraction(){return this.companionVitalityRank()*.1;}
@@ -260,6 +263,8 @@ class Campaign{
  grant(gold,xp){this.hero.gold+=gold;this.s.statistics.goldEarned+=gold;this.xp(xp);}
  companionVitalityCost(){return 200;}
  trainCompanionVitality(family='archive'){if(family!=='archive'||!this.s.rescued.archive)return false;const cost=this.companionVitalityCost();if(!this.spend(cost))return false;this.s.companionVitalityRank=this.companionVitalityRank()+1;this.syncCompanionLevelStats();const pct=this.companionVitalityRank()*10;this.say('Companion Vitality rank '+this.companionVitalityRank()+' learned · companion max HP +'+pct+'%.');this.notice('COMPANION VITALITY '+this.companionVitalityRank()+' · +'+pct+'% HP',5.5);this.event('companionVitality',{rank:this.companionVitalityRank(),family});return true;}
+ talentRespecCost(){return 250;}
+ resetTalents(family='archive'){if(family!=='archive'||!this.s.rescued.archive)return false;const spent=(this.hero.talents||[]).reduce((n,v)=>n+v,0);if(!spent)return false;if(!this.spend(this.talentRespecCost()))return false;const hpBonus=this.heroTalentHpBonus(),missing=Math.max(0,this.hero.maxHp-this.hero.hp);this.hero.maxHp=Math.max(1,this.hero.maxHp-hpBonus);this.hero.hp=Math.max(1,this.hero.maxHp-missing);this.hero.talents=[0,0,0,0];this.hero.talentPoints+=spent;this.syncCompanionLevelStats();this.say('Talents reset · '+spent+' talent point'+(spent===1?'':'s')+' refunded.');this.notice('TALENTS RESET · '+spent+' point'+(spent===1?'':'s')+' refunded',5.5);this.event('talentRespec',{points:spent,family});return true;}
  buyPotion(type,advanced=false){const costs={health:advanced?50:20,mana:advanced?40:15,tonic:70};if(!costs[type]||advanced&&!this.s.rescued.archive)return false;if(type==='tonic'){if(!this.s.rescued.archive||this.hero.tonic||!this.spend(70))return false;this.hero.tonic=true;this.hero.tonicBonus=Math.ceil(this.hero.maxHp*.1);this.hero.maxHp+=this.hero.tonicBonus;this.hero.hp+=this.hero.tonicBonus;this.syncCompanionLevelStats();return true;}if(!this.spend(costs[type]))return false;const key=(advanced?'greater_':'')+type;this.hero.potions[key]=(this.hero.potions[key]||0)+1;return true;}
  potion(type){if(!['health','mana'].includes(type)||this.hero.potionCd>0)return false;const field=type==='health'?'hp':'mp',max=type==='health'?'maxHp':'maxMp';if(this.hero[field]>=this.hero[max])return false;const legacy=this.hero.legacyPotions?.findIndex(p=>p.type===type);let value;if(legacy>=0){value=this.hero.legacyPotions.splice(legacy,1)[0].value;}else{let key='greater_'+type;if(!this.hero.potions[key])key=type;if(!this.hero.potions[key])return false;value=type==='health'?(key.startsWith('greater')?150:60):(key.startsWith('greater')?100:40);this.hero.potions[key]--;}
   this.hero.potionEffect={type,remaining:value,seconds:5};this.hero.potionCd=10;this.s.statistics.suppliesUsed++;this.event('heal',{x:this.hero.x,y:this.hero.y,resource:type});return true;}
@@ -416,7 +421,7 @@ class Campaign{
   const [side,forward]=this.partyFormationOffset(u,living),heading=this.formationHeading||{x:0,y:1},n=Math.hypot(heading.x,heading.y)||1,fx=heading.x/n,fy=heading.y/n,rx=-fy,ry=fx,p={x:this.hero.x+fx*forward+rx*side,y:this.hero.y+fy*forward+ry*side};
   try{return this.blocked(p.x,p.y)?this.safe(this.hero.x,this.hero.y):p;}catch(_){return this.hero;}
  }
- followPartyMember(u,living,dt){const d=dist(u,this.hero),speed=(d>650?500:d>350?390:d>200?315:255)*(u.slow>0?.65:1);return this.follow(u,this.partyFollowPoint(u,living),speed,dt,45);}
+ followPartyMember(u,living,dt){const d=dist(u,this.hero),speed=this.companionMoveSpeed(d>650?500:d>350?390:d>200?315:255)*(u.slow>0?.65:1);return this.follow(u,this.partyFollowPoint(u,living),speed,dt,45);}
  soldierScreenTarget(u,targets,living,claimed){
   const protectedUnits=[this.hero,...living.filter(v=>v.type==='archer'&&!v.order)],pressure=e=>Math.min(...protectedUnits.map(p=>dist(e,p))),band=e=>pressure(e)<150?0:pressure(e)<280?1:2;
   return targets.filter(e=>dist(u,e)<620).sort((a,b)=>band(a)-band(b)||(claimed.has(a.id)?1:0)-(claimed.has(b.id)?1:0)||pressure(a)-pressure(b)||dist(a,u)-dist(b,u))[0]||null;
@@ -437,10 +442,10 @@ class Campaign{
   if(this.s.recallActive&&living.every(u=>dist(u,this.hero)<165))this.s.recallActive=false;
   const crowdTarget=(u,targets)=>targets.filter(e=>dist(u,e)<620).sort((a,b)=>(claimed.has(a.id)?1:0)-(claimed.has(b.id)?1:0)||dist(a,this.hero)-dist(b,this.hero)||dist(a,u)-dist(b,u))[0]||null;
   for(const u of living){u.slow=Math.max(0,(u.slow||0)-dt);u.cd=Math.max(0,u.cd-dt);
-   if(u.order?.type==='build'){const b=z.buildings.find(b=>b.id===u.order.id);if(b&&b.progress<4){if(dist(u,b)>85)this.follow(u,b,230*(u.slow>0?.65:1),dt,70);else{b.progress=Math.min(4,b.progress+dt);if(b.progress>=4){u.order=null;this.say('Barracks construction complete.');this.event('construction',{id:b.id});}}}else u.order=null;continue;}
-   if(u.order?.type==='upgrade'){const b=z.buildings.find(b=>b.id===u.order.id);if(b&&b.progress>=4&&!b.full&&b.upgradePaid){if(dist(u,b)>85)this.follow(u,b,230*(u.slow>0?.65:1),dt,70);else{b.upgradeProgress=Math.min(4,(b.upgradeProgress||0)+dt);if(b.upgradeProgress>=4){b.full=true;b.upgradeProgress=4;u.order=null;this.say('Full barracks ready.');this.event('barracksUpgrade',{id:b.id});}}}else u.order=null;continue;}
-   if(u.order?.type==='gather'){const n=z.nodes.find(n=>n.id===u.order.id);if(n&&n.amount>0&&(!n.mini||this.peace||this.miniCleared(n.mini))){if(dist(u,n)>60)this.follow(u,n,230*(u.slow>0?.65:1),dt);else{const amount=Math.min(n.amount,12*dt);n.amount=Math.max(0,n.amount-amount);u.carry+=amount;this.s.gathered[this.definition().id]=(this.s.gathered[this.definition().id]||0)+amount;}if(u.carry>=35||n.amount<=0)u.order={type:'deposit',id:n.id};}else u.order={type:'deposit'};continue;}
-   if(u.order?.type==='deposit'){const deposit=this.depositSite(u);if(dist(u,deposit)>130)this.follow(u,deposit,230*(u.slow>0?.65:1),dt);else{const payout=Math.floor(u.carry+1e-7);this.grant(payout,0);u.carry=Math.max(0,u.carry-payout);const n=z.nodes.find(n=>n.id===u.order.id&&n.amount>0);u.order=n?{type:'gather',id:n.id}:null;}continue;}
+   if(u.order?.type==='build'){const b=z.buildings.find(b=>b.id===u.order.id);if(b&&b.progress<4){if(dist(u,b)>85)this.follow(u,b,this.companionMoveSpeed(230)*(u.slow>0?.65:1),dt,70);else{b.progress=Math.min(4,b.progress+dt);if(b.progress>=4){u.order=null;this.say('Barracks construction complete.');this.event('construction',{id:b.id});}}}else u.order=null;continue;}
+   if(u.order?.type==='upgrade'){const b=z.buildings.find(b=>b.id===u.order.id);if(b&&b.progress>=4&&!b.full&&b.upgradePaid){if(dist(u,b)>85)this.follow(u,b,this.companionMoveSpeed(230)*(u.slow>0?.65:1),dt,70);else{b.upgradeProgress=Math.min(4,(b.upgradeProgress||0)+dt);if(b.upgradeProgress>=4){b.full=true;b.upgradeProgress=4;u.order=null;this.say('Full barracks ready.');this.event('barracksUpgrade',{id:b.id});}}}else u.order=null;continue;}
+   if(u.order?.type==='gather'){const n=z.nodes.find(n=>n.id===u.order.id);if(n&&n.amount>0&&(!n.mini||this.peace||this.miniCleared(n.mini))){if(dist(u,n)>60)this.follow(u,n,this.companionMoveSpeed(230)*(u.slow>0?.65:1),dt);else{const amount=Math.min(n.amount,12*dt);n.amount=Math.max(0,n.amount-amount);u.carry+=amount;this.s.gathered[this.definition().id]=(this.s.gathered[this.definition().id]||0)+amount;}if(u.carry>=35||n.amount<=0)u.order={type:'deposit',id:n.id};}else u.order={type:'deposit'};continue;}
+   if(u.order?.type==='deposit'){const deposit=this.depositSite(u);if(dist(u,deposit)>130)this.follow(u,deposit,this.companionMoveSpeed(230)*(u.slow>0?.65:1),dt);else{const payout=Math.floor(u.carry+1e-7);this.grant(payout,0);u.carry=Math.max(0,u.carry-payout);const n=z.nodes.find(n=>n.id===u.order.id&&n.amount>0);u.order=n?{type:'gather',id:n.id}:null;}continue;}
    if(u.order)u.order=null;
    if(this.peace||this.s.recallActive){this.followPartyMember(u,living,dt);continue;}
    let e=null;
@@ -455,12 +460,12 @@ class Campaign{
    if(!e){this.followPartyMember(u,living,dt);continue;}claimed.add(e.id);
    if(u.type==='archer'){
     const d=dist(u,e),visible=this.line(u,e),anchor=this.partyFollowPoint(u,living);
-    if(d<150){this.follow(u,this.archerFallbackPoint(u,e,living),270*(u.slow>0?.65:1),dt,35);continue;}
-    if(d>280||!visible){this.follow(u,this.archerCombatPoint(u,e,living),260*(u.slow>0?.65:1),dt,35);continue;}
-    if(dist(u,anchor)>70&&dist(anchor,e)<=280&&this.line(anchor,e)){this.follow(u,anchor,245*(u.slow>0?.65:1),dt,35);continue;}
+    if(d<150){this.follow(u,this.archerFallbackPoint(u,e,living),this.companionMoveSpeed(270)*(u.slow>0?.65:1),dt,35);continue;}
+    if(d>280||!visible){this.follow(u,this.archerCombatPoint(u,e,living),this.companionMoveSpeed(260)*(u.slow>0?.65:1),dt,35);continue;}
+    if(dist(u,anchor)>70&&dist(anchor,e)<=280&&this.line(anchor,e)){this.follow(u,anchor,this.companionMoveSpeed(245)*(u.slow>0?.65:1),dt,35);continue;}
     if(u.cd<=0){u.cd=1.3;const shot=Math.max(1,d);this.s.projectiles.push({id:'projectile-'+this.s.nextId++,x:u.x,y:u.y,dx:(e.x-u.x)/shot,dy:(e.y-u.y)/shot,target:e.id,damage:u.damage+this.hero.level*2+this.companionInheritedDamageBonus(),source:u.id,speed:450,style:'arrow'});}continue;
    }
-   if(dist(u,e)>65||!this.line(u,e))this.follow(u,e,250*(u.slow>0?.65:1),dt,this.line(u,e)?55:0);else if(u.cd<=0){u.cd=1;if(this.damage(e,u.damage+this.hero.level*2+this.companionInheritedDamageBonus(),u.id))this.event('melee');}
+   if(dist(u,e)>65||!this.line(u,e))this.follow(u,e,this.companionMoveSpeed(250)*(u.slow>0?.65:1),dt,this.line(u,e)?55:0);else if(u.cd<=0){u.cd=1;if(this.damage(e,u.damage+this.hero.level*2+this.companionInheritedDamageBonus(),u.id))this.event('melee');}
   }
   const finishRecruit=b=>{if(b.queue>0){b.queue=Math.max(0,b.queue-dt);if(b.queue===0){const p=this.safe(b.x+50,b.y+50),type=['soldier','archer'].includes(b.queueType)?b.queueType:'soldier',u=this.unit(type,p.x,p.y);u.active=this.activeParty().length<this.barracksFieldCap(b);this.s.party.push(u);b.queueType=null;}}};
   for(const b of z.buildings)finishRecruit(b);
