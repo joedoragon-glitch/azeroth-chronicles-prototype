@@ -201,7 +201,7 @@ const nightEnemyCombat={
 };
 const roomCaptains={
  'supply-vale':{
-  mentor:'thorn',name:'Fangsworn Ravager',visualScale:1.16,specialRange:420,specialCooldown:4.2,
+  mentor:'thorn',name:'Scornfang',visualScale:1.16,specialRange:420,specialCooldown:4.2,
   phase:{threshold:.42,name:"Scavenger's Nerve",kind:'scramble'},
   attacks:[
    {name:'Hookfang Rush',kind:'line',warning:.9,recovery:1.15,coefficient:1.15,charge:true},
@@ -210,7 +210,7 @@ const roomCaptains={
   ]
  },
  'supply-march':{
-  mentor:'mire',name:'Siltmaw Devourer',visualScale:1.18,specialRange:390,specialCooldown:4.4,
+  mentor:'mire',name:'Direjaw',visualScale:1.18,specialRange:390,specialCooldown:4.4,
   phase:{threshold:.45,name:'Sloughskin',kind:'molt'},
   attacks:[
    {name:'Bog Skitter',kind:'line',warning:.9,recovery:1.2,coefficient:1.2,charge:true},
@@ -219,7 +219,7 @@ const roomCaptains={
   ]
  },
  'supply-highlands':{
-  mentor:'ridge',name:'Stonehowl Alpha',visualScale:1.2,specialRange:430,specialCooldown:4.1,
+  mentor:'ridge',name:'Crag Tyrant',visualScale:1.2,specialRange:430,specialCooldown:4.1,
   phase:{threshold:.44,name:'Lone Howl',kind:'howl'},
   attacks:[
    {name:'Shoulder Rush',kind:'line',warning:.95,recovery:1.25,coefficient:1.25,charge:true},
@@ -228,7 +228,7 @@ const roomCaptains={
   ]
  },
  'supply-crown':{
-  mentor:'darklord',name:'Cinderbound Horror',visualScale:1.19,specialRange:440,specialCooldown:4.0,
+  mentor:'darklord',name:'Dread Lord',visualScale:1.19,specialRange:440,specialCooldown:4.0,
   phase:{threshold:.45,name:'Ash Carapace',kind:'carapace'},
   attacks:[
    {name:'Cinder Mark',kind:'circle',warning:1.15,recovery:1.0,coefficient:1.0,count:2,sequential:true,radius:78},
@@ -237,7 +237,7 @@ const roomCaptains={
   ]
  },
  'frontier-overseer':{
-  mentor:'warlord',name:'Tally Reaver',visualScale:1.18,specialRange:440,specialCooldown:4.0,patrolSpeed:82,inspectionPause:2.4,
+  mentor:'warlord',name:'Cinder Warlord',visualScale:1.18,specialRange:440,specialCooldown:4.0,patrolSpeed:82,inspectionPause:2.4,
   patrol:[[1200,950],[1660,1390],[1350,1800],[1100,1080],[1740,1050]],
   phase:{threshold:.45,name:'Mandatory Overtime',kind:'overtime'},
   attacks:[
