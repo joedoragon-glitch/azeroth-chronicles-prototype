@@ -5,18 +5,20 @@ const APP_FILES = ['./prototype.html', './legacy.html', './styles/prototype.css'
 const appURL = path => new URL(path, self.registration.scope).href;
 const appFiles = new Set(APP_FILES.map(appURL));
 const spriteBase = appURL('./assets/sprites/');
-async function spriteAssetURLs(){
+async function spriteAssetURLs(cache){
     try {
-        const response = await fetch(appURL('./assets/sprites/manifest.json'), { cache: 'reload' });
-        if (!response.ok) return [];
+        const response = await cache.match(appURL('./assets/sprites/manifest.json'));
+        if (!response) return [];
         const manifest = await response.json();
         return [...new Set(Object.values(manifest.sprites || {}).map(entry => entry && entry.src).filter(Boolean).map(appURL))];
     } catch (_) { return []; }
 }
 self.addEventListener('install', event => {
     event.waitUntil((async () => {
-        const cache = await caches.open(CACHE_VERSION), sprites = await spriteAssetURLs();
-        await cache.addAll([...appFiles, ...sprites].map(url => new Request(url, { cache: 'reload' })));
+        const cache = await caches.open(CACHE_VERSION);
+        await cache.addAll([...appFiles].map(url => new Request(url, { cache: 'reload' })));
+        const sprites = await spriteAssetURLs(cache);
+        if (sprites.length) await cache.addAll(sprites.map(url => new Request(url, { cache: 'reload' })));
         await self.skipWaiting();
     })());
 });
