@@ -264,7 +264,7 @@ const idleWander={
  night:{radius:54,speed:36,minPause:2.2,maxPause:5.5},
  summon:{radius:28,speed:30,minPause:2,maxPause:5}
 };
-const autoPotionThresholds={health:.35,mana:.35};
+const autoPotionThresholds={health:.5,mana:.35};
 // Boss telegraphs stay readable, but idle gaps are short and basic attacks only interrupt sustained special pressure occasionally.
 const bossCadence={specialRecoveryMultiplier:.25,basicCooldown:.75,skillsPerBasic:4,specialRange:560};
 const rangedEnemyCombat={projectileMultiplier:1.7,aimTime:.35,cooldown:1.15,retreatFraction:.5,retreatSpeed:165,ringleaderRetreatMultiplier:1.2,ringleaderHybridMeleeRange:100,guardianScreenRange:220};
