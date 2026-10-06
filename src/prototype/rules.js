@@ -313,8 +313,8 @@ const forests=[[[470,850,210,280],[1850,1050,250,320],[550,1800,260,180]],[[650,
 const resourceDepositCounts=[2,3,4,4,4];
 const teachers={thorn:{learn:[2],train:[1,2],maxRank:2},mire:{learn:[3,4,6],train:[1,2,3,4,6],maxRank:3},ridge:{learn:[5],train:[1,2,3,4,5,6],maxRank:4},warlord:{learn:[7],train:[1,2,3,4,5,6,7],maxRank:6},citadel:{learn:[8],train:[1,2,3,4,5,6,7,8],maxRank:8}};
 const expeditionSupportSkills={
- sharedTraining:{name:'Shared Training',trainers:{thorn:1,mire:2,ridge:3,warlord:4,citadel:5},maxRank:5,costs:[0,280,280,280,280,280],detail:'Companions inherit applicable talent-derived HP, damage and movement speed.'},
- sharedStrength:{name:'Shared Strength',trainers:{crypt:1,mine:2,abyss:3,darklord:4},laterTrainerCap:4,maxRank:4,costs:[0,250,400,600,850],detail:'Companions inherit other bonus HP and damage plus armor-tier and reforge defense bonuses.'}
+ sharedTraining:{name:'Shared Training',trainers:{thorn:1,mire:2,ridge:3,warlord:4,citadel:5},maxRank:5,costs:[0,140,140,140,140,140],detail:'Companions inherit applicable talent-derived HP, damage and movement speed.'},
+ sharedStrength:{name:'Shared Strength',trainers:{crypt:1,mine:2,abyss:3,darklord:4},laterTrainerCap:4,maxRank:4,costs:[0,125,200,300,425],detail:'Companions inherit other bonus HP and damage plus armor-tier and reforge defense bonuses.'}
 };
 const progression={ordinaryXpMultiplier:.5,levelGapRewards:[1,.75,.4,.1,0]};
 const ordinaryMeleeScaling=[{hp:1.25,damage:1.15},{hp:1.4,damage:1.25},{hp:1.65,damage:1.4},{hp:1.9,damage:1.6},{hp:2.2,damage:1.8}];
@@ -418,7 +418,7 @@ const rangerSupport={healThreshold:.5,manaThreshold:.35,cooldown:10,duration:5,h
 // Boss telegraphs stay readable, but idle gaps are short and basic attacks only interrupt sustained special pressure occasionally.
 const bossCadence={specialRecoveryMultiplier:.25,basicCooldown:.75,skillsPerBasic:4,specialRange:560};
 const rangedEnemyCombat={projectileMultiplier:1.7,aimTime:.35,cooldown:1.15,retreatFraction:.5,retreatSpeed:165,ringleaderRetreatMultiplier:1.2,ringleaderHybridMeleeRange:100,guardianScreenRange:220};
-const chargedSkills={holdSeconds:.65,basicDamageMultiplier:3,second:{paladin:{shape:'cone',range:185,halfAngle:.8,effect:'holy-cleave'},mage:{shape:'circle',radius:160,effect:'frost-burst',slow:4},ranger:{shape:'line',range:480,halfWidth:55,effect:'piercing-volley'}}};
+const chargedSkills={holdSeconds:.65,basicDamageMultiplier:3,manaFractions:{1:.20,2:.30,3:.35},third:{effect:'party-heal'},second:{paladin:{shape:'cone',range:185,halfAngle:.8,effect:'holy-cleave'},mage:{shape:'circle',radius:160,effect:'frost-burst',slow:4},ranger:{shape:'line',range:480,halfWidth:55,effect:'piercing-volley'}}};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
 const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
