@@ -533,7 +533,7 @@ class Campaign{
   const i=slot-1,rank=this.hero.skills[i],isCharged=!!charged&&(slot===1||slot===2);
   if(this.s.challenge.pending||this.s.challenge.gameOver)return false;
   if(!rank||this.hero.cd[i]>0||this.peace){if(!rank)this.say('This skill must be learned from a rescued instructor.');return false;}
-  const scale=1+.15*(rank-1),range=this.hero.class==='paladin'&&slot<3?120:slot===1?this.hero.class==='mage'?400:450:480,targets=this.zone().enemies.filter(e=>e.hp>0&&!e.neutral&&dist(e,this.hero)<=range&&this.line(this.hero,e)),target=targets.find(e=>e.id===targetId)||targets.sort((a,b)=>dist(a,this.hero)-dist(b,this.hero))[0];
+  const scale=1+.15*(rank-1),chargedSecond=isCharged&&slot===2?R.chargedSkills.second?.[this.hero.class]:null,range=chargedSecond?(chargedSecond.range||480):this.hero.class==='paladin'&&slot<3?120:slot===1?this.hero.class==='mage'?400:450:480,targets=this.zone().enemies.filter(e=>e.hp>0&&!e.neutral&&dist(e,this.hero)<=range&&this.line(this.hero,e)),target=targets.find(e=>e.id===targetId)||targets.sort((a,b)=>dist(a,this.hero)-dist(b,this.hero))[0];
   if([1,2,6,7,8].includes(slot)&&!target)return false;
   if(slot===3&&(this.hero.class==='mage'?this.hero.mp>=this.hero.maxMp:this.hero.hp>=this.hero.maxHp))return false;
   const cost=this.skillManaCost(slot,rank);if(this.hero.mp<cost)return false;this.hero.mp-=cost;this.hero.cd[i]=cooldowns[slot];if(target&&[1,2,6,7,8].includes(slot))this.s.heroTarget=target.id;
@@ -544,9 +544,9 @@ class Campaign{
    this.event('charged',{slot,class:this.hero.class,x:this.hero.x,y:this.hero.y,targetX:target.x,targetY:target.y});return true;
   }
   if(isCharged&&slot===2){
-   const radius=R.chargedSkills.secondRadius,damage=power*(this.hero.class==='ranger'?2.4:2.2)*scale;
-   this.engage(target);for(const e of this.zone().enemies.filter(e=>e.hp>0&&!e.neutral&&dist(e,target)<=radius).sort((a,b)=>this.idOrder(a,b))){if(e!==target&&!this.line(target,e))continue;if(this.damage(e,damage)&&this.hero.class==='mage')e.slow=Math.max(e.slow||0,4);}
-   if(this.hero.class==='paladin')this.event('melee');this.event('chargedArea',{slot,class:this.hero.class,x:target.x,y:target.y,radius});return true;
+   const def=chargedSecond||R.chargedSkills.second[this.hero.class],damage=power*(this.hero.class==='ranger'?2.4:2.2)*scale,angle=Math.atan2(target.y-this.hero.y,target.x-this.hero.x),from={x:this.hero.x,y:this.hero.y},end={x:this.hero.x+Math.cos(angle)*(def.range||dist(this.hero,target)),y:this.hero.y+Math.sin(angle)*(def.range||dist(this.hero,target))},angleDelta=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b)),inside=e=>def.shape==='circle'?dist(e,target)<=def.radius:def.shape==='cone'?dist(e,this.hero)<=def.range&&Math.abs(angleDelta(Math.atan2(e.y-this.hero.y,e.x-this.hero.x),angle))<=def.halfAngle:def.shape==='line'?this.distanceToSegment(e,from,end)<=def.halfWidth:false;
+   this.engage(target);let hits=0;for(const e of this.zone().enemies.filter(e=>e.hp>0&&!e.neutral&&inside(e)&&this.line(this.hero,e)).sort((a,b)=>this.idOrder(a,b))){if(this.damage(e,damage)){hits++;if(def.slow)e.slow=Math.max(e.slow||0,def.slow);}}
+   this.event(this.hero.class==='paladin'?'melee':'spell');this.event('chargedArea',{slot,class:this.hero.class,effect:def.effect,shape:def.shape,x:target.x,y:target.y,fromX:this.hero.x,fromY:this.hero.y,angle,radius:def.radius||0,range:def.range||0,halfAngle:def.halfAngle||0,halfWidth:def.halfWidth||0,hits});return true;
   }
   if(slot===3){if(this.hero.class==='mage')this.hero.mp=Math.min(this.hero.maxMp,this.hero.mp+R.manaBalance.mageRecovery.base+R.manaBalance.mageRecovery.perRank*(rank-1));else this.hero.hp=Math.min(this.hero.maxHp,this.hero.hp+(45+power*.5)*scale);this.event('heal',{x:this.hero.x,y:this.hero.y,resource:this.hero.class==='mage'?'mana':'health'});}
   else if(slot===4){if(this.hero.class==='ranger')this.hero.haste=Math.min(6,4+.25*(rank-1));else this.hero.immune=Math.min(4,(this.hero.class==='paladin'?2.5:2)+.15*(rank-1));this.event('spell');}
