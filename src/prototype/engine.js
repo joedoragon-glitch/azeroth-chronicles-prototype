@@ -15,7 +15,7 @@ const costs=[0,0,15,10,25,40,20,45,60],cooldowns=[0,.85,3,8,14,9,4,15,24];
 class Campaign{
  constructor(mode='normal',heroClass='paladin',random=Math.random,options={}){
   if(!['normal','nightmare'].includes(mode)||!classes[heroClass])throw Error('Unknown mode or class');
-  this.random=random;this.formationHeading={x:0,y:1};this.messages=[];this.effects=[];this.notices=[];this.noticeId=0;this.s={version:4,mode,phase:'adventure',clock:0,time:0,restCooldown:0,zone:'vale',refuge:'vale',nextId:1,manaBalanceVersion:1,normal:{},true:{},fieldBossKills:{},earlyRoll:{},pending:{},origins:{},late:{},victories:{},rescued:{},keys:{},paid:{},tickets:{},recovery:{},quests:{},discovered:{},gathered:{},fountains:{},zones:{},loot:[],projectiles:[],hazards:[],streak:{key:null,count:0},endingAck:false,awakeningAck:false,expeditionRank:1,squadDoctrine:heroClass==='paladin'?'focus':'guard',squadEngagement:null,squadBoss:false,heroTarget:null,statistics:{kills:0,deaths:0,goldEarned:0,suppliesUsed:0,bossSeconds:{},events:[]}};
+  this.random=random;this.formationHeading={x:0,y:1};this.messages=[];this.effects=[];this.notices=[];this.noticeId=0;this.s={version:4,mode,phase:'adventure',clock:0,time:0,restCooldown:0,zone:'vale',refuge:'vale',nextId:1,manaBalanceVersion:1,normal:{},true:{},fieldBossKills:{},earlyRoll:{},pending:{},origins:{},late:{},victories:{},rescued:{},keys:{},paid:{},tickets:{},recovery:{},quests:{},discovered:{},gathered:{},fountains:{},zones:{},loot:[],projectiles:[],hazards:[],streak:{key:null,count:0},endingAck:false,awakeningAck:false,expeditionRank:1,expeditionSkills:{sharedTraining:0,sharedStrength:0},squadDoctrine:heroClass==='paladin'?'focus':'guard',squadEngagement:null,squadBoss:false,heroTarget:null,statistics:{kills:0,deaths:0,goldEarned:0,suppliesUsed:0,bossSeconds:{},events:[]}};
   const c=classes[heroClass];this.s.hero={class:heroClass,x:300,y:350,hp:c.hp,maxHp:c.hp,mp:c.mp,maxMp:c.mp,level:1,xp:0,gold:30,power:c.power,armor:c.armor,speed:c.speed,skills:[1,0,0,0,0,0,0,0],cd:Array(8).fill(0),immune:0,haste:0,weapon:0,armorTier:0,reforges:{},potions:{health:1,mana:1},tonic:false,potionCd:0,slow:0,talents:[0,0,0,0],talentPoints:0};
   this.s.challenge={succession:options.succession===true,fallen:[],pending:false,gameOver:false};
   this.initializeQuests();
@@ -33,7 +33,16 @@ class Campaign{
  say(text){this.messages.push(text);if(this.messages.length>7)this.messages.shift();}
  notice(text,duration=5.5){this.notices.push({id:++this.noticeId,text,duration});if(this.notices.length>6)this.notices.shift();}
  boss(id){return D.bosses.find(b=>b.id===id);}
- companionMaxHp(type,level=this.hero.level){const base={soldier:140,archer:100}[type];if(!base)throw Error('Unknown companion type');return base+12*level;}
+ heroNaturalMaxHp(){return classes[this.hero.class].hp+25*(this.hero.level-1);}
+ heroTalentHpBonus(){return (this.hero.talents?.[2]||0)*30;}
+ heroTalentDamageBonus(){return (this.hero.talents?.[0]||0)*8;}
+ heroOtherHpBonus(){return Math.max(0,this.hero.maxHp-this.heroNaturalMaxHp()-this.heroTalentHpBonus());}
+ heroOtherDamageBonus(){return Math.max(0,this.power()-classes[this.hero.class].power-this.heroTalentDamageBonus());}
+ expeditionSupportRank(id){return this.s.expeditionSkills?.[id]||0;}
+ expeditionSupportFraction(id){return this.expeditionSupportRank(id)*.25;}
+ companionInheritedHpBonus(){return Math.round(this.heroTalentHpBonus()*this.expeditionSupportFraction('sharedTraining')+this.heroOtherHpBonus()*this.expeditionSupportFraction('sharedStrength'));}
+ companionInheritedDamageBonus(){return Math.round(this.heroTalentDamageBonus()*this.expeditionSupportFraction('sharedTraining')+this.heroOtherDamageBonus()*this.expeditionSupportFraction('sharedStrength'));}
+ companionMaxHp(type,level=this.hero.level){const base={soldier:140,archer:100}[type];if(!base)throw Error('Unknown companion type');return base+12*level+this.companionInheritedHpBonus();}
  unit(type,x,y){const base={soldier:[140,12,'⚔️'],archer:[100,15,'🏹']}[type];if(!base)throw Error('Unknown companion type');const maxHp=this.companionMaxHp(type);return {id:'ally-'+this.s.nextId++,type,x,y,hp:maxHp,maxHp,damage:base[1],icon:base[2],cd:0,order:null,carry:0,active:true};}
  syncCompanionLevelStats(){for(const u of this.s.party){if(!['soldier','archer'].includes(u.type))continue;const next=this.companionMaxHp(u.type),gain=next-u.maxHp;u.maxHp=next;if(u.hp>0&&gain!==0)u.hp=clamp(u.hp+gain,1,next);}}
  blocked(x,y,zone=this.s.zone,radius=15,terrainOnly=false){
