@@ -3,7 +3,7 @@
   "artDirection": "Azeroth Chronicles modern retro pixel art — Warcraft shapes, Ragnarok heart",
   "sprites": {
     "hero:paladin": {
-      "src": "./assets/sprites/paladin.webp",
+      "src": "./assets/sprites/paladin.png",
       "displayWidth": 96,
       "displayHeight": 112,
       "anchorX": 0.5,
