@@ -3,7 +3,7 @@ const fs=require('fs'),path=require('path'),assert=require('node:assert/strict')
 
 const diskManifest=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/sprites/manifest.json'),'utf8')),paladin=diskManifest.sprites['hero:paladin'];
 assert(paladin,'approved Paladin canary is registered');
-assert.equal(paladin.src,'./assets/sprites/paladin.webp');
+assert.equal(paladin.src,'./assets/sprites/paladin.png');
 assert.equal(paladin.displayWidth,96);
 assert.equal(paladin.displayHeight,112);
 assert.equal(paladin.anchorX,.5);
