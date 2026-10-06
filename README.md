@@ -4,9 +4,9 @@ One hero and companion adventure across five regions, ten settlements and five d
 
 ## Play
 
-Play the live game at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/. During the current playtest phase, deployed updates are adopted automatically: the app preserves the local run and reloads once when a newer service worker takes control. **Menu → Game and settings → Check for game update** remains available as a manual check. The portable copy below runs offline. On a phone, open **Menu → Game and settings → Install on phone**. Android/Chrome can launch the native install prompt; on iPhone/iPad the game gives the Safari **Share → Add to Home Screen** steps. Once installed, it launches from the home screen in app mode without normal browser chrome and can use the cached game offline after the first connected load.
+Play the live game at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/. During the current playtest phase, deployed updates are adopted automatically: the app preserves the local run and reloads once when a newer service worker takes control. **Menu → Game and settings → Check for game update** remains available as a manual check. On a phone, open **Menu → Game and settings → Install on phone**. Android/Chrome can launch the native install prompt; on iPhone/iPad the game gives the Safari **Share → Add to Home Screen** steps. Once installed, it launches from the home screen in app mode without normal browser chrome and can use the cached game offline after the first connected load.
 
-For an offline portable copy, download `release/Azeroth_Chronicles_Playtest.html` and open it in Chrome or another current browser. The whole game, music and sound are embedded; no installation, server or internet connection is needed. Press a key or tap to start sound. Download the HTML instead of viewing its source in GitHub. The earlier v0.5 adventure remains available at `legacy.html`.
+The earlier v0.5 adventure remains available at `legacy.html`.
 
 Choose Standard or the optional **Succession challenge**, then Paladin, Mage or Ranger. Succession retires fallen classes for that run. The first death offers the other two classes; the second automatically selects the last unused class; the third ends the run. A successor starts at level 1 in Millhaven, with zero XP, no talents and just their first skill. Gold, world progress, equipment, supplies and companions are inherited. Rescued teachers remain available. Training has no hero-level requirement: rescue access, gold and the specialist's own curriculum/rank ceiling are the gates. Normal and Nightmare have separate saves. Nightmare can also be started with the Succession challenge; the same challenge-condition choice appears before class selection in either mode.
 
@@ -55,7 +55,7 @@ World aesthetic pass v0.8.61 gives every overworld region denser biome-appropria
 Playtest deployment in v0.8.59 favors rapid iteration: pushes to `main` cancel superseded in-progress Pages workflows instead of queueing every obsolete build. The newest successful commit is the one allowed to finish deployment. Installed/live playtest clients also activate a newly published service worker immediately and reload once after saving when replacing an existing controller; first-time installs do not receive the extra reload.
 
 
-`npm test` runs legacy regressions, expanded campaign and soundtrack checks, plus all 1,024 ending-state combinations. `npm run test:browser` requires Playwright and Chromium. Set `PLAYTEST_FILE=release/Azeroth_Chronicles_Playtest.html` to verify the portable release or `PLAYTEST_URL` to verify a hosted copy. `npm run release` builds the portable HTML and checksum.
+`npm test` runs legacy regressions, expanded campaign and soundtrack checks, plus all 1,024 ending-state combinations. `npm run test:browser` requires Playwright and Chromium. Set `PLAYTEST_URL` to verify a hosted copy; without it, the browser suite verifies the local project files.
 
 The pure engine/content, browser shell and synthesized audio are separate modules under `src/prototype`. `legacy.html` retains the earlier game. See `docs/DECISIONS.md`, `docs/PLAYTEST_AUDIT.md` and `docs/SPRINT.md` for implementation choices, verification limits and dormant sprint activation.
 
@@ -119,7 +119,7 @@ Quest and layout update v0.8.2 puts one crate outdoors and two in a nearby guard
 
 Whole-game visual pass v0.8.3 keeps the schematic prototype art and improves the five regional floors, dungeon and quest interiors, waterways, roads and bridges, town structures, shared character grounding, combat warnings, projectiles, loot, map and interface. Health and mana now have compact HUD bars. All visual changes use local canvas and CSS drawing; collision, saves, combat and rewards are unchanged. Representative desktop and phone screenshots are captured by the browser checks.
 
-Phone usability update v0.8.5–v0.8.6 anchors status messages flush to the bottom center, places larger skill touch targets beside the left joystick, and restores vertical touch scrolling throughout menus such as Help. The phone skill cluster stays within the left half of small screens. GitHub Actions verifies 320 px, 375 px and landscape phone layouts, the portable HTML build and the live Pages deployment.
+Phone usability update v0.8.5–v0.8.6 anchors status messages flush to the bottom center, places larger skill touch targets beside the left joystick, and restores vertical touch scrolling throughout menus such as Help. The phone skill cluster stays within the left half of small screens. GitHub Actions verifies desktop and touch layouts against the project files and the live Pages deployment.
 
 Update v0.8.7 refreshes the offline cache for these releases and fetches current assets during installation. The in-game update action waits for the new worker to finish installing before activating it.
 
