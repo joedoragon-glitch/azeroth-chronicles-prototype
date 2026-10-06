@@ -31,20 +31,20 @@ const expeditions=[
 ];
 // Field-boss compounds sit away from the main town approach instead of sharing the central traffic band.
 const fieldBossCenters=[
- [720,1580],
- [2050,1000],
- [2120,620],
- [2050,1520],
- [2420,2450]
+ [760,1750],
+ [2180,1120],
+ [2380,650],
+ [2250,1620],
+ [2750,2700]
 ];
 // Remaining ordinary patrol packs are distributed across the wider countryside.
 // Local-site patrols and mini-dungeon guards keep their authored positions.
 const occupationAnchors=[
- [[520,1050],[430,1900],[900,2100],[1500,420],[1870,620],[2080,1080],[1680,2020],[2130,2050],[1510,920],[870,1420]],
- [[620,420],[620,1900],[900,2320],[1780,420],[2140,760],[2280,1320],[2150,2200],[1510,700],[1940,1120],[880,1320]],
- [[480,620],[520,1180],[610,2260],[980,2450],[1620,360],[2220,520],[2390,1120],[1810,1680],[2310,2240],[1630,2460]],
- [[620,980],[650,1840],[930,2440],[1180,430],[1740,420],[2290,760],[2390,1580],[2070,2160],[1660,2460],[1020,1460]],
- [[610,980],[690,2190],[1080,2630],[1690,430],[2210,650],[2580,1180],[1820,1710],[2490,1980],[1770,2640],[1040,1320]]
+ [[520,1050],[430,2050],[980,2350],[1500,420],[1930,650],[2320,1050],[1820,2180],[2400,2380],[1510,920],[870,1420],[2450,1500],[1320,2480]],
+ [[620,420],[620,2050],[980,2550],[1780,420],[2200,780],[2520,1250],[2480,2450],[1510,700],[2040,1160],[880,1320],[2720,1750],[1550,2700]],
+ [[480,620],[520,1250],[610,2500],[980,2920],[1720,360],[2500,520],[2860,1180],[1980,1820],[2800,2500],[1700,2860],[3070,700],[3050,2050]],
+ [[620,980],[650,1940],[930,2700],[1180,430],[1840,420],[2600,760],[2940,1580],[2500,2300],[1850,2860],[1020,1460],[3060,640],[3060,2460]],
+ [[610,980],[690,2290],[1080,2900],[1690,430],[2310,650],[3000,1180],[2020,1810],[3070,2200],[2050,3140],[1040,1320],[3380,780],[3380,2850],[1200,3300]]
 ];
 // Settlements use a deliberate ring: buildings define streets while the center stays readable for NPCs and labels.
 const settlementLayouts={
@@ -72,6 +72,53 @@ const natureThemes=[
  ['dead-tree','charred-stump','ash-patch','dry-scrub','burned-log','ember-pit'],
  ['black-rock','black-rock','crystal-cluster','ash-patch','dead-shrub','fumarole','obsidian']
 ];
+const worldLifePlans=[
+ {
+  civilian:[[520,420,'garden'],[600,500,'animal-pen'],[790,670,'drying-rack'],[1020,710,'market'],[760,770,'laundry'],[430,520,'tax-post']],
+  habitats:[
+   {id:'goblin-road-camp',center:[520,1050],props:[[-70,-30,'lean-to'],[40,-20,'cookfire'],[-15,55,'sleep-roll'],[90,45,'game-table'],[-95,55,'stolen-goods']]},
+   {id:'goblin-orchard-camp',center:[1510,920],props:[[-75,-15,'lean-to'],[25,-25,'cookfire'],[75,35,'stolen-goods'],[-35,65,'sleep-roll'],[115,-20,'training-dummy']]},
+   {id:'crypt-fringe',center:[2050,2050],props:[[-60,-30,'bone-pile'],[30,-20,'grave-marker'],[70,45,'bone-pile'],[-25,65,'cookfire'],[120,15,'sleep-roll']]}
+  ],
+  field:[[-125,-80,'thorn-bed'],[-35,-125,'bone-pile'],[65,-120,'stolen-goods'],[145,-65,'cookfire'],[-155,45,'sleep-roll'],[-70,120,'fang-trophy'],[55,125,'root-table'],[150,55,'pup-nest']]
+ },
+ {
+  civilian:[[510,1040,'drying-rack'],[610,1160,'fish-rack'],[930,510,'fishing-net'],[1120,520,'garden'],[900,620,'laundry'],[500,1210,'tax-post']],
+  habitats:[
+   {id:'mire-nesting-bank',center:[1940,1120],props:[[-70,-25,'mud-nest'],[30,-35,'wallow'],[80,35,'bone-pile'],[-30,65,'reed-nest'],[115,-10,'shell-hoard']]},
+   {id:'reedbeast-wallow',center:[880,1320],props:[[-65,-15,'wallow'],[25,-25,'mud-nest'],[80,35,'fish-rack'],[-25,65,'reed-nest'],[115,-5,'bone-pile']]},
+   {id:'causeway-scavengers',center:[2480,2450],props:[[-65,-25,'lean-to'],[30,-25,'cookfire'],[85,30,'stolen-goods'],[-20,65,'sleep-roll'],[115,-10,'fishing-net']]}
+  ],
+  field:[[-140,-70,'mire-pool'],[-55,-125,'reed-nest'],[45,-125,'mud-nest'],[140,-70,'fish-rack'],[-150,45,'wallow'],[-65,120,'shell-hoard'],[50,125,'drift-seat'],[145,50,'bone-pile']]
+ },
+ {
+  civilian:[[760,1400,'market'],[930,1420,'ore-cart'],[1490,930,'ore-crane'],[1690,960,'tool-rack'],[1560,1110,'laundry'],[720,1580,'tax-post']],
+  habitats:[
+   {id:'wolf-hunting-ground',center:[520,1250],props:[[-70,-25,'wolf-den'],[25,-30,'bone-pile'],[75,35,'sleep-roll'],[-25,65,'stone-marker'],[120,-10,'bone-pile']]},
+   {id:'ogre-hearth',center:[1980,1820],props:[[-75,-20,'lean-to'],[25,-25,'ridge-hearth'],[85,35,'stone-seat'],[-25,65,'bone-pile'],[120,-10,'game-table']]},
+   {id:'quarry-squat',center:[2860,1180],props:[[-70,-25,'lean-to'],[20,-30,'cookfire'],[80,35,'ore-cart'],[-25,65,'tool-rack'],[120,-5,'sleep-roll']]}
+  ],
+  field:[[-150,-80,'ridge-hearth'],[-55,-130,'weapon-rack'],[55,-130,'stone-seat'],[150,-75,'trophy-rack'],[-160,45,'sleep-roll'],[-70,125,'game-table'],[55,125,'stone-marker'],[155,45,'supply-stack']]
+ },
+ {
+  civilian:[[350,650,'market'],[560,620,'field-kitchen'],[1080,850,'garden'],[1260,940,'woodpile'],[1130,1040,'laundry'],[620,430,'tax-post']],
+  habitats:[
+   {id:'orc-bivouac',center:[1840,420],props:[[-75,-25,'lean-to'],[25,-30,'field-kitchen'],[85,30,'weapon-rack'],[-25,65,'sleep-roll'],[120,-5,'game-table']]},
+   {id:'raider-rest-stop',center:[2500,2300],props:[[-70,-25,'lean-to'],[25,-30,'cookfire'],[80,35,'supply-stack'],[-25,65,'sleep-roll'],[120,-5,'training-dummy']]},
+   {id:'archer-drill-camp',center:[3060,640],props:[[-70,-25,'lean-to'],[25,-30,'field-kitchen'],[80,35,'weapon-rack'],[-25,65,'training-dummy'],[120,-5,'supply-stack']]}
+  ],
+  field:[[-160,-85,'command-tent'],[-65,-135,'field-kitchen'],[50,-135,'weapon-rack'],[155,-80,'war-table'],[-165,45,'bunk'],[-70,125,'supply-stack'],[55,125,'training-dummy'],[160,45,'banner']]
+ },
+ {
+  civilian:[[300,760,'market'],[520,760,'forge'],[900,1430,'garden'],[1080,1540,'field-kitchen'],[910,1630,'laundry'],[620,570,'tax-post']],
+  habitats:[
+   {id:'ashbeast-roost',center:[2020,1810],props:[[-70,-25,'roost'],[25,-30,'bone-pile'],[80,35,'ember-pit'],[-25,65,'sleep-roll'],[120,-5,'obsidian']]},
+   {id:'crown-barracks',center:[3000,1180],props:[[-80,-25,'command-tent'],[20,-30,'field-kitchen'],[85,35,'weapon-rack'],[-25,70,'bunk'],[125,-5,'supply-stack']]},
+   {id:'fortress-work-camp',center:[3070,2200],props:[[-75,-25,'forge'],[25,-30,'field-kitchen'],[85,35,'supply-stack'],[-25,65,'bunk'],[120,-5,'training-dummy']]}
+  ],
+  field:[[-165,-90,'dark-throne'],[-70,-140,'dark-brazier'],[50,-140,'war-table'],[160,-85,'weapon-rack'],[-170,45,'bunk'],[-75,130,'supply-stack'],[55,130,'forge'],[165,45,'crown-banner']]
+ }
+];
 // Field-boss supply objectives are actual Treasury raids: every required cache is kept inside the boss's Treasury.
 const supplyRooms=[
  {id:'supply-vale',region:'vale',site:'orchard',boss:'thorn',count:2,name:"Thornfang's Treasury",objective:"Recover two caches from Thornfang's Treasury"},
@@ -81,16 +128,20 @@ const supplyRooms=[
 ];
 const treasuryDecor={
  'supply-vale':[
-  [205,665,'thorn-bed',28],[315,205,'fang-trophy',0],[690,205,'treasure-hoard',22],[665,500,'root-table',22],[185,445,'warm-brazier',16],[785,760,'boss-chest',20]
+  [155,690,'thorn-bed',28],[265,205,'fang-trophy',0],[690,205,'treasure-hoard',22],[665,500,'root-table',22],[175,445,'warm-brazier',16],[785,760,'boss-chest',20],
+  [365,705,'pup-nest',0],[470,195,'stolen-goods',0],[560,690,'sleep-roll',0],[745,405,'bone-pile',0],[330,460,'game-table',0]
  ],
  'supply-march':[
-  [210,665,'mire-pool',0],[315,205,'fish-rack',18],[690,205,'reed-nest',26],[665,500,'shell-hoard',22],[180,445,'drift-seat',18],[785,760,'boss-chest',20]
+  [165,690,'mire-pool',0],[275,205,'fish-rack',18],[690,205,'reed-nest',26],[665,500,'shell-hoard',22],[175,445,'drift-seat',18],[785,760,'boss-chest',20],
+  [360,700,'mud-nest',0],[470,205,'fishing-net',0],[560,690,'wallow',0],[745,405,'bone-pile',0],[330,460,'sleep-roll',0]
  ],
  'supply-highlands':[
-  [210,665,'ridge-hearth',24],[315,205,'weapon-rack',18],[690,205,'stone-seat',28],[665,500,'treasure-hoard',22],[180,445,'trophy-rack',18],[785,760,'boss-chest',20]
+  [165,690,'ridge-hearth',24],[275,205,'weapon-rack',18],[690,205,'stone-seat',28],[665,500,'treasure-hoard',22],[175,445,'trophy-rack',18],[785,760,'boss-chest',20],
+  [365,700,'sleep-roll',0],[470,205,'tool-rack',0],[555,690,'ore-cart',0],[745,405,'bone-pile',0],[330,460,'game-table',0]
  ],
  'supply-crown':[
-  [210,665,'dark-brazier',18],[315,205,'treasure-hoard',22],[690,205,'dark-throne',28],[665,500,'war-table',24],[180,445,'crown-banner',0],[785,760,'boss-chest',20]
+  [165,690,'dark-brazier',18],[275,205,'treasure-hoard',22],[690,205,'dark-throne',28],[665,500,'war-table',24],[175,445,'crown-banner',0],[785,760,'boss-chest',20],
+  [365,700,'bunk',0],[470,205,'supply-stack',0],[555,690,'forge',0],[745,405,'weapon-rack',0],[330,460,'ration',0]
  ]
 };
 const miniPlans=[
@@ -159,11 +210,11 @@ const dungeonTraps={
 };
 // Curated occupied spaces: each dungeon has an entrance, work/ritual zone, command markers and a boss approach.
 const dungeonDecor={
- crypt:[[300,330,'torch'],[430,330,'torch'],[350,520,'coffin'],[470,520,'coffin'],[350,660,'coffin'],[470,660,'coffin'],[580,780,'bones'],[620,850,'bones'],[930,320,'banner'],[1120,320,'banner'],[980,480,'torch'],[1220,480,'torch'],[930,980,'coffin'],[1040,1040,'bones'],[1180,980,'coffin'],[1000,1190,'torch'],[1280,1190,'torch'],[1110,1240,'banner'],[1300,1240,'banner'],[870,820,'bones']],
- archive:[[300,330,'torch'],[500,330,'torch'],[330,520,'shelf'],[330,650,'shelf'],[520,520,'shelf'],[520,650,'shelf'],[900,340,'banner'],[1080,340,'banner'],[930,520,'shelf'],[1160,520,'shelf'],[850,760,'water'],[1040,760,'water'],[1220,760,'water'],[890,930,'rune'],[1120,930,'rune'],[980,1120,'torch'],[1240,1120,'torch'],[1070,1230,'shelf'],[1260,1230,'shelf'],[720,850,'rune']],
- mine:[[280,330,'torch'],[480,330,'torch'],[300,530,'crate'],[410,530,'crate'],[520,530,'crate'],[650,760,'rail'],[650,860,'rail'],[650,960,'rail'],[930,330,'crystal'],[1080,330,'crystal'],[1230,330,'crystal'],[960,600,'banner'],[1200,600,'banner'],[970,820,'crate'],[1080,820,'crate'],[1190,820,'crate'],[960,1050,'crystal'],[1180,1050,'crystal'],[1080,1220,'torch'],[1280,1220,'torch']],
- abyss:[[300,340,'torch'],[500,340,'torch'],[350,560,'chain'],[500,560,'chain'],[820,360,'banner'],[1060,360,'banner'],[930,570,'ember'],[1120,570,'ember'],[850,780,'chain'],[1080,780,'chain'],[1250,780,'chain'],[860,960,'ember'],[1060,960,'ember'],[1260,960,'ember'],[900,1140,'banner'],[1180,1140,'banner'],[980,1240,'torch'],[1260,1240,'torch'],[700,850,'chain'],[1140,860,'torch']],
- citadel:[[300,330,'torch'],[500,330,'torch'],[340,520,'armor'],[500,520,'armor'],[900,340,'banner'],[1120,340,'banner'],[870,560,'rune'],[1000,650,'rune'],[1130,560,'rune'],[860,820,'armor'],[1140,820,'armor'],[900,980,'banner'],[1120,980,'banner'],[940,1130,'rune'],[1080,1130,'rune'],[980,1240,'torch'],[1240,1240,'torch'],[1260,600,'armor'],[780,1020,'banner'],[1260,1020,'banner']]
+ crypt:[[300,330,'torch'],[430,330,'torch'],[350,520,'coffin'],[470,520,'coffin'],[350,660,'coffin'],[470,660,'coffin'],[580,780,'bones'],[620,850,'bones'],[930,320,'banner'],[1120,320,'banner'],[980,480,'torch'],[1220,480,'torch'],[930,980,'coffin'],[1040,1040,'bones'],[1180,980,'coffin'],[1000,1190,'torch'],[1280,1190,'torch'],[1110,1240,'banner'],[1300,1240,'banner'],[870,820,'bones'],[760,300,'grave-marker'],[820,430,'ossuary'],[860,1030,'ritual-table'],[1170,1110,'grave-lamp'],[1260,1080,'bone-pile'],[1080,880,'caretaker-table'],[560,1120,'sleep-roll'],[350,900,'tool-rack']],
+ archive:[[300,330,'torch'],[500,330,'torch'],[330,520,'shelf'],[330,650,'shelf'],[520,520,'shelf'],[520,650,'shelf'],[900,340,'banner'],[1080,340,'banner'],[930,520,'shelf'],[1160,520,'shelf'],[850,760,'water'],[1040,760,'water'],[1220,760,'water'],[890,930,'rune'],[1120,930,'rune'],[980,1120,'torch'],[1240,1120,'torch'],[1070,1230,'shelf'],[1260,1230,'shelf'],[720,850,'rune'],[720,330,'scribe-desk'],[760,520,'scroll-stack'],[820,1120,'fish-rack'],[1190,1040,'mud-nest'],[1260,870,'drift-seat'],[560,1080,'sleep-roll'],[690,980,'fishing-net'],[1290,650,'shell-hoard']],
+ mine:[[280,330,'torch'],[480,330,'torch'],[300,530,'crate'],[410,530,'crate'],[520,530,'crate'],[650,760,'rail'],[650,860,'rail'],[650,960,'rail'],[930,330,'crystal'],[1080,330,'crystal'],[1230,330,'crystal'],[960,600,'banner'],[1200,600,'banner'],[970,820,'crate'],[1080,820,'crate'],[1190,820,'crate'],[960,1050,'crystal'],[1180,1050,'crystal'],[1080,1220,'torch'],[1280,1220,'torch'],[720,330,'ore-cart'],[760,520,'tool-rack'],[790,1120,'forge'],[1180,1160,'stone-seat'],[1270,930,'ore-crane'],[540,1120,'sleep-roll'],[890,970,'supply-stack'],[1320,520,'stone-marker']],
+ abyss:[[300,340,'torch'],[500,340,'torch'],[350,560,'chain'],[500,560,'chain'],[820,360,'banner'],[1060,360,'banner'],[930,570,'ember'],[1120,570,'ember'],[850,780,'chain'],[1080,780,'chain'],[1250,780,'chain'],[860,960,'ember'],[1060,960,'ember'],[1260,960,'ember'],[900,1140,'banner'],[1180,1140,'banner'],[980,1240,'torch'],[1260,1240,'torch'],[700,850,'chain'],[1140,860,'torch'],[720,330,'roost'],[760,520,'bone-pile'],[810,1120,'treasure-hoard'],[1190,1110,'ember-pit'],[1280,1080,'roost'],[560,1120,'sleep-roll'],[890,1010,'hatchery'],[1310,600,'supply-stack']],
+ citadel:[[300,330,'torch'],[500,330,'torch'],[340,520,'armor'],[500,520,'armor'],[900,340,'banner'],[1120,340,'banner'],[870,560,'rune'],[1000,650,'rune'],[1130,560,'rune'],[860,820,'armor'],[1140,820,'armor'],[900,980,'banner'],[1120,980,'banner'],[940,1130,'rune'],[1080,1130,'rune'],[980,1240,'torch'],[1240,1240,'torch'],[1260,600,'armor'],[780,1020,'banner'],[1260,1020,'banner'],[720,330,'war-table'],[760,520,'bunk'],[800,1120,'field-kitchen'],[1190,1110,'weapon-rack'],[1280,1080,'supply-stack'],[560,1120,'training-dummy'],[880,1030,'forge'],[1320,520,'tax-post']]
 };
 const dungeonTrapTuning={
  crypt:{cycle:6.8,warning:1.4,active:.8,damage:.11,radius:44,sealRadius:60,jetLength:150,jetHalfWidth:30,slow:2.5,offset:1.10},
@@ -298,6 +349,6 @@ const bossCadence={specialRecoveryMultiplier:.25,basicCooldown:.75,skillsPerBasi
 const rangedEnemyCombat={projectileMultiplier:1.7,aimTime:.35,cooldown:1.15,retreatFraction:.5,retreatSpeed:165,ringleaderRetreatMultiplier:1.2,ringleaderHybridMeleeRange:100,guardianScreenRange:220};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryDecor,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,harbors,travelArrivals,dungeonWalls,pillars};
+const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryDecor,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,harbors,travelArrivals,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
