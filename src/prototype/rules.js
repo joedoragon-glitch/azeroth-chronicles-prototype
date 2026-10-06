@@ -108,7 +108,7 @@ const forests=[[[470,850,210,280],[1850,1050,250,320],[550,1800,260,180]],[[650,
 const teachers={thorn:{learn:[2],train:[1,2],maxRank:2},mire:{learn:[3,4,6],train:[1,2,3,4,6],maxRank:3},ridge:{learn:[5],train:[1,2,3,4,5,6],maxRank:4},warlord:{learn:[7],train:[1,2,3,4,5,6,7],maxRank:6},citadel:{learn:[8],train:[1,2,3,4,5,6,7,8],maxRank:8}};
 const expeditionSupportSkills={
  sharedTraining:{name:'Shared Training',teacher:'ridge',maxRank:4,costs:[0,250,400,600,850],detail:'Companions inherit talent-derived HP and damage.'},
- sharedStrength:{name:'Shared Strength',teacher:'ridge',maxRank:4,costs:[0,250,400,600,850],detail:'Companions inherit other bonus HP and damage above the hero natural baseline.'}
+ sharedStrength:{name:'Shared Strength',teacher:'mine',maxRank:4,costs:[0,250,400,600,850],detail:'Companions inherit other bonus HP and damage above the hero natural baseline.'}
 };
 const progression={ordinaryXpMultiplier:.5,levelGapRewards:[1,.75,.4,.1,0]};
 const ordinaryMeleeScaling=[{hp:1.25,damage:1.15},{hp:1.4,damage:1.25},{hp:1.65,damage:1.4},{hp:1.9,damage:1.6},{hp:2.2,damage:1.8}];
