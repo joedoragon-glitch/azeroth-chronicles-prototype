@@ -70,11 +70,6 @@ function definitionFor(e,region=0,rescued=false){
  return null;
 }
 
-function embeddedSource(src){
- const table=root.__AZEROTH_EMBEDDED_SPRITES__;
- return table&&table[src]||src;
-}
-
 function ensure(key,entry){
  if(images.has(key)||loading.has(key)||failed.has(key)||typeof root.Image!=='function')return loading.get(key)||null;
  const promise=new Promise(resolve=>{
@@ -82,15 +77,14 @@ function ensure(key,entry){
   img.decoding='async';
   img.onload=()=>{images.set(key,img);loading.delete(key);resolve(img);};
   img.onerror=()=>{failed.add(key);loading.delete(key);resolve(null);};
-  img.src=embeddedSource(entry.src);
+  img.src=entry.src;
  });
  loading.set(key,promise);
  return promise;
 }
 
 async function preload(url=DEFAULT_MANIFEST){
- if(root.__AZEROTH_SPRITE_MANIFEST__)installManifest(root.__AZEROTH_SPRITE_MANIFEST__);
- else if(typeof root.fetch==='function'){
+ if(typeof root.fetch==='function'){
   try{
    const response=await root.fetch(url,{cache:'no-cache'});
    if(response.ok)installManifest(await response.json());
