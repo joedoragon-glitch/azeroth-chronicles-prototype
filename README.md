@@ -1,4 +1,4 @@
-# Azeroth Chronicles — expanded prototype v0.8.62
+# Azeroth Chronicles — expanded prototype v0.8.63
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families use readable but adaptive warned mechanics. Every boss can summon pressure units, while TRUE forms use six-unit elite warbands. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
@@ -49,6 +49,8 @@ Autosaves occur every five active seconds and after important events. Export a b
 The sound menu offers independent master, music, ambience and effects volumes. Fourteen original melodic themes and ten peaceful arrangements are synthesized locally. Backgrounding and explicit pause suspend sound and combat. No external tracks or recording licenses are needed.
 
 Choose **Menu → Game and settings → Save and game management → Export playtest report** to collect deaths, kills, boss durations, earnings and supply use. Record class, mode, challenge, session length, stuck routes, unaffordable training, unclear boss warnings, companion behavior and sound comfort. Reports stay local; no telemetry is sent automatically. Difficulty, economy, presentation and music are provisional.
+
+Charged early-skill update v0.8.63 adds hold-and-release variants to Skills 1 and 2 on keyboard and touch. Hold either command for 0.65 seconds, then release: charged Skill 1 launches a larger class-flavored projectile for 3× normal basic-attack damage while retaining the normal cooldown; charged Skill 2 keeps its normal damage budget and mana/cooldown but converts the hit into a 145-unit area attack, preserving Mage slow and class-specific presentation. Movement-triggered Skill 1 stays normal and is suppressed only while an explicit Skill 1 charge is being held.
 
 World life and geography pass v0.8.62 expands the five overworld regions selectively instead of squeezing new content into the old bounds: Greenwood Vale is 2700 units across, Flooded Marches 3000, Ironroot Highlands and Ashen Frontier 3400, and Dark Crown 3800. Major destinations move into that breathing room, existing saves migrate them automatically, and roads rebuild around the new geography. Civilian settlements show ordinary life under occupation through markets, gardens, laundry, kitchens and work areas alongside tax posts and military pressure. Ordinary monsters gain lived-in territories such as goblin camps, mire nesting banks, wolf hunting grounds, ogre hearths, orc bivouacs, ash-beast roosts and Crown field barracks. Existing exploration quests are reworked to lead through several of these places without increasing the quest count or rewards.
 
