@@ -319,13 +319,13 @@ class Campaign{
   if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||!z.minis?.length||z.miniReachabilityVersion===1)return;
   const oldZone=this.s.zone;this.s.zone=z.id;
   try{
-   const i=this.regionIndex(z.id),town=this.safe(D.towns[i][0],D.towns[i][1],z.id),reachable=p=>!!this.route(town,p).length;
    const occupied=[];
    for(const e of z.enemies.filter(e=>e.guard&&e.mini)){
-    if(reachable(e.home)){occupied.push(e.home);continue;}
     const mini=z.minis.find(m=>m.id===e.mini);if(!mini)continue;
+    let marker=z.npcs.find(n=>n.kind==='mini'&&n.mini===mini.id);if(!marker)marker=this.safe(mini.x-130,mini.y-10,z.id);
+    if(!this.blocked(e.home.x,e.home.y,z.id,15)&&this.clearSegment(marker,e.home,15)){occupied.push(e.home);continue;}
     let replacement=null;
-    for(const radius of [70,100,130,160,190,220,250]){for(let n=0;n<24;n++){const a=n*Math.PI/12,p={x:mini.x+Math.cos(a)*radius,y:mini.y+Math.sin(a)*radius};if(this.blocked(p.x,p.y,z.id,15)||occupied.some(q=>dist(q,p)<42)||!reachable(p))continue;replacement=p;break;}if(replacement)break;}
+    for(const radius of [70,100,130,160,190,220]){for(let n=0;n<24;n++){const a=n*Math.PI/12,p={x:mini.x+Math.cos(a)*radius,y:mini.y+Math.sin(a)*radius};if(this.blocked(p.x,p.y,z.id,15)||occupied.some(q=>dist(q,p)<42)||!this.clearSegment(marker,p,15))continue;replacement=p;break;}if(replacement)break;}
     if(replacement){e.home={...replacement};if(e.hp>0&&!e.aggro)Object.assign(e,replacement);occupied.push(replacement);}
    }
    z.miniReachabilityVersion=1;
