@@ -8,7 +8,7 @@ Legacy regression checks retain the original shell. Expanded engine checks cover
 
 All 1,024 early-dungeon outcome combinations are tested through the production engine, including unbeaten normal, failed roll, pending early TRUE and early TRUE already defeated. Every combination must reach peace without reviving a defeated TRUE or requiring another random roll.
 
-Real Chromium checks cover 1280×800 desktop, 375×812 and 320×568 phones, and 844×390 landscape. They execute movement, controls, audio gesture unlock, saved successor choices, automatic last class, terminal game over, peace, Nightmare unlock and separate mode saves. The portable HTML is checked separately and embeds the same source/styles/audio. Test logs and screenshots accompany the source.
+Real Chromium checks cover 1280×800 desktop, 375×812 and 320×568 phones, and 844×390 landscape. They execute movement, controls, audio gesture unlock, saved successor choices, automatic last class, terminal game over, peace, Nightmare unlock and separate mode saves. CI repeats the browser checks against the deployed GitHub Pages game. Test logs and screenshots accompany the source.
 
 ## Corrections
 
