@@ -221,6 +221,16 @@ const roomCaptains={
    {name:'Blackline Rush',kind:'line',warning:1.0,recovery:1.2,coefficient:1.2,charge:true},
    {name:'Ember Veil',kind:'cone',warning:.85,recovery:1.0,coefficient:.75,slow:true,radius:155}
   ]
+ },
+ 'frontier-overseer':{
+  mentor:'warlord',name:'Ashen Quota Captain',visualScale:1.18,specialRange:440,specialCooldown:4.0,patrolSpeed:82,inspectionPause:2.4,
+  patrol:[[1200,950],[1660,1390],[1350,1800],[1100,1080],[1740,1050]],
+  phase:{threshold:.45,name:'Mandatory Overtime',kind:'overtime'},
+  attacks:[
+   {name:'Inspection Cleave',kind:'cone',warning:.85,recovery:1.0,coefficient:1.0,radius:150},
+   {name:'Violation Marker',kind:'circle',warning:1.15,recovery:1.0,coefficient:.95,count:2,sequential:true,radius:76},
+   {name:'Compliance Charge',kind:'line',warning:1.0,recovery:1.2,coefficient:1.2,charge:true}
+  ]
  }
 };
 const manaBalance={
