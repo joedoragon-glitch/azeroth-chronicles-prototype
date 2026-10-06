@@ -488,7 +488,8 @@ function terrain(ctx,screen,region=0){
  rect(x1,x2,y1,y2,palette[0]);
  rect(x1+8,x2-8,y1+8,y2-8,palette[1]);
  for(const x of [x1,x2]){line({x:x+(x===x1?-10:10),y:y1},{x:x+(x===x1?-10:10),y:y2},'#16231c99',4);line({x,y:y1},{x,y:y2},palette[2],2);}
- for(let y=y1+30;y<y2-20;y+=70){const inset=Math.min(22,(x2-x1)/4);line({x:x1+inset,y},{x:x2-inset,y:y+12},palette[2],kind==='ravine'?1:2);if(kind==='water')line({x:x1+inset+8,y:y+16},{x:x1+inset+24,y:y+19},'#b8ddd055',1);else if(kind==='lava')line({x:x1+inset+3,y:y+17},{x:x2-inset-5,y:y+22},'#ffc07866',1);}
+ const t=(typeof performance!=='undefined'?performance.now():0)/1000;
+ for(let y=y1+30;y<y2-20;y+=70){const inset=Math.min(22,(x2-x1)/4),wave=kind==='ravine'?0:Math.sin(t*1.35+y*.027)*5;line({x:x1+inset,y:y+wave},{x:x2-inset,y:y+12+wave},palette[2],kind==='ravine'?1:2);if(kind==='water')line({x:x1+inset+8,y:y+16-wave*.25},{x:x1+inset+24,y:y+19-wave*.25},'#c5ebe066',1);else if(kind==='lava')line({x:x1+inset+3,y:y+17+wave*.2},{x:x2-inset-5,y:y+22+wave*.2},'#ffc07877',1);}
  // Other authored ponds and walls also use exact shapes, independent of props.
  for(const p of R.terrain[region]){
   if(p.r){const points=[],inner=[];for(let n=0;n<48;n++){const a=n*Math.PI/24;points.push({x:p.x+Math.cos(a)*p.r,y:p.y+Math.sin(a)*p.r});inner.push({x:p.x+Math.cos(a)*(p.r-8),y:p.y+Math.sin(a)*(p.r-8)});}polygon(points,'#9aab9866');polygon(inner,'#397f92');for(const dy of [-p.r*.25,p.r*.25])line({x:p.x-p.r*.35,y:p.y+dy},{x:p.x+p.r*.25,y:p.y+dy+8},'#a1c8bf99',1.5);}
@@ -540,6 +541,32 @@ function roads(ctx,paths,screen,region=0){
 
  ctx.restore();
 }
-root.PrototypeVisuals={draw,height,floor,roads,terrain,bridges};
+function atmosphere(ctx,canvas,region=0,opts={}){
+ const night=!!opts.night,peace=!!opts.peace,dungeon=!!opts.dungeon,room=!!opts.room,hero=opts.hero||null,lights=opts.lights||[],time=(typeof performance!=='undefined'?performance.now():0)/1000;
+ ctx.save();
+ // Regional color grade: gentle enough to preserve combat readability, strong enough to make each zone feel authored.
+ const dayTints=['rgba(213,229,163,.045)','rgba(150,206,205,.05)','rgba(221,219,184,.045)','rgba(215,157,120,.05)','rgba(166,146,196,.05)'];
+ const nightTints=['rgba(8,18,38,.64)','rgba(8,28,40,.61)','rgba(15,22,38,.62)','rgba(26,14,30,.62)','rgba(20,12,36,.66)'];
+ if(night){
+  const g=ctx.createLinearGradient(0,0,0,canvas.height);g.addColorStop(0,nightTints[region]||nightTints[0]);g.addColorStop(1,peace?'rgba(22,31,49,.36)':'rgba(3,8,20,.72)');ctx.fillStyle=g;ctx.fillRect(0,0,canvas.width,canvas.height);
+  // Warm pools around the hero and inhabited field structures make night readable without flattening the whole scene.
+  ctx.globalCompositeOperation='screen';
+  const glow=(p,r=120,a=.22,c='255,218,151')=>{if(!p)return;const q=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,r);q.addColorStop(0,`rgba(${c},${a})`);q.addColorStop(.35,`rgba(${c},${a*.48})`);q.addColorStop(1,`rgba(${c},0)`);ctx.fillStyle=q;ctx.fillRect(p.x-r,p.y-r,r*2,r*2);};
+  glow(hero,145,peace?.24:.2,region===4?'215,186,238':'255,221,158');for(const p of lights.slice(0,12))glow(p,88,.16,region===1?'180,226,211':region===4?'204,170,229':'255,198,125');
+  ctx.globalCompositeOperation='source-over';
+ }else{
+  ctx.fillStyle=dayTints[region]||dayTints[0];ctx.fillRect(0,0,canvas.width,canvas.height);
+  const sun=ctx.createLinearGradient(0,0,canvas.width,canvas.height);sun.addColorStop(0,'rgba(255,244,203,.07)');sun.addColorStop(.45,'rgba(255,255,255,0)');sun.addColorStop(1,region>=3?'rgba(97,56,55,.035)':'rgba(22,55,42,.025)');ctx.fillStyle=sun;ctx.fillRect(0,0,canvas.width,canvas.height);
+ }
+ // Atmospheric motes are screen-space and intentionally sparse: pollen, marsh mist, alpine dust, ash and Crown sparks.
+ const moteColors=night?['#dcefa8','#b7e2d5','#dbe4df','#e6a170','#c7a4df']:['#eadf9e','#b8d8ca','#dedcc7','#b98569','#aa8ec0'],count=dungeon||room?8:region===3||region===4?18:14;
+ ctx.globalAlpha=night?.24:.18;ctx.fillStyle=moteColors[region]||moteColors[0];
+ for(let j=0;j<count;j++){const seed=(j+1)*91+region*137,x=((seed*37+time*(region>=3?10:5))%(canvas.width+80))-40,y=((seed*53+Math.sin(time*.7+j)*22+time*(region===3?5:1.5))%(canvas.height+70))-35,r=region>=3?(j%3===0?1.8:1):region===1?(j%4===0?2.5:1.2):1.15;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();}
+ ctx.globalAlpha=1;
+ // Soft vignette gives the miniature scene depth and focuses attention toward play space.
+ const v=ctx.createRadialGradient(canvas.width*.5,canvas.height*.48,Math.min(canvas.width,canvas.height)*.18,canvas.width*.5,canvas.height*.5,Math.max(canvas.width,canvas.height)*.72);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,night?'rgba(0,0,0,.24)':'rgba(5,15,10,.12)');ctx.fillStyle=v;ctx.fillRect(0,0,canvas.width,canvas.height);
+ ctx.restore();
+}
+root.PrototypeVisuals={draw,height,floor,roads,terrain,bridges,atmosphere};
 if(typeof module!=='undefined')module.exports=root.PrototypeVisuals;
 })(typeof window!=='undefined'?window:globalThis);
