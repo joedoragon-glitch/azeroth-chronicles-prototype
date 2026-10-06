@@ -290,7 +290,7 @@ class Campaign{
   try{
    const anchor={x:primary.x,y:primary.y},town={x:D.towns[i][0],y:D.towns[i][1]},minor={x:D.minors[i][0],y:D.minors[i][1]},icon=primary.icon,mini=primary.mini,positions=[];
    const preferred=[[-170,-90],[170,-90],[-175,135],[175,135],[0,-210],[0,220]];
-   const usable=p=>!this.blocked(p.x,p.y,z.id,18)&&positions.every(q=>dist(q,p)>105)&&!!this.route(town,p).length;
+   const usable=p=>!this.blocked(p.x,p.y,z.id,18)&&dist(p,town)>=300&&dist(p,minor)>=300&&positions.every(q=>dist(q,p)>105)&&!!this.route(town,p).length;
    for(let j=0;j<count;j++){
     let p=null;const [dx,dy]=preferred[j%preferred.length],candidate={x:anchor.x+dx,y:anchor.y+dy};
     try{const safe=this.safe(candidate.x,candidate.y,z.id);if(usable(safe))p=safe;}catch(_){}
