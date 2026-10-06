@@ -57,7 +57,7 @@ class Campaign{
  blocked(x,y,zone=this.s.zone,radius=15,terrainOnly=false){
   const i=this.regionIndex(zone),room=this.supplyRoom(zone),dungeon=dungeonIds.includes(zone),size=room?900:dungeon?1500:D.regions[i]?.size;
   if(!size||x<40+radius||y<40+radius||x>size-40-radius||y>size-40-radius)return true;
-  if(room){if(x>420-radius&&x<470+radius&&y>150&&y<825&&![[285,395],[620,730]].some(([l,h])=>y>l+radius&&y<h-radius))return true;}
+  if(room){for(const w of R.treasuryWalls?.[zone]||[]){const hit=x>w.x1-radius&&x<w.x2+radius&&y>w.y1-radius&&y<w.y2+radius;if(!hit)continue;const v=w.axis==='x'?x:y;if(!(w.gaps||[]).some(([l,h])=>v>l+radius&&v<h-radius))return true;}}
   else if(dungeon){const [a,b,gaps]=R.dungeonWalls[zone];if(x>a-radius&&x<b+radius&&y>120&&y<1260&&!gaps.some(([l,h])=>y>l+radius&&y<h-radius))return true;}
   else {
    const {bounds:[a,b,c,e],gaps}=R.barriers[i];if(x>a-radius&&x<b+radius&&y>c-radius&&y<e+radius&&!gaps.some(([l,h])=>y>l+radius&&y<h-radius))return true;
