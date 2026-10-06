@@ -288,7 +288,7 @@ class Campaign{
   if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||z.resourceDepositsVersion===1||!z.nodes?.length)return;
   const i=this.regionIndex(z.id),count=R.resourceDepositCounts?.[i]||1,plan=R.expeditions[i],primary=z.nodes[0],total=Math.max(0,Math.round(z.nodes.reduce((sum,n)=>sum+(Number(n.amount)||0),0))),group='resource-'+z.id,oldZone=this.s.zone;this.s.zone=z.id;
   try{
-   const anchor={x:primary.x,y:primary.y},town={x:D.towns[i][0],y:D.towns[i][1]},icon=primary.icon,mini=primary.mini,positions=[];
+   const anchor={x:primary.x,y:primary.y},town={x:D.towns[i][0],y:D.towns[i][1]},minor={x:D.minors[i][0],y:D.minors[i][1]},icon=primary.icon,mini=primary.mini,positions=[];
    const preferred=[[-170,-90],[170,-90],[-175,135],[175,135],[0,-210],[0,220]];
    const usable=p=>!this.blocked(p.x,p.y,z.id,18)&&positions.every(q=>dist(q,p)>105)&&!!this.route(town,p).length;
    for(let j=0;j<count;j++){
@@ -299,6 +299,9 @@ class Campaign{
    }
    const base=Math.floor(total/count),remainder=total-base*count;
    z.nodes=positions.map((p,j)=>({id:j===0?primary.id:'gather-'+z.id+'-'+(j+1),...p,amount:base+(j<remainder?1:0),icon,site:primary.site,name:count>1?plan.name+' deposit '+(j+1):plan.name,kind:'resource',resourceGroup:group,...(mini?{mini}:{} )}));
+   // The old single-node patrol now screens every split deposit instead of remaining clustered at deposit 1.
+   const defenders=z.enemies.filter(e=>e.site===primary.site&&!e.guard&&!e.summon&&e.form==='normal').sort((a,b)=>this.idOrder(a,b));
+   for(let k=0;k<defenders.length;k++){const node=z.nodes[k%z.nodes.length],e=defenders[k];let p=null;for(let t=0;t<24;t++){const a=(t+k*5)*Math.PI/12,r=80+Math.floor(k/z.nodes.length)*35,candidate={x:node.x+Math.cos(a)*r,y:node.y+Math.sin(a)*r};if(this.blocked(candidate.x,candidate.y,z.id,15)||dist(candidate,town)<260||dist(candidate,minor)<260||!this.line(candidate,node))continue;p=candidate;break;}if(!p)p=this.safe(node.x+70,node.y+35,z.id);e.home={...p};if(e.hp>0&&!e.aggro)Object.assign(e,p);}
    z.resourceDepositsVersion=1;
   }finally{this.s.zone=oldZone;}
  }
