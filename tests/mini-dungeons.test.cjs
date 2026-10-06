@@ -3,7 +3,7 @@ const assert=require('node:assert/strict'),C=require('../src/prototype/engine');
 const fresh=()=>new C('normal','paladin',()=>.9),kill=(c,e,hero=false)=>{e.hp=0;e.heroParticipated=hero;c.kill(e);};
 let passed=0;function test(name,fn){try{fn();passed++;console.log('PASS '+name);}catch(e){process.exitCode=1;console.error('FAIL '+name+' '+e.stack);}}
 for(const [i,r]of C.data.regions.entries())test(r.id+' field and resource dungeons have cover, accessible routes and reduced-reward guardians',()=>{
- const c=fresh();c.enter(r.id);c.s.rescued.thorn=true;c.trainExpedition('thorn');const z=c.zone();assert.equal(z.minis.length,2);
+ const c=fresh();c.enter(r.id);c.s.expeditionRank=2;const z=c.zone();assert.equal(z.minis.length,2);
  for(const m of z.minis){assert(!m.cleared);const walls=z.props.filter(p=>p.mini===m.id);assert(walls.length>=3);const wall=walls[0];assert(c.blocked(wall.x,wall.y));assert(!c.line({x:wall.x-60,y:wall.y},{x:wall.x+60,y:wall.y}));const guards=z.enemies.filter(e=>e.mini===m.id);assert(guards.length>=3);guards.forEach(e=>{assert(e.guard);assert.equal(e.gold,Math.max(1,Math.floor((r.gold_range[0]+r.gold_range[1])/2*.35)));assert.equal(e.xp,r.guard_xp);assert(c.route(c.hero,e.home).length,r.id+' guardian route');});
   const marker=z.npcs.find(n=>n.mini===m.id&&n.kind==='mini');assert(c.route(c.hero,marker).length);assert(c.miniStatus(m.id).includes('guardians'));
  }
