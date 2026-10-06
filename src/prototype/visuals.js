@@ -602,8 +602,19 @@ function terrain(ctx,screen,region=0){
  }
  // Other authored ponds and walls also use exact shapes, independent of props.
  for(const p of R.terrain[region]){
-  if(p.r){const points=[],inner=[];for(let n=0;n<48;n++){const a=n*Math.PI/24;points.push({x:p.x+Math.cos(a)*p.r,y:p.y+Math.sin(a)*p.r});inner.push({x:p.x+Math.cos(a)*(p.r-8),y:p.y+Math.sin(a)*(p.r-8)});}polygon(points,'#9aab9866');polygon(inner,'#397f92');for(const dy of [-p.r*.25,p.r*.25])line({x:p.x-p.r*.35,y:p.y+dy},{x:p.x+p.r*.25,y:p.y+dy+8},'#a1c8bf99',1.5);}
-  else {let start=p.y1;for(const [lo,hi]of p.gaps||[]){rect(p.x1,p.x2,start,lo,'#62645b');start=hi;}rect(p.x1,p.x2,start,p.y2,'#62645b');line({x:p.x1,y:p.y1},{x:p.x1,y:p.y2},'#a39e86',1);}
+  const feature=p.kind||'cliff';
+  if(p.r){
+   const points=[],inner=[];for(let n=0;n<48;n++){const a=n*Math.PI/24;points.push({x:p.x+Math.cos(a)*p.r,y:p.y+Math.sin(a)*p.r});inner.push({x:p.x+Math.cos(a)*(p.r-8),y:p.y+Math.sin(a)*(p.r-8)});}
+   const circular=feature==='water'?['#8fa79766','#397f92','#a1c8bf99']:feature==='obsidian'?['#46434f','#302f39','#8c7e99']:['#70685f','#514b46','#9e9488'];
+   polygon(points,circular[0]);polygon(inner,circular[1]);
+   if(feature==='water')for(const dy of [-p.r*.25,p.r*.25])line({x:p.x-p.r*.35,y:p.y+dy},{x:p.x+p.r*.25,y:p.y+dy+8},circular[2],1.5);
+   else for(let a=0;a<Math.PI*2;a+=Math.PI/3)line({x:p.x+Math.cos(a)*p.r*.25,y:p.y+Math.sin(a)*p.r*.25},{x:p.x+Math.cos(a)*p.r*.7,y:p.y+Math.sin(a)*p.r*.7},circular[2],1.2);
+  } else {
+   const colors=feature==='lava'?['#723d31','#d06c3c','#f0ae68']:feature==='ravine'?['#292b2d','#42464a','#85827a']:['#5d625b','#777c73','#aaa795'];
+   let start=p.y1;for(const [lo,hi]of p.gaps||[]){rect(p.x1,p.x2,start,lo,colors[0]);rect(p.x1+8,p.x2-8,start+8,lo-8,colors[1]);start=hi;}rect(p.x1,p.x2,start,p.y2,colors[0]);if(p.y2-start>16)rect(p.x1+8,p.x2-8,start+8,p.y2-8,colors[1]);
+   for(const x of [p.x1,p.x2])line({x,y:p.y1},{x,y:p.y2},colors[2],1.5);
+   if(feature==='lava')for(let y=p.y1+35;y<p.y2-20;y+=90)line({x:p.x1+18,y},{x:p.x2-18,y:y+10},'#ffc07877',1.2);
+  }
  }
  ctx.restore();
 }
