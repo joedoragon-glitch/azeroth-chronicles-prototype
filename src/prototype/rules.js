@@ -72,12 +72,12 @@ const natureThemes=[
  ['dead-tree','charred-stump','ash-patch','dry-scrub','burned-log','ember-pit'],
  ['black-rock','black-rock','crystal-cluster','ash-patch','dead-shrub','fumarole','obsidian']
 ];
-// The field bosses keep their personal hoards in lived-in Treasuries. One quest supply stays outdoors; two are inside.
+// Field-boss supply objectives are actual Treasury raids: every required cache is kept inside the boss's Treasury.
 const supplyRooms=[
- {id:'supply-vale',region:'vale',site:'orchard',boss:'thorn',name:"Thornfang's Treasury",objective:"Recover one orchard crate and two caches from Thornfang's Treasury"},
- {id:'supply-march',region:'march',site:'wagon',boss:'mire',name:"Mirejaw's Treasury",objective:"Recover one wagon bundle and two caches from Mirejaw's Treasury"},
- {id:'supply-highlands',region:'highlands',site:'ore',boss:'ridge',name:"Ridge Tyrant's Treasury",objective:"Recover one quarry bundle and two caches from Ridge Tyrant's Treasury"},
- {id:'supply-crown',region:'crown',site:'foundry',boss:'darklord',name:"Dark Lord's Treasury",objective:"Recover one foundry cache and two caches from the Dark Lord's Treasury"}
+ {id:'supply-vale',region:'vale',site:'orchard',boss:'thorn',count:2,name:"Thornfang's Treasury",objective:"Recover two caches from Thornfang's Treasury"},
+ {id:'supply-march',region:'march',site:'wagon',boss:'mire',count:3,name:"Mirejaw's Treasury",objective:"Recover three caches from Mirejaw's Treasury"},
+ {id:'supply-highlands',region:'highlands',site:'ore',boss:'ridge',count:3,name:"Ridge Tyrant's Treasury",objective:"Recover three caches from Ridge Tyrant's Treasury"},
+ {id:'supply-crown',region:'crown',site:'foundry',boss:'darklord',count:3,name:"Dark Lord's Treasury",objective:"Recover three caches from the Dark Lord's Treasury"}
 ];
 const treasuryDecor={
  'supply-vale':[
@@ -102,7 +102,7 @@ const miniPlans=[
 ];
 const quest=(kind,target,sites=[])=>({kind,target,sites});
 const quests=[
- quest('rescue','thorn'),quest('patrol',5),quest('bundles',3),quest('rescue','crypt'),quest('sites',null,['bridge-north','port']),quest('sites',null,['den-ruins','bridge-south']),
+ quest('rescue','thorn'),quest('patrol',5),quest('bundles',2),quest('rescue','crypt'),quest('sites',null,['bridge-north','port']),quest('sites',null,['den-ruins','bridge-south']),
  quest('rescue','mire'),quest('patrol',6),quest('rescue','archive'),quest('bundles',3),quest('night',2,['night-site']),quest('sites',null,['port']),
  quest('rescue','ridge'),quest('patrol',7),quest('rescue','mine'),quest('bundles',3),quest('sites',null,['bridge-north','bridge-south']),quest('sites',null,['port']),
  quest('rescue','warlord'),quest('escort'),quest('rescue','abyss'),quest('patrol',8),quest('sites',null,['shrine','minor','overlook']),quest('sites',null,['port']),
