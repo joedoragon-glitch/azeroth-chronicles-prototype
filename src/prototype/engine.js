@@ -24,6 +24,7 @@ class Campaign{
  get hero(){return this.s.hero;} get zoneId(){return this.s.zone;} get peace(){return this.s.phase==='peace';}
  regionIndex(id=this.s.zone){const boss=D.bosses.find(b=>b.id===id),room=R.supplyRooms.find(r=>r.id===id);return D.regions.findIndex(r=>r.id===(boss?.region||room?.region||id));}
  definition(){return D.regions[this.regionIndex()];}
+ fieldCenter(index=this.regionIndex()){const p=R.fieldBossCenters?.[index]||D.fields[index];return {x:p[0],y:p[1]};}
  supplyRoom(id=this.s.zone){return R.supplyRooms.find(r=>r.id===id);}
  isDungeon(){return dungeonIds.includes(this.s.zone)||!!this.supplyRoom();}
  night(){return !this.peace&&this.s.mode==='nightmare'||this.s.clock%600>=360;}
@@ -77,10 +78,10 @@ class Campaign{
    const x=id%n,y=Math.floor(id/n),from=point(id);for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const xx=x+dx,yy=y+dy,j=yy*n+xx;if(xx<0||yy<0||xx>=n||yy>=n||parents.has(j)||!free(j)||!this.clearSegment(from,point(j),15,terrainOnly))continue;parents.set(j,id);queue.push(j);}}
   return [];
  }
- roadNetwork(z){if(z.roadVersion===3||dungeonIds.includes(z.id)||this.supplyRoom(z.id))return;const i=this.regionIndex(z.id),origin={x:D.towns[i][0],y:D.towns[i][1]},oldZone=this.s.zone;this.s.zone=z.id;
-  const destinations=[D.minors[i],D.ports[i],D.entrances[i],D.fields[i]];const props=z.props;z.props=[];try{if(roadPlans.has(z.id))z.roads=clone(roadPlans.get(z.id));else{z.roads=destinations.filter(([x,y])=>dist(origin,{x,y})>1).map(([x,y])=>this.route(origin,{x,y},{road:true,terrainOnly:true})).filter(p=>p.length>1);roadPlans.set(z.id,clone(z.roads));}}finally{z.props=props;this.s.zone=oldZone;}
+ roadNetwork(z){if(z.roadVersion===4||dungeonIds.includes(z.id)||this.supplyRoom(z.id))return;const i=this.regionIndex(z.id),origin={x:D.towns[i][0],y:D.towns[i][1]},field=this.fieldCenter(i),oldZone=this.s.zone;this.s.zone=z.id;
+  const destinations=[D.minors[i],D.ports[i],D.entrances[i],[field.x,field.y]];const props=z.props;z.props=[];try{if(roadPlans.has(z.id))z.roads=clone(roadPlans.get(z.id));else{z.roads=destinations.filter(([x,y])=>dist(origin,{x,y})>1).map(([x,y])=>this.route(origin,{x,y},{road:true,terrainOnly:true})).filter(p=>p.length>1);roadPlans.set(z.id,clone(z.roads));}}finally{z.props=props;this.s.zone=oldZone;}
   const near=(p,a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,t=clamp(((p.x-a.x)*dx+(p.y-a.y)*dy)/(dx*dx+dy*dy||1),0,1);return Math.hypot(p.x-a.x-t*dx,p.y-a.y-t*dy);};
-  z.props=z.props.filter(p=>p.structure||!z.roads.some(path=>path.some((b,j)=>j&&near(p,path[j-1],b)<p.r+60)));z.roadVersion=3;
+  z.props=z.props.filter(p=>p.structure||!z.roads.some(path=>path.some((b,j)=>j&&near(p,path[j-1],b)<p.r+60)));z.roadVersion=4;
  }
  move(entity,target,speed,dt,stop=0){const d=dist(entity,target);if(d<=stop)return true;const step=Math.min(d-stop,speed*dt),nx=entity.x+(target.x-entity.x)/d*step,ny=entity.y+(target.y-entity.y)/d*step;
   if(this.clearSegment(entity,{x:nx,y:ny})){entity.x=nx;entity.y=ny;return true;}let moved=false;if(this.clearSegment(entity,{x:nx,y:entity.y})){entity.x=nx;moved=true;}if(this.clearSegment(entity,{x:entity.x,y:ny})){entity.y=ny;moved=true;}return moved;
@@ -102,7 +103,7 @@ class Campaign{
    const [px,py]=D.ports[i];if(i<4)z.npcs.push({id:'outbound',name:r.transport+' to '+D.regions[i+1].name,kind:'transport',direction:1,x:px,y:py,icon:['🐎','⛵','🐫','🐉'][i]});
    if(i>0)z.npcs.push({id:'return',name:'Return to '+D.regions[i-1].name,kind:'transport',direction:-1,x:x+120,y:y+150,icon:['','🐎','⛵','🐫','🐉'][i]});
    const db=bosses.find(b=>b.kind==='dungeon'),[ex,ey]=D.entrances[i];z.npcs.push({id:'entrance',name:db.place,kind:'dungeon',family:db.id,x:ex,y:ey,icon:'🏛️'});
-   const [fx,fy]=D.fields[i];z.npcs.push({id:'cage-'+field.id,name:field.captive,kind:'cage',family:field.id,x:fx+90,y:fy+80,icon:'🔒'});
+   const {x:fx,y:fy}=this.fieldCenter(i);z.npcs.push({id:'cage-'+field.id,name:field.captive,kind:'cage',family:field.id,x:fx+90,y:fy+80,icon:'🔒'});
    for(let j=0;j<3;j++){const p=this.safe(minor[0]+150+j*70,minor[1]+160+j*90);z.npcs.push({id:'bundle-'+j,name:'Quest supplies '+(j+1),kind:'bundle',index:j,...p,icon:'📦'});}
    const landmarks=[...D.entrances[i],...D.ports[i]];for(let j=0;j<3;j++){const p=this.safe(j===0?minor[0]+150:j===1?fx-150:ex-180,j===0?minor[1]+40:j===1?fy+180:ey+100);z.npcs.push({id:'landmark-'+j,name:['Regional monument','Wildland lookout','Ancient ruins'][j],kind:'landmark',...p,icon:['🗿','🏕️','🏚️'][j]});}
    const gp=this.safe(x+250,y+160);z.nodes.push({id:'gather-'+region,...gp,amount:r.resource,icon:['🪵','🧺','⛏️','🪵','💎'][i]});
@@ -115,7 +116,7 @@ class Campaign{
    let p=this.safe(base.x+(j%group)*44,base.y+(j%group%2)*50);if(!dungeon&&D.towns.some(([tx,ty],ti)=>ti===i&&dist(p,{x:tx,y:ty})<260))p=this.safe(base.x+350,base.y+250);
    const e=this.makeEnemy({species:s[0],name:s[1]+(dungeon?' guardian':''),icon:s[2],level:Math.max(1,i*3+(pack%2)+1),hp:65+i*105,damage:7+i*8,gold:Math.floor((r.gold_range[0]+r.gold_range[1])/2),xp:dungeon?r.guard_xp:r.enemy_xp},p);e.pack=id+'-pack-'+pack;e.guard=dungeon;z.enemies.push(e);
   }
-  const point=dungeon?{x:1160,y:1110}:{x:D.fields[i][0],y:D.fields[i][1]};if(dungeon&&this.s.normal[boss.id])z.enemies=z.enemies.filter(e=>!e.guard);
+  const point=dungeon?{x:1160,y:1110}:this.fieldCenter(i);if(dungeon&&this.s.normal[boss.id])z.enemies=z.enemies.filter(e=>!e.guard);
   if(!this.s.normal[boss.id]||boss.kind==='field'&&!(boss.id==='darklord'&&this.s.true.darklord)&& !this.s.pending[boss.id])z.enemies.push(this.bossEnemy(boss,'normal',point));
   this.roadNetwork(z);this.authoredPlaces(z);
   this.refreshNPCs();if(this.peace)this.makeHabitat(z);return z;
@@ -135,11 +136,11 @@ class Campaign{
  depositSite(u){const z=this.isDungeon()?this.s.zones[this.definition().id]:this.zone(),i=this.regionIndex(),sites=[...(z?.npcs.filter(n=>n.kind==='rest')||[]),...(this.isDungeon()?[]:(z?.buildings.filter(b=>b.progress>=4&&b.full)||[])),{x:D.towns[i][0],y:D.towns[i][1]}];return sites.sort((a,b)=>dist(a,u)-dist(b,u))[0];}
  setRefuge(zone,id){const n=this.s.zones[zone]?.npcs.find(n=>n.id===id&&n.kind==='rest');if(n){this.s.refuge=zone;this.s.refugeSite={zone,id,x:n.x,y:n.y};}}
  arriveRefuge(site){const n=this.zone().npcs.find(n=>n.id===site.id&&n.kind==='rest');if(!n)return;Object.assign(this.hero,this.safe(n.x,n.y));for(const u of this.activeParty())Object.assign(u,this.safe(n.x+40,n.y+30));}
- authoredPlaces(z){if(this.supplyRoom(z.id)){this.combatPopulation(z);this.guardianPopulation(z);return;}this.spaceQuestBoard(z);this.spaceMillhavenSupplier(z);this.combatPopulation(z);this.nightEnemyPopulation(z);if(dungeonIds.includes(z.id)){this.decorateDungeon(z);this.guardianRewards(z);}if(z.placesVersion===1){this.localSites(z);this.miniDungeons(z);this.supplyInteriors(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);return;}z.placesVersion=1;const i=this.regionIndex(z.id),dungeon=dungeonIds.includes(z.id);
+ authoredPlaces(z){if(this.supplyRoom(z.id)){this.combatPopulation(z);this.guardianPopulation(z);return;}this.spaceQuestBoard(z);this.spaceMillhavenSupplier(z);this.combatPopulation(z);this.nightEnemyPopulation(z);if(dungeonIds.includes(z.id)){this.decorateDungeon(z);this.guardianRewards(z);}if(z.placesVersion===1){this.localSites(z);this.miniDungeons(z);this.spreadOutdoorForces(z);this.supplyInteriors(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);return;}z.placesVersion=1;const i=this.regionIndex(z.id),dungeon=dungeonIds.includes(z.id);
   if(!dungeon){z.npcs=z.npcs.filter(n=>!n.id.startsWith('landmark-'));for(const [id,name,x,y]of R.sites[i])z.npcs.push({id,name,kind:'landmark',...this.safe(x,y,z.id),icon:/bridge|crossing/i.test(name)?'🪵':/camp|convoy|wagon/i.test(name)?'🏕️':'🏚️'});}
   const nearRoad=p=>z.roads?.some(path=>path.some((b,j)=>j&&this.distanceToSegment(p,path[j-1],b)<p.r+85));
   const points=dungeon?R.pillars[z.id].map(([x,y])=>({x,y,r:30,icon:'🪨',structure:'pillar'})):[D.towns[i],D.minors[i]].flatMap(([x,y])=>[[-215,-150],[220,230],[-210,190],[190,-200]].map(([dx,dy],j)=>({x:x+dx,y:y+dy,r:32,icon:'🏠',structure:j%2?'workshop':'house'})));
-  if(!dungeon)for(const [x,y]of [D.towns[i],D.minors[i]])for(const dx of [-240,-180,180,240])points.push({x:x+dx,y:y+260,r:18,icon:'🪵',structure:'fence'});for(const q of points){if(this.blocked(q.x,q.y,z.id,q.r+20)||z.npcs.some(n=>dist(n,q)<q.r+90)||z.enemies.some(e=>dist(e.home,q)<q.r+50)||nearRoad(q)||z.id===this.s.zone&&dist(this.hero,q)<q.r+40)continue;z.props.push({id:'structure-'+z.props.length,...q});}this.localSites(z);this.miniDungeons(z);this.supplyInteriors(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);
+  if(!dungeon)for(const [x,y]of [D.towns[i],D.minors[i]])for(const dx of [-240,-180,180,240])points.push({x:x+dx,y:y+260,r:18,icon:'🪵',structure:'fence'});for(const q of points){if(this.blocked(q.x,q.y,z.id,q.r+20)||z.npcs.some(n=>dist(n,q)<q.r+90)||z.enemies.some(e=>dist(e.home,q)<q.r+50)||nearRoad(q)||z.id===this.s.zone&&dist(this.hero,q)<q.r+40)continue;z.props.push({id:'structure-'+z.props.length,...q});}this.localSites(z);this.miniDungeons(z);this.spreadOutdoorForces(z);this.supplyInteriors(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);
  }
  spaceQuestBoard(z){if(dungeonIds.includes(z.id)||z.boardPositionVersion===1)return;const board=z.npcs.find(n=>n.kind==='quests');if(!board)return;const i=this.regionIndex(z.id),[x,y]=D.towns[i],p=this.safe(x+190,y+70,z.id);Object.assign(board,p);z.boardPositionVersion=1;}
  spaceMillhavenSupplier(z){if(z.id!=='vale'||z.supplierPositionVersion===1)return;const supplier=z.npcs.find(n=>n.id==='supplier');if(!supplier)return;const [x,y]=D.towns[0];Object.assign(supplier,this.safe(x+85,y-95,z.id));z.supplierPositionVersion=1;}
@@ -161,11 +162,44 @@ class Campaign{
    z.localSitesVersion=2;
   }finally{this.s.zone=oldZone;}
  }
+ spreadOutdoorForces(z){
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||z.outdoorOccupationVersion===1)return;
+  const i=this.regionIndex(z.id),fieldBoss=D.bosses.find(b=>b.region===z.id&&b.kind==='field'),center=this.fieldCenter(i),fieldId='field-'+fieldBoss.id,town={x:D.towns[i][0],y:D.towns[i][1]},minor={x:D.minors[i][0],y:D.minors[i][1]},oldZone=this.s.zone;this.s.zone=z.id;
+  try{
+   const mini=z.minis?.find(m=>m.id===fieldId),normalBoss=z.enemies.find(e=>e.type==='boss'&&e.family===fieldBoss.id&&e.form==='normal'),oldCenter=mini?{x:mini.x,y:mini.y}:normalBoss?.home||{x:D.fields[i][0],y:D.fields[i][1]},dx=center.x-oldCenter.x,dy=center.y-oldCenter.y;
+   if(Math.hypot(dx,dy)>5){
+    const nearRoad=p=>z.roads?.some(path=>path.some((b,j)=>j&&this.distanceToSegment(p,path[j-1],b)<(p.r||20)+55));
+    const shifted=p=>this.safe(p.x+dx,p.y+dy,z.id);
+    if(mini){mini.x=center.x;mini.y=center.y;mini.trapPosts=(mini.trapPosts||[]).map(p=>({...p,...shifted(p)})).filter(p=>!nearRoad({...p,r:20}));}
+    z.props=z.props.filter(p=>{if(p.mini!==fieldId)return true;const q=shifted(p);if(nearRoad({...q,r:p.r||20}))return false;Object.assign(p,q);return true;});
+    const cage=z.npcs.find(n=>n.kind==='cage'&&n.family===fieldBoss.id);if(cage)Object.assign(cage,this.safe(center.x+90,center.y+80,z.id));
+    const marker=z.npcs.find(n=>n.kind==='mini'&&n.mini===fieldId);if(marker)Object.assign(marker,this.safe(center.x-130,center.y-10,z.id));
+    for(const e of z.enemies.filter(e=>e.mini===fieldId)){const q=shifted(e.home);e.home={...q};if(e.hp>0&&!e.aggro)Object.assign(e,q);}
+    if(normalBoss){normalBoss.home={...center};if(normalBoss.hp>0&&!normalBoss.aggro)Object.assign(normalBoss,center);}
+    const pending=this.s.pending[fieldBoss.id];if(pending?.kind==='field'&&pending.zone===z.id){pending.base.home={...center};pending.base.x=center.x;pending.base.y=center.y;}
+   }
+   const allPacks=[...new Set(z.enemies.filter(e=>e.type==='mob'&&e.pack&&!e.summon&&!e.nightOnly&&e.form==='normal').map(e=>e.pack))],
+    packs=allPacks.filter(pack=>z.enemies.filter(e=>e.pack===pack).every(e=>!e.guard&&!e.mini&&!e.site&&!e.summon&&!e.nightOnly&&e.form==='normal')),
+    anchors=R.occupationAnchors?.[i]||[],used=[];
+   for(let pi=0;pi<packs.length;pi++){
+    let anchor=null;
+    for(let step=0;step<anchors.length;step++){
+     const [ax,ay]=anchors[(pi*3+step)%anchors.length];let p;try{p=this.safe(ax,ay,z.id);}catch(_){continue;}
+     if(dist(p,town)<390||dist(p,minor)<320||dist(p,center)<380||z.npcs.some(n=>dist(p,n)<150)||used.some(q=>dist(p,q)<220))continue;
+     anchor=p;break;
+    }
+    if(!anchor)continue;used.push(anchor);
+    const members=z.enemies.filter(e=>e.pack===packs[pi]).sort((a,b)=>this.idOrder(a,b));
+    for(let k=0;k<members.length;k++){const a=k*2.3999632297,r=35+Math.floor(k/2)*28,q=this.safe(anchor.x+Math.cos(a)*r,anchor.y+Math.sin(a)*r,z.id),e=members[k];e.home={...q};if(e.hp>0&&!e.aggro)Object.assign(e,q);}
+   }
+   z.outdoorOccupationVersion=1;
+  }finally{this.s.zone=oldZone;}
+ }
  miniDungeons(z){
   if(dungeonIds.includes(z.id)||z.minisVersion===1)return;
   const i=this.regionIndex(z.id),r=D.regions[i],plan=R.miniPlans[i],oldZone=this.s.zone;this.s.zone=z.id;
   try{
-   const family=D.bosses.find(b=>b.region===z.id&&b.kind==='field').id,field={x:D.fields[i][0],y:D.fields[i][1]},resource=z.nodes[0];
+   const family=D.bosses.find(b=>b.region===z.id&&b.kind==='field').id,field=this.fieldCenter(i),resource=z.nodes[0];
    z.minis=[];
    for(const [type,center,count]of [['resource',resource,3+i],['field',field,4+i*2]]){
     const id=type==='field'?'field-'+family:'resource-'+z.id,site=type==='resource'?resource.site:null;
@@ -373,7 +407,7 @@ class Campaign{
  checkEnding(){if(this.s.true.darklord&&dungeonIds.every(id=>this.s.true[id])){if(this.peace)return;this.s.phase='peace';this.s.endingAck=false;this.s.streak={key:null,count:0};this.s.pending={};this.s.projectiles=[];this.s.hazards=[];this.hero.order=null;this.s.party.forEach(u=>u.order=null);if(this.s.mode==='nightmare')this.s.clock=360;for(const z of Object.values(this.s.zones))this.makeHabitat(z);for(const q of this.questDefs()){const p=this.s.quests[q.id];if(p&&!p.done&&(['patrol','night','escort'].includes(q.kind)||q.clear&&!this.miniCleared(q.clear,q.region))){p.closedByPeace=true;p.active=false;}}
    this.say('The war is over for people and creatures alike. Nightmare Mode is unlocked.');this.event('peace');}}
  makeHabitat(z){if(z.habitat)return;z.habitat=true;z.enemies=[];if(this.supplyRoom(z.id))return;const i=this.regionIndex(z.id),dungeon=dungeonIds.includes(z.id),count=dungeon?4:[8,10,12,14,16][i];for(let j=0;j<count;j++){const sp=D.species[i][Math.floor(j/2)%2],size=dungeon?1500:D.regions[i].size,p=this.safe(350+(Math.floor(j/2)*337)%(size-600)+(j%2)*55,400+(Math.floor(j/2)*277)%(size-650),z.id);const e=this.makeEnemy({species:sp[0],name:sp[1]+' resident',icon:sp[2],level:1,hp:1,damage:0,gold:0,xp:0},p);e.neutral=true;z.enemies.push(e);}
-  if(!dungeon){const b=D.bosses.find(b=>b.region===z.id&&b.kind==='field');if(b.id!=='darklord'){const p={x:D.fields[i][0],y:D.fields[i][1]},e=this.bossEnemy(b,'normal',p);e.neutral=true;z.enemies.push(e);}}}
+  if(!dungeon){const b=D.bosses.find(b=>b.region===z.id&&b.kind==='field');if(b.id!=='darklord'){const p=this.fieldCenter(i),e=this.bossEnemy(b,'normal',p);e.neutral=true;z.enemies.push(e);}}}
  tick(dt,input={x:0,y:0}){if(!Number.isFinite(dt)||dt<=0||this.s.challenge?.pending||this.s.challenge?.gameOver)return;dt=Math.min(dt,.1);this.s.time+=dt;this.s.restCooldown=Math.max(0,(this.s.restCooldown||0)-dt);if(this.peace||this.s.mode==='normal')this.s.clock=(this.s.clock+dt)%600;const h=this.hero,z=this.zone(),formationStart={x:h.x,y:h.y};z.clock+=dt;h.cd=h.cd.map(c=>Math.max(0,c-dt));for(const f of ['immune','haste','potionCd','slow'])h[f]=Math.max(0,h[f]-dt);h.mp=Math.min(h.maxMp,h.mp+this.manaRegenRate()*dt);this.syncCompanionLevelStats();
   if(input.x||input.y){h.order=null;const n=Math.hypot(input.x,input.y),speed=(h.speed+h.talents[3]*40)*(h.haste>0?1.25:1)*(h.slow>0?.65:1)*clamp(input.speedFactor||1,1,1.35);this.move(h,{x:h.x+input.x/n*speed,y:h.y+input.y/n*speed},speed,dt);}
   else if(h.order){const target=h.order.type==='attack'?z.enemies.find(e=>e.id===h.order.id):h.order;if(target&&!target.neutral){if(dist(h,target)>(h.order.type==='attack'?h.class==='paladin'?105:350:25))this.follow(h,target,h.speed*(h.slow>0?.65:1),dt,20);else if(h.order.type==='attack')this.cast(1,target.id);else h.order=null;}else h.order=null;}
@@ -597,7 +631,7 @@ class Campaign{
   if(s.hero.legacyPotions){if(!Array.isArray(s.hero.legacyPotions)||s.hero.legacyPotions.length>10000)throw Error('Invalid legacy supplies');for(const p of s.hero.legacyPotions){if(!['health','mana'].includes(p.type))throw Error('Invalid supply type');finite(p.value,1,1000);}}
   return s;
  }
- static restore(data,random=Math.random){const s=Campaign.validate(data),c=new Campaign(s.mode,s.hero.class,random);c.s=s;for(const u of c.s.party)if(u.type==='worker'){const ratio=u.maxHp?clamp(u.hp/u.maxHp,0,1):0;u.type='soldier';u.maxHp=c.companionMaxHp('soldier');u.hp=Math.round(u.maxHp*ratio);u.damage=12;u.icon='⚔️';u.order=null;}c.s.squadDoctrine=c.squadDefaultDoctrine();c.s.squadEngagement=null;c.s.squadBoss=false;c.s.heroTarget=null;delete c.s.holdFire;c.normalizeManaProgression();c.s.clock%=600;c.s.fieldBossKills=c.s.fieldBossKills||{};for(const b of D.bosses.filter(b=>b.kind==='field')){const required=b.id==='darklord'?1:2,logged=(c.s.statistics?.events||[]).filter(ev=>ev.type==='bossDefeat'&&ev.family===b.id&&ev.form==='normal').length,known=c.s.normal[b.id]?1:0,done=c.s.true[b.id]?required:0,reconstructed=Math.min(required,Math.max(c.s.fieldBossKills[b.id]||0,logged,known,done));if(reconstructed>0)c.s.fieldBossKills[b.id]=reconstructed;else delete c.s.fieldBossKills[b.id];if(reconstructed>=required&&!c.s.true[b.id]&&!c.s.pending[b.id]){const ri=D.regions.findIndex(r=>r.id===b.region),home=c.s.zones[b.region]?.enemies.find(e=>e.family===b.id)?.home||{x:D.fields[ri][0],y:D.fields[ri][1]};c.s.pending[b.id]={kind:'field',count:1,zone:b.region,base:{family:b.id,form:'normal',type:'boss',home:{...home},x:home.x,y:home.y},delay:5};if(c.s.zone===b.region)c.notice(b.name+' TRUE encounter restored from your saved boss defeats',6.5);}}if(c.s.awakeningAck===undefined)c.s.awakeningAck=c.s.phase!=='awakening';c.repairLegacyRescues();if(c.s.phase==='awakening'&&!c.s.awakeningLevel)c.s.awakeningLevel=c.hero.level+2;c.s.projectiles=[];c.s.hazards=[];c.messages=[];c.effects=[];for(const z of Object.values(c.s.zones)){z.props=z.props.filter(p=>!c.blocked(p.x,p.y,z.id,p.r||0,true));c.roadNetwork(z);for(const e of z.enemies){if(e.family==='thorn'&&e.type==='boss'){const base=c.boss('thorn').hp*(e.form==='true'?1.8:1),fraction=e.hp/e.maxHp,m=e.maxHp/e.baseHp;e.baseHp=base;e.maxHp=base*m;e.hp=e.maxHp*fraction;}if(c.blocked(e.home.x,e.home.y,z.id))e.home=c.safe(e.home.x,e.home.y,z.id);if(c.blocked(e.x,e.y,z.id))Object.assign(e,c.safe(e.x,e.y,z.id));}for(const n of [...z.npcs,...z.nodes,...z.buildings])if(c.blocked(n.x,n.y,z.id))Object.assign(n,c.safe(n.x,n.y,z.id));c.authoredPlaces(z);const families=new Set();z.enemies=z.enemies.filter(e=>{if(e.type!=='boss'||e.hp<=0||c.boss(e.family).kind!=='field')return true;if(families.has(e.family))return false;families.add(e.family);return true;});}c.zone();c.refreshNPCs();c.initializeQuests();c.checkQuests();c.autoEquipBestWeapon();c.syncCompanionLevelStats();for(const u of [c.hero,...c.s.party])if(c.blocked(u.x,u.y))Object.assign(u,c.safe(u.x,u.y));if(c.s.phase==='awakening')c.activatePending();return c;}
+ static restore(data,random=Math.random){const s=Campaign.validate(data),c=new Campaign(s.mode,s.hero.class,random);c.s=s;for(const u of c.s.party)if(u.type==='worker'){const ratio=u.maxHp?clamp(u.hp/u.maxHp,0,1):0;u.type='soldier';u.maxHp=c.companionMaxHp('soldier');u.hp=Math.round(u.maxHp*ratio);u.damage=12;u.icon='⚔️';u.order=null;}c.s.squadDoctrine=c.squadDefaultDoctrine();c.s.squadEngagement=null;c.s.squadBoss=false;c.s.heroTarget=null;delete c.s.holdFire;c.normalizeManaProgression();c.s.clock%=600;c.s.fieldBossKills=c.s.fieldBossKills||{};for(const b of D.bosses.filter(b=>b.kind==='field')){const required=b.id==='darklord'?1:2,logged=(c.s.statistics?.events||[]).filter(ev=>ev.type==='bossDefeat'&&ev.family===b.id&&ev.form==='normal').length,known=c.s.normal[b.id]?1:0,done=c.s.true[b.id]?required:0,reconstructed=Math.min(required,Math.max(c.s.fieldBossKills[b.id]||0,logged,known,done));if(reconstructed>0)c.s.fieldBossKills[b.id]=reconstructed;else delete c.s.fieldBossKills[b.id];if(reconstructed>=required&&!c.s.true[b.id]&&!c.s.pending[b.id]){const ri=D.regions.findIndex(r=>r.id===b.region),home=c.s.zones[b.region]?.enemies.find(e=>e.family===b.id)?.home||c.fieldCenter(ri);c.s.pending[b.id]={kind:'field',count:1,zone:b.region,base:{family:b.id,form:'normal',type:'boss',home:{...home},x:home.x,y:home.y},delay:5};if(c.s.zone===b.region)c.notice(b.name+' TRUE encounter restored from your saved boss defeats',6.5);}}if(c.s.awakeningAck===undefined)c.s.awakeningAck=c.s.phase!=='awakening';c.repairLegacyRescues();if(c.s.phase==='awakening'&&!c.s.awakeningLevel)c.s.awakeningLevel=c.hero.level+2;c.s.projectiles=[];c.s.hazards=[];c.messages=[];c.effects=[];for(const z of Object.values(c.s.zones)){z.props=z.props.filter(p=>!c.blocked(p.x,p.y,z.id,p.r||0,true));c.roadNetwork(z);for(const e of z.enemies){if(e.family==='thorn'&&e.type==='boss'){const base=c.boss('thorn').hp*(e.form==='true'?1.8:1),fraction=e.hp/e.maxHp,m=e.maxHp/e.baseHp;e.baseHp=base;e.maxHp=base*m;e.hp=e.maxHp*fraction;}if(c.blocked(e.home.x,e.home.y,z.id))e.home=c.safe(e.home.x,e.home.y,z.id);if(c.blocked(e.x,e.y,z.id))Object.assign(e,c.safe(e.x,e.y,z.id));}for(const n of [...z.npcs,...z.nodes,...z.buildings])if(c.blocked(n.x,n.y,z.id))Object.assign(n,c.safe(n.x,n.y,z.id));c.authoredPlaces(z);const families=new Set();z.enemies=z.enemies.filter(e=>{if(e.type!=='boss'||e.hp<=0||c.boss(e.family).kind!=='field')return true;if(families.has(e.family))return false;families.add(e.family);return true;});}c.zone();c.refreshNPCs();c.initializeQuests();c.checkQuests();c.autoEquipBestWeapon();c.syncCompanionLevelStats();for(const u of [c.hero,...c.s.party])if(c.blocked(u.x,u.y))Object.assign(u,c.safe(u.x,u.y));if(c.s.phase==='awakening')c.activatePending();return c;}
  repairLegacyRescues(){
   // Earlier v2 imports granted nine service unlocks without checking campaign progress.
   if(!Array.isArray(this.s.legacyInventory)||this.s.legacyRescueAuditVersion===1)return;
