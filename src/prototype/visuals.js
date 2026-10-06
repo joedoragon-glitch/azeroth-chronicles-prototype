@@ -396,7 +396,13 @@ function bridges(ctx,screen,region=0){
  ctx.restore();
 }
 function roads(ctx,paths,screen,region=0){
- const strip=R.barriers[region].bounds;
+ const strip=R.barriers[region].bounds,palettes=[
+  {shoulder:'#564834',base:'#8e7758',inner:'#a18b68',seam:'#6f604c'},
+  {shoulder:'#4b5043',base:'#83775e',inner:'#9c8e70',seam:'#6b6b58'},
+  {shoulder:'#4e4d46',base:'#87857a',inner:'#aaa695',seam:'#6e6d66'},
+  {shoulder:'#51443e',base:'#7c6c61',inner:'#978678',seam:'#625750'},
+  {shoulder:'#3f3d45',base:'#66636e',inner:'#87818e',seam:'#55525d'}
+ ],road=palettes[region]||palettes[0];
  const bridge=p=>p.x>=strip[0]-12&&p.x<=strip[1]+12&&p.y>=strip[2]&&p.y<=strip[3];
  const polygon=(points,color)=>{ctx.fillStyle=color;ctx.beginPath();points.forEach((q,j)=>{const p=screen(q);j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);});ctx.closePath();ctx.fill();};
  const segment=(a,b,w,color)=>{const d=Math.hypot(b.x-a.x,b.y-a.y);if(!d)return;const dx=-(b.y-a.y)/d*w,dy=(b.x-a.x)/d*w;polygon([{x:a.x+dx,y:a.y+dy},{x:b.x+dx,y:b.y+dy},{x:b.x-dx,y:b.y-dy},{x:a.x-dx,y:a.y-dy}],color);};
@@ -404,14 +410,14 @@ function roads(ctx,paths,screen,region=0){
  const edges=[],seen=new Set();for(const path of paths)for(let j=1;j<path.length;j++){const a=path[j-1],b=path[j],key=[a.x,a.y,b.x,b.y].join(':');if(seen.has(key))continue;seen.add(key);edges.push([a,b]);}
  ctx.save();ctx.lineJoin='round';ctx.lineCap='butt';
  // Shared shoulders and pavement form junctions before individual slab seams.
- for(const [a,b]of edges)segment(a,b,35,'#504d3c');
- for(const path of paths)for(const q of path)polygon([{x:q.x-35,y:q.y-35},{x:q.x+35,y:q.y-35},{x:q.x+35,y:q.y+35},{x:q.x-35,y:q.y+35}],'#504d3c');
- for(const [a,b]of edges)segment(a,b,29,'#a29677');
- for(const path of paths)for(const q of path)polygon([{x:q.x-29,y:q.y-29},{x:q.x+29,y:q.y-29},{x:q.x+29,y:q.y+29},{x:q.x-29,y:q.y+29}],'#a29677');
- for(const [a,b]of edges)segment(a,b,23,'#b1a586');
+ for(const [a,b]of edges)segment(a,b,35,road.shoulder);
+ for(const path of paths)for(const q of path)polygon([{x:q.x-35,y:q.y-35},{x:q.x+35,y:q.y-35},{x:q.x+35,y:q.y+35},{x:q.x-35,y:q.y+35}],road.shoulder);
+ for(const [a,b]of edges)segment(a,b,29,road.base);
+ for(const path of paths)for(const q of path)polygon([{x:q.x-29,y:q.y-29},{x:q.x+29,y:q.y-29},{x:q.x+29,y:q.y+29},{x:q.x-29,y:q.y+29}],road.base);
+ for(const [a,b]of edges)segment(a,b,23,road.inner);
  const seams=new Set();for(const [a,b]of edges){const length=Math.hypot(b.x-a.x,b.y-a.y);if(!length)continue;const ux=(b.x-a.x)/length,uy=(b.y-a.y)/length,nx=-uy,ny=ux,steps=Math.max(1,Math.ceil(length/22));
  for(let j=0;j<steps;j++){const p={x:a.x+(b.x-a.x)*j/steps,y:a.y+(b.y-a.y)*j/steps},q={x:a.x+(b.x-a.x)*(j+1)/steps,y:a.y+(b.y-a.y)*(j+1)/steps},mid={x:(p.x+q.x)/2,y:(p.y+q.y)/2};if(bridge(mid)){segment(p,q,28,'#b49468');for(const side of [-1,1])stroke({x:p.x+nx*side*31,y:p.y+ny*side*31},{x:q.x+nx*side*31,y:q.y+ny*side*31},'#d1b887',2);}}
- const anchor=a.x*ux+a.y*uy,first=Math.ceil(anchor/44)*44-anchor;for(let t=first;t<length;t+=44){const p={x:a.x+ux*t,y:a.y+uy*t},key=Math.round(p.x)+':'+Math.round(p.y);if(seams.has(key))continue;seams.add(key);const wood=bridge(p);stroke({x:p.x+nx*26,y:p.y+ny*26},{x:p.x-nx*26,y:p.y-ny*26},wood?'#624b34':'#7e7865',1);if(!wood){const q={x:a.x+ux*Math.min(length,t+44),y:a.y+uy*Math.min(length,t+44)};stroke(p,q,'#888370',.8);}}
+ const anchor=a.x*ux+a.y*uy,first=Math.ceil(anchor/44)*44-anchor;for(let t=first;t<length;t+=44){const p={x:a.x+ux*t,y:a.y+uy*t},key=Math.round(p.x)+':'+Math.round(p.y);if(seams.has(key))continue;seams.add(key);const wood=bridge(p);stroke({x:p.x+nx*26,y:p.y+ny*26},{x:p.x-nx*26,y:p.y-ny*26},wood?'#624b34':road.seam,1);if(!wood){const q={x:a.x+ux*Math.min(length,t+44),y:a.y+uy*Math.min(length,t+44)};stroke(p,q,road.seam,.8);}}
  }
 
  ctx.restore();
