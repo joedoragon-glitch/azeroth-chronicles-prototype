@@ -46,4 +46,12 @@ test('each field-boss Treasury has a distinct boss-home entrance rather than a d
  for(const room of R.supplyRooms){const region=Campaign.data.regions.findIndex(r=>r.id===room.region),sig=visualSignature({id:'supply-entrance',kind:'dungeon',family:room.id,treasury:true,treasuryBoss:room.boss,renderKind:'npc'},region);assert.notEqual(sig,genericGate,room.id+' entrance differs from generic dungeon gate');seen.push(sig);}
  assert.equal(new Set(seen).size,R.supplyRooms.length,'all four Treasury entrances have distinct boss identities');
 });
+test('completed barracks are rough regional military shelters, not polished houses',()=>{
+ const genericByRegion=Campaign.data.regions.map((_,i)=>visualSignature({id:'generic-house',renderKind:'prop',structure:'house',decorative:false},i));
+ const finished=Campaign.data.regions.map((_,i)=>visualSignature({id:'barracks',kind:'barracks',renderKind:'building',name:'Barracks',progress:4},i));
+ const building=Campaign.data.regions.map((_,i)=>visualSignature({id:'barracks',kind:'barracks',renderKind:'building',name:'Barracks',progress:2},i));
+ assert.equal(new Set(finished).size,5,'every region gets a distinct finished barracks design');
+ assert.equal(new Set(building).size,5,'every region gets a distinct rough construction state');
+ for(let i=0;i<5;i++){assert.notEqual(finished[i],genericByRegion[i],Campaign.data.regions[i].id+' finished barracks does not inherit generic-house body');assert.notEqual(finished[i],building[i],Campaign.data.regions[i].id+' finished barracks evolves from construction without becoming a house');}
+});
 console.log(passed+' world-aesthetic scenarios passed.');
