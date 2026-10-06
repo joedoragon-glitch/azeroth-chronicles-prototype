@@ -122,6 +122,16 @@ const terrain=[
 ];
 // Small authored arrival harbors supplement the region-scale barriers. Their dock rectangles are walkable over the water.
 const harbors={
+ march:{
+  id:'reedport-ferry',
+  water:{x1:2140,x2:2550,y1:470,y2:900},
+  dock:{x1:2075,x2:2255,y1:615,y2:735},
+  arrival:{x:2115,y:675},
+  boat:{x:2285,y:675},
+  shore:{x:2140,y:675},
+  name:'Reedport Mangrove Ferry',
+  vegetation:'mangrove'
+ },
  highlands:{
   id:'stonecross-ferry',
   water:{x1:70,x2:390,y1:1740,y2:2190},
@@ -129,12 +139,13 @@ const harbors={
   arrival:{x:438,y:1900},
   boat:{x:285,y:1900},
   shore:{x:390,y:1900},
-  name:'Stonecross Ferry Landing'
+  name:'Stonecross Ferry Landing',
+  vegetation:'pine'
  }
 };
 const travelArrivals={
  'march>highlands':{x:438,y:1900},
- 'highlands>march':{x:2185,y:690}
+ 'highlands>march':{x:2115,y:675}
 };
 const dungeonWalls={crypt:[710,780,[[480,680],[870,1060]]],archive:[650,730,[[400,620],[980,1200]]],mine:[800,870,[[480,730],[1020,1250]]],abyss:[610,690,[[600,830],[1040,1260]]],citadel:[750,830,[[430,680],[900,1150]]]};
 const pillars={crypt:[[430,620],[1010,480]],archive:[[420,740],[1060,620]],mine:[[480,950],[1120,380]],abyss:[[420,530],[980,890]],citadel:[[400,750],[1080,450]]};
