@@ -256,7 +256,7 @@ class Campaign{
    z.harborVersion=1;
   }finally{this.s.zone=oldZone;}
  }
- authoredPlaces(z){if(this.supplyRoom(z.id)){this.treasuryInterior(z);this.combatPopulation(z);this.guardianPopulation(z);this.roomCaptainPopulation(z);return;}this.harborLayout(z);this.spaceQuestBoard(z);this.spaceMillhavenSupplier(z);this.combatPopulation(z);this.nightEnemyPopulation(z);if(dungeonIds.includes(z.id)){this.decorateDungeon(z);this.guardianRewards(z);}if(z.placesVersion===1){this.localSites(z);this.miniDungeons(z);this.spreadOutdoorForces(z);this.alignLandmarks(z);this.supplyInteriors(z);this.regionalAesthetics(z);this.worldLife(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);this.fieldCaptainPopulation(z);return;}z.placesVersion=1;const i=this.regionIndex(z.id),dungeon=dungeonIds.includes(z.id);
+ authoredPlaces(z){if(this.supplyRoom(z.id)){this.treasuryInterior(z);this.combatPopulation(z);this.guardianPopulation(z);this.roomCaptainPopulation(z);return;}this.harborLayout(z);this.repairMiniGuardianReachability(z);this.spaceQuestBoard(z);this.spaceMillhavenSupplier(z);this.combatPopulation(z);this.nightEnemyPopulation(z);if(dungeonIds.includes(z.id)){this.decorateDungeon(z);this.guardianRewards(z);}if(z.placesVersion===1){this.localSites(z);this.miniDungeons(z);this.spreadOutdoorForces(z);this.alignLandmarks(z);this.supplyInteriors(z);this.regionalAesthetics(z);this.worldLife(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);this.fieldCaptainPopulation(z);return;}z.placesVersion=1;const i=this.regionIndex(z.id),dungeon=dungeonIds.includes(z.id);
   if(!dungeon){z.npcs=z.npcs.filter(n=>!n.id.startsWith('landmark-'));for(const [id,name,x,y]of R.sites[i])z.npcs.push({id,name,kind:'landmark',...this.safe(x,y,z.id),icon:/bridge|crossing/i.test(name)?'🪵':/camp|convoy|wagon/i.test(name)?'🏕️':'🏚️'});}
   const nearRoad=p=>z.roads?.some(path=>path.some((b,j)=>j&&this.distanceToSegment(p,path[j-1],b)<p.r+85));
   const points=dungeon?R.pillars[z.id].map(([x,y])=>({x,y,r:30,icon:'🪨',structure:'pillar'})):[];
@@ -315,6 +315,22 @@ class Campaign{
    z.outdoorOccupationVersion=2;
   }finally{this.s.zone=oldZone;}
  }
+ repairMiniGuardianReachability(z){
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||!z.minis?.length||z.miniReachabilityVersion===1)return;
+  const oldZone=this.s.zone;this.s.zone=z.id;
+  try{
+   const i=this.regionIndex(z.id),town=this.safe(D.towns[i][0],D.towns[i][1],z.id),reachable=p=>!!this.route(town,p).length;
+   const occupied=[];
+   for(const e of z.enemies.filter(e=>e.guard&&e.mini)){
+    if(reachable(e.home)){occupied.push(e.home);continue;}
+    const mini=z.minis.find(m=>m.id===e.mini);if(!mini)continue;
+    let replacement=null;
+    for(const radius of [70,100,130,160,190,220,250]){for(let n=0;n<24;n++){const a=n*Math.PI/12,p={x:mini.x+Math.cos(a)*radius,y:mini.y+Math.sin(a)*radius};if(this.blocked(p.x,p.y,z.id,15)||occupied.some(q=>dist(q,p)<42)||!reachable(p))continue;replacement=p;break;}if(replacement)break;}
+    if(replacement){e.home={...replacement};if(e.hp>0&&!e.aggro)Object.assign(e,replacement);occupied.push(replacement);}
+   }
+   z.miniReachabilityVersion=1;
+  }finally{this.s.zone=oldZone;}
+ }
  miniDungeons(z){
   if(dungeonIds.includes(z.id)||z.minisVersion===1)return;
   const i=this.regionIndex(z.id),r=D.regions[i],plan=R.miniPlans[i],oldZone=this.s.zone;this.s.zone=z.id;
@@ -339,6 +355,7 @@ class Campaign{
    // New cover cannot seal existing arrivals, captives, patrol homes or expedition troops.
    for(const n of [...z.npcs,...z.nodes,...z.enemies.filter(e=>e.hp>0)])if(this.blocked(n.x,n.y,z.id))Object.assign(n,this.safe(n.x,n.y));
    for(const e of z.enemies)if(this.blocked(e.home.x,e.home.y,z.id))e.home=this.safe(e.home.x,e.home.y);
+   delete z.miniReachabilityVersion;this.repairMiniGuardianReachability(z);
   }finally{this.s.zone=oldZone;}
  }
  miniCleared(id,region=this.s.zone){return !!this.s.zones[region]?.minis?.find(m=>m.id===id)?.cleared;}
