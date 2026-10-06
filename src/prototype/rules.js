@@ -72,13 +72,27 @@ const natureThemes=[
  ['dead-tree','charred-stump','ash-patch','dry-scrub','burned-log','ember-pit'],
  ['black-rock','black-rock','crystal-cluster','ash-patch','dead-shrub','fumarole','obsidian']
 ];
-// Two quest supplies are stored inside a nearby building; the first stays outdoors.
+// The field bosses keep their personal hoards in lived-in Treasuries. One quest supply stays outdoors; two are inside.
 const supplyRooms=[
- {id:'supply-vale',region:'vale',site:'orchard',name:'Orchard watchtower cellar',objective:'Recover one orchard crate and two from the watchtower cellar'},
- {id:'supply-march',region:'march',site:'wagon',name:'Stranded wagon hold',objective:'Recover one wagon bundle and two from its guarded hold'},
- {id:'supply-highlands',region:'highlands',site:'ore',name:'Quarry storehouse',objective:'Recover one quarry bundle and two from the storehouse'},
- {id:'supply-crown',region:'crown',site:'foundry',name:'Foundry storeroom',objective:'Recover one foundry cache and two from the storeroom'}
+ {id:'supply-vale',region:'vale',site:'orchard',boss:'thorn',name:"Thornfang's Treasury",objective:"Recover one orchard crate and two caches from Thornfang's Treasury"},
+ {id:'supply-march',region:'march',site:'wagon',boss:'mire',name:"Mirejaw's Treasury",objective:"Recover one wagon bundle and two caches from Mirejaw's Treasury"},
+ {id:'supply-highlands',region:'highlands',site:'ore',boss:'ridge',name:"Ridge Tyrant's Treasury",objective:"Recover one quarry bundle and two caches from Ridge Tyrant's Treasury"},
+ {id:'supply-crown',region:'crown',site:'foundry',boss:'darklord',name:"Dark Lord's Treasury",objective:"Recover one foundry cache and two caches from the Dark Lord's Treasury"}
 ];
+const treasuryDecor={
+ 'supply-vale':[
+  [205,665,'thorn-bed',28],[315,205,'fang-trophy',0],[690,205,'treasure-hoard',22],[665,500,'root-table',22],[185,445,'warm-brazier',16],[785,760,'boss-chest',20]
+ ],
+ 'supply-march':[
+  [210,665,'mire-pool',0],[315,205,'fish-rack',18],[690,205,'reed-nest',26],[665,500,'shell-hoard',22],[180,445,'drift-seat',18],[785,760,'boss-chest',20]
+ ],
+ 'supply-highlands':[
+  [210,665,'ridge-hearth',24],[315,205,'weapon-rack',18],[690,205,'stone-seat',28],[665,500,'treasure-hoard',22],[180,445,'trophy-rack',18],[785,760,'boss-chest',20]
+ ],
+ 'supply-crown':[
+  [210,665,'dark-brazier',18],[315,205,'treasure-hoard',22],[690,205,'dark-throne',28],[665,500,'war-table',24],[180,445,'crown-banner',0],[785,760,'boss-chest',20]
+ ]
+};
 const miniPlans=[
  {field:'Orchard den stockade',resource:'Woodland cache ruins',theme:'stockade'},
  {field:'Mirejaw island redoubt',resource:'Stranded wagon enclosure',theme:'palisade'},
@@ -256,6 +270,6 @@ const bossCadence={specialRecoveryMultiplier:.25,basicCooldown:.75,skillsPerBasi
 const rangedEnemyCombat={projectileMultiplier:1.7,aimTime:.35,cooldown:1.15,retreatFraction:.5,retreatSpeed:165,ringleaderRetreatMultiplier:1.2,ringleaderHybridMeleeRange:100,guardianScreenRange:220};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
+const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryDecor,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,attacks,sites,quests,barriers,terrain,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
