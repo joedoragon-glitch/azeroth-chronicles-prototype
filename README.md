@@ -1,4 +1,4 @@
-# Azeroth Chronicles — expanded prototype v0.8.59
+# Azeroth Chronicles — expanded prototype v0.8.60
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families use readable but adaptive warned mechanics. Every boss can summon pressure units, while TRUE forms use six-unit elite warbands. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
@@ -50,7 +50,7 @@ The sound menu offers independent master, music, ambience and effects volumes. F
 
 Choose **Menu → Game and settings → Save and game management → Export playtest report** to collect deaths, kills, boss durations, earnings and supply use. Record class, mode, challenge, session length, stuck routes, unaffordable training, unclear boss warnings, companion behavior and sound comfort. Reports stay local; no telemetry is sent automatically. Difficulty, economy, presentation and music are provisional.
 
-## Development
+Overworld distribution update v0.8.60 spreads ordinary unassigned patrol packs across wider regional occupation points and moves field-boss compounds farther from the main settlement approach. Authored quest-site guards, resource mini-dungeons and dungeon populations keep their designed positions. Existing saves migrate the outdoor layout once; combat sight and aggro rules are unchanged.\n\n## Development
 
 Playtest deployment in v0.8.59 favors rapid iteration: pushes to `main` cancel superseded in-progress Pages workflows instead of queueing every obsolete build. The newest successful commit is the one allowed to finish deployment. Installed/live playtest clients also activate a newly published service worker immediately and reload once after saving when replacing an existing controller; first-time installs do not receive the extra reload.
 
