@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),Campaign=require('../src/prototype/engine.js'),R=require('../src/prototype/rules.js');
+const assert=require('node:assert/strict'),Campaign=require('../src/prototype/engine.js'),R=require('../src/prototype/rules.js'),Visuals=require('../src/prototype/visuals.js');
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 let passed=0;function test(name,fn){try{fn();passed++;console.log('PASS '+name);}catch(e){process.exitCode=1;console.error('FAIL '+name+' '+e.stack);}}
 
@@ -21,4 +21,29 @@ test('named landmarks sit beside the world feature their names describe',()=>{
  for(const [region,id,max] of [['highlands','tower',260],['frontier','checkpoint',220],['crown','fortress-gate',220]]){const c=new Campaign();c.enter(region);const n=c.zone().npcs.find(n=>n.id===id),f=c.fieldCenter();assert(distance(n,f)<max,region+' '+id+' belongs to its stronghold area');}
 });
 
+
+function visualSignature(entity,region){
+ const log=[],target={};const ctx=new Proxy(target,{get(o,p){if(p in o)return o[p];return (...args)=>{log.push([String(p),...args.map(v=>typeof v==='number'?Math.round(v*100)/100:v)]);};},set(o,p,v){o[p]=v;log.push(['set',String(p),v]);return true;}});
+ Visuals.draw(ctx,entity,{x:0,y:0},region,false);return JSON.stringify(log);
+}
+test('named town utilities use distinct purpose-specific silhouettes while retaining each regional palette',()=>{
+ const roles=[
+  {id:'rest',kind:'rest',renderKind:'npc',name:'Refuge'},
+  {id:'supplier',kind:'supplier',renderKind:'npc',name:'Supplies'},
+  {id:'recruiter',kind:'recruiter',renderKind:'npc',name:'Captain'},
+  {id:'board',kind:'quests',renderKind:'npc',name:'Quest board'},
+  {id:'barracks',kind:'barracks',renderKind:'building',name:'Barracks',progress:4}
+ ];
+ for(let region=0;region<Campaign.data.regions.length;region++){
+  const generic=visualSignature({id:'generic-house',renderKind:'prop',structure:'house',decorative:false},region),signatures=roles.map(e=>visualSignature(e,region));
+  assert.equal(new Set(signatures).size,roles.length,Campaign.data.regions[region].id+' utility silhouettes are distinct');
+  assert(signatures.every(s=>s!==generic),Campaign.data.regions[region].id+' named utilities do not reuse generic-house drawing');
+ }
+ for(const role of roles){const regional=Campaign.data.regions.map((_,i)=>visualSignature(role,i));assert(new Set(regional).size>=4,role.kind+' visibly inherits regional materials/colors');}
+});
+test('each field-boss Treasury has a distinct boss-home entrance rather than a dungeon gate',()=>{
+ const genericGate=visualSignature({id:'entrance',kind:'dungeon',family:'crypt',renderKind:'npc'},0),seen=[];
+ for(const room of R.supplyRooms){const region=Campaign.data.regions.findIndex(r=>r.id===room.region),sig=visualSignature({id:'supply-entrance',kind:'dungeon',family:room.id,treasury:true,treasuryBoss:room.boss,renderKind:'npc'},region);assert.notEqual(sig,genericGate,room.id+' entrance differs from generic dungeon gate');seen.push(sig);}
+ assert.equal(new Set(seen).size,R.supplyRooms.length,'all four Treasury entrances have distinct boss identities');
+});
 console.log(passed+' world-aesthetic scenarios passed.');
