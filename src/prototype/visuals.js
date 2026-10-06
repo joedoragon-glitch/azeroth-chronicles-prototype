@@ -214,7 +214,7 @@ function draw(ctx,e,p,region=0,rescued=false){
   }
   rect(14,-43,7,17,'#9a8e7c');rect(-5,-24,10,8,gold);
  }
- function decoration(kind){switch(kind){
+ function decoration(kind){const localWood=['#806044','#71654f','#71695b','#614f46','#555563'][region];switch(kind){
  case 'torch':line([[0,-6],[0,16]],'#807660',4);poly([[-8,-7],[-4,-24],[0,-16],[5,-29],[9,-7]],'#d99753');poly([[-3,-7],[0,-18],[4,-7]],'#f2cf7c');break;
  case 'coffin':poly([[-18,-14],[-12,-24],[12,-24],[19,-12],[15,16],[-15,16]],'#787e75');line([[-7,-17],[7,-17]],'#b3b6a1',2);line([[0,-21],[0,3]],'#b3b6a1',2);break;
  case 'bones':skull(-9,-5,6);line([[0,5],[18,-7]],bone,4);line([[1,-6],[18,7]],bone,4);break;
@@ -229,20 +229,20 @@ function draw(ctx,e,p,region=0,rescued=false){
  case 'ember':oval(0,5,27,12,'#4d4945');for(const x of [-13,0,13])poly([[x-5,8],[x,-9],[x+7,8]],'#b7784e');break;
  case 'armor':humanoid('#88999d',steel);rect(-25,7,50,9,'#6b756f');shield(-19,-1,'#626f79');break;
  case 'thorn-bed':oval(0,7,29,12,'#6f7f55');for(const [x,y]of [[-18,-2],[-8,-8],[4,-6],[16,-1]])poly([[x-5,y+8],[x,y-8],[x+6,y+8]],'#5e744d');for(const x of [-17,17])line([[x,6],[x+(x<0?-7:7),-5]],'#806543',3);break;
- case 'fang-trophy':line([[0,-41],[0,13]],timber||'#765b40',3);for(const y of [-31,-18,-5]){poly([[-11,y],[-5,y-8],[-2,y]],bone);poly([[11,y],[5,y-8],[2,y]],bone);}break;
+ case 'fang-trophy':line([[0,-41],[0,13]],localWood,3);for(const y of [-31,-18,-5]){poly([[-11,y],[-5,y-8],[-2,y]],bone);poly([[11,y],[5,y-8],[2,y]],bone);}break;
  case 'root-table':oval(0,3,27,10,'#74563d');for(const x of [-17,17])line([[x,6],[x,17]],'#604831',4);for(const [x,c]of [[-9,'#d0a85e'],[0,'#b98555'],[10,'#8c9a69']])oval(x,-1,4,3,c);break;
  case 'warm-brazier':oval(0,8,16,6,'#5a4a3b');for(const x of [-7,0,7])poly([[x-4,7],[x,-8],[x+4,7]],'#c87946');glint(0,-5,'#ffd27e',2);break;
  case 'treasure-hoard':for(const [x,y,r]of [[-15,6,7],[-5,1,8],[7,5,9],[16,8,6],[2,-5,6]])oval(x,y,r,r*.55,'#c59a4f');for(const [x,y]of [[-8,-2],[4,1],[13,4]])glint(x,y,'#f3dc8a',1.5);break;
  case 'boss-chest':rect(-23,-10,46,23,'#806144');poly([[-23,-10],[-17,-23],[17,-23],[23,-10]],'#9d7950');line([[0,-22],[0,12]],gold,3);rect(-5,-8,10,8,gold);break;
  case 'mire-pool':oval(0,7,30,12,'#4d7470');for(const x of [-22,-14,18,25])line([[x,12],[x,-8]],'#71865e',2);for(const [x,y]of [[-9,4],[6,1],[14,8]])oval(x,y,4,2,'#829c75');break;
- case 'fish-rack':for(const x of [-20,20])line([[x,12],[x,-34]],timber||'#6c6652',3);line([[-21,-30],[21,-30]],timber||'#6c6652',3);for(const x of [-14,0,14]){line([[x,-28],[x,-13]],'#d5c9a5',1);poly([[x-7,-12],[x,-17],[x+7,-12],[x,-7]],'#8fa197');}break;
+ case 'fish-rack':for(const x of [-20,20])line([[x,12],[x,-34]],localWood,3);line([[-21,-30],[21,-30]],localWood,3);for(const x of [-14,0,14]){line([[x,-28],[x,-13]],'#d5c9a5',1);poly([[x-7,-12],[x,-17],[x+7,-12],[x,-7]],'#8fa197');}break;
  case 'reed-nest':oval(0,7,29,12,'#7d8060');for(let x=-25;x<=25;x+=8)line([[x,10],[x+4,-4]],'#a0986d',2);oval(0,3,18,7,'#556e5a');break;
  case 'shell-hoard':for(const [x,y]of [[-15,5],[-7,-1],[2,5],[11,0],[18,7]]){oval(x,y,7,4,'#b9ad8f');line([[x-4,y],[x+4,y]],'#806f5f',1);}for(const x of [-8,8])glint(x,-5,'#d9cfac',1.3);break;
  case 'drift-seat':line([[-24,8],[22,-2]],'#76654e',8);line([[-13,4],[-16,16]],'#665440',4);line([[12,0],[16,13]],'#665440',4);for(const x of [-12,2,14])line([[x,3],[x+3,-6]],'#9b8b6c',1);break;
  case 'ridge-hearth':rect(-25,-10,50,23,'#7d7f76');rect(-18,-27,36,17,'#666960');oval(0,4,17,6,'#4d4841');for(const x of [-8,0,8])poly([[x-4,5],[x,-9],[x+4,5]],'#c27e4c');break;
- case 'weapon-rack':for(const x of [-22,22])line([[x,13],[x,-38]],timber||'#71695b',3);line([[-23,-30],[23,-30]],timber||'#71695b',3);for(const x of [-13,0,13]){line([[x,-28],[x,10]],steel,2);poly([[x-5,-28],[x,-39],[x+5,-28]],'#aaa891');}break;
+ case 'weapon-rack':for(const x of [-22,22])line([[x,13],[x,-38]],localWood,3);line([[-23,-30],[23,-30]],localWood,3);for(const x of [-13,0,13]){line([[x,-28],[x,10]],steel,2);poly([[x-5,-28],[x,-39],[x+5,-28]],'#aaa891');}break;
  case 'stone-seat':rect(-24,-12,48,27,'#777a72');rect(-18,-34,36,23,'#898b82');for(const x of [-17,17])rect(x-6,-4,12,19,'#686b65');line([[-14,-26],[14,-26]],'#aaa68f',2);break;
- case 'trophy-rack':for(const x of [-20,20])line([[x,13],[x,-36]],timber||'#71695b',3);line([[-21,-31],[21,-31]],timber||'#71695b',3);for(const x of [-12,0,12]){poly([[x-6,-27],[x,-37],[x+6,-27]],bone);line([[x,-26],[x,-8]],'#9b8e73',2);}break;
+ case 'trophy-rack':for(const x of [-20,20])line([[x,13],[x,-36]],localWood,3);line([[-21,-31],[21,-31]],localWood,3);for(const x of [-12,0,12]){poly([[x-6,-27],[x,-37],[x+6,-27]],bone);line([[x,-26],[x,-8]],'#9b8e73',2);}break;
  case 'dark-brazier':oval(0,8,18,7,'#4c4652');for(const x of [-9,0,9])poly([[x-5,7],[x,-11],[x+5,7]],'#9c5f58');for(const x of [-5,5])glint(x,-4,'#d5a074',1.5);break;
  case 'dark-throne':rect(-24,-11,48,27,'#555461');poly([[-20,-10],[-17,-39],[0,-51],[17,-39],[20,-10]],'#64616f');poly([[0,-39],[6,-29],[0,-19],[-6,-29]],'#9b82aa');for(const x of [-18,18])rect(x-5,-3,10,19,'#464752');break;
  case 'war-table':oval(0,4,29,11,'#5e554f');for(const x of [-18,18])line([[x,7],[x,18]],'#493f3b',4);line([[-18,-1],[18,7]],'#ad8b6d',1);for(const [x,y]of [[-10,0],[3,2],[12,5]])glint(x,y,'#d7b46d',1.3);break;
