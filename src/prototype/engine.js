@@ -63,6 +63,7 @@ class Campaign{
    const {bounds:[a,b,c,e],gaps}=R.barriers[i];if(x>a-radius&&x<b+radius&&y>c-radius&&y<e+radius&&!gaps.some(([l,h])=>y>l+radius&&y<h-radius))return true;
   }
   if(!dungeon&&!room)for(const p of R.terrain[i])if(p.r?Math.hypot(x-p.x,y-p.y)<p.r+radius:x>p.x1-radius&&x<p.x2+radius&&y>p.y1-radius&&y<p.y2+radius&&!(p.gaps||[]).some(([l,h])=>y>l+radius&&y<h-radius))return true;
+  if(!dungeon&&!room){const harbor=R.harbors?.[D.regions[i]?.id];if(harbor){const w=harbor.water,d=harbor.dock,onDock=x>d.x1+radius&&x<d.x2-radius&&y>d.y1+radius&&y<d.y2-radius;if(!onDock&&x>w.x1-radius&&x<w.x2+radius&&y>w.y1-radius&&y<w.y2+radius)return true;}}
   const z=this.s.zones[zone];return !terrainOnly&&z?.props.some(p=>!p.decorative&&Math.hypot(x-p.x,y-p.y)<p.r+radius)||false;
  }
  safe(x,y,zone=this.s.zone){if(!this.blocked(x,y,zone))return {x,y};for(let r=30;r<450;r+=30)for(let i=0;i<24;i++){const a=i*Math.PI/12,p={x:x+Math.cos(a)*r,y:y+Math.sin(a)*r};if(!this.blocked(p.x,p.y,zone))return p;}throw Error('No safe arrival');}
@@ -88,15 +89,15 @@ class Campaign{
    const add=(center,layout,prefix)=>{layout.forEach(([dx,dy,structure],j)=>{const p=terrainSafe(center.x+dx,center.y+dy,34);if(!p)return;z.props.push({id:'settlement-'+prefix+'-'+j,...p,r:32,structure,roadBlocker:true});});};
    add(major,R.settlementLayouts.major,'major');add(minor,R.settlementLayouts.minor,'minor');
    const by=id=>z.npcs.find(n=>n.id===id),place=(id,dx,dy)=>{const n=by(id);if(n)Object.assign(n,terrainSafe(major.x+dx,major.y+dy,8)||{x:major.x+dx,y:major.y+dy});};
-   place('supplier',115,-85);place('recruiter',-125,90);place('board',210,55);place('rest',0,0);place('return',150,175);
+   place('supplier',115,-85);place('recruiter',-125,90);place('board',210,55);place('rest',0,0);if(!R.harbors?.[z.id])place('return',150,175);
    const minorRest=by('minor');if(minorRest)Object.assign(minorRest,terrainSafe(minor.x,minor.y,8)||minor);
    z.boardPositionVersion=2;if(z.id==='vale')z.supplierPositionVersion=2;z.settlementLayoutVersion=2;
   }finally{this.s.zone=oldZone;}
  }
- roadNetwork(z){if(dungeonIds.includes(z.id)||this.supplyRoom(z.id))return;this.settlementLayout(z);if(z.roadVersion===5)return;const i=this.regionIndex(z.id),origin={x:D.towns[i][0],y:D.towns[i][1]},field=this.fieldCenter(i),oldZone=this.s.zone,key=z.id+':v5';this.s.zone=z.id;
-  const destinations=[D.minors[i],D.ports[i],D.entrances[i],[field.x,field.y]],props=z.props,blockers=z.props.filter(p=>p.roadBlocker).map(p=>({...p,r:(p.r||0)+30}));z.props=blockers;try{if(roadPlans.has(key))z.roads=clone(roadPlans.get(key));else{z.roads=destinations.filter(([x,y])=>dist(origin,{x,y})>1).map(([x,y])=>this.route(origin,{x,y},{road:true})).filter(p=>p.length>1);roadPlans.set(key,clone(z.roads));}}finally{z.props=props;this.s.zone=oldZone;}
+ roadNetwork(z){if(dungeonIds.includes(z.id)||this.supplyRoom(z.id))return;this.settlementLayout(z);if(z.roadVersion===6)return;const i=this.regionIndex(z.id),origin={x:D.towns[i][0],y:D.towns[i][1]},field=this.fieldCenter(i),oldZone=this.s.zone,key=z.id+':v6';this.s.zone=z.id;
+  const harbor=R.harbors?.[z.id],destinations=[D.minors[i],D.ports[i],D.entrances[i],[field.x,field.y],...(harbor?[[harbor.arrival.x,harbor.arrival.y]]:[])],props=z.props,blockers=z.props.filter(p=>p.roadBlocker).map(p=>({...p,r:(p.r||0)+30}));z.props=blockers;try{if(roadPlans.has(key))z.roads=clone(roadPlans.get(key));else{z.roads=destinations.filter(([x,y])=>dist(origin,{x,y})>1).map(([x,y])=>this.route(origin,{x,y},{road:true})).filter(p=>p.length>1);roadPlans.set(key,clone(z.roads));}}finally{z.props=props;this.s.zone=oldZone;}
   const near=(p,a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,t=clamp(((p.x-a.x)*dx+(p.y-a.y)*dy)/(dx*dx+dy*dy||1),0,1);return Math.hypot(p.x-a.x-t*dx,p.y-a.y-t*dy);};
-  z.props=z.props.filter(p=>p.roadBlocker||p.structure||!z.roads.some(path=>path.some((b,j)=>j&&near(p,path[j-1],b)<(p.r||0)+60)));z.roadVersion=5;
+  z.props=z.props.filter(p=>p.roadBlocker||p.structure||!z.roads.some(path=>path.some((b,j)=>j&&near(p,path[j-1],b)<(p.r||0)+60)));z.roadVersion=6;
  }
  move(entity,target,speed,dt,stop=0){const d=dist(entity,target);if(d<=stop)return true;const step=Math.min(d-stop,speed*dt),nx=entity.x+(target.x-entity.x)/d*step,ny=entity.y+(target.y-entity.y)/d*step;
   if(this.clearSegment(entity,{x:nx,y:ny})){entity.x=nx;entity.y=ny;return true;}let moved=false;if(this.clearSegment(entity,{x:nx,y:entity.y})){entity.x=nx;moved=true;}if(this.clearSegment(entity,{x:entity.x,y:ny})){entity.y=ny;moved=true;}return moved;
@@ -190,7 +191,31 @@ class Campaign{
    z.aestheticVersion=2;
   }finally{this.s.zone=oldZone;}
  }
- authoredPlaces(z){if(this.supplyRoom(z.id)){this.treasuryInterior(z);this.combatPopulation(z);this.guardianPopulation(z);this.roomCaptainPopulation(z);return;}this.spaceQuestBoard(z);this.spaceMillhavenSupplier(z);this.combatPopulation(z);this.nightEnemyPopulation(z);if(dungeonIds.includes(z.id)){this.decorateDungeon(z);this.guardianRewards(z);}if(z.placesVersion===1){this.localSites(z);this.miniDungeons(z);this.spreadOutdoorForces(z);this.alignLandmarks(z);this.supplyInteriors(z);this.regionalAesthetics(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);this.fieldCaptainPopulation(z);return;}z.placesVersion=1;const i=this.regionIndex(z.id),dungeon=dungeonIds.includes(z.id);
+ harborLayout(z){
+  const h=R.harbors?.[z.id];if(!h)return;
+  const transport=z.id==='march'?z.npcs.find(n=>n.id==='outbound'):z.id==='highlands'?z.npcs.find(n=>n.id==='return'):null;
+  if(transport){Object.assign(transport,h.boat);transport.name=z.id==='march'?'Ferry to Ironroot Highlands':'Ferry back to Flooded Marches';transport.harbor=true;}
+  if(z.harborVersion===1)return;
+  const oldZone=this.s.zone;this.s.zone=z.id;try{
+   const w=h.water,d=h.dock,insideHarbor=p=>p.x>w.x1-70&&p.x<w.x2+70&&p.y>w.y1-70&&p.y<w.y2+70;
+   z.props=z.props.filter(p=>!String(p.id||'').startsWith('harbor-')&&!insideHarbor(p));
+   for(const e of z.enemies.filter(e=>e.hp>0&&e.type==='mob'&&dist(e,h.arrival)<280)){const fallback=this.safe(z.id==='march'?1900:650,z.id==='march'?980:2180,z.id);e.home={...fallback};if(!e.aggro)Object.assign(e,fallback);}
+   const add=(id,x,y,structure,r=0)=>z.props.push({id:'harbor-'+id,x,y,r,decorative:true,structure});
+   if(z.id==='march'){
+    for(const [id,x,y,structure]of [
+     ['mangrove-a',2180,535,'mangrove'],['mangrove-b',2415,520,'mangrove'],['mangrove-c',2470,790,'mangrove'],
+     ['reeds-a',2160,790,'reeds'],['reeds-b',2380,830,'cattails'],['drift',2085,780,'driftwood']
+    ])add(id,x,y,structure);
+   }else if(z.id==='highlands'){
+    for(const [id,x,y,structure]of [
+     ['pine-a',170,1770,'pine-sapling'],['pine-b',185,2110,'pine-sapling'],['rock-a',405,1790,'rock-cluster'],
+     ['rock-b',410,2110,'rock-cluster'],['heather',485,1990,'heather']
+    ])add(id,x,y,structure);
+   }
+   z.harborVersion=1;
+  }finally{this.s.zone=oldZone;}
+ }
+ authoredPlaces(z){if(this.supplyRoom(z.id)){this.treasuryInterior(z);this.combatPopulation(z);this.guardianPopulation(z);this.roomCaptainPopulation(z);return;}this.harborLayout(z);this.spaceQuestBoard(z);this.spaceMillhavenSupplier(z);this.combatPopulation(z);this.nightEnemyPopulation(z);if(dungeonIds.includes(z.id)){this.decorateDungeon(z);this.guardianRewards(z);}if(z.placesVersion===1){this.localSites(z);this.miniDungeons(z);this.spreadOutdoorForces(z);this.alignLandmarks(z);this.supplyInteriors(z);this.regionalAesthetics(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);this.fieldCaptainPopulation(z);return;}z.placesVersion=1;const i=this.regionIndex(z.id),dungeon=dungeonIds.includes(z.id);
   if(!dungeon){z.npcs=z.npcs.filter(n=>!n.id.startsWith('landmark-'));for(const [id,name,x,y]of R.sites[i])z.npcs.push({id,name,kind:'landmark',...this.safe(x,y,z.id),icon:/bridge|crossing/i.test(name)?'🪵':/camp|convoy|wagon/i.test(name)?'🏕️':'🏚️'});}
   const nearRoad=p=>z.roads?.some(path=>path.some((b,j)=>j&&this.distanceToSegment(p,path[j-1],b)<p.r+85));
   const points=dungeon?R.pillars[z.id].map(([x,y])=>({x,y,r:30,icon:'🪨',structure:'pillar'})):[];
@@ -401,7 +426,7 @@ class Campaign{
  dismissCompanion(id){const i=this.s.party.findIndex(u=>u.id===id&&u.active===false);if(i<0)return false;this.s.party.splice(i,1);return true;}
  enter(zone,arrival=null){if(!D.regions.some(r=>r.id===zone)&&!dungeonIds.includes(zone)&&!this.supplyRoom(zone))return false;const i=this.regionIndex(zone),p=arrival|| (this.supplyRoom(zone)?{x:125,y:155}:dungeonIds.includes(zone)?{x:160,y:240}:{x:D.towns[i][0],y:D.towns[i][1]});this.s.zone=zone;this.zone();this.s.recallActive=false;this.s.squadEngagement=null;this.s.squadBoss=false;this.s.squadDoctrine=this.squadDefaultDoctrine();this.s.heroTarget=null;const q=this.safe(p.x,p.y);Object.assign(this.hero,q);for(const u of this.activeParty()){Object.assign(u,this.safe(q.x+40,q.y+30));u.order=null;u.path=[];}this.hero.order=null;this.s.projectiles=[];this.s.hazards=[];for(const z of Object.values(this.s.zones))for(const e of z.enemies){e.aggro=false;e.telegraph=null;e.sequence=[];e.motion=null;e.rangedAim=null;e.frozen=false;if(e.hp>0){Object.assign(e,e.home);e.hp=e.baseHp;e.maxHp=e.baseHp;e.damage=e.baseDamage;}}this.activatePending();this.discover('arrival');return true;}
  travel(direction){if(this.isDungeon()||![1,-1].includes(direction))return false;const i=this.regionIndex(),j=i+direction;if(j<0||j>4)return false;const edge=direction===1?D.regions[i].id:D.regions[j].id;if(direction<0&&!this.s.tickets[edge])return false;const fare=direction===1&&!this.s.recovery[edge]?D.regions[i].fare:0;if(this.hero.gold<fare){this.say('Not enough gold.');return false;}
-  const before=clone(this.s),messageCount=this.messages.length,effectCount=this.effects.length;try{if(!this.enter(D.regions[j].id))throw Error('Invalid destination');this.hero.gold-=fare;if(direction===1){delete this.s.recovery[edge];this.s.tickets[edge]=true;this.s.lastEdge=edge;}this.event('travel',{from:before.zone,to:this.s.zone});return true;}catch(_){this.s=before;this.messages.length=messageCount;this.effects.length=effectCount;this.say('Travel could not complete. Your fare and progress were kept.');return false;}
+  const before=clone(this.s),messageCount=this.messages.length,effectCount=this.effects.length,from=D.regions[i].id,to=D.regions[j].id,arrival=R.travelArrivals?.[from+'>'+to]||null;try{if(!this.enter(to,arrival))throw Error('Invalid destination');this.hero.gold-=fare;if(direction===1){delete this.s.recovery[edge];this.s.tickets[edge]=true;this.s.lastEdge=edge;}this.event('travel',{from:before.zone,to:this.s.zone});return true;}catch(_){this.s=before;this.messages.length=messageCount;this.effects.length=effectCount;this.say('Travel could not complete. Your fare and progress were kept.');return false;}
  }
  discover(key){if(key==='night-site'&&!this.night())return;this.s.discovered[this.definition().id+':'+key]=true;this.checkQuests();}
  interact(npc){if(!npc||dist(npc,this.hero)>115)return false;switch(npc.kind){case 'cage':return this.rescue(npc.family);case 'rest':return this.rest();case 'mini':this.checkMinis();this.say(this.miniStatus(npc.mini));return true;case 'bundle':this.checkMinis();if(this.supplyRoom()&&!this.peace&&(this.zone().enemies.some(e=>e.guard&&e.hp>0)||Object.values(this.s.pending).some(p=>p.kind==='mob'&&p.zone===this.s.zone&&p.base.guard))){this.say('Clear the Treasury guards before recovering the caches.');return false;}if(npc.mini&&!this.peace&&!this.miniCleared(npc.mini)){this.say(this.miniStatus(npc.mini));return false;}if(this.bundleCollected(npc))return false;this.s.discovered[this.definition().id+':bundle-'+npc.index]=true;this.say(npc.name+' recovered.');this.event('supplies');this.checkQuests();return true;case 'resource':return this.gather(npc.id);case 'landmark':this.discover(npc.id);this.say(this.siteDescription(npc));return true;case 'exit':{const room=this.supplyRoom();if(!room)return this.enter(this.definition().id);const entrance=this.s.zones[room.region]?.npcs.find(n=>n.id==='supply-entrance');return this.enter(room.region,entrance&&{x:entrance.x+35,y:entrance.y+40});}case 'dungeon':return this.enter(npc.family);case 'fountain':if(this.refugeThreat()){this.say('Cannot use the preparation fountain during nearby combat.');return false;}if(this.s.fountains[this.s.zone]||this.zone().enemies.some(e=>e.guard&&e.hp>0)||Object.values(this.s.pending).some(p=>p.kind==='mob'&&p.zone===this.s.zone&&p.base.guard))return false;this.s.fountains[this.s.zone]=true;this.hero.hp=Math.min(this.hero.maxHp,this.hero.hp+.6*this.hero.maxHp);this.hero.mp=Math.min(this.hero.maxMp,this.hero.mp+.6*this.hero.maxMp);this.activeParty().forEach(u=>{if(u.hp>0)u.hp=Math.min(u.maxHp,u.hp+.6*u.maxHp);});return true;default:return false;}}
