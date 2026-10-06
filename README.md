@@ -1,10 +1,10 @@
-# Azeroth Chronicles — expanded prototype v0.8.57
+# Azeroth Chronicles — expanded prototype v0.8.58
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families use readable but adaptive warned mechanics. Every boss can summon pressure units, while TRUE forms use six-unit elite warbands. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
 ## Play
 
-Play the live game at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/. Existing installs can use **Menu → Game and settings → Check for game update** to save the run and install the latest version. The portable copy below runs offline. On a phone, open **Menu → Game and settings → Install on phone**. Android/Chrome can launch the native install prompt; on iPhone/iPad the game gives the Safari **Share → Add to Home Screen** steps. Once installed, it launches from the home screen in app mode without normal browser chrome and can use the cached game offline after the first connected load.
+Play the live game at https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/. During the current playtest phase, deployed updates are adopted automatically: the app preserves the local run and reloads once when a newer service worker takes control. **Menu → Game and settings → Check for game update** remains available as a manual check. The portable copy below runs offline. On a phone, open **Menu → Game and settings → Install on phone**. Android/Chrome can launch the native install prompt; on iPhone/iPad the game gives the Safari **Share → Add to Home Screen** steps. Once installed, it launches from the home screen in app mode without normal browser chrome and can use the cached game offline after the first connected load.
 
 For an offline portable copy, download `release/Azeroth_Chronicles_Playtest.html` and open it in Chrome or another current browser. The whole game, music and sound are embedded; no installation, server or internet connection is needed. Press a key or tap to start sound. Download the HTML instead of viewing its source in GitHub. The earlier v0.5 adventure remains available at `legacy.html`.
 
@@ -51,6 +51,9 @@ The sound menu offers independent master, music, ambience and effects volumes. F
 Choose **Menu → Game and settings → Save and game management → Export playtest report** to collect deaths, kills, boss durations, earnings and supply use. Record class, mode, challenge, session length, stuck routes, unaffordable training, unclear boss warnings, companion behavior and sound comfort. Reports stay local; no telemetry is sent automatically. Difficulty, economy, presentation and music are provisional.
 
 ## Development
+
+Playtest deployment in v0.8.58 favors rapid iteration: pushes to `main` cancel superseded in-progress Pages workflows instead of queueing every obsolete build. The newest successful commit is the one allowed to finish deployment. Installed/live playtest clients also activate a newly published service worker immediately and reload once after saving when replacing an existing controller; first-time installs do not receive the extra reload.
+
 
 `npm test` runs legacy regressions, expanded campaign and soundtrack checks, plus all 1,024 ending-state combinations. `npm run test:browser` requires Playwright and Chromium. Set `PLAYTEST_FILE=release/Azeroth_Chronicles_Playtest.html` to verify the portable release or `PLAYTEST_URL` to verify a hosted copy. `npm run release` builds the portable HTML and checksum.
 
