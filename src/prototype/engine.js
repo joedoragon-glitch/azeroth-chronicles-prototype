@@ -235,8 +235,8 @@ class Campaign{
  teacherCatalog(family){return R.teachers[family]||null;}
  barracksSpecialists(){
   const teacherOrder=['thorn','mire','ridge','warlord','citadel'],rescuedTeachers=teacherOrder.filter(id=>this.s.rescued[id]),highestTeacher=rescuedTeachers.at(-1),keep=new Set();
-  for(const id of rescuedTeachers){const catalog=this.teacherCatalog(id),supportNeeded=id==='ridge'&&Object.keys(R.expeditionSupportSkills||{}).some(key=>this.expeditionSupportRank(key)<(R.expeditionSupportSkills[key].maxRank||4));if(id===highestTeacher||catalog.learn.some(slot=>!this.hero.skills[slot-1])||supportNeeded)keep.add(id);}
-  const smithOrder=['crypt','mine','abyss','darklord'],highestSmith=smithOrder.filter(id=>this.s.rescued[id]).at(-1);if(highestSmith)keep.add(highestSmith);if(this.s.rescued.archive)keep.add('archive');
+  for(const id of rescuedTeachers){const catalog=this.teacherCatalog(id),supportNeeded=Object.entries(R.expeditionSupportSkills||{}).some(([key,def])=>def.teacher===id&&this.expeditionSupportRank(key)<(def.maxRank||4));if(id===highestTeacher||catalog.learn.some(slot=>!this.hero.skills[slot-1])||supportNeeded)keep.add(id);}
+  const smithOrder=['crypt','mine','abyss','darklord'],highestSmith=smithOrder.filter(id=>this.s.rescued[id]).at(-1);if(highestSmith)keep.add(highestSmith);for(const id of smithOrder)if(this.s.rescued[id]&&Object.entries(R.expeditionSupportSkills||{}).some(([key,def])=>def.teacher===id&&this.expeditionSupportRank(key)<(def.maxRank||4)))keep.add(id);if(this.s.rescued.archive)keep.add('archive');
   return D.bosses.filter(b=>keep.has(b.id)).map(b=>({family:b.id,name:b.captive,kind:R.teachers[b.id]?'teacher':b.id==='archive'?'alchemist':'smith'}));
  }
  barracksRecruitPrice(type){return ({soldier:60,archer:85})[type]||0;}
