@@ -32,7 +32,7 @@ const expeditions=[
 // Field-boss compounds sit away from the main town approach instead of sharing the central traffic band.
 const fieldBossCenters=[
  [720,1580],
- [2050,1180],
+ [2050,1000],
  [2120,620],
  [2050,1520],
  [2420,2450]
