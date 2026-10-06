@@ -278,7 +278,7 @@ class Campaign{
    // Reassign existing patrols, retaining enemy count, drops, deaths and respawn timers.
    const targets=z.npcs.filter(n=>n.kind==='landmark'&&!n.id.startsWith('bridge-'));
    const packs=[...new Set(z.enemies.filter(e=>e.type==='mob'&&e.pack&&!e.guard&&!e.summon&&e.form==='normal').map(e=>e.pack))];
-   targets.forEach((site,j)=>{const anchor=site.id===plan.resource&&node?node:z.npcs.find(n=>n.kind==='bundle'&&n.site===site.id)||fieldPoint(site);z.enemies.filter(e=>e.pack===packs[j]).forEach((e,k)=>{let p;for(let t=0;t<24;t++){const a=(t+k*3)*Math.PI/12,candidate={x:anchor.x+Math.cos(a)*(75+Math.floor(k/2)*35),y:anchor.y+Math.sin(a)*(75+Math.floor(k/2)*35)};if(!this.blocked(candidate.x,candidate.y,z.id)&&refuges.every(([x,y])=>dist(candidate,{x,y})>=260)&&this.line(candidate,anchor)){p=candidate;break;}}if(!p)p=fieldPoint(anchor,60);e.home=p;e.site=site.id;if(e.hp>0&&!e.aggro)Object.assign(e,p);});});
+   targets.forEach((site,j)=>{const pack=packs[j];if(!pack)return;const anchor=site.id===plan.resource&&node?node:z.npcs.find(n=>n.kind==='bundle'&&n.site===site.id)||fieldPoint(site);z.enemies.filter(e=>e.pack===pack).forEach((e,k)=>{let p;for(let t=0;t<24;t++){const a=(t+k*3)*Math.PI/12,candidate={x:anchor.x+Math.cos(a)*(75+Math.floor(k/2)*35),y:anchor.y+Math.sin(a)*(75+Math.floor(k/2)*35)};if(!this.blocked(candidate.x,candidate.y,z.id)&&refuges.every(([x,y])=>dist(candidate,{x,y})>=260)&&this.line(candidate,anchor)){p=candidate;break;}}if(!p)p=fieldPoint(anchor,60);e.home=p;e.site=site.id;if(e.hp>0&&!e.aggro)Object.assign(e,p);});});
    z.localSitesVersion=2;
   }finally{this.s.zone=oldZone;}
  }
@@ -357,6 +357,13 @@ class Campaign{
   if(n.id==='checkpoint')parts.push('The warlord holds Lyss farther along this road.');
   if(n.id==='fortress-gate')parts.push('The fortress approach leads to the Dark Lord and Vera.');
   if(n.id==='night-site')parts.push('Visit after dark and defeat two Lantern wraiths for Lanterns after dark.');
+  if(n.id==='goblin-camp')parts.push('A working goblin roadside camp: bedding, cookfire and stolen goods show a raiding community that lives here between attacks.');
+  if(n.id==='mire-nests')parts.push('Mire creatures nest, feed and wallow along this bank; the territory is habitat first and a danger to travelers second.');
+  if(n.id==='wolf-den')parts.push('Tracks, bedding and old kills mark a real hunting ground used by the highland wolf packs.');
+  if(n.id==='ogre-hearth')parts.push('A rough ogre home camp with a communal hearth, stone seats and scavenged quarry gear.');
+  if(n.id==='orc-bivouac')parts.push('A long-term occupation bivouac: soldiers cook, sleep, drill and repair equipment here between patrol quotas.');
+  if(n.id==='ash-roost')parts.push('Ash beasts roost and feed here among warm stone and old bones instead of simply wandering the volcanic road.');
+  if(n.id==='crown-barracks')parts.push('A permanent Crown field barracks with bunks, meals, stores and training space for troops enforcing the Dark Lord\'s order.');
   const mini=z.minis?.find(m=>m.site===n.id||m.type==='field'&&dist(m,n)<260);if(mini)parts.push(this.miniStatus(mini.id));
   if(!parts.length)parts.push('An outdoor patrol site. It has no separate dungeon interior.');
   if(!this.peace)parts.push(guards?'Local patrol: '+guards+' guards alive. Patrols return after the whole party leaves.':'No local guards remain.');
