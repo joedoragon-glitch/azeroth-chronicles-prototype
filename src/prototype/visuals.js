@@ -567,7 +567,8 @@ function terrain(ctx,screen,region=0){
  const drawLandform=(f)=>{
   const colors=landformPalettes[f.kind]||['#555','#777'],pts=f.shape==='ellipse'?Array.from({length:40},(_,n)=>{const a=n*Math.PI/20;return{x:f.x+Math.cos(a)*f.rx,y:f.y+Math.sin(a)*f.ry};}):f.shape==='rect'?[{x:f.x1,y:f.y1},{x:f.x2,y:f.y1},{x:f.x2,y:f.y2},{x:f.x1,y:f.y2}]:(f.points||[]).map(([x,y])=>({x,y}));
   if(pts.length<3)return;ctx.save();ctx.globalAlpha=.34;polygon(pts,colors[0]);ctx.globalAlpha=.26;
-  const inset=pts.map(q=>({x:q.x+(f.x??(pts.reduce((a,p)=>a+p.x,0)/pts.length)-q.x)*.08,y:q.y+(f.y??(pts.reduce((a,p)=>a+p.y,0)/pts.length)-q.y)*.08}));polygon(inset,colors[1]);ctx.globalAlpha=.52;
+  const cx=f.x??pts.reduce((a,p)=>a+p.x,0)/pts.length,cy=f.y??pts.reduce((a,p)=>a+p.y,0)/pts.length;
+  const inset=pts.map(q=>({x:q.x+(cx-q.x)*.08,y:q.y+(cy-q.y)*.08}));polygon(inset,colors[1]);ctx.globalAlpha=.52;
   for(let j=0;j<pts.length;j+=Math.max(1,Math.floor(pts.length/8))){const a=pts[j],b=pts[(j+1)%pts.length];line(a,b,colors[1],1.4);}
   if(/terrace|shelf|plateau|rise|apron/.test(f.kind)){ctx.globalAlpha=.35;for(let j=0;j<pts.length;j+=2){const a=pts[j],b=pts[(j+1)%pts.length];line({x:a.x,y:a.y+18},{x:b.x,y:b.y+18},'#282a2d',2);}}
   ctx.restore();
