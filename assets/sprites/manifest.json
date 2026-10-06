@@ -1,5 +1,14 @@
 {
-  "version": 2,
-  "artDirection": "Azeroth Chronicles static illustrated sprites — Warcraft shapes, Ragnarok heart",
-  "sprites": {}
+  "version": 3,
+  "artDirection": "Azeroth Chronicles modern retro pixel art — Warcraft shapes, Ragnarok heart",
+  "sprites": {
+    "hero:paladin": {
+      "src": "./assets/sprites/paladin.png",
+      "displayWidth": 96,
+      "displayHeight": 112,
+      "anchorX": 0.5,
+      "anchorY": 0.88,
+      "labelHeight": 100
+    }
+  }
 }

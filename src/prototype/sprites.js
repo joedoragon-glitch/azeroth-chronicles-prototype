@@ -141,8 +141,9 @@ function draw(ctx,e,p,region=0,rescued=false){
  const scale=entityScale(e,entry),dw=(Number(entry.displayWidth)||img.naturalWidth||img.width)*scale,dh=(Number(entry.displayHeight)||img.naturalHeight||img.height)*scale;
  const ax=Number.isFinite(entry.anchorX)?entry.anchorX:.5,ay=Number.isFinite(entry.anchorY)?entry.anchorY:.88;
  ctx.save();
+ ctx.imageSmoothingEnabled=false;
  if(Number.isFinite(entry.opacity))ctx.globalAlpha=entry.opacity;
- ctx.drawImage(img,p.x-dw*ax,p.y-dh*ay,dw,dh);
+ ctx.drawImage(img,Math.round(p.x-dw*ax),Math.round(p.y-dh*ay),Math.round(dw),Math.round(dh));
  ctx.restore();
  overlay(ctx,e,p,entry,scale);
  return true;
