@@ -5,7 +5,7 @@ This directory holds the approved static pixel-art sprites used by the hosted Gi
 Register each approved asset in `manifest.json`. Canonical examples include `hero:paladin`, `ally:soldier`, `enemy:goblin`, `enemy:goblin:ranged`, `boss:thorn`, `specialist:thorn`, `dungeon:crypt`, `prop:house:vale`, and `building:barracks:vale:basic`.
 
 Required:
-- `src`: repository-relative transparent lossless WebP or PNG, normally `./assets/sprites/<name>.webp`.
+- `src`: repository-relative transparent PNG or lossless WebP, normally `./assets/sprites/<name>.webp`.
 
 Recommended:
 - `displayWidth`, `displayHeight`: logical Canvas display size.
