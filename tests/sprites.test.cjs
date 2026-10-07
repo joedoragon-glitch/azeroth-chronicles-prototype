@@ -10,7 +10,7 @@ const promptCatalog=fs.readFileSync(path.join(__dirname,'../docs/GRAPHICS_CANON_
 const promptAudit=fs.readFileSync(path.join(__dirname,'../docs/GRAPHICS_CANON_SPRITE_PROMPT_AUDIT.md'),'utf8');
 assert.match(promptCatalog,/generate exactly one sprite per request/i,'sprite production is locked to one asset at a time');
 assert.match(promptCatalog,/never generate sheets, comparisons, multiple options, turnarounds, scenes, or old\/new boards/i,'batch/comparison image generation is explicitly forbidden');
-assert.equal((promptCatalog.match(/\\*\\*Image-generation prompt:\\*\\*/g)||[]).length,122,'audited catalog has 122 sprite-generation prompts');
+assert.equal((promptCatalog.match(/\*\*Image-generation prompt:\*\*/g)||[]).length,122,'audited catalog has 122 sprite-generation prompts');
 assert.equal((promptCatalog.match(/KEEP PROCEDURAL — DO NOT GENERATE A SPRITE/g)||[]).length,9,'audited catalog has 9 explicit procedural-only entries');
 assert.doesNotMatch(promptCatalog,/Warcraft|Ragnarok/i,'prompt catalog cannot reintroduce superseded outside-style direction');
 assert(promptAudit.includes('mechanical distinction alone does not justify a new sprite'),'audit preserves canon-over-mechanics rule');
