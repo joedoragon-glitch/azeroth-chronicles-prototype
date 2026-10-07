@@ -35,6 +35,12 @@ Dark Crown's road network now has its own version and deliberately reaches sever
 
 The existing roads to Ash Refuge, the Citadel, Cindermaw's field compound and the Dark Fortress gate remain. Additional roads connect the Crown field barracks and siege infrastructure.
 
+### Borrowed Crown travel network
+
+Dark Crown's existing dragon platform, levy caravan route, military transit route and fortress convoy route are all usable as equivalent travel hubs. No new roads or travel buildings are added for this feature. Interacting with any of these structures offers the same list of previously visited regions, and selecting a region places the hero directly in that region's main town.
+
+The wilderness ash track remains environmental/world-space infrastructure rather than a travel hub.
+
 ## Ordinary inhabitants
 
 Dark Crown keeps the existing ash-beast roost and Crown field barracks strongholds and adds an unmarked Crown toll redoubt. These are ordinary-monster/soldier living and territorial spaces rather than resource wrappers.
