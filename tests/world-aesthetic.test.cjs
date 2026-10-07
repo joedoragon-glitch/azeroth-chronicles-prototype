@@ -26,11 +26,10 @@ test('major waterways and ferry waters continue to world boundaries',()=>{const 
 
 test('Ironroot wilderness is filled by physical nature rather than terrain panels',()=>{const c=new Campaign();c.enter('highlands');const z=c.zone(),nature=z.props.filter(p=>String(p.id).startsWith('aesthetic-nature-'));assert(nature.length>=70,'Highlands has enough pines, scrub and rocks to read as authored wilderness');assert(nature.some(p=>p.structure==='pine-sapling'));assert(nature.some(p=>p.structure==='rock-cluster'||p.structure==='alpine-scrub'));});
 
-test('named landmarks sit beside the world feature their names describe',()=>{
+test('retained named landmarks sit beside the world feature their names describe',()=>{
  const vale=new Campaign();vale.enter('vale');let z=vale.zone(),pond=z.npcs.find(n=>n.id==='mill-pond'),water=R.terrain[0].find(p=>p.r);const pondDistance=distance(pond,water);assert(pondDistance>water.r&&pondDistance<water.r+70,'Mill pond marker belongs on the pond shore');
- const march=new Campaign();march.enter('march');z=march.zone();const dock=z.npcs.find(n=>n.id==='dock'),lake=R.barriers[1].bounds;assert(Math.min(Math.abs(dock.x-lake[0]),Math.abs(dock.x-lake[1]))<100&&dock.y>lake[2]&&dock.y<lake[3],'Sunken dock belongs on the lake shore');
- for(const [region,id,max] of [['highlands','tower',260],['frontier','checkpoint',220]]){const c=new Campaign();c.enter(region);const n=c.zone().npcs.find(n=>n.id===id),f=c.fieldCenter();assert(distance(n,f)<max,region+' '+id+' belongs to its stronghold area');}
- const crown=new Campaign();crown.enter('crown');const gate=crown.zone().npcs.find(n=>n.id==='fortress-gate'),apron=R.landforms[4].find(l=>l.kind==='fortress-apron');assert(gate&&apron);assert(distance(gate,{x:apron.x,y:apron.y})<120,'crown fortress-gate belongs to the authored fortress apron');
+ const frontier=new Campaign();frontier.enter('frontier');z=frontier.zone();const checkpoint=z.npcs.find(n=>n.id==='checkpoint'),warlord=frontier.fieldCenter();assert(checkpoint&&distance(checkpoint,warlord)<220,'Occupied checkpoint belongs to the Ashen Warlord compound');
+ const crown=new Campaign();crown.enter('crown');const gate=crown.zone().npcs.find(n=>n.id==='fortress-gate'),apron=R.landforms[4].find(l=>l.kind==='fortress-apron');assert(gate&&apron);assert(distance(gate,{x:apron.x,y:apron.y})<120,'Dark fortress gate belongs to the authored fortress apron');
 });
 
 
