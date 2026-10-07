@@ -5,7 +5,7 @@ assert.equal(typeof Visuals.atmosphere,'function','procedural renderer exposes t
 let passed=0;function test(name,fn){try{fn();passed++;console.log('PASS '+name);}catch(e){process.exitCode=1;console.error('FAIL '+name+' '+e.stack);}}
 
 for(const [i,region] of Campaign.data.regions.entries())test(region.id+' overworld reads as a settled, natural place',()=>{
- const c=new Campaign(),ok=c.enter(region.id),z=c.zone();assert(ok);assert.equal(z.roadVersion,region.id==='crown'?10:9);assert.equal(z.settlementLayoutVersion,3);assert.equal(z.aestheticVersion,4);assert.equal(z.landmarkLayoutVersion,3);assert.equal(z.worldLifeVersion,1);
+ const c=new Campaign(),ok=c.enter(region.id),z=c.zone();assert(ok);assert.equal(z.roadVersion,['frontier','crown'].includes(region.id)?10:9);assert.equal(z.settlementLayoutVersion,3);assert.equal(z.aestheticVersion,4);assert.equal(z.landmarkLayoutVersion,3);assert.equal(z.worldLifeVersion,1);
  const blockers=z.props.filter(p=>p.roadBlocker),life=z.props.filter(p=>String(p.id).startsWith('aesthetic-town-')||String(p.id).startsWith('aesthetic-hamlet-')),nature=z.props.filter(p=>String(p.id).startsWith('aesthetic-nature-')||String(p.id).startsWith('aesthetic-bank-'));
  assert(blockers.length>=13,region.id+' has a real settlement footprint');assert(life.length>=6,region.id+' towns show daily life');assert(nature.length>=25,region.id+' countryside has visible regional nature');assert(new Set(nature.map(p=>p.structure)).size>=3,region.id+' nature is not one repeated prop');const lived=z.props.filter(p=>String(p.id).startsWith('world-life-'));assert(lived.length>=12,region.id+' has civilian, habitat and field living-space details');assert(lived.some(p=>String(p.id).includes('-civilian-')));assert(lived.some(p=>String(p.id).includes('-habitat-')));assert(lived.some(p=>String(p.id).includes('-field-')));assert(R.landforms[i]?.length>=4,region.id+' has authored regional landforms');assert(z.props.length<=380);
  for(const p of blockers)for(const path of z.roads)for(let j=1;j<path.length;j++)assert(c.distanceToSegment(p,path[j-1],path[j])>p.r+15,region.id+' road crosses '+p.id);
@@ -30,6 +30,26 @@ test('retained named landmarks sit beside the world feature their names describe
  const vale=new Campaign();vale.enter('vale');let z=vale.zone(),pond=z.npcs.find(n=>n.id==='mill-pond'),water=R.terrain[0].find(p=>p.r);const pondDistance=distance(pond,water);assert(pondDistance>water.r&&pondDistance<water.r+70,'Mill pond marker belongs on the pond shore');
  const frontier=new Campaign();frontier.enter('frontier');z=frontier.zone();const checkpoint=z.npcs.find(n=>n.id==='checkpoint'),warlord=frontier.fieldCenter();assert(checkpoint&&distance(checkpoint,warlord)<220,'Occupied checkpoint belongs to the Ashen Warlord compound');
  const crown=new Campaign();crown.enter('crown');const gate=crown.zone().npcs.find(n=>n.id==='fortress-gate'),apron=R.landforms[4].find(l=>l.kind==='fortress-apron');assert(gate&&apron);assert(distance(gate,{x:apron.x,y:apron.y})<120,'Dark fortress gate belongs to the authored fortress apron');
+});
+
+test('Ashen Frontier reads as recovery under a functioning occupation corridor',()=>{
+ const c=new Campaign();c.enter('frontier');const z=c.zone(),town={x:Campaign.data.towns[3][0],y:Campaign.data.towns[3][1]},hamlet={x:Campaign.data.minors[3][0],y:Campaign.data.minors[3][1]};
+ assert.equal(z.frontierLayoutVersion,1);assert.equal(z.roadVersion,10);
+ assert(R.frontierRoutes.length>=5,'Frontier has separate supply, repair, inspection, checkpoint and Bastion routes');
+ const routeIds=new Set(R.frontierRoutes.map(r=>r.id));assert.equal(routeIds.size,R.frontierRoutes.length);
+ for(const route of R.frontierRoutes){const target={x:route.point[0],y:route.point[1]};assert(c.route(town,target).length,'route '+route.id+' is reachable');assert(z.roads.some(path=>distance(path.at(-1),target)<2),'road network reaches '+route.id);}
+ const props=z.props.filter(p=>String(p.id).startsWith('frontier-layout-')),districts=new Set(props.map(p=>p.frontierDistrict));
+ for(const id of ['emberwatch-livelihood','burned-hamlet-recovery','roadworks-yard','inspection-yard','checkpoint-support','bastion-cordon'])assert(districts.has(id),id+' has procedural occupation/recovery dressing');
+ assert(new Set(props.map(p=>p.structure)).size>=14,'Frontier layout mixes civilian recovery, work and military infrastructure');
+ const ember=props.filter(p=>p.frontierDistrict==='emberwatch-livelihood'),burned=props.filter(p=>p.frontierDistrict==='burned-hamlet-recovery'),cordon=props.filter(p=>p.frontierDistrict==='bastion-cordon');
+ assert(ember.some(p=>['market','field-kitchen','woodpile','cart'].includes(p.structure))&&ember.some(p=>p.structure==='watchpost'),'Emberwatch visibly combines livelihood with occupation control');
+ assert(burned.some(p=>['burned-log','ash-patch'].includes(p.structure))&&burned.some(p=>['tool-rack','woodpile','cart','field-kitchen','supply-stack'].includes(p.structure)),'Burned Hamlet visibly mixes damage with ongoing recovery');
+ assert(cordon.some(p=>p.structure==='chain'||p.structure==='barricade')&&cordon.some(p=>p.structure==='warm-brazier'||p.structure==='supply-stack'||p.structure==='roost'),'Abyss Bastion approach reads as a controlled dragon support/containment zone');
+ assert(distance(town,hamlet)>650,'Emberwatch and Burned Hamlet remain separate lived-in settlements');
+ const field=c.fieldCenter(),bastion=z.npcs.find(n=>n.id==='entrance');assert(distance(field,bastion)>900,'Warlord checkpoint and Abyss Bastion remain separate power centers');
+ assert(R.creatureStrongholds.filter(s=>s.region==='frontier').length>=3,'Frontier retains multiple ordinary-monster centers of power');
+ assert(R.creatureStrongholds.some(s=>s.region==='frontier'&&s.night&&s.nightSpecies==='stalker'),'night Stalkers retain their own authored hold');
+ const overseer=R.roomCaptains['frontier-overseer'];assert(overseer&&overseer.patrol.length>=5,'Cinder Warlord keeps a real inspection circuit through the occupied province');
 });
 
 test('Dark Crown reads as a regime with separate districts and distributed outward routes',()=>{
