@@ -14,9 +14,23 @@ check('Abyss Bastion uses an irregular branching fortress with paired guardians 
  assert(c.route(c.hero,boss).length,'dragon remains reachable');assert(c.route(c.hero,cage).length,'Eren remains reachable');
  const structures=new Set(decor.map(p=>p.structure));for(const kind of ['handler-station','feed-crate','containment-post','scorched-floor','egg-cradle','feeding-trough','carcass-rack','claw-scrape','dragon-perch','chain-anchor'])assert(structures.has(kind),kind+' is represented');
  assert(decor.every(p=>p.r===0&&p.decorative),'Bastion dressing remains non-colliding');
- const traps=c.traps(),original=c.blocked.bind(c);c.blocked=(x,y,zone,r=15,terrain)=>original(x,y,zone,r,terrain)||traps.some(t=>c.trapContains({...t,radius:t.radius+r,length:t.length+2*r},{x,y}));
- assert(c.route(c.hero,boss).length,'all trap footprints can be avoided on the route to the dragon');assert(c.route(c.hero,cage).length,'all trap footprints can be avoided on the route to Eren');c.blocked=original;
+ const traps=c.traps(),original=c.blocked.bind(c),inflate=(t,r=24)=>({...t,radius:t.radius+r,length:t.length+2*r,halfWidth:(t.halfWidth||28)+r});
+ c.blocked=(x,y,zone,r=15,terrain)=>original(x,y,zone,r,terrain)||traps.some(t=>c.trapContains(inflate(t,24+r),{x,y}));
+ const dragonRoute=c.route(c.hero,boss),erenRoute=c.route(c.hero,cage);assert(dragonRoute.length,'dragon route retains a maneuver-width safe lane around every trap');assert(erenRoute.length,'Eren route retains a maneuver-width safe lane around every trap');
+ for(const route of [dragonRoute,erenRoute])for(const p of route)assert(!traps.some(t=>c.trapContains(inflate(t),p)),'route waypoint never sits inside the expanded trap safety margin');c.blocked=original;
 });
+check('Abyss layout migration restages living guardians without reviving dead ones or trapping the party',()=>{
+ const c=new C();c.enter('abyss');const z=c.zone(),guards=z.enemies.filter(e=>e.guard&&e.form==='normal').sort((a,b)=>c.idOrder(a,b)),dead=guards[0];kill(c,dead,true);
+ const raw=c.snapshot(),rz=raw.zones.abyss;rz.dungeonVersion=2;rz.enemies=rz.enemies.filter(e=>!e.guard||guards.slice(0,22).some(g=>g.id===e.id));
+ for(let j=0;j<rz.enemies.filter(e=>e.guard&&e.form==='normal').length;j++){const e=rz.enemies.filter(e=>e.guard&&e.form==='normal')[j];e.home={x:350+(j%6)*110,y:430+Math.floor(j/6)*180};if(e.hp>0)Object.assign(e,e.home);}
+ Object.assign(raw.hero,{x:600,y:360});if(raw.party[0])Object.assign(raw.party[0],{x:950,y:500});
+ const r=C.restore(raw);r.enter('abyss');const next=r.zone(),restaged=next.enemies.filter(e=>e.guard&&e.form==='normal'&&!e.reinforcement).sort((a,b)=>r.idOrder(a,b));
+ assert.equal(next.dungeonVersion,4);assert.equal(restaged.length,26,'migration fills only the four newly authored guardian slots');assert.equal(restaged.find(e=>e.id===dead.id).hp,0,'defeated guardian stays defeated');
+ assert(!r.blocked(r.hero.x,r.hero.y,'abyss'),'hero is relocated if an old save lands inside new geometry');for(const u of r.activeParty())assert(!r.blocked(u.x,u.y,'abyss'),'active companions are relocated out of new geometry');
+ const posts=C.rules.dungeonGuardPosts.abyss;for(let j=0;j<restaged.length;j++){const pack=Math.floor(j/2),[x,y]=posts[pack%posts.length],expected=r.safe(x+(j%2)*44,y+(j%2)*50,'abyss');assert.deepEqual(restaged[j].home,expected,'guardian '+j+' home follows authored Bastion staging');}
+ assert(restaged.every(e=>e.gold===0&&e.xp===0),'restaged and added guardians remain zero reward');
+});
+
 check('Dungeon trap pressure escalates while keeping readable warnings and safe alternatives',()=>{const cycles=[],damage=[],duty=[];for(const id of C.dungeonIds){const c=new C();c.enter(id);const t=c.traps()[0],cfg=C.rules.dungeonTrapTuning[id];cycles.push(cfg.cycle);damage.push(cfg.damage);duty.push(cfg.active/cfg.cycle);assert(t.warningTime>=1.2);assert(t.activeTime>=.8);assert(t.damageFraction===cfg.damage);}for(let i=1;i<cycles.length;i++){assert(cycles[i]<cycles[i-1]);assert(damage[i]>damage[i-1]);assert(duty[i]>duty[i-1]);}});
 check('Guardian strength scales by region while main-dungeon guardians give no gold or XP',()=>{for(const [i,id] of C.dungeonIds.entries()){const c=new C();c.enter(id);const cfg=C.rules.guardianScaling[i],g=c.zone().enemies.find(e=>e.guard&&e.form==='normal');assert.equal(g.baseHp,Math.round((65+i*105)*cfg.hp));assert.equal(g.baseDamage,Math.round((7+i*8)*cfg.damage));assert.equal(g.xp,0);assert.equal(g.gold,0);}});
 check('Dungeon guardians are materially tougher than equivalent regional field melee mobs',()=>{const baseHp=[65,170,275,380,485],baseDamage=[7,15,23,31,39];for(const [i,id]of C.dungeonIds.entries()){const c=new C();c.enter(id);const g=c.zone().enemies.find(e=>e.guard&&e.form==='normal'),fieldHp=Math.round(baseHp[i]*C.rules.ordinaryMeleeScaling[i].hp),fieldDamage=Math.round(baseDamage[i]*C.rules.ordinaryMeleeScaling[i].damage);assert(g.baseHp>=fieldHp*1.25,id+' guardian HP clearly exceeds field melee');assert(g.baseDamage>=fieldDamage*1.12,id+' guardian damage clearly exceeds field melee');assert.equal(g.guardianBalanceVersion,2);}});
