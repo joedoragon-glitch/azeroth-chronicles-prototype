@@ -6,7 +6,7 @@
 
 This was the initial 110-candidate planning roster. It has now been audited against the full production renderer. **Do not use this file to drive image generation.** The authoritative production list and exact prompts are in `GRAPHICS_CANON_SPRITE_PROMPTS.md`, with audit rationale in `GRAPHICS_CANON_SPRITE_PROMPT_AUDIT.md`.
 
-The audited result is 122 one-at-a-time sprite-generation prompts plus 9 explicit procedural-only entries. The audit corrected Ranger/companion details, removed visually duplicate mechanical variants, added all 20 regional town-service structures and the Citadel preparation fountain, and retained region-sensitive repeated props procedurally.
+The audited result is 227 classified entries: 212 one-at-a-time sprite-generation prompts, 5 exact visual aliases, and 10 numbered procedural-only entries; broader procedural systems are classified in the renderer coverage audit.
 
 This file defines the candidate sprite library to be produced before the visual audit. Nothing in this roster is active in `assets/sprites/manifest.json`; production and implementation remain separate.
 
