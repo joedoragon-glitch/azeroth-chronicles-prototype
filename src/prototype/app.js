@@ -253,6 +253,7 @@ function drawVisualFx(){for(const f of visualFx){const a=Math.max(0,f.life/f.max
  const h=game.hero,p=screen(h);if(h.immune>0)guard(p,29);if(h.haste>0){ctx.save();ctx.strokeStyle='#d9f2ff99';ctx.lineWidth=1.5;for(let j=-1;j<=1;j++){ctx.beginPath();ctx.moveTo(p.x-24,p.y+j*7);ctx.lineTo(p.x-38,p.y+j*7+3);ctx.stroke();}ctx.restore();}for(const effect of h.supportEffects||[])support(p,effect,25);for(const u of game.activeLivingParty()){const q=screen(u);if(u.immune>0)guard(q,24);for(const effect of u.supportEffects||[])support(q,effect,22);}}
 
 function draw(){ctx.fillStyle='#0c1913';ctx.fillRect(0,0,canvas.width,canvas.height);const z=game.zone(),room=!!game.supplyRoom(),dungeon=game.isDungeon(),size=game.zoneSize(),i=game.regionIndex();for(let x=0;x<size;x+=80)for(let y=0;y<size;y+=80){const p=screen({x,y});if(p.x<-160||p.x>canvas.width+160||p.y<-100||p.y>canvas.height+100)continue;const blocked=dungeon&&game.blocked(x+40,y+40,game.zoneId,0)&&!z.props.some(q=>Math.hypot(x+40-q.x,y+40-q.y)<q.r);PrototypeVisuals.floor(ctx,p,x,y,i,room,room?game.zoneId:dungeon?game.zoneId:'',blocked);}
+ if(game.zoneId==='abyss'&&PrototypeVisuals.dungeonArchitecture)PrototypeVisuals.dungeonArchitecture(ctx,screen,game.zoneId);
  if(!game.isDungeon())PrototypeVisuals.terrain(ctx,screen,i);
  PrototypeVisuals.roads(ctx,z.roads||[],screen,i);
  if(!game.isDungeon())PrototypeVisuals.bridges(ctx,screen,i);

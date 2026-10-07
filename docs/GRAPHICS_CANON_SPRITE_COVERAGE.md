@@ -62,7 +62,7 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `crate` | GENERATE 187 |
 | `rail` | PROCEDURAL — repeated linear geometry |
 | `crystal` | GENERATE 188 |
-| `chain` | GENERATE 189 |
+| `chain` | GENERATE 189 base; Frontier/Abyss local wear variation remains procedural |
 | `ember` | GENERATE 190 |
 | `armor` | GENERATE 191 |
 | `thorn-bed` | GENERATE 138 |
@@ -107,7 +107,7 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `game-table` | PROCEDURAL — region-sensitive repeated furniture |
 | `stolen-goods` | GENERATE 199 |
 | `training-dummy` | PROCEDURAL — region-sensitive repeated prop |
-| `bone-pile` | GENERATE 200 |
+| `bone-pile` | GENERATE 200 base; Frontier/Abyss scattered-remains variation remains procedural |
 | `grave-marker` | GENERATE 201 |
 | `pup-nest` | GENERATE 158 |
 | `fishing-net` | GENERATE 202 |
@@ -122,8 +122,8 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `command-tent` | PROCEDURAL — region-sensitive repeated structure with deterministic Frontier variants |
 | `bunk` | GENERATE 215/216 by region |
 | `forge` | GENERATE 098 |
-| `roost` | GENERATE 150 |
-| `hatchery` | GENERATE 151 |
+| `roost` | GENERATE 150 base; Frontier/Abyss nest-use variation remains procedural |
+| `hatchery` | GENERATE 151 base; Abyss hatchery-use variation remains procedural |
 | `scribe-desk` | GENERATE 152 |
 | `scroll-stack` | GENERATE 205 |
 | `ossuary` | GENERATE 153 |
@@ -179,7 +179,16 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `patched-fence` | PROCEDURAL — Frontier civilian repair detail |
 | `inspection-marker` | PROCEDURAL — standardized occupation administration marker |
 | `checkpoint-standard` | PROCEDURAL — standardized occupation military marker |
-| `chain-anchor` | PROCEDURAL — Abyss cordon containment detail |
+| `chain-anchor` | PROCEDURAL — Abyss containment detail used outside and inside the Bastion |
+| `handler-station` | PROCEDURAL — Bastion handler/work station |
+| `feed-crate` | PROCEDURAL — dragon provisioning container |
+| `containment-post` | PROCEDURAL — repeated Bastion restraint hardware |
+| `scorched-floor` | PROCEDURAL — flat dragon-damage ground trace |
+| `egg-cradle` | PROCEDURAL — maintained hatchery/nesting support |
+| `feeding-trough` | PROCEDURAL — dragon feeding infrastructure |
+| `carcass-rack` | PROCEDURAL — dragon provisioning/service structure |
+| `claw-scrape` | PROCEDURAL — flat dragon-use ground trace |
+| `dragon-perch` | PROCEDURAL — Bastion aerie/roost structure |
 
 ## `landmark()` coverage
 
@@ -256,6 +265,7 @@ Many broad procedural systems are classified here rather than receiving pointles
 | attack warnings, projectiles and timed combat VFX | PROCEDURAL |
 | atmosphere/night lighting | PROCEDURAL |
 | terrain planes, roads, rivers, lava and crossings | PROCEDURAL |
+| authored main-dungeon walkable footprints and partition geometry | PROCEDURAL — gameplay-space structure, never a sprite requirement |
 
 ## Wild-prop strategy
 
