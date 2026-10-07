@@ -634,7 +634,7 @@ class Campaign{
   if(isCharged&&slot===2){
    const def=chargedSecond||R.chargedSkills.second[this.hero.class],damage=power*(this.hero.class==='ranger'?2.4:2.2)*scale,angle=Math.atan2(target.y-this.hero.y,target.x-this.hero.x),from={x:this.hero.x,y:this.hero.y},end={x:this.hero.x+Math.cos(angle)*(def.range||dist(this.hero,target)),y:this.hero.y+Math.sin(angle)*(def.range||dist(this.hero,target))},angleDelta=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b)),inside=e=>def.shape==='circle'?dist(e,target)<=def.radius:def.shape==='cone'?dist(e,this.hero)<=def.range&&Math.abs(angleDelta(Math.atan2(e.y-this.hero.y,e.x-this.hero.x),angle))<=def.halfAngle:def.shape==='line'?this.distanceToSegment(e,from,end)<=def.halfWidth:false;
    this.engage(target);let hits=0;for(const e of this.zone().enemies.filter(e=>e.hp>0&&!e.neutral&&inside(e)&&this.line(this.hero,e)).sort((a,b)=>this.idOrder(a,b))){if(this.damage(e,damage)){hits++;if(def.slow)e.slow=Math.max(e.slow||0,def.slow);}}
-   this.event(this.hero.class==='paladin'?'melee':'spell');this.event('chargedArea',{slot,class:this.hero.class,effect:def.effect,shape:def.shape,x:target.x,y:target.y,fromX:this.hero.x,fromY:this.hero.y,angle,radius:def.radius||0,range:def.range||0,halfAngle:def.halfAngle||0,halfWidth:def.halfWidth||0,hits});return true;
+   this.event(this.hero.class==='paladin'?'melee':'spell');this.event('chargedArea',{slot,class:this.hero.class,targetId:target.id,effect:def.effect,shape:def.shape,x:target.x,y:target.y,fromX:this.hero.x,fromY:this.hero.y,angle,radius:def.radius||0,range:def.range||0,halfAngle:def.halfAngle||0,halfWidth:def.halfWidth||0,hits});return true;
   }
   if(slot===3){
    const amount=(45+power*.5)*scale;
