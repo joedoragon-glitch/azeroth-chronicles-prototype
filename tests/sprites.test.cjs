@@ -8,8 +8,8 @@ assert.doesNotMatch(diskManifest.artDirection,/Warcraft|Ragnarok/i,'sprite direc
 assert.equal(typeof Visuals.atmosphere,'function','procedural graphics expose regional atmosphere without sprite assets');
 const promptCatalog=fs.readFileSync(path.join(__dirname,'../docs/GRAPHICS_CANON_SPRITE_PROMPTS.md'),'utf8');
 const promptAudit=fs.readFileSync(path.join(__dirname,'../docs/GRAPHICS_CANON_SPRITE_PROMPT_AUDIT.md'),'utf8');
-assert(promptCatalog.includes('generate exactly one sprite per request'),'sprite production is locked to one asset at a time');
-assert(promptCatalog.includes('Never generate sheets, comparisons, multiple options, turnarounds, scenes, or old/new boards'),'batch/comparison image generation is explicitly forbidden');
+assert.match(promptCatalog,/generate exactly one sprite per request/i,'sprite production is locked to one asset at a time');
+assert.match(promptCatalog,/never generate sheets, comparisons, multiple options, turnarounds, scenes, or old\/new boards/i,'batch/comparison image generation is explicitly forbidden');
 assert.equal((promptCatalog.match(/\\*\\*Image-generation prompt:\\*\\*/g)||[]).length,122,'audited catalog has 122 sprite-generation prompts');
 assert.equal((promptCatalog.match(/KEEP PROCEDURAL — DO NOT GENERATE A SPRITE/g)||[]).length,9,'audited catalog has 9 explicit procedural-only entries');
 assert.doesNotMatch(promptCatalog,/Warcraft|Ragnarok/i,'prompt catalog cannot reintroduce superseded outside-style direction');
