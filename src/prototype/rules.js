@@ -182,18 +182,16 @@ const crownDistricts=[
  ]}
 ];
 
-// Long-distance travel links are data, not assumptions baked into the travel engine.
-// Dark Crown is the first regional hub: after reaching it, the hero can directly revisit every earlier region.
-// Each route arrives at that region's established onward transport station, so world navigation remains visually legible.
+// Dark Crown borrows the regime's existing outward infrastructure as a travel hub.
+// No new roads or stations are created: each link attaches to an already-authored Crown route.
 const regionalTravelHubs={
  crown:[
-  {id:'crown-route-frontier',destination:'frontier',name:'Dragon rider to Ashen Frontier',icon:'🐉',point:[620,220],arrival:[3100,500],fare:0,requiresVisited:true},
-  {id:'crown-route-highlands',destination:'highlands',name:'Pack caravan to Ironroot Highlands',icon:'🐫',point:[3570,980],arrival:[3100,500],fare:0,requiresVisited:true},
-  {id:'crown-route-march',destination:'march',name:'Crown supply convoy to Flooded Marches',icon:'🐎',point:[180,1600],arrival:[2250,650],fare:0,requiresVisited:true},
-  {id:'crown-route-vale',destination:'vale',name:'Crown merchant convoy to Greenwood Vale',icon:'🐎',point:[1650,3580],arrival:[2450,650],fare:0,requiresVisited:true}
+  {id:'crown-route-frontier',route:'frontier-return',destination:'frontier',name:'Dragon rider to Ashen Frontier',icon:'🐉',fare:0,requiresVisited:true},
+  {id:'crown-route-highlands',route:'military-gate',destination:'highlands',name:'Pack caravan to Ironroot Highlands',icon:'🐫',fare:0,requiresVisited:true},
+  {id:'crown-route-march',route:'fortress-service',destination:'march',name:'Crown supply convoy to Flooded Marches',icon:'🐎',fare:0,requiresVisited:true},
+  {id:'crown-route-vale',route:'levy-road',destination:'vale',name:'Crown merchant convoy to Greenwood Vale',icon:'🐎',fare:0,requiresVisited:true}
  ]
 };
-
 
 // Field-boss supply objectives are actual Treasury raids: every required cache is kept inside the boss's Treasury.
 const supplyRooms=[
