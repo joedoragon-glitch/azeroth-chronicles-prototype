@@ -83,7 +83,9 @@ Existing Citadel saves migrate to fortress-layout version 3. If the hero, an act
 
 Cindermaw's Treasury now follows the same Dark Crown spatial philosophy without copying the Citadel's scale. The old 900×900 crossed-wall storehouse is replaced by a compact irregular volcanic den composed from overlapping spaces: entrance cleft, roost chamber, hoard chamber, ash den, ember junction, service loop and Dreadmaw's inner vault.
 
-The three quest caches remain exactly three and keep their collected-state migration, but they are distributed across separate den spaces rather than sharing generic storehouse coordinates. Dreadmaw remains the captain and combat disciple of Cindermaw and keeps the inner vault. The other Treasury defenders remain Ash beasts; no new species, boss or reward layer is introduced.
+The three quest caches remain exactly three and keep their collected-state migration, but they are distributed across separate den spaces rather than sharing generic storehouse coordinates. Dreadmaw remains the captain and combat disciple of Cindermaw and keeps the inner vault. The permanent Treasury population remains Dreadmaw plus three Ash-beast guardians.
+
+Dreadmaw gains a fourth captain skill, **Brood Call**. It has a readable summon warning and maintains a maximum three-member Ash-beast brood: two melee Ash broodlings and one ranged Cinder broodling. These are temporary zero-reward summons, not additional permanent guardians. Brood Call replenishes missing members up to three rather than stacking unlimited waves, and Dreadmaw's brood is removed when he is defeated or the encounter resets. No new species, boss or reward layer is introduced.
 
 Treasury dressing is reduced into stronger procedural compositions: an Ash-beast roost scene, a dense Cindermaw hoard scene, an ash den and a Dreadmaw vault post, with only a few supporting props. The floor gains restrained ash/obsidian/ember detail specific to Cindermaw's den.
 
