@@ -87,6 +87,9 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `crown-levy-yard` | PROCEDURAL — composed Crown labor/transport scene |
 | `crown-command-post` | PROCEDURAL — composed Crown military command scene |
 | `ashbeast-roost-scene` | PROCEDURAL — composed Ash-beast habitat scene |
+| `cindermaw-hoard-scene` | PROCEDURAL — composed Cindermaw hoard/obsidian scene |
+| `cindermaw-ash-den` | PROCEDURAL — composed Ash-beast den scene |
+| `dreadmaw-vault-post` | PROCEDURAL — composed Treasury inner-vault command scene |
 | `crown-logistics-bay` | PROCEDURAL — composed Crown fortress logistics scene |
 | `crown-fortress-checkpoint` | PROCEDURAL — composed final-approach control scene |
 | `citadel-muster` | PROCEDURAL — composed Citadel entrance/muster station |
