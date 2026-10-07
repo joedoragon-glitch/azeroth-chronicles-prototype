@@ -374,9 +374,15 @@ function draw(ctx,e,p,region=0,rescued=false){
    case 'highland-wall':
     rect(-31,-14,62,28,'#777c75');for(const y of [-9,2,12])line([[-30,y],[30,y]],'#555d57',2);for(const x of [-22,-4,15])line([[x,-13],[x,0]],'#555d57',1.5);return;
    case 'frontier-patched-house':
-    rect(-30,-19,60,34,'#9c826d');poly([[-36,-20],[-20,-43],[8,-48],[36,-20]],'#6f514d');rect(-8,-4,16,19,'#493f39');for(const [x,y]of [[-20,-12],[12,-14],[19,1]])rect(x,y,9,7,'#725f52');line([[-25,-16],[25,-16]],'#bd8f6f',2);line([[-29,-25],[-20,-38]],'#443d38',3);return;
+    rect(-30,-19,60,34,'#9c826d');poly([[-36,-20],[-20,-43],[8,-48],[36,-20]],'#6f514d');rect(-8,-4,16,19,'#493f39');for(const [x,y]of [[-20,-12],[12,-14],[19,1]])rect(x,y,9,7,'#725f52');line([[-25,-16],[25,-16]],'#bd8f6f',2);line([[-29,-25],[-20,-38]],'#443d38',3);
+    if(variant%3===0){line([[19,-16],[29,8]],'#5a4439',4);rect(18,-37,8,17,'#635149');}
+    else if(variant%3===1){for(const x of [-20,-10,0])line([[x,13],[x+13,7]],'#7d6048',3);rect(-27,-31,12,7,'#8f6d55');}
+    else {line([[-25,-2],[-11,10]],'#6d5141',4);line([[10,-43],[25,-30]],'#9a735a',3);glint(21,-10,'#d18b5a',1.3);}return;
    case 'frontier-workshop':
-    for(const x of [-30,30])rect(x-3,-31,6,46,wood);poly([[-35,-30],[-19,-44],[23,-41],[36,-28]],'#654a47');rect(-31,-8,62,23,'#846e61');rect(-15,-8,30,23,dark);line([[-27,-7],[27,-7]],trim,2);oval(23,7,8,4,'#4b423c');for(const x of [19,23,27])glint(x,3,'#c77b53',1.3);return;
+    for(const x of [-30,30])rect(x-3,-31,6,46,wood);poly([[-35,-30],[-19,-44],[23,-41],[36,-28]],'#654a47');rect(-31,-8,62,23,'#846e61');rect(-15,-8,30,23,dark);line([[-27,-7],[27,-7]],trim,2);oval(23,7,8,4,'#4b423c');for(const x of [19,23,27])glint(x,3,'#c77b53',1.3);
+    if(variant%3===0){for(const x of [-20,-10,0])line([[x,13],[x+14,7]],'#765742',3);line([[-31,-20],[-18,-31]],'#9b765b',2);}
+    else if(variant%3===1){rect(-28,-18,12,9,'#6d584c');line([[26,-8],[35,-20]],'#7e5f48',4);oval(36,-20,5,5,'#514842');}
+    else {line([[-26,-30],[-12,-43]],'#ae8061',3);rect(15,-35,10,8,'#765950');glint(-20,5,'#d69a64',1.2);}return;
    case 'frontier-palisade':
     for(const x of [-24,-12,0,12,24]){rect(x-4,-28,8,42,'#665248');poly([[x-4,-28],[x,-40],[x+4,-28]],'#8b6f55');}line([[-27,-16],[27,-16]],'#54463e',4);return;
    case 'crown-ash-house':
@@ -439,9 +445,9 @@ function draw(ctx,e,p,region=0,rescued=false){
  case 'ore-crane':for(const x of [-25,25])line([[x,14],[x,-42]],localWood,5);line([[-27,-39],[28,-39]],localWood,4);line([[20,-38],[20,-5]],steel,2);oval(20,-2,6,4,'#777b75');line([[-25,-30],[25,-39]],'#9c805a',3);break;
  case 'tool-rack':for(const x of [-22,22])line([[x,13],[x,-35]],localWood,3);line([[-23,-29],[23,-29]],localWood,3);for(const x of [-13,0,13]){line([[x,-27],[x,8]],steel,2);line([[x-5,-20],[x+5,-20]],'#9b805e',3);}break;
  case 'stone-marker':for(const [x,y,r]of [[0,7,12],[-2,-8,9],[1,-20,6]])oval(x,y,r,r*.55,'#797d75');line([[-5,-9],[5,-13]],'#b4aa8e',1.5);break;
- case 'field-kitchen':rect(-25,-8,50,21,'#7a6249');oval(0,-5,16,7,'#4e4840');for(const x of [-8,0,8])poly([[x-4,-2],[x,-16],[x+4,-2]],'#b96f47');line([[-30,-20],[30,-20]],localWood,3);for(const x of [-24,24])line([[x,13],[x,-28]],localWood,3);break;
- case 'supply-stack':for(const [x,y]of [[-17,0],[5,2],[-6,-14],[15,-13]]){rect(x-10,y-8,20,17,'#8d6d4b');line([[x-9,y-7],[x+9,y+7]],'#b89565',2);}break;
- case 'command-tent':poly([[-35,12],[0,-47],[36,12]],region===4?'#5d5668':'#7c5e53');line([[0,-44],[0,14]],localWood,4);rect(-12,-2,24,17,region===4?'#33313a':'#54463f');line([[-29,9],[29,9]],'#b79573',2);break;
+ case 'field-kitchen':rect(-25,-8,50,21,'#7a6249');oval(0,-5,16,7,'#4e4840');for(const x of [-8,0,8])poly([[x-4,-2],[x,-16],[x+4,-2]],'#b96f47');line([[-30,-20],[30,-20]],localWood,3);for(const x of [-24,24])line([[x,13],[x,-28]],localWood,3);if(region===3&&variant%2===0){oval(-18,-17,7,4,'#5a5046');line([[-24,-18],[-12,-18]],'#a88964',2);}break;
+ case 'supply-stack':for(const [x,y]of [[-17,0],[5,2],[-6,-14],[15,-13]]){rect(x-10,y-8,20,17,'#8d6d4b');line([[x-9,y-7],[x+9,y+7]],'#b89565',2);}if(region===3){if(variant%3===0)oval(22,6,9,6,'#8a765e');else if(variant%3===1)rect(-30,-4,13,16,'#725942');else line([[-24,-18],[20,-21]],'#c6a477',2);}break;
+ case 'command-tent':poly([[-35,12],[0,-47],[36,12]],region===4?'#5d5668':'#7c5e53');line([[0,-44],[0,14]],localWood,4);rect(-12,-2,24,17,region===4?'#33313a':'#54463f');line([[-29,9],[29,9]],'#b79573',2);if(region===3){if(variant%2===0){rect(-24,-22,13,8,'#956f60');line([[-34,11],[-45,19]],'#6a5141',2);}else{line([[22,-18],[34,-26]],'#9e735d',3);rect(18,-3,10,8,'#6d5144');}}break;
  case 'bunk':rect(-27,-8,54,18,'#6d5947');rect(-24,-6,48,10,'#837561');for(const x of [-23,23])line([[x,8],[x,17]],localWood,3);rect(-20,-5,11,7,'#b09a78');break;
  case 'forge':rect(-26,-12,52,27,'#696863');rect(-18,-29,36,18,'#77736b');oval(0,4,16,6,'#403b38');for(const x of [-8,0,8])poly([[x-4,5],[x,-9],[x+4,5]],'#bd7148');rect(19,-42,9,31,'#5b5855');break;
  case 'roost':oval(0,7,30,12,'#62594f');for(const x of [-24,-12,0,12,24])line([[x,10],[x+5,-6]],'#806a4e',2);for(const [x,y]of [[-9,1],[8,4]])poly([[x-5,y+6],[x,y-8],[x+5,y+6]],'#676b62');break;
@@ -485,11 +491,23 @@ function draw(ctx,e,p,region=0,rescued=false){
  case 'laundry':for(const x of [-19,19])line([[x,12],[x,-30]],'#75654e',3);line([[-19,-21],[19,-21]],'#d7c8a0',1);rect(-13,-20,9,13,'#8ba0a2');rect(1,-20,11,15,'#a77f74');break;
  case 'well':oval(0,7,20,9,'#858b80');oval(0,4,15,6,'#3f6d73');for(const x of [-15,15])line([[x,5],[x,-28]],'#806a4d',3);poly([[-20,-26],[0,-39],[20,-26]],'#9a7355');break;
  case 'barrel':oval(0,-8,9,5,'#a48158');rect(-9,-8,18,20,'#8b6b49');oval(0,12,9,5,'#72573e');for(const y of [-5,7])line([[-8,y],[8,y]],'#b7aa8a',2);break;
- case 'cart':rect(-22,-9,44,17,'#987752');for(const x of [-14,14])oval(x,10,7,7,'#53564f');line([[20,-5],[34,-13]],'#80654a',3);rect(-15,-19,30,10,'#b08b5d');break;
+ case 'cart':rect(-22,-9,44,17,'#987752');for(const x of [-14,14])oval(x,10,7,7,'#53564f');line([[20,-5],[34,-13]],'#80654a',3);rect(-15,-19,30,10,'#b08b5d');if(region===3){if(variant%3===0){for(const x of [-11,0,11])line([[x,-19],[x+5,-28]],'#765642',4);}else if(variant%3===1){rect(-14,-28,28,8,'#8d6c4e');line([[-20,-7],[-7,-18]],'#5e493c',2);}else{oval(-14,10,4,4,'#b79664');line([[14,10],[25,16]],'#6e5541',3);}}break;
  case 'ration':for(const [x,y]of [[-10,3],[4,5],[-2,-7]]){rect(x-8,y-7,16,13,'#96734d');line([[x-7,y-6],[x+7,y+5]],'#c1a170',2);}break;
  case 'garden':for(const x of [-14,-7,0,7,14]){line([[x,9],[x,-3]],'#66845d',1.4);oval(x,-5,3,2,x%2?'#bb966d':'#799b68');}line([[-20,11],[20,11]],'#755c43',2);break;
- case 'watchpost':for(const x of [-13,13])line([[x,12],[x,-27]],'#776047',4);rect(-18,-29,36,8,'#997954');poly([[-20,-30],[0,-43],[20,-30]],'#84644b');line([[0,-29],[0,-48]],'#ad9a72',2);break;
- case 'barricade':for(const x of [-18,-6,6,18]){rect(x-3,-11,6,24,'#665248');poly([[x-3,-11],[x,-21],[x+3,-11]],'#8b6f55');}line([[-22,-4],[22,5]],'#8a6d53',4);break;
+ case 'watchpost':for(const x of [-13,13])line([[x,12],[x,-27]],'#776047',4);rect(-18,-29,36,8,'#997954');poly([[-20,-30],[0,-43],[20,-30]],'#84644b');line([[0,-29],[0,-48]],'#ad9a72',2);if(region===3){rect(-6,-34,12,7,'#8c5d54');if(variant%2===0)line([[15,-27],[24,-18]],'#6e5141',3);}break;
+ case 'barricade':for(const x of [-18,-6,6,18]){rect(x-3,-11,6,24,'#665248');poly([[x-3,-11],[x,-21],[x+3,-11]],'#8b6f55');}line([[-22,-4],[22,5]],'#8a6d53',4);if(region===3){line([[-20,4],[18,-7]],'#5b4439',3);if(variant%2===0)rect(-5,-9,11,5,'#955d50');}break;
+ case 'road-ruts':ctx.save();ctx.globalAlpha=.5;for(const y of [-7,7]){line([[-30,y],[30,y+flip*2]],'#493b34',3);line([[-22,y+3],[24,y+4]],'#796151',1);}for(const x of [-18,4,22])oval(x,2+(x%3),2,1.4,'#8d735d');ctx.restore();break;
+ case 'road-patch':ctx.save();ctx.globalAlpha=.65;poly([[-27,-9],[-9,-13],[10,-10],[28,-5],[22,10],[1,13],[-22,8]],'#766257');for(const [x,y]of [[-15,-4],[-3,5],[10,-2],[19,5]])oval(x,y,2.5,1.7,'#a2866e');line([[-19,0],[17,4]],'#4d4039',1.2);ctx.restore();break;
+ case 'stacked-lumber':for(const [y,w]of [[7,25],[0,22],[-7,19]]){line([[-w,y],[w,y-2]],'#7d5b43',6);oval(w,y-2,3,3,'#b2875e');}for(const x of [-18,18])line([[x,11],[x-3,-12]],'#5f4739',2);break;
+ case 'repair-brace':for(const x of [-18,18])line([[x,13],[x,-34]],'#745641',4);line([[-18,7],[18,-28]],'#9a7455',5);line([[-18,-18],[18,-18]],'#6a4f3f',3);break;
+ case 'broken-cart':rect(-23,-8,39,15,'#7d5d46');oval(-13,10,7,7,'#4b4b45');oval(15,10,7,7,'#4b4b45');line([[15,10],[29,18]],'#684c3a',3);line([[12,-5],[31,-17]],'#7a5842',3);line([[-19,-13],[-2,-22]],'#9a7150',4);break;
+ case 'wagon-wheel':oval(0,0,15,15,'#5a5147');oval(0,0,11,11,'#8a684c');for(let a=0;a<Math.PI;a+=Math.PI/4)line([[Math.cos(a)*2,Math.sin(a)*2],[Math.cos(a)*12,Math.sin(a)*12]],'#c09968',2);break;
+ case 'charred-foundation':ctx.save();ctx.globalAlpha=.75;for(const [x1,y1,x2,y2]of [[-27,-12,24,-12],[24,-12,27,12],[27,12,-22,12],[-22,12,-27,-12]])line([[x1,y1],[x2,y2]],'#4b423e',6);for(const [x,y]of [[-18,-6],[8,7],[20,-4]])oval(x,y,4,2,'#66534a');ctx.restore();break;
+ case 'replacement-stakes':for(const x of [-22,-11,0,11,22]){rect(x-2,-17,4,30,'#8a684d');poly([[x-2,-17],[x,-24],[x+2,-17]],'#b38a60');}line([[-24,0],[24,0]],'#6d513f',3);break;
+ case 'patched-fence':for(const x of [-22,-7,8,23])rect(x-2,-17,4,30,x===8?'#9a7656':'#6d5342');line([[-27,-10],[28,-8]],'#8e6d50',4);line([[-27,3],[28,0]],'#a17b58',4);rect(3,-6,12,8,'#76584a');break;
+ case 'inspection-marker':line([[0,-35],[0,14]],'#745942',4);rect(-15,-31,30,20,'#7b644f');for(const y of [-26,-20,-14])line([[-10,y],[9,y]],'#d0bc91',1);rect(8,-8,9,8,'#8f5c52');break;
+ case 'checkpoint-standard':line([[0,-49],[0,15]],'#6b5543',4);poly([[3,-46],[24,-41],[20,-23],[3,-27]],'#965b53');line([[7,-37],[18,-34]],'#d4b988',2);for(const x of [-16,16])line([[x,11],[x,-12]],'#675044',3);break;
+ case 'chain-anchor':poly([[-12,11],[-9,-8],[0,-18],[10,-8],[13,11]],'#5d5b56');for(let x=-24;x<=24;x+=8)oval(x,3+Math.abs(x)/10,4,3,'#85877f');line([[-20,2],[-9,-1]],'#9a9b91',2);line([[10,-1],[22,3]],'#9a9b91',2);break;
  }}
  function landmark(){
   switch(e.id){

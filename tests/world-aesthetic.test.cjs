@@ -34,22 +34,35 @@ test('retained named landmarks sit beside the world feature their names describe
 
 test('Ashen Frontier reads as recovery under a functioning occupation corridor',()=>{
  const c=new Campaign();c.enter('frontier');const z=c.zone(),town={x:Campaign.data.towns[3][0],y:Campaign.data.towns[3][1]},hamlet={x:Campaign.data.minors[3][0],y:Campaign.data.minors[3][1]};
- assert.equal(z.frontierLayoutVersion,1);assert.equal(z.roadVersion,10);
+ assert.equal(z.frontierLayoutVersion,2);assert.equal(z.roadVersion,10);
  assert(R.frontierRoutes.length>=5,'Frontier has separate supply, repair, inspection, checkpoint and Bastion routes');
  const routeIds=new Set(R.frontierRoutes.map(r=>r.id));assert.equal(routeIds.size,R.frontierRoutes.length);
  for(const route of R.frontierRoutes){const target={x:route.point[0],y:route.point[1]};assert(c.route(town,target).length,'route '+route.id+' is reachable');assert(z.roads.some(path=>distance(path.at(-1),target)<2),'road network reaches '+route.id);}
  const props=z.props.filter(p=>String(p.id).startsWith('frontier-layout-')),districts=new Set(props.map(p=>p.frontierDistrict));
  for(const id of ['emberwatch-livelihood','burned-hamlet-recovery','roadworks-yard','inspection-yard','checkpoint-support','bastion-cordon'])assert(districts.has(id),id+' has procedural occupation/recovery dressing');
- assert(new Set(props.map(p=>p.structure)).size>=14,'Frontier layout mixes civilian recovery, work and military infrastructure');
- const ember=props.filter(p=>p.frontierDistrict==='emberwatch-livelihood'),burned=props.filter(p=>p.frontierDistrict==='burned-hamlet-recovery'),cordon=props.filter(p=>p.frontierDistrict==='bastion-cordon');
- assert(ember.some(p=>['market','field-kitchen','woodpile','cart'].includes(p.structure))&&ember.some(p=>p.structure==='watchpost'),'Emberwatch visibly combines livelihood with occupation control');
- assert(burned.some(p=>['burned-log','ash-patch'].includes(p.structure))&&burned.some(p=>['tool-rack','woodpile','cart','field-kitchen','supply-stack'].includes(p.structure)),'Burned Hamlet visibly mixes damage with ongoing recovery');
- assert(cordon.some(p=>p.structure==='chain'||p.structure==='barricade')&&cordon.some(p=>p.structure==='warm-brazier'||p.structure==='supply-stack'||p.structure==='roost'),'Abyss Bastion approach reads as a controlled dragon support/containment zone');
+ assert(new Set(props.map(p=>p.structure)).size>=20,'Frontier layout mixes civilian recovery, roadwork and standardized military infrastructure');
+ const ember=props.filter(p=>p.frontierDistrict==='emberwatch-livelihood'),burned=props.filter(p=>p.frontierDistrict==='burned-hamlet-recovery'),roadworks=props.filter(p=>p.frontierDistrict==='roadworks-yard'),inspection=props.filter(p=>p.frontierDistrict==='inspection-yard'),checkpointSupport=props.filter(p=>p.frontierDistrict==='checkpoint-support'),cordon=props.filter(p=>p.frontierDistrict==='bastion-cordon');
+ assert(ember.some(p=>['market','field-kitchen','woodpile','cart'].includes(p.structure))&&ember.some(p=>p.structure==='watchpost')&&ember.some(p=>p.structure==='patched-fence'),'Emberwatch visibly combines livelihood, repair and occupation control');
+ assert(burned.some(p=>['charred-foundation','ash-patch'].includes(p.structure))&&burned.some(p=>['repair-brace','replacement-stakes','stacked-lumber','broken-cart'].includes(p.structure)),'Burned Hamlet pairs visible destruction with visible rebuilding instead of separate generic clutter');
+ assert(roadworks.some(p=>['stacked-lumber','wagon-wheel'].includes(p.structure))&&roadworks.some(p=>p.structure==='road-ruts'),'roadworks read as an active transport-repair scene');
+ assert(inspection.some(p=>p.structure==='inspection-marker')&&checkpointSupport.some(p=>p.structure==='checkpoint-standard'),'occupation administration repeats standardized authority markers');
+ assert(cordon.some(p=>p.structure==='chain'||p.structure==='barricade'||p.structure==='chain-anchor')&&cordon.some(p=>p.structure==='warm-brazier'||p.structure==='supply-stack'||p.structure==='roost'),'Abyss Bastion approach reads as a controlled dragon support/containment zone');
+ const traces=props.filter(p=>p.roadTrace);assert(traces.length>=2&&traces.every(p=>p.decorative&&!p.r),'Frontier adds flat road wear/repair traces without adding collision');
  assert(distance(town,hamlet)>650,'Emberwatch and Burned Hamlet remain separate lived-in settlements');
  const field=c.fieldCenter(),bastion=z.npcs.find(n=>n.id==='entrance');assert(distance(field,bastion)>900,'Warlord checkpoint and Abyss Bastion remain separate power centers');
  assert(R.creatureStrongholds.filter(s=>s.region==='frontier').length>=3,'Frontier retains multiple ordinary-monster centers of power');
  assert(R.creatureStrongholds.some(s=>s.region==='frontier'&&s.night&&s.nightSpecies==='stalker'),'night Stalkers retain their own authored hold');
  const overseer=R.roomCaptains['frontier-overseer'];assert(overseer&&overseer.patrol.length>=5,'Cinder Warlord keeps a real inspection circuit through the occupied province');
+});
+
+test('Frontier procedural props gain deterministic local variants instead of repeating one identical drawing',()=>{
+ const region=3;
+ const cartA={id:'frontier-cart-a',renderKind:'prop',decorative:true,structure:'cart'},cartB={id:'frontier-cart-b',renderKind:'prop',decorative:true,structure:'cart'};
+ assert.equal(visualSignature(cartA,region),visualSignature(cartA,region),'same prop id renders deterministically');
+ const cartVariants=['frontier-cart-a','frontier-cart-b','frontier-cart-c','frontier-cart-d'].map(id=>visualSignature({id,renderKind:'prop',decorative:true,structure:'cart'},region));assert(new Set(cartVariants).size>=2,'Frontier carts vary load/damage detail');
+ const houses=['frontier-house-a','frontier-house-b','frontier-house-c','frontier-house-d'].map(id=>visualSignature({id,renderKind:'prop',structure:'frontier-patched-house',r:32},region));assert(new Set(houses).size>=2,'Frontier patched houses vary their repair history');
+ const recovery=['road-ruts','road-patch','stacked-lumber','repair-brace','broken-cart','wagon-wheel','charred-foundation','replacement-stakes','patched-fence','inspection-marker','checkpoint-standard','chain-anchor'].map((structure,i)=>visualSignature({id:'frontier-depth-'+i,renderKind:'prop',decorative:true,structure},region));
+ assert.equal(new Set(recovery).size,recovery.length,'new recovery/occupation prop families have distinct procedural silhouettes');
 });
 
 test('Dark Crown reads as a regime with separate districts and distributed outward routes',()=>{

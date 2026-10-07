@@ -158,30 +158,30 @@ const worldLifePlans=[
 // Ashen Frontier gets a dedicated consolidation layer: civilians are rebuilding inside a functioning occupation corridor.
 // These are procedural road/livelihood details only; they do not change combat, rewards, progression or sprite policy.
 const frontierRoutes=[
- {id:'convoy-service',role:'supply',point:[900,600],props:[[-65,55,'cart'],[55,55,'supply-stack'],[0,105,'watchpost']]},
- {id:'north-ravine-works',role:'road-repair',point:[1320,760],props:[[-70,50,'tool-rack'],[65,45,'woodpile'],[0,105,'barricade']]},
- {id:'inspection-spur',role:'administration',point:[1900,1250],props:[[-70,50,'watchpost'],[60,50,'war-table'],[0,105,'supply-stack']]},
- {id:'checkpoint-logistics',role:'military-staging',point:[2250,1650],props:[[-70,50,'weapon-rack'],[65,50,'supply-stack'],[0,105,'banner']]},
- {id:'bastion-cordon',role:'dragon-logistics',point:[3000,2400],props:[[-70,50,'chain'],[65,50,'warm-brazier'],[0,105,'barricade']]}
+ {id:'convoy-service',role:'supply',point:[900,600],props:[[-85,55,'cart'],[55,55,'supply-stack'],[0,0,'road-ruts'],[95,105,'watchpost']]},
+ {id:'north-ravine-works',role:'road-repair',point:[1320,760],props:[[-95,50,'tool-rack'],[45,45,'stacked-lumber'],[0,0,'road-patch'],[105,105,'barricade']]},
+ {id:'inspection-spur',role:'administration',point:[1900,1250],props:[[-90,50,'watchpost'],[50,50,'war-table'],[-10,105,'inspection-marker'],[115,100,'supply-stack']]},
+ {id:'checkpoint-logistics',role:'military-staging',point:[2250,1650],props:[[-95,50,'weapon-rack'],[45,50,'supply-stack'],[-15,105,'checkpoint-standard'],[110,105,'banner']]},
+ {id:'bastion-cordon',role:'dragon-logistics',point:[3000,2400],props:[[-90,50,'chain'],[50,50,'warm-brazier'],[-15,105,'chain-anchor'],[110,105,'barricade']]}
 ];
 const frontierDistricts=[
  {id:'emberwatch-livelihood',role:'controlled-civilian',center:[650,620],props:[
-  [-165,-90,'market',0],[-45,-125,'field-kitchen',0],[100,-105,'supply-stack',0],[-150,70,'woodpile',0],[-10,110,'cart',0],[135,65,'watchpost',0]
+  [-165,-90,'market',0],[-45,-125,'field-kitchen',0],[100,-105,'supply-stack',0],[-150,70,'woodpile',0],[-10,110,'cart',0],[135,65,'watchpost',0],[70,135,'patched-fence',0],[15,-55,'road-patch',0]
  ]},
  {id:'burned-hamlet-recovery',role:'rebuilding-civilian',center:[1240,1080],props:[
-  [-170,-90,'burned-log',0],[-45,-130,'ash-patch',0],[105,-105,'tool-rack',0],[-155,75,'woodpile',0],[-20,115,'cart',0],[135,70,'field-kitchen',0],[55,15,'supply-stack',0]
+  [-175,-95,'charred-foundation',0],[-70,-130,'ash-patch',0],[95,-110,'tool-rack',0],[-160,70,'stacked-lumber',0],[-35,120,'broken-cart',0],[140,70,'field-kitchen',0],[55,15,'supply-stack',0],[-105,20,'repair-brace',0],[125,-20,'replacement-stakes',0]
  ]},
  {id:'roadworks-yard',role:'transport-repair',center:[1080,700],props:[
-  [-145,-75,'cart',0],[-35,-115,'tool-rack',0],[95,-95,'woodpile',0],[-135,70,'supply-stack',0],[-5,110,'barricade',0],[125,55,'watchpost',0]
+  [-155,-75,'cart',0],[-45,-115,'tool-rack',0],[90,-95,'stacked-lumber',0],[-145,70,'supply-stack',0],[-10,110,'barricade',0],[125,55,'watchpost',0],[65,105,'wagon-wheel',0],[5,-20,'road-ruts',0]
  ]},
  {id:'inspection-yard',role:'occupation-administration',center:[1720,1360],props:[
-  [-145,-80,'watchpost',0],[-30,-120,'war-table',0],[100,-90,'weapon-rack',0],[-135,70,'supply-stack',0],[-5,110,'training-dummy',0],[125,55,'barricade',0]
+  [-150,-80,'watchpost',0],[-35,-120,'war-table',0],[95,-90,'weapon-rack',0],[-140,70,'supply-stack',0],[-10,110,'training-dummy',0],[125,55,'barricade',0],[45,20,'inspection-marker',0]
  ]},
  {id:'checkpoint-support',role:'military-support',center:[2300,1650],props:[
-  [-155,-85,'command-tent',0],[-40,-125,'field-kitchen',0],[105,-95,'weapon-rack',0],[-145,75,'bunk',0],[-10,115,'supply-stack',0],[130,60,'war-table',0]
+  [-160,-85,'command-tent',0],[-45,-125,'field-kitchen',0],[100,-95,'weapon-rack',0],[-150,75,'bunk',0],[-15,115,'supply-stack',0],[125,60,'war-table',0],[55,15,'checkpoint-standard',0]
  ]},
  {id:'bastion-cordon',role:'dragon-containment',center:[3000,2420],props:[
-  [-155,-80,'chain',0],[-45,-125,'warm-brazier',0],[100,-95,'supply-stack',0],[-145,75,'roost',0],[-10,115,'bone-pile',0],[130,60,'barricade',0],[40,10,'watchpost',0]
+  [-160,-80,'chain',0],[-50,-125,'warm-brazier',0],[95,-95,'supply-stack',0],[-150,75,'roost',0],[-15,115,'bone-pile',0],[125,60,'barricade',0],[35,10,'watchpost',0],[145,-20,'chain-anchor',0]
  ]}
 ];
 
