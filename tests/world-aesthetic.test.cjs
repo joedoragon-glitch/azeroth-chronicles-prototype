@@ -92,6 +92,16 @@ test('military Ringleaders read as officers without changing body scale',()=>{
   assert.notEqual(visualSignature(base,species==='crownguard'?4:3),visualSignature(lead,species==='crownguard'?4:3),species+' Ringleader has officer-specific hierarchy cues');
  }
 });
+test('Abyss Bastion uses visible irregular architecture and distinct procedural containment life',()=>{
+ assert.equal(typeof Visuals.dungeonArchitecture,'function','renderer exposes the same authored dungeon partitions used by collision');
+ const c=new Campaign();c.enter('abyss');const z=c.zone(),a=R.dungeonArchitecture.abyss,decor=z.props.filter(p=>p.dungeonDistrict);
+ assert(a.walkable.length>=6&&a.partitions.length>=4,'Abyss uses multiple overlapping functional wings and gates');
+ assert(c.blocked(680,180,'abyss',12)&&!c.blocked(300,300,'abyss',12)&&!c.blocked(1180,1200,'abyss',12),'Abyss footprint is visibly irregular instead of one full rectangle');
+ const districts=new Set(decor.map(p=>p.dungeonDistrict));for(const id of ['handler-intake','containment-gallery','hatchery','feeding-service','roost-hoard'])assert(districts.has(id),id+' has procedural scene dressing');
+ const families=['handler-station','feed-crate','containment-post','scorched-floor','egg-cradle','feeding-trough','carcass-rack','claw-scrape','dragon-perch','chain-anchor'];
+ const signatures=families.map((structure,i)=>visualSignature({id:'abyss-depth-'+i,renderKind:'prop',decorative:true,structure},3));assert.equal(new Set(signatures).size,families.length,'Abyss service/containment families have distinct procedural silhouettes');
+ for(const structure of ['chain','roost','hatchery','bone-pile']){const same={id:'abyss-stable-'+structure,renderKind:'prop',decorative:true,structure};assert.equal(visualSignature(same,3),visualSignature(same,3),structure+' variation remains deterministic');const variants=Array.from({length:8},(_,i)=>visualSignature({id:'abyss-'+structure+'-'+i,renderKind:'prop',decorative:true,structure},3));assert(new Set(variants).size>=2,structure+' gains stable local variation in the Bastion');}
+});
 test('Citadel composition continues into an irregular military fortress',()=>{
  const c=new Campaign();c.enter('citadel');const z=c.zone(),decor=z.props.filter(p=>String(p.id).startsWith('decor-')),required=['citadel-muster','citadel-command','citadel-ritual-array','citadel-barracks-bay','citadel-forge-bay','citadel-boss-approach'],architecture=R.dungeonArchitecture.citadel;
  assert.equal(z.enemies.filter(e=>e.guard&&e.form==='normal').length,R.dungeonGuardFormations.citadel.length,'Citadel uses its authored military formation quota');
