@@ -148,7 +148,7 @@ class Campaign{
   }else{
    const [x,y]=D.towns[i],minor=D.minors[i];z.npcs.push({id:'supplier',name:r.town+' Supplies',kind:'supplier',x:x+85,y:y-40,icon:'🛒'},{id:'recruiter',name:r.town+' Captain',kind:'recruiter',x:x-80,y:y+60,icon:'👥'},{id:'board',name:r.town+' Quest board',kind:'quests',x:x+70,y:y+95,icon:'📜'},{id:'rest',name:r.town+' Refuge',kind:'rest',x,y,icon:'🏠'}, {id:'minor',name:r.minor,kind:'rest',x:minor[0],y:minor[1],icon:'🏡'});
    const [px,py]=D.ports[i];if(i<4)z.npcs.push({id:'outbound',name:r.transport+' to '+D.regions[i+1].name,kind:'transport',direction:1,x:px,y:py,icon:['🐎','⛵','🐫','🐉'][i]});
-   if(i>0)z.npcs.push({id:'return',name:'Return to '+D.regions[i-1].name,kind:'transport',direction:-1,x:x+120,y:y+150,icon:['','🐎','⛵','🐫','🐉'][i]});
+   if(i>0)z.npcs.push({id:'return',name:(i===4?'Dragon rider to ':'Return to ')+D.regions[i-1].name,kind:'transport',direction:-1,x:x+120,y:y+150,icon:['','🐎','⛵','🐫','🐉'][i]});
    const db=bosses.find(b=>b.kind==='dungeon'),[ex,ey]=D.entrances[i];z.npcs.push({id:'entrance',name:db.place,kind:'dungeon',family:db.id,x:ex,y:ey,icon:'🏛️'});
    const {x:fx,y:fy}=this.fieldCenter(i);z.npcs.push({id:'cage-'+field.id,name:field.captive,kind:'cage',family:field.id,x:fx+90,y:fy+80,icon:'🔒'});
    for(let j=0;j<3;j++){const p=this.safe(minor[0]+150+j*70,minor[1]+160+j*90);z.npcs.push({id:'bundle-'+j,name:'Quest supplies '+(j+1),kind:'bundle',index:j,...p,icon:'📦'});}
