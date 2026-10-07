@@ -6,6 +6,48 @@ assert.deepEqual(diskManifest.sprites,{},'production manifest stays empty until 
 assert.match(diskManifest.artDirection,/canonical procedural visuals/i,'manifest names the procedural renderer as canon');
 assert.doesNotMatch(diskManifest.artDirection,/Warcraft|Ragnarok/i,'sprite direction cannot depend on external style references');
 assert.equal(typeof Visuals.atmosphere,'function','procedural graphics expose regional atmosphere without sprite assets');
+const promptCatalog=fs.readFileSync(path.join(__dirname,'../docs/GRAPHICS_CANON_SPRITE_PROMPTS.md'),'utf8');
+const promptAudit=fs.readFileSync(path.join(__dirname,'../docs/GRAPHICS_CANON_SPRITE_PROMPT_AUDIT.md'),'utf8');
+const promptCoverage=fs.readFileSync(path.join(__dirname,'../docs/GRAPHICS_CANON_SPRITE_COVERAGE.md'),'utf8');
+assert.match(promptCatalog,/generate exactly one sprite per request/i,'sprite production is locked to one asset at a time');
+assert.match(promptCatalog,/never generate sheets, comparisons, multiple options, turnarounds, scenes, or old\/new boards/i,'batch/comparison image generation is explicitly forbidden');
+assert.doesNotMatch(promptCatalog,/Warcraft|Ragnarok/i,'prompt catalog cannot reintroduce superseded outside-style direction');
+
+const headings=[...promptCatalog.matchAll(/^### (\d{3}) — ([^\n]+)$/gm)];
+assert.equal(headings.length,227,'audited catalog has 227 classified numbered entries');
+assert.equal(new Set(headings.map(m=>m[1])).size,227,'catalog IDs are unique');
+assert(headings.every((m,i)=>Number(m[1])===i+1),'catalog IDs remain continuous from 001 through 227');
+let generated=0,aliases=0,procedural=0;
+for(let i=0;i<headings.length;i++){
+ const section=promptCatalog.slice(headings[i].index,i+1<headings.length?headings[i+1].index:promptCatalog.length);
+ const states=[
+  section.includes('**Image-generation prompt:**'),
+  section.includes('ALIAS — do not generate a new image'),
+  section.includes('KEEP PROCEDURAL — DO NOT GENERATE A SPRITE')
+ ];
+ assert.equal(states.filter(Boolean).length,1,'entry '+headings[i][1]+' has exactly one production status');
+ if(states[0])generated++;else if(states[1])aliases++;else procedural++;
+}
+assert.deepEqual({generated,aliases,procedural},{generated:212,aliases:5,procedural:10},'final audited sprite-production partition');
+assert(promptCatalog.match(/### 005 — Companion — Archer \/ Ranger support[\s\S]*human\('ranger'\)/),'companion Archer retains canonical Ranger-body details');
+assert(promptCatalog.match(/### 023 — Raider Archer[\s\S]*human\('archer'\)[\s\S]*Image-generation prompt/),'hostile Raider Archer has its own simpler canonical body prompt');
+assert(promptCatalog.match(/### 131 — Occupied side-interior entrance[\s\S]*default `gate\(\)`/),'side-interior entrance uses the actual default gate renderer');
+assert(promptCatalog.includes('### 161 — Citadel preparation fountain'),'unique Citadel fountain is covered');
+assert(promptCatalog.includes('### 162 — Field-boss compound marker'),'field-compound marker is covered');
+assert(promptCatalog.includes('### 163 — Dark Lord Tribute cache'),'active tribute cache is covered');
+
+assert.match(promptAudit,/mechanical variants are not automatically visual variants|renderer, not a semantic name.*wins every conflict/i,'audit preserves canon-over-mechanics rule');
+assert(promptAudit.includes('Drowned Watchhouse')&&promptAudit.includes('Old Signal Keep'),'audit protects named-place markers from literal redesign');
+
+const visualsSource=fs.readFileSync(path.join(__dirname,'../src/prototype/visuals.js'),'utf8');
+function casesBetween(a,b){
+ const s=visualsSource.slice(visualsSource.indexOf(a),visualsSource.indexOf(b,visualsSource.indexOf(a)));
+ return [...s.matchAll(/case '([^']+)'/g)].map(m=>m[1]);
+}
+for(const kind of casesBetween('function decoration(kind)','function landmark()'))assert(promptCoverage.includes('| `'+kind+'` |'),'coverage audit classifies decoration '+kind);
+for(const kind of casesBetween('function landmark()','const type=e.renderKind'))assert(promptCoverage.includes('| `'+kind+'` |'),'coverage audit classifies landmark '+kind);
+for(const kind of casesBetween('function settlementBuilding(kind)','function decoration(kind)'))assert(promptCoverage.includes('| `'+kind+'` |'),'coverage audit classifies settlement structure '+kind);
+
 
 assert.deepEqual(Sprites.candidateKeys({renderKind:'hero',class:'paladin'}),['hero:paladin']);
 assert.deepEqual(Sprites.candidateKeys({renderKind:'ally',type:'soldier'}),['ally:soldier']);
