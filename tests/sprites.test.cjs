@@ -2,7 +2,9 @@
 const fs=require('fs'),path=require('path'),assert=require('node:assert/strict'),Sprites=require('../src/prototype/sprites.js'),Visuals=require('../src/prototype/visuals.js');
 
 const diskManifest=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/sprites/manifest.json'),'utf8'));
-assert.deepEqual(diskManifest.sprites,{},'production manifest has no active illustrated sprites after Paladin rollback');
+assert.deepEqual(diskManifest.sprites,{},'production manifest stays empty until a canon-faithful sprite is approved');
+assert.match(diskManifest.artDirection,/canonical procedural visuals/i,'manifest names the procedural renderer as canon');
+assert.doesNotMatch(diskManifest.artDirection,/Warcraft|Ragnarok/i,'sprite direction cannot depend on external style references');
 assert.equal(typeof Visuals.atmosphere,'function','procedural graphics expose regional atmosphere without sprite assets');
 
 assert.deepEqual(Sprites.candidateKeys({renderKind:'hero',class:'paladin'}),['hero:paladin']);
