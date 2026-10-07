@@ -29,11 +29,13 @@ class Campaign{
   this.s.party=[this.unit('soldier',260,390),this.unit('archer',350,380)];this.zone();
  }
  get hero(){return this.s.hero;} get zoneId(){return this.s.zone;} get peace(){return this.s.phase==='peace';}
- regionIndex(id=this.s.zone){const boss=D.bosses.find(b=>b.id===id),room=R.supplyRooms.find(r=>r.id===id);return D.regions.findIndex(r=>r.id===(boss?.region||room?.region||id));}
+ regionIndex(id=this.s.zone){const boss=D.bosses.find(b=>b.id===id),room=R.supplyRooms.find(r=>r.id===id),side=R.sideDungeons?.find(r=>r.id===id);return D.regions.findIndex(r=>r.id===(boss?.region||room?.region||side?.region||id));}
  definition(){return D.regions[this.regionIndex()];}
  fieldCenter(index=this.regionIndex()){const p=R.fieldBossCenters?.[index]||D.fields[index];return {x:p[0],y:p[1]};}
  supplyRoom(id=this.s.zone){return R.supplyRooms.find(r=>r.id===id);}
- isDungeon(){return dungeonIds.includes(this.s.zone)||!!this.supplyRoom();}
+ sideDungeon(id=this.s.zone){return R.sideDungeons?.find(r=>r.id===id);}
+ zoneSize(id=this.s.zone){const room=this.supplyRoom(id),side=this.sideDungeon(id);return room?900:side?(side.size||1100):dungeonIds.includes(id)?1500:D.regions[this.regionIndex(id)]?.size;}
+ isDungeon(){return dungeonIds.includes(this.s.zone)||!!this.supplyRoom()||!!this.sideDungeon();}
  night(){return !this.peace&&this.s.mode==='nightmare'||this.s.clock%600>=360;}
  nightPoints(){return this.s.mode==='nightmare'?Object.keys(this.s.victories).length:Math.min(15,Object.keys(this.s.normal).length+Object.keys(this.s.late).length);}
  multipliers(){const n=this.nightPoints();return this.night()&&!this.peace?{hp:1.10+.03*n,damage:1.15+.02*n}:{hp:1,damage:1};}
@@ -64,22 +66,23 @@ class Campaign{
  unit(type,x,y){const base={soldier:[120,12,'⚔️'],archer:[105,15,'🏹']}[type];if(!base)throw Error('Unknown companion type');const maxHp=this.companionMaxHp(type);return {id:'ally-'+this.s.nextId++,type,x,y,hp:maxHp,maxHp,damage:base[1],icon:base[2],cd:0,healCd:0,manaCd:0,survivalCd:0,immune:0,supportEffects:[],order:null,carry:0,active:true};}
  syncCompanionLevelStats(){for(const u of this.s.party){if(!['soldier','archer'].includes(u.type))continue;const next=this.companionMaxHp(u.type),gain=next-u.maxHp;u.maxHp=next;if(u.hp>0&&gain!==0)u.hp=clamp(u.hp+gain,1,next);}}
  blocked(x,y,zone=this.s.zone,radius=15,terrainOnly=false){
-  const i=this.regionIndex(zone),room=this.supplyRoom(zone),dungeon=dungeonIds.includes(zone),size=room?900:dungeon?1500:D.regions[i]?.size;
+  const i=this.regionIndex(zone),room=this.supplyRoom(zone),side=this.sideDungeon(zone),dungeon=dungeonIds.includes(zone),size=this.zoneSize(zone);
   if(!size||x<40+radius||y<40+radius||x>size-40-radius||y>size-40-radius)return true;
   if(room){for(const w of R.treasuryWalls?.[zone]||[]){const hit=x>w.x1-radius&&x<w.x2+radius&&y>w.y1-radius&&y<w.y2+radius;if(!hit)continue;const v=w.axis==='x'?x:y;if(!(w.gaps||[]).some(([l,h])=>v>l+radius&&v<h-radius))return true;}}
   else if(dungeon){const [a,b,gaps]=R.dungeonWalls[zone];if(x>a-radius&&x<b+radius&&y>120&&y<1260&&!gaps.some(([l,h])=>y>l+radius&&y<h-radius))return true;}
+  else if(side){}
   else {
    const {bounds:[a,b,c,e],gaps}=R.barriers[i];if(x>a-radius&&x<b+radius&&y>c-radius&&y<e+radius&&!gaps.some(([l,h])=>y>l+radius&&y<h-radius))return true;
   }
-  if(!dungeon&&!room)for(const p of R.terrain[i])if(p.r?Math.hypot(x-p.x,y-p.y)<p.r+radius:x>p.x1-radius&&x<p.x2+radius&&y>p.y1-radius&&y<p.y2+radius&&!(p.gaps||[]).some(([l,h])=>y>l+radius&&y<h-radius))return true;
-  if(!dungeon&&!room){const harbor=R.harbors?.[D.regions[i]?.id];if(harbor){const w=harbor.water,d=harbor.dock,onDock=x>d.x1+radius&&x<d.x2-radius&&y>d.y1+radius&&y<d.y2-radius;if(!onDock&&x>w.x1-radius&&x<w.x2+radius&&y>w.y1-radius&&y<w.y2+radius)return true;}}
+  if(!dungeon&&!room&&!side)for(const p of R.terrain[i])if(p.r?Math.hypot(x-p.x,y-p.y)<p.r+radius:x>p.x1-radius&&x<p.x2+radius&&y>p.y1-radius&&y<p.y2+radius&&!(p.gaps||[]).some(([l,h])=>y>l+radius&&y<h-radius))return true;
+  if(!dungeon&&!room&&!side){const harbor=R.harbors?.[D.regions[i]?.id];if(harbor){const w=harbor.water,d=harbor.dock,onDock=x>d.x1+radius&&x<d.x2-radius&&y>d.y1+radius&&y<d.y2-radius;if(!onDock&&x>w.x1-radius&&x<w.x2+radius&&y>w.y1-radius&&y<w.y2+radius)return true;}}
   const z=this.s.zones[zone];return !terrainOnly&&z?.props.some(p=>!p.decorative&&Math.hypot(x-p.x,y-p.y)<p.r+radius)||false;
  }
  safe(x,y,zone=this.s.zone){if(!this.blocked(x,y,zone))return {x,y};for(let r=30;r<450;r+=30)for(let i=0;i<24;i++){const a=i*Math.PI/12,p={x:x+Math.cos(a)*r,y:y+Math.sin(a)*r};if(!this.blocked(p.x,p.y,zone))return p;}throw Error('No safe arrival');}
  line(a,b){const n=Math.ceil(dist(a,b)/20);for(let i=1;i<n;i++)if(this.blocked(a.x+(b.x-a.x)*i/n,a.y+(b.y-a.y)*i/n,this.s.zone,0))return false;return true;}
  clearSegment(a,b,radius=15,terrainOnly=false){const n=Math.max(1,Math.ceil(dist(a,b)/8));for(let j=0;j<=n;j++)if(this.blocked(a.x+(b.x-a.x)*j/n,a.y+(b.y-a.y)*j/n,this.s.zone,radius,terrainOnly))return false;return true;}
  route(a,b,options={}){
-  const terrainOnly=!!options.terrainOnly,target=this.safe(b.x,b.y),step=50,size=this.supplyRoom()?900:this.isDungeon()?1500:this.definition().size,n=Math.ceil(size/step),point=id=>({x:(id%n)*step+25,y:Math.floor(id/n)*step+25});
+  const terrainOnly=!!options.terrainOnly,target=this.safe(b.x,b.y),step=50,size=this.zoneSize(),n=Math.ceil(size/step),point=id=>({x:(id%n)*step+25,y:Math.floor(id/n)*step+25});
   if(!options.road&&this.clearSegment(a,target,15,terrainOnly))return [target];
   const nearby=p=>{const out=[],cx=Math.floor(p.x/step),cy=Math.floor(p.y/step);for(let dx=-2;dx<=2;dx++)for(let dy=-2;dy<=2;dy++){const x=cx+dx,y=cy+dy;if(x<0||y<0||x>=n||y>=n)continue;const id=y*n+x,q=point(id);if(!this.blocked(q.x,q.y,this.s.zone,15,terrainOnly)&&this.clearSegment(p,q,15,terrainOnly))out.push(id);}return out.sort((x,y)=>dist(point(x),p)-dist(point(y),p));};
   const starts=nearby(a),ends=nearby(target);if(!starts.length||!ends.length)return [];const start=starts[0],end=ends[0],queue=[start],parents=new Map([[start,null]]),valid=new Map();
