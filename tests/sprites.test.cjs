@@ -36,7 +36,7 @@ assert(promptCatalog.includes('### 161 — Citadel preparation fountain'),'uniqu
 assert(promptCatalog.includes('### 162 — Field-boss compound marker'),'field-compound marker is covered');
 assert(promptCatalog.includes('### 163 — Dark Lord Tribute cache'),'active tribute cache is covered');
 
-assert(promptAudit.includes('mechanic or a name is not enough')||promptAudit.includes('mechanical distinction'),'audit preserves canon-over-mechanics rule');
+assert.match(promptAudit,/mechanical variants are not automatically visual variants|renderer, not a semantic name.*wins every conflict/i,'audit preserves canon-over-mechanics rule');
 assert(promptAudit.includes('Drowned Watchhouse')&&promptAudit.includes('Old Signal Keep'),'audit protects named-place markers from literal redesign');
 
 const visualsSource=fs.readFileSync(path.join(__dirname,'../src/prototype/visuals.js'),'utf8');
