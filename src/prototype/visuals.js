@@ -62,7 +62,7 @@ function draw(ctx,e,p,region=0,rescued=false){
  }
  function captainFinish(){
   if(!(e.captain||e.roomCaptain))return;
-  switch(e.captainMentor){
+  switch(e.captainVisualIdol||e.captainMentor){
    case 'thorn':
     // Goblin disciple: wolf trophies and claw marks, but still unmistakably goblin.
     poly([[-14,-18],[-19,-28],[-11,-26],[-6,-18]],'#8f8063');for(const [x,y]of [[-8,-8],[0,-10],[8,-8]])poly([[x-2,y],[x,y-5],[x+2,y]],bone);
@@ -76,7 +76,7 @@ function draw(ctx,e,p,region=0,rescued=false){
     line([[-20,-8],[18,-7]],'#938b78',4);for(const x of [-11,0,11])rect(x-3,-11,6,6,'#6f7470');
     poly([[10,-23],[18,-28],[25,-22],[18,-18]],'#9a9b8d');line([[19,-26],[27,-31]],'#c9c3a4',2);break;
    case 'darklord':
-    // Ash Beast disciple: obsidian harness and Crown sigil carried on its own carapace.
+    // Dreadmaw preserves his original Dark Lord fanboy identity even though Cindermaw is now his combat mentor: obsidian harness and Crown sigil on the Ash-beast carapace.
     poly([[-16,-9],[-7,-18],[0,-12],[7,-18],[16,-9],[10,-3],[-10,-3]],'#51495c');
     poly([[0,-16],[5,-10],[0,-4],[-5,-10]],'#9f79aa');line([[-11,2],[0,7],[11,2]],'#b39272',2);for(const x of [-18,18])glint(x,-12,'#d29ab5',1.5);break;
    case 'warlord':
