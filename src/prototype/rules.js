@@ -155,6 +155,36 @@ const worldLifePlans=[
   field:[[-160,-80,'roost'],[-70,-135,'ember-pit'],[40,-135,'bone-pile'],[150,-80,'obsidian'],[-165,45,'sleep-roll'],[-70,125,'treasure-hoard'],[55,125,'roost'],[160,45,'bone-pile']]
  }
 ];
+// Ashen Frontier gets a dedicated consolidation layer: civilians are rebuilding inside a functioning occupation corridor.
+// These are procedural road/livelihood details only; they do not change combat, rewards, progression or sprite policy.
+const frontierRoutes=[
+ {id:'convoy-service',role:'supply',point:[900,600],props:[[-65,55,'cart'],[55,55,'supply-stack'],[0,105,'watchpost']]},
+ {id:'north-ravine-works',role:'road-repair',point:[1320,760],props:[[-70,50,'tool-rack'],[65,45,'woodpile'],[0,105,'barricade']]},
+ {id:'inspection-spur',role:'administration',point:[1900,1250],props:[[-70,50,'watchpost'],[60,50,'war-table'],[0,105,'supply-stack']]},
+ {id:'checkpoint-logistics',role:'military-staging',point:[2250,1650],props:[[-70,50,'weapon-rack'],[65,50,'supply-stack'],[0,105,'banner']]},
+ {id:'bastion-cordon',role:'dragon-logistics',point:[3000,2400],props:[[-70,50,'chain'],[65,50,'warm-brazier'],[0,105,'barricade']]}
+];
+const frontierDistricts=[
+ {id:'emberwatch-livelihood',role:'controlled-civilian',center:[650,620],props:[
+  [-165,-90,'market',0],[-45,-125,'field-kitchen',0],[100,-105,'supply-stack',0],[-150,70,'woodpile',0],[-10,110,'cart',0],[135,65,'watchpost',0]
+ ]},
+ {id:'burned-hamlet-recovery',role:'rebuilding-civilian',center:[1240,1080],props:[
+  [-170,-90,'burned-log',0],[-45,-130,'ash-patch',0],[105,-105,'tool-rack',0],[-155,75,'woodpile',0],[-20,115,'cart',0],[135,70,'field-kitchen',0],[55,15,'supply-stack',0]
+ ]},
+ {id:'roadworks-yard',role:'transport-repair',center:[1080,700],props:[
+  [-145,-75,'cart',0],[-35,-115,'tool-rack',0],[95,-95,'woodpile',0],[-135,70,'supply-stack',0],[-5,110,'barricade',0],[125,55,'watchpost',0]
+ ]},
+ {id:'inspection-yard',role:'occupation-administration',center:[1720,1360],props:[
+  [-145,-80,'watchpost',0],[-30,-120,'war-table',0],[100,-90,'weapon-rack',0],[-135,70,'supply-stack',0],[-5,110,'training-dummy',0],[125,55,'barricade',0]
+ ]},
+ {id:'checkpoint-support',role:'military-support',center:[2300,1650],props:[
+  [-155,-85,'command-tent',0],[-40,-125,'field-kitchen',0],[105,-95,'weapon-rack',0],[-145,75,'bunk',0],[-10,115,'supply-stack',0],[130,60,'war-table',0]
+ ]},
+ {id:'bastion-cordon',role:'dragon-containment',center:[3000,2420],props:[
+  [-155,-80,'chain',0],[-45,-125,'warm-brazier',0],[100,-95,'supply-stack',0],[-145,75,'roost',0],[-10,115,'bone-pile',0],[130,60,'barricade',0],[40,10,'watchpost',0]
+ ]}
+];
+
 // Dark Crown gets a dedicated political/logistical layout layer instead of relying only on generic regional dressing.
 // These remain procedural structures and road targets; they do not change combat, progression, rewards or sprite policy.
 const crownRoutes=[
@@ -547,6 +577,6 @@ const basicAttackCombo={steps:3,resetSeconds:4,multipliers:[1,1.1,1.2],finisher:
 const companionSkills={globalCooldown:1.5,first:{cooldown:8,multiplier:3,soldier:{name:'Power Strike'},archer:{name:'Triple Shot'}},second:{cooldown:12,unlockHeroSlot:2,soldier:{name:'Holy Cleave',shape:'cone',range:185,halfAngle:.8,multiplier:2.2,effect:'holy-cleave'},archer:{name:'Piercing Volley',shape:'line',range:480,halfWidth:55,multiplier:2.4,effect:'piercing-volley'}}};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,basicAttackCombo,companionSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,creatureStrongholds,sideDungeons,sideDungeonTrapTuning,tributeTotal,legacyResourceTotals,tributePlans,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,crownRoutes,crownDistricts,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
+const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,basicAttackCombo,companionSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,creatureStrongholds,sideDungeons,sideDungeonTrapTuning,tributeTotal,legacyResourceTotals,tributePlans,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,frontierRoutes,frontierDistricts,crownRoutes,crownDistricts,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
