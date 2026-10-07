@@ -3,6 +3,7 @@
 'use strict';
 const R=typeof PrototypeRules!=='undefined'?PrototypeRules:require('./rules.js');
 function allyBodyKind(e){return e?.type==='archer'?'goblin-archer':(e?.class||e?.type||'worker');}
+function barracksVisualState(e){return Number.isFinite(e?.progress)&&e.progress<4?'construction':e?.full?'full':'basic';}
 function draw(ctx,e,p,region=0,rescued=false){
  if(e.kind==='landmark'&&e.id?.startsWith('bridge-'))return; // The full deck is drawn in world space.
  ctx.save();ctx.translate(p.x,p.y);ctx.lineJoin='round';ctx.lineCap='round';
@@ -244,6 +245,30 @@ function draw(ctx,e,p,region=0,rescued=false){
    else if(region===3){for(const x of [-35,35]){rect(x-3,-29,6,44,'#604f45');poly([[x-4,-29],[x,-39],[x+4,-29]],'#8a6b54');}line([[-36,7],[36,-3]],'#785d4f',3);}
    else{for(const x of [-35,-22,22,35])rect(x-3,-31,6,46,'#555762');for(const x of [-29,29])poly([[x-5,-30],[x,-44],[x+5,-30]],'#71697e');poly([[-6,-44],[0,-54],[6,-44],[0,-35]],'#9b87ad');}
   };
+  const fullBarracksPolish=()=>{
+   if(!e.full)return;
+   // Full Barracks keep the same regional shelter, but visibly gain a command annex,
+   // stronger perimeter treatment and a second authority marker.
+   if(region===0){
+    rect(-49,-7,16,21,'#a38a68');for(const x of [-47,-35])line([[x,13],[x,-20]],timber,3);poly([[-51,-19],[-42,-34],[-31,-19]],roof);
+    line([[-47,-4],[-34,-4]],trim,2);for(const y of [-14,-5,4])line([[-45,y],[-36,y]],steel,1.7);
+   }else if(region===1){
+    rect(-50,5,18,9,dark);for(const x of [-48,-34])line([[x,12],[x,27]],timber,4);poly([[-51,-17],[-43,-32],[-31,-17]],roof);
+    line([[-48,1],[-34,1]],trim,2);for(const x of [-46,-40,-34])line([[x,-28],[x+3,-18]],'#8fa071',1.5);
+   }else if(region===2){
+    rect(-52,-18,18,33,'#74776f');for(const y of [-12,-1,10])line([[-50,y],[-36,y]],'#555d57',1.5);
+    rect(-50,-35,14,18,'#858980');poly([[-52,-35],[-43,-45],[-34,-35]],roof);glint(-43,-30,'#d9b56d',1.4);
+   }else if(region===3){
+    for(const x of [-50,-40]){rect(x-3,-26,6,41,timber);poly([[x-4,-26],[x,-38],[x+4,-26]],roof);}
+    line([[-52,-14],[-35,-10]],'#7f6557',3);rect(-51,2,15,11,'#786556');glint(-43,-3,'#c77b53',1.3);
+   }else{
+    rect(-52,-20,18,35,'#555763');for(const x of [-50,-37])rect(x-2,-31,4,46,timber);
+    for(const y of [-13,0,11])line([[-50,y],[-36,y]],'#777381',1.5);poly([[-48,-31],[-43,-43],[-38,-31]],'#81758f');
+    poly([[-46,-16],[-42,-10],[-46,-4],[-50,-10]],'#a087b2');
+   }
+   line([[-43,-46],[-43,14]],timber,3);poly([[-41,-44],[-27,-40],[-41,-30]],trim);
+   poly([[-6,-49],[0,-57],[6,-49],[0,-41]],trim);
+  };
   if(kind==='quests'){utilityFrame();for(const x of [-20,20])rect(x-2,-38,4,52,timber);rect(-25,-38,50,5,roof);rect(-22,-32,44,31,wall);line([[-22,-27],[22,-27]],trim,2);for(const [x,y]of [[-16,-23],[-3,-25],[10,-22],[-11,-9],[5,-10]]){rect(x,y,10,9,'#e7d7ad');line([[x+2,y+3],[x+8,y+3]],'#8f765a',1);}for(const x of [-18,18])glint(x,-29,trim,1.5);return;}
   if(kind==='supplier'){utilityFrame();for(const x of [-25,25])rect(x-2,-28,4,43,timber);poly([[-31,-27],[-22,-45],[22,-45],[31,-27]],roof);rect(-28,-7,56,20,wall);line([[-27,-6],[27,-6]],trim,2);rect(-19,-18,13,11,dark);oval(0,-12,7,5,trim);rect(10,-20,13,13,timber);for(const x of [-17,0,17])oval(x,7,4,3,x===0?trim:'#8b9c72');return;}
   if(kind==='recruiter'){utilityFrame();rect(-29,5,58,9,dark);for(const x of [-25,25])rect(x-3,-34,6,40,timber);poly([[-31,-33],[-18,-48],[20,-48],[32,-33]],roof);line([[-26,-31],[26,-31]],trim,2);shield(-13,-10,wall);line([[8,-27],[8,9]],steel,3);line([[17,-27],[17,9]],timber,3);poly([[6,-29],[12,-42],[18,-29]],trim);rect(-3,-17,7,22,timber);return;}
@@ -294,6 +319,7 @@ function draw(ctx,e,p,region=0,rescued=false){
     for(const x of [-25,25])poly([[x-6,12],[x,-5],[x+6,12]],'#747184');poly([[-5,-37],[0,-45],[5,-37],[0,-29]],'#9b87ad');
     rect(-29,4,15,8,timber);rect(15,4,14,8,timber);oval(0,8,8,4,'#4a454d');glint(0,4,'#c89a72',1.5);
    }
+   fullBarracksPolish();
    // Shared military readability: banner + rack, but the shelter itself is region-authored.
    line([[32,-40],[32,13]],timber,3);poly([[34,-38],[48,-34],[34,-24]],trim);shield(-23,-25,wall);return;
   }
@@ -727,6 +753,6 @@ function atmosphere(ctx,canvas,region=0,opts={}){
  ctx.restore();
 }
 function enemyBodyKind(e){if(!e?.species)return 'unknown';const rangedClass=e.ranged&&['mireling','ogre','orc','ashbeast'].includes(e.species);return e.species+(rangedClass?':ranged':'');}
-root.PrototypeVisuals={draw,height,floor,roads,terrain,bridges,atmosphere,allyBodyKind,enemyBodyKind};
+root.PrototypeVisuals={draw,height,floor,roads,terrain,bridges,atmosphere,allyBodyKind,enemyBodyKind,barracksVisualState};
 if(typeof module!=='undefined')module.exports=root.PrototypeVisuals;
 })(typeof window!=='undefined'?window:globalThis);
