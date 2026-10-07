@@ -62,6 +62,24 @@ function draw(ctx,e,p,region=0,rescued=false){
   }
   if(e.guard){line([[-13,8],[0,12],[13,8]],'#a49573',1.5);rect(-3,-21,6,3,'#b6a373');}
  }
+ function militaryRingleaderFinish(){
+  switch(e.species){
+   case 'crownguard':
+    // Crown officers keep the same uniform and body size; rank is shown through a crested helm, command sash and gold-edged pauldrons.
+    poly([[-11,-38],[-7,-49],[0,-55],[8,-48],[12,-38],[7,-41],[-7,-41]],'#806177');poly([[-2,-55],[0,-64],[3,-55]],'#d1ae72');
+    for(const side of [-1,1])poly([[side*10,-18],[side*22,-20],[side*18,-9],[side*9,-8]],'#8e858b');
+    line([[-10,-15],[10,1]],'#c39a67',4);for(const y of [-10,-4,2])line([[10,y],[19,y-2]],'#d9bf83',1.5);line([[22,-29],[22,10]],'#a58a65',3);poly([[24,-27],[38,-23],[24,-15]],'#76586e');break;
+   case 'orc':
+    // Occupation officers use warlord-style authority marks rather than a universal monster crown.
+    poly([[-14,-18],[-24,-22],[-21,-8],[-11,-7]],'#85877d');poly([[14,-18],[24,-22],[21,-8],[11,-7]],'#74776f');
+    line([[-11,-14],[10,1]],'#9b5d52',4);line([[24,-32],[24,9]],'#8e704f',3);poly([[26,-30],[41,-25],[26,-18]],'#9a5c54');for(const y of [-6,0,6])line([[-4,y],[6,y+1]],'#d3bb7f',1.5);break;
+   case 'archer':
+    // Raider-archer leaders stay recognizably archers but gain a command hood crest, sash and marked quiver.
+    poly([[-10,-35],[-5,-47],[0,-52],[6,-46],[11,-35],[5,-39],[-5,-39]],'#6f554e');poly([[0,-52],[3,-59],[6,-51]],'#c8a16c');
+    line([[-10,-15],[8,-2]],'#c39b67',3);rect(-19,-5,8,10,'#7b5c45');for(const y of [-26,-20,-14])line([[-22,y],[-13,y-5]],'#e4c98c',1.5);poly([[-24,-30],[-18,-35],[-12,-29]],'#a36959');break;
+  }
+  ctx.save();ctx.globalAlpha=.38;ctx.strokeStyle='#d4b36f';ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(0,11,25,8,0,0,Math.PI*2);ctx.stroke();ctx.restore();
+ }
  function captainFinish(){
   if(!(e.captain||e.roomCaptain))return;
   switch(e.captainVisualIdol||e.captainMentor){
@@ -426,6 +444,26 @@ function draw(ctx,e,p,region=0,rescued=false){
  case 'dark-throne':rect(-24,-11,48,27,'#555461');poly([[-20,-10],[-17,-39],[0,-51],[17,-39],[20,-10]],'#64616f');poly([[0,-39],[6,-29],[0,-19],[-6,-29]],'#9b82aa');for(const x of [-18,18])rect(x-5,-3,10,19,'#464752');break;
  case 'war-table':oval(0,4,29,11,'#5e554f');for(const x of [-18,18])line([[x,7],[x,18]],'#493f3b',4);line([[-18,-1],[18,7]],'#ad8b6d',1);for(const [x,y]of [[-10,0],[3,2],[12,5]])glint(x,y,'#d7b46d',1.3);break;
  case 'crown-banner':line([[0,-50],[0,14]],steel,3);poly([[3,-47],[27,-43],[23,-13],[12,-6],[3,-15]],'#71586f');poly([[14,-37],[20,-28],[14,-19],[8,-28]],'#a78ab1');break;
+ case 'crown-levy-yard':
+  shade(42,10,.18);rect(-38,-5,48,18,'#765b47');for(const x of [-28,0])oval(x,13,7,7,'#45474a');line([[8,-2],[28,-18]],localWood,4);
+  rect(15,-3,22,17,'#8d6d4b');rect(25,-18,20,16,'#7c6047');line([[16,-2],[36,13]],'#b99566',2);line([[26,-17],[44,-3]],'#b99566',2);
+  oval(-3,-16,12,5,'#4c4652');for(const x of [-7,-1,5])poly([[x-3,-15],[x,-27],[x+3,-15]],'#a76149');line([[-45,-28],[-45,12]],steel,3);poly([[-43,-26],[-22,-23],[-26,-7],[-43,-11]],'#71586f');break;
+ case 'crown-command-post':
+  shade(44,10,.18);rect(-34,-8,68,18,'#5e5a61');for(const x of [-28,28])line([[x,9],[x,-28]],steel,4);line([[-30,-25],[30,-25]],steel,3);
+  line([[0,-55],[0,11]],steel,3);poly([[3,-52],[31,-48],[26,-18],[13,-10],[3,-18]],'#71586f');poly([[15,-39],[21,-30],[15,-21],[9,-30]],'#a78ab1');
+  for(const x of [-21,21]){line([[x,-22],[x,7]],'#aeb6b2',2);poly([[x-4,-23],[x,-34],[x+4,-23]],'#c2b48d');}rect(-9,-15,18,18,'#4b4651');break;
+ case 'ashbeast-roost-scene':
+  shade(46,11,.16);oval(0,7,38,15,'#544a4b');for(let x=-34;x<=34;x+=10)line([[x,11],[x+5,-3]],'#78634f',3);oval(0,4,25,9,'#6d5a4e');
+  for(const [x,h]of [[-34,22],[28,28],[40,18]])poly([[x-5,9],[x,-h],[x+6,9]],'#514c59');for(const [x,y]of [[-20,-1],[16,1],[7,-7]])line([[x-5,y+3],[x+5,y-3]],bone,3);
+  oval(-28,12,11,5,'#4b403d');for(const x of [-32,-27,-22])poly([[x-3,11],[x,-3],[x+3,11]],'#b06b4d');break;
+ case 'crown-logistics-bay':
+  shade(46,11,.18);poly([[-43,-2],[-25,-34],[25,-34],[44,-2]],'#57515f');line([[-24,-31],[-24,13]],localWood,4);line([[24,-31],[24,13]],localWood,4);
+  rect(-35,-4,27,20,'#806144');rect(-10,-10,25,24,'#8b6b49');rect(14,-2,25,18,'#745945');for(const [x,y]of [[-26,-8],[4,-14],[26,-6]])glint(x,y,'#b99468',1);
+  oval(-28,-17,13,5,'#4d4642');for(const x of [-34,-28,-22])poly([[x-3,-16],[x,-30],[x+3,-16]],'#b96f47');for(const x of [5,15,25])line([[x,-31],[x,7]],steel,2);break;
+ case 'crown-fortress-checkpoint':
+  shade(48,11,.2);for(const x of [-38,38]){oval(x,5,13,5,'#4c4652');for(const dx of [-5,0,5])poly([[x+dx-3,4],[x+dx,-12],[x+dx+3,4]],'#9c5f58');}
+  for(const x of [-32,-16,0,16,32])line([[x,13],[x,-8]],'#6e5d55',5);line([[-39,-4],[39,-4]],steel,3);
+  line([[0,-56],[0,12]],steel,3);poly([[3,-53],[29,-49],[24,-19],[12,-10],[3,-18]],'#71586f');poly([[14,-40],[20,-31],[14,-22],[8,-31]],'#b08db9');for(const x of [-20,20])line([[x,-7],[x,-32]],'#b7b8b0',2);break;
  case 'animal-pen':for(const x of [-23,23])line([[x,12],[x,-18]],localWood,3);line([[-24,-13],[24,-13]],localWood,3);line([[-24,2],[24,2]],localWood,3);for(const [x,y]of [[-9,5],[7,7]])oval(x,y,7,4,'#8c8062');break;
  case 'drying-rack':for(const x of [-22,22])line([[x,12],[x,-34]],localWood,3);line([[-23,-29],[23,-29]],localWood,3);for(const x of [-14,0,14]){line([[x,-28],[x,-10]],'#cdbf9f',1);rect(x-5,-10,10,12,x===0?'#8da0a0':'#a1846f');}break;
  case 'tax-post':line([[0,-48],[0,14]],localWood,4);rect(-18,-43,36,25,'#8a7357');for(const y of [-37,-31,-25])line([[-13,y],[12,y]],'#d3c298',1);rect(7,-14,12,10,'#6f5541');break;
@@ -579,7 +617,14 @@ function draw(ctx,e,p,region=0,rescued=false){
  case 'ogre':if(e.ranged){humanoid('#777469','#b2a684',1.5);rect(-12,-3,24,7,'#80664d');poly([[-17,-18],[-25,-12],[-21,3],[-11,-4]],'#6f655d');line([[-18,-8],[13,3]],'#a08461',4);rect(-27,-2,14,17,'#705946');for(const [x,y,r]of [[-22,-6,5],[-17,1,4],[-24,7,4]])oval(x,y,r,r*.7,'#85867f');line([[18,-29],[30,-11]],'#b69a70',2);poly([[27,-13],[34,-17],[36,-10],[29,-7]],'#81796d');}else{humanoid('#8d7a5f','#b2a684',1.5);rect(-12,-3,24,7,'#6b5841');line([[25,-22],[20,14]],'#96744e',6);oval(27,-25,8,15,'#816647');}poly([[-4,-23],[-5,-17],[-1,-21]],bone);poly([[4,-23],[5,-17],[1,-21]],bone);break;
  case 'archer':human('archer');break;
  case 'orc':if(e.ranged){humanoid('#765e4f','#89936c',1.15);poly([[-10,-14],[-16,-22],[-4,-18]],'#7b6a5d');poly([[9,-14],[14,-20],[4,-18]],'#8a7463');line([[-11,-15],[10,-1]],'#b07855',4);rect(-17,-5,8,11,'#704b3e');line([[16,-28],[25,-8]],'#79573f',3);poly([[19,-29],[30,-34],[27,-23]],steel);line([[11,-20],[19,-1]],'#79573f',3);poly([[14,-22],[25,-27],[22,-16]],steel);}else{humanoid('#846e56','#89936c',1.15);poly([[-10,-14],[-15,-22],[-3,-18]],steel);poly([[10,-14],[15,-22],[3,-18]],steel);sword(17,-6);}break;
- case 'crownguard':human('soldier');poly([[-12,-34],[0,-45],[12,-34]],'#6d5260');shield(-16,-1,'#7e4f56');break;
+ case 'crownguard':{
+  const cloth=e.guard?'#51495d':'#62566e',metal=e.guard?'#aab2b5':'#939fa7';humanoid(cloth,metal,1.03);
+  poly([[-12,-32],[-9,-42],[0,-47],[10,-41],[13,-31],[7,-35],[-7,-35]],'#6d5260');fillPoly([[-12,-32],[-9,-42],[0,-47],[0,-32]],'#2f2938',.28);line([[-7,-29],[7,-29]],'#d2b77b',2);
+  rect(-8,-17,16,15,metal);fillPoly([[-8,-17],[0,-17],[0,-2],[-8,-2]],'#2e3440',.18);
+  if(e.ranged){bow(17,-7);line([[-15,-29],[-19,5]],'#7b604f',5);for(const y of [-29,-23,-17])line([[-20,y],[-13,y-5]],'#e5d4ad',1);poly([[-11,-14],[-18,8],[-6,6]],'#4d4259');}
+  else{shield(-17,-1,'#7e4f56');sword(16,-6);}
+  if(e.guard){poly([[-13,-19],[-22,-18],[-18,-10],[-10,-11]],'#858e91');poly([[13,-19],[22,-18],[18,-10],[10,-11]],'#858e91');line([[-8,-24],[8,-24]],'#e0c989',2);}
+ }break;
  case 'wraith':case 'stalker':case 'summon':poly([[-16,12],[-10,-24],[0,-40],[11,-25],[17,12],[8,7],[0,14],[-7,7]],e.species==='stalker'?'#877179':'#87a9a6');oval(0,-23,6,8,'#354c50');eye(-4,-25);eye(2,-25);if(e.species==='wraith'){line([[12,-10],[22,-5]],'#a6bbae');rect(18,-4,9,12,'#6b7769');rect(20,-2,5,7,'#dfc980');}break;
  default:humanoid('#919b81');
  }
@@ -587,11 +632,11 @@ function draw(ctx,e,p,region=0,rescued=false){
  }
  if(e.hybrid&&e.species==='reedbeast'){oval(0,0,6,3,'#628975');line([[2,1],[15,5]],'#c1a18e',2);}if(e.rangedAim){oval(0,-56,5,5,'#ead6a0');}
  if(e.form==='true'){ctx.save();ctx.globalAlpha=.48;ctx.strokeStyle=e.type==='boss'?'#fff0a6':'#e5c876';ctx.lineWidth=e.type==='boss'?3:2;for(const r of e.type==='boss'?[30,40,50]:[23,30]){ctx.beginPath();ctx.ellipse(0,11,r,r*.28,0,0,Math.PI*2);ctx.stroke();}if(e.type==='boss'){ctx.globalAlpha=.18;ctx.fillStyle='#f1c75e';ctx.beginPath();ctx.ellipse(0,-11,34,52,0,0,Math.PI*2);ctx.fill();}ctx.restore();line([[-19,18],[-8,23],[9,23],[21,17]],'#e2c36f',e.type==='boss'?3:2);for(const x of [-17,17])poly([[x,-36],[x*1.45,-54],[x*.48,-42]],'#e1bd6d');for(const x of [-11,0,11])glint(x,-47,'#ffe7a8',e.type==='boss'?2.4:1.3);if(e.type==='boss'){poly([[-22,-52],[-14,-66],[-7,-56],[0,-70],[7,-56],[14,-66],[22,-52]],'#d7ad42');for(const x of [-26,26])glint(x,-28,'#fff4bd',2.8);}}
- else if(e.form==='ringleader'){rect(-4,-47,8,8,gold);poly([[-12,-40],[-15,-49],[-5,-45],[0,-53],[5,-45],[15,-49],[12,-40]],gold);for(const x of [-16,16])line([[x,-12],[x*1.2,-24]],'#d5b36e',2);glint(0,-51,'#fff0b7',1.5);if(e.frenzy){ctx.save();ctx.globalAlpha=.55;ctx.strokeStyle='#ef8c63';ctx.lineWidth=2.5;for(const r of [25,32]){ctx.beginPath();ctx.ellipse(0,10,r,r*.27,0,0,Math.PI*2);ctx.stroke();}ctx.restore();for(const x of [-19,19])glint(x,-21,'#ff9f6b',2);}}
+ else if(e.form==='ringleader'){const military=['orc','archer','crownguard'].includes(e.species);if(military)militaryRingleaderFinish();else{rect(-4,-47,8,8,gold);poly([[-12,-40],[-15,-49],[-5,-45],[0,-53],[5,-45],[15,-49],[12,-40]],gold);for(const x of [-16,16])line([[x,-12],[x*1.2,-24]],'#d5b36e',2);glint(0,-51,'#fff0b7',1.5);}if(e.frenzy){ctx.save();ctx.globalAlpha=.55;ctx.strokeStyle='#ef8c63';ctx.lineWidth=2.5;for(const r of [25,32]){ctx.beginPath();ctx.ellipse(0,10,r,r*.27,0,0,Math.PI*2);ctx.stroke();}ctx.restore();for(const x of [-19,19])glint(x,-21,'#ff9f6b',2);}}
  if(type==='hero'||type==='ally'||type==='enemy'){line([[-8,13],[0,15],[8,13]],type==='enemy'?'#d2aa87':'#c9d6ad',1.2);if(type==='hero')oval(0,-47,2,2,'#f6dfa0');}
  ctx.restore();
 }
-function height(e){if(e.type==='boss')return 102;if(e.captain||e.roomCaptain)return 68;if(e.renderKind==='building'&&e.kind==='barracks')return 88;if(e.renderKind==='hero'&&e.class==='mage'||e.renderKind==='prop')return 64;if(['dungeon','exit','transport'].includes(e.kind))return 64;return 54;}
+function height(e){if(e.type==='boss')return 102;if(e.captain||e.roomCaptain)return 68;if(e.renderKind==='building'&&e.kind==='barracks')return 88;if(e.renderKind==='prop'&&['crown-levy-yard','crown-command-post','ashbeast-roost-scene','crown-logistics-bay','crown-fortress-checkpoint'].includes(e.structure))return 76;if(e.renderKind==='hero'&&e.class==='mage'||e.renderKind==='prop')return 64;if(['dungeon','exit','transport'].includes(e.kind))return 64;return 54;}
 const floorPalettes=[['#294b36','#31583e','#203e30','#95ad80'],['#26444b','#31535a','#203b42','#85ada6'],['#485447','#56614d','#3b493f','#b1b59a'],['#50413b','#5d4b42','#423732','#b9987b'],['#343644','#414351','#2c2f3c','#a09b9e']];
 const dungeonFloors={crypt:['#343c39','#414945','#2b3331','#a9b1a0'],archive:['#30464a','#3b5558','#283d42','#8fb6b4'],mine:['#44433b','#524f43','#39382f','#ada88c'],abyss:['#44373b','#544349','#382f34','#c09a89'],citadel:['#3b414b','#494f59','#303640','#abb3b5']};
 const treasuryFloors={
@@ -796,7 +841,7 @@ function atmosphere(ctx,canvas,region=0,opts={}){
  const v=ctx.createRadialGradient(canvas.width*.5,canvas.height*.48,Math.min(canvas.width,canvas.height)*.18,canvas.width*.5,canvas.height*.5,Math.max(canvas.width,canvas.height)*.72);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,night?'rgba(0,0,0,.24)':'rgba(5,15,10,.12)');ctx.fillStyle=v;ctx.fillRect(0,0,canvas.width,canvas.height);
  ctx.restore();
 }
-function enemyBodyKind(e){if(!e?.species)return 'unknown';const rangedClass=e.ranged&&['mireling','ogre','orc','ashbeast'].includes(e.species);return e.species+(rangedClass?':ranged':'');}
+function enemyBodyKind(e){if(!e?.species)return 'unknown';const rangedClass=e.ranged&&['mireling','ogre','orc','ashbeast','crownguard'].includes(e.species);return e.species+(rangedClass?':ranged':'');}
 root.PrototypeVisuals={draw,height,floor,roads,terrain,bridges,atmosphere,allyBodyKind,enemyBodyKind,barracksVisualState};
 if(typeof module!=='undefined')module.exports=root.PrototypeVisuals;
 })(typeof window!=='undefined'?window:globalThis);
