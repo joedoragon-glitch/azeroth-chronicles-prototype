@@ -292,7 +292,7 @@ class Campaign{
  spaceMillhavenSupplier(z){if(z.id!=='vale'||z.supplierPositionVersion===2)return;const supplier=z.npcs.find(n=>n.id==='supplier');if(!supplier)return;const [x,y]=D.towns[0];Object.assign(supplier,this.safe(x+115,y-85,z.id));z.supplierPositionVersion=2;}
  creatureStrongholdCenter(z,cfg){if(cfg.site){const n=z.npcs.find(n=>n.id===cfg.site);if(n)return {x:n.x,y:n.y};}return cfg.center?{x:cfg.center[0],y:cfg.center[1]}:null;}
  creatureStrongholds(z){
-  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||this.sideDungeon(z.id)||z.creatureStrongholdsVersion===4)return;
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||this.sideDungeon(z.id)||z.creatureStrongholdsVersion===5)return;
   const plans=(R.creatureStrongholds||[]).filter(s=>s.region===z.id),oldZone=this.s.zone;this.s.zone=z.id;
   try{
    z.props=z.props.filter(p=>!String(p.id||'').startsWith('stronghold-'));
@@ -312,7 +312,7 @@ class Campaign{
     const spots=[[-95,-20],[-25,-95],[80,-65],[100,35],[20,105],[-85,75]];
     for(const [j,e]of candidates.entries()){const [dx,dy]=spots[j%spots.length],p=this.safe(center.x+dx,center.y+dy,z.id);e.home={...p};if(e.hp>0&&!e.aggro)Object.assign(e,p);e.stronghold=cfg.id;e.strongholdResident=true;e.pack='stronghold-'+cfg.id+'-'+Math.floor(j/3);if(cfg.site)e.site=cfg.site;occupied.add(e.id);}
    }
-   z.creatureStrongholdsVersion=4;
+   z.creatureStrongholdsVersion=5;
   }finally{this.s.zone=oldZone;}
  }
  sideInteriors(z){
