@@ -85,6 +85,13 @@ function visualSignature(entity,region){
  const log=[],target={};const ctx=new Proxy(target,{get(o,p){if(p in o)return o[p];return (...args)=>{log.push([String(p),...args.map(v=>typeof v==='number'?Math.round(v*100)/100:v)]);};},set(o,p,v){o[p]=v;log.push(['set',String(p),v]);return true;}});
  Visuals.draw(ctx,entity,{x:0,y:0},region,false);return JSON.stringify(log);
 }
+test('Abyss Bastion procedural props and authored partitions are visually distinct',()=>{
+ assert.equal(typeof Visuals.dungeonArchitecture,'function','renderer exposes authored dungeon partition geometry');
+ const region=3,structures=['handler-station','feed-crate','containment-post','scorched-floor','egg-cradle','feeding-trough','carcass-rack','claw-scrape','dragon-perch'];
+ const signatures=structures.map((structure,i)=>visualSignature({id:'abyss-prop-'+i,renderKind:'prop',decorative:true,structure},region));
+ assert.equal(new Set(signatures).size,structures.length,'Abyss service, containment and dragon-life props have distinct silhouettes');
+ for(const structure of ['chain','roost','hatchery','bone-pile']){const variants=Array.from({length:8},(_,i)=>visualSignature({id:'abyss-'+structure+'-'+i,renderKind:'prop',decorative:true,structure},region));assert(new Set(variants).size>=2,structure+' gains deterministic Frontier/Abyss variation');}
+});
 test('military Ringleaders read as officers without changing body scale',()=>{
  for(const species of ['orc','archer','crownguard']){
   const base={id:'rank-'+species,species,name:species,renderKind:'enemy',type:'mob',form:'normal',ranged:species!=='orc'},lead={...base,form:'ringleader'};
