@@ -12,7 +12,7 @@ assert.equal(Visuals.barracksVisualState({progress:2,full:false}),'construction'
 assert.equal(Visuals.barracksVisualState({progress:4,full:false}),'basic','Basic Barracks use the cozy field-camp body');
 assert.equal(Visuals.barracksVisualState({progress:4,full:true}),'full','Full Barracks use the expanded expedition-camp body');
 assert.equal(Visuals.height({renderKind:'building',kind:'barracks',progress:4,full:false}),Visuals.height({renderKind:'building',kind:'barracks',progress:4,full:true}),'Basic and Full Barracks reserve the same visual footprint height');
-for(const species of ['mireling','ogre','orc','ashbeast']){
+for(const species of ['mireling','ogre','orc','ashbeast','crownguard']){
  assert.equal(Visuals.enemyBodyKind({species,ranged:false}),species,species+' melee body key');
  assert.equal(Visuals.enemyBodyKind({species,ranged:true}),species+':ranged',species+' ranged class has a distinct procedural body');
 }
