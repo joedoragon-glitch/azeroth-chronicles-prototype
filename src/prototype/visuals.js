@@ -691,7 +691,7 @@ function groundDetail(ctx,p,seed,region,room,dungeonId,colors){
   if(dungeonId==='supply-crown'){
    if(k<3){line(x-10,y+2,x-2,y-4,'#1f1d2455',1.2);line(x-2,y-4,x+6,y+1,'#1f1d2455',1.2);line(x+6,y+1,x+11,y-3,'#1f1d2455',1.2);}
    else if(k===3){for(const [ox,oy]of [[-5,1],[1,-2],[6,2]])dot(x+ox,y+oy,1.7,'#8d758f88');}
-   else if(k===4){line(x-8,y+2,x+7,y-1,'#5f4c46',2);glint(x+2,y-3,'#b87552',1);}
+   else if(k===4){line(x-8,y+2,x+7,y-1,'#5f4c46',2);dot(x+2,y-3,1.2,'#b87552');}
    else if(k===5){dot(x-3,y,2,'#4a454f');dot(x+3,y+1,1.5,'#6f5f70');}
   }else{
    if(k<3){line(x-9,y,x-2,y-3,'#171d1b55',1);line(x-2,y-3,x+5,y+1,'#171d1b55',1);line(x+5,y+1,x+10,y-2,'#171d1b55',1);}
