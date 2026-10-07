@@ -77,7 +77,7 @@ await check('Paladin, Mage and Ranger Skill 1 charge readiness is identical and 
   assert(queued?.waiting&&queued.cooldown>0,cls+' can queue Skill 1 charge through the ordinary cooldown');
   await page.waitForFunction(()=>document.querySelector('#skill-1 small')?.textContent==='CHARGED',{timeout:2500});
   assert(await page.evaluate(()=>{const e=Prototype.game.zone().enemies[0];return Math.abs(e.hp-e.maxHp)<1e-9;}),cls+' movement auto-basic cannot steal Skill 1 while queued or charging');
-  await page.keyboard.up('1');await page.keyboard.up('d');
+  await page.keyboard.up('d');await page.keyboard.up('1');
   await page.waitForFunction(()=>!Prototype.game.s.projectiles.some(p=>p.charged),null,{timeout:2500});
   state=await page.evaluate(()=>({lost:Prototype.game.zone().enemies[0].maxHp-Prototype.game.zone().enemies[0].hp,mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[0]}));
   assert(Math.abs(state.lost-expectedDamage[cls])<.001,cls+' charged basic deals the expected triple basic damage');
