@@ -5,7 +5,7 @@ assert.equal(typeof Visuals.atmosphere,'function','procedural renderer exposes t
 let passed=0;function test(name,fn){try{fn();passed++;console.log('PASS '+name);}catch(e){process.exitCode=1;console.error('FAIL '+name+' '+e.stack);}}
 
 for(const [i,region] of Campaign.data.regions.entries())test(region.id+' overworld reads as a settled, natural place',()=>{
- const c=new Campaign(),ok=c.enter(region.id),z=c.zone();assert(ok);assert.equal(z.roadVersion,9);assert.equal(z.settlementLayoutVersion,3);assert.equal(z.aestheticVersion,4);assert.equal(z.landmarkLayoutVersion,3);assert.equal(z.worldLifeVersion,1);
+ const c=new Campaign(),ok=c.enter(region.id),z=c.zone();assert(ok);assert.equal(z.roadVersion,region.id==='crown'?10:9);assert.equal(z.settlementLayoutVersion,3);assert.equal(z.aestheticVersion,4);assert.equal(z.landmarkLayoutVersion,3);assert.equal(z.worldLifeVersion,1);
  const blockers=z.props.filter(p=>p.roadBlocker),life=z.props.filter(p=>String(p.id).startsWith('aesthetic-town-')||String(p.id).startsWith('aesthetic-hamlet-')),nature=z.props.filter(p=>String(p.id).startsWith('aesthetic-nature-')||String(p.id).startsWith('aesthetic-bank-'));
  assert(blockers.length>=13,region.id+' has a real settlement footprint');assert(life.length>=6,region.id+' towns show daily life');assert(nature.length>=25,region.id+' countryside has visible regional nature');assert(new Set(nature.map(p=>p.structure)).size>=3,region.id+' nature is not one repeated prop');const lived=z.props.filter(p=>String(p.id).startsWith('world-life-'));assert(lived.length>=12,region.id+' has civilian, habitat and field living-space details');assert(lived.some(p=>String(p.id).includes('-civilian-')));assert(lived.some(p=>String(p.id).includes('-habitat-')));assert(lived.some(p=>String(p.id).includes('-field-')));assert(R.landforms[i]?.length>=4,region.id+' has authored regional landforms');assert(z.props.length<=380);
  for(const p of blockers)for(const path of z.roads)for(let j=1;j<path.length;j++)assert(c.distanceToSegment(p,path[j-1],path[j])>p.r+15,region.id+' road crosses '+p.id);
@@ -17,7 +17,7 @@ for(const [i,region] of Campaign.data.regions.entries())test(region.id+' overwor
 });
 
 test('expanded destination migration keeps transports, dungeons and strongholds aligned with canonical data',()=>{
- for(const [i,region] of Campaign.data.regions.entries()){const c=new Campaign();c.enter(region.id);const z=c.zone(),entrance=z.npcs.find(n=>n.id==='entrance');assert.equal(z.destinationLayoutVersion,2);assert(distance(entrance,{x:Campaign.data.entrances[i][0],y:Campaign.data.entrances[i][1]})<1,region.id+' dungeon entrance follows expanded geography');if(!R.harbors?.[region.id]&&i<4){const out=z.npcs.find(n=>n.id==='outbound');assert(distance(out,{x:Campaign.data.ports[i][0],y:Campaign.data.ports[i][1]})<1,region.id+' outbound transport follows expanded geography');}}
+ for(const [i,region] of Campaign.data.regions.entries()){const c=new Campaign();c.enter(region.id);const z=c.zone(),entrance=z.npcs.find(n=>n.id==='entrance');assert.equal(z.destinationLayoutVersion,region.id==='crown'?3:2);assert(distance(entrance,{x:Campaign.data.entrances[i][0],y:Campaign.data.entrances[i][1]})<1,region.id+' dungeon entrance follows expanded geography');if(!R.harbors?.[region.id]&&i<4){const out=z.npcs.find(n=>n.id==='outbound');assert(distance(out,{x:Campaign.data.ports[i][0],y:Campaign.data.ports[i][1]})<1,region.id+' outbound transport follows expanded geography');}}
 });
 
 test('Flooded Marches and Ironroot Highlands share a continuous ferry route',()=>{for(const region of ['march','highlands']){const c=new Campaign();c.enter(region);const z=c.zone(),h=R.harbors[region],boat=z.npcs.find(n=>n.harbor);assert(h&&boat,region+' has an authored ferry harbor and boat');assert.equal(z.harborVersion,2);assert(distance(boat,h.boat)<1,region+' boat sits at the authored water berth');assert(!c.blocked(h.arrival.x,h.arrival.y,region),region+' dock arrival is walkable');const waterPoint={x:(h.water.x1+h.water.x2)/2,y:(h.water.y1+h.water.y2)/2};if(distance(waterPoint,h.boat)>45)assert(c.blocked(waterPoint.x,waterPoint.y,region),region+' surrounding harbor water is impassable');assert(c.route(h.arrival,{x:Campaign.data.towns[c.regionIndex()][0],y:Campaign.data.towns[c.regionIndex()][1]}).length,region+' dock connects by foot to town');if(region==='march')assert(z.props.filter(p=>String(p.id).startsWith('harbor-')&&p.structure==='mangrove').length>=3,'March ferry shore is visibly mangrove/swamp authored');}}
@@ -30,6 +30,21 @@ test('retained named landmarks sit beside the world feature their names describe
  const vale=new Campaign();vale.enter('vale');let z=vale.zone(),pond=z.npcs.find(n=>n.id==='mill-pond'),water=R.terrain[0].find(p=>p.r);const pondDistance=distance(pond,water);assert(pondDistance>water.r&&pondDistance<water.r+70,'Mill pond marker belongs on the pond shore');
  const frontier=new Campaign();frontier.enter('frontier');z=frontier.zone();const checkpoint=z.npcs.find(n=>n.id==='checkpoint'),warlord=frontier.fieldCenter();assert(checkpoint&&distance(checkpoint,warlord)<220,'Occupied checkpoint belongs to the Ashen Warlord compound');
  const crown=new Campaign();crown.enter('crown');const gate=crown.zone().npcs.find(n=>n.id==='fortress-gate'),apron=R.landforms[4].find(l=>l.kind==='fortress-apron');assert(gate&&apron);assert(distance(gate,{x:apron.x,y:apron.y})<120,'Dark fortress gate belongs to the authored fortress apron');
+});
+
+test('Dark Crown reads as a regime with separate districts and distributed outward routes',()=>{
+ const c=new Campaign();c.enter('crown');const z=c.zone(),town={x:Campaign.data.towns[4][0],y:Campaign.data.towns[4][1]};
+ assert.equal(z.crownLayoutVersion,1);assert.equal(z.roadVersion,10);assert.equal(z.destinationLayoutVersion,3);
+ assert(R.crownRoutes.length>=5,'Crown has several functionally distinct outward/logistics routes');
+ const routeIds=new Set(R.crownRoutes.map(r=>r.id));assert.equal(routeIds.size,R.crownRoutes.length);
+ for(let a=0;a<R.crownRoutes.length;a++)for(let b=a+1;b<R.crownRoutes.length;b++)assert(distance({x:R.crownRoutes[a].point[0],y:R.crownRoutes[a].point[1]},{x:R.crownRoutes[b].point[0],y:R.crownRoutes[b].point[1]})>500,'Crown routes are not clumped together');
+ for(const route of R.crownRoutes){const target={x:route.point[0],y:route.point[1]};assert(c.route(town,target).length,'route '+route.id+' is reachable');assert(z.roads.some(path=>distance(path.at(-1),target)<2),'road network reaches '+route.id);}
+ const returnRoute=R.crownRoutes.find(r=>r.transport==='return'),returnTransport=z.npcs.find(n=>n.id==='return');assert(returnRoute&&returnTransport);assert(distance(returnTransport,{x:returnRoute.point[0],y:returnRoute.point[1]})<2,'return transport occupies its own administrative route');assert(distance(returnTransport,town)>350,'return transport is no longer stacked into Crownwatch');
+ const props=z.props.filter(p=>String(p.id).startsWith('crown-layout-')),districts=new Set(props.map(p=>p.crownDistrict));
+ for(const id of ['labor-quarter','citadel-command','cindermaw-domain','fortress-logistics','fortress-approach'])assert(districts.has(id),id+' has procedural district dressing');
+ assert(new Set(props.map(p=>p.structure)).size>=12,'Crown district dressing communicates several kinds of daily and military life');
+ const citadel=z.npcs.find(n=>n.id==='entrance'),cinder=c.fieldCenter(),gate=z.npcs.find(n=>n.id==='fortress-gate');assert(distance(citadel,cinder)>600,'Citadel and Cindermaw read as separate power centers');assert(distance(cinder,gate)>1000,'Cindermaw territory does not collapse into the fortress approach');
+ assert(R.creatureStrongholds.filter(s=>s.region==='crown').length>=3,'Crown has multiple ordinary-monster/military centers of power');
 });
 
 
