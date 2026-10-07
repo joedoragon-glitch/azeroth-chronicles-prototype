@@ -37,7 +37,7 @@ const tributePlans={
   {id:'orchard-stores',site:'orchard',amount:170,hidden:false,offset:[45,260],context:'confiscated orchard stores'},
   {id:'woodland-cache',site:'cache',amount:180,hidden:false,offset:[95,65],context:'collector cache'},
   {id:'pond-strongbox',site:'mill-pond',amount:150,hidden:true,offset:[105,-65],context:'hidden tax strongbox'},
-  {id:'bridge-toll',site:'bridge-north',amount:140,hidden:true,offset:[-105,95],context:'concealed bridge toll chest'}
+  {id:'bridge-toll',site:'bridge-north',amount:140,hidden:true,offset:[-180,250],context:'concealed bridge toll chest'}
  ],
  march:[
   {id:'wagon-levy',site:'wagon',amount:200,hidden:false,offset:[100,70],context:'seized provisions levy'},
