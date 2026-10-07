@@ -9,7 +9,7 @@ This pass gives Dark Crown a dedicated procedural layout layer. It does not intr
 - Cindermaw's Treasury remains his occupied Treasury, with Dreadmaw as its captain.
 - The Ash Sentinel remains the Citadel boss and Tovan remains its captive.
 - The Dark Lord remains behind the final fortress gate and still requires both Crown specialists to be rescued.
-- Existing terrain, lava barriers, Citadel interior, Treasury interior, boss mechanics, quest rewards and ending logic remain intact.
+- Existing terrain, lava barriers, boss mechanics, Treasury cache count/rewards, specialist progression and ending logic remain intact; the Citadel and Cindermaw Treasury now have their authored irregular interior layouts.
 
 ## Dedicated districts
 
