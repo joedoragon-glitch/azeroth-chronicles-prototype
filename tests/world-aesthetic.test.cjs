@@ -69,12 +69,9 @@ test('Abyss Bastion depth props have distinct deterministic procedural silhouett
  const region=3,kinds=['handler-station','feed-crate','containment-post','scorched-floor','egg-cradle','feeding-trough','carcass-rack','claw-scrape','dragon-perch'];
  const signatures=kinds.map((structure,i)=>visualSignature({id:'abyss-depth-'+i,renderKind:'prop',decorative:true,structure,dungeonDistrict:'test'},region));
  assert.equal(new Set(signatures).size,kinds.length,'Bastion functional props do not collapse into one generic drawing');
- const roosts=['abyss-roost-a','abyss-roost-b','abyss-roost-c','abyss-roost-d'].map(id=>visualSignature({id,renderKind:'prop',decorative:true,structure:'roost'},region));
- assert(new Set(roosts).size>=2,'Abyss roosts have deterministic lived-in variation');
- const hatcheries=['abyss-hatch-a','abyss-hatch-b','abyss-hatch-c','abyss-hatch-d'].map(id=>visualSignature({id,renderKind:'prop',decorative:true,structure:'hatchery'},region));
- assert(new Set(hatcheries).size>=2,'Abyss hatcheries have deterministic variation');
+ const roosts=['abyss-roost-a','abyss-roost-b','abyss-roost-c','abyss-roost-d'].map(id=>visualSignature({id,renderKind:'prop',decorative:true,structure:'roost'},region));assert(new Set(roosts).size>=2,'Abyss roosts vary deterministically');
+ const hatcheries=['abyss-hatch-a','abyss-hatch-b','abyss-hatch-c','abyss-hatch-d'].map(id=>visualSignature({id,renderKind:'prop',decorative:true,structure:'hatchery'},region));assert(new Set(hatcheries).size>=2,'Abyss hatcheries vary deterministically');
 });
-
 test('Dark Crown reads as a regime with separate districts and distributed outward routes',()=>{
  const c=new Campaign();c.enter('crown');const z=c.zone(),town={x:Campaign.data.towns[4][0],y:Campaign.data.towns[4][1]};
  assert.equal(z.crownLayoutVersion,1);assert.equal(z.roadVersion,10);assert.equal(z.destinationLayoutVersion,4);
@@ -85,7 +82,7 @@ test('Dark Crown reads as a regime with separate districts and distributed outwa
  const hubRoutes=R.crownRoutes.filter(r=>r.travelHub),hubs=z.npcs.filter(n=>n.crownTravelHub);assert.equal(hubRoutes.length,4,'four existing Crown route structures support travel');assert.equal(hubs.length,4,'all four route structures expose travel interaction');assert(!z.npcs.some(n=>n.id==='return'),'old single-return transport is replaced by the shared Crown hubs');for(const route of hubRoutes){const hub=hubs.find(n=>n.routeId===route.id);assert(hub,route.id+' has a travel interaction');assert(distance(hub,{x:route.point[0],y:route.point[1]})<2,route.id+' travel interaction stays on the existing route structure');}assert.equal(hubs.filter(n=>!n.interactionOnly).length,1,'only the already-visible dragon adds a transport vehicle; other hubs reuse their existing structures');
  const props=z.props.filter(p=>String(p.id).startsWith('crown-layout-')),districts=new Set(props.map(p=>p.crownDistrict));
  for(const id of ['labor-quarter','citadel-command','cindermaw-domain','fortress-logistics','fortress-approach'])assert(districts.has(id),id+' has procedural district dressing');
- assert(new Set(props.map(p=>p.structure)).size>=12,'Crown district dressing communicates several kinds of daily and military life');
+ const composed=['crown-levy-yard','crown-command-post','ashbeast-roost-scene','crown-logistics-bay','crown-fortress-checkpoint'],authored=R.crownDistricts.flatMap(d=>d.props.map(p=>p[2]));for(const structure of composed)assert(authored.includes(structure),structure+' is authored as a composed Crown scene');assert(props.filter(p=>composed.includes(p.structure)).length>=3,'road clearance still leaves several large composed Crown scenes visible');assert(props.length<28,'Crown composition pass reduces loose district prop count instead of increasing density');
  const citadel=z.npcs.find(n=>n.id==='entrance'),cinder=c.fieldCenter(),gate=z.npcs.find(n=>n.id==='fortress-gate');assert(distance(citadel,cinder)>600,'Citadel and Cindermaw read as separate power centers');assert(distance(cinder,gate)>1000,'Cindermaw territory does not collapse into the fortress approach');
  assert(R.creatureStrongholds.filter(s=>s.region==='crown').length>=3,'Crown has multiple ordinary-monster/military centers of power');
 });
@@ -95,6 +92,21 @@ function visualSignature(entity,region){
  const log=[],target={};const ctx=new Proxy(target,{get(o,p){if(p in o)return o[p];return (...args)=>{log.push([String(p),...args.map(v=>typeof v==='number'?Math.round(v*100)/100:v)]);};},set(o,p,v){o[p]=v;log.push(['set',String(p),v]);return true;}});
  Visuals.draw(ctx,entity,{x:0,y:0},region,false);return JSON.stringify(log);
 }
+test('military Ringleaders read as officers without changing body scale',()=>{
+ for(const species of ['orc','archer','crownguard']){
+  const base={id:'rank-'+species,species,name:species,renderKind:'enemy',type:'mob',form:'normal',ranged:species!=='orc'},lead={...base,form:'ringleader'};
+  assert.equal(Visuals.height(base),Visuals.height(lead),species+' hierarchy must not use size inflation');
+  assert.notEqual(visualSignature(base,species==='crownguard'?4:3),visualSignature(lead,species==='crownguard'?4:3),species+' Ringleader has officer-specific hierarchy cues');
+ }
+});
+test('Citadel composition preserves combat geometry while consolidating decoration',()=>{
+ const c=new Campaign();c.enter('citadel');const z=c.zone(),decor=z.props.filter(p=>String(p.id).startsWith('decor-')),required=['citadel-muster','citadel-command','citadel-ritual-array','citadel-barracks-bay','citadel-forge-bay','citadel-boss-approach'];
+ assert.equal(z.enemies.filter(e=>e.guard&&e.form==='normal').length,Campaign.data.regions[4].guards,'Citadel guard quota is unchanged');
+ assert.equal(R.dungeonTraps.citadel.length,24,'Citadel trap layout is unchanged');
+ assert.deepEqual(R.dungeonWalls.citadel,[750,830,[[430,680],[900,1150]]],'Citadel wall geometry is unchanged');
+ for(const structure of required)assert(decor.some(p=>p.structure===structure),structure+' is present');
+ assert(decor.length<=8,'Citadel uses composed stations instead of dozens of loose decorations');
+});
 test('named town utilities use distinct purpose-specific silhouettes while retaining each regional palette',()=>{
  const roles=[
   {id:'rest',kind:'rest',renderKind:'npc',name:'Refuge'},
