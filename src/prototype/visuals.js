@@ -820,6 +820,22 @@ function bridges(ctx,screen,region=0){
  }
  ctx.restore();
 }
+function dungeonGeometry(ctx,screen,dungeonId=''){
+ const layout=R.dungeonGeometry?.[dungeonId];if(!layout)return;
+ const poly=(pts,fill,stroke,width=1)=>{const ps=pts.map(screen);ctx.fillStyle=fill;ctx.beginPath();ps.forEach((p,j)=>j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.stroke();}};
+ ctx.save();
+ for(const b of layout.blockers||[]){
+  if(b.shape==='circle'){
+   const pts=Array.from({length:28},(_,n)=>{const a=n*Math.PI/14;return{x:b.x+Math.cos(a)*b.r,y:b.y+Math.sin(a)*b.r};});
+   poly(pts,'#292327','#8e675d',2);const p=screen({x:b.x,y:b.y});ctx.globalAlpha=.35;ctx.fillStyle='#b9694c';ctx.beginPath();ctx.ellipse(p.x,p.y,b.r*.55,b.r*.19,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;continue;
+  }
+  const pts=[{x:b.x1,y:b.y1},{x:b.x2,y:b.y1},{x:b.x2,y:b.y2},{x:b.x1,y:b.y2}],ps=pts.map(screen),drop=12;
+  ctx.fillStyle='#4b4142';ctx.beginPath();ctx.moveTo(ps[1].x,ps[1].y);ctx.lineTo(ps[2].x,ps[2].y);ctx.lineTo(ps[2].x,ps[2].y+drop);ctx.lineTo(ps[1].x,ps[1].y+drop);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#514647';ctx.beginPath();ctx.moveTo(ps[2].x,ps[2].y);ctx.lineTo(ps[3].x,ps[3].y);ctx.lineTo(ps[3].x,ps[3].y+drop);ctx.lineTo(ps[2].x,ps[2].y+drop);ctx.closePath();ctx.fill();
+  poly(pts,'#706064','#a17b70',1.8);
+ }
+ ctx.restore();
+}
 function roads(ctx,paths,screen,region=0){
  const strip=R.barriers[region].bounds,palettes=[
   {shoulder:'#564834',base:'#8e7758',inner:'#a18b68',seam:'#6f604c'},
@@ -874,6 +890,6 @@ function atmosphere(ctx,canvas,region=0,opts={}){
  ctx.restore();
 }
 function enemyBodyKind(e){if(!e?.species)return 'unknown';const rangedClass=e.ranged&&['mireling','ogre','orc','ashbeast','crownguard'].includes(e.species);return e.species+(rangedClass?':ranged':'');}
-root.PrototypeVisuals={draw,height,floor,roads,terrain,bridges,atmosphere,allyBodyKind,enemyBodyKind,barracksVisualState};
+root.PrototypeVisuals={draw,height,floor,dungeonGeometry,roads,terrain,bridges,atmosphere,allyBodyKind,enemyBodyKind,barracksVisualState};
 if(typeof module!=='undefined')module.exports=root.PrototypeVisuals;
 })(typeof window!=='undefined'?window:globalThis);
