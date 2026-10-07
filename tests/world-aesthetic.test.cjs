@@ -92,11 +92,14 @@ test('military Ringleaders read as officers without changing body scale',()=>{
   assert.notEqual(visualSignature(base,species==='crownguard'?4:3),visualSignature(lead,species==='crownguard'?4:3),species+' Ringleader has officer-specific hierarchy cues');
  }
 });
-test('Citadel composition preserves combat geometry while consolidating decoration',()=>{
- const c=new Campaign();c.enter('citadel');const z=c.zone(),decor=z.props.filter(p=>String(p.id).startsWith('decor-')),required=['citadel-muster','citadel-command','citadel-ritual-array','citadel-barracks-bay','citadel-forge-bay','citadel-boss-approach'];
- assert.equal(z.enemies.filter(e=>e.guard&&e.form==='normal').length,Campaign.data.regions[4].guards,'Citadel guard quota is unchanged');
- assert.equal(R.dungeonTraps.citadel.length,24,'Citadel trap layout is unchanged');
- assert.deepEqual(R.dungeonWalls.citadel,[750,830,[[430,680],[900,1150]]],'Citadel wall geometry is unchanged');
+test('Citadel composition continues into an irregular military fortress',()=>{
+ const c=new Campaign();c.enter('citadel');const z=c.zone(),decor=z.props.filter(p=>String(p.id).startsWith('decor-')),required=['citadel-muster','citadel-command','citadel-ritual-array','citadel-barracks-bay','citadel-forge-bay','citadel-boss-approach'],architecture=R.dungeonArchitecture.citadel;
+ assert.equal(z.enemies.filter(e=>e.guard&&e.form==='normal').length,R.dungeonGuardFormations.citadel.length,'Citadel uses its authored military formation quota');
+ assert.equal(R.dungeonGuardFormations.citadel.length,32,'Citadel has more rewardless defenders without changing the regional field population');
+ assert.equal(R.dungeonTraps.citadel.length,28,'Citadel trap systems expand with the fortress while retaining safe alternatives');
+ assert(architecture.walkable.length>=6&&architecture.partitions.length>=4,'Citadel uses multiple overlapping wings and internal gates instead of the legacy single divider');
+ const bounds=architecture.walkable.map(a=>a.bounds.join(','));assert(new Set(bounds).size===architecture.walkable.length,'Citadel wings have distinct footprints');
+ assert(c.blocked(700,180,'citadel',12)&&!c.blocked(300,300,'citadel',12)&&!c.blocked(1180,1200,'citadel',12),'Citadel footprint is visibly irregular rather than one full rectangular floor');
  for(const structure of required)assert(decor.some(p=>p.structure===structure),structure+' is present');
  assert(decor.length<=8,'Citadel uses composed stations instead of dozens of loose decorations');
 });
