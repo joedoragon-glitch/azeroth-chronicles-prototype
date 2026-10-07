@@ -269,14 +269,15 @@ class Campaign{
    let serial=0;
    const roadNear=(p,margin=40)=>z.roads?.some(path=>path.some((b,j)=>j&&this.distanceToSegment(p,path[j-1],b)<margin));
    const clearPoint=(x,y)=>{if(!this.blocked(x,y,z.id,8,true))return {x,y};for(let radius=30;radius<=180;radius+=30)for(let n=0;n<16;n++){const a=n*Math.PI/8,p={x:x+Math.cos(a)*radius,y:y+Math.sin(a)*radius};if(!this.blocked(p.x,p.y,z.id,8,true))return p;}return null;};
-   const place=(base,spec,prefix,roadside=false)=>{
+   const place=(base,spec,prefix)=>{
     const [dx,dy,structure]=spec,p=clearPoint(base.x+dx,base.y+dy);if(!p)return false;
-    if(!roadside&&roadNear(p,48))return false;
+    // Even decorative roadside furniture must leave the generated travel lane visually and mechanically clear.
+    if(roadNear(p,48))return false;
     if(z.npcs.some(n=>dist(n,p)<45)||z.nodes.some(n=>n.amount>0&&dist(n,p)<48)||z.buildings.some(n=>dist(n,p)<55))return false;
     z.props.push({id:'frontier-layout-'+prefix+'-'+serial++,...p,r:0,decorative:true,structure,frontierDistrict:prefix});return true;
    };
-   for(const d of districts){const center={x:d.center[0],y:d.center[1]};for(const spec of d.props||[])place(center,spec,d.id,false);}
-   for(const route of routes){const center={x:route.point[0],y:route.point[1]};for(const spec of route.props||[])place(center,spec,'route-'+route.id,true);}
+   for(const d of districts){const center={x:d.center[0],y:d.center[1]};for(const spec of d.props||[])place(center,spec,d.id);}
+   for(const route of routes){const center={x:route.point[0],y:route.point[1]};for(const spec of route.props||[])place(center,spec,'route-'+route.id);}
    z.frontierLayoutVersion=1;
   }finally{this.s.zone=oldZone;}
  }
