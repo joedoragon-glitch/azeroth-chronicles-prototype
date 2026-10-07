@@ -182,6 +182,19 @@ const crownDistricts=[
  ]}
 ];
 
+// Long-distance travel links are data, not assumptions baked into the travel engine.
+// Dark Crown is the first regional hub: after reaching it, the hero can directly revisit every earlier region.
+// Each route arrives at that region's established onward transport station, so world navigation remains visually legible.
+const regionalTravelHubs={
+ crown:[
+  {id:'crown-route-frontier',destination:'frontier',name:'Dragon rider to Ashen Frontier',icon:'🐉',point:[620,220],arrival:[3100,500],fare:0,requiresVisited:true},
+  {id:'crown-route-highlands',destination:'highlands',name:'Pack caravan to Ironroot Highlands',icon:'🐫',point:[3570,980],arrival:[3100,500],fare:0,requiresVisited:true},
+  {id:'crown-route-march',destination:'march',name:'Crown supply convoy to Flooded Marches',icon:'🐎',point:[180,1600],arrival:[2250,650],fare:0,requiresVisited:true},
+  {id:'crown-route-vale',destination:'vale',name:'Crown merchant convoy to Greenwood Vale',icon:'🐎',point:[1650,3580],arrival:[2450,650],fare:0,requiresVisited:true}
+ ]
+};
+
+
 // Field-boss supply objectives are actual Treasury raids: every required cache is kept inside the boss's Treasury.
 const supplyRooms=[
  {id:'supply-vale',region:'vale',boss:'thorn',count:2,entryOffset:[255,-170],name:"Thornfang's Treasury",objective:"Recover two caches from Thornfang's Treasury"},
@@ -549,6 +562,6 @@ const basicAttackCombo={steps:3,resetSeconds:4,multipliers:[1,1.1,1.2],finisher:
 const companionSkills={globalCooldown:1.5,first:{cooldown:8,multiplier:3,soldier:{name:'Power Strike'},archer:{name:'Triple Shot'}},second:{cooldown:12,unlockHeroSlot:2,soldier:{name:'Holy Cleave',shape:'cone',range:185,halfAngle:.8,multiplier:2.2,effect:'holy-cleave'},archer:{name:'Piercing Volley',shape:'line',range:480,halfWidth:55,multiplier:2.4,effect:'piercing-volley'}}};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,basicAttackCombo,companionSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,creatureStrongholds,sideDungeons,sideDungeonTrapTuning,tributeTotal,legacyResourceTotals,tributePlans,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,crownRoutes,crownDistricts,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
+const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,basicAttackCombo,companionSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,creatureStrongholds,sideDungeons,sideDungeonTrapTuning,tributeTotal,legacyResourceTotals,tributePlans,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,crownRoutes,crownDistricts,regionalTravelHubs,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
