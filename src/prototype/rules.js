@@ -425,11 +425,50 @@ const travelArrivals={
 const dungeonWalls={crypt:[710,780,[[480,680],[870,1060]]],archive:[650,730,[[400,620],[980,1200]]],mine:[800,870,[[480,730],[1020,1250]]],abyss:[610,690,[[600,830],[1040,1260]]],citadel:[750,830,[[430,680],[900,1150]]]};
 const pillars={crypt:[[430,620],[1010,480]],archive:[[420,740],[1060,620]],mine:[[480,950],[1120,380]],abyss:[[420,530],[980,890]],citadel:[[400,750],[1080,450]]};
 const guardPosts=[[350,430],[490,700],[420,1030],[990,420],[1110,680],[1000,900],[1000,1200],[550,1190],[900,240],[1250,480],[380,850],[1190,950],[560,390]];
+// Abyss Bastion breaks the old single-divider dungeon template into an asymmetrical fortress around open abyss cuts.
+// Blocks are real collision geometry. Wide authored gates preserve squad movement and readable retreat space.
+const dungeonGeometry={
+ abyss:{
+  version:1,
+  exit:[160,240],
+  boss:[1240,1120],
+  cage:[1260,1340],
+  waypoints:[[160,240],[420,430],[635,430],[820,520],[875,795],[880,980],[1020,1090],[1240,1120],[1260,1340]],
+  serviceWaypoint:[500,1120],
+  blocks:[
+   {kind:'void',x1:1040,y1:40,x2:1460,y2:250},
+   {kind:'void',x1:40,y1:760,x2:260,y2:1460},
+   {kind:'wall',x1:590,y1:140,x2:675,y2:320},
+   {kind:'wall',x1:590,y1:545,x2:675,y2:900},
+   {kind:'wall',x1:675,y1:755,x2:800,y2:835},
+   {kind:'wall',x1:950,y1:755,x2:1100,y2:835},
+   {kind:'wall',x1:980,y1:835,x2:1060,y2:970},
+   {kind:'wall',x1:980,y1:1220,x2:1060,y2:1400},
+   {kind:'wall',x1:650,y1:1120,x2:730,y2:1400}
+  ]
+ }
+};
+// Guardian placement follows the Bastion's actual defensive functions rather than the generic repeated two-unit post grid.
+const dungeonGuardianPlans={
+ abyss:{
+  positions:[
+   [300,300,'entry-watch'],[420,330,'entry-watch'],
+   [330,560,'entry-garrison'],[480,620,'entry-garrison'],
+   [520,410,'containment-gate'],[535,500,'containment-gate'],
+   [740,350,'containment-gallery'],[840,430,'containment-gallery'],[940,560,'containment-gallery'],
+   [780,690,'hatchery-threshold'],[960,690,'hatchery-threshold'],
+   [760,900,'hatchery'],[880,900,'hatchery'],[820,1080,'hatchery'],[960,1080,'hatchery'],
+   [450,1050,'service-bay'],[560,1200,'service-bay'],
+   [930,1030,'aerie-gate'],[930,1170,'aerie-gate'],
+   [1140,930,'aerie'],[1300,1000,'aerie'],[1340,1190,'aerie']
+  ]
+ }
+};
 const dungeonTraps={
  crypt:[[520,470,'spikes'],[630,610,'spikes'],[1020,540,'spikes'],[930,850,'seal'],[1080,1010,'spikes'],[1190,1210,'seal'],[360,560,'spikes'],[520,900,'seal'],[860,370,'spikes'],[840,1080,'spikes'],[1240,700,'seal'],[830,1230,'spikes']],
  archive:[[500,430,'jet'],[560,680,'seal'],[770,520,'jet'],[900,720,'seal'],[1040,470,'jet'],[1150,890,'jet'],[1030,1040,'seal'],[1200,1220,'jet'],[330,560,'seal'],[480,970,'jet'],[820,330,'seal'],[830,1080,'jet'],[1240,620,'seal'],[1280,780,'jet'],[850,1260,'seal'],[360,1180,'jet']],
  mine:[[500,500,'spikes'],[640,750,'spikes'],[930,600,'spikes'],[1030,370,'jet'],[600,1030,'spikes'],[1040,840,'jet'],[1270,980,'spikes'],[1060,1190,'spikes'],[900,1210,'seal'],[360,650,'spikes'],[520,880,'jet'],[700,420,'seal'],[730,1150,'spikes'],[960,480,'seal'],[1180,560,'jet'],[1260,720,'spikes'],[720,1320,'jet'],[430,1210,'seal']],
- abyss:[[440,450,'jet'],[560,690,'jet'],[770,740,'seal'],[980,460,'jet'],[440,950,'seal'],[900,940,'jet'],[1120,800,'jet'],[1250,1020,'seal'],[1040,1220,'jet'],[1290,1190,'jet'],[330,650,'seal'],[420,790,'jet'],[520,1120,'jet'],[760,460,'seal'],[800,900,'jet'],[940,650,'seal'],[1180,560,'jet'],[1270,700,'seal'],[820,1240,'jet'],[1320,860,'jet']],
+ abyss:[[280,450,'seal'],[470,470,'jet'],[360,650,'seal'],[760,470,'seal'],[910,360,'jet'],[970,620,'seal'],[720,650,'jet'],[1010,650,'seal'],[760,900,'seal'],[940,900,'jet'],[850,1040,'jet'],[940,1120,'seal'],[430,1040,'seal'],[550,1280,'jet'],[1190,900,'seal'],[1330,980,'jet'],[1200,1280,'jet'],[1350,1240,'seal']],
  citadel:[[500,450,'spikes'],[660,530,'jet'],[870,610,'seal'],[1030,430,'jet'],[530,850,'seal'],[650,1060,'spikes'],[940,1010,'jet'],[1100,790,'seal'],[1300,960,'jet'],[1020,1210,'spikes'],[1270,1190,'seal'],[930,750,'jet'],[340,430,'spikes'],[470,680,'seal'],[520,1180,'jet'],[650,780,'spikes'],[690,1240,'seal'],[890,390,'jet'],[980,520,'spikes'],[1190,520,'seal'],[1260,680,'jet'],[850,900,'spikes'],[880,1220,'seal'],[1320,820,'spikes']]
 };
 // Abyss Bastion is a maintained occupation fortress built around a dangerous dragon asset, not only a natural lair.
@@ -438,16 +477,16 @@ const abyssBastionDistricts=[
   [300,340,'torch'],[500,340,'torch'],[340,480,'banner'],[500,480,'weapon-rack'],[350,585,'bunk'],[520,585,'supply-stack'],[400,680,'war-table']
  ]},
  {id:'containment-gallery',role:'containment-and-inspection',props:[
-  [720,330,'chain-winch'],[830,350,'banner'],[760,500,'chain'],[870,540,'chain-anchor'],[730,680,'heat-shield'],[850,720,'scorch-gouge'],[930,570,'ember'],[940,760,'handler-station']
+  [720,330,'chain-winch'],[830,350,'banner'],[760,500,'chain'],[870,540,'chain-anchor'],[730,680,'heat-shield'],[850,710,'scorch-gouge'],[930,570,'ember'],[960,690,'handler-station']
  ]},
  {id:'hatchery-roost',role:'nesting-and-feeding',props:[
-  [720,880,'roost'],[820,980,'hatchery'],[900,1060,'feed-trough'],[780,1120,'bone-pile'],[1010,1000,'nest-scrape'],[1060,960,'ember'],[920,1160,'warm-brazier']
+  [720,890,'roost'],[820,980,'hatchery'],[900,1060,'feed-trough'],[780,1080,'bone-pile'],[900,960,'nest-scrape'],[950,950,'ember'],[900,1160,'warm-brazier']
  ]},
  {id:'dragon-aerie',role:'boss-roost-and-hoard',props:[
-  [1120,570,'ember'],[1260,700,'chain'],[1140,860,'torch'],[1220,900,'chain-winch'],[1260,960,'ember'],[1280,1080,'roost'],[1190,1110,'ember-pit'],[1100,1140,'treasure-hoard'],[1320,1120,'heat-shield']
+  [1160,870,'ember'],[1320,880,'chain'],[1160,950,'torch'],[1280,940,'chain-winch'],[1340,1040,'ember'],[1330,1160,'roost'],[1270,1260,'ember-pit'],[1170,1210,'treasure-hoard'],[1360,1280,'heat-shield']
  ]},
  {id:'lower-service-bay',role:'supplies-and-containment-service',props:[
-  [980,1240,'torch'],[1060,1260,'rune'],[1100,1340,'tool-rack'],[1260,1240,'torch'],[1320,1260,'supply-stack'],[1330,1340,'handler-station'],[1010,1340,'chain']
+  [400,1040,'torch'],[500,1100,'rune'],[560,1270,'tool-rack'],[620,1020,'torch'],[600,1320,'supply-stack'],[470,1320,'handler-station'],[620,1220,'chain']
  ]}
 ];
 // Curated occupied spaces: each dungeon has an entrance, work/ritual zone, command markers and a boss approach.
@@ -595,6 +634,6 @@ const basicAttackCombo={steps:3,resetSeconds:4,multipliers:[1,1.1,1.2],finisher:
 const companionSkills={globalCooldown:1.5,first:{cooldown:8,multiplier:3,soldier:{name:'Power Strike'},archer:{name:'Triple Shot'}},second:{cooldown:12,unlockHeroSlot:2,soldier:{name:'Holy Cleave',shape:'cone',range:185,halfAngle:.8,multiplier:2.2,effect:'holy-cleave'},archer:{name:'Piercing Volley',shape:'line',range:480,halfWidth:55,multiplier:2.4,effect:'piercing-volley'}}};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,basicAttackCombo,companionSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,abyssBastionDistricts,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,creatureStrongholds,sideDungeons,sideDungeonTrapTuning,tributeTotal,legacyResourceTotals,tributePlans,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,frontierRoutes,frontierDistricts,crownRoutes,crownDistricts,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
+const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,basicAttackCombo,companionSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,abyssBastionDistricts,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,creatureStrongholds,sideDungeons,sideDungeonTrapTuning,tributeTotal,legacyResourceTotals,tributePlans,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,frontierRoutes,frontierDistricts,crownRoutes,crownDistricts,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars,dungeonGeometry,dungeonGuardianPlans};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
