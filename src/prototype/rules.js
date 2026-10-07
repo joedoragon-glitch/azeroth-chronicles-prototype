@@ -188,11 +188,11 @@ const frontierDistricts=[
 // Dark Crown gets a dedicated political/logistical layout layer instead of relying only on generic regional dressing.
 // These remain procedural structures and road targets; they do not change combat, progression, rewards or sprite policy.
 const crownRoutes=[
- {id:'frontier-return',role:'administrative',point:[620,220],transport:'return',props:[[-70,45,'watchpost'],[70,45,'crown-banner'],[0,95,'supply-stack']]},
- {id:'levy-road',role:'labor-supply',point:[180,1600],props:[[55,-70,'cart'],[65,65,'tax-post'],[120,10,'supply-stack']]},
- {id:'military-gate',role:'military',point:[3570,980],props:[[-70,60,'crown-banner'],[-90,-55,'weapon-rack'],[-25,105,'watchpost']]},
+ {id:'frontier-return',role:'administrative',point:[620,220],travelHub:{name:'Crown dragon platform',icon:'🐉'},props:[[-70,45,'watchpost'],[70,45,'crown-banner'],[0,95,'supply-stack']]},
+ {id:'levy-road',role:'labor-supply',point:[180,1600],travelHub:{name:'Crown levy caravan',icon:'🐎'},props:[[55,-70,'cart'],[65,65,'tax-post'],[120,10,'supply-stack']]},
+ {id:'military-gate',role:'military',point:[3570,980],travelHub:{name:'Crown military transit',icon:'🐎'},props:[[-70,60,'crown-banner'],[-90,-55,'weapon-rack'],[-25,105,'watchpost']]},
  {id:'ash-track',role:'monster-wilds',point:[1650,3580],props:[[-75,-35,'black-rock'],[35,-70,'roost'],[80,45,'ember-pit']]},
- {id:'fortress-service',role:'elite-logistics',point:[3570,2480],props:[[-75,-45,'crown-banner'],[-20,90,'dark-brazier'],[-120,35,'command-tent']]}
+ {id:'fortress-service',role:'elite-logistics',point:[3570,2480],travelHub:{name:'Crown fortress convoy',icon:'🐎'},props:[[-75,-45,'crown-banner'],[-20,90,'dark-brazier'],[-120,35,'command-tent']]}
 ];
 const crownDistricts=[
  {id:'labor-quarter',role:'civilian-labor',center:[720,900],props:[
