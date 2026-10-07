@@ -195,25 +195,58 @@ const treasuryDecor={
   [365,700,'roost',0],[470,205,'supply-stack',0],[555,690,'warm-brazier',0],[745,405,'bone-pile',0],[330,460,'sleep-roll',0]
  ]
 };
+// Creature strongholds are centers of ordinary-monster life and territorial power, not resource wrappers.
+// Named sites reuse existing map destinations; unmarked holds fill quiet territory without adding map clutter.
+const creatureStrongholds=[
+ {id:'goblin-road-fort',region:'vale',site:'goblin-camp',species:'goblin',wall:'stockade',guardCount:4,
+  props:[[-105,-55,'lean-to'],[-45,-105,'cookfire'],[50,-100,'sleep-roll'],[110,-45,'game-table'],[105,60,'stolen-goods'],[10,110,'training-dummy'],[-90,70,'ration']]},
+ {id:'skeleton-watch',region:'vale',center:[2050,2050],species:'skeleton',wall:'stonewall',guardCount:3,unmarked:true,
+  props:[[-90,-55,'grave-marker'],[-35,-105,'bone-pile'],[55,-90,'grave-lamp'],[100,-25,'caretaker-table'],[70,75,'sleep-roll'],[-55,95,'ossuary']]},
+
+ {id:'mire-nest-hold',region:'march',site:'mire-nests',species:'mireling',wall:'palisade',guardCount:4,
+  props:[[-105,-45,'mud-nest'],[-45,-105,'reed-nest'],[55,-95,'fish-rack'],[110,-35,'shell-hoard'],[90,70,'wallow'],[-20,105,'drift-seat'],[-95,65,'bone-pile']]},
+ {id:'reedbeast-wallow-hold',region:'march',center:[880,1320],species:'reedbeast',wall:'palisade',guardCount:3,unmarked:true,
+  props:[[-100,-45,'wallow'],[-35,-100,'mud-nest'],[55,-90,'fish-rack'],[105,-20,'reed-nest'],[75,75,'bone-pile'],[-60,95,'fishing-net']]},
+ {id:'lantern-wraith-hold',region:'march',site:'night-site',nightSpecies:'wraith',wall:'stonewall',night:true,
+  props:[[-95,-50,'grave-marker'],[-35,-105,'grave-lamp'],[55,-95,'bone-pile'],[105,-25,'ritual-table'],[75,80,'grave-marker'],[-65,90,'cattails']]},
+
+ {id:'wolf-packhold',region:'highlands',site:'wolf-den',species:'wolf',wall:'stonewall',guardCount:4,
+  props:[[-105,-50,'wolf-den'],[-45,-105,'bone-pile'],[50,-95,'sleep-roll'],[105,-35,'stone-marker'],[85,70,'bone-pile'],[-15,105,'trophy-rack'],[-90,65,'heather']]},
+ {id:'ogre-hearth-fort',region:'highlands',site:'ogre-hearth',species:'ogre',wall:'stonewall',guardCount:4,
+  props:[[-105,-50,'lean-to'],[-45,-105,'ridge-hearth'],[50,-100,'stone-seat'],[110,-35,'tool-rack'],[90,70,'game-table'],[-10,110,'ore-cart'],[-90,65,'sleep-roll']]},
+
+ {id:'orc-road-fort',region:'frontier',site:'orc-bivouac',species:'orc',wall:'stockade',guardCount:4,
+  props:[[-105,-50,'command-tent'],[-45,-105,'field-kitchen'],[50,-100,'weapon-rack'],[110,-35,'sleep-roll'],[90,70,'game-table'],[-10,110,'training-dummy'],[-90,65,'supply-stack']]},
+ {id:'raider-drill-redoubt',region:'frontier',center:[3060,640],species:'archer',wall:'stockade',guardCount:4,unmarked:true,
+  props:[[-105,-50,'lean-to'],[-45,-105,'field-kitchen'],[50,-100,'weapon-rack'],[110,-35,'training-dummy'],[90,70,'supply-stack'],[-10,110,'sleep-roll'],[-90,65,'barricade']]},
+ {id:'stalker-cinder-hold',region:'frontier',site:'overlook',nightSpecies:'stalker',wall:'stonewall',night:true,
+  props:[[-95,-50,'ash-patch'],[-35,-105,'bone-pile'],[55,-95,'roost'],[105,-25,'ember-pit'],[75,80,'burned-log'],[-65,90,'black-rock']]},
+
+ {id:'ashbeast-roost-hold',region:'crown',center:[2020,1810],species:'ashbeast',wall:'stonewall',guardCount:4,unmarked:true,
+  props:[[-105,-50,'roost'],[-45,-105,'bone-pile'],[50,-100,'ember-pit'],[110,-35,'obsidian'],[90,70,'sleep-roll'],[-10,110,'roost'],[-90,65,'black-rock']]},
+ {id:'crown-field-barracks-hold',region:'crown',site:'crown-barracks',species:'crownguard',wall:'stonewall',guardCount:4,
+  props:[[-105,-50,'command-tent'],[-45,-105,'field-kitchen'],[50,-100,'weapon-rack'],[110,-35,'bunk'],[90,70,'supply-stack'],[-10,110,'training-dummy'],[-90,65,'war-table']]}
+];
+
 // Optional occupied interiors consolidate weak overlapping landmarks. They intentionally have no boss, captive, quest reward or gatherable resource yet.
 const sideDungeons=[
- {id:'side-vale-cellars',region:'vale',site:'den-ruins',name:'Old Orchard Cellars',size:1100,enemyCount:6,theme:'cellar',
+ {id:'side-vale-cellars',region:'vale',site:'den-ruins',name:'Old Orchard Cellars',size:1100,enemyCount:6,theme:'cellar',species:'goblin',lore:'Goblin households have turned the abandoned fruit cellars into a warm communal hideout: sleeping rolls, stolen preserves, games and pup nests occupy the rooms the farmers once used for winter stores.',
   decor:[[190,210,'crate'],[300,230,'ration'],[430,190,'stolen-goods'],[670,220,'root-table'],[830,240,'thorn-bed'],[230,520,'sleep-roll'],[390,560,'pup-nest'],[620,520,'bone-pile'],[815,565,'warm-brazier'],[360,835,'crate'],[700,830,'game-table']],
   walls:[[470,180,28],[470,260,28],[470,340,28],[470,720,28],[470,800,28],[470,880,28],[760,440,28],[840,440,28]],
   traps:[[350,405,'spikes'],[575,405,'spikes'],[690,700,'seal']]},
- {id:'side-march-watchhouse',region:'march',site:'watch',name:'Drowned Watchhouse',size:1100,enemyCount:8,theme:'flooded',
+ {id:'side-march-watchhouse',region:'march',site:'watch',name:'Drowned Watchhouse',size:1100,enemyCount:8,theme:'flooded',species:'reedbeast',lore:'Reed beasts have claimed the half-flooded watchhouse as a dry nesting structure. Fish racks and shell piles matter to them more than whatever military purpose the building once had.',
   decor:[[180,210,'fish-rack'],[300,220,'fishing-net'],[455,210,'reed-nest'],[700,215,'shell-hoard'],[835,235,'drift-seat'],[210,540,'mud-nest'],[390,570,'wallow'],[635,535,'water'],[820,560,'sleep-roll'],[330,835,'bone-pile'],[720,825,'reed-nest']],
   walls:[[455,180,28],[455,260,28],[455,340,28],[455,760,28],[455,840,28],[720,455,28],[800,455,28]],
   traps:[[315,410,'seal'],[600,410,'jet'],[710,720,'seal']]},
- {id:'side-highlands-signal',region:'highlands',site:'lookout',name:'Old Signal Keep',size:1100,enemyCount:10,theme:'keep',
+ {id:'side-highlands-signal',region:'highlands',site:'lookout',name:'Old Signal Keep',size:1100,enemyCount:10,theme:'keep',species:'ogre',lore:'Ogres have rebuilt the dead signal keep around a communal hearth. Stone seats, scavenged quarry tools and a game table make the ruin look less like a battlefield and more like a rough household.',
   decor:[[180,215,'ridge-hearth'],[305,210,'weapon-rack'],[455,225,'stone-seat'],[690,210,'trophy-rack'],[835,235,'tool-rack'],[210,550,'sleep-roll'],[390,555,'game-table'],[640,535,'ore-cart'],[825,565,'bone-pile'],[335,835,'stone-marker'],[720,825,'supply-stack']],
   walls:[[430,180,30],[430,260,30],[430,340,30],[430,760,30],[430,840,30],[730,455,30],[810,455,30]],
   traps:[[315,420,'spikes'],[600,420,'jet'],[705,715,'spikes']]},
- {id:'side-frontier-shrine',region:'frontier',site:'shrine',name:'Ruined Shrine',size:1100,enemyCount:12,theme:'shrine',
+ {id:'side-frontier-shrine',region:'frontier',site:'shrine',name:'Ruined Shrine',size:1100,enemyCount:12,theme:'shrine',species:'orc',lore:'Orcs have converted the old shrine into a barracks without bothering to erase all of its former identity. Cooking, sleeping, drills and gambling now share space with the broken ritual furniture.',
   decor:[[180,215,'ritual-table'],[315,210,'field-kitchen'],[455,220,'weapon-rack'],[690,210,'stolen-goods'],[835,235,'training-dummy'],[210,550,'sleep-roll'],[390,555,'game-table'],[640,535,'bone-pile'],[825,565,'command-tent'],[335,835,'supply-stack'],[720,825,'cookfire']],
   walls:[[445,180,30],[445,260,30],[445,340,30],[445,760,30],[445,840,30],[735,455,30],[815,455,30]],
   traps:[[315,420,'jet'],[600,420,'seal'],[710,715,'jet']]},
- {id:'side-crown-foundry',region:'crown',site:'foundry',name:'Ruined Foundry',size:1100,enemyCount:14,theme:'foundry',
+ {id:'side-crown-foundry',region:'crown',site:'foundry',name:'Ruined Foundry',size:1100,enemyCount:14,theme:'foundry',species:'crownguard',lore:'Crown soldiers use the damaged foundry as a working barracks and repair hall. Bunks and meals sit beside active forge space; the place exists for their daily work, not as a treasure room for adventurers.',
   decor:[[180,215,'forge'],[315,210,'supply-stack'],[455,220,'weapon-rack'],[690,210,'war-table'],[835,235,'bunk'],[210,550,'ember-pit'],[390,555,'field-kitchen'],[640,535,'roost'],[825,565,'bone-pile'],[335,835,'training-dummy'],[720,825,'crown-banner']],
   walls:[[450,180,30],[450,260,30],[450,340,30],[450,760,30],[450,840,30],[740,455,30],[820,455,30]],
   traps:[[315,420,'jet'],[600,420,'seal'],[710,715,'jet'],[540,805,'seal']]}
@@ -482,6 +515,6 @@ const rangedEnemyCombat={projectileMultiplier:1.7,aimTime:.35,cooldown:1.15,retr
 const chargedSkills={holdSeconds:.65,basicDamageMultiplier:3,manaFractions:{1:.20,2:.30,3:.35},third:{effect:'party-heal'},second:{paladin:{shape:'cone',range:185,halfAngle:.8,effect:'holy-cleave'},mage:{shape:'circle',radius:160,effect:'frost-burst',slow:4},ranger:{shape:'line',range:480,halfWidth:55,effect:'piercing-volley'}}};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,sideDungeons,sideDungeonTrapTuning,tributeTotal,tributePlans,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
+const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,creatureStrongholds,sideDungeons,sideDungeonTrapTuning,tributeTotal,tributePlans,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
