@@ -41,3 +41,8 @@ Attack and quest prose no longer drives mechanics. Explicit rule tables define s
 ## Procedural canon polish v0.8.79
 
 Static identity polishing changes drawings only: ten destination entrances, selected meaningful furnishings, individual specialist clothing, regional services and unfinished camp stages. Gameplay/saves/collision remain governed by the existing engine and rules. `GRAPHICS_PROCEDURAL_POLISH_V0879.md` records the scope. The sprite catalog is reconciled to 231 entries (221 GENERATE, 0 ALIAS, 10 KEEP PROCEDURAL), preserving existing IDs and exact runtime keys. No sprite is active.
+
+
+## Terrain and effects polish v0.8.80
+
+World-space combat geometry is shared through `rules.combatGeometry` and the separate `combat-visuals.js` presentation module. Its constants preserve the previous hit rules. Circular warnings project world circles; charges and jets use capsules; expanding rings show the actual dangerous band and warn their eventual reach. Ground fills remain below actors, with critical outlines and transient effects above atmosphere. Every main dungeon clips its floor to the exact walkable footprint and draws actual partitions, including legacy dividers and the previously omitted Citadel walls. Terrain materials use stable feathered world patches, continuous collision rims, broken faces and regional route treatment. Recovery events identify their recipients, and normal area abilities/projectile contacts retain class/material identity. No route, position, save schema, damage, cost, cooldown or reward is changed. See `TERRAIN_EFFECTS_POLISH_V0880.md`.

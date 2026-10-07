@@ -276,3 +276,6 @@ The renderer deliberately seeds natural variation. Phase 2A therefore creates on
 Every static renderer family has an explicit destination: a generation prompt, a visual alias, or a documented procedural decision. Image generation must use only **GENERATE** entries from the prompt catalog and must produce exactly one isolated asset per request.
 
 V0.8.79 reconciles the affected canonical cues after procedural polishing. Repeated game tables remain procedural despite their clearer board-and-counter drawing. Weapon racks still use regional exact keys; KEEP PROCEDURAL entries 136/137 describe the authored Frontier/Crown versions. No existing runtime sprite key is broadened or aliased.
+
+
+V0.8.80 strengthens the PROCEDURAL terrain/effects families without adding sprite keys or generation entries. Natural ground uses feathered world-space materials; roads, water banks, ravine strata, lava crust and main-dungeon footprints/partitions follow actual geometry. Normal abilities, projectile contacts and recovery cues carry their existing gameplay identity. Danger outlines remain procedural and retain contrast after atmospheric grading. See `TERRAIN_EFFECTS_POLISH_V0880.md`; the numbered catalog remains 231 entries.
