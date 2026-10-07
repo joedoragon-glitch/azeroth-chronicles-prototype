@@ -2,6 +2,7 @@
 (function(root){
 'use strict';
 const R=typeof PrototypeRules!=='undefined'?PrototypeRules:require('./rules.js');
+function allyBodyKind(e){return e?.type==='archer'?'goblin-archer':(e?.class||e?.type||'worker');}
 function draw(ctx,e,p,region=0,rescued=false){
  if(e.kind==='landmark'&&e.id?.startsWith('bridge-'))return; // The full deck is drawn in world space.
  ctx.save();ctx.translate(p.x,p.y);ctx.lineJoin='round';ctx.lineCap='round';
@@ -138,7 +139,6 @@ function draw(ctx,e,p,region=0,rescued=false){
    else{poly([[-3,-41],[0,-47],[3,-41]],'#b99c68');line([[-4,-8],[5,-1]],'#a98a61',2);line([[5,-8],[-4,-1]],'#a98a61',2);}
   }
  }
- function allyBodyKind(e){return e.type==='archer'?'goblin-archer':(e.class||e.type||'worker');}
  function goblinArcher(){
   // Companion Archer: an allied goblin scout. This keeps the established companion bow/quiver role
   // while making the party visibly include a normally-hostile species without borrowing the hero Ranger body.
