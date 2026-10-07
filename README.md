@@ -65,6 +65,10 @@ World aesthetic pass v0.8.61 gives every overworld region denser biome-appropria
 
 Overworld distribution update v0.8.60 spreads ordinary unassigned patrol packs across wider regional occupation points and moves field-boss compounds farther from the main settlement approach. Authored quest-site guards, resource mini-dungeons and dungeon populations keep their designed positions. Existing saves migrate the outdoor layout once; combat sight and aggro rules are unchanged.
 
+## Runtime architecture
+
+**The canonical Azeroth Chronicles product is the multi-file GitHub Pages/PWA application.** HTML, JavaScript, CSS, sprite art, audio, data files and future asset types may live as separate repository files and are expected to be cached by the service worker for offline play. Feature design must not be constrained by, duplicated into, or blocked on a self-contained single-HTML build. Any historical portable HTML artifact is optional legacy convenience only; it is not a release requirement and may lag behind or be retired whenever supporting it would reduce game quality, complicate the asset pipeline or slow development.
+
 ## Development
 
 Playtest deployment in v0.8.59 favors rapid iteration: pushes to `main` cancel superseded in-progress Pages workflows instead of queueing every obsolete build. The newest successful commit is the one allowed to finish deployment. Installed/live playtest clients also activate a newly published service worker immediately and reload once after saving when replacing an existing controller; first-time installs do not receive the extra reload.
