@@ -15,20 +15,53 @@ const attacks={
  darklord:[attack('cone',1.3,1.5,{combo:true,manaDrain:.08}),attack('circle',1.9,1.6,{count:3,sequential:true,manaDrain:.10}),attack('summon',2,1.6,{species:'crownguard',ranged:true}),attack('sector',2,2,{sequential:true,count:3,manaDrain:.12})]
 };
 const sites=[
- [['bridge-north','Mill bridge',1200,750],['bridge-south','Southern footbridge',1200,1750],['orchard','Abandoned orchard',1050,740],['den-ruins','Orchard den ruins',650,1490],['mill-pond','Mill pond',780,1320],['cache','Woodland supply cache',1550,1150],['goblin-camp','Goblin roadside camp',520,1050]],
- [['bridge-lake','Lake causeway',1405,1780],['night-site','Lantern shore',1700,900],['wagon','Stranded supply wagon',1000,1150],['watch','Causeway watch platform',1700,1300],['dock','Sunken dock',1760,1800],['mire-nests','Mire nesting bank',1940,1120]],
- [['bridge-north','Stone bridge',1300,950],['bridge-south','Timber crossing',1300,1870],['lookout','Highland lookout',2380,470],['ore','Stonecross ore vein',1100,650],['tower','Ruined watchtower',2530,830],['wolf-den','Wolf hunting ground',520,1250],['ogre-hearth','Ogre hearth camp',1980,1820]],
- [['bridge-north','Guarded ravine bridge',1450,750],['bridge-south','Burned forest crossing',1450,2160],['shrine','Ruined shrine',1140,1120],['overlook','Ravine overlook',1750,2050],['checkpoint','Occupied checkpoint',2430,1570],['convoy','Supply convoy',1260,980],['orc-bivouac','Orc roadside bivouac',1840,420]],
- [['bridge-north','Lava ridge bridge',1350,1000],['bridge-south','Southern stone crossing',1350,2400],['foundry','Ruined foundry',900,2050],['shelf','Crystal shelf',1250,2350],['siege','Siege camp',2700,2250],['fortress-gate','Dark fortress gate',3060,3040],['ash-roost','Ash-beast roost',2020,1810],['crown-barracks','Crown field barracks',3000,1180]]
+ [['bridge-north','Mill bridge',1200,750],['bridge-south','Southern footbridge',1200,1750],['orchard','Abandoned orchard',1050,740],['den-ruins','Old Orchard Cellars',540,2220],['mill-pond','Mill pond',780,1320],['cache','Woodland supply cache',1550,1150],['goblin-camp','Goblin roadside camp',520,1050]],
+ [['bridge-lake','Lake causeway',1405,1780],['night-site','Lantern shore',1700,900],['wagon','Stranded supply wagon',1000,1150],['watch','Drowned Watchhouse',2550,1480],['mire-nests','Mire nesting bank',1940,1120]],
+ [['bridge-north','Stone bridge',1300,950],['bridge-south','Timber crossing',1300,1870],['lookout','Old Signal Keep',2350,1500],['ore','Stonecross ore vein',1100,650],['wolf-den','Wolf hunting ground',520,1250],['ogre-hearth','Ogre hearth camp',1980,1820]],
+ [['bridge-north','Guarded ravine bridge',1450,750],['bridge-south','Burned forest crossing',1450,2160],['shrine','Ruined Shrine',1050,1850],['overlook','Ravine overlook',1750,2050],['checkpoint','Occupied checkpoint',2430,1570],['convoy','Supply convoy',1260,980],['orc-bivouac','Orc roadside bivouac',1840,420]],
+ [['bridge-north','Lava ridge bridge',1350,1000],['bridge-south','Southern stone crossing',1350,2400],['foundry','Ruined Foundry',1850,2700],['shelf','Crystal shelf',1250,2350],['siege','Siege camp',2700,2250],['fortress-gate','Dark fortress gate',3060,3040],['ash-roost','Ash-beast roost',2020,1810],['crown-barracks','Crown field barracks',3000,1180]]
 ];
-// Explicit finite worker expeditions. Treasury quest caches are not outdoor expedition supplies.
+// Companion labor recovers finite Dark Lord Tribute from outdoor sites. Exact amounts belong in barracks operations, not the world map.
 const expeditions=[
- {resource:'cache',supplies:[],name:'Woodland timber'},
- {resource:'wagon',supplies:[],name:'Salvaged provisions'},
- {resource:'ore',supplies:[],name:'Stonecross ore'},
- {resource:'shrine',supplies:[],name:'Shrine salvage'},
- {resource:'foundry',supplies:[],name:'Foundry crystals'}
+ {resource:'cache',supplies:[],name:'Dark Lord Tribute'},
+ {resource:'wagon',supplies:[],name:'Dark Lord Tribute'},
+ {resource:'ore',supplies:[],name:'Dark Lord Tribute'},
+ {resource:'convoy',supplies:[],name:'Dark Lord Tribute'},
+ {resource:'siege',supplies:[],name:'Dark Lord Tribute'}
 ];
+const tributeTotal=640;
+const tributePlans={
+ vale:[
+  {id:'orchard-stores',site:'orchard',amount:170,hidden:false,offset:[90,85],context:'confiscated orchard stores'},
+  {id:'woodland-cache',site:'cache',amount:180,hidden:false,offset:[95,65],context:'collector cache'},
+  {id:'pond-strongbox',site:'mill-pond',amount:150,hidden:true,offset:[105,-65],context:'hidden tax strongbox'},
+  {id:'bridge-toll',site:'bridge-north',amount:140,hidden:true,offset:[-105,95],context:'concealed bridge toll chest'}
+ ],
+ march:[
+  {id:'wagon-levy',site:'wagon',amount:200,hidden:false,offset:[100,70],context:'seized provisions levy'},
+  {id:'causeway-toll',site:'bridge-lake',amount:150,hidden:false,offset:[105,-85],context:'causeway toll stores'},
+  {id:'watchhouse-cache',site:'mire-nests',amount:160,hidden:true,offset:[-120,90],context:'marsh collector cache'},
+  {id:'lantern-cache',site:'night-site',amount:130,hidden:true,offset:[115,85],context:'hidden shore strongbox'}
+ ],
+ highlands:[
+  {id:'ore-shipment',site:'ore',amount:220,hidden:false,offset:[105,80],context:'ore tribute shipment'},
+  {id:'stone-toll',site:'bridge-north',amount:160,hidden:false,offset:[-105,95],context:'bridge toll stores'},
+  {id:'timber-toll',site:'bridge-south',amount:130,hidden:true,offset:[105,95],context:'concealed crossing levy'},
+  {id:'ogre-cache',site:'ogre-hearth',amount:130,hidden:true,offset:[120,-80],context:'stolen collector chest'}
+ ],
+ frontier:[
+  {id:'convoy-tribute',site:'convoy',amount:220,hidden:false,offset:[105,75],context:'military tribute convoy'},
+  {id:'ravine-toll',site:'bridge-north',amount:150,hidden:false,offset:[-110,95],context:'ravine toll stores'},
+  {id:'forest-levy',site:'bridge-south',amount:150,hidden:true,offset:[115,95],context:'abandoned collector cart'},
+  {id:'overlook-cache',site:'overlook',amount:120,hidden:true,offset:[115,-80],context:'hidden command strongbox'}
+ ],
+ crown:[
+  {id:'siege-war-chest',site:'siege',amount:220,hidden:false,offset:[110,80],context:'siege war chest'},
+  {id:'crystal-shipment',site:'shelf',amount:180,hidden:false,offset:[115,90],context:'crystal tribute shipment'},
+  {id:'barracks-payroll',site:'crown-barracks',amount:140,hidden:true,offset:[-115,95],context:'Crown payroll stores'},
+  {id:'roost-cache',site:'ash-roost',amount:100,hidden:true,offset:[120,-85],context:'hidden collector cache'}
+ ]
+};
 // Field-boss compounds sit away from the main town approach instead of sharing the central traffic band.
 const fieldBossCenters=[
  [760,1750],
@@ -121,10 +154,10 @@ const worldLifePlans=[
 ];
 // Field-boss supply objectives are actual Treasury raids: every required cache is kept inside the boss's Treasury.
 const supplyRooms=[
- {id:'supply-vale',region:'vale',site:'orchard',boss:'thorn',count:2,name:"Thornfang's Treasury",objective:"Recover two caches from Thornfang's Treasury"},
- {id:'supply-march',region:'march',site:'wagon',boss:'mire',count:3,name:"Mirejaw's Treasury",objective:"Recover three caches from Mirejaw's Treasury"},
- {id:'supply-highlands',region:'highlands',site:'ore',boss:'ridge',count:3,name:"Ridge Tyrant's Treasury",objective:"Recover three caches from Ridge Tyrant's Treasury"},
- {id:'supply-crown',region:'crown',site:'foundry',boss:'darklord',count:3,name:"Dark Lord's Treasury",objective:"Recover three caches from the Dark Lord's Treasury"}
+ {id:'supply-vale',region:'vale',boss:'thorn',count:2,entryOffset:[255,-170],name:"Thornfang's Treasury",objective:"Recover two caches from Thornfang's Treasury"},
+ {id:'supply-march',region:'march',boss:'mire',count:3,entryOffset:[260,-165],name:"Mirejaw's Treasury",objective:"Recover three caches from Mirejaw's Treasury"},
+ {id:'supply-highlands',region:'highlands',boss:'ridge',count:3,entryOffset:[-265,185],name:"Ridge Tyrant's Treasury",objective:"Recover three caches from Ridge Tyrant's Treasury"},
+ {id:'supply-crown',region:'crown',boss:'darklord',count:3,entryOffset:[285,-185],name:"Dark Lord's Treasury",objective:"Recover three caches from the Dark Lord's Treasury"}
 ];
 const treasuryWalls={
  'supply-vale':[
@@ -160,6 +193,31 @@ const treasuryDecor={
   [365,700,'bunk',0],[470,205,'supply-stack',0],[555,690,'forge',0],[745,405,'weapon-rack',0],[330,460,'ration',0]
  ]
 };
+// Optional occupied interiors consolidate weak overlapping landmarks. They intentionally have no boss, captive, quest reward or gatherable resource yet.
+const sideDungeons=[
+ {id:'side-vale-cellars',region:'vale',site:'den-ruins',name:'Old Orchard Cellars',size:1100,enemyCount:6,theme:'cellar',
+  decor:[[190,210,'crate'],[300,230,'ration'],[430,190,'stolen-goods'],[670,220,'root-table'],[830,240,'thorn-bed'],[230,520,'sleep-roll'],[390,560,'pup-nest'],[620,520,'bone-pile'],[815,565,'warm-brazier'],[360,835,'crate'],[700,830,'game-table']],
+  walls:[[470,180,28],[470,260,28],[470,340,28],[470,720,28],[470,800,28],[470,880,28],[760,440,28],[840,440,28]],
+  traps:[[350,405,'spikes'],[575,405,'spikes'],[690,700,'seal']]},
+ {id:'side-march-watchhouse',region:'march',site:'watch',name:'Drowned Watchhouse',size:1100,enemyCount:8,theme:'flooded',
+  decor:[[180,210,'fish-rack'],[300,220,'fishing-net'],[455,210,'reed-nest'],[700,215,'shell-hoard'],[835,235,'drift-seat'],[210,540,'mud-nest'],[390,570,'wallow'],[635,535,'water'],[820,560,'sleep-roll'],[330,835,'bone-pile'],[720,825,'reed-nest']],
+  walls:[[455,180,28],[455,260,28],[455,340,28],[455,760,28],[455,840,28],[720,455,28],[800,455,28]],
+  traps:[[315,410,'seal'],[600,410,'jet'],[710,720,'seal']]},
+ {id:'side-highlands-signal',region:'highlands',site:'lookout',name:'Old Signal Keep',size:1100,enemyCount:10,theme:'keep',
+  decor:[[180,215,'ridge-hearth'],[305,210,'weapon-rack'],[455,225,'stone-seat'],[690,210,'trophy-rack'],[835,235,'tool-rack'],[210,550,'sleep-roll'],[390,555,'game-table'],[640,535,'ore-cart'],[825,565,'bone-pile'],[335,835,'stone-marker'],[720,825,'supply-stack']],
+  walls:[[430,180,30],[430,260,30],[430,340,30],[430,760,30],[430,840,30],[730,455,30],[810,455,30]],
+  traps:[[315,420,'spikes'],[600,420,'jet'],[705,715,'spikes']]},
+ {id:'side-frontier-shrine',region:'frontier',site:'shrine',name:'Ruined Shrine',size:1100,enemyCount:12,theme:'shrine',
+  decor:[[180,215,'ritual-table'],[315,210,'field-kitchen'],[455,220,'weapon-rack'],[690,210,'stolen-goods'],[835,235,'training-dummy'],[210,550,'sleep-roll'],[390,555,'game-table'],[640,535,'bone-pile'],[825,565,'command-tent'],[335,835,'supply-stack'],[720,825,'cookfire']],
+  walls:[[445,180,30],[445,260,30],[445,340,30],[445,760,30],[445,840,30],[735,455,30],[815,455,30]],
+  traps:[[315,420,'jet'],[600,420,'seal'],[710,715,'jet']]},
+ {id:'side-crown-foundry',region:'crown',site:'foundry',name:'Ruined Foundry',size:1100,enemyCount:14,theme:'foundry',
+  decor:[[180,215,'forge'],[315,210,'supply-stack'],[455,220,'weapon-rack'],[690,210,'war-table'],[835,235,'bunk'],[210,550,'ember-pit'],[390,555,'field-kitchen'],[640,535,'roost'],[825,565,'bone-pile'],[335,835,'training-dummy'],[720,825,'crown-banner']],
+  walls:[[450,180,30],[450,260,30],[450,340,30],[450,760,30],[450,840,30],[740,455,30],[820,455,30]],
+  traps:[[315,420,'jet'],[600,420,'seal'],[710,715,'jet'],[540,805,'seal']]}
+];
+const sideDungeonTrapTuning={cycle:7.2,warning:1.45,active:.7,damage:.09,radius:44,sealRadius:58,jetLength:150,jetHalfWidth:29,slow:2.2,offset:1.2};
+
 const miniPlans=[
  {field:'Orchard den stockade',resource:'Woodland cache ruins',theme:'stockade'},
  {field:'Mirejaw island redoubt',resource:'Stranded wagon enclosure',theme:'palisade'},
@@ -420,6 +478,6 @@ const rangedEnemyCombat={projectileMultiplier:1.7,aimTime:.35,cooldown:1.15,retr
 const chargedSkills={holdSeconds:.65,basicDamageMultiplier:3,manaFractions:{1:.20,2:.30,3:.35},third:{effect:'party-heal'},second:{paladin:{shape:'cone',range:185,halfAngle:.8,effect:'holy-cleave'},mage:{shape:'circle',radius:160,effect:'frost-burst',slow:4},ranger:{shape:'line',range:480,halfWidth:55,effect:'piercing-volley'}}};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
+const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,sideDungeons,sideDungeonTrapTuning,tributeTotal,tributePlans,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
