@@ -122,7 +122,7 @@ The detailed case-by-case proof is in `GRAPHICS_CANON_SPRITE_COVERAGE.md`.
 
 ## Barracks states
 
-The procedural canon now defines three distinct Barracks states. Construction remains a rough regional worksite. Basic Barracks are reasonably sized, cozy field-adventure camps built around a low expedition tent, visible sleeping gear, communal fire and practical equipment. Full Barracks visibly expand the same camp into a larger expedition base with a second sleeping tent, open command canopy/map table, additional bedding/seating, supplies, authority markers and warm camp lighting. They remain camps rather than shops, houses, forts or oversized military compounds.
+The procedural canon now defines three distinct Barracks states. Construction remains a rough regional worksite. Basic Barracks are reasonably sized, cozy field-adventure camps built around a low expedition tent, visible sleeping gear, communal fire and practical equipment. Full Barracks transform the same reserved camp footprint into a richer expedition base with a second sleeping tent, open command canopy/map table, additional bedding/seating, supplies, authority markers and warm camp lighting. Basic and Full use the same footprint by design, so the upgrade cannot outgrow an accepted site. They remain camps rather than shops, houses, forts or oversized military compounds.
 
 The existing 071–075 prompt entries describe the five regional Basic camps. Full Barracks must remain procedural until a later catalog extension gives the five Full camp variants their own one-at-a-time entries; they must not reuse a Basic sprite once sprite activation begins.
 
