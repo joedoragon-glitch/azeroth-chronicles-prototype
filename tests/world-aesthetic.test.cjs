@@ -85,6 +85,16 @@ function visualSignature(entity,region){
  const log=[],target={};const ctx=new Proxy(target,{get(o,p){if(p in o)return o[p];return (...args)=>{log.push([String(p),...args.map(v=>typeof v==='number'?Math.round(v*100)/100:v)]);};},set(o,p,v){o[p]=v;log.push(['set',String(p),v]);return true;}});
  Visuals.draw(ctx,entity,{x:0,y:0},region,false);return JSON.stringify(log);
 }
+test('Abyss Bastion containment props have distinct deterministic procedural silhouettes',()=>{
+ const region=3,families=['chain-winch','heat-shield','feed-trough','scorch-gouge','nest-scrape','handler-station'];
+ const signatures=families.map((structure,i)=>visualSignature({id:'abyss-depth-'+i,renderKind:'prop',decorative:true,structure},region));
+ assert.equal(new Set(signatures).size,families.length,'Bastion service/containment families are visually distinct');
+ for(const structure of ['chain','roost','hatchery']){
+  const same={id:'abyss-stable-'+structure,renderKind:'prop',decorative:true,structure};assert.equal(visualSignature(same,region),visualSignature(same,region),structure+' variation is deterministic');
+  const variants=Array.from({length:8},(_,i)=>visualSignature({id:'abyss-'+structure+'-'+i,renderKind:'prop',decorative:true,structure},region));assert(new Set(variants).size>=2,structure+' gains stable local variation inside the Frontier/Abyss visual family');
+ }
+});
+
 test('named town utilities use distinct purpose-specific silhouettes while retaining each regional palette',()=>{
  const roles=[
   {id:'rest',kind:'rest',renderKind:'npc',name:'Refuge'},
