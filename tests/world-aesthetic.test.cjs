@@ -65,6 +65,13 @@ test('Frontier procedural props gain deterministic local variants instead of rep
  assert.equal(new Set(recovery).size,recovery.length,'new recovery/occupation prop families have distinct procedural silhouettes');
 });
 
+test('Abyss Bastion depth props have distinct deterministic procedural silhouettes',()=>{
+ const region=3,kinds=['handler-station','feed-crate','containment-post','scorched-floor','egg-cradle','feeding-trough','carcass-rack','claw-scrape','dragon-perch'];
+ const signatures=kinds.map((structure,i)=>visualSignature({id:'abyss-depth-'+i,renderKind:'prop',decorative:true,structure,dungeonDistrict:'test'},region));
+ assert.equal(new Set(signatures).size,kinds.length,'Bastion functional props do not collapse into one generic drawing');
+ const roosts=['abyss-roost-a','abyss-roost-b','abyss-roost-c','abyss-roost-d'].map(id=>visualSignature({id,renderKind:'prop',decorative:true,structure:'roost'},region));assert(new Set(roosts).size>=2,'Abyss roosts vary deterministically');
+ const hatcheries=['abyss-hatch-a','abyss-hatch-b','abyss-hatch-c','abyss-hatch-d'].map(id=>visualSignature({id,renderKind:'prop',decorative:true,structure:'hatchery'},region));assert(new Set(hatcheries).size>=2,'Abyss hatcheries vary deterministically');
+});
 test('Dark Crown reads as a regime with separate districts and distributed outward routes',()=>{
  const c=new Campaign();c.enter('crown');const z=c.zone(),town={x:Campaign.data.towns[4][0],y:Campaign.data.towns[4][1]};
  assert.equal(z.crownLayoutVersion,1);assert.equal(z.roadVersion,10);assert.equal(z.destinationLayoutVersion,4);
