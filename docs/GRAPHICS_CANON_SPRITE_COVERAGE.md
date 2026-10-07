@@ -177,6 +177,15 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `inspection-marker` | PROCEDURAL — standardized occupation administration marker |
 | `checkpoint-standard` | PROCEDURAL — standardized occupation military marker |
 | `chain-anchor` | PROCEDURAL — Abyss cordon containment detail |
+| `handler-station` | PROCEDURAL — Abyss handler/logistics furniture |
+| `feed-crate` | PROCEDURAL — Abyss dragon provisioning clutter |
+| `containment-post` | PROCEDURAL — Abyss restraint infrastructure |
+| `scorched-floor` | PROCEDURAL — flat dragon-wear ground trace |
+| `egg-cradle` | PROCEDURAL — Abyss hatchery support |
+| `feeding-trough` | PROCEDURAL — Abyss feeding/service structure |
+| `carcass-rack` | PROCEDURAL — Abyss feeding preparation structure |
+| `claw-scrape` | PROCEDURAL — flat dragon-wear ground trace |
+| `dragon-perch` | PROCEDURAL — Abyss roost support structure |
 
 ## `landmark()` coverage
 
