@@ -155,6 +155,33 @@ const worldLifePlans=[
   field:[[-160,-80,'roost'],[-70,-135,'ember-pit'],[40,-135,'bone-pile'],[150,-80,'obsidian'],[-165,45,'sleep-roll'],[-70,125,'treasure-hoard'],[55,125,'roost'],[160,45,'bone-pile']]
  }
 ];
+// Dark Crown gets a dedicated political/logistical layout layer instead of relying only on generic regional dressing.
+// These remain procedural structures and road targets; they do not change combat, progression, rewards or sprite policy.
+const crownRoutes=[
+ {id:'frontier-return',role:'administrative',point:[620,220],transport:'return',props:[[-70,45,'watchpost'],[70,45,'crown-banner'],[0,95,'supply-stack']]},
+ {id:'levy-road',role:'labor-supply',point:[180,1600],props:[[55,-70,'cart'],[65,65,'tax-post'],[120,10,'supply-stack']]},
+ {id:'military-gate',role:'military',point:[3570,980],props:[[-70,60,'crown-banner'],[-90,-55,'weapon-rack'],[-25,105,'watchpost']]},
+ {id:'ash-track',role:'monster-wilds',point:[1650,3580],props:[[-75,-35,'black-rock'],[35,-70,'roost'],[80,45,'ember-pit']]},
+ {id:'fortress-service',role:'elite-logistics',point:[3570,2480],props:[[-75,-45,'crown-banner'],[-20,90,'dark-brazier'],[-120,35,'command-tent']]}
+];
+const crownDistricts=[
+ {id:'labor-quarter',role:'civilian-labor',center:[720,900],props:[
+  [-180,-120,'crown-ash-house',32],[-20,-145,'crown-forgehouse',32],[150,-90,'cart',0],[-145,65,'field-kitchen',0],[20,105,'supply-stack',0],[165,80,'bunk',0],[70,-10,'tax-post',0]
+ ]},
+ {id:'citadel-command',role:'military-command',center:[2580,900],props:[
+  [-170,-85,'crown-wall',26],[-40,-130,'watchpost',0],[115,-100,'crown-banner',0],[-155,80,'weapon-rack',0],[-20,115,'war-table',0],[130,75,'training-dummy',0]
+ ]},
+ {id:'cindermaw-domain',role:'ash-beast-domain',center:[2580,1900],props:[
+  [-150,-70,'roost',0],[-35,-125,'ember-pit',0],[100,-90,'bone-pile',0],[-135,75,'obsidian',0],[10,110,'sleep-roll',0],[135,55,'warm-brazier',0]
+ ]},
+ {id:'fortress-logistics',role:'military-logistics',center:[3050,2320],props:[
+  [-175,-85,'forge',0],[-45,-130,'supply-stack',0],[110,-105,'field-kitchen',0],[-155,80,'bunk',0],[-20,115,'war-table',0],[135,70,'weapon-rack',0]
+ ]},
+ {id:'fortress-approach',role:'ultimate-authority',center:[3220,2860],props:[
+  [-185,-90,'crown-wall',26],[-60,-140,'dark-brazier',0],[85,-120,'crown-banner',0],[-170,75,'barricade',0],[-20,120,'weapon-rack',0],[135,70,'watchpost',0]
+ ]}
+];
+
 // Field-boss supply objectives are actual Treasury raids: every required cache is kept inside the boss's Treasury.
 const supplyRooms=[
  {id:'supply-vale',region:'vale',boss:'thorn',count:2,entryOffset:[255,-170],name:"Thornfang's Treasury",objective:"Recover two caches from Thornfang's Treasury"},
@@ -226,7 +253,9 @@ const creatureStrongholds=[
  {id:'ashbeast-roost-hold',region:'crown',center:[1800,3300],species:'ashbeast',wall:'stonewall',guardCount:4,unmarked:true,
   props:[[-105,-50,'roost'],[-45,-105,'bone-pile'],[50,-100,'ember-pit'],[110,-35,'obsidian'],[90,70,'sleep-roll'],[-10,110,'roost'],[-90,65,'black-rock']]},
  {id:'crown-field-barracks-hold',region:'crown',site:'crown-barracks',species:'crownguard',wall:'stonewall',guardCount:4,
-  props:[[-105,-50,'command-tent'],[-45,-105,'field-kitchen'],[50,-100,'weapon-rack'],[110,-35,'bunk'],[90,70,'supply-stack'],[-10,110,'training-dummy'],[-90,65,'war-table'],[170,110,'forge'],[190,-120,'bunk']]}
+  props:[[-105,-50,'command-tent'],[-45,-105,'field-kitchen'],[50,-100,'weapon-rack'],[110,-35,'bunk'],[90,70,'supply-stack'],[-10,110,'training-dummy'],[-90,65,'war-table'],[170,110,'forge'],[190,-120,'bunk']]},
+ {id:'crown-toll-redoubt',region:'crown',center:[3370,1820],species:'crownguard',wall:'stonewall',guardCount:3,unmarked:true,
+  props:[[-105,-50,'command-tent'],[-45,-105,'weapon-rack'],[55,-95,'bunk'],[110,-30,'supply-stack'],[85,75,'war-table'],[-55,100,'training-dummy']]}
 ];
 
 // Optional occupied interiors consolidate weak overlapping landmarks. They intentionally have no boss, captive, quest reward or gatherable resource yet.
@@ -518,6 +547,6 @@ const basicAttackCombo={steps:3,resetSeconds:4,multipliers:[1,1.1,1.2],finisher:
 const companionSkills={globalCooldown:1.5,first:{cooldown:8,multiplier:3,soldier:{name:'Power Strike'},archer:{name:'Triple Shot'}},second:{cooldown:12,unlockHeroSlot:2,soldier:{name:'Holy Cleave',shape:'cone',range:185,halfAngle:.8,multiplier:2.2,effect:'holy-cleave'},archer:{name:'Piercing Volley',shape:'line',range:480,halfWidth:55,multiplier:2.4,effect:'piercing-volley'}}};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,basicAttackCombo,companionSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,creatureStrongholds,sideDungeons,sideDungeonTrapTuning,tributeTotal,legacyResourceTotals,tributePlans,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
+const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,basicAttackCombo,companionSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,creatureStrongholds,sideDungeons,sideDungeonTrapTuning,tributeTotal,legacyResourceTotals,tributePlans,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,crownRoutes,crownDistricts,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
