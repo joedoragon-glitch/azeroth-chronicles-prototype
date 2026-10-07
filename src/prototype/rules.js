@@ -52,8 +52,8 @@ const tributePlans={
   {id:'ogre-cache',site:'ogre-hearth',amount:130,hidden:true,offset:[120,-80],context:'stolen collector chest'}
  ],
  frontier:[
-  {id:'convoy-tribute',site:'convoy',amount:220,hidden:false,offset:[105,75],context:'military tribute convoy'},
-  {id:'ravine-toll',site:'bridge-north',amount:150,hidden:false,offset:[-110,95],context:'ravine toll stores'},
+  {id:'convoy-tribute',site:'convoy',amount:220,hidden:false,offset:[-260,-220],context:'military tribute convoy'},
+  {id:'ravine-toll',site:'bridge-north',amount:150,hidden:false,offset:[220,-180],context:'ravine toll stores'},
   {id:'forest-levy',site:'bridge-south',amount:150,hidden:true,offset:[115,95],context:'abandoned collector cart'},
   {id:'overlook-cache',site:'overlook',amount:120,hidden:true,offset:[115,-80],context:'hidden command strongbox'}
  ],
