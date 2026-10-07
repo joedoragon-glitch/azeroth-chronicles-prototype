@@ -853,82 +853,67 @@ function groundDetail(ctx,p,seed,region,room,dungeonId,colors){
 function floor(ctx,p,x,y,region=0,room=false,dungeonId='',blocked=false){
  const colors=room?(treasuryFloors[dungeonId]||['#403d35','#4d493e','#343229','#b6a98a']):dungeonFloors[dungeonId]||floorPalettes[region];
  const tileX=Math.floor(x/80),tileY=Math.floor(y/80),seed=(Math.imul(tileX+19,73856093)^Math.imul(tileY+37,19349663))>>>0;
- const color=blocked?'#737c70':seed%7===0?colors[1]:seed%11===0?colors[2]:colors[0];
- ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x+60.8,p.y+21.6);ctx.lineTo(p.x,p.y+43.2);ctx.lineTo(p.x-60.8,p.y+21.6);ctx.closePath();ctx.fill();
- // Painterly tile plane: a faint warm/cool face break gives the isometric ground volume without obvious grid noise.
+ const outdoor=!room&&!dungeonId;let color=blocked?'#737c70':seed%7===0?colors[1]:seed%11===0?colors[2]:colors[0];if(outdoor)color=colors[0];
+ ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x+60.8,p.y+21.6);ctx.lineTo(p.x,p.y+43.2);ctx.lineTo(p.x-60.8,p.y+21.6);ctx.closePath();ctx.fill();if(outdoor){ctx.strokeStyle=color;ctx.lineWidth=1.2;ctx.stroke();}
+ // Slab joints belong to built interiors; natural ground has continuous material variation.
+ if(!outdoor){
  ctx.save();ctx.globalAlpha=blocked?.055:.035;ctx.fillStyle=colors[3]||'#d8d2aa';ctx.beginPath();ctx.moveTo(p.x,p.y+1);ctx.lineTo(p.x+58,p.y+21.6);ctx.lineTo(p.x,p.y+25);ctx.lineTo(p.x-58,p.y+21.6);ctx.closePath();ctx.fill();ctx.restore();
  ctx.strokeStyle='#f0ead01a';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.x-60.8,p.y+21.6);ctx.lineTo(p.x,p.y);ctx.lineTo(p.x+60.8,p.y+21.6);ctx.stroke();
  ctx.strokeStyle='#08161145';ctx.beginPath();ctx.moveTo(p.x-60.8,p.y+21.6);ctx.lineTo(p.x,p.y+43.2);ctx.lineTo(p.x+60.8,p.y+21.6);ctx.stroke();
  if(blocked&&seed%4===0){ctx.strokeStyle='#303a3566';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.x-14,p.y+18);ctx.lineTo(p.x-4,p.y+14);ctx.lineTo(p.x+5,p.y+19);ctx.lineTo(p.x+14,p.y+15);ctx.stroke();}
+ }
  if(!blocked)groundDetail(ctx,p,seed,region,room,dungeonId,colors);
 }
 // World-space surfaces avoid losing narrow barriers between coarse tile samples.
-function terrain(ctx,screen,region=0){
- const {kind,bounds:[x1,x2,y1,y2]}=R.barriers[region];
- const palette=kind==='water'?['#285d70','#397f92','#84b4b3']:kind==='lava'?['#753c2e','#d16c38','#e5a55b']:['#252a2c','#394044','#93917d'];
- const polygon=(points,color)=>{ctx.fillStyle=color;ctx.beginPath();points.forEach((q,j)=>{const p=screen(q);j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);});ctx.closePath();ctx.fill();};
- const rect=(a,b,c,d,color)=>polygon([{x:a,y:c},{x:b,y:c},{x:b,y:d},{x:a,y:d}],color);
- const line=(a,b,color,width)=>{a=screen(a);b=screen(b);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();};
- ctx.save();
- const landformPalettes={
-  meadow:['#557144','#78905b'], 'orchard-slope':['#5b7348','#8a9a60'], 'wooded-rise':['#425f42','#6f8456'], 'river-bank':['#5a7352','#87936f'],
-  'wet-basin':['#365f62','#6f8b7e'], mudflat:['#596353','#87866a'], 'reed-islands':['#46675a','#7d9272'], 'shore-shelf':['#4c6964','#82958a'],
-  'high-terrace':['#596054','#858779'], 'middle-terrace':['#4f584e','#787f70'], 'quarry-shelf':['#68675c','#989284'], 'pine-basin':['#44554b','#6e7863'],
-  'burn-scar':['#684d42','#926b55'], 'ravine-shelf':['#554944','#776159'], 'ash-lowland':['#5c5048','#857064'], 'war-road':['#60504a','#8b7468'],
-  'ash-plateau':['#494957','#6d6977'], 'obsidian-shelf':['#3d3e49','#5d5968'], 'crystal-field':['#49485b','#756b87'], 'fortress-apron':['#454650','#696672']
- };
- const drawLandform=(f)=>{
-  const colors=landformPalettes[f.kind]||['#555','#777'],pts=f.shape==='ellipse'?Array.from({length:40},(_,n)=>{const a=n*Math.PI/20;return{x:f.x+Math.cos(a)*f.rx,y:f.y+Math.sin(a)*f.ry};}):f.shape==='rect'?[{x:f.x1,y:f.y1},{x:f.x2,y:f.y1},{x:f.x2,y:f.y2},{x:f.x1,y:f.y2}]:(f.points||[]).map(([x,y])=>({x,y}));
-  if(pts.length<3)return;
-  const elevated=/terrace|shelf|plateau|rise|apron|quarry/.test(f.kind),cx=f.x??pts.reduce((a,p)=>a+p.x,0)/pts.length,cy=f.y??pts.reduce((a,p)=>a+p.y,0)/pts.length;
-  const inset=(amount)=>pts.map(q=>({x:q.x+(cx-q.x)*amount,y:q.y+(cy-q.y)*amount}));
-  ctx.save();
-  // Landforms are terrain texture, not painted polygons. Feather the tint inward so boundaries disappear into the base tiles.
-  ctx.globalAlpha=elevated?.07:.045;polygon(pts,colors[0]);
-  ctx.globalAlpha=elevated?.05:.035;polygon(inset(.06),colors[0]);
-  ctx.globalAlpha=elevated?.03:.025;polygon(inset(.14),colors[1]);
-  // Only raised geography keeps a restrained contour cue; flat basins/meadows/mudflats have no hard outline at all.
-  if(elevated){
-   ctx.globalAlpha=.14;for(let j=0;j<pts.length;j+=Math.max(2,Math.floor(pts.length/6))){const a=pts[j],b=pts[(j+1)%pts.length];line(a,b,colors[1],.9);}
-   ctx.globalAlpha=.11;for(let j=0;j<pts.length;j+=2){const a=pts[j],b=pts[(j+1)%pts.length];line({x:a.x,y:a.y+12},{x:b.x,y:b.y+12},'#202522',1.25);}
+function terrain(ctx,screen,region=0,size=3000){
+ const time=(typeof performance!=='undefined'?performance.now():0)/1000;
+ const poly=(points,color)=>{const ps=points.map(screen);if(ps.every(p=>p.x<-100)||ps.every(p=>p.x>(ctx.canvas?.width||10000)+100)||ps.every(p=>p.y<-100)||ps.every(p=>p.y>(ctx.canvas?.height||10000)+100))return;ctx.fillStyle=color;ctx.beginPath();ps.forEach((p,j)=>j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.fill();};
+ const rect=(x1,x2,y1,y2,color)=>poly([{x:x1,y:y1},{x:x2,y:y1},{x:x2,y:y2},{x:x1,y:y2}],color);
+ const line=(a,b,color,width=1)=>{a=screen(a);b=screen(b);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();};
+ const visible=(q)=>{const p=screen(q);return p.x>-150&&p.x<(ctx.canvas?.width||10000)+150&&p.y>-150&&p.y<(ctx.canvas?.height||10000)+150;};
+ const strip=(kind,x1,x2,y1,y2)=>{
+  if(y2<=y1)return;const water=kind==='water',lava=kind==='lava',cliff=kind==='cliff',width=x2-x1,bank=water?(region===1?'#677561':'#64725a'):lava?'#54413e':'#726c5d';
+  // The continuous rim identifies the exact simulation edge; all broken faces lie inside it.
+  rect(x1-8,x2+8,y1,y2,bank);rect(x1,x2,y1,y2,water?'#285d70':lava?'#672f28':cliff?'#494b43':'#222729');
+  rect(x1+7,x2-7,y1+3,y2-3,water?'#397783':lava?'#b44e2c':cliff?'#616357':'#30363a');
+  for(let y=y1;y<y2;y+=58){
+   const end=Math.min(y2,y+58),seed=(Math.imul(Math.floor(y/58)+region*17,73856093)>>>0),tooth=8+seed%12;
+   for(const side of [-1,1]){const edge=side<0?x1:x2,inside=edge-side*Math.min(tooth,width*.25),mid=y+(end-y)*(.3+(seed%4)*.1);
+    poly([{x:edge,y},{x:inside,y:mid},{x:edge-side*6,y:end},{x:edge,y:end}],water?(side<0?'#536a57':'#6a7c64'):lava?(seed%2?'#423b3b':'#574039'):side<0?'#696b61':'#4b514c');
+    if(!water&&!lava)line({x:edge-side*3,y:y+10},{x:inside,y:mid},'#a3a18b77',1);
+   }
   }
-  ctx.restore();
+  for(let y=y1+24;y<y2-8;y+=water?62:48){const q={x:(x1+x2)/2,y};if(!visible(q))continue;const phase=Math.sin(time*(water?.9:1.3)+y*.035),seed=Math.abs(Math.floor(y*13+region*47));
+   if(water){const x=x1+width*(.28+(seed%4)*.1),span=Math.min(55,width*.38);line({x,y:y+phase*3},{x:x+span,y:y+5+phase*3},'#9abeb788',1.2);line({x:x+span*.15,y:y+12},{x:x+span*.65,y:y+14},'#c0d6c044',.8);}
+   else if(lava){const mid=x1+width*(.4+(seed%3)*.08);line({x:mid-10,y},{x:mid+8,y:y+11+phase*3},'#ffd076',2);line({x:mid+8,y:y+11+phase*3},{x:mid-4,y:y+27},'#ed963f',1.5);poly([{x:x1+width*.24,y:y+28},{x:x1+width*.38,y:y+32},{x:x1+width*.45,y:y+39},{x:x1+width*.22,y:y+36}],'#4b3633');}
+   else{const x=x1+width*.3;line({x,y},{x:x+width*.45,y:y+12},cliff?'#9a9b8777':'#586067',1.5);line({x:x+width*.15,y:y+7},{x:x+width*.3,y:y+26},'#191f2388',2);}
+  }
+  for(const x of [x1,x2])line({x,y:y1},{x,y:y2},water?'#aec6a888':lava?'#d6956866':'#ada88c99',1.5);
  };
- // Large-scale landforms guide authored placement only; visible geography comes from terrain, vegetation, roads and structures.
- rect(x1,x2,y1,y2,palette[0]);
- rect(x1+8,x2-8,y1+8,y2-8,palette[1]);
- for(const x of [x1,x2]){line({x:x+(x===x1?-10:10),y:y1},{x:x+(x===x1?-10:10),y:y2},'#16231c99',4);line({x,y:y1},{x,y:y2},palette[2],2);}
- const t=(typeof performance!=='undefined'?performance.now():0)/1000;
- for(let y=y1+30;y<y2-20;y+=70){const inset=Math.min(22,(x2-x1)/4),wave=kind==='ravine'?0:Math.sin(t*1.35+y*.027)*5;line({x:x1+inset,y:y+wave},{x:x2-inset,y:y+12+wave},palette[2],kind==='ravine'?1:2);if(kind==='water')line({x:x1+inset+8,y:y+16-wave*.25},{x:x1+inset+24,y:y+19-wave*.25},'#c5ebe066',1);else if(kind==='lava')line({x:x1+inset+3,y:y+17+wave*.2},{x:x2-inset-5,y:y+22+wave*.2},'#ffc07877',1);}
- // Authored arrival harbors make ferry travel physically continuous between regions.
- const harbor=R.harbors?.[['vale','march','highlands','frontier','crown'][region]];
- if(harbor){
-  const w=harbor.water,d=harbor.dock,waterBase=region===1?'#315f67':'#426e79',waterInner=region===1?'#3f7a7c':'#527f8c',shore=region===1?'#6e806b':'#7c8177';
-  rect(w.x1-10,w.x2+10,w.y1-10,w.y2+10,shore);rect(w.x1,w.x2,w.y1,w.y2,waterBase);rect(w.x1+10,w.x2-10,w.y1+10,w.y2-10,waterInner);
-  for(let y=w.y1+35;y<w.y2-20;y+=55){const wave=Math.sin(t*1.4+y*.025)*5;line({x:w.x1+24,y:y+wave},{x:w.x2-28,y:y+8+wave},region===1?'#9ed0c788':'#b6d4d188',1.4);}
-  // Dock deck is world-space so collision and artwork agree about where the hero can walk over water.
-  rect(d.x1,d.x2,d.y1,d.y2,'#6a5139');rect(d.x1+4,d.x2-4,d.y1+4,d.y2-4,region===1?'#a1855c':'#968265');
-  const horizontal=(d.x2-d.x1)>=(d.y2-d.y1),step=horizontal?24:22;
-  if(horizontal)for(let x=d.x1+10;x<d.x2-6;x+=step)line({x,y:d.y1+4},{x,y:d.y2-4},'#6f563d',1);
-  else for(let y=d.y1+10;y<d.y2-6;y+=step)line({x:d.x1+4,y},{x:d.x2-4,y},'#6f563d',1);
-  line({x:d.x1,y:d.y1},{x:d.x2,y:d.y1},'#d0b17a',2);line({x:d.x1,y:d.y2},{x:d.x2,y:d.y2},'#5a4534',2);
-  for(const q of [{x:d.x1+10,y:d.y1+10},{x:d.x1+10,y:d.y2-10},{x:d.x2-10,y:d.y1+10},{x:d.x2-10,y:d.y2-10}]){const p=screen(q);ctx.strokeStyle='#5d4735';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(p.x,p.y+7);ctx.lineTo(p.x,p.y-12);ctx.stroke();ctx.fillStyle='#a17b55';ctx.beginPath();ctx.arc(p.x,p.y-12,2.5,0,Math.PI*2);ctx.fill();}
+ ctx.save();ctx.lineJoin='round';ctx.lineCap='round';
+ // Broad feathered material patches are stable in world space, independent of tile and camera edges.
+ ctx.save();ctx.beginPath();[{x:0,y:0},{x:size,y:0},{x:size,y:size},{x:0,y:size}].map(screen).forEach((p,j)=>j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.clip();
+ const materials=[['#75905a','#182e24','#92714b'],['#6f785b','#162f37','#86734f'],['#8c8b71','#2a4438','#b4a489'],['#a08060','#272628','#775344'],['#776183','#181e28','#555369']][region];
+ for(let x=160;x<size;x+=360)for(let y=160;y<size;y+=360){const seed=(Math.imul(x+17,73856093)^Math.imul(y+37+region*11,19349663))>>>0,q=screen({x:x+(seed%121)-60,y:y+((seed>>>8)%121)-60}),radius=190+seed%95,rx=radius*.76*Math.SQRT2,ry=radius*.27*Math.SQRT2;if(q.x+rx<0||q.x-rx>(ctx.canvas?.width||10000)||q.y+ry<0||q.y-ry>(ctx.canvas?.height||10000))continue;
+  ctx.save();ctx.translate(q.x,q.y);ctx.scale(1,.27/.76);const g=ctx.createRadialGradient(0,0,0,0,0,rx),color=materials[seed%3];g.addColorStop(0,color+'50');g.addColorStop(.45,color+'22');g.addColorStop(1,color+'00');ctx.fillStyle=g;ctx.fillRect(-rx,-rx,rx*2,rx*2);ctx.restore();
  }
- // Other authored ponds and walls also use exact shapes, independent of props.
+ ctx.restore();
+ const b=R.barriers[region];strip(b.kind,...b.bounds);
+ const harbor=R.harbors?.[['vale','march','highlands','frontier','crown'][region]];
+ if(harbor){const w=harbor.water,d=harbor.dock;strip('water',w.x1,w.x2,w.y1,w.y2);
+  rect(d.x1,d.x2,d.y1,d.y2,'#594735');rect(d.x1+4,d.x2-4,d.y1+4,d.y2-4,region===1?'#a1855c':'#968265');
+  for(let x=d.x1+10;x<d.x2-6;x+=22){line({x,y:d.y1+4},{x,y:d.y2-4},'#6f563d',1);for(const y of [d.y1+9,d.y2-9]){const p=screen({x,y});ctx.fillStyle='#504435';ctx.fillRect(p.x-1,p.y-1,2,2);}}
+  for(const y of [d.y1,d.y2]){line({x:d.x1,y},{x:d.x2,y},y===d.y1?'#d0b17a':'#5a4534',2);line({x:d.x1,y:y+6},{x:d.x2,y:y+6},'#493a2c',2);}
+  for(const q of [{x:d.x1+10,y:d.y1+10},{x:d.x1+10,y:d.y2-10},{x:d.x2-10,y:d.y1+10},{x:d.x2-10,y:d.y2-10}]){const p=screen(q);ctx.strokeStyle='#5d4735';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(p.x,p.y+7);ctx.lineTo(p.x,p.y-12);ctx.stroke();ctx.fillStyle='#b29269';ctx.beginPath();ctx.arc(p.x,p.y-12,2.5,0,Math.PI*2);ctx.fill();}
+ }
  for(const p of R.terrain[region]){
-  const feature=p.kind||'cliff';
-  if(p.r){
-   const points=[],inner=[];for(let n=0;n<48;n++){const a=n*Math.PI/24;points.push({x:p.x+Math.cos(a)*p.r,y:p.y+Math.sin(a)*p.r});inner.push({x:p.x+Math.cos(a)*(p.r-8),y:p.y+Math.sin(a)*(p.r-8)});}
-   const circular=feature==='water'?['#8fa79766','#397f92','#a1c8bf99']:feature==='obsidian'?['#46434f','#302f39','#8c7e99']:['#70685f','#514b46','#9e9488'];
-   polygon(points,circular[0]);polygon(inner,circular[1]);
-   if(feature==='water')for(const dy of [-p.r*.25,p.r*.25])line({x:p.x-p.r*.35,y:p.y+dy},{x:p.x+p.r*.25,y:p.y+dy+8},circular[2],1.5);
-   else for(let a=0;a<Math.PI*2;a+=Math.PI/3)line({x:p.x+Math.cos(a)*p.r*.25,y:p.y+Math.sin(a)*p.r*.25},{x:p.x+Math.cos(a)*p.r*.7,y:p.y+Math.sin(a)*p.r*.7},circular[2],1.2);
-  } else {
-   const colors=feature==='lava'?['#723d31','#d06c3c','#f0ae68']:feature==='ravine'?['#292b2d','#42464a','#85827a']:['#5d625b','#777c73','#aaa795'];
-   let start=p.y1;for(const [lo,hi]of p.gaps||[]){rect(p.x1,p.x2,start,lo,colors[0]);rect(p.x1+8,p.x2-8,start+8,lo-8,colors[1]);start=hi;}rect(p.x1,p.x2,start,p.y2,colors[0]);if(p.y2-start>16)rect(p.x1+8,p.x2-8,start+8,p.y2-8,colors[1]);
-   for(const x of [p.x1,p.x2])line({x,y:p.y1},{x,y:p.y2},colors[2],1.5);
-   if(feature==='lava')for(let y=p.y1+35;y<p.y2-20;y+=90)line({x:p.x1+18,y},{x:p.x2-18,y:y+10},'#ffc07877',1.2);
-  }
+  const kind=p.kind||'cliff';
+  if(p.r){const circle=(r)=>Array.from({length:48},(_,n)=>{const a=n*Math.PI/24;return{x:p.x+Math.cos(a)*r,y:p.y+Math.sin(a)*r};}),water=kind==='water';
+   poly(circle(p.r+6),water?'#70816a':kind==='obsidian'?'#625568':'#827b68');poly(circle(p.r),water?'#315f6c':kind==='obsidian'?'#302f39':'#514b46');poly(circle(p.r-12),water?'#397783':kind==='obsidian'?'#403b4d':'#645d52');
+   for(let n=0;n<12;n++){const a=n*Math.PI/6,r=p.r-7,q={x:p.x+Math.cos(a)*r,y:p.y+Math.sin(a)*r};if(!visible(q))continue;poly([q,{x:p.x+Math.cos(a+.13)*(r-10-n%3*5),y:p.y+Math.sin(a+.13)*(r-10-n%3*5)},{x:p.x+Math.cos(a+.25)*r,y:p.y+Math.sin(a+.25)*r}],water?'#65796a88':kind==='obsidian'?'#82709266':'#aba18a77');}
+   if(water)for(let j=0;j<4;j++){const y=p.y+(j-1.5)*p.r*.3,x=p.x-p.r*.25+Math.sin(time*.8+j)*5;line({x,y},{x:x+p.r*.45,y:y+5},'#b4d4c388',1);}
+   else for(let a=0;a<Math.PI*2;a+=Math.PI/3)line({x:p.x+Math.cos(a)*p.r*.2,y:p.y+Math.sin(a)*p.r*.2},{x:p.x+Math.cos(a+.2)*p.r*.7,y:p.y+Math.sin(a+.2)*p.r*.7},kind==='obsidian'?'#b49dcc88':'#aea08988',1.3);
+  }else{let at=p.y1;for(const [lo,hi]of p.gaps||[]){strip(kind,p.x1,p.x2,at,lo);at=hi;}strip(kind,p.x1,p.x2,at,p.y2);}
  }
  ctx.restore();
 }
@@ -939,6 +924,7 @@ function bridges(ctx,screen,region=0){
  ctx.save();
  for(const [lo,hi]of gaps){
   polygon([{x:x1-24,y:lo-8},{x:x2+24,y:lo-8},{x:x2+24,y:hi+8},{x:x1-24,y:hi+8}],stone?'#3b3833':'#4b3929');
+  for(const y of [lo,hi]){const a=screen({x:x1-18,y}),b=screen({x:x2+18,y});ctx.fillStyle=stone?'#56554b':'#665039';ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.lineTo(b.x,b.y+6);ctx.lineTo(a.x,a.y+6);ctx.closePath();ctx.fill();}
   polygon([{x:x1-18,y:lo},{x:x2+18,y:lo},{x:x2+18,y:hi},{x:x1-18,y:hi}],stone?'#a6a08c':'#b49468');
   for(let x=x1-12;x<x2+18;x+=stone?40:18)line({x,y:lo},{x,y:hi},stone?'#716e61':'#705338');
   for(const y of [lo,hi]){
@@ -946,41 +932,53 @@ function bridges(ctx,screen,region=0){
    for(const x of [x1-12,x2+12]){const p=screen({x,y});ctx.strokeStyle=stone?'#bdb7a4':'#c5a577';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x,p.y-12);ctx.stroke();ctx.fillStyle=stone?'#e5dcc0':'#edcf91';ctx.beginPath();ctx.arc(p.x,p.y-13,3,0,Math.PI*2);ctx.fill();}
   }
   line({x:x1-13,y:(lo+hi)/2},{x:x2+13,y:(lo+hi)/2},stone?'#d4cdb166':'#f2d6a166',1);
+  for(const x of [x1-14,x2+14])for(const y of [lo+12,hi-12]){const p=screen({x,y});ctx.fillStyle=stone?'#666558':'#6a5139';ctx.fillRect(p.x-2,p.y-1,3,2);}
  }
  ctx.restore();
 }
-function dungeonArchitecture(ctx,screen,dungeonId=''){
- const layout=R.dungeonArchitecture?.[dungeonId];if(!layout)return;
- const palette=dungeonId==='abyss'?{top:'#6f5b5d',side:'#463b3d',edge:'#a77a6b'}:{top:'#667078',side:'#3f484e',edge:'#9ba7aa'};
- const poly=(pts,fill,stroke,width=1)=>{const ps=pts.map(screen);ctx.fillStyle=fill;ctx.beginPath();ps.forEach((p,j)=>j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.stroke();}};
- const block=(x1,x2,y1,y2)=>{const top=[{x:x1,y:y1},{x:x2,y:y1},{x:x2,y:y2},{x:x1,y:y2}],drop=14;poly([{x:x2,y:y1},{x:x2,y:y2},{x:x2,y:y2+drop},{x:x2,y:y1+drop}],palette.side);poly([{x:x1,y:y2},{x:x2,y:y2},{x:x2,y:y2+drop},{x:x1,y:y2+drop}],palette.side);poly(top,palette.top,palette.edge,1.7);};
- ctx.save();for(const w of layout.partitions||[]){const gaps=[...(w.gaps||[])].sort((a,b)=>a[0]-b[0]);if(w.axis==='x'){let at=w.x1;for(const [lo,hi]of gaps){if(lo>at)block(at,Math.min(lo,w.x2),w.y1,w.y2);at=Math.max(at,hi);}if(at<w.x2)block(at,w.x2,w.y1,w.y2);}else{let at=w.y1;for(const [lo,hi]of gaps){if(lo>at)block(w.x1,w.x2,at,Math.min(lo,w.y2));at=Math.max(at,hi);}if(at<w.y2)block(w.x1,w.x2,at,w.y2);}}ctx.restore();
+function dungeonLayout(id,size=1470){
+ if(R.dungeonArchitecture?.[id])return R.dungeonArchitecture[id];
+ const wall=R.dungeonWalls[id];if(!wall)return null;
+ return {walkable:[{bounds:[40,size-40,40,size-40]}],partitions:[{x1:wall[0],x2:wall[1],y1:120,y2:1260,axis:'y',gaps:wall[2]}]};
+}
+function dungeonFloorPath(ctx,screen,id,size){const layout=dungeonLayout(id,size);ctx.beginPath();for(const {bounds:[x1,x2,y1,y2]}of layout?.walkable||[]){const ps=[{x:x1,y:y1},{x:x2,y:y1},{x:x2,y:y2},{x:x1,y:y2}].map(screen);ps.forEach((p,j)=>j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();}}
+const dungeonEdgeCache=new Map();
+function dungeonEdges(id,size){
+ const key=id+':'+size;if(dungeonEdgeCache.has(key))return dungeonEdgeCache.get(key);
+ const bounds=(dungeonLayout(id,size)?.walkable||[]).map(a=>a.bounds),xs=[...new Set(bounds.flatMap(b=>b.slice(0,2)))].sort((a,b)=>a-b),ys=[...new Set(bounds.flatMap(b=>b.slice(2)))].sort((a,b)=>a-b),inside=(j,k)=>j>=0&&k>=0&&j<xs.length-1&&k<ys.length-1&&bounds.some(([x1,x2,y1,y2])=>(xs[j]+xs[j+1])/2>x1&&(xs[j]+xs[j+1])/2<x2&&(ys[k]+ys[k+1])/2>y1&&(ys[k]+ys[k+1])/2<y2),edges=[];
+ for(let j=0;j<xs.length-1;j++)for(let k=0;k<ys.length-1;k++){if(!inside(j,k))continue;const x1=xs[j],x2=xs[j+1],y1=ys[k],y2=ys[k+1];if(!inside(j,k-1))edges.push([{x:x1,y:y1},{x:x2,y:y1}]);if(!inside(j+1,k))edges.push([{x:x2,y:y1},{x:x2,y:y2}]);if(!inside(j,k+1))edges.push([{x:x2,y:y2},{x:x1,y:y2}]);if(!inside(j-1,k))edges.push([{x:x1,y:y2},{x:x1,y:y1}]);}
+ dungeonEdgeCache.set(key,edges);return edges;
+}
+function dungeonArchitecture(ctx,screen,dungeonId='',size){
+ const layout=dungeonLayout(dungeonId,size);if(!layout)return;
+ const palette=dungeonId==='abyss'?{top:'#6f5b5d',side:'#463b3d',edge:'#a77a6b'}:dungeonId==='archive'?{top:'#697978',side:'#3e5458',edge:'#9eb2ac'}:dungeonId==='mine'?{top:'#797567',side:'#4b4a42',edge:'#a7a187'}:{top:'#667078',side:'#3f484e',edge:'#9ba7aa'};
+ const poly=(pts,fill,stroke,width=1)=>{ctx.fillStyle=fill;ctx.beginPath();pts.forEach((p,j)=>j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.stroke();}};
+ const block=(x1,x2,y1,y2)=>{const top=[{x:x1,y:y1},{x:x2,y:y1},{x:x2,y:y2},{x:x1,y:y2}].map(screen),drop=7;poly([top[1],top[2],{x:top[2].x,y:top[2].y+drop},{x:top[1].x,y:top[1].y+drop}],palette.side);poly([top[3],top[2],{x:top[2].x,y:top[2].y+drop},{x:top[3].x,y:top[3].y+drop}],palette.side);poly(top,palette.top,palette.edge,1.7);
+  const seam=(a,b)=>{a=screen(a);b=screen(b);ctx.strokeStyle=palette.side+'99';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();};
+  if(x2-x1>y2-y1)for(let x=x1+35;x<x2;x+=50)seam({x,y:y1+4},{x,y:y2-4});else for(let y=y1+35;y<y2;y+=50)seam({x:x1+4,y},{x:x2-4,y});
+ };
+ ctx.save();for(const [a,b]of dungeonEdges(dungeonId,size)){const p=screen(a),q=screen(b);ctx.strokeStyle=palette.side;ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(p.x,p.y+3);ctx.lineTo(q.x,q.y+3);ctx.stroke();ctx.strokeStyle=palette.edge;ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.stroke();}
+ for(const w of layout.partitions||[]){const gaps=[...(w.gaps||[])].sort((a,b)=>a[0]-b[0]);if(w.axis==='x'){let at=w.x1;for(const [lo,hi]of gaps){if(lo>at)block(at,Math.min(lo,w.x2),w.y1,w.y2);at=Math.max(at,hi);}if(at<w.x2)block(at,w.x2,w.y1,w.y2);}else{let at=w.y1;for(const [lo,hi]of gaps){if(lo>at)block(w.x1,w.x2,at,Math.min(lo,w.y2));at=Math.max(at,hi);}if(at<w.y2)block(w.x1,w.x2,at,w.y2);}}ctx.restore();
 }
 function roads(ctx,paths,screen,region=0){
- const strip=R.barriers[region].bounds,palettes=[
-  {shoulder:'#564834',base:'#8e7758',inner:'#a18b68',seam:'#6f604c'},
-  {shoulder:'#4b5043',base:'#83775e',inner:'#9c8e70',seam:'#6b6b58'},
-  {shoulder:'#4e4d46',base:'#87857a',inner:'#aaa695',seam:'#6e6d66'},
-  {shoulder:'#51443e',base:'#7c6c61',inner:'#978678',seam:'#625750'},
-  {shoulder:'#3f3d45',base:'#66636e',inner:'#87818e',seam:'#55525d'}
- ],road=palettes[region]||palettes[0];
- const bridge=p=>p.x>=strip[0]-12&&p.x<=strip[1]+12&&p.y>=strip[2]&&p.y<=strip[3];
- const polygon=(points,color)=>{ctx.fillStyle=color;ctx.beginPath();points.forEach((q,j)=>{const p=screen(q);j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);});ctx.closePath();ctx.fill();};
- const segment=(a,b,w,color)=>{const d=Math.hypot(b.x-a.x,b.y-a.y);if(!d)return;const dx=-(b.y-a.y)/d*w,dy=(b.x-a.x)/d*w;polygon([{x:a.x+dx,y:a.y+dy},{x:b.x+dx,y:b.y+dy},{x:b.x-dx,y:b.y-dy},{x:a.x-dx,y:a.y-dy}],color);};
+ const barrier=R.barriers[region],palettes=[{shoulder:'#564834',base:'#8e7758',inner:'#9c8664',seam:'#6f604c'},{shoulder:'#4b5043',base:'#756e57',inner:'#8e8367',seam:'#5a6354'},{shoulder:'#4e4d46',base:'#87857a',inner:'#a29f8e',seam:'#6e6d66'},{shoulder:'#51443e',base:'#7c6c61',inner:'#8c7c6d',seam:'#625750'},{shoulder:'#3f3d45',base:'#66636e',inner:'#827d89',seam:'#55525d'}],road=palettes[region]||palettes[0];
+ const onBridge=p=>p.x>=barrier.bounds[0]-12&&p.x<=barrier.bounds[1]+12&&barrier.gaps.some(([lo,hi])=>p.y>=lo&&p.y<=hi),stone=region>=2;
+ const poly=(points,color)=>{ctx.fillStyle=color;ctx.beginPath();points.forEach((q,j)=>{const p=screen(q);j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);});ctx.closePath();ctx.fill();};
+ const disk=(q,r,color)=>poly(Array.from({length:16},(_,j)=>{const a=j*Math.PI/8;return{x:q.x+Math.cos(a)*r,y:q.y+Math.sin(a)*r};}),color);
+ const segment=(a,b,w,color)=>{const d=Math.hypot(b.x-a.x,b.y-a.y);if(!d)return;const dx=-(b.y-a.y)/d*w,dy=(b.x-a.x)/d*w;poly([{x:a.x+dx,y:a.y+dy},{x:b.x+dx,y:b.y+dy},{x:b.x-dx,y:b.y-dy},{x:a.x-dx,y:a.y-dy}],color);};
  const stroke=(a,b,color,width=1)=>{a=screen(a);b=screen(b);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();};
- const edges=[],seen=new Set();for(const path of paths)for(let j=1;j<path.length;j++){const a=path[j-1],b=path[j],key=[a.x,a.y,b.x,b.y].join(':');if(seen.has(key))continue;seen.add(key);edges.push([a,b]);}
- ctx.save();ctx.lineJoin='round';ctx.lineCap='butt';
- // Shared shoulders and pavement form junctions before individual slab seams.
- for(const [a,b]of edges)segment(a,b,35,road.shoulder);
- for(const path of paths)for(const q of path)polygon([{x:q.x-35,y:q.y-35},{x:q.x+35,y:q.y-35},{x:q.x+35,y:q.y+35},{x:q.x-35,y:q.y+35}],road.shoulder);
- for(const [a,b]of edges)segment(a,b,29,road.base);
- for(const path of paths)for(const q of path)polygon([{x:q.x-29,y:q.y-29},{x:q.x+29,y:q.y-29},{x:q.x+29,y:q.y+29},{x:q.x-29,y:q.y+29}],road.base);
- for(const [a,b]of edges)segment(a,b,23,road.inner);
- const seams=new Set();for(const [a,b]of edges){const length=Math.hypot(b.x-a.x,b.y-a.y);if(!length)continue;const ux=(b.x-a.x)/length,uy=(b.y-a.y)/length,nx=-uy,ny=ux,steps=Math.max(1,Math.ceil(length/22));
- for(let j=0;j<steps;j++){const p={x:a.x+(b.x-a.x)*j/steps,y:a.y+(b.y-a.y)*j/steps},q={x:a.x+(b.x-a.x)*(j+1)/steps,y:a.y+(b.y-a.y)*(j+1)/steps},mid={x:(p.x+q.x)/2,y:(p.y+q.y)/2};if(bridge(mid)){segment(p,q,28,'#b49468');for(const side of [-1,1])stroke({x:p.x+nx*side*31,y:p.y+ny*side*31},{x:q.x+nx*side*31,y:q.y+ny*side*31},'#d1b887',2);}}
- const anchor=a.x*ux+a.y*uy,first=Math.ceil(anchor/44)*44-anchor;for(let t=first;t<length;t+=44){const p={x:a.x+ux*t,y:a.y+uy*t},key=Math.round(p.x)+':'+Math.round(p.y);if(seams.has(key))continue;seams.add(key);const wood=bridge(p);stroke({x:p.x+nx*26,y:p.y+ny*26},{x:p.x-nx*26,y:p.y-ny*26},wood?'#624b34':road.seam,1);if(!wood){const q={x:a.x+ux*Math.min(length,t+44),y:a.y+uy*Math.min(length,t+44)};stroke(p,q,road.seam,.8);}}
+ const edges=[],seen=new Set(),nodes=new Map();for(const path of paths){for(const q of path)nodes.set(q.x+':'+q.y,q);for(let j=1;j<path.length;j++){const a=path[j-1],b=path[j],key=[a.x+':'+a.y,b.x+':'+b.y].sort().join('/');if(!seen.has(key)){seen.add(key);edges.push([a,b]);}}}
+ ctx.save();ctx.lineJoin='round';ctx.lineCap='round';
+ for(const [w,color]of [[35,road.shoulder],[29,road.base],[23,road.inner]]){for(const [a,b]of edges)segment(a,b,w,color);for(const q of nodes.values())disk(q,w,color);}
+ const details=new Set();for(const [a,b]of edges){const length=Math.hypot(b.x-a.x,b.y-a.y);if(!length)continue;const ux=(b.x-a.x)/length,uy=(b.y-a.y)/length,nx=-uy,ny=ux,spacing=region===4?56:region===2?64:48,anchor=a.x*ux+a.y*uy,first=Math.ceil(anchor/spacing)*spacing-anchor;
+  if(region===0||region===1||region===3)for(const side of [-1,1])stroke({x:a.x+nx*side*12,y:a.y+ny*side*12},{x:b.x+nx*side*12,y:b.y+ny*side*12},road.seam+(region===3?'99':'44'),region===3?1.8:1);
+  for(let t=first;t<length;t+=spacing){const p={x:a.x+ux*t,y:a.y+uy*t},key=Math.round(p.x)+':'+Math.round(p.y);if(details.has(key))continue;details.add(key);const bridge=onBridge(p);
+   if(bridge){stroke({x:p.x+nx*26,y:p.y+ny*26},{x:p.x-nx*26,y:p.y-ny*26},stone?'#716e61':'#705338',1);continue;}
+   if(region===4){stroke({x:p.x+nx*26,y:p.y+ny*26},{x:p.x-nx*26,y:p.y-ny*26},road.seam,1);const q={x:a.x+ux*Math.min(length,t+spacing),y:a.y+uy*Math.min(length,t+spacing)};stroke(p,q,road.seam,.8);}
+   else if(region===2){for(const side of [-1,1])stroke({x:p.x+nx*side*23,y:p.y+ny*side*23},{x:p.x+nx*side*5+ux*7,y:p.y+ny*side*5+uy*7},road.seam,.9);}
+   else{const off=(Math.round(p.x+p.y)%17)-8,q={x:p.x+nx*off,y:p.y+ny*off};stroke(q,{x:q.x+ux*(region===1?8:4),y:q.y+uy*(region===1?8:4)},region===1?'#b7af8b66':region===3?'#403b3666':'#c7b18a77',region===1?1.4:1.2);}
+  }
  }
-
  ctx.restore();
 }
 function atmosphere(ctx,canvas,region=0,opts={}){
@@ -1010,6 +1008,6 @@ function atmosphere(ctx,canvas,region=0,opts={}){
  ctx.restore();
 }
 function enemyBodyKind(e){if(!e?.species)return 'unknown';const rangedClass=e.ranged&&['mireling','ogre','orc','ashbeast','crownguard'].includes(e.species);return e.species+(rangedClass?':ranged':'');}
-root.PrototypeVisuals={draw,height,floor,dungeonArchitecture,roads,terrain,bridges,atmosphere,allyBodyKind,enemyBodyKind,barracksVisualState};
+root.PrototypeVisuals={draw,height,floor,dungeonFloorPath,dungeonLayout,dungeonEdges,dungeonArchitecture,roads,terrain,bridges,atmosphere,allyBodyKind,enemyBodyKind,barracksVisualState};
 if(typeof module!=='undefined')module.exports=root.PrototypeVisuals;
 })(typeof window!=='undefined'?window:globalThis);
