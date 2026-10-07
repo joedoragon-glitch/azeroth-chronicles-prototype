@@ -6,6 +6,16 @@
 
 This document is the production source for the next image-generation phase. It does **not** activate any sprite in the game. Each asset is generated **one at a time and one alone**, using its own entry below. The current procedural renderer is canon.
 
+## Audit status — authoritative for generation
+
+This catalog has completed its Phase 2A documentation audit. The next image-generation phase must obey the per-entry status:
+
+- **GENERATE:** entries containing an **Image-generation prompt**. Generate exactly one image for that entry.
+- **ALIAS:** reuse the named existing asset; do not generate a second image.
+- **KEEP PROCEDURAL:** do not generate a sprite; the current renderer remains the final visual for that item.
+
+The audited catalog contains 160 numbered entries. Do not add visual details from memory, older concept sheets, or prior generated images. If an entry still lacks enough information, stop on that entry rather than improvising.
+
 ## Mandatory base prompt
 
 Use this text at the beginning of every asset prompt, followed by that asset's specific prompt:
@@ -1099,51 +1109,39 @@ The first roster omitted four purpose-specific procedural service structures. Th
 
 ### 132 — Frontier market stand
 
-**Canonical cues:** Same compact market geometry as asset 094: low brown table, two thin rear posts, three small green produce shapes, but with the Frontier's muted red-brown canopy instead of the standard tan canopy.
+**Audit status: KEEP PROCEDURAL — DO NOT GENERATE A SPRITE.**
 
-**Image-generation prompt:**
-
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Frontier market stand exactly as described. Preserve the same simple table/posts/produce composition and use only the muted red-brown Frontier canopy change. No merchant, crates, extra goods or sign.
+**Reason:** Market stands are repeated settlement dressing and already handle regional canopy color procedurally. The audited production set keeps all market stands procedural.
 
 ### 133 — Dark Crown command tent
 
-**Canonical cues:** Same triangular command-tent geometry as asset 097 but in Dark Crown colors: muted dark violet-gray tent cloth, near-black entrance flap, dark slate-brown central pole, pale brown lower trim.
+**Audit status: KEEP PROCEDURAL — DO NOT GENERATE A SPRITE.**
 
-**Image-generation prompt:**
-
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Dark Crown command tent exactly as described. Preserve the single triangular tent, central pole and dark entrance; use the Crown palette only. No banner, crown emblem, flames or extra props.
+**Reason:** Command tents are repeated stronghold dressing and already change palette by region. The audited production set keeps command tents procedural.
 
 ### 134 — Frontier training dummy
 
-**Canonical cues:** Same simple training-dummy geometry as asset 102 but with Frontier dark brown/charred wood: central post, horizontal arm bar, round tan head and brown padded torso.
+**Audit status: KEEP PROCEDURAL — DO NOT GENERATE A SPRITE.**
 
-**Image-generation prompt:**
-
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Frontier training dummy exactly as described. Preserve the same dummy silhouette, changing only to the Frontier wood palette. No armor, weapons, fire or target markings.
+**Reason:** Training dummies are repeated functional clutter whose wood palette follows the region. The audited production set keeps them procedural.
 
 ### 135 — Dark Crown training dummy
 
-**Canonical cues:** Same simple training-dummy geometry as asset 102 but with Dark Crown dark slate-brown wood: central post, horizontal arm bar, round tan head and brown padded torso.
+**Audit status: KEEP PROCEDURAL — DO NOT GENERATE A SPRITE.**
 
-**Image-generation prompt:**
-
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Dark Crown training dummy exactly as described. Preserve the same dummy silhouette, changing only to the Crown wood palette. No armor, crown, sigils, weapons or effects.
+**Reason:** Training dummies are repeated functional clutter whose wood palette follows the region. The audited production set keeps them procedural.
 
 ### 136 — Frontier weapon rack
 
-**Canonical cues:** Same rack geometry as asset 103: two upright posts, one upper crossbar and exactly three vertical pale-steel weapons, using Frontier dark brown wood.
+**Audit status: KEEP PROCEDURAL — DO NOT GENERATE A SPRITE.**
 
-**Image-generation prompt:**
-
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Frontier weapon rack exactly as described. Preserve two posts, one crossbar and exactly three weapons; use Frontier wood colors. No shields, axes pile, crates or extra weapons.
+**Reason:** Weapon racks are repeated functional clutter whose wood palette follows the region. The audited production set keeps them procedural.
 
 ### 137 — Dark Crown weapon rack
 
-**Canonical cues:** Same rack geometry as asset 103: two upright posts, one upper crossbar and exactly three vertical pale-steel weapons, using Dark Crown dark slate-brown wood.
+**Audit status: KEEP PROCEDURAL — DO NOT GENERATE A SPRITE.**
 
-**Image-generation prompt:**
-
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Dark Crown weapon rack exactly as described. Preserve two posts, one crossbar and exactly three weapons; use Crown wood colors. No crown symbol, shields, extra weapons or glow.
+**Reason:** Weapon racks are repeated functional clutter whose wood palette follows the region. The audited production set keeps them procedural.
 
 ## Q. Identity-bearing boss-home / dungeon props promoted by audit
 
