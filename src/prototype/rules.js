@@ -196,19 +196,19 @@ const crownRoutes=[
 ];
 const crownDistricts=[
  {id:'labor-quarter',role:'civilian-labor',center:[720,900],props:[
-  [-180,-120,'crown-ash-house',32],[-20,-145,'crown-forgehouse',32],[150,-90,'cart',0],[-145,65,'field-kitchen',0],[20,105,'supply-stack',0],[165,80,'bunk',0],[70,-10,'tax-post',0]
+  [-180,-120,'crown-ash-house',32],[-20,-145,'crown-forgehouse',32],[105,25,'crown-levy-yard',0],[165,105,'bunk',0],[70,-35,'tax-post',0]
  ]},
  {id:'citadel-command',role:'military-command',center:[2580,900],props:[
-  [-170,-85,'crown-wall',26],[-40,-130,'watchpost',0],[115,-100,'crown-banner',0],[-155,80,'weapon-rack',0],[-20,115,'war-table',0],[130,75,'training-dummy',0]
+  [-170,-85,'crown-wall',26],[-5,-30,'crown-command-post',0],[-20,120,'war-table',0]
  ]},
  {id:'cindermaw-domain',role:'ash-beast-domain',center:[2580,1900],props:[
-  [-150,-70,'roost',0],[-35,-125,'ember-pit',0],[100,-90,'bone-pile',0],[-135,75,'obsidian',0],[10,110,'sleep-roll',0],[135,55,'warm-brazier',0]
+  [-30,-25,'ashbeast-roost-scene',0],[15,115,'sleep-roll',0],[140,60,'warm-brazier',0]
  ]},
  {id:'fortress-logistics',role:'military-logistics',center:[3050,2320],props:[
-  [-175,-85,'forge',0],[-45,-130,'supply-stack',0],[110,-105,'field-kitchen',0],[-155,80,'bunk',0],[-20,115,'war-table',0],[135,70,'weapon-rack',0]
+  [-15,-25,'crown-logistics-bay',0],[-155,90,'bunk',0],[-15,120,'war-table',0]
  ]},
  {id:'fortress-approach',role:'ultimate-authority',center:[3220,2860],props:[
-  [-185,-90,'crown-wall',26],[-60,-140,'dark-brazier',0],[85,-120,'crown-banner',0],[-170,75,'barricade',0],[-20,120,'weapon-rack',0],[135,70,'watchpost',0]
+  [-185,-90,'crown-wall',26],[-10,-20,'crown-fortress-checkpoint',0]
  ]}
 ];
 
@@ -470,7 +470,7 @@ const dungeonDecor={
   [810,1120,'treasure-hoard','roost-hoard'],[1180,1140,'banner','roost-hoard'],[1190,1110,'ember-pit','roost-hoard'],[1280,1080,'roost','roost-hoard'],
   [1260,1240,'torch','roost-hoard'],[1310,600,'supply-stack','roost-hoard'],[1090,1190,'claw-scrape','roost-hoard'],[1290,930,'dragon-perch','roost-hoard']
  ],
- citadel:[[300,330,'torch'],[500,330,'torch'],[340,520,'armor'],[500,520,'armor'],[900,340,'banner'],[1120,340,'banner'],[870,560,'rune'],[1000,650,'rune'],[1130,560,'rune'],[860,820,'armor'],[1140,820,'armor'],[900,980,'banner'],[1120,980,'banner'],[940,1130,'rune'],[1080,1130,'rune'],[980,1240,'torch'],[1240,1240,'torch'],[1260,600,'armor'],[780,1020,'banner'],[1260,1020,'banner'],[720,330,'war-table'],[760,520,'bunk'],[800,1120,'field-kitchen'],[1190,1110,'weapon-rack'],[1280,1080,'supply-stack'],[560,1120,'training-dummy'],[880,1030,'forge'],[1320,520,'tax-post']]
+ citadel:[[400,345,'citadel-muster'],[760,395,'citadel-command'],[1010,610,'citadel-ritual-array'],[650,1050,'citadel-barracks-bay'],[1000,1070,'citadel-forge-bay'],[1180,1190,'citadel-boss-approach'],[1320,520,'tax-post']]
 };
 const dungeonTrapTuning={
  crypt:{cycle:6.8,warning:1.4,active:.8,damage:.11,radius:44,sealRadius:60,jetLength:150,jetHalfWidth:30,slow:2.5,offset:1.10},
