@@ -215,11 +215,11 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 023 — Raider Archer
 
-**Audit status:** ALIAS — do not generate a new image.
+**Canonical cues:** Compact hooded humanoid enemy rendered with `human('archer')`, not the Ranger body. Darker green clothing, dark green hood and cape, bow on screen-right, quiver on screen-left/back with visible arrows. It does **not** have the Ranger-specific teal flask/pouch or pale-green/gold utility accent.
 
-**Reuse:** asset 005.
+**Image-generation prompt:**
 
-**Reason:** The production renderer calls the same canonical archer body used by the companion Archer. Gameplay identity is different, but the static body art is not.
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Raider Archer exactly from the canonical human('archer') body: compact darker-green hooded archer, bow on screen-right and quiver with arrows on screen-left/back. Keep it visibly simpler than the Ranger hero and companion Ranger-support body. Do not add the Ranger teal flask/pouch, utility accent, daggers, armor, mask, banner or new equipment.
 
 ### 024 — Ash beast base
 
@@ -1099,11 +1099,11 @@ The first roster omitted four purpose-specific procedural service structures. Th
 
 ### 131 — Occupied side-interior entrance — shared visual
 
-**Canonical cues:** Small compact gray-green stone entrance used by side-interior sites: rectangular masonry body, deep dark central doorway, two tall side pillars/towers and pale cap blocks at their tops.
+**Canonical cues:** The five occupied side-interior entrances are `kind:'dungeon'` with families not handled by the five main-dungeon gate variants, so they use the default `gate()` drawing: broad muted gray-beige rectangular masonry body, deep dark central doorway, triangular stone roof/pediment, and two narrow pale stone side columns with simple horizontal seam lines.
 
 **Image-generation prompt:**
 
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the shared occupied side-interior entrance exactly as described. Preserve the compact rectangular gray-green gate, dark doorway, two tall side pillars and pale caps. No region-specific symbols, roof, torches, statues, banners or surrounding ruins.
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the shared occupied side-interior entrance exactly from the default canonical gate: broad muted gray-beige masonry body, dark central doorway, triangular stone roof/pediment and two narrow pale side columns with simple seam lines. No twin towers, skull, regional emblem, torches, banners, statues, plants or surrounding ruins.
 
 ## P. Regional prop variants exposed by audit
 
@@ -1329,6 +1329,546 @@ The first roster omitted four purpose-specific procedural service structures. Th
 
 > Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Wallow exactly as described. Preserve low two-oval structure and exactly three surface marks. No creature, splashes, reeds or ground scenery.
 
+
+## O. Audit additions — interaction states, missing landmarks and static furnishings
+
+These entries were added only after the second full-renderer audit. They close static-visual gaps that were not present in the initial planning roster.
+
+### 161 — Citadel preparation fountain
+
+**Canonical cues:** Unique interactable: low pale gray stone oval basin, smaller blue-teal water oval inside, narrow pale stone central pedestal, wider pale cap/bowl near the top and one thin cyan vertical water stream above it.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Citadel preparation fountain exactly as described. Preserve one low stone basin, teal inner water, narrow central pedestal, upper pale bowl/cap and one thin cyan water stream. No surrounding floor, guardian statues, runes, coins, plants, extra tiers or healing aura.
+
+### 162 — Field-boss compound marker
+
+**Canonical cues:** Generic `kind:'mini'` world marker used for field compounds: compact gray-green rectangular structure, dark central opening, two taller pale gray-green side pillars/towers and two pale cap blocks along the top.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the field-compound marker exactly as described: compact gray-green block, dark opening, two taller side pillars and pale top caps. No triangular roof, regional emblem, boss symbol, walls, guards, flags or scenery.
+
+### 163 — Dark Lord Tribute cache
+
+**Canonical cues:** Active tribute node: warm dark-brown rectangular chest/base, sloped medium-brown lid, vertical gold center band, small rectangular gold latch and three restrained pale-gold glints.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Dark Lord Tribute cache exactly as described. Preserve brown chest/base, sloped lid, single vertical gold band, small gold latch and only three restrained glints. No coin pile, crown, skull, open lid, text or surrounding ground.
+
+### 164 — Treasury quest cache bundle
+
+**Canonical cues:** Interactable cache bundle: compact tan-brown rectangular crate with two pale diagonal braces crossing the face to form an X.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Treasury quest cache exactly as described: one compact tan-brown rectangular crate and exactly two pale diagonal braces forming an X. No lid opening, coins, rope, emblem, text or extra boxes.
+
+### 165 — Woodland supply cache landmark
+
+**Canonical cues:** Greenwood landmark: one medium brown rectangular crate with two pale crossing braces, plus one thick dark-brown fallen log/branch extending down-left from the crate.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Woodland supply cache landmark exactly as described. Preserve one braced crate and one thick down-left log/branch. No treasure, sacks, trees, grass patch or extra crates.
+
+### 166 — Stranded supply wagon / supply convoy landmark
+
+**Canonical cues:** Shared landmark body: broad brown cart body, two dark wheels, pale tan covered top/canopy and a simple wooden shaft projecting to screen-right.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the shared stranded-wagon/convoy landmark exactly as described. Preserve broad cart, two wheels, pale covered top and right-side shaft. No draft animal, driver, cargo pile, banner, road or scenery.
+
+### 167 — Ravine overlook landmark
+
+**Canonical cues:** Three narrow brown wooden posts with one horizontal pale-brown rail across them; two small gray-brown rocks sit low near the center.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Ravine overlook marker exactly as described. Preserve three posts, one horizontal rail and exactly two low rocks. No cliff, vista, flag, sign, rope or ground patch.
+
+### 168 — Stonecross ore vein landmark
+
+**Canonical cues:** Three separate gray-brown ore/crystal rock spikes arranged left, center and right, each angular and vertically pointed, with three restrained warm-gold glints.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Stonecross ore vein exactly as described. Preserve exactly three angular gray ore spikes and three small warm-gold glints. No minecart, pickaxe, cave, ground patch or extra crystals.
+
+### 169 — Dark Crown crystal shelf landmark
+
+**Canonical cues:** Three tall purple crystal formations of different heights arranged left, center and right; center is tallest. Muted violet palette with one pale-violet glint near the tall center crystal.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Crystal shelf landmark exactly as described. Preserve exactly three differently sized purple crystal formations, center tallest, and one restrained pale-violet glint. No rock base, lava, runes, extra crystals or ground patch.
+
+### 170 — Open specialist cage
+
+**Canonical cues:** Shared rescued/open cage state: brown rectangular outer cage frame, dark inner opening, five pale steel vertical bars and one pale horizontal crossbar. The right-side cage door is swung open outward. No specialist remains inside and the gold lock is absent.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the open specialist cage exactly as described. Preserve brown rectangular frame, dark interior, five pale vertical bars, one horizontal bar and the right-side door visibly swung open. No prisoner, lock, chains, floor, wall or extra bars.
+
+### 171 — Closed cage — Mira
+
+**Canonical cues:** Closed captive state: brown rectangular cage frame with dark interior, five pale steel vertical bars, one pale horizontal crossbar and a small gold lock at lower center. Behind the bars is the canonical specialist. Mira: olive-green cloth, dark green cape, brown hair/head covering with pale-gold trim, tall staff at screen-right with pale-green diamond/leaf-like head, pale tan rectangular item at screen-left.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one closed cage containing the specified canonical specialist. Preserve the brown frame, dark interior, exactly five pale vertical bars, one horizontal bar and small gold lower-center lock. Specialist inside: Mira: olive-green cloth, dark green cape, brown hair/head covering with pale-gold trim, tall staff at screen-right with pale-green diamond/leaf-like head, pale tan rectangular item at screen-left. Do not redesign the specialist, add chains, scenery, wall, floor, extra bars or a second character.
+
+### 172 — Closed cage — Borin
+
+**Canonical cues:** Closed captive state: brown rectangular cage frame with dark interior, five pale steel vertical bars, one pale horizontal crossbar and a small gold lock at lower center. Behind the bars is the canonical specialist. Borin: earthy brown clothing, dark gray-brown cape, dark head band, heavy dark apron/chest block with brown inset, long-handled steel smith hammer at screen-right.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one closed cage containing the specified canonical specialist. Preserve the brown frame, dark interior, exactly five pale vertical bars, one horizontal bar and small gold lower-center lock. Specialist inside: Borin: earthy brown clothing, dark gray-brown cape, dark head band, heavy dark apron/chest block with brown inset, long-handled steel smith hammer at screen-right. Do not redesign the specialist, add chains, scenery, wall, floor, extra bars or a second character.
+
+### 173 — Closed cage — Sela
+
+**Canonical cues:** Closed captive state: brown rectangular cage frame with dark interior, five pale steel vertical bars, one pale horizontal crossbar and a small gold lock at lower center. Behind the bars is the canonical specialist. Sela: teal clothing, dark teal cape and pointed teal headwear with pale trim, tall right-side staff topped by a round teal orb/disc.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one closed cage containing the specified canonical specialist. Preserve the brown frame, dark interior, exactly five pale vertical bars, one horizontal bar and small gold lower-center lock. Specialist inside: Sela: teal clothing, dark teal cape and pointed teal headwear with pale trim, tall right-side staff topped by a round teal orb/disc. Do not redesign the specialist, add chains, scenery, wall, floor, extra bars or a second character.
+
+### 174 — Closed cage — Neri
+
+**Canonical cues:** Closed captive state: brown rectangular cage frame with dark interior, five pale steel vertical bars, one pale horizontal crossbar and a small gold lock at lower center. Behind the bars is the canonical specialist. Neri: slate blue-gray clothing, dark blue-gray cape, brown hair under flat dark cap/headband, brown rectangular satchel at screen-left, blue-green flask at screen-right and two small colored torso vials.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one closed cage containing the specified canonical specialist. Preserve the brown frame, dark interior, exactly five pale vertical bars, one horizontal bar and small gold lower-center lock. Specialist inside: Neri: slate blue-gray clothing, dark blue-gray cape, brown hair under flat dark cap/headband, brown rectangular satchel at screen-left, blue-green flask at screen-right and two small colored torso vials. Do not redesign the specialist, add chains, scenery, wall, floor, extra bars or a second character.
+
+### 175 — Closed cage — Orin
+
+**Canonical cues:** Closed captive state: brown rectangular cage frame with dark interior, five pale steel vertical bars, one pale horizontal crossbar and a small gold lock at lower center. Behind the bars is the canonical specialist. Orin: earthy olive/tan clothing, muted green-gray cape, square dark headwear with pale-gold trim, pale gray shoulder/chest mantle, tall right-side staff with pale triangular head.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one closed cage containing the specified canonical specialist. Preserve the brown frame, dark interior, exactly five pale vertical bars, one horizontal bar and small gold lower-center lock. Specialist inside: Orin: earthy olive/tan clothing, muted green-gray cape, square dark headwear with pale-gold trim, pale gray shoulder/chest mantle, tall right-side staff with pale triangular head. Do not redesign the specialist, add chains, scenery, wall, floor, extra bars or a second character.
+
+### 176 — Closed cage — Dara
+
+**Canonical cues:** Closed captive state: brown rectangular cage frame with dark interior, five pale steel vertical bars, one pale horizontal crossbar and a small gold lock at lower center. Behind the bars is the canonical specialist. Dara: gray-olive work clothes, dark gray-green cape, dark apron with brown inset, pale steel headband, long-handled steel smith hammer at screen-right.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one closed cage containing the specified canonical specialist. Preserve the brown frame, dark interior, exactly five pale vertical bars, one horizontal bar and small gold lower-center lock. Specialist inside: Dara: gray-olive work clothes, dark gray-green cape, dark apron with brown inset, pale steel headband, long-handled steel smith hammer at screen-right. Do not redesign the specialist, add chains, scenery, wall, floor, extra bars or a second character.
+
+### 177 — Closed cage — Lyss
+
+**Canonical cues:** Closed captive state: brown rectangular cage frame with dark interior, five pale steel vertical bars, one pale horizontal crossbar and a small gold lock at lower center. Behind the bars is the canonical specialist. Lyss: muted red-brown clothing, dark burgundy cape, angular dark headwear, steel shoulder plates, tall right-side pole with pale-gold diamond head.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one closed cage containing the specified canonical specialist. Preserve the brown frame, dark interior, exactly five pale vertical bars, one horizontal bar and small gold lower-center lock. Specialist inside: Lyss: muted red-brown clothing, dark burgundy cape, angular dark headwear, steel shoulder plates, tall right-side pole with pale-gold diamond head. Do not redesign the specialist, add chains, scenery, wall, floor, extra bars or a second character.
+
+### 178 — Closed cage — Eren
+
+**Canonical cues:** Closed captive state: brown rectangular cage frame with dark interior, five pale steel vertical bars, one pale horizontal crossbar and a small gold lock at lower center. Behind the bars is the canonical specialist. Eren: muted violet-gray clothing, dark purple cape, gray-violet hair/head shape, angular dark headwear, brown-violet rectangular item at screen-left, tall right-side staff with purple diamond head.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one closed cage containing the specified canonical specialist. Preserve the brown frame, dark interior, exactly five pale vertical bars, one horizontal bar and small gold lower-center lock. Specialist inside: Eren: muted violet-gray clothing, dark purple cape, gray-violet hair/head shape, angular dark headwear, brown-violet rectangular item at screen-left, tall right-side staff with purple diamond head. Do not redesign the specialist, add chains, scenery, wall, floor, extra bars or a second character.
+
+### 179 — Closed cage — Vera
+
+**Canonical cues:** Closed captive state: brown rectangular cage frame with dark interior, five pale steel vertical bars, one pale horizontal crossbar and a small gold lock at lower center. Behind the bars is the canonical specialist. Vera: warm brown/tan clothing, dark brown-gray cape, pale blond/white hair, heavy brown apron with tan inset, broad pale steel hammer on a long handle at screen-right.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one closed cage containing the specified canonical specialist. Preserve the brown frame, dark interior, exactly five pale vertical bars, one horizontal bar and small gold lower-center lock. Specialist inside: Vera: warm brown/tan clothing, dark brown-gray cape, pale blond/white hair, heavy brown apron with tan inset, broad pale steel hammer on a long handle at screen-right. Do not redesign the specialist, add chains, scenery, wall, floor, extra bars or a second character.
+
+### 180 — Closed cage — Tovan
+
+**Canonical cues:** Closed captive state: brown rectangular cage frame with dark interior, five pale steel vertical bars, one pale horizontal crossbar and a small gold lock at lower center. Behind the bars is the canonical specialist. Tovan: cool gray-blue clothing, dark slate cape, pale gray hair, tall angular pale headpiece with gold trim, long right-side staff with round gold head and gold diamond chest mark.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one closed cage containing the specified canonical specialist. Preserve the brown frame, dark interior, exactly five pale vertical bars, one horizontal bar and small gold lower-center lock. Specialist inside: Tovan: cool gray-blue clothing, dark slate cape, pale gray hair, tall angular pale headpiece with gold trim, long right-side staff with round gold head and gold diamond chest mark. Do not redesign the specialist, add chains, scenery, wall, floor, extra bars or a second character.
+
+### 181 — Dungeon torch
+
+**Canonical cues:** Simple vertical brown-gray torch shaft with a compact two-layer orange/yellow flame at its upper end.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render one canonical dungeon torch: straight shaft and compact two-layer flame. No wall bracket, smoke, floor, extra flames or aura.
+
+### 182 — Crypt coffin
+
+**Canonical cues:** Muted gray-green tapered coffin: wider shoulders, narrower foot, pale horizontal short line near upper face and one pale vertical line down the center.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Crypt coffin exactly as described. No corpse, skull, candles, runes, open lid or surrounding floor.
+
+### 183 — Loose bones prop
+
+**Canonical cues:** One small ivory skull at screen-left plus two thick crossed long bones extending across the lower/right area.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the loose-bones prop exactly as described: one small skull and exactly two crossed long bones. No pile, extra bones, blood or ground.
+
+### 184 — Standard dungeon banner
+
+**Canonical cues:** Tall steel-gray pole with one muted brown hanging banner to screen-right, pointed/irregular lower edge and one simple vertical gold mark.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the standard dungeon banner exactly as described. No readable emblem beyond the single vertical gold mark, no second flag, floor or wall.
+
+### 185 — Dark Crown dungeon banner
+
+**Canonical cues:** Tall steel-gray pole with one muted purple hanging banner to screen-right, pointed/irregular lower edge and one simple vertical gold mark.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Dark Crown dungeon banner exactly as described. No crown symbol, text, extra flags or scenery.
+
+### 186 — Archive shelf
+
+**Canonical cues:** Tall rectangular brown shelving unit with three horizontal shelves and small alternating muted teal/brown book-or-container rectangles arranged across the shelves.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Archive shelf exactly as described. Preserve tall rectangular shelf, three shelves and compact alternating muted contents. No loose books, ladder, desk or wall.
+
+### 187 — Generic braced crate
+
+**Canonical cues:** Medium warm-brown rectangular crate with two pale diagonal braces crossing the front in an X.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render one canonical braced crate exactly as described. No label, metal corners, open lid, contents or extra crate.
+
+### 188 — Mine crystal prop
+
+**Canonical cues:** Exactly three slim blue-gray crystal spikes arranged left, center and right, each vertically faceted and pointed, with no rock base.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly three canonical Mine crystal spikes as described. No glowing aura, rock base, extra shards or ground patch.
+
+### 189 — Hanging chain
+
+**Canonical cues:** Vertical series of repeated pale steel oval chain links ending in one larger dark-gray oval/ring at the bottom.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the hanging chain exactly as described. Preserve repeated oval links and one larger bottom ring. No hook, wall, prisoner or extra chain.
+
+### 190 — Ember bed
+
+**Canonical cues:** Low dark charcoal oval bed with exactly three short muted orange-red flame/ember triangles rising from it.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the ember bed exactly as described. No logs, brazier rim, smoke, ground patch or extra flames.
+
+### 191 — Armor display
+
+**Canonical cues:** Static humanoid armor display in muted blue-gray steel tones, mounted above a low dark rectangular stand and carrying a muted gray-blue shield on screen-left.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the armor display exactly as described. It is an empty display/mannequin, not a living soldier. Preserve steel humanoid silhouette, low stand and left shield. No sword, face, banner or room scenery.
+
+### 192 — Warm brazier
+
+**Canonical cues:** Low dark-brown oval brazier with exactly three warm orange flame triangles and one small pale-gold center glint.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the warm brazier exactly as described. No tall legs, chains, smoke, surrounding light pool or extra fire.
+
+### 193 — Dark Crown brazier
+
+**Canonical cues:** Low dark purple-gray oval brazier with exactly three muted red-purple flame triangles and two restrained warm glints.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Dark Crown brazier exactly as described. No spikes, chains, smoke, skulls or aura.
+
+### 194 — Vale animal pen
+
+**Canonical cues:** Simple small wooden pen: two upright side posts, two horizontal rails, with exactly two small muted-brown animal/body ovals low inside.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Vale animal pen exactly as described. Preserve two posts, two rails and two simple small animal/body ovals. Do not invent identifiable livestock species, roof, gate or scenery.
+
+### 195 — Vale drying rack
+
+**Canonical cues:** Two Greenwood wooden posts with top crossbar; exactly three hanging rectangular cloth/items suspended by thin lines, center item muted teal and side items muted brown/tan.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Vale drying rack exactly as described. No laundry line beyond the rack, people, baskets or extra cloth.
+
+### 196 — Marches drying rack
+
+**Canonical cues:** Same two-post drying-rack geometry as the canonical prop but using the darker Flooded Marches local wood; exactly three hanging rectangular cloth/items suspended by thin lines.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Marches drying rack exactly as described. Preserve two darker wetland-wood posts, top bar and exactly three hanging items. No extra cloth, fish, people or scenery.
+
+### 197 — Cookfire
+
+**Canonical cues:** Three crossed dark-brown log lines over a low dark oval fire bed, with exactly three orange flame triangles and one small pale-gold center glint.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the cookfire exactly as described. No cooking pot, stones, smoke, ground patch or extra logs.
+
+### 198 — Sleep roll
+
+**Canonical cues:** Low wide muted-brown rectangular bedroll, one pale horizontal seam/blanket line and a small oval pillow at the screen-left end.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the sleep roll exactly as described. No character, backpack, blanket pile, ground mat or extra bedding.
+
+### 199 — Stolen goods pile
+
+**Canonical cues:** Two overlapping warm-brown rectangular crates/boxes, one muted green folded/triangular cloth item and one short steel object projecting at screen-right.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the stolen-goods pile exactly as described. Preserve exactly two box masses, one muted green item and one short steel object. No coins, weapons pile, sacks or extra loot.
+
+### 200 — Bone pile
+
+**Canonical cues:** Compact cluster of four crossed ivory bone sets with one small skull near the upper-left/center.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the bone pile exactly as described. Preserve four compact bone groupings and one small skull. No giant skeleton, blood, grave marker or ground patch.
+
+### 201 — Grave marker
+
+**Canonical cues:** Tall muted gray stone grave marker with rectangular lower body, pointed triangular top and a simple pale cross made from one vertical and one horizontal line.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the grave marker exactly as described. No name text, moss, flowers, candles, skull or ground.
+
+### 202 — Marches fishing net
+
+**Canonical cues:** Two wetland-wood posts with a hanging pale net drawn as a simple crisscross mesh between them.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Marches fishing net exactly as described. Preserve two posts and one simple crisscross net. No fish, dock, water, floats or extra ropes.
+
+### 203 — Highland tool rack
+
+**Canonical cues:** Two Highland wooden uprights with one top crossbar and exactly three simple steel tools hanging vertically, each with a short brown cross-handle.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Highland tool rack exactly as described. Preserve two posts, one crossbar and exactly three simple tools. No weapons, shield, crate or wall.
+
+### 204 — Supply stack
+
+**Canonical cues:** Exactly four overlapping warm-brown supply boxes/crates arranged as a compact stack, each with one pale diagonal brace.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the supply stack exactly as described. Preserve four boxes and one diagonal brace per box. No sacks, barrels, labels or extra crates.
+
+### 205 — Archive scroll stack
+
+**Canonical cues:** Exactly five small pale parchment scroll bundles arranged in a compact pile, each as a short rolled rectangle with darker roll-end detail.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Archive scroll stack exactly as described. Preserve exactly five scroll bundles. No books, shelf, desk, loose sheets or ink.
+
+### 206 — Woodpile
+
+**Canonical cues:** Exactly five short brown logs arranged in a compact overlapping pile, each with a pale circular cut end visible on one side.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the woodpile exactly as described. Preserve five logs and visible cut ends. No axe, stump, fire, fence or ground.
+
+### 207 — Laundry line
+
+**Canonical cues:** Two simple wooden posts with one pale clothesline and exactly two hanging cloth rectangles, one muted blue-gray and one muted red-brown.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the laundry line exactly as described. Preserve two posts, one line and exactly two cloth pieces. No basket, people, extra laundry or house.
+
+### 208 — Barrel
+
+**Canonical cues:** Single upright warm-brown barrel with oval top and bottom and exactly two pale metal/wood bands around the body.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render one canonical barrel exactly as described. No tap, rope, label, cargo or extra barrels.
+
+### 209 — Small handcart
+
+**Canonical cues:** Low warm-brown rectangular cart with two dark wheels, a raised shallow cargo box and one short wooden shaft projecting to screen-right.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the small handcart exactly as described. No animal, cargo pile, person, canopy or road.
+
+### 210 — Ration stack
+
+**Canonical cues:** Exactly three small warm-brown wrapped ration parcels/boxes arranged in a compact cluster, each with one pale diagonal tie/brace.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the ration stack exactly as described. Preserve exactly three parcels and their simple diagonal ties. No food exposed, sacks, basket or table.
+
+### 211 — Garden patch
+
+**Canonical cues:** Five thin green plant stems in a row with small muted green/tan leaf/produce ovals and one simple brown baseline/soil line.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the garden patch exactly as described. Preserve five stems and simple baseline. No fence, flowers beyond the small canonical ovals, watering can or ground field.
+
+### 212 — Barricade
+
+**Canonical cues:** Exactly four short pointed dark-brown wooden stakes/posts in a row with one thicker diagonal brown brace crossing the front.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the barricade exactly as described. Preserve four pointed stakes and one diagonal brace. No spikes beyond the four, sandbags, banner or ground.
+
+### 213 — Frontier field kitchen
+
+**Canonical cues:** Low warm-brown rectangular kitchen table/block with a dark oval fire basin near center, exactly three muted orange flame triangles, a long upper horizontal rail and two Frontier-wood side posts.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Frontier field kitchen exactly as described. Preserve table/block, dark basin, three flames, upper rail and two dark Frontier-wood posts. No cook, pot, tent or extra supplies.
+
+### 214 — Dark Crown field kitchen
+
+**Canonical cues:** Same canonical field-kitchen geometry but with Dark Crown local wood: low brown table/block, dark oval fire basin, three muted orange flame triangles, upper rail and two dark slate-brown side posts.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Dark Crown field kitchen exactly as described. No cook, cauldron, purple magic, extra supplies or scenery.
+
+### 215 — Frontier bunk
+
+**Canonical cues:** Low wide brown bunk/bed frame with darker mattress rectangle, two short Frontier-wood legs and one small pale tan pillow at screen-left.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Frontier bunk exactly as described. Preserve simple frame, mattress, two legs and one pillow. No sleeper, blanket pile, chest or room.
+
+### 216 — Dark Crown bunk
+
+**Canonical cues:** Same canonical bunk geometry using Dark Crown local wood: low brown bed frame, darker mattress, two short dark legs and one small pale tan pillow at screen-left.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Dark Crown bunk exactly as described. No occupant, purple ornament, extra bedding or room.
+
+### 217 — March ritual table
+
+**Canonical cues:** Low muted-brown oval ritual table with two darker March-wood legs, one central diamond-shaped muted stone/object on top and one restrained pale-gold glint.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the March ritual table exactly as described. Preserve oval top, two legs, one central diamond object and one glint. No candles, runes, skulls or extra ritual items.
+
+### 218 — Frontier ritual table
+
+**Canonical cues:** Same canonical ritual-table geometry using Frontier local wood: low muted-brown oval top, two dark Frontier-wood legs, one central diamond-shaped muted object and one restrained pale-gold glint.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Frontier ritual table exactly as described. No altar redesign, candles, blood, runes, skulls or extra props.
+
+### 219 — Vale tax post
+
+**Canonical cues:** Tall regional wooden post (#806044) with a rectangular muted-brown notice board near the top, exactly three pale horizontal writing lines and one small dark-brown box attached low on screen-right.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Vale tax post exactly as described using wood #806044. Preserve one tall post, one rectangular notice board, exactly three pale horizontal lines and one small lower-right box. No readable text, coins, flags, guards or extra notices.
+
+### 220 — Marches tax post
+
+**Canonical cues:** Tall regional wooden post (#71654f) with a rectangular muted-brown notice board near the top, exactly three pale horizontal writing lines and one small dark-brown box attached low on screen-right.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Marches tax post exactly as described using wood #71654f. Preserve one tall post, one rectangular notice board, exactly three pale horizontal lines and one small lower-right box. No readable text, coins, flags, guards or extra notices.
+
+### 221 — Highlands tax post
+
+**Canonical cues:** Tall regional wooden post (#71695b) with a rectangular muted-brown notice board near the top, exactly three pale horizontal writing lines and one small dark-brown box attached low on screen-right.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Highlands tax post exactly as described using wood #71695b. Preserve one tall post, one rectangular notice board, exactly three pale horizontal lines and one small lower-right box. No readable text, coins, flags, guards or extra notices.
+
+### 222 — Frontier tax post
+
+**Canonical cues:** Tall regional wooden post (#614f46) with a rectangular muted-brown notice board near the top, exactly three pale horizontal writing lines and one small dark-brown box attached low on screen-right.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Frontier tax post exactly as described using wood #614f46. Preserve one tall post, one rectangular notice board, exactly three pale horizontal lines and one small lower-right box. No readable text, coins, flags, guards or extra notices.
+
+### 223 — Dark Crown tax post
+
+**Canonical cues:** Tall regional wooden post (#555563) with a rectangular muted-brown notice board near the top, exactly three pale horizontal writing lines and one small dark-brown box attached low on screen-right.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Dark Crown tax post exactly as described using wood #555563. Preserve one tall post, one rectangular notice board, exactly three pale horizontal lines and one small lower-right box. No readable text, coins, flags, guards or extra notices.
+
+### 224 — Vale lean-to
+
+**Canonical cues:** Simple regional lean-to made from two upright wooden posts (#806044), one broad uneven muted-brown slanted roof/canopy and one low dark-brown rectangular rear/storage block.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Vale lean-to exactly as described using regional wood #806044. Preserve two posts, one uneven slanted canopy and one low rear/storage block. No occupants, fire, bedrolls, crates, banner or scenery.
+
+### 225 — Marches lean-to
+
+**Canonical cues:** Simple regional lean-to made from two upright wooden posts (#71654f), one broad uneven muted-brown slanted roof/canopy and one low dark-brown rectangular rear/storage block.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Marches lean-to exactly as described using regional wood #71654f. Preserve two posts, one uneven slanted canopy and one low rear/storage block. No occupants, fire, bedrolls, crates, banner or scenery.
+
+### 226 — Highlands lean-to
+
+**Canonical cues:** Simple regional lean-to made from two upright wooden posts (#71695b), one broad uneven muted-brown slanted roof/canopy and one low dark-brown rectangular rear/storage block.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Highlands lean-to exactly as described using regional wood #71695b. Preserve two posts, one uneven slanted canopy and one low rear/storage block. No occupants, fire, bedrolls, crates, banner or scenery.
+
+### 227 — Frontier lean-to
+
+**Canonical cues:** Simple regional lean-to made from two upright wooden posts (#614f46), one broad uneven muted-brown slanted roof/canopy and one low dark-brown rectangular rear/storage block.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Frontier lean-to exactly as described using regional wood #614f46. Preserve two posts, one uneven slanted canopy and one low rear/storage block. No occupants, fire, bedrolls, crates, banner or scenery.
 
 ## End of production catalog
 
