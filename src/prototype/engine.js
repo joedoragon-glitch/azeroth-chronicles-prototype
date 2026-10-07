@@ -417,7 +417,7 @@ class Campaign{
   const quests=this.questDefs().filter(q=>q.region===z.id&&q.sites?.includes(n.id));if(quests.length)parts.push('Survey objective: '+quests.map(q=>q.name).join(', ')+'.');
   const caches=z.npcs.filter(b=>b.kind==='bundle'&&b.site===n.id&&!this.bundleCollected(b));if(caches.length)parts.push('Recover the marked supplies here with Interact.');
   const room=R.supplyRooms.find(r=>r.region===z.id&&r.site===n.id);if(room)parts.push('The quest supplies are secured inside '+room.name+' nearby. Recover all '+room.count+' caches there after clearing its guards.');
-  const node=z.nodes.find(a=>a.site===n.id);if(node)parts.push(node.amount>0?node.name+': '+Math.ceil(node.amount)+' left. Assign idle troops, clear the guards, and protect the return trip.':'The finite resource deposit is exhausted.');
+  const node=z.nodes.find(a=>a.site===n.id&&this.tributeKnown(a));if(node)parts.push(node.amount>0?'Dark Lord Tribute has been located here. Assign idle troops from Barracks Operations to recover it; exact value is tracked there.':'The recovered tribute at this site is exhausted.');
   if(n.id==='convoy')parts.push('Escort the supplier back to Emberwatch. Stay close so the convoy keeps moving.');
   if(n.id==='checkpoint')parts.push('The warlord holds Lyss farther along this road.');
   if(n.id==='fortress-gate')parts.push(this.s.rescued.cindermaw&&this.s.rescued.citadel?'Both Crown specialists are free. The fortress approach now leads to the Dark Lord.':'The Dark Lord remains beyond the fortress, but first free Vera from Cindermaw and Tovan from the Citadel.');
@@ -428,7 +428,7 @@ class Campaign{
   if(n.id==='ogre-hearth')parts.push('A rough ogre home camp with a communal hearth, stone seats and scavenged quarry gear.');
   if(n.id==='orc-bivouac')parts.push('A long-term occupation bivouac: soldiers cook, sleep, drill and repair equipment here between patrol quotas.');
   if(n.id==='ash-roost')parts.push('Ash beasts roost and feed here among warm stone and old bones instead of simply wandering the volcanic road.');
-  if(n.id==='crown-barracks')parts.push('A permanent Crown field barracks with bunks, meals, stores and training space for troops enforcing the Dark Lord\'s order.');
+  if(n.id==='crown-barracks')parts.push('A permanent Crown field barracks with bunks, meals, stores and training space for troops enforcing the Dark Lord\'s order.');if(n.sideDungeon)parts.push('This named site has an occupied interior. Regional enemies have adapted the old structure into living space, traps and defensible rooms.');
   const mini=z.minis?.find(m=>m.site===n.id||m.type==='field'&&dist(m,n)<260);if(mini)parts.push(this.miniStatus(mini.id));
   if(!parts.length)parts.push('An outdoor patrol site. It has no separate dungeon interior.');
   if(!this.peace)parts.push(guards?'Local patrol: '+guards+' guards alive. Patrols return after the whole party leaves.':'No local guards remain.');
@@ -440,7 +440,7 @@ class Campaign{
   if(q.kind==='bundles')return Array.from({length:q.target},(_,j)=>j).filter(j=>seen('bundle-'+j)).length+'/'+q.target+' supplies recovered';
   if(q.kind==='patrol')return (p?.count||0)+'/'+q.target+' outdoor enemies';
   if(q.kind==='night')return (p?.count||0)+'/'+q.target+' night wraiths; '+(seen('night-site')?'shore observed':'observe Lantern shore after dark');
-  if(q.kind==='sites')return q.sites.filter(id=>!seen(id)).map(id=>id==='port'?'transport stand':id==='minor'?D.regions.find(r=>r.id===q.region).minor:R.sites[D.regions.findIndex(r=>r.id===q.region)].find(s=>s[0]===id)?.[1]||id).join(', ')+' still to visit';
+  if(q.kind==='sites'){const missing=q.sites.filter(id=>!seen(id)).map(id=>id==='port'?'transport stand':id==='minor'?D.regions.find(r=>r.id===q.region).minor:R.sites[D.regions.findIndex(r=>r.id===q.region)].find(s=>s[0]===id)?.[1]||id),rescues=(q.requiresRescues||[]).filter(id=>!this.s.rescued[id]).map(id=>this.boss(id).captive);return [...missing,...rescues].join(', ')+' still required';}
   if(q.kind==='rescue')return (this.s.rescued[q.target]?'Captive freed':this.boss(q.target).captive+' still captive')+(q.clear&&!this.miniCleared(q.clear,q.region)?' · clear the field dungeon guardians':'');
   return 'Meet the supplier at Supply convoy; stay within escort range on the return road';
  }
