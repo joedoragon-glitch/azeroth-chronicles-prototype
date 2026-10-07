@@ -1,4 +1,4 @@
-# Azeroth Chronicles — expanded prototype v0.8.68
+# Azeroth Chronicles — expanded prototype v0.8.69
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families use readable but adaptive warned mechanics. Every boss can summon pressure units, while TRUE forms use six-unit elite warbands. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
@@ -49,7 +49,7 @@ Nightmare starts fresh and stays at night during the hostile campaign. Distinct 
 
 Autosaves occur every five active seconds and after important events. Export a backup before moving the HTML or switching devices, since browser storage for local files varies. Import validates before replacing a run. Current-run reloads preserve fallen classes and game over, but deliberately importing an old backup can rewind an offline run. No server anti-cheat is provided. The old v2 export remains untouched and is backed up on migration.
 
-The sound menu offers independent master, music, ambience and effects volumes. Fourteen original melodic themes and ten peaceful arrangements are synthesized locally. Backgrounding and explicit pause suspend sound and combat. No external tracks or recording licenses are needed.
+The sound menu offers independent master, music, ambience and effects volumes. Fourteen original melodic themes and ten peaceful arrangements are synthesized locally. Combat audio uses contextual sound families: Paladin and Soldier steel impacts, Ranger/Archer bow releases, magic launches/impacts, creature/body hits and progression cues are mixed independently instead of collapsing into one generic melee tone. Backgrounding and explicit pause suspend sound and combat. The canonical multi-file PWA may use dedicated audio assets whenever they improve quality; there is no single-HTML restriction.
 
 Choose **Menu → Game and settings → Save and game management → Export playtest report** to collect deaths, kills, boss durations, earnings and supply use. Record class, mode, challenge, session length, stuck routes, unaffordable training, unclear boss warnings, companion behavior and sound comfort. Reports stay local; no telemetry is sent automatically. Difficulty, economy, presentation and music are provisional.
 
@@ -69,7 +69,7 @@ Overworld distribution update v0.8.60 spreads ordinary unassigned patrol packs a
 
 **The canonical Azeroth Chronicles product is the multi-file GitHub Pages/PWA application.** HTML, JavaScript, CSS, sprite art, audio, data files and future asset types may live as separate repository files and are expected to be cached by the service worker for offline play. Feature design must not be constrained by, duplicated into, or blocked on a self-contained single-HTML build. Any historical portable HTML artifact is optional legacy convenience only; it is not a release requirement and may lag behind or be retired whenever supporting it would reduce game quality, complicate the asset pipeline or slow development.
 
-## Development
+Audio overhaul v0.8.69 replaces the old one-size-fits-all melee chirp with contextual layered Web Audio. Combat events now preserve actor, class/role, weapon/projectile style, source and target context through the browser shell. Paladin basics get a heavier steel impact and sword movement layer; Soldiers use a lighter related steel family; bows, arrows, magic and creature attacks have distinct launch/impact identities. The existing soundtrack, volume buses, offline behavior and save format remain intact.\n\n## Development
 
 Playtest deployment in v0.8.59 favors rapid iteration: pushes to `main` cancel superseded in-progress Pages workflows instead of queueing every obsolete build. The newest successful commit is the one allowed to finish deployment. Installed/live playtest clients also activate a newly published service worker immediately and reload once after saving when replacing an existing controller; first-time installs do not receive the extra reload.
 
