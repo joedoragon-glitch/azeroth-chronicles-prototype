@@ -14,7 +14,7 @@ This catalog has completed its Phase 2A documentation audit. The next image-gene
 - **ALIAS:** reuse the named existing asset; do not generate a second image.
 - **KEEP PROCEDURAL:** do not generate a sprite; the current renderer remains the final visual for that item.
 
-The audited catalog contains 160 numbered entries. Do not add visual details from memory, older concept sheets, or prior generated images. If an entry still lacks enough information, stop on that entry rather than improvising.
+The audited catalog contains **227 numbered entries**: **212 GENERATE**, **5 ALIAS**, and **10 numbered KEEP PROCEDURAL**. Broad procedural systems that do not need individual numbered entries are exhaustively classified in `GRAPHICS_CANON_SPRITE_COVERAGE.md`. Do not add visual details from memory, older concept sheets, or prior generated images. If an entry still lacks enough information, stop on that entry rather than improvising.
 
 ## Mandatory base prompt
 
