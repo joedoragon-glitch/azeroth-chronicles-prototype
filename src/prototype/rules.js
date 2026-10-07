@@ -614,7 +614,7 @@ const roomCaptains={
  'supply-crown':{
   mentor:'cindermaw',visualIdol:'darklord',name:'Dreadmaw',visualScale:1.19,specialRange:440,specialCooldown:4.0,
   phase:{threshold:.45,name:'Ash Carapace',kind:'carapace'},
-  summon:{name:'Brood Call',species:'ashbeast',cap:3,cooldown:12,warning:1.15,composition:['melee','melee','ranged']},
+  summon:{name:'Brood Call',species:'ashbeast',cap:3,cooldown:12,warning:1.15,composition:['melee','melee','ranged'],opening:true,guardPerSummon:.08,guardCap:.24},
   attacks:[
    {name:'Cinder Mark',kind:'circle',warning:1.15,recovery:1.0,coefficient:1.0,count:2,sequential:true,radius:78},
    {name:'Blackline Rush',kind:'line',warning:1.0,recovery:1.2,coefficient:1.2,charge:true},
