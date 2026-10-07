@@ -223,7 +223,7 @@ class Campaign{
     lookout:['alpine-scrub','rock-cluster'],ore:['rock-cluster','heather'],tower:['rock-cluster','pine-sapling'],
     shrine:['dead-tree','ash-patch'],overlook:['dry-scrub','rock-cluster'],checkpoint:['barricade','banner'],convoy:['cart','crate'],
     foundry:['ember-pit','black-rock'],shelf:['crystal-cluster','black-rock'],siege:['barricade','banner'],'fortress-gate':['black-rock','banner']};
-   for(const n of z.npcs.filter(n=>n.kind==='landmark'&&scenery[n.id]))for(const [j,structure]of scenery[n.id].entries()){const a=(j?2.4:-.6)+(i*.23),p={x:n.x+Math.cos(a)*70,y:n.y+Math.sin(a)*70};add(p,structure,'site');}
+   for(const n of z.npcs.filter(n=>n.kind==='landmark'&&!n.internalSite&&scenery[n.id]))for(const [j,structure]of scenery[n.id].entries()){const a=(j?2.4:-.6)+(i*.23),p={x:n.x+Math.cos(a)*70,y:n.y+Math.sin(a)*70};add(p,structure,'site');}
    const oppression=i<2?'ration':i===2?'watchpost':i===3?'barricade':'banner';add({x:major.x-300,y:major.y+15},oppression,'town');add({x:major.x+300,y:major.y+15},oppression,'town');
    z.aestheticVersion=4;
   }finally{this.s.zone=oldZone;}
@@ -283,7 +283,7 @@ class Campaign{
   if(dungeonIds.includes(z.id)){this.decorateDungeon(z);this.guardianRewards(z);return;}
   if(z.placesVersion!==2){
    z.npcs=z.npcs.filter(n=>!n.id.startsWith('landmark-'));
-   const i=this.regionIndex(z.id);for(const [id,name,x,y]of R.sites[i]){let n=z.npcs.find(n=>n.id===id);const data={id,name,kind:'landmark',...this.safe(x,y,z.id),icon:/bridge|crossing/i.test(name)?'🪵':/camp|convoy|wagon/i.test(name)?'🏕️':'🏚️'};if(n)Object.assign(n,data);else z.npcs.push(data);}
+   const i=this.regionIndex(z.id);for(const [id,name,x,y]of R.sites[i]){let n=z.npcs.find(n=>n.id===id);const data={id,name,kind:'landmark',...this.safe(x,y,z.id),icon:/bridge|crossing/i.test(name)?'🪵':/camp|convoy|wagon/i.test(name)?'🏕️':'🏚️',...(z.id==='frontier'&&id==='checkpoint'?{internalSite:true}:{})};if(n)Object.assign(n,data);else z.npcs.push(data);}
    z.placesVersion=2;
   }
   this.localSites(z);this.retireResourceMini(z);this.resourceDeposits(z);this.miniDungeons(z);this.repairMiniGuardianReachability(z);this.spreadOutdoorForces(z);this.alignLandmarks(z);this.sideInteriors(z);this.supplyInteriors(z);this.regionalAesthetics(z);this.worldLife(z);this.creatureStrongholds(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);this.fieldCaptainPopulation(z);this.finalBossPopulation(z);
@@ -346,7 +346,7 @@ class Campaign{
   try{
    for(const n of z.npcs.filter(n=>n.kind==='landmark')){const source=R.sites[i].find(a=>a[0]===n.id);if(source)Object.assign(n,this.safe(source[2],source[3],z.id));}
    z.npcs=z.npcs.filter(n=>n.kind!=='bundle');
-   const targets=z.npcs.filter(n=>n.kind==='landmark'&&!n.id.startsWith('bridge-')),packs=[...new Set(z.enemies.filter(e=>e.type==='mob'&&e.pack&&!e.guard&&!e.summon&&e.form==='normal').map(e=>e.pack))];
+   const targets=z.npcs.filter(n=>n.kind==='landmark'&&!n.internalSite&&!n.id.startsWith('bridge-')),packs=[...new Set(z.enemies.filter(e=>e.type==='mob'&&e.pack&&!e.guard&&!e.summon&&e.form==='normal').map(e=>e.pack))];
    targets.forEach((site,j)=>{const pack=packs[j];if(!pack)return;z.enemies.filter(e=>e.pack===pack).forEach((e,k)=>{let p=null;for(let t=0;t<24;t++){const a=(t+k*3)*Math.PI/12,candidate={x:site.x+Math.cos(a)*(85+Math.floor(k/2)*35),y:site.y+Math.sin(a)*(85+Math.floor(k/2)*35)};if(this.blocked(candidate.x,candidate.y,z.id)||refuges.some(([x,y])=>dist(candidate,{x,y})<260)||!this.line(candidate,site))continue;p=candidate;break;}if(!p)p=this.safe(site.x+70,site.y+45,z.id);e.home={...p};e.site=site.id;if(e.hp>0&&!e.aggro)Object.assign(e,p);});});
    z.localSitesVersion=3;
   }finally{this.s.zone=oldZone;}
@@ -439,7 +439,7 @@ class Campaign{
  miniStatus(id){const z=this.zone(),m=z.minis?.find(m=>m.id===id);if(!m)return 'Unknown encounter';const guards=z.enemies.filter(e=>e.mini===id&&e.hp>0&&!e.neutral).length,pending=Object.values(this.s.pending).some(p=>p.kind==='mob'&&p.zone===z.id&&p.base.mini===id);return m.name+' · '+(this.peace?'Peaceful':m.cleared?'Cleared':guards+' guardians'+(pending?' + incoming ringleaders':'')+(m.type==='field'&&!this.s.normal[m.family]?' + '+this.boss(m.family).name:''))+' · '+(m.type==='resource'?'Clear to unlock expedition resources and marked supplies.':'Clear the guardians, defeat the boss and free the captive for the local quest reward.')+' Two open approaches and cover allow retreat. Guardians give reduced gold and EXP.';}
  checkMinis(){if(this.isDungeon()||this.peace)return;const z=this.s.zones[this.s.zone];for(const m of z?.minis||[]){if(m.cleared||m.type==='field'&&!this.s.normal[m.family])continue;if(z.enemies.some(e=>e.mini===m.id&&e.hp>0&&!e.neutral)||Object.values(this.s.pending).some(p=>p.kind==='mob'&&p.zone===z.id&&p.base.mini===m.id))continue;m.cleared=true;this.say(m.name+' cleared. '+(m.type==='resource'?'Troops can gather and supplies can be recovered.':'Any completed quest reward is delivered automatically.'));this.event('miniClear',{id:m.id});this.checkQuests();}}
  bundleCollected(n){return n.kind==='bundle'&&!!this.s.discovered[this.definition().id+':bundle-'+n.index];}
- visibleNPCs(){return this.zone().npcs.filter(n=>!this.bundleCollected(n));}
+ visibleNPCs(){return this.zone().npcs.filter(n=>!n.internalSite&&!this.bundleCollected(n));}
  siteDescription(n){
   const z=this.zone(),guards=z.enemies.filter(e=>e.site===n.id&&e.hp>0&&!e.neutral).length,parts=[];
   if(n.id.startsWith('bridge-'))parts.push('A crossing through the regional terrain. Walk across the connected road; no separate entrance.');
@@ -448,7 +448,7 @@ class Campaign{
   const room=R.supplyRooms.find(r=>r.region===z.id&&r.site===n.id);if(room)parts.push('The quest supplies are secured inside '+room.name+' nearby. Recover all '+room.count+' caches there after clearing its guards.');
   const node=z.nodes.find(a=>a.site===n.id&&this.tributeKnown(a));if(node)parts.push(node.amount>0?'Dark Lord Tribute has been located here. Assign idle troops from Barracks Operations to recover it; exact value is tracked there.':'The recovered tribute at this site is exhausted.');
   if(n.id==='convoy')parts.push('Escort the supplier back to Emberwatch. Stay close so the convoy keeps moving.');
-  if(n.id==='checkpoint')parts.push('The warlord holds Lyss farther along this road.');
+  if(n.id==='checkpoint')parts.push('This is the Ashen Warlord\'s occupied checkpoint; Lyss is held inside the compound.');
   if(n.id==='fortress-gate')parts.push(this.s.rescued.cindermaw&&this.s.rescued.citadel?'Both Crown specialists are free. The fortress approach now leads to the Dark Lord.':'The Dark Lord remains beyond the fortress, but first free Vera from Cindermaw and Tovan from the Citadel.');
   if(n.id==='night-site')parts.push('Visit after dark and defeat two Lantern wraiths for Lanterns after dark.');
   if(n.id==='goblin-camp')parts.push('A working goblin roadside camp: bedding, cookfire and stolen goods show a raiding community that lives here between attacks.');
