@@ -225,7 +225,7 @@ const creatureStrongholds=[
 
  {id:'ashbeast-roost-hold',region:'crown',center:[2020,1810],species:'ashbeast',wall:'stonewall',guardCount:4,unmarked:true,
   props:[[-105,-50,'roost'],[-45,-105,'bone-pile'],[50,-100,'ember-pit'],[110,-35,'obsidian'],[90,70,'sleep-roll'],[-10,110,'roost'],[-90,65,'black-rock']]},
- {id:'crown-field-barracks-hold',region:'crown',site:'crown-barracks',species:'crownguard',wall:'stonewall',guardCount:4,
+ {id:'crown-field-barracks-hold',region:'crown',site:'crown-barracks',species:'crownguard',wall:'stonewall',wallRadius:250,guardCount:4,
   props:[[-105,-50,'command-tent'],[-45,-105,'field-kitchen'],[50,-100,'weapon-rack'],[110,-35,'bunk'],[90,70,'supply-stack'],[-10,110,'training-dummy'],[-90,65,'war-table']]}
 ];
 
