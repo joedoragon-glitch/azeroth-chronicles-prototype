@@ -235,6 +235,38 @@ const treasuryWalls={
   {axis:'x',x1:220,x2:790,y1:485,y2:540,gaps:[[315,425],[600,715]]}
  ]
 };
+// Cindermaw's Treasury is a volcanic den rather than the generic supply-room rectangle.
+// Overlapping chambers keep the room compact while giving the roost, hoard and inner vault distinct spaces.
+const treasuryArchitecture={
+ 'supply-crown':{
+  version:1,
+  walkable:[
+   {id:'entrance-cleft',bounds:[70,360,70,320]},
+   {id:'roost-chamber',bounds:[260,620,100,450]},
+   {id:'hoard-chamber',bounds:[540,850,120,520]},
+   {id:'ash-den',bounds:[110,430,330,820]},
+   {id:'ember-junction',bounds:[350,680,340,700]},
+   {id:'inner-vault',bounds:[540,850,480,830]},
+   {id:'service-loop',bounds:[420,600,650,820]}
+  ],
+  partitions:[
+   {id:'roost-shelf',x1:470,x2:510,y1:110,y2:500,axis:'y',gaps:[[230,325],[405,475]]},
+   {id:'vault-gate',x1:500,x2:850,y1:520,y2:560,axis:'x',gaps:[[585,680],[750,825]]},
+   {id:'ash-ridge',x1:110,x2:600,y1:600,y2:640,axis:'x',gaps:[[210,330],[455,550]]}
+  ]
+ }
+};
+const treasuryCacheSpots={
+ 'supply-crown':[[705,285],[270,700],[735,725]]
+};
+const treasuryGuardFormations={
+ 'supply-crown':[
+  {x:330,y:260,role:'melee',group:'roost',name:'Ash beast treasury guardian'},
+  {x:585,y:315,role:'ranged',group:'hoard',name:'Ash beast cinder guardian'},
+  {x:300,y:520,role:'melee',group:'ash-den',name:'Ash beast treasury guardian'},
+  {x:705,y:650,captain:true,group:'inner-vault',name:'Dreadmaw'}
+ ]
+};
 const treasuryDecor={
  'supply-vale':[
   [155,690,'thorn-bed',28],[265,205,'fang-trophy',0],[690,205,'treasure-hoard',22],[665,500,'root-table',22],[175,445,'warm-brazier',16],[785,760,'boss-chest',20],
@@ -249,8 +281,13 @@ const treasuryDecor={
   [365,700,'sleep-roll',0],[470,205,'tool-rack',0],[555,690,'ore-cart',0],[745,405,'bone-pile',0],[330,460,'game-table',0]
  ],
  'supply-crown':[
-  [165,690,'ember-pit',18],[275,205,'treasure-hoard',22],[690,205,'roost',28],[665,500,'bone-pile',0],[175,445,'obsidian',0],[785,760,'boss-chest',20],
-  [365,700,'roost',0],[470,205,'supply-stack',0],[555,690,'warm-brazier',0],[745,405,'bone-pile',0],[330,460,'sleep-roll',0]
+  [320,220,'ashbeast-roost-scene',0],
+  [700,285,'cindermaw-hoard-scene',0],
+  [265,590,'cindermaw-ash-den',0],
+  [485,470,'ember-pit',18],
+  [655,650,'dreadmaw-vault-post',0],
+  [800,760,'boss-chest',20],
+  [455,740,'obsidian',0]
  ]
 };
 // Creature strongholds are centers of ordinary-monster life and territorial power, not resource wrappers.
@@ -620,6 +657,6 @@ const basicAttackCombo={steps:3,resetSeconds:4,multipliers:[1,1.1,1.2],finisher:
 const companionSkills={globalCooldown:1.5,first:{cooldown:8,multiplier:3,soldier:{name:'Power Strike'},archer:{name:'Triple Shot'}},second:{cooldown:12,unlockHeroSlot:2,soldier:{name:'Holy Cleave',shape:'cone',range:185,halfAngle:.8,multiplier:2.2,effect:'holy-cleave'},archer:{name:'Piercing Volley',shape:'line',range:480,halfWidth:55,multiplier:2.4,effect:'piercing-volley'}}};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,basicAttackCombo,companionSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,creatureStrongholds,sideDungeons,sideDungeonTrapTuning,tributeTotal,legacyResourceTotals,tributePlans,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,frontierRoutes,frontierDistricts,crownRoutes,crownDistricts,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonGuardFormations,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,dungeonArchitecture,pillars};
+const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,basicAttackCombo,companionSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryArchitecture,treasuryCacheSpots,treasuryGuardFormations,treasuryDecor,creatureStrongholds,sideDungeons,sideDungeonTrapTuning,tributeTotal,legacyResourceTotals,tributePlans,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,frontierRoutes,frontierDistricts,crownRoutes,crownDistricts,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonGuardFormations,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,dungeonArchitecture,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
