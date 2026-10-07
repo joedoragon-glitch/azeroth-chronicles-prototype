@@ -2,7 +2,7 @@
 
 Abyss Bastion is the Ashen Frontier's main dungeon and should read as more than a generic dragon cave. The occupation has stabilized the surrounding province because reliable roads, supplies and control now serve power. The Bastion therefore reads as a maintained facility built around a dangerous dragon that is simultaneously contained, provisioned and exploited.
 
-This pass now redesigns both presentation and dungeon topology. Abyss Dragon combat, guardian stats/rewards, reinforcement rules, boss/captive coordinates, clear rewards and progression remain unchanged, but the Bastion has its own collision geometry, a larger 26-guardian garrison and a revised 22-trap encounter plan.
+This pass now redesigns both presentation and dungeon topology. Abyss Dragon combat, guardian stats/rewards, reinforcement rules, boss/captive coordinates, clear rewards and progression remain unchanged, but the Bastion has its own collision geometry, a larger 26-guardian garrison and a revised 18-trap encounter plan.
 
 ## Internal functions
 
@@ -33,7 +33,7 @@ The direct entrance-to-dragon line is intentionally obstructed, but the dungeon 
 
 The normal and Awakening garrisons use 26 guardians staged as 13 two-unit posts. This uses the zero-gold/zero-XP guardian economy to make the facility feel defended without creating a farming incentive. Reinforcements still recover only toward the configured half-population pressure floor.
 
-The trap plan expands to 22 placements. Jets and seals pressure edges, approaches and combat lanes, but traps are never used as mandatory hallway tolls. Regression treats every trap footprint as permanently impassable and still requires a route to both Abyss Dragon and Eren.
+The trap plan uses 18 placements. Jets and seals pressure edges, approaches and combat lanes, but traps are never used as mandatory hallway tolls. Regression treats every trap footprint as permanently impassable and still requires a route to both Abyss Dragon and Eren.
 
 ## Save migration
 
