@@ -755,7 +755,7 @@ class Campaign{
   const z=this.zone(),living=this.activeLivingParty(),context=this.syncSquadDoctrine(),claimed=new Set();for(const u of living)if(context.engaged&&u.type==='soldier'&&u.hp<=u.maxHp*.5&&(u.survivalCd||0)<=0){u.survivalCd=14;u.immune=Math.max(u.immune||0,2.5);this.event('spell',{x:u.x,y:u.y,target:u.id,kind:'soldierGuard'});}
   if(this.s.recallActive&&living.every(u=>dist(u,this.hero)<165))this.s.recallActive=false;
   const crowdTarget=(u,targets)=>targets.filter(e=>dist(u,e)<620).sort((a,b)=>(claimed.has(a.id)?1:0)-(claimed.has(b.id)?1:0)||dist(a,this.hero)-dist(b,this.hero)||dist(a,u)-dist(b,u))[0]||null;
-  for(const u of living){u.slow=Math.max(0,(u.slow||0)-dt);u.cd=Math.max(0,u.cd-dt);
+  for(const u of living){u.slow=Math.max(0,(u.slow||0)-dt);u.cd=Math.max(0,u.cd-dt);u.skill1Cd=Math.max(0,(u.skill1Cd||0)-dt);u.skill2Cd=Math.max(0,(u.skill2Cd||0)-dt);u.skillGlobalCd=Math.max(0,(u.skillGlobalCd||0)-dt);
    if(u.order?.type==='build'){const b=z.buildings.find(b=>b.id===u.order.id);if(b&&b.progress<4){if(dist(u,b)>85)this.follow(u,b,this.companionMoveSpeed(230)*(u.slow>0?.65:1),dt,70);else{b.progress=Math.min(4,b.progress+dt);if(b.progress>=4){u.order=null;this.say('Barracks construction complete.');this.event('construction',{id:b.id});this.checkQuests();}}}else u.order=null;continue;}
    if(u.order?.type==='upgrade'){const b=z.buildings.find(b=>b.id===u.order.id);if(b&&b.progress>=4&&!b.full&&b.upgradePaid){if(dist(u,b)>85)this.follow(u,b,this.companionMoveSpeed(230)*(u.slow>0?.65:1),dt,70);else{b.upgradeProgress=Math.min(4,(b.upgradeProgress||0)+dt);if(b.upgradeProgress>=4){b.full=true;b.upgradeProgress=4;u.order=null;this.say('Full barracks ready.');this.event('barracksUpgrade',{id:b.id});}}}else u.order=null;continue;}
    if(u.order?.type==='gather'){const n=z.nodes.find(n=>n.id===u.order.id);if(n&&n.amount>0&&(!n.mini||this.peace||this.miniCleared(n.mini))){if(dist(u,n)>60)this.follow(u,n,this.companionMoveSpeed(230)*(u.slow>0?.65:1),dt);else{const amount=Math.min(n.amount,12*dt);n.amount=Math.max(0,n.amount-amount);u.carry+=amount;this.s.gathered[this.definition().id]=(this.s.gathered[this.definition().id]||0)+amount;}if(u.carry>=35||n.amount<=0)u.order={type:'deposit',id:n.id,group:n.resourceGroup};}else u.order={type:'deposit',id:u.order.id,group:u.order.group};continue;}
@@ -772,14 +772,15 @@ class Campaign{
     }else e=u.type==='soldier'?this.soldierScreenTarget(u,context.threats,living,claimed):crowdTarget(u,context.threats);
    }
    if(!e){this.followPartyMember(u,living,dt);continue;}claimed.add(e.id);
+   const specialRange=u.type==='archer'?480:185;if(this.line(u,e)&&dist(u,e)<=specialRange&&this.companionTrySkill(u,e))continue;
    if(u.type==='archer'){
     const d=dist(u,e),visible=this.line(u,e),anchor=this.partyFollowPoint(u,living);
     if(d<150){this.follow(u,this.archerFallbackPoint(u,e,living),this.companionMoveSpeed(270)*(u.slow>0?.65:1),dt,35);continue;}
     if(d>280||!visible){this.follow(u,this.archerCombatPoint(u,e,living),this.companionMoveSpeed(260)*(u.slow>0?.65:1),dt,35);continue;}
     if(dist(u,anchor)>70&&dist(anchor,e)<=280&&this.line(anchor,e)){this.follow(u,anchor,this.companionMoveSpeed(245)*(u.slow>0?.65:1),dt,35);continue;}
-    if(u.cd<=0){u.cd=.85;const shot=Math.max(1,d);this.s.projectiles.push({id:'projectile-'+this.s.nextId++,x:u.x,y:u.y,dx:(e.x-u.x)/shot,dy:(e.y-u.y)/shot,target:e.id,damage:u.damage+this.hero.level*2+this.companionInheritedDamageBonus(),source:u.id,speed:450,style:'arrow'});this.event('projectileLaunch',{actor:'companion',role:'archer',source:u.id,style:'arrow',x:u.x,y:u.y,target:e.id});}continue;
+    if(u.cd<=0){u.cd=.85;const shot=Math.max(1,d);this.s.projectiles.push({id:'projectile-'+this.s.nextId++,x:u.x,y:u.y,dx:(e.x-u.x)/shot,dy:(e.y-u.y)/shot,target:e.id,damage:this.companionAttackDamage(u),source:u.id,speed:450,style:'arrow'});this.event('projectileLaunch',{actor:'companion',role:'archer',source:u.id,style:'arrow',x:u.x,y:u.y,target:e.id});}continue;
    }
-   if(dist(u,e)>65||!this.line(u,e))this.follow(u,e,this.companionMoveSpeed(250)*(u.slow>0?.65:1),dt,this.line(u,e)?55:0);else if(u.cd<=0){u.cd=.85;if(this.damage(e,u.damage+this.hero.level*2+this.companionInheritedDamageBonus(),u.id))this.event('melee',{actor:'companion',role:'soldier',source:u.id,weapon:'sword',x:e.x,y:e.y,target:e.id});}
+   if(dist(u,e)>65||!this.line(u,e))this.follow(u,e,this.companionMoveSpeed(250)*(u.slow>0?.65:1),dt,this.line(u,e)?55:0);else if(u.cd<=0){u.cd=.85;if(this.damage(e,this.companionAttackDamage(u),u.id))this.event('melee',{actor:'companion',role:'soldier',source:u.id,weapon:'sword',x:e.x,y:e.y,target:e.id});}
   }
   const finishRecruit=b=>{if(b.queue>0){b.queue=Math.max(0,b.queue-dt);if(b.queue===0){const p=this.safe(b.x+50,b.y+50),type=['soldier','archer'].includes(b.queueType)?b.queueType:'soldier',u=this.unit(type,p.x,p.y);u.active=this.activeParty().length<this.barracksFieldCap(b);this.s.party.push(u);b.queueType=null;}}};
   for(const b of z.buildings)finishRecruit(b);
