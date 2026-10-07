@@ -25,7 +25,7 @@ const pitch=(degree,peace)=>{const s=scale(peace),oct=Math.floor(degree/7),i=((d
 const defaults={master:.65,music:.4,ambience:.25,effects:.7,muted:false};
 const eventNotes={
  purchase:[75,79],successor:[60,64,72],gameOver:[43,38,31],heal:[64,67,72],gold:[84,88],level:[72,76,79,84],rescue:[67,72,76],learning:[60,64,67],upgrade:[64,67,72],travel:[55,62,67],
- eliteWarning:[45,46,52],eliteFrenzy:[43,48,55],captainPhase:[46,53,58],warning:[57,57],bossDefeat:[60,67,72],awakening:[48,55,60,67],peace:[60,64,67,72,76,79],death:[50,46,43],reset:[48,43],
+ eliteWarning:[45,46,52],eliteFrenzy:[43,48,55],captainPhase:[46,53,58],captainSummon:[43,50,55],warning:[57,57],bossDefeat:[60,67,72],awakening:[48,55,60,67],peace:[60,64,67,72,76,79],death:[50,46,43],reset:[48,43],
  construction:[48,55,60],barracksUpgrade:[52,59,64],questComplete:[64,67,72],quest:[60,64],supplies:[72,76],miniClear:[60,67],squadRecall:[55,62],squadDoctrine:[60,65],manaDrain:[50,43],
  companionVitality:[55,62,67],talentRespec:[60,55],rangerSupportTraining:[64,71],expeditionSupport:[60,67,72],expeditionRank:[60,67,72,79],rest:[55,60,64],tributeDiscovery:[72,79,84],sideInteriorDiscovery:[52,59,64]
 };
