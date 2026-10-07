@@ -1,12 +1,12 @@
 # Phase 2A — canonical sprite production roster
 
-> **Superseded after full renderer audit.** This file records the initial 110-item planning roster only. Do not use it for image generation. The authoritative production source is `docs/GRAPHICS_CANON_SPRITE_PROMPTS.md`, audited in `docs/GRAPHICS_CANON_SPRITE_PROMPT_AUDIT.md`. The audited catalog contains 160 numbered decisions: 144 GENERATE, 6 ALIAS, and 10 KEEP PROCEDURAL.
+> **Superseded after full renderer audit.** This file records the initial 110-item planning roster only. Do not use it for image generation. The authoritative production source is `docs/GRAPHICS_CANON_SPRITE_PROMPTS.md`, audited in `docs/GRAPHICS_CANON_SPRITE_PROMPT_AUDIT.md`. The audited catalog contains 231 numbered decisions: 221 GENERATE, 0 ALIAS, and 10 KEEP PROCEDURAL.
 
 ## Audit supersession
 
 This was the initial 110-candidate planning roster. It has now been audited against the full production renderer. **Do not use this file to drive image generation.** The authoritative production list and exact prompts are in `GRAPHICS_CANON_SPRITE_PROMPTS.md`, with audit rationale in `GRAPHICS_CANON_SPRITE_PROMPT_AUDIT.md`.
 
-The audited result is 227 classified entries: 212 one-at-a-time sprite-generation prompts, 5 exact visual aliases, and 10 numbered procedural-only entries; broader procedural systems are classified in the renderer coverage audit.
+The audited result is 231 classified entries: 221 one-at-a-time sprite-generation prompts, 0 exact visual aliases, and 10 numbered procedural-only entries; broader procedural systems are classified in the renderer coverage audit.
 
 This file defines the candidate sprite library to be produced before the visual audit. Nothing in this roster is active in `assets/sprites/manifest.json`; production and implementation remain separate.
 
@@ -119,7 +119,7 @@ Final / authored major entrance:
 
 60. Dark fortress gate
 
-Occupied side-interior entrance families are candidates where their current authored exterior is visually distinct from the generic dungeon gate. Exact sprite approval waits for the audit if the current renderer shares too much geometry to justify separate art.
+V0.8.79 gives each occupied side interior its own procedural exterior. The production catalog preserves entry 131 for Old Orchard Cellars and adds 228–231 for Drowned Watchhouse, Old Signal Keep, Ruined Shrine and Ruined Foundry.
 
 ## G. Settlement structure families
 

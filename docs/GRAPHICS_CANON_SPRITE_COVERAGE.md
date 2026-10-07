@@ -14,9 +14,9 @@ The existence of a mechanic or a name is not enough to justify a new image.
 
 ## Catalog totals
 
-The audited numbered catalog contains **227 entries**:
+The audited numbered catalog contains **231 entries**:
 
-- **217 GENERATE** entries;
+- **221 GENERATE** entries;
 - **0 ALIAS** entries;
 - **10 numbered KEEP PROCEDURAL** entries.
 
@@ -38,9 +38,9 @@ Many broad procedural systems are classified here rather than receiving pointles
 - Main dungeon entrances: 051–055.
 - Treasury entrances: 056–059.
 - Dark fortress gate: 060.
-- Barracks: construction remains procedural; Basic regional camps are 071–075; Full Barracks have distinct procedural camp layouts within the exact same reserved footprint and must not alias Basic art when sprites are eventually activated.
+- Barracks: construction remains procedural with materials/frame/one-panel/two-panel stages; Basic regional camps are 071–075; Full Barracks have distinct procedural camp layouts within the exact same reserved footprint and must not alias Basic art when sprites are eventually activated.
 - Regional town service structures: 111–130.
-- Shared occupied side-interior gate: 131.
+- Occupied side-interior entrances: Old Orchard Cellars 131, Drowned Watchhouse 228, Old Signal Keep 229, Ruined Shrine 230, Ruined Foundry 231.
 - Citadel preparation fountain: 161.
 - Field-boss compound marker: 162.
 - Dark Lord Tribute cache: 163.
@@ -201,15 +201,15 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `cache` | GENERATE 165 |
 | `wagon` | GENERATE 166 |
 | `convoy` | GENERATE 166 |
-| `watch` | GENERATE 084 |
+| `watch` | GENERATE 084 — retained marker branch; active side entrance uses 228 |
 | `dock` | PROCEDURAL — water/dock geometry |
-| `lookout` | GENERATE 085 |
+| `lookout` | GENERATE 085 — retained marker branch; active side entrance uses 229 |
 | `ore` | GENERATE 168 |
 | `tower` | GENERATE 089 |
-| `shrine` | GENERATE 086 |
+| `shrine` | GENERATE 086 — retained marker branch; active side entrance uses 230 |
 | `overlook` | GENERATE 167 |
 | `checkpoint` | PROCEDURAL/internal quest trigger; visible compound is separate |
-| `foundry` | GENERATE 087 |
+| `foundry` | GENERATE 087 — retained marker branch; active side entrance uses 231 |
 | `shelf` | GENERATE 169 |
 | `siege` | GENERATE 088 |
 | `fortress-gate` | GENERATE 060 |
@@ -251,7 +251,7 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `rest/supplier/recruiter/quests` | GENERATE 111–130 |
 | `cage` | GENERATE 170–180 |
 | `dungeon/exit` main families | GENERATE 051–055 and reuse for matching exit identity |
-| occupied side-interior `dungeon` default gate | GENERATE 131 |
+| occupied side-interior `dungeon` theme-specific facade | GENERATE 131 / 228–231 |
 | Treasury `dungeon` entrance | GENERATE 056–059 |
 | `transport` | GENERATE 090–093 |
 | `bundle` | GENERATE 164 |
@@ -274,3 +274,5 @@ The renderer deliberately seeds natural variation. Phase 2A therefore creates on
 ## Audit conclusion
 
 Every static renderer family has an explicit destination: a generation prompt, a visual alias, or a documented procedural decision. Image generation must use only **GENERATE** entries from the prompt catalog and must produce exactly one isolated asset per request.
+
+V0.8.79 reconciles the affected canonical cues after procedural polishing. Repeated game tables remain procedural despite their clearer board-and-counter drawing. Weapon racks still use regional exact keys; KEEP PROCEDURAL entries 136/137 describe the authored Frontier/Crown versions. No existing runtime sprite key is broadened or aliased.
