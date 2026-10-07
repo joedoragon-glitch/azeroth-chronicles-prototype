@@ -464,6 +464,29 @@ function draw(ctx,e,p,region=0,rescued=false){
   shade(48,11,.2);for(const x of [-38,38]){oval(x,5,13,5,'#4c4652');for(const dx of [-5,0,5])poly([[x+dx-3,4],[x+dx,-12],[x+dx+3,4]],'#9c5f58');}
   for(const x of [-32,-16,0,16,32])line([[x,13],[x,-8]],'#6e5d55',5);line([[-39,-4],[39,-4]],steel,3);
   line([[0,-56],[0,12]],steel,3);poly([[3,-53],[29,-49],[24,-19],[12,-10],[3,-18]],'#71586f');poly([[14,-40],[20,-31],[14,-22],[8,-31]],'#b08db9');for(const x of [-20,20])line([[x,-7],[x,-32]],'#b7b8b0',2);break;
+ case 'citadel-muster':
+  shade(45,10,.17);for(const x of [-28,28]){line([[x,-2],[x,-43]],steel,3);poly([[x-8,-40],[x,-52],[x+8,-40],[x+5,-17],[x-5,-17]],'#85979b');}
+  rect(-38,-4,76,16,'#555d61');for(const x of [-22,0,22]){poly([[x-7,-2],[x+7,-2],[x+6,9],[x,15],[x-6,9]],'#5a6670');line([[x,0],[x,10]],gold,1.4);}
+  for(const x of [-34,34]){line([[x,-50],[x,11]],steel,3);poly([[x+2,-47],[x+(x<0?20: -20),-43],[x+(x<0?17:-17),-18],[x+2,-15]],'#785266');}break;
+ case 'citadel-command':
+  shade(44,10,.16);oval(0,2,31,11,'#5e5654');for(const x of [-20,20])line([[x,6],[x,19]],'#4a4140',4);line([[-20,-2],[20,7]],'#b18f70',1.2);
+  for(const [x,y] of [[-12,0],[2,3],[13,5]])glint(x,y,'#d7b46d',1.4);line([[0,-56],[0,13]],steel,3);poly([[3,-53],[29,-49],[24,-18],[13,-10],[3,-18]],'#785266');line([[13,-41],[13,-24]],gold,2);
+  for(const x of [-31,31])poly([[x-8,-17],[x+8,-17],[x+7,-3],[x,4],[x-7,-3]],'#66757b');break;
+ case 'citadel-ritual-array':
+  shade(44,10,.13);for(const [x,y] of [[-26,5],[0,-2],[26,5]]){oval(x,y,18,7,'#67777d');poly([[x,y-10],[x+8,y],[x,y+9],[x-8,y]],'#9eb1b4');line([[x,y-5],[x,y+5]],'#d4c58f',1.4);}
+  line([[-38,-24],[38,-24]],'#868f91',3);for(const x of [-28,0,28])poly([[x-7,-24],[x,-39],[x+7,-24]],'#79878a');for(const x of [-36,36])glint(x,-8,'#e3bd76',1.8);break;
+ case 'citadel-barracks-bay':
+  shade(48,11,.16);rect(-42,-6,84,18,'#62564a');rect(-39,-4,37,10,'#7b6d5b');rect(3,-4,36,10,'#7b6d5b');for(const x of [-35,-5,7,37])line([[x,8],[x,17]],localWood,3);
+  rect(-34,-3,11,7,'#ad9676');rect(8,-3,11,7,'#ad9676');line([[0,-42],[0,13]],localWood,4);line([[-22,-26],[22,-26]],localWood,4);oval(0,-49,9,9,'#967c5f');
+  for(const x of [-28,28])line([[x,-20],[x,5]],steel,2);break;
+ case 'citadel-forge-bay':
+  shade(48,11,.18);rect(-40,-10,48,25,'#65645f');rect(-31,-29,30,19,'#76716a');oval(-17,4,14,5,'#3f3a37');for(const x of [-23,-17,-11])poly([[x-3,4],[x,-10],[x+3,4]],'#bd7148');
+  rect(-2,-42,9,32,'#595653');for(const x of [17,28,39]){line([[x,-29],[x,10]],steel,2);poly([[x-5,-29],[x,-40],[x+5,-29]],'#aaa891');}
+  rect(13,-1,22,17,'#806144');rect(25,-17,20,17,'#725744');line([[14,0],[34,15]],'#b99566',2);break;
+ case 'citadel-boss-approach':
+  shade(46,10,.12);for(const x of [-35,35]){line([[x,-55],[x,13]],steel,3);poly([[x+(x<0?2:-2),-52],[x+(x<0?27:-27),-48],[x+(x<0?24:-24),-18],[x+(x<0?13:-13),-10],[x+(x<0?2:-2),-18]],'#785266');}
+  for(const x of [-20,20]){oval(x,3,16,7,'#67777d');poly([[x,-8],[x+8,2],[x,12],[x-8,2]],'#a6b8bc');}
+  oval(0,7,17,6,'#4c4652');for(const x of [-8,0,8])poly([[x-4,6],[x,-10],[x+4,6]],'#a9634d');glint(0,-7,'#e6bd7a',2);break;
  case 'animal-pen':for(const x of [-23,23])line([[x,12],[x,-18]],localWood,3);line([[-24,-13],[24,-13]],localWood,3);line([[-24,2],[24,2]],localWood,3);for(const [x,y]of [[-9,5],[7,7]])oval(x,y,7,4,'#8c8062');break;
  case 'drying-rack':for(const x of [-22,22])line([[x,12],[x,-34]],localWood,3);line([[-23,-29],[23,-29]],localWood,3);for(const x of [-14,0,14]){line([[x,-28],[x,-10]],'#cdbf9f',1);rect(x-5,-10,10,12,x===0?'#8da0a0':'#a1846f');}break;
  case 'tax-post':line([[0,-48],[0,14]],localWood,4);rect(-18,-43,36,25,'#8a7357');for(const y of [-37,-31,-25])line([[-13,y],[12,y]],'#d3c298',1);rect(7,-14,12,10,'#6f5541');break;
@@ -636,7 +659,7 @@ function draw(ctx,e,p,region=0,rescued=false){
  if(type==='hero'||type==='ally'||type==='enemy'){line([[-8,13],[0,15],[8,13]],type==='enemy'?'#d2aa87':'#c9d6ad',1.2);if(type==='hero')oval(0,-47,2,2,'#f6dfa0');}
  ctx.restore();
 }
-function height(e){if(e.type==='boss')return 102;if(e.captain||e.roomCaptain)return 68;if(e.renderKind==='building'&&e.kind==='barracks')return 88;if(e.renderKind==='prop'&&['crown-levy-yard','crown-command-post','ashbeast-roost-scene','crown-logistics-bay','crown-fortress-checkpoint'].includes(e.structure))return 76;if(e.renderKind==='hero'&&e.class==='mage'||e.renderKind==='prop')return 64;if(['dungeon','exit','transport'].includes(e.kind))return 64;return 54;}
+function height(e){if(e.type==='boss')return 102;if(e.captain||e.roomCaptain)return 68;if(e.renderKind==='building'&&e.kind==='barracks')return 88;if(e.renderKind==='prop'&&['crown-levy-yard','crown-command-post','ashbeast-roost-scene','crown-logistics-bay','crown-fortress-checkpoint','citadel-muster','citadel-command','citadel-ritual-array','citadel-barracks-bay','citadel-forge-bay','citadel-boss-approach'].includes(e.structure))return 76;if(e.renderKind==='hero'&&e.class==='mage'||e.renderKind==='prop')return 64;if(['dungeon','exit','transport'].includes(e.kind))return 64;return 54;}
 const floorPalettes=[['#294b36','#31583e','#203e30','#95ad80'],['#26444b','#31535a','#203b42','#85ada6'],['#485447','#56614d','#3b493f','#b1b59a'],['#50413b','#5d4b42','#423732','#b9987b'],['#343644','#414351','#2c2f3c','#a09b9e']];
 const dungeonFloors={crypt:['#343c39','#414945','#2b3331','#a9b1a0'],archive:['#30464a','#3b5558','#283d42','#8fb6b4'],mine:['#44433b','#524f43','#39382f','#ada88c'],abyss:['#44373b','#544349','#382f34','#c09a89'],citadel:['#3b414b','#494f59','#303640','#abb3b5']};
 const treasuryFloors={
