@@ -147,7 +147,7 @@ const worldLifePlans=[
  {
   civilian:[[300,760,'market'],[520,760,'forge'],[900,1430,'garden'],[1080,1540,'field-kitchen'],[910,1630,'laundry'],[620,570,'tax-post']],
   habitats:[
-   {id:'ashbeast-roost',center:[2020,1810],props:[[-70,-25,'roost'],[25,-30,'bone-pile'],[80,35,'ember-pit'],[-25,65,'sleep-roll'],[120,-5,'obsidian']]},
+   {id:'ashbeast-roost',center:[1800,3300],props:[[-70,-25,'roost'],[25,-30,'bone-pile'],[80,35,'ember-pit'],[-25,65,'sleep-roll'],[120,-5,'obsidian']]},
    {id:'crown-barracks',center:[3000,1180],props:[[-80,-25,'command-tent'],[20,-30,'field-kitchen'],[85,35,'weapon-rack'],[-25,70,'bunk'],[125,-5,'supply-stack']]},
    {id:'fortress-work-camp',center:[3070,2200],props:[[-75,-25,'forge'],[25,-30,'field-kitchen'],[85,35,'supply-stack'],[-25,65,'bunk'],[120,-5,'training-dummy']]},
    {id:'dark-fortress-court',center:[3250,3200],props:[[-165,-90,'dark-throne'],[-70,-140,'dark-brazier'],[50,-140,'war-table'],[160,-85,'weapon-rack'],[-170,45,'bunk'],[-75,130,'supply-stack'],[55,130,'forge'],[165,45,'crown-banner']]}
@@ -223,7 +223,7 @@ const creatureStrongholds=[
  {id:'stalker-cinder-hold',region:'frontier',site:'overlook',nightSpecies:'stalker',wall:'stonewall',night:true,
   props:[[-95,-50,'ash-patch'],[-35,-105,'bone-pile'],[55,-95,'roost'],[105,-25,'ember-pit'],[75,80,'burned-log'],[-65,90,'black-rock']]},
 
- {id:'ashbeast-roost-hold',region:'crown',center:[2020,1810],species:'ashbeast',wall:'stonewall',guardCount:4,unmarked:true,
+ {id:'ashbeast-roost-hold',region:'crown',center:[1800,3300],species:'ashbeast',wall:'stonewall',guardCount:4,unmarked:true,
   props:[[-105,-50,'roost'],[-45,-105,'bone-pile'],[50,-100,'ember-pit'],[110,-35,'obsidian'],[90,70,'sleep-roll'],[-10,110,'roost'],[-90,65,'black-rock']]},
  {id:'crown-field-barracks-hold',region:'crown',site:'crown-barracks',species:'crownguard',wall:'stonewall',guardCount:4,
   props:[[-105,-50,'command-tent'],[-45,-105,'field-kitchen'],[50,-100,'weapon-rack'],[110,-35,'bunk'],[90,70,'supply-stack'],[-10,110,'training-dummy'],[-90,65,'war-table'],[170,110,'forge'],[190,-120,'bunk']]}
