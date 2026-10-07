@@ -35,7 +35,7 @@ const legacyResourceTotals={vale:180,march:360,highlands:600,frontier:850,crown:
 const tributePlans={
  vale:[
   {id:'orchard-stores',site:'orchard',amount:170,hidden:false,offset:[45,260],context:'confiscated orchard stores'},
-  {id:'woodland-cache',site:'cache',amount:180,hidden:false,offset:[95,65],context:'collector cache'},
+  {id:'woodland-cache',site:'cache',amount:180,hidden:false,offset:[50,-250],context:'collector cache'},
   {id:'pond-strongbox',site:'mill-pond',amount:150,hidden:true,offset:[105,-65],context:'hidden tax strongbox'},
   {id:'bridge-toll',site:'bridge-north',amount:140,hidden:true,offset:[-180,250],context:'concealed bridge toll chest'}
  ],
