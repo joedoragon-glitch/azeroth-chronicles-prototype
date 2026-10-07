@@ -31,9 +31,10 @@ const expeditions=[
  {resource:'siege',supplies:[],name:'Dark Lord Tribute'}
 ];
 const tributeTotal=640;
+const legacyResourceTotals={vale:180,march:360,highlands:600,frontier:850,crown:1200};
 const tributePlans={
  vale:[
-  {id:'orchard-stores',site:'orchard',amount:170,hidden:false,offset:[90,85],context:'confiscated orchard stores'},
+  {id:'orchard-stores',site:'orchard',amount:170,hidden:false,offset:[45,260],context:'confiscated orchard stores'},
   {id:'woodland-cache',site:'cache',amount:180,hidden:false,offset:[95,65],context:'collector cache'},
   {id:'pond-strongbox',site:'mill-pond',amount:150,hidden:true,offset:[105,-65],context:'hidden tax strongbox'},
   {id:'bridge-toll',site:'bridge-north',amount:140,hidden:true,offset:[-105,95],context:'concealed bridge toll chest'}
@@ -515,6 +516,6 @@ const rangedEnemyCombat={projectileMultiplier:1.7,aimTime:.35,cooldown:1.15,retr
 const chargedSkills={holdSeconds:.65,basicDamageMultiplier:3,manaFractions:{1:.20,2:.30,3:.35},third:{effect:'party-heal'},second:{paladin:{shape:'cone',range:185,halfAngle:.8,effect:'holy-cleave'},mage:{shape:'circle',radius:160,effect:'frost-burst',slow:4},ranger:{shape:'line',range:480,halfWidth:55,effect:'piercing-volley'}}};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,creatureStrongholds,sideDungeons,sideDungeonTrapTuning,tributeTotal,tributePlans,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
+const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,creatureStrongholds,sideDungeons,sideDungeonTrapTuning,tributeTotal,legacyResourceTotals,tributePlans,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
