@@ -59,14 +59,31 @@ await check('Charged skills use hold-and-release on keyboard and touch '+tag,asy
  await hold(3);const heal=await page.evaluate(()=>({mp:Prototype.game.hero.mp,hero:[Prototype.game.hero.hp,Prototype.game.hero.maxHp],party:Prototype.game.s.party.map(u=>[u.hp,u.maxHp])}));assert(Math.abs(heal.mp-650)<.2,'charged skill 3 spends 35% max MP');assert(heal.hero[0]===heal.hero[1]||heal.hero[0]>heal.hero[1]-40,'charged Skill 3 heals hero');assert(heal.party.every(([hp,max])=>hp>max-40),'charged Skill 3 heals active companions');
  await page.evaluate(state=>{Prototype.game.s=state;},saved);
 });
-await check('Mage Skill 1 charge queues through the shared cooldown and low MP never blocks the free normal basic '+tag,async()=>{
+await check('Paladin, Mage and Ranger Skill 1 charge readiness is identical and predictable '+tag,async()=>{
  const saved=await page.evaluate(()=>Prototype.game.snapshot());
- await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');c.zone().props=[];c.s.party=[];c.s.mercyTime=0;Object.assign(c.hero,{class:'mage',x:600,y:900,mp:0,maxMp:100,power:22,weapon:0,legacyWeaponPower:0,legacyEquipped:false,talents:[0,0,0,0],order:null});c.hero.skills[0]=1;c.hero.cd[0]=0;const target=c.makeEnemy({species:'goblin',name:'Mage charge target',level:1,hp:10000,damage:0,gold:0,xp:0},{x:680,y:900});c.zone().enemies=[target];});
- await page.locator('#skill-1').evaluate(el=>{el.setPointerCapture=()=>{};el.onpointerdown({pointerType:'touch',pointerId:201,preventDefault(){}});el.onpointerup({pointerType:'touch',pointerId:201});});await page.waitForFunction(()=>Prototype.game.zone().enemies[0].hp<Prototype.game.zone().enemies[0].maxHp);let state=await page.evaluate(()=>({mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[0],title:document.querySelector('#skill-1').title}));assert(state.cd>0&&state.cd<=.85,'free normal Skill 1 still uses its normal cooldown');assert(state.mp>=0&&state.mp<1,'Mage can use the free normal basic at zero MP');assert(state.title.includes('Charged cost 20% max MP'),'Skill 1 exposes its charged mana requirement');
- await page.evaluate(()=>{const c=Prototype.game,e=c.zone().enemies[0];Object.assign(c.hero,{x:600,y:900,mp:100,maxMp:100,order:null});c.hero.cd[0]=.45;e.hp=e.maxHp=10000;e.aggro=false;Object.assign(e,{x:680,y:900,home:{x:680,y:900}});});
- await page.keyboard.down('d');await page.waitForTimeout(40);await page.keyboard.down('1');await page.waitForFunction(()=>document.querySelector('#skill-1 small')?.textContent.startsWith('WAIT '));const queued=await page.evaluate(()=>Prototype.chargePresentation());assert(queued?.waiting&&queued.cooldown>0,'holding Skill 1 during cooldown creates an explicit queued charge');
- await page.waitForFunction(()=>document.querySelector('#skill-1 small')?.textContent==='CHARGED',{timeout:2500});assert(await page.evaluate(()=>{const e=Prototype.game.zone().enemies[0];return Math.abs(e.hp-e.maxHp)<1e-9;}),'movement auto-basic cannot steal Skill 1 while a charge is queued or charging');
- await page.keyboard.up('1');await page.keyboard.up('d');await page.waitForFunction(()=>Prototype.game.zone().enemies[0].hp<Prototype.game.zone().enemies[0].maxHp);state=await page.evaluate(()=>({lost:Prototype.game.zone().enemies[0].maxHp-Prototype.game.zone().enemies[0].hp,mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[0]}));assert(Math.abs(state.lost-102)<.001,'Mage charged basic deals triple 34-point basic damage');assert(state.cd>0&&state.cd<=.85,'charged Skill 1 has no hidden cooldown beyond the normal 0.85s cooldown');assert(state.mp>79&&state.mp<82.5,'charged Skill 1 spends the documented 20% max MP despite frame-level regeneration');
+ const expectedDamage={paladin:90,mage:102,ranger:96};
+ for(const cls of ['paladin','mage','ranger']){
+  await page.evaluate(cls=>{const c=Prototype.game;c.enter('vale');c.zone().props=[];c.s.party=[];c.s.mercyTime=0;const base=Campaign.classes[cls];Object.assign(c.hero,{class:cls,x:600,y:900,mp:0,maxMp:100,power:base.power,weapon:0,legacyWeaponPower:0,legacyEquipped:false,talents:[0,0,0,0],order:null});c.hero.skills[0]=1;c.hero.cd[0]=0;const target=c.makeEnemy({species:'goblin',name:cls+' charge target',level:1,hp:10000,damage:0,gold:0,xp:0},{x:680,y:900});c.zone().enemies=[target];},cls);
+  await page.locator('#skill-1').evaluate(el=>{el.setPointerCapture=()=>{};el.onpointerdown({pointerType:'touch',pointerId:201,preventDefault(){}});el.onpointerup({pointerType:'touch',pointerId:201});});
+  await page.waitForFunction(()=>Prototype.game.zone().enemies[0].hp<Prototype.game.zone().enemies[0].maxHp);
+  let state=await page.evaluate(()=>({mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[0],title:document.querySelector('#skill-1').title}));
+  assert(state.cd>0&&state.cd<=.85,cls+' free normal Skill 1 keeps the ordinary 0.85s cooldown');
+  assert(state.mp>=0&&state.mp<3,cls+' can use the free normal basic at zero starting MP');
+  assert(state.title.includes('Charged cost 20% max MP'),cls+' exposes the charged mana requirement');
+  await page.evaluate(()=>{const c=Prototype.game,e=c.zone().enemies[0];Object.assign(c.hero,{x:600,y:900,mp:100,maxMp:100,order:null});c.hero.cd[0]=.45;e.hp=e.maxHp;e.aggro=false;Object.assign(e,{x:680,y:900,home:{x:680,y:900}});});
+  await page.keyboard.down('d');await page.waitForTimeout(40);await page.keyboard.down('1');
+  await page.waitForFunction(()=>document.querySelector('#skill-1 small')?.textContent.startsWith('WAIT '));
+  const queued=await page.evaluate(()=>Prototype.chargePresentation());
+  assert(queued?.waiting&&queued.cooldown>0,cls+' can queue Skill 1 charge through the ordinary cooldown');
+  await page.waitForFunction(()=>document.querySelector('#skill-1 small')?.textContent==='CHARGED',{timeout:2500});
+  assert(await page.evaluate(()=>{const e=Prototype.game.zone().enemies[0];return Math.abs(e.hp-e.maxHp)<1e-9;}),cls+' movement auto-basic cannot steal Skill 1 while queued or charging');
+  await page.keyboard.up('1');await page.keyboard.up('d');
+  await page.waitForFunction(()=>Prototype.game.zone().enemies[0].hp<Prototype.game.zone().enemies[0].maxHp);
+  state=await page.evaluate(()=>({lost:Prototype.game.zone().enemies[0].maxHp-Prototype.game.zone().enemies[0].hp,mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[0]}));
+  assert(Math.abs(state.lost-expectedDamage[cls])<.001,cls+' charged basic deals the expected triple basic damage');
+  assert(state.cd>0&&state.cd<=.85,cls+' charged Skill 1 has no hidden cooldown beyond the ordinary 0.85s cooldown');
+  assert(state.mp>79&&state.mp<82.5,cls+' charged Skill 1 spends the documented 20% max MP despite frame-level regeneration');
+ }
  await page.evaluate(state=>{Prototype.game.s=state;},saved);
 });
 await check('Ranger sustain thresholds and direct commands '+tag,async()=>{
