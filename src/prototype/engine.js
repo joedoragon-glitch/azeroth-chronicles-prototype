@@ -277,7 +277,7 @@ class Campaign{
    const roadTraceStructures=new Set(['road-ruts','road-patch']);
    const clearPoint=(x,y)=>{if(!this.blocked(x,y,z.id,8,true))return {x,y};for(let radius=30;radius<=180;radius+=30)for(let n=0;n<16;n++){const a=n*Math.PI/8,p={x:x+Math.cos(a)*radius,y:y+Math.sin(a)*radius};if(!this.blocked(p.x,p.y,z.id,8,true))return p;}return null;};
    const place=(base,spec,prefix)=>{
-    const [dx,dy,structure]=spec,p=clearPoint(base.x+dx,base.y+dy);if(!p)return false,roadTrace=roadTraceStructures.has(structure);
+    const [dx,dy,structure]=spec,roadTrace=roadTraceStructures.has(structure),p=clearPoint(base.x+dx,base.y+dy);if(!p)return false;
     // Furniture stays off travel lanes; flat ruts/patches are the only authored road-surface exception.
     if(!roadTrace&&roadNear(p,48))return false;
     if(!roadTrace&&(z.npcs.some(n=>dist(n,p)<45)||z.nodes.some(n=>n.amount>0&&dist(n,p)<48)||z.buildings.some(n=>dist(n,p)<55)))return false;
