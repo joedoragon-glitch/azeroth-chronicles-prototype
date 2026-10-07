@@ -3,7 +3,7 @@ const assert=require('node:assert/strict'),Campaign=require('../src/prototype/en
 
 const combat=()=>{
  const c=new Campaign('normal','paladin',()=>.9),e=c.zone().enemies.find(e=>e.type==='mob');
- c.s.mercyTime=0;Object.assign(e,{x:c.hero.x+90,y:c.hero.y,home:{x:c.hero.x+90,y:c.hero.y},aggro:true,damage:0,baseDamage:0});
+ c.s.mercyTime=0;Object.assign(e,{x:c.hero.x+90,y:c.hero.y,home:{x:c.hero.x+90,y:c.hero.y},hp:10000,maxHp:10000,baseHp:10000,aggro:true,damage:0,baseDamage:0});
  c.zone().enemies=[e];c.updateEnemies=()=>{};return c;
 };
 
