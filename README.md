@@ -16,7 +16,7 @@ Choose Standard or the optional **Succession challenge**, then Paladin, Mage or 
 | --- | --- |
 | Move | WASD / left joystick |
 | Interact | E or F / Interact |
-| Skills 1–5 | 1–5 / left skill buttons |
+| Skills 1–5 | 1–5 / left skill buttons; normal Skill 1 rewards maintaining the same target through its three-hit combo |
 | Charged Skills 1–3 | Tap 1/2/3 for normal; hold 0.65s for charged. Holds can queue through cooldowns; incomplete holds cancel safely. |
 | Skills 6–8 | Space, left Shift, B / left skill buttons |
 | Ranger support | H / left mouse commands Ranger Heal; M / right mouse commands Ranger Mana Recovery; touch support buttons remain available |
