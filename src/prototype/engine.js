@@ -286,7 +286,7 @@ class Campaign{
    const i=this.regionIndex(z.id);for(const [id,name,x,y]of R.sites[i]){let n=z.npcs.find(n=>n.id===id);const data={id,name,kind:'landmark',...this.safe(x,y,z.id),icon:/bridge|crossing/i.test(name)?'🪵':/camp|convoy|wagon/i.test(name)?'🏕️':'🏚️'};if(n)Object.assign(n,data);else z.npcs.push(data);}
    z.placesVersion=2;
   }
-  this.localSites(z);this.retireResourceMini(z);this.resourceDeposits(z);this.miniDungeons(z);this.spreadOutdoorForces(z);this.alignLandmarks(z);this.sideInteriors(z);this.supplyInteriors(z);this.regionalAesthetics(z);this.worldLife(z);this.creatureStrongholds(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);this.fieldCaptainPopulation(z);this.finalBossPopulation(z);
+  this.localSites(z);this.retireResourceMini(z);this.resourceDeposits(z);this.miniDungeons(z);this.repairMiniGuardianReachability(z);this.spreadOutdoorForces(z);this.alignLandmarks(z);this.sideInteriors(z);this.supplyInteriors(z);this.regionalAesthetics(z);this.worldLife(z);this.creatureStrongholds(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);this.fieldCaptainPopulation(z);this.finalBossPopulation(z);
  }
  spaceQuestBoard(z){if(dungeonIds.includes(z.id)||z.boardPositionVersion===2)return;const board=z.npcs.find(n=>n.kind==='quests');if(!board)return;const i=this.regionIndex(z.id),[x,y]=D.towns[i],p=this.safe(x+210,y+55,z.id);Object.assign(board,p);z.boardPositionVersion=2;}
  spaceMillhavenSupplier(z){if(z.id!=='vale'||z.supplierPositionVersion===2)return;const supplier=z.npcs.find(n=>n.id==='supplier');if(!supplier)return;const [x,y]=D.towns[0];Object.assign(supplier,this.safe(x+115,y-85,z.id));z.supplierPositionVersion=2;}
@@ -348,8 +348,9 @@ class Campaign{
  }
  resourceDeposits(z){
   if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||this.sideDungeon(z.id)||z.resourceDepositsVersion===2)return;
-  const plan=R.tributePlans?.[z.id]||[],total=R.tributeTotal||640,already=Math.max(0,Math.floor(this.s.gathered?.[z.id]||0)),remaining=Math.max(0,total-already),oldZone=this.s.zone;this.s.zone=z.id;
+  const plan=R.tributePlans?.[z.id]||[],total=R.tributeTotal||640,legacyNodes=(z.nodes||[]).filter(n=>!n.tribute),legacyRemaining=legacyNodes.reduce((sum,n)=>sum+(Number(n.amount)||0),0),legacyCap=R.legacyResourceTotals?.[z.id]||0,recorded=Math.max(0,Math.floor(this.s.gathered?.[z.id]||0)),inferred=recorded>0?recorded:legacyNodes.length&&legacyCap?Math.max(0,legacyCap-legacyRemaining):0,already=Math.min(total,inferred),remaining=Math.max(0,total-already),oldZone=this.s.zone;this.s.zone=z.id;
   try{
+   if(already>recorded)this.s.gathered[z.id]=already;
    const raw=plan.map(s=>Math.floor(remaining*s.amount/total)),left=remaining-raw.reduce((a,b)=>a+b,0);for(let j=0;j<left;j++)raw[j%raw.length]++;
    z.nodes=[];
    for(const [j,source]of plan.entries()){const site=z.npcs.find(n=>n.id===source.site);if(!site)continue;const off=source.offset||[80,60],p=this.safe(site.x+off[0],site.y+off[1],z.id),id='tribute-'+z.id+'-'+source.id;z.nodes.push({id,...p,amount:raw[j]||0,icon:'🪙',site:source.site,siteName:site.name,name:'Dark Lord Tribute',kind:'resource',tribute:true,tributeId:source.id,hidden:!!source.hidden,context:source.context||'tribute stores',resourceGroup:'tribute-'+z.id});if(!source.hidden&&this.s.discovered[z.id+':'+source.site])this.s.discovered[z.id+':tribute:'+source.id]=true;}
