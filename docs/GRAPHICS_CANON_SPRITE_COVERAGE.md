@@ -30,8 +30,8 @@ Many broad procedural systems are classified here rather than receiving pointles
 - Ordinary/night enemies and visible weapon/ranged-class variants: 016–034. Mireling Spitter 030, Ogre Stone Thrower 032, Orc Axe Thrower 033 and Ash-beast Cinder Spitter 034 now have distinct procedural bodies/equipment.
 - Bosses: 035–045.
 - Named captains with authored static additions: 046–050. Dreadmaw 049 uses Ash-beast anatomy with a retained Dark-Lord-idol captain treatment while Cindermaw remains his gameplay mentor.
-- Ringleader, Frenzy and TRUE presentation remain procedural overlays on the approved underlying body.
-- Guard identifiers remain procedural; no invented guard armor is permitted.
+- Ringleader, Frenzy and TRUE presentation remain procedural. Non-military species keep the universal Ringleader overlay; military species use same-size officer hierarchy cues tied to their uniform instead of the generic crown treatment.
+- Guard identifiers remain procedural. Military species may use restrained uniform/pauldron role cues, but role readability must not create a new species silhouette or inflate body scale.
 
 ## Interaction/state coverage
 
