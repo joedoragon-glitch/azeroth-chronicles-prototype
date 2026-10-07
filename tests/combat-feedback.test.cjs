@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),C=require('../src/prototype/engine'),Audio=require('../src/prototype/audio');
+const assert=require('node:assert/strict'),fs=require('fs'),path=require('path'),C=require('../src/prototype/engine'),Audio=require('../src/prototype/audio');
 const arena=()=>{const c=new C('normal','paladin',()=>.9);c.enter('crypt');c.zone().props=[];c.zone().enemies=[];Object.assign(c.hero,{x:500,y:500});c.s.party=[];return c;};
 
 const c=arena(),e=c.makeEnemy({species:'goblin',name:'Target',level:1,hp:1000,damage:8,gold:1,xp:1},{x:540,y:500});c.zone().enemies.push(e);
@@ -32,6 +32,24 @@ assert.equal(a.soundKind({type:'projectileLaunch',actor:'hero',class:'mage',styl
 assert.equal(a.soundKind({type:'projectileImpact',style:'arrow'}),'arrowImpact');
 assert.equal(a.soundKind({type:'projectileImpact',style:'magic'}),'magicImpact');
 assert.equal(a.soundKind({type:'hit'}),null);
+assert.equal(a.soundKind({type:'melee',actor:'companion',role:'soldier',special:'power-strike'}),'powerStrike');
+assert.equal(a.soundKind({type:'projectileLaunch',actor:'companion',role:'archer',style:'arrow',special:'triple-shot',count:3}),'tripleShot');
+assert.equal(a.soundKind({type:'chargedArea',actor:'companion',role:'soldier',companion:true,effect:'holy-cleave',class:'paladin'}),'companionHolyCleave');
+assert.equal(a.soundKind({type:'chargedArea',actor:'companion',role:'archer',companion:true,effect:'piercing-volley',class:'ranger'}),'piercingVolley');
+assert.equal(a.soundKind({type:'projectileLaunch',actor:'hero',class:'mage',style:'magic',beam:true}),'arcaneBeamLaunch');
+assert.equal(a.soundKind({type:'projectileImpact',actor:'hero',class:'mage',style:'beam'}),'arcaneBeamImpact');
+assert.equal(a.soundKind({type:'projectileLaunch',actor:'enemy',style:'axe'}),'heavyProjectileLaunch');
+assert.equal(a.soundKind({type:'projectileImpact',actor:'enemy',style:'stone'}),'heavyProjectileImpact');
+assert.equal(a.soundKind({type:'projectileLaunch',actor:'enemy',style:'spit'}),'organicProjectileLaunch');
+assert.equal(a.soundKind({type:'projectileImpact',actor:'enemy',style:'spit'}),'organicProjectileImpact');
+assert.equal(a.soundKind({type:'basicComboFinisher',class:'paladin'}),'paladinComboFinisher');
+assert.equal(a.soundKind({type:'basicComboFinisher',class:'mage'}),'mageComboFinisher');
+assert.equal(a.soundKind({type:'basicComboFinisher',class:'ranger'}),'rangerComboFinisher');
+assert.equal(a.soundKind({type:'companionSkill',skill:'power-strike'}),null,'companionSkill marker is intentionally silent because its concrete attack event owns the sound');
+for(const type of ['expeditionRank','rest','tributeDiscovery','sideInteriorDiscovery'])assert(a.supportsType(type),type+' has an explicit noncombat audio decision');
+const engineSource=fs.readFileSync(path.join(__dirname,'../src/prototype/engine.js'),'utf8'),literalEvents=[...new Set([...engineSource.matchAll(/this\.event\(\s*['"]([^'"]+)['"]/g)].map(m=>m[1]))];
+for(const type of literalEvents)assert(a.supportsType(type),'engine event lacks an explicit audio route or intentional-silence decision: '+type);
+console.log('PASS current engine event inventory is explicitly covered by audio routing');
 
 const calls=[];a.ctx={currentTime:1};a.steelImpact=(now,hero)=>calls.push(['steel',hero]);a.effect({type:'melee',actor:'hero',class:'paladin'});assert.deepEqual(calls,[['steel',true]]);
 a.ctx.currentTime+=.01;a.effect({type:'melee',actor:'hero',class:'paladin'});assert.equal(calls.length,1,'hero steel layer is crowd-throttled without deleting other sound families');
