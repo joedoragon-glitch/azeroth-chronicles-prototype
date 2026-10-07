@@ -427,7 +427,7 @@ class Campaign{
   const i=this.regionIndex(z.id),r=D.regions[i],plan=R.miniPlans[i],oldZone=this.s.zone;this.s.zone=z.id;
   try{
    const family=D.bosses.find(b=>b.region===z.id&&b.kind==='field').id,field=this.fieldCenter(i),id='field-'+family,existing=(z.minis||[]).find(m=>m.id===id);
-   if(existing){z.minis=[existing];z.minisVersion=2;return;}
+   if(existing){if(z.minisVersion!==2&&(this.s.normal[family]||this.s.rescued[family])){existing.cleared=true;for(const e of z.enemies.filter(e=>e.mini===id)){e.hp=0;e.deathPaid=true;}}z.minis=[existing];z.minisVersion=2;return;}
    z.minis=[];const inherited=!!this.s.normal[family]||!!this.s.rescued[family],mini={id,type:'field',family,site:null,name:plan.field,x:field.x,y:field.y,cleared:inherited,trapPosts:[]};z.minis.push(mini);
    const roads=p=>z.roads.some(path=>path.some((b,j)=>j&&this.distanceToSegment(p,path[j-1],b)<p.r+60)),posts=[[-190,-190],[-120,-190],[-50,-190],[70,-190],[140,-190],[190,-190],[-190,-120],[-190,0],[-190,120],[-190,190],[-120,190],[-50,190],[70,190],[140,190],[190,190],[190,120],[190,0],[190,-120],[-95,-65],[90,-75],[0,140]];
    for(const [j,[dx,dy]]of posts.entries()){const p={x:field.x+dx,y:field.y+dy,r:j<18?27:30};if(this.blocked(p.x,p.y,z.id,p.r+15)||roads(p)||z.npcs.some(n=>dist(n,p)<p.r+65)||z.nodes.some(n=>dist(n,p)<p.r+65)||z.enemies.some(e=>e.type==='boss'&&dist(e.home,p)<90)||z.id===oldZone&&dist(this.hero,p)<80)continue;z.props.push({id:'mini-wall-'+id+'-'+j,...p,structure:j<18?plan.theme:'pillar',mini:id,icon:'🪨'});}
