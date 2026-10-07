@@ -28,7 +28,7 @@ The expanded shell runs one shared Campaign state. `data.js` carries approved co
 - Sprint remains dormant and unavailable. Q is reserved; no menu or saved setting enables it. Source and activation notes remain explicit.
 - Offline exports are portable backups. Reloading the current Succession run cannot restore fallen classes, while deliberate imports of older exports can rewind it. There is no online anti-cheat service.
 
-The expanded game is published at the existing GitHub Pages URL; legacy.html retains v0.5. GitHub Pages/PWA is the supported game target, with assets cached by the service worker after the first connected load.
+The expanded game is published at the existing GitHub Pages URL; legacy.html retains v0.5. GitHub Pages/PWA is the supported and canonical game target, with assets cached by the service worker after the first connected load. The game is explicitly a multi-file application: JavaScript, CSS, images, audio and future asset types may remain separate files. No feature, test, asset pipeline or release decision may require preserving a self-contained single-HTML build. Historical portable HTML output is optional legacy convenience only and may be incomplete or retired rather than constrain the live game.
 
 ## v0.7.0 audit fixes
 
