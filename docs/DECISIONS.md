@@ -25,6 +25,7 @@ The expanded shell runs one shared Campaign state. `data.js` carries approved co
 - Authored water/cliff partitions, bridge gaps, forest clusters and connected roads form five regions. Terrain checks cover every service, captive, entrance, transport stand and boss home.
 - Four boss slots combine cones, charges, circles, separated patches, projectiles, expanding rings and capped summons. Shared prototype primitives approximate some advanced animation descriptions while retaining readable warnings and safe routes.
 - Music uses original synthesized instruments, harmony and filtered ambience. Every place has a melody and peaceful arrangement. Recorded orchestration is outside this prototype.
+- Combat audio is contextual rather than event-name-only. The browser shell passes complete gameplay events into `audio.js`, allowing hero class, companion role, enemy identity and projectile/weapon style to select distinct sound families. The current implementation uses layered Web Audio for compact original SFX, but dedicated files under the multi-file PWA asset pipeline are explicitly allowed whenever they improve quality.
 - Sprint remains dormant and unavailable. Q is reserved; no menu or saved setting enables it. Source and activation notes remain explicit.
 - Offline exports are portable backups. Reloading the current Succession run cannot restore fallen classes, while deliberate imports of older exports can rewind it. There is no online anti-cheat service.
 
