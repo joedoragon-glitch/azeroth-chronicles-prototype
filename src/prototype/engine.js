@@ -628,7 +628,7 @@ class Campaign{
   const i=slot-1,rank=this.hero.skills[i],isCharged=!!charged&&(slot===1||slot===2||slot===3);
   if(this.s.challenge.pending||this.s.challenge.gameOver)return false;
   if(!rank||this.hero.cd[i]>0||this.peace){if(!rank)this.say('This skill must be learned from a rescued instructor.');return false;}
-  const scale=1+.15*(rank-1),chargedSecond=isCharged&&slot===2?R.chargedSkills.second?.[this.hero.class]:null,range=chargedSecond?(chargedSecond.range||480):this.hero.class==='paladin'&&slot<3?120:slot===1?this.hero.class==='mage'?400:450:480,targets=this.zone().enemies.filter(e=>e.hp>0&&!e.neutral&&dist(e,this.hero)<=range&&this.line(this.hero,e)),target=targets.find(e=>e.id===targetId)||targets.sort((a,b)=>dist(a,this.hero)-dist(b,this.hero))[0];
+  const scale=1+.15*(rank-1),chargedSecond=isCharged&&slot===2?R.chargedSkills.second?.[this.hero.class]:null,range=chargedSecond?(chargedSecond.range||480):this.hero.class==='paladin'&&slot<3?120:slot===1?this.hero.class==='mage'?400:450:480,targets=this.zone().enemies.filter(e=>e.hp>0&&!e.neutral&&dist(e,this.hero)<=range&&this.line(this.hero,e)),preferredTargetId=targetId??(slot===1?this.s.heroTarget:null),target=targets.find(e=>e.id===preferredTargetId)||targets.sort((a,b)=>dist(a,this.hero)-dist(b,this.hero))[0];
   if([1,2,6,7,8].includes(slot)&&!target)return false;
   if(slot===3){const living=[this.hero,...this.activeLivingParty()].filter(u=>u.hp>0);if(isCharged){if(living.every(u=>u.hp>=u.maxHp))return false;}else if(this.hero.hp>=this.hero.maxHp)return false;}
   const cost=this.skillManaCost(slot,rank,isCharged);if(this.hero.mp<cost)return false;this.hero.mp-=cost;this.hero.cd[i]=cooldowns[slot];if(target&&[1,2,6,7,8].includes(slot))this.s.heroTarget=target.id;
