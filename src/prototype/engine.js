@@ -374,10 +374,12 @@ class Campaign{
  }
  retireResourceMini(z){
   if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||this.sideDungeon(z.id)||z.resourceMiniRetiredVersion===1)return;
-  const id='resource-'+z.id,i=this.regionIndex(z.id),r=D.regions[i];
+  const id='resource-'+z.id,i=this.regionIndex(z.id),r=D.regions[i],hadLegacyMini=(z.minis||[]).some(m=>m.id===id)||z.npcs.some(n=>n.mini===id)||z.props.some(p=>p.mini===id||String(p.id||'').startsWith('mini-wall-'+id+'-'))||z.enemies.some(e=>e.mini===id);
   z.minis=(z.minis||[]).filter(m=>m.id!==id);z.npcs=z.npcs.filter(n=>!(n.kind==='mini'&&n.mini===id));z.props=z.props.filter(p=>p.mini!==id&&!String(p.id||'').startsWith('mini-wall-'+id+'-'));
   for(const e of z.enemies.filter(e=>e.mini===id)){delete e.mini;e.guard=false;e.name=e.name.replace(/ guardian$/,'');e.gold=Math.floor((r.gold_range[0]+r.gold_range[1])/2);e.xp=r.enemy_xp;delete e.miniRewardVersion;e.pack='retired-resource-patrol-'+Math.floor((Number(e.id?.split('-').at(-1))||0)/3);}
-  for(const n of z.nodes||[])delete n.mini;z.resourceMiniRetiredVersion=1;
+  for(const n of z.nodes||[])delete n.mini;
+  if(hadLegacyMini)delete z.resourceDepositsVersion;
+  z.resourceMiniRetiredVersion=1;
  }
  openResourceMini(z){this.retireResourceMini(z);}
  spreadOutdoorForces(z){
