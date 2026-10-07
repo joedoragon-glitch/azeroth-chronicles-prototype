@@ -103,9 +103,9 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `ore-crane` | GENERATE 105 |
 | `tool-rack` | GENERATE 203 |
 | `stone-marker` | GENERATE 157 |
-| `field-kitchen` | GENERATE 213/214 by region |
-| `supply-stack` | GENERATE 204 |
-| `command-tent` | PROCEDURAL — region-sensitive repeated structure |
+| `field-kitchen` | GENERATE 213/214 by region; Frontier keeps a deterministic procedural service overlay |
+| `supply-stack` | GENERATE 204 base; Frontier stack/load variation remains procedural |
+| `command-tent` | PROCEDURAL — region-sensitive repeated structure with deterministic Frontier variants |
 | `bunk` | GENERATE 215/216 by region |
 | `forge` | GENERATE 098 |
 | `roost` | GENERATE 150 |
@@ -149,11 +149,23 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `laundry` | GENERATE 207 |
 | `well` | GENERATE 095 |
 | `barrel` | GENERATE 208 |
-| `cart` | GENERATE 209 |
+| `cart` | GENERATE 209 base; Frontier load/damage variation remains procedural |
 | `ration` | GENERATE 210 |
 | `garden` | GENERATE 211 |
-| `watchpost` | GENERATE 096 |
-| `barricade` | GENERATE 212 |
+| `watchpost` | GENERATE 096 base; Frontier occupation marking remains procedural |
+| `barricade` | GENERATE 212 base; Frontier occupation variation remains procedural |
+| `road-ruts` | PROCEDURAL — flat road wear trace |
+| `road-patch` | PROCEDURAL — flat repaired-road trace |
+| `stacked-lumber` | PROCEDURAL — Frontier repair-yard material |
+| `repair-brace` | PROCEDURAL — Frontier rebuilding structure |
+| `broken-cart` | PROCEDURAL — Frontier damage/recovery storytelling |
+| `wagon-wheel` | PROCEDURAL — Frontier repair-yard clutter |
+| `charred-foundation` | PROCEDURAL — Frontier ruin/recovery ground structure |
+| `replacement-stakes` | PROCEDURAL — Frontier rebuilding boundary detail |
+| `patched-fence` | PROCEDURAL — Frontier civilian repair detail |
+| `inspection-marker` | PROCEDURAL — standardized occupation administration marker |
+| `checkpoint-standard` | PROCEDURAL — standardized occupation military marker |
+| `chain-anchor` | PROCEDURAL — Abyss cordon containment detail |
 
 ## `landmark()` coverage
 
@@ -199,8 +211,8 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `highland-stone-house` | GENERATE 065 |
 | `highland-smithy` | GENERATE 066 |
 | `highland-wall` | PROCEDURAL — repeated boundary geometry |
-| `frontier-patched-house` | GENERATE 067 |
-| `frontier-workshop` | GENERATE 068 |
+| `frontier-patched-house` | GENERATE 067 base; seeded repair-history overlays remain procedural canon |
+| `frontier-workshop` | GENERATE 068 base; seeded repair/work overlays remain procedural canon |
 | `frontier-palisade` | PROCEDURAL — repeated boundary geometry |
 | `crown-ash-house` | GENERATE 069 |
 | `crown-forgehouse` | GENERATE 070 |
