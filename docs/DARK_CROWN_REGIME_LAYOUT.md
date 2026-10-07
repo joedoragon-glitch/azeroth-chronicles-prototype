@@ -55,3 +55,16 @@ Only Crown-specific layout versions are advanced where possible:
 - New Crown district layer: v1.
 
 Existing campaign facts, resources, rescues, bosses and progression are not reset.
+
+## Procedural composition and hierarchy pass
+
+The Crown visual pass improves composition rather than density. Districts keep their established footprints, roads, encounters and populations, but several loose prop clusters are consolidated into larger procedural scene units: a levy yard, command post, Ash-beast roost scene, fortress logistics bay and final-approach checkpoint.
+
+Monster identity remains stable. Ordinary monsters are not randomized into individually unique designs. Visual differences communicate gameplay role and hierarchy:
+
+- Ash beasts keep stable species anatomy, with their existing melee/ranged role cues.
+- Crown soldiers share one uniform family; ranged/guard roles use equipment and uniform cues rather than new bodies.
+- Military Ringleaders (Crown soldiers, Frontier orcs and Raider archers) use same-size officer/commander treatments instead of the universal gold-crown Ringleader overlay.
+- Non-military species retain the universal Ringleader treatment.
+
+The Citadel of Ashes receives the same composition rule. Its former scatter of individual armor stands, banners, runes and service props is consolidated into six readable functional stations: muster, command, ritual control, barracks/training, forge/supply and the final boss approach. Walls, pillars, traps, guard quota, boss placement and progression are unchanged.
