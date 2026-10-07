@@ -84,6 +84,11 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `dark-throne` | GENERATE 100 |
 | `war-table` | GENERATE 099 |
 | `crown-banner` | GENERATE 101 |
+| `crown-levy-yard` | PROCEDURAL — composed Crown labor/transport scene |
+| `crown-command-post` | PROCEDURAL — composed Crown military command scene |
+| `ashbeast-roost-scene` | PROCEDURAL — composed Ash-beast habitat scene |
+| `crown-logistics-bay` | PROCEDURAL — composed Crown fortress logistics scene |
+| `crown-fortress-checkpoint` | PROCEDURAL — composed final-approach control scene |
 | `animal-pen` | GENERATE 194 |
 | `drying-rack` | GENERATE 195/196 by region |
 | `tax-post` | GENERATE 219–223 by region |
