@@ -424,12 +424,33 @@ const travelArrivals={
 };
 const dungeonWalls={crypt:[710,780,[[480,680],[870,1060]]],archive:[650,730,[[400,620],[980,1200]]],mine:[800,870,[[480,730],[1020,1250]]],abyss:[610,690,[[600,830],[1040,1260]]],citadel:[750,830,[[430,680],[900,1150]]]};
 const pillars={crypt:[[430,620],[1010,480]],archive:[[420,740],[1060,620]],mine:[[480,950],[1120,380]],abyss:[[420,530],[980,890]],citadel:[[400,750],[1080,450]]};
+// Most legacy dungeons still use one partition strip. Abyss Bastion intentionally breaks that template into an irregular fortress/lair footprint.
+const dungeonGeometry={
+ abyss:{blockers:[
+  {shape:'rect',x1:40,x2:230,y1:520,y2:1420},{shape:'rect',x1:230,x2:520,y1:1270,y2:1420},
+  {shape:'rect',x1:920,x2:1420,y1:40,y2:220},{shape:'rect',x1:1300,x2:1420,y1:220,y2:650},
+  {shape:'rect',x1:560,x2:650,y1:300,y2:500},{shape:'rect',x1:560,x2:650,y1:760,y2:940},{shape:'rect',x1:560,x2:650,y1:1180,y2:1320},
+  {shape:'rect',x1:900,x2:990,y1:420,y2:610},{shape:'rect',x1:900,x2:990,y1:850,y2:1030},
+  {shape:'circle',x:770,y:800,r:92}
+ ]}
+};
 const guardPosts=[[350,430],[490,700],[420,1030],[990,420],[1110,680],[1000,900],[1000,1200],[550,1190],[900,240],[1250,480],[380,850],[1190,950],[560,390]];
+const dungeonGuardianCounts={abyss:26};
+const dungeonGuardPosts={abyss:[
+ [300,390],[420,650],[735,350],[760,610],[770,960],[1060,330],[1160,520],
+ [1120,760],[360,1010],[610,1120],[900,1120],[1260,850],[1280,1160]
+]};
 const dungeonTraps={
  crypt:[[520,470,'spikes'],[630,610,'spikes'],[1020,540,'spikes'],[930,850,'seal'],[1080,1010,'spikes'],[1190,1210,'seal'],[360,560,'spikes'],[520,900,'seal'],[860,370,'spikes'],[840,1080,'spikes'],[1240,700,'seal'],[830,1230,'spikes']],
  archive:[[500,430,'jet'],[560,680,'seal'],[770,520,'jet'],[900,720,'seal'],[1040,470,'jet'],[1150,890,'jet'],[1030,1040,'seal'],[1200,1220,'jet'],[330,560,'seal'],[480,970,'jet'],[820,330,'seal'],[830,1080,'jet'],[1240,620,'seal'],[1280,780,'jet'],[850,1260,'seal'],[360,1180,'jet']],
  mine:[[500,500,'spikes'],[640,750,'spikes'],[930,600,'spikes'],[1030,370,'jet'],[600,1030,'spikes'],[1040,840,'jet'],[1270,980,'spikes'],[1060,1190,'spikes'],[900,1210,'seal'],[360,650,'spikes'],[520,880,'jet'],[700,420,'seal'],[730,1150,'spikes'],[960,480,'seal'],[1180,560,'jet'],[1260,720,'spikes'],[720,1320,'jet'],[430,1210,'seal']],
- abyss:[[440,450,'jet'],[560,690,'jet'],[770,740,'seal'],[980,460,'jet'],[440,950,'seal'],[900,940,'jet'],[1120,800,'jet'],[1250,1020,'seal'],[1040,1220,'jet'],[1290,1190,'jet'],[330,650,'seal'],[420,790,'jet'],[520,1120,'jet'],[760,460,'seal'],[800,900,'jet'],[940,650,'seal'],[1180,560,'jet'],[1270,700,'seal'],[820,1240,'jet'],[1320,860,'jet']],
+ abyss:[
+  [310,470,'jet'],[470,610,'seal'],[300,730,'seal'],
+  [700,420,'seal'],[810,520,'jet'],[690,690,'jet'],[850,950,'seal'],
+  [1050,330,'jet'],[1210,430,'seal'],[1070,650,'jet'],[1230,720,'seal'],[1090,830,'jet'],
+  [340,980,'seal'],[500,1050,'jet'],[690,1100,'seal'],[740,1200,'jet'],
+  [920,1120,'seal'],[1040,1240,'jet'],[1270,980,'jet'],[1300,1190,'seal'],[1190,880,'jet'],[870,1040,'seal']
+ ],
  citadel:[[500,450,'spikes'],[660,530,'jet'],[870,610,'seal'],[1030,430,'jet'],[530,850,'seal'],[650,1060,'spikes'],[940,1010,'jet'],[1100,790,'seal'],[1300,960,'jet'],[1020,1210,'spikes'],[1270,1190,'seal'],[930,750,'jet'],[340,430,'spikes'],[470,680,'seal'],[520,1180,'jet'],[650,780,'spikes'],[690,1240,'seal'],[890,390,'jet'],[980,520,'spikes'],[1190,520,'seal'],[1260,680,'jet'],[850,900,'spikes'],[880,1220,'seal'],[1320,820,'spikes']]
 };
 // Curated occupied spaces: each dungeon has an entrance, work/ritual zone, command markers and a boss approach.
@@ -437,7 +458,18 @@ const dungeonDecor={
  crypt:[[300,330,'torch'],[430,330,'torch'],[350,520,'coffin'],[470,520,'coffin'],[350,660,'coffin'],[470,660,'coffin'],[580,780,'bones'],[620,850,'bones'],[930,320,'banner'],[1120,320,'banner'],[980,480,'torch'],[1220,480,'torch'],[930,980,'coffin'],[1040,1040,'bones'],[1180,980,'coffin'],[1000,1190,'torch'],[1280,1190,'torch'],[1110,1240,'banner'],[1300,1240,'banner'],[870,820,'bones'],[760,300,'grave-marker'],[820,430,'ossuary'],[860,1030,'ritual-table'],[1170,1110,'grave-lamp'],[1260,1080,'bone-pile'],[1080,880,'caretaker-table'],[560,1120,'sleep-roll'],[350,900,'tool-rack']],
  archive:[[300,330,'torch'],[500,330,'torch'],[330,520,'shelf'],[330,650,'shelf'],[520,520,'shelf'],[520,650,'shelf'],[900,340,'banner'],[1080,340,'banner'],[930,520,'shelf'],[1160,520,'shelf'],[850,760,'water'],[1040,760,'water'],[1220,760,'water'],[890,930,'rune'],[1120,930,'rune'],[980,1120,'torch'],[1240,1120,'torch'],[1070,1230,'shelf'],[1260,1230,'shelf'],[720,850,'rune'],[720,330,'scribe-desk'],[760,520,'scroll-stack'],[820,1120,'fish-rack'],[1190,1040,'mud-nest'],[1260,870,'drift-seat'],[560,1080,'sleep-roll'],[690,980,'fishing-net'],[1290,650,'shell-hoard']],
  mine:[[280,330,'torch'],[480,330,'torch'],[300,530,'crate'],[410,530,'crate'],[520,530,'crate'],[650,760,'rail'],[650,860,'rail'],[650,960,'rail'],[930,330,'crystal'],[1080,330,'crystal'],[1230,330,'crystal'],[960,600,'banner'],[1200,600,'banner'],[970,820,'crate'],[1080,820,'crate'],[1190,820,'crate'],[960,1050,'crystal'],[1180,1050,'crystal'],[1080,1220,'torch'],[1280,1220,'torch'],[720,330,'ore-cart'],[760,520,'tool-rack'],[790,1120,'forge'],[1180,1160,'stone-seat'],[1270,930,'ore-crane'],[540,1120,'sleep-roll'],[890,970,'supply-stack'],[1320,520,'stone-marker']],
- abyss:[[300,340,'torch'],[500,340,'torch'],[350,560,'chain'],[500,560,'chain'],[820,360,'banner'],[1060,360,'banner'],[930,570,'ember'],[1120,570,'ember'],[850,780,'chain'],[1080,780,'chain'],[1250,780,'chain'],[860,960,'ember'],[1060,960,'ember'],[1260,960,'ember'],[900,1140,'banner'],[1180,1140,'banner'],[980,1240,'torch'],[1260,1240,'torch'],[700,850,'chain'],[1140,860,'torch'],[720,330,'roost'],[760,520,'bone-pile'],[810,1120,'treasure-hoard'],[1190,1110,'ember-pit'],[1280,1080,'roost'],[560,1120,'sleep-roll'],[890,1010,'hatchery'],[1310,600,'supply-stack']],
+ abyss:[
+  [300,340,'torch','handler-intake'],[500,340,'torch','handler-intake'],[350,560,'chain','handler-intake'],[500,560,'chain','handler-intake'],
+  [430,430,'handler-station','handler-intake'],[560,430,'feed-crate','handler-intake'],[360,690,'supply-stack','handler-intake'],
+  [720,330,'roost','containment-gallery'],[820,360,'banner','containment-gallery'],[930,570,'ember','containment-gallery'],[850,780,'chain','containment-gallery'],
+  [700,850,'chain-anchor','containment-gallery'],[790,680,'containment-post','containment-gallery'],[970,700,'scorched-floor','containment-gallery'],
+  [1060,360,'banner','hatchery'],[1120,570,'ember','hatchery'],[1080,780,'chain','hatchery'],[1250,780,'chain','hatchery'],
+  [890,1010,'hatchery','hatchery'],[1010,930,'egg-cradle','hatchery'],[1140,860,'warm-brazier','hatchery'],[1260,960,'ember','hatchery'],
+  [760,520,'bone-pile','feeding-service'],[860,960,'ember','feeding-service'],[1060,960,'ember','feeding-service'],[560,1120,'sleep-roll','feeding-service'],
+  [690,1110,'feeding-trough','feeding-service'],[760,1210,'carcass-rack','feeding-service'],[900,1140,'banner','feeding-service'],[980,1240,'torch','feeding-service'],
+  [810,1120,'treasure-hoard','roost-hoard'],[1180,1140,'banner','roost-hoard'],[1190,1110,'ember-pit','roost-hoard'],[1280,1080,'roost','roost-hoard'],
+  [1260,1240,'torch','roost-hoard'],[1310,600,'supply-stack','roost-hoard'],[1090,1190,'claw-scrape','roost-hoard'],[1290,930,'dragon-perch','roost-hoard']
+ ],
  citadel:[[400,345,'citadel-muster'],[760,395,'citadel-command'],[1010,610,'citadel-ritual-array'],[650,1050,'citadel-barracks-bay'],[1000,1070,'citadel-forge-bay'],[1180,1190,'citadel-boss-approach'],[1320,520,'tax-post']]
 };
 const dungeonTrapTuning={
@@ -577,6 +609,6 @@ const basicAttackCombo={steps:3,resetSeconds:4,multipliers:[1,1.1,1.2],finisher:
 const companionSkills={globalCooldown:1.5,first:{cooldown:8,multiplier:3,soldier:{name:'Power Strike'},archer:{name:'Triple Shot'}},second:{cooldown:12,unlockHeroSlot:2,soldier:{name:'Holy Cleave',shape:'cone',range:185,halfAngle:.8,multiplier:2.2,effect:'holy-cleave'},archer:{name:'Piercing Volley',shape:'line',range:480,halfWidth:55,multiplier:2.4,effect:'piercing-volley'}}};
 // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
 const movementBasicClasses={paladin:true,mage:true,ranger:true};
-const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,basicAttackCombo,companionSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,creatureStrongholds,sideDungeons,sideDungeonTrapTuning,tributeTotal,legacyResourceTotals,tributePlans,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,frontierRoutes,frontierDistricts,crownRoutes,crownDistricts,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
+const R={bossCadence,bossSummoning,bossBehavior,rangedEnemyCombat,chargedSkills,basicAttackCombo,companionSkills,ordinaryMeleeScaling,ordinaryRangedScaling,guardianLegacyScaling,guardianScaling,awakenedGuardianScaling,summonScaling,trueBossSummons,ringleaderScaling,nightEnemyCombat,roomCaptains,manaBalance,dungeonTrapTuning,dungeonReinforcement,outdoorMiniTrapTuning,outdoorMiniTrapKinds,dungeonDecor,dungeonGeometry,dungeonGuardianCounts,dungeonGuardPosts,idleWander,autoPotionThresholds,rangerSupport,movementBasicClasses,enemyProjectileMultiplier:1.15,progression,supplyRooms,treasuryWalls,treasuryDecor,creatureStrongholds,sideDungeons,sideDungeonTrapTuning,tributeTotal,legacyResourceTotals,tributePlans,miniPlans,expeditions,fieldBossCenters,occupationAnchors,settlementLayouts,serviceOffsets,natureThemes,worldLifePlans,frontierRoutes,frontierDistricts,crownRoutes,crownDistricts,teachers,expeditionSupportSkills,rangedProfiles,guardPosts,dungeonTraps,forests,resourceDepositCounts,attacks,sites,quests,barriers,terrain,landforms,harbors,travelArrivals,dungeonWalls,pillars};
 if(typeof module!=='undefined')module.exports=R;else root.PrototypeRules=R;
 })(typeof window!=='undefined'?window:globalThis);
