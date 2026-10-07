@@ -404,7 +404,7 @@ function draw(ctx,e,p,region=0,rescued=false){
  case 'crate':rect(-20,-16,40,30,'#9b7953');line([[-20,-16],[20,14]],'#c6aa78',3);line([[20,-16],[-20,14]],'#c6aa78',3);break;
  case 'rail':for(const y of [-10,0,10])line([[-24,y],[24,y]],'#8d7354',4);line([[-14,-18],[-14,17]],steel,3);line([[14,-18],[14,17]],steel,3);break;
  case 'crystal':for(const x of [-12,0,12])poly([[x-5,12],[x-5,-15],[x,-25],[x+5,-15],[x+5,12]],'#83a7b1');break;
- case 'chain':for(let y=-48;y<12;y+=9)oval(0,y,4,6,'#9ca59e');oval(0,13,12,7,'#6c7674');break;
+ case 'chain':for(let y=-48;y<12;y+=9)oval(0,y,4,6,'#9ca59e');oval(0,13,12,7,'#6c7674');if(region===3){if(variant%2===0)line([[-7,-34],[7,-25]],'#6e6f6a',3);else oval(9,5,7,5,'#777973');}break;
  case 'ember':oval(0,5,27,12,'#4d4945');for(const x of [-13,0,13])poly([[x-5,8],[x,-9],[x+7,8]],'#b7784e');break;
  case 'armor':humanoid('#88999d',steel);rect(-25,7,50,9,'#6b756f');shield(-19,-1,'#626f79');break;
  case 'thorn-bed':oval(0,7,29,12,'#6f7f55');for(const [x,y]of [[-18,-2],[-8,-8],[4,-6],[16,-1]])poly([[x-5,y+8],[x,y-8],[x+6,y+8]],'#5e744d');for(const x of [-17,17])line([[x,6],[x+(x<0?-7:7),-5]],'#806543',3);break;
@@ -450,8 +450,8 @@ function draw(ctx,e,p,region=0,rescued=false){
  case 'command-tent':poly([[-35,12],[0,-47],[36,12]],region===4?'#5d5668':'#7c5e53');line([[0,-44],[0,14]],localWood,4);rect(-12,-2,24,17,region===4?'#33313a':'#54463f');line([[-29,9],[29,9]],'#b79573',2);if(region===3){if(variant%2===0){rect(-24,-22,13,8,'#956f60');line([[-34,11],[-45,19]],'#6a5141',2);}else{line([[22,-18],[34,-26]],'#9e735d',3);rect(18,-3,10,8,'#6d5144');}}break;
  case 'bunk':rect(-27,-8,54,18,'#6d5947');rect(-24,-6,48,10,'#837561');for(const x of [-23,23])line([[x,8],[x,17]],localWood,3);rect(-20,-5,11,7,'#b09a78');break;
  case 'forge':rect(-26,-12,52,27,'#696863');rect(-18,-29,36,18,'#77736b');oval(0,4,16,6,'#403b38');for(const x of [-8,0,8])poly([[x-4,5],[x,-9],[x+4,5]],'#bd7148');rect(19,-42,9,31,'#5b5855');break;
- case 'roost':oval(0,7,30,12,'#62594f');for(const x of [-24,-12,0,12,24])line([[x,10],[x+5,-6]],'#806a4e',2);for(const [x,y]of [[-9,1],[8,4]])poly([[x-5,y+6],[x,y-8],[x+5,y+6]],'#676b62');break;
- case 'hatchery':oval(0,7,30,12,'#5a5049');for(const [x,y]of [[-12,3],[0,-1],[12,4]])oval(x,y,6,8,'#8d826d');for(const x of [-22,22])line([[x,10],[x+4,-7]],'#7b6750',2);break;
+ case 'roost':oval(0,7,30,12,'#62594f');for(const x of [-24,-12,0,12,24])line([[x,10],[x+5,-6]],'#806a4e',2);for(const [x,y]of [[-9,1],[8,4]])poly([[x-5,y+6],[x,y-8],[x+5,y+6]],'#676b62');if(region===3){if(variant%2===0)for(const x of [-16,15])line([[x,6],[x+flip*7,-9]],'#4b4240',3);else glint(13,-2,'#d58a59',1.3);}break;
+ case 'hatchery':oval(0,7,30,12,'#5a5049');for(const [x,y]of [[-12,3],[0,-1],[12,4]])oval(x,y,6,8,'#8d826d');for(const x of [-22,22])line([[x,10],[x+4,-7]],'#7b6750',2);if(region===3){if(variant%2===0){line([[-25,8],[-12,-9]],'#645048',3);line([[24,8],[12,-7]],'#645048',3);}else oval(0,3,21,9,'#4c4541');}break;
  case 'scribe-desk':rect(-27,-8,54,17,'#725d47');for(const x of [-21,21])line([[x,6],[x,18]],localWood,3);rect(-18,-18,36,11,'#c5b88f');line([[-14,-14],[12,-14]],'#776b58',1);break;
  case 'scroll-stack':for(const [x,y]of [[-13,5],[0,1],[13,6],[-5,-8],[8,-9]]){rect(x-8,y-3,16,6,'#c5b78e');oval(x-8,y,2,3,'#927a5e');}break;
  case 'ossuary':rect(-24,-17,48,31,'#747872');for(const [x,y]of [[-12,-8],[0,-10],[12,-7],[-7,4],[8,3]])skull(x,y,4);line([[-22,-14],[22,-14]],'#a5aa9d',2);break;
@@ -508,6 +508,12 @@ function draw(ctx,e,p,region=0,rescued=false){
  case 'inspection-marker':line([[0,-35],[0,14]],'#745942',4);rect(-15,-31,30,20,'#7b644f');for(const y of [-26,-20,-14])line([[-10,y],[9,y]],'#d0bc91',1);rect(8,-8,9,8,'#8f5c52');break;
  case 'checkpoint-standard':line([[0,-49],[0,15]],'#6b5543',4);poly([[3,-46],[24,-41],[20,-23],[3,-27]],'#965b53');line([[7,-37],[18,-34]],'#d4b988',2);for(const x of [-16,16])line([[x,11],[x,-12]],'#675044',3);break;
  case 'chain-anchor':poly([[-12,11],[-9,-8],[0,-18],[10,-8],[13,11]],'#5d5b56');for(let x=-24;x<=24;x+=8)oval(x,3+Math.abs(x)/10,4,3,'#85877f');line([[-20,2],[-9,-1]],'#9a9b91',2);line([[10,-1],[22,3]],'#9a9b91',2);break;
+ case 'chain-winch':for(const x of [-22,22])line([[x,14],[x,-30]],'#66554b',4);line([[-24,-27],[24,-27]],'#8d7662',4);oval(0,-11,13,13,'#6c6963');oval(0,-11,7,7,'#454744');for(let y=-4;y<16;y+=7)oval(18,y,4,5,'#91938c');line([[13,-11],[28,-18]],'#a08d70',3);break;
+ case 'heat-shield':rect(-27,-22,54,37,'#666864');for(const x of [-21,-7,7,21])line([[x,-20],[x,12]],'#8e9189',2);for(const y of [-15,1])line([[-24,y],[24,y]],'#484b48',2);for(const [x,y]of [[-18,-17],[18,-17],[-18,10],[18,10]])glint(x,y,'#b78b65',1.1);break;
+ case 'feed-trough':rect(-28,-7,56,18,'#725b4a');poly([[-25,-7],[-19,-18],[19,-18],[25,-7]],'#8a6b52');for(const [x,y]of [[-14,-12],[-2,-15],[11,-11]]){line([[x-5,y+3],[x+5,y-3]],bone,2);oval(x+5,y-3,2,2,bone);}line([[-23,10],[-18,17]],'#5b493d',3);line([[23,10],[18,17]],'#5b493d',3);break;
+ case 'scorch-gouge':ctx.save();ctx.globalAlpha=.6;for(const [y,w]of [[-7,26],[1,31],[8,22]])line([[-w,y],[w,y+flip*2]],y===1?'#342d2b':'#55403a',y===1?4:2);for(const x of [-17,3,19])glint(x,4,'#a95f43',1);ctx.restore();break;
+ case 'nest-scrape':ctx.save();ctx.globalAlpha=.7;oval(0,5,29,11,'#4d4541');oval(0,4,22,8,'#65564b');for(const a of [-1.9,-.9,.2,1.2])line([[Math.cos(a)*9,Math.sin(a)*4+5],[Math.cos(a)*25,Math.sin(a)*9+5]],'#7d6251',2);ctx.restore();break;
+ case 'handler-station':for(const x of [-20,20])line([[x,14],[x,-33]],'#6d5544',3);rect(-23,-30,46,12,'#82664e');for(const y of [-27,-22])line([[-17,y],[9,y]],'#d1bc91',1);line([[14,-18],[14,8]],'#8f918b',2);for(let y=-13;y<7;y+=7)oval(14,y,3,4,'#8f918b');rect(-8,-13,15,10,'#5d4b40');break;
  }}
  function landmark(){
   switch(e.id){
