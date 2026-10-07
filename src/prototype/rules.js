@@ -426,6 +426,23 @@ const dungeonWalls={crypt:[710,780,[[480,680],[870,1060]]],archive:[650,730,[[40
 // The Citadel breaks the legacy one-divider rectangle. Walkable wings overlap into a readable fortress,
 // while partitions create gates/chokepoints without removing alternate routes.
 const dungeonArchitecture={
+ abyss:{
+  version:1,
+  walkable:[
+   {id:'handler-intake',bounds:[80,600,100,620]},
+   {id:'containment-spine',bounds:[430,960,280,980]},
+   {id:'hatchery-wing',bounds:[720,1220,180,980]},
+   {id:'feeding-service',bounds:[300,900,820,1360]},
+   {id:'dragon-aerie',bounds:[930,1390,780,1390]},
+   {id:'service-loop',bounds:[760,1100,900,1250]}
+  ],
+  partitions:[
+   {id:'containment-gate',x1:480,x2:760,y1:560,y2:615,axis:'x',gaps:[[560,660]]},
+   {id:'hatchery-baffle',x1:830,x2:885,y1:360,y2:980,axis:'y',gaps:[[500,610],[770,875]]},
+   {id:'service-gate',x1:500,x2:920,y1:1000,y2:1055,axis:'x',gaps:[[610,710],[810,890]]},
+   {id:'aerie-gate',x1:1060,x2:1115,y1:780,y2:1250,axis:'y',gaps:[[900,1010],[1120,1210]]}
+  ]
+ },
  citadel:{
   version:1,
   walkable:[
@@ -448,6 +465,21 @@ const dungeonArchitecture={
 const pillars={crypt:[[430,620],[1010,480]],archive:[[420,740],[1060,620]],mine:[[480,950],[1120,380]],abyss:[[420,530],[980,890]],citadel:[[400,750],[1080,450]]};
 const guardPosts=[[350,430],[490,700],[420,1030],[990,420],[1110,680],[1000,900],[1000,1200],[550,1190],[900,240],[1250,480],[380,850],[1190,950],[560,390]];
 const dungeonGuardFormations={
+ abyss:[
+  {x:240,y:300,species:'orc',name:'Orc guardian',role:'melee',group:'intake-watch'},{x:390,y:300,species:'archer',name:'Raider guardian',role:'ranged',group:'intake-watch'},
+  {x:250,y:500,species:'orc',name:'Orc guardian',role:'melee',group:'intake-service'},{x:420,y:500,species:'archer',name:'Raider guardian',role:'ranged',group:'intake-service'},
+  {x:620,y:360,species:'orc',name:'Orc guardian',role:'melee',group:'containment-gate'},{x:760,y:360,species:'archer',name:'Raider guardian',role:'ranged',group:'containment-gate'},
+  {x:640,y:720,species:'orc',name:'Orc guardian',role:'melee',group:'containment-floor'},{x:800,y:720,species:'archer',name:'Raider guardian',role:'ranged',group:'containment-floor'},
+  {x:960,y:420,species:'orc',name:'Orc guardian',role:'melee',group:'hatchery-upper'},{x:1120,y:420,species:'archer',name:'Raider guardian',role:'ranged',group:'hatchery-upper'},
+  {x:960,y:650,species:'orc',name:'Orc guardian',role:'melee',group:'hatchery-lower'},{x:1140,y:650,species:'archer',name:'Raider guardian',role:'ranged',group:'hatchery-lower'},
+  {x:420,y:900,species:'orc',name:'Orc guardian',role:'melee',group:'feeding-entry'},{x:580,y:900,species:'archer',name:'Raider guardian',role:'ranged',group:'feeding-entry'},
+  {x:420,y:1160,species:'orc',name:'Orc guardian',role:'melee',group:'feeding-deep'},{x:600,y:1160,species:'archer',name:'Raider guardian',role:'ranged',group:'feeding-deep'},
+  {x:790,y:930,species:'orc',name:'Orc guardian',role:'melee',group:'service-loop'},{x:970,y:930,species:'archer',name:'Raider guardian',role:'ranged',group:'service-loop'},
+  {x:800,y:1180,species:'orc',name:'Orc guardian',role:'melee',group:'service-deep'},{x:980,y:1180,species:'archer',name:'Raider guardian',role:'ranged',group:'service-deep'},
+  {x:1020,y:850,species:'orc',name:'Orc guardian',role:'melee',group:'aerie-gate'},{x:1220,y:850,species:'archer',name:'Raider guardian',role:'ranged',group:'aerie-gate'},
+  {x:1000,y:1080,species:'orc',name:'Orc guardian',role:'melee',group:'aerie-inner'},{x:1260,y:1080,species:'archer',name:'Raider guardian',role:'ranged',group:'aerie-inner'},
+  {x:1000,y:1280,species:'orc',name:'Orc guardian',role:'melee',group:'aerie-rear'},{x:1260,y:1280,species:'archer',name:'Raider guardian',role:'ranged',group:'aerie-rear'}
+ ],
  citadel:[
   {x:230,y:300,role:'melee',group:'muster'},{x:390,y:300,role:'ranged',group:'muster'},{x:540,y:300,role:'melee',group:'muster'},
   {x:220,y:540,role:'ranged',group:'muster'},{x:450,y:540,role:'melee',group:'muster'},{x:590,y:450,role:'ranged',group:'muster'},
@@ -466,7 +498,13 @@ const dungeonTraps={
  crypt:[[520,470,'spikes'],[630,610,'spikes'],[1020,540,'spikes'],[930,850,'seal'],[1080,1010,'spikes'],[1190,1210,'seal'],[360,560,'spikes'],[520,900,'seal'],[860,370,'spikes'],[840,1080,'spikes'],[1240,700,'seal'],[830,1230,'spikes']],
  archive:[[500,430,'jet'],[560,680,'seal'],[770,520,'jet'],[900,720,'seal'],[1040,470,'jet'],[1150,890,'jet'],[1030,1040,'seal'],[1200,1220,'jet'],[330,560,'seal'],[480,970,'jet'],[820,330,'seal'],[830,1080,'jet'],[1240,620,'seal'],[1280,780,'jet'],[850,1260,'seal'],[360,1180,'jet']],
  mine:[[500,500,'spikes'],[640,750,'spikes'],[930,600,'spikes'],[1030,370,'jet'],[600,1030,'spikes'],[1040,840,'jet'],[1270,980,'spikes'],[1060,1190,'spikes'],[900,1210,'seal'],[360,650,'spikes'],[520,880,'jet'],[700,420,'seal'],[730,1150,'spikes'],[960,480,'seal'],[1180,560,'jet'],[1260,720,'spikes'],[720,1320,'jet'],[430,1210,'seal']],
- abyss:[[440,450,'jet'],[560,690,'jet'],[770,740,'seal'],[980,460,'jet'],[440,950,'seal'],[900,940,'jet'],[1120,800,'jet'],[1250,1020,'seal'],[1040,1220,'jet'],[1290,1190,'jet'],[330,650,'seal'],[420,790,'jet'],[520,1120,'jet'],[760,460,'seal'],[800,900,'jet'],[940,650,'seal'],[1180,560,'jet'],[1270,700,'seal'],[820,1240,'jet'],[1320,860,'jet']],
+ abyss:[
+  [300,430,'seal'],[460,470,'jet'],[300,570,'seal'],[350,520,'jet'],
+  [700,450,'seal'],[760,520,'jet'],[720,700,'seal'],[780,860,'jet'],
+  [500,900,'seal'],[520,1150,'jet'],[700,1200,'seal'],[820,1280,'jet'],
+  [1000,850,'seal'],[930,1070,'jet'],
+  [1350,850,'seal'],[1350,1050,'seal'],[1350,1250,'seal'],[950,1320,'jet']
+ ],
  citadel:[[300,430,'spikes'],[470,470,'spikes'],[330,520,'seal'],
   [560,650,'jet'],[720,590,'seal'],[620,820,'spikes'],[780,850,'seal'],[880,900,'spikes'],
   [850,500,'seal'],[1180,500,'seal'],[1260,650,'spikes'],[1230,300,'jet'],[900,650,'spikes'],
@@ -480,7 +518,18 @@ const dungeonDecor={
  crypt:[[300,330,'torch'],[430,330,'torch'],[350,520,'coffin'],[470,520,'coffin'],[350,660,'coffin'],[470,660,'coffin'],[580,780,'bones'],[620,850,'bones'],[930,320,'banner'],[1120,320,'banner'],[980,480,'torch'],[1220,480,'torch'],[930,980,'coffin'],[1040,1040,'bones'],[1180,980,'coffin'],[1000,1190,'torch'],[1280,1190,'torch'],[1110,1240,'banner'],[1300,1240,'banner'],[870,820,'bones'],[760,300,'grave-marker'],[820,430,'ossuary'],[860,1030,'ritual-table'],[1170,1110,'grave-lamp'],[1260,1080,'bone-pile'],[1080,880,'caretaker-table'],[560,1120,'sleep-roll'],[350,900,'tool-rack']],
  archive:[[300,330,'torch'],[500,330,'torch'],[330,520,'shelf'],[330,650,'shelf'],[520,520,'shelf'],[520,650,'shelf'],[900,340,'banner'],[1080,340,'banner'],[930,520,'shelf'],[1160,520,'shelf'],[850,760,'water'],[1040,760,'water'],[1220,760,'water'],[890,930,'rune'],[1120,930,'rune'],[980,1120,'torch'],[1240,1120,'torch'],[1070,1230,'shelf'],[1260,1230,'shelf'],[720,850,'rune'],[720,330,'scribe-desk'],[760,520,'scroll-stack'],[820,1120,'fish-rack'],[1190,1040,'mud-nest'],[1260,870,'drift-seat'],[560,1080,'sleep-roll'],[690,980,'fishing-net'],[1290,650,'shell-hoard']],
  mine:[[280,330,'torch'],[480,330,'torch'],[300,530,'crate'],[410,530,'crate'],[520,530,'crate'],[650,760,'rail'],[650,860,'rail'],[650,960,'rail'],[930,330,'crystal'],[1080,330,'crystal'],[1230,330,'crystal'],[960,600,'banner'],[1200,600,'banner'],[970,820,'crate'],[1080,820,'crate'],[1190,820,'crate'],[960,1050,'crystal'],[1180,1050,'crystal'],[1080,1220,'torch'],[1280,1220,'torch'],[720,330,'ore-cart'],[760,520,'tool-rack'],[790,1120,'forge'],[1180,1160,'stone-seat'],[1270,930,'ore-crane'],[540,1120,'sleep-roll'],[890,970,'supply-stack'],[1320,520,'stone-marker']],
- abyss:[[300,340,'torch'],[500,340,'torch'],[350,560,'chain'],[500,560,'chain'],[820,360,'banner'],[1060,360,'banner'],[930,570,'ember'],[1120,570,'ember'],[850,780,'chain'],[1080,780,'chain'],[1250,780,'chain'],[860,960,'ember'],[1060,960,'ember'],[1260,960,'ember'],[900,1140,'banner'],[1180,1140,'banner'],[980,1240,'torch'],[1260,1240,'torch'],[700,850,'chain'],[1140,860,'torch'],[720,330,'roost'],[760,520,'bone-pile'],[810,1120,'treasure-hoard'],[1190,1110,'ember-pit'],[1280,1080,'roost'],[560,1120,'sleep-roll'],[890,1010,'hatchery'],[1310,600,'supply-stack']],
+ abyss:[
+  [300,340,'torch','handler-intake'],[500,340,'torch','handler-intake'],[350,560,'chain','handler-intake'],[500,520,'chain','handler-intake'],
+  [430,430,'handler-station','handler-intake'],[540,430,'feed-crate','handler-intake'],[430,650,'supply-stack','handler-intake'],
+  [720,330,'roost','containment-gallery'],[800,330,'banner','containment-gallery'],[930,570,'ember','containment-gallery'],[800,760,'chain','containment-gallery'],
+  [700,850,'chain-anchor','containment-gallery'],[790,680,'containment-post','containment-gallery'],[940,700,'scorched-floor','containment-gallery'],
+  [1060,360,'banner','hatchery'],[1120,570,'ember','hatchery'],[1080,760,'chain','hatchery'],[1180,760,'chain','hatchery'],
+  [900,900,'hatchery','hatchery'],[1010,930,'egg-cradle','hatchery'],[1140,860,'warm-brazier','hatchery'],[1200,940,'ember','hatchery'],
+  [760,520,'bone-pile','feeding-service'],[860,960,'ember','feeding-service'],[1040,960,'ember','feeding-service'],[560,1120,'sleep-roll','feeding-service'],
+  [690,1110,'feeding-trough','feeding-service'],[760,1210,'carcass-rack','feeding-service'],[900,1140,'banner','feeding-service'],[880,1260,'torch','feeding-service'],
+  [980,1080,'treasure-hoard','roost-hoard'],[1180,1140,'banner','roost-hoard'],[1190,1110,'ember-pit','roost-hoard'],[1280,1080,'roost','roost-hoard'],
+  [1260,1240,'torch','roost-hoard'],[1190,600,'supply-stack','roost-hoard'],[1090,1190,'claw-scrape','roost-hoard'],[1290,930,'dragon-perch','roost-hoard']
+ ],
  citadel:[[400,345,'citadel-muster'],[760,395,'citadel-command'],[1010,610,'citadel-ritual-array'],[650,1050,'citadel-barracks-bay'],[1000,1070,'citadel-forge-bay'],[1180,1190,'citadel-boss-approach'],[1320,520,'tax-post']]
 };
 const dungeonTrapTuning={
