@@ -6,8 +6,8 @@
 
 The completed audit contains **227 numbered entries**:
 
-- **212 GENERATE** entries with complete one-at-a-time image-generation prompts;
-- **5 ALIAS** entries that reuse an already generated canonical static body;
+- **217 GENERATE** entries with complete one-at-a-time image-generation prompts;
+- **0 ALIAS** entries that reuse an already generated canonical static body;
 - **10 numbered KEEP PROCEDURAL** entries;
 - additional broad procedural systems classified exhaustively in `GRAPHICS_CANON_SPRITE_COVERAGE.md`.
 
@@ -43,26 +43,21 @@ ALIAS entries receive no new image. KEEP PROCEDURAL families receive no sprite.
 
 ### Ranger and Archer bodies
 
-The hero Ranger uses the canonical Ranger body plus hero-layer polish. The companion Archer/Ranger support is also rendered with `human('ranger')`, so it retains the Ranger body's teal flask/pouch and small pale-green/gold utility accent.
+The hero Ranger remains the canonical human Ranger body plus hero-layer polish.
 
-The hostile Raider Archer is different: it uses `human('archer')`, a simpler darker-green archer without those Ranger-specific extras. Its earlier alias was incorrect and was replaced by its own prompt 023.
+The companion Archer is now deliberately different: an allied goblin scout using goblin anatomy, green scout clothing, hood/cape, bow and quiver, with a simple ally-specific strap, pouch and warm-gold knot. This establishes that an ordinary monster species can also appear as a trusted party member. It no longer borrows the hero Ranger's body or Ranger-specific flask/utility ornaments.
 
-### Mechanical variants are not automatically visual variants
+The hostile Raider Archer remains human('archer'), a simpler human ranged enemy, so hero Ranger, companion Archer and hostile Archer are three distinct procedural identities.
 
-The following remain visual aliases because their static procedural bodies do not change:
+### Ranged classes are visual classes
 
-- 030 Mireling spitter → 018 Mireling;
-- 032 Ogre stone thrower → 021 Ogre;
-- 033 Orc axe thrower → 022 Orc;
-- 034 Ash-beast cinder spitter → 024 Ash beast.
+Mireling Spitter, Ogre Stone Thrower, Orc Axe Thrower and Ash-beast Cinder Spitter now have persistent static procedural distinctions in addition to their runtime projectile behavior. Their ranged variants use different palettes, clothing/harnesses and role equipment. Most importantly, the Orc Axe Thrower no longer carries the melee Orc sword; it visibly carries throwing axes.
 
-Their ranged identity lives in runtime aiming/projectile behavior.
-
-Reed-beast spitter 031 remains a separate image because the renderer does add a visible hybrid-specific mouth/projection cue. Goblin slinger 028 and Skeleton bow 029 also visibly change static equipment.
+Reed-beast Spitter, Goblin Slinger and Skeleton Bow already had static ranged cues and remain unchanged in principle.
 
 ### Dreadmaw
 
-Dreadmaw is mechanically named and distinct, but the current renderer has no `cindermaw` branch in `captainFinish`. Its static body is the ordinary Ash-beast body at captain scale plus procedural captain treatment. Entry 049 therefore aliases 024. A unique Dreadmaw image would currently invent canon.
+Dreadmaw's current combat mentor and Treasury master is Cindermaw, but his procedural visual idol is the Dark Lord. This preserves the character's history: before Cindermaw was introduced, the same Crown Treasury captain was named "Dread Lord" and used mentor:'darklord'. Dreadmaw therefore keeps an Ash-beast body with Dark-Lord-inspired obsidian-purple harness/sigil treatment rather than becoming a plain Ash-beast alias or a miniature humanoid Dark Lord.
 
 ### Side-interior entrance
 

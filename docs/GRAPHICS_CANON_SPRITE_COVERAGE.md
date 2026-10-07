@@ -16,8 +16,8 @@ The existence of a mechanic or a name is not enough to justify a new image.
 
 The audited numbered catalog contains **227 entries**:
 
-- **212 GENERATE** entries;
-- **5 ALIAS** entries;
+- **217 GENERATE** entries;
+- **0 ALIAS** entries;
 - **10 numbered KEEP PROCEDURAL** entries.
 
 Many broad procedural systems are classified here rather than receiving pointless numbered no-image entries.
@@ -25,13 +25,11 @@ Many broad procedural systems are classified here rather than receiving pointles
 ## Entity coverage
 
 - Heroes: Paladin 001, Mage 002, Ranger 003.
-- Companions: Soldier 004, Ranger-support Archer 005.
+- Companions: Soldier 004, allied-goblin Archer/Ranger-support 005.
 - Specialists: 006–015.
-- Ordinary/night enemies and visible weapon variants: 016–029 and 031.
-- Exact visual aliases: Mireling spitter 030 → 018; Ogre stone thrower 032 → 021; Orc axe thrower 033 → 022; Ash-beast cinder spitter 034 → 024.
+- Ordinary/night enemies and visible weapon/ranged-class variants: 016–034. Mireling Spitter 030, Ogre Stone Thrower 032, Orc Axe Thrower 033 and Ash-beast Cinder Spitter 034 now have distinct procedural bodies/equipment.
 - Bosses: 035–045.
-- Named captains with authored static additions: 046–048 and 050.
-- Dreadmaw 049 → alias of Ash-beast body 024 because the current renderer defines no unique Cindermaw-captain body ornament.
+- Named captains with authored static additions: 046–050. Dreadmaw 049 uses Ash-beast anatomy with a retained Dark-Lord-idol captain treatment while Cindermaw remains his gameplay mentor.
 - Ringleader, Frenzy and TRUE presentation remain procedural overlays on the approved underlying body.
 - Guard identifiers remain procedural; no invented guard armor is permitted.
 

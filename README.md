@@ -1,6 +1,8 @@
-# Azeroth Chronicles — expanded prototype v0.8.71
+# Azeroth Chronicles — expanded prototype v0.8.72
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families use readable but adaptive warned mechanics. Every boss can summon pressure units, while TRUE forms use six-unit elite warbands. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
+
+Procedural visual canon update v0.8.72 separates gameplay classes that had outgrown their old shared drawings. The companion Archer is now an allied goblin scout rather than a copy of the human Ranger, reinforcing that ordinary monster species are not inherently evil. Mireling Spitters, Ogre Stone Throwers, Orc Axe Throwers and Ash-beast Cinder Spitters have persistent ranged-class clothing/equipment cues; the Orc Axe Thrower visibly carries throwing axes instead of the melee Orc sword. Dreadmaw remains Cindermaw's Treasury captain and combat disciple while preserving the Dark Lord as his visual idol, a remnant of his earlier Dread Lord identity.
 
 ## Play
 

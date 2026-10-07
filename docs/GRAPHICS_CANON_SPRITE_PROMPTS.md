@@ -14,7 +14,7 @@ This catalog has completed its Phase 2A documentation audit. The next image-gene
 - **ALIAS:** reuse the named existing asset; do not generate a second image.
 - **KEEP PROCEDURAL:** do not generate a sprite; the current renderer remains the final visual for that item.
 
-The audited catalog contains **227 numbered entries**: **212 GENERATE**, **5 ALIAS**, and **10 numbered KEEP PROCEDURAL**. Broad procedural systems that do not need individual numbered entries are exhaustively classified in `GRAPHICS_CANON_SPRITE_COVERAGE.md`. Do not add visual details from memory, older concept sheets, or prior generated images. If an entry still lacks enough information, stop on that entry rather than improvising.
+The audited catalog contains **227 numbered entries**: **217 GENERATE**, **0 ALIAS**, and **10 numbered KEEP PROCEDURAL**. Broad procedural systems that do not need individual numbered entries are exhaustively classified in `GRAPHICS_CANON_SPRITE_COVERAGE.md`. Do not add visual details from memory, older concept sheets, or prior generated images. If an entry still lacks enough information, stop on that entry rather than improvising.
 
 ## Mandatory base prompt
 
@@ -67,13 +67,11 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 005 — Companion — Archer / Ranger support
 
-**Canonical cues:** Compact humanoid rendered with the canonical human('ranger') body rather than human('archer'): green clothing, green hood/cape, bow on screen-right, quiver on screen-left/back, plus the same small teal flask/pouch and restrained pale-green/gold utility accent used by that body. Unlike the hero Ranger, it does not receive the extra hero-layer facial/strap/quiver polish.
+**Canonical cues:** Compact allied goblin scout: semi-human goblin proportions, olive-green goblin skin, long pointed ears and a small goblin facial/nose silhouette. Muted green scout clothing with a darker green hood/cape. Bow on screen-right and quiver/arrows on screen-left/back preserve the established Archer companion role. A diagonal travel strap, small brown side pouch and restrained warm-gold ally knot distinguish the companion from hostile goblins. It does not use the hero Ranger's teal flask/pouch or pale-green utility ornament.
 
 **Image-generation prompt:**
 
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the companion Archer/Ranger support exactly from the canonical human('ranger') body: green hood/cloak, right-side bow, left/back quiver and arrows, small teal flask/pouch and restrained pale-green/gold utility accent. Keep it slightly simpler in finish than the hero Ranger by omitting only the separate hero-layer additions. Do not remove canonical ranger-body gear and do not invent new equipment.
-
-## B. Specialists
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the companion Archer as the allied goblin scout defined by the procedural renderer: compact goblin-derived semi-human body, olive skin, long ears, muted green scout clothing, darker green hood/cape, bow on screen-right, quiver on screen-left/back, diagonal travel strap, small brown pouch and restrained warm-gold ally knot. It must read as a friendly party member while remaining unmistakably goblin. Do not copy the human Ranger face/body, do not add the Ranger's teal flask or pale-green utility ornament, and do not turn it into the hostile Goblin Slinger or human Raider Archer.
 
 ### 006 — Mira — Greenwood instructor
 
@@ -271,11 +269,11 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 030 — Mireling spitter hybrid
 
-**Audit status:** ALIAS — do not generate a new image.
+**Canonical cues:** Same low crocodilian species silhouette as the melee Mireling, but a distinct ranged class body. Slightly darker muted green hide and warmer amber markings. A woven reed/leather harness crosses the torso, with a small side pouch and a visible mouth/spit-projection fitting at the snout. Dark dorsal spikes remain.
 
-**Reuse:** asset 018.
+**Image-generation prompt:**
 
-**Reason:** The ranged Mireling profile changes behavior/projectiles only. The procedural body has no distinct static visual cue.
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Mireling Spitter exactly as the ranged procedural class: preserve the low crocodilian Mireling anatomy, tail left, snout right, four low legs and dorsal spikes, but use the darker muted-green ranged palette, amber markings, crossed reed/leather harness, small side pouch and visible snout/spit-projection cue. Do not add humanoid armor, a saddle, horns, fins or projectile effects.
 
 ### 031 — Reed-beast spitter hybrid
 
@@ -287,29 +285,27 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 032 — Ogre stone-thrower hybrid
 
-**Audit status:** ALIAS — do not generate a new image.
+**Canonical cues:** Same very bulky Ogre species and paired facial tusk marks, but a distinct ranged class. Gray-olive/brown clothing rather than the melee Ogre's warmer body treatment, an asymmetric shoulder wrap, diagonal throwing strap, and a large stone satchel on screen-left with visible stones. A simple throwing sling/stone tool is carried on screen-right. No melee club.
 
-**Reuse:** asset 021.
+**Image-generation prompt:**
 
-**Reason:** The stone-throwing behavior is runtime-only; the procedural Ogre body is unchanged.
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Ogre Stone Thrower exactly as the ranged procedural class. Preserve the very bulky Ogre proportions, muted tan/olive skin and paired facial tusk marks, but use the gray-olive/brown ranged clothing, asymmetric shoulder wrap, diagonal throwing strap, stone satchel on screen-left with visible stones, and the simple throwing sling/stone tool on screen-right. Do not give it the melee Ogre's heavy wooden club, armor suit, helmet, tattoos or extra horns.
 
 ### 033 — Orc axe-thrower hybrid
 
-**Audit status:** ALIAS — do not generate a new image.
+**Canonical cues:** Same broad olive-skinned Orc species, but a distinct ranged class. Rust-brown clothing replaces the melee Orc's brown-olive outfit. Shoulder protection is lighter and asymmetric rather than the melee steel pair. A diagonal throwing harness and small side pouch cross the body. Two compact throwing axes are carried on screen-right/back. No sword.
 
-**Reuse:** asset 022.
+**Image-generation prompt:**
 
-**Reason:** The thrown axe is a runtime projectile. The static procedural Orc body remains the melee Orc design.
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Orc Axe Thrower exactly as the ranged procedural class. Preserve the broad Orc proportions and olive-green skin, but use rust-brown clothing, lighter asymmetric shoulder pads, diagonal throwing harness, small side pouch and two compact throwing axes carried on screen-right/back. The ranged Orc must not carry the melee Orc's sword and must not resemble the armored Ashen Warlord.
 
 ### 034 — Ash-beast cinder-spitter hybrid
 
-**Audit status:** ALIAS — do not generate a new image.
+**Canonical cues:** Same low many-legged Ash-beast anatomy, raised forelimbs and curled tail, but a distinct ranged class. Darker red-brown/purple carapace replaces the ordinary burnt-orange body. Additional dorsal cinder plates and two visible cinder sacs/vents carry restrained warm orange highlights.
 
-**Reuse:** asset 024.
+**Image-generation prompt:**
 
-**Reason:** The cinder attack is runtime-only; the procedural Ash-beast body is unchanged.
-
-## D. Bosses
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Ash-beast Cinder Spitter exactly as the ranged procedural class. Preserve the low many-legged Ash-beast silhouette, raised forelimbs, curled tail and pale tail/body spine, but use the darker red-brown/purple carapace, added dorsal cinder plates and two visible cinder sacs/vents with restrained warm-orange highlights. Do not add wings, humanoid equipment, a giant scorpion stinger, lava cracks or active projectile effects.
 
 ### 035 — Thornfang
 
@@ -427,11 +423,11 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 049 — Dreadmaw
 
-**Audit status:** ALIAS — do not generate a new image.
+**Canonical cues:** Enlarged Ash-beast captain body. Dreadmaw's current combat mentor and Treasury master is Cindermaw, but his retained visual idol is the Dark Lord, preserving his original "Dread Lord" imitator identity. The Ash-beast carapace carries a dark obsidian-purple harness, a small Crown/Dark-Lord-style purple sigil, restrained bronze/gold authority linework and the generic captain ground-ring treatment. He remains unmistakably an Ash beast rather than becoming humanoid.
 
-**Reuse:** asset 024.
+**Image-generation prompt:**
 
-**Reason:** Dreadmaw is an Ash-beast captain with increased visualScale and captain mechanics, but the current renderer has no Cindermaw-specific static body ornament for this mentor. The exact captain sprite key may later point to the same Ash-beast image while retaining runtime captain treatment.
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render Dreadmaw exactly as the procedural captain canon: a larger Ash-beast body with the normal many-legged Ash-beast anatomy, plus the Dark-Lord-idol obsidian-purple carapace harness, small purple Crown sigil and restrained bronze/gold authority accents. Preserve his identity as an Ash beast serving Cindermaw while visually imitating the Dark Lord. Do not turn him into a miniature Dark Lord, do not give him humanoid armor, sword, shield, crown or cape, and do not remove the Ash-beast anatomy.
 
 ### 050 — Cinder Warlord
 
