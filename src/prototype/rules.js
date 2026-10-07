@@ -201,7 +201,7 @@ const treasuryDecor={
 const creatureStrongholds=[
  {id:'goblin-road-fort',region:'vale',site:'goblin-camp',species:'goblin',wall:'stockade',guardCount:4,
   props:[[-105,-55,'lean-to'],[-45,-105,'cookfire'],[50,-100,'sleep-roll'],[110,-45,'game-table'],[105,60,'stolen-goods'],[10,110,'training-dummy'],[-90,70,'ration']]},
- {id:'skeleton-watch',region:'vale',center:[2050,2050],species:'skeleton',wall:'stonewall',guardCount:3,unmarked:true,
+ {id:'skeleton-watch',region:'vale',center:[1820,2260],species:'skeleton',wall:'stonewall',guardCount:3,unmarked:true,
   props:[[-90,-55,'grave-marker'],[-35,-105,'bone-pile'],[55,-90,'grave-lamp'],[100,-25,'caretaker-table'],[70,75,'sleep-roll'],[-55,95,'ossuary']]},
 
  {id:'mire-nest-hold',region:'march',site:'mire-nests',species:'mireling',wall:'palisade',guardCount:4,
