@@ -292,7 +292,7 @@ class Campaign{
  spaceMillhavenSupplier(z){if(z.id!=='vale'||z.supplierPositionVersion===2)return;const supplier=z.npcs.find(n=>n.id==='supplier');if(!supplier)return;const [x,y]=D.towns[0];Object.assign(supplier,this.safe(x+115,y-85,z.id));z.supplierPositionVersion=2;}
  creatureStrongholdCenter(z,cfg){if(cfg.site){const n=z.npcs.find(n=>n.id===cfg.site);if(n)return {x:n.x,y:n.y};}return cfg.center?{x:cfg.center[0],y:cfg.center[1]}:null;}
  creatureStrongholds(z){
-  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||this.sideDungeon(z.id)||z.creatureStrongholdsVersion===5)return;
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||this.sideDungeon(z.id)||z.creatureStrongholdsVersion===6)return;
   const plans=(R.creatureStrongholds||[]).filter(s=>s.region===z.id),oldZone=this.s.zone;this.s.zone=z.id;
   try{
    z.props=z.props.filter(p=>!String(p.id||'').startsWith('stronghold-'));
@@ -302,7 +302,10 @@ class Campaign{
     const center=this.creatureStrongholdCenter(z,cfg);if(!center)continue;
     // Replace light habitat dressing around the hold with a more deliberate territorial layout.
     z.props=z.props.filter(p=>!(String(p.id||'').startsWith('world-life-habitat-')&&dist(p,center)<175));
-    for(const [j,[dx,dy,structure]]of (cfg.props||[]).entries()){let p={x:center.x+dx,y:center.y+dy};try{p=this.safe(p.x,p.y,z.id);}catch(_){continue;}if(roadNear(p,42))continue;z.props.push({id:'stronghold-'+cfg.id+'-prop-'+j,...p,r:0,decorative:true,structure,stronghold:cfg.id});}
+    let livedInCount=0;const placedStructures=new Set();
+    for(const [j,[dx,dy,structure]]of (cfg.props||[]).entries()){let p={x:center.x+dx,y:center.y+dy};try{p=this.safe(p.x,p.y,z.id);}catch(_){continue;}if(roadNear(p,42))continue;z.props.push({id:'stronghold-'+cfg.id+'-prop-'+j,...p,r:0,decorative:true,structure,stronghold:cfg.id});placedStructures.add(structure);livedInCount++;}
+    // A road can clip the original domestic layout, but a stronghold must still read as a place somebody lives in.
+    if(livedInCount<5&&cfg.props?.length){const fallback=[];for(const radius of [105,145,190,235])for(let n=0;n<16;n++){const a=n*Math.PI/8+.3;fallback.push({x:center.x+Math.cos(a)*radius,y:center.y+Math.sin(a)*radius});}let cursor=0;for(const q of fallback){if(livedInCount>=5)break;if(roadNear(q,48)||this.blocked(q.x,q.y,z.id,8,true)||z.nodes.some(n=>n.amount>0&&dist(n,q)<55)||z.npcs.some(n=>dist(n,q)<55)||z.props.some(p=>p.stronghold===cfg.id&&dist(p,q)<34))continue;let p;try{p=this.safe(q.x,q.y,z.id);}catch(_){continue;}if(roadNear(p,48))continue;const source=cfg.props[cursor++%cfg.props.length],structure=source[2];z.props.push({id:'stronghold-'+cfg.id+'-lived-'+livedInCount,...p,r:0,decorative:true,structure,stronghold:cfg.id});placedStructures.add(structure);livedInCount++;}}
     const ring=[[-145,-105],[-70,-145],[70,-145],[145,-105],[155,20],[115,120],[40,155],[-40,155],[-115,120],[-155,20]];let wallCount=0;
     for(const [j,[dx,dy]]of ring.entries()){let p={x:center.x+dx,y:center.y+dy};if(roadNear(p,85)||this.blocked(p.x,p.y,z.id,28,true)||z.nodes.some(n=>n.amount>0&&dist(n,p)<85))continue;z.props.push({id:'stronghold-'+cfg.id+'-wall-'+j,...p,r:26,structure:cfg.wall||'stockade',stronghold:cfg.id});wallCount++;}
     // Road-adjacent holds still get a partial defensive backstop on whichever side has room.
@@ -312,7 +315,7 @@ class Campaign{
     const spots=[[-95,-20],[-25,-95],[80,-65],[100,35],[20,105],[-85,75]];
     for(const [j,e]of candidates.entries()){const [dx,dy]=spots[j%spots.length],p=this.safe(center.x+dx,center.y+dy,z.id);e.home={...p};if(e.hp>0&&!e.aggro)Object.assign(e,p);e.stronghold=cfg.id;e.strongholdResident=true;e.pack='stronghold-'+cfg.id+'-'+Math.floor(j/3);if(cfg.site)e.site=cfg.site;occupied.add(e.id);}
    }
-   z.creatureStrongholdsVersion=5;
+   z.creatureStrongholdsVersion=6;
   }finally{this.s.zone=oldZone;}
  }
  sideInteriors(z){
