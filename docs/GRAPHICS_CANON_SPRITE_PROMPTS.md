@@ -1,6 +1,8 @@
-# Phase 2A — Canon Sprite Image-Generation Prompt Catalog
+# Phase 2A — Canon Sprite Image-Generation Prompt Catalog (AUDITED)
 
 ## Purpose
+
+**Audit status: COMPLETE.** This document has been checked back against the current production renderer and rules after the initial 110-entry draft. Entries marked **KEEP PROCEDURAL** are intentionally not image-generation tasks.
 
 This document is the production source for the next image-generation phase. It does **not** activate any sprite in the game. Each asset is generated **one at a time and one alone**, using its own entry below. The current procedural renderer is canon.
 
@@ -17,6 +19,7 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 - Never fabricate a visual reference. The procedural renderer and this audited document are the references.
 - Do not move to another asset until the current generation is complete.
 - Candidate assets remain outside the live sprite manifest until Phase 2B audit approval.
+- Only entries containing **Image-generation prompt** are generated. Entries marked **KEEP PROCEDURAL** are skipped.
 
 ## A. Heroes and companions
 
@@ -38,11 +41,11 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 003 — Hero — Ranger
 
-**Canonical cues:** Compact hooded humanoid. Green clothing and dark green cape; bow on screen-right; quiver on screen-left/back with visible arrows; small gold accent; face visible under hood. Narrow stance.
+**Canonical cues:** Compact hooded humanoid. Green clothing and dark green cape; bow on screen-right; quiver on screen-left/back with visible arrows; small gold accent. The canonical human('ranger') body also carries a small teal flask/pouch on screen-left and a small pale-green/gold hand/utility accent on screen-right. The hero layer adds simple facial marks, extra strap/quiver definition and restrained pale-green highlights.
 
 **Image-generation prompt:**
 
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Ranger exactly as described. Preserve green hood, green body/cloak, right-side bow, left/back quiver and arrows, compact proportions and restrained gold detail. No extra daggers, leather armor redesign, animal motifs, magical arrows or new equipment.
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Ranger exactly as described. Preserve green hood, green body/cloak, right-side bow, left/back quiver and arrows, the small teal left-side flask/pouch, the small pale-green/gold utility accent, compact proportions and restrained gold detail. Do not add daggers, leather-armor redesign, animal motifs, magical arrows, new pouches or equipment not listed.
 
 ### 004 — Companion — Soldier
 
@@ -54,11 +57,11 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 005 — Companion — Archer / Ranger support
 
-**Canonical cues:** Compact hooded archer. Darker green clothing, dark green hood and cape, bow on screen-right, quiver on screen-left/back with arrows. Simpler than the hero Ranger: no Ranger-specific potion/flask and magical-looking hand detail.
+**Canonical cues:** Compact humanoid rendered with the canonical human('ranger') body rather than human('archer'): green clothing, green hood/cape, bow on screen-right, quiver on screen-left/back, plus the same small teal flask/pouch and restrained pale-green/gold utility accent used by that body. Unlike the hero Ranger, it does not receive the extra hero-layer facial/strap/quiver polish.
 
 **Image-generation prompt:**
 
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Archer exactly as described. Preserve darker green hood/cloak, bow and quiver placement and compact humanoid proportions. It must remain visually simpler than the hero Ranger. No extra knives, armor redesign, magic effects or new gear.
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the companion Archer/Ranger support exactly from the canonical human('ranger') body: green hood/cloak, right-side bow, left/back quiver and arrows, small teal flask/pouch and restrained pale-green/gold utility accent. Keep it slightly simpler in finish than the hero Ranger by omitting only the separate hero-layer additions. Do not remove canonical ranger-body gear and do not invent new equipment.
 
 ## B. Specialists
 
@@ -258,11 +261,9 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 030 — Mireling spitter hybrid
 
-**Canonical cues:** Canonical renderer uses the same Mireling body as the melee form; the ranged behavior is conveyed mainly by runtime projectile/aim effects rather than a new body silhouette.
+**Audit status: KEEP PROCEDURAL — DO NOT GENERATE A SPRITE.**
 
-**Image-generation prompt:**
-
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the exact same canonical Mireling body as asset 018, with no invented anatomical or equipment differences. This candidate exists only for audit; do not add a spit sac, tongue, markings or weapon.
+**Reason:** The current renderer gives the spitter the same static Mireling body as the melee Mireling. Its ranged identity is expressed by runtime aiming/projectile behavior, so a second raster body would be a duplicate or an invention.
 
 ### 031 — Reed-beast spitter hybrid
 
@@ -274,27 +275,21 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 032 — Ogre stone-thrower hybrid
 
-**Canonical cues:** Canonical renderer uses the same Ogre body and weapon silhouette as the melee form; ranged behavior is carried by runtime projectiles.
+**Audit status: KEEP PROCEDURAL — DO NOT GENERATE A SPRITE.**
 
-**Image-generation prompt:**
-
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the exact same canonical Ogre as asset 021. Do not invent a sling, stone bag, throwing pose or new weapon. This candidate exists only for audit.
+**Reason:** The current renderer gives the stone thrower the same static Ogre body as the melee Ogre. The thrown stone is a runtime projectile; there is no separate canonical static throwing kit.
 
 ### 033 — Orc axe-thrower hybrid
 
-**Canonical cues:** Canonical renderer retains the same Orc body with steel shoulders and sword; the thrown axe exists as a runtime projectile rather than a different static body.
+**Audit status: KEEP PROCEDURAL — DO NOT GENERATE A SPRITE.**
 
-**Image-generation prompt:**
-
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the exact same canonical Orc as asset 022. Do not replace the sword with an axe or invent throwing equipment. This candidate exists only for audit.
+**Reason:** The current renderer keeps the same sword-bearing Orc body. The axe exists as a runtime projectile; replacing the sword or adding throwing gear would contradict the visible canon.
 
 ### 034 — Ash-beast cinder-spitter hybrid
 
-**Canonical cues:** Canonical renderer retains the same Ash beast body; the cinder attack is a runtime projectile and does not create a distinct body silhouette.
+**Audit status: KEEP PROCEDURAL — DO NOT GENERATE A SPRITE.**
 
-**Image-generation prompt:**
-
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the exact same canonical Ash beast as asset 024. Do not add glowing mouth, lava cracks, sacs or projectile effects. This candidate exists only for audit.
+**Reason:** The current renderer gives the cinder spitter the same static Ash-beast body. Cinder identity is carried by runtime projectile behavior, not a different body design.
 
 ## D. Bosses
 
@@ -414,11 +409,9 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 049 — Dreadmaw
 
-**Canonical cues:** Ash-beast captain assigned to Cindermaw. Current renderer gives it the same Ash beast body at captain scale but does not define a unique Cindermaw-specific body ornament in captainFinish. Procedural captain ground ring excluded.
+**Audit status: KEEP PROCEDURAL — DO NOT GENERATE A SPRITE.**
 
-**Image-generation prompt:**
-
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render Dreadmaw as the canonical Ash beast body, only moderately larger than an ordinary Ash beast. Do not invent Cindermaw plates, crown, harness, lava cracks or new markings. This candidate is intentionally conservative pending audit.
+**Reason:** Dreadmaw is named and mechanically distinct, but the current renderer has no cindermaw-specific captainFinish case. Visually it is only an Ash beast at captain scale plus procedural captain treatment. A unique sprite now would invent canon.
 
 ### 050 — Cinder Warlord
 
@@ -788,11 +781,9 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 094 — Market stand
 
-**Canonical cues:** Low brown market table with two thin rear posts and a simple muted tan canopy/awning; three small green produce ovals on the counter.
+**Audit status: KEEP PROCEDURAL — DO NOT GENERATE A SPRITE.**
 
-**Image-generation prompt:**
-
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Market stand exactly as described. Preserve table, two posts, simple canopy and three small produce shapes. No merchant, baskets, signs, extra goods or surrounding street.
+**Reason:** The market canopy is region-sensitive in the renderer and the prop is repeated settlement dressing. A single static sprite would either erase that regional difference or require an unnecessary variant family. Keep procedural.
 
 ### 095 — Well
 
@@ -812,11 +803,9 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 097 — Command tent
 
-**Canonical cues:** Large muted brown-red triangular tent with central vertical wooden pole, dark rectangular entrance flap and pale low trim line.
+**Audit status: KEEP PROCEDURAL — DO NOT GENERATE A SPRITE.**
 
-**Image-generation prompt:**
-
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Command tent exactly as described. Preserve single triangular tent, central pole and dark entrance. No banner, weapons, campfire or surrounding props.
+**Reason:** The renderer changes the command-tent body color in Dark Crown versus other regions. It is repeated stronghold dressing rather than a unique landmark. Keep procedural instead of multiplying static variants.
 
 ### 098 — Forge
 
@@ -852,19 +841,15 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 102 — Training dummy
 
-**Canonical cues:** Simple wooden training dummy: central vertical post, horizontal arm bar, round tan head, rectangular brown padded torso, small base portion.
+**Audit status: KEEP PROCEDURAL — DO NOT GENERATE A SPRITE.**
 
-**Image-generation prompt:**
-
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Training dummy exactly as described. Preserve basic wooden cross-shaped silhouette, round head and brown torso pad. No armor, helmet, shield, weapons or target markings.
+**Reason:** The training dummy uses region-dependent local wood and appears as repeated functional clutter. The procedural form already handles regional palette variation cleanly.
 
 ### 103 — Weapon rack
 
-**Canonical cues:** Simple wooden rack: two upright side posts, one upper crossbar, three narrow weapons hanging vertically with pale steel heads and wooden/dark shafts.
+**Audit status: KEEP PROCEDURAL — DO NOT GENERATE A SPRITE.**
 
-**Image-generation prompt:**
-
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Weapon rack exactly as described. Preserve two posts, one crossbar and exactly three simple hanging weapons. No shields, bows, extra weapons, crate or wall.
+**Reason:** The rack uses region-dependent local wood and appears across multiple regions/interiors. Keep it procedural so one sprite does not flatten regional material differences.
 
 ### 104 — Fish rack
 
@@ -923,6 +908,170 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 **Image-generation prompt:**
 
 > Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render one Dark Crown rock exactly as described. Preserve irregular dark rock, lighter facet, single purple crystal spike and restrained glint. No crystal cluster, lava, runes, smoke or ground patch.
+
+## N. Regional town service structures — added by prompt audit
+
+The first roster omitted four purpose-specific procedural service structures. The renderer gives each a distinct silhouette and each region a distinct material palette, so the audited catalog includes all 20 exact region/role combinations rather than flattening them into generic art.
+
+### 111 — Greenwood Vale Refuge / rest house
+
+**Canonical cues:** Small regional refuge building. Main wall #baa888, roof #9b6350, timber #806044, trim #d8bd83, dark doorway #594b3b. Canon role silhouette: rectangular house body, triangular roof, central dark door, narrow chimney on screen-right, small round warm lantern on screen-left, plus warm timber side posts with two small muted-green low plant/brace accents.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Greenwood Vale Refuge exactly from the regional service-building canon: small house body, triangular roof, central dark door, right-side chimney, small left lantern, and warm timber side posts with two small muted-green low plant/brace accents. Preserve palette relationships wall #baa888, roof #9b6350, timber #806044, trim #d8bd83, dark #594b3b. No NPC, sign, beds outside, fence, road, smoke cloud or extra annex.
+
+### 112 — Greenwood Vale Supplier stall
+
+**Canonical cues:** Regional supplier shelter. Wall/counter #baa888, roof #9b6350, timber #806044, trim #d8bd83, dark storage #594b3b. Canon role silhouette: two main side posts, triangular roof, low counter, one dark box on screen-left, a small central oval good, one timber crate/block on screen-right, three small goods along the lower counter, plus warm timber side posts with two small muted-green low plant/brace accents.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Greenwood Vale Supplier exactly from the canonical service silhouette: two-post roofed stall, low counter, left dark storage box, small central good, right crate/block and three small counter goods, with warm timber side posts with two small muted-green low plant/brace accents. Preserve palette wall #baa888, roof #9b6350, timber #806044, trim #d8bd83, dark #594b3b. No merchant, text sign, awning redesign, extra shelves or scattered inventory.
+
+### 113 — Greenwood Vale Town Captain / recruiter post
+
+**Canonical cues:** Regional recruiter/Captain post. Uses roof #9b6350, timber #806044, wall/shield #baa888, trim #d8bd83, dark platform #594b3b. Canon role silhouette: low dark platform, two strong side posts, triangular roof, shield mounted on screen-left, slim steel weapon/pole near center-right, second timber pole on right, small triangular trim pennant/crest high on right, short central post, plus warm timber side posts with two small muted-green low plant/brace accents.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Greenwood Vale Town Captain/recruiter post exactly from the canonical structure: low platform, two posts, triangular roof, mounted shield left, slim steel pole/weapon center-right, timber pole right, small triangular trim crest and short center post, with warm timber side posts with two small muted-green low plant/brace accents. Preserve regional colors. No Captain character, barracks, tower, extra weapons, text or banners beyond the stated small crest.
+
+### 114 — Greenwood Vale Quest board
+
+**Canonical cues:** Regional quest board. Timber #806044, roof/cap #9b6350, board #baa888, trim #d8bd83. Canon role silhouette: two tall posts, short top cap/roof, wide rectangular board, one trim line near top, exactly five small pale parchment notices arranged across the face, plus warm timber side posts with two small muted-green low plant/brace accents.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Greenwood Vale Quest board exactly from the canonical structure: two tall posts, short top cap, wide rectangular board, trim line and exactly five small pale parchment notices, with warm timber side posts with two small muted-green low plant/brace accents. Preserve regional materials/colors. No readable text, NPC, lanterns, roofed kiosk, extra notices or decorative symbols.
+
+### 115 — Flooded Marches Refuge / rest house
+
+**Canonical cues:** Small regional refuge building. Main wall #aab1a1, roof #618789, timber #71654f, trim #abd0c0, dark doorway #465a57. Canon role silhouette: rectangular house body, triangular roof, central dark door, narrow chimney on screen-right, small round warm lantern on screen-left, plus raised/stilted wetland framing with extra lower supports and thin reed stalks along the roofline.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Flooded Marches Refuge exactly from the regional service-building canon: small house body, triangular roof, central dark door, right-side chimney, small left lantern, and raised/stilted wetland framing with extra lower supports and thin reed stalks along the roofline. Preserve palette relationships wall #aab1a1, roof #618789, timber #71654f, trim #abd0c0, dark #465a57. No NPC, sign, beds outside, fence, road, smoke cloud or extra annex.
+
+### 116 — Flooded Marches Supplier stall
+
+**Canonical cues:** Regional supplier shelter. Wall/counter #aab1a1, roof #618789, timber #71654f, trim #abd0c0, dark storage #465a57. Canon role silhouette: two main side posts, triangular roof, low counter, one dark box on screen-left, a small central oval good, one timber crate/block on screen-right, three small goods along the lower counter, plus raised/stilted wetland framing with extra lower supports and thin reed stalks along the roofline.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Flooded Marches Supplier exactly from the canonical service silhouette: two-post roofed stall, low counter, left dark storage box, small central good, right crate/block and three small counter goods, with raised/stilted wetland framing with extra lower supports and thin reed stalks along the roofline. Preserve palette wall #aab1a1, roof #618789, timber #71654f, trim #abd0c0, dark #465a57. No merchant, text sign, awning redesign, extra shelves or scattered inventory.
+
+### 117 — Flooded Marches Town Captain / recruiter post
+
+**Canonical cues:** Regional recruiter/Captain post. Uses roof #618789, timber #71654f, wall/shield #aab1a1, trim #abd0c0, dark platform #465a57. Canon role silhouette: low dark platform, two strong side posts, triangular roof, shield mounted on screen-left, slim steel weapon/pole near center-right, second timber pole on right, small triangular trim pennant/crest high on right, short central post, plus raised/stilted wetland framing with extra lower supports and thin reed stalks along the roofline.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Flooded Marches Town Captain/recruiter post exactly from the canonical structure: low platform, two posts, triangular roof, mounted shield left, slim steel pole/weapon center-right, timber pole right, small triangular trim crest and short center post, with raised/stilted wetland framing with extra lower supports and thin reed stalks along the roofline. Preserve regional colors. No Captain character, barracks, tower, extra weapons, text or banners beyond the stated small crest.
+
+### 118 — Flooded Marches Quest board
+
+**Canonical cues:** Regional quest board. Timber #71654f, roof/cap #618789, board #aab1a1, trim #abd0c0. Canon role silhouette: two tall posts, short top cap/roof, wide rectangular board, one trim line near top, exactly five small pale parchment notices arranged across the face, plus raised/stilted wetland framing with extra lower supports and thin reed stalks along the roofline.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Flooded Marches Quest board exactly from the canonical structure: two tall posts, short top cap, wide rectangular board, trim line and exactly five small pale parchment notices, with raised/stilted wetland framing with extra lower supports and thin reed stalks along the roofline. Preserve regional materials/colors. No readable text, NPC, lanterns, roofed kiosk, extra notices or decorative symbols.
+
+### 119 — Ironroot Highlands Refuge / rest house
+
+**Canonical cues:** Small regional refuge building. Main wall #a1aaa4, roof #727a73, timber #71695b, trim #c8c4a3, dark doorway #54574f. Canon role silhouette: rectangular house body, triangular roof, central dark door, narrow chimney on screen-right, small round warm lantern on screen-left, plus low stone platform/block framing with a small masonry/chimney-like vertical mass on screen-right.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Ironroot Highlands Refuge exactly from the regional service-building canon: small house body, triangular roof, central dark door, right-side chimney, small left lantern, and low stone platform/block framing with a small masonry/chimney-like vertical mass on screen-right. Preserve palette relationships wall #a1aaa4, roof #727a73, timber #71695b, trim #c8c4a3, dark #54574f. No NPC, sign, beds outside, fence, road, smoke cloud or extra annex.
+
+### 120 — Ironroot Highlands Supplier stall
+
+**Canonical cues:** Regional supplier shelter. Wall/counter #a1aaa4, roof #727a73, timber #71695b, trim #c8c4a3, dark storage #54574f. Canon role silhouette: two main side posts, triangular roof, low counter, one dark box on screen-left, a small central oval good, one timber crate/block on screen-right, three small goods along the lower counter, plus low stone platform/block framing with a small masonry/chimney-like vertical mass on screen-right.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Ironroot Highlands Supplier exactly from the canonical service silhouette: two-post roofed stall, low counter, left dark storage box, small central good, right crate/block and three small counter goods, with low stone platform/block framing with a small masonry/chimney-like vertical mass on screen-right. Preserve palette wall #a1aaa4, roof #727a73, timber #71695b, trim #c8c4a3, dark #54574f. No merchant, text sign, awning redesign, extra shelves or scattered inventory.
+
+### 121 — Ironroot Highlands Town Captain / recruiter post
+
+**Canonical cues:** Regional recruiter/Captain post. Uses roof #727a73, timber #71695b, wall/shield #a1aaa4, trim #c8c4a3, dark platform #54574f. Canon role silhouette: low dark platform, two strong side posts, triangular roof, shield mounted on screen-left, slim steel weapon/pole near center-right, second timber pole on right, small triangular trim pennant/crest high on right, short central post, plus low stone platform/block framing with a small masonry/chimney-like vertical mass on screen-right.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Ironroot Highlands Town Captain/recruiter post exactly from the canonical structure: low platform, two posts, triangular roof, mounted shield left, slim steel pole/weapon center-right, timber pole right, small triangular trim crest and short center post, with low stone platform/block framing with a small masonry/chimney-like vertical mass on screen-right. Preserve regional colors. No Captain character, barracks, tower, extra weapons, text or banners beyond the stated small crest.
+
+### 122 — Ironroot Highlands Quest board
+
+**Canonical cues:** Regional quest board. Timber #71695b, roof/cap #727a73, board #a1aaa4, trim #c8c4a3. Canon role silhouette: two tall posts, short top cap/roof, wide rectangular board, one trim line near top, exactly five small pale parchment notices arranged across the face, plus low stone platform/block framing with a small masonry/chimney-like vertical mass on screen-right.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Ironroot Highlands Quest board exactly from the canonical structure: two tall posts, short top cap, wide rectangular board, trim line and exactly five small pale parchment notices, with low stone platform/block framing with a small masonry/chimney-like vertical mass on screen-right. Preserve regional materials/colors. No readable text, NPC, lanterns, roofed kiosk, extra notices or decorative symbols.
+
+### 123 — Ashen Frontier Refuge / rest house
+
+**Canonical cues:** Small regional refuge building. Main wall #a18e7b, roof #76585a, timber #614f46, trim #c69a75, dark doorway #4d403a. Canon role silhouette: rectangular house body, triangular roof, central dark door, narrow chimney on screen-right, small round warm lantern on screen-left, plus charred pointed side posts and a rough diagonal timber brace.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Ashen Frontier Refuge exactly from the regional service-building canon: small house body, triangular roof, central dark door, right-side chimney, small left lantern, and charred pointed side posts and a rough diagonal timber brace. Preserve palette relationships wall #a18e7b, roof #76585a, timber #614f46, trim #c69a75, dark #4d403a. No NPC, sign, beds outside, fence, road, smoke cloud or extra annex.
+
+### 124 — Ashen Frontier Supplier stall
+
+**Canonical cues:** Regional supplier shelter. Wall/counter #a18e7b, roof #76585a, timber #614f46, trim #c69a75, dark storage #4d403a. Canon role silhouette: two main side posts, triangular roof, low counter, one dark box on screen-left, a small central oval good, one timber crate/block on screen-right, three small goods along the lower counter, plus charred pointed side posts and a rough diagonal timber brace.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Ashen Frontier Supplier exactly from the canonical service silhouette: two-post roofed stall, low counter, left dark storage box, small central good, right crate/block and three small counter goods, with charred pointed side posts and a rough diagonal timber brace. Preserve palette wall #a18e7b, roof #76585a, timber #614f46, trim #c69a75, dark #4d403a. No merchant, text sign, awning redesign, extra shelves or scattered inventory.
+
+### 125 — Ashen Frontier Town Captain / recruiter post
+
+**Canonical cues:** Regional recruiter/Captain post. Uses roof #76585a, timber #614f46, wall/shield #a18e7b, trim #c69a75, dark platform #4d403a. Canon role silhouette: low dark platform, two strong side posts, triangular roof, shield mounted on screen-left, slim steel weapon/pole near center-right, second timber pole on right, small triangular trim pennant/crest high on right, short central post, plus charred pointed side posts and a rough diagonal timber brace.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Ashen Frontier Town Captain/recruiter post exactly from the canonical structure: low platform, two posts, triangular roof, mounted shield left, slim steel pole/weapon center-right, timber pole right, small triangular trim crest and short center post, with charred pointed side posts and a rough diagonal timber brace. Preserve regional colors. No Captain character, barracks, tower, extra weapons, text or banners beyond the stated small crest.
+
+### 126 — Ashen Frontier Quest board
+
+**Canonical cues:** Regional quest board. Timber #614f46, roof/cap #76585a, board #a18e7b, trim #c69a75. Canon role silhouette: two tall posts, short top cap/roof, wide rectangular board, one trim line near top, exactly five small pale parchment notices arranged across the face, plus charred pointed side posts and a rough diagonal timber brace.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Ashen Frontier Quest board exactly from the canonical structure: two tall posts, short top cap, wide rectangular board, trim line and exactly five small pale parchment notices, with charred pointed side posts and a rough diagonal timber brace. Preserve regional materials/colors. No readable text, NPC, lanterns, roofed kiosk, extra notices or decorative symbols.
+
+### 127 — Dark Crown Refuge / rest house
+
+**Canonical cues:** Small regional refuge building. Main wall #929ba5, roof #596478, timber #555563, trim #b6a5c2, dark doorway #454653. Canon role silhouette: rectangular house body, triangular roof, central dark door, narrow chimney on screen-right, small round warm lantern on screen-left, plus dark vertical braces with small pointed finials and a single purple diamond crest high on the frame.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Dark Crown Refuge exactly from the regional service-building canon: small house body, triangular roof, central dark door, right-side chimney, small left lantern, and dark vertical braces with small pointed finials and a single purple diamond crest high on the frame. Preserve palette relationships wall #929ba5, roof #596478, timber #555563, trim #b6a5c2, dark #454653. No NPC, sign, beds outside, fence, road, smoke cloud or extra annex.
+
+### 128 — Dark Crown Supplier stall
+
+**Canonical cues:** Regional supplier shelter. Wall/counter #929ba5, roof #596478, timber #555563, trim #b6a5c2, dark storage #454653. Canon role silhouette: two main side posts, triangular roof, low counter, one dark box on screen-left, a small central oval good, one timber crate/block on screen-right, three small goods along the lower counter, plus dark vertical braces with small pointed finials and a single purple diamond crest high on the frame.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Dark Crown Supplier exactly from the canonical service silhouette: two-post roofed stall, low counter, left dark storage box, small central good, right crate/block and three small counter goods, with dark vertical braces with small pointed finials and a single purple diamond crest high on the frame. Preserve palette wall #929ba5, roof #596478, timber #555563, trim #b6a5c2, dark #454653. No merchant, text sign, awning redesign, extra shelves or scattered inventory.
+
+### 129 — Dark Crown Town Captain / recruiter post
+
+**Canonical cues:** Regional recruiter/Captain post. Uses roof #596478, timber #555563, wall/shield #929ba5, trim #b6a5c2, dark platform #454653. Canon role silhouette: low dark platform, two strong side posts, triangular roof, shield mounted on screen-left, slim steel weapon/pole near center-right, second timber pole on right, small triangular trim pennant/crest high on right, short central post, plus dark vertical braces with small pointed finials and a single purple diamond crest high on the frame.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Dark Crown Town Captain/recruiter post exactly from the canonical structure: low platform, two posts, triangular roof, mounted shield left, slim steel pole/weapon center-right, timber pole right, small triangular trim crest and short center post, with dark vertical braces with small pointed finials and a single purple diamond crest high on the frame. Preserve regional colors. No Captain character, barracks, tower, extra weapons, text or banners beyond the stated small crest.
+
+### 130 — Dark Crown Quest board
+
+**Canonical cues:** Regional quest board. Timber #555563, roof/cap #596478, board #929ba5, trim #b6a5c2. Canon role silhouette: two tall posts, short top cap/roof, wide rectangular board, one trim line near top, exactly five small pale parchment notices arranged across the face, plus dark vertical braces with small pointed finials and a single purple diamond crest high on the frame.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Dark Crown Quest board exactly from the canonical structure: two tall posts, short top cap, wide rectangular board, trim line and exactly five small pale parchment notices, with dark vertical braces with small pointed finials and a single purple diamond crest high on the frame. Preserve regional materials/colors. No readable text, NPC, lanterns, roofed kiosk, extra notices or decorative symbols.
 
 ## End of production catalog
 
