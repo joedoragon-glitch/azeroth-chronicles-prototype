@@ -78,3 +78,13 @@ The Citadel now fields 32 rewardless Crown guardians in authored military format
 Citadel traps are redesigned as 28 defensive installations distributed through those functional areas rather than generic floor scatter. The mandatory navigation invariant is stronger than before: the entrance, Ash Sentinel chamber and Tovan's captive position must remain connected by at least one route that does not cross any trap footprint at all. The barracks and ritual-control wings likewise retain trap-free access. Traps may make shortcuts or direct lanes dangerous, but they cannot be unavoidable progression damage.
 
 Existing Citadel saves migrate to fortress-layout version 3. If the hero, an active companion, an NPC or a surviving enemy occupies space that became solid under the new architecture, it is moved to the nearest valid Citadel floor without resetting campaign progress, rewards or boss state. The other four main dungeons retain their existing geometry.
+
+### Cindermaw Treasury den pass
+
+Cindermaw's Treasury now follows the same Dark Crown spatial philosophy without copying the Citadel's scale. The old 900×900 crossed-wall storehouse is replaced by a compact irregular volcanic den composed from overlapping spaces: entrance cleft, roost chamber, hoard chamber, ash den, ember junction, service loop and Dreadmaw's inner vault.
+
+The three quest caches remain exactly three and keep their collected-state migration, but they are distributed across separate den spaces rather than sharing generic storehouse coordinates. Dreadmaw remains the captain and combat disciple of Cindermaw and keeps the inner vault. The other Treasury defenders remain Ash beasts; no new species, boss or reward layer is introduced.
+
+Treasury dressing is reduced into stronger procedural compositions: an Ash-beast roost scene, a dense Cindermaw hoard scene, an ash den and a Dreadmaw vault post, with only a few supporting props. The floor gains restrained ash/obsidian/ember detail specific to Cindermaw's den.
+
+Treasury layout version 4 migrates existing Cindermaw Treasury saves. Cache progress, Dreadmaw state and campaign facts are retained; occupants stranded by the new irregular footprint are moved to valid floor. Other regional Treasuries keep their existing layouts.
