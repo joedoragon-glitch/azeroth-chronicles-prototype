@@ -176,7 +176,7 @@ class Campaign{
  expeditionPartyCap(rank=this.s.expeditionRank||1){return [0,2,3,3,4,5,6][clamp(rank,1,6)];}
  expeditionInstructorCap(family){return expeditionCeilings[family]||0;}
  expeditionNextInstructor(rank=this.s.expeditionRank||1){return Object.keys(expeditionCeilings).find(id=>expeditionCeilings[id]>rank)||null;}
- expeditionUnlock(rank){return ({2:'Recruitment + resources · active group 3',3:'Manual squad doctrine',4:'Full barracks · active group 4',5:'Active group 5',6:'Active group 6'})[rank]||'';}
+ expeditionUnlock(rank){return ({2:'Recruitment + resources · active group 3',3:'Manual squad doctrine',4:'Full Barracks upgrade · active group 4',5:'Active group 5',6:'Active group 6'})[rank]||'';}
  expeditionTrainer(){return Object.keys(expeditionCeilings).filter(id=>this.s.rescued[id]&&expeditionCeilings[id]>(this.s.expeditionRank||1)).sort((a,b)=>expeditionCeilings[a]-expeditionCeilings[b])[0]||null;}
  trainExpedition(family){const cap=this.expeditionInstructorCap(family),rank=this.s.expeditionRank||1;if(!this.s.rescued[family]||!cap||rank>=cap||rank>=6)return false;this.s.expeditionRank=rank+1;this.say('Expedition Skill rank '+this.s.expeditionRank+' learned. '+this.expeditionUnlock(this.s.expeditionRank)+'.');this.notice('EXPEDITION '+this.s.expeditionRank+' · '+this.expeditionUnlock(this.s.expeditionRank),5.5);this.event('expeditionRank',{rank:this.s.expeditionRank,family});return true;}
  barracksFieldCap(b){return b?.full?this.expeditionPartyCap():Math.min(3,this.expeditionPartyCap());}
