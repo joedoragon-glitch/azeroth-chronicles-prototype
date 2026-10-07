@@ -314,25 +314,25 @@ class Campaign{
   }finally{this.s.zone=oldZone;}
  }
  sideInteriors(z){
-  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||this.sideDungeon(z.id)||z.sideEntranceVersion===1)return;
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||this.sideDungeon(z.id)||z.sideEntranceVersion===2)return;
   const configs=(R.sideDungeons||[]).filter(d=>d.region===z.id),oldZone=this.s.zone;this.s.zone=z.id;
   try{
    z.props=z.props.filter(p=>!String(p.id||'').startsWith('side-entrance-'));
-   const approach={cellar:['stump','crate','fallen-log'],flooded:['reeds','driftwood','fishing-net'],keep:['rock-cluster','stone-marker','weapon-rack'],shrine:['ash-patch','bone-pile','stolen-goods'],foundry:['black-rock','ember-pit','supply-stack']};
-   for(const cfg of configs){let n=z.npcs.find(n=>n.id===cfg.site);const source=R.sites[this.regionIndex(z.id)].find(s=>s[0]===cfg.site);if(!source)continue;const p=this.safe(source[2],source[3],z.id),data={id:cfg.site,name:cfg.name,kind:'dungeon',family:cfg.id,sideDungeon:true,...p,icon:'🏚️'};if(n)Object.assign(n,data);else{n=data;z.npcs.push(n);}for(const [j,structure]of (approach[cfg.theme]||[]).entries()){const a=-.6+j*2.15,q=this.safe(p.x+Math.cos(a)*78,p.y+Math.sin(a)*68,z.id);z.props.push({id:'side-entrance-'+cfg.id+'-'+j,...q,r:0,decorative:true,structure});}}
-   z.sideEntranceVersion=1;
+   const roadNear=(p,margin=50)=>z.roads?.some(path=>path.some((b,j)=>j&&this.distanceToSegment(p,path[j-1],b)<margin)),approach={cellar:['stump','crate','fallen-log'],flooded:['reeds','driftwood','fishing-net'],keep:['rock-cluster','stone-marker','weapon-rack'],shrine:['ash-patch','bone-pile','stolen-goods'],foundry:['black-rock','ember-pit','supply-stack']};
+   for(const cfg of configs){let n=z.npcs.find(n=>n.id===cfg.site);const source=R.sites[this.regionIndex(z.id)].find(s=>s[0]===cfg.site);if(!source)continue;const p=this.safe(source[2],source[3],z.id),data={id:cfg.site,name:cfg.name,kind:'dungeon',family:cfg.id,sideDungeon:true,...p,icon:'🏚️'};if(n)Object.assign(n,data);else{n=data;z.npcs.push(n);}for(const [j,structure]of (approach[cfg.theme]||[]).entries()){const a=-.6+j*2.15,q=this.safe(p.x+Math.cos(a)*78,p.y+Math.sin(a)*68,z.id);if(roadNear(q))continue;z.props.push({id:'side-entrance-'+cfg.id+'-'+j,...q,r:0,decorative:true,structure});}}
+   z.sideEntranceVersion=2;
   }finally{this.s.zone=oldZone;}
  }
  supplyInteriors(z){
-  const room=R.supplyRooms.find(r=>r.region===z.id);if(!room)return;if(z.supplyRoomVersion===4)return;
+  const room=R.supplyRooms.find(r=>r.region===z.id);if(!room)return;if(z.supplyRoomVersion===5)return;
   const oldZone=this.s.zone;this.s.zone=z.id;
   try{
    const center=this.fieldCenter(this.regionIndex(z.id)),off=room.entryOffset||[240,-160],target=this.safe(center.x+off[0],center.y+off[1],z.id),existing=z.npcs.find(n=>n.id==='supply-entrance'),data={...target,id:'supply-entrance',name:room.name,kind:'dungeon',family:room.id,treasury:true,treasuryBoss:room.boss,icon:'🗝️'};
    if(existing)Object.assign(existing,data);else z.npcs.push(data);
    z.props=z.props.filter(p=>!String(p.id||'').startsWith('treasury-approach-'));
-   const dressing={thorn:['fang-trophy','stolen-goods','thorn-bed'],mire:['reed-nest','fish-rack','shell-hoard'],ridge:['trophy-rack','stone-seat','weapon-rack'],cindermaw:['roost','ember-pit','bone-pile']}[room.boss]||[];
-   for(const [j,structure]of dressing.entries()){const a=-.55+j*2.1,q=this.safe(target.x+Math.cos(a)*88,target.y+Math.sin(a)*72,z.id);z.props.push({id:'treasury-approach-'+j,...q,r:0,decorative:true,structure});}
-   z.supplyRoomVersion=4;
+   const roadNear=(p,margin=50)=>z.roads?.some(path=>path.some((b,j)=>j&&this.distanceToSegment(p,path[j-1],b)<margin)),dressing={thorn:['fang-trophy','stolen-goods','thorn-bed'],mire:['reed-nest','fish-rack','shell-hoard'],ridge:['trophy-rack','stone-seat','weapon-rack'],cindermaw:['roost','ember-pit','bone-pile']}[room.boss]||[];
+   for(const [j,structure]of dressing.entries()){const a=-.55+j*2.1,q=this.safe(target.x+Math.cos(a)*88,target.y+Math.sin(a)*72,z.id);if(roadNear(q))continue;z.props.push({id:'treasury-approach-'+j,...q,r:0,decorative:true,structure});}
+   z.supplyRoomVersion=5;
   }finally{this.s.zone=oldZone;}
  }
  localSites(z){
