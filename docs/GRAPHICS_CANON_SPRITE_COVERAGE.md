@@ -89,6 +89,12 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `ashbeast-roost-scene` | PROCEDURAL — composed Ash-beast habitat scene |
 | `crown-logistics-bay` | PROCEDURAL — composed Crown fortress logistics scene |
 | `crown-fortress-checkpoint` | PROCEDURAL — composed final-approach control scene |
+| `citadel-muster` | PROCEDURAL — composed Citadel entrance/muster station |
+| `citadel-command` | PROCEDURAL — composed Citadel command station |
+| `citadel-ritual-array` | PROCEDURAL — composed Citadel ritual-control station |
+| `citadel-barracks-bay` | PROCEDURAL — composed Citadel barracks/training station |
+| `citadel-forge-bay` | PROCEDURAL — composed Citadel forge/supply station |
+| `citadel-boss-approach` | PROCEDURAL — composed Citadel final-approach station |
 | `animal-pen` | GENERATE 194 |
 | `drying-rack` | GENERATE 195/196 by region |
 | `tax-post` | GENERATE 219–223 by region |
