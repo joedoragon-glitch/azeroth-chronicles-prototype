@@ -749,6 +749,26 @@ function bridges(ctx,screen,region=0){
  }
  ctx.restore();
 }
+function dungeonGeometry(ctx,screen,dungeonId=''){
+ const layout=R.dungeonGeometry?.[dungeonId];if(!layout)return;
+ const polygon=(points,color)=>{ctx.fillStyle=color;ctx.beginPath();points.map(screen).forEach((p,j)=>j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.fill();};
+ const outline=(points,color,width=1)=>{const ps=points.map(screen);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();ps.forEach((p,j)=>j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.stroke();};
+ ctx.save();
+ for(const b of layout.blocks||[]){
+  const pts=[{x:b.x1,y:b.y1},{x:b.x2,y:b.y1},{x:b.x2,y:b.y2},{x:b.x1,y:b.y2}];
+  if(b.kind==='void'){
+   polygon(pts,'#171519');outline(pts,'#6f4a43',3);
+   const inset=18,inner=[{x:b.x1+inset,y:b.y1+inset},{x:b.x2-inset,y:b.y1+inset},{x:b.x2-inset,y:b.y2-inset},{x:b.x1+inset,y:b.y2-inset}];polygon(inner,'#211b20');
+   const corners=[[b.x1+22,b.y1+22],[b.x2-22,b.y1+22],[b.x2-22,b.y2-22],[b.x1+22,b.y2-22]];for(const [x,y]of corners){const p=screen({x,y});ctx.fillStyle='#a65e49';ctx.globalAlpha=.35;ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+  }else{
+   const ps=pts.map(screen),drop=13;ctx.fillStyle='#4d4546';ctx.beginPath();ctx.moveTo(ps[1].x,ps[1].y);ctx.lineTo(ps[2].x,ps[2].y);ctx.lineTo(ps[2].x,ps[2].y+drop);ctx.lineTo(ps[1].x,ps[1].y+drop);ctx.closePath();ctx.fill();
+   ctx.fillStyle='#5a4d4e';ctx.beginPath();ctx.moveTo(ps[2].x,ps[2].y);ctx.lineTo(ps[3].x,ps[3].y);ctx.lineTo(ps[3].x,ps[3].y+drop);ctx.lineTo(ps[2].x,ps[2].y+drop);ctx.closePath();ctx.fill();
+   polygon(pts,'#766365');outline(pts,'#9b7c73',2);
+   const mx=(b.x1+b.x2)/2,my=(b.y1+b.y2)/2,p=screen({x:mx,y:my});ctx.strokeStyle='#3f383a';ctx.lineWidth=1;for(const o of [-18,0,18]){ctx.beginPath();ctx.moveTo(p.x-26,p.y+o*.25);ctx.lineTo(p.x+26,p.y+o*.25);ctx.stroke();}
+  }
+ }
+ ctx.restore();
+}
 function roads(ctx,paths,screen,region=0){
  const strip=R.barriers[region].bounds,palettes=[
   {shoulder:'#564834',base:'#8e7758',inner:'#a18b68',seam:'#6f604c'},
@@ -803,6 +823,6 @@ function atmosphere(ctx,canvas,region=0,opts={}){
  ctx.restore();
 }
 function enemyBodyKind(e){if(!e?.species)return 'unknown';const rangedClass=e.ranged&&['mireling','ogre','orc','ashbeast'].includes(e.species);return e.species+(rangedClass?':ranged':'');}
-root.PrototypeVisuals={draw,height,floor,roads,terrain,bridges,atmosphere,allyBodyKind,enemyBodyKind,barracksVisualState};
+root.PrototypeVisuals={draw,height,floor,dungeonGeometry,roads,terrain,bridges,atmosphere,allyBodyKind,enemyBodyKind,barracksVisualState};
 if(typeof module!=='undefined')module.exports=root.PrototypeVisuals;
 })(typeof window!=='undefined'?window:globalThis);
