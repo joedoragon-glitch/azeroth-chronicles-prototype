@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),Campaign=require('../src/prototype/engine.js'),R=require('../src/prototype/rules.js'),Visuals=require('../src/prototype/visuals.js');
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
-assert.equal(typeof Visuals.atmosphere,'function','procedural renderer exposes the regional atmosphere layer');
+assert.equal(typeof Visuals.atmosphere,'function','procedural renderer exposes the regional atmosphere layer');assert.equal(typeof Visuals.dungeonGeometry,'function','procedural renderer exposes authored dungeon geometry');assert.equal(typeof Visuals.dungeonGeometry,'function','procedural renderer exposes visible authored dungeon geometry');
 let passed=0;function test(name,fn){try{fn();passed++;console.log('PASS '+name);}catch(e){process.exitCode=1;console.error('FAIL '+name+' '+e.stack);}}
 
 for(const [i,region] of Campaign.data.regions.entries())test(region.id+' overworld reads as a settled, natural place',()=>{
@@ -65,6 +65,13 @@ test('Frontier procedural props gain deterministic local variants instead of rep
  assert.equal(new Set(recovery).size,recovery.length,'new recovery/occupation prop families have distinct procedural silhouettes');
 });
 
+test('Abyss Bastion depth props have distinct deterministic procedural silhouettes',()=>{
+ const region=3,kinds=['handler-station','feed-crate','containment-post','scorched-floor','egg-cradle','feeding-trough','carcass-rack','claw-scrape','dragon-perch'];
+ const signatures=kinds.map((structure,i)=>visualSignature({id:'abyss-depth-'+i,renderKind:'prop',decorative:true,structure,dungeonDistrict:'test'},region));
+ assert.equal(new Set(signatures).size,kinds.length,'Bastion functional props do not collapse into one generic drawing');
+ const roosts=['abyss-roost-a','abyss-roost-b','abyss-roost-c','abyss-roost-d'].map(id=>visualSignature({id,renderKind:'prop',decorative:true,structure:'roost'},region));assert(new Set(roosts).size>=2,'Abyss roosts vary deterministically');
+ const hatcheries=['abyss-hatch-a','abyss-hatch-b','abyss-hatch-c','abyss-hatch-d'].map(id=>visualSignature({id,renderKind:'prop',decorative:true,structure:'hatchery'},region));assert(new Set(hatcheries).size>=2,'Abyss hatcheries vary deterministically');
+});
 test('Dark Crown reads as a regime with separate districts and distributed outward routes',()=>{
  const c=new Campaign();c.enter('crown');const z=c.zone(),town={x:Campaign.data.towns[4][0],y:Campaign.data.towns[4][1]};
  assert.equal(z.crownLayoutVersion,1);assert.equal(z.roadVersion,10);assert.equal(z.destinationLayoutVersion,4);
@@ -85,6 +92,14 @@ function visualSignature(entity,region){
  const log=[],target={};const ctx=new Proxy(target,{get(o,p){if(p in o)return o[p];return (...args)=>{log.push([String(p),...args.map(v=>typeof v==='number'?Math.round(v*100)/100:v)]);};},set(o,p,v){o[p]=v;log.push(['set',String(p),v]);return true;}});
  Visuals.draw(ctx,entity,{x:0,y:0},region,false);return JSON.stringify(log);
 }
+function dungeonGeometrySignature(id){
+ const log=[],target={},ctx=new Proxy(target,{get(o,p){if(p in o)return o[p];return (...args)=>{log.push([String(p),...args.map(v=>typeof v==='number'?Math.round(v*100)/100:v)]);};},set(o,p,v){o[p]=v;log.push(['set',String(p),v]);return true;}});
+ Visuals.dungeonGeometry(ctx,p=>({x:p.x,y:p.y}),id);return JSON.stringify(log);
+}
+test('Abyss collision masses are explicitly rendered instead of existing as invisible blockers',()=>{
+ const signature=dungeonGeometrySignature('abyss');assert(signature.length>200,'Abyss geometry emits visible canvas work');assert(signature.includes('lineTo')&&signature.includes('fill'),'fortress masses have filled visible geometry');
+});
+
 test('military Ringleaders read as officers without changing body scale',()=>{
  for(const species of ['orc','archer','crownguard']){
   const base={id:'rank-'+species,species,name:species,renderKind:'enemy',type:'mob',form:'normal',ranged:species!=='orc'},lead={...base,form:'ringleader'};
