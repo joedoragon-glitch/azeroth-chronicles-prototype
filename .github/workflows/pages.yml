@@ -22,6 +22,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Install locked development tools
+        run: npm ci --ignore-scripts
+      - name: Check formatting
+        run: npm run format:check
+      - name: Check generated entries and all published JavaScript
+        run: npm run check
       - name: Fast gameplay, save and UI regressions
         run: npm run test:quick
       - name: Use runner Chrome for browser smoke tests
@@ -38,9 +44,10 @@ jobs:
           BROWSER_SMOKE: '1'
         run: node tests/prototype-browser.test.cjs
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()
         with:
           name: pr-smoke-screenshots
+          retention-days: 3
           path: test-results/
           if-no-files-found: ignore
 
@@ -52,6 +59,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Install locked development tools
+        run: npm ci --ignore-scripts
+      - name: Check formatting
+        run: npm run format:check
+      - name: Check generated entries and all published JavaScript
+        run: npm run check
       - name: Full regression suite
         run: npm test
       - name: Use runner Chrome for full browser matrix
@@ -66,18 +79,14 @@ jobs:
       - name: Test full desktop and mobile matrix
         run: node tests/prototype-browser.test.cjs
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()
         with:
           name: app-screenshots
+          retention-days: 3
           path: test-results/
           if-no-files-found: ignore
       - name: Prepare app files
-        run: |
-          mkdir _site
-          cp index.html rts.html manifest.webmanifest sw.js _site/
-          cp legacy.html prototype.html _site/
-          cp -R styles src icons assets _site/
-          printf '%s\n' "$GITHUB_SHA" > _site/build.txt
+        run: node scripts/build.cjs --check --site
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

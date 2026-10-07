@@ -17,5 +17,5 @@ test('Full prototype campaign can gather, recruit, cross river and defeat both b
  for(const enemy of s.enemies.slice(3)){s.selected=fighters();E.order(s,enemy);tick(s,20);assert.equal(enemy.hp,0);}
  s.selected=fighters();E.order(s,s.fortress);tick(s,15);assert.equal(s.result,'victory');});
 test('Recruits from a riverside barracks spawn on walkable ground',()=>{const s=E.create();peaceful(s);s.buildings.push({id:4,x:710,y:400,progress:4,queue:.01});s.nextId=5;tick(s,.05);assert(E.walkable(s.units[3]));});
-test('Deployment packages both RPG and RTS entry points',()=>{const fs=require('fs'),path=require('path');const workflow=fs.readFileSync(path.join(__dirname,'../.github/workflows/pages.yml'),'utf8');assert.match(workflow,/cp index\.html rts\.html manifest\.webmanifest sw\.js _site\//);});
-console.log(`\n${count} RTS checks passed.`);
+test('Deployment packages both Campaign and historical RTS through the asset inventory',()=>{const fs=require('fs'),path=require('path'),cp=require('child_process'),root=path.resolve(__dirname,'..');const workflow=fs.readFileSync(path.join(root,'.github/workflows/pages.yml'),'utf8');assert.match(workflow,/node scripts\/build\.cjs --check --site/);cp.execFileSync(process.execPath,['scripts/build.cjs','--check','--site'],{cwd:root});for(const file of ['index.html','phone.html','rts.html','legacy.html','src/rts-engine.js','src/rts.js','src/prototype/world.js','src/prototype/renderer.js','sw.js'])assert(fs.existsSync(path.join(root,'_site',file)),file);});
+console.log(count+' RTS checks passed.');
