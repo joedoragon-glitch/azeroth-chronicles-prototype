@@ -236,6 +236,7 @@ const quests=[
  quest('rescue','citadel'),quest('patrol',8),quest('rescue','cindermaw'),quest('bundles',3),quest('sites',null,['foundry','shelf','crown-barracks','siege']),quest('sites',null,['fortress-gate'])
 ];
 for(const [index,family]of [[0,'thorn'],[6,'mire'],[12,'ridge'],[18,'warlord'],[26,'cindermaw']])quests[index].clear='field-'+family;
+quests[29].requiresRescues=['cindermaw','citadel'];
 // The renderer and collision engine share these exact boundaries and crossing gaps.
 const barriers=[
  {kind:'water',bounds:[1160,1240,0,2700],gaps:[[660,840],[1660,1840]]},
