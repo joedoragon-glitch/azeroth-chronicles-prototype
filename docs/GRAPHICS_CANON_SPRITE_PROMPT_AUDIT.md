@@ -1,150 +1,153 @@
-# Phase 2A — Sprite prompt catalog audit
+# Phase 2A — Canon Sprite Prompt Catalog Audit
 
 ## Result
 
-The prompt catalog in `GRAPHICS_CANON_SPRITE_PROMPTS.md` is the authoritative input for the next image-generation phase.
+**PASS after corrections.**
 
-The audited catalog contains:
+The authoritative generation document is `docs/GRAPHICS_CANON_SPRITE_PROMPTS.md`.
 
-- **131 documented entries**
-- **122 entries approved for one-at-a-time sprite generation**
-- **9 entries explicitly retained as procedural and not generated**
+It contains **160 numbered entries**:
 
-No sprite is activated in the game during this phase.
+- **144 GENERATE** — unique canonical sprite images to produce one at a time.
+- **6 ALIAS** — no new image; reuse an already generated canonical body.
+- **10 KEEP PROCEDURAL** — no sprite; the procedural renderer remains the intended final treatment.
 
-## Audit method
+Automated structure checks confirm:
 
-The initial 110-entry roster was checked back against:
+- IDs 001–160 are complete with no gaps.
+- No duplicate IDs remain.
+- Every GENERATE entry contains the mandatory one-image instruction.
+- Every GENERATE entry requires a transparent background.
+- No GENERATE prompt contains the retired external-style references.
+- No entry requires a sprite sheet, comparison sheet, scene, or multiple options.
 
-1. the current production branches in `src/prototype/visuals.js`;
-2. authored species, bosses, sites, strongholds and region data;
-3. ranged/hybrid/captain rules where they clarify what the visible procedural body represents;
-4. the sprite key/fallback architecture in `src/prototype/sprites.js`.
+## Canon source reviewed
 
-The audit used a strict rule: **mechanical distinction alone does not justify a new sprite.** A distinct raster candidate requires a distinct canonical visual body or a clearly authored static visual identity.
+The audit compared the prompt catalog against:
 
-## Corrections made
+1. `src/prototype/visuals.js` — authoritative static shape, palette, equipment, anatomy, architecture and prop geometry.
+2. `src/prototype/rules.js` — regional identity, ranged/hybrid profiles, strongholds, Treasuries, side interiors, authored sites and service roles.
+3. `src/prototype/data.js` — boss/specialist names, regional biome identity and gameplay role.
+4. `docs/GRAPHICS_OVERHAUL_PHASE1.md` — canon-preservation and selective-conversion rules.
 
-### Hero / companion accuracy
+Older generated images and concept sheets were not used as canon.
 
-The Ranger prompt was corrected to retain all visual details already present in the canonical ranger body, including the small teal left-side flask/pouch and restrained pale-green/gold utility accent.
+## Corrections made during audit
 
-The companion Archer/Ranger support prompt was also corrected. The production renderer uses `human('ranger')` for that companion, not the simpler `human('archer')` enemy body. The companion therefore retains the ranger-body flask/pouch and utility accent while omitting only the separate hero-layer additions.
+### Duplicate gameplay identities that do not justify new art
 
-### Mechanical variants that do not have separate canonical bodies
+These entries are aliases, not separate generations:
 
-The following initial candidates are now marked **KEEP PROCEDURAL — DO NOT GENERATE**:
+- **023 Raider Archer → 005 Companion Archer.** The production renderer uses the same `human('archer')` body.
+- **030 Mireling spitter → 018 Mireling.** Ranged behavior changes projectiles/AI only.
+- **032 Ogre stone thrower → 021 Ogre.** The static body does not change.
+- **033 Orc axe thrower → 022 Orc.** The thrown axe is a runtime projectile; the body still carries its canonical sword.
+- **034 Ash-beast cinder spitter → 024 Ash beast.** The cinder attack is runtime-only.
+- **049 Dreadmaw → 024 Ash beast.** Current `captainFinish()` has no `cindermaw` body-ornament branch; Dreadmaw's current visual distinction is captain scale/runtime treatment rather than a separate static design.
 
-- Mireling spitter hybrid
-- Ogre stone-thrower hybrid
-- Orc axe-thrower hybrid
-- Ash-beast cinder-spitter hybrid
+An exact gameplay sprite key can still reference the aliased image during implementation where variant safety requires it.
 
-In each case, the production renderer uses the same static body as the ordinary form. Their ranged identity comes from runtime aiming/projectile behavior. Creating a different body sprite would invent visual canon.
+### Missing major static structures added
 
-The Reed-beast spitter remains a sprite candidate because the renderer does add a small hybrid-specific mouth/projection cue.
+The first roster undercounted regional service structures. The audited catalog adds separate prompts for all five regional visual families of:
 
-Goblin slinger and Skeleton bow remain candidates because the renderer visibly changes their static weapon/equipment presentation.
+- quest board;
+- supplier;
+- recruiter/Captain post;
+- refuge/rest building.
 
-### Dreadmaw
+That adds entries **111–130**.
 
-Dreadmaw is mechanically named and distinct, but the current renderer has no `cindermaw` branch in `captainFinish`. Its visible body is therefore only the ordinary Ash-beast body at captain scale plus procedural captain treatment.
+These are sprite-worthy because they are persistent, identity-heavy settlement structures and their regional construction is already authored visually.
 
-Dreadmaw is marked **KEEP PROCEDURAL — DO NOT GENERATE** until the canonical renderer itself gives Dreadmaw a distinct static visual identity. Image generation must not solve that gap by invention.
+### Shared occupied-interior entrance added
 
-### Repeated regional props
+Entry **131** captures the single canonical compact side-interior entrance visual. It is one generated body, not five invented regional redesigns.
 
-The following were removed from sprite production and retained procedurally:
+### Repeated regional clutter kept procedural
 
-- Market stand
-- Command tent
-- Training dummy
-- Weapon rack
+The following were explicitly rejected as sprite families after checking their renderer behavior:
 
-Their renderer depends on region-sensitive materials and/or they are repeated functional clutter. A single sprite would flatten canonical regional variation; producing a large variant family would provide too little payoff.
+- market stands;
+- command tents;
+- training dummies;
+- weapon racks.
 
-### Missing town-service visuals added
+They are repeated dressing and/or use region-dependent procedural material colors. Entries **094, 097, 102, 103, 132–137** are therefore marked **KEEP PROCEDURAL** rather than multiplying static variants.
 
-The first roster omitted four important purpose-specific structures that are explicitly authored by the procedural renderer:
+### Identity-bearing props promoted
 
-- Refuge / rest house
-- Supplier stall
-- Town Captain / recruiter post
-- Quest board
+The first roster was too conservative about places whose domestic/work details are part of their identity. The audit adds sprite prompts for selected fixed-shape props that materially define Treasuries, strongholds and dungeons:
 
-Each has a regional treatment in all five regions. The audit therefore added **20 prompts**, one exact region/role combination for each.
+- Thorn bed;
+- Vale fang trophy;
+- root table;
+- treasure hoard;
+- boss chest;
+- Mire pool;
+- reed nest;
+- shell hoard;
+- drift seat;
+- Ridge hearth;
+- stone seat;
+- Highland trophy rack;
+- Ash-beast roost;
+- Abyss hatchery;
+- Archive scribe desk;
+- Crypt ossuary;
+- Vale grave lamp;
+- Vale caretaker table;
+- Highland ore cart;
+- Highland stone marker;
+- Greenwood pup nest;
+- March mud nest;
+- March wallow.
 
-These are high-value sprite candidates because they are persistent named services, use distinct silhouettes, and materially affect how settlements read.
+These are entries **138–160**.
 
-### Citadel preparation fountain added
+They are still generated one at a time and may not acquire extra lore/detail.
 
-The Citadel preparation fountain is a unique persistent interactable with its own authored visual body. It was missing from the first roster and is now included as prompt 131.
+## Visual systems intentionally excluded from image generation
 
-### Named places versus literal names
+These were reviewed and remain procedural by design:
 
-Some place names describe more than their current outdoor marker depicts. The prompt catalog follows the renderer, not the semantic temptation of the name.
+- terrain planes and large biome fills;
+- roads and road edges;
+- rivers, ponds, water shimmer, lava and channels;
+- bridges/crossing geometry;
+- collision walls, fences, palisades and repeated structural segments;
+- actor ground shadows;
+- night darkness and local light pools;
+- pollen, mist, dust, ash, sparks and atmosphere;
+- telegraphs and hazard-warning geometry;
+- projectile travel and moving attack objects;
+- hit/heal/mana/swing/Guard and other timed VFX;
+- TRUE, ringleader and frenzy overlays;
+- health/mana bars, labels, quest punctuation and UI;
+- active construction progress for barracks;
+- small repetitive clutter such as generic crates, barrels, rations, ordinary bone piles, sleep rolls, grass tufts and similar dressing;
+- animated/fire-like dressing where the procedural treatment is more useful than a frozen asset.
 
-Examples:
+## Variant decisions
 
-- **Drowned Watchhouse** is generated from the actual simple timber watch structure, not invented as a full house.
-- **Old Signal Keep** is generated from the actual rock-and-banner lookout marker, not invented as a castle/keep.
+- TRUE bosses reuse the approved normal boss body with procedural TRUE treatment.
+- Ringleaders reuse the exact approved underlying species/role body with procedural elite/frenzy treatment.
+- Guardian variants remain procedural until a later implementation decision proves that their small guard cue needs a dedicated static sprite rather than procedural overlay/fallback.
+- Cage framing remains procedural so specialists can be composed inside closed cages and the same framing can open after rescue.
+- Completed Full Barracks do not receive separate art in this phase because the current renderer does not draw a distinct full-versus-basic completed body. One regional completed-barracks body remains canon until the renderer itself establishes a visual difference.
 
-This rule applies everywhere: **the name may clarify identity, but it cannot expand the sprite beyond the visible procedural canon.**
+## Generation-phase rule
 
-## Intentionally procedural systems
+The next phase is deliberately mechanical:
 
-The following remain procedural by design and have no sprite prompts:
+1. Read one numbered entry from `GRAPHICS_CANON_SPRITE_PROMPTS.md`.
+2. If status is GENERATE, send **only that entry's prompt** to image generation.
+3. Produce **one image and one sprite only**.
+4. Do not generate a board, comparison, sheet, variations, turnarounds, scene or extra objects.
+5. Do not use earlier generated images as design authority.
+6. Move to the next numbered GENERATE entry only after the current generation completes.
+7. ALIAS and KEEP PROCEDURAL entries are skipped.
+8. No generated image enters `assets/sprites/manifest.json` during production.
+9. Phase 2B audits the completed candidate library against procedural canon before implementation.
 
-- terrain planes and biome ground;
-- roads, rivers, ponds, lava and crossings;
-- repeated collision walls, fences, stockades, palisades and pillars;
-- ground shadows;
-- atmosphere and night lighting;
-- attack telegraphs and hazard warnings;
-- projectiles and thrown/moving weapons;
-- hit, heal, mana, swing, Guard and other timed combat VFX;
-- TRUE, Ringleader and Frenzy treatments;
-- labels, health/mana bars, targeting and UI;
-- cage open/closed framing;
-- Treasury quest-cache crates and other generic bundle boxes;
-- Dark Lord Tribute nodes;
-- generic mini-site gateway markers;
-- construction-state barracks;
-- repeated small clutter not specifically promoted by the prompt catalog.
-
-## Guard variants
-
-Guard enemies have small procedural guard identifiers, and Skeleton guards additionally gain a shield treatment.
-
-They are **not** being mass-generated as separate body sprites in Phase 2A. During implementation, either:
-
-1. guard identifiers should remain procedural overlays on approved species sprites, or
-2. guard entities should continue using the full procedural renderer until an exact guard-sprite strategy is deliberately approved.
-
-The image-generation phase must not invent guard armor to solve this.
-
-## Barracks states
-
-The sprite registry distinguishes construction/basic/full keys, but the current completed procedural Barracks drawing does not establish a separate full-barracks body design.
-
-Phase 2A therefore generates the completed regional Barracks body only. Construction remains procedural. A separate full sprite is not created unless a future canonical renderer change first makes Full Barracks visually distinct.
-
-## Generation procedure locked for the next phase
-
-For every approved prompt:
-
-1. select exactly one catalog entry;
-2. use its complete image-generation prompt;
-3. generate exactly one isolated sprite and nothing else;
-4. do not make a sprite sheet, comparison board, turnaround, alternate costume, alternate pose or multiple-option image;
-5. do not infer missing design details;
-6. store the candidate outside the live manifest;
-7. move to the next entry only after the current sprite exists.
-
-The production phase is allowed to create the whole candidate library before visual approval. **Approval and implementation remain separate later phases.**
-
-## Final audit conclusion
-
-The prompt catalog is now suitable to drive sprite production without requiring art-direction improvisation during generation.
-
-If a future generation request cannot be answered directly from an audited prompt, that asset returns to documentation/audit. The generator does not fill the gap creatively.
+If image generation cannot satisfy an entry without inventing information, stop that entry and return it to documentation instead of improvising.
