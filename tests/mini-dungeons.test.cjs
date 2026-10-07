@@ -22,7 +22,7 @@ test('Field compound guardians and the captive remain part of the regional speci
 });
 
 test('Pending field-compound ringleaders prevent clear and retain mini identity with reduced rewards',()=>{
- const c=new C('normal','paladin',()=>.2),z=c.zone(),m=z.minis[0],guards=z.enemies.filter(e=>e.mini===m.id),counts=new Map();for(const e of guards)counts.set(e.species,(counts.get(e.species)||0)+1);const species=[...counts].find(([,n])=>n>=2)?.[0],pair=guards.filter(e=>e.species===species).slice(0,2);assert.equal(pair.length,2);
+ const c=new C('normal','paladin',()=>.2),z=c.zone(),m=z.minis[0],boss=z.enemies.find(e=>e.family===m.family&&e.form==='normal'),guards=z.enemies.filter(e=>e.mini===m.id),counts=new Map();kill(c,boss,false);for(const e of guards)counts.set(e.species,(counts.get(e.species)||0)+1);const species=[...counts].find(([,n])=>n>=2)?.[0],pair=guards.filter(e=>e.species===species).slice(0,2);assert.equal(pair.length,2);
  pair.forEach(e=>kill(c,e,true));assert(Object.values(c.s.pending).some(p=>p.base.mini===m.id));for(const e of guards.filter(e=>e.hp>0))kill(c,e,false);c.checkMinis();assert(!m.cleared,'pending guardian ringleader keeps compound contested');
  c.updateElites(3);const elites=z.enemies.filter(e=>e.form==='ringleader'&&e.mini===m.id);assert(elites.length>=1);elites.forEach(e=>{assert(e.guard);assert(e.gold<=Math.floor((4+8)/2*.35)*1.5+1e-9);assert(e.xp<=4*1.5+1e-9);kill(c,e,false);});c.updateElites(.1);c.checkMinis();assert(m.cleared);
 });
