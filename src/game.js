@@ -212,7 +212,7 @@
         let groundLoot = [];
         function spawnLoot(wx, wy, goldAmount) {
             groundLoot.push({
-                wx, wy, region:activeRegion, gold: goldAmount, name: `${goldAmount}g Monedas de Oro`, icon: '🪙'
+                wx, wy, region:activeRegion, gold: goldAmount, name: `${goldAmount} crowns`, icon: '🪙'
             });
         }
 
@@ -522,7 +522,7 @@
                 if (dist <= 75) {
                     player.gold += loot.gold;
                     AudioSys.playGold();
-                    addFloatingText(`+${loot.gold}g Oro Recogido`, player.wx, player.wy, '#facc15');
+                    addFloatingText(`+${loot.gold} crowns recogidas`, player.wx, player.wy, '#facc15');
                     groundLoot.splice(i, 1);
                     return;
                 }
@@ -836,7 +836,7 @@
 
         function shopStock(){const tier=npcs.find(n=>n.id===activeMerchant)?.shopTier||0;return shopCatalog.filter(i=>(i.tier||0)<=tier);}
         function renderShopUI() {
-            document.getElementById('shop-player-gold').innerText = `${player.gold}g`;
+            document.getElementById('shop-player-gold').innerText = `${player.gold} crowns`;
             const container = document.getElementById('shop-item-list');
             container.innerHTML = '';
             menuIndex = Math.max(0, Math.min(shopStock().length - 1, menuIndex));
@@ -856,7 +856,7 @@
                         </div>
                     </div>
                     <div class="text-right">
-                        <div class="text-yellow-400 font-bold text-sm">🪙 ${item.cost}g</div>
+                        <div class="text-yellow-400 font-bold text-sm">🪙 ${item.cost} crowns</div>
                         <span class="text-[10px] ${player.gold >= item.cost ? 'text-green-400 font-bold' : 'text-red-400'}">${item.type === 'gear' && inventory.some(i => i.name === item.name) ? 'Ya lo tienes' : '[ENTER] Comprar'}</span>
                     </div>
                 `;
@@ -904,7 +904,7 @@
                         </div>
                     </div>
                     <div class="text-right">
-                        <div class="text-yellow-400 font-bold text-sm">🪙 ${curLvl >= limit ? 'Máximo' : upg.cost * curLvl + 'g'}</div>
+                        <div class="text-yellow-400 font-bold text-sm">🪙 ${curLvl >= limit ? 'Máximo' : upg.cost * curLvl + ' crowns'}</div>
                         <span class="text-[10px] ${player.gold >= upg.cost * curLvl ? 'text-green-400 font-bold' : 'text-red-400'}">${curLvl >= limit ? 'Límite del maestro' : '[ENTER] Entrenar'}</span>
                     </div>
                 `;
@@ -916,7 +916,7 @@
         function renderExpeditionUI(){
             const m=expeditionData[activeExpedition],q=expeditionState[activeExpedition],done=m.targets.every(id=>dungeonCleared[id]);
             document.getElementById('expedition-title').textContent=m.name;
-            document.getElementById('expedition-desc').textContent=m.targets.map(id=>{const d=RPG_DUNGEONS.find(d=>d.id===id);return `${d.name} · Nv ${d.level}: ${dungeonCleared[id]?'despejada':'pendiente'}`;}).join(' · ')+` Recompensa: ${m.gold}g y ${m.xp} XP. `+(activeExpedition==='front'?'Cuando termines, busca al Guardián y al Maestro de las Cumbres (3050, 1050).':'La Ciudadela exige buen equipo y poderes avanzados. Sus trampas avisan; el Centinela abre su coraza después de cada impacto.');
+            document.getElementById('expedition-desc').textContent=m.targets.map(id=>{const d=RPG_DUNGEONS.find(d=>d.id===id);return `${d.name} · Nv ${d.level}: ${dungeonCleared[id]?'despejada':'pendiente'}`;}).join(' · ')+` Recompensa: ${m.gold} crowns y ${m.xp} XP. `+(activeExpedition==='front'?'Cuando termines, busca al Guardián y al Maestro de las Cumbres (3050, 1050).':'La Ciudadela exige buen equipo y poderes avanzados. Sus trampas avisan; el Centinela abre su coraza después de cada impacto.');
             const button=document.getElementById('expedition-action');button.disabled=q.rewarded||(q.active&&!done);button.textContent=q.rewarded?'He ofrecido todo mi encargo. Sigue hacia las cumbres.':!q.active?'Aceptar expedición · F':done?'Cobrar recompensa · F':'Expedición en curso';
         }
         function handleExpeditionAction(){
@@ -981,7 +981,7 @@
                 player.gold += 60;
                 addXp(120);
                 AudioSys.playGold();
-                addFloatingText("+60g +120XP Recompensa", player.wx, player.wy, '#eab308');
+                addFloatingText("+60 crowns +120XP Recompensa", player.wx, player.wy, '#eab308');
                 closeAllWindows();
             }
         }
@@ -1045,7 +1045,7 @@
                     addFloatingText(`Comprado: ${item.name}`, player.wx, player.wy, '#eab308');
                     renderShopUI();
                 } else if (item) {
-                    addFloatingText('Necesitas más oro.', player.wx, player.wy, '#fde047');
+                    addFloatingText('Necesitas más crowns.', player.wx, player.wy, '#fde047');
                 }
             } else if (activeWindow === 'trainer') {
                 const upg = spellUpgrades[menuIndex];
@@ -1059,7 +1059,7 @@
                     addFloatingText(`¡Habilidad Nivel ${player.spellLevels[upg.num]}!`, player.wx, player.wy, '#c084fc');
                     renderTrainerUI();
                 } else {
-                    addFloatingText('Necesitas más oro.', player.wx, player.wy, '#fde047');
+                    addFloatingText('Necesitas más crowns.', player.wx, player.wy, '#fde047');
                 }
             } else if (activeWindow === 'quest') {
                 handleQuestAction();
@@ -1079,7 +1079,7 @@
             if (enemy.id === 5) { bossDefeated = true; addFloatingText('¡Señor Demonio derrotado! El ciclo de la demo está completo.', player.wx, player.wy, '#facc15'); }
             if(enemy.region&&!dungeonCleared[enemy.region]&&enemies.filter(e=>e.region===enemy.region).every(e=>e.hp<=0)){
                 const d=RPG_DUNGEONS.find(d=>d.id===enemy.region);dungeonCleared[d.id]=true;player.gold+=d.gold;addXp(d.xp);
-                addFloatingText(`¡${d.name} despejada! +${d.gold}g · +${d.xp} XP`,player.wx,player.wy,'#facc15');
+                addFloatingText(`¡${d.name} despejada! +${d.gold} crowns · +${d.xp} XP`,player.wx,player.wy,'#facc15');
             }
             AudioSys.playGold();
             spawnLoot(enemy.wx, enemy.wy, enemy.gold);
@@ -1369,7 +1369,7 @@
                 const loot = groundLoot[i];
                 if (Math.hypot(player.wx - loot.wx, player.wy - loot.wy) <= 45) {
                     player.gold += loot.gold; groundLoot.splice(i, 1); AudioSys.playGold();
-                    addFloatingText(`+${loot.gold}g Oro`, player.wx, player.wy, '#facc15');
+                    addFloatingText(`+${loot.gold} crowns Oro`, player.wx, player.wy, '#facc15');
                 }
             }
 
@@ -1450,7 +1450,7 @@
                 slot.classList.toggle('buff-active', k === '4' && player.shieldActive);
             }
             document.getElementById('ui-player-level').innerText = player.level;
-            document.getElementById('ui-gold-text').innerText = `🪙 ${player.gold}g`;
+            document.getElementById('ui-gold-text').innerText = `🪙 ${player.gold} crowns`;
             document.getElementById('ui-hp-bar').style.width = `${(player.hp / player.maxHp) * 100}%`;
             document.getElementById('ui-hp-text').innerText = `${Math.round(player.hp)} / ${player.maxHp}`;
             document.getElementById('ui-mp-bar').style.width = `${(player.mp / player.maxMp) * 100}%`;
@@ -1667,8 +1667,8 @@
             let text;
             if(activeRegion!=='world'){const d=RPG_DUNGEONS.find(d=>d.id===activeRegion);const alive=enemies.filter(inRegion).filter(e=>e.hp>0).length;text=`${d.name} · Nv ${d.level} · ${alive} enemigos. Trampas: ámbar avisa, rojo daña. ${dungeonCleared[d.id]?'Despejada.':''} Salida 🚪: E.`;}
             else if (!questState.active) text = 'Habla con el comandante de la villa. Usa Interactuar o E; consulta el mapa en el menú.';
-            else if (!questState.completed) text = `Protege la villa: ${questState.currentKills}/${questState.requiredKills} enemigos comunes. Recoge su oro.`;
-            else if (!questState.rewardClaimed) text = 'Vuelve al comandante para cobrar: 120 XP + 60g.';
+            else if (!questState.completed) text = `Protege la villa: ${questState.currentKills}/${questState.requiredKills} enemigos comunes. Recoge sus crowns.`;
+            else if (!questState.rewardClaimed) text = 'Vuelve al comandante para cobrar: 120 XP + 60 crowns.';
             else if (!bossDefeated) text = 'Cripta Nv 3 → maestros de frontera Nv 6 → Bastión Nv 10 → Cumbres y Ciudadela Nv 15. Forma tu escuadrón; mapa Z.';
             else text = `Mazmorras despejadas: ${Object.keys(dungeonCleared).length}/4. Cripta Nv 3 · Mina Nv 6 · Bastión Nv 10. Ciudadela Nv 15. Busca entradas y maestros en Z.`;
             if (objective.textContent !== text) objective.textContent = text;
@@ -1676,7 +1676,7 @@
             const loot = groundLoot.filter(inRegion).find(l => Math.hypot(player.wx - l.wx, player.wy - l.wy) <= 75);
             const npc = npcs.filter(inRegion).find(n => Math.hypot(player.wx - n.wx, player.wy - n.wy) <= 90);
             document.getElementById('mini-map-button').setAttribute('aria-label',activeRegion==='world'?'Abrir mapa del mundo':'Abrir mapa de la mazmorra');
-            const prompt = loot ? 'Interactuar: recoger oro · también se recoge al acercarte' : (npc ? 'Interactuar: ' + npc.name : '');
+            const prompt = loot ? 'Interactuar: recoger crowns · también se recoge al acercarte' : (npc ? 'Interactuar: ' + npc.name : '');
             if (hint.textContent !== prompt) hint.textContent = prompt;
         }
         function clearMovement() {
@@ -1807,7 +1807,7 @@
                     hp: number(e.hp, 0, base.maxHp), respawnRemaining: number(e.respawnRemaining, 0, base.type === 'boss' ? 30 : 8), attackCd: number(e.attackCd, 0, 1.8), aggro: false, returning: false, telegraph: null, smashCd: 2 };
             });
             const loot = data.loot.map(l => ({ wx: number(l.wx, 0, MAP_WORLD_SIZE), wy: number(l.wy, 0, MAP_WORLD_SIZE),
-                region:validateRegion(l.region||'world'),gold: number(l.gold, 0, 1e9, true), icon: '🪙', name: `${l.gold}g Monedas de Oro` }));
+                region:validateRegion(l.region||'world'),gold: number(l.gold, 0, 1e9, true), icon: '🪙', name: `${l.gold} crowns` }));
             const region=validateRegion(data.activeRegion||'world');
             const restoredSquad=typeof Squad!=='undefined'?Squad.validate(data.squad,restored.level,region):null;
             const restoredSprint=typeof Sprint!=='undefined'&&Sprint.enabled?Sprint.validate(data.sprint):null;

@@ -42,7 +42,7 @@
         const worker=s.units.find(u=>u.hp>0&&u.type==='worker'&&s.selected.includes(u.id));
         if(!worker){s.message='Selecciona un trabajador para construir.';return false;}
         if(s.buildings.length>=30){s.message='Límite del prototipo: 30 cuarteles.';return false;}
-        if(s.gold<COST){s.message='El cuartel cuesta 50 recursos. Ordena recolectar en el bosque.';return false;}
+        if(s.gold<COST){s.message='El cuartel cuesta 50 crowns. Ordena recolectar en el bosque.';return false;}
         if(!walkable(p)||![-30,30].every(dx=>[-30,30].every(dy=>walkable({x:p.x+dx,y:p.y+dy})))||p.x<40||p.y<40||p.x>W-40||p.y>H-40||distance(p,s.base)<65||distance(p,s.camp)<75||distance(p,s.fortress)<85||s.nodes.some(n=>distance(p,n)<65)||s.buildings.some(b=>distance(p,b)<70)) {s.message='Busca un espacio libre para el cuartel.';return false;}
         const b={id:s.nextId++,x:p.x,y:p.y,progress:0,worker:worker.id,queue:0};s.buildings.push(b);s.gold-=COST;s.selectedNPC=null;
         worker.order={kind:'build',id:b.id};s.selectedBuilding=b.id;s.message='El trabajador irá al lugar y construirá el cuartel.';return true;
@@ -52,7 +52,7 @@
         if(s.result)return false;
         if(!b){s.message='Selecciona un cuartel terminado para reclutar.';return false;}
         if(b.queue>0){s.message='Ya hay un soldado en preparación.';return false;}
-        if(s.gold<TRAIN){s.message='Necesitas 30 recursos para reclutar.';return false;}
+        if(s.gold<TRAIN){s.message='Necesitas 30 crowns para reclutar.';return false;}
         if(s.units.filter(u=>u.hp>0).length+s.buildings.filter(b=>b.queue>0).length>=12){s.message='Límite del prototipo: 12 unidades.';return false;}
         s.gold-=TRAIN;b.queue=3;s.message='Reclutando un soldado (3 segundos).';return true;
     }
@@ -107,7 +107,7 @@
                 else if(e.cd===0){t.hp=Math.max(0,t.hp-(e.type==='boss'?16:e.type==='orc'?10:e.type==='captain'?12:7));e.cd=1;}
                 if(e.type==='boss'&&e.warning===0){e.burst-=dt;if(e.burst<=0){e.warning=1.25;s.message='¡El jefe prepara un golpe de área! Aleja las tropas del círculo rojo.';}}}
         }
-        for(const town of s.towns){if(!town.owned&&s.camp.hp===0&&s.units.some(u=>u.hp>0&&distance(u,town)<80)){town.owned=true;s.gold+=50;s.message='Poblado de frontera recuperado: +50 recursos y refugio para tus tropas.';}if(town.owned)for(const u of s.units)if(u.hp>0&&distance(u,town)<70&&!s.enemies.some(e=>e.hp>0&&distance(e,town)<160))u.hp=Math.min(u.maxHp,u.hp+3*dt);}
+        for(const town of s.towns){if(!town.owned&&s.camp.hp===0&&s.units.some(u=>u.hp>0&&distance(u,town)<80)){town.owned=true;s.gold+=50;s.message='Poblado de frontera recuperado: +50 crowns y refugio para tus tropas.';}if(town.owned)for(const u of s.units)if(u.hp>0&&distance(u,town)<70&&!s.enemies.some(e=>e.hp>0&&distance(e,town)<160))u.hp=Math.min(u.maxHp,u.hp+3*dt);}
         s.selected=s.selected.filter(id=>s.units.some(u=>u.id===id&&u.hp>0));
         if(s.camp.hp===0&&s.fortress.hp===0&&!s.enemies.some(e=>e.hp>0)&&s.towns[1].owned&&s.buildings.some(b=>b.progress>=4)){s.result='victory';s.message='¡Victoria! Recuperaste la frontera y derrotaste la fortaleza.';}
         else if(!s.units.some(u=>u.hp>0)){s.result='defeat';s.message='No quedan unidades. Reinicia y reúne un grupo mayor.';}
@@ -117,7 +117,7 @@
         if(s.result)return false;const id=s.selectedNPC,cost=id==='upgrade'?60:id==='frontRecruit'?45:20,town=id?.startsWith('front')?s.towns[1]:s.base;
         if(id?.startsWith('front')&&!s.towns[1].owned){s.message='Recupera primero el poblado de frontera.';return false;}
         if(!id)return false;if(id==='upgrade'&&s.upgrade){s.message='La mejora del herrero ya está activa.';return false;}
-        if(s.gold<cost){s.message=`Necesitas ${cost} recursos.`;return false;}
+        if(s.gold<cost){s.message=`Necesitas ${cost} crowns.`;return false;}
         if(['recruit','frontRecruit'].includes(id)&&s.units.filter(u=>u.hp>0).length+s.buildings.filter(b=>b.queue>0).length>=12){s.message='Límite del prototipo: 12 unidades.';return false;}
         if(['heal','frontHeal'].includes(id)&&!s.units.some(u=>u.hp>0&&u.hp<u.maxHp&&distance(u,town)<160)){s.message='Acerca al poblado una unidad herida.';return false;}
         s.gold-=cost;if(id==='recruit'){s.units.push(unit(s.nextId++,'worker',100,450));s.message='Un trabajador se une al grupo.';}

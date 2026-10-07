@@ -59,19 +59,19 @@ const Squad = (() => {
     function hire(type){if(isGamePaused()&&activeWindow!=='squad')return;const spec=types[type];if(!spec)return;
         if(!isInTown()){addFloatingText('Recluta desde un refugio.',player.wx,player.wy,'#fde047');return;}
         if(units.filter(u=>u.hp>0).length+buildings.filter(b=>b.queue>0).length>=cap||units.length>=24){addFloatingText('Máximo 6 subordinados.',player.wx,player.wy,'#fde047');return;}
-        if(player.gold<spec.cost){addFloatingText(`Necesitas ${spec.cost}g.`,player.wx,player.wy,'#fde047');return;}
+        if(player.gold<spec.cost){addFloatingText(`Necesitas ${spec.cost} crowns.`,player.wx,player.wy,'#fde047');return;}
         player.gold-=spec.cost;units.push(spawn(type,{wx:player.wx+60,wy:player.wy+30}));saveGame();hud();if(activeWindow==='squad')render();
     }
-    function revive(){if(!isInTown()){addFloatingText('Recupera aliados desde un refugio.',player.wx,player.wy,'#fde047');return;}if(player.gold<40){addFloatingText('Recuperar: 40g.',player.wx,player.wy,'#fde047');return;}if(units.filter(u=>u.hp>0).length+buildings.filter(b=>b.queue>0).length>=cap){addFloatingText('Máximo 6 subordinados, incluyendo reclutas en cola.',player.wx,player.wy,'#fde047');return;}const dead=units.find(u=>u.hp<=0);if(!dead)return;player.gold-=40;Object.assign(dead,spawn(dead.type,{wx:player.wx+50,wy:player.wy}));saveGame();render();}
+    function revive(){if(!isInTown()){addFloatingText('Recupera aliados desde un refugio.',player.wx,player.wy,'#fde047');return;}if(player.gold<40){addFloatingText('Recuperar: 40 crowns.',player.wx,player.wy,'#fde047');return;}if(units.filter(u=>u.hp>0).length+buildings.filter(b=>b.queue>0).length>=cap){addFloatingText('Máximo 6 subordinados, incluyendo reclutas en cola.',player.wx,player.wy,'#fde047');return;}const dead=units.find(u=>u.hp<=0);if(!dead)return;player.gold-=40;Object.assign(dead,spawn(dead.type,{wx:player.wx+50,wy:player.wy}));saveGame();render();}
     function build(){if(!active||isGamePaused())return;
         const worker=units.find(u=>u.hp>0&&u.type==='worker'&&selected.includes(u.id));const p=point();
         if(activeRegion!=='world'){addFloatingText('Los cuarteles se construyen en el mundo exterior.',player.wx,player.wy,'#fde047');return;}
-        if(!worker||player.gold<120||!valid(p)||buildings.some(b=>Math.hypot(b.wx-p.wx,b.wy-p.wy)<100)||npcs.some(n=>inRegion(n)&&Math.hypot(n.wx-p.wx,n.wy-p.wy)<100)||nodes.some(n=>Math.hypot(n.wx-p.wx,n.wy-p.wy)<100)){addFloatingText('Cuartel: trabajador seleccionado, 120g y terreno libre.',player.wx,player.wy,'#fde047');return;}
+        if(!worker||player.gold<120||!valid(p)||buildings.some(b=>Math.hypot(b.wx-p.wx,b.wy-p.wy)<100)||npcs.some(n=>inRegion(n)&&Math.hypot(n.wx-p.wx,n.wy-p.wy)<100)||nodes.some(n=>Math.hypot(n.wx-p.wx,n.wy-p.wy)<100)){addFloatingText('Cuartel: trabajador seleccionado, 120 crowns y terreno libre.',player.wx,player.wy,'#fde047');return;}
         if(buildings.length>=4){addFloatingText('Máximo 4 cuarteles.',player.wx,player.wy,'#fde047');return;}
         player.gold-=120;const b={id:'building-'+nextId++,wx:p.wx,wy:p.wy,region:'world',icon:'🏗️',name:'Cuartel',progress:0,queue:0};buildings.push(b);worker.order={type:'build',id:b.id};worker.path=[];gridCache.clear();hud();saveGame();
     }
     function train(){const b=under(buildings.filter(b=>b.progress>=4),75);if(!b||b.queue>0)return;
-        if(units.length+buildings.filter(b=>b.queue>0).length>=24||player.gold<60||units.filter(u=>u.hp>0).length+buildings.filter(b=>b.queue>0).length>=cap){addFloatingText('Reclutar: 60g y espacio en el escuadrón.',player.wx,player.wy,'#fde047');return;}
+        if(units.length+buildings.filter(b=>b.queue>0).length>=24||player.gold<60||units.filter(u=>u.hp>0).length+buildings.filter(b=>b.queue>0).length>=cap){addFloatingText('Reclutar: 60 crowns y espacio en el escuadrón.',player.wx,player.wy,'#fde047');return;}
         player.gold-=60;b.queue=4;saveGame();hud();
     }
     function heroVector(){if(!heroOrder)return null;
@@ -111,14 +111,14 @@ const Squad = (() => {
         for(const b of buildings.filter(inRegion)){if(b.queue>0){b.queue=Math.max(0,b.queue-dt);if(b.queue===0)units.push(spawn('soldier',{wx:b.wx+75,wy:b.wy}));}}
     }
     function target(enemy){return ([player,...units.filter(u=>u.hp>0&&inRegion(u))].filter(u=>!isInTown(u.wx,u.wy))).sort((a,b)=>Math.hypot(a.wx-enemy.wx,a.wy-enemy.wy)-Math.hypot(b.wx-enemy.wx,b.wy-enemy.wy))[0]||player;}
-    function hurt(u,amount){if(u.hp<=0)return;u.hp=Math.max(0,u.hp-amount);if(!u.hp){u.order=null;u.carry=0;selected=selected.filter(id=>id!==u.id);addFloatingText(u.name+' cayó. Recupéralo en un refugio (40g).',u.wx,u.wy,'#fca5a5');}}
+    function hurt(u,amount){if(u.hp<=0)return;u.hp=Math.max(0,u.hp-amount);if(!u.hp){u.order=null;u.carry=0;selected=selected.filter(id=>id!==u.id);addFloatingText(u.name+' cayó. Recupéralo en un refugio (40 crowns).',u.wx,u.wy,'#fca5a5');}}
     function area(p,r,damage){for(const u of units.filter(u=>u.hp>0&&inRegion(u)))if(Math.hypot(u.wx-p.wx,u.wy-p.wy)<=r)hurt(u,damage);}
     function traps(t,cycle){for(const u of units.filter(u=>u.hp>0&&inRegion(u))){const id=t.wx+':'+t.wy;if(u.trapHits[id]!==cycle&&Math.hypot(u.wx-t.wx,u.wy-t.wy)<=t.radius){u.trapHits[id]=cycle;hurt(u,u.maxHp*t.fraction);}}}
     function region(){heroOrder=null;selected=['hero'];units.forEach((u,i)=>{const p=nearest({wx:player.wx+40+(i%3)*35,wy:player.wy+45+Math.floor(i/3)*35});u.region=activeRegion;u.wx=p.wx;u.wy=p.wy;u.order=null;u.path=[];u.trapHits={};});const p=screen(player);cursor.x=p.x;cursor.y=p.y;hud();}
     function render(){const container=document.getElementById('squad-options');if(!container)return;container.innerHTML='';
-        const actions=[['Grupo completo · `',selectAll],['Control directo / cursor · Tab',()=>{closeAllWindows();toggle();}],...Object.entries(types).map(([type,t])=>[`${t.icon} Reclutar ${t.name} · ${t.cost}g`,()=>hire(type)]),['Recuperar subordinado caído · 40g',revive],['Construir cuartel en el cursor · 120g',()=>{closeAllWindows();if(!active)toggle(true);build();}],['Reclutar en el cuartel del cursor · 60g',()=>{closeAllWindows();if(!active)toggle(true);train();}],['Seguir al héroe',()=>{units.forEach(u=>u.order=null);heroOrder=null;}],['Volver al juego',closeAllWindows]];
+        const actions=[['Grupo completo · `',selectAll],['Control directo / cursor · Tab',()=>{closeAllWindows();toggle();}],...Object.entries(types).map(([type,t])=>[`${t.icon} Reclutar ${t.name} · ${t.cost} crowns`,()=>hire(type)]),['Recuperar subordinado caído · 40 crowns',revive],['Construir cuartel en el cursor · 120 crowns',()=>{closeAllWindows();if(!active)toggle(true);build();}],['Reclutar en el cuartel del cursor · 60 crowns',()=>{closeAllWindows();if(!active)toggle(true);train();}],['Seguir al héroe',()=>{units.forEach(u=>u.order=null);heroOrder=null;}],['Volver al juego',closeAllWindows]];
         menuIndex=Math.max(0,Math.min(actions.length-1,menuIndex));actions.forEach(([label,fn],i)=>{const b=document.createElement('button');b.textContent=label;b.className='wow-btn';b.style.minHeight='44px';b.classList.toggle('keyboard-selected',i===menuIndex);b.onclick=fn;container.appendChild(b);});
-        document.getElementById('squad-summary').textContent=`${units.filter(u=>u.hp>0).length}/${cap} subordinados vivos. Recluta en refugios; trabajadores reúnen oro del bosque/minas. En órdenes: E selecciona, F manda, C construye cuartel (120g), R recluta sobre un cuartel (60g). En móvil, selecciona trabajador y sitúa el cursor; usa Construir/Reclutar en este menú. Todos entran contigo en las mazmorras.`;
+        document.getElementById('squad-summary').textContent=`${units.filter(u=>u.hp>0).length}/${cap} subordinados vivos. Recluta en refugios; trabajadores reúnen crowns del bosque/minas. En órdenes: E selecciona, F manda, C construye cuartel (120 crowns), R recluta sobre un cuartel (60 crowns). En móvil, selecciona trabajador y sitúa el cursor; usa Construir/Reclutar en este menú. Todos entran contigo en las mazmorras.`;
         container.children[menuIndex]?.scrollIntoView?.({block:'nearest'});
     }
     function execute(){document.getElementById('squad-options').children[menuIndex]?.click();}

@@ -63,7 +63,7 @@
             <div class="flex-1 flex flex-col justify-center gap-1">
                 <div class="flex justify-between items-center text-xs font-bold text-amber-200">
                     <span id="ui-player-name" class="font-cinzel text-sm text-amber-300">Paladín de la Luz</span>
-                    <span id="ui-gold-text" class="text-yellow-400 font-mono text-xs">🪙 0g</span>
+                    <span id="ui-gold-text" class="text-yellow-400 font-mono text-xs">🪙 0 crowns</span>
                 </div>
                 <!-- Health Bar -->
                 <div class="w-full h-3.5 bg-slate-950 rounded border border-red-900 overflow-hidden relative shadow-inner">
@@ -157,7 +157,7 @@
             <button id="tactics-select" class="wow-btn squad-input" aria-label="Doble toque izquierdo para seleccionar unidad">👆<span>Seleccionar · E</span></button>
             <button id="squad-all" class="wow-btn squad-input" aria-label="Seleccionar héroe y todo el escuadrón">👥<span>Grupo · `</span></button>
             <!-- Menu Hotkey Shortcuts Bar -->
-            <button id="interact-button" class="wow-btn touch-only" aria-label="Interactuar: hablar, recoger oro o seleccionar enemigo">🤝<span>Interactuar</span></button>
+            <button id="interact-button" class="wow-btn touch-only" aria-label="Interactuar: hablar, recoger crowns o seleccionar enemigo">🤝<span>Interactuar</span></button>
             <button id="sprint-button" class="wow-btn touch-only" hidden aria-label="Mantener para esprintar">🏃<span>Esprintar · Q</span></button>
             <div id="hotbar-divider" class="h-10 w-[2px] bg-amber-600/50 mx-1"></div>
             <div id="desktop-menus" class="flex gap-1.5 font-bold">
@@ -219,8 +219,8 @@
             <h2 class="font-cinzel text-xl text-amber-300">Una aventura de héroe y escuadrón</h2>
             <div id="class-choice"><label for="hero-class">Elige tu clase: 1 Paladín · 2 Maga · 3 Exploradora</label><select id="hero-class" onchange="chooseHeroClass(this.value)"><option value="paladin">🛡️ Paladín</option><option value="mage">🧙‍♀️ Maga</option><option value="ranger">🏹 Exploradora</option></select><p id="class-summary"></p></div>
             <p id="keyboard-help-guide" class="keyboard-help">Todo cerca de WASD: 1–5 habilidades · E/F interactuar o confirmar · Esc menú/volver · R mochila · C talentos · X habilidades · T misión · Z mapa · V pausa · G ayuda. En los menús, WASD selecciona. F empieza esta aventura.</p>
-            <p>Un solo mundo, un héroe y sus subordinados. <b>Tab</b> cambia entre mover al héroe y mover el cursor de órdenes. En órdenes: <b>E</b> selecciona, <b>F</b> manda mover/atacar/interactuar, <b>`</b> selecciona todo, <b>C</b> construye cuartel con un trabajador y <b>R</b> recluta sobre un cuartel. En móvil, usa Órdenes, Seleccionar (dos toques), Grupo e Interactuar/Ordenar a la izquierda. Los poderes siguen disponibles en ambos controles.</p><p>Habla con el comandante, vence a cinco enemigos comunes y vuelve por tu recompensa. Recoge oro, compra equipo y mejora tus habilidades antes de desafiar al Señor Demonio. Explora la Cripta (nivel 3), la Mina (nivel 6) el Bastión (nivel 10) y la Ciudadela (nivel 15); sus entradas aparecen en el mapa.</p>
-            <p><b>WASD</b>: moverte en la dirección de la pantalla.<br><b>E</b>: hablar, recoger oro o fijar un objetivo cercano.<br><b>1</b>: ataque básico. <b>Espacio</b>: sexto poder (4 s). <b>2</b>: fuego. <b>3</b>: curar. <b>4</b>: inmunidad. <b>5</b>: ataque de área.</p>
+            <p>Un solo mundo, un héroe y sus subordinados. <b>Tab</b> cambia entre mover al héroe y mover el cursor de órdenes. En órdenes: <b>E</b> selecciona, <b>F</b> manda mover/atacar/interactuar, <b>`</b> selecciona todo, <b>C</b> construye cuartel con un trabajador y <b>R</b> recluta sobre un cuartel. En móvil, usa Órdenes, Seleccionar (dos toques), Grupo e Interactuar/Ordenar a la izquierda. Los poderes siguen disponibles en ambos controles.</p><p>Habla con el comandante, vence a cinco enemigos comunes y vuelve por tu recompensa. Recoge crowns, compra equipo y mejora tus habilidades antes de desafiar al Señor Demonio. Explora la Cripta (nivel 3), la Mina (nivel 6) el Bastión (nivel 10) y la Ciudadela (nivel 15); sus entradas aparecen en el mapa.</p>
+            <p><b>WASD</b>: moverte en la dirección de la pantalla.<br><b>E</b>: hablar, recoger crowns o fijar un objetivo cercano.<br><b>1</b>: ataque básico. <b>Espacio</b>: sexto poder (4 s). <b>2</b>: fuego. <b>3</b>: curar. <b>4</b>: inmunidad. <b>5</b>: ataque de área.</p>
             <p><b>R / I</b>: inventario. <b>C</b>: talentos. <b>K</b>: habilidades. <b>T</b>: misión. <b>M</b>: mapa. <b>P</b>: pausa. <b>H</b>: ayuda.</p>
             <p>Los menús pausan el juego. Puedes tocar las opciones o usar el ratón, WASD y Enter en ellos. Los ataques eligen un enemigo al alcance. La villa es un refugio: combate fuera de ella y regresa para recuperar vida y maná. El círculo rojo del jefe anuncia un ataque: sal de él o usa tu escudo.</p>
             <p>El guardado automático pertenece a este navegador. Usa <b>Exportar</b> para llevar tu partida a otra versión o equipo. El séptimo poder usa Mayús izquierdo (60 maná, 90 s); el octavo usa B (60 maná, 120 s). Los clics del ratón son atajos opcionales. En móvil, la palanca, poderes e interacción están a la izquierda; el grupo también se dirige desde la izquierda. En los menús, usa la palanca izquierda para elegir y Confirmar para comprar, entrenar o aceptar misiones. Mantén <b>Espada</b> para atacar; suelta para detenerte. <b>Interactuar</b> permite hablar con los personajes. El menú reúne mochila, talentos, habilidades, misión y mapa.</p>
@@ -291,7 +291,7 @@
             <div class="flex justify-between items-center border-b border-amber-600/40 pb-2">
                 <div>
                     <h2 class="font-cinzel text-xl font-bold text-amber-300">🛒 Mercader de la Cruzada</h2>
-                    <p class="text-xs text-amber-400">Tu Oro: <span id="shop-player-gold" class="font-bold text-yellow-300">0g</span></p>
+                    <p class="text-xs text-amber-400">Tus crowns: <span id="shop-player-gold" class="font-bold text-yellow-300">0 crowns</span></p>
                 </div>
                 <button onclick="closeAllWindows()" class="text-amber-400 font-bold hover:text-white">[ESC]</button>
             </div>
@@ -311,7 +311,7 @@
             <div class="flex justify-between items-center border-b border-amber-600/40 pb-2">
                 <div>
                     <h2 id="trainer-name" class="font-cinzel text-xl font-bold text-amber-300">Entrenador de Clases</h2>
-                    <p class="text-xs text-amber-400">Aumenta el nivel de tus hechizos usando oro</p><p id="trainer-limit" class="text-xs text-amber-200"></p>
+                    <p class="text-xs text-amber-400">Aumenta el nivel de tus hechizos usando crowns</p><p id="trainer-limit" class="text-xs text-amber-200"></p>
                 </div>
                 <button onclick="closeAllWindows()" class="text-amber-400 font-bold hover:text-white">[ESC]</button>
             </div>
@@ -340,7 +340,7 @@
             <div class="bg-amber-950/40 p-3 rounded border border-amber-600/40 text-xs flex flex-col gap-1">
                 <span class="font-bold text-amber-300">Progreso de la Misión:</span>
                 <div id="quest-progress-text" class="text-amber-200 font-mono">Enemigos comunes: 0 / 5</div>
-                <div class="text-yellow-400 font-bold mt-1">Recompensa: 120 XP + 60 Monedas de Oro</div>
+                <div class="text-yellow-400 font-bold mt-1">Recompensa: 120 XP + 60 crowns</div>
             </div>
 
             <div class="flex justify-end gap-2">
