@@ -275,60 +275,71 @@ class Campaign{
    z.harborVersion=2;
   }finally{this.s.zone=oldZone;}
  }
- authoredPlaces(z){if(this.supplyRoom(z.id)){this.treasuryInterior(z);this.combatPopulation(z);this.guardianPopulation(z);this.roomCaptainPopulation(z);return;}this.harborLayout(z);this.repairMiniGuardianReachability(z);this.spaceQuestBoard(z);this.spaceMillhavenSupplier(z);this.combatPopulation(z);this.nightEnemyPopulation(z);if(dungeonIds.includes(z.id)){this.decorateDungeon(z);this.guardianRewards(z);}if(z.placesVersion===1){this.localSites(z);this.openResourceMini(z);this.resourceDeposits(z);this.miniDungeons(z);this.openResourceMini(z);this.spreadOutdoorForces(z);this.alignLandmarks(z);this.supplyInteriors(z);this.regionalAesthetics(z);this.worldLife(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);this.fieldCaptainPopulation(z);return;}z.placesVersion=1;const i=this.regionIndex(z.id),dungeon=dungeonIds.includes(z.id);
-  if(!dungeon){z.npcs=z.npcs.filter(n=>!n.id.startsWith('landmark-'));for(const [id,name,x,y]of R.sites[i])z.npcs.push({id,name,kind:'landmark',...this.safe(x,y,z.id),icon:/bridge|crossing/i.test(name)?'🪵':/camp|convoy|wagon/i.test(name)?'🏕️':'🏚️'});}
-  const nearRoad=p=>z.roads?.some(path=>path.some((b,j)=>j&&this.distanceToSegment(p,path[j-1],b)<p.r+85));
-  const points=dungeon?R.pillars[z.id].map(([x,y])=>({x,y,r:30,icon:'🪨',structure:'pillar'})):[];
-  for(const q of points){if(this.blocked(q.x,q.y,z.id,q.r+20)||z.npcs.some(n=>dist(n,q)<q.r+90)||z.enemies.some(e=>dist(e.home,q)<q.r+50)||nearRoad(q)||z.id===this.s.zone&&dist(this.hero,q)<q.r+40)continue;z.props.push({id:'structure-'+z.props.length,...q});}this.localSites(z);this.openResourceMini(z);this.resourceDeposits(z);this.miniDungeons(z);this.openResourceMini(z);this.spreadOutdoorForces(z);this.alignLandmarks(z);this.supplyInteriors(z);this.regionalAesthetics(z);this.worldLife(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);this.fieldCaptainPopulation(z);
+ authoredPlaces(z){
+  if(this.supplyRoom(z.id)){this.treasuryInterior(z);this.combatPopulation(z);this.guardianPopulation(z);this.roomCaptainPopulation(z);return;}
+  if(this.sideDungeon(z.id)){this.combatPopulation(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);return;}
+  this.harborLayout(z);this.repairMiniGuardianReachability(z);this.spaceQuestBoard(z);this.spaceMillhavenSupplier(z);this.combatPopulation(z);this.nightEnemyPopulation(z);
+  if(dungeonIds.includes(z.id)){this.decorateDungeon(z);this.guardianRewards(z);return;}
+  if(z.placesVersion!==2){
+   z.npcs=z.npcs.filter(n=>!n.id.startsWith('landmark-'));
+   const i=this.regionIndex(z.id);for(const [id,name,x,y]of R.sites[i]){let n=z.npcs.find(n=>n.id===id);const data={id,name,kind:'landmark',...this.safe(x,y,z.id),icon:/bridge|crossing/i.test(name)?'🪵':/camp|convoy|wagon/i.test(name)?'🏕️':'🏚️'};if(n)Object.assign(n,data);else z.npcs.push(data);}
+   z.placesVersion=2;
+  }
+  this.localSites(z);this.retireResourceMini(z);this.resourceDeposits(z);this.miniDungeons(z);this.spreadOutdoorForces(z);this.alignLandmarks(z);this.sideInteriors(z);this.supplyInteriors(z);this.regionalAesthetics(z);this.worldLife(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);this.guardianPopulation(z);this.summonPopulation(z);for(const e of z.enemies)this.upgradeRingleader(e);this.fieldCaptainPopulation(z);
  }
  spaceQuestBoard(z){if(dungeonIds.includes(z.id)||z.boardPositionVersion===2)return;const board=z.npcs.find(n=>n.kind==='quests');if(!board)return;const i=this.regionIndex(z.id),[x,y]=D.towns[i],p=this.safe(x+210,y+55,z.id);Object.assign(board,p);z.boardPositionVersion=2;}
  spaceMillhavenSupplier(z){if(z.id!=='vale'||z.supplierPositionVersion===2)return;const supplier=z.npcs.find(n=>n.id==='supplier');if(!supplier)return;const [x,y]=D.towns[0];Object.assign(supplier,this.safe(x+115,y-85,z.id));z.supplierPositionVersion=2;}
- supplyInteriors(z){const room=R.supplyRooms.find(r=>r.region===z.id);if(!room||z.supplyRoomVersion===3)return;z.npcs=z.npcs.filter(n=>n.kind!=='bundle');const site=z.npcs.find(n=>n.id===room.site),existing=z.npcs.find(n=>n.id==='supply-entrance'),p=existing||this.safe(site.x+100,site.y-90,z.id),data={...p,id:'supply-entrance',name:room.name,kind:'dungeon',family:room.id,treasury:true,treasuryBoss:room.boss,icon:'🗝️'};if(existing)Object.assign(existing,data);else z.npcs.push(data);z.supplyRoomVersion=3;}
- localSites(z){
-  if(dungeonIds.includes(z.id)||z.localSitesVersion===2)return;
-  const i=this.regionIndex(z.id),plan=R.expeditions[i],refuges=[D.towns[i],D.minors[i]],oldZone=this.s.zone;this.s.zone=z.id;
+ sideInteriors(z){
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||this.sideDungeon(z.id))return;
+  const configs=(R.sideDungeons||[]).filter(d=>d.region===z.id),oldZone=this.s.zone;this.s.zone=z.id;
   try{
-   // Supply destinations must sit outside both refuges, even when a landmark borders a hamlet.
-   const fieldPoint=(anchor,offset=0)=>{for(let r=offset;r<=420;r+=40)for(let j=0;j<24;j++){const a=j*Math.PI/12,p={x:anchor.x+Math.cos(a)*r,y:anchor.y+Math.sin(a)*r};if(!this.blocked(p.x,p.y,z.id)&&refuges.every(([x,y])=>dist(p,{x,y})>=300)&&z.enemies.filter(e=>e.type==='boss').every(e=>dist(p,e.home)>240))return p;}throw Error('No contested site: '+z.id);};
+   z.props=z.props.filter(p=>!String(p.id||'').startsWith('side-entrance-'));
+   const approach={cellar:['stump','crate','fallen-log'],flooded:['reeds','driftwood','fishing-net'],keep:['rock-cluster','stone-marker','weapon-rack'],shrine:['ash-patch','bone-pile','stolen-goods'],foundry:['black-rock','ember-pit','supply-stack']};
+   for(const cfg of configs){let n=z.npcs.find(n=>n.id===cfg.site);const source=R.sites[this.regionIndex(z.id)].find(s=>s[0]===cfg.site);if(!source)continue;const p=this.safe(source[2],source[3],z.id),data={id:cfg.site,name:cfg.name,kind:'dungeon',family:cfg.id,sideDungeon:true,...p,icon:'🏚️'};if(n)Object.assign(n,data);else{n=data;z.npcs.push(n);}for(const [j,structure]of (approach[cfg.theme]||[]).entries()){const a=-.6+j*2.15,q=this.safe(p.x+Math.cos(a)*78,p.y+Math.sin(a)*68,z.id);z.props.push({id:'side-entrance-'+cfg.id+'-'+j,...q,r:0,decorative:true,structure});}}
+   z.sideEntranceVersion=1;
+  }finally{this.s.zone=oldZone;}
+ }
+ supplyInteriors(z){
+  const room=R.supplyRooms.find(r=>r.region===z.id);if(!room)return;if(z.supplyRoomVersion===4)return;
+  const oldZone=this.s.zone;this.s.zone=z.id;
+  try{
+   const center=this.fieldCenter(this.regionIndex(z.id)),off=room.entryOffset||[240,-160],target=this.safe(center.x+off[0],center.y+off[1],z.id),existing=z.npcs.find(n=>n.id==='supply-entrance'),data={...target,id:'supply-entrance',name:room.name,kind:'dungeon',family:room.id,treasury:true,treasuryBoss:room.boss,icon:'🗝️'};
+   if(existing)Object.assign(existing,data);else z.npcs.push(data);
+   z.props=z.props.filter(p=>!String(p.id||'').startsWith('treasury-approach-'));
+   const dressing={thorn:['fang-trophy','stolen-goods','thorn-bed'],mire:['reed-nest','fish-rack','shell-hoard'],ridge:['trophy-rack','stone-seat','weapon-rack'],darklord:['crown-banner','dark-brazier','war-table']}[room.boss]||[];
+   for(const [j,structure]of dressing.entries()){const a=-.55+j*2.1,q=this.safe(target.x+Math.cos(a)*88,target.y+Math.sin(a)*72,z.id);z.props.push({id:'treasury-approach-'+j,...q,r:0,decorative:true,structure});}
+   z.supplyRoomVersion=4;
+  }finally{this.s.zone=oldZone;}
+ }
+ localSites(z){
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||this.sideDungeon(z.id)||z.localSitesVersion===3)return;
+  const i=this.regionIndex(z.id),refuges=[D.towns[i],D.minors[i]],oldZone=this.s.zone;this.s.zone=z.id;
+  try{
    for(const n of z.npcs.filter(n=>n.kind==='landmark')){const source=R.sites[i].find(a=>a[0]===n.id);if(source)Object.assign(n,this.safe(source[2],source[3],z.id));}
-   z.npcs=z.npcs.filter(n=>n.kind!=='bundle'||plan.supplies.length);
-   for(const n of z.npcs.filter(n=>n.kind==='bundle')){const site=z.npcs.find(a=>a.id===plan.supplies[n.index]);Object.assign(n,fieldPoint(site,70));n.site=site.id;n.name=site.name+' supplies';}
-   const resource=z.npcs.find(n=>n.id===plan.resource),node=z.nodes[0];if(node){Object.assign(node,fieldPoint(resource,90));node.site=resource.id;node.name=plan.name;node.kind='resource';}
-   // Reassign existing patrols, retaining enemy count, drops, deaths and respawn timers.
-   const targets=z.npcs.filter(n=>n.kind==='landmark'&&!n.id.startsWith('bridge-'));
-   const packs=[...new Set(z.enemies.filter(e=>e.type==='mob'&&e.pack&&!e.guard&&!e.summon&&e.form==='normal').map(e=>e.pack))];
-   targets.forEach((site,j)=>{const pack=packs[j];if(!pack)return;const anchor=site.id===plan.resource&&node?node:z.npcs.find(n=>n.kind==='bundle'&&n.site===site.id)||fieldPoint(site);z.enemies.filter(e=>e.pack===pack).forEach((e,k)=>{let p;for(let t=0;t<24;t++){const a=(t+k*3)*Math.PI/12,candidate={x:anchor.x+Math.cos(a)*(75+Math.floor(k/2)*35),y:anchor.y+Math.sin(a)*(75+Math.floor(k/2)*35)};if(!this.blocked(candidate.x,candidate.y,z.id)&&refuges.every(([x,y])=>dist(candidate,{x,y})>=260)&&this.line(candidate,anchor)){p=candidate;break;}}if(!p)p=fieldPoint(anchor,60);e.home=p;e.site=site.id;if(e.hp>0&&!e.aggro)Object.assign(e,p);});});
-   z.localSitesVersion=2;
+   z.npcs=z.npcs.filter(n=>n.kind!=='bundle');
+   const targets=z.npcs.filter(n=>n.kind==='landmark'&&!n.id.startsWith('bridge-')),packs=[...new Set(z.enemies.filter(e=>e.type==='mob'&&e.pack&&!e.guard&&!e.summon&&e.form==='normal').map(e=>e.pack))];
+   targets.forEach((site,j)=>{const pack=packs[j];if(!pack)return;z.enemies.filter(e=>e.pack===pack).forEach((e,k)=>{let p=null;for(let t=0;t<24;t++){const a=(t+k*3)*Math.PI/12,candidate={x:site.x+Math.cos(a)*(85+Math.floor(k/2)*35),y:site.y+Math.sin(a)*(85+Math.floor(k/2)*35)};if(this.blocked(candidate.x,candidate.y,z.id)||refuges.some(([x,y])=>dist(candidate,{x,y})<260)||!this.line(candidate,site))continue;p=candidate;break;}if(!p)p=this.safe(site.x+70,site.y+45,z.id);e.home={...p};e.site=site.id;if(e.hp>0&&!e.aggro)Object.assign(e,p);});});
+   z.localSitesVersion=3;
   }finally{this.s.zone=oldZone;}
  }
  resourceDeposits(z){
-  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||z.resourceDepositsVersion===1||!z.nodes?.length)return;
-  const i=this.regionIndex(z.id),count=R.resourceDepositCounts?.[i]||1,plan=R.expeditions[i],primary=z.nodes[0],total=Math.max(0,Math.round(z.nodes.reduce((sum,n)=>sum+(Number(n.amount)||0),0))),group='resource-'+z.id,oldZone=this.s.zone;this.s.zone=z.id;
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||this.sideDungeon(z.id)||z.resourceDepositsVersion===2)return;
+  const plan=R.tributePlans?.[z.id]||[],total=R.tributeTotal||640,already=Math.max(0,Math.floor(this.s.gathered?.[z.id]||0)),remaining=Math.max(0,total-already),oldZone=this.s.zone;this.s.zone=z.id;
   try{
-   const anchor={x:primary.x,y:primary.y},town={x:D.towns[i][0],y:D.towns[i][1]},minor={x:D.minors[i][0],y:D.minors[i][1]},icon=primary.icon,mini=primary.mini,positions=[];
-   const preferred=[[-170,-90],[170,-90],[-175,135],[175,135],[0,-210],[0,220]];
-   const usable=p=>!this.blocked(p.x,p.y,z.id,18)&&dist(p,town)>=300&&dist(p,minor)>=300&&positions.every(q=>dist(q,p)>105)&&!!this.route(town,p).length;
-   for(let j=0;j<count;j++){
-    let p=null;const [dx,dy]=preferred[j%preferred.length],candidate={x:anchor.x+dx,y:anchor.y+dy};
-    try{const safe=this.safe(candidate.x,candidate.y,z.id);if(usable(safe))p=safe;}catch(_){}
-    if(!p)for(const radius of [130,180,230,280]){for(let n=0;n<24;n++){const a=(n+j*5)*Math.PI/12,c={x:anchor.x+Math.cos(a)*radius,y:anchor.y+Math.sin(a)*radius};if(!usable(c))continue;p=c;break;}if(p)break;}
-    positions.push(p||this.safe(anchor.x,anchor.y,z.id));
-   }
-   const base=Math.floor(total/count),remainder=total-base*count;
-   z.nodes=positions.map((p,j)=>({id:j===0?primary.id:'gather-'+z.id+'-'+(j+1),...p,amount:base+(j<remainder?1:0),icon,site:primary.site,name:count>1?plan.name+' deposit '+(j+1):plan.name,kind:'resource',resourceGroup:group,...(mini?{mini}:{} )}));
-   // The old single-node patrol now screens every split deposit instead of remaining clustered at deposit 1.
-   const defenders=z.enemies.filter(e=>e.site===primary.site&&!e.guard&&!e.summon&&e.form==='normal').sort((a,b)=>this.idOrder(a,b));
-   for(let k=0;k<defenders.length;k++){const node=z.nodes[k%z.nodes.length],e=defenders[k];let p=null;for(let t=0;t<24;t++){const a=(t+k*5)*Math.PI/12,r=80+Math.floor(k/z.nodes.length)*35,candidate={x:node.x+Math.cos(a)*r,y:node.y+Math.sin(a)*r};if(this.blocked(candidate.x,candidate.y,z.id,15)||dist(candidate,town)<260||dist(candidate,minor)<260||!this.line(candidate,node))continue;p=candidate;break;}if(!p)p=this.safe(node.x+70,node.y+35,z.id);e.home={...p};if(e.hp>0&&!e.aggro)Object.assign(e,p);}
-   z.resourceDepositsVersion=1;
+   const raw=plan.map(s=>Math.floor(remaining*s.amount/total)),left=remaining-raw.reduce((a,b)=>a+b,0);for(let j=0;j<left;j++)raw[j%raw.length]++;
+   z.nodes=[];
+   for(const [j,source]of plan.entries()){const site=z.npcs.find(n=>n.id===source.site);if(!site)continue;const off=source.offset||[80,60],p=this.safe(site.x+off[0],site.y+off[1],z.id),id='tribute-'+z.id+'-'+source.id;z.nodes.push({id,...p,amount:raw[j]||0,icon:'🪙',site:source.site,siteName:site.name,name:'Dark Lord Tribute',kind:'resource',tribute:true,tributeId:source.id,hidden:!!source.hidden,context:source.context||'tribute stores',resourceGroup:'tribute-'+z.id});if(!source.hidden&&this.s.discovered[z.id+':'+source.site])this.s.discovered[z.id+':tribute:'+source.id]=true;}
+   z.resourceDepositsVersion=2;
   }finally{this.s.zone=oldZone;}
  }
- openResourceMini(z){
-  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||z.resourceMiniOpenVersion===1)return;
-  const id='resource-'+z.id,mini=z.minis?.find(m=>m.id===id);if(!mini)return;
-  const keep=new Set([0,5,9,14]);
-  z.props=z.props.filter(p=>{if(p.mini!==id||!String(p.id||'').startsWith('mini-wall-'+id+'-'))return true;const n=Number(String(p.id).split('-').at(-1));return keep.has(n);});
-  z.resourceMiniOpenVersion=1;
+ retireResourceMini(z){
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||this.sideDungeon(z.id)||z.resourceMiniRetiredVersion===1)return;
+  const id='resource-'+z.id,i=this.regionIndex(z.id),r=D.regions[i];
+  z.minis=(z.minis||[]).filter(m=>m.id!==id);z.npcs=z.npcs.filter(n=>!(n.kind==='mini'&&n.mini===id));z.props=z.props.filter(p=>p.mini!==id&&!String(p.id||'').startsWith('mini-wall-'+id+'-'));
+  for(const e of z.enemies.filter(e=>e.mini===id)){delete e.mini;e.guard=false;e.name=e.name.replace(/ guardian$/,'');e.gold=Math.floor((r.gold_range[0]+r.gold_range[1])/2);e.xp=r.enemy_xp;delete e.miniRewardVersion;e.pack='retired-resource-patrol-'+Math.floor((Number(e.id?.split('-').at(-1))||0)/3);}
+  for(const n of z.nodes||[])delete n.mini;z.resourceMiniRetiredVersion=1;
  }
+ openResourceMini(z){this.retireResourceMini(z);}
  spreadOutdoorForces(z){
   if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||z.outdoorOccupationVersion===2)return;
   const i=this.regionIndex(z.id),fieldBoss=D.bosses.find(b=>b.region===z.id&&b.kind==='field'),center=this.fieldCenter(i),fieldId='field-'+fieldBoss.id,town={x:D.towns[i][0],y:D.towns[i][1]},minor={x:D.minors[i][0],y:D.minors[i][1]},oldZone=this.s.zone;this.s.zone=z.id;
@@ -379,30 +390,19 @@ class Campaign{
   }finally{this.s.zone=oldZone;}
  }
  miniDungeons(z){
-  if(dungeonIds.includes(z.id)||z.minisVersion===1)return;
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||this.sideDungeon(z.id))return;this.retireResourceMini(z);if(z.minisVersion===2)return;
   const i=this.regionIndex(z.id),r=D.regions[i],plan=R.miniPlans[i],oldZone=this.s.zone;this.s.zone=z.id;
   try{
-   const family=D.bosses.find(b=>b.region===z.id&&b.kind==='field').id,field=this.fieldCenter(i),resource=z.nodes[0],resourceNodes=z.nodes.filter(n=>n.resourceGroup===resource.resourceGroup||n.site===resource.site),resourceCenter={x:resourceNodes.reduce((a,n)=>a+n.x,0)/resourceNodes.length,y:resourceNodes.reduce((a,n)=>a+n.y,0)/resourceNodes.length};
-   z.minis=[];
-   for(const [type,center,count]of [['resource',resourceCenter,3+i],['field',field,4+i*2]]){
-    const id=type==='field'?'field-'+family:'resource-'+z.id,site=type==='resource'?resource.site:null;
-    const inherited=type==='field'?!!this.s.normal[family]||!!this.s.rescued[family]:resourceNodes.reduce((sum,n)=>sum+n.amount,0)<r.resource||z.npcs.some(n=>n.kind==='bundle'&&n.site===site&&this.s.discovered[z.id+':bundle-'+n.index]);
-    const mini={id,type,family:type==='field'?family:null,site,name:plan[type],x:center.x,y:center.y,cleared:!!inherited,trapPosts:[]};z.minis.push(mini);
-    const roads=p=>z.roads.some(path=>path.some((b,j)=>j&&this.distanceToSegment(p,path[j-1],b)<p.r+60));
-    const posts=type==='resource'?[[-260,-180],[-260,180],[260,-180],[260,180],[-80,-240],[80,-240],[-80,240],[80,240]]:[[-190,-190],[-120,-190],[-50,-190],[70,-190],[140,-190],[190,-190],[-190,-120],[-190,0],[-190,120],[-190,190],[-120,190],[-50,190],[70,190],[140,190],[190,190],[190,120],[190,0],[190,-120],[-95,-65],[90,-75],[0,140]];
-    for(const [j,[dx,dy]]of posts.entries()){const p={x:center.x+dx,y:center.y+dy,r:j<18?27:30};if(this.blocked(p.x,p.y,z.id,p.r+15)||roads(p)||z.npcs.some(n=>dist(n,p)<p.r+65)||z.nodes.some(n=>dist(n,p)<p.r+65)||z.enemies.some(e=>e.type==='boss'&&dist(e.home,p)<90)||z.id===oldZone&&dist(this.hero,p)<80)continue;z.props.push({id:'mini-wall-'+id+'-'+j,...p,structure:j<18?plan.theme:'pillar',mini:id,icon:'🪨'});}
-    const pool=z.enemies.filter(e=>e.type==='mob'&&!e.guard&&!e.summon&&!e.mini&&!e.nightOnly&&e.form==='normal'),preferredSpecies=D.species[i][type==='resource'?0:1][0],score=e=>type==='resource'?(e.site===site?0:!e.site?1:2):!e.site?0:1,preferred=pool.filter(e=>e.species===preferredSpecies).sort((a,b)=>score(a)-score(b)||this.idOrder(a,b)),candidates=(preferred.length>=count?preferred:pool.sort((a,b)=>score(a)-score(b)||this.idOrder(a,b))).slice(0,count);
-    const offsets=type==='field'?[[-250,-100],[-250,-25],[-110,-250],[-25,-250],[150,110],[180,40],[30,180],[-60,160],[100,-10],[70,70],[-120,60],[-100,-90]]:[[-210,-135],[210,-135],[-220,95],[220,95],[-95,210],[95,210],[0,-205]];
-    candidates.forEach((e,j)=>{const [dx,dy]=offsets[j%offsets.length],p=this.safe(center.x+dx,center.y+dy);Object.assign(e,p);e.home={...p};e.guard=true;e.mini=id;e.site=site;e.pack=id+'-guard-pair-'+Math.floor(j/2);e.name=e.name.replace(/ guardian$/,'')+' guardian';e.gold=Math.max(1,Math.floor((r.gold_range[0]+r.gold_range[1])/2*.35));e.xp=r.guard_xp;e.miniRewardVersion=1;if(inherited){e.hp=0;e.deathPaid=true;}this.configureEnemy(e,j);});
-    for(const [j,[dx,dy]]of [[50,65],[-65,75]].slice(0,type==='field'?1:2).entries()){const p={x:center.x+dx,y:center.y+dy},kinds=R.outdoorMiniTrapKinds[z.id]||['spikes','spikes'];if(!this.blocked(p.x,p.y)&&!roads({...p,r:20})&&!z.npcs.some(n=>dist(n,p)<65))mini.trapPosts.push({...p,kind:kinds[Math.min(j,kinds.length-1)],index:100+z.minis.length*10+j});}
-    const marker=this.safe(center.x-130,center.y-10);z.npcs.push({id:'mini-'+id,name:mini.name,kind:'mini',mini:id,...marker,icon:'🏚️'});
-    if(type==='resource'){for(const n of resourceNodes)n.mini=id;for(const n of z.npcs.filter(n=>n.kind==='bundle'&&n.site===site))n.mini=id;z.resourceMiniOpenVersion=1;}
-   }
-   z.minisVersion=1;
-   // New cover cannot seal existing arrivals, captives, patrol homes or expedition troops.
-   for(const n of [...z.npcs,...z.nodes,...z.enemies.filter(e=>e.hp>0)])if(this.blocked(n.x,n.y,z.id))Object.assign(n,this.safe(n.x,n.y));
-   for(const e of z.enemies)if(this.blocked(e.home.x,e.home.y,z.id))e.home=this.safe(e.home.x,e.home.y);
-   delete z.miniReachabilityVersion;this.repairMiniGuardianReachability(z);
+   const family=D.bosses.find(b=>b.region===z.id&&b.kind==='field').id,field=this.fieldCenter(i),id='field-'+family,existing=(z.minis||[]).find(m=>m.id===id);
+   if(existing){z.minis=[existing];z.minisVersion=2;return;}
+   z.minis=[];const inherited=!!this.s.normal[family]||!!this.s.rescued[family],mini={id,type:'field',family,site:null,name:plan.field,x:field.x,y:field.y,cleared:inherited,trapPosts:[]};z.minis.push(mini);
+   const roads=p=>z.roads.some(path=>path.some((b,j)=>j&&this.distanceToSegment(p,path[j-1],b)<p.r+60)),posts=[[-190,-190],[-120,-190],[-50,-190],[70,-190],[140,-190],[190,-190],[-190,-120],[-190,0],[-190,120],[-190,190],[-120,190],[-50,190],[70,190],[140,190],[190,190],[190,120],[190,0],[190,-120],[-95,-65],[90,-75],[0,140]];
+   for(const [j,[dx,dy]]of posts.entries()){const p={x:field.x+dx,y:field.y+dy,r:j<18?27:30};if(this.blocked(p.x,p.y,z.id,p.r+15)||roads(p)||z.npcs.some(n=>dist(n,p)<p.r+65)||z.nodes.some(n=>dist(n,p)<p.r+65)||z.enemies.some(e=>e.type==='boss'&&dist(e.home,p)<90)||z.id===oldZone&&dist(this.hero,p)<80)continue;z.props.push({id:'mini-wall-'+id+'-'+j,...p,structure:j<18?plan.theme:'pillar',mini:id,icon:'🪨'});}
+   const count=4+i*2,pool=z.enemies.filter(e=>e.type==='mob'&&!e.guard&&!e.summon&&!e.mini&&!e.nightOnly&&e.form==='normal'),preferredSpecies=D.species[i][1][0],preferred=pool.filter(e=>e.species===preferredSpecies).sort((a,b)=>this.idOrder(a,b)),candidates=(preferred.length>=count?preferred:pool.sort((a,b)=>this.idOrder(a,b))).slice(0,count),offsets=[[-250,-100],[-250,-25],[-110,-250],[-25,-250],[150,110],[180,40],[30,180],[-60,160],[100,-10],[70,70],[-120,60],[-100,-90]];
+   candidates.forEach((e,j)=>{const [dx,dy]=offsets[j%offsets.length],p=this.safe(field.x+dx,field.y+dy,z.id);Object.assign(e,p);e.home={...p};e.guard=true;e.mini=id;e.pack=id+'-guard-pair-'+Math.floor(j/2);e.name=e.name.replace(/ guardian$/,'')+' guardian';e.gold=Math.max(1,Math.floor((r.gold_range[0]+r.gold_range[1])/2*.35));e.xp=r.guard_xp;e.miniRewardVersion=1;if(inherited){e.hp=0;e.deathPaid=true;}this.configureEnemy(e,j);});
+   const p={x:field.x+50,y:field.y+65},kinds=R.outdoorMiniTrapKinds[z.id]||['spikes'];if(!this.blocked(p.x,p.y)&&!roads({...p,r:20})&&!z.npcs.some(n=>dist(n,p)<65))mini.trapPosts.push({...p,kind:kinds[0],index:110});
+   const marker=this.safe(field.x-130,field.y-10,z.id);z.npcs.push({id:'mini-'+id,name:mini.name,kind:'mini',mini:id,...marker,icon:'🏚️'});z.minisVersion=2;
+   for(const n of [...z.npcs,...z.nodes,...z.enemies.filter(e=>e.hp>0)])if(this.blocked(n.x,n.y,z.id))Object.assign(n,this.safe(n.x,n.y,z.id));for(const e of z.enemies)if(this.blocked(e.home.x,e.home.y,z.id))e.home=this.safe(e.home.x,e.home.y,z.id);
   }finally{this.s.zone=oldZone;}
  }
  miniCleared(id,region=this.s.zone){return !!this.s.zones[region]?.minis?.find(m=>m.id===id)?.cleared;}
