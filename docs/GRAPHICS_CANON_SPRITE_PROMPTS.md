@@ -2,7 +2,7 @@
 
 ## Purpose
 
-**Audit status: COMPLETE.** This document has been checked back against the current production renderer and rules after the initial 110-entry draft. Entries marked **KEEP PROCEDURAL** are intentionally not image-generation tasks.
+**Audit status: COMPLETE.** This document has been checked back against the current production renderer and rules after the initial 110-entry draft, including a second pass over every top-level render branch. Entries marked **KEEP PROCEDURAL** are intentionally not image-generation tasks.
 
 This document is the production source for the next image-generation phase. It does **not** activate any sprite in the game. Each asset is generated **one at a time and one alone**, using its own entry below. The current procedural renderer is canon.
 
@@ -1043,11 +1043,11 @@ The first roster omitted four purpose-specific procedural service structures. Th
 
 ### 127 — Dark Crown Refuge / rest house
 
-**Canonical cues:** Small regional refuge building. Main wall #929ba5, roof #596478, timber #555563, trim #b6a5c2, dark doorway #454653. Canon role silhouette: rectangular house body, triangular roof, central dark door, narrow chimney on screen-right, small round warm lantern on screen-left, plus dark vertical braces with small pointed finials and a single purple diamond crest high on the frame.
+**Canonical cues:** Small Dark Crown refuge building. Main wall #929ba5, roof #596478, timber/braces #555563, trim #b6a5c2, dark doorway #454653. Canon role silhouette: rectangular house body, triangular roof, central dark door, narrow chimney on screen-right and small round warm lantern on screen-left. Dark Crown utility framing adds four dark vertical braces, pointed side finials and one purple diamond crest high on the frame; the Refuge drawing adds a second smaller purple diamond on the upper facade.
 
 **Image-generation prompt:**
 
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Dark Crown Refuge exactly from the regional service-building canon: small house body, triangular roof, central dark door, right-side chimney, small left lantern, and dark vertical braces with small pointed finials and a single purple diamond crest high on the frame. Preserve palette relationships wall #929ba5, roof #596478, timber #555563, trim #b6a5c2, dark #454653. No NPC, sign, beds outside, fence, road, smoke cloud or extra annex.
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Dark Crown Refuge exactly from the canonical service-building drawing: small slate refuge house, blue-gray triangular roof, central dark door, narrow right chimney, small left lantern, four dark braces, pointed finials, one purple diamond high on the frame and a second smaller purple diamond on the upper facade. Preserve the subdued slate/lavender palette. No NPC, beds outside, fence, road, smoke cloud, extra sigils or annex.
 
 ### 128 — Dark Crown Supplier stall
 
@@ -1072,6 +1072,14 @@ The first roster omitted four purpose-specific procedural service structures. Th
 **Image-generation prompt:**
 
 > Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Dark Crown Quest board exactly from the canonical structure: two tall posts, short top cap, wide rectangular board, trim line and exactly five small pale parchment notices, with dark vertical braces with small pointed finials and a single purple diamond crest high on the frame. Preserve regional materials/colors. No readable text, NPC, lanterns, roofed kiosk, extra notices or decorative symbols.
+
+### 131 — Citadel preparation fountain
+
+**Canonical cues:** Unique Citadel interactable. Low pale gray stone oval basin, smaller blue-teal water oval inside, narrow pale stone central pedestal rising upward, wider pale cap/bowl near the top, and one thin cyan water stream rising above the cap. The water/restoration behavior is gameplay logic; only the static fountain body belongs in the sprite.
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Citadel preparation fountain exactly as described: low pale gray oval stone basin, blue-teal inner water, narrow pale stone central pedestal, wider pale cap/bowl near the top and one thin cyan vertical water stream above it. No surrounding floor, guardian statues, runes, extra tiers, plants, coins, glow aura or healing effects.
 
 ## End of production catalog
 
