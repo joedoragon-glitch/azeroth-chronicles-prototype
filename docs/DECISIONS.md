@@ -37,3 +37,7 @@ The expanded game is published at the existing GitHub Pages URL; legacy.html ret
 ## v0.7.0 audit fixes
 
 Attack and quest prose no longer drives mechanics. Explicit rule tables define stages, motion, damage, recovery and authored sites. Existing version-4 saves remain compatible, with repaired road/site geometry and safe positions when changed terrain overlaps a saved actor. Legacy v2 exports remain backed up unchanged; their supply values, regional buildings and selectable weapons carry forward. See `AUDIT_FIXES_V070.md` for all 23 findings and the limits of automated acceptance.
+
+## Procedural canon polish v0.8.79
+
+Static identity polishing changes drawings only: ten destination entrances, selected meaningful furnishings, individual specialist clothing, regional services and unfinished camp stages. Gameplay/saves/collision remain governed by the existing engine and rules. `GRAPHICS_PROCEDURAL_POLISH_V0879.md` records the scope. The sprite catalog is reconciled to 231 entries (221 GENERATE, 0 ALIAS, 10 KEEP PROCEDURAL), preserving existing IDs and exact runtime keys. No sprite is active.

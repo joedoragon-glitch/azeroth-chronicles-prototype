@@ -230,6 +230,19 @@ function draw(ctx,e,p,region=0,rescued=false){
   if(teacher){line([[-5,-16],[-5,-3]],style.trim,1.5);line([[5,-16],[5,-3]],style.trim,1.5);}
   else if(chemist){oval(-9,-15,3,3,'#9bd2cf');oval(0,-15,3,3,'#c9a6a8');}
   else{for(const x of [-5,0,5])oval(x,-13,1.5,1.5,style.trim);}
+  // Personal clothing construction complements the existing profession tools and headgear.
+  switch(e.family){
+   case 'thorn':poly([[-12,-17],[-19,-6],[-15,5],[-8,3]],'#88a17a');line([[-15,-9],[-8,-6]],style.trim,2);line([[-14,2],[-8,2]],'#d7c6a0',2);break;
+   case 'crypt':poly([[-12,-18],[-15,9],[-5,12],[4,9],[6,-17]],'#74604d');rect(-12,-2,8,5,'#a08968');line([[-9,-15],[-6,-3]],'#c2ae87',1.5);break;
+   case 'mire':poly([[-13,-18],[-18,-11],[-14,0],[-8,-12]],'#83a8a0');line([[-12,-11],[4,2]],style.trim,2);poly([[-6,1],[-4,12],[8,12],[5,1]],'#678f89');break;
+   case 'archive':poly([[-10,-14],[-12,8],[10,8],[8,-14]],'#a6b4a5');line([[-9,-9],[9,-9]],'#647a7b',2);for(const [x,c]of [[-6,'#8dc6bd'],[1,'#b9939b'],[7,'#c6bd8e']]){rect(x-2,-2,4,6,c);line([[x,-5],[x,-2]],steel,1.5);}break;
+   case 'ridge':poly([[-14,-17],[-20,-8],[-8,-7],[0,-13],[10,-8],[16,-14]],'#a2a790');for(const x of [-12,-5,3,10])line([[x,-13],[x+2,-8]],'#c7c7ad',1.5);break;
+   case 'mine':poly([[-14,-20],[-18,-12],[-12,-5],[-6,-12]],'#8d9285');rect(-9,-2,18,8,'#968367');line([[-5,-2],[-5,6]],'#c5af88',1.5);line([[3,-2],[3,6]],'#c5af88',1.5);break;
+   case 'warlord':poly([[-10,-5],[-15,12],[-3,9],[0,-4]],'#b28575');poly([[3,-4],[7,11],[15,13],[10,-5]],'#765351');line([[-8,-15],[7,-4]],style.trim,3);break;
+   case 'abyss':poly([[-11,-13],[-15,10],[2,12],[6,-11]],'#726477');line([[-9,-9],[0,6]],style.trim,2);poly([[-8,-3],[-3,-8],[2,-3],[-3,2]],'#c5a4ba');line([[7,-8],[12,8]],'#a192a8',2);break;
+   case 'citadel':poly([[-9,-14],[-12,12],[0,8],[11,12],[8,-14]],'#9aa5a9');line([[-7,-12],[-5,6]],style.trim,2);line([[6,-12],[7,6]],style.trim,2);break;
+   case 'cindermaw':case 'darklord':poly([[-16,-18],[-21,-8],[-14,-1],[-9,-11]],'#ada491');poly([[10,-17],[16,-12],[13,10],[5,12],[4,-14]],'#765843');line([[-8,4],[4,4]],'#d2b784',2);break;
+  }
   eye(-4,-28,'#433e34');eye(3,-28,'#433e34');
  }
  function bossFinish(family){switch(family){
@@ -245,7 +258,84 @@ function draw(ctx,e,p,region=0,rescued=false){
   case 'citadel':line([[-8,-47],[-8,-42]],'#d2ded7',2);line([[9,-47],[9,-42]],'#d2ded7',2);poly([[-18,-19],[-11,-24],[-6,-17],[-13,-13]],'#b3c5c2');poly([[9,-22],[18,-18],[14,-11],[7,-15]],'#9eb4b5');line([[-24,-5],[-24,7]],'#d4b97b',2);oval(0,-16,2.5,3,'#ffe0a2');line([[24,-35],[34,-37]],'#e1e6d2',2);break;
   case 'darklord':poly([[-12,-20],[-20,-25],[-21,-17],[-13,-11]],'#8990a3');poly([[11,-20],[19,-25],[21,-16],[12,-11]],'#788297');line([[-6,-39],[0,-44],[6,-39]],'#b9bdc2',1.5);poly([[0,-19],[5,-12],[0,-6],[-5,-12]],'#b48fbc');poly([[0,-16],[2,-12],[0,-9],[-2,-12]],'#e3b9df');line([[-14,8],[-9,-6]],'#6c5b83',2);line([[10,7],[13,-4]],'#6c5b83',2);eye(-5,-32,'#f0bcad');eye(3,-32,'#f0bcad');line([[24,-38],[24,-20]],'#d4d8e0',1.5);break;
  }}
- function gate(family){const colors={crypt:'#929583',archive:'#6f9897',mine:'#8e8679',abyss:'#75545b',citadel:'#6a7082'},c=colors[family]||'#9b9988';rect(-30,-32,60,44,c);rect(-17,-21,34,34,'#172727');poly([[-34,-31],[0,-56],[34,-31]],c);for(const x of [-27,20]){rect(x,-30,7,40,'#b1b1a0');line([[x,-19],[x+7,-19]],ink,1);line([[x,-7],[x+7,-7]],ink,1);}if(family==='crypt')skull(0,-39,5);else if(family==='archive'){line([[-9,-37],[0,-42],[9,-37]],'#bdd9cb');rect(-18,9,36,3,'#65969d');}else if(family==='mine'){line([[-16,-36],[16,-36]],'#bc9a6e',4);line([[-10,-44],[9,-29]],steel,3);}else{poly([[-30,-33],[-33,-48],[-22,-34]],gold);poly([[30,-33],[33,-48],[22,-34]],gold);oval(0,-40,4,6,family==='abyss'?'#d78357':'#e8b766');}}
+ function gate(family){
+  // Destination bodies share an anchor, not a facade. Exits retain a quiet generic doorway.
+  const side=R.sideDungeons?.find(s=>s.id===family),theme=side?.theme;
+  if(theme==='cellar'){
+   poly([[-31,13],[-27,-17],[-16,-30],[20,-30],[31,-15],[31,13]],'#858b76');
+   poly([[-16,13],[-16,-13],[-9,-22],[11,-22],[18,-13],[18,13]],'#233129');
+   for(const y of [-4,3,10])poly([[-15,y],[17,y],[20,y+4],[-18,y+4]],'#a29a7c');
+   poly([[-31,-17],[-16,-30],[20,-30],[28,-20],[10,-23],[-17,-21]],'#697c55');
+   for(const x of [-23,24])line([[x,-11],[x,9]],'#74604a',3);line([[-23,-13],[-16,-19]],'#b39b70',2);
+   rect(22,-5,8,12,'#93724e');line([[23,-2],[29,-2]],'#c0a078',1.5);return;
+  }
+  if(theme==='flooded'){
+   for(const x of [-26,-9,10,26])line([[x,-3],[x,16]],'#736950',4);
+   rect(-29,-25,58,30,'#859282');poly([[-34,-25],[-25,-45],[-3,-47],[13,-35],[29,-41],[34,-25]],'#587b71');
+   for(const x of [-22,-12,0,13,24])line([[x,-22],[x,3]],'#697c6d',1.5);
+   rect(-9,-20,18,25,'#233d37');rect(14,-19,9,10,'#344b43');line([[14,-15],[22,-15]],'#a9b8a1',2);
+   line([[-28,7],[28,7]],'#a18b64',4);line([[-12,11],[12,11]],'#a18b64',4);
+   line([[-29,-28],[-18,-40]],'#a8ad86',2);for(const x of [-30,29])line([[x,12],[x+4,-3]],'#7d946c',2);return;
+  }
+  if(theme==='keep'){
+   rect(-26,-33,52,46,'#868b7e');for(const x of [-28,-14,0,14])rect(x,-43,11,12,'#a1a394');
+   rect(-9,-15,18,28,'#2e3831');rect(-16,-29,5,9,'#424c42');rect(10,-29,5,9,'#424c42');
+   for(const y of [-23,-3,9])line([[-24,y],[24,y]],'#626e64',1.5);
+   line([[2,-42],[2,-59]],'#9b815b',3);poly([[4,-58],[23,-54],[18,-44],[4,-47]],'#b09a73');
+   poly([[-29,13],[-32,1],[-23,-5],[-17,13]],'#737c70');line([[18,-37],[13,-22],[18,-14]],'#586459',2);return;
+  }
+  if(theme==='shrine'){
+   for(const x of [-27,20]){rect(x,-27,8,40,'#8c7e73');rect(x-3,-30,14,5,'#b19b84');}
+   poly([[-33,-30],[-5,-52],[4,-45],[12,-48],[33,-30],[17,-30],[0,-42],[-18,-30]],'#978571');
+   rect(-18,-20,36,33,'#66544d');rect(-10,-16,20,29,'#312a28');line([[-8,-16],[8,3]],'#805c50',3);
+   line([[25,-27],[25,-50]],'#8e7054',3);poly([[27,-48],[39,-43],[27,-32]],'#975f54');
+   line([[-31,12],[-19,12]],'#b3a08b',4);poly([[-30,-10],[-26,-19],[-23,-9]],'#786a60');return;
+  }
+  if(theme==='foundry'){
+   rect(-30,-23,60,36,'#666976');poly([[-34,-24],[-23,-38],[25,-38],[34,-24]],'#515c69');
+   rect(18,-56,11,33,'#666574');line([[19,-49],[27,-49]],'#a49aa6',2);rect(-12,-19,24,32,'#272a31');
+   for(const x of [-23,23])rect(x-2,-20,4,33,'#9a8c7d');line([[-24,-21],[24,-21]],'#b0a080',3);
+   rect(-26,-15,10,12,'#393d45');line([[-24,-11],[-17,-11]],'#c08a64',2);
+   poly([[-9,-32],[-1,-35],[8,-30],[1,-27]],'#a8acb0');line([[-25,6],[-17,6]],steel,3);line([[-21,3],[-21,12]],'#8a735b',3);return;
+  }
+  if(family==='crypt'){
+   rect(-28,-25,56,38,'#858b7d');poly([[-31,-25],[-23,-41],[-10,-49],[10,-49],[23,-41],[31,-25]],'#a1a591');
+   poly([[-15,13],[-15,-16],[-9,-29],[0,-34],[9,-29],[15,-16],[15,13]],'#202c27');
+   for(const x of [-25,20]){rect(x,-22,5,35,'#b2b29b');line([[x,-13],[x+5,-13]],'#707a69',1.5);}
+   skull(0,-42,5);for(const y of [7,12])line([[-19,y],[19,y]],'#aaa68d',3);
+   for(const [x,y]of [[-22,-27],[23,-31],[-27,8]])oval(x,y,4,2,'#627c51');return;
+  }
+  if(family==='archive'){
+   rect(-31,-24,62,34,'#769591');for(const x of [-28,20])rect(x,-39,8,49,'#9db5a7');
+   poly([[-35,-39],[-14,-47],[15,-47],[35,-39],[30,-32],[-30,-32]],'#638783');
+   rect(-14,-24,28,34,'#213a38');line([[-12,-21],[12,-21]],'#b8cfc0',2);
+   for(const x of [-23,23]){rect(x-3,-25,6,18,'#4b7270');line([[x-3,-18],[x+3,-18]],'#a2b8a6',1.5);}
+   line([[-29,3],[29,3]],'#446b68',3);for(const y of [8,13])line([[-23,y],[23,y]],'#8fada0',4);
+   poly([[-5,-36],[0,-41],[5,-36]],'#c6d6b5');return;
+  }
+  if(family==='mine'){
+   poly([[-34,13],[-32,-16],[-22,-34],[-3,-48],[19,-38],[33,-14],[34,13]],'#777d71');
+   poly([[-19,13],[-19,-13],[-11,-26],[11,-26],[20,-12],[20,13]],'#222c27');
+   for(const x of [-22,22])line([[x,12],[x,-25]],'#94744f',5);line([[-25,-26],[25,-26]],'#b29665',6);
+   for(const x of [-14,14])line([[x,-23],[x+(x<0?7:-7),-14]],'#765c40',3);
+   for(const x of [-9,9])line([[x,-4],[x*1.6,14]],steel,2);for(const y of [1,7,13])line([[-15,y],[15,y]],'#977754',2);
+   poly([[-29,-11],[-24,-17],[-19,-9]],'#baaa84');return;
+  }
+  if(family==='abyss'){
+   for(const side of [-1,1]){poly([[side*18,13],[side*22,-26],[side*28,-51],[side*36,-22],[side*34,13]],'#65535c');line([[side*27,-35],[side*30,-9]],'#ac7e6a',2);}
+   poly([[-23,-24],[-13,-38],[0,-31],[13,-38],[23,-24],[18,-17],[-18,-17]],'#886465');
+   poly([[-17,13],[-15,-14],[0,-25],[15,-14],[17,13]],'#241f27');
+   for(const x of [-10,10])line([[x,-16],[x,8]],'#8e8387',2);line([[-15,-4],[15,-4]],'#8e8387',2);
+   oval(0,-32,4,5,'#cf956e');line([[-28,10],[28,10]],'#a47c65',3);return;
+  }
+  if(family==='citadel'){
+   rect(-32,-29,64,42,'#666b7a');for(const x of [-34,24]){rect(x,-45,10,58,'#7d8290');poly([[x-2,-45],[x+5,-59],[x+12,-45]],'#555c6b');}
+   poly([[-25,-30],[0,-52],[25,-30]],'#535c6c');poly([[-14,13],[-14,-17],[0,-32],[14,-17],[14,13]],'#232530');
+   for(const x of [-9,0,9])line([[x,-18],[x,7]],'#8b8d98',2);line([[-13,-12],[13,-12]],'#b1a28a',2);
+   poly([[-5,-40],[0,-48],[5,-40],[0,-34]],'#b19ac0');for(const y of [-23,-8,7]){line([[-30,y],[-18,y]],'#4b5262',1.5);line([[18,y],[30,y]],'#4b5262',1.5);}return;
+  }
+  rect(-30,-32,60,44,'#9b9988');rect(-17,-21,34,34,'#172727');poly([[-34,-31],[0,-56],[34,-31]],'#9b9988');for(const x of [-27,20]){rect(x,-30,7,40,'#b1b1a0');line([[x,-19],[x+7,-19]],ink,1);line([[x,-7],[x+7,-7]],ink,1);}for(const side of [-1,1])poly([[side*30,-33],[side*33,-48],[side*22,-34]],gold);oval(0,-40,4,6,'#e8b766');
+ }
  function treasuryEntrance(boss){
   const wall=['#baa888','#aab1a1','#a1aaa4','#a18e7b','#929ba5'][region],roof=['#9b6350','#618789','#727a73','#76585a','#596478'][region],wood=['#765b40','#6c6652','#69665d','#5e4d46','#51515e'][region],trim=['#d8bd83','#abd0c0','#c8c4a3','#c69a75','#b6a5c2'][region];
   if(boss==='thorn'){rect(-31,-22,62,37,wall);poly([[-37,-22],[0,-51],[37,-22]],roof);rect(-15,-15,30,30,'#25362b');for(const x of [-25,25])line([[x,9],[x,-30]],wood,4);for(const x of [-18,-7,5,16])poly([[x,-29],[x+4,-38],[x+8,-29]],'#61784f');poly([[-8,-34],[-4,-44],[0,-36],[5,-45],[9,-34]],bone);line([[-28,8],[28,8]],trim,2);}
@@ -258,22 +348,41 @@ function draw(ctx,e,p,region=0,rescued=false){
   const wall=['#baa888','#aab1a1','#a1aaa4','#a18e7b','#929ba5'][region],roof=['#9b6350','#618789','#727a73','#76585a','#596478'][region],timber=['#806044','#71654f','#71695b','#614f46','#555563'][region],trim=['#d8bd83','#abd0c0','#c8c4a3','#c69a75','#b6a5c2'][region],dark=['#594b3b','#465a57','#54574f','#4d403a','#454653'][region];
   const utilityFrame=()=>{
    if(region===0){for(const x of [-31,31])line([[x,13],[x,-26]],timber,3);for(const x of [-24,24])oval(x,10,6,3,'#6c8a58');}
-   else if(region===1){for(const x of [-29,-14,14,29])line([[x,12],[x,27]],timber,4);line([[-34,15],[34,15]],'#867557',4);for(const x of [-29,-18,-7,5,17,29])line([[x,-39],[x+4,-50]],'#82946c',1.6);}
-   else if(region===2){rect(-36,7,72,9,'#777b73');for(const x of [-31,-13,8,27])rect(x,8,16,7,'#929389');rect(23,-48,9,28,'#74756d');}
+   else if(region===1){for(const x of [-29,-14,14,29])line([[x,12],[x,27]],timber,4);line([[-34,15],[34,15]],'#867557',4);}
+   else if(region===2){rect(-36,7,72,9,'#777b73');for(const x of [-31,-13,8,27])rect(x,8,16,7,'#929389');}
    else if(region===3){for(const x of [-35,35]){rect(x-3,-29,6,44,'#604f45');poly([[x-4,-29],[x,-39],[x+4,-29]],'#8a6b54');}line([[-36,7],[36,-3]],'#785d4f',3);}
    else{for(const x of [-35,-22,22,35])rect(x-3,-31,6,46,'#555762');for(const x of [-29,29])poly([[x-5,-30],[x,-44],[x+5,-30]],'#71697e');poly([[-6,-44],[0,-54],[6,-44],[0,-35]],'#9b87ad');}
   };
-  if(kind==='quests'){utilityFrame();for(const x of [-20,20])rect(x-2,-38,4,52,timber);rect(-25,-38,50,5,roof);rect(-22,-32,44,31,wall);line([[-22,-27],[22,-27]],trim,2);for(const [x,y]of [[-16,-23],[-3,-25],[10,-22],[-11,-9],[5,-10]]){rect(x,y,10,9,'#e7d7ad');line([[x+2,y+3],[x+8,y+3]],'#8f765a',1);}for(const x of [-18,18])glint(x,-29,trim,1.5);return;}
-  if(kind==='supplier'){utilityFrame();for(const x of [-25,25])rect(x-2,-28,4,43,timber);poly([[-31,-27],[-22,-45],[22,-45],[31,-27]],roof);rect(-28,-7,56,20,wall);line([[-27,-6],[27,-6]],trim,2);rect(-19,-18,13,11,dark);oval(0,-12,7,5,trim);rect(10,-20,13,13,timber);for(const x of [-17,0,17])oval(x,7,4,3,x===0?trim:'#8b9c72');return;}
-  if(kind==='recruiter'){utilityFrame();rect(-29,5,58,9,dark);for(const x of [-25,25])rect(x-3,-34,6,40,timber);poly([[-31,-33],[-18,-48],[20,-48],[32,-33]],roof);line([[-26,-31],[26,-31]],trim,2);shield(-13,-10,wall);line([[8,-27],[8,9]],steel,3);line([[17,-27],[17,9]],timber,3);poly([[6,-29],[12,-42],[18,-29]],trim);rect(-3,-17,7,22,timber);return;}
-  if(kind==='rest'){utilityFrame();rect(-30,-20,60,35,wall);poly([[-35,-21],[0,-50],[35,-21]],roof);rect(-8,-5,16,20,dark);rect(19,-42,8,23,timber);for(const y of [-39,-33])line([[20,y],[26,y]],'#d4c5a2',1);line([[-25,-16],[25,-16]],trim,2);oval(-18,-8,5,5,'#d6b56f');rect(-21,-7,6,12,timber);if(region===1){for(const x of [-28,-18,18,28])line([[x,14],[x,23]],timber,3);}else if(region===2){for(const x of [-25,-12,12,25])rect(x-3,7,6,8,'#85877f');}else if(region===3){for(const x of [-24,24])poly([[x-4,-20],[x,-31],[x+4,-20]],'#8c674f');}else if(region===4){poly([[-5,-34],[0,-43],[5,-34],[0,-27]],'#9b87ad');}return;}
+  const serviceRoof=(y)=>{
+   if(region===0){poly([[-33,y],[-20,y-17],[20,y-17],[33,y]],roof);line([[-31,y],[31,y]],trim,2);}
+   else if(region===1){poly([[-34,y],[-26,y-13],[24,y-20],[34,y]],roof);for(const x of [-27,-16,-5,6,17,28])line([[x,y-3],[x-4,y-13]],'#a2ae85',1.5);}
+   else if(region===2){rect(-31,y-12,62,13,roof);rect(-25,y-17,50,6,'#92998b');line([[-29,y-7],[29,y-7]],'#555f58',1.5);}
+   else if(region===3){poly([[-34,y],[-23,y-18],[7,y-20],[34,y]],roof);poly([[8,y-16],[18,y-11],[14,y-3],[3,y-9]],'#aa8067');line([[-29,y],[29,y-5]],timber,3);}
+   else{poly([[-34,y],[-25,y-18],[25,y-18],[34,y]],roof);for(const x of [-27,27])poly([[x-4,y],[x,y-15],[x+4,y]],'#8c8296');line([[-24,y-2],[24,y-2]],trim,2);}
+  };
+  if(kind==='quests'){utilityFrame();for(const x of [-20,20])rect(x-2,-38,4,52,timber);rect(-22,-32,44,31,wall);serviceRoof(-34);line([[-22,-27],[22,-27]],trim,2);for(const [x,y]of [[-16,-23],[-3,-25],[10,-22],[-11,-9],[5,-10]]){rect(x,y,10,9,'#e7d7ad');line([[x+2,y+3],[x+8,y+3]],'#8f765a',1);}rect(-18,3,24,4,timber);rect(13,-3,6,12,dark);return;}
+  if(kind==='supplier'){utilityFrame();for(const x of [-25,25])rect(x-2,-28,4,43,timber);serviceRoof(-27);rect(-28,-7,56,20,wall);line([[-27,-6],[27,-6]],trim,3);rect(-21,-24,13,17,dark);for(const y of [-21,-14])line([[-20,y],[-9,y]],trim,2);oval(0,-12,7,5,'#b1a17b');line([[-4,-15],[4,-15]],'#776047',2);rect(12,-20,10,13,timber);line([[12,-14],[22,-14]],trim,1.5);for(const x of [-18,18])line([[x,0],[x,12]],timber,2);return;}
+  if(kind==='recruiter'){utilityFrame();rect(-29,5,58,9,dark);for(const x of [-25,25])rect(x-3,-34,6,40,timber);serviceRoof(-32);shield(-13,-10,wall);line([[8,-27],[8,9]],steel,3);line([[17,-27],[17,9]],timber,3);poly([[6,-29],[12,-42],[18,-29]],trim);rect(-3,-17,7,22,timber);line([[29,-32],[29,12]],timber,3);poly([[30,-30],[39,-27],[37,-13],[30,-16]],region===4?'#71586f':roof);return;}
+  if(kind==='rest'){
+   utilityFrame();
+   if(region===0){rect(-28,-19,56,34,wall);poly([[-34,-20],[0,-50],[34,-20]],roof);for(const x of [-23,23])line([[x,-18],[x,12]],timber,3);}
+   else if(region===1){rect(-30,-16,60,29,wall);serviceRoof(-17);line([[-28,7],[28,7]],trim,3);for(const x of [-24,24])line([[x,9],[x,23]],timber,3);}
+   else if(region===2){rect(-30,-23,60,38,'#92968b');poly([[-34,-24],[-22,-39],[22,-39],[34,-24]],roof);for(const y of [-17,-5,7])line([[-28,y],[28,y]],'#68756b',1.5);rect(21,-51,9,28,'#757a71');}
+   else if(region===3){rect(-28,-19,56,34,wall);serviceRoof(-20);rect(12,-13,12,10,'#6e574c');line([[12,-12],[24,-4]],'#b89676',2);poly([[-31,12],[-31,-9],[-17,-20],[-13,12]],'#89705e');}
+   else{rect(-29,-23,58,38,wall);serviceRoof(-24);rect(-24,-18,10,14,'#414752');for(const x of [-21,-17])line([[x,-17],[x,-5]],steel,1.5);poly([[-5,-35],[0,-43],[5,-35],[0,-28]],'#ae98bd');}
+   rect(-7,-4,14,19,dark);rect(12,4,14,6,timber);oval(-18,-8,5,5,'#d6b56f');rect(-21,-7,6,12,timber);line([[-4,-3],[-4,12]],trim,1);return;
+  }
   if(kind==='barracks'&&Number.isFinite(e.progress)&&e.progress<4){
    const timber=['#8a6a49','#7a7258','#7b6f58','#66564a','#555563'][region],base=['#6f765c','#667b78','#777a70','#65524a','#545867'][region];
-   rect(-28,7,56,7,base);for(const x of [-23,0,23]){rect(x-3,-28,6,42,timber);poly([[x-4,-28],[x,-37],[x+4,-28]],roof);}
-   line([[-27,-17],[27,3]],'#c1a477',3);line([[27,-17],[-27,3]],'#c1a477',3);rect(-18,-34,36,4,timber);
+   rect(-28,7,56,7,base);
+   if(e.progress<1){for(const x of [-23,23])line([[x,13],[x,-5]],timber,3);for(const y of [-3,2])line([[-17,y],[16,y]],timber,4);oval(15,7,8,4,roof);}
+   else{for(const x of [-23,0,23]){rect(x-3,-28,6,42,timber);poly([[x-4,-28],[x,-37],[x+4,-28]],roof);}rect(-18,-34,36,4,timber);
+    if(e.progress<2){line([[-27,-17],[27,3]],'#c1a477',3);line([[27,-17],[-27,3]],'#c1a477',3);}
+    else{poly([[0,-35],[-26,8],[-7,8]],roof);line([[0,-33],[-25,7]],'#c1a477',2);if(e.progress>=3){poly([[0,-35],[26,8],[9,8]],roof);line([[0,-33],[25,7]],'#c1a477',2);}else line([[27,-17],[3,3]],'#c1a477',3);}
+   }
    if(region===1){for(const x of [-24,-8,8,24])line([[x,13],[x,22]],'#7d7255',3);line([[-29,16],[29,16]],'#9a8a65',3);}
    if(region===2){for(const x of [-25,-8,9])rect(x,10,16,7,'#777e74');}
-   if(region===3){for(const x of [-24,24])line([[x,-31],[x-7,-41]],'#4f4a43',3);}
+   if(region===3&&e.progress>=1){for(const x of [-24,24])line([[x,-31],[x-7,-41]],'#4f4a43',3);}
    if(region===4){for(const x of [-18,18])poly([[x-5,10],[x,-3],[x+5,10]],'#77718c');}
    return;
   }
@@ -427,22 +536,22 @@ function draw(ctx,e,p,region=0,rescued=false){
  case 'armor':humanoid('#88999d',steel);rect(-25,7,50,9,'#6b756f');shield(-19,-1,'#626f79');break;
  case 'thorn-bed':oval(0,7,29,12,'#6f7f55');for(const [x,y]of [[-18,-2],[-8,-8],[4,-6],[16,-1]])poly([[x-5,y+8],[x,y-8],[x+6,y+8]],'#5e744d');for(const x of [-17,17])line([[x,6],[x+(x<0?-7:7),-5]],'#806543',3);break;
  case 'fang-trophy':line([[0,-41],[0,13]],localWood,3);for(const y of [-31,-18,-5]){poly([[-11,y],[-5,y-8],[-2,y]],bone);poly([[11,y],[5,y-8],[2,y]],bone);}break;
- case 'root-table':oval(0,3,27,10,'#74563d');for(const x of [-17,17])line([[x,6],[x,17]],'#604831',4);for(const [x,c]of [[-9,'#d0a85e'],[0,'#b98555'],[10,'#8c9a69']])oval(x,-1,4,3,c);break;
+ case 'root-table':poly([[-12,5],[-9,14],[-22,18],[-10,19],[0,13],[12,19],[22,16],[10,12],[12,5]],'#604831');poly([[-29,0],[-20,-9],[-5,-11],[9,-8],[25,-9],[30,1],[21,9],[-17,10]],'#896b49');line([[-20,1],[18,3]],'#b49567',1.5);for(const [x,c]of [[-12,'#d0a85e'],[0,'#b98555'],[13,'#8c9a69']]){oval(x,-2,5,3,'#d2bc89');oval(x,-3,3,2,c);}break;
  case 'warm-brazier':oval(0,8,16,6,'#5a4a3b');for(const x of [-7,0,7])poly([[x-4,7],[x,-8],[x+4,7]],'#c87946');glint(0,-5,'#ffd27e',2);break;
  case 'treasure-hoard':for(const [x,y,r]of [[-15,6,7],[-5,1,8],[7,5,9],[16,8,6],[2,-5,6]])oval(x,y,r,r*.55,'#c59a4f');for(const [x,y]of [[-8,-2],[4,1],[13,4]])glint(x,y,'#f3dc8a',1.5);break;
  case 'boss-chest':rect(-23,-10,46,23,'#806144');poly([[-23,-10],[-17,-23],[17,-23],[23,-10]],'#9d7950');line([[0,-22],[0,12]],gold,3);rect(-5,-8,10,8,gold);break;
  case 'mire-pool':oval(0,7,30,12,'#4d7470');for(const x of [-22,-14,18,25])line([[x,12],[x,-8]],'#71865e',2);for(const [x,y]of [[-9,4],[6,1],[14,8]])oval(x,y,4,2,'#829c75');break;
- case 'fish-rack':for(const x of [-20,20])line([[x,12],[x,-34]],localWood,3);line([[-21,-30],[21,-30]],localWood,3);for(const x of [-14,0,14]){line([[x,-28],[x,-13]],'#d5c9a5',1);poly([[x-7,-12],[x,-17],[x+7,-12],[x,-7]],'#8fa197');}break;
+ case 'fish-rack':for(const x of [-22,22]){line([[x,13],[x,-34]],localWood,4);line([[x,7],[x+(x<0?7:-7),-7]],'#9b8764',2);}line([[-24,-30],[24,-30]],localWood,4);for(const [x,y]of [[-14,-13],[0,-8],[14,-16]]){line([[x,-28],[x,y-8]],'#d5c9a5',1.5);poly([[x-3,y-9],[x+3,y-9],[x,y-4]],'#b4b6a1');poly([[x,y-5],[x+5,y+1],[x+3,y+10],[x-3,y+10],[x-5,y+1]],'#8fa197');line([[x,y-1],[x,y+6]],'#ccd2b7',1);eye(x-1,y+7,ink);}break;
  case 'reed-nest':oval(0,7,29,12,'#7d8060');for(let x=-25;x<=25;x+=8)line([[x,10],[x+4,-4]],'#a0986d',2);oval(0,3,18,7,'#556e5a');break;
  case 'shell-hoard':for(const [x,y]of [[-15,5],[-7,-1],[2,5],[11,0],[18,7]]){oval(x,y,7,4,'#b9ad8f');line([[x-4,y],[x+4,y]],'#806f5f',1);}for(const x of [-8,8])glint(x,-5,'#d9cfac',1.3);break;
  case 'drift-seat':line([[-24,8],[22,-2]],'#76654e',8);line([[-13,4],[-16,16]],'#665440',4);line([[12,0],[16,13]],'#665440',4);for(const x of [-12,2,14])line([[x,3],[x+3,-6]],'#9b8b6c',1);break;
  case 'ridge-hearth':rect(-25,-10,50,23,'#7d7f76');rect(-18,-27,36,17,'#666960');oval(0,4,17,6,'#4d4841');for(const x of [-8,0,8])poly([[x-4,5],[x,-9],[x+4,5]],'#c27e4c');break;
- case 'weapon-rack':for(const x of [-22,22])line([[x,13],[x,-38]],localWood,3);line([[-23,-30],[23,-30]],localWood,3);for(const x of [-13,0,13]){line([[x,-28],[x,10]],steel,2);poly([[x-5,-28],[x,-39],[x+5,-28]],'#aaa891');}break;
+ case 'weapon-rack':for(const x of [-24,24])line([[x,14],[x,-32]],localWood,4);for(const y of [-22,5])line([[-25,y],[25,y]],localWood,3);line([[-15,-26],[-15,10]],'#9f825a',3);poly([[-19,-23],[-15,-38],[-11,-23]],steel);line([[-2,-18],[-2,11]],'#9f825a',3);poly([[-7,-26],[-2,-33],[4,-24],[4,-9],[-2,-5],[-7,-10]],steel);line([[-9,-6],[5,-6]],gold,2);line([[15,-24],[15,10]],'#9f825a',3);poly([[14,-30],[25,-32],[24,-21],[15,-19]],'#a6afa7');break;
  case 'stone-seat':rect(-24,-12,48,27,'#777a72');rect(-18,-34,36,23,'#898b82');for(const x of [-17,17])rect(x-6,-4,12,19,'#686b65');line([[-14,-26],[14,-26]],'#aaa68f',2);break;
  case 'trophy-rack':for(const x of [-20,20])line([[x,13],[x,-36]],localWood,3);line([[-21,-31],[21,-31]],localWood,3);for(const x of [-12,0,12]){poly([[x-6,-27],[x,-37],[x+6,-27]],bone);line([[x,-26],[x,-8]],'#9b8e73',2);}break;
  case 'dark-brazier':oval(0,8,18,7,'#4c4652');for(const x of [-9,0,9])poly([[x-5,7],[x,-11],[x+5,7]],'#9c5f58');for(const x of [-5,5])glint(x,-4,'#d5a074',1.5);break;
  case 'dark-throne':rect(-24,-11,48,27,'#555461');poly([[-20,-10],[-17,-39],[0,-51],[17,-39],[20,-10]],'#64616f');poly([[0,-39],[6,-29],[0,-19],[-6,-29]],'#9b82aa');for(const x of [-18,18])rect(x-5,-3,10,19,'#464752');break;
- case 'war-table':oval(0,4,29,11,'#5e554f');for(const x of [-18,18])line([[x,7],[x,18]],'#493f3b',4);line([[-18,-1],[18,7]],'#ad8b6d',1);for(const [x,y]of [[-10,0],[3,2],[12,5]])glint(x,y,'#d7b46d',1.3);break;
+ case 'war-table':for(const x of [-22,22])line([[x,4],[x,18]],localWood,4);poly([[-31,-8],[25,-8],[31,4],[27,11],[-29,11]],'#695e54');poly([[-21,-5],[17,-5],[22,6],[-18,6]],'#b3a17c');line([[-15,-2],[-4,2],[4,-2],[15,3]],'#6f7c65',2);for(const [x,y]of [[-11,0],[2,-1],[12,3]]){line([[x,y],[x,y-9]],'#6a5944',1.5);poly([[x,y-9],[x+5,y-7],[x,y-5]],region===4?'#94799f':'#af7557');}oval(-25,-4,3,5,'#c7b68f');rect(24,-3,4,8,'#8a7457');break;
  case 'crown-banner':line([[0,-50],[0,14]],steel,3);poly([[3,-47],[27,-43],[23,-13],[12,-6],[3,-15]],'#71586f');poly([[14,-37],[20,-28],[14,-19],[8,-28]],'#a78ab1');break;
  case 'crown-levy-yard':
   shade(42,10,.18);rect(-38,-5,48,18,'#765b47');for(const x of [-28,0])oval(x,13,7,7,'#45474a');line([[8,-2],[28,-18]],localWood,4);
@@ -505,8 +614,8 @@ function draw(ctx,e,p,region=0,rescued=false){
  case 'tax-post':line([[0,-48],[0,14]],localWood,4);rect(-18,-43,36,25,'#8a7357');for(const y of [-37,-31,-25])line([[-13,y],[12,y]],'#d3c298',1);rect(7,-14,12,10,'#6f5541');break;
  case 'lean-to':for(const x of [-24,24])line([[x,13],[x,-27]],localWood,4);poly([[-31,-25],[-12,-41],[28,-32],[31,-20]],'#8a7359');rect(-22,-5,44,17,'#665848');break;
  case 'cookfire':for(const a of [-15,0,15])line([[-18,a/5+7],[18,a/5-4]],'#70543d',4);oval(0,7,16,6,'#4b443c');for(const x of [-8,0,8])poly([[x-4,6],[x,-9],[x+4,6]],'#c97d48');glint(0,-5,'#efbd72',2);break;
- case 'sleep-roll':rect(-25,-8,50,18,'#7b6c58');line([[-23,-5],[23,-5]],'#b6a17d',2);oval(-18,-7,7,4,'#9b8566');break;
- case 'game-table':oval(0,2,24,9,'#705740');for(const x of [-15,15])line([[x,5],[x,17]],localWood,4);for(const [x,y,c]of [[-7,0,'#d2bd7d'],[2,-2,'#8fa0a0'],[8,3,'#aa7c6f']])oval(x,y,2.5,2,c);break;
+ case 'sleep-roll':poly([[-25,-8],[18,-8],[25,-3],[25,11],[-25,11]],'#7b6c58');poly([[-12,-6],[20,-6],[23,9],[-11,9]],region===1?'#78928a':region===4?'#7b728b':'#a08a67');for(const y of [-3,7])line([[-10,y],[20,y]],'#c2af86',1.5);oval(-20,-6,6,4,'#c9b997');line([[-26,10],[24,10]],localWood,2);line([[14,-6],[14,9]],'#6b5945',2);break;
+ case 'game-table':for(const x of [-18,18])line([[x,4],[x,17]],localWood,4);poly([[-25,-7],[23,-7],[28,7],[-25,7]],'#8a6b4b');rect(-13,-5,24,11,'#d2bc89');for(let row=0;row<3;row++)for(let col=0;col<4;col++)if((row+col)%2===0)rect(-12+col*6,-4+row*3,5,3,'#776448');for(const [x,y,c]of [[-8,-3,'#d9c582'],[3,0,'#8fa0a0'],[8,4,'#aa7c6f']])oval(x,y,2,1.5,c);oval(-20,-1,3,3,'#b7956a');break;
  case 'stolen-goods':rect(-20,-10,24,23,'#8b6b49');rect(3,-5,21,18,'#9a7752');poly([[-8,-12],[-1,-25],[7,-13]],'#8d9b76');line([[12,-4],[22,-17]],steel,2);break;
  case 'training-dummy':line([[0,-40],[0,15]],localWood,5);line([[-20,-24],[20,-24]],localWood,4);oval(0,-48,9,9,'#9b8060');rect(-12,-18,24,24,'#77614d');break;
  case 'bone-pile':for(const [x,y]of [[-13,4],[-4,-1],[6,5],[14,0]]){line([[x-7,y-4],[x+7,y+4]],bone,3);oval(x+6,y+4,2.5,2.5,bone);}skull(-2,-7,5);if(region===3){if(variant%2===0)line([[-22,8],[-12,-3]],'#7b6252',2);else skull(15,-5,3.5);}break;
@@ -517,19 +626,19 @@ function draw(ctx,e,p,region=0,rescued=false){
  case 'wallow':oval(0,7,29,12,'#5d6254');oval(0,5,23,8,'#4f6f69');for(const [x,y]of [[-9,3],[7,5],[13,1]])oval(x,y,3,2,'#7c8972');break;
  case 'ore-cart':rect(-23,-11,46,18,'#806548');for(const x of [-15,15])oval(x,10,7,7,'#4f514c');for(const [x,y]of [[-12,-12],[0,-16],[12,-11]])oval(x,y,8,5,'#858880');line([[21,-7],[34,-15]],localWood,3);break;
  case 'ore-crane':for(const x of [-25,25])line([[x,14],[x,-42]],localWood,5);line([[-27,-39],[28,-39]],localWood,4);line([[20,-38],[20,-5]],steel,2);oval(20,-2,6,4,'#777b75');line([[-25,-30],[25,-39]],'#9c805a',3);break;
- case 'tool-rack':for(const x of [-22,22])line([[x,13],[x,-35]],localWood,3);line([[-23,-29],[23,-29]],localWood,3);for(const x of [-13,0,13]){line([[x,-27],[x,8]],steel,2);line([[x-5,-20],[x+5,-20]],'#9b805e',3);}break;
+ case 'tool-rack':for(const x of [-23,23])line([[x,14],[x,-33]],localWood,4);line([[-24,-28],[24,-28]],localWood,4);line([[-24,7],[24,7]],localWood,3);line([[-14,-23],[-14,8]],'#b09265',3);rect(-20,-26,12,7,steel);line([[0,-22],[0,0]],'#b09265',3);poly([[-6,-1],[6,-1],[4,8],[0,11],[-4,8]],'#899a9a');line([[-4,-23],[4,-23]],'#b09265',2);for(const x of [11,17])line([[x,-24],[x-1,4]],steel,2);line([[11,4],[15,9],[17,4]],steel,2);break;
  case 'stone-marker':for(const [x,y,r]of [[0,7,12],[-2,-8,9],[1,-20,6]])oval(x,y,r,r*.55,'#797d75');line([[-5,-9],[5,-13]],'#b4aa8e',1.5);break;
- case 'field-kitchen':rect(-25,-8,50,21,'#7a6249');oval(0,-5,16,7,'#4e4840');for(const x of [-8,0,8])poly([[x-4,-2],[x,-16],[x+4,-2]],'#b96f47');line([[-30,-20],[30,-20]],localWood,3);for(const x of [-24,24])line([[x,13],[x,-28]],localWood,3);if(region===3&&variant%2===0){oval(-18,-17,7,4,'#5a5046');line([[-24,-18],[-12,-18]],'#a88964',2);}break;
+ case 'field-kitchen':rect(-24,0,48,13,'#776956');oval(0,6,14,5,'#413d37');for(const x of [-7,0,7])poly([[x-3,6],[x,-5],[x+3,6]],'#b96f47');for(const x of [-24,24])line([[x,13],[x,-30]],localWood,4);line([[-28,-27],[28,-27]],localWood,4);line([[0,-25],[0,-14]],steel,2);oval(0,-10,11,8,'#565957');oval(0,-15,11,4,'#87918a');line([[-9,-12],[9,-12]],'#a6b1a2',1.5);line([[19,-26],[19,-7]],'#b8996b',2);oval(19,-5,3,4,'#a18b6b');rect(-25,-11,11,10,'#b7a17b');if(region===3&&variant%2===0)line([[-23,-24],[-17,-18]],'#b79573',2);break;
  case 'supply-stack':for(const [x,y]of [[-17,0],[5,2],[-6,-14],[15,-13]]){rect(x-10,y-8,20,17,'#8d6d4b');line([[x-9,y-7],[x+9,y+7]],'#b89565',2);}if(region===3){if(variant%3===0)oval(22,6,9,6,'#8a765e');else if(variant%3===1)rect(-30,-4,13,16,'#725942');else line([[-24,-18],[20,-21]],'#c6a477',2);}break;
  case 'command-tent':poly([[-35,12],[0,-47],[36,12]],region===4?'#5d5668':'#7c5e53');line([[0,-44],[0,14]],localWood,4);rect(-12,-2,24,17,region===4?'#33313a':'#54463f');line([[-29,9],[29,9]],'#b79573',2);if(region===3){if(variant%2===0){rect(-24,-22,13,8,'#956f60');line([[-34,11],[-45,19]],'#6a5141',2);}else{line([[22,-18],[34,-26]],'#9e735d',3);rect(18,-3,10,8,'#6d5144');}}break;
- case 'bunk':rect(-27,-8,54,18,'#6d5947');rect(-24,-6,48,10,'#837561');for(const x of [-23,23])line([[x,8],[x,17]],localWood,3);rect(-20,-5,11,7,'#b09a78');break;
+ case 'bunk':for(const x of [-26,26])line([[x,-14],[x,17]],localWood,4);rect(-27,-8,54,18,localWood);rect(-23,-8,46,12,'#ada086');rect(-21,-7,11,6,'#d0c3a3');rect(-8,-7,30,13,region===4?'#796b85':region===3?'#9b7260':'#8a917d');line([[-4,-6],[-4,5]],'#c8b78e',2);line([[-26,-15],[-16,-15]],'#b49a71',3);line([[17,-12],[26,-12]],'#b49a71',3);line([[-25,10],[25,10]],'#554b3b',2);break;
  case 'forge':rect(-26,-12,52,27,'#696863');rect(-18,-29,36,18,'#77736b');oval(0,4,16,6,'#403b38');for(const x of [-8,0,8])poly([[x-4,5],[x,-9],[x+4,5]],'#bd7148');rect(19,-42,9,31,'#5b5855');break;
  case 'roost':oval(0,7,30,12,'#62594f');for(const x of [-24,-12,0,12,24])line([[x,10],[x+5,-6]],'#806a4e',2);for(const [x,y]of [[-9,1],[8,4]])poly([[x-5,y+6],[x,y-8],[x+5,y+6]],'#676b62');if(region===3){if(variant%2===0)for(const x of [-16,15])line([[x,6],[x+flip*7,-9]],'#4b4240',3);else glint(13,-2,'#d58a59',1.3);}break;
  case 'hatchery':oval(0,7,30,12,'#5a5049');for(const [x,y]of [[-12,3],[0,-1],[12,4]])oval(x,y,6,8,'#8d826d');for(const x of [-22,22])line([[x,10],[x+4,-7]],'#7b6750',2);if(region===3){if(variant%2===0){line([[-25,8],[-12,-9]],'#645048',3);line([[24,8],[12,-7]],'#645048',3);}else oval(0,3,21,9,'#4c4541');}break;
- case 'scribe-desk':rect(-27,-8,54,17,'#725d47');for(const x of [-21,21])line([[x,6],[x,18]],localWood,3);rect(-18,-18,36,11,'#c5b88f');line([[-14,-14],[12,-14]],'#776b58',1);break;
+ case 'scribe-desk':for(const x of [-21,21])line([[x,3],[x,18]],localWood,4);poly([[-28,5],[-23,-17],[23,-17],[28,5]],'#88704f');poly([[-17,-14],[-2,-12],[13,-14],[16,2],[0,4],[-19,2]],'#d4c49a');line([[-2,-11],[0,3]],'#89785d',1.5);for(const y of [-7,-2]){line([[-14,y],[-6,y+1]],'#9b8968',1);line([[3,y],[11,y-1]],'#9b8968',1);}oval(22,-5,3,3,'#394b4a');line([[21,-8],[25,-22]],'#d4c9a7',2);poly([[24,-21],[28,-26],[28,-17]],'#d4c9a7');line([[-25,5],[25,5]],'#bc9f70',2);break;
  case 'scroll-stack':for(const [x,y]of [[-13,5],[0,1],[13,6],[-5,-8],[8,-9]]){rect(x-8,y-3,16,6,'#c5b78e');oval(x-8,y,2,3,'#927a5e');}break;
  case 'ossuary':rect(-24,-17,48,31,'#747872');for(const [x,y]of [[-12,-8],[0,-10],[12,-7],[-7,4],[8,3]])skull(x,y,4);line([[-22,-14],[22,-14]],'#a5aa9d',2);break;
- case 'ritual-table':oval(0,3,27,10,'#6d5e50');for(const x of [-18,18])line([[x,6],[x,18]],localWood,4);poly([[-7,-3],[0,-11],[7,-3],[0,5]],'#9b8a73');glint(0,-6,'#d9bf86',1.5);break;
+ case 'ritual-table':rect(-16,3,32,14,region===1?'#778b7a':'#80756c');poly([[-28,-5],[-18,-13],[19,-13],[28,-5],[25,6],[-25,6]],region===1?'#9bafa0':'#9a8a7c');line([[-24,3],[24,3]],'#c1b59a',2);poly([[-7,-4],[0,-11],[7,-4],[0,3]],'#746579');oval(0,-5,3,2,'#c8ae84');for(const x of [-19,19]){rect(x-2,-16,4,9,'#d4c6a5');oval(x,-7,4,2,'#746252');}line([[-8,13],[8,13]],'#c7b694',2);break;
  case 'grave-lamp':line([[0,-35],[0,13]],steel,3);poly([[-8,-33],[0,-43],[8,-33],[6,-18],[-6,-18]],'#7c7260');glint(0,-27,'#e0bd72',2);break;
  case 'caretaker-table':rect(-24,-7,48,16,'#6f5a45');for(const x of [-18,18])line([[x,7],[x,18]],localWood,3);rect(-17,-14,15,7,'#9a8669');oval(10,-10,6,4,'#83725a');break;
  case 'grass':for(const x of [-7,0,7])line([[x,8],[x+(x?Math.sign(x)*3:1),-8-(variant%5)]],'#739266',1.5);break;

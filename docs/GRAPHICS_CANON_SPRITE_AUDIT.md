@@ -1,5 +1,7 @@
 # Canon sprite-conversion audit
 
+> Historical conversion assessment. For current drawings and the v0.8.79 procedural revision, use `GRAPHICS_PROCEDURAL_POLISH_V0879.md`, `GRAPHICS_CANON_SPRITE_PROMPT_AUDIT.md` and the production prompt catalog. The allied Archer now uses a goblin scout body; main and side entrances, specialist clothing, services and selected furniture have since been polished.
+
 This audit applies the canonical rule in `GRAPHICS_OVERHAUL_PHASE1.md`: the production procedural visuals are the source of truth, and sprite work is justified only where a static raster asset produces a meaningful visual gain without redesign.
 
 ## Priority A — convert first

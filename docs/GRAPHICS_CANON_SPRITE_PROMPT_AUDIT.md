@@ -4,9 +4,9 @@
 
 `GRAPHICS_CANON_SPRITE_PROMPTS.md` is the authoritative production document for the next sprite-generation phase.
 
-The completed audit contains **227 numbered entries**:
+The completed audit contains **231 numbered entries**:
 
-- **217 GENERATE** entries with complete one-at-a-time image-generation prompts;
+- **221 GENERATE** entries with complete one-at-a-time image-generation prompts;
 - **0 ALIAS** entries that reuse an already generated canonical static body;
 - **10 numbered KEEP PROCEDURAL** entries;
 - additional broad procedural systems classified exhaustively in `GRAPHICS_CANON_SPRITE_COVERAGE.md`.
@@ -59,11 +59,9 @@ Reed-beast Spitter, Goblin Slinger and Skeleton Bow already had static ranged cu
 
 Dreadmaw's current combat mentor and Treasury master is Cindermaw, but his procedural visual idol is the Dark Lord. This preserves the character's history: before Cindermaw was introduced, the same Crown Treasury captain was named "Dread Lord" and used mentor:'darklord'. Dreadmaw therefore keeps an Ash-beast body with Dark-Lord-inspired obsidian-purple harness/sigil treatment rather than becoming a plain Ash-beast alias or a miniature humanoid Dark Lord.
 
-### Side-interior entrance
+### Side-interior entrances — v0.8.79 supersession
 
-The five occupied side-interior entrances are `kind:'dungeon'` and fall through to the default `gate()` renderer. Prompt 131 now correctly describes that triangular-roof masonry gate. It no longer confuses the side-interior gate with the separate `kind:'mini'` field-compound marker.
-
-The actual field-compound marker is prompt 162.
+The earlier shared default-gate diagnosis was correct at the time, but has now been addressed in the procedural renderer. `gate(family)` resolves each occupied side interior through its rules-defined theme. Old Orchard Cellars uses a low cellar arch and steps (131), Drowned Watchhouse a damaged raised timber facade (228), Old Signal Keep a crenellated signal keep (229), Ruined Shrine a broken portico with occupation timber (230), and Ruined Foundry a chimney repair-hall facade (231). All five preserve their exact runtime `dungeon:side-*` keys. Generic exits and field-compound marker 162 remain separate designs.
 
 ### Missing interactables
 
@@ -82,7 +80,7 @@ This prevents progression-critical interactables from being forgotten while char
 
 The audit added renderer-faithful prompts for the Woodland cache, wagon/convoy, Ravine overlook, Stonecross ore vein and Dark Crown crystal shelf.
 
-Names do not override drawings. Drowned Watchhouse remains the actual timber watch marker in prompt 084; Old Signal Keep remains the actual rock-and-banner lookout marker in prompt 085.
+Names do not override drawings. The retained `landmark()` watch/lookout/shrine/foundry bodies remain separately catalogued historical or conditional branches. Active Drowned Watchhouse, Old Signal Keep, Ruined Shrine and Ruined Foundry entrances use their distinct `kind:'dungeon'` bodies and prompts 228–231. Do not substitute the old landmark-marker prompts for these active entrances.
 
 ### Settlement services
 
@@ -137,3 +135,7 @@ Ringleaders reuse the exact approved underlying species/variant body plus the pr
 The prompt catalog no longer requires image-generation-time art direction. Every renderer family has an explicit destination: GENERATE, ALIAS, or PROCEDURAL.
 
 If a future generation cannot be completed directly from its audited entry, that asset returns to documentation/audit. The image generator does not fill the gap creatively.
+
+## V0.8.79 procedural polish reconciliation
+
+Main entrances 051–055, specialists 006–015 and their closed cages 171–180, services 111–130, and affected furnishings have been rewritten against the revised renderer. This is an intentional procedural-canon revision before raster production, not an image-generation redesign. Basic and Full camps, heroes, companions, enemy variants, captains and major bosses retain their established bodies. Construction now progresses through materials, frame, one canvas panel and both panels. The manifest remains empty. The catalog now contains 231 entries: 221 GENERATE, 0 ALIAS and 10 KEEP PROCEDURAL.

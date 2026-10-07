@@ -85,6 +85,24 @@ function visualSignature(entity,region){
  const log=[],target={};const ctx=new Proxy(target,{get(o,p){if(p in o)return o[p];return (...args)=>{log.push([String(p),...args.map(v=>typeof v==='number'?Math.round(v*100)/100:v)]);};},set(o,p,v){o[p]=v;log.push(['set',String(p),v]);return true;}});
  Visuals.draw(ctx,entity,{x:0,y:0},region,false);return JSON.stringify(log);
 }
+test('actual occupied side entrances and main dungeons have distinct geometry without mutating campaign state',()=>{
+ const c=new Campaign(),sideShapes=[],mainShapes=[];
+ const geometry=(entity,region)=>JSON.stringify(JSON.parse(visualSignature(entity,region)).filter(op=>op[0]!=='set'));
+ for(const side of R.sideDungeons){
+  c.enter(side.region);const entrance=c.zone().npcs.find(n=>n.sideDungeon&&n.family===side.id);assert(entrance,side.id+' is instantiated as an occupied entrance');
+  const entity={...entrance,renderKind:'npc'},before=JSON.stringify(c.s),sig=geometry(entity,c.regionIndex());
+  assert.equal(geometry(entity,c.regionIndex()),sig,'same entrance renders deterministically');
+  assert.equal(JSON.stringify(c.s),before,'drawing cannot change the campaign');sideShapes.push(sig);
+ }
+ for(const boss of Campaign.data.bosses.filter(b=>b.kind==='dungeon')){
+  c.enter(boss.region);const entrance=c.zone().npcs.find(n=>n.kind==='dungeon'&&n.family===boss.id);assert(entrance,boss.id+' is instantiated as a main entrance');mainShapes.push(geometry({...entrance,renderKind:'npc'},c.regionIndex()));
+ }
+ assert.equal(new Set(sideShapes).size,5,'side entrances differ in geometry, independent of palette');
+ assert.equal(new Set(mainShapes).size,5,'main entrances differ in geometry, independent of palette');
+ const exit=geometry({renderKind:'npc',kind:'exit'},0);assert(!sideShapes.includes(exit),'occupied interiors do not fall back to the generic exit gate');
+ const stages=[.5,1.5,2.5,3.5].map(progress=>geometry({renderKind:'building',kind:'barracks',progress},0));
+ assert.equal(new Set(stages).size,4,'unfinished camp visibly advances before completion');
+});
 test('Abyss Bastion procedural props and authored partitions are visually distinct',()=>{
  assert.equal(typeof Visuals.dungeonArchitecture,'function','renderer exposes authored dungeon partition geometry');
  const region=3,structures=['handler-station','feed-crate','containment-post','scorched-floor','egg-cradle','feeding-trough','carcass-rack','claw-scrape','dragon-perch'];

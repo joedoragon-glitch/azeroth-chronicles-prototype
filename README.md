@@ -1,4 +1,6 @@
-# Azeroth Chronicles — expanded prototype v0.8.78
+# Azeroth Chronicles — expanded prototype v0.8.79
+
+Procedural polish v0.8.79 gives the five main and five side-interior entrances distinct construction, clarifies meaningful furniture and specialist clothing, strengthens regional town services, and adds visible camp construction stages. The updated sprite catalog tracks the revised canon; no raster sprites are active. See [the procedural polish scope](docs/GRAPHICS_PROCEDURAL_POLISH_V0879.md).
 
 Currency update v0.8.78 names the game's currency **crowns**, the official currency of the Dark Lord's regime. Every region uses crowns for trade, services, travel and rewards; recovered tribute returns those same crowns to the resistance economy. Existing balances, prices and rewards are unchanged.
 
