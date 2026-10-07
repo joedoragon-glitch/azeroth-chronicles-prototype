@@ -1,4 +1,4 @@
-# Azeroth Chronicles — expanded prototype v0.8.70
+# Azeroth Chronicles — expanded prototype v0.8.71
 
 One hero and companion adventure across five regions, ten settlements and five dungeons. Rescue ten captive specialists to purchase skills, skill ranks and equipment improvements. Ten boss families use readable but adaptive warned mechanics. Every boss can summon pressure units, while TRUE forms use six-unit elite warbands. Secret ringleaders and TRUE forms lead to the Dark Lord, the awakened dungeon finale, peace for every creature and an unlocked Nightmare campaign.
 
@@ -69,7 +69,11 @@ Overworld distribution update v0.8.60 spreads ordinary unassigned patrol packs a
 
 **The canonical Azeroth Chronicles product is the multi-file GitHub Pages/PWA application.** HTML, JavaScript, CSS, sprite art, audio, data files and future asset types may live as separate repository files and are expected to be cached by the service worker for offline play. Feature design must not be constrained by, duplicated into, or blocked on a self-contained single-HTML build. Any historical portable HTML artifact is optional legacy convenience only; it is not a release requirement and may lag behind or be retired whenever supporting it would reduce game quality, complicate the asset pipeline or slow development.
 
-Audio overhaul v0.8.69 replaces the old one-size-fits-all melee chirp with contextual layered Web Audio. Combat events now preserve actor, class/role, weapon/projectile style, source and target context through the browser shell. Paladin basics get a heavier steel impact and sword movement layer; Soldiers use a lighter related steel family; bows, arrows, magic and creature attacks have distinct launch/impact identities. The existing soundtrack, volume buses, offline behavior and save format remain intact.\n\n## Development
+Audio overhaul v0.8.69 replaces the old one-size-fits-all melee chirp with contextual layered Web Audio. Combat events now preserve actor, class/role, weapon/projectile style, source and target context through the browser shell. Paladin basics get a heavier steel impact and sword movement layer; Soldiers use a lighter related steel family; bows, arrows, magic and creature attacks have distinct launch/impact identities. The existing soundtrack, volume buses, offline behavior and save format remain intact.
+
+Audio coverage v0.8.71 follows the v0.8.70 combat expansion: the three Skill 1 combo beats escalate audibly, each class gets a distinct third-hit finisher accent, Mage charged Skill 1 has beam-specific launch/impact sound, Soldier Power Strike/Holy Cleave and Archer Triple Shot/Piercing Volley have role-appropriate special identities, and axe/stone/spit projectiles no longer fall through the contextual router. Expedition rank, rest, tribute discovery and side-interior discovery now have explicit cues. A regression test inventories engine event types so new gameplay events must receive either an audio route or an intentional-silence decision.
+
+## Development
 
 Playtest deployment in v0.8.59 favors rapid iteration: pushes to `main` cancel superseded in-progress Pages workflows instead of queueing every obsolete build. The newest successful commit is the one allowed to finish deployment. Installed/live playtest clients also activate a newly published service worker immediately and reload once after saving when replacing an existing controller; first-time installs do not receive the extra reload.
 
