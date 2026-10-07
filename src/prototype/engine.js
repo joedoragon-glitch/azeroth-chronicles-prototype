@@ -280,7 +280,7 @@ class Campaign{
   if(this.supplyRoom(z.id)){this.treasuryInterior(z);this.combatPopulation(z);this.guardianPopulation(z);this.roomCaptainPopulation(z);return;}
   if(this.sideDungeon(z.id)){this.combatPopulation(z);this.ordinaryMeleePopulation(z);this.ordinaryRangedPopulation(z);return;}
   this.harborLayout(z);this.repairMiniGuardianReachability(z);this.spaceQuestBoard(z);this.spaceMillhavenSupplier(z);this.combatPopulation(z);this.nightEnemyPopulation(z);
-  if(dungeonIds.includes(z.id)){this.decorateDungeon(z);this.guardianRewards(z);return;}
+  if(dungeonIds.includes(z.id)){this.decorateDungeon(z);this.guardianPopulation(z);this.guardianRewards(z);return;}
   if(z.placesVersion!==2){
    z.npcs=z.npcs.filter(n=>!n.id.startsWith('landmark-'));
    const i=this.regionIndex(z.id);for(const [id,name,x,y]of R.sites[i]){let n=z.npcs.find(n=>n.id===id);const data={id,name,kind:'landmark',...this.safe(x,y,z.id),icon:/bridge|crossing/i.test(name)?'🪵':/camp|convoy|wagon/i.test(name)?'🏕️':'🏚️',...(z.id==='frontier'&&id==='checkpoint'?{internalSite:true}:{})};if(n)Object.assign(n,data);else z.npcs.push(data);}
