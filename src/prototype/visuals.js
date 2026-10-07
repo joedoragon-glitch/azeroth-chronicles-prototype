@@ -138,6 +138,25 @@ function draw(ctx,e,p,region=0,rescued=false){
    else{poly([[-3,-41],[0,-47],[3,-41]],'#b99c68');line([[-4,-8],[5,-1]],'#a98a61',2);line([[5,-8],[-4,-1]],'#a98a61',2);}
   }
  }
+ function allyBodyKind(e){return e.type==='archer'?'goblin-archer':(e.class||e.type||'worker');}
+ function goblinArcher(){
+  // Companion Archer: an allied goblin scout. This keeps the established companion bow/quiver role
+  // while making the party visibly include a normally-hostile species without borrowing the hero Ranger body.
+  humanoid('#6f7f5d','#9ba574',.82);
+  // Goblin anatomy stays unmistakable: long ears and compact semi-human proportions.
+  poly([[-6,-29],[-18,-36],[-12,-24]],'#9ba574');poly([[6,-29],[18,-36],[12,-24]],'#9ba574');
+  poly([[-3,-27],[0,-21],[5,-25]],'#c1bd8d');
+  // Scout hood/cape keep the old companion-Archer readability without Ranger-specific flask/utility ornaments.
+  poly([[-10,-26],[-7,-39],[0,-44],[9,-37],[11,-26],[6,-32],[-5,-32]],'#5b7157');
+  fillPoly([[-10,-26],[-7,-39],[0,-44],[0,-27]],'#1f3429',.22);
+  poly([[-11,-16],[-18,9],[-4,6]],'#4f654d');fillPoly([[-11,-15],[-18,8],[-11,6]],'#21382c',.25);
+  // Existing companion role language: bow on screen-right, quiver/arrows on screen-left/back.
+  bow(14,-7);line([[-15,-27],[-19,4]],'#9c7953',5);line([[-19,-29],[-14,-26]],bone,2);
+  for(const y of [-28,-23,-18])line([[-20,y],[-13,y-5]],'#e6d7ae',1);
+  // Simple travel strap/pouch and warm ally knot distinguish this scout from hostile goblins and Raider Archers.
+  line([[-9,-14],[7,-2]],'#b39768',2);rect(-15,-4,8,9,'#785d43');
+  poly([[-4,-18],[0,-23],[4,-18],[0,-14]],'#d0b36f');
+ }
  function hero(role){
   const cape=role==='paladin'?'#785848':role==='mage'?'#394f78':'#355643';
   poly([[-10,-21],[-18,11],[-7,8],[0,13],[12,8],[16,-18]],cape);human(role);
@@ -460,7 +479,7 @@ function draw(ctx,e,p,region=0,rescued=false){
  else if(e.kind==='mini'){rect(-24,-22,48,36,'#7e897f');rect(-12,-16,24,30,'#24372d');for(const x of [-24,12])rect(x,-37,12,50,'#9aa38e');rect(-29,-43,22,8,'#b4b99e');rect(7,-43,22,8,'#b4b99e');}else if(e.kind==='landmark'){landmark();}
  else if(type==='npc'){if(e.family&&['teacher','smith','alchemist'].includes(e.kind))specialist(e);else{const smith=['smith','alchemist'].includes(e.kind);humanoid(smith?'#8b7770':'#8b9c7b');if(smith&&e.kind==='smith'){rect(-8,-15,16,19,'#675448');line([[18,-20],[12,13]],'#b29367',3);rect(13,-24,15,7,steel);poly([[19,9],[38,9],[32,16],[22,16]],steel);}else if(e.kind==='alchemist'){rect(12,-16,8,4,'#bed3cb');oval(16,-6,7,9,'#789ba1');rect(-8,-37,16,5,'#c9d6ab');}else{line([[17,-31],[17,13]],'#baa373',3);oval(17,-33,4,4,'#c9d6ab');rect(-14,-10,8,14,'#cab483');}}}
  else if(type==='hero')hero(e.class||'paladin');
- else if(type==='ally')human(e.class||(e.type==='archer'?'ranger':e.type)||'worker');
+ else if(type==='ally'){const role=allyBodyKind(e);if(role==='goblin-archer')goblinArcher();else human(role);}
  else if(e.type==='boss'){
  shade(e.form==='true'?42:34,e.form==='true'?13:10,e.form==='true'?.42:.32);const bossScale=(e.family==='darklord'||e.family==='cindermaw'||e.family==='mine'||e.family==='abyss'?1.36:1.3)*(e.form==='true'?1.14:1);ctx.scale(bossScale,bossScale);
  switch(e.family){
@@ -707,6 +726,6 @@ function atmosphere(ctx,canvas,region=0,opts={}){
  const v=ctx.createRadialGradient(canvas.width*.5,canvas.height*.48,Math.min(canvas.width,canvas.height)*.18,canvas.width*.5,canvas.height*.5,Math.max(canvas.width,canvas.height)*.72);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,night?'rgba(0,0,0,.24)':'rgba(5,15,10,.12)');ctx.fillStyle=v;ctx.fillRect(0,0,canvas.width,canvas.height);
  ctx.restore();
 }
-root.PrototypeVisuals={draw,height,floor,roads,terrain,bridges,atmosphere};
+root.PrototypeVisuals={draw,height,floor,roads,terrain,bridges,atmosphere,allyBodyKind};
 if(typeof module!=='undefined')module.exports=root.PrototypeVisuals;
 })(typeof window!=='undefined'?window:globalThis);
