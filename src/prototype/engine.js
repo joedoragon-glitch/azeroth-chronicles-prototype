@@ -274,7 +274,7 @@ class Campaign{
    const clearPoint=(x,y,r=8)=>{const raw={x,y};if(!this.blocked(x,y,z.id,r,true)&&!solidNear(raw,r))return raw;for(let radius=35;radius<=210;radius+=35)for(let n=0;n<16;n++){const a=n*Math.PI/8,p={x:x+Math.cos(a)*radius,y:y+Math.sin(a)*radius};if(!this.blocked(p.x,p.y,z.id,r,true)&&!solidNear(p,r))return p;}return null;};
    const place=(base,spec,prefix)=>{
     const [dx,dy,structure,r=0]=spec,p=clearPoint(base.x+dx,base.y+dy,Math.max(8,r));if(!p)return false;
-    if(roadNear(p,r>0?r+62:34)||z.npcs.some(n=>dist(n,p)<48)||z.nodes.some(n=>dist(n,p)<50)||z.buildings.some(n=>dist(n,p)<60))return false;
+    if(roadNear(p,r>0?r+62:50)||z.npcs.some(n=>dist(n,p)<48)||z.nodes.some(n=>dist(n,p)<50)||z.buildings.some(n=>dist(n,p)<60))return false;
     z.props.push({id:'crown-layout-'+prefix+'-'+serial++,...p,r,decorative:r<=0,structure,crownDistrict:prefix});return true;
    };
    for(const d of districts){const center={x:d.center[0],y:d.center[1]};for(const spec of d.props||[])place(center,spec,d.id);}
