@@ -67,4 +67,14 @@ Monster identity remains stable. Ordinary monsters are not randomized into indiv
 - Military Ringleaders (Crown soldiers, Frontier orcs and Raider archers) use same-size officer/commander treatments instead of the universal gold-crown Ringleader overlay.
 - Non-military species retain the universal Ringleader treatment.
 
-The Citadel of Ashes receives the same composition rule. Its former scatter of individual armor stands, banners, runes and service props is consolidated into six readable functional stations: muster, command, ritual control, barracks/training, forge/supply and the final boss approach. Walls, pillars, traps, guard quota, boss placement and progression are unchanged.
+The Citadel of Ashes receives the same composition rule. Its former scatter of individual armor stands, banners, runes and service props is consolidated into six readable functional stations: muster, command, ritual control, barracks/training, forge/supply and the final boss approach.
+
+### Citadel fortress-layout pass
+
+The Citadel is no longer constrained by the legacy single-divider rectangular main-dungeon template. It uses a data-driven irregular fortress footprint built from overlapping functional wings: outer muster court, command spine, barracks/armory wing, ritual-control wing, forge/logistics quarter, service loop and inner command court. Internal partitions use multiple gates so the complex has chokepoints and hierarchy without becoming a one-path maze.
+
+The Citadel now fields 32 rewardless Crown guardians in authored military formations. Shield/melee guardians and ranged marksmen occupy positions appropriate to muster, command, ritual security, barracks, logistics and the inner court. The same formation system is reused when Awakening guardians return. Guardian gold and EXP remain zero.
+
+Citadel traps are redesigned as 28 defensive installations distributed through those functional areas rather than generic floor scatter. The mandatory navigation invariant is stronger than before: the entrance, Ash Sentinel chamber and Tovan's captive position must remain connected by at least one route that does not cross any trap footprint at all. The barracks and ritual-control wings likewise retain trap-free access. Traps may make shortcuts or direct lanes dangerous, but they cannot be unavoidable progression damage.
+
+Existing Citadel saves migrate to fortress-layout version 3. If the hero, an active companion, an NPC or a surviving enemy occupies space that became solid under the new architecture, it is moved to the nearest valid Citadel floor without resetting campaign progress, rewards or boss state. The other four main dungeons retain their existing geometry.
