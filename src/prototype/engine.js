@@ -776,6 +776,7 @@ class Campaign{
    if(u.type==='archer'){
     const d=dist(u,e),visible=this.line(u,e),anchor=this.partyFollowPoint(u,living);
     if(d<150){this.follow(u,this.archerFallbackPoint(u,e,living),this.companionMoveSpeed(270)*(u.slow>0?.65:1),dt,35);continue;}
+    if(visible&&d<=480&&this.companionTrySkill(u,e))continue;
     if(d>280||!visible){this.follow(u,this.archerCombatPoint(u,e,living),this.companionMoveSpeed(260)*(u.slow>0?.65:1),dt,35);continue;}
     if(dist(u,anchor)>70&&dist(anchor,e)<=280&&this.line(anchor,e)){this.follow(u,anchor,this.companionMoveSpeed(245)*(u.slow>0?.65:1),dt,35);continue;}
     if(u.cd<=0){u.cd=.85;const shot=Math.max(1,d);this.s.projectiles.push({id:'projectile-'+this.s.nextId++,x:u.x,y:u.y,dx:(e.x-u.x)/shot,dy:(e.y-u.y)/shot,target:e.id,damage:this.companionAttackDamage(u),source:u.id,speed:450,style:'arrow'});}continue;
