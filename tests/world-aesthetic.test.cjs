@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),Campaign=require('../src/prototype/engine.js'),R=require('../src/prototype/rules.js'),Visuals=require('../src/prototype/visuals.js');
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
-assert.equal(typeof Visuals.atmosphere,'function','procedural renderer exposes the regional atmosphere layer');assert.equal(typeof Visuals.dungeonGeometry,'function','procedural renderer exposes visible authored dungeon geometry');
+assert.equal(typeof Visuals.atmosphere,'function','procedural renderer exposes the regional atmosphere layer');assert.equal(typeof Visuals.dungeonGeometry,'function','procedural renderer exposes authored dungeon geometry');assert.equal(typeof Visuals.dungeonGeometry,'function','procedural renderer exposes visible authored dungeon geometry');
 let passed=0;function test(name,fn){try{fn();passed++;console.log('PASS '+name);}catch(e){process.exitCode=1;console.error('FAIL '+name+' '+e.stack);}}
 
 for(const [i,region] of Campaign.data.regions.entries())test(region.id+' overworld reads as a settled, natural place',()=>{
