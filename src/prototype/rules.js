@@ -390,7 +390,9 @@ const harbors={
 };
 const travelArrivals={
  'march>highlands':{x:425,y:1900},
- 'highlands>march':{x:2115,y:675}
+ 'highlands>march':{x:2115,y:675},
+ 'frontier>crown':{x:620,y:220},
+ 'crown>frontier':{x:3100,y:500}
 };
 const dungeonWalls={crypt:[710,780,[[480,680],[870,1060]]],archive:[650,730,[[400,620],[980,1200]]],mine:[800,870,[[480,730],[1020,1250]]],abyss:[610,690,[[600,830],[1040,1260]]],citadel:[750,830,[[430,680],[900,1150]]]};
 const pillars={crypt:[[430,620],[1010,480]],archive:[[420,740],[1060,620]],mine:[[480,950],[1120,380]],abyss:[[420,530],[980,890]],citadel:[[400,750],[1080,450]]};
