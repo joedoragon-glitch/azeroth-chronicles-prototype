@@ -773,7 +773,6 @@ class Campaign{
     }else e=u.type==='soldier'?this.soldierScreenTarget(u,context.threats,living,claimed):crowdTarget(u,context.threats);
    }
    if(!e){this.followPartyMember(u,living,dt);continue;}claimed.add(e.id);
-   const specialRange=u.type==='archer'?480:185;if(this.line(u,e)&&dist(u,e)<=specialRange&&this.companionTrySkill(u,e))continue;
    if(u.type==='archer'){
     const d=dist(u,e),visible=this.line(u,e),anchor=this.partyFollowPoint(u,living);
     if(d<150){this.follow(u,this.archerFallbackPoint(u,e,living),this.companionMoveSpeed(270)*(u.slow>0?.65:1),dt,35);continue;}
