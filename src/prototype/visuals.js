@@ -422,7 +422,7 @@ function draw(ctx,e,p,region=0,rescued=false){
  case 'crate':rect(-20,-16,40,30,'#9b7953');line([[-20,-16],[20,14]],'#c6aa78',3);line([[20,-16],[-20,14]],'#c6aa78',3);break;
  case 'rail':for(const y of [-10,0,10])line([[-24,y],[24,y]],'#8d7354',4);line([[-14,-18],[-14,17]],steel,3);line([[14,-18],[14,17]],steel,3);break;
  case 'crystal':for(const x of [-12,0,12])poly([[x-5,12],[x-5,-15],[x,-25],[x+5,-15],[x+5,12]],'#83a7b1');break;
- case 'chain':for(let y=-48;y<12;y+=9)oval(0,y,4,6,'#9ca59e');oval(0,13,12,7,'#6c7674');break;
+ case 'chain':for(let y=-48;y<12;y+=9)oval(0,y,4,6,'#9ca59e');oval(0,13,12,7,'#6c7674');if(region===3&&variant%2===0){line([[-8,-31],[7,-20]],'#6f7470',2);oval(8,-19,5,4,'#868a84');}break;
  case 'ember':oval(0,5,27,12,'#4d4945');for(const x of [-13,0,13])poly([[x-5,8],[x,-9],[x+7,8]],'#b7784e');break;
  case 'armor':humanoid('#88999d',steel);rect(-25,7,50,9,'#6b756f');shield(-19,-1,'#626f79');break;
  case 'thorn-bed':oval(0,7,29,12,'#6f7f55');for(const [x,y]of [[-18,-2],[-8,-8],[4,-6],[16,-1]])poly([[x-5,y+8],[x,y-8],[x+6,y+8]],'#5e744d');for(const x of [-17,17])line([[x,6],[x+(x<0?-7:7),-5]],'#806543',3);break;
@@ -496,7 +496,7 @@ function draw(ctx,e,p,region=0,rescued=false){
  case 'game-table':oval(0,2,24,9,'#705740');for(const x of [-15,15])line([[x,5],[x,17]],localWood,4);for(const [x,y,c]of [[-7,0,'#d2bd7d'],[2,-2,'#8fa0a0'],[8,3,'#aa7c6f']])oval(x,y,2.5,2,c);break;
  case 'stolen-goods':rect(-20,-10,24,23,'#8b6b49');rect(3,-5,21,18,'#9a7752');poly([[-8,-12],[-1,-25],[7,-13]],'#8d9b76');line([[12,-4],[22,-17]],steel,2);break;
  case 'training-dummy':line([[0,-40],[0,15]],localWood,5);line([[-20,-24],[20,-24]],localWood,4);oval(0,-48,9,9,'#9b8060');rect(-12,-18,24,24,'#77614d');break;
- case 'bone-pile':for(const [x,y]of [[-13,4],[-4,-1],[6,5],[14,0]]){line([[x-7,y-4],[x+7,y+4]],bone,3);oval(x+6,y+4,2.5,2.5,bone);}skull(-2,-7,5);break;
+ case 'bone-pile':for(const [x,y]of [[-13,4],[-4,-1],[6,5],[14,0]]){line([[x-7,y-4],[x+7,y+4]],bone,3);oval(x+6,y+4,2.5,2.5,bone);}skull(-2,-7,5);if(region===3&&variant%2===0){line([[-22,8],[20,-8]],'#cfc2a2',4);oval(20,-8,3,3,bone);}break;
  case 'grave-marker':rect(-11,-29,22,42,'#7a7f78');poly([[-13,-28],[0,-42],[13,-28]],'#8f958b');line([[0,-25],[0,2]],'#b5b5a5',2);line([[-6,-16],[6,-16]],'#b5b5a5',2);break;
  case 'pup-nest':oval(0,7,28,11,'#7d7657');for(let x=-24;x<=24;x+=8)line([[x,10],[x+5,-2]],'#a28d62',2);for(const [x,y]of [[-8,3],[8,4]])oval(x,y,5,3,'#8c775d');break;
  case 'fishing-net':for(const x of [-22,22])line([[x,13],[x,-31]],localWood,3);for(let y=-28;y<9;y+=8)line([[-20,y],[20,y+4]],'#b4b39a',1);for(let x=-18;x<=18;x+=9)line([[x,-29],[x+5,10]],'#b4b39a',1);break;
@@ -511,8 +511,8 @@ function draw(ctx,e,p,region=0,rescued=false){
  case 'command-tent':poly([[-35,12],[0,-47],[36,12]],region===4?'#5d5668':'#7c5e53');line([[0,-44],[0,14]],localWood,4);rect(-12,-2,24,17,region===4?'#33313a':'#54463f');line([[-29,9],[29,9]],'#b79573',2);if(region===3){if(variant%2===0){rect(-24,-22,13,8,'#956f60');line([[-34,11],[-45,19]],'#6a5141',2);}else{line([[22,-18],[34,-26]],'#9e735d',3);rect(18,-3,10,8,'#6d5144');}}break;
  case 'bunk':rect(-27,-8,54,18,'#6d5947');rect(-24,-6,48,10,'#837561');for(const x of [-23,23])line([[x,8],[x,17]],localWood,3);rect(-20,-5,11,7,'#b09a78');break;
  case 'forge':rect(-26,-12,52,27,'#696863');rect(-18,-29,36,18,'#77736b');oval(0,4,16,6,'#403b38');for(const x of [-8,0,8])poly([[x-4,5],[x,-9],[x+4,5]],'#bd7148');rect(19,-42,9,31,'#5b5855');break;
- case 'roost':oval(0,7,30,12,'#62594f');for(const x of [-24,-12,0,12,24])line([[x,10],[x+5,-6]],'#806a4e',2);for(const [x,y]of [[-9,1],[8,4]])poly([[x-5,y+6],[x,y-8],[x+5,y+6]],'#676b62');break;
- case 'hatchery':oval(0,7,30,12,'#5a5049');for(const [x,y]of [[-12,3],[0,-1],[12,4]])oval(x,y,6,8,'#8d826d');for(const x of [-22,22])line([[x,10],[x+4,-7]],'#7b6750',2);break;
+ case 'roost':oval(0,7,30,12,'#62594f');for(const x of [-24,-12,0,12,24])line([[x,10],[x+5,-6]],'#806a4e',2);for(const [x,y]of [[-9,1],[8,4]])poly([[x-5,y+6],[x,y-8],[x+5,y+6]],'#676b62');if(region===3){if(variant%2===0)for(const x of [-18,18])line([[x,7],[x+flip*8,-11]],'#4b413d',3);else line([[-23,2],[22,-4]],'#8d6e55',3);}break;
+ case 'hatchery':oval(0,7,30,12,'#5a5049');for(const [x,y]of [[-12,3],[0,-1],[12,4]])oval(x,y,6,8,'#8d826d');for(const x of [-22,22])line([[x,10],[x+4,-7]],'#7b6750',2);if(region===3){if(variant%2===0){for(const x of [-14,0,14])glint(x,0,'#d6ad82',1.2);}else line([[-25,8],[25,5]],'#956f55',3);}break;
  case 'scribe-desk':rect(-27,-8,54,17,'#725d47');for(const x of [-21,21])line([[x,6],[x,18]],localWood,3);rect(-18,-18,36,11,'#c5b88f');line([[-14,-14],[12,-14]],'#776b58',1);break;
  case 'scroll-stack':for(const [x,y]of [[-13,5],[0,1],[13,6],[-5,-8],[8,-9]]){rect(x-8,y-3,16,6,'#c5b78e');oval(x-8,y,2,3,'#927a5e');}break;
  case 'ossuary':rect(-24,-17,48,31,'#747872');for(const [x,y]of [[-12,-8],[0,-10],[12,-7],[-7,4],[8,3]])skull(x,y,4);line([[-22,-14],[22,-14]],'#a5aa9d',2);break;
@@ -568,7 +568,15 @@ function draw(ctx,e,p,region=0,rescued=false){
  case 'patched-fence':for(const x of [-22,-7,8,23])rect(x-2,-17,4,30,x===8?'#9a7656':'#6d5342');line([[-27,-10],[28,-8]],'#8e6d50',4);line([[-27,3],[28,0]],'#a17b58',4);rect(3,-6,12,8,'#76584a');break;
  case 'inspection-marker':line([[0,-35],[0,14]],'#745942',4);rect(-15,-31,30,20,'#7b644f');for(const y of [-26,-20,-14])line([[-10,y],[9,y]],'#d0bc91',1);rect(8,-8,9,8,'#8f5c52');break;
  case 'checkpoint-standard':line([[0,-49],[0,15]],'#6b5543',4);poly([[3,-46],[24,-41],[20,-23],[3,-27]],'#965b53');line([[7,-37],[18,-34]],'#d4b988',2);for(const x of [-16,16])line([[x,11],[x,-12]],'#675044',3);break;
- case 'chain-anchor':poly([[-12,11],[-9,-8],[0,-18],[10,-8],[13,11]],'#5d5b56');for(let x=-24;x<=24;x+=8)oval(x,3+Math.abs(x)/10,4,3,'#85877f');line([[-20,2],[-9,-1]],'#9a9b91',2);line([[10,-1],[22,3]],'#9a9b91',2);break;
+ case 'chain-anchor':poly([[-12,11],[-9,-8],[0,-18],[10,-8],[13,11]],'#5d5b56');for(let x=-24;x<=24;x+=8)oval(x,3+Math.abs(x)/10,4,3,'#85877f');line([[-20,2],[-9,-1]],'#9a9b91',2);line([[10,-1],[22,3]],'#9a9b91',2);break; case 'handler-station':rect(-28,-8,56,17,'#675647');for(const x of [-22,22])line([[x,7],[x,18]],'#5a493c',3);line([[-20,-3],[18,3]],'#c0a16e',1.5);rect(-24,-23,15,13,'#7d684f');for(const y of [-19,-15,-11])line([[-21,y],[-11,y]],'#d0bc91',1);break;
+ case 'feed-crate':rect(-24,-12,48,25,'#795d47');line([[-22,-10],[22,10]],'#a67e58',3);for(const [x,y]of [[-12,-17],[3,-20],[14,-16]])oval(x,y,7,4,'#705a48');break;
+ case 'containment-post':rect(-8,-35,16,49,'#615b57');for(const y of [-26,-14,-2])oval(0,y,9,5,'#8b8d86');for(const side of [-1,1])line([[side*8,-22],[side*22,-12]],'#999b94',3);break;
+ case 'scorched-floor':ctx.save();ctx.globalAlpha=.6;oval(0,6,29,10,'#463d3a');for(const [x,y]of [[-17,4],[-5,0],[8,7],[18,2]])line([[x-5,y],[x+4,y-3]],'#8d5e4a',2);ctx.restore();break;
+ case 'egg-cradle':oval(0,8,28,10,'#65584b');for(const x of [-20,-10,0,10,20])line([[x,10],[x+3,-2]],'#866b52',2);for(const [x,y]of [[-8,1],[8,3]]){oval(x,y,6,8,'#a18c77');line([[x-2,y-5],[x+2,y+4]],'#c1ac90',1);}break;
+ case 'feeding-trough':rect(-29,-8,58,17,'#6a5848');poly([[-29,-8],[-23,-18],[23,-18],[29,-8]],'#806650');for(const [x,y]of [[-13,-8],[0,-11],[14,-7]])oval(x,y,6,3,'#8c7057');break;
+ case 'carcass-rack':for(const x of [-22,22])line([[x,14],[x,-38]],'#725943',4);line([[-24,-34],[24,-34]],'#84664b',4);for(const x of [-12,7]){line([[x,-32],[x,-9]],'#a99b80',2);poly([[x-7,-7],[x,-13],[x+7,-7],[x,0]],'#806857');}break;
+ case 'claw-scrape':for(const y of [-6,0,6])line([[-25,y],[24,y-7]],'#8c5e4e',2.5);for(const x of [-18,5])glint(x,-4,'#c17b57',1);break;
+ case 'dragon-perch':poly([[-31,11],[-23,-12],[-12,-24],[3,-18],[14,-30],[30,-9],[27,11]],'#655f5d');for(const [x,y]of [[-17,-7],[2,-13],[18,-6]])line([[x-5,y],[x+5,y-4]],'#928379',2);line([[-26,7],[25,7]],'#493f3d',2);break;
  }}
  function landmark(){
   switch(e.id){
@@ -715,13 +723,14 @@ function groundDetail(ctx,p,seed,region,room,dungeonId,colors){
 function floor(ctx,p,x,y,region=0,room=false,dungeonId='',blocked=false){
  const colors=room?(treasuryFloors[dungeonId]||['#403d35','#4d493e','#343229','#b6a98a']):dungeonFloors[dungeonId]||floorPalettes[region];
  const tileX=Math.floor(x/80),tileY=Math.floor(y/80),seed=(Math.imul(tileX+19,73856093)^Math.imul(tileY+37,19349663))>>>0;
- const color=blocked?'#737c70':seed%7===0?colors[1]:seed%11===0?colors[2]:colors[0];
+ const abyssMass=blocked&&dungeonId==='abyss',color=blocked?(abyssMass?'#2c292c':'#737c70'):seed%7===0?colors[1]:seed%11===0?colors[2]:colors[0];
  ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x+60.8,p.y+21.6);ctx.lineTo(p.x,p.y+43.2);ctx.lineTo(p.x-60.8,p.y+21.6);ctx.closePath();ctx.fill();
  // Painterly tile plane: a faint warm/cool face break gives the isometric ground volume without obvious grid noise.
  ctx.save();ctx.globalAlpha=blocked?.055:.035;ctx.fillStyle=colors[3]||'#d8d2aa';ctx.beginPath();ctx.moveTo(p.x,p.y+1);ctx.lineTo(p.x+58,p.y+21.6);ctx.lineTo(p.x,p.y+25);ctx.lineTo(p.x-58,p.y+21.6);ctx.closePath();ctx.fill();ctx.restore();
  ctx.strokeStyle='#f0ead01a';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.x-60.8,p.y+21.6);ctx.lineTo(p.x,p.y);ctx.lineTo(p.x+60.8,p.y+21.6);ctx.stroke();
  ctx.strokeStyle='#08161145';ctx.beginPath();ctx.moveTo(p.x-60.8,p.y+21.6);ctx.lineTo(p.x,p.y+43.2);ctx.lineTo(p.x+60.8,p.y+21.6);ctx.stroke();
- if(blocked&&seed%4===0){ctx.strokeStyle='#303a3566';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.x-14,p.y+18);ctx.lineTo(p.x-4,p.y+14);ctx.lineTo(p.x+5,p.y+19);ctx.lineTo(p.x+14,p.y+15);ctx.stroke();}
+ if(blocked&&seed%4===0){ctx.strokeStyle=abyssMass?'#7e696655':'#303a3566';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.x-14,p.y+18);ctx.lineTo(p.x-4,p.y+14);ctx.lineTo(p.x+5,p.y+19);ctx.lineTo(p.x+14,p.y+15);ctx.stroke();}
+ if(abyssMass){ctx.save();ctx.globalAlpha=.32;ctx.strokeStyle='#9a7262';ctx.lineWidth=1.3;for(const off of [-18,5,22]){ctx.beginPath();ctx.moveTo(p.x+off-8,p.y+15);ctx.lineTo(p.x+off,p.y+6);ctx.lineTo(p.x+off+7,p.y+14);ctx.stroke();}ctx.restore();}
  if(!blocked)groundDetail(ctx,p,seed,region,room,dungeonId,colors);
 }
 // World-space surfaces avoid losing narrow barriers between coarse tile samples.
@@ -811,6 +820,22 @@ function bridges(ctx,screen,region=0){
  }
  ctx.restore();
 }
+function dungeonGeometry(ctx,screen,dungeonId=''){
+ const layout=R.dungeonGeometry?.[dungeonId];if(!layout)return;
+ const poly=(pts,fill,stroke,width=1)=>{const ps=pts.map(screen);ctx.fillStyle=fill;ctx.beginPath();ps.forEach((p,j)=>j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.stroke();}};
+ ctx.save();
+ for(const b of layout.blockers||[]){
+  if(b.shape==='circle'){
+   const pts=Array.from({length:28},(_,n)=>{const a=n*Math.PI/14;return{x:b.x+Math.cos(a)*b.r,y:b.y+Math.sin(a)*b.r};});
+   poly(pts,'#292327','#8e675d',2);const p=screen({x:b.x,y:b.y});ctx.globalAlpha=.35;ctx.fillStyle='#b9694c';ctx.beginPath();ctx.ellipse(p.x,p.y,b.r*.55,b.r*.19,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;continue;
+  }
+  const pts=[{x:b.x1,y:b.y1},{x:b.x2,y:b.y1},{x:b.x2,y:b.y2},{x:b.x1,y:b.y2}],ps=pts.map(screen),drop=12;
+  ctx.fillStyle='#4b4142';ctx.beginPath();ctx.moveTo(ps[1].x,ps[1].y);ctx.lineTo(ps[2].x,ps[2].y);ctx.lineTo(ps[2].x,ps[2].y+drop);ctx.lineTo(ps[1].x,ps[1].y+drop);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#514647';ctx.beginPath();ctx.moveTo(ps[2].x,ps[2].y);ctx.lineTo(ps[3].x,ps[3].y);ctx.lineTo(ps[3].x,ps[3].y+drop);ctx.lineTo(ps[2].x,ps[2].y+drop);ctx.closePath();ctx.fill();
+  poly(pts,'#706064','#a17b70',1.8);
+ }
+ ctx.restore();
+}
 function roads(ctx,paths,screen,region=0){
  const strip=R.barriers[region].bounds,palettes=[
   {shoulder:'#564834',base:'#8e7758',inner:'#a18b68',seam:'#6f604c'},
@@ -865,6 +890,6 @@ function atmosphere(ctx,canvas,region=0,opts={}){
  ctx.restore();
 }
 function enemyBodyKind(e){if(!e?.species)return 'unknown';const rangedClass=e.ranged&&['mireling','ogre','orc','ashbeast','crownguard'].includes(e.species);return e.species+(rangedClass?':ranged':'');}
-root.PrototypeVisuals={draw,height,floor,roads,terrain,bridges,atmosphere,allyBodyKind,enemyBodyKind,barracksVisualState};
+root.PrototypeVisuals={draw,height,floor,dungeonGeometry,roads,terrain,bridges,atmosphere,allyBodyKind,enemyBodyKind,barracksVisualState};
 if(typeof module!=='undefined')module.exports=root.PrototypeVisuals;
 })(typeof window!=='undefined'?window:globalThis);
