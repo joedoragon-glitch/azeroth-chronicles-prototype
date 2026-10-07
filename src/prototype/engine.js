@@ -634,8 +634,11 @@ class Campaign{
   const cost=this.skillManaCost(slot,rank,isCharged);if(this.hero.mp<cost)return false;this.hero.mp-=cost;this.hero.cd[i]=cooldowns[slot];if(target&&[1,2,6,7,8].includes(slot))this.s.heroTarget=target.id;
   const power=this.power();
   if(isCharged&&slot===1){
-   this.resetBasicCombo();const d=Math.max(1,dist(this.hero,target)),damage=(power+12)*scale*R.chargedSkills.basicDamageMultiplier,style=this.hero.class==='paladin'?'holy':this.hero.class==='ranger'?'arrow':'magic';
-   this.engage(target);this.s.projectiles.push({id:'projectile-'+this.s.nextId++,x:this.hero.x,y:this.hero.y,dx:(target.x-this.hero.x)/d,dy:(target.y-this.hero.y)/d,target:target.id,damage,source:'hero',speed:550,delay:0,style,charged:true});
+   this.resetBasicCombo();const d=Math.max(1,dist(this.hero,target)),damage=(power+12)*scale*R.chargedSkills.basicDamageMultiplier,dx=(target.x-this.hero.x)/d,dy=(target.y-this.hero.y)/d;
+   this.engage(target);
+   if(this.hero.class==='mage')this.s.projectiles.push({id:'projectile-'+this.s.nextId++,x:this.hero.x,y:this.hero.y,originX:this.hero.x,originY:this.hero.y,dx,dy,target:target.id,damage,source:'hero',speed:1000,delay:0,style:'beam',charged:true});
+   else if(this.hero.class==='ranger')for(let j=0;j<3;j++)this.s.projectiles.push({id:'projectile-'+this.s.nextId++,x:this.hero.x,y:this.hero.y,dx,dy,target:target.id,damage:damage/3,source:'hero',speed:620,delay:j*.08,style:'arrow',charged:true,rapid:true});
+   else this.s.projectiles.push({id:'projectile-'+this.s.nextId++,x:this.hero.x,y:this.hero.y,dx,dy,target:target.id,damage,source:'hero',speed:550,delay:0,style:'holy',charged:true});
    this.event('charged',{slot,class:this.hero.class,x:this.hero.x,y:this.hero.y,targetX:target.x,targetY:target.y});return true;
   }
   if(isCharged&&slot===2){
