@@ -39,9 +39,7 @@ jobs:
           else
             npx playwright install chromium
           fi
-      - name: Smoke test desktop and phone
-        env:
-          BROWSER_SMOKE: '1'
+      - name: Test desktop and full phone matrix before merge
         run: node tests/prototype-browser.test.cjs
       - uses: actions/upload-artifact@v4
         if: always()

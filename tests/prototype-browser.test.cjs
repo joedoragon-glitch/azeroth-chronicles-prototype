@@ -157,7 +157,7 @@ await check('Visible terrain and all nine bridge crossings '+tag,async()=>{
   await page.waitForTimeout(40);
   const result=await page.evaluate(()=>{
    const c=Prototype.game,i=c.regionIndex(),{bounds:[a,b,l,h],gaps}=PrototypeRules.barriers[i],canvas=document.querySelector('canvas'),ctx=canvas.getContext('2d');
-   const pixel=(x,y)=>{const sx=canvas.width*(canvas.width<600?.69:.6)+(x-y-c.hero.x+c.hero.y)*.76,sy=canvas.height*.5+(x+y-c.hero.x-c.hero.y)*.27;return [...ctx.getImageData(Math.round(sx),Math.round(sy),1,1).data].slice(0,3);};
+   Prototype.renderer.draw();const pixel=(x,y)=>{const p=Prototype.renderer.screen({x,y}),scale=ctx.getTransform(),sx=p.x*scale.a+scale.e,sy=p.y*scale.d+scale.f;return [...ctx.getImageData(Math.round(sx),Math.round(sy),1,1).data].slice(0,3);};
    let y=(l+h)/2;if(gaps.some(([lo,hi])=>y>=lo&&y<=hi))y=l+60;
    return {pixel:pixel((a+b)/2,y),blocked:c.blocked((a+b)/2,y,c.zoneId,0)};
   });
@@ -167,7 +167,7 @@ await check('Visible terrain and all nine bridge crossings '+tag,async()=>{
   for(let j=0;j<count;j++){
    await page.evaluate(j=>{const c=Prototype.game,{bounds:[a,b],gaps}=PrototypeRules.barriers[c.regionIndex()],y=(gaps[j][0]+gaps[j][1])/2;Object.assign(c.hero,{x:(a+b)/2+100,y});},j);
    await page.waitForTimeout(40);
-   const deck=await page.evaluate(j=>{const c=Prototype.game,{bounds:[a,b],gaps}=PrototypeRules.barriers[c.regionIndex()],y=(gaps[j][0]+gaps[j][1])/2,x=(a+b)/2+3,canvas=document.querySelector('canvas'),sx=canvas.width*(canvas.width<600?.69:.6)+(x-y-c.hero.x+c.hero.y)*.76,sy=canvas.height*.5+(x+y-c.hero.x-c.hero.y)*.27;return {rgb:[...canvas.getContext('2d').getImageData(Math.round(sx),Math.round(sy),1,1).data].slice(0,3),clear:c.clearSegment({x:a-30,y},{x:b+30,y})};},j);
+   const deck=await page.evaluate(j=>{const c=Prototype.game,{bounds:[a,b],gaps}=PrototypeRules.barriers[c.regionIndex()],y=(gaps[j][0]+gaps[j][1])/2,x=(a+b)/2+3,canvas=document.querySelector('canvas');Prototype.renderer.draw();const ctx=canvas.getContext('2d'),p=Prototype.renderer.screen({x,y}),scale=ctx.getTransform(),sx=p.x*scale.a+scale.e,sy=p.y*scale.d+scale.f;return {rgb:[...canvas.getContext('2d').getImageData(Math.round(sx),Math.round(sy),1,1).data].slice(0,3),clear:c.clearSegment({x:a-30,y},{x:b+30,y})};},j);
    assert(deck.clear,region+' bridge '+j+' remains traversable');assert(deck.rgb[0]>deck.rgb[2],region+' bridge '+j+' has a visible deck');
    if(v.width===1280||v.width===375)await page.screenshot({path:path.join(results,'bridge-'+region+'-'+j+'-'+tag+'.png')});
   }
