@@ -304,7 +304,7 @@ class Campaign{
     z.props=z.props.filter(p=>!(String(p.id||'').startsWith('world-life-habitat-')&&dist(p,center)<175));
     for(const [j,[dx,dy,structure]]of (cfg.props||[]).entries()){let p={x:center.x+dx,y:center.y+dy};try{p=this.safe(p.x,p.y,z.id);}catch(_){continue;}if(roadNear(p,42))continue;z.props.push({id:'stronghold-'+cfg.id+'-prop-'+j,...p,r:0,decorative:true,structure,stronghold:cfg.id});}
     const ring=[[-145,-105],[-70,-145],[70,-145],[145,-105],[155,20],[115,120],[40,155],[-40,155],[-115,120],[-155,20]];
-    for(const [j,[dx,dy]]of ring.entries()){let p={x:center.x+dx,y:center.y+dy};if(roadNear(p,62)||this.blocked(p.x,p.y,z.id,28,true)||z.nodes.some(n=>n.amount>0&&dist(n,p)<85))continue;z.props.push({id:'stronghold-'+cfg.id+'-wall-'+j,...p,r:26,structure:cfg.wall||'stockade',stronghold:cfg.id});}
+    for(const [j,[dx,dy]]of ring.entries()){let p={x:center.x+dx,y:center.y+dy};if(roadNear(p,85)||this.blocked(p.x,p.y,z.id,28,true)||z.nodes.some(n=>n.amount>0&&dist(n,p)<85))continue;z.props.push({id:'stronghold-'+cfg.id+'-wall-'+j,...p,r:26,structure:cfg.wall||'stockade',stronghold:cfg.id});}
     if(cfg.night)continue;
     const candidates=z.enemies.filter(e=>e.type==='mob'&&e.form==='normal'&&!e.guard&&!e.mini&&!e.summon&&!e.nightOnly&&!e.captain&&!e.roomCaptain&&!e.sideDungeon&&e.species===cfg.species&&!occupied.has(e.id)).sort((a,b)=>(a.site===cfg.site?-1:0)-(b.site===cfg.site?-1:0)||this.idOrder(a,b)).slice(0,cfg.guardCount||3);
     const spots=[[-95,-20],[-25,-95],[80,-65],[100,35],[20,105],[-85,75]];
