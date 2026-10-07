@@ -775,14 +775,15 @@ class Campaign{
     }else e=u.type==='soldier'?this.soldierScreenTarget(u,context.threats,living,claimed):crowdTarget(u,context.threats);
    }
    if(!e){this.followPartyMember(u,living,dt);continue;}claimed.add(e.id);
-   const specialRange=u.type==='archer'?480:185;if(this.line(u,e)&&dist(u,e)<=specialRange&&this.companionTrySkill(u,e))continue;
    if(u.type==='archer'){
     const d=dist(u,e),visible=this.line(u,e),anchor=this.partyFollowPoint(u,living);
     if(d<150){this.follow(u,this.archerFallbackPoint(u,e,living),this.companionMoveSpeed(270)*(u.slow>0?.65:1),dt,35);continue;}
     if(d>280||!visible){this.follow(u,this.archerCombatPoint(u,e,living),this.companionMoveSpeed(260)*(u.slow>0?.65:1),dt,35);continue;}
     if(dist(u,anchor)>70&&dist(anchor,e)<=280&&this.line(anchor,e)){this.follow(u,anchor,this.companionMoveSpeed(245)*(u.slow>0?.65:1),dt,35);continue;}
+    if(this.companionTrySkill(u,e))continue;
     if(u.cd<=0){u.cd=.85;const shot=Math.max(1,d);this.s.projectiles.push({id:'projectile-'+this.s.nextId++,x:u.x,y:u.y,dx:(e.x-u.x)/shot,dy:(e.y-u.y)/shot,target:e.id,damage:this.companionAttackDamage(u),source:u.id,speed:450,style:'arrow'});this.event('projectileLaunch',{actor:'companion',role:'archer',source:u.id,style:'arrow',x:u.x,y:u.y,target:e.id});}continue;
    }
+   if(this.line(u,e)&&dist(u,e)<=185&&this.companionTrySkill(u,e))continue;
    if(dist(u,e)>65||!this.line(u,e))this.follow(u,e,this.companionMoveSpeed(250)*(u.slow>0?.65:1),dt,this.line(u,e)?55:0);else if(u.cd<=0){u.cd=.85;if(this.damage(e,this.companionAttackDamage(u),u.id))this.event('melee',{actor:'companion',role:'soldier',source:u.id,weapon:'sword',x:e.x,y:e.y,target:e.id});}
   }
   const finishRecruit=b=>{if(b.queue>0){b.queue=Math.max(0,b.queue-dt);if(b.queue===0){const p=this.safe(b.x+50,b.y+50),type=['soldier','archer'].includes(b.queueType)?b.queueType:'soldier',u=this.unit(type,p.x,p.y);u.active=this.activeParty().length<this.barracksFieldCap(b);this.s.party.push(u);b.queueType=null;}}};
