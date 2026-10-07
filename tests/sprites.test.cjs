@@ -6,6 +6,16 @@ assert.deepEqual(diskManifest.sprites,{},'production manifest stays empty until 
 assert.match(diskManifest.artDirection,/canonical procedural visuals/i,'manifest names the procedural renderer as canon');
 assert.doesNotMatch(diskManifest.artDirection,/Warcraft|Ragnarok/i,'sprite direction cannot depend on external style references');
 assert.equal(typeof Visuals.atmosphere,'function','procedural graphics expose regional atmosphere without sprite assets');
+const promptCatalog=fs.readFileSync(path.join(__dirname,'../docs/GRAPHICS_CANON_SPRITE_PROMPTS.md'),'utf8');
+const promptAudit=fs.readFileSync(path.join(__dirname,'../docs/GRAPHICS_CANON_SPRITE_PROMPT_AUDIT.md'),'utf8');
+assert(promptCatalog.includes('generate exactly one sprite per request'),'sprite production is locked to one asset at a time');
+assert(promptCatalog.includes('Never generate sheets, comparisons, multiple options, turnarounds, scenes, or old/new boards'),'batch/comparison image generation is explicitly forbidden');
+assert.equal((promptCatalog.match(/\\*\\*Image-generation prompt:\\*\\*/g)||[]).length,122,'audited catalog has 122 sprite-generation prompts');
+assert.equal((promptCatalog.match(/KEEP PROCEDURAL — DO NOT GENERATE A SPRITE/g)||[]).length,9,'audited catalog has 9 explicit procedural-only entries');
+assert.doesNotMatch(promptCatalog,/Warcraft|Ragnarok/i,'prompt catalog cannot reintroduce superseded outside-style direction');
+assert(promptAudit.includes('mechanical distinction alone does not justify a new sprite'),'audit preserves canon-over-mechanics rule');
+assert(promptAudit.includes('Drowned Watchhouse')&&promptAudit.includes('Old Signal Keep'),'audit protects named-place markers from literal redesign');
+
 
 assert.deepEqual(Sprites.candidateKeys({renderKind:'hero',class:'paladin'}),['hero:paladin']);
 assert.deepEqual(Sprites.candidateKeys({renderKind:'ally',type:'soldier'}),['ally:soldier']);
