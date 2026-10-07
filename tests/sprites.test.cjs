@@ -10,11 +10,12 @@ const promptCatalog=fs.readFileSync(path.join(__dirname,'../docs/GRAPHICS_CANON_
 const promptAudit=fs.readFileSync(path.join(__dirname,'../docs/GRAPHICS_CANON_SPRITE_PROMPT_AUDIT.md'),'utf8');
 assert.match(promptCatalog,/generate exactly one sprite per request/i,'sprite production is locked to one asset at a time');
 assert.match(promptCatalog,/never generate sheets, comparisons, multiple options, turnarounds, scenes, or old\/new boards/i,'batch/comparison image generation is explicitly forbidden');
-assert.equal((promptCatalog.match(/\*\*Image-generation prompt:\*\*/g)||[]).length,122,'audited catalog has 122 sprite-generation prompts');
-assert.equal((promptCatalog.match(/KEEP PROCEDURAL — DO NOT GENERATE A SPRITE/g)||[]).length,9,'audited catalog has 9 explicit procedural-only entries');
+assert.equal((promptCatalog.match(/\*\*Image-generation prompt:\*\*/g)||[]).length,144,'audited catalog has 144 sprite-generation prompts');
+assert.equal((promptCatalog.match(/\*\*Audit status:\*\* ALIAS/g)||[]).length,6,'audited catalog has 6 explicit alias entries');
+assert.equal((promptCatalog.match(/KEEP PROCEDURAL — DO NOT GENERATE A SPRITE/g)||[]).length,10,'audited catalog has 10 explicit procedural-only entries');
 assert.doesNotMatch(promptCatalog,/Warcraft|Ragnarok/i,'prompt catalog cannot reintroduce superseded outside-style direction');
-assert(promptAudit.includes('mechanical distinction alone does not justify a new sprite'),'audit preserves canon-over-mechanics rule');
-assert(promptAudit.includes('Drowned Watchhouse')&&promptAudit.includes('Old Signal Keep'),'audit protects named-place markers from literal redesign');
+assert(promptAudit.includes('Duplicate gameplay identities that do not justify new art'),'audit preserves canon-over-mechanics rule');
+assert(promptCatalog.includes('Drowned Watchhouse exterior marker')&&promptCatalog.includes('Old Signal Keep exterior marker'),'catalog protects named-place markers from literal redesign');
 
 
 assert.deepEqual(Sprites.candidateKeys({renderKind:'hero',class:'paladin'}),['hero:paladin']);
