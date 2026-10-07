@@ -144,7 +144,7 @@ class Campaign{
    const {x:fx,y:fy}=this.fieldCenter(i);z.npcs.push({id:'cage-'+field.id,name:field.captive,kind:'cage',family:field.id,x:fx+90,y:fy+80,icon:'🔒'});
    for(let j=0;j<3;j++){const p=this.safe(minor[0]+150+j*70,minor[1]+160+j*90);z.npcs.push({id:'bundle-'+j,name:'Quest supplies '+(j+1),kind:'bundle',index:j,...p,icon:'📦'});}
    const landmarks=[...D.entrances[i],...D.ports[i]];for(let j=0;j<3;j++){const p=this.safe(j===0?minor[0]+150:j===1?fx-150:ex-180,j===0?minor[1]+40:j===1?fy+180:ey+100);z.npcs.push({id:'landmark-'+j,name:['Regional monument','Wildland lookout','Ancient ruins'][j],kind:'landmark',...p,icon:['🗿','🏕️','🏚️'][j]});}
-   const gp=this.safe(x+250,y+160);z.nodes.push({id:'gather-'+region,...gp,amount:r.resource,icon:['🪵','🧺','⛏️','🪵','💎'][i]});
+   // Regional companion labor is authored later as distributed Dark Lord Tribute; no generic bootstrap node.
    for(const [patch,[cx,cy,rx,ry]]of R.forests[i].entries())for(let k=0;k<45;k++){const angle=k*2.3999632297,radius=Math.sqrt((k+.5)/45),x=cx+Math.cos(angle)*rx*radius,y=cy+Math.sin(angle)*ry*radius;if(z.npcs.some(n=>dist(n,{x,y})<150)||dist({x,y},{x:fx,y:fy})<200||this.blocked(x,y,id,50))continue;z.props.push({id:'forest-'+patch+'-'+k,x,y,r:24,icon:i===4?'🪨':i===3?'🌳':k%5===0?'🪨':'🌲'});}
 
   }
@@ -292,7 +292,7 @@ class Campaign{
  spaceMillhavenSupplier(z){if(z.id!=='vale'||z.supplierPositionVersion===2)return;const supplier=z.npcs.find(n=>n.id==='supplier');if(!supplier)return;const [x,y]=D.towns[0];Object.assign(supplier,this.safe(x+115,y-85,z.id));z.supplierPositionVersion=2;}
  creatureStrongholdCenter(z,cfg){if(cfg.site){const n=z.npcs.find(n=>n.id===cfg.site);if(n)return {x:n.x,y:n.y};}return cfg.center?{x:cfg.center[0],y:cfg.center[1]}:null;}
  creatureStrongholds(z){
-  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||this.sideDungeon(z.id)||z.creatureStrongholdsVersion===1)return;
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||this.sideDungeon(z.id)||z.creatureStrongholdsVersion===2)return;
   const plans=(R.creatureStrongholds||[]).filter(s=>s.region===z.id),oldZone=this.s.zone;this.s.zone=z.id;
   try{
    z.props=z.props.filter(p=>!String(p.id||'').startsWith('stronghold-'));
@@ -304,17 +304,17 @@ class Campaign{
     z.props=z.props.filter(p=>!(String(p.id||'').startsWith('world-life-habitat-')&&dist(p,center)<175));
     for(const [j,[dx,dy,structure]]of (cfg.props||[]).entries()){let p={x:center.x+dx,y:center.y+dy};try{p=this.safe(p.x,p.y,z.id);}catch(_){continue;}if(roadNear(p,42))continue;z.props.push({id:'stronghold-'+cfg.id+'-prop-'+j,...p,r:0,decorative:true,structure,stronghold:cfg.id});}
     const ring=[[-145,-105],[-70,-145],[70,-145],[145,-105],[155,20],[115,120],[40,155],[-40,155],[-115,120],[-155,20]];
-    for(const [j,[dx,dy]]of ring.entries()){let p={x:center.x+dx,y:center.y+dy};if(roadNear(p,62)||this.blocked(p.x,p.y,z.id,28,true))continue;z.props.push({id:'stronghold-'+cfg.id+'-wall-'+j,...p,r:26,structure:cfg.wall||'stockade',stronghold:cfg.id});}
+    for(const [j,[dx,dy]]of ring.entries()){let p={x:center.x+dx,y:center.y+dy};if(roadNear(p,62)||this.blocked(p.x,p.y,z.id,28,true)||z.nodes.some(n=>n.amount>0&&dist(n,p)<85))continue;z.props.push({id:'stronghold-'+cfg.id+'-wall-'+j,...p,r:26,structure:cfg.wall||'stockade',stronghold:cfg.id});}
     if(cfg.night)continue;
     const candidates=z.enemies.filter(e=>e.type==='mob'&&e.form==='normal'&&!e.guard&&!e.mini&&!e.summon&&!e.nightOnly&&!e.captain&&!e.roomCaptain&&!e.sideDungeon&&e.species===cfg.species&&!occupied.has(e.id)).sort((a,b)=>(a.site===cfg.site?-1:0)-(b.site===cfg.site?-1:0)||this.idOrder(a,b)).slice(0,cfg.guardCount||3);
     const spots=[[-95,-20],[-25,-95],[80,-65],[100,35],[20,105],[-85,75]];
     for(const [j,e]of candidates.entries()){const [dx,dy]=spots[j%spots.length],p=this.safe(center.x+dx,center.y+dy,z.id);e.home={...p};if(e.hp>0&&!e.aggro)Object.assign(e,p);e.stronghold=cfg.id;e.strongholdResident=true;e.pack='stronghold-'+cfg.id+'-'+Math.floor(j/3);if(cfg.site)e.site=cfg.site;occupied.add(e.id);}
    }
-   z.creatureStrongholdsVersion=1;
+   z.creatureStrongholdsVersion=2;
   }finally{this.s.zone=oldZone;}
  }
  sideInteriors(z){
-  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||this.sideDungeon(z.id))return;
+  if(dungeonIds.includes(z.id)||this.supplyRoom(z.id)||this.sideDungeon(z.id)||z.sideEntranceVersion===1)return;
   const configs=(R.sideDungeons||[]).filter(d=>d.region===z.id),oldZone=this.s.zone;this.s.zone=z.id;
   try{
    z.props=z.props.filter(p=>!String(p.id||'').startsWith('side-entrance-'));
