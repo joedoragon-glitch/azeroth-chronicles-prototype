@@ -3,6 +3,7 @@
 'use strict';
 const R=typeof PrototypeRules!=='undefined'?PrototypeRules:require('./rules.js');
 function allyBodyKind(e){return e?.type==='archer'?'goblin-archer':(e?.class||e?.type||'worker');}
+function barracksVisualState(e){return Number.isFinite(e?.progress)&&e.progress<4?'construction':e?.full?'full':'basic';}
 function draw(ctx,e,p,region=0,rescued=false){
  if(e.kind==='landmark'&&e.id?.startsWith('bridge-'))return; // The full deck is drawn in world space.
  ctx.save();ctx.translate(p.x,p.y);ctx.lineJoin='round';ctx.lineCap='round';
@@ -259,43 +260,94 @@ function draw(ctx,e,p,region=0,rescued=false){
    return;
   }
   if(kind==='barracks'){
-   // Completed barracks remain field-built military shelters: rough, useful and lived-in rather than upgraded houses.
+   // Barracks are expedition camps, not shops or houses. Basic is a cozy field camp;
+   // Full is the same camp grown into a larger, more capable expedition base.
+   const full=!!e.full,campScale=1.18; // Basic and Full reserve the same visual footprint; upgrades change contents, never site size.
+   ctx.save();ctx.scale(campScale,campScale);
+   const canvas=['#927554','#6b7867','#77766a','#75594f','#555463'][region];
+   const canvasLight=['#b29a72','#859483','#949184','#947166','#6e6b7c'][region];
+   const bedding=['#8b6b55','#627b75','#777064','#7f5f58','#686171'][region];
+   const ground=['#6f684f','#55665f','#69695f','#625149','#4d4b57'][region];
+   const fireRing=['#777367','#66746e','#73756d','#665b54','#5c5963'][region];
+
+   // Soft camp footprint and scattered sleeping gear make the site feel inhabited.
+   shade(full?48:39,full?12:10,.18);
+   fillOval(0,10,45,12,ground,.28);
+
+   // Main low expedition tent. Open flap stays readable as shelter rather than storefront.
+   const tentW=37,tentH=43;
+   poly([[-tentW,8],[0,-tentH],[tentW,8]],canvas);
+   fillPoly([[0,-tentH],[tentW,8],[0,8]],canvasLight,.23);
+   poly([[-12,8],[0,-18],[12,8]],dark);
+   line([[0,-tentH+3],[0,9]],timber,2);
+   for(const side of [-1,1])line([[side*(tentW-4),6],[side*(tentW+10),15]],timber,2);
+   line([[-tentW+3,8],[tentW-3,8]],trim,1.5);
+
+   // Bedrolls/blankets beside the tent, deliberately visible in the world.
+   rect(-31,5,18,7,bedding);line([[-28,7],[-16,7]],trim,1);
+   if(full){rect(-10,9,18,7,bedding);line([[-7,11],[5,11]],trim,1);}
+   oval(-29,4,5,3,canvasLight);
+
+   // Communal cookfire: the visual heart of both camp tiers.
+   for(const [x,y]of [[21,9],[27,11],[33,8],[27,5]])oval(x,y,4,2.5,fireRing);
+   line([[20,8],[34,3]],timber,3);line([[21,3],[34,9]],timber,3);
+   for(const x of [24,28,32])poly([[x-3,7],[x, -5-(x%2)*2],[x+3,7]],'#c77b48');
+   glint(28,-2,region===4?'#d7a0ba':'#f0bd72',2);
+   if(region===1){oval(28,0,7,3,'#5f7772');}
+   if(region===4){poly([[25,3],[28,-7],[31,3]],'#8c6677');}
+
+   // Small supply/gear corner; practical clutter rather than a counter or storefront.
+   rect(15,-7,13,11,timber);line([[16,-6],[27,3]],trim,1);
+   line([[37,-29],[37,10]],timber,3);for(const y of [-24,-13,-2])line([[33,y],[45,y]],steel,1.7);
+   shield(-39,-2,wall);
+
+   // Region-specific camp identity.
    if(region===0){
-    // Timber drill lodge with open muster bay, bedrolls, cookfire and weapon rack.
-    for(const x of [-31,-20,20,31])rect(x-3,-31,6,46,timber);poly([[-36,-30],[-23,-48],[25,-48],[37,-30]],roof);
-    rect(-31,-8,62,22,wall);rect(-13,-8,26,23,dark);line([[-29,-7],[29,-7]],trim,2);
-    for(const x of [-24,-12]){rect(x-5,5,11,5,'#8e704d');line([[x-4,4],[x+4,4]],'#c8ad7a',1);}
-    line([[19,-28],[19,10]],timber,3);for(const y of [-24,-10,4])line([[15,y],[28,y]],steel,2);
-    oval(27,7,7,4,'#5b4b3e');glint(27,4,'#e3ad62',1.7);
+    for(const x of [-39,-34,-29])glint(x,12,x===-34?'#d7b47a':'#8ea16d',1.2);
+    line([[-42,-8],[-47,-20]],'#75573e',2);
    }else if(region===1){
-    // Raised reed-and-timber barracks above wet ground, with drying lines and a sheltered central stove.
-    for(const x of [-30,-14,14,30])line([[x,13],[x,24]],timber,4);rect(-34,6,68,9,dark);
-    for(const x of [-29,29])rect(x-3,-31,6,39,timber);poly([[-35,-30],[-22,-47],[23,-47],[35,-30]],roof);
-    rect(-30,-9,60,17,wall);rect(-12,-8,24,17,dark);for(const x of [-23,-8,8,23])line([[x,-43],[x+5,-26]],trim,1.5);
-    line([[-27,-17],[27,-17]],timber,2);for(const x of [-18,0,18])rect(x-5,-16,10,8,'#82725a');
-    oval(22,3,6,4,'#5d5547');glint(22,0,'#d4a869',1.5);
+    for(const x of [-43,-37,-31])line([[x,13],[x+2,-9]],'#7e936c',1.5);
+    line([[-45,15],[45,15]],'#8f7c59',2);
    }else if(region===2){
-    // Low stone redoubt with timber roof, gear niches and a warm hearth.
-    rect(-35,-20,70,35,'#7f8279');for(const x of [-31,-14,4,22])rect(x,-14,13,10,'#97998d');
-    poly([[-38,-21],[-25,-41],[25,-41],[38,-21]],roof);for(const x of [-30,30])rect(x-4,-27,8,42,timber);
-    rect(-13,-10,26,25,dark);line([[-30,-18],[30,-18]],trim,2);shield(22,-27,wall);
-    rect(-30,5,18,7,timber);rect(14,4,15,8,timber);oval(-1,7,8,4,'#514b42');glint(-1,4,'#dda762',1.6);
+    for(const [x,y,r]of [[-41,10,5],[-35,7,4],[42,9,5]])oval(x,y,r,r*.55,'#777a72');
+    line([[-38,-6],[-30,-14]],'#b3aa8e',1.5);
    }else if(region===3){
-    // Improvised stockade barracks: charred posts, patched awning, supply racks and ember brazier.
-    for(const x of [-34,-23,23,34]){rect(x-3,-29,6,44,timber);poly([[x-4,-29],[x,-40],[x+4,-29]],roof);}
-    poly([[-38,-27],[-20,-45],[21,-42],[38,-25]],roof);rect(-31,-8,62,23,wall);rect(-14,-8,28,23,dark);
-    line([[-29,-7],[29,-7]],trim,2);for(const y of [-25,-11,3])line([[19,y],[31,y]],'#a99a82',2);
-    rect(-31,4,14,9,'#786556');oval(25,7,8,4,'#4b423c');for(const x of [21,25,29])glint(x,3,'#c77b53',1.3);
-    line([[-19,-29],[-27,-39]],'#4a413c',3);line([[13,-30],[20,-38]],'#4a413c',3);
+    line([[-42,9],[-35,-15]],'#4d433d',3);line([[-36,12],[-27,-10]],'#4d433d',2);
+    for(const x of [23,28,33])glint(x,4,'#c77b53',1.2);
    }else{
-    // Crown field bastion: obsidian braces and canvas-like dark shelter softened by bunks and a contained brazier.
-    rect(-35,-20,70,35,'#646570');for(const x of [-34,-18,18,34])rect(x-3,-31,6,46,timber);
-    poly([[-39,-29],[-24,-48],[25,-48],[39,-29]],roof);rect(-14,-10,28,25,dark);line([[-30,-18],[30,-18]],trim,2);
-    for(const x of [-25,25])poly([[x-6,12],[x,-5],[x+6,12]],'#747184');poly([[-5,-37],[0,-45],[5,-37],[0,-29]],'#9b87ad');
-    rect(-29,4,15,8,timber);rect(15,4,14,8,timber);oval(0,8,8,4,'#4a454d');glint(0,4,'#c89a72',1.5);
+    for(const x of [-42,42])poly([[x-5,12],[x,-2],[x+5,12]],'#706b82');
+    poly([[-4,-33],[0,-40],[4,-33],[0,-27]],'#9b87ad');
    }
-   // Shared military readability: banner + rack, but the shelter itself is region-authored.
-   line([[32,-40],[32,13]],timber,3);poly([[34,-38],[48,-34],[34,-24]],trim);shield(-23,-25,wall);return;
+
+   // Simple camp banner/lantern reads as "our base" without making the camp a fort.
+   line([[44,-35],[44,12]],timber,3);poly([[46,-33],[58,-30],[46,-22]],trim);
+   glint(44,-37,region===4?'#d8c2ea':'#efd28a',1.8);
+
+   if(full){
+    // Full Barracks = established expedition base: second sleeping tent, command canopy,
+    // extra bunks/supplies, and more warm lived-in detail while remaining unmistakably a camp.
+    poly([[-58,10],[-44,-23],[-26,10]],canvas);fillPoly([[-44,-23],[-26,10],[-44,10]],canvasLight,.22);
+    poly([[-49,10],[-44,-7],[-38,10]],dark);
+    line([[-44,-21],[-44,11]],timber,2);
+    rect(-58,11,20,6,bedding);line([[-55,13],[-41,13]],trim,1);
+
+    // Open command canopy and low map table, not a shop counter.
+    for(const x of [-12,12])line([[x,-13],[x,-37]],timber,3);
+    poly([[-18,-35],[0,-46],[18,-35],[12,-27],[-12,-27]],canvasLight);
+    rect(-15,-18,30,7,timber);line([[-11,-15],[10,-13]],'#c9b284',1);
+    for(const [x,y]of [[-8,-15],[2,-16],[9,-13]])glint(x,y,trim,1);
+
+    // More supplies and seating establish permanence/coziness.
+    rect(48,-5,15,12,timber);rect(51,-17,12,11,canvas);
+    oval(15,14,7,3,bedding);oval(33,15,7,3,bedding);
+    line([[15,12],[15,19]],timber,2);line([[33,12],[33,19]],timber,2);
+    for(const x of [-18,0,18])glint(x,16,region===4?'#c8a8d8':'#d7bc7c',1.2);
+
+    // A second warm lamp makes Full camps feel welcoming at a glance.
+    line([[-62,-20],[-62,13]],timber,2);glint(-62,-22,region===4?'#d7b4e4':'#f2cc7f',2);
+   }
+   ctx.restore();
+   return;
   }
   rect(-23,-22,46,37,wall);poly([[23,-22],[35,-15],[35,10],[23,15]],'#737f75');poly([[-29,-22],[0,-47],[30,-22]],roof);poly([[0,-47],[12,-43],[36,-15],[30,-22]],'#4b5957');line([[-26,-23],[0,-44],[27,-22]],'#dfc9a0',2);line([[30,-20],[36,-15],[36,10]],'#8c9687',1.5);rect(-7,-5,14,20,'#504d40');rect(-18,-14,8,9,'#87a7a2');rect(11,-14,8,9,'#87a7a2');for(const x of [-17,12])line([[x,-12],[x+6,-12]],'#c8d7b9',1.5);line([[-23,2],[-9,2]],'#746b56',1);line([[-22,11],[22,11]],'#897f68',2);
   rect(14,-43,7,17,'#9a8e7c');rect(-5,-24,10,8,gold);
@@ -521,7 +573,7 @@ function draw(ctx,e,p,region=0,rescued=false){
  if(type==='hero'||type==='ally'||type==='enemy'){line([[-8,13],[0,15],[8,13]],type==='enemy'?'#d2aa87':'#c9d6ad',1.2);if(type==='hero')oval(0,-47,2,2,'#f6dfa0');}
  ctx.restore();
 }
-function height(e){if(e.type==='boss')return 102;if(e.captain||e.roomCaptain)return 68;if(e.renderKind==='hero'&&e.class==='mage'||e.renderKind==='prop')return 64;if(['dungeon','exit','transport'].includes(e.kind))return 64;return 54;}
+function height(e){if(e.type==='boss')return 102;if(e.captain||e.roomCaptain)return 68;if(e.renderKind==='building'&&e.kind==='barracks')return 88;if(e.renderKind==='hero'&&e.class==='mage'||e.renderKind==='prop')return 64;if(['dungeon','exit','transport'].includes(e.kind))return 64;return 54;}
 const floorPalettes=[['#294b36','#31583e','#203e30','#95ad80'],['#26444b','#31535a','#203b42','#85ada6'],['#485447','#56614d','#3b493f','#b1b59a'],['#50413b','#5d4b42','#423732','#b9987b'],['#343644','#414351','#2c2f3c','#a09b9e']];
 const dungeonFloors={crypt:['#343c39','#414945','#2b3331','#a9b1a0'],archive:['#30464a','#3b5558','#283d42','#8fb6b4'],mine:['#44433b','#524f43','#39382f','#ada88c'],abyss:['#44373b','#544349','#382f34','#c09a89'],citadel:['#3b414b','#494f59','#303640','#abb3b5']};
 const treasuryFloors={
@@ -727,6 +779,6 @@ function atmosphere(ctx,canvas,region=0,opts={}){
  ctx.restore();
 }
 function enemyBodyKind(e){if(!e?.species)return 'unknown';const rangedClass=e.ranged&&['mireling','ogre','orc','ashbeast'].includes(e.species);return e.species+(rangedClass?':ranged':'');}
-root.PrototypeVisuals={draw,height,floor,roads,terrain,bridges,atmosphere,allyBodyKind,enemyBodyKind};
+root.PrototypeVisuals={draw,height,floor,roads,terrain,bridges,atmosphere,allyBodyKind,enemyBodyKind,barracksVisualState};
 if(typeof module!=='undefined')module.exports=root.PrototypeVisuals;
 })(typeof window!=='undefined'?window:globalThis);

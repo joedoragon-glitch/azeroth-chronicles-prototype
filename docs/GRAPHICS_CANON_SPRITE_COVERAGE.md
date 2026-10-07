@@ -38,7 +38,7 @@ Many broad procedural systems are classified here rather than receiving pointles
 - Main dungeon entrances: 051–055.
 - Treasury entrances: 056–059.
 - Dark fortress gate: 060.
-- Completed regional barracks bodies: 071–075. Construction remains procedural; Full Barracks reuses the same completed canonical body until the renderer defines a distinct Full body.
+- Barracks: construction remains procedural; Basic regional camps are 071–075; Full Barracks have distinct procedural camp layouts within the exact same reserved footprint and must not alias Basic art when sprites are eventually activated.
 - Regional town service structures: 111–130.
 - Shared occupied side-interior gate: 131.
 - Citadel preparation fountain: 161.

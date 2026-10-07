@@ -8,6 +8,10 @@ assert.doesNotMatch(diskManifest.artDirection,/Warcraft|Ragnarok/i,'sprite direc
 assert.equal(typeof Visuals.atmosphere,'function','procedural graphics expose regional atmosphere without sprite assets');
 assert.equal(Visuals.allyBodyKind({renderKind:'ally',type:'archer'}),'goblin-archer','companion Archer no longer borrows the hero Ranger body');
 assert.equal(Visuals.allyBodyKind({renderKind:'ally',type:'soldier'}),'soldier','Soldier companion keeps its armored human body');
+assert.equal(Visuals.barracksVisualState({progress:2,full:false}),'construction','unfinished Barracks keep construction visuals');
+assert.equal(Visuals.barracksVisualState({progress:4,full:false}),'basic','Basic Barracks use the cozy field-camp body');
+assert.equal(Visuals.barracksVisualState({progress:4,full:true}),'full','Full Barracks use the expanded expedition-camp body');
+assert.equal(Visuals.height({renderKind:'building',kind:'barracks',progress:4,full:false}),Visuals.height({renderKind:'building',kind:'barracks',progress:4,full:true}),'Basic and Full Barracks reserve the same visual footprint height');
 for(const species of ['mireling','ogre','orc','ashbeast']){
  assert.equal(Visuals.enemyBodyKind({species,ranged:false}),species,species+' melee body key');
  assert.equal(Visuals.enemyBodyKind({species,ranged:true}),species+':ranged',species+' ranged class has a distinct procedural body');

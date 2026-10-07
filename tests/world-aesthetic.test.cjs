@@ -65,12 +65,20 @@ test('each field-boss Treasury has a distinct boss-home entrance rather than a d
  for(const room of R.supplyRooms){const region=Campaign.data.regions.findIndex(r=>r.id===room.region),sig=visualSignature({id:'supply-entrance',kind:'dungeon',family:room.id,treasury:true,treasuryBoss:room.boss,renderKind:'npc'},region);assert.notEqual(sig,genericGate,room.id+' entrance differs from generic dungeon gate');seen.push(sig);}
  assert.equal(new Set(seen).size,R.supplyRooms.length,'all four Treasury entrances have distinct boss identities');
 });
-test('completed barracks are rough regional military shelters, not polished houses',()=>{
+test('Basic and Full Barracks are distinct cozy regional expedition camps, not shops or houses',()=>{
  const genericByRegion=Campaign.data.regions.map((_,i)=>visualSignature({id:'generic-house',renderKind:'prop',structure:'house',decorative:false},i));
- const finished=Campaign.data.regions.map((_,i)=>visualSignature({id:'barracks',kind:'barracks',renderKind:'building',name:'Barracks',progress:4},i));
- const building=Campaign.data.regions.map((_,i)=>visualSignature({id:'barracks',kind:'barracks',renderKind:'building',name:'Barracks',progress:2},i));
- assert.equal(new Set(finished).size,5,'every region gets a distinct finished barracks design');
- assert.equal(new Set(building).size,5,'every region gets a distinct rough construction state');
- for(let i=0;i<5;i++){assert.notEqual(finished[i],genericByRegion[i],Campaign.data.regions[i].id+' finished barracks does not inherit generic-house body');assert.notEqual(finished[i],building[i],Campaign.data.regions[i].id+' finished barracks evolves from construction without becoming a house');}
+ const construction=Campaign.data.regions.map((_,i)=>visualSignature({id:'barracks-building',kind:'barracks',renderKind:'building',name:'Barracks',progress:2,full:false},i));
+ const basic=Campaign.data.regions.map((_,i)=>visualSignature({id:'barracks-basic',kind:'barracks',renderKind:'building',name:'Barracks',progress:4,full:false},i));
+ const full=Campaign.data.regions.map((_,i)=>visualSignature({id:'barracks-full',kind:'barracks',renderKind:'building',name:'Barracks',progress:4,full:true},i));
+ assert.equal(new Set(construction).size,5,'every region keeps a distinct camp-construction state');
+ assert.equal(new Set(basic).size,5,'every region gets a distinct Basic camp');
+ assert.equal(new Set(full).size,5,'every region gets a distinct Full expedition base');
+ for(let i=0;i<5;i++){
+  const id=Campaign.data.regions[i].id;
+  assert.notEqual(basic[i],genericByRegion[i],id+' Basic Barracks is a camp rather than a house/shop body');
+  assert.notEqual(full[i],genericByRegion[i],id+' Full Barracks remains a camp rather than becoming a house/shop body');
+  assert.notEqual(basic[i],construction[i],id+' Basic camp visibly completes construction');
+  assert.notEqual(full[i],basic[i],id+' Full Barracks visibly expands the Basic camp');
+ }
 });
 console.log(passed+' world-aesthetic scenarios passed.');
