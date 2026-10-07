@@ -371,7 +371,7 @@ const outdoorMiniTrapKinds={
 };
 const rangedProfiles={goblin:{variant:'slinger',shotRange:240,shotSpeed:240,projectileStyle:'stone'},skeleton:{variant:'bow guard',shotRange:290,shotSpeed:280,projectileStyle:'arrow'},reedbeast:{variant:'spitter',hybrid:true,shotRange:250,shotSpeed:220,projectileStyle:'spit',projectileSlow:1.6},mireling:{variant:'spitter',hybrid:true,shotRange:230,shotSpeed:230,projectileStyle:'spit',projectileSlow:1.6},ogre:{variant:'stone thrower',hybrid:true,shotRange:260,shotSpeed:220,projectileStyle:'stone'},orc:{variant:'axe thrower',hybrid:true,shotRange:260,shotSpeed:250,projectileStyle:'axe'},ashbeast:{variant:'cinder spitter',hybrid:true,shotRange:270,shotSpeed:240,projectileStyle:'cinder'}};
 const forests=[[[470,850,210,280],[1850,1050,250,320],[550,1800,260,180]],[[650,1650,240,200],[1950,1000,200,300],[2050,2300,230,170]],[[850,600,150,210],[1900,1500,240,350],[650,2100,230,200],[1200,2700,260,180],[2750,1750,220,240]],[[600,1300,250,250],[2100,1900,270,260],[1100,2300,200,160]],[[800,1100,230,250],[1850,1600,240,300],[2400,1050,170,200]]];
-const resourceDepositCounts=[2,3,4,4,4];
+const resourceDepositCounts=[4,4,4,4,4];
 const teachers={thorn:{learn:[2],train:[1,2],maxRank:2},mire:{learn:[3,4,6],train:[1,2,3,4,6],maxRank:3},ridge:{learn:[5],train:[1,2,3,4,5,6],maxRank:4},warlord:{learn:[7],train:[1,2,3,4,5,6,7],maxRank:6},citadel:{learn:[8],train:[1,2,3,4,5,6,7,8],maxRank:8}};
 const expeditionSupportSkills={
  sharedTraining:{name:'Shared Training',trainers:{thorn:1,mire:2,ridge:3,warlord:4,citadel:5},maxRank:5,costs:[0,140,140,140,140,140],detail:'Companions inherit applicable discipline-training HP, damage and movement speed.'},
