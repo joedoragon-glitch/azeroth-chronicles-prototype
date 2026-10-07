@@ -92,6 +92,14 @@ function visualSignature(entity,region){
  const log=[],target={};const ctx=new Proxy(target,{get(o,p){if(p in o)return o[p];return (...args)=>{log.push([String(p),...args.map(v=>typeof v==='number'?Math.round(v*100)/100:v)]);};},set(o,p,v){o[p]=v;log.push(['set',String(p),v]);return true;}});
  Visuals.draw(ctx,entity,{x:0,y:0},region,false);return JSON.stringify(log);
 }
+function dungeonGeometrySignature(id){
+ const log=[],target={},ctx=new Proxy(target,{get(o,p){if(p in o)return o[p];return (...args)=>{log.push([String(p),...args.map(v=>typeof v==='number'?Math.round(v*100)/100:v)]);};},set(o,p,v){o[p]=v;log.push(['set',String(p),v]);return true;}});
+ Visuals.dungeonGeometry(ctx,p=>({x:p.x,y:p.y}),id);return JSON.stringify(log);
+}
+test('Abyss collision masses are explicitly rendered instead of existing as invisible blockers',()=>{
+ const signature=dungeonGeometrySignature('abyss');assert(signature.length>200,'Abyss geometry emits visible canvas work');assert(signature.includes('lineTo')&&signature.includes('fill'),'fortress masses have filled visible geometry');
+});
+
 test('military Ringleaders read as officers without changing body scale',()=>{
  for(const species of ['orc','archer','crownguard']){
   const base={id:'rank-'+species,species,name:species,renderKind:'enemy',type:'mob',form:'normal',ranged:species!=='orc'},lead={...base,form:'ringleader'};
