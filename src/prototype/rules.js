@@ -12,6 +12,7 @@ const attacks={
  warlord:[attack('cone',1.2,1.5,{combo:true}),attack('circle',1.8,1.5,{count:2}),attack('summon',1.8,1.5,{species:'orc',ranged:false}),attack('line',1.6,2.5,{charge:true,coefficient:1.4})],
  abyss:[attack('cone',1.5,1.5,{manaDrain:.08}),attack('ring',1.7,1.6,{manaDrain:.10}),attack('circle',1.8,2,{count:2,sequential:true,landing:true,coefficient:1.4}),attack('summon',2,1.6,{species:'ashbeast',ranged:false})],
  citadel:[attack('circle',1.6,3,{coefficient:1.4,opening:3}),attack('line',1.8,1.6,{count:2,manaDrain:.08}),attack('line',1.8,2.5,{charge:true,advance:true,coefficient:1.4}),attack('circle',2,1.5,{count:3,sequential:true,persistent:true,manaDrain:.10}),attack('summon',1.9,1.5,{species:'crownguard',ranged:true})],
+ cindermaw:[attack('cone',1.1,1.1,{coefficient:1.15}),attack('line',1.5,1.8,{charge:true,coefficient:1.45}),attack('circle',1.6,1.5,{count:3,persistent:true,coefficient:1.05}),attack('summon',1.8,1.5,{species:'ashbeast',ranged:false})],
  darklord:[attack('cone',1.3,1.5,{combo:true,manaDrain:.08}),attack('circle',1.9,1.6,{count:3,sequential:true,manaDrain:.10}),attack('summon',2,1.6,{species:'crownguard',ranged:true}),attack('sector',2,2,{sequential:true,count:3,manaDrain:.12})]
 };
 const sites=[
@@ -19,7 +20,7 @@ const sites=[
  [['bridge-lake','Lake causeway',1405,1780],['night-site','Lantern shore',1700,900],['wagon','Stranded supply wagon',1000,1150],['watch','Drowned Watchhouse',2550,1480],['mire-nests','Mire nesting bank',1940,1120]],
  [['bridge-north','Stone bridge',1300,950],['bridge-south','Timber crossing',1300,1870],['lookout','Old Signal Keep',2350,1500],['ore','Stonecross ore vein',1100,650],['wolf-den','Wolf hunting ground',520,1250],['ogre-hearth','Ogre hearth camp',1980,1820]],
  [['bridge-north','Guarded ravine bridge',1450,750],['bridge-south','Burned forest crossing',1450,2160],['shrine','Ruined Shrine',1050,1850],['overlook','Ravine overlook',1750,2050],['checkpoint','Occupied checkpoint',2430,1570],['convoy','Supply convoy',1260,980],['orc-bivouac','Orc roadside bivouac',1840,420]],
- [['bridge-north','Lava ridge bridge',1350,1000],['bridge-south','Southern stone crossing',1350,2400],['foundry','Ruined Foundry',1850,2700],['shelf','Crystal shelf',1250,2350],['siege','Siege camp',2700,2250],['fortress-gate','Dark fortress gate',3060,3040],['ash-roost','Ash-beast roost',2020,1810],['crown-barracks','Crown field barracks',3000,1180]]
+ [['bridge-north','Lava ridge bridge',1350,1000],['bridge-south','Southern stone crossing',1350,2400],['foundry','Ruined Foundry',1850,2700],['shelf','Crystal shelf',1250,2350],['siege','Siege camp',2700,2250],['fortress-gate','Dark fortress gate',3060,3040],['crown-barracks','Crown field barracks',3000,1180]]
 ];
 // Companion labor recovers finite Dark Lord Tribute from outdoor sites. Exact amounts belong in barracks operations, not the world map.
 const expeditions=[
@@ -59,7 +60,7 @@ const tributePlans={
   {id:'siege-war-chest',site:'siege',amount:220,hidden:false,offset:[110,80],context:'siege war chest'},
   {id:'crystal-shipment',site:'shelf',amount:180,hidden:false,offset:[115,90],context:'crystal tribute shipment'},
   {id:'barracks-payroll',site:'crown-barracks',amount:140,hidden:true,offset:[-115,95],context:'Crown payroll stores'},
-  {id:'roost-cache',site:'ash-roost',amount:100,hidden:true,offset:[120,-85],context:'hidden collector cache'}
+  {id:'southern-levy',site:'bridge-south',amount:100,hidden:true,offset:[115,95],context:'concealed southern levy chest'}
  ]
 };
 // Field-boss compounds sit away from the main town approach instead of sharing the central traffic band.
@@ -68,7 +69,7 @@ const fieldBossCenters=[
  [2180,1120],
  [2700,700],
  [2600,1650],
- [3250,3200]
+ [2200,1750]
 ];
 // Remaining ordinary patrol packs are distributed across the wider countryside.
 // Local-site patrols and mini-dungeon guards keep their authored positions.
@@ -147,9 +148,10 @@ const worldLifePlans=[
   habitats:[
    {id:'ashbeast-roost',center:[2020,1810],props:[[-70,-25,'roost'],[25,-30,'bone-pile'],[80,35,'ember-pit'],[-25,65,'sleep-roll'],[120,-5,'obsidian']]},
    {id:'crown-barracks',center:[3000,1180],props:[[-80,-25,'command-tent'],[20,-30,'field-kitchen'],[85,35,'weapon-rack'],[-25,70,'bunk'],[125,-5,'supply-stack']]},
-   {id:'fortress-work-camp',center:[3070,2200],props:[[-75,-25,'forge'],[25,-30,'field-kitchen'],[85,35,'supply-stack'],[-25,65,'bunk'],[120,-5,'training-dummy']]}
+   {id:'fortress-work-camp',center:[3070,2200],props:[[-75,-25,'forge'],[25,-30,'field-kitchen'],[85,35,'supply-stack'],[-25,65,'bunk'],[120,-5,'training-dummy']]},
+   {id:'dark-fortress-court',center:[3250,3200],props:[[-165,-90,'dark-throne'],[-70,-140,'dark-brazier'],[50,-140,'war-table'],[160,-85,'weapon-rack'],[-170,45,'bunk'],[-75,130,'supply-stack'],[55,130,'forge'],[165,45,'crown-banner']]}
   ],
-  field:[[-165,-90,'dark-throne'],[-70,-140,'dark-brazier'],[50,-140,'war-table'],[160,-85,'weapon-rack'],[-170,45,'bunk'],[-75,130,'supply-stack'],[55,130,'forge'],[165,45,'crown-banner']]
+  field:[[-160,-80,'roost'],[-70,-135,'ember-pit'],[40,-135,'bone-pile'],[150,-80,'obsidian'],[-165,45,'sleep-roll'],[-70,125,'treasure-hoard'],[55,125,'roost'],[160,45,'bone-pile']]
  }
 ];
 // Field-boss supply objectives are actual Treasury raids: every required cache is kept inside the boss's Treasury.
@@ -157,7 +159,7 @@ const supplyRooms=[
  {id:'supply-vale',region:'vale',boss:'thorn',count:2,entryOffset:[255,-170],name:"Thornfang's Treasury",objective:"Recover two caches from Thornfang's Treasury"},
  {id:'supply-march',region:'march',boss:'mire',count:3,entryOffset:[260,-165],name:"Mirejaw's Treasury",objective:"Recover three caches from Mirejaw's Treasury"},
  {id:'supply-highlands',region:'highlands',boss:'ridge',count:3,entryOffset:[-265,185],name:"Ridge Tyrant's Treasury",objective:"Recover three caches from Ridge Tyrant's Treasury"},
- {id:'supply-crown',region:'crown',boss:'darklord',count:3,entryOffset:[285,-185],name:"Dark Lord's Treasury",objective:"Recover three caches from the Dark Lord's Treasury"}
+ {id:'supply-crown',region:'crown',boss:'cindermaw',count:3,entryOffset:[285,-185],name:"Cindermaw's Treasury",objective:"Recover three caches from Cindermaw's Treasury"}
 ];
 const treasuryWalls={
  'supply-vale':[
@@ -189,8 +191,8 @@ const treasuryDecor={
   [365,700,'sleep-roll',0],[470,205,'tool-rack',0],[555,690,'ore-cart',0],[745,405,'bone-pile',0],[330,460,'game-table',0]
  ],
  'supply-crown':[
-  [165,690,'dark-brazier',18],[275,205,'treasure-hoard',22],[690,205,'dark-throne',28],[665,500,'war-table',24],[175,445,'crown-banner',0],[785,760,'boss-chest',20],
-  [365,700,'bunk',0],[470,205,'supply-stack',0],[555,690,'forge',0],[745,405,'weapon-rack',0],[330,460,'ration',0]
+  [165,690,'ember-pit',18],[275,205,'treasure-hoard',22],[690,205,'roost',28],[665,500,'bone-pile',0],[175,445,'obsidian',0],[785,760,'boss-chest',20],
+  [365,700,'roost',0],[470,205,'supply-stack',0],[555,690,'warm-brazier',0],[745,405,'bone-pile',0],[330,460,'sleep-roll',0]
  ]
 };
 // Optional occupied interiors consolidate weak overlapping landmarks. They intentionally have no boss, captive, quest reward or gatherable resource yet.
@@ -223,7 +225,7 @@ const miniPlans=[
  {field:'Mirejaw island redoubt',resource:'Stranded wagon enclosure',theme:'palisade'},
  {field:'Mountain watchtower yard',resource:'Abandoned quarry works',theme:'stonewall'},
  {field:'Warlord checkpoint',resource:'Ruined shrine courtyard',theme:'stonewall'},
- {field:'Dark fortress courtyard',resource:'Ruined foundry works',theme:'stonewall'}
+ {field:"Cindermaw's roosting compound",resource:'Ruined foundry works',theme:'stonewall'}
 ];
 const quest=(kind,target,sites=[])=>({kind,target,sites});
 const quests=[
@@ -231,9 +233,9 @@ const quests=[
  quest('rescue','mire'),quest('patrol',6),quest('rescue','archive'),quest('bundles',3),quest('night',2,['night-site']),quest('sites',null,['port']),
  quest('rescue','ridge'),quest('patrol',7),quest('rescue','mine'),quest('bundles',3),quest('sites',null,['bridge-north','wolf-den','ogre-hearth','bridge-south']),quest('sites',null,['port']),
  quest('rescue','warlord'),quest('sites',null,['convoy','bridge-north','checkpoint']),quest('rescue','abyss'),quest('patrol',8),quest('sites',null,['shrine','minor','orc-bivouac','overlook']),quest('sites',null,['port']),
- quest('rescue','citadel'),quest('patrol',8),quest('rescue','darklord'),quest('bundles',3),quest('sites',null,['foundry','shelf','ash-roost','crown-barracks','siege']),quest('sites',null,['fortress-gate'])
+ quest('rescue','citadel'),quest('patrol',8),quest('rescue','cindermaw'),quest('bundles',3),quest('sites',null,['foundry','shelf','crown-barracks','siege']),quest('sites',null,['fortress-gate'])
 ];
-for(const [index,family]of [[0,'thorn'],[6,'mire'],[12,'ridge'],[18,'warlord'],[26,'darklord']])quests[index].clear='field-'+family;
+for(const [index,family]of [[0,'thorn'],[6,'mire'],[12,'ridge'],[18,'warlord'],[26,'cindermaw']])quests[index].clear='field-'+family;
 // The renderer and collision engine share these exact boundaries and crossing gaps.
 const barriers=[
  {kind:'water',bounds:[1160,1240,0,2700],gaps:[[660,840],[1660,1840]]},
@@ -372,7 +374,7 @@ const resourceDepositCounts=[2,3,4,4,4];
 const teachers={thorn:{learn:[2],train:[1,2],maxRank:2},mire:{learn:[3,4,6],train:[1,2,3,4,6],maxRank:3},ridge:{learn:[5],train:[1,2,3,4,5,6],maxRank:4},warlord:{learn:[7],train:[1,2,3,4,5,6,7],maxRank:6},citadel:{learn:[8],train:[1,2,3,4,5,6,7,8],maxRank:8}};
 const expeditionSupportSkills={
  sharedTraining:{name:'Shared Training',trainers:{thorn:1,mire:2,ridge:3,warlord:4,citadel:5},maxRank:5,costs:[0,140,140,140,140,140],detail:'Companions inherit applicable discipline-training HP, damage and movement speed.'},
- sharedStrength:{name:'Shared Strength',trainers:{crypt:1,mine:2,abyss:3,darklord:4},laterTrainerCap:4,maxRank:4,costs:[0,125,200,300,425],detail:'Companions inherit other bonus HP and damage plus armor-tier and reforge defense bonuses.'}
+ sharedStrength:{name:'Shared Strength',trainers:{crypt:1,mine:2,abyss:3,cindermaw:4},laterTrainerCap:4,maxRank:4,costs:[0,125,200,300,425],detail:'Companions inherit other bonus HP and damage plus armor-tier and reforge defense bonuses.'}
 };
 const progression={ordinaryXpMultiplier:.5,levelGapRewards:[1,.75,.4,.1,0]};
 const ordinaryMeleeScaling=[{hp:1.25,damage:1.15},{hp:1.4,damage:1.25},{hp:1.65,damage:1.4},{hp:1.9,damage:1.6},{hp:2.2,damage:1.8}];
@@ -392,6 +394,7 @@ const bossBehavior={
  warlord:{close:[0],far:[1,3],heroTarget:[1,3],phasePreferred:[2,1,3],combos:[{from:2,to:0,phase:'low',chance:.45},{from:1,to:3,phase:'low',chance:.35}]},
  abyss:{close:[0,1],far:[2],heroTarget:[2],phasePreferred:[0,1,2],combos:[{from:0,to:1,phase:'low',chance:.4},{from:2,to:3,phase:'low',chance:.35}]},
  citadel:{close:[0],far:[1,2,3],heroTarget:[1,2,3],phasePreferred:[1,2,4],combos:[{from:1,to:2,phase:'low',chance:.45}]},
+ cindermaw:{close:[0],far:[1,2],heroTarget:[1,2],phasePreferred:[2,1],combos:[{from:2,to:1,phase:'low',chance:.45}]},
  darklord:{close:[0,3],far:[1,2,3],heroTarget:[0,1,3],phasePreferred:[3,1,2],combos:[{from:1,to:0,phase:'high',chance:.4}]}
 };
 const trueBossSummons={cap:6,minions:4,captains:2,minionScaling:{hp:1.5,damage:1.25},families:{
@@ -399,7 +402,7 @@ const trueBossSummons={cap:6,minions:4,captains:2,minionScaling:{hp:1.5,damage:1
  mire:{species:'mireling',ranged:false},archive:{species:'wraith',ranged:true},
  ridge:{species:'archer',ranged:true},mine:{species:'ogre',ranged:false},
  warlord:{species:'orc',ranged:false},abyss:{species:'ashbeast',ranged:false},
- citadel:{species:'crownguard',ranged:true},darklord:{species:'crownguard',ranged:true}
+ cindermaw:{species:'ashbeast',ranged:false},citadel:{species:'crownguard',ranged:true},darklord:{species:'crownguard',ranged:true}
 }};
 const ringleaderScaling={hp:2.5,damage:1.5,pursuit:1.2,frenzyThreshold:.5,frenzyCooldown:.6,frenzyAim:.75};
 const nightEnemyCombat={
@@ -435,7 +438,7 @@ const roomCaptains={
   ]
  },
  'supply-crown':{
-  mentor:'darklord',name:'Dread Lord',visualScale:1.19,specialRange:440,specialCooldown:4.0,
+  mentor:'cindermaw',name:'Dreadmaw',visualScale:1.19,specialRange:440,specialCooldown:4.0,
   phase:{threshold:.45,name:'Ash Carapace',kind:'carapace'},
   attacks:[
    {name:'Cinder Mark',kind:'circle',warning:1.15,recovery:1.0,coefficient:1.0,count:2,sequential:true,radius:78},
