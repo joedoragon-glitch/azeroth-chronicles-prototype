@@ -86,6 +86,36 @@ await check('Paladin, Mage and Ranger Skill 1 charge readiness is identical and 
  }
  await page.evaluate(state=>{Prototype.game.s=state;},saved);
 });
+await check('Skill 2 and party-heal charge states are target-stable and honest '+tag,async()=>{
+ const saved=await page.evaluate(()=>Prototype.game.snapshot());
+ await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');c.zone().props=[];c.s.party=[];c.s.mercyTime=0;Object.assign(c.hero,{class:'mage',x:600,y:900,mp:100,maxMp:100,power:22,weapon:0,legacyWeaponPower:0,legacyEquipped:false,talents:[0,0,0,0],order:null});c.hero.skills[1]=1;c.hero.skills[2]=1;c.hero.cd[1]=.35;c.hero.cd[2]=0;const a=c.makeEnemy({species:'goblin',name:'Locked target',level:1,hp:10000,damage:0,gold:0,xp:0},{x:720,y:900}),b=c.makeEnemy({species:'goblin',name:'Closer later',level:1,hp:10000,damage:0,gold:0,xp:0},{x:820,y:900});c.zone().enemies=[a,b];c.s.heroTarget=a.id;});
+ await page.locator('#skill-2').evaluate(el=>{el.setPointerCapture=()=>{};el.onpointerdown({pointerType:'touch',pointerId:302,preventDefault(){}});});
+ await page.waitForFunction(()=>document.querySelector('#skill-2 small')?.textContent.startsWith('WAIT '));
+ await page.waitForFunction(()=>Prototype.chargePresentation()?.state==='charging',{timeout:1600});
+ const locked=await page.evaluate(()=>Prototype.chargePresentation().targetId);assert(locked,'Skill 2 locks a target when charging begins');
+ await page.evaluate(()=>{const c=Prototype.game;c.zone().enemies[1].x=625;c.zone().enemies[1].y=900;});
+ await page.waitForFunction(()=>document.querySelector('#skill-2 small')?.textContent==='CHARGED',{timeout:1800});
+ assert.equal(await page.evaluate(()=>Prototype.chargePresentation().targetId),locked,'a nearer enemy cannot silently steal the charged Skill 2 target');
+ const lockedPos=await page.evaluate(id=>{const e=Prototype.game.zone().enemies.find(e=>e.id===id);return {x:e.x,y:e.y};},locked);
+ await page.locator('#skill-2').evaluate(el=>el.onpointerup({pointerType:'touch',pointerId:302}));
+ const area=await page.evaluate(()=>[...Prototype.game.s.statistics.events].reverse().find(e=>e.type==='chargedArea'&&e.slot===2));assert(area,'charged Skill 2 resolves after honest CHARGED state');assert(Math.abs(area.x-lockedPos.x)<1e-9&&Math.abs(area.y-lockedPos.y)<1e-9,'Mage frost burst stays centered on the locked target');assert.equal(await page.evaluate(()=>Prototype.game.s.heroTarget),locked,'charged Skill 2 resolves on the locked target id');
+ await page.evaluate(()=>{const c=Prototype.game,a=c.zone().enemies[0],b=c.zone().enemies[1];c.effects=[];c.hero.cd[1]=0;c.hero.mp=100;a.hp=a.maxHp;b.hp=b.maxHp;Object.assign(a,{x:720,y:900});Object.assign(b,{x:625,y:900});c.s.heroTarget=a.id;});
+ await page.locator('#skill-2').evaluate(el=>{el.setPointerCapture=()=>{};el.onpointerdown({pointerType:'touch',pointerId:303,preventDefault(){}});});
+ await page.waitForFunction(()=>Prototype.chargePresentation()?.state==='charging');
+ await page.evaluate(()=>{const c=Prototype.game,id=Prototype.chargePresentation().targetId,e=c.zone().enemies.find(e=>e.id===id);e.x=1300;e.y=1300;});
+ await page.waitForFunction(()=>document.querySelector('#skill-2 small')?.textContent==='NO TARGET',{timeout:1800});
+ const beforeInvalid=await page.evaluate(()=>({mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[1]}));
+ await page.locator('#skill-2').evaluate(el=>el.onpointerup({pointerType:'touch',pointerId:303}));
+ const afterInvalid=await page.evaluate(()=>({mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[1]}));assert.deepEqual(afterInvalid,beforeInvalid,'NO TARGET release spends neither MP nor cooldown');
+ await page.evaluate(()=>{const c=Prototype.game,e=c.zone().enemies[0];c.hero.cd[1]=0;c.hero.mp=100;Object.assign(e,{x:720,y:900,hp:e.maxHp});c.s.heroTarget=e.id;c.effects=[];});
+ await page.locator('#skill-2').evaluate(el=>{el.setPointerCapture=()=>{};el.onpointerdown({pointerType:'touch',pointerId:304,preventDefault(){}});});await page.waitForTimeout(350);await page.locator('#skill-2').evaluate(el=>el.onpointerup({pointerType:'touch',pointerId:304}));
+ const canceled=await page.evaluate(()=>({mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[1],hp:Prototype.game.zone().enemies[0].hp,max:Prototype.game.zone().enemies[0].maxHp}));assert.equal(canceled.mp,100,'incomplete hold keeps MP');assert.equal(canceled.cd,0,'incomplete hold keeps cooldown');assert.equal(canceled.hp,canceled.max,'incomplete hold does not unexpectedly fire normal Skill 2');
+ await page.evaluate(()=>{const c=Prototype.game;c.zone().enemies=[];c.hero.cd[2]=0;c.hero.mp=100;c.hero.hp=c.hero.maxHp;c.s.party=[];});
+ await page.locator('#skill-3').evaluate(el=>{el.setPointerCapture=()=>{};el.onpointerdown({pointerType:'touch',pointerId:305,preventDefault(){}});});
+ await page.waitForFunction(()=>document.querySelector('#skill-3 small')?.textContent==='NO HEAL',{timeout:1800});
+ const beforeHeal=await page.evaluate(()=>({mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[2]}));await page.locator('#skill-3').evaluate(el=>el.onpointerup({pointerType:'touch',pointerId:305}));const afterHeal=await page.evaluate(()=>({mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[2]}));assert.deepEqual(afterHeal,beforeHeal,'NO HEAL release spends neither MP nor cooldown');
+ await page.evaluate(state=>{Prototype.game.s=state;},saved);
+});
 await check('Ranger sustain thresholds and direct commands '+tag,async()=>{
  const saved=await page.evaluate(()=>Prototype.game.snapshot());
  await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');c.s.mercyTime=0;const e=c.zone().enemies.find(e=>e.type==='mob');c.zone().enemies=[e];Object.assign(c.hero,{x:600,y:900,hp:c.hero.maxHp*.3,mp:c.hero.maxMp});Object.assign(e,{x:690,y:900,home:{x:690,y:900},aggro:true,damage:0,baseDamage:0});const ranger=c.s.party.find(u=>u.type==='archer'),soldier=c.s.party.find(u=>u.type==='soldier');Object.assign(ranger,{healCd:0,manaCd:0});soldier.hp=soldier.maxHp*.3;c.hero.supportEffects=[];soldier.supportEffects=[];});
