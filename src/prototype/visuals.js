@@ -272,10 +272,10 @@ function draw(ctx,e,p,region=0,rescued=false){
 
    // Soft camp footprint and scattered sleeping gear make the site feel inhabited.
    shade(full?48:39,full?12:10,.18);
-   fillOval(0,10,full?45:36,full?12:10,ground,.28);
+   fillOval(0,10,45,12,ground,.28);
 
    // Main low expedition tent. Open flap stays readable as shelter rather than storefront.
-   const tentW=full?37:32,tentH=full?43:38;
+   const tentW=37,tentH=43;
    poly([[-tentW,8],[0,-tentH],[tentW,8]],canvas);
    fillPoly([[0,-tentH],[tentW,8],[0,8]],canvasLight,.23);
    poly([[-12,8],[0,-18],[12,8]],dark);
