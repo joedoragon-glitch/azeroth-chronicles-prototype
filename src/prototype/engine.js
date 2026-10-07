@@ -781,7 +781,7 @@ class Campaign{
     if(dist(u,anchor)>70&&dist(anchor,e)<=280&&this.line(anchor,e)){this.follow(u,anchor,this.companionMoveSpeed(245)*(u.slow>0?.65:1),dt,35);continue;}
     if(u.cd<=0){u.cd=.85;const shot=Math.max(1,d);this.s.projectiles.push({id:'projectile-'+this.s.nextId++,x:u.x,y:u.y,dx:(e.x-u.x)/shot,dy:(e.y-u.y)/shot,target:e.id,damage:this.companionAttackDamage(u),source:u.id,speed:450,style:'arrow'});}continue;
    }
-   if(dist(u,e)>65||!this.line(u,e))this.follow(u,e,this.companionMoveSpeed(250)*(u.slow>0?.65:1),dt,this.line(u,e)?55:0);else if(u.cd<=0){u.cd=.85;if(this.damage(e,this.companionAttackDamage(u),u.id))this.event('melee');}
+   const soldierVisible=this.line(u,e),soldierDistance=dist(u,e);if(soldierVisible&&soldierDistance<=185&&this.companionTrySkill(u,e))continue;if(soldierDistance>65||!soldierVisible)this.follow(u,e,this.companionMoveSpeed(250)*(u.slow>0?.65:1),dt,soldierVisible?55:0);else if(u.cd<=0){u.cd=.85;if(this.damage(e,this.companionAttackDamage(u),u.id))this.event('melee');}
   }
   const finishRecruit=b=>{if(b.queue>0){b.queue=Math.max(0,b.queue-dt);if(b.queue===0){const p=this.safe(b.x+50,b.y+50),type=['soldier','archer'].includes(b.queueType)?b.queueType:'soldier',u=this.unit(type,p.x,p.y);u.active=this.activeParty().length<this.barracksFieldCap(b);this.s.party.push(u);b.queueType=null;}}};
   for(const b of z.buildings)finishRecruit(b);
