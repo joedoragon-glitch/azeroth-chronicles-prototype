@@ -14,7 +14,7 @@ This catalog has completed its Phase 2A documentation audit. The next image-gene
 - **ALIAS:** reuse the named existing asset; do not generate a second image.
 - **KEEP PROCEDURAL:** do not generate a sprite; the current renderer remains the final visual for that item.
 
-The audited catalog contains **227 numbered entries**: **216 GENERATE**, **1 ALIAS**, and **10 numbered KEEP PROCEDURAL**. Broad procedural systems that do not need individual numbered entries are exhaustively classified in `GRAPHICS_CANON_SPRITE_COVERAGE.md`. Do not add visual details from memory, older concept sheets, or prior generated images. If an entry still lacks enough information, stop on that entry rather than improvising.
+The audited catalog contains **227 numbered entries**: **217 GENERATE**, **0 ALIAS**, and **10 numbered KEEP PROCEDURAL**. Broad procedural systems that do not need individual numbered entries are exhaustively classified in `GRAPHICS_CANON_SPRITE_COVERAGE.md`. Do not add visual details from memory, older concept sheets, or prior generated images. If an entry still lacks enough information, stop on that entry rather than improvising.
 
 ## Mandatory base prompt
 
@@ -423,11 +423,11 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 049 — Dreadmaw
 
-**Audit status:** ALIAS — do not generate a new image.
+**Canonical cues:** Enlarged Ash-beast captain body. Dreadmaw's current combat mentor and Treasury master is Cindermaw, but his retained visual idol is the Dark Lord, preserving his original "Dread Lord" imitator identity. The Ash-beast carapace carries a dark obsidian-purple harness, a small Crown/Dark-Lord-style purple sigil, restrained bronze/gold authority linework and the generic captain ground-ring treatment. He remains unmistakably an Ash beast rather than becoming humanoid.
 
-**Reuse:** asset 024.
+**Image-generation prompt:**
 
-**Reason:** Dreadmaw is an Ash-beast captain with increased visualScale and captain mechanics, but the current renderer has no Cindermaw-specific static body ornament for this mentor. The exact captain sprite key may later point to the same Ash-beast image while retaining runtime captain treatment.
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render Dreadmaw exactly as the procedural captain canon: a larger Ash-beast body with the normal many-legged Ash-beast anatomy, plus the Dark-Lord-idol obsidian-purple carapace harness, small purple Crown sigil and restrained bronze/gold authority accents. Preserve his identity as an Ash beast serving Cindermaw while visually imitating the Dark Lord. Do not turn him into a miniature Dark Lord, do not give him humanoid armor, sword, shield, crown or cape, and do not remove the Ash-beast anatomy.
 
 ### 050 — Cinder Warlord
 
