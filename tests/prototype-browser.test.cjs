@@ -97,7 +97,7 @@ await check('Skill 2 and party-heal charge states are target-stable and honest '
  await page.waitForFunction(()=>document.querySelector('#skill-2 small')?.textContent==='CHARGED',{timeout:1800});
  assert.equal(await page.evaluate(()=>Prototype.chargePresentation().targetId),locked,'a nearer enemy cannot silently steal the charged Skill 2 target');
  await page.locator('#skill-2').evaluate(el=>el.onpointerup({pointerType:'touch',pointerId:302}));
- const area=await page.evaluate(()=>Prototype.game.effects.find(e=>e.type==='chargedArea'&&e.slot===2));assert(area,'charged Skill 2 resolves after honest CHARGED state');assert(Math.abs(area.x-720)<1e-9&&Math.abs(area.y-900)<1e-9,'Mage frost burst stays centered on the locked target');
+ const area=await page.evaluate(()=>[...Prototype.game.s.statistics.events].reverse().find(e=>e.type==='chargedArea'&&e.slot===2));assert(area,'charged Skill 2 resolves after honest CHARGED state');assert(Math.abs(area.x-720)<1e-9&&Math.abs(area.y-900)<1e-9,'Mage frost burst stays centered on the locked target');
  await page.evaluate(()=>{const c=Prototype.game,a=c.zone().enemies[0],b=c.zone().enemies[1];c.effects=[];c.hero.cd[1]=0;c.hero.mp=100;a.hp=a.maxHp;b.hp=b.maxHp;Object.assign(a,{x:720,y:900});Object.assign(b,{x:625,y:900});c.s.heroTarget=a.id;});
  await page.locator('#skill-2').evaluate(el=>{el.setPointerCapture=()=>{};el.onpointerdown({pointerType:'touch',pointerId:303,preventDefault(){}});});
  await page.waitForFunction(()=>Prototype.chargePresentation()?.state==='charging');
