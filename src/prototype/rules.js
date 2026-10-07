@@ -473,7 +473,7 @@ const roomCaptains={
   ]
  },
  'supply-crown':{
-  mentor:'cindermaw',name:'Dreadmaw',visualScale:1.19,specialRange:440,specialCooldown:4.0,
+  mentor:'cindermaw',visualIdol:'darklord',name:'Dreadmaw',visualScale:1.19,specialRange:440,specialCooldown:4.0,
   phase:{threshold:.45,name:'Ash Carapace',kind:'carapace'},
   attacks:[
    {name:'Cinder Mark',kind:'circle',warning:1.15,recovery:1.0,coefficient:1.0,count:2,sequential:true,radius:78},
