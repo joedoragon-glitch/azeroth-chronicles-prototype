@@ -262,7 +262,8 @@ function draw(ctx,e,p,region=0,rescued=false){
   if(kind==='barracks'){
    // Barracks are expedition camps, not shops or houses. Basic is a cozy field camp;
    // Full is the same camp grown into a larger, more capable expedition base.
-   const full=!!e.full;
+   const full=!!e.full,campScale=full?1.18:1.08;
+   ctx.save();ctx.scale(campScale,campScale);
    const canvas=['#927554','#6b7867','#77766a','#75594f','#555463'][region];
    const canvasLight=['#b29a72','#859483','#949184','#947166','#6e6b7c'][region];
    const bedding=['#8b6b55','#627b75','#777064','#7f5f58','#686171'][region];
@@ -345,6 +346,7 @@ function draw(ctx,e,p,region=0,rescued=false){
     // A second warm lamp makes Full camps feel welcoming at a glance.
     line([[-62,-20],[-62,13]],timber,2);glint(-62,-22,region===4?'#d7b4e4':'#f2cc7f',2);
    }
+   ctx.restore();
    return;
   }
   rect(-23,-22,46,37,wall);poly([[23,-22],[35,-15],[35,10],[23,15]],'#737f75');poly([[-29,-22],[0,-47],[30,-22]],roof);poly([[0,-47],[12,-43],[36,-15],[30,-22]],'#4b5957');line([[-26,-23],[0,-44],[27,-22]],'#dfc9a0',2);line([[30,-20],[36,-15],[36,10]],'#8c9687',1.5);rect(-7,-5,14,20,'#504d40');rect(-18,-14,8,9,'#87a7a2');rect(11,-14,8,9,'#87a7a2');for(const x of [-17,12])line([[x,-12],[x+6,-12]],'#c8d7b9',1.5);line([[-23,2],[-9,2]],'#746b56',1);line([[-22,11],[22,11]],'#897f68',2);
@@ -571,7 +573,7 @@ function draw(ctx,e,p,region=0,rescued=false){
  if(type==='hero'||type==='ally'||type==='enemy'){line([[-8,13],[0,15],[8,13]],type==='enemy'?'#d2aa87':'#c9d6ad',1.2);if(type==='hero')oval(0,-47,2,2,'#f6dfa0');}
  ctx.restore();
 }
-function height(e){if(e.type==='boss')return 102;if(e.captain||e.roomCaptain)return 68;if(e.renderKind==='building'&&e.kind==='barracks')return e.full?76:68;if(e.renderKind==='hero'&&e.class==='mage'||e.renderKind==='prop')return 64;if(['dungeon','exit','transport'].includes(e.kind))return 64;return 54;}
+function height(e){if(e.type==='boss')return 102;if(e.captain||e.roomCaptain)return 68;if(e.renderKind==='building'&&e.kind==='barracks')return e.full?88:76;if(e.renderKind==='hero'&&e.class==='mage'||e.renderKind==='prop')return 64;if(['dungeon','exit','transport'].includes(e.kind))return 64;return 54;}
 const floorPalettes=[['#294b36','#31583e','#203e30','#95ad80'],['#26444b','#31535a','#203b42','#85ada6'],['#485447','#56614d','#3b493f','#b1b59a'],['#50413b','#5d4b42','#423732','#b9987b'],['#343644','#414351','#2c2f3c','#a09b9e']];
 const dungeonFloors={crypt:['#343c39','#414945','#2b3331','#a9b1a0'],archive:['#30464a','#3b5558','#283d42','#8fb6b4'],mine:['#44433b','#524f43','#39382f','#ada88c'],abyss:['#44373b','#544349','#382f34','#c09a89'],citadel:['#3b414b','#494f59','#303640','#abb3b5']};
 const treasuryFloors={
