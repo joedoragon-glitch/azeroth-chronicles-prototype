@@ -18,7 +18,9 @@ The browser is the current desktop playtest target, especially Chromebook keyboa
 | `renderer.js` | World projection, viewport culling, draw order, transient effects and renderer counters |
 | `visuals.js` / `combat-visuals.js` | Canonical procedural drawings, terrain, architecture and combat cues |
 | `sprites.js` | Optional faithful sprite translation and procedural fallback |
-| `audio.js` | Original music, contextual sound and audio lifecycle |
+| `audio.js` / `audio-catalog.js` | Public audio facade and current compositions/event catalog |
+| `audio-score.js` | Cue selection, contextual observation, score scheduling, fades and ambience |
+| `audio-runtime.js` / `audio-effects.js` | Context lifecycle, mixer/source cleanup/bounds, diagnostics and contextual effect recipes |
 | `runtime.js` | Bounded active-frame measurements and idle redraw scheduling |
 | `menus.js` | Specialist, barracks, party, inventory and training menu definitions/actions; current game and shell callbacks injected |
 | `app.js` | Shell lifecycle, global/settings menus, map presentation, keyboard/touch coordination, charge input, frame scheduling and app updates |
@@ -62,3 +64,9 @@ Development-only `scripts/sprite-pipeline.cjs` owns catalog parsing, image inspe
 ## Regional authored context
 
 `rules.js` owns authored dungeon/residence walkable bounds, real partitions, floor surface treatments, guard/trap placement and contextual furnishing/workstation specifications. `world.js` stages contextual captives and places outdoor support scenes after existing settlements/strongholds, reserving future rescued-service stands. Existing Campaign dungeon/treasury authoring performs versioned geometry migration without replacing saved progression. `visuals.js` draws the same geometry as collision; `renderer.js` uses the authored Highlands residence footprint and keeps captive labels within the Canvas. Working captives retain the internal `cage` rescue kind/family; `presentation: 'workstation'` changes their drawing and pre-rescue context. `sprites.js` keeps workstations and `sceneRole` furnishings on procedural paths instead of substituting generic images. No new runtime module or production asset is introduced.
+
+## Audio foundation
+
+Audio owners install their methods before `PrototypeAudio` is exported in Node or the browser. The public API, four volume defaults, existing compositions and sound recipes remain compatible. No gameplay owner imports audio. The shell supplies menu/background/start/pause metadata separately from the existing audio-pause boolean; future authored scoring can inspect exact region/interior/boss/form without inferring mechanics from prose. Current cue-selection policy is preserved.
+
+`scripts/audio-assets.cjs` validates the empty recorded-audio registry and provides registered local file paths to the common inventory, packaging and precache. Registration checks path/symlink containment, hashes, provenance, duration/loop metadata, container signatures and encoded-size guards. This is asset publishing preparation; recorded playback, codec/decode/decoded-memory policy and the richer scene mix are future work. See `AUDIO_FOUNDATION.md` for findings, preservation checks and the production sequence.

@@ -1,0 +1,12 @@
+{
+  "sourceCommit": "fafefe0a54abcbeee13b2ca2de0770c38cc543fe",
+  "audio": {
+    "catalog": "c4564cc0edd086a106115168e031bf397ac4486b35c4e8a2db7eacf479149211",
+    "defaults": "b4ef4d9d5019e467d17ca5d048edab1ad8cec2bf350ce2da4b7406ce7d92fbc1",
+    "scheduledMusic": "01b3a420306a623102872821063c68ea6faca1476ce570f3db684a14cfbf2535",
+    "effectRecipes": "64d8df20997b8adc091a9343d08a6a579ba97fa95ccfeaf987f09e80b28353a5",
+    "effectRoutes": "26f0a7b16c35e5dee328e895a6849569af495c1281e7e2c4dac8ddabf3a90bdb",
+    "scheduledNotes": 67088,
+    "effectEvents": 186
+  }
+}

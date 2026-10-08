@@ -41,6 +41,8 @@ jobs:
           fi
       - name: Test desktop and full phone matrix before merge
         run: node tests/prototype-browser.test.cjs
+      - name: Verify audio playback and lifecycle
+        run: node tests/audio-browser.test.cjs
       - name: Verify development sprite showroom
         run: node tests/sprite-showroom-browser.test.cjs
       - uses: actions/upload-artifact@v4
@@ -64,6 +66,10 @@ jobs:
           npx playwright install --with-deps webkit
       - name: Verify WebKit phone presentation and gestures
         run: node tests/phone-webkit-browser.test.cjs
+      - name: Verify WebKit audio playback and lifecycle
+        env:
+          AUDIO_BROWSER_ENGINE: webkit
+        run: node tests/audio-browser.test.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -99,6 +105,8 @@ jobs:
           fi
       - name: Test full desktop and mobile matrix
         run: node tests/prototype-browser.test.cjs
+      - name: Verify audio playback and lifecycle
+        run: node tests/audio-browser.test.cjs
       - name: Verify development sprite showroom
         run: node tests/sprite-showroom-browser.test.cjs
       - uses: actions/upload-artifact@v4

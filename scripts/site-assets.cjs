@@ -10,6 +10,10 @@ const scripts = [
     'progression',
     'save',
     'engine',
+    'audio-catalog',
+    'audio-runtime',
+    'audio-score',
+    'audio-effects',
     'audio',
     'visuals',
     'combat-visuals',
@@ -36,6 +40,7 @@ const core = [
   'icons/icon-192.png',
   'icons/icon-512.png',
   'assets/sprites/manifest.json',
+  ...require('./audio-assets.cjs').publishedFiles(require('node:path').resolve(__dirname, '..')),
 ];
 const legacy = [
   'legacy.html',

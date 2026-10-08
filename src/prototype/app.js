@@ -531,6 +531,7 @@
             {
               version: PrototypeBuild.version,
               performance: runtime.report(renderer.metrics(), platform.mode),
+              audio: audio.status(),
               currency: 'crowns',
               mode: game.s.mode,
               phase: game.s.phase,
@@ -1604,7 +1605,10 @@
       audio.setPaused(true);
     }
   });
-  addEventListener('pagehide', save);
+  addEventListener('pagehide', () => {
+    save();
+    audio.setPaused(true);
+  });
   function updateCriticalNotice() {
     const host = $('message'),
       latest = game.notices?.at(-1),
@@ -1871,6 +1875,7 @@
     audio.update(
       game,
       paused || !!menu || !focused || document.hidden || game.s.challenge.gameOver,
+      { menu: !!menu, backgrounded: !focused || document.hidden, paused, started },
     );
     if (!frozen) {
       let x = (keys.right ? 1 : 0) - (keys.left ? 1 : 0) + joy.x,
