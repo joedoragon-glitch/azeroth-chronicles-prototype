@@ -84,7 +84,8 @@ await check('HUD surfaces shield the world and real pointer skills charge safely
  if(touch)await touch.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y,id:701}]});else{await page.mouse.move(x,y);await page.mouse.down();}
  await page.waitForFunction(()=>document.querySelector('#skill-1 small').textContent==='CHARGED',null,{timeout:2000});
  if(touch)await touch.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});else await page.mouse.up();
- await page.waitForFunction(()=>Prototype.game.zone().enemies[0].hp<10000,null,{timeout:2000});
+ const releaseState=await page.evaluate(()=>({charge:Prototype.chargePresentation(),mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[0],hero:{x:Prototype.game.hero.x,y:Prototype.game.hero.y},enemy:Prototype.game.zone().enemies[0],projectiles:Prototype.game.s.projectiles,status:document.querySelector('#status').textContent,messages:Prototype.game.messages}));
+ await page.waitForFunction(()=>Prototype.game.zone().enemies[0].hp<10000,null,{timeout:2000}).catch(e=>{throw Error(e.message+' · native release '+JSON.stringify(releaseState));});
  assert.equal(await page.evaluate(()=>10000-Prototype.game.zone().enemies[0].hp),90,'native pointer hold casts exactly one charged basic');
  await page.evaluate(()=>{Prototype.game.hero.cd[0]=0;Prototype.game.hero.mp=1000;Prototype.updateHUD();});
  if(touch)await touch.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y,id:702}]});else await page.mouse.down();
