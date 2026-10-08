@@ -227,7 +227,6 @@
     'click',
     run(async () => {
       await gesture();
-      audio.enableProduction(false);
       await selectSource();
       await audio.playRecording('diagnostic-click', { bus: 'interface', gain: 0.6 });
     }),

@@ -84,6 +84,9 @@ assert.equal(steps, 1);
 a.paused = true;
 a.footstep({}, 80);
 assert.equal(steps, 1);
+a.setSceneMix('menu');
+a.enableProduction(false);
+assert.equal(a.mixScene, 'menu');
 console.log(
   'PASS 19 place identities, night/refuges/peace, 11 boss/TRUE pairs, synchronized loops, transport-preserving intensity and movement-only footsteps',
 );

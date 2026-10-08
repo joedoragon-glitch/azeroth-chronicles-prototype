@@ -79,7 +79,6 @@
             this.studio = null;
           }
           this.stopRecordedScore();
-          this.setSceneMix('world');
         }
       }
       productionCue(scene) {
