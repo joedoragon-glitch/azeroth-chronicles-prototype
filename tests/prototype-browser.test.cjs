@@ -10,7 +10,7 @@ if(!baseURL){
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});
  baseURL='http://127.0.0.1:'+server.address().port+'/';
 }
-const viewports=smoke?[{width:1280,height:800,touch:false},{width:375,height:812,touch:true}]:[{width:1280,height:800,touch:false},{width:375,height:812,touch:true},{width:320,height:568,touch:true},{width:844,height:390,touch:true},{width:980,height:1740,touch:true}];
+const viewports=smoke?[{width:1280,height:800,touch:false},{width:375,height:812,touch:true}]:[{width:1280,height:800,touch:false},{width:375,height:812,touch:true},{width:320,height:568,touch:true},{width:844,height:390,touch:true},{width:768,height:310,touch:true},{width:980,height:1740,touch:true}];
 for(const v of viewports){
 const b=await pw.chromium.launch(launch),page=await b.newPage({viewport:{width:v.width,height:v.height},hasTouch:v.touch,isMobile:v.touch}),errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());await page.goto(baseURL);const tag=v.width+'x'+v.height;
 await check('New-game premise, Succession opt-in and audio gesture '+tag,async()=>{assert.equal(await page.locator('#modal-title').textContent(),'Challenge condition');const premise=await page.locator('#modal-description').textContent();assert(premise.includes('Dark Lord rules the land'));assert(premise.includes('captured the specialists'));assert.equal(await page.evaluate(()=>Prototype.audio.ctx),null);await page.keyboard.press('s');assert((await page.locator('#modal-actions button.selected').textContent()).includes('Succession challenge'));await page.keyboard.press('f');assert((await page.locator('#modal-title').textContent()).includes('New Normal adventure'));await page.keyboard.press('f');await page.waitForFunction(()=>document.querySelector('#modal').hidden);assert(await page.evaluate(()=>Prototype.game.s.challenge.succession));await page.waitForFunction(()=>Prototype.audio.ctx?.state==='running');assert.deepEqual(await page.evaluate(()=>Prototype.game.hero.skills),[1,0,0,0,0,0,0,0]);});
@@ -139,7 +139,7 @@ await check('Phone controls preserve world space and contextual interaction '+ta
  const npc=await page.evaluate(()=>{const c=Prototype.game,n=c.zone().npcs.find(n=>n.kind==='quests');c.zone().npcs=[n];c.zone().nodes=[];c.zone().buildings=[];Object.assign(c.hero,{x:n.x,y:n.y});Prototype.updateHUD();return {x:n.x,y:n.y};});
  const interact=await box('#touch-interact-button');assert(interact&&interact.height>=44);
  assert(!overlap(interact,skills)&&!overlap(interact,joy),'context prompt never displaces combat');
- await page.locator('#touch-interact-button').tap();assert((await page.locator('#modal-title').textContent()).includes('Quest'),'nearby interaction really activates the target');await page.keyboard.press('Escape');
+ await page.locator('#touch-interact-button').tap();assert((await page.locator('#modal-title').textContent())==='Local quests','nearby interaction really activates the target');await page.keyboard.press('Escape');
  await page.evaluate(n=>{Object.assign(Prototype.game.hero,{x:n.x+116,y:n.y});Prototype.updateHUD();},npc);
  assert(await page.locator('#touch-interact-button').isHidden(),'Interact disappears beyond interaction range');
  await page.evaluate(()=>{const c=Prototype.game;c.s.expeditionRank=3;Object.assign(c.hero,{x:600,y:900,order:null});const e=c.makeEnemy({species:'goblin',level:1,hp:10000,damage:0,gold:0,xp:0},{x:680,y:900});Object.assign(e,{aggro:true,heroParticipated:true});c.zone().enemies=[e];});

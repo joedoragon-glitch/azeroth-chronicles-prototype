@@ -2,16 +2,17 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const {webkit}=require(process.env.PLAYWRIGHT_MODULE||'playwright'),root=path.resolve(__dirname,'..');
+fs.mkdirSync(path.join(root,'test-results'),{recursive:true});
 const server=http.createServer((req,res)=>{
  const file=path.resolve(root,decodeURIComponent((req.url||'/').split('?')[0].replace(/^\//,''))||'phone.html');
  if(!file.startsWith(root+path.sep)||!fs.existsSync(file)||fs.statSync(file).isDirectory()){res.writeHead(404);res.end();return;}
  const mime={'.html':'text/html','.js':'application/javascript','.css':'text/css','.json':'application/json','.webmanifest':'application/manifest+json','.png':'image/png'};
  res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');fs.createReadStream(file).pipe(res);
 });
-(async()=>{let browser;try{
+(async()=>{let browser,activePage;try{
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));browser=await webkit.launch();
- for(const size of [{width:375,height:812},{width:320,height:568},{width:844,height:390}]){
- const page=await browser.newPage({viewport:size,hasTouch:true,isMobile:true}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ for(const size of [{width:375,height:812},{width:320,height:568},{width:844,height:390},{width:768,height:310}]){
+ const page=await browser.newPage({viewport:size,hasTouch:true,isMobile:true}),errors=[];activePage=page;page.on('pageerror',e=>errors.push(e.message));
  await page.goto('http://127.0.0.1:'+server.address().port+'/phone.html');await page.waitForFunction(()=>!!window.Prototype);
  await page.keyboard.press('f');await page.keyboard.press('f');await page.waitForFunction(()=>document.querySelector('#modal').hidden);
  await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');c.zone().enemies=[];c.zone().props=[];c.s.party=[];Object.assign(c.hero,{x:600,y:900,order:null});Prototype.updateHUD();});
@@ -32,7 +33,8 @@ const server=http.createServer((req,res)=>{
  for(let i=1;i<=8;i++)assert(await page.locator('#skill-'+i).isVisible());assert(await page.locator('#health-potion').isVisible());await page.evaluate(()=>Prototype.game.s.party[0].order={type:'wait'});await page.locator('#recall-button').tap();assert(await page.evaluate(()=>Prototype.game.s.recallActive&&Prototype.game.s.party.every(u=>u.order===null)),'WebKit Recall stays directly available');
  const all=await page.locator('#skills').boundingBox(),joy=await page.locator('#joystick').boundingBox();assert(all.y>hud.y+hud.height,'all learned controls stay below HUD');assert(all.x>=joy.x+joy.width,'all learned controls avoid joystick');assert(all.y+all.height<=size.height);
  const npc=await page.evaluate(()=>{const c=Prototype.game,n=c.zone().npcs.find(n=>n.kind==='quests');c.zone().npcs=[n];c.zone().nodes=[];c.zone().buildings=[];Object.assign(c.hero,{x:n.x,y:n.y});Prototype.updateHUD();return {x:n.x,y:n.y};});
- await page.locator('#touch-interact-button').tap();assert((await page.locator('#modal-title').textContent()).includes('Quest'));await page.keyboard.press('Escape');
+ const prompt=await page.locator('#touch-interact-button').boundingBox();assert(prompt.x+prompt.width<=all.x||prompt.y+prompt.height<=all.y||prompt.y>=all.y+all.height,'contextual Interact stays clear of all learned controls');
+ await page.locator('#touch-interact-button').tap();assert((await page.locator('#modal-title').textContent())==='Local quests');await page.keyboard.press('Escape');
  await page.evaluate(n=>{Object.assign(Prototype.game.hero,{x:n.x+116,y:n.y});Prototype.updateHUD();},npc);assert(await page.locator('#touch-interact-button').isHidden());
  await page.keyboard.press('g');assert.equal(await page.locator('#modal').evaluate(el=>getComputedStyle(el).touchAction),'pan-y');
  const scroll=await page.locator('#modal').evaluate(el=>{el.scrollTop=80;return {top:el.scrollTop,max:el.scrollHeight-el.clientHeight};});assert(scroll.max<=0||scroll.top>0,'help still scrolls');
@@ -42,4 +44,4 @@ const server=http.createServer((req,res)=>{
  assert.deepEqual(errors,[]);await page.screenshot({path:path.join(root,'test-results','webkit-phone-'+size.width+'x'+size.height+'.png')});
  console.log('PASS WebKit phone input, selection, compact HUD, learned controls, interaction and menu access '+size.width+'x'+size.height);await page.close();
  }
-}finally{await browser?.close();server.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
+}catch(e){await activePage?.screenshot({path:path.join(root,'test-results','webkit-failure.png')}).catch(()=>{});throw e;}finally{await browser?.close();server.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
