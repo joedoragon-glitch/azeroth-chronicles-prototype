@@ -52,3 +52,7 @@ button:disabled{background:#202c28;box-shadow:none;text-shadow:none}
 #message.visible{opacity:1;visibility:visible;transform:translate(-50%,0)}
 
 @media(prefers-reduced-motion:reduce){#message{transition:none}}
+/* Game gestures must not become text selection or iOS touch callouts. */
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+#location{display:none}

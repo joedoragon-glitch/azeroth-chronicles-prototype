@@ -49,6 +49,27 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
 
+  phone-webkit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install WebKit and browser dependencies
+        run: |
+          npm install --no-save --package-lock=false playwright@1.62.1
+          npx playwright install --with-deps webkit
+      - name: Verify WebKit phone presentation and gestures
+        run: node tests/phone-webkit-browser.test.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: webkit-phone-screenshots
+          retention-days: 3
+          path: test-results/
+          if-no-files-found: ignore
+
   main-test:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
@@ -91,7 +112,7 @@ jobs:
 
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: main-test
+    needs: [main-test, phone-webkit]
     runs-on: ubuntu-latest
     permissions:
       contents: read

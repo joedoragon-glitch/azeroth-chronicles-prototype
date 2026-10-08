@@ -14,3 +14,5 @@ En **Game and settings → Controls → Customize keyboard** puedes cambiar y gu
 En **Touch and mouse options** puedes elegir dos pulgares (movimiento izquierda, habilidades derecha) o el diseño alternativo de mano izquierda. Tocar el mundo para desplazarte está activado por defecto en pantallas táctiles, también tabletas y Chromebooks, y puede desactivarse. El clic de ratón para desplazarte es opcional y empieza desactivado; al activarlo, la curación sigue disponible mediante su botón o tecla.
 
 Los destinos respetan los obstáculos y rutas existentes. Mover con teclado/palanca toma el control inmediatamente; menús, pausa y pérdida de foco cancelan el destino. Las preferencias no cambian tus partidas ni sus penalizaciones.
+
+En teléfono, las habilidades aprendidas y la recuperación disponible quedan abajo a la derecha. Interact aparece aparte solo al estar cerca de un objetivo utilizable. Entrenamiento está en Character → Discipline Training; Recall sigue en la pantalla, sobre la palanca izquierda, para reunir al grupo. El HUD muestra vida, maná, nivel y menú.

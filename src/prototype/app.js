@@ -27,6 +27,7 @@
     gateDismissed = false,
     criticalNoticeSeen = null,
     criticalNoticeUntil = 0,
+    statusUntil = 0,
     worldPointer = null,
     pointer = null;
   profile = persistence.loadProfile(profile);
@@ -124,7 +125,9 @@
     }
   }
   function status(text) {
+    if (text === 'Saved locally · export for a backup') return;
     $('status').textContent = text;
+    statusUntil = performance.now() + 5000;
   }
   function persistProfile() {
     return persistence.saveProfile(profile);
@@ -1735,6 +1738,10 @@
         game.hero.armorTier +
         '\nCrowns are the official currency of the Dark Lord’s regime.',
       [
+        action('Recall squad', () => {
+          recallSquad();
+          closeMenu();
+        }),
         action(
           'Ranger Heal · ' + heal + ' HP',
           () => {},
@@ -2521,6 +2528,7 @@
       };
       b.onpointerdown = (e) => {
         if (e?.button > 0) return;
+        e?.preventDefault?.();
         audio.unlock();
         if (beginCharge(slot, 'pointer', e?.pointerId ?? null)) b.setPointerCapture?.(e.pointerId);
       };
@@ -2739,8 +2747,11 @@
     if (worldPointer?.id === e.pointerId) worldPointer = null;
   };
   addEventListener('contextmenu', (e) => {
-    if (e.target === canvas && activePlay()) e.preventDefault();
+    if (e.target === canvas || e.target.closest?.('#hud, #skills, #movement, #modal, #message'))
+      e.preventDefault();
   });
+  // Make readouts explicit tap targets so touch adjustment cannot choose a nearby button.
+  $('hero-stats').onclick = (e) => e?.stopPropagation?.();
   addEventListener('blur', () => {
     focused = false;
     clearInput();
@@ -2834,21 +2845,10 @@
         activeRecovery.seconds.toFixed(1) +
         's</small>';
     setMarkup('hero-stats', heroMarkup);
-    $('location').textContent =
-      game.definition().name +
-      (game.supplyRoom()
-        ? ' · ' + game.supplyRoom().name
-        : game.isDungeon()
-          ? ' · ' + game.boss(game.zoneId).place
-          : '') +
-      ' · ' +
-      (game.peace
-        ? 'At peace'
-        : game.s.mode === 'nightmare'
-          ? 'Nightmare'
-          : game.night()
-            ? 'Night'
-            : 'Day');
+    if (statusUntil && performance.now() >= statusUntil) {
+      $('status').textContent = '';
+      statusUntil = 0;
+    }
     const rangers = game.activeLivingParty().filter((u) => u.type === 'archer');
     for (const [type, label, key, cdKey, threshold] of [
       ['health', 'Heal', input.key('heal'), 'healCd', 50],
@@ -2862,6 +2862,7 @@
             : h.mp >= h.maxMp,
         next = rangers.length ? Math.min(...rangers.map((u) => u[cdKey] || 0)) : 0;
       b.disabled = !rangers.length || !ready || full;
+      b.hidden = platform.mode === 'phone' && !rangers.length;
       setMarkup(
         type + '-potion',
         label +
@@ -2988,8 +2989,9 @@
             : skillKeys()[i];
     }
     const n = nearestNPC();
+    $('touch-interact-button').hidden = !n || !activePlay();
     setMarkup('touch-interact-button', 'Interact');
-    $('touch-interact-button').title = n ? n.name : 'Find a marked person';
+    $('touch-interact-button').title = n ? n.name : '';
     $('order-button').textContent = 'Confirm';
     $('desktop-hints').textContent =
       ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('') +
