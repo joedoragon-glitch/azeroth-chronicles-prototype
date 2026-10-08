@@ -1,0 +1,10 @@
+{
+  "key": "enemy:goblin",
+  "request": "Joel reported the live goblin face looked deformed on 2026-10-08. Preserve approved identity while improving native readability.",
+  "sourceCommit": "369cc42889228fb1dbfc1a54c7048deda1f051b0",
+  "priorRevision": "6e7434dfc416f121e748172b2e5ac18571d6837e85a1de13227c90a5466c8186",
+  "tool": "image_gen",
+  "prompt": "Use case: precise-object-edit. Asset type: transparent game sprite, Azeroth Chronicles enemy:goblin. Edit target: the provided approved goblin source. Correct ONLY the face so it stays expressive and anatomically coherent when the ENTIRE character is displayed at just 39 pixels wide by 50 pixels tall. Preserve the exact full image canvas, transparent background, character location and size, organic long pointed ears, green-olive palette, leather armor, belt, sword, hands, boots, body proportions and pose. The face must have TWO clean, evenly placed small dark eyes, separated from simple brows by clear green skin; a small readable nose; one uncluttered playful half-smile with ONE small ivory corner tooth. Simplify tiny face detail and reduce unnecessary high-contrast cheek blocks so downsampling cannot turn eyes/nose/mouth into a tangled distorted cluster. Keep a mischievous friendly-sly goblin identity and approved half-smile. Do not enlarge the head, change ears or silhouette, add accessories, text, scenery, ground shadow or background. Keep crisp refined pixel-art style, with facial features designed for native tiny game readability, no extra eyes, no crooked disconnected mouth, no photorealism.",
+  "imageCallCount": 16,
+  "status": "reviewed-and-integrated-release-pending"
+}

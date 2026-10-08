@@ -1,0 +1,95 @@
+{
+  "directory": "/workspace/scratch/64ab2c41f702/azeroth-chronicles-prototype/_sprite-work/enemy-goblin/e4b08696a4a29266c2a26c5aa163f5327526727bd96021bdd70d911b1710f3c8-png-372175d58245",
+  "record": {
+    "version": 2,
+    "key": "enemy:goblin",
+    "catalogId": "016",
+    "canonHash": "aaae81634188dec92335c2937ebbff673f5cd456580ac3730c9395c63cd70f19",
+    "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+    "catalogHash": "afea6b2cccaad719db7caf0f8f7351d250bd5779d1beb9305e05da0d5262c4f5",
+    "source": {
+      "file": "source.png",
+      "format": "png",
+      "width": 1350,
+      "height": 1350,
+      "bytes": 186658,
+      "decodedBytes": 7290000,
+      "hash": "e4b08696a4a29266c2a26c5aa163f5327526727bd96021bdd70d911b1710f3c8",
+      "pixelHash": "802f4d0dd6cc849454f31be67f1e21b7b2453320ea649d9106b05fb7c6a57cc2",
+      "bounds": {
+        "x1": 169,
+        "y1": 95,
+        "x2": 1231,
+        "y2": 1186
+      },
+      "padding": 95,
+      "transparentPixels": 1761115,
+      "visiblePixels": 61385,
+      "lowAlphaPixels": 5526,
+      "materialBounds": {
+        "x1": 583,
+        "y1": 776,
+        "x2": 841,
+        "y2": 1104
+      }
+    },
+    "output": {
+      "file": "candidate.png",
+      "format": "png",
+      "width": 192,
+      "height": 192,
+      "bytes": 4778,
+      "decodedBytes": 147456,
+      "hash": "a3e2779196275c98fcce26908bd24acd0b757d785dabe69464ca56199cf55e81",
+      "pixelHash": "7be6fef9d966e825739eafbb9193c160d007eec6c22b87616bbba387bbce8a51",
+      "bounds": {
+        "x1": 66,
+        "y1": 110,
+        "x2": 120,
+        "y2": 157
+      },
+      "padding": 34,
+      "transparentPixels": 35632,
+      "visiblePixels": 1232,
+      "lowAlphaPixels": 114,
+      "materialBounds": {
+        "x1": 83,
+        "y1": 111,
+        "x2": 119,
+        "y2": 156
+      }
+    },
+    "runtime": {
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 54
+    },
+    "processing": {
+      "tool": "sharp",
+      "version": "0.35.5",
+      "kernel": "nearest",
+      "from": [
+        1350,
+        1350
+      ],
+      "to": [
+        192,
+        192
+      ],
+      "crop": false,
+      "trim": false,
+      "colorConversion": false,
+      "translation": {
+        "x": 0,
+        "y": 0,
+        "visiblePixelsDiscarded": 0
+      }
+    },
+    "review": {
+      "status": "pending",
+      "reference": null
+    }
+  }
+}

@@ -105,3 +105,7 @@ Joel requests place-specific atmosphere without dense jungle noise, with prepara
 ## Sprite continuation and terrain foundation · prepared v0.8.94
 
 PR #121 is merged and verified live at commit `5bdfa149`. The first continuation stage registers Mage, Ranger, Soldier and allied Goblin Archer, retaining all three approved pilots. Native desktop/phone day/night checks and exact immutable sources are recorded with honest engineer-review provenance. The dedicated opaque terrain processor, seam checks, revision rollback, clipped world mapping, bounded loading and offline inventory are implemented before terrain image production. Terrain remains procedural in this stage. See SPRITE_PRODUCTION_CURRENT_CONTEXT.md and TERRAIN_TEXTURE_PIPELINE.md; the remaining catalog is still in production.
+
+### v0.8.95 — Goblin native face readability
+
+User-requested correction simplifies face features to survive nearest downsampling at native game size. Same runtime dimensions and anchors; no gameplay changes. Prior approved source/output retained in history. Native desktop/phone day/night comparison evidence accompanies the asset. Release pending CI and exact live deployment verification.

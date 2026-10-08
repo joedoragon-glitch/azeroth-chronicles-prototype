@@ -1,0 +1,82 @@
+[
+  {
+    "width": 1280,
+    "height": 800,
+    "lighting": "day",
+    "sceneHash": "af2e282fccd0fc89214d29cd4a0b7c10febf4795adbaa9a7dbc80c6049808bcd",
+    "anchor": {
+      "x": 475.2,
+      "y": 269.29999999999995
+    }
+  },
+  {
+    "width": 1280,
+    "height": 800,
+    "lighting": "night",
+    "sceneHash": "a3c5af0bbe47550da5efae4ca3d3bb2c6d58c1d3d1179b1cd3542a040e116bc1",
+    "anchor": {
+      "x": 475.2,
+      "y": 269.29999999999995
+    }
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "lighting": "day",
+    "sceneHash": "b04310c502ff6545c9ebe5fc8c744abec1f59aca8a4da340bbe6760ae46d478b",
+    "anchor": {
+      "x": 172.2,
+      "y": 270.7799999999999
+    }
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "lighting": "night",
+    "sceneHash": "15d270210ce8741d3ebe553cc2f2b5692044dc02d9d79e901634836e3d7839be",
+    "anchor": {
+      "x": 172.2,
+      "y": 270.7799999999999
+    }
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "lighting": "day",
+    "sceneHash": "dd84ae7302ef131dedffa813d9ce1e1f4bab0b86526dbc196292521c5bac251c",
+    "anchor": {
+      "x": 399.2,
+      "y": 80.09999999999991
+    }
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "lighting": "night",
+    "sceneHash": "3f44d5188986722b5a0915cdb15a66d7938374aa88619218633c270cddabe4f8",
+    "anchor": {
+      "x": 399.2,
+      "y": 80.09999999999991
+    }
+  },
+  {
+    "width": 320,
+    "height": 568,
+    "lighting": "day",
+    "sceneHash": "a1de0472bd454d9f091244076b5e372e251c926aec4095d4bca3681c4c7bd18f",
+    "anchor": {
+      "x": 89.2,
+      "y": 154.85999999999996
+    }
+  },
+  {
+    "width": 320,
+    "height": 568,
+    "lighting": "night",
+    "sceneHash": "ea8e2ee67ce32b504f7d248214337c037a98c6bdbd7639a83c62a0e8776ec41d",
+    "anchor": {
+      "x": 89.2,
+      "y": 154.85999999999996
+    }
+  }
+]
