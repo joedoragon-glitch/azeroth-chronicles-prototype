@@ -283,17 +283,20 @@
       () => help(back),
     );
   }
+  function cancelTravel() {
+    worldPointer = null;
+    if (game) {
+      game.hero.order = null;
+      game.hero.path = [];
+    }
+  }
   function clearInput() {
     if (typeof Sprint !== 'undefined') Sprint.release();
     cancelCharge();
     keys = {};
     pointer = null;
-    worldPointer = null;
+    cancelTravel();
     joy = { x: 0, y: 0 };
-    if (game) {
-      game.hero.order = null;
-      game.hero.path = [];
-    }
     $('stick').style.transform = '';
   }
   function action(label, fn, detail = '', disabled = false) {
@@ -2618,7 +2621,7 @@
     }
     if ((paused || !focused || document.hidden) && !['pause', 'help'].includes(actionId)) return;
     if (!actionId) return;
-    if (['up', 'down', 'left', 'right'].includes(actionId)) worldPointer = null;
+    if (['up', 'down', 'left', 'right'].includes(actionId)) cancelTravel();
     keys[actionId] = true;
     if (e.repeat) return;
     if (actionId === 'doctrine') {
@@ -2664,7 +2667,7 @@
     if (e.pointerType === 'mouse' || pointer !== null) return;
     e.preventDefault();
     audio.unlock();
-    worldPointer = null;
+    cancelTravel();
     pointer = e.pointerId;
     joystick.setPointerCapture(pointer);
     joyUpdate(e);
@@ -2792,8 +2795,9 @@
         ? h.talentPoints +
           ' unspent training point' +
           (h.talentPoints === 1 ? '' : 's') +
-          ' · press C'
-        : 'Discipline Training · press C';
+          ' · press ' +
+          input.key('training')
+        : 'Discipline Training · press ' + input.key('training');
     let heroMarkup =
       '<div class="hero-title"><span>' +
       Campaign.classes[h.class].icon +
@@ -3112,7 +3116,9 @@
       status(
         'Level ' +
           levelEvent.level +
-          '! Training point available · press C or use Discipline Training.',
+          '! Training point available · press ' +
+          input.key('training') +
+          ' or use Discipline Training.',
       );
     if (events.some((e) => e.type === 'peace')) ending();
     if (game.s.phase === 'awakening' && !game.s.awakeningAck && !menu) awakeningMenu();

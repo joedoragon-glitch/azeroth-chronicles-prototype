@@ -1,4 +1,4 @@
-# Azeroth Chronicles · v0.8.82
+# Azeroth Chronicles · v0.8.83
 
 An offline-capable RPG across five regions, ten settlements and five main dungeons. Rescue the specialists, build your expedition, and challenge the Dark Lord. The regime's currency is **crowns**.
 

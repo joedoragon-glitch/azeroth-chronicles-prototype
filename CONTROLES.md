@@ -1,4 +1,4 @@
-# Controles · v0.8.82
+# Controles · v0.8.83
 
 La campaña actual está en [navegador](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/) y [teléfono](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html). La antigua guía v0.5 queda en el historial de Git.
 

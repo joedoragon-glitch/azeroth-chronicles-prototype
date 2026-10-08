@@ -49,12 +49,16 @@ await check('Rebinding updates real input, menus and labels and survives reload 
  await page.keyboard.press('s');assert((await page.locator('#modal-description').textContent()).includes('already used'));
  await page.keyboard.press('ArrowUp');assert.equal(await page.locator('#modal-title').textContent(),'Customize keyboard');
  await page.getByRole('button',{name:'Skill 1 · 1',exact:true}).click();await page.keyboard.press('q');
+ await page.getByRole('button',{name:'Discipline Training · C',exact:true}).click();await page.keyboard.press('l');
  await page.getByRole('button',{name:'Command Ranger Heal · H',exact:true}).click();await page.keyboard.press('u');
  await page.getByRole('button',{name:'Command Ranger Mana Recovery · M',exact:true}).click();await page.keyboard.press('o');
  await page.keyboard.press('Escape');await page.keyboard.press('Escape');
  const before=await page.evaluate(()=>{const c=Prototype.game;c.hero.x=600;c.hero.y=900;return c.hero.y;});
  await page.keyboard.down('ArrowUp');await page.waitForTimeout(100);await page.keyboard.up('ArrowUp');assert(await page.evaluate(()=>Prototype.game.hero.y)<before);
  assert((await page.locator('#desktop-hints').textContent()).includes('↑'));
+ assert((await page.locator('#talent-button').getAttribute('title')).includes('press L'));
+ await page.evaluate(()=>Prototype.game.event('level',{level:Prototype.game.hero.level}));
+ await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('press L or use Discipline Training'));
  assert((await page.locator('#health-potion small').textContent()).startsWith('U'));
  assert((await page.locator('#mana-potion small').textContent()).startsWith('O'));
  await page.evaluate(()=>Prototype.save());await page.reload();await page.waitForFunction(()=>!!window.Prototype);
@@ -62,6 +66,33 @@ await check('Rebinding updates real input, menus and labels and survives reload 
  assert.equal(await page.evaluate(()=>Prototype.input.actionFor('ArrowUp')),'up');
  assert.equal(await page.evaluate(()=>Prototype.input.actionFor('KeyW')),null);
  await page.evaluate(()=>Prototype.input.resetBindings());await page.reload();await page.waitForFunction(()=>!!window.Prototype);
+});
+await check('HUD surfaces shield the world and real pointer skills charge safely '+tag,async()=>{
+ const saved=await page.evaluate(()=>Prototype.game.snapshot());
+ await page.evaluate(()=>{Prototype.closeMenu();const c=Prototype.game;c.enter('vale');c.zone().props=[];c.s.party=[];c.s.projectiles=[];c.s.hazards=[];c.zone().enemies=[];Object.assign(c.hero,{x:600,y:900,order:null});});
+ await page.waitForTimeout(80);
+ const hud=await page.locator('#hero-stats .hero-title').boundingBox();
+ assert(await page.evaluate(p=>!!document.elementFromPoint(p.x+p.width/2,p.y+p.height/2)?.closest('#hud'),hud),'HUD text must receive the pointer instead of the world');
+ const before=await page.evaluate(()=>[Prototype.game.hero.x,Prototype.game.hero.y]);
+ if(v.touch)await page.touchscreen.tap(hud.x+hud.width/2,hud.y+hud.height/2);else await page.mouse.click(hud.x+hud.width/2,hud.y+hud.height/2);
+ assert.equal(await page.evaluate(()=>Prototype.game.hero.order),null,'HUD text never creates travel');
+ assert.deepEqual(await page.evaluate(()=>[Prototype.game.hero.x,Prototype.game.hero.y]),before);
+ if(v.touch){await page.evaluate(()=>{const h=Prototype.game.hero;h.order={type:'move',x:800,y:900};h.path=[{x:800,y:900}];});await page.locator('#joystick').tap();assert.equal(await page.evaluate(()=>Prototype.game.hero.order),null,'neutral joystick tap takes over from travel');}
+ await page.evaluate(()=>{const c=Prototype.game;Object.assign(c.hero,{x:600,y:900,class:'paladin',mp:1000,maxMp:1000,power:18,weapon:0,legacyWeaponPower:0,legacyEquipped:false,talents:[0,0,0,0],order:null});c.hero.skills[0]=1;c.hero.cd[0]=0;c.s.mercyTime=0;const e=c.makeEnemy({species:'goblin',name:'Pointer audit target',level:1,hp:10000,damage:0,gold:0,xp:0},{x:680,y:900});c.zone().enemies=[e];c.s.heroTarget=e.id;Prototype.updateHUD();});
+ const skill=await page.locator('#skill-1').boundingBox(),x=skill.x+skill.width/2,y=skill.y+skill.height/2;
+ const touch=v.touch?await page.context().newCDPSession(page):null;
+ if(touch)await touch.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y,id:701}]});else{await page.mouse.move(x,y);await page.mouse.down();}
+ await page.waitForFunction(()=>document.querySelector('#skill-1 small').textContent==='CHARGED',null,{timeout:2000});
+ if(touch)await touch.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});else await page.mouse.up();
+ await page.waitForFunction(()=>Prototype.game.zone().enemies[0].hp<10000,null,{timeout:2000});
+ assert.equal(await page.evaluate(()=>10000-Prototype.game.zone().enemies[0].hp),90,'native pointer hold casts exactly one charged basic');
+ await page.evaluate(()=>{Prototype.game.hero.cd[0]=0;Prototype.game.hero.mp=1000;Prototype.updateHUD();});
+ if(touch)await touch.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y,id:702}]});else await page.mouse.down();
+ await page.keyboard.press('Escape');
+ if(touch){await touch.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await touch.detach();}else await page.mouse.up();
+ assert.equal(await page.evaluate(()=>Prototype.chargePresentation()),null,'opening a menu cancels a native pointer hold');
+ assert.equal(await page.evaluate(()=>10000-Prototype.game.zone().enemies[0].hp),90,'releasing a canceled hold never casts');
+ await page.evaluate(state=>{Prototype.closeMenu();Prototype.game.s=state;},saved);
 });
 await check('Reachable pointer destinations, cancellation and legacy phone layout '+tag,async()=>{
  const saved=await page.evaluate(()=>Prototype.game.snapshot());
