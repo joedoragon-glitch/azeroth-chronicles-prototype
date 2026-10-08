@@ -925,9 +925,11 @@
         room = !!game.supplyRoom(),
         dungeon = game.isDungeon(),
         size = game.zoneSize(),
-        i = game.regionIndex();
+        i = game.regionIndex(),
+        authoredFloor =
+          Campaign.dungeonIds.includes(game.zoneId) || game.zoneId === 'supply-highlands';
       ctx.save();
-      if (Campaign.dungeonIds.includes(game.zoneId)) {
+      if (authoredFloor) {
         PrototypeVisuals.dungeonFloorPath(ctx, screen, game.zoneId, size);
         ctx.clip();
       }
@@ -940,7 +942,7 @@
             continue;
           const blocked =
             dungeon &&
-            !Campaign.dungeonIds.includes(game.zoneId) &&
+            !authoredFloor &&
             game.blocked(x + 40, y + 40, game.zoneId, 0) &&
             !z.props.some((q) => Math.hypot(x + 40 - q.x, y + 40 - q.y) < q.r);
           stats.tilesDrawn++;
@@ -956,8 +958,7 @@
           );
         }
       ctx.restore();
-      if (Campaign.dungeonIds.includes(game.zoneId))
-        PrototypeVisuals.dungeonArchitecture(ctx, screen, game.zoneId, size);
+      if (authoredFloor) PrototypeVisuals.dungeonArchitecture(ctx, screen, game.zoneId, size);
       if (!game.isDungeon()) PrototypeVisuals.terrain(ctx, screen, i, size);
       PrototypeVisuals.roads(ctx, z.roads || [], screen, i);
       if (!game.isDungeon()) PrototypeVisuals.bridges(ctx, screen, i);
@@ -1068,7 +1069,14 @@
             ctx.fillStyle = '#ffe4a2';
             ctx.shadowColor = '#07140e';
             ctx.shadowBlur = 4;
-            ctx.fillText(name, p.x, p.y - spriteHeight(e) - 4);
+            const width =
+              e.presentation === 'workstation'
+                ? Math.min(ctx.measureText(name).width, canvas.width - 24)
+                : 0;
+            const labelX = width
+              ? Math.max(width / 2 + 12, Math.min(canvas.width - width / 2 - 12, p.x))
+              : p.x;
+            ctx.fillText(name, labelX, p.y - spriteHeight(e) - 4, width || undefined);
             ctx.shadowBlur = 0;
           }
           const cue =

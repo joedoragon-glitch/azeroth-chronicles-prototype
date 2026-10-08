@@ -41,6 +41,8 @@ const server=http.createServer((req,res)=>{
  await page.keyboard.press('Escape');await page.locator('#menu-button').tap();await page.getByRole('button',{name:'Character',exact:true}).tap();assert((await page.locator('#modal-description').textContent()).includes('XP '));await page.getByRole('button',{name:'Discipline Training',exact:true}).tap();assert.equal(await page.locator('#modal-title').textContent(),'Discipline Training');
  await page.keyboard.press('Escape');await page.keyboard.press('Escape');await page.keyboard.press('Escape');
  await page.evaluate(()=>Prototype.save());assert(!(await page.locator('#status').textContent()).includes('Saved locally'));
+ await require('./helpers/ironroot-browser.cjs').verifyIronroot(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);
+ await require('./helpers/regional-browser.cjs').verifyRegional(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);
  assert.deepEqual(errors,[]);await page.screenshot({path:path.join(root,'test-results','webkit-phone-'+size.width+'x'+size.height+'.png')});
  console.log('PASS WebKit phone input, selection, compact HUD, learned controls, interaction and menu access '+size.width+'x'+size.height);await page.close();
  }

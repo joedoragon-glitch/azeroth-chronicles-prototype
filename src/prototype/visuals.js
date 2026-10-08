@@ -6664,6 +6664,321 @@
               1,
             );
           break;
+        case 'highland-pay-station':
+          shade(40, 12, 0.15);
+          rect(-34, -6, 68, 22, localWood);
+          rect(-19, -20, 23, 17, '#ded2af');
+          for (const y of [-16, -11, -6])
+            line(
+              [
+                [-15, y],
+                [0, y],
+              ],
+              '#776f5f',
+              1,
+            );
+          for (const x of [13, 20, 27]) oval(x, -3, 3, 2, gold);
+          rect(-34, -39, 19, 20, '#8b795c');
+          rect(-32, -37, 15, 14, '#d8cb9f');
+          line(
+            [
+              [-24, -19],
+              [-24, -6],
+            ],
+            localWood,
+            3,
+          );
+          oval(18, -31, 6, 7, '#c09b7b');
+          rect(12, -23, 13, 18, '#6a7e71');
+          break;
+        case 'ore-sorting-bay':
+          shade(45, 12, 0.16);
+          for (const x of [-29, -7, 16]) {
+            rect(x, -6, 20, 20, localWood);
+            for (const dx of [5, 13])
+              poly(
+                [
+                  [x + dx - 5, -6],
+                  [x + dx, -17],
+                  [x + dx + 5, -6],
+                ],
+                '#a19a80',
+              );
+          }
+          line(
+            [
+              [-28, -20],
+              [30, -20],
+            ],
+            steel,
+            2,
+          );
+          line(
+            [
+              [1, -38],
+              [1, -20],
+            ],
+            steel,
+            2,
+          );
+          for (const x of [-20, 22]) {
+            line(
+              [
+                [x, -20],
+                [x, -9],
+              ],
+              steel,
+              1,
+            );
+            oval(x, -7, 9, 3, '#a7a08a');
+          }
+          break;
+        case 'mint-workbench':
+          shade(40, 10, 0.14);
+          rect(-34, -3, 68, 19, localWood);
+          rect(-17, -37, 8, 34, steel);
+          rect(15, -37, 8, 34, steel);
+          rect(-17, -40, 40, 7, '#888f88');
+          line(
+            [
+              [3, -40],
+              [3, -9],
+            ],
+            steel,
+            5,
+          );
+          line(
+            [
+              [-14, -28],
+              [23, -28],
+            ],
+            '#b9b3a0',
+            3,
+          );
+          rect(-9, -6, 26, 6, '#969c90');
+          oval(4, -8, 5, 2, gold);
+          for (const x of [-27, -23, -19]) oval(x, -3, 2, 2, gold);
+          rect(26, -15, 7, 12, '#8b7761');
+          break;
+        case 'caravan-loading-bay':
+          shade(47, 12, 0.16);
+          for (const x of [-25, 22]) {
+            oval(x, 10, 9, 9, '#454b41');
+            oval(x, 10, 4, 4, '#a29e82');
+          }
+          rect(-35, -12, 70, 23, localWood);
+          rect(-26, -25, 23, 17, '#8c7554');
+          rect(2, -29, 25, 22, '#82745c');
+          line(
+            [
+              [-34, -5],
+              [34, -5],
+            ],
+            '#b49e74',
+            2,
+          );
+          line(
+            [
+              [32, 4],
+              [48, -3],
+            ],
+            localWood,
+            4,
+          );
+          rect(9, -26, 13, 7, '#ded0ad');
+          line(
+            [
+              [13, -24],
+              [18, -24],
+            ],
+            '#786d57',
+            1,
+          );
+          break;
+        case 'mine-supports':
+          shade(39, 10, 0.12);
+          for (const x of [-29, 29]) {
+            rect(x - 4, -44, 8, 56, localWood);
+            rect(x - 6, -8, 12, 5, steel);
+          }
+          rect(-34, -48, 68, 9, '#95805e');
+          line(
+            [
+              [-29, -36],
+              [-14, -44],
+            ],
+            localWood,
+            4,
+          );
+          line(
+            [
+              [29, -36],
+              [14, -44],
+            ],
+            localWood,
+            4,
+          );
+          rect(-9, 6, 18, 7, '#a99b72');
+          break;
+        case 'mine-old-markings':
+          shade(36, 10, 0.17);
+          poly(
+            [
+              [-31, 12],
+              [-28, -25],
+              [-14, -44],
+              [12, -42],
+              [30, -17],
+              [26, 13],
+            ],
+            '#757768',
+          );
+          line(
+            [
+              [-15, -21],
+              [0, -32],
+              [13, -20],
+              [0, -8],
+              [-15, -21],
+            ],
+            '#c6bfa2',
+            2,
+          );
+          line(
+            [
+              [-12, 1],
+              [12, 1],
+            ],
+            '#9f9c85',
+            2,
+          );
+          break;
+        case 'mine-collapse':
+          shade(45, 13, 0.19);
+          for (const [x, y, h] of [
+            [-27, 7, 18],
+            [-10, 0, 31],
+            [12, 6, 24],
+            [29, 8, 16],
+          ])
+            poly(
+              [
+                [x - 12, y],
+                [x - 7, y - h],
+                [x + 5, y - h + 3],
+                [x + 13, y],
+              ],
+              '#777a6c',
+            );
+          line(
+            [
+              [-39, -17],
+              [35, 12],
+            ],
+            localWood,
+            7,
+          );
+          line(
+            [
+              [-26, 11],
+              [22, -21],
+            ],
+            localWood,
+            5,
+          );
+          break;
+        case 'ridge-supper':
+          shade(37, 12, 0.12);
+          rect(-30, -3, 60, 15, localWood);
+          for (const x of [-22, 22]) {
+            rect(x - 3, 8, 6, 12, localWood);
+            oval(x, -4, 8, 4, '#ded0ad');
+          }
+          oval(0, -5, 10, 5, '#514d40');
+          oval(0, -7, 8, 4, '#be9565');
+          rect(8, -21, 9, 14, '#966f4b');
+          line(
+            [
+              [13, -20],
+              [13, -26],
+            ],
+            '#ddd0ae',
+            2,
+          );
+          break;
+        case 'ridge-game-corner':
+          shade(43, 12, 0.12);
+          rect(-29, -6, 58, 19, localWood);
+          for (let row = 0; row < 4; row++)
+            for (let col = 0; col < 4; col++)
+              rect(-21 + col * 10, -10 + row * 4, 10, 4, (row + col) % 2 ? '#655b49' : '#ceba8c');
+          for (const [x, y, c] of [
+            [-16, -8, '#d9d0b3'],
+            [14, 2, '#504e48'],
+            [4, -4, '#504e48'],
+          ]) {
+            oval(x, y, 3, 2, c);
+            rect(x - 2, y - 7, 4, 6, c);
+          }
+          rect(-41, 0, 9, 17, '#8a8c7e');
+          rect(34, 0, 9, 17, '#8a8c7e');
+          break;
+        case 'ridge-study':
+          shade(38, 12, 0.12);
+          rect(-31, -4, 62, 21, localWood);
+          rect(-19, -20, 28, 18, '#ded2b1');
+          for (const y of [-16, -11, -6])
+            line(
+              [
+                [-15, y],
+                [5, y],
+              ],
+              '#7c7564',
+              1,
+            );
+          rect(15, -16, 11, 12, '#ece1c2');
+          oval(20, -13, 3, 2, '#855c67');
+          line(
+            [
+              [10, -5],
+              [17, -30],
+            ],
+            '#a29980',
+            2,
+          );
+          rect(-25, -30, 7, 22, '#ddd0ad');
+          glint(-22, -32, '#ffc276', 2);
+          break;
+        case 'ridge-bed':
+          shade(38, 12, 0.14);
+          rect(-28, -15, 56, 32, localWood);
+          rect(-24, -13, 48, 27, '#687769');
+          rect(-24, -13, 48, 8, '#d4c8aa');
+          rect(-31, -23, 62, 9, localWood);
+          line(
+            [
+              [-24, 8],
+              [24, 8],
+            ],
+            '#bba584',
+            2,
+          );
+          break;
+        case 'crag-rest':
+          shade(36, 11, 0.14);
+          oval(0, 3, 29, 13, '#8d8068');
+          oval(0, 1, 22, 9, '#b9aa87');
+          oval(29, 4, 8, 4, steel);
+          oval(29, 2, 6, 2, '#809998');
+          line(
+            [
+              [-23, -6],
+              [-13, 8],
+            ],
+            '#d3c2a0',
+            2,
+          );
+          break;
         case 'ridge-hearth':
           rect(-25, -10, 50, 23, '#7d7f76');
           rect(-18, -27, 36, 17, '#666960');
@@ -10763,6 +11078,126 @@
           }
       }
     }
+    function workDetails(role) {
+      if (!role) return;
+      if (role === 'pages') {
+        for (const x of [-18, -6, 6, 18]) {
+          rect(x - 4, -30, 8, 19, '#ded1ae');
+          line(
+            [
+              [x - 2, -23],
+              [x + 2, -23],
+            ],
+            '#8a7d67',
+            1,
+          );
+          rect(x - 1, -32, 2, 4, '#726249');
+        }
+      } else if (role === 'alchemy') {
+        for (const [x, color] of [
+          [-16, '#90b9a8'],
+          [1, '#c19c74'],
+          [17, '#8bafc0'],
+        ]) {
+          rect(x - 3, -26, 6, 12, color);
+          rect(x - 2, -32, 4, 6, '#cbd7c4');
+          line(
+            [
+              [x - 3, -18],
+              [x + 3, -18],
+            ],
+            '#e3e6cb',
+            1,
+          );
+        }
+      } else if (role === 'pump') {
+        oval(0, -8, 13, 9, '#697f81');
+        rect(-10, -28, 20, 17, '#93a69b');
+        line(
+          [
+            [0, -27],
+            [0, -43],
+            [19, -43],
+          ],
+          '#bdac80',
+          4,
+        );
+        line(
+          [
+            [11, -9],
+            [27, -5],
+            [31, 14],
+          ],
+          '#566b71',
+          5,
+        );
+        oval(-20, 7, 7, 5, '#829a96');
+      } else if (role === 'submerged') {
+        oval(0, 5, 35, 9, '#568c9766');
+        for (const y of [1, 7])
+          line(
+            [
+              [-29, y],
+              [26, y - 2],
+            ],
+            '#9ec1bb',
+            1,
+          );
+      } else if (role === 'construction') {
+        for (const x of [-12, 0, 12])
+          line(
+            [
+              [x - 10, 9],
+              [x + 6, -18],
+            ],
+            '#b29c74',
+            5,
+          );
+        for (const x of [-14, 4, 19]) rect(x, -7, 5, 5, '#9ba3a0');
+      } else if (role === 'preservation') {
+        for (const x of [-13, 3, 17]) {
+          rect(x - 4, -26, 8, 13, '#b2bf9d');
+          rect(x - 2, -30, 4, 4, '#80724f');
+        }
+        rect(-20, -3, 22, 4, '#d7cbaa');
+      } else if (role === 'fish-study') {
+        oval(-9, -8, 12, 4, '#9db9ad');
+        poly(
+          [
+            [3, -8],
+            [10, -13],
+            [10, -3],
+          ],
+          '#78989c',
+        );
+        line(
+          [
+            [-13, -11],
+            [-6, -5],
+          ],
+          '#536c70',
+          1,
+        );
+        oval(-17, -8, 1.5, 1.5, '#34494c');
+      } else if (role === 'coin-accounting') {
+        for (const [x, y] of [
+          [-15, -8],
+          [-10, -5],
+          [-4, -9],
+          [17, -7],
+        ])
+          oval(x, y, 3, 1.6, '#cfb36d');
+        rect(-8, -23, 18, 6, '#e0d4b2');
+        line(
+          [
+            [-5, -20],
+            [6, -20],
+          ],
+          '#81745b',
+          1,
+        );
+      }
+    }
     const type = e.renderKind;
     if (type === 'prop') {
       if (e.treasuryBoss) decoration(e.structure);
@@ -11017,9 +11452,62 @@
             '#c1a16b',
           );
       }
+      workDetails(e.sceneRole);
     } else if (type === 'building' || ['rest', 'supplier', 'recruiter', 'quests'].includes(e.kind))
       building(type === 'building' ? 'barracks' : e.kind);
-    else if (e.kind === 'cage') {
+    else if (e.kind === 'cage' && e.workstation === 'equipment-repair') {
+      rect(-34, 4, 68, 13, '#71695b');
+      poly(
+        [
+          [-26, 4],
+          [-22, -8],
+          [-7, -8],
+          [-3, 4],
+        ],
+        steel,
+      );
+      line(
+        [
+          [13, 2],
+          [27, -11],
+        ],
+        '#71695b',
+        4,
+      );
+      rect(22, -16, 12, 7, steel);
+      if (!rescued) specialist({ ...e, kind: 'smith' });
+      // A sealed restraint sits beside the tools; the rescue gate remains authoritative.
+      if (!rescued) {
+        rect(28, -4, 7, 8, gold);
+        line(
+          [
+            [30, 5],
+            [37, 12],
+          ],
+          steel,
+          2,
+        );
+      }
+    } else if (e.kind === 'cage' && e.presentation === 'workstation') {
+      // A secured worker can remain mechanically a captive without being drawn behind cage bars.
+      ctx.save();
+      ctx.translate(28, 0);
+      decoration(e.workKind === 'alchemist' ? 'scribe-desk' : 'tool-rack');
+      if (e.workKind === 'alchemist') workDetails('alchemy');
+      ctx.restore();
+      if (!rescued) specialist({ ...e, kind: e.workKind });
+      if (!rescued) {
+        rect(-28, -3, 7, 9, '#a39570');
+        line(
+          [
+            [-24, -7],
+            [-24, -3],
+          ],
+          '#c9bd93',
+          3,
+        );
+      }
+    } else if (e.kind === 'cage') {
       rect(-20, -35, 40, 49, '#746c58');
       rect(-17, -31, 34, 41, '#23302b');
       if (!rescued)
@@ -12961,6 +13449,7 @@
   }
   function dungeonLayout(id, size = 1470) {
     if (R.dungeonArchitecture?.[id]) return R.dungeonArchitecture[id];
+    if (R.treasuryArchitecture?.[id]) return R.treasuryArchitecture[id];
     const wall = R.dungeonWalls[id];
     if (!wall) return null;
     return {
@@ -13039,13 +13528,15 @@
     const layout = dungeonLayout(dungeonId, size);
     if (!layout) return;
     const palette =
-      dungeonId === 'abyss'
-        ? { top: '#6f5b5d', side: '#463b3d', edge: '#a77a6b' }
-        : dungeonId === 'archive'
-          ? { top: '#697978', side: '#3e5458', edge: '#9eb2ac' }
-          : dungeonId === 'mine'
-            ? { top: '#797567', side: '#4b4a42', edge: '#a7a187' }
-            : { top: '#667078', side: '#3f484e', edge: '#9ba7aa' };
+      dungeonId === 'supply-highlands'
+        ? { top: '#857965', side: '#52483d', edge: '#b2a28a' }
+        : dungeonId === 'abyss'
+          ? { top: '#6f5b5d', side: '#463b3d', edge: '#a77a6b' }
+          : dungeonId === 'archive'
+            ? { top: '#697978', side: '#3e5458', edge: '#9eb2ac' }
+            : dungeonId === 'mine'
+              ? { top: '#797567', side: '#4b4a42', edge: '#a7a187' }
+              : { top: '#667078', side: '#3f484e', edge: '#9ba7aa' };
     const poly = (pts, fill, stroke, width = 1) => {
       ctx.fillStyle = fill;
       ctx.beginPath();
@@ -13090,6 +13581,36 @@
       else for (let y = y1 + 35; y < y2; y += 50) seam({ x: x1 + 4, y }, { x: x2 - 4, y });
     };
     ctx.save();
+    ctx.save();
+    dungeonFloorPath(ctx, screen, dungeonId, size);
+    ctx.clip();
+    for (const s of layout.surfaces || []) {
+      const [x1, x2, y1, y2] = s.bounds;
+      const color =
+        s.kind === 'flooded' ? '#416d7888' : s.kind === 'earth' ? '#6e614e66' : '#887b6555';
+      poly(
+        [
+          { x: x1, y: y1 },
+          { x: x2, y: y1 },
+          { x: x2, y: y2 },
+          { x: x1, y: y2 },
+        ].map(screen),
+        color,
+      );
+      for (let y = y1 + 35; y < y2; y += 100)
+        for (let x = x1 + 35; x < x2; x += 110) {
+          const a = screen({ x, y }),
+            b = screen({ x: x + 35, y: y + (s.kind === 'flooded' ? -8 : 9) });
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = s.kind === 'flooded' ? '#a2c3bf88' : '#b7a18077';
+          ctx.lineWidth = 1.3;
+          ctx.stroke();
+        }
+    }
+    ctx.restore();
+
     for (const [a, b] of dungeonEdges(dungeonId, size)) {
       const p = screen(a),
         q = screen(b);

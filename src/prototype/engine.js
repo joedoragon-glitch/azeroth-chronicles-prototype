@@ -623,6 +623,7 @@
       const z = this.zone(),
         guards = z.enemies.filter((e) => e.site === n.id && e.hp > 0 && !e.neutral).length,
         parts = [];
+      if (z.id === 'highlands' && R.ironrootLore?.[n.id]) parts.push(R.ironrootLore[n.id]);
       if (n.id.startsWith('bridge-'))
         parts.push(
           'A crossing through the regional terrain. Walk across the connected road; no separate entrance.',
@@ -903,7 +904,7 @@
     treasuryInterior(z) {
       const room = this.supplyRoom(z.id),
         layout = room && R.treasuryDecor?.[room.id],
-        targetVersion = room?.id === 'supply-crown' ? 4 : 3;
+        targetVersion = ['supply-crown', 'supply-highlands'].includes(room?.id) ? 4 : 3;
       if (!room || !layout || z.treasuryVersion === targetVersion) return;
       z.room = true;
       z.treasury = room.boss;
@@ -912,7 +913,7 @@
           !/^room-(pillar|crate)-/.test(String(p.id || '')) &&
           !/^treasury-/.test(String(p.id || '')),
       );
-      for (const [j, [x, y, structure, radius]] of layout.entries()) {
+      for (const [j, [x, y, structure, radius, sceneRole]] of layout.entries()) {
         const p = this.safe(x, y, z.id);
         z.props.push({
           id: 'treasury-' + j,
@@ -921,6 +922,7 @@
           decorative: !radius,
           structure,
           treasuryBoss: room.boss,
+          ...(sceneRole ? { sceneRole } : {}),
         });
       }
       const exit = z.npcs.find((n) => n.id === 'exit');
@@ -949,9 +951,11 @@
           icon: '📦',
         });
       }
-      for (let j = 0; j < 3; j++) delete this.s.discovered[room.region + ':bundle-' + j];
-      for (let j = 0; j < collected; j++) this.s.discovered[room.region + ':bundle-' + j] = true;
-      if (room.id === 'supply-crown') {
+      if (room.id !== 'supply-highlands') {
+        for (let j = 0; j < 3; j++) delete this.s.discovered[room.region + ':bundle-' + j];
+        for (let j = 0; j < collected; j++) this.s.discovered[room.region + ':bundle-' + j] = true;
+      }
+      if (R.treasuryGuardFormations?.[room.id]) {
         const fallback = this.safe(150, 180, z.id),
           formation = R.treasuryGuardFormations?.[room.id] || [],
           guards = z.enemies.filter((e) => e.roomGuard).sort((a, b) => this.idOrder(a, b));
@@ -962,6 +966,7 @@
             e.home = { ...p };
             e.pack = z.id + '-' + (slot.group || 'guard-' + j);
             if (slot.role) e.forcedRole = slot.role;
+            if (!e.roomCaptain && slot.name) e.name = slot.name;
             if (e.hp > 0 && !e.aggro) Object.assign(e, p);
             this.configureEnemy(e, j);
           } else {
@@ -1224,13 +1229,19 @@
       z.rangedBalanceVersion = 1;
     }
     decorateDungeon(z) {
-      const targetVersion = z.id === 'abyss' ? 4 : z.id === 'citadel' ? 3 : 2;
+      const targetVersion = R.dungeonWorkstations?.[z.id]
+        ? 3
+        : z.id === 'abyss'
+          ? 4
+          : z.id === 'citadel'
+            ? 3
+            : 2;
       if (z.dungeonVersion === targetVersion) return;
       z.props = z.props.filter((p) => !p.decorative || !String(p.id).startsWith('decor-'));
       z.dungeonVersion = targetVersion;
       const i = this.regionIndex(z.id),
         region = D.regions[i];
-      for (const [j, [x, y, kind, district]] of R.dungeonDecor[z.id].entries()) {
+      for (const [j, [x, y, kind, district, sceneRole]] of R.dungeonDecor[z.id].entries()) {
         const p = this.safe(x, y, z.id);
         z.props.push({
           id: 'decor-' + j,
@@ -1240,6 +1251,7 @@
           structure: kind,
           icon: '🕯️',
           ...(district ? { dungeonDistrict: district } : {}),
+          ...(sceneRole ? { sceneRole } : {}),
         });
       }
       const architecture = R.dungeonArchitecture?.[z.id],
@@ -2097,6 +2109,23 @@
       if (!npc || dist(npc, this.hero) > 115) return false;
       switch (npc.kind) {
         case 'cage':
+          if (
+            (npc.lore || npc.context) &&
+            !this.s.keys[npc.family] &&
+            !this.s.rescued[npc.family] &&
+            !this.peace
+          ) {
+            this.say(
+              npc.lore ||
+                npc.context +
+                  ' Defeat ' +
+                  this.boss(npc.family).name +
+                  ' to free ' +
+                  npc.name +
+                  '.',
+            );
+            return false;
+          }
           return this.rescue(npc.family);
         case 'rest':
           return this.rest();
