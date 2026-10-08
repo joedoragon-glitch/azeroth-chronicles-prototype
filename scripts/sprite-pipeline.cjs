@@ -9,6 +9,7 @@ const { createCanvas, Image } = require('@napi-rs/canvas');
 const root = path.resolve(__dirname, '..');
 const specs = require('../tools/sprites/specifications.json');
 const Sprites = require('../src/prototype/sprites.js');
+const Format = require('../src/prototype/sprite-format.js');
 const visualSandbox = {
   PrototypeRules: require('../src/prototype/rules.js'),
   performance: { now: () => 16000 },
@@ -63,7 +64,7 @@ function parseCatalog(text, file = 'docs/GRAPHICS_CANON_SPRITE_PROMPTS.md') {
       name: heading[2],
       status: states[0] ? 'generate' : states[1] ? 'alias' : 'procedural',
       source: file,
-      sourceHash: hash(Buffer.from(section)),
+      sourceHash: hash(Buffer.from(section.trim())),
       cues: section.match(/\*\*Canonical cues:\*\* ([^\n]+)/)?.[1] || '',
       prompt: section.match(/\*\*Image-generation prompt:\*\*\s*\n\s*> ([^\n]+)/)?.[1] || null,
       declaredKey: section.match(/\*\*Runtime sprite key:\*\* `([^`]+)`/)?.[1] || null,
@@ -92,6 +93,7 @@ function canonHash() {
 function contracts() {
   const entries = catalog();
   const approved = json(path.join(root, 'tools/sprites/approved.json'));
+  const snapshotHash = canonHash();
   return specs.assets.map((spec) => {
     const item = entries.find((entry) => entry.id === spec.catalogId);
     fail(item?.status === 'generate', 'Only GENERATE catalog entries can have asset contracts');
@@ -111,10 +113,10 @@ function contracts() {
       [anchorX, anchorY].every((n) => Number.isFinite(n) && n >= 0 && n <= 1),
       'Invalid anchor',
     );
-    return {
+    const result = {
       ...spec,
       catalog: item,
-      canonHash: canonHash(),
+      canonSnapshotHash: snapshotHash,
       approval: approved.assets[spec.key]?.review?.status || 'pending',
       runtime: {
         displayWidth: width,
@@ -124,12 +126,72 @@ function contracts() {
         labelHeight: Visuals.height(spec.entity),
       },
     };
+    result.canonHash = hash(
+      Buffer.concat([
+        reference(result, true),
+        Buffer.from(
+          JSON.stringify({
+            key: result.key,
+            entity: result.entity,
+            region: result.region,
+            runtime: result.runtime,
+          }),
+        ),
+      ]),
+    );
+    return result;
   });
 }
 function contractFor(key) {
   const contract = contracts().find((item) => item.key === key);
   fail(contract, 'No prepared contract for exact key: ' + key);
   return contract;
+}
+function asset(query) {
+  fail(typeof query === 'string' && query.trim(), 'Provide a sprite key, catalog ID or name');
+  const needle = query.trim().toLowerCase(),
+    all = catalog(),
+    bindings = contracts();
+  const registry = json(path.join(root, 'tools/sprites/approved.json'));
+  const exact = all.filter(
+    (item) =>
+      item.id === needle ||
+      item.name.toLowerCase() === needle ||
+      bindings.some((c) => c.catalogId === item.id && c.key === needle),
+  );
+  const matches = exact.length
+    ? exact
+    : all.filter((item) => item.name.toLowerCase().includes(needle));
+  return {
+    query,
+    resolved: matches.length === 1,
+    matches: matches.map((item) => {
+      const binding = bindings.find((c) => c.catalogId === item.id),
+        key = binding?.key || item.declaredKey || null,
+        current = registry.assets[key];
+      return {
+        catalogId: item.id,
+        name: item.name,
+        status: item.status,
+        key,
+        activeRevision: current ? lease(current) : null,
+        source: current ? 'tools/sprites/sources/' + current.source.file : null,
+        output: current ? 'assets/sprites/' + current.output.file : null,
+        presentation: current?.presentation || null,
+        review: current?.review || null,
+        history: Object.entries(registry.history?.[key] || {}).map(([revision, record]) => ({
+          revision,
+          source: 'tools/sprites/sources/' + record.source.file,
+          output: 'assets/sprites/' + record.output.file,
+        })),
+        nextAction: current
+          ? 'Edit retained source, prepare/review affected frames and replace with activeRevision lease'
+          : binding
+            ? 'Resume accepted design handoff and prepare this exact key'
+            : 'Reconcile an exact contract before preparation',
+      };
+    }),
+  };
 }
 async function inspect(input, policy = specs.policy) {
   const bytes = Buffer.isBuffer(input) ? input : fs.readFileSync(input);
@@ -234,7 +296,7 @@ function reference(contract, generation = false) {
   );
   return canvas.toBuffer('image/png');
 }
-async function prepare(key, input, format = 'png') {
+async function prepare(key, input, format = 'png', placement = {}) {
   fail(['png', 'webp'].includes(format), 'Output must be PNG or lossless WebP');
   const contract = contractFor(key),
     bytes = fs.readFileSync(input),
@@ -246,11 +308,38 @@ async function prepare(key, input, format = 'png') {
   const pipeline = sharp(bytes).resize(contract.canvas.width, contract.canvas.height, {
     kernel: specs.policy.resizeKernel,
   });
-  const output = await (
+  let output = await (
     format === 'png'
       ? pipeline.png({ compressionLevel: 9, palette: false })
       : pipeline.webp({ lossless: true, effort: 6 })
   ).toBuffer();
+  const dx = placement.offsetX || 0,
+    dy = placement.offsetY || 0;
+  fail(
+    [dx, dy].every((n) => Number.isInteger(n) && Math.abs(n) <= 32),
+    'Invalid explicit placement translation',
+  );
+  if (dx || dy) {
+    const { data, info } = await sharp(output)
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    const moved = Buffer.alloc(data.length);
+    for (let y = 0; y < info.height; y++)
+      for (let x = 0; x < info.width; x++) {
+        const from = (y * info.width + x) * 4,
+          xx = x + dx,
+          yy = y + dy;
+        if (xx < 0 || yy < 0 || xx >= info.width || yy >= info.height)
+          fail(!data[from + 3], 'Translation would discard visible pixels');
+        else data.copy(moved, (yy * info.width + xx) * 4, from, from + 4);
+      }
+    output = await (
+      format === 'png'
+        ? sharp(moved, { raw: info }).png()
+        : sharp(moved, { raw: info }).webp({ lossless: true })
+    ).toBuffer();
+  }
   const report = await inspect(output);
   fail(report.bytes <= specs.policy.maxOutputBytes, 'Output exceeds byte budget');
   const workspace = path.join(root, '_sprite-work');
@@ -259,16 +348,33 @@ async function prepare(key, input, format = 'png') {
   const parent = path.join(workspace, key.replaceAll(':', '-'));
   fs.mkdirSync(parent, { recursive: true });
   fail(fs.realpathSync(parent) === parent, 'Candidate parent must not be symlinked');
-  const directory = path.join(parent, source.hash + '-' + format);
+  const directory = path.join(
+    parent,
+    source.hash +
+      '-' +
+      format +
+      '-' +
+      hash(
+        Buffer.from(
+          JSON.stringify({
+            canon: contract.canonHash,
+            catalog: contract.catalog.sourceHash,
+            dx,
+            dy,
+          }),
+        ),
+      ).slice(0, 12),
+  );
   fail(
     !fs.existsSync(directory),
     'Candidate is immutable; use a new source or remove only the scratch candidate',
   );
   const record = {
-    version: 1,
+    version: 2,
     key,
     catalogId: contract.catalogId,
     canonHash: contract.canonHash,
+    canonSnapshotHash: contract.canonSnapshotHash,
     catalogHash: contract.catalog.sourceHash,
     source: { file: 'source.' + source.format, ...source },
     output: { file: 'candidate.' + format, ...report },
@@ -282,6 +388,7 @@ async function prepare(key, input, format = 'png') {
       crop: false,
       trim: false,
       colorConversion: false,
+      translation: { x: dx, y: dy, visiblePixelsDiscarded: 0 },
     },
     review: { status: 'pending', reference: null },
   };
@@ -298,17 +405,22 @@ async function prepare(key, input, format = 'png') {
   }
   return { directory, record };
 }
-function validateRecord(record, contract, requireApproval = false) {
+function validateRecord(record, contract, requireApproval = false, allowStale = false) {
   fail(
-    record?.version === 1 && record.key === contract.key && record.catalogId === contract.catalogId,
+    [1, 2].includes(record?.version) &&
+      record.key === contract.key &&
+      record.catalogId === contract.catalogId,
     'Candidate identity mismatch',
   );
   fail(
-    record.canonHash === contract.canonHash && record.catalogHash === contract.catalog.sourceHash,
+    allowStale ||
+      (record.canonHash ===
+        (record.version === 1 ? contract.canonSnapshotHash : contract.canonHash) &&
+        record.catalogHash === contract.catalog.sourceHash),
     'Stale canonical reference; compare again before publication',
   );
   fail(
-    JSON.stringify(record.runtime) === JSON.stringify(contract.runtime),
+    allowStale || JSON.stringify(record.runtime) === JSON.stringify(contract.runtime),
     'Runtime dimensions/anchors differ from the contract',
   );
   if (requireApproval)
@@ -320,57 +432,162 @@ function validateRecord(record, contract, requireApproval = false) {
       'Recorded creative approval is required; tests cannot approve appearance',
     );
 }
-async function checkProduction() {
+function revisionFor(record) {
+  return hash(
+    Buffer.from(
+      JSON.stringify({
+        output: record.output.hash,
+        runtime: record.runtime,
+        presentation: record.presentation || null,
+        canon: record.canonHash,
+        catalog: record.catalogHash,
+      }),
+    ),
+  );
+}
+function entryFor(record) {
+  return {
+    src: './assets/sprites/' + record.output.file,
+    width: record.output.width,
+    height: record.output.height,
+    hash: record.output.hash,
+    revision: record.revision || revisionFor(record),
+    ...record.runtime,
+    ...(record.presentation || {}),
+  };
+}
+async function verifyExtra(extra, directory, sourceDirectory) {
+  const output = await inspect(safeFile(directory, extra.output.file));
+  fail(
+    output.hash === extra.output.hash &&
+      output.width === extra.output.width &&
+      output.height === extra.output.height,
+    'Extra resource provenance changed',
+  );
+  fail(
+    output.width * output.height <= Format.LIMITS.resourcePixels &&
+      output.bytes <= 4 * specs.policy.maxOutputBytes,
+    'Extra resource budget exceeded',
+  );
+  for (const item of extra.sources || []) {
+    const source = await inspect(safeFile(sourceDirectory, item.file));
+    fail(source.hash === item.hash, 'Frame/variant source provenance changed');
+  }
+  return output;
+}
+async function checkProduction(options = {}) {
   const approved = json(path.join(root, 'tools/sprites/approved.json'));
   fail(
-    approved.version === 1 && approved.assets && !Array.isArray(approved.assets),
+    [1, 2].includes(approved.version) && approved.assets && !Array.isArray(approved.assets),
     'Invalid approval registry',
   );
-  const manifest = json(path.join(root, 'assets/sprites/manifest.json'));
-  const expected = {},
+  const manifest = json(path.join(root, 'assets/sprites/manifest.json')),
+    expected = {},
     unique = new Map();
-  let decodedBytes = 0;
   for (const [key, record] of Object.entries(approved.assets)) {
-    const contract = contractFor(key);
-    validateRecord(record, contract, true);
-    const file = safeFile(path.join(root, 'assets/sprites'), record.output.file);
-    const sourceFile = safeFile(path.join(root, 'tools/sprites/sources'), record.source.file);
-    const report = await inspect(file),
-      source = await inspect(sourceFile);
+    const contract = contractFor(key),
+      stale = (options.allowStaleKeys || []).includes(key);
+    validateRecord(record, contract, true, stale);
+    const report = await inspect(safeFile(path.join(root, 'assets/sprites'), record.output.file));
+    const source = await inspect(
+      safeFile(path.join(root, 'tools/sprites/sources'), record.source.file),
+    );
     fail(
       report.hash === record.output.hash && source.hash === record.source.hash,
       'Approved binary provenance changed',
     );
     fail(
-      report.width === contract.canvas.width &&
-        report.height === contract.canvas.height &&
+      report.width === (stale ? record.output.width : contract.canvas.width) &&
+        report.height === (stale ? record.output.height : contract.canvas.height) &&
         report.bytes <= specs.policy.maxOutputBytes,
       'Approved output violates size budget',
     );
-    unique.set(file, report.decodedBytes);
-    decodedBytes += report.decodedBytes;
-    expected[key] = { src: './assets/sprites/' + record.output.file, ...record.runtime };
+    unique.set('./assets/sprites/' + record.output.file, report);
+    for (const extra of record.extras || [])
+      unique.set(
+        './assets/sprites/' + extra.output.file,
+        await verifyExtra(
+          extra,
+          path.join(root, 'assets/sprites'),
+          path.join(root, 'tools/sprites/sources'),
+        ),
+      );
+    expected[key] =
+      record.version === 1
+        ? { src: './assets/sprites/' + record.output.file, ...record.runtime }
+        : entryFor(record);
+    if (record.revision) fail(record.revision === revisionFor(record), 'Asset revision changed');
   }
   fail(
     JSON.stringify(manifest.sprites) === JSON.stringify(expected),
     'Runtime manifest must derive exactly from approved records',
   );
+  const resources = Format.resources(manifest);
   fail(
-    decodedBytes <= specs.policy.maxDecodedRegistryBytes,
-    'Current eager sprite loader exceeds provisional decoded-memory budget',
+    resources.length === unique.size && resources.every((r) => unique.has(r.src)),
+    'Untracked or unused sprite resources',
+  );
+  const activeBudget = specs.policy.maxActiveDecodedBytes;
+  for (const report of unique.values())
+    fail(report.decodedBytes <= activeBudget, 'Resource exceeds active decoded-memory budget');
+  const decodedContent = new Map([...unique.values()].map((r) => [r.hash, r]));
+  const decodedBytes = [...decodedContent.values()].reduce((n, r) => n + r.decodedBytes, 0),
+    packagedBytes = [...unique.values()].reduce((n, r) => n + r.bytes, 0);
+  fail(
+    decodedBytes <= specs.policy.maxPackagedDecodedBytes &&
+      packagedBytes <= specs.policy.maxPackagedBytes,
+    'Packaged sprite budget exceeded',
   );
   return {
     catalogEntries: catalog().length,
     preparedContracts: contracts().length,
     registered: Object.keys(expected).length,
-    uniqueImages: unique.size,
+    uniqueImages: decodedContent.size,
+    packagedResources: unique.size,
     decodedBytes,
+    packagedBytes,
+    maxActiveDecodedBytes: activeBudget,
   };
 }
-async function publish(recordFile) {
+async function commitRegistry(approved, manifest, copies = []) {
+  const approvedFile = path.join(root, 'tools/sprites/approved.json'),
+    manifestFile = path.join(root, 'assets/sprites/manifest.json');
+  const oldApproved = fs.readFileSync(approvedFile),
+    oldManifest = fs.readFileSync(manifestFile),
+    created = [];
+  try {
+    for (const { source, target, expectedHash } of copies) {
+      const parent = path.dirname(target);
+      fs.mkdirSync(parent, { recursive: true });
+      fail(fs.realpathSync(parent) === parent, 'Asset directory must not be symlinked');
+      if (!fs.existsSync(target)) {
+        fs.copyFileSync(source, target, fs.constants.COPYFILE_EXCL);
+        created.push(target);
+      }
+      fail(hash(fs.readFileSync(target)) === expectedHash, 'Immutable resource hash collision');
+    }
+    writeJSON(approvedFile, approved);
+    writeJSON(manifestFile, manifest);
+    return await checkProduction();
+  } catch (error) {
+    fs.writeFileSync(approvedFile, oldApproved);
+    fs.writeFileSync(manifestFile, oldManifest);
+    for (const file of created) fs.rmSync(file, { force: true });
+    throw error;
+  }
+}
+function lease(record) {
+  return record?.revision || record?.output.hash;
+}
+function retain(approved, key, record) {
+  approved.history ||= {};
+  approved.history[key] ||= {};
+  approved.history[key][lease(record)] = record;
+}
+async function publish(recordFile, expectedRevision = null) {
   const directory = path.dirname(path.resolve(recordFile)),
-    record = json(recordFile);
-  const contract = contractFor(record.key);
+    record = json(recordFile),
+    contract = contractFor(record.key);
   validateRecord(record, contract, true);
   const output = safeFile(directory, record.output.file),
     source = safeFile(directory, record.source.file);
@@ -386,83 +603,304 @@ async function publish(recordFile) {
       outputReport.bytes <= specs.policy.maxOutputBytes,
     'Invalid candidate output dimensions/budget',
   );
-  await checkProduction();
-  const approvedFile = path.join(root, 'tools/sprites/approved.json'),
-    approved = json(approvedFile);
-  fail(
-    !approved.assets[record.key],
-    'Replacement needs its own reviewed migration; do not overwrite approved source',
-  );
-  const filename =
-    record.key.replaceAll(':', '-') +
-    '-' +
-    outputReport.hash.slice(0, 16) +
-    '.' +
-    outputReport.format;
+  const approved = json(path.join(root, 'tools/sprites/approved.json')),
+    prior = approved.assets[record.key];
+  if (expectedRevision === null)
+    fail(!prior, 'Replacement requires an expected active revision; use replace');
+  else fail(prior && lease(prior) === expectedRevision, 'Replacement lease mismatch');
+  await checkProduction({ allowStaleKeys: expectedRevision ? [record.key] : [] });
+  const manifest = json(path.join(root, 'assets/sprites/manifest.json')),
+    copies = [];
+  const outputName =
+    record.key.replaceAll(':', '-') + '-' + outputReport.hash + '.' + outputReport.format;
   const sourceName = sourceReport.hash + '.' + sourceReport.format;
-  const sourceDir = path.join(root, 'tools/sprites/sources');
-  fs.mkdirSync(sourceDir, { recursive: true });
-  fail(fs.realpathSync(sourceDir) === sourceDir, 'Source directory must not be symlinked');
-  const spriteDir = path.join(root, 'assets/sprites');
-  fail(fs.realpathSync(spriteDir) === spriteDir, 'Sprite directory must not be symlinked');
-  // Preflight memory and collisions before changing any authoritative file.
-  const current = await checkProduction();
-  fail(
-    current.decodedBytes + outputReport.decodedBytes <= specs.policy.maxDecodedRegistryBytes,
-    'Registry memory budget exceeded',
+  copies.push(
+    {
+      source: output,
+      target: path.join(root, 'assets/sprites', outputName),
+      expectedHash: outputReport.hash,
+    },
+    {
+      source,
+      target: path.join(root, 'tools/sprites/sources', sourceName),
+      expectedHash: sourceReport.hash,
+    },
   );
-  fail(!fs.existsSync(path.join(spriteDir, filename)), 'Output already exists');
-  const manifestFile = path.join(spriteDir, 'manifest.json'),
-    manifest = json(manifestFile);
-  record.output.file = filename;
+  for (const extra of record.extras || []) {
+    await verifyExtra(extra, directory, directory);
+    copies.push({
+      source: safeFile(directory, extra.output.file),
+      target: path.join(root, 'assets/sprites', extra.output.file),
+      expectedHash: extra.output.hash,
+    });
+    for (const item of extra.sources) {
+      const original = safeFile(directory, item.file),
+        name = item.hash + '.' + item.format;
+      copies.push({
+        source: original,
+        target: path.join(root, 'tools/sprites/sources', name),
+        expectedHash: item.hash,
+      });
+      item.file = name;
+    }
+  }
+  record.version = 2;
+  record.output.file = outputName;
   record.source.file = sourceName;
+  record.revision = revisionFor(record);
+  approved.version = 2;
+  if (prior) retain(approved, record.key, prior);
   approved.assets[record.key] = record;
-  manifest.sprites[record.key] = { src: './assets/sprites/' + filename, ...record.runtime };
-  // Preserve the two authoritative files if a write/check fails.
-  const oldApproved = fs.readFileSync(approvedFile),
-    oldManifest = fs.readFileSync(manifestFile);
-  let newSource = false;
+  manifest.formatVersion = 3;
+  manifest.sprites[record.key] = entryFor(record);
+  return commitRegistry(approved, manifest, copies);
+}
+async function rollback(key, targetRevision, expectedRevision) {
+  const approved = json(path.join(root, 'tools/sprites/approved.json')),
+    prior = approved.assets[key],
+    target = approved.history?.[key]?.[targetRevision];
+  fail(
+    prior ? lease(prior) === expectedRevision : expectedRevision === 'absent',
+    'Rollback lease mismatch',
+  );
+  fail(target, 'Unknown rollback revision');
+  validateRecord(target, contractFor(key), true);
+  await checkProduction({ allowStaleKeys: [key] });
+  if (prior) retain(approved, key, prior);
+  approved.assets[key] = target;
+  const manifest = json(path.join(root, 'assets/sprites/manifest.json'));
+  manifest.sprites[key] =
+    target.version === 1
+      ? { src: './assets/sprites/' + target.output.file, ...target.runtime }
+      : entryFor(target);
+  return commitRegistry(approved, manifest);
+}
+async function remove(key, expectedRevision) {
+  const approved = json(path.join(root, 'tools/sprites/approved.json')),
+    prior = approved.assets[key];
+  fail(prior && lease(prior) === expectedRevision, 'Removal lease mismatch');
+  await checkProduction({ allowStaleKeys: [key] });
+  retain(approved, key, prior);
+  delete approved.assets[key];
+  const manifest = json(path.join(root, 'assets/sprites/manifest.json'));
+  delete manifest.sprites[key];
+  return commitRegistry(approved, manifest);
+}
+async function attachClip(recordFile, name, frameFiles, durations, loop = true) {
+  const record = json(recordFile),
+    contract = contractFor(record.key),
+    directory = path.dirname(path.resolve(recordFile));
+  validateRecord(record, contract, true);
+  fail(
+    !record.presentation?.clips?.[name],
+    'Clip already exists; assemble a new candidate revision',
+  );
+  fail(
+    Array.isArray(frameFiles) &&
+      frameFiles.length > 0 &&
+      frameFiles.length <= 120 &&
+      Array.isArray(durations) &&
+      durations.length === frameFiles.length &&
+      durations.every((n) => Number.isFinite(n) && n > 0 && n <= 10000),
+    'Invalid clip frame timing',
+  );
+  const width = contract.canvas.width,
+    height = contract.canvas.height,
+    pad = 2;
+  const columns = Math.floor(1024 / (width + pad * 2)),
+    rows = Math.floor(1024 / (height + pad * 2)),
+    perPage = columns * rows;
+  const frames = [],
+    extras = [],
+    staged = [];
+  fail(columns > 0 && rows > 0, 'Frame cannot fit atlas page');
   try {
-    fs.copyFileSync(output, path.join(spriteDir, filename), fs.constants.COPYFILE_EXCL);
-    if (!fs.existsSync(path.join(sourceDir, sourceName))) {
-      fs.copyFileSync(source, path.join(sourceDir, sourceName), fs.constants.COPYFILE_EXCL);
-      newSource = true;
-    } else
-      fail(
-        hash(fs.readFileSync(path.join(sourceDir, sourceName))) === sourceReport.hash,
-        'Source hash collision',
-      );
-    writeJSON(approvedFile, approved);
-    writeJSON(manifestFile, manifest);
-    return await checkProduction();
+    for (let start = 0; start < frameFiles.length; start += perPage) {
+      const chunk = frameFiles.slice(start, start + perPage),
+        composites = [],
+        sources = [],
+        locations = [];
+      const cols = Math.min(columns, chunk.length),
+        pageWidth = cols * (width + pad * 2),
+        pageHeight = Math.ceil(chunk.length / cols) * (height + pad * 2);
+      for (let i = 0; i < chunk.length; i++) {
+        const file = path.resolve(chunk[i]),
+          item = json(file),
+          folder = path.dirname(file);
+        validateRecord(item, contract, true);
+        const input = safeFile(folder, item.output.file),
+          original = safeFile(folder, item.source.file);
+        fail(
+          (await inspect(input)).hash === item.output.hash &&
+            (await inspect(original)).hash === item.source.hash,
+          'Animation frame changed after review',
+        );
+        const left = (i % cols) * (width + pad * 2) + pad,
+          top = Math.floor(i / cols) * (height + pad * 2) + pad;
+        composites.push({ input, left, top });
+        locations.push({ left, top, index: start + i });
+        const sourceName = 'frame-source-' + item.source.hash + '.' + item.source.format;
+        const target = path.join(directory, sourceName);
+        if (!fs.existsSync(target)) {
+          fs.copyFileSync(original, target, fs.constants.COPYFILE_EXCL);
+          staged.push(target);
+        }
+        fail(hash(fs.readFileSync(target)) === item.source.hash, 'Frame source collision');
+        sources.push({
+          ...item.source,
+          file: sourceName,
+          frameOutputHash: item.output.hash,
+          processing: item.processing,
+          review: item.review,
+        });
+      }
+      const bytes = await sharp({
+        create: {
+          width: pageWidth,
+          height: pageHeight,
+          channels: 4,
+          background: { r: 0, g: 0, b: 0, alpha: 0 },
+        },
+      })
+        .composite(composites)
+        .png({ compressionLevel: 9 })
+        .toBuffer();
+      const report = await inspect(bytes),
+        filename = 'atlas-' + report.hash + '.png',
+        target = path.join(directory, filename);
+      if (!fs.existsSync(target)) {
+        fs.writeFileSync(target, bytes);
+        staged.push(target);
+      }
+      fail(hash(fs.readFileSync(target)) === report.hash, 'Atlas resource collision');
+      extras.push({ role: 'atlas', output: { ...report, file: filename }, sources });
+      for (const loc of locations)
+        frames.push({
+          src: './assets/sprites/' + filename,
+          width: pageWidth,
+          height: pageHeight,
+          hash: report.hash,
+          rect: [loc.left, loc.top, width, height],
+          pivot: [width * contract.canvas.anchorX, height * contract.canvas.anchorY],
+          durationMs: durations[loc.index],
+        });
+    }
+    const presentation = {
+      ...(record.presentation || {}),
+      clips: { ...(record.presentation?.clips || {}), [name]: { loop, frames } },
+    };
+    Format.entry({ src: './assets/sprites/base.png', ...record.runtime, ...presentation });
+    record.review = { status: 'pending', reference: null, inheritedStaticReview: record.review };
+    record.presentation = presentation;
+    record.extras = [...(record.extras || []), ...extras];
+    writeJSON(recordFile, record);
+    return { recordFile, pages: extras.length, frames: frames.length };
   } catch (error) {
-    fs.writeFileSync(approvedFile, oldApproved);
-    fs.writeFileSync(manifestFile, oldManifest);
-    fs.rmSync(path.join(spriteDir, filename), { force: true });
-    if (newSource) fs.rmSync(path.join(sourceDir, sourceName), { force: true });
+    for (const file of staged) fs.rmSync(file, { force: true });
     throw error;
   }
 }
-async function spriteLayer(contract, candidateFile) {
+async function attachVariants(recordFile, variants) {
+  const record = json(recordFile),
+    contract = contractFor(record.key),
+    directory = path.dirname(path.resolve(recordFile));
+  validateRecord(record, contract, true);
+  fail(!record.presentation?.variants, 'Variants already exist; assemble a new candidate');
+  const resources = [],
+    extras = [],
+    created = [];
+  try {
+    for (const variant of variants) {
+      const file = path.resolve(variant.recordFile),
+        item = json(file),
+        folder = path.dirname(file);
+      validateRecord(item, contract, true);
+      const output = safeFile(folder, item.output.file),
+        source = safeFile(folder, item.source.file);
+      fail(
+        (await inspect(output)).hash === item.output.hash &&
+          (await inspect(source)).hash === item.source.hash,
+        'Variant bytes changed',
+      );
+      const filename = 'variant-' + item.output.hash + '.' + item.output.format,
+        sourceName = 'variant-source-' + item.source.hash + '.' + item.source.format;
+      for (const [from, name, expected] of [
+        [output, filename, item.output.hash],
+        [source, sourceName, item.source.hash],
+      ]) {
+        const target = path.join(directory, name);
+        if (!fs.existsSync(target)) {
+          fs.copyFileSync(from, target, fs.constants.COPYFILE_EXCL);
+          created.push(target);
+        }
+        fail(hash(fs.readFileSync(target)) === expected, 'Variant hash collision');
+      }
+      resources.push({
+        id: variant.id,
+        src: './assets/sprites/' + filename,
+        width: item.output.width,
+        height: item.output.height,
+        hash: item.output.hash,
+      });
+      extras.push({
+        role: 'variant',
+        output: { ...item.output, file: filename },
+        sources: [
+          { ...item.source, file: sourceName, processing: item.processing, review: item.review },
+        ],
+      });
+    }
+    const presentation = { ...(record.presentation || {}), variants: resources };
+    Format.entry({ src: './assets/sprites/base.png', ...record.runtime, ...presentation });
+    record.presentation = presentation;
+    record.extras = [...(record.extras || []), ...extras];
+    record.review = { status: 'pending', reference: null, inheritedStaticReview: record.review };
+    writeJSON(recordFile, record);
+    return { recordFile, variants: resources.length };
+  } catch (error) {
+    for (const file of created) fs.rmSync(file, { force: true });
+    throw error;
+  }
+}
+async function spriteLayer(contract, candidateFile, presentation = null) {
   const sandbox = {
-    Image,
+    Image: class extends Image {
+      set src(_value) {
+        super.src = _value.endsWith('/preview.png')
+          ? candidateFile
+          : path.join(path.dirname(candidateFile), path.basename(_value));
+      }
+    },
     console,
     fetch: async () => ({
       ok: true,
       json: async () => ({
         version: 8,
         sprites: {
-          [contract.key]: { src: candidateFile, ...contract.runtime },
+          [contract.key]: {
+            src: './assets/sprites/preview.png',
+            width: contract.canvas.width,
+            height: contract.canvas.height,
+            ...contract.runtime,
+            ...(presentation || {}),
+          },
         },
       }),
     }),
   };
+  vm.runInNewContext(
+    fs.readFileSync(path.join(root, 'src/prototype/sprite-format.js'), 'utf8'),
+    sandbox,
+  );
   vm.runInNewContext(fs.readFileSync(path.join(root, 'src/prototype/sprites.js'), 'utf8'), sandbox);
-  await sandbox.PrototypeSprites.preload();
+  await sandbox.PrototypeSprites.preload(undefined, [contract.key]);
+  if (presentation)
+    await sandbox.PrototypeSprites.warm([contract.key], { clips: true, variants: true });
   fail(
-    sandbox.PrototypeSprites.status().loaded === 1,
+    sandbox.PrototypeSprites.status().loaded >= 1,
     'Candidate image did not decode in actual sprite layer',
   );
+  for (let i = 0; i < 160; i++) sandbox.PrototypeSprites.advance(100);
   return sandbox.PrototypeSprites;
 }
 function scene(contract, width, height, sprite = null, lighting = 'day') {
@@ -530,7 +968,7 @@ async function showroom(recordFile) {
       (await inspect(candidate)).hash === record.output.hash,
       'Candidate changed since processing',
     );
-    sprite = await spriteLayer(contract, candidate);
+    sprite = await spriteLayer(contract, candidate, record.presentation);
   }
   const directory = path.join(root, '_sprite-preview');
   fs.mkdirSync(directory, { recursive: true });
@@ -586,13 +1024,22 @@ async function showroom(recordFile) {
   return { directory, comparisons, pending: !candidate };
 }
 async function main() {
-  const [command = 'check', key, input, format] = process.argv.slice(2);
+  const [command = 'check', key, input, format, placementFile] = process.argv.slice(2);
   let result;
   if (command === 'catalog') result = catalog();
+  else if (command === 'asset') result = asset(key);
   else if (command === 'contracts') result = contracts();
   else if (command === 'inspect') result = await inspect(key);
-  else if (command === 'prepare') result = await prepare(key, input, format);
+  else if (command === 'prepare')
+    result = await prepare(key, input, format, placementFile ? json(placementFile) : {});
   else if (command === 'publish') result = await publish(key);
+  else if (command === 'attach-variants') result = await attachVariants(key, json(input));
+  else if (command === 'attach-clip') {
+    const job = json(input);
+    result = await attachClip(key, job.name, job.frameFiles, job.durations, job.loop);
+  } else if (command === 'replace') result = await publish(key, input);
+  else if (command === 'rollback') result = await rollback(key, input, format);
+  else if (command === 'remove') result = await remove(key, input);
   else if (command === 'showroom') result = await showroom(key);
   else if (command === 'check') result = await checkProduction();
   else
@@ -606,12 +1053,19 @@ module.exports = {
   catalog,
   contracts,
   contractFor,
+  asset,
   inspect,
   reference,
   prepare,
   validateRecord,
   checkProduction,
   publish,
+  rollback,
+  remove,
+  revisionFor,
+  entryFor,
+  attachClip,
+  attachVariants,
   spriteLayer,
   scene,
   showroom,

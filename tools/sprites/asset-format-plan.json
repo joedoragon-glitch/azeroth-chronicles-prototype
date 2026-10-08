@@ -1,5 +1,5 @@
 {
-  "status": "proposed format; not accepted by current static publication validator",
+  "status": "Implemented optional formatVersion 3 in v0.8.92; terrain world mapping remains a separate job",
   "schemaExtension": "Keep existing static entry fields and add optional variants/clips through an explicit format migration",
   "exampleLogicalKey": "hero:paladin",
   "entry": {
@@ -18,14 +18,16 @@
             "src": "./assets/sprites/atlas-CONTENT_HASH.webp",
             "rect": [0, 0, 192, 192],
             "durationMs": 200,
-            "pivot": [96, 144]
+            "pivot": [96, 144],
+            "width": 192,
+            "height": 192
           }
         ]
       }
     }
   },
   "lifecycle": {
-    "replaceLease": "expected active content hash",
+    "replaceLease": "expected active revision (body and presentation)",
     "retainRollbackRevision": true,
     "decodeIdentity": "unique content hash and decode settings, shared across logical keys",
     "lateLoadGuard": "discard results whose expected active revision is no longer current",

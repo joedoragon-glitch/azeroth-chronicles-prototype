@@ -536,6 +536,7 @@
               version: PrototypeBuild.version,
               performance: runtime.report(renderer.metrics(), platform.mode),
               audio: audio.status(),
+              sprites: typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites.status(),
               currency: 'crowns',
               mode: game.s.mode,
               phase: game.s.phase,
@@ -1875,6 +1876,7 @@
       document.hidden ||
       game.s.challenge.pending ||
       game.s.challenge.gameOver;
+    if (typeof PrototypeSprites !== 'undefined') PrototypeSprites.advance(dt * 1000, !!frozen);
     if (menu) {
       menuJoyTime -= dt;
       if (Math.abs(joy.y) > 0.4 && menuJoyTime <= 0 && buttons.length) {

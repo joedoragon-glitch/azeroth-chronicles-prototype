@@ -56,4 +56,29 @@ function manifest(populated = true) {
       : {},
   };
 }
-module.exports = { images, manifest };
+function animatedManifest() {
+  const result = manifest(false),
+    [base, extra] = [...images.keys()];
+  result.formatVersion = 3;
+  result.sprites['hero:paladin'] = {
+    ...entry(base),
+    variants: [{ ...entry(extra), id: 'alternate', width: 2, height: 2 }],
+    clips: {
+      idle: {
+        loop: true,
+        frames: [
+          {
+            src: './' + extra,
+            width: 2,
+            height: 2,
+            rect: [0, 0, 2, 2],
+            pivot: [1, 1.5],
+            durationMs: 80,
+          },
+        ],
+      },
+    },
+  };
+  return result;
+}
+module.exports = { images, manifest, animatedManifest };

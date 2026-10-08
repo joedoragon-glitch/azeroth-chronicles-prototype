@@ -62,9 +62,11 @@
       game = getGame();
       for (const key of Object.keys(stats)) stats[key] = 0;
       origin = offset();
+      PrototypeSprites?.beginFrame?.();
       try {
         render();
       } finally {
+        PrototypeSprites?.endFrame?.();
         origin = null;
       }
     }
@@ -97,7 +99,7 @@
             'bundle',
           ].includes(e.kind));
       if (!actor) return p;
-      const t = now() / 1000,
+      const t = (PrototypeSprites?.timeMs?.() ?? now()) / 1000,
         phase = visualPhase(e),
         busy =
           (e.renderKind === 'enemy' && (e.aggro || e.telegraph)) ||
@@ -973,7 +975,7 @@
           const p = screen(e);
           if (p.x < -100 || p.x > canvas.width + 100 || p.y < -100 || p.y > canvas.height + 100)
             continue;
-          entities.push({ ...e, renderKind });
+          entities.push({ ...e, renderKind, spriteIdentity: e });
         }
       }
       add(z.props, 'prop');
@@ -1184,6 +1186,7 @@
       queue: (events) => {
         game = getGame();
         queueVisualFx(events);
+        PrototypeSprites?.noteEvents?.(events);
       },
       update: updateVisualFx,
       metrics: () => ({ ...stats }),

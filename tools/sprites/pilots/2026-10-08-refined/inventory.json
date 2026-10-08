@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-08",
+  "version": "0.8.92",
+  "chatLink": null,
+  "decisions": [
+    "Joel accepted original Paladin and cottage direction and authorized faithful implementation",
+    "Joel explicitly accepted corrected playful half-smile Goblin with organic ears at 07:24 America/New_York",
+    "Material-appropriate contours replace accidental procedural polygon artifacts for all candidate categories",
+    "Sprite edit requests in chat include implementation; preserve previous revisions and update affected dependent presentation"
+  ],
+  "assets": {
+    "hero:paladin": {
+      "revision": "b162917a153d83f0bea42abb24a86b40c35f98608bc493cb0b7a27c1a58f9d25",
+      "source": "9c3684826868a0776a3fd0a2bbed440014d41f9117214ac22fe2900ab0bb62be.png",
+      "output": "hero-paladin-d784954f7459c31582209b631b5c8384335cbfe0ee8c221b0c5f1db0df002b56.png",
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "scope": "Engineer-reviewed faithful two-frame idle under Joel authorized implementation; accepted static design preserved. No separate user animation acceptance claimed.",
+        "inheritedStaticReview": {
+          "status": "approved",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+          "scope": "Accepted pilot direction; technical placement and faithful implementation authorized by Joel",
+          "chatLink": null,
+          "technicalReview": "Native/context review required before release"
+        },
+        "technicalReview": "Both native frame poses and shared ground/pivot inspected; day/night desktop/phone scene comparisons checked"
+      }
+    },
+    "enemy:goblin": {
+      "revision": "6e7434dfc416f121e748172b2e5ac18571d6837e85a1de13227c90a5466c8186",
+      "source": "fea4585a07603408d8509459e2a31108bdb9cdfd226c1f7e17823cd40a610d84.png",
+      "output": "enemy-goblin-c20da0cb214bf63b414416a83dfe198b646c27dbb87d986173d03803aacc8e50.png",
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "scope": "Joel explicitly accepted playful half-smile and organic ears on 2026-10-08 at 07:24 America/New_York",
+        "chatLink": null,
+        "technicalReview": "Native/context review required before release"
+      }
+    },
+    "prop:vale-cottage:vale": {
+      "revision": "3c35ef58fe76061f5fb4f017be965947afba71885b6897781d59b7253237cf15",
+      "source": "ee52d21f1f1d6a95fb1e545db3fa584a7b9ae86618f9277b1d475d9c1b3778e3.png",
+      "output": "prop-vale-cottage-vale-d94098c0186d31ce1b16815a3092957b5e428e35117729a9f2ffd9d8ec79ff3a.png",
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "scope": "Accepted pilot direction; technical placement and faithful implementation authorized by Joel",
+        "chatLink": null,
+        "technicalReview": "Native/context review required before release"
+      }
+    }
+  },
+  "staticPaladinRollback": "422da014a70b82d89e9eda8ccbd93516a91bde02805fd2f2cf1ca7cc22c7a0b0",
+  "verification": {
+    "nativeFrames": "reviewed",
+    "sceneViewports": [
+      1280,
+      375,
+      320,
+      844
+    ],
+    "lighting": [
+      "day",
+      "night"
+    ],
+    "motion": "two-frame idle only; other states use static/procedural fallback"
+  }
+}
