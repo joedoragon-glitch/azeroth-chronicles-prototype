@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "key": "terrain:ground:march",
+  "catalogId": "T002",
+  "dependencyHash": "25b3d28969ae877432dcefd8a0166d60ba7a2a7a013f1ce1c86d5f35061f8fde",
+  "source": {
+    "hash": "4f2acfca7d423ef4c0b1002cf4b0eea447f507caff5ba87e4ac6241803da5b53",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2906561,
+    "opaque": true,
+    "seams": {
+      "x": 7.409090909090889,
+      "y": 6.0571504518872885,
+      "interiorX": 5.381465980848742,
+      "interiorY": 5.469520466138705
+    }
+  },
+  "output": {
+    "hash": "b1782a435760ed6bce0e5b1b5ad87ae8709ac22ae21c880e0b6a70bf13712276",
+    "width": 256,
+    "height": 256,
+    "bytes": 106250,
+    "opaque": true,
+    "seams": {
+      "x": 4.62890625,
+      "y": 5.3789062499999964,
+      "interiorX": 4.6683874591502725,
+      "interiorY": 4.5920802696078145
+    }
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "lanczos3",
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "seamRepair": false
+  },
+  "runtime": {
+    "worldSpan": 320,
+    "opacity": 0.28
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "kind": "engineer-authorized",
+    "userAppearanceAcceptance": false,
+    "nativeScale": true,
+    "wrap": true,
+    "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
+  }
+}

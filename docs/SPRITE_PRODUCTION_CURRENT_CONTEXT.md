@@ -1,3 +1,5 @@
+> **PAUSED by Joel, 8 October 2026.** Resume only on his request. Read [the saved checkpoint](SPRITE_PRODUCTION_PAUSED_2026-10-08.md) first; this branch includes unpublished work.
+
 # Sprite production checkpoint · 8 October 2026
 
 ## Implemented lifecycle and pilots · v0.8.92
@@ -29,3 +31,7 @@ The batch journal records release-pending status, exact revisions and procedural
 Joel reported the live goblin face looked deformed after an interrupted stream. One targeted source edit simplifies the eyes, brows, nose and playful half-smile for the actual 38 × 49-pixel body. Original organic ears, equipment and palette remain recognizable. Four viewport day/night scenes and hashes are retained in `tools/sprites/batches/2026-10-08-goblin-face`. This is engineer-reviewed authorized correction, not a claim of Joel accepting the unseen new image. The prior revision remains in rollback history. Image calls: 16 total. Five ground pilots and nature candidates remain pending; no new mass-generation calls while this correction releases.
 
 PR #123 deployment run 37784625938 succeeded at exact merge SHA `369cc42889228fb1dbfc1a54c7048deda1f051b0`, including exact live build and desktop/phone smoke checks.
+
+## Regional ground stage, v0.8.96
+
+T001–T005 are reviewed and locally registered after terrain pipeline completion. Original tool images remain opaque and unmodified, with explicit Lanczos resizing to 256² and no seam repair. Eight actual scene comparisons per material passed engineer review; source/output hashes and rollback targets are in the material registry. Stage release pending. No terrain production is claimed complete: roads, floors, rock/lava surfaces and bridge grain remain queued. Total image calls remain 16.

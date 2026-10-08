@@ -4,7 +4,7 @@ const fs = require('node:fs'),
   crypto = require('node:crypto'),
   vm = require('node:vm'),
   sharp = require('sharp');
-const { createCanvas } = require('@napi-rs/canvas');
+const { createCanvas, Image } = require('@napi-rs/canvas');
 const Contract = require('../src/prototype/material-contract.js');
 const root = path.resolve(__dirname, '..');
 const specs = require('../tools/sprites/terrain-specifications.json');
@@ -201,6 +201,78 @@ function entry(record) {
     revision: record.revision,
   };
 }
+async function showroom(recordFile) {
+  const directory = path.dirname(path.resolve(recordFile)),
+    record = json(recordFile),
+    candidate = safe(directory, 'candidate.png');
+  fail((await inspect(candidate)).hash === record.output.hash, 'Candidate changed');
+  const Sprites = require('./sprite-pipeline.cjs'),
+    Materials = require('../src/prototype/materials.js'),
+    regions = ['vale', 'march', 'highlands', 'frontier', 'crown'],
+    region = regions.indexOf(record.key.split(':')[2]);
+  fail(record.key.startsWith('terrain:ground:') && region >= 0, 'Ground scene review only');
+  class PreviewImage extends Image {
+    set src(_) {
+      super.src = candidate;
+    }
+  }
+  const layer = new Materials({ Image: PreviewImage });
+  fail(
+    layer.install({
+      version: 1,
+      materials: { [record.key]: { ...entry(record), revision: record.output.hash } },
+    }),
+    'Invalid review manifest',
+  );
+  fail(await layer.ensure(record.key), 'Review material did not decode');
+  const panels = [],
+    checks = [],
+    contract = { ...Sprites.contractFor('hero:paladin'), region };
+  for (const [width, height] of [
+    [1280, 800],
+    [390, 844],
+    [844, 390],
+    [320, 568],
+  ])
+    for (const lighting of ['day', 'night']) {
+      const baseline = Sprites.scene(contract, width, height, null, lighting),
+        proposed = Sprites.scene(contract, width, height, null, lighting, layer);
+      fail(hash(baseline.bytes) !== hash(proposed.bytes), 'Material was not painted');
+      const cropWidth = Math.min(width, 320),
+        cropHeight = Math.min(height, 230),
+        left = Math.max(
+          0,
+          Math.min(width - cropWidth, Math.round(proposed.anchor.x - cropWidth / 2)),
+        ),
+        top = Math.max(
+          0,
+          Math.min(height - cropHeight, Math.round(proposed.anchor.y - cropHeight / 2)),
+        );
+      for (const result of [baseline, proposed])
+        panels.push({
+          input: await sharp(result.bytes)
+            .extract({ left, top, width: cropWidth, height: cropHeight })
+            .png()
+            .toBuffer(),
+          left: (panels.length % 2) * 320,
+          top: Math.floor(panels.length / 2) * 230,
+        });
+      checks.push({
+        width,
+        height,
+        lighting,
+        baselineHash: hash(baseline.bytes),
+        candidateHash: hash(proposed.bytes),
+        materialDraws: layer.stats.draws,
+      });
+    }
+  await sharp({ create: { width: 640, height: 1840, channels: 4, background: '#344b39' } })
+    .composite(panels)
+    .png()
+    .toFile(path.join(directory, 'native-scene-review.png'));
+  write(path.join(directory, 'native-scene-review.json'), checks);
+  return { directory, scenes: checks.length, status: layer.status() };
+}
 function revisionFor(record) {
   return hash(
     Buffer.from(
@@ -396,6 +468,7 @@ if (require.main === module)
       result = { file: args[1], hash: hash(reference(args[0])) };
     } else if (command === 'inspect') result = await inspect(args[0], true);
     else if (command === 'prepare') result = await prepare(...args);
+    else if (command === 'showroom') result = await showroom(...args);
     else if (command === 'publish') result = await publish(...args);
     else if (command === 'rollback') result = await rollback(...args);
     else throw Error('Use material-pipeline check|reference|inspect|prepare|publish|rollback');
@@ -414,4 +487,5 @@ module.exports = {
   publish,
   rollback,
   entry,
+  showroom,
 };

@@ -109,3 +109,7 @@ PR #121 is merged and verified live at commit `5bdfa149`. The first continuation
 ### v0.8.95 — Goblin native face readability
 
 User-requested correction simplifies face features to survive nearest downsampling at native game size. Same runtime dimensions and anchors; no gameplay changes. Prior approved source/output retained in history. Native desktop/phone day/night comparison evidence accompanies the asset. Release pending CI and exact live deployment verification.
+
+### v0.8.96 — Regional ground texture pilots
+
+Five region-specific ground textures add quiet grass/soil, wet earth, grit, ash and slate grain within existing world-coordinate floor clips. Lazy decoding and procedural fallback remain authoritative; total player texture payload is 507,307 bytes, 256² each. Original masters, exact prompts, seamless-wrap and native device day/night reviews retained. Each registration can roll back to procedural. Reproducible material showroom added. Release pending CI and exact deployment.

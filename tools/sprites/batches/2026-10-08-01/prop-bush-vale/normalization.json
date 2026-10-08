@@ -1,0 +1,11 @@
+{
+  "padding": 197,
+  "alphaDeletion": false,
+  "crop": false,
+  "reason": "Explicit full-canvas padding preserves all generated pixels while bringing native material bounds back to the current design footprint; original retained.",
+  "translation": {
+    "x": 0,
+    "y": 11
+  },
+  "candidate": "tools/sprites/batches/2026-10-08-01/prop-bush-vale/prepared"
+}

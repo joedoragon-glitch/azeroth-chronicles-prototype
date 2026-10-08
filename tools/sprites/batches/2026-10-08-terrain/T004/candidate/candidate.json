@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "key": "terrain:ground:frontier",
+  "catalogId": "T004",
+  "dependencyHash": "69e5d2e1455efc2de2040f40eec391dafadf04c92ca69a22d61911933f51ca0b",
+  "source": {
+    "hash": "9504556f05eb570dbd1f12ee6cc3bab52fc224d2c3d99b7d5ef74d3e4410710a",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2642587,
+    "opaque": true,
+    "seams": {
+      "x": 6.028442317916002,
+      "y": 4.520999468367887,
+      "interiorX": 3.7277519598898308,
+      "interiorY": 3.881519016773654
+    }
+  },
+  "output": {
+    "hash": "bf8577c52fb47274c71ce2e8c73c98c66a2515d5b62a89120156e5749c3a4ba7",
+    "width": 256,
+    "height": 256,
+    "bytes": 91835,
+    "opaque": true,
+    "seams": {
+      "x": 4.541666666666666,
+      "y": 3.393229166666668,
+      "interiorX": 3.1557904411765114,
+      "interiorY": 3.1848651960784666
+    }
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "lanczos3",
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "seamRepair": false
+  },
+  "runtime": {
+    "worldSpan": 320,
+    "opacity": 0.28
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "kind": "engineer-authorized",
+    "userAppearanceAcceptance": false,
+    "nativeScale": true,
+    "wrap": true,
+    "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
+  }
+}

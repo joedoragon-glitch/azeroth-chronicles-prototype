@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "integrated",
+  "designId": "terrain-ground-frontier",
+  "name": "Ashen Frontier ground grain",
+  "kind": "terrain material",
+  "nextAction": "Verify v0.8.96 full CI and exact published build.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Faithful grain conversion under Joel\u2019s explicit terrain pipeline and mass-production authorization.",
+    "decisionDate": "2026-10-08",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "contentDocuments": [
+      "docs/TERRAIN_TEXTURE_PIPELINE.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": null,
+    "proceduralDesignAcceptance": null,
+    "spriteProductionAuthorization": "Explicit terrain production after completing and testing the pipeline.",
+    "generatedAppearanceAcceptance": "Engineer-reviewed; no claim of Joel accepting the generated appearance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "369cc42889228fb1dbfc1a54c7048deda1f051b0",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js:floor",
+      "src/prototype/materials.js:world-coordinate grain"
+    ],
+    "exactEntityState": {
+      "key": "terrain:ground:frontier",
+      "catalogId": "T004",
+      "runtime": {
+        "worldSpan": 320,
+        "opacity": 0.28
+      }
+    },
+    "isolatedReferencePath": "tools/sprites/batches/2026-10-08-terrain/T004/candidate/reference.png",
+    "isolatedReferenceHash": "28a9f7a1f77753273ace08205210730dcfd3fc0e05f0e4c8ff0253f54288a73b",
+    "gameplayContextPaths": [
+      "tools/sprites/batches/2026-10-08-terrain/T004/candidate/native-scene-review.png",
+      "tools/sprites/batches/2026-10-08-terrain/T004/candidate/native-scene-review.json"
+    ],
+    "traitsToPreserve": [
+      "Region palette",
+      "Quiet material-appropriate grain",
+      "Procedural clipping and topology",
+      "World phase",
+      "Foreground readability"
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [
+      "T004"
+    ],
+    "verifiedRuntimeKeys": [
+      "terrain:ground:frontier"
+    ],
+    "requiredVisibleAssets": [
+      "Opaque square repeating ground texture"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "Objects, road borders, tile geometry, collisions and existing microdetail remain procedural."
+    ]
+  },
+  "animationRequirements": {
+    "status": "static material",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "tools/sprites/batches/2026-10-08-terrain/T004/candidate/candidate.json"
+    ],
+    "approvedRecordKey": "terrain:ground:frontier",
+    "activeContentRevision": "c9a09db6aed83db02cb784200c9fa1cb9cbfc5e6608a313a5388dcd8d509fe82",
+    "expectedReplacementRevision": "absent",
+    "rollbackRevision": "procedural",
+    "releaseCommit": null,
+    "releaseEvidence": "Native and wrap reviews passed; publication pending."
+  }
+}
