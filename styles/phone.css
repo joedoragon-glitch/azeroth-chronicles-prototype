@@ -37,9 +37,9 @@ body[data-experience="phone"] #message{width:min(420px,calc(100vw - 16px));font-
 body[data-experience="phone"][data-phone-layout="left-hand"] #skills{right:auto;left:max(8px,env(safe-area-inset-left));bottom:calc(124px + env(safe-area-inset-bottom))}
 body[data-experience="phone"][data-phone-layout="left-hand"] #recall-button{left:auto;right:max(8px,env(safe-area-inset-right));bottom:max(8px,env(safe-area-inset-bottom))}
 body[data-experience="phone"][data-phone-layout="left-hand"] #squad-button{left:auto;right:max(8px,env(safe-area-inset-right));bottom:calc(60px + env(safe-area-inset-bottom))}
-@media(max-height:500px) and (min-width:601px){
+@media(max-height:500px) and (min-width:480px){
  body[data-experience="phone"] #hud{right:auto;width:min(360px,48vw)}
- body[data-experience="phone"] #touch-interact-button{left:45%;top:52vh}
+ body[data-experience="phone"] #touch-interact-button{left:calc(50vw - 80px);top:50vh}
  body[data-experience="phone"] #skills{width:min(340px,48vw);grid-template-columns:repeat(4,minmax(0,1fr))}
  body[data-experience="phone"] #skills button{min-height:50px;padding:5px 4px}
  body[data-experience="phone"] #modal{top:8px;width:min(520px,62vw);bottom:120px}

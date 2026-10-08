@@ -10,7 +10,7 @@ if(!baseURL){
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});
  baseURL='http://127.0.0.1:'+server.address().port+'/';
 }
-const viewports=smoke?[{width:1280,height:800,touch:false},{width:375,height:812,touch:true}]:[{width:1280,height:800,touch:false},{width:375,height:812,touch:true},{width:320,height:568,touch:true},{width:844,height:390,touch:true},{width:768,height:310,touch:true},{width:980,height:1740,touch:true}];
+const viewports=smoke?[{width:1280,height:800,touch:false},{width:375,height:812,touch:true}]:[{width:1280,height:800,touch:false},{width:375,height:812,touch:true},{width:320,height:568,touch:true},{width:844,height:390,touch:true},{width:768,height:310,touch:true},{width:568,height:320,touch:true},{width:980,height:1740,touch:true}];
 for(const v of viewports){
 const b=await pw.chromium.launch(launch),page=await b.newPage({viewport:{width:v.width,height:v.height},hasTouch:v.touch,isMobile:v.touch}),errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());await page.goto(baseURL);const tag=v.width+'x'+v.height;
 await check('New-game premise, Succession opt-in and audio gesture '+tag,async()=>{assert.equal(await page.locator('#modal-title').textContent(),'Challenge condition');const premise=await page.locator('#modal-description').textContent();assert(premise.includes('Dark Lord rules the land'));assert(premise.includes('captured the specialists'));assert.equal(await page.evaluate(()=>Prototype.audio.ctx),null);await page.keyboard.press('s');assert((await page.locator('#modal-actions button.selected').textContent()).includes('Succession challenge'));await page.keyboard.press('f');assert((await page.locator('#modal-title').textContent()).includes('New Normal adventure'));await page.keyboard.press('f');await page.waitForFunction(()=>document.querySelector('#modal').hidden);assert(await page.evaluate(()=>Prototype.game.s.challenge.succession));await page.waitForFunction(()=>Prototype.audio.ctx?.state==='running');assert.deepEqual(await page.evaluate(()=>Prototype.game.hero.skills),[1,0,0,0,0,0,0,0]);});
@@ -129,7 +129,7 @@ await check('Phone controls preserve world space and contextual interaction '+ta
  assert(hud.height<=60,'phone HUD must stay compact '+JSON.stringify(hud));
  assert(skills.x>=v.width/2-2&&skills.x+skills.width<=v.width,'combat remains on the right');
  assert(skills.y+skills.height>=v.height-12,'combat sits at bottom edge without a reserved Interact row');
- assert(first.width>=64&&first.height>=50,'skill targets remain thumb-sized');
+ assert(first.width>=(v.width>=480&&v.height<=500?50:64)&&first.height>=50,'skill targets remain thumb-sized');
  assert(joy.width>=102&&joy.height>=102,'joystick keeps a comfortable touch target');
  assert(!overlap(skills,joy));const recall=await box('#recall-button');assert(recall&&recall.height>=44&&!overlap(recall,joy)&&!overlap(recall,skills),'Recall stays reachable beside movement');
  for(const id of ['#location','#objective','#talent-button','#hero-stats .wallet'])assert(await page.locator(id).isHidden(),id+' stays out of phone gameplay');

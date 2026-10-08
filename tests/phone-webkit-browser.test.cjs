@@ -11,7 +11,7 @@ const server=http.createServer((req,res)=>{
 });
 (async()=>{let browser,activePage;try{
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));browser=await webkit.launch();
- for(const size of [{width:375,height:812},{width:320,height:568},{width:844,height:390},{width:768,height:310}]){
+ for(const size of [{width:375,height:812},{width:320,height:568},{width:844,height:390},{width:768,height:310},{width:568,height:320}]){
  const page=await browser.newPage({viewport:size,hasTouch:true,isMobile:true}),errors=[];activePage=page;page.on('pageerror',e=>errors.push(e.message));
  await page.goto('http://127.0.0.1:'+server.address().port+'/phone.html');await page.waitForFunction(()=>!!window.Prototype);
  await page.keyboard.press('f');await page.keyboard.press('f');await page.waitForFunction(()=>document.querySelector('#modal').hidden);
@@ -29,7 +29,7 @@ const server=http.createServer((req,res)=>{
  const skill=await page.locator('#skill-1').boundingBox();await page.mouse.move(skill.x+skill.width/2,skill.y+skill.height/2);await page.mouse.down();
  await page.waitForFunction(()=>document.querySelector('#skill-1 small').textContent==='CHARGED',null,{timeout:2500});await page.mouse.up();
  await page.waitForFunction(()=>{const e=Prototype.game.zone().enemies[0];return e.hp<e.maxHp;});assert.equal(await page.evaluate(()=>{const e=Prototype.game.zone().enemies[0];return e.maxHp-e.hp;}),90,'WebKit release casts once');assert.equal(await page.evaluate(()=>getSelection().toString()),'');
- await page.evaluate(()=>{const c=Prototype.game;c.zone().enemies=[];c.s.projectiles=[];c.hero.skills=Array(8).fill(1);const u=c.unit('archer',640,930);c.s.party=[u];Prototype.updateHUD();});
+ await page.evaluate(()=>{const c=Prototype.game;c.zone().enemies=[];c.s.projectiles=[];c.hero.skills=Array(8).fill(1);const u=c.unit('archer',1100,1050);c.s.party=[u];Prototype.updateHUD();});
  for(let i=1;i<=8;i++)assert(await page.locator('#skill-'+i).isVisible());assert(await page.locator('#health-potion').isVisible());await page.evaluate(()=>Prototype.game.s.party[0].order={type:'wait'});await page.locator('#recall-button').tap();assert(await page.evaluate(()=>Prototype.game.s.recallActive&&Prototype.game.s.party.every(u=>u.order===null)),'WebKit Recall stays directly available');
  const all=await page.locator('#skills').boundingBox(),joy=await page.locator('#joystick').boundingBox();assert(all.y>hud.y+hud.height,'all learned controls stay below HUD');assert(all.x>=joy.x+joy.width,'all learned controls avoid joystick');assert(all.y+all.height<=size.height);
  const npc=await page.evaluate(()=>{const c=Prototype.game,n=c.zone().npcs.find(n=>n.kind==='quests');c.zone().npcs=[n];c.zone().nodes=[];c.zone().buildings=[];Object.assign(c.hero,{x:n.x,y:n.y});Prototype.updateHUD();return {x:n.x,y:n.y};});
