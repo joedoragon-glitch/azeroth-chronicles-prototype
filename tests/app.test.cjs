@@ -44,7 +44,7 @@ async function test(name,fn){try{await fn();passed++;console.log('PASS '+name)}c
   });
   await test('Manifest, app resources and maskable PNG sizes are valid',()=>{
     const manifest=JSON.parse(fs.readFileSync(path.join(root,'manifest.webmanifest')));
-    assert.equal(manifest.start_url,'./');assert.equal(manifest.scope,'./');assert.equal(manifest.display,'standalone');assert.equal(manifest.orientation,'any');
+    assert.equal(manifest.start_url,'./phone.html');assert.equal(manifest.scope,'./');assert.equal(manifest.display,'standalone');assert.equal(manifest.orientation,'any');
     for(const icon of manifest.icons){const png=fs.readFileSync(path.join(root,icon.src));const size=Number(icon.sizes.split('x')[0]);assert.equal(png.readUInt32BE(16),size);assert.equal(png.readUInt32BE(20),size);assert(icon.purpose.includes('maskable'))}
     const html=fs.readFileSync(path.join(root,'tests/fixtures/legacy.html'),'utf8');for(const match of html.matchAll(/(?:src|href)="(\.\/[^\"]+)"/g))assert(fs.existsSync(path.join(root,match[1])));
   });

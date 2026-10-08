@@ -1,285 +1,3068 @@
 /* Browser shell. Saved campaign rules are independent of this UI. */
-(function(){
-'use strict';
-const $=id=>document.getElementById(id),canvas=$('world'),ctx=canvas.getContext('2d'),D=Campaign.data;
-const profileKey='azeroth-v4-profile',saveKey=mode=>'azeroth-v4-'+mode;
-let profile={nightmareUnlocked:false,activeMode:'normal',audio:{...PrototypeAudio.defaults}},game,menu=null,menuIndex=0,buttons=[],keys={},joy={x:0,y:0},last=performance.now(),saveTimer=0,hudTimer=0,focused=true,paused=false,charge=null,footstepTimer=0,gateDismissed=false,criticalNoticeSeen=null,criticalNoticeUntil=0,visualFx=[];
-try{const p=JSON.parse(localStorage.getItem(profileKey)||'null');if(p){profile.nightmareUnlocked=p.nightmareUnlocked===true;profile.activeMode=p.activeMode==='nightmare'?'nightmare':'normal';profile.audio=p.audio||profile.audio;}}catch(_){}
-const audio=new PrototypeAudio(profile.audio);
-let appRegistration=null,appUpdateReady=false,appReloadRequested=false,installPrompt=null,appControllerReloaded=false;const hadServiceWorkerController=!!navigator.serviceWorker?.controller;
-async function updateApp(){if(!appRegistration)return;if(!save())return;paused=true;clearInput();audio.setPaused(true);status('Checking for a game update…');try{await appRegistration.update();const worker=appRegistration.installing;if(worker&&worker.state!=='installed'&&worker.state!=='activated')await new Promise(resolve=>{const done=()=>{worker.removeEventListener('statechange',check);clearTimeout(timer);resolve();},check=()=>{if(worker.state==='installed'||worker.state==='activated'||worker.state==='redundant')done();},timer=setTimeout(done,15000);worker.addEventListener('statechange',check);check();});if(appRegistration.waiting){appReloadRequested=true;appRegistration.waiting.postMessage({type:'SKIP_WAITING'});}else{paused=false;audio.setPaused(false);status('No update waiting. Check again shortly.');}}catch(_){paused=false;audio.setPaused(false);status('Update unavailable. Your saved run is safe.');}}
-function runningAsApp(){return (window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;}
-function installInstructions(){openMenu('Install on phone','Install once, then Azeroth Chronicles launches from the home screen like an app and keeps its offline cache on that device.\n\nAndroid / Chrome: use the Install button when available. If Chrome does not offer it, open the browser menu and choose Install app or Add to Home screen.\n\niPhone / iPad: open the game in Safari, tap Share, choose Add to Home Screen, then Add.',installPrompt?[action('Install Azeroth Chronicles',installApp,'Open the phone installation prompt')]:[],systemMenu);}
-async function installApp(){if(runningAsApp()){status('Azeroth Chronicles is already running as an installed app.');closeMenu();return;}if(!installPrompt){installInstructions();return;}const prompt=installPrompt;installPrompt=null;try{await prompt.prompt();const choice=await prompt.userChoice;if(choice&&choice.outcome==='accepted'){status('Azeroth Chronicles installed. Open it from your home screen.');closeMenu();}else installInstructions();}catch(_){installInstructions();}}
-function status(text){$('status').textContent=text;}
-function persistProfile(){try{localStorage.setItem(profileKey,JSON.stringify(profile));return true;}catch(_){status('Local storage unavailable. Export before closing.');return false;}}
-function save(){try{localStorage.setItem(saveKey(game.s.mode),JSON.stringify(game.snapshot()));profile.activeMode=game.s.mode;if(game.peace)profile.nightmareUnlocked=true;persistProfile();status('Saved locally · export for a backup');return true;}catch(_){status('Saving failed. Export your run before closing.');return false;}}
-function load(mode){try{const raw=localStorage.getItem(saveKey(mode));if(raw){game=Campaign.restore(JSON.parse(raw));return true;}}catch(_){status('Saved run unavailable. Import a backup.');}return false;}
-let loaded=load(profile.activeMode);if(!loaded){game=new Campaign();try{const old=localStorage.getItem('azeroth-chronicles-prototype-save-v2');if(old){const candidate=Campaign.migrate(JSON.parse(old));localStorage.setItem('azeroth-v2-original-backup',old);game=candidate;loaded=true;save();}}catch(_){status('Legacy save retained unchanged. Import a valid export to migrate.');}}
-let started=loaded;
-window.Prototype={get game(){return game;},audio,save,openMenu,closeMenu,updateHUD,labelVisible:worldLabelVisible,chargePresentation,get profile(){return profile;},get paused(){return paused||!!menu||!focused||document.hidden;}};
-function resize(){canvas.width=innerWidth;canvas.height=innerHeight;}resize();addEventListener('resize',resize);
-function iso(x,y){return {x:(x-y)*.76,y:(x+y)*.27};}
-function offset(){const p=iso(game.hero.x,game.hero.y);return {x:canvas.width*(canvas.width<600?.69:.6)-p.x,y:canvas.height*.5-p.y};}
-function screen(e){const p=iso(e.x,e.y),o=offset();return {x:p.x+o.x,y:p.y+o.y};}
-function world(x,y){const o=offset(),xx=x-o.x,yy=y-o.y;return {x:(xx/.76+yy/.27)/2,y:(yy/.27-xx/.76)/2};}
-function activePlay(){return started&&!paused&&!menu&&focused&&!document.hidden&&!game.s.challenge.pending&&!game.s.challenge.gameOver;}
-function desktopMouse(e){return !!(e?.isTrusted&&e.pointerType==='mouse'&&(!window.matchMedia||window.matchMedia('(hover: hover) and (pointer: fine)').matches));}
-function worldLabelVisible(e){if(e.renderKind==='enemy')return e.type==='boss'||!!e.aggro;if(e.renderKind==='npc'||e.renderKind==='building')return Math.hypot(e.x-game.hero.x,e.y-game.hero.y)<=220;return true;}
-function help(back=closeMenu){openMenu('Controls','MOVE\nWASD — Move hero\nLeft joystick — Move on touch devices\n\nCOMBAT\n1–5 — Skills 1–5\nTap Skill 1, 2 or 3 quickly for the normal version\nHold 0.65 s for the charged version · costs 20% / 30% / 35% max MP respectively\nHold during a cooldown to queue the charge · releasing an incomplete hold cancels safely instead of firing the normal skill\nCHARGED means the charged action can actually release; NEED MP / NO TARGET / NO HEAL explain why it cannot\nSkill 1 movement auto-attacks pause while Skill 1 is held · Skill 2 locks its target when charging begins\nNormal Skill 1 rewards keeping the same target: hit 1 = 100%, hit 2 = 110%, hit 3 = 120% + a small frontal AoE · switching targets or waiting 4s resets the combo\nSpace — Skill 6\nLeft Shift — Skill 7\nB — Skill 8\nH / Left mouse — Command Ranger Heal\nM / Right mouse — Command Ranger Mana Recovery\nQ — Reserved / unavailable\n\nSQUAD\nTab — Switch squad doctrine during combat (Expedition 3)\nBacktick — Recall and regroup squad\nPaladin defaults to TARGET / BOSS\nMage and Ranger default to THREATS / ADDS\nDoctrine resets automatically for each encounter\n\nINTERACT\nE / F — Interact\n\nMENUS\nI / R — Inventory\nC — Discipline Training\nX — Skills\nJ / T — Quests\nZ — Map\nP / V — Pause\nG — Controls\nEsc — Adventure menu\n\nMENU NAVIGATION\nW / A — Previous\nS / D — Next\nF / Enter / Space — Confirm\n\nPC INPUT\nMouse clicks do not move the hero, command the squad or activate menus. Left mouse commands Ranger Heal; right mouse commands Ranger Mana Recovery.\n\nTouch controls use the labeled on-screen buttons.',[],back);}
-function clearInput(){if(typeof Sprint!=='undefined')Sprint.release();cancelCharge();keys={};joy={x:0,y:0};}
-function action(label,fn,detail='',disabled=false){return {label,action:fn,detail,disabled};}
-function openMenu(title,description='',actions=[],back=closeMenu){clearInput();gateDismissed=false;menu={title,description,actions,back};menuIndex=0;document.body.classList.add('menu-open');$('modal').hidden=false;$('modal-title').textContent=title;$('modal-description').textContent=description;renderActions();}
-let menuTouchBlockUntil=0;function renderActions(){const host=$('modal-actions');host.replaceChildren();buttons=[];for(const a of menu.actions){const b=document.createElement('button');b.textContent=a.label;b.disabled=a.disabled===true;if(a.detail){const span=document.createElement('span');span.className='detail';span.textContent=a.detail;b.append(span);}b.onclick=e=>{if(desktopMouse(e)||e?.pointerType==='touch'||(e?.isTrusted&&performance.now()<menuTouchBlockUntil))return;audio.unlock();a.action();if(started)save();updateHUD();};host.append(b);buttons.push(b);}const back=$('close-button');back.hidden=false;buttons.push(back);highlight();}
-function highlight(){buttons.forEach((b,i)=>b.classList.toggle('selected',i===menuIndex));buttons[menuIndex]?.scrollIntoView({block:'nearest'});}
-function closeMenu(){if(game.s.challenge.pending||game.s.challenge.gameOver)gateDismissed=true;menu=null;$('modal').hidden=true;document.body.classList.remove('menu-open');clearInput();}
-$('modal').ontouchstart=()=>{menuTouchBlockUntil=performance.now()+700;};
-$('close-button').onclick=e=>{if(desktopMouse(e)||e?.pointerType==='touch'||(e?.isTrusted&&performance.now()<menuTouchBlockUntil))return;audio.unlock();if(!game.s.endingAck&&game.peace){game.s.endingAck=true;save();}menu?.back();};
-function exportJSON(data,name){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-function start(mode,heroClass,succession){if(mode==='nightmare'&&!profile.nightmareUnlocked)return;game=new Campaign(mode,heroClass,Math.random,{succession});started=true;if(typeof Sprint!=='undefined')Sprint.reset();paused=false;profile.activeMode=mode;save();closeMenu();updateHUD();}
-function chooseClass(mode,succession){if(succession===undefined){openMenu('Challenge condition','The Dark Lord rules the land. To keep heroes from becoming strong enough to challenge him, his forces have captured the specialists who teach skills, forge equipment and prepare adventurers. Free them, rebuild your strength and confront his rule.\n\nSuccession is optional. Each fallen class is lost for this run; after three class deaths the run ends.',[action('Standard death and refuge recovery',()=>chooseClass(mode,false)),action('Succession challenge',()=>chooseClass(mode,true))]);return;}
- openMenu('New '+(mode==='nightmare'?'Nightmare':'Normal')+' adventure','Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.',Object.entries(Campaign.classes).map(([id,c])=>action(c.icon+' '+id,()=>{let exists=false;try{exists=!!localStorage.getItem(saveKey(mode));}catch(_){}if(exists&&!confirm('Replace the existing '+mode+' run? Export it first to keep it.'))return;start(mode,id,succession);},id==='paladin'?'Melee, healing and brief immunity':id==='mage'?'Ranged magic, mana recovery and barriers':'Ranged bow, healing and mobility')),()=>chooseClass(mode));}
-function awakeningChecklist(){return Campaign.dungeonIds.map(id=>{const b=game.boss(id),region=D.regions.find(r=>r.id===b.region);return {id,label:(game.s.true[id]?'✓ ':game.s.normal[id]?'⚔ ':'◇ ')+b.name,detail:(game.s.true[id]?'TRUE defeated':game.s.normal[id]?'TRUE awakened — return and challenge it':'Normal boss still alive — defeat it to awaken TRUE')+' · '+region.name};});}
-function finaleMenu(back=openMain){const done=Campaign.dungeonIds.filter(id=>game.s.true[id]).length;openMenu('Awakening · Final objective','The TRUE Dark Lord is gone forever. Defeat every remaining TRUE dungeon guardian to end the war.\n\nProgress: '+done+'/5 TRUE guardians defeated.',awakeningChecklist().map(x=>action(x.label,()=>{},x.detail,true)),back);}
-function acknowledgeAwakening(){game.s.awakeningAck=true;save();closeMenu();}
-function awakeningMenu(){const done=Campaign.dungeonIds.filter(id=>game.s.true[id]).length;openMenu('The Dungeons Awaken','The TRUE Dark Lord has fallen and will not return. His defeat has awakened the remaining TRUE guardians of the five great dungeons. Defeat every remaining TRUE dungeon guardian to end the war. Previously defeated TRUE guardians remain defeated.\n\nProgress: '+done+'/5 defeated.',[...awakeningChecklist().map(x=>action(x.label,()=>{},x.detail,true)),action('Continue',acknowledgeAwakening)],acknowledgeAwakening);}
-function characterMenu(){openMenu('Character','Hero progression only. Troops, resources and construction are managed at town Captains or your barracks.',[action('Skills and teachers',()=>skillBook(characterMenu)),action('Discipline Training',()=>talents(characterMenu))],openMain);}
-function saveMenu(){openMenu('Save and game management','Backups, reports and run management.',[action('Save run',()=>{save();closeMenu();}),action('Export save',()=>exportJSON(game.snapshot(),'Azeroth_Chronicles_'+game.s.mode+'.json')),action('Import save',()=>$('import-file').click()),action('Export playtest report',()=>exportJSON({version:'0.8.80-prototype',currency:'crowns',mode:game.s.mode,phase:game.s.phase,hero:game.hero,statistics:game.s.statistics},'Azeroth_Playtest_Report.json')),action('New Normal game',()=>chooseClass('normal')),action('New game in Nightmare Mode',()=>chooseClass('nightmare'),'Unlocked by the peaceful ending',!profile.nightmareUnlocked),action('Load other mode run',()=>{const mode=game.s.mode==='normal'?'nightmare':'normal';if(load(mode)){save();closeMenu();}else game.say('No saved '+mode+' run yet.');})],systemMenu);}
-function systemMenu(){openMenu('Game and settings','Controls, audio and save management.',[...(!runningAsApp()?[action('Install on phone',installApp,'Add Azeroth Chronicles to the home screen')]:[]),...(appRegistration?[action(appUpdateReady?'Install available game update':'Check for game update',updateApp)]:[]),action('Controls',()=>help(systemMenu)),action('Sound settings',()=>soundMenu(systemMenu)),action(paused?'Resume play':'Pause play',()=>{paused=!paused;closeMenu();}),action('Save and game management',saveMenu)],openMain);}
-function openMain(){const rank=game.s.expeditionRank||1,canBuild=!game.isDungeon()&&game.availableLabor().length>0,cost=game.barracksBuildCost(),costLabel=cost?cost+' crowns':'FREE';openMenu('Adventure menu','Global adventure functions. Troops, resources and construction are managed through town Captains and barracks.',[
- action('Map and travel routes',showMap),action('Quest journal',()=>quests(false)),action('Inventory and support',inventory),action('Character',characterMenu),...(canBuild?[action('Establish Basic Barracks · '+costLabel,()=>{if(game.build())closeMenu();},cost===0?'FIRST BARRACKS FREE · Creates a nearby companion recovery base':rank>=4?'One companion builds a Basic camp · optional Full upgrade costs 100 crowns':'One companion builds a recovery base; Full upgrade unlocks at Expedition 4',game.hero.gold<cost)]:[]),...(game.s.phase==='awakening'?[action('Awakening · Final objective',()=>finaleMenu(openMain),'TRUE dungeon guardians '+Campaign.dungeonIds.filter(id=>game.s.true[id]).length+'/5')]:[]),...(profile.nightmareUnlocked?[action('★ New Game — Nightmare Mode',()=>chooseClass('nightmare'),'Unlocked by the peaceful ending · Standard or Succession challenge')]:[]),action('Game and settings',systemMenu)]);}
-$('menu-button').onclick=e=>{if(desktopMouse(e))return;audio.unlock();if(!started)chooseClass('normal');else if(game.s.challenge.pending)successionMenu();else if(game.s.challenge.gameOver)gameOver();else openMain();};
-$('talent-button').onclick=e=>{if(desktopMouse(e))return;audio.unlock();if(started&&!game.s.challenge.pending&&!game.s.challenge.gameOver)talents();};
-function ending(){profile.nightmareUnlocked=true;persistProfile();openMenu('Peace for everyone','The evil is defeated. Every dungeon guardian has fallen. The war is over for people and creatures alike.\n\nCreatures are neutral and cannot harm or be harmed. The reclaimed dungeons are their homes.',[action('Continue in the peaceful world',()=>{game.s.endingAck=true;save();closeMenu();}),action('New game in Nightmare Mode',()=>{game.s.endingAck=true;save();chooseClass('nightmare');}),action('Export completed run',()=>exportJSON(game.snapshot(),'Azeroth_Chronicles_Completed.json'))]);}
-function successionMenu(){openMenu('Choose your successor','The '+game.hero.class+' has fallen permanently. The death penalty has already removed 20% of carried crowns; the remaining crowns, rescues, quests and boss progress survive. Your successor starts at level 1 in Millhaven and must learn their skills.',Object.entries(Campaign.classes).filter(([id])=>!game.s.challenge.fallen.includes(id)).map(([id,c])=>action(c.icon+' '+id+' successor',()=>{game.successor(id);save();closeMenu();})));}
-function gameOver(){openMenu('The last successor has fallen','All three classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.',[action('Export final run',()=>exportJSON(game.snapshot(),'Azeroth_Succession_Game_Over.json')),action('Start a new Normal run',()=>chooseClass('normal')),action('Start a new Nightmare run',()=>chooseClass('nightmare'),'',!profile.nightmareUnlocked)]);}
-$('import-file').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>5*1024*1024)throw Error('too large');const data=JSON.parse(await file.text()),candidate=data.version===2?Campaign.migrate(data):Campaign.restore(data);localStorage.setItem(saveKey(candidate.s.mode),JSON.stringify(candidate.snapshot()));game=candidate;started=true;profile.activeMode=game.s.mode;if(game.peace)profile.nightmareUnlocked=true;persistProfile();closeMenu();status('Imported successfully.');}catch(_){status('Invalid import. Your current run was kept intact.');}e.target.value='';};
-function nearestNPC(){return [...game.visibleNPCs(),...game.visibleResourceNodes(),...game.zone().buildings.map(b=>({...b,kind:'barracks',name:b.name||'Barracks'}))].filter(n=>Math.hypot(n.x-game.hero.x,n.y-game.hero.y)<115).sort((a,b)=>Math.hypot(a.x-game.hero.x,a.y-game.hero.y)-Math.hypot(b.x-game.hero.x,b.y-game.hero.y))[0];}
-function interact(){const n=nearestNPC();if(!n){game.say('Find a marked person or place nearby. Use the map.');return;}if(['rest','cage','bundle','landmark','dungeon','exit','fountain','resource','mini'].includes(n.kind)){game.interact(n);save();updateHUD();return;}if(n.kind==='barracks')barracksMenu(n);else if(n.kind==='teacher')teacher(n);else if(n.kind==='smith')smith(n);else if(n.kind==='supplier'||n.kind==='alchemist')supplier(n);else if(n.kind==='recruiter')partyMenu();else if(n.kind==='quests')quests(true);else if(n.kind==='transport'){if(n.hub){const destinations=game.hubDestinations();openMenu(n.name,'Borrow this Dark Crown route to any previously visited region. Every destination arrives directly in its main town.',destinations.map(target=>action('Travel to '+target.name,()=>{if(game.travelHub(target.id))closeMenu();},target.town)));}else{const i=game.regionIndex(),r=D.regions[i],target=D.regions[i+n.direction],cost=n.direction===1?(game.s.recovery[r.id]?0:r.fare):0;openMenu(n.name,'Fare '+cost+' crowns. Paid outbound travel includes free return. Health, mana and supplies are preserved.',[action('Travel to '+target.name,()=>{if(game.travel(n.direction))closeMenu();})]);}}}
-$('touch-interact-button').onclick=e=>{if(desktopMouse(e))return;audio.unlock();if(activePlay())interact();};
-function expeditionSupportActions(n,refresh){return Object.entries(Campaign.rules.expeditionSupportSkills).flatMap(([id,def])=>{const cap=def.trainers?.[n.family]||0;if(!cap)return [];const rank=game.expeditionSupportRank(id),next=rank+1;if(rank>=def.maxRank)return [action(def.name+' · Rank '+def.maxRank,()=>{},'100% inheritance · maximum rank',true)];if(rank>=cap){const nextTrainer=Object.entries(def.trainers).sort((a,b)=>a[1]-b[1]).find(([,limit])=>limit>rank)?.[0];return [action(def.name+' · Rank '+rank,()=>{},'This specialist trains through Rank '+cap+(nextTrainer?' · Next: '+game.boss(nextTrainer).captive:''),true)];}const cost=game.expeditionSupportCost(id),pct=Math.round(next/def.maxRank*100);return [action((rank?'Train ':'Learn ')+def.name+' · Rank '+next+' · '+cost+' crowns',()=>{game.trainExpeditionSupport(id,n.family);refresh();},pct+'% inheritance · '+def.detail,game.hero.gold<cost)];});}
-function teacher(n,back=closeMenu){const catalog=game.teacherCatalog(n.family),cap=catalog.maxRank,next=Object.keys(Campaign.rules.teachers).find(id=>Campaign.rules.teachers[id].maxRank>cap),expCap=game.expeditionInstructorCap(n.family),expRank=game.s.expeditionRank||1,expNext=expRank+1,expActions=expCap?[expRank<expCap?action('Train Expedition Skill · Rank '+expRank+' → '+expNext+' · FREE',()=>{game.trainExpedition(n.family);teacher(n,back);},game.expeditionUnlock(expNext)):action('Expedition Skill · Rank '+expRank,()=>{},expRank>=6?'Maximum Expedition rank':('This instructor trains Expedition through rank '+expCap),true)]:[],supportActions=expeditionSupportActions(n,()=>teacher(n,back));openMenu(n.name,(next?'Higher hero-skill ranks: rescue '+game.boss(next).captive+' in '+D.regions.find(r=>r.id===game.boss(next).region).name+'. ':'Maximum hero-skill training rank available here. ')+'Expedition Rank training is free. Hero skills and specialist companion-training skills use crowns.',[...expActions,...supportActions,...D.skills.filter(s=>game.hero.skills[s[0]-1]?catalog.train.includes(s[0]):catalog.learn.includes(s[0])).map(s=>{const rank=game.hero.skills[s[0]-1],cost=rank?s[5]*rank:s[3];return action((rank?'Train ':'Learn ')+s[1]+' · '+cost+' crowns',()=>{rank?game.upgrade(s[0],n.family):game.learn(s[0],n.family);teacher(n,back);},'Skill '+s[0]+' · Rank '+rank+' · Specialist cap '+cap,rank>=cap||game.hero.gold<cost);})],back);}
-function skillBook(back=closeMenu){const rank=game.s.expeditionRank||1,next=game.expeditionNextInstructor(rank),expDetail=rank>=6?'Maximum rank':next?'Next: '+game.boss(next).captive+' · '+game.expeditionUnlock(rank+1):'',support=Object.entries(Campaign.rules.expeditionSupportSkills).filter(([,def])=>Object.keys(def.trainers||{}).some(family=>game.s.rescued[family])).map(([id,def])=>{const r=game.expeditionSupportRank(id),cost=r<def.maxRank?game.expeditionSupportCost(id):0,best=game.expeditionSupportBestTrainer(id),nextProvider=best||Object.entries(def.trainers).sort((a,b)=>a[1]-b[1]).find(([,cap])=>cap>r)?.[0],provider=nextProvider?game.boss(nextProvider).captive:'';const pct=Math.round(r/def.maxRank*100);return action(r?def.name+' · Rank '+r:def.name+' · Not learned',()=>{},r>=def.maxRank?'100% inheritance · maximum':r?(pct+'% inheritance · next '+cost+' crowns'+(provider?' · '+provider:'')):('Learn Rank 1 · '+cost+' crowns'+(provider?' · '+provider:'')),true);}),companionAdvanced=(game.s.companionCombatTraining||1)>=2,companionLine=action('Companion combat skills · '+(companionAdvanced?'Advanced':'Core'),()=>{},companionAdvanced?'Soldier: Power Strike (8s) + Holy Cleave (12s) · Archer: Triple Shot (8s) + Piercing Volley (12s)':'Soldier: Power Strike · Archer: Triple Shot · Learn hero Skill 2 Rank 1 to unlock Holy Cleave and Piercing Volley',true);openMenu('Skills and teachers','Expedition Rank training is free. Hero skills and specialist companion-training skills use crowns; none require hero levels.',[action('Expedition Skill · Rank '+rank,()=>{},expDetail,true),...support,companionLine,...D.skills.filter(s=>game.skillRevealed(s[0])).map(s=>action('Skill '+s[0]+' '+s[1]+' · Rank '+game.hero.skills[s[0]-1],()=>{},s[0]===1?'Always available · same-target combo: 100% → 110% → 120% + frontal AoE · resets on target switch or 4s gap':s[0]===2?(s[3]+' crowns · '+game.boss(s[4]).captive+' · '+D.regions.find(r=>r.id===game.boss(s[4]).region).name+' · Rank 1 also teaches companion Holy Cleave and Piercing Volley'):s[3]+' crowns · '+game.boss(s[4]).captive+' · '+D.regions.find(r=>r.id===game.boss(s[4]).region).name,true))],back);}
-function supplier(n,back=closeMenu){const advanced=n.kind==='alchemist',vitalityRank=game.companionVitalityRank(),vitalityCost=game.companionVitalityCost(),respecCost=game.talentRespecCost(),spentTalents=(game.hero.talents||[]).reduce((sum,v)=>sum+v,0),healRank=game.rangerSupportRank('health'),manaRank=game.rangerSupportRank('mana'),healCost=game.rangerSupportCost('health'),manaCost=game.rangerSupportCost('mana');if(!advanced){openMenu(n.name,'Combat potions have been retired. Rangers now provide field Heal and Mana Recovery, so the supply shop no longer requires you to maintain potion stock.',[action('Ranger field support',()=>{},'Heal triggers automatically at 50% HP or less · Mana Recovery at 35% MP or less · H/M command them manually',true)],back);return;}openMenu(n.name,'Neri trains Ranger field support instead of selling health or mana potions. Training is permanent for every Ranger, including Rangers you recruit later.',[
- action(healRank>=2?'Ranger Heal · Rank 2 · MAX':'Upgrade Ranger Heal · Rank 2 · '+healCost+' crowns',()=>{game.trainRangerSupport('health',n.family);supplier(n,back);},healRank>=2?'Restores 150 HP over five seconds to one target · hero has priority · maximum training':'60 → 150 HP over five seconds to one target · same 10s per-Ranger Heal cooldown',healRank>=2||game.hero.gold<healCost),
- action(manaRank>=2?'Ranger Mana Recovery · Rank 2 · MAX':'Upgrade Ranger Mana Recovery · Rank 2 · '+manaCost+' crowns',()=>{game.trainRangerSupport('mana',n.family);supplier(n,back);},manaRank>=2?'Restores 100 MP over five seconds to the hero · maximum training':'40 → 100 MP over five seconds · same 10s per-Ranger Mana Recovery cooldown',manaRank>=2||game.hero.gold<manaCost),
- action('Train Companion Vitality · Rank '+(vitalityRank+1)+' · '+vitalityCost+' crowns',()=>{game.trainCompanionVitality(n.family);supplier(n,back);},'+10% companion max HP · current +'+(vitalityRank*10)+'% · repeatable without a gameplay cap',game.hero.gold<vitalityCost),
- action('Reset discipline training · '+respecCost+' crowns',()=>{game.resetTalents(n.family);supplier(n,back);},spentTalents?'Refund '+spentTalents+' spent training point'+(spentTalents===1?'':'s')+' · level, skills and equipment stay unchanged':'No spent training points to refund',!spentTalents||game.hero.gold<respecCost)
- ],back);}
-function smith(n,back=closeMenu){const tier={crypt:1,mine:2,abyss:3,cindermaw:4}[n.family],weapon=[0,100,450,1000,2000][tier],armor=[0,80,300,700,1200][tier],weaponBonus=[0,15,35,55,70][tier],armorBonus=[0,5,12,20,28][tier],currentWeapon=game.hero.weapon||0,currentArmor=game.hero.armorTier||0,weaponOwned=currentWeapon>=tier,armorOwned=currentArmor>=tier,weaponReforged=!!game.hero.reforges['weapon:'+tier],armorReforged=!!game.hero.reforges['armor:'+tier],equipmentMaxed=weaponOwned&&armorOwned&&(currentWeapon>tier||weaponReforged)&&(currentArmor>tier||armorReforged),supportActions=expeditionSupportActions(n,()=>smith(n,back)),equipmentStatus=equipmentMaxed?'EQUIPMENT SERVICE MAXED — you already own or have surpassed every equipment improvement this smith can offer. ':'Current equipment: weapon tier '+currentWeapon+' · armor tier '+currentArmor+'. ';openMenu(n.name,equipmentStatus+'Equipment replaces the earlier tier in its slot. Tier purchases are one-time; bonuses do not stack.'+(supportActions.length?' This specialist also teaches companion equipment inheritance.':''),[
- ...supportActions,
- action(weaponOwned?'Weapon tier '+tier+' · '+(currentWeapon===tier?'OWNED':'SURPASSED'):'Weapon tier '+tier+' · '+weapon+' crowns',()=>{game.gear(n.family,'weapon');smith(n,back);},'Current tier '+currentWeapon+' · +'+weaponBonus+' power'+(weaponOwned?' · one-time purchase already satisfied':''),weaponOwned||game.hero.gold<weapon),
- action(armorOwned?'Armor tier '+tier+' · '+(currentArmor===tier?'OWNED':'SURPASSED'):'Armor tier '+tier+' · '+armor+' crowns',()=>{game.gear(n.family,'armor');smith(n,back);},'Current tier '+currentArmor+' · +'+armorBonus+' armor'+(armorOwned?' · one-time purchase already satisfied':''),armorOwned||game.hero.gold<armor),
- action(currentWeapon===tier&&weaponReforged?'Reforge weapon · DONE':currentWeapon!==tier?'Reforge weapon · UNAVAILABLE':'Reforge weapon · '+Math.ceil(weapon/2)+' crowns',()=>{game.gear(n.family,'weapon',true);smith(n,back);},currentWeapon< tier?'Buy weapon tier '+tier+' first':currentWeapon>tier?'Current weapon tier '+currentWeapon+' has surpassed this forge':weaponReforged?'Already reforged at this tier':'+5 power once at this tier',currentWeapon!==tier||weaponReforged||game.hero.gold<Math.ceil(weapon/2)),
- action(currentArmor===tier&&armorReforged?'Reforge armor · DONE':currentArmor!==tier?'Reforge armor · UNAVAILABLE':'Reforge armor · '+Math.ceil(armor/2)+' crowns',()=>{game.gear(n.family,'armor',true);smith(n,back);},currentArmor< tier?'Buy armor tier '+tier+' first':currentArmor>tier?'Current armor tier '+currentArmor+' has surpassed this forge':armorReforged?'Already reforged at this tier':'+3 armor once at this tier',currentArmor!==tier||armorReforged||game.hero.gold<Math.ceil(armor/2))
- ],back);}
-function unitLabel(type){return type==='archer'?'Ranger':'Soldier';}
-function rosterLabel(u){const i=game.s.party.indexOf(u)+1;return unitLabel(u.type)+' #'+i;}
-function regionalSpecialistProgress(){
- const region=game.definition().id,bosses=D.bosses.filter(b=>b.region===region&&b.captive),missing=bosses.filter(b=>!game.s.rescued[b.id]),rescued=bosses.length-missing.length;
- const target=b=>b.kind==='dungeon'?b.place:b.name;
- const label=b=>{const parts=b.captive.split(' the ');return parts.length>1?parts[0]+' ('+parts.slice(1).join(' the ')+')':b.captive;};
- return {region,regionName:game.definition().name,bosses,missing,rescued,total:bosses.length,target,label};
-}
-function regionalSpecialistObjective(){
- const tutorial=game.s.quests['quest-barracks'];
- if(tutorial&&!tutorial.paid)return 'FIELD BASE · Build your first Barracks — FREE · Open Menu/Esc while in the field → Establish Basic Barracks. It gives companions a nearby recovery base.';
- const p=regionalSpecialistProgress();
- if(!p.total)return 'Rescue specialists, rebuild your strength and continue the campaign. Map: Z.';
- if(!p.missing.length)return p.region==='crown'&&!game.s.true.darklord?p.regionName+' specialists '+p.rescued+'/'+p.total+' rescued · FINAL OBJECTIVE · Reach the Dark fortress and defeat the Dark Lord. Map: Z.':p.regionName+' specialists '+p.rescued+'/'+p.total+' rescued · Continue the campaign. Map: Z.';
- const goals=p.missing.map(b=>'Rescue '+p.label(b)+(b.kind==='dungeon'?' in ':' from ')+p.target(b));
- return p.regionName+' specialists '+p.rescued+'/'+p.total+' · '+goals.join(' · ')+'. Map: Z.';
-}
-function regionalSpecialistBarracksDetail(){
- const p=regionalSpecialistProgress();
- if(!p.total)return 'No regional specialist objectives here.';
- if(!p.missing.length)return p.regionName+': '+p.rescued+'/'+p.total+' regional specialists rescued.';
- return p.regionName+': '+p.rescued+'/'+p.total+' rescued · Still captive: '+p.missing.map(b=>p.label(b)+' — '+p.target(b)).join('; ')+'.';
-}
-function barracksSpecialistMenu(b,back){const specialists=game.barracksSpecialists(),returnHere=()=>barracksSpecialistMenu(b,back),regional=regionalSpecialistBarracksDetail();openMenu('Rescued specialists',regional+' Rescued specialists work from your barracks. More advanced specialists replace older redundant services.',specialists.length?specialists.map(s=>action(s.name,()=>{const n={...s};s.kind==='teacher'?teacher(n,returnHere):s.kind==='smith'?smith(n,returnHere):supplier(n,returnHere);})): [action('No specialists rescued yet',()=>{},regional,true)],back);}
-function barracksRecoveryMenu(b,back){const wounded=game.s.party.some(u=>u.hp>0&&u.hp<u.maxHp),fallen=game.s.party.some(u=>u.hp<=0);openMenu('Recovery','Basic barracks recovery is available from Expedition Rank 1.',[
- action('Treat wounded companions · 30 crowns',()=>{game.treatCompanions();barracksRecoveryMenu(b,back);},'Restores every living wounded companion to full health',!wounded||game.hero.gold<30||game.refugeThreat()),
- action('Recover fallen companion · 40 crowns',()=>{game.recover();barracksRecoveryMenu(b,back);},'Restores one fallen companion at full health',!fallen||game.hero.gold<40)
- ],back);}
-function barracksRecruitmentMenu(b,back){const queueName=b.queue>0?unitLabel(b.queueType||'soldier'):null;openMenu('Recruitment',(queueName?'Training '+queueName+' · '+b.queue.toFixed(1)+'s remaining':'Recruit as many companions as you want')+'. New recruits join the active group if this barracks can support another slot; otherwise they rest in reserve.',[
- ...[['soldier','Soldier'],['archer','Ranger']].map(([type,label])=>{const price=game.barracksRecruitPrice(type);return action('Recruit '+label+' · '+price+' crowns',()=>{game.train(b.id,type);barracksRecruitmentMenu(b,back);},b.queue>0?'Barracks queue occupied':'Barracks rate',b.queue>0||game.hero.gold<price);})
- ],back);}
-function barracksLaborMenu(b,back){const nodes=game.visibleResourceNodes(),hidden=game.hiddenTributeNodes(),actions=nodes.map(n=>action('Recover Dark Lord Tribute · '+(n.siteName||n.name),()=>{game.gather(n.id);closeMenu();},Math.floor(n.amount)+' crowns remaining · '+(n.context||'recovered tribute')));if(hidden.length)actions.push(action('Search for hidden Dark Lord Tribute',()=>{game.scoutTribute();barracksLaborMenu(b,back);},hidden.length+' undiscovered source'+(hidden.length===1?'':'s')+' remain · scouts reveal locations, not their value'));openMenu('Resources & labor','Companions recover tribute intended for the Dark Lord and return its value to the resistance economy. Exact amounts are managed here; hidden sources must be located by expedition scouts.',actions.length?actions:[action('No remaining regional tribute',()=>{},'All known and hidden Dark Lord Tribute in this region has been recovered.',true)],back);}
-function barracksGroupMenu(b,back){const active=game.activeParty().length,cap=game.barracksFieldCap(b),threat=game.refugeThreat(),actions=game.s.party.map(u=>u.active!==false?action('Rest '+rosterLabel(u),()=>{game.restCompanion(u.id);barracksGroupMenu(b,back);},u.hp>0?'With you · '+Math.ceil(u.hp)+'/'+u.maxHp+' HP':'With you · FALLEN',threat):action('Add '+rosterLabel(u)+' to group',()=>{game.activateCompanion(u.id,b.id);barracksGroupMenu(b,back);},u.hp<=0?'Resting · FALLEN — recover first':'Resting · '+Math.ceil(u.hp)+'/'+u.maxHp+' HP',u.hp<=0||active>=cap||threat));openMenu('Manage group','With you '+active+'/'+cap+' · Employed '+game.rosterCount()+'. '+(!b.full&&(game.s.expeditionRank||1)>=4?'Basic barracks support at most 3 active companions. Upgrade it to use your higher Expedition cap.':''),actions.length?actions:[action('No companions employed',()=>{},'',true)],back);}
-function barracksCompanyMenu(b,back){const returnHere=()=>barracksCompanyMenu(b,back),rank=game.s.expeditionRank||1,active=game.activeParty().length,cap=game.barracksFieldCap(b),fallen=game.s.party.filter(u=>u.hp<=0).length;openMenu('Company','Recruit, recover and choose who travels with you.',[
- action('Manage active group',()=>barracksGroupMenu(b,returnHere),'With you '+active+'/'+cap+' · employed '+game.rosterCount()),
- rank>=2?action('Recruit companions',()=>barracksRecruitmentMenu(b,returnHere),'Soldier 60 crowns · Ranger 85 crowns · extra hires rest in reserve'):action('Recruitment — Expedition 2',()=>{},'Rescue Mira and train Expedition to Rank 2',true),
- action('Recovery',()=>barracksRecoveryMenu(b,returnHere),fallen?fallen+' fallen · treat wounded or recover fallen':'Treat wounded · recover fallen')
- ],back);}
-function barracksOperationsMenu(b,back){const returnHere=()=>barracksOperationsMenu(b,back),rank=game.s.expeditionRank||1;openMenu('Operations','Regional objectives, routes and expedition labor.',[
- action('Regional map and routes',()=>showMap(returnHere)),
- action('Local objectives',()=>quests(true,returnHere)),
- rank>=2?action('Resources & labor',()=>barracksLaborMenu(b,returnHere),'Assign idle active troops · full barracks is a deposit point'):action('Resources — Expedition 2',()=>{},'Rescue Mira and train Expedition to Rank 2',true),
- ...(game.s.phase==='awakening'?[action('Awakening · Final objective',()=>finaleMenu(returnHere),'TRUE dungeon guardians '+Campaign.dungeonIds.filter(id=>game.s.true[id]).length+'/5')]:[])
- ],back);}
-function expeditionBarracksAction(b,back){const rank=game.s.expeditionRank||1;if(rank>=6)return action('Expedition Skill · Rank 6',()=>{},'Maximum rank · active group 6',true);const trainer=game.expeditionTrainer(),next=rank+1;if(trainer)return action('Train Expedition Skill · Rank '+rank+' → '+next+' · FREE',()=>{game.trainExpedition(trainer);barracksMenu(b,back);},game.expeditionUnlock(next));const need=game.expeditionNextInstructor(rank);return action('Expedition Skill · Rank '+rank,()=>{},need?'Next: rescue '+game.boss(need).captive+' → Rank '+next+' · '+game.expeditionUnlock(next):'',true);}
-function barracksMenu(ref,back=closeMenu){const b=game.zone().buildings.find(x=>x.id===ref.id);if(!b){game.say('That barracks is no longer available.');return;}if(b.progress<4){const assigned=game.activeLivingParty().some(u=>u.order?.type==='build'&&u.order.id===b.id),canAssign=!assigned&&game.availableLabor().length>0;openMenu('Barracks under construction','The hero keeps watch while one companion builds. Progress '+Math.floor(b.progress)+'/4. Recall cancels labor without losing progress.',assigned?[action('Construction in progress',()=>{},'One companion is building.',true)]:canAssign?[action('Assign companion to construction',()=>{if(game.assignBuilder(b.id))closeMenu();},'Uses one idle active Soldier or Ranger')]:[action('No idle companion available',()=>{},'Recall or finish another labor assignment first.',true)],back);return;}
- const rank=game.s.expeditionRank||1,returnHere=()=>barracksMenu(b,back),specialists=game.barracksSpecialists(),exp=expeditionBarracksAction(b,back),rank2=rank>=2,baseActions=[
-  exp,
-  action('Rescued specialists',()=>barracksSpecialistMenu(b,returnHere),(specialists.length?'Use '+specialists.length+' rescued specialist'+(specialists.length===1?'':'s')+' here · ':'')+regionalSpecialistBarracksDetail()),
-  action('Recovery',()=>barracksRecoveryMenu(b,returnHere),'Treat wounded · recover fallen'),
-  action('Manage group',()=>barracksGroupMenu(b,returnHere),'With you '+game.activeParty().length+'/'+game.barracksFieldCap(b)+' · employed '+game.rosterCount()),
-  rank2?action('Recruitment',()=>barracksRecruitmentMenu(b,returnHere),'Soldier 60 crowns · Ranger 85 crowns · extra hires rest in reserve'):action('Recruitment — Expedition 2',()=>{},'Rescue Mira and train Expedition to Rank 2',true),
-  rank2?action('Resources & labor',()=>barracksLaborMenu(b,returnHere),'Assign idle active troops to regional deposits'):action('Resources — Expedition 2',()=>{},'Rescue Mira and train Expedition to Rank 2',true)
- ];
- if(!b.full){const upgrading=game.activeLivingParty().some(u=>u.order?.type==='upgrade'&&u.order.id===b.id),canUpgrade=rank>=4;if(canUpgrade)baseActions.push(upgrading?action('Full Barracks upgrade in progress',()=>{},'Progress '+Math.floor(b.upgradeProgress||0)+'/4',true):action((b.upgradePaid?'Resume Full Barracks upgrade':'Upgrade to Full Barracks · 100 crowns'),()=>{game.upgradeBarracks(b.id);barracksMenu(b,back);},'Optional upgrade · required only for active groups above 3 · becomes a resource deposit · unlocks full operations',!game.availableLabor().length||(!b.upgradePaid&&game.hero.gold<100)));else baseActions.push(action('Full Barracks — Expedition 4',()=>{},'Supports active groups above 3 · resource deposit · full operations',true));openMenu('Basic Barracks',game.definition().name+' · cheap recovery and expedition base.',baseActions,back);return;}
- openMenu('Full Barracks',game.definition().name+' field base · '+game.activeParty().length+'/'+game.barracksFieldCap(b)+' with you · '+game.rosterCount()+' employed.',[
-  exp,
-  action('Company',()=>barracksCompanyMenu(b,returnHere),'Recruit · active group · recovery'),
-  action('Rescued specialists',()=>barracksSpecialistMenu(b,returnHere),(specialists.length?specialists.length+' available here · ':'')+regionalSpecialistBarracksDetail()),
-  action('Operations',()=>barracksOperationsMenu(b,returnHere),'Map · objectives · resources'),
-  action('Inventory & support',()=>inventory(returnHere),'Ranger support and equipment')
- ],back);}
-function inventory(back=closeMenu){const rangers=game.activeLivingParty().filter(u=>u.type==='archer'),heal=game.rangerSupportAmount('health'),mana=game.rangerSupportAmount('mana');openMenu('Inventory','Crowns '+Math.floor(game.hero.gold)+' · Weapon tier '+game.hero.weapon+' · Armor tier '+game.hero.armorTier+'\nCrowns are the official currency of the Dark Lord’s regime.',[action('Ranger Heal · '+heal+' HP',()=>{},rangers.length?rangers.length+' active Ranger'+(rangers.length===1?'':'s')+' · combat: auto at ≤50% HP · out of combat: tops off injured allies · hero priority · command with H':'No active Ranger · recruit or activate one for field healing',true),action('Ranger Mana Recovery · '+mana+' MP',()=>{},rangers.length?rangers.length+' active Ranger'+(rangers.length===1?'':'s')+' · automatic at hero ≤35% MP · command with M':'No active Ranger · recruit or activate one for field mana recovery',true),...Object.keys(Campaign.legacyWeapons).filter(name=>game.s.legacyInventory?.includes(name)).map(name=>action('Equip '+name,()=>{game.equipLegacy(name);inventory(back);},'Saved weapon · +'+Campaign.legacyWeapons[name]+' power')), ...(game.hero.weapon?[action('Equip current weapon tier '+game.hero.weapon,()=>{game.hero.legacyEquipped=false;inventory(back);})]:[])],back);}
-function recallSquad(){game.recallParty();updateHUD();}
-function townRecruitmentMenu(back){const rank=game.s.expeditionRank||1,atLimit=game.rosterCount()>=3,actions=[];if(rank<2)actions.push(action('Recruitment — Expedition 2 required',()=>{},'Rescue Mira and train Expedition to Rank 2',true));else if(atLimit)actions.push(action('Town recruitment limit reached',()=>{},'Further recruiting requires a barracks.',true));else actions.push(...[['soldier','Soldier',70],['archer','Ranger',100]].map(([type,label,price])=>action('Recruit '+label+' · '+price+' crowns',()=>{game.recruit(type);townRecruitmentMenu(back);},'Town can employ only the first 3 companions',game.hero.gold<price)));actions.push(action('Recover fallen companion · 40 crowns',()=>{game.recover();townRecruitmentMenu(back);},'',!game.s.party.some(u=>u.hp<=0)||game.hero.gold<40));openMenu('Town recruitment','Town recruitment stops at 3 total employed companions, including resting or fallen ones. Build a barracks for further hiring.',actions,back);}
-function townLaborMenu(back){const rank=game.s.expeditionRank||1,nodes=game.zone().nodes.filter(n=>n.amount>0),canBuild=!game.isDungeon()&&game.availableLabor().length>0,cost=game.barracksBuildCost(),costLabel=cost?cost+' crowns':'FREE',actions=[];if(canBuild)actions.push(action('Establish Basic Barracks · '+costLabel,()=>{game.build();townLaborMenu(back);},cost===0?'First barracks is free · establishes nearby companion recovery':rank>=4?'Basic camp · optional Full upgrade 100 crowns':'Basic recovery base; Full upgrade unlocks at Expedition 4',game.hero.gold<cost));if(rank>=2)actions.push(...nodes.map(n=>action('Gather '+n.name+' '+n.icon,()=>{game.gather(n.id);closeMenu();},Math.floor(n.amount)+' crowns remaining · assigns all idle active troops')));else actions.push(action('Resources — Expedition 2 required',()=>{},'Rescue Mira and train Expedition to Rank 2',true));openMenu('Construction & resources','The hero does not build. One active companion provides construction labor.',actions,back);}
-function partyMenu(back=closeMenu){const title=game.definition().town+' Captain',returnHere=()=>partyMenu(back);openMenu(title,'Town services cover the starter expedition. For a larger roster: build a barracks.',[
- action('Recruitment & recovery',()=>townRecruitmentMenu(returnHere),game.rosterCount()>=3?'3+ employed · further recruiting requires a barracks':'Town hiring limit: 3 total companions'),
- action('Construction & resources',()=>townLaborMenu(returnHere),game.barracksBuildCost()===0?'First barracks FREE · companion recovery base':'Basic barracks 20 crowns · Full upgrade optional at Expedition 4')
- ],back);}
-function formatTrainingNumber(n){return Number(n.toFixed(2)).toString();}
-function disciplineEffect(i){const p=game.talentProfile();if(i===0)return 'Each rank: +'+p.power+' Power';if(i===1)return 'Each rank: +'+formatTrainingNumber(p.mana*.125)+' MP/s in combat · +'+formatTrainingNumber(p.mana*.25)+' MP/s out of combat';if(i===2)return 'Each rank: +'+p.hp+' maximum HP';return 'Each rank: +'+p.speed+' movement speed';}
-function freeTalentResetMenu(back=closeMenu){const left=game.hero.freeTalentResets||0;openMenu('Free training reset','Refund every spent training point. This uses one of this hero’s two free resets.',[action('Confirm reset · '+left+' free left',()=>{if(game.freeResetTalents())talents(back);},'All spent training points are refunded.')],()=>talents(back));}
-function talents(back=closeMenu){const names=['Power Training','Mana Training','Health Training','Movement Training'],spent=game.talentSpent(),left=game.hero.freeTalentResets||0,actions=names.map((name,i)=>action(name+' · Rank '+game.hero.talents[i]+'/'+game.talentMaxRank(i),()=>{game.talent(i);talents(back);},disciplineEffect(i)));actions.push(action('Reset discipline training · FREE · '+left+' left',()=>freeTalentResetMenu(back),spent?'Refund all spent training points.':left?'Spend at least one point before resetting.':'Free resets exhausted.',!spent||!left));openMenu('Discipline Training','Available training points '+game.hero.talentPoints+' · One point raises one discipline by one rank.',actions,back);}
-function quests(atBoard,back=closeMenu){const local=atBoard?game.questDefs().filter(q=>q.region===game.definition().id):game.questDefs();openMenu(atBoard?'Local quests':'Quest journal',atBoard?'All local quests are already ACTIVE. Rewards are automatically delivered as soon as their objectives are completed.':'All quests begin active automatically. Rewards are delivered immediately on completion; no return trip is required.',local.map(q=>{const p=game.s.quests[q.id],reward=q.tutorial?'Tutorial':q.gold+' crowns / '+q.xp+' XP';return action(q.name+' · '+(p?.paid?'Complete':p?.closedByPeace?'Resolved by peace':'ACTIVE'),()=>{},q.objective+' · '+reward+' · '+game.questProgress(q));}),back);}
-function soundMenu(back=closeMenu){const s=audio.settings;openMenu('Music and sound','Independent volumes. Preferences survive new games.',[action(s.muted?'Unmute all sound':'Mute all sound',()=>{audio.setSettings({muted:!s.muted});profile.audio={...audio.settings};persistProfile();soundMenu(back);}),...['master','music','ambience','effects'].flatMap(key=>[action(key+' − · '+Math.round(s[key]*100)+'%',()=>{audio.setSettings({[key]:s[key]-.1});profile.audio={...audio.settings};persistProfile();soundMenu(back);}),action(key+' +',()=>{audio.setSettings({[key]:s[key]+.1});profile.audio={...audio.settings};persistProfile();soundMenu(back);})])],back);}
-function showMap(back=closeMenu){
- const r=game.definition(),room=game.supplyRoom(),side=game.sideDungeon(),rawNpcs=game.visibleNPCs(),mapNpcs=game.isDungeon()?rawNpcs:rawNpcs.filter(n=>!['supplier','recruiter','quests','teacher','smith','alchemist','cage','bundle'].includes(n.kind)).map(n=>n.kind==='rest'&&n.id==='rest'?{...n,name:r.town,icon:'🏘️'}:n),fieldTrue=game.zone().enemies.filter(e=>e.hp>0&&e.type==='boss'&&e.form==='true'&&((game.boss(e.family)?.kind==='field'||e.family==='darklord')||e.family==='darklord')).map(e=>({...e,kind:'trueboss',icon:'⚔️'})),fieldBases=game.zone().buildings.map(b=>({...b,kind:'barracks',name:b.name||'Barracks',icon:b.progress<4?'🏗️':'🏕️'})),targets=[...fieldTrue,...mapNpcs,...fieldBases];
- openMenu((room?.name||side?.name||r.name)+' map',r.biome+'\nTransport: '+D.regions.map(r=>r.name).join(' → ')+'\nNamed places are destinations; tribute values and labor assignments belong in Barracks Operations.',targets.map(n=>{const boss=game.boss(n.family);return action(n.icon+' '+n.name,()=>{game.hero.order={type:'move',x:n.x,y:n.y};closeMenu();},Math.round(n.x)+', '+Math.round(n.y)+(n.kind==='trueboss'?' · TRUE boss hunt target':n.kind==='barracks'?(n.progress<4?' · Barracks under construction':' · Regional field base'):n.kind==='landmark'||n.sideDungeon?' · '+game.siteDescription(n):n.kind==='dungeon'&&boss?.kind==='dungeon'&&game.s.phase==='awakening'?' · '+(game.s.true[n.family]?'TRUE defeated':game.s.normal[n.family]?'TRUE awakened — challenge it':'Normal boss still alive — defeat it first'):n.kind==='mini'?' · '+game.miniStatus(n.mini):n.hub?' · Crown travel hub — direct town travel to previously visited regions':''));}),back);
- const map=document.createElement('canvas');map.width=420;map.height=280;const ctx=map.getContext('2d'),size=game.zoneSize(),sx=x=>x/size*420,sy=y=>y/size*280;
- ctx.fillStyle=D.colors[game.regionIndex()];ctx.fillRect(0,0,420,280);ctx.strokeStyle='#e0ddb21b';ctx.lineWidth=1;for(let x=35;x<420;x+=35){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,280);ctx.stroke();}for(let y=35;y<280;y+=35){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(420,y);ctx.stroke();}
- for(let x=0;x<size;x+=50)for(let y=0;y<size;y+=50)if(game.blocked(x,y,game.zoneId,0)){ctx.fillStyle=game.isDungeon()?'#78807d':'#355d72';ctx.fillRect(sx(x),sy(y),sx(50)+1,sy(50)+1);}
- ctx.strokeStyle='#d9c898';ctx.lineWidth=2;for(const road of game.zone().roads||[]){ctx.beginPath();road.forEach((p,j)=>j?ctx.lineTo(sx(p.x),sy(p.y)):ctx.moveTo(sx(p.x),sy(p.y)));ctx.stroke();}
- for(const n of [...mapNpcs,...game.zone().buildings.map(b=>({...b,kind:'barracks'}))]){const x=sx(n.x),y=sy(n.y);ctx.fillStyle=n.kind==='dungeon'||n.kind==='exit'?'#a9d4c6':n.kind==='barracks'?'#d7bd86':'#f2e4b9';ctx.strokeStyle='#162a25';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(x,y,n.kind==='barracks'?5:3.5,0,Math.PI*2);ctx.fill();ctx.stroke();}
- for(const e of game.zone().enemies.filter(e=>e.hp>0&&e.type==='boss')){ctx.fillStyle=e.neutral?'#aed6a0':'#e87b7b';ctx.fillRect(sx(e.x)-2,sy(e.y)-2,5,5);}
- ctx.strokeStyle='#fff2bd';ctx.lineWidth=2;ctx.beginPath();ctx.arc(sx(game.hero.x),sy(game.hero.y),6,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(sx(game.hero.x)-8,sy(game.hero.y));ctx.lineTo(sx(game.hero.x)+8,sy(game.hero.y));ctx.moveTo(sx(game.hero.x),sy(game.hero.y)-8);ctx.lineTo(sx(game.hero.x),sy(game.hero.y)+8);ctx.stroke();ctx.strokeStyle='#e2cf9a';ctx.strokeRect(1,1,418,278);$('modal-description').append(map);
-}
-$('squad-button').onclick=e=>{if(desktopMouse(e))return;audio.unlock();if(activePlay()&&game.toggleSquadDoctrine())updateHUD();};$('recall-button').onclick=e=>{if(desktopMouse(e))return;audio.unlock();if(activePlay()){recallSquad();save();}};$('order-button').onclick=e=>{if(desktopMouse(e))return;audio.unlock();if(menu)buttons[menuIndex]?.click();};
-const skillNames=['Basic attack','Second attack','Self-Heal','Defense or mobility','Area attack','Frequent special','Advanced special','Final special'],icons=['ATK','HIT','HEAL','GUARD','AREA','CAST','BURST','FINAL'],skillKeys=['1','2','3','4','5','Space','Shift','B'],chargeableSlots=new Set([1,2,3]);
-function chargeSeconds(){return PrototypeRules.chargedSkills?.holdSeconds||.65;}
-function chargeTapSeconds(){return PrototypeRules.chargedSkills?.tapSeconds||.20;}
-function chargedManaPercent(slot){return Math.round((PrototypeRules.chargedSkills?.manaFractions?.[slot]||0)*100);}
-function cooldownText(seconds){return (Math.ceil(Math.max(0,seconds)*10)/10).toFixed(1);}
-function chargedTargetRange(slot){if(slot===2){const def=PrototypeRules.chargedSkills?.second?.[game.hero.class];return def?.range||480;}if(slot===1)return game.hero.class==='paladin'?120:game.hero.class==='mage'?400:450;return 0;}
-function chargeTarget(slot,targetId=null){if(slot!==1&&slot!==2)return null;const range=chargedTargetRange(slot),valid=game.zone().enemies.filter(e=>e.hp>0&&!e.neutral&&Math.hypot(e.x-game.hero.x,e.y-game.hero.y)<=range&&game.line(game.hero,e));if(targetId!==null&&targetId!==undefined)return valid.find(e=>e.id===targetId)||null;const preferred=valid.find(e=>e.id===game.s.heroTarget);return preferred||valid.sort((a,b)=>Math.hypot(a.x-game.hero.x,a.y-game.hero.y)-Math.hypot(b.x-game.hero.x,b.y-game.hero.y))[0]||null;}
-function chargeHealNeeded(){return [game.hero,...game.activeLivingParty()].some(u=>u.hp>0&&u.hp<u.maxHp);}
-function startChargeClock(){if(!charge||charge.started!==null)return false;charge.started=performance.now();if(charge.slot===1||charge.slot===2)charge.targetId=chargeTarget(charge.slot)?.id??null;return true;}
-function syncChargeReady(){if(!charge||charge.started!==null||!activePlay())return false;if(game.hero.cd[charge.slot-1]<=0)return startChargeClock();return false;}
-function chargePresentation(){if(!charge)return null;syncChargeReady();const rank=game.hero.skills[charge.slot-1],cost=game.skillManaCost(charge.slot,rank,true),enoughMana=game.hero.mp>=cost,color=game.hero.class==='mage'?'#9fd8ff':game.hero.class==='ranger'?'#cfe59a':'#f6d77a';if(charge.started===null)return {slot:charge.slot,state:'waiting',elapsed:0,progress:0,ready:false,waiting:true,cooldown:game.hero.cd[charge.slot-1],cost,enoughMana,targetId:charge.targetId??null,color};const elapsed=Math.max(0,(performance.now()-charge.started)/1000),progress=Math.min(1,elapsed/chargeSeconds());if(progress<1)return {slot:charge.slot,state:'charging',elapsed,progress,ready:false,waiting:false,cooldown:0,cost,enoughMana,targetId:charge.targetId??null,color};if(!enoughMana)return {slot:charge.slot,state:'need-mp',elapsed,progress,ready:false,waiting:false,cooldown:0,cost,enoughMana:false,targetId:charge.targetId??null,color};if((charge.slot===1||charge.slot===2)&&!chargeTarget(charge.slot,charge.targetId))return {slot:charge.slot,state:'no-target',elapsed,progress,ready:false,waiting:false,cooldown:0,cost,enoughMana:true,targetId:charge.targetId??null,color};if(charge.slot===3&&!chargeHealNeeded())return {slot:charge.slot,state:'no-heal',elapsed,progress,ready:false,waiting:false,cooldown:0,cost,enoughMana:true,targetId:null,color};return {slot:charge.slot,state:'ready',elapsed,progress,ready:true,waiting:false,cooldown:0,cost,enoughMana:true,targetId:charge.targetId??null,color};}
-function beginCharge(slot,source,pointerId=null){const rank=game.hero.skills[slot-1];if(!chargeableSlots.has(slot)||!activePlay()||!rank||game.peace)return false;if(charge)cancelCharge();const queued=game.hero.cd[slot-1]>0;charge={slot,source,pointerId,queued,started:null,targetId:null};if(!queued)startChargeClock();updateHUD();return true;}
-function chargeFailureStatus(slot,charged){const rank=game.hero.skills[slot-1],cost=game.skillManaCost(slot,rank,charged);if(game.hero.cd[slot-1]>0){status('Skill '+slot+' is ready in '+cooldownText(game.hero.cd[slot-1])+'s.');return;}if(game.hero.mp<cost){status((charged?'Charged ':'')+'Skill '+slot+' needs '+cost+' MP'+(charged?' ('+chargedManaPercent(slot)+'% max MP).':'.'));return;}if(slot===1||slot===2){status((charged?'Charged ':'')+'Skill '+slot+' needs a hostile target in range and line of sight.');return;}if(slot===3){status((charged?'Charged ':'')+'Self-Heal needs a wounded '+(charged?'hero or active companion.':'hero.'));}}
-function chargeStateStatus(cast){if(cast.state==='need-mp'){status('Charged Skill '+cast.slot+' needs '+cast.cost+' MP ('+chargedManaPercent(cast.slot)+'% max MP).');return;}if(cast.state==='no-target'){status('Charged Skill '+cast.slot+' lost its target · move into range or line of sight and charge again.');return;}if(cast.state==='no-heal'){status('Charged Self-Heal has no wounded hero or active companion to heal.');}}
-function releaseCharge(slot,source){if(!charge||charge.slot!==slot||charge.source!==source)return false;syncChargeReady();if(charge.started===null){const remaining=game.hero.cd[slot-1];charge=null;status('Skill '+slot+' is ready in '+cooldownText(remaining)+'s. Hold through the cooldown to queue the charge.');updateHUD();return false;}const held=(performance.now()-charge.started)/1000,wasQueued=charge.queued,targetId=charge.targetId;if(held<chargeSeconds()){const quickTap=!wasQueued&&held<chargeTapSeconds();charge=null;if(!quickTap){status('Skill '+slot+' charge canceled safely.');updateHUD();return false;}const cast=activePlay()&&game.cast(slot,undefined,false);if(!cast&&activePlay())chargeFailureStatus(slot,false);updateHUD();return cast;}const state=chargePresentation();if(!state.ready){charge=null;chargeStateStatus(state);updateHUD();return false;}charge=null;const cast=activePlay()&&game.cast(slot,(slot===1||slot===2)?targetId:undefined,true);if(!cast&&activePlay())chargeFailureStatus(slot,true);updateHUD();return cast;}
-function cancelCharge(){if(!charge)return;charge=null;if(started)updateHUD();}
-for(let i=0;i<8;i++){const slot=i+1,b=document.createElement('button');b.id='skill-'+slot;b.setAttribute('aria-label','Skill '+slot+' '+skillNames[i]);b.innerHTML=icons[i]+'<small>'+skillKeys[i]+'</small>';if(chargeableSlots.has(slot)){b.onclick=e=>e?.preventDefault?.();b.onpointerdown=e=>{if(desktopMouse(e)||e?.pointerType==='mouse')return;audio.unlock();if(beginCharge(slot,'touch',e?.pointerId??null))b.setPointerCapture?.(e.pointerId);};b.onpointerup=e=>{if(e?.pointerType==='mouse')return;releaseCharge(slot,'touch');};b.onpointercancel=b.onlostpointercapture=e=>{if(charge?.source==='touch'&&(charge.pointerId===null||charge.pointerId===e?.pointerId))cancelCharge();};}else b.onclick=e=>{if(desktopMouse(e))return;audio.unlock();if(activePlay())game.cast(slot);};$('skills').append(b);}
-function useRangerSupport(type){if(!activePlay())return;audio.unlock();if(game.rangerSupport(type,true)){updateHUD();save();}}
-const quickItems=document.createElement('div');quickItems.id='quick-items';for(const [type,label,key]of [['health','Heal','H'],['mana','Mana Regen','M']]){const b=document.createElement('button');b.id=type+'-potion';b.className='potion-button';b.setAttribute('aria-label','Command Ranger '+label+' ('+key+')');b.onclick=e=>{if(desktopMouse(e))return;useRangerSupport(type);};quickItems.append(b);}$('skills').append(quickItems);
-addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey)return;audio.unlock();const code=e.code;if(['Space','Tab','Escape'].includes(code))e.preventDefault();if(code==='Escape'){if(menu)menu.back();else if(!started)chooseClass('normal');else if(game.s.challenge.pending)successionMenu();else if(game.s.challenge.gameOver)gameOver();else openMain();return;}if(menu){if(e.repeat)return;if(['KeyS','KeyD'].includes(code)){menuIndex=(menuIndex+1)%Math.max(1,buttons.length);highlight();}else if(['KeyW','KeyA'].includes(code)){menuIndex=(menuIndex-1+buttons.length)%Math.max(1,buttons.length);highlight();}else if(['KeyF','Enter','Space'].includes(code))buttons[menuIndex]?.click();return;}if((paused||!focused||document.hidden)&&!['KeyP','KeyV','KeyG'].includes(code))return;keys[code]=true;if(code==='KeyQ')Sprint.press('keyboard',true);if(e.repeat)return;if(code==='Tab'){game.toggleSquadDoctrine();updateHUD();}else if(code==='KeyE'||code==='KeyF')interact();else if(code==='Backquote'){recallSquad();save();}else if(code==='KeyP'||code==='KeyV'){paused=!paused;clearInput();}else if(code==='KeyZ')showMap();else if(code==='KeyI'||code==='KeyR')inventory();else if(code==='KeyH')useRangerSupport('health');else if(code==='KeyM')useRangerSupport('mana');else if(code==='KeyC')talents();else if(code==='KeyX')skillBook();else if(code==='KeyG')help();else if(code==='KeyJ'||code==='KeyT')quests(false);else{const num=/Digit([1-5])/.exec(code)?.[1]||({Space:6,ShiftLeft:7,KeyB:8}[code]);if(num){const slot=Number(num);if(chargeableSlots.has(slot))beginCharge(slot,'keyboard');else game.cast(slot);}}});
-addEventListener('keyup',e=>{delete keys[e.code];if(e.code==='KeyQ')Sprint.press('keyboard',false);const slot=/Digit([123])/.exec(e.code)?.[1];if(slot)releaseCharge(Number(slot),'keyboard');});
-const joystick=$('joystick');let pointer=null,menuJoyTime=0;function joyUpdate(e){const r=joystick.getBoundingClientRect(),dx=(e.clientX-r.left-r.width/2)/(r.width*.4),dy=(e.clientY-r.top-r.height/2)/(r.height*.4),n=Math.max(1,Math.hypot(dx,dy));joy={x:dx/n,y:dy/n};$('stick').style.transform='translate('+joy.x*24+'px,'+joy.y*24+'px)';}
-joystick.onpointerdown=e=>{if(e.pointerType==='mouse'||pointer!==null)return;e.preventDefault();audio.unlock();pointer=e.pointerId;joystick.setPointerCapture(pointer);joyUpdate(e);};joystick.onpointermove=e=>{if(e.pointerId===pointer)joyUpdate(e);};joystick.onpointerup=joystick.onpointercancel=joystick.onlostpointercapture=e=>{if(e.pointerId===pointer){pointer=null;joy={x:0,y:0};$('stick').style.transform='';}};
-canvas.onpointermove=null;canvas.onpointerdown=e=>{if(e.pointerType==='mouse')e.preventDefault();};addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'||!activePlay())return;if(e.button===0){e.preventDefault();useRangerSupport('health');}else if(e.button===2){e.preventDefault();useRangerSupport('mana');}},true);addEventListener('contextmenu',e=>{if(activePlay())e.preventDefault();});
-addEventListener('blur',()=>{focused=false;clearInput();save();audio.setPaused(true);});addEventListener('focus',()=>{focused=true;last=performance.now();});document.addEventListener('visibilitychange',()=>{clearInput();last=performance.now();if(document.hidden){save();audio.setPaused(true);}});addEventListener('pagehide',save);
-function updateCriticalNotice(){const host=$('message'),latest=game.notices?.at(-1),now=performance.now();if(latest&&latest!==criticalNoticeSeen){criticalNoticeSeen=latest;criticalNoticeUntil=now+(latest.duration||5.5)*1000;host.textContent=latest.text;host.classList.add('visible');}if(criticalNoticeUntil&&now>=criticalNoticeUntil){criticalNoticeUntil=0;host.classList.remove('visible');}}
-function updateHUD(){const h=game.hero,hp=Math.max(0,Math.min(100,h.hp/h.maxHp*100)),mp=Math.max(0,Math.min(100,h.mp/h.maxMp*100));const talentButton=$('talent-button'),talentCount=$('talent-count');talentCount.textContent=h.talentPoints;talentButton.classList.toggle('talent-ready',h.talentPoints>0);talentButton.title=h.talentPoints>0?h.talentPoints+' unspent training point'+(h.talentPoints===1?'':'s')+' · press C':'Discipline Training · press C';$('hero-stats').innerHTML='<div class="hero-title"><span>'+Campaign.classes[h.class].icon+' '+h.class+'</span><small>LEVEL '+h.level+'</small></div><div class="resource-line health"><span>HP '+Math.ceil(h.hp)+' / '+h.maxHp+'</span><i style="--fill:'+hp+'%"></i></div><div class="resource-line mana"><span>MP '+Math.floor(h.mp)+' / '+h.maxMp+'</span><i style="--fill:'+mp+'%"></i></div><div class="wallet"><span class="gold">'+Math.floor(h.gold)+' crowns</span><span>XP '+Math.floor(h.xp)+' / '+120*h.level+'</span></div>';const heroEffects=h.supportEffects||[],activeRecovery=heroEffects.slice().sort((a,b)=>a.seconds-b.seconds)[0];if(activeRecovery)$('hero-stats').innerHTML+='<small class="restoring">Ranger restoring '+(activeRecovery.type==='health'?'HP':'MP')+' · '+activeRecovery.seconds.toFixed(1)+'s</small>';$('location').textContent=game.definition().name+(game.supplyRoom()?' · '+game.supplyRoom().name:game.isDungeon()?' · '+game.boss(game.zoneId).place:'')+' · '+(game.peace?'At peace':game.s.mode==='nightmare'?'Nightmare':game.night()?'Night':'Day');
- const rangers=game.activeLivingParty().filter(u=>u.type==='archer');for(const [type,label,key,cdKey,threshold]of [['health','Heal','H','healCd',50],['mana','Mana Regen','M','manaCd',35]]){const b=$(type+'-potion'),ready=rangers.filter(u=>(u[cdKey]||0)<=0).length,full=type==='health'?[h,...game.activeLivingParty()].every(u=>u.hp>=u.maxHp):h.mp>=h.maxMp,next=rangers.length?Math.min(...rangers.map(u=>u[cdKey]||0)):0;b.disabled=!rangers.length||!ready||full;b.innerHTML=label+'<small>'+key+(ready?' · '+ready+' ready':rangers.length?' · '+next.toFixed(1)+'s':' · Need Ranger')+'</small>';b.title='Ranger '+label+' · '+(type==='health'?'restores '+game.rangerSupportAmount(type)+' HP to one injured ally · hero priority':'restores '+game.rangerSupportAmount(type)+' MP to the hero')+' over five seconds · auto at '+threshold+'% or less · 10-second cooldown belongs only to the Ranger who casts it';}
- const remaining=Campaign.dungeonIds.filter(id=>!game.s.true[id]),liveFieldTrue=game.zone().enemies.find(e=>e.hp>0&&e.type==='boss'&&e.form==='true'&&game.boss(e.family)?.kind==='field'),pendingField=Object.entries(game.s.pending||{}).find(([id,p])=>p.kind==='field'&&p.zone===game.zoneId&&!game.s.true[id]);$('objective').textContent=game.peace?'Peace for everyone. Explore the creatures’ new homes.':liveFieldTrue?'TRUE BOSS · '+liveFieldTrue.name+' is roaming '+game.definition().name+' · Map: Z':pendingField&&!pendingField[1].active?'TRUE BOSS · '+game.boss(pendingField[0]).name+' TRUE emerging in '+Math.max(0,Math.ceil(pendingField[1].delay))+'s':game.s.phase==='awakening'?'AWAKENING · Final objective · '+(5-remaining.length)+'/5 TRUE guardians defeated · Map: Z':regionalSpecialistObjective();
- const doctrine=game.squadDoctrineLabel(),squad=$('squad-button');squad.hidden=(game.s.expeditionRank||1)<3||!doctrine.active;squad.textContent='Squad · '+doctrine.label+' · Tab';squad.title=doctrine.boss?(doctrine.mode==='focus'?'Squad concentrates on the boss and ignores adds':'Squad clears adds and ignores the boss'):(doctrine.mode==='focus'?'Squad concentrates on the hero’s current target':'Squad spreads across nearby threats');for(let i=0;i<8;i++){const slot=i+1,b=$('skill-'+slot),rank=h.skills[i],charging=charge?.slot===slot,cast=charging?chargePresentation():null;b.classList.toggle('locked',!rank);b.classList.toggle('charging',charging);const revealed=game.skillRevealed(slot),chargeTip=chargeableSlots.has(slot)?' · Tap under '+chargeTapSeconds().toFixed(2)+'s for normal · hold '+chargeSeconds().toFixed(2)+'s for charged · Charged cost '+chargedManaPercent(slot)+'% max MP':'';b.title=(revealed?skillNames[i]:'Undiscovered skill')+(rank?' · Rank '+rank:' · Not learned')+chargeTip+(slot===1?' · Same-target combo: 100% → 110% → 120% · third hit adds 55% frontal splash':'')+(i===0&&PrototypeRules.movementBasicClasses[h.class]?' · Movement auto-attacks pause while Skill 1 is held':'')+(slot===2?' · Charged target locks when charging begins':'');b.setAttribute('aria-label','Skill '+slot+' '+(revealed?skillNames[i]:'Undiscovered')+(chargeableSlots.has(slot)?' · tap for normal or hold to charge · charged cost '+chargedManaPercent(slot)+' percent max MP':''));b.querySelector('small').textContent=charging?(cast.state==='waiting'?'WAIT '+cooldownText(cast.cooldown):cast.state==='charging'?Math.min(99,Math.round(cast.progress*100))+'%':cast.state==='need-mp'?'NEED MP':cast.state==='no-target'?'NO TARGET':cast.state==='no-heal'?'NO HEAL':'CHARGED'):!rank?'Locked':h.cd[i]>0?cooldownText(h.cd[i]):skillKeys[i];}const n=nearestNPC();$('touch-interact-button').innerHTML='F<br><small>Interact</small>';$('touch-interact-button').title=n?n.name:'Find a marked person';$('order-button').textContent='Confirm · F';updateCriticalNotice();}
-function visualPhase(e){let h=2166136261>>>0;for(const ch of String(e.id||e.name||e.species||e.family||e.type||'azeroth')){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return (h%628)/100;}
-function visualPosition(e,p){const actor=e.renderKind==='hero'||e.renderKind==='ally'||e.renderKind==='enemy'||e.renderKind==='npc'&&!['rest','supplier','recruiter','quests','transport','dungeon','exit','cage','fountain','mini','landmark','bundle'].includes(e.kind);if(!actor)return p;const t=performance.now()/1000,phase=visualPhase(e),busy=e.renderKind==='enemy'&&(e.aggro||e.telegraph)||e.renderKind==='hero'&&game.manaCombatActive(),amp=e.type==='boss'?1.6:e.captain||e.roomCaptain?1.15:(busy ? 0.85 : 0.6);return {x:p.x+Math.sin(t*.75+phase)*.35,y:p.y+Math.sin(t*(busy?5.2:2.4)+phase)*amp};}
-function sprite(e,p){const q=visualPosition(e,p),rescued=!!game.s.rescued[e.family];if(typeof PrototypeSprites!=='undefined'&&PrototypeSprites.draw(ctx,e,q,game.regionIndex(),rescued))return;PrototypeVisuals.draw(ctx,e,q,game.regionIndex(),rescued);}
-function spriteHeight(e){const fallback=PrototypeVisuals.height(e),rescued=!!game.s.rescued[e.family];return typeof PrototypeSprites!=='undefined'?PrototypeSprites.height(e,game.regionIndex(),rescued,fallback):fallback;}
-function entityShadow(e,p){let rx=18,ry=5.5;if(e.type==='boss'){rx=31;ry=9;}else if(e.captain||e.roomCaptain){rx=25;ry=7;}else if(e.renderKind==='building'){rx=33;ry=9;}else if(e.renderKind==='prop'){rx=e.structure==='house'||e.structure==='workshop'?31:22;ry=e.structure==='house'||e.structure==='workshop'?8:6;}else if(e.kind==='transport'){rx=30;ry=8;}ctx.save();ctx.fillStyle='#05100c38';ctx.beginPath();ctx.ellipse(p.x+4,p.y+13,rx*1.18,ry*1.35,-.08,0,Math.PI*2);ctx.fill();ctx.fillStyle='#02090666';ctx.beginPath();ctx.ellipse(p.x+1,p.y+11,rx,ry,0,0,Math.PI*2);ctx.fill();ctx.restore();}
-function groundMarker(e,p){const type=e.renderKind,important=type==='hero'||e.type==='boss'||(e.captain||e.roomCaptain)||e.kind==='quests';if(!['hero','ally','enemy','npc','node'].includes(type))return;ctx.strokeStyle=type==='hero'?'#f5d992bb':type==='ally'?'#a7d3a77d':type==='enemy'?e.neutral?'#b9d8b177':e.type==='boss'?'#ec8b76aa':'#b8786870':e.kind==='quests'?'#f5d18cbb':'#d5ca9b66';ctx.lineWidth=important?2:1;ctx.beginPath();ctx.ellipse(p.x,p.y+9,important?28:21,important?11:8,0,0,Math.PI*2);ctx.stroke();if(important){ctx.strokeStyle='#f3e2bb44';ctx.beginPath();ctx.ellipse(p.x,p.y+9,34,14,0,0,Math.PI*2);ctx.stroke();}}
-function entityAura(e,p){if(e.renderKind!=='enemy'||(!['true','ringleader'].includes(e.form)&&!e.frenzy))return;const t=performance.now()/1000,pulse=.5+.5*Math.sin(t*3.1+visualPhase(e));ctx.save();if(e.form==='true'){ctx.globalAlpha=.16+pulse*.09;ctx.fillStyle='#f4d376';ctx.beginPath();ctx.ellipse(p.x,p.y+8,34+pulse*6,12+pulse*2,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=.55;ctx.strokeStyle='#f8dfa0';ctx.lineWidth=1.5;for(const r of [30+pulse*5,39+pulse*4]){ctx.beginPath();ctx.ellipse(p.x,p.y+8,r,r*.3,0,0,Math.PI*2);ctx.stroke();}}else{ctx.globalAlpha=e.frenzy?.65:.4;ctx.strokeStyle=e.frenzy?'#ef8b63':'#d8b66f';ctx.lineWidth=e.frenzy?2.4:1.5;ctx.beginPath();ctx.ellipse(p.x,p.y+8,25+pulse*5,8+pulse*2,0,0,Math.PI*2);ctx.stroke();if(e.frenzy)for(let j=0;j<3;j++){const a=t*2+j*2.09;ctx.fillStyle='#ffb075';ctx.beginPath();ctx.arc(p.x+Math.cos(a)*25,p.y-12+Math.sin(a)*9,1.8,0,Math.PI*2);ctx.fill();}}ctx.restore();}
-function healthPlate(e,p){const y=p.y-spriteHeight(e),w=e.type==='boss'?54:(e.captain||e.roomCaptain)?50:42,left=p.x-w/2;if(e.renderKind==='hero'){const cast=chargePresentation();if(cast){const cy=y-9;ctx.fillStyle='#07100ddd';ctx.fillRect(left-2,cy-2,w+4,7);ctx.fillStyle='#36413b';ctx.fillRect(left,cy,w,3);ctx.fillStyle=cast.color;ctx.fillRect(left,cy,w*cast.progress,3);ctx.fillStyle='#ffffffaa';ctx.fillRect(left,cy,w*cast.progress,1);if(cast.ready){ctx.strokeStyle=cast.color;ctx.lineWidth=1;ctx.strokeRect(left-.5,cy-.5,w+1,4);}}}ctx.fillStyle='#0c1a19dd';ctx.fillRect(left-2,y-2,w+4,8);ctx.fillStyle='#5a645b';ctx.fillRect(left,y,w,4);ctx.fillStyle=e.renderKind==='enemy'?'#e87966':'#91d59c';ctx.fillRect(left,y,w*Math.max(0,Math.min(1,e.hp/e.maxHp)),4);ctx.fillStyle='#ffffff77';ctx.fillRect(left,y,w*Math.max(0,Math.min(1,e.hp/e.maxHp)),1);}
-function projectileVector(p){const dx=Number.isFinite(p.dx)?p.dx:1,dy=Number.isFinite(p.dy)?p.dy:0,q=screen(p),tail=screen({x:p.x-dx*24,y:p.y-dy*24}),vx=q.x-tail.x,vy=q.y-tail.y,len=Math.hypot(vx,vy)||1;return {q,ux:vx/len,uy:vy/len,px:-vy/len,py:vx/len};}
-function drawProjectile(p){const {q,ux,uy,px,py}=projectileVector(p),style=p.style||'magic',combo=p.combo||0;ctx.save();if(p.charged&&!p.rapid&&style!=='beam'){ctx.translate(q.x,q.y);ctx.scale(1.6,1.6);ctx.translate(-q.x,-q.y);}ctx.lineCap='round';ctx.lineJoin='round';
- if(p.effect==='frost'){ctx.strokeStyle='#b5edf3';ctx.lineWidth=1.5;for(const side of [-1,1]){ctx.beginPath();ctx.moveTo(q.x-ux*13+px*side*5,q.y-uy*13+py*side*5);ctx.lineTo(q.x-ux*4,q.y-uy*4);ctx.stroke();}ctx.fillStyle='#e5fbff';ctx.beginPath();ctx.moveTo(q.x+ux*7,q.y+uy*7);ctx.lineTo(q.x+px*5,q.y+py*5);ctx.lineTo(q.x-ux*6,q.y-uy*6);ctx.lineTo(q.x-px*5,q.y-py*5);ctx.closePath();ctx.fill();ctx.restore();return;}
- if(p.effect==='piercing-shot'){ctx.strokeStyle='#e4efb2';ctx.lineWidth=2.5;ctx.globalAlpha=.55;ctx.beginPath();ctx.moveTo(q.x-ux*42,q.y-uy*42);ctx.lineTo(q.x-ux*5,q.y-uy*5);ctx.stroke();ctx.globalAlpha=1;}
- if(style==='beam'){const o=screen({x:p.originX??p.x,y:p.originY??p.y});ctx.strokeStyle='#9fd8ff';ctx.globalAlpha=.22;ctx.lineWidth=14;ctx.beginPath();ctx.moveTo(o.x,o.y);ctx.lineTo(q.x,q.y);ctx.stroke();ctx.globalAlpha=.65;ctx.strokeStyle='#bceaff';ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(o.x,o.y);ctx.lineTo(q.x,q.y);ctx.stroke();ctx.globalAlpha=1;ctx.strokeStyle='#f4fbff';ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(o.x,o.y);ctx.lineTo(q.x,q.y);ctx.stroke();ctx.fillStyle='#d9f4ff';ctx.beginPath();ctx.arc(q.x,q.y,5,0,Math.PI*2);ctx.fill();}
- else if(style==='holy'){ctx.strokeStyle='#f6d77a';ctx.fillStyle='#fff2b0';ctx.lineWidth=4;ctx.globalAlpha=.55;ctx.beginPath();ctx.moveTo(q.x-ux*24,q.y-uy*24);ctx.lineTo(q.x+ux*5,q.y+uy*5);ctx.stroke();ctx.globalAlpha=1;ctx.beginPath();ctx.moveTo(q.x+ux*10,q.y+uy*10);ctx.lineTo(q.x+px*7,q.y+py*7);ctx.lineTo(q.x-ux*5,q.y-uy*5);ctx.lineTo(q.x-px*7,q.y-py*7);ctx.closePath();ctx.fill();ctx.stroke();}
- else if(style==='arrow'){
-  if(combo===2){ctx.strokeStyle='#eef0c4';ctx.globalAlpha=.45;ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(q.x-ux*28+px*7,q.y-uy*28+py*7);ctx.quadraticCurveTo(q.x-ux*12-px*3,q.y-uy*12-py*3,q.x-ux*2,q.y-uy*2);ctx.stroke();}
-  else if(combo===3){ctx.strokeStyle='#f5e6b2';ctx.globalAlpha=.38;ctx.lineWidth=2;for(const side of [-1,1]){ctx.beginPath();ctx.moveTo(q.x-ux*31+px*5*side,q.y-uy*31+py*5*side);ctx.lineTo(q.x-ux*5+px*2*side,q.y-uy*5+py*2*side);ctx.stroke();}}
-  ctx.globalAlpha=1;ctx.strokeStyle=combo===3?'#f0d9a6':'#d8c69a';ctx.fillStyle=combo===3?'#fff2c7':'#e8e1c6';ctx.lineWidth=combo===3?2.6:2;ctx.beginPath();ctx.moveTo(q.x-ux*(combo===3?29:24),q.y-uy*(combo===3?29:24));ctx.lineTo(q.x+ux*4,q.y+uy*4);ctx.stroke();ctx.beginPath();ctx.moveTo(q.x+ux*(combo===3?9:7),q.y+uy*(combo===3?9:7));ctx.lineTo(q.x-ux*2+px*(combo===3?5:4),q.y-uy*2+py*(combo===3?5:4));ctx.lineTo(q.x-ux*2-px*(combo===3?5:4),q.y-uy*2-py*(combo===3?5:4));ctx.closePath();ctx.fill();ctx.strokeStyle='#9b6f4f';ctx.lineWidth=1.5;for(const side of [-1,1]){ctx.beginPath();ctx.moveTo(q.x-ux*19,q.y-uy*19);ctx.lineTo(q.x-ux*14+px*4*side,q.y-uy*14+py*4*side);ctx.stroke();}}
- else if(style==='axe'){ctx.translate(q.x,q.y);ctx.rotate(performance.now()/90);ctx.strokeStyle='#77563b';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-9,0);ctx.lineTo(9,0);ctx.stroke();ctx.fillStyle='#c9c5b6';ctx.beginPath();ctx.moveTo(4,-7);ctx.quadraticCurveTo(13,0,4,7);ctx.lineTo(0,4);ctx.lineTo(0,-4);ctx.closePath();ctx.fill();}
- else if(style==='stone'){ctx.fillStyle='#a9916f';ctx.strokeStyle='#655a4d';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(q.x-6,q.y-2);ctx.lineTo(q.x-2,q.y-6);ctx.lineTo(q.x+5,q.y-4);ctx.lineTo(q.x+7,q.y+2);ctx.lineTo(q.x+1,q.y+6);ctx.lineTo(q.x-5,q.y+3);ctx.closePath();ctx.fill();ctx.stroke();ctx.globalAlpha=.35;ctx.fillStyle='#d1b98e';for(const d of [13,21]){ctx.beginPath();ctx.arc(q.x-ux*d,q.y-uy*d,2,0,Math.PI*2);ctx.fill();}}
- else if(style==='spit'){ctx.translate(q.x,q.y);ctx.rotate(Math.atan2(uy,ux));ctx.fillStyle='#9dcc7d';ctx.beginPath();ctx.ellipse(0,0,8,4,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=.55;ctx.beginPath();ctx.arc(-10,1,2.5,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(-16,-2,1.5,0,Math.PI*2);ctx.fill();}
- else if(style==='cinder'){ctx.fillStyle='#e97542';ctx.beginPath();ctx.moveTo(q.x+ux*7,q.y+uy*7);ctx.lineTo(q.x-ux*13+px*5,q.y-uy*13+py*5);ctx.lineTo(q.x-ux*8,q.y-uy*8);ctx.lineTo(q.x-ux*13-px*5,q.y-uy*13-py*5);ctx.closePath();ctx.fill();ctx.fillStyle='#ffd17a';ctx.beginPath();ctx.arc(q.x,q.y,3.5,0,Math.PI*2);ctx.fill();}
- else if(style==='spectral'){ctx.strokeStyle='#b6b8ff';ctx.fillStyle='#8d90d9';ctx.globalAlpha=.5;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(q.x-ux*20,q.y-uy*20);ctx.lineTo(q.x,q.y);ctx.stroke();ctx.globalAlpha=1;ctx.beginPath();ctx.moveTo(q.x+ux*7,q.y+uy*7);ctx.lineTo(q.x+px*5,q.y+py*5);ctx.lineTo(q.x-ux*6,q.y-uy*6);ctx.lineTo(q.x-px*5,q.y-py*5);ctx.closePath();ctx.fill();}
- else{
-  ctx.strokeStyle='#9fd8ff';ctx.fillStyle='#c7ecff';
-  if(combo===2){ctx.globalAlpha=.5;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(q.x-ux*24+px*7,q.y-uy*24+py*7);ctx.quadraticCurveTo(q.x-ux*10-px*8,q.y-uy*10-py*8,q.x+ux*2,q.y+uy*2);ctx.stroke();ctx.beginPath();ctx.moveTo(q.x-ux*20-px*5,q.y-uy*20-py*5);ctx.quadraticCurveTo(q.x-ux*8+px*6,q.y-uy*8+py*6,q.x,q.y);ctx.stroke();}
-  else if(combo===3){ctx.globalAlpha=.5;ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(q.x-ux*30,q.y-uy*30);ctx.lineTo(q.x+ux*2,q.y+uy*2);ctx.stroke();ctx.globalAlpha=.8;ctx.lineWidth=1.5;for(const side of [-1,0,1]){ctx.beginPath();ctx.moveTo(q.x-ux*(15+side*3)+px*side*6,q.y-uy*(15+side*3)+py*side*6);ctx.lineTo(q.x-ux*(5+side*2)+px*side*2,q.y-uy*(5+side*2)+py*side*2);ctx.stroke();}}
-  else{ctx.globalAlpha=.45;ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(q.x-ux*18,q.y-uy*18);ctx.lineTo(q.x,q.y);ctx.stroke();}
-  ctx.globalAlpha=1;ctx.beginPath();ctx.moveTo(q.x+ux*(combo===3?9:7),q.y+uy*(combo===3?9:7));ctx.lineTo(q.x+px*(combo===2?6:4),q.y+py*(combo===2?6:4));ctx.lineTo(q.x-ux*(combo===3?7:6),q.y-uy*(combo===3?7:6));ctx.lineTo(q.x-px*(combo===2?6:4),q.y-py*(combo===2?6:4));ctx.closePath();ctx.fill();if(combo===3){ctx.strokeStyle='#edf8ff';ctx.lineWidth=1.4;ctx.stroke();}}
- ctx.restore();}
-function queueVisualFx(events){visualFx=PrototypeCombatVisuals.queue(events,game,visualFx);}
-function updateVisualFx(dt){for(const f of visualFx)f.life-=dt;visualFx=visualFx.filter(f=>f.life>0);}
-function drawVisualFx(){for(const f of visualFx){const a=Math.max(0,f.life/f.max),p=screen(f),grow=1-a;ctx.save();ctx.globalAlpha=a;
-  if(f.type==='ability'){PrototypeCombatVisuals.ability(ctx,screen,f);
-  }else if(f.type==='contact'){PrototypeCombatVisuals.contact(ctx,screen,f);
-  }else if(f.type==='impact'){
-   const flash=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,15);flash.addColorStop(0,'rgba(255,247,205,.75)');flash.addColorStop(1,'rgba(255,247,205,0)');ctx.fillStyle=flash;ctx.fillRect(p.x-16,p.y-16,32,32);
-   ctx.strokeStyle='#fff0b6';ctx.lineWidth=2;for(let j=0;j<6;j++){const an=j*Math.PI/3+.25;ctx.beginPath();ctx.moveTo(p.x+Math.cos(an)*4,p.y+Math.sin(an)*4);ctx.lineTo(p.x+Math.cos(an)*(13+grow*5),p.y+Math.sin(an)*(13+grow*5));ctx.stroke();}
-  }else if(f.type==='hurt'){
-   ctx.strokeStyle='#f08b78';ctx.lineWidth=2;ctx.beginPath();ctx.arc(p.x,p.y,8+grow*12,-.2,Math.PI*1.35);ctx.stroke();ctx.globalAlpha=a*.65;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(p.x-8-grow*5,p.y-9);ctx.lineTo(p.x+9+grow*4,p.y+6);ctx.stroke();
-  }else if(f.type==='heal'){
-   const mana=f.resource==='mana',c=mana?'#9fcfff':'#a9e7b0';ctx.strokeStyle=c;ctx.fillStyle=c;ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(p.x,p.y+7,20+grow*13,8+grow*4,0,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=a*.45;ctx.beginPath();ctx.ellipse(p.x,p.y+7,13+grow*8,5+grow*2,0,0,Math.PI*2);ctx.stroke();
-   for(let j=0;j<5;j++){const angle=j*1.26+grow*2.2,x=p.x+Math.cos(angle)*(8+j*2),y=p.y-8-grow*(12+j*3)+Math.sin(angle)*3;ctx.globalAlpha=a*.75;ctx.beginPath();ctx.arc(x,y,mana?1.8:2.1,0,Math.PI*2);ctx.fill();if(!mana&&j<3){ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x-3,y);ctx.lineTo(x+3,y);ctx.moveTo(x,y-3);ctx.lineTo(x,y+3);ctx.stroke();}}
-  }else if(f.type==='swing'){
-   const t=screen({x:f.targetX??f.x+1,y:f.targetY??f.y}),dx=t.x-p.x,dy=t.y-p.y,len=Math.hypot(dx,dy)||1,ux=dx/len,uy=dy/len,px=-uy,py=ux,combo=f.combo||0;ctx.strokeStyle='#f8e4a3';ctx.lineCap='round';
-   if(combo===1||combo===2){const side=combo===1?1:-1,start={x:p.x+px*22*side,y:p.y+py*22*side},end={x:t.x-px*24*side,y:t.y-py*24*side},mid={x:(p.x+t.x)/2+px*30*side,y:(p.y+t.y)/2+py*30*side};ctx.lineWidth=5;ctx.globalAlpha=a*.9;ctx.beginPath();ctx.moveTo(start.x,start.y);ctx.quadraticCurveTo(mid.x,mid.y,end.x,end.y);ctx.stroke();ctx.globalAlpha=a*.35;ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(start.x,start.y);ctx.quadraticCurveTo(mid.x,mid.y,end.x,end.y);ctx.stroke();}
-   else if(combo===3){ctx.globalAlpha=a;ctx.lineWidth=5.5;for(const side of [-1,1]){ctx.beginPath();ctx.moveTo(p.x+px*27*side-ux*4,p.y+py*27*side-uy*4);ctx.lineTo(t.x-px*25*side+ux*5,t.y-py*25*side+uy*5);ctx.stroke();}ctx.globalAlpha=a*.55;ctx.fillStyle='#fff1b8';ctx.beginPath();ctx.arc(t.x,t.y,5+grow*6,0,Math.PI*2);ctx.fill();}
-   else{const ang=Math.atan2(dy,dx);ctx.lineWidth=3.4;ctx.beginPath();ctx.arc(p.x,p.y,31,ang-.9,ang+.55);ctx.stroke();ctx.globalAlpha=a*.35;ctx.lineWidth=6;ctx.beginPath();ctx.arc(p.x,p.y,35,ang-.75,ang+.42);ctx.stroke();}
-  }else if(f.type==='basicComboFinisher'){
-   const from=screen({x:f.fromX,y:f.fromY}),color=f.class==='mage'?'#9fd8ff':f.class==='ranger'?'#e3efaa':'#ffe39a';ctx.strokeStyle=color;ctx.fillStyle=color+'24';ctx.lineCap='round';
-   if(f.class==='ranger'){ctx.lineWidth=2.6;for(const off of [-.32,0,.32]){const an=f.angle+off,q=screen({x:f.fromX+Math.cos(an)*f.range,y:f.fromY+Math.sin(an)*f.range});ctx.globalAlpha=a*(off===0?1:.7);ctx.beginPath();ctx.moveTo(from.x,from.y);ctx.lineTo(q.x,q.y);ctx.stroke();ctx.beginPath();ctx.moveTo(q.x,q.y);ctx.lineTo(q.x-Math.cos(an-.45)*9,q.y-Math.sin(an-.45)*9);ctx.moveTo(q.x,q.y);ctx.lineTo(q.x-Math.cos(an+.45)*9,q.y-Math.sin(an+.45)*9);ctx.stroke();}}
-   else{ctx.lineWidth=f.class==='paladin'?5:3;ctx.beginPath();ctx.moveTo(from.x,from.y);for(let j=0;j<=12;j++){const an=f.angle-f.halfAngle+j*(f.halfAngle*2/12),q=screen({x:f.fromX+Math.cos(an)*f.range,y:f.fromY+Math.sin(an)*f.range});ctx.lineTo(q.x,q.y);}ctx.closePath();ctx.fill();ctx.stroke();if(f.class==='mage'){ctx.globalAlpha=a*.7;for(const mul of [.45,.72,1]){ctx.beginPath();for(let j=0;j<=10;j++){const an=f.angle-f.halfAngle+j*(f.halfAngle*2/10),q=screen({x:f.fromX+Math.cos(an)*f.range*mul,y:f.fromY+Math.sin(an)*f.range*mul});j?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y);}ctx.stroke();}}else{ctx.globalAlpha=a*.8;for(const side of [-1,1]){const an=f.angle+side*.24,q=screen({x:f.fromX+Math.cos(an)*f.range*.95,y:f.fromY+Math.sin(an)*f.range*.95});ctx.beginPath();ctx.moveTo(from.x,from.y);ctx.lineTo(q.x,q.y);ctx.stroke();}}}
-  }else if(f.type==='chargedArea'){
-   const color=f.class==='mage'?'#9fd8ff':f.class==='ranger'?'#cfe59a':'#f6d77a',from=screen({x:f.fromX,y:f.fromY});ctx.strokeStyle=color;ctx.fillStyle=color+'28';ctx.lineWidth=3;
-   if(f.shape==='circle'){PrototypeCombatVisuals.circlePath(ctx,screen,f,f.radius);ctx.fill();ctx.stroke();ctx.globalAlpha=a*.7;for(let j=0;j<8;j++){const an=j*Math.PI/4,q=screen({x:f.x+Math.cos(an)*f.radius*.78,y:f.y+Math.sin(an)*f.radius*.78});ctx.beginPath();ctx.moveTo(q.x,q.y);ctx.lineTo(q.x+Math.cos(an)*8,q.y-10+Math.sin(an)*3);ctx.stroke();if(f.effect==='frost-burst'){ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(q.x-4,q.y);ctx.lineTo(q.x,q.y-15-grow*5);ctx.lineTo(q.x+4,q.y);ctx.closePath();ctx.fill();}}}
-   else if(f.shape==='cone'){ctx.beginPath();ctx.moveTo(from.x,from.y);for(let j=0;j<=14;j++){const an=f.angle-f.halfAngle+j*(f.halfAngle*2/14),q=screen({x:f.fromX+Math.cos(an)*f.range,y:f.fromY+Math.sin(an)*f.range});ctx.lineTo(q.x,q.y);}ctx.closePath();ctx.fill();ctx.stroke();ctx.globalAlpha=a*.65;for(const mul of [.55,.82]){ctx.beginPath();for(let j=0;j<=12;j++){const an=f.angle-f.halfAngle+j*(f.halfAngle*2/12),q=screen({x:f.fromX+Math.cos(an)*f.range*mul,y:f.fromY+Math.sin(an)*f.range*mul});j?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y);}ctx.stroke();}}
-   else if(f.shape==='line'){const side={x:Math.cos(f.angle+Math.PI/2)*f.halfWidth,y:Math.sin(f.angle+Math.PI/2)*f.halfWidth},end={x:f.fromX+Math.cos(f.angle)*f.range,y:f.fromY+Math.sin(f.angle)*f.range};PrototypeCombatVisuals.polygon(ctx,screen,PrototypeCombatVisuals.capsulePoints({x:f.fromX,y:f.fromY},end,f.halfWidth));ctx.fill();ctx.stroke();ctx.globalAlpha=a*.75;for(const offset of [-.55,0,.55]){const laneSide={x:side.x*offset,y:side.y*offset},q1=screen({x:f.fromX+laneSide.x,y:f.fromY+laneSide.y}),q2=screen({x:end.x+laneSide.x,y:end.y+laneSide.y});ctx.beginPath();ctx.moveTo(q1.x,q1.y);ctx.lineTo(q2.x,q2.y);ctx.stroke();}}
-  }else if(f.type==='chargedImpact'){
-   const color=f.class==='mage'?'#b9e6ff':f.class==='ranger'?'#e8efb7':'#ffe49a';ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=2.5;for(let j=0;j<8;j++){const an=j*Math.PI/4;ctx.beginPath();ctx.moveTo(p.x+Math.cos(an)*5,p.y+Math.sin(an)*5);ctx.lineTo(p.x+Math.cos(an)*(14+grow*12),p.y+Math.sin(an)*(14+grow*12));ctx.stroke();}ctx.globalAlpha=a*.35;ctx.beginPath();ctx.arc(p.x,p.y,10+grow*15,0,Math.PI*2);ctx.fill();
+(function () {
+  'use strict';
+  const $ = (id) => document.getElementById(id),
+    canvas = $('world'),
+    ctx = canvas.getContext('2d'),
+    D = Campaign.data;
+  const persistence = PrototypePersistence.create({ storage: localStorage, Campaign, status });
+  let profile = {
+      nightmareUnlocked: false,
+      activeMode: 'normal',
+      audio: { ...PrototypeAudio.defaults },
+    },
+    game,
+    menu = null,
+    menuIndex = 0,
+    buttons = [],
+    keys = {},
+    joy = { x: 0, y: 0 },
+    last = performance.now(),
+    saveTimer = 0,
+    hudTimer = 0,
+    focused = true,
+    paused = false,
+    charge = null,
+    footstepTimer = 0,
+    gateDismissed = false,
+    criticalNoticeSeen = null,
+    criticalNoticeUntil = 0;
+  profile = persistence.loadProfile(profile);
+  const audio = new PrototypeAudio(profile.audio);
+  const platform = PrototypePlatform.init(window);
+  let appRegistration = null,
+    appUpdateReady = false,
+    appReloadRequested = false,
+    installPrompt = null,
+    appControllerReloaded = false;
+  const hadServiceWorkerController = !!navigator.serviceWorker?.controller;
+  async function updateApp() {
+    if (!appRegistration) return;
+    if (!save()) return;
+    paused = true;
+    clearInput();
+    audio.setPaused(true);
+    status('Checking for a game update…');
+    try {
+      await appRegistration.update();
+      const worker = appRegistration.installing;
+      if (worker && worker.state !== 'installed' && worker.state !== 'activated')
+        await new Promise((resolve) => {
+          const done = () => {
+              worker.removeEventListener('statechange', check);
+              clearTimeout(timer);
+              resolve();
+            },
+            check = () => {
+              if (
+                worker.state === 'installed' ||
+                worker.state === 'activated' ||
+                worker.state === 'redundant'
+              )
+                done();
+            },
+            timer = setTimeout(done, 15000);
+          worker.addEventListener('statechange', check);
+          check();
+        });
+      if (appRegistration.waiting) {
+        appReloadRequested = true;
+        appRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      } else {
+        paused = false;
+        audio.setPaused(false);
+        status('No update waiting. Check again shortly.');
+      }
+    } catch (_) {
+      paused = false;
+      audio.setPaused(false);
+      status('Update unavailable. Your saved run is safe.');
+    }
   }
-  ctx.restore();}
- const guard=(q,r,cls='paladin')=>{ctx.save();const pulse=.65+Math.sin(performance.now()/160)*.15;ctx.globalAlpha=pulse;ctx.strokeStyle=cls==='mage'?'#b3dfff':'#f6dda0';ctx.fillStyle=cls==='mage'?'#b3dfff18':'#f6dda018';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(q.x,q.y+5,r,r*.42,0,0,Math.PI*2);ctx.fill();ctx.stroke();for(const side of [-1,1]){ctx.beginPath();ctx.moveTo(q.x+side*r*.75,q.y-12);ctx.lineTo(q.x+side*r,q.y+3);ctx.lineTo(q.x+side*r*.65,q.y+12);ctx.stroke();}ctx.restore();};
- const support=(q,e,r)=>{ctx.save();const mana=e.type==='mana';ctx.strokeStyle=mana?'#82bfff99':'#8bd99aaa';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(q.x,q.y+8,r,r*.4,0,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=.45;for(let j=0;j<3;j++){const an=performance.now()/550+j*2.09;ctx.fillStyle=mana?'#b8ddff':'#c1efc6';ctx.beginPath();ctx.arc(q.x+Math.cos(an)*r*.6,q.y-7+Math.sin(an)*5,1.8,0,Math.PI*2);ctx.fill();}ctx.restore();};
- const h=game.hero,p=screen(h);if(h.immune>0)guard(p,29,h.class);if(h.haste>0){ctx.save();ctx.strokeStyle='#d9f2ff99';ctx.lineWidth=1.5;for(let j=-1;j<=1;j++){ctx.beginPath();ctx.moveTo(p.x-24,p.y+j*7);ctx.lineTo(p.x-38,p.y+j*7+3);ctx.stroke();}ctx.restore();}for(const effect of h.supportEffects||[])support(p,effect,25);for(const u of game.activeLivingParty()){const q=screen(u);if(u.immune>0)guard(q,24);for(const effect of u.supportEffects||[])support(q,effect,22);}}
+  function runningAsApp() {
+    return (
+      (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+      navigator.standalone === true
+    );
+  }
+  function installInstructions() {
+    openMenu(
+      'Install on phone',
+      'Install once, then Azeroth Chronicles launches from the home screen like an app and keeps its offline cache on that device.\n\nAndroid / Chrome: use the Install button when available. If Chrome does not offer it, open the browser menu and choose Install app or Add to Home screen.\n\niPhone / iPad: open the game in Safari, tap Share, choose Add to Home Screen, then Add.',
+      installPrompt
+        ? [action('Install Azeroth Chronicles', installApp, 'Open the phone installation prompt')]
+        : [],
+      systemMenu,
+    );
+  }
+  async function installApp() {
+    if (runningAsApp()) {
+      status('Azeroth Chronicles is already running as an installed app.');
+      closeMenu();
+      return;
+    }
+    if (!installPrompt) {
+      installInstructions();
+      return;
+    }
+    const prompt = installPrompt;
+    installPrompt = null;
+    try {
+      await prompt.prompt();
+      const choice = await prompt.userChoice;
+      if (choice && choice.outcome === 'accepted') {
+        status('Azeroth Chronicles installed. Open it from your home screen.');
+        closeMenu();
+      } else installInstructions();
+    } catch (_) {
+      installInstructions();
+    }
+  }
+  function status(text) {
+    $('status').textContent = text;
+  }
+  function persistProfile() {
+    return persistence.saveProfile(profile);
+  }
+  function save() {
+    return persistence.save(game, profile);
+  }
+  function load(mode) {
+    const restored = persistence.load(mode);
+    if (!restored) return false;
+    game = restored;
+    return true;
+  }
+  let loaded = load(profile.activeMode);
+  if (!loaded) {
+    game = persistence.migrateLegacy();
+    if (game) {
+      loaded = true;
+      save();
+    } else game = new Campaign();
+  }
+  let started = loaded;
+  const viewport = { width: innerWidth, height: innerHeight };
+  const renderer = PrototypeRenderer.create({
+    canvas: viewport,
+    ctx,
+    getGame: () => game,
+    platform,
+    chargePresentation,
+    isPaused: () => paused || !focused || document.hidden,
+    Campaign,
+    PrototypeVisuals,
+    PrototypeCombatVisuals,
+    PrototypeSprites: typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites,
+  });
+  const { world } = renderer,
+    worldLabelVisible = renderer.labelVisible;
+  const runtime = PrototypeRuntime.create();
 
-function draw(){ctx.fillStyle='#0c1913';ctx.fillRect(0,0,canvas.width,canvas.height);const z=game.zone(),room=!!game.supplyRoom(),dungeon=game.isDungeon(),size=game.zoneSize(),i=game.regionIndex();
- ctx.save();if(Campaign.dungeonIds.includes(game.zoneId)){PrototypeVisuals.dungeonFloorPath(ctx,screen,game.zoneId,size);ctx.clip();}
- for(let x=0;x<size;x+=80)for(let y=0;y<size;y+=80){const p=screen({x,y});if(p.x<-160||p.x>canvas.width+160||p.y<-100||p.y>canvas.height+100)continue;const blocked=dungeon&&!Campaign.dungeonIds.includes(game.zoneId)&&game.blocked(x+40,y+40,game.zoneId,0)&&!z.props.some(q=>Math.hypot(x+40-q.x,y+40-q.y)<q.r);PrototypeVisuals.floor(ctx,p,x,y,i,room,room?game.zoneId:dungeon?game.zoneId:'',blocked);}ctx.restore();
- if(Campaign.dungeonIds.includes(game.zoneId))PrototypeVisuals.dungeonArchitecture(ctx,screen,game.zoneId,size);
- if(!game.isDungeon())PrototypeVisuals.terrain(ctx,screen,i,size);
- PrototypeVisuals.roads(ctx,z.roads||[],screen,i);
- if(!game.isDungeon())PrototypeVisuals.bridges(ctx,screen,i);
- PrototypeCombatVisuals.ground(ctx,screen,game,'fill',performance.now()/1000);
- const boardCue=null,captainCue=game.zoneId==='vale'&&game.s.party.length<=2;
- const entities=[...z.props.map(p=>({...p,renderKind:'prop'})),...game.visibleNPCs().map(p=>({...p,renderKind:'npc'})),...game.visibleResourceNodes().map(p=>({...p,renderKind:'node'})),...z.buildings.map(p=>({...p,renderKind:'building'})),...z.enemies.filter(e=>e.hp>0).map(p=>({...p,renderKind:'enemy'})),...game.activeLivingParty().map(p=>({...p,renderKind:'ally'})),{...game.hero,icon:Campaign.classes[game.hero.class].icon,renderKind:'hero'},...(z.escort?[{...z.escort,icon:'🧑‍🌾',name:'Supply escort',renderKind:'ally'}]:[])].sort((a,b)=>a.x+a.y-b.x-b.y);
- for(const e of entities){const p=screen(e);if(p.x<-100||p.x>canvas.width+100||p.y<-100||p.y>canvas.height+100)continue;if(!e.interactionOnly){groundMarker(e,p);entityShadow(e,p);entityAura(e,p);}ctx.font=(e.renderKind==='prop'?34:30)+'px system-ui';ctx.textAlign='center';if(e.renderKind==='enemy'&&e.pursuitBurst>0){ctx.strokeStyle='#e9d3a8b0';ctx.lineWidth=2;for(const dy of [-1,6,13]){ctx.beginPath();ctx.moveTo(p.x-32,p.y+dy);ctx.lineTo(p.x-22,p.y+dy-3);ctx.stroke();}}if(!e.interactionOnly)sprite(e,p);
-  if(['enemy','ally','hero'].includes(e.renderKind)){const visibleCombat=e.renderKind!=='enemy'||worldLabelVisible(e);if(visibleCombat&&!e.neutral)healthPlate(e,p);if(visibleCombat){const isTrueBoss=e.renderKind==='enemy'&&e.type==='boss'&&e.form==='true',isCaptain=e.renderKind==='enemy'&&(e.captain||e.roomCaptain);ctx.font=isTrueBoss?'bold 12px system-ui':e.type==='boss'||isCaptain?'bold 11px system-ui':'10px system-ui';ctx.fillStyle=isTrueBoss?'#ffe08a':isCaptain?'#f0d79b':e.renderKind==='enemy'?'#f8cebd':'#dcebcf';ctx.shadowColor='#091510';ctx.shadowBlur=isTrueBoss?5:isCaptain?4:3;const label=e.renderKind==='enemy'?(isTrueBoss?'TRUE · '+e.name.replace(/\s+TRUE$/,'')+' · Lv '+e.level:e.name+' · Lv '+e.level):e.renderKind==='ally'?e.type||e.name:'';ctx.fillText(label,p.x,p.y-spriteHeight(e)-7);if(isTrueBoss){const w=ctx.measureText('TRUE').width+12,y=p.y-spriteHeight(e)-25;ctx.fillStyle='#3a2d12dd';ctx.fillRect(p.x-w/2,y-11,w,15);ctx.strokeStyle='#ffe08a';ctx.lineWidth=1.5;ctx.strokeRect(p.x-w/2,y-11,w,15);ctx.fillStyle='#fff1b4';ctx.font='bold 9px system-ui';ctx.fillText('TRUE',p.x,y);}ctx.shadowBlur=0;}}
-  if(e.renderKind==='npc'){const label=worldLabelVisible(e),name=e.kind==='mini'?e.name+(game.peace?' · Peaceful':game.miniCleared(e.mini)?' · Cleared':' · Guardians'):e.name;if(label){ctx.font='bold 11px system-ui';ctx.fillStyle='#ffe4a2';ctx.shadowColor='#07140e';ctx.shadowBlur=4;ctx.fillText(name,p.x,p.y-spriteHeight(e)-4);ctx.shadowBlur=0;}const cue=e.kind==='quests'?boardCue:e.kind==='recruiter'&&captainCue?'!':null;if(cue){ctx.fillStyle=cue==='?'?'#9fe4ad':'#f9ce72';ctx.beginPath();ctx.arc(p.x,p.y-80,16,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#fff1b4';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#19291e';ctx.font='bold 23px system-ui';ctx.fillText(cue,p.x,p.y-72);}}if(e.renderKind==='building'&&worldLabelVisible(e)){ctx.font='bold 10px system-ui';ctx.fillStyle='#e8ddb8';ctx.shadowColor='#07140e';ctx.shadowBlur=3;ctx.fillText(e.name||(/^barracks/.test(e.id||'')?'Barracks':'Building'),p.x,p.y-spriteHeight(e)-4);ctx.shadowBlur=0;}if(e.renderKind==='node'){ctx.font='10px system-ui';ctx.fillStyle='#f5e7b8';ctx.fillText('Dark Lord Tribute',p.x,p.y-25);}}
- for(const l of game.s.loot.filter(l=>l.zone===game.zoneId)){const p=screen(l);ctx.fillStyle='#4e3823';ctx.beginPath();ctx.ellipse(p.x,p.y+5,11,5,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#dcad54';ctx.beginPath();ctx.arc(p.x,p.y-3,7,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#f7dfa0';ctx.lineWidth=2;ctx.beginPath();ctx.arc(p.x,p.y-3,4,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#fff0bb';ctx.fillRect(p.x-3,p.y-8,2,2);}
- const ambientLights=[...game.visibleNPCs().filter(n=>['rest','supplier','recruiter','quests','fountain'].includes(n.kind)),...z.buildings.filter(b=>b.progress>=4),...z.props.filter(p=>['torch','warm-brazier','ember-pit','fumarole','house','workshop','market'].includes(p.structure))].map(screen).filter(p=>p.x>-120&&p.x<canvas.width+120&&p.y>-120&&p.y<canvas.height+120);
- PrototypeVisuals.atmosphere(ctx,canvas,i,{night:game.night(),peace:game.peace,dungeon,room,hero:screen(game.hero),lights:ambientLights});
- // Critical outlines and transient effects retain contrast through the night grade.
- PrototypeCombatVisuals.ground(ctx,screen,game,'cue',performance.now()/1000);for(const p of game.s.projectiles)drawProjectile(p);drawVisualFx();
- if(paused||!focused||document.hidden){ctx.fillStyle='#0006';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.font='bold 25px system-ui';ctx.fillStyle='#fff';ctx.textAlign='center';ctx.fillText('Paused',canvas.width*.65,canvas.height*.45);}}
-function frame(now){const dt=Math.min(.1,Math.max(0,(now-last)/1000));last=now;const frozen=paused||menu||!focused||document.hidden||game.s.challenge.pending||game.s.challenge.gameOver;if(menu){menuJoyTime-=dt;if(Math.abs(joy.y)>.4&&menuJoyTime<=0&&buttons.length){menuIndex=(menuIndex+(joy.y>0?1:-1)+buttons.length)%buttons.length;highlight();menuJoyTime=.3;}}audio.update(game,paused||!!menu||!focused||document.hidden||game.s.challenge.gameOver);if(!frozen){let x=(keys.KeyD?1:0)-(keys.KeyA?1:0)+joy.x,y=(keys.KeyS?1:0)-(keys.KeyW?1:0)+joy.y;if(joy.x||joy.y){const p=world(canvas.width*.5+joy.x*100,canvas.height*.5+joy.y*100),base=world(canvas.width*.5,canvas.height*.5);x=p.x-base.x;y=p.y-base.y;}const speedFactor=Sprint.tick(dt,!!(x||y||game.hero.order)),movingHero=game.hero,was={x:movingHero.x,y:movingHero.y,zone:game.zoneId,deaths:game.s.statistics.deaths};game.tick(dt,{x,y,speedFactor});syncChargeReady();if((x||y)&&charge?.slot!==1&&game.hero===movingHero&&PrototypeRules.movementBasicClasses[movingHero.class]&&game.zoneId===was.zone&&game.s.statistics.deaths===was.deaths&&Math.hypot(movingHero.x-was.x,movingHero.y-was.y)>.25)game.cast(1);if(x||y||game.hero.order){footstepTimer+=dt;if(footstepTimer>.35){audio.effect('footstep');footstepTimer=0;}}if(Sprint.enabled)Sprint.hud();saveTimer+=dt;if(saveTimer>=5){saveTimer=0;save();}}
- const events=game.effects.splice(0);queueVisualFx(events);updateVisualFx(dt);for(const e of events)audio.effect(e);if(events.some(e=>['heal','rescue','learning','upgrade','expeditionRank','construction','barracksUpgrade','level','bossDefeat','peace','quest','questComplete','supplies','miniClear','travel','death','successor','gameOver'].includes(e.type)))save();const levelEvent=events.find(e=>e.type==='level');if(levelEvent)status('Level '+levelEvent.level+'! Training point available · press C or use Discipline Training.');if(events.some(e=>e.type==='peace'))ending();if(game.s.phase==='awakening'&&!game.s.awakeningAck&&!menu)awakeningMenu();if(game.s.challenge.pending&&!gateDismissed&&menu?.title!=='Choose your successor')successionMenu();if(game.s.challenge.gameOver&&!gateDismissed&&!menu)gameOver();if(game.peace&&!game.s.endingAck&&!menu)ending();hudTimer+=dt;if(hudTimer>.15){hudTimer=0;updateHUD();}draw();requestAnimationFrame(frame);}
-if(Sprint.enabled){Sprint.init();$('sprint-button').onpointerdown=e=>{if(e.pointerType!=='mouse')Sprint.press('touch',true);};$('sprint-button').onpointerup=$('sprint-button').onpointercancel=$('sprint-button').onpointerleave=()=>Sprint.press('touch',false);}
-updateHUD();if(!loaded)chooseClass('normal');requestAnimationFrame(frame);
-addEventListener('beforeinstallprompt',event=>{event.preventDefault();installPrompt=event;});
-addEventListener('appinstalled',()=>{installPrompt=null;status('Azeroth Chronicles installed. Open it from your home screen.');});
-if(location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'){if('serviceWorker'in navigator){navigator.serviceWorker.addEventListener('controllerchange',()=>{if(appControllerReloaded)return;appControllerReloaded=true;if(hadServiceWorkerController){appReloadRequested=false;if(started)save();location.reload();}});navigator.serviceWorker.register('./sw.js').then(reg=>{appRegistration=reg;function check(){appUpdateReady=!!reg.waiting;if(appUpdateReady)reg.waiting.postMessage({type:'SKIP_WAITING'});}check();reg.addEventListener('updatefound',()=>{const worker=reg.installing;if(worker)worker.addEventListener('statechange',check);});reg.update().catch(()=>{});}).catch(()=>{});}}
+  window.Prototype = {
+    get game() {
+      return game;
+    },
+    audio,
+    renderer,
+    platform,
+    runtime,
+    save,
+    openMenu,
+    closeMenu,
+    updateHUD,
+    labelVisible: worldLabelVisible,
+    chargePresentation,
+    get profile() {
+      return profile;
+    },
+    get paused() {
+      return paused || !!menu || !focused || document.hidden;
+    },
+  };
+  function resize() {
+    viewport.width = innerWidth;
+    viewport.height = innerHeight;
+    const ratio = Math.max(
+      1,
+      Math.min(
+        window.devicePixelRatio || 1,
+        platform.mode === 'phone' ? 1.5 : 2,
+        Math.sqrt(3000000 / (innerWidth * innerHeight)),
+      ),
+    );
+    canvas.width = Math.round(innerWidth * ratio);
+    canvas.height = Math.round(innerHeight * ratio);
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  }
+  resize();
+  addEventListener('resize', resize);
+  function activePlay() {
+    return (
+      started &&
+      !paused &&
+      !menu &&
+      focused &&
+      !document.hidden &&
+      !game.s.challenge.pending &&
+      !game.s.challenge.gameOver
+    );
+  }
+  function desktopMouse(e) {
+    return !!(
+      e?.isTrusted &&
+      e.pointerType === 'mouse' &&
+      (!window.matchMedia || window.matchMedia('(hover: hover) and (pointer: fine)').matches)
+    );
+  }
+  function help(back = closeMenu) {
+    openMenu(
+      'Controls',
+      'MOVE\nWASD — Move hero\nLeft joystick — Move on touch devices\n\nCOMBAT\n1–5 — Skills 1–5\nTap Skill 1, 2 or 3 quickly for the normal version\nHold 0.65 s for the charged version · costs 20% / 30% / 35% max MP respectively\nHold during a cooldown to queue the charge · releasing an incomplete hold cancels safely instead of firing the normal skill\nCHARGED means the charged action can actually release; NEED MP / NO TARGET / NO HEAL explain why it cannot\nSkill 1 movement auto-attacks pause while Skill 1 is held · Skill 2 locks its target when charging begins\nNormal Skill 1 rewards keeping the same target: hit 1 = 100%, hit 2 = 110%, hit 3 = 120% + a small frontal AoE · switching targets or waiting 4s resets the combo\nSpace — Skill 6\nLeft Shift — Skill 7\nB — Skill 8\nH / Left mouse — Command Ranger Heal\nM / Right mouse — Command Ranger Mana Recovery\nQ — Reserved / unavailable\n\nSQUAD\nTab — Switch squad doctrine during combat (Expedition 3)\nBacktick — Recall and regroup squad\nPaladin defaults to TARGET / BOSS\nMage and Ranger default to THREATS / ADDS\nDoctrine resets automatically for each encounter\n\nINTERACT\nE / F — Interact\n\nMENUS\nI / R — Inventory\nC — Discipline Training\nX — Skills\nJ / T — Quests\nZ — Map\nP / V — Pause\nG — Controls\nEsc — Adventure menu\n\nMENU NAVIGATION\nW / A — Previous\nS / D — Next\nF / Enter / Space — Confirm\n\nPC INPUT\nMouse clicks do not move the hero, command the squad or activate menus. Left mouse commands Ranger Heal; right mouse commands Ranger Mana Recovery.\n\nTouch controls use the labeled on-screen buttons.',
+      [],
+      back,
+    );
+  }
+  function clearInput() {
+    if (typeof Sprint !== 'undefined') Sprint.release();
+    cancelCharge();
+    keys = {};
+    joy = { x: 0, y: 0 };
+    $('stick').style.transform = '';
+  }
+  function action(label, fn, detail = '', disabled = false) {
+    return { label, action: fn, detail, disabled };
+  }
+  function openMenu(title, description = '', actions = [], back = closeMenu) {
+    clearInput();
+    gateDismissed = false;
+    menu = { title, description, actions, back };
+    menuIndex = 0;
+    document.body.classList.add('menu-open');
+    $('modal').hidden = false;
+    $('modal-title').textContent = title;
+    $('modal-description').textContent = description;
+    renderActions();
+  }
+  let menuTouchBlockUntil = 0;
+  function renderActions() {
+    const host = $('modal-actions');
+    host.replaceChildren();
+    buttons = [];
+    for (const a of menu.actions) {
+      const b = document.createElement('button');
+      b.textContent = a.label;
+      b.disabled = a.disabled === true;
+      if (a.detail) {
+        const span = document.createElement('span');
+        span.className = 'detail';
+        span.textContent = a.detail;
+        b.append(span);
+      }
+      b.onclick = (e) => {
+        if (
+          desktopMouse(e) ||
+          e?.pointerType === 'touch' ||
+          (e?.isTrusted && performance.now() < menuTouchBlockUntil)
+        )
+          return;
+        audio.unlock();
+        a.action();
+        if (started) save();
+        updateHUD();
+      };
+      host.append(b);
+      buttons.push(b);
+    }
+    const back = $('close-button');
+    back.hidden = false;
+    buttons.push(back);
+    highlight();
+  }
+  function highlight() {
+    buttons.forEach((b, i) => b.classList.toggle('selected', i === menuIndex));
+    buttons[menuIndex]?.scrollIntoView({ block: 'nearest' });
+  }
+  function closeMenu() {
+    if (game.s.challenge.pending || game.s.challenge.gameOver) gateDismissed = true;
+    menu = null;
+    $('modal').hidden = true;
+    document.body.classList.remove('menu-open');
+    clearInput();
+  }
+  $('modal').ontouchstart = () => {
+    menuTouchBlockUntil = performance.now() + 700;
+  };
+  $('close-button').onclick = (e) => {
+    if (
+      desktopMouse(e) ||
+      e?.pointerType === 'touch' ||
+      (e?.isTrusted && performance.now() < menuTouchBlockUntil)
+    )
+      return;
+    audio.unlock();
+    if (!game.s.endingAck && game.peace) {
+      game.s.endingAck = true;
+      save();
+    }
+    menu?.back();
+  };
+  function exportJSON(data, name) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }),
+      url = URL.createObjectURL(blob),
+      a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+  function start(mode, heroClass, succession) {
+    if (mode === 'nightmare' && !profile.nightmareUnlocked) return;
+    game = new Campaign(mode, heroClass, Math.random, { succession });
+    started = true;
+    if (typeof Sprint !== 'undefined') Sprint.reset();
+    paused = false;
+    profile.activeMode = mode;
+    save();
+    closeMenu();
+    updateHUD();
+  }
+  function chooseClass(mode, succession) {
+    if (succession === undefined) {
+      openMenu(
+        'Challenge condition',
+        'The Dark Lord rules the land. To keep heroes from becoming strong enough to challenge him, his forces have captured the specialists who teach skills, forge equipment and prepare adventurers. Free them, rebuild your strength and confront his rule.\n\nSuccession is optional. Each fallen class is lost for this run; after three class deaths the run ends.',
+        [
+          action('Standard death and refuge recovery', () => chooseClass(mode, false)),
+          action('Succession challenge', () => chooseClass(mode, true)),
+        ],
+      );
+      return;
+    }
+    openMenu(
+      'New ' + (mode === 'nightmare' ? 'Nightmare' : 'Normal') + ' adventure',
+      'Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.',
+      Object.entries(Campaign.classes).map(([id, c]) =>
+        action(
+          c.icon + ' ' + id,
+          () => {
+            const exists = persistence.exists(mode);
+            if (
+              exists &&
+              !confirm('Replace the existing ' + mode + ' run? Export it first to keep it.')
+            )
+              return;
+            start(mode, id, succession);
+          },
+          id === 'paladin'
+            ? 'Melee, healing and brief immunity'
+            : id === 'mage'
+              ? 'Ranged magic, mana recovery and barriers'
+              : 'Ranged bow, healing and mobility',
+        ),
+      ),
+      () => chooseClass(mode),
+    );
+  }
+  function awakeningChecklist() {
+    return Campaign.dungeonIds.map((id) => {
+      const b = game.boss(id),
+        region = D.regions.find((r) => r.id === b.region);
+      return {
+        id,
+        label: (game.s.true[id] ? '✓ ' : game.s.normal[id] ? '⚔ ' : '◇ ') + b.name,
+        detail:
+          (game.s.true[id]
+            ? 'TRUE defeated'
+            : game.s.normal[id]
+              ? 'TRUE awakened — return and challenge it'
+              : 'Normal boss still alive — defeat it to awaken TRUE') +
+          ' · ' +
+          region.name,
+      };
+    });
+  }
+  function finaleMenu(back = openMain) {
+    const done = Campaign.dungeonIds.filter((id) => game.s.true[id]).length;
+    openMenu(
+      'Awakening · Final objective',
+      'The TRUE Dark Lord is gone forever. Defeat every remaining TRUE dungeon guardian to end the war.\n\nProgress: ' +
+        done +
+        '/5 TRUE guardians defeated.',
+      awakeningChecklist().map((x) => action(x.label, () => {}, x.detail, true)),
+      back,
+    );
+  }
+  function acknowledgeAwakening() {
+    game.s.awakeningAck = true;
+    save();
+    closeMenu();
+  }
+  function awakeningMenu() {
+    const done = Campaign.dungeonIds.filter((id) => game.s.true[id]).length;
+    openMenu(
+      'The Dungeons Awaken',
+      'The TRUE Dark Lord has fallen and will not return. His defeat has awakened the remaining TRUE guardians of the five great dungeons. Defeat every remaining TRUE dungeon guardian to end the war. Previously defeated TRUE guardians remain defeated.\n\nProgress: ' +
+        done +
+        '/5 defeated.',
+      [
+        ...awakeningChecklist().map((x) => action(x.label, () => {}, x.detail, true)),
+        action('Continue', acknowledgeAwakening),
+      ],
+      acknowledgeAwakening,
+    );
+  }
+  function characterMenu() {
+    openMenu(
+      'Character',
+      'Hero progression only. Troops, resources and construction are managed at town Captains or your barracks.',
+      [
+        action('Skills and teachers', () => skillBook(characterMenu)),
+        action('Discipline Training', () => talents(characterMenu)),
+      ],
+      openMain,
+    );
+  }
+  function saveMenu() {
+    openMenu(
+      'Save and game management',
+      'Backups, reports and run management.',
+      [
+        action('Save run', () => {
+          save();
+          closeMenu();
+        }),
+        action('Export save', () =>
+          exportJSON(game.snapshot(), 'Azeroth_Chronicles_' + game.s.mode + '.json'),
+        ),
+        action('Import save', () => $('import-file').click()),
+        action('Export playtest report', () =>
+          exportJSON(
+            {
+              version: PrototypeBuild.version,
+              performance: runtime.report(renderer.metrics(), platform.mode),
+              currency: 'crowns',
+              mode: game.s.mode,
+              phase: game.s.phase,
+              hero: game.hero,
+              statistics: game.s.statistics,
+            },
+            'Azeroth_Playtest_Report.json',
+          ),
+        ),
+        action('New Normal game', () => chooseClass('normal')),
+        action(
+          'New game in Nightmare Mode',
+          () => chooseClass('nightmare'),
+          'Unlocked by the peaceful ending',
+          !profile.nightmareUnlocked,
+        ),
+        action('Load other mode run', () => {
+          const mode = game.s.mode === 'normal' ? 'nightmare' : 'normal';
+          if (load(mode)) {
+            save();
+            closeMenu();
+          } else game.say('No saved ' + mode + ' run yet.');
+        }),
+      ],
+      systemMenu,
+    );
+  }
+  function platformMenu(back = systemMenu) {
+    openMenu(
+      'Screen and performance',
+      'Current screen: ' +
+        (platform.mode === 'desktop' ? 'Chromebook / desktop' : 'Phone / touch') +
+        '. The two layouts share your saved campaign. Automatic selection uses input capabilities, so a touchscreen Chromebook keeps its desktop layout.\n\n' +
+        runtime.describe(renderer.metrics()),
+      [
+        action('Automatic screen', () => {
+          platform.select('auto');
+          closeMenu();
+        }),
+        action('Chromebook / desktop screen', () => {
+          platform.select('desktop');
+          closeMenu();
+        }),
+        action('Phone / touch screen', () => {
+          platform.select('phone');
+          closeMenu();
+        }),
+        action('Reset performance sample', () => {
+          runtime.reset();
+          platformMenu(back);
+        }),
+      ],
+      back,
+    );
+  }
+  function systemMenu() {
+    openMenu(
+      'Game and settings',
+      'Controls, audio and save management.',
+      [
+        ...(!runningAsApp() && platform.mode === 'phone'
+          ? [action('Install on phone', installApp, 'Add Azeroth Chronicles to the home screen')]
+          : []),
+        ...(appRegistration
+          ? [
+              action(
+                appUpdateReady ? 'Install available game update' : 'Check for game update',
+                updateApp,
+              ),
+            ]
+          : []),
+        action('Screen and performance', () => platformMenu(systemMenu)),
+        action('Controls', () => help(systemMenu)),
+        action('Sound settings', () => soundMenu(systemMenu)),
+        action(paused ? 'Resume play' : 'Pause play', () => {
+          paused = !paused;
+          closeMenu();
+        }),
+        action('Save and game management', saveMenu),
+      ],
+      openMain,
+    );
+  }
+  function openMain() {
+    const rank = game.s.expeditionRank || 1,
+      canBuild = !game.isDungeon() && game.availableLabor().length > 0,
+      cost = game.barracksBuildCost(),
+      costLabel = cost ? cost + ' crowns' : 'FREE';
+    openMenu(
+      'Adventure menu',
+      'Global adventure functions. Troops, resources and construction are managed through town Captains and barracks.',
+      [
+        action('Map and travel routes', showMap),
+        action('Quest journal', () => quests(false)),
+        action('Inventory and support', inventory),
+        action('Character', characterMenu),
+        ...(canBuild
+          ? [
+              action(
+                'Establish Basic Barracks · ' + costLabel,
+                () => {
+                  if (game.build()) closeMenu();
+                },
+                cost === 0
+                  ? 'FIRST BARRACKS FREE · Creates a nearby companion recovery base'
+                  : rank >= 4
+                    ? 'One companion builds a Basic camp · optional Full upgrade costs 100 crowns'
+                    : 'One companion builds a recovery base; Full upgrade unlocks at Expedition 4',
+                game.hero.gold < cost,
+              ),
+            ]
+          : []),
+        ...(game.s.phase === 'awakening'
+          ? [
+              action(
+                'Awakening · Final objective',
+                () => finaleMenu(openMain),
+                'TRUE dungeon guardians ' +
+                  Campaign.dungeonIds.filter((id) => game.s.true[id]).length +
+                  '/5',
+              ),
+            ]
+          : []),
+        ...(profile.nightmareUnlocked
+          ? [
+              action(
+                '★ New Game — Nightmare Mode',
+                () => chooseClass('nightmare'),
+                'Unlocked by the peaceful ending · Standard or Succession challenge',
+              ),
+            ]
+          : []),
+        action('Game and settings', systemMenu),
+      ],
+    );
+  }
+  $('menu-button').onclick = (e) => {
+    if (desktopMouse(e)) return;
+    audio.unlock();
+    if (!started) chooseClass('normal');
+    else if (game.s.challenge.pending) successionMenu();
+    else if (game.s.challenge.gameOver) gameOver();
+    else openMain();
+  };
+  $('talent-button').onclick = (e) => {
+    if (desktopMouse(e)) return;
+    audio.unlock();
+    if (started && !game.s.challenge.pending && !game.s.challenge.gameOver) talents();
+  };
+  function ending() {
+    profile.nightmareUnlocked = true;
+    persistProfile();
+    openMenu(
+      'Peace for everyone',
+      'The evil is defeated. Every dungeon guardian has fallen. The war is over for people and creatures alike.\n\nCreatures are neutral and cannot harm or be harmed. The reclaimed dungeons are their homes.',
+      [
+        action('Continue in the peaceful world', () => {
+          game.s.endingAck = true;
+          save();
+          closeMenu();
+        }),
+        action('New game in Nightmare Mode', () => {
+          game.s.endingAck = true;
+          save();
+          chooseClass('nightmare');
+        }),
+        action('Export completed run', () =>
+          exportJSON(game.snapshot(), 'Azeroth_Chronicles_Completed.json'),
+        ),
+      ],
+    );
+  }
+  function successionMenu() {
+    openMenu(
+      'Choose your successor',
+      'The ' +
+        game.hero.class +
+        ' has fallen permanently. The death penalty has already removed 20% of carried crowns; the remaining crowns, rescues, quests and boss progress survive. Your successor starts at level 1 in Millhaven and must learn their skills.',
+      Object.entries(Campaign.classes)
+        .filter(([id]) => !game.s.challenge.fallen.includes(id))
+        .map(([id, c]) =>
+          action(c.icon + ' ' + id + ' successor', () => {
+            game.successor(id);
+            save();
+            closeMenu();
+          }),
+        ),
+    );
+  }
+  function gameOver() {
+    openMenu(
+      'The last successor has fallen',
+      'All three classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.',
+      [
+        action('Export final run', () =>
+          exportJSON(game.snapshot(), 'Azeroth_Succession_Game_Over.json'),
+        ),
+        action('Start a new Normal run', () => chooseClass('normal')),
+        action(
+          'Start a new Nightmare run',
+          () => chooseClass('nightmare'),
+          '',
+          !profile.nightmareUnlocked,
+        ),
+      ],
+    );
+  }
+  $('import-file').onchange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      if (file.size > 5 * 1024 * 1024) throw Error('too large');
+      const data = JSON.parse(await file.text()),
+        candidate = data.version === 2 ? Campaign.migrate(data) : Campaign.restore(data);
+      persistence.writeCandidate(candidate);
+      game = candidate;
+      started = true;
+      profile.activeMode = game.s.mode;
+      if (game.peace) profile.nightmareUnlocked = true;
+      persistProfile();
+      closeMenu();
+      status('Imported successfully.');
+    } catch (_) {
+      status('Invalid import. Your current run was kept intact.');
+    }
+    e.target.value = '';
+  };
+  function nearestNPC() {
+    return [
+      ...game.visibleNPCs(),
+      ...game.visibleResourceNodes(),
+      ...game.zone().buildings.map((b) => ({ ...b, kind: 'barracks', name: b.name || 'Barracks' })),
+    ]
+      .filter((n) => Math.hypot(n.x - game.hero.x, n.y - game.hero.y) < 115)
+      .sort(
+        (a, b) =>
+          Math.hypot(a.x - game.hero.x, a.y - game.hero.y) -
+          Math.hypot(b.x - game.hero.x, b.y - game.hero.y),
+      )[0];
+  }
+  function interact() {
+    const n = nearestNPC();
+    if (!n) {
+      game.say('Find a marked person or place nearby. Use the map.');
+      return;
+    }
+    if (
+      [
+        'rest',
+        'cage',
+        'bundle',
+        'landmark',
+        'dungeon',
+        'exit',
+        'fountain',
+        'resource',
+        'mini',
+      ].includes(n.kind)
+    ) {
+      game.interact(n);
+      save();
+      updateHUD();
+      return;
+    }
+    if (n.kind === 'barracks') barracksMenu(n);
+    else if (n.kind === 'teacher') teacher(n);
+    else if (n.kind === 'smith') smith(n);
+    else if (n.kind === 'supplier' || n.kind === 'alchemist') supplier(n);
+    else if (n.kind === 'recruiter') partyMenu();
+    else if (n.kind === 'quests') quests(true);
+    else if (n.kind === 'transport') {
+      if (n.hub) {
+        const destinations = game.hubDestinations();
+        openMenu(
+          n.name,
+          'Borrow this Dark Crown route to any previously visited region. Every destination arrives directly in its main town.',
+          destinations.map((target) =>
+            action(
+              'Travel to ' + target.name,
+              () => {
+                if (game.travelHub(target.id)) closeMenu();
+              },
+              target.town,
+            ),
+          ),
+        );
+      } else {
+        const i = game.regionIndex(),
+          r = D.regions[i],
+          target = D.regions[i + n.direction],
+          cost = n.direction === 1 ? (game.s.recovery[r.id] ? 0 : r.fare) : 0;
+        openMenu(
+          n.name,
+          'Fare ' +
+            cost +
+            ' crowns. Paid outbound travel includes free return. Health, mana and supplies are preserved.',
+          [
+            action('Travel to ' + target.name, () => {
+              if (game.travel(n.direction)) closeMenu();
+            }),
+          ],
+        );
+      }
+    }
+  }
+  $('touch-interact-button').onclick = (e) => {
+    if (desktopMouse(e)) return;
+    audio.unlock();
+    if (activePlay()) interact();
+  };
+  function expeditionSupportActions(n, refresh) {
+    return Object.entries(Campaign.rules.expeditionSupportSkills).flatMap(([id, def]) => {
+      const cap = def.trainers?.[n.family] || 0;
+      if (!cap) return [];
+      const rank = game.expeditionSupportRank(id),
+        next = rank + 1;
+      if (rank >= def.maxRank)
+        return [
+          action(
+            def.name + ' · Rank ' + def.maxRank,
+            () => {},
+            '100% inheritance · maximum rank',
+            true,
+          ),
+        ];
+      if (rank >= cap) {
+        const nextTrainer = Object.entries(def.trainers)
+          .sort((a, b) => a[1] - b[1])
+          .find(([, limit]) => limit > rank)?.[0];
+        return [
+          action(
+            def.name + ' · Rank ' + rank,
+            () => {},
+            'This specialist trains through Rank ' +
+              cap +
+              (nextTrainer ? ' · Next: ' + game.boss(nextTrainer).captive : ''),
+            true,
+          ),
+        ];
+      }
+      const cost = game.expeditionSupportCost(id),
+        pct = Math.round((next / def.maxRank) * 100);
+      return [
+        action(
+          (rank ? 'Train ' : 'Learn ') + def.name + ' · Rank ' + next + ' · ' + cost + ' crowns',
+          () => {
+            game.trainExpeditionSupport(id, n.family);
+            refresh();
+          },
+          pct + '% inheritance · ' + def.detail,
+          game.hero.gold < cost,
+        ),
+      ];
+    });
+  }
+  function teacher(n, back = closeMenu) {
+    const catalog = game.teacherCatalog(n.family),
+      cap = catalog.maxRank,
+      next = Object.keys(Campaign.rules.teachers).find(
+        (id) => Campaign.rules.teachers[id].maxRank > cap,
+      ),
+      expCap = game.expeditionInstructorCap(n.family),
+      expRank = game.s.expeditionRank || 1,
+      expNext = expRank + 1,
+      expActions = expCap
+        ? [
+            expRank < expCap
+              ? action(
+                  'Train Expedition Skill · Rank ' + expRank + ' → ' + expNext + ' · FREE',
+                  () => {
+                    game.trainExpedition(n.family);
+                    teacher(n, back);
+                  },
+                  game.expeditionUnlock(expNext),
+                )
+              : action(
+                  'Expedition Skill · Rank ' + expRank,
+                  () => {},
+                  expRank >= 6
+                    ? 'Maximum Expedition rank'
+                    : 'This instructor trains Expedition through rank ' + expCap,
+                  true,
+                ),
+          ]
+        : [],
+      supportActions = expeditionSupportActions(n, () => teacher(n, back));
+    openMenu(
+      n.name,
+      (next
+        ? 'Higher hero-skill ranks: rescue ' +
+          game.boss(next).captive +
+          ' in ' +
+          D.regions.find((r) => r.id === game.boss(next).region).name +
+          '. '
+        : 'Maximum hero-skill training rank available here. ') +
+        'Expedition Rank training is free. Hero skills and specialist companion-training skills use crowns.',
+      [
+        ...expActions,
+        ...supportActions,
+        ...D.skills
+          .filter((s) =>
+            game.hero.skills[s[0] - 1]
+              ? catalog.train.includes(s[0])
+              : catalog.learn.includes(s[0]),
+          )
+          .map((s) => {
+            const rank = game.hero.skills[s[0] - 1],
+              cost = rank ? s[5] * rank : s[3];
+            return action(
+              (rank ? 'Train ' : 'Learn ') + s[1] + ' · ' + cost + ' crowns',
+              () => {
+                rank ? game.upgrade(s[0], n.family) : game.learn(s[0], n.family);
+                teacher(n, back);
+              },
+              'Skill ' + s[0] + ' · Rank ' + rank + ' · Specialist cap ' + cap,
+              rank >= cap || game.hero.gold < cost,
+            );
+          }),
+      ],
+      back,
+    );
+  }
+  function skillBook(back = closeMenu) {
+    const rank = game.s.expeditionRank || 1,
+      next = game.expeditionNextInstructor(rank),
+      expDetail =
+        rank >= 6
+          ? 'Maximum rank'
+          : next
+            ? 'Next: ' + game.boss(next).captive + ' · ' + game.expeditionUnlock(rank + 1)
+            : '',
+      support = Object.entries(Campaign.rules.expeditionSupportSkills)
+        .filter(([, def]) =>
+          Object.keys(def.trainers || {}).some((family) => game.s.rescued[family]),
+        )
+        .map(([id, def]) => {
+          const r = game.expeditionSupportRank(id),
+            cost = r < def.maxRank ? game.expeditionSupportCost(id) : 0,
+            best = game.expeditionSupportBestTrainer(id),
+            nextProvider =
+              best ||
+              Object.entries(def.trainers)
+                .sort((a, b) => a[1] - b[1])
+                .find(([, cap]) => cap > r)?.[0],
+            provider = nextProvider ? game.boss(nextProvider).captive : '';
+          const pct = Math.round((r / def.maxRank) * 100);
+          return action(
+            r ? def.name + ' · Rank ' + r : def.name + ' · Not learned',
+            () => {},
+            r >= def.maxRank
+              ? '100% inheritance · maximum'
+              : r
+                ? pct +
+                  '% inheritance · next ' +
+                  cost +
+                  ' crowns' +
+                  (provider ? ' · ' + provider : '')
+                : 'Learn Rank 1 · ' + cost + ' crowns' + (provider ? ' · ' + provider : ''),
+            true,
+          );
+        }),
+      companionAdvanced = (game.s.companionCombatTraining || 1) >= 2,
+      companionLine = action(
+        'Companion combat skills · ' + (companionAdvanced ? 'Advanced' : 'Core'),
+        () => {},
+        companionAdvanced
+          ? 'Soldier: Power Strike (8s) + Holy Cleave (12s) · Archer: Triple Shot (8s) + Piercing Volley (12s)'
+          : 'Soldier: Power Strike · Archer: Triple Shot · Learn hero Skill 2 Rank 1 to unlock Holy Cleave and Piercing Volley',
+        true,
+      );
+    openMenu(
+      'Skills and teachers',
+      'Expedition Rank training is free. Hero skills and specialist companion-training skills use crowns; none require hero levels.',
+      [
+        action('Expedition Skill · Rank ' + rank, () => {}, expDetail, true),
+        ...support,
+        companionLine,
+        ...D.skills
+          .filter((s) => game.skillRevealed(s[0]))
+          .map((s) =>
+            action(
+              'Skill ' + s[0] + ' ' + s[1] + ' · Rank ' + game.hero.skills[s[0] - 1],
+              () => {},
+              s[0] === 1
+                ? 'Always available · same-target combo: 100% → 110% → 120% + frontal AoE · resets on target switch or 4s gap'
+                : s[0] === 2
+                  ? s[3] +
+                    ' crowns · ' +
+                    game.boss(s[4]).captive +
+                    ' · ' +
+                    D.regions.find((r) => r.id === game.boss(s[4]).region).name +
+                    ' · Rank 1 also teaches companion Holy Cleave and Piercing Volley'
+                  : s[3] +
+                    ' crowns · ' +
+                    game.boss(s[4]).captive +
+                    ' · ' +
+                    D.regions.find((r) => r.id === game.boss(s[4]).region).name,
+              true,
+            ),
+          ),
+      ],
+      back,
+    );
+  }
+  function supplier(n, back = closeMenu) {
+    const advanced = n.kind === 'alchemist',
+      vitalityRank = game.companionVitalityRank(),
+      vitalityCost = game.companionVitalityCost(),
+      respecCost = game.talentRespecCost(),
+      spentTalents = (game.hero.talents || []).reduce((sum, v) => sum + v, 0),
+      healRank = game.rangerSupportRank('health'),
+      manaRank = game.rangerSupportRank('mana'),
+      healCost = game.rangerSupportCost('health'),
+      manaCost = game.rangerSupportCost('mana');
+    if (!advanced) {
+      openMenu(
+        n.name,
+        'Combat potions have been retired. Rangers now provide field Heal and Mana Recovery, so the supply shop no longer requires you to maintain potion stock.',
+        [
+          action(
+            'Ranger field support',
+            () => {},
+            'Heal triggers automatically at 50% HP or less · Mana Recovery at 35% MP or less · H/M command them manually',
+            true,
+          ),
+        ],
+        back,
+      );
+      return;
+    }
+    openMenu(
+      n.name,
+      'Neri trains Ranger field support instead of selling health or mana potions. Training is permanent for every Ranger, including Rangers you recruit later.',
+      [
+        action(
+          healRank >= 2
+            ? 'Ranger Heal · Rank 2 · MAX'
+            : 'Upgrade Ranger Heal · Rank 2 · ' + healCost + ' crowns',
+          () => {
+            game.trainRangerSupport('health', n.family);
+            supplier(n, back);
+          },
+          healRank >= 2
+            ? 'Restores 150 HP over five seconds to one target · hero has priority · maximum training'
+            : '60 → 150 HP over five seconds to one target · same 10s per-Ranger Heal cooldown',
+          healRank >= 2 || game.hero.gold < healCost,
+        ),
+        action(
+          manaRank >= 2
+            ? 'Ranger Mana Recovery · Rank 2 · MAX'
+            : 'Upgrade Ranger Mana Recovery · Rank 2 · ' + manaCost + ' crowns',
+          () => {
+            game.trainRangerSupport('mana', n.family);
+            supplier(n, back);
+          },
+          manaRank >= 2
+            ? 'Restores 100 MP over five seconds to the hero · maximum training'
+            : '40 → 100 MP over five seconds · same 10s per-Ranger Mana Recovery cooldown',
+          manaRank >= 2 || game.hero.gold < manaCost,
+        ),
+        action(
+          'Train Companion Vitality · Rank ' +
+            (vitalityRank + 1) +
+            ' · ' +
+            vitalityCost +
+            ' crowns',
+          () => {
+            game.trainCompanionVitality(n.family);
+            supplier(n, back);
+          },
+          '+10% companion max HP · current +' +
+            vitalityRank * 10 +
+            '% · repeatable without a gameplay cap',
+          game.hero.gold < vitalityCost,
+        ),
+        action(
+          'Reset discipline training · ' + respecCost + ' crowns',
+          () => {
+            game.resetTalents(n.family);
+            supplier(n, back);
+          },
+          spentTalents
+            ? 'Refund ' +
+                spentTalents +
+                ' spent training point' +
+                (spentTalents === 1 ? '' : 's') +
+                ' · level, skills and equipment stay unchanged'
+            : 'No spent training points to refund',
+          !spentTalents || game.hero.gold < respecCost,
+        ),
+      ],
+      back,
+    );
+  }
+  function smith(n, back = closeMenu) {
+    const tier = { crypt: 1, mine: 2, abyss: 3, cindermaw: 4 }[n.family],
+      weapon = [0, 100, 450, 1000, 2000][tier],
+      armor = [0, 80, 300, 700, 1200][tier],
+      weaponBonus = [0, 15, 35, 55, 70][tier],
+      armorBonus = [0, 5, 12, 20, 28][tier],
+      currentWeapon = game.hero.weapon || 0,
+      currentArmor = game.hero.armorTier || 0,
+      weaponOwned = currentWeapon >= tier,
+      armorOwned = currentArmor >= tier,
+      weaponReforged = !!game.hero.reforges['weapon:' + tier],
+      armorReforged = !!game.hero.reforges['armor:' + tier],
+      equipmentMaxed =
+        weaponOwned &&
+        armorOwned &&
+        (currentWeapon > tier || weaponReforged) &&
+        (currentArmor > tier || armorReforged),
+      supportActions = expeditionSupportActions(n, () => smith(n, back)),
+      equipmentStatus = equipmentMaxed
+        ? 'EQUIPMENT SERVICE MAXED — you already own or have surpassed every equipment improvement this smith can offer. '
+        : 'Current equipment: weapon tier ' +
+          currentWeapon +
+          ' · armor tier ' +
+          currentArmor +
+          '. ';
+    openMenu(
+      n.name,
+      equipmentStatus +
+        'Equipment replaces the earlier tier in its slot. Tier purchases are one-time; bonuses do not stack.' +
+        (supportActions.length
+          ? ' This specialist also teaches companion equipment inheritance.'
+          : ''),
+      [
+        ...supportActions,
+        action(
+          weaponOwned
+            ? 'Weapon tier ' + tier + ' · ' + (currentWeapon === tier ? 'OWNED' : 'SURPASSED')
+            : 'Weapon tier ' + tier + ' · ' + weapon + ' crowns',
+          () => {
+            game.gear(n.family, 'weapon');
+            smith(n, back);
+          },
+          'Current tier ' +
+            currentWeapon +
+            ' · +' +
+            weaponBonus +
+            ' power' +
+            (weaponOwned ? ' · one-time purchase already satisfied' : ''),
+          weaponOwned || game.hero.gold < weapon,
+        ),
+        action(
+          armorOwned
+            ? 'Armor tier ' + tier + ' · ' + (currentArmor === tier ? 'OWNED' : 'SURPASSED')
+            : 'Armor tier ' + tier + ' · ' + armor + ' crowns',
+          () => {
+            game.gear(n.family, 'armor');
+            smith(n, back);
+          },
+          'Current tier ' +
+            currentArmor +
+            ' · +' +
+            armorBonus +
+            ' armor' +
+            (armorOwned ? ' · one-time purchase already satisfied' : ''),
+          armorOwned || game.hero.gold < armor,
+        ),
+        action(
+          currentWeapon === tier && weaponReforged
+            ? 'Reforge weapon · DONE'
+            : currentWeapon !== tier
+              ? 'Reforge weapon · UNAVAILABLE'
+              : 'Reforge weapon · ' + Math.ceil(weapon / 2) + ' crowns',
+          () => {
+            game.gear(n.family, 'weapon', true);
+            smith(n, back);
+          },
+          currentWeapon < tier
+            ? 'Buy weapon tier ' + tier + ' first'
+            : currentWeapon > tier
+              ? 'Current weapon tier ' + currentWeapon + ' has surpassed this forge'
+              : weaponReforged
+                ? 'Already reforged at this tier'
+                : '+5 power once at this tier',
+          currentWeapon !== tier || weaponReforged || game.hero.gold < Math.ceil(weapon / 2),
+        ),
+        action(
+          currentArmor === tier && armorReforged
+            ? 'Reforge armor · DONE'
+            : currentArmor !== tier
+              ? 'Reforge armor · UNAVAILABLE'
+              : 'Reforge armor · ' + Math.ceil(armor / 2) + ' crowns',
+          () => {
+            game.gear(n.family, 'armor', true);
+            smith(n, back);
+          },
+          currentArmor < tier
+            ? 'Buy armor tier ' + tier + ' first'
+            : currentArmor > tier
+              ? 'Current armor tier ' + currentArmor + ' has surpassed this forge'
+              : armorReforged
+                ? 'Already reforged at this tier'
+                : '+3 armor once at this tier',
+          currentArmor !== tier || armorReforged || game.hero.gold < Math.ceil(armor / 2),
+        ),
+      ],
+      back,
+    );
+  }
+  function unitLabel(type) {
+    return type === 'archer' ? 'Ranger' : 'Soldier';
+  }
+  function rosterLabel(u) {
+    const i = game.s.party.indexOf(u) + 1;
+    return unitLabel(u.type) + ' #' + i;
+  }
+  function regionalSpecialistProgress() {
+    const region = game.definition().id,
+      bosses = D.bosses.filter((b) => b.region === region && b.captive),
+      missing = bosses.filter((b) => !game.s.rescued[b.id]),
+      rescued = bosses.length - missing.length;
+    const target = (b) => (b.kind === 'dungeon' ? b.place : b.name);
+    const label = (b) => {
+      const parts = b.captive.split(' the ');
+      return parts.length > 1 ? parts[0] + ' (' + parts.slice(1).join(' the ') + ')' : b.captive;
+    };
+    return {
+      region,
+      regionName: game.definition().name,
+      bosses,
+      missing,
+      rescued,
+      total: bosses.length,
+      target,
+      label,
+    };
+  }
+  function regionalSpecialistObjective() {
+    const tutorial = game.s.quests['quest-barracks'];
+    if (tutorial && !tutorial.paid)
+      return 'FIELD BASE · Build your first Barracks — FREE · Open Menu/Esc while in the field → Establish Basic Barracks. It gives companions a nearby recovery base.';
+    const p = regionalSpecialistProgress();
+    if (!p.total)
+      return 'Rescue specialists, rebuild your strength and continue the campaign. Map: Z.';
+    if (!p.missing.length)
+      return p.region === 'crown' && !game.s.true.darklord
+        ? p.regionName +
+            ' specialists ' +
+            p.rescued +
+            '/' +
+            p.total +
+            ' rescued · FINAL OBJECTIVE · Reach the Dark fortress and defeat the Dark Lord. Map: Z.'
+        : p.regionName +
+            ' specialists ' +
+            p.rescued +
+            '/' +
+            p.total +
+            ' rescued · Continue the campaign. Map: Z.';
+    const goals = p.missing.map(
+      (b) => 'Rescue ' + p.label(b) + (b.kind === 'dungeon' ? ' in ' : ' from ') + p.target(b),
+    );
+    return (
+      p.regionName +
+      ' specialists ' +
+      p.rescued +
+      '/' +
+      p.total +
+      ' · ' +
+      goals.join(' · ') +
+      '. Map: Z.'
+    );
+  }
+  function regionalSpecialistBarracksDetail() {
+    const p = regionalSpecialistProgress();
+    if (!p.total) return 'No regional specialist objectives here.';
+    if (!p.missing.length)
+      return p.regionName + ': ' + p.rescued + '/' + p.total + ' regional specialists rescued.';
+    return (
+      p.regionName +
+      ': ' +
+      p.rescued +
+      '/' +
+      p.total +
+      ' rescued · Still captive: ' +
+      p.missing.map((b) => p.label(b) + ' — ' + p.target(b)).join('; ') +
+      '.'
+    );
+  }
+  function barracksSpecialistMenu(b, back) {
+    const specialists = game.barracksSpecialists(),
+      returnHere = () => barracksSpecialistMenu(b, back),
+      regional = regionalSpecialistBarracksDetail();
+    openMenu(
+      'Rescued specialists',
+      regional +
+        ' Rescued specialists work from your barracks. More advanced specialists replace older redundant services.',
+      specialists.length
+        ? specialists.map((s) =>
+            action(s.name, () => {
+              const n = { ...s };
+              s.kind === 'teacher'
+                ? teacher(n, returnHere)
+                : s.kind === 'smith'
+                  ? smith(n, returnHere)
+                  : supplier(n, returnHere);
+            }),
+          )
+        : [action('No specialists rescued yet', () => {}, regional, true)],
+      back,
+    );
+  }
+  function barracksRecoveryMenu(b, back) {
+    const wounded = game.s.party.some((u) => u.hp > 0 && u.hp < u.maxHp),
+      fallen = game.s.party.some((u) => u.hp <= 0);
+    openMenu(
+      'Recovery',
+      'Basic barracks recovery is available from Expedition Rank 1.',
+      [
+        action(
+          'Treat wounded companions · 30 crowns',
+          () => {
+            game.treatCompanions();
+            barracksRecoveryMenu(b, back);
+          },
+          'Restores every living wounded companion to full health',
+          !wounded || game.hero.gold < 30 || game.refugeThreat(),
+        ),
+        action(
+          'Recover fallen companion · 40 crowns',
+          () => {
+            game.recover();
+            barracksRecoveryMenu(b, back);
+          },
+          'Restores one fallen companion at full health',
+          !fallen || game.hero.gold < 40,
+        ),
+      ],
+      back,
+    );
+  }
+  function barracksRecruitmentMenu(b, back) {
+    const queueName = b.queue > 0 ? unitLabel(b.queueType || 'soldier') : null;
+    openMenu(
+      'Recruitment',
+      (queueName
+        ? 'Training ' + queueName + ' · ' + b.queue.toFixed(1) + 's remaining'
+        : 'Recruit as many companions as you want') +
+        '. New recruits join the active group if this barracks can support another slot; otherwise they rest in reserve.',
+      [
+        ...[
+          ['soldier', 'Soldier'],
+          ['archer', 'Ranger'],
+        ].map(([type, label]) => {
+          const price = game.barracksRecruitPrice(type);
+          return action(
+            'Recruit ' + label + ' · ' + price + ' crowns',
+            () => {
+              game.train(b.id, type);
+              barracksRecruitmentMenu(b, back);
+            },
+            b.queue > 0 ? 'Barracks queue occupied' : 'Barracks rate',
+            b.queue > 0 || game.hero.gold < price,
+          );
+        }),
+      ],
+      back,
+    );
+  }
+  function barracksLaborMenu(b, back) {
+    const nodes = game.visibleResourceNodes(),
+      hidden = game.hiddenTributeNodes(),
+      actions = nodes.map((n) =>
+        action(
+          'Recover Dark Lord Tribute · ' + (n.siteName || n.name),
+          () => {
+            game.gather(n.id);
+            closeMenu();
+          },
+          Math.floor(n.amount) + ' crowns remaining · ' + (n.context || 'recovered tribute'),
+        ),
+      );
+    if (hidden.length)
+      actions.push(
+        action(
+          'Search for hidden Dark Lord Tribute',
+          () => {
+            game.scoutTribute();
+            barracksLaborMenu(b, back);
+          },
+          hidden.length +
+            ' undiscovered source' +
+            (hidden.length === 1 ? '' : 's') +
+            ' remain · scouts reveal locations, not their value',
+        ),
+      );
+    openMenu(
+      'Resources & labor',
+      'Companions recover tribute intended for the Dark Lord and return its value to the resistance economy. Exact amounts are managed here; hidden sources must be located by expedition scouts.',
+      actions.length
+        ? actions
+        : [
+            action(
+              'No remaining regional tribute',
+              () => {},
+              'All known and hidden Dark Lord Tribute in this region has been recovered.',
+              true,
+            ),
+          ],
+      back,
+    );
+  }
+  function barracksGroupMenu(b, back) {
+    const active = game.activeParty().length,
+      cap = game.barracksFieldCap(b),
+      threat = game.refugeThreat(),
+      actions = game.s.party.map((u) =>
+        u.active !== false
+          ? action(
+              'Rest ' + rosterLabel(u),
+              () => {
+                game.restCompanion(u.id);
+                barracksGroupMenu(b, back);
+              },
+              u.hp > 0
+                ? 'With you · ' + Math.ceil(u.hp) + '/' + u.maxHp + ' HP'
+                : 'With you · FALLEN',
+              threat,
+            )
+          : action(
+              'Add ' + rosterLabel(u) + ' to group',
+              () => {
+                game.activateCompanion(u.id, b.id);
+                barracksGroupMenu(b, back);
+              },
+              u.hp <= 0
+                ? 'Resting · FALLEN — recover first'
+                : 'Resting · ' + Math.ceil(u.hp) + '/' + u.maxHp + ' HP',
+              u.hp <= 0 || active >= cap || threat,
+            ),
+      );
+    openMenu(
+      'Manage group',
+      'With you ' +
+        active +
+        '/' +
+        cap +
+        ' · Employed ' +
+        game.rosterCount() +
+        '. ' +
+        (!b.full && (game.s.expeditionRank || 1) >= 4
+          ? 'Basic barracks support at most 3 active companions. Upgrade it to use your higher Expedition cap.'
+          : ''),
+      actions.length ? actions : [action('No companions employed', () => {}, '', true)],
+      back,
+    );
+  }
+  function barracksCompanyMenu(b, back) {
+    const returnHere = () => barracksCompanyMenu(b, back),
+      rank = game.s.expeditionRank || 1,
+      active = game.activeParty().length,
+      cap = game.barracksFieldCap(b),
+      fallen = game.s.party.filter((u) => u.hp <= 0).length;
+    openMenu(
+      'Company',
+      'Recruit, recover and choose who travels with you.',
+      [
+        action(
+          'Manage active group',
+          () => barracksGroupMenu(b, returnHere),
+          'With you ' + active + '/' + cap + ' · employed ' + game.rosterCount(),
+        ),
+        rank >= 2
+          ? action(
+              'Recruit companions',
+              () => barracksRecruitmentMenu(b, returnHere),
+              'Soldier 60 crowns · Ranger 85 crowns · extra hires rest in reserve',
+            )
+          : action(
+              'Recruitment — Expedition 2',
+              () => {},
+              'Rescue Mira and train Expedition to Rank 2',
+              true,
+            ),
+        action(
+          'Recovery',
+          () => barracksRecoveryMenu(b, returnHere),
+          fallen
+            ? fallen + ' fallen · treat wounded or recover fallen'
+            : 'Treat wounded · recover fallen',
+        ),
+      ],
+      back,
+    );
+  }
+  function barracksOperationsMenu(b, back) {
+    const returnHere = () => barracksOperationsMenu(b, back),
+      rank = game.s.expeditionRank || 1;
+    openMenu(
+      'Operations',
+      'Regional objectives, routes and expedition labor.',
+      [
+        action('Regional map and routes', () => showMap(returnHere)),
+        action('Local objectives', () => quests(true, returnHere)),
+        rank >= 2
+          ? action(
+              'Resources & labor',
+              () => barracksLaborMenu(b, returnHere),
+              'Assign idle active troops · full barracks is a deposit point',
+            )
+          : action(
+              'Resources — Expedition 2',
+              () => {},
+              'Rescue Mira and train Expedition to Rank 2',
+              true,
+            ),
+        ...(game.s.phase === 'awakening'
+          ? [
+              action(
+                'Awakening · Final objective',
+                () => finaleMenu(returnHere),
+                'TRUE dungeon guardians ' +
+                  Campaign.dungeonIds.filter((id) => game.s.true[id]).length +
+                  '/5',
+              ),
+            ]
+          : []),
+      ],
+      back,
+    );
+  }
+  function expeditionBarracksAction(b, back) {
+    const rank = game.s.expeditionRank || 1;
+    if (rank >= 6)
+      return action('Expedition Skill · Rank 6', () => {}, 'Maximum rank · active group 6', true);
+    const trainer = game.expeditionTrainer(),
+      next = rank + 1;
+    if (trainer)
+      return action(
+        'Train Expedition Skill · Rank ' + rank + ' → ' + next + ' · FREE',
+        () => {
+          game.trainExpedition(trainer);
+          barracksMenu(b, back);
+        },
+        game.expeditionUnlock(next),
+      );
+    const need = game.expeditionNextInstructor(rank);
+    return action(
+      'Expedition Skill · Rank ' + rank,
+      () => {},
+      need
+        ? 'Next: rescue ' +
+            game.boss(need).captive +
+            ' → Rank ' +
+            next +
+            ' · ' +
+            game.expeditionUnlock(next)
+        : '',
+      true,
+    );
+  }
+  function barracksMenu(ref, back = closeMenu) {
+    const b = game.zone().buildings.find((x) => x.id === ref.id);
+    if (!b) {
+      game.say('That barracks is no longer available.');
+      return;
+    }
+    if (b.progress < 4) {
+      const assigned = game
+          .activeLivingParty()
+          .some((u) => u.order?.type === 'build' && u.order.id === b.id),
+        canAssign = !assigned && game.availableLabor().length > 0;
+      openMenu(
+        'Barracks under construction',
+        'The hero keeps watch while one companion builds. Progress ' +
+          Math.floor(b.progress) +
+          '/4. Recall cancels labor without losing progress.',
+        assigned
+          ? [action('Construction in progress', () => {}, 'One companion is building.', true)]
+          : canAssign
+            ? [
+                action(
+                  'Assign companion to construction',
+                  () => {
+                    if (game.assignBuilder(b.id)) closeMenu();
+                  },
+                  'Uses one idle active Soldier or Ranger',
+                ),
+              ]
+            : [
+                action(
+                  'No idle companion available',
+                  () => {},
+                  'Recall or finish another labor assignment first.',
+                  true,
+                ),
+              ],
+        back,
+      );
+      return;
+    }
+    const rank = game.s.expeditionRank || 1,
+      returnHere = () => barracksMenu(b, back),
+      specialists = game.barracksSpecialists(),
+      exp = expeditionBarracksAction(b, back),
+      rank2 = rank >= 2,
+      baseActions = [
+        exp,
+        action(
+          'Rescued specialists',
+          () => barracksSpecialistMenu(b, returnHere),
+          (specialists.length
+            ? 'Use ' +
+              specialists.length +
+              ' rescued specialist' +
+              (specialists.length === 1 ? '' : 's') +
+              ' here · '
+            : '') + regionalSpecialistBarracksDetail(),
+        ),
+        action(
+          'Recovery',
+          () => barracksRecoveryMenu(b, returnHere),
+          'Treat wounded · recover fallen',
+        ),
+        action(
+          'Manage group',
+          () => barracksGroupMenu(b, returnHere),
+          'With you ' +
+            game.activeParty().length +
+            '/' +
+            game.barracksFieldCap(b) +
+            ' · employed ' +
+            game.rosterCount(),
+        ),
+        rank2
+          ? action(
+              'Recruitment',
+              () => barracksRecruitmentMenu(b, returnHere),
+              'Soldier 60 crowns · Ranger 85 crowns · extra hires rest in reserve',
+            )
+          : action(
+              'Recruitment — Expedition 2',
+              () => {},
+              'Rescue Mira and train Expedition to Rank 2',
+              true,
+            ),
+        rank2
+          ? action(
+              'Resources & labor',
+              () => barracksLaborMenu(b, returnHere),
+              'Assign idle active troops to regional deposits',
+            )
+          : action(
+              'Resources — Expedition 2',
+              () => {},
+              'Rescue Mira and train Expedition to Rank 2',
+              true,
+            ),
+      ];
+    if (!b.full) {
+      const upgrading = game
+          .activeLivingParty()
+          .some((u) => u.order?.type === 'upgrade' && u.order.id === b.id),
+        canUpgrade = rank >= 4;
+      if (canUpgrade)
+        baseActions.push(
+          upgrading
+            ? action(
+                'Full Barracks upgrade in progress',
+                () => {},
+                'Progress ' + Math.floor(b.upgradeProgress || 0) + '/4',
+                true,
+              )
+            : action(
+                b.upgradePaid
+                  ? 'Resume Full Barracks upgrade'
+                  : 'Upgrade to Full Barracks · 100 crowns',
+                () => {
+                  game.upgradeBarracks(b.id);
+                  barracksMenu(b, back);
+                },
+                'Optional upgrade · required only for active groups above 3 · becomes a resource deposit · unlocks full operations',
+                !game.availableLabor().length || (!b.upgradePaid && game.hero.gold < 100),
+              ),
+        );
+      else
+        baseActions.push(
+          action(
+            'Full Barracks — Expedition 4',
+            () => {},
+            'Supports active groups above 3 · resource deposit · full operations',
+            true,
+          ),
+        );
+      openMenu(
+        'Basic Barracks',
+        game.definition().name + ' · cheap recovery and expedition base.',
+        baseActions,
+        back,
+      );
+      return;
+    }
+    openMenu(
+      'Full Barracks',
+      game.definition().name +
+        ' field base · ' +
+        game.activeParty().length +
+        '/' +
+        game.barracksFieldCap(b) +
+        ' with you · ' +
+        game.rosterCount() +
+        ' employed.',
+      [
+        exp,
+        action(
+          'Company',
+          () => barracksCompanyMenu(b, returnHere),
+          'Recruit · active group · recovery',
+        ),
+        action(
+          'Rescued specialists',
+          () => barracksSpecialistMenu(b, returnHere),
+          (specialists.length ? specialists.length + ' available here · ' : '') +
+            regionalSpecialistBarracksDetail(),
+        ),
+        action(
+          'Operations',
+          () => barracksOperationsMenu(b, returnHere),
+          'Map · objectives · resources',
+        ),
+        action('Inventory & support', () => inventory(returnHere), 'Ranger support and equipment'),
+      ],
+      back,
+    );
+  }
+  function inventory(back = closeMenu) {
+    const rangers = game.activeLivingParty().filter((u) => u.type === 'archer'),
+      heal = game.rangerSupportAmount('health'),
+      mana = game.rangerSupportAmount('mana');
+    openMenu(
+      'Inventory',
+      'Crowns ' +
+        Math.floor(game.hero.gold) +
+        ' · Weapon tier ' +
+        game.hero.weapon +
+        ' · Armor tier ' +
+        game.hero.armorTier +
+        '\nCrowns are the official currency of the Dark Lord’s regime.',
+      [
+        action(
+          'Ranger Heal · ' + heal + ' HP',
+          () => {},
+          rangers.length
+            ? rangers.length +
+                ' active Ranger' +
+                (rangers.length === 1 ? '' : 's') +
+                ' · combat: auto at ≤50% HP · out of combat: tops off injured allies · hero priority · command with H'
+            : 'No active Ranger · recruit or activate one for field healing',
+          true,
+        ),
+        action(
+          'Ranger Mana Recovery · ' + mana + ' MP',
+          () => {},
+          rangers.length
+            ? rangers.length +
+                ' active Ranger' +
+                (rangers.length === 1 ? '' : 's') +
+                ' · automatic at hero ≤35% MP · command with M'
+            : 'No active Ranger · recruit or activate one for field mana recovery',
+          true,
+        ),
+        ...Object.keys(Campaign.legacyWeapons)
+          .filter((name) => game.s.legacyInventory?.includes(name))
+          .map((name) =>
+            action(
+              'Equip ' + name,
+              () => {
+                game.equipLegacy(name);
+                inventory(back);
+              },
+              'Saved weapon · +' + Campaign.legacyWeapons[name] + ' power',
+            ),
+          ),
+        ...(game.hero.weapon
+          ? [
+              action('Equip current weapon tier ' + game.hero.weapon, () => {
+                game.hero.legacyEquipped = false;
+                inventory(back);
+              }),
+            ]
+          : []),
+      ],
+      back,
+    );
+  }
+  function recallSquad() {
+    game.recallParty();
+    updateHUD();
+  }
+  function townRecruitmentMenu(back) {
+    const rank = game.s.expeditionRank || 1,
+      atLimit = game.rosterCount() >= 3,
+      actions = [];
+    if (rank < 2)
+      actions.push(
+        action(
+          'Recruitment — Expedition 2 required',
+          () => {},
+          'Rescue Mira and train Expedition to Rank 2',
+          true,
+        ),
+      );
+    else if (atLimit)
+      actions.push(
+        action(
+          'Town recruitment limit reached',
+          () => {},
+          'Further recruiting requires a barracks.',
+          true,
+        ),
+      );
+    else
+      actions.push(
+        ...[
+          ['soldier', 'Soldier', 70],
+          ['archer', 'Ranger', 100],
+        ].map(([type, label, price]) =>
+          action(
+            'Recruit ' + label + ' · ' + price + ' crowns',
+            () => {
+              game.recruit(type);
+              townRecruitmentMenu(back);
+            },
+            'Town can employ only the first 3 companions',
+            game.hero.gold < price,
+          ),
+        ),
+      );
+    actions.push(
+      action(
+        'Recover fallen companion · 40 crowns',
+        () => {
+          game.recover();
+          townRecruitmentMenu(back);
+        },
+        '',
+        !game.s.party.some((u) => u.hp <= 0) || game.hero.gold < 40,
+      ),
+    );
+    openMenu(
+      'Town recruitment',
+      'Town recruitment stops at 3 total employed companions, including resting or fallen ones. Build a barracks for further hiring.',
+      actions,
+      back,
+    );
+  }
+  function townLaborMenu(back) {
+    const rank = game.s.expeditionRank || 1,
+      nodes = game.zone().nodes.filter((n) => n.amount > 0),
+      canBuild = !game.isDungeon() && game.availableLabor().length > 0,
+      cost = game.barracksBuildCost(),
+      costLabel = cost ? cost + ' crowns' : 'FREE',
+      actions = [];
+    if (canBuild)
+      actions.push(
+        action(
+          'Establish Basic Barracks · ' + costLabel,
+          () => {
+            game.build();
+            townLaborMenu(back);
+          },
+          cost === 0
+            ? 'First barracks is free · establishes nearby companion recovery'
+            : rank >= 4
+              ? 'Basic camp · optional Full upgrade 100 crowns'
+              : 'Basic recovery base; Full upgrade unlocks at Expedition 4',
+          game.hero.gold < cost,
+        ),
+      );
+    if (rank >= 2)
+      actions.push(
+        ...nodes.map((n) =>
+          action(
+            'Gather ' + n.name + ' ' + n.icon,
+            () => {
+              game.gather(n.id);
+              closeMenu();
+            },
+            Math.floor(n.amount) + ' crowns remaining · assigns all idle active troops',
+          ),
+        ),
+      );
+    else
+      actions.push(
+        action(
+          'Resources — Expedition 2 required',
+          () => {},
+          'Rescue Mira and train Expedition to Rank 2',
+          true,
+        ),
+      );
+    openMenu(
+      'Construction & resources',
+      'The hero does not build. One active companion provides construction labor.',
+      actions,
+      back,
+    );
+  }
+  function partyMenu(back = closeMenu) {
+    const title = game.definition().town + ' Captain',
+      returnHere = () => partyMenu(back);
+    openMenu(
+      title,
+      'Town services cover the starter expedition. For a larger roster: build a barracks.',
+      [
+        action(
+          'Recruitment & recovery',
+          () => townRecruitmentMenu(returnHere),
+          game.rosterCount() >= 3
+            ? '3+ employed · further recruiting requires a barracks'
+            : 'Town hiring limit: 3 total companions',
+        ),
+        action(
+          'Construction & resources',
+          () => townLaborMenu(returnHere),
+          game.barracksBuildCost() === 0
+            ? 'First barracks FREE · companion recovery base'
+            : 'Basic barracks 20 crowns · Full upgrade optional at Expedition 4',
+        ),
+      ],
+      back,
+    );
+  }
+  function formatTrainingNumber(n) {
+    return Number(n.toFixed(2)).toString();
+  }
+  function disciplineEffect(i) {
+    const p = game.talentProfile();
+    if (i === 0) return 'Each rank: +' + p.power + ' Power';
+    if (i === 1)
+      return (
+        'Each rank: +' +
+        formatTrainingNumber(p.mana * 0.125) +
+        ' MP/s in combat · +' +
+        formatTrainingNumber(p.mana * 0.25) +
+        ' MP/s out of combat'
+      );
+    if (i === 2) return 'Each rank: +' + p.hp + ' maximum HP';
+    return 'Each rank: +' + p.speed + ' movement speed';
+  }
+  function freeTalentResetMenu(back = closeMenu) {
+    const left = game.hero.freeTalentResets || 0;
+    openMenu(
+      'Free training reset',
+      'Refund every spent training point. This uses one of this hero’s two free resets.',
+      [
+        action(
+          'Confirm reset · ' + left + ' free left',
+          () => {
+            if (game.freeResetTalents()) talents(back);
+          },
+          'All spent training points are refunded.',
+        ),
+      ],
+      () => talents(back),
+    );
+  }
+  function talents(back = closeMenu) {
+    const names = ['Power Training', 'Mana Training', 'Health Training', 'Movement Training'],
+      spent = game.talentSpent(),
+      left = game.hero.freeTalentResets || 0,
+      actions = names.map((name, i) =>
+        action(
+          name + ' · Rank ' + game.hero.talents[i] + '/' + game.talentMaxRank(i),
+          () => {
+            game.talent(i);
+            talents(back);
+          },
+          disciplineEffect(i),
+        ),
+      );
+    actions.push(
+      action(
+        'Reset discipline training · FREE · ' + left + ' left',
+        () => freeTalentResetMenu(back),
+        spent
+          ? 'Refund all spent training points.'
+          : left
+            ? 'Spend at least one point before resetting.'
+            : 'Free resets exhausted.',
+        !spent || !left,
+      ),
+    );
+    openMenu(
+      'Discipline Training',
+      'Available training points ' +
+        game.hero.talentPoints +
+        ' · One point raises one discipline by one rank.',
+      actions,
+      back,
+    );
+  }
+  function quests(atBoard, back = closeMenu) {
+    const local = atBoard
+      ? game.questDefs().filter((q) => q.region === game.definition().id)
+      : game.questDefs();
+    openMenu(
+      atBoard ? 'Local quests' : 'Quest journal',
+      atBoard
+        ? 'All local quests are already ACTIVE. Rewards are automatically delivered as soon as their objectives are completed.'
+        : 'All quests begin active automatically. Rewards are delivered immediately on completion; no return trip is required.',
+      local.map((q) => {
+        const p = game.s.quests[q.id],
+          reward = q.tutorial ? 'Tutorial' : q.gold + ' crowns / ' + q.xp + ' XP';
+        return action(
+          q.name +
+            ' · ' +
+            (p?.paid ? 'Complete' : p?.closedByPeace ? 'Resolved by peace' : 'ACTIVE'),
+          () => {},
+          q.objective + ' · ' + reward + ' · ' + game.questProgress(q),
+        );
+      }),
+      back,
+    );
+  }
+  function soundMenu(back = closeMenu) {
+    const s = audio.settings;
+    openMenu(
+      'Music and sound',
+      'Independent volumes. Preferences survive new games.',
+      [
+        action(s.muted ? 'Unmute all sound' : 'Mute all sound', () => {
+          audio.setSettings({ muted: !s.muted });
+          profile.audio = { ...audio.settings };
+          persistProfile();
+          soundMenu(back);
+        }),
+        ...['master', 'music', 'ambience', 'effects'].flatMap((key) => [
+          action(key + ' − · ' + Math.round(s[key] * 100) + '%', () => {
+            audio.setSettings({ [key]: s[key] - 0.1 });
+            profile.audio = { ...audio.settings };
+            persistProfile();
+            soundMenu(back);
+          }),
+          action(key + ' +', () => {
+            audio.setSettings({ [key]: s[key] + 0.1 });
+            profile.audio = { ...audio.settings };
+            persistProfile();
+            soundMenu(back);
+          }),
+        ]),
+      ],
+      back,
+    );
+  }
+  function showMap(back = closeMenu) {
+    const r = game.definition(),
+      room = game.supplyRoom(),
+      side = game.sideDungeon(),
+      rawNpcs = game.visibleNPCs(),
+      mapNpcs = game.isDungeon()
+        ? rawNpcs
+        : rawNpcs
+            .filter(
+              (n) =>
+                ![
+                  'supplier',
+                  'recruiter',
+                  'quests',
+                  'teacher',
+                  'smith',
+                  'alchemist',
+                  'cage',
+                  'bundle',
+                ].includes(n.kind),
+            )
+            .map((n) =>
+              n.kind === 'rest' && n.id === 'rest' ? { ...n, name: r.town, icon: '🏘️' } : n,
+            ),
+      fieldTrue = game
+        .zone()
+        .enemies.filter(
+          (e) =>
+            e.hp > 0 &&
+            e.type === 'boss' &&
+            e.form === 'true' &&
+            (game.boss(e.family)?.kind === 'field' ||
+              e.family === 'darklord' ||
+              e.family === 'darklord'),
+        )
+        .map((e) => ({ ...e, kind: 'trueboss', icon: '⚔️' })),
+      fieldBases = game.zone().buildings.map((b) => ({
+        ...b,
+        kind: 'barracks',
+        name: b.name || 'Barracks',
+        icon: b.progress < 4 ? '🏗️' : '🏕️',
+      })),
+      targets = [...fieldTrue, ...mapNpcs, ...fieldBases];
+    openMenu(
+      (room?.name || side?.name || r.name) + ' map',
+      r.biome +
+        '\nTransport: ' +
+        D.regions.map((r) => r.name).join(' → ') +
+        '\nNamed places are destinations; tribute values and labor assignments belong in Barracks Operations.',
+      targets.map((n) => {
+        const boss = game.boss(n.family);
+        return action(
+          n.icon + ' ' + n.name,
+          () => {
+            game.hero.order = { type: 'move', x: n.x, y: n.y };
+            closeMenu();
+          },
+          Math.round(n.x) +
+            ', ' +
+            Math.round(n.y) +
+            (n.kind === 'trueboss'
+              ? ' · TRUE boss hunt target'
+              : n.kind === 'barracks'
+                ? n.progress < 4
+                  ? ' · Barracks under construction'
+                  : ' · Regional field base'
+                : n.kind === 'landmark' || n.sideDungeon
+                  ? ' · ' + game.siteDescription(n)
+                  : n.kind === 'dungeon' && boss?.kind === 'dungeon' && game.s.phase === 'awakening'
+                    ? ' · ' +
+                      (game.s.true[n.family]
+                        ? 'TRUE defeated'
+                        : game.s.normal[n.family]
+                          ? 'TRUE awakened — challenge it'
+                          : 'Normal boss still alive — defeat it first')
+                    : n.kind === 'mini'
+                      ? ' · ' + game.miniStatus(n.mini)
+                      : n.hub
+                        ? ' · Crown travel hub — direct town travel to previously visited regions'
+                        : ''),
+        );
+      }),
+      back,
+    );
+    const map = document.createElement('canvas');
+    map.width = 420;
+    map.height = 280;
+    const ctx = map.getContext('2d'),
+      size = game.zoneSize(),
+      sx = (x) => (x / size) * 420,
+      sy = (y) => (y / size) * 280;
+    ctx.fillStyle = D.colors[game.regionIndex()];
+    ctx.fillRect(0, 0, 420, 280);
+    ctx.strokeStyle = '#e0ddb21b';
+    ctx.lineWidth = 1;
+    for (let x = 35; x < 420; x += 35) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, 280);
+      ctx.stroke();
+    }
+    for (let y = 35; y < 280; y += 35) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(420, y);
+      ctx.stroke();
+    }
+    for (let x = 0; x < size; x += 50)
+      for (let y = 0; y < size; y += 50)
+        if (game.blocked(x, y, game.zoneId, 0)) {
+          ctx.fillStyle = game.isDungeon() ? '#78807d' : '#355d72';
+          ctx.fillRect(sx(x), sy(y), sx(50) + 1, sy(50) + 1);
+        }
+    ctx.strokeStyle = '#d9c898';
+    ctx.lineWidth = 2;
+    for (const road of game.zone().roads || []) {
+      ctx.beginPath();
+      road.forEach((p, j) => (j ? ctx.lineTo(sx(p.x), sy(p.y)) : ctx.moveTo(sx(p.x), sy(p.y))));
+      ctx.stroke();
+    }
+    for (const n of [
+      ...mapNpcs,
+      ...game.zone().buildings.map((b) => ({ ...b, kind: 'barracks' })),
+    ]) {
+      const x = sx(n.x),
+        y = sy(n.y);
+      ctx.fillStyle =
+        n.kind === 'dungeon' || n.kind === 'exit'
+          ? '#a9d4c6'
+          : n.kind === 'barracks'
+            ? '#d7bd86'
+            : '#f2e4b9';
+      ctx.strokeStyle = '#162a25';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(x, y, n.kind === 'barracks' ? 5 : 3.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    }
+    for (const e of game.zone().enemies.filter((e) => e.hp > 0 && e.type === 'boss')) {
+      ctx.fillStyle = e.neutral ? '#aed6a0' : '#e87b7b';
+      ctx.fillRect(sx(e.x) - 2, sy(e.y) - 2, 5, 5);
+    }
+    ctx.strokeStyle = '#fff2bd';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(sx(game.hero.x), sy(game.hero.y), 6, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(sx(game.hero.x) - 8, sy(game.hero.y));
+    ctx.lineTo(sx(game.hero.x) + 8, sy(game.hero.y));
+    ctx.moveTo(sx(game.hero.x), sy(game.hero.y) - 8);
+    ctx.lineTo(sx(game.hero.x), sy(game.hero.y) + 8);
+    ctx.stroke();
+    ctx.strokeStyle = '#e2cf9a';
+    ctx.strokeRect(1, 1, 418, 278);
+    $('modal-description').append(map);
+  }
+  $('squad-button').onclick = (e) => {
+    if (desktopMouse(e)) return;
+    audio.unlock();
+    if (activePlay() && game.toggleSquadDoctrine()) updateHUD();
+  };
+  $('recall-button').onclick = (e) => {
+    if (desktopMouse(e)) return;
+    audio.unlock();
+    if (activePlay()) {
+      recallSquad();
+      save();
+    }
+  };
+  $('order-button').onclick = (e) => {
+    if (desktopMouse(e)) return;
+    audio.unlock();
+    if (menu) buttons[menuIndex]?.click();
+  };
+  const skillNames = [
+      'Basic attack',
+      'Second attack',
+      'Self-Heal',
+      'Defense or mobility',
+      'Area attack',
+      'Frequent special',
+      'Advanced special',
+      'Final special',
+    ],
+    icons = ['ATK', 'HIT', 'HEAL', 'GUARD', 'AREA', 'CAST', 'BURST', 'FINAL'],
+    skillKeys = ['1', '2', '3', '4', '5', 'Space', 'Shift', 'B'],
+    chargeableSlots = new Set([1, 2, 3]);
+  function chargeSeconds() {
+    return PrototypeRules.chargedSkills?.holdSeconds || 0.65;
+  }
+  function chargeTapSeconds() {
+    return PrototypeRules.chargedSkills?.tapSeconds || 0.2;
+  }
+  function chargedManaPercent(slot) {
+    return Math.round((PrototypeRules.chargedSkills?.manaFractions?.[slot] || 0) * 100);
+  }
+  function cooldownText(seconds) {
+    return (Math.ceil(Math.max(0, seconds) * 10) / 10).toFixed(1);
+  }
+  function chargedTargetRange(slot) {
+    if (slot === 2) {
+      const def = PrototypeRules.chargedSkills?.second?.[game.hero.class];
+      return def?.range || 480;
+    }
+    if (slot === 1)
+      return game.hero.class === 'paladin' ? 120 : game.hero.class === 'mage' ? 400 : 450;
+    return 0;
+  }
+  function chargeTarget(slot, targetId = null) {
+    if (slot !== 1 && slot !== 2) return null;
+    const range = chargedTargetRange(slot),
+      valid = game
+        .zone()
+        .enemies.filter(
+          (e) =>
+            e.hp > 0 &&
+            !e.neutral &&
+            Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= range &&
+            game.line(game.hero, e),
+        );
+    if (targetId !== null && targetId !== undefined)
+      return valid.find((e) => e.id === targetId) || null;
+    const preferred = valid.find((e) => e.id === game.s.heroTarget);
+    return (
+      preferred ||
+      valid.sort(
+        (a, b) =>
+          Math.hypot(a.x - game.hero.x, a.y - game.hero.y) -
+          Math.hypot(b.x - game.hero.x, b.y - game.hero.y),
+      )[0] ||
+      null
+    );
+  }
+  function chargeHealNeeded() {
+    return [game.hero, ...game.activeLivingParty()].some((u) => u.hp > 0 && u.hp < u.maxHp);
+  }
+  function startChargeClock() {
+    if (!charge || charge.started !== null) return false;
+    charge.started = performance.now();
+    if (charge.slot === 1 || charge.slot === 2)
+      charge.targetId = chargeTarget(charge.slot)?.id ?? null;
+    return true;
+  }
+  function syncChargeReady() {
+    if (!charge || charge.started !== null || !activePlay()) return false;
+    if (game.hero.cd[charge.slot - 1] <= 0) return startChargeClock();
+    return false;
+  }
+  function chargePresentation() {
+    if (!charge) return null;
+    syncChargeReady();
+    const rank = game.hero.skills[charge.slot - 1],
+      cost = game.skillManaCost(charge.slot, rank, true),
+      enoughMana = game.hero.mp >= cost,
+      color =
+        game.hero.class === 'mage'
+          ? '#9fd8ff'
+          : game.hero.class === 'ranger'
+            ? '#cfe59a'
+            : '#f6d77a';
+    if (charge.started === null)
+      return {
+        slot: charge.slot,
+        state: 'waiting',
+        elapsed: 0,
+        progress: 0,
+        ready: false,
+        waiting: true,
+        cooldown: game.hero.cd[charge.slot - 1],
+        cost,
+        enoughMana,
+        targetId: charge.targetId ?? null,
+        color,
+      };
+    const elapsed = Math.max(0, (performance.now() - charge.started) / 1000),
+      progress = Math.min(1, elapsed / chargeSeconds());
+    if (progress < 1)
+      return {
+        slot: charge.slot,
+        state: 'charging',
+        elapsed,
+        progress,
+        ready: false,
+        waiting: false,
+        cooldown: 0,
+        cost,
+        enoughMana,
+        targetId: charge.targetId ?? null,
+        color,
+      };
+    if (!enoughMana)
+      return {
+        slot: charge.slot,
+        state: 'need-mp',
+        elapsed,
+        progress,
+        ready: false,
+        waiting: false,
+        cooldown: 0,
+        cost,
+        enoughMana: false,
+        targetId: charge.targetId ?? null,
+        color,
+      };
+    if ((charge.slot === 1 || charge.slot === 2) && !chargeTarget(charge.slot, charge.targetId))
+      return {
+        slot: charge.slot,
+        state: 'no-target',
+        elapsed,
+        progress,
+        ready: false,
+        waiting: false,
+        cooldown: 0,
+        cost,
+        enoughMana: true,
+        targetId: charge.targetId ?? null,
+        color,
+      };
+    if (charge.slot === 3 && !chargeHealNeeded())
+      return {
+        slot: charge.slot,
+        state: 'no-heal',
+        elapsed,
+        progress,
+        ready: false,
+        waiting: false,
+        cooldown: 0,
+        cost,
+        enoughMana: true,
+        targetId: null,
+        color,
+      };
+    return {
+      slot: charge.slot,
+      state: 'ready',
+      elapsed,
+      progress,
+      ready: true,
+      waiting: false,
+      cooldown: 0,
+      cost,
+      enoughMana: true,
+      targetId: charge.targetId ?? null,
+      color,
+    };
+  }
+  function beginCharge(slot, source, pointerId = null) {
+    const rank = game.hero.skills[slot - 1];
+    if (!chargeableSlots.has(slot) || !activePlay() || !rank || game.peace) return false;
+    if (charge) cancelCharge();
+    const queued = game.hero.cd[slot - 1] > 0;
+    charge = { slot, source, pointerId, queued, started: null, targetId: null };
+    if (!queued) startChargeClock();
+    updateHUD();
+    return true;
+  }
+  function chargeFailureStatus(slot, charged) {
+    const rank = game.hero.skills[slot - 1],
+      cost = game.skillManaCost(slot, rank, charged);
+    if (game.hero.cd[slot - 1] > 0) {
+      status('Skill ' + slot + ' is ready in ' + cooldownText(game.hero.cd[slot - 1]) + 's.');
+      return;
+    }
+    if (game.hero.mp < cost) {
+      status(
+        (charged ? 'Charged ' : '') +
+          'Skill ' +
+          slot +
+          ' needs ' +
+          cost +
+          ' MP' +
+          (charged ? ' (' + chargedManaPercent(slot) + '% max MP).' : '.'),
+      );
+      return;
+    }
+    if (slot === 1 || slot === 2) {
+      status(
+        (charged ? 'Charged ' : '') +
+          'Skill ' +
+          slot +
+          ' needs a hostile target in range and line of sight.',
+      );
+      return;
+    }
+    if (slot === 3) {
+      status(
+        (charged ? 'Charged ' : '') +
+          'Self-Heal needs a wounded ' +
+          (charged ? 'hero or active companion.' : 'hero.'),
+      );
+    }
+  }
+  function chargeStateStatus(cast) {
+    if (cast.state === 'need-mp') {
+      status(
+        'Charged Skill ' +
+          cast.slot +
+          ' needs ' +
+          cast.cost +
+          ' MP (' +
+          chargedManaPercent(cast.slot) +
+          '% max MP).',
+      );
+      return;
+    }
+    if (cast.state === 'no-target') {
+      status(
+        'Charged Skill ' +
+          cast.slot +
+          ' lost its target · move into range or line of sight and charge again.',
+      );
+      return;
+    }
+    if (cast.state === 'no-heal') {
+      status('Charged Self-Heal has no wounded hero or active companion to heal.');
+    }
+  }
+  function releaseCharge(slot, source) {
+    if (!charge || charge.slot !== slot || charge.source !== source) return false;
+    syncChargeReady();
+    if (charge.started === null) {
+      const remaining = game.hero.cd[slot - 1];
+      charge = null;
+      status(
+        'Skill ' +
+          slot +
+          ' is ready in ' +
+          cooldownText(remaining) +
+          's. Hold through the cooldown to queue the charge.',
+      );
+      updateHUD();
+      return false;
+    }
+    const held = (performance.now() - charge.started) / 1000,
+      wasQueued = charge.queued,
+      targetId = charge.targetId;
+    if (held < chargeSeconds()) {
+      const quickTap = !wasQueued && held < chargeTapSeconds();
+      charge = null;
+      if (!quickTap) {
+        status('Skill ' + slot + ' charge canceled safely.');
+        updateHUD();
+        return false;
+      }
+      const cast = activePlay() && game.cast(slot, undefined, false);
+      if (!cast && activePlay()) chargeFailureStatus(slot, false);
+      updateHUD();
+      return cast;
+    }
+    const state = chargePresentation();
+    if (!state.ready) {
+      charge = null;
+      chargeStateStatus(state);
+      updateHUD();
+      return false;
+    }
+    charge = null;
+    const cast =
+      activePlay() && game.cast(slot, slot === 1 || slot === 2 ? targetId : undefined, true);
+    if (!cast && activePlay()) chargeFailureStatus(slot, true);
+    updateHUD();
+    return cast;
+  }
+  function cancelCharge() {
+    if (!charge) return;
+    charge = null;
+    if (started) updateHUD();
+  }
+  for (let i = 0; i < 8; i++) {
+    const slot = i + 1,
+      b = document.createElement('button');
+    b.id = 'skill-' + slot;
+    b.setAttribute('aria-label', 'Skill ' + slot + ' ' + skillNames[i]);
+    b.innerHTML = icons[i] + '<small>' + skillKeys[i] + '</small>';
+    if (chargeableSlots.has(slot)) {
+      b.onclick = (e) => e?.preventDefault?.();
+      b.onpointerdown = (e) => {
+        if (desktopMouse(e) || e?.pointerType === 'mouse') return;
+        audio.unlock();
+        if (beginCharge(slot, 'touch', e?.pointerId ?? null)) b.setPointerCapture?.(e.pointerId);
+      };
+      b.onpointerup = (e) => {
+        if (e?.pointerType === 'mouse') return;
+        releaseCharge(slot, 'touch');
+      };
+      b.onpointercancel = b.onlostpointercapture = (e) => {
+        if (
+          charge?.source === 'touch' &&
+          (charge.pointerId === null || charge.pointerId === e?.pointerId)
+        )
+          cancelCharge();
+      };
+    } else
+      b.onclick = (e) => {
+        if (desktopMouse(e)) return;
+        audio.unlock();
+        if (activePlay()) game.cast(slot);
+      };
+    $('skills').append(b);
+  }
+  function useRangerSupport(type) {
+    if (!activePlay()) return;
+    audio.unlock();
+    if (game.rangerSupport(type, true)) {
+      updateHUD();
+      save();
+    }
+  }
+  const quickItems = document.createElement('div');
+  quickItems.id = 'quick-items';
+  for (const [type, label, key] of [
+    ['health', 'Heal', 'H'],
+    ['mana', 'Mana Regen', 'M'],
+  ]) {
+    const b = document.createElement('button');
+    b.id = type + '-potion';
+    b.className = 'potion-button';
+    b.setAttribute('aria-label', 'Command Ranger ' + label + ' (' + key + ')');
+    b.onclick = (e) => {
+      if (desktopMouse(e)) return;
+      useRangerSupport(type);
+    };
+    quickItems.append(b);
+  }
+  $('skills').append(quickItems);
+  addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    audio.unlock();
+    const code = e.code;
+    if (['Space', 'Tab', 'Escape'].includes(code)) e.preventDefault();
+    if (code === 'Escape') {
+      if (menu) menu.back();
+      else if (!started) chooseClass('normal');
+      else if (game.s.challenge.pending) successionMenu();
+      else if (game.s.challenge.gameOver) gameOver();
+      else openMain();
+      return;
+    }
+    if (menu) {
+      if (e.repeat) return;
+      if (['KeyS', 'KeyD'].includes(code)) {
+        menuIndex = (menuIndex + 1) % Math.max(1, buttons.length);
+        highlight();
+      } else if (['KeyW', 'KeyA'].includes(code)) {
+        menuIndex = (menuIndex - 1 + buttons.length) % Math.max(1, buttons.length);
+        highlight();
+      } else if (['KeyF', 'Enter', 'Space'].includes(code)) buttons[menuIndex]?.click();
+      return;
+    }
+    if ((paused || !focused || document.hidden) && !['KeyP', 'KeyV', 'KeyG'].includes(code)) return;
+    keys[code] = true;
+    if (code === 'KeyQ') Sprint.press('keyboard', true);
+    if (e.repeat) return;
+    if (code === 'Tab') {
+      game.toggleSquadDoctrine();
+      updateHUD();
+    } else if (code === 'KeyE' || code === 'KeyF') interact();
+    else if (code === 'Backquote') {
+      recallSquad();
+      save();
+    } else if (code === 'KeyP' || code === 'KeyV') {
+      paused = !paused;
+      clearInput();
+    } else if (code === 'KeyZ') showMap();
+    else if (code === 'KeyI' || code === 'KeyR') inventory();
+    else if (code === 'KeyH') useRangerSupport('health');
+    else if (code === 'KeyM') useRangerSupport('mana');
+    else if (code === 'KeyC') talents();
+    else if (code === 'KeyX') skillBook();
+    else if (code === 'KeyG') help();
+    else if (code === 'KeyJ' || code === 'KeyT') quests(false);
+    else {
+      const num = /Digit([1-5])/.exec(code)?.[1] || { Space: 6, ShiftLeft: 7, KeyB: 8 }[code];
+      if (num) {
+        const slot = Number(num);
+        if (chargeableSlots.has(slot)) beginCharge(slot, 'keyboard');
+        else game.cast(slot);
+      }
+    }
+  });
+  addEventListener('keyup', (e) => {
+    delete keys[e.code];
+    if (e.code === 'KeyQ') Sprint.press('keyboard', false);
+    const slot = /Digit([123])/.exec(e.code)?.[1];
+    if (slot) releaseCharge(Number(slot), 'keyboard');
+  });
+  const joystick = $('joystick');
+  let pointer = null,
+    menuJoyTime = 0;
+  function joyUpdate(e) {
+    const r = joystick.getBoundingClientRect(),
+      dx = (e.clientX - r.left - r.width / 2) / (r.width * 0.4),
+      dy = (e.clientY - r.top - r.height / 2) / (r.height * 0.4),
+      n = Math.max(1, Math.hypot(dx, dy));
+    joy = { x: dx / n, y: dy / n };
+    $('stick').style.transform = 'translate(' + joy.x * 24 + 'px,' + joy.y * 24 + 'px)';
+  }
+  joystick.onpointerdown = (e) => {
+    if (e.pointerType === 'mouse' || pointer !== null) return;
+    e.preventDefault();
+    audio.unlock();
+    pointer = e.pointerId;
+    joystick.setPointerCapture(pointer);
+    joyUpdate(e);
+  };
+  joystick.onpointermove = (e) => {
+    if (e.pointerId === pointer) joyUpdate(e);
+  };
+  joystick.onpointerup =
+    joystick.onpointercancel =
+    joystick.onlostpointercapture =
+      (e) => {
+        if (e.pointerId === pointer) {
+          pointer = null;
+          joy = { x: 0, y: 0 };
+          $('stick').style.transform = '';
+        }
+      };
+  canvas.onpointermove = null;
+  canvas.onpointerdown = (e) => {
+    if (e.pointerType === 'mouse') e.preventDefault();
+  };
+  addEventListener(
+    'pointerdown',
+    (e) => {
+      if (e.pointerType !== 'mouse' || !activePlay()) return;
+      if (e.button === 0) {
+        e.preventDefault();
+        useRangerSupport('health');
+      } else if (e.button === 2) {
+        e.preventDefault();
+        useRangerSupport('mana');
+      }
+    },
+    true,
+  );
+  addEventListener('contextmenu', (e) => {
+    if (activePlay()) e.preventDefault();
+  });
+  addEventListener('blur', () => {
+    focused = false;
+    clearInput();
+    save();
+    audio.setPaused(true);
+  });
+  addEventListener('focus', () => {
+    focused = true;
+    last = performance.now();
+  });
+  document.addEventListener('visibilitychange', () => {
+    clearInput();
+    last = performance.now();
+    if (document.hidden) {
+      save();
+      audio.setPaused(true);
+    }
+  });
+  addEventListener('pagehide', save);
+  function updateCriticalNotice() {
+    const host = $('message'),
+      latest = game.notices?.at(-1),
+      now = performance.now();
+    if (latest && latest !== criticalNoticeSeen) {
+      criticalNoticeSeen = latest;
+      criticalNoticeUntil = now + (latest.duration || 5.5) * 1000;
+      host.textContent = latest.text;
+      host.classList.add('visible');
+    }
+    if (criticalNoticeUntil && now >= criticalNoticeUntil) {
+      criticalNoticeUntil = 0;
+      host.classList.remove('visible');
+    }
+  }
+  const hudMarkup = new Map();
+  function setMarkup(id, html) {
+    if (hudMarkup.get(id) !== html) {
+      $(id).innerHTML = html;
+      hudMarkup.set(id, html);
+    }
+  }
+  function updateHUD() {
+    const h = game.hero,
+      hp = Math.max(0, Math.min(100, (h.hp / h.maxHp) * 100)),
+      mp = Math.max(0, Math.min(100, (h.mp / h.maxMp) * 100));
+    const talentButton = $('talent-button'),
+      talentCount = $('talent-count');
+    talentCount.textContent = h.talentPoints;
+    talentButton.classList.toggle('talent-ready', h.talentPoints > 0);
+    talentButton.title =
+      h.talentPoints > 0
+        ? h.talentPoints +
+          ' unspent training point' +
+          (h.talentPoints === 1 ? '' : 's') +
+          ' · press C'
+        : 'Discipline Training · press C';
+    let heroMarkup =
+      '<div class="hero-title"><span>' +
+      Campaign.classes[h.class].icon +
+      ' ' +
+      h.class +
+      '</span><small>LEVEL ' +
+      h.level +
+      '</small></div><div class="resource-line health"><span>HP ' +
+      Math.ceil(h.hp) +
+      ' / ' +
+      h.maxHp +
+      '</span><i style="--fill:' +
+      hp +
+      '%"></i></div><div class="resource-line mana"><span>MP ' +
+      Math.floor(h.mp) +
+      ' / ' +
+      h.maxMp +
+      '</span><i style="--fill:' +
+      mp +
+      '%"></i></div><div class="wallet"><span class="gold">' +
+      Math.floor(h.gold) +
+      ' crowns</span><span>XP ' +
+      Math.floor(h.xp) +
+      ' / ' +
+      120 * h.level +
+      '</span></div>';
+    const heroEffects = h.supportEffects || [],
+      activeRecovery = heroEffects.slice().sort((a, b) => a.seconds - b.seconds)[0];
+    if (activeRecovery)
+      heroMarkup +=
+        '<small class="restoring">Ranger restoring ' +
+        (activeRecovery.type === 'health' ? 'HP' : 'MP') +
+        ' · ' +
+        activeRecovery.seconds.toFixed(1) +
+        's</small>';
+    setMarkup('hero-stats', heroMarkup);
+    $('location').textContent =
+      game.definition().name +
+      (game.supplyRoom()
+        ? ' · ' + game.supplyRoom().name
+        : game.isDungeon()
+          ? ' · ' + game.boss(game.zoneId).place
+          : '') +
+      ' · ' +
+      (game.peace
+        ? 'At peace'
+        : game.s.mode === 'nightmare'
+          ? 'Nightmare'
+          : game.night()
+            ? 'Night'
+            : 'Day');
+    const rangers = game.activeLivingParty().filter((u) => u.type === 'archer');
+    for (const [type, label, key, cdKey, threshold] of [
+      ['health', 'Heal', 'H', 'healCd', 50],
+      ['mana', 'Mana Regen', 'M', 'manaCd', 35],
+    ]) {
+      const b = $(type + '-potion'),
+        ready = rangers.filter((u) => (u[cdKey] || 0) <= 0).length,
+        full =
+          type === 'health'
+            ? [h, ...game.activeLivingParty()].every((u) => u.hp >= u.maxHp)
+            : h.mp >= h.maxMp,
+        next = rangers.length ? Math.min(...rangers.map((u) => u[cdKey] || 0)) : 0;
+      b.disabled = !rangers.length || !ready || full;
+      setMarkup(
+        type + '-potion',
+        label +
+          '<small>' +
+          key +
+          (ready
+            ? ' · ' + ready + ' ready'
+            : rangers.length
+              ? ' · ' + next.toFixed(1) + 's'
+              : ' · Need Ranger') +
+          '</small>',
+      );
+      b.title =
+        'Ranger ' +
+        label +
+        ' · ' +
+        (type === 'health'
+          ? 'restores ' + game.rangerSupportAmount(type) + ' HP to one injured ally · hero priority'
+          : 'restores ' + game.rangerSupportAmount(type) + ' MP to the hero') +
+        ' over five seconds · auto at ' +
+        threshold +
+        '% or less · 10-second cooldown belongs only to the Ranger who casts it';
+    }
+    const remaining = Campaign.dungeonIds.filter((id) => !game.s.true[id]),
+      liveFieldTrue = game
+        .zone()
+        .enemies.find(
+          (e) =>
+            e.hp > 0 &&
+            e.type === 'boss' &&
+            e.form === 'true' &&
+            game.boss(e.family)?.kind === 'field',
+        ),
+      pendingField = Object.entries(game.s.pending || {}).find(
+        ([id, p]) => p.kind === 'field' && p.zone === game.zoneId && !game.s.true[id],
+      );
+    $('objective').textContent = game.peace
+      ? 'Peace for everyone. Explore the creatures’ new homes.'
+      : liveFieldTrue
+        ? 'TRUE BOSS · ' +
+          liveFieldTrue.name +
+          ' is roaming ' +
+          game.definition().name +
+          ' · Map: Z'
+        : pendingField && !pendingField[1].active
+          ? 'TRUE BOSS · ' +
+            game.boss(pendingField[0]).name +
+            ' TRUE emerging in ' +
+            Math.max(0, Math.ceil(pendingField[1].delay)) +
+            's'
+          : game.s.phase === 'awakening'
+            ? 'AWAKENING · Final objective · ' +
+              (5 - remaining.length) +
+              '/5 TRUE guardians defeated · Map: Z'
+            : regionalSpecialistObjective();
+    const doctrine = game.squadDoctrineLabel(),
+      squad = $('squad-button');
+    squad.hidden = (game.s.expeditionRank || 1) < 3 || !doctrine.active;
+    squad.textContent = 'Squad · ' + doctrine.label + ' · Tab';
+    squad.title = doctrine.boss
+      ? doctrine.mode === 'focus'
+        ? 'Squad concentrates on the boss and ignores adds'
+        : 'Squad clears adds and ignores the boss'
+      : doctrine.mode === 'focus'
+        ? 'Squad concentrates on the hero’s current target'
+        : 'Squad spreads across nearby threats';
+    for (let i = 0; i < 8; i++) {
+      const slot = i + 1,
+        b = $('skill-' + slot),
+        rank = h.skills[i],
+        charging = charge?.slot === slot,
+        cast = charging ? chargePresentation() : null;
+      b.classList.toggle('locked', !rank);
+      b.classList.toggle('charging', charging);
+      const revealed = game.skillRevealed(slot),
+        chargeTip = chargeableSlots.has(slot)
+          ? ' · Tap under ' +
+            chargeTapSeconds().toFixed(2) +
+            's for normal · hold ' +
+            chargeSeconds().toFixed(2) +
+            's for charged · Charged cost ' +
+            chargedManaPercent(slot) +
+            '% max MP'
+          : '';
+      b.title =
+        (revealed ? skillNames[i] : 'Undiscovered skill') +
+        (rank ? ' · Rank ' + rank : ' · Not learned') +
+        chargeTip +
+        (slot === 1
+          ? ' · Same-target combo: 100% → 110% → 120% · third hit adds 55% frontal splash'
+          : '') +
+        (i === 0 && PrototypeRules.movementBasicClasses[h.class]
+          ? ' · Movement auto-attacks pause while Skill 1 is held'
+          : '') +
+        (slot === 2 ? ' · Charged target locks when charging begins' : '');
+      b.setAttribute(
+        'aria-label',
+        'Skill ' +
+          slot +
+          ' ' +
+          (revealed ? skillNames[i] : 'Undiscovered') +
+          (chargeableSlots.has(slot)
+            ? ' · tap for normal or hold to charge · charged cost ' +
+              chargedManaPercent(slot) +
+              ' percent max MP'
+            : ''),
+      );
+      b.querySelector('small').textContent = charging
+        ? cast.state === 'waiting'
+          ? 'WAIT ' + cooldownText(cast.cooldown)
+          : cast.state === 'charging'
+            ? Math.min(99, Math.round(cast.progress * 100)) + '%'
+            : cast.state === 'need-mp'
+              ? 'NEED MP'
+              : cast.state === 'no-target'
+                ? 'NO TARGET'
+                : cast.state === 'no-heal'
+                  ? 'NO HEAL'
+                  : 'CHARGED'
+        : !rank
+          ? 'Locked'
+          : h.cd[i] > 0
+            ? cooldownText(h.cd[i])
+            : skillKeys[i];
+    }
+    const n = nearestNPC();
+    setMarkup('touch-interact-button', 'F<br><small>Interact</small>');
+    $('touch-interact-button').title = n ? n.name : 'Find a marked person';
+    $('order-button').textContent = 'Confirm · F';
+    updateCriticalNotice();
+  }
+  function frame(now) {
+    if (document.hidden) {
+      runtime.suspend();
+      last = now;
+      requestAnimationFrame(frame);
+      return;
+    }
+    const frameStart = performance.now();
+    const dt = Math.min(0.1, Math.max(0, (now - last) / 1000));
+    last = now;
+    const frozen =
+      paused ||
+      menu ||
+      !focused ||
+      document.hidden ||
+      game.s.challenge.pending ||
+      game.s.challenge.gameOver;
+    if (menu) {
+      menuJoyTime -= dt;
+      if (Math.abs(joy.y) > 0.4 && menuJoyTime <= 0 && buttons.length) {
+        menuIndex = (menuIndex + (joy.y > 0 ? 1 : -1) + buttons.length) % buttons.length;
+        highlight();
+        menuJoyTime = 0.3;
+      }
+    }
+    audio.update(
+      game,
+      paused || !!menu || !focused || document.hidden || game.s.challenge.gameOver,
+    );
+    if (!frozen) {
+      let x = (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0) + joy.x,
+        y = (keys.KeyS ? 1 : 0) - (keys.KeyW ? 1 : 0) + joy.y;
+      if (joy.x || joy.y) {
+        const p = world(viewport.width * 0.5 + joy.x * 100, viewport.height * 0.5 + joy.y * 100),
+          base = world(viewport.width * 0.5, viewport.height * 0.5);
+        x = p.x - base.x;
+        y = p.y - base.y;
+      }
+      const speedFactor = Sprint.tick(dt, !!(x || y || game.hero.order)),
+        movingHero = game.hero,
+        was = {
+          x: movingHero.x,
+          y: movingHero.y,
+          zone: game.zoneId,
+          deaths: game.s.statistics.deaths,
+        };
+      game.tick(dt, { x, y, speedFactor });
+      syncChargeReady();
+      if (
+        (x || y) &&
+        charge?.slot !== 1 &&
+        game.hero === movingHero &&
+        PrototypeRules.movementBasicClasses[movingHero.class] &&
+        game.zoneId === was.zone &&
+        game.s.statistics.deaths === was.deaths &&
+        Math.hypot(movingHero.x - was.x, movingHero.y - was.y) > 0.25
+      )
+        game.cast(1);
+      if (x || y || game.hero.order) {
+        footstepTimer += dt;
+        if (footstepTimer > 0.35) {
+          audio.effect('footstep');
+          footstepTimer = 0;
+        }
+      }
+      if (Sprint.enabled) Sprint.hud();
+      saveTimer += dt;
+      if (saveTimer >= 5) {
+        saveTimer = 0;
+        save();
+      }
+    }
+    const events = game.effects.splice(0);
+    renderer.queue(events);
+    renderer.update(dt);
+    for (const e of events) audio.effect(e);
+    if (
+      events.some((e) =>
+        [
+          'heal',
+          'rescue',
+          'learning',
+          'upgrade',
+          'expeditionRank',
+          'construction',
+          'barracksUpgrade',
+          'level',
+          'bossDefeat',
+          'peace',
+          'quest',
+          'questComplete',
+          'supplies',
+          'miniClear',
+          'travel',
+          'death',
+          'successor',
+          'gameOver',
+        ].includes(e.type),
+      )
+    )
+      save();
+    const levelEvent = events.find((e) => e.type === 'level');
+    if (levelEvent)
+      status(
+        'Level ' +
+          levelEvent.level +
+          '! Training point available · press C or use Discipline Training.',
+      );
+    if (events.some((e) => e.type === 'peace')) ending();
+    if (game.s.phase === 'awakening' && !game.s.awakeningAck && !menu) awakeningMenu();
+    if (game.s.challenge.pending && !gateDismissed && menu?.title !== 'Choose your successor')
+      successionMenu();
+    if (game.s.challenge.gameOver && !gateDismissed && !menu) gameOver();
+    if (game.peace && !game.s.endingAck && !menu) ending();
+    hudTimer += dt;
+    if (hudTimer > 0.15) {
+      hudTimer = 0;
+      updateHUD();
+    }
+    if (!frozen) runtime.record(now, frameStart, () => renderer.draw());
+    else {
+      runtime.suspend();
+      if (runtime.shouldDrawIdle(now)) renderer.draw();
+    }
+    requestAnimationFrame(frame);
+  }
+  if (Sprint.enabled) {
+    Sprint.init();
+    $('sprint-button').onpointerdown = (e) => {
+      if (e.pointerType !== 'mouse') Sprint.press('touch', true);
+    };
+    $('sprint-button').onpointerup =
+      $('sprint-button').onpointercancel =
+      $('sprint-button').onpointerleave =
+        () => Sprint.press('touch', false);
+  }
+  platform.onChange(() => {
+    clearInput();
+    resize();
+    runtime.reset();
+  });
+  updateHUD();
+  if (!loaded) chooseClass('normal');
+  requestAnimationFrame(frame);
+  addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    installPrompt = event;
+  });
+  addEventListener('appinstalled', () => {
+    installPrompt = null;
+    status('Azeroth Chronicles installed. Open it from your home screen.');
+  });
+  if (
+    location.protocol === 'https:' ||
+    location.hostname === 'localhost' ||
+    location.hostname === '127.0.0.1'
+  ) {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (appControllerReloaded) return;
+        appControllerReloaded = true;
+        if (hadServiceWorkerController) {
+          appReloadRequested = false;
+          if (started) save();
+          location.reload();
+        }
+      });
+      navigator.serviceWorker
+        .register('./sw.js')
+        .then((reg) => {
+          appRegistration = reg;
+          function check() {
+            appUpdateReady = !!reg.waiting;
+            if (appUpdateReady) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+          }
+          check();
+          reg.addEventListener('updatefound', () => {
+            const worker = reg.installing;
+            if (worker) worker.addEventListener('statechange', check);
+          });
+          reg.update().catch(() => {});
+        })
+        .catch(() => {});
+    }
+  }
 })();

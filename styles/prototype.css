@@ -1,19 +1,22 @@
-:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif;background:#0d1b14;color:#ecf1e7}*{box-sizing:border-box}body{margin:0;overflow:hidden;touch-action:none}button{font:inherit;color:inherit;background:#263a2e;border:1px solid #71866d;border-radius:8px;padding:9px 11px;cursor:pointer;text-align:left;min-height:40px}button:focus-visible,button.selected{outline:3px solid #ebc875;outline-offset:1px}button:hover{background:#38513d}button:disabled{opacity:.5;cursor:default}small{color:#c4cbbd;font-size:10px}#world{position:fixed;inset:0;width:100%;height:100%}#hud{position:fixed;left:10px;top:max(10px,env(safe-area-inset-top));width:min(260px,44vw);padding:10px;background:#102018e8;border:1px solid #71866d77;border-radius:10px;pointer-events:none;font-size:13px}#hud button{pointer-events:auto;margin:2px 0;width:100%;padding:6px 9px;min-height:34px}h1{font-size:16px;margin:8px 0}#hero-stats{line-height:1.6}#location{font-weight:700;color:#edce87;margin-top:7px}#objective{font-size:12px;line-height:1.35;margin:7px 0;color:#d5decc}#status{font-size:11px;color:#f9cc9c}#talent-button{border-color:#bda469;background:linear-gradient(155deg,#51472f,#353226);color:#f6e2a6;font-weight:750}#talent-button.talent-ready{border-color:#f0ca69;box-shadow:inset 0 1px #fff1ba55,0 0 0 2px #d0a64f66,0 0 18px #d8aa4555;animation:talent-pulse 1.35s ease-in-out infinite}@keyframes talent-pulse{0%,100%{box-shadow:inset 0 1px #fff1ba55,0 0 0 2px #d0a64f55,0 0 12px #d8aa4538}50%{box-shadow:inset 0 1px #fff1ba88,0 0 0 2px #e1bd6f88,0 0 22px #e0b24f88}}#message{position:fixed;left:min(290px,47vw);right:12px;bottom:15px;padding:8px;background:#102018e0;border-radius:7px;font-size:12px;pointer-events:none}#skills{position:fixed;left:10px;bottom:145px;width:min(252px,43vw);display:grid;grid-template-columns:repeat(4,1fr);gap:5px}#skills button{font-size:16px;padding:6px 4px;text-align:center;min-height:49px}#skills button.charging{border-color:#f0ca69;box-shadow:0 0 0 2px #d0a64f66,0 0 18px #d8aa4555;background:#4a422c}#skills small{display:block;font-size:9px}#skills .locked{background:#202823;color:#9da79a}#movement{position:fixed;left:12px;bottom:max(14px,env(safe-area-inset-bottom));display:flex;gap:12px;align-items:center}#joystick{width:110px;height:110px;border-radius:50%;background:#152c2290;border:2px solid #95aa8b;position:relative;touch-action:none}#stick{position:absolute;width:44px;height:44px;left:31px;top:31px;background:#8da783cc;border-radius:50%;pointer-events:none}#order-button{font-size:12px;width:100px;min-height:64px}#modal{position:fixed;left:10px;top:max(10px,env(safe-area-inset-top));bottom:14px;width:min(510px,94vw);background:#15241af7;border:1px solid #a2b495;border-radius:12px;padding:18px;overflow-y:auto;touch-action:pan-y;box-shadow:8px 0 45px #0007;z-index:10}#modal[hidden]{display:none}h2{font-size:23px;margin:0 0 10px}#modal-description{font-size:13px;color:#cbd6c3;line-height:1.5;white-space:pre-line;margin-bottom:12px}#modal-actions{display:grid;gap:7px}#modal-actions button{white-space:pre-line}#modal-actions .detail{font-size:11px;color:#b8c6ad;display:block;margin-top:3px}#close-button{margin:14px 0;width:100%}#modal canvas{display:block;width:100%;border:1px solid #55714f;margin:8px 0}body.menu-open #skills{visibility:hidden}body.menu-open #movement{z-index:11}body.menu-open #modal{bottom:140px}.health{color:#9de39a}.mana{color:#a1c9fa}.gold{color:#f7da84}@media(max-width:600px){#hud{font-size:11px;padding:7px}h1{font-size:12px}#objective{font-size:10px}#skills{bottom:122px;grid-template-columns:repeat(3,1fr);gap:3px}#skills button{min-height:37px;font-size:13px;padding:3px}#joystick{width:88px;height:88px}#stick{width:36px;height:36px;left:24px;top:24px}#movement{gap:6px}#order-button{width:61px;font-size:10px;padding:5px;min-height:52px}#modal{padding:12px}h2{font-size:20px}#hud button{font-size:11px;min-height:29px}#hero-stats{line-height:1.45}#message{font-size:10px}#modal-actions button{min-height:43px}}
-
-#stamina-status{position:fixed;left:10px;bottom:258px;background:#102018;padding:6px;font-size:11px}#sprint-button{position:fixed;left:128px;bottom:92px;z-index:3}#sprint-button[hidden],#stamina-status[hidden]{display:none}@media(max-height:610px) and (min-width:600px){#hud{width:190px;padding:6px;font-size:11px}#hud h1{display:none}#hero-stats{line-height:1.2}#hud #objective{display:none}#hud button{min-height:28px;padding:4px}#skills{left:212px;bottom:15px;width:180px;grid-template-columns:repeat(4,1fr)}#message{left:410px;font-size:10px}#movement{bottom:10px}#skills button{min-height:38px;font-size:13px}}
-
-@media(max-width:360px) and (max-height:650px){#objective{display:none}#status{font-size:9px}#hud{padding:6px}}
-
-#quick-items{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,1fr);gap:5px}#skills .potion-button{font-size:12px;min-height:42px;background:#263b39}#skills .potion-button:disabled{opacity:.65}
-
-/* Keep the status and menu on the right; powers stay above the left joystick. */
-#hud{left:auto;right:10px}
-#modal{left:auto;right:10px;bottom:140px}
-#order-button{position:fixed;left:auto;right:12px;bottom:max(14px,env(safe-area-inset-bottom));z-index:12}
-#message{bottom:calc(90px + env(safe-area-inset-bottom))}
-@media(max-height:610px) and (min-width:600px){#skills{left:10px;bottom:128px}}
-#modal{touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
-
+/* Shared theme. Screen layout belongs to desktop.css or phone.css. */
+:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif;background:#0d1b14;color:#ecf1e7}
+*{box-sizing:border-box}body{margin:0;overflow:hidden;touch-action:none}
+button{font:inherit;color:inherit;border:1px solid #71866d;border-radius:8px;padding:9px 11px;text-align:left;min-height:40px}
+button:focus-visible,button.selected{outline:3px solid #ebc875;outline-offset:1px}button:disabled{opacity:.5}
+small{color:#c4cbbd;font-size:10px}h1{font-size:16px;margin:8px 0}h2{font-size:23px;margin:0 0 10px}
+#world{position:fixed;inset:0;width:100%;height:100%}
+#hud{position:fixed;padding:10px;pointer-events:none;font-size:13px;z-index:6}
+#hud button{margin:2px 0;width:100%;padding:6px 9px;min-height:34px}
+#objective{font-size:12px;line-height:1.35;margin:7px 0;color:#d5decc}#location{font-weight:700;margin-top:7px}#status{font-size:11px}
+#talent-button{border-color:#bda469;color:#f6e2a6;font-weight:750}#talent-button.talent-ready{border-color:#f0ca69;box-shadow:0 0 0 2px #d0a64f66,0 0 18px #d8aa4555}
+#skills{position:fixed;display:grid;gap:5px;z-index:5}#skills button{font-size:16px;padding:6px 4px;text-align:center;min-height:49px}
+#skills button.charging{border-color:#f0ca69;box-shadow:0 0 0 2px #d0a64f66,0 0 18px #d8aa4555;background:#4a422c}
+#skills small{display:block;font-size:9px}#quick-items{display:grid;grid-template-columns:repeat(2,1fr);gap:5px}#skills .potion-button{font-size:12px;min-height:42px}
+#joystick{border-radius:50%;position:relative;touch-action:none}#stick{position:absolute;border-radius:50%;pointer-events:none}
+#order-button,#touch-interact-button{position:fixed;z-index:12;text-align:center;font-weight:750}
+#modal{position:fixed;background:#15241af7;border:1px solid #a2b495;border-radius:12px;padding:18px;overflow-y:auto;overflow-x:hidden;touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;box-shadow:8px 0 45px #0007;z-index:10}
+#modal[hidden],[hidden]{display:none!important}#modal-description{font-size:13px;color:#cbd6c3;line-height:1.5;white-space:pre-line;margin-bottom:12px}#modal-actions{display:grid;gap:7px}#modal-actions button{white-space:pre-line}#modal-actions .detail{font-size:11px;color:#b8c6ad;display:block;margin-top:3px}#close-button{margin:14px 0;width:100%}#modal canvas{display:block;width:100%;border:1px solid #55714f;margin:8px 0}
+body.menu-open #skills{visibility:hidden}.health{color:#9de39a}.mana{color:#a1c9fa}.gold{color:#f7da84}#recall-button{color:#e7e2c3}#desktop-hints{display:none}
 /* A restrained ink, stone and brass layer over the existing prototype layout. */
 button{background:linear-gradient(160deg,#344b3c,#25392f 58%,#213329);border-color:#879878a8;box-shadow:inset 0 1px #d8ddc01f,0 2px 6px #07120d88;text-shadow:0 1px #0c1713}
 button:hover{background:linear-gradient(160deg,#426249,#2d4836)}
@@ -33,98 +36,6 @@ button:disabled{background:#202c28;box-shadow:none;text-shadow:none}
 #order-button{border-color:#e8ca8d;color:#fce9bb;background:linear-gradient(155deg,#69563b,#3e392d);font-weight:750;text-align:center;box-shadow:inset 0 1px #f5dfac66,0 3px 12px #07120dcc}
 #modal{border-color:#c6bb92;border-radius:14px}#modal h2{color:#f0d99b;letter-spacing:.015em;border-bottom:1px solid #bac7a14d;padding-bottom:10px}#modal-description{color:#d9e0cd}#modal-actions button{border-left:3px solid #829d82}#modal-actions button.selected{border-left-color:#f3d17d}#modal-actions .detail{color:#c1cdb4}#close-button{border-color:#d1b876;color:#f2d59a}
 #message{border-color:#abb99772;color:#f2ecd7;border-radius:9px}
-@media(max-width:600px){#hud h1{padding-bottom:5px;margin:5px 0}.resource-line{font-size:10px;margin:4px 0}.resource-line i{height:5px}#hero-stats .wallet{font-size:9px;margin:5px 0}#hero-stats .hero-title{margin:2px 0 5px}#modal h2{padding-bottom:6px}}
-
-/* v0.8.21 touch controls: transient toast removed everywhere; touch layout follows input capability as well as viewport. */
-#message{display:none!important}
-@media(max-width:600px), (pointer:coarse) and (hover:none){
- #hud{z-index:6}
- #hud button{min-height:42px;padding:7px 8px}
- #movement{left:8px;bottom:max(8px,env(safe-area-inset-bottom));z-index:5}
- #joystick{width:104px;height:104px}
- #stick{width:44px;height:44px;left:27px;top:27px}
- #skills{
-   left:8px;bottom:calc(126px + env(safe-area-inset-bottom));
-   width:min(196px,calc(50vw - 12px));
-   grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;z-index:5
- }
- #skills button{min-width:0;min-height:52px;font-size:13px;padding:6px 4px;touch-action:manipulation}
- #skills button small{font-size:9px}
- #quick-items{gap:6px}
- #skills .potion-button{min-height:46px;font-size:11px}
- #order-button{right:8px;bottom:max(8px,env(safe-area-inset-bottom));width:90px;min-height:68px;font-size:12px;padding:8px 6px}
- #modal{
-   top:max(8px,env(safe-area-inset-top));right:8px;left:auto;
-   width:calc(100vw - 16px);bottom:124px;padding:12px;
-   overflow-y:auto;overflow-x:hidden;touch-action:pan-y;
-   overscroll-behavior:contain;-webkit-overflow-scrolling:touch
- }
- body.menu-open #modal{bottom:124px}
- #modal-actions button{min-height:48px}
-}
-@media(max-width:340px){
- #skills{gap:5px}
- #skills button{min-height:50px;font-size:12px}
- #order-button{width:86px;min-height:66px}
-}
-@media(max-height:500px) and (min-width:601px), (pointer:coarse) and (hover:none) and (orientation:landscape){
- #hud{z-index:6}
- #movement{left:8px;bottom:8px;z-index:5}
- #joystick{width:104px;height:104px}
- #stick{width:44px;height:44px;left:27px;top:27px}
- #skills{
-   left:8px;bottom:122px;width:min(340px,48vw);
-   grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;z-index:5
- }
- #skills button{min-height:50px;font-size:13px;padding:5px 4px;touch-action:manipulation}
- #skills .potion-button{min-height:46px;font-size:11px}
- #order-button{right:8px;bottom:8px;width:96px;min-height:64px;font-size:12px}
- #modal{
-   top:8px;right:8px;left:auto;width:min(520px,62vw);bottom:120px;
-   overflow-y:auto;overflow-x:hidden;touch-action:pan-y;
-   overscroll-behavior:contain;-webkit-overflow-scrolling:touch
- }
- body.menu-open #modal{bottom:120px}
-}
-@media(max-height:610px) and (min-width:600px){
- #hero-stats .hero-title{margin:2px 0}
- #hero-stats .wallet{margin:3px 0}
- .resource-line{margin:2px 0}
- .resource-line i{height:4px}
- #location{margin-top:3px;padding-top:3px}
-}
-
-
-/* v0.8.30 squad controls: protect the primary Interact/Order slot on touch screens. */
-#recall-button{color:#e7e2c3}
-@media(max-width:600px), (pointer:coarse) and (hover:none){
-  #hud #interact-button,#hud #squad-button,#hud #recall-button{
-    position:fixed;right:8px;width:96px;margin:0;z-index:12;
-    min-height:42px;padding:7px 6px;font-size:11px;text-align:center;
-  }
-  #hud #interact-button{
-    bottom:max(8px,env(safe-area-inset-bottom));
-    min-height:68px;border-color:#e8ca8d;color:#fce9bb;
-    background:linear-gradient(155deg,#69563b,#3e392d);
-  }
-  #hud #recall-button{bottom:calc(84px + env(safe-area-inset-bottom))}
-  #hud #squad-button{bottom:calc(134px + env(safe-area-inset-bottom))}
-  #hud #squad-button[hidden]{display:none!important}
-  #order-button{
-    display:none;right:8px;bottom:max(8px,env(safe-area-inset-bottom));
-    width:96px;min-height:68px;font-size:12px;padding:8px 6px;
-  }
-  body.menu-open #order-button{display:block}
-  body.menu-open #interact-button,body.menu-open #squad-button,body.menu-open #recall-button{display:none}
-}
-@media(max-width:340px){
-  #hud #interact-button,#hud #squad-button,#hud #recall-button,#order-button{width:88px}
-}
-@media(max-height:500px) and (min-width:601px), (pointer:coarse) and (hover:none) and (orientation:landscape){
-  #hud #interact-button,#hud #squad-button,#hud #recall-button,#order-button{width:96px}
-}
-
-
 /* v0.8.32 critical notices: rare, readable, top-center only. */
 #message{
   display:block!important;
@@ -139,56 +50,5 @@ button:disabled{background:#202c28;box-shadow:none;text-shadow:none}
   transition:opacity .35s ease,transform .35s ease,visibility .35s;
 }
 #message.visible{opacity:1;visibility:visible;transform:translate(-50%,0)}
-@media(max-width:600px),(pointer:coarse) and (hover:none){
-  #message{width:min(420px,calc(100vw - 16px));font-size:12px;padding:9px 12px;top:max(8px,env(safe-area-inset-top))}
-}
-@media(prefers-reduced-motion:reduce){
-  #message{transition:none}
-}
 
-
-/* v0.8.33 desktop input identity: gameplay is keyboard-first, not point-and-click. */
-@media (hover:hover) and (pointer:fine){
-  #world,#joystick,#hud button,#skills button,#order-button,#modal button{
-    pointer-events:none;
-    cursor:default;
-  }
-}
-
-
-/* v0.8.44 unified squad doctrine: Confirm exists only for menus. */
-#order-button{display:none}
-body.menu-open #order-button{display:block}
-#squad-button[hidden]{display:none!important}
-
-
-/* Dedicated phone interaction control: keep gameplay Interact out of the HUD. */
-#touch-interact-button{display:none}
-@media(max-width:600px), (pointer:coarse) and (hover:none){
-  #touch-interact-button{
-    display:block;position:fixed;right:8px;bottom:max(8px,env(safe-area-inset-bottom));
-    width:96px;min-height:68px;z-index:12;margin:0;padding:8px 6px;
-    border-color:#e8ca8d;color:#fce9bb;
-    background:linear-gradient(155deg,#69563b,#3e392d);
-    font-size:12px;font-weight:750;text-align:center;
-    box-shadow:inset 0 1px #f5dfac66,0 3px 12px #07120dcc;
-    touch-action:manipulation;
-  }
-  #touch-interact-button small{font-size:10px}
-  #hud #recall-button{position:static;width:100%;margin-top:6px}
-  #hud #squad-button{position:static;width:100%;margin-top:6px}
-  body.menu-open #touch-interact-button{display:none}
-  body.menu-open #order-button{
-    display:block;right:8px;bottom:max(8px,env(safe-area-inset-bottom));
-    width:96px;min-height:68px;font-size:12px;padding:8px 6px;
-  }
-}
-@media(max-width:340px){
-  #touch-interact-button,body.menu-open #order-button{width:88px}
-}
-@media(max-height:500px) and (min-width:601px), (pointer:coarse) and (hover:none) and (orientation:landscape){
-  #touch-interact-button,body.menu-open #order-button{width:96px}
-}
-@media (hover:hover) and (pointer:fine){
-  #touch-interact-button{display:none!important}
-}
+@media(prefers-reduced-motion:reduce){#message{transition:none}}
