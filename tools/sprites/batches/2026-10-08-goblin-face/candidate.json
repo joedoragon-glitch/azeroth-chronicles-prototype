@@ -1,0 +1,97 @@
+{
+  "version": 2,
+  "key": "enemy:goblin",
+  "catalogId": "016",
+  "canonHash": "aaae81634188dec92335c2937ebbff673f5cd456580ac3730c9395c63cd70f19",
+  "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+  "catalogHash": "afea6b2cccaad719db7caf0f8f7351d250bd5779d1beb9305e05da0d5262c4f5",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1286,
+    "height": 1286,
+    "bytes": 185732,
+    "decodedBytes": 6615184,
+    "hash": "09b7f153f6b303756e7f71e709b3562c07a6b5597ee8af51902fd30be964d50e",
+    "pixelHash": "c7d9fcf27ede9e651b435587341fc611ae4ce14109a273762c581668fd0c93e4",
+    "bounds": {
+      "x1": 137,
+      "y1": 63,
+      "x2": 1199,
+      "y2": 1154
+    },
+    "padding": 63,
+    "transparentPixels": 1592411,
+    "visiblePixels": 61385,
+    "lowAlphaPixels": 5526,
+    "materialBounds": {
+      "x1": 551,
+      "y1": 744,
+      "x2": 809,
+      "y2": 1072
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 5330,
+    "decodedBytes": 147456,
+    "hash": "a766feaa2f0b00ddc8a4da98745e66c2e8b76e9605c32e2d17e30d365da05ade",
+    "pixelHash": "3fcc99f8d0f8d8b1897f439f6d665af3a56d22c499aac0e49992772fb9f5e796",
+    "bounds": {
+      "x1": 79,
+      "y1": 110,
+      "x2": 118,
+      "y2": 159
+    },
+    "padding": 32,
+    "transparentPixels": 35493,
+    "visiblePixels": 1371,
+    "lowAlphaPixels": 114,
+    "materialBounds": {
+      "x1": 80,
+      "y1": 110,
+      "x2": 117,
+      "y2": 158
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 54
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1286,
+      1286
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": -3,
+      "y": -1,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "scope": "Engineer review of user-requested native face readability correction. Prior approved organic ears and playful half-smile retained; generated replacement not yet accepted by Joel.",
+    "kind": "engineer-authorized",
+    "userAppearanceAcceptance": false,
+    "nativeScale": true,
+    "technicalReview": "Four desktop/phone viewports, day/night, placement and full-scene hashes retained."
+  }
+}

@@ -56,11 +56,11 @@
       }
     },
     "enemy:goblin": {
-      "src": "./assets/sprites/enemy-goblin-c20da0cb214bf63b414416a83dfe198b646c27dbb87d986173d03803aacc8e50.png",
+      "src": "./assets/sprites/enemy-goblin-a766feaa2f0b00ddc8a4da98745e66c2e8b76e9605c32e2d17e30d365da05ade.png",
       "width": 192,
       "height": 192,
-      "hash": "c20da0cb214bf63b414416a83dfe198b646c27dbb87d986173d03803aacc8e50",
-      "revision": "6e7434dfc416f121e748172b2e5ac18571d6837e85a1de13227c90a5466c8186",
+      "hash": "a766feaa2f0b00ddc8a4da98745e66c2e8b76e9605c32e2d17e30d365da05ade",
+      "revision": "06d5419a812e8c477e77be6f81c4b79e297b7592bc32b0282d0d39ff63590377",
       "displayWidth": 192,
       "displayHeight": 192,
       "anchorX": 0.5,

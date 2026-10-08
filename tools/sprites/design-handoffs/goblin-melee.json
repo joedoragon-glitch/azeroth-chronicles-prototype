@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "integrated",
+  "designId": "goblin-melee",
+  "name": "Goblin melee",
+  "kind": "enemy",
+  "nextAction": "Complete v0.8.95 CI and verify exact live deployment; then resume staged catalog work.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel accepted organic ears and playful half-smile earlier, then reported a deformed face in native live display on 2026-10-08. Authorized targeted correction and implementation.",
+    "decisionDate": "2026-10-08",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "contentDocuments": [
+      "docs/DESIGN_TO_SPRITE_WORKFLOW.md"
+    ],
+    "locationAndLore": "Goblin melee enemy; shared base, guard variants remain separately queued."
+  },
+  "decisions": {
+    "conceptAcceptance": null,
+    "proceduralDesignAcceptance": null,
+    "spriteProductionAuthorization": "Explicit user request to correct the live goblin within authorized sprite production.",
+    "generatedAppearanceAcceptance": "Prior source accepted by Joel; this corrected source is engineer-reviewed, awaiting user feedback during play.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "369cc42889228fb1dbfc1a54c7048deda1f051b0",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js: goblin enemy",
+      "src/prototype/sprites.js: enemy:goblin"
+    ],
+    "exactEntityState": {
+      "key": "enemy:goblin",
+      "catalogId": "016"
+    },
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [
+      "tools/sprites/batches/2026-10-08-goblin-face/device-review.png",
+      "tools/sprites/batches/2026-10-08-goblin-face/device-review.json"
+    ],
+    "traitsToPreserve": [
+      "Organic pointed ears",
+      "Olive-green goblin",
+      "Playful half-smile and corner tooth",
+      "Leather armor, belt and sword"
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [
+      "016"
+    ],
+    "verifiedRuntimeKeys": [
+      "enemy:goblin"
+    ],
+    "requiredVisibleAssets": [
+      "Static body"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": []
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": {
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 54
+    },
+    "staticFallbackKey": "enemy:goblin",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "tools/sprites/batches/2026-10-08-goblin-face/candidate.json"
+    ],
+    "approvedRecordKey": "enemy:goblin",
+    "activeContentRevision": "06d5419a812e8c477e77be6f81c4b79e297b7592bc32b0282d0d39ff63590377",
+    "expectedReplacementRevision": "6e7434dfc416f121e748172b2e5ac18571d6837e85a1de13227c90a5466c8186",
+    "rollbackRevision": "6e7434dfc416f121e748172b2e5ac18571d6837e85a1de13227c90a5466c8186",
+    "releaseCommit": null,
+    "releaseEvidence": "Local review completed; remote CI and deployment pending."
+  }
+}
