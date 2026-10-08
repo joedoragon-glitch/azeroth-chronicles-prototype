@@ -118,6 +118,7 @@ function harness() {
     'audio-effects',
     'audio-recordings',
     'audio-production',
+    'audio-environment',
     'audio',
   ])
     vm.runInContext(

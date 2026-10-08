@@ -26,6 +26,7 @@ const scripts = [
     'audio-effects',
     'audio-recordings',
     'audio-production',
+    'audio-environment',
     'audio',
     'visuals',
     'combat-visuals',

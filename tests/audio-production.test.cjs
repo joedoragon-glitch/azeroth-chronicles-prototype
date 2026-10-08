@@ -49,7 +49,28 @@ for (const boss of data.bosses) {
   }
 }
 assert.equal(data.bosses.length, 11);
-assert.equal(Object.keys(manifest.assets).length, 83);
+assert.equal(Object.values(manifest.assets).filter((a) => a.kind === 'music').length, 83);
+assert.equal(Object.values(manifest.assets).filter((a) => a.kind === 'ambience').length, 14);
+for (const zone of Object.keys(production.places)) {
+  const interior = zone.startsWith('supply-')
+    ? 'treasury'
+    : data.regions.some((r) => r.id === zone)
+      ? 'outdoors'
+      : 'dungeon';
+  for (const night of [false, true])
+    for (const peace of [false, true]) {
+      const rule = a.environmentCue({
+        ...scene,
+        zone,
+        interior,
+        night,
+        peace,
+        region: interior === 'outdoors' ? zone : 'vale',
+      });
+      assert(rule && manifest.assets[rule.asset]?.kind === 'ambience', zone);
+    }
+}
+a.updateEnvironment = () => {};
 assert.equal(a.productionCue({ ...scene, started: false }).id, 'title');
 assert.equal(a.productionCue({ ...scene, gameOver: true }).id, 'defeat');
 a.finaleUntil = 3;

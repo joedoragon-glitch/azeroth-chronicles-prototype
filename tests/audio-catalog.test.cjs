@@ -16,7 +16,9 @@ const copy = (v) => structuredClone(v),
   assert(!runtimeCatalog(production).director.eventGuides);
   assert(
     Object.values(production.assets).every(
-      (a) => a.generationGuide && a.managedBy === 'score-book',
+      (a) =>
+        a.generationGuide &&
+        a.managedBy === (a.kind === 'ambience' ? 'environment-book' : 'score-book'),
     ),
   );
   assert(

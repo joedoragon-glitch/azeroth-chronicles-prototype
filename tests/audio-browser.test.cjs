@@ -68,6 +68,8 @@ const root = path.resolve(__dirname, '..'),
           { cause: error },
         );
       }
+      await page.waitForFunction(() => Prototype.audio.environmentVoice?.id === 'env-woodland-day');
+      assert(await page.evaluate(() => Prototype.audio.noise === null));
       await page.waitForTimeout(120);
       const before = await page.evaluate(() => ({
         status: Prototype.audio.status(),
@@ -94,6 +96,8 @@ const root = path.resolve(__dirname, '..'),
       await page.waitForFunction(
         () => Prototype.audio.ctx.state === 'running' && Prototype.audio.mixScene === 'menu',
       );
+      await page.waitForFunction(() => !!Prototype.audio.environmentVoice);
+      const environmentalStart = await page.evaluate(() => Prototype.audio.environmentVoice.at);
       const saved = await page.evaluate(() => JSON.stringify(Prototype.game.snapshot()));
       await page.waitForTimeout(150);
       assert.equal(await page.evaluate(() => JSON.stringify(Prototype.game.snapshot())), saved);
@@ -103,6 +107,10 @@ const root = path.resolve(__dirname, '..'),
       await page.waitForFunction(() => Prototype.audio.ctx.state === 'suspended');
       await page.evaluate(() => dispatchEvent(new Event('focus')));
       await page.waitForFunction(() => Prototype.audio.ctx.state === 'running');
+      assert.equal(
+        await page.evaluate(() => Prototype.audio.environmentVoice.at),
+        environmentalStart,
+      );
       await page.evaluate(() => {
         const a = Prototype.audio;
         for (let i = 0; i < 300; i++) a.noiseBurst(a.ctx.currentTime);

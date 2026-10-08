@@ -22,9 +22,11 @@
       ? 'Exact synthesis recipes: audio-effects.js, audio-production.js and audio-catalog.js.'
       : entry?.managedBy === 'score-book'
         ? 'Exact composition: tools/audio/score-book.json. Renderer: tools/audio/render-score.py.'
-        : entry?.creationMethod === 'imported-recording'
-          ? 'Imported recording: see its registered author/license. A retained guide is a creative reference.'
-          : 'Diagnostic PCM recipe: tools/audio/fixtures.js.';
+        : entry?.managedBy === 'environment-book'
+          ? 'Exact sound design: tools/audio/environment-book.json. Renderer: tools/audio/render-environment.py.'
+          : entry?.creationMethod === 'imported-recording'
+            ? 'Imported recording: see its registered author/license. A retained guide is a creative reference.'
+            : 'Diagnostic PCM recipe: tools/audio/fixtures.js.';
   }
   $('recording').addEventListener('change', showGuide);
   $('guide-event').addEventListener('change', showGuide);
@@ -211,6 +213,8 @@
         return;
       }
       const entry = audio.recordingManifest.assets[id];
+      audio.stopRecordedScore(0);
+      for (const voice of [...audio.voices]) if (voice.recorded) audio.stopRecording(voice, 0);
       let ok;
       if (entry.kind === 'music' && entry.loop)
         ok = await audio.setRecordedScore({

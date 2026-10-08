@@ -127,11 +127,17 @@ const root = path.resolve(__dirname, '..'),
         );
         assert.equal(bossStarts.length, 2);
         assert.equal(bossStarts[0], bossStarts[1]);
+        await page.waitForFunction(
+          () => AudioAudition.audio.environmentVoice?.id === 'env-crown-courtyard',
+        );
+        assert(
+          await page.evaluate(() => AudioAudition.audio.environmentVoice.targetGain <= 0.36 * 0.25),
+        );
         await page.locator('#source').selectOption('production');
         await page.waitForFunction(
           () =>
             AudioAudition.audio.recordingManifest &&
-            Object.keys(AudioAudition.audio.recordingManifest.assets).length === 83,
+            Object.keys(AudioAudition.audio.recordingManifest.assets).length === 97,
         );
         await press('#record-play');
         await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'place-vale');
@@ -166,12 +172,31 @@ const root = path.resolve(__dirname, '..'),
             }
             return output;
           });
-          assert.equal(decoded.length, 83);
+          assert.equal(decoded.length, 97);
           for (const item of decoded) {
             assert(item.peak < 0.98 && item.rms > 0.005, item.id);
             assert(item.bytes <= 32 * 1024 * 1024, item.id);
           }
         }
+
+        await page.locator('#recording').selectOption('env-marsh-day');
+        assert((await page.locator('#guide-text').inputValue()).includes('shallow water'));
+        assert(
+          (await page.locator('#guide-recipe').textContent()).includes('environment-book.json'),
+        );
+        await press('#record-play');
+        await page.waitForFunction(() =>
+          [...AudioAudition.audio.voices].some((v) => v.id === 'env-marsh-day'),
+        );
+        await press('#record-play');
+        assert.equal(
+          await page.evaluate(
+            () =>
+              [...AudioAudition.audio.voices].filter((v) => v.recorded && v.bus === 'ambience')
+                .length,
+          ),
+          1,
+        );
 
         // Actual decode + OfflineAudioContext render: synchronized samples remain finite, audible and below clipping.
         const output = await page.evaluate(async () => {
