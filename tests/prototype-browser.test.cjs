@@ -81,8 +81,9 @@ await check('HUD surfaces shield the world and real pointer skills charge safely
  await page.evaluate(()=>{const c=Prototype.game;Object.assign(c.hero,{x:600,y:900,class:'paladin',mp:1000,maxMp:1000,power:18,weapon:0,legacyWeaponPower:0,legacyEquipped:false,talents:[0,0,0,0],order:null});c.hero.skills[0]=1;c.hero.cd[0]=0;c.s.mercyTime=0;const e=c.makeEnemy({species:'goblin',name:'Pointer audit target',level:1,hp:10000,damage:0,gold:0,xp:0},{x:680,y:900});c.zone().enemies=[e];c.s.heroTarget=e.id;Prototype.updateHUD();});
  const skill=await page.locator('#skill-1').boundingBox(),x=skill.x+skill.width/2,y=skill.y+skill.height/2;
  const touch=v.touch?await page.context().newCDPSession(page):null;
+ await page.evaluate(()=>{window.__nativeAudit=[];window.__nativeAuditListener=e=>__nativeAudit.push({type:e.type,target:e.target.id,pointerType:e.pointerType,button:e.button,id:e.pointerId,x:e.clientX,y:e.clientY});for(const type of ['pointerdown','pointerup','pointercancel','lostpointercapture'])document.addEventListener(type,__nativeAuditListener,true);});
  if(touch)await touch.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y,id:701}]});else{await page.mouse.move(x,y);await page.mouse.down();}
- await page.waitForFunction(()=>document.querySelector('#skill-1 small').textContent==='CHARGED',null,{timeout:2000});
+ await page.waitForFunction(()=>document.querySelector('#skill-1 small').textContent==='CHARGED',null,{timeout:2000}).catch(async e=>{const probe=await page.evaluate(p=>({events:__nativeAudit,charge:Prototype.chargePresentation(),label:document.querySelector('#skill-1 small').textContent,hit:document.elementFromPoint(p.x,p.y)?.outerHTML,viewport:{width:innerWidth,height:innerHeight,scale:visualViewport.scale,offsetX:visualViewport.offsetLeft,offsetY:visualViewport.offsetTop},status:document.querySelector('#status').textContent}),{x,y});throw Error(e.message+' · native start '+JSON.stringify(probe));});
  if(touch)await touch.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});else await page.mouse.up();
  const releaseState=await page.evaluate(()=>({charge:Prototype.chargePresentation(),mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[0],hero:{x:Prototype.game.hero.x,y:Prototype.game.hero.y},enemy:Prototype.game.zone().enemies[0],projectiles:Prototype.game.s.projectiles,status:document.querySelector('#status').textContent,messages:Prototype.game.messages}));
  await page.waitForFunction(()=>{const e=Prototype.game.zone().enemies[0];return e.hp<e.maxHp;},null,{timeout:2000}).catch(e=>{throw Error(e.message+' · native release '+JSON.stringify(releaseState));});
@@ -93,6 +94,7 @@ await check('HUD surfaces shield the world and real pointer skills charge safely
  if(touch){await touch.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await touch.detach();}else await page.mouse.up();
  assert.equal(await page.evaluate(()=>Prototype.chargePresentation()),null,'opening a menu cancels a native pointer hold');
  assert.equal(await page.evaluate(()=>{const e=Prototype.game.zone().enemies[0];return e.maxHp-e.hp;}),90,'releasing a canceled hold never casts');
+ await page.evaluate(()=>{for(const type of ['pointerdown','pointerup','pointercancel','lostpointercapture'])document.removeEventListener(type,__nativeAuditListener,true);delete window.__nativeAudit;delete window.__nativeAuditListener;});
  await page.evaluate(state=>{Prototype.closeMenu();Prototype.game.s=state;},saved);
 });
 await check('Reachable pointer destinations, cancellation and legacy phone layout '+tag,async()=>{
