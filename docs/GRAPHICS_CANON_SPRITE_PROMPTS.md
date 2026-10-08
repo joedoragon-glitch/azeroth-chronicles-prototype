@@ -1,5 +1,7 @@
 # Phase 2A — Canon Sprite Image-Generation Prompt Catalog (AUDITED)
 
+<!-- SPRITE_TOTALS {"entries":296,"generate":280,"alias":0,"procedural":16} -->
+
 ## Purpose
 
 **Audit status: COMPLETE.** This document has been checked back against the current production renderer and rules after the initial 110-entry draft, including a second pass over every top-level render branch. Entries marked **KEEP PROCEDURAL** are intentionally not image-generation tasks.
@@ -14,7 +16,7 @@ This catalog has completed its Phase 2A documentation audit. The next image-gene
 - **ALIAS:** reuse the named existing asset; do not generate a second image.
 - **KEEP PROCEDURAL:** do not generate a sprite; the current renderer remains the final visual for that item.
 
-The audited catalog contains **231 numbered entries**: **221 GENERATE**, **0 ALIAS**, and **10 numbered KEEP PROCEDURAL**. Broad procedural systems that do not need individual numbered entries are exhaustively classified in `GRAPHICS_CANON_SPRITE_COVERAGE.md`. Do not add visual details from memory, older concept sheets, or prior generated images. If an entry still lacks enough information, stop on that entry rather than improvising.
+The audited catalog contains **296 numbered entries**: **280 GENERATE**, **0 ALIAS**, and **16 numbered KEEP PROCEDURAL**. Broad procedural systems that do not need individual numbered entries are exhaustively classified in `GRAPHICS_CANON_SPRITE_COVERAGE.md`. Do not add visual details from memory, older concept sheets, or prior generated images. If an entry still lacks enough information, stop on that entry rather than improvising.
 
 The v0.8.79 procedural polish pass revises entrances, specialist clothing, regional services and selected furnishings. Entry 131 now covers Old Orchard Cellars alone; entries 228–231 cover the other four occupied side interiors. Existing IDs are preserved. See `GRAPHICS_PROCEDURAL_POLISH_V0879.md` for the scope and retained procedural families.
 
@@ -30,6 +32,10 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 - Never generate sheets, comparisons, multiple options, turnarounds, scenes, or old/new boards.
 - Never fabricate a visual reference. The procedural renderer and this audited document are the references.
 - Do not move to another asset until the current generation is complete.
+- This is an open inventory. Reconcile current renderer/map additions before their production; the total is not a ceiling.
+- Capture the current exact body and scene context; remove procedural grounding shadows from generation references, retain them in gameplay comparisons.
+- Check native-size facial readability, apparent silhouette, placement and alpha margins before publication.
+- The goblin's pale angular center-face cue is a small nose/face feature, not a broad toothy smile. Do not exaggerate it into a triangular grin.
 - Candidate assets remain outside the live sprite manifest until Phase 2B audit approval.
 - Only entries containing **Image-generation prompt** are generated. Entries marked **KEEP PROCEDURAL** are skipped.
 
@@ -159,7 +165,7 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 016 — Goblin melee
 
-**Canonical cues:** Small humanoid enemy, about 0.8 normal human bulk. Brown clothing, muted yellow-green skin, very large pointed ears, small angular nose, dark belt/waist details, short sword on screen-right.
+**Canonical cues:** Small humanoid enemy, about 0.8 normal human bulk. Brown clothing, muted yellow-green skin, very large pointed ears, small angular nose and separate simple mouth (no wide pale triangular grin), dark belt/waist details, short sword on screen-right.
 
 **Image-generation prompt:**
 
@@ -231,11 +237,11 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 025 — Crown soldier
 
-**Canonical cues:** Armored humanoid based on the Soldier body: muted blue-gray armor, crown-shaped dark maroon/purple headpiece, maroon shield on screen-left, sword on screen-right, small gold horizontal chest detail.
+**Canonical cues:** Compact Crown melee humanoid: muted violet cloth (#62566e), gray steel head/chest (#939fa7), angular maroon-purple Crown helmet, maroon shield on screen-left, sword on screen-right, restrained pale-gold visor/chest marks and current diagonal uniform seam. It is not the blue-gray allied Soldier body.
 
 **Image-generation prompt:**
 
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Crown soldier exactly as described. Preserve Soldier-like armored body, dark crown-shaped headpiece, maroon left shield and right sword. No Dark Lord crown, cape, glowing eyes or extra black armor.
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Crown soldier exactly as described. Preserve violet uniform, gray steel head/chest, angular maroon-purple Crown helmet, maroon left shield, right sword and restrained pale-gold visor/chest marks. No Dark Lord crown, cape, glowing eyes or extra black armor.
 
 ### 026 — Wraith
 
@@ -401,43 +407,53 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 046 — Scornfang
 
-**Canonical cues:** Goblin captain: same Goblin body and proportions, moderately larger. Canon additions inspired by Thornfang: wolf-trophy/bone pieces near left shoulder, three small claw/fang bone marks on torso, two green diagonal markings, small warm-gold glint. Procedural captain ground ring is NOT part of sprite.
+**Canonical cues:** Goblin captain: same Goblin body and proportions, moderately larger. Canon additions inspired by Thornfang: wolf-trophy/bone pieces near left shoulder, three small claw/fang bone marks on torso, two green diagonal markings, small warm-gold glint. Procedural captain ground ring is NOT part of sprite. Current treasury loadout is ranged: sling/stone on screen-right and small brown pouch on screen-left, not the melee sword. Preserve the small angular nose with separate simple mouth; no wide pale triangular grin. The current guard role also retains its small pale-gold body mark. Exclude all captain rings and guard ground chevrons from the raster.
+
+**Runtime sprite key:** `enemy:goblin:captain-ranged-guard`
 
 **Image-generation prompt:**
 
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render Scornfang as the same canonical Goblin body, moderately enlarged, adding only the existing wolf-trophy/bone pieces, three small fang/claw marks and green diagonal markings. No wolf head helmet, antlers, fur cape, boss aura or new armor.
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Scornfang. Goblin captain: same Goblin body and proportions, moderately larger. Canon additions inspired by Thornfang: wolf-trophy/bone pieces near left shoulder, three small claw/fang bone marks on torso, two green diagonal markings, small warm-gold glint. Procedural captain ground ring is NOT part of sprite. Current treasury loadout is ranged: sling/stone on screen-right and small brown pouch on screen-left, not the melee sword. Preserve the small angular nose with separate simple mouth; no wide pale triangular grin. The current guard role also retains its small pale-gold body mark. Exclude all captain rings and guard ground chevrons from the raster. Preserve the exact current loadout, source silhouette and existing captain scale. Do not add anatomy, equipment, a new uniform, scenery or ground effects.
 
 ### 047 — Direjaw
 
-**Canonical cues:** Mireling captain: same crocodilian Mireling body, moderately larger. Canon additions: heavier pale jaw-band/line and several darker/tan dorsal trophy plates, small warm-gold glints along snout. Procedural captain ground ring excluded.
+**Canonical cues:** Mireling captain: same crocodilian Mireling body, moderately larger. Canon additions: heavier pale jaw-band/line and several darker/tan dorsal trophy plates, small warm-gold glints along snout. Procedural captain ground ring excluded. Current treasury loadout is the Mireling hybrid ranged class: darker muted green hide, amber markings, torso reed/leather harness, side pouch and current snout fitting; retain these beneath the captain additions. The current guard role also retains its small pale-gold body mark. Exclude all captain rings and guard ground chevrons from the raster.
+
+**Runtime sprite key:** `enemy:mireling:captain-hybrid-ranged-guard`
 
 **Image-generation prompt:**
 
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render Direjaw as the same canonical Mireling body, moderately enlarged, adding only the heavier jaw band and existing dorsal trophy plates. No armor harness, horns, crown, extra limbs or Mirejaw-scale redesign.
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Direjaw. Mireling captain: same crocodilian Mireling body, moderately larger. Canon additions: heavier pale jaw-band/line and several darker/tan dorsal trophy plates, small warm-gold glints along snout. Procedural captain ground ring excluded. Current treasury loadout is the Mireling hybrid ranged class: darker muted green hide, amber markings, torso reed/leather harness, side pouch and current snout fitting; retain these beneath the captain additions. The current guard role also retains its small pale-gold body mark. Exclude all captain rings and guard ground chevrons from the raster. Preserve the exact current loadout, source silhouette and existing captain scale. Do not add anatomy, equipment, a new uniform, scenery or ground effects.
 
 ### 048 — Crag Tyrant
 
-**Canonical cues:** Wolf captain: same gray Wolf body, moderately larger. Canon additions: quarry-metal collar across shoulders/neck with three rectangular plates, pale stone brow plate near head and a small pale protruding line. Procedural captain ground ring excluded.
+**Canonical cues:** Wolf captain: same gray Wolf body, moderately larger. Canon additions: quarry-metal collar across shoulders/neck with three rectangular plates, pale stone brow plate near head and a small pale protruding line. Procedural captain ground ring excluded. The current guard role also retains its small pale-gold body mark. Exclude all captain rings and guard ground chevrons from the raster.
+
+**Runtime sprite key:** `enemy:wolf:captain-guard`
 
 **Image-generation prompt:**
 
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render Crag Tyrant as the same canonical Wolf body, moderately enlarged, adding only the metal collar plates and pale brow/stone accents. No humanoid armor, horns, antlers, saddle or giant boss proportions.
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Crag Tyrant. Wolf captain: same gray Wolf body, moderately larger. Canon additions: quarry-metal collar across shoulders/neck with three rectangular plates, pale stone brow plate near head and a small pale protruding line. Procedural captain ground ring excluded. The current guard role also retains its small pale-gold body mark. Exclude all captain rings and guard ground chevrons from the raster. Preserve the exact current loadout, source silhouette and existing captain scale. Do not add anatomy, equipment, a new uniform, scenery or ground effects.
 
 ### 049 — Dreadmaw
 
-**Canonical cues:** Enlarged Ash-beast captain body. Dreadmaw's current combat mentor and Treasury master is Cindermaw, but his retained visual idol is the Dark Lord, preserving his original "Dread Lord" imitator identity. The Ash-beast carapace carries a dark obsidian-purple harness, a small Crown/Dark-Lord-style purple sigil, restrained bronze/gold authority linework and the generic captain ground-ring treatment. He remains unmistakably an Ash beast rather than becoming humanoid.
+**Canonical cues:** Enlarged Ash-beast captain body. Dreadmaw's current combat mentor and Treasury master is Cindermaw, but his retained visual idol is the Dark Lord, preserving his original "Dread Lord" imitator identity. The Ash-beast carapace carries a dark obsidian-purple harness, a small Crown/Dark-Lord-style purple sigil, restrained bronze/gold authority linework. He remains unmistakably an Ash beast rather than becoming humanoid. Current treasury loadout is the hybrid Cinder Spitter: dark red-brown/purple carapace, dorsal cinder plates and two restrained orange-highlighted sacs/vents beneath the existing captain harness. The current guard role also retains its small pale-gold body mark. Exclude all captain rings and guard ground chevrons from the raster.
+
+**Runtime sprite key:** `enemy:ashbeast:captain-hybrid-ranged-guard`
 
 **Image-generation prompt:**
 
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render Dreadmaw exactly as the procedural captain canon: a larger Ash-beast body with the normal many-legged Ash-beast anatomy, plus the Dark-Lord-idol obsidian-purple carapace harness, small purple Crown sigil and restrained bronze/gold authority accents. Preserve his identity as an Ash beast serving Cindermaw while visually imitating the Dark Lord. Do not turn him into a miniature Dark Lord, do not give him humanoid armor, sword, shield, crown or cape, and do not remove the Ash-beast anatomy.
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Dreadmaw. Enlarged Ash-beast captain body. Dreadmaw's current combat mentor and Treasury master is Cindermaw, but his retained visual idol is the Dark Lord, preserving his original "Dread Lord" imitator identity. The Ash-beast carapace carries a dark obsidian-purple harness, a small Crown/Dark-Lord-style purple sigil, restrained bronze/gold authority linework. He remains unmistakably an Ash beast rather than becoming humanoid. Current treasury loadout is the hybrid Cinder Spitter: dark red-brown/purple carapace, dorsal cinder plates and two restrained orange-highlighted sacs/vents beneath the existing captain harness. The current guard role also retains its small pale-gold body mark. Exclude all captain rings and guard ground chevrons from the raster. Preserve the exact current loadout, source silhouette and existing captain scale. Do not add anatomy, equipment, a new uniform, scenery or ground effects.
 
 ### 050 — Cinder Warlord
 
 **Canonical cues:** Orc captain: same canonical Orc body, moderately larger. Canon additions inspired by Ashen Warlord: two steel shoulder plates, diagonal muted red authority stripe across torso, small brown tally-board block on screen-right with pale tally lines, slim pole with muted red triangular banner at screen-right.
 
+**Runtime sprite key:** `enemy:orc:captain`
+
 **Image-generation prompt:**
 
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render Cinder Warlord as the same canonical Orc body, moderately enlarged, adding only the steel shoulders, diagonal red authority stripe, tally-board block and slim red triangular banner pole. No Warlord helmet, giant weapon, extra horns or full boss armor.
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Cinder Warlord. Orc captain: same canonical Orc body, moderately larger. Canon additions inspired by Ashen Warlord: two steel shoulder plates, diagonal muted red authority stripe across torso, small brown tally-board block on screen-right with pale tally lines, slim pole with muted red triangular banner at screen-right. Preserve the exact current loadout, source silhouette and existing captain scale. Do not add anatomy, equipment, a new uniform, scenery or ground effects.
 
 ## F. Major destination structures
 
@@ -1436,11 +1452,7 @@ These entries were added only after the second full-renderer audit. They close s
 
 ### 172 — Closed cage — Borin
 
-**Canonical cues:** Closed captive state: brown rectangular cage frame, dark interior, exactly five pale vertical bars, one horizontal crossbar and small gold lower-center lock. Behind the bars is the same current specialist body: Humanoid specialist. Brown/earth clothing and dark gray-brown cape. Dark hair/head band. Heavy dark apron/chest block with brown inset. Long-handled smith hammer on screen-right with steel rectangular head. Asymmetric longer leather apron, angled pale seam and small rectangular pocket toward screen-left. The inset remains partly visible beneath the apron.
-
-**Image-generation prompt:**
-
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Closed cage — Borin. Closed captive state: brown rectangular cage frame, dark interior, exactly five pale vertical bars, one horizontal crossbar and small gold lower-center lock. Behind the bars is the same current specialist body: Humanoid specialist. Brown/earth clothing and dark gray-brown cape. Dark hair/head band. Heavy dark apron/chest block with brown inset. Long-handled smith hammer on screen-right with steel rectangular head. Asymmetric longer leather apron, angled pale seam and small rectangular pocket toward screen-left. The inset remains partly visible beneath the apron. Treat all listed furnishings or equipment as attached parts of this one asset. Preserve the current screen-left/screen-right arrangement. Do not add occupants, new symbols, additional equipment, surrounding scenery or effects.
+**Production decision:** KEEP PROCEDURAL — DO NOT GENERATE A SPRITE. The old barred-cage proposal is superseded for current Borin. Current captive rendering is a secured workstation, not a cage. Retain this ID for history; use the dedicated current-state decision at the end of this catalog and do not generate obsolete cage art.
 
 ### 173 — Closed cage — Sela
 
@@ -1452,11 +1464,7 @@ These entries were added only after the second full-renderer audit. They close s
 
 ### 174 — Closed cage — Neri
 
-**Canonical cues:** Closed captive state: brown rectangular cage frame, dark interior, exactly five pale vertical bars, one horizontal crossbar and small gold lower-center lock. Behind the bars is the same current specialist body: Humanoid specialist. Slate blue-gray cloth, dark blue-gray cape, brown hair under a flat dark headband/cap. Rectangular brown satchel/item on screen-left. Blue-green flask on screen-right with small pale trim/metal neck. Two small colored alchemy vials on torso. Pale gray-green work apron with a dark horizontal upper seam and three small colored vials in lower apron loops, in addition to the two round torso accents.
-
-**Image-generation prompt:**
-
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Closed cage — Neri. Closed captive state: brown rectangular cage frame, dark interior, exactly five pale vertical bars, one horizontal crossbar and small gold lower-center lock. Behind the bars is the same current specialist body: Humanoid specialist. Slate blue-gray cloth, dark blue-gray cape, brown hair under a flat dark headband/cap. Rectangular brown satchel/item on screen-left. Blue-green flask on screen-right with small pale trim/metal neck. Two small colored alchemy vials on torso. Pale gray-green work apron with a dark horizontal upper seam and three small colored vials in lower apron loops, in addition to the two round torso accents. Treat all listed furnishings or equipment as attached parts of this one asset. Preserve the current screen-left/screen-right arrangement. Do not add occupants, new symbols, additional equipment, surrounding scenery or effects.
+**Production decision:** KEEP PROCEDURAL — DO NOT GENERATE A SPRITE. The old barred-cage proposal is superseded for current Neri. Current captive rendering is a secured workstation, not a cage. Retain this ID for history; use the dedicated current-state decision at the end of this catalog and do not generate obsolete cage art.
 
 ### 175 — Closed cage — Orin
 
@@ -1468,11 +1476,7 @@ These entries were added only after the second full-renderer audit. They close s
 
 ### 176 — Closed cage — Dara
 
-**Canonical cues:** Closed captive state: brown rectangular cage frame, dark interior, exactly five pale vertical bars, one horizontal crossbar and small gold lower-center lock. Behind the bars is the same current specialist body: Humanoid specialist. Gray-olive cloth and dark gray-green cape. Dark apron/chest block with brown inset. Pale steel headband/helmet strip. Long-handled smith hammer on screen-right with steel rectangular head. Angular pale-gray screen-left shoulder guard and a broad segmented lower apron pocket with two pale dividers.
-
-**Image-generation prompt:**
-
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Closed cage — Dara. Closed captive state: brown rectangular cage frame, dark interior, exactly five pale vertical bars, one horizontal crossbar and small gold lower-center lock. Behind the bars is the same current specialist body: Humanoid specialist. Gray-olive cloth and dark gray-green cape. Dark apron/chest block with brown inset. Pale steel headband/helmet strip. Long-handled smith hammer on screen-right with steel rectangular head. Angular pale-gray screen-left shoulder guard and a broad segmented lower apron pocket with two pale dividers. Treat all listed furnishings or equipment as attached parts of this one asset. Preserve the current screen-left/screen-right arrangement. Do not add occupants, new symbols, additional equipment, surrounding scenery or effects.
+**Production decision:** KEEP PROCEDURAL — DO NOT GENERATE A SPRITE. The old barred-cage proposal is superseded for current Dara. Current captive rendering is a secured workstation, not a cage. Retain this ID for history; use the dedicated current-state decision at the end of this catalog and do not generate obsolete cage art.
 
 ### 177 — Closed cage — Lyss
 
@@ -1927,3 +1931,646 @@ These entries were added only after the second full-renderer audit. They close s
 ## End of production catalog
 
 The catalog is intentionally explicit so the generation phase never has to improvise visual design. If an asset cannot be generated without inventing information, stop that asset and return it to documentation/audit rather than filling the gap creatively.
+
+## P. Current-map additions and corrected states · 8 October 2026
+
+These entries were reconciled from current production code and authored placement, not inferred from lore. Each generation still requires its current screenshot/reference and exact state. New IDs append without renumbering existing assets.
+
+### 232 — Greenwood Full Barracks
+
+**Canonical cues:** Current Full expedition camp, same reserved footprint as Basic: low central open-flap tent, additional smaller sleeping tent on screen-left, extra bedrolls, open command canopy above a low map table, supply/gear corner on screen-right, shield, weapon rack, communal cookfire, banner/lamps and added seating/supplies. Regional materials: brown-tan canvas and warm pale trim; small grass/flower accents. This is a camp, never a shop or masonry fort.
+
+**Runtime sprite key:** `building:barracks:vale:full`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Greenwood Full Barracks. Current Full expedition camp, same reserved footprint as Basic: low central open-flap tent, additional smaller sleeping tent on screen-left, extra bedrolls, open command canopy above a low map table, supply/gear corner on screen-right, shield, weapon rack, communal cookfire, banner/lamps and added seating/supplies. Regional materials: brown-tan canvas and warm pale trim; small grass/flower accents. This is a camp, never a shop or masonry fort. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.
+
+### 233 — Marches Full Barracks
+
+**Canonical cues:** Current Full expedition camp, same reserved footprint as Basic: low central open-flap tent, additional smaller sleeping tent on screen-left, extra bedrolls, open command canopy above a low map table, supply/gear corner on screen-right, shield, weapon rack, communal cookfire, banner/lamps and added seating/supplies. Regional materials: muted green-gray canvas, teal bedding, reed details and damp-ground timber edge. This is a camp, never a shop or masonry fort.
+
+**Runtime sprite key:** `building:barracks:march:full`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Marches Full Barracks. Current Full expedition camp, same reserved footprint as Basic: low central open-flap tent, additional smaller sleeping tent on screen-left, extra bedrolls, open command canopy above a low map table, supply/gear corner on screen-right, shield, weapon rack, communal cookfire, banner/lamps and added seating/supplies. Regional materials: muted green-gray canvas, teal bedding, reed details and damp-ground timber edge. This is a camp, never a shop or masonry fort. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.
+
+### 234 — Highlands Full Barracks
+
+**Canonical cues:** Current Full expedition camp, same reserved footprint as Basic: low central open-flap tent, additional smaller sleeping tent on screen-left, extra bedrolls, open command canopy above a low map table, supply/gear corner on screen-right, shield, weapon rack, communal cookfire, banner/lamps and added seating/supplies. Regional materials: gray-olive canvas, muted stone markers and alpine timber. This is a camp, never a shop or masonry fort.
+
+**Runtime sprite key:** `building:barracks:highlands:full`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Highlands Full Barracks. Current Full expedition camp, same reserved footprint as Basic: low central open-flap tent, additional smaller sleeping tent on screen-left, extra bedrolls, open command canopy above a low map table, supply/gear corner on screen-right, shield, weapon rack, communal cookfire, banner/lamps and added seating/supplies. Regional materials: gray-olive canvas, muted stone markers and alpine timber. This is a camp, never a shop or masonry fort. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.
+
+### 235 — Frontier Full Barracks
+
+**Canonical cues:** Current Full expedition camp, same reserved footprint as Basic: low central open-flap tent, additional smaller sleeping tent on screen-left, extra bedrolls, open command canopy above a low map table, supply/gear corner on screen-right, shield, weapon rack, communal cookfire, banner/lamps and added seating/supplies. Regional materials: patched rust-brown canvas, scorched braces and warm ember details. This is a camp, never a shop or masonry fort.
+
+**Runtime sprite key:** `building:barracks:frontier:full`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Frontier Full Barracks. Current Full expedition camp, same reserved footprint as Basic: low central open-flap tent, additional smaller sleeping tent on screen-left, extra bedrolls, open command canopy above a low map table, supply/gear corner on screen-right, shield, weapon rack, communal cookfire, banner/lamps and added seating/supplies. Regional materials: patched rust-brown canvas, scorched braces and warm ember details. This is a camp, never a shop or masonry fort. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.
+
+### 236 — Dark Crown Full Barracks
+
+**Canonical cues:** Current Full expedition camp, same reserved footprint as Basic: low central open-flap tent, additional smaller sleeping tent on screen-left, extra bedrolls, open command canopy above a low map table, supply/gear corner on screen-right, shield, weapon rack, communal cookfire, banner/lamps and added seating/supplies. Regional materials: slate-purple canvas, restrained obsidian braces and small purple camp emblem. This is a camp, never a shop or masonry fort.
+
+**Runtime sprite key:** `building:barracks:crown:full`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Dark Crown Full Barracks. Current Full expedition camp, same reserved footprint as Basic: low central open-flap tent, additional smaller sleeping tent on screen-left, extra bedrolls, open command canopy above a low map table, supply/gear corner on screen-right, shield, weapon rack, communal cookfire, banner/lamps and added seating/supplies. Regional materials: slate-purple canvas, restrained obsidian braces and small purple camp emblem. This is a camp, never a shop or masonry fort. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.
+
+### 237 — Highlands payroll station
+
+**Canonical cues:** Broad muted timber pay table; pale ledger with three ruled lines on screen-left, three small gold crowns on screen-right, raised small framed payroll notice at left/back, one already-authored small worker on screen-right in green-gray work clothing. Keep the worker attached as part of this exact static station; add no queue or new people.
+
+**Runtime sprite key:** `prop:highland-pay-station:highlands`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Highlands payroll station. Broad muted timber pay table; pale ledger with three ruled lines on screen-left, three small gold crowns on screen-right, raised small framed payroll notice at left/back, one already-authored small worker on screen-right in green-gray work clothing. Keep the worker attached as part of this exact static station; add no queue or new people. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.
+
+### 238 — Highlands ore-sorting bay
+
+**Canonical cues:** Three timber ore bins with paired muted gray-tan angular ore heaps; thin horizontal steel weighing beam above, central upright, two hanging shallow balance pans at left and right.
+
+**Runtime sprite key:** `prop:ore-sorting-bay:highlands`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Highlands ore-sorting bay. Three timber ore bins with paired muted gray-tan angular ore heaps; thin horizontal steel weighing beam above, central upright, two hanging shallow balance pans at left and right. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.
+
+### 239 — Stonecross mint workbench
+
+**Canonical cues:** Broad low timber workbench, two steel press uprights, dark gray horizontal cap, centered vertical striking shaft and cross handle, muted metal base/anvil, one gold striking disc and three small gold coins on screen-left, narrow brown block at right. A small manual press, no industrial machinery or large hoard.
+
+**Runtime sprite key:** `prop:mint-workbench:highlands`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Stonecross mint workbench. Broad low timber workbench, two steel press uprights, dark gray horizontal cap, centered vertical striking shaft and cross handle, muted metal base/anvil, one gold striking disc and three small gold coins on screen-left, narrow brown block at right. A small manual press, no industrial machinery or large hoard. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.
+
+### 240 — Highlands loaded caravan cart
+
+**Canonical cues:** Wide timber cart with two dark circular wheels, two brown sealed crates of different heights, pale horizontal load seam, forward timber shaft at screen-right and one small pale sealed paper on the right crate.
+
+**Runtime sprite key:** `prop:caravan-loading-bay:highlands`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Highlands loaded caravan cart. Wide timber cart with two dark circular wheels, two brown sealed crates of different heights, pale horizontal load seam, forward timber shaft at screen-right and one small pale sealed paper on the right crate. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.
+
+### 241 — Mine old-cut marker
+
+**Canonical cues:** Single irregular tall gray-green cut-stone fragment, pale angular diamond-like old cut marking and short horizontal lower seam. No invented runes, text, glowing magic or historical symbols.
+
+**Runtime sprite key:** `prop:mine-old-markings:highlands`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Mine old-cut marker. Single irregular tall gray-green cut-stone fragment, pale angular diamond-like old cut marking and short horizontal lower seam. No invented runes, text, glowing magic or historical symbols. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.
+
+### 242 — Ridge supper table
+
+**Canonical cues:** Low wide timber table with two visible supports, two pale oval plates toward left and right, central dark bowl with muted tan food, brown vessel and pale neck at screen-right. No extra diners or feast.
+
+**Runtime sprite key:** `prop:ridge-supper:highlands`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Ridge supper table. Low wide timber table with two visible supports, two pale oval plates toward left and right, central dark bowl with muted tan food, brown vessel and pale neck at screen-right. No extra diners or feast. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.
+
+### 243 — Ridge tabletop game corner
+
+**Canonical cues:** Broad low timber game table with exactly a four-by-four alternating dark tan/pale tan board, three small pale/dark counters/pieces and one gray-green low seat block at each side. Preserve current counter placement; no chess set redesign.
+
+**Runtime sprite key:** `prop:ridge-game-corner:highlands`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Ridge tabletop game corner. Broad low timber game table with exactly a four-by-four alternating dark tan/pale tan board, three small pale/dark counters/pieces and one gray-green low seat block at each side. Preserve current counter placement; no chess set redesign. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.
+
+### 244 — Ridge private study table
+
+**Canonical cues:** Low timber study table, large pale open ruled ledger left-center, small pale sealed letter on screen-right with muted purple-red seal, diagonal pale quill, pale candle toward screen-left and its small intrinsic warm point. No new writing or large treasury piles.
+
+**Runtime sprite key:** `prop:ridge-study:highlands`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Ridge private study table. Low timber study table, large pale open ruled ledger left-center, small pale sealed letter on screen-right with muted purple-red seal, diagonal pale quill, pale candle toward screen-left and its small intrinsic warm point. No new writing or large treasury piles. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.
+
+### 245 — Ridge private bed
+
+**Canonical cues:** Low timber bed frame with broad headboard, muted green-gray blanket, pale tan upper pillow/bedding band and one pale lower horizontal blanket seam. No canopy, occupants, extra pillows or new furniture.
+
+**Runtime sprite key:** `prop:ridge-bed:highlands`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Ridge private bed. Low timber bed frame with broad headboard, muted green-gray blanket, pale tan upper pillow/bedding band and one pale lower horizontal blanket seam. No canopy, occupants, extra pillows or new furniture. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.
+
+### 246 — Crag Tyrant bedding and bowl
+
+**Canonical cues:** Low brown oval bedding with smaller pale tan inner cushion, one steel-gray shallow water bowl attached at screen-right, pale diagonal blanket seam at left. No Wolf occupant, bones or trophies.
+
+**Runtime sprite key:** `prop:crag-rest:highlands`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Crag Tyrant bedding and bowl. Low brown oval bedding with smaller pale tan inner cushion, one steel-gray shallow water bowl attached at screen-right, pale diagonal blanket seam at left. No Wolf occupant, bones or trophies. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.
+
+### 247 — Royal aerial planning table
+
+**Canonical cues:** Angled broad brown timber tabletop with two supports, pale inset map, three muted purple compact dragon-formation marks, connected purple route strokes, pale map divisions and small upright purple-bound planning book on screen-right. No new maps, labels or extra dragons outside the map.
+
+**Runtime sprite key:** `prop:flight-planning-table:frontier`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Royal aerial planning table. Angled broad brown timber tabletop with two supports, pale inset map, three muted purple compact dragon-formation marks, connected purple route strokes, pale map divisions and small upright purple-bound planning book on screen-right. No new maps, labels or extra dragons outside the map. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.
+
+### 248 — Royal flight harness station
+
+**Canonical cues:** Two brown timber uprights and crossbeam; one suspended muted purple-brown saddle with tan inset, two tan hanging harness/stirrup loops with small pale metal fittings, low brown tool block and diagonal pale maintenance tool. Flight equipment, not restraints or a prisoner rack.
+
+**Runtime sprite key:** `prop:flight-harness-station:frontier`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Royal flight harness station. Two brown timber uprights and crossbeam; one suspended muted purple-brown saddle with tan inset, two tan hanging harness/stirrup loops with small pale metal fittings, low brown tool block and diagonal pale maintenance tool. Flight equipment, not restraints or a prisoner rack. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.
+
+### 249 — Royal purple dragon standard
+
+**Canonical cues:** Tall warm timber pole on screen-left with small gold diamond finial; one purple banner extending screen-right with pale purple angular dragon-wing emblem and small pale gold central Crown diamond, irregular lower edge and restrained pale seam. Preserve this existing aviation emblem, not generic banner lore.
+
+**Runtime sprite key:** `prop:royal-flight-standard:frontier`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Royal purple dragon standard. Tall warm timber pole on screen-left with small gold diamond finial; one purple banner extending screen-right with pale purple angular dragon-wing emblem and small pale gold central Crown diamond, irregular lower edge and restrained pale seam. Preserve this existing aviation emblem, not generic banner lore. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.
+
+### 250 — Unfinished royal launch platform
+
+**Canonical cues:** Low angled brown plank platform with visible front/right thickness, plank seams, one loose inset board, two tall unfinished uprights, short overhead timber at left, small purple pennant at upper-right, spare beams and small tool box/maintenance tool. Preserve the open unfinished framework; do not complete the platform or add dragons/riders.
+
+**Runtime sprite key:** `prop:royal-launch-platform:frontier`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Unfinished royal launch platform. Low angled brown plank platform with visible front/right thickness, plank seams, one loose inset board, two tall unfinished uprights, short overhead timber at left, small purple pennant at upper-right, spare beams and small tool box/maintenance tool. Preserve the open unfinished framework; do not complete the platform or add dragons/riders. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.
+
+### 251 — Borin secured craft workstation
+
+**Canonical cues:** Borin beside a tool rack and small secured lock, current smith clothing and craft context; he disappears from this captive state after rescue.
+
+**Production decision:** KEEP PROCEDURAL — DO NOT GENERATE A SPRITE. Current rescue-state composition must preserve specialist disappearance, workstation furniture and the exact secured presentation. The existing runtime rejects generic cage substitution. The separately cataloged rescued specialist body remains eligible. A later isolated-component conversion can be added after its exact state/binding is designed; do not generate a permanently occupied workstation.
+
+### 252 — Neri secured restoration workstation
+
+**Canonical cues:** Neri beside a writing/restoration desk with alchemy materials and small secured lock; she disappears from this captive state after rescue.
+
+**Production decision:** KEEP PROCEDURAL — DO NOT GENERATE A SPRITE. Current rescue-state composition must preserve specialist disappearance, workstation furniture and the exact secured presentation. The existing runtime rejects generic cage substitution. The separately cataloged rescued specialist body remains eligible. A later isolated-component conversion can be added after its exact state/binding is designed; do not generate a permanently occupied workstation.
+
+### 253 — Dara secured equipment-repair workstation
+
+**Canonical cues:** Dara at the wide repair bench with cart/metal parts, hammer and small restraint; she disappears from this captive state after rescue.
+
+**Production decision:** KEEP PROCEDURAL — DO NOT GENERATE A SPRITE. Current rescue-state composition must preserve specialist disappearance, workstation furniture and the exact secured presentation. The existing runtime rejects generic cage substitution. The separately cataloged rescued specialist body remains eligible. A later isolated-component conversion can be added after its exact state/binding is designed; do not generate a permanently occupied workstation.
+
+### 254 — Crown ranged soldier
+
+**Canonical cues:** Compact Crown ranged humanoid, muted violet cloth (#62566e), gray steel (#939fa7), angular maroon-purple Crown helmet and small pale gold visor/chest marks; bow on screen-right, quiver and three arrow shafts at screen-left/back, small dark purple side cloth. No sword or shield. Preserve the current uniform rather than using the simpler Raider Archer.
+
+**Runtime sprite key:** `enemy:crownguard:ranged`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Crown ranged soldier. Compact Crown ranged humanoid, muted violet cloth (#62566e), gray steel (#939fa7), angular maroon-purple Crown helmet and small pale gold visor/chest marks; bow on screen-right, quiver and three arrow shafts at screen-left/back, small dark purple side cloth. No sword or shield. Preserve the current uniform rather than using the simpler Raider Archer. No guard pauldrons, officer sash, extra crest, new equipment or ground marker.
+
+### 255 — Skeleton melee guard
+
+**Canonical cues:** Small exposed bone skeleton with skull, rib cage, thin bone arms and legs, short sword on screen-right. Warm ivory bone color with dark outlines. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. The current skeleton guard has the additional muted gray polygon shield at screen-left; retain the bow or sword of this exact variant.
+
+**Runtime sprite key:** `enemy:skeleton:guard`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Skeleton melee guard. Small exposed bone skeleton with skull, rib cage, thin bone arms and legs, short sword on screen-right. Warm ivory bone color with dark outlines. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. The current skeleton guard has the additional muted gray polygon shield at screen-left; retain the bow or sword of this exact variant. Omit the procedural ground chevron, targeting/elite indicators and shadows. No captain/officer additions, new equipment or bulk increase.
+
+### 256 — Skeleton ranged guard
+
+**Canonical cues:** Same exposed Skeleton body and bone proportions as melee Skeleton, but bow on screen-right instead of sword. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. The current skeleton guard has the additional muted gray polygon shield at screen-left; retain the bow or sword of this exact variant.
+
+**Runtime sprite key:** `enemy:skeleton:ranged-guard`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Skeleton ranged guard. Same exposed Skeleton body and bone proportions as melee Skeleton, but bow on screen-right instead of sword. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. The current skeleton guard has the additional muted gray polygon shield at screen-left; retain the bow or sword of this exact variant. Omit the procedural ground chevron, targeting/elite indicators and shadows. No captain/officer additions, new equipment or bulk increase.
+
+### 257 — Reedbeast ranged guard
+
+**Canonical cues:** Same Reed beast body as asset 019, plus the canonical hybrid mouth cue: a small darker mouth/central oval and a short pale projecting spit/tongue line toward screen-right. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural.
+
+**Runtime sprite key:** `enemy:reedbeast:hybrid-ranged-guard`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Reedbeast ranged guard. Same Reed beast body as asset 019, plus the canonical hybrid mouth cue: a small darker mouth/central oval and a short pale projecting spit/tongue line toward screen-right. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. Omit the procedural ground chevron, targeting/elite indicators and shadows. No captain/officer additions, new equipment or bulk increase.
+
+### 258 — Ogre melee guard
+
+**Canonical cues:** Very bulky humanoid, about 1.5 human bulk. Muted tan/olive skin, minimal dark brown waist belt, small paired tusk/horn marks around face, heavy wooden club/maul held on screen-right. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural.
+
+**Runtime sprite key:** `enemy:ogre:guard`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Ogre melee guard. Very bulky humanoid, about 1.5 human bulk. Muted tan/olive skin, minimal dark brown waist belt, small paired tusk/horn marks around face, heavy wooden club/maul held on screen-right. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. Omit the procedural ground chevron, targeting/elite indicators and shadows. No captain/officer additions, new equipment or bulk increase.
+
+### 259 — Ogre ranged guard
+
+**Canonical cues:** Same very bulky Ogre species and paired facial tusk marks, but a distinct ranged class. Gray-olive/brown clothing rather than the melee Ogre's warmer body treatment, an asymmetric shoulder wrap, diagonal throwing strap, and a large stone satchel on screen-left with visible stones. A simple throwing sling/stone tool is carried on screen-right. No melee club. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural.
+
+**Runtime sprite key:** `enemy:ogre:hybrid-ranged-guard`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Ogre ranged guard. Same very bulky Ogre species and paired facial tusk marks, but a distinct ranged class. Gray-olive/brown clothing rather than the melee Ogre's warmer body treatment, an asymmetric shoulder wrap, diagonal throwing strap, and a large stone satchel on screen-left with visible stones. A simple throwing sling/stone tool is carried on screen-right. No melee club. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. Omit the procedural ground chevron, targeting/elite indicators and shadows. No captain/officer additions, new equipment or bulk increase.
+
+### 260 — Archer ranged guard
+
+**Canonical cues:** Compact hooded humanoid enemy rendered with `human('archer')`, not the Ranger body. Darker green clothing, dark green hood and cape, bow on screen-right, quiver on screen-left/back with visible arrows. It does **not** have the Ranger-specific teal flask/pouch or pale-green/gold utility accent. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural.
+
+**Runtime sprite key:** `enemy:archer:ranged-guard`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Archer ranged guard. Compact hooded humanoid enemy rendered with `human('archer')`, not the Ranger body. Darker green clothing, dark green hood and cape, bow on screen-right, quiver on screen-left/back with visible arrows. It does **not** have the Ranger-specific teal flask/pouch or pale-green/gold utility accent. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. Omit the procedural ground chevron, targeting/elite indicators and shadows. No captain/officer additions, new equipment or bulk increase.
+
+### 261 — Crownguard ranged guard
+
+**Canonical cues:** Compact Crown ranged humanoid, muted violet cloth (#62566e), gray steel (#939fa7), angular maroon-purple Crown helmet and small pale gold visor/chest marks; bow on screen-right, quiver and three arrow shafts at screen-left/back, small dark purple side cloth. No sword or shield. Preserve the current uniform rather than using the simpler Raider Archer. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. Guard uniform uses darker violet cloth (#51495d), lighter steel (#aab2b5), two gray outward shoulder plates and pale-gold collar line; never substitute the unguarded Crown uniform.
+
+**Runtime sprite key:** `enemy:crownguard:ranged-guard`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Crownguard ranged guard. Compact Crown ranged humanoid, muted violet cloth (#62566e), gray steel (#939fa7), angular maroon-purple Crown helmet and small pale gold visor/chest marks; bow on screen-right, quiver and three arrow shafts at screen-left/back, small dark purple side cloth. No sword or shield. Preserve the current uniform rather than using the simpler Raider Archer. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. Guard uniform uses darker violet cloth (#51495d), lighter steel (#aab2b5), two gray outward shoulder plates and pale-gold collar line; never substitute the unguarded Crown uniform. Omit the procedural ground chevron, targeting/elite indicators and shadows. No captain/officer additions, new equipment or bulk increase.
+
+### 262 — Wolf melee guard
+
+**Canonical cues:** Low gray wolf in side-facing game silhouette: long body, tail extending screen-left, four legs, head to screen-right, pointed ears and muzzle; cool gray coat with slightly lighter markings. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural.
+
+**Runtime sprite key:** `enemy:wolf:guard`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Wolf melee guard. Low gray wolf in side-facing game silhouette: long body, tail extending screen-left, four legs, head to screen-right, pointed ears and muzzle; cool gray coat with slightly lighter markings. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. Omit the procedural ground chevron, targeting/elite indicators and shadows. No captain/officer additions, new equipment or bulk increase.
+
+### 263 — Orc melee guard
+
+**Canonical cues:** Broad humanoid enemy, slightly larger than human. Muted olive-green skin, brown-olive clothing, steel shoulder plates, short sword on screen-right. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural.
+
+**Runtime sprite key:** `enemy:orc:guard`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Orc melee guard. Broad humanoid enemy, slightly larger than human. Muted olive-green skin, brown-olive clothing, steel shoulder plates, short sword on screen-right. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. Omit the procedural ground chevron, targeting/elite indicators and shadows. No captain/officer additions, new equipment or bulk increase.
+
+### 264 — Crownguard melee guard
+
+**Canonical cues:** Compact Crown melee humanoid with violet cloth, gray steel head/chest, angular maroon-purple Crown helmet, maroon shield on screen-left, sword on screen-right and restrained pale-gold visor/chest marks. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. Guard uniform uses darker violet cloth (#51495d), lighter steel (#aab2b5), two gray outward shoulder plates and pale-gold collar line; never substitute the unguarded Crown uniform.
+
+**Runtime sprite key:** `enemy:crownguard:guard`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Crownguard melee guard. Compact Crown melee humanoid with violet cloth, gray steel head/chest, angular maroon-purple Crown helmet, maroon shield on screen-left, sword on screen-right and restrained pale-gold visor/chest marks. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. Guard uniform uses darker violet cloth (#51495d), lighter steel (#aab2b5), two gray outward shoulder plates and pale-gold collar line; never substitute the unguarded Crown uniform. Omit the procedural ground chevron, targeting/elite indicators and shadows. No captain/officer additions, new equipment or bulk increase.
+
+### 265 — Goblin melee guard
+
+**Canonical cues:** Small humanoid enemy, about 0.8 normal human bulk. Brown clothing, muted yellow-green skin, very large pointed ears, small angular nose and separate simple mouth (no wide pale triangular grin), dark belt/waist details, short sword on screen-right. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural.
+
+**Runtime sprite key:** `enemy:goblin:guard`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Goblin melee guard. Small humanoid enemy, about 0.8 normal human bulk. Brown clothing, muted yellow-green skin, very large pointed ears, small angular nose and separate simple mouth (no wide pale triangular grin), dark belt/waist details, short sword on screen-right. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. Omit the procedural ground chevron, targeting/elite indicators and shadows. No captain/officer additions, new equipment or bulk increase.
+
+### 266 — Goblin ranged guard
+
+**Canonical cues:** Same small Goblin body, ears, colors and proportions as melee Goblin, but its ranged canonical drawing replaces the sword emphasis with a simple sling/throwing line and stone on screen-right plus a small brown pouch/block on screen-left. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural.
+
+**Runtime sprite key:** `enemy:goblin:ranged-guard`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Goblin ranged guard. Same small Goblin body, ears, colors and proportions as melee Goblin, but its ranged canonical drawing replaces the sword emphasis with a simple sling/throwing line and stone on screen-right plus a small brown pouch/block on screen-left. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. Omit the procedural ground chevron, targeting/elite indicators and shadows. No captain/officer additions, new equipment or bulk increase.
+
+### 267 — Mireling melee guard
+
+**Canonical cues:** Low horizontal crocodilian creature: long tail to screen-left, oval body, long toothy snout to screen-right, four low legs, dark green dorsal spikes, olive-green body. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural.
+
+**Runtime sprite key:** `enemy:mireling:guard`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Mireling melee guard. Low horizontal crocodilian creature: long tail to screen-left, oval body, long toothy snout to screen-right, four low legs, dark green dorsal spikes, olive-green body. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. Omit the procedural ground chevron, targeting/elite indicators and shadows. No captain/officer additions, new equipment or bulk increase.
+
+### 268 — Mireling ranged guard
+
+**Canonical cues:** Same low crocodilian species silhouette as the melee Mireling, but a distinct ranged class body. Slightly darker muted green hide and warmer amber markings. A woven reed/leather harness crosses the torso, with a small side pouch and a visible mouth/spit-projection fitting at the snout. Dark dorsal spikes remain. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural.
+
+**Runtime sprite key:** `enemy:mireling:hybrid-ranged-guard`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Mireling ranged guard. Same low crocodilian species silhouette as the melee Mireling, but a distinct ranged class body. Slightly darker muted green hide and warmer amber markings. A woven reed/leather harness crosses the torso, with a small side pouch and a visible mouth/spit-projection fitting at the snout. Dark dorsal spikes remain. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. Omit the procedural ground chevron, targeting/elite indicators and shadows. No captain/officer additions, new equipment or bulk increase.
+
+
+### 269 — Ash beast melee guard
+
+**Canonical cues:** Low many-legged ash creature. Oval burnt orange-brown body, multiple thin lateral legs, two larger raised forelimb/pincer shapes, curled segmented tail sweeping to screen-left/back, one pale bone-colored horn/spine near the tail/body. Existing guard state adds a restrained pale-gold rectangular role mark; preserve the current species size and loadout. Guard ground chevrons remain procedural.
+
+**Runtime sprite key:** `enemy:ashbeast:guard`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Ash beast melee guard. Low many-legged ash creature. Oval burnt orange-brown body, multiple thin lateral legs, two larger raised forelimb/pincer shapes, curled segmented tail sweeping to screen-left/back, one pale bone-colored horn/spine near the tail/body. Existing guard state adds a restrained pale-gold rectangular role mark; preserve the current species size and loadout. Guard ground chevrons remain procedural. Omit procedural ground chevrons, targeting indicators and shadows. No captain additions or increased bulk.
+
+### 270 — Ash beast cinder-spitter guard
+
+**Canonical cues:** Same low many-legged Ash-beast anatomy, raised forelimbs and curled tail, but a distinct ranged class. Darker red-brown/purple carapace replaces the ordinary burnt-orange body. Additional dorsal cinder plates and two visible cinder sacs/vents carry restrained warm orange highlights. Existing guard state adds a restrained pale-gold rectangular role mark; preserve the current species size and loadout. Guard ground chevrons remain procedural.
+
+**Runtime sprite key:** `enemy:ashbeast:ranged-guard`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Ash beast cinder-spitter guard. Same low many-legged Ash-beast anatomy, raised forelimbs and curled tail, but a distinct ranged class. Darker red-brown/purple carapace replaces the ordinary burnt-orange body. Additional dorsal cinder plates and two visible cinder sacs/vents carry restrained warm orange highlights. Existing guard state adds a restrained pale-gold rectangular role mark; preserve the current species size and loadout. Guard ground chevrons remain procedural. Omit procedural ground chevrons, targeting indicators and shadows. No captain additions or increased bulk.
+
+### 271 — Environmental Grass
+
+**Canonical cues:** Three sparse muted green (#739266) grass blades, small upright clump, restrained differing blade heights. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:grass:vale`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Grass as the current procedural reference. Three sparse muted green (#739266) grass blades, small upright clump, restrained differing blade heights. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 272 — Environmental Wet Grass
+
+**Canonical cues:** Four sparse muted marsh-green (#688c70) blades, narrow upright clump, slightly taller than dry grass. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:wet-grass:march`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Wet Grass as the current procedural reference. Four sparse muted marsh-green (#688c70) blades, narrow upright clump, slightly taller than dry grass. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 273 — Environmental Bush
+
+**Canonical cues:** Compact three-lobed leafy bush: left/right low lobes and raised central lobe, muted green (#58784f), no trunk or flowers. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:bush:vale`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Bush as the current procedural reference. Compact three-lobed leafy bush: left/right low lobes and raised central lobe, muted green (#58784f), no trunk or flowers. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 274 — Environmental Marsh Bush
+
+**Canonical cues:** Compact three-lobed muted gray-green (#5d7662) wetland bush, broad low foliage and two tiny pale highlights. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:marsh-bush:march`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Marsh Bush as the current procedural reference. Compact three-lobed muted gray-green (#5d7662) wetland bush, broad low foliage and two tiny pale highlights. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 275 — Environmental Wildflowers
+
+**Canonical cues:** Four thin muted green stems carrying tiny warm yellow, muted pink, pale cream and pale blue flower heads; preserve their sparse arrangement and very small scale. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:wildflowers:vale`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Wildflowers as the current procedural reference. Four thin muted green stems carrying tiny warm yellow, muted pink, pale cream and pale blue flower heads; preserve their sparse arrangement and very small scale. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 276 — Environmental Sapling
+
+**Canonical cues:** Small brown trunk (#74583e) and three rounded green foliage clumps (#52794f), raised central/left canopy and smaller right clump. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:sapling:vale`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Sapling as the current procedural reference. Small brown trunk (#74583e) and three rounded green foliage clumps (#52794f), raised central/left canopy and smaller right clump. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 277 — Environmental Stump
+
+**Canonical cues:** Low short brown stump (#76563c), warm tan oval cut face (#b38b5d), one restrained dark grain line. No roots or new shoots. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:stump:vale`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Stump as the current procedural reference. Low short brown stump (#76563c), warm tan oval cut face (#b38b5d), one restrained dark grain line. No roots or new shoots. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 278 — Environmental Fallen Log
+
+**Canonical cues:** Diagonal brown log, lower left to upper right, tan round cut end on screen-right, two short branch stubs. No fungi, leaves or surrounding ground. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:fallen-log:vale`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Fallen Log as the current procedural reference. Diagonal brown log, lower left to upper right, tan round cut end on screen-right, two short branch stubs. No fungi, leaves or surrounding ground. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 279 — Environmental Reeds
+
+**Canonical cues:** Five fine muted olive-green (#748c62) reed stems with restrained differing heights; no cattail heads or water patch. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:reeds:march`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Reeds as the current procedural reference. Five fine muted olive-green (#748c62) reed stems with restrained differing heights; no cattail heads or water patch. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 280 — Environmental Cattails
+
+**Canonical cues:** Four fine muted olive-green stems (#71875e), each with narrow elongated brown cattail head (#796245). Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:cattails:march`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Cattails as the current procedural reference. Four fine muted olive-green stems (#71875e), each with narrow elongated brown cattail head (#796245). Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 281 — Environmental Driftwood
+
+**Canonical cues:** Slender weathered brown-gray (#776752) diagonal branch from lower left to upper right with two short branching twigs. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:driftwood:march`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Driftwood as the current procedural reference. Slender weathered brown-gray (#776752) diagonal branch from lower left to upper right with two short branching twigs. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 282 — Environmental Mangrove
+
+**Canonical cues:** Small brown trunk, four rounded muted wetland-green foliage masses (#4d735f), exposed paired splayed roots on both sides and restrained leaf highlights. No water patch. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:mangrove:march`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Mangrove as the current procedural reference. Small brown trunk, four rounded muted wetland-green foliage masses (#4d735f), exposed paired splayed roots on both sides and restrained leaf highlights. No water patch. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 283 — Environmental Pine Sapling
+
+**Canonical cues:** Small slim brown trunk and three stacked triangular muted gray-green (#526c50) foliage tiers, widest below and narrow above. No snow or cones. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:pine-sapling:highlands`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Pine Sapling as the current procedural reference. Small slim brown trunk and three stacked triangular muted gray-green (#526c50) foliage tiers, widest below and narrow above. No snow or cones. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 284 — Environmental Alpine Scrub
+
+**Canonical cues:** Low three-lobed muted gray-olive shrub (#778166), shallow rounded masses, compact alpine silhouette. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:alpine-scrub:highlands`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Alpine Scrub as the current procedural reference. Low three-lobed muted gray-olive shrub (#778166), shallow rounded masses, compact alpine silhouette. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 285 — Environmental Heather
+
+**Canonical cues:** Four sparse fine gray-green (#778067) stems with tiny muted mauve/lavender (#b79ab9/#a99bc6) flower heads. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:heather:highlands`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Heather as the current procedural reference. Four sparse fine gray-green (#778067) stems with tiny muted mauve/lavender (#b79ab9/#a99bc6) flower heads. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 286 — Environmental Rock Cluster
+
+**Canonical cues:** Three small low gray-green stones, left stone lower, larger lighter central stone raised, smaller dark right stone; preserve #797d75/#90928a/#666b66 relationships. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:rock-cluster:highlands`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Rock Cluster as the current procedural reference. Three small low gray-green stones, left stone lower, larger lighter central stone raised, smaller dark right stone; preserve #797d75/#90928a/#666b66 relationships. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 287 — Environmental Dead Tree
+
+**Canonical cues:** Small dark brown (#5f4b40) bare trunk with two angular upward side branches and a short left twig. No leaves or flame. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:dead-tree:frontier`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Dead Tree as the current procedural reference. Small dark brown (#5f4b40) bare trunk with two angular upward side branches and a short left twig. No leaves or flame. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 288 — Environmental Charred Stump
+
+**Canonical cues:** Low short charcoal-brown stump (#4a403a), muted brown cut face (#6c5545) and one dark burnt grain line. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:charred-stump:frontier`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Charred Stump as the current procedural reference. Low short charcoal-brown stump (#4a403a), muted brown cut face (#6c5545) and one dark burnt grain line. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 289 — Environmental Dry Scrub
+
+**Canonical cues:** Four fine dry brown (#78614f) stems, outward leaning upper branches with small crossing side twigs. No foliage or flowers. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:dry-scrub:frontier`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Dry Scrub as the current procedural reference. Four fine dry brown (#78614f) stems, outward leaning upper branches with small crossing side twigs. No foliage or flowers. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 290 — Environmental Burned Log
+
+**Canonical cues:** Low diagonal charcoal-brown log (#4a403a) with two short darker burnt stubs (#2f2d2b). No embers or smoke. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:burned-log:frontier`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Burned Log as the current procedural reference. Low diagonal charcoal-brown log (#4a403a) with two short darker burnt stubs (#2f2d2b). No embers or smoke. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 291 — Environmental Black Rock
+
+**Canonical cues:** Three low dark violet-gray stones, larger raised central stone, lower left/right stones, #4e4a54/#625a69/#403f48 relationships. No added crystal. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:black-rock:crown`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Black Rock as the current procedural reference. Three low dark violet-gray stones, larger raised central stone, lower left/right stones, #4e4a54/#625a69/#403f48 relationships. No added crystal. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 292 — Environmental Crystal Cluster
+
+**Canonical cues:** Three narrow irregular faceted muted violet crystals, tallest center, medium left, shortest right, #766a91/#9382ac/#6f6488 and one restrained pale central glint. No aura. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:crystal-cluster:crown`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Crystal Cluster as the current procedural reference. Three narrow irregular faceted muted violet crystals, tallest center, medium left, shortest right, #766a91/#9382ac/#6f6488 and one restrained pale central glint. No aura. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 293 — Environmental Dead Shrub
+
+**Canonical cues:** Four thin muted dark brown (#62534e) bare stems, outward upper branches and small side twigs; preserve sparse low silhouette. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:dead-shrub:crown`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Dead Shrub as the current procedural reference. Four thin muted dark brown (#62534e) bare stems, outward upper branches and small side twigs; preserve sparse low silhouette. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 294 — Environmental Obsidian
+
+**Canonical cues:** Single irregular dark slate-violet (#373740) upright stone shard, broad low base, uneven pointed upper silhouette and restrained violet facet line (#8b789a). No rune or glow. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.
+
+**Runtime sprite key:** `prop:obsidian:crown`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Obsidian as the current procedural reference. Single irregular dark slate-violet (#373740) upright stone shard, broad low base, uneven pointed upper silhouette and restrained violet facet line (#8b789a). No rune or glow. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.
+
+### 295 — Environmental Vale field rock
+
+**Canonical cues:** Low irregular faceted field rock, broad six-point silhouette, lighter left/top facet, darker right face and thin pale fracture line; muted gray-green #788579/#9fac98 material. Preserve the current moss-marked or unmarked seed reference. No Crown crystal spike.
+
+**Runtime sprite key:** `prop:rock:vale`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one field rock from the current vale wildProp rock branch. Low irregular faceted field rock, broad six-point silhouette, lighter left/top facet, darker right face and thin pale fracture line; muted gray-green #788579/#9fac98 material. Preserve the current moss-marked or unmarked seed reference. No Crown crystal spike. Preserve the current geometry. No new crystals, symbols, ground patch, other rocks or baked shadow.
+
+### 296 — Environmental Highlands field rock
+
+**Canonical cues:** Low irregular faceted field rock, broad six-point silhouette, lighter left/top facet, darker right face and thin pale fracture line; muted gray-green #7d8179/#adb09f material. Preserve the current moss-marked or unmarked seed reference. No Crown crystal spike.
+
+**Runtime sprite key:** `prop:rock:highlands`
+
+**Image-generation prompt:**
+
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one field rock from the current highlands wildProp rock branch. Low irregular faceted field rock, broad six-point silhouette, lighter left/top facet, darker right face and thin pale fracture line; muted gray-green #7d8179/#adb09f material. Preserve the current moss-marked or unmarked seed reference. No Crown crystal spike. Preserve the current geometry. No new crystals, symbols, ground patch, other rocks or baked shadow.

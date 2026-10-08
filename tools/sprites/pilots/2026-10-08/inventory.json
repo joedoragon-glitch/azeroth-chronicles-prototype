@@ -1,0 +1,24 @@
+{
+  "baseline": "231d898988752f1594614a360bda8bb3cc87c1f1",
+  "status": "creative-review-pending",
+  "assets": [
+    {
+      "key": "hero:paladin",
+      "path": "tools/sprites/pilots/2026-10-08/hero-paladin",
+      "sourceHash": "9c3684826868a0776a3fd0a2bbed440014d41f9117214ac22fe2900ab0bb62be",
+      "outputHash": "c14713298812cfd2e68737abdc3b1cf57cfe0a1f3be5eb91dd82f1b4b062bf25"
+    },
+    {
+      "key": "enemy:goblin",
+      "path": "tools/sprites/pilots/2026-10-08/enemy-goblin",
+      "sourceHash": "679e533288b739832afcba13ca03ab6ece5372909ec69a8b64c8cfed16610962",
+      "outputHash": "7dae43a3287b3faf4c7ef41c798b0501114c227a2fe5a83af2aa793b3b0106e1"
+    },
+    {
+      "key": "prop:vale-cottage:vale",
+      "path": "tools/sprites/pilots/2026-10-08/prop-vale-cottage-vale",
+      "sourceHash": "ee52d21f1f1d6a95fb1e545db3fa584a7b9ae86618f9277b1d475d9c1b3778e3",
+      "outputHash": "6d6e3740f2fa1d806c9f051ca4f0b1c4c98a43f44a80621b32dbe0c625d48878"
+    }
+  ]
+}

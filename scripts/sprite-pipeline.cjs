@@ -18,6 +18,13 @@ vm.runInNewContext(
   visualSandbox,
 );
 const Visuals = visualSandbox.PrototypeVisuals;
+// Generation inputs exclude presentation-owned camp ground patches. Production drawing is untouched.
+const generationSandbox = { ...visualSandbox };
+const visualSource = fs.readFileSync(path.join(root, 'src/prototype/visuals.js'), 'utf8');
+const campGround = 'fillOval(0, 10, 45, 12, ground, 0.28);';
+fail(visualSource.includes(campGround), 'Review the current camp grounding before generation');
+vm.runInNewContext(visualSource.replace(campGround, ''), generationSandbox);
+const GenerationVisuals = generationSandbox.PrototypeVisuals;
 const json = (file) => JSON.parse(fs.readFileSync(file, 'utf8'));
 const hash = (bytes) => crypto.createHash('sha256').update(bytes).digest('hex');
 const writeJSON = (file, value) => fs.writeFileSync(file, JSON.stringify(value, null, 2) + '\n');
@@ -33,11 +40,15 @@ function safeFile(base, relative) {
   fail(fs.realpathSync(absolute).startsWith(boundary), 'File escapes declared directory');
   return absolute;
 }
-function catalog() {
-  const file = 'docs/GRAPHICS_CANON_SPRITE_PROMPTS.md';
-  const text = fs.readFileSync(path.join(root, file), 'utf8');
+function parseCatalog(text, file = 'docs/GRAPHICS_CANON_SPRITE_PROMPTS.md') {
+  const summary = text.match(/<!-- SPRITE_TOTALS (\{[^\n]+\}) -->/);
+  fail(summary, 'Catalog must declare its reviewed totals');
+  const expected = JSON.parse(summary[1]);
   const headings = [...text.matchAll(/^### (\d{3}) — ([^\n]+)$/gm)];
-  fail(headings.length === 231, 'Catalog changed; review coverage before updating expectations');
+  fail(
+    headings.length > 0 && headings.length === expected.entries,
+    'Catalog totals changed; reconcile the reviewed scope',
+  );
   const entries = headings.map((heading, index) => {
     fail(Number(heading[1]) === index + 1, 'Duplicate or reordered catalog ID');
     const section = text.slice(heading.index, headings[index + 1]?.index || text.length);
@@ -58,8 +69,16 @@ function catalog() {
       declaredKey: section.match(/\*\*Runtime sprite key:\*\* `([^`]+)`/)?.[1] || null,
     };
   });
-  fail(entries.filter((e) => e.status === 'generate').length === 221, 'Catalog partition changed');
+  for (const state of ['generate', 'alias', 'procedural'])
+    fail(
+      entries.filter((e) => e.status === state).length === expected[state],
+      'Catalog partition changed: ' + state,
+    );
   return entries;
+}
+function catalog() {
+  const file = 'docs/GRAPHICS_CANON_SPRITE_PROMPTS.md';
+  return parseCatalog(fs.readFileSync(path.join(root, file), 'utf8'), file);
 }
 function canonHash() {
   return hash(
@@ -134,13 +153,22 @@ async function inspect(input, policy = specs.policy) {
     x2 = -1,
     y2 = -1,
     transparent = 0,
-    visible = 0;
+    visible = 0,
+    lowAlphaPixels = 0;
+  const materialBounds = { x1: info.width, y1: info.height, x2: -1, y2: -1 };
   for (let y = 0; y < info.height; y++)
     for (let x = 0; x < info.width; x++) {
       const alpha = data[(y * info.width + x) * info.channels + info.channels - 1];
       if (alpha === 0) transparent++;
       else {
         visible++;
+        if (alpha < 16) lowAlphaPixels++;
+        else {
+          materialBounds.x1 = Math.min(materialBounds.x1, x);
+          materialBounds.y1 = Math.min(materialBounds.y1, y);
+          materialBounds.x2 = Math.max(materialBounds.x2, x);
+          materialBounds.y2 = Math.max(materialBounds.y2, y);
+        }
         x1 = Math.min(x1, x);
         y1 = Math.min(y1, y);
         x2 = Math.max(x2, x);
@@ -162,12 +190,39 @@ async function inspect(input, policy = specs.policy) {
     padding,
     transparentPixels: transparent,
     visiblePixels: visible,
+    lowAlphaPixels,
+    materialBounds,
   };
 }
-function reference(contract) {
+function reference(contract, generation = false) {
   const canvas = createCanvas(contract.canvas.width, contract.canvas.height);
-  const ctx = canvas.getContext('2d');
-  Visuals.draw(
+  const native = canvas.getContext('2d');
+  const ctx = generation
+    ? new Proxy(native, {
+        get(target, property) {
+          if (property === 'fill')
+            return (...args) => {
+              if (target.fillStyle !== '#07110d') target.fill(...args);
+            };
+          if (property === 'stroke')
+            return (...args) => {
+              if (
+                !['#d2aa87', '#c9d6ad', '#a49573', '#d4b36f', '#e0b96f'].includes(
+                  target.strokeStyle,
+                )
+              )
+                target.stroke(...args);
+            };
+          const value = target[property];
+          return typeof value === 'function' ? value.bind(target) : value;
+        },
+        set(target, property, value) {
+          target[property] = value;
+          return true;
+        },
+      })
+    : native;
+  (generation ? GenerationVisuals : Visuals).draw(
     ctx,
     contract.entity,
     {
@@ -235,6 +290,7 @@ async function prepare(key, input, format = 'png') {
     fs.writeFileSync(path.join(stage, 'source.' + source.format), bytes);
     fs.writeFileSync(path.join(stage, 'candidate.' + format), output);
     fs.writeFileSync(path.join(stage, 'canonical.png'), reference(contract));
+    fs.writeFileSync(path.join(stage, 'generation-reference.png'), reference(contract, true));
     writeJSON(path.join(stage, 'candidate.json'), record);
     fs.renameSync(stage, directory);
   } finally {
@@ -546,6 +602,7 @@ async function main() {
   console.log(JSON.stringify(result, null, 2));
 }
 module.exports = {
+  parseCatalog,
   catalog,
   contracts,
   contractFor,

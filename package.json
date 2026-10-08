@@ -8,17 +8,18 @@
     "test:browser": "node tests/prototype-browser.test.cjs",
     "test:quick": "node tests/run.cjs --quick",
     "build": "node scripts/build.cjs",
-    "check": "node scripts/build.cjs --check && node scripts/sprite-pipeline.cjs check",
+    "check": "node scripts/build.cjs --check && node scripts/sprite-pipeline.cjs check && node scripts/sprite-scope-audit.cjs --check",
     "dev": "node scripts/dev.cjs",
-    "format": "prettier --write \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\" \"tools/sprites/*.{js,css,html,json}\" tests/sprite-pipeline.test.cjs tests/sprite-showroom-browser.test.cjs tests/regional-handoffs.test.cjs tests/ironroot-highlands.test.cjs \"tools/audio/*.{js,css,html,json}\" tests/audio-recordings.test.cjs tests/audio-audition-browser.test.cjs tests/campaign-domains.test.cjs tests/economy.test.cjs tests/audio-production.test.cjs tests/audio-browser.test.cjs",
-    "format:check": "prettier --check \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\" \"tools/sprites/*.{js,css,html,json}\" tests/sprite-pipeline.test.cjs tests/sprite-showroom-browser.test.cjs tests/regional-handoffs.test.cjs tests/ironroot-highlands.test.cjs \"tools/audio/*.{js,css,html,json}\" tests/audio-recordings.test.cjs tests/audio-audition-browser.test.cjs tests/campaign-domains.test.cjs tests/economy.test.cjs tests/audio-production.test.cjs tests/audio-browser.test.cjs",
+    "format": "prettier --write \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\" \"tools/sprites/*.{js,css,html,json}\" tests/sprite-pipeline.test.cjs tests/sprite-showroom-browser.test.cjs tests/regional-handoffs.test.cjs tests/ironroot-highlands.test.cjs \"tools/audio/*.{js,css,html,json}\" tests/audio-recordings.test.cjs tests/audio-audition-browser.test.cjs tests/campaign-domains.test.cjs tests/economy.test.cjs tests/audio-production.test.cjs tests/audio-browser.test.cjs tests/sprite-scope.test.cjs",
+    "format:check": "prettier --check \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\" \"tools/sprites/*.{js,css,html,json}\" tests/sprite-pipeline.test.cjs tests/sprite-showroom-browser.test.cjs tests/regional-handoffs.test.cjs tests/ironroot-highlands.test.cjs \"tools/audio/*.{js,css,html,json}\" tests/audio-recordings.test.cjs tests/audio-audition-browser.test.cjs tests/campaign-domains.test.cjs tests/economy.test.cjs tests/audio-production.test.cjs tests/audio-browser.test.cjs tests/sprite-scope.test.cjs",
     "sprite:check": "node scripts/sprite-pipeline.cjs check",
     "sprite:catalog": "node scripts/sprite-pipeline.cjs catalog",
     "sprite:contracts": "node scripts/sprite-pipeline.cjs contracts",
     "sprite:inspect": "node scripts/sprite-pipeline.cjs inspect",
     "sprite:prepare": "node scripts/sprite-pipeline.cjs prepare",
     "sprite:showroom": "node scripts/sprite-pipeline.cjs showroom",
-    "sprite:publish": "node scripts/sprite-pipeline.cjs publish"
+    "sprite:publish": "node scripts/sprite-pipeline.cjs publish",
+    "sprite:scope": "node scripts/sprite-scope-audit.cjs"
   },
   "engines": {
     "node": ">=20.9.0"

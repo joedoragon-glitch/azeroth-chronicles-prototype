@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "key": "hero:paladin",
+  "catalogId": "001",
+  "canonHash": "5f1abcf8da3672404f405bc28a7f617360a6ca81e9e76cfb1147b3e29ce1dc57",
+  "catalogHash": "041c3a250aa97c6916d6a65814ee8dcd6fb81f9c017ffc110cbe367dd4bee2f8",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 196666,
+    "decodedBytes": 6290064,
+    "hash": "9c3684826868a0776a3fd0a2bbed440014d41f9117214ac22fe2900ab0bb62be",
+    "pixelHash": "c584c9fbca3cc00f3e155762d77ddc5ef843a1c0e7d746afef2287dedccae43a",
+    "bounds": {
+      "x1": 162,
+      "y1": 70,
+      "x2": 1209,
+      "y2": 1181
+    },
+    "padding": 44,
+    "transparentPixels": 1484717,
+    "visiblePixels": 87799
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 7746,
+    "decodedBytes": 147456,
+    "hash": "c14713298812cfd2e68737abdc3b1cf57cfe0a1f3be5eb91dd82f1b4b062bf25",
+    "pixelHash": "f0bde1f96f761bc98918edf7762c500d0553de62be28279d13c64caaa393b35b",
+    "bounds": {
+      "x1": 60,
+      "y1": 18,
+      "x2": 126,
+      "y2": 164
+    },
+    "padding": 18,
+    "transparentPixels": 34799,
+    "visiblePixels": 2065
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 54
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1254,
+      1254
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false
+  },
+  "review": {
+    "status": "pending",
+    "reference": null
+  }
+}
