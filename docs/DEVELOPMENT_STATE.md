@@ -35,3 +35,7 @@ The v0.8.83 accepted phone layout and input behavior are preserved. Progression 
 Current recovery guidance distinguishes ordinary hero-only Skill 3 from charged party healing. Automatic/manual Ranger Heal supports living active allies, Mana Recovery is hero-only, and fallen-unit recovery stays separate. Current inheritance costs are 140 crowns per Shared Training rank and 125/200/300/425 for Shared Strength; historical higher prices are not current rules. Rescue/curriculum gates remain unchanged.
 
 All hand-authored campaign JS and the three campaign CSS files have repeatable formatter coverage. Registry contract, packaging, realistic precache/offline reads and failed-image procedural fallback accept both empty and populated test registries. Production manifest/art are unchanged. Review `HOUSEKEEPING_AUDIT.md` and `HOUSEKEEPING_PROGRESS.md` for preservation evidence, review findings and release recovery.
+
+## Sprite preparation v0.8.85
+
+Issue 111 preparation provides a pinned processing toolchain, parsed catalog, three exact reference contracts, immutable sources, approval/provenance checks and a development-only day/night comparison showroom at four device sizes. Tests use current procedural drawings and isolated fixtures. The production manifest stays empty and byte-identical; no art is generated or activated. The later three-asset creative pilot and image-tool generation are deferred at Joel’s request. See `SPRITE_PREPARATION.md` and `SPRITE_PREPARATION_AUDIT.md`; the implementing agent owns technical checks and release.
