@@ -107,7 +107,17 @@ function harness() {
   };
   root.window = root;
   vm.createContext(root);
-  for (const file of ['audio-catalog', 'audio-runtime', 'audio-score', 'audio-effects', 'audio'])
+  for (const file of [
+    'audio-catalog',
+    'audio-assets',
+    'audio-mixer',
+    'audio-runtime',
+    'audio-score',
+    'audio-effects',
+    'audio-recordings',
+    'audio-production',
+    'audio',
+  ])
     vm.runInContext(
       fs.readFileSync(path.join(__dirname, '../src/prototype', file + '.js'), 'utf8'),
       root,
@@ -138,7 +148,7 @@ function harness() {
   assert.equal(h.timers.size, 1);
   const ctx = a.ctx;
   for (let i = 0; i < 1000; i++) a.noiseBurst(0);
-  assert.equal(a.voices.size, 64);
+  assert.equal(a.voices.size, 60);
   const voices = [...a.voices];
   for (const v of voices) {
     v.osc.onended();

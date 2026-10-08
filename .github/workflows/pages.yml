@@ -42,7 +42,9 @@ jobs:
       - name: Test desktop and full phone matrix before merge
         run: node tests/prototype-browser.test.cjs
       - name: Verify audio playback and lifecycle
-        run: node tests/audio-browser.test.cjs
+        run: |
+          node tests/audio-browser.test.cjs
+          node tests/audio-audition-browser.test.cjs
       - name: Verify development sprite showroom
         run: node tests/sprite-showroom-browser.test.cjs
       - uses: actions/upload-artifact@v4
@@ -61,7 +63,14 @@ jobs:
         with:
           node-version: '22'
       - name: Install WebKit and browser dependencies
+        timeout-minutes: 5
         run: |
+          # Avoid slow Azure mirror downloads on fresh hosted runners; packages and signatures stay identical.
+          for aptSource in /etc/apt/sources.list /etc/apt/sources.list.d/ubuntu.sources; do
+            if [ -f "$aptSource" ]; then
+              sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g' "$aptSource"
+            fi
+          done
           npm install --no-save --package-lock=false playwright@1.62.1
           npx playwright install --with-deps webkit
       - name: Verify WebKit phone presentation and gestures
@@ -69,7 +78,9 @@ jobs:
       - name: Verify WebKit audio playback and lifecycle
         env:
           AUDIO_BROWSER_ENGINE: webkit
-        run: node tests/audio-browser.test.cjs
+        run: |
+          node tests/audio-browser.test.cjs
+          node tests/audio-audition-browser.test.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -106,7 +117,9 @@ jobs:
       - name: Test full desktop and mobile matrix
         run: node tests/prototype-browser.test.cjs
       - name: Verify audio playback and lifecycle
-        run: node tests/audio-browser.test.cjs
+        run: |
+          node tests/audio-browser.test.cjs
+          node tests/audio-audition-browser.test.cjs
       - name: Verify development sprite showroom
         run: node tests/sprite-showroom-browser.test.cjs
       - uses: actions/upload-artifact@v4

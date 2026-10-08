@@ -77,6 +77,18 @@ Audio owners install their methods before `PrototypeAudio` is exported in Node o
 
 `scripts/audio-assets.cjs` validates the empty recorded-audio registry and provides registered local file paths to the common inventory, packaging and precache. Registration checks path/symlink containment, hashes, provenance, duration/loop metadata, container signatures and encoded-size guards. This is asset publishing preparation; recorded playback, codec/decode/decoded-memory policy and the richer scene mix are future work. See `AUDIO_FOUNDATION.md` for findings, preservation checks and the production sequence.
 
+## Recorded audio and audition v0.8.89
+
+`audio-assets.js` owns verified local fetching, codec fallback, serialized decoding and a pinned 32 MiB decoded LRU cache. `audio-recordings.js` owns source handles, synchronized loop groups, transitions, intensity and opt-in exact-context cue rules. `audio-mixer.js` owns listening/foreground mix profiles and source priorities. The new interface bus defaults to the existing effects preference unless explicitly adjusted; reference/world mix preserves the original four settings and recipes. No domain module or game shell behavior is changed.
+
+The separate published `tools/audio/index.html` loads isolated campaign/audio owners, never persistence or app. Its diagnostic WAVs are generated in memory, never registered as production recordings. The explicit four audition files join the offline inventory; sprite tools and all other development tools stay unpublished. Known public HTML navigation now resolves its own cached entry rather than falling back to the game. See `AUDIO_PLAYBACK.md` for the current contracts. The preceding v0.8.88 foundation describes the historical packaging-only state.
+
+## Contextual production score v0.8.90
+
+`audio-production.js` observes exact scene metadata and selects authored local tracks, smooths combat/TRUE stems without transport restarts, holds refuge transitions briefly, and owns interface feedback, distance-based surface footsteps, sparse environment details and a shared stereo reflection tail. The shell enables this production director, keeps menu audio running under the menu mix while simulation remains frozen, and suspends on explicit pause/background loss. No domain module imports audio or changes gameplay state.
+
+The 83 original MP3 cues are immutable registered assets and join precaching; decoding remains lazy and bounded. `tools/audio/score-book.json` and `render-score.py` are development-only composition/rendering sources. The original procedural score remains the recovery path when a registered recording cannot load. See `AUDIO_SOUND_PASS.md`.
+
 ## Economy and EXP housekeeping
 
 Prepared v0.8.89 keeps the shared Campaign API and state. Economy owns money mutations; actions in progression/party/engine still own eligibility, training effects, construction, recovery and route transitions. `grant(gold, xp)` remains the compatible reward dispatcher and calls progression's `xp`. Travel charges only after arrival succeeds, inside the existing state rollback boundary. Rewards owns reward amounts and payment policies; kill orchestration retains the summoned-enemy and already-paid guards. EXP is awarded immediately on defeat; crown loot is paid only on pickup. Labor retains gathering/deposit timing and fractional carry.

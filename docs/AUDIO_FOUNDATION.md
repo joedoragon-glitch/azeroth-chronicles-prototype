@@ -1,5 +1,7 @@
 # Audio foundation and production sequence
 
+**Current status:** the technical playback/mixer/audition phase is now implemented in v0.8.89; see [AUDIO_PLAYBACK.md](AUDIO_PLAYBACK.md). The remainder of this document records the v0.8.88 housekeeping baseline and its original gap assessment. Production recordings and soundtrack changes remain deferred to the contextual pilot.
+
 Joel's 8 October 2026 direction is a professional contextual audio overhaul, preceded by housekeeping. Warm fantasy is the broad musical direction. Music should relate to the place, situation and actual boss, with a complete menu/interaction/effects soundscape. This phase prepares the foundation; it does not compose, generate, approve or activate replacement sound.
 
 ## Stack assessment

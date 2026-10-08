@@ -62,6 +62,16 @@ Joel requests professional place/situation/boss-specific audio, with housekeepin
 
 The recorded-audio production manifest is empty. Validated registration now feeds packaging/offline inventory; no new music/effect is created or played. Recorded playback/decode, richer mixing, menu audio and the contextual soundtrack belong to the subsequent production work. See `AUDIO_FOUNDATION.md` for the concrete gap audit and sequence, including unhandled side-zone musical identity and the need to audition music rather than equate tests with musical quality.
 
+## Recorded playback and mixing v0.8.89
+
+The next technical audio phase is implemented: local hash verification and codec variants, cancellable lazy fetching, serialized decoding, pinned 32 MiB decoded LRU memory, synchronized 1–4 loop stems, bar-aligned transitions, exact-context opt-in cue rules, procedural fallback, independent UI/foreground mixing, reference/quiet/phone audition profiles and reserved/stealable warning capacity. The normal campaign keeps its original score policy and menu silence because no replacement sound or cue rule is activated.
+
+A separate offline-capable listening room at `tools/audio/index.html` auditions actual campaign regions/interiors and all eleven normal/TRUE boss identities, existing procedural sound, diagnostic WAVs, synchronized stems and scene mixes. It includes waveform/loop-edge measurements and a local downloadable report. It never loads persistence or reads/writes saves. Production music and sprite manifests remain empty. See `AUDIO_PLAYBACK.md`; contextual composition/sound design and actual-device listening remain the next creative pilot.
+
+## Contextual sound pass v0.8.90
+
+Joel authorized proceeding through soundtrack implementation and publication. The game now activates 83 original rendered music cues across 19 locations, five outdoor night/refuge variants, peaceful arrangements and eleven distinct boss/TRUE pairs, plus title/defeat/finale music. Layered combat intensity, shared reflections, interface sounds, movement-driven footsteps and sparse environmental detail extend the existing contextual combat effects. All music is original virtual-instrument composition, not licensed third-party recordings or live orchestra. The audition room compares new/original scoring and individual production tracks without touching saves. See `AUDIO_SOUND_PASS.md` for coverage, limits and verification. Real-device musical feedback remains creative iteration, not an implementation approval gate.
+
 ## Prepared economy and EXP housekeeping v0.8.89
 
 Local branch `codex/combat-party-housekeeping` combines the combat/party split with main's v0.8.88 audio foundation. `economy.js` owns crown transactions and all quoted prices; `rewards.js` owns regional/boss profiles, drop/quest payouts and reward reductions; EXP leveling remains in `progression.js`. Existing authored amounts, rank/rescue gates, v4 saves, reward timing, first-free barracks and transportation rollback remain compatible. No balance tuning or new art/audio content is included. See `ECONOMY_EXP_HOUSEKEEPING.md`. Joel lifted the initial publication pause and authorized release through the existing CI gates; the historical combat report describes its earlier regional-baseline verification. Local WebKit execution remains unavailable; release CI must run that check.

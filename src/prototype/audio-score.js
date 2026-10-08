@@ -49,6 +49,8 @@
           boss: boss ? { family: boss.family, form: boss.form, name: boss.name } : null,
           engaged: engaged.length,
           lowHealth: hero.hp > 0 && hero.hp / hero.maxHp <= 0.25,
+          started: activity.started !== false,
+          gameOver: !!campaign.s.challenge.gameOver,
         };
       }
       choose(campaign) {
@@ -85,6 +87,8 @@
         this.context = this.describe(campaign, activity);
         const selected = this.choose(campaign),
           key = JSON.stringify(selected);
+        this.updateRecordedCue(this.context);
+        this.updateProduction(this.context);
         if (this.key === key) return;
         const sameScore = this.cue?.id === selected.id && this.cue?.peace === selected.peace;
         this.key = key;
@@ -102,9 +106,9 @@
           this.ambient();
         }
       }
-      retireScore(score, seconds = 0) {
+      retireScore(score, seconds = 0, startAt = null) {
         if (!score || !this.ctx) return;
-        const now = this.ctx.currentTime;
+        const now = startAt ?? this.ctx.currentTime;
         score.node.gain.cancelScheduledValues(now);
         score.node.gain.setValueAtTime(score.node.gain.value, now);
         score.node.gain.linearRampToValueAtTime(0, now + seconds);
@@ -139,13 +143,16 @@
       schedule() {
         if (!this.ctx || this.paused || this.ctx.state !== 'running' || !this.cue) return;
         for (const s of [...this.scores]) if (s.until <= this.ctx.currentTime) this.retireScore(s);
+        if (this.recordedScore && this.ctx.currentTime >= this.recordedScore.at) return;
         const cue = this.cue,
           theme = themes.find((t) => t.id === cue.id) || themes[0],
           peace = cue.peace || cue.id === 'finale',
           bpm = peace ? Math.max(64, theme.bpm - 10) : theme.bpm,
           beat = 60 / bpm;
         if (this.next < this.ctx.currentTime - 0.2) this.next = this.ctx.currentTime + 0.05;
-        while (this.next < this.ctx.currentTime + 0.14) {
+        while (
+          this.next < Math.min(this.ctx.currentTime + 0.14, this.recordedScore?.at ?? Infinity)
+        ) {
           const step = this.step++,
             at = this.next,
             degree = theme.form[step % 256],

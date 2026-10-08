@@ -4,8 +4,22 @@
   const common = typeof module !== 'undefined';
   const catalog = common ? require('./audio-catalog.js') : root.PrototypeAudioCatalog;
   const owners = common
-    ? [require('./audio-runtime.js'), require('./audio-score.js'), require('./audio-effects.js')]
-    : [root.PrototypeAudioRuntime, root.PrototypeAudioScore, root.PrototypeAudioEffects];
+    ? [
+        require('./audio-mixer.js'),
+        require('./audio-runtime.js'),
+        require('./audio-score.js'),
+        require('./audio-effects.js'),
+        require('./audio-recordings.js'),
+        require('./audio-production.js'),
+      ]
+    : [
+        root.PrototypeAudioMixer,
+        root.PrototypeAudioRuntime,
+        root.PrototypeAudioScore,
+        root.PrototypeAudioEffects,
+        root.PrototypeAudioRecordings,
+        root.PrototypeAudioProduction,
+      ];
   const { themes, defaults } = catalog;
   class PrototypeAudio {
     constructor(settings = {}) {

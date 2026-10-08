@@ -56,6 +56,7 @@ const root = path.resolve(__dirname, '..'),
       await page.locator('#modal-actions button').first().click();
       await page.locator('#modal-actions button').first().click();
       await page.waitForFunction(() => Prototype.audio.ctx?.state === 'running');
+      await page.waitForFunction(() => !!Prototype.audio.recordedScore);
       await page.waitForTimeout(120);
       const before = await page.evaluate(() => ({
         status: Prototype.audio.status(),
@@ -65,7 +66,9 @@ const root = path.resolve(__dirname, '..'),
       assert(before.status.voices <= 64);
       assert(before.status.context.region === 'vale');
       await page.evaluate(() => Prototype.openMenu('Audio housekeeping check', '', []));
-      await page.waitForFunction(() => Prototype.audio.ctx.state === 'suspended');
+      await page.waitForFunction(
+        () => Prototype.audio.ctx.state === 'running' && Prototype.audio.mixScene === 'menu',
+      );
       const saved = await page.evaluate(() => JSON.stringify(Prototype.game.snapshot()));
       await page.waitForTimeout(150);
       assert.equal(await page.evaluate(() => JSON.stringify(Prototype.game.snapshot())), saved);
@@ -133,7 +136,7 @@ const root = path.resolve(__dirname, '..'),
           engine +
           ' ' +
           entry +
-          ': gesture unlock, menu/background suspend, unchanged frozen saves, bounded/released voices and 28 non-silent finite unclipped score renders',
+          ': gesture unlock, soft menu/background suspend, unchanged frozen saves, bounded/released voices and 28 non-silent finite unclipped score renders',
       );
       await page.close();
     }

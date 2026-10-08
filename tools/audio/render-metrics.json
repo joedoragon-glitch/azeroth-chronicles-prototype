@@ -1,0 +1,583 @@
+{
+  "place-vale": {
+    "peak": 0.49931,
+    "rms": 0.12298,
+    "seconds": 21.1695625,
+    "bytes": 255357,
+    "edge": 0.00266
+  },
+  "action-vale": {
+    "peak": 0.72224,
+    "rms": 0.09518,
+    "seconds": 21.1695625,
+    "bytes": 255357,
+    "edge": 0.00523
+  },
+  "peace-vale": {
+    "peak": 0.4977,
+    "rms": 0.12295,
+    "seconds": 21.1695625,
+    "bytes": 255357,
+    "edge": 0.00096
+  },
+  "place-march": {
+    "peak": 0.5513,
+    "rms": 0.12312,
+    "seconds": 23.714625,
+    "bytes": 285597,
+    "edge": 0.00312
+  },
+  "action-march": {
+    "peak": 0.67959,
+    "rms": 0.09566,
+    "seconds": 23.714625,
+    "bytes": 285597,
+    "edge": 0.00354
+  },
+  "peace-march": {
+    "peak": 0.51771,
+    "rms": 0.12312,
+    "seconds": 23.714625,
+    "bytes": 285597,
+    "edge": 0.00319
+  },
+  "place-highlands": {
+    "peak": 0.53917,
+    "rms": 0.12306,
+    "seconds": 22.1181875,
+    "bytes": 266589,
+    "edge": 0.00081
+  },
+  "action-highlands": {
+    "peak": 0.72456,
+    "rms": 0.09182,
+    "seconds": 22.1181875,
+    "bytes": 266589,
+    "edge": 0.00093
+  },
+  "peace-highlands": {
+    "peak": 0.51676,
+    "rms": 0.12298,
+    "seconds": 22.1181875,
+    "bytes": 266589,
+    "edge": 0.0013
+  },
+  "place-frontier": {
+    "peak": 0.56903,
+    "rms": 0.12299,
+    "seconds": 20.3,
+    "bytes": 244557,
+    "edge": 0.00353
+  },
+  "action-frontier": {
+    "peak": 0.68383,
+    "rms": 0.0957,
+    "seconds": 20.3,
+    "bytes": 244557,
+    "edge": 0.00703
+  },
+  "peace-frontier": {
+    "peak": 0.54481,
+    "rms": 0.12304,
+    "seconds": 20.3,
+    "bytes": 244557,
+    "edge": 2e-5
+  },
+  "place-crown": {
+    "peak": 0.48984,
+    "rms": 0.12293,
+    "seconds": 23.15715625,
+    "bytes": 279117,
+    "edge": 0.00208
+  },
+  "action-crown": {
+    "peak": 0.70324,
+    "rms": 0.09574,
+    "seconds": 23.15715625,
+    "bytes": 279117,
+    "edge": 0.00872
+  },
+  "peace-crown": {
+    "peak": 0.51634,
+    "rms": 0.12313,
+    "seconds": 23.15715625,
+    "bytes": 279117,
+    "edge": 0.00051
+  },
+  "place-crypt": {
+    "peak": 0.57767,
+    "rms": 0.12304,
+    "seconds": 23.15715625,
+    "bytes": 279117,
+    "edge": 0.00644
+  },
+  "action-crypt": {
+    "peak": 0.73547,
+    "rms": 0.09425,
+    "seconds": 23.15715625,
+    "bytes": 279117,
+    "edge": 0.00145
+  },
+  "peace-crypt": {
+    "peak": 0.56485,
+    "rms": 0.12317,
+    "seconds": 23.15715625,
+    "bytes": 279117,
+    "edge": 0.00565
+  },
+  "place-archive": {
+    "peak": 0.50847,
+    "rms": 0.12317,
+    "seconds": 22.62559375,
+    "bytes": 272637,
+    "edge": 0.00536
+  },
+  "action-archive": {
+    "peak": 0.64248,
+    "rms": 0.09567,
+    "seconds": 22.62559375,
+    "bytes": 272637,
+    "edge": 0.00718
+  },
+  "peace-archive": {
+    "peak": 0.55494,
+    "rms": 0.12311,
+    "seconds": 22.62559375,
+    "bytes": 272637,
+    "edge": 0.0035
+  },
+  "place-mine": {
+    "peak": 0.53008,
+    "rms": 0.12296,
+    "seconds": 20.3,
+    "bytes": 244557,
+    "edge": 9e-5
+  },
+  "action-mine": {
+    "peak": 0.72196,
+    "rms": 0.09411,
+    "seconds": 20.3,
+    "bytes": 244557,
+    "edge": 0.00374
+  },
+  "peace-mine": {
+    "peak": 0.58699,
+    "rms": 0.12307,
+    "seconds": 20.3,
+    "bytes": 244557,
+    "edge": 0.00299
+  },
+  "place-abyss": {
+    "peak": 0.51812,
+    "rms": 0.123,
+    "seconds": 20.3,
+    "bytes": 244557,
+    "edge": 0.00258
+  },
+  "action-abyss": {
+    "peak": 0.71903,
+    "rms": 0.09535,
+    "seconds": 20.3,
+    "bytes": 244557,
+    "edge": 0.00136
+  },
+  "peace-abyss": {
+    "peak": 0.48902,
+    "rms": 0.12296,
+    "seconds": 20.3,
+    "bytes": 244557,
+    "edge": 0.00052
+  },
+  "place-citadel": {
+    "peak": 0.50459,
+    "rms": 0.12292,
+    "seconds": 22.1181875,
+    "bytes": 266589,
+    "edge": 0.00174
+  },
+  "action-citadel": {
+    "peak": 0.71356,
+    "rms": 0.09572,
+    "seconds": 22.1181875,
+    "bytes": 266589,
+    "edge": 0.00484
+  },
+  "peace-citadel": {
+    "peak": 0.52734,
+    "rms": 0.12306,
+    "seconds": 22.1181875,
+    "bytes": 266589,
+    "edge": 0.00419
+  },
+  "interior-supply-vale": {
+    "peak": 0.49054,
+    "rms": 0.12315,
+    "seconds": 21.1695625,
+    "bytes": 255357,
+    "edge": 0.003
+  },
+  "interior-supply-march": {
+    "peak": 0.52286,
+    "rms": 0.12316,
+    "seconds": 23.714625,
+    "bytes": 285597,
+    "edge": 0.00916
+  },
+  "interior-supply-highlands": {
+    "peak": 0.51185,
+    "rms": 0.12303,
+    "seconds": 22.1181875,
+    "bytes": 266589,
+    "edge": 0.00044
+  },
+  "interior-supply-crown": {
+    "peak": 0.49405,
+    "rms": 0.12322,
+    "seconds": 23.15715625,
+    "bytes": 279117,
+    "edge": 0.01229
+  },
+  "interior-side-vale-cellars": {
+    "peak": 0.56224,
+    "rms": 0.12294,
+    "seconds": 21.1695625,
+    "bytes": 255357,
+    "edge": 0.00072
+  },
+  "interior-side-march-watchhouse": {
+    "peak": 0.55431,
+    "rms": 0.12308,
+    "seconds": 23.714625,
+    "bytes": 285597,
+    "edge": 0.00793
+  },
+  "interior-side-highlands-signal": {
+    "peak": 0.57535,
+    "rms": 0.12304,
+    "seconds": 22.1181875,
+    "bytes": 266589,
+    "edge": 0.00013
+  },
+  "interior-side-frontier-shrine": {
+    "peak": 0.57294,
+    "rms": 0.12299,
+    "seconds": 20.3,
+    "bytes": 244557,
+    "edge": 0.00759
+  },
+  "interior-side-crown-foundry": {
+    "peak": 0.57275,
+    "rms": 0.12307,
+    "seconds": 23.15715625,
+    "bytes": 279117,
+    "edge": 0.01573
+  },
+  "boss-thorn": {
+    "peak": 0.54074,
+    "rms": 0.1229,
+    "seconds": 16.85171875,
+    "bytes": 203517,
+    "edge": 0.00062
+  },
+  "boss-thorn-true": {
+    "peak": 0.48693,
+    "rms": 0.09495,
+    "seconds": 16.85171875,
+    "bytes": 203517,
+    "edge": 0.00045
+  },
+  "boss-crypt": {
+    "peak": 0.57144,
+    "rms": 0.12294,
+    "seconds": 18.76153125,
+    "bytes": 226413,
+    "edge": 0.00077
+  },
+  "boss-crypt-true": {
+    "peak": 0.51213,
+    "rms": 0.09527,
+    "seconds": 18.76153125,
+    "bytes": 226413,
+    "edge": 0.00174
+  },
+  "boss-mire": {
+    "peak": 0.582,
+    "rms": 0.12285,
+    "seconds": 18.07778125,
+    "bytes": 218205,
+    "edge": 0.00054
+  },
+  "boss-mire-true": {
+    "peak": 0.46093,
+    "rms": 0.09498,
+    "seconds": 18.07778125,
+    "bytes": 218205,
+    "edge": 0.00268
+  },
+  "boss-archive": {
+    "peak": 0.53634,
+    "rms": 0.12305,
+    "seconds": 18.07778125,
+    "bytes": 218205,
+    "edge": 0.00063
+  },
+  "boss-archive-true": {
+    "peak": 0.49905,
+    "rms": 0.09518,
+    "seconds": 18.07778125,
+    "bytes": 218205,
+    "edge": 0.00012
+  },
+  "boss-ridge": {
+    "peak": 0.49611,
+    "rms": 0.12295,
+    "seconds": 18.07778125,
+    "bytes": 218205,
+    "edge": 0.0011
+  },
+  "boss-ridge-true": {
+    "peak": 0.4995,
+    "rms": 0.09516,
+    "seconds": 18.07778125,
+    "bytes": 218205,
+    "edge": 0.00171
+  },
+  "boss-mine": {
+    "peak": 0.49895,
+    "rms": 0.1229,
+    "seconds": 19.5,
+    "bytes": 235053,
+    "edge": 0.00075
+  },
+  "boss-mine-true": {
+    "peak": 0.50237,
+    "rms": 0.09516,
+    "seconds": 19.5,
+    "bytes": 235053,
+    "edge": 0.00117
+  },
+  "boss-warlord": {
+    "peak": 0.55317,
+    "rms": 0.12292,
+    "seconds": 16.3,
+    "bytes": 196605,
+    "edge": 0.00261
+  },
+  "boss-warlord-true": {
+    "peak": 0.44603,
+    "rms": 0.09521,
+    "seconds": 16.3,
+    "bytes": 196605,
+    "edge": 0.00136
+  },
+  "boss-abyss": {
+    "peak": 0.51141,
+    "rms": 0.12289,
+    "seconds": 17.44284375,
+    "bytes": 210429,
+    "edge": 0.00125
+  },
+  "boss-abyss-true": {
+    "peak": 0.47812,
+    "rms": 0.09516,
+    "seconds": 17.44284375,
+    "bytes": 210429,
+    "edge": 0.00284
+  },
+  "boss-citadel": {
+    "peak": 0.53398,
+    "rms": 0.12287,
+    "seconds": 18.07778125,
+    "bytes": 218205,
+    "edge": 0.00246
+  },
+  "boss-citadel-true": {
+    "peak": 0.47521,
+    "rms": 0.09519,
+    "seconds": 18.07778125,
+    "bytes": 218205,
+    "edge": 0.00562
+  },
+  "boss-cindermaw": {
+    "peak": 0.5486,
+    "rms": 0.12281,
+    "seconds": 16.5711875,
+    "bytes": 200061,
+    "edge": 0.00123
+  },
+  "boss-cindermaw-true": {
+    "peak": 0.49661,
+    "rms": 0.09519,
+    "seconds": 16.5711875,
+    "bytes": 200061,
+    "edge": 0.00278
+  },
+  "boss-darklord": {
+    "peak": 0.55792,
+    "rms": 0.12295,
+    "seconds": 18.76153125,
+    "bytes": 226413,
+    "edge": 0.00097
+  },
+  "boss-darklord-true": {
+    "peak": 0.46789,
+    "rms": 0.09521,
+    "seconds": 18.76153125,
+    "bytes": 226413,
+    "edge": 0.00472
+  },
+  "title": {
+    "peak": 0.5017,
+    "rms": 0.123,
+    "seconds": 22.1181875,
+    "bytes": 266589,
+    "edge": 0.00435
+  },
+  "finale": {
+    "peak": 0.50775,
+    "rms": 0.12298,
+    "seconds": 22.1181875,
+    "bytes": 266589,
+    "edge": 0.0008
+  },
+  "defeat": {
+    "peak": 0.57072,
+    "rms": 0.12299,
+    "seconds": 23.15715625,
+    "bytes": 279117,
+    "edge": 0.00174
+  },
+  "peace-interior-supply-vale": {
+    "peak": 0.49771,
+    "rms": 0.12315,
+    "seconds": 21.1695625,
+    "bytes": 255357,
+    "edge": 3e-5
+  },
+  "peace-interior-supply-march": {
+    "peak": 0.48832,
+    "rms": 0.12321,
+    "seconds": 23.714625,
+    "bytes": 285597,
+    "edge": 0.01574
+  },
+  "peace-interior-supply-highlands": {
+    "peak": 0.51907,
+    "rms": 0.12307,
+    "seconds": 22.1181875,
+    "bytes": 266589,
+    "edge": 0.00456
+  },
+  "peace-interior-supply-crown": {
+    "peak": 0.50367,
+    "rms": 0.1232,
+    "seconds": 23.15715625,
+    "bytes": 279117,
+    "edge": 0.00609
+  },
+  "peace-interior-side-vale-cellars": {
+    "peak": 0.50772,
+    "rms": 0.12309,
+    "seconds": 21.1695625,
+    "bytes": 255357,
+    "edge": 0.00315
+  },
+  "peace-interior-side-march-watchhouse": {
+    "peak": 0.55891,
+    "rms": 0.12318,
+    "seconds": 23.714625,
+    "bytes": 285597,
+    "edge": 0.00258
+  },
+  "peace-interior-side-highlands-signal": {
+    "peak": 0.56909,
+    "rms": 0.12317,
+    "seconds": 22.1181875,
+    "bytes": 266589,
+    "edge": 0.00621
+  },
+  "peace-interior-side-frontier-shrine": {
+    "peak": 0.51946,
+    "rms": 0.12312,
+    "seconds": 20.3,
+    "bytes": 244557,
+    "edge": 0.00277
+  },
+  "peace-interior-side-crown-foundry": {
+    "peak": 0.50508,
+    "rms": 0.12319,
+    "seconds": 23.15715625,
+    "bytes": 279117,
+    "edge": 0.00299
+  },
+  "settlement-vale": {
+    "peak": 0.49163,
+    "rms": 0.12305,
+    "seconds": 21.1695625,
+    "bytes": 255357,
+    "edge": 0.00193
+  },
+  "night-vale": {
+    "peak": 0.51375,
+    "rms": 0.12309,
+    "seconds": 21.1695625,
+    "bytes": 255357,
+    "edge": 0.00044
+  },
+  "settlement-march": {
+    "peak": 0.49672,
+    "rms": 0.12314,
+    "seconds": 23.714625,
+    "bytes": 285597,
+    "edge": 0.00572
+  },
+  "night-march": {
+    "peak": 0.59436,
+    "rms": 0.1232,
+    "seconds": 23.714625,
+    "bytes": 285597,
+    "edge": 0.00343
+  },
+  "settlement-highlands": {
+    "peak": 0.51931,
+    "rms": 0.1231,
+    "seconds": 22.1181875,
+    "bytes": 266589,
+    "edge": 0.00063
+  },
+  "night-highlands": {
+    "peak": 0.52844,
+    "rms": 0.12319,
+    "seconds": 22.1181875,
+    "bytes": 266589,
+    "edge": 0.00024
+  },
+  "settlement-frontier": {
+    "peak": 0.51614,
+    "rms": 0.12308,
+    "seconds": 20.3,
+    "bytes": 244557,
+    "edge": 0.00399
+  },
+  "night-frontier": {
+    "peak": 0.58039,
+    "rms": 0.12314,
+    "seconds": 20.3,
+    "bytes": 244557,
+    "edge": 0.00232
+  },
+  "settlement-crown": {
+    "peak": 0.52562,
+    "rms": 0.12309,
+    "seconds": 23.15715625,
+    "bytes": 279117,
+    "edge": 0.00572
+  },
+  "night-crown": {
+    "peak": 0.5178,
+    "rms": 0.12319,
+    "seconds": 23.15715625,
+    "bytes": 279117,
+    "edge": 0.00391
+  }
+}
