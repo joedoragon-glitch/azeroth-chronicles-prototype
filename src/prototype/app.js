@@ -472,9 +472,17 @@
     );
   }
   function characterMenu() {
+    const h = game.hero;
     openMenu(
       'Character',
-      'Hero progression only. Troops, resources and construction are managed at town Captains or your barracks.',
+      h.class +
+        ' · Level ' +
+        h.level +
+        '\nXP ' +
+        Math.floor(h.xp) +
+        ' / ' +
+        120 * h.level +
+        '\nHero progression only. Troops, resources and construction are managed at town Captains or your barracks.',
       [
         action('Skills and teachers', () => skillBook(characterMenu)),
         action('Discipline Training', () => talents(characterMenu)),
@@ -2747,6 +2755,7 @@
     if (worldPointer?.id === e.pointerId) worldPointer = null;
   };
   addEventListener('contextmenu', (e) => {
+    if (e.target.closest?.('input, textarea, [contenteditable="true"]')) return;
     if (e.target === canvas || e.target.closest?.('#hud, #skills, #movement, #modal, #message'))
       e.preventDefault();
   });
@@ -2866,13 +2875,10 @@
       setMarkup(
         type + '-potion',
         label +
-          '<small>' +
+          '<small><span class="key-hint">' +
           key +
-          (ready
-            ? ' · ' + ready + ' ready'
-            : rangers.length
-              ? ' · ' + next.toFixed(1) + 's'
-              : ' · Need Ranger') +
+          ' · </span>' +
+          (ready ? ready + ' ready' : rangers.length ? next.toFixed(1) + 's' : 'Need Ranger') +
           '</small>',
       );
       b.title =
@@ -2937,6 +2943,7 @@
         cast = charging ? chargePresentation() : null;
       b.classList.toggle('locked', !rank);
       b.classList.toggle('charging', charging);
+      b.classList.toggle('skill-ready', !!rank && h.cd[i] <= 0 && !charging);
       const revealed = game.skillRevealed(slot),
         chargeTip = chargeableSlots.has(slot)
           ? ' · Tap under ' +
