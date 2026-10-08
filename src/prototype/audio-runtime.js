@@ -62,6 +62,10 @@
             this.clock = root.setInterval(() => this.schedule(), 25);
             this.ambient();
           }
+          if (this.paused) {
+            if (this.ctx.state === 'running') await this.ctx.suspend();
+            return false;
+          }
           if (!this.paused && ['suspended', 'interrupted'].includes(this.ctx.state)) {
             const ctx = this.ctx;
             await ctx.resume();

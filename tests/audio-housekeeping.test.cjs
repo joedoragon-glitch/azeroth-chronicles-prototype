@@ -60,7 +60,7 @@ function harness() {
   class Context {
     constructor() {
       this.currentTime = 0;
-      this.state = 'suspended';
+      this.state = Context.initialState || 'suspended';
       this.sampleRate = 1000;
       this.destination = node();
       contexts.push(this);
@@ -112,9 +112,20 @@ function harness() {
       fs.readFileSync(path.join(__dirname, '../src/prototype', file + '.js'), 'utf8'),
       root,
     );
-  return { Audio: root.PrototypeAudio, nodes, contexts, timers };
+  return { Audio: root.PrototypeAudio, Context, nodes, contexts, timers };
 }
 (async () => {
+  const pausedHarness = harness();
+  pausedHarness.Context.initialState = 'running';
+  const pausedAudio = new pausedHarness.Audio();
+  pausedAudio.setPaused(true);
+  assert.equal(await pausedAudio.unlock(), false);
+  assert.equal(
+    pausedAudio.ctx.state,
+    'suspended',
+    'a gesture creating a running context still respects an already-open menu',
+  );
+  pausedAudio.dispose();
   const h = harness(),
     a = new h.Audio({ music: 0.22 });
   assert.equal(h.contexts.length, 0);
