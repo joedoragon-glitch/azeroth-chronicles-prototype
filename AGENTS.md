@@ -5,6 +5,8 @@
 - Desktop/Chromebook and phone share the campaign engine but have distinct presentation. Do not infer phone mode from window width alone or restore touch controls on the desktop screen.
 - Keep the v4 save schema and existing keys compatible. Preserve original legacy backups. Crowns are the player-facing currency; internal `gold` fields remain compatible.
 - Keep combat geometry and timing authoritative in the engine/rules. Presentation changes must not alter balance or collision to match drawings.
+- Live balance belongs in rules.js (group new settings under rules.balance or the existing subsystem tables). Keep legacy migration maps separate. Progression/training/equipment belong in progression.js, snapshots/validation/migration in save.js, and specialist/expedition menus in menus.js with injected shell services. Domain modules must not import engine.js or introduce browser state.
+- The accepted presentation CSS fixture in tests/fixtures/presentation-v0883.json records the approved layout. Browser comparisons freeze game/render updates and compare that CSS with production CSS; revise a baseline only for an explicitly authorized presentation change.
 - Use the owning module instead of expanding `app.js` or `engine.js` indiscriminately. New runtime files belong in the asset inventory and generated entry graph.
 - After runtime changes, bump the package version, run `npm run build`, then `npm run format:check`, `npm run check` and appropriate tests. `npm test` discovers non-browser suites; the browser matrix must exercise relevant device paths.
 - Commit generated entries and the service worker. Publish only tested artifacts. Deployment authorization comes from the user's task, not this file.

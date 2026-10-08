@@ -1,6 +1,6 @@
 {
   "name": "azeroth-chronicles-prototype",
-  "version": "0.8.83",
+  "version": "0.8.84",
   "private": true,
   "description": "Offline installable RPG prototype for Chromebook and mobile.",
   "scripts": {
@@ -10,8 +10,8 @@
     "build": "node scripts/build.cjs",
     "check": "node scripts/build.cjs --check",
     "dev": "node scripts/dev.cjs",
-    "format": "prettier --write \"src/prototype/*.js\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs",
-    "format:check": "prettier --check \"src/prototype/*.js\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs"
+    "format": "prettier --write \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\"",
+    "format:check": "prettier --check \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\""
   },
   "engines": {
     "node": ">=20"

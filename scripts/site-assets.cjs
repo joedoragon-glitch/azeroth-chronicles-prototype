@@ -7,6 +7,8 @@ const scripts = [
     'rules',
     'world',
     'navigation',
+    'progression',
+    'save',
     'engine',
     'audio',
     'visuals',
@@ -18,6 +20,7 @@ const scripts = [
     'input',
     'runtime',
     'renderer',
+    'menus',
     'app',
   ].map((name) => 'src/prototype/' + name + '.js'),
 ];

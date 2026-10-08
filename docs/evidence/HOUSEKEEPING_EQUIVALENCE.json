@@ -1,0 +1,1386 @@
+{
+  "baseline": "fd66875f5cbb68a291398652797aa0a31b68ed6f",
+  "scenarios": [
+    {
+      "tag": "normal/paladin/standard",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "33549291f425692441f71e0cfa9c6c40142bdaec35aec68864969f20483a1f96"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "724453adf6499fb53db6dca62d565976f1bf4bfd545664297a7620d94dbaa4c8"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "29587926d32fdc41a6b8418e56f1848413c8099715ea5165c4a0b4a584f2b25e"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "7aebe7380d52fc0b3af404a237bd91988215153e9498322e131f7ac9b088794b"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "54b65e433778f70d04d2bbe34031382ce654083b19480ca3418eec604df6c88b"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "af4f096d8194b04dbc5c0fc5525298080027c01ded71f0d7292f130522bf8e45"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "2d1abfe2912530b557d56b5e43660a2d2009af4506bbdec96e897bb8e919ece6"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "ed5b3472babddc3550a93c55dfa9e450a1aa456626bc139a4a403c589b2ccd0f"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "11e0c78c45bd1936944489184045fd2c97155e3c015ab42b86ad1f8e6af3f3cd"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "5193771489c170731f50e73a4f56b38155273f5074fcc1904834cb2042a66f3d"
+        },
+        {
+          "name": "charged-1",
+          "digest": "73e97726bd34289a5d43f5380ec137d24ad10440c173007ce2c6f8b92c65a894"
+        },
+        {
+          "name": "charged-2",
+          "digest": "cc939713f1affa74c837c05f68479d4de703ef54ac4a26d012a665213b4baff6"
+        },
+        {
+          "name": "charged-3",
+          "digest": "ac544b590ad01a69ea93c4a22cc584509d01bf6ab25c5796cf114e048f0dd15d"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "98f1aabd654641dbc36fcbd6f034f50096eb06c1e54104ff4d5e49eff99ec646"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "fb70a537c4dbf6a8e1e981ff2b5569dca961b7a04f90321c858401f5c62ab7df"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "882f2641ae6a009318084d449a3112b27b1cebe7d6192489a980b0075eb28fe8"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "5bf901e21e03ed05d40fab8fb94994570bd11e709c475025eb14475a9e88e9ca"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "af46570ee6b12e9a408dd9c076cf3bed51091dfdf3c49525b86652a0f6c1d783"
+        },
+        {
+          "name": "save-restore",
+          "digest": "af46570ee6b12e9a408dd9c076cf3bed51091dfdf3c49525b86652a0f6c1d783"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "49c42343c7170532a6b4c734ce80392f1b63c9efb71bd464d504ff05c8241229"
+        }
+      ]
+    },
+    {
+      "tag": "normal/paladin/succession",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "23564c34257c24a875da5b591a26f7cc31ca76d42f0c2cb074af4664f5c8d149"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "4a907eb836c5961fb7d545dc2bcb4e4bf2c7251ae864b121195bb518348a9069"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "862279d94d4ea6415f70d86340ba59232c8bea9848488030cd7b3cd89f441c13"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "83a4cbb2074e09766aac83660e7bcb6f5cf2dc1961387adfc8053b90447b5557"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "2fd9a2b8e223f32b2962803b598e390a52c52c3dd91fc7028ce6ee9b042c7927"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "a2c3cc53102cefcd2f05776cf33bea07a94f3491ba27ea9c7eb6da5209890bbe"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "0c35c0753abc87185ef0e2bd877347fdf403bfbcd4b0e66c1c355c3460265a26"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "1b3bdde4a2ff4de43343d056238e98639df923cde15880727329ef43e9ae3292"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "26abd6b53d44a60ac439ac13c44a734f46fce41340f547692b389c7221a7dd69"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "6fd79239751b1e27e8a04913b7ba7974a5e94ccfd73b8f651f2d7a25a825af20"
+        },
+        {
+          "name": "charged-1",
+          "digest": "de0a6303f93db67adef3bc075e43788c9c2cb9e1166c120f5a8605cda6e34c18"
+        },
+        {
+          "name": "charged-2",
+          "digest": "5e3796204e7ca682705ee303d3920afc5083ef7e550a8858d40e9b240f7b18a8"
+        },
+        {
+          "name": "charged-3",
+          "digest": "314cf2915419c6233d6136e9db93b7f4818ca4dedb33f46a1a8ef9c48fdac125"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "7f97e4c894946bca094feca5b7c07377d78de70afdce413f35d3e3161fa52c2b"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "ac3891a083120170df371427bdf0009f7f55f515a51192f74d96d3754fa5b410"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "69025ed5c755a9debaee91f9a10383213d9f4c532bfa43a44bc0ba278ec1a299"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "790c017f26e5b5b833938fb0b1a8ea7cba6180075d576fe458c8b55907a28145"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "68da987b689193cca8a825080d03c5b646f760f091c46f3c12cd1a1b95a303ed"
+        },
+        {
+          "name": "save-restore",
+          "digest": "68da987b689193cca8a825080d03c5b646f760f091c46f3c12cd1a1b95a303ed"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "5dc5c73547b4a3629560943976ee4e5a425ded88b82babb81230c10f8ce8d8fa"
+        }
+      ]
+    },
+    {
+      "tag": "normal/mage/standard",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "cba16ab40874ac966ff3054789e6aee64f624ae96e477f94bf641a6c9b23670d"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "2e2d1f0801cf3a57009404843808b460698a1468a9974c2e0125d9a3622b742f"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "eb4810bba4d27545f7e80e8ae9bb8a13d9f2d6cba6b63eeb8f85474dcdc740c7"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "ddd3d2763ad8a3474d1db41b04be5bf9ed098aec33deb40ed8c5d293351d5ef9"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "67062fb1e1b315c4a39dd46c4aa0ff7fa71954c3f7ce84060fa0511a01ce1c0b"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "41a695c158e442d87911bd43c3bd5575cb0eca226b647bd556d16ba732100801"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "77d432d48a0d1cf3f20f4e12552bb3772d9f5aa63aae1c889a6897f518eb462d"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "3fbb4bc93114f10a5ccdd85e4dc998654ae38b57c59297a73bf8621a6d09d0ea"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "5f59823b70577afd0e02117a41cda16b299c333e6474c44acfbe67b37948b9a3"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "5063ff95a86fcaa92760c9739bea0c665af61f47b3e154ae3abbb15fb331ac5c"
+        },
+        {
+          "name": "charged-1",
+          "digest": "ba7c8e64614984bf138ad29be784e4fa6c78e1dd5cdbc28e1b6bf4672673d8e5"
+        },
+        {
+          "name": "charged-2",
+          "digest": "8d807394357d03e20cccfcc6456456b220eefa19861a0b61a6192868931e30b4"
+        },
+        {
+          "name": "charged-3",
+          "digest": "64574952f329d9d8dbf1b346a83ff3f62c73e6def8913c42002c216b0ccd0445"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "cfbc22b5a28bb237d5b5267b234cbaa17ef9601f7a0623a57e1763c718b74796"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "1c06b41c5c3a3cf7de0965e94b5cd45570a7ff822a4d39d372f75f609f8ee69d"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "4f6c552de30980d107665f162423f22202944e00c59d40f8eb245c6fc0febfe9"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "8e0a31c5c2ca21015d6e3e0136be8f241e34b8eaa133c4a776a0e0ec81fdb3dd"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "6e23cace586d52ace8a3817486239d27b08a8f448a748a958adac2da50b37ddd"
+        },
+        {
+          "name": "save-restore",
+          "digest": "6e23cace586d52ace8a3817486239d27b08a8f448a748a958adac2da50b37ddd"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "77ce90ce68142d3ca5a6b8ad0636c9d4bb17e2b4341b342b2e647a0991a19cea"
+        }
+      ]
+    },
+    {
+      "tag": "normal/mage/succession",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "64a24de685170558eb1e0fd30fac074698267e539c80825a4f9955070c72dd0d"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "4b0a4add934faa475c8c4309d6d591d42ab02bc5dd189713b11afe34711b85e9"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "ddab752b94606c1e3d03df206a7bab4a840cc3571f5e77da8fab6a2adbd613ed"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "7834f80847b6272101bbf8292f927b51a7533b6e869543b5d1d657af32ec5e98"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "9a2403c59024bd21ee80f5c28d3db9ca2c484895d3bcc30711b3f167d127777d"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "8d0568615303212f15001cfa51de276ab00c97fd9c67e015b334bfe692eaa914"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "22cb2c0d4e969dbee4c6037a5e8be8266de5a3def77c5e3432cca8f3da465f80"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "1680659d127601e132218e6239fecf4643b557423e1bf25993f4165a1561951c"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "e92878cae523d2f213281f461e13547def303ce97f717cd6a9cb875c0704c861"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "d838329da75cff667656855b9baf3f2dbc896995534282c44f16bdfe6d7d5680"
+        },
+        {
+          "name": "charged-1",
+          "digest": "f82292c24aa4a132a08d27d3eaef7f8a32d607944f38e90e730d235fb6d2f18a"
+        },
+        {
+          "name": "charged-2",
+          "digest": "b23e35c18b43cb16360163e7de45d6d9bb64fa03d4e978f42bd4ea5f9cdb57ac"
+        },
+        {
+          "name": "charged-3",
+          "digest": "1754a136c179ae34e008fe010ac9caac529aface63861f3364c485ebfe8a4b30"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "80ac4155e6f610e0325b6931c8b11d6051f6dcedc19294bf1ede3ef98689f2a9"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "8d0428cec2d8a503ddf825683af5543769a864d15d3d8862fd20403b7b4af074"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "90ac9c51207a4f90dacaba1d156bed6a499afc0dbad28acc24b64b63edbcd4ea"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "18543e03a1e134d4d4671d932f61bfbb9b2e9beb1f36cef7541e7ed30ae2ef3e"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "8dd6be64f34a56656610d6f8e42dc97d2c3e88b2df7b13a53a76ddfd20431dc2"
+        },
+        {
+          "name": "save-restore",
+          "digest": "8dd6be64f34a56656610d6f8e42dc97d2c3e88b2df7b13a53a76ddfd20431dc2"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "3a4dfb9a4ace43c30aeaec002b8a5f95493f8bbd4a57d58267d8148844df2c79"
+        }
+      ]
+    },
+    {
+      "tag": "normal/ranger/standard",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "1d8f5b2d22a500aa44a9427d5b3fa9ead8cfe2f0adcafe24a6e58711fd83d5bb"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "c63ab65f32bfe913cd5e0927d3ae92c93a1e0f8f12b3271446439a8cc9f44095"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "d3db9b16135c07848d9a99aa1aede6207ffa86faf2f9e58caa68b34314cb9465"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "443410226f5cdf738519a6f63b32f92fc98ecb1f5fd1dc3f35ccf85f5b733657"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "36c325f20f1db7f4c0bf1732478304e8c1c1c6d4eaf27bfb589edb641e26e3d2"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "b4f7d961ef94b5903f0013327c0e276bfe548900a4db7abe42780b18f5da31b8"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "618185b5a9198cd59d8fe5541b02789373a3783b6369b0412dae0d84bafd704e"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "7d38f78334dd7a6d3a0bf4dc6a7eaa5a5d9173ad8d437975301fbd9dabbdafa0"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "c35e0ce0fe9c45dee17a59240b8d8c4de157efb51ae957fef2c4acbdb3a48286"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "2a5c714802b6109ac8f4592d34556b7b07e247883dc06d8bebb97ed55fcbc171"
+        },
+        {
+          "name": "charged-1",
+          "digest": "028a0718050314fe5e68d8193e617dc1d50a4e542d2b999bd817a6e4643dc02b"
+        },
+        {
+          "name": "charged-2",
+          "digest": "dc91739c9d174461532251e280969de1c670a5c4f11f79ba766df9848106a546"
+        },
+        {
+          "name": "charged-3",
+          "digest": "104a80b759257de205d6fb868d103fc3e9cf68d68fd7fd0033567f894a812dd3"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "30284a18cba2d260c53184d91b9f7190ba873203eec8fdb0c73eb7beb8290178"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "9b1f91b155ad183d9503ae52c0c091f6e60092dc78eb5fc5251c5b9d917e847d"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "ac7517053f297bd38fc0f95f31070f82adbea2edcc29e8c278339bebfcd141d2"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "66fa5202913c1ada32d1a6a8882e611a7e9f76786fe32354e262c9897885423e"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "106930002ef32f835a6831129867c6fba10beca7a47be5c520d8066aa2dd1e0c"
+        },
+        {
+          "name": "save-restore",
+          "digest": "106930002ef32f835a6831129867c6fba10beca7a47be5c520d8066aa2dd1e0c"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "8049610f11d21c515b8c91a70c5832a8ed39c7e369b7683e3ee1bf0a312a7df6"
+        }
+      ]
+    },
+    {
+      "tag": "normal/ranger/succession",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "eb7b9f6f92b4dfa3df8e6419852c78274f6b0f9ba380118bd9f648288a985eaf"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "f66eac8545da6b8523ee8140ab431a22d8c10f3ed5d5c9f66dd43b25f097c5cd"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "df9c758bc27b315dd020451d6b6b188e5ea79ec7623200459036fce5fe3ba684"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "907a92dd730aea606970806ae641635b9d1a3d840b589a2dd2931048928e987c"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "d00aec7ee6b131ff17a4c0151139919762e91068ee7ec53e7005ac1cc790e7ae"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "39798cec56a768b43219258398342b659c8276be0d8bdc3a4ebc3ef6c1965ae1"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "fdae7b64b3a360d322f71121da41448d377590413317776b52a42a02f9615237"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "0ef48f36567ba505139011dc4a7035194c554e59a2b65352def9a528e6cbadbc"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "80a8d94e52fa7cbb85da39099a388af6df768240643b5262194aa59008f08e91"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "53e4724088fd3f3768afa0d390057cb40fcb7690cb670469b68defed7642a56b"
+        },
+        {
+          "name": "charged-1",
+          "digest": "6715067fb2f3a14dfce6aed09412b60a1955db33caa4a273a1deefa481447dea"
+        },
+        {
+          "name": "charged-2",
+          "digest": "d6b8bd8180de1e756dc3ab1f64a1cfbdc61c315c8ce56d97de3744bb8484f992"
+        },
+        {
+          "name": "charged-3",
+          "digest": "541ad21bcfbd2ba84c512cde44b1ab8b0686814db949faf54d77faca1037ba0c"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "97e9951b969ccc386b6c6ebdded2c94fc6770143af9545404f6c0928c5181201"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "10ca3fd6d0c6bf3384242f98d42e3296314f95adf679775dd0d81e7ee55b2ab6"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "19dfdf6a42a390925adfa3a32edf63a479d7466f61481bb98f33910493beaa46"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "a8de54ff112588d7f8d471e41cfa2b27ae21f4e3c57a56ce6eafec4076722e51"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "d5b1e846bfa8c47c8db9370170f1c2f02cc0a6312824d8a13928ef62298c7c86"
+        },
+        {
+          "name": "save-restore",
+          "digest": "d5b1e846bfa8c47c8db9370170f1c2f02cc0a6312824d8a13928ef62298c7c86"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "e4e0b0948dfaeb144998f4266b0b6f68062961c3128b6fc1a9b0f6917be52485"
+        }
+      ]
+    },
+    {
+      "tag": "nightmare/paladin/standard",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "9ee5edeba3ae03e174ff34d09087915d43c54f5f5e6bc7e1a11d533a9f17790e"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "91fffc7b08e830080a9f41e4cc348d136978842e651094969875fa84ebfc01df"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "9d6ad8d333cdd25648d662db90ed4a93e4465779c9c26abdd43bbd29183ffd5b"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "3a01981ec95fd62594e4b839bf6a35ba05a48e265595d23ac8fad0d2b61f19fd"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "dbf5fcef721d1ca261d4c9184fcadd4f7466114f183199dedd12b69e32d8edd4"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "6f6c2242c1966169731bb7791131ed31e43f3c0fc05962e54484ec9ae5600860"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "f5c191b86c97cb2ffa082eb0a259961022bb0ac6dcd21d746e65a683eea5c65a"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "32916899ddf030bf34e9f628ee156e60b442bcf4a01b56fc28958327dfd40b95"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "c53b52449ca0a471c4f6c2def77dc2d3e600f9561f90215f9b256f347a1edce8"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "9cabadad54acfd3b4b1b4c21303b4d0bed14fc6b0f99f25c1e10512360d61ea7"
+        },
+        {
+          "name": "charged-1",
+          "digest": "79cd2d6a04a22b1fb0c52db02ad60ab770c99461a20ebd19903e8f0176eca353"
+        },
+        {
+          "name": "charged-2",
+          "digest": "067bf21cd5ed6956dc81d31ec6901ac634584d3c1fb948029c4ac9da6cce0787"
+        },
+        {
+          "name": "charged-3",
+          "digest": "19945ea66d508c8d5a473fab8c49d463eba6713da89fb235b47ad7d8cb5595f7"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "add6705b38f3a3ec9cd5b864390677a727f4d777ee03ac369d4ce22c1761f7c7"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "d9df73bde31ac3a5ad7d85b3e2ca0b9c422306ca915e27ae88df2be889030289"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "2dd40c35ab5f58ff7855cc49a9d50f6ad7189a18ae5094bb49a303e87f175dcb"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "06e53a0d311bba340934a9df7594cb9f72986be166172164d4465a78e8dc9b6d"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "be2e51fffe32ce3787d6fe9142374b7de1b13ca8062aa042cb9ab080bea1c34a"
+        },
+        {
+          "name": "save-restore",
+          "digest": "be2e51fffe32ce3787d6fe9142374b7de1b13ca8062aa042cb9ab080bea1c34a"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "8a7dac527d9e72598b7b32031b7441a48f470c1a19897fae5c29b7801a0ed104"
+        }
+      ]
+    },
+    {
+      "tag": "nightmare/paladin/succession",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "777e52567d02cb8a1e4f5327d315551f002f9b2b98dfcecdeb94b5a22c60cac1"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "b843342a924bcaee563a398728f1ebda0a2fee52fbf6646e1bf239b607838bea"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "c80ec922838a43a25835a472597ae86b1bc86c956642f45658e3c9910c3c813c"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "8a8ddd121cb88b0dabe0704c4dee38f0110b7e466ea2be9d8d4fff88462ede46"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "79fca239efed217bbd58cfc76fd5472818be2e9afdf936cacb4f8fbc7554da1c"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "370461729bf5e767129c16de862d61c5eefb02b6d72c57b48d933b0d754e0594"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "9500ca170fbdac1c19505fae8a1300519b441c8e4b305ad583377d921acb000a"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "47ab478ea1f6d27d2d698cb3c4b7fac3d9784e9cb3b768e8bf104f2e1b36ac24"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "5983b81fe1ec283552b96439dc46ffff2acd85dafe803e5dfe12527524a437c2"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "a92415df87f3cad6f27489baa276f9b206e267e30611b886ace11e33441a7604"
+        },
+        {
+          "name": "charged-1",
+          "digest": "511c1d66e5480fbd0c601658e7cce32bf4c25db52e56803ad077f177a3ee61a7"
+        },
+        {
+          "name": "charged-2",
+          "digest": "d459dc8059d13a293b52b0bc07b7b043523d4a3d40b6b77e70aef91083a56f66"
+        },
+        {
+          "name": "charged-3",
+          "digest": "47af48c22bd042eafbe7ae765e7be5deee3d418db40349fd2aa1e2f8caa23e09"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "0083903e336eacd4d3518e5fc3db21423f663c089d1b0e0056c031054f2525e1"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "76fa51468f237722de6cf3911992c7608e534e00426e7b497043cb65dea8060f"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "7ec5a2f48ac4b87fa8c41b85396240bcb7e64e345a817ad6467875b1d8d61f24"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "a57503f24356a839b5fb99f5311cab8c4eb1400e4911694df3eb63c2ede1ef3f"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "c35589d43656e55a465853729413930180e8e16ed1643a4ebe3be3aaa7ad2b3c"
+        },
+        {
+          "name": "save-restore",
+          "digest": "c35589d43656e55a465853729413930180e8e16ed1643a4ebe3be3aaa7ad2b3c"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "9eefa9041692274166d3405ee94d2152fc00731de822e0648a1550bd2f9e8bc9"
+        }
+      ]
+    },
+    {
+      "tag": "nightmare/mage/standard",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "39ea8d4e7ce1c47f7cb6e6b3c0e8f64928c587b9ef56b459e47798205054c5ed"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "ebbc45379479793f2fcdb97de6510284ffaa8f202a5bdf04acd1daf6ef40bc8b"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "479d0580ad4c89d7ac4afd747df88b8d2211b0917b886b96a008cd4420231ad0"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "fb6753c8531b175824982fca564c46056bd45b1246bd7e80593e1c165bf9e833"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "c923ada3feadf2021c3920829dbf174a2361ccf288d390abdcfba7bf5d1b0ab6"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "4b1d15d8c920b9266b4bb1509c61ee751aa904f9da104bd9364eb1df1a307710"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "3edbe5faf8d33e352c67752c49388652c30d5e67139d5448efd873829c38421a"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "9018070096491d6a71224ca0108b90e563d4c2119d52f06263d8b93ef90d6659"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "276da5652daa1d7706b5ee3b7ca5814f961edb49bf7c0ad42ea6cfc6dcadb87c"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "ed0565a760fe860f8aa440982e004c0cfc70416a1ae2340b7f19be74bfe7baa7"
+        },
+        {
+          "name": "charged-1",
+          "digest": "26062fecc3829aed9b42b7724a7b813f79980c3e0a63290c33f22736059c2d7f"
+        },
+        {
+          "name": "charged-2",
+          "digest": "17402518804e302e0e27ef1641a72f0aaf40bca470b1bc1f76e73fd65176ab6c"
+        },
+        {
+          "name": "charged-3",
+          "digest": "c6ea7ae7a5ecc184871c98c79a6d3cddc9f58798d98ed72cabcb57a05d2a2f55"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "f82ccd76919ef0956200f4af45d38f123c26386d5925e4ade5a8c1c9a92181fa"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "68db1f456c80d4e2c4d800ef2fba9edc300490406b0a9bb8330949509426fa9b"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "98882c9d6569b70bfc049add763cea4451b3077a6e38066bbef2914639704a9e"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "8b14b96d4bb7aa906a7c5c017e72f86b0dfd1a5cbccaaabcbc4d5e816071ab78"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "38747ad6dba96f6f106063946f503987420407dca48b8588cb69c0e9c3d01911"
+        },
+        {
+          "name": "save-restore",
+          "digest": "38747ad6dba96f6f106063946f503987420407dca48b8588cb69c0e9c3d01911"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "09a549837021d5c024fd08360e83e97d826694b14cba28a17c5f2757b9bcf2de"
+        }
+      ]
+    },
+    {
+      "tag": "nightmare/mage/succession",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "85eba774fbec2bb52214110eb91dd7d45fc74f3cd9f17a34f9424448b579f0aa"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "5c0ecb4b27c73b8d099b41c2d58bc15b4a78bc63efbfc38ee7d2625c5247c4fe"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "c22996ed68cb59402a9f0ced4fbb2a88f568db70ca5ec172de627b47c6d0c698"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "81cede0d592262a28c58718364cedde5741debc6dfd3e4a9daeeec0d8059e86c"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "d6838a5548432773b0f9f109410f6a02578374cc3418976561f2c9e57052ab5c"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "1bca91524d3ed6de04b833ea4959126a06ba69349851514dd97ace08a66119b8"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "b32f3d7edf86c1d36f51fe87f6a18c481202156473ada1c1e87bd710b101e4d9"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "987bf294c7b120ca2b92dfb676580ee84860e705962de1a3ffdf483a08c01e7a"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "928a02a7260cc0158786fd3aeb95ab6a331fbb40a861f794e293c6a15d7f5279"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "6e0ca06af289df70db6d46c6ab55b414185a1dbf589976d9804b7377fe807eab"
+        },
+        {
+          "name": "charged-1",
+          "digest": "09a004ca831ad2a8fc214ecde4a8a7b11cd2c877e48433667f8d45c12fd8393d"
+        },
+        {
+          "name": "charged-2",
+          "digest": "65588979911907ed42225497e4c81be77391c13eff072fc1f9c54112f03cf5e0"
+        },
+        {
+          "name": "charged-3",
+          "digest": "a6297279fec874b1800ce109dbad7a3b6a74bef742a06d4978302065e56d11f5"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "66cab80ed6b7b27152f6b5f1c8a1d8dc97b8c02e796776724b2825ff062d7626"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "820333b291d8d2c97ac99b4a9390a8df5b3569b67540d1e0367d401c292059db"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "3cc10245c13369693907f194ab17546922e089102bf7dd2cada47c32776feafa"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "c579a071d04f09ad9443eb89b7b263ffb8a75b55605ed2a09f450af15d84b9a2"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "3fd786536e106241e3b59f788c51a34e4f4654e20a5ee4a8d686918a39e153e2"
+        },
+        {
+          "name": "save-restore",
+          "digest": "3fd786536e106241e3b59f788c51a34e4f4654e20a5ee4a8d686918a39e153e2"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "2dd132b5ee112e02a547accbc9d14628f03b89f19f963c6eb4bb7a108aef38c5"
+        }
+      ]
+    },
+    {
+      "tag": "nightmare/ranger/standard",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "abf84ae411ab1fbf815cd507cd1176e283335bddbf19689458c10eda128d6830"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "34e5669694e48d1cd3bdeeb049a90e4acef0c842b8e23989d632dfed967771c1"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "d8553ba273b52721d4f9dc6d78c6d950d078ff55f31aae3af7b52634ccf9af42"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "6515907bf8012ad8b45dffa77e788eafb6aa1ec448895ea81294907f1fdeb1c3"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "d7e6c9a110470f8c0a76d69f7b880b8134f6c0bfd612683a4cf5f960bd7c4a4a"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "5343e09b81218f4a71ef9dfa071e0233f17b3a203c12a66ac240dd597823c632"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "3e338c8d6a0e144996f9b7ecbe86365fa583d4c565cc6f32a34369e8182fe1d5"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "99bc25a3fe5a09d547191bee3ef22afb5c8413363382bdc69426b26d0d149192"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "02bcf21712466e9aaa96985eb2173af96c5365bb826403c1c68f82ddaca853ce"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "76358c08c5094e642deb352c5de88d1c1b40350fd47765d25144fc4878c70a91"
+        },
+        {
+          "name": "charged-1",
+          "digest": "a3c94b44edeadfff3b496caddc3158dd514d04bef1ee133c976d976ba99ba53b"
+        },
+        {
+          "name": "charged-2",
+          "digest": "4c0cd20eef7dff1ba528d5f06ed84159f3d023aefcf05d2bceb91ba94d53ca83"
+        },
+        {
+          "name": "charged-3",
+          "digest": "f916651624bd48358152a6a045d2c5af95ad0d86e2a307b76539673495f06276"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "78ac90c4488ade8cf08189b11a18d93d275d0cf51a45cf05dab9176e6ca15920"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "be78f67eed104c8379f807dba3a2c53db26c9c476ecdd1ffc590d6b0455ff755"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "596a51e6738447a65bdecffe8c089319224e7951fbd23da4ca20795c3bfa4424"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "b0f1530500f8323020f41fff8298eaa6984c1e5f87394bde550cb9f71cbdcc86"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "8151510790eab4cdbc801307b6d978f91cba9c6b128560b57ac3386b2b31cc6a"
+        },
+        {
+          "name": "save-restore",
+          "digest": "8151510790eab4cdbc801307b6d978f91cba9c6b128560b57ac3386b2b31cc6a"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "7ce2552ef96272f1245beb290530fe2cf2fb869a8fa0b0e0338ed95d876ff7ad"
+        }
+      ]
+    },
+    {
+      "tag": "nightmare/ranger/succession",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "47326eea009166d63f3d06841bcc9be13662ab653f81f56959e3a87e00a0674e"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "527fe5d74cdc43e3049792a6bbaf16009eaba84e53cb8906cb43363cbd40c974"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "b2cc975482645896830f9bd808ac63d80922efe7e18617eb5ec8c0a357aba382"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "e77c9d6b0ebf4b40143d77974765225b980dadb537b932b0d94d0cbabf9a72dc"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "84f5e4a2584d2b330f051eaf9d6714b70c871dd6a52f620af252c3e660e3a986"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "0797e0a7cf20046d853116879bf0299f174eadb065c2e9630fcedb9156388faf"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "3c8ec4e386ff52302473cd8bf892c66eb83a5a9467c369e8eb3c1f8d9664c357"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "c45a58489dd29773717f09a78731761140079e1e38504de3c8b1e64f87f0892f"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "195615842b84abce8aa76909a8ffb1466670f7f8c5147be75125141e9109a5ba"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "00c3b914bf045711c41e1a09ff66f4a9e65eaa9aa15c5c9d422e827249837055"
+        },
+        {
+          "name": "charged-1",
+          "digest": "34e36b3d3336ff2a6bb466227b3783208dff69255c9cd0dc88dfa8f0c7bdc427"
+        },
+        {
+          "name": "charged-2",
+          "digest": "c1a2040c73453d9f5feb1fc30ca605d738cee721c44992501529d3097ba52f91"
+        },
+        {
+          "name": "charged-3",
+          "digest": "fc99f3a7e90c5ef7996b40f4670aaa3a3cf8e67c8703a3f1732d70b8fc956442"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "427c98b2b0332e53aa40c19941e9e4cac9a36294610a633d75b990e16a6c227f"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "eb81799fa269ca8283a8be36ede4029f4acd7d54d4bcb2ef4df9353bb21ae292"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "5b5a8ad12ac5717f2c8004f1536287022f9ac987915b1014ade29e749c6f94b4"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "c0f25b147cab77676f2782a1ca01ed761f06e541bdbe97834abdd8dca1ee4570"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "255ca2ad32e7b9f23ea5b70aa4a98ad5091617f42a8dcb2920e9279e686aac03"
+        },
+        {
+          "name": "save-restore",
+          "digest": "255ca2ad32e7b9f23ea5b70aa4a98ad5091617f42a8dcb2920e9279e686aac03"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "11aacd39d9a9588cc9f5b5998afb255e3534951b7219a16d0d42127575059cc0"
+        }
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "zone": "vale",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "b8b84d0e07cc1eab55691d165826378be74dec7bcc9f847101ba0f882a1a4e79"
+    },
+    {
+      "zone": "vale",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "3564f9724e999023f899b7277ea9c01aae6ddefba17a87bb04c1bb621a23eea4"
+    },
+    {
+      "zone": "march",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "2f325f5d3e90f329b9704da41ba8e24daa6eec3b5612c90cf2de0f30c082a372"
+    },
+    {
+      "zone": "march",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "b645386dca31b088a0b39c4580cb95184b0057a8bc535449596474aa2dcd7c86"
+    },
+    {
+      "zone": "highlands",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "0e315e6648c855c8cad8e56afd48980ca478510396628dfa153733e087b6bcff"
+    },
+    {
+      "zone": "highlands",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "4a62ba9e5f299544cfe3b97da35908b7ba6cf71c5217d057d48a103417fb1854"
+    },
+    {
+      "zone": "frontier",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "057de36c8d845addfec510b8fdb0a69e44b5052e4091516db7339db25e38af64"
+    },
+    {
+      "zone": "frontier",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "6825c2de35e785cdb9d038ef8a801f02ac389c4316830086b9c2f30677846cb3"
+    },
+    {
+      "zone": "crown",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "9d3960632ebb97d0b7edae1001f3a91236b1104f932fd6f8504fe4968ae3d7e7"
+    },
+    {
+      "zone": "crown",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "e85bc7cc4282d40435d8b79e9cdef21ffdea6997d0dcd2a7a8c14408e1bbb1a7"
+    },
+    {
+      "zone": "crypt",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "3f705774284d1a243b41c0f81498a98b41f92c37345c604b652ef8d3a374aa7b"
+    },
+    {
+      "zone": "crypt",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "b24af13671474619185e31888a6d479ecfac4e8bde41e60c3b26fac759c1f182"
+    },
+    {
+      "zone": "archive",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "29ef8ca2135ca281e4a9e7679d241129c6f3315bf46dacd7341d33643bace243"
+    },
+    {
+      "zone": "archive",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "489b520d0836e90d35b0dbb7ce1cef3172afeb573eafb09baf66b5de4496ba72"
+    },
+    {
+      "zone": "mine",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "d78399abf47208beb47d5420aebe24abc3377479ee6efddcf468e31e1f927885"
+    },
+    {
+      "zone": "mine",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "f1a3f9857b4fe05ba51e420ebd2ab652433c26f85a30b65a742d018055e72d86"
+    },
+    {
+      "zone": "abyss",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "0410135e643504ec8556386e5b9da87f7ff3ea5388f3c8806622272307c185b3"
+    },
+    {
+      "zone": "abyss",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "b891dcb4f5a99c12355ca940e4312e2f1a1d6abccc5147d858cbd3ff4dd02dd5"
+    },
+    {
+      "zone": "citadel",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "dc2abdb3eba4cc7da8ef316a84b2bb9ea570f1d67c93fcc55749a814d20cd1f4"
+    },
+    {
+      "zone": "citadel",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "7a0b66e17ee0f5b14942c8d073c49ad9455db4e873cab81f6faf6879d13d977d"
+    }
+  ],
+  "configuration": [
+    {
+      "name": "classes",
+      "owner": "rules.balance.classes",
+      "before": {
+        "paladin": {
+          "icon": "🛡️",
+          "hp": 120,
+          "mp": 60,
+          "power": 18,
+          "armor": 8,
+          "speed": 300
+        },
+        "mage": {
+          "icon": "🧙‍♀️",
+          "hp": 90,
+          "mp": 100,
+          "power": 22,
+          "armor": 3,
+          "speed": 300
+        },
+        "ranger": {
+          "icon": "🏹",
+          "hp": 105,
+          "mp": 70,
+          "power": 20,
+          "armor": 5,
+          "speed": 320
+        }
+      },
+      "after": {
+        "paladin": {
+          "icon": "🛡️",
+          "hp": 120,
+          "mp": 60,
+          "power": 18,
+          "armor": 8,
+          "speed": 300
+        },
+        "mage": {
+          "icon": "🧙‍♀️",
+          "hp": 90,
+          "mp": 100,
+          "power": 22,
+          "armor": 3,
+          "speed": 300
+        },
+        "ranger": {
+          "icon": "🏹",
+          "hp": 105,
+          "mp": 70,
+          "power": 20,
+          "armor": 5,
+          "speed": 320
+        }
+      }
+    },
+    {
+      "name": "talentMaxRanks",
+      "owner": "rules.balance.disciplines.maxRanks",
+      "before": [
+        5,
+        5,
+        5,
+        3
+      ],
+      "after": [
+        5,
+        5,
+        5,
+        3
+      ]
+    },
+    {
+      "name": "talentProfiles",
+      "owner": "rules.balance.disciplines.profiles",
+      "before": {
+        "paladin": {
+          "power": 7,
+          "mana": 2,
+          "hp": 33,
+          "speed": 38
+        },
+        "mage": {
+          "power": 9,
+          "mana": 3,
+          "hp": 27,
+          "speed": 41
+        },
+        "ranger": {
+          "power": 8,
+          "mana": 2,
+          "hp": 29,
+          "speed": 41
+        }
+      },
+      "after": {
+        "paladin": {
+          "power": 7,
+          "mana": 2,
+          "hp": 33,
+          "speed": 38
+        },
+        "mage": {
+          "power": 9,
+          "mana": 3,
+          "hp": 27,
+          "speed": 41
+        },
+        "ranger": {
+          "power": 8,
+          "mana": 2,
+          "hp": 29,
+          "speed": 41
+        }
+      }
+    },
+    {
+      "name": "ceilings",
+      "owner": "rules.balance.instructors.skillCeilings",
+      "before": {
+        "thorn": 2,
+        "mire": 3,
+        "ridge": 4,
+        "warlord": 6,
+        "citadel": 8
+      },
+      "after": {
+        "thorn": 2,
+        "mire": 3,
+        "ridge": 4,
+        "warlord": 6,
+        "citadel": 8
+      }
+    },
+    {
+      "name": "expeditionCeilings",
+      "owner": "rules.balance.instructors.expeditionCeilings",
+      "before": {
+        "thorn": 2,
+        "mire": 3,
+        "ridge": 4,
+        "warlord": 5,
+        "citadel": 6
+      },
+      "after": {
+        "thorn": 2,
+        "mire": 3,
+        "ridge": 4,
+        "warlord": 5,
+        "citadel": 6
+      }
+    },
+    {
+      "name": "pursuitBurstSeconds",
+      "owner": "rules.balance.pursuit.burstSeconds",
+      "before": 1.2,
+      "after": 1.2
+    },
+    {
+      "name": "pursuitBurstMultiplier",
+      "owner": "rules.balance.pursuit.burstMultiplier",
+      "before": 1.5,
+      "after": 1.5
+    },
+    {
+      "name": "mercyStartRadius",
+      "owner": "rules.balance.pursuit.mercyStartRadius",
+      "before": 300,
+      "after": 300
+    },
+    {
+      "name": "costs",
+      "owner": "rules.balance.skills.costs",
+      "before": [
+        0,
+        0,
+        15,
+        10,
+        25,
+        40,
+        20,
+        45,
+        60
+      ],
+      "after": [
+        0,
+        0,
+        15,
+        10,
+        25,
+        40,
+        20,
+        45,
+        60
+      ]
+    },
+    {
+      "name": "cooldowns",
+      "owner": "rules.balance.skills.cooldowns",
+      "before": [
+        0,
+        0.85,
+        3,
+        8,
+        14,
+        9,
+        4,
+        15,
+        24
+      ],
+      "after": [
+        0,
+        0.85,
+        3,
+        8,
+        14,
+        9,
+        4,
+        15,
+        24
+      ]
+    }
+  ],
+  "styles": [
+    {
+      "name": "prototype",
+      "digest": "6ab38f537cdc3497f1a4d991ef2c356a902afc47ae232120b10f34acd78727fd"
+    },
+    {
+      "name": "desktop",
+      "digest": "4147703bdd1ba3474024189f046c03c879c6efb3bec91ec4df6f16d8c74b1213"
+    },
+    {
+      "name": "phone",
+      "digest": "8a4471bd96a206d6194fbcdac2541ca53ab5a38716a38f4eb2fe5af4de140d9e"
+    }
+  ],
+  "liveComparisons": 243
+}
