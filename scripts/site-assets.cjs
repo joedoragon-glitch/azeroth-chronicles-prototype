@@ -8,6 +8,7 @@ const scripts = [
     'world',
     'navigation',
     'progression',
+    'save',
     'engine',
     'audio',
     'visuals',
