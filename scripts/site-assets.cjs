@@ -15,6 +15,7 @@ const scripts = [
     'build-info',
     'persistence',
     'platform',
+    'input',
     'runtime',
     'renderer',
     'app',

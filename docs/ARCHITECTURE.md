@@ -11,6 +11,7 @@ The browser is the current desktop playtest target, especially Chromebook keyboa
 | `navigation.js` | Collision, line of sight, routing, movement and following |
 | `engine.js` | Campaign state, progression, combat, party behavior, save validation and migration |
 | `persistence.js` | Browser storage, existing v4 keys, profile persistence and original legacy backup retention |
+| `input.js` | Validated persistent bindings, pointer preferences and reachable destination requests |
 | `platform.js` | Input-capability detection, explicit screen choice and camera anchoring |
 | `renderer.js` | World projection, viewport culling, draw order, transient effects and renderer counters |
 | `visuals.js` / `combat-visuals.js` | Canonical procedural drawings, terrain, architecture and combat cues |
@@ -27,7 +28,7 @@ Rendering reads the campaign and holds only transient presentation state. Screen
 
 `styles/prototype.css` defines the shared theme. `desktop.css` and `phone.css` contain separate layouts scoped by the selected experience. A narrow desktop window keeps its desktop identity. Fine pointer plus hover support wins on hybrid laptops; coarse-only input chooses phone. An explicit setting or `?experience=desktop|phone` overrides detection. `phone.html` defaults to the phone presentation; an explicit saved screen choice survives relaunch. The compact phone HUD leaves the hero and skill controls clear. `phone.html` is the installed PWA launch entry.
 
-`templates/game.html` generates all three campaign entries (`index.html`, `prototype.html`, `phone.html`). They load the same script graph and share storage on the same origin. Phone-specific controls are absent from the desktop layout. The keyboard-first menu and mouse recovery-command rules remain deliberate game-design decisions.
+`templates/game.html` generates all three campaign entries (`index.html`, `prototype.html`, `phone.html`). They load the same script graph and share storage on the same origin. Phone-specific controls are absent from the desktop layout. Menus and HUD accept keyboard, mouse and touch independently of presentation. Input preferences use their own versioned storage key; campaign save schemas remain unchanged.
 
 ## Work limits
 

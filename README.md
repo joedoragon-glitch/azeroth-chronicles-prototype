@@ -1,4 +1,4 @@
-# Azeroth Chronicles · v0.8.81
+# Azeroth Chronicles · v0.8.82
 
 An offline-capable RPG across five regions, ten settlements and five main dungeons. Rescue the specialists, build your expedition, and challenge the Dark Lord. The regime's currency is **crowns**.
 
@@ -17,7 +17,7 @@ Choose a Standard run or the optional Succession challenge, then Paladin, Mage o
 
 | Action | Desktop | Phone |
 | --- | --- | --- |
-| Move | WASD | Left joystick |
+| Move | WASD | Left joystick or tap a reachable destination |
 | Interact | E / F | Interact |
 | Skills 1–5 | 1–5 | Skill buttons |
 | Skills 6–8 | Space / left Shift / B | Skill buttons |
@@ -27,9 +27,15 @@ Choose a Standard run or the optional Succession challenge, then Paladin, Mage o
 | Recall | Backtick | Recall squad |
 | Map / inventory / journal | Z / I / J | Adventure menu |
 | Pause / menu / controls | P or V / Escape / G | Menu |
-| Menu navigation | W/A previous; S/D next; F/Enter/Space confirms | Joystick and Confirm |
+| Menu navigation | W/A previous; S/D next; F/Enter/Space confirms | Direct tap; joystick and Confirm also work |
 
-Desktop remains keyboard-first. Mouse clicks do not move the hero or activate menus. Q remains reserved; sprint is unavailable. Incomplete charge holds cancel safely, and charged actions still require valid targets, mana and cooldown readiness.
+These are keyboard defaults. **Game and settings → Controls → Customize keyboard** changes and saves bindings on this browser/device. Menu navigation follows the chosen movement keys; Enter and Space remain confirmation fallbacks, and Esc opens/backtracks menus. Browser shortcuts remain available.
+
+Menus, HUD buttons and skills accept mouse clicks and touch taps on every screen, including touchscreen Chromebooks and tablets. Skills 1–3 support quick taps and charge holds with either input. Movement autoattack remains active.
+
+**Controls → Touch and mouse options** selects the phone's default two-thumb layout (movement left, skills right) or the alternate left-hand layout. Touch tap-to-move is enabled by default alongside the joystick and can be disabled. Taps use existing collision/pathfinding; manual keyboard or joystick movement immediately takes over. Opening menus, pausing or losing focus cancels travel. Taps move the hero only and do not issue squad orders or automatically interact with services.
+
+Mouse click-to-move is off by default and can be enabled separately. With it off, left-clicking the world commands Ranger Heal; right-clicking commands Mana Recovery. Clickable HUD recovery buttons and their rebindable keyboard shortcuts work in either mode. Sprint remains unavailable; Q can be assigned to another action.
 
 ## Saves and reports
 
