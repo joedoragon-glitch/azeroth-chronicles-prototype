@@ -1,0 +1,154 @@
+{
+  "name": "Environmental Rock Cluster",
+  "key": "prop:rock-cluster:highlands",
+  "pending": false,
+  "review": {
+    "status": "pending",
+    "reference": null
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "candidateImage": "candidate-isolated.png",
+  "comparisons": [
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "day",
+      "canonical": "canonical-1280x800-day.png",
+      "candidate": "candidate-1280x800-day.png",
+      "anchor": {
+        "x": 498,
+        "y": 277.4
+      },
+      "canonicalHash": "93abd9476a0b67b262dfdd6624edc1964e98b5e7aab3f8c99c16a5c016c3bdcf",
+      "candidateHash": "d1bf21dde5ab104d928e2a13063b19d9c86142e9314d716de1212693daec6913"
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "night",
+      "canonical": "canonical-1280x800-night.png",
+      "candidate": "candidate-1280x800-night.png",
+      "anchor": {
+        "x": 498,
+        "y": 277.4
+      },
+      "canonicalHash": "96ba91f979397b3609772936d8b5224733ea4da9d1dce135c653db87d8330ed4",
+      "candidateHash": "9bc34e8f210c8da716889c65e44720c53c3b57a37c2ee97b21749c998716b7c8"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "day",
+      "canonical": "canonical-375x812-day.png",
+      "candidate": "candidate-375x812-day.png",
+      "anchor": {
+        "x": 187.5,
+        "y": 265.43999999999994
+      },
+      "canonicalHash": "182a7b0213da28776caee2f3b30724aff482da8f1a8ed48f91c5f31a9e9abe23",
+      "candidateHash": "4b6d18548f56c6ec5fb7008baf01440e29b5a16a09f1d48a7f8504145ad15681"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "night",
+      "canonical": "canonical-375x812-night.png",
+      "candidate": "candidate-375x812-night.png",
+      "anchor": {
+        "x": 187.5,
+        "y": 265.43999999999994
+      },
+      "canonicalHash": "63d031620a303ff159a77634ba6966e34ac7787d4300c672028a57712a6791c5",
+      "candidateHash": "482b51f164f5b0892b25aa98577280a4892a80a930a876d58d48e964cc6be139"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "day",
+      "canonical": "canonical-320x568-day.png",
+      "candidate": "candidate-320x568-day.png",
+      "anchor": {
+        "x": 112,
+        "y": 162.95999999999998
+      },
+      "canonicalHash": "0c9a5cd46ef9ed44eb70f6915e98332d6f911fb6c9003a81913c681f516825e1",
+      "candidateHash": "dde2a31cc66a27acb1d95856ebd8cc0839281ba0af40b4a2a6cf947d9ba63d15"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "night",
+      "canonical": "canonical-320x568-night.png",
+      "candidate": "candidate-320x568-night.png",
+      "anchor": {
+        "x": 112,
+        "y": 162.95999999999998
+      },
+      "canonicalHash": "ceb76a4e214980c805169349fc3f479010b9ac370eb8efb8cbd2daa39ba56496",
+      "candidateHash": "5f2171ecd91f62dc03b538766416d3babedb176a542a3d95ef40af1b9cc8806e"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "day",
+      "canonical": "canonical-844x390-day.png",
+      "candidate": "candidate-844x390-day.png",
+      "anchor": {
+        "x": 422,
+        "y": 88.19999999999993
+      },
+      "canonicalHash": "9b98b5be07892ed8933851c8f8dbdc01fcb6264307a7923df2863aea13dfbdfc",
+      "candidateHash": "7cee8b21ba4c3aa8ff7943ab64437a42d755742ba5efd0d99329bc32ae947d4f"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "night",
+      "canonical": "canonical-844x390-night.png",
+      "candidate": "candidate-844x390-night.png",
+      "anchor": {
+        "x": 422,
+        "y": 88.19999999999993
+      },
+      "canonicalHash": "608d7d9e176fc9b0e32f37b8b2a5949f6468a1b22fd95a6dbfa5e18f2ad9d1da",
+      "candidateHash": "c82d135609e67c017cd63a58d32aec3cc0a756a97971915e18c2cbc1498918bd"
+    }
+  ],
+  "canonHash": "c1ef5cc43b16eea3802fe76688b1b82375a5d81269896dcb26dff9566f151188",
+  "policy": {
+    "maxSourcePixels": 4194304,
+    "maxSourceBytes": 16777216,
+    "maxOutputDimension": 512,
+    "maxOutputBytes": 1048576,
+    "minimumPadding": 2,
+    "colorSpace": "srgb",
+    "resizeKernel": "nearest",
+    "viewports": [
+      [
+        1280,
+        800
+      ],
+      [
+        375,
+        812
+      ],
+      [
+        320,
+        568
+      ],
+      [
+        844,
+        390
+      ]
+    ],
+    "maxActiveDecodedBytes": 16777216,
+    "maxPackagedDecodedBytes": 134217728,
+    "maxPackagedBytes": 134217728
+  }
+}

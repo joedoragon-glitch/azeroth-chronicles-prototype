@@ -1,0 +1,97 @@
+{
+  "version": 2,
+  "key": "prop:fallen-log:vale",
+  "catalogId": "278",
+  "canonHash": "c6fb381227b5089a97f8621d2c76e794d8bdee0ae1ddd33b9a0f24bce87d9d4e",
+  "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+  "catalogHash": "bd84c289d20319e956a06e78aff507cf59d86cd8d69eca16aa482a7231c7c073",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1545,
+    "height": 1545,
+    "bytes": 155340,
+    "decodedBytes": 9548100,
+    "hash": "378de15f444a8c63d684f9e0fe5d988c439b18d951ae9ba30a0af54cc2af13b6",
+    "pixelHash": "3d8d2104a6b6e0a721c5bcabba56ff94a472b5bc4ff45fff62dc288c3da7d681",
+    "bounds": {
+      "x1": 467,
+      "y1": 328,
+      "x2": 1336,
+      "y2": 1310
+    },
+    "padding": 208,
+    "transparentPixels": 2345386,
+    "visiblePixels": 41639,
+    "lowAlphaPixels": 3263,
+    "materialBounds": {
+      "x1": 610,
+      "y1": 956,
+      "x2": 1010,
+      "y2": 1140
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 2830,
+    "decodedBytes": 147456,
+    "hash": "d2edbc197f3aa178c48124ba50d933c0cc4e544b5b0d2b8e000c8fdb138103f8",
+    "pixelHash": "bc1bec7b2299fa4d1dbb29a34d628bf8257dcbc6138bc63408a58208780773f0",
+    "bounds": {
+      "x1": 71,
+      "y1": 131,
+      "x2": 120,
+      "y2": 154
+    },
+    "padding": 37,
+    "transparentPixels": 36212,
+    "visiblePixels": 652,
+    "lowAlphaPixels": 56,
+    "materialBounds": {
+      "x1": 71,
+      "y1": 132,
+      "x2": 120,
+      "y2": 154
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1545,
+      1545
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": -5,
+      "y": 13,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "reviewer": "Codex engineering review under authorized faithful implementation",
+    "userImageAcceptance": false,
+    "seedInvariant": true,
+    "evidence": "tools/sprites/batches/2026-10-08-02/prop-fallen-log-vale/review-scenes/comparison.json",
+    "notes": "Exact current canon, organic material shapes, native silhouette and ground contact reviewed in desktop/small phone/portrait/landscape day and night. Current decoration branch has no seed-dependent body variant. Static body has no obsolete animation attachments."
+  }
+}

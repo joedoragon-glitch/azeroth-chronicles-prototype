@@ -1,0 +1,154 @@
+{
+  "name": "Environmental Dead Shrub",
+  "key": "prop:dead-shrub:crown",
+  "pending": false,
+  "review": {
+    "status": "pending",
+    "reference": null
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "candidateImage": "candidate-isolated.png",
+  "comparisons": [
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "day",
+      "canonical": "canonical-1280x800-day.png",
+      "candidate": "candidate-1280x800-day.png",
+      "anchor": {
+        "x": 498,
+        "y": 277.4
+      },
+      "canonicalHash": "0c4853ed185aac0a54d9ee29569349653740bc9948a0a4c4d53ac56e3b59ffe8",
+      "candidateHash": "15d5cf1698133410b17fb652bca94877e9b9155d29719c55c659dbcc840b992c"
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "night",
+      "canonical": "canonical-1280x800-night.png",
+      "candidate": "candidate-1280x800-night.png",
+      "anchor": {
+        "x": 498,
+        "y": 277.4
+      },
+      "canonicalHash": "da54fba258677036c2d20489463f9812915370b2c87259562e3b9ddb94b77930",
+      "candidateHash": "511652b798d2970229a5d28a0b365ef6641467698e503723a4931c474e303148"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "day",
+      "canonical": "canonical-375x812-day.png",
+      "candidate": "candidate-375x812-day.png",
+      "anchor": {
+        "x": 187.5,
+        "y": 265.43999999999994
+      },
+      "canonicalHash": "c4dba9c136ae395dc22e165340572bc39c75e82fb4e16441f0c2abd2edb2a4d5",
+      "candidateHash": "3d8379c74d48d5434f1600319e6cacb39a517c389c22cfa22c20206983c2b8fa"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "night",
+      "canonical": "canonical-375x812-night.png",
+      "candidate": "candidate-375x812-night.png",
+      "anchor": {
+        "x": 187.5,
+        "y": 265.43999999999994
+      },
+      "canonicalHash": "cc1ef0693a34bf992ce2d3c3b2a8b064c591704026aa6f850afeaa4f45ceb76f",
+      "candidateHash": "1c414c60b8f6a47b6aca7d12b503f9f28884ee409898379b2f80c046299f7b42"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "day",
+      "canonical": "canonical-320x568-day.png",
+      "candidate": "candidate-320x568-day.png",
+      "anchor": {
+        "x": 112,
+        "y": 162.95999999999998
+      },
+      "canonicalHash": "d4ecbc03f4f420ba93083fe68d5ba1449acf67833ae65a38d4647bb8be02c795",
+      "candidateHash": "8b305fde1c6e7a0e0ecd1e30d547815443d0d31897634aa66d0b7676ae263026"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "night",
+      "canonical": "canonical-320x568-night.png",
+      "candidate": "candidate-320x568-night.png",
+      "anchor": {
+        "x": 112,
+        "y": 162.95999999999998
+      },
+      "canonicalHash": "6e7de46f03f76904cf18150f17dc1c4efd109f5086146f7c1a1040c1458412dc",
+      "candidateHash": "e44fb44d97d665079acc1b3343403f331d3a78a67b1fd44fa9f9b79c5cc3cb93"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "day",
+      "canonical": "canonical-844x390-day.png",
+      "candidate": "candidate-844x390-day.png",
+      "anchor": {
+        "x": 422,
+        "y": 88.19999999999993
+      },
+      "canonicalHash": "e028e8c11468813be4f1596dd26e01f80fa9cb219bcf4f2487d6cc055dd46d8a",
+      "candidateHash": "761aa3ba938b9b53740d0f1903795756c5b43b3cdeaa20e0a85ed4911dd87e28"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "night",
+      "canonical": "canonical-844x390-night.png",
+      "candidate": "candidate-844x390-night.png",
+      "anchor": {
+        "x": 422,
+        "y": 88.19999999999993
+      },
+      "canonicalHash": "9a3dbcbbf56ee85a8cbda3fbe48604e06c69a776704f0b17e454e475eb6e1977",
+      "candidateHash": "f86ec36182ced132b59d52fa37c885072fce949cdb5f179bdf3b2e3035e01f2a"
+    }
+  ],
+  "canonHash": "c07e5a74279bc29367714d02407844be0f11c7e87c195aef61bc5d18afc1f551",
+  "policy": {
+    "maxSourcePixels": 4194304,
+    "maxSourceBytes": 16777216,
+    "maxOutputDimension": 512,
+    "maxOutputBytes": 1048576,
+    "minimumPadding": 2,
+    "colorSpace": "srgb",
+    "resizeKernel": "nearest",
+    "viewports": [
+      [
+        1280,
+        800
+      ],
+      [
+        375,
+        812
+      ],
+      [
+        320,
+        568
+      ],
+      [
+        844,
+        390
+      ]
+    ],
+    "maxActiveDecodedBytes": 16777216,
+    "maxPackagedDecodedBytes": 134217728,
+    "maxPackagedBytes": 134217728
+  }
+}

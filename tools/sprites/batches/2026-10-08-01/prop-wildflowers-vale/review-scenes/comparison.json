@@ -1,0 +1,154 @@
+{
+  "name": "Environmental Wildflowers",
+  "key": "prop:wildflowers:vale",
+  "pending": false,
+  "review": {
+    "status": "pending",
+    "reference": null
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "candidateImage": "candidate-isolated.png",
+  "comparisons": [
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "day",
+      "canonical": "canonical-1280x800-day.png",
+      "candidate": "candidate-1280x800-day.png",
+      "anchor": {
+        "x": 475.2,
+        "y": 269.29999999999995
+      },
+      "canonicalHash": "d9bb84196821631db0b53523e33c0b6f8e2627c94e26792489c492db08974772",
+      "candidateHash": "5434c1da9ff5b65b6cdaa06045a58a9ef81f20bada9ce1e92accb0e782285bc2"
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "night",
+      "canonical": "canonical-1280x800-night.png",
+      "candidate": "candidate-1280x800-night.png",
+      "anchor": {
+        "x": 475.2,
+        "y": 269.29999999999995
+      },
+      "canonicalHash": "1817dc77148d83209141f08d0b6a7c23ca7e85893af31accf0623e76fd1793bd",
+      "candidateHash": "18b54de8ac17daa607484efca5d6d1b8894fd8409e41ae0a743adbb887106201"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "day",
+      "canonical": "canonical-375x812-day.png",
+      "candidate": "candidate-375x812-day.png",
+      "anchor": {
+        "x": 164.7,
+        "y": 257.3399999999999
+      },
+      "canonicalHash": "55d24fd3649a3562d2b2d1fe0d62eecfec378125083a4fdab42b86c48067a5c4",
+      "candidateHash": "63af8ae8fd4598de10b9f52c75580083edb4d2a3d4662a4776db4f7459bcb36f"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "night",
+      "canonical": "canonical-375x812-night.png",
+      "candidate": "candidate-375x812-night.png",
+      "anchor": {
+        "x": 164.7,
+        "y": 257.3399999999999
+      },
+      "canonicalHash": "7d331fb086fe53ad74cba5567985a2f074a3d6280fb4e955186d99a0d06b7665",
+      "candidateHash": "ecce94b38a7169d746fa47454f0c247b809676b452a1af49351c0366d2d5d1bf"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "day",
+      "canonical": "canonical-320x568-day.png",
+      "candidate": "candidate-320x568-day.png",
+      "anchor": {
+        "x": 89.2,
+        "y": 154.85999999999996
+      },
+      "canonicalHash": "43cb4a5cd3f13fb36038e683838c73bf5af169180ae0f6a30feaf4125cdd11ab",
+      "candidateHash": "3eb6d668d6e0bf728c7a56df041394f88d893adf3c5e09f69ecb50b0bf42b3eb"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "night",
+      "canonical": "canonical-320x568-night.png",
+      "candidate": "candidate-320x568-night.png",
+      "anchor": {
+        "x": 89.2,
+        "y": 154.85999999999996
+      },
+      "canonicalHash": "0e8f97dc16e9f704d5d96f5c452c1156a299766286711e33bef4492ed8a0edbe",
+      "candidateHash": "9101e1b53d463182737e41eb108aecedaf302715345af7a6471178d43188db2b"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "day",
+      "canonical": "canonical-844x390-day.png",
+      "candidate": "candidate-844x390-day.png",
+      "anchor": {
+        "x": 399.2,
+        "y": 80.09999999999991
+      },
+      "canonicalHash": "b56d7f69045303cefe51128e13137c34617da5469521c063b7131959eee1c31e",
+      "candidateHash": "95c07469fb72668c640997519e6a0df7ae4bec15aa0f2fe2a375df4f50e6c14c"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "night",
+      "canonical": "canonical-844x390-night.png",
+      "candidate": "candidate-844x390-night.png",
+      "anchor": {
+        "x": 399.2,
+        "y": 80.09999999999991
+      },
+      "canonicalHash": "188cab43f0b7f8a00e34be51c0817dfa3b915a2f8c0d23595488ab26cba3244a",
+      "candidateHash": "ca551afcbef2da65da00bff7fb25a8c2487e27285704c5b81c7890d64df5951e"
+    }
+  ],
+  "canonHash": "20469b6935a3445c0137df72d9ad37e926ae29dbef67307b7df29a8565c347e0",
+  "policy": {
+    "maxSourcePixels": 4194304,
+    "maxSourceBytes": 16777216,
+    "maxOutputDimension": 512,
+    "maxOutputBytes": 1048576,
+    "minimumPadding": 2,
+    "colorSpace": "srgb",
+    "resizeKernel": "nearest",
+    "viewports": [
+      [
+        1280,
+        800
+      ],
+      [
+        375,
+        812
+      ],
+      [
+        320,
+        568
+      ],
+      [
+        844,
+        390
+      ]
+    ],
+    "maxActiveDecodedBytes": 16777216,
+    "maxPackagedDecodedBytes": 134217728,
+    "maxPackagedBytes": 134217728
+  }
+}

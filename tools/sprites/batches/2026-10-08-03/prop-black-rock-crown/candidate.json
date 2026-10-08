@@ -1,0 +1,97 @@
+{
+  "version": 2,
+  "key": "prop:black-rock:crown",
+  "catalogId": "291",
+  "canonHash": "75a5fbb523b703bcc70f78b3798265e3f30cf47459b6ca55ae9e16d7a4bb4b52",
+  "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+  "catalogHash": "f79b229418725d08c482c681ce1bbb94775fa0eace2db5fefd756be9f106d79f",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1734,
+    "height": 1734,
+    "bytes": 118018,
+    "decodedBytes": 12027024,
+    "hash": "9ed0182100fa380f22360ce6d682f012facdf22d2aa04b5a604eb12ecdf6aca7",
+    "pixelHash": "9d56d64ef0fbae57af8ca21319e3198e58179bbc27a23f94c8b28dbadaab042a",
+    "bounds": {
+      "x1": 506,
+      "y1": 405,
+      "x2": 1415,
+      "y2": 1528
+    },
+    "padding": 205,
+    "transparentPixels": 2965576,
+    "visiblePixels": 41180,
+    "lowAlphaPixels": 1729,
+    "materialBounds": {
+      "x1": 715,
+      "y1": 1213,
+      "x2": 1048,
+      "y2": 1382
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 2149,
+    "decodedBytes": 147456,
+    "hash": "b881134a10f69136b554dd02c1f656c23323e35cbdab134ccc8348e8ddcc48c8",
+    "pixelHash": "65b4be2e9ff72e00bfe1179f2165d6bab218a7631acc304ef0c9b155a72a0a69",
+    "bounds": {
+      "x1": 77,
+      "y1": 134,
+      "x2": 114,
+      "y2": 169
+    },
+    "padding": 22,
+    "transparentPixels": 36363,
+    "visiblePixels": 501,
+    "lowAlphaPixels": 17,
+    "materialBounds": {
+      "x1": 77,
+      "y1": 135,
+      "x2": 114,
+      "y2": 152
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1734,
+      1734
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": -2,
+      "y": 0,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "reviewer": "Codex engineering review under authorized faithful implementation",
+    "userImageAcceptance": false,
+    "seedInvariant": true,
+    "evidence": "tools/sprites/batches/2026-10-08-03/prop-black-rock-crown/review-scenes/comparison.json",
+    "notes": "Exact fixed decoration branch reviewed against retained native reference and four desktop/phone viewports in day/night. Organic wood/foliage and stone/mineral contours retain colors, branch/cluster counts and grounding. Existing placement and procedural overlays preserved."
+  }
+}

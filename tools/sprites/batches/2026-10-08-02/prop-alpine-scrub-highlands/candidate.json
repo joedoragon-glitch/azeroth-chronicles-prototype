@@ -1,0 +1,97 @@
+{
+  "version": 2,
+  "key": "prop:alpine-scrub:highlands",
+  "catalogId": "284",
+  "canonHash": "3afa98283abe7c630c06c523a914f815c79c47dce84d54023a44afa7413b56c6",
+  "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+  "catalogHash": "bbe26dc0b21d745cc3a57dcecf359a034adb83448feefe511b5e3c7e2d45b5df",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1756,
+    "height": 1756,
+    "bytes": 85912,
+    "decodedBytes": 12334144,
+    "hash": "bc7991ce1b88291deb36849a5143cc5dd5a3bfab8a33f19b45460154d3ceedf4",
+    "pixelHash": "f72057c13fa5e138ab7511f45acbf6cdd0438198df17fa5a6502ad4e1812f555",
+    "bounds": {
+      "x1": 316,
+      "y1": 320,
+      "x2": 1386,
+      "y2": 1384
+    },
+    "padding": 316,
+    "transparentPixels": 3060496,
+    "visiblePixels": 23040,
+    "lowAlphaPixels": 2362,
+    "materialBounds": {
+      "x1": 783,
+      "y1": 1070,
+      "x2": 1018,
+      "y2": 1197
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 1378,
+    "decodedBytes": 147456,
+    "hash": "9dfa887f68a9e97a066944a146c2341a80e0a75c4a1f5c2767c3616a4933be8d",
+    "pixelHash": "a6f05da8c6042cdc472497b81944bb309189d6ba0402d182b68b220e265901f6",
+    "bounds": {
+      "x1": 82,
+      "y1": 137,
+      "x2": 108,
+      "y2": 151
+    },
+    "padding": 40,
+    "transparentPixels": 36594,
+    "visiblePixels": 270,
+    "lowAlphaPixels": 26,
+    "materialBounds": {
+      "x1": 83,
+      "y1": 137,
+      "x2": 108,
+      "y2": 150
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1756,
+      1756
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": -3,
+      "y": 20,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "reviewer": "Codex engineering review under authorized faithful implementation",
+    "userImageAcceptance": false,
+    "seedInvariant": true,
+    "evidence": "tools/sprites/batches/2026-10-08-02/prop-alpine-scrub-highlands/review-scenes/comparison.json",
+    "notes": "Exact current canon, organic material shapes, native silhouette and ground contact reviewed in desktop/small phone/portrait/landscape day and night. Current decoration branch has no seed-dependent body variant. Static body has no obsolete animation attachments."
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "version": 2,
+  "key": "prop:cattails:march",
+  "catalogId": "280",
+  "canonHash": "db78e87356b18374f89dd4a15b05ce2b92226c81858ff7d5f09209ffd72b96db",
+  "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+  "catalogHash": "0cf7508d5e0b04e32468218dc41414a60bba2d067008436b8fecadda94c2fb9d",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1980,
+    "height": 1980,
+    "bytes": 173860,
+    "decodedBytes": 15681600,
+    "hash": "a20648db7343c19be6578d9d86a8911654554e4317e63adab0ce4d52cd9149f7",
+    "pixelHash": "647bd9543fe09d59e52d3d36a2143aa37796fe6b0fa3b6876523b80b2b958a97",
+    "bounds": {
+      "x1": 539,
+      "y1": 688,
+      "x2": 1238,
+      "y2": 1494
+    },
+    "padding": 485,
+    "transparentPixels": 3870546,
+    "visiblePixels": 49854,
+    "lowAlphaPixels": 10558,
+    "materialBounds": {
+      "x1": 881,
+      "y1": 990,
+      "x2": 1096,
+      "y2": 1340
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 2247,
+    "decodedBytes": 147456,
+    "hash": "80fb7024b43b477e547eeb1edd051ce32b34ae948da732bc9e2a9782164e2144",
+    "pixelHash": "f09f03d158f1ddc7c8dde58dc3d7ba924d8da7a5041f0a2ec81954fedde7c0f4",
+    "bounds": {
+      "x1": 85,
+      "y1": 120,
+      "x2": 106,
+      "y2": 153
+    },
+    "padding": 38,
+    "transparentPixels": 36392,
+    "visiblePixels": 472,
+    "lowAlphaPixels": 102,
+    "materialBounds": {
+      "x1": 86,
+      "y1": 120,
+      "x2": 106,
+      "y2": 153
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1980,
+      1980
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": 0,
+      "y": 24,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "reviewer": "Codex engineering review under authorized faithful implementation",
+    "userImageAcceptance": false,
+    "seedInvariant": true,
+    "evidence": "tools/sprites/batches/2026-10-08-02/prop-cattails-march/review-scenes/comparison.json",
+    "notes": "Exact current canon, organic material shapes, native silhouette and ground contact reviewed in desktop/small phone/portrait/landscape day and night. Current decoration branch has no seed-dependent body variant. Static body has no obsolete animation attachments."
+  }
+}

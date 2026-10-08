@@ -1,0 +1,154 @@
+{
+  "name": "Environmental Fallen Log",
+  "key": "prop:fallen-log:vale",
+  "pending": false,
+  "review": {
+    "status": "pending",
+    "reference": null
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "candidateImage": "candidate-isolated.png",
+  "comparisons": [
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "day",
+      "canonical": "canonical-1280x800-day.png",
+      "candidate": "candidate-1280x800-day.png",
+      "anchor": {
+        "x": 475.2,
+        "y": 269.29999999999995
+      },
+      "canonicalHash": "9579ae16eb1a7d8cc8cedd8bb3bfd8f50782c77bdcbd839028b937b280baf057",
+      "candidateHash": "4e99797645ab1c4b3160ad86fbe04b47787d2714639c03a477cd802fba8d58bd"
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "night",
+      "canonical": "canonical-1280x800-night.png",
+      "candidate": "candidate-1280x800-night.png",
+      "anchor": {
+        "x": 475.2,
+        "y": 269.29999999999995
+      },
+      "canonicalHash": "86b18025a473157109e2ee60dde6be4553d858b1650db9372c019cd3a85a902d",
+      "candidateHash": "bea9c74a60e48a3ddc28f84ee19946c9c77fc83914c77fa0298b57c7aebcc78b"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "day",
+      "canonical": "canonical-375x812-day.png",
+      "candidate": "candidate-375x812-day.png",
+      "anchor": {
+        "x": 164.7,
+        "y": 257.3399999999999
+      },
+      "canonicalHash": "157e01557ec6b888770c9826519fe996259c808a1450f1950e8f24b7afa0bbee",
+      "candidateHash": "698fe03dd906d71c6dfbd0102f8ba888b31bfda5f3eaa193334624f5860fee68"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "night",
+      "canonical": "canonical-375x812-night.png",
+      "candidate": "candidate-375x812-night.png",
+      "anchor": {
+        "x": 164.7,
+        "y": 257.3399999999999
+      },
+      "canonicalHash": "8eb9b7019f521f7e7567dd14c7e4024b16591b400ce10ceb2321a55fbd4f99f6",
+      "candidateHash": "898a0ace52c0d6c6d0efeb949ab460382409a9bfeffc9892d6c2b0013f99d6b9"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "day",
+      "canonical": "canonical-320x568-day.png",
+      "candidate": "candidate-320x568-day.png",
+      "anchor": {
+        "x": 89.2,
+        "y": 154.85999999999996
+      },
+      "canonicalHash": "c8af13ec2458701e835227c1ee97e33dc64f1a549de4adf790a4836462de4215",
+      "candidateHash": "85f3e5ff37d2b115a0fb8db3ba8a4e1b38e0a0a1db8f2ba74546816eaf23a37f"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "night",
+      "canonical": "canonical-320x568-night.png",
+      "candidate": "candidate-320x568-night.png",
+      "anchor": {
+        "x": 89.2,
+        "y": 154.85999999999996
+      },
+      "canonicalHash": "69de684d8311088c8433645310971d8b509bf6ee148dfba76df355b207d934c9",
+      "candidateHash": "76e4c27d72f4b6711f5f3071b35aceb7ce1a643bd9bac559bd20b619f9b8d92c"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "day",
+      "canonical": "canonical-844x390-day.png",
+      "candidate": "candidate-844x390-day.png",
+      "anchor": {
+        "x": 399.2,
+        "y": 80.09999999999991
+      },
+      "canonicalHash": "ad14a34686c37f8cb840ae4a3cd2dde26d47f7d01d6d1ea3f2bf563f03ddacd2",
+      "candidateHash": "46f9b89077c4677c59c0b10619557bb16d0aba41c64845ebd47e32ef02c7f539"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "night",
+      "canonical": "canonical-844x390-night.png",
+      "candidate": "candidate-844x390-night.png",
+      "anchor": {
+        "x": 399.2,
+        "y": 80.09999999999991
+      },
+      "canonicalHash": "af924867ff406893586f60d81a2a68fab3aafcf91d962fdada29f44820642ff7",
+      "candidateHash": "7780c9e3d69eca657dc61ff1abaa1e06bfd21a7be4ee1fdb056e919f1231ff8c"
+    }
+  ],
+  "canonHash": "c6fb381227b5089a97f8621d2c76e794d8bdee0ae1ddd33b9a0f24bce87d9d4e",
+  "policy": {
+    "maxSourcePixels": 4194304,
+    "maxSourceBytes": 16777216,
+    "maxOutputDimension": 512,
+    "maxOutputBytes": 1048576,
+    "minimumPadding": 2,
+    "colorSpace": "srgb",
+    "resizeKernel": "nearest",
+    "viewports": [
+      [
+        1280,
+        800
+      ],
+      [
+        375,
+        812
+      ],
+      [
+        320,
+        568
+      ],
+      [
+        844,
+        390
+      ]
+    ],
+    "maxActiveDecodedBytes": 16777216,
+    "maxPackagedDecodedBytes": 134217728,
+    "maxPackagedBytes": 134217728
+  }
+}
