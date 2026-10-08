@@ -8,7 +8,15 @@ const root = path.resolve(__dirname, '..'),
   engine = process.env.AUDIO_BROWSER_ENGINE || 'chromium',
   prefix = '/azeroth-chronicles-prototype/';
 (async () => {
+  let outage = false,
+    outageRequests = 0;
   const server = http.createServer((req, res) => {
+    if (outage) {
+      outageRequests++;
+      res.writeHead(503);
+      res.end('Network unavailable');
+      return;
+    }
     const relative = decodeURIComponent(new URL(req.url, 'http://localhost').pathname).slice(
         prefix.length,
       ),
@@ -43,6 +51,8 @@ const root = path.resolve(__dirname, '..'),
     }
     browser = await pw[engine].launch(launch);
     for (const phone of [false, true]) {
+      outage = false;
+      outageRequests = 0;
       const context = await browser.newContext({
         viewport: phone ? { width: 375, height: 812 } : { width: 1280, height: 800 },
         hasTouch: phone,
@@ -165,10 +175,14 @@ const root = path.resolve(__dirname, '..'),
           await navigator.serviceWorker.ready;
         });
         await page.waitForFunction(() => !!navigator.serviceWorker.controller);
-        await context.setOffline(true);
+        outage = true;
+        // WebKit's setOffline + service-worker reload can raise an internal browser error.
+        // A server outage still proves every entry/script comes from cache: zero network reads.
+        if (engine === 'chromium') await context.setOffline(true);
         await page.reload();
         await page.waitForFunction(() => window.AudioAudition?.audio.recordingManifest);
         assert.equal(await page.title(), 'Azeroth Chronicles · Audio audition');
+        assert.equal(outageRequests, 0);
         await press('#stem-play');
         await page.waitForFunction(() => AudioAudition.audio.recordedScore?.voices.length === 2);
         await press('#stop');
