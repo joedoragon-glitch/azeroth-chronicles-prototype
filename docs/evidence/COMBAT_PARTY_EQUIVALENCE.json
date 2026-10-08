@@ -1,0 +1,4389 @@
+{
+  "baseline": "6a20a291fc0547e372f699e597f1151d08ec6bb8",
+  "scenarios": [
+    {
+      "tag": "normal/paladin/standard",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "0780a957c275f385518e8b136cd58c7adcc3d5f80d1d1fab8227b5385125652d"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "075ce286d28ec5b367423f3412fce3f99d4754a6008b5ba27e641b00c09c0272"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "4769faec7542d2fa44b69dadc2267ad43acd2d383de15de15c2016096bfcf237"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "850112a77b034a43ee8a8e45bab1f87dfafac3644f3144ee09d48fb0e273a538"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "897d3bb235d99f64058b017dfd4183f2f045971ecbb96cbf5c4297207823de4c"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "bd10542425d088a4300fe8d60d6c39e6413c871e2c36d5412cebab741640c8b7"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "7d669d2af129632930ffd64c6e4093f4bf43ac7bef2b3a13960a667b5b22a421"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "58ea0034cd83f6f50faa2c5d4af5e7a370fb109b29d8d1b86d1bae5d97204a1a"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "73d913d9b0c19bc82b542ad689093c1b19839b499f7ef868f4516caef951316b"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "19dbca488859b77357c69970a1a4581c212fd781243313a5e31e6bb3398496c5"
+        },
+        {
+          "name": "charged-1",
+          "digest": "038b68e121f1d7e0dec3a0a9b7d939495039dd9d7f74591c6e83e46afdb8b703"
+        },
+        {
+          "name": "charged-2",
+          "digest": "7120df92c3dc67653188c74c0a42e89d4bfcb8d42d86b210e4213f775f05c333"
+        },
+        {
+          "name": "charged-3",
+          "digest": "eae49e71b82a9bc1eddf621ecfa2f323bb4b73cabddc9ae5ded8fd729744f307"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "ba2df12c084f1f0061c7f9d407cabcf7d396779a3143adc6c3d3f486a1501d13"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "ecf2e24ee690eff63b691fb43583bac86aebb56098cfd2f16315d1d68d602b1a"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "d16729bb388e517157ce313c10f3a0a2f49000956f8193b4da5b518c39138611"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "088e899566e169eaf7b76de67ba0ac08429b0e1bad00214401d9896ea69e3ec8"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "e385ddb3adc5e398230d4934d44ca8251ee6e0bbf08534de1f9e47dda418c53c"
+        },
+        {
+          "name": "save-restore",
+          "digest": "e385ddb3adc5e398230d4934d44ca8251ee6e0bbf08534de1f9e47dda418c53c"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "e6af67f0637ded0409f7f60472c58d1913d8d59674edf9f8b8a2c0e0c45e219d"
+        }
+      ]
+    },
+    {
+      "tag": "normal/paladin/succession",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "2f4a11f4ca65a3ac4d0162b4299bc5f5b6eaafa8fd5b18b90df622e4f46628aa"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "0689568c46a9a48af7db81192e9b69f80046a9d35f5bd08c6ac4a6f70f0de9eb"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "0059bc0b64d11a754a601f0de238b261014949dab8b251da8510fc2fe914b320"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "ca79043aadd884fc5ab9dc964bb8ed888f6c74d45933d35dca81f3c214a95027"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "794065b6e431d4a1b35ee275d2d7179623fa9c3c90370b20483d89ee3fe3a7a6"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "9f39992dcbf3704af7b8c43583345fe3a10832df50db69c48b059eb972e7f025"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "48c21a20a02f896a66c35c26cbb3199fe39f44100e6b07c3358f24ab362091f1"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "0bec22f7bd66dced9bf3b1c979c84016ec5ed193443550034df8238d0fff807b"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "ee426f246b37a7fade474a370aa68d13fa003f3fb6eed0ea2c49ff59593c10ee"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "393c86f0df8b1e25eac96316d6cbcf46c6f4e056f70a6e8156aa912afcef9496"
+        },
+        {
+          "name": "charged-1",
+          "digest": "38d3e0cf648d93f125b35cfb0ed4e24c18a618b65bea483a30219935cd10f4b8"
+        },
+        {
+          "name": "charged-2",
+          "digest": "644d39c5ef41dcf2cb589823958b6cc2f2d46ebdb775a1e951637a1450125ae1"
+        },
+        {
+          "name": "charged-3",
+          "digest": "d034184469928221a0cbb90e86628ce72522d116690da58eff958135b0896bdc"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "a8f4578fa56e5fa71f6e23fa1095350cdeb744bc06521f8a0d444b247c842a16"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "2900732bf93d07d47bea8f89bd83ffdc87ff4494cab1f2ef92862532f2c42114"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "e11735aec0d7bff25738924acc444065c7d5ac4692146946eb581fbc737ab9d5"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "dd693605b0c4992bcdee1316f53273f5e629762fd1a2e5ac19309fc4c61279b7"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "7d55c1e221e6a7811f187446a15f69e561a3a5360174cd9abfe229b8228a21ac"
+        },
+        {
+          "name": "save-restore",
+          "digest": "7d55c1e221e6a7811f187446a15f69e561a3a5360174cd9abfe229b8228a21ac"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "7d1d91ad147d072ec0016fe6dd334c7a66d809e769cf257448398c4961c64321"
+        }
+      ]
+    },
+    {
+      "tag": "normal/mage/standard",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "decdf4643a3d02b0753c3e240e8207534c7c4a9525077db0590246a4771ad0a3"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "763772c744806888a191a3d05fdccfc2b3efe77c203ded367ffeded1045d37b2"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "f2bffbbaa9ad5cef1d5a828014357451f7db0cbf43c7b2cb7f5025e40a19ba11"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "b07750be97dfb295d238d0a4f04b08b3b62dcd25296c58886aa252813ee4db1c"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "d07e637fd54bb089f727775f4be082c056253f52af5689dd3aff032b2f3ebe76"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "814286bcd25b6bf2cfb5a1c77b2cb6548f454a98f1d3f45919dc7336a5870aa3"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "2b53d15a5120417b3360b54c214ea8a1bc63747041250692a58ba8d254eed28a"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "6b6a6b36704092f8b264ec53cdc969b22885ce3c5c941fae5798605453e752c7"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "fae69281002c1286243e2716747d71e87682f37f45bcd86fc67debf4f65dbb04"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "ca272c744ab2f56d6d90a303c167dc4fe81e446da7ec8bce525e29f475422cc1"
+        },
+        {
+          "name": "charged-1",
+          "digest": "815936326cad6089b7f835704be64cbb1a13646b03868b9fb035b507dd997f11"
+        },
+        {
+          "name": "charged-2",
+          "digest": "b779a414f2c01948f698e591e756afc9d3678b8083c66d91491a159b47f5c78e"
+        },
+        {
+          "name": "charged-3",
+          "digest": "2dcfa0bba99fa41f583e1aaff79cbb52ebc0d7cb80cef236cded77b60d000318"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "7938c7f83c2fbe2eee2742e07776d6c7002a116b63d5badece33830b279c7d91"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "a3a5cf4478972ed7b40d72a95e11a51508244bd64b2c4e9fd7734a3a94b65bbd"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "b5c493bb68dfa72aad4634dd94ada4327291810957569a943121398b34a6990f"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "3e09e87508a344c78660a3c9c8db5e68044e043737d9bd9502892bfa374eee6e"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "5e909e7443d30bdb187d4e5350bc214f0338b0a9e50e859b047d1276ee7dab03"
+        },
+        {
+          "name": "save-restore",
+          "digest": "5e909e7443d30bdb187d4e5350bc214f0338b0a9e50e859b047d1276ee7dab03"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "36534f20a86899784ec062220db3e53e232bab1d2c2c72d1a51b8f540298ec1e"
+        }
+      ]
+    },
+    {
+      "tag": "normal/mage/succession",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "203adf78bbceb7251a368a1691997d00784d9949a8c49d1a0423ab27ebee0fd5"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "7f7fbc25b346d09944b7ea9413628439978b551cf8ed564f23df0f9fca74c055"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "5818d4ee558e85384bbae3b3d9c29a483a6867982d5944daf5912b0b12415b3f"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "ecdc229227bc98680172eadb19f388f61235530ad9f6a12e361bff48accb8ac7"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "f608121962ff2d39d77db0127090397f8bdcb2776b06ab0bfd9f69cde93ab0a2"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "79465a25b3f6dc4ceea118d66be4663ffa198a99c36e4828272e9c4045efea34"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "7d6fca8fe7cc87828b8941bf48246fb895dfb41ab6d7f63b8d9c6d77e66af9d0"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "dbcb5d6ae4897921a405cdafbff8d88ecad39e337fe5189767c5345500a91727"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "ce2c61658ce33dfab5a8bb657c9d9f478ceab16f1b3d04051bda7204c8d6b5ab"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "5d37edefdc47d16eb2cbe73f68448b708270f813bb80a3f84cd42977a010d5b7"
+        },
+        {
+          "name": "charged-1",
+          "digest": "9fde95b024e7658785e8b1ebafb8bdfc5c65a22fb90f57be1d40a579cbced44c"
+        },
+        {
+          "name": "charged-2",
+          "digest": "7dbb31aab5d6dad8da5f6e0119bb6639562ec9e9491d01b077ccea8f8674ff05"
+        },
+        {
+          "name": "charged-3",
+          "digest": "ec5fa43923401b5194d9c37e200d7d8fa445dd242e852ce74c4096ddee4441f2"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "1ce2923db4c5035424a23ba5efce28e5d3e421cbb9418c22a2a378d37df64b99"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "4bb9fc57e3f735fe3c3fb007d11657c8a92195d12b6e617e8a42d1a9691effbc"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "20d3822f102b26728e3dc2e53a2d097b155f87c9008e84aa0f266172d0669a3b"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "3656c1b7fecd82cffda9817d76d19fe3434131f3b78a1b364afffe6b9128d0e6"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "edd81593eb125761357152c18d9f66e2d91a870eb1152b9a4bb85390726abd12"
+        },
+        {
+          "name": "save-restore",
+          "digest": "edd81593eb125761357152c18d9f66e2d91a870eb1152b9a4bb85390726abd12"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "0babe15f57efaa533b8baf9bbb67d3de17510f2697cd7b31ce982292104c58e3"
+        }
+      ]
+    },
+    {
+      "tag": "normal/ranger/standard",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "d81237ead7a5b7c1efd67e25437c34f5ce2773d620d72451362203228385d074"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "a914031313d493ad89cbd18ac412df42b14c306c5a13cf96e142ad9aeef949d8"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "7e11b3498199af2c9fa2556ba2a9403c919121b8218b9148eb5d0cd8c4a9dd1a"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "fdbc42a270eb6fad9cf681485361def6a2196ade3ee5047180a801114ffb27ed"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "01825a2ebb605898c4fc58368a07b1019e0f7899d04b2d87e7da958f6b4dbac8"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "1b098e3b3c796171da4f2f4786f5c07f6d6b1be14258fbef93e3085ff317f66e"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "71740c58dd826ae62abf02ffd7fb8bfc108c56b2663835148fea90710cdc1fd1"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "06c0c29b4028bcf7448379005b0d0cfe79e6cbc327a53481aa62d883a14f36de"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "c5fa340066a0a35202ac9d89504745720f27f54b7fe5476b317078cc263ec92b"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "e32db6b161c13cecc3de0b8ea7a7a90cb95557d53aa11ea20c080c45229c9051"
+        },
+        {
+          "name": "charged-1",
+          "digest": "9b3778ab58892232aa60fe88fd51965fd40a1b8ff1576323323ac40c9ad7f576"
+        },
+        {
+          "name": "charged-2",
+          "digest": "7336c59324bb860fb30ed94c5259ba2a843135b670de6a86fa1428038116a815"
+        },
+        {
+          "name": "charged-3",
+          "digest": "f087f67d88c1c4a0ac6988b285a54aabc693b32fe407a10f6ea62d50c1cc233e"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "2942a284a81f3318bebdd6080cd6965a0600c856fdd07065afe2dae9fe55a349"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "a2e67b4be4f07eb744e764cdfc8108bb36febc8b762642a3085a996c851bb974"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "46e9cd439073004abb27261e3bf7da8e0696b9cd17cb829f2bd6980dea724936"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "77de3d8c0a682264274742066f32cc3b8e93558a215f0929a9f93818a18326c2"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "b86a9cf0a0428a38be4c5979abda417d9fdc242e56945dcaa97c25ad97826e69"
+        },
+        {
+          "name": "save-restore",
+          "digest": "b86a9cf0a0428a38be4c5979abda417d9fdc242e56945dcaa97c25ad97826e69"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "cb38d3f95746304205d5ab3137cc3883ac73a212944d7c03134851b57785f63a"
+        }
+      ]
+    },
+    {
+      "tag": "normal/ranger/succession",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "8bb0ec617bbffe7c4caa70e3fcdbef92d279de51ef4a1359ff027b7f8a613a39"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "a3d77760f267d1867b8e9aa082a0147b6ba5d182872b5161c020cc444aaa453c"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "5a6604a18e8a3ba857cfefe9b9983e292f2ec08fb4bc44f84d74ecd8fea18081"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "bbdae2c70f55b871a37aeb05af5e48d568acadd80b25e14d9003eb4ac26db145"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "7f6787db6049802cfcfb261994e4092aba1b156586931b6bfcbd92e2987e2e49"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "a836e311502041b512fa3292d63c0948845c61a2a322fb1140fc1dbf40064a73"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "3f0447df9849c514a1144343dc1d20edd35de76814e310f8340e0e67e0209fcb"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "35e7a3ff7ac53322300ee8faf313d7dcaeb267fcf2ac58c1ebcc08d4846336fc"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "2dd650b59107a3d20a9fc0918f5215b3766fb529f0d1a79dd7f8698f574699a1"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "be60bb12402883a57d3b93d311a026e31f3a0f4d8af84793a24471b497f9187d"
+        },
+        {
+          "name": "charged-1",
+          "digest": "096ebf835daee04cf7e8bad43576b5878ad4deb82b70340dbcfd848c0d2c80df"
+        },
+        {
+          "name": "charged-2",
+          "digest": "38f197e3f18dcf920df840a612338d6501b3f4d4bdd4661a8512a512e804bb68"
+        },
+        {
+          "name": "charged-3",
+          "digest": "da18798b225fb429a77045c841a8dd9f001aa5707dc6170164c3bc569087c8ec"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "888bee191c922573f11aa96a653c0ff3eadd43c7caf9d81eaf237cda563e6f53"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "01aef486ff1ebf6ed026de8deeee7ed1304273e3cb10bd6c393a66dfb169ab12"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "668de9c9946cd772ab26cfc6e9480ef6f3d5e9812ed3b82f5d50857f0d104dd7"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "a57fdfa5628e12e31c65e29ee7b957f893613e5c00682b37c632467560ca6387"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "b6b691928ae8e73621ca7a9871ad7134d7a72a5daa23eb0c46d0e2ac075bc6ad"
+        },
+        {
+          "name": "save-restore",
+          "digest": "b6b691928ae8e73621ca7a9871ad7134d7a72a5daa23eb0c46d0e2ac075bc6ad"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "f4d1b106da21fa8c4c96f25f4a9855c805eea25f30d92a1494e4d04013f11677"
+        }
+      ]
+    },
+    {
+      "tag": "nightmare/paladin/standard",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "894249ec87a3f79126059ff1b5921a3d93a2a9c449d7f20724c4ffd2d152b5ae"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "b62302434575636afedddcf5fcb514eaa9df9588baa8d9d7ffb22f2791694a67"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "2543eb46c1ff3980227ab38263c8b636a3716ac5527bb6cf04d03ac8da9dd52e"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "242be3d59e428dd9fd3d7029bec68aab4f63231aa9039a8ab7efbc5940d823a8"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "aba5496b2b6b0172e173da3b76b7c6612a613514b314633ecd2acf4c63bdf831"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "69aaaa32b3e5d235b8b4c2058ed42f980969c070e87972a8dc9162a19807e3d9"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "5bf3e38c60e23b68d78902a4be624c2df626856ada63173ec031ddbaa44b478c"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "1a70a0fa26f80385a77bbc196f7810697bd3a9dd550a34290d6a23ba3a0e5ac6"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "9794cb815013d452bd1f95baeeb47224c15b2822f1e0927ed2441dcaf58f490c"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "c0839e6e402da3cfd775233a25861e87d78cdeb6aa27c41537d2e8391beda4b3"
+        },
+        {
+          "name": "charged-1",
+          "digest": "03e68b5e5bd0ce70960252be96b1f3471ba758b52dc3508c9dd3a481aa4585f4"
+        },
+        {
+          "name": "charged-2",
+          "digest": "56e4518b6000c07d0016383cd795f4fbfb83ae5d0c91ff831c8a27deca14fd31"
+        },
+        {
+          "name": "charged-3",
+          "digest": "fb1c235b99e5a279722d9261672dbda905d4a71c9b4b30817956572fa86190d0"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "74276cd05bb52ec0d77acc827355a498ed257debbdff6cb5fd206c13b6323225"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "dd39dff0aa95d6132e55c6216cf80a1d5c073460e3586f9e20b2b0b14c2154a0"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "8d32f1a3c5c34ffd0ba84f865bef6368f90f4651a6e842eda9388ad4e2c9f7b5"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "6a2fb5a39c33d2bb0349e5a779f08a93732a3a922558ae501a0d7048c5ebe6a4"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "539056bdbe100eb23872da682aef47b2c5111415b446d4e1bc8fd484b6b20d36"
+        },
+        {
+          "name": "save-restore",
+          "digest": "539056bdbe100eb23872da682aef47b2c5111415b446d4e1bc8fd484b6b20d36"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "4132359ba776007429ae449d9e389c87e12fd635ead7bcb0149eb4b8492acfab"
+        }
+      ]
+    },
+    {
+      "tag": "nightmare/paladin/succession",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "da10382e6bfc4a6f54155ae243e8ad72c27bcb999cb0de30f766276aeb063b11"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "10ee0abbca5cf7240694d68d0c5f1004de5907a8538fe46a3edda905b0920f7f"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "e722c36e4618bcf82b742ff7d0eb4ae791e90ba4623dadf8d9941609326a1af3"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "8f7c01994df9193f64226a2f32c12e010097a9b803ad89e92b7312070f32654c"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "97d633c3c0bd0adf201d6294494182ba4ebde1e6be4f14ca927d509a0f6f371b"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "8378ce8b3cc80fb7e9b4b1369e36e98653e0a1301853f8425e322c1d43a20354"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "fa17711f235581128b06923665980cbe83924777c3050ed97719acd7c266f4be"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "d8d88b52bb7156eb08927e46eec4a223c2841ff4df21d62757214976e448183a"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "0eeda81d91985af545e7734a88a37ed4bdbbc05869b37ab99f1e35a6344d6b04"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "4ec015b9a1e261df7e1093d8f7bc463906db713c8c8b5b0bc9033b420e8bcfb6"
+        },
+        {
+          "name": "charged-1",
+          "digest": "dca20e06eb7621652b5ad61520cd39a7bb60b02fb8d42984040adf322dd9c9d1"
+        },
+        {
+          "name": "charged-2",
+          "digest": "5ad291bfa9935926d90650e3b63cd63ffd98bd6196085f7aca3b52ee4044c34d"
+        },
+        {
+          "name": "charged-3",
+          "digest": "8af3bce1add34e63849b0bad5e11b5cb7eb46a63b0e6934a4d02d30117ec113b"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "7b62b8e9d3d94b8e8e185fe7a4d77d550ce5034274b6cdc4815eb81f4432a067"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "de89a9d85fb333a52914a1aa90faf852cdabac3b62b48ca577b0ba947922248f"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "f4f1ea866af28ac6d75339a70f6fe5d49ef50643c7f216c6f29a554d7ce84187"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "bbdf038c2331dca663b1762c74a32c90f7340a09322a43b60417af2a72fca678"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "fa3a0ed8c44c63c526374b09e6c136f7ca0fb9e0283d38d9fbc4e2d6f2fcc5da"
+        },
+        {
+          "name": "save-restore",
+          "digest": "fa3a0ed8c44c63c526374b09e6c136f7ca0fb9e0283d38d9fbc4e2d6f2fcc5da"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "d5db815785d31afc6562f9fe839f0fe38926651febbf1f50606906ace3bf5fb1"
+        }
+      ]
+    },
+    {
+      "tag": "nightmare/mage/standard",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "207add161ce7f8f387eba1e38d3f7229415cc32de8eeaabe7c65a29cf2c8f8a5"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "06927ec0accd9e0bc400b2b536e6be692dcf9f1bcae97e285f1cbbf0790af51a"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "d7bacb7fbe1e67b9414abcbf5c9d529ebbbbbfa23af9970324d1c1215624c61a"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "3ead1d17b224694d9d9629009e656813334faedc592ffef590f06cd4d4a4bb86"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "270d7587caa71a39fc7e9598be2e93441f4a6c797e74fc6e60a6a5270608fbd5"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "99d9a044a7c1af902a53fba2663dfe0490c04ac675d975bf9cb8248f50e21959"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "2f8c7736574c748ff0340d9491baa8996e57f74ff19ba644a8d2f973d564c31c"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "6426417a3c48ac9a2099f03fdca1ce2646cc826e7f7a519f1a08ca52b0132b3c"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "4921b544a60ea434552f9e4b7c40a01ef75eb2cfb6555441bd633fbd338a58a0"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "7a9e6e3a0227e730a896c9fcb00d7581cc8f14a67eaa38f6d1b02cafa345d257"
+        },
+        {
+          "name": "charged-1",
+          "digest": "e142f68bff84e670fc7b1996714fb5ece474f736f2d8420a5b3898f11e9f7abd"
+        },
+        {
+          "name": "charged-2",
+          "digest": "d5275984e1a6ac1881297a82b8ae788bb539a3bc85b86884aa2c319e59ba070f"
+        },
+        {
+          "name": "charged-3",
+          "digest": "27cee3e08c55ac369e769de72e351fe014eda7f02cfa9896e62c8b2dbda4f79f"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "08de8e4bf1e4e37eddfc8b8ecd504744ff06803e536cf9a6ec6f926462732e67"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "783e85aebc54474c3975b15ba2a509110339b977d44f22bc9cee3687e3258ae3"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "929c20479dd4b900d7425ea576fea045b8cc046240b02bbb6f3bbb773d4dc385"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "d3e5c9ae2ad00563ebf7fe15e46a04240ce26eb845e07b4ef244a65ea288213f"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "250e85cf6bc49079ba499e05b65eef2f221a1d75621bfb428d8c45c3de49f1a1"
+        },
+        {
+          "name": "save-restore",
+          "digest": "250e85cf6bc49079ba499e05b65eef2f221a1d75621bfb428d8c45c3de49f1a1"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "6196d0920d838808dd14b7c3d7a15c8dafe822e2fa66e5d82dffe36fdc7d87c1"
+        }
+      ]
+    },
+    {
+      "tag": "nightmare/mage/succession",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "31365e234bd3e9b63f7324b4a1fe8c32e6d4252b496132225fc2aaad93ef4b68"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "63fe16836732f5bddce6a9a843a101b30dc848f6631dfebf3bed998d4a40d2b8"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "e45332d8125c245b0cddd31e6557343cbd5e6d4d0e28513795492419f4426034"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "a592eee8a2034e7d98274ac56455c5039cfef0b0a8ffe769023746e49a65d9ba"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "15b14a6043f45366e47cfcfc2ce5bd7ef746b76dba66076414f0a29163ac6af3"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "a0c11412b7562cfa4b7e3cadfafe6ae32c81578c6fdbda774fb25f884d331d58"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "3bf3139c1a1d1639cfae9f2d74b824c607e4ae9586aab7195adc4b34a1ed6987"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "380b190b3f9266747801e33fa7f96c00e915e145edbb8107c7ee75cb587b2006"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "ded1f3259b863af7a4bf01afa71b8667e2970b3cea6100147ce2ece7565b60db"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "e105c7ca0978890e52aaf35ee2a2f705c89a604c6539ed13f39c1d54211244da"
+        },
+        {
+          "name": "charged-1",
+          "digest": "5f0f8daa1df2ee78a83188ac34de6083a14c548fd2dc754d8b75d74b2e8b6669"
+        },
+        {
+          "name": "charged-2",
+          "digest": "95ccdb79f1c20459d82dbf44831611e529f2253b40f409561986d063b166eac1"
+        },
+        {
+          "name": "charged-3",
+          "digest": "f6a23d10b6143e2bacc916e39492e27c5d774f9fe1e80ff6ce876a918d59169e"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "c15a873fb9f223caa6cb3edf084a72af4190c8aa5341b1b552347d6de5aacb5f"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "01e74033d099c4ecba44b034c8af996574333328499984ee54de8161f5e6837e"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "136208737f6e1f93dc559cf7903d34858d84a582bc157c33de44aa2ab0d99ed5"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "f1d4ae8ce3b8cec8e066e10638f249570f239e17f5dd3226fd717778da867c7c"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "2b2f25fcf983f29730053dcde2708cf16283539a171f76b27b1a522763576cea"
+        },
+        {
+          "name": "save-restore",
+          "digest": "2b2f25fcf983f29730053dcde2708cf16283539a171f76b27b1a522763576cea"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "8a7a26d8defbbca9d90ae6b1a8085c1976f4b0ee803ee64bc571c25ed9221d13"
+        }
+      ]
+    },
+    {
+      "tag": "nightmare/ranger/standard",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "3570ab40f4b2a639b7af3502ac7ba32802cd8d3e258c35f5741f74280e7ea6e1"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "d997fd678cf3a668ffe0971463d196f1f85214ba63d92b899371b29fe34ea789"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "8d0c4fc64313936e95f5096cff4816835fc35278763e3def5ef838e6e5fbbada"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "280b054929228bcf010872c182a8bb98743dfc2eee4004549cd999a401cb2257"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "9aa199bacc5e3d4e541e64b1b1582d656d3afe4bc8cb7ad331b32b2a556d9eb6"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "6ed51585be4edebf2ec99ca03c9ac78c41ea65c04c7a851c303b340344792c16"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "53bde886333282b300610a34d0072f70ea357b271f3ffb282cb1b17cd281ee57"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "ba04e3a6566325f315014a9e0cf0632db9acc0adb1a12e6e58459131131540a6"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "d97c22a267de31e1988cb8f990185c4053045d894e21bc38989f71c360233d95"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "422a13c2fe506e2d35704d088725dd718ec68fccfc1b40c26a71641b8bdaa3e3"
+        },
+        {
+          "name": "charged-1",
+          "digest": "e4157c7707fdab5d3d5ab9d73a86c8f7011f347a0e758fbfe6ef567e5f0f0ca4"
+        },
+        {
+          "name": "charged-2",
+          "digest": "b160fe32eefaf1e93ec3e79498ab755bbe88eb0b6008e3cb38f69e2395a3a472"
+        },
+        {
+          "name": "charged-3",
+          "digest": "fd1b4d7c832cb5a489d057bc8a6daa0c795111c0ff563a312d4dd438e5b8a75f"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "9f347edc78c0a40f3bf4c0c68f0cf655df443ef4f1470b6322d184708d719cfb"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "8caec90e2d84a84e50eeb08a597984dd330fab88a229623b2e1e4bd5b9fef17e"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "bed50b05a39c44f68124dfd4c4d9ad79e58b0f09492883dc5a109a67bd64c7ca"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "c8528541586457dfc1371183e1691ba0d61f20f208beb8b9ec0da55a36da69e0"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "6b41cb6730831677f63ef7db51a309ee7fc086822ddd97f5e9dbae8e37481ee0"
+        },
+        {
+          "name": "save-restore",
+          "digest": "6b41cb6730831677f63ef7db51a309ee7fc086822ddd97f5e9dbae8e37481ee0"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "4dffe131216eff4233bc4c1eb187597158cb1848cda111c5e74fecfcfa19e6f7"
+        }
+      ]
+    },
+    {
+      "tag": "nightmare/ranger/succession",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "79b64a83607c0c4ca7e50580121554ca03da56f4bfcad077afa6823d5b5b0ca1"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "24db6d9d8830411d172e32f59438e89c0fa86106deb1f1aeedc1ae5e6336b075"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "cf18802f65cc24f040c416f774bff52f3cbba1ba695add06bae9bdd9f423060b"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "597e5d045ee6170c83054fa5b9cf9cae07f9ebba797e60740cecba44965ea5d9"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "965a47f7980a2f83c1fdcedd1d78523530a0a2d71f2c5bf992ebf17512f8cf0b"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "d51c920708747ec80cb72745fb208d43a8e95c24ce49508b477b01a7f3e7ebe3"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "8ec4ca0f31447e568e0c386331e50a72236ba9f5bfe6cfcfd50ca3a432393487"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "6bfc6a81e908e6626c33726b80150afbdf3cfadf25ac70d07caf4ab9cf31ec5a"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "26352421e13a8066721c639c5c5f56569c9e0f830d3566199c2a2b3f3db3819d"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "3ce1dbde70150cad5ee236e19cc92369dfc9ca23a2d5479ec242a37dbead57f3"
+        },
+        {
+          "name": "charged-1",
+          "digest": "fdd8b2d07e94fef6b6b222fb04e32682dc4cd4f0cd82619d7cb69d828b3f734d"
+        },
+        {
+          "name": "charged-2",
+          "digest": "a2cdd6830a844cf1a34b1a243b18797627d60349ac1dd079bed7e6e21159e0d3"
+        },
+        {
+          "name": "charged-3",
+          "digest": "7ebc61eb662aae576c2780cb0d78d25e2e4cd387ad146e23cc386b80e3ad57b0"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "c7a352aff58b2e14b046346c7f4dfba351bf6882c8a09f396ec5048100f7b409"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "e28e833f300fcf478d05d50227c8f70a027c517ae8eaab35ae4a440e50331819"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "e633bf489a5bb392313aa1f3054e9a216d22c66e60f93f618c33746423f0ea9a"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "8e4d43ae3c723377f022c1f6d4af56243e8b8210690f0741de3cd3965421f177"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "335b1176b619eb30a7b79a5b96bc29bcfcb29f07f0ddf3c9ab9440debd917c37"
+        },
+        {
+          "name": "save-restore",
+          "digest": "335b1176b619eb30a7b79a5b96bc29bcfcb29f07f0ddf3c9ab9440debd917c37"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "0d621e1ac311feea7cfd39c4fcb1d5c19b53fa956d56921c4b88033523697e67"
+        }
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "zone": "vale",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "9960ff41cbda37b2b47bfead00de83d635049f3a2dd4c72cebdf96293417a96e"
+    },
+    {
+      "zone": "vale",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "8dccb336ca54f3e53acb8cc8ccabf88f9a6a8ae3a78a3f90686b65741252fbd7"
+    },
+    {
+      "zone": "march",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "9672d0bcf51dfa41ee380376314a2dec5dfc9151439555b9bd3f0e11b8491dd6"
+    },
+    {
+      "zone": "march",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "974140aa10548a34be5f1da2e37c34c8d96cb3bd9fbf4a21187ebe937f1932db"
+    },
+    {
+      "zone": "highlands",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "b9bd57ee4452ba2e592bac7c93698915aacac7995190944430fd2c4bd8c36339"
+    },
+    {
+      "zone": "highlands",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "8364e4656ad5a133e4880b11034a3120474422921325188253d9f76e72c3cc8e"
+    },
+    {
+      "zone": "frontier",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "52097e9b99a69d7d44dd36c9af3e39e64632353cd55595718380f12df47a7038"
+    },
+    {
+      "zone": "frontier",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "4e7dc488062b84392383e069b608a4994e4cfb32522f4c71bbab64fa89a6c813"
+    },
+    {
+      "zone": "crown",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "499e071079d67a9ebae20f10372859f4904efe1c7a686a344c67f554ba701cc0"
+    },
+    {
+      "zone": "crown",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "6579c303e897a9a6d0378daa1ffc7d4511384ce13323fc46bab5886ad3e90cb6"
+    },
+    {
+      "zone": "crypt",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "427841825f45b0b105654aaceeca5f62f253d683d53387cc514c5bf0e785618e"
+    },
+    {
+      "zone": "crypt",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "93d5a9aa85418e2b3943f7594969b74cdadce7919935bde896e4b579cf715dad"
+    },
+    {
+      "zone": "archive",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "623520d0853f118149f117b2c08ff8d48f53b249b8e56c2fbfbb8f3ef728b44e"
+    },
+    {
+      "zone": "archive",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "7297a263733237c003c20abec826c69d9ab431bca8f5cfe3bc34786fc01fc242"
+    },
+    {
+      "zone": "mine",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "7575d40e8d6f60806a741644c0682e304bb22c963b17ff32bd966af68d54860a"
+    },
+    {
+      "zone": "mine",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "1d2a079a6905866979eb7d68ac187a4fae2baead7d5feab1d857c4f159207f5a"
+    },
+    {
+      "zone": "abyss",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "fe6b53b68ea07df3cfcf4fc93c6ca68cfeb1a0d28ac0460051ca73bc7770e182"
+    },
+    {
+      "zone": "abyss",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "85cdebe9ba457b9db26fcbd8dda9dc9f1b02121d89447a92f58d7985529a21ac"
+    },
+    {
+      "zone": "citadel",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "3a20364382e23c2856afa4ff4bd1157c6b1122088f021ee16c2ba0cff0815189"
+    },
+    {
+      "zone": "citadel",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "da66f5d6e1aefa6b5ae6891cf6b9ecd29573372cd690341eb13c01c6ba2d683d"
+    }
+  ],
+  "methods": [
+    {
+      "owner": "instance",
+      "name": "abyssAviationProject",
+      "kind": "value",
+      "digest": "33bd41a3581a4b26c18c711f647013ec4380e3e87529a16a70c276a1e1d10205"
+    },
+    {
+      "owner": "instance",
+      "name": "accept",
+      "kind": "value",
+      "digest": "837b5e7afdf5256db84d765ccf24c671b733c5297545f5335455bc63f0ae8e2e"
+    },
+    {
+      "owner": "instance",
+      "name": "activateCompanion",
+      "kind": "value",
+      "digest": "d1180f2f46112e6a2ab2be079019ac9d169488959c981391f52a2bd2c9a7bdf0"
+    },
+    {
+      "owner": "instance",
+      "name": "activatePending",
+      "kind": "value",
+      "digest": "dc87493f711aa65c56c6adcf09e4dfe4780603efc8fb546187ad8a4b3c3ed8ab"
+    },
+    {
+      "owner": "instance",
+      "name": "activeLivingParty",
+      "kind": "value",
+      "digest": "64252514ab078000fe7dd429a4c93b18e27e3794d501bce99ce3aea7ecf1bcff"
+    },
+    {
+      "owner": "instance",
+      "name": "activeParty",
+      "kind": "value",
+      "digest": "ef90acdb5fbdda9ab75fc18e61952b36e67b888087dd0916edfa1bd151a70fc9"
+    },
+    {
+      "owner": "instance",
+      "name": "addSupportEffect",
+      "kind": "value",
+      "digest": "171410e46c0ed36019d93740a9981544d0940cd4aaa1dd8f81056157b33eaa68"
+    },
+    {
+      "owner": "instance",
+      "name": "advanceMotion",
+      "kind": "value",
+      "digest": "5fc77d752d9ce2615782064f2563743106133442208274d6829be7b16ad8c6f6"
+    },
+    {
+      "owner": "instance",
+      "name": "alignLandmarks",
+      "kind": "value",
+      "digest": "9b507b03f7e7e54cfeabfcec95734ed4de1b8e1ddd5e70276718a997aaa78161"
+    },
+    {
+      "owner": "instance",
+      "name": "applyTalentReset",
+      "kind": "value",
+      "digest": "4bba24d88a5401c8851adf4765ac7d8668c18ffa78edb9bc71eb2e8b7dec54ce"
+    },
+    {
+      "owner": "instance",
+      "name": "archerCombatPoint",
+      "kind": "value",
+      "digest": "7eb691307840d0b30090de20c348838b94868df7d21e69c8e9a1a047fcaf4029"
+    },
+    {
+      "owner": "instance",
+      "name": "archerFallbackPoint",
+      "kind": "value",
+      "digest": "e05a908658e2ec877036963a0ac0ba50c4fb82fdc6fd24e2b2bf209aa34e89cb"
+    },
+    {
+      "owner": "instance",
+      "name": "armor",
+      "kind": "value",
+      "digest": "3b247094fe6daf62aac0ecf7ffc077951fc796bec90d3586b21f66b72af6bf4c"
+    },
+    {
+      "owner": "instance",
+      "name": "arriveRefuge",
+      "kind": "value",
+      "digest": "a4c21a014a7692951ec2a8c739a75b5c9da67f5681a5aed23c33e3b91e7cedfc"
+    },
+    {
+      "owner": "instance",
+      "name": "assignBuilder",
+      "kind": "value",
+      "digest": "7a5c7b4686a97a7d3726dd18f055da541bdb66bedba2004856229dbe8b1cd1ba"
+    },
+    {
+      "owner": "instance",
+      "name": "attackPatches",
+      "kind": "value",
+      "digest": "b0c287dcf14dee783942e57c96396ab2d36e490df9e39db092b8b651c5bb504e"
+    },
+    {
+      "owner": "instance",
+      "name": "authoredPlaces",
+      "kind": "value",
+      "digest": "2147d54237319d3b702a4746749906f3b1d5495c9774d123c165934482170ec5"
+    },
+    {
+      "owner": "instance",
+      "name": "autoEquipBestWeapon",
+      "kind": "value",
+      "digest": "cbeda8c6cd2b3dbdd8637fbf8f38a8de7334f634ce9264c49ced2701a963fcb2"
+    },
+    {
+      "owner": "instance",
+      "name": "autoRangerSupport",
+      "kind": "value",
+      "digest": "683fdb00ddff7382153e058f84abf0a2f1943ea957d7e1f2de9dd051080bbcb3"
+    },
+    {
+      "owner": "instance",
+      "name": "availableLabor",
+      "kind": "value",
+      "digest": "94ab2072845fa925ce087c283651229f2ebee709abff7179b2c0f50b7e887f6c"
+    },
+    {
+      "owner": "instance",
+      "name": "availableRangers",
+      "kind": "value",
+      "digest": "b8aedb7e5c5e674f04d9f7dc5e75e36316e3e508eeecc1329248148d9e82c625"
+    },
+    {
+      "owner": "instance",
+      "name": "awaken",
+      "kind": "value",
+      "digest": "c838c7fcae34ada7d75a9a06d2f2195052c12f235b1de904ecf7acc66230a88f"
+    },
+    {
+      "owner": "instance",
+      "name": "barracksBuildCost",
+      "kind": "value",
+      "digest": "f211f8f9b4a7b28c93e4039174c629d468b6cfd98b21c88b30e5cd79855f89df"
+    },
+    {
+      "owner": "instance",
+      "name": "barracksFieldCap",
+      "kind": "value",
+      "digest": "06c87a648ba248fbb03f4ee28cb49998eb72bcf833dec0bd872605b343e5b919"
+    },
+    {
+      "owner": "instance",
+      "name": "barracksRecruitPrice",
+      "kind": "value",
+      "digest": "2f3b2caf2b8246d54304250c252cf6724254232e2bfca41ea644dced2377af04"
+    },
+    {
+      "owner": "instance",
+      "name": "barracksSpecialists",
+      "kind": "value",
+      "digest": "b14dd95696d3de52f4a32e22d235d1e02c1ae079aa8bdde55219466b11f67256"
+    },
+    {
+      "owner": "instance",
+      "name": "basicComboFinisher",
+      "kind": "value",
+      "digest": "be94f780f25410e2f05aec35e3a00f343b7e70a1ab83e88148f9442b6967a845"
+    },
+    {
+      "owner": "instance",
+      "name": "bestLegacyWeapon",
+      "kind": "value",
+      "digest": "0fd1d038dc9c9c13d1fb85ad8c82d4c13caff1cbaba94fa1859659cde71eb72b"
+    },
+    {
+      "owner": "instance",
+      "name": "blocked",
+      "kind": "value",
+      "digest": "022a06d09f8b65944ccc6f9aadf5789d6b7acedb29400cea33f7e08d73bcf81a"
+    },
+    {
+      "owner": "instance",
+      "name": "boss",
+      "kind": "value",
+      "digest": "582a524d6a23442e4bdcb1a7e2a8151e08227b8a856066a034083e74826febe7"
+    },
+    {
+      "owner": "instance",
+      "name": "bossAttackTarget",
+      "kind": "value",
+      "digest": "09f9cf58a63ebe4b883cb02fc12f22827ee2dc881c70d2e2f239dccde1d7fa46"
+    },
+    {
+      "owner": "instance",
+      "name": "bossAttackWeights",
+      "kind": "value",
+      "digest": "1861ce6da433cdcd600418641dbef71a34a49cb5ee92a4a4aa96f1e14a353b07"
+    },
+    {
+      "owner": "instance",
+      "name": "bossComboSequence",
+      "kind": "value",
+      "digest": "965bc456528e488e01036388751b96b8d931e839b913b8970aa8a5ac3607de88"
+    },
+    {
+      "owner": "instance",
+      "name": "bossEnemy",
+      "kind": "value",
+      "digest": "21fdf9b8aded71b281babd4b906d03563da08472013e2b744bb6920d048c0967"
+    },
+    {
+      "owner": "instance",
+      "name": "bossOwnedSummons",
+      "kind": "value",
+      "digest": "d2137888e225a4a83f4702fd4bac9dd9e942fce69d72ee4e27a2d53adc9f6fd2"
+    },
+    {
+      "owner": "instance",
+      "name": "bossSummonCap",
+      "kind": "value",
+      "digest": "8e957bbf1247fb8c87cb81529f6d433568eaf9783aa2d3740dd60271bd4420b8"
+    },
+    {
+      "owner": "instance",
+      "name": "bossSummonProfile",
+      "kind": "value",
+      "digest": "f52a321e4c662730cfcfef44d3411516c49e5b01a5fed53437bf3420c662bc9f"
+    },
+    {
+      "owner": "instance",
+      "name": "build",
+      "kind": "value",
+      "digest": "7bf6ad9a6b21e0a8a647a7c8a37770a3956e8135cd21cf90aff297c52d894c02"
+    },
+    {
+      "owner": "instance",
+      "name": "buildBossAttack",
+      "kind": "value",
+      "digest": "00e2a39fad4737ff3cd5534dfa0d08f98f6c40b93261288a73812354d84735a4"
+    },
+    {
+      "owner": "instance",
+      "name": "bundleCollected",
+      "kind": "value",
+      "digest": "1a835e07046c54872bc86bbdad956a70f9201e2470a26d64ee78dd8dd1fbfe2c"
+    },
+    {
+      "owner": "instance",
+      "name": "buyPotion",
+      "kind": "value",
+      "digest": "dbe3042b50f6bb19187d13714f3acac23d654868ac8c86ca925219388b32acc6"
+    },
+    {
+      "owner": "instance",
+      "name": "captainOwnedSummons",
+      "kind": "value",
+      "digest": "8a6d74d9dda883cfcf06811acef97fb9a6088b3c73d53306d7ca6e37c5874c96"
+    },
+    {
+      "owner": "instance",
+      "name": "captainProfile",
+      "kind": "value",
+      "digest": "07767c19114125a8f9367bc00a4f654b88b4191e6eeb81ab998d0a4622b7ed24"
+    },
+    {
+      "owner": "instance",
+      "name": "cast",
+      "kind": "value",
+      "digest": "f0a8211519a5d6f81080053bf789f3585c77f9bf66906388b3154dd2ee6d1aca"
+    },
+    {
+      "owner": "instance",
+      "name": "checkClear",
+      "kind": "value",
+      "digest": "0c43714c8df2ac2284743b292adc2fe13b79a02e926d6493b29f8924ed067789"
+    },
+    {
+      "owner": "instance",
+      "name": "checkEnding",
+      "kind": "value",
+      "digest": "581066142a1cdb9812380d08dbb29efb3cde66f6cd864bfe8f05d6586cdd0cc0"
+    },
+    {
+      "owner": "instance",
+      "name": "checkMinis",
+      "kind": "value",
+      "digest": "986c4e6f6123af19e34b334cdeb01de2b62c86eacf40580c2e3454d67597421f"
+    },
+    {
+      "owner": "instance",
+      "name": "checkQuests",
+      "kind": "value",
+      "digest": "84b8884c5e67f4d2b8ded312724419041149262b958e2dd2c16820e82dd35400"
+    },
+    {
+      "owner": "instance",
+      "name": "chooseBossAttack",
+      "kind": "value",
+      "digest": "1f23b223ca4015ebd7f7a87b0012b20c6f05c4ae0535dfe498a08fbd90bb4b70"
+    },
+    {
+      "owner": "instance",
+      "name": "claim",
+      "kind": "value",
+      "digest": "859d17e26354dbb2d0c6329b066050aa1de6f47b06230376ccd33839efa4a3b3"
+    },
+    {
+      "owner": "instance",
+      "name": "clearSegment",
+      "kind": "value",
+      "digest": "56025566067bdfbe7d814f47c1868e22e39c27b4babb9b91f9f0f40dc2ab49b2"
+    },
+    {
+      "owner": "instance",
+      "name": "clearTonic",
+      "kind": "value",
+      "digest": "ef2ec7fa427a18fac23c2566a42bfd5073f0f9134bfd3d16172dac1606a7e89f"
+    },
+    {
+      "owner": "instance",
+      "name": "combatPopulation",
+      "kind": "value",
+      "digest": "ed824b673518e7e7f06e5a907d126a0e1c8ea2a554c293d620ad3553e929b909"
+    },
+    {
+      "owner": "instance",
+      "name": "combatTargets",
+      "kind": "value",
+      "digest": "6d278c4d8ea5c8a44795628eaf03e84cd3863457089fd616b6f1a6e02dafaa6d"
+    },
+    {
+      "owner": "instance",
+      "name": "companionArmor",
+      "kind": "value",
+      "digest": "030c7cc629d4e2ccf769243926b708e3a8dc61f5e59b0947e2aa1ca851c47251"
+    },
+    {
+      "owner": "instance",
+      "name": "companionAttackDamage",
+      "kind": "value",
+      "digest": "5a3cdd669f45990795c570f12a112f6044d3274b776b8ecbfd835f2b04ba97f8"
+    },
+    {
+      "owner": "instance",
+      "name": "companionInheritedArmorBonus",
+      "kind": "value",
+      "digest": "b44cd1feb5b143b24c356dfcf8f43e24efcc1ed4c62799cdfbe71a0f6484030e"
+    },
+    {
+      "owner": "instance",
+      "name": "companionInheritedDamageBonus",
+      "kind": "value",
+      "digest": "705e2fd964585e6c42b84b51d3fe1dfd73cbc3797c6a0e57556fb99fcdae3b3e"
+    },
+    {
+      "owner": "instance",
+      "name": "companionInheritedHpBonus",
+      "kind": "value",
+      "digest": "5e7b96d8ee5dc0368a5c8d16007b49c7326b6f272c02809a42df7bcc8dc4b63e"
+    },
+    {
+      "owner": "instance",
+      "name": "companionInheritedSpeedBonus",
+      "kind": "value",
+      "digest": "46381810ff6ed6b34b54113433d8ae23b4ebd9c49f5fc861705f09a82390af5c"
+    },
+    {
+      "owner": "instance",
+      "name": "companionMaxHp",
+      "kind": "value",
+      "digest": "943acf87848d4133dd95b220acf1b65331af66df7ee5acf05fa14f4616142388"
+    },
+    {
+      "owner": "instance",
+      "name": "companionMoveSpeed",
+      "kind": "value",
+      "digest": "42942502d214f71444ea19923ca6daa85627b0e1af57ab0ffb0429337a8505e8"
+    },
+    {
+      "owner": "instance",
+      "name": "companionSecondSkillTargets",
+      "kind": "value",
+      "digest": "95e4e51fff433c754694b38c2a83e6a5d6c4e29f590ec3ca5f7d4f5e674926ea"
+    },
+    {
+      "owner": "instance",
+      "name": "companionSecondSkillUnlocked",
+      "kind": "value",
+      "digest": "055670819a10d38226075cb24279f86ddc4c0216c223d8fb82164cc644a24d7b"
+    },
+    {
+      "owner": "instance",
+      "name": "companionTrySkill",
+      "kind": "value",
+      "digest": "a06d16e5f02617879cf9dd68d067549f2c2b1c71239d22e924ec3998631c42e3"
+    },
+    {
+      "owner": "instance",
+      "name": "companionUseFirstSkill",
+      "kind": "value",
+      "digest": "f2e2daae0212ec572c4c1afd38405b64558c2e6494a2ad336df54b713a65b201"
+    },
+    {
+      "owner": "instance",
+      "name": "companionUseSecondSkill",
+      "kind": "value",
+      "digest": "fb7a01c9849709dc68cdc2125a919e01afad03255dd83f46355b23d0b14b46ba"
+    },
+    {
+      "owner": "instance",
+      "name": "companionVitalityCost",
+      "kind": "value",
+      "digest": "38f0af11668e0c52b6279acbc925bbe60b087fbb015fe7b606e1490a2b37e1fc"
+    },
+    {
+      "owner": "instance",
+      "name": "companionVitalityFraction",
+      "kind": "value",
+      "digest": "8233732d15f2cbd72d8f86eafdd907da120f3737384744204a731cc67a0de20d"
+    },
+    {
+      "owner": "instance",
+      "name": "companionVitalityRank",
+      "kind": "value",
+      "digest": "e35bb2406d1c6af5f2ba084ae064413ba06e2f100d465dbf59d317147ec30945"
+    },
+    {
+      "owner": "instance",
+      "name": "configureEnemy",
+      "kind": "value",
+      "digest": "e5787980211d6918abca4290112dab24dcde09f1fa8441cdbfbcf1566ff3b84a"
+    },
+    {
+      "owner": "instance",
+      "name": "creatureStrongholdCenter",
+      "kind": "value",
+      "digest": "b12990f5bff8aafcc62b63c3e1d775be037b5ac1b8e2f56e580fdb11b3eca997"
+    },
+    {
+      "owner": "instance",
+      "name": "creatureStrongholds",
+      "kind": "value",
+      "digest": "2c5f1d68cc65c8984241cdee47c232ea5b9fb38bdd5a7478a8309ae38c931bd7"
+    },
+    {
+      "owner": "instance",
+      "name": "damage",
+      "kind": "value",
+      "digest": "180074912c826eae38ac1b3e178373a27b9ac319a10e925ab839d8c0aa5d8edd"
+    },
+    {
+      "owner": "instance",
+      "name": "darkCrownLayout",
+      "kind": "value",
+      "digest": "959ee260d15b9da50fa897eb32453c710cdb8c33baef2904510b0f54e7a3af9b"
+    },
+    {
+      "owner": "instance",
+      "name": "decorateDungeon",
+      "kind": "value",
+      "digest": "23054529cea9ac7a1c5a2e8bd529fbe38c7127204592faef0a5eab9108b1c22a"
+    },
+    {
+      "owner": "instance",
+      "name": "definition",
+      "kind": "value",
+      "digest": "15cdaeb2e30738ea6fe7b8fee177426a1c4974d49d90cc5196e0af289a8346c0"
+    },
+    {
+      "owner": "instance",
+      "name": "depositSite",
+      "kind": "value",
+      "digest": "5048a73c3f091ec1f9b5c6ff1303969d3e137df8e292fdd664e7b186debaf5fc"
+    },
+    {
+      "owner": "instance",
+      "name": "die",
+      "kind": "value",
+      "digest": "adb9170e084f44828e81e045182224153b798af77fd5e0ea9b42d53f3e7383fe"
+    },
+    {
+      "owner": "instance",
+      "name": "discover",
+      "kind": "value",
+      "digest": "13d5a9b2d416f6f86f3a263fbab718af48814c52a2810f2e72f1ad52de35b5f0"
+    },
+    {
+      "owner": "instance",
+      "name": "disengage",
+      "kind": "value",
+      "digest": "a4315048df4ed7448239768f664c1a8dacce7b359f2f5cd0eda0b61ff346abd5"
+    },
+    {
+      "owner": "instance",
+      "name": "dismissCompanion",
+      "kind": "value",
+      "digest": "5c2edea92327a19a71c4e338c8e0c6d2231601321100e77d67946df00d594512"
+    },
+    {
+      "owner": "instance",
+      "name": "distanceToSegment",
+      "kind": "value",
+      "digest": "0d6c13966f6dd5dbca7f52af979bbcef59dda0763628c494cdb2bf12cde44b59"
+    },
+    {
+      "owner": "instance",
+      "name": "drainMana",
+      "kind": "value",
+      "digest": "aac067442217ea7108548a580c84b0a17c97ed48ac48c86baf10aa9457e98ad7"
+    },
+    {
+      "owner": "instance",
+      "name": "dungeonGuardBlueprint",
+      "kind": "value",
+      "digest": "dd08851b4682cec3e137c7ba9f72322bd6d285d69dfd2a1267447019efc93a61"
+    },
+    {
+      "owner": "instance",
+      "name": "dungeonGuardCount",
+      "kind": "value",
+      "digest": "24fbf020a51ac74f61eca89fbf45451a61623c7c20b48535248548756f6145b7"
+    },
+    {
+      "owner": "instance",
+      "name": "dungeonWorkstation",
+      "kind": "value",
+      "digest": "66211167ac0f42163d1d9f3299360bbb7aad718b8bd9138615954cfb726c66df"
+    },
+    {
+      "owner": "instance",
+      "name": "enemyReward",
+      "kind": "value",
+      "digest": "df2eb5f82bfed24a094e77b58848d7539ccfcf96a033833ef039d4bac3df5457"
+    },
+    {
+      "owner": "instance",
+      "name": "engage",
+      "kind": "value",
+      "digest": "17100fed0703e00d9197d6a1afc8c350cc97effcce30b44d78732f344ce454d1"
+    },
+    {
+      "owner": "instance",
+      "name": "enter",
+      "kind": "value",
+      "digest": "6a1ee1d8fd4ab3bf9e2915d19572758f1c432760039294e1de0a28c11d2982d8"
+    },
+    {
+      "owner": "instance",
+      "name": "equipLegacy",
+      "kind": "value",
+      "digest": "49ba9fc6cc17b7d20d4e616e5e148fac6cabcd4f567f8c12b28d0afd57d4a8ea"
+    },
+    {
+      "owner": "instance",
+      "name": "event",
+      "kind": "value",
+      "digest": "260583d0790541f4226cee0cc479317c519d50d21de6af983622765e464490cb"
+    },
+    {
+      "owner": "instance",
+      "name": "expectedMaxMp",
+      "kind": "value",
+      "digest": "55bea9e73e8d4b2891c365c1e6417264ffe112f30e9623842d5523cfec622b12"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionInstructorCap",
+      "kind": "value",
+      "digest": "20ec94fddfaf8e1271544d2cf4a8da1f66a4698c58beaa0688829253ff7f0d9b"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionNextInstructor",
+      "kind": "value",
+      "digest": "e6b3818e32c2253b3892d880bf01a193909b4a165ce40649d189b859be953ec9"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionPartyCap",
+      "kind": "value",
+      "digest": "5a451c022b8ceec1576b7ce282eb68ea6edbd2feb7f3ac0a427bbf65c1267ed3"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionSupportBestTrainer",
+      "kind": "value",
+      "digest": "6367fcad27666dc7f5c3492e34ef5cc389d355ecb805bf24ecd266745084b731"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionSupportCost",
+      "kind": "value",
+      "digest": "c6c0423d50598d636121620b0cabc03b5e14c6bf58905ffa5f12e27effcfe35a"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionSupportFraction",
+      "kind": "value",
+      "digest": "2bb389ee07906d6b206694a207425074f30f6ade4a8e7480ba16de173401adc7"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionSupportRank",
+      "kind": "value",
+      "digest": "3916fd1f6c6ca04d0ae78fc2f1c5e4175ff17b20d895829a70a34d1df49e2a83"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionSupportTrainerCap",
+      "kind": "value",
+      "digest": "f64145cc44e831885f177e23b04d61db632b7186e4f8c746ba0570f5270e2d32"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionTrainer",
+      "kind": "value",
+      "digest": "d9cf23bee196e1f6fd3938e2397852a9c659e1c7cf3d09276393c8a7d922081d"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionUnlock",
+      "kind": "value",
+      "digest": "4793f3150e80216503d3363574a9040f0956a702f8f6c7774da1dc2fe07499ee"
+    },
+    {
+      "owner": "instance",
+      "name": "fieldBossStreak",
+      "kind": "value",
+      "digest": "593bd46d368d35c24190acea4204a0091111470c0d8cd74666a6ea577307a4b9"
+    },
+    {
+      "owner": "instance",
+      "name": "fieldCaptainPopulation",
+      "kind": "value",
+      "digest": "672fe9447a0ca7183714ced2c420c60acdd69124a1294a336f099fd97b5b7722"
+    },
+    {
+      "owner": "instance",
+      "name": "fieldCenter",
+      "kind": "value",
+      "digest": "b26581bf9dfa7f2a8fd635f7867e79b41ee6300495f0938656265180c860d2a0"
+    },
+    {
+      "owner": "instance",
+      "name": "fieldTrueSpawnPoint",
+      "kind": "value",
+      "digest": "430cf3eba95914a90b338d0a96b9236091348112e1f5a35c3768a6a6e04e62cc"
+    },
+    {
+      "owner": "instance",
+      "name": "finalBossPopulation",
+      "kind": "value",
+      "digest": "78ef7665e03608967edf75bdd5b721c3f0bfd39de03430f70729044836a39ef6"
+    },
+    {
+      "owner": "instance",
+      "name": "follow",
+      "kind": "value",
+      "digest": "4ddb243c59dcea9c3c8cd58c932142957b7de1cc5c65a9a23d90dce003ac4097"
+    },
+    {
+      "owner": "instance",
+      "name": "followPartyMember",
+      "kind": "value",
+      "digest": "76a57b109b8491a0f87e638c3a51c0e4dceebb26a52797a914b21e3fd3c59b93"
+    },
+    {
+      "owner": "instance",
+      "name": "freeResetTalents",
+      "kind": "value",
+      "digest": "225f151a8076fd469fcb27f503f9746652eabbaedb32cd51bf5272194ebebd68"
+    },
+    {
+      "owner": "instance",
+      "name": "frontierOccupationLayout",
+      "kind": "value",
+      "digest": "9d086fc2d1a4019e006dd951fae3d070b98f132903969e1871c531c30f19ceac"
+    },
+    {
+      "owner": "instance",
+      "name": "gather",
+      "kind": "value",
+      "digest": "e9a4a3bb00190c6618bc73dbb75c3ca652e60a74e56e5e624efd8827df07a0c3"
+    },
+    {
+      "owner": "instance",
+      "name": "gear",
+      "kind": "value",
+      "digest": "d24b86b6151140c94ea5bd027d0f84bb9cbd5d850438f1348d3522bbb1db166a"
+    },
+    {
+      "owner": "instance",
+      "name": "grant",
+      "kind": "value",
+      "digest": "38df582ff9509ae8d3f7190b9a671bd18b3af999d8ac4c881f52c11a9a117ea6"
+    },
+    {
+      "owner": "instance",
+      "name": "guardianPopulation",
+      "kind": "value",
+      "digest": "944c158d75ac595d9f690622b809b40c41fa2664752bd6071dc73e3df4b19a2b"
+    },
+    {
+      "owner": "instance",
+      "name": "guardianRewards",
+      "kind": "value",
+      "digest": "837b08f5243b252fb20188613f54a4ea77a552a9bebbf8e3d4704f44453b62fd"
+    },
+    {
+      "owner": "instance",
+      "name": "harborLayout",
+      "kind": "value",
+      "digest": "f377cc527236ceb45c58eabf4bf7c237e31320235def8f97ee82d21e3cea6d0a"
+    },
+    {
+      "owner": "instance",
+      "name": "hasAnyBarracks",
+      "kind": "value",
+      "digest": "583ab24c3310bb98b2b594a64b5ad903a8133e001282ed9387f435d453673930"
+    },
+    {
+      "owner": "instance",
+      "name": "hasCompletedBarracks",
+      "kind": "value",
+      "digest": "d06f2cbc9646b29860af8f168071f426fe3fc27ab4d2dffcab5ae14f77977de6"
+    },
+    {
+      "owner": "instance",
+      "name": "hasSupportEffect",
+      "kind": "value",
+      "digest": "31d6c04a2ead03b3d9c8e53df16603b32927c4c6f41ad36ee478a224e9874ccf"
+    },
+    {
+      "owner": "instance",
+      "name": "hero",
+      "kind": "get",
+      "digest": "d2f399afe188dbd14e6356c770f982075356e1cf56ab0fff7b5ab85de30be2df"
+    },
+    {
+      "owner": "instance",
+      "name": "heroEquipmentArmorBonus",
+      "kind": "value",
+      "digest": "b524785d8c19e9c2f314d9a6a55d5f18afef3bccacb15dac00de6364b34d1552"
+    },
+    {
+      "owner": "instance",
+      "name": "heroNaturalMaxHp",
+      "kind": "value",
+      "digest": "7e7d3ea6ff2bea6aa636aff99075b9f9bdba123014e0bddf30be04318fa2b828"
+    },
+    {
+      "owner": "instance",
+      "name": "heroOtherDamageBonus",
+      "kind": "value",
+      "digest": "dfa5c0388bfd7adf4655a1b198d133ea10050f1ef5c7f010ce2636d696b4a0dd"
+    },
+    {
+      "owner": "instance",
+      "name": "heroOtherHpBonus",
+      "kind": "value",
+      "digest": "4212961017b7e8b3036967a79e9b28d64832177440e1e00b22d9b74423bb21e5"
+    },
+    {
+      "owner": "instance",
+      "name": "heroTalentDamageBonus",
+      "kind": "value",
+      "digest": "87cd2a008325e43dab6d6a7a709c38a92ec13de19dc19ad11c474cbc90d736a8"
+    },
+    {
+      "owner": "instance",
+      "name": "heroTalentHpBonus",
+      "kind": "value",
+      "digest": "ecf4de9a39008c1f4454d54c071855f3d4c17f6fa45ab9d3f0b0a7d1ef73cdd3"
+    },
+    {
+      "owner": "instance",
+      "name": "heroTalentSpeedBonus",
+      "kind": "value",
+      "digest": "3ff2c8eacf9efc3d57a04934cfb3257090a0cb60034d20c627281c1c37fb5ad3"
+    },
+    {
+      "owner": "instance",
+      "name": "hiddenTributeNodes",
+      "kind": "value",
+      "digest": "acfeed30014e8785258377e96fa97cb1b826449edd3347ccc2151a1109118005"
+    },
+    {
+      "owner": "instance",
+      "name": "hitParty",
+      "kind": "value",
+      "digest": "79eb9715865889efcde1fe5f7ae6f2c11f1745561b30a2b00524b3d91b79b9ee"
+    },
+    {
+      "owner": "instance",
+      "name": "hubDestinations",
+      "kind": "value",
+      "digest": "2219fb86df5e517b257bdb1411bba75eebebb6fcec945590b74ebfd012bbb520"
+    },
+    {
+      "owner": "instance",
+      "name": "idOrder",
+      "kind": "value",
+      "digest": "396100d776f5bee215bfe192956fefb516732b4ea8840cca979d4b1327a5018d"
+    },
+    {
+      "owner": "instance",
+      "name": "idleWanderProfile",
+      "kind": "value",
+      "digest": "f8846b3836e5ad9b4ede4380d5e5d4bf4457c3f5435b58ce7d8ab42b79b63403"
+    },
+    {
+      "owner": "instance",
+      "name": "initializeQuests",
+      "kind": "value",
+      "digest": "f41b481608a797cfa4a633a3ec88200ac4ff85417864d5e932ab4985f3bd21a6"
+    },
+    {
+      "owner": "instance",
+      "name": "interact",
+      "kind": "value",
+      "digest": "098be6f3413c4b48a32cad91189e12f754d61bec395e4d687487493135a79386"
+    },
+    {
+      "owner": "instance",
+      "name": "ironrootLivelihood",
+      "kind": "value",
+      "digest": "11741f1421bd4517e09e5960621674d9656563e0f75d0219a02dac11797c28ff"
+    },
+    {
+      "owner": "instance",
+      "name": "isDungeon",
+      "kind": "value",
+      "digest": "05a1e223ec3b05fc83076fb30772ab11c228958ad6de2529a2bf2dd353940f3c"
+    },
+    {
+      "owner": "instance",
+      "name": "kill",
+      "kind": "value",
+      "digest": "831996f86112f2f2d9c6337269838ad194c9dcfffe68ece90440f99fad8a44b6"
+    },
+    {
+      "owner": "instance",
+      "name": "learn",
+      "kind": "value",
+      "digest": "985d9cd7e107eb4c3cf7633a4020318b352ce9f2d62626de5774ea3fe003d0ff"
+    },
+    {
+      "owner": "instance",
+      "name": "line",
+      "kind": "value",
+      "digest": "dfc21a7c712d8084ebca76c9fcd81a672711fd9fcc1aa995a8463d083bc3de20"
+    },
+    {
+      "owner": "instance",
+      "name": "localSites",
+      "kind": "value",
+      "digest": "86a4cafd07e3318ba4002452fa290512ffe75abd5a205a995d38bc77b0882ea7"
+    },
+    {
+      "owner": "instance",
+      "name": "makeEnemy",
+      "kind": "value",
+      "digest": "2721b88fcd7d177a0a77a939271bd30cfd8dd15a8ef4e94cb9969733c5f5bdb9"
+    },
+    {
+      "owner": "instance",
+      "name": "makeHabitat",
+      "kind": "value",
+      "digest": "1a66c74f46f8acd19956466481088beae720516f0d7d2dfb4a420e900d31bf6c"
+    },
+    {
+      "owner": "instance",
+      "name": "manaCombatActive",
+      "kind": "value",
+      "digest": "7028e1e998ff3165bd1435d76b40fcef8e3e059e56d0fc9fbfd603a275ac3930"
+    },
+    {
+      "owner": "instance",
+      "name": "manaRegenRate",
+      "kind": "value",
+      "digest": "848213be7fb51b5d4f66a90a52a59cb1e5cf970a3dc60b466f4fc65e79b23938"
+    },
+    {
+      "owner": "instance",
+      "name": "miniCleared",
+      "kind": "value",
+      "digest": "6bec2da45717df2e577a8d836721a4f506bfdbcf9666f606bf4c7006909bdab7"
+    },
+    {
+      "owner": "instance",
+      "name": "miniDungeons",
+      "kind": "value",
+      "digest": "cefa44b6836ecfe0c3b28c45fb0adef58f728e7295b1ef9bc7eaf62436d60c28"
+    },
+    {
+      "owner": "instance",
+      "name": "miniStatus",
+      "kind": "value",
+      "digest": "70bcebf5e54b3548bf24f56dfa403c58107fcfc2da7ea2f9a6ab3acbd2d44c90"
+    },
+    {
+      "owner": "instance",
+      "name": "move",
+      "kind": "value",
+      "digest": "3d7810ca2bec5985df1a4e7652afdd948ecf0280ca714a1b7ae16a6935777ca2"
+    },
+    {
+      "owner": "instance",
+      "name": "multipliers",
+      "kind": "value",
+      "digest": "e6c7ff4ac6114539f4a74b22750787fb98f6b6d71117f986dfd6a21ee2e2999c"
+    },
+    {
+      "owner": "instance",
+      "name": "nextBasicCombo",
+      "kind": "value",
+      "digest": "ec30a2cccc0a05eca95b40a14b9ce92d9a26bb9f83dcb708494989370e36a3a0"
+    },
+    {
+      "owner": "instance",
+      "name": "night",
+      "kind": "value",
+      "digest": "bedd2347a84d4f94aee9145bf08aada03d86e47605e53c13c1b996280ebb9e8e"
+    },
+    {
+      "owner": "instance",
+      "name": "nightEnemyPopulation",
+      "kind": "value",
+      "digest": "8a5119296609aa346f0db4c0dbad5d96e146aa5c101cb27e98f9f1496a2a2de6"
+    },
+    {
+      "owner": "instance",
+      "name": "nightPoints",
+      "kind": "value",
+      "digest": "11c5029448de7ebf4656df94da91dd714b744bcd1f3e864ff4c62d434d15c276"
+    },
+    {
+      "owner": "instance",
+      "name": "normalizeManaProgression",
+      "kind": "value",
+      "digest": "d190d2bf421cb3be9d0b64c37d5f0735af60092821b31d24ca2793ec8ebc5563"
+    },
+    {
+      "owner": "instance",
+      "name": "notice",
+      "kind": "value",
+      "digest": "9bd09aa194e8f1f19af043ad2634195f459738891f6c06c71ae3c0bcf90ed2ed"
+    },
+    {
+      "owner": "instance",
+      "name": "openResourceMini",
+      "kind": "value",
+      "digest": "ce2a222663ed42a18eca74fc5527cdb5e1abdac38b395a754a58db17dab02962"
+    },
+    {
+      "owner": "instance",
+      "name": "ordinaryMeleePopulation",
+      "kind": "value",
+      "digest": "ab1d860a7517a6ac20e76329fe94a15604e23fdfd569b2eaef720aa0b17b2986"
+    },
+    {
+      "owner": "instance",
+      "name": "ordinaryRangedPopulation",
+      "kind": "value",
+      "digest": "25efb8df006d08356c8fb96ac7617ca3428bd2299a2078023216e95936e3c838"
+    },
+    {
+      "owner": "instance",
+      "name": "partyFollowPoint",
+      "kind": "value",
+      "digest": "253e3656d610c1a539fdafca7e23d18a6fa0e74d47a1c30a3ba2c5a49b4b2c28"
+    },
+    {
+      "owner": "instance",
+      "name": "partyFormationOffset",
+      "kind": "value",
+      "digest": "3372d96c6c041847d777530d94cd7ff84c16ba27885d1cbab8421b504b2f02b0"
+    },
+    {
+      "owner": "instance",
+      "name": "payQuest",
+      "kind": "value",
+      "digest": "9c16d46fb75d8057bbf80b9c9aac9afe66a7b0df5e87fd9c44185cd38b49f0f4"
+    },
+    {
+      "owner": "instance",
+      "name": "peace",
+      "kind": "get",
+      "digest": "d7637aec79b743c999ef9f41d9c891cee000995e67602f15c66dd0ccb402caa5"
+    },
+    {
+      "owner": "instance",
+      "name": "potion",
+      "kind": "value",
+      "digest": "2f5c6be40f97240b1de6841fadd2ccc4b312c554d8d620e2ff1cd57e1d43566c"
+    },
+    {
+      "owner": "instance",
+      "name": "power",
+      "kind": "value",
+      "digest": "35032758f2615159927cd1101da1bc1e9f81c317328301d5867a13e60d6f537b"
+    },
+    {
+      "owner": "instance",
+      "name": "questDefs",
+      "kind": "value",
+      "digest": "3e85aa321cdb99be1d8c556017dc7a7488650acef0d54548c3a4ef48684f7e55"
+    },
+    {
+      "owner": "instance",
+      "name": "questId",
+      "kind": "value",
+      "digest": "625fa52be4a1081b97534da7214a4709be4f3e713e6efdf1f905360ffab3f957"
+    },
+    {
+      "owner": "instance",
+      "name": "questProgress",
+      "kind": "value",
+      "digest": "43f0b771ba1916f38dfd50c6446b4d3a390326fff356e375774e5fe7aa7c9a6a"
+    },
+    {
+      "owner": "instance",
+      "name": "queuedCompanions",
+      "kind": "value",
+      "digest": "3262d9748edabf8f748770e485270877e4552108a0df26f692470a167ac7986b"
+    },
+    {
+      "owner": "instance",
+      "name": "rangerSupport",
+      "kind": "value",
+      "digest": "8752f5c20cdf80814929fedae7625a264cf78b010b8f50115bed5223756f1000"
+    },
+    {
+      "owner": "instance",
+      "name": "rangerSupportAmount",
+      "kind": "value",
+      "digest": "fc6653b26d72d2c5f4123859e7598a5c9f3aef291ce585055d57f944fdca4c68"
+    },
+    {
+      "owner": "instance",
+      "name": "rangerSupportCost",
+      "kind": "value",
+      "digest": "f9eb03fe9944eff51b552a9f6e9281c8ff4d95454afb712ce311f2fcbf2bc58d"
+    },
+    {
+      "owner": "instance",
+      "name": "rangerSupportRank",
+      "kind": "value",
+      "digest": "38d0612081406fde3f3f4a1d0a4ab42b9afbb02f093b323047a1116ede58dbd2"
+    },
+    {
+      "owner": "instance",
+      "name": "recallParty",
+      "kind": "value",
+      "digest": "ecb009f7791149318178cc979677bea7346ade67898ef8961b0766466a64f1e4"
+    },
+    {
+      "owner": "instance",
+      "name": "recover",
+      "kind": "value",
+      "digest": "c36bf1508f4ee59d8ae3ccd201377d216f9661be8956803cda56fe524c14110a"
+    },
+    {
+      "owner": "instance",
+      "name": "recruit",
+      "kind": "value",
+      "digest": "4b006f3d2030927b51c8b839a6d4e1f77e10b2d5183024da7233fba20c4714f5"
+    },
+    {
+      "owner": "instance",
+      "name": "refreshNPCs",
+      "kind": "value",
+      "digest": "ecbb80c858e85ad1e37ce9d1df527e7cbddb6d3838edc61aa7842764c4019b66"
+    },
+    {
+      "owner": "instance",
+      "name": "refugeThreat",
+      "kind": "value",
+      "digest": "9d37a74bdb01891dc0181ec6fcfc67ab9ae102fba77a06b031c013864006a8d5"
+    },
+    {
+      "owner": "instance",
+      "name": "regionIndex",
+      "kind": "value",
+      "digest": "96a5cf405d97755980cd3197a6be65dbee81df48ad757638dbe946188c856f17"
+    },
+    {
+      "owner": "instance",
+      "name": "regionalAesthetics",
+      "kind": "value",
+      "digest": "5b6754d0e0e3407996bc44a0b7a38c6abf3e05ba72e661d21bb308feede7f9d3"
+    },
+    {
+      "owner": "instance",
+      "name": "regionalDestinations",
+      "kind": "value",
+      "digest": "c426969d2838f43ab35d667a9f38fefba8743776ca535eb22cd13223ab693447"
+    },
+    {
+      "owner": "instance",
+      "name": "regionalHandoffLife",
+      "kind": "value",
+      "digest": "262f1f0388791a942742ce9f059d4b681da1e6f555248293075a5deb562045f0"
+    },
+    {
+      "owner": "instance",
+      "name": "repairLegacyRescues",
+      "kind": "value",
+      "digest": "243625914dd0c3016cd4bb2d0ecd79fac591e0946b03fe8f65d1d45048fd822b"
+    },
+    {
+      "owner": "instance",
+      "name": "repairMiniGuardianReachability",
+      "kind": "value",
+      "digest": "6a6788b704bd69b6e3af88a4c89ac5c828be198a8a11f3260d086709d3093fb6"
+    },
+    {
+      "owner": "instance",
+      "name": "rescue",
+      "kind": "value",
+      "digest": "6d97c792a2cbe23bbd3fa0218239dc33d728a4ae900c43a5f87395e5900550e0"
+    },
+    {
+      "owner": "instance",
+      "name": "resetBasicCombo",
+      "kind": "value",
+      "digest": "bbb1b67eaced6dec69652f2b8862e4b7afcc6988881d4fee52421d87f199d212"
+    },
+    {
+      "owner": "instance",
+      "name": "resetTalents",
+      "kind": "value",
+      "digest": "0eb459476d79a67bd9e81ea046ef709db1636f0a3b7160e84059b6cc9e10560e"
+    },
+    {
+      "owner": "instance",
+      "name": "resolveArea",
+      "kind": "value",
+      "digest": "8b8bb251f546534a591ffb0612fcd7de8b3672e7e027ce0bf044a87f43662036"
+    },
+    {
+      "owner": "instance",
+      "name": "resolveAttack",
+      "kind": "value",
+      "digest": "1d7a52eef83e885d5a5dac2eec141972e766295c8a42d021940e9089c6002b15"
+    },
+    {
+      "owner": "instance",
+      "name": "resourceDeposits",
+      "kind": "value",
+      "digest": "57e012276f9b4e31c7fa60d05fe1ce9911d623125584991d77bfa11fcd1ff7cd"
+    },
+    {
+      "owner": "instance",
+      "name": "rest",
+      "kind": "value",
+      "digest": "5899fcc6a9ef60ff91c5c7503cef74a02a13dd2ff08661cff902c670d4723308"
+    },
+    {
+      "owner": "instance",
+      "name": "restCompanion",
+      "kind": "value",
+      "digest": "823b092bf9bedc71c1866c565660e36f237a2e670db5626e38958c897991a01d"
+    },
+    {
+      "owner": "instance",
+      "name": "retireResourceMini",
+      "kind": "value",
+      "digest": "09c09c3c0b3489a84f60e9585d853860efdd01f86f3c962a39166d6ce1b72e1b"
+    },
+    {
+      "owner": "instance",
+      "name": "returnGuardians",
+      "kind": "value",
+      "digest": "2929446826e9d5bc962b4423547078267593bbdebca2160ddc89980cdc2c921b"
+    },
+    {
+      "owner": "instance",
+      "name": "reward",
+      "kind": "value",
+      "digest": "303941dab796bfa808d3414f179881755db0a248452e90ce8fe9587ac4ac59de"
+    },
+    {
+      "owner": "instance",
+      "name": "roadNetwork",
+      "kind": "value",
+      "digest": "fbdbc264b6088edb30b8bad8705cd6479c7ec1438273281be0ebd32fa4e25e7d"
+    },
+    {
+      "owner": "instance",
+      "name": "roomCaptainPopulation",
+      "kind": "value",
+      "digest": "c2ac365b193b185cfa05a5559339ea0706f8f75e969ef7ae37d3591468266c95"
+    },
+    {
+      "owner": "instance",
+      "name": "rosterCount",
+      "kind": "value",
+      "digest": "65a8a4e842121dc59e07c84bbe16d7488ac09721818b3dabc7cc6e1ffc59c77c"
+    },
+    {
+      "owner": "instance",
+      "name": "route",
+      "kind": "value",
+      "digest": "9ba11c57f9c2f6cff1df06533d5871d002dd0b6e39f9170a75918cdd94260935"
+    },
+    {
+      "owner": "instance",
+      "name": "safe",
+      "kind": "value",
+      "digest": "51279e198fe94e891d18f02b23d3dc7878a70018c51915f092c09454d665f66c"
+    },
+    {
+      "owner": "instance",
+      "name": "say",
+      "kind": "value",
+      "digest": "62e678b8ed63db6e60f40ce6238a0f6daa5769286f6f6bd0563a8b7a1067ef22"
+    },
+    {
+      "owner": "instance",
+      "name": "scoutTribute",
+      "kind": "value",
+      "digest": "514aaa5de80dd945f30659b78f8301220ec274cd5551b0601802c669eadaffaf"
+    },
+    {
+      "owner": "instance",
+      "name": "setRefuge",
+      "kind": "value",
+      "digest": "93591369eeb956ac315a58457a5d91853d78b4a5ddaf6dbe461457c0d696f9b5"
+    },
+    {
+      "owner": "instance",
+      "name": "settlementLayout",
+      "kind": "value",
+      "digest": "491908394dc023718bc6d8ae16246f12d77f3f94f8e6c65d40809160743e5d05"
+    },
+    {
+      "owner": "instance",
+      "name": "sideDungeon",
+      "kind": "value",
+      "digest": "62246bc6add401714e7ab9bc6446f1b3ff8b70a1a9b2b85c97064716920c1534"
+    },
+    {
+      "owner": "instance",
+      "name": "sideInteriors",
+      "kind": "value",
+      "digest": "c49ec618a7a98ddb40694da84721381bfc3891615b6615bbf5bbf60a16f6d4da"
+    },
+    {
+      "owner": "instance",
+      "name": "siteDescription",
+      "kind": "value",
+      "digest": "2b7ee0e0568284b7b0f7916241c4cd7b6c27bfaca6be1d74f867c190df14507d"
+    },
+    {
+      "owner": "instance",
+      "name": "skillManaCost",
+      "kind": "value",
+      "digest": "71ed01f27a313856afc435f4abab7e79aa7a46a84d541e57532a0a0b18e5b758"
+    },
+    {
+      "owner": "instance",
+      "name": "skillRevealed",
+      "kind": "value",
+      "digest": "3ded211efc62cb96ebf7344c4f5a52374af84dca8ac4f70c11fee9875f7b124d"
+    },
+    {
+      "owner": "instance",
+      "name": "snapshot",
+      "kind": "value",
+      "digest": "5eb37d23f2d0481b80a126b586ce373f58ca5b43ca7fabcb609946ec748d5aae"
+    },
+    {
+      "owner": "instance",
+      "name": "soldierScreenTarget",
+      "kind": "value",
+      "digest": "4bd756fc70bfbd163c9dfac524717bf62a632ceecd16837cc0188b95786dc024"
+    },
+    {
+      "owner": "instance",
+      "name": "spaceMillhavenSupplier",
+      "kind": "value",
+      "digest": "b6a3ce77449863745a0891773ff2665a70cff6659f6d18d2046d694c39fefa3f"
+    },
+    {
+      "owner": "instance",
+      "name": "spaceQuestBoard",
+      "kind": "value",
+      "digest": "74523f62a3ebcf178afc69081904250beda23870abacd15de64b650627cb12fc"
+    },
+    {
+      "owner": "instance",
+      "name": "spend",
+      "kind": "value",
+      "digest": "0cd053a54939854970814d442273cdaf3c8b30e15dfc9825a2955785034c8a0a"
+    },
+    {
+      "owner": "instance",
+      "name": "spreadOutdoorForces",
+      "kind": "value",
+      "digest": "9ec9278c822f5a63888650d7a44c6764e774adaec4def6d64d0710d585dccac6"
+    },
+    {
+      "owner": "instance",
+      "name": "squadContext",
+      "kind": "value",
+      "digest": "39102961facf30af3da92fea36ca98aaadbcb35530544c9b4931df2957edfbd2"
+    },
+    {
+      "owner": "instance",
+      "name": "squadDefaultDoctrine",
+      "kind": "value",
+      "digest": "7cc242ce7f47566ce8b3fd70607cb412c0249d492314d629d1acf783756ec824"
+    },
+    {
+      "owner": "instance",
+      "name": "squadDoctrineLabel",
+      "kind": "value",
+      "digest": "880adbc034321bcae14b285d4da4c36fe39867b7c247f3fb92022feafa9f0e48"
+    },
+    {
+      "owner": "instance",
+      "name": "squadThreats",
+      "kind": "value",
+      "digest": "2ea29dbbd19680ed4687eb8e3ecf1f2c9812044967ddeb84f4d48111fa78fb22"
+    },
+    {
+      "owner": "instance",
+      "name": "startAttack",
+      "kind": "value",
+      "digest": "80a0a6d671bf930dc6f787a549e8f9fa8bbe97dbe8bb01c1f1c734cbfcd3a68f"
+    },
+    {
+      "owner": "instance",
+      "name": "startCaptainAttack",
+      "kind": "value",
+      "digest": "2fbff876e392018b6c91155c1e714a545fb8c8e40caa9c597f291fd61b28d802"
+    },
+    {
+      "owner": "instance",
+      "name": "startNightSkill",
+      "kind": "value",
+      "digest": "54adba87ec7c7dd032f1dc35d1a8154125ae2f9768b468f6518d26ff2e1c6f4b"
+    },
+    {
+      "owner": "instance",
+      "name": "streak",
+      "kind": "value",
+      "digest": "075ceec3c0de421f73cfa08810f1e736f3882a82d3ab2f1e4102c184fd541854"
+    },
+    {
+      "owner": "instance",
+      "name": "successor",
+      "kind": "value",
+      "digest": "a0eb05ba1d7f705e9c6c5898799fc79d21466b2b7e486f0067cbaf06be05672f"
+    },
+    {
+      "owner": "instance",
+      "name": "summonBossAdds",
+      "kind": "value",
+      "digest": "c991266c6a417654bba905761b4b3b2bf9836f5d2966da958ff57858061de51c"
+    },
+    {
+      "owner": "instance",
+      "name": "summonCaptainAdds",
+      "kind": "value",
+      "digest": "03d645ba6fed7324a1fd8a34e1c589c23bba18682691ee38d5fa953a76e3ed35"
+    },
+    {
+      "owner": "instance",
+      "name": "summonCombatProfile",
+      "kind": "value",
+      "digest": "66cbdbf961febd669b943a9cb6515e2a2fe4bb5a4f1d74e5d376be2e50c650b9"
+    },
+    {
+      "owner": "instance",
+      "name": "summonName",
+      "kind": "value",
+      "digest": "065809c74b3c9dc4adc86ed0c5d4dee72248f7956d70c8177a7b9e375133494b"
+    },
+    {
+      "owner": "instance",
+      "name": "summonPopulation",
+      "kind": "value",
+      "digest": "7e7478e801a77df1a369ab425ce1382bcf58a7c7e309c1d79acc74d2e0e56705"
+    },
+    {
+      "owner": "instance",
+      "name": "supplyInteriors",
+      "kind": "value",
+      "digest": "b2cd668b3405de6d85fe9c318f4f34a5e797d2680385d5d7e803086e447ce3fc"
+    },
+    {
+      "owner": "instance",
+      "name": "supplyRoom",
+      "kind": "value",
+      "digest": "b52b6bc1891db797c5c1ed12d4ba780715261f9e2f33db6a44d93978722174a3"
+    },
+    {
+      "owner": "instance",
+      "name": "supportEffectActive",
+      "kind": "value",
+      "digest": "c6184dacb31012f1e8e988ca26b401c9d6f3d163a1790f7599db3880a143092d"
+    },
+    {
+      "owner": "instance",
+      "name": "syncCompanionLevelStats",
+      "kind": "value",
+      "digest": "f0d321f2a6848a581cd1441bbac34bd90a3e46e3171df358a983577e16d97c14"
+    },
+    {
+      "owner": "instance",
+      "name": "syncSquadDoctrine",
+      "kind": "value",
+      "digest": "2f1a00f102434da7291ce07de58d75b64443650f37faa366525882259c63b0fc"
+    },
+    {
+      "owner": "instance",
+      "name": "talent",
+      "kind": "value",
+      "digest": "a746a3f0823b5f9d08df2e0e08f456d04687a5acfe520c5647e651836838f27e"
+    },
+    {
+      "owner": "instance",
+      "name": "talentMaxRank",
+      "kind": "value",
+      "digest": "60bc10955966ffedc5ccff7b2fbf6e9d7c3c63c7e8566da53d8ea17ea4355b0c"
+    },
+    {
+      "owner": "instance",
+      "name": "talentProfile",
+      "kind": "value",
+      "digest": "7c6c0a208ee588b419a0dd9adaf03e878e7685bc9ee9f2e462378fa6d0b7413c"
+    },
+    {
+      "owner": "instance",
+      "name": "talentRespecCost",
+      "kind": "value",
+      "digest": "726b85019effd3c890c8b96b4ae33bcf9cd840fb2d81012d9953c8aa5e00e772"
+    },
+    {
+      "owner": "instance",
+      "name": "talentSpent",
+      "kind": "value",
+      "digest": "841951c4f586ead6f25f53d0063b4710d3d7687a65a8eacb756eafc3f5109177"
+    },
+    {
+      "owner": "instance",
+      "name": "teacherCatalog",
+      "kind": "value",
+      "digest": "f5bba132126a56e935db72d8ea0e7f178386ec69142a14a21c181028474cf70a"
+    },
+    {
+      "owner": "instance",
+      "name": "tick",
+      "kind": "value",
+      "digest": "3c3dfa6b42a918d2087e2356cfd1a5c1a373eba877a711c6d9a512fdfcbffa52"
+    },
+    {
+      "owner": "instance",
+      "name": "toggleSquadDoctrine",
+      "kind": "value",
+      "digest": "6aad37b4ba374b525bc45cf84904b5280a6b8d758a6ed1a1dcbda907fb3d02fa"
+    },
+    {
+      "owner": "instance",
+      "name": "train",
+      "kind": "value",
+      "digest": "53799abb3b3f5eddce7fc063bed745680c9c7817a5c32b1e50cc1a958d0876be"
+    },
+    {
+      "owner": "instance",
+      "name": "trainCompanionVitality",
+      "kind": "value",
+      "digest": "1b4c44402568b5e5d1f16f00c5d80ec9bdb388bfc7f82325b3b5194552888533"
+    },
+    {
+      "owner": "instance",
+      "name": "trainExpedition",
+      "kind": "value",
+      "digest": "ae7bcea794c50819a357f2180c7b6bcdd7b4996b2cf09eddf7d0d9cd5af02e77"
+    },
+    {
+      "owner": "instance",
+      "name": "trainExpeditionSupport",
+      "kind": "value",
+      "digest": "c77174bc6823519c9a43526684d5a414d151d2110a3a624299c567bfbd6b31b8"
+    },
+    {
+      "owner": "instance",
+      "name": "trainRangerSupport",
+      "kind": "value",
+      "digest": "6a0580bdd2a390caed8f4dc01e7b25e49a84e051d73e80678b3ec910cc06f649"
+    },
+    {
+      "owner": "instance",
+      "name": "trapContains",
+      "kind": "value",
+      "digest": "87767a9c5bd65119f61679e7d525cf4102d2d2b2caea3102776bed91fdd60aaa"
+    },
+    {
+      "owner": "instance",
+      "name": "traps",
+      "kind": "value",
+      "digest": "b52e94d0861504ff145788e1f9faaca2f8c986d984ca1b76f0323685155a78f7"
+    },
+    {
+      "owner": "instance",
+      "name": "travel",
+      "kind": "value",
+      "digest": "d938cb03f1eed157303a386f11474f5d3f84bec5593fc2a8d7bc3998c702e42f"
+    },
+    {
+      "owner": "instance",
+      "name": "travelHub",
+      "kind": "value",
+      "digest": "c1736e16ea203fa8aaeb8f3781e9fa8423f460e7baa0e18bbbdf7a0866bdbba2"
+    },
+    {
+      "owner": "instance",
+      "name": "treasuryInterior",
+      "kind": "value",
+      "digest": "077514a26a7be7d2d7dcb817e0990a8f3f15e91ca906441f57b7ccd9799481c0"
+    },
+    {
+      "owner": "instance",
+      "name": "treatCompanions",
+      "kind": "value",
+      "digest": "13f233497a431d14951c67c7f4f07b5eab13f9d39d74085084ba6cbd2efb52cd"
+    },
+    {
+      "owner": "instance",
+      "name": "tributeKnown",
+      "kind": "value",
+      "digest": "f64c2eb46ba3c0ea7cf502c2c49a5cdcf7a6ed8c18c361128dc87da1b023b8b9"
+    },
+    {
+      "owner": "instance",
+      "name": "triggerCaptainPhase",
+      "kind": "value",
+      "digest": "5517d3cb2b13d36ea0bbaaf036ed7389e6680088df4386fa4f0404fbaa91a29e"
+    },
+    {
+      "owner": "instance",
+      "name": "trueSummonPlan",
+      "kind": "value",
+      "digest": "366c56ea9835807a5a4eb0e1661036fabe46707e98165913fec6cda3593c8cf5"
+    },
+    {
+      "owner": "instance",
+      "name": "unit",
+      "kind": "value",
+      "digest": "ee08affc961e05edb9395f6f8ee470fd345361731e0e170205b5680c6964e724"
+    },
+    {
+      "owner": "instance",
+      "name": "updateCaptainPatrol",
+      "kind": "value",
+      "digest": "4392230a483f83fc7b87523a7148d50af55eedc720d424aa5bd3b17ad2b981d3"
+    },
+    {
+      "owner": "instance",
+      "name": "updateElites",
+      "kind": "value",
+      "digest": "09edbf29c8a79a6e50ec6eb79d2d1fa2ab58df905808df43c8a786745a710de2"
+    },
+    {
+      "owner": "instance",
+      "name": "updateEnemies",
+      "kind": "value",
+      "digest": "137b97011fb6d0021e4cb315af07a5c913ce164d42fc5d50dcb30cbf31953522"
+    },
+    {
+      "owner": "instance",
+      "name": "updateEscort",
+      "kind": "value",
+      "digest": "2993903468d0dc9415b22a22c68c33914d940b32b760f8d8324803bc84d5d7a6"
+    },
+    {
+      "owner": "instance",
+      "name": "updateGuardianReinforcements",
+      "kind": "value",
+      "digest": "68f4f034cb62166ab3f9012f21336b576e0d54349bccd2f1cae82a4d771386e8"
+    },
+    {
+      "owner": "instance",
+      "name": "updateIdleWander",
+      "kind": "value",
+      "digest": "fe0dd10bb48aad09284bcdae190e0da5a18e900e8ba6e50a6b92775ba9f4e55f"
+    },
+    {
+      "owner": "instance",
+      "name": "updateNight",
+      "kind": "value",
+      "digest": "0386440fc73ec286adefe9dcfb324a730f298f402842abf0490fdd180bd9ad55"
+    },
+    {
+      "owner": "instance",
+      "name": "updatePacks",
+      "kind": "value",
+      "digest": "e2bb7a3ff2428b589097e2975ad9c9f1e9c7e48ae69016253848fc9838fdcc3a"
+    },
+    {
+      "owner": "instance",
+      "name": "updateParty",
+      "kind": "value",
+      "digest": "a394b1e4b5a28ce6fd635cc1e8136b4d38b44b320f5bf525b640c203058b6d9c"
+    },
+    {
+      "owner": "instance",
+      "name": "updateProjectiles",
+      "kind": "value",
+      "digest": "9f08b4df5754f8f00ce8b9059e551fd0e1f23ab1bbbf4fdce54bf225d5ea7dce"
+    },
+    {
+      "owner": "instance",
+      "name": "updateRangerSupport",
+      "kind": "value",
+      "digest": "6277e40d9a63bf5b94e11a9e72b761913976435c0de27fbfd16200fd3583a390"
+    },
+    {
+      "owner": "instance",
+      "name": "updateTraps",
+      "kind": "value",
+      "digest": "a9ed4ff44578a7a0d9806c0e123b6efdc5fd281c386fa95f0f0d2a5b3c0fc7e1"
+    },
+    {
+      "owner": "instance",
+      "name": "upgrade",
+      "kind": "value",
+      "digest": "bf6591da3613b4dfd20acc0b7e74eeba6fa8042aee14811125842aca103f7f45"
+    },
+    {
+      "owner": "instance",
+      "name": "upgradeBarracks",
+      "kind": "value",
+      "digest": "013172f09e3fb9004876f3a82bbefd3511f1a0cdc99743b48a649bf7c945b9e9"
+    },
+    {
+      "owner": "instance",
+      "name": "upgradeRingleader",
+      "kind": "value",
+      "digest": "23bffddcd1023e168c796e26a5858e9a67fe54d1098fa693cfa7d6157c347eb5"
+    },
+    {
+      "owner": "instance",
+      "name": "victory",
+      "kind": "value",
+      "digest": "67d7eb34a4e816daa4fbb8ad2e1fe5aa7a3f422a9fcc179f9bb5f83ea86aba1d"
+    },
+    {
+      "owner": "instance",
+      "name": "visibleNPCs",
+      "kind": "value",
+      "digest": "f3918016bff2eac40b341326bd3a76eb79a11a19881473bf80dbe8b365b2b9c3"
+    },
+    {
+      "owner": "instance",
+      "name": "visibleResourceNodes",
+      "kind": "value",
+      "digest": "b3a4627ed20c2613462a29b1ebc2b6ded6ee0ae3f045dae205979e443d910bf8"
+    },
+    {
+      "owner": "instance",
+      "name": "weaponTierBonus",
+      "kind": "value",
+      "digest": "ff9d23fe9885661084d1948e763a4785732406348d6c8187f1810489b49434be"
+    },
+    {
+      "owner": "instance",
+      "name": "worldLife",
+      "kind": "value",
+      "digest": "0b1f9eb866240f63039e830aabf6432c6c780f0dde9a6b5480b01cc4b7804fa6"
+    },
+    {
+      "owner": "instance",
+      "name": "xp",
+      "kind": "value",
+      "digest": "c1a0604287b0c1567eb829fd0e39407190639a6afd685b9591f7044e3bc76200"
+    },
+    {
+      "owner": "instance",
+      "name": "zone",
+      "kind": "value",
+      "digest": "518f1b369cfff78e2b999405776f4681fe1dd33374f06b1a00acea40914263ae"
+    },
+    {
+      "owner": "instance",
+      "name": "zoneId",
+      "kind": "get",
+      "digest": "1f64db7843eabda5b347bd914dede6736b7ed086a53cda6f83849a5d57c56854"
+    },
+    {
+      "owner": "instance",
+      "name": "zoneSize",
+      "kind": "value",
+      "digest": "b1216ac30c6f18c9eab42810ddff93840b994cd4c8e9624d58bb1774e8f5397d"
+    },
+    {
+      "owner": "static",
+      "name": "migrate",
+      "kind": "value",
+      "digest": "ba33266af37a2e574542ce15248b74984b3ba5162b4ebf271dc6a1152cda9e2f"
+    },
+    {
+      "owner": "static",
+      "name": "restore",
+      "kind": "value",
+      "digest": "f7136beae1ff0d9f4400ae3777595983ef95e94eb0a542f61570bb34f493fa23"
+    },
+    {
+      "owner": "static",
+      "name": "validate",
+      "kind": "value",
+      "digest": "4591c2cb17d25dbd00b17de82753267bb3f2a807f9f3513d1e97ba78fff298db"
+    }
+  ],
+  "constructor": "ab59250e924eba2597afa57f8e8341560814c4fa83f95e9c15447ec3df8f86b8",
+  "configuration": [
+    {
+      "name": "classes",
+      "owner": "rules.balance.classes",
+      "before": {
+        "paladin": {
+          "icon": "🛡️",
+          "hp": 120,
+          "mp": 60,
+          "power": 18,
+          "armor": 8,
+          "speed": 300
+        },
+        "mage": {
+          "icon": "🧙‍♀️",
+          "hp": 90,
+          "mp": 100,
+          "power": 22,
+          "armor": 3,
+          "speed": 300
+        },
+        "ranger": {
+          "icon": "🏹",
+          "hp": 105,
+          "mp": 70,
+          "power": 20,
+          "armor": 5,
+          "speed": 320
+        }
+      },
+      "after": {
+        "paladin": {
+          "icon": "🛡️",
+          "hp": 120,
+          "mp": 60,
+          "power": 18,
+          "armor": 8,
+          "speed": 300
+        },
+        "mage": {
+          "icon": "🧙‍♀️",
+          "hp": 90,
+          "mp": 100,
+          "power": 22,
+          "armor": 3,
+          "speed": 300
+        },
+        "ranger": {
+          "icon": "🏹",
+          "hp": 105,
+          "mp": 70,
+          "power": 20,
+          "armor": 5,
+          "speed": 320
+        }
+      }
+    },
+    {
+      "name": "talentMaxRanks",
+      "owner": "rules.balance.disciplines.maxRanks",
+      "before": [
+        5,
+        5,
+        5,
+        3
+      ],
+      "after": [
+        5,
+        5,
+        5,
+        3
+      ]
+    },
+    {
+      "name": "talentProfiles",
+      "owner": "rules.balance.disciplines.profiles",
+      "before": {
+        "paladin": {
+          "power": 7,
+          "mana": 2,
+          "hp": 33,
+          "speed": 38
+        },
+        "mage": {
+          "power": 9,
+          "mana": 3,
+          "hp": 27,
+          "speed": 41
+        },
+        "ranger": {
+          "power": 8,
+          "mana": 2,
+          "hp": 29,
+          "speed": 41
+        }
+      },
+      "after": {
+        "paladin": {
+          "power": 7,
+          "mana": 2,
+          "hp": 33,
+          "speed": 38
+        },
+        "mage": {
+          "power": 9,
+          "mana": 3,
+          "hp": 27,
+          "speed": 41
+        },
+        "ranger": {
+          "power": 8,
+          "mana": 2,
+          "hp": 29,
+          "speed": 41
+        }
+      }
+    },
+    {
+      "name": "ceilings",
+      "owner": "rules.balance.instructors.skillCeilings",
+      "before": {
+        "thorn": 2,
+        "mire": 3,
+        "ridge": 4,
+        "warlord": 6,
+        "citadel": 8
+      },
+      "after": {
+        "thorn": 2,
+        "mire": 3,
+        "ridge": 4,
+        "warlord": 6,
+        "citadel": 8
+      }
+    },
+    {
+      "name": "expeditionCeilings",
+      "owner": "rules.balance.instructors.expeditionCeilings",
+      "before": {
+        "thorn": 2,
+        "mire": 3,
+        "ridge": 4,
+        "warlord": 5,
+        "citadel": 6
+      },
+      "after": {
+        "thorn": 2,
+        "mire": 3,
+        "ridge": 4,
+        "warlord": 5,
+        "citadel": 6
+      }
+    },
+    {
+      "name": "pursuitBurstSeconds",
+      "owner": "rules.balance.pursuit.burstSeconds",
+      "before": 1.2,
+      "after": 1.2
+    },
+    {
+      "name": "pursuitBurstMultiplier",
+      "owner": "rules.balance.pursuit.burstMultiplier",
+      "before": 1.5,
+      "after": 1.5
+    },
+    {
+      "name": "mercyStartRadius",
+      "owner": "rules.balance.pursuit.mercyStartRadius",
+      "before": 300,
+      "after": 300
+    },
+    {
+      "name": "costs",
+      "owner": "rules.balance.skills.costs",
+      "before": [
+        0,
+        0,
+        15,
+        10,
+        25,
+        40,
+        20,
+        45,
+        60
+      ],
+      "after": [
+        0,
+        0,
+        15,
+        10,
+        25,
+        40,
+        20,
+        45,
+        60
+      ]
+    },
+    {
+      "name": "cooldowns",
+      "owner": "rules.balance.skills.cooldowns",
+      "before": [
+        0,
+        0.85,
+        3,
+        8,
+        14,
+        9,
+        4,
+        15,
+        24
+      ],
+      "after": [
+        0,
+        0.85,
+        3,
+        8,
+        14,
+        9,
+        4,
+        15,
+        24
+      ]
+    }
+  ],
+  "styles": [
+    {
+      "name": "prototype",
+      "digest": "6ab38f537cdc3497f1a4d991ef2c356a902afc47ae232120b10f34acd78727fd"
+    },
+    {
+      "name": "desktop",
+      "digest": "4147703bdd1ba3474024189f046c03c879c6efb3bec91ec4df6f16d8c74b1213"
+    },
+    {
+      "name": "phone",
+      "digest": "8a4471bd96a206d6194fbcdac2541ca53ab5a38716a38f4eb2fe5af4de140d9e"
+    }
+  ],
+  "bossAttacks": [
+    {
+      "mode": "normal",
+      "family": "thorn",
+      "form": "normal",
+      "index": 0,
+      "digest": "4435aa8c73cb545d34c2a896f91195a5f0733d8582a2831f6fbc5544a4c3c722"
+    },
+    {
+      "mode": "normal",
+      "family": "thorn",
+      "form": "normal",
+      "index": 1,
+      "digest": "6d1c609ac6d3496047a083e195a591f75e923307519f0bce1655cf14267374c4"
+    },
+    {
+      "mode": "normal",
+      "family": "thorn",
+      "form": "normal",
+      "index": 2,
+      "digest": "1224d1a573c193cb149a438a7d638d27fa4b750958d4aa6bed3aab6a60a340ce"
+    },
+    {
+      "mode": "normal",
+      "family": "thorn",
+      "form": "normal",
+      "index": 3,
+      "digest": "85e9624792ecb3579a7b759e160583e71a9b613eda67fe2422e824f7cf02bebc"
+    },
+    {
+      "mode": "normal",
+      "family": "thorn",
+      "form": "true",
+      "index": 0,
+      "digest": "f5f3df9eef6a76cba756d338e5086481a4159367f35d7a5bb77256dd1e16ce9e"
+    },
+    {
+      "mode": "normal",
+      "family": "thorn",
+      "form": "true",
+      "index": 1,
+      "digest": "dbc8b491d0ed958361da1a02d2f71638b5cde26977aca1f82fab278f1c582694"
+    },
+    {
+      "mode": "normal",
+      "family": "thorn",
+      "form": "true",
+      "index": 2,
+      "digest": "11e890c57534f4769510644e35c9711846293be32c893107040595b139ee263e"
+    },
+    {
+      "mode": "normal",
+      "family": "thorn",
+      "form": "true",
+      "index": 3,
+      "digest": "31f2dbec29bd148ced8a556ab83ea4608f74eb93c33ce7ce828df37772fdd5f8"
+    },
+    {
+      "mode": "normal",
+      "family": "crypt",
+      "form": "normal",
+      "index": 0,
+      "digest": "dc7c349f2c27ce1b023405ed6d9ef7c54cf91b86c7d9b6ef024f62cfbef76aa8"
+    },
+    {
+      "mode": "normal",
+      "family": "crypt",
+      "form": "normal",
+      "index": 1,
+      "digest": "9a0e94c4a6309fd152c4c887d21bdf93d70a1229aa04a8b3b8c1a09be759e435"
+    },
+    {
+      "mode": "normal",
+      "family": "crypt",
+      "form": "normal",
+      "index": 2,
+      "digest": "c51bd744c33f66c856f9449e2f91926f01340e3fb15f709a9868d87bd61c54f6"
+    },
+    {
+      "mode": "normal",
+      "family": "crypt",
+      "form": "normal",
+      "index": 3,
+      "digest": "52c860b5a65cc620ac34dbe41f0f65641a6158cfadb3a38b699f42ab6f68c095"
+    },
+    {
+      "mode": "normal",
+      "family": "crypt",
+      "form": "true",
+      "index": 0,
+      "digest": "9a9e1eac676274dd816685adb00589693314e8948a741b505103dcdc96f7a88e"
+    },
+    {
+      "mode": "normal",
+      "family": "crypt",
+      "form": "true",
+      "index": 1,
+      "digest": "6104a13592a3165b67bd936ac6dd332d37aa59079b0bd80763dc4e1a035a9f61"
+    },
+    {
+      "mode": "normal",
+      "family": "crypt",
+      "form": "true",
+      "index": 2,
+      "digest": "038e0f4cd4d57221a22f6f91934c15f64dd47a9d9f4f21a78ba7b3d7b1a3b6e8"
+    },
+    {
+      "mode": "normal",
+      "family": "crypt",
+      "form": "true",
+      "index": 3,
+      "digest": "4a33d0828fcb649a9af0749b26f3d79639f7f206a7904ad97cc8550d7324bd88"
+    },
+    {
+      "mode": "normal",
+      "family": "mire",
+      "form": "normal",
+      "index": 0,
+      "digest": "042070f1855236f733375916dd575829b45d7dff60eb3d534d94abb52759266e"
+    },
+    {
+      "mode": "normal",
+      "family": "mire",
+      "form": "normal",
+      "index": 1,
+      "digest": "4367ce5bc9a556b85e070277c44a86afab9bc43d6024478a785072c959d50b79"
+    },
+    {
+      "mode": "normal",
+      "family": "mire",
+      "form": "normal",
+      "index": 2,
+      "digest": "8ad0170fc22c0593814f8a9d4ef7523e64f629231c51224c8203ca71fb5b8749"
+    },
+    {
+      "mode": "normal",
+      "family": "mire",
+      "form": "normal",
+      "index": 3,
+      "digest": "660ac45d4e8f707c0d2d6d9d038525b1fb7f72547b4de7e99acbd9eac9b1c70b"
+    },
+    {
+      "mode": "normal",
+      "family": "mire",
+      "form": "true",
+      "index": 0,
+      "digest": "92433f3b916da41396a5f0778a0c3ce117e92948cfd648ed9b9f149c00ba4650"
+    },
+    {
+      "mode": "normal",
+      "family": "mire",
+      "form": "true",
+      "index": 1,
+      "digest": "1eec5f27106fedc9a12ab01572c4247bf8e86f887b11fd1f1ee08aa5ff1df010"
+    },
+    {
+      "mode": "normal",
+      "family": "mire",
+      "form": "true",
+      "index": 2,
+      "digest": "795d0e266c285928e4833e1c3d6ddbc5ada37383010c87f9e75b9bc7644a75e0"
+    },
+    {
+      "mode": "normal",
+      "family": "mire",
+      "form": "true",
+      "index": 3,
+      "digest": "1884b46d064955d620f3ac3eff8da97d798722ff247d54ecbb9523b91aca534b"
+    },
+    {
+      "mode": "normal",
+      "family": "archive",
+      "form": "normal",
+      "index": 0,
+      "digest": "23640ded9aebda368db1dae29949613f391f7f249d3933c75e7034a4d944cdc3"
+    },
+    {
+      "mode": "normal",
+      "family": "archive",
+      "form": "normal",
+      "index": 1,
+      "digest": "cb3da9d4372d042cd5859fee6fc5bf7aaba3c270cb9a7e0758f4f9a513f58ea3"
+    },
+    {
+      "mode": "normal",
+      "family": "archive",
+      "form": "normal",
+      "index": 2,
+      "digest": "05cbc42cdfcac9c86b647d80a6e75073e3b19ec34ccaa6cad47882309999cb0b"
+    },
+    {
+      "mode": "normal",
+      "family": "archive",
+      "form": "normal",
+      "index": 3,
+      "digest": "f308169d171b91a8a9641b525438c9fdb46bbb2b4b3c59927b068f7029027fc6"
+    },
+    {
+      "mode": "normal",
+      "family": "archive",
+      "form": "true",
+      "index": 0,
+      "digest": "e675afb9d06abfcc56b51ce87a7ad9bd9c46b9bb9becc4967fab1bcf3a6cedec"
+    },
+    {
+      "mode": "normal",
+      "family": "archive",
+      "form": "true",
+      "index": 1,
+      "digest": "d2d7de9b013a34f00fb186129c1ed3157b10c20a48c02878fd9441d5911f6fb6"
+    },
+    {
+      "mode": "normal",
+      "family": "archive",
+      "form": "true",
+      "index": 2,
+      "digest": "8bc420ceab53c70e30ffce5b904a6d791c1876bdc7dc6b82fe730d3dad489a76"
+    },
+    {
+      "mode": "normal",
+      "family": "archive",
+      "form": "true",
+      "index": 3,
+      "digest": "1971d0dd3b778fb09b10f2f43ea6763965ac9b205d99e5c05516801b8851bf52"
+    },
+    {
+      "mode": "normal",
+      "family": "ridge",
+      "form": "normal",
+      "index": 0,
+      "digest": "3785061c99ada72102cf2583e171607d17b356fad46235388092f5995654d153"
+    },
+    {
+      "mode": "normal",
+      "family": "ridge",
+      "form": "normal",
+      "index": 1,
+      "digest": "a529965b5363b5caa81508cdaa6269943519927fb1d23a36e1e0d6bc3b803eca"
+    },
+    {
+      "mode": "normal",
+      "family": "ridge",
+      "form": "normal",
+      "index": 2,
+      "digest": "2b195dd0d4b1765a59f4619df2317b8cdc1b53efd3a1efe46345beffbd7384b4"
+    },
+    {
+      "mode": "normal",
+      "family": "ridge",
+      "form": "normal",
+      "index": 3,
+      "digest": "37827744bc95fea13412c2deb6593932a4fb9eaf24922d65f7e408fd229d97d6"
+    },
+    {
+      "mode": "normal",
+      "family": "ridge",
+      "form": "true",
+      "index": 0,
+      "digest": "a6e0cac44b50e291c529e9e7729a85db098885c87ad76af0d6c9e4e20a62fbc7"
+    },
+    {
+      "mode": "normal",
+      "family": "ridge",
+      "form": "true",
+      "index": 1,
+      "digest": "45b6088ab30fdec2747bb4872bfe5565405163196c3342fbca70af32c35b5e42"
+    },
+    {
+      "mode": "normal",
+      "family": "ridge",
+      "form": "true",
+      "index": 2,
+      "digest": "91330ffda359de31c9ff97b905d903113f0478758f29475168f3778c0229a257"
+    },
+    {
+      "mode": "normal",
+      "family": "ridge",
+      "form": "true",
+      "index": 3,
+      "digest": "f408c37269aa82c0cfef002f23e6044aefee7517c3036188ca435d321533a13c"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "normal",
+      "index": 0,
+      "digest": "c12b5980f84ba6672dea59f9cfc393dc529a2e929c14d90d8833b800b258c314"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "normal",
+      "index": 1,
+      "digest": "ed230910b0944edebdcc0b08b2569c3615fbcddef7960e05eb9e263763b0bf6e"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "normal",
+      "index": 2,
+      "digest": "8bb135eb4bc0204182b42035398885242a2d477c9ba86f47b4f0268aeac71d9a"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "normal",
+      "index": 3,
+      "digest": "ad8845db9f22b64503f883cda8bd58ca07e37f04abb2c783eeef855139ecb6de"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "normal",
+      "index": 4,
+      "digest": "5c5bdb4d2bb8d0bfea0b2cb2e2951145109dbf47be33904e1a7fdd2841ae65fc"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "true",
+      "index": 0,
+      "digest": "e66dc0d57eb545c4067001dccfb45566a9397c4d5b6d3390ca97789a81c1dde3"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "true",
+      "index": 1,
+      "digest": "f22f9ac09e38b2a3fb3cafd92dc67b57f886d22a47f07f4225ca3e1bd54e2d17"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "true",
+      "index": 2,
+      "digest": "4af60fd933a9d63a8e968b9823bbfbf318e62d451fd1cef25eb6af023e9ed47f"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "true",
+      "index": 3,
+      "digest": "30a1b22a9b5c644689c9e6d671e179c00e76588f1b5f4e2f80afac111c5da7b6"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "true",
+      "index": 4,
+      "digest": "12c842a3701456f2ee6b327a1ece0df000cee67b93d48af6fe6f19a288a979d9"
+    },
+    {
+      "mode": "normal",
+      "family": "warlord",
+      "form": "normal",
+      "index": 0,
+      "digest": "49d566208a2e37e3c92a11cb748249fd079de729f7db12b19e67b175c330a065"
+    },
+    {
+      "mode": "normal",
+      "family": "warlord",
+      "form": "normal",
+      "index": 1,
+      "digest": "c3e745ab1bfd20d1cdcb2481cedb1da564339c8c9be90bb0b281be972b1b46ad"
+    },
+    {
+      "mode": "normal",
+      "family": "warlord",
+      "form": "normal",
+      "index": 2,
+      "digest": "735932e37b7f6b04046ec280778eaaa76f22efcf7964903b6b08995366e645f6"
+    },
+    {
+      "mode": "normal",
+      "family": "warlord",
+      "form": "normal",
+      "index": 3,
+      "digest": "00bb9df47741f5b0316e08c24fe0f336ff3b6c2b7a862d353e419712e2ada7da"
+    },
+    {
+      "mode": "normal",
+      "family": "warlord",
+      "form": "true",
+      "index": 0,
+      "digest": "1dda37d4745986bf555f85a8d7c8908a6fce3bf8a5efd6a7427d95de7924ec04"
+    },
+    {
+      "mode": "normal",
+      "family": "warlord",
+      "form": "true",
+      "index": 1,
+      "digest": "161e76a81eef17ca63295fcfeeb1a57753a01f09229c5fa5be09c94aa43f1c4f"
+    },
+    {
+      "mode": "normal",
+      "family": "warlord",
+      "form": "true",
+      "index": 2,
+      "digest": "146af896429059ebd9781d18719d4c0b4d56106350cb32dc3d44a5c39739dc57"
+    },
+    {
+      "mode": "normal",
+      "family": "warlord",
+      "form": "true",
+      "index": 3,
+      "digest": "28af8f582e44fa008d75f0b5463c82c01abd2b8dbbbfef1ea5a752896c0965df"
+    },
+    {
+      "mode": "normal",
+      "family": "abyss",
+      "form": "normal",
+      "index": 0,
+      "digest": "3c7ddb39b059b55841f840cb6d2143de789422289f5f13c8509ff2b9965147b5"
+    },
+    {
+      "mode": "normal",
+      "family": "abyss",
+      "form": "normal",
+      "index": 1,
+      "digest": "b72b866045e49049f77774676a0cf1cbfd4d620daf49833ccd7db857a6b0a095"
+    },
+    {
+      "mode": "normal",
+      "family": "abyss",
+      "form": "normal",
+      "index": 2,
+      "digest": "5f2dfcdd31037aa60d7345c3aef1bbf6b37af280342990d68ef6567745400b24"
+    },
+    {
+      "mode": "normal",
+      "family": "abyss",
+      "form": "normal",
+      "index": 3,
+      "digest": "3d1f0e2c8f442396eea2a19852aa242cdd22f202ef7d1f85fde761ef6224538e"
+    },
+    {
+      "mode": "normal",
+      "family": "abyss",
+      "form": "true",
+      "index": 0,
+      "digest": "5b5cebfbc93ed4c1c1fbe07670dcfeb8bc891e3ba0347eb2b276d9f6f057e70c"
+    },
+    {
+      "mode": "normal",
+      "family": "abyss",
+      "form": "true",
+      "index": 1,
+      "digest": "11f3aeb32f3be967ee41f668d428de92ba37b8d2ea2db6f0cbb021e8a42dcea6"
+    },
+    {
+      "mode": "normal",
+      "family": "abyss",
+      "form": "true",
+      "index": 2,
+      "digest": "8367f06db0688e511ff4831750527be9e2e7d58886d3779a430a8167d3780e8a"
+    },
+    {
+      "mode": "normal",
+      "family": "abyss",
+      "form": "true",
+      "index": 3,
+      "digest": "6e1a67337814e623f882d7d2d2ab00fded0c11e3c57e3c7557bb6fb1812704b4"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "normal",
+      "index": 0,
+      "digest": "dd97946b6142ce6c11c226b9e389efdf7bf0ad906735fa83602dd6d9b7320141"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "normal",
+      "index": 1,
+      "digest": "ee69991a7f71d471425571cff65790eae64b5d34d5eb2ccbc5602ccf68baadfe"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "normal",
+      "index": 2,
+      "digest": "199afc62cdaf7bcefa42ba5d835d66bcd36d40aee3e757bf2b610401e5c38dac"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "normal",
+      "index": 3,
+      "digest": "7a8aaea666df597b7f6d91dfd07255dd336cb7e7b9a8595414f458d5507d90cc"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "normal",
+      "index": 4,
+      "digest": "29f03fe41973be3559b32a669a4aa125a54f7846a0f571bd8280e71862029fec"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "true",
+      "index": 0,
+      "digest": "9f473c83dcecda3954310d6c1eaa6f80f57935e729e497756e49bdf078b0c2aa"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "true",
+      "index": 1,
+      "digest": "0105dcff23894024ecb816903bab76faf38d6b4dc9a8fcf0aa87233101633cfb"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "true",
+      "index": 2,
+      "digest": "0958e834ffab5e8487968272e21f2567430647e075bca4e6d62ec8913f670179"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "true",
+      "index": 3,
+      "digest": "36011cd1f695bb066cd3368670758c33e54cda6ac0c1e346ee345fefaad28945"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "true",
+      "index": 4,
+      "digest": "821a30a7870bedec1c023bacfe4dddba1d9fa9a02080c0f79718f087bdd7c85c"
+    },
+    {
+      "mode": "normal",
+      "family": "cindermaw",
+      "form": "normal",
+      "index": 0,
+      "digest": "38f81dcd89952589eb6a510f5846d1d6af8d57d141d1d42a342b98b657dc5531"
+    },
+    {
+      "mode": "normal",
+      "family": "cindermaw",
+      "form": "normal",
+      "index": 1,
+      "digest": "772cb1513406bf495ef6fbe88330c95a04f82f09e0b530bbe130280e364bbffe"
+    },
+    {
+      "mode": "normal",
+      "family": "cindermaw",
+      "form": "normal",
+      "index": 2,
+      "digest": "60ba2a700e6a103f783117ab7a64a4ef61f6c29f543adb8c5cbce9949c556970"
+    },
+    {
+      "mode": "normal",
+      "family": "cindermaw",
+      "form": "normal",
+      "index": 3,
+      "digest": "fb64c2813e2c489ce9d7724245cdfc282706c43af533cdbc823327262b2a3855"
+    },
+    {
+      "mode": "normal",
+      "family": "cindermaw",
+      "form": "true",
+      "index": 0,
+      "digest": "2689cb19f51b6afc6f615e67dba34ab28d05427a4faf6d0585aa84e69349bfe6"
+    },
+    {
+      "mode": "normal",
+      "family": "cindermaw",
+      "form": "true",
+      "index": 1,
+      "digest": "693e54863603212e0381e14a7ddbbdcc7e46b790ac0d1d280eae4c3a65cfb04d"
+    },
+    {
+      "mode": "normal",
+      "family": "cindermaw",
+      "form": "true",
+      "index": 2,
+      "digest": "2197283a66ddc007ee9b14ebc6a890f4d8f3860484bb8e6f8b9e8f6b5e97d330"
+    },
+    {
+      "mode": "normal",
+      "family": "cindermaw",
+      "form": "true",
+      "index": 3,
+      "digest": "fa903ba378d2d2c8fceef9f5dea41ed172bec3f252ffc91853ae3e52ec9bdf5f"
+    },
+    {
+      "mode": "normal",
+      "family": "darklord",
+      "form": "normal",
+      "index": 0,
+      "digest": "0a2877337cfc5f5688bf4f221bc0c8f26024dee53aad063fa4932f8bd2681fe8"
+    },
+    {
+      "mode": "normal",
+      "family": "darklord",
+      "form": "normal",
+      "index": 1,
+      "digest": "fd971a6e0cd0f3ec0d03b5c543aab196d54ccd2fb5ca097d0f660c812924d528"
+    },
+    {
+      "mode": "normal",
+      "family": "darklord",
+      "form": "normal",
+      "index": 2,
+      "digest": "e245e1532a21473efdb88850ba7d7466d6d7e23b916e69e5a795e5b936928b41"
+    },
+    {
+      "mode": "normal",
+      "family": "darklord",
+      "form": "normal",
+      "index": 3,
+      "digest": "5d4b49ba5a89e0a23477348c8e8f4f2e0ab81b35015b4ef2bca73295e6372ee4"
+    },
+    {
+      "mode": "normal",
+      "family": "darklord",
+      "form": "true",
+      "index": 0,
+      "digest": "9f7470f57f9d0eb1ccd67c6428115784c20ae452a9f2052b7f0d4131fec27362"
+    },
+    {
+      "mode": "normal",
+      "family": "darklord",
+      "form": "true",
+      "index": 1,
+      "digest": "6703e8b24f071d859b67b660f1b209b1a7dcd28f430c97de60d52b20f282de1a"
+    },
+    {
+      "mode": "normal",
+      "family": "darklord",
+      "form": "true",
+      "index": 2,
+      "digest": "e9c879061e81b9c03481f88124224c3c4ec6c060f760a07802894186fba42df0"
+    },
+    {
+      "mode": "normal",
+      "family": "darklord",
+      "form": "true",
+      "index": 3,
+      "digest": "c6c0fc4be54b5dae6dec9e2fa6755b70609a105a87f4c33e51288c6caae77e44"
+    },
+    {
+      "mode": "nightmare",
+      "family": "thorn",
+      "form": "normal",
+      "index": 0,
+      "digest": "97dde67811233365f1485937c1d5de46d805ad5e3da6840a134422ae4f9862d8"
+    },
+    {
+      "mode": "nightmare",
+      "family": "thorn",
+      "form": "normal",
+      "index": 1,
+      "digest": "8249c179622cc984269ffe15603d4791ed95622c1cc464c71e3512058e599c90"
+    },
+    {
+      "mode": "nightmare",
+      "family": "thorn",
+      "form": "normal",
+      "index": 2,
+      "digest": "ba9bbccd3a1f99580aabd68cd361e1ddc2325c945e3ffb967256db5c2008d4b1"
+    },
+    {
+      "mode": "nightmare",
+      "family": "thorn",
+      "form": "normal",
+      "index": 3,
+      "digest": "a24676d244fddd0d8ee0ea4910bbbf573332b5f00c4ff7d96e1e4bc627c5b441"
+    },
+    {
+      "mode": "nightmare",
+      "family": "thorn",
+      "form": "true",
+      "index": 0,
+      "digest": "2e03fd84710ae6680f2442e5a8ea1ce16ea4c414818792e95e34ac75d7566ea2"
+    },
+    {
+      "mode": "nightmare",
+      "family": "thorn",
+      "form": "true",
+      "index": 1,
+      "digest": "102a5ab0b32573c58466b1af4445c65866c7fc9b23d3632139ecd7d11c48421b"
+    },
+    {
+      "mode": "nightmare",
+      "family": "thorn",
+      "form": "true",
+      "index": 2,
+      "digest": "942b15fdc7e47222eceffc7ac319247749cde8cf85b350a2983ee03f03c337c1"
+    },
+    {
+      "mode": "nightmare",
+      "family": "thorn",
+      "form": "true",
+      "index": 3,
+      "digest": "522d55d5ff4dd34e417f018d0ed45cf357bb5c45e8d5bf13c925b219f1d376de"
+    },
+    {
+      "mode": "nightmare",
+      "family": "crypt",
+      "form": "normal",
+      "index": 0,
+      "digest": "e933c45e1b6855475caf993bc0c4ecfe759f132d57773268ab16b6edeee6447c"
+    },
+    {
+      "mode": "nightmare",
+      "family": "crypt",
+      "form": "normal",
+      "index": 1,
+      "digest": "2a25e3dcf2137764ffb4432f1b66bce56fd11a838eabd0048ed8f7ce7394be22"
+    },
+    {
+      "mode": "nightmare",
+      "family": "crypt",
+      "form": "normal",
+      "index": 2,
+      "digest": "a251d1a74cb76f8cffa57288f4b79af4cb7d5bedf376bf43ae4e0a3a2199e657"
+    },
+    {
+      "mode": "nightmare",
+      "family": "crypt",
+      "form": "normal",
+      "index": 3,
+      "digest": "dfecf73f641edfed4889e588dd15d8e57de7f2083ee6a3b6e21a85657d572a55"
+    },
+    {
+      "mode": "nightmare",
+      "family": "crypt",
+      "form": "true",
+      "index": 0,
+      "digest": "0894415dd1008f1385379b65608c626f231dd112dacb33ab2d7f0bc8cec948df"
+    },
+    {
+      "mode": "nightmare",
+      "family": "crypt",
+      "form": "true",
+      "index": 1,
+      "digest": "6ae179005553bb3a18edba161e9b9a729c1cd7194fd13d97963480f7e693593f"
+    },
+    {
+      "mode": "nightmare",
+      "family": "crypt",
+      "form": "true",
+      "index": 2,
+      "digest": "38a5845c527365a6eac758b4489c2d5f65d89b148572c02a5bc1399d5fd46933"
+    },
+    {
+      "mode": "nightmare",
+      "family": "crypt",
+      "form": "true",
+      "index": 3,
+      "digest": "799c5d808f1f862947db763e6891607583783b17783d38e33c31aa6862222709"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mire",
+      "form": "normal",
+      "index": 0,
+      "digest": "3918c0f136ccecc433d92c775d508bd4741413f2a6bf38ad5d4a170fa95367cb"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mire",
+      "form": "normal",
+      "index": 1,
+      "digest": "4021f347e07b2a57722a70e987c32754847175697357acc054e5c58c972de35d"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mire",
+      "form": "normal",
+      "index": 2,
+      "digest": "0a5ee06174fa4f315ab42f25f096ca9764fbf6ab286159476e6f793436e38bb2"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mire",
+      "form": "normal",
+      "index": 3,
+      "digest": "c59e91f943d62fa5380a82aca47178ff87e056979ec16ff374ba9f62e78ce9d2"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mire",
+      "form": "true",
+      "index": 0,
+      "digest": "c31f6b07a46a1822bef90ed13c07a4ff731964effe1ccbf0cab9e489343a3044"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mire",
+      "form": "true",
+      "index": 1,
+      "digest": "86a8f47efa0b2daf2faefe1a4ef2cc3d8faf36ed52f6ee93e93612aec695d31a"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mire",
+      "form": "true",
+      "index": 2,
+      "digest": "3e1d0efe0a01a8b4ef4907174144aed4eaf8628bff4b7bb53731ae6350d66ce9"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mire",
+      "form": "true",
+      "index": 3,
+      "digest": "005e969da0c011c96b3847cdc370a7eb9f59bd48ac7b69281460bc7c6c2b3cfb"
+    },
+    {
+      "mode": "nightmare",
+      "family": "archive",
+      "form": "normal",
+      "index": 0,
+      "digest": "7f3f79df215639f044605647ec173a4bfe543cc2877bf184ff807f9fbd3fe737"
+    },
+    {
+      "mode": "nightmare",
+      "family": "archive",
+      "form": "normal",
+      "index": 1,
+      "digest": "f6056678fe8c061d8aaee5d170455318d833d72f477976f58a5f5c9630f5c2de"
+    },
+    {
+      "mode": "nightmare",
+      "family": "archive",
+      "form": "normal",
+      "index": 2,
+      "digest": "d462a1a856887c3bf6f6374907986fd8790cd298c9e57c6106933ecf756c7112"
+    },
+    {
+      "mode": "nightmare",
+      "family": "archive",
+      "form": "normal",
+      "index": 3,
+      "digest": "b94458133528bc482c0431c89c4455a44fa53b3120ac0af306e1707502e0b0e4"
+    },
+    {
+      "mode": "nightmare",
+      "family": "archive",
+      "form": "true",
+      "index": 0,
+      "digest": "0e9927d2455f935934bb4909360571c670a82a3500d464333550fed244de4953"
+    },
+    {
+      "mode": "nightmare",
+      "family": "archive",
+      "form": "true",
+      "index": 1,
+      "digest": "5cc6d507ec68e59f996d430d6bf51b3e9b6c7bb820b8ed983baff35ddc11ebe0"
+    },
+    {
+      "mode": "nightmare",
+      "family": "archive",
+      "form": "true",
+      "index": 2,
+      "digest": "a75d000aa642581128087a59a018b795ccd9c51b2e82b6b5a5a6983b27f56e5a"
+    },
+    {
+      "mode": "nightmare",
+      "family": "archive",
+      "form": "true",
+      "index": 3,
+      "digest": "2d348639c1b1addf6eacc3ad41f52a45e1b16491c1dda388efffb9634abff710"
+    },
+    {
+      "mode": "nightmare",
+      "family": "ridge",
+      "form": "normal",
+      "index": 0,
+      "digest": "f97a51bf3bdfbf5416f568ba845948dfc1193919a0b8ea6854b72e8d530fd364"
+    },
+    {
+      "mode": "nightmare",
+      "family": "ridge",
+      "form": "normal",
+      "index": 1,
+      "digest": "4001a3ca498803345dfefb5aef0d88e3a75dbabc1135ed2e4fbaec717ea2cf0c"
+    },
+    {
+      "mode": "nightmare",
+      "family": "ridge",
+      "form": "normal",
+      "index": 2,
+      "digest": "92c5bf603aff2265bb3f4c28df2ce9bf7a2489859b56212635a24ac413595cd6"
+    },
+    {
+      "mode": "nightmare",
+      "family": "ridge",
+      "form": "normal",
+      "index": 3,
+      "digest": "e35dd100a49133d8da1d69d2afabd4f72f19e2b3241b3c7a2301c5ed5cbf0b5d"
+    },
+    {
+      "mode": "nightmare",
+      "family": "ridge",
+      "form": "true",
+      "index": 0,
+      "digest": "186240e81591f8b39200e397e50bf1407a1a7b2c02abc72ee0efa181662edac7"
+    },
+    {
+      "mode": "nightmare",
+      "family": "ridge",
+      "form": "true",
+      "index": 1,
+      "digest": "2dccbca542ed5d3fe98434f45d7af4820175d99d06e805c94a445ac549220866"
+    },
+    {
+      "mode": "nightmare",
+      "family": "ridge",
+      "form": "true",
+      "index": 2,
+      "digest": "040b4b4b7b302d2c9c7615fec7e6cd160b2f03d862e19d9f0caebbe7d804ea82"
+    },
+    {
+      "mode": "nightmare",
+      "family": "ridge",
+      "form": "true",
+      "index": 3,
+      "digest": "cdcc91026d6a1730c91add1dafa227d627eaa5c0865285ad274b234f0a70e030"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "normal",
+      "index": 0,
+      "digest": "839570b7b1b5d1c32cabb183d64f439719a1ad16b1e12f080f337bb1f5eddbb0"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "normal",
+      "index": 1,
+      "digest": "0d6502cd525d1e46d96cc049f92dedc6c2ea40230aec13dec02c1d9cd2680f95"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "normal",
+      "index": 2,
+      "digest": "a5704d9985157127bb6f62f9554ae176940e0711053b6659affbe282dcb551d9"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "normal",
+      "index": 3,
+      "digest": "553b97cc8b4afe832ba0f52d4f37bf280292e57d7a45c90a136e7edaecbababa"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "normal",
+      "index": 4,
+      "digest": "43e5b56a22c8a00d30eabee2d32dded71f747c7f6d28bdeca0d2cc075436d204"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "true",
+      "index": 0,
+      "digest": "dfbf934a4be2de79be4f25f9805fe529e3c8def218d6bee6ec34eeb933f56bed"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "true",
+      "index": 1,
+      "digest": "13a7b6df3df7aa6b7d11e2351ef9e6e86d82c5d9d22b8916339c0339ae38d0cb"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "true",
+      "index": 2,
+      "digest": "8b921df6ee4940772b55616cc770ea3b52cef2532a4a9fcce3798c56e3335454"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "true",
+      "index": 3,
+      "digest": "cd42c6ee9905b61a3a65a4e9c85559cfce8fb88ad18e2c7c2d88cd00b60fbe92"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "true",
+      "index": 4,
+      "digest": "e40bbbea8ac7fb41f79fc0164ec23f86e98876080111f4d4a7fff9616fb243c8"
+    },
+    {
+      "mode": "nightmare",
+      "family": "warlord",
+      "form": "normal",
+      "index": 0,
+      "digest": "bcbd86680cc846bf71744d7754d3c6e69e4206ab442c2edbabc151004695fd1a"
+    },
+    {
+      "mode": "nightmare",
+      "family": "warlord",
+      "form": "normal",
+      "index": 1,
+      "digest": "53d475a496d6832671c06eceefe41ab9f922fc787f272f898a5d9c64a2db8ada"
+    },
+    {
+      "mode": "nightmare",
+      "family": "warlord",
+      "form": "normal",
+      "index": 2,
+      "digest": "a4fdeabe51f2ee1097b82dabf4801065c603faec322e39f0742fa4b23063d70d"
+    },
+    {
+      "mode": "nightmare",
+      "family": "warlord",
+      "form": "normal",
+      "index": 3,
+      "digest": "41bf73a9caf10612ea7adfe8eaf6b4c60c155ed19dca868c8526cdfc24234376"
+    },
+    {
+      "mode": "nightmare",
+      "family": "warlord",
+      "form": "true",
+      "index": 0,
+      "digest": "9d1c17a3a7e0ad7b974ae79deee7db3044a89f5f93500a1c4a2edce984d48c9a"
+    },
+    {
+      "mode": "nightmare",
+      "family": "warlord",
+      "form": "true",
+      "index": 1,
+      "digest": "24e2cc06442073bea57b08d780100fc486edc4266752139f5c6a15dede9d0cf4"
+    },
+    {
+      "mode": "nightmare",
+      "family": "warlord",
+      "form": "true",
+      "index": 2,
+      "digest": "e66911469ff55243de443d4e7584b7e53b8c4f74473dc8b8976080ba5419ac9c"
+    },
+    {
+      "mode": "nightmare",
+      "family": "warlord",
+      "form": "true",
+      "index": 3,
+      "digest": "266cc8fe6b1d6d3f54c5383414078f8eb9e318f8c5ef215a245ad9f4ceb19073"
+    },
+    {
+      "mode": "nightmare",
+      "family": "abyss",
+      "form": "normal",
+      "index": 0,
+      "digest": "631170b017a67a37861172169cad3ba3f84f99fd5bddd6f5eba60296b2de0722"
+    },
+    {
+      "mode": "nightmare",
+      "family": "abyss",
+      "form": "normal",
+      "index": 1,
+      "digest": "dee006cb522c92bb9926ecde89e9a7a7c697960a7fa8be1a3603f3f578efce47"
+    },
+    {
+      "mode": "nightmare",
+      "family": "abyss",
+      "form": "normal",
+      "index": 2,
+      "digest": "706170da7521349ca69362c52ae3852addc6962c3170e3530c99420e22d69cdc"
+    },
+    {
+      "mode": "nightmare",
+      "family": "abyss",
+      "form": "normal",
+      "index": 3,
+      "digest": "6e4277ce03f6ba42879d486d6415bd38008a4eb5873dc69095d8776491dc3adb"
+    },
+    {
+      "mode": "nightmare",
+      "family": "abyss",
+      "form": "true",
+      "index": 0,
+      "digest": "795155ce04ae83cb5ec990f272746e6f6dc74af9cf9548ccbda3310e0e69fb1c"
+    },
+    {
+      "mode": "nightmare",
+      "family": "abyss",
+      "form": "true",
+      "index": 1,
+      "digest": "f17d87bb2ca2083d7edc09f82fe08c55570e496bec0e54ca4d2146bf6657ea75"
+    },
+    {
+      "mode": "nightmare",
+      "family": "abyss",
+      "form": "true",
+      "index": 2,
+      "digest": "6f75c7f66b0bcc18d700b02de06f1fcf7cba3f1d6f03280ffad64fbb4b783d68"
+    },
+    {
+      "mode": "nightmare",
+      "family": "abyss",
+      "form": "true",
+      "index": 3,
+      "digest": "4ccd5a5a7e6e03834bec212e8231973321e08974cfbe516a43fc98010ac9f2fd"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "normal",
+      "index": 0,
+      "digest": "0dd84ad9f4c60b9abb6fb199edbdbb504cac005683ab8c5d6beac37041dd35a8"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "normal",
+      "index": 1,
+      "digest": "2e1781926ff3f07fbbb91500cf0c54fca7be675cbe8aed716740e66257ba7210"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "normal",
+      "index": 2,
+      "digest": "afb2793513cea5d2fdb4a697d667662ddfe8f99358e0460ba86d18b4673b3ae9"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "normal",
+      "index": 3,
+      "digest": "deac8421f90191e7ef603ed0ee2c347238963a16d3a6074b49e09892f280c153"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "normal",
+      "index": 4,
+      "digest": "bdbe75775704ec0709bdf421005f9532eb34a71e53ee5f6a4acab22c45be02f1"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "true",
+      "index": 0,
+      "digest": "e332351b31729ab4fe01d451ca2184a457e04e2124c9fc201cce84215d283fd8"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "true",
+      "index": 1,
+      "digest": "6a6a9e03f34f7dc554e40948e8130fa00a1ad2fd70e6ab6b91bfebfc08a843a1"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "true",
+      "index": 2,
+      "digest": "7abbb1879a7accb7d20d7dde921023f490b3aa1c52804062dea40a2d3753e4b1"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "true",
+      "index": 3,
+      "digest": "8740e92c98c1898a20a7be452e8dd7ccb8f2a435c25fe4a8ad49618af61e7cf8"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "true",
+      "index": 4,
+      "digest": "4e2c4d9b360f29d4f452cd4fd84d5faa94ac8935b1ed7872560befbe1d719929"
+    },
+    {
+      "mode": "nightmare",
+      "family": "cindermaw",
+      "form": "normal",
+      "index": 0,
+      "digest": "da3bddc620f4718ad318934dc188426ca6bc516036764dc7dbe1910876d17c94"
+    },
+    {
+      "mode": "nightmare",
+      "family": "cindermaw",
+      "form": "normal",
+      "index": 1,
+      "digest": "b392c6a0be790accca0a806cef7014fc3f7eb3c7f267b57c87c8cea2543594da"
+    },
+    {
+      "mode": "nightmare",
+      "family": "cindermaw",
+      "form": "normal",
+      "index": 2,
+      "digest": "bdf211a45ab61e4f6aeecb9e753938e2d7f6a0893e605d2b27bf60ba5c6f8fc2"
+    },
+    {
+      "mode": "nightmare",
+      "family": "cindermaw",
+      "form": "normal",
+      "index": 3,
+      "digest": "8b100b8bf872f486d704ca7e47341d8c3b9662eb2f85eee7fa3dab8bb110f783"
+    },
+    {
+      "mode": "nightmare",
+      "family": "cindermaw",
+      "form": "true",
+      "index": 0,
+      "digest": "d8c8d12356d05e1222c094a50ba50b638f53f5934c2e0b0f05483c6965a905b4"
+    },
+    {
+      "mode": "nightmare",
+      "family": "cindermaw",
+      "form": "true",
+      "index": 1,
+      "digest": "da93736999b5ce47cb9c19c15133b4181837989adbd5ac7c599f42058598bafc"
+    },
+    {
+      "mode": "nightmare",
+      "family": "cindermaw",
+      "form": "true",
+      "index": 2,
+      "digest": "88689080cae9c5edd5866b293fd07898fda032513654d6ecd5f54073c40d47a5"
+    },
+    {
+      "mode": "nightmare",
+      "family": "cindermaw",
+      "form": "true",
+      "index": 3,
+      "digest": "7f893d3fb8db5483f61099e93e50a162dcdb8f6315b274ac9603b4ace01d3749"
+    },
+    {
+      "mode": "nightmare",
+      "family": "darklord",
+      "form": "normal",
+      "index": 0,
+      "digest": "30f5341b93300e85e4eed231c3756a14f4bf2b85f420b70f8b1db5abeb6ef555"
+    },
+    {
+      "mode": "nightmare",
+      "family": "darklord",
+      "form": "normal",
+      "index": 1,
+      "digest": "e7856640dc18febf1c49aed4af4fdf8ae0212641eb5f0c2e193b71b382ca6cf6"
+    },
+    {
+      "mode": "nightmare",
+      "family": "darklord",
+      "form": "normal",
+      "index": 2,
+      "digest": "2a079dfc31e33c080f6f966b46274a578856d5267c0692d63f3af4a3dbfe5af9"
+    },
+    {
+      "mode": "nightmare",
+      "family": "darklord",
+      "form": "normal",
+      "index": 3,
+      "digest": "4cd2dffd123a85cfc083ef39c34a529471989a07f3aecf99858ea6799e9555a1"
+    },
+    {
+      "mode": "nightmare",
+      "family": "darklord",
+      "form": "true",
+      "index": 0,
+      "digest": "4306f82467eb9e2103d6ed49f5bfc3b955ed2ac2227b9ca9467dcadef2e745a4"
+    },
+    {
+      "mode": "nightmare",
+      "family": "darklord",
+      "form": "true",
+      "index": 1,
+      "digest": "3e8e3f5d9e961b0ee526f8b42a626ea2091ad3809dce86866486239b4b3168ae"
+    },
+    {
+      "mode": "nightmare",
+      "family": "darklord",
+      "form": "true",
+      "index": 2,
+      "digest": "40ff9846d0bb32f0d0c2907162c54fd2ad27109ff9fe5052809c219f0c1654f4"
+    },
+    {
+      "mode": "nightmare",
+      "family": "darklord",
+      "form": "true",
+      "index": 3,
+      "digest": "57124b3283c8632e3a67c79ea2dfb762de228e98b1bebe3c91ed6bf9237ad1d1"
+    }
+  ],
+  "liveComparisons": 427
+}

@@ -272,8 +272,19 @@ await check('Skill 2 and party-heal charge states are target-stable and honest '
  await page.locator('#skill-2').evaluate(el=>el.onpointerup({pointerType:'touch',pointerId:303}));
  const afterInvalid=await page.evaluate(()=>({mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[1]}));assert.deepEqual(afterInvalid,beforeInvalid,'NO TARGET release spends neither MP nor cooldown');
  await page.evaluate(()=>{const c=Prototype.game,e=c.zone().enemies[0];c.hero.cd[1]=0;c.hero.mp=100;Object.assign(e,{x:720,y:900,hp:e.maxHp});c.s.heroTarget=e.id;c.effects=[];});
- await page.locator('#skill-2').evaluate(el=>{el.setPointerCapture=()=>{};el.onpointerdown({pointerType:'touch',pointerId:304,preventDefault(){}});});await page.waitForTimeout(350);await page.locator('#skill-2').evaluate(el=>el.onpointerup({pointerType:'touch',pointerId:304}));
- const canceled=await page.evaluate(()=>({mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[1],hp:Prototype.game.zone().enemies[0].hp,max:Prototype.game.zone().enemies[0].maxHp}));assert.equal(canceled.mp,100,'incomplete hold keeps MP');assert.equal(canceled.cd,0,'incomplete hold keeps cooldown');assert.equal(canceled.hp,canceled.max,'incomplete hold does not unexpectedly fire normal Skill 2');
+ // Keep this boundary probe inside one browser turn: separate runner calls
+ // can turn a requested 350ms wait into a completed charge on a slow viewport.
+ // Native keyboard/mouse/touch hold-and-release coverage above uses real time.
+ const canceled=await page.locator('#skill-2').evaluate(el=>{
+   const descriptor=Object.getOwnPropertyDescriptor(performance,'now');let now=performance.now();
+   try{
+     Object.defineProperty(performance,'now',{configurable:true,value:()=>now});
+     el.setPointerCapture=()=>{};el.onpointerdown({pointerType:'touch',pointerId:304,preventDefault(){}});
+     now+=350;
+     const held=Prototype.chargePresentation();el.onpointerup({pointerType:'touch',pointerId:304});
+     return {held,mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[1],hp:Prototype.game.zone().enemies[0].hp,max:Prototype.game.zone().enemies[0].maxHp};
+   }finally{if(descriptor)Object.defineProperty(performance,'now',descriptor);else delete performance.now;}
+ });assert(canceled.held?.state==='charging'&&!canceled.held.ready,'350ms is an incomplete charge');assert.equal(canceled.mp,100,'incomplete hold keeps MP');assert.equal(canceled.cd,0,'incomplete hold keeps cooldown');assert.equal(canceled.hp,canceled.max,'incomplete hold does not unexpectedly fire normal Skill 2');
  await page.evaluate(()=>{const c=Prototype.game;c.zone().enemies=[];c.hero.cd[2]=0;c.hero.mp=100;c.hero.hp=c.hero.maxHp;c.s.party=[];});
  await page.locator('#skill-3').evaluate(el=>{el.setPointerCapture=()=>{};el.onpointerdown({pointerType:'touch',pointerId:305,preventDefault(){}});});
  await page.waitForFunction(()=>document.querySelector('#skill-3 small')?.textContent==='NO HEAL',{timeout:1800});

@@ -4179,6 +4179,22 @@
   // Live balance ownership. Arrays retain their original slot/tier indices and fallbacks.
   // Historical migration mappings and procedural coordinates intentionally remain separate.
   const balance = {
+    economy: {
+      startingCrowns: 30,
+      deathPenaltyFraction: 0.2,
+      preparationTonicCost: 70,
+      reforgePriceDivisor: 2,
+    },
+    rewards: {
+      trueBossMultiplier: 2,
+      awakenedBossCrowns: [500, 600, 700, 800, 1000],
+      awakenedBossXp: [1000, 1250, 1500, 1750, 2000],
+      dungeonClearCrowns: [100, 220, 400, 650, 900],
+      fieldCaptainCrownsMultiplier: 2.5,
+      fieldCaptainXpMultiplier: 2,
+      ringleaderMultiplier: 1.5,
+      roomGuardCrownsFraction: 0.35,
+    },
     classes: {
       paladin: { icon: '🛡️', hp: 120, mp: 60, power: 18, armor: 8, speed: 300 },
       mage: { icon: '🧙‍♀️', hp: 90, mp: 100, power: 22, armor: 3, speed: 300 },

@@ -504,7 +504,7 @@
         '\nXP ' +
         Math.floor(h.xp) +
         ' / ' +
-        Campaign.rules.balance.growth.xpPerLevel * h.level +
+        game.xpRequired(h.level) +
         '\nHero progression only. Troops, resources and construction are managed at town Captains or your barracks.',
       [
         action('Skills and teachers', () => skillBook(characterMenu)),
@@ -638,7 +638,9 @@
                 cost === 0
                   ? 'FIRST BARRACKS FREE · Creates a nearby companion recovery base'
                   : rank >= 4
-                    ? 'One companion builds a Basic camp · optional Full upgrade costs 100 crowns'
+                    ? 'One companion builds a Basic camp · optional Full upgrade costs ' +
+                      game.barracksUpgradeCost() +
+                      ' crowns'
                     : 'One companion builds a recovery base; Full upgrade unlocks at Expedition 4',
                 game.hero.gold < cost,
               ),
@@ -707,7 +709,9 @@
       'Choose your successor',
       'The ' +
         game.hero.class +
-        ' has fallen permanently. The death penalty has already removed 20% of carried crowns; the remaining crowns, rescues, quests and boss progress survive. Your successor starts at level 1 in Millhaven and must learn their skills.',
+        ' has fallen permanently. The death penalty has already removed ' +
+        Math.round(Campaign.rules.balance.economy.deathPenaltyFraction * 100) +
+        '% of carried crowns; the remaining crowns, rescues, quests and boss progress survive. Your successor starts at level 1 in Millhaven and must learn their skills.',
       Object.entries(Campaign.classes)
         .filter(([id]) => !game.s.challenge.fallen.includes(id))
         .map(([id, c]) =>
@@ -820,7 +824,7 @@
         const i = game.regionIndex(),
           r = D.regions[i],
           target = D.regions[i + n.direction],
-          cost = n.direction === 1 ? (game.s.recovery[r.id] ? 0 : r.fare) : 0;
+          cost = game.travelFare(D.regions.indexOf(r), n.direction);
         openMenu(
           n.name,
           'Fare ' +
@@ -1671,7 +1675,7 @@
       ' crowns</span><span>XP ' +
       Math.floor(h.xp) +
       ' / ' +
-      Campaign.rules.balance.growth.xpPerLevel * h.level +
+      game.xpRequired(h.level) +
       '</span></div>';
     const heroEffects = h.supportEffects || [],
       activeRecovery = heroEffects.slice().sort((a, b) => a.seconds - b.seconds)[0];

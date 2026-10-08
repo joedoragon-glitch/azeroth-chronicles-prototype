@@ -1,6 +1,6 @@
 {
   "name": "azeroth-chronicles-prototype",
-  "version": "0.8.88",
+  "version": "0.8.89",
   "private": true,
   "description": "Offline installable RPG prototype for Chromebook and mobile.",
   "scripts": {
@@ -10,8 +10,8 @@
     "build": "node scripts/build.cjs",
     "check": "node scripts/build.cjs --check && node scripts/sprite-pipeline.cjs check",
     "dev": "node scripts/dev.cjs",
-    "format": "prettier --write \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\" \"tools/sprites/*.{js,css,html,json}\" tests/sprite-pipeline.test.cjs tests/sprite-showroom-browser.test.cjs tests/regional-handoffs.test.cjs tests/ironroot-highlands.test.cjs",
-    "format:check": "prettier --check \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\" \"tools/sprites/*.{js,css,html,json}\" tests/sprite-pipeline.test.cjs tests/sprite-showroom-browser.test.cjs tests/regional-handoffs.test.cjs tests/ironroot-highlands.test.cjs",
+    "format": "prettier --write \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs tests/campaign-domains.test.cjs tests/economy.test.cjs \"tests/helpers/*.cjs\" \"tools/sprites/*.{js,css,html,json}\" tests/sprite-pipeline.test.cjs tests/sprite-showroom-browser.test.cjs tests/regional-handoffs.test.cjs tests/ironroot-highlands.test.cjs",
+    "format:check": "prettier --check \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs tests/campaign-domains.test.cjs tests/economy.test.cjs \"tests/helpers/*.cjs\" \"tools/sprites/*.{js,css,html,json}\" tests/sprite-pipeline.test.cjs tests/sprite-showroom-browser.test.cjs tests/regional-handoffs.test.cjs tests/ironroot-highlands.test.cjs",
     "sprite:check": "node scripts/sprite-pipeline.cjs check",
     "sprite:catalog": "node scripts/sprite-pipeline.cjs catalog",
     "sprite:contracts": "node scripts/sprite-pipeline.cjs contracts",

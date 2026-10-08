@@ -1,0 +1,4433 @@
+{
+  "baseline": "c6c57b5d5f4efc429da318e319ce906e4026a416",
+  "scenarios": [
+    {
+      "tag": "normal/paladin/standard",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "0780a957c275f385518e8b136cd58c7adcc3d5f80d1d1fab8227b5385125652d"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "075ce286d28ec5b367423f3412fce3f99d4754a6008b5ba27e641b00c09c0272"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "4769faec7542d2fa44b69dadc2267ad43acd2d383de15de15c2016096bfcf237"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "850112a77b034a43ee8a8e45bab1f87dfafac3644f3144ee09d48fb0e273a538"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "897d3bb235d99f64058b017dfd4183f2f045971ecbb96cbf5c4297207823de4c"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "bd10542425d088a4300fe8d60d6c39e6413c871e2c36d5412cebab741640c8b7"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "7d669d2af129632930ffd64c6e4093f4bf43ac7bef2b3a13960a667b5b22a421"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "58ea0034cd83f6f50faa2c5d4af5e7a370fb109b29d8d1b86d1bae5d97204a1a"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "73d913d9b0c19bc82b542ad689093c1b19839b499f7ef868f4516caef951316b"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "19dbca488859b77357c69970a1a4581c212fd781243313a5e31e6bb3398496c5"
+        },
+        {
+          "name": "charged-1",
+          "digest": "038b68e121f1d7e0dec3a0a9b7d939495039dd9d7f74591c6e83e46afdb8b703"
+        },
+        {
+          "name": "charged-2",
+          "digest": "7120df92c3dc67653188c74c0a42e89d4bfcb8d42d86b210e4213f775f05c333"
+        },
+        {
+          "name": "charged-3",
+          "digest": "eae49e71b82a9bc1eddf621ecfa2f323bb4b73cabddc9ae5ded8fd729744f307"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "ba2df12c084f1f0061c7f9d407cabcf7d396779a3143adc6c3d3f486a1501d13"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "ecf2e24ee690eff63b691fb43583bac86aebb56098cfd2f16315d1d68d602b1a"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "d16729bb388e517157ce313c10f3a0a2f49000956f8193b4da5b518c39138611"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "088e899566e169eaf7b76de67ba0ac08429b0e1bad00214401d9896ea69e3ec8"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "e385ddb3adc5e398230d4934d44ca8251ee6e0bbf08534de1f9e47dda418c53c"
+        },
+        {
+          "name": "save-restore",
+          "digest": "e385ddb3adc5e398230d4934d44ca8251ee6e0bbf08534de1f9e47dda418c53c"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "e6af67f0637ded0409f7f60472c58d1913d8d59674edf9f8b8a2c0e0c45e219d"
+        }
+      ]
+    },
+    {
+      "tag": "normal/paladin/succession",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "2f4a11f4ca65a3ac4d0162b4299bc5f5b6eaafa8fd5b18b90df622e4f46628aa"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "0689568c46a9a48af7db81192e9b69f80046a9d35f5bd08c6ac4a6f70f0de9eb"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "0059bc0b64d11a754a601f0de238b261014949dab8b251da8510fc2fe914b320"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "ca79043aadd884fc5ab9dc964bb8ed888f6c74d45933d35dca81f3c214a95027"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "794065b6e431d4a1b35ee275d2d7179623fa9c3c90370b20483d89ee3fe3a7a6"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "9f39992dcbf3704af7b8c43583345fe3a10832df50db69c48b059eb972e7f025"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "48c21a20a02f896a66c35c26cbb3199fe39f44100e6b07c3358f24ab362091f1"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "0bec22f7bd66dced9bf3b1c979c84016ec5ed193443550034df8238d0fff807b"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "ee426f246b37a7fade474a370aa68d13fa003f3fb6eed0ea2c49ff59593c10ee"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "393c86f0df8b1e25eac96316d6cbcf46c6f4e056f70a6e8156aa912afcef9496"
+        },
+        {
+          "name": "charged-1",
+          "digest": "38d3e0cf648d93f125b35cfb0ed4e24c18a618b65bea483a30219935cd10f4b8"
+        },
+        {
+          "name": "charged-2",
+          "digest": "644d39c5ef41dcf2cb589823958b6cc2f2d46ebdb775a1e951637a1450125ae1"
+        },
+        {
+          "name": "charged-3",
+          "digest": "d034184469928221a0cbb90e86628ce72522d116690da58eff958135b0896bdc"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "a8f4578fa56e5fa71f6e23fa1095350cdeb744bc06521f8a0d444b247c842a16"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "2900732bf93d07d47bea8f89bd83ffdc87ff4494cab1f2ef92862532f2c42114"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "e11735aec0d7bff25738924acc444065c7d5ac4692146946eb581fbc737ab9d5"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "dd693605b0c4992bcdee1316f53273f5e629762fd1a2e5ac19309fc4c61279b7"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "7d55c1e221e6a7811f187446a15f69e561a3a5360174cd9abfe229b8228a21ac"
+        },
+        {
+          "name": "save-restore",
+          "digest": "7d55c1e221e6a7811f187446a15f69e561a3a5360174cd9abfe229b8228a21ac"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "7d1d91ad147d072ec0016fe6dd334c7a66d809e769cf257448398c4961c64321"
+        }
+      ]
+    },
+    {
+      "tag": "normal/mage/standard",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "decdf4643a3d02b0753c3e240e8207534c7c4a9525077db0590246a4771ad0a3"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "763772c744806888a191a3d05fdccfc2b3efe77c203ded367ffeded1045d37b2"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "f2bffbbaa9ad5cef1d5a828014357451f7db0cbf43c7b2cb7f5025e40a19ba11"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "b07750be97dfb295d238d0a4f04b08b3b62dcd25296c58886aa252813ee4db1c"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "d07e637fd54bb089f727775f4be082c056253f52af5689dd3aff032b2f3ebe76"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "814286bcd25b6bf2cfb5a1c77b2cb6548f454a98f1d3f45919dc7336a5870aa3"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "2b53d15a5120417b3360b54c214ea8a1bc63747041250692a58ba8d254eed28a"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "6b6a6b36704092f8b264ec53cdc969b22885ce3c5c941fae5798605453e752c7"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "fae69281002c1286243e2716747d71e87682f37f45bcd86fc67debf4f65dbb04"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "ca272c744ab2f56d6d90a303c167dc4fe81e446da7ec8bce525e29f475422cc1"
+        },
+        {
+          "name": "charged-1",
+          "digest": "815936326cad6089b7f835704be64cbb1a13646b03868b9fb035b507dd997f11"
+        },
+        {
+          "name": "charged-2",
+          "digest": "b779a414f2c01948f698e591e756afc9d3678b8083c66d91491a159b47f5c78e"
+        },
+        {
+          "name": "charged-3",
+          "digest": "2dcfa0bba99fa41f583e1aaff79cbb52ebc0d7cb80cef236cded77b60d000318"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "7938c7f83c2fbe2eee2742e07776d6c7002a116b63d5badece33830b279c7d91"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "a3a5cf4478972ed7b40d72a95e11a51508244bd64b2c4e9fd7734a3a94b65bbd"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "b5c493bb68dfa72aad4634dd94ada4327291810957569a943121398b34a6990f"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "3e09e87508a344c78660a3c9c8db5e68044e043737d9bd9502892bfa374eee6e"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "5e909e7443d30bdb187d4e5350bc214f0338b0a9e50e859b047d1276ee7dab03"
+        },
+        {
+          "name": "save-restore",
+          "digest": "5e909e7443d30bdb187d4e5350bc214f0338b0a9e50e859b047d1276ee7dab03"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "36534f20a86899784ec062220db3e53e232bab1d2c2c72d1a51b8f540298ec1e"
+        }
+      ]
+    },
+    {
+      "tag": "normal/mage/succession",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "203adf78bbceb7251a368a1691997d00784d9949a8c49d1a0423ab27ebee0fd5"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "7f7fbc25b346d09944b7ea9413628439978b551cf8ed564f23df0f9fca74c055"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "5818d4ee558e85384bbae3b3d9c29a483a6867982d5944daf5912b0b12415b3f"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "ecdc229227bc98680172eadb19f388f61235530ad9f6a12e361bff48accb8ac7"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "f608121962ff2d39d77db0127090397f8bdcb2776b06ab0bfd9f69cde93ab0a2"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "79465a25b3f6dc4ceea118d66be4663ffa198a99c36e4828272e9c4045efea34"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "7d6fca8fe7cc87828b8941bf48246fb895dfb41ab6d7f63b8d9c6d77e66af9d0"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "dbcb5d6ae4897921a405cdafbff8d88ecad39e337fe5189767c5345500a91727"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "ce2c61658ce33dfab5a8bb657c9d9f478ceab16f1b3d04051bda7204c8d6b5ab"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "5d37edefdc47d16eb2cbe73f68448b708270f813bb80a3f84cd42977a010d5b7"
+        },
+        {
+          "name": "charged-1",
+          "digest": "9fde95b024e7658785e8b1ebafb8bdfc5c65a22fb90f57be1d40a579cbced44c"
+        },
+        {
+          "name": "charged-2",
+          "digest": "7dbb31aab5d6dad8da5f6e0119bb6639562ec9e9491d01b077ccea8f8674ff05"
+        },
+        {
+          "name": "charged-3",
+          "digest": "ec5fa43923401b5194d9c37e200d7d8fa445dd242e852ce74c4096ddee4441f2"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "1ce2923db4c5035424a23ba5efce28e5d3e421cbb9418c22a2a378d37df64b99"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "4bb9fc57e3f735fe3c3fb007d11657c8a92195d12b6e617e8a42d1a9691effbc"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "20d3822f102b26728e3dc2e53a2d097b155f87c9008e84aa0f266172d0669a3b"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "3656c1b7fecd82cffda9817d76d19fe3434131f3b78a1b364afffe6b9128d0e6"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "edd81593eb125761357152c18d9f66e2d91a870eb1152b9a4bb85390726abd12"
+        },
+        {
+          "name": "save-restore",
+          "digest": "edd81593eb125761357152c18d9f66e2d91a870eb1152b9a4bb85390726abd12"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "0babe15f57efaa533b8baf9bbb67d3de17510f2697cd7b31ce982292104c58e3"
+        }
+      ]
+    },
+    {
+      "tag": "normal/ranger/standard",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "d81237ead7a5b7c1efd67e25437c34f5ce2773d620d72451362203228385d074"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "a914031313d493ad89cbd18ac412df42b14c306c5a13cf96e142ad9aeef949d8"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "7e11b3498199af2c9fa2556ba2a9403c919121b8218b9148eb5d0cd8c4a9dd1a"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "fdbc42a270eb6fad9cf681485361def6a2196ade3ee5047180a801114ffb27ed"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "01825a2ebb605898c4fc58368a07b1019e0f7899d04b2d87e7da958f6b4dbac8"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "1b098e3b3c796171da4f2f4786f5c07f6d6b1be14258fbef93e3085ff317f66e"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "71740c58dd826ae62abf02ffd7fb8bfc108c56b2663835148fea90710cdc1fd1"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "06c0c29b4028bcf7448379005b0d0cfe79e6cbc327a53481aa62d883a14f36de"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "c5fa340066a0a35202ac9d89504745720f27f54b7fe5476b317078cc263ec92b"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "e32db6b161c13cecc3de0b8ea7a7a90cb95557d53aa11ea20c080c45229c9051"
+        },
+        {
+          "name": "charged-1",
+          "digest": "9b3778ab58892232aa60fe88fd51965fd40a1b8ff1576323323ac40c9ad7f576"
+        },
+        {
+          "name": "charged-2",
+          "digest": "7336c59324bb860fb30ed94c5259ba2a843135b670de6a86fa1428038116a815"
+        },
+        {
+          "name": "charged-3",
+          "digest": "f087f67d88c1c4a0ac6988b285a54aabc693b32fe407a10f6ea62d50c1cc233e"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "2942a284a81f3318bebdd6080cd6965a0600c856fdd07065afe2dae9fe55a349"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "a2e67b4be4f07eb744e764cdfc8108bb36febc8b762642a3085a996c851bb974"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "46e9cd439073004abb27261e3bf7da8e0696b9cd17cb829f2bd6980dea724936"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "77de3d8c0a682264274742066f32cc3b8e93558a215f0929a9f93818a18326c2"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "b86a9cf0a0428a38be4c5979abda417d9fdc242e56945dcaa97c25ad97826e69"
+        },
+        {
+          "name": "save-restore",
+          "digest": "b86a9cf0a0428a38be4c5979abda417d9fdc242e56945dcaa97c25ad97826e69"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "cb38d3f95746304205d5ab3137cc3883ac73a212944d7c03134851b57785f63a"
+        }
+      ]
+    },
+    {
+      "tag": "normal/ranger/succession",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "8bb0ec617bbffe7c4caa70e3fcdbef92d279de51ef4a1359ff027b7f8a613a39"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "a3d77760f267d1867b8e9aa082a0147b6ba5d182872b5161c020cc444aaa453c"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "5a6604a18e8a3ba857cfefe9b9983e292f2ec08fb4bc44f84d74ecd8fea18081"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "bbdae2c70f55b871a37aeb05af5e48d568acadd80b25e14d9003eb4ac26db145"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "7f6787db6049802cfcfb261994e4092aba1b156586931b6bfcbd92e2987e2e49"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "a836e311502041b512fa3292d63c0948845c61a2a322fb1140fc1dbf40064a73"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "3f0447df9849c514a1144343dc1d20edd35de76814e310f8340e0e67e0209fcb"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "35e7a3ff7ac53322300ee8faf313d7dcaeb267fcf2ac58c1ebcc08d4846336fc"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "2dd650b59107a3d20a9fc0918f5215b3766fb529f0d1a79dd7f8698f574699a1"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "be60bb12402883a57d3b93d311a026e31f3a0f4d8af84793a24471b497f9187d"
+        },
+        {
+          "name": "charged-1",
+          "digest": "096ebf835daee04cf7e8bad43576b5878ad4deb82b70340dbcfd848c0d2c80df"
+        },
+        {
+          "name": "charged-2",
+          "digest": "38f197e3f18dcf920df840a612338d6501b3f4d4bdd4661a8512a512e804bb68"
+        },
+        {
+          "name": "charged-3",
+          "digest": "da18798b225fb429a77045c841a8dd9f001aa5707dc6170164c3bc569087c8ec"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "888bee191c922573f11aa96a653c0ff3eadd43c7caf9d81eaf237cda563e6f53"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "01aef486ff1ebf6ed026de8deeee7ed1304273e3cb10bd6c393a66dfb169ab12"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "668de9c9946cd772ab26cfc6e9480ef6f3d5e9812ed3b82f5d50857f0d104dd7"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "a57fdfa5628e12e31c65e29ee7b957f893613e5c00682b37c632467560ca6387"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "b6b691928ae8e73621ca7a9871ad7134d7a72a5daa23eb0c46d0e2ac075bc6ad"
+        },
+        {
+          "name": "save-restore",
+          "digest": "b6b691928ae8e73621ca7a9871ad7134d7a72a5daa23eb0c46d0e2ac075bc6ad"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "f4d1b106da21fa8c4c96f25f4a9855c805eea25f30d92a1494e4d04013f11677"
+        }
+      ]
+    },
+    {
+      "tag": "nightmare/paladin/standard",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "894249ec87a3f79126059ff1b5921a3d93a2a9c449d7f20724c4ffd2d152b5ae"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "b62302434575636afedddcf5fcb514eaa9df9588baa8d9d7ffb22f2791694a67"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "2543eb46c1ff3980227ab38263c8b636a3716ac5527bb6cf04d03ac8da9dd52e"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "242be3d59e428dd9fd3d7029bec68aab4f63231aa9039a8ab7efbc5940d823a8"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "aba5496b2b6b0172e173da3b76b7c6612a613514b314633ecd2acf4c63bdf831"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "69aaaa32b3e5d235b8b4c2058ed42f980969c070e87972a8dc9162a19807e3d9"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "5bf3e38c60e23b68d78902a4be624c2df626856ada63173ec031ddbaa44b478c"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "1a70a0fa26f80385a77bbc196f7810697bd3a9dd550a34290d6a23ba3a0e5ac6"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "9794cb815013d452bd1f95baeeb47224c15b2822f1e0927ed2441dcaf58f490c"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "c0839e6e402da3cfd775233a25861e87d78cdeb6aa27c41537d2e8391beda4b3"
+        },
+        {
+          "name": "charged-1",
+          "digest": "03e68b5e5bd0ce70960252be96b1f3471ba758b52dc3508c9dd3a481aa4585f4"
+        },
+        {
+          "name": "charged-2",
+          "digest": "56e4518b6000c07d0016383cd795f4fbfb83ae5d0c91ff831c8a27deca14fd31"
+        },
+        {
+          "name": "charged-3",
+          "digest": "fb1c235b99e5a279722d9261672dbda905d4a71c9b4b30817956572fa86190d0"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "74276cd05bb52ec0d77acc827355a498ed257debbdff6cb5fd206c13b6323225"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "dd39dff0aa95d6132e55c6216cf80a1d5c073460e3586f9e20b2b0b14c2154a0"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "8d32f1a3c5c34ffd0ba84f865bef6368f90f4651a6e842eda9388ad4e2c9f7b5"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "6a2fb5a39c33d2bb0349e5a779f08a93732a3a922558ae501a0d7048c5ebe6a4"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "539056bdbe100eb23872da682aef47b2c5111415b446d4e1bc8fd484b6b20d36"
+        },
+        {
+          "name": "save-restore",
+          "digest": "539056bdbe100eb23872da682aef47b2c5111415b446d4e1bc8fd484b6b20d36"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "4132359ba776007429ae449d9e389c87e12fd635ead7bcb0149eb4b8492acfab"
+        }
+      ]
+    },
+    {
+      "tag": "nightmare/paladin/succession",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "da10382e6bfc4a6f54155ae243e8ad72c27bcb999cb0de30f766276aeb063b11"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "10ee0abbca5cf7240694d68d0c5f1004de5907a8538fe46a3edda905b0920f7f"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "e722c36e4618bcf82b742ff7d0eb4ae791e90ba4623dadf8d9941609326a1af3"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "8f7c01994df9193f64226a2f32c12e010097a9b803ad89e92b7312070f32654c"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "97d633c3c0bd0adf201d6294494182ba4ebde1e6be4f14ca927d509a0f6f371b"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "8378ce8b3cc80fb7e9b4b1369e36e98653e0a1301853f8425e322c1d43a20354"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "fa17711f235581128b06923665980cbe83924777c3050ed97719acd7c266f4be"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "d8d88b52bb7156eb08927e46eec4a223c2841ff4df21d62757214976e448183a"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "0eeda81d91985af545e7734a88a37ed4bdbbc05869b37ab99f1e35a6344d6b04"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "4ec015b9a1e261df7e1093d8f7bc463906db713c8c8b5b0bc9033b420e8bcfb6"
+        },
+        {
+          "name": "charged-1",
+          "digest": "dca20e06eb7621652b5ad61520cd39a7bb60b02fb8d42984040adf322dd9c9d1"
+        },
+        {
+          "name": "charged-2",
+          "digest": "5ad291bfa9935926d90650e3b63cd63ffd98bd6196085f7aca3b52ee4044c34d"
+        },
+        {
+          "name": "charged-3",
+          "digest": "8af3bce1add34e63849b0bad5e11b5cb7eb46a63b0e6934a4d02d30117ec113b"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "7b62b8e9d3d94b8e8e185fe7a4d77d550ce5034274b6cdc4815eb81f4432a067"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "de89a9d85fb333a52914a1aa90faf852cdabac3b62b48ca577b0ba947922248f"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "f4f1ea866af28ac6d75339a70f6fe5d49ef50643c7f216c6f29a554d7ce84187"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "bbdf038c2331dca663b1762c74a32c90f7340a09322a43b60417af2a72fca678"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "fa3a0ed8c44c63c526374b09e6c136f7ca0fb9e0283d38d9fbc4e2d6f2fcc5da"
+        },
+        {
+          "name": "save-restore",
+          "digest": "fa3a0ed8c44c63c526374b09e6c136f7ca0fb9e0283d38d9fbc4e2d6f2fcc5da"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "d5db815785d31afc6562f9fe839f0fe38926651febbf1f50606906ace3bf5fb1"
+        }
+      ]
+    },
+    {
+      "tag": "nightmare/mage/standard",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "207add161ce7f8f387eba1e38d3f7229415cc32de8eeaabe7c65a29cf2c8f8a5"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "06927ec0accd9e0bc400b2b536e6be692dcf9f1bcae97e285f1cbbf0790af51a"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "d7bacb7fbe1e67b9414abcbf5c9d529ebbbbbfa23af9970324d1c1215624c61a"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "3ead1d17b224694d9d9629009e656813334faedc592ffef590f06cd4d4a4bb86"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "270d7587caa71a39fc7e9598be2e93441f4a6c797e74fc6e60a6a5270608fbd5"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "99d9a044a7c1af902a53fba2663dfe0490c04ac675d975bf9cb8248f50e21959"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "2f8c7736574c748ff0340d9491baa8996e57f74ff19ba644a8d2f973d564c31c"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "6426417a3c48ac9a2099f03fdca1ce2646cc826e7f7a519f1a08ca52b0132b3c"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "4921b544a60ea434552f9e4b7c40a01ef75eb2cfb6555441bd633fbd338a58a0"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "7a9e6e3a0227e730a896c9fcb00d7581cc8f14a67eaa38f6d1b02cafa345d257"
+        },
+        {
+          "name": "charged-1",
+          "digest": "e142f68bff84e670fc7b1996714fb5ece474f736f2d8420a5b3898f11e9f7abd"
+        },
+        {
+          "name": "charged-2",
+          "digest": "d5275984e1a6ac1881297a82b8ae788bb539a3bc85b86884aa2c319e59ba070f"
+        },
+        {
+          "name": "charged-3",
+          "digest": "27cee3e08c55ac369e769de72e351fe014eda7f02cfa9896e62c8b2dbda4f79f"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "08de8e4bf1e4e37eddfc8b8ecd504744ff06803e536cf9a6ec6f926462732e67"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "783e85aebc54474c3975b15ba2a509110339b977d44f22bc9cee3687e3258ae3"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "929c20479dd4b900d7425ea576fea045b8cc046240b02bbb6f3bbb773d4dc385"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "d3e5c9ae2ad00563ebf7fe15e46a04240ce26eb845e07b4ef244a65ea288213f"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "250e85cf6bc49079ba499e05b65eef2f221a1d75621bfb428d8c45c3de49f1a1"
+        },
+        {
+          "name": "save-restore",
+          "digest": "250e85cf6bc49079ba499e05b65eef2f221a1d75621bfb428d8c45c3de49f1a1"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "6196d0920d838808dd14b7c3d7a15c8dafe822e2fa66e5d82dffe36fdc7d87c1"
+        }
+      ]
+    },
+    {
+      "tag": "nightmare/mage/succession",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "31365e234bd3e9b63f7324b4a1fe8c32e6d4252b496132225fc2aaad93ef4b68"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "63fe16836732f5bddce6a9a843a101b30dc848f6631dfebf3bed998d4a40d2b8"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "e45332d8125c245b0cddd31e6557343cbd5e6d4d0e28513795492419f4426034"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "a592eee8a2034e7d98274ac56455c5039cfef0b0a8ffe769023746e49a65d9ba"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "15b14a6043f45366e47cfcfc2ce5bd7ef746b76dba66076414f0a29163ac6af3"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "a0c11412b7562cfa4b7e3cadfafe6ae32c81578c6fdbda774fb25f884d331d58"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "3bf3139c1a1d1639cfae9f2d74b824c607e4ae9586aab7195adc4b34a1ed6987"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "380b190b3f9266747801e33fa7f96c00e915e145edbb8107c7ee75cb587b2006"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "ded1f3259b863af7a4bf01afa71b8667e2970b3cea6100147ce2ece7565b60db"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "e105c7ca0978890e52aaf35ee2a2f705c89a604c6539ed13f39c1d54211244da"
+        },
+        {
+          "name": "charged-1",
+          "digest": "5f0f8daa1df2ee78a83188ac34de6083a14c548fd2dc754d8b75d74b2e8b6669"
+        },
+        {
+          "name": "charged-2",
+          "digest": "95ccdb79f1c20459d82dbf44831611e529f2253b40f409561986d063b166eac1"
+        },
+        {
+          "name": "charged-3",
+          "digest": "f6a23d10b6143e2bacc916e39492e27c5d774f9fe1e80ff6ce876a918d59169e"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "c15a873fb9f223caa6cb3edf084a72af4190c8aa5341b1b552347d6de5aacb5f"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "01e74033d099c4ecba44b034c8af996574333328499984ee54de8161f5e6837e"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "136208737f6e1f93dc559cf7903d34858d84a582bc157c33de44aa2ab0d99ed5"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "f1d4ae8ce3b8cec8e066e10638f249570f239e17f5dd3226fd717778da867c7c"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "2b2f25fcf983f29730053dcde2708cf16283539a171f76b27b1a522763576cea"
+        },
+        {
+          "name": "save-restore",
+          "digest": "2b2f25fcf983f29730053dcde2708cf16283539a171f76b27b1a522763576cea"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "8a7a26d8defbbca9d90ae6b1a8085c1976f4b0ee803ee64bc571c25ed9221d13"
+        }
+      ]
+    },
+    {
+      "tag": "nightmare/ranger/standard",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "3570ab40f4b2a639b7af3502ac7ba32802cd8d3e258c35f5741f74280e7ea6e1"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "d997fd678cf3a668ffe0971463d196f1f85214ba63d92b899371b29fe34ea789"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "8d0c4fc64313936e95f5096cff4816835fc35278763e3def5ef838e6e5fbbada"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "280b054929228bcf010872c182a8bb98743dfc2eee4004549cd999a401cb2257"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "9aa199bacc5e3d4e541e64b1b1582d656d3afe4bc8cb7ad331b32b2a556d9eb6"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "6ed51585be4edebf2ec99ca03c9ac78c41ea65c04c7a851c303b340344792c16"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "53bde886333282b300610a34d0072f70ea357b271f3ffb282cb1b17cd281ee57"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "ba04e3a6566325f315014a9e0cf0632db9acc0adb1a12e6e58459131131540a6"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "d97c22a267de31e1988cb8f990185c4053045d894e21bc38989f71c360233d95"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "422a13c2fe506e2d35704d088725dd718ec68fccfc1b40c26a71641b8bdaa3e3"
+        },
+        {
+          "name": "charged-1",
+          "digest": "e4157c7707fdab5d3d5ab9d73a86c8f7011f347a0e758fbfe6ef567e5f0f0ca4"
+        },
+        {
+          "name": "charged-2",
+          "digest": "b160fe32eefaf1e93ec3e79498ab755bbe88eb0b6008e3cb38f69e2395a3a472"
+        },
+        {
+          "name": "charged-3",
+          "digest": "fd1b4d7c832cb5a489d057bc8a6daa0c795111c0ff563a312d4dd438e5b8a75f"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "9f347edc78c0a40f3bf4c0c68f0cf655df443ef4f1470b6322d184708d719cfb"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "8caec90e2d84a84e50eeb08a597984dd330fab88a229623b2e1e4bd5b9fef17e"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "bed50b05a39c44f68124dfd4c4d9ad79e58b0f09492883dc5a109a67bd64c7ca"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "c8528541586457dfc1371183e1691ba0d61f20f208beb8b9ec0da55a36da69e0"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "6b41cb6730831677f63ef7db51a309ee7fc086822ddd97f5e9dbae8e37481ee0"
+        },
+        {
+          "name": "save-restore",
+          "digest": "6b41cb6730831677f63ef7db51a309ee7fc086822ddd97f5e9dbae8e37481ee0"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "4dffe131216eff4233bc4c1eb187597158cb1848cda111c5e74fecfcfa19e6f7"
+        }
+      ]
+    },
+    {
+      "tag": "nightmare/ranger/succession",
+      "checkpoints": [
+        {
+          "name": "fresh",
+          "digest": "79b64a83607c0c4ca7e50580121554ca03da56f4bfcad077afa6823d5b5b0ca1"
+        },
+        {
+          "name": "movement-autoattack",
+          "digest": "24db6d9d8830411d172e32f59438e89c0fa86106deb1f1aeedc1ae5e6336b075"
+        },
+        {
+          "name": "ordinary-1",
+          "digest": "cf18802f65cc24f040c416f774bff52f3cbba1ba695add06bae9bdd9f423060b"
+        },
+        {
+          "name": "ordinary-2",
+          "digest": "597e5d045ee6170c83054fa5b9cf9cae07f9ebba797e60740cecba44965ea5d9"
+        },
+        {
+          "name": "ordinary-3",
+          "digest": "965a47f7980a2f83c1fdcedd1d78523530a0a2d71f2c5bf992ebf17512f8cf0b"
+        },
+        {
+          "name": "ordinary-4",
+          "digest": "d51c920708747ec80cb72745fb208d43a8e95c24ce49508b477b01a7f3e7ebe3"
+        },
+        {
+          "name": "ordinary-5",
+          "digest": "8ec4ca0f31447e568e0c386331e50a72236ba9f5bfe6cfcfd50ca3a432393487"
+        },
+        {
+          "name": "ordinary-6",
+          "digest": "6bfc6a81e908e6626c33726b80150afbdf3cfadf25ac70d07caf4ab9cf31ec5a"
+        },
+        {
+          "name": "ordinary-7",
+          "digest": "26352421e13a8066721c639c5c5f56569c9e0f830d3566199c2a2b3f3db3819d"
+        },
+        {
+          "name": "ordinary-8",
+          "digest": "3ce1dbde70150cad5ee236e19cc92369dfc9ca23a2d5479ec242a37dbead57f3"
+        },
+        {
+          "name": "charged-1",
+          "digest": "fdd8b2d07e94fef6b6b222fb04e32682dc4cd4f0cd82619d7cb69d828b3f734d"
+        },
+        {
+          "name": "charged-2",
+          "digest": "a2cdd6830a844cf1a34b1a243b18797627d60349ac1dd079bed7e6e21159e0d3"
+        },
+        {
+          "name": "charged-3",
+          "digest": "7ebc61eb662aae576c2780cb0d78d25e2e4cd387ad146e23cc386b80e3ad57b0"
+        },
+        {
+          "name": "manual-ranger-health-and-mana",
+          "digest": "c7a352aff58b2e14b046346c7f4dfba351bf6882c8a09f396ec5048100f7b409"
+        },
+        {
+          "name": "automatic-ranger-companion-heal",
+          "digest": "e28e833f300fcf478d05d50227c8f70a027c517ae8eaab35ae4a440e50331819"
+        },
+        {
+          "name": "party-recall-reserve-and-fallen",
+          "digest": "e633bf489a5bb392313aa1f3054e9a216d22c66e60f93f618c33746423f0ea9a"
+        },
+        {
+          "name": "progression-rescue-and-ceilings",
+          "digest": "8e4d43ae3c723377f022c1f6d4af56243e8b8210690f0741de3cd3965421f177"
+        },
+        {
+          "name": "enemy-attack-and-pressure",
+          "digest": "335b1176b619eb30a7b79a5b96bc29bcfcb29f07f0ddf3c9ab9440debd917c37"
+        },
+        {
+          "name": "save-restore",
+          "digest": "335b1176b619eb30a7b79a5b96bc29bcfcb29f07f0ddf3c9ab9440debd917c37"
+        },
+        {
+          "name": "death-and-successor",
+          "digest": "0d621e1ac311feea7cfd39c4fcb1d5c19b53fa956d56921c4b88033523697e67"
+        }
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "zone": "vale",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "9960ff41cbda37b2b47bfead00de83d635049f3a2dd4c72cebdf96293417a96e"
+    },
+    {
+      "zone": "vale",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "8dccb336ca54f3e53acb8cc8ccabf88f9a6a8ae3a78a3f90686b65741252fbd7"
+    },
+    {
+      "zone": "march",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "9672d0bcf51dfa41ee380376314a2dec5dfc9151439555b9bd3f0e11b8491dd6"
+    },
+    {
+      "zone": "march",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "974140aa10548a34be5f1da2e37c34c8d96cb3bd9fbf4a21187ebe937f1932db"
+    },
+    {
+      "zone": "highlands",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "b9bd57ee4452ba2e592bac7c93698915aacac7995190944430fd2c4bd8c36339"
+    },
+    {
+      "zone": "highlands",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "8364e4656ad5a133e4880b11034a3120474422921325188253d9f76e72c3cc8e"
+    },
+    {
+      "zone": "frontier",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "52097e9b99a69d7d44dd36c9af3e39e64632353cd55595718380f12df47a7038"
+    },
+    {
+      "zone": "frontier",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "4e7dc488062b84392383e069b608a4994e4cfb32522f4c71bbab64fa89a6c813"
+    },
+    {
+      "zone": "crown",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "499e071079d67a9ebae20f10372859f4904efe1c7a686a344c67f554ba701cc0"
+    },
+    {
+      "zone": "crown",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "6579c303e897a9a6d0378daa1ffc7d4511384ce13323fc46bab5886ad3e90cb6"
+    },
+    {
+      "zone": "crypt",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "427841825f45b0b105654aaceeca5f62f253d683d53387cc514c5bf0e785618e"
+    },
+    {
+      "zone": "crypt",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "93d5a9aa85418e2b3943f7594969b74cdadce7919935bde896e4b579cf715dad"
+    },
+    {
+      "zone": "archive",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "623520d0853f118149f117b2c08ff8d48f53b249b8e56c2fbfbb8f3ef728b44e"
+    },
+    {
+      "zone": "archive",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "7297a263733237c003c20abec826c69d9ab431bca8f5cfe3bc34786fc01fc242"
+    },
+    {
+      "zone": "mine",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "7575d40e8d6f60806a741644c0682e304bb22c963b17ff32bd966af68d54860a"
+    },
+    {
+      "zone": "mine",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "1d2a079a6905866979eb7d68ac187a4fae2baead7d5feab1d857c4f159207f5a"
+    },
+    {
+      "zone": "abyss",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "fe6b53b68ea07df3cfcf4fc93c6ca68cfeb1a0d28ac0460051ca73bc7770e182"
+    },
+    {
+      "zone": "abyss",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "85cdebe9ba457b9db26fcbd8dda9dc9f1b02121d89447a92f58d7985529a21ac"
+    },
+    {
+      "zone": "citadel",
+      "width": 1280,
+      "height": 800,
+      "pixelsSHA256": "3a20364382e23c2856afa4ff4bd1157c6b1122088f021ee16c2ba0cff0815189"
+    },
+    {
+      "zone": "citadel",
+      "width": 375,
+      "height": 812,
+      "pixelsSHA256": "da66f5d6e1aefa6b5ae6891cf6b9ecd29573372cd690341eb13c01c6ba2d683d"
+    }
+  ],
+  "publicApi": [
+    {
+      "owner": "instance",
+      "name": "hero"
+    },
+    {
+      "owner": "instance",
+      "name": "zoneId"
+    },
+    {
+      "owner": "instance",
+      "name": "peace"
+    },
+    {
+      "owner": "instance",
+      "name": "regionIndex"
+    },
+    {
+      "owner": "instance",
+      "name": "definition"
+    },
+    {
+      "owner": "instance",
+      "name": "fieldCenter"
+    },
+    {
+      "owner": "instance",
+      "name": "supplyRoom"
+    },
+    {
+      "owner": "instance",
+      "name": "sideDungeon"
+    },
+    {
+      "owner": "instance",
+      "name": "zoneSize"
+    },
+    {
+      "owner": "instance",
+      "name": "isDungeon"
+    },
+    {
+      "owner": "instance",
+      "name": "night"
+    },
+    {
+      "owner": "instance",
+      "name": "nightPoints"
+    },
+    {
+      "owner": "instance",
+      "name": "multipliers"
+    },
+    {
+      "owner": "instance",
+      "name": "event"
+    },
+    {
+      "owner": "instance",
+      "name": "say"
+    },
+    {
+      "owner": "instance",
+      "name": "notice"
+    },
+    {
+      "owner": "instance",
+      "name": "boss"
+    },
+    {
+      "owner": "instance",
+      "name": "idOrder"
+    },
+    {
+      "owner": "instance",
+      "name": "setRefuge"
+    },
+    {
+      "owner": "instance",
+      "name": "arriveRefuge"
+    },
+    {
+      "owner": "instance",
+      "name": "miniCleared"
+    },
+    {
+      "owner": "instance",
+      "name": "miniStatus"
+    },
+    {
+      "owner": "instance",
+      "name": "checkMinis"
+    },
+    {
+      "owner": "instance",
+      "name": "bundleCollected"
+    },
+    {
+      "owner": "instance",
+      "name": "visibleNPCs"
+    },
+    {
+      "owner": "instance",
+      "name": "siteDescription"
+    },
+    {
+      "owner": "instance",
+      "name": "questProgress"
+    },
+    {
+      "owner": "instance",
+      "name": "guardianRewards"
+    },
+    {
+      "owner": "instance",
+      "name": "upgradeRingleader"
+    },
+    {
+      "owner": "instance",
+      "name": "guardianPopulation"
+    },
+    {
+      "owner": "instance",
+      "name": "summonPopulation"
+    },
+    {
+      "owner": "instance",
+      "name": "nightEnemyPopulation"
+    },
+    {
+      "owner": "instance",
+      "name": "treasuryInterior"
+    },
+    {
+      "owner": "instance",
+      "name": "roomCaptainPopulation"
+    },
+    {
+      "owner": "instance",
+      "name": "fieldCaptainPopulation"
+    },
+    {
+      "owner": "instance",
+      "name": "finalBossPopulation"
+    },
+    {
+      "owner": "instance",
+      "name": "dungeonGuardCount"
+    },
+    {
+      "owner": "instance",
+      "name": "dungeonGuardBlueprint"
+    },
+    {
+      "owner": "instance",
+      "name": "configureEnemy"
+    },
+    {
+      "owner": "instance",
+      "name": "combatPopulation"
+    },
+    {
+      "owner": "instance",
+      "name": "ordinaryMeleePopulation"
+    },
+    {
+      "owner": "instance",
+      "name": "ordinaryRangedPopulation"
+    },
+    {
+      "owner": "instance",
+      "name": "decorateDungeon"
+    },
+    {
+      "owner": "instance",
+      "name": "makeEnemy"
+    },
+    {
+      "owner": "instance",
+      "name": "bossEnemy"
+    },
+    {
+      "owner": "instance",
+      "name": "refreshNPCs"
+    },
+    {
+      "owner": "instance",
+      "name": "clearTonic"
+    },
+    {
+      "owner": "instance",
+      "name": "refugeThreat"
+    },
+    {
+      "owner": "instance",
+      "name": "rest"
+    },
+    {
+      "owner": "instance",
+      "name": "spend"
+    },
+    {
+      "owner": "instance",
+      "name": "rescue"
+    },
+    {
+      "owner": "instance",
+      "name": "barracksSpecialists"
+    },
+    {
+      "owner": "instance",
+      "name": "barracksRecruitPrice"
+    },
+    {
+      "owner": "instance",
+      "name": "buyPotion"
+    },
+    {
+      "owner": "instance",
+      "name": "hasAnyBarracks"
+    },
+    {
+      "owner": "instance",
+      "name": "hasCompletedBarracks"
+    },
+    {
+      "owner": "instance",
+      "name": "barracksBuildCost"
+    },
+    {
+      "owner": "instance",
+      "name": "build"
+    },
+    {
+      "owner": "instance",
+      "name": "assignBuilder"
+    },
+    {
+      "owner": "instance",
+      "name": "upgradeBarracks"
+    },
+    {
+      "owner": "instance",
+      "name": "train"
+    },
+    {
+      "owner": "instance",
+      "name": "tributeKnown"
+    },
+    {
+      "owner": "instance",
+      "name": "visibleResourceNodes"
+    },
+    {
+      "owner": "instance",
+      "name": "hiddenTributeNodes"
+    },
+    {
+      "owner": "instance",
+      "name": "scoutTribute"
+    },
+    {
+      "owner": "instance",
+      "name": "gather"
+    },
+    {
+      "owner": "instance",
+      "name": "enter"
+    },
+    {
+      "owner": "instance",
+      "name": "travel"
+    },
+    {
+      "owner": "instance",
+      "name": "hubDestinations"
+    },
+    {
+      "owner": "instance",
+      "name": "travelHub"
+    },
+    {
+      "owner": "instance",
+      "name": "discover"
+    },
+    {
+      "owner": "instance",
+      "name": "interact"
+    },
+    {
+      "owner": "instance",
+      "name": "questId"
+    },
+    {
+      "owner": "instance",
+      "name": "questDefs"
+    },
+    {
+      "owner": "instance",
+      "name": "initializeQuests"
+    },
+    {
+      "owner": "instance",
+      "name": "accept"
+    },
+    {
+      "owner": "instance",
+      "name": "payQuest"
+    },
+    {
+      "owner": "instance",
+      "name": "checkQuests"
+    },
+    {
+      "owner": "instance",
+      "name": "claim"
+    },
+    {
+      "owner": "instance",
+      "name": "engage"
+    },
+    {
+      "owner": "instance",
+      "name": "die"
+    },
+    {
+      "owner": "instance",
+      "name": "successor"
+    },
+    {
+      "owner": "instance",
+      "name": "victory"
+    },
+    {
+      "owner": "instance",
+      "name": "kill"
+    },
+    {
+      "owner": "instance",
+      "name": "fieldBossStreak"
+    },
+    {
+      "owner": "instance",
+      "name": "streak"
+    },
+    {
+      "owner": "instance",
+      "name": "returnGuardians"
+    },
+    {
+      "owner": "instance",
+      "name": "activatePending"
+    },
+    {
+      "owner": "instance",
+      "name": "awaken"
+    },
+    {
+      "owner": "instance",
+      "name": "checkClear"
+    },
+    {
+      "owner": "instance",
+      "name": "checkEnding"
+    },
+    {
+      "owner": "instance",
+      "name": "makeHabitat"
+    },
+    {
+      "owner": "instance",
+      "name": "tick"
+    },
+    {
+      "owner": "instance",
+      "name": "captainProfile"
+    },
+    {
+      "owner": "instance",
+      "name": "updateCaptainPatrol"
+    },
+    {
+      "owner": "instance",
+      "name": "idleWanderProfile"
+    },
+    {
+      "owner": "instance",
+      "name": "updateIdleWander"
+    },
+    {
+      "owner": "instance",
+      "name": "triggerCaptainPhase"
+    },
+    {
+      "owner": "instance",
+      "name": "captainOwnedSummons"
+    },
+    {
+      "owner": "instance",
+      "name": "summonCaptainAdds"
+    },
+    {
+      "owner": "instance",
+      "name": "startCaptainAttack"
+    },
+    {
+      "owner": "instance",
+      "name": "startNightSkill"
+    },
+    {
+      "owner": "instance",
+      "name": "updateEnemies"
+    },
+    {
+      "owner": "instance",
+      "name": "disengage"
+    },
+    {
+      "owner": "instance",
+      "name": "fieldTrueSpawnPoint"
+    },
+    {
+      "owner": "instance",
+      "name": "updateElites"
+    },
+    {
+      "owner": "instance",
+      "name": "updateGuardianReinforcements"
+    },
+    {
+      "owner": "instance",
+      "name": "updatePacks"
+    },
+    {
+      "owner": "instance",
+      "name": "traps"
+    },
+    {
+      "owner": "instance",
+      "name": "trapContains"
+    },
+    {
+      "owner": "instance",
+      "name": "updateTraps"
+    },
+    {
+      "owner": "instance",
+      "name": "updateNight"
+    },
+    {
+      "owner": "instance",
+      "name": "updateEscort"
+    },
+    {
+      "owner": "instance",
+      "name": "settlementLayout"
+    },
+    {
+      "owner": "instance",
+      "name": "roadNetwork"
+    },
+    {
+      "owner": "instance",
+      "name": "zone"
+    },
+    {
+      "owner": "instance",
+      "name": "regionalDestinations"
+    },
+    {
+      "owner": "instance",
+      "name": "alignLandmarks"
+    },
+    {
+      "owner": "instance",
+      "name": "regionalAesthetics"
+    },
+    {
+      "owner": "instance",
+      "name": "worldLife"
+    },
+    {
+      "owner": "instance",
+      "name": "ironrootLivelihood"
+    },
+    {
+      "owner": "instance",
+      "name": "frontierOccupationLayout"
+    },
+    {
+      "owner": "instance",
+      "name": "darkCrownLayout"
+    },
+    {
+      "owner": "instance",
+      "name": "harborLayout"
+    },
+    {
+      "owner": "instance",
+      "name": "regionalHandoffLife"
+    },
+    {
+      "owner": "instance",
+      "name": "dungeonWorkstation"
+    },
+    {
+      "owner": "instance",
+      "name": "abyssAviationProject"
+    },
+    {
+      "owner": "instance",
+      "name": "authoredPlaces"
+    },
+    {
+      "owner": "instance",
+      "name": "spaceQuestBoard"
+    },
+    {
+      "owner": "instance",
+      "name": "spaceMillhavenSupplier"
+    },
+    {
+      "owner": "instance",
+      "name": "creatureStrongholdCenter"
+    },
+    {
+      "owner": "instance",
+      "name": "creatureStrongholds"
+    },
+    {
+      "owner": "instance",
+      "name": "sideInteriors"
+    },
+    {
+      "owner": "instance",
+      "name": "supplyInteriors"
+    },
+    {
+      "owner": "instance",
+      "name": "localSites"
+    },
+    {
+      "owner": "instance",
+      "name": "resourceDeposits"
+    },
+    {
+      "owner": "instance",
+      "name": "retireResourceMini"
+    },
+    {
+      "owner": "instance",
+      "name": "openResourceMini"
+    },
+    {
+      "owner": "instance",
+      "name": "spreadOutdoorForces"
+    },
+    {
+      "owner": "instance",
+      "name": "repairMiniGuardianReachability"
+    },
+    {
+      "owner": "instance",
+      "name": "miniDungeons"
+    },
+    {
+      "owner": "instance",
+      "name": "blocked"
+    },
+    {
+      "owner": "instance",
+      "name": "safe"
+    },
+    {
+      "owner": "instance",
+      "name": "line"
+    },
+    {
+      "owner": "instance",
+      "name": "clearSegment"
+    },
+    {
+      "owner": "instance",
+      "name": "route"
+    },
+    {
+      "owner": "instance",
+      "name": "move"
+    },
+    {
+      "owner": "instance",
+      "name": "follow"
+    },
+    {
+      "owner": "instance",
+      "name": "talentProfile"
+    },
+    {
+      "owner": "instance",
+      "name": "talentMaxRank"
+    },
+    {
+      "owner": "instance",
+      "name": "heroNaturalMaxHp"
+    },
+    {
+      "owner": "instance",
+      "name": "heroTalentHpBonus"
+    },
+    {
+      "owner": "instance",
+      "name": "heroTalentDamageBonus"
+    },
+    {
+      "owner": "instance",
+      "name": "heroTalentSpeedBonus"
+    },
+    {
+      "owner": "instance",
+      "name": "heroOtherHpBonus"
+    },
+    {
+      "owner": "instance",
+      "name": "heroOtherDamageBonus"
+    },
+    {
+      "owner": "instance",
+      "name": "heroEquipmentArmorBonus"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionSupportRank"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionSupportFraction"
+    },
+    {
+      "owner": "instance",
+      "name": "companionInheritedHpBonus"
+    },
+    {
+      "owner": "instance",
+      "name": "companionInheritedDamageBonus"
+    },
+    {
+      "owner": "instance",
+      "name": "companionInheritedSpeedBonus"
+    },
+    {
+      "owner": "instance",
+      "name": "companionMoveSpeed"
+    },
+    {
+      "owner": "instance",
+      "name": "companionInheritedArmorBonus"
+    },
+    {
+      "owner": "instance",
+      "name": "companionVitalityRank"
+    },
+    {
+      "owner": "instance",
+      "name": "companionVitalityFraction"
+    },
+    {
+      "owner": "instance",
+      "name": "companionMaxHp"
+    },
+    {
+      "owner": "instance",
+      "name": "companionArmor"
+    },
+    {
+      "owner": "instance",
+      "name": "syncCompanionLevelStats"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionPartyCap"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionInstructorCap"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionNextInstructor"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionUnlock"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionTrainer"
+    },
+    {
+      "owner": "instance",
+      "name": "trainExpedition"
+    },
+    {
+      "owner": "instance",
+      "name": "teacherCatalog"
+    },
+    {
+      "owner": "instance",
+      "name": "skillRevealed"
+    },
+    {
+      "owner": "instance",
+      "name": "learn"
+    },
+    {
+      "owner": "instance",
+      "name": "upgrade"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionSupportCost"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionSupportTrainerCap"
+    },
+    {
+      "owner": "instance",
+      "name": "expeditionSupportBestTrainer"
+    },
+    {
+      "owner": "instance",
+      "name": "trainExpeditionSupport"
+    },
+    {
+      "owner": "instance",
+      "name": "reward"
+    },
+    {
+      "owner": "instance",
+      "name": "enemyReward"
+    },
+    {
+      "owner": "instance",
+      "name": "xp"
+    },
+    {
+      "owner": "instance",
+      "name": "grant"
+    },
+    {
+      "owner": "instance",
+      "name": "companionVitalityCost"
+    },
+    {
+      "owner": "instance",
+      "name": "trainCompanionVitality"
+    },
+    {
+      "owner": "instance",
+      "name": "talentRespecCost"
+    },
+    {
+      "owner": "instance",
+      "name": "talentSpent"
+    },
+    {
+      "owner": "instance",
+      "name": "applyTalentReset"
+    },
+    {
+      "owner": "instance",
+      "name": "freeResetTalents"
+    },
+    {
+      "owner": "instance",
+      "name": "resetTalents"
+    },
+    {
+      "owner": "instance",
+      "name": "rangerSupportRank"
+    },
+    {
+      "owner": "instance",
+      "name": "rangerSupportAmount"
+    },
+    {
+      "owner": "instance",
+      "name": "rangerSupportCost"
+    },
+    {
+      "owner": "instance",
+      "name": "trainRangerSupport"
+    },
+    {
+      "owner": "instance",
+      "name": "weaponTierBonus"
+    },
+    {
+      "owner": "instance",
+      "name": "bestLegacyWeapon"
+    },
+    {
+      "owner": "instance",
+      "name": "autoEquipBestWeapon"
+    },
+    {
+      "owner": "instance",
+      "name": "gear"
+    },
+    {
+      "owner": "instance",
+      "name": "equipLegacy"
+    },
+    {
+      "owner": "instance",
+      "name": "power"
+    },
+    {
+      "owner": "instance",
+      "name": "armor"
+    },
+    {
+      "owner": "instance",
+      "name": "expectedMaxMp"
+    },
+    {
+      "owner": "instance",
+      "name": "normalizeManaProgression"
+    },
+    {
+      "owner": "instance",
+      "name": "manaCombatActive"
+    },
+    {
+      "owner": "instance",
+      "name": "manaRegenRate"
+    },
+    {
+      "owner": "instance",
+      "name": "talent"
+    },
+    {
+      "owner": "instance",
+      "name": "snapshot"
+    },
+    {
+      "owner": "instance",
+      "name": "repairLegacyRescues"
+    },
+    {
+      "owner": "instance",
+      "name": "combatTargets"
+    },
+    {
+      "owner": "instance",
+      "name": "drainMana"
+    },
+    {
+      "owner": "instance",
+      "name": "damage"
+    },
+    {
+      "owner": "instance",
+      "name": "hitParty"
+    },
+    {
+      "owner": "instance",
+      "name": "distanceToSegment"
+    },
+    {
+      "owner": "instance",
+      "name": "updateProjectiles"
+    },
+    {
+      "owner": "instance",
+      "name": "nextBasicCombo"
+    },
+    {
+      "owner": "instance",
+      "name": "resetBasicCombo"
+    },
+    {
+      "owner": "instance",
+      "name": "basicComboFinisher"
+    },
+    {
+      "owner": "instance",
+      "name": "skillManaCost"
+    },
+    {
+      "owner": "instance",
+      "name": "cast"
+    },
+    {
+      "owner": "instance",
+      "name": "trueSummonPlan"
+    },
+    {
+      "owner": "instance",
+      "name": "bossOwnedSummons"
+    },
+    {
+      "owner": "instance",
+      "name": "bossSummonProfile"
+    },
+    {
+      "owner": "instance",
+      "name": "bossSummonCap"
+    },
+    {
+      "owner": "instance",
+      "name": "summonName"
+    },
+    {
+      "owner": "instance",
+      "name": "summonCombatProfile"
+    },
+    {
+      "owner": "instance",
+      "name": "summonBossAdds"
+    },
+    {
+      "owner": "instance",
+      "name": "bossAttackWeights"
+    },
+    {
+      "owner": "instance",
+      "name": "chooseBossAttack"
+    },
+    {
+      "owner": "instance",
+      "name": "bossAttackTarget"
+    },
+    {
+      "owner": "instance",
+      "name": "buildBossAttack"
+    },
+    {
+      "owner": "instance",
+      "name": "bossComboSequence"
+    },
+    {
+      "owner": "instance",
+      "name": "startAttack"
+    },
+    {
+      "owner": "instance",
+      "name": "attackPatches"
+    },
+    {
+      "owner": "instance",
+      "name": "resolveAttack"
+    },
+    {
+      "owner": "instance",
+      "name": "resolveArea"
+    },
+    {
+      "owner": "instance",
+      "name": "advanceMotion"
+    },
+    {
+      "owner": "instance",
+      "name": "companionAttackDamage"
+    },
+    {
+      "owner": "instance",
+      "name": "companionSecondSkillUnlocked"
+    },
+    {
+      "owner": "instance",
+      "name": "companionSecondSkillTargets"
+    },
+    {
+      "owner": "instance",
+      "name": "companionUseFirstSkill"
+    },
+    {
+      "owner": "instance",
+      "name": "companionUseSecondSkill"
+    },
+    {
+      "owner": "instance",
+      "name": "companionTrySkill"
+    },
+    {
+      "owner": "instance",
+      "name": "unit"
+    },
+    {
+      "owner": "instance",
+      "name": "queuedCompanions"
+    },
+    {
+      "owner": "instance",
+      "name": "activeParty"
+    },
+    {
+      "owner": "instance",
+      "name": "activeLivingParty"
+    },
+    {
+      "owner": "instance",
+      "name": "barracksFieldCap"
+    },
+    {
+      "owner": "instance",
+      "name": "rosterCount"
+    },
+    {
+      "owner": "instance",
+      "name": "depositSite"
+    },
+    {
+      "owner": "instance",
+      "name": "availableRangers"
+    },
+    {
+      "owner": "instance",
+      "name": "supportEffectActive"
+    },
+    {
+      "owner": "instance",
+      "name": "hasSupportEffect"
+    },
+    {
+      "owner": "instance",
+      "name": "addSupportEffect"
+    },
+    {
+      "owner": "instance",
+      "name": "rangerSupport"
+    },
+    {
+      "owner": "instance",
+      "name": "potion"
+    },
+    {
+      "owner": "instance",
+      "name": "updateRangerSupport"
+    },
+    {
+      "owner": "instance",
+      "name": "autoRangerSupport"
+    },
+    {
+      "owner": "instance",
+      "name": "recruit"
+    },
+    {
+      "owner": "instance",
+      "name": "recover"
+    },
+    {
+      "owner": "instance",
+      "name": "treatCompanions"
+    },
+    {
+      "owner": "instance",
+      "name": "availableLabor"
+    },
+    {
+      "owner": "instance",
+      "name": "restCompanion"
+    },
+    {
+      "owner": "instance",
+      "name": "activateCompanion"
+    },
+    {
+      "owner": "instance",
+      "name": "dismissCompanion"
+    },
+    {
+      "owner": "instance",
+      "name": "squadDefaultDoctrine"
+    },
+    {
+      "owner": "instance",
+      "name": "squadThreats"
+    },
+    {
+      "owner": "instance",
+      "name": "squadContext"
+    },
+    {
+      "owner": "instance",
+      "name": "syncSquadDoctrine"
+    },
+    {
+      "owner": "instance",
+      "name": "toggleSquadDoctrine"
+    },
+    {
+      "owner": "instance",
+      "name": "squadDoctrineLabel"
+    },
+    {
+      "owner": "instance",
+      "name": "recallParty"
+    },
+    {
+      "owner": "instance",
+      "name": "partyFormationOffset"
+    },
+    {
+      "owner": "instance",
+      "name": "partyFollowPoint"
+    },
+    {
+      "owner": "instance",
+      "name": "followPartyMember"
+    },
+    {
+      "owner": "instance",
+      "name": "soldierScreenTarget"
+    },
+    {
+      "owner": "instance",
+      "name": "archerCombatPoint"
+    },
+    {
+      "owner": "instance",
+      "name": "archerFallbackPoint"
+    },
+    {
+      "owner": "instance",
+      "name": "updateParty"
+    },
+    {
+      "owner": "static",
+      "name": "validate"
+    },
+    {
+      "owner": "static",
+      "name": "restore"
+    },
+    {
+      "owner": "static",
+      "name": "migrate"
+    }
+  ],
+  "methods": [],
+  "configuration": [
+    {
+      "name": "classes",
+      "owner": "rules.balance.classes",
+      "before": {
+        "paladin": {
+          "icon": "🛡️",
+          "hp": 120,
+          "mp": 60,
+          "power": 18,
+          "armor": 8,
+          "speed": 300
+        },
+        "mage": {
+          "icon": "🧙‍♀️",
+          "hp": 90,
+          "mp": 100,
+          "power": 22,
+          "armor": 3,
+          "speed": 300
+        },
+        "ranger": {
+          "icon": "🏹",
+          "hp": 105,
+          "mp": 70,
+          "power": 20,
+          "armor": 5,
+          "speed": 320
+        }
+      },
+      "after": {
+        "paladin": {
+          "icon": "🛡️",
+          "hp": 120,
+          "mp": 60,
+          "power": 18,
+          "armor": 8,
+          "speed": 300
+        },
+        "mage": {
+          "icon": "🧙‍♀️",
+          "hp": 90,
+          "mp": 100,
+          "power": 22,
+          "armor": 3,
+          "speed": 300
+        },
+        "ranger": {
+          "icon": "🏹",
+          "hp": 105,
+          "mp": 70,
+          "power": 20,
+          "armor": 5,
+          "speed": 320
+        }
+      }
+    },
+    {
+      "name": "talentMaxRanks",
+      "owner": "rules.balance.disciplines.maxRanks",
+      "before": [
+        5,
+        5,
+        5,
+        3
+      ],
+      "after": [
+        5,
+        5,
+        5,
+        3
+      ]
+    },
+    {
+      "name": "talentProfiles",
+      "owner": "rules.balance.disciplines.profiles",
+      "before": {
+        "paladin": {
+          "power": 7,
+          "mana": 2,
+          "hp": 33,
+          "speed": 38
+        },
+        "mage": {
+          "power": 9,
+          "mana": 3,
+          "hp": 27,
+          "speed": 41
+        },
+        "ranger": {
+          "power": 8,
+          "mana": 2,
+          "hp": 29,
+          "speed": 41
+        }
+      },
+      "after": {
+        "paladin": {
+          "power": 7,
+          "mana": 2,
+          "hp": 33,
+          "speed": 38
+        },
+        "mage": {
+          "power": 9,
+          "mana": 3,
+          "hp": 27,
+          "speed": 41
+        },
+        "ranger": {
+          "power": 8,
+          "mana": 2,
+          "hp": 29,
+          "speed": 41
+        }
+      }
+    },
+    {
+      "name": "ceilings",
+      "owner": "rules.balance.instructors.skillCeilings",
+      "before": {
+        "thorn": 2,
+        "mire": 3,
+        "ridge": 4,
+        "warlord": 6,
+        "citadel": 8
+      },
+      "after": {
+        "thorn": 2,
+        "mire": 3,
+        "ridge": 4,
+        "warlord": 6,
+        "citadel": 8
+      }
+    },
+    {
+      "name": "expeditionCeilings",
+      "owner": "rules.balance.instructors.expeditionCeilings",
+      "before": {
+        "thorn": 2,
+        "mire": 3,
+        "ridge": 4,
+        "warlord": 5,
+        "citadel": 6
+      },
+      "after": {
+        "thorn": 2,
+        "mire": 3,
+        "ridge": 4,
+        "warlord": 5,
+        "citadel": 6
+      }
+    },
+    {
+      "name": "pursuitBurstSeconds",
+      "owner": "rules.balance.pursuit.burstSeconds",
+      "before": 1.2,
+      "after": 1.2
+    },
+    {
+      "name": "pursuitBurstMultiplier",
+      "owner": "rules.balance.pursuit.burstMultiplier",
+      "before": 1.5,
+      "after": 1.5
+    },
+    {
+      "name": "mercyStartRadius",
+      "owner": "rules.balance.pursuit.mercyStartRadius",
+      "before": 300,
+      "after": 300
+    },
+    {
+      "name": "costs",
+      "owner": "rules.balance.skills.costs",
+      "before": [
+        0,
+        0,
+        15,
+        10,
+        25,
+        40,
+        20,
+        45,
+        60
+      ],
+      "after": [
+        0,
+        0,
+        15,
+        10,
+        25,
+        40,
+        20,
+        45,
+        60
+      ]
+    },
+    {
+      "name": "cooldowns",
+      "owner": "rules.balance.skills.cooldowns",
+      "before": [
+        0,
+        0.85,
+        3,
+        8,
+        14,
+        9,
+        4,
+        15,
+        24
+      ],
+      "after": [
+        0,
+        0.85,
+        3,
+        8,
+        14,
+        9,
+        4,
+        15,
+        24
+      ]
+    }
+  ],
+  "styles": [
+    {
+      "name": "prototype",
+      "digest": "6ab38f537cdc3497f1a4d991ef2c356a902afc47ae232120b10f34acd78727fd"
+    },
+    {
+      "name": "desktop",
+      "digest": "4147703bdd1ba3474024189f046c03c879c6efb3bec91ec4df6f16d8c74b1213"
+    },
+    {
+      "name": "phone",
+      "digest": "8a4471bd96a206d6194fbcdac2541ca53ab5a38716a38f4eb2fe5af4de140d9e"
+    }
+  ],
+  "bossAttacks": [
+    {
+      "mode": "normal",
+      "family": "thorn",
+      "form": "normal",
+      "index": 0,
+      "digest": "4435aa8c73cb545d34c2a896f91195a5f0733d8582a2831f6fbc5544a4c3c722"
+    },
+    {
+      "mode": "normal",
+      "family": "thorn",
+      "form": "normal",
+      "index": 1,
+      "digest": "6d1c609ac6d3496047a083e195a591f75e923307519f0bce1655cf14267374c4"
+    },
+    {
+      "mode": "normal",
+      "family": "thorn",
+      "form": "normal",
+      "index": 2,
+      "digest": "1224d1a573c193cb149a438a7d638d27fa4b750958d4aa6bed3aab6a60a340ce"
+    },
+    {
+      "mode": "normal",
+      "family": "thorn",
+      "form": "normal",
+      "index": 3,
+      "digest": "85e9624792ecb3579a7b759e160583e71a9b613eda67fe2422e824f7cf02bebc"
+    },
+    {
+      "mode": "normal",
+      "family": "thorn",
+      "form": "true",
+      "index": 0,
+      "digest": "f5f3df9eef6a76cba756d338e5086481a4159367f35d7a5bb77256dd1e16ce9e"
+    },
+    {
+      "mode": "normal",
+      "family": "thorn",
+      "form": "true",
+      "index": 1,
+      "digest": "dbc8b491d0ed958361da1a02d2f71638b5cde26977aca1f82fab278f1c582694"
+    },
+    {
+      "mode": "normal",
+      "family": "thorn",
+      "form": "true",
+      "index": 2,
+      "digest": "11e890c57534f4769510644e35c9711846293be32c893107040595b139ee263e"
+    },
+    {
+      "mode": "normal",
+      "family": "thorn",
+      "form": "true",
+      "index": 3,
+      "digest": "31f2dbec29bd148ced8a556ab83ea4608f74eb93c33ce7ce828df37772fdd5f8"
+    },
+    {
+      "mode": "normal",
+      "family": "crypt",
+      "form": "normal",
+      "index": 0,
+      "digest": "dc7c349f2c27ce1b023405ed6d9ef7c54cf91b86c7d9b6ef024f62cfbef76aa8"
+    },
+    {
+      "mode": "normal",
+      "family": "crypt",
+      "form": "normal",
+      "index": 1,
+      "digest": "9a0e94c4a6309fd152c4c887d21bdf93d70a1229aa04a8b3b8c1a09be759e435"
+    },
+    {
+      "mode": "normal",
+      "family": "crypt",
+      "form": "normal",
+      "index": 2,
+      "digest": "c51bd744c33f66c856f9449e2f91926f01340e3fb15f709a9868d87bd61c54f6"
+    },
+    {
+      "mode": "normal",
+      "family": "crypt",
+      "form": "normal",
+      "index": 3,
+      "digest": "52c860b5a65cc620ac34dbe41f0f65641a6158cfadb3a38b699f42ab6f68c095"
+    },
+    {
+      "mode": "normal",
+      "family": "crypt",
+      "form": "true",
+      "index": 0,
+      "digest": "9a9e1eac676274dd816685adb00589693314e8948a741b505103dcdc96f7a88e"
+    },
+    {
+      "mode": "normal",
+      "family": "crypt",
+      "form": "true",
+      "index": 1,
+      "digest": "6104a13592a3165b67bd936ac6dd332d37aa59079b0bd80763dc4e1a035a9f61"
+    },
+    {
+      "mode": "normal",
+      "family": "crypt",
+      "form": "true",
+      "index": 2,
+      "digest": "038e0f4cd4d57221a22f6f91934c15f64dd47a9d9f4f21a78ba7b3d7b1a3b6e8"
+    },
+    {
+      "mode": "normal",
+      "family": "crypt",
+      "form": "true",
+      "index": 3,
+      "digest": "4a33d0828fcb649a9af0749b26f3d79639f7f206a7904ad97cc8550d7324bd88"
+    },
+    {
+      "mode": "normal",
+      "family": "mire",
+      "form": "normal",
+      "index": 0,
+      "digest": "042070f1855236f733375916dd575829b45d7dff60eb3d534d94abb52759266e"
+    },
+    {
+      "mode": "normal",
+      "family": "mire",
+      "form": "normal",
+      "index": 1,
+      "digest": "4367ce5bc9a556b85e070277c44a86afab9bc43d6024478a785072c959d50b79"
+    },
+    {
+      "mode": "normal",
+      "family": "mire",
+      "form": "normal",
+      "index": 2,
+      "digest": "8ad0170fc22c0593814f8a9d4ef7523e64f629231c51224c8203ca71fb5b8749"
+    },
+    {
+      "mode": "normal",
+      "family": "mire",
+      "form": "normal",
+      "index": 3,
+      "digest": "660ac45d4e8f707c0d2d6d9d038525b1fb7f72547b4de7e99acbd9eac9b1c70b"
+    },
+    {
+      "mode": "normal",
+      "family": "mire",
+      "form": "true",
+      "index": 0,
+      "digest": "92433f3b916da41396a5f0778a0c3ce117e92948cfd648ed9b9f149c00ba4650"
+    },
+    {
+      "mode": "normal",
+      "family": "mire",
+      "form": "true",
+      "index": 1,
+      "digest": "1eec5f27106fedc9a12ab01572c4247bf8e86f887b11fd1f1ee08aa5ff1df010"
+    },
+    {
+      "mode": "normal",
+      "family": "mire",
+      "form": "true",
+      "index": 2,
+      "digest": "795d0e266c285928e4833e1c3d6ddbc5ada37383010c87f9e75b9bc7644a75e0"
+    },
+    {
+      "mode": "normal",
+      "family": "mire",
+      "form": "true",
+      "index": 3,
+      "digest": "1884b46d064955d620f3ac3eff8da97d798722ff247d54ecbb9523b91aca534b"
+    },
+    {
+      "mode": "normal",
+      "family": "archive",
+      "form": "normal",
+      "index": 0,
+      "digest": "23640ded9aebda368db1dae29949613f391f7f249d3933c75e7034a4d944cdc3"
+    },
+    {
+      "mode": "normal",
+      "family": "archive",
+      "form": "normal",
+      "index": 1,
+      "digest": "cb3da9d4372d042cd5859fee6fc5bf7aaba3c270cb9a7e0758f4f9a513f58ea3"
+    },
+    {
+      "mode": "normal",
+      "family": "archive",
+      "form": "normal",
+      "index": 2,
+      "digest": "05cbc42cdfcac9c86b647d80a6e75073e3b19ec34ccaa6cad47882309999cb0b"
+    },
+    {
+      "mode": "normal",
+      "family": "archive",
+      "form": "normal",
+      "index": 3,
+      "digest": "f308169d171b91a8a9641b525438c9fdb46bbb2b4b3c59927b068f7029027fc6"
+    },
+    {
+      "mode": "normal",
+      "family": "archive",
+      "form": "true",
+      "index": 0,
+      "digest": "e675afb9d06abfcc56b51ce87a7ad9bd9c46b9bb9becc4967fab1bcf3a6cedec"
+    },
+    {
+      "mode": "normal",
+      "family": "archive",
+      "form": "true",
+      "index": 1,
+      "digest": "d2d7de9b013a34f00fb186129c1ed3157b10c20a48c02878fd9441d5911f6fb6"
+    },
+    {
+      "mode": "normal",
+      "family": "archive",
+      "form": "true",
+      "index": 2,
+      "digest": "8bc420ceab53c70e30ffce5b904a6d791c1876bdc7dc6b82fe730d3dad489a76"
+    },
+    {
+      "mode": "normal",
+      "family": "archive",
+      "form": "true",
+      "index": 3,
+      "digest": "1971d0dd3b778fb09b10f2f43ea6763965ac9b205d99e5c05516801b8851bf52"
+    },
+    {
+      "mode": "normal",
+      "family": "ridge",
+      "form": "normal",
+      "index": 0,
+      "digest": "3785061c99ada72102cf2583e171607d17b356fad46235388092f5995654d153"
+    },
+    {
+      "mode": "normal",
+      "family": "ridge",
+      "form": "normal",
+      "index": 1,
+      "digest": "a529965b5363b5caa81508cdaa6269943519927fb1d23a36e1e0d6bc3b803eca"
+    },
+    {
+      "mode": "normal",
+      "family": "ridge",
+      "form": "normal",
+      "index": 2,
+      "digest": "2b195dd0d4b1765a59f4619df2317b8cdc1b53efd3a1efe46345beffbd7384b4"
+    },
+    {
+      "mode": "normal",
+      "family": "ridge",
+      "form": "normal",
+      "index": 3,
+      "digest": "37827744bc95fea13412c2deb6593932a4fb9eaf24922d65f7e408fd229d97d6"
+    },
+    {
+      "mode": "normal",
+      "family": "ridge",
+      "form": "true",
+      "index": 0,
+      "digest": "a6e0cac44b50e291c529e9e7729a85db098885c87ad76af0d6c9e4e20a62fbc7"
+    },
+    {
+      "mode": "normal",
+      "family": "ridge",
+      "form": "true",
+      "index": 1,
+      "digest": "45b6088ab30fdec2747bb4872bfe5565405163196c3342fbca70af32c35b5e42"
+    },
+    {
+      "mode": "normal",
+      "family": "ridge",
+      "form": "true",
+      "index": 2,
+      "digest": "91330ffda359de31c9ff97b905d903113f0478758f29475168f3778c0229a257"
+    },
+    {
+      "mode": "normal",
+      "family": "ridge",
+      "form": "true",
+      "index": 3,
+      "digest": "f408c37269aa82c0cfef002f23e6044aefee7517c3036188ca435d321533a13c"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "normal",
+      "index": 0,
+      "digest": "c12b5980f84ba6672dea59f9cfc393dc529a2e929c14d90d8833b800b258c314"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "normal",
+      "index": 1,
+      "digest": "ed230910b0944edebdcc0b08b2569c3615fbcddef7960e05eb9e263763b0bf6e"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "normal",
+      "index": 2,
+      "digest": "8bb135eb4bc0204182b42035398885242a2d477c9ba86f47b4f0268aeac71d9a"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "normal",
+      "index": 3,
+      "digest": "ad8845db9f22b64503f883cda8bd58ca07e37f04abb2c783eeef855139ecb6de"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "normal",
+      "index": 4,
+      "digest": "5c5bdb4d2bb8d0bfea0b2cb2e2951145109dbf47be33904e1a7fdd2841ae65fc"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "true",
+      "index": 0,
+      "digest": "e66dc0d57eb545c4067001dccfb45566a9397c4d5b6d3390ca97789a81c1dde3"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "true",
+      "index": 1,
+      "digest": "f22f9ac09e38b2a3fb3cafd92dc67b57f886d22a47f07f4225ca3e1bd54e2d17"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "true",
+      "index": 2,
+      "digest": "4af60fd933a9d63a8e968b9823bbfbf318e62d451fd1cef25eb6af023e9ed47f"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "true",
+      "index": 3,
+      "digest": "30a1b22a9b5c644689c9e6d671e179c00e76588f1b5f4e2f80afac111c5da7b6"
+    },
+    {
+      "mode": "normal",
+      "family": "mine",
+      "form": "true",
+      "index": 4,
+      "digest": "12c842a3701456f2ee6b327a1ece0df000cee67b93d48af6fe6f19a288a979d9"
+    },
+    {
+      "mode": "normal",
+      "family": "warlord",
+      "form": "normal",
+      "index": 0,
+      "digest": "49d566208a2e37e3c92a11cb748249fd079de729f7db12b19e67b175c330a065"
+    },
+    {
+      "mode": "normal",
+      "family": "warlord",
+      "form": "normal",
+      "index": 1,
+      "digest": "c3e745ab1bfd20d1cdcb2481cedb1da564339c8c9be90bb0b281be972b1b46ad"
+    },
+    {
+      "mode": "normal",
+      "family": "warlord",
+      "form": "normal",
+      "index": 2,
+      "digest": "735932e37b7f6b04046ec280778eaaa76f22efcf7964903b6b08995366e645f6"
+    },
+    {
+      "mode": "normal",
+      "family": "warlord",
+      "form": "normal",
+      "index": 3,
+      "digest": "00bb9df47741f5b0316e08c24fe0f336ff3b6c2b7a862d353e419712e2ada7da"
+    },
+    {
+      "mode": "normal",
+      "family": "warlord",
+      "form": "true",
+      "index": 0,
+      "digest": "1dda37d4745986bf555f85a8d7c8908a6fce3bf8a5efd6a7427d95de7924ec04"
+    },
+    {
+      "mode": "normal",
+      "family": "warlord",
+      "form": "true",
+      "index": 1,
+      "digest": "161e76a81eef17ca63295fcfeeb1a57753a01f09229c5fa5be09c94aa43f1c4f"
+    },
+    {
+      "mode": "normal",
+      "family": "warlord",
+      "form": "true",
+      "index": 2,
+      "digest": "146af896429059ebd9781d18719d4c0b4d56106350cb32dc3d44a5c39739dc57"
+    },
+    {
+      "mode": "normal",
+      "family": "warlord",
+      "form": "true",
+      "index": 3,
+      "digest": "28af8f582e44fa008d75f0b5463c82c01abd2b8dbbbfef1ea5a752896c0965df"
+    },
+    {
+      "mode": "normal",
+      "family": "abyss",
+      "form": "normal",
+      "index": 0,
+      "digest": "3c7ddb39b059b55841f840cb6d2143de789422289f5f13c8509ff2b9965147b5"
+    },
+    {
+      "mode": "normal",
+      "family": "abyss",
+      "form": "normal",
+      "index": 1,
+      "digest": "b72b866045e49049f77774676a0cf1cbfd4d620daf49833ccd7db857a6b0a095"
+    },
+    {
+      "mode": "normal",
+      "family": "abyss",
+      "form": "normal",
+      "index": 2,
+      "digest": "5f2dfcdd31037aa60d7345c3aef1bbf6b37af280342990d68ef6567745400b24"
+    },
+    {
+      "mode": "normal",
+      "family": "abyss",
+      "form": "normal",
+      "index": 3,
+      "digest": "3d1f0e2c8f442396eea2a19852aa242cdd22f202ef7d1f85fde761ef6224538e"
+    },
+    {
+      "mode": "normal",
+      "family": "abyss",
+      "form": "true",
+      "index": 0,
+      "digest": "5b5cebfbc93ed4c1c1fbe07670dcfeb8bc891e3ba0347eb2b276d9f6f057e70c"
+    },
+    {
+      "mode": "normal",
+      "family": "abyss",
+      "form": "true",
+      "index": 1,
+      "digest": "11f3aeb32f3be967ee41f668d428de92ba37b8d2ea2db6f0cbb021e8a42dcea6"
+    },
+    {
+      "mode": "normal",
+      "family": "abyss",
+      "form": "true",
+      "index": 2,
+      "digest": "8367f06db0688e511ff4831750527be9e2e7d58886d3779a430a8167d3780e8a"
+    },
+    {
+      "mode": "normal",
+      "family": "abyss",
+      "form": "true",
+      "index": 3,
+      "digest": "6e1a67337814e623f882d7d2d2ab00fded0c11e3c57e3c7557bb6fb1812704b4"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "normal",
+      "index": 0,
+      "digest": "dd97946b6142ce6c11c226b9e389efdf7bf0ad906735fa83602dd6d9b7320141"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "normal",
+      "index": 1,
+      "digest": "ee69991a7f71d471425571cff65790eae64b5d34d5eb2ccbc5602ccf68baadfe"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "normal",
+      "index": 2,
+      "digest": "199afc62cdaf7bcefa42ba5d835d66bcd36d40aee3e757bf2b610401e5c38dac"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "normal",
+      "index": 3,
+      "digest": "7a8aaea666df597b7f6d91dfd07255dd336cb7e7b9a8595414f458d5507d90cc"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "normal",
+      "index": 4,
+      "digest": "29f03fe41973be3559b32a669a4aa125a54f7846a0f571bd8280e71862029fec"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "true",
+      "index": 0,
+      "digest": "9f473c83dcecda3954310d6c1eaa6f80f57935e729e497756e49bdf078b0c2aa"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "true",
+      "index": 1,
+      "digest": "0105dcff23894024ecb816903bab76faf38d6b4dc9a8fcf0aa87233101633cfb"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "true",
+      "index": 2,
+      "digest": "0958e834ffab5e8487968272e21f2567430647e075bca4e6d62ec8913f670179"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "true",
+      "index": 3,
+      "digest": "36011cd1f695bb066cd3368670758c33e54cda6ac0c1e346ee345fefaad28945"
+    },
+    {
+      "mode": "normal",
+      "family": "citadel",
+      "form": "true",
+      "index": 4,
+      "digest": "821a30a7870bedec1c023bacfe4dddba1d9fa9a02080c0f79718f087bdd7c85c"
+    },
+    {
+      "mode": "normal",
+      "family": "cindermaw",
+      "form": "normal",
+      "index": 0,
+      "digest": "38f81dcd89952589eb6a510f5846d1d6af8d57d141d1d42a342b98b657dc5531"
+    },
+    {
+      "mode": "normal",
+      "family": "cindermaw",
+      "form": "normal",
+      "index": 1,
+      "digest": "772cb1513406bf495ef6fbe88330c95a04f82f09e0b530bbe130280e364bbffe"
+    },
+    {
+      "mode": "normal",
+      "family": "cindermaw",
+      "form": "normal",
+      "index": 2,
+      "digest": "60ba2a700e6a103f783117ab7a64a4ef61f6c29f543adb8c5cbce9949c556970"
+    },
+    {
+      "mode": "normal",
+      "family": "cindermaw",
+      "form": "normal",
+      "index": 3,
+      "digest": "fb64c2813e2c489ce9d7724245cdfc282706c43af533cdbc823327262b2a3855"
+    },
+    {
+      "mode": "normal",
+      "family": "cindermaw",
+      "form": "true",
+      "index": 0,
+      "digest": "2689cb19f51b6afc6f615e67dba34ab28d05427a4faf6d0585aa84e69349bfe6"
+    },
+    {
+      "mode": "normal",
+      "family": "cindermaw",
+      "form": "true",
+      "index": 1,
+      "digest": "693e54863603212e0381e14a7ddbbdcc7e46b790ac0d1d280eae4c3a65cfb04d"
+    },
+    {
+      "mode": "normal",
+      "family": "cindermaw",
+      "form": "true",
+      "index": 2,
+      "digest": "2197283a66ddc007ee9b14ebc6a890f4d8f3860484bb8e6f8b9e8f6b5e97d330"
+    },
+    {
+      "mode": "normal",
+      "family": "cindermaw",
+      "form": "true",
+      "index": 3,
+      "digest": "fa903ba378d2d2c8fceef9f5dea41ed172bec3f252ffc91853ae3e52ec9bdf5f"
+    },
+    {
+      "mode": "normal",
+      "family": "darklord",
+      "form": "normal",
+      "index": 0,
+      "digest": "0a2877337cfc5f5688bf4f221bc0c8f26024dee53aad063fa4932f8bd2681fe8"
+    },
+    {
+      "mode": "normal",
+      "family": "darklord",
+      "form": "normal",
+      "index": 1,
+      "digest": "fd971a6e0cd0f3ec0d03b5c543aab196d54ccd2fb5ca097d0f660c812924d528"
+    },
+    {
+      "mode": "normal",
+      "family": "darklord",
+      "form": "normal",
+      "index": 2,
+      "digest": "e245e1532a21473efdb88850ba7d7466d6d7e23b916e69e5a795e5b936928b41"
+    },
+    {
+      "mode": "normal",
+      "family": "darklord",
+      "form": "normal",
+      "index": 3,
+      "digest": "5d4b49ba5a89e0a23477348c8e8f4f2e0ab81b35015b4ef2bca73295e6372ee4"
+    },
+    {
+      "mode": "normal",
+      "family": "darklord",
+      "form": "true",
+      "index": 0,
+      "digest": "9f7470f57f9d0eb1ccd67c6428115784c20ae452a9f2052b7f0d4131fec27362"
+    },
+    {
+      "mode": "normal",
+      "family": "darklord",
+      "form": "true",
+      "index": 1,
+      "digest": "6703e8b24f071d859b67b660f1b209b1a7dcd28f430c97de60d52b20f282de1a"
+    },
+    {
+      "mode": "normal",
+      "family": "darklord",
+      "form": "true",
+      "index": 2,
+      "digest": "e9c879061e81b9c03481f88124224c3c4ec6c060f760a07802894186fba42df0"
+    },
+    {
+      "mode": "normal",
+      "family": "darklord",
+      "form": "true",
+      "index": 3,
+      "digest": "c6c0fc4be54b5dae6dec9e2fa6755b70609a105a87f4c33e51288c6caae77e44"
+    },
+    {
+      "mode": "nightmare",
+      "family": "thorn",
+      "form": "normal",
+      "index": 0,
+      "digest": "97dde67811233365f1485937c1d5de46d805ad5e3da6840a134422ae4f9862d8"
+    },
+    {
+      "mode": "nightmare",
+      "family": "thorn",
+      "form": "normal",
+      "index": 1,
+      "digest": "8249c179622cc984269ffe15603d4791ed95622c1cc464c71e3512058e599c90"
+    },
+    {
+      "mode": "nightmare",
+      "family": "thorn",
+      "form": "normal",
+      "index": 2,
+      "digest": "ba9bbccd3a1f99580aabd68cd361e1ddc2325c945e3ffb967256db5c2008d4b1"
+    },
+    {
+      "mode": "nightmare",
+      "family": "thorn",
+      "form": "normal",
+      "index": 3,
+      "digest": "a24676d244fddd0d8ee0ea4910bbbf573332b5f00c4ff7d96e1e4bc627c5b441"
+    },
+    {
+      "mode": "nightmare",
+      "family": "thorn",
+      "form": "true",
+      "index": 0,
+      "digest": "2e03fd84710ae6680f2442e5a8ea1ce16ea4c414818792e95e34ac75d7566ea2"
+    },
+    {
+      "mode": "nightmare",
+      "family": "thorn",
+      "form": "true",
+      "index": 1,
+      "digest": "102a5ab0b32573c58466b1af4445c65866c7fc9b23d3632139ecd7d11c48421b"
+    },
+    {
+      "mode": "nightmare",
+      "family": "thorn",
+      "form": "true",
+      "index": 2,
+      "digest": "942b15fdc7e47222eceffc7ac319247749cde8cf85b350a2983ee03f03c337c1"
+    },
+    {
+      "mode": "nightmare",
+      "family": "thorn",
+      "form": "true",
+      "index": 3,
+      "digest": "522d55d5ff4dd34e417f018d0ed45cf357bb5c45e8d5bf13c925b219f1d376de"
+    },
+    {
+      "mode": "nightmare",
+      "family": "crypt",
+      "form": "normal",
+      "index": 0,
+      "digest": "e933c45e1b6855475caf993bc0c4ecfe759f132d57773268ab16b6edeee6447c"
+    },
+    {
+      "mode": "nightmare",
+      "family": "crypt",
+      "form": "normal",
+      "index": 1,
+      "digest": "2a25e3dcf2137764ffb4432f1b66bce56fd11a838eabd0048ed8f7ce7394be22"
+    },
+    {
+      "mode": "nightmare",
+      "family": "crypt",
+      "form": "normal",
+      "index": 2,
+      "digest": "a251d1a74cb76f8cffa57288f4b79af4cb7d5bedf376bf43ae4e0a3a2199e657"
+    },
+    {
+      "mode": "nightmare",
+      "family": "crypt",
+      "form": "normal",
+      "index": 3,
+      "digest": "dfecf73f641edfed4889e588dd15d8e57de7f2083ee6a3b6e21a85657d572a55"
+    },
+    {
+      "mode": "nightmare",
+      "family": "crypt",
+      "form": "true",
+      "index": 0,
+      "digest": "0894415dd1008f1385379b65608c626f231dd112dacb33ab2d7f0bc8cec948df"
+    },
+    {
+      "mode": "nightmare",
+      "family": "crypt",
+      "form": "true",
+      "index": 1,
+      "digest": "6ae179005553bb3a18edba161e9b9a729c1cd7194fd13d97963480f7e693593f"
+    },
+    {
+      "mode": "nightmare",
+      "family": "crypt",
+      "form": "true",
+      "index": 2,
+      "digest": "38a5845c527365a6eac758b4489c2d5f65d89b148572c02a5bc1399d5fd46933"
+    },
+    {
+      "mode": "nightmare",
+      "family": "crypt",
+      "form": "true",
+      "index": 3,
+      "digest": "799c5d808f1f862947db763e6891607583783b17783d38e33c31aa6862222709"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mire",
+      "form": "normal",
+      "index": 0,
+      "digest": "3918c0f136ccecc433d92c775d508bd4741413f2a6bf38ad5d4a170fa95367cb"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mire",
+      "form": "normal",
+      "index": 1,
+      "digest": "4021f347e07b2a57722a70e987c32754847175697357acc054e5c58c972de35d"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mire",
+      "form": "normal",
+      "index": 2,
+      "digest": "0a5ee06174fa4f315ab42f25f096ca9764fbf6ab286159476e6f793436e38bb2"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mire",
+      "form": "normal",
+      "index": 3,
+      "digest": "c59e91f943d62fa5380a82aca47178ff87e056979ec16ff374ba9f62e78ce9d2"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mire",
+      "form": "true",
+      "index": 0,
+      "digest": "c31f6b07a46a1822bef90ed13c07a4ff731964effe1ccbf0cab9e489343a3044"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mire",
+      "form": "true",
+      "index": 1,
+      "digest": "86a8f47efa0b2daf2faefe1a4ef2cc3d8faf36ed52f6ee93e93612aec695d31a"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mire",
+      "form": "true",
+      "index": 2,
+      "digest": "3e1d0efe0a01a8b4ef4907174144aed4eaf8628bff4b7bb53731ae6350d66ce9"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mire",
+      "form": "true",
+      "index": 3,
+      "digest": "005e969da0c011c96b3847cdc370a7eb9f59bd48ac7b69281460bc7c6c2b3cfb"
+    },
+    {
+      "mode": "nightmare",
+      "family": "archive",
+      "form": "normal",
+      "index": 0,
+      "digest": "7f3f79df215639f044605647ec173a4bfe543cc2877bf184ff807f9fbd3fe737"
+    },
+    {
+      "mode": "nightmare",
+      "family": "archive",
+      "form": "normal",
+      "index": 1,
+      "digest": "f6056678fe8c061d8aaee5d170455318d833d72f477976f58a5f5c9630f5c2de"
+    },
+    {
+      "mode": "nightmare",
+      "family": "archive",
+      "form": "normal",
+      "index": 2,
+      "digest": "d462a1a856887c3bf6f6374907986fd8790cd298c9e57c6106933ecf756c7112"
+    },
+    {
+      "mode": "nightmare",
+      "family": "archive",
+      "form": "normal",
+      "index": 3,
+      "digest": "b94458133528bc482c0431c89c4455a44fa53b3120ac0af306e1707502e0b0e4"
+    },
+    {
+      "mode": "nightmare",
+      "family": "archive",
+      "form": "true",
+      "index": 0,
+      "digest": "0e9927d2455f935934bb4909360571c670a82a3500d464333550fed244de4953"
+    },
+    {
+      "mode": "nightmare",
+      "family": "archive",
+      "form": "true",
+      "index": 1,
+      "digest": "5cc6d507ec68e59f996d430d6bf51b3e9b6c7bb820b8ed983baff35ddc11ebe0"
+    },
+    {
+      "mode": "nightmare",
+      "family": "archive",
+      "form": "true",
+      "index": 2,
+      "digest": "a75d000aa642581128087a59a018b795ccd9c51b2e82b6b5a5a6983b27f56e5a"
+    },
+    {
+      "mode": "nightmare",
+      "family": "archive",
+      "form": "true",
+      "index": 3,
+      "digest": "2d348639c1b1addf6eacc3ad41f52a45e1b16491c1dda388efffb9634abff710"
+    },
+    {
+      "mode": "nightmare",
+      "family": "ridge",
+      "form": "normal",
+      "index": 0,
+      "digest": "f97a51bf3bdfbf5416f568ba845948dfc1193919a0b8ea6854b72e8d530fd364"
+    },
+    {
+      "mode": "nightmare",
+      "family": "ridge",
+      "form": "normal",
+      "index": 1,
+      "digest": "4001a3ca498803345dfefb5aef0d88e3a75dbabc1135ed2e4fbaec717ea2cf0c"
+    },
+    {
+      "mode": "nightmare",
+      "family": "ridge",
+      "form": "normal",
+      "index": 2,
+      "digest": "92c5bf603aff2265bb3f4c28df2ce9bf7a2489859b56212635a24ac413595cd6"
+    },
+    {
+      "mode": "nightmare",
+      "family": "ridge",
+      "form": "normal",
+      "index": 3,
+      "digest": "e35dd100a49133d8da1d69d2afabd4f72f19e2b3241b3c7a2301c5ed5cbf0b5d"
+    },
+    {
+      "mode": "nightmare",
+      "family": "ridge",
+      "form": "true",
+      "index": 0,
+      "digest": "186240e81591f8b39200e397e50bf1407a1a7b2c02abc72ee0efa181662edac7"
+    },
+    {
+      "mode": "nightmare",
+      "family": "ridge",
+      "form": "true",
+      "index": 1,
+      "digest": "2dccbca542ed5d3fe98434f45d7af4820175d99d06e805c94a445ac549220866"
+    },
+    {
+      "mode": "nightmare",
+      "family": "ridge",
+      "form": "true",
+      "index": 2,
+      "digest": "040b4b4b7b302d2c9c7615fec7e6cd160b2f03d862e19d9f0caebbe7d804ea82"
+    },
+    {
+      "mode": "nightmare",
+      "family": "ridge",
+      "form": "true",
+      "index": 3,
+      "digest": "cdcc91026d6a1730c91add1dafa227d627eaa5c0865285ad274b234f0a70e030"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "normal",
+      "index": 0,
+      "digest": "839570b7b1b5d1c32cabb183d64f439719a1ad16b1e12f080f337bb1f5eddbb0"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "normal",
+      "index": 1,
+      "digest": "0d6502cd525d1e46d96cc049f92dedc6c2ea40230aec13dec02c1d9cd2680f95"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "normal",
+      "index": 2,
+      "digest": "a5704d9985157127bb6f62f9554ae176940e0711053b6659affbe282dcb551d9"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "normal",
+      "index": 3,
+      "digest": "553b97cc8b4afe832ba0f52d4f37bf280292e57d7a45c90a136e7edaecbababa"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "normal",
+      "index": 4,
+      "digest": "43e5b56a22c8a00d30eabee2d32dded71f747c7f6d28bdeca0d2cc075436d204"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "true",
+      "index": 0,
+      "digest": "dfbf934a4be2de79be4f25f9805fe529e3c8def218d6bee6ec34eeb933f56bed"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "true",
+      "index": 1,
+      "digest": "13a7b6df3df7aa6b7d11e2351ef9e6e86d82c5d9d22b8916339c0339ae38d0cb"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "true",
+      "index": 2,
+      "digest": "8b921df6ee4940772b55616cc770ea3b52cef2532a4a9fcce3798c56e3335454"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "true",
+      "index": 3,
+      "digest": "cd42c6ee9905b61a3a65a4e9c85559cfce8fb88ad18e2c7c2d88cd00b60fbe92"
+    },
+    {
+      "mode": "nightmare",
+      "family": "mine",
+      "form": "true",
+      "index": 4,
+      "digest": "e40bbbea8ac7fb41f79fc0164ec23f86e98876080111f4d4a7fff9616fb243c8"
+    },
+    {
+      "mode": "nightmare",
+      "family": "warlord",
+      "form": "normal",
+      "index": 0,
+      "digest": "bcbd86680cc846bf71744d7754d3c6e69e4206ab442c2edbabc151004695fd1a"
+    },
+    {
+      "mode": "nightmare",
+      "family": "warlord",
+      "form": "normal",
+      "index": 1,
+      "digest": "53d475a496d6832671c06eceefe41ab9f922fc787f272f898a5d9c64a2db8ada"
+    },
+    {
+      "mode": "nightmare",
+      "family": "warlord",
+      "form": "normal",
+      "index": 2,
+      "digest": "a4fdeabe51f2ee1097b82dabf4801065c603faec322e39f0742fa4b23063d70d"
+    },
+    {
+      "mode": "nightmare",
+      "family": "warlord",
+      "form": "normal",
+      "index": 3,
+      "digest": "41bf73a9caf10612ea7adfe8eaf6b4c60c155ed19dca868c8526cdfc24234376"
+    },
+    {
+      "mode": "nightmare",
+      "family": "warlord",
+      "form": "true",
+      "index": 0,
+      "digest": "9d1c17a3a7e0ad7b974ae79deee7db3044a89f5f93500a1c4a2edce984d48c9a"
+    },
+    {
+      "mode": "nightmare",
+      "family": "warlord",
+      "form": "true",
+      "index": 1,
+      "digest": "24e2cc06442073bea57b08d780100fc486edc4266752139f5c6a15dede9d0cf4"
+    },
+    {
+      "mode": "nightmare",
+      "family": "warlord",
+      "form": "true",
+      "index": 2,
+      "digest": "e66911469ff55243de443d4e7584b7e53b8c4f74473dc8b8976080ba5419ac9c"
+    },
+    {
+      "mode": "nightmare",
+      "family": "warlord",
+      "form": "true",
+      "index": 3,
+      "digest": "266cc8fe6b1d6d3f54c5383414078f8eb9e318f8c5ef215a245ad9f4ceb19073"
+    },
+    {
+      "mode": "nightmare",
+      "family": "abyss",
+      "form": "normal",
+      "index": 0,
+      "digest": "631170b017a67a37861172169cad3ba3f84f99fd5bddd6f5eba60296b2de0722"
+    },
+    {
+      "mode": "nightmare",
+      "family": "abyss",
+      "form": "normal",
+      "index": 1,
+      "digest": "dee006cb522c92bb9926ecde89e9a7a7c697960a7fa8be1a3603f3f578efce47"
+    },
+    {
+      "mode": "nightmare",
+      "family": "abyss",
+      "form": "normal",
+      "index": 2,
+      "digest": "706170da7521349ca69362c52ae3852addc6962c3170e3530c99420e22d69cdc"
+    },
+    {
+      "mode": "nightmare",
+      "family": "abyss",
+      "form": "normal",
+      "index": 3,
+      "digest": "6e4277ce03f6ba42879d486d6415bd38008a4eb5873dc69095d8776491dc3adb"
+    },
+    {
+      "mode": "nightmare",
+      "family": "abyss",
+      "form": "true",
+      "index": 0,
+      "digest": "795155ce04ae83cb5ec990f272746e6f6dc74af9cf9548ccbda3310e0e69fb1c"
+    },
+    {
+      "mode": "nightmare",
+      "family": "abyss",
+      "form": "true",
+      "index": 1,
+      "digest": "f17d87bb2ca2083d7edc09f82fe08c55570e496bec0e54ca4d2146bf6657ea75"
+    },
+    {
+      "mode": "nightmare",
+      "family": "abyss",
+      "form": "true",
+      "index": 2,
+      "digest": "6f75c7f66b0bcc18d700b02de06f1fcf7cba3f1d6f03280ffad64fbb4b783d68"
+    },
+    {
+      "mode": "nightmare",
+      "family": "abyss",
+      "form": "true",
+      "index": 3,
+      "digest": "4ccd5a5a7e6e03834bec212e8231973321e08974cfbe516a43fc98010ac9f2fd"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "normal",
+      "index": 0,
+      "digest": "0dd84ad9f4c60b9abb6fb199edbdbb504cac005683ab8c5d6beac37041dd35a8"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "normal",
+      "index": 1,
+      "digest": "2e1781926ff3f07fbbb91500cf0c54fca7be675cbe8aed716740e66257ba7210"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "normal",
+      "index": 2,
+      "digest": "afb2793513cea5d2fdb4a697d667662ddfe8f99358e0460ba86d18b4673b3ae9"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "normal",
+      "index": 3,
+      "digest": "deac8421f90191e7ef603ed0ee2c347238963a16d3a6074b49e09892f280c153"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "normal",
+      "index": 4,
+      "digest": "bdbe75775704ec0709bdf421005f9532eb34a71e53ee5f6a4acab22c45be02f1"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "true",
+      "index": 0,
+      "digest": "e332351b31729ab4fe01d451ca2184a457e04e2124c9fc201cce84215d283fd8"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "true",
+      "index": 1,
+      "digest": "6a6a9e03f34f7dc554e40948e8130fa00a1ad2fd70e6ab6b91bfebfc08a843a1"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "true",
+      "index": 2,
+      "digest": "7abbb1879a7accb7d20d7dde921023f490b3aa1c52804062dea40a2d3753e4b1"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "true",
+      "index": 3,
+      "digest": "8740e92c98c1898a20a7be452e8dd7ccb8f2a435c25fe4a8ad49618af61e7cf8"
+    },
+    {
+      "mode": "nightmare",
+      "family": "citadel",
+      "form": "true",
+      "index": 4,
+      "digest": "4e2c4d9b360f29d4f452cd4fd84d5faa94ac8935b1ed7872560befbe1d719929"
+    },
+    {
+      "mode": "nightmare",
+      "family": "cindermaw",
+      "form": "normal",
+      "index": 0,
+      "digest": "da3bddc620f4718ad318934dc188426ca6bc516036764dc7dbe1910876d17c94"
+    },
+    {
+      "mode": "nightmare",
+      "family": "cindermaw",
+      "form": "normal",
+      "index": 1,
+      "digest": "b392c6a0be790accca0a806cef7014fc3f7eb3c7f267b57c87c8cea2543594da"
+    },
+    {
+      "mode": "nightmare",
+      "family": "cindermaw",
+      "form": "normal",
+      "index": 2,
+      "digest": "bdf211a45ab61e4f6aeecb9e753938e2d7f6a0893e605d2b27bf60ba5c6f8fc2"
+    },
+    {
+      "mode": "nightmare",
+      "family": "cindermaw",
+      "form": "normal",
+      "index": 3,
+      "digest": "8b100b8bf872f486d704ca7e47341d8c3b9662eb2f85eee7fa3dab8bb110f783"
+    },
+    {
+      "mode": "nightmare",
+      "family": "cindermaw",
+      "form": "true",
+      "index": 0,
+      "digest": "d8c8d12356d05e1222c094a50ba50b638f53f5934c2e0b0f05483c6965a905b4"
+    },
+    {
+      "mode": "nightmare",
+      "family": "cindermaw",
+      "form": "true",
+      "index": 1,
+      "digest": "da93736999b5ce47cb9c19c15133b4181837989adbd5ac7c599f42058598bafc"
+    },
+    {
+      "mode": "nightmare",
+      "family": "cindermaw",
+      "form": "true",
+      "index": 2,
+      "digest": "88689080cae9c5edd5866b293fd07898fda032513654d6ecd5f54073c40d47a5"
+    },
+    {
+      "mode": "nightmare",
+      "family": "cindermaw",
+      "form": "true",
+      "index": 3,
+      "digest": "7f893d3fb8db5483f61099e93e50a162dcdb8f6315b274ac9603b4ace01d3749"
+    },
+    {
+      "mode": "nightmare",
+      "family": "darklord",
+      "form": "normal",
+      "index": 0,
+      "digest": "30f5341b93300e85e4eed231c3756a14f4bf2b85f420b70f8b1db5abeb6ef555"
+    },
+    {
+      "mode": "nightmare",
+      "family": "darklord",
+      "form": "normal",
+      "index": 1,
+      "digest": "e7856640dc18febf1c49aed4af4fdf8ae0212641eb5f0c2e193b71b382ca6cf6"
+    },
+    {
+      "mode": "nightmare",
+      "family": "darklord",
+      "form": "normal",
+      "index": 2,
+      "digest": "2a079dfc31e33c080f6f966b46274a578856d5267c0692d63f3af4a3dbfe5af9"
+    },
+    {
+      "mode": "nightmare",
+      "family": "darklord",
+      "form": "normal",
+      "index": 3,
+      "digest": "4cd2dffd123a85cfc083ef39c34a529471989a07f3aecf99858ea6799e9555a1"
+    },
+    {
+      "mode": "nightmare",
+      "family": "darklord",
+      "form": "true",
+      "index": 0,
+      "digest": "4306f82467eb9e2103d6ed49f5bfc3b955ed2ac2227b9ca9467dcadef2e745a4"
+    },
+    {
+      "mode": "nightmare",
+      "family": "darklord",
+      "form": "true",
+      "index": 1,
+      "digest": "3e8e3f5d9e961b0ee526f8b42a626ea2091ad3809dce86866486239b4b3168ae"
+    },
+    {
+      "mode": "nightmare",
+      "family": "darklord",
+      "form": "true",
+      "index": 2,
+      "digest": "40ff9846d0bb32f0d0c2907162c54fd2ad27109ff9fe5052809c219f0c1654f4"
+    },
+    {
+      "mode": "nightmare",
+      "family": "darklord",
+      "form": "true",
+      "index": 3,
+      "digest": "57124b3283c8632e3a67c79ea2dfb762de228e98b1bebe3c91ed6bf9237ad1d1"
+    }
+  ],
+  "economy": [
+    {
+      "mode": "normal",
+      "cls": "paladin",
+      "succession": false,
+      "checkpoints": [
+        {
+          "name": "training-equipment-support-tonic",
+          "digest": "e0348b9967b918c32f24bc43320da9257fc468d1ad9a38a653a5cf179116a0d0"
+        },
+        {
+          "name": "barracks-first-free-upgrade-recruit-recovery-treatment",
+          "digest": "6693d687754f35f9775f335a064feecbce2dab673a1be4ebf0dfdf07d93e323b"
+        },
+        {
+          "name": "barracks-hire-prices-and-queue",
+          "digest": "178a9b77507018948f09de7e8c978a84fe4ed6f957eb8f2985c5573ce4af5d9a"
+        },
+        {
+          "name": "labor-deposit-retains-fraction",
+          "digest": "d57950af5e85adb1c3848dc0f8177b019cd5e6ce93a438bd9efd140461776a49"
+        },
+        {
+          "name": "travel-paid-return-waiver-rollback",
+          "digest": "c3e1e414dd7194f20678efcf0553334c916183754bc227bbc25eb18280b7aa87"
+        },
+        {
+          "name": "insufficient-funds",
+          "digest": "69f12d7a8cb8c9aee90e301f66a8ef2284c2d4236723d2fc83f1d7dcace9b5ca"
+        },
+        {
+          "name": "every-boss-form",
+          "digest": "a3a3fc7886150495b5264d2637ddc826a84c38edbfb7ede81bab5099b365946f"
+        },
+        {
+          "name": "quest-pays-once",
+          "digest": "9123df16e779dc6983634ea78c84158dbcca40c91ba3747037ef882659a34fad"
+        },
+        {
+          "name": "kill-exp-immediate-crowns-pickup-once",
+          "digest": "42c2ab4d582310df2c941618f919f19785a0c7b8324bf506bf9d66633c3945bd"
+        },
+        {
+          "name": "dungeon-clear-pays-once",
+          "digest": "747935126d674e23244963c144f716d4a39c5e3519bdc2510e1e83e6be7c563d"
+        },
+        {
+          "name": "death-and-succession",
+          "digest": "d1995313009f314deabd6c9b6e20008c69ed4ee24ba2da59e053d2e5d46358d4"
+        }
+      ]
+    },
+    {
+      "mode": "normal",
+      "cls": "paladin",
+      "succession": true,
+      "checkpoints": [
+        {
+          "name": "training-equipment-support-tonic",
+          "digest": "ecb195c138e6595401ab9c9664459a9f4638e62e0b7cf0b38505d214a140f709"
+        },
+        {
+          "name": "barracks-first-free-upgrade-recruit-recovery-treatment",
+          "digest": "761fafc9a9a4100988ffa3fe9c6c08ec50994bd5c18a0c68414075755a5a667d"
+        },
+        {
+          "name": "barracks-hire-prices-and-queue",
+          "digest": "b79f400daca101a024e5c27425dc254c142bbb9b044660a1d1e95e0ec2e84470"
+        },
+        {
+          "name": "labor-deposit-retains-fraction",
+          "digest": "b004c199445cc6e2b67fc3a25929d47d6123905179af0b1e6cd273afdaad258e"
+        },
+        {
+          "name": "travel-paid-return-waiver-rollback",
+          "digest": "f1a1a3c52feeb72fcda7609d596a77121b564f862c5747264dc3b6780ec16bef"
+        },
+        {
+          "name": "insufficient-funds",
+          "digest": "cb2de5e55a122ece68260992df349dbcee1a1b7f1144f020dc7292a5e77cce64"
+        },
+        {
+          "name": "every-boss-form",
+          "digest": "a3a3fc7886150495b5264d2637ddc826a84c38edbfb7ede81bab5099b365946f"
+        },
+        {
+          "name": "quest-pays-once",
+          "digest": "440e90819767d4e2d4fb58a13a4bc0898399bd26ccddbfa353dea1c42f0520ff"
+        },
+        {
+          "name": "kill-exp-immediate-crowns-pickup-once",
+          "digest": "85e7a4f22c5029a0537cb50a757f0f02e90368029f376629b4caa4b2b1bd131a"
+        },
+        {
+          "name": "dungeon-clear-pays-once",
+          "digest": "66fcc27dffdc406d159f79b926060f5294522a6ce9d1e3cd16516e816b930b4c"
+        },
+        {
+          "name": "death-and-succession",
+          "digest": "225f11fa731c12cfa091cb76693606a49611cd8ff7132c1e6ee99d24affdacd1"
+        }
+      ]
+    },
+    {
+      "mode": "normal",
+      "cls": "mage",
+      "succession": false,
+      "checkpoints": [
+        {
+          "name": "training-equipment-support-tonic",
+          "digest": "be2f75477da0e52a4c4a9926374a4af3fcfdd107330fa8e1ce67b88d17ca7d13"
+        },
+        {
+          "name": "barracks-first-free-upgrade-recruit-recovery-treatment",
+          "digest": "2a424a2356a4a1b434e9d8c2d7fb26df944b4ea53a2d1019973ab5d3305389dd"
+        },
+        {
+          "name": "barracks-hire-prices-and-queue",
+          "digest": "0d7e99cb276892a502afca971c544c8bb499432ea3a9ac92252d956f5ef5ddc2"
+        },
+        {
+          "name": "labor-deposit-retains-fraction",
+          "digest": "a8c674a70990803b6ff534ebb3b9e4636298d45382a8f26c7c1821210d74fb12"
+        },
+        {
+          "name": "travel-paid-return-waiver-rollback",
+          "digest": "4be68a3dd1d74a04125ebabd2b3267bdfd43c7f1b996358cb97b688056061967"
+        },
+        {
+          "name": "insufficient-funds",
+          "digest": "e8e630599be70c6fcfbb9f7a4216fb32fdbf78a831f2f5a8715fee1999db46d4"
+        },
+        {
+          "name": "every-boss-form",
+          "digest": "a3a3fc7886150495b5264d2637ddc826a84c38edbfb7ede81bab5099b365946f"
+        },
+        {
+          "name": "quest-pays-once",
+          "digest": "aa0f07b2dd522712fabdf09e5d465affeb0d00f55f4adfd150d626206fb81b74"
+        },
+        {
+          "name": "kill-exp-immediate-crowns-pickup-once",
+          "digest": "443996f00b8aeff52dd1775bd1615f79d8a02b82e513abf4abb90e8ba4d09863"
+        },
+        {
+          "name": "dungeon-clear-pays-once",
+          "digest": "2097cf15b01ed94c26a728ad5715ceeb327d698fcbc62fe8ab3375d4cff33a4d"
+        },
+        {
+          "name": "death-and-succession",
+          "digest": "495f5ad0c947cde38e647802c70a1acdf193f3de70e51b0bfdf0f6b36619dd6c"
+        }
+      ]
+    },
+    {
+      "mode": "normal",
+      "cls": "mage",
+      "succession": true,
+      "checkpoints": [
+        {
+          "name": "training-equipment-support-tonic",
+          "digest": "c14db52fd4bd9c446bdf7148f21d84ca74f6300c093a97b86ee0d58984d1efa9"
+        },
+        {
+          "name": "barracks-first-free-upgrade-recruit-recovery-treatment",
+          "digest": "a9346132a1b39597d98bee45c17d438d6668d5c12fadda559d4869f6e40d9ead"
+        },
+        {
+          "name": "barracks-hire-prices-and-queue",
+          "digest": "86a2770d680259689df2a01354749d81f083c51878a0295055cb987e70f50ebe"
+        },
+        {
+          "name": "labor-deposit-retains-fraction",
+          "digest": "e8a1db3517b7883aec6665c45f0f478ee71a35d6989a112c88783aab95bf9378"
+        },
+        {
+          "name": "travel-paid-return-waiver-rollback",
+          "digest": "4813bd37f91e4b15f074c96b3241346064e909176f00b7225c583d2040022776"
+        },
+        {
+          "name": "insufficient-funds",
+          "digest": "28353ef55a5541fb8bef166424b6de638b9a8b62c6907c228959ab1bec2f3e32"
+        },
+        {
+          "name": "every-boss-form",
+          "digest": "a3a3fc7886150495b5264d2637ddc826a84c38edbfb7ede81bab5099b365946f"
+        },
+        {
+          "name": "quest-pays-once",
+          "digest": "f0843344db231f7711c9f779ca98ea0218be58cd4e72d9814a61195aa0f0983d"
+        },
+        {
+          "name": "kill-exp-immediate-crowns-pickup-once",
+          "digest": "39b23d35871ef24ecc829364d67c7d9499edc6c6b1f4a3f9aa412e134c087ace"
+        },
+        {
+          "name": "dungeon-clear-pays-once",
+          "digest": "319b3b152f9f08f1590bda3ad9bca53ccb583afc75eb6adff4e3652364b04778"
+        },
+        {
+          "name": "death-and-succession",
+          "digest": "b363f694a16836f867416511812626238e00536437dace33983802984eb31085"
+        }
+      ]
+    },
+    {
+      "mode": "normal",
+      "cls": "ranger",
+      "succession": false,
+      "checkpoints": [
+        {
+          "name": "training-equipment-support-tonic",
+          "digest": "89fcd1f372b40d83ee5f0157099f0252e47ae823b5c95e0b68b7a7223b16814d"
+        },
+        {
+          "name": "barracks-first-free-upgrade-recruit-recovery-treatment",
+          "digest": "dba64c3d9916541a50a7f8b5a267a67d7f94f2678e6c22d9d82fde7763fc14e6"
+        },
+        {
+          "name": "barracks-hire-prices-and-queue",
+          "digest": "6e2432fea2b2f03a96d0da94e597e9443a9da540b3d67291d3bfc43ae9bf03a5"
+        },
+        {
+          "name": "labor-deposit-retains-fraction",
+          "digest": "dd32a927d85c7be3ca92a3358d22f6190c09e67fbf9c04291cded4e921123fbc"
+        },
+        {
+          "name": "travel-paid-return-waiver-rollback",
+          "digest": "140a7c1e01776ca333a85b02db8a42113137025882dba2b145ffa7105031bb35"
+        },
+        {
+          "name": "insufficient-funds",
+          "digest": "9e6977036c640adcecd3021a85e0bf170afbdcf4d0ca9428224393bc85daf849"
+        },
+        {
+          "name": "every-boss-form",
+          "digest": "a3a3fc7886150495b5264d2637ddc826a84c38edbfb7ede81bab5099b365946f"
+        },
+        {
+          "name": "quest-pays-once",
+          "digest": "c31d67e0c1e992d15ac1b54faf3b25a2feb1c5b8519bac83ce2bca8113517285"
+        },
+        {
+          "name": "kill-exp-immediate-crowns-pickup-once",
+          "digest": "17f863a727db6e22fd58490329f4603caf841ef5a664d06b3ce5483d7acedeab"
+        },
+        {
+          "name": "dungeon-clear-pays-once",
+          "digest": "7d32121ed2f0fdd1fa0713b14f1706d339124e238f1366a262e41598f7c88ea2"
+        },
+        {
+          "name": "death-and-succession",
+          "digest": "8f9c1e0d15f0d8f5e35812a77b935e25665ba6afd909d901cdd0d12720f6171d"
+        }
+      ]
+    },
+    {
+      "mode": "normal",
+      "cls": "ranger",
+      "succession": true,
+      "checkpoints": [
+        {
+          "name": "training-equipment-support-tonic",
+          "digest": "2a8d38798134fd3ec023aa63771c1856ff633e54a115593eaed2584fb8188bc1"
+        },
+        {
+          "name": "barracks-first-free-upgrade-recruit-recovery-treatment",
+          "digest": "41706e8bc89ac9afe286610c9ff9a803ece89fba74a5ae5c4f14827d26966110"
+        },
+        {
+          "name": "barracks-hire-prices-and-queue",
+          "digest": "728397dc262b7cd1d7300872987fca724bd0fdbf2940d2b96f0bbfc0d0954332"
+        },
+        {
+          "name": "labor-deposit-retains-fraction",
+          "digest": "960484914010316e73003b117d1ed1e33d5c48686c450ee335bf72fbcdc3c890"
+        },
+        {
+          "name": "travel-paid-return-waiver-rollback",
+          "digest": "524c003390be738dfd583d383a36ab4f53be3703214ba6640791f37008fb0ed5"
+        },
+        {
+          "name": "insufficient-funds",
+          "digest": "6da106e279d087372d7d346c0f21b4fab78865fed105180b3e19f0c967e7c602"
+        },
+        {
+          "name": "every-boss-form",
+          "digest": "a3a3fc7886150495b5264d2637ddc826a84c38edbfb7ede81bab5099b365946f"
+        },
+        {
+          "name": "quest-pays-once",
+          "digest": "99b368c14e45d10c74ce4e8424a7aba4d5d33e2da50ce8e129e092b39b43998f"
+        },
+        {
+          "name": "kill-exp-immediate-crowns-pickup-once",
+          "digest": "f65341cdfa698989914dfd387c1d7356c158e3aa181aa8960c75c24cacc7cfab"
+        },
+        {
+          "name": "dungeon-clear-pays-once",
+          "digest": "a9dd3cb5985a2b6a02011588a64564619a7b93cb6ab98a9901a993b1e3d618fb"
+        },
+        {
+          "name": "death-and-succession",
+          "digest": "f81ba904bf3d415f78f3b75bd845f0604d2222400a9e7dff33c635daccf4e7ed"
+        }
+      ]
+    },
+    {
+      "mode": "nightmare",
+      "cls": "paladin",
+      "succession": false,
+      "checkpoints": [
+        {
+          "name": "training-equipment-support-tonic",
+          "digest": "b8041db0e0193a4b146f6c816a5029d5c6ea97e03dfb1a71cc09012767f384ff"
+        },
+        {
+          "name": "barracks-first-free-upgrade-recruit-recovery-treatment",
+          "digest": "bc4395bc3a28a363b60ea0c856f6e573a0108a9cc1f0aed34c40b3de39ddef4f"
+        },
+        {
+          "name": "barracks-hire-prices-and-queue",
+          "digest": "7392cd53525e025dddee8f37c92f6579747b068e629c78b239839a7c10d38add"
+        },
+        {
+          "name": "labor-deposit-retains-fraction",
+          "digest": "0fd0593612d7b92b4aebf1498f5415a1d055b1f15e8f95885a6aceaad9da22a6"
+        },
+        {
+          "name": "travel-paid-return-waiver-rollback",
+          "digest": "408641e6012cdd3c1f46f8240ee3f38f183eebac5f7e1be3b4a5bc965977babe"
+        },
+        {
+          "name": "insufficient-funds",
+          "digest": "a5ee84666520561591094b5551829404722ccdb39e41e960dc2edac500ada410"
+        },
+        {
+          "name": "every-boss-form",
+          "digest": "a3a3fc7886150495b5264d2637ddc826a84c38edbfb7ede81bab5099b365946f"
+        },
+        {
+          "name": "quest-pays-once",
+          "digest": "89cd1c7c76539e378ed7d7afc433f2d6f67c52f6b57fbc47fb92e457547c063c"
+        },
+        {
+          "name": "kill-exp-immediate-crowns-pickup-once",
+          "digest": "1f8a070a1af1253bc0dff91cd989751b75ee070c222d47f159bf3f6d77952071"
+        },
+        {
+          "name": "dungeon-clear-pays-once",
+          "digest": "9b5e76c711a791e260439adb8f2da808350f1d18d7d3fc1a4c5fe6063c4757fb"
+        },
+        {
+          "name": "death-and-succession",
+          "digest": "9e274fa1063bd031b36b8b61b8a61ab9a5ab025c1971f0e389b5634b72bf3743"
+        }
+      ]
+    },
+    {
+      "mode": "nightmare",
+      "cls": "paladin",
+      "succession": true,
+      "checkpoints": [
+        {
+          "name": "training-equipment-support-tonic",
+          "digest": "04a39e8aa707de4450f48550c221a79cb2ace15ce44a44a689fa9f653d09f99d"
+        },
+        {
+          "name": "barracks-first-free-upgrade-recruit-recovery-treatment",
+          "digest": "22af1c0a4e982599f4f5db12b2ff4a90bf11df29b7cfa49cee0aab68d3ea06c1"
+        },
+        {
+          "name": "barracks-hire-prices-and-queue",
+          "digest": "8cd8792bd4d466b396cb7b75244cebd6112184b2acf40c0c64dd1f58bf2202e9"
+        },
+        {
+          "name": "labor-deposit-retains-fraction",
+          "digest": "640485a3e7e62f99906fc930f065c6c0a31365c7be831932a0a5102b575617f4"
+        },
+        {
+          "name": "travel-paid-return-waiver-rollback",
+          "digest": "8f47c76509c8731c582c139d2b613fdb26e7ddb7f9e8a0abb51ff7691a2fa4e5"
+        },
+        {
+          "name": "insufficient-funds",
+          "digest": "a253e038ad9dfad814b75d3f7ecdaeed413eaf9d39a53deffc446fdab4dd4804"
+        },
+        {
+          "name": "every-boss-form",
+          "digest": "a3a3fc7886150495b5264d2637ddc826a84c38edbfb7ede81bab5099b365946f"
+        },
+        {
+          "name": "quest-pays-once",
+          "digest": "cafa4b00414458616d9c9a5becac88d9fc502677c1aee2631184e8b787dff4bb"
+        },
+        {
+          "name": "kill-exp-immediate-crowns-pickup-once",
+          "digest": "15ebfd62354bf91f553b9dca8abb4afbf1b86b23d64c39ebf49b8098b33a8faa"
+        },
+        {
+          "name": "dungeon-clear-pays-once",
+          "digest": "a9f01035712507d38a6b9d0b90465bf88cfe8317dc538888b27b6d519fee0b5c"
+        },
+        {
+          "name": "death-and-succession",
+          "digest": "fd948a010cd052d1048878f31bf5f54720ae5331444a3924678e89534f43e699"
+        }
+      ]
+    },
+    {
+      "mode": "nightmare",
+      "cls": "mage",
+      "succession": false,
+      "checkpoints": [
+        {
+          "name": "training-equipment-support-tonic",
+          "digest": "219b8e83a4edda417486dcfc07a7c1e837e8e257a61ccc6f13060b351264b78b"
+        },
+        {
+          "name": "barracks-first-free-upgrade-recruit-recovery-treatment",
+          "digest": "9d10c9febd8b4b21c75d76d99cd12dd13aec0fdc123b3b28a59da36793202c38"
+        },
+        {
+          "name": "barracks-hire-prices-and-queue",
+          "digest": "4914c03ed0abd60fb7c443d259dfc0459b18cb89895656936771310c172ef377"
+        },
+        {
+          "name": "labor-deposit-retains-fraction",
+          "digest": "f54b97a8e3466102edf4e3141d0e63aa3246d7f0e538cf79229af6aa110478d1"
+        },
+        {
+          "name": "travel-paid-return-waiver-rollback",
+          "digest": "3c835795fec528084002a128b25b938ef2bf06c00e6068662cf007c5b02fccff"
+        },
+        {
+          "name": "insufficient-funds",
+          "digest": "877b3b73d2f2c7c5d365c9a7d5d786018415a5ecebe2fa5f2c2440e09f4dbd10"
+        },
+        {
+          "name": "every-boss-form",
+          "digest": "a3a3fc7886150495b5264d2637ddc826a84c38edbfb7ede81bab5099b365946f"
+        },
+        {
+          "name": "quest-pays-once",
+          "digest": "0239815df9033c21526b730631db34eb198bce86c5ff2458fb7e6dbcff9afaad"
+        },
+        {
+          "name": "kill-exp-immediate-crowns-pickup-once",
+          "digest": "c2ce193be82201ded23a6e5370e2f85a178ea94455824a20e7bdfeb843afa60c"
+        },
+        {
+          "name": "dungeon-clear-pays-once",
+          "digest": "191072bb2edc4b3f7ab13f0875356b9a042206a32d80bd42710fea77a47dca0c"
+        },
+        {
+          "name": "death-and-succession",
+          "digest": "942bb2418f800c76cc0482405fe5697ab3bf11b4ac7141d1f2663cb25b28e65e"
+        }
+      ]
+    },
+    {
+      "mode": "nightmare",
+      "cls": "mage",
+      "succession": true,
+      "checkpoints": [
+        {
+          "name": "training-equipment-support-tonic",
+          "digest": "e96cc163f3eb87d7c80e23ee2323170f52ed7ff32f1f722f8652e6fc572b39eb"
+        },
+        {
+          "name": "barracks-first-free-upgrade-recruit-recovery-treatment",
+          "digest": "80a55218d0ecf0b60092b29171e8f24a77a6d47453a5c5b1b47a8b43aee8f841"
+        },
+        {
+          "name": "barracks-hire-prices-and-queue",
+          "digest": "8b31d9da0bf4df361081e2b09e78b20cfa28dcdb6fdb28907552a804e33a3657"
+        },
+        {
+          "name": "labor-deposit-retains-fraction",
+          "digest": "1a7b56cf585500dda771d349cbfa5ac94a552f525a9d4febfcf6751210cad8f9"
+        },
+        {
+          "name": "travel-paid-return-waiver-rollback",
+          "digest": "afb3fe779bd9264fa573dcc52e181fd4c6bd4288e6f04b861f3d54f667892af8"
+        },
+        {
+          "name": "insufficient-funds",
+          "digest": "d208253175cd8c9838fc2c8ce58dafe8315a89583378b872a52013e773a50f9a"
+        },
+        {
+          "name": "every-boss-form",
+          "digest": "a3a3fc7886150495b5264d2637ddc826a84c38edbfb7ede81bab5099b365946f"
+        },
+        {
+          "name": "quest-pays-once",
+          "digest": "ba3c6bf372fbf6dbb4becc3ef2f9e72dfb7e3060478ae48565c38a16f2c93c97"
+        },
+        {
+          "name": "kill-exp-immediate-crowns-pickup-once",
+          "digest": "41bd64f760ae305fd7998d58d18ae726a82ee6fcd95f57f26ec5610fa65abd09"
+        },
+        {
+          "name": "dungeon-clear-pays-once",
+          "digest": "63a8c2f5f92e051850f32542e153f0283f72c3198ee881dd09e6e622b7f79a61"
+        },
+        {
+          "name": "death-and-succession",
+          "digest": "90cff8c6fe222ecf2bfa16b540322c0bbaefbff312ba0a1d7c4549771152a329"
+        }
+      ]
+    },
+    {
+      "mode": "nightmare",
+      "cls": "ranger",
+      "succession": false,
+      "checkpoints": [
+        {
+          "name": "training-equipment-support-tonic",
+          "digest": "cf7e141f67c7ecbaceaab10cd90225be96f09b33ea56f32dc7db5148207f5d67"
+        },
+        {
+          "name": "barracks-first-free-upgrade-recruit-recovery-treatment",
+          "digest": "050feef7efa933d48336c3b5b71c79b58a169893a262f3c2bb678b7c796715fe"
+        },
+        {
+          "name": "barracks-hire-prices-and-queue",
+          "digest": "3de576b3097b8fb84ff1a74066ef263674638179adf8713c00aadf035a21a9cc"
+        },
+        {
+          "name": "labor-deposit-retains-fraction",
+          "digest": "76943efdbab2c643409bbb4ec76437c312e8dc2dcd76577498e9c2bea5866a79"
+        },
+        {
+          "name": "travel-paid-return-waiver-rollback",
+          "digest": "958c38e3e3d7f5a6cac95cde7b1816e99756c21c88bca71c23771d4f9a2e829e"
+        },
+        {
+          "name": "insufficient-funds",
+          "digest": "2b152ae5505949e5009e25c672bd94e7708175f0e3414967644116c7e64f74e1"
+        },
+        {
+          "name": "every-boss-form",
+          "digest": "a3a3fc7886150495b5264d2637ddc826a84c38edbfb7ede81bab5099b365946f"
+        },
+        {
+          "name": "quest-pays-once",
+          "digest": "6f16ee0c81646e1e0bb0a87f820cdf16200b1d756d7b556623f8b9aa5512faef"
+        },
+        {
+          "name": "kill-exp-immediate-crowns-pickup-once",
+          "digest": "c688f1c467a302b46709960f92dd4a1c6dff5c3c783d02fae34246853bfa8055"
+        },
+        {
+          "name": "dungeon-clear-pays-once",
+          "digest": "3505197df90e206f94a1ff075f7c29e1330fa83b227a302d6c5ec6ecf9a25b18"
+        },
+        {
+          "name": "death-and-succession",
+          "digest": "012828fe1e66aa2799fe38f388f83e2fdcabc3781309c87a4ea1d40f172e6d19"
+        }
+      ]
+    },
+    {
+      "mode": "nightmare",
+      "cls": "ranger",
+      "succession": true,
+      "checkpoints": [
+        {
+          "name": "training-equipment-support-tonic",
+          "digest": "dde6a64aa0846b4a66f766cbae3afdbd2daf4aa26306f9d2a62152a20219d245"
+        },
+        {
+          "name": "barracks-first-free-upgrade-recruit-recovery-treatment",
+          "digest": "297c098366de7ad5b6ebc6be44d1615ca83d7a4a440a3b09fabd037f1507a13e"
+        },
+        {
+          "name": "barracks-hire-prices-and-queue",
+          "digest": "0abc8cfa82c710380474257ae969b1ca11e8905c5738afd2f6704b1851cbda0c"
+        },
+        {
+          "name": "labor-deposit-retains-fraction",
+          "digest": "891c11599cf558e827e4603ba792c3a69b054c57cd9a0d56b38e3ba33c0b3cb1"
+        },
+        {
+          "name": "travel-paid-return-waiver-rollback",
+          "digest": "5d726c632a1f92f8de963b2d83dfb7d5298d6a0ba1511c631b8ca2101986b5eb"
+        },
+        {
+          "name": "insufficient-funds",
+          "digest": "3266aacec5a1e6960994178fc261749f5932d786a1abc7a3464fa3647d13df65"
+        },
+        {
+          "name": "every-boss-form",
+          "digest": "a3a3fc7886150495b5264d2637ddc826a84c38edbfb7ede81bab5099b365946f"
+        },
+        {
+          "name": "quest-pays-once",
+          "digest": "1d04a6b45bf125f201eeb0aea521af1083ab2b636804708ffd359c3269c7150c"
+        },
+        {
+          "name": "kill-exp-immediate-crowns-pickup-once",
+          "digest": "b3c130662b73970fb2df559733a4485a118d74d34fb69ce1d8591f49c8a62c80"
+        },
+        {
+          "name": "dungeon-clear-pays-once",
+          "digest": "0a5d8b4af0616e3d4e830219adea524b8b78fb09e8875df8af433411483d67de"
+        },
+        {
+          "name": "death-and-succession",
+          "digest": "7f57e9ce63684ca294a493ee5e5843236f5cd72120df92312e752e15433efb24"
+        }
+      ]
+    }
+  ],
+  "liveComparisons": 559
+}
