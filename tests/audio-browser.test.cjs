@@ -76,6 +76,12 @@ const root = path.resolve(__dirname, '..'),
       assert(before.status.voices > 0);
       assert(before.status.voices <= 64);
       assert(before.status.context.region === 'vale');
+      // Freeze the campaign after startup selection settles; do not race the title/refuge transition.
+      await page.evaluate(() => Prototype.openMenu('Audio housekeeping check', '', []));
+      await page.waitForFunction(() => {
+        const a = Prototype.audio;
+        return a.mixScene === 'menu' && a.recordedScore?.selectionKey === a.productionKey;
+      });
       const replaced = await page.evaluate(() => {
         const a = Prototype.audio,
           current = { id: a.recordedScore.id, at: a.recordedScore.at };
