@@ -481,7 +481,7 @@
         '\nXP ' +
         Math.floor(h.xp) +
         ' / ' +
-        120 * h.level +
+        Campaign.rules.balance.growth.xpPerLevel * h.level +
         '\nHero progression only. Troops, resources and construction are managed at town Captains or your barracks.',
       [
         action('Skills and teachers', () => skillBook(characterMenu)),
@@ -1100,11 +1100,11 @@
     );
   }
   function smith(n, back = closeMenu) {
-    const tier = { crypt: 1, mine: 2, abyss: 3, cindermaw: 4 }[n.family],
-      weapon = [0, 100, 450, 1000, 2000][tier],
-      armor = [0, 80, 300, 700, 1200][tier],
-      weaponBonus = [0, 15, 35, 55, 70][tier],
-      armorBonus = [0, 5, 12, 20, 28][tier],
+    const tier = Campaign.rules.balance.equipment.tiers[n.family],
+      weapon = Campaign.rules.balance.equipment.prices.weapon[tier],
+      armor = Campaign.rules.balance.equipment.prices.armor[tier],
+      weaponBonus = Campaign.rules.balance.equipment.bonuses.weapon[tier],
+      armorBonus = Campaign.rules.balance.equipment.bonuses.armor[tier],
       currentWeapon = game.hero.weapon || 0,
       currentArmor = game.hero.armorTier || 0,
       weaponOwned = currentWeapon >= tier,
@@ -2842,7 +2842,7 @@
       ' crowns</span><span>XP ' +
       Math.floor(h.xp) +
       ' / ' +
-      120 * h.level +
+      Campaign.rules.balance.growth.xpPerLevel * h.level +
       '</span></div>';
     const heroEffects = h.supportEffects || [],
       activeRecovery = heroEffects.slice().sort((a, b) => a.seconds - b.seconds)[0];

@@ -1,22 +1,15 @@
 /* Deterministic campaign rules, independent of the browser and renderer. */
 (function (root) {
   'use strict';
+  const R = typeof PrototypeRules !== 'undefined' ? PrototypeRules : require('./rules.js');
   const D = typeof PrototypeData !== 'undefined' ? PrototypeData : require('./data.js');
   const clone = (x) => JSON.parse(JSON.stringify(x)),
     clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
     dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-  const classes = {
-    paladin: { icon: '🛡️', hp: 120, mp: 60, power: 18, armor: 8, speed: 300 },
-    mage: { icon: '🧙‍♀️', hp: 90, mp: 100, power: 22, armor: 3, speed: 300 },
-    ranger: { icon: '🏹', hp: 105, mp: 70, power: 20, armor: 5, speed: 320 },
-  };
-  const talentMaxRanks = [5, 5, 5, 3];
+  const classes = R.balance.classes;
+  const talentMaxRanks = R.balance.disciplines.maxRanks;
   // Rounded from the level-1 class stat ratios: talent growth reinforces each class's natural strengths while keeping the old average power budget.
-  const talentProfiles = {
-    paladin: { power: 7, mana: 2, hp: 33, speed: 38 },
-    mage: { power: 9, mana: 3, hp: 27, speed: 41 },
-    ranger: { power: 8, mana: 2, hp: 29, speed: 41 },
-  };
+  const talentProfiles = R.balance.disciplines.profiles;
   const legacyWeapons = {
     'Espada de Cruzado': 10,
     'Bastón de Escarcha': 10,
@@ -25,15 +18,15 @@
     'Arma de la Frontera': 40,
     'Arma de las Cumbres': 70,
   };
-  const ceilings = { thorn: 2, mire: 3, ridge: 4, warlord: 6, citadel: 8 };
-  const expeditionCeilings = { thorn: 2, mire: 3, ridge: 4, warlord: 5, citadel: 6 };
+  const ceilings = R.balance.instructors.skillCeilings;
+  const expeditionCeilings = R.balance.instructors.expeditionCeilings;
   const dungeonIds = D.bosses.filter((b) => b.kind === 'dungeon').map((b) => b.id);
-  const R = typeof PrototypeRules !== 'undefined' ? PrototypeRules : require('./rules.js');
-  const pursuitBurstSeconds = 1.2,
-    pursuitBurstMultiplier = 1.5,
-    mercyStartRadius = 300;
-  const costs = [0, 0, 15, 10, 25, 40, 20, 45, 60],
-    cooldowns = [0, 0.85, 3, 8, 14, 9, 4, 15, 24];
+
+  const pursuitBurstSeconds = R.balance.pursuit.burstSeconds,
+    pursuitBurstMultiplier = R.balance.pursuit.burstMultiplier,
+    mercyStartRadius = R.balance.pursuit.mercyStartRadius;
+  const costs = R.balance.skills.costs,
+    cooldowns = R.balance.skills.cooldowns;
   class Campaign {
     constructor(mode = 'normal', heroClass = 'paladin', random = Math.random, options = {}) {
       if (!['normal', 'nightmare'].includes(mode) || !classes[heroClass])
@@ -496,7 +489,7 @@
       return Number.isInteger(i) && i >= 0 && i < talentMaxRanks.length ? talentMaxRanks[i] : 0;
     }
     heroNaturalMaxHp() {
-      return classes[this.hero.class].hp + 25 * (this.hero.level - 1);
+      return classes[this.hero.class].hp + R.balance.growth.hpPerLevel * (this.hero.level - 1);
     }
     heroTalentHpBonus() {
       return (this.hero.talents?.[2] || 0) * this.talentProfile().hp;
@@ -551,16 +544,19 @@
       return this.s.companionVitalityRank || 0;
     }
     companionVitalityFraction() {
-      return this.companionVitalityRank() * 0.1;
+      return this.companionVitalityRank() * R.balance.companions.vitalityPerRank;
     }
     companionMaxHp(type, level = this.hero.level) {
-      const base = { soldier: 120, archer: 105 }[type];
+      const base = R.balance.companions.hp[type];
       if (!base) throw Error('Unknown companion type');
-      const raw = base + 12 * Math.max(0, level - 1) + this.companionInheritedHpBonus();
+      const raw =
+        base +
+        R.balance.companions.hpPerLevel * Math.max(0, level - 1) +
+        this.companionInheritedHpBonus();
       return Math.round(raw * (1 + this.companionVitalityFraction()));
     }
     companionArmor(type) {
-      const base = { soldier: 8, archer: 5 }[type];
+      const base = R.balance.companions.armor[type];
       if (base === undefined) throw Error('Unknown companion type');
       return base + this.companionInheritedArmorBonus();
     }
@@ -616,7 +612,7 @@
       return this.s.party.filter((u) => u.active !== false && u.hp > 0);
     }
     expeditionPartyCap(rank = this.s.expeditionRank || 1) {
-      return [0, 2, 3, 3, 4, 5, 6][clamp(rank, 1, 6)];
+      return R.balance.companions.activeCaps[clamp(rank, 1, 6)];
     }
     expeditionInstructorCap(family) {
       return expeditionCeilings[family] || 0;
@@ -1791,10 +1787,10 @@
     }
     xp(amount) {
       this.hero.xp += amount;
-      while (this.hero.xp >= 120 * this.hero.level) {
-        this.hero.xp -= 120 * this.hero.level;
+      while (this.hero.xp >= R.balance.growth.xpPerLevel * this.hero.level) {
+        this.hero.xp -= R.balance.growth.xpPerLevel * this.hero.level;
         this.hero.level++;
-        this.hero.maxHp += 25;
+        this.hero.maxHp += R.balance.growth.hpPerLevel;
         this.hero.maxMp += R.manaBalance.perLevel;
         this.hero.hp = this.hero.maxHp;
         this.hero.mp = this.hero.maxMp;
@@ -1816,7 +1812,7 @@
       this.xp(xp);
     }
     companionVitalityCost() {
-      return 200;
+      return R.balance.companions.vitalityCost;
     }
     trainCompanionVitality(family = 'archive') {
       if (family !== 'archive' || !this.s.rescued.archive) return false;
@@ -1840,7 +1836,7 @@
       return true;
     }
     talentRespecCost() {
-      return 250;
+      return R.balance.disciplines.resetCost;
     }
     talentSpent() {
       return (this.hero.talents || []).reduce((n, v) => n + v, 0);
@@ -2120,7 +2116,10 @@
         this.rangerSupport('mana', false);
     }
     weaponTierBonus(tier = this.hero.weapon) {
-      return [0, 15, 35, 55, 70][tier] + (this.hero.reforges['weapon:' + tier] ? 5 : 0);
+      return (
+        R.balance.equipment.bonuses.weapon[tier] +
+        (this.hero.reforges['weapon:' + tier] ? R.balance.equipment.reforgeBonus.weapon : 0)
+      );
     }
     bestLegacyWeapon() {
       let bestName = '',
@@ -2147,12 +2146,16 @@
       return this.hero.legacyEquipped ? 'legacy' : 'tier';
     }
     gear(family, slot, reforge = false) {
-      const tier = { crypt: 1, mine: 2, abyss: 3, cindermaw: 4 }[family];
+      const tier = R.balance.equipment.tiers[family];
       if (!tier || !this.s.rescued[family] || !['weapon', 'armor'].includes(slot)) return false;
       const old = slot === 'weapon' ? this.hero.weapon : this.hero.armorTier,
-        prices = slot === 'weapon' ? [0, 100, 450, 1000, 2000] : [0, 80, 300, 700, 1200],
-        bonuses = slot === 'weapon' ? [0, 15, 35, 55, 70] : [0, 5, 12, 20, 28],
-        reforgeBonus = slot === 'weapon' ? 5 : 3,
+        prices =
+          slot === 'weapon' ? R.balance.equipment.prices.weapon : R.balance.equipment.prices.armor,
+        bonuses =
+          slot === 'weapon'
+            ? R.balance.equipment.bonuses.weapon
+            : R.balance.equipment.bonuses.armor,
+        reforgeBonus = R.balance.equipment.reforgeBonus[slot],
         key = slot + ':' + tier,
         label = slot === 'weapon' ? 'Weapon' : 'Armor';
       if (reforge) {
@@ -2246,16 +2249,20 @@
       return (
         this.hero.power +
         (this.hero.weapon ? 0 : this.hero.legacyWeaponPower || 0) +
-        [0, 15, 35, 55, 70][this.hero.weapon] +
-        (this.hero.reforges['weapon:' + this.hero.weapon] ? 5 : 0) +
+        R.balance.equipment.bonuses.weapon[this.hero.weapon] +
+        (this.hero.reforges['weapon:' + this.hero.weapon]
+          ? R.balance.equipment.reforgeBonus.weapon
+          : 0) +
         this.heroTalentDamageBonus()
       );
     }
     armor() {
       return (
         this.hero.armor +
-        [0, 5, 12, 20, 28][this.hero.armorTier] +
-        (this.hero.reforges['armor:' + this.hero.armorTier] ? 3 : 0)
+        R.balance.equipment.bonuses.armor[this.hero.armorTier] +
+        (this.hero.reforges['armor:' + this.hero.armorTier]
+          ? R.balance.equipment.reforgeBonus.armor
+          : 0)
       );
     }
     expectedMaxMp() {
@@ -2315,7 +2322,7 @@
       return true;
     }
     recruit(type) {
-      const price = { soldier: 70, archer: 100 }[type];
+      const price = R.balance.companions.recruitPrices[type];
       if ((this.s.expeditionRank || 1) < 2) {
         this.say(
           'Recruitment unlocks at Expedition 2. Rescue Mira and train the Expedition Skill.',
@@ -2336,7 +2343,7 @@
     }
     recover() {
       const dead = this.s.party.find((u) => u.hp <= 0);
-      if (!dead || !this.spend(40)) return false;
+      if (!dead || !this.spend(R.balance.companions.recoveryCost)) return false;
       const id = dead.id,
         active = dead.active !== false,
         u = this.unit(dead.type, this.hero.x + 40, this.hero.y);
@@ -2352,7 +2359,7 @@
         );
         return false;
       }
-      if (!this.spend(30)) return false;
+      if (!this.spend(R.balance.companions.treatmentCost)) return false;
       for (const u of wounded) {
         u.hp = u.maxHp;
         this.event('heal', { x: u.x, y: u.y, resource: 'health', target: u.id });

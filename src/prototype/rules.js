@@ -3278,7 +3278,55 @@
   };
   // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
   const movementBasicClasses = { paladin: true, mage: true, ranger: true };
+
+  // Live balance ownership. Arrays retain their original slot/tier indices and fallbacks.
+  // Historical migration mappings and procedural coordinates intentionally remain separate.
+  const balance = {
+    classes: {
+      paladin: { icon: '🛡️', hp: 120, mp: 60, power: 18, armor: 8, speed: 300 },
+      mage: { icon: '🧙‍♀️', hp: 90, mp: 100, power: 22, armor: 3, speed: 300 },
+      ranger: { icon: '🏹', hp: 105, mp: 70, power: 20, armor: 5, speed: 320 },
+    },
+    disciplines: {
+      maxRanks: [5, 5, 5, 3],
+      profiles: {
+        paladin: { power: 7, mana: 2, hp: 33, speed: 38 },
+        mage: { power: 9, mana: 3, hp: 27, speed: 41 },
+        ranger: { power: 8, mana: 2, hp: 29, speed: 41 },
+      },
+      resetCost: 250,
+    },
+    instructors: {
+      skillCeilings: { thorn: 2, mire: 3, ridge: 4, warlord: 6, citadel: 8 },
+      expeditionCeilings: { thorn: 2, mire: 3, ridge: 4, warlord: 5, citadel: 6 },
+    },
+    skills: {
+      costs: [0, 0, 15, 10, 25, 40, 20, 45, 60],
+      cooldowns: [0, 0.85, 3, 8, 14, 9, 4, 15, 24],
+    },
+    pursuit: { burstSeconds: 1.2, burstMultiplier: 1.5, mercyStartRadius: 300 },
+    growth: { xpPerLevel: 120, hpPerLevel: 25 },
+    equipment: {
+      tiers: { crypt: 1, mine: 2, abyss: 3, cindermaw: 4 },
+      prices: { weapon: [0, 100, 450, 1000, 2000], armor: [0, 80, 300, 700, 1200] },
+      bonuses: { weapon: [0, 15, 35, 55, 70], armor: [0, 5, 12, 20, 28] },
+      reforgeBonus: { weapon: 5, armor: 3 },
+    },
+    companions: {
+      hp: { soldier: 120, archer: 105 },
+      armor: { soldier: 8, archer: 5 },
+      hpPerLevel: 12,
+      vitalityPerRank: 0.1,
+      vitalityCost: 200,
+      recruitPrices: { soldier: 70, archer: 100 },
+      recoveryCost: 40,
+      treatmentCost: 30,
+      activeCaps: [0, 2, 3, 3, 4, 5, 6],
+    },
+  };
+
   const R = {
+    balance,
     combatGeometry,
     bossCadence,
     bossSummoning,
