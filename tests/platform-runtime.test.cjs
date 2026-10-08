@@ -39,6 +39,16 @@ assert.equal(P.init(env).mode, 'desktop');
 env.location.search = '';
 env.document.body.getAttribute = () => 'phone';
 assert.equal(P.init(env).mode, 'phone', 'Dedicated installed entry opens phone presentation');
+items.set(P.preferenceKey, 'desktop');
+assert.equal(
+  P.init(env).mode,
+  'desktop',
+  'An explicit saved choice survives relaunching the installed entry',
+);
+items.set(P.preferenceKey, 'auto');
+const previousChanges = changed;
+platform.select('auto');
+assert.equal(changed, previousChanges, 'Unchanged capabilities do not reset gameplay input');
 console.log(
   'PASS phone, desktop, hybrid Chromebook, explicit entry and persistent screen preferences',
 );

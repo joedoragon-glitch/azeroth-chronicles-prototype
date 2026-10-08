@@ -16,17 +16,18 @@
     const entry = env.document.body.getAttribute?.('data-entry') || 'auto';
     const requested = params.get('experience');
     if (requested === 'desktop' || requested === 'phone') preference = requested;
-    else if (entry === 'phone') preference = 'phone';
+    else if (entry === 'phone' && !['desktop', 'phone'].includes(preference)) preference = 'phone';
     let mode;
     const listeners = new Set();
     function apply() {
+      const previous = mode;
       mode = resolve({
         requested: preference,
         fine: match('(any-pointer: fine)') && match('(any-hover: hover)'),
         coarse: match('(pointer: coarse)'),
       });
       env.document.body.setAttribute('data-experience', mode);
-      for (const listener of listeners) listener(mode);
+      if (previous !== mode) for (const listener of listeners) listener(mode);
     }
     apply();
     for (const query of ['(any-pointer: fine)', '(any-hover: hover)', '(pointer: coarse)'])
