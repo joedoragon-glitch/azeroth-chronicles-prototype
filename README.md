@@ -1,4 +1,4 @@
-# Azeroth Chronicles · v0.8.82
+# Azeroth Chronicles · v0.8.83
 
 An offline-capable RPG across five regions, ten settlements and five main dungeons. Rescue the specialists, build your expedition, and challenge the Dark Lord. The regime's currency is **crowns**.
 
@@ -70,3 +70,5 @@ Browser testing uses Playwright 1.62.1 and Chromium/Chrome. CI supplies them and
 - [Sprite production contract](docs/GRAPHICS_OVERHAUL_PHASE1.md)
 - [Sprite coverage and canon](docs/GRAPHICS_CANON_SPRITE_COVERAGE.md)
 - [Historical project narrative through v0.8.80](docs/PROJECT_HISTORY.md)
+
+Phone gameplay uses a compact health/mana/level HUD. Learned skills and available Ranger recovery controls sit at the bottom right; Interact appears separately only within reach of a usable target. Recall stays directly above the left joystick; Character → Discipline Training keeps training in its menu. Map/time labels and routine save reminders no longer occupy the gameplay HUD.

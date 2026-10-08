@@ -27,6 +27,7 @@
     gateDismissed = false,
     criticalNoticeSeen = null,
     criticalNoticeUntil = 0,
+    statusUntil = 0,
     worldPointer = null,
     pointer = null;
   profile = persistence.loadProfile(profile);
@@ -124,7 +125,9 @@
     }
   }
   function status(text) {
+    if (text === 'Saved locally · export for a backup') return;
     $('status').textContent = text;
+    statusUntil = performance.now() + 5000;
   }
   function persistProfile() {
     return persistence.saveProfile(profile);
@@ -218,7 +221,7 @@
     openMenu(
       'Controls',
       input.actions.map(([id, name]) => input.key(id) + ' — ' + name).join('\n') +
-        '\n\nEsc — Menu / back · Enter or Space — Confirm in menus\nMouse or touch — Activate menus and HUD buttons\nSkills 1–3: tap for normal; hold 0.65 s for charged. Releasing an incomplete hold cancels.\nMovement autoattack stays active, except while holding Skill 1.\nTouch: use the joystick or tap a reachable place to move when enabled. Keyboard or joystick movement cancels a destination.\nMouse: left click commands Ranger Heal unless click-to-move is enabled; right click commands Mana Recovery. HUD recovery buttons always work.\nSprint remains unavailable.',
+        '\n\nEsc — Menu / back · Enter or Space — Confirm in menus\nMouse or touch — Activate menus and HUD buttons\nSkills 1–3: tap under 0.20 s for normal; hold 0.65 s for charged. Releasing an incomplete hold cancels.\nCharged Skills 1 / 2 / 3 cost 20% / 30% / 35% max MP respectively. Hold through a cooldown to queue the charge; WAIT shows until charging can begin.\nCHARGED means ready to release. NEED MP / NO TARGET / NO HEAL explain a blocked charge. Skills 1–2 lock their target when charging begins.\nNormal Skill 1 builds a same-target combo across three hits; the third adds frontal splash. Switching targets or waiting four seconds resets it.\nSquad doctrine becomes available at Expedition 3 during combat and resets for each encounter.\nMovement autoattack stays active, except while holding Skill 1.\nTouch: use the joystick or tap a reachable place to move when enabled. Keyboard or joystick movement cancels a destination.\nMouse: left click commands Ranger Heal unless click-to-move is enabled; right click commands Mana Recovery. HUD recovery buttons always work.\nSprint remains unavailable.',
       [
         action('Customize keyboard', () => keyboardMenu(back)),
         action('Touch and mouse options', () => pointerMenu(back)),
@@ -283,17 +286,20 @@
       () => help(back),
     );
   }
+  function cancelTravel() {
+    worldPointer = null;
+    if (game) {
+      game.hero.order = null;
+      game.hero.path = [];
+    }
+  }
   function clearInput() {
     if (typeof Sprint !== 'undefined') Sprint.release();
     cancelCharge();
     keys = {};
     pointer = null;
-    worldPointer = null;
+    cancelTravel();
     joy = { x: 0, y: 0 };
-    if (game) {
-      game.hero.order = null;
-      game.hero.path = [];
-    }
     $('stick').style.transform = '';
   }
   function action(label, fn, detail = '', disabled = false) {
@@ -466,9 +472,17 @@
     );
   }
   function characterMenu() {
+    const h = game.hero;
     openMenu(
       'Character',
-      'Hero progression only. Troops, resources and construction are managed at town Captains or your barracks.',
+      h.class +
+        ' · Level ' +
+        h.level +
+        '\nXP ' +
+        Math.floor(h.xp) +
+        ' / ' +
+        120 * h.level +
+        '\nHero progression only. Troops, resources and construction are managed at town Captains or your barracks.',
       [
         action('Skills and teachers', () => skillBook(characterMenu)),
         action('Discipline Training', () => talents(characterMenu)),
@@ -1732,6 +1746,10 @@
         game.hero.armorTier +
         '\nCrowns are the official currency of the Dark Lord’s regime.',
       [
+        action('Recall squad', () => {
+          recallSquad();
+          closeMenu();
+        }),
         action(
           'Ranger Heal · ' + heal + ' HP',
           () => {},
@@ -2518,6 +2536,7 @@
       };
       b.onpointerdown = (e) => {
         if (e?.button > 0) return;
+        e?.preventDefault?.();
         audio.unlock();
         if (beginCharge(slot, 'pointer', e?.pointerId ?? null)) b.setPointerCapture?.(e.pointerId);
       };
@@ -2618,7 +2637,7 @@
     }
     if ((paused || !focused || document.hidden) && !['pause', 'help'].includes(actionId)) return;
     if (!actionId) return;
-    if (['up', 'down', 'left', 'right'].includes(actionId)) worldPointer = null;
+    if (['up', 'down', 'left', 'right'].includes(actionId)) cancelTravel();
     keys[actionId] = true;
     if (e.repeat) return;
     if (actionId === 'doctrine') {
@@ -2664,7 +2683,7 @@
     if (e.pointerType === 'mouse' || pointer !== null) return;
     e.preventDefault();
     audio.unlock();
-    worldPointer = null;
+    cancelTravel();
     pointer = e.pointerId;
     joystick.setPointerCapture(pointer);
     joyUpdate(e);
@@ -2736,8 +2755,12 @@
     if (worldPointer?.id === e.pointerId) worldPointer = null;
   };
   addEventListener('contextmenu', (e) => {
-    if (e.target === canvas && activePlay()) e.preventDefault();
+    if (e.target.closest?.('input, textarea, [contenteditable="true"]')) return;
+    if (e.target === canvas || e.target.closest?.('#hud, #skills, #movement, #modal, #message'))
+      e.preventDefault();
   });
+  // Make readouts explicit tap targets so touch adjustment cannot choose a nearby button.
+  $('hero-stats').onclick = (e) => e?.stopPropagation?.();
   addEventListener('blur', () => {
     focused = false;
     clearInput();
@@ -2792,8 +2815,9 @@
         ? h.talentPoints +
           ' unspent training point' +
           (h.talentPoints === 1 ? '' : 's') +
-          ' · press C'
-        : 'Discipline Training · press C';
+          ' · press ' +
+          input.key('training')
+        : 'Discipline Training · press ' + input.key('training');
     let heroMarkup =
       '<div class="hero-title"><span>' +
       Campaign.classes[h.class].icon +
@@ -2830,21 +2854,10 @@
         activeRecovery.seconds.toFixed(1) +
         's</small>';
     setMarkup('hero-stats', heroMarkup);
-    $('location').textContent =
-      game.definition().name +
-      (game.supplyRoom()
-        ? ' · ' + game.supplyRoom().name
-        : game.isDungeon()
-          ? ' · ' + game.boss(game.zoneId).place
-          : '') +
-      ' · ' +
-      (game.peace
-        ? 'At peace'
-        : game.s.mode === 'nightmare'
-          ? 'Nightmare'
-          : game.night()
-            ? 'Night'
-            : 'Day');
+    if (statusUntil && performance.now() >= statusUntil) {
+      $('status').textContent = '';
+      statusUntil = 0;
+    }
     const rangers = game.activeLivingParty().filter((u) => u.type === 'archer');
     for (const [type, label, key, cdKey, threshold] of [
       ['health', 'Heal', input.key('heal'), 'healCd', 50],
@@ -2858,16 +2871,14 @@
             : h.mp >= h.maxMp,
         next = rangers.length ? Math.min(...rangers.map((u) => u[cdKey] || 0)) : 0;
       b.disabled = !rangers.length || !ready || full;
+      b.hidden = platform.mode === 'phone' && !rangers.length;
       setMarkup(
         type + '-potion',
         label +
-          '<small>' +
+          '<small><span class="key-hint">' +
           key +
-          (ready
-            ? ' · ' + ready + ' ready'
-            : rangers.length
-              ? ' · ' + next.toFixed(1) + 's'
-              : ' · Need Ranger') +
+          ' · </span>' +
+          (ready ? ready + ' ready' : rangers.length ? next.toFixed(1) + 's' : 'Need Ranger') +
           '</small>',
       );
       b.title =
@@ -2932,6 +2943,7 @@
         cast = charging ? chargePresentation() : null;
       b.classList.toggle('locked', !rank);
       b.classList.toggle('charging', charging);
+      b.classList.toggle('skill-ready', !!rank && h.cd[i] <= 0 && !charging);
       const revealed = game.skillRevealed(slot),
         chargeTip = chargeableSlots.has(slot)
           ? ' · Tap under ' +
@@ -2984,8 +2996,9 @@
             : skillKeys()[i];
     }
     const n = nearestNPC();
+    $('touch-interact-button').hidden = !n || !activePlay();
     setMarkup('touch-interact-button', 'Interact');
-    $('touch-interact-button').title = n ? n.name : 'Find a marked person';
+    $('touch-interact-button').title = n ? n.name : '';
     $('order-button').textContent = 'Confirm';
     $('desktop-hints').textContent =
       ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('') +
@@ -3112,7 +3125,9 @@
       status(
         'Level ' +
           levelEvent.level +
-          '! Training point available · press C or use Discipline Training.',
+          '! Training point available · press ' +
+          input.key('training') +
+          ' or use Discipline Training.',
       );
     if (events.some((e) => e.type === 'peace')) ending();
     if (game.s.phase === 'awakening' && !game.s.awakeningAck && !menu) awakeningMenu();
