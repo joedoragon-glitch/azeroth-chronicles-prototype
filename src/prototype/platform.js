@@ -52,7 +52,16 @@
       },
       cameraAnchor(width, height) {
         return mode === 'phone'
-          ? { x: width * (width < 600 ? 0.69 : 0.6), y: height * 0.5 }
+          ? {
+              x:
+                width *
+                (env.document.body.getAttribute?.('data-phone-layout') === 'left-hand'
+                  ? width < 600
+                    ? 0.69
+                    : 0.6
+                  : 0.5),
+              y: height * 0.42,
+            }
           : {
               x: Math.max(
                 width * 0.35,

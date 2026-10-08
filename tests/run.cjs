@@ -5,6 +5,7 @@ const fs = require('node:fs'),
 const quick = new Set([
   'architecture',
   'platform-runtime',
+  'input',
   'game',
   'service-worker',
   'sprites',

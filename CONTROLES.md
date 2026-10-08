@@ -1,29 +1,16 @@
-# Controles · v0.5
+# Controles · v0.8.82
 
-Abre https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ . Es una sola aventura: héroe, subordinados, progreso y mazmorras comparten mundo y partida.
+La campaña actual está en [navegador](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/) y [teléfono](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html). La antigua guía v0.5 queda en el historial de Git.
 
-## Teclado fijo
+- WASD mueve; E/F interactúa. 1–5, Espacio, Mayús izquierdo y B activan habilidades 1–8.
+- H / clic izquierdo en el mundo: curación del Ranger. M / clic derecho: recuperación de maná.
+- Tab cambia la doctrina durante combate desde Expedición 3; ` reúne al grupo.
+- Z mapa, I/R inventario, J/T misiones, C entrenamiento, X habilidades, P/V pausa, G controles, Esc menú/volver.
+- En menús, las teclas de movimiento eligen; F/Enter/Espacio confirma. Los botones también aceptan clics y toques directos.
+- Las habilidades 1–3 admiten toque rápido o pulsación de 0,65 s para cargar, con teclado, ratón o pantalla táctil. El autoataque por movimiento continúa.
 
-- WASD: mover héroe/cursor; elegir opciones en menús.
-- Tab: alternar control directo del héroe y cursor de órdenes.
-- En órdenes: E selecciona; F manda mover/atacar/reunir recursos/interactuar; ` selecciona héroe y grupo; C construye cuartel con un trabajador (120g); R recluta sobre un cuartel terminado (60g).
-- 1–5: poderes normales; Espacio: sexto (10 maná / 4 s); Mayús izquierdo: séptimo (60 maná / 90 s); B: octavo (60 maná / 120 s).
-- En control directo: E/F interactúa; R mochila, C talentos, X habilidades, T misión, Z mapa, V pausa, G ayuda.
-- Menús: WASD elige; E/F confirma, compra, equipa, entrena o acepta misiones.
-- Escape: menú/volver. **Q queda libre**.
+En **Game and settings → Controls → Customize keyboard** puedes cambiar y guardar las teclas; las etiquetas se actualizan. Esc cancela una asignación. No se permiten teclas duplicadas. Q puede asignarse; esprintar sigue desactivado.
 
-Los clics son atajos opcionales: poderes 7/8 en control directo, seleccionar/ordenar con el cursor. **Se puede jugar sin ratón**. No hay personalización de teclas. Los atajos del navegador con Ctrl, Alt o Cmd siguen disponibles.
+En **Touch and mouse options** puedes elegir dos pulgares (movimiento izquierda, habilidades derecha) o el diseño alternativo de mano izquierda. Tocar el mundo para desplazarte está activado por defecto en pantallas táctiles, también tabletas y Chromebooks, y puede desactivarse. El clic de ratón para desplazarte es opcional y empieza desactivado; al activarlo, la curación sigue disponible mediante su botón o tecla.
 
-## Móvil
-
-Palanca, ocho poderes y órdenes a la izquierda. Mantén el ataque básico para repetirlo. Órdenes cambia a cursor; dos toques en Seleccionar eligen una unidad; Grupo selecciona a todos; Ordenar da una orden contextual. Los poderes siguen disponibles. En los menús usa la palanca y **Confirmar**; **Volver** también está a la izquierda.
-
-## Grupo y progreso
-
-Comienzas con un soldado y un trabajador. Habla con la Capitana o abre Escuadrón y órdenes para reclutar en refugios. Máximo seis subordinados vivos; los caídos se recuperan por 40g. Los trabajadores reúnen recursos y los depositan como oro en los pueblos. Todos viajan contigo a las mazmorras.
-
-El instructor de la villa enseña hasta rango 2; la maestra de la frontera hasta 5; el maestro de las cumbres hasta 8. Te indican dónde seguir. Busca también comerciantes y encargados de expediciones en los pueblos posteriores.
-
-Consulta Z: Cripta del Bosque (nivel 3), Mina de los Colosos (6), Bastión del Abismo (10), Ciudadela de las Cenizas (15). Entra con E/F cerca del portal. La puerta 🚪 permite salir. Derrota a los cuatro enemigos para cobrar una recompensa única. Se guarda el progreso; los derrotados no reaparecen dentro de las mazmorras.
-
-Trampas: ámbar avisa, rojo daña. Evita las zonas marcadas de los jefes. En la Ciudadela, ataca al Centinela cuando abra su coraza después del impacto; la fuente de un solo uso se habilita tras vencer a los custodios. Lleva buen equipo, entrenamiento y consumibles.
+Los destinos respetan los obstáculos y rutas existentes. Mover con teclado/palanca toma el control inmediatamente; menús, pausa y pérdida de foco cancelan el destino. Las preferencias no cambian tus partidas ni sus penalizaciones.

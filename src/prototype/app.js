@@ -26,10 +26,15 @@
     footstepTimer = 0,
     gateDismissed = false,
     criticalNoticeSeen = null,
-    criticalNoticeUntil = 0;
+    criticalNoticeUntil = 0,
+    worldPointer = null,
+    pointer = null;
   profile = persistence.loadProfile(profile);
   const audio = new PrototypeAudio(profile.audio);
   const platform = PrototypePlatform.init(window);
+  const input = PrototypeInput.create(localStorage, status);
+  let bindingCapture = null;
+  document.body.setAttribute('data-phone-layout', input.preferences.phoneLayout);
   let appRegistration = null,
     appUpdateReady = false,
     appReloadRequested = false,
@@ -167,6 +172,7 @@
     renderer,
     platform,
     runtime,
+    input,
     save,
     openMenu,
     closeMenu,
@@ -208,32 +214,93 @@
       !game.s.challenge.gameOver
     );
   }
-  function desktopMouse(e) {
-    return !!(
-      e?.isTrusted &&
-      e.pointerType === 'mouse' &&
-      (!window.matchMedia || window.matchMedia('(hover: hover) and (pointer: fine)').matches)
-    );
-  }
   function help(back = closeMenu) {
     openMenu(
       'Controls',
-      'MOVE\nWASD — Move hero\nLeft joystick — Move on touch devices\n\nCOMBAT\n1–5 — Skills 1–5\nTap Skill 1, 2 or 3 quickly for the normal version\nHold 0.65 s for the charged version · costs 20% / 30% / 35% max MP respectively\nHold during a cooldown to queue the charge · releasing an incomplete hold cancels safely instead of firing the normal skill\nCHARGED means the charged action can actually release; NEED MP / NO TARGET / NO HEAL explain why it cannot\nSkill 1 movement auto-attacks pause while Skill 1 is held · Skill 2 locks its target when charging begins\nNormal Skill 1 rewards keeping the same target: hit 1 = 100%, hit 2 = 110%, hit 3 = 120% + a small frontal AoE · switching targets or waiting 4s resets the combo\nSpace — Skill 6\nLeft Shift — Skill 7\nB — Skill 8\nH / Left mouse — Command Ranger Heal\nM / Right mouse — Command Ranger Mana Recovery\nQ — Reserved / unavailable\n\nSQUAD\nTab — Switch squad doctrine during combat (Expedition 3)\nBacktick — Recall and regroup squad\nPaladin defaults to TARGET / BOSS\nMage and Ranger default to THREATS / ADDS\nDoctrine resets automatically for each encounter\n\nINTERACT\nE / F — Interact\n\nMENUS\nI / R — Inventory\nC — Discipline Training\nX — Skills\nJ / T — Quests\nZ — Map\nP / V — Pause\nG — Controls\nEsc — Adventure menu\n\nMENU NAVIGATION\nW / A — Previous\nS / D — Next\nF / Enter / Space — Confirm\n\nPC INPUT\nMouse clicks do not move the hero, command the squad or activate menus. Left mouse commands Ranger Heal; right mouse commands Ranger Mana Recovery.\n\nTouch controls use the labeled on-screen buttons.',
-      [],
+      input.actions.map(([id, name]) => input.key(id) + ' — ' + name).join('\n') +
+        '\n\nEsc — Menu / back · Enter or Space — Confirm in menus\nMouse or touch — Activate menus and HUD buttons\nSkills 1–3: tap for normal; hold 0.65 s for charged. Releasing an incomplete hold cancels.\nMovement autoattack stays active, except while holding Skill 1.\nTouch: use the joystick or tap a reachable place to move when enabled. Keyboard or joystick movement cancels a destination.\nMouse: left click commands Ranger Heal unless click-to-move is enabled; right click commands Mana Recovery. HUD recovery buttons always work.\nSprint remains unavailable.',
+      [
+        action('Customize keyboard', () => keyboardMenu(back)),
+        action('Touch and mouse options', () => pointerMenu(back)),
+      ],
       back,
+    );
+  }
+  function keyboardMenu(back = systemMenu) {
+    bindingCapture = null;
+    openMenu(
+      'Customize keyboard',
+      'Select an action, then press its new key. Esc cancels. Duplicate keys are rejected. Browser shortcuts remain available.',
+      [
+        ...input.actions.map(([id, name]) =>
+          action(name + ' · ' + input.key(id), () => {
+            openMenu('Bind ' + name, 'Press a new key for ' + name + '. Esc cancels.', [], () =>
+              keyboardMenu(back),
+            );
+            bindingCapture = id;
+          }),
+        ),
+        action('Restore default keys', () => {
+          input.resetBindings();
+          clearInput();
+          updateHUD();
+          keyboardMenu(back);
+        }),
+      ],
+      () => help(back),
+    );
+  }
+  function pointerMenu(back = systemMenu) {
+    const p = input.preferences;
+    const select = (name, value) => {
+      input.select(name, value);
+      document.body.setAttribute('data-phone-layout', input.preferences.phoneLayout);
+      clearInput();
+      runtime.reset();
+      updateHUD();
+      pointerMenu(back);
+    };
+    openMenu(
+      'Touch and mouse options',
+      'Use the controls that feel comfortable. Menus always accept direct clicks and taps. Movement inputs work alongside the keyboard and joystick.',
+      [
+        action(
+          'Phone layout · ' + (p.phoneLayout === 'two-thumb' ? 'Two thumbs' : 'Left hand'),
+          () => select('phoneLayout', p.phoneLayout === 'two-thumb' ? 'left-hand' : 'two-thumb'),
+          'Two thumbs: movement left, skills right. Left hand: skills above the joystick.',
+        ),
+        action(
+          'Touch tap-to-move · ' + (p.touchMove ? 'ON' : 'OFF'),
+          () => select('touchMove', !p.touchMove),
+          'Applies to phones, tablets and touchscreen browsers. Tap a reachable place in the world.',
+        ),
+        action(
+          'Mouse click-to-move · ' + (p.mouseMove ? 'ON' : 'OFF'),
+          () => select('mouseMove', !p.mouseMove),
+          'When off, left click in the world commands Ranger Heal. Right click commands Mana Recovery.',
+        ),
+      ],
+      () => help(back),
     );
   }
   function clearInput() {
     if (typeof Sprint !== 'undefined') Sprint.release();
     cancelCharge();
     keys = {};
+    pointer = null;
+    worldPointer = null;
     joy = { x: 0, y: 0 };
+    if (game) {
+      game.hero.order = null;
+      game.hero.path = [];
+    }
     $('stick').style.transform = '';
   }
   function action(label, fn, detail = '', disabled = false) {
     return { label, action: fn, detail, disabled };
   }
   function openMenu(title, description = '', actions = [], back = closeMenu) {
+    bindingCapture = null;
     clearInput();
     gateDismissed = false;
     menu = { title, description, actions, back };
@@ -244,7 +311,6 @@
     $('modal-description').textContent = description;
     renderActions();
   }
-  let menuTouchBlockUntil = 0;
   function renderActions() {
     const host = $('modal-actions');
     host.replaceChildren();
@@ -260,12 +326,6 @@
         b.append(span);
       }
       b.onclick = (e) => {
-        if (
-          desktopMouse(e) ||
-          e?.pointerType === 'touch' ||
-          (e?.isTrusted && performance.now() < menuTouchBlockUntil)
-        )
-          return;
         audio.unlock();
         a.action();
         if (started) save();
@@ -276,6 +336,7 @@
     }
     const back = $('close-button');
     back.hidden = false;
+    back.innerHTML = 'Back <small>' + input.key('confirm') + ' / Esc</small>';
     buttons.push(back);
     highlight();
   }
@@ -284,22 +345,14 @@
     buttons[menuIndex]?.scrollIntoView({ block: 'nearest' });
   }
   function closeMenu() {
+    bindingCapture = null;
     if (game.s.challenge.pending || game.s.challenge.gameOver) gateDismissed = true;
     menu = null;
     $('modal').hidden = true;
     document.body.classList.remove('menu-open');
     clearInput();
   }
-  $('modal').ontouchstart = () => {
-    menuTouchBlockUntil = performance.now() + 700;
-  };
-  $('close-button').onclick = (e) => {
-    if (
-      desktopMouse(e) ||
-      e?.pointerType === 'touch' ||
-      (e?.isTrusted && performance.now() < menuTouchBlockUntil)
-    )
-      return;
+  $('close-button').onclick = () => {
     audio.unlock();
     if (!game.s.endingAck && game.peace) {
       game.s.endingAck = true;
@@ -578,7 +631,6 @@
     );
   }
   $('menu-button').onclick = (e) => {
-    if (desktopMouse(e)) return;
     audio.unlock();
     if (!started) chooseClass('normal');
     else if (game.s.challenge.pending) successionMenu();
@@ -586,7 +638,6 @@
     else openMain();
   };
   $('talent-button').onclick = (e) => {
-    if (desktopMouse(e)) return;
     audio.unlock();
     if (started && !game.s.challenge.pending && !game.s.challenge.gameOver) talents();
   };
@@ -747,7 +798,6 @@
     }
   }
   $('touch-interact-button').onclick = (e) => {
-    if (desktopMouse(e)) return;
     audio.unlock();
     if (activePlay()) interact();
   };
@@ -2147,12 +2197,10 @@
     $('modal-description').append(map);
   }
   $('squad-button').onclick = (e) => {
-    if (desktopMouse(e)) return;
     audio.unlock();
     if (activePlay() && game.toggleSquadDoctrine()) updateHUD();
   };
   $('recall-button').onclick = (e) => {
-    if (desktopMouse(e)) return;
     audio.unlock();
     if (activePlay()) {
       recallSquad();
@@ -2160,7 +2208,6 @@
     }
   };
   $('order-button').onclick = (e) => {
-    if (desktopMouse(e)) return;
     audio.unlock();
     if (menu) buttons[menuIndex]?.click();
   };
@@ -2175,7 +2222,7 @@
       'Final special',
     ],
     icons = ['ATK', 'HIT', 'HEAL', 'GUARD', 'AREA', 'CAST', 'BURST', 'FINAL'],
-    skillKeys = ['1', '2', '3', '4', '5', 'Space', 'Shift', 'B'],
+    skillKeys = () => Array.from({ length: 8 }, (_, i) => input.key('skill' + (i + 1))),
     chargeableSlots = new Set([1, 2, 3]);
   function chargeSeconds() {
     return PrototypeRules.chargedSkills?.holdSeconds || 0.65;
@@ -2463,28 +2510,31 @@
       b = document.createElement('button');
     b.id = 'skill-' + slot;
     b.setAttribute('aria-label', 'Skill ' + slot + ' ' + skillNames[i]);
-    b.innerHTML = icons[i] + '<small>' + skillKeys[i] + '</small>';
+    b.innerHTML = icons[i] + '<small>' + skillKeys()[i] + '</small>';
     if (chargeableSlots.has(slot)) {
-      b.onclick = (e) => e?.preventDefault?.();
+      b.onclick = (e) => {
+        e?.preventDefault?.();
+        if (e?.isTrusted && e.detail === 0 && activePlay()) game.cast(slot);
+      };
       b.onpointerdown = (e) => {
-        if (desktopMouse(e) || e?.pointerType === 'mouse') return;
+        if (e?.button > 0) return;
         audio.unlock();
-        if (beginCharge(slot, 'touch', e?.pointerId ?? null)) b.setPointerCapture?.(e.pointerId);
+        if (beginCharge(slot, 'pointer', e?.pointerId ?? null)) b.setPointerCapture?.(e.pointerId);
       };
       b.onpointerup = (e) => {
-        if (e?.pointerType === 'mouse') return;
-        releaseCharge(slot, 'touch');
+        if (e?.button > 0 || (charge?.pointerId !== null && charge?.pointerId !== e?.pointerId))
+          return;
+        releaseCharge(slot, 'pointer');
       };
       b.onpointercancel = b.onlostpointercapture = (e) => {
         if (
-          charge?.source === 'touch' &&
+          charge?.source === 'pointer' &&
           (charge.pointerId === null || charge.pointerId === e?.pointerId)
         )
           cancelCharge();
       };
     } else
       b.onclick = (e) => {
-        if (desktopMouse(e)) return;
         audio.unlock();
         if (activePlay()) game.cast(slot);
       };
@@ -2507,19 +2557,45 @@
     const b = document.createElement('button');
     b.id = type + '-potion';
     b.className = 'potion-button';
-    b.setAttribute('aria-label', 'Command Ranger ' + label + ' (' + key + ')');
+    b.setAttribute('aria-label', 'Command Ranger ' + label);
     b.onclick = (e) => {
-      if (desktopMouse(e)) return;
       useRangerSupport(type);
     };
     quickItems.append(b);
   }
   $('skills').append(quickItems);
   addEventListener('keydown', (e) => {
-    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (
+      e.ctrlKey ||
+      e.metaKey ||
+      e.altKey ||
+      /^(INPUT|TEXTAREA|SELECT)$/.test(e.target?.tagName || '')
+    )
+      return;
     audio.unlock();
     const code = e.code;
-    if (['Space', 'Tab', 'Escape'].includes(code)) e.preventDefault();
+    if (bindingCapture) {
+      e.preventDefault();
+      if (e.repeat) return;
+      if (code === 'Escape') {
+        bindingCapture = null;
+        menu.back();
+        return;
+      }
+      const error = input.rebind(bindingCapture, code);
+      if (error) {
+        $('modal-description').textContent = error;
+        return;
+      }
+      bindingCapture = null;
+      clearInput();
+      updateHUD();
+      menu.back();
+      return;
+    }
+    const actionId = input.actionFor(code);
+    if (actionId || code === 'Escape' || (menu && ['Enter', 'Space'].includes(code)))
+      e.preventDefault();
     if (code === 'Escape') {
       if (menu) menu.back();
       else if (!started) chooseClass('normal');
@@ -2530,55 +2606,52 @@
     }
     if (menu) {
       if (e.repeat) return;
-      if (['KeyS', 'KeyD'].includes(code)) {
+      if (['down', 'right'].includes(actionId)) {
         menuIndex = (menuIndex + 1) % Math.max(1, buttons.length);
         highlight();
-      } else if (['KeyW', 'KeyA'].includes(code)) {
+      } else if (['up', 'left'].includes(actionId)) {
         menuIndex = (menuIndex - 1 + buttons.length) % Math.max(1, buttons.length);
         highlight();
-      } else if (['KeyF', 'Enter', 'Space'].includes(code)) buttons[menuIndex]?.click();
+      } else if (actionId === 'confirm' || ['Enter', 'Space'].includes(code))
+        buttons[menuIndex]?.click();
       return;
     }
-    if ((paused || !focused || document.hidden) && !['KeyP', 'KeyV', 'KeyG'].includes(code)) return;
-    keys[code] = true;
-    if (code === 'KeyQ') Sprint.press('keyboard', true);
+    if ((paused || !focused || document.hidden) && !['pause', 'help'].includes(actionId)) return;
+    if (!actionId) return;
+    if (['up', 'down', 'left', 'right'].includes(actionId)) worldPointer = null;
+    keys[actionId] = true;
     if (e.repeat) return;
-    if (code === 'Tab') {
+    if (actionId === 'doctrine') {
       game.toggleSquadDoctrine();
       updateHUD();
-    } else if (code === 'KeyE' || code === 'KeyF') interact();
-    else if (code === 'Backquote') {
+    } else if (actionId === 'interact' || actionId === 'confirm') interact();
+    else if (actionId === 'recall') {
       recallSquad();
       save();
-    } else if (code === 'KeyP' || code === 'KeyV') {
+    } else if (actionId === 'pause') {
       paused = !paused;
       clearInput();
-    } else if (code === 'KeyZ') showMap();
-    else if (code === 'KeyI' || code === 'KeyR') inventory();
-    else if (code === 'KeyH') useRangerSupport('health');
-    else if (code === 'KeyM') useRangerSupport('mana');
-    else if (code === 'KeyC') talents();
-    else if (code === 'KeyX') skillBook();
-    else if (code === 'KeyG') help();
-    else if (code === 'KeyJ' || code === 'KeyT') quests(false);
-    else {
-      const num = /Digit([1-5])/.exec(code)?.[1] || { Space: 6, ShiftLeft: 7, KeyB: 8 }[code];
-      if (num) {
-        const slot = Number(num);
-        if (chargeableSlots.has(slot)) beginCharge(slot, 'keyboard');
-        else game.cast(slot);
-      }
+    } else if (actionId === 'map') showMap();
+    else if (actionId === 'inventory') inventory();
+    else if (actionId === 'heal') useRangerSupport('health');
+    else if (actionId === 'mana') useRangerSupport('mana');
+    else if (actionId === 'training') talents();
+    else if (actionId === 'skills') skillBook();
+    else if (actionId === 'help') help();
+    else if (actionId === 'quests') quests(false);
+    else if (actionId.startsWith('skill')) {
+      const slot = Number(actionId.slice(5));
+      if (chargeableSlots.has(slot)) beginCharge(slot, 'keyboard');
+      else game.cast(slot);
     }
   });
   addEventListener('keyup', (e) => {
-    delete keys[e.code];
-    if (e.code === 'KeyQ') Sprint.press('keyboard', false);
-    const slot = /Digit([123])/.exec(e.code)?.[1];
-    if (slot) releaseCharge(Number(slot), 'keyboard');
+    const actionId = input.actionFor(e.code);
+    delete keys[actionId];
+    if (actionId?.startsWith('skill')) releaseCharge(Number(actionId.slice(5)), 'keyboard');
   });
   const joystick = $('joystick');
-  let pointer = null,
-    menuJoyTime = 0;
+  let menuJoyTime = 0;
   function joyUpdate(e) {
     const r = joystick.getBoundingClientRect(),
       dx = (e.clientX - r.left - r.width / 2) / (r.width * 0.4),
@@ -2591,6 +2664,7 @@
     if (e.pointerType === 'mouse' || pointer !== null) return;
     e.preventDefault();
     audio.unlock();
+    worldPointer = null;
     pointer = e.pointerId;
     joystick.setPointerCapture(pointer);
     joyUpdate(e);
@@ -2608,26 +2682,61 @@
           $('stick').style.transform = '';
         }
       };
-  canvas.onpointermove = null;
   canvas.onpointerdown = (e) => {
-    if (e.pointerType === 'mouse') e.preventDefault();
-  };
-  addEventListener(
-    'pointerdown',
-    (e) => {
-      if (e.pointerType !== 'mouse' || !activePlay()) return;
-      if (e.button === 0) {
-        e.preventDefault();
-        useRangerSupport('health');
-      } else if (e.button === 2) {
+    if (!activePlay() || e.button > 0) {
+      if (activePlay() && e.pointerType === 'mouse' && e.button === 2) {
         e.preventDefault();
         useRangerSupport('mana');
       }
-    },
-    true,
-  );
+      return;
+    }
+    audio.unlock();
+    if (e.pointerType === 'mouse' && !input.preferences.mouseMove) {
+      e.preventDefault();
+      useRangerSupport('health');
+      return;
+    }
+    if (e.pointerType !== 'mouse' && !input.preferences.touchMove) return;
+    if (worldPointer || pointer !== null) return;
+    e.preventDefault();
+    worldPointer = {
+      id: e.pointerId,
+      x: e.clientX,
+      y: e.clientY,
+      target: world(e.clientX, e.clientY),
+      moved: false,
+    };
+    canvas.setPointerCapture?.(e.pointerId);
+  };
+  canvas.onpointermove = (e) => {
+    if (
+      worldPointer?.id === e.pointerId &&
+      Math.hypot(e.clientX - worldPointer.x, e.clientY - worldPointer.y) > 12
+    )
+      worldPointer.moved = true;
+  };
+  canvas.onpointerup = (e) => {
+    if (worldPointer?.id !== e.pointerId) return;
+    const tap = worldPointer;
+    worldPointer = null;
+    if (
+      !activePlay() ||
+      tap.moved ||
+      pointer !== null ||
+      keys.up ||
+      keys.down ||
+      keys.left ||
+      keys.right ||
+      Math.hypot(e.clientX - tap.x, e.clientY - tap.y) > 12
+    )
+      return;
+    if (!PrototypeInput.requestMove(game, tap.target)) status('Choose a reachable place to move.');
+  };
+  canvas.onpointercancel = canvas.onlostpointercapture = (e) => {
+    if (worldPointer?.id === e.pointerId) worldPointer = null;
+  };
   addEventListener('contextmenu', (e) => {
-    if (activePlay()) e.preventDefault();
+    if (e.target === canvas && activePlay()) e.preventDefault();
   });
   addEventListener('blur', () => {
     focused = false;
@@ -2807,7 +2916,7 @@
     const doctrine = game.squadDoctrineLabel(),
       squad = $('squad-button');
     squad.hidden = (game.s.expeditionRank || 1) < 3 || !doctrine.active;
-    squad.textContent = 'Squad · ' + doctrine.label + ' · Tab';
+    squad.textContent = 'Squad · ' + doctrine.label + ' · ' + input.key('doctrine');
     squad.title = doctrine.boss
       ? doctrine.mode === 'focus'
         ? 'Squad concentrates on the boss and ignores adds'
@@ -2872,12 +2981,28 @@
           ? 'Locked'
           : h.cd[i] > 0
             ? cooldownText(h.cd[i])
-            : skillKeys[i];
+            : skillKeys()[i];
     }
     const n = nearestNPC();
-    setMarkup('touch-interact-button', 'F<br><small>Interact</small>');
+    setMarkup('touch-interact-button', 'Interact');
     $('touch-interact-button').title = n ? n.name : 'Find a marked person';
-    $('order-button').textContent = 'Confirm · F';
+    $('order-button').textContent = 'Confirm';
+    $('desktop-hints').textContent =
+      ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('') +
+      ' · Move   ' +
+      input.key('interact') +
+      ' / ' +
+      input.key('confirm') +
+      ' · Interact   ' +
+      input.key('map') +
+      ' · Map   ' +
+      input.key('inventory') +
+      ' · Inventory   Esc · Menu';
+    $('talent-button').querySelector('small').textContent = input.key('training');
+    if ($('squad-button').querySelector('small'))
+      $('squad-button').querySelector('small').textContent = input.key('doctrine');
+    if ($('recall-button').querySelector('small'))
+      $('recall-button').querySelector('small').textContent = input.key('recall');
     updateCriticalNotice();
   }
   function frame(now) {
@@ -2910,8 +3035,8 @@
       paused || !!menu || !focused || document.hidden || game.s.challenge.gameOver,
     );
     if (!frozen) {
-      let x = (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0) + joy.x,
-        y = (keys.KeyS ? 1 : 0) - (keys.KeyW ? 1 : 0) + joy.y;
+      let x = (keys.right ? 1 : 0) - (keys.left ? 1 : 0) + joy.x,
+        y = (keys.down ? 1 : 0) - (keys.up ? 1 : 0) + joy.y;
       if (joy.x || joy.y) {
         const p = world(viewport.width * 0.5 + joy.x * 100, viewport.height * 0.5 + joy.y * 100),
           base = world(viewport.width * 0.5, viewport.height * 0.5);
@@ -2925,11 +3050,12 @@
           y: movingHero.y,
           zone: game.zoneId,
           deaths: game.s.statistics.deaths,
+          order: !!movingHero.order,
         };
       game.tick(dt, { x, y, speedFactor });
       syncChargeReady();
       if (
-        (x || y) &&
+        (x || y || was.order) &&
         charge?.slot !== 1 &&
         game.hero === movingHero &&
         PrototypeRules.movementBasicClasses[movingHero.class] &&
