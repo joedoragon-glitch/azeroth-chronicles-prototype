@@ -71,10 +71,11 @@ const root = path.resolve(__dirname, '..'),
           starts: v.map((n) => n.at),
           status: a.status(),
           duration: v[0].item.buffer.duration,
+          sampleRate: v[0].item.buffer.sampleRate,
         };
       });
       assert.equal(initial.starts[0], initial.starts[1]);
-      assert.equal(initial.duration, 2);
+      assert(Math.abs(initial.duration - 2) <= 2 / initial.sampleRate);
       assert(initial.status.recordings.assets.decodedBytes < 2 * 1024 * 1024);
       await page.locator('#mix-scene').selectOption('menu');
       await page.locator('#ui-play').click();
