@@ -31,6 +31,8 @@
             this.studio = null;
           }
           this.stopRecordedScore();
+          this.stopEnvironment();
+          this.ambient();
         }
       }
       soundCatalog() {
@@ -112,6 +114,8 @@
         const mix =
           scene.situation === 'menu' ? 'menu' : scene.situation === 'title' ? 'title' : 'world';
         if (this.mixScene !== mix) this.setSceneMix(mix);
+        this.updateEnvironment(scene);
+        this.sceneDetails(scene);
         const now = this.ctx.currentTime;
         if (scene.settlement) {
           this.settlementUntil = now + 4;
@@ -146,10 +150,7 @@
         }
         const group = this.recordedScore;
         if (!group || group.id !== spec.id) return;
-        if (spec.custom) {
-          this.sceneDetails(scene);
-          return;
-        }
+        if (spec.custom) return;
         if (scene.engaged && !scene.peace) this.combatUntil = now + 2.5;
         const combat = !scene.peace && now < (this.combatUntil || 0);
         const intensity = scene.boss
@@ -164,7 +165,6 @@
           if (group.voices.length > 1) this.setStemGain(1, intensity, intensity ? 0.25 : 2.2);
           this.productionIntensity = key;
         }
-        this.sceneDetails(scene);
       }
       buildStudio() {
         if (!this.production || !this.ctx || this.studio || !this.ctx.createConvolver) return;
@@ -267,11 +267,19 @@
         this.tone(surface === 'wood' ? 42 : 29, now, 0.055, 0.01, 'sine', 'effects', 0.002);
       }
       sceneDetails(scene) {
-        if (!this.ctx || !this.cue || scene.situation === 'menu' || scene.situation === 'title')
+        if (
+          !this.ctx ||
+          !this.cue ||
+          scene.situation === 'menu' ||
+          scene.situation === 'title' ||
+          scene.gameOver ||
+          scene.engaged
+        )
           return;
         const now = this.ctx.currentTime;
         if (now < (this.nextSceneDetail || 0)) return;
-        this.nextSceneDetail = now + (scene.boss ? 8 : 3.5 + Math.random() * 5);
+        const gap = this.soundCatalog().director?.environment?.detailGap || [12, 24];
+        this.nextSceneDetail = now + gap[0] + Math.random() * (gap[1] - gap[0]);
         if (scene.boss) return;
         if (scene.interior === 'outdoors') {
           if (scene.region === 'march') {

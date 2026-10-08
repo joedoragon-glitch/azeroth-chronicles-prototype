@@ -18,12 +18,15 @@
         )
           throw Error('Invalid recording manifest');
         contract.validateCatalog(manifest);
+        this.stopEnvironment();
         this.stopRecordedScore(0);
         for (const voice of [...this.voices]) if (voice.recorded) this.stopRecording(voice, 0);
         this.recordingAssets?.dispose();
         this.recordingAssets = null;
         this.recordingManifest = JSON.parse(JSON.stringify(manifest));
         this.recordingOptions = options;
+        this.environmentError = null;
+        if (this.ctx && this.production) this.ambient();
         this.recordingEpoch = (this.recordingEpoch || 0) + 1;
         this.recordedCueKey = null;
         this.recordingError = null;
@@ -433,6 +436,14 @@
       }
       recordingStatus() {
         return {
+          environment: this.environmentVoice
+            ? {
+                id: this.environmentVoice.id,
+                at: this.environmentVoice.at,
+                gain: this.environmentVoice.targetGain,
+              }
+            : null,
+          environmentError: this.environmentError || null,
           score: this.recordedScore
             ? {
                 id: this.recordedScore.id,

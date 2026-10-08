@@ -11,6 +11,7 @@
         require('./audio-effects.js'),
         require('./audio-recordings.js'),
         require('./audio-production.js'),
+        require('./audio-environment.js'),
       ]
     : [
         root.PrototypeAudioMixer,
@@ -19,6 +20,7 @@
         root.PrototypeAudioEffects,
         root.PrototypeAudioRecordings,
         root.PrototypeAudioProduction,
+        root.PrototypeAudioEnvironment,
       ];
   const { themes, defaults } = catalog;
   class PrototypeAudio {

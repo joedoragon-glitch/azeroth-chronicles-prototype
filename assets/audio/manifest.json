@@ -1494,6 +1494,244 @@
       "bpm": 84,
       "managedBy": "score-book",
       "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Roads Beneath the Banner — nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, C tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-crown."
+    },
+    "env-woodland-day": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/env-woodland-day.mp3",
+      "duration": 24.336,
+      "sha256": "56eac0b239b3025e83387e2bf8b02c178f37a7bbf994b8e23c7de7713237ea15",
+      "loop": {
+        "start": 0.15,
+        "end": 24.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original procedural sound design",
+        "license": "CC0-1.0"
+      },
+      "title": "Woodland — gentle leaf air",
+      "managedBy": "environment-book",
+      "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: light wind passing through broad leaves, gently varying air; quiet temperate woodland, without jungle chatter. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    "env-woodland-night": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/env-woodland-night.mp3",
+      "duration": 24.336,
+      "sha256": "5462622840bec08c98396d8dc95e127f86ccab884612b736086fc7088ebe418d",
+      "loop": {
+        "start": 0.15,
+        "end": 24.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original procedural sound design",
+        "license": "CC0-1.0"
+      },
+      "title": "Woodland — still night air",
+      "managedBy": "environment-book",
+      "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: still woodland night, a soft cool breeze and long quiet spaces. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    "env-marsh-day": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/env-marsh-day.mp3",
+      "duration": 24.336,
+      "sha256": "a9cafb7163f12368d74367a6bcd9f87d2aff78a47cca3f4a5178be26329884ef",
+      "loop": {
+        "start": 0.15,
+        "end": 24.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original procedural sound design",
+        "license": "CC0-1.0"
+      },
+      "title": "Marches — shallow water and reeds",
+      "managedBy": "environment-book",
+      "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: gentle shallow water lapping beside reeds, a little airy reed movement; no constant splashing. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    "env-marsh-night": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/env-marsh-night.mp3",
+      "duration": 24.336,
+      "sha256": "5c97c6e4ea1de0d0da7e56fc47a5e9c2a864b12949073e8216a68db261075c5b",
+      "loop": {
+        "start": 0.15,
+        "end": 24.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original procedural sound design",
+        "license": "CC0-1.0"
+      },
+      "title": "Marches — quiet night water",
+      "managedBy": "environment-book",
+      "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: very soft slow marsh water at night, sheltered cool air. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    "env-highland-wind": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/env-highland-wind.mp3",
+      "duration": 24.336,
+      "sha256": "8f2265467dd5aa2f46f363e0e3a11a5160c3364ab9283bce92b23a0356f97e37",
+      "loop": {
+        "start": 0.15,
+        "end": 24.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original procedural sound design",
+        "license": "CC0-1.0"
+      },
+      "title": "Highlands — open mountain air",
+      "managedBy": "environment-book",
+      "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: broad gentle mountain wind with slow rises and falls, no storm or harsh whistle. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    "env-frontier-air": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/env-frontier-air.mp3",
+      "duration": 24.336,
+      "sha256": "49dc5f916fc5efd2f111d51f57827e624372c6cbd7bf5939eff67b8396cdde99",
+      "loop": {
+        "start": 0.15,
+        "end": 24.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original procedural sound design",
+        "license": "CC0-1.0"
+      },
+      "title": "Frontier — dry open air",
+      "managedBy": "environment-book",
+      "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: dry, spacious frontier air and distant fine grit moving lightly over open ground. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    "env-crown-courtyard": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/env-crown-courtyard.mp3",
+      "duration": 24.336,
+      "sha256": "01fe1d6d9786588beaa388736dae21e0d23050459757935979e8fa37723b9d1b",
+      "loop": {
+        "start": 0.15,
+        "end": 24.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original procedural sound design",
+        "license": "CC0-1.0"
+      },
+      "title": "Crown — sheltered courtyard",
+      "managedBy": "environment-book",
+      "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: sheltered air around stone streets and courtyards, faint distant movement without voices or crowd noise. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    "env-home": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/env-home.mp3",
+      "duration": 24.336,
+      "sha256": "311a99d098a473662ef3236722ae449b427c2fcfd28365a91aa35deef2633ea1",
+      "loop": {
+        "start": 0.15,
+        "end": 24.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original procedural sound design",
+        "license": "CC0-1.0"
+      },
+      "title": "Residences — quiet room",
+      "managedBy": "environment-book",
+      "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: warm quiet interior room air with one barely audible settling timber; no people, furniture clatter or fire without a visible source. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    "env-retreat": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/env-retreat.mp3",
+      "duration": 24.336,
+      "sha256": "b1c7e94c63c4e01f2c1ddf42013afac1297591f620a02dc36e4371bfb42cbd19",
+      "loop": {
+        "start": 0.15,
+        "end": 24.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original procedural sound design",
+        "license": "CC0-1.0"
+      },
+      "title": "Crypt — secluded stone retreat",
+      "managedBy": "environment-book",
+      "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: a secluded unfinished private stone retreat, still room air and distant light drafts, no horror drones. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    "env-archive": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/env-archive.mp3",
+      "duration": 24.336,
+      "sha256": "28f1297b4a775487ab3d2ae47ec1ac34679b2561a01c641226e6741d719157da",
+      "loop": {
+        "start": 0.15,
+        "end": 24.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original procedural sound design",
+        "license": "CC0-1.0"
+      },
+      "title": "Archive — restoration hall water",
+      "managedBy": "environment-book",
+      "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: quiet damp stone restoration hall, gentle residual water movement and widely spaced distant tiny drops. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    "env-mine": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/env-mine.mp3",
+      "duration": 24.336,
+      "sha256": "6e653fc967ad65986d71176b6586ad8d876611c0b1119294837dd5a75ad6e09e",
+      "loop": {
+        "start": 0.15,
+        "end": 24.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original procedural sound design",
+        "license": "CC0-1.0"
+      },
+      "title": "Mine and foundry — distant works",
+      "managedBy": "environment-book",
+      "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: sheltered mine ventilation with very faint irregular work vibrations in the distance, no heavy machinery rhythm or loud picks. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    "env-dragon-hall": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/env-dragon-hall.mp3",
+      "duration": 24.336,
+      "sha256": "eebc98489c3db9fbc3e3f7bc8554562e260cdd99e57c6bbee4995e2550a6c7fa",
+      "loop": {
+        "start": 0.15,
+        "end": 24.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original procedural sound design",
+        "license": "CC0-1.0"
+      },
+      "title": "Abyss — high vaulted air",
+      "managedBy": "environment-book",
+      "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: air moving quietly through a spacious vaulted flight-project hall, without dragon roars, wing flaps or ominous musical tones. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    "env-citadel": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/env-citadel.mp3",
+      "duration": 24.336,
+      "sha256": "febd98d0c5826fecd7e5d429c187f97f237b4314f18fd98a96f2b6fa9d4ba0e4",
+      "loop": {
+        "start": 0.15,
+        "end": 24.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original procedural sound design",
+        "license": "CC0-1.0"
+      },
+      "title": "Citadel — restrained machinery",
+      "managedBy": "environment-book",
+      "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: low distant irregular mechanical vibration inside a large stone citadel, soft ventilation, no engine drone or clanking loop. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    "env-cellar": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/env-cellar.mp3",
+      "duration": 24.336,
+      "sha256": "fb5256aedb59e4f40e26615513a9ec23d5368c00eaf880a3246d6abce546a596",
+      "loop": {
+        "start": 0.15,
+        "end": 24.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original procedural sound design",
+        "license": "CC0-1.0"
+      },
+      "title": "Cellars — sheltered timber room",
+      "managedBy": "environment-book",
+      "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: quiet cool timber cellar air with an isolated distant gentle wood creak. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
     }
   },
   "director": {
@@ -1932,6 +2170,187 @@
       "ambience.settlement": "Create an original fantasy RPG sound for ambience.settlement. A faint short background rustle suggesting nearby settlement activity. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
       "ambience.drips": "Create an original fantasy RPG sound for ambience.drips. Two restrained resonant drops for an archive or flooded watchhouse. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
       "ambience.metal": "Create an original fantasy RPG sound for ambience.metal. A faint low resonance with a higher metallic overtone for mine or foundry interiors. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment."
+    },
+    "environment": {
+      "combatGain": 0.45,
+      "bossGain": 0.25,
+      "detailGap": [
+        18,
+        36
+      ],
+      "rules": [
+        {
+          "id": "crypt",
+          "when": {
+            "zone": "crypt"
+          },
+          "asset": "env-retreat",
+          "gain": 0.3,
+          "fade": 2.5
+        },
+        {
+          "id": "archive",
+          "when": {
+            "zone": "archive"
+          },
+          "asset": "env-archive",
+          "gain": 0.33,
+          "fade": 2.5
+        },
+        {
+          "id": "mine",
+          "when": {
+            "zone": "mine"
+          },
+          "asset": "env-mine",
+          "gain": 0.32,
+          "fade": 2.5
+        },
+        {
+          "id": "abyss",
+          "when": {
+            "zone": "abyss"
+          },
+          "asset": "env-dragon-hall",
+          "gain": 0.29,
+          "fade": 2.5
+        },
+        {
+          "id": "citadel",
+          "when": {
+            "zone": "citadel"
+          },
+          "asset": "env-citadel",
+          "gain": 0.3,
+          "fade": 2.5
+        },
+        {
+          "id": "side-vale-cellars",
+          "when": {
+            "zone": "side-vale-cellars"
+          },
+          "asset": "env-cellar",
+          "gain": 0.3,
+          "fade": 2.5
+        },
+        {
+          "id": "side-march-watchhouse",
+          "when": {
+            "zone": "side-march-watchhouse"
+          },
+          "asset": "env-archive",
+          "gain": 0.28,
+          "fade": 2.5
+        },
+        {
+          "id": "side-highlands-signal",
+          "when": {
+            "zone": "side-highlands-signal"
+          },
+          "asset": "env-highland-wind",
+          "gain": 0.22,
+          "fade": 2.5
+        },
+        {
+          "id": "side-frontier-shrine",
+          "when": {
+            "zone": "side-frontier-shrine"
+          },
+          "asset": "env-frontier-air",
+          "gain": 0.23,
+          "fade": 2.5
+        },
+        {
+          "id": "side-crown-foundry",
+          "when": {
+            "zone": "side-crown-foundry"
+          },
+          "asset": "env-mine",
+          "gain": 0.3,
+          "fade": 2.5
+        },
+        {
+          "id": "homes",
+          "when": {
+            "interior": "treasury"
+          },
+          "asset": "env-home",
+          "gain": 0.3,
+          "fade": 2.5
+        },
+        {
+          "id": "vale-night",
+          "when": {
+            "region": "vale",
+            "interior": "outdoors",
+            "night": true
+          },
+          "asset": "env-woodland-night",
+          "gain": 0.33,
+          "fade": 2.5
+        },
+        {
+          "id": "march-night",
+          "when": {
+            "region": "march",
+            "interior": "outdoors",
+            "night": true
+          },
+          "asset": "env-marsh-night",
+          "gain": 0.33,
+          "fade": 2.5
+        },
+        {
+          "id": "vale",
+          "when": {
+            "region": "vale",
+            "interior": "outdoors"
+          },
+          "asset": "env-woodland-day",
+          "gain": 0.36,
+          "fade": 2.5
+        },
+        {
+          "id": "march",
+          "when": {
+            "region": "march",
+            "interior": "outdoors"
+          },
+          "asset": "env-marsh-day",
+          "gain": 0.36,
+          "fade": 2.5
+        },
+        {
+          "id": "highlands",
+          "when": {
+            "region": "highlands",
+            "interior": "outdoors"
+          },
+          "asset": "env-highland-wind",
+          "gain": 0.36,
+          "fade": 2.5
+        },
+        {
+          "id": "frontier",
+          "when": {
+            "region": "frontier",
+            "interior": "outdoors"
+          },
+          "asset": "env-frontier-air",
+          "gain": 0.36,
+          "fade": 2.5
+        },
+        {
+          "id": "crown",
+          "when": {
+            "region": "crown",
+            "interior": "outdoors"
+          },
+          "asset": "env-crown-courtyard",
+          "gain": 0.36,
+          "fade": 2.5
+        }
+      ]
     }
   },
   "creativeSource": {
@@ -1948,6 +2367,11 @@
         "src/prototype/audio-catalog.js"
       ]
     },
-    "guides": "Reusable generation briefs written after the sounds were created; these are not historical model prompts. Exact musical notes and synthesis parameters remain in the recipes."
+    "guides": "Reusable generation briefs written after the sounds were created; these are not historical model prompts. Exact musical notes and synthesis parameters remain in the recipes.",
+    "environment": {
+      "method": "Original procedural spectral textures and physical-style transients; no imported recordings or audio-generation model",
+      "recipe": "tools/audio/environment-book.json",
+      "renderer": "tools/audio/render-environment.py"
+    }
   }
 }

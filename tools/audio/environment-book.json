@@ -1,0 +1,328 @@
+{
+  "schemaVersion": 1,
+  "seconds": 24,
+  "cues": [
+    {
+      "id": "env-woodland-day",
+      "title": "Woodland \u2014 gentle leaf air",
+      "seed": 39173,
+      "layers": [
+        {
+          "low": 180,
+          "high": 1300,
+          "level": 0.04
+        },
+        {
+          "low": 1400,
+          "high": 3500,
+          "level": 0.008
+        }
+      ],
+      "details": [],
+      "guide": "Create a restrained seamless 24-second fantasy environmental bed: light wind passing through broad leaves, gently varying air; quiet temperate woodland, without jungle chatter. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    {
+      "id": "env-woodland-night",
+      "title": "Woodland \u2014 still night air",
+      "seed": 48360,
+      "layers": [
+        {
+          "low": 110,
+          "high": 680,
+          "level": 0.035
+        },
+        {
+          "low": 1600,
+          "high": 2800,
+          "level": 0.004
+        }
+      ],
+      "details": [],
+      "guide": "Create a restrained seamless 24-second fantasy environmental bed: still woodland night, a soft cool breeze and long quiet spaces. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    {
+      "id": "env-marsh-day",
+      "title": "Marches \u2014 shallow water and reeds",
+      "seed": 57547,
+      "layers": [
+        {
+          "low": 150,
+          "high": 780,
+          "level": 0.039
+        },
+        {
+          "low": 1050,
+          "high": 2300,
+          "level": 0.014
+        }
+      ],
+      "details": [
+        {
+          "type": "water",
+          "frequency": 580,
+          "times": [3.2, 11.7, 19.8],
+          "level": 0.016,
+          "duration": 0.4
+        }
+      ],
+      "guide": "Create a restrained seamless 24-second fantasy environmental bed: gentle shallow water lapping beside reeds, a little airy reed movement; no constant splashing. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    {
+      "id": "env-marsh-night",
+      "title": "Marches \u2014 quiet night water",
+      "seed": 66734,
+      "layers": [
+        {
+          "low": 120,
+          "high": 580,
+          "level": 0.032
+        },
+        {
+          "low": 1050,
+          "high": 1900,
+          "level": 0.008
+        }
+      ],
+      "details": [
+        {
+          "type": "water",
+          "frequency": 510,
+          "times": [6.4, 18.3],
+          "level": 0.012,
+          "duration": 0.35
+        }
+      ],
+      "guide": "Create a restrained seamless 24-second fantasy environmental bed: very soft slow marsh water at night, sheltered cool air. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    {
+      "id": "env-highland-wind",
+      "title": "Highlands \u2014 open mountain air",
+      "seed": 75921,
+      "layers": [
+        {
+          "low": 95,
+          "high": 1050,
+          "level": 0.045
+        },
+        {
+          "low": 1200,
+          "high": 2300,
+          "level": 0.009
+        }
+      ],
+      "details": [],
+      "guide": "Create a restrained seamless 24-second fantasy environmental bed: broad gentle mountain wind with slow rises and falls, no storm or harsh whistle. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    {
+      "id": "env-frontier-air",
+      "title": "Frontier \u2014 dry open air",
+      "seed": 85108,
+      "layers": [
+        {
+          "low": 220,
+          "high": 900,
+          "level": 0.035
+        },
+        {
+          "low": 1300,
+          "high": 2600,
+          "level": 0.012
+        }
+      ],
+      "details": [],
+      "guide": "Create a restrained seamless 24-second fantasy environmental bed: dry, spacious frontier air and distant fine grit moving lightly over open ground. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    {
+      "id": "env-crown-courtyard",
+      "title": "Crown \u2014 sheltered courtyard",
+      "seed": 94295,
+      "layers": [
+        {
+          "low": 100,
+          "high": 650,
+          "level": 0.034
+        },
+        {
+          "low": 950,
+          "high": 1750,
+          "level": 0.007
+        }
+      ],
+      "details": [],
+      "guide": "Create a restrained seamless 24-second fantasy environmental bed: sheltered air around stone streets and courtyards, faint distant movement without voices or crowd noise. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    {
+      "id": "env-home",
+      "title": "Residences \u2014 quiet room",
+      "seed": 103482,
+      "layers": [
+        {
+          "low": 70,
+          "high": 340,
+          "level": 0.025
+        },
+        {
+          "low": 750,
+          "high": 1150,
+          "level": 0.004
+        }
+      ],
+      "details": [
+        {
+          "type": "wood",
+          "frequency": 137,
+          "times": [9.3],
+          "level": 0.011,
+          "duration": 1.2
+        }
+      ],
+      "guide": "Create a restrained seamless 24-second fantasy environmental bed: warm quiet interior room air with one barely audible settling timber; no people, furniture clatter or fire without a visible source. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    {
+      "id": "env-retreat",
+      "title": "Crypt \u2014 secluded stone retreat",
+      "seed": 112669,
+      "layers": [
+        {
+          "low": 65,
+          "high": 490,
+          "level": 0.028
+        },
+        {
+          "low": 900,
+          "high": 1700,
+          "level": 0.005
+        }
+      ],
+      "details": [],
+      "guide": "Create a restrained seamless 24-second fantasy environmental bed: a secluded unfinished private stone retreat, still room air and distant light drafts, no horror drones. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    {
+      "id": "env-archive",
+      "title": "Archive \u2014 restoration hall water",
+      "seed": 121856,
+      "layers": [
+        {
+          "low": 130,
+          "high": 620,
+          "level": 0.031
+        },
+        {
+          "low": 950,
+          "high": 1650,
+          "level": 0.007
+        }
+      ],
+      "details": [
+        {
+          "type": "water",
+          "frequency": 720,
+          "times": [7.3, 20.4],
+          "level": 0.013,
+          "duration": 0.4
+        }
+      ],
+      "guide": "Create a restrained seamless 24-second fantasy environmental bed: quiet damp stone restoration hall, gentle residual water movement and widely spaced distant tiny drops. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    {
+      "id": "env-mine",
+      "title": "Mine and foundry \u2014 distant works",
+      "seed": 131043,
+      "layers": [
+        {
+          "low": 70,
+          "high": 470,
+          "level": 0.036
+        },
+        {
+          "low": 800,
+          "high": 1500,
+          "level": 0.006
+        }
+      ],
+      "details": [
+        {
+          "type": "work",
+          "frequency": 118,
+          "times": [5.1, 17.6],
+          "level": 0.013,
+          "duration": 1.4
+        }
+      ],
+      "guide": "Create a restrained seamless 24-second fantasy environmental bed: sheltered mine ventilation with very faint irregular work vibrations in the distance, no heavy machinery rhythm or loud picks. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    {
+      "id": "env-dragon-hall",
+      "title": "Abyss \u2014 high vaulted air",
+      "seed": 140230,
+      "layers": [
+        {
+          "low": 80,
+          "high": 620,
+          "level": 0.033
+        },
+        {
+          "low": 1100,
+          "high": 1950,
+          "level": 0.005
+        }
+      ],
+      "details": [],
+      "guide": "Create a restrained seamless 24-second fantasy environmental bed: air moving quietly through a spacious vaulted flight-project hall, without dragon roars, wing flaps or ominous musical tones. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    {
+      "id": "env-citadel",
+      "title": "Citadel \u2014 restrained machinery",
+      "seed": 149417,
+      "layers": [
+        {
+          "low": 60,
+          "high": 380,
+          "level": 0.036
+        },
+        {
+          "low": 720,
+          "high": 1250,
+          "level": 0.006
+        }
+      ],
+      "details": [
+        {
+          "type": "work",
+          "frequency": 91,
+          "times": [12.7],
+          "level": 0.01,
+          "duration": 2
+        }
+      ],
+      "guide": "Create a restrained seamless 24-second fantasy environmental bed: low distant irregular mechanical vibration inside a large stone citadel, soft ventilation, no engine drone or clanking loop. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    },
+    {
+      "id": "env-cellar",
+      "title": "Cellars \u2014 sheltered timber room",
+      "seed": 158604,
+      "layers": [
+        {
+          "low": 80,
+          "high": 430,
+          "level": 0.028
+        },
+        {
+          "low": 800,
+          "high": 1300,
+          "level": 0.004
+        }
+      ],
+      "details": [
+        {
+          "type": "wood",
+          "frequency": 113,
+          "times": [14.8],
+          "level": 0.012,
+          "duration": 1.3
+        }
+      ],
+      "guide": "Create a restrained seamless 24-second fantasy environmental bed: quiet cool timber cellar air with an isolated distant gentle wood creak. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
+    }
+  ]
+}

@@ -106,6 +106,7 @@ async function offlineContract(checkout) {
     'src/prototype/audio-assets.js',
     'src/prototype/audio-mixer.js',
     'src/prototype/audio-recordings.js',
+    'src/prototype/audio-environment.js',
     'tools/audio/index.html',
     'tools/audio/audition.js',
     'src/prototype/audio-runtime.js',

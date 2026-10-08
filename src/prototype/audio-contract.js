@@ -129,6 +129,45 @@
       if (rule.score.quantizeBars !== undefined && ![0, 1, 2, 4].includes(rule.score.quantizeBars))
         fail('invalid rule quantization');
     }
+    if (director.environment !== undefined) {
+      const environment = director.environment;
+      if (
+        !object(environment) ||
+        !Array.isArray(environment.rules) ||
+        environment.rules.length > 128 ||
+        new Set(environment.rules.map((r) => r?.id)).size !== environment.rules.length
+      )
+        fail('invalid environmental rules');
+      for (const field of ['combatGain', 'bossGain'])
+        if (!bounded(environment[field], 0, 1)) fail('invalid environmental ' + field);
+      if (
+        !Array.isArray(environment.detailGap) ||
+        environment.detailGap.length !== 2 ||
+        !bounded(environment.detailGap[0], 8, 120) ||
+        !bounded(environment.detailGap[1], environment.detailGap[0], 120)
+      )
+        fail('invalid environmental detail spacing');
+      for (const rule of environment.rules) {
+        const asset = manifest.assets[rule?.asset];
+        if (
+          !object(rule) ||
+          !/^[a-z0-9][a-z0-9:_-]*$/.test(rule.id || '') ||
+          !asset ||
+          asset.kind !== 'ambience' ||
+          !bounded(asset.duration, 0.000001, 600) ||
+          !asset.loop ||
+          !Number.isFinite(asset.loop.start) ||
+          !Number.isFinite(asset.loop.end) ||
+          asset.loop.start < 0 ||
+          asset.loop.end <= asset.loop.start ||
+          asset.loop.end > asset.duration
+        )
+          fail('missing looped environmental asset');
+        match(rule.when, sceneFields);
+        if (!bounded(rule.gain, 0, 1) || !bounded(rule.fade, 0.025, 4))
+          fail('invalid environmental mix');
+      }
+    }
     if (Object.keys(director.events).length > 256) fail('too many sound events');
     for (const [key, bindings] of Object.entries(director.events)) {
       if (

@@ -99,6 +99,7 @@
           this.recordedRequest = (this.recordedRequest || 0) + 1;
           this.recordedCueKey = null;
           this.productionKey = null;
+          this.invalidateEnvironment();
         }
         if (!this.ctx) return;
         if (paused) {
@@ -201,6 +202,8 @@
         osc.stop(at + duration + 0.03);
       }
       dispose() {
+        this.stopEnvironment();
+        this.environmentError = null;
         for (const node of Object.values(this.studio || {})) node.disconnect();
         this.studio = null;
         this.productionKey = null;

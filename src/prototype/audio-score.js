@@ -226,6 +226,12 @@
           this.noise = null;
         }
         if (!this.cue) return;
+        if (
+          this.production &&
+          this.soundCatalog().director?.environment &&
+          !this.environmentFallback
+        )
+          return;
         const length = this.ctx.sampleRate * 3,
           buffer = this.ctx.createBuffer(1, length, this.ctx.sampleRate),
           data = buffer.getChannelData(0);
