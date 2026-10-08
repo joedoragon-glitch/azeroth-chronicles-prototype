@@ -63,7 +63,7 @@ await check('Reachable pointer destinations, cancellation and legacy phone layou
  const saved=await page.evaluate(()=>Prototype.game.snapshot());
  await page.evaluate(()=>{Prototype.closeMenu();const c=Prototype.game;c.enter('vale');Object.assign(c.hero,{x:600,y:900,order:null});});
  await page.waitForTimeout(350);
- const point=await page.evaluate(()=>{const p=Prototype.game.safe(740,940);const screen=Prototype.renderer.screen(p);return {x:screen.x,y:screen.y};});
+ const point=await page.evaluate(()=>{const p=Prototype.game.safe(660,1040);const screen=Prototype.renderer.screen(p);if(document.elementFromPoint(screen.x,screen.y)!==document.querySelector('#world'))throw Error('Destination must be visible terrain: '+JSON.stringify(screen));return {x:screen.x,y:screen.y};});
  if(!v.touch)await page.evaluate(()=>Prototype.input.select('mouseMove',true));
  if(v.touch)await page.touchscreen.tap(point.x,point.y);else await page.mouse.click(point.x,point.y);
  await page.waitForTimeout(80);assert(await page.evaluate(()=>!!Prototype.game.hero.order),'pointer creates reachable movement destination');
