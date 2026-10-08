@@ -121,6 +121,12 @@ const root = path.resolve(__dirname, '..'),
         await press('#scene-play');
         await page.waitForFunction(() => AudioAudition.audio.cue?.id === 'darklord-boss');
         assert.equal(await page.evaluate(() => AudioAudition.audio.context.boss.form), 'true');
+        await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'boss-darklord');
+        const bossStarts = await page.evaluate(() =>
+          AudioAudition.audio.recordedScore.voices.map((v) => v.at),
+        );
+        assert.equal(bossStarts.length, 2);
+        assert.equal(bossStarts[0], bossStarts[1]);
         await page.locator('#source').selectOption('production');
         await page.waitForFunction(
           () =>

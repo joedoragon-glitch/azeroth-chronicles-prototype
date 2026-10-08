@@ -56,6 +56,7 @@ const root = path.resolve(__dirname, '..'),
       await page.locator('#modal-actions button').first().click();
       await page.locator('#modal-actions button').first().click();
       await page.waitForFunction(() => Prototype.audio.ctx?.state === 'running');
+      await page.waitForFunction(() => !!Prototype.audio.recordedScore);
       await page.waitForTimeout(120);
       const before = await page.evaluate(() => ({
         status: Prototype.audio.status(),
