@@ -45,6 +45,8 @@ jobs:
         run: |
           node tests/audio-browser.test.cjs
           node tests/audio-audition-browser.test.cjs
+      - name: Verify terrain material rendering
+        run: node tests/materials-browser.test.cjs
       - name: Verify development sprite showroom
         run: node tests/sprite-showroom-browser.test.cjs
       - uses: actions/upload-artifact@v4
@@ -81,6 +83,10 @@ jobs:
         run: |
           node tests/audio-browser.test.cjs
           node tests/audio-audition-browser.test.cjs
+      - name: Verify WebKit terrain material rendering
+        env:
+          MATERIAL_BROWSER_ENGINE: webkit
+        run: node tests/materials-browser.test.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -120,6 +126,8 @@ jobs:
         run: |
           node tests/audio-browser.test.cjs
           node tests/audio-audition-browser.test.cjs
+      - name: Verify terrain material rendering
+        run: node tests/materials-browser.test.cjs
       - name: Verify development sprite showroom
         run: node tests/sprite-showroom-browser.test.cjs
       - uses: actions/upload-artifact@v4

@@ -101,3 +101,7 @@ The reconciled scope remains 296 decisions (280 GENERATE, 16 PROCEDURAL), 70 pre
 ## Environmental sound v0.8.93
 
 Joel requests place-specific atmosphere without dense jungle noise, with preparation before creation. An independent environmental owner now provides bounded smooth transitions, pause/resume transport, validated replacement and combat/menu attenuation. Fourteen quiet original textures cover all nineteen current places; daytime/night woodland and marsh differ, and interiors stay restrained. Sparse details occur 18–36 seconds apart outside combat. Recipes, reusable briefs, import-safe regeneration and audition references are included. The sound catalog totals 83 music cues plus 14 environmental beds, 23.9 MiB encoded. See `AUDIO_ENVIRONMENT.md`; source-positioned/occluded environmental objects remain a future creative scope.
+
+## Sprite continuation and terrain foundation · prepared v0.8.94
+
+PR #121 is merged and verified live at commit `5bdfa149`. The first continuation stage registers Mage, Ranger, Soldier and allied Goblin Archer, retaining all three approved pilots. Native desktop/phone day/night checks and exact immutable sources are recorded with honest engineer-review provenance. The dedicated opaque terrain processor, seam checks, revision rollback, clipped world mapping, bounded loading and offline inventory are implemented before terrain image production. Terrain remains procedural in this stage. See SPRITE_PRODUCTION_CURRENT_CONTEXT.md and TERRAIN_TEXTURE_PIPELINE.md; the remaining catalog is still in production.

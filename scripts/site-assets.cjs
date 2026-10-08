@@ -32,6 +32,8 @@ const scripts = [
     'combat-visuals',
     'sprite-format',
     'sprites',
+    'material-contract',
+    'materials',
     'build-info',
     'persistence',
     'platform',
@@ -54,6 +56,10 @@ const core = [
   'icons/icon-192.png',
   'icons/icon-512.png',
   'assets/sprites/manifest.json',
+  'assets/materials/manifest.json',
+  ...require('../src/prototype/material-contract.js')
+    .sources(require('../assets/materials/manifest.json'))
+    .map((p) => p.replace(/^\.\//, '')),
   'tools/audio/index.html',
   'tools/audio/audition.css',
   'tools/audio/audition.js',

@@ -908,6 +908,7 @@ function scene(contract, width, height, sprite = null, lighting = 'day') {
   let seed = 111;
   const random = () => (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296;
   const game = new Campaign('normal', 'paladin', random);
+  game.enter(['vale', 'march', 'highlands', 'frontier', 'crown'][contract.region]);
   game.s.clock = lighting === 'night' ? 430 : 120;
   game.s.party = [];
   Object.assign(game.hero, game.safe(800, 800));
@@ -925,8 +926,13 @@ function scene(contract, width, height, sprite = null, lighting = 'day') {
   };
   if (entity.renderKind === 'hero') Object.assign(game.hero, entity);
   else {
-    Object.assign(game.hero, game.safe(game.hero.x + 180, game.hero.y - 100));
+    // Keep the reviewed entity inside narrow phone viewports, above the hero.
+    Object.assign(game.hero, game.safe(game.hero.x + 140, game.hero.y + 140));
     if (entity.renderKind === 'enemy') zone.enemies.push(entity);
+    else if (entity.renderKind === 'ally') game.s.party.push(entity);
+    else if (entity.renderKind === 'npc') zone.npcs.push(entity);
+    else if (entity.renderKind === 'node') zone.nodes.push(entity);
+    else if (entity.renderKind === 'building') zone.buildings.push(entity);
     else zone.props.push(entity);
   }
   const canvas = createCanvas(width, height);

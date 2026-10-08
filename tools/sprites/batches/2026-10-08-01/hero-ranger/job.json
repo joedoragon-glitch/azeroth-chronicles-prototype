@@ -1,0 +1,36 @@
+{
+  "catalogId": "003",
+  "key": "hero:ranger",
+  "region": 0,
+  "entity": {
+    "renderKind": "hero",
+    "class": "ranger",
+    "id": "sprite-reference-003"
+  },
+  "canvas": {
+    "width": 192,
+    "height": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75
+  },
+  "catalog": {
+    "id": "003",
+    "name": "Hero — Ranger",
+    "status": "generate",
+    "source": "docs/GRAPHICS_CANON_SPRITE_PROMPTS.md",
+    "sourceHash": "0bb43bcb04438181aff2910a9886fbdbfdf431da719412e3c8d33342630fc4b5",
+    "cues": "Compact hooded humanoid. Green clothing and dark green cape; bow on screen-right; quiver on screen-left/back with visible arrows; small gold accent. The canonical human('ranger') body also carries a small teal flask/pouch on screen-left and a small pale-green/gold hand/utility accent on screen-right. The hero layer adds simple facial marks, extra strap/quiver definition and restrained pale-green highlights.",
+    "prompt": "Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Ranger exactly as described. Preserve green hood, green body/cloak, right-side bow, left/back quiver and arrows, the small teal left-side flask/pouch, the small pale-green/gold utility accent, compact proportions and restrained gold detail. Do not add daggers, leather-armor redesign, animal motifs, magical arrows, new pouches or equipment not listed.",
+    "declaredKey": null
+  },
+  "canonSnapshotHash": "412f4e9ff9815f69f1ca3b826f8416b61de81393ddaad6f77bec865a72e61e72",
+  "approval": "pending",
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 54
+  },
+  "canonHash": "b89bc6fff5df3a1165a778f0ff1c0028b3b3424a01d7b92e07ae15f9d252c164"
+}

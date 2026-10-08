@@ -1,0 +1,316 @@
+{
+  "name": "Hero — Ranger",
+  "key": "hero:ranger",
+  "pending": false,
+  "review": {
+    "status": "pending",
+    "reference": null
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 54
+  },
+  "candidateImage": "candidate-isolated.png",
+  "comparisons": [
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "day",
+      "canonical": "native-review.png",
+      "candidate": "native-review.png",
+      "anchor": {
+        "x": 498,
+        "y": 353
+      },
+      "canonicalHash": "e21c42221c989232693025293b8bca96deaf0a77b0a424d3e925dafc327bcabf",
+      "candidateHash": "ffd60b338d7f950faf4016608d5d7d5acc56d4f571453a0722a34290cd93ca13",
+      "fullSceneCanonicalHash": "59d9b4f460ff0c186f9f3cc2d1709ef0668a80c56634a90a59233f8e179d2eed",
+      "fullSceneCandidateHash": "de4a8b2abd82792e8d3c7294eeae4541f05f4e57758cbd13f35775e62ab3499d",
+      "crop": {
+        "left": 418,
+        "top": 263,
+        "width": 160,
+        "height": 140
+      },
+      "canonicalPanel": {
+        "left": 0,
+        "top": 0,
+        "width": 160,
+        "height": 140
+      },
+      "candidatePanel": {
+        "left": 160,
+        "top": 0,
+        "width": 160,
+        "height": 140
+      }
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "night",
+      "canonical": "native-review.png",
+      "candidate": "native-review.png",
+      "anchor": {
+        "x": 498,
+        "y": 353
+      },
+      "canonicalHash": "c426f42ac803a2b4e0bceef32e762e6797720ed1ea34a8d0584b7be1de5864c2",
+      "candidateHash": "eaba95d4c06fd86cd1ac96e1c53f529c18982b6011698702cc36dbe713234d21",
+      "fullSceneCanonicalHash": "0aace67c40f7a97b3e7dc1b9ae4f37e6510df89a5e9eb94084cdd3722fb2c25f",
+      "fullSceneCandidateHash": "c7bdebd17087563f618cfc722d646a78dafe8e44fca92041a311bec38d95c405",
+      "crop": {
+        "left": 418,
+        "top": 263,
+        "width": 160,
+        "height": 140
+      },
+      "canonicalPanel": {
+        "left": 0,
+        "top": 140,
+        "width": 160,
+        "height": 140
+      },
+      "candidatePanel": {
+        "left": 160,
+        "top": 140,
+        "width": 160,
+        "height": 140
+      }
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "day",
+      "canonical": "native-review.png",
+      "candidate": "native-review.png",
+      "anchor": {
+        "x": 187.5,
+        "y": 341.03999999999996
+      },
+      "canonicalHash": "cb79da018a4f4e96f0b214fb425cee289eb2012348db8263ad8619cd02db6dd9",
+      "candidateHash": "13f014fe505e1821120ce72584deeead3aed58d6f807cb9387707af02403cde6",
+      "fullSceneCanonicalHash": "75fc9ca0513fd31f288e5eb2a69436f4369ab32ddf1f7b34684b4f7c046f26e2",
+      "fullSceneCandidateHash": "7e9d64eac9ed06972ef8593eb6909d42838e33b0ebdc3738f05d0bbfe9bdb9b6",
+      "crop": {
+        "left": 108,
+        "top": 251,
+        "width": 160,
+        "height": 140
+      },
+      "canonicalPanel": {
+        "left": 0,
+        "top": 280,
+        "width": 160,
+        "height": 140
+      },
+      "candidatePanel": {
+        "left": 160,
+        "top": 280,
+        "width": 160,
+        "height": 140
+      }
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "night",
+      "canonical": "native-review.png",
+      "candidate": "native-review.png",
+      "anchor": {
+        "x": 187.5,
+        "y": 341.03999999999996
+      },
+      "canonicalHash": "9244367b6c7d2ab07bd19dc7ef0636f684af621c26f2fa4f8309eddeae369796",
+      "candidateHash": "ab2b9b59cfdab05bf1970602fbc88c9161e96251988e5fdad386d9113f17ccdd",
+      "fullSceneCanonicalHash": "15c0c4ff345658083c2225d41c034fdbbba8d9574b29ce314d5bfb877dd85db7",
+      "fullSceneCandidateHash": "bc2d8c92de3cd37436c622c0b3901239466a3c13bef4be7b021e9ab9ab340687",
+      "crop": {
+        "left": 108,
+        "top": 251,
+        "width": 160,
+        "height": 140
+      },
+      "canonicalPanel": {
+        "left": 0,
+        "top": 420,
+        "width": 160,
+        "height": 140
+      },
+      "candidatePanel": {
+        "left": 160,
+        "top": 420,
+        "width": 160,
+        "height": 140
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "day",
+      "canonical": "native-review.png",
+      "candidate": "native-review.png",
+      "anchor": {
+        "x": 112,
+        "y": 238.56
+      },
+      "canonicalHash": "9c8e12bdf632fba63052ea14c415c6f78fa9a8210b413becf106a06230e8691a",
+      "candidateHash": "cf2e4b795d0661ffc0ba6e2ca13e129be224d392f712b8277b920cf5729b36c2",
+      "fullSceneCanonicalHash": "89097075ad7368d92702c7179d69651167ffd25cc7c412ba618f9e29967e3a2b",
+      "fullSceneCandidateHash": "ffc07050496d548a589130372f8c5ddda0c79671376298716c237f6727f8cfbf",
+      "crop": {
+        "left": 32,
+        "top": 149,
+        "width": 160,
+        "height": 140
+      },
+      "canonicalPanel": {
+        "left": 0,
+        "top": 560,
+        "width": 160,
+        "height": 140
+      },
+      "candidatePanel": {
+        "left": 160,
+        "top": 560,
+        "width": 160,
+        "height": 140
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "night",
+      "canonical": "native-review.png",
+      "candidate": "native-review.png",
+      "anchor": {
+        "x": 112,
+        "y": 238.56
+      },
+      "canonicalHash": "1b319771f56279c2ac1df2dea07180bea5acdcf3f35a7cabd05a13238c30253d",
+      "candidateHash": "572a16fe85a119f17ee6789ace5d6c16565d09fd7623554f95c1aca7a0f856d3",
+      "fullSceneCanonicalHash": "2e6d385743146ca85df63a09cc3ea9d980a3754079de90d2d86344a9587b738b",
+      "fullSceneCandidateHash": "7077d404baa9c11f441b8ca10085b4d64843f92f11406f5fa32c28fccaa657b1",
+      "crop": {
+        "left": 32,
+        "top": 149,
+        "width": 160,
+        "height": 140
+      },
+      "canonicalPanel": {
+        "left": 0,
+        "top": 700,
+        "width": 160,
+        "height": 140
+      },
+      "candidatePanel": {
+        "left": 160,
+        "top": 700,
+        "width": 160,
+        "height": 140
+      }
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "day",
+      "canonical": "native-review.png",
+      "candidate": "native-review.png",
+      "anchor": {
+        "x": 422,
+        "y": 163.79999999999995
+      },
+      "canonicalHash": "e45dc25543234644c3579c01831b139d07a2d347b13c91c33876eb7ef09bfaf8",
+      "candidateHash": "6739d98d44d7ae57cff83833f31a13d4793ce4f35ab84b8f56dfc0f35346c7c8",
+      "fullSceneCanonicalHash": "eb88c43b8012a74c660389f16678fe0a5bb0fed93f237ba4d424299b735b5544",
+      "fullSceneCandidateHash": "977eb4369453399b86bc39b1275ca8cdf8cfd08a27fa50d3e434b175f80c2aa1",
+      "crop": {
+        "left": 342,
+        "top": 74,
+        "width": 160,
+        "height": 140
+      },
+      "canonicalPanel": {
+        "left": 0,
+        "top": 840,
+        "width": 160,
+        "height": 140
+      },
+      "candidatePanel": {
+        "left": 160,
+        "top": 840,
+        "width": 160,
+        "height": 140
+      }
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "night",
+      "canonical": "native-review.png",
+      "candidate": "native-review.png",
+      "anchor": {
+        "x": 422,
+        "y": 163.79999999999995
+      },
+      "canonicalHash": "b5c27c8b58edf2efbc203441e4a563c53b34c3a772fdf70e5e4f8852dc64f104",
+      "candidateHash": "2ab33819027eef2cc3455e6e8699041893335ce897f2aff4666e617ec19d40ae",
+      "fullSceneCanonicalHash": "fcf44fbce6fca4dc6a08472f8df84c04a8faaf37322b50463e39aebf25e7503d",
+      "fullSceneCandidateHash": "c91ea55ebd94e52ba67ce8ac85b80973aa32170c1f260541f900c4a2daedb4fa",
+      "crop": {
+        "left": 342,
+        "top": 74,
+        "width": 160,
+        "height": 140
+      },
+      "canonicalPanel": {
+        "left": 0,
+        "top": 980,
+        "width": 160,
+        "height": 140
+      },
+      "candidatePanel": {
+        "left": 160,
+        "top": 980,
+        "width": 160,
+        "height": 140
+      }
+    }
+  ],
+  "canonHash": "b89bc6fff5df3a1165a778f0ff1c0028b3b3424a01d7b92e07ae15f9d252c164",
+  "policy": {
+    "maxSourcePixels": 4194304,
+    "maxSourceBytes": 16777216,
+    "maxOutputDimension": 512,
+    "maxOutputBytes": 1048576,
+    "minimumPadding": 2,
+    "colorSpace": "srgb",
+    "resizeKernel": "nearest",
+    "viewports": [
+      [
+        1280,
+        800
+      ],
+      [
+        375,
+        812
+      ],
+      [
+        320,
+        568
+      ],
+      [
+        844,
+        390
+      ]
+    ],
+    "maxActiveDecodedBytes": 16777216,
+    "maxPackagedDecodedBytes": 134217728,
+    "maxPackagedBytes": 134217728
+  },
+  "capturePolicy": "Native actor context crops retained; full scene hashes retained and full scenes reproducible with sprite:showroom and the exact candidate record. No artwork crop or alpha deletion.",
+  "panelImageHash": "e1d9fff2695da4c52d76756ab24291fa549b5671f2e5b75fb8c591315cef4d57"
+}

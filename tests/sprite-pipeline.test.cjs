@@ -42,7 +42,7 @@ const root = path.resolve(__dirname, '..');
       contracts.slice(0, 3).map((item) => item.key),
       ['hero:paladin', 'enemy:goblin', 'prop:vale-cottage:vale'],
     );
-    assert.equal(contracts.length, 70);
+    assert(contracts.length >= 70, 'retain all baseline contracts as the open catalog grows');
     assert(contracts.every((item) => ['pending', 'approved'].includes(item.approval)));
     assert.equal(
       (await pipeline.checkProduction()).registered,

@@ -1,0 +1,36 @@
+{
+  "catalogId": "295",
+  "key": "prop:rock:vale",
+  "region": 0,
+  "entity": {
+    "renderKind": "prop",
+    "icon": "🪨",
+    "id": "sprite-reference-295"
+  },
+  "canvas": {
+    "width": 192,
+    "height": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75
+  },
+  "catalog": {
+    "id": "295",
+    "name": "Environmental Vale field rock",
+    "status": "generate",
+    "source": "docs/GRAPHICS_CANON_SPRITE_PROMPTS.md",
+    "sourceHash": "28bada07c0bd6fcb5a71e961f7cb430e64385864725143e465d7d3f6ad3bf754",
+    "cues": "Low irregular faceted field rock, broad six-point silhouette, lighter left/top facet, darker right face and thin pale fracture line; muted gray-green #788579/#9fac98 material. Preserve the current moss-marked or unmarked seed reference. No Crown crystal spike.",
+    "prompt": "Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one field rock from the current vale wildProp rock branch. Low irregular faceted field rock, broad six-point silhouette, lighter left/top facet, darker right face and thin pale fracture line; muted gray-green #788579/#9fac98 material. Preserve the current moss-marked or unmarked seed reference. No Crown crystal spike. Preserve the current geometry. No new crystals, symbols, ground patch, other rocks or baked shadow.",
+    "declaredKey": "prop:rock:vale"
+  },
+  "canonSnapshotHash": "412f4e9ff9815f69f1ca3b826f8416b61de81393ddaad6f77bec865a72e61e72",
+  "approval": "pending",
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "canonHash": "69dc7b2d4cfe9a034b54e72ba65c77a27cb6e93540562f1a572dac415c4830f6"
+}

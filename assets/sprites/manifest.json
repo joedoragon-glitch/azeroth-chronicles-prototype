@@ -78,6 +78,54 @@
       "anchorX": 0.5,
       "anchorY": 0.75,
       "labelHeight": 64
+    },
+    "hero:mage": {
+      "src": "./assets/sprites/hero-mage-467c8bdef58eb0741115fbf15c01e1b42a2e6a1e199bf6d028f1f188d82b53e9.png",
+      "width": 192,
+      "height": 192,
+      "hash": "467c8bdef58eb0741115fbf15c01e1b42a2e6a1e199bf6d028f1f188d82b53e9",
+      "revision": "482a359a5997d069c2bd66761ebbafcafb234d3abce8acabe54cd1b2c2402254",
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 64
+    },
+    "hero:ranger": {
+      "src": "./assets/sprites/hero-ranger-338fb3907f1b657ab7527d7e72a6b7f8df40aa9b85072e3b98acd58b65a455d7.png",
+      "width": 192,
+      "height": 192,
+      "hash": "338fb3907f1b657ab7527d7e72a6b7f8df40aa9b85072e3b98acd58b65a455d7",
+      "revision": "fbf4d3d59177a51cf4ade65829e2bab7c62491c0728b06fe4ba95f099a578671",
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 54
+    },
+    "ally:soldier": {
+      "src": "./assets/sprites/ally-soldier-ab89b9cdec45f3f1a509fa700ff56bb6295fc6892218796c33c9854ad5deb25b.png",
+      "width": 192,
+      "height": 192,
+      "hash": "ab89b9cdec45f3f1a509fa700ff56bb6295fc6892218796c33c9854ad5deb25b",
+      "revision": "a48acfe9940e55581d1598cbd0a8a4a7d10b9bb2dc92f6e4e717ad495a961bd8",
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 54
+    },
+    "ally:archer": {
+      "src": "./assets/sprites/ally-archer-f0179672464cd896cfa06a19ec6a928db6b202a10785e65b290032178612bb4c.png",
+      "width": 192,
+      "height": 192,
+      "hash": "f0179672464cd896cfa06a19ec6a928db6b202a10785e65b290032178612bb4c",
+      "revision": "9b9548bf117f33a4ef68b23be54e217def7f9cbd2fdb871747821846cfc00146",
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 54
     }
   },
   "formatVersion": 3

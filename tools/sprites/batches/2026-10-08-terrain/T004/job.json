@@ -1,0 +1,17 @@
+{
+  "id": "T004",
+  "resourceKey": "terrain:ground:frontier",
+  "name": "Ashen Frontier ground",
+  "status": "candidate",
+  "sourceOwner": "floor/groundDetail/terrain",
+  "palette": [
+    "#50413b",
+    "#5d4b42",
+    "#423732",
+    "#b9987b"
+  ],
+  "cues": "Muted warm gray-brown ash/char earth with subdued grit and dry weathering. No embers.",
+  "dependencyHash": "69e5d2e1455efc2de2040f40eec391dafadf04c92ca69a22d61911933f51ca0b",
+  "stage": "pipeline verified; generation queued",
+  "sourceCommit": "5bdfa149905290a1f14d8f06b966cf619ffec213"
+}

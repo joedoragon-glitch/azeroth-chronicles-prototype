@@ -1271,6 +1271,72 @@
         "anchorX": 0.5,
         "anchorY": 0.75
       }
+    },
+    {
+      "catalogId": "002",
+      "key": "hero:mage",
+      "region": 0,
+      "entity": {
+        "renderKind": "hero",
+        "class": "mage",
+        "id": "sprite-reference-002"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "003",
+      "key": "hero:ranger",
+      "region": 0,
+      "entity": {
+        "renderKind": "hero",
+        "class": "ranger",
+        "id": "sprite-reference-003"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "004",
+      "key": "ally:soldier",
+      "region": 0,
+      "entity": {
+        "renderKind": "ally",
+        "class": "soldier",
+        "type": "soldier",
+        "id": "sprite-reference-004"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "005",
+      "key": "ally:archer",
+      "region": 0,
+      "entity": {
+        "renderKind": "ally",
+        "class": "archer",
+        "type": "archer",
+        "id": "sprite-reference-005"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
     }
   ]
 }

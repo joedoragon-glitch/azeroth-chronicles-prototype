@@ -1,0 +1,13 @@
+{
+  "source": "exec-98b2b489-d965-45e9-9521-6afbac771e70.png",
+  "originalHash": "f87142b722be5c86dfffa7350af7c57ebba4f0e02164e3adc7de53e907a1ab3f",
+  "padding": 32,
+  "alphaDeletion": false,
+  "crop": false,
+  "reason": "Preserve low-alpha generator speckles and add an explicit strict transparent margin; material bounds govern grounding.",
+  "translation": {
+    "x": -1,
+    "y": 4
+  },
+  "candidate": "/workspace/scratch/64ab2c41f702/azeroth-chronicles-prototype/_sprite-work/ally-soldier/d1ba960002f85b3fb396a4c021ac70c40c55d66c929723336ede91483b07b2dd-png-494493c5a45f"
+}

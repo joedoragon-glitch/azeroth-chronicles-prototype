@@ -1,0 +1,37 @@
+{
+  "catalogId": "004",
+  "key": "ally:soldier",
+  "region": 0,
+  "entity": {
+    "renderKind": "ally",
+    "class": "soldier",
+    "type": "soldier",
+    "id": "sprite-reference-004"
+  },
+  "canvas": {
+    "width": 192,
+    "height": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75
+  },
+  "catalog": {
+    "id": "004",
+    "name": "Companion — Soldier",
+    "status": "generate",
+    "source": "docs/GRAPHICS_CANON_SPRITE_PROMPTS.md",
+    "sourceHash": "d6fc6aea04d1a2de02aae01b00b47c9f34cd2e77a855d81a469d0bb5d6d819d0",
+    "cues": "Compact armored humanoid derived from the non-Paladin armored human: muted blue-gray body, steel helmet/chest/shoulders, green-gray shield on screen-left, sword on screen-right, small crest point and crossed strap marks; no hero cape or Paladin gold cross.",
+    "prompt": "Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Soldier exactly as described. Keep the same compact armored silhouette, shield left and sword right. It must read as a simpler military companion than the Paladin. No cape, holy cross, ornate heraldry, oversized armor or extra weapons.",
+    "declaredKey": null
+  },
+  "canonSnapshotHash": "412f4e9ff9815f69f1ca3b826f8416b61de81393ddaad6f77bec865a72e61e72",
+  "approval": "pending",
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 54
+  },
+  "canonHash": "38c1c26e432e92d4c4132731aa78f5d220be66accf9f8dc51e40196f9349dc71"
+}
