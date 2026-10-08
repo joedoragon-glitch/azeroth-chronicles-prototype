@@ -11,9 +11,12 @@ const scripts = [
     'save',
     'engine',
     'audio-catalog',
+    'audio-assets',
+    'audio-mixer',
     'audio-runtime',
     'audio-score',
     'audio-effects',
+    'audio-recordings',
     'audio',
     'visuals',
     'combat-visuals',
@@ -40,6 +43,10 @@ const core = [
   'icons/icon-192.png',
   'icons/icon-512.png',
   'assets/sprites/manifest.json',
+  'tools/audio/index.html',
+  'tools/audio/audition.css',
+  'tools/audio/audition.js',
+  'tools/audio/fixtures.js',
   ...require('./audio-assets.cjs').publishedFiles(require('node:path').resolve(__dirname, '..')),
 ];
 const legacy = [

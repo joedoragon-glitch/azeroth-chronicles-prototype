@@ -35,7 +35,7 @@ self.addEventListener('fetch', event => {
     if (request.method !== 'GET' || url.origin !== scope.origin || !url.pathname.startsWith(scope.pathname)) return;
     const key = new URL(url); key.search = ''; key.hash = '';
     const isNavigation = request.mode === 'navigate';
-    const navigationKey = key.pathname.endsWith('/phone.html') ? appURL('./phone.html') : key.pathname.endsWith('/legacy.html') ? appURL('./legacy.html') : key.pathname.endsWith('/prototype.html') ? appURL('./prototype.html') : key.pathname === appURL('./rts.html').replace(scope.origin, '') ? appURL('./rts.html') : appURL('./index.html');
+    const navigationKey = appFiles.has(key.href) && key.pathname.endsWith('.html') ? key.href : key.pathname.endsWith('/phone.html') ? appURL('./phone.html') : key.pathname.endsWith('/legacy.html') ? appURL('./legacy.html') : key.pathname.endsWith('/prototype.html') ? appURL('./prototype.html') : key.pathname === appURL('./rts.html').replace(scope.origin, '') ? appURL('./rts.html') : appURL('./index.html');
     const isSprite = key.href.startsWith(spriteBase);
     if (!isNavigation && !appFiles.has(key.href) && !legacyFiles.has(key.href) && !isSprite) return;
     event.respondWith(caches.open(CACHE_VERSION).then(async cache => {

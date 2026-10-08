@@ -12,6 +12,9 @@ const root = path.resolve(__dirname, '..'),
     '.webmanifest': 'application/manifest+json',
     '.png': 'image/png',
     '.webp': 'image/webp',
+    '.wav': 'audio/wav',
+    '.mp3': 'audio/mpeg',
+    '.ogg': 'audio/ogg',
   };
 http
   .createServer((req, res) => {

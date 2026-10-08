@@ -11,7 +11,17 @@ const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'azeroth-sprite-contract-'));
 try {
   const checkout = path.join(temp, 'checkout');
   fs.mkdirSync(checkout);
-  for (const name of ['src', 'styles', 'templates', 'scripts', 'icons', 'assets', 'tests', 'docs'])
+  for (const name of [
+    'src',
+    'styles',
+    'templates',
+    'scripts',
+    'icons',
+    'assets',
+    'tests',
+    'docs',
+    'tools',
+  ])
     fs.cpSync(path.join(root, name), path.join(checkout, name), { recursive: true });
   for (const name of [
     'package.json',

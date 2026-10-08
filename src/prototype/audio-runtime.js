@@ -14,12 +14,16 @@
           voices: this.voices.size,
           maxVoices: 64,
           scores: this.scores.length,
-          ambienceLayers: this.noise ? 1 : 0,
+          ambienceLayers:
+            (this.noise ? 1 : 0) +
+            [...this.voices].filter((v) => v.recorded && v.bus === 'ambience').length,
           settings: { ...this.settings },
+          mix: { profile: this.mixProfile || 'reference', scene: this.mixScene || 'world' },
+          recordings: this.recordingStatus(),
         };
       }
       setSettings(settings) {
-        for (const k of ['master', 'music', 'ambience', 'effects'])
+        for (const k of ['master', 'music', 'ambience', 'effects', 'interface'])
           if (Number.isFinite(settings[k]))
             this.settings[k] = Math.max(0, Math.min(1, settings[k]));
         if (typeof settings.muted === 'boolean') this.settings.muted = settings.muted;
@@ -29,7 +33,7 @@
         if (!this.ctx) return;
         const now = this.ctx.currentTime;
         for (const [key, node] of Object.entries(this.buses || {})) {
-          const volume = this.settings[key] * (this.settings.muted ? 0 : 1);
+          const volume = this.mixLevel(key);
           const ducked = ['music', 'ambience'].includes(key) && this.duckUntil > now;
           node.gain.cancelScheduledValues(now);
           node.gain.setTargetAtTime(volume * (ducked ? 0.4 : 1), now, 0.04);
@@ -48,14 +52,14 @@
           if (!this.ctx) {
             this.ctx = new A();
             this.buses = {};
-            for (const key of ['master', 'music', 'ambience', 'effects'])
+            for (const key of ['master', 'music', 'ambience', 'effects', 'interface'])
               this.buses[key] = this.ctx.createGain();
             const compressor = this.ctx.createDynamicsCompressor();
             compressor.threshold.value = -10;
             compressor.ratio.value = 8;
             this.buses.master.connect(compressor);
             compressor.connect(this.ctx.destination);
-            for (const key of ['music', 'ambience', 'effects'])
+            for (const key of ['music', 'ambience', 'effects', 'interface'])
               this.buses[key].connect(this.buses.master);
             this.applySettings();
             this.next = this.ctx.currentTime + 0.05;
@@ -84,6 +88,11 @@
       setPaused(paused) {
         if (this.paused === paused) return;
         this.paused = paused;
+        if (paused) {
+          this.recordingEpoch = (this.recordingEpoch || 0) + 1;
+          this.recordedRequest = (this.recordedRequest || 0) + 1;
+          this.recordedCueKey = null;
+        }
         if (!this.ctx) return;
         if (paused) {
           this.ctx.suspend().catch(() => {});
@@ -100,7 +109,8 @@
         }
       }
       tone(midi, at, duration, volume = 0.04, type = 'sine', bus = 'music', attack = 0.03) {
-        if (!this.ctx || this.voices.size >= 64) return;
+        const priority = this.sourcePriority ?? (bus === 'music' ? 0 : bus === 'interface' ? 3 : 1);
+        if (!this.ctx || !this.reserveVoice(priority)) return;
         const osc = this.ctx.createOscillator(),
           gain = this.ctx.createGain();
         osc.type = type;
@@ -111,7 +121,7 @@
         osc.connect(gain);
         if (bus === 'music' && !this.score) this.transitionScore(this.cue || { id: 'vale' });
         gain.connect(bus === 'music' ? this.score.node : this.buses[bus]);
-        const v = { osc, gain, bus, score: bus === 'music' ? this.score : null };
+        const v = { osc, gain, bus, priority, score: bus === 'music' ? this.score : null };
         this.voices.add(v);
         osc.onended = () => {
           osc.disconnect();
@@ -129,7 +139,8 @@
         frequency = 1200,
         q = 0.7,
       ) {
-        if (!this.ctx || !this.buses?.effects || this.voices.size >= 64) return;
+        const priority = this.sourcePriority ?? 1;
+        if (!this.ctx || !this.buses?.effects || !this.reserveVoice(priority)) return;
         const length = Math.max(8, Math.floor(this.ctx.sampleRate * duration)),
           buffer = this.ctx.createBuffer(1, length, this.ctx.sampleRate),
           data = buffer.getChannelData(0);
@@ -146,7 +157,7 @@
         source.connect(filter);
         filter.connect(gain);
         gain.connect(this.buses.effects);
-        const voice = { osc: source, filter, gain, bus: 'effects', score: null };
+        const voice = { osc: source, filter, gain, bus: 'effects', score: null, priority };
         this.voices.add(voice);
         source.onended = () => {
           source.disconnect();
@@ -158,7 +169,8 @@
         source.stop(at + duration + 0.02);
       }
       sweep(fromMidi, toMidi, at, duration = 0.1, volume = 0.04, type = 'triangle') {
-        if (!this.ctx || this.voices.size >= 64) return;
+        const priority = this.sourcePriority ?? 1;
+        if (!this.ctx || !this.reserveVoice(priority)) return;
         const osc = this.ctx.createOscillator(),
           gain = this.ctx.createGain(),
           hz = (m) => 440 * 2 ** ((m - 69) / 12);
@@ -170,7 +182,7 @@
         gain.gain.exponentialRampToValueAtTime(0.0001, at + duration);
         osc.connect(gain);
         gain.connect(this.buses.effects);
-        const v = { osc, gain, bus: 'effects', score: null };
+        const v = { osc, gain, bus: 'effects', score: null, priority };
         this.voices.add(v);
         osc.onended = () => {
           osc.disconnect();
@@ -181,6 +193,11 @@
         osc.stop(at + duration + 0.03);
       }
       dispose() {
+        this.manifestController?.abort();
+        this.recordingEpoch = (this.recordingEpoch || 0) + 1;
+        this.stopRecordedScore(0);
+        this.recordingAssets?.dispose();
+        this.recordingAssets = null;
         if (this.clock !== null) root.clearInterval(this.clock);
         this.clock = null;
         if (this.noise) {
@@ -197,6 +214,8 @@
           voice.osc.disconnect();
           voice.gain.disconnect();
           voice.filter?.disconnect();
+          voice.pan?.disconnect();
+          voice.release?.();
         }
         for (const score of this.scores) score.node.disconnect();
         for (const bus of Object.values(this.buses || {})) bus.disconnect();

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Azeroth Chronicles · Audio audition</title>
+    <link rel="stylesheet" href="./audition.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <a href="../../index.html">← Game</a>
+        <p class="eyebrow">Azeroth Chronicles</p>
+        <h1>Audio audition</h1>
+        <p>
+          Compare scenes, loops and mixes. This separate listening room never reads or writes your
+          game saves.
+        </p>
+      </header>
+      <section aria-labelledby="scenes">
+        <h2 id="scenes">Current game sound</h2>
+        <div class="controls">
+          <label>Place<select id="place"></select></label
+          ><label
+            >Encounter<select id="boss">
+              <option value="">Exploration</option>
+            </select></label
+          >
+          <label
+            >Boss form<select id="form">
+              <option value="normal">Normal</option>
+              <option value="true">TRUE</option>
+            </select></label
+          >
+          <label><input type="checkbox" id="peace" /> Peaceful world</label
+          ><label><input type="checkbox" id="night" /> Night</label>
+        </div>
+        <button id="scene-play">Listen to scene</button><button id="warning">Warning effect</button>
+        <p id="scene-description"></p>
+      </section>
+      <section aria-labelledby="recordings">
+        <h2 id="recordings">Recorded playback</h2>
+        <p>
+          The production registry is empty until soundtrack assets are approved. Diagnostic tones
+          test the system; they are not proposed music.
+        </p>
+        <div class="controls">
+          <label
+            >Source<select id="source">
+              <option value="diagnostic">Diagnostic tones</option>
+              <option value="production">Production registry</option>
+            </select></label
+          >
+          <label>Recording<select id="recording"></select></label
+          ><label
+            >Transition<select id="grid">
+              <option value="0">Immediate fade</option>
+              <option value="1">Next bar · 120 BPM</option>
+              <option value="2">Next two bars · 120 BPM</option>
+            </select></label
+          >
+        </div>
+        <button id="record-play">Listen to recording</button
+        ><button id="stem-play">Two synchronized stems</button
+        ><button id="ui-play">Interface test</button>
+        <label class="slider"
+          >Second stem intensity<input
+            id="intensity"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.35"
+        /></label>
+        <canvas
+          id="waveform"
+          width="800"
+          height="120"
+          aria-label="Selected recording waveform"
+        ></canvas>
+        <p id="measurement"></p>
+      </section>
+      <section aria-labelledby="mix">
+        <h2 id="mix">Listening mix</h2>
+        <div class="controls">
+          <label
+            >Profile<select id="profile">
+              <option value="reference">Reference</option>
+              <option value="quiet">Quiet</option>
+              <option value="phone">Phone</option>
+            </select></label
+          >
+          <label
+            >Scene mix<select id="mix-scene">
+              <option value="world">World</option>
+              <option value="menu">Menu · music softened</option>
+              <option value="title">Title</option>
+            </select></label
+          >
+        </div>
+        <div id="volumes" class="controls"></div>
+        <label><input id="mute" type="checkbox" /> Mute</label>
+        <button id="pause">Pause / resume</button><button id="stop">Stop all</button
+        ><button id="report">Download local report</button>
+      </section>
+      <p id="message" role="status" aria-live="polite">Choose a scene or recording to begin.</p>
+      <pre id="status" aria-label="Playback diagnostics"></pre>
+    </main>
+    <script src="../../src/prototype/data.js"></script>
+    <script src="../../src/prototype/rules.js"></script>
+    <script src="../../src/prototype/world.js"></script>
+    <script src="../../src/prototype/navigation.js"></script>
+    <script src="../../src/prototype/progression.js"></script>
+    <script src="../../src/prototype/save.js"></script>
+    <script src="../../src/prototype/engine.js"></script>
+    <script src="../../src/prototype/audio-catalog.js"></script>
+    <script src="../../src/prototype/audio-assets.js"></script>
+    <script src="../../src/prototype/audio-mixer.js"></script>
+    <script src="../../src/prototype/audio-runtime.js"></script>
+    <script src="../../src/prototype/audio-score.js"></script>
+    <script src="../../src/prototype/audio-effects.js"></script>
+    <script src="../../src/prototype/audio-recordings.js"></script>
+    <script src="../../src/prototype/audio.js"></script>
+    <script src="../../src/prototype/build-info.js"></script>
+    <script src="./fixtures.js"></script>
+    <script src="./audition.js"></script>
+  </body>
+</html>

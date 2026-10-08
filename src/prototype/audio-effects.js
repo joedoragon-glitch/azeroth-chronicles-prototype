@@ -217,6 +217,16 @@
         this.tone(45, now, 0.16, 0.035, 'triangle', 'effects', 0.004);
       }
       effect(input) {
+        const previous = this.sourcePriority;
+        const type = typeof input === 'string' ? input : input?.type;
+        this.sourcePriority = ['warning', 'death', 'gameOver'].includes(type) ? 3 : 1;
+        try {
+          return this.renderEffect(input);
+        } finally {
+          this.sourcePriority = previous;
+        }
+      }
+      renderEffect(input) {
         if (!this.ctx || this.paused || this.settings.muted || this.ctx.state !== 'running') return;
         const e = typeof input === 'string' ? { type: input } : input || {},
           type = e.type,

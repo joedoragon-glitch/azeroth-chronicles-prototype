@@ -1,4 +1,4 @@
-# Azeroth Chronicles · v0.8.88
+# Azeroth Chronicles · v0.8.89
 
 An offline-capable RPG across five regions, ten settlements and five main dungeons. Rescue the specialists, build your expedition, and challenge the Dark Lord. The regime's currency is **crowns**.
 
@@ -12,6 +12,12 @@ The canonical Azeroth Chronicles product is the multi-file GitHub Pages/PWA appl
 Automatic selection uses pointer capabilities, including a mouse/trackpad on a touchscreen Chromebook. Resizing a desktop window does not turn it into a phone screen. **Game and settings → Screen and performance** changes the screen preference and shows local performance measurements. Both entries use the same on-device saves.
 
 Choose a Standard run or the optional Succession challenge, then Paladin, Mage or Ranger. Normal and Nightmare have independent saves. Nightmare unlocks after the peaceful ending. Updates preserve local campaigns and adopt the tested published build automatically; a manual update check is also available in settings.
+
+## Audio playback and audition · v0.8.89
+
+The audio engine now supports verified recordings, bounded lazy decoding, synchronized loop stems, bar-aligned fades, contextual cue rules, warning/UI priorities, independent interface mixing and quiet/phone comparison profiles. Current game music, effects, menus and saves remain the baseline while the production recording registry is empty.
+
+[Open the audio audition room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) to compare current locations/boss forms, diagnostic loops and listening mixes. It does not read or write game saves. Diagnostic tones verify playback and are not proposed soundtrack content. See `docs/AUDIO_PLAYBACK.md` for engineering contracts and measured limits; the contextual creative pilot comes next.
 
 ## Regional handoff foundations · v0.8.87
 

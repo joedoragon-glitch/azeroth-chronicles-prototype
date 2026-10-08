@@ -16,7 +16,21 @@ function publishedFiles(root) {
     throw Error('Invalid audio manifest schema');
   const audioRoot = fs.realpathSync(path.join(root, 'assets/audio')) + path.sep;
   const unique = new Map();
+  const entries = [];
   for (const [id, entry] of Object.entries(manifest.assets)) {
+    if (
+      entry?.variants !== undefined &&
+      (!Array.isArray(entry.variants) || entry.variants.length > 3)
+    )
+      throw Error('Invalid audio codec variants: ' + id);
+    entries.push([id, entry]);
+    for (const [i, variant] of (entry?.variants || []).entries()) {
+      if (!variant || typeof variant !== 'object')
+        throw Error('Invalid audio codec variant: ' + id);
+      entries.push([id + ':variant:' + i, { ...entry, src: variant.src, sha256: variant.sha256 }]);
+    }
+  }
+  for (const [id, entry] of entries) {
     const fail = (reason) => {
       throw Error('Invalid audio asset ' + id + ': ' + reason);
     };

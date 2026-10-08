@@ -242,7 +242,13 @@ const root = path.resolve(__dirname, '..');
       prepared.record.output.hash,
       'real transparent image is packaged byte-for-byte',
     );
-    for (const name of ['tools', 'tests', 'node_modules', '_sprite-work', '_sprite-preview'])
+    for (const name of [
+      'tools/sprites',
+      'tests',
+      'node_modules',
+      '_sprite-work',
+      '_sprite-preview',
+    ])
       assert(
         !fs.existsSync(path.join(checkout, '_site', name)),
         'development-only files never enter the public site',
