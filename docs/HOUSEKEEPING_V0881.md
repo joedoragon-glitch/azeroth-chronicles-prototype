@@ -2,7 +2,7 @@
 
 ## Result
 
-Chromebook/browser play now uses a dedicated desktop layout without the phone joystick, touch interaction or touch confirmation controls. The skill bar and keyboard hints leave the right HUD clear, and the camera centers the remaining play space. A separate phone entry launches the installed PWA in the touch layout. Both presentations retain one campaign engine and the existing save keys.
+Chromebook/browser play now uses a dedicated desktop layout without the phone joystick, touch interaction or touch confirmation controls. The skill bar and keyboard hints leave the right HUD clear, and the camera centers the remaining play space. Phone statistics and menu shortcuts use a compact top panel that leaves the hero clear, with doctrine above Interact during combat. A separate phone entry launches the installed PWA in the touch layout. Both presentations retain one campaign engine and the existing save keys.
 
 World authoring, navigation, rendering, persistence, platform selection and bounded runtime measurements have separate modules. The affected code is formatted for review, with a pinned formatter and lockfile. One generated entry template and one public asset inventory prevent script, offline-cache and deployment drift. CI checks formatting, generated artifacts and syntax before gameplay/browser testing.
 
@@ -20,7 +20,7 @@ Rendering inverse-projects viewport bounds before visiting floor tiles and culls
 
 The extracted world/navigation code was compared directly with v0.8.80 across 19 outdoor/interior zones. Exact serialized snapshots match before and after short simulation runs; 3,496 collision/route queries match. This comparison covers the moved code, rather than assuming source extraction is behavior-neutral.
 
-Twenty native Canvas scenes across five regions and five main dungeons, at phone and desktop dimensions, are pixel-identical to v0.8.80 when given the same camera and animation time. The intended new desktop camera/layout are separate presentation changes.
+Twenty native Canvas scenes across five regions and five main dungeons, at phone and desktop dimensions, are pixel-identical to v0.8.80 when given the same camera and animation time. The intended new desktop camera and separate desktop/phone layouts are presentation changes.
 
 Sampled work counts at the same town camera:
 
