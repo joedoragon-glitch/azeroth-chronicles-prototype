@@ -55,6 +55,7 @@
             for (const key of ['master', 'music', 'ambience', 'effects', 'interface'])
               this.buses[key] = this.ctx.createGain();
             const compressor = this.ctx.createDynamicsCompressor();
+            this.compressor = compressor;
             compressor.threshold.value = -10;
             compressor.ratio.value = 8;
             this.buses.master.connect(compressor);
@@ -235,6 +236,7 @@
         for (const bus of Object.values(this.buses || {})) bus.disconnect();
         if (this.ctx) this.ctx.close().catch(() => {});
         this.ctx = null;
+        this.compressor = null;
         this.buses = null;
         this.score = null;
         this.scores = [];

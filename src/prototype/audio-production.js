@@ -66,7 +66,18 @@
         this.production = !!enabled;
         this.productionKey = null;
         this.productionIntensity = null;
+        if (this.compressor) {
+          this.compressor.threshold.value = enabled ? -14 : -10;
+          this.compressor.ratio.value = enabled ? 3.5 : 8;
+        }
+        if (enabled) this.buildStudio();
         if (!enabled) {
+          if (this.studio) {
+            this.buses.music.disconnect(this.studio.send);
+            this.buses.interface.disconnect(this.studio.send);
+            for (const node of Object.values(this.studio)) node.disconnect();
+            this.studio = null;
+          }
           this.stopRecordedScore();
           this.setSceneMix('world');
         }
@@ -108,9 +119,9 @@
       }
       updateProduction(scene) {
         if (!this.production || !this.ctx || this.paused || this.ctx.state !== 'running') return;
-        this.setSceneMix(
-          scene.situation === 'menu' ? 'menu' : scene.situation === 'title' ? 'title' : 'world',
-        );
+        const mix =
+          scene.situation === 'menu' ? 'menu' : scene.situation === 'title' ? 'title' : 'world';
+        if (this.mixScene !== mix) this.setSceneMix(mix);
         const now = this.ctx.currentTime;
         if (scene.settlement) {
           this.settlementUntil = now + 4;
