@@ -18,7 +18,9 @@ The browser is the current desktop playtest target, especially Chromebook keyboa
 | `renderer.js` | World projection, viewport culling, draw order, transient effects and renderer counters |
 | `visuals.js` / `combat-visuals.js` | Canonical procedural drawings, terrain, architecture and combat cues |
 | `sprites.js` | Optional faithful sprite translation and procedural fallback |
-| `audio.js` | Original music, contextual sound and audio lifecycle |
+| `audio.js` / `audio-catalog.js` | Public audio facade and current compositions/event catalog |
+| `audio-score.js` | Cue selection, contextual observation, score scheduling, fades and ambience |
+| `audio-runtime.js` / `audio-effects.js` | Context lifecycle, mixer/source cleanup/bounds, diagnostics and contextual effect recipes |
 | `runtime.js` | Bounded active-frame measurements and idle redraw scheduling |
 | `menus.js` | Specialist, barracks, party, inventory and training menu definitions/actions; current game and shell callbacks injected |
 | `app.js` | Shell lifecycle, global/settings menus, map presentation, keyboard/touch coordination, charge input, frame scheduling and app updates |
@@ -58,3 +60,9 @@ All hand-authored campaign JavaScript and shared/desktop/phone CSS use pinned Pr
 ## Sprite preparation tooling
 
 Development-only `scripts/sprite-pipeline.cjs` owns catalog parsing, image inspection/processing, immutable provenance, approval-controlled registry derivation and deterministic context capture. `tools/sprites/specifications.json` owns the three prepared exact bindings and provisional budgets; `tools/sprites/approved.json` owns approved source/output records. The Markdown prompt catalog remains authoritative and is parsed instead of copied. `tools/sprites/showroom.*` renders local comparisons and never loads in the game. Pinned Sharp and native Canvas are development dependencies only. See `SPRITE_PREPARATION.md`; production art and loading policy are unchanged.
+
+## Audio foundation
+
+Audio owners install their methods before `PrototypeAudio` is exported in Node or the browser. The public API, four volume defaults, existing compositions and sound recipes remain compatible. No gameplay owner imports audio. The shell supplies menu/background/start/pause metadata separately from the existing audio-pause boolean; future authored scoring can inspect exact region/interior/boss/form without inferring mechanics from prose. Current cue-selection policy is preserved.
+
+`scripts/audio-assets.cjs` validates the empty recorded-audio registry and provides registered local file paths to the common inventory, packaging and precache. Registration checks path/symlink containment, hashes, provenance, duration/loop metadata, container signatures and encoded-size guards. This is asset publishing preparation; recorded playback, codec/decode/decoded-memory policy and the richer scene mix are future work. See `AUDIO_FOUNDATION.md` for findings, preservation checks and the production sequence.

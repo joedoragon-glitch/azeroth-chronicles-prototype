@@ -43,3 +43,9 @@ Issue 111 preparation provides a pinned processing toolchain, parsed catalog, th
 ## Regional canon correction v0.8.86
 
 Abyss Bastion now visibly prepares the Dark Lord’s air-superiority project. His purple dragon is his own personal flying mount; hatchery, rider equipment, aerial planning, royal standards and an unfinished launch platform support a future air force. See `ABYSS_AIR_SUPERIORITY_CANON.md`. Existing mechanics and geometry are preserved; presentation migrates on old saves. Cindermaw/Dreadmaw preview alternatives remain unimplemented.
+
+## Audio foundation v0.8.87
+
+Joel requests professional place/situation/boss-specific audio, with housekeeping before sound creation. Warm fantasy is the broad direction. The existing catalog and cue policy are preserved while catalog, score/ambience, runtime/mixer/lifecycle and effects gain separate owners. Noise sources now obey the voice bound and clean up connections; disposal/resume races, interrupted-context retries, initial warnings and mute/volume edits during ducking have focused checks. Playtest exports gain local audio diagnostics and exact scene/boss metadata is observable without changing gameplay.
+
+The recorded-audio production manifest is empty. Validated registration now feeds packaging/offline inventory; no new music/effect is created or played. Recorded playback/decode, richer mixing, menu audio and the contextual soundtrack belong to the subsequent production work. See `AUDIO_FOUNDATION.md` for the concrete gap audit and sequence, including unhandled side-zone musical identity and the need to audition music rather than equate tests with musical quality.
