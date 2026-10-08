@@ -813,7 +813,7 @@
         }
       }
       frontierOccupationLayout(z) {
-        if (z.id !== 'frontier' || z.frontierLayoutVersion === 2) return;
+        if (z.id !== 'frontier' || z.frontierLayoutVersion === 3) return;
         const districts = R.frontierDistricts || [],
           routes = R.frontierRoutes || [],
           oldZone = this.s.zone;
@@ -869,7 +869,7 @@
             const center = { x: route.point[0], y: route.point[1] };
             for (const spec of route.props || []) place(center, spec, 'route-' + route.id);
           }
-          z.frontierLayoutVersion = 2;
+          z.frontierLayoutVersion = 3;
         } finally {
           this.s.zone = oldZone;
         }
@@ -1032,6 +1032,15 @@
           this.s.zone = oldZone;
         }
       }
+      abyssAviationProject(z) {
+        if (z.id !== 'abyss' || z.flightProjectVersion === 1) return;
+        // Update only presentation on existing saves: occupants, progress and geometry stay put.
+        for (const [j, [, , structure, district]] of R.dungeonDecor.abyss.entries()) {
+          const p = z.props.find((p) => p.id === 'decor-' + j && p.decorative);
+          if (p) Object.assign(p, { structure, dungeonDistrict: district });
+        }
+        z.flightProjectVersion = 1;
+      }
       authoredPlaces(z) {
         if (this.supplyRoom(z.id)) {
           this.treasuryInterior(z);
@@ -1054,6 +1063,7 @@
         this.nightEnemyPopulation(z);
         if (dungeonIds.includes(z.id)) {
           this.decorateDungeon(z);
+          this.abyssAviationProject(z);
           for (const e of z.enemies) this.upgradeRingleader(e);
           this.guardianPopulation(z);
           this.guardianRewards(z);

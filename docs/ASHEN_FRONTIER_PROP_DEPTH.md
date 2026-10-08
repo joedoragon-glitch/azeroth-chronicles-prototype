@@ -34,7 +34,7 @@ The roadworks yard similarly combines carts, wheels, timber, tools, supplies, ro
 
 Inspection and checkpoint spaces intentionally repeat standardized visual markers. Civilian spaces vary more, while military bureaucracy repeats recognizable posts, standards and supply organization.
 
-The Abyss Bastion cordon adds chain anchors to make containment/logistics read more clearly.
+The Abyss Bastion cordon now uses saddle/harness preparation and purple royal flight standards to identify the Dark Lord’s air-superiority project. Chains elsewhere serve equipment and logistics, not a prisoner-dragon story.
 
 ## Road-surface safety
 

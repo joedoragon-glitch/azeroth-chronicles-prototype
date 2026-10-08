@@ -1,3 +1,5 @@
+> Current canon correction v0.8.86: Abyss Bastion prepares the Dark Lord’s air-superiority project around his purple personal mount. Earlier containment descriptions below are historical and superseded; see `ABYSS_AIR_SUPERIORITY_CANON.md`.
+
 > Historical project narrative through v0.8.80. For current setup and boundaries, read the root README and docs/ARCHITECTURE.md.
 
 # Azeroth Chronicles — expanded prototype v0.8.80

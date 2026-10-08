@@ -179,10 +179,10 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `patched-fence` | PROCEDURAL — Frontier civilian repair detail |
 | `inspection-marker` | PROCEDURAL — standardized occupation administration marker |
 | `checkpoint-standard` | PROCEDURAL — standardized occupation military marker |
-| `chain-anchor` | PROCEDURAL — Abyss containment detail used outside and inside the Bastion |
+| `chain-anchor` | PROCEDURAL — Abyss flight-equipment/logistics detail |
 | `handler-station` | PROCEDURAL — Bastion handler/work station |
 | `feed-crate` | PROCEDURAL — dragon provisioning container |
-| `containment-post` | PROCEDURAL — repeated Bastion restraint hardware |
+| `containment-post` | PROCEDURAL — legacy hardware drawing; current Bastion uses flight harness stations |
 | `scorched-floor` | PROCEDURAL — flat dragon-damage ground trace |
 | `egg-cradle` | PROCEDURAL — maintained hatchery/nesting support |
 | `feeding-trough` | PROCEDURAL — dragon feeding infrastructure |
@@ -279,3 +279,16 @@ V0.8.79 reconciles the affected canonical cues after procedural polishing. Repea
 
 
 V0.8.80 strengthens the PROCEDURAL terrain/effects families without adding sprite keys or generation entries. Natural ground uses feathered world-space materials; roads, water banks, ravine strata, lava crust and main-dungeon footprints/partitions follow actual geometry. Normal abilities, projectile contacts and recovery cues carry their existing gameplay identity. Danger outlines remain procedural and retain contrast after atmospheric grading. See `TERRAIN_EFFECTS_POLISH_V0880.md`; the numbered catalog remains 231 entries.
+
+## Air-superiority project v0.8.86
+
+Four procedural families present Joel’s approved Bastion role without generating replacement sprites:
+
+| Structure | Current purpose |
+| --- | --- |
+| `flight-planning-table` | Aerial routes and dragon formations |
+| `flight-harness-station` | Saddle, stirrups and harness maintenance |
+| `royal-flight-standard` | Purple Crown dragon standard |
+| `royal-launch-platform` | Flight preparation platform under construction |
+
+Legacy handler/containment/perch drawing keys remain available for compatibility; current Bastion slots use the project families.

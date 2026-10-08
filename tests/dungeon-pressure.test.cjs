@@ -12,8 +12,8 @@ check('Abyss Bastion is an irregular dragon fortress with staged zero-reward def
  assert.equal(guards.length,26);assert(guards.every(e=>e.gold===0&&e.xp===0),'Abyss guardian pressure creates no farming reward');
  const packs=new Map();for(const g of guards)packs.set(g.pack,(packs.get(g.pack)||0)+1);assert.equal(packs.size,13);assert([...packs.values()].every(n=>n===2),'Abyss defenders are staged as thirteen small pairs');
  assert(guards.some(e=>e.species==='orc'&&e.forcedRole==='melee'));assert(guards.some(e=>e.species==='archer'&&e.forcedRole==='ranged'));
- const districts=new Set(decor.map(p=>p.dungeonDistrict));for(const id of ['handler-intake','containment-gallery','hatchery','feeding-service','roost-hoard'])assert(districts.has(id),id+' has functional dressing');
- const structures=new Set(decor.map(p=>p.structure));for(const kind of ['handler-station','feed-crate','containment-post','scorched-floor','egg-cradle','feeding-trough','carcass-rack','claw-scrape','dragon-perch','chain-anchor'])assert(structures.has(kind),kind+' is represented');
+ const districts=new Set(decor.map(p=>p.dungeonDistrict));for(const id of ['rider-preparation','flight-training','hatchery','feeding-service','royal-aerie'])assert(districts.has(id),id+' has functional dressing');
+ const structures=new Set(decor.map(p=>p.structure));for(const kind of ['flight-planning-table','feed-crate','flight-harness-station','scorched-floor','egg-cradle','feeding-trough','carcass-rack','claw-scrape','royal-launch-platform','royal-flight-standard'])assert(structures.has(kind),kind+' is represented');
  assert.equal(traps.length,18,'hazard density is reduced where extra traps would become mandatory tolls');
  const boss=z.enemies.find(e=>e.type==='boss'),cage=z.npcs.find(n=>n.kind==='cage'),rawBlocked=c.blocked.bind(c),inflate=(t,r=24)=>({...t,radius:t.radius+r,length:t.length+2*r,halfWidth:(t.halfWidth||28)+r});
  c.blocked=(x,y,zone,r=15,terrain)=>rawBlocked(x,y,zone,r,terrain)||traps.some(t=>c.trapContains(inflate(t,24+r),{x,y}));

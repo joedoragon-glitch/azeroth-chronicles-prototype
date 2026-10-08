@@ -1,6 +1,6 @@
 # Abyss Bastion dungeon-depth pass
 
-Abyss Bastion is Ashen Frontier's main dungeon. It is now designed as a maintained occupation fortress built around a dangerous dragon rather than a generic rectangular dragon room.
+Abyss Bastion is Ashen Frontier's main dungeon. It is the preparation center for the Dark Lord’s air-superiority project, housing his own purple dragon and personal flying mount. Joel’s 8 October decision supersedes the earlier generic containment interpretation; see `ABYSS_AIR_SUPERIORITY_CANON.md`.
 
 This pass is fully procedural and uses the same data-driven irregular-dungeon architecture/guardian framework already used by the Citadel. It does not introduce sprites.
 
@@ -12,8 +12,8 @@ The Bastion remains a challenge space. Its pressure comes from staged guardian g
 
 Six overlapping walkable spaces replace the legacy shared rectangle/divider:
 
-- handler intake;
-- containment spine;
+- rider preparation;
+- flight-training spine;
 - hatchery wing;
 - feeding/service wing;
 - service/maneuver loop;
@@ -29,7 +29,7 @@ Abyss Bastion uses 26 guardians in 13 authored pairs.
 
 Guardians remain zero gold and zero EXP. The increased/authored population exists only to shape encounter rhythm and fortress defense.
 
-Pairs combine Orc melee pressure with Raider Archer ranged pressure across intake, containment, hatchery, service and aerie positions. Reinforcement waves and Awakening guardians reuse the same authored formation through the shared dungeon framework.
+Pairs combine Orc melee pressure with Raider Archer ranged pressure across rider preparation, flight training, hatchery, service and royal aerie positions. Reinforcement waves and Awakening guardians reuse the same authored formation through the shared dungeon framework.
 
 The guardian count is not a sacred quota. Future playtesting may change it if the new geometry proves too light or too exhausting.
 
@@ -52,15 +52,15 @@ Even under that model, both Abyss Dragon and Eren must remain reachable. No requ
 
 The old flat mixture of chains, embers, banners and roost icons is organized into five readable dressing districts:
 
-- handler intake;
-- containment gallery;
+- rider preparation;
+- flight training;
 - hatchery;
 - feeding/service;
-- roost/hoard.
+- royal aerie/hoard.
 
-New procedural prop families include handler stations, feed crates, containment posts, scorched-floor traces, egg cradles, feeding troughs, carcass racks, claw scrapes and dragon perches.
+Current project dressing includes a flight-planning table, saddle/harness stations, purple royal flight standards and a launch platform still under construction, alongside feed crates, scorched-floor traces, egg cradles, feeding troughs, carcass racks and claw scrapes.
 
-Chains, roosts, hatcheries and bone piles retain their canonical base identity but gain stable deterministic local variation in Frontier/Abyss contexts.
+Chains are equipment and logistics, not evidence of an imprisoned dragon. Roosts, hatcheries and bone piles retain their canonical base identity but gain stable deterministic local variation in Frontier/Abyss contexts.
 
 ## Save migration
 
