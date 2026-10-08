@@ -16,7 +16,7 @@ const PrototypeData = {
       obstacle:
         'Dense thickets close direct shortcuts, but broad woodland paths remain walkable. The river, lake shore and mill pond are impassable water. Houses and fences shape streets without blocking exits.',
       exploration:
-        'An abandoned orchard, the mill bridge, a woodland supply cache and the crypt approach anchor a broader lived-in countryside. Farms and hamlets keep working under occupation while goblin camps and grave-haunting skeletons hold their own territories beyond the roads.',
+        'Millhaven, Orchard Hamlet and the working mill remain a rural woodland country. Beyond the local goblin camps and skeleton territories, the Crypt Guardian oversees an unfinished seasonal retreat for the Dark Lord and his trusted friends. The Guardian is an outsider and trusted friend who acts as caretaker and project overseer. The Dark Lord owns these woods because he wanted a place here; Dark Crown remains his permanent seat.',
       resource: 640,
       questgold: 160,
       questxp: 600,
@@ -42,7 +42,7 @@ const PrototypeData = {
       obstacle:
         'A lake occupies the central basin. Two raised crossings and a bridge provide useful choices around it. Reeds are decorative or collision marked; open water is consistently impassable.',
       exploration:
-        'A stranded supply wagon, watch platform, sunken dock and fisher rescue route encourage detours through a wider wetland. Fishing life persists along the inhabited shore while mire nests, reed-beast wallows and scavenger camps occupy the deeper marsh.',
+        'Reedport and Fisher Camp live by fishing while Mirejaw, Reed Beasts and night Wraiths keep their own territories. The Drowned Keeper is a capable scholar, fishing enthusiast and councillor who proposed capturing the specialists. His nickname comes from a past drowning; his active Archive now faces a separate preservation emergency. Neri is being forced to save the records; outside, removed books and restoration supplies mark the emergency.',
       resource: 640,
       questgold: 380,
       questxp: 1200,
@@ -68,7 +68,7 @@ const PrototypeData = {
       obstacle:
         'Cliffs divide the plateau into connected terraces. Switchbacks, a stone bridge and a timber crossing provide routes. Rock walls and pine thickets block movement and projectiles consistently.',
       exploration:
-        'A lookout, ore vein, ruined watchtower and quarry camp give the mountain routes purpose across a larger highland. Wolves keep hunting grounds and dens; ogres maintain hearth camps and quarry squats instead of being scattered at random.',
+        'The Dark Lord took these mineral-rich mountains long ago; Ironroot now supplies his crowns. His Master of Coin, the Ridge Tyrant, keeps ore, wages and caravans moving and calls it proof of better rule. Stonecross trades and raises families; Quarry Outpost sorts and hauls. Some welcome regular payday, others resent who owns the mountain. Wolves keep wild hunting grounds; Ogres work stone, cook, sleep and play at their own hearths.',
       resource: 640,
       questgold: 700,
       questxp: 1800,
@@ -223,6 +223,9 @@ const PrototypeData = {
       region: 'highlands',
       kind: 'field',
       name: 'Ridge Tyrant',
+      role: "The Dark Lord's Master of Coin",
+      history:
+        'A competent economist who treats wages, maintained roads and circulating crowns as his case for authoritarian rule. Hired ridge archers protect his payroll and mineral caravans; their contracts bring them beyond the Frontier.',
       level: 8,
       captive: 'Orin the Highland Instructor',
       service: 'Learn skill 5 and train learned skills to rank 4',
@@ -244,6 +247,8 @@ const PrototypeData = {
       region: 'highlands',
       kind: 'dungeon',
       name: 'Stone Colossus',
+      history:
+        'An ancient guardian exposed by the older Ironroot workings. The regime routes production around its territory rather than controlling it; new supports and haulage lanes stop at the older stone. Dara is compelled to repair mining equipment so shipments can continue.',
       level: 9,
       captive: 'Dara the Highland Smith',
       service: 'Highland weapons armor and equipment improvements',

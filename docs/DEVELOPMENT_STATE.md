@@ -8,7 +8,7 @@ Desktop/browser and phone presentation are distinct. World authoring, navigation
 
 | Workstream | Current evidence and next step |
 | --- | --- |
-| Regional playtesting | Continue Joel's region-by-region review and corrections. Recent authored Frontier/Crown and main-dungeon depth work remains in place. Housekeeping does not certify every map as artistically finished. |
+| Regional playtesting | v0.8.87 implements the first Greenwood/Marches/Highlands handoff pass. Continue Joel's region-by-region review and corrections using REGIONAL_HANDOFF_AUDIT.md. Recent Frontier/Crown work remains in place. Housekeeping does not certify every map as artistically finished. |
 | Procedural canon | Static polish v0.8.79 and terrain/effects polish v0.8.80 are retained. New feedback should improve current canon in the owning modules. |
 | Sprite production | The approved catalog has 231 entries; the production sprite manifest remains empty. Follow the existing small-experiment/approval gates in the sprite production contract before mass generation. This engineering pass does not manufacture or register replacement art. |
 | Chromebook tuning | Play the desktop entry on the actual laptop. Reports now include active frame cadence, work time and renderer counters for reproducible tuning. |
@@ -40,6 +40,18 @@ All hand-authored campaign JS and the three campaign CSS files have repeatable f
 
 Issue 111 preparation provides a pinned processing toolchain, parsed catalog, three exact reference contracts, immutable sources, approval/provenance checks and a development-only day/night comparison showroom at four device sizes. Tests use current procedural drawings and isolated fixtures. The production manifest stays empty and byte-identical; no art is generated or activated. The later three-asset creative pilot and image-tool generation are deferred at Joel’s request. See `SPRITE_PREPARATION.md` and `SPRITE_PREPARATION_AUDIT.md`; the implementing agent owns technical checks and release.
 
+## Ironroot Highlands v0.8.87
+
+Ironroot's existing mountain settlements, Wolf territories, Ogre homes and Old Signal Keep remain. Small pay, sorting, mint and hauling scenes connect the province to crown production. The Ridge Tyrant's Treasury now prioritizes off-duty comforts; Crag Tyrant remains a Wolf household protector. Colossus Mine has seven connected functional/historical areas with a repair forge for Dara. See `IRONROOT_HIGHLANDS_LAYOUT.md` for the deliberately selected lore and preservation checks. The production sprite manifest is unchanged.
+
 ## Regional canon correction v0.8.86
 
 Abyss Bastion now visibly prepares the Dark Lord’s air-superiority project. His purple dragon is his own personal flying mount; hatchery, rider equipment, aerial planning, royal standards and an unfinished launch platform support a future air force. See `ABYSS_AIR_SUPERIORITY_CANON.md`. Existing mechanics and geometry are preserved; presentation migrates on old saves. Cindermaw/Dreadmaw preview alternatives remain unimplemented.
+
+## Regional handoff foundations v0.8.87
+
+The three supplied audited handoffs are reconciled against the reorganized v0.8.85 modules. Forest Crypt becomes an unfinished private retreat with older crypt fabric, craft work, guest space and a caretaker study. Sunken Archive has dry stacks, forced restoration, shallow flooded sections and the Keeper's working study. Colossus Mine has active and older workings, haulage, repair/metallurgy, collapsed shafts and a Colossus chamber. Borin, Neri and Dara retain independent boss/key rescue gates while appearing at workstations. The Highlands Treasury has a domestic floor plan; its Wolf captain and three caches remain. Small outdoor support scenes avoid roads and present/future services.
+
+Dungeon layout migration retains guard death state, rescued services, clear state, progression and currency. Treasury migration retains the exact collected-cache indices and captain death. New contextual furnishings remain procedural so a generic cage or generic prop sprite cannot overwrite their scene meaning. The approved sprite catalog and production registry remain unchanged.
+
+This is an implementation foundation for further regional iteration, not a declaration that the regions are finished. Greenwood biography, flood cause and captive-trade identities stay open; the separate Ironroot pass records provisional repair-work, ancient-Colossus and convoy-escort interpretations for later revision. See REGIONAL_HANDOFF_AUDIT.md.
