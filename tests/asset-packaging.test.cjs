@@ -5,7 +5,7 @@ const production = fs.readFileSync(path.join(root, 'assets/sprites/manifest.json
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'azeroth-sprite-contract-'));
 try {
   const checkout = path.join(temp, 'checkout'); fs.mkdirSync(checkout);
-  for (const name of ['src', 'styles', 'templates', 'scripts', 'icons', 'assets', 'tests']) fs.cpSync(path.join(root, name), path.join(checkout, name), { recursive: true });
+  for (const name of ['src', 'styles', 'templates', 'scripts', 'icons', 'assets', 'tests', 'docs']) fs.cpSync(path.join(root, name), path.join(checkout, name), { recursive: true });
   for (const name of ['package.json', 'index.html', 'prototype.html', 'phone.html', 'legacy.html', 'rts.html', 'manifest.webmanifest', 'sw.js']) fs.copyFileSync(path.join(root, name), path.join(checkout, name));
   for (const [file, bytes] of fixtures.images) fs.writeFileSync(path.join(checkout, file), bytes);
   const manifestFile = path.join(checkout, 'assets/sprites/manifest.json');
