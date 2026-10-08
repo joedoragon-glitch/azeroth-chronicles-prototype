@@ -25,8 +25,6 @@
   const pursuitBurstSeconds = R.balance.pursuit.burstSeconds,
     pursuitBurstMultiplier = R.balance.pursuit.burstMultiplier,
     mercyStartRadius = R.balance.pursuit.mercyStartRadius;
-  const costs = R.balance.skills.costs,
-    cooldowns = R.balance.skills.cooldowns;
   class Campaign {
     constructor(mode = 'normal', heroClass = 'paladin', random = Math.random, options = {}) {
       if (!['normal', 'nightmare'].includes(mode) || !classes[heroClass])
@@ -108,7 +106,7 @@
         maxMp: c.mp,
         level: 1,
         xp: 0,
-        gold: 30,
+        gold: R.balance.economy.startingCrowns,
         power: c.power,
         armor: c.armor,
         speed: c.speed,
@@ -205,272 +203,7 @@
       if (this.s.statistics.events.length > 400) this.s.statistics.events.shift();
       this.effects.push({ type, ...data });
     }
-    nextBasicCombo(targetId) {
-      const cfg = R.basicAttackCombo || { steps: 3, resetSeconds: 4, multipliers: [1, 1.1, 1.2] };
-      if (
-        this.basicComboClass !== this.hero.class ||
-        this.basicComboTargetId !== targetId ||
-        this.s.time - this.basicComboAt > cfg.resetSeconds
-      )
-        this.basicComboStep = 0;
-      this.basicComboClass = this.hero.class;
-      this.basicComboTargetId = targetId;
-      this.basicComboStep = (this.basicComboStep % cfg.steps) + 1;
-      this.basicComboAt = this.s.time;
-      return {
-        step: this.basicComboStep,
-        multiplier: cfg.multipliers?.[this.basicComboStep - 1] || 1,
-      };
-    }
-    resetBasicCombo() {
-      this.basicComboStep = 0;
-      this.basicComboAt = -1e9;
-      this.basicComboClass = this.hero.class;
-      this.basicComboTargetId = null;
-    }
-    basicComboFinisher(target, from, baseDamage, source = 'hero', heroClass = this.hero.class) {
-      const cfg = R.basicAttackCombo?.finisher,
-        def = cfg?.[heroClass];
-      if (!target || !def) return 0;
-      const angle = Math.atan2(target.y - from.y, target.x - from.x),
-        delta = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
-      let hits = 0;
-      for (const e of this.zone()
-        .enemies.filter(
-          (e) =>
-            e !== target &&
-            e.hp > 0 &&
-            !e.neutral &&
-            dist(e, from) <= def.range &&
-            Math.abs(delta(Math.atan2(e.y - from.y, e.x - from.x), angle)) <= def.halfAngle &&
-            this.line(from, e),
-        )
-        .sort((a, b) => this.idOrder(a, b))) {
-        if (this.damage(e, baseDamage * (cfg.secondaryMultiplier || 0.55), source)) hits++;
-      }
-      this.event('basicComboFinisher', {
-        class: heroClass,
-        effect: def.effect,
-        shape: 'cone',
-        x: target.x,
-        y: target.y,
-        fromX: from.x,
-        fromY: from.y,
-        angle,
-        range: def.range,
-        halfAngle: def.halfAngle,
-        hits,
-        targetId: target.id,
-      });
-      return hits;
-    }
-    companionAttackDamage(u) {
-      return u.damage + this.hero.level * 2 + this.companionInheritedDamageBonus();
-    }
-    companionSecondSkillUnlocked() {
-      return (this.s.companionCombatTraining || 1) >= 2;
-    }
-    companionSecondSkillTargets(u, target) {
-      const def = R.companionSkills?.second?.[u.type];
-      if (!def || !target) return [];
-      const angle = Math.atan2(target.y - u.y, target.x - u.x),
-        from = { x: u.x, y: u.y },
-        delta = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b)),
-        end = {
-          x: u.x + Math.cos(angle) * (def.range || 0),
-          y: u.y + Math.sin(angle) * (def.range || 0),
-        };
-      return this.zone()
-        .enemies.filter(
-          (e) =>
-            e.hp > 0 &&
-            !e.neutral &&
-            this.line(u, e) &&
-            (def.shape === 'cone'
-              ? dist(e, u) <= def.range &&
-                Math.abs(delta(Math.atan2(e.y - u.y, e.x - u.x), angle)) <= def.halfAngle
-              : def.shape === 'line'
-                ? (() => {
-                    const along = (e.x - u.x) * Math.cos(angle) + (e.y - u.y) * Math.sin(angle);
-                    return (
-                      along >= 0 &&
-                      along <= def.range &&
-                      this.distanceToSegment(e, from, end) <= def.halfWidth
-                    );
-                  })()
-                : false),
-        )
-        .sort((a, b) => this.idOrder(a, b));
-    }
-    companionUseFirstSkill(u, target) {
-      const cfg = R.companionSkills?.first,
-        def = cfg?.[u.type];
-      if (!cfg || !def || !target || (u.skill1Cd || 0) > 0) return false;
-      const base = this.companionAttackDamage(u);
-      if (u.type === 'soldier') {
-        if (dist(u, target) > 80 || !this.line(u, target)) return false;
-        if (!this.damage(target, base * cfg.multiplier, u.id)) return false;
-        u.skill1Cd = cfg.cooldown;
-        u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
-        u.cd = Math.max(u.cd, 0.4);
-        this.event('melee', {
-          actor: 'companion',
-          role: 'soldier',
-          source: u.id,
-          weapon: 'sword',
-          x: target.x,
-          y: target.y,
-          target: target.id,
-          special: 'power-strike',
-        });
-        this.event('swing', {
-          actor: 'companion',
-          role: 'soldier',
-          source: u.id,
-          weapon: 'sword',
-          x: u.x,
-          y: u.y,
-          targetX: target.x,
-          targetY: target.y,
-          combo: 3,
-          companionSkill: 'power-strike',
-        });
-        this.event('companionSkill', {
-          source: u.id,
-          unitType: u.type,
-          skill: 'power-strike',
-          targetId: target.id,
-        });
-        return true;
-      }
-      if (dist(u, target) > 320 || !this.line(u, target)) return false;
-      u.skill1Cd = cfg.cooldown;
-      u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
-      u.cd = Math.max(u.cd, 0.4);
-      const shot = Math.max(1, dist(u, target));
-      for (let j = 0; j < 3; j++)
-        this.s.projectiles.push({
-          id: 'projectile-' + this.s.nextId++,
-          x: u.x,
-          y: u.y,
-          dx: (target.x - u.x) / shot,
-          dy: (target.y - u.y) / shot,
-          target: target.id,
-          damage: base,
-          source: u.id,
-          speed: 520,
-          delay: j * 0.08,
-          style: 'arrow',
-          rapid: true,
-          companionSkill: 'triple-shot',
-        });
-      this.event('projectileLaunch', {
-        actor: 'companion',
-        role: 'archer',
-        source: u.id,
-        style: 'arrow',
-        count: 3,
-        special: 'triple-shot',
-        x: u.x,
-        y: u.y,
-        target: target.id,
-      });
-      this.event('companionSkill', {
-        source: u.id,
-        unitType: u.type,
-        skill: 'triple-shot',
-        targetId: target.id,
-      });
-      return true;
-    }
-    companionUseSecondSkill(u, target, targets = this.companionSecondSkillTargets(u, target)) {
-      const cfg = R.companionSkills?.second,
-        def = cfg?.[u.type];
-      if (
-        !this.companionSecondSkillUnlocked() ||
-        !cfg ||
-        !def ||
-        !target ||
-        (u.skill2Cd || 0) > 0 ||
-        !targets.length
-      )
-        return false;
-      const base = this.companionAttackDamage(u),
-        damage = base * def.multiplier,
-        angle = Math.atan2(target.y - u.y, target.x - u.x);
-      let hits = 0;
-      for (const e of targets) if (this.damage(e, damage, u.id)) hits++;
-      if (!hits) return false;
-      u.skill2Cd = cfg.cooldown;
-      u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
-      u.cd = Math.max(u.cd, 0.5);
-      this.event(
-        u.type === 'soldier' ? 'melee' : 'spell',
-        u.type === 'soldier'
-          ? {
-              actor: 'companion',
-              role: 'soldier',
-              source: u.id,
-              weapon: 'sword',
-              x: target.x,
-              y: target.y,
-              target: target.id,
-              special: 'holy-cleave',
-            }
-          : {
-              actor: 'companion',
-              role: 'archer',
-              class: 'ranger',
-              source: u.id,
-              x: u.x,
-              y: u.y,
-              special: 'piercing-volley',
-            },
-      );
-      this.event('chargedArea', {
-        slot: 2,
-        class: u.type === 'soldier' ? 'paladin' : 'ranger',
-        companion: true,
-        actor: 'companion',
-        role: u.type,
-        source: u.id,
-        targetId: target.id,
-        effect: def.effect,
-        shape: def.shape,
-        x: target.x,
-        y: target.y,
-        fromX: u.x,
-        fromY: u.y,
-        angle,
-        radius: 0,
-        range: def.range || 0,
-        halfAngle: def.halfAngle || 0,
-        halfWidth: def.halfWidth || 0,
-        hits,
-      });
-      this.event('companionSkill', {
-        source: u.id,
-        unitType: u.type,
-        skill: u.type === 'soldier' ? 'holy-cleave' : 'piercing-volley',
-        targetId: target.id,
-        hits,
-      });
-      return true;
-    }
-    companionTrySkill(u, target) {
-      if (!target || (u.skillGlobalCd || 0) > 0) return false;
-      const secondReady = this.companionSecondSkillUnlocked() && (u.skill2Cd || 0) <= 0,
-        secondTargets = secondReady ? this.companionSecondSkillTargets(u, target) : [];
-      if (
-        secondReady &&
-        (secondTargets.length >= 2 || (u.skill1Cd || 0) > 0) &&
-        this.companionUseSecondSkill(u, target, secondTargets)
-      )
-        return true;
-      if ((u.skill1Cd || 0) <= 0 && this.companionUseFirstSkill(u, target)) return true;
-      if (secondReady && this.companionUseSecondSkill(u, target, secondTargets)) return true;
-      return false;
-    }
+
     say(text) {
       this.messages.push(text);
       if (this.messages.length > 7) this.messages.shift();
@@ -483,66 +216,10 @@
       return D.bosses.find((b) => b.id === id);
     }
 
-    unit(type, x, y) {
-      const base = { soldier: [120, 12, '⚔️'], archer: [105, 15, '🏹'] }[type];
-      if (!base) throw Error('Unknown companion type');
-      const maxHp = this.companionMaxHp(type);
-      return {
-        id: 'ally-' + this.s.nextId++,
-        type,
-        x,
-        y,
-        hp: maxHp,
-        maxHp,
-        damage: base[1],
-        icon: base[2],
-        cd: 0,
-        skill1Cd: 0,
-        skill2Cd: 0,
-        skillGlobalCd: 0,
-        healCd: 0,
-        manaCd: 0,
-        survivalCd: 0,
-        immune: 0,
-        supportEffects: [],
-        order: null,
-        carry: 0,
-        active: true,
-      };
-    }
-
     idOrder(a, b) {
       return a.id.localeCompare(b.id, undefined, { numeric: true });
     }
-    queuedCompanions() {
-      return Object.values(this.s.zones).reduce(
-        (n, z) => n + z.buildings.filter((b) => b.queue > 0).length,
-        0,
-      );
-    }
-    activeParty() {
-      return this.s.party.filter((u) => u.active !== false);
-    }
-    activeLivingParty() {
-      return this.s.party.filter((u) => u.active !== false && u.hp > 0);
-    }
 
-    barracksFieldCap(b) {
-      return b?.full ? this.expeditionPartyCap() : Math.min(3, this.expeditionPartyCap());
-    }
-    rosterCount() {
-      return this.s.party.length;
-    }
-    depositSite(u) {
-      const z = this.isDungeon() ? this.s.zones[this.definition().id] : this.zone(),
-        i = this.regionIndex(),
-        sites = [
-          ...(z?.npcs.filter((n) => n.kind === 'rest') || []),
-          ...(this.isDungeon() ? [] : z?.buildings.filter((b) => b.progress >= 4 && b.full) || []),
-          { x: D.towns[i][0], y: D.towns[i][1] },
-        ];
-      return sites.sort((a, b) => dist(a, u) - dist(b, u))[0];
-    }
     setRefuge(zone, id) {
       const n = this.s.zones[zone]?.npcs.find((n) => n.id === id && n.kind === 'rest');
       if (n) {
@@ -783,23 +460,7 @@
         );
       return 'Meet the supplier at Supply convoy; stay within escort range on the return road';
     }
-    combatTargets() {
-      const z = this.s.zones[this.s.zone];
-      return [this.hero, ...this.activeLivingParty(), ...(z?.escort?.hp > 0 ? [z.escort] : [])];
-    }
-    guardianRewards(z) {
-      if (z.guardRewardsVersion === 2) return;
-      z.guardRewardsVersion = 2;
-      for (const e of z.enemies.filter((e) => e.guard)) {
-        e.gold = 0;
-        e.xp = 0;
-      }
-      for (const p of Object.values(this.s.pending))
-        if (p.kind === 'mob' && p.zone === z.id && p.base.guard) {
-          p.base.gold = 0;
-          p.base.xp = 0;
-        }
-    }
+
     upgradeRingleader(e) {
       if (e.form !== 'ringleader' || e.ringleaderHealthVersion === 3) return;
       const alive = e.hp > 0,
@@ -1034,8 +695,7 @@
           p = this.safe(raw[0], raw[1], z.id),
           hp = Math.round((65 + i * 105) * scale.hp * 2),
           damage = Math.round((7 + i * 8) * scale.damage * 1.25),
-          gold = Math.round(((r.gold_range[0] + r.gold_range[1]) / 2) * 2.5),
-          xp = Math.round(r.enemy_xp * 2);
+          { gold, xp } = this.regionalEnemyRewards(i, 'fieldCaptain');
         captain = this.makeEnemy(
           {
             species: sp[0],
@@ -1368,14 +1028,11 @@
     bossEnemy(b, form, p) {
       let hp = b.hp,
         damage = b.damage,
-        gold = b.gold,
-        xp = b.xp,
+        { gold, xp } = this.bossRewards(b, form),
         level = b.level;
       if (form === 'true') {
         hp *= 1.8;
         damage *= 1.25;
-        gold *= 2;
-        xp *= 2;
         level += 2;
         if (b.kind === 'dungeon' && this.s.phase !== 'adventure') {
           const i = dungeonIds.indexOf(b.id);
@@ -1383,8 +1040,6 @@
           const scale = Math.max(1, level / 18);
           hp = Math.round((13000 + i * 1000) * scale);
           damage = Math.round((70 + i * 2) * scale);
-          gold = [500, 600, 700, 800, 1000][i];
-          xp = [1000, 1250, 1500, 1750, 2000][i];
           level = this.s.awakeningLevel || this.hero.level + 2;
         }
       }
@@ -1478,14 +1133,7 @@
       this.event('rest');
       return true;
     }
-    spend(amount) {
-      if (!Number.isFinite(amount) || amount < 0 || this.hero.gold < amount) {
-        this.say('Not enough crowns.');
-        return false;
-      }
-      this.hero.gold -= amount;
-      return true;
-    }
+
     rescue(family) {
       if (!this.boss(family)?.captive) return false;
       if (this.s.rescued[family]) return false;
@@ -1532,9 +1180,6 @@
           kind: R.teachers[b.id] ? 'teacher' : b.id === 'archive' ? 'alchemist' : 'smith',
         }));
     }
-    barracksRecruitPrice(type) {
-      return R.balance.companions.barracksRecruitPrices[type] || 0;
-    }
 
     buyPotion(type, advanced = false) {
       if (type === 'tonic') {
@@ -1543,7 +1188,7 @@
           this.say('Preparation tonic already active.');
           return false;
         }
-        if (!this.spend(70)) {
+        if (!this.spend(this.preparationTonicCost())) {
           this.say('Not enough crowns for a Preparation tonic.');
           return false;
         }
@@ -1561,228 +1206,7 @@
       );
       return false;
     }
-    availableRangers(type) {
-      const key = type === 'health' ? 'healCd' : 'manaCd';
-      return this.activeLivingParty().filter((u) => u.type === 'archer' && (u[key] || 0) <= 0);
-    }
-    supportEffectActive(type) {
-      return [this.hero, ...this.activeLivingParty()].some((u) =>
-        (u.supportEffects || []).some((e) => e.type === type),
-      );
-    }
-    hasSupportEffect(u, type) {
-      return (u.supportEffects || []).some((e) => e.type === type);
-    }
-    addSupportEffect(u, type, amount) {
-      if (!u.supportEffects) u.supportEffects = [];
-      u.supportEffects.push({ type, remaining: amount, seconds: R.rangerSupport.duration });
-    }
-    rangerSupport(type, manual = true, targetOverride = null) {
-      if (
-        !['health', 'mana'].includes(type) ||
-        this.s.challenge.pending ||
-        this.s.challenge.gameOver
-      )
-        return false;
-      const rangers = this.availableRangers(type),
-        key = type === 'health' ? 'healCd' : 'manaCd';
-      if (!rangers.length) {
-        if (manual) {
-          const active = this.activeLivingParty().filter((u) => u.type === 'archer');
-          if (!active.length)
-            this.say(
-              'No active Ranger is available to use ' +
-                (type === 'health' ? 'Heal.' : 'Mana Recovery.'),
-            );
-          else
-            this.say(
-              (type === 'health' ? 'Heal' : 'Mana Recovery') +
-                ' is cooling down · ' +
-                Math.ceil(Math.min(...active.map((u) => u[key] || 0))) +
-                's.',
-            );
-        }
-        return false;
-      }
-      if (type === 'health') {
-        const injured = [this.hero, ...this.activeLivingParty()].filter(
-          (u) => u.hp > 0 && u.hp < u.maxHp && !this.hasSupportEffect(u, 'health'),
-        );
-        if (!injured.length) {
-          if (manual) this.say('The active party is already fully covered or at full health.');
-          return false;
-        }
-        const target =
-            targetOverride && injured.includes(targetOverride)
-              ? targetOverride
-              : injured.includes(this.hero)
-                ? this.hero
-                : injured.sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0],
-          ranger = rangers[0],
-          amount = this.rangerSupportAmount(type);
-        ranger[key] = R.rangerSupport.cooldown;
-        this.addSupportEffect(target, type, amount);
-        this.say(
-          'Ranger casts Heal on ' +
-            (target === this.hero
-              ? 'the hero'
-              : target.type === 'archer'
-                ? 'a Ranger'
-                : 'a Soldier') +
-            ' · restoring ' +
-            amount +
-            ' HP over five seconds.',
-        );
-        this.event('heal', {
-          x: target.x,
-          y: target.y,
-          fromX: ranger.x,
-          fromY: ranger.y,
-          resource: 'health',
-          target: target === this.hero ? 'hero' : target.id,
-        });
-        return true;
-      }
-      if (this.hero.mp >= this.hero.maxMp || this.hasSupportEffect(this.hero, 'mana')) {
-        if (manual)
-          this.say(
-            this.hero.mp >= this.hero.maxMp
-              ? 'Hero mana is already full.'
-              : 'Mana Recovery is already restoring the hero.',
-          );
-        return false;
-      }
-      const ranger = rangers[0],
-        amount = this.rangerSupportAmount(type);
-      ranger[key] = R.rangerSupport.cooldown;
-      this.addSupportEffect(this.hero, type, amount);
-      this.say('Ranger casts Mana Recovery · hero restoring ' + amount + ' MP over five seconds.');
-      this.event('heal', {
-        x: this.hero.x,
-        y: this.hero.y,
-        fromX: ranger.x,
-        fromY: ranger.y,
-        resource: 'mana',
-        target: 'hero',
-      });
-      return true;
-    }
-    potion(type) {
-      return this.rangerSupport(type, true);
-    }
-    updateRangerSupport(dt) {
-      for (const u of [this.hero, ...this.s.party]) {
-        if (!Array.isArray(u.supportEffects)) u.supportEffects = [];
-        const next = [];
-        for (const e of u.supportEffects) {
-          if (u.hp <= 0) continue;
-          const field = e.type === 'health' ? 'hp' : 'mp',
-            max = e.type === 'health' ? 'maxHp' : 'maxMp';
-          if (field === 'mp' && u !== this.hero) continue;
-          if (u[field] >= u[max]) continue;
-          const step = Math.min(dt, e.seconds),
-            amount = (e.remaining * step) / e.seconds;
-          u[field] = Math.min(u[max], u[field] + amount);
-          e.remaining = Math.max(0, e.remaining - amount);
-          e.seconds = Math.max(0, e.seconds - step);
-          if (e.seconds > 0 && e.remaining > 0 && u[field] < u[max]) next.push(e);
-        }
-        u.supportEffects = next;
-      }
-    }
-    autoRangerSupport() {
-      const h = this.hero;
-      if (h.hp <= 0 || this.s.challenge.pending || this.s.challenge.gameOver) return;
-      const engaged = this.manaCombatActive(),
-        healThreshold = engaged ? R.rangerSupport.healThreshold : 1,
-        manaThreshold = engaged ? R.rangerSupport.manaThreshold : 1;
-      for (const ranger of this.availableRangers('health').slice()) {
-        const candidates = [h, ...this.activeLivingParty()].filter(
-          (u) =>
-            u.hp > 0 &&
-            u.hp < u.maxHp &&
-            u.hp <= u.maxHp * healThreshold &&
-            !this.hasSupportEffect(u, 'health'),
-        );
-        if (!candidates.length) break;
-        const target = candidates.includes(h)
-          ? h
-          : candidates.sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
-        if (!this.rangerSupport('health', false, target)) break;
-      }
-      if (h.mp < h.maxMp && h.mp <= h.maxMp * manaThreshold && !this.hasSupportEffect(h, 'mana'))
-        this.rangerSupport('mana', false);
-    }
 
-    skillManaCost(slot, rank = this.hero.skills[slot - 1] || 1, charged = false) {
-      if (charged) {
-        const fraction = R.chargedSkills?.manaFractions?.[slot];
-        if (fraction) return Math.max(1, Math.ceil(this.hero.maxMp * fraction));
-      }
-      if (slot === 1) return 0;
-      return Math.ceil(costs[slot] * (1 + R.manaBalance.rankCostGrowth * Math.max(0, rank - 1)));
-    }
-    drainMana(u, fraction) {
-      if (u !== this.hero || !fraction || u.mp <= 0 || this.peace) return 0;
-      const amount = Math.min(u.mp, Math.max(1, Math.round(u.maxMp * fraction)));
-      u.mp = Math.max(0, u.mp - amount);
-      if (amount > 0) this.event('manaDrain', { amount });
-      return amount;
-    }
-
-    recruit(type) {
-      const price = R.balance.companions.recruitPrices[type];
-      if ((this.s.expeditionRank || 1) < 2) {
-        this.say(
-          'Recruitment unlocks at Expedition 2. Rescue Mira and train the Expedition Skill.',
-        );
-        return false;
-      }
-      if (!price) return false;
-      if (this.rosterCount() >= 3) {
-        this.say('Town recruitment limit reached. Build a barracks to recruit more companions.');
-        return false;
-      }
-      if (!this.spend(price)) return false;
-      const p = this.safe(this.hero.x + 50, this.hero.y + 50),
-        u = this.unit(type, p.x, p.y);
-      u.active = this.activeParty().length < this.expeditionPartyCap();
-      this.s.party.push(u);
-      return true;
-    }
-    recover() {
-      const dead = this.s.party.find((u) => u.hp <= 0);
-      if (!dead || !this.spend(R.balance.companions.recoveryCost)) return false;
-      const id = dead.id,
-        active = dead.active !== false,
-        u = this.unit(dead.type, this.hero.x + 40, this.hero.y);
-      Object.assign(dead, u, { id, active });
-      return true;
-    }
-    treatCompanions() {
-      const wounded = this.s.party.filter((u) => u.hp > 0 && u.hp < u.maxHp);
-      if (!wounded.length) return false;
-      if (this.refugeThreat()) {
-        this.say(
-          'Cannot treat companions while nearby enemies are engaged. Retreat and end the fight first.',
-        );
-        return false;
-      }
-      if (!this.spend(R.balance.companions.treatmentCost)) return false;
-      for (const u of wounded) {
-        u.hp = u.maxHp;
-        this.event('heal', { x: u.x, y: u.y, resource: 'health', target: u.id });
-      }
-      this.say(
-        'Living companions treated at the barracks. Fallen companions still require recovery.',
-      );
-      return true;
-    }
-    availableLabor() {
-      return this.activeLivingParty().filter(
-        (u) => ['soldier', 'archer'].includes(u.type) && !u.order,
-      );
-    }
     hasAnyBarracks() {
       return Object.values(this.s.zones).some((z) =>
         z?.buildings?.some((b) => b.kind === 'barracks'),
@@ -1793,9 +1217,7 @@
         z?.buildings?.some((b) => b.kind === 'barracks' && b.progress >= 4),
       );
     }
-    barracksBuildCost() {
-      return this.hasAnyBarracks() ? R.balance.barracks.buildCost : 0;
-    }
+
     build() {
       if (this.isDungeon()) return false;
       const builder = this.availableLabor()[0],
@@ -1847,7 +1269,7 @@
         builder = this.availableLabor()[0];
       if (!b || (this.s.expeditionRank || 1) < 4 || already || !builder) return false;
       if (!b.upgradePaid) {
-        if (!this.spend(R.balance.barracks.fullUpgradeCost)) return false;
+        if (!this.spend(this.barracksUpgradeCost())) return false;
         b.upgradePaid = true;
         b.upgradeProgress = b.upgradeProgress || 0;
       }
@@ -1940,36 +1362,7 @@
       );
       return true;
     }
-    restCompanion(id) {
-      const u = this.s.party.find((u) => u.id === id && u.active !== false);
-      if (!u || this.refugeThreat()) return false;
-      u.active = false;
-      u.order = null;
-      u.path = [];
-      return true;
-    }
-    activateCompanion(id, barracksId) {
-      const u = this.s.party.find((u) => u.id === id && u.active === false),
-        b = this.zone().buildings.find((b) => b.id === barracksId && b.progress >= 4);
-      if (
-        !u ||
-        !b ||
-        u.hp <= 0 ||
-        this.refugeThreat() ||
-        this.activeParty().length >= this.barracksFieldCap(b)
-      )
-        return false;
-      u.active = true;
-      Object.assign(u, this.safe(b.x + 45, b.y + 45));
-      u.order = null;
-      return true;
-    }
-    dismissCompanion(id) {
-      const i = this.s.party.findIndex((u) => u.id === id && u.active === false);
-      if (i < 0) return false;
-      this.s.party.splice(i, 1);
-      return true;
-    }
+
     enter(zone, arrival = null) {
       if (
         !D.regions.some((r) => r.id === zone) &&
@@ -2043,7 +1436,7 @@
       if (j < 0 || j >= D.regions.length) return false;
       const edge = direction === 1 ? D.regions[i].id : D.regions[j].id;
       if (direction < 0 && !this.s.tickets[edge]) return false;
-      const fare = direction === 1 && !this.s.recovery[edge] ? D.regions[i].fare : 0;
+      const fare = this.travelFare(i, direction);
       if (this.hero.gold < fare) {
         this.say('Not enough crowns.');
         return false;
@@ -2056,7 +1449,7 @@
         arrival = R.travelArrivals?.[from + '>' + to] || null;
       try {
         if (!this.enter(to, arrival)) throw Error('Invalid destination');
-        this.hero.gold -= fare;
+        this.payTravelFare(fare);
         if (direction === 1) {
           delete this.s.recovery[edge];
           this.s.tickets[edge] = true;
@@ -2263,22 +1656,7 @@
       this.checkQuests();
       return true;
     }
-    payQuest(q, p) {
-      if (!q || !p?.done || p.paid || p.closedByPeace) return false;
-      p.paid = true;
-      p.active = false;
-      if (q.kind === 'barracks')
-        this.say('First Barracks established. You now have a field base for companion recovery.');
-      else {
-        this.grant(q.gold, q.xp);
-        this.say(
-          q.name + ' complete. Reward delivered: ' + q.gold + ' crowns and ' + q.xp + ' XP.',
-        );
-      }
-      this.event('questComplete', { id: q.id });
-      this.event('quest', { id: q.id, automatic: true });
-      return true;
-    }
+
     checkQuests() {
       this.initializeQuests();
       for (const q of this.questDefs()) {
@@ -2315,343 +1693,7 @@
         p = this.s.quests[id];
       return this.payQuest(q, p);
     }
-    trueSummonPlan(e) {
-      const authored = R.attacks[e.family]?.find((a) => a.kind === 'summon');
-      return authored
-        ? { species: authored.species, ranged: !!authored.ranged }
-        : R.trueBossSummons.families[e.family];
-    }
-    bossOwnedSummons(e) {
-      return this.zone().enemies.filter((u) => u.summon && u.owner === e.id && u.hp > 0);
-    }
-    bossSummonProfile(e) {
-      const o = R.bossSummoning.overrides?.[e.family] || {};
-      return {
-        normalCap: o.normalCap || R.bossSummoning.normalCap,
-        trueCap: o.trueCap || R.bossSummoning.trueCap,
-        minions: o.minions || R.trueBossSummons.minions,
-        captains: o.captains || R.trueBossSummons.captains,
-      };
-    }
-    bossSummonCap(e) {
-      const p = this.bossSummonProfile(e);
-      return e.form === 'true' ? p.trueCap : p.normalCap;
-    }
-    bossAttackWeights(e, target = this.hero) {
-      const plans = R.attacks[e.family] || [],
-        behavior = R.bossBehavior[e.family] || {},
-        d = dist(e, target),
-        low = e.hp <= e.maxHp * 0.5,
-        alive = this.bossOwnedSummons(e).length,
-        cap = this.bossSummonCap(e);
-      return plans.map((plan, index) => {
-        if (index === e.lastAttackIndex && plans.length > 1) return 0;
-        if (e.family === 'darklord' && index === 3 && !low) return 0;
-        let w = 1;
-        if (plan.kind === 'summon') {
-          if (alive >= cap || (e.summonCd || 0) > 0) return 0;
-          const missing = cap - alive;
-          w = 2.4 + missing * 1.15;
-          if (alive >= R.bossSummoning.pressureFloor) w *= 0.7;
-        } else {
-          if (d <= 170 && behavior.close?.includes(index)) w *= 2.4;
-          if (d >= 230 && behavior.far?.includes(index)) w *= 2.2;
-          if (d >= 330 && behavior.close?.includes(index)) w *= 0.55;
-          if (d <= 110 && behavior.far?.includes(index)) w *= 0.7;
-        }
-        if (low && behavior.phasePreferred?.includes(index)) w *= 2.25;
-        return w;
-      });
-    }
-    chooseBossAttack(e, target = this.hero) {
-      const plans = R.attacks[e.family] || [],
-        weights = this.bossAttackWeights(e, target),
-        total = weights.reduce((n, w) => n + w, 0);
-      if (total > 0) {
-        let roll = this.random() * total;
-        for (let i = 0; i < weights.length; i++) {
-          roll -= weights[i];
-          if (roll <= 0 && weights[i] > 0) return i;
-        }
-      }
-      const low = e.hp <= e.maxHp * 0.5;
-      let fallback = plans.findIndex(
-        (p, i) =>
-          i !== e.lastAttackIndex &&
-          p.kind !== 'summon' &&
-          !(e.family === 'darklord' && i === 3 && !low),
-      );
-      if (fallback < 0) fallback = plans.findIndex((p, i) => i !== e.lastAttackIndex);
-      return Math.max(0, fallback);
-    }
-    bossAttackTarget(e, fallback, index) {
-      const behavior = R.bossBehavior[e.family] || {};
-      return behavior.heroTarget?.includes(index) && this.hero.hp > 0 ? this.hero : fallback;
-    }
-    buildBossAttack(e, index, target, includeTrue = true) {
-      const b = this.boss(e.family),
-        plan = R.attacks[e.family][index],
-        kind = plan.kind === 'sector' && e.hp > e.maxHp * 0.5 ? 'cone' : plan.kind,
-        angle = Math.atan2(target.y - e.y, target.x - e.x),
-        from = { x: e.x, y: e.y },
-        center = ['cone', 'ring', 'sector'].includes(kind) ? from : { x: target.x, y: target.y },
-        a = {
-          ...plan,
-          index,
-          name: b.attacks[index]?.split(':')[0] || 'Attack ' + (index + 1),
-          timer: plan.warning,
-          total: plan.warning,
-          kind,
-          ...center,
-          fromX: e.x,
-          fromY: e.y,
-          angle,
-          count: plan.count || 1,
-          radius:
-            kind === 'cone'
-              ? 165
-              : kind === 'sector'
-                ? 280
-                : kind === 'ring'
-                  ? 105
-                  : index === 0
-                    ? 90
-                    : 115,
-        },
-        sequence = [];
-      if (a.sequential && a.kind === 'circle') {
-        const patches = this.attackPatches(a);
-        Object.assign(a, patches[0], { count: 1 });
-        for (const p of patches.slice(1)) sequence.push({ ...a, ...p, count: 1 });
-      }
-      if (a.combo)
-        sequence.push({
-          ...a,
-          angle: angle + 0.7,
-          timer: 0.8,
-          total: 0.8,
-          name: a.name + ' — second arc',
-        });
-      if (a.kind === 'sector') {
-        a.angle = angle + Math.PI / 2;
-        a.count = 1;
-        for (let j = 1; j < 3; j++)
-          sequence.push({
-            ...a,
-            angle: angle + (j % 2 ? -Math.PI / 2 : Math.PI / 2),
-            timer: plan.warning,
-            total: plan.warning,
-          });
-      }
-      if (includeTrue && e.form === 'true') {
-        if (e.family === 'crypt' && index === 1) a.staggered = true;
-        if (e.family === 'archive' && index === 1)
-          sequence.push({
-            ...a,
-            x: a.x + Math.cos(angle + Math.PI / 2) * 80,
-            y: a.y + Math.sin(angle + Math.PI / 2) * 80,
-            timer: plan.warning,
-            total: plan.warning,
-            name: 'Shifting water channels',
-          });
-        if (e.family === 'mine' && index === 1)
-          sequence.push({
-            ...a,
-            x: a.x + 150,
-            y: a.y + 50,
-            count: 1,
-            timer: plan.warning,
-            total: plan.warning,
-            name: 'Delayed rockfall',
-          });
-        if (e.family === 'abyss' && index === 0)
-          sequence.push({
-            ...a,
-            kind: 'circle',
-            x: target.x,
-            y: target.y,
-            landing: false,
-            persistent: true,
-            timer: plan.warning,
-            total: plan.warning,
-            name: 'Delayed flame patch',
-            radius: 90,
-          });
-        if (e.family === 'citadel' && index === 2) a.opening = 2.5;
-      }
-      return { first: a, sequence };
-    }
-    bossComboSequence(e, index, target) {
-      const behavior = R.bossBehavior[e.family] || {},
-        ratio = e.hp / e.maxHp,
-        combo = (behavior.combos || []).find(
-          (x) =>
-            x.from === index &&
-            (x.phase === 'low' ? ratio <= 0.5 : x.phase === 'high' ? ratio > 0.5 : true) &&
-            this.random() < x.chance,
-        );
-      if (!combo) return [];
-      const plan = R.attacks[e.family][combo.to];
-      if (
-        plan.kind === 'summon' &&
-        (this.bossOwnedSummons(e).length >= this.bossSummonCap(e) || (e.summonCd || 0) > 0)
-      )
-        return [];
-      const comboTarget = this.bossAttackTarget(e, this.hero, combo.to),
-        built = this.buildBossAttack(e, combo.to, comboTarget, true);
-      return [built.first, ...built.sequence];
-    }
-    summonName(species) {
-      return species === 'wolf'
-        ? 'Den pup'
-        : species === 'skeleton'
-          ? 'Summoned skeleton'
-          : species === 'archer'
-            ? 'Ridge archer'
-            : species === 'mireling'
-              ? 'Brood mireling'
-              : species === 'crownguard'
-                ? 'Black guard'
-                : species === 'wraith'
-                  ? 'Drowned echo'
-                  : species === 'ogre'
-                    ? 'Stonebound ogre'
-                    : species === 'orc'
-                      ? 'Warband orc'
-                      : species === 'ashbeast'
-                        ? 'Abyss hatchling'
-                        : 'Summoned ' + species;
-    }
-    summonCombatProfile(s, plan) {
-      s.ranged = !!plan.ranged;
-      if (!s.ranged) return;
-      const profile = R.rangedProfiles[s.species];
-      if (profile) Object.assign(s, profile, { ranged: true });
-      else if (['archer', 'crownguard', 'wraith'].includes(s.species)) {
-        s.shotRange = 280;
-        s.shotSpeed = 260;
-        s.projectileStyle = s.species === 'wraith' ? 'spectral' : 'arrow';
-      }
-    }
-    summonBossAdds(e, plan, cap) {
-      if (!e || !plan || cap < 1) return 0;
-      const z = this.zone(),
-        sc = R.summonScaling[this.regionIndex()],
-        baseHp =
-          (this.s.phase === 'awakening' && this.isDungeon() ? 700 : 40 + e.level * 15) * sc.hp,
-        baseDamage =
-          (this.s.phase === 'awakening' && this.isDungeon() ? 30 : 5 + e.level) * sc.damage,
-        spawnPoint = (slot) => {
-          for (let n = 0; n < 24; n++) {
-            const k = slot + n,
-              a = (k * Math.PI) / 3,
-              r = 125 + Math.floor(k / 6) * 55,
-              candidate = this.safe(e.x + Math.cos(a) * r, e.y + Math.sin(a) * r);
-            if (
-              dist(candidate, this.hero) < 75 ||
-              z.enemies.some((u) => u.hp > 0 && u !== e && dist(candidate, u) < 38)
-            )
-              continue;
-            return candidate;
-          }
-          return this.safe(e.x + 120, e.y + 120);
-        };
-      if (e.form !== 'true') {
-        const owned = () => z.enemies.filter((u) => u.summon && u.owner === e.id && u.hp > 0),
-          limit = Math.min(cap, this.bossSummonProfile(e).normalCap);
-        let made = 0;
-        for (let i = owned().length; i < limit; i++) {
-          const p = spawnPoint(i),
-            s = this.makeEnemy(
-              {
-                species: plan.species,
-                name: this.summonName(plan.species),
-                icon: '👻',
-                level: e.level,
-                hp: Math.round(baseHp * (plan.normalHpScale || 1)),
-                damage: Math.round(baseDamage * (plan.normalDamageScale || 1)),
-                gold: 0,
-                xp: 0,
-              },
-              p,
-            );
-          s.summon = true;
-          s.summonBalanceVersion = 1;
-          s.owner = e.id;
-          this.summonCombatProfile(s, plan);
-          s.eliteNightBonus = { hp: e.maxHp / e.baseHp, damage: e.damage / e.baseDamage };
-          s.maxHp = s.hp = s.baseHp * s.eliteNightBonus.hp;
-          s.damage = s.baseDamage * s.eliteNightBonus.damage;
-          z.enemies.push(s);
-          made++;
-          if (e.aggro) this.engage(s);
-        }
-        return made;
-      }
-      z.enemies = z.enemies.filter(
-        (u) =>
-          !(
-            u.summon &&
-            u.owner === e.id &&
-            u.hp > 0 &&
-            !['minion', 'captain'].includes(u.trueSummonRole)
-          ),
-      );
-      const composition = this.bossSummonProfile(e),
-        live = (role) =>
-          z.enemies
-            .filter((u) => u.summon && u.owner === e.id && u.hp > 0 && u.trueSummonRole === role)
-            .sort((a, b) => this.idOrder(a, b));
-      for (const u of live('minion').slice(composition.minions))
-        z.enemies.splice(z.enemies.indexOf(u), 1);
-      for (const u of live('captain').slice(composition.captains))
-        z.enemies.splice(z.enemies.indexOf(u), 1);
-      const owned = () => z.enemies.filter((u) => u.summon && u.owner === e.id && u.hp > 0);
-      let made = 0;
-      const spawnRole = (role) => {
-        const p = spawnPoint(owned().length),
-          captain = role === 'captain',
-          hpScale = captain ? R.ringleaderScaling.hp : R.trueBossSummons.minionScaling.hp,
-          damageScale = captain
-            ? R.ringleaderScaling.damage
-            : R.trueBossSummons.minionScaling.damage,
-          hp = Math.round(baseHp * hpScale),
-          damage = Math.round(baseDamage * damageScale),
-          baseName = this.summonName(plan.species),
-          s = this.makeEnemy(
-            {
-              species: plan.species,
-              name: captain ? 'TRUE ' + baseName + ' Ringleader' : 'TRUE-bound ' + baseName,
-              icon: '👻',
-              form: captain ? 'ringleader' : 'normal',
-              level: e.level,
-              hp,
-              damage,
-              gold: 0,
-              xp: 0,
-            },
-            p,
-          );
-        s.summon = true;
-        s.summonBalanceVersion = 1;
-        s.owner = e.id;
-        this.summonCombatProfile(s, plan);
-        s.trueSummon = true;
-        s.trueSummonRole = role;
-        s.pack = e.id + '-summons';
-        if (captain) s.ringleaderHealthVersion = 3;
-        s.eliteNightBonus = { hp: e.maxHp / e.baseHp, damage: e.damage / e.baseDamage };
-        s.maxHp = s.hp = s.baseHp * s.eliteNightBonus.hp;
-        s.damage = s.baseDamage * s.eliteNightBonus.damage;
-        z.enemies.push(s);
-        made++;
-        if (e.aggro) this.engage(s);
-        return true;
-      };
-      for (let i = live('minion').length; i < composition.minions; i++) spawnRole('minion');
-      for (let i = live('captain').length; i < composition.captains; i++) spawnRole('captain');
-      return made;
-    }
+
     engage(e, forced = true) {
       if (e.aggro || e.neutral) return false;
       if ((this.s.mercyTime || 0) > 0 && !forced && !e.mercyProvoked) return false;
@@ -2677,64 +1719,12 @@
         if (ally.pack && ally.pack === e.pack && ally.hp > 0 && !ally.aggro)
           this.engage(ally, false);
     }
-    damage(e, amount, source = 'hero') {
-      if (
-        !e ||
-        e.hp <= 0 ||
-        e.neutral ||
-        this.peace ||
-        e.returning ||
-        !Number.isFinite(amount) ||
-        amount <= 0
-      )
-        return false;
-      const origin =
-        source === 'hero' ? this.hero : this.s.party.find((u) => u.id === source) || this.hero;
-      if (
-        !this.line(origin, e) ||
-        dist(origin, e.home) > (e.type === 'boss' ? (this.isDungeon() ? 1800 : 700) : 500)
-      )
-        return false;
-      e.mercyProvoked = true;
-      this.engage(e, true);
-      if (source === 'hero') e.heroParticipated = true;
-      if (e.roomCaptain && e.captainGuard > 0) amount *= 0.7;
-      if (e.roomCaptain) {
-        const profile = this.captainProfile(e),
-          summon = profile?.summon;
-        if (summon?.guardPerSummon) {
-          const living = this.captainOwnedSummons(e).length,
-            guard = Math.min(summon.guardCap ?? 1, living * summon.guardPerSummon);
-          amount *= 1 - guard;
-        }
-      }
-      if (e.family === 'citadel' && e.open <= 0) amount *= 0.65;
-      if (e.family === 'mine' && e.open > 0) amount *= 1.25;
-      e.hp = Math.max(0, e.hp - amount);
-      this.effects.push({ type: 'hit', x: e.x, y: e.y, amount });
-      if (e.hp === 0) this.kill(e);
-      return true;
-    }
-    hitParty(u, amount, manaDrain = 0) {
-      if (this.peace || u.hp <= 0 || (u.immune || 0) > 0) return false;
-      const armor =
-        u === this.hero
-          ? this.armor()
-          : ['soldier', 'archer'].includes(u.type)
-            ? this.companionArmor(u.type)
-            : 5 + this.hero.level * 0.5;
-      u.hp = Math.max(0, u.hp - Math.max(3, amount - armor * 0.35));
-      if (u === this.hero && manaDrain > 0) this.drainMana(u, manaDrain);
-      this.event('hurt', { x: u.x, y: u.y, target: u === this.hero ? 'hero' : u.id });
-      if (u === this.hero && u.hp === 0) this.die();
-      return true;
-    }
+
     die() {
       this.clearTonic();
       this.hero.supportEffects = [];
       for (const u of this.s.party) u.supportEffects = [];
-      const goldLost = this.hero.gold > 0 ? Math.ceil(this.hero.gold * 0.2) : 0;
-      this.hero.gold = Math.max(0, this.hero.gold - goldLost);
+      const goldLost = this.applyDeathPenalty();
       this.s.statistics.deaths++;
       this.s.streak = { key: null, count: 0 };
       this.s.projectiles = [];
@@ -2815,401 +1805,7 @@
       );
       return true;
     }
-    cast(slot, targetId, charged = false) {
-      const i = slot - 1,
-        rank = this.hero.skills[i],
-        isCharged = !!charged && (slot === 1 || slot === 2 || slot === 3);
-      if (this.s.challenge.pending || this.s.challenge.gameOver) return false;
-      if (!rank || this.hero.cd[i] > 0 || this.peace) {
-        if (!rank) this.say('This skill must be learned from a rescued instructor.');
-        return false;
-      }
-      const scale = 1 + 0.15 * (rank - 1),
-        chargedSecond = isCharged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null,
-        range = chargedSecond
-          ? chargedSecond.range || 480
-          : this.hero.class === 'paladin' && slot < 3
-            ? 120
-            : slot === 1
-              ? this.hero.class === 'mage'
-                ? 400
-                : 450
-              : 480,
-        targets = this.zone().enemies.filter(
-          (e) => e.hp > 0 && !e.neutral && dist(e, this.hero) <= range && this.line(this.hero, e),
-        ),
-        preferredTargetId =
-          targetId ?? (slot === 1 ? (this.basicComboTargetId ?? this.s.heroTarget) : null),
-        target =
-          targets.find((e) => e.id === preferredTargetId) ||
-          targets.find((e) => slot === 1 && e.id === this.s.heroTarget) ||
-          targets.sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0];
-      if ([1, 2, 6, 7, 8].includes(slot) && !target) return false;
-      if (slot === 3) {
-        const living = [this.hero, ...this.activeLivingParty()].filter((u) => u.hp > 0);
-        if (isCharged) {
-          if (living.every((u) => u.hp >= u.maxHp)) return false;
-        } else if (this.hero.hp >= this.hero.maxHp) return false;
-      }
-      const cost = this.skillManaCost(slot, rank, isCharged);
-      if (this.hero.mp < cost) return false;
-      this.hero.mp -= cost;
-      this.hero.cd[i] = cooldowns[slot];
-      if (target && [1, 2, 6, 7, 8].includes(slot)) this.s.heroTarget = target.id;
-      const power = this.power();
-      if (isCharged && slot === 1) {
-        this.resetBasicCombo();
-        const d = Math.max(1, dist(this.hero, target)),
-          damage = (power + 12) * scale * R.chargedSkills.basicDamageMultiplier,
-          dx = (target.x - this.hero.x) / d,
-          dy = (target.y - this.hero.y) / d;
-        this.engage(target);
-        if (this.hero.class === 'mage') {
-          this.s.projectiles.push({
-            id: 'projectile-' + this.s.nextId++,
-            x: this.hero.x,
-            y: this.hero.y,
-            originX: this.hero.x,
-            originY: this.hero.y,
-            dx,
-            dy,
-            target: target.id,
-            damage,
-            source: 'hero',
-            speed: 1000,
-            delay: 0,
-            style: 'beam',
-            charged: true,
-          });
-          this.event('projectileLaunch', {
-            actor: 'hero',
-            class: 'mage',
-            source: 'hero',
-            style: 'magic',
-            slot,
-            charged: true,
-            beam: true,
-            x: this.hero.x,
-            y: this.hero.y,
-            target: target.id,
-          });
-        } else if (this.hero.class === 'ranger') {
-          for (let j = 0; j < 3; j++)
-            this.s.projectiles.push({
-              id: 'projectile-' + this.s.nextId++,
-              x: this.hero.x,
-              y: this.hero.y,
-              dx,
-              dy,
-              target: target.id,
-              damage: damage / 3,
-              source: 'hero',
-              speed: 620,
-              delay: j * 0.08,
-              style: 'arrow',
-              charged: true,
-              rapid: true,
-              chargedBurst: j === 2,
-            });
-          this.event('projectileLaunch', {
-            actor: 'hero',
-            class: 'ranger',
-            source: 'hero',
-            style: 'arrow',
-            slot,
-            charged: true,
-            count: 3,
-            rapid: true,
-            x: this.hero.x,
-            y: this.hero.y,
-            target: target.id,
-          });
-        } else {
-          this.s.projectiles.push({
-            id: 'projectile-' + this.s.nextId++,
-            x: this.hero.x,
-            y: this.hero.y,
-            dx,
-            dy,
-            target: target.id,
-            damage,
-            source: 'hero',
-            speed: 550,
-            delay: 0,
-            style: 'holy',
-            charged: true,
-          });
-          this.event('projectileLaunch', {
-            actor: 'hero',
-            class: 'paladin',
-            source: 'hero',
-            style: 'holy',
-            slot,
-            charged: true,
-            x: this.hero.x,
-            y: this.hero.y,
-            target: target.id,
-          });
-        }
-        this.event('charged', {
-          slot,
-          class: this.hero.class,
-          actor: 'hero',
-          source: 'hero',
-          x: this.hero.x,
-          y: this.hero.y,
-          targetX: target.x,
-          targetY: target.y,
-          targetId: target.id,
-        });
-        return true;
-      }
-      if (isCharged && slot === 2) {
-        const def = chargedSecond || R.chargedSkills.second[this.hero.class],
-          damage = power * (this.hero.class === 'ranger' ? 2.4 : 2.2) * scale,
-          angle = Math.atan2(target.y - this.hero.y, target.x - this.hero.x),
-          from = { x: this.hero.x, y: this.hero.y },
-          end = {
-            x: this.hero.x + Math.cos(angle) * (def.range || dist(this.hero, target)),
-            y: this.hero.y + Math.sin(angle) * (def.range || dist(this.hero, target)),
-          },
-          angleDelta = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b)),
-          inside = (e) =>
-            def.shape === 'circle'
-              ? dist(e, target) <= def.radius
-              : def.shape === 'cone'
-                ? dist(e, this.hero) <= def.range &&
-                  Math.abs(angleDelta(Math.atan2(e.y - this.hero.y, e.x - this.hero.x), angle)) <=
-                    def.halfAngle
-                : def.shape === 'line'
-                  ? this.distanceToSegment(e, from, end) <= def.halfWidth
-                  : false;
-        this.engage(target);
-        let hits = 0;
-        for (const e of this.zone()
-          .enemies.filter((e) => e.hp > 0 && !e.neutral && inside(e) && this.line(this.hero, e))
-          .sort((a, b) => this.idOrder(a, b))) {
-          if (this.damage(e, damage)) {
-            hits++;
-            if (def.slow) e.slow = Math.max(e.slow || 0, def.slow);
-          }
-        }
-        this.event(this.hero.class === 'paladin' ? 'melee' : 'spell', {
-          actor: 'hero',
-          class: this.hero.class,
-          source: 'hero',
-          slot,
-          charged: true,
-          weapon: this.hero.class === 'paladin' ? 'sword' : undefined,
-          x: target.x,
-          y: target.y,
-          target: target.id,
-        });
-        this.event('chargedArea', {
-          slot,
-          class: this.hero.class,
-          actor: 'hero',
-          source: 'hero',
-          targetId: target.id,
-          effect: def.effect,
-          shape: def.shape,
-          x: target.x,
-          y: target.y,
-          fromX: this.hero.x,
-          fromY: this.hero.y,
-          angle,
-          radius: def.radius || 0,
-          range: def.range || 0,
-          halfAngle: def.halfAngle || 0,
-          halfWidth: def.halfWidth || 0,
-          hits,
-        });
-        return true;
-      }
-      if (slot === 3) {
-        const amount = (45 + power * 0.5) * scale;
-        if (isCharged) {
-          const targets = [this.hero, ...this.activeLivingParty()].filter(
-            (u) => u.hp > 0 && u.hp < u.maxHp,
-          );
-          for (const u of targets) {
-            u.hp = Math.min(u.maxHp, u.hp + amount);
-            this.event('heal', {
-              x: u.x,
-              y: u.y,
-              resource: 'health',
-              target: u === this.hero ? 'hero' : u.id,
-            });
-          }
-          this.event('chargedArea', {
-            slot,
-            class: this.hero.class,
-            effect: R.chargedSkills.third.effect,
-            shape: 'circle',
-            x: this.hero.x,
-            y: this.hero.y,
-            fromX: this.hero.x,
-            fromY: this.hero.y,
-            angle: 0,
-            radius: 240,
-            range: 0,
-            halfAngle: 0,
-            halfWidth: 0,
-            hits: targets.length,
-          });
-        } else {
-          this.hero.hp = Math.min(this.hero.maxHp, this.hero.hp + amount);
-          this.event('heal', {
-            x: this.hero.x,
-            y: this.hero.y,
-            resource: 'health',
-            target: 'hero',
-          });
-        }
-      } else if (slot === 4) {
-        if (this.hero.class === 'ranger') this.hero.haste = Math.min(6, 4 + 0.25 * (rank - 1));
-        else
-          this.hero.immune = Math.min(
-            4,
-            (this.hero.class === 'paladin' ? 2.5 : 2) + 0.15 * (rank - 1),
-          );
-        this.event('spell', {
-          actor: 'hero',
-          class: this.hero.class,
-          source: 'hero',
-          slot,
-          x: this.hero.x,
-          y: this.hero.y,
-        });
-      } else if (slot === 5 || slot === 8 || (slot === 7 && this.hero.class !== 'ranger')) {
-        for (const e of this.zone()
-          .enemies.filter((e) => e.hp > 0 && dist(e, this.hero) < (slot === 5 ? 350 : 500))
-          .sort((a, b) => this.idOrder(a, b))) {
-          this.damage(
-            e,
-            (slot === 8
-              ? power * 4 + 60
-              : slot === 7
-                ? power * (this.hero.class === 'mage' ? 7 : 6)
-                : power * 2.3) * scale,
-          );
-          if (this.hero.class === 'mage' && slot !== 8) e.slow = slot === 5 ? 5 : 6;
-        }
-        if (slot === 8) {
-          this.hero.hp = Math.min(this.hero.maxHp, this.hero.hp + this.hero.maxHp * 0.35 * scale);
-          this.hero.immune = Math.min(4, 3 + 0.15 * (rank - 1));
-        }
-        this.event('spell', {
-          actor: 'hero',
-          class: this.hero.class,
-          source: 'hero',
-          slot,
-          radius: slot === 5 ? 350 : 500,
-          x: this.hero.x,
-          y: this.hero.y,
-        });
-      } else {
-        const baseDmg =
-            (slot === 1
-              ? power + 12
-              : slot === 2
-                ? power * 2.2
-                : slot === 6
-                  ? power * 1.8 + 20
-                  : power * 10) * scale,
-          comboState = slot === 1 ? this.nextBasicCombo(target.id) : null,
-          combo = comboState?.step || 0,
-          dmg = baseDmg * (comboState?.multiplier || 1);
-        if (this.hero.class === 'paladin') {
-          const landed = this.damage(target, dmg);
-          if (landed) {
-            this.event('melee', {
-              actor: 'hero',
-              class: 'paladin',
-              source: 'hero',
-              weapon: 'sword',
-              slot,
-              x: target.x,
-              y: target.y,
-              target: target.id,
-              combo,
-            });
-            if (slot === 1 && combo === 3)
-              this.basicComboFinisher(
-                target,
-                { x: this.hero.x, y: this.hero.y },
-                baseDmg,
-                'hero',
-                'paladin',
-              );
-          }
-          this.event('swing', {
-            actor: 'hero',
-            class: 'paladin',
-            source: 'hero',
-            weapon: 'sword',
-            slot,
-            x: this.hero.x,
-            y: this.hero.y,
-            targetX: target.x,
-            targetY: target.y,
-            combo,
-          });
-        } else {
-          this.engage(target);
-          const count = this.hero.class === 'ranger' && slot === 2 ? 2 : 1;
-          for (let j = 0; j < count; j++) {
-            const d = Math.max(1, dist(this.hero, target));
-            this.s.projectiles.push({
-              id: 'projectile-' + this.s.nextId++,
-              x: this.hero.x,
-              y: this.hero.y,
-              dx: (target.x - this.hero.x) / d,
-              dy: (target.y - this.hero.y) / d,
-              target: target.id,
-              damage: count === 2 ? power * 1.2 * scale : dmg,
-              source: 'hero',
-              speed: 550,
-              delay: j * 0.12,
-              style: this.hero.class === 'ranger' ? 'arrow' : 'magic',
-              slot,
-              effect:
-                this.hero.class === 'mage' && slot === 2
-                  ? 'frost'
-                  : this.hero.class === 'ranger' && slot === 7
-                    ? 'piercing-shot'
-                    : undefined,
-              combo,
-              slow: this.hero.class === 'mage' && [2, 6].includes(slot) ? (slot === 2 ? 4 : 2) : 0,
-              ...(slot === 1 && combo === 3
-                ? {
-                    basicComboFinisher: true,
-                    finisherBaseDamage: baseDmg,
-                    finisherFromX: this.hero.x,
-                    finisherFromY: this.hero.y,
-                    comboClass: this.hero.class,
-                  }
-                : {}),
-            });
-          }
-          if (slot === 6 && this.hero.class === 'ranger')
-            this.hero.haste = Math.max(this.hero.haste, 2 + 0.15 * (rank - 1));
-          this.event('projectileLaunch', {
-            actor: 'hero',
-            class: this.hero.class,
-            source: 'hero',
-            style: this.hero.class === 'ranger' ? 'arrow' : 'magic',
-            slot,
-            count,
-            combo,
-            x: this.hero.x,
-            y: this.hero.y,
-            target: target.id,
-          });
-        }
-      }
-      return true;
-    }
+
     victory(family, form) {
       const key = family + ':' + form;
       if (this.s.victories[key]) return false;
@@ -3233,16 +1829,7 @@
         return;
       }
       this.s.statistics.kills++;
-      const r = this.enemyReward(e);
-      if (r.gold > 0)
-        this.s.loot.push({
-          id: 'loot-' + this.s.nextId++,
-          zone: this.s.zone,
-          x: e.x,
-          y: e.y,
-          gold: r.gold,
-        });
-      this.xp(r.xp);
+      this.awardEnemyReward(e);
       for (const q of this.questDefs().filter((q) => q.region === this.definition().id)) {
         const p = this.s.quests[q.id];
         if (
@@ -3485,8 +2072,7 @@
         )
       ) {
         this.s.paid['clear:' + id] = true;
-        const i = dungeonIds.indexOf(id);
-        this.grant([100, 220, 400, 650, 900][i], 0);
+        this.grant(this.dungeonClearReward(id), 0);
         this.say('Dungeon first clear reward earned.');
       }
     }
@@ -3691,432 +2277,7 @@
           this.event('gold');
         }
     }
-    squadDefaultDoctrine() {
-      return this.hero.class === 'paladin' ? 'focus' : 'guard';
-    }
-    squadThreats() {
-      return this.zone().enemies.filter(
-        (e) =>
-          e.hp > 0 &&
-          !e.neutral &&
-          !e.returning &&
-          e.aggro &&
-          dist(e, this.hero) < (e.type === 'boss' || e.summon ? 720 : 540),
-      );
-    }
-    squadContext() {
-      const threats = this.squadThreats(),
-        bossEnemy =
-          threats
-            .filter((e) => e.type === 'boss')
-            .sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0] || null;
-      return { engaged: threats.length > 0, boss: !!bossEnemy, bossEnemy, threats };
-    }
-    syncSquadDoctrine() {
-      const context = this.squadContext(),
-        phase = context.engaged ? (context.boss ? 'boss' : 'field') : null;
-      if (!phase) {
-        if (this.s.squadEngagement) {
-          this.s.squadEngagement = null;
-          this.s.squadBoss = false;
-          this.s.squadDoctrine = this.squadDefaultDoctrine();
-          this.s.heroTarget = null;
-        }
-        return context;
-      }
-      if (this.s.squadEngagement !== phase) {
-        this.s.squadEngagement = phase;
-        this.s.squadBoss = context.boss;
-        this.s.squadDoctrine = this.squadDefaultDoctrine();
-      }
-      return context;
-    }
-    toggleSquadDoctrine() {
-      if ((this.s.expeditionRank || 1) < 3) return false;
-      const context = this.syncSquadDoctrine();
-      if (!context.engaged) return false;
-      this.s.squadDoctrine = this.s.squadDoctrine === 'focus' ? 'guard' : 'focus';
-      this.event('squadDoctrine', { mode: this.s.squadDoctrine, boss: context.boss });
-      return true;
-    }
-    squadDoctrineLabel() {
-      const context = this.syncSquadDoctrine();
-      return {
-        active: context.engaged,
-        boss: context.boss,
-        mode: this.s.squadDoctrine,
-        label: context.boss
-          ? this.s.squadDoctrine === 'focus'
-            ? 'BOSS'
-            : 'ADDS'
-          : this.s.squadDoctrine === 'focus'
-            ? 'TARGET'
-            : 'THREATS',
-      };
-    }
-    recallParty() {
-      this.s.recallActive = true;
-      this.hero.order = null;
-      for (const u of this.activeLivingParty()) {
-        u.order = null;
-        u.path = [];
-        u.routeAge = 0;
-      }
-      this.say('Squad recalled. Companions are regrouping on the hero.');
-      this.event('squadRecall');
-      return true;
-    }
-    partyFormationOffset(u, living = this.activeLivingParty()) {
-      const rangedHero = this.hero.class === 'mage' || this.hero.class === 'ranger',
-        same = living.filter((v) => v.type === u.type && !v.order),
-        index = Math.max(
-          0,
-          same.findIndex((v) => v.id === u.id),
-        );
-      const ranged = {
-          archer: [
-            [-34, -24],
-            [34, -24],
-            [0, -52],
-            [-62, -45],
-            [62, -45],
-            [0, -78],
-          ],
-          soldier: [
-            [0, 95],
-            [-90, 45],
-            [90, 45],
-            [-110, -25],
-            [110, -25],
-            [0, -105],
-          ],
-        },
-        melee = {
-          soldier: [
-            [-42, -20],
-            [42, -20],
-            [0, -55],
-            [-68, -50],
-            [68, -50],
-            [0, 35],
-          ],
-          archer: [
-            [-65, -115],
-            [65, -115],
-            [0, -145],
-            [-105, -145],
-            [105, -145],
-            [0, -175],
-          ],
-        },
-        slots = (rangedHero ? ranged : melee)[u.type] || [[0, -100]];
-      return slots[index % slots.length];
-    }
-    partyFollowPoint(u, living = this.activeLivingParty()) {
-      const [side, forward] = this.partyFormationOffset(u, living),
-        heading = this.formationHeading || { x: 0, y: 1 },
-        n = Math.hypot(heading.x, heading.y) || 1,
-        fx = heading.x / n,
-        fy = heading.y / n,
-        rx = -fy,
-        ry = fx,
-        p = {
-          x: this.hero.x + fx * forward + rx * side,
-          y: this.hero.y + fy * forward + ry * side,
-        };
-      try {
-        return this.blocked(p.x, p.y) ? this.safe(this.hero.x, this.hero.y) : p;
-      } catch (_) {
-        return this.hero;
-      }
-    }
-    followPartyMember(u, living, dt) {
-      const d = dist(u, this.hero),
-        speed =
-          this.companionMoveSpeed(d > 650 ? 500 : d > 350 ? 390 : d > 200 ? 315 : 255) *
-          (u.slow > 0 ? 0.65 : 1);
-      return this.follow(u, this.partyFollowPoint(u, living), speed, dt, 45);
-    }
-    soldierScreenTarget(u, targets, living, claimed) {
-      const protectedUnits = [this.hero, ...living.filter((v) => v.type === 'archer' && !v.order)],
-        pressure = (e) => Math.min(...protectedUnits.map((p) => dist(e, p))),
-        band = (e) => (pressure(e) < 150 ? 0 : pressure(e) < 280 ? 1 : 2);
-      return (
-        targets
-          .filter((e) => dist(u, e) < 620)
-          .sort(
-            (a, b) =>
-              band(a) - band(b) ||
-              (claimed.has(a.id) ? 1 : 0) - (claimed.has(b.id) ? 1 : 0) ||
-              pressure(a) - pressure(b) ||
-              dist(a, u) - dist(b, u),
-          )[0] || null
-      );
-    }
-    archerCombatPoint(u, e, living) {
-      const anchor = this.partyFollowPoint(u, living),
-        preferred = 250,
-        anchorRange = dist(anchor, e);
-      if (anchorRange <= 280 && this.line(anchor, e)) return anchor;
-      const dx = anchor.x - e.x,
-        dy = anchor.y - e.y,
-        n = Math.hypot(dx, dy) || 1,
-        p = { x: e.x + (dx / n) * preferred, y: e.y + (dy / n) * preferred };
-      try {
-        return this.blocked(p.x, p.y) ? this.safe(p.x, p.y) : p;
-      } catch (_) {
-        return anchor;
-      }
-    }
-    archerFallbackPoint(u, e, living) {
-      const anchor = this.partyFollowPoint(u, living),
-        d = dist(anchor, e);
-      if (d >= 190) return anchor;
-      const dx = anchor.x - e.x,
-        dy = anchor.y - e.y,
-        n = Math.hypot(dx, dy) || 1,
-        p = { x: anchor.x + (dx / n) * (190 - d + 55), y: anchor.y + (dy / n) * (190 - d + 55) };
-      try {
-        return this.blocked(p.x, p.y) ? anchor : p;
-      } catch (_) {
-        return anchor;
-      }
-    }
-    updateParty(dt) {
-      const z = this.zone(),
-        living = this.activeLivingParty(),
-        context = this.syncSquadDoctrine(),
-        claimed = new Set();
-      for (const u of living)
-        if (
-          context.engaged &&
-          u.type === 'soldier' &&
-          u.hp <= u.maxHp * 0.5 &&
-          (u.survivalCd || 0) <= 0
-        ) {
-          u.survivalCd = 14;
-          u.immune = Math.max(u.immune || 0, 2.5);
-          this.event('spell', { x: u.x, y: u.y, target: u.id, kind: 'soldierGuard' });
-        }
-      if (this.s.recallActive && living.every((u) => dist(u, this.hero) < 165))
-        this.s.recallActive = false;
-      const crowdTarget = (u, targets) =>
-        targets
-          .filter((e) => dist(u, e) < 620)
-          .sort(
-            (a, b) =>
-              (claimed.has(a.id) ? 1 : 0) - (claimed.has(b.id) ? 1 : 0) ||
-              dist(a, this.hero) - dist(b, this.hero) ||
-              dist(a, u) - dist(b, u),
-          )[0] || null;
-      for (const u of living) {
-        u.slow = Math.max(0, (u.slow || 0) - dt);
-        u.cd = Math.max(0, u.cd - dt);
-        u.skill1Cd = Math.max(0, (u.skill1Cd || 0) - dt);
-        u.skill2Cd = Math.max(0, (u.skill2Cd || 0) - dt);
-        u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - dt);
-        if (u.order?.type === 'build') {
-          const b = z.buildings.find((b) => b.id === u.order.id);
-          if (b && b.progress < 4) {
-            if (dist(u, b) > 85)
-              this.follow(u, b, this.companionMoveSpeed(230) * (u.slow > 0 ? 0.65 : 1), dt, 70);
-            else {
-              b.progress = Math.min(4, b.progress + dt);
-              if (b.progress >= 4) {
-                u.order = null;
-                this.say('Barracks construction complete.');
-                this.event('construction', { id: b.id });
-                this.checkQuests();
-              }
-            }
-          } else u.order = null;
-          continue;
-        }
-        if (u.order?.type === 'upgrade') {
-          const b = z.buildings.find((b) => b.id === u.order.id);
-          if (b && b.progress >= 4 && !b.full && b.upgradePaid) {
-            if (dist(u, b) > 85)
-              this.follow(u, b, this.companionMoveSpeed(230) * (u.slow > 0 ? 0.65 : 1), dt, 70);
-            else {
-              b.upgradeProgress = Math.min(4, (b.upgradeProgress || 0) + dt);
-              if (b.upgradeProgress >= 4) {
-                b.full = true;
-                b.upgradeProgress = 4;
-                u.order = null;
-                this.say('Full barracks ready.');
-                this.event('barracksUpgrade', { id: b.id });
-              }
-            }
-          } else u.order = null;
-          continue;
-        }
-        if (u.order?.type === 'gather') {
-          const n = z.nodes.find((n) => n.id === u.order.id);
-          if (n && n.amount > 0 && (!n.mini || this.peace || this.miniCleared(n.mini))) {
-            if (dist(u, n) > 60)
-              this.follow(u, n, this.companionMoveSpeed(230) * (u.slow > 0 ? 0.65 : 1), dt);
-            else {
-              const amount = Math.min(n.amount, 12 * dt);
-              n.amount = Math.max(0, n.amount - amount);
-              u.carry += amount;
-              this.s.gathered[this.definition().id] =
-                (this.s.gathered[this.definition().id] || 0) + amount;
-            }
-            if (u.carry >= 35 || n.amount <= 0)
-              u.order = { type: 'deposit', id: n.id, group: n.resourceGroup };
-          } else u.order = { type: 'deposit', id: u.order.id, group: u.order.group };
-          continue;
-        }
-        if (u.order?.type === 'deposit') {
-          const deposit = this.depositSite(u);
-          if (dist(u, deposit) > 130)
-            this.follow(u, deposit, this.companionMoveSpeed(230) * (u.slow > 0 ? 0.65 : 1), dt);
-          else {
-            const payout = Math.floor(u.carry + 1e-7);
-            this.grant(payout, 0);
-            u.carry = Math.max(0, u.carry - payout);
-            const current = z.nodes.find(
-                (n) => n.id === u.order.id && n.amount > 0 && this.tributeKnown(n),
-              ),
-              next =
-                current ||
-                z.nodes.find(
-                  (n) =>
-                    u.order.group &&
-                    n.resourceGroup === u.order.group &&
-                    n.amount > 0 &&
-                    this.tributeKnown(n),
-                );
-            u.order = next ? { type: 'gather', id: next.id, group: next.resourceGroup } : null;
-          }
-          continue;
-        }
-        if (u.order) u.order = null;
-        if (this.peace || this.s.recallActive) {
-          this.followPartyMember(u, living, dt);
-          continue;
-        }
-        let e = null;
-        if (context.engaged) {
-          if (context.boss) {
-            if (this.s.squadDoctrine === 'focus') e = context.bossEnemy;
-            else {
-              const adds = context.threats.filter((x) => x.type !== 'boss');
-              e =
-                u.type === 'soldier'
-                  ? this.soldierScreenTarget(u, adds, living, claimed)
-                  : crowdTarget(u, adds);
-            }
-          } else if (this.s.squadDoctrine === 'focus') {
-            e =
-              context.threats.find((x) => x.id === this.s.heroTarget) ||
-              context.threats.slice().sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0] ||
-              null;
-          } else
-            e =
-              u.type === 'soldier'
-                ? this.soldierScreenTarget(u, context.threats, living, claimed)
-                : crowdTarget(u, context.threats);
-        }
-        if (!e) {
-          this.followPartyMember(u, living, dt);
-          continue;
-        }
-        claimed.add(e.id);
-        if (u.type === 'archer') {
-          const d = dist(u, e),
-            visible = this.line(u, e),
-            anchor = this.partyFollowPoint(u, living);
-          if (d < 150) {
-            this.follow(
-              u,
-              this.archerFallbackPoint(u, e, living),
-              this.companionMoveSpeed(270) * (u.slow > 0 ? 0.65 : 1),
-              dt,
-              35,
-            );
-            continue;
-          }
-          if (d > 280 || !visible) {
-            this.follow(
-              u,
-              this.archerCombatPoint(u, e, living),
-              this.companionMoveSpeed(260) * (u.slow > 0 ? 0.65 : 1),
-              dt,
-              35,
-            );
-            continue;
-          }
-          if (dist(u, anchor) > 70 && dist(anchor, e) <= 280 && this.line(anchor, e)) {
-            this.follow(u, anchor, this.companionMoveSpeed(245) * (u.slow > 0 ? 0.65 : 1), dt, 35);
-            continue;
-          }
-          if (this.companionTrySkill(u, e)) continue;
-          if (u.cd <= 0) {
-            u.cd = 0.85;
-            const shot = Math.max(1, d);
-            this.s.projectiles.push({
-              id: 'projectile-' + this.s.nextId++,
-              x: u.x,
-              y: u.y,
-              dx: (e.x - u.x) / shot,
-              dy: (e.y - u.y) / shot,
-              target: e.id,
-              damage: this.companionAttackDamage(u),
-              source: u.id,
-              speed: 450,
-              style: 'arrow',
-            });
-            this.event('projectileLaunch', {
-              actor: 'companion',
-              role: 'archer',
-              source: u.id,
-              style: 'arrow',
-              x: u.x,
-              y: u.y,
-              target: e.id,
-            });
-          }
-          continue;
-        }
-        if (this.line(u, e) && dist(u, e) <= 185 && this.companionTrySkill(u, e)) continue;
-        if (dist(u, e) > 65 || !this.line(u, e))
-          this.follow(
-            u,
-            e,
-            this.companionMoveSpeed(250) * (u.slow > 0 ? 0.65 : 1),
-            dt,
-            this.line(u, e) ? 55 : 0,
-          );
-        else if (u.cd <= 0) {
-          u.cd = 0.85;
-          if (this.damage(e, this.companionAttackDamage(u), u.id))
-            this.event('melee', {
-              actor: 'companion',
-              role: 'soldier',
-              source: u.id,
-              weapon: 'sword',
-              x: e.x,
-              y: e.y,
-              target: e.id,
-            });
-        }
-      }
-      const finishRecruit = (b) => {
-        if (b.queue > 0) {
-          b.queue = Math.max(0, b.queue - dt);
-          if (b.queue === 0) {
-            const p = this.safe(b.x + 50, b.y + 50),
-              type = ['soldier', 'archer'].includes(b.queueType) ? b.queueType : 'soldier',
-              u = this.unit(type, p.x, p.y);
-            u.active = this.activeParty().length < this.barracksFieldCap(b);
-            this.s.party.push(u);
-            b.queueType = null;
-          }
-        }
-      };
-      for (const b of z.buildings) finishRecruit(b);
-    }
+
     captainProfile(e) {
       return e?.captainProfile && (e.captain || e.roomCaptain)
         ? R.roomCaptains?.[e.captainProfile]
@@ -4789,364 +2950,7 @@
         }
       }
     }
-    startAttack(e, target, indexOverride = null) {
-      const plans = R.attacks[e.family] || [];
-      if (!plans.length) return false;
-      const selected = Number.isInteger(indexOverride)
-          ? Math.max(0, Math.min(plans.length - 1, indexOverride))
-          : this.chooseBossAttack(e, target),
-        actualTarget = this.bossAttackTarget(e, target, selected),
-        built = this.buildBossAttack(e, selected, actualTarget, true);
-      e.attackIndex = (e.attackIndex || 0) + 1;
-      e.lastAttackIndex = selected;
-      e.sequence = [...built.sequence, ...this.bossComboSequence(e, selected, actualTarget)];
-      e.telegraph = built.first;
-      this.event('warning', { family: e.family, index: selected });
-      return true;
-    }
-    attackPatches(a) {
-      return Array.from({ length: a.count || 1 }, (_, i) => ({
-        ...a,
-        x: a.x + (i - ((a.count || 1) - 1) / 2) * 190,
-        y: a.y + (i % 2) * 100,
-        radius: a.count > 1 ? 75 : a.radius,
-      }));
-    }
-    resolveAttack(e) {
-      const a = e.telegraph;
-      if (!a) return;
-      if (a.nightSkill === 'drain') {
-        const hero = this.hero,
-          zone = this.zoneId;
-        let hit = false;
-        for (const u of this.combatTargets())
-          if (dist(u, e) < a.radius && this.line(e, u)) {
-            if (this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0)) {
-              u.slow = Math.max(u.slow || 0, a.slowDuration || 0);
-              hit = true;
-            }
-            if (
-              this.hero !== hero ||
-              this.zoneId !== zone ||
-              this.s.challenge.pending ||
-              this.s.challenge.gameOver
-            )
-              return;
-          }
-        if (hit) e.hp = Math.min(e.maxHp, e.hp + e.maxHp * a.heal);
-        return;
-      }
-      if (a.nightSkill === 'pounce') {
-        e.motion = { ...a, target: { x: a.x, y: a.y }, hit: [], speed: a.pounceSpeed, life: 2 };
-        return;
-      }
-      if (a.kind === 'summon') {
-        if (a.captainSkill && (e.captain || e.roomCaptain))
-          this.summonCaptainAdds(
-            e,
-            this.captainProfile(e)?.summon || { species: a.species, cap: a.summonCap || 3 },
-          );
-        else {
-          this.summonBossAdds(
-            e,
-            {
-              species: a.species,
-              ranged: !!a.ranged,
-              normalHpScale: a.normalHpScale,
-              normalDamageScale: a.normalDamageScale,
-            },
-            this.bossSummonCap(e),
-          );
-          e.summonCd =
-            e.form === 'true' ? R.bossSummoning.trueCooldown : R.bossSummoning.normalCooldown;
-        }
-        return;
-      }
-      if (a.kind === 'volley') {
-        const style = e.projectileStyle || 'arrow';
-        for (const [i, delta] of [-0.22, 0, 0.22].entries())
-          this.s.projectiles.push({
-            id: 'projectile-' + this.s.nextId++,
-            x: e.x,
-            y: e.y,
-            dx: Math.cos(a.angle + delta),
-            dy: Math.sin(a.angle + delta),
-            speed: 260 * R.enemyProjectileMultiplier,
-            life: 2.5 / R.enemyProjectileMultiplier,
-            damage: e.damage,
-            manaDrain: a.manaDrain || 0,
-            source: 'enemy',
-            sourceId: e.id,
-            species: e.species,
-            style,
-            delay: a.staggered ? i * 0.35 : 0,
-          });
-        this.event('projectileLaunch', {
-          actor: 'enemy',
-          source: e.id,
-          species: e.species,
-          family: e.family,
-          boss: e.type === 'boss',
-          style,
-          count: 3,
-          x: e.x,
-          y: e.y,
-        });
-        return;
-      }
-      if (a.kind === 'ring') {
-        this.s.hazards.push({
-          ...a,
-          family: e.family,
-          species: e.species,
-          x: e.x,
-          y: e.y,
-          life: R.combatGeometry.ringLife,
-          tick: 0,
-          damage: e.damage,
-          age: 0,
-          hit: [],
-        });
-        return;
-      }
-      if (a.charge || a.landing) {
-        e.motion = {
-          ...a,
-          target: { x: a.x, y: a.y },
-          hit: [],
-          speed: a.advance ? 100 : 450,
-          life: 5,
-        };
-        return;
-      }
-      this.resolveArea(e, a);
-    }
-    resolveArea(e, a) {
-      const party = this.combatTargets(),
-        patches = this.attackPatches(a),
-        hits = (u) =>
-          a.kind === 'line'
-            ? a.count === 2
-              ? [-85, 85].some(
-                  (o) =>
-                    this.distanceToSegment(
-                      u,
-                      {
-                        x: a.fromX + Math.cos(a.angle + Math.PI / 2) * o,
-                        y: a.fromY + Math.sin(a.angle + Math.PI / 2) * o,
-                      },
-                      {
-                        x: a.x + Math.cos(a.angle + Math.PI / 2) * o,
-                        y: a.y + Math.sin(a.angle + Math.PI / 2) * o,
-                      },
-                    ) < R.combatGeometry.dualLineHalfWidth,
-                )
-              : this.distanceToSegment(u, { x: a.fromX, y: a.fromY }, a) <
-                R.combatGeometry.lineHalfWidth
-            : ['cone', 'sector'].includes(a.kind)
-              ? dist(u, a) < a.radius &&
-                Math.cos(Math.atan2(u.y - a.y, u.x - a.x) - a.angle) >
-                  (a.kind === 'sector' ? Math.cos(0.65) : Math.cos(1.1))
-              : patches.some((p) => dist(u, p) < p.radius);
-      for (const u of party)
-        if (hits(u) && this.line(e, u)) {
-          if (
-            this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0) &&
-            ['cone', 'sector'].includes(a.kind)
-          )
-            this.event('melee', {
-              actor: 'enemy',
-              source: e.id,
-              species: e.species,
-              family: e.family,
-              boss: e.type === 'boss',
-              x: u.x,
-              y: u.y,
-              target: u === this.hero ? 'hero' : u.id,
-            });
-          if (a.slow || a.slowDuration) u.slow = Math.max(u.slow || 0, a.slowDuration || 4);
-          if (party[0] !== this.hero || this.s.challenge.pending || this.s.challenge.gameOver)
-            return;
-        }
-      if (a.persistent)
-        for (const p of patches)
-          this.s.hazards.push({
-            ...p,
-            family: e.family,
-            species: e.species,
-            kind: 'circle',
-            life: 4,
-            tick: 1,
-            damage: e.damage * 0.25,
-          });
-    }
-    advanceMotion(e, dt) {
-      const a = e.motion;
-      if (!a) return;
-      const hero = this.hero,
-        zone = this.zoneId,
-        before = { x: e.x, y: e.y };
-      a.life -= dt;
-      const moved = this.move(e, a.target, a.speed || a.pounceSpeed || 450, dt);
-      if (a.charge)
-        for (const u of this.combatTargets()) {
-          const id = u === this.hero ? 'hero' : u.id;
-          if (
-            !a.hit.includes(id) &&
-            this.distanceToSegment(u, before, e) < R.combatGeometry.chargeHalfWidth &&
-            this.line(e, u)
-          ) {
-            a.hit.push(id);
-            this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0);
-            if (
-              this.hero !== hero ||
-              this.zoneId !== zone ||
-              this.s.challenge.pending ||
-              this.s.challenge.gameOver ||
-              e.hp <= 0
-            )
-              return;
-          }
-        }
-      if (dist(e, a.target) < 1 || !moved || a.life <= 0) {
-        if (a.landing && dist(e, a.target) < 20) this.resolveArea(e, a);
-        e.motion = null;
-        e.cd =
-          a.recovery *
-          (e.type === 'boss' ? R.bossCadence.specialRecoveryMultiplier : 1) *
-          (e.frenzy ? R.ringleaderScaling.frenzyCooldown : 1);
-        if (a.opening)
-          e.open = e.form === 'true' && e.family === 'citadel' ? a.opening / 2 : a.opening;
-        e.telegraph = e.sequence?.shift() || null;
-        if (e.telegraph) this.event('warning', { family: e.family });
-        else e.basicDue = e.type === 'boss' && e.attackIndex % R.bossCadence.skillsPerBasic === 0;
-      }
-    }
 
-    distanceToSegment(p, a, b) {
-      const dx = b.x - a.x,
-        dy = b.y - a.y,
-        t = clamp(((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy || 1), 0, 1);
-      return dist(p, { x: a.x + t * dx, y: a.y + t * dy });
-    }
-    updateProjectiles(dt) {
-      const hero = this.hero;
-      for (const p of [...this.s.projectiles]) {
-        if (p.delay > 0) {
-          p.delay -= dt;
-          continue;
-        }
-        if (p.source === 'enemy') {
-          p.life -= dt;
-          const before = { x: p.x, y: p.y };
-          p.x += p.dx * p.speed * dt;
-          p.y += p.dy * p.speed * dt;
-          if (!this.clearSegment(before, p, 0)) {
-            this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
-            continue;
-          }
-          const victim = this.combatTargets().find(
-            (u) => this.distanceToSegment(u, before, p) < 22,
-          );
-          if (victim) {
-            if (this.hitParty(victim, p.damage, p.manaDrain || 0) && p.slow)
-              victim.slow = Math.max(victim.slow || 0, p.slow);
-            this.event('projectileImpact', {
-              actor: 'enemy',
-              source: p.sourceId || 'enemy',
-              species: p.species,
-              style: p.style || 'arrow',
-              x: victim.x,
-              y: victim.y,
-              target: victim === this.hero ? 'hero' : victim.id,
-            });
-            p.life = 0;
-          }
-          if (p.life <= 0 || !this.line(before, p) || this.peace)
-            this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
-          if (this.hero !== hero || this.s.challenge.pending || this.s.challenge.gameOver) return;
-          continue;
-        }
-        const e = this.zone().enemies.find((e) => e.id === p.target && e.hp > 0 && !e.neutral);
-        if (!e || this.peace) {
-          this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
-          continue;
-        }
-        const before = { x: p.x, y: p.y },
-          d = dist(p, e),
-          step = Math.min(p.speed * dt, d);
-        p.dx = (e.x - p.x) / Math.max(1, d);
-        p.dy = (e.y - p.y) / Math.max(1, d);
-        p.x += p.dx * step;
-        p.y += p.dy * step;
-        if (!this.clearSegment(before, p, 0)) {
-          this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
-          continue;
-        }
-        if (d < step + 15) {
-          const landed = this.damage(e, p.damage, p.source);
-          if (landed && p.basicComboFinisher)
-            this.basicComboFinisher(
-              e,
-              { x: p.finisherFromX, y: p.finisherFromY },
-              p.finisherBaseDamage,
-              p.source,
-              p.comboClass || this.hero.class,
-            );
-          if (p.slow) e.slow = Math.max(e.slow || 0, p.slow);
-          this.event('projectileImpact', {
-            actor: p.source === 'hero' ? 'hero' : 'companion',
-            class: p.source === 'hero' ? this.hero.class : undefined,
-            role: p.source === 'hero' ? undefined : 'archer',
-            source: p.source,
-            style: p.style || 'arrow',
-            effect: p.effect,
-            slot: p.slot,
-            x: e.x,
-            y: e.y,
-            target: e.id,
-            charged: !!p.charged,
-          });
-          if (p.charged && (!p.rapid || p.chargedBurst))
-            this.event('chargedImpact', {
-              actor: 'hero',
-              source: 'hero',
-              x: e.x,
-              y: e.y,
-              class: this.hero.class,
-            });
-          this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
-        }
-      }
-      for (const a of [...this.s.hazards]) {
-        a.life -= dt;
-        a.tick -= dt;
-        a.age = (a.age || 0) + dt;
-        if (a.kind === 'ring') {
-          a.radius = a.age * R.combatGeometry.ringSpeed;
-          for (const u of this.combatTargets()) {
-            const id = u === this.hero ? 'hero' : u.id;
-            if (
-              !a.hit.includes(id) &&
-              Math.abs(dist(u, a) - a.radius) < R.combatGeometry.ringHalfWidth &&
-              this.line(a, u)
-            ) {
-              a.hit.push(id);
-              this.hitParty(u, a.damage, a.manaDrain || 0);
-            }
-          }
-        } else if (a.tick <= 0) {
-          a.tick = 1;
-          for (const u of this.combatTargets())
-            if (dist(u, a) < a.radius && this.line({ x: a.fromX ?? a.x, y: a.fromY ?? a.y }, u)) {
-              this.hitParty(u, a.damage, a.manaDrain || 0);
-              if (a.slow) u.slow = 3;
-            }
-        }
-        if (a.life <= 0 || this.peace) this.s.hazards.splice(this.s.hazards.indexOf(a), 1);
-        if (hero !== this.hero || this.s.challenge.pending || this.s.challenge.gameOver) return;
-      }
-    }
     fieldTrueSpawnPoint(base) {
       const size = this.definition().size,
         i = this.regionIndex(),
@@ -5264,8 +3068,7 @@
                     hp: p.base.baseHp * R.ringleaderScaling.hp,
                     damage: p.base.baseDamage * R.ringleaderScaling.damage,
                     level: p.base.level + 2,
-                    gold: p.base.gold * 1.5,
-                    xp: p.base.xp * 1.5,
+                    ...this.ringleaderRewards(p.base),
                   },
                   point,
                 );
@@ -5571,8 +3374,7 @@
                   level: i * 3 + 2,
                   hp: Math.round((120 + i * 100) * cfg.hp),
                   damage: Math.round((12 + i * 7) * cfg.damage),
-                  gold: D.regions[i].gold_range[0],
-                  xp: D.regions[i].enemy_xp,
+                  ...this.regionalEnemyRewards(i, 'night'),
                 },
                 p,
               );
@@ -5623,6 +3425,22 @@
     expeditionCeilings,
     dungeonIds,
   });
+  const Combat = typeof PrototypeCombat !== 'undefined' ? PrototypeCombat : require('./combat.js');
+  Combat.install(Campaign, { R });
+  const HeroCombat =
+    typeof PrototypeHeroCombat !== 'undefined' ? PrototypeHeroCombat : require('./hero-combat.js');
+  HeroCombat.install(Campaign, { R });
+  const BossCombat =
+    typeof PrototypeBossCombat !== 'undefined' ? PrototypeBossCombat : require('./boss-combat.js');
+  BossCombat.install(Campaign, { R });
+  const Party = typeof PrototypeParty !== 'undefined' ? PrototypeParty : require('./party.js');
+  Party.install(Campaign, { D, R });
+  const Economy =
+    typeof PrototypeEconomy !== 'undefined' ? PrototypeEconomy : require('./economy.js');
+  Economy.install(Campaign, { D, R, dungeonIds });
+  const Rewards =
+    typeof PrototypeRewards !== 'undefined' ? PrototypeRewards : require('./rewards.js');
+  Rewards.install(Campaign, { D, R, dungeonIds });
   Campaign.rules = R;
   Campaign.data = D;
   Campaign.classes = classes;

@@ -1,8 +1,10 @@
 # Recorded playback, mixing and audition · v0.8.89
 
+**The production score and game menu sound are activated in v0.8.90. See [AUDIO_SOUND_PASS.md](AUDIO_SOUND_PASS.md). The implementation contracts below remain current; statements about an empty registry and unchanged menu behavior describe the preceding engineering phase.**
+
 Joel authorized the next engineering phase after the v0.8.88 audio housekeeping. The multi-file Web Audio stack is retained. This release makes recordings and contextual production practical without composing or activating a replacement soundtrack. Warm fantasy remains the broad direction; existing regional canon and all eleven boss identities must guide the later creative pilot.
 
-## Current experience
+## Historical v0.8.89 experience
 
 The game keeps the original 14 synthesized themes, peaceful/night/TRUE arrangements, effect recipes, cue selection, settings defaults and menu suspension. The recorded production registry is empty. No game save, mechanics, costs, map, collision, sprite or approved game layout changes.
 

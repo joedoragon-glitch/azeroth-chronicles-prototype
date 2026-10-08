@@ -4,6 +4,7 @@ const fs = require('node:fs'),
   cp = require('node:child_process');
 const quick = new Set([
   'architecture',
+  'campaign-domains',
   'platform-runtime',
   'input',
   'game',

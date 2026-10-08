@@ -61,6 +61,11 @@
             compressor.connect(this.ctx.destination);
             for (const key of ['music', 'ambience', 'effects', 'interface'])
               this.buses[key].connect(this.buses.master);
+            this.buildStudio();
+            if (this.production) {
+              compressor.threshold.value = -14;
+              compressor.ratio.value = 3.5;
+            }
             this.applySettings();
             this.next = this.ctx.currentTime + 0.05;
             this.clock = root.setInterval(() => this.schedule(), 25);
@@ -92,6 +97,7 @@
           this.recordingEpoch = (this.recordingEpoch || 0) + 1;
           this.recordedRequest = (this.recordedRequest || 0) + 1;
           this.recordedCueKey = null;
+          this.productionKey = null;
         }
         if (!this.ctx) return;
         if (paused) {
@@ -138,9 +144,10 @@
         filterType = 'bandpass',
         frequency = 1200,
         q = 0.7,
+        bus = 'effects',
       ) {
         const priority = this.sourcePriority ?? 1;
-        if (!this.ctx || !this.buses?.effects || !this.reserveVoice(priority)) return;
+        if (!this.ctx || !this.buses?.[bus] || !this.reserveVoice(priority)) return;
         const length = Math.max(8, Math.floor(this.ctx.sampleRate * duration)),
           buffer = this.ctx.createBuffer(1, length, this.ctx.sampleRate),
           data = buffer.getChannelData(0);
@@ -156,8 +163,8 @@
         gain.gain.exponentialRampToValueAtTime(0.0001, at + duration);
         source.connect(filter);
         filter.connect(gain);
-        gain.connect(this.buses.effects);
-        const voice = { osc: source, filter, gain, bus: 'effects', score: null, priority };
+        gain.connect(this.buses[bus]);
+        const voice = { osc: source, filter, gain, bus, score: null, priority };
         this.voices.add(voice);
         source.onended = () => {
           source.disconnect();
@@ -193,6 +200,13 @@
         osc.stop(at + duration + 0.03);
       }
       dispose() {
+        for (const node of Object.values(this.studio || {})) node.disconnect();
+        this.studio = null;
+        this.productionKey = null;
+        this.productionIntensity = null;
+        this.nextSceneDetail = 0;
+        this.combatUntil = 0;
+        this.stepDistance = 0;
         this.manifestController?.abort();
         this.recordingEpoch = (this.recordingEpoch || 0) + 1;
         this.stopRecordedScore(0);

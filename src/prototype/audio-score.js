@@ -49,6 +49,8 @@
           boss: boss ? { family: boss.family, form: boss.form, name: boss.name } : null,
           engaged: engaged.length,
           lowHealth: hero.hp > 0 && hero.hp / hero.maxHp <= 0.25,
+          started: activity.started !== false,
+          gameOver: !!campaign.s.challenge.gameOver,
         };
       }
       choose(campaign) {
@@ -86,6 +88,7 @@
         const selected = this.choose(campaign),
           key = JSON.stringify(selected);
         this.updateRecordedCue(this.context);
+        this.updateProduction(this.context);
         if (this.key === key) return;
         const sameScore = this.cue?.id === selected.id && this.cue?.peace === selected.peace;
         this.key = key;

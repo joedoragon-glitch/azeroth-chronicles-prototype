@@ -37,6 +37,7 @@ const root = path.resolve(__dirname, '..'),
         '.css': 'text/css',
         '.json': 'application/json',
         '.wav': 'audio/wav',
+        '.mp3': 'audio/mpeg',
       };
     res.setHeader('Content-Type', types[ext] || 'text/html');
     fs.createReadStream(file).pipe(res);
@@ -124,11 +125,41 @@ const root = path.resolve(__dirname, '..'),
         await page.waitForFunction(
           () =>
             AudioAudition.audio.recordingManifest &&
-            Object.keys(AudioAudition.audio.recordingManifest.assets).length === 0,
+            Object.keys(AudioAudition.audio.recordingManifest.assets).length === 83,
         );
         await press('#record-play');
-        assert((await page.locator('#message').textContent()).includes('No production recording'));
-        assert.equal(await page.evaluate(() => AudioAudition.audio.recordedScore), null);
+        await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'place-vale');
+        assert((await page.locator('#message').textContent()).includes('Playing place-vale'));
+
+        if (!phone) {
+          const decoded = await page.evaluate(async () => {
+            const a = AudioAudition.audio,
+              output = [];
+            a.stopRecordedScore();
+            for (const id of Object.keys(a.recordingManifest.assets)) {
+              const item = await a.recordingAssets.load(id);
+              let peak = 0,
+                sum = 0;
+              for (const n of item.buffer.getChannelData(0)) {
+                if (!Number.isFinite(n)) throw Error('Nonfinite ' + id);
+                peak = Math.max(peak, Math.abs(n));
+                sum += n * n;
+              }
+              output.push({
+                id,
+                peak,
+                rms: Math.sqrt(sum / item.buffer.length),
+                bytes: a.recordingAssets.bytes,
+              });
+            }
+            return output;
+          });
+          assert.equal(decoded.length, 83);
+          for (const item of decoded) {
+            assert(item.peak < 0.98 && item.rms > 0.005, item.id);
+            assert(item.bytes <= 32 * 1024 * 1024, item.id);
+          }
+        }
 
         // Actual decode + OfflineAudioContext render: synchronized samples remain finite, audible and below clipping.
         const output = await page.evaluate(async () => {
@@ -183,8 +214,10 @@ const root = path.resolve(__dirname, '..'),
         await page.waitForFunction(() => window.AudioAudition?.audio.recordingManifest);
         assert.equal(await page.title(), 'Azeroth Chronicles · Audio audition');
         assert.equal(outageRequests, 0);
-        await press('#stem-play');
-        await page.waitForFunction(() => AudioAudition.audio.recordedScore?.voices.length === 2);
+        await page.locator('#source').selectOption('production');
+        await press('#record-play');
+        await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'place-vale');
+        assert.equal(outageRequests, 0);
         await press('#stop');
         assert.equal(await page.evaluate(() => AudioAudition.audio.voices.size), 0);
         await press('#record-play');

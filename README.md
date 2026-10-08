@@ -1,4 +1,4 @@
-# Azeroth Chronicles · v0.8.89
+# Azeroth Chronicles · v0.8.90
 
 An offline-capable RPG across five regions, ten settlements and five main dungeons. Rescue the specialists, build your expedition, and challenge the Dark Lord. The regime's currency is **crowns**.
 
@@ -13,11 +13,11 @@ Automatic selection uses pointer capabilities, including a mouse/trackpad on a t
 
 Choose a Standard run or the optional Succession challenge, then Paladin, Mage or Ranger. Normal and Nightmare have independent saves. Nightmare unlocks after the peaceful ending. Updates preserve local campaigns and adopt the tested published build automatically; a manual update check is also available in settings.
 
-## Audio playback and audition · v0.8.89
+## Contextual soundtrack · v0.8.90
 
-The audio engine now supports verified recordings, bounded lazy decoding, synchronized loop stems, bar-aligned fades, contextual cue rules, warning/UI priorities, independent interface mixing and quiet/phone comparison profiles. Current game music, effects, menus and saves remain the baseline while the production recording registry is empty.
+An original warm-fantasy score now follows the hero through all five regions, main dungeons, treasuries and side interiors. Night, settlement and peaceful arrangements change the mood; combat adds a synchronized rhythm layer, and each of the eleven bosses has its own theme and TRUE-form layer. Menus have soft musical backing and distinct selection/confirmation sounds. Footsteps follow actual movement and surface type, with sparse local ambience.
 
-[Open the audio audition room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) to compare current locations/boss forms, diagnostic loops and listening mixes. It does not read or write game saves. Diagnostic tones verify playback and are not proposed soundtrack content. See `docs/AUDIO_PLAYBACK.md` for engineering contracts and measured limits; the contextual creative pilot comes next.
+[Open the audio audition room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) to compare the new score with the original sound, hear individual tracks and inspect listening mixes. It never reads or writes game saves. Music, ambience, effects and interface volumes are adjustable; phone and quiet mixes are available. See `docs/AUDIO_SOUND_PASS.md` for coverage and `docs/AUDIO_PLAYBACK.md` for playback contracts.
 
 ## Regional handoff foundations · v0.8.87
 

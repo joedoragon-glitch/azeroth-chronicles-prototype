@@ -107,7 +107,17 @@ function harness() {
   };
   root.window = root;
   vm.createContext(root);
-  for (const file of ['audio-catalog', 'audio-assets', 'audio-mixer', 'audio-runtime', 'audio-score', 'audio-effects', 'audio-recordings', 'audio'])
+  for (const file of [
+    'audio-catalog',
+    'audio-assets',
+    'audio-mixer',
+    'audio-runtime',
+    'audio-score',
+    'audio-effects',
+    'audio-recordings',
+    'audio-production',
+    'audio',
+  ])
     vm.runInContext(
       fs.readFileSync(path.join(__dirname, '../src/prototype', file + '.js'), 'utf8'),
       root,

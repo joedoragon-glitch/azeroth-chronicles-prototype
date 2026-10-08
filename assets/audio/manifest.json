@@ -1,4 +1,1333 @@
 {
   "schemaVersion": 1,
-  "assets": {}
+  "assets": {
+    "place-vale": {
+      "kind": "music",
+      "src": "./assets/audio/music/place-vale.mp3",
+      "duration": 21.1695625,
+      "sha256": "6d04c690b498b66714bf65e7d872714e498e40c7c57e7317848c1aeaf12dbf17",
+      "loop": {
+        "start": 0.15,
+        "end": 21.0195625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Orchard Roads",
+      "bpm": 92
+    },
+    "action-vale": {
+      "kind": "music",
+      "src": "./assets/audio/music/action-vale.mp3",
+      "duration": 21.1695625,
+      "sha256": "f4cd716563ad44358602aa82a31903b03d4fee1f18eef3469365eeb9cdbb90be",
+      "loop": {
+        "start": 0.15,
+        "end": 21.0195625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Orchard Roads \u2014 encounter",
+      "bpm": 92
+    },
+    "peace-vale": {
+      "kind": "music",
+      "src": "./assets/audio/music/peace-vale.mp3",
+      "duration": 21.1695625,
+      "sha256": "b1ab8a2f178c6a4daac27c92d0e9c65ea709ca16ab581727c83cec76f1bb25fc",
+      "loop": {
+        "start": 0.15,
+        "end": 21.0195625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Orchard Roads \u2014 after liberation",
+      "bpm": 92
+    },
+    "place-march": {
+      "kind": "music",
+      "src": "./assets/audio/music/place-march.mp3",
+      "duration": 23.714625,
+      "sha256": "54899cda7729f92ea0de7dd6f821baa320b377d52eacf6bc8ec4a0f7bf189fed",
+      "loop": {
+        "start": 0.15,
+        "end": 23.564625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Reedwater",
+      "bpm": 82
+    },
+    "action-march": {
+      "kind": "music",
+      "src": "./assets/audio/music/action-march.mp3",
+      "duration": 23.714625,
+      "sha256": "b0721310ce0a8b39794a7fbc4fe18f442da4fa589d7a43cc44872b871aa51a90",
+      "loop": {
+        "start": 0.15,
+        "end": 23.564625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Reedwater \u2014 encounter",
+      "bpm": 82
+    },
+    "peace-march": {
+      "kind": "music",
+      "src": "./assets/audio/music/peace-march.mp3",
+      "duration": 23.714625,
+      "sha256": "1a0dbb9a9f9603e9c962e1308d35f27f6ffd26fa5b5ea3b2fac2532102b14a93",
+      "loop": {
+        "start": 0.15,
+        "end": 23.564625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Reedwater \u2014 after liberation",
+      "bpm": 82
+    },
+    "place-highlands": {
+      "kind": "music",
+      "src": "./assets/audio/music/place-highlands.mp3",
+      "duration": 22.1181875,
+      "sha256": "2bf93d9c242190cef584408b77e6cfa0f0cb950edb7f698e8b6b688772b15ea8",
+      "loop": {
+        "start": 0.15,
+        "end": 21.9681875
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Payday on the Ridge",
+      "bpm": 88
+    },
+    "action-highlands": {
+      "kind": "music",
+      "src": "./assets/audio/music/action-highlands.mp3",
+      "duration": 22.1181875,
+      "sha256": "1ade63bbb0974c8dbaffc5d3b5b8f032cfb8436605e306cfd9217d3f490d4e29",
+      "loop": {
+        "start": 0.15,
+        "end": 21.9681875
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Payday on the Ridge \u2014 encounter",
+      "bpm": 88
+    },
+    "peace-highlands": {
+      "kind": "music",
+      "src": "./assets/audio/music/peace-highlands.mp3",
+      "duration": 22.1181875,
+      "sha256": "9603795b38402e51fb2520559c79c2060d0f404b08dd454661d84632a69cd211",
+      "loop": {
+        "start": 0.15,
+        "end": 21.9681875
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Payday on the Ridge \u2014 after liberation",
+      "bpm": 88
+    },
+    "place-frontier": {
+      "kind": "music",
+      "src": "./assets/audio/music/place-frontier.mp3",
+      "duration": 20.3,
+      "sha256": "d99a34fb2db65f9cdaa52b34964044778732434a31b82527fc69a29408b2554c",
+      "loop": {
+        "start": 0.15,
+        "end": 20.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Embers Still Warm",
+      "bpm": 96
+    },
+    "action-frontier": {
+      "kind": "music",
+      "src": "./assets/audio/music/action-frontier.mp3",
+      "duration": 20.3,
+      "sha256": "8870b47b015563168ad1d86a9d0b48164d7f272546962229ac615f9b79dd3bd5",
+      "loop": {
+        "start": 0.15,
+        "end": 20.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Embers Still Warm \u2014 encounter",
+      "bpm": 96
+    },
+    "peace-frontier": {
+      "kind": "music",
+      "src": "./assets/audio/music/peace-frontier.mp3",
+      "duration": 20.3,
+      "sha256": "30a580fe2729a07f62c789d4fdc63866d598a6a7284eb975ae9de93d182d4cda",
+      "loop": {
+        "start": 0.15,
+        "end": 20.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Embers Still Warm \u2014 after liberation",
+      "bpm": 96
+    },
+    "place-crown": {
+      "kind": "music",
+      "src": "./assets/audio/music/place-crown.mp3",
+      "duration": 23.15715625,
+      "sha256": "72cd7f217bf2c48bd5dd7b1f86ce110d2ecbce8ed0aac792d4309720093ca50f",
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Roads Beneath the Banner",
+      "bpm": 84
+    },
+    "action-crown": {
+      "kind": "music",
+      "src": "./assets/audio/music/action-crown.mp3",
+      "duration": 23.15715625,
+      "sha256": "69fb37bcad389e19d06dd2c37ed9bc326247f7f4bd7769115989645f64492c8c",
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Roads Beneath the Banner \u2014 encounter",
+      "bpm": 84
+    },
+    "peace-crown": {
+      "kind": "music",
+      "src": "./assets/audio/music/peace-crown.mp3",
+      "duration": 23.15715625,
+      "sha256": "b294152d59ae0d118b5f29bc60ccf7df1c16fd02a3bcee2ce06d47b798c19b7c",
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Roads Beneath the Banner \u2014 after liberation",
+      "bpm": 84
+    },
+    "place-crypt": {
+      "kind": "music",
+      "src": "./assets/audio/music/place-crypt.mp3",
+      "duration": 23.15715625,
+      "sha256": "37bec396188ea330ec3035d65262d85167793cbde57121ce68357dad8ab28adf",
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "The Unfinished Retreat",
+      "bpm": 84
+    },
+    "action-crypt": {
+      "kind": "music",
+      "src": "./assets/audio/music/action-crypt.mp3",
+      "duration": 23.15715625,
+      "sha256": "5d80b26969b85b6804cd5bfc7992b5e732ccc46e9c66517aa2e5d2e5e011e44e",
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "The Unfinished Retreat \u2014 encounter",
+      "bpm": 84
+    },
+    "peace-crypt": {
+      "kind": "music",
+      "src": "./assets/audio/music/peace-crypt.mp3",
+      "duration": 23.15715625,
+      "sha256": "780050aa4b5104fb5ef76dc522ac401578aa61caa19c5ba701b342f4d0f05390",
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "The Unfinished Retreat \u2014 after liberation",
+      "bpm": 84
+    },
+    "place-archive": {
+      "kind": "music",
+      "src": "./assets/audio/music/place-archive.mp3",
+      "duration": 22.62559375,
+      "sha256": "228da5927dda783edb071902bebc9d2dfee1f5a46bccf68657b32a82b81e1b63",
+      "loop": {
+        "start": 0.15,
+        "end": 22.47559375
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Restoration After Rain",
+      "bpm": 86
+    },
+    "action-archive": {
+      "kind": "music",
+      "src": "./assets/audio/music/action-archive.mp3",
+      "duration": 22.62559375,
+      "sha256": "d7a0c4f792659799f8e5362888b39e72abfa1e4965a7b926a313d79ff5108dd4",
+      "loop": {
+        "start": 0.15,
+        "end": 22.47559375
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Restoration After Rain \u2014 encounter",
+      "bpm": 86
+    },
+    "peace-archive": {
+      "kind": "music",
+      "src": "./assets/audio/music/peace-archive.mp3",
+      "duration": 22.62559375,
+      "sha256": "75d564cb8ad5ce6d023e0a16bf0568ba75b064092f45cee5ca18a355d389b2e2",
+      "loop": {
+        "start": 0.15,
+        "end": 22.47559375
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Restoration After Rain \u2014 after liberation",
+      "bpm": 86
+    },
+    "place-mine": {
+      "kind": "music",
+      "src": "./assets/audio/music/place-mine.mp3",
+      "duration": 20.3,
+      "sha256": "39587fb7f13dcce789f50dbb3d0b2c2e86813237ba2c9b65f00fc96d09c8945c",
+      "loop": {
+        "start": 0.15,
+        "end": 20.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Veins and Old Stone",
+      "bpm": 96
+    },
+    "action-mine": {
+      "kind": "music",
+      "src": "./assets/audio/music/action-mine.mp3",
+      "duration": 20.3,
+      "sha256": "456a5eb4f0f99b44f54e2f262c41d8c2fadd817c04e84b55a8d2e7660f77c1ba",
+      "loop": {
+        "start": 0.15,
+        "end": 20.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Veins and Old Stone \u2014 encounter",
+      "bpm": 96
+    },
+    "peace-mine": {
+      "kind": "music",
+      "src": "./assets/audio/music/peace-mine.mp3",
+      "duration": 20.3,
+      "sha256": "20dc02cfa815478fe9cd490cf128fcbe66f671fa97d0f04092023102bf83038f",
+      "loop": {
+        "start": 0.15,
+        "end": 20.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Veins and Old Stone \u2014 after liberation",
+      "bpm": 96
+    },
+    "place-abyss": {
+      "kind": "music",
+      "src": "./assets/audio/music/place-abyss.mp3",
+      "duration": 20.3,
+      "sha256": "977f6b6194e63d595b64465880e024500e1d004d246802b27cbed4b4887c4cae",
+      "loop": {
+        "start": 0.15,
+        "end": 20.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Purple Wings",
+      "bpm": 96
+    },
+    "action-abyss": {
+      "kind": "music",
+      "src": "./assets/audio/music/action-abyss.mp3",
+      "duration": 20.3,
+      "sha256": "172e03c3c0d3038548f871c3e369fa70dafba0d0e6176513e3895d0362743120",
+      "loop": {
+        "start": 0.15,
+        "end": 20.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Purple Wings \u2014 encounter",
+      "bpm": 96
+    },
+    "peace-abyss": {
+      "kind": "music",
+      "src": "./assets/audio/music/peace-abyss.mp3",
+      "duration": 20.3,
+      "sha256": "21e52d02e87cb50a6ab9079d92a90905bf273ba0d30c2c47c1d6b8bfa8ddcb14",
+      "loop": {
+        "start": 0.15,
+        "end": 20.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Purple Wings \u2014 after liberation",
+      "bpm": 96
+    },
+    "place-citadel": {
+      "kind": "music",
+      "src": "./assets/audio/music/place-citadel.mp3",
+      "duration": 22.1181875,
+      "sha256": "7ecf81ddd9a21580db9207b8f8c42f5ad57389ae98d7b1f50576c52af69f93f7",
+      "loop": {
+        "start": 0.15,
+        "end": 21.9681875
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "The Machinery of Rule",
+      "bpm": 88
+    },
+    "action-citadel": {
+      "kind": "music",
+      "src": "./assets/audio/music/action-citadel.mp3",
+      "duration": 22.1181875,
+      "sha256": "402baa365931e6aa555d45265aa0a04e9e7ae918514d2e250489adf8066e0e23",
+      "loop": {
+        "start": 0.15,
+        "end": 21.9681875
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "The Machinery of Rule \u2014 encounter",
+      "bpm": 88
+    },
+    "peace-citadel": {
+      "kind": "music",
+      "src": "./assets/audio/music/peace-citadel.mp3",
+      "duration": 22.1181875,
+      "sha256": "77b3625157ec3905a9d659829fe135e894fb62d18e457990c80b8f22b49d3f67",
+      "loop": {
+        "start": 0.15,
+        "end": 21.9681875
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "The Machinery of Rule \u2014 after liberation",
+      "bpm": 88
+    },
+    "interior-supply-vale": {
+      "kind": "music",
+      "src": "./assets/audio/music/interior-supply-vale.mp3",
+      "duration": 21.1695625,
+      "sha256": "670f0148f3d4655c6dd17e253b5456e2100785ff65c1a7089e8674a172a237a1",
+      "loop": {
+        "start": 0.15,
+        "end": 21.0195625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Thornfang's Treasury",
+      "bpm": 92
+    },
+    "interior-supply-march": {
+      "kind": "music",
+      "src": "./assets/audio/music/interior-supply-march.mp3",
+      "duration": 23.714625,
+      "sha256": "6bce7111b8e922ee0530947fd76ba49ca0920583fb519fa19543c6558fc7a723",
+      "loop": {
+        "start": 0.15,
+        "end": 23.564625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Mirejaw's Treasury",
+      "bpm": 82
+    },
+    "interior-supply-highlands": {
+      "kind": "music",
+      "src": "./assets/audio/music/interior-supply-highlands.mp3",
+      "duration": 22.1181875,
+      "sha256": "7f2165a88bd12073e3d5219ef80437d141dd4f2ce581e0636ffa3afcd60eb3e6",
+      "loop": {
+        "start": 0.15,
+        "end": 21.9681875
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Ridge Tyrant's Treasury",
+      "bpm": 88
+    },
+    "interior-supply-crown": {
+      "kind": "music",
+      "src": "./assets/audio/music/interior-supply-crown.mp3",
+      "duration": 23.15715625,
+      "sha256": "ac7ec304b81e27505a3630e3c0f9b1f62398ac57fdaf42472802c6199b9509bf",
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Cindermaw's Treasury",
+      "bpm": 84
+    },
+    "interior-side-vale-cellars": {
+      "kind": "music",
+      "src": "./assets/audio/music/interior-side-vale-cellars.mp3",
+      "duration": 21.1695625,
+      "sha256": "5dbc7ff12caecd56407ed963b369052bcfe25d4a16a7647f0eaff64a27652a38",
+      "loop": {
+        "start": 0.15,
+        "end": 21.0195625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Old Orchard Cellars",
+      "bpm": 92
+    },
+    "interior-side-march-watchhouse": {
+      "kind": "music",
+      "src": "./assets/audio/music/interior-side-march-watchhouse.mp3",
+      "duration": 23.714625,
+      "sha256": "684632e502431e92cde1d6560814373e8b0323077d56a3d1a025bbb883f45a41",
+      "loop": {
+        "start": 0.15,
+        "end": 23.564625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Drowned Watchhouse",
+      "bpm": 82
+    },
+    "interior-side-highlands-signal": {
+      "kind": "music",
+      "src": "./assets/audio/music/interior-side-highlands-signal.mp3",
+      "duration": 22.1181875,
+      "sha256": "aac8df1a96c9c48cecdecf088313331ed8fe0d5a878636a16b9e01d22c760a7c",
+      "loop": {
+        "start": 0.15,
+        "end": 21.9681875
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Old Signal Keep",
+      "bpm": 88
+    },
+    "interior-side-frontier-shrine": {
+      "kind": "music",
+      "src": "./assets/audio/music/interior-side-frontier-shrine.mp3",
+      "duration": 20.3,
+      "sha256": "1896d473e111a97d218eaf287b302c9cc31ed75a47d45b171f3a4f9c63a3b856",
+      "loop": {
+        "start": 0.15,
+        "end": 20.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Ruined Shrine",
+      "bpm": 96
+    },
+    "interior-side-crown-foundry": {
+      "kind": "music",
+      "src": "./assets/audio/music/interior-side-crown-foundry.mp3",
+      "duration": 23.15715625,
+      "sha256": "c69d0c9e3dde82356cbc7bc795cba20e33f88d6e0ef8aa73346bad6c35f30606",
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Ruined Foundry",
+      "bpm": 84
+    },
+    "boss-thorn": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-thorn.mp3",
+      "duration": 16.85171875,
+      "sha256": "d460a68943936cff99696e41420a6aa8521e5fa812353fdb6360b82ffb37fbd8",
+      "loop": {
+        "start": 0.15,
+        "end": 16.70171875
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Thorn Underfoot",
+      "bpm": 116
+    },
+    "boss-thorn-true": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-thorn-true.mp3",
+      "duration": 16.85171875,
+      "sha256": "48737224a70afc5753f3e3fb633c34bfa73c8948569d5413103b6702a2a9021c",
+      "loop": {
+        "start": 0.15,
+        "end": 16.70171875
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Thorn Underfoot \u2014 TRUE",
+      "bpm": 116
+    },
+    "boss-crypt": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-crypt.mp3",
+      "duration": 18.76153125,
+      "sha256": "d3dd66b31d5969ed6bd199c075e0bada6738451b18f91328066e622fa061323e",
+      "loop": {
+        "start": 0.15,
+        "end": 18.61153125
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Keeper of the Summer Keys",
+      "bpm": 104
+    },
+    "boss-crypt-true": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-crypt-true.mp3",
+      "duration": 18.76153125,
+      "sha256": "110dc20df97f10debac25795f803c5e84fca10aa3d283a1a333fab8297951b18",
+      "loop": {
+        "start": 0.15,
+        "end": 18.61153125
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Keeper of the Summer Keys \u2014 TRUE",
+      "bpm": 104
+    },
+    "boss-mire": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-mire.mp3",
+      "duration": 18.07778125,
+      "sha256": "dbdf65a9ba2e4ea4b449f9a3816958fe8282316cda32ad88b20469f6c513d7d7",
+      "loop": {
+        "start": 0.15,
+        "end": 17.92778125
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Teeth Beneath the Reeds",
+      "bpm": 108
+    },
+    "boss-mire-true": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-mire-true.mp3",
+      "duration": 18.07778125,
+      "sha256": "8504681ecd70dc7dbbe742c1bbe5d1b46456380768803fa45395a3dfe7e4b0e6",
+      "loop": {
+        "start": 0.15,
+        "end": 17.92778125
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Teeth Beneath the Reeds \u2014 TRUE",
+      "bpm": 108
+    },
+    "boss-archive": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-archive.mp3",
+      "duration": 18.07778125,
+      "sha256": "71be1e76d8e00444537f5fe4687bd375d5da160168f155be03996e170fef2a2d",
+      "loop": {
+        "start": 0.15,
+        "end": 17.92778125
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "The Scholar's Hook",
+      "bpm": 108
+    },
+    "boss-archive-true": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-archive-true.mp3",
+      "duration": 18.07778125,
+      "sha256": "51417380434bca7de2dd0223de4224867d4cdb37fb504d652ab09d0f0c71a33e",
+      "loop": {
+        "start": 0.15,
+        "end": 17.92778125
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "The Scholar's Hook \u2014 TRUE",
+      "bpm": 108
+    },
+    "boss-ridge": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-ridge.mp3",
+      "duration": 18.07778125,
+      "sha256": "8dbb6206948aaffa47c8fcb9556bf55a6d5ec47735bb047bfcd6ddaadbb06e34",
+      "loop": {
+        "start": 0.15,
+        "end": 17.92778125
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Master of Coin",
+      "bpm": 108
+    },
+    "boss-ridge-true": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-ridge-true.mp3",
+      "duration": 18.07778125,
+      "sha256": "a048c8f69fba6b20fb97beaf25fe2bc2be0bd3c394296aa9214cda0d96f2e91a",
+      "loop": {
+        "start": 0.15,
+        "end": 17.92778125
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Master of Coin \u2014 TRUE",
+      "bpm": 108
+    },
+    "boss-mine": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-mine.mp3",
+      "duration": 19.5,
+      "sha256": "7b23de2bee6cf8b2c98e3c7a030c082f06b921a8d71057805fd90f487084d785",
+      "loop": {
+        "start": 0.15,
+        "end": 19.35
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "The Mountain Remembers",
+      "bpm": 100
+    },
+    "boss-mine-true": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-mine-true.mp3",
+      "duration": 19.5,
+      "sha256": "bc269fb0c916facade7f96e86b6ab98f89e0e7beedbf6f653cd82d5432809ce8",
+      "loop": {
+        "start": 0.15,
+        "end": 19.35
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "The Mountain Remembers \u2014 TRUE",
+      "bpm": 100
+    },
+    "boss-warlord": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-warlord.mp3",
+      "duration": 16.3,
+      "sha256": "c8a179510485f91b551f5f5b05d0971bb5f51c034adb9c1b4cf21808bf9f59f0",
+      "loop": {
+        "start": 0.15,
+        "end": 16.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Orders in the Ash",
+      "bpm": 120
+    },
+    "boss-warlord-true": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-warlord-true.mp3",
+      "duration": 16.3,
+      "sha256": "41b559b0b7b49fe748785d977101e5f62e066130d8cf3ade462268f45366b08b",
+      "loop": {
+        "start": 0.15,
+        "end": 16.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Orders in the Ash \u2014 TRUE",
+      "bpm": 120
+    },
+    "boss-abyss": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-abyss.mp3",
+      "duration": 17.44284375,
+      "sha256": "3a0fcdaaf88889a52067562637fbb736353e660b93dc4fa5f8bc0a041c51efda",
+      "loop": {
+        "start": 0.15,
+        "end": 17.29284375
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "His Majesty's Wings",
+      "bpm": 112
+    },
+    "boss-abyss-true": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-abyss-true.mp3",
+      "duration": 17.44284375,
+      "sha256": "aa5e1f930a7e0ec99d84b3c195481dc8e453e583867efcbf7e734eb4760e918f",
+      "loop": {
+        "start": 0.15,
+        "end": 17.29284375
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "His Majesty's Wings \u2014 TRUE",
+      "bpm": 112
+    },
+    "boss-citadel": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-citadel.mp3",
+      "duration": 18.07778125,
+      "sha256": "006f3f01397203516a09c3d58b22a5e7210b42732d223b3bc891ed8318c10d55",
+      "loop": {
+        "start": 0.15,
+        "end": 17.92778125
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "The Last Watch",
+      "bpm": 108
+    },
+    "boss-citadel-true": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-citadel-true.mp3",
+      "duration": 18.07778125,
+      "sha256": "f5ebff1603c02bba71cec705057441c01994a976fcef658d8f8f17980f1b1d96",
+      "loop": {
+        "start": 0.15,
+        "end": 17.92778125
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "The Last Watch \u2014 TRUE",
+      "bpm": 108
+    },
+    "boss-cindermaw": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-cindermaw.mp3",
+      "duration": 16.5711875,
+      "sha256": "1342d6c1f90aa3ab94801c35480cc27cb8e82ad0682d52ef06564fbe4f2b33c7",
+      "loop": {
+        "start": 0.15,
+        "end": 16.4211875
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "The Ember Maw",
+      "bpm": 118
+    },
+    "boss-cindermaw-true": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-cindermaw-true.mp3",
+      "duration": 16.5711875,
+      "sha256": "ff71b31816de0a62d63715fbc6034c5c9928bc7bcc66b44cd800844a0d2f5280",
+      "loop": {
+        "start": 0.15,
+        "end": 16.4211875
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "The Ember Maw \u2014 TRUE",
+      "bpm": 118
+    },
+    "boss-darklord": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-darklord.mp3",
+      "duration": 18.76153125,
+      "sha256": "7e7dca4f9fc9255a819875599b2865cfea56d945ff819b2641194bb0cb383995",
+      "loop": {
+        "start": 0.15,
+        "end": 18.61153125
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Crown Without Horizon",
+      "bpm": 104
+    },
+    "boss-darklord-true": {
+      "kind": "music",
+      "src": "./assets/audio/music/boss-darklord-true.mp3",
+      "duration": 18.76153125,
+      "sha256": "3cd351dd88910bdf20499bf2c48f6d22253bddb57477057d27d993a38eb5746d",
+      "loop": {
+        "start": 0.15,
+        "end": 18.61153125
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Crown Without Horizon \u2014 TRUE",
+      "bpm": 104
+    },
+    "title": {
+      "kind": "music",
+      "src": "./assets/audio/music/title.mp3",
+      "duration": 22.1181875,
+      "sha256": "6d01955ec56706aa5ac774bbbe9751e2666af4d28786fc3c73ca4d402ddd3f09",
+      "loop": {
+        "start": 0.15,
+        "end": 21.9681875
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Azeroth Chronicles",
+      "bpm": 88
+    },
+    "finale": {
+      "kind": "music",
+      "src": "./assets/audio/music/finale.mp3",
+      "duration": 22.1181875,
+      "sha256": "9ad80f054bf86f280730f065dbfb1afd5f50be678ed01ea690ade646e5183c70",
+      "loop": {
+        "start": 0.15,
+        "end": 21.9681875
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "A Country Wakes",
+      "bpm": 88
+    },
+    "defeat": {
+      "kind": "music",
+      "src": "./assets/audio/music/defeat.mp3",
+      "duration": 23.15715625,
+      "sha256": "efb7e1d3045a59b6c4e3116c79ae1834e9db757ae74e1d45e8bde6bd232fb04e",
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "The Road Remains",
+      "bpm": 84
+    },
+    "peace-interior-supply-vale": {
+      "kind": "music",
+      "src": "./assets/audio/music/peace-interior-supply-vale.mp3",
+      "duration": 21.1695625,
+      "sha256": "46f1a9573cadbedb15e66ce891cff38d1baafeafcc6db165f03058893a25d55f",
+      "loop": {
+        "start": 0.15,
+        "end": 21.0195625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Thornfang's Treasury \u2014 after liberation",
+      "bpm": 92
+    },
+    "peace-interior-supply-march": {
+      "kind": "music",
+      "src": "./assets/audio/music/peace-interior-supply-march.mp3",
+      "duration": 23.714625,
+      "sha256": "b64c2ec298933c51d70de13e8dfcd8a6dd1f638d38d35c1a1458d16d4b94f4a7",
+      "loop": {
+        "start": 0.15,
+        "end": 23.564625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Mirejaw's Treasury \u2014 after liberation",
+      "bpm": 82
+    },
+    "peace-interior-supply-highlands": {
+      "kind": "music",
+      "src": "./assets/audio/music/peace-interior-supply-highlands.mp3",
+      "duration": 22.1181875,
+      "sha256": "c4def0d983b5a458186530628fdc303da90de9e11ac29ed555c0a87a2ad9d55b",
+      "loop": {
+        "start": 0.15,
+        "end": 21.9681875
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Ridge Tyrant's Treasury \u2014 after liberation",
+      "bpm": 88
+    },
+    "peace-interior-supply-crown": {
+      "kind": "music",
+      "src": "./assets/audio/music/peace-interior-supply-crown.mp3",
+      "duration": 23.15715625,
+      "sha256": "12d91b76948551021afd6c50fd5bf7ed14234919579c43467ab7f7f4ed5db085",
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Cindermaw's Treasury \u2014 after liberation",
+      "bpm": 84
+    },
+    "peace-interior-side-vale-cellars": {
+      "kind": "music",
+      "src": "./assets/audio/music/peace-interior-side-vale-cellars.mp3",
+      "duration": 21.1695625,
+      "sha256": "5db7e4cceba27792faf45959ba06bcdcf8580de1d4b5143c01bba716db904ac2",
+      "loop": {
+        "start": 0.15,
+        "end": 21.0195625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Old Orchard Cellars \u2014 after liberation",
+      "bpm": 92
+    },
+    "peace-interior-side-march-watchhouse": {
+      "kind": "music",
+      "src": "./assets/audio/music/peace-interior-side-march-watchhouse.mp3",
+      "duration": 23.714625,
+      "sha256": "e5cf885697db55fb4712f36cfadc8bbbe369b9779b78417c41cd26b1512628e9",
+      "loop": {
+        "start": 0.15,
+        "end": 23.564625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Drowned Watchhouse \u2014 after liberation",
+      "bpm": 82
+    },
+    "peace-interior-side-highlands-signal": {
+      "kind": "music",
+      "src": "./assets/audio/music/peace-interior-side-highlands-signal.mp3",
+      "duration": 22.1181875,
+      "sha256": "2fee5bad40c797042ecd0250e2f9101b4a4a76aa6dc032901edb292d4fc98da8",
+      "loop": {
+        "start": 0.15,
+        "end": 21.9681875
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Old Signal Keep \u2014 after liberation",
+      "bpm": 88
+    },
+    "peace-interior-side-frontier-shrine": {
+      "kind": "music",
+      "src": "./assets/audio/music/peace-interior-side-frontier-shrine.mp3",
+      "duration": 20.3,
+      "sha256": "927d9c76d9e97113dfc9f355a92224ee45c548207286fcfdc434adc1025335e8",
+      "loop": {
+        "start": 0.15,
+        "end": 20.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Ruined Shrine \u2014 after liberation",
+      "bpm": 96
+    },
+    "peace-interior-side-crown-foundry": {
+      "kind": "music",
+      "src": "./assets/audio/music/peace-interior-side-crown-foundry.mp3",
+      "duration": 23.15715625,
+      "sha256": "b4026fabbd7b04e85f6b5d2b85fd687c820f1c4932e566a9e77a2dc3713b2f86",
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Ruined Foundry \u2014 after liberation",
+      "bpm": 84
+    },
+    "settlement-vale": {
+      "kind": "music",
+      "src": "./assets/audio/music/settlement-vale.mp3",
+      "duration": 21.1695625,
+      "sha256": "3485cd97dd0e48208db0d823bf8aa47c4143476b59b0681f0c15947959d89b31",
+      "loop": {
+        "start": 0.15,
+        "end": 21.0195625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Orchard Roads \u2014 hearths and neighbors",
+      "bpm": 92
+    },
+    "night-vale": {
+      "kind": "music",
+      "src": "./assets/audio/music/night-vale.mp3",
+      "duration": 21.1695625,
+      "sha256": "3c1ce21fafcf55869a11e47618ca66bd97bdd01ee9c57b370216e1c939213aec",
+      "loop": {
+        "start": 0.15,
+        "end": 21.0195625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Orchard Roads \u2014 nightfall",
+      "bpm": 92
+    },
+    "settlement-march": {
+      "kind": "music",
+      "src": "./assets/audio/music/settlement-march.mp3",
+      "duration": 23.714625,
+      "sha256": "45f32b11aa202ed2d314ca470ff334c95f36ae47fe62c74f6b1ac227ad5a381c",
+      "loop": {
+        "start": 0.15,
+        "end": 23.564625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Reedwater \u2014 hearths and neighbors",
+      "bpm": 82
+    },
+    "night-march": {
+      "kind": "music",
+      "src": "./assets/audio/music/night-march.mp3",
+      "duration": 23.714625,
+      "sha256": "9d115e279c0a79b25578b5a13a09aab861b0aadb99c7426690b1eed647a79f9d",
+      "loop": {
+        "start": 0.15,
+        "end": 23.564625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Reedwater \u2014 nightfall",
+      "bpm": 82
+    },
+    "settlement-highlands": {
+      "kind": "music",
+      "src": "./assets/audio/music/settlement-highlands.mp3",
+      "duration": 22.1181875,
+      "sha256": "65a4f5e306a79b430cae10d9dfe301e255ed2982db78da0d3fb5bc144c7830cc",
+      "loop": {
+        "start": 0.15,
+        "end": 21.9681875
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Payday on the Ridge \u2014 hearths and neighbors",
+      "bpm": 88
+    },
+    "night-highlands": {
+      "kind": "music",
+      "src": "./assets/audio/music/night-highlands.mp3",
+      "duration": 22.1181875,
+      "sha256": "77de858afc9eaaf301a8c428e97aea87b59beb314573420f6b6f3a1a7cc3872f",
+      "loop": {
+        "start": 0.15,
+        "end": 21.9681875
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Payday on the Ridge \u2014 nightfall",
+      "bpm": 88
+    },
+    "settlement-frontier": {
+      "kind": "music",
+      "src": "./assets/audio/music/settlement-frontier.mp3",
+      "duration": 20.3,
+      "sha256": "4e3a3461bf91676adb31a9fd2eefd88eec881522bd3f6e9e3b572a9452643814",
+      "loop": {
+        "start": 0.15,
+        "end": 20.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Embers Still Warm \u2014 hearths and neighbors",
+      "bpm": 96
+    },
+    "night-frontier": {
+      "kind": "music",
+      "src": "./assets/audio/music/night-frontier.mp3",
+      "duration": 20.3,
+      "sha256": "17f2ae2b58efaf5e1267e241b516d0719ae1810b792d82008226f044b42bd7a7",
+      "loop": {
+        "start": 0.15,
+        "end": 20.15
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Embers Still Warm \u2014 nightfall",
+      "bpm": 96
+    },
+    "settlement-crown": {
+      "kind": "music",
+      "src": "./assets/audio/music/settlement-crown.mp3",
+      "duration": 23.15715625,
+      "sha256": "72c73d3af9583dafc30882ba07310009c9f43c83c5acd0869e5ed1612207e7a3",
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Roads Beneath the Banner \u2014 hearths and neighbors",
+      "bpm": 84
+    },
+    "night-crown": {
+      "kind": "music",
+      "src": "./assets/audio/music/night-crown.mp3",
+      "duration": 23.15715625,
+      "sha256": "5799a78e3705fb3638aa5d7373fd61e5a731a73332dfe4788c6bbb1695f872bf",
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "credits": {
+        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "license": "CC0-1.0"
+      },
+      "title": "Roads Beneath the Banner \u2014 nightfall",
+      "bpm": 84
+    }
+  }
 }

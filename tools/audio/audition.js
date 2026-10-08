@@ -154,6 +154,15 @@
       Object.defineProperty(campaign, 'peace', { value: $('peace').checked });
       campaign.night = () => $('night').checked;
       audio.key = null;
+      audio.enableProduction($('new-score').checked);
+      if ($('new-score').checked) {
+        const manifest =
+          registry ||
+          (await fetch(new URL('assets/audio/manifest.json', baseUrl)).then((r) => r.json()));
+        registry = manifest;
+        source = null;
+        audio.configureRecordings(manifest, { baseUrl });
+      }
       audio.update(campaign);
       $('scene-description').textContent = JSON.stringify(audio.context);
       message(
@@ -165,6 +174,7 @@
     'click',
     run(async () => {
       await gesture();
+      audio.enableProduction(false);
       await selectSource();
       const id = $('recording').value;
       if (!id) {
@@ -195,6 +205,7 @@
     'click',
     run(async () => {
       await gesture();
+      audio.enableProduction(false);
       await selectSource();
       const ok = await audio.setRecordedScore({
         id: 'diagnostic-stems',
@@ -216,6 +227,7 @@
     'click',
     run(async () => {
       await gesture();
+      audio.enableProduction(false);
       await selectSource();
       await audio.playRecording('diagnostic-click', { bus: 'interface', gain: 0.6 });
     }),
@@ -244,6 +256,7 @@
   $('stop').addEventListener('click', () => {
     action++;
     audio.dispose();
+    source = null;
     audio.cue = null;
     audio.key = null;
     message('Stopped. Choose Listen to reopen.');

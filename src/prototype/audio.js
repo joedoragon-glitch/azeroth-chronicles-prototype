@@ -10,6 +10,7 @@
         require('./audio-score.js'),
         require('./audio-effects.js'),
         require('./audio-recordings.js'),
+        require('./audio-production.js'),
       ]
     : [
         root.PrototypeAudioMixer,
@@ -17,6 +18,7 @@
         root.PrototypeAudioScore,
         root.PrototypeAudioEffects,
         root.PrototypeAudioRecordings,
+        root.PrototypeAudioProduction,
       ];
   const { themes, defaults } = catalog;
   class PrototypeAudio {

@@ -1,5 +1,5 @@
 'use strict';
-// Recorded-audio publishing contract. No production recordings are registered yet.
+// Recorded-audio publishing contract. Original score assets are registered under the bounded publishing contract.
 const fs = require('node:fs'),
   path = require('node:path'),
   crypto = require('node:crypto');

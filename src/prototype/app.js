@@ -23,7 +23,6 @@
     focused = true,
     paused = false,
     charge = null,
-    footstepTimer = 0,
     gateDismissed = false,
     criticalNoticeSeen = null,
     criticalNoticeUntil = 0,
@@ -32,7 +31,9 @@
     pointer = null;
   profile = persistence.loadProfile(profile);
   const audio = new PrototypeAudio(profile.audio);
+  audio.enableProduction();
   const platform = PrototypePlatform.init(window);
+  audio.setMixProfile(platform.mode === 'phone' ? 'phone' : 'reference');
   const input = PrototypeInput.create(localStorage, status);
   let bindingCapture = null;
   document.body.setAttribute('data-phone-layout', input.preferences.phoneLayout);
@@ -333,6 +334,7 @@
     clearInput();
     gateDismissed = false;
     menu = { title, description, actions, back };
+    audio.interfaceSound('open');
     menuIndex = 0;
     document.body.classList.add('menu-open');
     $('modal').hidden = false;
@@ -355,7 +357,7 @@
         b.append(span);
       }
       b.onclick = (e) => {
-        audio.unlock();
+        audio.unlock().then(() => audio.interfaceSound('confirm'));
         a.action();
         if (started) save();
         updateHUD();
@@ -370,10 +372,12 @@
     highlight();
   }
   function highlight() {
+    audio.interfaceSound('select');
     buttons.forEach((b, i) => b.classList.toggle('selected', i === menuIndex));
     buttons[menuIndex]?.scrollIntoView({ block: 'nearest' });
   }
   function closeMenu() {
+    audio.interfaceSound('close');
     bindingCapture = null;
     if (game.s.challenge.pending || game.s.challenge.gameOver) gateDismissed = true;
     menu = null;
@@ -382,7 +386,7 @@
     clearInput();
   }
   $('close-button').onclick = () => {
-    audio.unlock();
+    audio.unlock().then(() => audio.interfaceSound('back'));
     if (!game.s.endingAck && game.peace) {
       game.s.endingAck = true;
       save();
@@ -504,7 +508,7 @@
         '\nXP ' +
         Math.floor(h.xp) +
         ' / ' +
-        Campaign.rules.balance.growth.xpPerLevel * h.level +
+        game.xpRequired(h.level) +
         '\nHero progression only. Troops, resources and construction are managed at town Captains or your barracks.',
       [
         action('Skills and teachers', () => skillBook(characterMenu)),
@@ -638,7 +642,9 @@
                 cost === 0
                   ? 'FIRST BARRACKS FREE · Creates a nearby companion recovery base'
                   : rank >= 4
-                    ? 'One companion builds a Basic camp · optional Full upgrade costs 100 crowns'
+                    ? 'One companion builds a Basic camp · optional Full upgrade costs ' +
+                      game.barracksUpgradeCost() +
+                      ' crowns'
                     : 'One companion builds a recovery base; Full upgrade unlocks at Expedition 4',
                 game.hero.gold < cost,
               ),
@@ -707,7 +713,9 @@
       'Choose your successor',
       'The ' +
         game.hero.class +
-        ' has fallen permanently. The death penalty has already removed 20% of carried crowns; the remaining crowns, rescues, quests and boss progress survive. Your successor starts at level 1 in Millhaven and must learn their skills.',
+        ' has fallen permanently. The death penalty has already removed ' +
+        Math.round(Campaign.rules.balance.economy.deathPenaltyFraction * 100) +
+        '% of carried crowns; the remaining crowns, rescues, quests and boss progress survive. Your successor starts at level 1 in Millhaven and must learn their skills.',
       Object.entries(Campaign.classes)
         .filter(([id]) => !game.s.challenge.fallen.includes(id))
         .map(([id, c]) =>
@@ -820,7 +828,7 @@
         const i = game.regionIndex(),
           r = D.regions[i],
           target = D.regions[i + n.direction],
-          cost = n.direction === 1 ? (game.s.recovery[r.id] ? 0 : r.fare) : 0;
+          cost = game.travelFare(D.regions.indexOf(r), n.direction);
         openMenu(
           n.name,
           'Fare ' +
@@ -857,15 +865,15 @@
           persistProfile();
           soundMenu(back);
         }),
-        ...['master', 'music', 'ambience', 'effects'].flatMap((key) => [
-          action(key + ' − · ' + Math.round(s[key] * 100) + '%', () => {
-            audio.setSettings({ [key]: s[key] - 0.1 });
+        ...['master', 'music', 'ambience', 'effects', 'interface'].flatMap((key) => [
+          action(key + ' − · ' + Math.round((s[key] ?? s.effects) * 100) + '%', () => {
+            audio.setSettings({ [key]: (s[key] ?? s.effects) - 0.1 });
             profile.audio = { ...audio.settings };
             persistProfile();
             soundMenu(back);
           }),
           action(key + ' +', () => {
-            audio.setSettings({ [key]: s[key] + 0.1 });
+            audio.setSettings({ [key]: (s[key] ?? s.effects) + 0.1 });
             profile.audio = { ...audio.settings };
             persistProfile();
             soundMenu(back);
@@ -1442,8 +1450,10 @@
     if (actionId || code === 'Escape' || (menu && ['Enter', 'Space'].includes(code)))
       e.preventDefault();
     if (code === 'Escape') {
-      if (menu) menu.back();
-      else if (!started) chooseClass('normal');
+      if (menu) {
+        audio.interfaceSound('back');
+        menu.back();
+      } else if (!started) chooseClass('normal');
       else if (game.s.challenge.pending) successionMenu();
       else if (game.s.challenge.gameOver) gameOver();
       else openMain();
@@ -1458,7 +1468,8 @@
         menuIndex = (menuIndex - 1 + buttons.length) % Math.max(1, buttons.length);
         highlight();
       } else if (actionId === 'confirm' || ['Enter', 'Space'].includes(code))
-        buttons[menuIndex]?.click();
+        if (buttons[menuIndex]?.disabled) audio.interfaceSound('denied');
+        else buttons[menuIndex]?.click();
       return;
     }
     if ((paused || !focused || document.hidden) && !['pause', 'help'].includes(actionId)) return;
@@ -1671,7 +1682,7 @@
       ' crowns</span><span>XP ' +
       Math.floor(h.xp) +
       ' / ' +
-      Campaign.rules.balance.growth.xpPerLevel * h.level +
+      game.xpRequired(h.level) +
       '</span></div>';
     const heroEffects = h.supportEffects || [],
       activeRecovery = heroEffects.slice().sort((a, b) => a.seconds - b.seconds)[0];
@@ -1872,11 +1883,12 @@
         menuJoyTime = 0.3;
       }
     }
-    audio.update(
-      game,
-      paused || !!menu || !focused || document.hidden || game.s.challenge.gameOver,
-      { menu: !!menu, backgrounded: !focused || document.hidden, paused, started },
-    );
+    audio.update(game, paused || !focused || document.hidden, {
+      menu: !!menu,
+      backgrounded: !focused || document.hidden,
+      paused,
+      started,
+    });
     if (!frozen) {
       let x = (keys.right ? 1 : 0) - (keys.left ? 1 : 0) + joy.x,
         y = (keys.down ? 1 : 0) - (keys.up ? 1 : 0) + joy.y;
@@ -1907,13 +1919,12 @@
         Math.hypot(movingHero.x - was.x, movingHero.y - was.y) > 0.25
       )
         game.cast(1);
-      if (x || y || game.hero.order) {
-        footstepTimer += dt;
-        if (footstepTimer > 0.35) {
-          audio.effect('footstep');
-          footstepTimer = 0;
-        }
-      }
+      if (
+        game.hero === movingHero &&
+        game.zoneId === was.zone &&
+        game.s.statistics.deaths === was.deaths
+      )
+        audio.footstep(game, Math.hypot(movingHero.x - was.x, movingHero.y - was.y));
       if (Sprint.enabled) Sprint.hud();
       saveTimer += dt;
       if (saveTimer >= 5) {
