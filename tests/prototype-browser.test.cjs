@@ -25,9 +25,15 @@ await check('Accepted desktop/phone CSS is pixel-equivalent at fixed presentatio
  const settle=()=>page.evaluate(()=>new Promise(resolve=>{document.body.getBoundingClientRect();__layoutRestore.raf(()=>__layoutRestore.raf(resolve));}));
  let style,probe;
  try{
-   const current=await page.screenshot({animations:'disabled',caret:'hide',path:path.join(results,'accepted-css-current-'+tag+'.png')});
+   // Install both stylesheet sets through the same owner and paint path. Mixing
+   // an already composited external sheet with a freshly inserted inline sheet
+   // can change rounded-border antialiasing on Chrome without a CSS change.
+   const currentCSS=await page.evaluate(async()=>Promise.all([...document.querySelectorAll('link[rel="stylesheet"]')].map(async el=>{const response=await fetch(el.href);if(!response.ok)throw Error('Missing production CSS');return response.text();})));
    await page.evaluate(()=>document.querySelectorAll('link[rel="stylesheet"]').forEach(el=>el.sheet.disabled=true));
-   style=await page.addStyleTag({content:Object.values(baseline.css).join('\n')});
+   style=await page.addStyleTag({content:currentCSS.join('\n')});
+   await settle();
+   const current=await page.screenshot({animations:'disabled',caret:'hide',path:path.join(results,'accepted-css-current-'+tag+'.png')});
+   await style.evaluate((el,css)=>{el.textContent=css;},Object.values(baseline.css).join('\n'));
    await settle();
    const before=await page.screenshot({animations:'disabled',caret:'hide',path:path.join(results,'accepted-css-baseline-'+tag+'.png')});
    assert(current.equals(before),'accepted CSS layout pixels differ at '+tag);
