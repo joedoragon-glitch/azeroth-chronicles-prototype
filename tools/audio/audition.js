@@ -142,6 +142,11 @@
             : boss.id
         : $('place').value;
       campaign.enter(place);
+      if (boss && !campaign.zone().enemies.some((e) => e.type === 'boss' && e.family === boss.id)) {
+        // Isolated audition may stage progression-gated bosses through the canonical factory.
+        const point = campaign.safe(campaign.hero.x + 180, campaign.hero.y, place);
+        campaign.zone().enemies.push(campaign.bossEnemy(boss, 'normal', point));
+      }
       for (const enemy of campaign.zone().enemies) {
         enemy.aggro = enemy.type === 'boss' && enemy.family === boss?.id;
         if (enemy.aggro) enemy.form = $('form').value;
