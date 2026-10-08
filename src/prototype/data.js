@@ -90,11 +90,11 @@ const PrototypeData = {
       transport: 'Dragon rider',
       fare: 180,
       route:
-        "The caravan arrives at Emberwatch at (450, 500). The old damaged road has become a working occupation corridor: convoy and repair yards feed the guarded ravine crossing, inspection spurs and the Ashen Warlord's checkpoint near (2600, 1650), while a controlled supply route continues toward the Abyss Bastion at (3000, 2700) and dragon roost at (3100, 500).",
+        "The caravan arrives at Emberwatch at (450, 500). The old damaged road has become a working occupation corridor: convoy and repair yards feed the guarded ravine crossing, inspection spurs and the Ashen Warlord's checkpoint near (2600, 1650), while a supply route supports the Dark Lord’s air-superiority project at Abyss Bastion (3000, 2700); the transport dragon roost remains at (3100, 500).",
       obstacle:
         'A ravine still splits the scarred region. The guarded northern crossing and longer burned-forest route remain the practical alternatives; charred trunks, fort walls, repairs and collapsed masonry leave visible gaps rather than a healed landscape.',
       exploration:
-        'Ashen Frontier is a province recovering under oppression: Emberwatch functions under control, Burned Hamlet mixes ruins with repair and everyday survival, and roadside work yards, bivouacs, drill camps, inspection posts and checkpoint support spaces show the occupiers investing in reliable movement and supply. The Ruined Shrine barracks, ordinary-monster forts, night Stalker hold and controlled Abyss Bastion approach preserve the damage and danger beneath that new order.',
+        'Ashen Frontier is a province recovering under oppression: Emberwatch functions under control, Burned Hamlet mixes ruins with repair and everyday survival, and roadside work yards, bivouacs, drill camps, inspection posts and checkpoint support spaces show the occupiers investing in reliable movement and supply. The Ruined Shrine barracks, ordinary-monster forts, night Stalker hold and guarded approach to the Dark Lord’s dragon-breeding and flight-preparation center preserve the damage and danger beneath that new order.',
       resource: 640,
       questgold: 1200,
       questxp: 2400,

@@ -2010,6 +2010,12 @@
         }
       this.activatePending();
       this.discover('arrival');
+      const dungeonLore = R.dungeonLore?.[zone],
+        loreKey = this.definition().id + ':dungeon-lore:' + zone;
+      if (dungeonLore && !this.s.discovered[loreKey]) {
+        this.s.discovered[loreKey] = true;
+        this.say(dungeonLore);
+      }
       const side = this.sideDungeon();
       if (side && !this.s.discovered[side.region + ':side-lore:' + side.id]) {
         this.s.discovered[side.region + ':side-lore:' + side.id] = true;

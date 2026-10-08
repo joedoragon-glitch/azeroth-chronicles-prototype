@@ -34,7 +34,7 @@ test('retained named landmarks sit beside the world feature their names describe
 
 test('Ashen Frontier reads as recovery under a functioning occupation corridor',()=>{
  const c=new Campaign();c.enter('frontier');const z=c.zone(),town={x:Campaign.data.towns[3][0],y:Campaign.data.towns[3][1]},hamlet={x:Campaign.data.minors[3][0],y:Campaign.data.minors[3][1]};
- assert.equal(z.frontierLayoutVersion,2);assert.equal(z.roadVersion,10);
+ assert.equal(z.frontierLayoutVersion,3);assert.equal(z.roadVersion,10);
  assert(R.frontierRoutes.length>=5,'Frontier has separate supply, repair, inspection, checkpoint and Bastion routes');
  const routeIds=new Set(R.frontierRoutes.map(r=>r.id));assert.equal(routeIds.size,R.frontierRoutes.length);
  for(const route of R.frontierRoutes){const target={x:route.point[0],y:route.point[1]};assert(c.route(town,target).length,'route '+route.id+' is reachable');assert(z.roads.some(path=>distance(path.at(-1),target)<2),'road network reaches '+route.id);}
@@ -105,7 +105,7 @@ test('actual occupied side entrances and main dungeons have distinct geometry wi
 });
 test('Abyss Bastion procedural props and authored partitions are visually distinct',()=>{
  assert.equal(typeof Visuals.dungeonArchitecture,'function','renderer exposes authored dungeon partition geometry');
- const region=3,structures=['handler-station','feed-crate','containment-post','scorched-floor','egg-cradle','feeding-trough','carcass-rack','claw-scrape','dragon-perch'];
+ const region=3,structures=['flight-planning-table','feed-crate','flight-harness-station','scorched-floor','egg-cradle','feeding-trough','carcass-rack','claw-scrape','royal-launch-platform','royal-flight-standard'];
  const signatures=structures.map((structure,i)=>visualSignature({id:'abyss-prop-'+i,renderKind:'prop',decorative:true,structure},region));
  assert.equal(new Set(signatures).size,structures.length,'Abyss service, containment and dragon-life props have distinct silhouettes');
  for(const structure of ['chain','roost','hatchery','bone-pile']){const variants=Array.from({length:8},(_,i)=>visualSignature({id:'abyss-'+structure+'-'+i,renderKind:'prop',decorative:true,structure},region));assert(new Set(variants).size>=2,structure+' gains deterministic Frontier/Abyss variation');}

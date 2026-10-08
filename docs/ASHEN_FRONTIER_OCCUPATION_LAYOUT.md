@@ -36,7 +36,7 @@ The Ashen Warlord remains the regional military governor and field boss. His che
 
 Cinder Warlord remains the roaming middle-management captain. The new inspection-yard and road-administration dressing reinforces his existing patrol/discipline role without changing his combat mechanics.
 
-Abyss Dragon remains the Bastion boss. The approach now reads as a dangerous power center the occupation has chosen to manage and provision around rather than as a random dungeon floating beyond the road network. Chains, barricades, heat, supplies and roosting traces communicate support and containment without changing the dungeon or boss relationship mechanically.
+Abyss Dragon is the Dark Lord’s purple dragon and personal flying mount. The guarded Bastion approach provisions his air-superiority project: population growth, rider preparation and facilities under construction. Purple royal flight standards and saddle/harness equipment identify that purpose. This 8 October decision supersedes the earlier generic support/containment interpretation; see `ABYSS_AIR_SUPERIORITY_CANON.md`.
 
 ## Ordinary monster life
 
