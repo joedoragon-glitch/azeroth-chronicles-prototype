@@ -13,3 +13,8 @@ PR #121 and #123 were verified merged/deployed before new work. Concurrent other
 
 ## Save status
 Full nature checkpoint saved on recovery/nature-paused-2026-10-08. This branch is a paused snapshot, not a release. See GitHub issue #125. Local workspace: /workspace/scratch/3a2d0af21c36/azeroth-chronicles-prototype. Read docs/SPRITE_PRODUCTION_CURRENT_CONTEXT.md, docs/DESIGN_TO_SPRITE_WORKFLOW.md and tools/sprites/batches/2026-10-08-03/production-journal.json. Resume existing originals; do not regenerate completed assets. Future image requests must complete one at a time.
+
+
+## Completed-assets publication authorized · 8 October 2026
+
+Joel authorized implementing only the already-completed work after the pause. Publish these 20 reviewed nature registrations as v0.8.97, preserving the Goblin correction and rollback history. New generation and unfinished candidates remain paused. Final local build/format/registry checks passed, along with 51 regression suites, 224 desktop/mobile Chromium checks and five WebKit phone viewport paths. No remote release is claimed until PR CI and exact live deployment pass. Terrain materials remain owned by the separate continuation and are not activated by this nature release. After publication, update issue #125 with the release evidence; leave the remaining catalog and held variants paused.

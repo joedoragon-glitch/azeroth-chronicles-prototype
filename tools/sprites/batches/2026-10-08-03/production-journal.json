@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "prepared-release-gates-pending",
+  "status": "local-checks-passed-release-pending",
   "preparedVersion": "0.8.97",
   "ownership": "This continuation: nature bodies. Concurrent checkout: Goblin face and terrain grounds.",
   "previousMain": "0d02d355ce4f59ab83df24fe6fc0f88ea72478b5",
@@ -117,5 +117,10 @@
     "prop:rock:vale"
   ],
   "userImageAcceptance": false,
-  "nextAction": "Finish release checks, reconcile latest main and publish; verify exact live build before continuing catalog."
+  "nextAction": "Publish only completed nature assets, verify exact live deployment, then pause remaining production.",
+  "tests": {
+    "regressionSuites": 51,
+    "chromiumChecks": 224,
+    "webkitPhoneViewports": 5
+  }
 }
