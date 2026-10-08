@@ -20,6 +20,7 @@ const scripts = [
     'input',
     'runtime',
     'renderer',
+    'menus',
     'app',
   ].map((name) => 'src/prototype/' + name + '.js'),
 ];
