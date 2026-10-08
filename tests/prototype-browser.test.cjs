@@ -18,7 +18,7 @@ await check('Production registry preserves exact sprites and procedural fallback
 await check('Accepted desktop/phone CSS is pixel-equivalent at fixed presentation '+tag,async()=>{
  if(smoke)return;
  const baseline=require('./fixtures/presentation-v0883.json');
- await page.evaluate(()=>{const p=Prototype;window.__layoutRestore={tick:p.game.tick,draw:p.renderer.draw};p.game.tick=()=>{};p.renderer.draw=()=>{};});
+ await page.evaluate(()=>{const p=Prototype;window.__layoutRestore={tick:p.game.tick,draw:p.renderer.draw};p.game.tick=()=>{};p.renderer.draw=()=>{};p.updateHUD();});
  let style;
  try{
    const current=await page.screenshot({animations:'disabled',caret:'hide',path:path.join(results,'accepted-css-current-'+tag+'.png')});
