@@ -1,10 +1,12 @@
 'use strict';
 // Run with an untouched checkout: node scripts/compare-housekeeping.cjs ../baseline
+// Add --exact-methods for extraction-only passes that preserve every method body.
 // Native Canvas is a verification-only dependency, never a shipped game dependency.
 const fs = require('node:fs'),
   path = require('node:path'),
   assert = require('node:assert/strict');
 const crypto = require('node:crypto');
+const cp = require('node:child_process');
 const baseline = path.resolve(process.argv[2] || '');
 assert(process.argv[2], 'Supply the untouched baseline checkout');
 const current = path.resolve(__dirname, '..');
@@ -18,17 +20,119 @@ const hash = (x) =>
     .update(typeof x === 'string' || Buffer.isBuffer(x) ? x : JSON.stringify(x))
     .digest('hex');
 const evidence = {
-  baseline: 'fd66875f5cbb68a291398652797aa0a31b68ed6f',
+  baseline: cp
+    .execFileSync('git', ['rev-parse', 'HEAD'], { cwd: baseline, encoding: 'utf8' })
+    .trim(),
   scenarios: [],
   scenes: [],
 };
 const babel = require('prettier/plugins/babel'),
   vm = require('node:vm');
-const baselineSource = fs.readFileSync(path.join(baseline, 'src/prototype/engine.js'), 'utf8');
-const declarations = babel.parsers.babel
-  .parse(baselineSource)
-  .program.body[0].expression.callee.body.body.filter((node) => node.type === 'VariableDeclaration')
-  .flatMap((node) => node.declarations);
+// Method ownership may change; parameters, bodies and property descriptors may not.
+const semanticTree = (node) => {
+  if (Array.isArray(node)) return node.map(semanticTree);
+  if (!node || typeof node !== 'object') return node;
+  return Object.fromEntries(
+    Object.entries(node)
+      .filter(
+        ([key]) =>
+          ![
+            'start',
+            'end',
+            'loc',
+            'range',
+            'extra',
+            'leadingComments',
+            'trailingComments',
+            'innerComments',
+            'comments',
+            'tokens',
+          ].includes(key),
+      )
+      .map(([key, value]) => [key, semanticTree(value)]),
+  );
+};
+evidence.publicApi = [];
+for (const [owner, before, after] of [
+  ['instance', A.prototype, B.prototype],
+  ['static', A, B],
+]) {
+  for (const name of Object.getOwnPropertyNames(before)) {
+    if (name === 'constructor') continue;
+    const old = Object.getOwnPropertyDescriptor(before, name);
+    if (![old.value, old.get, old.set].some((fn) => typeof fn === 'function')) continue;
+    const next = Object.getOwnPropertyDescriptor(after, name);
+    assert(next, owner + '.' + name + ' retained');
+    for (const key of ['enumerable', 'configurable', 'writable'])
+      assert.equal(next[key], old[key], owner + '.' + name + ' descriptor ' + key);
+    for (const key of ['value', 'get', 'set'])
+      if (typeof old[key] === 'function') {
+        assert.equal(typeof next[key], 'function', owner + '.' + name + ' ' + key);
+        assert.equal(next[key].length, old[key].length, owner + '.' + name + ' argument count');
+      }
+    evidence.publicApi.push({ owner, name });
+  }
+}
+evidence.methods = [];
+if (process.argv.includes('--exact-methods')) {
+  const constructorTree = (C) =>
+    semanticTree(
+      babel.parsers.babel
+        .parse(C.toString())
+        .program.body[0].body.body.find((node) => node.kind === 'constructor'),
+    );
+  assert.deepEqual(constructorTree(B), constructorTree(A), 'Campaign constructor parameters/body');
+  evidence.constructor = hash(constructorTree(B));
+  for (const [owner, before, after] of [
+    ['instance', A.prototype, B.prototype],
+    ['static', A, B],
+  ]) {
+    const methodNames = (object) =>
+      Object.getOwnPropertyNames(object)
+        .filter((name) => {
+          if (name === 'constructor') return false;
+          const d = Object.getOwnPropertyDescriptor(object, name);
+          return [d.value, d.get, d.set].some((fn) => typeof fn === 'function');
+        })
+        .sort();
+    assert.deepEqual(methodNames(after), methodNames(before), owner + ' public method set');
+    for (const name of methodNames(before)) {
+      const old = Object.getOwnPropertyDescriptor(before, name),
+        next = Object.getOwnPropertyDescriptor(after, name);
+      for (const key of ['enumerable', 'configurable', 'writable'])
+        assert.equal(next[key], old[key], owner + '.' + name + ' ' + key);
+      for (const key of ['value', 'get', 'set']) {
+        if (typeof old[key] !== 'function') continue;
+        const parse = (fn) =>
+          semanticTree(
+            babel.parsers.babel.parse('class Contract { ' + fn.toString() + ' }').program.body[0]
+              .body.body[0],
+          );
+        assert.deepEqual(
+          parse(next[key]),
+          parse(old[key]),
+          owner + '.' + name + ' ' + key + ' parameters/body',
+        );
+        evidence.methods.push({ owner, name, kind: key, digest: hash(parse(next[key])) });
+      }
+    }
+  }
+}
+const declarations = [];
+for (const name of ['engine', 'combat', 'hero-combat']) {
+  const file = path.join(baseline, 'src/prototype', name + '.js');
+  if (!fs.existsSync(file)) continue;
+  const source = fs.readFileSync(file, 'utf8');
+  const collect = (node) => {
+    if (!node || typeof node !== 'object') return;
+    if (node.type === 'VariableDeclarator') declarations.push({ node, source });
+    for (const value of Object.values(node)) {
+      if (Array.isArray(value)) value.forEach(collect);
+      else if (value && typeof value === 'object') collect(value);
+    }
+  };
+  collect(babel.parsers.babel.parse(source));
+}
 evidence.configuration = [];
 for (const [name, owner] of Object.entries({
   classes: 'classes',
@@ -42,10 +146,12 @@ for (const [name, owner] of Object.entries({
   costs: 'skills.costs',
   cooldowns: 'skills.cooldowns',
 })) {
-  const declaration = declarations.find((node) => node.id.name === name);
+  const declaration = declarations.find(({ node }) => node.id.name === name);
+  assert(declaration, 'Missing baseline configuration ' + name);
   const before = json(
     vm.runInNewContext(
-      '(' + baselineSource.slice(declaration.init.start, declaration.init.end) + ')',
+      '(' + declaration.source.slice(declaration.node.init.start, declaration.node.init.end) + ')',
+      { R: A.rules },
     ),
   );
   const after = owner.split('.').reduce((node, key) => node[key], B.rules.balance);
@@ -255,6 +361,44 @@ function pair(mode, cls, succession) {
 for (const mode of ['normal', 'nightmare'])
   for (const cls of ['paladin', 'mage', 'ranger'])
     for (const succession of [false, true]) pair(mode, cls, succession);
+evidence.bossAttacks = [];
+for (const mode of ['normal', 'nightmare'])
+  for (const boss of A.data.bosses)
+    for (const form of ['normal', 'true'])
+      for (let index = 0; index < A.rules.attacks[boss.id].length; index++) {
+        const run = (C) => {
+          const c = new C(mode, 'mage', rng());
+          c.enter('crypt');
+          c.zone().props = [];
+          c.s.mercyTime = 0;
+          Object.assign(c.hero, { x: 500, y: 500, hp: 100000, maxHp: 100000, immune: 0 });
+          c.s.party.forEach((u, i) =>
+            Object.assign(u, { x: 500 + 25 * i, y: 530, hp: 100000, maxHp: 100000 }),
+          );
+          const e = c.bossEnemy(c.boss(boss.id), form, { x: 700, y: 500 });
+          c.zone().enemies = [e];
+          const timeline = [];
+          for (const ratio of [1, 0.4]) {
+            e.hp = e.maxHp * ratio;
+            const weights = c.bossAttackWeights(e),
+              selected = c.chooseBossAttack(e);
+            assert(c.startAttack(e, c.hero, index));
+            timeline.push({ weights, selected, state: live(c) });
+            c.resolveAttack(e);
+            for (let i = 0; i < 12; i++) {
+              c.advanceMotion(e, 0.1);
+              c.updateProjectiles(0.1);
+              timeline.push(live(c));
+            }
+          }
+          return timeline;
+        };
+        const before = run(A),
+          after = run(B);
+        assert.deepEqual(after, before, mode + '/' + boss.id + '/' + form + '/attack-' + index);
+        evidence.bossAttacks.push({ mode, family: boss.id, form, index, digest: hash(after) });
+        comparisons++;
+      }
 for (const cls of ['paladin', 'mage', 'ranger']) {
   const old = {
     version: 2,
@@ -288,12 +432,30 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
 }
 assert.deepEqual(load(current, 'data'), load(baseline, 'data'), 'parsed content');
 assert.equal(JSON.stringify(B.data), JSON.stringify(A.data), 'content ordering');
-const newRules = { ...B.rules };
-delete newRules.balance;
+const newRules = { ...B.rules, balance: { ...B.rules.balance } };
+for (const group of ['economy', 'rewards'])
+  if (!A.rules.balance?.[group]) delete newRules.balance[group];
+if (!A.rules.balance) delete newRules.balance;
 assert.deepEqual(newRules, A.rules, 'existing rule values, ordering and formulas');
 assert.equal(JSON.stringify(newRules), JSON.stringify(A.rules), 'existing rule ordering');
 for (const key of ['classes', 'talentProfiles', 'talentMaxRanks', 'mercyStartRadius'])
   assert.deepEqual(B[key], A[key], key);
+const economyReplay = require('../tests/helpers/economy-scenarios.cjs');
+evidence.economy = [];
+for (const mode of ['normal', 'nightmare'])
+  for (const cls of ['paladin', 'mage', 'ranger'])
+    for (const succession of [false, true]) {
+      const before = economyReplay(A, mode, cls, succession),
+        after = economyReplay(B, mode, cls, succession);
+      assert.deepEqual(after, before, 'economy action replay ' + [mode, cls, succession].join('/'));
+      comparisons += after.length;
+      evidence.economy.push({
+        mode,
+        cls,
+        succession,
+        checkpoints: after.map((record) => ({ name: record.name, digest: hash(record) })),
+      });
+    }
 Object.defineProperty(globalThis, 'performance', {
   value: { now: () => 16000 },
   configurable: true,

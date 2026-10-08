@@ -109,7 +109,7 @@
             )
             .map((s) => {
               const rank = getGame().hero.skills[s[0] - 1],
-                cost = rank ? s[5] * rank : s[3];
+                cost = getGame().skillTrainingCost(s[0], rank);
               return action(
                 (rank ? 'Train ' : 'Learn ') + s[1] + ' · ' + cost + ' crowns',
                 () => {
@@ -191,13 +191,13 @@
                 s[0] === 1
                   ? 'Always available · same-target combo: 100% → 110% → 120% + frontal AoE · resets on target switch or 4s gap'
                   : s[0] === 2
-                    ? s[3] +
+                    ? getGame().skillTrainingCost(s[0], 0) +
                       ' crowns · ' +
                       getGame().boss(s[4]).captive +
                       ' · ' +
                       D.regions.find((r) => r.id === getGame().boss(s[4]).region).name +
                       ' · Rank 1 also teaches companion Holy Cleave and Piercing Volley'
-                    : s[3] +
+                    : getGame().skillTrainingCost(s[0], 0) +
                       ' crowns · ' +
                       getGame().boss(s[4]).captive +
                       ' · ' +
@@ -301,8 +301,8 @@
     }
     function smith(n, back = closeMenu) {
       const tier = Campaign.rules.balance.equipment.tiers[n.family],
-        weapon = Campaign.rules.balance.equipment.prices.weapon[tier],
-        armor = Campaign.rules.balance.equipment.prices.armor[tier],
+        weapon = getGame().equipmentCost('weapon', tier),
+        armor = getGame().equipmentCost('armor', tier),
         weaponBonus = Campaign.rules.balance.equipment.bonuses.weapon[tier],
         armorBonus = Campaign.rules.balance.equipment.bonuses.armor[tier],
         currentWeapon = getGame().hero.weapon || 0,
@@ -370,7 +370,7 @@
               ? 'Reforge weapon · DONE'
               : currentWeapon !== tier
                 ? 'Reforge weapon · UNAVAILABLE'
-                : 'Reforge weapon · ' + Math.ceil(weapon / 2) + ' crowns',
+                : 'Reforge weapon · ' + getGame().equipmentCost('weapon', tier, true) + ' crowns',
             () => {
               getGame().gear(n.family, 'weapon', true);
               smith(n, back);
@@ -382,14 +382,16 @@
                 : weaponReforged
                   ? 'Already reforged at this tier'
                   : '+5 power once at this tier',
-            currentWeapon !== tier || weaponReforged || getGame().hero.gold < Math.ceil(weapon / 2),
+            currentWeapon !== tier ||
+              weaponReforged ||
+              getGame().hero.gold < getGame().equipmentCost('weapon', tier, true),
           ),
           action(
             currentArmor === tier && armorReforged
               ? 'Reforge armor · DONE'
               : currentArmor !== tier
                 ? 'Reforge armor · UNAVAILABLE'
-                : 'Reforge armor · ' + Math.ceil(armor / 2) + ' crowns',
+                : 'Reforge armor · ' + getGame().equipmentCost('armor', tier, true) + ' crowns',
             () => {
               getGame().gear(n.family, 'armor', true);
               smith(n, back);
@@ -401,7 +403,9 @@
                 : armorReforged
                   ? 'Already reforged at this tier'
                   : '+3 armor once at this tier',
-            currentArmor !== tier || armorReforged || getGame().hero.gold < Math.ceil(armor / 2),
+            currentArmor !== tier ||
+              armorReforged ||
+              getGame().hero.gold < getGame().equipmentCost('armor', tier, true),
           ),
         ],
         back,
@@ -517,28 +521,24 @@
         'Basic barracks recovery is available from Expedition Rank 1.',
         [
           action(
-            'Treat wounded companions · ' +
-              Campaign.rules.balance.companions.treatmentCost +
-              ' crowns',
+            'Treat wounded companions · ' + getGame().companionTreatmentCost() + ' crowns',
             () => {
               getGame().treatCompanions();
               barracksRecoveryMenu(b, back);
             },
             'Restores every living wounded companion to full health',
             !wounded ||
-              getGame().hero.gold < Campaign.rules.balance.companions.treatmentCost ||
+              getGame().hero.gold < getGame().companionTreatmentCost() ||
               getGame().refugeThreat(),
           ),
           action(
-            'Recover fallen companion · ' +
-              Campaign.rules.balance.companions.recoveryCost +
-              ' crowns',
+            'Recover fallen companion · ' + getGame().companionRecoveryCost() + ' crowns',
             () => {
               getGame().recover();
               barracksRecoveryMenu(b, back);
             },
             'Restores one fallen companion at full health',
-            !fallen || getGame().hero.gold < Campaign.rules.balance.companions.recoveryCost,
+            !fallen || getGame().hero.gold < getGame().companionRecoveryCost(),
           ),
         ],
         back,
@@ -679,7 +679,11 @@
             ? action(
                 'Recruit companions',
                 () => barracksRecruitmentMenu(b, returnHere),
-                'Soldier 60 crowns · Ranger 85 crowns · extra hires rest in reserve',
+                'Soldier ' +
+                  getGame().barracksRecruitPrice('soldier') +
+                  ' crowns · Ranger ' +
+                  getGame().barracksRecruitPrice('archer') +
+                  ' crowns · extra hires rest in reserve',
               )
             : action(
                 'Recruitment — Expedition 2',
@@ -843,7 +847,11 @@
             ? action(
                 'Recruitment',
                 () => barracksRecruitmentMenu(b, returnHere),
-                'Soldier 60 crowns · Ranger 85 crowns · extra hires rest in reserve',
+                'Soldier ' +
+                  getGame().barracksRecruitPrice('soldier') +
+                  ' crowns · Ranger ' +
+                  getGame().barracksRecruitPrice('archer') +
+                  ' crowns · extra hires rest in reserve',
               )
             : action(
                 'Recruitment — Expedition 2',
@@ -881,17 +889,14 @@
               : action(
                   b.upgradePaid
                     ? 'Resume Full Barracks upgrade'
-                    : 'Upgrade to Full Barracks · ' +
-                        Campaign.rules.balance.barracks.fullUpgradeCost +
-                        ' crowns',
+                    : 'Upgrade to Full Barracks · ' + getGame().barracksUpgradeCost() + ' crowns',
                   () => {
                     getGame().upgradeBarracks(b.id);
                     barracksMenu(b, back);
                   },
                   'Optional upgrade · required only for active groups above 3 · becomes a resource deposit · unlocks full operations',
                   !getGame().availableLabor().length ||
-                    (!b.upgradePaid &&
-                      getGame().hero.gold < Campaign.rules.balance.barracks.fullUpgradeCost),
+                    (!b.upgradePaid && getGame().hero.gold < getGame().barracksUpgradeCost()),
                 ),
           );
         else
@@ -1039,8 +1044,8 @@
       else
         actions.push(
           ...[
-            ['soldier', 'Soldier', Campaign.rules.balance.companions.recruitPrices.soldier],
-            ['archer', 'Ranger', Campaign.rules.balance.companions.recruitPrices.archer],
+            ['soldier', 'Soldier', getGame().recruitPrice('soldier')],
+            ['archer', 'Ranger', getGame().recruitPrice('archer')],
           ].map(([type, label, price]) =>
             action(
               'Recruit ' + label + ' · ' + price + ' crowns',
@@ -1055,16 +1060,14 @@
         );
       actions.push(
         action(
-          'Recover fallen companion · ' +
-            Campaign.rules.balance.companions.recoveryCost +
-            ' crowns',
+          'Recover fallen companion · ' + getGame().companionRecoveryCost() + ' crowns',
           () => {
             getGame().recover();
             townRecruitmentMenu(back);
           },
           '',
           !getGame().s.party.some((u) => u.hp <= 0) ||
-            getGame().hero.gold < Campaign.rules.balance.companions.recoveryCost,
+            getGame().hero.gold < getGame().companionRecoveryCost(),
         ),
       );
       openMenu(
@@ -1094,7 +1097,9 @@
             cost === 0
               ? 'First barracks is free · establishes nearby companion recovery'
               : rank >= 4
-                ? 'Basic camp · optional Full upgrade 100 crowns'
+                ? 'Basic camp · optional Full upgrade ' +
+                  getGame().barracksUpgradeCost() +
+                  ' crowns'
                 : 'Basic recovery base; Full upgrade unlocks at Expedition 4',
             getGame().hero.gold < cost,
           ),
@@ -1147,7 +1152,9 @@
             () => townLaborMenu(returnHere),
             getGame().barracksBuildCost() === 0
               ? 'First barracks FREE · companion recovery base'
-              : 'Basic barracks 20 crowns · Full upgrade optional at Expedition 4',
+              : 'Basic barracks ' +
+                  getGame().barracksBuildCost() +
+                  ' crowns · Full upgrade optional at Expedition 4',
           ),
         ],
         back,

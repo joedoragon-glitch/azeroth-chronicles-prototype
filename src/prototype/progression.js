@@ -172,7 +172,7 @@
           this.say('Learning requires the correct rescued teacher and an unlearned skill.');
           return false;
         }
-        if (!this.spend(def[3])) {
+        if (!this.spend(this.skillTrainingCost(slot, 0))) {
           this.say('Not enough crowns to learn ' + def[1] + '.');
           return false;
         }
@@ -206,7 +206,7 @@
           this.say('The rescued teacher or learned skill cannot support that rank.');
           return false;
         }
-        if (!this.spend(def[5] * (next - 1))) {
+        if (!this.spend(this.skillTrainingCost(slot, rank))) {
           this.say('Not enough crowns to upgrade ' + def[1] + ' to Rank ' + next + '.');
           return false;
         }
@@ -216,11 +216,7 @@
         this.event('upgrade', { slot, rank: next });
         return true;
       }
-      expeditionSupportCost(id) {
-        const def = R.expeditionSupportSkills?.[id],
-          next = this.expeditionSupportRank(id) + 1;
-        return def?.costs?.[next] || 0;
-      }
+
       expeditionSupportTrainerCap(id, family) {
         return R.expeditionSupportSkills?.[id]?.trainers?.[family] || 0;
       }
@@ -240,7 +236,7 @@
           cap = this.expeditionSupportTrainerCap(id, family);
         if (!def || !this.s.rescued[family] || !cap || next > cap || next > def.maxRank)
           return false;
-        const cost = def.costs[next];
+        const cost = this.expeditionSupportCost(id);
         if (!this.spend(cost)) return false;
         this.s.expeditionSkills[id] = next;
         this.syncCompanionLevelStats();
@@ -261,25 +257,14 @@
         this.event('expeditionSupport', { id, rank: next, family });
         return true;
       }
-      reward(gold, xp, level) {
-        const gap = Math.max(0, this.hero.level - level),
-          m =
-            R.progression.levelGapRewards[Math.min(gap, R.progression.levelGapRewards.length - 1)];
-        return { gold: Math.floor(gold * m), xp: Math.floor(xp * m) };
-      }
-      enemyReward(e) {
-        const ordinary =
-          e.type === 'mob' && !e.guard && !e.captain && !e.roomCaptain && e.form === 'normal';
-        return this.reward(
-          e.gold,
-          e.xp * (ordinary ? R.progression.ordinaryXpMultiplier : 1),
-          e.level,
-        );
+
+      xpRequired(level = this.hero.level) {
+        return R.balance.growth.xpPerLevel * level;
       }
       xp(amount) {
         this.hero.xp += amount;
-        while (this.hero.xp >= R.balance.growth.xpPerLevel * this.hero.level) {
-          this.hero.xp -= R.balance.growth.xpPerLevel * this.hero.level;
+        while (this.hero.xp >= this.xpRequired()) {
+          this.hero.xp -= this.xpRequired();
           this.hero.level++;
           this.hero.maxHp += R.balance.growth.hpPerLevel;
           this.hero.maxMp += R.manaBalance.perLevel;
@@ -297,14 +282,7 @@
           this.notice('LEVEL ' + this.hero.level + ' · Training point available', 5.5);
         }
       }
-      grant(gold, xp) {
-        this.hero.gold += gold;
-        this.s.statistics.goldEarned += gold;
-        this.xp(xp);
-      }
-      companionVitalityCost() {
-        return R.balance.companions.vitalityCost;
-      }
+
       trainCompanionVitality(family = 'archive') {
         if (family !== 'archive' || !this.s.rescued.archive) return false;
         const cost = this.companionVitalityCost();
@@ -326,9 +304,7 @@
         this.event('companionVitality', { rank: this.companionVitalityRank(), family });
         return true;
       }
-      talentRespecCost() {
-        return R.balance.disciplines.resetCost;
-      }
+
       talentSpent() {
         return (this.hero.talents || []).reduce((n, v) => n + v, 0);
       }
@@ -398,11 +374,7 @@
           values = type === 'health' ? R.rangerSupport.healAmounts : R.rangerSupport.manaAmounts;
         return values[Math.min(values.length, rank) - 1];
       }
-      rangerSupportCost(type) {
-        return type === 'health'
-          ? R.rangerSupport.healUpgradeCost
-          : R.rangerSupport.manaUpgradeCost;
-      }
+
       trainRangerSupport(type, family = 'archive') {
         if (family !== 'archive' || !this.s.rescued.archive || !['health', 'mana'].includes(type))
           return false;
@@ -465,10 +437,6 @@
         const tier = R.balance.equipment.tiers[family];
         if (!tier || !this.s.rescued[family] || !['weapon', 'armor'].includes(slot)) return false;
         const old = slot === 'weapon' ? this.hero.weapon : this.hero.armorTier,
-          prices =
-            slot === 'weapon'
-              ? R.balance.equipment.prices.weapon
-              : R.balance.equipment.prices.armor,
           bonuses =
             slot === 'weapon'
               ? R.balance.equipment.bonuses.weapon
@@ -501,7 +469,7 @@
             );
             return false;
           }
-          if (!this.spend(Math.ceil(prices[tier] / 2))) {
+          if (!this.spend(this.equipmentCost(slot, tier, true))) {
             this.say('Not enough crowns to reforge ' + label.toLowerCase() + ' tier ' + tier + '.');
             return false;
           }
@@ -533,7 +501,7 @@
             );
             return false;
           }
-          if (!this.spend(prices[tier])) {
+          if (!this.spend(this.equipmentCost(slot, tier))) {
             this.say('Not enough crowns for ' + label.toLowerCase() + ' tier ' + tier + '.');
             return false;
           }

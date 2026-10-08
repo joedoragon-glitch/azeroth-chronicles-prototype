@@ -225,7 +225,7 @@
             const i = this.regionIndex(),
               r = D.regions[i],
               sp = D.species[i][0],
-              gold = Math.max(1, Math.floor(((r.gold_range[0] + r.gold_range[1]) / 2) * 0.35)),
+              gold = this.regionalEnemyRewards(i, 'roomGuard').gold,
               captainProfile = R.roomCaptains?.[id],
               authored = R.treasuryGuardFormations?.[id],
               posts =
@@ -248,7 +248,7 @@
                     hp: (65 + i * 105) * (captain ? 2 : 1),
                     damage: (7 + i * 8) * (captain ? 1.25 : 1),
                     gold,
-                    xp: r.guard_xp,
+                    xp: this.regionalEnemyRewards(i, 'roomGuard').xp,
                   },
                   p,
                 );
@@ -332,8 +332,8 @@
                     level: Math.max(1, i * 3 + (pack % 2) + 1),
                     hp: 65 + i * 105,
                     damage: 7 + i * 8,
-                    gold: Math.floor((r.gold_range[0] + r.gold_range[1]) / 2),
-                    xp: r.enemy_xp,
+                    gold: this.regionalEnemyRewards(i).gold,
+                    xp: this.regionalEnemyRewards(i).xp,
                   },
                   p,
                 );
@@ -527,8 +527,8 @@
               level: Math.max(1, i * 3 + (pack % 2) + 1),
               hp: 65 + i * 105,
               damage: 7 + i * 8,
-              gold: Math.floor((r.gold_range[0] + r.gold_range[1]) / 2),
-              xp: dungeon ? r.guard_xp : r.enemy_xp,
+              gold: this.regionalEnemyRewards(i).gold,
+              xp: this.regionalEnemyRewards(i, dungeon ? 'guard' : 'ordinary').xp,
             },
             p,
           );
@@ -1698,8 +1698,8 @@
           delete e.mini;
           e.guard = false;
           e.name = e.name.replace(/ guardian$/, '');
-          e.gold = Math.floor((r.gold_range[0] + r.gold_range[1]) / 2);
-          e.xp = r.enemy_xp;
+          e.gold = this.regionalEnemyRewards(i).gold;
+          e.xp = this.regionalEnemyRewards(i).xp;
           delete e.miniRewardVersion;
           e.pack =
             'retired-resource-patrol-' + Math.floor((Number(e.id?.split('-').at(-1)) || 0) / 3);
@@ -2020,8 +2020,8 @@
             e.mini = id;
             e.pack = id + '-guard-pair-' + Math.floor(j / 2);
             e.name = e.name.replace(/ guardian$/, '') + ' guardian';
-            e.gold = Math.max(1, Math.floor(((r.gold_range[0] + r.gold_range[1]) / 2) * 0.35));
-            e.xp = r.guard_xp;
+            e.gold = this.regionalEnemyRewards(i, 'roomGuard').gold;
+            e.xp = this.regionalEnemyRewards(i, 'roomGuard').xp;
             e.miniRewardVersion = 1;
             if (inherited) {
               e.hp = 0;
