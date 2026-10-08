@@ -67,6 +67,13 @@ try {
       'isolated-fixture-revision',
     );
   }
+  const animated = fixtures.animatedManifest();
+  const animatedResult = run(animated);
+  assert.equal(animatedResult.status, 0, animatedResult.stderr);
+  for (const [file, bytes] of fixtures.images)
+    assert(fs.readFileSync(path.join(checkout, '_site', file)).equals(bytes));
+  animated.sprites['hero:paladin'].clips.idle.frames[0].src = './assets/sprites/missing-atlas.png';
+  assert.notEqual(run(animated).status, 0, 'missing frame-only resource blocks packaging');
   for (const src of [
     './assets/sprites/not-present.png',
     '../outside.png',

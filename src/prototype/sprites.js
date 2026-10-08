@@ -1,12 +1,44 @@
-/* Static illustrated sprite layer. Missing or unsafe variants fall back to PrototypeVisuals. */
+/* Bounded optional sprites. Simulation and saved state remain engine-owned. */
 (function (root) {
   'use strict';
 
   const DEFAULT_MANIFEST = './assets/sprites/manifest.json';
-  let manifest = { version: 2, sprites: {} };
+  const Format =
+    root.PrototypeSpriteFormat ||
+    (typeof require === 'function' ? require('./sprite-format.js') : null);
+  let manifest = { version: 2, sprites: {} },
+    epoch = 0,
+    manifestRequest = 0;
   const images = new Map(),
     loading = new Map(),
-    failed = new Set();
+    failed = new Set(),
+    queue = [],
+    pins = new Set();
+  let active = new Map(),
+    bytes = 0,
+    reserved = 0,
+    decoding = 0,
+    tick = 0,
+    inFrame = false;
+  let budget = Format.LIMITS.decodedBytes,
+    concurrency = Format.LIMITS.concurrent;
+  let clock = 0,
+    pausedClock = false,
+    states = new WeakMap();
+  const events = new Map();
+  const counters = {
+    evictions: 0,
+    staleLoads: 0,
+    invalidPresentation: 0,
+    budgetSkips: 0,
+    peakDecodedBytes: 0,
+    peakReservedBytes: 0,
+    peakConcurrent: 0,
+  };
+  const identity = (r) =>
+    (r.hash ? 'sha256:' + r.hash : r.src) + ':' + (r.width || '') + 'x' + (r.height || '');
+  const estimate = (r) =>
+    r.width && r.height ? r.width * r.height * 4 : Format.LIMITS.resourcePixels * 4;
 
   const clean = (s) =>
     String(s || '')
@@ -69,58 +101,321 @@
   }
 
   function installManifest(next) {
-    if (!next || typeof next !== 'object' || !next.sprites || typeof next.sprites !== 'object')
+    let parsed, resources;
+    try {
+      if (next?.formatVersion !== undefined && next.formatVersion !== 3) return false;
+      try {
+        parsed = Format.entries(next);
+      } catch (error) {
+        if (!next?.sprites || Array.isArray(next.sprites) || typeof next.sprites !== 'object')
+          return false;
+        parsed = Format.entries({
+          ...next,
+          sprites: Object.fromEntries(
+            Object.entries(next.sprites).map(([key, value]) => {
+              try {
+                return [key, Format.entry(value)];
+              } catch (_) {
+                const staticEntry = Format.entry({
+                  ...value,
+                  clips: undefined,
+                  variants: undefined,
+                });
+                counters.invalidPresentation++;
+                return [key, staticEntry];
+              }
+            }),
+          ),
+        });
+      }
+      resources = Format.resources({ ...next, sprites: parsed });
+    } catch (_) {
       return false;
-    manifest = { version: Number(next.version) || 2, sprites: { ...next.sprites } };
+    }
+    const nextActive = new Map(resources.map((r) => [identity(r), r]));
+    epoch++;
+    manifestRequest++;
+    manifest = { version: Number(next.version) || 2, sprites: parsed };
+    active = nextActive;
     failed.clear();
+    pins.clear();
+    states = new WeakMap();
+    events.clear();
+    for (const [id, item] of images)
+      if (!active.has(id)) {
+        images.delete(id);
+        bytes -= item.bytes;
+      }
+    for (let i = queue.length - 1; i >= 0; i--)
+      if (!active.has(queue[i].id)) {
+        const job = queue.splice(i, 1)[0];
+        loading.delete(job.id);
+        job.resolve(null);
+      }
+    if (!inFrame) pump();
     return true;
   }
-
   function definitionFor(e, region = 0, rescued = false) {
+    // Military officers have a distinct procedural finish, not the generic monster crown.
+    if (e?.form === 'ringleader' && ['orc', 'archer', 'crownguard'].includes(e.species))
+      return null;
     for (const key of candidateKeys(e, region, rescued)) {
       const entry = manifest.sprites[key];
-      if (entry && entry.src) return { key, entry };
+      if (entry?.src) return { key, entry };
     }
     return null;
   }
-
-  function ensure(key, entry) {
-    if (images.has(key) || loading.has(key) || failed.has(key) || typeof root.Image !== 'function')
-      return loading.get(key) || null;
-    const promise = new Promise((resolve) => {
+  function room(size) {
+    if (size > budget) return false;
+    while (bytes + reserved + size > budget) {
+      const candidates = [...images.entries()]
+        .filter(([id]) => !pins.has(id))
+        .sort((a, b) => a[1].used - b[1].used);
+      if (!candidates.length) return false;
+      const [id, old] = candidates[0];
+      images.delete(id);
+      bytes -= old.bytes;
+      counters.evictions++;
+    }
+    return true;
+  }
+  function pump() {
+    if (inFrame || typeof root.Image !== 'function') return;
+    for (let i = 0; i < queue.length && decoding < concurrency; ) {
+      const job = queue[i],
+        size = estimate(job.resource);
+      if (!room(size)) {
+        counters.budgetSkips++;
+        queue.splice(i, 1);
+        loading.delete(job.id);
+        job.resolve(null);
+        continue;
+      }
+      queue.splice(i, 1);
+      reserved += size;
+      decoding++;
+      counters.peakReservedBytes = Math.max(counters.peakReservedBytes, bytes + reserved);
+      counters.peakConcurrent = Math.max(counters.peakConcurrent, decoding);
       const img = new root.Image();
+      let finished = false;
+      const done = (ok) => {
+        if (finished) return;
+        finished = true;
+        reserved -= size;
+        decoding--;
+        loading.delete(job.id);
+        const width = img.naturalWidth || img.width,
+          height = img.naturalHeight || img.height,
+          decoded = width * height * 4;
+        if (!active.has(job.id)) {
+          counters.staleLoads++;
+          ok = false;
+        } else if (
+          ok &&
+          (!Number.isInteger(width) ||
+            !Number.isInteger(height) ||
+            width <= 0 ||
+            height <= 0 ||
+            width * height > Format.LIMITS.resourcePixels ||
+            decoded > size ||
+            (job.resource.width &&
+              (width !== job.resource.width || height !== job.resource.height)))
+        ) {
+          failed.add(job.id);
+          ok = false;
+        } else if (!ok) failed.add(job.id);
+        if (ok && room(decoded)) {
+          images.set(job.id, { image: img, bytes: decoded, used: ++tick });
+          bytes += decoded;
+          counters.peakDecodedBytes = Math.max(counters.peakDecodedBytes, bytes);
+          job.resolve(img);
+        } else job.resolve(null);
+        pump();
+      };
       img.decoding = 'async';
       img.onload = () => {
-        images.set(key, img);
-        loading.delete(key);
-        resolve(img);
+        try {
+          Promise.resolve(typeof img.decode === 'function' ? img.decode() : null).then(
+            () => done(true),
+            () => done(false),
+          );
+        } catch (_) {
+          done(false);
+        }
       };
-      img.onerror = () => {
-        failed.add(key);
-        loading.delete(key);
-        resolve(null);
-      };
-      img.src = entry.src;
+      img.onerror = () => done(false);
+      try {
+        img.src = job.resource.src;
+      } catch (_) {
+        done(false);
+      }
+    }
+  }
+  function ensure(resource) {
+    const id = identity(resource);
+    const cached = images.get(id);
+    if (cached) {
+      cached.used = ++tick;
+      return Promise.resolve(cached.image);
+    }
+    if (failed.has(id) || typeof root.Image !== 'function') return Promise.resolve(null);
+    if (loading.has(id)) return loading.get(id);
+    if (estimate(resource) > budget) {
+      counters.budgetSkips++;
+      return Promise.resolve(null);
+    }
+    let resolve;
+    const promise = new Promise((r) => {
+      resolve = r;
     });
-    loading.set(key, promise);
+    loading.set(id, promise);
+    queue.push({ id, resource, resolve });
+    if (!inFrame) pump();
     return promise;
   }
-
-  async function preload(url = DEFAULT_MANIFEST) {
+  async function warm(keys = [], options = {}) {
+    const pending = [];
+    for (const key of keys) {
+      const entry = manifest.sprites[key];
+      if (!entry) continue;
+      pending.push(ensure(entry));
+      if (options.variants)
+        for (const resource of entry.variants || []) pending.push(ensure(resource));
+      if (options.clips)
+        for (const clip of Object.values(entry.clips || {}))
+          for (const frame of clip.frames) pending.push(ensure(frame));
+    }
+    await Promise.allSettled(pending);
+    return status();
+  }
+  async function preload(url = DEFAULT_MANIFEST, keys = []) {
+    const request = ++manifestRequest;
     if (typeof root.fetch === 'function') {
       try {
         const response = await root.fetch(url, { cache: 'no-cache' });
-        if (response.ok) installManifest(await response.json());
+        if (response.ok) {
+          const next = await response.json();
+          if (request === manifestRequest) installManifest(next);
+        }
       } catch (_) {}
     }
-    const pending = [];
-    for (const [key, entry] of Object.entries(manifest.sprites))
-      if (entry?.src) {
-        const p = ensure(key, entry);
-        if (p) pending.push(p);
-      }
-    if (pending.length) await Promise.allSettled(pending);
+    await warm(keys);
     return manifest;
+  }
+  function configure(options = {}) {
+    const size = options.decodedBytes ?? budget,
+      count = options.concurrent ?? concurrency;
+    if (
+      !Number.isInteger(size) ||
+      size < 16 ||
+      size > Format.LIMITS.decodedBytes ||
+      !Number.isInteger(count) ||
+      count < 1 ||
+      count > Format.LIMITS.concurrent ||
+      decoding
+    )
+      return false;
+    pins.clear();
+    if (!room(0) || reserved > size) return false;
+    budget = size;
+    concurrency = count;
+    room(0);
+    return true;
+  }
+  function beginFrame() {
+    inFrame = true;
+    pins.clear();
+  }
+  function endFrame() {
+    inFrame = false;
+    pump();
+  }
+  function advance(ms, paused = false) {
+    pausedClock = paused;
+    if (!paused && Number.isFinite(ms) && ms >= 0) clock += Math.min(ms, 100);
+  }
+  function noteEvents(list) {
+    for (const e of list || []) {
+      const who =
+        e.type === 'hurt' ? e.target : ['swing', 'shot', 'cast'].includes(e.type) ? e.actor : null;
+      if (who) events.set(who, { state: e.type === 'hurt' ? 'hurt' : 'attack', at: clock });
+    }
+    for (const [id, e] of events) if (clock - e.at > 10000) events.delete(id);
+    while (events.size > 256) events.delete(events.keys().next().value);
+  }
+  function phase(e, entry) {
+    const actor = e.spriteIdentity || e,
+      old = states.get(actor);
+    if (pausedClock && old) return { name: old.state, elapsed: clock - old.at };
+    const dx = old ? e.x - old.x : 0,
+      dy = old ? e.y - old.y : 0;
+    const event = events.get(e.renderKind === 'hero' ? 'hero' : e.id);
+    let name =
+      e.spriteClip ||
+      (e.hp <= 0
+        ? 'death'
+        : old && e.hp < old.hp
+          ? 'hurt'
+          : e.telegraph
+            ? 'windup'
+            : Math.hypot(dx || 0, dy || 0) > 0.01
+              ? 'walk'
+              : 'idle');
+    if (event) {
+      const clip = entry.clips?.[event.state],
+        duration = clip?.frames.reduce((sum, f) => sum + f.durationMs, 0) || 0;
+      if (clock - event.at < duration) name = event.state;
+    }
+    const facing =
+      e.spriteFacing ||
+      (Math.hypot(dx || 0, dy || 0) > 0.01
+        ? Math.abs(dx) > Math.abs(dy)
+          ? dx > 0
+            ? 'east'
+            : 'west'
+          : dy > 0
+            ? 'south'
+            : 'north'
+        : old?.facing || 'south');
+    const selected = entry.clips?.[name + ':' + facing] ? name + ':' + facing : name;
+    const at = old?.state === selected ? old.at : event?.state === name ? event.at : clock;
+    states.set(actor, { x: e.x, y: e.y, hp: e.hp, state: selected, at, facing });
+    return { name: selected, elapsed: clock - at };
+  }
+  function variant(e, entry) {
+    if (!entry.variants) return entry;
+    const seed = String(e.spriteVariantSeed ?? e.seed ?? e.id ?? (e.x || 0) + ':' + (e.y || 0));
+    let best = entry.variants[0],
+      score = -1;
+    for (const item of entry.variants) {
+      let h = 2166136261;
+      for (const ch of seed + '|' + item.id) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
+      if (h >>> 0 > score) {
+        score = h >>> 0;
+        best = item;
+      }
+    }
+    return best;
+  }
+  function frameFor(clip, elapsed) {
+    const duration = clip.frames.reduce((s, f) => s + f.durationMs, 0);
+    let t = clip.loop ? elapsed % duration : Math.min(elapsed, duration - 0.001);
+    for (const f of clip.frames) {
+      if (t < f.durationMs) return f;
+      t -= f.durationMs;
+    }
+    return clip.frames[clip.frames.length - 1];
+  }
+  function imageFor(resource) {
+    const id = identity(resource);
+    pins.add(id);
+    const item = images.get(id);
+    if (item) {
+      item.used = ++tick;
+      return item.image;
+    }
+    ensure(resource);
+    return null;
   }
 
   function entityScale(e, entry) {
@@ -284,27 +579,47 @@
   function draw(ctx, e, p, region = 0, rescued = false) {
     const found = definitionFor(e, region, rescued);
     if (!found) return false;
-    const { key, entry } = found,
-      img = images.get(key);
-    if (!img) {
-      ensure(key, entry);
-      return false;
+    const { entry } = found,
+      scale = entityScale(e, entry);
+    const animation = phase(e, entry),
+      clip = entry.clips?.[animation.name];
+    const reduced =
+      typeof root.matchMedia === 'function' &&
+      root.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let frame = clip && !reduced ? frameFor(clip, animation.elapsed) : null;
+    let resource = frame || variant(e, entry),
+      img = imageFor(resource);
+    if (!img && resource !== entry) {
+      frame = null;
+      resource = entry;
+      img = imageFor(entry);
     }
-    const scale = entityScale(e, entry),
-      dw = (Number(entry.displayWidth) || img.naturalWidth || img.width) * scale,
-      dh = (Number(entry.displayHeight) || img.naturalHeight || img.height) * scale;
-    const ax = Number.isFinite(entry.anchorX) ? entry.anchorX : 0.5,
-      ay = Number.isFinite(entry.anchorY) ? entry.anchorY : 0.88;
-    ctx.save();
-    ctx.imageSmoothingEnabled = false;
-    if (Number.isFinite(entry.opacity)) ctx.globalAlpha = entry.opacity;
-    ctx.drawImage(
-      img,
+    if (!img) return false;
+    const width = frame?.rect[2] || img.naturalWidth || img.width,
+      height = frame?.rect[3] || img.naturalHeight || img.height;
+    const dw = (Number(entry.displayWidth) || width) * scale,
+      dh = (Number(entry.displayHeight) || height) * scale;
+    const ax = frame
+      ? frame.pivot[0] / width
+      : Number.isFinite(entry.anchorX)
+        ? entry.anchorX
+        : 0.5;
+    const ay = frame
+      ? frame.pivot[1] / height
+      : Number.isFinite(entry.anchorY)
+        ? entry.anchorY
+        : 0.88;
+    const dest = [
       Math.round(p.x - dw * ax),
       Math.round(p.y - dh * ay),
       Math.round(dw),
       Math.round(dh),
-    );
+    ];
+    ctx.save();
+    ctx.imageSmoothingEnabled = false;
+    if (Number.isFinite(entry.opacity)) ctx.globalAlpha = entry.opacity;
+    if (frame) ctx.drawImage(img, ...frame.rect, ...dest);
+    else ctx.drawImage(img, ...dest);
     ctx.restore();
     overlay(ctx, e, p, entry, scale);
     return true;
@@ -328,8 +643,15 @@
       manifestVersion: manifest.version,
       definitions: Object.keys(manifest.sprites).length,
       loaded: images.size,
-      loading: loading.size,
+      loading: decoding,
+      queued: queue.length,
       failed: failed.size,
+      decodedBytes: bytes,
+      reservedBytes: reserved,
+      maxDecodedBytes: budget,
+      maxConcurrentDecodes: concurrency,
+      clockMs: clock,
+      ...counters,
     };
   }
 
@@ -339,6 +661,15 @@
     installManifest,
     definitionFor,
     preload,
+    warm,
+    configure,
+    beginFrame,
+    endFrame,
+    advance,
+    noteEvents,
+    frameFor,
+    timeMs: () => clock,
+    variant,
     draw,
     height,
     status,

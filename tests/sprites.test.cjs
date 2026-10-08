@@ -106,8 +106,8 @@ console.log('PASS Static sprite registry preserves exact variants, anchors, scal
 (async()=>{
  const vm=require('node:vm'),fixtures=require('./helpers/sprite-fixtures.cjs');
  const scope={console,Image:class{set src(src){queueMicrotask(()=>{if(src.endsWith('test-fixture-b.png'))this.onerror();else{this.width=this.naturalWidth=2;this.height=this.naturalHeight=2;this.onload();}})}},fetch:async()=>new Response(JSON.stringify(fixtures.manifest())),Response};
- vm.createContext(scope);vm.runInContext(fs.readFileSync(path.join(__dirname,'../src/prototype/sprites.js'),'utf8'),scope);
- const sprites=scope.PrototypeSprites;await sprites.preload();assert.equal(sprites.status().loaded,2);assert.equal(sprites.status().failed,1);
+ vm.createContext(scope);vm.runInContext(fs.readFileSync(path.join(__dirname,'../src/prototype/sprite-format.js'),'utf8'),scope);vm.runInContext(fs.readFileSync(path.join(__dirname,'../src/prototype/sprites.js'),'utf8'),scope);
+ const sprites=scope.PrototypeSprites;await sprites.preload(undefined,Object.keys(fixtures.manifest().sprites));assert.equal(sprites.status().loaded,1);assert.equal(sprites.status().failed,1);
  const drawn=[],ctx=new Proxy({measureText:t=>({width:String(t).length*6}),createLinearGradient:()=>({addColorStop(){}}),createRadialGradient:()=>({addColorStop(){}})},{get:(o,k)=>k in o?o[k]:(...args)=>{if(k==='drawImage')drawn.push(args)}});
  assert(sprites.draw(ctx,{renderKind:'hero',class:'paladin'},{x:100,y:100}));
  assert.deepEqual(drawn[0].slice(1),[84,65,32,40],'default/explicit anchors and dimensions apply at drawing');

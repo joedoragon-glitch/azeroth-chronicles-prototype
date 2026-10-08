@@ -1,5 +1,6 @@
 /* Bump CACHE_VERSION when app assets change. Tester builds activate immediately. */
 const CACHE_VERSION = {{CACHE_VERSION}};
+{{SPRITE_FORMAT}}
 const CACHE_PREFIX = 'azeroth-app-';
 const APP_FILES = {{APP_FILES}};
 const LEGACY_FILES = {{LEGACY_FILES}};
@@ -12,7 +13,7 @@ async function spriteAssetURLs(cache){
         const response = await cache.match(appURL('./assets/sprites/manifest.json'));
         if (!response) return [];
         const manifest = await response.json();
-        return [...new Set(Object.values(manifest.sprites || {}).map(entry => entry && entry.src).filter(Boolean).map(appURL))];
+        return [...new Set(PrototypeSpriteFormat.sources(manifest).map(appURL))];
     } catch (_) { return []; }
 }
 self.addEventListener('install', event => {

@@ -1,0 +1,95 @@
+{
+  "version": 2,
+  "key": "hero:paladin",
+  "catalogId": "001",
+  "canonHash": "4fab05495891ab0599302be747092bb603aa10f658f550d967dd07cfce5293f5",
+  "canonSnapshotHash": "698426129edfdaaaee0f2d2c11f552c9debd6f3dfa8eda567995d0c9a7ee36a6",
+  "catalogHash": "e28cf4e5912363ba4659a674b95628665b603c03eb207a7f47c3c5ba2180a5a9",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 193051,
+    "decodedBytes": 6290064,
+    "hash": "61155bf334936860950ef95766a8d33008e1e7ed2d7e6fff88baeec3e5603aea",
+    "pixelHash": "cbc4628158fb73bd821b9c27c2c7bca01f26b48eec64310e804b52110deb97b7",
+    "bounds": {
+      "x1": 226,
+      "y1": 111,
+      "x2": 1126,
+      "y2": 1114
+    },
+    "padding": 111,
+    "transparentPixels": 1483219,
+    "visiblePixels": 89297,
+    "lowAlphaPixels": 3408,
+    "materialBounds": {
+      "x1": 498,
+      "y1": 640,
+      "x2": 824,
+      "y2": 1071
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 7808,
+    "decodedBytes": 147456,
+    "hash": "c652b9dc74ca267e16440962c8d4c674cb689ee281979da920ce9116e02673e1",
+    "pixelHash": "5cab986f31ca97d7977aa343284c711dab71d41066d3c6ca66760d2cc0a239a3",
+    "bounds": {
+      "x1": 71,
+      "y1": 93,
+      "x2": 120,
+      "y2": 159
+    },
+    "padding": 32,
+    "transparentPixels": 34786,
+    "visiblePixels": 2078,
+    "lowAlphaPixels": 82,
+    "materialBounds": {
+      "x1": 71,
+      "y1": 93,
+      "x2": 120,
+      "y2": 158
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 54
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1254,
+      1254
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": -5,
+      "y": -5,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "scope": "Engineer review of faithful alternate idle under authorized animation pilot; no separate user image acceptance claimed",
+    "chatLink": null,
+    "technicalReview": "Native/context review required before release"
+  }
+}

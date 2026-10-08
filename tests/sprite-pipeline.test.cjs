@@ -300,6 +300,90 @@ const root = path.resolve(__dirname, '..');
         !fs.existsSync(path.join(checkout, '_site', name)),
         'development-only files never enter the public site',
       );
+    const ownerPath = path.join(checkout, 'tools/sprites/approved.json');
+    const getActive = () => JSON.parse(fs.readFileSync(ownerPath)).assets['hero:paladin'];
+    const firstRevision = getActive().revision;
+    const replacementFile = path.join(webp.directory, 'candidate.json');
+    const replacement = JSON.parse(fs.readFileSync(replacementFile));
+    replacement.review = record.review;
+    fs.writeFileSync(replacementFile, JSON.stringify(replacement));
+    assert.notEqual(
+      run('replace', replacementFile, '0'.repeat(64)).status,
+      0,
+      'wrong replacement lease rejects',
+    );
+    success('replace', replacementFile, firstRevision);
+    const secondRevision = getActive().revision;
+    assert.notEqual(secondRevision, firstRevision);
+    assert(
+      fs.existsSync(
+        path.join(
+          checkout,
+          'assets/sprites',
+          JSON.parse(fs.readFileSync(ownerPath)).history['hero:paladin'][firstRevision].output.file,
+        ),
+      ),
+      'old binary retained',
+    );
+    success('rollback', 'hero:paladin', firstRevision, secondRevision);
+    assert.equal(getActive().revision, firstRevision);
+    assert.notEqual(
+      run('rollback', 'hero:paladin', secondRevision, secondRevision).status,
+      0,
+      'rollback lease rejects',
+    );
+    const clipJob = path.join(checkout, 'clip-job.json');
+    fs.writeFileSync(
+      clipJob,
+      JSON.stringify({
+        name: 'idle',
+        frameFiles: [recordFile, replacementFile],
+        durations: [100, 100],
+        loop: true,
+      }),
+    );
+    success('attach-clip', replacementFile, clipJob);
+    assert.notEqual(
+      run('replace', replacementFile, firstRevision).status,
+      0,
+      'assembly requires a final review',
+    );
+    const assembled = JSON.parse(fs.readFileSync(replacementFile));
+    assembled.review = record.review;
+    fs.writeFileSync(replacementFile, JSON.stringify(assembled));
+    success('replace', replacementFile, firstRevision);
+    assert.equal(success('check').uniqueImages, 2, 'fallback and atlas registered');
+    success('rollback', 'hero:paladin', firstRevision, getActive().revision);
+    // An unrelated renderer edit must not invalidate accepted image evidence.
+    const rendererFile = path.join(checkout, 'src/prototype/renderer.js');
+    fs.appendFileSync(rendererFile, '\n// unrelated maintenance\n');
+    success('check');
+    const originalCatalog = fs.readFileSync(
+      path.join(checkout, 'docs/GRAPHICS_CANON_SPRITE_PROMPTS.md'),
+      'utf8',
+    );
+    fs.writeFileSync(
+      path.join(checkout, 'docs/GRAPHICS_CANON_SPRITE_PROMPTS.md'),
+      originalCatalog.replace('"entries":296,"generate":280', '"entries":297,"generate":281') +
+        '\n### 297 — Future object\n\n**Image-generation prompt:**\n\n> One object.\n',
+    );
+    success('check');
+    fs.writeFileSync(path.join(checkout, 'docs/GRAPHICS_CANON_SPRITE_PROMPTS.md'), originalCatalog);
+    assert.notEqual(run('remove', 'hero:paladin', '0'.repeat(64)).status, 0);
+    success('remove', 'hero:paladin', firstRevision);
+    assert.equal(success('check').registered, 0);
+    // Restore a removed registration using the explicit absent lease.
+    assert.notEqual(run('rollback', 'hero:paladin', firstRevision, firstRevision).status, 0);
+    success('rollback', 'hero:paladin', firstRevision, 'absent');
+    assert.equal(success('asset', 'hero:paladin').matches[0].activeRevision, firstRevision);
+    assert.equal(
+      success('asset', 'goblin').resolved,
+      false,
+      'ambiguous species names return choices',
+    );
+    console.log(
+      'PASS replacement leases, retained revisions, rollback/removal, atlas provenance and unrelated-source/catalog additions',
+    );
     const ownerFile = path.join(checkout, 'tools/sprites/approved.json');
     const owner = JSON.parse(fs.readFileSync(ownerFile));
     const singleManifest = JSON.parse(
@@ -311,26 +395,25 @@ const root = path.resolve(__dirname, '..');
       key: goblin.key,
       catalogId: goblin.catalogId,
       catalogHash: goblin.catalog.sourceHash,
+      canonHash: goblin.canonHash,
       runtime: goblin.runtime,
     });
+    duplicateRecord.revision = pipeline.revisionFor(duplicateRecord);
     owner.assets[goblin.key] = duplicateRecord;
     fs.writeFileSync(ownerFile, JSON.stringify(owner));
     const doubled = JSON.parse(JSON.stringify(singleManifest));
-    doubled.sprites[goblin.key] = {
-      src: singleManifest.sprites['hero:paladin'].src,
-      ...goblin.runtime,
-    };
+    doubled.sprites[goblin.key] = pipeline.entryFor(duplicateRecord);
     fs.writeFileSync(path.join(checkout, 'assets/sprites/manifest.json'), JSON.stringify(doubled));
     const duplicateBudget = success('check');
     assert.equal(duplicateBudget.uniqueImages, 1);
     assert.equal(
       duplicateBudget.decodedBytes,
-      prepared.record.output.decodedBytes * 2,
-      'budget includes key-level duplicate decodes',
+      prepared.record.output.decodedBytes,
+      'shared content is decoded once',
     );
     const specFile = path.join(checkout, 'tools/sprites/specifications.json'),
       policy = JSON.parse(fs.readFileSync(specFile));
-    policy.policy.maxDecodedRegistryBytes = prepared.record.output.decodedBytes + 1;
+    policy.policy.maxActiveDecodedBytes = prepared.record.output.decodedBytes - 1;
     fs.writeFileSync(specFile, JSON.stringify(policy));
     const overBudget = run('check');
     assert.notEqual(overBudget.status, 0);

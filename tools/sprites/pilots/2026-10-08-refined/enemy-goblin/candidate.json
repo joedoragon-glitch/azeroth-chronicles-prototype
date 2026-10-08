@@ -1,0 +1,95 @@
+{
+  "version": 2,
+  "key": "enemy:goblin",
+  "catalogId": "016",
+  "canonHash": "aaae81634188dec92335c2937ebbff673f5cd456580ac3730c9395c63cd70f19",
+  "canonSnapshotHash": "698426129edfdaaaee0f2d2c11f552c9debd6f3dfa8eda567995d0c9a7ee36a6",
+  "catalogHash": "afea6b2cccaad719db7caf0f8f7351d250bd5779d1beb9305e05da0d5262c4f5",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1350,
+    "height": 1350,
+    "bytes": 206534,
+    "decodedBytes": 7290000,
+    "hash": "fea4585a07603408d8509459e2a31108bdb9cdfd226c1f7e17823cd40a610d84",
+    "pixelHash": "8c8cac44a4ffaa6bb46b40b1b6fd3b8643cfce4895ef57bf7c3df97167b3c669",
+    "bounds": {
+      "x1": 48,
+      "y1": 48,
+      "x2": 1263,
+      "y2": 1255
+    },
+    "padding": 48,
+    "transparentPixels": 1753546,
+    "visiblePixels": 68954,
+    "lowAlphaPixels": 5791,
+    "materialBounds": {
+      "x1": 577,
+      "y1": 785,
+      "x2": 851,
+      "y2": 1134
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 5341,
+    "decodedBytes": 147456,
+    "hash": "c20da0cb214bf63b414416a83dfe198b646c27dbb87d986173d03803aacc8e50",
+    "pixelHash": "11001f431b91b55098bcf679463ce43d3d5f60bee0af9f5c77da3160bded1e62",
+    "bounds": {
+      "x1": 79,
+      "y1": 109,
+      "x2": 117,
+      "y2": 159
+    },
+    "padding": 32,
+    "transparentPixels": 35460,
+    "visiblePixels": 1404,
+    "lowAlphaPixels": 133,
+    "materialBounds": {
+      "x1": 79,
+      "y1": 110,
+      "x2": 117,
+      "y2": 159
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 54
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1350,
+      1350
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": -3,
+      "y": -2,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "scope": "Joel explicitly accepted playful half-smile and organic ears on 2026-10-08 at 07:24 America/New_York",
+    "chatLink": null,
+    "technicalReview": "Native/context review required before release"
+  }
+}

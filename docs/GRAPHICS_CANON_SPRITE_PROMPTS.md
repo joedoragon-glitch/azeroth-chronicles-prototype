@@ -26,6 +26,10 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 > Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale.
 
+## Intended design and material-appropriate shape · 8 October 2026
+
+Joel clarified that procedural primitives can create accidental anatomy and blocky forms. This applies to every candidate, including props, buildings, terrain and scenery. Preserve the intended identity, functional structure, proportions, palette, equipment and major silhouette; refine contours and joins to suit the actual material. Organic body parts, leaves, flowers, branches and natural rock can have natural contours. Curved manufactured parts can gain their intended curves. Hard edges remain appropriate for armor, quarried blocks, timber joints or machinery when those are the design. A coarse polygon is a reference for meaning, not a requirement to reproduce awkward geometry literally. This clarification governs the base and per-entry prompts below; include it in every actual generation request. It authorizes faithful shape refinement, not new species, loadouts, symbols, lore or changes to gameplay geometry. Review at native size against intended design and current scene context.
+
 ## Workflow lock
 
 - Generate exactly one sprite per request.
@@ -35,7 +39,7 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 - This is an open inventory. Reconcile current renderer/map additions before their production; the total is not a ceiling.
 - Capture the current exact body and scene context; remove procedural grounding shadows from generation references, retain them in gameplay comparisons.
 - Check native-size facial readability, apparent silhouette, placement and alpha margins before publication.
-- The goblin's pale angular center-face cue is a small nose/face feature, not a broad toothy smile. Do not exaggerate it into a triangular grin.
+- Joel's accepted Goblin direction is a playful asymmetrical half-smile, a small ivory tooth/sliver at one lower mouth corner, a separate small nose, and organic pointed ears with natural joins/folds. Preserve that intention rather than a robotic polygon or a face-wide triangle.
 - Candidate assets remain outside the live sprite manifest until Phase 2B audit approval.
 - Only entries containing **Image-generation prompt** are generated. Entries marked **KEEP PROCEDURAL** are skipped.
 
@@ -75,7 +79,7 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 005 — Companion — Archer / Ranger support
 
-**Canonical cues:** Compact allied goblin scout: semi-human goblin proportions, olive-green goblin skin, long pointed ears and a small goblin facial/nose silhouette. Muted green scout clothing with a darker green hood/cape. Bow on screen-right and quiver/arrows on screen-left/back preserve the established Archer companion role. A diagonal travel strap, small brown side pouch and restrained warm-gold ally knot distinguish the companion from hostile goblins. It does not use the hero Ranger's teal flask/pouch or pale-green utility ornament.
+**Canonical cues:** Compact allied goblin scout: semi-human goblin proportions, olive-green goblin skin, long pointed ears and a small goblin facial/nose silhouette. Muted green scout clothing with a darker green hood/cape. Bow on screen-right and quiver/arrows on screen-left/back preserve the established Archer companion role. A diagonal travel strap, small brown side pouch and restrained warm-gold ally knot distinguish the companion from hostile goblins. It does not use the hero Ranger's teal flask/pouch or pale-green utility ornament. Organic pointed ears with natural folds/joins; playful half-smile with a small ivory corner-tooth/sliver and separate narrow nose. Refine procedural shape artifacts rather than copying robotic ear panels.
 
 **Image-generation prompt:**
 
@@ -165,7 +169,7 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 016 — Goblin melee
 
-**Canonical cues:** Small humanoid enemy, about 0.8 normal human bulk. Brown clothing, muted yellow-green skin, very large pointed ears, small angular nose and separate simple mouth (no wide pale triangular grin), dark belt/waist details, short sword on screen-right.
+**Canonical cues:** Small humanoid enemy, about 0.8 normal human bulk. Brown clothing, muted yellow-green skin, very large pointed ears, small angular nose and separate simple mouth (no wide pale triangular grin), dark belt/waist details, short sword on screen-right. Organic pointed ears with natural folds/joins; playful half-smile with a small ivory corner-tooth/sliver and separate narrow nose. Refine procedural shape artifacts rather than copying robotic ear panels.
 
 **Image-generation prompt:**
 
@@ -261,7 +265,7 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 028 — Goblin slinger
 
-**Canonical cues:** Same small Goblin body, ears, colors and proportions as melee Goblin, but its ranged canonical drawing replaces the sword emphasis with a simple sling/throwing line and stone on screen-right plus a small brown pouch/block on screen-left.
+**Canonical cues:** Same small Goblin body, ears, colors and proportions as melee Goblin, but its ranged canonical drawing replaces the sword emphasis with a simple sling/throwing line and stone on screen-right plus a small brown pouch/block on screen-left. Organic pointed ears with natural folds/joins; playful half-smile with a small ivory corner-tooth/sliver and separate narrow nose. Refine procedural shape artifacts rather than copying robotic ear panels.
 
 **Image-generation prompt:**
 
@@ -407,7 +411,7 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 046 — Scornfang
 
-**Canonical cues:** Goblin captain: same Goblin body and proportions, moderately larger. Canon additions inspired by Thornfang: wolf-trophy/bone pieces near left shoulder, three small claw/fang bone marks on torso, two green diagonal markings, small warm-gold glint. Procedural captain ground ring is NOT part of sprite. Current treasury loadout is ranged: sling/stone on screen-right and small brown pouch on screen-left, not the melee sword. Preserve the small angular nose with separate simple mouth; no wide pale triangular grin. The current guard role also retains its small pale-gold body mark. Exclude all captain rings and guard ground chevrons from the raster.
+**Canonical cues:** Goblin captain: same Goblin body and proportions, moderately larger. Canon additions inspired by Thornfang: wolf-trophy/bone pieces near left shoulder, three small claw/fang bone marks on torso, two green diagonal markings, small warm-gold glint. Procedural captain ground ring is NOT part of sprite. Current treasury loadout is ranged: sling/stone on screen-right and small brown pouch on screen-left, not the melee sword. Preserve the small angular nose with separate simple mouth; no wide pale triangular grin. The current guard role also retains its small pale-gold body mark. Exclude all captain rings and guard ground chevrons from the raster. Organic pointed ears with natural folds/joins; playful half-smile with a small ivory corner-tooth/sliver and separate narrow nose. Refine procedural shape artifacts rather than copying robotic ear panels.
 
 **Runtime sprite key:** `enemy:goblin:captain-ranged-guard`
 
@@ -673,7 +677,7 @@ Use this text at the beginning of every asset prompt, followed by that asset's s
 
 ### 076 — Goblin roadside camp
 
-**Canonical cues:** Two overlapping small brown/tan triangular lean-to tents, a small dark fire pit with one warm glint at lower left, and a small brown crate/block at screen-right.
+**Canonical cues:** Two overlapping small brown/tan triangular lean-to tents, a small dark fire pit with one warm glint at lower left, and a small brown crate/block at screen-right. Organic pointed ears with natural folds/joins; playful half-smile with a small ivory corner-tooth/sliver and separate narrow nose. Refine procedural shape artifacts rather than copying robotic ear panels.
 
 **Image-generation prompt:**
 
@@ -2256,7 +2260,7 @@ These entries were reconciled from current production code and authored placemen
 
 ### 265 — Goblin melee guard
 
-**Canonical cues:** Small humanoid enemy, about 0.8 normal human bulk. Brown clothing, muted yellow-green skin, very large pointed ears, small angular nose and separate simple mouth (no wide pale triangular grin), dark belt/waist details, short sword on screen-right. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural.
+**Canonical cues:** Small humanoid enemy, about 0.8 normal human bulk. Brown clothing, muted yellow-green skin, very large pointed ears, small angular nose and separate simple mouth (no wide pale triangular grin), dark belt/waist details, short sword on screen-right. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. Organic pointed ears with natural folds/joins; playful half-smile with a small ivory corner-tooth/sliver and separate narrow nose. Refine procedural shape artifacts rather than copying robotic ear panels.
 
 **Runtime sprite key:** `enemy:goblin:guard`
 
@@ -2266,7 +2270,7 @@ These entries were reconciled from current production code and authored placemen
 
 ### 266 — Goblin ranged guard
 
-**Canonical cues:** Same small Goblin body, ears, colors and proportions as melee Goblin, but its ranged canonical drawing replaces the sword emphasis with a simple sling/throwing line and stone on screen-right plus a small brown pouch/block on screen-left. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural.
+**Canonical cues:** Same small Goblin body, ears, colors and proportions as melee Goblin, but its ranged canonical drawing replaces the sword emphasis with a simple sling/throwing line and stone on screen-right plus a small brown pouch/block on screen-left. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. Organic pointed ears with natural folds/joins; playful half-smile with a small ivory corner-tooth/sliver and separate narrow nose. Refine procedural shape artifacts rather than copying robotic ear panels.
 
 **Runtime sprite key:** `enemy:goblin:ranged-guard`
 
