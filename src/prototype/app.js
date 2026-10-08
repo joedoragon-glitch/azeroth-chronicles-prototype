@@ -2847,8 +2847,8 @@
             : 'Day');
     const rangers = game.activeLivingParty().filter((u) => u.type === 'archer');
     for (const [type, label, key, cdKey, threshold] of [
-      ['health', 'Heal', 'H', 'healCd', 50],
-      ['mana', 'Mana Regen', 'M', 'manaCd', 35],
+      ['health', 'Heal', input.key('heal'), 'healCd', 50],
+      ['mana', 'Mana Regen', input.key('mana'), 'manaCd', 35],
     ]) {
       const b = $(type + '-potion'),
         ready = rangers.filter((u) => (u[cdKey] || 0) <= 0).length,
