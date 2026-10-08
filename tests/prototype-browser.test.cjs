@@ -74,10 +74,12 @@ await check('HUD surfaces shield the world and real pointer skills charge safely
  const hud=await page.locator('#hero-stats .hero-title').boundingBox();
  assert(await page.evaluate(p=>!!document.elementFromPoint(p.x+p.width/2,p.y+p.height/2)?.closest('#hud'),hud),'HUD text must receive the pointer instead of the world');
  const before=await page.evaluate(()=>[Prototype.game.hero.x,Prototype.game.hero.y]);
+ const hudHit=await page.evaluate(p=>{const hit=document.elementFromPoint(p.x+p.width/2,p.y+p.height/2);return {target:hit?.outerHTML,modalHidden:document.querySelector('#modal').hidden};},hud);
  if(v.touch)await page.touchscreen.tap(hud.x+hud.width/2,hud.y+hud.height/2);else await page.mouse.click(hud.x+hud.width/2,hud.y+hud.height/2);
+ assert(await page.locator('#modal').isHidden(),'HUD readout must not open a menu: '+JSON.stringify({hud,hudHit,title:await page.locator('#modal-title').textContent()}));
  assert.equal(await page.evaluate(()=>Prototype.game.hero.order),null,'HUD text never creates travel');
  assert.deepEqual(await page.evaluate(()=>[Prototype.game.hero.x,Prototype.game.hero.y]),before);
- if(v.touch){await page.evaluate(()=>{const h=Prototype.game.hero;h.order={type:'move',x:800,y:900};h.path=[{x:800,y:900}];});await page.locator('#joystick').tap();assert.equal(await page.evaluate(()=>Prototype.game.hero.order),null,'neutral joystick tap takes over from travel');}
+ if(v.touch){await page.evaluate(()=>{const h=Prototype.game.hero;h.order={type:'move',x:800,y:900};h.path=[{x:800,y:900}];});await page.locator('#joystick').tap();assert(await page.locator('#modal').isHidden(),'neutral joystick must not open a menu: '+JSON.stringify({box:await page.locator('#joystick').boundingBox(),title:await page.locator('#modal-title').textContent()}));assert.equal(await page.evaluate(()=>Prototype.game.hero.order),null,'neutral joystick tap takes over from travel');}
  await page.evaluate(()=>{const c=Prototype.game;Object.assign(c.hero,{x:600,y:900,class:'paladin',mp:1000,maxMp:1000,power:18,weapon:0,legacyWeaponPower:0,legacyEquipped:false,talents:[0,0,0,0],order:null});c.hero.skills[0]=1;c.hero.cd[0]=0;c.s.mercyTime=0;const e=c.makeEnemy({species:'goblin',name:'Pointer audit target',level:1,hp:10000,damage:0,gold:0,xp:0},{x:680,y:900});c.zone().enemies=[e];c.s.heroTarget=e.id;Prototype.updateHUD();});
  const skill=await page.locator('#skill-1').boundingBox(),x=skill.x+skill.width/2,y=skill.y+skill.height/2;
  const touch=v.touch?await page.context().newCDPSession(page):null;
