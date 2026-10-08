@@ -75,3 +75,7 @@ Browser testing uses Playwright 1.62.1 with Chromium/Chrome and WebKit. CI suppl
 - [Historical project narrative through v0.8.80](docs/PROJECT_HISTORY.md)
 
 Phone gameplay uses a compact health/mana/level HUD. Learned skills and available Ranger recovery controls sit at the bottom right; Interact appears separately only within reach of a usable target. Recall stays directly above the left joystick; Character → Discipline Training keeps training in its menu. Map/time labels and routine save reminders no longer occupy the gameplay HUD.
+
+## Sprite production preparation
+
+The developer tooling and comparison showroom are documented in [SPRITE_PREPARATION.md](docs/SPRITE_PREPARATION.md). This preparation release keeps the current procedural game visuals. The later art pilot and creative approvals remain separate.

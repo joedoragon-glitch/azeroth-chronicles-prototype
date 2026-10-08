@@ -1,6 +1,6 @@
 {
   "name": "azeroth-chronicles-prototype",
-  "version": "0.8.84",
+  "version": "0.8.85",
   "private": true,
   "description": "Offline installable RPG prototype for Chromebook and mobile.",
   "scripts": {
@@ -8,15 +8,24 @@
     "test:browser": "node tests/prototype-browser.test.cjs",
     "test:quick": "node tests/run.cjs --quick",
     "build": "node scripts/build.cjs",
-    "check": "node scripts/build.cjs --check",
+    "check": "node scripts/build.cjs --check && node scripts/sprite-pipeline.cjs check",
     "dev": "node scripts/dev.cjs",
-    "format": "prettier --write \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\"",
-    "format:check": "prettier --check \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\""
+    "format": "prettier --write \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\" \"tools/sprites/*.{js,css,html,json}\" tests/sprite-pipeline.test.cjs tests/sprite-showroom-browser.test.cjs",
+    "format:check": "prettier --check \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\" \"tools/sprites/*.{js,css,html,json}\" tests/sprite-pipeline.test.cjs tests/sprite-showroom-browser.test.cjs",
+    "sprite:check": "node scripts/sprite-pipeline.cjs check",
+    "sprite:catalog": "node scripts/sprite-pipeline.cjs catalog",
+    "sprite:contracts": "node scripts/sprite-pipeline.cjs contracts",
+    "sprite:inspect": "node scripts/sprite-pipeline.cjs inspect",
+    "sprite:prepare": "node scripts/sprite-pipeline.cjs prepare",
+    "sprite:showroom": "node scripts/sprite-pipeline.cjs showroom",
+    "sprite:publish": "node scripts/sprite-pipeline.cjs publish"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20.9.0"
   },
   "devDependencies": {
-    "prettier": "3.5.3"
+    "@napi-rs/canvas": "1.0.10",
+    "prettier": "3.5.3",
+    "sharp": "0.35.5"
   }
 }

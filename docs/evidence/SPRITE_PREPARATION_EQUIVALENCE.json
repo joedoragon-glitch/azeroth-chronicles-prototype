@@ -1,0 +1,134 @@
+{
+  "baseline": "3b1fa4c394c633abd61f3e8710b451c5e96618bc",
+  "version": "0.8.85",
+  "byteIdentical": [
+    {
+      "file": "assets/sprites/manifest.json",
+      "sha256": "6ece336f088efa35ea064bd749ac2c9b4323404a8ddbca5e6e1f8edff38c8c04"
+    },
+    {
+      "file": "src/prototype/app.js",
+      "sha256": "b8e8c681191586789f3336feb3db28f10654e7cf2bfa6554589cf6996b86ac25"
+    },
+    {
+      "file": "src/prototype/audio.js",
+      "sha256": "8ad2c761492d1d76b663b0ab673d5c4ca239cc5c6fb511e1e942dcf8a02ec2ae"
+    },
+    {
+      "file": "src/prototype/combat-visuals.js",
+      "sha256": "3b084aa58b467698cd845c4696d7b901bc5b70b1146f6d0b4ba7d1547e492c5f"
+    },
+    {
+      "file": "src/prototype/data.js",
+      "sha256": "e505ef789bf507656d695f9882c02bfb9dfe255612b4756646e7e6a0903a9165"
+    },
+    {
+      "file": "src/prototype/engine.js",
+      "sha256": "32d97449498a913c0376f0e5ae0680f2b61fa6b244df8d167704acb237812bec"
+    },
+    {
+      "file": "src/prototype/input.js",
+      "sha256": "7734c94eecc190f569dd6760a784cb50538b9a078abf10d6c40cde023c412665"
+    },
+    {
+      "file": "src/prototype/menus.js",
+      "sha256": "9cec957f77b7ccf60c6c7c1dce4a8f9b37f6147da4cad01cfa9765c76c260ec1"
+    },
+    {
+      "file": "src/prototype/navigation.js",
+      "sha256": "dbb700f55909a4908b64aec2c97583b07af93d7aeafe32d111dbbe16a7f79c36"
+    },
+    {
+      "file": "src/prototype/persistence.js",
+      "sha256": "262f2f07b8ff6a6286d38fc887cbce9416425f89f91afdbf609caca08e54846b"
+    },
+    {
+      "file": "src/prototype/platform.js",
+      "sha256": "6bd6b05112d62b9922d538d99f0dda55305ac926e4b30ab95276064080556db4"
+    },
+    {
+      "file": "src/prototype/progression.js",
+      "sha256": "34a856b6216a57761f3b6ef6677046325819f0fa3d10ec2c209fe54303fef1bf"
+    },
+    {
+      "file": "src/prototype/renderer.js",
+      "sha256": "50341978ceb30553886e5383e75b003382f2bfe9f4e9dc5abd52fb504cff7fe7"
+    },
+    {
+      "file": "src/prototype/rules.js",
+      "sha256": "8f8d2ee8e220b39ea7dba9167e111b609b224fcd7d1bc801f8ecbe2d84b85003"
+    },
+    {
+      "file": "src/prototype/runtime.js",
+      "sha256": "baeae0441fd164f90bda835381d6f99772332eb8d850f2e18d7ccc8838b19e86"
+    },
+    {
+      "file": "src/prototype/save.js",
+      "sha256": "ce5328cb7c2eeb1bab4d56ad07851f482f6465ea06d914fc6a0dd61058653832"
+    },
+    {
+      "file": "src/prototype/sprites.js",
+      "sha256": "239ed4e53f732ad7b080f2146a8ef9d3d690198b9380d8c733e07d4a5acaa321"
+    },
+    {
+      "file": "src/prototype/visuals.js",
+      "sha256": "cbe01540b2130a02eded7fe1cfe0398660b4795201dc70f276b57b1dee889436"
+    },
+    {
+      "file": "src/prototype/world.js",
+      "sha256": "29d4b9e18beb3e248bfebb128f86c85378e5aa7208e3d7c4255f22aef5aefe29"
+    },
+    {
+      "file": "styles/desktop.css",
+      "sha256": "a32d8f8615eb166827ff69b98f244f4a5f13e258844941fd1dfa8f8922f2274a"
+    },
+    {
+      "file": "styles/phone.css",
+      "sha256": "0870165a29bdc9c6a6fe41f932b4358a759a11c4ecf34abb5c6dadc648aab29c"
+    },
+    {
+      "file": "styles/prototype.css",
+      "sha256": "753e94f4e25f60c71d085beaea00512976e3bb1a0670e6d17895c05ea161e585"
+    }
+  ],
+  "catalogEntries": 231,
+  "preparedContracts": [
+    {
+      "key": "hero:paladin",
+      "canonHash": "33f107be45d4c6b6223f2e2d3bcaab4f7710c62951361625d62f2afd6e918138",
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 54
+      },
+      "referenceHash": "b0fe524d7f712fd41359fbfe6d0bebb7ea306c243069dcc7bffb68210aad6ab8"
+    },
+    {
+      "key": "enemy:goblin",
+      "canonHash": "33f107be45d4c6b6223f2e2d3bcaab4f7710c62951361625d62f2afd6e918138",
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 54
+      },
+      "referenceHash": "ca85e5f6d7ac51eeee6cb6d3e68d4b4a38e6513ec3f0517555dc8c7ab89cef69"
+    },
+    {
+      "key": "prop:vale-cottage:vale",
+      "canonHash": "33f107be45d4c6b6223f2e2d3bcaab4f7710c62951361625d62f2afd6e918138",
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "referenceHash": "851ebe2ae638623df3efc680fd02310754f44300c3ac62da6774075278913d7f"
+    }
+  ],
+  "binaryFixtureHash": "b0fe524d7f712fd41359fbfe6d0bebb7ea306c243069dcc7bffb68210aad6ab8"
+}

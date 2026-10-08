@@ -1,0 +1,88 @@
+:root {
+  color-scheme: dark;
+  font:
+    16px/1.5 system-ui,
+    sans-serif;
+  background: #121c19;
+  color: #f4eedb;
+}
+body {
+  margin: 0;
+}
+main {
+  max-width: 1400px;
+  padding: 24px;
+  margin: auto;
+}
+h1 {
+  margin-bottom: 8px;
+}
+h2 {
+  margin-top: 30px;
+}
+p {
+  max-width: 78ch;
+}
+.controls {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 12px 0;
+}
+label {
+  flex-wrap: wrap;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+select {
+  max-width: 100%;
+  font: inherit;
+  padding: 6px;
+}
+figure {
+  margin: 0;
+  min-width: 0;
+}
+figcaption {
+  font-weight: 650;
+  padding: 8px 0;
+}
+.isolated {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+canvas {
+  max-width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+  border: 1px solid #647368;
+}
+.scenes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.scenes img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #647368;
+}
+.note {
+  color: #bcc8be;
+}
+#error {
+  color: #ffc6ad;
+}
+@media (max-width: 600px) {
+  main {
+    padding: 16px;
+  }
+  .scenes {
+    grid-template-columns: 1fr;
+  }
+}

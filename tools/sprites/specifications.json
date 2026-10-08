@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "policy": {
+    "maxSourcePixels": 4194304,
+    "maxSourceBytes": 16777216,
+    "maxOutputDimension": 512,
+    "maxOutputBytes": 1048576,
+    "maxDecodedRegistryBytes": 16777216,
+    "minimumPadding": 2,
+    "colorSpace": "srgb",
+    "resizeKernel": "nearest",
+    "viewports": [
+      [1280, 800],
+      [375, 812],
+      [320, 568],
+      [844, 390]
+    ]
+  },
+  "assets": [
+    {
+      "catalogId": "001",
+      "key": "hero:paladin",
+      "region": 0,
+      "entity": {
+        "renderKind": "hero",
+        "class": "paladin",
+        "id": "sprite-reference-paladin"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "016",
+      "key": "enemy:goblin",
+      "region": 0,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "goblin",
+        "species": "goblin",
+        "id": "sprite-reference-goblin"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "061",
+      "key": "prop:vale-cottage:vale",
+      "region": 0,
+      "entity": {
+        "renderKind": "prop",
+        "structure": "vale-cottage",
+        "id": "sprite-reference-cottage"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    }
+  ]
+}
