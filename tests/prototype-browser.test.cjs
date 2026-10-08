@@ -18,17 +18,26 @@ await check('Production registry preserves exact sprites and procedural fallback
 await check('Accepted desktop/phone CSS is pixel-equivalent at fixed presentation '+tag,async()=>{
  if(smoke)return;
  const baseline=require('./fixtures/presentation-v0883.json');
- await page.evaluate(()=>{const p=Prototype;window.__layoutRestore={tick:p.game.tick,draw:p.renderer.draw};p.game.tick=()=>{};p.renderer.draw=()=>{};p.updateHUD();});
- let style;
+ // Stop the entire frame loop, including its closed-over HUD refresh. Freezing
+ // tick/draw alone leaves DOM writes racing the stylesheet replacement.
+ await page.evaluate(async()=>{const p=Prototype;window.__layoutRestore={tick:p.game.tick,draw:p.renderer.draw,raf:window.requestAnimationFrame.bind(window)};p.game.tick=()=>{};p.renderer.draw=()=>{};window.requestAnimationFrame=callback=>{__layoutRestore.callback=callback;return 0;};p.updateHUD();await document.fonts.ready;await new Promise(resolve=>__layoutRestore.raf(()=>__layoutRestore.raf(resolve)));});
+ const settle=()=>page.evaluate(()=>new Promise(resolve=>{document.body.getBoundingClientRect();__layoutRestore.raf(()=>__layoutRestore.raf(resolve));}));
+ let style,probe;
  try{
    const current=await page.screenshot({animations:'disabled',caret:'hide',path:path.join(results,'accepted-css-current-'+tag+'.png')});
    await page.evaluate(()=>document.querySelectorAll('link[rel="stylesheet"]').forEach(el=>el.sheet.disabled=true));
    style=await page.addStyleTag({content:Object.values(baseline.css).join('\n')});
+   await settle();
    const before=await page.screenshot({animations:'disabled',caret:'hide',path:path.join(results,'accepted-css-baseline-'+tag+'.png')});
    assert(current.equals(before),'accepted CSS layout pixels differ at '+tag);
+   // Retain exact pixel equality and prove it still detects a real style change.
+   probe=await page.addStyleTag({content:'button { border-radius: 0 !important; }'});
+   await settle();
+   assert(!before.equals(await page.screenshot({animations:'disabled',caret:'hide'})),'CSS comparison must detect altered button geometry at '+tag);
  }finally{
+   if(probe)await probe.evaluate(el=>el.remove());
    if(style)await style.evaluate(el=>el.remove());
-   await page.evaluate(()=>{document.querySelectorAll('link[rel="stylesheet"]').forEach(el=>el.sheet.disabled=false);Prototype.game.tick=__layoutRestore.tick;Prototype.renderer.draw=__layoutRestore.draw;delete window.__layoutRestore;});
+   await page.evaluate(()=>{document.querySelectorAll('link[rel="stylesheet"]').forEach(el=>el.sheet.disabled=false);Prototype.game.tick=__layoutRestore.tick;Prototype.renderer.draw=__layoutRestore.draw;window.requestAnimationFrame=__layoutRestore.raf;if(__layoutRestore.callback)window.requestAnimationFrame(__layoutRestore.callback);delete window.__layoutRestore;});
  }
 });
 await check('Terrain and effects module renders Citadel walls, normal abilities and protected night cues '+tag,async()=>{
