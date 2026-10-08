@@ -1,0 +1,17 @@
+{
+  "id": "T002",
+  "resourceKey": "terrain:ground:march",
+  "name": "Flooded Marches ground",
+  "status": "candidate",
+  "sourceOwner": "floor/groundDetail/terrain",
+  "palette": [
+    "#26444b",
+    "#31535a",
+    "#203b42",
+    "#85ada6"
+  ],
+  "cues": "Muted teal-green marsh earth with darker damp mud and restrained reed/grass grain. No puddles.",
+  "dependencyHash": "25b3d28969ae877432dcefd8a0166d60ba7a2a7a013f1ce1c86d5f35061f8fde",
+  "stage": "pipeline verified; generation queued",
+  "sourceCommit": "5bdfa149905290a1f14d8f06b966cf619ffec213"
+}

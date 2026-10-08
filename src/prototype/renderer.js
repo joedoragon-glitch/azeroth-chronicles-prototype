@@ -12,6 +12,7 @@
     PrototypeVisuals,
     PrototypeCombatVisuals,
     PrototypeSprites,
+    PrototypeMaterials,
     now = () => performance.now(),
   }) {
     let game = getGame(),
@@ -63,10 +64,12 @@
       for (const key of Object.keys(stats)) stats[key] = 0;
       origin = offset();
       PrototypeSprites?.beginFrame?.();
+      PrototypeMaterials?.beginFrame?.();
       try {
         render();
       } finally {
         PrototypeSprites?.endFrame?.();
+        PrototypeMaterials?.endFrame?.();
         origin = null;
       }
     }
@@ -957,13 +960,14 @@
             room,
             room ? game.zoneId : dungeon ? game.zoneId : '',
             blocked,
+            PrototypeMaterials,
           );
         }
       ctx.restore();
       if (authoredFloor) PrototypeVisuals.dungeonArchitecture(ctx, screen, game.zoneId, size);
-      if (!game.isDungeon()) PrototypeVisuals.terrain(ctx, screen, i, size);
-      PrototypeVisuals.roads(ctx, z.roads || [], screen, i);
-      if (!game.isDungeon()) PrototypeVisuals.bridges(ctx, screen, i);
+      if (!game.isDungeon()) PrototypeVisuals.terrain(ctx, screen, i, size, PrototypeMaterials);
+      PrototypeVisuals.roads(ctx, z.roads || [], screen, i, PrototypeMaterials);
+      if (!game.isDungeon()) PrototypeVisuals.bridges(ctx, screen, i, PrototypeMaterials);
       PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000);
       const boardCue = null,
         captainCue = game.zoneId === 'vale' && game.s.party.length <= 2;

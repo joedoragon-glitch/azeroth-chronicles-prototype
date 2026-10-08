@@ -1,0 +1,37 @@
+{
+  "catalogId": "005",
+  "key": "ally:archer",
+  "region": 0,
+  "entity": {
+    "renderKind": "ally",
+    "class": "archer",
+    "type": "archer",
+    "id": "sprite-reference-005"
+  },
+  "canvas": {
+    "width": 192,
+    "height": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75
+  },
+  "catalog": {
+    "id": "005",
+    "name": "Companion — Archer / Ranger support",
+    "status": "generate",
+    "source": "docs/GRAPHICS_CANON_SPRITE_PROMPTS.md",
+    "sourceHash": "4f00fbaff9ca24e2c4ee164c6c74ec7570465b7caaa132207d351427dd21cfaa",
+    "cues": "Compact allied goblin scout: semi-human goblin proportions, olive-green goblin skin, long pointed ears and a small goblin facial/nose silhouette. Muted green scout clothing with a darker green hood/cape. Bow on screen-right and quiver/arrows on screen-left/back preserve the established Archer companion role. A diagonal travel strap, small brown side pouch and restrained warm-gold ally knot distinguish the companion from hostile goblins. It does not use the hero Ranger's teal flask/pouch or pale-green utility ornament. Organic pointed ears with natural folds/joins; playful half-smile with a small ivory corner-tooth/sliver and separate narrow nose. Refine procedural shape artifacts rather than copying robotic ear panels.",
+    "prompt": "Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the companion Archer as the allied goblin scout defined by the procedural renderer: compact goblin-derived semi-human body, olive skin, long ears, muted green scout clothing, darker green hood/cape, bow on screen-right, quiver on screen-left/back, diagonal travel strap, small brown pouch and restrained warm-gold ally knot. It must read as a friendly party member while remaining unmistakably goblin. Do not copy the human Ranger face/body, do not add the Ranger's teal flask or pale-green utility ornament, and do not turn it into the hostile Goblin Slinger or human Raider Archer.",
+    "declaredKey": null
+  },
+  "canonSnapshotHash": "412f4e9ff9815f69f1ca3b826f8416b61de81393ddaad6f77bec865a72e61e72",
+  "approval": "pending",
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 54
+  },
+  "canonHash": "3b955cae0108bd184c7153755fe5cb7b8a8c3314fdfd5cf6bfb3d4118666cb9c"
+}

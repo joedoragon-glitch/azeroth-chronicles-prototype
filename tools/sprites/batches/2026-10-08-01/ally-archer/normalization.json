@@ -1,0 +1,13 @@
+{
+  "source": "exec-da0396eb-d81b-46eb-a861-0eb20c871dfb.png",
+  "originalHash": "df7a370cb7d119c7d90a6b045c542930d0c2f8d68492aa43c0b4ad2fa8c7e238",
+  "padding": 32,
+  "alphaDeletion": false,
+  "crop": false,
+  "reason": "Preserve low-alpha generator speckles and add an explicit strict transparent margin; material bounds govern grounding.",
+  "translation": {
+    "x": 3,
+    "y": 12
+  },
+  "candidate": "/workspace/scratch/64ab2c41f702/azeroth-chronicles-prototype/_sprite-work/ally-archer/5152d566a86ddb5c03d52008002a78efcb42c8011a214c898ee781ea9438d721-png-7eb0537a2553"
+}

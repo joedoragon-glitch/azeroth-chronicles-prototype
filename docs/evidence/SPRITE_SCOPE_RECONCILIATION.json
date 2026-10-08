@@ -5,7 +5,7 @@
     "alias": 0,
     "procedural": 16
   },
-  "preparedContracts": 70,
+  "preparedContracts": 74,
   "families": {
     "decoration": [
       "torch",
@@ -1143,12 +1143,12 @@
     }
   ],
   "sources": {
-    "src/prototype/visuals.js": "833491f8a94fa9032e792b2aa6b67a5ecc7d9f0006a1daebd99daacedc93668d",
+    "src/prototype/visuals.js": "0b55de226c4e485d825812ae7301ebdccfd9e6f045027b7330745a1b0440f5ca",
     "src/prototype/world.js": "bed381d82380a20c90a7f1b5b41d2d7956f911e0817a04a09a1266d7a242f2eb",
     "src/prototype/rules.js": "32de2d1fe194fd4245847cbf6460a9142bca19990d68bd0ee4a0d151e1ecfeb3",
     "src/prototype/data.js": "2857cba6812013313a5dd3a9751a7a1b28b418ed98d995a087b68609120e69a1",
     "src/prototype/sprites.js": "061ba00db854c4298ff2fed732afb046ebd8d945d8f80f8d475ac25966915fbe",
-    "src/prototype/renderer.js": "b7912a0dd82c8b0c6c7eb96d12c9b3b6d8c34684d710e7420d850bf0e5e5c750"
+    "src/prototype/renderer.js": "8c2d4a3001c779a0fa1e9493bbda206ccdeae8295c327f7850b7126f4403daee"
   },
   "limits": "Deterministic normal/Nightmare world samples support source-case classification; every actual art job still requires its exact current state/reference. Future summon/night/seed additions are not inferred from these samples."
 }

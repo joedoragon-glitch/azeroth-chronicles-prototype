@@ -1,0 +1,17 @@
+{
+  "id": "T005",
+  "resourceKey": "terrain:ground:crown",
+  "name": "Dark Crown ground",
+  "status": "candidate",
+  "sourceOwner": "floor/groundDetail/terrain",
+  "palette": [
+    "#343644",
+    "#414351",
+    "#2c2f3c",
+    "#a09b9e"
+  ],
+  "cues": "Muted slate-violet earth with restrained fine mineral/obsidian grain. No purple glow.",
+  "dependencyHash": "74350b029d3cef23685edb97420d3e435bb08fc08fc20cfae495f4895f6e7420",
+  "stage": "pipeline verified; generation queued",
+  "sourceCommit": "5bdfa149905290a1f14d8f06b966cf619ffec213"
+}

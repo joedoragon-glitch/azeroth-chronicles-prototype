@@ -1,0 +1,17 @@
+{
+  "id": "T001",
+  "resourceKey": "terrain:ground:vale",
+  "name": "Greenwood Vale ground",
+  "status": "candidate",
+  "sourceOwner": "floor/groundDetail/terrain",
+  "palette": [
+    "#294b36",
+    "#31583e",
+    "#203e30",
+    "#95ad80"
+  ],
+  "cues": "Muted woodland-green ground with subtle brown soil, sparse fine grass and leaf-grain detail.",
+  "dependencyHash": "3bea9060e82355f7fcde2117748e3be031d5b43740ac82a0a3a7f24dc89e71a0",
+  "stage": "pipeline verified; generation queued",
+  "sourceCommit": "5bdfa149905290a1f14d8f06b966cf619ffec213"
+}

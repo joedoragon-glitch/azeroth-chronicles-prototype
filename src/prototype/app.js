@@ -163,6 +163,7 @@
     PrototypeVisuals,
     PrototypeCombatVisuals,
     PrototypeSprites: typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites,
+    PrototypeMaterials: typeof PrototypeMaterials === 'undefined' ? null : PrototypeMaterials,
   });
   const { world } = renderer,
     worldLabelVisible = renderer.labelVisible;
@@ -537,6 +538,8 @@
               performance: runtime.report(renderer.metrics(), platform.mode),
               audio: audio.status(),
               sprites: typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites.status(),
+              materials:
+                typeof PrototypeMaterials === 'undefined' ? null : PrototypeMaterials.status(),
               currency: 'crowns',
               mode: game.s.mode,
               phase: game.s.phase,
@@ -2050,3 +2053,5 @@
     }
   }
 })();
+
+if (typeof PrototypeMaterials !== 'undefined') void PrototypeMaterials.load();

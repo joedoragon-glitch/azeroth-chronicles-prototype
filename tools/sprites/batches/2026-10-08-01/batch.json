@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "date": "2026-10-08",
+  "sourceCommit": "5bdfa149905290a1f14d8f06b966cf619ffec213",
+  "authorization": "Continue sprite mass production, own generation/testing/implementation/publication; user subsequently asked to continue here. No separate creative acceptance of these generated candidates is claimed.",
+  "pr121Gate": {
+    "run": 37777751587,
+    "commit": "5bdfa149905290a1f14d8f06b966cf619ffec213",
+    "status": "success",
+    "exactPublishedBuild": true,
+    "liveDesktopPhoneSmoke": true
+  },
+  "generationCalls": 10,
+  "initialCandidates": 8,
+  "targetedCorrections": 2,
+  "activeKeys": [
+    {
+      "key": "hero:mage",
+      "revision": "482a359a5997d069c2bd66761ebbafcafb234d3abce8acabe54cd1b2c2402254",
+      "rollback": "procedural",
+      "stage": "registered; release pending"
+    },
+    {
+      "key": "hero:ranger",
+      "revision": "fbf4d3d59177a51cf4ade65829e2bab7c62491c0728b06fe4ba95f099a578671",
+      "rollback": "procedural",
+      "stage": "registered; release pending"
+    },
+    {
+      "key": "ally:soldier",
+      "revision": "a48acfe9940e55581d1598cbd0a8a4a7d10b9bb2dc92f6e4e717ad495a961bd8",
+      "rollback": "procedural",
+      "stage": "registered; release pending"
+    },
+    {
+      "key": "ally:archer",
+      "revision": "9b9548bf117f33a4ef68b23be54e217def7f9cbd2fdb871747821846cfc00146",
+      "rollback": "procedural",
+      "stage": "registered; release pending"
+    }
+  ],
+  "pendingNature": [
+    {
+      "key": "prop:grass:vale",
+      "stage": "generated; native/variant review pending"
+    },
+    {
+      "key": "prop:bush:vale",
+      "stage": "generated; native/variant review pending"
+    },
+    {
+      "key": "prop:wildflowers:vale",
+      "stage": "generated; native/variant review pending"
+    },
+    {
+      "key": "prop:rock:vale",
+      "stage": "generated; native/variant review pending"
+    }
+  ],
+  "terrain": {
+    "generated": 0,
+    "stage": "dedicated pipeline verified; five-ground image production next"
+  },
+  "nextAction": "Publish actor batch and terrain pipeline, then process nature candidates/variants and five regional ground pilots in the next small staged batch.",
+  "releaseBaseCommit": "c93f64475123260af317cc0435ab81a5c317f4bd",
+  "releaseVersion": "0.8.94",
+  "concurrentWork": "Retains main environmental sound v0.8.93 and its audio smoke fixes"
+}

@@ -1,0 +1,37 @@
+{
+  "catalogId": "273",
+  "key": "prop:bush:vale",
+  "region": 0,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "bush",
+    "id": "aesthetic-nature-7"
+  },
+  "canvas": {
+    "width": 192,
+    "height": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75
+  },
+  "catalog": {
+    "id": "273",
+    "name": "Environmental Bush",
+    "status": "generate",
+    "source": "docs/GRAPHICS_CANON_SPRITE_PROMPTS.md",
+    "sourceHash": "3f58b47d332786e65b2f2e60a34b6c19cee2fe20af92309933dcd8d87a9a952b",
+    "cues": "Compact three-lobed leafy bush: left/right low lobes and raised central lobe, muted green (#58784f), no trunk or flowers. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.",
+    "prompt": "Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Bush as the current procedural reference. Compact three-lobed leafy bush: left/right low lobes and raised central lobe, muted green (#58784f), no trunk or flowers. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.",
+    "declaredKey": "prop:bush:vale"
+  },
+  "canonSnapshotHash": "412f4e9ff9815f69f1ca3b826f8416b61de81393ddaad6f77bec865a72e61e72",
+  "approval": "pending",
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "canonHash": "e131df531ec37a17a39fdabac720d23939d04a3e4fcb4525f51a405a15b0d0f0"
+}

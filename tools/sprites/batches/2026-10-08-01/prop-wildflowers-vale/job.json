@@ -1,0 +1,37 @@
+{
+  "catalogId": "275",
+  "key": "prop:wildflowers:vale",
+  "region": 0,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "wildflowers",
+    "id": "aesthetic-nature-10"
+  },
+  "canvas": {
+    "width": 192,
+    "height": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75
+  },
+  "catalog": {
+    "id": "275",
+    "name": "Environmental Wildflowers",
+    "status": "generate",
+    "source": "docs/GRAPHICS_CANON_SPRITE_PROMPTS.md",
+    "sourceHash": "c48954578fb68399057c6197eb21b1347506732aa7c117831fac56c0b988962e",
+    "cues": "Four thin muted green stems carrying tiny warm yellow, muted pink, pale cream and pale blue flower heads; preserve their sparse arrangement and very small scale. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.",
+    "prompt": "Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Wildflowers as the current procedural reference. Four thin muted green stems carrying tiny warm yellow, muted pink, pale cream and pale blue flower heads; preserve their sparse arrangement and very small scale. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.",
+    "declaredKey": "prop:wildflowers:vale"
+  },
+  "canonSnapshotHash": "412f4e9ff9815f69f1ca3b826f8416b61de81393ddaad6f77bec865a72e61e72",
+  "approval": "pending",
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "canonHash": "20469b6935a3445c0137df72d9ad37e926ae29dbef67307b7df29a8565c347e0"
+}

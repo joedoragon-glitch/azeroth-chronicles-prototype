@@ -1,0 +1,17 @@
+{
+  "id": "T003",
+  "resourceKey": "terrain:ground:highlands",
+  "name": "Ironroot Highlands ground",
+  "status": "candidate",
+  "sourceOwner": "floor/groundDetail/terrain",
+  "palette": [
+    "#485447",
+    "#56614d",
+    "#3b493f",
+    "#b1b59a"
+  ],
+  "cues": "Muted gray-green quarry earth with subdued dust and fine mineral grit.",
+  "dependencyHash": "3968e9ce138276536311f1a3ee36586dc276a2b9469bee5a84ea9121dd744328",
+  "stage": "pipeline verified; generation queued",
+  "sourceCommit": "5bdfa149905290a1f14d8f06b966cf619ffec213"
+}

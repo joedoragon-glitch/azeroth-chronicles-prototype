@@ -1,0 +1,102 @@
+{
+  "version": 2,
+  "key": "ally:archer",
+  "catalogId": "005",
+  "canonHash": "3b955cae0108bd184c7153755fe5cb7b8a8c3314fdfd5cf6bfb3d4118666cb9c",
+  "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+  "catalogHash": "4f00fbaff9ca24e2c4ee164c6c74ec7570465b7caaa132207d351427dd21cfaa",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1318,
+    "height": 1318,
+    "bytes": 345737,
+    "decodedBytes": 6948496,
+    "hash": "5152d566a86ddb5c03d52008002a78efcb42c8011a214c898ee781ea9438d721",
+    "pixelHash": "0560fa5cc63aadb48f5fbea712aa8003ef297506de8df653a0b3c64a234ec4f9",
+    "bounds": {
+      "x1": 113,
+      "y1": 89,
+      "x2": 1261,
+      "y2": 1165
+    },
+    "padding": 56,
+    "transparentPixels": 1626665,
+    "visiblePixels": 110459,
+    "lowAlphaPixels": 9196,
+    "materialBounds": {
+      "x1": 504,
+      "y1": 571,
+      "x2": 851,
+      "y2": 1013
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 8748,
+    "decodedBytes": 147456,
+    "hash": "f0179672464cd896cfa06a19ec6a928db6b202a10785e65b290032178612bb4c",
+    "pixelHash": "0b591644cc06009bf533fa308343da5fea25b090829bc641cbd32897016a0472",
+    "bounds": {
+      "x1": 76,
+      "y1": 96,
+      "x2": 126,
+      "y2": 159
+    },
+    "padding": 32,
+    "transparentPixels": 34502,
+    "visiblePixels": 2362,
+    "lowAlphaPixels": 194,
+    "materialBounds": {
+      "x1": 76,
+      "y1": 96,
+      "x2": 126,
+      "y2": 159
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 54
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1318,
+      1318
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": 3,
+      "y": 12,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "kind": "engineer-authorized-faithful-translation",
+    "date": "2026-10-08",
+    "userAppearanceAcceptance": false,
+    "checks": [
+      "current exact equipment/palette reference",
+      "organic anatomy/material contours",
+      "native grounding",
+      "all specified desktop/phone day/night scenes"
+    ],
+    "notes": "Joel authorized generation, testing, implementation and publication in this chat. This records engineer review, not separate user acceptance of this generated candidate. Static presentation avoids mixing a new design with stale frames."
+  }
+}

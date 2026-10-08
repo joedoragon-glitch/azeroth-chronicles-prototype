@@ -1,0 +1,13 @@
+{
+  "source": "exec-66785114-1142-431b-845a-35f9a652ab1a.png",
+  "originalHash": "25ca3e73678da20bd97c070247176b042ab79bf529fb316ea3e02eb772e9800f",
+  "padding": 32,
+  "alphaDeletion": false,
+  "crop": false,
+  "reason": "Preserve low-alpha generator speckles and add an explicit strict transparent margin; material bounds govern grounding.",
+  "translation": {
+    "x": 0,
+    "y": 6
+  },
+  "candidate": "/workspace/scratch/64ab2c41f702/azeroth-chronicles-prototype/_sprite-work/hero-mage/e3a36670eb4dd2823b37f7eea85e4e52922023864ac81f691a19d33761ec5708-png-233698f127fd"
+}

@@ -1,0 +1,37 @@
+{
+  "catalogId": "271",
+  "key": "prop:grass:vale",
+  "region": 0,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "grass",
+    "id": "aesthetic-nature-8"
+  },
+  "canvas": {
+    "width": 192,
+    "height": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75
+  },
+  "catalog": {
+    "id": "271",
+    "name": "Environmental Grass",
+    "status": "generate",
+    "source": "docs/GRAPHICS_CANON_SPRITE_PROMPTS.md",
+    "sourceHash": "f53f5c3cd38eaca23bcc495fcfce9aed71d3d5d360311da8e560c2b140b8c2a9",
+    "cues": "Three sparse muted green (#739266) grass blades, small upright clump, restrained differing blade heights. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.",
+    "prompt": "Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one isolated Grass as the current procedural reference. Three sparse muted green (#739266) grass blades, small upright clump, restrained differing blade heights. Add only readable material definition and fine detail. Do not add vegetation, anatomy, symbols, objects, a ground patch or baked shadow. Keep the current silhouette and small gameplay scale.",
+    "declaredKey": "prop:grass:vale"
+  },
+  "canonSnapshotHash": "412f4e9ff9815f69f1ca3b826f8416b61de81393ddaad6f77bec865a72e61e72",
+  "approval": "pending",
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "canonHash": "29cb10a8c2f66cf7f5f3fc579c1c218523c9d6224652f47fe7e18ae6ef025a8d"
+}

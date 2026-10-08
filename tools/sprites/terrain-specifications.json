@@ -1,7 +1,7 @@
 {
   "version": 1,
   "policy": {
-    "status": "scope-only; processing and runtime support pending terrain pilot",
+    "status": "opaque processing, review, rollback and clipped world mapping implemented; production follows verified pipeline",
     "source": "src/prototype/visuals.js",
     "targetWidth": 256,
     "targetHeight": 256,
@@ -17,7 +17,11 @@
       "terrain:ground:highlands",
       "terrain:ground:frontier",
       "terrain:ground:crown"
-    ]
+    ],
+    "resizeKernel": "lanczos3",
+    "maximumSeamMean": 12,
+    "maximumSeamToInteriorRatio": 1.5,
+    "defaultOpacity": 0.28
   },
   "candidates": [
     {

@@ -1,0 +1,13 @@
+{
+  "source": "exec-c80dca75-cea5-4c37-9cdc-081535a4cf0c.png",
+  "originalHash": "fab51967f9bd550e64189ad3103fb3abfde3469081c6880c18e4b8b538b33dd2",
+  "padding": 32,
+  "alphaDeletion": false,
+  "crop": false,
+  "reason": "Preserve low-alpha generator speckles and add an explicit strict transparent margin; material bounds govern grounding.",
+  "translation": {
+    "x": -2,
+    "y": 3
+  },
+  "candidate": "/workspace/scratch/64ab2c41f702/azeroth-chronicles-prototype/_sprite-work/hero-ranger/6a9bb7dc2503878ddfdbc4e0a2d275f47a5d2ea2d4fde33a3024f09bf727c341-png-9c32c342c641"
+}

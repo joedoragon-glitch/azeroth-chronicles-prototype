@@ -13001,7 +13001,17 @@
     }
     ctx.restore();
   }
-  function floor(ctx, p, x, y, region = 0, room = false, dungeonId = '', blocked = false) {
+  function floor(
+    ctx,
+    p,
+    x,
+    y,
+    region = 0,
+    room = false,
+    dungeonId = '',
+    blocked = false,
+    materials = null,
+  ) {
     const colors = room
       ? treasuryFloors[dungeonId] || ['#403d35', '#4d493e', '#343229', '#b6a98a']
       : dungeonFloors[dungeonId] || floorPalettes[region];
@@ -13029,6 +13039,22 @@
       ctx.strokeStyle = color;
       ctx.lineWidth = 1.2;
       ctx.stroke();
+    }
+    if (!blocked && materials) {
+      const regionName = ['vale', 'march', 'highlands', 'frontier', 'crown'][region];
+      const key =
+        'terrain:' +
+        (outdoor ? 'ground:' + regionName : 'floor:' + (room ? 'supply-' + regionName : dungeonId));
+      const projection = (q) => ({
+        x: p.x + (q.x - x - (q.y - y)) * 0.76,
+        y: p.y + (q.x - x + (q.y - y)) * 0.27,
+      });
+      materials.paint(ctx, key, projection, [
+        { x, y },
+        { x: x + 80, y },
+        { x: x + 80, y: y + 80 },
+        { x, y: y + 80 },
+      ]);
     }
     // Slab joints belong to built interiors; natural ground has continuous material variation.
     if (!outdoor) {
@@ -13070,9 +13096,9 @@
     if (!blocked) groundDetail(ctx, p, seed, region, room, dungeonId, colors);
   }
   // World-space surfaces avoid losing narrow barriers between coarse tile samples.
-  function terrain(ctx, screen, region = 0, size = 3000) {
+  function terrain(ctx, screen, region = 0, size = 3000, materialLayer = null) {
     const time = (typeof performance !== 'undefined' ? performance.now() : 0) / 1000;
-    const poly = (points, color) => {
+    const poly = (points, color, material = null) => {
       const ps = points.map(screen);
       if (
         ps.every((p) => p.x < -100) ||
@@ -13086,8 +13112,9 @@
       ps.forEach((p, j) => (j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
       ctx.closePath();
       ctx.fill();
+      if (material) materialLayer?.paint(ctx, material, screen, points);
     };
-    const rect = (x1, x2, y1, y2, color) =>
+    const rect = (x1, x2, y1, y2, color, material = null) =>
       poly(
         [
           { x: x1, y: y1 },
@@ -13096,6 +13123,7 @@
           { x: x1, y: y2 },
         ],
         color,
+        material,
       );
     const line = (a, b, color, width = 1) => {
       a = screen(a);
@@ -13132,6 +13160,7 @@
         y1 + 3,
         y2 - 3,
         water ? '#397783' : lava ? '#b44e2c' : cliff ? '#616357' : '#30363a',
+        water ? null : lava ? 'terrain:lava:crust' : 'terrain:rock:cliff-ravine',
       );
       for (let y = y1; y < y2; y += 58) {
         const end = Math.min(y2, y + 58),
@@ -13313,7 +13342,15 @@
           water = kind === 'water';
         poly(circle(p.r + 6), water ? '#70816a' : kind === 'obsidian' ? '#625568' : '#827b68');
         poly(circle(p.r), water ? '#315f6c' : kind === 'obsidian' ? '#302f39' : '#514b46');
-        poly(circle(p.r - 12), water ? '#397783' : kind === 'obsidian' ? '#403b4d' : '#645d52');
+        poly(
+          circle(p.r - 12),
+          water ? '#397783' : kind === 'obsidian' ? '#403b4d' : '#645d52',
+          water
+            ? null
+            : kind === 'obsidian'
+              ? 'terrain:rock:obsidian'
+              : 'terrain:rock:cliff-ravine',
+        );
         for (let n = 0; n < 12; n++) {
           const a = (n * Math.PI) / 6,
             r = p.r - 7,
@@ -13356,7 +13393,7 @@
     }
     ctx.restore();
   }
-  function bridges(ctx, screen, region = 0) {
+  function bridges(ctx, screen, region = 0, materials = null) {
     const {
         bounds: [x1, x2],
         gaps,
@@ -13371,6 +13408,8 @@
       });
       ctx.closePath();
       ctx.fill();
+      if (!stone && color === '#b49468')
+        materials?.paint(ctx, 'terrain:bridge:wood-grain', screen, points, Math.PI / 2);
     };
     const line = (a, b, color, width = 1) => {
       a = screen(a);
@@ -13647,7 +13686,7 @@
     }
     ctx.restore();
   }
-  function roads(ctx, paths, screen, region = 0) {
+  function roads(ctx, paths, screen, region = 0, materials = null) {
     const barrier = R.barriers[region],
       palettes = [
         { shoulder: '#564834', base: '#8e7758', inner: '#9c8664', seam: '#6f604c' },
@@ -13671,6 +13710,13 @@
       });
       ctx.closePath();
       ctx.fill();
+      if (color === road.inner)
+        materials?.paint(
+          ctx,
+          'terrain:road:' + ['vale', 'march', 'highlands', 'frontier', 'crown'][region],
+          screen,
+          points,
+        );
     };
     const disk = (q, r, color) =>
       poly(

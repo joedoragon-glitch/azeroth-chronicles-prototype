@@ -1,0 +1,36 @@
+{
+  "catalogId": "002",
+  "key": "hero:mage",
+  "region": 0,
+  "entity": {
+    "renderKind": "hero",
+    "class": "mage",
+    "id": "sprite-reference-002"
+  },
+  "canvas": {
+    "width": 192,
+    "height": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75
+  },
+  "catalog": {
+    "id": "002",
+    "name": "Hero — Mage",
+    "status": "generate",
+    "source": "docs/GRAPHICS_CANON_SPRITE_PROMPTS.md",
+    "sourceHash": "0a652a52c1f42ee5d7f59d9082dbe6003cbcdc4136dab8471ac5f382df263b5a",
+    "cues": "Compact humanoid hero. Blue clothing; large pointed blue hat; dark blue cape; long staff on screen-right with a cyan crystal/orb; small gold waist/chest accent; simple face visible beneath hat. Narrow stance.",
+    "prompt": "Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Mage exactly as described. Preserve the tall pointed blue hat, blue robe/body, dark cape, right-side wooden staff with cyan crystal, small gold accents and compact proportions. Do not add belts, spellbooks, floating magic, extra gems, shoulder armor or new robe symbols.",
+    "declaredKey": null
+  },
+  "canonSnapshotHash": "412f4e9ff9815f69f1ca3b826f8416b61de81393ddaad6f77bec865a72e61e72",
+  "approval": "pending",
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "canonHash": "52f7662e1696f381bcfdefe2006d3e3441e70aad57ebf697c66904202257c7c0"
+}

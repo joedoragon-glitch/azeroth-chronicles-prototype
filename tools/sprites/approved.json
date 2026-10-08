@@ -434,6 +434,394 @@
         "technicalReview": "Native/context review required before release"
       },
       "revision": "3c35ef58fe76061f5fb4f017be965947afba71885b6897781d59b7253237cf15"
+    },
+    "hero:mage": {
+      "version": 2,
+      "key": "hero:mage",
+      "catalogId": "002",
+      "canonHash": "52f7662e1696f381bcfdefe2006d3e3441e70aad57ebf697c66904202257c7c0",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "0a652a52c1f42ee5d7f59d9082dbe6003cbcdc4136dab8471ac5f382df263b5a",
+      "source": {
+        "file": "e3a36670eb4dd2823b37f7eea85e4e52922023864ac81f691a19d33761ec5708.png",
+        "format": "png",
+        "width": 1318,
+        "height": 1318,
+        "bytes": 261202,
+        "decodedBytes": 6948496,
+        "hash": "e3a36670eb4dd2823b37f7eea85e4e52922023864ac81f691a19d33761ec5708",
+        "pixelHash": "7fb78fde43e54accd6ee0a535db04db786f9c2121274aca6978a9e604b35d8c1",
+        "bounds": {
+          "x1": 71,
+          "y1": 79,
+          "x2": 1257,
+          "y2": 1259
+        },
+        "padding": 58,
+        "transparentPixels": 1652053,
+        "visiblePixels": 85071,
+        "lowAlphaPixels": 7266,
+        "materialBounds": {
+          "x1": 534,
+          "y1": 619,
+          "x2": 807,
+          "y2": 1058
+        }
+      },
+      "output": {
+        "file": "hero-mage-467c8bdef58eb0741115fbf15c01e1b42a2e6a1e199bf6d028f1f188d82b53e9.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 6812,
+        "decodedBytes": 147456,
+        "hash": "467c8bdef58eb0741115fbf15c01e1b42a2e6a1e199bf6d028f1f188d82b53e9",
+        "pixelHash": "9e14032f0fccf159736e69d0c77164c2f968dcfd64267b6018e85bdfb17b5bd2",
+        "bounds": {
+          "x1": 19,
+          "y1": 45,
+          "x2": 165,
+          "y2": 183
+        },
+        "padding": 8,
+        "transparentPixels": 35048,
+        "visiblePixels": 1816,
+        "lowAlphaPixels": 172,
+        "materialBounds": {
+          "x1": 78,
+          "y1": 97,
+          "x2": 117,
+          "y2": 159
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1318, 1318],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": 0,
+          "y": 6,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "kind": "engineer-authorized-faithful-translation",
+        "date": "2026-10-08",
+        "userAppearanceAcceptance": false,
+        "checks": [
+          "current exact equipment/palette reference",
+          "organic anatomy/material contours",
+          "native grounding",
+          "all specified desktop/phone day/night scenes"
+        ],
+        "notes": "Joel authorized generation, testing, implementation and publication in this chat. This records engineer review, not separate user acceptance of this generated candidate. Static presentation avoids mixing a new design with stale frames."
+      },
+      "revision": "482a359a5997d069c2bd66761ebbafcafb234d3abce8acabe54cd1b2c2402254"
+    },
+    "hero:ranger": {
+      "version": 2,
+      "key": "hero:ranger",
+      "catalogId": "003",
+      "canonHash": "b89bc6fff5df3a1165a778f0ff1c0028b3b3424a01d7b92e07ae15f9d252c164",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "0bb43bcb04438181aff2910a9886fbdbfdf431da719412e3c8d33342630fc4b5",
+      "source": {
+        "file": "6a9bb7dc2503878ddfdbc4e0a2d275f47a5d2ea2d4fde33a3024f09bf727c341.png",
+        "format": "png",
+        "width": 1318,
+        "height": 1318,
+        "bytes": 272488,
+        "decodedBytes": 6948496,
+        "hash": "6a9bb7dc2503878ddfdbc4e0a2d275f47a5d2ea2d4fde33a3024f09bf727c341",
+        "pixelHash": "c32435bd24704691209a4deffd1491638636b8300eacbf5c8a68d507332c131c",
+        "bounds": {
+          "x1": 32,
+          "y1": 32,
+          "x2": 1239,
+          "y2": 1229
+        },
+        "padding": 32,
+        "transparentPixels": 1651489,
+        "visiblePixels": 85635,
+        "lowAlphaPixels": 7569,
+        "materialBounds": {
+          "x1": 552,
+          "y1": 680,
+          "x2": 857,
+          "y2": 1076
+        }
+      },
+      "output": {
+        "file": "hero-ranger-338fb3907f1b657ab7527d7e72a6b7f8df40aa9b85072e3b98acd58b65a455d7.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 6844,
+        "decodedBytes": 147456,
+        "hash": "338fb3907f1b657ab7527d7e72a6b7f8df40aa9b85072e3b98acd58b65a455d7",
+        "pixelHash": "6f317a4e00fe3948c8d36357c562668381ba93ac7d9dfa735d41078d9dd67274",
+        "bounds": {
+          "x1": 8,
+          "y1": 43,
+          "x2": 122,
+          "y2": 175
+        },
+        "padding": 8,
+        "transparentPixels": 35059,
+        "visiblePixels": 1805,
+        "lowAlphaPixels": 146,
+        "materialBounds": {
+          "x1": 78,
+          "y1": 102,
+          "x2": 122,
+          "y2": 159
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 54
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1318, 1318],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": -2,
+          "y": 3,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "kind": "engineer-authorized-faithful-translation",
+        "date": "2026-10-08",
+        "userAppearanceAcceptance": false,
+        "checks": [
+          "current exact equipment/palette reference",
+          "organic anatomy/material contours",
+          "native grounding",
+          "all specified desktop/phone day/night scenes"
+        ],
+        "notes": "Joel authorized generation, testing, implementation and publication in this chat. This records engineer review, not separate user acceptance of this generated candidate. Static presentation avoids mixing a new design with stale frames."
+      },
+      "revision": "fbf4d3d59177a51cf4ade65829e2bab7c62491c0728b06fe4ba95f099a578671"
+    },
+    "ally:soldier": {
+      "version": 2,
+      "key": "ally:soldier",
+      "catalogId": "004",
+      "canonHash": "38c1c26e432e92d4c4132731aa78f5d220be66accf9f8dc51e40196f9349dc71",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "d6fc6aea04d1a2de02aae01b00b47c9f34cd2e77a855d81a469d0bb5d6d819d0",
+      "source": {
+        "file": "d1ba960002f85b3fb396a4c021ac70c40c55d66c929723336ede91483b07b2dd.png",
+        "format": "png",
+        "width": 1318,
+        "height": 1318,
+        "bytes": 247162,
+        "decodedBytes": 6948496,
+        "hash": "d1ba960002f85b3fb396a4c021ac70c40c55d66c929723336ede91483b07b2dd",
+        "pixelHash": "8165700805657ea1159bf2bd5767ded8fa9831654f7907aadab0fad511c3caf2",
+        "bounds": {
+          "x1": 328,
+          "y1": 127,
+          "x2": 1209,
+          "y2": 1213
+        },
+        "padding": 104,
+        "transparentPixels": 1656571,
+        "visiblePixels": 80553,
+        "lowAlphaPixels": 3993,
+        "materialBounds": {
+          "x1": 510,
+          "y1": 667,
+          "x2": 835,
+          "y2": 1066
+        }
+      },
+      "output": {
+        "file": "ally-soldier-ab89b9cdec45f3f1a509fa700ff56bb6295fc6892218796c33c9854ad5deb25b.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 6530,
+        "decodedBytes": 147456,
+        "hash": "ab89b9cdec45f3f1a509fa700ff56bb6295fc6892218796c33c9854ad5deb25b",
+        "pixelHash": "7f21a973adb06c23d0624fce5d8dba287af0aa5b3374741444991286ae067c22",
+        "bounds": {
+          "x1": 72,
+          "y1": 75,
+          "x2": 120,
+          "y2": 160
+        },
+        "padding": 31,
+        "transparentPixels": 35141,
+        "visiblePixels": 1723,
+        "lowAlphaPixels": 85,
+        "materialBounds": {
+          "x1": 73,
+          "y1": 102,
+          "x2": 120,
+          "y2": 159
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 54
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1318, 1318],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": -1,
+          "y": 4,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "kind": "engineer-authorized-faithful-translation",
+        "date": "2026-10-08",
+        "userAppearanceAcceptance": false,
+        "checks": [
+          "current exact equipment/palette reference",
+          "organic anatomy/material contours",
+          "native grounding",
+          "all specified desktop/phone day/night scenes"
+        ],
+        "notes": "Joel authorized generation, testing, implementation and publication in this chat. This records engineer review, not separate user acceptance of this generated candidate. Static presentation avoids mixing a new design with stale frames."
+      },
+      "revision": "a48acfe9940e55581d1598cbd0a8a4a7d10b9bb2dc92f6e4e717ad495a961bd8"
+    },
+    "ally:archer": {
+      "version": 2,
+      "key": "ally:archer",
+      "catalogId": "005",
+      "canonHash": "3b955cae0108bd184c7153755fe5cb7b8a8c3314fdfd5cf6bfb3d4118666cb9c",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "4f00fbaff9ca24e2c4ee164c6c74ec7570465b7caaa132207d351427dd21cfaa",
+      "source": {
+        "file": "5152d566a86ddb5c03d52008002a78efcb42c8011a214c898ee781ea9438d721.png",
+        "format": "png",
+        "width": 1318,
+        "height": 1318,
+        "bytes": 345737,
+        "decodedBytes": 6948496,
+        "hash": "5152d566a86ddb5c03d52008002a78efcb42c8011a214c898ee781ea9438d721",
+        "pixelHash": "0560fa5cc63aadb48f5fbea712aa8003ef297506de8df653a0b3c64a234ec4f9",
+        "bounds": {
+          "x1": 113,
+          "y1": 89,
+          "x2": 1261,
+          "y2": 1165
+        },
+        "padding": 56,
+        "transparentPixels": 1626665,
+        "visiblePixels": 110459,
+        "lowAlphaPixels": 9196,
+        "materialBounds": {
+          "x1": 504,
+          "y1": 571,
+          "x2": 851,
+          "y2": 1013
+        }
+      },
+      "output": {
+        "file": "ally-archer-f0179672464cd896cfa06a19ec6a928db6b202a10785e65b290032178612bb4c.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 8748,
+        "decodedBytes": 147456,
+        "hash": "f0179672464cd896cfa06a19ec6a928db6b202a10785e65b290032178612bb4c",
+        "pixelHash": "0b591644cc06009bf533fa308343da5fea25b090829bc641cbd32897016a0472",
+        "bounds": {
+          "x1": 76,
+          "y1": 96,
+          "x2": 126,
+          "y2": 159
+        },
+        "padding": 32,
+        "transparentPixels": 34502,
+        "visiblePixels": 2362,
+        "lowAlphaPixels": 194,
+        "materialBounds": {
+          "x1": 76,
+          "y1": 96,
+          "x2": 126,
+          "y2": 159
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 54
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1318, 1318],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": 3,
+          "y": 12,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "kind": "engineer-authorized-faithful-translation",
+        "date": "2026-10-08",
+        "userAppearanceAcceptance": false,
+        "checks": [
+          "current exact equipment/palette reference",
+          "organic anatomy/material contours",
+          "native grounding",
+          "all specified desktop/phone day/night scenes"
+        ],
+        "notes": "Joel authorized generation, testing, implementation and publication in this chat. This records engineer review, not separate user acceptance of this generated candidate. Static presentation avoids mixing a new design with stale frames."
+      },
+      "revision": "9b9548bf117f33a4ef68b23be54e217def7f9cbd2fdb871747821846cfc00146"
     }
   },
   "history": {
