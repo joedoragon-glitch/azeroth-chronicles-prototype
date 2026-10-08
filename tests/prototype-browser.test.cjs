@@ -250,8 +250,11 @@ await check('Paladin, Mage and Ranger Skill 1 charge readiness is identical and 
 await check('Skill 2 and party-heal charge states are target-stable and honest '+tag,async()=>{
  const saved=await page.evaluate(()=>Prototype.game.snapshot());
  await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');c.zone().props=[];c.s.party=[];c.s.mercyTime=0;Object.assign(c.hero,{class:'mage',x:600,y:900,mp:100,maxMp:100,power:22,weapon:0,legacyWeaponPower:0,legacyEquipped:false,talents:[0,0,0,0],order:null});c.hero.skills[1]=1;c.hero.skills[2]=1;c.hero.cd[1]=.35;c.hero.cd[2]=0;const a=c.makeEnemy({species:'goblin',name:'Locked target',level:1,hp:10000,damage:0,gold:0,xp:0},{x:720,y:900}),b=c.makeEnemy({species:'goblin',name:'Closer later',level:1,hp:10000,damage:0,gold:0,xp:0},{x:820,y:900});c.zone().enemies=[a,b];c.s.heroTarget=a.id;});
- await page.locator('#skill-2').evaluate(el=>{el.setPointerCapture=()=>{};el.onpointerdown({pointerType:'touch',pointerId:302,preventDefault(){}});});
- await page.waitForFunction(()=>document.querySelector('#skill-2 small')?.textContent.startsWith('WAIT '));
+ // Observe the short queued state in the same browser turn as pointer-down.
+ // A slow runner can otherwise advance the 0.35s cooldown before polling begins.
+ const queuedSkill2=await page.locator('#skill-2').evaluate(el=>{Prototype.game.hero.cd[1]=.35;el.setPointerCapture=()=>{};el.onpointerdown({pointerType:'touch',pointerId:302,preventDefault(){}});Prototype.updateHUD();return {charge:Prototype.chargePresentation(),label:el.querySelector('small').textContent};});
+ assert(queuedSkill2.charge?.waiting&&queuedSkill2.charge.cooldown>0,'Skill 2 queues through the ordinary cooldown');
+ assert(queuedSkill2.label.startsWith('WAIT '),'queued Skill 2 shows WAIT before its cooldown expires');
  await page.waitForFunction(()=>Prototype.chargePresentation()?.state==='charging',{timeout:1600});
  const locked=await page.evaluate(()=>Prototype.chargePresentation().targetId);assert(locked,'Skill 2 locks a target when charging begins');
  await page.evaluate(()=>{const c=Prototype.game;c.zone().enemies[1].x=625;c.zone().enemies[1].y=900;});
