@@ -208,6 +208,8 @@
         this.nextSceneDetail = 0;
         this.combatUntil = 0;
         this.stepDistance = 0;
+        this.soundLoads = new Set();
+        this.soundFailures = new Set();
         this.manifestController?.abort();
         this.recordingEpoch = (this.recordingEpoch || 0) + 1;
         this.stopRecordedScore(0);

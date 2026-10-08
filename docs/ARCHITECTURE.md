@@ -89,6 +89,12 @@ The separate published `tools/audio/index.html` loads isolated campaign/audio ow
 
 The 83 original MP3 cues are immutable registered assets and join precaching; decoding remains lazy and bounded. `tools/audio/score-book.json` and `render-score.py` are development-only composition/rendering sources. The original procedural score remains the recovery path when a registered recording cannot load. See `AUDIO_SOUND_PASS.md`.
 
+## Audio authoring housekeeping v0.8.91
+
+The recorded manifest now owns location/boss/special routing, contextual music overrides, per-cue gains, event recording bindings and reusable creative guides. Build derives the immediate selection snapshot in `audio-library.js`; `audio-contract.js` shares validation across registration, packaging and playback. `audio-production.js` has one selection policy for catalog and explicit overrides. `audio-recordings.js` replaces catalogs safely and dispatches warm recorded events synchronously, with immediate procedural fallback on a cold/missing asset. Warning/victory behavior remains in the effect owner.
+
+The score renderer updates its own marked assets while preserving imports, custom overrides, routing and edited guides. Registration computes duration/hash/provenance, supports atomic layer batches and validates before writing. The listening room exposes guides and exact recipe references. See `AUDIO_AUTHORING.md` for the complete editing/release workflow, provenance distinction and retained short-loop resource limits.
+
 ## Economy and EXP housekeeping
 
 Prepared v0.8.89 keeps the shared Campaign API and state. Economy owns money mutations; actions in progression/party/engine still own eligibility, training effects, construction, recovery and route transitions. `grant(gold, xp)` remains the compatible reward dispatcher and calls progression's `xp`. Travel charges only after arrival succeeds, inside the existing state rollback boundary. Rewards owns reward amounts and payment policies; kill orchestration retains the summoned-enemy and already-paid guards. EXP is awarded immediately on defeat; crown loot is paid only on pickup. Labor retains gathering/deposit timing and fractional carry.

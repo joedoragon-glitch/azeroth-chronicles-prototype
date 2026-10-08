@@ -3,6 +3,8 @@
   'use strict';
   const Assets =
     typeof module !== 'undefined' ? require('./audio-assets.js') : root.PrototypeAudioAssets;
+  const contract =
+    typeof module !== 'undefined' ? require('./audio-contract.js') : root.PrototypeAudioContract;
   function install(Audio) {
     const clamp = (n, fallback = 1) =>
       Number.isFinite(n) ? Math.max(0, Math.min(1, n)) : fallback;
@@ -15,6 +17,7 @@
           Array.isArray(manifest.assets)
         )
           throw Error('Invalid recording manifest');
+        contract.validateCatalog(manifest);
         this.stopRecordedScore(0);
         for (const voice of [...this.voices]) if (voice.recorded) this.stopRecording(voice, 0);
         this.recordingAssets?.dispose();
@@ -24,6 +27,10 @@
         this.recordingEpoch = (this.recordingEpoch || 0) + 1;
         this.recordedCueKey = null;
         this.recordingError = null;
+        this.productionKey = null;
+        this.productionIntensity = null;
+        this.soundLoads = new Set();
+        this.soundFailures = new Set();
       }
       setRecordedCueRules(rules = []) {
         const fields = [
@@ -54,23 +61,91 @@
         this.recordedCueRules = JSON.parse(JSON.stringify(rules));
         this.stopRecordedScore();
         this.recordedCueKey = null;
+        this.productionKey = null;
+        this.productionIntensity = null;
       }
-      updateRecordedCue(scene) {
-        if (!this.recordedCueRules?.length || !this.ctx || this.paused) return;
+      matchingRecordedRule(scene, rules = this.recordedCueRules) {
         const observed = {
           ...scene,
           bossFamily: scene.boss?.family || null,
           bossForm: scene.boss?.form || null,
         };
-        const rule = this.recordedCueRules.find((r) =>
-          Object.entries(r.when).every(([k, v]) => observed[k] === v),
-        );
+        return rules?.find((r) => Object.entries(r.when).every(([k, v]) => observed[k] === v));
+      }
+      updateRecordedCue(scene) {
+        // Production owns selection when enabled, including explicit rule overrides.
+        if (this.production || !this.recordedCueRules?.length || !this.ctx || this.paused) return;
+        const rule = this.matchingRecordedRule(scene);
         const key = rule?.id || 'procedural';
         if (key === this.recordedCueKey) return;
         this.recordedCueKey = key;
         if (rule && this.recordedScore?.id === rule.id) return;
         if (rule) void this.setRecordedScore({ ...rule.score, id: rule.id });
         else this.stopRecordedScore();
+      }
+      playSoundEvent(key, details = {}) {
+        if (!this.ctx || this.paused || this.settings.muted || this.ctx.state !== 'running')
+          return false;
+        const scene = this.context || {},
+          observed = {
+            ...scene,
+            bossFamily: scene.boss?.family || null,
+            bossForm: scene.boss?.form || null,
+            ...details,
+          },
+          binding = this.soundCatalog().director?.events?.[key]?.find((b) =>
+            Object.entries(b.when || {}).every(([field, value]) => observed[field] === value),
+          );
+        if (!binding) return false;
+        const assets = this.recordingAssets,
+          item = assets?.touch(binding.asset);
+        if (!item) {
+          // Warm the next occurrence. Never delay an impact/click or play it after a fetch.
+          this.soundLoads ||= new Set();
+          this.soundFailures ||= new Set();
+          if (this.soundLoads.size >= 2 || (assets?.pending.size || 0) >= 6) return false;
+          if (!this.soundLoads.has(binding.asset) && !this.soundFailures.has(binding.asset)) {
+            const epoch = this.recordingEpoch || 0,
+              loads = this.soundLoads,
+              failures = this.soundFailures;
+            loads.add(binding.asset);
+            void this.assetsForRecordings()
+              .then((store) => store.load(binding.asset))
+              .catch((error) => {
+                if (epoch === (this.recordingEpoch || 0)) {
+                  failures.add(binding.asset);
+                  this.recordingError = error.message;
+                }
+              })
+              .finally(() => loads.delete(binding.asset));
+          }
+          return false;
+        }
+        if (!this.allowSfx('recorded-event:' + key, this.ctx.currentTime, binding.minGap ?? 0.025))
+          return true;
+        try {
+          const bus =
+            binding.bus ||
+            (key.startsWith('interface.')
+              ? 'interface'
+              : key.startsWith('ambience.')
+                ? 'ambience'
+                : 'effects');
+          return !!this.createRecording(binding.asset, item, assets, {
+            gain: binding.gain ?? 0.35,
+            pan: binding.pan ?? 0,
+            priority: Math.max(
+              this.sourcePriority ?? (bus === 'interface' ? 3 : 1),
+              binding.priority ?? 0,
+            ),
+            bus,
+            loop: false,
+            fade: 0.005,
+          });
+        } catch (error) {
+          this.recordingError = error.message;
+          return false;
+        }
       }
       async assetsForRecordings() {
         if (!this.ctx || this.paused || this.ctx.state !== 'running')
@@ -93,7 +168,8 @@
               .then(async (r) => {
                 if (!r.ok) throw Error('Recording registry unavailable');
                 const text = await r.text();
-                if (text.length > 128 * 1024) throw Error('Recording registry exceeds budget');
+                if (new TextEncoder().encode(text).byteLength > 256 * 1024)
+                  throw Error('Recording registry exceeds budget');
                 return JSON.parse(text);
               })
               .finally(() => {
@@ -105,6 +181,7 @@
           const manifest = await this.manifestRequest;
           if (ctx !== this.ctx || epoch !== (this.recordingEpoch || 0))
             throw Error('Audio changed during registry load');
+          contract.validateCatalog(manifest);
           this.recordingManifest = manifest;
         }
         if (!this.recordingAssets)

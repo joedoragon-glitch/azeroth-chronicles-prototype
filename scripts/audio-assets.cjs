@@ -4,9 +4,12 @@ const fs = require('node:fs'),
   path = require('node:path'),
   crypto = require('node:crypto');
 const limits = Object.freeze({ perFile: 8 * 1024 * 1024, total: 32 * 1024 * 1024 });
-function publishedFiles(root) {
+function publishedFiles(root, suppliedManifest) {
   const manifestFile = 'assets/audio/manifest.json';
-  const manifest = JSON.parse(fs.readFileSync(path.join(root, manifestFile), 'utf8'));
+  const manifest =
+    suppliedManifest || JSON.parse(fs.readFileSync(path.join(root, manifestFile), 'utf8'));
+  if (Buffer.byteLength(JSON.stringify(manifest)) > 256 * 1024)
+    throw Error('Audio catalog exceeds metadata budget');
   if (
     manifest.schemaVersion !== 1 ||
     !manifest.assets ||
@@ -14,6 +17,7 @@ function publishedFiles(root) {
     typeof manifest.assets !== 'object'
   )
     throw Error('Invalid audio manifest schema');
+  require('./audio-catalog.cjs').validateCatalog(manifest);
   const audioRoot = fs.realpathSync(path.join(root, 'assets/audio')) + path.sep;
   const unique = new Map();
   const entries = [];

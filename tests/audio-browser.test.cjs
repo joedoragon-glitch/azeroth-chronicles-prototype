@@ -65,6 +65,14 @@ const root = path.resolve(__dirname, '..'),
       assert(before.status.voices > 0);
       assert(before.status.voices <= 64);
       assert(before.status.context.region === 'vale');
+      const replaced = await page.evaluate(() => {
+        const a = Prototype.audio,
+          current = { id: a.recordedScore.id, at: a.recordedScore.at };
+        a.configureRecordings(a.recordingManifest);
+        return current;
+      });
+      await page.waitForFunction((id) => Prototype.audio.recordedScore?.id === id, replaced.id);
+      assert((await page.evaluate(() => Prototype.audio.recordedScore.at)) > replaced.at);
       await page.evaluate(() => Prototype.openMenu('Audio housekeeping check', '', []));
       await page.waitForFunction(
         () => Prototype.audio.ctx.state === 'running' && Prototype.audio.mixScene === 'menu',

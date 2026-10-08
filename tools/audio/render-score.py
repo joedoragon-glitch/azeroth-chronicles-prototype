@@ -4,6 +4,7 @@ Development dependencies: Python 3, numpy, scipy and ffmpeg (libmp3lame).
 The checked-in MP3s and registry are the reproducible runtime output.
 """
 from pathlib import Path
+import argparse
 import hashlib
 import json
 import subprocess
@@ -11,6 +12,7 @@ import tempfile
 import wave
 import numpy as np
 from scipy.signal import butter, sosfilt
+from score_registry import can_render, merge_registry
 
 ROOT = Path(__file__).resolve().parents[2]
 RATE = 32000
@@ -146,11 +148,26 @@ def render(cue, seed):
     return mix, duration
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--cue", choices=list(BOOK["cues"]), help="Render one managed cue only")
+    args = parser.parse_args()
+    registry_path = ROOT / "assets/audio/manifest.json"
+    registry = json.loads(registry_path.read_text())
     folder = ROOT / "assets/audio/music"
     folder.mkdir(parents=True, exist_ok=True)
-    assets, metrics = {}, {}
+    assets = {}
+    metrics_path = ROOT / "tools/audio/render-metrics.json"
+    metrics = json.loads(metrics_path.read_text()) if metrics_path.exists() else {}
     with tempfile.TemporaryDirectory(prefix="azeroth-score-") as temp:
         for index, (id, cue) in enumerate(BOOK["cues"].items()):
+            if args.cue and id != args.cue: continue
+            if not can_render(registry, id):
+                print("Preserved custom override", id, flush=True)
+                continue
+            target_src = "./assets/audio/music/" + id + ".mp3"
+            for other_id, entry in registry.get("assets", {}).items():
+                if other_id != id and entry.get("managedBy") != "score-book" and target_src in [entry.get("src"), *[v.get("src") for v in entry.get("variants", [])]]:
+                    raise ValueError("Render target is used by custom sound " + other_id)
             signal, duration = render(cue, 48011 + index * 97)
             guard = round(.15 * RATE)
             extended = np.concatenate([signal[-guard:], signal, signal[:guard]])
@@ -177,8 +194,10 @@ def main():
             metrics[id] = {"peak": round(peak, 5), "rms": round(rms, 5), "seconds": measured,
                            "bytes": output.stat().st_size, "edge": round(float(abs(decoded[guard] - decoded[guard + len(signal) - 1])), 5)}
             print("Rendered", id, round(measured, 3), "sec", flush=True)
-    (ROOT / "assets/audio/manifest.json").write_text(json.dumps({"schemaVersion": 1, "assets": assets}, indent=2) + "\n")
-    (ROOT / "tools/audio/render-metrics.json").write_text(json.dumps(metrics, indent=2) + "\n")
-    print("TOTAL", len(assets), "scores", round(sum(m["bytes"] for m in metrics.values()) / 1024 ** 2, 2), "MiB")
+    merged = merge_registry(registry, assets, BOOK["cues"], partial=bool(args.cue))
+    registry_path.write_text(json.dumps(merged, indent=2) + "\n")
+    metrics = {id: value for id, value in metrics.items() if id in merged["assets"] and merged["assets"][id].get("managedBy") == "score-book"}
+    metrics_path.write_text(json.dumps(metrics, indent=2) + "\n")
+    print("Rendered", len(assets), "managed scores; preserved catalog and custom sounds")
 
 if __name__ == "__main__": main()

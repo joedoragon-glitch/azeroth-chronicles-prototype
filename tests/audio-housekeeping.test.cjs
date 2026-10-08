@@ -109,6 +109,8 @@ function harness() {
   vm.createContext(root);
   for (const file of [
     'audio-catalog',
+    'audio-contract',
+    'audio-library',
     'audio-assets',
     'audio-mixer',
     'audio-runtime',

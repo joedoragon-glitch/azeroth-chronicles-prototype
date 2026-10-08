@@ -1,65 +1,17 @@
 /* Authored contextual soundtrack and foreground sound direction. No gameplay writes. */
 (function (root) {
   'use strict';
-  const places = {
-    vale: ['place-vale', 'action-vale', 'peace-vale', 92],
-    march: ['place-march', 'action-march', 'peace-march', 82],
-    highlands: ['place-highlands', 'action-highlands', 'peace-highlands', 88],
-    frontier: ['place-frontier', 'action-frontier', 'peace-frontier', 96],
-    crown: ['place-crown', 'action-crown', 'peace-crown', 84],
-    crypt: ['place-crypt', 'action-crypt', 'peace-crypt', 84],
-    archive: ['place-archive', 'action-archive', 'peace-archive', 86],
-    mine: ['place-mine', 'action-mine', 'peace-mine', 96],
-    abyss: ['place-abyss', 'action-abyss', 'peace-abyss', 96],
-    citadel: ['place-citadel', 'action-citadel', 'peace-citadel', 88],
-    'supply-vale': ['interior-supply-vale', null, 'peace-interior-supply-vale', 92],
-    'supply-march': ['interior-supply-march', null, 'peace-interior-supply-march', 82],
-    'supply-highlands': ['interior-supply-highlands', null, 'peace-interior-supply-highlands', 88],
-    'supply-crown': ['interior-supply-crown', null, 'peace-interior-supply-crown', 84],
-    'side-vale-cellars': [
-      'interior-side-vale-cellars',
-      null,
-      'peace-interior-side-vale-cellars',
-      92,
-    ],
-    'side-march-watchhouse': [
-      'interior-side-march-watchhouse',
-      null,
-      'peace-interior-side-march-watchhouse',
-      82,
-    ],
-    'side-highlands-signal': [
-      'interior-side-highlands-signal',
-      null,
-      'peace-interior-side-highlands-signal',
-      88,
-    ],
-    'side-frontier-shrine': [
-      'interior-side-frontier-shrine',
-      null,
-      'peace-interior-side-frontier-shrine',
-      96,
-    ],
-    'side-crown-foundry': [
-      'interior-side-crown-foundry',
-      null,
-      'peace-interior-side-crown-foundry',
-      84,
-    ],
-  };
-  const bossTempos = {
-    thorn: 116,
-    crypt: 104,
-    mire: 108,
-    archive: 108,
-    ridge: 108,
-    mine: 100,
-    warlord: 120,
-    abyss: 112,
-    citadel: 108,
-    cindermaw: 118,
-    darklord: 104,
-  };
+  const library =
+    typeof module !== 'undefined' ? require('./audio-library.js') : root.PrototypeAudioLibrary;
+  const contract =
+    typeof module !== 'undefined' ? require('./audio-contract.js') : root.PrototypeAudioContract;
+  const places = library.director?.places || {};
+  const bossTempos = Object.fromEntries(
+    Object.entries(library.director?.bosses || {}).map(([id, boss]) => [
+      id,
+      library.tempos[boss.base],
+    ]),
+  );
   function install(Audio) {
     class Owner {
       enableProduction(enabled = true) {
@@ -81,38 +33,77 @@
           this.stopRecordedScore();
         }
       }
+      soundCatalog() {
+        const manifest = this.recordingManifest;
+        if (this.catalogManifest !== manifest || !this.activeCatalog) {
+          this.activeCatalog = manifest?.director ? contract.runtimeCatalog(manifest) : library;
+          this.catalogManifest = manifest;
+        }
+        return this.activeCatalog;
+      }
       productionCue(scene) {
-        if (scene.started === false || scene.situation === 'title')
-          return { id: 'title', stems: [{ id: 'title', gain: 0.7 }], bpm: 88 };
-        if (scene.gameOver || scene.situation === 'game-over')
-          return { id: 'defeat', stems: [{ id: 'defeat', gain: 0.55 }], bpm: 84 };
-        if (this.ctx && this.ctx.currentTime < this.finaleUntil && scene.peace)
-          return { id: 'finale', stems: [{ id: 'finale', gain: 0.72 }], bpm: 88 };
-        if (scene.boss && !scene.peace && bossTempos[scene.boss.family]) {
-          const id = 'boss-' + scene.boss.family;
+        const { director, tempos } = this.soundCatalog();
+        if (!director) return null;
+        const rule =
+          this.matchingRecordedRule(scene) || this.matchingRecordedRule(scene, director.rules);
+        if (rule)
           return {
-            id,
-            bpm: bossTempos[scene.boss.family],
-            fade: 0.7,
+            ...rule.score,
+            id: rule.id,
+            bpm: rule.score.bpm ?? tempos[rule.score.stems[0].id],
+            custom: true,
+          };
+        const special = (key) => {
+          const cue = director.specials[key];
+          return {
+            id: cue.asset,
+            stems: [{ id: cue.asset, gain: cue.gain }],
+            bpm: tempos[cue.asset],
+          };
+        };
+        if (scene.started === false || scene.situation === 'title') return special('title');
+        if (scene.gameOver || scene.situation === 'game-over') return special('defeat');
+        if (this.ctx && this.ctx.currentTime < this.finaleUntil && scene.peace)
+          return special('finale');
+        const boss = director.bosses[scene.boss?.family];
+        if (scene.boss && !scene.peace && boss) {
+          return {
+            id: boss.base,
+            bpm: tempos[boss.base],
+            fade: boss.fade ?? 0.7,
             stems: [
-              { id, gain: 0.78 },
-              { id: id + '-true', gain: scene.boss.form === 'true' ? 0.55 : 0.12 },
+              { id: boss.base, gain: boss.gain ?? 0.78 },
+              {
+                id: boss.true,
+                gain:
+                  scene.boss.form === 'true' ? (boss.trueGain ?? 0.55) : (boss.idleGain ?? 0.12),
+              },
             ],
           };
         }
-        const p = places[scene.zone] || places[scene.region] || places.vale;
-        let base = scene.peace && p[2] ? p[2] : p[0];
-        if (!scene.peace && scene.interior === 'outdoors' && places[scene.region]) {
-          if (scene.settlement) base = 'settlement-' + scene.region;
-          else if (scene.night) base = 'night-' + scene.region;
+        const p =
+          director.places[scene.zone] ||
+          director.places[scene.region] ||
+          director.places[director.fallbackPlace];
+        let base = scene.peace && p.peace ? p.peace : p.base;
+        if (!scene.peace && scene.interior === 'outdoors') {
+          if (scene.settlement && p.settlement) base = p.settlement;
+          else if (scene.night && p.night) base = p.night;
         }
         return {
           id: base,
-          bpm: p[3],
-          fade: 1.5,
+          bpm: tempos[base],
+          fade: p.fade ?? 1.2,
           stems: [
-            { id: base, gain: scene.night ? 0.58 : scene.settlement ? 0.62 : 0.74 },
-            ...(p[1] && !scene.peace ? [{ id: p[1], gain: 0 }] : []),
+            {
+              id: base,
+              gain: scene.night
+                ? (p.nightGain ?? 0.58)
+                : scene.settlement
+                  ? (p.settlementGain ?? 0.62)
+                  : (p.gain ?? 0.74),
+            },
+            ...(p.action && !scene.peace ? [{ id: p.action, gain: 0 }] : []),
           ],
         };
       }
@@ -133,24 +124,36 @@
             ? { ...scene, settlement: scene.settlement || 'nearby-refuge' }
             : scene;
         const spec = this.productionCue(observed);
-        if (spec.id !== this.productionKey) {
-          this.productionKey = spec.id;
+        if (!spec) return;
+        const selectionKey = JSON.stringify([
+          spec.id,
+          spec.stems.map((s) => s.id),
+          spec.bpm,
+          spec.custom ? spec.stems.map((s) => s.gain) : null,
+        ]);
+        if (selectionKey !== this.productionKey) {
+          this.productionKey = selectionKey;
           this.productionIntensity = null;
           this.stepDistance = 0;
-          const wanted = spec.id;
-          if (this.recordedScore?.id !== spec.id)
+          const wanted = selectionKey;
+          if (this.recordedScore?.selectionKey !== selectionKey)
             void this.setRecordedScore(spec).then((ok) => {
-              if (ok && this.productionKey === wanted) this.productionIntensity = null;
+              if (ok && this.productionKey === wanted) {
+                this.recordedScore.selectionKey = selectionKey;
+                this.productionIntensity = null;
+              }
             });
         }
         const group = this.recordedScore;
         if (!group || group.id !== spec.id) return;
+        if (spec.custom) {
+          this.sceneDetails(scene);
+          return;
+        }
         if (scene.engaged && !scene.peace) this.combatUntil = now + 2.5;
         const combat = !scene.peace && now < (this.combatUntil || 0);
         const intensity = scene.boss
-          ? scene.boss.form === 'true'
-            ? 0.55
-            : 0.12
+          ? spec.stems[1]?.gain || 0
           : combat
             ? Math.min(0.55, 0.28 + scene.engaged * 0.045)
             : 0;
@@ -200,6 +203,7 @@
           return;
         const now = this.ctx.currentTime;
         if (!this.allowSfx('interface-' + kind, now, kind === 'select' ? 0.075 : 0.13)) return;
+        if (this.playSoundEvent('interface.' + kind)) return;
         const notes = {
           select: [81],
           confirm: [64, 71, 76],
@@ -258,6 +262,7 @@
           wood: [620, 0.018],
         }[surface];
         if (!this.allowSfx('surface-step', now, 0.14)) return;
+        if (this.playSoundEvent('step.' + surface, { surface })) return;
         this.noiseBurst(now, surface === 'wet' ? 0.09 : 0.045, settings[1], 'lowpass', settings[0]);
         this.tone(surface === 'wood' ? 42 : 29, now, 0.055, 0.01, 'sine', 'effects', 0.002);
       }
@@ -270,21 +275,27 @@
         if (scene.boss) return;
         if (scene.interior === 'outdoors') {
           if (scene.region === 'march') {
-            this.noiseBurst(now, 0.28, 0.012, 'bandpass', 650, 0.7, 'ambience');
+            if (!this.playSoundEvent('ambience.water', scene))
+              this.noiseBurst(now, 0.28, 0.012, 'bandpass', 650, 0.7, 'ambience');
             if (scene.night) this.tone(72, now + 0.04, 0.12, 0.008, 'sine', 'ambience', 0.035);
           } else if (scene.region === 'vale' && !scene.night) {
-            this.tone(88, now, 0.1, 0.007, 'sine', 'ambience');
-            this.tone(93, now + 0.14, 0.075, 0.005, 'sine', 'ambience');
+            if (!this.playSoundEvent('ambience.birds', scene)) {
+              this.tone(88, now, 0.1, 0.007, 'sine', 'ambience');
+              this.tone(93, now + 0.14, 0.075, 0.005, 'sine', 'ambience');
+            }
           } else if (scene.night) {
-            for (let i = 0; i < 3; i++)
-              this.tone(95, now + i * 0.11, 0.045, 0.003, 'sine', 'ambience', 0.006);
+            if (!this.playSoundEvent('ambience.insects', scene))
+              for (let i = 0; i < 3; i++)
+                this.tone(95, now + i * 0.11, 0.045, 0.003, 'sine', 'ambience', 0.006);
           }
-          if (scene.settlement)
+          if (scene.settlement && !this.playSoundEvent('ambience.settlement', scene))
             this.noiseBurst(now + 0.25, 0.08, 0.007, 'bandpass', 2100, 0.7, 'ambience');
         } else if (scene.zone === 'archive' || scene.zone === 'side-march-watchhouse') {
+          if (this.playSoundEvent('ambience.drips', scene)) return;
           this.tone(82, now, 0.09, 0.006, 'sine', 'ambience', 0.003);
           this.tone(77, now + 0.45, 0.07, 0.004, 'sine', 'ambience', 0.003);
         } else if (scene.zone === 'mine' || scene.zone === 'side-crown-foundry') {
+          if (this.playSoundEvent('ambience.metal', scene)) return;
           this.tone(48, now, 0.3, 0.004, 'triangle', 'ambience', 0.004);
           this.tone(71, now + 0.03, 0.16, 0.003, 'sine', 'ambience', 0.004);
         }
