@@ -135,7 +135,7 @@
       const campaign = new Campaign(),
         boss = PrototypeData.bosses.find((b) => b.id === $('boss').value);
       const place = boss
-        ? boss.kind === 'field'
+        ? boss.kind !== 'dungeon'
           ? boss.region
           : boss.id === 'darklord'
             ? 'citadel'
