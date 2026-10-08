@@ -136,6 +136,12 @@ const root = path.resolve(__dirname, '..'),
         await press('#record-play');
         await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'place-vale');
         assert((await page.locator('#message').textContent()).includes('Playing place-vale'));
+        assert((await page.locator('#guide-text').inputValue()).includes('Orchard Roads'));
+        assert((await page.locator('#guide-recipe').textContent()).includes('score-book.json'));
+        assert.equal(await page.locator('#guide-event option').count(), 91);
+        await page.locator('#guide-event').selectOption('step.wet');
+        assert((await page.locator('#guide-text').inputValue()).includes('wet footstep'));
+        await page.locator('#guide-event').selectOption('');
 
         if (!phone) {
           const decoded = await page.evaluate(async () => {

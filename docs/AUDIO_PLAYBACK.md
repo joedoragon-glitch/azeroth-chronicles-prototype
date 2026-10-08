@@ -46,7 +46,7 @@ Registered files stay under `assets/audio`, including real symlink containment a
 | --- | --- |
 | Encoded publishing | 8 MiB each, 32 MiB unique registered total, including codec variants |
 | Runtime fetch | 8 MiB each; streamed response length enforced; 15-second abort |
-| Registry | 128 KiB; lazy fetch with 15-second abort |
+| Registry | 256 KiB including creative guides; lazy fetch with 15-second abort |
 | Decode | One at a time, at most eight pending IDs; duplicate loads share one promise |
 | Decoded PCM | 32 MiB default LRU; playing/prepared stems pinned; conservative stereo admission before decode |
 | Decode watchdog | 20 seconds; a stalled decoder closes its asset store to prevent overlapping runaway decodes; reopen to retry |

@@ -10,6 +10,10 @@ const check = process.argv.includes('--check'),
   read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 const template = read('templates/game.html'),
   generated = new Map();
+generated.set(
+  'src/prototype/audio-library.js',
+  `/* Generated from assets/audio/manifest.json. Edit the catalog, then run npm run build. */\n(function(root){'use strict';const api=${JSON.stringify(require('./audio-catalog.cjs').runtimeCatalog(JSON.parse(read('assets/audio/manifest.json'))))};if(typeof module!=='undefined')module.exports=api;else root.PrototypeAudioLibrary=api;})(typeof window!=='undefined'?window:globalThis);\n`,
+);
 for (const [file, entry] of [
   ['index.html', 'auto'],
   ['prototype.html', 'auto'],

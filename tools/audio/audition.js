@@ -11,6 +11,31 @@
   const message = (text) => {
     $('message').textContent = text;
   };
+  function showGuide() {
+    const manifest = audio.recordingManifest,
+      event = $('guide-event').value,
+      entry = manifest?.assets[$('recording').value];
+    $('guide-text').value = event
+      ? manifest?.director?.eventGuides?.[event] || 'No guide registered.'
+      : entry?.generationGuide || 'This diagnostic recording is an engineering fixture.';
+    $('guide-recipe').textContent = event
+      ? 'Exact synthesis recipes: audio-effects.js, audio-production.js and audio-catalog.js.'
+      : entry?.managedBy === 'score-book'
+        ? 'Exact composition: tools/audio/score-book.json. Renderer: tools/audio/render-score.py.'
+        : entry?.creationMethod === 'imported-recording'
+          ? 'Imported recording: see its registered author/license. A retained guide is a creative reference.'
+          : 'Diagnostic PCM recipe: tools/audio/fixtures.js.';
+  }
+  $('recording').addEventListener('change', showGuide);
+  $('guide-event').addEventListener('change', showGuide);
+  $('copy-guide').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText($('guide-text').value);
+      message('Guide copied.');
+    } catch (_) {
+      message('Select the guide text and copy it.');
+    }
+  });
   for (const region of PrototypeData.regions) $('place').add(new Option(region.name, region.id));
   for (const id of Campaign.dungeonIds) {
     const theme = PrototypeAudio.themes.find((t) => t.id === id);
@@ -57,6 +82,10 @@
     $('recording').replaceChildren();
     for (const [id, entry] of Object.entries(data.manifest.assets))
       $('recording').add(new Option(id + ' · ' + entry.kind, id));
+    $('guide-event').replaceChildren(new Option('Selected recording', ''));
+    for (const key of Object.keys(data.manifest.director?.eventGuides || {}))
+      $('guide-event').add(new Option(key, key));
+    showGuide();
     if (!$('recording').options.length)
       $('recording').add(new Option('No production recordings yet', ''));
     $('stem-play').disabled = selected !== 'diagnostic';
@@ -187,7 +216,7 @@
         ok = await audio.setRecordedScore({
           id,
           stems: [{ id, gain: 0.6 }],
-          bpm: 120,
+          bpm: entry.bpm || 120,
           quantizeBars: Number($('grid').value),
         });
       else {

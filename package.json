@@ -1,6 +1,6 @@
 {
   "name": "azeroth-chronicles-prototype",
-  "version": "0.8.90",
+  "version": "0.8.91",
   "private": true,
   "description": "Offline installable RPG prototype for Chromebook and mobile.",
   "scripts": {
@@ -10,8 +10,8 @@
     "build": "node scripts/build.cjs",
     "check": "node scripts/build.cjs --check && node scripts/sprite-pipeline.cjs check && node scripts/sprite-scope-audit.cjs --check",
     "dev": "node scripts/dev.cjs",
-    "format": "prettier --write \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\" \"tools/sprites/*.{js,css,html,json}\" tests/sprite-pipeline.test.cjs tests/sprite-showroom-browser.test.cjs tests/regional-handoffs.test.cjs tests/ironroot-highlands.test.cjs \"tools/audio/*.{js,css,html,json}\" tests/audio-recordings.test.cjs tests/audio-audition-browser.test.cjs tests/campaign-domains.test.cjs tests/economy.test.cjs tests/audio-production.test.cjs tests/audio-browser.test.cjs tests/sprite-scope.test.cjs",
-    "format:check": "prettier --check \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\" \"tools/sprites/*.{js,css,html,json}\" tests/sprite-pipeline.test.cjs tests/sprite-showroom-browser.test.cjs tests/regional-handoffs.test.cjs tests/ironroot-highlands.test.cjs \"tools/audio/*.{js,css,html,json}\" tests/audio-recordings.test.cjs tests/audio-audition-browser.test.cjs tests/campaign-domains.test.cjs tests/economy.test.cjs tests/audio-production.test.cjs tests/audio-browser.test.cjs tests/sprite-scope.test.cjs",
+    "format": "prettier --write \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\" \"tools/sprites/*.{js,css,html,json}\" tests/sprite-pipeline.test.cjs tests/sprite-showroom-browser.test.cjs tests/regional-handoffs.test.cjs tests/ironroot-highlands.test.cjs \"tools/audio/*.{js,css,html,json}\" tests/audio-recordings.test.cjs tests/audio-audition-browser.test.cjs tests/campaign-domains.test.cjs tests/economy.test.cjs tests/audio-production.test.cjs tests/audio-browser.test.cjs tests/sprite-scope.test.cjs tests/audio-catalog.test.cjs",
+    "format:check": "prettier --check \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\" \"tools/sprites/*.{js,css,html,json}\" tests/sprite-pipeline.test.cjs tests/sprite-showroom-browser.test.cjs tests/regional-handoffs.test.cjs tests/ironroot-highlands.test.cjs \"tools/audio/*.{js,css,html,json}\" tests/audio-recordings.test.cjs tests/audio-audition-browser.test.cjs tests/campaign-domains.test.cjs tests/economy.test.cjs tests/audio-production.test.cjs tests/audio-browser.test.cjs tests/sprite-scope.test.cjs tests/audio-catalog.test.cjs",
     "sprite:check": "node scripts/sprite-pipeline.cjs check",
     "sprite:catalog": "node scripts/sprite-pipeline.cjs catalog",
     "sprite:contracts": "node scripts/sprite-pipeline.cjs contracts",
@@ -19,7 +19,10 @@
     "sprite:prepare": "node scripts/sprite-pipeline.cjs prepare",
     "sprite:showroom": "node scripts/sprite-pipeline.cjs showroom",
     "sprite:publish": "node scripts/sprite-pipeline.cjs publish",
-    "sprite:scope": "node scripts/sprite-scope-audit.cjs"
+    "sprite:scope": "node scripts/sprite-scope-audit.cjs",
+    "audio:check": "node scripts/audio-library.cjs check",
+    "audio:register": "node scripts/audio-library.cjs register",
+    "audio:bind": "node scripts/audio-library.cjs bind"
   },
   "engines": {
     "node": ">=20.9.0"

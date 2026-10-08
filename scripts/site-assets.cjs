@@ -17,6 +17,8 @@ const scripts = [
     'rewards',
     'engine',
     'audio-catalog',
+    'audio-contract',
+    'audio-library',
     'audio-assets',
     'audio-mixer',
     'audio-runtime',

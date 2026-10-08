@@ -15,7 +15,9 @@
         "license": "CC0-1.0"
       },
       "title": "Orchard Roads",
-      "bpm": 92
+      "bpm": 92,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orchard Roads\". Exploration music with space for combat and interface sounds. Use flute lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for place-vale."
     },
     "action-vale": {
       "kind": "music",
@@ -30,8 +32,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Orchard Roads \u2014 encounter",
-      "bpm": 92
+      "title": "Orchard Roads — encounter",
+      "bpm": 92,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orchard Roads — encounter\". Create an additive combat layer for place-vale. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use harp rhythmic figures, shaker, tom and frame percussion. 92 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-vale."
     },
     "peace-vale": {
       "kind": "music",
@@ -46,8 +50,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Orchard Roads \u2014 after liberation",
-      "bpm": 92
+      "title": "Orchard Roads — after liberation",
+      "bpm": 92,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orchard Roads — after liberation\". A gentler peaceful arrangement with less tension. Use flute lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-vale."
     },
     "place-march": {
       "kind": "music",
@@ -63,7 +69,9 @@
         "license": "CC0-1.0"
       },
       "title": "Reedwater",
-      "bpm": 82
+      "bpm": 82,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Reedwater\". Exploration music with space for combat and interface sounds. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for place-march."
     },
     "action-march": {
       "kind": "music",
@@ -78,8 +86,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Reedwater \u2014 encounter",
-      "bpm": 82
+      "title": "Reedwater — encounter",
+      "bpm": 82,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Reedwater — encounter\". Create an additive combat layer for place-march. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use bell rhythmic figures, shaker, tom and frame percussion. 82 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-march."
     },
     "peace-march": {
       "kind": "music",
@@ -94,8 +104,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Reedwater \u2014 after liberation",
-      "bpm": 82
+      "title": "Reedwater — after liberation",
+      "bpm": 82,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Reedwater — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, D tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-march."
     },
     "place-highlands": {
       "kind": "music",
@@ -111,7 +123,9 @@
         "license": "CC0-1.0"
       },
       "title": "Payday on the Ridge",
-      "bpm": 88
+      "bpm": 88,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Payday on the Ridge\". Exploration music with space for combat and interface sounds. Use horn lead, dulcimer arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, G tonal center with mixolydian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for place-highlands."
     },
     "action-highlands": {
       "kind": "music",
@@ -126,8 +140,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Payday on the Ridge \u2014 encounter",
-      "bpm": 88
+      "title": "Payday on the Ridge — encounter",
+      "bpm": 88,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Payday on the Ridge — encounter\". Create an additive combat layer for place-highlands. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use dulcimer rhythmic figures, shaker, tom and frame percussion. 88 BPM, 4/4, G tonal center with mixolydian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-highlands."
     },
     "peace-highlands": {
       "kind": "music",
@@ -142,8 +158,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Payday on the Ridge \u2014 after liberation",
-      "bpm": 88
+      "title": "Payday on the Ridge — after liberation",
+      "bpm": 88,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Payday on the Ridge — after liberation\". A gentler peaceful arrangement with less tension. Use flute lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-highlands."
     },
     "place-frontier": {
       "kind": "music",
@@ -159,7 +177,9 @@
         "license": "CC0-1.0"
       },
       "title": "Embers Still Warm",
-      "bpm": 96
+      "bpm": 96,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Embers Still Warm\". Exploration music with space for combat and interface sounds. Use cello lead, guitar arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, A tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for place-frontier."
     },
     "action-frontier": {
       "kind": "music",
@@ -174,8 +194,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Embers Still Warm \u2014 encounter",
-      "bpm": 96
+      "title": "Embers Still Warm — encounter",
+      "bpm": 96,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Embers Still Warm — encounter\". Create an additive combat layer for place-frontier. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use guitar rhythmic figures, shaker, tom and frame percussion. 96 BPM, 4/4, A tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-frontier."
     },
     "peace-frontier": {
       "kind": "music",
@@ -190,8 +212,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Embers Still Warm \u2014 after liberation",
-      "bpm": 96
+      "title": "Embers Still Warm — after liberation",
+      "bpm": 96,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Embers Still Warm — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, A tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-frontier."
     },
     "place-crown": {
       "kind": "music",
@@ -207,7 +231,9 @@
         "license": "CC0-1.0"
       },
       "title": "Roads Beneath the Banner",
-      "bpm": 84
+      "bpm": 84,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Roads Beneath the Banner\". Exploration music with space for combat and interface sounds. Use cello lead, piano arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, C tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for place-crown."
     },
     "action-crown": {
       "kind": "music",
@@ -222,8 +248,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Roads Beneath the Banner \u2014 encounter",
-      "bpm": 84
+      "title": "Roads Beneath the Banner — encounter",
+      "bpm": 84,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Roads Beneath the Banner — encounter\". Create an additive combat layer for place-crown. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use piano rhythmic figures, shaker, tom and frame percussion. 84 BPM, 4/4, C tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-crown."
     },
     "peace-crown": {
       "kind": "music",
@@ -238,8 +266,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Roads Beneath the Banner \u2014 after liberation",
-      "bpm": 84
+      "title": "Roads Beneath the Banner — after liberation",
+      "bpm": 84,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Roads Beneath the Banner — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-crown."
     },
     "place-crypt": {
       "kind": "music",
@@ -255,7 +285,9 @@
         "license": "CC0-1.0"
       },
       "title": "The Unfinished Retreat",
-      "bpm": 84
+      "bpm": 84,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Unfinished Retreat\". Exploration music with space for combat and interface sounds. Use cello lead, harp arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, A tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for place-crypt."
     },
     "action-crypt": {
       "kind": "music",
@@ -270,8 +302,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "The Unfinished Retreat \u2014 encounter",
-      "bpm": 84
+      "title": "The Unfinished Retreat — encounter",
+      "bpm": 84,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Unfinished Retreat — encounter\". Create an additive combat layer for place-crypt. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use harp rhythmic figures, shaker, tom and frame percussion. 84 BPM, 4/4, A tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-crypt."
     },
     "peace-crypt": {
       "kind": "music",
@@ -286,8 +320,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "The Unfinished Retreat \u2014 after liberation",
-      "bpm": 84
+      "title": "The Unfinished Retreat — after liberation",
+      "bpm": 84,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Unfinished Retreat — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, A tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-crypt."
     },
     "place-archive": {
       "kind": "music",
@@ -303,7 +339,9 @@
         "license": "CC0-1.0"
       },
       "title": "Restoration After Rain",
-      "bpm": 86
+      "bpm": 86,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Restoration After Rain\". Exploration music with space for combat and interface sounds. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 86 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for place-archive."
     },
     "action-archive": {
       "kind": "music",
@@ -318,8 +356,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Restoration After Rain \u2014 encounter",
-      "bpm": 86
+      "title": "Restoration After Rain — encounter",
+      "bpm": 86,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Restoration After Rain — encounter\". Create an additive combat layer for place-archive. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use bell rhythmic figures, shaker, tom and frame percussion. 86 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-archive."
     },
     "peace-archive": {
       "kind": "music",
@@ -334,8 +374,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Restoration After Rain \u2014 after liberation",
-      "bpm": 86
+      "title": "Restoration After Rain — after liberation",
+      "bpm": 86,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Restoration After Rain — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 86 BPM, 4/4, D tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-archive."
     },
     "place-mine": {
       "kind": "music",
@@ -351,7 +393,9 @@
         "license": "CC0-1.0"
       },
       "title": "Veins and Old Stone",
-      "bpm": 96
+      "bpm": 96,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Veins and Old Stone\". Exploration music with space for combat and interface sounds. Use horn lead, dulcimer arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, F tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for place-mine."
     },
     "action-mine": {
       "kind": "music",
@@ -366,8 +410,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Veins and Old Stone \u2014 encounter",
-      "bpm": 96
+      "title": "Veins and Old Stone — encounter",
+      "bpm": 96,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Veins and Old Stone — encounter\". Create an additive combat layer for place-mine. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use dulcimer rhythmic figures, shaker, tom and frame percussion. 96 BPM, 4/4, F tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-mine."
     },
     "peace-mine": {
       "kind": "music",
@@ -382,8 +428,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Veins and Old Stone \u2014 after liberation",
-      "bpm": 96
+      "title": "Veins and Old Stone — after liberation",
+      "bpm": 96,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Veins and Old Stone — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, F tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-mine."
     },
     "place-abyss": {
       "kind": "music",
@@ -399,7 +447,9 @@
         "license": "CC0-1.0"
       },
       "title": "Purple Wings",
-      "bpm": 96
+      "bpm": 96,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Purple Wings\". Exploration music with space for combat and interface sounds. Use horn lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for place-abyss."
     },
     "action-abyss": {
       "kind": "music",
@@ -414,8 +464,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Purple Wings \u2014 encounter",
-      "bpm": 96
+      "title": "Purple Wings — encounter",
+      "bpm": 96,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Purple Wings — encounter\". Create an additive combat layer for place-abyss. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use harp rhythmic figures, shaker, tom and frame percussion. 96 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-abyss."
     },
     "peace-abyss": {
       "kind": "music",
@@ -430,8 +482,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Purple Wings \u2014 after liberation",
-      "bpm": 96
+      "title": "Purple Wings — after liberation",
+      "bpm": 96,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Purple Wings — after liberation\". A gentler peaceful arrangement with less tension. Use flute lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-abyss."
     },
     "place-citadel": {
       "kind": "music",
@@ -447,7 +501,9 @@
         "license": "CC0-1.0"
       },
       "title": "The Machinery of Rule",
-      "bpm": 88
+      "bpm": 88,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Machinery of Rule\". Exploration music with space for combat and interface sounds. Use cello lead, piano arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, C tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for place-citadel."
     },
     "action-citadel": {
       "kind": "music",
@@ -462,8 +518,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "The Machinery of Rule \u2014 encounter",
-      "bpm": 88
+      "title": "The Machinery of Rule — encounter",
+      "bpm": 88,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Machinery of Rule — encounter\". Create an additive combat layer for place-citadel. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use piano rhythmic figures, shaker, tom and frame percussion. 88 BPM, 4/4, C tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-citadel."
     },
     "peace-citadel": {
       "kind": "music",
@@ -478,8 +536,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "The Machinery of Rule \u2014 after liberation",
-      "bpm": 88
+      "title": "The Machinery of Rule — after liberation",
+      "bpm": 88,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Machinery of Rule — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-citadel."
     },
     "interior-supply-vale": {
       "kind": "music",
@@ -495,7 +555,9 @@
         "license": "CC0-1.0"
       },
       "title": "Thornfang's Treasury",
-      "bpm": 92
+      "bpm": 92,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Thornfang's Treasury\". A calm resting arrangement. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, F tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for interior-supply-vale."
     },
     "interior-supply-march": {
       "kind": "music",
@@ -511,7 +573,9 @@
         "license": "CC0-1.0"
       },
       "title": "Mirejaw's Treasury",
-      "bpm": 82
+      "bpm": 82,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Mirejaw's Treasury\". A calm resting arrangement. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, G tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for interior-supply-march."
     },
     "interior-supply-highlands": {
       "kind": "music",
@@ -527,7 +591,9 @@
         "license": "CC0-1.0"
       },
       "title": "Ridge Tyrant's Treasury",
-      "bpm": 88
+      "bpm": 88,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Ridge Tyrant's Treasury\". A calm resting arrangement. Use piano lead, dulcimer arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, C tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for interior-supply-highlands."
     },
     "interior-supply-crown": {
       "kind": "music",
@@ -543,7 +609,9 @@
         "license": "CC0-1.0"
       },
       "title": "Cindermaw's Treasury",
-      "bpm": 84
+      "bpm": 84,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Cindermaw's Treasury\". A calm resting arrangement. Use piano lead, piano arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, F tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for interior-supply-crown."
     },
     "interior-side-vale-cellars": {
       "kind": "music",
@@ -559,7 +627,9 @@
         "license": "CC0-1.0"
       },
       "title": "Old Orchard Cellars",
-      "bpm": 92
+      "bpm": 92,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Old Orchard Cellars\". Intimate interior music with restrained dynamics. Use cello lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for interior-side-vale-cellars."
     },
     "interior-side-march-watchhouse": {
       "kind": "music",
@@ -575,7 +645,9 @@
         "license": "CC0-1.0"
       },
       "title": "Drowned Watchhouse",
-      "bpm": 82
+      "bpm": 82,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Drowned Watchhouse\". Intimate interior music with restrained dynamics. Use cello lead, bell arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for interior-side-march-watchhouse."
     },
     "interior-side-highlands-signal": {
       "kind": "music",
@@ -591,7 +663,9 @@
         "license": "CC0-1.0"
       },
       "title": "Old Signal Keep",
-      "bpm": 88
+      "bpm": 88,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Old Signal Keep\". Intimate interior music with restrained dynamics. Use cello lead, dulcimer arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, D tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for interior-side-highlands-signal."
     },
     "interior-side-frontier-shrine": {
       "kind": "music",
@@ -607,7 +681,9 @@
         "license": "CC0-1.0"
       },
       "title": "Ruined Shrine",
-      "bpm": 96
+      "bpm": 96,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Ruined Shrine\". Intimate interior music with restrained dynamics. Use cello lead, guitar arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, E tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for interior-side-frontier-shrine."
     },
     "interior-side-crown-foundry": {
       "kind": "music",
@@ -623,7 +699,9 @@
         "license": "CC0-1.0"
       },
       "title": "Ruined Foundry",
-      "bpm": 84
+      "bpm": 84,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Ruined Foundry\". Intimate interior music with restrained dynamics. Use cello lead, piano arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for interior-side-crown-foundry."
     },
     "boss-thorn": {
       "kind": "music",
@@ -639,7 +717,9 @@
         "license": "CC0-1.0"
       },
       "title": "Thorn Underfoot",
-      "bpm": 116
+      "bpm": 116,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Thorn Underfoot\". A distinct boss encounter theme with firm low strings and restrained tom/frame percussion. Use flute lead, guitar arpeggios, soft bowed strings and cello bass. 116 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-thorn."
     },
     "boss-thorn-true": {
       "kind": "music",
@@ -654,8 +734,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Thorn Underfoot \u2014 TRUE",
-      "bpm": 116
+      "title": "Thorn Underfoot — TRUE",
+      "bpm": 116,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Thorn Underfoot — TRUE\". Create an additive combat layer for boss-thorn. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 116 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-thorn-true."
     },
     "boss-crypt": {
       "kind": "music",
@@ -671,7 +753,9 @@
         "license": "CC0-1.0"
       },
       "title": "Keeper of the Summer Keys",
-      "bpm": 104
+      "bpm": 104,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Keeper of the Summer Keys\". A distinct boss encounter theme with firm low strings and restrained tom/frame percussion. Use cello lead, harp arpeggios, soft bowed strings and cello bass. 104 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-crypt."
     },
     "boss-crypt-true": {
       "kind": "music",
@@ -686,8 +770,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Keeper of the Summer Keys \u2014 TRUE",
-      "bpm": 104
+      "title": "Keeper of the Summer Keys — TRUE",
+      "bpm": 104,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Keeper of the Summer Keys — TRUE\". Create an additive combat layer for boss-crypt. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 104 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-crypt-true."
     },
     "boss-mire": {
       "kind": "music",
@@ -703,7 +789,9 @@
         "license": "CC0-1.0"
       },
       "title": "Teeth Beneath the Reeds",
-      "bpm": 108
+      "bpm": 108,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Teeth Beneath the Reeds\". A distinct boss encounter theme with firm low strings and restrained tom/frame percussion. Use cello lead, bell arpeggios, soft bowed strings and cello bass. 108 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-mire."
     },
     "boss-mire-true": {
       "kind": "music",
@@ -718,8 +806,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Teeth Beneath the Reeds \u2014 TRUE",
-      "bpm": 108
+      "title": "Teeth Beneath the Reeds — TRUE",
+      "bpm": 108,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Teeth Beneath the Reeds — TRUE\". Create an additive combat layer for boss-mire. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 108 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-mire-true."
     },
     "boss-archive": {
       "kind": "music",
@@ -735,7 +825,9 @@
         "license": "CC0-1.0"
       },
       "title": "The Scholar's Hook",
-      "bpm": 108
+      "bpm": 108,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Scholar's Hook\". A distinct boss encounter theme with firm low strings and restrained tom/frame percussion. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 108 BPM, 4/4, D tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-archive."
     },
     "boss-archive-true": {
       "kind": "music",
@@ -750,8 +842,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "The Scholar's Hook \u2014 TRUE",
-      "bpm": 108
+      "title": "The Scholar's Hook — TRUE",
+      "bpm": 108,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Scholar's Hook — TRUE\". Create an additive combat layer for boss-archive. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 108 BPM, 4/4, D tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-archive-true."
     },
     "boss-ridge": {
       "kind": "music",
@@ -767,7 +861,9 @@
         "license": "CC0-1.0"
       },
       "title": "Master of Coin",
-      "bpm": 108
+      "bpm": 108,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Master of Coin\". A distinct boss encounter theme with firm low strings and restrained tom/frame percussion. Use horn lead, dulcimer arpeggios, soft bowed strings and cello bass. 108 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-ridge."
     },
     "boss-ridge-true": {
       "kind": "music",
@@ -782,8 +878,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Master of Coin \u2014 TRUE",
-      "bpm": 108
+      "title": "Master of Coin — TRUE",
+      "bpm": 108,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Master of Coin — TRUE\". Create an additive combat layer for boss-ridge. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 108 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-ridge-true."
     },
     "boss-mine": {
       "kind": "music",
@@ -799,7 +897,9 @@
         "license": "CC0-1.0"
       },
       "title": "The Mountain Remembers",
-      "bpm": 100
+      "bpm": 100,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Mountain Remembers\". A distinct boss encounter theme with firm low strings and restrained tom/frame percussion. Use horn lead, dulcimer arpeggios, soft bowed strings and cello bass. 100 BPM, 4/4, F tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-mine."
     },
     "boss-mine-true": {
       "kind": "music",
@@ -814,8 +914,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "The Mountain Remembers \u2014 TRUE",
-      "bpm": 100
+      "title": "The Mountain Remembers — TRUE",
+      "bpm": 100,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Mountain Remembers — TRUE\". Create an additive combat layer for boss-mine. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 100 BPM, 4/4, F tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-mine-true."
     },
     "boss-warlord": {
       "kind": "music",
@@ -831,7 +933,9 @@
         "license": "CC0-1.0"
       },
       "title": "Orders in the Ash",
-      "bpm": 120
+      "bpm": 120,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orders in the Ash\". A distinct boss encounter theme with firm low strings and restrained tom/frame percussion. Use horn lead, guitar arpeggios, soft bowed strings and cello bass. 120 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-warlord."
     },
     "boss-warlord-true": {
       "kind": "music",
@@ -846,8 +950,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Orders in the Ash \u2014 TRUE",
-      "bpm": 120
+      "title": "Orders in the Ash — TRUE",
+      "bpm": 120,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orders in the Ash — TRUE\". Create an additive combat layer for boss-warlord. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 120 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-warlord-true."
     },
     "boss-abyss": {
       "kind": "music",
@@ -863,7 +969,9 @@
         "license": "CC0-1.0"
       },
       "title": "His Majesty's Wings",
-      "bpm": 112
+      "bpm": 112,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"His Majesty's Wings\". A distinct boss encounter theme with firm low strings and restrained tom/frame percussion. Use horn lead, harp arpeggios, soft bowed strings and cello bass. 112 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-abyss."
     },
     "boss-abyss-true": {
       "kind": "music",
@@ -878,8 +986,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "His Majesty's Wings \u2014 TRUE",
-      "bpm": 112
+      "title": "His Majesty's Wings — TRUE",
+      "bpm": 112,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"His Majesty's Wings — TRUE\". Create an additive combat layer for boss-abyss. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 112 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-abyss-true."
     },
     "boss-citadel": {
       "kind": "music",
@@ -895,7 +1005,9 @@
         "license": "CC0-1.0"
       },
       "title": "The Last Watch",
-      "bpm": 108
+      "bpm": 108,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Last Watch\". A distinct boss encounter theme with firm low strings and restrained tom/frame percussion. Use cello lead, bell arpeggios, soft bowed strings and cello bass. 108 BPM, 4/4, C tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-citadel."
     },
     "boss-citadel-true": {
       "kind": "music",
@@ -910,8 +1022,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "The Last Watch \u2014 TRUE",
-      "bpm": 108
+      "title": "The Last Watch — TRUE",
+      "bpm": 108,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Last Watch — TRUE\". Create an additive combat layer for boss-citadel. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 108 BPM, 4/4, C tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-citadel-true."
     },
     "boss-cindermaw": {
       "kind": "music",
@@ -927,7 +1041,9 @@
         "license": "CC0-1.0"
       },
       "title": "The Ember Maw",
-      "bpm": 118
+      "bpm": 118,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Ember Maw\". A distinct boss encounter theme with firm low strings and restrained tom/frame percussion. Use cello lead, dulcimer arpeggios, soft bowed strings and cello bass. 118 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-cindermaw."
     },
     "boss-cindermaw-true": {
       "kind": "music",
@@ -942,8 +1058,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "The Ember Maw \u2014 TRUE",
-      "bpm": 118
+      "title": "The Ember Maw — TRUE",
+      "bpm": 118,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Ember Maw — TRUE\". Create an additive combat layer for boss-cindermaw. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 118 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-cindermaw-true."
     },
     "boss-darklord": {
       "kind": "music",
@@ -959,7 +1077,9 @@
         "license": "CC0-1.0"
       },
       "title": "Crown Without Horizon",
-      "bpm": 104
+      "bpm": 104,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Crown Without Horizon\". A distinct boss encounter theme with firm low strings and restrained tom/frame percussion. Use horn lead, piano arpeggios, soft bowed strings and cello bass. 104 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-darklord."
     },
     "boss-darklord-true": {
       "kind": "music",
@@ -974,8 +1094,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Crown Without Horizon \u2014 TRUE",
-      "bpm": 104
+      "title": "Crown Without Horizon — TRUE",
+      "bpm": 104,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Crown Without Horizon — TRUE\". Create an additive combat layer for boss-darklord. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 104 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-darklord-true."
     },
     "title": {
       "kind": "music",
@@ -991,7 +1113,9 @@
         "license": "CC0-1.0"
       },
       "title": "Azeroth Chronicles",
-      "bpm": 88
+      "bpm": 88,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Azeroth Chronicles\". A warm fantasy title theme with a clear rising motif. Use horn lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for title."
     },
     "finale": {
       "kind": "music",
@@ -1007,7 +1131,9 @@
         "license": "CC0-1.0"
       },
       "title": "A Country Wakes",
-      "bpm": 88
+      "bpm": 88,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"A Country Wakes\". A gentler peaceful arrangement with less tension. Use flute lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for finale."
     },
     "defeat": {
       "kind": "music",
@@ -1023,7 +1149,9 @@
         "license": "CC0-1.0"
       },
       "title": "The Road Remains",
-      "bpm": 84
+      "bpm": 84,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Road Remains\". A calm resting arrangement. Use cello lead, piano arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for defeat."
     },
     "peace-interior-supply-vale": {
       "kind": "music",
@@ -1038,8 +1166,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Thornfang's Treasury \u2014 after liberation",
-      "bpm": 92
+      "title": "Thornfang's Treasury — after liberation",
+      "bpm": 92,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Thornfang's Treasury — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, F tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-supply-vale."
     },
     "peace-interior-supply-march": {
       "kind": "music",
@@ -1054,8 +1184,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Mirejaw's Treasury \u2014 after liberation",
-      "bpm": 82
+      "title": "Mirejaw's Treasury — after liberation",
+      "bpm": 82,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Mirejaw's Treasury — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-supply-march."
     },
     "peace-interior-supply-highlands": {
       "kind": "music",
@@ -1070,8 +1202,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Ridge Tyrant's Treasury \u2014 after liberation",
-      "bpm": 88
+      "title": "Ridge Tyrant's Treasury — after liberation",
+      "bpm": 88,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Ridge Tyrant's Treasury — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-supply-highlands."
     },
     "peace-interior-supply-crown": {
       "kind": "music",
@@ -1086,8 +1220,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Cindermaw's Treasury \u2014 after liberation",
-      "bpm": 84
+      "title": "Cindermaw's Treasury — after liberation",
+      "bpm": 84,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Cindermaw's Treasury — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, F tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-supply-crown."
     },
     "peace-interior-side-vale-cellars": {
       "kind": "music",
@@ -1102,8 +1238,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Old Orchard Cellars \u2014 after liberation",
-      "bpm": 92
+      "title": "Old Orchard Cellars — after liberation",
+      "bpm": 92,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Old Orchard Cellars — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-side-vale-cellars."
     },
     "peace-interior-side-march-watchhouse": {
       "kind": "music",
@@ -1118,8 +1256,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Drowned Watchhouse \u2014 after liberation",
-      "bpm": 82
+      "title": "Drowned Watchhouse — after liberation",
+      "bpm": 82,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Drowned Watchhouse — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, A tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-side-march-watchhouse."
     },
     "peace-interior-side-highlands-signal": {
       "kind": "music",
@@ -1134,8 +1274,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Old Signal Keep \u2014 after liberation",
-      "bpm": 88
+      "title": "Old Signal Keep — after liberation",
+      "bpm": 88,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Old Signal Keep — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, D tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-side-highlands-signal."
     },
     "peace-interior-side-frontier-shrine": {
       "kind": "music",
@@ -1150,8 +1292,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Ruined Shrine \u2014 after liberation",
-      "bpm": 96
+      "title": "Ruined Shrine — after liberation",
+      "bpm": 96,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Ruined Shrine — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, E tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-side-frontier-shrine."
     },
     "peace-interior-side-crown-foundry": {
       "kind": "music",
@@ -1166,8 +1310,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Ruined Foundry \u2014 after liberation",
-      "bpm": 84
+      "title": "Ruined Foundry — after liberation",
+      "bpm": 84,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Ruined Foundry — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-side-crown-foundry."
     },
     "settlement-vale": {
       "kind": "music",
@@ -1182,8 +1328,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Orchard Roads \u2014 hearths and neighbors",
-      "bpm": 92
+      "title": "Orchard Roads — hearths and neighbors",
+      "bpm": 92,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orchard Roads — hearths and neighbors\". A refuge among hearths and neighbors: relaxed piano phrases and plucked accompaniment. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for settlement-vale."
     },
     "night-vale": {
       "kind": "music",
@@ -1198,8 +1346,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Orchard Roads \u2014 nightfall",
-      "bpm": 92
+      "title": "Orchard Roads — nightfall",
+      "bpm": 92,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orchard Roads — nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-vale."
     },
     "settlement-march": {
       "kind": "music",
@@ -1214,8 +1364,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Reedwater \u2014 hearths and neighbors",
-      "bpm": 82
+      "title": "Reedwater — hearths and neighbors",
+      "bpm": 82,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Reedwater — hearths and neighbors\". A refuge among hearths and neighbors: relaxed piano phrases and plucked accompaniment. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, D tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for settlement-march."
     },
     "night-march": {
       "kind": "music",
@@ -1230,8 +1382,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Reedwater \u2014 nightfall",
-      "bpm": 82
+      "title": "Reedwater — nightfall",
+      "bpm": 82,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Reedwater — nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-march."
     },
     "settlement-highlands": {
       "kind": "music",
@@ -1246,8 +1400,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Payday on the Ridge \u2014 hearths and neighbors",
-      "bpm": 88
+      "title": "Payday on the Ridge — hearths and neighbors",
+      "bpm": 88,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Payday on the Ridge — hearths and neighbors\". A refuge among hearths and neighbors: relaxed piano phrases and plucked accompaniment. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for settlement-highlands."
     },
     "night-highlands": {
       "kind": "music",
@@ -1262,8 +1418,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Payday on the Ridge \u2014 nightfall",
-      "bpm": 88
+      "title": "Payday on the Ridge — nightfall",
+      "bpm": 88,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Payday on the Ridge — nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, G tonal center with mixolydian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-highlands."
     },
     "settlement-frontier": {
       "kind": "music",
@@ -1278,8 +1436,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Embers Still Warm \u2014 hearths and neighbors",
-      "bpm": 96
+      "title": "Embers Still Warm — hearths and neighbors",
+      "bpm": 96,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Embers Still Warm — hearths and neighbors\". A refuge among hearths and neighbors: relaxed piano phrases and plucked accompaniment. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, A tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for settlement-frontier."
     },
     "night-frontier": {
       "kind": "music",
@@ -1294,8 +1454,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Embers Still Warm \u2014 nightfall",
-      "bpm": 96
+      "title": "Embers Still Warm — nightfall",
+      "bpm": 96,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Embers Still Warm — nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, A tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-frontier."
     },
     "settlement-crown": {
       "kind": "music",
@@ -1310,8 +1472,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Roads Beneath the Banner \u2014 hearths and neighbors",
-      "bpm": 84
+      "title": "Roads Beneath the Banner — hearths and neighbors",
+      "bpm": 84,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Roads Beneath the Banner — hearths and neighbors\". A refuge among hearths and neighbors: relaxed piano phrases and plucked accompaniment. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for settlement-crown."
     },
     "night-crown": {
       "kind": "music",
@@ -1326,8 +1490,464 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Roads Beneath the Banner \u2014 nightfall",
-      "bpm": 84
+      "title": "Roads Beneath the Banner — nightfall",
+      "bpm": 84,
+      "managedBy": "score-book",
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Roads Beneath the Banner — nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, C tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-crown."
     }
+  },
+  "director": {
+    "fallbackPlace": "vale",
+    "places": {
+      "vale": {
+        "base": "place-vale",
+        "action": "action-vale",
+        "peace": "peace-vale",
+        "night": "night-vale",
+        "settlement": "settlement-vale",
+        "gain": 0.74,
+        "fade": 1.2,
+        "nightGain": 0.58,
+        "settlementGain": 0.62
+      },
+      "march": {
+        "base": "place-march",
+        "action": "action-march",
+        "peace": "peace-march",
+        "night": "night-march",
+        "settlement": "settlement-march",
+        "gain": 0.74,
+        "fade": 1.2,
+        "nightGain": 0.58,
+        "settlementGain": 0.62
+      },
+      "highlands": {
+        "base": "place-highlands",
+        "action": "action-highlands",
+        "peace": "peace-highlands",
+        "night": "night-highlands",
+        "settlement": "settlement-highlands",
+        "gain": 0.74,
+        "fade": 1.2,
+        "nightGain": 0.58,
+        "settlementGain": 0.62
+      },
+      "frontier": {
+        "base": "place-frontier",
+        "action": "action-frontier",
+        "peace": "peace-frontier",
+        "night": "night-frontier",
+        "settlement": "settlement-frontier",
+        "gain": 0.74,
+        "fade": 1.2,
+        "nightGain": 0.58,
+        "settlementGain": 0.62
+      },
+      "crown": {
+        "base": "place-crown",
+        "action": "action-crown",
+        "peace": "peace-crown",
+        "night": "night-crown",
+        "settlement": "settlement-crown",
+        "gain": 0.74,
+        "fade": 1.2,
+        "nightGain": 0.58,
+        "settlementGain": 0.62
+      },
+      "crypt": {
+        "base": "place-crypt",
+        "action": "action-crypt",
+        "peace": "peace-crypt",
+        "gain": 0.74,
+        "fade": 1.2
+      },
+      "archive": {
+        "base": "place-archive",
+        "action": "action-archive",
+        "peace": "peace-archive",
+        "gain": 0.74,
+        "fade": 1.2
+      },
+      "mine": {
+        "base": "place-mine",
+        "action": "action-mine",
+        "peace": "peace-mine",
+        "gain": 0.74,
+        "fade": 1.2
+      },
+      "abyss": {
+        "base": "place-abyss",
+        "action": "action-abyss",
+        "peace": "peace-abyss",
+        "gain": 0.74,
+        "fade": 1.2
+      },
+      "citadel": {
+        "base": "place-citadel",
+        "action": "action-citadel",
+        "peace": "peace-citadel",
+        "gain": 0.74,
+        "fade": 1.2
+      },
+      "supply-vale": {
+        "base": "interior-supply-vale",
+        "peace": "peace-interior-supply-vale",
+        "gain": 0.74,
+        "fade": 1.2
+      },
+      "supply-march": {
+        "base": "interior-supply-march",
+        "peace": "peace-interior-supply-march",
+        "gain": 0.74,
+        "fade": 1.2
+      },
+      "supply-highlands": {
+        "base": "interior-supply-highlands",
+        "peace": "peace-interior-supply-highlands",
+        "gain": 0.74,
+        "fade": 1.2
+      },
+      "supply-crown": {
+        "base": "interior-supply-crown",
+        "peace": "peace-interior-supply-crown",
+        "gain": 0.74,
+        "fade": 1.2
+      },
+      "side-vale-cellars": {
+        "base": "interior-side-vale-cellars",
+        "peace": "peace-interior-side-vale-cellars",
+        "gain": 0.74,
+        "fade": 1.2
+      },
+      "side-march-watchhouse": {
+        "base": "interior-side-march-watchhouse",
+        "peace": "peace-interior-side-march-watchhouse",
+        "gain": 0.74,
+        "fade": 1.2
+      },
+      "side-highlands-signal": {
+        "base": "interior-side-highlands-signal",
+        "peace": "peace-interior-side-highlands-signal",
+        "gain": 0.74,
+        "fade": 1.2
+      },
+      "side-frontier-shrine": {
+        "base": "interior-side-frontier-shrine",
+        "peace": "peace-interior-side-frontier-shrine",
+        "gain": 0.74,
+        "fade": 1.2
+      },
+      "side-crown-foundry": {
+        "base": "interior-side-crown-foundry",
+        "peace": "peace-interior-side-crown-foundry",
+        "gain": 0.74,
+        "fade": 1.2
+      }
+    },
+    "bosses": {
+      "thorn": {
+        "base": "boss-thorn",
+        "true": "boss-thorn-true",
+        "gain": 0.78,
+        "idleGain": 0.12,
+        "trueGain": 0.55,
+        "fade": 0.7
+      },
+      "crypt": {
+        "base": "boss-crypt",
+        "true": "boss-crypt-true",
+        "gain": 0.78,
+        "idleGain": 0.12,
+        "trueGain": 0.55,
+        "fade": 0.7
+      },
+      "mire": {
+        "base": "boss-mire",
+        "true": "boss-mire-true",
+        "gain": 0.78,
+        "idleGain": 0.12,
+        "trueGain": 0.55,
+        "fade": 0.7
+      },
+      "archive": {
+        "base": "boss-archive",
+        "true": "boss-archive-true",
+        "gain": 0.78,
+        "idleGain": 0.12,
+        "trueGain": 0.55,
+        "fade": 0.7
+      },
+      "ridge": {
+        "base": "boss-ridge",
+        "true": "boss-ridge-true",
+        "gain": 0.78,
+        "idleGain": 0.12,
+        "trueGain": 0.55,
+        "fade": 0.7
+      },
+      "mine": {
+        "base": "boss-mine",
+        "true": "boss-mine-true",
+        "gain": 0.78,
+        "idleGain": 0.12,
+        "trueGain": 0.55,
+        "fade": 0.7
+      },
+      "warlord": {
+        "base": "boss-warlord",
+        "true": "boss-warlord-true",
+        "gain": 0.78,
+        "idleGain": 0.12,
+        "trueGain": 0.55,
+        "fade": 0.7
+      },
+      "abyss": {
+        "base": "boss-abyss",
+        "true": "boss-abyss-true",
+        "gain": 0.78,
+        "idleGain": 0.12,
+        "trueGain": 0.55,
+        "fade": 0.7
+      },
+      "citadel": {
+        "base": "boss-citadel",
+        "true": "boss-citadel-true",
+        "gain": 0.78,
+        "idleGain": 0.12,
+        "trueGain": 0.55,
+        "fade": 0.7
+      },
+      "cindermaw": {
+        "base": "boss-cindermaw",
+        "true": "boss-cindermaw-true",
+        "gain": 0.78,
+        "idleGain": 0.12,
+        "trueGain": 0.55,
+        "fade": 0.7
+      },
+      "darklord": {
+        "base": "boss-darklord",
+        "true": "boss-darklord-true",
+        "gain": 0.78,
+        "idleGain": 0.12,
+        "trueGain": 0.55,
+        "fade": 0.7
+      }
+    },
+    "specials": {
+      "title": {
+        "asset": "title",
+        "gain": 0.7
+      },
+      "defeat": {
+        "asset": "defeat",
+        "gain": 0.55
+      },
+      "finale": {
+        "asset": "finale",
+        "gain": 0.72
+      }
+    },
+    "rules": [],
+    "events": {
+      "effect.powerStrike": [],
+      "effect.heroSteelImpact": [],
+      "effect.soldierSteelImpact": [],
+      "effect.enemyWeaponImpact": [],
+      "effect.creatureImpact": [],
+      "effect.meleeImpact": [],
+      "effect.swordSwing": [],
+      "effect.arcaneBeamLaunch": [],
+      "effect.tripleShot": [],
+      "effect.rapidBow": [],
+      "effect.heroBow": [],
+      "effect.bow": [],
+      "effect.heavyProjectileLaunch": [],
+      "effect.organicProjectileLaunch": [],
+      "effect.magicLaunch": [],
+      "effect.projectileLaunch": [],
+      "effect.arcaneBeamImpact": [],
+      "effect.arrowImpact": [],
+      "effect.heavyProjectileImpact": [],
+      "effect.organicProjectileImpact": [],
+      "effect.magicImpact": [],
+      "effect.projectileImpact": [],
+      "effect.guardCast": [],
+      "effect.holyCast": [],
+      "effect.rangerCast": [],
+      "effect.magicCast": [],
+      "effect.companionHolyCleave": [],
+      "effect.piercingVolley": [],
+      "effect.paladinComboFinisher": [],
+      "effect.rangerComboFinisher": [],
+      "effect.mageComboFinisher": [],
+      "effect.holyBurst": [],
+      "effect.rangerBurst": [],
+      "effect.magicBurst": [],
+      "effect.bodyHit": [],
+      "effect.footstep": [],
+      "effect.purchase": [],
+      "effect.successor": [],
+      "effect.gameOver": [],
+      "effect.heal": [],
+      "effect.gold": [],
+      "effect.level": [],
+      "effect.rescue": [],
+      "effect.learning": [],
+      "effect.upgrade": [],
+      "effect.travel": [],
+      "effect.eliteWarning": [],
+      "effect.eliteFrenzy": [],
+      "effect.captainPhase": [],
+      "effect.captainSummon": [],
+      "effect.warning": [],
+      "effect.bossDefeat": [],
+      "effect.awakening": [],
+      "effect.peace": [],
+      "effect.death": [],
+      "effect.reset": [],
+      "effect.construction": [],
+      "effect.barracksUpgrade": [],
+      "effect.questComplete": [],
+      "effect.quest": [],
+      "effect.supplies": [],
+      "effect.miniClear": [],
+      "effect.squadRecall": [],
+      "effect.squadDoctrine": [],
+      "effect.manaDrain": [],
+      "effect.companionVitality": [],
+      "effect.talentRespec": [],
+      "effect.rangerSupportTraining": [],
+      "effect.expeditionSupport": [],
+      "effect.expeditionRank": [],
+      "effect.rest": [],
+      "effect.tributeDiscovery": [],
+      "effect.sideInteriorDiscovery": [],
+      "interface.select": [],
+      "interface.confirm": [],
+      "interface.back": [],
+      "interface.denied": [],
+      "interface.open": [],
+      "interface.close": [],
+      "step.grass": [],
+      "step.wet": [],
+      "step.gravel": [],
+      "step.stone": [],
+      "step.wood": [],
+      "ambience.water": [],
+      "ambience.birds": [],
+      "ambience.insects": [],
+      "ambience.settlement": [],
+      "ambience.drips": [],
+      "ambience.metal": []
+    },
+    "eventGuides": {
+      "effect.powerStrike": "Create an original fantasy RPG sound for effect.powerStrike. A weighty allied power strike with a steel impact and a low follow-through. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.heroSteelImpact": "Create an original fantasy RPG sound for effect.heroSteelImpact. A short bright steel impact, with a crisp metallic tick over a low body hit. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.soldierSteelImpact": "Create an original fantasy RPG sound for effect.soldierSteelImpact. A compact allied soldier steel impact, lighter and softer than the hero strike. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.enemyWeaponImpact": "Create an original fantasy RPG sound for effect.enemyWeaponImpact. A short enemy weapon impact with a gritty metallic attack. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.creatureImpact": "Create an original fantasy RPG sound for effect.creatureImpact. A soft blunt creature impact, low and fleshy. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.meleeImpact": "Create an original fantasy RPG sound for effect.meleeImpact. A compact generic melee impact with a clear low thump. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.swordSwing": "Create an original fantasy RPG sound for effect.swordSwing. A brief blade whoosh with a fast descending pitch sweep. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.arcaneBeamLaunch": "Create an original fantasy RPG sound for effect.arcaneBeamLaunch. A controlled arcane beam launch with a short luminous sweep. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.tripleShot": "Create an original fantasy RPG sound for effect.tripleShot. A tightly grouped triple bow release. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.rapidBow": "Create an original fantasy RPG sound for effect.rapidBow. A quick light bow release suited to rapid fire. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.heroBow": "Create an original fantasy RPG sound for effect.heroBow. A clear hero bowstring release, slightly stronger than an ordinary bow. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.bow": "Create an original fantasy RPG sound for effect.bow. A compact bowstring release with a small wooden transient. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.heavyProjectileLaunch": "Create an original fantasy RPG sound for effect.heavyProjectileLaunch. A short heavy axe or stone launch with low weight and a coarse whoosh. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.organicProjectileLaunch": "Create an original fantasy RPG sound for effect.organicProjectileLaunch. A small wet organic projectile launch. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.magicLaunch": "Create an original fantasy RPG sound for effect.magicLaunch. A compact magical projectile launch with a clear rising tone. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.projectileLaunch": "Create an original fantasy RPG sound for effect.projectileLaunch. A short neutral projectile launch. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.arcaneBeamImpact": "Create an original fantasy RPG sound for effect.arcaneBeamImpact. A compact arcane beam impact with a focused bright resonance. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.arrowImpact": "Create an original fantasy RPG sound for effect.arrowImpact. A short arrow impact with a dry wooden tick. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.heavyProjectileImpact": "Create an original fantasy RPG sound for effect.heavyProjectileImpact. A heavy axe or stone impact with a firm low transient. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.organicProjectileImpact": "Create an original fantasy RPG sound for effect.organicProjectileImpact. A short wet organic projectile impact. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.magicImpact": "Create an original fantasy RPG sound for effect.magicImpact. A brief magical impact with a bright overtone and a subdued low note. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.projectileImpact": "Create an original fantasy RPG sound for effect.projectileImpact. A short neutral projectile impact. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.guardCast": "Create an original fantasy RPG sound for effect.guardCast. A compact two-note allied guard cue, firm and reassuring. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.holyCast": "Create an original fantasy RPG sound for effect.holyCast. A clear bright holy cast with a light ringing attack. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.rangerCast": "Create an original fantasy RPG sound for effect.rangerCast. A clean natural ranger cast with light plucked tones. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.magicCast": "Create an original fantasy RPG sound for effect.magicCast. A brief arcane cast with a smooth luminous attack. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.companionHolyCleave": "Create an original fantasy RPG sound for effect.companionHolyCleave. A short allied holy cleave combining steel weight and bright magic. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.piercingVolley": "Create an original fantasy RPG sound for effect.piercingVolley. A stronger focused arrow volley with a crisp piercing attack. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.paladinComboFinisher": "Create an original fantasy RPG sound for effect.paladinComboFinisher. A stronger final paladin strike with steel and holy color. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.rangerComboFinisher": "Create an original fantasy RPG sound for effect.rangerComboFinisher. A focused final ranger strike with bow and natural color. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.mageComboFinisher": "Create an original fantasy RPG sound for effect.mageComboFinisher. A stronger final mage strike with a clear arcane resonance. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.holyBurst": "Create an original fantasy RPG sound for effect.holyBurst. A compact holy burst with a bright harmonic attack. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.rangerBurst": "Create an original fantasy RPG sound for effect.rangerBurst. A short natural ranger burst with a restrained low accent. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.magicBurst": "Create an original fantasy RPG sound for effect.magicBurst. A compact arcane burst with a low body and a bright attack. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.bodyHit": "Create an original fantasy RPG sound for effect.bodyHit. A short subdued body hit with filtered noise and a low thud. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.footstep": "Create an original fantasy RPG sound for effect.footstep. A short soft foot contact with low filtered noise. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.purchase": "Create an original fantasy RPG sound for effect.purchase. A short tonal cue for the purchase game event; the existing recipe uses MIDI notes 75, 79. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.successor": "Create an original fantasy RPG sound for effect.successor. A short tonal cue for the successor game event; the existing recipe uses MIDI notes 60, 64, 72. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.gameOver": "Create an original fantasy RPG sound for effect.gameOver. A short tonal cue for the gameOver game event; the existing recipe uses MIDI notes 43, 38, 31. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.heal": "Create an original fantasy RPG sound for effect.heal. A short tonal cue for the heal game event; the existing recipe uses MIDI notes 64, 67, 72. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.gold": "Create an original fantasy RPG sound for effect.gold. A short tonal cue for the gold game event; the existing recipe uses MIDI notes 84, 88. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.level": "Create an original fantasy RPG sound for effect.level. A short tonal cue for the level game event; the existing recipe uses MIDI notes 72, 76, 79, 84. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.rescue": "Create an original fantasy RPG sound for effect.rescue. A short tonal cue for the rescue game event; the existing recipe uses MIDI notes 67, 72, 76. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.learning": "Create an original fantasy RPG sound for effect.learning. A short tonal cue for the learning game event; the existing recipe uses MIDI notes 60, 64, 67. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.upgrade": "Create an original fantasy RPG sound for effect.upgrade. A short tonal cue for the upgrade game event; the existing recipe uses MIDI notes 64, 67, 72. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.travel": "Create an original fantasy RPG sound for effect.travel. A short tonal cue for the travel game event; the existing recipe uses MIDI notes 55, 62, 67. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.eliteWarning": "Create an original fantasy RPG sound for effect.eliteWarning. A short tonal cue for the eliteWarning game event; the existing recipe uses MIDI notes 45, 46, 52. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.eliteFrenzy": "Create an original fantasy RPG sound for effect.eliteFrenzy. A short tonal cue for the eliteFrenzy game event; the existing recipe uses MIDI notes 43, 48, 55. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.captainPhase": "Create an original fantasy RPG sound for effect.captainPhase. A short tonal cue for the captainPhase game event; the existing recipe uses MIDI notes 46, 53, 58. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.captainSummon": "Create an original fantasy RPG sound for effect.captainSummon. A short tonal cue for the captainSummon game event; the existing recipe uses MIDI notes 43, 50, 55. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.warning": "Create an original fantasy RPG sound for effect.warning. A short tonal cue for the warning game event; the existing recipe uses MIDI notes 57, 57. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.bossDefeat": "Create an original fantasy RPG sound for effect.bossDefeat. A short tonal cue for the bossDefeat game event; the existing recipe uses MIDI notes 60, 67, 72. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.awakening": "Create an original fantasy RPG sound for effect.awakening. A short tonal cue for the awakening game event; the existing recipe uses MIDI notes 48, 55, 60, 67. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.peace": "Create an original fantasy RPG sound for effect.peace. A short tonal cue for the peace game event; the existing recipe uses MIDI notes 60, 64, 67, 72, 76, 79. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.death": "Create an original fantasy RPG sound for effect.death. A short tonal cue for the death game event; the existing recipe uses MIDI notes 50, 46, 43. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.reset": "Create an original fantasy RPG sound for effect.reset. A short tonal cue for the reset game event; the existing recipe uses MIDI notes 48, 43. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.construction": "Create an original fantasy RPG sound for effect.construction. A short tonal cue for the construction game event; the existing recipe uses MIDI notes 48, 55, 60. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.barracksUpgrade": "Create an original fantasy RPG sound for effect.barracksUpgrade. A short tonal cue for the barracksUpgrade game event; the existing recipe uses MIDI notes 52, 59, 64. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.questComplete": "Create an original fantasy RPG sound for effect.questComplete. A short tonal cue for the questComplete game event; the existing recipe uses MIDI notes 64, 67, 72. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.quest": "Create an original fantasy RPG sound for effect.quest. A short tonal cue for the quest game event; the existing recipe uses MIDI notes 60, 64. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.supplies": "Create an original fantasy RPG sound for effect.supplies. A short tonal cue for the supplies game event; the existing recipe uses MIDI notes 72, 76. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.miniClear": "Create an original fantasy RPG sound for effect.miniClear. A short tonal cue for the miniClear game event; the existing recipe uses MIDI notes 60, 67. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.squadRecall": "Create an original fantasy RPG sound for effect.squadRecall. A short tonal cue for the squadRecall game event; the existing recipe uses MIDI notes 55, 62. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.squadDoctrine": "Create an original fantasy RPG sound for effect.squadDoctrine. A short tonal cue for the squadDoctrine game event; the existing recipe uses MIDI notes 60, 65. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.manaDrain": "Create an original fantasy RPG sound for effect.manaDrain. A short tonal cue for the manaDrain game event; the existing recipe uses MIDI notes 50, 43. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.companionVitality": "Create an original fantasy RPG sound for effect.companionVitality. A short tonal cue for the companionVitality game event; the existing recipe uses MIDI notes 55, 62, 67. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.talentRespec": "Create an original fantasy RPG sound for effect.talentRespec. A short tonal cue for the talentRespec game event; the existing recipe uses MIDI notes 60, 55. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.rangerSupportTraining": "Create an original fantasy RPG sound for effect.rangerSupportTraining. A short tonal cue for the rangerSupportTraining game event; the existing recipe uses MIDI notes 64, 71. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.expeditionSupport": "Create an original fantasy RPG sound for effect.expeditionSupport. A short tonal cue for the expeditionSupport game event; the existing recipe uses MIDI notes 60, 67, 72. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.expeditionRank": "Create an original fantasy RPG sound for effect.expeditionRank. A short tonal cue for the expeditionRank game event; the existing recipe uses MIDI notes 60, 67, 72, 79. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.rest": "Create an original fantasy RPG sound for effect.rest. A short tonal cue for the rest game event; the existing recipe uses MIDI notes 55, 60, 64. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.tributeDiscovery": "Create an original fantasy RPG sound for effect.tributeDiscovery. A short tonal cue for the tributeDiscovery game event; the existing recipe uses MIDI notes 72, 79, 84. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "effect.sideInteriorDiscovery": "Create an original fantasy RPG sound for effect.sideInteriorDiscovery. A short tonal cue for the sideInteriorDiscovery game event; the existing recipe uses MIDI notes 52, 59, 64. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "interface.select": "Create an original fantasy RPG sound for interface.select. A very short high single sine-like note for moving menu selection. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "interface.confirm": "Create an original fantasy RPG sound for interface.confirm. A short three-note rising confirmation, with delicate upper harmonics. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "interface.back": "Create an original fantasy RPG sound for interface.back. A short descending two-note return cue. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "interface.denied": "Create an original fantasy RPG sound for interface.denied. A short low tense two-note cue for an unavailable choice. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "interface.open": "Create an original fantasy RPG sound for interface.open. A light rising two-note cue for opening a menu. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "interface.close": "Create an original fantasy RPG sound for interface.close. A light descending two-note cue for closing a menu. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "step.grass": "Create an original fantasy RPG sound for step.grass. A quiet soft footstep on grass with a small low thump. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "step.wet": "Create an original fantasy RPG sound for step.wet. A quiet short wet footstep with a restrained splash. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "step.gravel": "Create an original fantasy RPG sound for step.gravel. A short quiet gravel crunch with a small low thump. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "step.stone": "Create an original fantasy RPG sound for step.stone. A short subdued footstep on stone. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "step.wood": "Create an original fantasy RPG sound for step.wood. A short quiet footstep on a wooden floor with a warm knock. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "ambience.water": "Create an original fantasy RPG sound for ambience.water. A sparse soft water rustle for marsh exploration. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "ambience.birds": "Create an original fantasy RPG sound for ambience.birds. A sparse two-part high bird call for daytime woodland exploration. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "ambience.insects": "Create an original fantasy RPG sound for ambience.insects. A quiet three-pulse high insect chirp for nighttime exploration. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "ambience.settlement": "Create an original fantasy RPG sound for ambience.settlement. A faint short background rustle suggesting nearby settlement activity. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "ambience.drips": "Create an original fantasy RPG sound for ambience.drips. Two restrained resonant drops for an archive or flooded watchhouse. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
+      "ambience.metal": "Create an original fantasy RPG sound for ambience.metal. A faint low resonance with a higher metallic overtone for mine or foundry interiors. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment."
+    }
+  },
+  "creativeSource": {
+    "music": {
+      "method": "Original procedural composition and virtual-instrument rendering",
+      "recipe": "tools/audio/score-book.json",
+      "renderer": "tools/audio/render-score.py"
+    },
+    "effects": {
+      "method": "Runtime synthesis",
+      "recipes": [
+        "src/prototype/audio-effects.js",
+        "src/prototype/audio-production.js",
+        "src/prototype/audio-catalog.js"
+      ]
+    },
+    "guides": "Reusable generation briefs written after the sounds were created; these are not historical model prompts. Exact musical notes and synthesis parameters remain in the recipes."
   }
 }

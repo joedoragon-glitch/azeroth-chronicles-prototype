@@ -82,6 +82,26 @@
         ></canvas>
         <p id="measurement"></p>
       </section>
+      <section aria-labelledby="creative-guide">
+        <h2 id="creative-guide">Creative recipes and generation guides</h2>
+        <p>
+          These reusable briefs describe our original procedural sounds. They are guides for future
+          creation, rather than historical audio-model prompts.
+        </p>
+        <label
+          >Guide<select id="guide-event">
+            <option value="">Selected recording</option>
+          </select></label
+        >
+        <textarea
+          id="guide-text"
+          rows="7"
+          readonly
+          aria-label="Reusable sound generation guide"
+        ></textarea>
+        <p id="guide-recipe"></p>
+        <button id="copy-guide">Copy guide</button>
+      </section>
       <section aria-labelledby="mix">
         <h2 id="mix">Listening mix</h2>
         <div class="controls">
@@ -122,6 +142,8 @@
     <script src="../../src/prototype/rewards.js"></script>
     <script src="../../src/prototype/engine.js"></script>
     <script src="../../src/prototype/audio-catalog.js"></script>
+    <script src="../../src/prototype/audio-contract.js"></script>
+    <script src="../../src/prototype/audio-library.js"></script>
     <script src="../../src/prototype/audio-assets.js"></script>
     <script src="../../src/prototype/audio-mixer.js"></script>
     <script src="../../src/prototype/audio-runtime.js"></script>

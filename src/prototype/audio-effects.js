@@ -263,6 +263,17 @@
           !this.allowSfx(kind + actorKey, now, crowdGap)
         )
           return;
+        if (type === 'warning') {
+          if (now - this.lastWarning < 0.35) return;
+          this.lastWarning = now;
+          this.duck();
+        }
+        if (type === 'peace') {
+          this.finaleUntil = now + 12;
+          this.key = null;
+        }
+        if (kind === 'footstep' && !this.allowSfx('footstep', now, 0.16)) return;
+        if (this.playSoundEvent('effect.' + kind, e)) return;
         if (kind === 'heroSteelImpact') {
           this.steelImpact(now, true, comboWeight);
           return;
@@ -391,19 +402,9 @@
           return;
         }
         if (kind === 'footstep') {
-          if (!this.allowSfx('footstep', now, 0.16)) return;
           this.noiseBurst(now, 0.045, 0.022, 'lowpass', 430, 0.4);
           this.tone(29, now, 0.045, 0.014, 'sine', 'effects', 0.002);
           return;
-        }
-        if (type === 'warning') {
-          if (now - this.lastWarning < 0.35) return;
-          this.lastWarning = now;
-          this.duck();
-        }
-        if (type === 'peace') {
-          this.finaleUntil = now + 12;
-          this.key = null;
         }
         const notes = eventNotes[type];
         if (!notes) return;

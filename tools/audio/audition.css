@@ -127,3 +127,16 @@ input,
 label {
   touch-action: manipulation;
 }
+/* Selectable creative briefs remain readable on phone. */
+#guide-text {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  resize: vertical;
+  padding: 0.7rem;
+  background: #101f1b;
+  color: #eef5ee;
+  border: 1px solid #496459;
+  border-radius: 0.4rem;
+  font: inherit;
+}
