@@ -2,6 +2,7 @@
 
 - The multi-file Campaign application is canonical. Never require a self-contained HTML release or impose obsolete single-file limits.
 - Read `docs/ARCHITECTURE.md`, `docs/DEVELOPMENT_STATE.md` and relevant gameplay decisions before changing a subsystem. Preserve unfinished authored maps and the procedural sprite canon.
+- New visible content and lore follow `docs/DESIGN_TO_SPRITE_WORKFLOW.md`: retain the accepted procedural design, approval scope and per-design handoff so a later sprite request in any chat can resume from that canon. Reconcile assets for characters, hero classes, monsters, companions, NPCs, locations and objects; preserve stable IDs and record replacement/animation requirements. The implementing agent owns these records and technical work.
 - Desktop/Chromebook and phone share the campaign engine but have distinct presentation. Do not infer phone mode from window width alone or restore touch controls on the desktop screen.
 - Keep the v4 save schema and existing keys compatible. Preserve original legacy backups. Crowns are the player-facing currency; internal `gold` fields remain compatible.
 - Keep combat geometry and timing authoritative in the engine/rules. Presentation changes must not alter balance or collision to match drawings.

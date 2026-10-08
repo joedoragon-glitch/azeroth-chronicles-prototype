@@ -12,15 +12,37 @@ const root = path.resolve(__dirname, '..');
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'azeroth-preparation-'));
   try {
     const catalog = pipeline.catalog();
-    assert.equal(catalog.length, 231);
-    assert.equal(catalog.filter((item) => item.status === 'generate').length, 221);
-    assert.equal(catalog.filter((item) => item.status === 'procedural').length, 10);
-    console.log('PASS catalog partition');
+    assert.equal(catalog.length, 296);
+    assert.equal(catalog.filter((item) => item.status === 'generate').length, 280);
+    assert.equal(catalog.filter((item) => item.status === 'procedural').length, 16);
+    const sourceText = fs.readFileSync(
+      path.join(root, 'docs/GRAPHICS_CANON_SPRITE_PROMPTS.md'),
+      'utf8',
+    );
+    const extended =
+      sourceText.replace('"entries":296,"generate":280', '"entries":297,"generate":281') +
+      '\n### 297 — Reviewed future asset\n\n**Canonical cues:** Current exact source.\n\n**Image-generation prompt:**\n\n> One asset.\n';
+    assert.equal(
+      pipeline.parseCatalog(extended).length,
+      297,
+      'reviewed additions are not blocked by a historic fixed count',
+    );
+    assert.throws(
+      () =>
+        pipeline.parseCatalog(
+          sourceText +
+            '\n### 297 — Unreconciled asset\n\n**Image-generation prompt:**\n\n> One asset.\n',
+        ),
+      /totals changed/,
+      'unreviewed count changes still reject',
+    );
+    console.log('PASS reviewed open catalog partition');
     const contracts = pipeline.contracts();
     assert.deepEqual(
-      contracts.map((item) => item.key),
+      contracts.slice(0, 3).map((item) => item.key),
       ['hero:paladin', 'enemy:goblin', 'prop:vale-cottage:vale'],
     );
+    assert.equal(contracts.length, 70);
     assert(contracts.every((item) => ['pending', 'approved'].includes(item.approval)));
     assert.equal(
       (await pipeline.checkProduction()).registered,
@@ -40,6 +62,30 @@ const root = path.resolve(__dirname, '..');
       );
     }
     console.log('PASS references and deterministic scenes');
+    const cleanGoblin = await sharp(pipeline.reference(contracts[1], true))
+      .ensureAlpha()
+      .raw()
+      .toBuffer();
+    const groundedGoblin = await sharp(pipeline.reference(contracts[1]))
+      .ensureAlpha()
+      .raw()
+      .toBuffer();
+    assert.notDeepEqual(
+      cleanGoblin,
+      groundedGoblin,
+      'generation reference removes procedural ground markings',
+    );
+    for (let i = 0; i < cleanGoblin.length; i += 4)
+      if (
+        Math.floor(i / 4 / 192) < 144 &&
+        groundedGoblin[i + 3] === 281 &&
+        cleanGoblin[i + 3] === 281
+      )
+        assert.deepEqual(
+          cleanGoblin.subarray(i, i + 4),
+          groundedGoblin.subarray(i, i + 4),
+          'opaque actor materials above the grounding zone remain unchanged',
+        );
     const reference = pipeline.reference(contracts[0]);
     const committed = fs.readFileSync(
       path.join(root, 'tests/fixtures/sprite-reference-paladin.png'),
@@ -150,6 +196,7 @@ const root = path.resolve(__dirname, '..');
       'candidate.json',
       'candidate.png',
       'canonical.png',
+      'generation-reference.png',
       'source.png',
     ]);
     console.log('PASS immutable PNG processing');

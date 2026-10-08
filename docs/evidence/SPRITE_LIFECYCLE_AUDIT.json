@@ -1,0 +1,15 @@
+{
+  "currentStaticOnly": true,
+  "replacementProbe": {
+    "requested": "new.png",
+    "drawn": "old.png",
+    "sameSessionUpdated": false
+  },
+  "policyDecodedBytes": 16777216,
+  "estimate": {
+    "static280At192RGBA": 41287680,
+    "texture28At256RGBA": 7340032,
+    "combinedMiB": 46.375
+  },
+  "scope": "Illustrative full-catalog estimate; current manifest remains empty. Real asset sizing/atlas trim and unique-byte dedup require measurement."
+}

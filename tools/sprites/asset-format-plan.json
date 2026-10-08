@@ -1,0 +1,42 @@
+{
+  "status": "proposed format; not accepted by current static publication validator",
+  "schemaExtension": "Keep existing static entry fields and add optional variants/clips through an explicit format migration",
+  "exampleLogicalKey": "hero:paladin",
+  "entry": {
+    "src": "./assets/sprites/hero-paladin-CONTENT_HASH.png",
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64,
+    "revision": "CONTENT_HASH",
+    "clips": {
+      "idle": {
+        "loop": true,
+        "frames": [
+          {
+            "src": "./assets/sprites/atlas-CONTENT_HASH.webp",
+            "rect": [0, 0, 192, 192],
+            "durationMs": 200,
+            "pivot": [96, 144]
+          }
+        ]
+      }
+    }
+  },
+  "lifecycle": {
+    "replaceLease": "expected active content hash",
+    "retainRollbackRevision": true,
+    "decodeIdentity": "unique content hash and decode settings, shared across logical keys",
+    "lateLoadGuard": "discard results whose expected active revision is no longer current",
+    "runtimeResidency": "bounded active decoded LRU with pinned visible/critical assets",
+    "offlineInventory": "all referenced fallback images, variant members, atlas pages and material textures"
+  },
+  "animation": {
+    "clockOwner": "shared paused presentation clock",
+    "simulationAuthority": "engine owns movement, action timing, damage and collision",
+    "states": "per-asset reviewed requirement, not a fixed universal frame multiplier",
+    "facing": "optional authored directions; no automatic mirroring",
+    "fallback": ["requested clip", "accepted static image", "current procedural rendering"]
+  }
+}

@@ -32,9 +32,9 @@ assert.match(promptCatalog,/never generate sheets, comparisons, multiple options
 assert.doesNotMatch(promptCatalog,/Warcraft|Ragnarok/i,'prompt catalog cannot reintroduce superseded outside-style direction');
 
 const headings=[...promptCatalog.matchAll(/^### (\d{3}) — ([^\n]+)$/gm)];
-assert.equal(headings.length,231,'audited catalog includes five distinct occupied side-interior entrances');
-assert.equal(new Set(headings.map(m=>m[1])).size,231,'catalog IDs are unique');
-assert(headings.every((m,i)=>Number(m[1])===i+1),'catalog IDs remain continuous from 001 through 231');
+assert.equal(headings.length,296,'audited catalog includes five distinct occupied side-interior entrances');
+assert.equal(new Set(headings.map(m=>m[1])).size,296,'catalog IDs are unique');
+assert(headings.every((m,i)=>Number(m[1])===i+1),'catalog IDs remain continuous from 001 through 296');
 let generated=0,aliases=0,procedural=0;
 for(let i=0;i<headings.length;i++){
  const section=promptCatalog.slice(headings[i].index,i+1<headings.length?headings[i+1].index:promptCatalog.length);
@@ -46,7 +46,7 @@ for(let i=0;i<headings.length;i++){
  assert.equal(states.filter(Boolean).length,1,'entry '+headings[i][1]+' has exactly one production status');
  if(states[0])generated++;else if(states[1])aliases++;else procedural++;
 }
-assert.deepEqual({generated,aliases,procedural},{generated:221,aliases:0,procedural:10},'final audited sprite-production partition');
+assert.deepEqual({generated,aliases,procedural},{generated:280,aliases:0,procedural:16},'final audited sprite-production partition');
 assert(promptCatalog.match(/### 005 — Companion — Archer \/ Ranger support[\s\S]*allied goblin scout/i),'companion Archer follows the allied-goblin procedural canon');
 assert(promptCatalog.match(/### 023 — Raider Archer[\s\S]*human\('archer'\)[\s\S]*Image-generation prompt/),'hostile Raider Archer has its own simpler canonical body prompt');
 for(const side of require('../src/prototype/rules.js').sideDungeons){
@@ -56,6 +56,13 @@ for(const side of require('../src/prototype/rules.js').sideDungeons){
 assert(promptCatalog.includes('### 161 — Citadel preparation fountain'),'unique Citadel fountain is covered');
 assert(promptCatalog.includes('### 162 — Field-boss compound marker'),'field-compound marker is covered');
 assert(promptCatalog.includes('### 163 — Dark Lord Tribute cache'),'active tribute cache is covered');
+for (const id of ['172','174','176']) {
+ const block=promptCatalog.split('### '+id+' — ')[1].split('\n### ')[0];
+ assert(block.includes('KEEP PROCEDURAL') && !block.includes('**Image-generation prompt:**'),'superseded captive cage '+id+' cannot be generated');
+}
+for (const role of [...visualsRoles()]) assert(promptCoverage.includes('`sceneRole:'+role+'`'),'current work overlay is classified: '+role);
+function visualsRoles(){const text=fs.readFileSync(path.join(__dirname,'../src/prototype/visuals.js'),'utf8');const block=text.slice(text.indexOf('function workDetails(role)'),text.indexOf('const type = e.renderKind'));return [...block.matchAll(/role === '([^']+)'/g)].map(m=>m[1]);}
+
 
 assert.match(promptAudit,/ranged classes are visual classes|renderer, not a semantic name.*wins every conflict/i,'audit follows corrected procedural canon');
 assert(promptAudit.includes('Drowned Watchhouse')&&promptAudit.includes('Old Signal Keep'),'audit reconciles named side entrances with their active dungeon bodies');

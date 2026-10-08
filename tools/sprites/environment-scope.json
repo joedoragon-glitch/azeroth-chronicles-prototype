@@ -1,0 +1,216 @@
+{
+  "version": 1,
+  "candidates": [
+    {
+      "catalogId": "271",
+      "family": "grass",
+      "representativeKey": "prop:grass:vale",
+      "authoredKeys": ["prop:grass:vale"],
+      "source": "decoration",
+      "referenceEntityId": "aesthetic-nature-8"
+    },
+    {
+      "catalogId": "272",
+      "family": "wet-grass",
+      "representativeKey": "prop:wet-grass:march",
+      "authoredKeys": ["prop:wet-grass:march"],
+      "source": "decoration",
+      "referenceEntityId": "aesthetic-nature-9"
+    },
+    {
+      "catalogId": "273",
+      "family": "bush",
+      "representativeKey": "prop:bush:vale",
+      "authoredKeys": ["prop:bush:vale"],
+      "source": "decoration",
+      "referenceEntityId": "aesthetic-nature-7"
+    },
+    {
+      "catalogId": "274",
+      "family": "marsh-bush",
+      "representativeKey": "prop:marsh-bush:march",
+      "authoredKeys": ["prop:marsh-bush:march"],
+      "source": "decoration",
+      "referenceEntityId": "aesthetic-nature-16"
+    },
+    {
+      "catalogId": "275",
+      "family": "wildflowers",
+      "representativeKey": "prop:wildflowers:vale",
+      "authoredKeys": ["prop:wildflowers:vale"],
+      "source": "decoration",
+      "referenceEntityId": "aesthetic-nature-10"
+    },
+    {
+      "catalogId": "276",
+      "family": "sapling",
+      "representativeKey": "prop:sapling:vale",
+      "authoredKeys": ["prop:sapling:vale"],
+      "source": "decoration",
+      "referenceEntityId": "sprite-reference-276"
+    },
+    {
+      "catalogId": "277",
+      "family": "stump",
+      "representativeKey": "prop:stump:vale",
+      "authoredKeys": ["prop:stump:vale"],
+      "source": "decoration",
+      "referenceEntityId": "side-entrance-side-vale-cellars-0"
+    },
+    {
+      "catalogId": "278",
+      "family": "fallen-log",
+      "representativeKey": "prop:fallen-log:vale",
+      "authoredKeys": ["prop:fallen-log:highlands", "prop:fallen-log:vale"],
+      "source": "decoration",
+      "referenceEntityId": "side-entrance-side-vale-cellars-2"
+    },
+    {
+      "catalogId": "279",
+      "family": "reeds",
+      "representativeKey": "prop:reeds:march",
+      "authoredKeys": ["prop:reeds:march", "prop:reeds:vale"],
+      "source": "decoration",
+      "referenceEntityId": "harbor-reeds-a"
+    },
+    {
+      "catalogId": "280",
+      "family": "cattails",
+      "representativeKey": "prop:cattails:march",
+      "authoredKeys": ["prop:cattails:march"],
+      "source": "decoration",
+      "referenceEntityId": "harbor-reeds-b"
+    },
+    {
+      "catalogId": "281",
+      "family": "driftwood",
+      "representativeKey": "prop:driftwood:march",
+      "authoredKeys": ["prop:driftwood:march"],
+      "source": "decoration",
+      "referenceEntityId": "harbor-drift"
+    },
+    {
+      "catalogId": "282",
+      "family": "mangrove",
+      "representativeKey": "prop:mangrove:march",
+      "authoredKeys": ["prop:mangrove:march"],
+      "source": "decoration",
+      "referenceEntityId": "harbor-mangrove-a"
+    },
+    {
+      "catalogId": "283",
+      "family": "pine-sapling",
+      "representativeKey": "prop:pine-sapling:highlands",
+      "authoredKeys": ["prop:pine-sapling:highlands"],
+      "source": "decoration",
+      "referenceEntityId": "harbor-pine-a"
+    },
+    {
+      "catalogId": "284",
+      "family": "alpine-scrub",
+      "representativeKey": "prop:alpine-scrub:highlands",
+      "authoredKeys": ["prop:alpine-scrub:highlands"],
+      "source": "decoration",
+      "referenceEntityId": "aesthetic-nature-7"
+    },
+    {
+      "catalogId": "285",
+      "family": "heather",
+      "representativeKey": "prop:heather:highlands",
+      "authoredKeys": ["prop:heather:highlands"],
+      "source": "decoration",
+      "referenceEntityId": "harbor-heather"
+    },
+    {
+      "catalogId": "286",
+      "family": "rock-cluster",
+      "representativeKey": "prop:rock-cluster:highlands",
+      "authoredKeys": ["prop:rock-cluster:highlands"],
+      "source": "decoration",
+      "referenceEntityId": "harbor-rock-a"
+    },
+    {
+      "catalogId": "287",
+      "family": "dead-tree",
+      "representativeKey": "prop:dead-tree:frontier",
+      "authoredKeys": ["prop:dead-tree:frontier"],
+      "source": "decoration",
+      "referenceEntityId": "aesthetic-nature-9"
+    },
+    {
+      "catalogId": "288",
+      "family": "charred-stump",
+      "representativeKey": "prop:charred-stump:frontier",
+      "authoredKeys": ["prop:charred-stump:frontier"],
+      "source": "decoration",
+      "referenceEntityId": "sprite-reference-288"
+    },
+    {
+      "catalogId": "289",
+      "family": "dry-scrub",
+      "representativeKey": "prop:dry-scrub:frontier",
+      "authoredKeys": ["prop:dry-scrub:frontier"],
+      "source": "decoration",
+      "referenceEntityId": "aesthetic-bank-96"
+    },
+    {
+      "catalogId": "290",
+      "family": "burned-log",
+      "representativeKey": "prop:burned-log:frontier",
+      "authoredKeys": ["prop:burned-log:frontier"],
+      "source": "decoration",
+      "referenceEntityId": "aesthetic-nature-7"
+    },
+    {
+      "catalogId": "291",
+      "family": "black-rock",
+      "representativeKey": "prop:black-rock:crown",
+      "authoredKeys": ["prop:black-rock:crown", "prop:black-rock:frontier"],
+      "source": "decoration",
+      "referenceEntityId": "side-entrance-side-crown-foundry-0"
+    },
+    {
+      "catalogId": "292",
+      "family": "crystal-cluster",
+      "representativeKey": "prop:crystal-cluster:crown",
+      "authoredKeys": ["prop:crystal-cluster:crown"],
+      "source": "decoration",
+      "referenceEntityId": "aesthetic-nature-12"
+    },
+    {
+      "catalogId": "293",
+      "family": "dead-shrub",
+      "representativeKey": "prop:dead-shrub:crown",
+      "authoredKeys": ["prop:dead-shrub:crown"],
+      "source": "decoration",
+      "referenceEntityId": "aesthetic-nature-11"
+    },
+    {
+      "catalogId": "294",
+      "family": "obsidian",
+      "representativeKey": "prop:obsidian:crown",
+      "authoredKeys": ["prop:obsidian:crown"],
+      "source": "decoration",
+      "referenceEntityId": "aesthetic-nature-16"
+    },
+    {
+      "catalogId": "295",
+      "family": "wildProp:rock:vale",
+      "representativeKey": "prop:rock:vale",
+      "authoredKeys": ["prop:rock:vale", "prop:rock:march", "prop:rock:frontier"],
+      "source": "wildProp",
+      "referenceEntityId": "sprite-reference-295"
+    },
+    {
+      "catalogId": "296",
+      "family": "wildProp:rock:highlands",
+      "representativeKey": "prop:rock:highlands",
+      "authoredKeys": ["prop:rock:highlands"],
+      "source": "wildProp",
+      "referenceEntityId": "sprite-reference-296"
+    }
+  ],
+  "existingLargeNatureIds": ["106", "107", "108", "109", "110"],
+  "proceduralFamilies": ["ash-patch", "ember-pit", "fumarole", "dock-post"],
+  "policy": "Preserve seeded placement/density and native scale. Capture actual variant references. Exact region bindings and variant-bank selection must be implemented before generic natural bodies are activated; no blind mirroring or new species."
+}

@@ -1,3 +1,7 @@
+# Current scope supersession
+
+The historical Phase 2A audit below describes the original 231-entry checkpoint. The current audit is SPRITE_SCOPE_RECONCILIATION.md: 296 decisions, 280 GENERATE, 0 ALIAS, 16 PROCEDURAL. Current Full camps, Crown ranged/guard bodies and regional additions have their own entries; three obsolete closed cages are no longer generation tasks. The inventory is open. Historical totals and conclusions below are not current production instructions.
+
 # Phase 2A — Sprite prompt catalog audit
 
 ## Final result

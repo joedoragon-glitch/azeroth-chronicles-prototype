@@ -1,0 +1,276 @@
+{
+  "version": 1,
+  "policy": {
+    "status": "scope-only; processing and runtime support pending terrain pilot",
+    "source": "src/prototype/visuals.js",
+    "targetWidth": 256,
+    "targetHeight": 256,
+    "opaque": true,
+    "seamlessAxes": ["x", "y"],
+    "coordinateSpace": "flat top-down material; renderer supplies isometric projection and clipping",
+    "provisionalWorldRepeatSpan": 320,
+    "maxActiveDecodedBytes": 2097152,
+    "lighting": "neutral unlit material; renderer retains day/night grading",
+    "firstPilot": [
+      "terrain:ground:vale",
+      "terrain:ground:march",
+      "terrain:ground:highlands",
+      "terrain:ground:frontier",
+      "terrain:ground:crown"
+    ]
+  },
+  "candidates": [
+    {
+      "id": "T001",
+      "resourceKey": "terrain:ground:vale",
+      "name": "Greenwood Vale ground",
+      "status": "candidate",
+      "sourceOwner": "floor/groundDetail/terrain",
+      "palette": ["#294b36", "#31583e", "#203e30", "#95ad80"],
+      "cues": "Muted woodland-green ground with subtle brown soil, sparse fine grass and leaf-grain detail."
+    },
+    {
+      "id": "T002",
+      "resourceKey": "terrain:ground:march",
+      "name": "Flooded Marches ground",
+      "status": "candidate",
+      "sourceOwner": "floor/groundDetail/terrain",
+      "palette": ["#26444b", "#31535a", "#203b42", "#85ada6"],
+      "cues": "Muted teal-green marsh earth with darker damp mud and restrained reed/grass grain. No puddles."
+    },
+    {
+      "id": "T003",
+      "resourceKey": "terrain:ground:highlands",
+      "name": "Ironroot Highlands ground",
+      "status": "candidate",
+      "sourceOwner": "floor/groundDetail/terrain",
+      "palette": ["#485447", "#56614d", "#3b493f", "#b1b59a"],
+      "cues": "Muted gray-green quarry earth with subdued dust and fine mineral grit."
+    },
+    {
+      "id": "T004",
+      "resourceKey": "terrain:ground:frontier",
+      "name": "Ashen Frontier ground",
+      "status": "candidate",
+      "sourceOwner": "floor/groundDetail/terrain",
+      "palette": ["#50413b", "#5d4b42", "#423732", "#b9987b"],
+      "cues": "Muted warm gray-brown ash/char earth with subdued grit and dry weathering. No embers."
+    },
+    {
+      "id": "T005",
+      "resourceKey": "terrain:ground:crown",
+      "name": "Dark Crown ground",
+      "status": "candidate",
+      "sourceOwner": "floor/groundDetail/terrain",
+      "palette": ["#343644", "#414351", "#2c2f3c", "#a09b9e"],
+      "cues": "Muted slate-violet earth with restrained fine mineral/obsidian grain. No purple glow."
+    },
+    {
+      "id": "T006",
+      "resourceKey": "terrain:road:vale",
+      "name": "Greenwood Vale road material",
+      "status": "candidate",
+      "sourceOwner": "roads",
+      "palette": ["#564834", "#8e7758", "#9c8664", "#6f604c"],
+      "cues": "Packed woodland-soil road, warm muted brown grain. Road margins, joints, wagon ruts and junctions stay in the renderer; do not bake them into the tile."
+    },
+    {
+      "id": "T007",
+      "resourceKey": "terrain:road:march",
+      "name": "Flooded Marches road material",
+      "status": "candidate",
+      "sourceOwner": "roads",
+      "palette": ["#4b5043", "#756e57", "#8e8367", "#5a6354"],
+      "cues": "Packed marsh/mud track, muted olive-brown fine grain. Road margins, joints, wagon ruts and junctions stay in the renderer; do not bake them into the tile."
+    },
+    {
+      "id": "T008",
+      "resourceKey": "terrain:road:highlands",
+      "name": "Ironroot Highlands road material",
+      "status": "candidate",
+      "sourceOwner": "roads",
+      "palette": ["#4e4d46", "#87857a", "#a29f8e", "#6e6d66"],
+      "cues": "Weathered gray quarry-stone paving material, fine mineral grain. Road margins, joints, wagon ruts and junctions stay in the renderer; do not bake them into the tile."
+    },
+    {
+      "id": "T009",
+      "resourceKey": "terrain:road:frontier",
+      "name": "Ashen Frontier road material",
+      "status": "candidate",
+      "sourceOwner": "roads",
+      "palette": ["#51443e", "#7c6c61", "#8c7c6d", "#625750"],
+      "cues": "Muted ash-brown wagon-road material, fine dry grain. Road margins, joints, wagon ruts and junctions stay in the renderer; do not bake them into the tile."
+    },
+    {
+      "id": "T010",
+      "resourceKey": "terrain:road:crown",
+      "name": "Dark Crown road material",
+      "status": "candidate",
+      "sourceOwner": "roads",
+      "palette": ["#3f3d45", "#66636e", "#827d89", "#55525d"],
+      "cues": "Ordered dark slate-violet paving material, fine stone grain. Road margins, joints, wagon ruts and junctions stay in the renderer; do not bake them into the tile."
+    },
+    {
+      "id": "T011",
+      "resourceKey": "terrain:floor:crypt",
+      "name": "Crypt floor material",
+      "status": "candidate",
+      "sourceOwner": "floor/dungeonFloors",
+      "palette": ["#343c39", "#414945", "#2b3331", "#a9b1a0"],
+      "cues": "Restrained current interior stone/mineral material with fine worn grain and low-contrast chips. Preserve the current floor palette. Slab outlines and wall/room boundaries stay procedural; no drawn joints, symbols, props or water."
+    },
+    {
+      "id": "T012",
+      "resourceKey": "terrain:floor:archive",
+      "name": "Archive floor material",
+      "status": "candidate",
+      "sourceOwner": "floor/dungeonFloors",
+      "palette": ["#30464a", "#3b5558", "#283d42", "#8fb6b4"],
+      "cues": "Restrained current interior stone/mineral material with fine worn grain and low-contrast chips. Preserve the current floor palette. Slab outlines and wall/room boundaries stay procedural; no drawn joints, symbols, props or water."
+    },
+    {
+      "id": "T013",
+      "resourceKey": "terrain:floor:mine",
+      "name": "Mine floor material",
+      "status": "candidate",
+      "sourceOwner": "floor/dungeonFloors",
+      "palette": ["#44433b", "#524f43", "#39382f", "#ada88c"],
+      "cues": "Restrained current interior stone/mineral material with fine worn grain and low-contrast chips. Preserve the current floor palette. Slab outlines and wall/room boundaries stay procedural; no drawn joints, symbols, props or water."
+    },
+    {
+      "id": "T014",
+      "resourceKey": "terrain:floor:abyss",
+      "name": "Abyss floor material",
+      "status": "candidate",
+      "sourceOwner": "floor/dungeonFloors",
+      "palette": ["#44373b", "#544349", "#382f34", "#c09a89"],
+      "cues": "Restrained current interior stone/mineral material with fine worn grain and low-contrast chips. Preserve the current floor palette. Slab outlines and wall/room boundaries stay procedural; no drawn joints, symbols, props or water."
+    },
+    {
+      "id": "T015",
+      "resourceKey": "terrain:floor:citadel",
+      "name": "Citadel floor material",
+      "status": "candidate",
+      "sourceOwner": "floor/dungeonFloors",
+      "palette": ["#3b414b", "#494f59", "#303640", "#abb3b5"],
+      "cues": "Restrained current interior stone/mineral material with fine worn grain and low-contrast chips. Preserve the current floor palette. Slab outlines and wall/room boundaries stay procedural; no drawn joints, symbols, props or water."
+    },
+    {
+      "id": "T016",
+      "resourceKey": "terrain:floor:supply-vale",
+      "name": "supply-vale floor material",
+      "status": "candidate",
+      "sourceOwner": "floor/treasuryFloors",
+      "palette": ["#514735", "#5e523c", "#433b2e", "#bca978"],
+      "cues": "Restrained current treasury floor material with fine worn grain and low-contrast chips. Preserve current regional color/material relationships; furniture, slab seams, room partitions and contextual household details stay procedural."
+    },
+    {
+      "id": "T017",
+      "resourceKey": "terrain:floor:supply-march",
+      "name": "supply-march floor material",
+      "status": "candidate",
+      "sourceOwner": "floor/treasuryFloors",
+      "palette": ["#3f5149", "#4b6258", "#33443f", "#9fb69c"],
+      "cues": "Restrained current treasury floor material with fine worn grain and low-contrast chips. Preserve current regional color/material relationships; furniture, slab seams, room partitions and contextual household details stay procedural."
+    },
+    {
+      "id": "T018",
+      "resourceKey": "terrain:floor:supply-highlands",
+      "name": "supply-highlands floor material",
+      "status": "candidate",
+      "sourceOwner": "floor/treasuryFloors",
+      "palette": ["#55534b", "#636056", "#46443e", "#b9ae91"],
+      "cues": "Restrained current treasury floor material with fine worn grain and low-contrast chips. Preserve current regional color/material relationships; furniture, slab seams, room partitions and contextual household details stay procedural."
+    },
+    {
+      "id": "T019",
+      "resourceKey": "terrain:floor:supply-crown",
+      "name": "supply-crown floor material",
+      "status": "candidate",
+      "sourceOwner": "floor/treasuryFloors",
+      "palette": ["#44404b", "#514b59", "#37343e", "#aa96b0"],
+      "cues": "Restrained current treasury floor material with fine worn grain and low-contrast chips. Preserve current regional color/material relationships; furniture, slab seams, room partitions and contextual household details stay procedural."
+    },
+    {
+      "id": "T020",
+      "resourceKey": "terrain:floor:side-vale-cellars",
+      "name": "Greenwood Vale side-interior floor material",
+      "status": "candidate",
+      "sourceOwner": "floor/regional-interior-fallback",
+      "palette": ["#294b36", "#31583e", "#203e30", "#95ad80"],
+      "cues": "Current regional interior floor palette with subdued worn mineral grain and fine chips. Use the existing interior treatment, not outdoor grass, foliage, mud puddles or a newly invented architectural style. Keep drawn slab joints and room edges procedural."
+    },
+    {
+      "id": "T021",
+      "resourceKey": "terrain:floor:side-march-watchhouse",
+      "name": "Flooded Marches side-interior floor material",
+      "status": "candidate",
+      "sourceOwner": "floor/regional-interior-fallback",
+      "palette": ["#26444b", "#31535a", "#203b42", "#85ada6"],
+      "cues": "Current regional interior floor palette with subdued worn mineral grain and fine chips. Use the existing interior treatment, not outdoor grass, foliage, mud puddles or a newly invented architectural style. Keep drawn slab joints and room edges procedural."
+    },
+    {
+      "id": "T022",
+      "resourceKey": "terrain:floor:side-highlands-signal",
+      "name": "Ironroot Highlands side-interior floor material",
+      "status": "candidate",
+      "sourceOwner": "floor/regional-interior-fallback",
+      "palette": ["#485447", "#56614d", "#3b493f", "#b1b59a"],
+      "cues": "Current regional interior floor palette with subdued worn mineral grain and fine chips. Use the existing interior treatment, not outdoor grass, foliage, mud puddles or a newly invented architectural style. Keep drawn slab joints and room edges procedural."
+    },
+    {
+      "id": "T023",
+      "resourceKey": "terrain:floor:side-frontier-shrine",
+      "name": "Ashen Frontier side-interior floor material",
+      "status": "candidate",
+      "sourceOwner": "floor/regional-interior-fallback",
+      "palette": ["#50413b", "#5d4b42", "#423732", "#b9987b"],
+      "cues": "Current regional interior floor palette with subdued worn mineral grain and fine chips. Use the existing interior treatment, not outdoor grass, foliage, mud puddles or a newly invented architectural style. Keep drawn slab joints and room edges procedural."
+    },
+    {
+      "id": "T024",
+      "resourceKey": "terrain:floor:side-crown-foundry",
+      "name": "Dark Crown side-interior floor material",
+      "status": "candidate",
+      "sourceOwner": "floor/regional-interior-fallback",
+      "palette": ["#343644", "#414351", "#2c2f3c", "#a09b9e"],
+      "cues": "Current regional interior floor palette with subdued worn mineral grain and fine chips. Use the existing interior treatment, not outdoor grass, foliage, mud puddles or a newly invented architectural style. Keep drawn slab joints and room edges procedural."
+    },
+    {
+      "id": "T025",
+      "resourceKey": "terrain:rock:cliff-ravine",
+      "name": "Cliff/ravine stone face material",
+      "status": "candidate",
+      "sourceOwner": "terrain",
+      "palette": ["#494b43", "#616357", "#222729", "#30363a", "#726c5d"],
+      "cues": "Subdued gray-green stone-face grain and fine fracture texture. No drawn cliffs, ledges, silhouettes, perspective or cast shadows; existing exact barrier rims and fractures remain procedural."
+    },
+    {
+      "id": "T026",
+      "resourceKey": "terrain:rock:obsidian",
+      "name": "Obsidian surface material",
+      "status": "candidate",
+      "sourceOwner": "terrain",
+      "palette": ["#302f39", "#403b4d", "#625568"],
+      "cues": "Subdued dark violet-gray obsidian mineral grain; low contrast, no glowing veins or symbols. Existing rock/pool outlines stay procedural."
+    },
+    {
+      "id": "T027",
+      "resourceKey": "terrain:lava:crust",
+      "name": "Lava crust material",
+      "status": "candidate",
+      "sourceOwner": "terrain",
+      "palette": ["#672f28", "#54413e", "#b44e2c"],
+      "cues": "Subdued dark reddish-brown cooled crust grain. No glowing branching seams, cracks opening into new holes or light emission. Current hot seams and animated lava remain procedural overlays."
+    },
+    {
+      "id": "T028",
+      "resourceKey": "terrain:bridge:wood-grain",
+      "name": "Wooden bridge timber grain",
+      "status": "candidate",
+      "sourceOwner": "bridges",
+      "palette": ["#b49468", "#705338", "#665039", "#4b3929", "#e0c394"],
+      "cues": "Restrained weathered brown timber grain. No drawn plank boundaries, pins, rails, supports, bridge silhouette or baked perspective; grain aligns with the actual timber direction during integration."
+    }
+  ]
+}

@@ -65,6 +65,1210 @@
         "anchorX": 0.5,
         "anchorY": 0.75
       }
+    },
+    {
+      "catalogId": "232",
+      "key": "building:barracks:vale:full",
+      "region": 0,
+      "entity": {
+        "renderKind": "building",
+        "kind": "barracks",
+        "progress": 4,
+        "full": true,
+        "id": "sprite-reference-232"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "233",
+      "key": "building:barracks:march:full",
+      "region": 1,
+      "entity": {
+        "renderKind": "building",
+        "kind": "barracks",
+        "progress": 4,
+        "full": true,
+        "id": "sprite-reference-233"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "234",
+      "key": "building:barracks:highlands:full",
+      "region": 2,
+      "entity": {
+        "renderKind": "building",
+        "kind": "barracks",
+        "progress": 4,
+        "full": true,
+        "id": "sprite-reference-234"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "235",
+      "key": "building:barracks:frontier:full",
+      "region": 3,
+      "entity": {
+        "renderKind": "building",
+        "kind": "barracks",
+        "progress": 4,
+        "full": true,
+        "id": "sprite-reference-235"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "236",
+      "key": "building:barracks:crown:full",
+      "region": 4,
+      "entity": {
+        "renderKind": "building",
+        "kind": "barracks",
+        "progress": 4,
+        "full": true,
+        "id": "sprite-reference-236"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "237",
+      "key": "prop:highland-pay-station:highlands",
+      "region": 2,
+      "entity": {
+        "renderKind": "prop",
+        "structure": "highland-pay-station",
+        "decorative": true,
+        "id": "sprite-reference-237"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "238",
+      "key": "prop:ore-sorting-bay:highlands",
+      "region": 2,
+      "entity": {
+        "renderKind": "prop",
+        "structure": "ore-sorting-bay",
+        "decorative": true,
+        "id": "sprite-reference-238"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "239",
+      "key": "prop:mint-workbench:highlands",
+      "region": 2,
+      "entity": {
+        "renderKind": "prop",
+        "structure": "mint-workbench",
+        "decorative": true,
+        "id": "sprite-reference-239"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "240",
+      "key": "prop:caravan-loading-bay:highlands",
+      "region": 2,
+      "entity": {
+        "renderKind": "prop",
+        "structure": "caravan-loading-bay",
+        "decorative": true,
+        "id": "sprite-reference-240"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "241",
+      "key": "prop:mine-old-markings:highlands",
+      "region": 2,
+      "entity": {
+        "renderKind": "prop",
+        "structure": "mine-old-markings",
+        "decorative": true,
+        "id": "sprite-reference-241"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "242",
+      "key": "prop:ridge-supper:highlands",
+      "region": 2,
+      "entity": {
+        "renderKind": "prop",
+        "structure": "ridge-supper",
+        "decorative": true,
+        "id": "sprite-reference-242"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "243",
+      "key": "prop:ridge-game-corner:highlands",
+      "region": 2,
+      "entity": {
+        "renderKind": "prop",
+        "structure": "ridge-game-corner",
+        "decorative": true,
+        "id": "sprite-reference-243"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "244",
+      "key": "prop:ridge-study:highlands",
+      "region": 2,
+      "entity": {
+        "renderKind": "prop",
+        "structure": "ridge-study",
+        "decorative": true,
+        "id": "sprite-reference-244"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "245",
+      "key": "prop:ridge-bed:highlands",
+      "region": 2,
+      "entity": {
+        "renderKind": "prop",
+        "structure": "ridge-bed",
+        "decorative": true,
+        "id": "sprite-reference-245"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "246",
+      "key": "prop:crag-rest:highlands",
+      "region": 2,
+      "entity": {
+        "renderKind": "prop",
+        "structure": "crag-rest",
+        "decorative": true,
+        "id": "sprite-reference-246"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "247",
+      "key": "prop:flight-planning-table:frontier",
+      "region": 3,
+      "entity": {
+        "renderKind": "prop",
+        "structure": "flight-planning-table",
+        "decorative": true,
+        "id": "sprite-reference-247"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "248",
+      "key": "prop:flight-harness-station:frontier",
+      "region": 3,
+      "entity": {
+        "renderKind": "prop",
+        "structure": "flight-harness-station",
+        "decorative": true,
+        "id": "sprite-reference-248"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "249",
+      "key": "prop:royal-flight-standard:frontier",
+      "region": 3,
+      "entity": {
+        "renderKind": "prop",
+        "structure": "royal-flight-standard",
+        "decorative": true,
+        "id": "sprite-reference-249"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "250",
+      "key": "prop:royal-launch-platform:frontier",
+      "region": 3,
+      "entity": {
+        "renderKind": "prop",
+        "structure": "royal-launch-platform",
+        "decorative": true,
+        "id": "sprite-reference-250"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "254",
+      "key": "enemy:crownguard:ranged",
+      "region": 4,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "crownguard",
+        "ranged": true,
+        "id": "sprite-reference-254"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "255",
+      "key": "enemy:skeleton:guard",
+      "region": 0,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "skeleton",
+        "guard": true,
+        "id": "sprite-reference-255"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "256",
+      "key": "enemy:skeleton:ranged-guard",
+      "region": 0,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "skeleton",
+        "guard": true,
+        "id": "sprite-reference-256",
+        "ranged": true
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "257",
+      "key": "enemy:reedbeast:hybrid-ranged-guard",
+      "region": 0,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "reedbeast",
+        "guard": true,
+        "id": "sprite-reference-257",
+        "ranged": true,
+        "hybrid": true
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "258",
+      "key": "enemy:ogre:guard",
+      "region": 0,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "ogre",
+        "guard": true,
+        "id": "sprite-reference-258"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "259",
+      "key": "enemy:ogre:hybrid-ranged-guard",
+      "region": 0,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "ogre",
+        "guard": true,
+        "id": "sprite-reference-259",
+        "ranged": true,
+        "hybrid": true
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "260",
+      "key": "enemy:archer:ranged-guard",
+      "region": 0,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "archer",
+        "guard": true,
+        "id": "sprite-reference-260",
+        "ranged": true
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "261",
+      "key": "enemy:crownguard:ranged-guard",
+      "region": 4,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "crownguard",
+        "guard": true,
+        "id": "sprite-reference-261",
+        "ranged": true
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "262",
+      "key": "enemy:wolf:guard",
+      "region": 0,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "wolf",
+        "guard": true,
+        "id": "sprite-reference-262"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "263",
+      "key": "enemy:orc:guard",
+      "region": 0,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "orc",
+        "guard": true,
+        "id": "sprite-reference-263"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "264",
+      "key": "enemy:crownguard:guard",
+      "region": 4,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "crownguard",
+        "guard": true,
+        "id": "sprite-reference-264"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "265",
+      "key": "enemy:goblin:guard",
+      "region": 0,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "goblin",
+        "guard": true,
+        "id": "sprite-reference-265"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "266",
+      "key": "enemy:goblin:ranged-guard",
+      "region": 0,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "goblin",
+        "guard": true,
+        "id": "sprite-reference-266",
+        "ranged": true
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "267",
+      "key": "enemy:mireling:guard",
+      "region": 0,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "mireling",
+        "guard": true,
+        "id": "sprite-reference-267"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "268",
+      "key": "enemy:mireling:hybrid-ranged-guard",
+      "region": 0,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "mireling",
+        "guard": true,
+        "id": "sprite-reference-268",
+        "ranged": true,
+        "hybrid": true
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "269",
+      "key": "enemy:ashbeast:guard",
+      "region": 3,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "ashbeast",
+        "guard": true,
+        "id": "sprite-reference-269"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "270",
+      "key": "enemy:ashbeast:ranged-guard",
+      "region": 3,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "ashbeast",
+        "guard": true,
+        "id": "sprite-reference-270",
+        "ranged": true
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "046",
+      "key": "enemy:goblin:captain-ranged-guard",
+      "region": 0,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "goblin",
+        "id": "sprite-reference-046",
+        "captain": true,
+        "roomCaptain": true,
+        "guard": true,
+        "ranged": true,
+        "captainMentor": "thorn",
+        "captainVisualIdol": "thorn",
+        "visualScale": 1.16
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "047",
+      "key": "enemy:mireling:captain-hybrid-ranged-guard",
+      "region": 1,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "mireling",
+        "id": "sprite-reference-047",
+        "captain": true,
+        "roomCaptain": true,
+        "guard": true,
+        "ranged": true,
+        "hybrid": true,
+        "captainMentor": "mire",
+        "captainVisualIdol": "mire",
+        "visualScale": 1.18
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "048",
+      "key": "enemy:wolf:captain-guard",
+      "region": 2,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "wolf",
+        "id": "sprite-reference-048",
+        "captain": true,
+        "roomCaptain": true,
+        "guard": true,
+        "captainMentor": "ridge",
+        "captainVisualIdol": "ridge",
+        "visualScale": 1.2
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "049",
+      "key": "enemy:ashbeast:captain-hybrid-ranged-guard",
+      "region": 4,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "ashbeast",
+        "id": "sprite-reference-049",
+        "captain": true,
+        "roomCaptain": true,
+        "guard": true,
+        "ranged": true,
+        "hybrid": true,
+        "captainMentor": "cindermaw",
+        "captainVisualIdol": "darklord",
+        "visualScale": 1.19
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "050",
+      "key": "enemy:orc:captain",
+      "region": 3,
+      "entity": {
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "orc",
+        "id": "sprite-reference-050",
+        "captain": true,
+        "fieldCaptain": true,
+        "captainMentor": "warlord",
+        "captainVisualIdol": "warlord",
+        "visualScale": 1.18
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "271",
+      "key": "prop:grass:vale",
+      "region": 0,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "grass",
+        "id": "aesthetic-nature-8"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "272",
+      "key": "prop:wet-grass:march",
+      "region": 1,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "wet-grass",
+        "id": "aesthetic-nature-9"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "273",
+      "key": "prop:bush:vale",
+      "region": 0,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "bush",
+        "id": "aesthetic-nature-7"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "274",
+      "key": "prop:marsh-bush:march",
+      "region": 1,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "marsh-bush",
+        "id": "aesthetic-nature-16"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "275",
+      "key": "prop:wildflowers:vale",
+      "region": 0,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "wildflowers",
+        "id": "aesthetic-nature-10"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "276",
+      "key": "prop:sapling:vale",
+      "region": 0,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "sapling",
+        "id": "sprite-reference-276"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "277",
+      "key": "prop:stump:vale",
+      "region": 0,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "stump",
+        "id": "side-entrance-side-vale-cellars-0"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "278",
+      "key": "prop:fallen-log:vale",
+      "region": 0,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "fallen-log",
+        "id": "side-entrance-side-vale-cellars-2"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "279",
+      "key": "prop:reeds:march",
+      "region": 1,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "reeds",
+        "id": "harbor-reeds-a"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "280",
+      "key": "prop:cattails:march",
+      "region": 1,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "cattails",
+        "id": "harbor-reeds-b"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "281",
+      "key": "prop:driftwood:march",
+      "region": 1,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "driftwood",
+        "id": "harbor-drift"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "282",
+      "key": "prop:mangrove:march",
+      "region": 1,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "mangrove",
+        "id": "harbor-mangrove-a"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "283",
+      "key": "prop:pine-sapling:highlands",
+      "region": 2,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "pine-sapling",
+        "id": "harbor-pine-a"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "284",
+      "key": "prop:alpine-scrub:highlands",
+      "region": 2,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "alpine-scrub",
+        "id": "aesthetic-nature-7"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "285",
+      "key": "prop:heather:highlands",
+      "region": 2,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "heather",
+        "id": "harbor-heather"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "286",
+      "key": "prop:rock-cluster:highlands",
+      "region": 2,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "rock-cluster",
+        "id": "harbor-rock-a"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "287",
+      "key": "prop:dead-tree:frontier",
+      "region": 3,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "dead-tree",
+        "id": "aesthetic-nature-9"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "288",
+      "key": "prop:charred-stump:frontier",
+      "region": 3,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "charred-stump",
+        "id": "sprite-reference-288"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "289",
+      "key": "prop:dry-scrub:frontier",
+      "region": 3,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "dry-scrub",
+        "id": "aesthetic-bank-96"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "290",
+      "key": "prop:burned-log:frontier",
+      "region": 3,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "burned-log",
+        "id": "aesthetic-nature-7"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "291",
+      "key": "prop:black-rock:crown",
+      "region": 4,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "black-rock",
+        "id": "side-entrance-side-crown-foundry-0"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "292",
+      "key": "prop:crystal-cluster:crown",
+      "region": 4,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "crystal-cluster",
+        "id": "aesthetic-nature-12"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "293",
+      "key": "prop:dead-shrub:crown",
+      "region": 4,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "dead-shrub",
+        "id": "aesthetic-nature-11"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "294",
+      "key": "prop:obsidian:crown",
+      "region": 4,
+      "entity": {
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "obsidian",
+        "id": "aesthetic-nature-16"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "295",
+      "key": "prop:rock:vale",
+      "region": 0,
+      "entity": {
+        "renderKind": "prop",
+        "icon": "\ud83e\udea8",
+        "id": "sprite-reference-295"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
+    },
+    {
+      "catalogId": "296",
+      "key": "prop:rock:highlands",
+      "region": 2,
+      "entity": {
+        "renderKind": "prop",
+        "icon": "\ud83e\udea8",
+        "id": "sprite-reference-296"
+      },
+      "canvas": {
+        "width": 192,
+        "height": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75
+      }
     }
   ]
 }

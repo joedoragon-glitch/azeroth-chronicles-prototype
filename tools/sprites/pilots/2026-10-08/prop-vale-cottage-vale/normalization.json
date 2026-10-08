@@ -1,0 +1,6 @@
+{
+  "originalHash": "6950d9ba5e8dd37162ca2a4fe4cc25e7282a621b149298b287361955404f298a",
+  "paddedHash": "ee52d21f1f1d6a95fb1e545db3fa584a7b9ae86618f9277b1d475d9c1b3778e3",
+  "operation": "32px transparent border on all sides; no trim, crop, color or alpha modifications",
+  "reason": "Original image generator left alpha=1 stray pixels at canvas edges. Retain all source pixels while providing required transparent margin."
+}

@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "key": "enemy:goblin",
+  "catalogId": "016",
+  "canonHash": "5f1abcf8da3672404f405bc28a7f617360a6ca81e9e76cfb1147b3e29ce1dc57",
+  "catalogHash": "ac33078af109e7aad40c8d55f45c0406978b30afa664526956765fe351458573",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 159589,
+    "decodedBytes": 6290064,
+    "hash": "679e533288b739832afcba13ca03ab6ece5372909ec69a8b64c8cfed16610962",
+    "pixelHash": "1f198209c6d7374acc723e21c2ead354aa167278f84540b9cb87842ff434e9c4",
+    "bounds": {
+      "x1": 35,
+      "y1": 62,
+      "x2": 1183,
+      "y2": 1205
+    },
+    "padding": 35,
+    "transparentPixels": 1504596,
+    "visiblePixels": 67920
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 5777,
+    "decodedBytes": 147456,
+    "hash": "7dae43a3287b3faf4c7ef41c798b0501114c227a2fe5a83af2aa793b3b0106e1",
+    "pixelHash": "d3637172d120f68981d37f411f0d0add498f4ec15aa3c1c2c814ac4851412aba",
+    "bounds": {
+      "x1": 70,
+      "y1": 46,
+      "x2": 166,
+      "y2": 184
+    },
+    "padding": 7,
+    "transparentPixels": 35273,
+    "visiblePixels": 1591
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 54
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1254,
+      1254
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false
+  },
+  "review": {
+    "status": "pending",
+    "reference": null
+  }
+}

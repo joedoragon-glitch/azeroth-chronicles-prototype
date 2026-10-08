@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "key": "prop:vale-cottage:vale",
+  "catalogId": "061",
+  "canonHash": "5f1abcf8da3672404f405bc28a7f617360a6ca81e9e76cfb1147b3e29ce1dc57",
+  "catalogHash": "e992e627e6a329541150dd899685931238b10fce1f535e778ddf82bb88616abf",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1318,
+    "height": 1318,
+    "bytes": 350170,
+    "decodedBytes": 6948496,
+    "hash": "ee52d21f1f1d6a95fb1e545db3fa584a7b9ae86618f9277b1d475d9c1b3778e3",
+    "pixelHash": "495d84f4da1fd18b09a8747181df386a6aab222a104fb70eb229f9191de4cd23",
+    "bounds": {
+      "x1": 32,
+      "y1": 32,
+      "x2": 1261,
+      "y2": 1140
+    },
+    "padding": 32,
+    "transparentPixels": 1582355,
+    "visiblePixels": 154769
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 10254,
+    "decodedBytes": 147456,
+    "hash": "6d6e3740f2fa1d806c9f051ca4f0b1c4c98a43f44a80621b32dbe0c625d48878",
+    "pixelHash": "41b43f5804d0fe979f86c77d0784bf90540a1edb5236bb0fea8f6af21a30602c",
+    "bounds": {
+      "x1": 62,
+      "y1": 100,
+      "x2": 129,
+      "y2": 166
+    },
+    "padding": 25,
+    "transparentPixels": 33608,
+    "visiblePixels": 3256
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1318,
+      1318
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false
+  },
+  "review": {
+    "status": "pending",
+    "reference": null
+  }
+}

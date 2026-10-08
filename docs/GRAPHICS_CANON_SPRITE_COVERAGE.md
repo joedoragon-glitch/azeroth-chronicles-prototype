@@ -14,11 +14,11 @@ The existence of a mechanic or a name is not enough to justify a new image.
 
 ## Catalog totals
 
-The audited numbered catalog contains **231 entries**:
+The audited numbered catalog contains **296 entries**:
 
-- **221 GENERATE** entries;
+- **280 GENERATE** entries;
 - **0 ALIAS** entries;
-- **10 numbered KEEP PROCEDURAL** entries.
+- **16 numbered KEEP PROCEDURAL** entries.
 
 Many broad procedural systems are classified here rather than receiving pointless numbered no-image entries.
 
@@ -31,7 +31,7 @@ Many broad procedural systems are classified here rather than receiving pointles
 - Bosses: 035–045.
 - Named captains with authored static additions: 046–050. Dreadmaw 049 uses Ash-beast anatomy with a retained Dark-Lord-idol captain treatment while Cindermaw remains his gameplay mentor.
 - Ringleader, Frenzy and TRUE presentation remain procedural. Non-military species keep the universal Ringleader overlay; military species use same-size officer hierarchy cues tied to their uniform instead of the generic crown treatment.
-- Guard identifiers remain procedural. Military species may use restrained uniform/pauldron role cues, but role readability must not create a new species silhouette or inflate body scale.
+- Guard ground identifiers remain procedural. Current guard bodies use exact entries 255–270, preserving their existing uniform/shield/role cues without increasing body scale. Crown ranged troops have separate entry 254. Base, ranged, hybrid and guard states never silently substitute for one another.
 
 ## Interaction/state coverage
 
@@ -45,7 +45,7 @@ Many broad procedural systems are classified here rather than receiving pointles
 - Field-boss compound marker: 162.
 - Dark Lord Tribute cache: 163.
 - Treasury quest bundle: 164.
-- Open cage: 170; closed specialist cages: 171–180.
+- Open cage: 170; closed specialist cages: 171, 173, 175, 177–180; obsolete Borin/Neri/Dara cage IDs 172/174/176 are procedural historical decisions.
 - Cage contents use the same specialist canon as 006–015; no alternate prisoner designs.
 
 ## `decoration(kind)` coverage
@@ -130,34 +130,34 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `ritual-table` | GENERATE 217/218 by region |
 | `grave-lamp` | GENERATE 154 |
 | `caretaker-table` | GENERATE 155 |
-| `grass` | PROCEDURAL — seeded nature |
-| `wet-grass` | PROCEDURAL — seeded nature |
-| `bush` | PROCEDURAL — seeded nature |
-| `marsh-bush` | PROCEDURAL — seeded nature |
-| `wildflowers` | PROCEDURAL — seeded nature |
-| `sapling` | PROCEDURAL — seeded nature |
-| `stump` | PROCEDURAL — seeded nature |
-| `fallen-log` | PROCEDURAL — seeded nature |
-| `reeds` | PROCEDURAL — seeded nature |
-| `cattails` | PROCEDURAL — seeded nature |
-| `driftwood` | PROCEDURAL — seeded nature |
-| `mangrove` | PROCEDURAL — harbor/nature geometry |
+| `grass` | GENERATE 271 — current isolated natural body; seeded placement/variants remain source-owned |
+| `wet-grass` | GENERATE 272 — current isolated natural body; seeded placement/variants remain source-owned |
+| `bush` | GENERATE 273 — current isolated natural body; seeded placement/variants remain source-owned |
+| `marsh-bush` | GENERATE 274 — current isolated natural body; seeded placement/variants remain source-owned |
+| `wildflowers` | GENERATE 275 — current isolated natural body; seeded placement/variants remain source-owned |
+| `sapling` | GENERATE 276 — current isolated natural body; seeded placement/variants remain source-owned |
+| `stump` | GENERATE 277 — current isolated natural body; seeded placement/variants remain source-owned |
+| `fallen-log` | GENERATE 278 — current isolated natural body; seeded placement/variants remain source-owned |
+| `reeds` | GENERATE 279 — current isolated natural body; seeded placement/variants remain source-owned |
+| `cattails` | GENERATE 280 — current isolated natural body; seeded placement/variants remain source-owned |
+| `driftwood` | GENERATE 281 — current isolated natural body; seeded placement/variants remain source-owned |
+| `mangrove` | GENERATE 282 — current isolated natural body; seeded placement/variants remain source-owned |
 | `dock-post` | PROCEDURAL — repeated harbor geometry |
-| `pine-sapling` | PROCEDURAL — seeded nature |
-| `alpine-scrub` | PROCEDURAL — seeded nature |
-| `heather` | PROCEDURAL — seeded nature |
-| `rock-cluster` | PROCEDURAL — seeded nature |
-| `dead-tree` | PROCEDURAL — seeded nature |
-| `charred-stump` | PROCEDURAL — seeded nature |
+| `pine-sapling` | GENERATE 283 — current isolated natural body; seeded placement/variants remain source-owned |
+| `alpine-scrub` | GENERATE 284 — current isolated natural body; seeded placement/variants remain source-owned |
+| `heather` | GENERATE 285 — current isolated natural body; seeded placement/variants remain source-owned |
+| `rock-cluster` | GENERATE 286 — current isolated natural body; seeded placement/variants remain source-owned |
+| `dead-tree` | GENERATE 287 — current isolated natural body; seeded placement/variants remain source-owned |
+| `charred-stump` | GENERATE 288 — current isolated natural body; seeded placement/variants remain source-owned |
 | `ash-patch` | PROCEDURAL — ground patch |
-| `dry-scrub` | PROCEDURAL — seeded nature |
-| `burned-log` | PROCEDURAL — seeded nature |
+| `dry-scrub` | GENERATE 289 — current isolated natural body; seeded placement/variants remain source-owned |
+| `burned-log` | GENERATE 290 — current isolated natural body; seeded placement/variants remain source-owned |
 | `ember-pit` | PROCEDURAL — ground/fire dressing |
-| `black-rock` | PROCEDURAL — seeded nature |
-| `crystal-cluster` | PROCEDURAL — seeded nature |
-| `dead-shrub` | PROCEDURAL — seeded nature |
+| `black-rock` | GENERATE 291 — current isolated natural body; seeded placement/variants remain source-owned |
+| `crystal-cluster` | GENERATE 292 — current isolated natural body; seeded placement/variants remain source-owned |
+| `dead-shrub` | GENERATE 293 — current isolated natural body; seeded placement/variants remain source-owned |
 | `fumarole` | PROCEDURAL — atmospheric ground effect |
-| `obsidian` | PROCEDURAL — seeded nature |
+| `obsidian` | GENERATE 294 — current isolated natural body; seeded placement/variants remain source-owned |
 | `market` | PROCEDURAL — region-sensitive repeated settlement prop |
 | `woodpile` | GENERATE 206 |
 | `laundry` | GENERATE 207 |
@@ -247,7 +247,7 @@ Many broad procedural systems are classified here rather than receiving pointles
 | --- | --- |
 | `building('barracks')` completed | GENERATE 071–075 |
 | Barracks construction stages | PROCEDURAL |
-| Full Barracks | ALIAS to same region's completed Barracks until canon differs |
+| Full Barracks | GENERATE 232–236, exact Full state per region; never alias Basic |
 | `rest/supplier/recruiter/quests` | GENERATE 111–130 |
 | `cage` | GENERATE 170–180 |
 | `dungeon/exit` main families | GENERATE 051–055 and reuse for matching exit identity |
@@ -264,12 +264,12 @@ Many broad procedural systems are classified here rather than receiving pointles
 | labels/health plates/targeting/UI | PROCEDURAL |
 | attack warnings, projectiles and timed combat VFX | PROCEDURAL |
 | atmosphere/night lighting | PROCEDURAL |
-| terrain planes, roads, rivers, lava and crossings | PROCEDURAL |
+| terrain planes, roads, rivers, lava and crossings | PROCEDURAL geometry/effects; material texture candidates T001–T028 in GRAPHICS_CANON_TERRAIN_TEXTURE_CANDIDATES.md |
 | authored main-dungeon walkable footprints and partition geometry | PROCEDURAL — gameplay-space structure, never a sprite requirement |
 
 ## Wild-prop strategy
 
-The renderer deliberately seeds natural variation. Phase 2A therefore creates only the five representative experiments 106–110. The smaller nature-decoration cases remain procedural during this production cycle. Phase 2B can reject even those five representative sprite experiments if they make the world more repetitive than the canonical seeded renderer.
+The renderer deliberately seeds natural variation. The expanded current scope includes large representatives 106–110, 24 isolated smaller nature families 271–294 and two missing field-rock materials 295–296. Their placement, density, collision, seeded variation and day/night grounding remain procedural. Prepare variant-bank selection and exact regional bindings before activating broad wild keys; a single repeated tree/rock must not erase current variation. Additional members require current-reference jobs, not invented flora.
 
 ## Audit conclusion
 
@@ -278,37 +278,61 @@ Every static renderer family has an explicit destination: a generation prompt, a
 V0.8.79 reconciles the affected canonical cues after procedural polishing. Repeated game tables remain procedural despite their clearer board-and-counter drawing. Weapon racks still use regional exact keys; KEEP PROCEDURAL entries 136/137 describe the authored Frontier/Crown versions. No existing runtime sprite key is broadened or aliased.
 
 
-V0.8.80 strengthens the PROCEDURAL terrain/effects families without adding sprite keys or generation entries. Natural ground uses feathered world-space materials; roads, water banks, ravine strata, lava crust and main-dungeon footprints/partitions follow actual geometry. Normal abilities, projectile contacts and recovery cues carry their existing gameplay identity. Danger outlines remain procedural and retain contrast after atmospheric grading. See `TERRAIN_EFFECTS_POLISH_V0880.md`; the numbered catalog remains 231 entries.
+V0.8.80 strengthens the PROCEDURAL terrain/effects families without adding sprite keys or generation entries. Natural ground uses feathered world-space materials; roads, water banks, ravine strata, lava crust and main-dungeon footprints/partitions follow actual geometry. Normal abilities, projectile contacts and recovery cues carry their existing gameplay identity. Danger outlines remain procedural and retain contrast after atmospheric grading. See `TERRAIN_EFFECTS_POLISH_V0880.md`; the historical numbered catalog remained 231 entries.
 
 ## Ironroot Highlands procedural additions v0.8.87
 
-These small production and household scenes use the existing regional materials and stay procedural. The 231-entry generation catalog and production registry are unchanged. Dara's equipment-repair staging is a contextual specialist drawing; it must not use the old standalone cage sprite.
+These additions were procedural at v0.8.87. The 8 October reconciliation promotes the isolated static bodies listed below; contextual occupants and overlays stay procedural. Dara's equipment-repair staging is a contextual specialist drawing; it must not use the old standalone cage sprite.
 
 | Renderer family | Classification |
 | --- | --- |
-| `highland-pay-station` | PROCEDURAL — regional payroll table and everyday worker |
-| `ore-sorting-bay` | PROCEDURAL — weighing and sorting station |
-| `mint-workbench` | PROCEDURAL — small working press with few visible crowns |
-| `caravan-loading-bay` | PROCEDURAL — regional hauling cart and sealed cargo |
+| `highland-pay-station` | GENERATE 237 — current exact static body |
+| `ore-sorting-bay` | GENERATE 238 — current exact static body |
+| `mint-workbench` | GENERATE 239 — current exact static body |
+| `caravan-loading-bay` | GENERATE 240 — current exact static body |
 | `mine-supports` | PROCEDURAL — repeated mine timber and repair detail |
-| `mine-old-markings` | PROCEDURAL — old cut stone and local mining traces |
+| `mine-old-markings` | GENERATE 241 — current exact static body |
 | `mine-collapse` | PROCEDURAL — rubble and broken supports |
-| `ridge-supper` | PROCEDURAL — domestic table and meal |
-| `ridge-game-corner` | PROCEDURAL — board, counters and seats |
-| `ridge-study` | PROCEDURAL — limited work material and sealed official correspondence |
-| `ridge-bed` | PROCEDURAL — private household comfort |
-| `crag-rest` | PROCEDURAL — Wolf bedding and drinking bowl |
+| `ridge-supper` | GENERATE 242 — current exact static body |
+| `ridge-game-corner` | GENERATE 243 — current exact static body |
+| `ridge-study` | GENERATE 244 — current exact static body |
+| `ridge-bed` | GENERATE 245 — current exact static body |
+| `crag-rest` | GENERATE 246 — current exact static body |
 | `cage` with `equipment-repair` workstation | PROCEDURAL — Dara at a secured equipment bench, same rescue state |
 
 ## Air-superiority project v0.8.86
 
-Four procedural families present Joel’s approved Bastion role without generating replacement sprites:
+Four current static families present Joel’s approved Bastion role and now have exact generation entries:
 
 | Structure | Current purpose |
 | --- | --- |
-| `flight-planning-table` | Aerial routes and dragon formations |
-| `flight-harness-station` | Saddle, stirrups and harness maintenance |
-| `royal-flight-standard` | Purple Crown dragon standard |
-| `royal-launch-platform` | Flight preparation platform under construction |
+| `flight-planning-table` | GENERATE 247 — current exact static body |
+| `flight-harness-station` | GENERATE 248 — current exact static body |
+| `royal-flight-standard` | GENERATE 249 — current exact static body |
+| `royal-launch-platform` | GENERATE 250 — current exact static body |
 
 Legacy handler/containment/perch drawing keys remain available for compatibility; current Bastion slots use the project families.
+
+## Current contextual state coverage · 8 October 2026
+
+| Current state/renderer branch | Decision |
+| --- | --- |
+| `cage` with craft workstation | PROCEDURAL 251 — Borin, separate secured/rescued composition |
+| `cage` with restoration workstation | PROCEDURAL 252 — Neri, separate secured/rescued composition |
+| `cage` with equipment-repair workstation | PROCEDURAL 253 — Dara, separate secured/rescued composition |
+| `sceneRole:pages` | PROCEDURAL — contextual overlay on current furniture; never erase it with a generic base sprite |
+| `sceneRole:alchemy` | PROCEDURAL — contextual overlay on current furniture; never erase it with a generic base sprite |
+| `sceneRole:pump` | PROCEDURAL — contextual overlay on current furniture; never erase it with a generic base sprite |
+| `sceneRole:submerged` | PROCEDURAL — contextual overlay on current furniture; never erase it with a generic base sprite |
+| `sceneRole:construction` | PROCEDURAL — contextual overlay on current furniture; never erase it with a generic base sprite |
+| `sceneRole:preservation` | PROCEDURAL — contextual overlay on current furniture; never erase it with a generic base sprite |
+| `sceneRole:fish-study` | PROCEDURAL — contextual overlay on current furniture; never erase it with a generic base sprite |
+| `sceneRole:coin-accounting` | PROCEDURAL — contextual overlay on current furniture; never erase it with a generic base sprite |
+
+The numbered scope is open. Newly authored bodies/states are discovered and reconciled before their generation. All 153 decoration cases, 15 settlement cases, landmark cases and workDetails roles must remain classified; automated source-case checks reject newly unclassified branches. Generic legacy `house`/`workshop`, default service fallbacks, summoned silhouettes and compatibility nodes remain procedural unless promoted through an exact documented current binding. Normal/TRUE/ringleader/guard/captain and Basic/Full/construction are not interchangeable.
+
+## Enemy state reconciliation
+
+Crown ranged soldier: GENERATE 254. Sixteen current guard keys: GENERATE 255–270, each with a current source reference and exact binding. Skeleton guards retain their left shield; Crown guards retain their distinct uniform and pauldrons. Shared guard ground chevrons stay procedural and must be preserved separately when these images are integrated.
+
+Military ringleaders (Orc, Raider Archer and Crown soldier) remain entirely procedural until their species-specific officer overlays are supported. The current optional sprite overlay draws a generic crown, so enabling base images for these forms without a follow-up correction would lose current uniform rank cues. This is an integration gate, not permission to generate generic officer art. Normal/TRUE reuse also requires normal-only source references and procedural TRUE effects.

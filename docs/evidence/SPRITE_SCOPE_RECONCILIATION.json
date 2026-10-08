@@ -1,0 +1,1154 @@
+{
+  "catalog": {
+    "entries": 296,
+    "generate": 280,
+    "alias": 0,
+    "procedural": 16
+  },
+  "preparedContracts": 70,
+  "families": {
+    "decoration": [
+      "torch",
+      "coffin",
+      "bones",
+      "banner",
+      "shelf",
+      "water",
+      "rune",
+      "crate",
+      "rail",
+      "crystal",
+      "chain",
+      "ember",
+      "armor",
+      "thorn-bed",
+      "fang-trophy",
+      "root-table",
+      "warm-brazier",
+      "treasure-hoard",
+      "boss-chest",
+      "mire-pool",
+      "fish-rack",
+      "reed-nest",
+      "shell-hoard",
+      "drift-seat",
+      "highland-pay-station",
+      "ore-sorting-bay",
+      "mint-workbench",
+      "caravan-loading-bay",
+      "mine-supports",
+      "mine-old-markings",
+      "mine-collapse",
+      "ridge-supper",
+      "ridge-game-corner",
+      "ridge-study",
+      "ridge-bed",
+      "crag-rest",
+      "ridge-hearth",
+      "weapon-rack",
+      "stone-seat",
+      "trophy-rack",
+      "dark-brazier",
+      "dark-throne",
+      "war-table",
+      "crown-banner",
+      "crown-levy-yard",
+      "crown-command-post",
+      "ashbeast-roost-scene",
+      "cindermaw-hoard-scene",
+      "cindermaw-ash-den",
+      "dreadmaw-vault-post",
+      "crown-logistics-bay",
+      "crown-fortress-checkpoint",
+      "citadel-muster",
+      "citadel-command",
+      "citadel-ritual-array",
+      "citadel-barracks-bay",
+      "citadel-forge-bay",
+      "citadel-boss-approach",
+      "animal-pen",
+      "drying-rack",
+      "tax-post",
+      "lean-to",
+      "cookfire",
+      "sleep-roll",
+      "game-table",
+      "stolen-goods",
+      "training-dummy",
+      "bone-pile",
+      "grave-marker",
+      "pup-nest",
+      "fishing-net",
+      "mud-nest",
+      "wallow",
+      "ore-cart",
+      "ore-crane",
+      "tool-rack",
+      "stone-marker",
+      "field-kitchen",
+      "supply-stack",
+      "command-tent",
+      "bunk",
+      "forge",
+      "roost",
+      "hatchery",
+      "scribe-desk",
+      "scroll-stack",
+      "ossuary",
+      "ritual-table",
+      "grave-lamp",
+      "caretaker-table",
+      "grass",
+      "wet-grass",
+      "bush",
+      "marsh-bush",
+      "wildflowers",
+      "sapling",
+      "stump",
+      "fallen-log",
+      "reeds",
+      "cattails",
+      "driftwood",
+      "mangrove",
+      "dock-post",
+      "pine-sapling",
+      "alpine-scrub",
+      "heather",
+      "rock-cluster",
+      "dead-tree",
+      "charred-stump",
+      "ash-patch",
+      "dry-scrub",
+      "burned-log",
+      "ember-pit",
+      "black-rock",
+      "crystal-cluster",
+      "dead-shrub",
+      "fumarole",
+      "obsidian",
+      "market",
+      "woodpile",
+      "laundry",
+      "well",
+      "barrel",
+      "cart",
+      "ration",
+      "garden",
+      "watchpost",
+      "barricade",
+      "road-ruts",
+      "road-patch",
+      "stacked-lumber",
+      "repair-brace",
+      "broken-cart",
+      "wagon-wheel",
+      "charred-foundation",
+      "replacement-stakes",
+      "patched-fence",
+      "inspection-marker",
+      "checkpoint-standard",
+      "chain-anchor",
+      "flight-planning-table",
+      "flight-harness-station",
+      "royal-flight-standard",
+      "royal-launch-platform",
+      "handler-station",
+      "feed-crate",
+      "containment-post",
+      "scorched-floor",
+      "egg-cradle",
+      "feeding-trough",
+      "carcass-rack",
+      "claw-scrape",
+      "dragon-perch"
+    ],
+    "settlement": [
+      "vale-cottage",
+      "vale-workshop",
+      "vale-fence",
+      "march-stilt-house",
+      "march-boathouse",
+      "march-boardwalk",
+      "highland-stone-house",
+      "highland-smithy",
+      "highland-wall",
+      "frontier-patched-house",
+      "frontier-workshop",
+      "frontier-palisade",
+      "crown-ash-house",
+      "crown-forgehouse",
+      "crown-wall"
+    ],
+    "landmark": [
+      "orchard",
+      "den-ruins",
+      "mill-pond",
+      "night-site",
+      "cache",
+      "wagon",
+      "convoy",
+      "watch",
+      "dock",
+      "lookout",
+      "ore",
+      "tower",
+      "shrine",
+      "overlook",
+      "checkpoint",
+      "foundry",
+      "shelf",
+      "siege",
+      "fortress-gate",
+      "goblin-camp",
+      "mire-nests",
+      "wolf-den",
+      "ogre-hearth",
+      "orc-bivouac",
+      "ash-roost",
+      "crown-barracks"
+    ]
+  },
+  "workRoles": [
+    "pages",
+    "alchemy",
+    "pump",
+    "submerged",
+    "construction",
+    "preservation",
+    "fish-study",
+    "coin-accounting"
+  ],
+  "environmentFamilies": [
+    {
+      "catalogId": "271",
+      "family": "grass",
+      "keys": [
+        "prop:grass:vale"
+      ]
+    },
+    {
+      "catalogId": "272",
+      "family": "wet-grass",
+      "keys": [
+        "prop:wet-grass:march"
+      ]
+    },
+    {
+      "catalogId": "273",
+      "family": "bush",
+      "keys": [
+        "prop:bush:vale"
+      ]
+    },
+    {
+      "catalogId": "274",
+      "family": "marsh-bush",
+      "keys": [
+        "prop:marsh-bush:march"
+      ]
+    },
+    {
+      "catalogId": "275",
+      "family": "wildflowers",
+      "keys": [
+        "prop:wildflowers:vale"
+      ]
+    },
+    {
+      "catalogId": "276",
+      "family": "sapling",
+      "keys": [
+        "prop:sapling:vale"
+      ]
+    },
+    {
+      "catalogId": "277",
+      "family": "stump",
+      "keys": [
+        "prop:stump:vale"
+      ]
+    },
+    {
+      "catalogId": "278",
+      "family": "fallen-log",
+      "keys": [
+        "prop:fallen-log:highlands",
+        "prop:fallen-log:vale"
+      ]
+    },
+    {
+      "catalogId": "279",
+      "family": "reeds",
+      "keys": [
+        "prop:reeds:march",
+        "prop:reeds:vale"
+      ]
+    },
+    {
+      "catalogId": "280",
+      "family": "cattails",
+      "keys": [
+        "prop:cattails:march"
+      ]
+    },
+    {
+      "catalogId": "281",
+      "family": "driftwood",
+      "keys": [
+        "prop:driftwood:march"
+      ]
+    },
+    {
+      "catalogId": "282",
+      "family": "mangrove",
+      "keys": [
+        "prop:mangrove:march"
+      ]
+    },
+    {
+      "catalogId": "283",
+      "family": "pine-sapling",
+      "keys": [
+        "prop:pine-sapling:highlands"
+      ]
+    },
+    {
+      "catalogId": "284",
+      "family": "alpine-scrub",
+      "keys": [
+        "prop:alpine-scrub:highlands"
+      ]
+    },
+    {
+      "catalogId": "285",
+      "family": "heather",
+      "keys": [
+        "prop:heather:highlands"
+      ]
+    },
+    {
+      "catalogId": "286",
+      "family": "rock-cluster",
+      "keys": [
+        "prop:rock-cluster:highlands"
+      ]
+    },
+    {
+      "catalogId": "287",
+      "family": "dead-tree",
+      "keys": [
+        "prop:dead-tree:frontier"
+      ]
+    },
+    {
+      "catalogId": "288",
+      "family": "charred-stump",
+      "keys": [
+        "prop:charred-stump:frontier"
+      ]
+    },
+    {
+      "catalogId": "289",
+      "family": "dry-scrub",
+      "keys": [
+        "prop:dry-scrub:frontier"
+      ]
+    },
+    {
+      "catalogId": "290",
+      "family": "burned-log",
+      "keys": [
+        "prop:burned-log:frontier"
+      ]
+    },
+    {
+      "catalogId": "291",
+      "family": "black-rock",
+      "keys": [
+        "prop:black-rock:crown",
+        "prop:black-rock:frontier"
+      ]
+    },
+    {
+      "catalogId": "292",
+      "family": "crystal-cluster",
+      "keys": [
+        "prop:crystal-cluster:crown"
+      ]
+    },
+    {
+      "catalogId": "293",
+      "family": "dead-shrub",
+      "keys": [
+        "prop:dead-shrub:crown"
+      ]
+    },
+    {
+      "catalogId": "294",
+      "family": "obsidian",
+      "keys": [
+        "prop:obsidian:crown"
+      ]
+    },
+    {
+      "catalogId": "295",
+      "family": "wildProp:rock:vale",
+      "keys": [
+        "prop:rock:vale",
+        "prop:rock:march",
+        "prop:rock:frontier"
+      ]
+    },
+    {
+      "catalogId": "296",
+      "family": "wildProp:rock:highlands",
+      "keys": [
+        "prop:rock:highlands"
+      ]
+    }
+  ],
+  "terrainMaterials": [
+    {
+      "id": "T001",
+      "key": "terrain:ground:vale",
+      "owner": "floor/groundDetail/terrain",
+      "palette": [
+        "#294b36",
+        "#31583e",
+        "#203e30",
+        "#95ad80"
+      ]
+    },
+    {
+      "id": "T002",
+      "key": "terrain:ground:march",
+      "owner": "floor/groundDetail/terrain",
+      "palette": [
+        "#26444b",
+        "#31535a",
+        "#203b42",
+        "#85ada6"
+      ]
+    },
+    {
+      "id": "T003",
+      "key": "terrain:ground:highlands",
+      "owner": "floor/groundDetail/terrain",
+      "palette": [
+        "#485447",
+        "#56614d",
+        "#3b493f",
+        "#b1b59a"
+      ]
+    },
+    {
+      "id": "T004",
+      "key": "terrain:ground:frontier",
+      "owner": "floor/groundDetail/terrain",
+      "palette": [
+        "#50413b",
+        "#5d4b42",
+        "#423732",
+        "#b9987b"
+      ]
+    },
+    {
+      "id": "T005",
+      "key": "terrain:ground:crown",
+      "owner": "floor/groundDetail/terrain",
+      "palette": [
+        "#343644",
+        "#414351",
+        "#2c2f3c",
+        "#a09b9e"
+      ]
+    },
+    {
+      "id": "T006",
+      "key": "terrain:road:vale",
+      "owner": "roads",
+      "palette": [
+        "#564834",
+        "#8e7758",
+        "#9c8664",
+        "#6f604c"
+      ]
+    },
+    {
+      "id": "T007",
+      "key": "terrain:road:march",
+      "owner": "roads",
+      "palette": [
+        "#4b5043",
+        "#756e57",
+        "#8e8367",
+        "#5a6354"
+      ]
+    },
+    {
+      "id": "T008",
+      "key": "terrain:road:highlands",
+      "owner": "roads",
+      "palette": [
+        "#4e4d46",
+        "#87857a",
+        "#a29f8e",
+        "#6e6d66"
+      ]
+    },
+    {
+      "id": "T009",
+      "key": "terrain:road:frontier",
+      "owner": "roads",
+      "palette": [
+        "#51443e",
+        "#7c6c61",
+        "#8c7c6d",
+        "#625750"
+      ]
+    },
+    {
+      "id": "T010",
+      "key": "terrain:road:crown",
+      "owner": "roads",
+      "palette": [
+        "#3f3d45",
+        "#66636e",
+        "#827d89",
+        "#55525d"
+      ]
+    },
+    {
+      "id": "T011",
+      "key": "terrain:floor:crypt",
+      "owner": "floor/dungeonFloors",
+      "palette": [
+        "#343c39",
+        "#414945",
+        "#2b3331",
+        "#a9b1a0"
+      ]
+    },
+    {
+      "id": "T012",
+      "key": "terrain:floor:archive",
+      "owner": "floor/dungeonFloors",
+      "palette": [
+        "#30464a",
+        "#3b5558",
+        "#283d42",
+        "#8fb6b4"
+      ]
+    },
+    {
+      "id": "T013",
+      "key": "terrain:floor:mine",
+      "owner": "floor/dungeonFloors",
+      "palette": [
+        "#44433b",
+        "#524f43",
+        "#39382f",
+        "#ada88c"
+      ]
+    },
+    {
+      "id": "T014",
+      "key": "terrain:floor:abyss",
+      "owner": "floor/dungeonFloors",
+      "palette": [
+        "#44373b",
+        "#544349",
+        "#382f34",
+        "#c09a89"
+      ]
+    },
+    {
+      "id": "T015",
+      "key": "terrain:floor:citadel",
+      "owner": "floor/dungeonFloors",
+      "palette": [
+        "#3b414b",
+        "#494f59",
+        "#303640",
+        "#abb3b5"
+      ]
+    },
+    {
+      "id": "T016",
+      "key": "terrain:floor:supply-vale",
+      "owner": "floor/treasuryFloors",
+      "palette": [
+        "#514735",
+        "#5e523c",
+        "#433b2e",
+        "#bca978"
+      ]
+    },
+    {
+      "id": "T017",
+      "key": "terrain:floor:supply-march",
+      "owner": "floor/treasuryFloors",
+      "palette": [
+        "#3f5149",
+        "#4b6258",
+        "#33443f",
+        "#9fb69c"
+      ]
+    },
+    {
+      "id": "T018",
+      "key": "terrain:floor:supply-highlands",
+      "owner": "floor/treasuryFloors",
+      "palette": [
+        "#55534b",
+        "#636056",
+        "#46443e",
+        "#b9ae91"
+      ]
+    },
+    {
+      "id": "T019",
+      "key": "terrain:floor:supply-crown",
+      "owner": "floor/treasuryFloors",
+      "palette": [
+        "#44404b",
+        "#514b59",
+        "#37343e",
+        "#aa96b0"
+      ]
+    },
+    {
+      "id": "T020",
+      "key": "terrain:floor:side-vale-cellars",
+      "owner": "floor/regional-interior-fallback",
+      "palette": [
+        "#294b36",
+        "#31583e",
+        "#203e30",
+        "#95ad80"
+      ]
+    },
+    {
+      "id": "T021",
+      "key": "terrain:floor:side-march-watchhouse",
+      "owner": "floor/regional-interior-fallback",
+      "palette": [
+        "#26444b",
+        "#31535a",
+        "#203b42",
+        "#85ada6"
+      ]
+    },
+    {
+      "id": "T022",
+      "key": "terrain:floor:side-highlands-signal",
+      "owner": "floor/regional-interior-fallback",
+      "palette": [
+        "#485447",
+        "#56614d",
+        "#3b493f",
+        "#b1b59a"
+      ]
+    },
+    {
+      "id": "T023",
+      "key": "terrain:floor:side-frontier-shrine",
+      "owner": "floor/regional-interior-fallback",
+      "palette": [
+        "#50413b",
+        "#5d4b42",
+        "#423732",
+        "#b9987b"
+      ]
+    },
+    {
+      "id": "T024",
+      "key": "terrain:floor:side-crown-foundry",
+      "owner": "floor/regional-interior-fallback",
+      "palette": [
+        "#343644",
+        "#414351",
+        "#2c2f3c",
+        "#a09b9e"
+      ]
+    },
+    {
+      "id": "T025",
+      "key": "terrain:rock:cliff-ravine",
+      "owner": "terrain",
+      "palette": [
+        "#494b43",
+        "#616357",
+        "#222729",
+        "#30363a",
+        "#726c5d"
+      ]
+    },
+    {
+      "id": "T026",
+      "key": "terrain:rock:obsidian",
+      "owner": "terrain",
+      "palette": [
+        "#302f39",
+        "#403b4d",
+        "#625568"
+      ]
+    },
+    {
+      "id": "T027",
+      "key": "terrain:lava:crust",
+      "owner": "terrain",
+      "palette": [
+        "#672f28",
+        "#54413e",
+        "#b44e2c"
+      ]
+    },
+    {
+      "id": "T028",
+      "key": "terrain:bridge:wood-grain",
+      "owner": "bridges",
+      "palette": [
+        "#b49468",
+        "#705338",
+        "#665039",
+        "#4b3929",
+        "#e0c394"
+      ]
+    }
+  ],
+  "zones": [
+    "abyss",
+    "archive",
+    "citadel",
+    "crown",
+    "crypt",
+    "frontier",
+    "highlands",
+    "march",
+    "mine",
+    "side-crown-foundry",
+    "side-frontier-shrine",
+    "side-highlands-signal",
+    "side-march-watchhouse",
+    "side-vale-cellars",
+    "supply-crown",
+    "supply-highlands",
+    "supply-march",
+    "supply-vale",
+    "vale"
+  ],
+  "guardKeys": [
+    "enemy:archer:ranged-guard",
+    "enemy:ashbeast:guard",
+    "enemy:ashbeast:ranged-guard",
+    "enemy:crownguard:guard",
+    "enemy:crownguard:ranged-guard",
+    "enemy:goblin:guard",
+    "enemy:goblin:ranged-guard",
+    "enemy:mireling:guard",
+    "enemy:mireling:hybrid-ranged-guard",
+    "enemy:ogre:guard",
+    "enemy:ogre:hybrid-ranged-guard",
+    "enemy:orc:guard",
+    "enemy:reedbeast:hybrid-ranged-guard",
+    "enemy:skeleton:guard",
+    "enemy:skeleton:ranged-guard",
+    "enemy:wolf:guard"
+  ],
+  "enemyObservations": [
+    {
+      "key": "boss:abyss",
+      "species": "abyss",
+      "captain": false,
+      "guard": false,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "boss:archive",
+      "species": "archive",
+      "captain": false,
+      "guard": false,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "boss:cindermaw",
+      "species": "cindermaw",
+      "captain": false,
+      "guard": false,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "boss:citadel",
+      "species": "citadel",
+      "captain": false,
+      "guard": false,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "boss:crypt",
+      "species": "crypt",
+      "captain": false,
+      "guard": false,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "boss:mine",
+      "species": "mine",
+      "captain": false,
+      "guard": false,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "boss:mire",
+      "species": "mire",
+      "captain": false,
+      "guard": false,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "boss:ridge",
+      "species": "ridge",
+      "captain": false,
+      "guard": false,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "boss:thorn",
+      "species": "thorn",
+      "captain": false,
+      "guard": false,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "boss:warlord",
+      "species": "warlord",
+      "captain": false,
+      "guard": false,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:archer:ranged",
+      "species": "archer",
+      "captain": false,
+      "guard": false,
+      "ranged": true,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:archer:ranged-guard",
+      "species": "archer",
+      "captain": false,
+      "guard": true,
+      "ranged": true,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:ashbeast",
+      "species": "ashbeast",
+      "captain": false,
+      "guard": false,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:ashbeast:captain-hybrid-ranged-guard",
+      "species": "ashbeast",
+      "captain": true,
+      "guard": true,
+      "ranged": true,
+      "hybrid": true
+    },
+    {
+      "key": "enemy:ashbeast:guard",
+      "species": "ashbeast",
+      "captain": false,
+      "guard": true,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:ashbeast:hybrid-ranged",
+      "species": "ashbeast",
+      "captain": false,
+      "guard": false,
+      "ranged": true,
+      "hybrid": true
+    },
+    {
+      "key": "enemy:ashbeast:ranged-guard",
+      "species": "ashbeast",
+      "captain": false,
+      "guard": true,
+      "ranged": true,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:crownguard:guard",
+      "species": "crownguard",
+      "captain": false,
+      "guard": true,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:crownguard:ranged",
+      "species": "crownguard",
+      "captain": false,
+      "guard": false,
+      "ranged": true,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:crownguard:ranged-guard",
+      "species": "crownguard",
+      "captain": false,
+      "guard": true,
+      "ranged": true,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:goblin",
+      "species": "goblin",
+      "captain": false,
+      "guard": false,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:goblin:captain-ranged-guard",
+      "species": "goblin",
+      "captain": true,
+      "guard": true,
+      "ranged": true,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:goblin:guard",
+      "species": "goblin",
+      "captain": false,
+      "guard": true,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:goblin:ranged",
+      "species": "goblin",
+      "captain": false,
+      "guard": false,
+      "ranged": true,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:goblin:ranged-guard",
+      "species": "goblin",
+      "captain": false,
+      "guard": true,
+      "ranged": true,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:mireling",
+      "species": "mireling",
+      "captain": false,
+      "guard": false,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:mireling:captain-hybrid-ranged-guard",
+      "species": "mireling",
+      "captain": true,
+      "guard": true,
+      "ranged": true,
+      "hybrid": true
+    },
+    {
+      "key": "enemy:mireling:guard",
+      "species": "mireling",
+      "captain": false,
+      "guard": true,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:mireling:hybrid-ranged",
+      "species": "mireling",
+      "captain": false,
+      "guard": false,
+      "ranged": true,
+      "hybrid": true
+    },
+    {
+      "key": "enemy:mireling:hybrid-ranged-guard",
+      "species": "mireling",
+      "captain": false,
+      "guard": true,
+      "ranged": true,
+      "hybrid": true
+    },
+    {
+      "key": "enemy:ogre",
+      "species": "ogre",
+      "captain": false,
+      "guard": false,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:ogre:guard",
+      "species": "ogre",
+      "captain": false,
+      "guard": true,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:ogre:hybrid-ranged",
+      "species": "ogre",
+      "captain": false,
+      "guard": false,
+      "ranged": true,
+      "hybrid": true
+    },
+    {
+      "key": "enemy:ogre:hybrid-ranged-guard",
+      "species": "ogre",
+      "captain": false,
+      "guard": true,
+      "ranged": true,
+      "hybrid": true
+    },
+    {
+      "key": "enemy:orc",
+      "species": "orc",
+      "captain": false,
+      "guard": false,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:orc:captain",
+      "species": "orc",
+      "captain": true,
+      "guard": false,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:orc:guard",
+      "species": "orc",
+      "captain": false,
+      "guard": true,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:orc:hybrid-ranged",
+      "species": "orc",
+      "captain": false,
+      "guard": false,
+      "ranged": true,
+      "hybrid": true
+    },
+    {
+      "key": "enemy:reedbeast",
+      "species": "reedbeast",
+      "captain": false,
+      "guard": false,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:reedbeast:hybrid-ranged",
+      "species": "reedbeast",
+      "captain": false,
+      "guard": false,
+      "ranged": true,
+      "hybrid": true
+    },
+    {
+      "key": "enemy:reedbeast:hybrid-ranged-guard",
+      "species": "reedbeast",
+      "captain": false,
+      "guard": true,
+      "ranged": true,
+      "hybrid": true
+    },
+    {
+      "key": "enemy:skeleton",
+      "species": "skeleton",
+      "captain": false,
+      "guard": false,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:skeleton:guard",
+      "species": "skeleton",
+      "captain": false,
+      "guard": true,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:skeleton:ranged",
+      "species": "skeleton",
+      "captain": false,
+      "guard": false,
+      "ranged": true,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:skeleton:ranged-guard",
+      "species": "skeleton",
+      "captain": false,
+      "guard": true,
+      "ranged": true,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:wolf",
+      "species": "wolf",
+      "captain": false,
+      "guard": false,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:wolf:captain-guard",
+      "species": "wolf",
+      "captain": true,
+      "guard": true,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
+      "key": "enemy:wolf:guard",
+      "species": "wolf",
+      "captain": false,
+      "guard": true,
+      "ranged": false,
+      "hybrid": false
+    }
+  ],
+  "sources": {
+    "src/prototype/visuals.js": "833491f8a94fa9032e792b2aa6b67a5ecc7d9f0006a1daebd99daacedc93668d",
+    "src/prototype/world.js": "bed381d82380a20c90a7f1b5b41d2d7956f911e0817a04a09a1266d7a242f2eb",
+    "src/prototype/rules.js": "32de2d1fe194fd4245847cbf6460a9142bca19990d68bd0ee4a0d151e1ecfeb3",
+    "src/prototype/data.js": "2857cba6812013313a5dd3a9751a7a1b28b418ed98d995a087b68609120e69a1",
+    "src/prototype/sprites.js": "8cd15feb782b191c27c99365249d65d58e2740b378d02c3204bf97efcaa4302f",
+    "src/prototype/renderer.js": "a89d62e60c7d3c75c25be9afdbb25798bc9079b2391984abda0ab746dd4f3005"
+  },
+  "limits": "Deterministic normal/Nightmare world samples support source-case classification; every actual art job still requires its exact current state/reference. Future summon/night/seed additions are not inferred from these samples."
+}
