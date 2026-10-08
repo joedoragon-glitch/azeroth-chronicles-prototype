@@ -517,22 +517,28 @@
         'Basic barracks recovery is available from Expedition Rank 1.',
         [
           action(
-            'Treat wounded companions · 30 crowns',
+            'Treat wounded companions · ' +
+              Campaign.rules.balance.companions.treatmentCost +
+              ' crowns',
             () => {
               getGame().treatCompanions();
               barracksRecoveryMenu(b, back);
             },
             'Restores every living wounded companion to full health',
-            !wounded || getGame().hero.gold < 30 || getGame().refugeThreat(),
+            !wounded ||
+              getGame().hero.gold < Campaign.rules.balance.companions.treatmentCost ||
+              getGame().refugeThreat(),
           ),
           action(
-            'Recover fallen companion · 40 crowns',
+            'Recover fallen companion · ' +
+              Campaign.rules.balance.companions.recoveryCost +
+              ' crowns',
             () => {
               getGame().recover();
               barracksRecoveryMenu(b, back);
             },
             'Restores one fallen companion at full health',
-            !fallen || getGame().hero.gold < 40,
+            !fallen || getGame().hero.gold < Campaign.rules.balance.companions.recoveryCost,
           ),
         ],
         back,
@@ -875,14 +881,17 @@
               : action(
                   b.upgradePaid
                     ? 'Resume Full Barracks upgrade'
-                    : 'Upgrade to Full Barracks · 100 crowns',
+                    : 'Upgrade to Full Barracks · ' +
+                        Campaign.rules.balance.barracks.fullUpgradeCost +
+                        ' crowns',
                   () => {
                     getGame().upgradeBarracks(b.id);
                     barracksMenu(b, back);
                   },
                   'Optional upgrade · required only for active groups above 3 · becomes a resource deposit · unlocks full operations',
                   !getGame().availableLabor().length ||
-                    (!b.upgradePaid && getGame().hero.gold < 100),
+                    (!b.upgradePaid &&
+                      getGame().hero.gold < Campaign.rules.balance.barracks.fullUpgradeCost),
                 ),
           );
         else
@@ -1030,8 +1039,8 @@
       else
         actions.push(
           ...[
-            ['soldier', 'Soldier', 70],
-            ['archer', 'Ranger', 100],
+            ['soldier', 'Soldier', Campaign.rules.balance.companions.recruitPrices.soldier],
+            ['archer', 'Ranger', Campaign.rules.balance.companions.recruitPrices.archer],
           ].map(([type, label, price]) =>
             action(
               'Recruit ' + label + ' · ' + price + ' crowns',
@@ -1046,13 +1055,16 @@
         );
       actions.push(
         action(
-          'Recover fallen companion · 40 crowns',
+          'Recover fallen companion · ' +
+            Campaign.rules.balance.companions.recoveryCost +
+            ' crowns',
           () => {
             getGame().recover();
             townRecruitmentMenu(back);
           },
           '',
-          !getGame().s.party.some((u) => u.hp <= 0) || getGame().hero.gold < 40,
+          !getGame().s.party.some((u) => u.hp <= 0) ||
+            getGame().hero.gold < Campaign.rules.balance.companions.recoveryCost,
         ),
       );
       openMenu(
@@ -1236,32 +1248,14 @@
       );
     }
     return {
-      expeditionSupportActions,
       teacher,
       skillBook,
       supplier,
       smith,
-      unitLabel,
-      rosterLabel,
-      regionalSpecialistProgress,
       regionalSpecialistObjective,
-      regionalSpecialistBarracksDetail,
-      barracksSpecialistMenu,
-      barracksRecoveryMenu,
-      barracksRecruitmentMenu,
-      barracksLaborMenu,
-      barracksGroupMenu,
-      barracksCompanyMenu,
-      barracksOperationsMenu,
-      expeditionBarracksAction,
       barracksMenu,
       inventory,
-      townRecruitmentMenu,
-      townLaborMenu,
       partyMenu,
-      formatTrainingNumber,
-      disciplineEffect,
-      freeTalentResetMenu,
       talents,
       quests,
     };

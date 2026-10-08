@@ -2,7 +2,14 @@
 const fs=require('fs'),path=require('path'),assert=require('node:assert/strict'),Sprites=require('../src/prototype/sprites.js'),Visuals=require('../src/prototype/visuals.js');
 
 const diskManifest=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/sprites/manifest.json'),'utf8'));
-assert.deepEqual(diskManifest.sprites,{},'production manifest stays empty until a canon-faithful sprite is approved');
+assert.equal(typeof diskManifest.version,'number');
+assert(diskManifest.sprites && !Array.isArray(diskManifest.sprites) && typeof diskManifest.sprites==='object');
+for(const [key,entry] of Object.entries(diskManifest.sprites)){
+ assert(/^[a-z][a-z0-9-]*(?::[a-z0-9_-]+)+$/.test(key) && entry && typeof entry.src==='string','registered entries name an exact key and image');
+ assert(/^\.\/assets\/sprites\/[^?#]+\.(png|webp)$/.test(entry.src) && !entry.src.includes('..'),'registered paths stay local');
+ for(const field of ['displayWidth','displayHeight','scale','labelHeight'])if(entry[field]!==undefined)assert(Number.isFinite(entry[field])&&entry[field]>0,field);
+ for(const field of ['anchorX','anchorY'])if(entry[field]!==undefined)assert(Number.isFinite(entry[field])&&entry[field]>=0&&entry[field]<=1,field);
+}
 assert.match(diskManifest.artDirection,/canonical procedural visuals/i,'manifest names the procedural renderer as canon');
 assert.doesNotMatch(diskManifest.artDirection,/Warcraft|Ragnarok/i,'sprite direction cannot depend on external style references');
 assert.equal(typeof Visuals.atmosphere,'function','procedural graphics expose regional atmosphere without sprite assets');
@@ -87,3 +94,23 @@ assert.equal(Sprites.height({renderKind:'enemy',species:'wolf'},0,false,54),54);
 assert.equal(Sprites.entityScale({visualScale:1.18},{scale:1}),1.18);
 assert.equal(Sprites.entityScale({type:'boss',form:'true'},{scale:1}),1.14);
 console.log('PASS Static sprite registry preserves exact variants, anchors, scaling and procedural fallback.');
+
+// A failed/missing image returns false, and the actual renderer reaches its procedural owner.
+(async()=>{
+ const vm=require('node:vm'),fixtures=require('./helpers/sprite-fixtures.cjs');
+ const scope={console,Image:class{set src(src){queueMicrotask(()=>{if(src.endsWith('test-fixture-b.png'))this.onerror();else{this.width=this.naturalWidth=2;this.height=this.naturalHeight=2;this.onload();}})}},fetch:async()=>new Response(JSON.stringify(fixtures.manifest())),Response};
+ vm.createContext(scope);vm.runInContext(fs.readFileSync(path.join(__dirname,'../src/prototype/sprites.js'),'utf8'),scope);
+ const sprites=scope.PrototypeSprites;await sprites.preload();assert.equal(sprites.status().loaded,2);assert.equal(sprites.status().failed,1);
+ const drawn=[],ctx=new Proxy({measureText:t=>({width:String(t).length*6}),createLinearGradient:()=>({addColorStop(){}}),createRadialGradient:()=>({addColorStop(){}})},{get:(o,k)=>k in o?o[k]:(...args)=>{if(k==='drawImage')drawn.push(args)}});
+ assert(sprites.draw(ctx,{renderKind:'hero',class:'paladin'},{x:100,y:100}));
+ assert.deepEqual(drawn[0].slice(1),[84,65,32,40],'default/explicit anchors and dimensions apply at drawing');
+ assert.equal(sprites.draw(ctx,{renderKind:'ally',type:'soldier'},{x:100,y:100}),false,'failed image stays procedural');
+ assert.equal(sprites.draw(ctx,{renderKind:'enemy',species:'goblin',ranged:true},{x:100,y:100}),false,'absent exact variant stays procedural');
+ const C=require('../src/prototype/engine'),Renderer=require('../src/prototype/renderer'),c=new C('normal','paladin',()=>.9);
+ c.zone().props=[];c.zone().enemies=[];c.zone().npcs=[];c.zone().nodes=[];c.zone().buildings=[];
+ c.s.party=[c.unit('soldier',c.hero.x+25,c.hero.y)];const procedural=[];
+ Renderer.create({getGame:()=>c,canvas:{width:375,height:812},ctx,platform:{cameraAnchor:()=>({x:190,y:400})},Campaign:C,PrototypeVisuals:{...Visuals,draw(_ctx,e){procedural.push(e.id||e.class)}},PrototypeCombatVisuals:require('../src/prototype/combat-visuals'),PrototypeSprites:sprites,now:()=>16000,chargePresentation:()=>null,isPaused:()=>false}).draw();
+ assert(procedural.includes(c.s.party[0].id),'renderer actually calls procedural draw for failed asset');
+ assert(!procedural.includes('paladin'),'loaded exact hero is drawn by sprite layer');
+ console.log('PASS loaded, failed and absent image paths exercise actual renderer fallback and anchored drawing');
+})().catch(e=>{console.error(e);process.exitCode=1});

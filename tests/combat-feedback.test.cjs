@@ -47,7 +47,7 @@ assert.equal(a.soundKind({type:'basicComboFinisher',class:'mage'}),'mageComboFin
 assert.equal(a.soundKind({type:'basicComboFinisher',class:'ranger'}),'rangerComboFinisher');
 assert.equal(a.soundKind({type:'companionSkill',skill:'power-strike'}),null,'companionSkill marker is intentionally silent because its concrete attack event owns the sound');
 for(const type of ['expeditionRank','rest','tributeDiscovery','sideInteriorDiscovery'])assert(a.supportsType(type),type+' has an explicit noncombat audio decision');
-const engineSource=fs.readFileSync(path.join(__dirname,'../src/prototype/engine.js'),'utf8'),literalEvents=[...new Set([...engineSource.matchAll(/this\.event\(\s*['"]([^'"]+)['"]/g)].map(m=>m[1]))];
+const engineSource=['engine','world','navigation','progression','save'].map(name=>fs.readFileSync(path.join(__dirname,'../src/prototype/'+name+'.js'),'utf8')).join('\n'),literalEvents=[...new Set([...engineSource.matchAll(/this\.event\(\s*['"]([^'"]+)['"]/g)].map(m=>m[1]))];
 for(const type of literalEvents)assert(a.supportsType(type),'engine event lacks an explicit audio route or intentional-silence decision: '+type);
 console.log('PASS current engine event inventory is explicitly covered by audio routing');
 

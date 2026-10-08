@@ -3297,7 +3297,9 @@
       resetCost: 250,
     },
     instructors: {
-      skillCeilings: { thorn: 2, mire: 3, ridge: 4, warlord: 6, citadel: 8 },
+      skillCeilings: Object.fromEntries(
+        Object.entries(teachers).map(([id, def]) => [id, def.maxRank]),
+      ),
       expeditionCeilings: { thorn: 2, mire: 3, ridge: 4, warlord: 5, citadel: 6 },
     },
     skills: {
@@ -3306,6 +3308,7 @@
     },
     pursuit: { burstSeconds: 1.2, burstMultiplier: 1.5, mercyStartRadius: 300 },
     growth: { xpPerLevel: 120, hpPerLevel: 25 },
+    barracks: { buildCost: 20, fullUpgradeCost: 100 },
     equipment: {
       tiers: { crypt: 1, mine: 2, abyss: 3, cindermaw: 4 },
       prices: { weapon: [0, 100, 450, 1000, 2000], armor: [0, 80, 300, 700, 1200] },
@@ -3319,6 +3322,7 @@
       vitalityPerRank: 0.1,
       vitalityCost: 200,
       recruitPrices: { soldier: 70, archer: 100 },
+      barracksRecruitPrices: { soldier: 60, archer: 85 },
       recoveryCost: 40,
       treatmentCost: 30,
       activeCaps: [0, 2, 3, 3, 4, 5, 6],

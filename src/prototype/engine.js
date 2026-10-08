@@ -1521,7 +1521,7 @@
         }));
     }
     barracksRecruitPrice(type) {
-      return { soldier: 60, archer: 85 }[type] || 0;
+      return R.balance.companions.barracksRecruitPrices[type] || 0;
     }
 
     buyPotion(type, advanced = false) {
@@ -1782,7 +1782,7 @@
       );
     }
     barracksBuildCost() {
-      return this.hasAnyBarracks() ? 20 : 0;
+      return this.hasAnyBarracks() ? R.balance.barracks.buildCost : 0;
     }
     build() {
       if (this.isDungeon()) return false;
@@ -1835,7 +1835,7 @@
         builder = this.availableLabor()[0];
       if (!b || (this.s.expeditionRank || 1) < 4 || already || !builder) return false;
       if (!b.upgradePaid) {
-        if (!this.spend(100)) return false;
+        if (!this.spend(R.balance.barracks.fullUpgradeCost)) return false;
         b.upgradePaid = true;
         b.upgradeProgress = b.upgradeProgress || 0;
       }

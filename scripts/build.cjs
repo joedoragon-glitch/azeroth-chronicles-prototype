@@ -40,13 +40,16 @@ const order = [...template.matchAll(/<script src="\.\/([^"]+)"/g)].map((m) => m[
 if (JSON.stringify(order) !== JSON.stringify(scripts))
   throw Error('Entry script order differs from asset inventory.');
 const sprites = JSON.parse(read('assets/sprites/manifest.json'));
+const spriteRoot = fs.realpathSync(path.join(root, 'assets/sprites')) + path.sep;
 for (const entry of Object.values(sprites.sprites || {}))
   if (entry?.src) {
     const file = entry.src.replace(/^\.\//, '');
     if (
       !file.startsWith('assets/sprites/') ||
       file.includes('..') ||
-      !fs.existsSync(path.join(root, file))
+      !fs.existsSync(path.join(root, file)) ||
+      !fs.statSync(path.join(root, file)).isFile() ||
+      !fs.realpathSync(path.join(root, file)).startsWith(spriteRoot)
     )
       throw Error('Missing or invalid sprite: ' + file);
   }
