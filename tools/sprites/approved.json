@@ -824,6 +824,190 @@
         "notes": "Joel authorized generation, testing, implementation and publication in this chat. This records engineer review, not separate user acceptance of this generated candidate. Static presentation avoids mixing a new design with stale frames."
       },
       "revision": "9b9548bf117f33a4ef68b23be54e217def7f9cbd2fdb871747821846cfc00146"
+    },
+    "prop:bush:vale": {
+      "version": 2,
+      "key": "prop:bush:vale",
+      "catalogId": "273",
+      "canonHash": "e131df531ec37a17a39fdabac720d23939d04a3e4fcb4525f51a405a15b0d0f0",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "3f58b47d332786e65b2f2e60a34b6c19cee2fe20af92309933dcd8d87a9a952b",
+      "source": {
+        "file": "55fd9dc986035646929322e6af43c63fec83291ca05474d8c6902089407e215b.png",
+        "format": "png",
+        "width": 1648,
+        "height": 1648,
+        "bytes": 140921,
+        "decodedBytes": 10863616,
+        "hash": "55fd9dc986035646929322e6af43c63fec83291ca05474d8c6902089407e215b",
+        "pixelHash": "33e31d7f2644e7e3dd0f76b78059d1f2d16be06a9545d18732d584637eacc6e7",
+        "bounds": {
+          "x1": 220,
+          "y1": 284,
+          "x2": 1412,
+          "y2": 1368
+        },
+        "padding": 220,
+        "transparentPixels": 2670267,
+        "visiblePixels": 45637,
+        "lowAlphaPixels": 3680,
+        "materialBounds": {
+          "x1": 670,
+          "y1": 1020,
+          "x2": 978,
+          "y2": 1215
+        }
+      },
+      "output": {
+        "file": "prop-bush-vale-abd74f53e50989b5a50c1d7bf5aacea2a68596ba92beabf7cd5d192e682f212b.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 2599,
+        "decodedBytes": 147456,
+        "hash": "abd74f53e50989b5a50c1d7bf5aacea2a68596ba92beabf7cd5d192e682f212b",
+        "pixelHash": "8581eb2f8965fa75408bfe0dc50fe2e9f9be29ecd8a6bd4552c0168f36ec7ce4",
+        "bounds": {
+          "x1": 78,
+          "y1": 130,
+          "x2": 114,
+          "y2": 159
+        },
+        "padding": 32,
+        "transparentPixels": 36248,
+        "visiblePixels": 616,
+        "lowAlphaPixels": 40,
+        "materialBounds": {
+          "x1": 78,
+          "y1": 130,
+          "x2": 113,
+          "y2": 152
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1648, 1648],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": 0,
+          "y": 11,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "kind": "engineer-authorized",
+        "userAppearanceAcceptance": false,
+        "nativeScale": true,
+        "scope": "Faithful implementation authorized by Joel’s request to release already completed work on 2026-10-08. Fixed shape/palette preserved with organic plant contours.",
+        "technicalReview": "Four desktop/phone viewports in day/night; native scene comparison and full-scene hashes retained beside the candidate."
+      },
+      "revision": "aa0612364d5451a516c326c008ff055379f3d531d5a2395c24259bf7dcb0e9a9"
+    },
+    "prop:wildflowers:vale": {
+      "version": 2,
+      "key": "prop:wildflowers:vale",
+      "catalogId": "275",
+      "canonHash": "20469b6935a3445c0137df72d9ad37e926ae29dbef67307b7df29a8565c347e0",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "c48954578fb68399057c6197eb21b1347506732aa7c117831fac56c0b988962e",
+      "source": {
+        "file": "953255dd847bb270d951b2bd01aa6be99d43c7b5fbef32d0b66f75a36e98f5bc.png",
+        "format": "png",
+        "width": 1440,
+        "height": 1440,
+        "bytes": 54327,
+        "decodedBytes": 8294400,
+        "hash": "953255dd847bb270d951b2bd01aa6be99d43c7b5fbef32d0b66f75a36e98f5bc",
+        "pixelHash": "bbb5e9b3673fa713ac40433930e25adaae78418fbd491c3d0ff597422e28dd8d",
+        "bounds": {
+          "x1": 239,
+          "y1": 146,
+          "x2": 1300,
+          "y2": 1274
+        },
+        "padding": 139,
+        "transparentPixels": 2058083,
+        "visiblePixels": 15517,
+        "lowAlphaPixels": 6085,
+        "materialBounds": {
+          "x1": 650,
+          "y1": 920,
+          "x2": 814,
+          "y2": 1040
+        }
+      },
+      "output": {
+        "file": "prop-wildflowers-vale-31ce71511df0b3d280d9a7c0f3de51bb4fa9f66efe2f878fc9b02f07d7f4cf00.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 1437,
+        "decodedBytes": 147456,
+        "hash": "31ce71511df0b3d280d9a7c0f3de51bb4fa9f66efe2f878fc9b02f07d7f4cf00",
+        "pixelHash": "2291a8f5b36b9e6b008f4f456ceadb5a1b99bb050833f8df6aed4d4596ffc78e",
+        "bounds": {
+          "x1": 85,
+          "y1": 137,
+          "x2": 110,
+          "y2": 167
+        },
+        "padding": 24,
+        "transparentPixels": 36578,
+        "visiblePixels": 286,
+        "lowAlphaPixels": 115,
+        "materialBounds": {
+          "x1": 86,
+          "y1": 138,
+          "x2": 107,
+          "y2": 153
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1440, 1440],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": -1,
+          "y": 15,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "kind": "engineer-authorized",
+        "userAppearanceAcceptance": false,
+        "nativeScale": true,
+        "scope": "Faithful implementation authorized by Joel’s request to release already completed work on 2026-10-08. Fixed shape/palette preserved with organic plant contours.",
+        "technicalReview": "Four desktop/phone viewports in day/night; native scene comparison and full-scene hashes retained beside the candidate."
+      },
+      "revision": "1f5e60a8e25aff8b6f1e3d56b3c4991d71caf5a335b6073bd943961fba028a5e"
     }
   },
   "history": {

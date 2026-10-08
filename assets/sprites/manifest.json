@@ -126,6 +126,30 @@
       "anchorX": 0.5,
       "anchorY": 0.75,
       "labelHeight": 54
+    },
+    "prop:bush:vale": {
+      "src": "./assets/sprites/prop-bush-vale-abd74f53e50989b5a50c1d7bf5aacea2a68596ba92beabf7cd5d192e682f212b.png",
+      "width": 192,
+      "height": 192,
+      "hash": "abd74f53e50989b5a50c1d7bf5aacea2a68596ba92beabf7cd5d192e682f212b",
+      "revision": "aa0612364d5451a516c326c008ff055379f3d531d5a2395c24259bf7dcb0e9a9",
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 64
+    },
+    "prop:wildflowers:vale": {
+      "src": "./assets/sprites/prop-wildflowers-vale-31ce71511df0b3d280d9a7c0f3de51bb4fa9f66efe2f878fc9b02f07d7f4cf00.png",
+      "width": 192,
+      "height": 192,
+      "hash": "31ce71511df0b3d280d9a7c0f3de51bb4fa9f66efe2f878fc9b02f07d7f4cf00",
+      "revision": "1f5e60a8e25aff8b6f1e3d56b3c4991d71caf5a335b6073bd943961fba028a5e",
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 64
     }
   },
   "formatVersion": 3

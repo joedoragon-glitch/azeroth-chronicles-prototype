@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "integrated",
+  "designId": "prop-bush-vale",
+  "name": "Environmental Bush",
+  "kind": "environment",
+  "nextAction": "Verify prepared-work release CI and exact live deployment.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Previously generated fixed-shape Vale flora reviewed at native size; Joel authorized implementation of completed work without new generation.",
+    "decisionDate": "2026-10-08",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "contentDocuments": [],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": null,
+    "proceduralDesignAcceptance": null,
+    "spriteProductionAuthorization": "Prior mass-production request and current explicit prepared-work implementation request.",
+    "generatedAppearanceAcceptance": "Engineer reviewed; no separate Joel acceptance claimed.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "369cc42889228fb1dbfc1a54c7048deda1f051b0",
+    "ownerFilesAndBranches": [],
+    "exactEntityState": {
+      "renderKind": "prop",
+      "decorative": true,
+      "structure": "bush",
+      "id": "aesthetic-nature-7"
+    },
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [
+      "tools/sprites/batches/2026-10-08-01/prop-bush-vale/native-review.png",
+      "tools/sprites/batches/2026-10-08-01/prop-bush-vale/native-review.json"
+    ],
+    "traitsToPreserve": [
+      "Three-lobe organic green bush",
+      "Existing footprint and grounding"
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [
+      "273"
+    ],
+    "verifiedRuntimeKeys": [
+      "prop:bush:vale"
+    ],
+    "requiredVisibleAssets": [
+      "Static prop"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": []
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "tools/sprites/batches/2026-10-08-01/prop-bush-vale/prepared/candidate.json"
+    ],
+    "approvedRecordKey": "prop:bush:vale",
+    "activeContentRevision": "aa0612364d5451a516c326c008ff055379f3d531d5a2395c24259bf7dcb0e9a9",
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "procedural",
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

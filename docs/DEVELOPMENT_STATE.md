@@ -113,3 +113,5 @@ User-requested correction simplifies face features to survive nearest downsampli
 ### v0.8.96 — Regional ground texture pilots
 
 Five region-specific ground textures add quiet grass/soil, wet earth, grit, ash and slate grain within existing world-coordinate floor clips. Lazy decoding and procedural fallback remain authoritative; total player texture payload is 507,307 bytes, 256² each. Original masters, exact prompts, seamless-wrap and native device day/night reviews retained. Each registration can roll back to procedural. Reproducible material showroom added. Release pending CI and exact deployment.
+
+The prepared-work release also activates the reviewed fixed-shape Vale bush and wildflowers. Existing flora placement and gameplay geometry remain authoritative. User authorization on 8 October permits release of completed work; new image generation and unfinished assets stay paused.

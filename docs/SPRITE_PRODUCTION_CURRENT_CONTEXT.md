@@ -1,4 +1,4 @@
-> **PAUSED by Joel, 8 October 2026.** Resume only on his request. Read [the saved checkpoint](SPRITE_PRODUCTION_PAUSED_2026-10-08.md) first; this branch includes unpublished work.
+> **Prepared-work release authorized by Joel, 8 October 2026 at 11:22 America/New_York.** Release the five completed ground materials and two reviewed flora sprites. New generation and remaining mass production stay paused. The [saved checkpoint](SPRITE_PRODUCTION_PAUSED_2026-10-08.md) remains historical recovery evidence.
 
 # Sprite production checkpoint · 8 October 2026
 
@@ -35,3 +35,7 @@ PR #123 deployment run 37784625938 succeeded at exact merge SHA `369cc42889228fb
 ## Regional ground stage, v0.8.96
 
 T001–T005 are reviewed and locally registered after terrain pipeline completion. Original tool images remain opaque and unmodified, with explicit Lanczos resizing to 256² and no seam repair. Eight actual scene comparisons per material passed engineer review; source/output hashes and rollback targets are in the material registry. Stage release pending. No terrain production is claimed complete: roads, floors, rock/lava surfaces and bridge grain remain queued. Total image calls remain 16.
+
+## Prepared-work release authorization
+
+Joel asked to implement what is already done to reduce pending work. v0.8.96 includes T001–T005 ground materials plus Vale bush and wildflowers, using retained candidates and reviews with no new image calls. Grass and seeded rock variants remain pending. Nine body keys and five materials are registered in this release draft. Goblin v0.8.95 is verified live at merge `0d02d355ce4f59ab83df24fe6fc0f88ea72478b5`, successful deployment run `37789504897`. This release awaits remote CI and exact live deployment. Total image calls remain 16.

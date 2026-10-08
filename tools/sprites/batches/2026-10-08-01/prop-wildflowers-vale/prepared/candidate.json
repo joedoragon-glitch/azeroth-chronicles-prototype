@@ -86,7 +86,12 @@
     }
   },
   "review": {
-    "status": "pending",
-    "reference": null
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "kind": "engineer-authorized",
+    "userAppearanceAcceptance": false,
+    "nativeScale": true,
+    "scope": "Faithful implementation authorized by Joel’s request to release already completed work on 2026-10-08. Fixed shape/palette preserved with organic plant contours.",
+    "technicalReview": "Four desktop/phone viewports in day/night; native scene comparison and full-scene hashes retained beside the candidate."
   }
 }
