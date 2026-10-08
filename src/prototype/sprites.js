@@ -33,7 +33,7 @@
   }
 
   function candidateKeys(e, region = 0, rescued = false) {
-    if (!e) return [];
+    if (!e || e.presentation === 'workstation' || e.sceneRole) return [];
     const kind = e.renderKind;
     if (kind === 'hero') return ['hero:' + clean(e.class)];
     if (kind === 'ally') return ['ally:' + clean(e.class || e.type || 'worker')];
@@ -42,6 +42,7 @@
       return [enemyKey(e)];
     }
     if (kind === 'npc') {
+      if (e.kind === 'cage' && e.workstation === 'equipment-repair') return [];
       if (e.kind === 'cage')
         return ['cage:' + clean(e.family) + ':' + (rescued ? 'open' : 'closed')];
       if (e.family && ['teacher', 'smith', 'alchemist'].includes(e.kind))

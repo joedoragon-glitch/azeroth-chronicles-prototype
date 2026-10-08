@@ -280,6 +280,26 @@ V0.8.79 reconciles the affected canonical cues after procedural polishing. Repea
 
 V0.8.80 strengthens the PROCEDURAL terrain/effects families without adding sprite keys or generation entries. Natural ground uses feathered world-space materials; roads, water banks, ravine strata, lava crust and main-dungeon footprints/partitions follow actual geometry. Normal abilities, projectile contacts and recovery cues carry their existing gameplay identity. Danger outlines remain procedural and retain contrast after atmospheric grading. See `TERRAIN_EFFECTS_POLISH_V0880.md`; the numbered catalog remains 231 entries.
 
+## Ironroot Highlands procedural additions v0.8.87
+
+These small production and household scenes use the existing regional materials and stay procedural. The 231-entry generation catalog and production registry are unchanged. Dara's equipment-repair staging is a contextual specialist drawing; it must not use the old standalone cage sprite.
+
+| Renderer family | Classification |
+| --- | --- |
+| `highland-pay-station` | PROCEDURAL — regional payroll table and everyday worker |
+| `ore-sorting-bay` | PROCEDURAL — weighing and sorting station |
+| `mint-workbench` | PROCEDURAL — small working press with few visible crowns |
+| `caravan-loading-bay` | PROCEDURAL — regional hauling cart and sealed cargo |
+| `mine-supports` | PROCEDURAL — repeated mine timber and repair detail |
+| `mine-old-markings` | PROCEDURAL — old cut stone and local mining traces |
+| `mine-collapse` | PROCEDURAL — rubble and broken supports |
+| `ridge-supper` | PROCEDURAL — domestic table and meal |
+| `ridge-game-corner` | PROCEDURAL — board, counters and seats |
+| `ridge-study` | PROCEDURAL — limited work material and sealed official correspondence |
+| `ridge-bed` | PROCEDURAL — private household comfort |
+| `crag-rest` | PROCEDURAL — Wolf bedding and drinking bowl |
+| `cage` with `equipment-repair` workstation | PROCEDURAL — Dara at a secured equipment bench, same rescue state |
+
 ## Air-superiority project v0.8.86
 
 Four procedural families present Joel’s approved Bastion role without generating replacement sprites:

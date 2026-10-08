@@ -921,6 +921,13 @@
     openMenu(
       (room?.name || side?.name || r.name) + ' map',
       r.biome +
+        (game.zoneId === 'highlands'
+          ? '\n' + r.exploration
+          : game.zoneId === 'mine'
+            ? '\n' + game.boss('mine').history
+            : game.zoneId === 'supply-highlands'
+              ? '\nThe Master of Coin lives here off duty. Supper, a warm hearth and a tabletop game come before the ledger. Crag Tyrant protects the household; the three guarded caches still serve the Treasury raid.'
+              : '') +
         '\nTransport: ' +
         D.regions.map((r) => r.name).join(' → ') +
         '\nNamed places are destinations; tribute values and labor assignments belong in Barracks Operations.',

@@ -812,6 +812,51 @@
           this.s.zone = oldZone;
         }
       }
+      ironrootLivelihood(z) {
+        if (z.id !== 'highlands' || z.ironrootLifeVersion === 1) return;
+        const oldZone = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          z.props = z.props.filter((p) => !String(p.id || '').startsWith('ironroot-life-'));
+          const [townX, townY] = D.towns[this.regionIndex(z.id)];
+          const futureServices = Object.values(R.serviceOffsets).map(([x, y]) =>
+            this.safe(townX + x, townY + y, z.id),
+          );
+          for (const district of R.ironrootLife || []) {
+            for (const [j, [x, y, structure]] of district.props.entries()) {
+              const candidates = [{ x, y }];
+              for (let d = 35; d <= 175; d += 35)
+                for (let k = 0; k < 12; k++) {
+                  const angle = (k * Math.PI) / 6;
+                  candidates.push({ x: x + Math.cos(angle) * d, y: y + Math.sin(angle) * d });
+                }
+              const p = candidates.find(
+                (p) =>
+                  !this.blocked(p.x, p.y, z.id, 8, true) &&
+                  !z.npcs.some((n) => dist(n, p) < 85) &&
+                  !futureServices.some((n) => dist(n, p) < 85) &&
+                  !z.nodes.some((n) => dist(n, p) < 65) &&
+                  !z.roads?.some((path) =>
+                    path.some((b, k) => k && this.distanceToSegment(p, path[k - 1], b) < 65),
+                  ) &&
+                  !z.props.some((q) => dist(q, p) < (q.r || 0) + 45),
+              );
+              if (!p) continue;
+              z.props.push({
+                id: 'ironroot-life-' + district.id + '-' + j,
+                ...p,
+                r: 0,
+                decorative: true,
+                structure,
+                ironrootDistrict: district.id,
+              });
+            }
+          }
+          z.ironrootLifeVersion = 1;
+        } finally {
+          this.s.zone = oldZone;
+        }
+      }
       frontierOccupationLayout(z) {
         if (z.id !== 'frontier' || z.frontierLayoutVersion === 3) return;
         const districts = R.frontierDistricts || [],
@@ -1032,6 +1077,61 @@
           this.s.zone = oldZone;
         }
       }
+      regionalHandoffLife(z) {
+        const scenes = R.regionalHandoffScenes?.[z.id];
+        if (!scenes || z.regionalHandoffVersion === 1) return;
+        const previous = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          z.props = z.props.filter((p) => !String(p.id || '').startsWith('regional-handoff-'));
+          const [townX, townY] = D.towns[this.regionIndex(z.id)];
+          const futureServices = Object.values(R.serviceOffsets).map(([x, y]) =>
+            this.safe(townX + x, townY + y, z.id),
+          );
+          const clear = (p) =>
+            !this.blocked(p.x, p.y, z.id, 24) &&
+            !z.npcs.some((n) => dist(n, p) < 65) &&
+            !futureServices.some((n) => dist(n, p) < 65) &&
+            !z.nodes.some((n) => n.amount > 0 && dist(n, p) < 55) &&
+            !z.props.some((n) => dist(n, p) < 45) &&
+            !z.roads.some((path) =>
+              path.some((b, j) => j && this.distanceToSegment(p, path[j - 1], b) < 60),
+            );
+          for (const [j, [x, y, structure, district, sceneRole]] of scenes.entries()) {
+            let point = null;
+            for (const radius of [0, 50, 100, 150, 200]) {
+              for (let n = 0; n < 16; n++) {
+                const a = (n * Math.PI) / 8,
+                  p = { x: x + Math.cos(a) * radius, y: y + Math.sin(a) * radius };
+                if (clear(p)) {
+                  point = p;
+                  break;
+                }
+              }
+              if (point) break;
+            }
+            if (point)
+              z.props.push({
+                id: 'regional-handoff-' + j,
+                ...point,
+                r: 0,
+                decorative: true,
+                structure,
+                regionalDistrict: district,
+                ...(sceneRole ? { sceneRole } : {}),
+              });
+          }
+          z.regionalHandoffVersion = 1;
+        } finally {
+          this.s.zone = previous;
+        }
+      }
+      dungeonWorkstation(z) {
+        const spec = R.dungeonWorkstations?.[z.id];
+        if (!spec) return;
+        const captive = z.npcs.find((n) => n.kind === 'cage' && n.family === z.id);
+        if (captive) Object.assign(captive, spec, { x: spec.x, y: spec.y });
+      }
       abyssAviationProject(z) {
         if (z.id !== 'abyss' || z.flightProjectVersion === 1) return;
         // Update only presentation on existing saves: occupants, progress and geometry stay put.
@@ -1062,6 +1162,7 @@
         this.combatPopulation(z);
         this.nightEnemyPopulation(z);
         if (dungeonIds.includes(z.id)) {
+          this.dungeonWorkstation(z);
           this.decorateDungeon(z);
           this.abyssAviationProject(z);
           for (const e of z.enemies) this.upgradeRingleader(e);
@@ -1112,6 +1213,8 @@
         for (const e of z.enemies) this.upgradeRingleader(e);
         this.fieldCaptainPopulation(z);
         this.finalBossPopulation(z);
+        this.regionalHandoffLife(z);
+        this.ironrootLivelihood(z);
       }
       spaceQuestBoard(z) {
         if (dungeonIds.includes(z.id) || z.boardPositionVersion === 2) return;
