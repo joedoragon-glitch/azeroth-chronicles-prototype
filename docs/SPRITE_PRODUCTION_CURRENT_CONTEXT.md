@@ -21,3 +21,11 @@ Before generation, inspect the exact current renderer branch, entity/state and m
 Generate one static asset alone. Preserve current proportions, equipment placement and palette, adding material definition only. Generation references omit game-owned shadows, ground patches/chevrons and captain rings. Gameplay comparisons retain them. New identity-heavy static objects can become candidates; effects, seeded variation, geometry and contextual/rescue compositions keep their documented procedural decisions.
 
 Next after reconciliation: targeted Goblin face correction, refresh pilot metadata/anchors, then staged generation with resumable per-key records. Integration needs current exact keys, procedural overlays/fallbacks, loading measurements, browser/device/offline regression and verified deployment. Military Ringleader officer cues need a follow-up integration fix before those forms can use base images. Keep Issue 111 open through pilot registration and release evidence. Do not activate art solely because it passed image decoding.
+
+## Asset lifecycle and animation follow-up
+
+Read SPRITE_ASSET_LIFECYCLE_ANIMATION_AUDIT.md before bulk integration. Current eager loading, same-session same-key invalidation and lack of replacement/clip support are known readiness gaps. Keep current budget guards, implement bounded content-aware shared loading and reversible replacement, then prove a small optional clip/atlas adapter without changing simulation timing. Existing masters remain static fallbacks/references; new articulated/directional frames still need their own jobs.
+
+## New content and originating-chat handoff
+
+Joel requests that new procedural designs naturally progress to sprites when he requests them, including designs originating in location/lore chats. Follow DESIGN_TO_SPRITE_WORKFLOW.md and retain a per-design repository record using tools/sprites/design-handoff-template.json. Carry forward the exact accepted procedural reference, decision scope, stable identity, affected map/state, pending corrections and next action. Decompose locations into visible bodies/materials and preserve procedural scene owners. Animation requirements and replacement revisions travel with the design; their runtime support remains future engineering. The template creates no approval or active asset by itself.
