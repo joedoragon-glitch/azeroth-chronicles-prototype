@@ -29,7 +29,7 @@ Both domains install descriptors on the existing Campaign constructor/prototype,
 
 The menu catalog owns 28 definitions/actions (about 1,266 lines), exposing ten shell entry points and keeping helpers private. It receives getGame, Campaign/content, open/close/action, Recall, map and finale services. Delayed actions read the current run at invocation, preserving the original dynamic game variable behavior. Back callbacks, action ordering, disabled states and service reachability remain covered by UI/browser tests. Settings/start/update lifecycle, input clearing, charge cancellation, map Canvas and frame scheduling stay in app.js.
 
-Engine is about 5,601 lines versus 6,998 at baseline; app is about 2,027 versus 3,233. Those counts are consequences of responsibility movement, not acceptance targets. Combat, party AI, encounters and quest orchestration remain coupled in engine. Global/settings/lifecycle menus and map drawing remain in the shell. Further extraction needs similarly bounded comparisons; this pass does not claim complete decoupling.
+Engine is about 5,601 lines versus 6,996 at baseline; app is about 2,027 versus 3,209. Those counts are consequences of responsibility movement, not acceptance targets. Combat, party AI, encounters and quest orchestration remain coupled in engine. Global/settings/lifecycle menus and map drawing remain in the shell. Further extraction needs similarly bounded comparisons; this pass does not claim complete decoupling.
 
 ## Balance comparison
 
