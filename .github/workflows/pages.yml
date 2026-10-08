@@ -28,8 +28,8 @@ jobs:
         run: npm run format:check
       - name: Check generated entries and all published JavaScript
         run: npm run check
-      - name: Fast gameplay, save and UI regressions
-        run: npm run test:quick
+      - name: Full regression suite before merge
+        run: npm test
       - name: Use runner Chrome for browser smoke tests
         run: |
           npm install --no-save --package-lock=false playwright@1.62.1

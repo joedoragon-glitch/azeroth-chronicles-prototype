@@ -1,15 +1,17 @@
 # Runtime architecture
 
-The browser is the current desktop playtest target, especially Chromebook keyboard/trackpad use. The phone target is an installable PWA with dedicated touch presentation. They share campaign logic and content, rather than keeping two copies of the game. A future desktop executable or native phone wrapper can host those same boundaries; no wrapper or engine migration is part of v0.8.81.
+The browser is the current desktop playtest target, especially Chromebook keyboard/trackpad use. The phone target is an installable PWA with dedicated touch presentation. They share campaign logic and content, rather than keeping two copies of the game. A future desktop executable or native phone wrapper can host those same boundaries; no wrapper or engine migration is part of this housekeeping pass.
 
 ## Ownership
 
 | Module | Responsibility |
 | --- | --- |
-| `data.js` / `rules.js` | Approved content, economy, combat and authored geometry tables |
+| `data.js` / `rules.js` | Approved content and authoritative live balance (`rules.balance`), combat/support and authored geometry tables |
 | `world.js` | Region generation, settlements, authored sites, interiors, occupation layouts and world migrations |
 | `navigation.js` | Collision, line of sight, routing, movement and following |
-| `engine.js` | Campaign state, progression, combat, party behavior, save validation and migration |
+| `engine.js` | Authoritative Campaign state, simulation clock, combat, party behavior, encounters and quest orchestration |
+| `progression.js` | Hero growth, discipline ranks/resets, instructor curricula, Expedition training, equipment, rewards and companion inheritance |
+| `save.js` | v4 snapshots, validation/repair, restoration and legacy v2 migration; no browser storage |
 | `persistence.js` | Browser storage, existing v4 keys, profile persistence and original legacy backup retention |
 | `input.js` | Validated persistent bindings, pointer preferences and reachable destination requests |
 | `platform.js` | Input-capability detection, explicit screen choice and camera anchoring |
@@ -18,9 +20,12 @@ The browser is the current desktop playtest target, especially Chromebook keyboa
 | `sprites.js` | Optional faithful sprite translation and procedural fallback |
 | `audio.js` | Original music, contextual sound and audio lifecycle |
 | `runtime.js` | Bounded active-frame measurements and idle redraw scheduling |
-| `app.js` | Menus, keyboard/touch bindings, charge input, frame coordination and app-update lifecycle |
+| `menus.js` | Specialist, barracks, party, inventory and training menu definitions/actions; current game and shell callbacks injected |
+| `app.js` | Shell lifecycle, global/settings menus, map presentation, keyboard/touch coordination, charge input, frame scheduling and app updates |
 
-World and navigation install methods on Campaign's prototype before it is exported. They receive explicit content dependencies and have no browser dependency. This keeps the public Campaign API stable for saves, tests and existing callers. They do not introduce a second state store. Navigation's numerical rules are unchanged.
+World, navigation, progression and save owners install method descriptors before Campaign is exported. Save also installs the existing static validate/restore/migrate APIs. The domain modules receive the Campaign constructor and explicit content/configuration dependencies; none imports engine.js or uses browser storage. They receive explicit content dependencies and have no browser dependency. This keeps the public Campaign API stable for saves, tests and existing callers. They do not introduce a second state store. Navigation's numerical rules are unchanged. `Campaign.classes`, `talentProfiles` and `talentMaxRanks` retain compatible references to rules balance tables. Legacy weapon/import maps are compatibility data, not duplicate live balance. Instructor skill ceilings derive from the authored curriculum. Existing combat/support tables remain in rules.js.
+
+`menus.js` receives `getGame`, Campaign/content, action/open/close services, Recall, map and finale callbacks. It keeps helpers private and exports ten catalog entry points. Delayed actions read `getGame()` at invocation so switching/reloading a campaign cannot leave a copied or stale state store. Shell input clearing, charge cancellation, Back selection and frame scheduling remain in app.js.
 
 Rendering reads the campaign and holds only transient presentation state. Screen coordinates are logical CSS pixels. The browser shell sizes the physical canvas for device pixel ratio, capped at 2 on desktop and 1.5 on phone, with a three-million-pixel budget where the viewport permits it. Combat geometry remains in world coordinates. Existing zone initialization/migration stays in the world layer.
 
@@ -42,8 +47,10 @@ Performance samples retain at most 180 active frames and stay local. Exported re
 
 The campaign core is precached. Independent legacy games are cached only after they are opened online. Registered sprite assets join the current cache. New cache activation removes only obsolete Azeroth caches. Save keys are independent of cache versions.
 
-CI checks generated artifacts before testing. PRs run focused suites and desktop/phone browser paths. Main runs all suites and the full device matrix, publishes only after success, and checks that the live build identifier matches the tested commit before live smoke verification.
+CI checks generated artifacts before testing. PRs run all non-browser suites and desktop/phone browser paths. Main runs all suites and the full device matrix, publishes only after success, and checks that the live build identifier matches the tested commit before live smoke verification.
 
-## Further extraction
+## Remaining coupling
 
-`engine.js` still contains substantial combat and progression logic, and `app.js` still contains the menu catalog. These are the next candidates for measured, test-backed extraction when work touches those domains. No gameplay completion or finished sprite set is required to improve architecture. Asset additions should use the manifest and existing renderer adapter, rather than growing a portable HTML file.
+`engine.js` still contains combat, party AI, encounters and quest orchestration. `app.js` retains global/settings/lifecycle menus and map Canvas drawing alongside input/frame coordination. Domain methods deliberately call the shared Campaign API through `this`; this is an incremental boundary, not a fully isolated functional simulation. Additional combat or quest extraction should follow actual dependencies and preservation comparisons. No gameplay completion or finished sprite set is required. See `HOUSEKEEPING_AUDIT.md` for this pass and limits.
+
+All hand-authored campaign JavaScript and shared/desktop/phone CSS use pinned Prettier coverage. Only generated build-info.js is excluded; npm run check verifies its exact generator output. The populated-registry tests use isolated 2×2 PNG fixtures, never production art. Packaging rejects missing files and symlinks escaping the sprite directory. Service-worker install policy is unchanged: registered image failures reject installation, whereas malformed optional manifest JSON keeps procedural play.

@@ -22,6 +22,80 @@ const evidence = {
   scenarios: [],
   scenes: [],
 };
+const babel = require('prettier/plugins/babel'),
+  vm = require('node:vm');
+const baselineSource = fs.readFileSync(path.join(baseline, 'src/prototype/engine.js'), 'utf8');
+const declarations = babel.parsers.babel
+  .parse(baselineSource)
+  .program.body[0].expression.callee.body.body.filter((node) => node.type === 'VariableDeclaration')
+  .flatMap((node) => node.declarations);
+evidence.configuration = [];
+for (const [name, owner] of Object.entries({
+  classes: 'classes',
+  talentMaxRanks: 'disciplines.maxRanks',
+  talentProfiles: 'disciplines.profiles',
+  ceilings: 'instructors.skillCeilings',
+  expeditionCeilings: 'instructors.expeditionCeilings',
+  pursuitBurstSeconds: 'pursuit.burstSeconds',
+  pursuitBurstMultiplier: 'pursuit.burstMultiplier',
+  mercyStartRadius: 'pursuit.mercyStartRadius',
+  costs: 'skills.costs',
+  cooldowns: 'skills.cooldowns',
+})) {
+  const declaration = declarations.find((node) => node.id.name === name);
+  const before = json(
+    vm.runInNewContext(
+      '(' + baselineSource.slice(declaration.init.start, declaration.init.end) + ')',
+    ),
+  );
+  const after = owner.split('.').reduce((node, key) => node[key], B.rules.balance);
+  assert.equal(JSON.stringify(after), JSON.stringify(before), name + ' values/indices/order');
+  evidence.configuration.push({ name, owner: 'rules.balance.' + owner, before, after });
+}
+// Compare parsed CSS, retaining selector/declaration order, string contents and numeric values.
+const postcss = require('prettier/plugins/postcss');
+const cssTree = (node) => {
+  if (Array.isArray(node)) return node.map(cssTree);
+  if (!node || typeof node !== 'object') return node;
+  return Object.fromEntries(
+    Object.entries(node)
+      .filter(
+        ([key]) =>
+          ![
+            'raws',
+            'source',
+            'parent',
+            'start',
+            'end',
+            'loc',
+            'range',
+            'id',
+            'sourceIndex',
+            'spaces',
+            'after',
+            'before',
+            'text',
+          ].includes(key) && !(key === 'value' && node.nodes),
+      )
+      .map(([key, value]) => [
+        key,
+        key === 'value' && node.type === 'value-number'
+          ? Number(value)
+          : key === 'value' && node.type === 'selector-attribute' && typeof value === 'string'
+            ? value.replace(/^['"]|['"]$/g, '')
+            : cssTree(value),
+      ]),
+  );
+};
+evidence.styles = [];
+for (const name of ['prototype', 'desktop', 'phone']) {
+  const parse = (root) =>
+    cssTree(
+      postcss.parsers.css.parse(fs.readFileSync(path.join(root, 'styles', name + '.css'), 'utf8')),
+    );
+  assert.deepEqual(parse(current), parse(baseline), name + ' parsed CSS');
+  evidence.styles.push({ name, digest: hash(parse(current)) });
+}
 const rng = () => {
   let x = 912345;
   return () => (x = (Math.imul(x, 1664525) + 1013904223) >>> 0) / 4294967296;
@@ -63,7 +137,7 @@ function pair(mode, cls, succession) {
     return c.s.statistics.events.length;
   });
   for (const charged of [false, true])
-    for (const slot of [1, 2, 3]) {
+    for (const slot of charged ? [1, 2, 3] : [1, 2, 3, 4, 5, 6, 7, 8]) {
       step((charged ? 'charged' : 'ordinary') + '-' + slot, (c) => {
         c.hero.cd.fill(0);
         c.hero.mp = 1000;
@@ -72,8 +146,12 @@ function pair(mode, cls, succession) {
         Object.assign(c.hero, { x: 500, y: 500 });
         Object.assign(c.zone().enemies[0], { x: 570, y: 500 });
         assert(c.cast(slot, c.zone().enemies[0].id, charged));
-        for (let i = 0; i < 8; i++) c.tick(0.05, { x: 0, y: 0 });
-        return c.effects;
+        const timeline = [live(c)];
+        for (let i = 0; i < 8; i++) {
+          c.tick(0.05, { x: 0, y: 0 });
+          timeline.push(live(c));
+        }
+        return timeline;
       });
     }
   step('manual-ranger-health-and-mana', (c) => {
@@ -209,9 +287,11 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
   comparisons++;
 }
 assert.deepEqual(load(current, 'data'), load(baseline, 'data'), 'parsed content');
+assert.equal(JSON.stringify(B.data), JSON.stringify(A.data), 'content ordering');
 const newRules = { ...B.rules };
 delete newRules.balance;
 assert.deepEqual(newRules, A.rules, 'existing rule values, ordering and formulas');
+assert.equal(JSON.stringify(newRules), JSON.stringify(A.rules), 'existing rule ordering');
 for (const key of ['classes', 'talentProfiles', 'talentMaxRanks', 'mercyStartRadius'])
   assert.deepEqual(B[key], A[key], key);
 Object.defineProperty(globalThis, 'performance', {

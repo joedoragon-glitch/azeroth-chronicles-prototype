@@ -1,4 +1,4 @@
-# Azeroth Chronicles · v0.8.83
+# Azeroth Chronicles · v0.8.84
 
 An offline-capable RPG across five regions, ten settlements and five main dungeons. Rescue the specialists, build your expedition, and challenge the Dark Lord. The regime's currency is **crowns**.
 
@@ -37,6 +37,8 @@ Menus, HUD buttons and skills accept mouse clicks and touch taps on every screen
 
 Mouse click-to-move is off by default and can be enabled separately. With it off, left-clicking the world commands Ranger Heal; right-clicking commands Mana Recovery. Clickable HUD recovery buttons and their rebindable keyboard shortcuts work in either mode. Sprint remains unavailable; Q can be assigned to another action.
 
+Normal Skill 3 heals the hero; charged Skill 3 also heals living active companions. Active Rangers provide automatic and manually commanded Heal (hero or wounded living active companion) and Mana Recovery (hero MP). Fallen companions need separate recovery at a Captain or barracks. Death removes 20% of positive carried crowns, rounded up, without debt.
+
 ## Saves and reports
 
 Campaigns stay on the current browser/device. Export a save before clearing browser data or moving to another device. The v4 save schema and internal currency fields remain compatible; importing v2 backups is still supported. Changing screen layout does not create a different campaign.
@@ -51,13 +53,13 @@ Use Node.js 20 or newer. The shipped game has no third-party runtime dependencie
 npm ci               # install the locked development tools
 npm run build        # regenerate the three entries, build information and service worker
 npm run dev          # http://127.0.0.1:8080; phone entry is /phone.html
-npm run format:check # verify readable formatting in the refactored modules
+npm run format:check # verify all hand-authored campaign JS and shared/desktop/phone CSS
 npm run check        # generated-file freshness, published assets and JavaScript syntax
 npm test             # all non-browser regression suites
 npm run test:quick   # focused gameplay, saves, platform and renderer regressions
 ```
 
-Browser testing uses Playwright 1.62.1 and Chromium/Chrome. CI supplies them and checks desktop, small phone, portrait, landscape and tablet views, then verifies the exact deployed commit. With those tools installed locally, use `npm run test:browser`; `CHROMIUM_EXECUTABLE` can select an existing Chrome executable.
+Browser testing uses Playwright 1.62.1 with Chromium/Chrome and WebKit. CI supplies them and checks desktop, small phone, portrait, landscape and tablet views, then verifies the exact deployed commit. With those tools installed locally, use `npm run test:browser` and `node tests/phone-webkit-browser.test.cjs`; `CHROMIUM_EXECUTABLE` can select an existing Chrome executable.
 
 `node scripts/build.cjs --check --site` packages only the declared public assets into `_site`. One inventory drives entry script order, offline cache contents and deployment. Generated files are committed, so GitHub Pages can also serve the repository directly without a bundler. Historical `legacy.html` and `rts.html` are independent references, loaded and cached only when opened.
 
@@ -65,7 +67,8 @@ Browser testing uses Playwright 1.62.1 and Chromium/Chrome. CI supplies them and
 
 - [Architecture and module boundaries](docs/ARCHITECTURE.md)
 - [Current work and sequencing](docs/DEVELOPMENT_STATE.md)
-- [Housekeeping release and validation](docs/HOUSEKEEPING_V0881.md)
+- [Current housekeeping audit and preservation evidence](docs/HOUSEKEEPING_AUDIT.md)
+- [Historical v0.8.81 housekeeping](docs/HOUSEKEEPING_V0881.md)
 - [Gameplay decisions](docs/DECISIONS.md)
 - [Sprite production contract](docs/GRAPHICS_OVERHAUL_PHASE1.md)
 - [Sprite coverage and canon](docs/GRAPHICS_CANON_SPRITE_COVERAGE.md)

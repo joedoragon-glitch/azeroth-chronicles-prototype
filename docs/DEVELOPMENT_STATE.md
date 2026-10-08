@@ -13,7 +13,7 @@ Desktop/browser and phone presentation are distinct. World authoring, navigation
 | Sprite production | The approved catalog has 231 entries; the production sprite manifest remains empty. Follow the existing small-experiment/approval gates in the sprite production contract before mass generation. This engineering pass does not manufacture or register replacement art. |
 | Chromebook tuning | Play the desktop entry on the actual laptop. Reports now include active frame cadence, work time and renderer counters for reproducible tuning. |
 | Phone playtesting | Use the dedicated phone entry or installed PWA. Check real-device thumb reach, portrait/landscape behavior and offline reopening. |
-| Engineering | Keep changes incremental. Extract combat/progression or menu subsystems when needed; benchmark before introducing collision caches, workers or a different renderer. |
+| Engineering | v0.8.84 extracts progression, save handling and the specialist/expedition menu catalog; balance and formatter coverage are consolidated. Combat/party/quest orchestration and global shell menus remain substantial. Benchmark before introducing caches, workers or a different renderer. |
 | Distribution | Browser desktop and installed phone web app are current targets. Native packaging is a later distribution decision, independent of finishing maps or sprites. |
 
 Map and sprite completion are not prerequisites for sound engineering. Conversely, changing frameworks does not complete map design, resolve performance by itself, or turn a PWA into a native package. Keep gameplay decisions in `DECISIONS.md`, engineering ownership in `ARCHITECTURE.md`, and historical releases in `PROJECT_HISTORY.md`.
@@ -27,3 +27,11 @@ Direct menu/HUD clicks and taps, persistent keyboard rebinding, two-thumb phone 
 Manual keys and joystick contact cancel pointer travel before simulation advances. HUD readouts shield world input, and visible training prompts follow rebinding. Browser coverage includes native mouse/touch charging and menu cancellation alongside the existing input/device checks.
 
 Joel’s iPhone feedback drives a compact phone HUD, bottom-right learned skills/recovery, contextual in-range Interact and removal of routine map/time/save labels. Game text blocks selection/callouts while form inputs retain normal behavior and menus retain vertical scrolling. WebKit phone regressions supplement the Chromium device matrix; real iOS system gesture and comfort checks remain device playtests.
+
+## Engineering handoff v0.8.84
+
+The v0.8.83 accepted phone layout and input behavior are preserved. Progression (62 methods), save handling (five instance/static methods) and 28 menu definitions/actions now have explicit owners; the catalog exports ten shell entry points. The public Campaign API, v4 keys/schema, mode separation, legacy backup retention and live balance remain compatible.
+
+Current recovery guidance distinguishes ordinary hero-only Skill 3 from charged party healing. Automatic/manual Ranger Heal supports living active allies, Mana Recovery is hero-only, and fallen-unit recovery stays separate. Current inheritance costs are 140 crowns per Shared Training rank and 125/200/300/425 for Shared Strength; historical higher prices are not current rules. Rescue/curriculum gates remain unchanged.
+
+All hand-authored campaign JS and the three campaign CSS files have repeatable formatter coverage. Registry contract, packaging, realistic precache/offline reads and failed-image procedural fallback accept both empty and populated test registries. Production manifest/art are unchanged. Review `HOUSEKEEPING_AUDIT.md` and `HOUSEKEEPING_PROGRESS.md` for preservation evidence, review findings and release recovery.
