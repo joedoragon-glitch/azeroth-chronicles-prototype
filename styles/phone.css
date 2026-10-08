@@ -1,47 +1,247 @@
 /* Phone gameplay keeps the world visible and combat within thumb reach. */
-body[data-experience="phone"] #hud{left:max(8px,env(safe-area-inset-left));right:max(8px,env(safe-area-inset-right));top:max(8px,env(safe-area-inset-top));width:auto;padding:5px;display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:8px;align-items:center;font-size:11px;background:#102018b8;box-shadow:none;border-color:#9eaf8c55}
-body[data-experience="phone"] #hud h1,body[data-experience="phone"] #objective,body[data-experience="phone"] #talent-button{display:none}
-body[data-experience="phone"] #hud #menu-button{grid-column:2;grid-row:1;margin:0;padding:4px;min-height:44px;width:44px;text-align:center;font-size:11px}
-body[data-experience="phone"] #menu-button small{display:none}
-body[data-experience="phone"] #hero-stats{grid-column:1;grid-row:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px 8px;line-height:1.1}
-body[data-experience="phone"] #hero-stats .hero-title{grid-column:1/-1;margin:0;font-size:10px;justify-content:flex-start}
-body[data-experience="phone"] #hero-stats .hero-title>span,body[data-experience="phone"] #hero-stats .wallet,body[data-experience="phone"] #hero-stats .restoring{display:none}
-body[data-experience="phone"] #hero-stats .hero-title small{font-size:9px}
-body[data-experience="phone"] .resource-line{margin:1px 0;font-size:11px}
-body[data-experience="phone"] .resource-line span{margin-bottom:2px}
-body[data-experience="phone"] .resource-line i{height:5px}
-body[data-experience="phone"] #status{position:fixed;top:calc(max(8px,env(safe-area-inset-top)) + 62px);left:50%;transform:translateX(-50%);max-width:calc(100vw - 24px);padding:5px 8px;border-radius:6px;background:#102018e8;font-size:11px;line-height:1.25;pointer-events:none}
-body[data-experience="phone"] #status:empty{display:none}
-body[data-experience="phone"] #movement{position:fixed;left:max(8px,env(safe-area-inset-left));bottom:max(8px,env(safe-area-inset-bottom));z-index:5}
-body[data-experience="phone"] #joystick{width:104px;height:104px;pointer-events:auto}
-body[data-experience="phone"] #stick{width:44px;height:44px;left:27px;top:27px}
-body[data-experience="phone"] #skills{left:auto;right:max(8px,env(safe-area-inset-right));bottom:max(8px,env(safe-area-inset-bottom));width:min(184px,calc(50vw - 12px));grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
-body[data-experience="phone"] #skills button{min-width:0;min-height:52px;font-size:13px;padding:6px 4px;touch-action:none;pointer-events:auto}
-body[data-experience="phone"] #skills>button.locked{display:none}
-body[data-experience="phone"] #skills .skill-ready small,body[data-experience="phone"] #skills .key-hint{display:none}
-body[data-experience="phone"] #quick-items{grid-column:1/-1;gap:6px}
-body[data-experience="phone"] #quick-items:not(:has(button:not([hidden]))){display:none}
-body[data-experience="phone"] #skills .potion-button{min-height:48px;font-size:11px}
-body[data-experience="phone"] #recall-button{position:fixed;left:max(8px,env(safe-area-inset-left));bottom:calc(124px + env(safe-area-inset-bottom));width:104px;min-height:44px;margin:0;font-size:11px;text-align:center;z-index:6}
-body[data-experience="phone"] #recall-button small{display:none}
-body[data-experience="phone"] #squad-button{position:fixed;left:max(8px,env(safe-area-inset-left));bottom:calc(176px + env(safe-area-inset-bottom));width:104px;min-height:44px;margin:0;font-size:11px;z-index:6}
-body[data-experience="phone"] #touch-interact-button{left:50%;right:auto;top:max(68px,17vh);bottom:auto;transform:translateX(-50%);width:104px;min-height:44px;font-size:12px;padding:8px 6px;touch-action:manipulation;border-color:#e8ca8d;color:#fce9bb;background:linear-gradient(155deg,#69563b,#3e392d)}
-body[data-experience="phone"] #order-button{right:max(8px,env(safe-area-inset-right));bottom:max(8px,env(safe-area-inset-bottom));width:96px;min-height:52px;display:none}
-body[data-experience="phone"].menu-open #order-button{display:block}
-body[data-experience="phone"].menu-open #touch-interact-button{display:none}
-body[data-experience="phone"].menu-open #movement{z-index:11}
-body[data-experience="phone"] #modal{top:max(8px,env(safe-area-inset-top));right:max(8px,env(safe-area-inset-right));width:calc(100vw - max(8px,env(safe-area-inset-left)) - max(8px,env(safe-area-inset-right)));bottom:124px;padding:12px}
-body[data-experience="phone"] #modal-actions button{min-height:48px;pointer-events:auto}
-body[data-experience="phone"] #message{width:min(420px,calc(100vw - 16px));font-size:12px;padding:9px 12px;top:max(8px,env(safe-area-inset-top))}
+body[data-experience='phone'] #hud {
+  left: max(8px, env(safe-area-inset-left));
+  right: max(8px, env(safe-area-inset-right));
+  top: max(8px, env(safe-area-inset-top));
+  width: auto;
+  padding: 5px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  gap: 8px;
+  align-items: center;
+  font-size: 11px;
+  background: #102018b8;
+  box-shadow: none;
+  border-color: #9eaf8c55;
+}
+body[data-experience='phone'] #hud h1,
+body[data-experience='phone'] #objective,
+body[data-experience='phone'] #talent-button {
+  display: none;
+}
+body[data-experience='phone'] #hud #menu-button {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+  padding: 4px;
+  min-height: 44px;
+  width: 44px;
+  text-align: center;
+  font-size: 11px;
+}
+body[data-experience='phone'] #menu-button small {
+  display: none;
+}
+body[data-experience='phone'] #hero-stats {
+  grid-column: 1;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px 8px;
+  line-height: 1.1;
+}
+body[data-experience='phone'] #hero-stats .hero-title {
+  grid-column: 1/-1;
+  margin: 0;
+  font-size: 10px;
+  justify-content: flex-start;
+}
+body[data-experience='phone'] #hero-stats .hero-title > span,
+body[data-experience='phone'] #hero-stats .wallet,
+body[data-experience='phone'] #hero-stats .restoring {
+  display: none;
+}
+body[data-experience='phone'] #hero-stats .hero-title small {
+  font-size: 9px;
+}
+body[data-experience='phone'] .resource-line {
+  margin: 1px 0;
+  font-size: 11px;
+}
+body[data-experience='phone'] .resource-line span {
+  margin-bottom: 2px;
+}
+body[data-experience='phone'] .resource-line i {
+  height: 5px;
+}
+body[data-experience='phone'] #status {
+  position: fixed;
+  top: calc(max(8px, env(safe-area-inset-top)) + 62px);
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: calc(100vw - 24px);
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: #102018e8;
+  font-size: 11px;
+  line-height: 1.25;
+  pointer-events: none;
+}
+body[data-experience='phone'] #status:empty {
+  display: none;
+}
+body[data-experience='phone'] #movement {
+  position: fixed;
+  left: max(8px, env(safe-area-inset-left));
+  bottom: max(8px, env(safe-area-inset-bottom));
+  z-index: 5;
+}
+body[data-experience='phone'] #joystick {
+  width: 104px;
+  height: 104px;
+  pointer-events: auto;
+}
+body[data-experience='phone'] #stick {
+  width: 44px;
+  height: 44px;
+  left: 27px;
+  top: 27px;
+}
+body[data-experience='phone'] #skills {
+  left: auto;
+  right: max(8px, env(safe-area-inset-right));
+  bottom: max(8px, env(safe-area-inset-bottom));
+  width: min(184px, calc(50vw - 12px));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+body[data-experience='phone'] #skills button {
+  min-width: 0;
+  min-height: 52px;
+  font-size: 13px;
+  padding: 6px 4px;
+  touch-action: none;
+  pointer-events: auto;
+}
+body[data-experience='phone'] #skills > button.locked {
+  display: none;
+}
+body[data-experience='phone'] #skills .skill-ready small,
+body[data-experience='phone'] #skills .key-hint {
+  display: none;
+}
+body[data-experience='phone'] #quick-items {
+  grid-column: 1/-1;
+  gap: 6px;
+}
+body[data-experience='phone'] #quick-items:not(:has(button:not([hidden]))) {
+  display: none;
+}
+body[data-experience='phone'] #skills .potion-button {
+  min-height: 48px;
+  font-size: 11px;
+}
+body[data-experience='phone'] #recall-button {
+  position: fixed;
+  left: max(8px, env(safe-area-inset-left));
+  bottom: calc(124px + env(safe-area-inset-bottom));
+  width: 104px;
+  min-height: 44px;
+  margin: 0;
+  font-size: 11px;
+  text-align: center;
+  z-index: 6;
+}
+body[data-experience='phone'] #recall-button small {
+  display: none;
+}
+body[data-experience='phone'] #squad-button {
+  position: fixed;
+  left: max(8px, env(safe-area-inset-left));
+  bottom: calc(176px + env(safe-area-inset-bottom));
+  width: 104px;
+  min-height: 44px;
+  margin: 0;
+  font-size: 11px;
+  z-index: 6;
+}
+body[data-experience='phone'] #touch-interact-button {
+  left: 50%;
+  right: auto;
+  top: max(68px, 17vh);
+  bottom: auto;
+  transform: translateX(-50%);
+  width: 104px;
+  min-height: 44px;
+  font-size: 12px;
+  padding: 8px 6px;
+  touch-action: manipulation;
+  border-color: #e8ca8d;
+  color: #fce9bb;
+  background: linear-gradient(155deg, #69563b, #3e392d);
+}
+body[data-experience='phone'] #order-button {
+  right: max(8px, env(safe-area-inset-right));
+  bottom: max(8px, env(safe-area-inset-bottom));
+  width: 96px;
+  min-height: 52px;
+  display: none;
+}
+body[data-experience='phone'].menu-open #order-button {
+  display: block;
+}
+body[data-experience='phone'].menu-open #touch-interact-button {
+  display: none;
+}
+body[data-experience='phone'].menu-open #movement {
+  z-index: 11;
+}
+body[data-experience='phone'] #modal {
+  top: max(8px, env(safe-area-inset-top));
+  right: max(8px, env(safe-area-inset-right));
+  width: calc(100vw - max(8px, env(safe-area-inset-left)) - max(8px, env(safe-area-inset-right)));
+  bottom: 124px;
+  padding: 12px;
+}
+body[data-experience='phone'] #modal-actions button {
+  min-height: 48px;
+  pointer-events: auto;
+}
+body[data-experience='phone'] #message {
+  width: min(420px, calc(100vw - 16px));
+  font-size: 12px;
+  padding: 9px 12px;
+  top: max(8px, env(safe-area-inset-top));
+}
 /* The optional historical layout keeps combat above the left joystick. */
-body[data-experience="phone"][data-phone-layout="left-hand"] #skills{right:auto;left:max(8px,env(safe-area-inset-left));bottom:calc(124px + env(safe-area-inset-bottom))}
-body[data-experience="phone"][data-phone-layout="left-hand"] #recall-button{left:auto;right:max(8px,env(safe-area-inset-right));bottom:max(8px,env(safe-area-inset-bottom))}
-body[data-experience="phone"][data-phone-layout="left-hand"] #squad-button{left:auto;right:max(8px,env(safe-area-inset-right));bottom:calc(60px + env(safe-area-inset-bottom))}
-@media(max-height:500px) and (min-width:480px){
- body[data-experience="phone"] #hud{right:auto;width:min(360px,48vw)}
- body[data-experience="phone"] #touch-interact-button{left:calc(50vw - 80px);top:50vh}
- body[data-experience="phone"] #skills{width:min(340px,48vw);grid-template-columns:repeat(4,minmax(0,1fr))}
- body[data-experience="phone"] #skills button{min-height:50px;padding:5px 4px}
- body[data-experience="phone"] #modal{top:8px;width:min(520px,62vw);bottom:120px}
- body[data-experience="phone"][data-phone-layout="left-hand"] #skills{bottom:122px}
+body[data-experience='phone'][data-phone-layout='left-hand'] #skills {
+  right: auto;
+  left: max(8px, env(safe-area-inset-left));
+  bottom: calc(124px + env(safe-area-inset-bottom));
+}
+body[data-experience='phone'][data-phone-layout='left-hand'] #recall-button {
+  left: auto;
+  right: max(8px, env(safe-area-inset-right));
+  bottom: max(8px, env(safe-area-inset-bottom));
+}
+body[data-experience='phone'][data-phone-layout='left-hand'] #squad-button {
+  left: auto;
+  right: max(8px, env(safe-area-inset-right));
+  bottom: calc(60px + env(safe-area-inset-bottom));
+}
+@media (max-height: 500px) and (min-width: 480px) {
+  body[data-experience='phone'] #hud {
+    right: auto;
+    width: min(360px, 48vw);
+  }
+  body[data-experience='phone'] #touch-interact-button {
+    left: calc(50vw - 80px);
+    top: 50vh;
+  }
+  body[data-experience='phone'] #skills {
+    width: min(340px, 48vw);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  body[data-experience='phone'] #skills button {
+    min-height: 50px;
+    padding: 5px 4px;
+  }
+  body[data-experience='phone'] #modal {
+    top: 8px;
+    width: min(520px, 62vw);
+    bottom: 120px;
+  }
+  body[data-experience='phone'][data-phone-layout='left-hand'] #skills {
+    bottom: 122px;
+  }
 }

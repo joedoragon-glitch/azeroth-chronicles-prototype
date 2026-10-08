@@ -59,7 +59,7 @@ function casesBetween(a,b){
  return [...s.matchAll(/case '([^']+)'/g)].map(m=>m[1]);
 }
 for(const kind of casesBetween('function decoration(kind)','function landmark()'))assert(promptCoverage.includes('| `'+kind+'` |'),'coverage audit classifies decoration '+kind);
-for(const kind of casesBetween('function landmark()','const type=e.renderKind'))assert(promptCoverage.includes('| `'+kind+'` |'),'coverage audit classifies landmark '+kind);
+for(const kind of casesBetween('function landmark()','const type = e.renderKind'))assert(promptCoverage.includes('| `'+kind+'` |'),'coverage audit classifies landmark '+kind);
 for(const kind of casesBetween('function settlementBuilding(kind)','function decoration(kind)'))assert(promptCoverage.includes('| `'+kind+'` |'),'coverage audit classifies settlement structure '+kind);
 
 

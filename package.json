@@ -10,8 +10,8 @@
     "build": "node scripts/build.cjs",
     "check": "node scripts/build.cjs --check",
     "dev": "node scripts/dev.cjs",
-    "format": "prettier --write \"src/prototype/*.js\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs",
-    "format:check": "prettier --check \"src/prototype/*.js\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs"
+    "format": "prettier --write \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs",
+    "format:check": "prettier --check \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs"
   },
   "engines": {
     "node": ">=20"
