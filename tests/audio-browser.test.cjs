@@ -21,16 +21,16 @@ const root = path.resolve(__dirname, '..'),
       res.end();
       return;
     }
-    res.setHeader(
-      'Content-Type',
-      file.endsWith('.js')
-        ? 'text/javascript'
-        : file.endsWith('.css')
-          ? 'text/css'
-          : file.endsWith('.json')
-            ? 'application/json'
-            : 'text/html',
-    );
+    const types = {
+      '.js': 'text/javascript',
+      '.css': 'text/css',
+      '.json': 'application/json',
+      '.mp3': 'audio/mpeg',
+      '.ogg': 'audio/ogg',
+      '.wav': 'audio/wav',
+      '.png': 'image/png',
+    };
+    res.setHeader('Content-Type', types[path.extname(file)] || 'text/html');
     fs.createReadStream(file).pipe(res);
   });
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
@@ -56,7 +56,18 @@ const root = path.resolve(__dirname, '..'),
       await page.locator('#modal-actions button').first().click();
       await page.locator('#modal-actions button').first().click();
       await page.waitForFunction(() => Prototype.audio.ctx?.state === 'running');
-      await page.waitForFunction(() => !!Prototype.audio.recordedScore);
+      try {
+        await page.waitForFunction(() => !!Prototype.audio.recordedScore);
+      } catch (error) {
+        throw Error(
+          engine +
+            ' ' +
+            entry +
+            ': recorded score failed: ' +
+            JSON.stringify(await page.evaluate(() => Prototype.audio.status())),
+          { cause: error },
+        );
+      }
       await page.waitForFunction(() => Prototype.audio.environmentVoice?.id === 'env-woodland-day');
       assert(await page.evaluate(() => Prototype.audio.noise === null));
       await page.waitForTimeout(120);
@@ -67,6 +78,12 @@ const root = path.resolve(__dirname, '..'),
       assert(before.status.voices > 0);
       assert(before.status.voices <= 64);
       assert(before.status.context.region === 'vale');
+      // Freeze the campaign after startup selection settles; do not race the title/refuge transition.
+      await page.evaluate(() => Prototype.openMenu('Audio housekeeping check', '', []));
+      await page.waitForFunction(() => {
+        const a = Prototype.audio;
+        return a.mixScene === 'menu' && a.recordedScore?.selectionKey === a.productionKey;
+      });
       const replaced = await page.evaluate(() => {
         const a = Prototype.audio,
           current = { id: a.recordedScore.id, at: a.recordedScore.at };
