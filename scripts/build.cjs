@@ -2,6 +2,7 @@
 const fs = require('node:fs'),
   path = require('node:path'),
   cp = require('node:child_process');
+const SpriteFormat = require('../src/prototype/sprite-format.js');
 const root = path.resolve(__dirname, '..'),
   { scripts, core, legacy } = require('./site-assets.cjs'),
   pkg = require('../package.json');
@@ -27,6 +28,7 @@ generated.set(
 generated.set(
   'sw.js',
   read('templates/service-worker.js')
+    .replace('{{SPRITE_FORMAT}}', read('src/prototype/sprite-format.js'))
     .replace('{{CACHE_VERSION}}', JSON.stringify('azeroth-app-v' + pkg.version))
     .replace('{{APP_FILES}}', JSON.stringify(['./', ...core.map((p) => './' + p)]))
     .replace('{{LEGACY_FILES}}', JSON.stringify(legacy.map((p) => './' + p))),
@@ -45,7 +47,8 @@ if (JSON.stringify(order) !== JSON.stringify(scripts))
   throw Error('Entry script order differs from asset inventory.');
 const sprites = JSON.parse(read('assets/sprites/manifest.json'));
 const spriteRoot = fs.realpathSync(path.join(root, 'assets/sprites')) + path.sep;
-for (const entry of Object.values(sprites.sprites || {}))
+const spriteResources = SpriteFormat.resources(sprites);
+for (const entry of spriteResources)
   if (entry?.src) {
     const file = entry.src.replace(/^\.\//, '');
     if (
@@ -65,9 +68,7 @@ if (site) {
     ...core,
     ...legacy,
     'sw.js',
-    ...Object.values(sprites.sprites || {})
-      .map((e) => e.src?.replace(/^\.\//, ''))
-      .filter(Boolean),
+    ...spriteResources.map((e) => e.src?.replace(/^\.\//, '')).filter(Boolean),
   ])) {
     const dest = path.join(target, file);
     fs.mkdirSync(path.dirname(dest), { recursive: true });

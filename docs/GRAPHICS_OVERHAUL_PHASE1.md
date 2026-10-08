@@ -10,6 +10,12 @@ A successful sprite should make the player think **"that is the same thing, now 
 
 Previous style slogans, outside-game aesthetic references, and experimental sprite assets are not authoritative. They may be useful production history, but they cannot override the current procedural design.
 
+## Joel's shape-translation clarification · 8 October 2026
+
+The intended design is canon; incidental limits of procedural primitives are not mandatory shapes. This applies to all sprite candidates: anatomy, creatures, NPCs, vegetation, natural features, props and architecture. Refine contours, curves and joins according to what the thing is and the material it represents. Preserve identity, functional structure, proportions, equipment, palette and overall silhouette. Do not reproduce a robotic ear, angular limb or artificial rock block just because the procedural drawing could only approximate it. Deliberate hard armor, masonry and mechanical edges remain hard. Use native-size and actual-scene comparisons to check readability and identity. These refinements do not add new anatomy, lore or gameplay geometry.
+
+Joel approved the corrected Goblin's playful half-smile and organic ears on 8 October. That specific decision supersedes the earlier neutral/strict nose-only interpretation. Include the general shape rule with each catalog prompt; a literal old polygon description cannot override the accepted intent.
+
 ## Canon source order
 
 When producing or reviewing a sprite, use this authority order:

@@ -10,7 +10,7 @@ Desktop/browser and phone presentation are distinct. World authoring, navigation
 | --- | --- |
 | Regional playtesting | v0.8.87 implements the first Greenwood/Marches/Highlands handoff pass. Continue Joel's region-by-region review and corrections using REGIONAL_HANDOFF_AUDIT.md. Recent Frontier/Crown work remains in place. Housekeeping does not certify every map as artistically finished. |
 | Procedural canon | Static polish v0.8.79 and terrain/effects polish v0.8.80 are retained. New feedback should improve current canon in the owning modules. |
-| Sprite production | The reconciled open catalog has 296 decisions (280 GENERATE, 16 PROCEDURAL); the production sprite manifest remains empty. Follow the existing small-experiment/approval gates in the sprite production contract before mass generation. This engineering pass does not manufacture or register replacement art. |
+| Sprite production | v0.8.92 activates Paladin (two-frame idle), playful Goblin and Vale cottage pilots. Bounded lazy loading, chat asset discovery, revision leases/rollback and optional clips/variants are implemented. Continue staged production from 296 decisions, 70 body contracts and 28 separate terrain candidates; see SPRITE_PRODUCTION_CURRENT_CONTEXT.md. |
 | Chromebook tuning | Play the desktop entry on the actual laptop. Reports now include active frame cadence, work time and renderer counters for reproducible tuning. |
 | Phone playtesting | Use the dedicated phone entry or installed PWA. Check real-device thumb reach, portrait/landscape behavior and offline reopening. |
 | Engineering | v0.8.84 extracts progression, save handling and the specialist/expedition menu catalog; balance and formatter coverage are consolidated. The prepared v0.8.88 pass separates hero skills, boss attacks/summons, shared combat resolution and party behavior. Enemy AI, encounters, quests and global shell menus remain substantial. Benchmark before introducing caches, workers or a different renderer. |
@@ -87,6 +87,16 @@ Joel requested a full current-map scope reconciliation before further sprite imp
 The reconciled scope also includes current smaller flora/rocks and 28 separate terrain material candidates. The lifecycle/animation review identifies eager loading, same-key stale decoded images, no replacement command and no clip support as required follow-ups before bulk integration. See SPRITE_ASSET_LIFECYCLE_ANIMATION_AUDIT.md; no animation runtime is activated by the current scope pass.
 
 Future content/lore work uses DESIGN_TO_SPRITE_WORKFLOW.md: accepted procedural designs retain repository handoffs and exact references, so sprite requests from their originating chats can resume directly. New locations identify body/material/NPC requirements and reuse accepted assets; stable identities, replacement revisions and animation requirements persist with the design. This is an agent-owned workflow, with no technical tasks assigned to Joel.
+
+## Implemented lifecycle and pilots · v0.8.92
+
+Three production keys are active: `hero:paladin`, `enemy:goblin` and `prop:vale-cottage:vale`. The Goblin uses Joel's explicitly accepted playful half-smile and organic ears. Paladin has a faithful two-frame idle; its static fallback is retained as a rollback revision. Native placement and desktop/phone day/night comparisons are recorded under `tools/sprites/pilots/2026-10-08-refined`. Engineer review of the idle is distinguished from Joel's actual image acceptance.
+
+The versioned optional format supports clip rectangles/pivots/timing and stable-ID variant banks. The loader is lazy, deduplicates content, limits concurrent decodes to two and active decoded residency to 16 MiB, pins visible resources and retires obsolete revisions. Replacement, removal and rollback use expected revision leases and immutable retained originals. Atlas assembly requires a final visual review. Build/offline enumeration shares the same resource schema. Asset-scoped evidence isolates unrelated catalog/map additions. Playtest exports include sprite diagnostics.
+
+Chat edits follow `DESIGN_TO_SPRITE_WORKFLOW.md`; `npm run sprite:asset -- "name or exact key"` exposes current originals, revision, dependent presentation and history. An authorized edit proceeds through generation, visual checks, implementation and release. Reconcile affected frames/variants together, or temporarily use the new static design. Preserve material-appropriate contours across every candidate, rather than copying accidental procedural blockiness.
+
+The reconciled scope remains 296 decisions (280 GENERATE, 16 PROCEDURAL), 70 prepared body contracts and 28 separate terrain material candidates. This release completes the lifecycle foundation and three pilots. Remaining body production, terrain texture processing/world mapping, authored directions and additional motion clips are subsequent asset jobs. Runtime memory bounds are software checks; they do not claim a measured physical-device performance guarantee.
 
 ## Environmental sound v0.8.93
 

@@ -1,0 +1,95 @@
+{
+  "version": 2,
+  "key": "prop:vale-cottage:vale",
+  "catalogId": "061",
+  "canonHash": "f33f2a6032756f75be031a7dea4c3832b1f08d123b0d20b5b9122b9acadd459e",
+  "canonSnapshotHash": "698426129edfdaaaee0f2d2c11f552c9debd6f3dfa8eda567995d0c9a7ee36a6",
+  "catalogHash": "b800662082d174a8139d9412cb87a9ca4eeb9c0ef7d2de1498b792c82c889c3d",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1318,
+    "height": 1318,
+    "bytes": 350170,
+    "decodedBytes": 6948496,
+    "hash": "ee52d21f1f1d6a95fb1e545db3fa584a7b9ae86618f9277b1d475d9c1b3778e3",
+    "pixelHash": "495d84f4da1fd18b09a8747181df386a6aab222a104fb70eb229f9191de4cd23",
+    "bounds": {
+      "x1": 32,
+      "y1": 32,
+      "x2": 1261,
+      "y2": 1140
+    },
+    "padding": 32,
+    "transparentPixels": 1582355,
+    "visiblePixels": 154769,
+    "lowAlphaPixels": 4312,
+    "materialBounds": {
+      "x1": 423,
+      "y1": 682,
+      "x2": 891,
+      "y2": 1137
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 10582,
+    "decodedBytes": 147456,
+    "hash": "d94098c0186d31ce1b16815a3092957b5e428e35117729a9f2ffd9d8ec79ff3a",
+    "pixelHash": "d7a51fa3e4e10c7d7a40d1edf56e1eee636a7f831737a5d674dc7c19598e026a",
+    "bounds": {
+      "x1": 62,
+      "y1": 94,
+      "x2": 129,
+      "y2": 160
+    },
+    "padding": 31,
+    "transparentPixels": 33608,
+    "visiblePixels": 3256,
+    "lowAlphaPixels": 86,
+    "materialBounds": {
+      "x1": 62,
+      "y1": 94,
+      "x2": 129,
+      "y2": 159
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1318,
+      1318
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": 0,
+      "y": -6,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "scope": "Accepted pilot direction; technical placement and faithful implementation authorized by Joel",
+    "chatLink": null,
+    "technicalReview": "Native/context review required before release"
+  }
+}

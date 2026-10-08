@@ -30,6 +30,7 @@ const scripts = [
     'audio',
     'visuals',
     'combat-visuals',
+    'sprite-format',
     'sprites',
     'build-info',
     'persistence',
