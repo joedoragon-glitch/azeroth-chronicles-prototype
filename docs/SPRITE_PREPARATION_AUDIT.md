@@ -36,6 +36,7 @@ Existing event/audio, v4/legacy/mode/Succession, balance, collision, navigation,
 | Unique-path budget could undercount the current loader's key-level image instances | Count decoded bytes per key while reporting unique paths separately. A duplicate-reference fixture reports one image/two instances and rejects at the reduced budget. |
 | Fixture tests initially assumed production must always remain empty | Compare registry counts to current manifest and reset only isolated fixture owners. Tests remain valid after future approved registrations. |
 | Browser fixture scratch cleanup could collide with a developer's candidate | Prepare/serve in an isolated temporary checkout; no real scratch candidates or production images are deleted. |
+| Browser automation used a text-fill API on a range slider | Drive the actual slider with focus and End, then assert its value; keep this in the final exact-head browser gate. |
 | Small-phone comparison controls could exceed available width | Allow wrapped labels and bounded selects; verify scroll width at all four browser sizes without relaxing viewport checks. |
 
 The self-review checks exact keys, canonical/source/output hashes, transparent margins, candidate immutability, path containment, publication rollback, explicit approval records, failed input, scene determinism, browser package boundaries and unchanged runtime files. No knowingly failed gate is waived. If the new CI evidence exposes a finding, repair it before merge and update the PR's delivery record.

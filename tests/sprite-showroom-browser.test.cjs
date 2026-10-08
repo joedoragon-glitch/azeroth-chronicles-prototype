@@ -121,7 +121,9 @@ const root = path.resolve(__dirname, '..');
         before,
         'guides are interactive',
       );
-      await page.locator('#blend').fill('100');
+      await page.locator('#blend').focus();
+      await page.keyboard.press('End');
+      assert.equal(await page.locator('#blend').inputValue(), '100');
       assert.match(await page.locator('#question').textContent(), /preserve the existing identity/);
       assert.equal(await page.locator('#error').isHidden(), true);
       await page.screenshot({
