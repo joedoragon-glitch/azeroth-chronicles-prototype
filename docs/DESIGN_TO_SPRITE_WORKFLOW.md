@@ -34,7 +34,7 @@ When lore introduces a named NPC, object, faction uniform or creature, create it
 
 ## Changes and animation
 
-Keep design identity and existing numbered catalog IDs stable. A changed design produces a new revision linked to the former accepted reference. Compare only that asset's dependencies and affected variants. Global source/catalog hashes remain useful snapshots; unrelated additions must not force regeneration of existing art. The current tooling already hashes catalog sections individually, but its global canon hash can still invalidate records after a canon-document edit; dependency-scoped review is a required follow-up, not implemented by this document.
+Keep design identity and existing numbered catalog IDs stable. A changed design produces a new revision linked to the former accepted reference. Compare only that asset's dependencies and affected variants. Global source/catalog hashes remain useful snapshots; unrelated additions must not force regeneration of existing art. The current tooling already hashes catalog sections individually, but its global canon hash covers the complete visuals, rules, data, sprites and renderer source files. An unrelated edit to those files can still invalidate a record; dependency-scoped review is a required follow-up, not implemented by this document. Retain the accepted image and renew affected evidence rather than automatically generate it again.
 
 For a replacement, retain the old accepted image, approval and source; record the expected active revision and rollback revision. The current publish command rejects replacement and the loader has a same-session invalidation gap. Implement the explicit replacement path before activating replacements, following `SPRITE_ASSET_LIFECYCLE_ANIMATION_AUDIT.md`.
 
