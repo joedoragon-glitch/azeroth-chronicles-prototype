@@ -2,7 +2,7 @@
 
 ## Authority and change boundary
 
-The product is the multi-file GitHub Pages/PWA. The original `QUEST_ANNOUNCEMENT_REQUIREMENTS.md` proposed one narrative payoff for every regional quest. Joel's subsequent explicit 30-quest review **supersedes that blanket requirement**: only selected useful or high-yield lines should be shown. All 30 regional quests and the Barracks tutorial continue to complete, persist and award crowns/XP exactly as before. This is a separate draft feature from responsive UI PR #165, milestone cleanup PR #181 and Keeper PR #172. No release or merge is authorized by this content pass.
+The product is the multi-file GitHub Pages/PWA. The original `QUEST_ANNOUNCEMENT_REQUIREMENTS.md` proposed one narrative payoff for every regional quest. Joel's subsequent explicit 30-quest review **supersedes that blanket requirement**: only selected useful or high-yield lines should be shown. All 30 regional quests and the Barracks tutorial continue to complete, persist and award crowns/XP exactly as before. The narration work was developed separately from PRs #165, #181 and #172. Those changes are already present on the current main branch, so the integration must preserve the released responsive HUD, milestone cleanup, and Archive/Keeper features. The author subsequently authorized completing the narration merge and deployment.
 
 ## Exact reviewed dispositions (1-based quest numbers)
 
@@ -65,3 +65,7 @@ The author requested a natural-sounding line edit guided by his conversational w
 The author subsequently approved a voice-polish pass for the two previously unchanged KEEP passages (#20 and #21). #20 now observes how the convoy, repair yards, and guarded crossing maintain the checkpoint; #21 keeps Eren's rescue and the Dark Lord's dragon-breeding plans distinct from civilian passenger transport. Both are still narration, not new quests or warnings. The final **milestone** (#30) stays deliberately concise and factual. The 17 cuts remain null.
 
 Writing constraints: plain English, concrete nouns and verbs, occasional dry humor, no fake gravitas, no premature reveal, no sales-copy cadence, no repeated "you notice" or "not just..." constructions. Functional truth and faithful canon come before voice.
+
+## Release integration checkpoint
+
+The user approved the final 12 Chronicle passages and amber fortress-approach milestone for game release after the voice audit. Final wording includes the polished #20 and #21 and the direct Crownwatch levy/supply description for #29. The feature was reconciled with the current v0.8.118 main release (including Archive evidence and notification-detail support), and the proposed release version is v0.8.119. Do not override newer main behavior, save schema, or the independent Keeper ledger notice. Run release CI and confirm the published build/version before reporting deployment complete.

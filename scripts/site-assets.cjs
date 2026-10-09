@@ -46,6 +46,7 @@ const scripts = [
     'input',
     'runtime',
     'renderer',
+    'archive',
     'menus',
     'app',
   ].map((name) => 'src/prototype/' + name + '.js'),

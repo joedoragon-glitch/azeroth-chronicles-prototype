@@ -89,7 +89,7 @@
           const index = Number(q.id.slice('quest-'.length));
           const payoff = Number.isInteger(index) ? Narration[index] : null;
           if (payoff && (payoff.kind === 'narration' || payoff.kind === 'milestone'))
-            this.notice(payoff.text, payoff.kind === 'milestone' ? 5.5 : 6.8, payoff.kind);
+            this.notice(payoff.text, payoff.kind === 'milestone' ? 5.5 : 6.8, '', payoff.kind);
         }
         this.event('questComplete', { id: q.id });
         this.event('quest', { id: q.id, automatic: true });
