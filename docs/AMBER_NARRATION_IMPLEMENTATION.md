@@ -6,7 +6,7 @@ The product is the multi-file GitHub Pages/PWA. The original `QUEST_ANNOUNCEMENT
 
 ## Exact reviewed dispositions (1-based quest numbers)
 
-- **KEEP**, verbatim: **20 An Army Needs Supplies; 21 Wings of War**.
+- **KEEP as selected events, subsequently voice-polished with explicit author approval**: **20 An Army Needs Supplies; 21 Wings of War**.
 - **REWRITE**: **4 An Unfinished Retreat; 5 Keeping Trade Open; 6 Who Owns the Woods?; 9 Records at Risk; 11 Shadows After Sundown; 16 The Master's Reserve; 18 Follow the Crowns; 23 Rebuilding Under Guard; 24 A Different Kind of Flight; 29 The Machinery of Rule**.
 - **MILESTONE**: **30 Ready for the Dark Lord**.
 - **CUT from narration**: **1, 2, 3, 7, 8, 10, 12, 13, 14, 15, 17, 19, 22, 25, 26, 27, 28**.
@@ -30,7 +30,7 @@ The ten rewritten entries are limited to established context and purposeful info
 | 24 Emberwatch landing | Distinguishes civilian dragon travel toward Dark Crown from Abyss Bastion's military air project |
 | 29 Dark Crown survey | Explains that levies, labor and guarded roads sustain the regime; no invented objective is implied |
 
-**Quest 30** is now a real `milestone` with the existing prominent amber styling; it reflects both Tovan and Vera being free and arrival at the fortress gate. The two KEEP entries retain their original approved wording byte for byte.
+**Quest 30** is now a real `milestone` with the existing prominent amber styling; it reflects both Tovan and Vera being free and arrival at the fortress gate. The two KEEP entries remain selected for narration, but their wording was subsequently revised with the author's explicit voice-polish approval. Their quest triggers and event kinds are unchanged.
 
 The Archive narration does **not** claim the player found the Drowned Keeper's hidden capture proposal. That revelation remains conditional on evidence discovered through the separate optional Keeper feature. No narration claims that an ordinary patrol permanently clears a road or unlocks new permanent gameplay states.
 
@@ -46,7 +46,7 @@ The Archive narration does **not** claim the player found the Drowned Keeper's h
 
 Changes are scoped to the independent `narration.js` data, a small event dispatch adaptation in `rewards.js`, tests and documentation. The canonical `src/prototype/data.js` remains **byte-identical** to `main`, preserving sprite-source hashes. Existing `quest-0`…`quest-29`, v4 save keys, one-time paid flags, automatic quest progression, event emission, XP/crowns and combat all remain unchanged.
 
-`tests/quest-narration.test.cjs` asserts the reviewed 30-way split, two verbatim keeps, proper types, compact text, no narration on cut quests, every quest's automatic payout and event, and no replay after save restoration. `tests/prototype-ui.test.cjs` covers two independent important notices, combat deferral, warning priority, milestone preemption and distinct card styling. Full CI and desktop/phone Chromium + WebKit browser checks remain mandatory before merge. Review especially 375×800 portrait, 800×375 landscape, and interactions with PRs #165/#181 before deployment.
+`tests/quest-narration.test.cjs` asserts the reviewed 30-way split, two author-approved polished KEEP lines, proper types, compact text, no narration on cut quests, every quest's automatic payout and event, and no replay after save restoration. `tests/prototype-ui.test.cjs` covers two independent important notices, combat deferral, warning priority, milestone preemption and distinct card styling. Full CI and desktop/phone Chromium + WebKit browser checks remain mandatory before merge. Review especially 375×800 portrait, 800×375 landscape, and interactions with PRs #165/#181 before deployment.
 
 ## Later refinement, not bundled here
 
@@ -62,6 +62,6 @@ The author requested a natural-sounding line edit guided by his conversational w
 - Allow restrained personality where appropriate: #6's wolves are unimpressed by land ownership; #23 observes civilians repairing homes while military convoys keep moving. Do not turn every notice into a joke.
 - No omniscient disclosures about the Keeper's secret capture proposal; no implied permanent road clearing or new quest requirements.
 
-The two **KEEP** passages (#20 and #21) remain byte-identical, as the user's earlier explicit approval still governs them; those contain somewhat formal expository phrasing and can be considered separately in a future review. The final **milestone** (#30) stays deliberately concise and factual. The 17 cuts remain null.
+The author subsequently approved a voice-polish pass for the two previously unchanged KEEP passages (#20 and #21). #20 now observes how the convoy, repair yards, and guarded crossing maintain the checkpoint; #21 keeps Eren's rescue and the Dark Lord's dragon-breeding plans distinct from civilian passenger transport. Both are still narration, not new quests or warnings. The final **milestone** (#30) stays deliberately concise and factual. The 17 cuts remain null.
 
 Writing constraints: plain English, concrete nouns and verbs, occasional dry humor, no fake gravitas, no premature reveal, no sales-copy cadence, no repeated "you notice" or "not just..." constructions. Functional truth and faithful canon come before voice.
