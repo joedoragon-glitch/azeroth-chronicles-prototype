@@ -106,4 +106,10 @@ assert.equal(
 const css = fs.readFileSync(path.join(__dirname, '../styles/prototype.css'), 'utf8');
 assert(css.includes('.notice-card.notice-narration'), 'Narration retains subdued styling');
 assert(css.includes('.notice-card.notice-warning'), 'Warnings retain an urgent treatment');
-console.log('PASS reviewed 17 cuts, 2 verbatim keeps, 10 rewrites, final milestone and quest/save integrity');
+const audition = fs.readFileSync(path.join(__dirname, '../tools/audio/index.html'), 'utf8');
+assert(
+  audition.includes('src/prototype/narration.js') &&
+    audition.indexOf('src/prototype/narration.js') < audition.indexOf('src/prototype/rewards.js'),
+  'Standalone audio audition loads narration before rewards',
+);
+console.log('PASS approved narration catalog, saved-game isolation and standalone tool script order');
