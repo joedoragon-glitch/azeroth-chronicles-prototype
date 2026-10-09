@@ -1382,6 +1382,7 @@
                 ? { x: 160, y: 240 }
                 : { x: D.towns[i][0], y: D.towns[i][1] });
       this.tacticalClearThreat(); // Transient observations never survive zone travel.
+      this.tacticalClearBurst();
       this.tacticalClearRogueRegroup();
       this._tacticalPartyTargets?.clear();
       this.s.zone = zone;
@@ -1735,6 +1736,7 @@
     die() {
       this.tacticalClearRogueRegroup();
       this.tacticalClearThreat();
+      this.tacticalClearBurst();
       this._tacticalPartyTargets?.clear();
       this.clearTonic();
       this.hero.supportEffects = [];
@@ -1834,6 +1836,7 @@
     kill(e) {
       if (e.deathPaid) return;
       this.tacticalClearThreat(e);
+      this.tacticalClearBurst(e);
       this.tacticalClearRogueRegroup(e);
       const victoryLevel = this.hero.level;
       e.deathPaid = true;
@@ -3337,6 +3340,7 @@
     disengage(e, dt) {
       if (!e.returning) {
         this.tacticalClearThreat(e);
+        this.tacticalClearBurst(e);
         this.tacticalClearRogueRegroup(e);
         e.returning = 1;
         e.pursuitBurst = 0;
