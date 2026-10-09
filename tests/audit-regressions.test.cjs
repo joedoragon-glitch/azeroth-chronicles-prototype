@@ -363,4 +363,26 @@ test('F58 sustained player pursuit can trigger successive bounded cross-pack ret
   assert.equal(c.tacticalRogueRegroup(e)?.allyId,b.id,'visitation prevents circling straight back to prior pack');
   assert.equal(b.aggro,false,'the next pack is not recruited until the player follows');
 });
+
+test('F59 two present adventurers outnumber one defender; another monster restores parity',()=>{
+  const c=fresh(),e=c.makeEnemy({species:'wolf',name:'defender',level:2,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700}),
+    soldier=c.unit('soldier',1420,1700),friend=c.makeEnemy({species:'goblin',name:'fellow defender',level:2,hp:100,damage:1,gold:0,xp:0},{x:1460,y:1700});
+  c.s.party=[soldier];c.zone().enemies=[e];c.hero.level=2;Object.assign(c.hero,{x:1400,y:1700});
+  assert.equal(c.tacticalPresentOpponents(e),2);
+  assert(c.tacticalRogueOutnumbered(e),'two living adventurers outnumber one defender');
+  c.zone().enemies.push(friend);
+  assert(!c.tacticalRogueOutnumbered(e),'two local defenders match two adventurers');
+  soldier.hp=0;assert(!c.tacticalRogueOutnumbered(e),'fallen companion does not increase pressure');
+});
+test('F60 wounded monsters three levels above an underleveled hero never retreat or gain damage reduction',()=>{
+  const c=fresh(),e=c.makeEnemy({species:'wolf',name:'dangerous monster',level:7,hp:1000,damage:9,gold:5,xp:200},{x:1400,y:1700});
+  c.s.party=[c.unit('soldier',1410,1700)];c.zone().enemies=[e];c.line=()=>true;
+  Object.assign(c.hero,{x:1450,y:1700,level:4});e.hp=290;e.aggro=true;
+  assert(c.tacticalRogueWounded(e),'a severely hurt monster is still classified as wounded');
+  assert.equal(c.tacticalRogueEligibility(e,3),false,'outlevel protection overrides wounds and numbers');
+  assert.equal(c.tacticalAutoRogue(e,c.hero),false,'underleveled player cannot trigger wounded retreat');
+  const before=e.hp,reward=c.enemyReward(e);
+  assert(c.damage(e,100));assert.equal(before-e.hp,100,'normal damage applies, without tactical mitigation');
+  assert.deepEqual(c.enemyReward(e),reward,'woundedness does not alter earned XP or gold');
+});
 console.log(passed+' audit regression scenarios passed.');
