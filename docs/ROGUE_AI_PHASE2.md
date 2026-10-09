@@ -1,7 +1,7 @@
 # Phase 2 — Autonomous rogue AI
 
 ## Scope
-The previously passive rogue regroup foundation is now opt-in **through the enemy AI** when `R.tacticalFoundation.enabled` is true. This phase does **not** enable tiered burst compression; `burstCompression.enabled` remains false.
+The previously passive rogue regroup foundation is now opt-in **through the enemy AI** when `R.tacticalFoundation.enabled` is true. Tiered burst compression was independently enabled on `main` by PR #147; this rogue-move change preserves those live settings and does not introduce a new compression model.
 
 ## Eligibility and intent
 - Every engaged monster category, including summoned hostiles, can assess tactical disadvantage. Wounded ordinary, guardian and ringleader monsters skip the normal opening grace and seek support when their HP is strictly below **30%**.
@@ -53,7 +53,7 @@ Rogue warnings show the named attack, countdown and marked collision region; blu
 **Skill-caused displacement must never reset a wounded boss/captain encounter.** Thornfang's scatter briefly overrides hero/companion movement and attack input, navigates around solids, then restores control. Short and bounded leash exceptions protect encounters from this forced movement and from a monster's self-repositioning, without permanently extending aggro or preventing genuine player escape. Rogue tactics still respect the original level-eligibility and one-response conditions.
 
 ## Non-goals
-This phase does not implement soft-knee burst compression, change existing normal/TRUE boss summons, rearrange zones, modify companion damage, or add an alternate boss ability rotation. Pursuit and attack geometry from the separately audited boss-range PR #136 remain intact.
+This phase does not retune the independently enabled soft-knee burst compression, change existing normal/TRUE boss summons, rearrange zones, modify companion damage, or add an alternate boss ability rotation. Pursuit and attack geometry from the separately audited boss-range PR #136 remain intact.
 
 ## Validation
 Regressions exercise targeting intent rather than party size, +3 enemy-level suppression, equal-level summon/cunning restrictions, single-ally and boss reinforcement, intentional multi-hop chain recruitment, wounded-HP threshold, 50% temporary protection, companion-only pressure, independent eligibility, and cleanup. Dedicated rogue-disruption regressions additionally cover two-choice elite repertoires, the complete captain/boss signature registry, warning geometry, line-of-sight escape, commander restraint and crowd-control limits. Full browser/mobile, asset/format, and campaign regressions gate integration.
