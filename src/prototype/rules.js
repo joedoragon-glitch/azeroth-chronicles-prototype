@@ -4299,7 +4299,7 @@
     heroLevelDisadvantageMinimum: 1,
     outlevelProtection: 3,
     simultaneousPressureSources: 2,
-    woundedThreshold: 0.30,
+    woundedThreshold: 0.3,
     summonSupportThreshold: 1,
     awarenessRadius: 750,
     threatWindowSeconds: 6,
