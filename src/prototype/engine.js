@@ -1391,7 +1391,15 @@
       this.s.squadBoss = false;
       this.s.squadDoctrine = this.squadDefaultDoctrine();
       this.s.heroTarget = null;
-      const q = this.safe(p.x, p.y);
+      const transport = arrival?.transportId
+        ? this.zone().npcs.find((n) => n.id === arrival.transportId && n.kind === 'transport')
+        : null;
+      if (arrival?.transportId && !transport)
+        throw Error('Destination transport is missing');
+      const landing = transport
+        ? { x: transport.x + (arrival.dx || 0), y: transport.y + (arrival.dy || 0) }
+        : p;
+      const q = this.safe(landing.x, landing.y);
       Object.assign(this.hero, q);
       for (const u of this.activeParty()) {
         Object.assign(u, this.safe(q.x + 40, q.y + 30));
@@ -1479,9 +1487,9 @@
       const before = clone(this.s),
         messageCount = this.messages.length,
         effectCount = this.effects.length,
-        [x, y] = D.towns[targetIndex];
+        arrival = R.travelArrivals?.['crown>' + regionId];
       try {
-        if (!this.enter(regionId, { x, y })) throw Error('Invalid destination');
+        if (!arrival || !this.enter(regionId, arrival)) throw Error('Invalid destination');
         this.event('travel', { from: before.zone, to: this.s.zone, hub: true });
         return true;
       } catch (_) {
