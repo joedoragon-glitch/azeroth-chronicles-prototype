@@ -19,3 +19,8 @@ Next: produce and review the five regional ground pilots, then proceed through r
 ## Ground pilot review
 
 The five regional ground pilots retain exact image-generation prompts and original sources under `tools/sprites/batches/2026-10-08-terrain/T001` through `T005`. Review evidence includes 3×3 wraps, edge measurements and four desktop/phone viewport pairs in day/night. Reproduce a native comparison with `node scripts/material-pipeline.cjs showroom tools/sprites/batches/2026-10-08-terrain/T001/candidate/candidate.json`. Its left column is procedural canon and its right column adds the proposed grain. World span 320 and opacity 0.28 remain explicit per-resource settings; no roads, objects, geometry or terrain collision are baked into these images.
+
+
+## Bounded ground projection · v0.8.123
+
+Ground materials reuse a screen-aligned isometric repeat at the current physical Canvas scale. Original world phase, opacity and surface clips remain authoritative. A separate 8 MiB projected RGBA LRU cache supplements the existing 2 MiB source-image budget; eviction and manifest retirement release backing stores. Unsupported/oversized/non-ground transforms keep the original projection. Artwork, scene animation, gameplay and saves remain unchanged. See [MATERIAL_RENDERING_PERFORMANCE.md](MATERIAL_RENDERING_PERFORMANCE.md) for regression evidence, sampling tolerances and device-test limits.
