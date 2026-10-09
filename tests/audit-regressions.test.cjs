@@ -171,7 +171,7 @@ test('F44 autonomous rogue initiation finds a single ally across packs without c
   assert.equal(c.tacticalRogueRegroup(e)?.phase,'travel');
   assert.equal(ally.aggro,false);assert.equal(other.aggro,false);
   assert(!c.tacticalAutoRogue(e,c.hero),'one retreat decision per engagement');
-  assert(C.rules.tacticalFoundation.burstCompression.enabled===false);
+  assert(C.rules.tacticalFoundation.burstCompression.enabled===true);
 });
 test('F45 arrived rogue recruits only immediate support and executes one low damage telegraphed feint',()=>{
   const c=fresh(),e=c.makeEnemy({species:'wolf',name:'regrouper',level:1,hp:180,damage:12,gold:0,xp:0},{x:1400,y:1700}),
