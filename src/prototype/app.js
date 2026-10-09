@@ -1138,11 +1138,11 @@
     if (!alreadyLocked) useTarget();
   }
   const targetButton = $('target-button');
+  let ignorePointerClickUntil = 0;
   targetButton.onclick = (e) => {
-    // Pointer input is handled by pointerup, so the following click must not
-    // switch targets a second time. detail=0 remains keyboard/AT accessible.
-    if (e?.detail > 0) return;
-    if (e && typeof e.detail === 'number' && targetPress) return;
+    // Touch browsers may synthesize detail=0 clicks after pointerup. Never
+    // cycle twice; genuine keyboard/accessibility clicks still work.
+    if (Date.now() < ignorePointerClickUntil || e?.detail > 0) return;
     audio.unlock();
     useTarget();
   };
@@ -1154,6 +1154,8 @@
   };
   targetButton.onpointerup = (e) => {
     if (e.button > 0) return;
+    if (targetPress?.source === 'pointer' && targetPress.pointerId === e.pointerId)
+      ignorePointerClickUntil = Date.now() + 400;
     releaseTargetPress('pointer', e.pointerId);
   };
   targetButton.onpointercancel = targetButton.onlostpointercapture = (e) => {
