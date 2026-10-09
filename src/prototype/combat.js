@@ -133,6 +133,30 @@
         return candidates.includes(fallback) ? fallback : candidates[0] || null;
       }
 
+      tacticalDirectTargetable(e) {
+        return !!e && (e.rogueDustCoverUntil || 0) <= (this.s.time || 0);
+      }
+
+      tacticalDropDustTarget(e) {
+        if (!e?.id) return;
+        // Direct target selection is invalid immediately, not merely at the
+        // moment damage would land. Other foes remain auto-targetable.
+        if (this.s.heroTarget === e.id) this.s.heroTarget = null;
+        if (this.hero.order?.type === 'attack' && this.hero.order.id === e.id)
+          this.hero.order = null;
+        if (this.basicComboTargetId === e.id) this.resetBasicCombo();
+        for (const u of this.s.party) {
+          if (u.order?.type === 'attack' && u.order.id === e.id) u.order = null;
+        }
+        if (this._tacticalPartyTargets)
+          for (const [id, targetId] of this._tacticalPartyTargets)
+            if (targetId === e.id) this._tacticalPartyTargets.delete(id);
+        // Already launched single-target shots are abandoned. Area effects
+        // retain their own hit geometry and remain able to damage the goblin.
+        this.s.projectiles = this.s.projectiles.filter(
+          (p) => p.source === 'enemy' || p.target !== e.id,
+        );
+      }
       tacticalProtectionTier(e) {
         if (e?.type === 'boss') return e.form === 'true' ? 'trueBoss' : 'boss';
         if (e?.captain || e?.roomCaptain) return 'captain';
@@ -248,11 +272,12 @@
         return amount;
       }
 
-      damage(e, amount, source = 'hero') {
+      damage(e, amount, source = 'hero', options = null) {
         if (
           !e ||
           e.hp <= 0 ||
           e.neutral ||
+          (!options?.area && !this.tacticalDirectTargetable(e)) ||
           this.peace ||
           e.returning ||
           !Number.isFinite(amount) ||
@@ -265,9 +290,7 @@
         // A valid tactical retreat moves the active encounter, not the permanent
         // spawn. Allow damage near the retreat corridor/anchor; otherwise a
         // regrouper beyond its original home leash would become invulnerable.
-        const inCombatArea = this.tacticalRogueRegroup(e)
-          ? this.tacticalRogueLeashAllows(e, origin, normalDamageTerritory)
-          : dist(origin, e.home) <= normalDamageTerritory;
+        const inCombatArea = this.tacticalRogueLeashAllows(e, origin, normalDamageTerritory);
         if (!this.line(origin, e) || !inCombatArea) return false;
         e.mercyProvoked = true;
         this.engage(e, true);
@@ -355,7 +378,9 @@
             if (this.hero !== hero || this.s.challenge.pending || this.s.challenge.gameOver) return;
             continue;
           }
-          const e = this.zone().enemies.find((e) => e.id === p.target && e.hp > 0 && !e.neutral);
+          const e = this.zone().enemies.find(
+            (e) => e.id === p.target && e.hp > 0 && !e.neutral && this.tacticalDirectTargetable(e),
+          );
           if (!e || this.peace) {
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
             continue;
