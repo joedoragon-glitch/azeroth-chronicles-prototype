@@ -66,7 +66,7 @@ for(const cls of classes){
   next.tick(0.1);
   assert.equal(next.hero.mp,mpBefore,'passive recovery disabled');
   next.xp(120);
-  assert.equal(next.hero.maxMp,maxBefore,'legacy MP capacity stays dormant on level-up');
+  assert.equal(next.hero.maxMp,maxBefore+R.manaBalance.perLevel,'dormant capacity still grows for future MP reactivation');
   assert.equal(next.hero.mp,mpBefore,'level-up does not refill dormant MP');
   assert.equal(next.skillCooldown(8),24*.8);
   next.hero.gold=500;next.s.rescued.archive=true;
