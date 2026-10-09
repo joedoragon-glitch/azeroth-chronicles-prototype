@@ -375,6 +375,34 @@ test('Lethal companion hits skip secondary effects while the signature still aff
     assert(survivor.hp < survivorHp, 'remaining living attackers still receive the signature');
   }
 });
+test('A successful lethal companion hit retains caster dust/withdrawal while expiring victim effects', () => {
+  for (const make of [mob('goblin'), mob('wolf', 'normal', true)]) {
+    const { c, e } = encounter(make);
+    const u = c.unit('archer', e.x + 80, e.y);
+    c.s.party = [u];
+    u.hp = 1;
+    const before = { x: u.x, y: u.y };
+    c.manualHeroTargetId = e.id;
+    c.manualHeroTargetZone = c.zoneId;
+    c.manualHeroTargetLocked = true;
+    assert(c.tacticalRogueMove(e, u));
+    const a = e.telegraph;
+    assert.equal(a.targetId, u.id);
+    assert(!a.rogueSignature);
+    resolveThroughAI(c, e, a);
+    assert.equal(u.hp, 0);
+    assert.deepEqual({ x: u.x, y: u.y }, before);
+    assert.equal(u.slow || 0, 0);
+    assert.equal(c.s.statistics.deaths, 0, 'hero encounter continues');
+    if (a.blinds) {
+      assert(
+        !c.tacticalDirectTargetable(e),
+        'successful dust hit grants its authored caster cover',
+      );
+      assert.equal(c.manualHeroTargetId, null, 'direct lock is interrupted');
+    } else assert(e.x < 1400, 'successful covering hit still withdraws its caster');
+  }
+});
 test('A companion death clears interrupted scatter before paid recovery of the same record', () => {
   const { c, e } = encounter((c) => c.bossEnemy(c.boss('thorn'), 'normal', { x: 1400, y: 1700 }));
   const u = c.unit('archer', e.x + 80, e.y);
@@ -404,6 +432,48 @@ test('A companion death clears interrupted scatter before paid recovery of the s
   const before = { x: u.x, y: u.y };
   assert(!c.tacticalAdvanceScatter(u, 0.1), 'recovered companion never resumes the old howl');
   assert.deepEqual({ x: u.x, y: u.y }, before);
+});
+test('Paid recovery expires prior slows after real enemy projectile and hazard deaths', () => {
+  for (const source of ['projectile', 'hazard']) {
+    const { c, e } = encounter((c) => c.bossEnemy(c.boss('thorn'), 'normal', { x: 1400, y: 1700 }));
+    const u = c.unit('archer', e.x + 80, e.y);
+    c.hero.y += 120;
+    c.s.party = [u];
+    u.hp = 1;
+    assert(c.tacticalBeginScatter(e, u, 70));
+    if (source === 'projectile')
+      c.s.projectiles.push({
+        id: 'quality-lethal-shot',
+        source: 'enemy',
+        sourceId: e.id,
+        x: u.x - 1,
+        y: u.y,
+        dx: 1,
+        dy: 0,
+        speed: 100,
+        life: 2,
+        damage: 100,
+        slow: 3,
+      });
+    else
+      c.s.hazards.push({
+        x: u.x,
+        y: u.y,
+        radius: 25,
+        kind: 'pool',
+        life: 2,
+        tick: 0,
+        damage: 100,
+        slow: 3,
+      });
+    c.updateProjectiles(0.01);
+    assert.equal(u.hp, 0, source + ' actually kills the companion');
+    assert(!c.tacticalScatterState(u), 'fatal contact cancels interrupted howl');
+    c.hero.gold = 10000;
+    assert(c.recover());
+    assert.equal(u.slow, 0, 'new life cannot inherit old pursuit impairment');
+    assert(!c.tacticalAdvanceScatter(u, 0.1));
+  }
 });
 test('Zone reset clears dust cover together with the original encounter', () => {
   const c = new C('normal', 'paladin', () => 0.9);

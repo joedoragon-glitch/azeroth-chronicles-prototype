@@ -419,19 +419,34 @@ button:disabled {
   color: #f2ecd7;
   border-radius: 9px;
 }
-/* v0.8.32 critical notices: rare, readable, top-center only. */
+/* At most two amber milestone notices share the top-center presentation. */
 #message {
-  display: block !important;
+  display: flex !important;
+  flex-direction: column;
+  gap: 8px;
   position: fixed;
   left: 50%;
   right: auto;
   top: max(12px, env(safe-area-inset-top));
   bottom: auto;
   width: min(520px, calc(100vw - 24px));
-  padding: 10px 16px;
+  padding: 0;
   transform: translate(-50%, -10px);
   opacity: 0;
   visibility: hidden;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  pointer-events: none;
+  z-index: 20;
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease,
+    visibility 0.35s;
+}
+#message .notice-card {
+  padding: 10px 16px;
   background: linear-gradient(155deg, #f0c96e, #d7a94c);
   color: #241b0c;
   border: 2px solid #fff0b4;
@@ -444,12 +459,6 @@ button:disabled {
   line-height: 1.3;
   text-align: center;
   letter-spacing: 0.01em;
-  pointer-events: none;
-  z-index: 20;
-  transition:
-    opacity 0.35s ease,
-    transform 0.35s ease,
-    visibility 0.35s;
 }
 #message.visible {
   opacity: 1;

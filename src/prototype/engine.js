@@ -211,7 +211,7 @@
     }
     notice(text, duration = 5.5) {
       this.notices.push({ id: ++this.noticeId, text, duration });
-      if (this.notices.length > 6) this.notices.shift();
+      if (this.notices.length > 32) this.notices.shift();
     }
     boss(id) {
       return D.bosses.find((b) => b.id === id);
@@ -3377,23 +3377,26 @@
           this.hero !== startingHero ||
           this.zoneId !== startingZone ||
           this.s.statistics.deaths !== startingDeaths ||
-          target.hp <= 0 ||
           this.s.challenge.pending ||
           this.s.challenge.gameOver
         )
           return;
-        if (move.style === 'shove') {
-          const d = Math.max(1, dist(e, target)),
-            point = {
-              x: target.x + ((target.x - e.x) / d) * 55,
-              y: target.y + ((target.y - e.y) / d) * 55,
-            };
-          this.move(target, point, 220, 0.25);
-        } else {
-          target.slow = Math.max(
-            target.slow || 0,
-            move.slowSeconds || (move.style === 'snare' ? 1.65 : 0.95),
-          );
+        // A successful lethal companion hit still grants the caster's authored
+        // dust/withdrawal, but cannot slow or shove the fallen victim.
+        if (target.hp > 0) {
+          if (move.style === 'shove') {
+            const d = Math.max(1, dist(e, target)),
+              point = {
+                x: target.x + ((target.x - e.x) / d) * 55,
+                y: target.y + ((target.y - e.y) / d) * 55,
+              };
+            this.move(target, point, 220, 0.25);
+          } else {
+            target.slow = Math.max(
+              target.slow || 0,
+              move.slowSeconds || (move.style === 'snare' ? 1.65 : 0.95),
+            );
+          }
         }
         if (move.blinds > 0) {
           // Dust blinds the victim narratively: the goblin briefly cannot be
