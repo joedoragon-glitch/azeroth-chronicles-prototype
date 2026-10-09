@@ -40,6 +40,10 @@
     if (
       /watchpost|watchtower|fortress|stronghold|command-post|barracks|checkpoint|stockade|shrine|altar|monument|gatehouse|ash-den|wolf-den|roost|lair|treasury|vault|cellar/.test(
         structure,
+      ) ||
+      /(?:^|[-_])(fort|gate|watch|redoubt|aerie|den|keep|prison)(?:$|[-_])/.test(structure) ||
+      /citadel-|dragon-logistics|command-tent|occupation-administration|military-command|goblin-road-camp|goblin-orchard-camp|archer-drill-camp/.test(
+        structure,
       )
     )
       return 1.35;
