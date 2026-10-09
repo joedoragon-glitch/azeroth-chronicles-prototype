@@ -204,7 +204,7 @@ const PrototypeData = {
       level: 6,
       captive: 'Neri the Alchemist',
       service:
-        'Advanced Ranger Heal and Mana Recovery training, Companion Vitality and talent reset',
+        'Ranger Heal training, Companion Vitality and talent reset',
       requires: [1, 2, 3],
       hp: 1600,
       damage: 28,
