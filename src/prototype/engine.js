@@ -2935,8 +2935,7 @@
         signature =
           (e.type === 'boss' && cfg.rogueSignatures.bosses[e.family]) ||
           ((e.captain || e.roomCaptain) && cfg.rogueSignatures.captains[e.captainProfile]),
-        pressured =
-          this.tacticalRogueOutnumbered(e) || !!this.tacticalRogueRegroup(e)?.anchor,
+        pressured = this.tacticalRogueOutnumbered(e) || !!this.tacticalRogueRegroup(e)?.anchor,
         eliteAmbush = tier === 'ringleader' && (pressured || this.tacticalRogueWounded(e)),
         isSignature = !!signature && pressured,
         profile = isSignature ? signature : eliteAmbush ? profiles.ringleader : basic,
@@ -2992,8 +2991,7 @@
         // Base movement remains single-target and cover-sensitive.
         if (!target || target.hp <= 0 || dist(target, move) > move.radius || !this.line(e, target))
           return;
-        if (move.style === 'dash' && dist(e, target) > 95)
-          this.move(e, target, 300, 0.3, 85);
+        if (move.style === 'dash' && dist(e, target) > 95) this.move(e, target, 300, 0.3, 85);
         if (!this.hitParty(target, e.damage * move.coefficient)) return;
         if (move.style === 'shove') {
           const d = Math.max(1, dist(e, target)),
@@ -3019,8 +3017,13 @@
         startingZone = this.zoneId;
       for (const unit of this.combatTargets().filter(inside)) {
         if (!this.hitParty(unit, e.damage * move.coefficient)) continue;
-        if (this.hero !== startingHero || this.zoneId !== startingZone ||
-          this.s.challenge.pending || this.s.challenge.gameOver) return;
+        if (
+          this.hero !== startingHero ||
+          this.zoneId !== startingZone ||
+          this.s.challenge.pending ||
+          this.s.challenge.gameOver
+        )
+          return;
         if (move.effect === 'scatter' || move.effect === 'sweep') {
           const d = Math.max(1, dist(e, unit)),
             push = move.push || 65,
@@ -3036,8 +3039,15 @@
         // A commander encourages only units ALREADY fighting. It does not
         // secretly recruit nearby packs or bypass the pursuit consequence rule.
         for (const ally of this.zone().enemies) {
-          if (ally === e || ally.hp <= 0 || !ally.aggro || ally.returning ||
-            dist(e, ally) > R.tacticalFoundation.supportRadius || !this.line(e, ally)) continue;
+          if (
+            ally === e ||
+            ally.hp <= 0 ||
+            !ally.aggro ||
+            ally.returning ||
+            dist(e, ally) > R.tacticalFoundation.supportRadius ||
+            !this.line(e, ally)
+          )
+            continue;
           ally.pursuitBurst = Math.max(ally.pursuitBurst || 0, move.rallySeconds);
           ally.cd = Math.min(ally.cd || 0, 0.5);
         }
