@@ -21,6 +21,14 @@ Current integration: [PR #183](https://github.com/joedoragon-glitch/azeroth-chro
 5. Measure actual contribution from HP life-steal and new telegraphed boss self-heals, including six-companion worst-case hits and repeated hazard pulses. Do not introduce max-HP fraction healing caps by default; report empirical encounter duration and gameplay costs before suggesting changes.
 6. For any concern, provide reproducible seed, setup, observed metrics, intended behavior, minimum fix and affected regression tests. Keep prior balance values unless actual measurements justify a change.
 
+## Integration blocker at last handover (2026-10-09)
+
+**Do not claim merged or deployed.** The active PR #183 is open and draft; its head was `15b12c10065325427e83f012c7955db0cd6f7328`. The branch originally integrated main `296356a883903459ba68e70291920f9c4538d96b`; concurrent approved responsive-UI work advanced `main` to `4a2e6b3d9772f4eb44fb3e351f3a67bfb5ac1bdd`, leaving PR #183 conflicted. This introduced the already-shipped v0.8.114 version, so choose a new available version (e.g. 0.8.115) when regenerating build/service-worker files. Preserve UI, tonic, quest, amber-notice, enemy-VFX and saves.
+
+The previous full regression run passed format and generated-file checks but failed `tests/cooldown-only.test.cjs` Cinder Siphon test: recorded siphon event was the correct 15% of actual HP loss (23.8425 HP), while the test observed 73.8425 HP net monster increase because a manually inserted enemy gained another 50 HP from lazy world normalization. A `g.zone()` pre-measurement fixture synchronization was committed, **not subsequently verified by a completed required CI pass**. Confirm this behavior in actual game and test cases, not by weakening the intended 15% siphon rule. The phone WebKit job and all other required browser checks likewise have no certified passing head at handover.
+
+Close status: superseded PR #169 is CLOSED and must not be merged. PR #183 is the sole active implementation, but requires rebase/reintegration, functional regression repair, fresh CI/browser validation, and then merge/deployment. **Only after that** perform the requested numerical cooldown-reduction and encounter balance audit.
+
 ## Current audit status
 
 The above values are **provisional** and must not be described as proven balanced. Functional pass/fail depends on most recent GitHub Actions run. In the previous chat, CI runs for several rapid commits were queued/pending; confirm the final head's completed checks. Do not merge conflicted PR #169. Follow the user's explicit instruction: **balance audit is deferred until the next chat, while functional implementation may proceed now if verified.**
