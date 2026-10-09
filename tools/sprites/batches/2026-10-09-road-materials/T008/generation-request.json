@@ -1,0 +1,8 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Use case: stylized-concept. Asset type: opaque seamless game terrain material, T008 terrain:road:highlands for Azeroth Chronicles. Generate one square flat top-down texture of weathered gray quarry-stone paving surface, restrained fine mineral grain and low contrast. Palette muted warm stone gray #4e4d46 #87857a #a29f8e #6e6d66. Uniform illumination and grain strength across the full tile. Seamlessly repeat on both axes. Designed for 256x256 game export blended at opacity 0.28 beneath small characters. No tile divisions, no slab seams, no cracks or large chunks, no road edges or ruts, no objects or grass, no isometric projection, no perspective, no vignette, no text, no watermark. Fully opaque.",
+  "transparentBackground": false,
+  "reference": null,
+  "requestId": "not exposed separately; original returned file retained",
+  "resultFile": "exec-23957087-9dcc-414f-b696-9c455023e6d6.png"
+}
