@@ -103,3 +103,7 @@ Burst protection is a smooth, windowed reduction to **combined** hero-and-compan
 ## Burst-compression strengthening · 9 October 2026
 
 Joel requests double the original compression strength for every monster tier. The live `rules.js` knees **and** logarithmic tails are therefore halved across ordinary, guardian, ringleader, captain, boss and TRUE boss categories. This is 2× curve sensitivity, not necessarily 2× the percentage of final damage removed at every burst size. Preserve the two-second shared hit history, uncapped positive marginal damage, individual enemy tiers, exposed openings and separate rogue retreat mitigation. Maintain tests for ordinary monsters benefiting before lethal raw damage and against mistakenly increasing thresholds.
+
+## Reallocate stronger compression by monster role · 9 October 2026
+
+The follow-up to doubled compression is **not** another across-the-board increase: reuse the previous strengthened **captain** profile for ringleaders (knee 0.25, tail 0.375), the previous strengthened **TRUE boss** profile for captains (0.145/0.24), and the existing strengthened **normal boss** profile for TRUE bosses (0.18/0.275). Normal bosses remain at 0.18/0.275; ordinary and guardian values remain 0.675/0.875 and 0.475/0.625. Captains are intentionally more burst-resistant than bosses under this tuning. Do not touch companion targeting, summons, enemy HP, or the shared two-second mechanic as part of this tier-only pass.
