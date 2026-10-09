@@ -121,3 +121,10 @@ The prepared-work release also activates the reviewed fixed-shape Vale bush and 
 Game and settings → Screen and performance offers original 100%, 150% and 175% camera framing. Default stays 100% pending Joel's selection; his likely preference is 150%. The renderer scales world presentation around the existing unobstructed hero anchor and applies inverse zoom to pointer mapping. The HUD, gameplay rules and campaign save schema remain unchanged. Camera settings persist independently for desktop and phone. Small-phone support is retired as recorded in DECISIONS.md.
 
 Generation and asset replacement/publication stay paused. No source artwork, registration, processed image, terrain texture or rollback record changes in this pass. Existing Paladin art has an approximate opaque body footprint of 50×65 logical pixels at 100% (75×98 at 150%; 88×114 at 175%); the Goblin is approximately 38×49 (57×74; 67×86). These exclude transparent padding and use alpha >20; animation frames and device pixel ratio can change physical raster dimensions. Target generation budgets remain provisional until viewing-scale review.
+
+
+## Selected camera framing · v0.8.102
+
+Joel selected 150% on 9 October. Both desktop and phone now default to it; the original 100% and 175% remain optional. A new presentation-only preference key preserves old comparison choices for rollback and lets the finalized default take effect without changing campaign saves. World projection, inverse pointer mapping, hero anchor and gameplay distances keep the v0.8.101 implementation.
+
+CAMERA_SPRITE_TARGETS.md records the selected visible body dimensions and physical raster budgets. Future images must be judged at 150%, with simple readable detail and enough raster pixels for the actual capped device ratio. Current accepted contracts and processing outputs remain immutable; implementing future higher-resolution replacements requires revising processing limits before production. All generation, replacement and further asset publication stay paused until Joel requests resumption.

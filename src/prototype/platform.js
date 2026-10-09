@@ -2,7 +2,9 @@
 (function (root) {
   'use strict';
   const preferenceKey = 'azeroth-screen-v1';
-  const cameraPreferenceKey = 'azeroth-camera-v1';
+  // Preserve comparison preferences for rollback; finalized framing starts at 150%.
+  const cameraPreferenceKey = 'azeroth-camera-v2';
+  const defaultCameraZoom = 1.5;
   const cameraScales = [1, 1.5, 1.75];
   function resolve({ requested = 'auto', fine = false, coarse = false }) {
     if (requested === 'desktop' || requested === 'phone') return requested;
@@ -53,7 +55,7 @@
       },
       get cameraZoom() {
         const value = cameraPreferences[mode];
-        return cameraScales.includes(value) ? value : 1;
+        return cameraScales.includes(value) ? value : defaultCameraZoom;
       },
       selectCameraZoom(value) {
         if (!cameraScales.includes(value)) return;
@@ -93,7 +95,14 @@
       },
     };
   }
-  const api = { resolve, init, preferenceKey, cameraPreferenceKey, cameraScales };
+  const api = {
+    resolve,
+    init,
+    preferenceKey,
+    cameraPreferenceKey,
+    cameraScales,
+    defaultCameraZoom,
+  };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypePlatform = api;
 })(typeof window !== 'undefined' ? window : globalThis);
