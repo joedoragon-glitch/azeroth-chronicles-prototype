@@ -705,6 +705,8 @@
           living = this.activeLivingParty(),
           context = this.syncSquadDoctrine(),
           claimed = new Set();
+        // Target intent is transient: active selection, not proximity or party size.
+        this._tacticalPartyTargets = new Map();
         for (const u of living)
           if (
             context.engaged &&
@@ -843,6 +845,7 @@
             continue;
           }
           claimed.add(e.id);
+          this._tacticalPartyTargets.set(u.id, e.id);
           if (u.type === 'archer') {
             const d = dist(u, e),
               visible = this.line(u, e),
