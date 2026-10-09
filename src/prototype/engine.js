@@ -35,6 +35,8 @@
       this.effects = [];
       this.notices = [];
       this.noticeId = 0;
+      this.actionFeedback = null;
+      this.actionFeedbackId = 0;
       this.basicComboStep = 0;
       this.basicComboAt = -1e9;
       this.basicComboClass = heroClass;
@@ -207,6 +209,9 @@
     say(text) {
       this.messages.push(text);
       if (this.messages.length > 7) this.messages.shift();
+    }
+    inform(text) {
+      this.actionFeedback = { id: ++this.actionFeedbackId, text };
     }
     notice(text, duration = 5.5) {
       this.notices.push({ id: ++this.noticeId, text, duration });
@@ -1117,10 +1122,12 @@
       if (!site) return false;
       if (this.refugeThreat()) {
         this.say('Cannot rest while nearby enemies are engaged. Retreat and end the fight first.');
+        this.inform('Too dangerous to rest.');
         return false;
       }
       if (this.s.restCooldown > 0) {
         this.say('Refuge restoration ready in ' + Math.ceil(this.s.restCooldown) + ' seconds.');
+        this.inform('Rest in ' + Math.ceil(this.s.restCooldown) + 's.');
         return false;
       }
       this.clearTonic();
@@ -1146,6 +1153,7 @@
       if (this.s.rescued[family]) return false;
       if (!this.s.keys[family] && !this.peace) {
         this.say('Defeat ' + this.boss(family).name + ' to obtain the key.');
+        this.inform('Defeat ' + this.boss(family).name + ' first.');
         return false;
       }
       this.s.rescued[family] = true;
@@ -1205,7 +1213,7 @@
         this.hero.hp += this.hero.tonicBonus;
         this.syncCompanionLevelStats();
         this.say('Preparation tonic applied · maximum health +10%.');
-        this.notice('PREPARATION TONIC · ACTIVE', 4.5);
+        // Tonics confirm their effect in the barracks menu, not the amber banner.
         return true;
       }
       this.say(
@@ -1355,6 +1363,7 @@
       }
       if (!n || n.amount <= 0 || !labor.length) {
         this.say('At least one idle living troop and an unexhausted deposit are required.');
+        this.inform(!labor.length ? 'No idle companion available.' : 'Nothing left to gather.');
         return false;
       }
       this.s.recallActive = false;
@@ -1558,6 +1567,7 @@
               ))
           ) {
             this.say('Clear the Treasury guards before recovering the caches.');
+            this.inform('Clear the Treasury guards first.');
             return false;
           }
           if (npc.mini && !this.peace && !this.miniCleared(npc.mini)) {
