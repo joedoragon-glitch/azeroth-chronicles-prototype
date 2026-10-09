@@ -4268,9 +4268,17 @@
     captains: {
       'supply-vale': { name: 'Scornfang’s Pocket Trick', style: 'snare', coefficient: 0.2 },
       'supply-march': { name: 'Direjaw’s Silt Hook', style: 'snare', coefficient: 0.2 },
-      'supply-highlands': { name: 'Crag Tyrant’s Shoulder Feint', style: 'shove', coefficient: 0.22 },
+      'supply-highlands': {
+        name: 'Crag Tyrant’s Shoulder Feint',
+        style: 'shove',
+        coefficient: 0.22,
+      },
       'supply-crown': { name: 'Dreadmaw’s Ash Snare', style: 'snare', coefficient: 0.22 },
-      'frontier-overseer': { name: 'Cinder Warlord’s Flank Order', style: 'dash', coefficient: 0.22 },
+      'frontier-overseer': {
+        name: 'Cinder Warlord’s Flank Order',
+        style: 'dash',
+        coefficient: 0.22,
+      },
     },
     bosses: {
       thorn: { name: 'Thornfang’s Pack Feint', style: 'dash', coefficient: 0.23 },
