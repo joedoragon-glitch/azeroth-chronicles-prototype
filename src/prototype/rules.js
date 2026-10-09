@@ -4294,6 +4294,31 @@
       darklord: { name: 'Dark Lord’s Crown Grasp', style: 'snare', coefficient: 0.26 },
     },
   };
+  // A signature is a second, situational rogue option, not a boss-rotation attack.
+  // Scatter/sweep buy breathing room; bind obstructs pursuit; pivot withdraws
+  // behind a warning; rally helps *already engaged* defenders without recruiting.
+  const rogueSignatures = {
+    captains: {
+      'supply-vale': { name: 'Scornfang’s Bait-and-Switch', effect: 'pivot', warning: 1.15, radius: 115, slowSeconds: 1.3, sidestep: 135, coefficient: 0.09 },
+      'supply-march': { name: 'Direjaw’s Silt Curtain', effect: 'bind', warning: 1.35, radius: 125, slowSeconds: 2.0, coefficient: 0.09 },
+      'supply-highlands': { name: 'Crag Tyrant’s Paid Screen', effect: 'rally', warning: 1.35, radius: 120, slowSeconds: 0.8, rallySeconds: 2.3, coefficient: 0.08 },
+      'supply-crown': { name: 'Dreadmaw’s Idol Defiance', effect: 'scatter', warning: 1.5, radius: 160, push: 70, coefficient: 0.08 },
+      'frontier-overseer': { name: 'Cinder Warlord’s Rearguard Order', effect: 'rally', warning: 1.4, radius: 135, slowSeconds: 1, rallySeconds: 2.8, coefficient: 0.08 },
+    },
+    bosses: {
+      thorn: { name: 'Thornfang’s Packbreaker Howl', effect: 'scatter', warning: 1.25, radius: 165, push: 70, coefficient: 0.08 },
+      crypt: { name: 'Crypt Guardian’s Grave Threshold', effect: 'bind', warning: 1.4, radius: 120, slowSeconds: 1.8, coefficient: 0.09 },
+      mire: { name: 'Mirejaw’s Sinking Bank', effect: 'bind', warning: 1.45, radius: 145, slowSeconds: 2.2, coefficient: 0.08 },
+      archive: { name: 'Drowned Keeper’s Floodgate Turn', effect: 'pivot', warning: 1.5, radius: 140, slowSeconds: 1.6, sidestep: 150, coefficient: 0.08 },
+      ridge: { name: 'Ridge Tyrant’s Payroll Screen', effect: 'rally', warning: 1.5, radius: 135, slowSeconds: 0.9, rallySeconds: 3, coefficient: 0.07 },
+      mine: { name: 'Stone Colossus’s Faultline Brace', effect: 'sweep', warning: 1.65, radius: 195, push: 95, coefficient: 0.1 },
+      warlord: { name: 'Ashen Warlord’s Shielded Withdrawal', effect: 'rally', warning: 1.55, radius: 155, slowSeconds: 0.85, rallySeconds: 3, coefficient: 0.08 },
+      abyss: { name: 'Abyss Dragon’s Wingward Break', effect: 'scatter', warning: 1.7, radius: 205, push: 110, sidestep: 90, coefficient: 0.09 },
+      citadel: { name: 'Ash Sentinel’s Guard Pivot', effect: 'pivot', warning: 1.6, radius: 150, slowSeconds: 1.15, sidestep: 115, coefficient: 0.09 },
+      cindermaw: { name: 'Cindermaw’s Broodscreen Roar', effect: 'scatter', warning: 1.5, radius: 180, push: 85, rallySeconds: 1.9, coefficient: 0.08 },
+      darklord: { name: 'Dark Lord’s Crown Decree', effect: 'bind', warning: 1.8, radius: 175, slowSeconds: 1.9, rallySeconds: 2.2, coefficient: 0.09 },
+    },
+  };
   const tacticalFoundation = Object.freeze({
     enabled: true,
     heroLevelDisadvantageMinimum: 1,
@@ -4310,6 +4335,7 @@
     thinkingSeconds: 0.8,
     escapeSeconds: 5.5,
     rogueMoves,
+    rogueSignatures,
     // Tier names are identifiers, not mitigation percentages.
     protectionTiers: ['ordinary', 'guardian', 'ringleader', 'captain', 'boss', 'trueBoss'],
     burstCompression: Object.freeze({ enabled: false, model: 'soft-knee', hardCap: false }),
