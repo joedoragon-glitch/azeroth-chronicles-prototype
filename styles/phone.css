@@ -261,3 +261,221 @@ body[data-experience='phone'][data-phone-layout='left-hand'] #squad-button {
     bottom: 122px;
   }
 }
+
+/* Phone: show HP, MP, class and level without a full-width banner. */
+body[data-experience='phone'] #hud {
+  left: max(8px, env(safe-area-inset-left));
+  right: auto;
+  width: min(310px, calc(100vw - 16px));
+  padding: 6px 7px;
+  grid-template-columns: minmax(0, 1fr) 42px;
+  gap: 6px;
+  border-radius: 10px;
+  background: linear-gradient(155deg, #172b36ec, #10212bde);
+}
+body[data-experience='phone'] #hero-stats {
+  gap: 2px 7px;
+}
+body[data-experience='phone'] #hero-stats .hero-title {
+  margin: 0 0 1px;
+  justify-content: space-between;
+  font-size: 11px;
+}
+body[data-experience='phone'] #hero-stats .hero-title > span {
+  display: inline;
+}
+body[data-experience='phone'] #hero-stats .hero-title small {
+  font-size: 10px;
+}
+body[data-experience='phone'] .resource-line {
+  margin: 1px 0;
+  font-size: 10px;
+}
+body[data-experience='phone'] .resource-line i {
+  height: 5px;
+}
+body[data-experience='phone'] #hud #menu-button {
+  width: 42px;
+  min-height: 42px;
+  padding: 4px;
+  font-size: 0;
+}
+body[data-experience='phone'] #hud #menu-button::before {
+  content: '☰';
+  display: inline-block;
+  font-size: 20px;
+  line-height: 1;
+}
+body[data-experience='phone'] #status {
+  top: calc(max(8px, env(safe-area-inset-top)) + 59px);
+  width: max-content;
+  max-width: min(270px, calc(100vw - 24px));
+  padding: 5px 8px;
+  background: #122733e8;
+  border: 1px solid #7996a54d;
+}
+body[data-experience='phone'] #modal {
+  top: 45%;
+  bottom: auto;
+  right: auto;
+  left: 50%;
+  width: min(330px, calc(100vw - 24px));
+  max-height: min(54dvh, 470px);
+  padding: 11px;
+  transform: translate(-50%, -50%);
+}
+body[data-experience='phone'] #modal h2 {
+  font-size: 17px;
+}
+body[data-experience='phone'] #modal-actions button,
+body[data-experience='phone'] #close-button {
+  min-height: 44px;
+}
+body[data-experience='phone'] #message {
+  width: min(310px, calc(100vw - 20px));
+  padding: 0;
+  font-size: 11px;
+}
+@media (max-height: 500px) and (min-width: 480px) {
+  body[data-experience='phone'] #hud {
+    width: min(310px, 44vw);
+  }
+  body[data-experience='phone'] #modal {
+    top: 46%;
+    width: min(390px, 58vw);
+    max-height: min(60dvh, 270px);
+  }
+}
+
+/* Thumb-first field controls. Keep movement left, unlocked skills right,
+   with Interact directly beside the joystick instead of over the world. */
+body[data-experience='phone'] #touch-interact-button {
+  left: calc(max(8px, env(safe-area-inset-left)) + 110px);
+  right: auto;
+  top: auto;
+  bottom: max(8px, env(safe-area-inset-bottom));
+  transform: none;
+  width: 58px;
+  min-height: 54px;
+  padding: 5px 3px;
+  font-size: 11px;
+  line-height: 1.15;
+}
+body[data-experience='phone'] #recall-button,
+body[data-experience='phone'] #target-button {
+  bottom: calc(120px + env(safe-area-inset-bottom));
+  min-height: 44px;
+  border-radius: 9px;
+}
+body[data-experience='phone'] #recall-button {
+  left: max(8px, env(safe-area-inset-left));
+  width: 80px;
+}
+body[data-experience='phone'] #target-button {
+  left: calc(max(8px, env(safe-area-inset-left)) + 88px);
+  width: 78px;
+}
+body[data-experience='phone'] #squad-button {
+  left: max(8px, env(safe-area-inset-left));
+  bottom: calc(172px + env(safe-area-inset-bottom));
+  width: 166px;
+  min-height: 44px;
+}
+body[data-experience='phone'] #joystick {
+  border-color: #91b1ad;
+  border-width: 2px;
+  background: radial-gradient(circle at 45% 40%, #42676bba, #132c35bb 73%);
+}
+body[data-experience='phone'] #stick {
+  border-color: #b5d1c7;
+  background: radial-gradient(circle at 35% 30%, #a8c5b6, #4f827d 73%);
+}
+body[data-experience='phone'] #hero-stats .hero-title {
+  font-size: 12px;
+}
+body[data-experience='phone'] #hero-stats .hero-title small {
+  font-size: 11px;
+}
+body[data-experience='phone'] .resource-line {
+  font-size: 11px;
+}
+body[data-experience='phone'] #status {
+  font-size: 12px;
+  line-height: 1.3;
+}
+body[data-experience='phone'] #message {
+  /* Amber cards live below the compact vitals; brief status feedback follows the stack. */
+  top: calc(max(8px, env(safe-area-inset-top)) + 70px);
+  transform: translate(-50%, 0);
+}
+body[data-experience='phone'] #modal-description,
+body[data-experience='phone'] #modal-actions button {
+  font-size: 13px;
+}
+body[data-experience='phone'] #modal-actions .detail {
+  font-size: 11px;
+}
+body[data-experience='phone'] #modal[data-dialog-size='compact'] {
+  width: min(280px, calc(100vw - 24px));
+}
+body[data-experience='phone'] #modal[data-dialog-size='regular'] {
+  width: min(300px, calc(100vw - 24px));
+}
+body[data-experience='phone'] #modal[data-dialog-size='wide'] {
+  width: min(330px, calc(100vw - 24px));
+}
+body[data-experience='phone'][data-phone-layout='left-hand'] #recall-button,
+body[data-experience='phone'][data-phone-layout='left-hand'] #target-button {
+  bottom: max(8px, env(safe-area-inset-bottom));
+}
+body[data-experience='phone'][data-phone-layout='left-hand'] #recall-button {
+  left: auto;
+  right: max(8px, env(safe-area-inset-right));
+  width: 80px;
+}
+body[data-experience='phone'][data-phone-layout='left-hand'] #target-button {
+  left: auto;
+  right: calc(max(8px, env(safe-area-inset-right)) + 88px);
+  width: 78px;
+}
+body[data-experience='phone'][data-phone-layout='left-hand'] #squad-button {
+  left: auto;
+  right: max(8px, env(safe-area-inset-right));
+  bottom: calc(60px + env(safe-area-inset-bottom));
+  width: 166px;
+}
+@media (max-height: 500px) and (min-width: 480px) {
+  body[data-experience='phone'] #modal[data-dialog-size='compact'] {
+    width: min(290px, 58vw);
+  }
+  body[data-experience='phone'] #modal[data-dialog-size='regular'] {
+    width: min(330px, 58vw);
+  }
+  body[data-experience='phone'] #modal[data-dialog-size='wide'] {
+    width: min(390px, 58vw);
+  }
+}
+
+/* Best-effort letterbox-style fit for smaller viewports. The design reference
+   remains 375x800 (800x375 rotated); no separate small-phone layout is authored. */
+body[data-experience='phone'] #joystick,
+body[data-experience='phone'] #recall-button,
+body[data-experience='phone'] #target-button,
+body[data-experience='phone'] #squad-button,
+body[data-experience='phone'] #touch-interact-button,
+body[data-experience='phone'] #order-button {
+  transform: scale(var(--phone-ui-fit, 1));
+  transform-origin: bottom left;
+}
+body[data-experience='phone'] #skills {
+  transform: scale(var(--phone-ui-fit, 1));
+  transform-origin: bottom right;
+}
+body[data-experience='phone'][data-phone-layout='left-hand'] #skills {
+  transform-origin: bottom left;
+}
+body[data-experience='phone'][data-phone-layout='left-hand'] #recall-button,
+body[data-experience='phone'][data-phone-layout='left-hand'] #target-button,
+body[data-experience='phone'][data-phone-layout='left-hand'] #squad-button {
+  transform-origin: bottom right;
+}

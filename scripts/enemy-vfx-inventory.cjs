@@ -274,7 +274,7 @@ function collect() {
       notes: 'Captain rogue response, separate from authored normal attacks',
     });
   }
-  // Dynamically adapt when PR #146 adds the expanded rogue signature registry.
+  // The integrated PR #146 repertoire is live; inventory every authored signature.
   for (const [role, profiles] of Object.entries(T.rogueRingleaderSignatures || {}))
     for (const [species, profile] of Object.entries(profiles)) {
       const visual = VFX.describe(
@@ -295,7 +295,7 @@ function collect() {
         name: profile.name,
         kind: profile.effect,
         stages: ['windup', 'release', 'impact'],
-        notes: 'Pending rogue repertoire; must keep exact dodge geometry and cyan cues',
+        notes: 'Implemented rogue repertoire; preserve exact dodge geometry and cyan cues',
       });
     }
   for (const [kind, profiles] of Object.entries(T.rogueSignatures || {})) {

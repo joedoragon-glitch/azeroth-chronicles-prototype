@@ -1448,6 +1448,7 @@
           e.motion = null;
           e.rangedAim = null;
           e.frozen = false;
+          delete e.rogueDustCoverUntil;
           if (e.hp > 0) {
             Object.assign(e, e.home);
             e.hp = e.baseHp;
@@ -2782,6 +2783,14 @@
     tacticalScatterState(unit) {
       return this._tacticalScatter?.get(unit === this.hero ? 'hero' : unit?.id) || null;
     }
+    tacticalClearScatter(unit) {
+      const key = unit === this.hero ? 'hero' : unit?.id;
+      this._tacticalScatter?.delete(key);
+      for (const [actor, allowance] of this._tacticalScatterLeash || []) {
+        allowance.victims.delete(key);
+        if (!allowance.victims.size) this._tacticalScatterLeash.delete(actor);
+      }
+    }
     tacticalBeginScatter(actor, unit, push) {
       if (!unit || unit.hp <= 0 || !Number.isFinite(push) || push <= 0) return false;
       const key = unit === this.hero ? 'hero' : unit.id,
@@ -3368,23 +3377,26 @@
           this.hero !== startingHero ||
           this.zoneId !== startingZone ||
           this.s.statistics.deaths !== startingDeaths ||
-          target.hp <= 0 ||
           this.s.challenge.pending ||
           this.s.challenge.gameOver
         )
           return;
-        if (move.style === 'shove') {
-          const d = Math.max(1, dist(e, target)),
-            point = {
-              x: target.x + ((target.x - e.x) / d) * 55,
-              y: target.y + ((target.y - e.y) / d) * 55,
-            };
-          this.move(target, point, 220, 0.25);
-        } else {
-          target.slow = Math.max(
-            target.slow || 0,
-            move.slowSeconds || (move.style === 'snare' ? 1.65 : 0.95),
-          );
+        // A successful lethal companion hit still grants the caster's authored
+        // dust/withdrawal, but cannot slow or shove the fallen victim.
+        if (target.hp > 0) {
+          if (move.style === 'shove') {
+            const d = Math.max(1, dist(e, target)),
+              point = {
+                x: target.x + ((target.x - e.x) / d) * 55,
+                y: target.y + ((target.y - e.y) / d) * 55,
+              };
+            this.move(target, point, 220, 0.25);
+          } else {
+            target.slow = Math.max(
+              target.slow || 0,
+              move.slowSeconds || (move.style === 'snare' ? 1.65 : 0.95),
+            );
+          }
         }
         if (move.blinds > 0) {
           // Dust blinds the victim narratively: the goblin briefly cannot be
@@ -3424,6 +3436,9 @@
           this.s.challenge.gameOver
         )
           return;
+        // A fallen companion does not end the hero's encounter, but cannot
+        // receive a new slow or displacement. Other marked survivors still do.
+        if (unit.hp <= 0) continue;
         if (move.effect === 'scatter' && e.family === 'thorn' && e.type === 'boss') {
           this.tacticalBeginScatter(e, unit, move.push || 70);
         } else if (move.effect === 'scatter' || move.effect === 'sweep') {

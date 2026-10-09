@@ -1,6 +1,6 @@
-# Final enemy audio/VFX synchronization audit · v0.8.114
+# Final enemy audio/VFX synchronization audit · v0.8.115
 
-Baseline: main `cdc8286ca499af1de4de53ffa3014bb89203cdab`, retaining merged audio #164, rogue #146 and VFX #162. The audit changes presentation metadata, sound levels and authoring tools only. No damage, collision, target selection, cooldown, movement, AI, balance, warning geometry or v4 save code changes.
+Baseline: main `cdc8286ca499af1de4de53ffa3014bb89203cdab`, retaining merged audio #164, rogue #146 and VFX #162. Concurrent main through `4a2e6b3` (rogue recovery #176 and ergonomic HUD #165) is preserved; the audit release advances to v0.8.115. The audit changes presentation metadata, sound levels and authoring tools only. No damage, collision, target selection, cooldown, movement, AI, balance, warning geometry or v4 save code changes.
 
 ## Corrected findings
 
@@ -23,6 +23,6 @@ All thirty effects are reproduced in memory from `sfx-book.json` and the rendere
 
 ## Release and limitations
 
-Required candidate gates: build, formatting, canonical generated/asset checks, all non-browser suites, Chromium/WebKit audio/audition and rogue checks, full desktop/mobile presentation paths, and the existing VFX/material/sprite browser gates. Require green CI for the exact PR head before merging. Main then reruns its gates, deploys Pages, compares live `build.txt` to its exact merge SHA, and runs the live desktop/phone smoke matrix. The generated service worker advances to v0.8.114 while existing v4 save keys remain compatible. Release results and exact commit/run links are recorded in the PR.
+Required candidate gates: build, formatting, canonical generated/asset checks, all non-browser suites, Chromium/WebKit audio/audition and rogue checks, full desktop/mobile presentation paths, and the existing VFX/material/sprite browser gates. Require green CI for the exact PR head before merging. Main then reruns its gates, deploys Pages, compares live `build.txt` to its exact merge SHA, and runs the live desktop/phone smoke matrix. The generated service worker advances to v0.8.115 while existing v4 save keys remain compatible. Release results and exact commit/run links are recorded in the PR.
 
 The existing bus separation, foreground warning ducking/priority, gesture unlock, menu/pause/background behavior, 64-source ceiling and 32 MiB decoded audio budget keep their owners and policies. Full lifecycle/packaging suites verify them. Physical iPhone/Android speaker comfort, headphone taste and real-device system gestures remain unmeasured; no subjective listening or physical-device certification is claimed. The previous optional live-browser attempt failed; it is not counted as passing evidence. Published-build verification uses the successful release workflow.
