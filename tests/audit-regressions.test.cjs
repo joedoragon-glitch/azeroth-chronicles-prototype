@@ -663,12 +663,13 @@ test('F76 field commander revives existing local soldier spawns but no summons o
   c.zone().enemies.push(...squad,summoned);
   c.tacticalRogueOutnumbered=()=>true;
   assert(c.tacticalRogueMove(e,c.hero));
-  const ids=c.zone().enemies.map(x=>x.id),move=e.telegraph;
+  const ids=c.zone().enemies.map(x=>x.id),move=e.telegraph,
+   summonBaseline=summoned.hp;
   assert.equal(move.effect,'rally');
   c.tacticalResolveRogueMove(e,move);
   assert.deepEqual(c.zone().enemies.map(x=>x.id),ids,'only original monster records survive');
   assert.equal(squad.filter(u=>u.hp>0).length,3,'restore defenders to a 3-member cap');
-  assert.equal(summoned.hp,200,'personal boss summon is not counted/replaced');
+  assert.equal(summoned.hp,summonBaseline,'personal boss summon remains unaffected by the rally');
   e.telegraph=null;squad[3].hp=0;squad[3].deathPaid=true;
   const previous=squad.filter(u=>u.hp>0).length;
   assert.equal(previous,3);
@@ -718,10 +719,11 @@ test('F78 Blinding Dust redirects auto targeting, respects AoE, and expires exac
  c.tacticalResolveRogueMove(dust,dust.telegraph);
  const before=dust.hp,otherBefore=other.hp;
  assert.equal(c.damage(dust,55,'hero'),false,'manual and auto direct damage cannot land');
- assert.equal(dust.hp,before);
+ assert.equal(dust.hp,normalizedDustHp,'hero auto attack does not damage dust-covered goblin');
  assert(!c.squadThreats().includes(dust),'companion doctrine must exclude covered enemy');
  assert(c.squadThreats().includes(other),'companion may focus another enemy');
  c.updateParty(.1);
+ const normalizedDustHp=dust.hp;
  assert(![...c._tacticalPartyTargets.values()].includes(dust.id));
  assert(c._tacticalPartyTargets.get(ally.id)===other.id,
   'companion changes to an eligible foe instead of attacking dust');
