@@ -1,0 +1,21 @@
+name: Inspect rogue formatting
+on:
+  push:
+    branches: [rogue-format-probe]
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm ci --ignore-scripts
+          npx prettier --write src/prototype/engine.js
+          echo 'ROGUE_FORMAT_DIFF_BEGIN'
+          git diff --no-ext-diff --unified=3 -- src/prototype/engine.js
+          echo 'ROGUE_FORMAT_DIFF_END'
+          node tests/audit-regressions.test.cjs
