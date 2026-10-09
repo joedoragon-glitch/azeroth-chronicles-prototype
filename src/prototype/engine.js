@@ -1912,6 +1912,12 @@
           if (a.summon && a.owner === e.id) a.hp = 0;
         });
         this.say(e.name + ' defeated.');
+        this.notice(
+          e.form === 'true'
+            ? this.boss(e.family).name + ' TRUE is broken. The ground grows quiet.'
+            : this.boss(e.family).name + ' falls. For now, the road is yours.',
+          5.5,
+        );
         this.event('bossDefeat', { family: e.family, form: e.form });
       }
       if (e.captain || e.roomCaptain) this.s.streak = { key: null, count: 0 };
@@ -2118,6 +2124,7 @@
         this.s.paid['clear:' + id] = true;
         this.grant(this.dungeonClearReward(id), 0);
         this.say('Dungeon first clear reward earned.');
+        this.notice('The last guardian falls. These halls are yours to explore.', 5.5);
       }
     }
     checkEnding() {
