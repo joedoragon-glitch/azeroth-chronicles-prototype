@@ -1,0 +1,23 @@
+name: Temporary exact rogue format report
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  format-report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Display exact Prettier correction
+        run: |
+          npm ci --ignore-scripts
+          npx prettier --write src/prototype/engine.js
+          echo '===BEGIN_ROGUE_FORMAT_PATCH==='
+          git diff --no-ext-diff --unified=3 -- src/prototype/engine.js
+          echo '===END_ROGUE_FORMAT_PATCH==='
+      - name: Probe focused rogue regression suite
+        run: node tests/audit-regressions.test.cjs
