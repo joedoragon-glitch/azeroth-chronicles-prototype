@@ -2203,7 +2203,11 @@
       } else if (h.order) {
         const target =
           h.order.type === 'attack' ? z.enemies.find((e) => e.id === h.order.id) : h.order;
-        if (target && !target.neutral) {
+        if (
+          target &&
+          !target.neutral &&
+          (h.order.type !== 'attack' || (target.hp > 0 && this.tacticalDirectTargetable(target)))
+        ) {
           if (
             dist(h, target) > (h.order.type === 'attack' ? (h.class === 'paladin' ? 105 : 350) : 25)
           )
