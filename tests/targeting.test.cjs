@@ -64,6 +64,10 @@ function encounter() {
   assert.equal(a.hp, a.maxHp, 'a manually selected foe wins over a nearer alternative');
   b.hp = 0;
   assert.equal(game.selectedHeroTarget(), null);
+  // Put the fallback foe on the same confirmed clear lane as the prior hit.
+  // Manual selection does not bypass the world's line-of-sight rules.
+  a.x = b.x;
+  a.y = b.y;
   game.hero.cd[0] = 0; // A new target cannot bypass the normal skill cooldown.
   assert.equal(game.cast(1), true, 'auto-targeting resumes once the locked foe dies');
   assert(a.hp < a.maxHp);
