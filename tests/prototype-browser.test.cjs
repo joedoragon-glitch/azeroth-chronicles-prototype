@@ -80,7 +80,31 @@ await check('Compact HUD and readable scrolling dialogs '+tag,async()=>{
  assert(metrics.scrollHeight>metrics.clientHeight,'long option lists scroll inside the dialog');
  if(phone)assert(metrics.hud.width<=310,'phone HUD is not a full-width banner');
  else assert(metrics.hud.width<=214,'desktop status dock is compact');
+ const natural=await page.evaluate(()=>{
+  Prototype.openMenu('Small NPC','A short greeting.',[{label:'Talk',action:()=>{}}]);
+  const el=document.getElementById('modal');
+  const small={kind:el.dataset.dialogSize,width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height};
+  Prototype.openMenu('Regular shop','Choose a service.',Array.from({length:4},(_,i)=>({label:'Service '+i,action:()=>{}})));
+  const regular={kind:el.dataset.dialogSize,width:el.getBoundingClientRect().width};
+  Prototype.closeMenu();return {small,regular};
+ });
+ assert.equal(natural.small.kind,'compact','one-action NPC dialog has compact treatment');
+ assert.equal(natural.regular.kind,'regular','short vendor list has regular treatment');
+ assert(natural.small.width<natural.regular.width,'short interactions do not occupy a large panel');
+ assert(natural.small.height<metrics.modal.height,'short interactions contract vertically');
  await page.evaluate(()=>Prototype.closeMenu());
+});
+await check('Subminimum phone uses visual fitting, not a new design breakpoint '+tag,async()=>{
+ if(!v.touch||v.width!==375||v.height>812||smoke)return;
+ await page.setViewportSize({width:360,height:780});
+ const fit=await page.evaluate(()=>({ratio:parseFloat(document.body.style.getPropertyValue('--phone-ui-fit')),experience:Prototype.platform.mode}));
+ assert.equal(fit.experience,'phone');
+ assert(fit.ratio>.94&&fit.ratio<.98,'360-wide screen proportionally reduces existing controls');
+ const sk=await page.locator('#skills').boundingBox(),joy=await page.locator('#joystick').boundingBox();
+ assert(sk.x>=0&&sk.x+sk.width<=361,'fitted skills stay on screen');
+ assert(joy.x>=0&&joy.x+joy.width<=361,'fitted movement stays on screen');
+ await page.setViewportSize({width:v.width,height:v.height});
+ await page.waitForFunction(()=>document.body.style.getPropertyValue('--phone-ui-fit')==='1.000');
 });
 await check('Movement, split controls, Q targeting, pause and keyboard menus '+tag,async()=>{assert.equal(await page.locator('#message').evaluate(el=>el.classList.contains('visible')),false,'critical notice starts hidden');assert.deepEqual(errors,[],'browser errors before movement '+tag);const a=await page.locator('#skills').boundingBox(),j=await page.locator('#joystick').boundingBox(),primary=await page.locator('#touch-interact-button').boundingBox(),hud=await page.locator('#hud').boundingBox();if(v.touch){if(primary)assert(a.x+a.width<=primary.x||primary.x+primary.width<=a.x||a.y+a.height<=primary.y||primary.y+primary.height<=a.y,'contextual Interact cannot cover skills');assert(hud.height<=60,'compact phone HUD');assert(a.y+a.height>=v.height-12,'combat rests at bottom edge');}else assert.equal(primary,null,'phone Interact is absent from desktop layout');if(!v.touch)assert(hud.x>=v.width/2-1,'desktop status/menu is on the right');else{assert(hud.x>=0&&hud.x+hud.width<=v.width,'phone HUD fits viewport');assert(hud.y+hud.height<a.y,'phone HUD stays above skill controls');const hero=await page.evaluate(()=>Prototype.renderer.screen(Prototype.game.hero));assert(hero.y-50>hud.y+hud.height,'phone HUD cannot cover the hero');}if(v.touch){assert(a.x>=v.width/2-2&&a.x+a.width<=v.width);assert(j.x>=0&&j.y+j.height<=v.height);}else{assert.equal(j,null,'desktop joystick is absent');assert(a.x>=0&&a.x+a.width<hud.x,'desktop skill bar leaves HUD clear');}assert(a.y>=0&&a.y+a.height<=v.height);await page.screenshot({path:path.join(results,'device-layout-'+tag+'.png')});if(v.touch)assert(a.x+a.width<=j.x||j.x+j.width<=a.x||a.y+a.height<=j.y||j.y+j.height<=a.y,'controls overlap');const start=await page.evaluate(()=>[Prototype.game.hero.x,Prototype.game.hero.y]);await page.keyboard.down('d');await page.waitForTimeout(150);await page.keyboard.up('d');const end=await page.evaluate(()=>[Prototype.game.hero.x,Prototype.game.hero.y]);assert(end[0]>start[0]);await page.keyboard.press('q');assert.equal(await page.evaluate(()=>Prototype.input.actionFor('KeyQ')),'target');assert(await page.locator('#sprint-button').isHidden());await page.keyboard.press('Escape');const menuCopy=await page.locator('#modal-description').textContent(),top=await page.locator('#modal-actions button').allTextContents();assert(menuCopy.includes('Global adventure functions'));assert(!menuCopy.includes('WASD moves'));assert(top.length<=7);assert(top.some(x=>x.includes('Game and settings')));assert(!top.some(x=>x==='Continue'));assert(!top.some(x=>x==='Controls'));const t=await page.evaluate(()=>Prototype.game.s.time);await page.waitForTimeout(120);assert.equal(await page.evaluate(()=>Prototype.game.s.time),t);await page.keyboard.press('w');assert(await page.locator('#close-button').evaluate(b=>b.classList.contains('selected')));await page.keyboard.press('f');assert(await page.locator('#modal').isHidden());});
 await check('Target button and Q cycle actual hero combat without unintended fallback '+tag,async()=>{
@@ -260,6 +284,8 @@ await check('Phone controls preserve world space and contextual interaction '+ta
  const npc=await page.evaluate(()=>{const c=Prototype.game,n=c.zone().npcs.find(n=>n.kind==='quests');c.zone().npcs=[n];c.zone().nodes=[];c.zone().buildings=[];Object.assign(c.hero,{x:n.x,y:n.y});Prototype.updateHUD();return {x:n.x,y:n.y};});
  const interact=await box('#touch-interact-button');assert(interact&&interact.height>=44);
  assert(!overlap(interact,skills)&&!overlap(interact,joy),'context prompt never displaces combat');
+ if(v.height>500)assert(interact.y>=joy.y-2,'contextual Interact stays in the thumb region');
+ else assert(interact.y>=v.height-75,'landscape Interact is bottom-aligned');
  await page.locator('#touch-interact-button').tap();assert((await page.locator('#modal-title').textContent())==='Local quests','nearby interaction really activates the target');await page.keyboard.press('Escape');
  await page.evaluate(n=>{Object.assign(Prototype.game.hero,{x:n.x+116,y:n.y});Prototype.updateHUD();},npc);
  assert(await page.locator('#touch-interact-button').isHidden(),'Interact disappears beyond interaction range');
