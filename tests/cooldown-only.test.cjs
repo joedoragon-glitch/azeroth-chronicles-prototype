@@ -104,6 +104,9 @@ console.log('PASS enemy attacks preserve health damage while resource effect rem
   );
   Object.assign(ash, { hp: 200, maxHp: 1000, projectileStyle: 'cinder' });
   g.zone().enemies = [ash];
+  // Freeze world normalization so the unit test measures siphon only.
+  const cinderZone = g.zone();
+  g.zone = () => cinderZone;
   const beforeHero = g.hero.hp, beforeAsh = ash.hp;
   assert(g.hitParty(g.hero, 160, 0.04, ash.id));
   const taken = beforeHero - g.hero.hp;
@@ -143,6 +146,8 @@ console.log('PASS uncapped 15% Cinder Siphon, companions, immunity, and natural 
   // Stress a high-damage AoE so its 15% transfer demonstrably exceeds 2%.
   crypt.damage = 160;
   g.zone().enemies = [crypt];
+  const cryptZone = g.zone();
+  g.zone = () => cryptZone;
   const soldier = g.s.party.find(u => u.type === 'soldier');
   soldier.hp = soldier.maxHp = 10000;
   Object.assign(soldier, { x: 510, y: 515, active: true });
@@ -191,6 +196,8 @@ console.log('PASS uncapped 15% supernatural boss AoE lifesteal, natural heal bou
   g.s.expeditionRank = 6;
   g.zone().props = [];
   g.zone().enemies = [darkLord];
+  const darkLordZone = g.zone();
+  g.zone = () => darkLordZone;
   Object.assign(g.hero, { x: 500, y: 500, hp: 10000, maxHp: 10000, immune: 0 });
   g.s.party = Array.from({ length: 6 }, (_, i) => {
     const u = g.unit(i % 2 ? 'archer' : 'soldier', 520 + (i % 3) * 10, 510 + Math.floor(i / 3) * 20);
