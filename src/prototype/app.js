@@ -1897,7 +1897,7 @@
     squad.title = doctrine.boss
       ? doctrine.mode === 'focus'
         ? 'BOSS priority: the squad obeys your order to attack the boss, even with active adds'
-        : 'ADDS priority: the squad screens attacking enemies, then automatically attacks the boss when they are cleared'
+        : 'ADDS: ignore the boss while adds or attackers remain; resume the boss once clear, then switch back for new adds'
       : doctrine.mode === 'focus'
         ? 'Squad concentrates on the hero’s current target'
         : 'Squad spreads across nearby threats';
