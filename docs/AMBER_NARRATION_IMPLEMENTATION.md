@@ -51,3 +51,17 @@ Changes are scoped to the independent `narration.js` data, a small event dispatc
 ## Later refinement, not bundled here
 
 No ambient narration timer, repeated patrol commentary, new event types, Archive mechanic changes, combat changes or ad hoc lore additions. Joel can refine the 12 narrative lines later without changing the trigger design. In a rare fully occupied two-milestone stack, a new TRUE warning may still wait until a slot becomes free; combat telegraphs remain independent and this queue tradeoff remains an explicit future audit consideration.
+
+## Voice and AI-pattern audit · 9 October 2026
+
+The author requested a natural-sounding line edit guided by his conversational writing: practical, curious, direct, occasionally wry. Conversation alone does not establish an exact fictional-author voice, so these are reviewable approximations rather than impersonation claims. Ten previously marked REWRITE passages received a second humanization pass, with no quest, warning, reward, or trigger changes.
+
+- Cut the mechanical "X is more than Y" / "not merely X" exposition, redundant destination sentences, and sanitized two-sentence regional summaries.
+- Let useful information lead: #5 names the wagon and its destination, #9 gives the actual completed-barracks menu and benefits, #11 warns about returning nighttime wraiths, #24 clearly distinguishes passenger dragon travel.
+- Make selected lore sound observed instead of lectured: #4 gives the retreat an unwilling builder, #16 notices the Master of Coin's comforts, #18 connects Stonecross crowns to the guarded caravan, #29 grounds the regime in levies and supplies.
+- Allow restrained personality where appropriate: #6's wolves are unimpressed by land ownership; #23 observes civilians repairing homes while military convoys keep moving. Do not turn every notice into a joke.
+- No omniscient disclosures about the Keeper's secret capture proposal; no implied permanent road clearing or new quest requirements.
+
+The two **KEEP** passages (#20 and #21) remain byte-identical, as the user's earlier explicit approval still governs them; those contain somewhat formal expository phrasing and can be considered separately in a future review. The final **milestone** (#30) stays deliberately concise and factual. The 17 cuts remain null.
+
+Writing constraints: plain English, concrete nouns and verbs, occasional dry humor, no fake gravitas, no premature reveal, no sales-copy cadence, no repeated "you notice" or "not just..." constructions. Functional truth and faithful canon come before voice.
