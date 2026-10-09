@@ -46,11 +46,11 @@
     null, // 19
     {
       kind: 'narration',
-      text: 'Convoys, repair yards, guarded crossings: the occupation needs more than soldiers to keep its roads.',
+      text: 'Now the checkpoint makes sense. The convoy brings supplies, the repair yards keep things moving, and the guards make sure both get through.',
     }, // 20
     {
       kind: 'narration',
-      text: 'Eren is free of Abyss Bastion. Its dragon preparations were built for war, not ordinary travelers.',
+      text: 'Eren is free. The dragons bred at Abyss Bastion are meant for an army. The Dark Lord has plans beyond his own mount.',
     }, // 21
     null, // 22
     {
