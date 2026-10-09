@@ -1401,12 +1401,7 @@
       return;
     }
     if (slot === 1 || slot === 2) {
-      status(
-        (charged ? 'Charged ' : '') +
-          'Skill ' +
-          slot +
-          ' · Need target in range.',
-      );
+      status((charged ? 'Charged ' : '') + 'Skill ' + slot + ' · Need target in range.');
       return;
     }
     if (slot === 3) {
@@ -1431,11 +1426,7 @@
       return;
     }
     if (cast.state === 'no-target') {
-      status(
-        'Charged Skill ' +
-          cast.slot +
-          ' · Target lost.',
-      );
+      status('Charged Skill ' + cast.slot + ' · Target lost.');
       return;
     }
     if (cast.state === 'no-heal') {
