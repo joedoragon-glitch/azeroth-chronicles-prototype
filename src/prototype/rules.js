@@ -4107,6 +4107,12 @@
     healFraction: 0.15,
     bossFamilies: Object.freeze(['crypt', 'archive', 'darklord']),
   });
+  // Provisional non-siphon self-healing, separate from hero skill cooldowns.
+  const bossRecovery = Object.freeze({
+    abyss: { name: 'Ember Renewal', healFraction: 0.08, cooldown: 24, warning: 1.6 },
+    citadel: { name: 'Ash Reforge', healFraction: 0.1, cooldown: 28, warning: 1.8 },
+    threshold: 0.6,
+  });
   const manaBalance = {
     perLevel: 5,
     regen: { combat: 1, outOfCombat: 2.5, talentCombat: 0.25, talentOutOfCombat: 0.5 },
@@ -4788,6 +4794,7 @@
     cooldownBalance,
     ashFeeding,
     vitalitySiphon,
+    bossRecovery,
     tacticalFoundation,
     balance,
     combatGeometry,
