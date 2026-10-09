@@ -398,4 +398,19 @@ test('F61 isolated boss or captain with no usable rogue response defends territo
   assert(!e.returning&&e.aggro,'field boss remains an opponent, not a perpetually resetting coward');
   assert(c._tacticalRegroupUsed.has(e.id),'failed direct maneuver cannot repeat in the same fight');
 });
+test('F61 chained retreat leash follows current hop, never the original spawn line',()=>{
+ const c=fresh(),e=c.makeEnemy({species:'wolf',name:'chained scout',level:1,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700}),
+  ally=c.makeEnemy({species:'goblin',name:'next ally',level:1,hp:100,damage:1,gold:0,xp:0},{x:2150,y:2450});
+ const home={...e.home};Object.assign(e,{x:1400,y:2450,aggro:true});
+ Object.assign(c.hero,{x:1420,y:2450,level:3});
+ c.zone().enemies=[e,ally];c.s.party=[];c.route=()=>[{x:ally.x,y:ally.y}];
+ assert(c.tacticalBeginRogueRegroup(e,ally));
+ const state=c.tacticalRogueRegroup(e);
+ assert.deepEqual(state.retreatOrigin,{x:1400,y:2450},'current hop begins at current monster position');
+ assert.deepEqual(e.home,home,'respawn home remains unchanged');
+ assert(c.distanceToSegment(c.hero,e.home,state.destination)>500,'old global home-to-destination corridor would incorrectly reset');
+ assert.equal(c.tacticalRogueLeashAllows(e,c.hero,500),true,'player following the actual retreat corridor preserves engagement');
+ Object.assign(c.hero,{x:3200,y:3100});
+ assert.equal(c.tacticalRogueLeashAllows(e,c.hero,500),false,'genuine escape still ends the encounter');
+});
 console.log(passed+' audit regression scenarios passed.');
