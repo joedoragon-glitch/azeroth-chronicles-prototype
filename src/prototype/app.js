@@ -1896,8 +1896,8 @@
     squad.textContent = 'Squad · ' + doctrine.label + ' · ' + input.key('doctrine');
     squad.title = doctrine.boss
       ? doctrine.mode === 'focus'
-        ? 'Squad concentrates on the boss and ignores adds'
-        : 'Squad clears adds and ignores the boss'
+        ? 'BOSS priority: the squad obeys your order to attack the boss, even with active adds'
+        : 'ADDS priority: the squad screens attacking enemies, then automatically attacks the boss when they are cleared'
       : doctrine.mode === 'focus'
         ? 'Squad concentrates on the hero’s current target'
         : 'Squad spreads across nearby threats';
