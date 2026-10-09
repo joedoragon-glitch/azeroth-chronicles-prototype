@@ -1,5 +1,10 @@
 # Sprite production checkpoint · 8 October 2026
 
+## Current prerequisite: spatial proportion and encounter-density audit · 9 October 2026
+
+Joel expanded the pre-sprite pass to cover houses, dwellings/interior-linked entrances, all trees including the Abandoned Orchard, all zone transports and Dark Lord oppressive structures. Review their relative size and detail, generally assessing +25–50% world-display size where appropriate. **Before final exports for these items**, follow [WORLD_PROPORTION_AND_DENSITY_GUARDRAILS.md](WORLD_PROPORTION_AND_DENSITY_GUARDRAILS.md): first declutter and redistribute into suitable unused edge areas of existing maps; only then consider minimal directional boundary expansions. Changing zone size can alter outdoor pack distribution; preserve encounter pacing and existing monster populations, avoid new enemy-production work, verify travel routes, collision, transitions, saves and actual 150% appearances. Do not blindly scale every map. This is an authorization and testing gate, not evidence that any bounds or placements are already changed.
+
+
 ## Current resumed production · 9 October 2026 02:08 EDT
 
 Joel explicitly resumed artwork adaptation, generation, implementation and publication overnight. Complete adaptation of retained sources to the selected 150% camera, then continue the remaining body and texture catalog. The agent owns technical and native appearance checks; no additional approval round is needed. Preserve originals, checkpoints, accepted identity, organic/material-appropriate shape cues, gameplay geometry and rollback history. Production batch: `2026-10-09-150-adaptation`; its journal and per-asset evidence must accompany the verified implementation. Start with Paladin/Goblin and affected Paladin idle frames, then all retained active sources.
