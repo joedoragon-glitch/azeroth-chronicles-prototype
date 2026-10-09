@@ -1624,8 +1624,7 @@
         id: 'quest-barracks',
         region: 'vale',
         name: 'A Place to Recover',
-        objective:
-          'In the field, choose Establish Basic Barracks from Adventure (free).',
+        objective: 'In the field, choose Establish Basic Barracks from Adventure (free).',
         gold: 0,
         xp: 0,
         index: -1,
@@ -1649,8 +1648,7 @@
             ...rule,
             target: room ? room.count : rule.target,
             objective:
-              (room ? room.objective : q[2]) +
-              (rule.clear ? '; clear compound guards' : ''),
+              (room ? room.objective : q[2]) + (rule.clear ? '; clear compound guards' : ''),
           };
         }),
       ];
