@@ -2749,7 +2749,7 @@
       // one defender; summons and bosses are meaningful support too.
       return (
         this.tacticalPresentOpponents(e) >= 2 &&
-        this.tacticalPresentOpponents(e) > this.tacticalLocalSupport(e) + 1
+        this.tacticalPresentOpponents(e) > this.tacticalLocalSupport(e)
       );
     }
     tacticalAdvanceRogueRegroup(e, target, dt) {
@@ -2818,10 +2818,16 @@
         state.travelRemaining -= dt;
         const ally = this.zone().enemies.find((unit) => unit.id === state.allyId);
         if (!ally || ally.hp <= 0 || ally.neutral || ally.returning || state.travelRemaining <= 0) {
+          // An interrupted retreat stays attached to the current encounter,
+          // rather than snapping back under the original-home leash.
           this._tacticalRegroups.set(e.id, {
             phase: 'thinking',
+            anchor: { x: e.x, y: e.y },
             thinkRemaining: R.tacticalFoundation.thinkingSeconds,
           });
+          e.path = [];
+          e.routeAge = 0;
+          e.noProgress = 0;
           return true;
         }
         if (dist(e, state.destination) > 65) {
@@ -2829,8 +2835,15 @@
           this.follow(e, state.destination, (e.type === 'boss' ? 145 : 175) * 1.5, dt, 55);
           state.stalled = dist(before, e) > Math.max(0.1, dt * 10) ? 0 : state.stalled + dt;
           if (state.stalled >= 2.5) {
-            this.tacticalStopRogueRegroup(e);
-            return false;
+            this._tacticalRegroups.set(e.id, {
+              phase: 'thinking',
+              anchor: { x: e.x, y: e.y },
+              thinkRemaining: R.tacticalFoundation.thinkingSeconds,
+            });
+            e.path = [];
+            e.routeAge = 0;
+            e.noProgress = 0;
+            return true;
           }
           e.noProgress = 0;
           return true;
