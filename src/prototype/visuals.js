@@ -49,6 +49,28 @@
       return 1.35;
     return 1;
   }
+  // A larger original-master export is required before an existing registered
+  // sprite can use the world-size increase. Low-resolution runtime PNGs must
+  // never be stretched to impersonate a high-density replacement.
+  function assetSafeScale(e, entry) {
+    const target = featureScale(e);
+    if (target <= 1 || !entry) return target;
+    const density = target >= 1.35 ? 4.25 : 4;
+    const width = Number(entry.width);
+    const height = Number(entry.height);
+    const logicalWidth = Number(entry.displayWidth) || width;
+    const logicalHeight = Number(entry.displayHeight) || height;
+    return (
+      Number.isFinite(width) &&
+      Number.isFinite(height) &&
+      Number.isFinite(logicalWidth) &&
+      Number.isFinite(logicalHeight) &&
+      width >= Math.ceil(logicalWidth * density) &&
+      height >= Math.ceil(logicalHeight * density)
+    )
+      ? target
+      : 1;
+  }
   function draw(ctx, e, p, region = 0, rescued = false) {
     if (e.kind === 'landmark' && e.id?.startsWith('bridge-')) return; // The full deck is drawn in world space.
     ctx.save();
@@ -14011,6 +14033,7 @@
     enemyBodyKind,
     barracksVisualState,
     featureScale,
+    assetSafeScale,
   };
   if (typeof module !== 'undefined') module.exports = root.PrototypeVisuals;
 })(typeof window !== 'undefined' ? window : globalThis);
