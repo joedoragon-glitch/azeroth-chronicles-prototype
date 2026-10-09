@@ -70,12 +70,26 @@ exports.verifyCamera = async function (page, results, tag, touch, capture = fals
         'Camera leaves HUD geometry unchanged',
       );
       assert.equal(probe.hit, 'world', 'Test destination is unobstructed');
+      // Native touch dispatch can quantize fractional CSS coordinates. Verify
+      // the actual event position, rather than the ideal floating-point tap.
+      await page.evaluate(() => {
+        document.querySelector('#world').addEventListener(
+          'pointerdown',
+          (event) => {
+            window.__cameraPointerExpected = Prototype.renderer.world(event.clientX, event.clientY);
+          },
+          { once: true, capture: true },
+        );
+      });
       if (touch) await page.touchscreen.tap(probe.screen.x, probe.screen.y);
       else await page.mouse.click(probe.screen.x, probe.screen.y);
-      const order = await page.evaluate(() => Prototype.game.hero.order);
+      const { order, expected } = await page.evaluate(() => ({
+        order: Prototype.game.hero.order,
+        expected: __cameraPointerExpected,
+      }));
       assert(order, 'Native pointer creates travel at the zoomed destination');
       assert(
-        Math.hypot(order.x - probe.target.x, order.y - probe.target.y) < 1,
+        Math.hypot(order.x - expected.x, order.y - expected.y) < 1e-7,
         'Pointer movement uses world coordinates',
       );
       if (capture)
@@ -95,6 +109,7 @@ exports.verifyCamera = async function (page, results, tag, touch, capture = fals
         p.input.select(key, previous.input[key]);
       p.updateHUD();
       delete window.__cameraAudit;
+      delete window.__cameraPointerExpected;
     });
   }
 };
