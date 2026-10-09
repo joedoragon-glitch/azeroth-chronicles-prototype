@@ -38,7 +38,7 @@ const PrototypeData = {
       transport: 'Ferryman',
       fare: 60,
       route:
-        "The wagon arrives at Reedport at (350, 1100). Raised roads connect Fisher Camp at (1050, 500), Mirejaw's marsh territory near (2180, 1120), the Sunken Archive entrance at (2600, 2350), and the Reedport ferry at (2250, 650).",
+        "The wagon stops behind Reedport near the western map edge at (145, 1180). Raised roads connect Fisher Camp at (1050, 500), Mirejaw's marsh territory near (2180, 1120), the Sunken Archive entrance at (2600, 2350), and the Reedport ferry at (2250, 650).",
       obstacle:
         'A lake occupies the central basin. Two raised crossings and a bridge provide useful choices around it. Reeds are decorative or collision marked; open water is consistently impassable.',
       exploration:
@@ -90,7 +90,7 @@ const PrototypeData = {
       transport: 'Dragon rider',
       fare: 180,
       route:
-        "The caravan arrives at Emberwatch at (450, 500). The old damaged road has become a working occupation corridor: convoy and repair yards feed the guarded ravine crossing, inspection spurs and the Ashen Warlord's checkpoint near (2600, 1650), while a supply route supports the Dark Lord’s air-superiority project at Abyss Bastion (3000, 2700); the civilian transport dragon landing sits behind Emberwatch near (145, 260), distinct from Abyss Bastion's military dragon operation.",
+        "The caravan stops behind Emberwatch near (155, 615). The old damaged road has become a working occupation corridor: convoy and repair yards feed the guarded ravine crossing, inspection spurs and the Ashen Warlord's checkpoint near (2600, 1650), while a supply route supports the Dark Lord’s air-superiority project at Abyss Bastion (3000, 2700); the civilian transport dragon landing sits behind Emberwatch near (145, 260), distinct from Abyss Bastion's military dragon operation.",
       obstacle:
         'A ravine still splits the scarred region. The guarded northern crossing and longer burned-forest route remain the practical alternatives; charred trunks, fort walls, repairs and collapsed masonry leave visible gaps rather than a healed landscape.',
       exploration:
