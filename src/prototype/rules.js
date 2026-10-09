@@ -4242,7 +4242,21 @@
     },
   };
 
+  // Phase-one preparation only. No rogue moves or DPS limiting are enabled.
+  const tacticalFoundation = Object.freeze({
+    enabled: false,
+    heroLevelDisadvantageMinimum: 1,
+    outlevelProtection: 3,
+    simultaneousPressureSources: 2,
+    summonSupportThreshold: 1,
+    awarenessRadius: 750,
+    threatWindowSeconds: 6,
+    // Tier names are identifiers, not mitigation percentages.
+    protectionTiers: ['ordinary', 'guardian', 'ringleader', 'captain', 'boss', 'trueBoss'],
+  });
+
   const R = {
+    tacticalFoundation,
     balance,
     combatGeometry,
     bossCadence,
