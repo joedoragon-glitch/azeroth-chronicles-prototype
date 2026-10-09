@@ -2940,9 +2940,29 @@
           this.tacticalRogueOutnumbered(e) ||
           !!this.tacticalRogueRegroup(e)?.anchor,
         eliteAmbush = tier === 'ringleader' && (pressured || this.tacticalRogueWounded(e)),
-        isSignature = !!signature && pressured,
+        threat = this.tacticalHighestThreatTarget(e, fallback),
+        closeTargets =
+          signature && ['scatter', 'sweep'].includes(signature.effect)
+            ? this.combatTargets()
+                .filter(
+                  (unit) =>
+                    unit.hp > 0 &&
+                    dist(unit, e) <= signature.radius &&
+                    this.line(e, unit),
+                )
+                .sort((a, b) => dist(e, a) - dist(e, b))
+            : [],
+        isSignature =
+          !!signature &&
+          pressured &&
+          (!['scatter', 'sweep'].includes(signature.effect) || closeTargets.length > 0),
         profile = isSignature ? signature : eliteAmbush ? profiles.ringleader : basic,
-        target = this.tacticalHighestThreatTarget(e, fallback),
+        target =
+          isSignature && closeTargets.length
+            ? closeTargets.includes(threat)
+              ? threat
+              : closeTargets[0]
+            : threat,
         maxRange = e.type === 'boss' ? 500 : e.captain || e.roomCaptain ? 440 : 340;
       if (!target || dist(e, target) > maxRange || !this.line(e, target)) return false;
       const effect = isSignature ? profile.effect : null,
