@@ -107,7 +107,12 @@ console.log('PASS enemy attacks preserve health damage while resource effect rem
   const beforeHero = g.hero.hp, beforeAsh = ash.hp;
   assert(g.hitParty(g.hero, 160, 0.04, ash.id));
   const taken = beforeHero - g.hero.hp;
-  assert(Math.abs((ash.hp - beforeAsh) - taken * 0.15) < 1e-8, 'Cinder Siphon heals full 15% of real HP damage');
+  assert(Math.abs((ash.hp - beforeAsh) - taken * 0.15) < 1e-8,
+    'Cinder Siphon heals full 15% of real HP damage: ' +
+      JSON.stringify({ gained: ash.hp - beforeAsh, taken, expected: taken * 0.15,
+        ashType: ash.species, ashStyle: ash.projectileStyle,
+        events: g.effects.filter(e => e.type === 'ashFeeding'),
+        manaEnabled: R.resourceMode.manaEnabled }));
   assert(ash.hp - beforeAsh > 0.01 * ash.maxHp, 'Cinder Siphon is NOT capped to 1% of max HP');
   const soldier = g.s.party.find(u => u.type === 'soldier');
   soldier.hp = soldier.maxHp;
