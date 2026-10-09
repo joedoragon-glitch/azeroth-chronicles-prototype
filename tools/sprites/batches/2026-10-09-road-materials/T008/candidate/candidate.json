@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "key": "terrain:road:highlands",
+  "catalogId": "T008",
+  "dependencyHash": "532b47b87cd84d3363e15124c83dcae7c6fc011d3fd12fb892975cf450c7afab",
+  "source": {
+    "hash": "358ffc144c6e905bd9e738d20bbacc5332972bd948d5072d683ca3715ec0eb5d",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 3783401,
+    "opaque": true,
+    "seams": {
+      "x": 14.213981924508243,
+      "y": 14.964646464646469,
+      "interiorX": 10.235812784033813,
+      "interiorY": 10.546996618005629
+    }
+  },
+  "output": {
+    "hash": "15ad70f49d7ba8593468ebd9cd1dca34b9df8fc70975f8b757d0686bc0881f22",
+    "width": 256,
+    "height": 256,
+    "bytes": 126537,
+    "opaque": true,
+    "seams": {
+      "x": 8.843750000000004,
+      "y": 10.692708333333341,
+      "interiorX": 8.995169526143828,
+      "interiorY": 8.994658905228762
+    }
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "lanczos3",
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "seamRepair": false
+  },
+  "runtime": {
+    "worldSpan": 320,
+    "opacity": 0.28
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+    "kind": "engineer-authorized",
+    "userAppearanceAcceptance": false,
+    "nativeScale": true,
+    "wrap": true,
+    "scope": "Engineer appearance review: restrained soil/gravel grain, opaque tile, 3x3 wrap and six capped-ratio device profiles in day/night. Browser/offline release gates pending.",
+    "evidence": "native-review-v2/evidence.json"
+  }
+}

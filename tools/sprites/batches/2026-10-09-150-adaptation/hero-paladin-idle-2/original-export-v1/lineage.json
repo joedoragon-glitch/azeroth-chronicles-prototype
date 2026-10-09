@@ -1,0 +1,32 @@
+{
+  "key": "hero:paladin",
+  "original": "tools/sprites/pilots/2026-10-08-refined/hero-paladin-frame-2/source.png",
+  "originalHash": "61155bf334936860950ef95766a8d33008e1e7ed2d7e6fff88baeec3e5603aea",
+  "priorRevision": "b162917a153d83f0bea42abb24a86b40c35f98608bc493cb0b7a27c1a58f9d25",
+  "placement": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1254,
+      1254
+    ],
+    "to": [
+      576,
+      576
+    ],
+    "rasterScale": 3,
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": -5,
+      "y": -5,
+      "rasterX": -15,
+      "rasterY": -15,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "neverUsesRuntimeExport": true,
+  "nativeReview": "pending"
+}

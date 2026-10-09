@@ -1,0 +1,522 @@
+{
+  "engine": "webkit",
+  "scenes": [
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "frames": [
+        "fe5812d834eaa7025261e54814223700713f33170bba2cc1f5d457639a74a6cf",
+        "238a2dbadb9d42cc0dea65603fae49e91151e4825e906afc8af1fb7456b8ae0d"
+      ],
+      "combat": {
+        "warning": "Blinding Dust",
+        "geometry": {
+          "x": 1400,
+          "y": 1700
+        },
+        "sprite": {
+          "manifestVersion": 8,
+          "definitions": 33,
+          "loaded": 13,
+          "loading": 0,
+          "queued": 0,
+          "failed": 0,
+          "decodedBytes": 9068800,
+          "reservedBytes": 0,
+          "maxDecodedBytes": 16777216,
+          "maxConcurrentDecodes": 2,
+          "clockMs": 1000,
+          "evictions": 0,
+          "staleLoads": 0,
+          "invalidPresentation": 0,
+          "budgetSkips": 0,
+          "peakDecodedBytes": 9068800,
+          "peakReservedBytes": 9068800,
+          "peakConcurrent": 2
+        }
+      },
+      "combatHash": "4891a44ed0219c7aa39a983bc16da85912e3c4c92a53382423607a0755dd850b",
+      "pause": true,
+      "errors": []
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "frames": [
+        "d382470564d4faaffe48caa2cd518d2e41bc2565c5d8e261d6c62a0c90a3737e",
+        "26a4ca97e4ae5b5600f89379cae05980848062c155b628a41e7d00ab01e57262"
+      ],
+      "combat": {
+        "warning": "Blinding Dust",
+        "geometry": {
+          "x": 1400,
+          "y": 1700
+        },
+        "sprite": {
+          "manifestVersion": 8,
+          "definitions": 33,
+          "loaded": 13,
+          "loading": 0,
+          "queued": 0,
+          "failed": 0,
+          "decodedBytes": 9068800,
+          "reservedBytes": 0,
+          "maxDecodedBytes": 16777216,
+          "maxConcurrentDecodes": 2,
+          "clockMs": 1800,
+          "evictions": 0,
+          "staleLoads": 0,
+          "invalidPresentation": 0,
+          "budgetSkips": 0,
+          "peakDecodedBytes": 9068800,
+          "peakReservedBytes": 9068800,
+          "peakConcurrent": 2
+        }
+      },
+      "combatHash": "4adbdb34ec99d7716d249545b579d310b047252c7197ad72ef08d28012350323",
+      "pause": true,
+      "errors": []
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "frames": [
+        "44d84d05b235bd7783751cc0e4108b972a59f5f1553365ac7b6770e44f9c7dd7",
+        "271a597a5505ad1b9d4b3938a6cfa9f2d99aad9f7b4a8be4cbd20c1efdadbf54"
+      ],
+      "combat": {
+        "warning": "Blinding Dust",
+        "geometry": {
+          "x": 1400,
+          "y": 1700
+        },
+        "sprite": {
+          "manifestVersion": 8,
+          "definitions": 33,
+          "loaded": 6,
+          "loading": 0,
+          "queued": 0,
+          "failed": 0,
+          "decodedBytes": 8036608,
+          "reservedBytes": 0,
+          "maxDecodedBytes": 16777216,
+          "maxConcurrentDecodes": 2,
+          "clockMs": 900,
+          "evictions": 0,
+          "staleLoads": 0,
+          "invalidPresentation": 0,
+          "budgetSkips": 0,
+          "peakDecodedBytes": 8036608,
+          "peakReservedBytes": 8036608,
+          "peakConcurrent": 2
+        }
+      },
+      "combatHash": "09c3dd00683a86d563bf2636ed574ea44ee535ec1570d848e12d0d72b3e128be",
+      "pause": true,
+      "errors": []
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "frames": [
+        "ee87a79a8721e72d630418a1b8a46420dfcd516c9b001feab604e48a0954c4ff",
+        "6ab49d699cd7ef167bdfa567c74f75e7698da9f85f3e7a7835866916d5695216"
+      ],
+      "combat": {
+        "warning": "Blinding Dust",
+        "geometry": {
+          "x": 1400,
+          "y": 1700
+        },
+        "sprite": {
+          "manifestVersion": 8,
+          "definitions": 33,
+          "loaded": 6,
+          "loading": 0,
+          "queued": 0,
+          "failed": 0,
+          "decodedBytes": 8036608,
+          "reservedBytes": 0,
+          "maxDecodedBytes": 16777216,
+          "maxConcurrentDecodes": 2,
+          "clockMs": 1700,
+          "evictions": 0,
+          "staleLoads": 0,
+          "invalidPresentation": 0,
+          "budgetSkips": 0,
+          "peakDecodedBytes": 8036608,
+          "peakReservedBytes": 8036608,
+          "peakConcurrent": 2
+        }
+      },
+      "combatHash": "d72f69f3f811c493ad940d6598c418129b7f9ab4708a0c28fce318fa0c5197e2",
+      "pause": true,
+      "errors": []
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "frames": [
+        "307aad6bc9bc9c7120d385c951805a466891035c09247452357d038eb5d6e9fa",
+        "51843c9566925aeef6fc5f925dd3f6e893839ea911cd7a810ef954faeb184dd6"
+      ],
+      "combat": {
+        "warning": "Blinding Dust",
+        "geometry": {
+          "x": 1400,
+          "y": 1700
+        },
+        "sprite": {
+          "manifestVersion": 8,
+          "definitions": 33,
+          "loaded": 11,
+          "loading": 0,
+          "queued": 0,
+          "failed": 0,
+          "decodedBytes": 8773888,
+          "reservedBytes": 0,
+          "maxDecodedBytes": 16777216,
+          "maxConcurrentDecodes": 2,
+          "clockMs": 1200,
+          "evictions": 0,
+          "staleLoads": 0,
+          "invalidPresentation": 0,
+          "budgetSkips": 0,
+          "peakDecodedBytes": 8773888,
+          "peakReservedBytes": 8773888,
+          "peakConcurrent": 2
+        }
+      },
+      "combatHash": "e00d80266bbbbf547f56b196a938dea1bc902d4a230a19eaf1abe33b83b7c8e4",
+      "pause": true,
+      "errors": []
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "frames": [
+        "10b64da75a595d9e757a6a905dac0d3739796bf64cffa0cae4b5dd7a64345917",
+        "839c6860383e4c5b0959dc22eac1e69e40dbb694330e0157b33565ce75b8503c"
+      ],
+      "combat": {
+        "warning": "Blinding Dust",
+        "geometry": {
+          "x": 1400,
+          "y": 1700
+        },
+        "sprite": {
+          "manifestVersion": 8,
+          "definitions": 33,
+          "loaded": 11,
+          "loading": 0,
+          "queued": 0,
+          "failed": 0,
+          "decodedBytes": 8773888,
+          "reservedBytes": 0,
+          "maxDecodedBytes": 16777216,
+          "maxConcurrentDecodes": 2,
+          "clockMs": 2000,
+          "evictions": 0,
+          "staleLoads": 0,
+          "invalidPresentation": 0,
+          "budgetSkips": 0,
+          "peakDecodedBytes": 8773888,
+          "peakReservedBytes": 8773888,
+          "peakConcurrent": 2
+        }
+      },
+      "combatHash": "3f092b9c7762a120784c906a8ece4469ff565390d1e0a6042c93cf8e9dbd72b0",
+      "pause": true,
+      "errors": []
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "frames": [
+        "901f9aad83bbdb39e7fc902dd53bd89ea25c65aa5305570db343975545b90a20",
+        "c8ef6fe2b41d2bfed9f1e579827b8fe5127e73c60906fbe18194177d4c30ee52"
+      ],
+      "combat": {
+        "warning": "Blinding Dust",
+        "geometry": {
+          "x": 1400,
+          "y": 1700
+        },
+        "sprite": {
+          "manifestVersion": 8,
+          "definitions": 33,
+          "loaded": 11,
+          "loading": 0,
+          "queued": 0,
+          "failed": 0,
+          "decodedBytes": 8773888,
+          "reservedBytes": 0,
+          "maxDecodedBytes": 16777216,
+          "maxConcurrentDecodes": 2,
+          "clockMs": 1000,
+          "evictions": 0,
+          "staleLoads": 0,
+          "invalidPresentation": 0,
+          "budgetSkips": 0,
+          "peakDecodedBytes": 8773888,
+          "peakReservedBytes": 8773888,
+          "peakConcurrent": 2
+        }
+      },
+      "combatHash": "de80f84e6e4ac7599d843207979ba5a5b35d41b395472d6115fce3c0d4673bcc",
+      "pause": true,
+      "errors": []
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "frames": [
+        "3f85b5222d808f549e54c7a9f96a3bd2b9a41c8c933619ff102562805019c883",
+        "3d7b505bb22797269c190e68ad067c5a266ec17acab363433b0db36884330da2"
+      ],
+      "combat": {
+        "warning": "Blinding Dust",
+        "geometry": {
+          "x": 1400,
+          "y": 1700
+        },
+        "sprite": {
+          "manifestVersion": 8,
+          "definitions": 33,
+          "loaded": 11,
+          "loading": 0,
+          "queued": 0,
+          "failed": 0,
+          "decodedBytes": 8773888,
+          "reservedBytes": 0,
+          "maxDecodedBytes": 16777216,
+          "maxConcurrentDecodes": 2,
+          "clockMs": 1800,
+          "evictions": 0,
+          "staleLoads": 0,
+          "invalidPresentation": 0,
+          "budgetSkips": 0,
+          "peakDecodedBytes": 8773888,
+          "peakReservedBytes": 8773888,
+          "peakConcurrent": 2
+        }
+      },
+      "combatHash": "9c5bc7d671f7a382a0ed65199318f44c01ff4debf7b0647f085690d5e5e0c015",
+      "pause": true,
+      "errors": []
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "frames": [
+        "dfea11e172f224d7805b6c79d7c42d75d23a02b38fbc8403d5be00f70e324370",
+        "b3d2652a1a458ce32b9782c2e8c6bd57998fb6ae1099608a719682987e75f7cc"
+      ],
+      "combat": {
+        "warning": "Blinding Dust",
+        "geometry": {
+          "x": 1400,
+          "y": 1700
+        },
+        "sprite": {
+          "manifestVersion": 8,
+          "definitions": 33,
+          "loaded": 9,
+          "loading": 0,
+          "queued": 0,
+          "failed": 0,
+          "decodedBytes": 8478976,
+          "reservedBytes": 0,
+          "maxDecodedBytes": 16777216,
+          "maxConcurrentDecodes": 2,
+          "clockMs": 1000,
+          "evictions": 0,
+          "staleLoads": 0,
+          "invalidPresentation": 0,
+          "budgetSkips": 0,
+          "peakDecodedBytes": 8478976,
+          "peakReservedBytes": 8478976,
+          "peakConcurrent": 2
+        }
+      },
+      "combatHash": "a79945603862fb84177ab665cb5d711b5c1385ceb1b4bb847733ffcafe686dea",
+      "pause": true,
+      "errors": []
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "frames": [
+        "54fa18f3b1f16e63193e8cb5d9396681fd98463cacb8bbe783c551899e6855b4",
+        "7451be2dbf6b4ce8b63b1dd510dce011e5e1a78d496728f53c8ca11a8639b695"
+      ],
+      "combat": {
+        "warning": "Blinding Dust",
+        "geometry": {
+          "x": 1400,
+          "y": 1700
+        },
+        "sprite": {
+          "manifestVersion": 8,
+          "definitions": 33,
+          "loaded": 9,
+          "loading": 0,
+          "queued": 0,
+          "failed": 0,
+          "decodedBytes": 8478976,
+          "reservedBytes": 0,
+          "maxDecodedBytes": 16777216,
+          "maxConcurrentDecodes": 2,
+          "clockMs": 1800,
+          "evictions": 0,
+          "staleLoads": 0,
+          "invalidPresentation": 0,
+          "budgetSkips": 0,
+          "peakDecodedBytes": 8478976,
+          "peakReservedBytes": 8478976,
+          "peakConcurrent": 2
+        }
+      },
+      "combatHash": "79ef30bde783efa5fa5e993e234b21b44b87e90d0151a2d24ea7b219adfc64e0",
+      "pause": true,
+      "errors": []
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "frames": [
+        "67818be001d3a79b36c3d8b049c78fe1b94f341b1109c2dd64e6533862140fff",
+        "fb667349b666f983736fb31567f6575549e103d74b4a1630ccb67b8204c54adb"
+      ],
+      "combat": {
+        "warning": "Blinding Dust",
+        "geometry": {
+          "x": 1400,
+          "y": 1700
+        },
+        "sprite": {
+          "manifestVersion": 8,
+          "definitions": 33,
+          "loaded": 9,
+          "loading": 0,
+          "queued": 0,
+          "failed": 0,
+          "decodedBytes": 8478976,
+          "reservedBytes": 0,
+          "maxDecodedBytes": 16777216,
+          "maxConcurrentDecodes": 2,
+          "clockMs": 1200,
+          "evictions": 0,
+          "staleLoads": 0,
+          "invalidPresentation": 0,
+          "budgetSkips": 0,
+          "peakDecodedBytes": 8478976,
+          "peakReservedBytes": 8478976,
+          "peakConcurrent": 2
+        }
+      },
+      "combatHash": "377ae56adbcdf39a1a8092d590fc631cd57334d4e1a13b620839699c40883eea",
+      "pause": true,
+      "errors": []
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "frames": [
+        "6402cf35667493907db3abe79370b3febd8eed07877ea18e15ccac3517a35513",
+        "0954fdb3f00ae801060977bd4f7299303eed45ae7103999e80b2e4c20f9c442f"
+      ],
+      "combat": {
+        "warning": "Blinding Dust",
+        "geometry": {
+          "x": 1400,
+          "y": 1700
+        },
+        "sprite": {
+          "manifestVersion": 8,
+          "definitions": 33,
+          "loaded": 9,
+          "loading": 0,
+          "queued": 0,
+          "failed": 0,
+          "decodedBytes": 8478976,
+          "reservedBytes": 0,
+          "maxDecodedBytes": 16777216,
+          "maxConcurrentDecodes": 2,
+          "clockMs": 2000,
+          "evictions": 0,
+          "staleLoads": 0,
+          "invalidPresentation": 0,
+          "budgetSkips": 0,
+          "peakDecodedBytes": 8478976,
+          "peakReservedBytes": 8478976,
+          "peakConcurrent": 2
+        }
+      },
+      "combatHash": "cf740a8d8a42939c872a0620dcfbe21261813483f1027b96741c51ab28153b9b",
+      "pause": true,
+      "errors": []
+    }
+  ],
+  "review": "pending engineer visual inspection"
+}
