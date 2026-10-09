@@ -1,0 +1,21 @@
+name: Rogue integration verification
+on:
+  push:
+    branches: [integration/rogue-146-main-20261009]
+permissions:
+  contents: read
+jobs:
+  integrated-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - name: Verify formatting
+        run: npm run format:check
+      - name: Verify generated files and sprite evidence
+        run: npm run check
+      - name: Run complete Node regression suite
+        run: npm test
