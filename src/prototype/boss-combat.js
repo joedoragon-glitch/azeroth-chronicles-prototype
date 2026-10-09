@@ -189,7 +189,7 @@
           return R.combatGeometry.ringSpeed * R.combatGeometry.ringLife * scale;
         return null;
       }
-      bossAttackWeights(e, target = this.hero) {
+      bossAttackWeights(e, target = this.hero, allowRepeat = false) {
         const plans = R.attacks[e.family] || [],
           behavior = R.bossBehavior[e.family] || {},
           d = dist(e, target),
@@ -197,11 +197,16 @@
           alive = this.bossOwnedSummons(e).length,
           cap = this.bossSummonCap(e);
         return plans.map((plan, index) => {
-          if (index === e.lastAttackIndex && plans.length > 1) return 0;
+          if (!allowRepeat && index === e.lastAttackIndex && plans.length > 1) return 0;
           if (e.family === 'darklord' && index === 3 && !low) return 0;
           const attackTarget = this.bossAttackTarget(e, target, index);
           const reach = this.bossCenteredReach(e, plan);
           // A special must have realistic coverage at the moment it is chosen.
+          if (
+            plan.kind !== 'summon' &&
+            dist(e, attackTarget) > R.bossCadence.specialRange
+          )
+            return 0;
           if (reach !== null && dist(e, attackTarget) > reach + 25) return 0;
           let w = 1;
           if (plan.kind === 'summon') {
@@ -220,17 +225,18 @@
         });
       }
       chooseBossAttack(e, target = this.hero) {
-        const plans = R.attacks[e.family] || [],
-          weights = this.bossAttackWeights(e, target),
-          total = weights.reduce((n, w) => n + w, 0);
-        if (total > 0) {
+        const plans = R.attacks[e.family] || [];
+        for (const allowRepeat of [false, true]) {
+          const weights = this.bossAttackWeights(e, target, allowRepeat),
+            total = weights.reduce((n, w) => n + w, 0);
+          if (total <= 0) continue;
           let roll = this.random() * total;
           for (let i = 0; i < weights.length; i++) {
             roll -= weights[i];
             if (roll <= 0 && weights[i] > 0) return i;
           }
         }
-        // If every available special is out of reach, resume closing distance.
+        // If every special is out of reach, resume closing distance.
         return -1;
       }
       bossAttackTarget(e, fallback, index) {
@@ -364,6 +370,7 @@
           return [];
         const comboTarget = this.bossAttackTarget(e, target, combo.to),
           reach = this.bossCenteredReach(e, plan);
+        if (dist(e, comboTarget) > R.bossCadence.specialRange) return [];
         if (reach !== null && dist(e, comboTarget) > reach + 25) return [];
         const built = this.buildBossAttack(e, combo.to, comboTarget, true);
         return [built.first, ...built.sequence];
