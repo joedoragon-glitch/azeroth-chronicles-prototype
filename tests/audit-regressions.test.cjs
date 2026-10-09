@@ -414,19 +414,24 @@ test('F62 chained retreat leash follows current hop, never the original spawn li
  assert.equal(c.tacticalRogueLeashAllows(e,c.hero,500),false,'genuine escape still ends the encounter');
 });
 
-test('F63 ringleaders retain their species feint and gain a pressure-driven ambush',()=>{
- const c=fresh(),e=c.makeEnemy({species:'wolf',name:'wolf ringleader',level:2,hp:300,damage:12,gold:0,xp:0},{x:1400,y:1700});
- e.form='ringleader';e.aggro=true;c.zone().enemies=[e];c.s.party=[];c.line=()=>true;
- Object.assign(c.hero,{x:1500,y:1700,hp:1000,maxHp:1000});
- c.tacticalRogueOutnumbered=()=>false;c.tacticalRogueWounded=()=>false;
- assert(c.tacticalRogueMove(e,c.hero));
- assert.equal(e.telegraph.name,'Flanking Snap','species identity survives elite promotion');
- assert(!e.telegraph.rogueSignature);
- e.telegraph=null;c.tacticalRogueOutnumbered=()=>true;
- assert(c.tacticalRogueMove(e,c.hero));
- assert.equal(e.telegraph.name,'Ringleader Ambush','outnumbering unlocks elite technique');
- assert.equal(e.telegraph.style,'dash');
- assert(e.telegraph.total>0.65,'elite warning must remain readable');
+test('F63 melee and ranged ringleaders retain role basics and species-specific elite signatures',()=>{
+ const cfg=C.rules.tacticalFoundation;
+ for(const role of ['melee','ranged'])for(const [species,def] of Object.entries(cfg.rogueRingleaderSignatures[role])){
+  const c=fresh(),e=c.makeEnemy({species,name:species+' ringleader',level:2,hp:300,damage:12,gold:0,xp:0},{x:1400,y:1700});
+  e.form='ringleader';e.ranged=role==='ranged';e.aggro=true;c.zone().enemies=[e];c.s.party=[];c.line=()=>true;
+  Object.assign(c.hero,{x:1470,y:1700,hp:1000,maxHp:1000});
+  c.tacticalRogueOutnumbered=()=>false;c.tacticalRogueWounded=()=>false;
+  assert(c.tacticalRogueMove(e,c.hero),species+' basic');
+  const basic=e.telegraph;
+  assert.equal(basic.name,role==='ranged'?(cfg.rogueMoves.ranged[species]||cfg.rogueMoves.rangedFallback).name:(cfg.rogueMoves.species[species]||cfg.rogueMoves.ordinary).name);
+  assert(!basic.rogueSignature);
+  e.telegraph=null;c.tacticalRogueOutnumbered=()=>true;
+  assert(c.tacticalRogueMove(e,c.hero),species+' signature');
+  assert.equal(e.telegraph.name,def.name);
+  assert(e.telegraph.rogueSignature);
+  assert.notEqual(e.telegraph.name,basic.name,'signature cannot repeat the basic');
+  assert.notEqual(e.telegraph.name,'Ringleader Ambush');
+ }
 });
 test('F64 all five captains have a basic move plus an individually authored rogue signature',()=>{
  const signatures=C.rules.tacticalFoundation.rogueSignatures.captains;
@@ -485,35 +490,40 @@ test('F66 rogue binding warnings use their actual hit circle and respect cover',
  c.line=()=>true;c.tacticalResolveRogueMove(e,move);
  assert(c.hero.hp<hp&&c.hero.slow>0,'remaining inside the readable mark gets modest snare');
 });
-test('F67 boss scatter disrupts present attackers without hard control or free summons',()=>{
+test('F67 Thornfang scatter forces living attackers apart with transient terrain-safe movement',()=>{
  const c=fresh(),e=c.bossEnemy(c.boss('thorn'),'normal',{x:1400,y:1700}),
   soldier=c.unit('soldier',1450,1700);
  c.zone().enemies=[e];c.s.party=[soldier];e.aggro=true;c.line=()=>true;
  c.tacticalRogueOutnumbered=()=>true;
  Object.assign(c.hero,{x:1450,y:1745,hp:1000,maxHp:1000});
- assert(c.tacticalRogueMove(e,c.hero));const a=e.telegraph,displaced=[];
- c.move=(unit,point)=>{displaced.push(unit.id||'hero');return true;};
+ assert(c.tacticalRogueMove(e,c.hero));const a=e.telegraph;
  const before=c.hero.hp,allyHp=soldier.hp,enemyCount=c.zone().enemies.length;
  c.tacticalResolveRogueMove(e,a);
  assert(c.hero.hp<before&&soldier.hp<allyHp);
- assert.equal(displaced.length,2,'two attackers are pushed rather than stun-locked');
- assert.equal(c.zone().enemies.length,enemyCount,'scatter does not summon or auto-pull');
+ assert(c.tacticalScatterState(c.hero)&&c.tacticalScatterState(soldier),'both attackers forcibly scattered');
+ const pos={x:c.hero.x,y:c.hero.y},allyPos={x:soldier.x,y:soldier.y};
+ c.tacticalAdvanceScatter(c.hero,.1);c.tacticalAdvanceScatter(soldier,.1);
+ assert(Math.hypot(c.hero.x-pos.x,c.hero.y-pos.y)>0);
+ assert(Math.hypot(soldier.x-allyPos.x,soldier.y-allyPos.y)>0);
+ assert.equal(c.zone().enemies.length,enemyCount,'scatter cannot manufacture summons');
 });
-test('F68 commanders rally only already engaged local troops, never innocent nearby packs',()=>{
+test('F68 captain orders rally existing defenders without recruiting distant packs',()=>{
  const c=fresh(),e=c.makeEnemy({species:'orc',name:'Cinder Warlord',level:10,hp:1000,damage:20,gold:0,xp:0},{x:1400,y:1700}),
   guard=c.makeEnemy({species:'orc',name:'engaged guard',level:10,hp:100,damage:7,gold:0,xp:0},{x:1460,y:1730}),
-  idle=c.makeEnemy({species:'orc',name:'unengaged guard',level:10,hp:100,damage:7,gold:0,xp:0},{x:1480,y:1740});
+  idle=c.makeEnemy({species:'orc',name:'nearby guard',level:10,hp:100,damage:7,gold:0,xp:0},{x:1480,y:1740}),
+  distant=c.makeEnemy({species:'orc',name:'distant pack',level:10,hp:100,damage:7,gold:0,xp:0},{x:2350,y:1700});
  e.captain=true;e.captainProfile='frontier-overseer';e.aggro=true;guard.aggro=true;
- c.zone().enemies=[e,guard,idle];c.s.party=[];c.line=()=>true;c.tacticalRogueOutnumbered=()=>true;
+ c.zone().enemies=[e,guard,idle,distant];c.s.party=[];c.line=()=>true;c.tacticalRogueOutnumbered=()=>true;
  Object.assign(c.hero,{x:1500,y:1700,hp:1000,maxHp:1000});
  assert(c.tacticalRogueMove(e,c.hero));
  assert.equal(e.telegraph.effect,'rally');
- const previous=guard.pursuitBurst||0;
+ const count=c.zone().enemies.length,previous=guard.pursuitBurst||0;
  c.tacticalResolveRogueMove(e,e.telegraph);
- assert(guard.pursuitBurst>previous,'engaged soldier receives a rearguard speed burst');
- assert(!idle.aggro&&!(idle.pursuitBurst>0),'no stealth reinforcement from idle pack');
+ assert(guard.pursuitBurst>previous,'already fighting soldier rallied');
+ assert(idle.pursuitBurst>0,'nearby existing troops also rallied');
+ assert(!distant.aggro&&!(distant.pursuitBurst>0),'distant pack not conscripted');
+ assert.equal(c.zone().enemies.length,count,'no artificial guard summons');
 });
-
 test('F69 rogue telegraphs do not advance or fabricate normal boss basic-attack cadence',()=>{
  const c=fresh(),e=c.bossEnemy(c.boss('thorn'),'normal',{x:1400,y:1700});
  c.zone().enemies=[e];c.s.party=[];e.aggro=true;e.attackIndex=4;e.basicDue=false;
@@ -584,5 +594,86 @@ test('F73 rogue targeting resolves escorts as active combat participants',()=>{
  c.tacticalResolveRogueMove(e,e.telegraph);
  assert(escort.hp<before,'the named rogue move resolves against its marked escort');
  assert(escort.slow>0,'the intended disruption effect also applies to the escort');
+});
+test('F74 goblin dust cancels active hero locks, squad targeting and homing projectiles',()=>{
+ const c=fresh(),g=c.makeEnemy({species:'goblin',name:'Slinger',level:1,hp:3000,damage:20,gold:0,xp:0},{x:1400,y:1700}),
+  other=c.makeEnemy({species:'skeleton',name:'Other attacker',level:1,hp:3000,damage:15,gold:0,xp:0},{x:1450,y:1710}),
+  soldier=c.unit('soldier',1460,1700);
+ c.zone().enemies=[g,other];c.s.party=[soldier];g.aggro=true;other.aggro=true;c.line=()=>true;
+ Object.assign(c.hero,{x:1460,y:1750,hp:1000,maxHp:1000});
+ c.s.heroTarget=g.id;c.hero.order={type:'attack',id:g.id};
+ c.basicComboTargetId=g.id;c._tacticalPartyTargets=new Map([[soldier.id,g.id]]);
+ c.s.projectiles.push({id:'pending-shot',target:g.id,source:soldier.id,x:1460,y:1700,speed:450,damage:10});
+ c.tacticalRogueOutnumbered=()=>false;
+ assert(c.tacticalRogueMove(g,c.hero));
+ assert.equal(g.telegraph.name,'Blinding Dust');
+ const hp=c.hero.hp;c.tacticalResolveRogueMove(g,g.telegraph);
+ assert(c.hero.hp<hp&&c.hero.slow>=1.65,'dust hits and slows');
+ assert.equal(c.tacticalDirectTargetable(g),false);
+ assert.equal(c.s.heroTarget,null,'hero target lock cleared');
+ assert.equal(c.hero.order,null,'held auto-attack order stopped');
+ assert.notEqual(c.basicComboTargetId,g.id,'basic combo lock reset');
+ assert(![...c._tacticalPartyTargets.values()].includes(g.id),'companion targeting lock cleared');
+ assert(!c.s.projectiles.some(p=>p.target===g.id),'existing homing shots cancelled');
+ assert(!c.squadThreats().includes(g),'companions cannot auto-reacquire covered goblin');
+ assert(c.squadThreats().includes(other),'other enemies remain eligible');
+ const before=g.hp;
+ assert.equal(c.damage(g,20),false,'direct hero damage rejected by resolver');
+ assert.equal(c.damage(g,20,soldier.id),false,'direct companion damage rejected');
+ assert.equal(g.hp,before);
+ c.hero.cd[0]=0;c.cast(1,g.id);
+ assert.equal(g.hp,before,'hero basic selects someone else instead of protected goblin');
+ c.updateParty(.1);
+ assert(![...c._tacticalPartyTargets.values()].includes(g.id),'companions retarget or return to follow');
+ const areaStart=g.hp;
+ assert(c.damage(g,20,'hero',{area:true}),'area effect still lands');
+ assert(g.hp<areaStart,'dust is not invulnerability');
+ c.hero.order={type:'attack',id:g.id};c.tick(.1,{x:0,y:0});
+ assert.equal(c.hero.order,null,'newly issued auto-follow also drops covered target');
+ c.s.time+=1.66;
+ assert(c.tacticalDirectTargetable(g),'direct targeting naturally resumes after 1.65 s');
+});
+test('F75 boss rogue repositions protect encounters without preventing genuine escape',()=>{
+ const c=fresh(),e=c.bossEnemy(c.boss('archive'),'normal',{x:1400,y:1700});
+ c.zone().enemies=[e];c.s.party=[];e.aggro=true;e.hp=e.maxHp*.45;
+ Object.assign(c.hero,{x:1490,y:1700,hp:10000,maxHp:10000});
+ c.line=()=>true;c.tacticalRogueOutnumbered=()=>true;
+ assert(c.tacticalRogueMove(e,c.hero));const a=e.telegraph;
+ assert.equal(a.effect,'pivot');
+ c.tacticalResolveRogueMove(e,a);
+ assert(e.hp<e.maxHp,'boss remains wounded');
+ const p=c._tacticalRepositions?.get(e.id);
+ assert(p,'reposition is recorded');
+ assert(c.tacticalRogueLeashAllows(e,c.hero,500),'nearby hero remains engaged during relocation');
+ Object.assign(c.hero,{x:3200,y:3300});
+ assert.equal(c.tacticalRogueLeashAllows(e,c.hero,500),false,'real escape remains possible');
+});
+test('F76 field commander revives existing local soldier spawns but no summons or new identities',()=>{
+ for(const [family,species] of [['warlord','orc'],['ridge','wolf']]){
+  const c=fresh(),e=c.bossEnemy(c.boss(family),'normal',{x:1400,y:1700});
+  c.zone().enemies=[e];c.s.party=[];e.aggro=true;c.line=()=>true;
+  Object.assign(c.hero,{x:1530,y:1720,hp:10000,maxHp:10000});
+  const squad=Array.from({length:4},(_,j)=>{
+   const u=c.makeEnemy({species,name:'native troop',level:10,hp:200,damage:10,gold:0,xp:0},{x:1240+j*48,y:1640});
+   u.pack='local-'+family;u.hp=j===0?200:0;u.deathPaid=j!==0;
+   return u;
+  });
+  const summoned=c.makeEnemy({species,name:'owned summon',level:10,hp:200,damage:10,gold:0,xp:0},{x:1470,y:1600});
+  summoned.summon=true;summoned.owner=e.id;
+  c.zone().enemies.push(...squad,summoned);
+  c.tacticalRogueOutnumbered=()=>true;
+  assert(c.tacticalRogueMove(e,c.hero));
+  const ids=c.zone().enemies.map(x=>x.id),move=e.telegraph;
+  assert.equal(move.effect,'rally');
+  c.tacticalResolveRogueMove(e,move);
+  assert.deepEqual(c.zone().enemies.map(x=>x.id),ids,'only original monster records survive');
+  assert.equal(squad.filter(u=>u.hp>0).length,3,'restore defenders to a 3-member cap');
+  assert.equal(summoned.hp,200,'personal boss summon is not counted/replaced');
+  e.telegraph=null;squad[3].hp=0;squad[3].deathPaid=true;
+  const previous=squad.filter(u=>u.hp>0).length;
+  assert.equal(previous,3);
+  c.tacticalRogueFieldSupport(e,move);
+  assert.equal(squad.filter(u=>u.hp>0).length,3,'three local defenders means no new rally spawn');
+ }
 });
 console.log(passed+' audit regression scenarios passed.');
