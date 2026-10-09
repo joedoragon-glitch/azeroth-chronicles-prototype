@@ -12,10 +12,71 @@
         ? 'full'
         : 'basic';
   }
+  // World-space artwork proportion is presentation-only, shared by procedural
+  // fallbacks and registered sprites. Never change gameplay/interaction reach here.
+  function featureScale(e) {
+    if (!e || e.interactionOnly) return 1;
+    const type = e.renderKind;
+    const structure = String(e.structure || '').toLowerCase();
+    if (type === 'building') return 1.35;
+    if (type === 'npc' && e.kind === 'rest') return 1.4;
+    if (['transport', 'dungeon', 'mini'].includes(e.kind)) return 1.35;
+    if (
+      type === 'npc' &&
+      e.kind === 'landmark' &&
+      /orchard|den|lair|cave|gate|fort|tower|shrine|watch|ruin|treasury|vault|crypt|mine/.test(
+        String(e.id || '') + ' ' + String(e.name || ''),
+      )
+    )
+      return /orchard/.test(String(e.id || '') + ' ' + String(e.name || '')) ? 1.3 : 1.35;
+    if (type !== 'prop') return 1;
+    if (String(e.id || '').startsWith('forest-') && /🌲|🌳/.test(e.icon || '')) return 1.3;
+    if (structure === 'mangrove' || /(?:^|[-_])(tree|sapling|pine)(?:$|[-_])/.test(structure))
+      return 1.3;
+    if (
+      /cottage|house|workshop|boathouse|smithy|forgehouse|watchhouse|lean-to|longhouse|dwelling|hut|cabin/.test(
+        structure,
+      )
+    )
+      return 1.4;
+    if (
+      /watchpost|watchtower|fortress|stronghold|command-post|barracks|checkpoint|stockade|shrine|altar|monument|gatehouse|ash-den|wolf-den|roost|lair|treasury|vault|cellar/.test(
+        structure,
+      ) ||
+      /(?:^|[-_])(fort|gate|watch|redoubt|aerie|den|keep|prison)(?:$|[-_])/.test(structure) ||
+      /citadel-|dragon-logistics|command-tent|occupation-administration|military-command|goblin-road-camp|goblin-orchard-camp|archer-drill-camp/.test(
+        structure,
+      )
+    )
+      return 1.35;
+    return 1;
+  }
+  // A larger original-master export is required before an existing registered
+  // sprite can use the world-size increase. Low-resolution runtime PNGs must
+  // never be stretched to impersonate a high-density replacement.
+  function assetSafeScale(e, entry) {
+    const target = featureScale(e);
+    if (target <= 1 || !entry) return target;
+    const density = target >= 1.35 ? 4.25 : 4;
+    const width = Number(entry.width);
+    const height = Number(entry.height);
+    const logicalWidth = Number(entry.displayWidth) || width;
+    const logicalHeight = Number(entry.displayHeight) || height;
+    if (!Number.isFinite(width) || !Number.isFinite(height)) return 1;
+    if (!Number.isFinite(logicalWidth) || !Number.isFinite(logicalHeight)) return 1;
+    if (width < Math.ceil(logicalWidth * density)) return 1;
+    if (height < Math.ceil(logicalHeight * density)) return 1;
+    return target;
+  }
   function draw(ctx, e, p, region = 0, rescued = false) {
     if (e.kind === 'landmark' && e.id?.startsWith('bridge-')) return; // The full deck is drawn in world space.
     ctx.save();
     ctx.translate(p.x, p.y);
+    const scale =
+      featureScale(e) > 1 && Number.isFinite(e.visualScale) && e.visualScale > 0
+        ? e.visualScale
+        : 1;
+    if (scale !== 1) ctx.scale(scale, scale);
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
     const ink = '#25312d',
@@ -12760,7 +12821,7 @@
     }
     ctx.restore();
   }
-  function height(e) {
+  function unscaledHeight(e) {
     if (e.type === 'boss') return 102;
     if (e.captain || e.roomCaptain) return 68;
     if (e.renderKind === 'building' && e.kind === 'barracks') return 88;
@@ -12787,6 +12848,13 @@
     if ((e.renderKind === 'hero' && e.class === 'mage') || e.renderKind === 'prop') return 64;
     if (['dungeon', 'exit', 'transport'].includes(e.kind)) return 64;
     return 54;
+  }
+  function height(e) {
+    const scale =
+      featureScale(e) > 1 && Number.isFinite(e.visualScale) && e.visualScale > 0
+        ? e.visualScale
+        : 1;
+    return unscaledHeight(e) * scale;
   }
   const floorPalettes = [
     ['#294b36', '#31583e', '#203e30', '#95ad80'],
@@ -13961,6 +14029,8 @@
     allyBodyKind,
     enemyBodyKind,
     barracksVisualState,
+    featureScale,
+    assetSafeScale,
   };
   if (typeof module !== 'undefined') module.exports = root.PrototypeVisuals;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -311,6 +311,9 @@
         rx = 30;
         ry = 8;
       }
+      const scale = (PrototypeVisuals.featureScale?.(e) || 1) > 1 ? e.visualScale || 1 : 1;
+      rx *= scale;
+      ry *= scale;
       ctx.save();
       ctx.fillStyle = '#05100c38';
       ctx.beginPath();
@@ -1274,9 +1277,24 @@
           stats.entitiesConsidered++;
           if (renderKind === 'enemy' && e.hp <= 0) continue;
           const p = screen(e);
-          if (p.x < -100 || p.x > canvas.width + 100 || p.y < -100 || p.y > canvas.height + 100)
+          if (p.x < -180 || p.x > canvas.width + 180 || p.y < -180 || p.y > canvas.height + 180)
             continue;
-          entities.push({ ...e, renderKind, spriteIdentity: e });
+          // Calculate scale from the same authored rule used by procedural art.
+          // A registered sprite consumes visualScale itself; no source pixels change.
+          const visualEntity = { ...e, renderKind };
+          const registered = PrototypeSprites?.definitionFor?.(
+            visualEntity,
+            game.regionIndex(),
+            !!game.s.rescued[e.family],
+          );
+          // Only attach a new feature multiplier to features. Actors retain
+          // their authored scale (including the procedural captain default).
+          if ((PrototypeVisuals.featureScale?.(visualEntity) || 1) > 1)
+            visualEntity.visualScale = PrototypeVisuals.assetSafeScale(
+              visualEntity,
+              registered?.entry,
+            );
+          entities.push({ ...visualEntity, spriteIdentity: e });
         }
       }
       add(z.props, 'prop');
@@ -1292,7 +1310,7 @@
 
       for (const e of entities) {
         const p = screen(e);
-        if (p.x < -100 || p.x > canvas.width + 100 || p.y < -100 || p.y > canvas.height + 100)
+        if (p.x < -180 || p.x > canvas.width + 180 || p.y < -180 || p.y > canvas.height + 180)
           continue;
         if (!e.interactionOnly) {
           groundMarker(e, p);
