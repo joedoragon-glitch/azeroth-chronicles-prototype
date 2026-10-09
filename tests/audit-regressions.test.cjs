@@ -22,7 +22,7 @@ test('F17 idle night health preserves fraction; F19 full barracks are valid reso
 test('F20 legacy region and regional buildings survive while retired potion stock is safely discarded',()=>{const legacy={version:2,activeRegion:'world',player:{heroClass:'mage',level:7,gold:500,wx:3200,maxHp:500,hp:10,maxMp:500,mp:10},inventory:['Arma de las Cumbres','Tónico de las Cumbres','Éter de las Cumbres','Poción de Maná Grande'],squad:{buildings:[{wx:2250,wy:1000,progress:4,queue:0}],units:[],nodes:[]}};const c=C.migrate(legacy);assert.equal(c.zoneId,'crown');assert.equal(c.s.zones.frontier.buildings.length,1);assert(c.equipLegacy('Arma de las Cumbres'));assert.equal(c.power(),c.hero.power+70);assert(!c.equipLegacy('unknown'));assert.deepEqual(c.hero.potions,{health:0,mana:0,greater_health:0,greater_mana:0});assert.deepEqual(c.hero.legacyPotions,[],'legacy potion inventory is retired without affecting the rest of the save');assert(Math.abs(c.hero.mp-2.6)<1e-9,'legacy MP percentage is normalized to the new curve');const restored=C.restore(c.snapshot());assert.equal(restored.zoneId,'crown');assert.equal(restored.s.zones.frontier.buildings.length,1);});
 test('F21 area kill sequence is independent of enemy array order',()=>{const outcomes=[];for(const reverse of [false,true]){const c=fresh();c.hero.skills[4]=1;const a=['goblin','goblin','skeleton'].map((species,i)=>c.makeEnemy({species,name:species,level:1,hp:1,damage:1,gold:0,xp:0},{x:350+i*10,y:350}));c.zone().enemies=reverse?a.reverse():a;c.cast(5);outcomes.push({streak:c.s.streak,pending:Object.keys(c.s.pending)});}assert.deepEqual(outcomes[0],outcomes[1]);});
 test('F23 every authored landmark is reachable, towns have solid structures and dungeon walls differ',()=>{const wallSignatures=[];for(const r of C.data.regions){const c=fresh();c.enter(r.id);const z=c.zone();assert(z.props.some(p=>p.roadBlocker),'regional settlement keeps solid street-defining structures');assert(z.props.some(p=>String(p.id).startsWith('settlement-')&&p.roadBlocker&&!/(?:fence|wall|boardwalk|palisade)$/.test(String(p.structure))),'regional settlement keeps inhabited region-specific buildings');for(const n of z.npcs.filter(n=>n.kind==='landmark')){assert(!c.blocked(n.x,n.y));assert(c.route(c.hero,n).length,r.id+' '+n.name);}}for(const id of C.dungeonIds){const c=fresh();c.enter(id);wallSignatures.push(Array.from({length:100},(_,i)=>c.blocked(600+(i%10)*35,250+Math.floor(i/10)*110,c.zoneId,0)).join());assert(c.route(c.hero,boss(c)).length);}assert(new Set(wallSignatures).size>=3);});
-test('F24 tactical foundation enables AI while keeping burst compression inactive',()=>{const c=fresh(),e=boss(c),cfg=C.rules.tacticalFoundation;assert.equal(cfg.enabled,true);assert.equal(cfg.burstCompression.enabled,false);c.zone().enemies=[e];c.s.party=[];Object.assign(c.hero,{x:e.x+100,y:e.y});c.hero.level=e.level-3;assert.equal(c.tacticalRogueEligibility(e,6),false);c.hero.level=e.level+1;assert.equal(c.tacticalRogueEligibility(e,0),true);c.hero.level=e.level;assert.equal(c.tacticalRogueEligibility(e,2),false);e.summonCd=3;assert.equal(c.tacticalRogueEligibility(e,2),true);assert.equal(c.tacticalProtectionTier(e),'boss');});
+test('F24 tactical foundation and tiered burst compression are enabled independently',()=>{const c=fresh(),e=boss(c),cfg=C.rules.tacticalFoundation;assert.equal(cfg.enabled,true);assert.equal(cfg.burstCompression.enabled,true);c.zone().enemies=[e];c.s.party=[];Object.assign(c.hero,{x:e.x+100,y:e.y});c.hero.level=e.level-3;assert.equal(c.tacticalRogueEligibility(e,6),false);c.hero.level=e.level+1;assert.equal(c.tacticalRogueEligibility(e,0),true);c.hero.level=e.level;assert.equal(c.tacticalRogueEligibility(e,2),false);e.summonCd=3;assert.equal(c.tacticalRogueEligibility(e,2),true);assert.equal(c.tacticalProtectionTier(e),'boss');});
 test('F25 tactical telemetry and extended awareness do not trigger aggro',()=>{const c=fresh(),e=boss(c);const ally=c.makeEnemy({species:'wolf',name:'ally',level:2,hp:100,damage:1,gold:0,xp:0},{x:e.x+620,y:e.y});const distant=c.makeEnemy({species:'wolf',name:'distant',level:2,hp:100,damage:1,gold:0,xp:0},{x:e.x+900,y:e.y});c.zone().enemies=[e,ally,distant];assert(c.tacticalRegroupCandidates(e).includes(ally));assert(!c.tacticalRegroupCandidates(e).includes(distant));assert.equal(ally.aggro,false);c.tacticalRecordHit(e,'hero',12);assert.equal(c.tacticalThreatSnapshot(e)[0].damage,12);assert.equal(e.aggro,false);c.s.time+=7;assert.equal(c.tacticalThreatSnapshot(e).length,0);});
 test('F26 threat records expire old hits independently and never carry through travel',()=>{
 const c=fresh(),e=boss(c);c.zone().enemies=[e];c.s.party=[];c.s.time=0;c.tacticalRecordHit(e,'hero',100);c.s.time=5;c.tacticalRecordHit(e,'hero',10);assert.equal(c.tacticalThreatSnapshot(e)[0].damage,110);c.s.time=7;assert.equal(c.tacticalThreatSnapshot(e)[0].damage,10,'old damage must expire even after a fresh hit');c.tacticalRecordHit(e,'hero',5);assert.equal(c.tacticalThreatSnapshot(e)[0].damage,15);c.enter('march');assert.deepEqual(c.tacticalThreatSnapshot(e),[],'zone transitions purge cached threat');assert(!Object.hasOwn(c.snapshot(),'_tacticalThreat'),'telemetry is not persisted');
@@ -171,7 +171,7 @@ test('F44 autonomous rogue initiation finds a single ally across packs without c
   assert.equal(c.tacticalRogueRegroup(e)?.phase,'travel');
   assert.equal(ally.aggro,false);assert.equal(other.aggro,false);
   assert(!c.tacticalAutoRogue(e,c.hero),'one retreat decision per engagement');
-  assert(C.rules.tacticalFoundation.burstCompression.enabled===false);
+  assert(C.rules.tacticalFoundation.burstCompression.enabled===true);
 });
 test('F45 arrived rogue recruits only immediate support and executes one low damage telegraphed feint',()=>{
   const c=fresh(),e=c.makeEnemy({species:'wolf',name:'regrouper',level:1,hp:180,damage:12,gold:0,xp:0},{x:1400,y:1700}),
@@ -228,14 +228,14 @@ test('F48 named rogue attacks prioritize actual high-threat archer over a closer
   e.telegraph=null;c.s.time=8;
   assert.equal(c.tacticalHighestThreatTarget(e,c.hero),c.hero,'expired threat no longer outweighs nearest fallback');
 });
-test('F49 TRUE bosses remain protected by the three-level immunity and no burst compression',()=>{
+test('F49 TRUE boss rogue level immunity remains despite active burst compression',()=>{
   const c=fresh(),b=c.boss('thorn'),e=c.bossEnemy(b,'true',{x:1400,y:1700});
   c.zone().enemies=[e];Object.assign(c.hero,{x:1450,y:1700,level:e.level-3});
   c.line=()=>true;e.aggro=true;c.s.time=10;
   assert.equal(c.tacticalProtectionTier(e),'trueBoss');
   assert.equal(c.tacticalRogueEligibility(e,7),false);
   assert.equal(c.tacticalAutoRogue(e,c.hero),false,'rogue immunity holds even if pressured by seven attackers');
-  assert.equal(C.rules.tacticalFoundation.burstCompression.enabled,false,'phase-three defense remains disabled');
+  assert.equal(C.rules.tacticalFoundation.burstCompression.enabled,true,'tiered compression remains enabled independently of rogue level immunity');
 });
 test('F50 interrupted rogue retreat sheds its protection and cannot chain',()=>{
   const c=fresh(),e=c.makeEnemy({species:'wolf',name:'retreater',level:1,hp:1000,damage:1,gold:0,xp:0},{x:1400,y:1700}),
@@ -266,7 +266,7 @@ test('F51 wounded ordinary, guardian and ringleader mobs gain independent rogue 
     c.hero.level=e.level;
   }
 });
-test('F52 wound trigger excludes bosses and captains and never activates tiered burst compression',()=>{
+test('F52 wound trigger excludes bosses and captains independently of burst compression',()=>{
   const c=fresh();c.s.party=[];c.line=()=>true;
   const bossUnit=c.bossEnemy(c.boss('crypt'),'normal',{x:1400,y:1700});
   const captain=c.makeEnemy({species:'wolf',name:'captain',level:3,hp:100,damage:1,gold:0,xp:0},{x:1450,y:1700});
@@ -274,7 +274,7 @@ test('F52 wound trigger excludes bosses and captains and never activates tiered 
   const ordinary=c.makeEnemy({species:'wolf',name:'summoned mob',level:3,hp:100,damage:1,gold:0,xp:0},{x:1470,y:1700});
   ordinary.summon=true;
   for(const e of [bossUnit,captain,ordinary]){e.hp=e.maxHp*.29;assert.equal(c.tacticalRogueWounded(e),e===ordinary);}
-  assert.equal(C.rules.tacticalFoundation.burstCompression.enabled,false);
+  assert.equal(C.rules.tacticalFoundation.burstCompression.enabled,true);
 });
 test('F53 wounded monster thinks under 50% protection then seeks a single ally',()=>{
   const c=fresh(),e=c.makeEnemy({species:'wolf',name:'wounded scout',level:2,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700}),
