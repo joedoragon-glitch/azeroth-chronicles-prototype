@@ -1383,6 +1383,8 @@
                 : { x: D.towns[i][0], y: D.towns[i][1] });
       this.tacticalClearThreat(); // Transient observations never survive zone travel.
       this.tacticalClearRogueRegroup();
+      this._tacticalScatter?.clear();
+      this._tacticalScatterLeash?.clear();
       this._tacticalPartyTargets?.clear();
       this.s.zone = zone;
       this.zone();
@@ -1726,6 +1728,8 @@
 
     die() {
       this.tacticalClearRogueRegroup();
+      this._tacticalScatter?.clear();
+      this._tacticalScatterLeash?.clear();
       this.tacticalClearThreat();
       this._tacticalPartyTargets?.clear();
       this.clearTonic();
@@ -2184,7 +2188,9 @@
         u.immune = Math.max(0, (u.immune || 0) - dt);
       }
       this.syncCompanionLevelStats();
-      if (input.x || input.y) {
+      if (this.tacticalAdvanceScatter(h, dt)) {
+        h.order = null;
+      } else if (input.x || input.y) {
         h.order = null;
         const n = Math.hypot(input.x, input.y),
           speed =
@@ -2721,7 +2727,78 @@
       e.routeAge = 0;
       return true;
     }
+    // Transient forced movement is shared by hero and companions, but never
+    // serialized. While scattering, no player movement or party AI can override
+    // the direction. World collision remains authoritative.
+    tacticalScatterState(unit) {
+      return this._tacticalScatter?.get(unit === this.hero ? 'hero' : unit?.id) || null;
+    }
+    tacticalBeginScatter(actor, unit, push) {
+      if (!unit || unit.hp <= 0 || !Number.isFinite(push) || push <= 0) return false;
+      const key = unit === this.hero ? 'hero' : unit.id,
+        distance = Math.max(1, dist(actor, unit)),
+        direction =
+          distance > 1
+            ? { x: (unit.x - actor.x) / distance, y: (unit.y - actor.y) / distance }
+            : { x: 1, y: 0 },
+        duration = 0.6;
+      if (!this._tacticalScatter) this._tacticalScatter = new Map();
+      this._tacticalScatter.set(key, {
+        zone: this.zoneId,
+        unit,
+        direction,
+        speed: push / duration,
+        remaining: duration,
+      });
+      if (unit === this.hero) this.hero.order = null;
+      // The short leash allowance is boss-specific and cannot become a
+      // permanent extended territory or a new aggro/recruitment rule.
+      if (actor?.family === 'thorn' && actor.type === 'boss') {
+        if (!this._tacticalScatterLeash) this._tacticalScatterLeash = new Map();
+        const prior = this._tacticalScatterLeash.get(actor.id),
+          victims = prior?.until > this.s.time ? prior.victims : new Set();
+        victims.add(key);
+        this._tacticalScatterLeash.set(actor.id, {
+          zone: this.zoneId,
+          anchor: { x: actor.x, y: actor.y },
+          victims,
+          until: this.s.time + 1.6,
+        });
+      }
+      return true;
+    }
+    tacticalAdvanceScatter(unit, dt) {
+      const key = unit === this.hero ? 'hero' : unit?.id,
+        state = this._tacticalScatter?.get(key);
+      if (!state) return false;
+      if (state.zone !== this.zoneId || state.unit !== unit || unit.hp <= 0) {
+        this._tacticalScatter.delete(key);
+        return false;
+      }
+      const step = Math.min(dt, state.remaining),
+        goal = {
+          x: unit.x + state.direction.x * state.speed * step,
+          y: unit.y + state.direction.y * state.speed * step,
+        };
+      if (step > 0) this.move(unit, goal, state.speed, step, 0);
+      state.remaining = Math.max(0, state.remaining - dt);
+      if (state.remaining <= 0) this._tacticalScatter.delete(key);
+      return true;
+    }
     tacticalRogueLeashAllows(e, target, territory) {
+      // The boss must not disengage merely because its own howl forcibly
+      // pushed an opponent beyond the normal home leash. This short exception
+      // applies only to victims of that howl, near its point of impact.
+      const scatter = this._tacticalScatterLeash?.get(e?.id);
+      if (
+        scatter &&
+        scatter.zone === this.zoneId &&
+        scatter.until > this.s.time &&
+        scatter.victims.has(target === this.hero ? 'hero' : target?.id) &&
+        dist(target, e) <= Math.max(territory + 250, 900) &&
+        dist(target, scatter.anchor) <= Math.max(territory + 250, 900)
+      )
+        return true;
       const state = this.tacticalRogueRegroup(e);
       if (!state) return dist(target, e.home) <= territory;
       if (state.phase === 'thinking' && !state.anchor) return dist(target, e.home) <= territory;
@@ -3026,7 +3103,7 @@
         ownedAlive = z.enemies.filter((u) =>
           u.hp > 0 && u.summon && u.rogueRearguard && u.owner === e.id,
         ).length;
-      if (initiallyAvailable.length < move.reinforceBelow) {
+      if (initiallyAvailable.length <= move.reinforceBelow) {
         const need = Math.max(0, Math.min(
           move.reinforceCap - initiallyAvailable.length,
           move.reinforceCap - ownedAlive,
@@ -3148,7 +3225,9 @@
           this.s.challenge.gameOver
         )
           return;
-        if (move.effect === 'scatter' || move.effect === 'sweep') {
+        if (move.effect === 'scatter' && e.family === 'thorn' && e.type === 'boss') {
+          this.tacticalBeginScatter(e, unit, move.push || 70);
+        } else if (move.effect === 'scatter' || move.effect === 'sweep') {
           const d = Math.max(1, dist(e, unit)),
             push = move.push || 65,
             point = {
@@ -3540,6 +3619,7 @@
       if (!e.returning) {
         this.tacticalClearThreat(e);
         this.tacticalClearRogueRegroup(e);
+        this._tacticalScatterLeash?.delete(e.id);
         e.returning = 1;
         e.pursuitBurst = 0;
         this.say(e.name + ' disengages.');
