@@ -198,9 +198,9 @@ The interrupted PR #185 is reconciled with the current audio/VFX release. Captiv
 
 The agreed scope is a placement/garrison/accessibility pass over **13 existing territorial ordinary-monster holds**, not a new capture/reward/respawn feature. The Ironroot Wolf hunting ground moves outside caravan arrival clearance; Dark Crown's Ash-beast roost moves off impassable obsidian. New-only old-zone stronghold version migrations reposition already-visited markers and extant enemy homes without reviving dead garrisons. Highlands holds advance to v7, Crown holds to v8; the other regions keep v6. All combat, rogue, bosses, companions, tribute, player Barracks, authored regions, save v4, sprite/audio/VFX and populations remain the same. See [MONSTER_FORTS_TERRITORIAL_AUDIT.md](MONSTER_FORTS_TERRITORIAL_AUDIT.md) and tests/monster-forts.test.cjs.
 
-## Cooldown-only functional candidate · v0.8.119
+## Cooldown-only functional release and balance audit · v0.8.119
 
-PR #183 integrates dormant MP, five-rank Cooldown Training and approved HP siphons/independent recovery with v0.8.118 main. Provisional cooldown/heal numbers are preserved. See COOLDOWN_ONLY_COMBAT_MIGRATION.md for preservation and regression evidence. Release status requires the exact-head completed CI/deployment gate; balance measurement follows functional release.
+PR #183 is merged and deployed at `48e2c0e2550c2735fcd45864f5d7aa75b85f9156`; release run 37978681773 passed all regression, browser, WebKit, deployment and exact published-build gates. Dormant MP, five-rank Cooldown Training and approved HP siphons/independent recovery preserve v0.8.118 main work and saves. See [COOLDOWN_ONLY_COMBAT_MIGRATION.md](COOLDOWN_ONLY_COMBAT_MIGRATION.md) for contracts and [COOLDOWN_BALANCE_AUDIT_20261009.md](COOLDOWN_BALANCE_AUDIT_20261009.md) for 810 benchmarks, 11,007 encounter trials, recommendations and limitations. The audit retains current cooldown/healing values; Ranger mobility and Dragon/Sentinel recovery tails require targeted human playtesting. Superseded #169 and older drafts #174/#182 must not be merged.
 
 ## Selective quest narration · integrated v0.8.120
 
