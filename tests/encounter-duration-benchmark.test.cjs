@@ -71,6 +71,7 @@ function run(kind,id,heroClass='paladin',style='tactical',late=false) {
    const def=C.data.bosses.find(b=>b.id===id);
    if(!def)throw Error('Missing boss '+id);
    if(late){c.s.phase='awakening';c.s.awakeningLevel=18;}
+   if(id==='darklord'){c.s.rescued.cindermaw=true;c.s.rescued.citadel=true;}
    c.enter(def.kind==='dungeon'?def.id:def.region);
    const existing=c.zone().enemies.find(x=>x.type==='boss'&&x.family===id&&x.form==='normal');
    if(!existing)throw Error('Missing real boss spawn '+id);
