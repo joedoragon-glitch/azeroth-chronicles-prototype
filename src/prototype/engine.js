@@ -2514,7 +2514,10 @@
         for (const x of available.length ? available : eligible) {
           let weight = 1;
           if (x.plan.kind === 'summon') weight += 1.5 + (summonCfg.cap || 3) - owned;
-          if (x.plan.kind === 'cone' && d < 170) weight += 1.4;
+          if (x.plan.kind === 'cone') {
+            if (d > (x.plan.radius || 145) * R.bossCadence.areaRangeMultiplier + 30) continue;
+            if (d < 170) weight += 1.4;
+          }
           if (x.plan.kind === 'line' && d > 140) weight += 1.2;
           if (x.plan.kind === 'circle' && d > 180) weight += 1;
           weighted.push({ ...x, weight });
@@ -2532,10 +2535,14 @@
       }
       const plan = chosen.plan,
         index = chosen.index,
-        angle = Math.atan2(target.y - e.y, target.x - e.x),
+        // Ground marks can challenge backline heroes while frontline allies remain useful.
+        markHero = plan.kind === 'circle' && this.hero.hp > 0 &&
+          dist(e, this.hero) < profile.specialRange && this.line(e, this.hero),
+        actualTarget = markHero ? this.hero : target,
+        angle = Math.atan2(actualTarget.y - e.y, actualTarget.x - e.x),
         center = ['cone', 'sector', 'ring'].includes(plan.kind)
           ? { x: e.x, y: e.y }
-          : { x: target.x, y: target.y },
+          : { x: actualTarget.x, y: actualTarget.y },
         a = {
           ...plan,
           captainSkill: true,
@@ -2547,7 +2554,7 @@
           fromY: e.y,
           angle,
           ...center,
-          radius: plan.radius || (plan.kind === 'cone' ? 145 : 85),
+          radius: (plan.radius || (plan.kind === 'cone' ? 145 : 85)) * R.bossCadence.areaRangeMultiplier,
           sequence: [],
         };
       if (plan.sequential && plan.kind === 'circle') {
