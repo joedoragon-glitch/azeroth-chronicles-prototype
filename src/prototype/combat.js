@@ -10,6 +10,69 @@
         return [this.hero, ...this.activeLivingParty(), ...(z?.escort?.hp > 0 ? [z.escort] : [])];
       }
 
+      // Passive tactical telemetry: does not influence target selection, damage or aggro.
+      tacticalThreatSnapshot(e) {
+        const ledger = this._tacticalThreat?.get(e?.id);
+        if (!ledger) return [];
+        const now = this.s.time || 0;
+        const window = R.tacticalFoundation.threatWindowSeconds;
+        return [...ledger.entries()]
+          .filter(([, hit]) => now - hit.time <= window)
+          .map(([source, hit]) => ({ source, damage: hit.damage, lastHit: hit.time }))
+          .sort((a, b) => b.damage - a.damage || a.source.localeCompare(b.source));
+      }
+
+      tacticalRecordHit(e, source, damage) {
+        if (!e || !Number.isFinite(damage) || damage <= 0) return;
+        const actor = source === 'hero' ? 'hero' : this.s.party.find((u) => u.id === source && u.hp > 0)?.id;
+        if (!actor) return;
+        if (!this._tacticalThreat) this._tacticalThreat = new Map();
+        if (!this._tacticalThreat.has(e.id)) this._tacticalThreat.set(e.id, new Map());
+        const ledger = this._tacticalThreat.get(e.id);
+        const now = this.s.time || 0, window = R.tacticalFoundation.threatWindowSeconds;
+        for (const [id, previous] of ledger)
+          if (now - previous.time > window) ledger.delete(id);
+        const previous = ledger.get(actor);
+        ledger.set(actor, {
+          damage: (previous && now - previous.time <= window ? previous.damage : 0) + damage,
+          time: now,
+        });
+      }
+
+      tacticalProtectionTier(e) {
+        if (e?.type === 'boss') return e.form === 'true' ? 'trueBoss' : 'boss';
+        if (e?.captain || e?.roomCaptain) return 'captain';
+        if (e?.form === 'ringleader') return 'ringleader';
+        if (e?.guard) return 'guardian';
+        return 'ordinary';
+      }
+
+      tacticalRegroupCandidates(e) {
+        if (!e || !this.zone()?.enemies) return [];
+        const radius = R.tacticalFoundation.awarenessRadius;
+        return this.zone().enemies
+          .filter((ally) => ally !== e && ally.hp > 0 && !ally.neutral &&
+            !ally.returning && !ally.summon && dist(ally, e) <= radius &&
+            dist(ally, e.home) <= radius)
+          .sort((a, b) => dist(a, e) - dist(b, e) || a.id.localeCompare(b.id));
+      }
+
+      tacticalRogueEligibility(e, activeTargetCount = 0) {
+        const config = R.tacticalFoundation;
+        if (!e || !this.hero || this.hero.hp <= 0 || e.hp <= 0) return false;
+        const difference = e.level - this.hero.level;
+        if (difference >= config.outlevelProtection) return false;
+        if (difference <= -config.heroLevelDisadvantageMinimum) return true;
+        // Damage contributors are only evidence; active target intent is supplied separately.
+        if (activeTargetCount < config.simultaneousPressureSources) return false;
+        if (e.type !== 'boss' && !e.captain && !e.roomCaptain) return true;
+        const ownsSummons = e.type === 'boss' || !!this.captainProfile?.(e)?.summon;
+        if (!ownsSummons || difference !== 0) return true;
+        const living = this.zone().enemies.filter((u) =>
+          u.summon && u.owner === e.id && u.hp > 0).length;
+        return living <= config.summonSupportThreshold && (e.summonCd || 0) > 0;
+      }
+
       drainMana(u, fraction) {
         if (u !== this.hero || !fraction || u.mp <= 0 || this.peace) return 0;
         const amount = Math.min(u.mp, Math.max(1, Math.round(u.maxMp * fraction)));
@@ -51,7 +114,9 @@
         }
         if (e.family === 'citadel' && e.open <= 0) amount *= 0.65;
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;
+        const actualDamage = Math.min(e.hp, amount);
         e.hp = Math.max(0, e.hp - amount);
+        this.tacticalRecordHit(e, source, actualDamage);
         this.effects.push({ type: 'hit', x: e.x, y: e.y, amount });
         if (e.hp === 0) this.kill(e);
         return true;
