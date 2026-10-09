@@ -64,6 +64,7 @@ function encounter() {
   assert.equal(a.hp, a.maxHp, 'a manually selected foe wins over a nearer alternative');
   b.hp = 0;
   assert.equal(game.selectedHeroTarget(), null);
+  game.hero.cd[0] = 0; // A new target cannot bypass the normal skill cooldown.
   assert.equal(game.cast(1), true, 'auto-targeting resumes once the locked foe dies');
   assert(a.hp < a.maxHp);
 }
