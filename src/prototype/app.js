@@ -78,7 +78,7 @@
       } else {
         paused = false;
         audio.setPaused(false);
-        status('No update waiting. Check again shortly.');
+        status('Already up to date.');
       }
     } catch (_) {
       paused = false;
@@ -104,7 +104,6 @@
   }
   async function installApp() {
     if (runningAsApp()) {
-      status('Azeroth Chronicles is already running as an installed app.');
       closeMenu();
       return;
     }
@@ -128,7 +127,14 @@
   function status(text) {
     if (text === 'Saved locally · export for a backup') return;
     $('status').textContent = text;
-    statusUntil = performance.now() + 5000;
+    const important = /storage unavailable|Saving failed|Saved run unavailable|Legacy save/i.test(
+      text,
+    );
+    statusUntil = performance.now() + (important ? 6000 : 2800);
+  }
+  function manaStatus(text) {
+    // Dormant MP remains recoverable: the restoration flag brings this back.
+    if (PrototypeRules.resourceMode?.manaEnabled !== false) status(text);
   }
   function persistProfile() {
     return persistence.saveProfile(profile);
@@ -190,6 +196,7 @@
     recallSquad,
     showMap,
     finaleMenu,
+    status,
   });
 
   window.Prototype = {
@@ -799,7 +806,7 @@
   function interact() {
     const n = nearestNPC();
     if (!n) {
-      game.say('Find a marked person or place nearby. Use the map.');
+      status('Nothing nearby to interact with.');
       return;
     }
     if (
@@ -815,7 +822,25 @@
         'mini',
       ].includes(n.kind)
     ) {
-      game.interact(n);
+      const success = game.interact(n);
+      if (!success) {
+        if (n.kind === 'cage' && !game.s.keys[n.family])
+          status('Defeat ' + game.boss(n.family).name + ' before freeing ' + n.name + '.');
+        else if (n.kind === 'rest')
+          status(
+            game.refugeThreat()
+              ? 'Cannot rest during combat.'
+              : 'Rest ready in ' + Math.ceil(game.s.restCooldown) + 's.',
+          );
+        else if (n.kind === 'bundle' || n.kind === 'fountain')
+          status(n.kind === 'bundle' ? 'Clear the guards first.' : 'Fountain unavailable.');
+        else if (n.kind === 'resource')
+          status(
+            (game.s.expeditionRank || 1) < 2
+              ? 'Expedition Rank 2 needed.'
+              : 'An idle companion is needed.',
+          );
+      }
       save();
       updateHUD();
       return;
@@ -1090,13 +1115,7 @@
       : game.cycleHeroTarget(visibleHostile);
     // Explicit selection while charging deliberately switches its aim.
     if (charge && (charge.slot === 1 || charge.slot === 2)) charge.targetId = target?.id ?? null;
-    status(
-      target
-        ? locked
-          ? 'TARGET LOCKED · ' + target.name + ' · Hold focus until the encounter ends.'
-          : 'Target · ' + target.name + ' · Hold Target to lock.'
-        : 'No visible hostile targets nearby.',
-    );
+    status(target ? (locked ? 'Locked · ' : 'Target · ') + target.name : 'No target nearby.');
     updateHUD();
   }
   function beginTargetPress(source, pointerId = null) {
@@ -1374,61 +1393,32 @@
     const rank = game.hero.skills[slot - 1],
       cost = game.skillManaCost(slot, rank, charged);
     if (game.hero.cd[slot - 1] > 0) {
-      status('Skill ' + slot + ' is ready in ' + cooldownText(game.hero.cd[slot - 1]) + 's.');
+      status('Skill ' + slot + ' · ' + cooldownText(game.hero.cd[slot - 1]) + 's.');
       return;
     }
     if (game.hero.mp < cost) {
-      status(
-        (charged ? 'Charged ' : '') +
-          'Skill ' +
-          slot +
-          ' needs ' +
-          cost +
-          ' MP' +
-          (charged ? ' (' + chargedManaPercent(slot) + '% max MP).' : '.'),
-      );
+      manaStatus('Need ' + cost + ' MP.');
       return;
     }
     if (slot === 1 || slot === 2) {
-      status(
-        (charged ? 'Charged ' : '') +
-          'Skill ' +
-          slot +
-          ' needs a hostile target in range and line of sight.',
-      );
+      status('No target in range.');
       return;
     }
     if (slot === 3) {
-      status(
-        (charged ? 'Charged ' : '') +
-          'Self-Heal needs a wounded ' +
-          (charged ? 'hero or active companion.' : 'hero.'),
-      );
+      status('No healing needed.');
     }
   }
   function chargeStateStatus(cast) {
     if (cast.state === 'need-mp') {
-      status(
-        'Charged Skill ' +
-          cast.slot +
-          ' needs ' +
-          cast.cost +
-          ' MP (' +
-          chargedManaPercent(cast.slot) +
-          '% max MP).',
-      );
+      manaStatus('Need ' + cast.cost + ' MP.');
       return;
     }
     if (cast.state === 'no-target') {
-      status(
-        'Charged Skill ' +
-          cast.slot +
-          ' lost its target · move into range or line of sight and charge again.',
-      );
+      status('Target lost. Move closer.');
       return;
     }
     if (cast.state === 'no-heal') {
-      status('Charged Self-Heal has no wounded hero or active companion to heal.');
+      status('No healing needed.');
     }
   }
   function releaseCharge(slot, source) {
@@ -1437,13 +1427,7 @@
     if (charge.started === null) {
       const remaining = game.hero.cd[slot - 1];
       charge = null;
-      status(
-        'Skill ' +
-          slot +
-          ' is ready in ' +
-          cooldownText(remaining) +
-          's. Hold through the cooldown to queue the charge.',
-      );
+      status('Skill ' + slot + ' · ' + cooldownText(remaining) + 's.');
       updateHUD();
       return false;
     }
@@ -1454,7 +1438,6 @@
       const quickTap = !wasQueued && held < chargeTapSeconds();
       charge = null;
       if (!quickTap) {
-        status('Skill ' + slot + ' charge canceled safely.');
         updateHUD();
         return false;
       }
@@ -1713,7 +1696,7 @@
       Math.hypot(e.clientX - tap.x, e.clientY - tap.y) > 12
     )
       return;
-    if (!PrototypeInput.requestMove(game, tap.target)) status('Choose a reachable place to move.');
+    if (!PrototypeInput.requestMove(game, tap.target)) status('Path blocked.');
   };
   canvas.onpointercancel = canvas.onlostpointercapture = (e) => {
     if (worldPointer?.id === e.pointerId) worldPointer = null;
@@ -2112,15 +2095,6 @@
       )
     )
       save();
-    const levelEvent = events.find((e) => e.type === 'level');
-    if (levelEvent)
-      status(
-        'Level ' +
-          levelEvent.level +
-          '! Training point available · press ' +
-          input.key('training') +
-          ' or use Discipline Training.',
-      );
     if (events.some((e) => e.type === 'peace')) ending();
     if (game.s.phase === 'awakening' && !game.s.awakeningAck && !menu) awakeningMenu();
     if (game.s.challenge.pending && !gateDismissed && menu?.title !== 'Choose your successor')
