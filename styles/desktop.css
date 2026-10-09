@@ -180,3 +180,13 @@ body[data-experience='desktop'] #quick-items:not(.has-rangers) {
     max-width: calc(100vw - 244px);
   }
 }
+
+body[data-experience='desktop'] #modal[data-dialog-size='compact'] {
+  width: min(300px, calc(100vw - 32px));
+}
+body[data-experience='desktop'] #modal[data-dialog-size='regular'] {
+  width: min(370px, calc(100vw - 32px));
+}
+body[data-experience='desktop'] #modal[data-dialog-size='wide'] {
+  width: min(430px, calc(100vw - 32px));
+}
