@@ -109,7 +109,7 @@
     'frontier-overseer': ['command', 'steel'],
   });
   const captainBasics = Object.freeze({
-    'supply-vale': ['bite', 'fur'],
+    'supply-vale': ['cleave', 'fur'],
     'supply-march': ['bite', 'mire'],
     'supply-highlands': ['claw', 'fur'],
     'supply-crown': ['claw', 'ember'],

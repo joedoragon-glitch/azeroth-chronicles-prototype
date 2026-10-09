@@ -136,9 +136,10 @@ function fresh() {
     assert(
       !['rush', 'bombard', 'fan'].includes(A.recipe({ id: 'captain/' + id + '/basic' }).action),
     );
-  assert.equal(A.recipe({ id: 'enemy/orc/basic' }).action, 'cleave');
-  assert.equal(A.recipe({ id: 'enemy/wolf/basic' }).action, 'bite');
-  assert.equal(A.recipe({ id: 'enemy/ogre/basic' }).action, 'slam');
+  assert.equal(A.recipe({ id: 'captain/supply-vale/basic' }).action, 'cleave');
+  assert.equal(A.recipe({ id: 'enemy/orc/melee' }).action, 'cleave');
+  assert.equal(A.recipe({ id: 'enemy/wolf/melee' }).action, 'bite');
+  assert.equal(A.recipe({ id: 'enemy/ogre/melee' }).action, 'slam');
   assert.equal(A.recipe({ id: 'boss/ridge/0' }).material, 'steel', 'hammer is not a fur claw');
   // One thousand offscreen casts must not rasterize or request invisible stage assets.
   const crowd = fresh();
