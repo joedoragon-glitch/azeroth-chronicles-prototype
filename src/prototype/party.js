@@ -140,7 +140,7 @@
           damage = base * def.multiplier,
           angle = Math.atan2(target.y - u.y, target.x - u.x);
         let hits = 0;
-        for (const e of targets) if (this.damage(e, damage, u.id)) hits++;
+        for (const e of targets) if (this.damage(e, damage, u.id, { area: true })) hits++;
         if (!hits) return false;
         u.skill2Cd = cfg.cooldown;
         u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
@@ -515,6 +515,7 @@
             e.hp > 0 &&
             !e.neutral &&
             !e.returning &&
+            this.tacticalDirectTargetable(e) &&
             e.aggro &&
             dist(e, this.hero) < (e.type === 'boss' || e.summon ? 720 : 540),
         );
