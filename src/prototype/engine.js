@@ -2675,7 +2675,8 @@
         return false;
       const groupKey = ally.pack || ally.id;
       if (this._tacticalVisitedAllies?.get(e.id)?.has(groupKey)) return false;
-      const destination = { x: ally.x, y: ally.y };
+      const destination = { x: ally.x, y: ally.y },
+        retreatOrigin = { x: e.x, y: e.y };
       if (!Number.isFinite(destination.x) || !Number.isFinite(destination.y)) return false;
       const path = this.route(e, destination);
       if (!path.length) return false;
@@ -2709,6 +2710,7 @@
         phase: 'travel',
         allyId: ally.id,
         destination,
+        retreatOrigin,
         travelRemaining: 12,
         stalled: 0,
         anchor: null,
@@ -2726,7 +2728,10 @@
       const separationLimit = R.tacticalFoundation.awarenessRadius + 200;
       if (dist(target, e) > separationLimit) return false;
       if (state.phase === 'travel')
-        return this.distanceToSegment(target, e.home, state.destination) <= territory;
+        return (
+          this.distanceToSegment(target, state.retreatOrigin || e.home, state.destination) <=
+          territory
+        );
       return (
         ['anchored', 'thinking', 'escape'].includes(state.phase) &&
         dist(target, state.anchor || e) <= separationLimit
