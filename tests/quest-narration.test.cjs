@@ -27,14 +27,15 @@ const quests = new Campaign('normal', 'paladin', () => 0.9)
   .questDefs()
   .filter((q) => q.id !== 'quest-barracks');
 assert.equal(quests.length, 30);
-const keptOriginals = new Map([
+// The two previously accepted KEEP slots were explicitly authorized for this voice-polish pass.
+const polishedKeeps = new Map([
   [
     20,
-    'Convoys, repair yards, guarded crossings: the occupation needs more than soldiers to keep its roads.',
+    'Now the checkpoint makes sense. The convoy brings supplies, the repair yards keep wagons rolling, and the guards hold the crossing.',
   ],
   [
     21,
-    'Eren is free of Abyss Bastion. Its dragon preparations were built for war, not ordinary travelers.',
+    'Eren is free. The dragons bred at Abyss Bastion are meant for an army. The Dark Lord has plans beyond his own mount.',
   ],
 ]);
 const authored = prose.filter(Boolean);
@@ -58,7 +59,7 @@ for (let i = 0; i < prose.length; i++) {
   assert(!/reward delivered|quest complete|\+\d+ XP|\b\d+ crowns\b/i.test(entry.text), 'No reward receipt');
   assert(!/^(you (see|notice|discover)|quest)/i.test(entry.text), 'No generic event feed');
   if (disposition === 'keep')
-    assert.equal(entry.text, keptOriginals.get(number), 'Approved keep is unchanged');
+    assert.equal(entry.text, polishedKeeps.get(number), 'Approved KEEP selection has its latest voice-polished wording');
 }
 assert(prose[29].text.includes('fortress gate'), 'Final approach is a significant event');
 
