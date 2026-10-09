@@ -535,6 +535,7 @@
             this.s.squadEngagement = null;
             this.s.squadBoss = false;
             this.s.squadDoctrine = this.squadDefaultDoctrine();
+            this._squadDoctrineManual = false;
             this.s.heroTarget = null;
           }
           return context;
@@ -543,6 +544,7 @@
           this.s.squadEngagement = phase;
           this.s.squadBoss = context.boss;
           this.s.squadDoctrine = this.squadDefaultDoctrine();
+          this._squadDoctrineManual = false;
         }
         return context;
       }
@@ -551,6 +553,9 @@
         const context = this.syncSquadDoctrine();
         if (!context.engaged) return false;
         this.s.squadDoctrine = this.s.squadDoctrine === 'focus' ? 'guard' : 'focus';
+        // The button is a direct player command. Automatic paladin protection
+        // may override only the untouched default, never an explicit BOSS order.
+        this._squadDoctrineManual = true;
         this.event('squadDoctrine', { mode: this.s.squadDoctrine, boss: context.boss });
         return true;
       }
@@ -819,13 +824,32 @@
           let e = null;
           if (context.engaged) {
             if (context.boss) {
-              if (this.s.squadDoctrine === 'focus') e = context.bossEnemy;
+              const adds = context.threats.filter((x) => x !== context.bossEnemy);
+              // Paladins normally focus the boss, but their untouched default
+              // briefly screens adds pressing the hero/back line. A manually
+              // selected BOSS order is strict and never overridden by AI.
+              const pressured = adds.filter(
+                (x) =>
+                  dist(x, this.hero) < 230 ||
+                  living.some((ally) => dist(x, ally) < 165) ||
+                  (x.quotaOvertime || 0) > 0,
+              );
+              const guardBoss = this.s.squadDoctrine === 'guard';
+              const automaticPaladinScreen =
+                this.s.squadDoctrine === 'focus' &&
+                this.hero.class === 'paladin' &&
+                !this._squadDoctrineManual &&
+                pressured.length > 0;
+              if (!guardBoss && !automaticPaladinScreen) e = context.bossEnemy;
               else {
-                const adds = context.threats.filter((x) => x.type !== 'boss');
+                // ADDS means protect against live threats first, not stand idle
+                // after the last add falls. Automatically return to the boss;
+                // revisit adds as soon as they become active again.
+                const targets = guardBoss ? adds : pressured;
                 e =
-                  u.type === 'soldier'
-                    ? this.soldierScreenTarget(u, adds, living, claimed)
-                    : crowdTarget(u, adds);
+                  (u.type === 'soldier'
+                    ? this.soldierScreenTarget(u, targets, living, claimed)
+                    : crowdTarget(u, targets)) || context.bossEnemy;
               }
             } else if (this.s.squadDoctrine === 'focus') {
               e =
