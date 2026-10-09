@@ -266,7 +266,12 @@
         '“Ask what you please. These volumes have survived worse than idle questions.”',
         topics.map(([title, answer]) =>
           action(title, () =>
-            openMenu(title, answer, [action('Another question', () => keeperTopics(back))], () => keeperTopics(back)),
+            openMenu(
+              title,
+              answer,
+              [action('Another question', () => keeperTopics(back))],
+              () => keeperTopics(back),
+            ),
           ),
         ),
         back,
@@ -609,7 +614,9 @@
               )
             : [action('No specialists rescued yet', () => {}, regional, true)]),
           ...(availableKeeper
-            ? [action('Drowned Keeper · The Archive', () => keeper(returnHere), 'Ask for his learning')]
+            ? [
+                action('Drowned Keeper · The Archive', () => keeper(returnHere), 'Ask for his learning'),
+              ]
             : []),
         ],
         back,
