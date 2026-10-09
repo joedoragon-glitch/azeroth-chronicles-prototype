@@ -37,6 +37,12 @@ The following entries all still deal their regular authored HP damage. Their MP 
 
 MP drain applies only to the hero; it never drained companion mana (companions have no MP pool). The boss and night attacks remain visually identifiable even while the `manaDrain` config field is dormant.
 
+## Ash-beast replacement candidate — not implemented
+
+**Cinder Siphon / Ash-feeding (design proposal):** The Ash-beast's corrupted embers consume the target's vitality to sustain the creature's internal fire. On a *successful hero hit*, the existing ranged attack would keep its current HP damage, but heal its Ash-beast source for a small fraction (provisional 10–15%) of the **actual HP damage dealt**, capped at the creature's missing health. Do **not** inflict an extra HP drain tick, permanent debuff, unavoidable damage or introduce new bars. An optional brief ember-trail returning toward the attacker would make the mechanic legible.
+
+This is a proposed replacement only for the Ash-beast's former 4%-maximum-MP projectile drain, pending approval and quantitative balance tests. Keep the existing Wraith and boss adjustments separate; do not silently enable an Ash-beast lifesteal effect in the cooldown-only migration PR.
+
 ## Validation requirements
 
 - All three classes × normal Skills 1–8 and charged 1–3, ranks 0–5 in Cooldown Training: exact cooldown, no MP deduction, no double-cast during cooldown.
