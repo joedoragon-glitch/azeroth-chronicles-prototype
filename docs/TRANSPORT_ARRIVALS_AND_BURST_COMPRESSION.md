@@ -41,3 +41,18 @@ The existing rogue thinking/travel/escape damage reduction remains an independen
 `tests/burst-compression.test.cjs`: tier ordering, positive uncapped marginal damage, threshold behavior, window expiry, boss openings, shared production damage resolver, per-enemy cleanup, zone transitions and absence from saves. Existing rogue regressions check independence of tactical decisions from burst activation.
 
 The full CI/device matrix remains the release gate. Tests and runtime behavior should be reviewed again after future map relocation or full animation/sprite passes.
+
+## v0.8.108 — Current stronger compression by inherited enemy roles
+
+After the initial v0.8.105 values shown above, the user requested stronger compression throughout the roster, followed by a **specific redistribution** of the already-strengthened curves. This is the authoritative current balance table, overriding the initial calibration above.
+
+| Enemy tier | Knee fraction of max HP | Logarithmic tail fraction | Source of stronger tuning |
+| --- | ---: | ---: | --- |
+| Ordinary | 0.675 | 0.875 | Original ordinary curve, both parameters halved |
+| Guardian | 0.475 | 0.625 | Original guardian curve, both parameters halved |
+| Ringleader | 0.250 | 0.375 | Previously strengthened captain curve |
+| Captain | 0.145 | 0.240 | Previously strengthened TRUE-boss curve |
+| Normal boss | 0.180 | 0.275 | Previously strengthened normal-boss curve |
+| TRUE boss | 0.180 | 0.275 | Exactly the normal-boss curve |
+
+*Captains deliberately have the strongest compression*, even stronger than TRUE bosses. TRUE bosses still differ through HP, summons, phases and attacks; only the burst defense is identical to normal bosses. The two-second rolling window, exposed-opening multiplier (1.6), shared hero/companion damage path, and no-hard-cap rule are unchanged. No companion targeting, boss abilities, encounter counts or world layouts are modified.
