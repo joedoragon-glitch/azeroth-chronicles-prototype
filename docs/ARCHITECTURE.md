@@ -139,3 +139,7 @@ Joel additionally authorizes a 256 MiB decoded sprite-cache ceiling for continue
 ## Session menu policy
 
 Single-player retains automatic menu pause. Cooperative selection uses an explicit transient session policy that separates blocked local controls from a running shared world. NPC/Barracks dialogs retain location leases through nested menus and close/reject stale actions on travel, death, unavailable services or lost range. Global menus remain independent. The current release implements the policy and future selection hook, not a multiplayer connection flow; local cooperative scheduling is not a guarantee of background-host continuity. See [SESSION_MENU_POLICY.md](SESSION_MENU_POLICY.md) for contracts and verification.
+
+## Opt-in cooperative roster foundation
+
+`cooperative.js` copies a live Campaign into an isolated in-memory working branch, manages one guest occupying a companion slot, shares team resources and applies individual XP through existing progression methods. It does not install Campaign methods or integrate into app.js. The branch rejects simulation and v4 saving until actor-aware combat/persistence exist; single-player stays on its existing path. See [COOPERATIVE_FOUNDATION.md](COOPERATIVE_FOUNDATION.md).
