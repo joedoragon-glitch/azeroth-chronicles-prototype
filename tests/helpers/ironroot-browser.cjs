@@ -4,11 +4,21 @@ const path = require('node:path');
 async function verifyIronroot(page, results, tag, capture = false) {
   const saved = await page.evaluate(() => {
     const c = Prototype.game;
-    window.__ironrootRender = { tick: c.tick, draw: PrototypeVisuals.draw, seen: {} };
+    window.__ironrootRender = {
+      tick: c.tick,
+      draw: PrototypeVisuals.draw,
+      spriteDraw: PrototypeSprites.draw,
+      seen: {},
+    };
     c.tick = () => {};
     PrototypeVisuals.draw = function (ctx, e, ...args) {
       __ironrootRender.seen[e.workstation || e.structure || ''] = true;
       return __ironrootRender.draw(ctx, e, ...args);
+    };
+    PrototypeSprites.draw = function (ctx, e, ...args) {
+      const drawn = __ironrootRender.spriteDraw.call(this, ctx, e, ...args);
+      if (drawn) __ironrootRender.seen[e.workstation || e.structure || ''] = 'sprite';
+      return drawn;
     };
     return c.snapshot();
   });
@@ -58,6 +68,7 @@ async function verifyIronroot(page, results, tag, capture = false) {
       Prototype.game.s = saved;
       Prototype.game.tick = __ironrootRender.tick;
       PrototypeVisuals.draw = __ironrootRender.draw;
+      PrototypeSprites.draw = __ironrootRender.spriteDraw;
       delete window.__ironrootRender;
       Prototype.updateHUD();
     }, saved);
