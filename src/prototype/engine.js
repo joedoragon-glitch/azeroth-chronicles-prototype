@@ -3098,6 +3098,7 @@
         reinforceBelow: profile.reinforceBelow || 0,
         reinforceCap: profile.reinforceCap || 0,
         reinforceSpecies: profile.reinforceSpecies || null,
+        reinforceRangedSpecies: profile.reinforceRangedSpecies || null,
         reinforceName: profile.reinforceName || null,
         timer: warning,
         total: warning,
@@ -3110,6 +3111,65 @@
         style: effect || profile.style,
         signature: isSignature,
       });
+      return true;
+    }
+    // Rally field troops by accelerating ordinary respawns from EXISTING packs.
+    // Never manufacture new field enemies or count a boss's summoned warband.
+    tacticalRogueFieldSupport(e, move) {
+      if (e.type !== 'boss' || !['ridge', 'warlord', 'cindermaw', 'darklord'].includes(e.family) ||
+          !move.reinforceSpecies || !move.reinforceCap) return false;
+      const z = this.zone(),
+        radius = 750,
+        species = [move.reinforceSpecies, move.reinforceRangedSpecies].filter(Boolean),
+        nativeTroop = (u) =>
+          u !== e && u.type === 'mob' && u.form === 'normal' && !!u.pack &&
+          !u.guard && !u.summon && !u.neutral && !u.nightOnly &&
+          !u.captain && !u.roomCaptain && !u.mini && !u.site &&
+          species.includes(u.species) && !!u.home && dist(u.home, e) <= radius,
+        nearby = () => z.enemies.filter((u) =>
+          nativeTroop(u) && u.hp > 0 && !u.returning && dist(u, e) <= radius
+        ).sort((a, b) => dist(a, e) - dist(b, e) || this.idOrder(a, b)),
+        living = nearby();
+      if (living.length <= move.reinforceBelow) {
+        const wanted = Math.max(0, move.reinforceCap - living.length),
+          party = [this.hero, ...this.activeLivingParty()],
+          dormant = z.enemies.filter((u) =>
+            nativeTroop(u) && u.hp <= 0 && u.deathPaid &&
+            !this.blocked(u.home.x, u.home.y, z.id, 12) &&
+            party.every((a) => a.hp <= 0 || dist(a, u.home) >= 115)
+          ).sort((a, b) => dist(a.home, e) - dist(b.home, e) || this.idOrder(a, b));
+        let returned = 0;
+        for (const u of dormant.slice(0, wanted)) {
+          Object.assign(u, u.home);
+          u.hp = u.maxHp = u.baseHp;
+          u.damage = u.baseDamage;
+          u.deathPaid = false;
+          u.heroParticipated = false;
+          u.aggro = false;
+          u.returning = 0;
+          u.telegraph = null;
+          u.rangedAim = null;
+          u.motion = null;
+          u.sequence = [];
+          u.cd = 0.25;
+          u.noProgress = 0;
+          this.engage(u, true, false);
+          returned++;
+        }
+        if (returned) {
+          this.say(e.name + ' rallies ' + returned + ' returning ' + move.reinforceName + '.');
+          this.event('rogueSupport', { actor: e.id, allies: returned, respawn: true });
+        }
+      }
+      // The action orders at most three nearby ordinary defenders, never
+      // activates far-away packs and never summons a new independent entity.
+      for (const u of nearby().slice(0, move.reinforceCap)) {
+        if (!u.aggro) this.engage(u, true, false);
+        if (u.aggro) {
+          u.pursuitBurst = Math.max(u.pursuitBurst || 0, move.rallySeconds);
+          u.cd = Math.min(u.cd || 0, 0.5);
+        }
+      }
       return true;
     }
     tacticalRogueCommanderSupport(e, move) {
@@ -3260,7 +3320,8 @@
           this.move(unit, point, 250, 0.36);
         } else unit.slow = Math.max(unit.slow || 0, move.slowSeconds || 1);
       }
-      if (move.rallySeconds > 0 && !this.tacticalRogueCommanderSupport(e, move)) {
+      if (move.rallySeconds > 0 && !this.tacticalRogueFieldSupport(e, move) &&
+          !this.tacticalRogueCommanderSupport(e, move)) {
         // Other commanders motivate only ALREADY engaged units.
         for (const ally of this.zone().enemies) {
           if (
