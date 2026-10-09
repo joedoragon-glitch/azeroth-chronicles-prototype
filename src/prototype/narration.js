@@ -9,26 +9,26 @@
     null, // 3
     {
       kind: 'narration',
-      text: "The Crypt Guardian kept Borin working on the Dark Lord's unfinished woodland retreat. The Forest Crypt was never just a tomb.",
+      text: "The Dark Lord wanted a woodland retreat. The Crypt Guardian supervised construction, and Borin wasn't exactly there by choice.",
     }, // 4
     {
       kind: 'narration',
-      text: 'The merchant wagon behind Millhaven travels onward to Flooded Marches. The wagon stand is your link beyond Greenwood Vale.',
+      text: "When you're ready for the Flooded Marches, take the merchant wagon behind Millhaven. Walking won't get you across regions.",
     }, // 5
     {
       kind: 'narration',
-      text: 'The Dark Lord claims Greenwood as a private woodland retreat, not his capital. His seat of power remains in Dark Crown.',
+      text: 'On paper, Greenwood belongs to the Dark Lord. The wolves seem to have missed that announcement.',
     }, // 6
     null, // 7
     null, // 8
     {
       kind: 'narration',
-      text: "Neri can train Companion Vitality and reset discipline training through a completed barracks. The Archive's damaged records still need care.",
+      text: 'Neri is now available through Rescued Specialists at a completed barracks. Ask her about Preparation Tonics, Companion Vitality, or discipline resets.',
     }, // 9
     null, // 10
     {
       kind: 'narration',
-      text: 'Lantern wraiths return after dark. Clearing this patrol does not make the shore safe on future nights.',
+      text: "Two wraiths down. Don't mistake that for a safe shoreline—Lantern wraiths return after dark.",
     }, // 11
     null, // 12
     null, // 13
@@ -36,12 +36,12 @@
     null, // 15
     {
       kind: 'narration',
-      text: "The Ridge Tyrant's comforts come from Ironroot's wealth. As the Dark Lord's Master of Coin, he oversees wages and ore caravans.",
+      text: "The Dark Lord's Master of Coin lives rather comfortably. The Ridge Tyrant controls Ironroot's wages and caravans—and it shows.",
     }, // 16
     null, // 17
     {
       kind: 'narration',
-      text: "Ironroot's ore is processed into the regime's crowns at Stonecross. Guarded caravans carry the wealth away.",
+      text: "So that's where the crowns come from. The ore goes to Stonecross; the finished crowns leave by guarded caravan.",
     }, // 18
     null, // 19
     {
@@ -55,11 +55,11 @@
     null, // 22
     {
       kind: 'narration',
-      text: 'People still repair and rebuild in Ashen Frontier despite the occupation. Its guarded roads carry both daily supplies and military convoys.',
+      text: 'People are patching up homes in the Frontier while the army keeps its convoys moving. Same roads, very different priorities.',
     }, // 23
     {
       kind: 'narration',
-      text: "The civilian dragon landing behind Emberwatch offers passage toward Dark Crown. Abyss Bastion's dragons belong to the military project, not passenger travel.",
+      text: "For a ride to Dark Crown, head behind Emberwatch to the civilian dragon landing. Abyss Bastion's dragons aren't taking passengers.",
     }, // 24
     null, // 25
     null, // 26
@@ -67,7 +67,7 @@
     null, // 28
     {
       kind: 'narration',
-      text: "Dark Crown's labor quarters, levies, and guarded roads keep its fortresses supplied. The regime is more than the Dark Lord's throne.",
+      text: "The fortress doesn't run itself. Someone has to collect the levies, move the supplies, and keep the roads guarded.",
     }, // 29
     {
       kind: 'milestone',
