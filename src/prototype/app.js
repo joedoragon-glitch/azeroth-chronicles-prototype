@@ -1892,12 +1892,14 @@
             : regionalSpecialistObjective();
     const doctrine = game.squadDoctrineLabel(),
       squad = $('squad-button');
-    squad.hidden = (game.s.expeditionRank || 1) < 3 || !doctrine.active;
+    squad.hidden = !doctrine.active || (!doctrine.boss && (game.s.expeditionRank || 1) < 3);
     squad.textContent = 'Squad · ' + doctrine.label + ' · ' + input.key('doctrine');
     squad.title = doctrine.boss
       ? doctrine.mode === 'focus'
-        ? 'Squad concentrates on the boss and ignores adds'
-        : 'Squad clears adds and ignores the boss'
+        ? game._squadDoctrineManual
+          ? 'Your BOSS order: companions stay on the boss until you switch.'
+          : 'Boss priority: companions temporarily intercept threats pressing the party.'
+        : 'ADDS priority: protect the party from adds; attack the boss between waves.'
       : doctrine.mode === 'focus'
         ? 'Squad concentrates on the hero’s current target'
         : 'Squad spreads across nearby threats';
