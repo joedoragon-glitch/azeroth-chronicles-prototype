@@ -222,6 +222,10 @@ jobs:
           PLAYTEST_URL: ${{ steps.deployment.outputs.page_url }}
           BROWSER_SMOKE: '1'
         run: node tests/prototype-browser.test.cjs
+      - name: Verify published quest observations and Keeper Archive
+        env:
+          PLAYTEST_URL: ${{ steps.deployment.outputs.page_url }}
+        run: node tests/quest-archive-browser.test.cjs
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
