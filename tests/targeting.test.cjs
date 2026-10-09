@@ -92,7 +92,7 @@ function encounter() {
   const summons = Array.from({ length: 3 }, (_, i) =>
     game.makeEnemy(
       { species: 'goblin', name: 'Summon ' + i, level: 1, hp: 10000, damage: 0, gold: 0, xp: 0 },
-      { x: 530 + i * 6, y: 510 },
+      { x: 530 - i * 6, y: 510 },
     ),
   );
   game.zone().enemies.push(...summons);
