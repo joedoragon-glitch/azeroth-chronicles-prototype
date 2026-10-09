@@ -160,17 +160,36 @@
           },
         },
         charged = {
-          paladin: { 1: 'Holy projectile with triple basic damage', 2: 'Holy cleave cone', 3: 'Heal hero and living active companions' },
-          mage: { 1: 'Arcane beam with triple basic damage', 2: 'Frost explosion and slow', 3: 'Heal hero and living active companions' },
-          ranger: { 1: 'Three rapid arrows with triple total basic damage', 2: 'Piercing arrow volley', 3: 'Heal hero and living active companions' },
+          paladin: {
+            1: 'Holy projectile with triple basic damage',
+            2: 'Holy cleave cone',
+            3: 'Heal hero and living active companions',
+          },
+          mage: {
+            1: 'Arcane beam with triple basic damage',
+            2: 'Frost explosion and slow',
+            3: 'Heal hero and living active companions',
+          },
+          ranger: {
+            1: 'Three rapid arrows with triple total basic damage',
+            2: 'Piercing arrow volley',
+            3: 'Heal hero and living active companions',
+          },
         },
         normalCd = g.skillCooldown(slot).toFixed(1);
-      return descriptions[cls][slot] +
-        ' · Normal cooldown ' + normalCd + 's' +
+      return (
+        descriptions[cls][slot] +
+        ' · Normal cooldown ' +
+        normalCd +
+        's' +
         (slot <= 3
-          ? ' · Charged: ' + charged[cls][slot] + ' · ' +
-            g.skillCooldown(slot, true).toFixed(1) + 's cooldown'
-          : '');
+          ? ' · Charged: ' +
+            charged[cls][slot] +
+            ' · ' +
+            g.skillCooldown(slot, true).toFixed(1) +
+            's cooldown'
+          : '')
+      );
     }
     function skillBook(back = closeMenu) {
       const rank = getGame().s.expeditionRank || 1,
@@ -236,22 +255,22 @@
               action(
                 'Skill ' + s[0] + ' ' + s[1] + ' · Rank ' + getGame().hero.skills[s[0] - 1],
                 () => {},
-                (Campaign.rules.resourceMode.manaEnabled
-                  ? (s[0] === 1
-                  ? 'Always available · same-target combo: 100% → 110% → 120% + frontal AoE · resets on target switch or 4s gap'
-                  : s[0] === 2
-                    ? getGame().skillTrainingCost(s[0], 0) +
-                      ' crowns · ' +
-                      getGame().boss(s[4]).captive +
-                      ' · ' +
-                      D.regions.find((r) => r.id === getGame().boss(s[4]).region).name +
-                      ' · Rank 1 also teaches companion Holy Cleave and Piercing Volley'
-                    : getGame().skillTrainingCost(s[0], 0) +
-                      ' crowns · ' +
-                      getGame().boss(s[4]).captive +
-                      ' · ' +
-                      D.regions.find((r) => r.id === getGame().boss(s[4]).region).name )
-                  : professionSkillDetail(s[0])),
+                Campaign.rules.resourceMode.manaEnabled
+                  ? s[0] === 1
+                    ? 'Always available · same-target combo: 100% → 110% → 120% + frontal AoE · resets on target switch or 4s gap'
+                    : s[0] === 2
+                      ? getGame().skillTrainingCost(s[0], 0) +
+                        ' crowns · ' +
+                        getGame().boss(s[4]).captive +
+                        ' · ' +
+                        D.regions.find((r) => r.id === getGame().boss(s[4]).region).name +
+                        ' · Rank 1 also teaches companion Holy Cleave and Piercing Volley'
+                      : getGame().skillTrainingCost(s[0], 0) +
+                        ' crowns · ' +
+                        getGame().boss(s[4]).captive +
+                        ' · ' +
+                        D.regions.find((r) => r.id === getGame().boss(s[4]).region).name
+                  : professionSkillDetail(s[0]),
                 true,
               ),
             ),
@@ -309,19 +328,23 @@
               : '60 → 150 HP over five seconds to one target · same 10s per-Ranger Heal cooldown',
             healRank >= 2 || getGame().hero.gold < healCost,
           ),
-          ...(manaEnabled ? [action(
-            manaRank >= 2
-              ? 'Ranger Mana Recovery · Rank 2 · MAX'
-              : 'Upgrade Ranger Mana Recovery · Rank 2 · ' + manaCost + ' crowns',
-            () => {
-              getGame().trainRangerSupport('mana', n.family);
-              supplier(n, back);
-            },
-            manaRank >= 2
-              ? 'Restores 100 MP over five seconds to the hero · maximum training'
-              : '40 → 100 MP over five seconds · same 10s per-Ranger Mana Recovery cooldown',
-            manaRank >= 2 || getGame().hero.gold < manaCost,
-          )] : []),
+          ...(manaEnabled
+            ? [
+                action(
+                  manaRank >= 2
+                    ? 'Ranger Mana Recovery · Rank 2 · MAX'
+                    : 'Upgrade Ranger Mana Recovery · Rank 2 · ' + manaCost + ' crowns',
+                  () => {
+                    getGame().trainRangerSupport('mana', n.family);
+                    supplier(n, back);
+                  },
+                  manaRank >= 2
+                    ? 'Restores 100 MP over five seconds to the hero · maximum training'
+                    : '40 → 100 MP over five seconds · same 10s per-Ranger Mana Recovery cooldown',
+                  manaRank >= 2 || getGame().hero.gold < manaCost,
+                ),
+              ]
+            : []),
           action(
             'Train Companion Vitality · Rank ' +
               (vitalityRank + 1) +
@@ -1041,17 +1064,21 @@
               : 'No active Ranger · recruit or activate one for field healing',
             true,
           ),
-          ...(Campaign.rules.resourceMode.manaEnabled ? [action(
-            'Ranger Mana Recovery · ' + mana + ' MP',
-            () => {},
-            rangers.length
-              ? rangers.length +
-                  ' active Ranger' +
-                  (rangers.length === 1 ? '' : 's') +
-                  ' · automatic at hero ≤35% MP · command with M'
-              : 'No active Ranger · recruit or activate one for field mana recovery',
-            true,
-          )] : []),
+          ...(Campaign.rules.resourceMode.manaEnabled
+            ? [
+                action(
+                  'Ranger Mana Recovery · ' + mana + ' MP',
+                  () => {},
+                  rangers.length
+                    ? rangers.length +
+                        ' active Ranger' +
+                        (rangers.length === 1 ? '' : 's') +
+                        ' · automatic at hero ≤35% MP · command with M'
+                    : 'No active Ranger · recruit or activate one for field mana recovery',
+                  true,
+                ),
+              ]
+            : []),
           ...Object.keys(Campaign.legacyWeapons)
             .filter((name) => getGame().s.legacyInventory?.includes(name))
             .map((name) =>
