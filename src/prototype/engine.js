@@ -1923,8 +1923,7 @@
           if (a.summon && a.owner === e.id) a.hp = 0;
         });
         this.say(e.name + ' defeated.');
-        if (firstVictory && e.form === 'normal')
-          this.notice('BOSS VANQUISHED · ' + b.name, 5.5);
+        if (firstVictory && e.form === 'normal') this.notice('BOSS VANQUISHED · ' + b.name, 5.5);
         this.event('bossDefeat', { family: e.family, form: e.form });
       }
       if (e.captain || e.roomCaptain) this.s.streak = { key: null, count: 0 };
