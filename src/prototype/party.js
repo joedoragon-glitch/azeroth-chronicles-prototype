@@ -521,9 +521,20 @@
       }
       squadContext() {
         const threats = this.squadThreats(),
+          liveBosses = this.zone().enemies.filter(
+            (e) => e.type === 'boss' && e.hp > 0 && !e.neutral && !e.returning,
+          ),
           bossEnemy =
-            threats
-              .filter((e) => e.type === 'boss')
+            liveBosses
+              .filter(
+                (e) =>
+                  threats.includes(e) ||
+                  // If a boss briefly drops aggro during its summon phase,
+                  // retain that encounter and obey a manual BOSS order.
+                  (this.s.squadEngagement === 'boss' &&
+                    dist(e, this.hero) < 720 &&
+                    threats.some((x) => x.summon && x.owner === e.id)),
+              )
               .sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0] || null;
         return { engaged: threats.length > 0, boss: !!bossEnemy, bossEnemy, threats };
       }
@@ -540,9 +551,12 @@
           return context;
         }
         if (this.s.squadEngagement !== phase) {
+          // Keep an explicit doctrine choice for the whole continuous encounter,
+          // even if an adds-only phase briefly loses sight of its boss.
+          const enteringCombat = !this.s.squadEngagement;
           this.s.squadEngagement = phase;
           this.s.squadBoss = context.boss;
-          this.s.squadDoctrine = this.squadDefaultDoctrine();
+          if (enteringCombat) this.s.squadDoctrine = this.squadDefaultDoctrine();
         }
         return context;
       }
@@ -821,11 +835,40 @@
             if (context.boss) {
               if (this.s.squadDoctrine === 'focus') e = context.bossEnemy;
               else {
-                const adds = context.threats.filter((x) => x.type !== 'boss');
-                e =
-                  u.type === 'soldier'
-                    ? this.soldierScreenTarget(u, adds, living, claimed)
-                    : crowdTarget(u, adds);
+                // ADDS: completely ignore boss damage while living adds need
+                // clearing, then attack the boss until fresh adds appear.
+                // Include this boss's summons even before they approach the hero;
+                // also screen unrelated active attackers pressuring the party.
+                // An explicit BOSS order above always overrides this policy.
+                const adds = [
+                  ...new Map(
+                    [
+                      ...context.threats.filter((x) => x.type !== 'boss'),
+                      ...z.enemies.filter(
+                        (x) =>
+                          x.hp > 0 &&
+                          x.summon &&
+                          x.owner === context.bossEnemy.id &&
+                          !x.neutral &&
+                          !x.returning,
+                      ),
+                    ].map((x) => [x.id, x]),
+                  ).values(),
+                ];
+                if (adds.length) {
+                  e =
+                    (u.type === 'soldier'
+                      ? this.soldierScreenTarget(u, adds, living, claimed)
+                      : crowdTarget(u, adds)) ||
+                    adds
+                      .slice()
+                      .sort(
+                        (a, b) =>
+                          (claimed.has(a.id) ? 1 : 0) - (claimed.has(b.id) ? 1 : 0) ||
+                          dist(a, this.hero) - dist(b, this.hero) ||
+                          dist(a, u) - dist(b, u),
+                      )[0];
+                } else e = context.bossEnemy;
               }
             } else if (this.s.squadDoctrine === 'focus') {
               e =
