@@ -191,7 +191,9 @@
         if (a.rogueMove) {
           // Wrap the complete named move, rather than shrink an oversized
           // one-line label to unreadable phone text or clip it off-screen.
-          const canvasWidth = ctx.canvas?.width || 900,
+          const zoom = ctx.getTransform?.().a || 1,
+            canvasWidth = (ctx.canvas?.width || 900) / zoom,
+            canvasHeight = (ctx.canvas?.height || 650) / zoom,
             maxWidth = Math.max(130, canvasWidth - 20);
           ctx.font = 'bold 11px system-ui';
           const lines = [''];
@@ -207,7 +209,7 @@
             ),
             x = Math.max(w / 2 + 5, Math.min(canvasWidth - w / 2 - 5, p.x)),
             h = 17 + lines.length * 15,
-            y = p.y - h - 12;
+            y = Math.max(6, Math.min(canvasHeight - h - 6, p.y - h - 12));
           ctx.fillStyle = '#192a36f2';
           ctx.fillRect(x - w / 2, y, w, h);
           ctx.strokeStyle = a.rogueSignature ? '#9cf1f0' : '#8ecde6';
