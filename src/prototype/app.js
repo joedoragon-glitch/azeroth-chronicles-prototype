@@ -336,6 +336,16 @@
     clearInput();
     gateDismissed = false;
     menu = { title, description, actions, back };
+    // Small interactions need a small dialog; longer service catalogs keep a readable width.
+    const compact =
+      actions.length <= 2 &&
+      description.length <= 180 &&
+      actions.every((a) => a.label.length <= 46 && (a.detail || '').length <= 95);
+    const regular =
+      actions.length <= 5 &&
+      description.length <= 340 &&
+      actions.every((a) => a.label.length <= 68 && (a.detail || '').length <= 160);
+    $('modal').setAttribute('data-dialog-size', compact ? 'compact' : regular ? 'regular' : 'wide');
     audio.interfaceSound('open');
     menuIndex = 0;
     document.body.classList.add('menu-open');
@@ -1827,6 +1837,7 @@
       statusUntil = 0;
     }
     const rangers = game.activeLivingParty().filter((u) => u.type === 'archer');
+    $('quick-items').classList.toggle('has-rangers', rangers.length > 0);
     for (const [type, label, key, cdKey, threshold] of [
       ['health', 'Heal', input.key('heal'), 'healCd', 50],
       ['mana', 'Mana Regen', input.key('mana'), 'manaCd', 35],
