@@ -46,6 +46,7 @@
     magic: 'arcane',
   });
   const actions = new Set([
+    'melee',
     'circle',
     'line',
     'cone',
@@ -106,6 +107,12 @@
     const p = event.identity?.presentation;
     if (!p || !event.skillId || event.skillId !== event.identity.id) return null;
     const stage = event.stage;
+    if (p.action === 'melee')
+      return Object.freeze({
+        mode: 'silent',
+        reason:
+          'Basic contact retains its existing legacy melee classification; the visual bridge must not duplicate it.',
+      });
     if (stage === 'travel' || stage === 'linger')
       return Object.freeze({
         mode: 'silent',

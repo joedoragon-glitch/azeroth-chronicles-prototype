@@ -585,25 +585,26 @@
     ctx.restore();
   }
 
-  function draw(ctx, e, p, region = 0, rescued = false, options = null) {
-    const found = definitionFor(e, region, rescued);
-    if (!found) return false;
-    const { entry } = found,
-      scale = entityScale(e, entry);
-    const animation = phase(e, entry),
-      clip = entry.clips?.[animation.name];
+  // Stage substitutions share the resource cache, frame selector, pivot and
+  // density rules used by actor sprites. Presentation never owns collisions.
+  function definition(key) {
+    return manifest.sprites[key] || null;
+  }
+  function drawStage(ctx, key, p, options = {}) {
+    if (!/^vfx:[a-z0-9][a-z0-9_-]*(?::[a-z0-9_-]+)*$/.test(key)) return false;
+    const entry = definition(key);
+    if (!entry || (options.clip && !entry.clips?.[options.clip])) return false;
+    const clip = options.clip && entry.clips[options.clip];
     const reduced =
       typeof root.matchMedia === 'function' &&
       root.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let frame = clip && !reduced ? frameFor(clip, animation.elapsed) : null;
-    let resource = frame || variant(e, entry),
-      img = imageFor(resource);
-    if (!img && resource !== entry) {
-      frame = null;
-      resource = entry;
-      img = imageFor(entry);
-    }
+    const frame = clip ? frameFor(clip, reduced ? 0 : Math.max(0, options.elapsedMs || 0)) : null;
+    const img = imageFor(frame || entry);
     if (!img) return false;
+    paint(ctx, entry, frame, img, p, (entry.scale || 1) * (options.scale || 1));
+    return true;
+  }
+  function paint(ctx, entry, frame, img, p, scale) {
     const width = frame?.rect[2] || img.naturalWidth || img.width,
       height = frame?.rect[3] || img.naturalHeight || img.height;
     const dw = (Number(entry.displayWidth) || width) * scale,
@@ -630,6 +631,28 @@
     if (frame) ctx.drawImage(img, ...frame.rect, ...dest);
     else ctx.drawImage(img, ...dest);
     ctx.restore();
+  }
+
+  function draw(ctx, e, p, region = 0, rescued = false, options = null) {
+    const found = definitionFor(e, region, rescued);
+    if (!found) return false;
+    const { entry } = found,
+      scale = entityScale(e, entry);
+    const animation = phase(e, entry),
+      clip = entry.clips?.[animation.name];
+    const reduced =
+      typeof root.matchMedia === 'function' &&
+      root.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let frame = clip && !reduced ? frameFor(clip, animation.elapsed) : null;
+    let resource = frame || variant(e, entry),
+      img = imageFor(resource);
+    if (!img && resource !== entry) {
+      frame = null;
+      resource = entry;
+      img = imageFor(entry);
+    }
+    if (!img) return false;
+    paint(ctx, entry, frame, img, p, scale);
     // A mask pass needs body pixels, not the surrounding TRUE/ringleader aura.
     if (!options?.silhouette) overlay(ctx, e, p, entry, scale);
     return true;
@@ -681,6 +704,8 @@
     timeMs: () => clock,
     variant,
     draw,
+    definition,
+    drawStage,
     height,
     status,
     entityScale,

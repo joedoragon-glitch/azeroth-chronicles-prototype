@@ -7,9 +7,7 @@ const manifest = require('../assets/vfx/manifest.json');
 
 const R = C.rules;
 assert.deepEqual(VFX.validateManifest(manifest), []);
-assert.deepEqual(VFX.STAGES, [
-  'windup', 'release', 'travel', 'impact', 'linger', 'spawn', 'phase',
-]);
+assert.deepEqual(VFX.STAGES, ['windup', 'release', 'travel', 'impact', 'linger', 'spawn', 'phase']);
 
 // Audit coverage is derived from the current authoritative movesets rather
 // than copied skill-name strings or a list that goes stale after rogue edits.
@@ -49,7 +47,10 @@ for (const [captain, profile] of captainProfiles) {
     assert.equal(id.tier, 'captain');
   }
 }
-for (const [species, move] of [['wraith', 'drain'], ['stalker', 'pounce']]) {
+for (const [species, move] of [
+  ['wraith', 'drain'],
+  ['stalker', 'pounce'],
+]) {
   assert(R.nightEnemyCombat[species]);
   assert.equal(
     VFX.describe({ species }, { nightSkill: move, kind: 'circle' }).id,
@@ -107,15 +108,24 @@ for (const [kind, profiles] of Object.entries(tactics.rogueSignatures || {})) {
     const actor =
       kind === 'bosses' ? { type: 'boss', family: id } : { roomCaptain: true, captainProfile: id };
     const signature = VFX.describe(actor, {
-      rogueMove: true, rogueSignature: true, kind: 'circle', name: profile.name,
+      rogueMove: true,
+      rogueSignature: true,
+      kind: 'circle',
+      name: profile.name,
     });
-    assert.equal(signature.id, 'rogue/' + (kind === 'bosses' ? 'boss/' : 'captain/') + id + '/signature');
+    assert.equal(
+      signature.id,
+      'rogue/' + (kind === 'bosses' ? 'boss/' : 'captain/') + id + '/signature',
+    );
   }
 }
 
 // Future sprite/animated asset replacement occurs per stage. Missing stages,
 // missing TRUE override, malformed assets and hostile paths must fail closed.
-const boss = VFX.describe({ type: 'boss', family: 'thorn', form: 'true' }, { kind: 'cone', index: 0 });
+const boss = VFX.describe(
+  { type: 'boss', family: 'thorn', form: 'true' },
+  { kind: 'cone', index: 0 },
+);
 const image = { type: 'sprite', spriteKey: 'vfx:thorn-pounce-windup' };
 const sheet = { type: 'sprite', spriteKey: 'vfx:thorn-pounce-impact', clip: 'impact' };
 const pilot = {
@@ -167,4 +177,6 @@ for (const bad of [
 assert.equal(VFX.select(pilot, null, 'impact').mode, 'procedural');
 assert.equal(VFX.describe(null, null), null);
 
-console.log('PASS VFX foundation: authored boss/captain/night/ranged inventory; rogue-ready stable IDs; stage and sprite/animation fallback');
+console.log(
+  'PASS VFX foundation: authored boss/captain/night/ranged inventory; rogue-ready stable IDs; stage and sprite/animation fallback',
+);

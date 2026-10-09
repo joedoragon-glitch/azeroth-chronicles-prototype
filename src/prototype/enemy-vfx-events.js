@@ -35,6 +35,7 @@
     if (!s) {
       s = {
         serial: 0,
+        epoch: 0,
         seen: new WeakMap(),
         projectiles: new WeakMap(),
         hazards: new WeakMap(),
@@ -68,8 +69,9 @@
           })
         : V.describe(e, a));
     if (!visual) return null;
-    const s = store(game),
-      seen = s.seen.get(a) || new Set(),
+    const s = store(game);
+    if (s.context && s.context.epoch !== s.epoch) return null;
+    const seen = s.seen.get(a) || new Set(),
       key = e.id + ':' + stage + ':' + (point?.target || '');
     if (seen.has(key)) return null;
     const x =
@@ -81,6 +83,7 @@
     if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
     const event = Object.freeze({
       type: 'enemyVfx',
+      epoch: s.epoch,
       eventId: ++s.serial,
       zone: game.zoneId,
       at: game.s.time,
@@ -122,8 +125,10 @@
     const s = store(game),
       identity = V.describe(e, a);
     for (const p of game.s.projectiles)
-      if (!beforeShots.has(p) && p.sourceId === e.id) s.projectiles.set(p, { e, a, identity });
-    for (const h of game.s.hazards) if (!beforeHazards.has(h)) s.hazards.set(h, { e, a, identity });
+      if (!beforeShots.has(p) && p.sourceId === e.id)
+        s.projectiles.set(p, { e, a, identity, epoch: s.epoch });
+    for (const h of game.s.hazards)
+      if (!beforeHazards.has(h)) s.hazards.set(h, { e, a, identity, epoch: s.epoch });
   }
   function install(Campaign) {
     const proto = Campaign.prototype;
@@ -181,6 +186,16 @@
         legacy.presentationHandled = true;
       } else if (type === 'melee' && context?.a) {
         legacy.presentationHandled = true;
+      } else if (type === 'melee' && details.actor === 'enemy' && e.aggro && !e.returning) {
+        const plan = {
+          kind: 'melee',
+          basic: true,
+          x: details.x,
+          y: details.y,
+          angle: Math.atan2(details.y - e.y, details.x - e.x),
+        };
+        emit(this, e, plan, 'release');
+        emit(this, e, plan, 'impact', { x: details.x, y: details.y, target: details.target });
       } else if (type === 'projectileLaunch' && details.actor === 'enemy') {
         if (context?.a) legacy.presentationHandled = true;
         else {
@@ -190,7 +205,7 @@
           for (const p of shots) {
             const plan = { kind: 'projectile', style: p.style },
               identity = V.projectile(e, p);
-            s.projectiles.set(p, { e, a: plan, identity });
+            s.projectiles.set(p, { e, a: plan, identity, epoch: s.epoch });
             if (emit(this, e, plan, 'release', null, identity)) legacy.presentationHandled = true;
           }
         }
@@ -215,7 +230,7 @@
       wrap(name, function (original, args) {
         const s = store(this),
           old = s.context;
-        s.context = { e: args[0] };
+        s.context = { e: args[0], epoch: s.epoch };
         try {
           return original.apply(this, args);
         } finally {
@@ -230,7 +245,7 @@
         shots = new Set(this.s.projectiles),
         hazards = new Set(this.s.hazards);
       emit(this, e, a, 'release');
-      s.context = { e, a };
+      s.context = { e, a, epoch: s.epoch };
       try {
         return original.call(this, e);
       } finally {
@@ -244,7 +259,7 @@
         hazards = new Set(this.s.hazards);
       // A ground payoff belongs to the real resolved footprint, even on a miss.
       emit(this, e, a, 'impact');
-      s.context = { e, a };
+      s.context = { e, a, epoch: s.epoch };
       try {
         return original.call(this, e, a);
       } finally {
@@ -256,7 +271,7 @@
       const a = e.motion,
         s = store(this),
         old = s.context;
-      if (a) s.context = { e, a };
+      if (a) s.context = { e, a, epoch: s.epoch };
       try {
         return original.call(this, e, dt);
       } finally {
@@ -264,15 +279,20 @@
         s.context = old;
       }
     });
+    wrap('tacticalResolveRogueMove', function (original, [e, a]) {
+      emit(this, e, a, 'impact');
+      return original.call(this, e, a);
+    });
     wrap('hitParty', function (original, args) {
       const u = args[0],
         point = { x: u.x, y: u.y, target: u === this.hero ? 'hero' : u.id },
         s = store(this),
         context = s.context,
         zone = this.zoneId,
+        epoch = s.epoch,
         hero = this.hero;
       const result = original.apply(this, args);
-      if (result && context && this.zoneId === zone && this.hero === hero)
+      if (result && context && s.epoch === epoch && this.zoneId === zone && this.hero === hero)
         emit(this, context.e, context.a, 'impact', point, context.identity);
       return result;
     });
@@ -317,7 +337,7 @@
     wrap('triggerCaptainPhase', function (original, [e]) {
       const s = store(this),
         old = s.context;
-      s.context = { e };
+      s.context = { e, epoch: s.epoch };
       try {
         const result = original.call(this, e);
         if (result) emit(this, e, this.captainProfile(e).phase, 'phase');
@@ -327,7 +347,8 @@
       }
     });
     wrap('updateEnemies', function (original, args) {
-      const zone = this.zoneId,
+      const epoch = store(this).epoch,
+        zone = this.zoneId,
         hero = this.hero,
         beforeShots = new Set(this.s.projectiles),
         frenzy = new Set(
@@ -336,7 +357,7 @@
             .map((e) => e.id),
         );
       const result = original.apply(this, args);
-      if (zone !== this.zoneId || hero !== this.hero) return result;
+      if (zone !== this.zoneId || hero !== this.hero || epoch !== store(this).epoch) return result;
       const s = store(this);
       for (const e of this.zone().enemies) {
         if (e.telegraph) emit(this, e, e.telegraph, 'windup');
@@ -353,12 +374,21 @@
           if (!beforeShots.has(p) && p.sourceId === e.id && !s.projectiles.has(p)) {
             const a = { kind: 'projectile', style: p.style, x: p.x, y: p.y },
               identity = V.projectile(e, p);
-            s.projectiles.set(p, { e, a, identity });
+            s.projectiles.set(p, { e, a, identity, epoch: s.epoch });
             emit(this, e, a, 'release', null, identity);
           }
       }
       return result;
     });
+    for (const name of ['die', 'enter'])
+      wrap(name, function (original, args) {
+        const result = original.apply(this, args);
+        store(this).epoch++;
+        return result;
+      });
+    proto.enemyVfxEpoch = function () {
+      return store(this).epoch;
+    };
     proto.enemyVfxProjectile = function (p) {
       return store(this).projectiles.get(p) || null;
     };
@@ -367,7 +397,7 @@
     };
     proto.enemyVfxHazardImpact = function (h, u) {
       const m = this.enemyVfxHazard(h);
-      if (m)
+      if (m && m.epoch === store(this).epoch)
         emit(
           this,
           m.e,
@@ -379,7 +409,7 @@
     };
     proto.enemyVfxProjectileImpact = function (p, point) {
       const m = this.enemyVfxProjectile(p);
-      if (m) {
+      if (m && m.epoch === store(this).epoch) {
         const f = emit(this, m.e, p, 'impact', { ...point, contact: true }, m.identity);
         if (f) store(this).lastProjectileContact = { sourceId: p.sourceId, x: point.x, y: point.y };
       }

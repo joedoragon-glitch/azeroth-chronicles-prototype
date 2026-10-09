@@ -17,6 +17,7 @@ assert.equal(report.counts.captain, 16, 'all five captain movesets are inventori
 assert.equal(report.counts['captain-phase'], 5, 'captain second phases are independently listed');
 assert.equal(report.counts.night, 2);
 assert.equal(report.counts.ranged, 18);
+assert.equal(report.counts['basic-attack'], 28);
 assert(report.rows.some((r) => r.id === 'projectile/crownguard/arrow'));
 assert(report.rows.some((r) => r.id === 'projectile/wraith/spectral'));
 assert(report.rows.some((r) => r.id === 'projectile/wolf/arrow'));

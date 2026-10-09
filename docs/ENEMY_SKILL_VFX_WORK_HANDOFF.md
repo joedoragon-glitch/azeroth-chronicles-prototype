@@ -1,5 +1,8 @@
 # Enemy skill VFX — quality gate, defect register and Work-mode handoff
 
+**Implementation update — v0.8.113:** The production work described below is implemented by PRs #161/#162. Read [ENEMY_SKILL_VFX_AUDIT.md](ENEMY_SKILL_VFX_AUDIT.md) for completed coverage and current evidence. The remaining text records the original foundation/production contract and its baseline findings.
+
+
 **9 October 2026 · housekeeping only.** This is an implementation contract for autonomous production, not a request to make every ability larger, brighter or more elaborate. Changes to boss damage, warning duration, dodge geometry, movement, AI, rogue decisions, attack cadence, audio, saves, world or sprite canon are out of scope. The multi-file GitHub Pages/PWA is canonical; no portable-HTML requirement may dictate architecture.
 
 ## The two separate visual responsibilities
@@ -72,6 +75,6 @@ All PRs must pass formatter, `npm run check`, quick/full Node regressions, Chrom
 
 This file is the handoff. The foundation PR introduced VFX asset identities; this housekeeping pass adds production direction and dynamic coverage, not implementation claims.
 
-## Audio synchronization acceptance (v0.8.112)
+## Audio synchronization acceptance (v0.8.113)
 
 Enemy stage IDs now share the presentation profile and audio decision bridge described in `ENEMY_AUDIO_SYNCHRONIZATION.md`. Every new/changed VFX identity or rogue signature must pass `npm run audio:coverage` as well as VFX checks. Reuse material/action and creature/faction profiles; document silent stages explicitly. Keep all sound events presentation-only, preserve gameplay geometry/timing, and never restore generic duplicate warnings under the stage owner. The old audio-gap findings above describe the pre-bridge baseline.

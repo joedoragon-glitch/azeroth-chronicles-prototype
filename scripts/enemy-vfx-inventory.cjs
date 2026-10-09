@@ -91,7 +91,7 @@ function collect() {
         name: captain.phase.name,
         kind: captain.phase.kind,
         stages: captain.summon?.opening ? ['phase', 'spawn'] : ['phase'],
-        notes: 'Unwired phase event; future work must attach at the existing phase trigger',
+        notes: 'Presentation attached at the existing phase trigger',
       });
   }
   for (const [species] of Object.entries(Campaign.rules.nightEnemyCombat)) {
@@ -150,6 +150,47 @@ function collect() {
         notes: 'Actual forced/native ranged role; includes ringleaders and defenders',
       });
   }
+  for (const b of Campaign.data.bosses)
+    add({
+      group: 'basic-attack',
+      owner: b.name,
+      id: 'boss/' + b.id + '/basic',
+      name: 'Basic melee',
+      kind: 'melee',
+      stages: ['release', 'impact'],
+      presentation: P.profile({ type: 'boss', family: b.id }, { kind: 'melee', basic: true }),
+      notes: 'Normal/TRUE share contact presentation',
+    });
+  for (const [id, p] of Object.entries(Campaign.rules.roomCaptains))
+    add({
+      group: 'basic-attack',
+      owner: p.name,
+      id: 'captain/' + id + '/basic',
+      name: 'Basic melee',
+      kind: 'melee',
+      stages: ['release', 'impact'],
+      presentation: P.profile(
+        { captain: true, captainProfile: id },
+        { kind: 'melee', basic: true },
+      ),
+      notes: 'Existing captain contact',
+    });
+  for (const species of [
+    ...new Set([
+      ...Campaign.data.species.flat().map((e) => e[0]),
+      ...Object.keys(Campaign.rules.nightEnemyCombat),
+    ]),
+  ].sort())
+    add({
+      group: 'basic-attack',
+      owner: species,
+      id: 'enemy/' + species + '/melee',
+      name: 'Basic melee',
+      kind: 'melee',
+      stages: ['release', 'impact'],
+      presentation: P.profile({ species }, { kind: 'melee', basic: true }),
+      notes: 'Ordinary/guardian/ringleader share species material',
+    });
   // Basic tactical maneuvers are inventoried independently of signatures.
   // Species and actual combat roles determine eligibility; shared mechanics
   // may later share artwork instead of forcing duplicate effect assets.

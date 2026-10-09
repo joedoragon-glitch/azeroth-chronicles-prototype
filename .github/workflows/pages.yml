@@ -49,6 +49,10 @@ jobs:
           node tests/audio-audition-browser.test.cjs
       - name: Verify terrain material rendering
         run: node tests/materials-browser.test.cjs
+      - name: Verify full enemy VFX catalog and pilot captures
+        run: |
+          node tests/enemy-vfx-browser.test.cjs
+          VFX_CAPTURE_TAG=ci VFX_CAPTURE_SMOKE=1 node scripts/enemy-vfx-capture.cjs
       - name: Verify development sprite showroom
         run: node tests/sprite-showroom-browser.test.cjs
       - uses: actions/upload-artifact@v4
@@ -89,6 +93,12 @@ jobs:
         run: |
           node tests/audio-browser.test.cjs
           node tests/audio-audition-browser.test.cjs
+      - name: Verify WebKit enemy VFX catalog and pilot captures
+        env:
+          VFX_BROWSER_ENGINE: webkit
+        run: |
+          node tests/enemy-vfx-browser.test.cjs
+          VFX_CAPTURE_TAG=webkit-ci VFX_CAPTURE_SMOKE=1 node scripts/enemy-vfx-capture.cjs
       - name: Verify WebKit terrain material rendering
         env:
           MATERIAL_BROWSER_ENGINE: webkit
@@ -136,6 +146,10 @@ jobs:
           node tests/audio-audition-browser.test.cjs
       - name: Verify terrain material rendering
         run: node tests/materials-browser.test.cjs
+      - name: Verify full enemy VFX catalog and pilot captures
+        run: |
+          node tests/enemy-vfx-browser.test.cjs
+          VFX_CAPTURE_TAG=ci VFX_CAPTURE_SMOKE=1 node scripts/enemy-vfx-capture.cjs
       - name: Verify development sprite showroom
         run: node tests/sprite-showroom-browser.test.cjs
       - uses: actions/upload-artifact@v4
