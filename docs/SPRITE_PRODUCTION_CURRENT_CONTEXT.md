@@ -107,3 +107,7 @@ The field-rock handoff was inaccurate: the live icon-rock branch executes before
 The development-only sprite-batch-review helper records immutable originals, explicit sizing/padding/root translation and native comparison crops with full-scene hashes. Candidate review and publication remain separate. Further grass corrections and height-bank generation are in progress; this is not completion of the catalog.
 
 End-to-end 150% workflow audit: `SPRITE_WORKFLOW_AUDIT.md`. Developer publication now journals sprite/terrain registry pairs and validates retained sprite history. New planning captures use `sprite:request`; this does not resume image production.
+
+## Memory policy update · v0.8.126
+
+Joel explicitly approves a 256 MiB decoded sprite-residency ceiling, superseding the earlier 16 MiB active-runtime policy described above. The current shared contract and production policy agree. Lazy loading, content sharing, two concurrent decodes, LRU eviction/visible pinning, per-image limits, packaged/download limits and original-master art remain unchanged. This is additional cache headroom, not a request to eagerly load the catalog. See GROUND_WINDOW_PERFORMANCE.md.

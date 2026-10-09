@@ -45,6 +45,7 @@ const scripts = [
     'platform',
     'input',
     'runtime',
+    'ground-cache',
     'renderer',
     'archive',
     'menus',

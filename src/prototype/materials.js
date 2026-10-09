@@ -174,6 +174,15 @@
       this.pump();
       return promise;
     }
+    surfaceRevision(key) {
+      const entry = this.entries[key];
+      if (!entry) return this.request + ':missing';
+      const id = this.identity(entry);
+      this.pins.add(id);
+      const ready = this.cache.has(id);
+      if (!ready) void this.ensure(key);
+      return this.request + ':' + id + ':' + (ready ? 'ready' : 'pending');
+    }
     beginFrame() {
       this.frame = true;
       this.pins.clear();

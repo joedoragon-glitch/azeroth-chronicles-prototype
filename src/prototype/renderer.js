@@ -72,6 +72,8 @@
       (typeof require === 'function' ? require('./enemy-vfx-art.js') : null),
     PrototypeSprites,
     PrototypeMaterials,
+    PrototypeGroundCache = root.PrototypeGroundCache ||
+      (typeof require === 'function' ? require('./ground-cache.js') : null),
     now = () => performance.now(),
   }) {
     // Draw in unzoomed presentation units, preserving one transform for the
@@ -88,7 +90,15 @@
     let game = getGame(),
       visualFx = [],
       origin = null;
-    const stats = { tileCandidates: 0, tilesDrawn: 0, entitiesConsidered: 0, entitiesDrawn: 0 };
+    const groundCache = PrototypeGroundCache ? new PrototypeGroundCache() : null;
+    let cacheGround = true;
+    const stats = {
+      tileCandidates: 0,
+      tilesDrawn: 0,
+      entitiesConsidered: 0,
+      entitiesDrawn: 0,
+      floorTilesPainted: 0,
+    };
     function iso(x, y) {
       return { x: (x - y) * 0.76, y: (x + y) * 0.27 };
     }
@@ -116,12 +126,16 @@
         return Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= 220;
       return true;
     }
-    function tileBounds(size) {
+    function tileBounds(size, width = canvas.width, height = canvas.height, o = offset()) {
+      const local = (x, y) => ({
+        x: ((x - o.x) / 0.76 + (y - o.y) / 0.27) / 2,
+        y: ((y - o.y) / 0.27 - (x - o.x) / 0.76) / 2,
+      });
       const corners = [
-        localWorld(-160, -100),
-        localWorld(canvas.width + 160, -100),
-        localWorld(-160, canvas.height + 100),
-        localWorld(canvas.width + 160, canvas.height + 100),
+        local(-160, -100),
+        local(width + 160, -100),
+        local(-160, height + 100),
+        local(width + 160, height + 100),
       ];
       return {
         x1: Math.max(0, Math.ceil(Math.min(...corners.map((p) => p.x)) / 80) * 80),
@@ -1239,6 +1253,30 @@
         ctx.clip();
       }
       const bounds = tileBounds(size);
+      const paintFloor = (target, o, width, height) => {
+        const b = tileBounds(size, width, height, o);
+        for (let x = b.x1; x <= b.x2; x += 80)
+          for (let y = b.y1; y <= b.y2; y += 80) {
+            const p = iso(x, y);
+            p.x += o.x;
+            p.y += o.y;
+            if (p.x < -160 || p.x > width + 160 || p.y < -100 || p.y > height + 100) continue;
+            PrototypeVisuals.floor(target, p, x, y, i, false, '', false, PrototypeMaterials);
+            stats.floorTilesPainted++;
+          }
+      };
+      let reused = false;
+      if (cacheGround && !dungeon && !room && groundCache) {
+        const key = 'terrain:ground:' + ['vale', 'march', 'highlands', 'frontier', 'crown'][i];
+        reused = groundCache.draw(ctx, {
+          width: canvas.width,
+          height: canvas.height,
+          origin,
+          scene: z,
+          revision: PrototypeMaterials?.surfaceRevision?.(key) || 'procedural',
+          paint: paintFloor,
+        });
+      } else groundCache?.clear();
       for (let x = bounds.x1; x <= bounds.x2; x += 80)
         for (let y = bounds.y1; y <= bounds.y2; y += 80) {
           stats.tileCandidates++;
@@ -1251,6 +1289,8 @@
             game.blocked(x + 40, y + 40, game.zoneId, 0) &&
             !z.props.some((q) => Math.hypot(x + 40 - q.x, y + 40 - q.y) < q.r);
           stats.tilesDrawn++;
+          if (reused) continue;
+          stats.floorTilesPainted++;
           PrototypeVisuals.floor(
             ctx,
             p,
@@ -1526,6 +1566,11 @@
         return { x: p.x * scale, y: p.y * scale };
       },
       tileBounds,
+      // Development A/B control; both paths use identical art and gameplay.
+      setGroundReuse: (enabled) => {
+        cacheGround = !!enabled;
+        groundCache?.clear();
+      },
       labelVisible: (e) => {
         game = getGame();
         return worldLabelVisible(e);
@@ -1541,6 +1586,7 @@
         cameraZoom: zoom(),
         transientEffects: visualFx.length,
         enemyVfxEffects: visualFx.filter((f) => f.type === 'enemyVfx').length,
+        groundCache: groundCache?.status() || null,
       }),
     };
   }

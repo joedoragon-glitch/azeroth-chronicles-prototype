@@ -8,7 +8,7 @@
     "minimumPadding": 2,
     "colorSpace": "srgb",
     "resizeKernel": "nearest",
-    "maxActiveDecodedBytes": 16777216,
+    "maxActiveDecodedBytes": 268435456,
     "maxPackagedDecodedBytes": 134217728,
     "maxPackagedBytes": 134217728,
     "maxRasterScale": 4.25,

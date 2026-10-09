@@ -2,7 +2,7 @@
 (function (root) {
   'use strict';
   const LIMITS = Object.freeze({
-    decodedBytes: 16 * 1024 * 1024,
+    decodedBytes: 256 * 1024 * 1024,
     concurrent: 2,
     resourcePixels: 1024 * 1024,
   });
