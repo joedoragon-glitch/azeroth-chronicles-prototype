@@ -1384,6 +1384,9 @@
       this.tacticalClearThreat(); // Transient observations never survive zone travel.
       this.tacticalClearBurst();
       this.tacticalClearRogueRegroup();
+      this._tacticalScatter?.clear();
+      this._tacticalScatterLeash?.clear();
+      this._tacticalRepositions?.clear();
       this._tacticalPartyTargets?.clear();
       this.s.zone = zone;
       this.zone();
@@ -1734,8 +1737,10 @@
 
     die() {
       this.tacticalClearRogueRegroup();
-      this.tacticalClearThreat();
       this.tacticalClearBurst();
+      this._tacticalScatter?.clear();
+      this._tacticalScatterLeash?.clear();
+      this.tacticalClearThreat();
       this._tacticalPartyTargets?.clear();
       this.clearTonic();
       this.hero.supportEffects = [];
@@ -1837,6 +1842,8 @@
       this.tacticalClearThreat(e);
       this.tacticalClearBurst(e);
       this.tacticalClearRogueRegroup(e);
+      this._tacticalScatterLeash?.delete(e.id);
+      this._tacticalRepositions?.delete(e.id);
       const victoryLevel = this.hero.level;
       e.deathPaid = true;
       e.aggro = false;
@@ -2194,7 +2201,9 @@
         u.immune = Math.max(0, (u.immune || 0) - dt);
       }
       this.syncCompanionLevelStats();
-      if (input.x || input.y) {
+      if (this.tacticalAdvanceScatter(h, dt)) {
+        h.order = null;
+      } else if (input.x || input.y) {
         h.order = null;
         const n = Math.hypot(input.x, input.y),
           speed =
@@ -2205,8 +2214,14 @@
         this.move(h, { x: h.x + (input.x / n) * speed, y: h.y + (input.y / n) * speed }, speed, dt);
       } else if (h.order) {
         const target =
-          h.order.type === 'attack' ? z.enemies.find((e) => e.id === h.order.id) : h.order;
-        if (target && !target.neutral) {
+          h.order.type === 'attack'
+            ? z.enemies.find((e) => e.id === h.order.id && this.tacticalDirectTargetable(e))
+            : h.order;
+        if (
+          target &&
+          !target.neutral &&
+          (h.order.type !== 'attack' || (target.hp > 0 && this.tacticalDirectTargetable(target)))
+        ) {
           if (
             dist(h, target) > (h.order.type === 'attack' ? (h.class === 'paladin' ? 105 : 350) : 25)
           )
@@ -2731,7 +2746,108 @@
       e.routeAge = 0;
       return true;
     }
+    // Transient forced movement is shared by hero and companions, but never
+    // serialized. While scattering, no player movement or party AI can override
+    // the direction. World collision remains authoritative.
+    tacticalScatterState(unit) {
+      return this._tacticalScatter?.get(unit === this.hero ? 'hero' : unit?.id) || null;
+    }
+    tacticalBeginScatter(actor, unit, push) {
+      if (!unit || unit.hp <= 0 || !Number.isFinite(push) || push <= 0) return false;
+      const key = unit === this.hero ? 'hero' : unit.id,
+        distance = Math.max(1, dist(actor, unit)),
+        direction =
+          distance > 1
+            ? { x: (unit.x - actor.x) / distance, y: (unit.y - actor.y) / distance }
+            : { x: 1, y: 0 },
+        duration = 0.6;
+      if (!this._tacticalScatter) this._tacticalScatter = new Map();
+      this._tacticalScatter.set(key, {
+        zone: this.zoneId,
+        unit,
+        direction,
+        speed: push / duration,
+        remaining: duration,
+      });
+      if (unit === this.hero) this.hero.order = null;
+      // The short leash allowance is boss-specific and cannot become a
+      // permanent extended territory or a new aggro/recruitment rule.
+      if (actor?.family === 'thorn' && actor.type === 'boss') {
+        if (!this._tacticalScatterLeash) this._tacticalScatterLeash = new Map();
+        const prior = this._tacticalScatterLeash.get(actor.id),
+          victims = prior?.until > this.s.time ? prior.victims : new Set();
+        victims.add(key);
+        this._tacticalScatterLeash.set(actor.id, {
+          zone: this.zoneId,
+          anchor: { x: actor.x, y: actor.y },
+          victims,
+          until: this.s.time + 1.6,
+        });
+      }
+      return true;
+    }
+    tacticalAdvanceScatter(unit, dt) {
+      const key = unit === this.hero ? 'hero' : unit?.id,
+        state = this._tacticalScatter?.get(key);
+      if (!state) return false;
+      if (state.zone !== this.zoneId || state.unit !== unit || unit.hp <= 0) {
+        this._tacticalScatter.delete(key);
+        return false;
+      }
+      const step = Math.min(dt, state.remaining),
+        goal = {
+          x: unit.x + state.direction.x * state.speed * step,
+          y: unit.y + state.direction.y * state.speed * step,
+        };
+      if (step > 0) this.move(unit, goal, state.speed, step, 0);
+      state.remaining = Math.max(0, state.remaining - dt);
+      if (state.remaining <= 0) this._tacticalScatter.delete(key);
+      return true;
+    }
+    // A captain/boss sidestep may carry the encounter across the original
+    // home leash, but never heal/reset the encounter merely for that motion.
+    // The temporary corridor is anchored to the actual short skill movement,
+    // bounded to local combat and cannot follow a genuine player escape.
+    tacticalRecordRogueReposition(e, from, target) {
+      if (!(e.type === 'boss' || e.captain || e.roomCaptain) || !target || dist(from, e) < 1)
+        return;
+      if (!this._tacticalRepositions) this._tacticalRepositions = new Map();
+      this._tacticalRepositions.set(e.id, {
+        zone: this.zoneId,
+        from,
+        to: { x: e.x, y: e.y },
+        until: this.s.time + 4,
+      });
+    }
     tacticalRogueLeashAllows(e, target, territory) {
+      const shift = this._tacticalRepositions?.get(e?.id);
+      if (
+        shift &&
+        shift.zone === this.zoneId &&
+        target?.hp > 0 &&
+        (shift.until > this.s.time ||
+          (dist(e, shift.to) <= 250 &&
+            dist(target, e) <= 350 &&
+            dist(target, e.home) <= territory + 250)) &&
+        dist(target, e) <= Math.max(territory, 550) &&
+        dist(target, shift.to) <= Math.max(territory + 200, 650) &&
+        this.distanceToSegment(target, shift.from, shift.to) <= Math.max(territory, 550)
+      )
+        return true;
+      // The boss must not disengage merely because its own howl forcibly
+      // pushed an opponent beyond the normal home leash. This short exception
+      // applies only to victims of that howl, near its point of impact.
+      const scatter = this._tacticalScatterLeash?.get(e?.id);
+      if (
+        scatter &&
+        scatter.zone === this.zoneId &&
+        scatter.victims.has(target === this.hero ? 'hero' : target?.id) &&
+        (scatter.until > this.s.time ||
+          (dist(target, e) <= 350 && dist(target, e.home) <= territory + 250)) &&
+        dist(target, e) <= Math.max(territory + 250, 900) &&
+        dist(target, scatter.anchor) <= Math.max(territory + 250, 900)
+      )
+        return true;
       const state = this.tacticalRogueRegroup(e);
       if (!state) return dist(target, e.home) <= territory;
       if (state.phase === 'thinking' && !state.anchor) return dist(target, e.home) <= territory;
@@ -2786,7 +2902,7 @@
         }
         if (this.tacticalSeekRogueSupport(e, totalPressure)) return true;
         this.tacticalStopRogueRegroup(e);
-        if (this.tacticalRogueMove(e, target)) {
+        if (this.tacticalRogueMove(e, target, !!state.anchor)) {
           if (!this._tacticalRegroupUsed) this._tacticalRegroupUsed = new Set();
           this._tacticalRegroupUsed.add(e.id); // Prevent lone move spam.
           if (state.anchor) {
@@ -2927,59 +3043,363 @@
       }
       return false;
     }
-    tacticalRogueMove(e, fallback) {
+    // Tactical one-action repertoire: each species keeps its basic maneuver;
+    // elite signatures are authored for the species AND its actual combat role.
+    tacticalRogueMove(e, fallback, fromRegroupAnchor = false) {
       if (e.hp <= 0 || e.returning || e.telegraph || e.motion || e.rangedAim) return false;
       const tier = this.tacticalProtectionTier(e),
         cfg = R.tacticalFoundation,
         profiles = cfg.rogueMoves,
-        profile =
+        ranged = !!e.ranged,
+        basic =
           (e.type === 'boss' && profiles.bosses[e.family]) ||
           ((e.captain || e.roomCaptain) && profiles.captains[e.captainProfile]) ||
+          (tier === 'guardian' && ranged && profiles.rangedGuardian) ||
+          (ranged && (profiles.ranged[e.species] || profiles.rangedFallback)) ||
           profiles.species[e.species] ||
           profiles[tier] ||
           profiles.ordinary,
-        target = this.tacticalHighestThreatTarget(e, fallback),
+        signature =
+          (e.type === 'boss' && cfg.rogueSignatures.bosses[e.family]) ||
+          ((e.captain || e.roomCaptain) && cfg.rogueSignatures.captains[e.captainProfile]) ||
+          (tier === 'ringleader' &&
+            cfg.rogueRingleaderSignatures[ranged ? 'ranged' : 'melee'][e.species]),
+        pressured =
+          fromRegroupAnchor ||
+          this.tacticalRogueOutnumbered(e) ||
+          !!this.tacticalRogueRegroup(e)?.anchor,
+        wantsSignature =
+          tier === 'ringleader' ? pressured || this.tacticalRogueWounded(e) : pressured,
+        threat = this.tacticalHighestThreatTarget(e, fallback),
+        closeTargets =
+          signature && ['scatter', 'sweep'].includes(signature.effect)
+            ? this.combatTargets()
+                .filter(
+                  (unit) => unit.hp > 0 && dist(unit, e) <= signature.radius && this.line(e, unit),
+                )
+                .sort((a, b) => dist(e, a) - dist(e, b))
+            : [],
+        isSignature =
+          !!signature &&
+          wantsSignature &&
+          (!['scatter', 'sweep'].includes(signature.effect) || closeTargets.length > 0),
+        profile = isSignature ? signature : basic,
+        target =
+          isSignature && closeTargets.length
+            ? closeTargets.includes(threat)
+              ? threat
+              : closeTargets[0]
+            : threat,
         maxRange = e.type === 'boss' ? 500 : e.captain || e.roomCaptain ? 440 : 340;
       if (!target || dist(e, target) > maxRange || !this.line(e, target)) return false;
+      const effect = isSignature ? profile.effect : null,
+        centered = effect === 'scatter' || effect === 'sweep',
+        warning =
+          profile.warning || (e.type === 'boss' ? 1.05 : e.captain || e.roomCaptain ? 0.95 : 0.75),
+        radius = profile.radius || (e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 95 : 80);
       e.telegraph = {
         rogueMove: true,
-        kind: 'circle',
+        rogueSignature: isSignature,
+        kind: effect === 'sweep' ? 'cone' : 'circle',
         name: profile.name,
-        style: profile.style,
+        style: profile.style || null,
+        effect,
         coefficient: profile.coefficient,
         targetId: target === this.hero ? 'hero' : target.id,
-        x: target.x,
-        y: target.y,
-        radius: 85,
-        timer: 0.65,
-        total: 0.65,
-        recovery: 0.8,
+        fromX: e.x,
+        fromY: e.y,
+        angle: Math.atan2(target.y - e.y, target.x - e.x),
+        x: centered ? e.x : target.x,
+        y: centered ? e.y : target.y,
+        radius,
+        slowSeconds: profile.slowSeconds || 0,
+        push: profile.push || 0,
+        retreat: profile.retreat || 0,
+        blinds: profile.blinds || 0,
+        sidestep: profile.sidestep || 0,
+        rallySeconds: profile.rallySeconds || 0,
+        reinforceBelow: profile.reinforceBelow || 0,
+        reinforceCap: profile.reinforceCap || 0,
+        reinforceSpecies: profile.reinforceSpecies || null,
+        reinforceRangedSpecies: profile.reinforceRangedSpecies || null,
+        reinforceName: profile.reinforceName || null,
+        timer: warning,
+        total: warning,
+        recovery: isSignature ? 1.05 : 0.8,
       };
       this.event('warning', { family: e.family, rogue: true, name: profile.name });
-      this.event('rogueMove', { actor: e.id, name: profile.name, style: profile.style });
+      this.event('rogueMove', {
+        actor: e.id,
+        name: profile.name,
+        style: effect || profile.style,
+        signature: isSignature,
+      });
+      return true;
+    }
+    // Field commanders rally native ordinary-monster spawn records; Ridge Tyrant
+    // instead rallies GUARD spawn records via tacticalRogueCommanderSupport.
+    // Never manufacture new field enemies or count a boss's summoned warband.
+    tacticalRogueFieldSupport(e, move) {
+      if (
+        e.type !== 'boss' ||
+        !['warlord', 'cindermaw', 'darklord'].includes(e.family) ||
+        !move.reinforceSpecies ||
+        !move.reinforceCap
+      )
+        return false;
+      const z = this.zone(),
+        radius = 750,
+        species = [move.reinforceSpecies, move.reinforceRangedSpecies].filter(Boolean),
+        nativeTroop = (u) =>
+          u !== e &&
+          u.type === 'mob' &&
+          u.form === 'normal' &&
+          !!u.pack &&
+          !u.guard &&
+          !u.summon &&
+          !u.neutral &&
+          !u.nightOnly &&
+          !u.captain &&
+          !u.roomCaptain &&
+          !u.mini &&
+          !u.site &&
+          species.includes(u.species) &&
+          !!u.home &&
+          dist(u.home, e) <= radius,
+        nearby = () =>
+          z.enemies
+            .filter((u) => nativeTroop(u) && u.hp > 0 && !u.returning && dist(u, e) <= radius)
+            .sort((a, b) => dist(a, e) - dist(b, e) || this.idOrder(a, b)),
+        living = nearby();
+      if (living.length <= move.reinforceBelow) {
+        const wanted = Math.max(0, move.reinforceCap - living.length),
+          party = [this.hero, ...this.activeLivingParty()],
+          dormant = z.enemies
+            .filter(
+              (u) =>
+                nativeTroop(u) &&
+                u.hp <= 0 &&
+                u.deathPaid &&
+                !this.blocked(u.home.x, u.home.y, z.id, 12) &&
+                party.every((a) => a.hp <= 0 || dist(a, u.home) >= 115),
+            )
+            .sort((a, b) => dist(a.home, e) - dist(b.home, e) || this.idOrder(a, b));
+        let returned = 0;
+        for (const u of dormant.slice(0, wanted)) {
+          Object.assign(u, u.home);
+          u.hp = u.maxHp = u.baseHp;
+          u.damage = u.baseDamage;
+          u.deathPaid = false;
+          u.heroParticipated = false;
+          u.aggro = false;
+          u.returning = 0;
+          u.telegraph = null;
+          u.rangedAim = null;
+          u.motion = null;
+          u.sequence = [];
+          u.cd = 0.25;
+          u.noProgress = 0;
+          this.engage(u, true, false);
+          returned++;
+        }
+        if (returned) {
+          this.say(e.name + ' rallies ' + returned + ' returning ' + move.reinforceName + '.');
+          this.event('rogueSupport', { actor: e.id, allies: returned, respawn: true });
+        }
+      }
+      // Refresh ordinary spawn positions throughout the local area, but only
+      // call defenders into combat when they are in the existing support radius.
+      for (const u of nearby().slice(0, move.reinforceCap)) {
+        if (!u.aggro && dist(u, e) <= R.tacticalFoundation.supportRadius && this.line(e, u))
+          this.engage(u, true, false);
+        if (u.aggro) {
+          u.pursuitBurst = Math.max(u.pursuitBurst || 0, move.rallySeconds);
+          u.cd = Math.min(u.cd || 0, 0.5);
+        }
+      }
+      return true;
+    }
+    tacticalRogueCommanderSupport(e, move) {
+      if (!move.reinforceSpecies || !move.reinforceCap) return false;
+      const captain = ['supply-highlands', 'frontier-overseer'].includes(e.captainProfile),
+        fieldBoss = e.type === 'boss' && e.family === 'ridge';
+      if (!captain && !fieldBoss) return false;
+      const z = this.zone(),
+        range = fieldBoss ? 750 : 560,
+        supports = (u) => {
+          if (
+            u === e ||
+            u.neutral ||
+            u.summon ||
+            u.captain ||
+            u.roomCaptain ||
+            u.type !== 'mob' ||
+            u.nightOnly ||
+            u.form !== 'normal' ||
+            u.site ||
+            (u.mini && this.miniCleared(u.mini))
+          )
+            return false;
+          if (e.captainProfile === 'supply-highlands')
+            return u.guard && ['wolf', 'ogre', 'archer'].includes(u.species);
+          if (e.captainProfile === 'frontier-overseer' || e.family === 'warlord')
+            return ['orc', 'archer'].includes(u.species);
+          return u.guard && ['wolf', 'ogre', 'archer'].includes(u.species);
+        },
+        live = () =>
+          z.enemies.filter((u) => supports(u) && u.hp > 0 && !u.returning && dist(u, e) <= range),
+        existing = live();
+      if (existing.length <= move.reinforceBelow) {
+        // Existing defeated spawn identities only: no new monster objects.
+        const available = z.enemies
+          .filter(
+            (u) =>
+              supports(u) &&
+              u.hp <= 0 &&
+              u.home &&
+              dist(u.home, e) <= range &&
+              dist(u.home, this.hero) >= 105 &&
+              !this.blocked(u.home.x, u.home.y, z.id, 12) &&
+              this.clearSegment(e, u.home, 12),
+          )
+          .sort((a, b) => dist(a.home, e) - dist(b.home, e) || a.id.localeCompare(b.id));
+        let revived = 0;
+        for (const u of available.slice(0, Math.max(0, move.reinforceCap - existing.length))) {
+          Object.assign(u, u.home);
+          u.hp = u.baseHp;
+          u.maxHp = u.baseHp;
+          u.damage = u.baseDamage;
+          u.returning = 0;
+          u.deathPaid = false;
+          u.heroParticipated = false;
+          u.telegraph = null;
+          u.motion = null;
+          u.rangedAim = null;
+          u.aggro = false;
+          u.frenzy = false;
+          u.cd = 0.5;
+          u.pursuitBurst = Math.max(u.pursuitBurst || 0, move.rallySeconds);
+          if (u.pack) delete z.packTimers[u.pack];
+          if (dist(u, e) <= R.tacticalFoundation.supportRadius && this.line(e, u))
+            this.engage(u, true, false);
+          revived++;
+        }
+        if (revived) {
+          this.say(e.name + ' recalls ' + revived + ' nearby defenders to their posts.');
+          this.event('rogueSupport', { actor: e.id, allies: revived, existingSpawns: true });
+        }
+      }
+      // Distant existing spawns occupy their posts, not automatic combat aggro.
+      for (const ally of live()) {
+        ally.pursuitBurst = Math.max(ally.pursuitBurst || 0, move.rallySeconds);
+        if (ally.aggro) ally.cd = Math.min(ally.cd || 0, 0.5);
+      }
       return true;
     }
     tacticalResolveRogueMove(e, move) {
       const target =
         move.targetId === 'hero'
           ? this.hero
-          : this.s.party.find((u) => u.id === move.targetId && u.active !== false);
-      if (!target || target.hp <= 0 || dist(target, move) > move.radius || !this.line(e, target))
+          : this.combatTargets().find((u) => u !== this.hero && u.id === move.targetId);
+      if (!move.rogueSignature) {
+        // Base movement remains single-target and cover-sensitive.
+        if (!target || target.hp <= 0 || dist(target, move) > move.radius || !this.line(e, target))
+          return;
+        if (move.style === 'dash' && dist(e, target) > 95) this.move(e, target, 300, 0.3, 85);
+        if (!this.hitParty(target, e.damage * move.coefficient)) return;
+        if (move.style === 'shove') {
+          const d = Math.max(1, dist(e, target)),
+            point = {
+              x: target.x + ((target.x - e.x) / d) * 55,
+              y: target.y + ((target.y - e.y) / d) * 55,
+            };
+          this.move(target, point, 220, 0.25);
+        } else {
+          target.slow = Math.max(
+            target.slow || 0,
+            move.slowSeconds || (move.style === 'snare' ? 1.65 : 0.95),
+          );
+        }
+        if (move.blinds > 0) {
+          // Dust blinds the victim narratively: the goblin briefly cannot be
+          // DIRECTLY targeted, but is still vulnerable to area damage.
+          e.rogueDustCoverUntil = Math.max(e.rogueDustCoverUntil || 0, this.s.time + move.blinds);
+          // Break locked attacks immediately; party AI can pick another threat.
+          this.tacticalDropDustTarget(e);
+        }
+        if (move.style === 'withdraw' && move.retreat > 0) {
+          const d = Math.max(1, dist(e, target)),
+            point = {
+              x: e.x + ((e.x - target.x) / d) * move.retreat,
+              y: e.y + ((e.y - target.y) / d) * move.retreat,
+            };
+          if (this.clearSegment(e, point, 12)) this.move(e, point, 350, 0.35);
+        }
         return;
-      if (move.style === 'dash' && dist(e, target) > 95) {
-        // Respect solid terrain; this is a short tactical sidestep, never a teleport.
-        this.move(e, target, 300, 0.3, 85);
       }
-      if (!this.hitParty(target, e.damage * move.coefficient)) return;
-      if (move.style === 'shove') {
+      const inside = (unit) => {
+        if (unit.hp <= 0 || !this.line(e, unit)) return false;
+        if (dist(unit, move) > move.radius) return false;
+        if (move.kind !== 'cone') return true;
+        const bearing = Math.atan2(unit.y - move.y, unit.x - move.x),
+          delta = Math.atan2(Math.sin(bearing - move.angle), Math.cos(bearing - move.angle));
+        return Math.abs(delta) <= 1.1;
+      };
+      const startingHero = this.hero,
+        startingZone = this.zoneId;
+      for (const unit of this.combatTargets().filter(inside)) {
+        if (!this.hitParty(unit, e.damage * move.coefficient)) continue;
+        if (
+          this.hero !== startingHero ||
+          this.zoneId !== startingZone ||
+          this.s.challenge.pending ||
+          this.s.challenge.gameOver
+        )
+          return;
+        if (move.effect === 'scatter' && e.family === 'thorn' && e.type === 'boss') {
+          this.tacticalBeginScatter(e, unit, move.push || 70);
+        } else if (move.effect === 'scatter' || move.effect === 'sweep') {
+          const d = Math.max(1, dist(e, unit)),
+            push = move.push || 65,
+            point = {
+              x: unit.x + ((unit.x - e.x) / d) * push,
+              y: unit.y + ((unit.y - e.y) / d) * push,
+            };
+          this.move(unit, point, 250, 0.36);
+        } else unit.slow = Math.max(unit.slow || 0, move.slowSeconds || 1);
+      }
+      if (
+        move.rallySeconds > 0 &&
+        !this.tacticalRogueFieldSupport(e, move) &&
+        !this.tacticalRogueCommanderSupport(e, move)
+      ) {
+        // Other commanders motivate only ALREADY engaged units.
+        for (const ally of this.zone().enemies) {
+          if (
+            ally === e ||
+            ally.hp <= 0 ||
+            !ally.aggro ||
+            ally.returning ||
+            dist(e, ally) > R.tacticalFoundation.supportRadius ||
+            !this.line(e, ally)
+          )
+            continue;
+          ally.pursuitBurst = Math.max(ally.pursuitBurst || 0, move.rallySeconds);
+          ally.cd = Math.min(ally.cd || 0, 0.5);
+        }
+      }
+      if (move.sidestep > 0 && target?.hp > 0) {
         const d = Math.max(1, dist(e, target)),
+          away = { x: (e.x - target.x) / d, y: (e.y - target.y) / d },
           point = {
-            x: target.x + ((target.x - e.x) / d) * 55,
-            y: target.y + ((target.y - e.y) / d) * 55,
+            x: e.x + (away.x * 0.65 - away.y * 0.35) * move.sidestep,
+            y: e.y + (away.y * 0.65 + away.x * 0.35) * move.sidestep,
           };
-        this.move(target, point, 220, 0.25);
-      } else {
-        target.slow = Math.max(target.slow || 0, move.style === 'snare' ? 1.65 : 0.95);
+        if (this.clearSegment(e, point)) {
+          const previous = { x: e.x, y: e.y };
+          this.move(e, point, 380, 0.36);
+          this.tacticalRecordRogueReposition(e, previous, target);
+        }
       }
     }
     tacticalRecruitRegroupAllies(e, state, target) {
@@ -3177,7 +3597,9 @@
             if (e.telegraph) this.event('warning', { family: e.family });
             if (!e.telegraph && !e.motion) {
               e.cd = a.recovery * (e.type === 'boss' ? R.bossCadence.specialRecoveryMultiplier : 1);
-              e.basicDue = e.type === 'boss' && e.attackIndex % R.bossCadence.skillsPerBasic === 0;
+              if (!a.rogueMove)
+                e.basicDue =
+                  e.type === 'boss' && e.attackIndex % R.bossCadence.skillsPerBasic === 0;
               if (a.opening)
                 e.open = e.form === 'true' && e.family === 'citadel' ? a.opening / 2 : a.opening;
             }
@@ -3341,6 +3763,8 @@
         this.tacticalClearThreat(e);
         this.tacticalClearBurst(e);
         this.tacticalClearRogueRegroup(e);
+        this._tacticalScatterLeash?.delete(e.id);
+        this._tacticalRepositions?.delete(e.id);
         e.returning = 1;
         e.pursuitBurst = 0;
         this.say(e.name + ' disengages.');
