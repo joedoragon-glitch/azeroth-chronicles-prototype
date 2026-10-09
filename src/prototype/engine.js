@@ -2202,7 +2202,9 @@
         this.move(h, { x: h.x + (input.x / n) * speed, y: h.y + (input.y / n) * speed }, speed, dt);
       } else if (h.order) {
         const target =
-          h.order.type === 'attack' ? z.enemies.find((e) => e.id === h.order.id) : h.order;
+          h.order.type === 'attack'
+            ? z.enemies.find((e) => e.id === h.order.id && this.tacticalDirectTargetable(e))
+            : h.order;
         if (
           target &&
           !target.neutral &&
@@ -3266,9 +3268,7 @@
           // DIRECTLY targeted, but is still vulnerable to area damage.
           e.rogueDustCoverUntil = Math.max(e.rogueDustCoverUntil || 0, this.s.time + move.blinds);
           // Break locked attacks immediately; party AI can pick another threat.
-          if (this.s.heroTarget === e.id) this.s.heroTarget = null;
-          if (this.hero.order?.type === 'attack' && this.hero.order.id === e.id)
-            this.hero.order = null;
+          this.tacticalDropDustTarget(e);
           if (this.basicComboTargetId === e.id) this.resetBasicCombo();
           for (const [id, selected] of this._tacticalPartyTargets || [])
             if (selected === e.id) this._tacticalPartyTargets.delete(id);
