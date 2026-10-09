@@ -5,6 +5,18 @@ const Visuals = require('../src/prototype/visuals.js');
 
 const sample = (renderKind, fields) => Visuals.featureScale({ renderKind, ...fields });
 assert.equal(sample('prop', { structure: 'vale-cottage' }), 1.4);
+const cottage = { renderKind: 'prop', structure: 'vale-cottage' };
+const tree = { renderKind: 'prop', structure: 'dead-tree' };
+const oldFrame = { width: 192, height: 192, displayWidth: 192, displayHeight: 192 };
+const newBuilding = { ...oldFrame, width: 816, height: 816 };
+const newTree = { ...oldFrame, width: 768, height: 768 };
+assert.equal(Visuals.assetSafeScale(cottage, oldFrame), 1, '100% export cannot be enlarged');
+assert.equal(Visuals.assetSafeScale(cottage, newBuilding), 1.4);
+assert.equal(Visuals.assetSafeScale(tree, oldFrame), 1);
+assert.equal(Visuals.assetSafeScale(tree, newTree), 1.3);
+assert.equal(Visuals.assetSafeScale(cottage, null), 1.4, 'unregistered procedural art may use new proportions');
+assert.equal(Visuals.assetSafeScale({ renderKind: 'enemy', visualScale: 1.18 }, oldFrame), 1);
+
 assert.equal(sample('prop', { structure: 'highland-stone-house' }), 1.4);
 assert.equal(sample('prop', { structure: 'frontier-workshop' }), 1.4);
 assert.equal(sample('prop', { structure: 'pine-sapling' }), 1.3);
