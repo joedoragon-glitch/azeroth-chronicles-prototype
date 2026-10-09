@@ -193,3 +193,7 @@ Automatic TRUE/captain births retain their own authored summon/phase identities 
 ## Keeper and feedback continuation · v0.8.118
 
 The interrupted PR #185 is reconciled with the current audio/VFX release. Captive Keeper, optional live-rule Archive reference, evidence-gated reveal, TRUE escape/recapture, practical Controls, short status, truthful equipment confirmations and milestone notices are completed. Superseded 30-quest prose is excluded; selective narration remains held in draft #184. See QUEST_ARCHIVE_CONTINUATION.md for states and verification.
+
+## Monster Forts territorial placement · v0.8.119
+
+The agreed scope is a placement/garrison/accessibility pass over **13 existing territorial ordinary-monster holds**, not a new capture/reward/respawn feature. The Ironroot Wolf hunting ground moves outside caravan arrival clearance; Dark Crown's Ash-beast roost moves off impassable obsidian. New-only old-zone stronghold version migrations reposition already-visited markers and extant enemy homes without reviving dead garrisons. Highlands holds advance to v7, Crown holds to v8; the other regions keep v6. All combat, rogue, bosses, companions, tribute, player Barracks, authored regions, save v4, sprite/audio/VFX and populations remain the same. See [MONSTER_FORTS_TERRITORIAL_AUDIT.md](MONSTER_FORTS_TERRITORIAL_AUDIT.md) and tests/monster-forts.test.cjs.
