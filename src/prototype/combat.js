@@ -325,7 +325,7 @@
         if (e.hp === 0) this.kill(e);
         return true;
       }
-      hitParty(u, amount, manaDrain = 0) {
+      hitParty(u, amount, manaDrain = 0, rangedSourceId = null) {
         if (this.peace || u.hp <= 0 || (u.immune || 0) > 0) return false;
         const armor =
           u === this.hero
@@ -333,9 +333,33 @@
             : ['soldier', 'archer'].includes(u.type)
               ? this.companionArmor(u.type)
               : 5 + this.hero.level * 0.5;
+        const oldHp = u.hp;
         u.hp = Math.max(0, u.hp - Math.max(3, amount - armor * 0.35));
         if (R.resourceMode.manaEnabled && u === this.hero && manaDrain > 0)
           this.drainMana(u, manaDrain);
+        // Ash-beasts consume a share of HP *actually removed*, not the nominal
+        // attack power. This applies to their ranged hero hits only and adds no
+        // second damage tick. Legacy MP mode restores the old mana drain instead.
+        if (!R.resourceMode.manaEnabled && u === this.hero && rangedSourceId) {
+          const source = this.zone().enemies.find((e) => e.id === rangedSourceId);
+          if (source?.species === 'ashbeast' && source.hp > 0 && source.hp < source.maxHp) {
+            const heal = Math.min(
+              source.maxHp - source.hp,
+              (oldHp - u.hp) * R.ashFeeding.healFraction,
+            );
+            if (heal > 0) {
+              source.hp += heal;
+              this.event('ashFeeding', {
+                source: source.id,
+                amount: heal,
+                x: source.x,
+                y: source.y,
+                fromX: u.x,
+                fromY: u.y,
+              });
+            }
+          }
+        }
         this.event('hurt', { x: u.x, y: u.y, target: u === this.hero ? 'hero' : u.id });
         if (u === this.hero && u.hp === 0) this.die();
         return true;
@@ -368,7 +392,7 @@
               (u) => this.distanceToSegment(u, before, p) < 22,
             );
             if (victim) {
-              if (this.hitParty(victim, p.damage, p.manaDrain || 0) && p.slow)
+              if (this.hitParty(victim, p.damage, p.manaDrain || 0, p.sourceId) && p.slow)
                 victim.slow = Math.max(victim.slow || 0, p.slow);
               this.enemyVfxProjectileImpact?.(p, {
                 x: victim.x,
