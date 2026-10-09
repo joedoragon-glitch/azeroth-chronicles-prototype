@@ -903,7 +903,7 @@ async function spriteLayer(contract, candidateFile, presentation = null) {
   for (let i = 0; i < 160; i++) sandbox.PrototypeSprites.advance(100);
   return sandbox.PrototypeSprites;
 }
-function scene(contract, width, height, sprite = null, lighting = 'day') {
+function scene(contract, width, height, sprite = null, lighting = 'day', materials = null) {
   const Campaign = require('../src/prototype/engine.js');
   let seed = 111;
   const random = () => (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296;
@@ -950,6 +950,7 @@ function scene(contract, width, height, sprite = null, lighting = 'day') {
     PrototypeVisuals: Visuals,
     PrototypeCombatVisuals: require('../src/prototype/combat-visuals.js'),
     PrototypeSprites: sprite,
+    PrototypeMaterials: materials,
     now: () => 16000,
     chargePresentation: () => null,
     isPaused: () => false,

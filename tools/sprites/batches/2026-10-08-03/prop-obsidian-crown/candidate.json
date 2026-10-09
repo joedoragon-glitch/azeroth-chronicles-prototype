@@ -1,0 +1,97 @@
+{
+  "version": 2,
+  "key": "prop:obsidian:crown",
+  "catalogId": "294",
+  "canonHash": "d8db4ac8390ca15f9a1916fecf224871699574a95395b84eb4d9e159d08cfba7",
+  "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+  "catalogHash": "e0def3cd5bd506a71b428545f4c552da8c402f974568a5db1541ed9f75bb0fa7",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1980,
+    "height": 1980,
+    "bytes": 185097,
+    "decodedBytes": 15681600,
+    "hash": "603d83777bd2f970e987e8233c13ed93018bba9d22feaa340a686ab612e4607b",
+    "pixelHash": "9674cc798f3ba78adbcbdf6d541d39d4af23ae8eec6d1ff0e607c27345d2b26c",
+    "bounds": {
+      "x1": 562,
+      "y1": 562,
+      "x2": 1485,
+      "y2": 1678
+    },
+    "padding": 301,
+    "transparentPixels": 3853855,
+    "visiblePixels": 66545,
+    "lowAlphaPixels": 2971,
+    "materialBounds": {
+      "x1": 857,
+      "y1": 1255,
+      "x2": 1145,
+      "y2": 1578
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 2406,
+    "decodedBytes": 147456,
+    "hash": "eee77b0694096f672e4259ec9147327a6b7f05814383a489ed404d19256d2d68",
+    "pixelHash": "0d79ce06b2bae0e014862c92b4f49c234b793583201365229cce53151d496307",
+    "bounds": {
+      "x1": 70,
+      "y1": 76,
+      "x2": 110,
+      "y2": 153
+    },
+    "padding": 38,
+    "transparentPixels": 36232,
+    "visiblePixels": 632,
+    "lowAlphaPixels": 39,
+    "materialBounds": {
+      "x1": 82,
+      "y1": 122,
+      "x2": 110,
+      "y2": 152
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1980,
+      1980
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": -1,
+      "y": 0,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "reviewer": "Codex engineering review under authorized faithful implementation",
+    "userImageAcceptance": false,
+    "seedInvariant": true,
+    "evidence": "tools/sprites/batches/2026-10-08-03/prop-obsidian-crown/review-scenes/comparison.json",
+    "notes": "Exact fixed decoration branch reviewed against retained native reference and four desktop/phone viewports in day/night. Organic wood/foliage and stone/mineral contours retain colors, branch/cluster counts and grounding. Existing placement and procedural overlays preserved."
+  }
+}

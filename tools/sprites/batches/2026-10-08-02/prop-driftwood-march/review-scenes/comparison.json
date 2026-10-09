@@ -1,0 +1,154 @@
+{
+  "name": "Environmental Driftwood",
+  "key": "prop:driftwood:march",
+  "pending": false,
+  "review": {
+    "status": "pending",
+    "reference": null
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "candidateImage": "candidate-isolated.png",
+  "comparisons": [
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "day",
+      "canonical": "canonical-1280x800-day.png",
+      "candidate": "candidate-1280x800-day.png",
+      "anchor": {
+        "x": 498,
+        "y": 277.4
+      },
+      "canonicalHash": "223e1a2e52b532ce2f30a70c43b31b54ace23513c3d1e3dc0f524e70d3b4cb36",
+      "candidateHash": "95e76350a0f4fa9c00a61fd2ec6b7311d9799f7e1d77ea99aacdfd36d7c4f505"
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "night",
+      "canonical": "canonical-1280x800-night.png",
+      "candidate": "candidate-1280x800-night.png",
+      "anchor": {
+        "x": 498,
+        "y": 277.4
+      },
+      "canonicalHash": "7c8eeebafa3e87ec5ba777ff8f65174b5e516b237bbaf238b58d583c8ddca9e9",
+      "candidateHash": "4feab2fe14f10f1755b62ec2b8973bf5777d59f47608bcc154d89ec39d55c20d"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "day",
+      "canonical": "canonical-375x812-day.png",
+      "candidate": "candidate-375x812-day.png",
+      "anchor": {
+        "x": 187.5,
+        "y": 265.43999999999994
+      },
+      "canonicalHash": "34c737cbd51fb81df8d18be23a4418d18d7c8eb26e34d90feb13acea682a3142",
+      "candidateHash": "4603b360d7534e41e56866b84885859fbdfa64319bf4b05bc19d296101763c9c"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "night",
+      "canonical": "canonical-375x812-night.png",
+      "candidate": "candidate-375x812-night.png",
+      "anchor": {
+        "x": 187.5,
+        "y": 265.43999999999994
+      },
+      "canonicalHash": "5dc701b49f0b5bb70a490d9c5887aff66c3c8650784ca3dd1106795ddbe7c493",
+      "candidateHash": "3d03da807f4254769d30aa178297c7f94c31f0a045641e25267ef17c6f37e358"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "day",
+      "canonical": "canonical-320x568-day.png",
+      "candidate": "candidate-320x568-day.png",
+      "anchor": {
+        "x": 112,
+        "y": 162.95999999999998
+      },
+      "canonicalHash": "dd15d5b52212c15de56e309a559c9f1082648db13078660b954045c916e13c14",
+      "candidateHash": "52747b07edacbebd63bdd7c6fdeb6b12290b6d5bda450e7811a596185d48ee2c"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "night",
+      "canonical": "canonical-320x568-night.png",
+      "candidate": "candidate-320x568-night.png",
+      "anchor": {
+        "x": 112,
+        "y": 162.95999999999998
+      },
+      "canonicalHash": "49dac5ef7deea83c0d30fc36de66e540c51de85a8e5b2e2e9b59a4ff2a4812cb",
+      "candidateHash": "1c92dab9a4619e5a5e399513747dff30d99b1257ca60e3544eddd5990a88fd48"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "day",
+      "canonical": "canonical-844x390-day.png",
+      "candidate": "candidate-844x390-day.png",
+      "anchor": {
+        "x": 422,
+        "y": 88.19999999999993
+      },
+      "canonicalHash": "2d8af0769c98828d7a6f31d748e120f45547e3b895539c816986a4a466f15113",
+      "candidateHash": "26a6b4ecee60731a9f313ec2a008f72e67654aaa59109624e779d29628b0738c"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "night",
+      "canonical": "canonical-844x390-night.png",
+      "candidate": "candidate-844x390-night.png",
+      "anchor": {
+        "x": 422,
+        "y": 88.19999999999993
+      },
+      "canonicalHash": "436fbc68c3aca679eedd9b97af77e3e19977d5e57641c24abcc2cba0a153eb76",
+      "candidateHash": "652546ad32d7883eca165d54757a04215c57db319a90c078ef72f46dec2010ad"
+    }
+  ],
+  "canonHash": "c57bf2d3be69214b9e2a67282d455447fdbac9eb03addabf25c415a288942919",
+  "policy": {
+    "maxSourcePixels": 4194304,
+    "maxSourceBytes": 16777216,
+    "maxOutputDimension": 512,
+    "maxOutputBytes": 1048576,
+    "minimumPadding": 2,
+    "colorSpace": "srgb",
+    "resizeKernel": "nearest",
+    "viewports": [
+      [
+        1280,
+        800
+      ],
+      [
+        375,
+        812
+      ],
+      [
+        320,
+        568
+      ],
+      [
+        844,
+        390
+      ]
+    ],
+    "maxActiveDecodedBytes": 16777216,
+    "maxPackagedDecodedBytes": 134217728,
+    "maxPackagedBytes": 134217728
+  }
+}
