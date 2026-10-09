@@ -1,38 +1,39 @@
-/* Authored quest payoff copy; separated from visual-canon source tables. */
+/* Authored regional quest payoffs, independent of the world/visual canon. */
 (function (root) {
   'use strict';
-  // Stable quest-0 through quest-29 order. No state, XP or quest mechanics here.
+  // 1-based review numbers match quest-0 through quest-29; null means no announcement.
+  // Every quest still finishes and pays automatically, including those without a card.
   const lines = [
-    "With Mira free, Greenwood gains back a teacher. Thornfang's defeat has opened a path home.",
-    "Fewer raiders trouble the mill road for now. Greenwood's farms still need watching.",
-    "Thornfang's Treasury held more than a wolf could use. These stolen stores belong beyond his den.",
-    "The Forest Crypt was built for a retreat, not a prison. Borin's escape spoils the Guardian's hospitality.",
-    'From the mill bridge to the wagon stand, Millhaven has a road to the wider world. Keeping it open is another matter.',
-    "Farms, creature territories, and hidden paths all belong to Greenwood's daily life, whatever its distant ruler claims.",
-    'Mirejaw can no longer keep Sela captive. The marsh remains dangerous, but one prisoner is going home.',
-    'Several threats have fallen along the causeways. The reeds still make it hard to see what lies ahead.',
-    'Neri leaves the Sunken Archive alive. Its threatened records remain, and saving them will take a different kind of work.',
-    "Behind Mirejaw's guarded hoard are ordinary provisions. In the Marches, even a supply crate is worth a fight.",
-    'Lantern shore grows quiet again. The wraiths are gone for now; night will return.',
-    'Raised roads, fishing camps, and flooded ruins shape this region. There is more to the Marches than the main road.',
-    "Orin is free of the Ridge Tyrant's grasp. The mountain's ore still travels through the regime's hands.",
-    'The quarry route has fewer dangers for a while. Stonecross still depends on the work that travels it.',
-    "Dara is leaving the Colossus Mine behind. A smith's tools can serve different hands once the chains are gone.",
-    'The Ridge Tyrant kept a comfortable reserve. Ironroot has been profitable for someone.',
-    'Wolves, ogres, miners, and caravan crews all have a place in Ironroot. No single title explains a mountain.',
-    "Stonecross's ore leaves the mountain by caravan. The Dark Lord's wealth has a very ordinary beginning.",
-    "Lyss is free of the Ashen Warlord's checkpoint. The occupied road remains scarred by the machinery around it.",
-    'Convoys, repair yards, guarded crossings: the occupation needs more than soldiers to keep its roads.',
-    'Eren is free of Abyss Bastion. Its dragon preparations were built for war, not ordinary travelers.',
-    'The Frontier road has fewer enemies for now. Its barricades and inspection posts still tell you who holds it.',
-    'The Frontier is not only ruins. Repair work and everyday life persist beside the scars of occupation.',
-    'Behind Emberwatch, the civilian dragon landing offers a very different journey from the military aerie.',
-    'Tovan is free of the Ash Sentinel. Even in Dark Crown, the regime cannot keep every teacher silent.',
-    'The approach remains hostile despite your victories. Dark Crown is defended in layers.',
-    "Vera is free of Cindermaw's holding. Even the regime's heartland has smiths who never chose their masters.",
-    "Cindermaw's Treasury is another guarded storehouse. Even at the seat of power, supplies have to come from somewhere.",
-    'From labor quarters to siege works, Dark Crown is an organized machine. Its roads keep the fortress supplied.',
-    'The fortress gate rises ahead. Tovan and Vera are free, but the Dark Lord still waits beyond it.',
+    null, // 1
+    null, // 2
+    null, // 3
+    { kind: 'narration', text: "The Crypt Guardian kept Borin working on the Dark Lord's unfinished woodland retreat. The Forest Crypt was never just a tomb." }, // 4
+    { kind: 'narration', text: "The merchant wagon behind Millhaven travels onward to Flooded Marches. The wagon stand is your link beyond Greenwood Vale." }, // 5
+    { kind: 'narration', text: "The Dark Lord claims Greenwood as a private woodland retreat, not his capital. His seat of power remains in Dark Crown." }, // 6
+    null, // 7
+    null, // 8
+    { kind: 'narration', text: "Neri can train Companion Vitality and reset discipline training through a completed barracks. The Archive's damaged records still need care." }, // 9
+    null, // 10
+    { kind: 'narration', text: "Lantern wraiths return after dark. Clearing this patrol does not make the shore safe on future nights." }, // 11
+    null, // 12
+    null, // 13
+    null, // 14
+    null, // 15
+    { kind: 'narration', text: "The Ridge Tyrant's comforts come from Ironroot's wealth. As the Dark Lord's Master of Coin, he oversees wages and ore caravans." }, // 16
+    null, // 17
+    { kind: 'narration', text: "Ironroot's ore is processed into the regime's crowns at Stonecross. Guarded caravans carry the wealth away." }, // 18
+    null, // 19
+    { kind: 'narration', text: "Convoys, repair yards, guarded crossings: the occupation needs more than soldiers to keep its roads." }, // 20
+    { kind: 'narration', text: "Eren is free of Abyss Bastion. Its dragon preparations were built for war, not ordinary travelers." }, // 21
+    null, // 22
+    { kind: 'narration', text: "People still repair and rebuild in Ashen Frontier despite the occupation. Its guarded roads carry both daily supplies and military convoys." }, // 23
+    { kind: 'narration', text: "The civilian dragon landing behind Emberwatch offers passage toward Dark Crown. Abyss Bastion's dragons belong to the military project, not passenger travel." }, // 24
+    null, // 25
+    null, // 26
+    null, // 27
+    null, // 28
+    { kind: 'narration', text: "Dark Crown's labor quarters, levies, and guarded roads keep its fortresses supplied. The regime is more than the Dark Lord's throne." }, // 29
+    { kind: 'milestone', text: "FINAL APPROACH · Tovan and Vera are free · The Dark Lord waits beyond the fortress gate" }, // 30
   ];
   if (typeof module !== 'undefined') module.exports = lines;
   else root.PrototypeNarration = lines;
