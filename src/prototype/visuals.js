@@ -60,16 +60,11 @@
     const height = Number(entry.height);
     const logicalWidth = Number(entry.displayWidth) || width;
     const logicalHeight = Number(entry.displayHeight) || height;
-    return (
-      Number.isFinite(width) &&
-      Number.isFinite(height) &&
-      Number.isFinite(logicalWidth) &&
-      Number.isFinite(logicalHeight) &&
-      width >= Math.ceil(logicalWidth * density) &&
-      height >= Math.ceil(logicalHeight * density)
-    )
-      ? target
-      : 1;
+    if (!Number.isFinite(width) || !Number.isFinite(height)) return 1;
+    if (!Number.isFinite(logicalWidth) || !Number.isFinite(logicalHeight)) return 1;
+    if (width < Math.ceil(logicalWidth * density)) return 1;
+    if (height < Math.ceil(logicalHeight * density)) return 1;
+    return target;
   }
   function draw(ctx, e, p, region = 0, rescued = false) {
     if (e.kind === 'landmark' && e.id?.startsWith('bridge-')) return; // The full deck is drawn in world space.
