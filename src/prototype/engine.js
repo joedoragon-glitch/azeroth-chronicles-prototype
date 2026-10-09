@@ -1547,6 +1547,7 @@
                   npc.name +
                   '.',
             );
+            this.inform('Defeat ' + this.boss(npc.family).name + ' first.');
             return false;
           }
           return this.rescue(npc.family);
