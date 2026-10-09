@@ -104,10 +104,10 @@ console.log('PASS enemy attacks preserve health damage while resource effect rem
   );
   Object.assign(ash, { hp: 200, maxHp: 1000, projectileStyle: 'cinder' });
   g.zone().enemies = [ash];
+  g.zone(); // Complete authored enemy-stat normalization before measuring lifesteal.
   const beforeHero = g.hero.hp, beforeAsh = ash.hp;
   assert(g.hitParty(g.hero, 160, 0.04, ash.id));
   const taken = beforeHero - g.hero.hp;
-  console.log('ASH_SIPHON_DIAGNOSTIC', JSON.stringify({taken, ashBefore: beforeAsh, ashAfter: ash.hp, species: ash.species, style: ash.projectileStyle, ratio: R.ashFeeding.healFraction, mode: R.resourceMode.manaEnabled, effects: g.effects.filter(e => e.type === 'ashFeeding')}));
   assert(Math.abs((ash.hp - beforeAsh) - taken * 0.15) < 1e-8, 'Cinder Siphon heals full 15% of real HP damage');
   assert(ash.hp - beforeAsh > 0.01 * ash.maxHp, 'Cinder Siphon is NOT capped to 1% of max HP');
   const soldier = g.s.party.find(u => u.type === 'soldier');
@@ -139,6 +139,8 @@ console.log('PASS uncapped 15% Cinder Siphon, companions, immunity, and natural 
   // Stress a high-damage AoE so its 15% transfer demonstrably exceeds 2%.
   crypt.damage = 160;
   g.zone().enemies = [crypt];
+  g.zone(); // Settle zone stats before the controlled two-target hit.
+  crypt.hp = crypt.maxHp * 0.5;
   const soldier = g.s.party.find(u => u.type === 'soldier');
   soldier.hp = soldier.maxHp = 10000;
   Object.assign(soldier, { x: 510, y: 515, active: true });
@@ -187,6 +189,8 @@ console.log('PASS uncapped 15% supernatural boss AoE lifesteal, natural heal bou
   g.s.expeditionRank = 6;
   g.zone().props = [];
   g.zone().enemies = [darkLord];
+  g.zone(); // Avoid counting zone-stat migration as recovered boss health.
+  darkLord.hp = darkLord.maxHp * 0.5;
   Object.assign(g.hero, { x: 500, y: 500, hp: 10000, maxHp: 10000, immune: 0 });
   g.s.party = Array.from({ length: 6 }, (_, i) => {
     const u = g.unit(i % 2 ? 'archer' : 'soldier', 520 + (i % 3) * 10, 510 + Math.floor(i / 3) * 20);
