@@ -4303,9 +4303,11 @@
     awarenessRadius: 750,
     threatWindowSeconds: 6,
     cunningEnemies: ['thorn', 'warlord', 'supply-crown', 'darklord'],
-    maxReinforcements: 2,
     supportRadius: 195,
-    moveCooldownSeconds: 14,
+    presenceRadius: 540,
+    moveCooldownSeconds: 6,
+    thinkingSeconds: 0.8,
+    escapeSeconds: 5.5,
     rogueMoves,
     // Tier names are identifiers, not mitigation percentages.
     protectionTiers: ['ordinary', 'guardian', 'ringleader', 'captain', 'boss', 'trueBoss'],
