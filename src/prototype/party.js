@@ -521,9 +521,20 @@
       }
       squadContext() {
         const threats = this.squadThreats(),
+          liveBosses = this.zone().enemies.filter(
+            (e) => e.type === 'boss' && e.hp > 0 && !e.neutral && !e.returning,
+          ),
           bossEnemy =
-            threats
-              .filter((e) => e.type === 'boss')
+            liveBosses
+              .filter(
+                (e) =>
+                  threats.includes(e) ||
+                  // If a boss briefly drops aggro during its summon phase,
+                  // retain that encounter and obey a manual BOSS order.
+                  (this.s.squadEngagement === 'boss' &&
+                    dist(e, this.hero) < 720 &&
+                    threats.some((x) => x.summon && x.owner === e.id)),
+              )
               .sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0] || null;
         return { engaged: threats.length > 0, boss: !!bossEnemy, bossEnemy, threats };
       }
