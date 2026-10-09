@@ -243,6 +243,7 @@ test('F50 interrupted rogue retreat sheds its protection and cannot chain',()=>{
   ally.hp=0;c.tacticalAdvanceRogueRegroup(e,c.hero,.1);
   assert.equal(c.tacticalRogueRegroup(e),null,'dead support invalidates rogue route');
   const after=e.hp;assert(c.damage(e,100));assert.equal(after-e.hp,100,'ordinary damage restored after interrupted retreat');
-  assert.equal(c.tacticalBeginRogueRegroup(e,ally),false,'unlimited retry is prohibited');
+  ally.hp=100;
+  assert.equal(c.tacticalBeginRogueRegroup(e,ally),false,'unlimited retry is prohibited even when the ally returns');
 });
 console.log(passed+' audit regression scenarios passed.');
