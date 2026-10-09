@@ -1083,7 +1083,10 @@
         }
         ctx.restore();
       }
-      for (const effect of h.supportEffects || []) support(p, effect, 25);
+      for (const effect of h.supportEffects || []) {
+        if (effect.type === 'mana' && !Campaign.rules.resourceMode.manaEnabled) continue;
+        support(p, effect, 25);
+      }
       for (const u of game.activeLivingParty()) {
         const q = screen(u);
         if (u.immune > 0) guard(q, 24);

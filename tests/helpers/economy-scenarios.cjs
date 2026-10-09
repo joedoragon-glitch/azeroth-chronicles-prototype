@@ -55,7 +55,8 @@ module.exports = function replay(C, mode = 'normal', cls = 'paladin', succession
     }
   paid(200, () => c.trainCompanionVitality());
   paid(50, () => c.trainRangerSupport('health'));
-  paid(40, () => c.trainRangerSupport('mana'));
+  if (C.rules.resourceMode.manaEnabled) paid(40, () => c.trainRangerSupport('mana'));
+  else unpaid(() => c.trainRangerSupport('mana'));
   unpaid(() => c.trainRangerSupport('health'));
   c.hero.talentPoints = 4;
   assert(c.talent(0));

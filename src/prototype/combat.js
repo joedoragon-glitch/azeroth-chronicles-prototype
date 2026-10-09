@@ -270,6 +270,7 @@
       }
 
       drainMana(u, fraction) {
+        if (!R.resourceMode.manaEnabled) return 0;
         if (u !== this.hero || !fraction || u.mp <= 0 || this.peace) return 0;
         const amount = Math.min(u.mp, Math.max(1, Math.round(u.maxMp * fraction)));
         u.mp = Math.max(0, u.mp - amount);
@@ -324,7 +325,7 @@
         if (e.hp === 0) this.kill(e);
         return true;
       }
-      hitParty(u, amount, manaDrain = 0) {
+      hitParty(u, amount, manaDrain = 0, rangedSourceId = null) {
         if (this.peace || u.hp <= 0 || (u.immune || 0) > 0) return false;
         const armor =
           u === this.hero
@@ -332,8 +333,40 @@
             : ['soldier', 'archer'].includes(u.type)
               ? this.companionArmor(u.type)
               : 5 + this.hero.level * 0.5;
+        const oldHp = u.hp;
         u.hp = Math.max(0, u.hp - Math.max(3, amount - armor * 0.35));
-        if (u === this.hero && manaDrain > 0) this.drainMana(u, manaDrain);
+        if (R.resourceMode.manaEnabled && u === this.hero && manaDrain > 0)
+          this.drainMana(u, manaDrain);
+        // All life-steal uses actual HP lost after armor, immunity and overkill.
+        // It never adds a second damage tick, heals other enemies, or uses a
+        // percentage of the attacker's max HP as an artificial healing cap.
+        // Previous mana-drain semantics remain available in legacy MP mode.
+        if (!R.resourceMode.manaEnabled && rangedSourceId) {
+          const source = this.zone().enemies.find((e) => e.id === rangedSourceId);
+          const cinder = source?.species === 'ashbeast' && source.projectileStyle === 'cinder';
+          const spectral =
+            manaDrain > 0 &&
+            (source?.species === 'wraith' ||
+              (source?.type === 'boss' && R.vitalitySiphon.bossFamilies.includes(source.family)));
+          if (source && source.hp > 0 && source.hp < source.maxHp && (cinder || spectral)) {
+            const heal = Math.min(
+              source.maxHp - source.hp,
+              (oldHp - u.hp) * (cinder ? R.ashFeeding.healFraction : R.vitalitySiphon.healFraction),
+            );
+            if (heal > 0) {
+              source.hp += heal;
+              this.event(cinder ? 'ashFeeding' : 'lifeSiphon', {
+                source: source.id,
+                target: u === this.hero ? 'hero' : u.id,
+                amount: heal,
+                x: source.x,
+                y: source.y,
+                fromX: u.x,
+                fromY: u.y,
+              });
+            }
+          }
+        }
         this.event('hurt', { x: u.x, y: u.y, target: u === this.hero ? 'hero' : u.id });
         if (u.hp === 0) {
           u.slow = 0;
@@ -370,7 +403,7 @@
               (u) => this.distanceToSegment(u, before, p) < 22,
             );
             if (victim) {
-              if (this.hitParty(victim, p.damage, p.manaDrain || 0) && p.slow)
+              if (this.hitParty(victim, p.damage, p.manaDrain || 0, p.sourceId) && p.slow)
                 victim.slow = Math.max(victim.slow || 0, p.slow);
               this.enemyVfxProjectileImpact?.(p, {
                 x: victim.x,
@@ -460,14 +493,16 @@
                 this.line(a, u)
               ) {
                 a.hit.push(id);
-                if (this.hitParty(u, a.damage, a.manaDrain || 0)) this.enemyVfxHazardImpact?.(a, u);
+                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null))
+                  this.enemyVfxHazardImpact?.(a, u);
               }
             }
           } else if (a.tick <= 0) {
             a.tick = 1;
             for (const u of this.combatTargets())
               if (dist(u, a) < a.radius && this.line({ x: a.fromX ?? a.x, y: a.fromY ?? a.y }, u)) {
-                if (this.hitParty(u, a.damage, a.manaDrain || 0)) this.enemyVfxHazardImpact?.(a, u);
+                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null))
+                  this.enemyVfxHazardImpact?.(a, u);
                 if (a.slow) u.slow = 3;
               }
           }

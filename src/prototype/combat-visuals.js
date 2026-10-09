@@ -182,8 +182,20 @@
         shapes = warningShapes(a, game.attackPatches(a));
       // Rogue warnings need an identity distinct from ordinary boss attacks:
       // cool outlines for basic disruption, brighter double-width for signature.
-      ctx.strokeStyle = a.rogueSignature ? '#9cf1f0' : a.rogueMove ? '#8ecde6' : '#ffe09a';
-      ctx.fillStyle = a.rogueSignature ? '#369ab33e' : a.rogueMove ? '#4b95c132' : '#dc644c30';
+      ctx.strokeStyle = a.bossHeal
+        ? '#a9e7b0'
+        : a.rogueSignature
+          ? '#9cf1f0'
+          : a.rogueMove
+            ? '#8ecde6'
+            : '#ffe09a';
+      ctx.fillStyle = a.bossHeal
+        ? '#4c9f6730'
+        : a.rogueSignature
+          ? '#369ab33e'
+          : a.rogueMove
+            ? '#4b95c132'
+            : '#dc644c30';
       ctx.lineWidth = a.rogueSignature ? 3.3 : 2.5;
       ctx.setLineDash(cue ? (a.rogueSignature ? [10, 4] : [8, 5]) : []);
       for (const points of shapes) {

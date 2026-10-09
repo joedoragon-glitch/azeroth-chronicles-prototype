@@ -1159,7 +1159,7 @@
       this.clearTonic();
       this.hero.supportEffects = [];
       this.hero.hp = this.hero.maxHp;
-      this.hero.mp = this.hero.maxMp;
+      if (R.resourceMode.manaEnabled) this.hero.mp = this.hero.maxMp;
       for (const u of this.activeParty())
         if (u.hp > 0) {
           u.hp = u.maxHp;
@@ -1261,7 +1261,9 @@
         return true;
       }
       this.say(
-        'Combat potions are no longer used. Rangers provide Heal and Mana Recovery in the field.',
+        R.resourceMode.manaEnabled
+          ? 'Combat potions are no longer used. Rangers provide Heal and Mana Recovery in the field.'
+          : 'Combat potions are no longer used. Rangers provide Heal in the field.',
       );
       return false;
     }
@@ -1660,7 +1662,8 @@
             return false;
           this.s.fountains[this.s.zone] = true;
           this.hero.hp = Math.min(this.hero.maxHp, this.hero.hp + 0.6 * this.hero.maxHp);
-          this.hero.mp = Math.min(this.hero.maxMp, this.hero.mp + 0.6 * this.hero.maxMp);
+          if (R.resourceMode.manaEnabled)
+            this.hero.mp = Math.min(this.hero.maxMp, this.hero.mp + 0.6 * this.hero.maxMp);
           this.activeParty().forEach((u) => {
             if (u.hp > 0) u.hp = Math.min(u.maxHp, u.hp + 0.6 * u.maxHp);
           });
@@ -1840,7 +1843,7 @@
         return;
       }
       this.hero.hp = this.hero.maxHp;
-      this.hero.mp = this.hero.maxMp;
+      if (R.resourceMode.manaEnabled) this.hero.mp = this.hero.maxMp;
       this.hero.tonic = false;
       this.hero.immune = 0;
       this.hero.slow = 0;
@@ -2363,7 +2366,7 @@
         return;
       this.updateRangerSupport(dt);
       this.autoRangerSupport();
-      h.mp = Math.min(h.maxMp, h.mp + this.manaRegenRate() * dt);
+      if (R.resourceMode.manaEnabled) h.mp = Math.min(h.maxMp, h.mp + this.manaRegenRate() * dt);
       this.updateNight();
       this.updateEscort(dt);
       this.checkClear();
@@ -3608,6 +3611,7 @@
         e.cd = Math.max(0, e.cd - dt);
         e.specialCd = Math.max(0, (e.specialCd || 0) - dt);
         e.summonCd = Math.max(0, (e.summonCd || 0) - dt);
+        e.healCd = Math.max(0, (e.healCd || 0) - dt);
         e.pursuitBurst = Math.max(0, (e.pursuitBurst || 0) - dt);
         e.open = Math.max(0, (e.open || 0) - dt);
         e.captainGuard = Math.max(0, (e.captainGuard || 0) - dt);
@@ -3784,6 +3788,14 @@
           visible &&
           d < (this.captainProfile(e)?.specialRange || 420) &&
           this.startCaptainAttack(e, target)
+        ) {
+          opportunity = true;
+        } else if (
+          e.type === 'boss' &&
+          e.cd <= 0 &&
+          visible &&
+          d < R.bossCadence.specialRange &&
+          this.startBossRecovery(e)
         ) {
           opportunity = true;
         } else if (

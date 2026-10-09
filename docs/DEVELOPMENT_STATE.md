@@ -193,3 +193,7 @@ Automatic TRUE/captain births retain their own authored summon/phase identities 
 ## Keeper and feedback continuation · v0.8.118
 
 The interrupted PR #185 is reconciled with the current audio/VFX release. Captive Keeper, optional live-rule Archive reference, evidence-gated reveal, TRUE escape/recapture, practical Controls, short status, truthful equipment confirmations and milestone notices are completed. Superseded 30-quest prose is excluded; selective narration remains held in draft #184. See QUEST_ARCHIVE_CONTINUATION.md for states and verification.
+
+## Cooldown-only functional candidate · v0.8.119
+
+PR #183 integrates dormant MP, five-rank Cooldown Training and approved HP siphons/independent recovery with v0.8.118 main. Provisional cooldown/heal numbers are preserved. See COOLDOWN_ONLY_COMBAT_MIGRATION.md for preservation and regression evidence. Release status requires the exact-head completed CI/deployment gate; balance measurement follows functional release.

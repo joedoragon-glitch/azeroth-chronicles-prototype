@@ -33,6 +33,9 @@
   // TRUE shares the base ID and optionally overrides stages in the manifest.
   function describe(enemy, attack) {
     if (!plain(enemy) || !plain(attack)) return null;
+    // Recovery uses its green, non-damaging telegraph and normal heal feedback.
+    // Do not route it through a damaging circle's art/audio identity.
+    if (attack.bossHeal) return null;
     const tier = tierOf(enemy),
       role = enemy.ranged ? 'ranged' : 'melee',
       family = safePart(enemy.family),

@@ -286,6 +286,7 @@
         u.supportEffects.push({ type, remaining: amount, seconds: R.rangerSupport.duration });
       }
       rangerSupport(type, manual = true, targetOverride = null) {
+        if (type === 'mana' && !R.resourceMode.manaEnabled) return false;
         if (
           !['health', 'mana'].includes(type) ||
           this.s.challenge.pending ||
@@ -385,7 +386,11 @@
           if (!Array.isArray(u.supportEffects)) u.supportEffects = [];
           const next = [];
           for (const e of u.supportEffects) {
-            if (u.hp <= 0) continue;
+            if (e.type === 'mana' && !R.resourceMode.manaEnabled) {
+              next.push(e); // Dormant legacy state remains available for restoration.
+              continue;
+            }
+            if (u.hp <= 0 || e.seconds <= 0 || e.remaining <= 0) continue;
             const field = e.type === 'health' ? 'hp' : 'mp',
               max = e.type === 'health' ? 'maxHp' : 'maxMp';
             if (field === 'mp' && u !== this.hero) continue;
@@ -420,7 +425,12 @@
             : candidates.sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
           if (!this.rangerSupport('health', false, target)) break;
         }
-        if (h.mp < h.maxMp && h.mp <= h.maxMp * manaThreshold && !this.hasSupportEffect(h, 'mana'))
+        if (
+          R.resourceMode.manaEnabled &&
+          h.mp < h.maxMp &&
+          h.mp <= h.maxMp * manaThreshold &&
+          !this.hasSupportEffect(h, 'mana')
+        )
           this.rangerSupport('mana', false);
       }
       recruit(type) {
