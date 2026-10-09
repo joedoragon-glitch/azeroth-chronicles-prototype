@@ -42,7 +42,7 @@ function prepare(c,s,target,style) {
  c.hero.skills=unlocked(s);
  c.hero.hp=c.hero.maxHp;
  c.hero.mp=c.hero.maxMp;
- c.s.expeditionRank=Math.min(6,Math.max(1,s.party-1));
+ c.s.expeditionRank=({2:1,3:2,4:4,5:5,6:6})[s.party];
  c.s.companionCombatTraining=s.level>=8?2:1;
  c.s.expeditionSkills={sharedTraining:Math.min(3,Math.floor(s.level/5)),sharedStrength:Math.min(2,Math.floor(s.level/7))};
  c.syncCompanionLevelStats();
@@ -70,7 +70,7 @@ function run(kind,id,heroClass='paladin',style='tactical',late=false) {
  if (kind==='boss') {
    const def=C.data.bosses.find(b=>b.id===id);
    if(!def)throw Error('Missing boss '+id);
-   if(late){c.s.phase='awakened';c.s.awakeningLevel=18;}
+   if(late){c.s.phase='awakening';c.s.awakeningLevel=18;}
    c.enter(def.kind==='dungeon'?def.id:def.region);
    const existing=c.zone().enemies.find(x=>x.type==='boss'&&x.family===id&&x.form==='normal');
    if(!existing)throw Error('Missing real boss spawn '+id);
@@ -103,7 +103,7 @@ function run(kind,id,heroClass='paladin',style='tactical',late=false) {
      }
    }
    const a=e.telegraph;
-   if(style==='tactical'&&a&&a.kind!=='summon'&&a!==previousWarning){
+   if((style==='tactical'||style==='true')&&a&&a.kind!=='summon'&&a!==previousWarning){
      previousWarning=a;
      try {
        const theta=Math.atan2(c.hero.y-e.y,c.hero.x-e.x);
