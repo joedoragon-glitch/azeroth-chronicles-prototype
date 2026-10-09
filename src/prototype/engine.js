@@ -1841,7 +1841,7 @@
       if (e.deathPaid) return;
       this.tacticalClearThreat(e);
       this.tacticalClearBurst(e);
-      this.tacticalRogueRegroup(e);
+      this.tacticalClearRogueRegroup(e);
       this._tacticalScatterLeash?.delete(e.id);
       this._tacticalRepositions?.delete(e.id);
       const victoryLevel = this.hero.level;
