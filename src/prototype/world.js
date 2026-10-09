@@ -622,11 +622,12 @@
         }
       }
       regionalTravelSafety(z) {
+        const safetyVersion = originalDepartureRegion(z.id) ? 2 : 1;
         if (
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
           this.sideDungeon(z.id) ||
-          z.travelSafetyVersion === (originalDepartureRegion(z.id) ? 2 : 1)
+          z.travelSafetyVersion === safetyVersion
         )
           return;
         const landingIds =
@@ -667,7 +668,7 @@
               break;
             }
           }
-          z.travelSafetyVersion = originalDepartureRegion(z.id) ? 2 : 1;
+          z.travelSafetyVersion = safetyVersion;
         } finally {
           this.s.zone = previousZone;
         }
