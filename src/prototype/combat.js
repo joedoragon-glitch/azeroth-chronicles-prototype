@@ -73,9 +73,9 @@
           this.hero.hp > 0 &&
           dist(this.hero, e) <= 520 &&
           this.line(this.hero, e) &&
-          (this.s.heroTarget === e.id ||
-            this.basicComboTargetId === e.id ||
-            recent.some((entry) => entry.source === 'hero' && now - entry.lastHit <= 1.5));
+          ((this.hero.order?.type === 'attack' && this.hero.order.id === e.id) ||
+            (this.basicComboTargetId === e.id && now - this.basicComboAt <= 2.2) ||
+            recent.some((entry) => entry.source === 'hero' && now - entry.lastHit <= 2.2));
         let count = attackingHero ? 1 : 0;
         for (const u of this.activeLivingParty()) {
           if (u.order || this.s.recallActive || dist(u, e) > 640) continue;
@@ -116,11 +116,7 @@
               ally.hp > 0 &&
               !ally.neutral &&
               !ally.returning &&
-              !ally.summon &&
-              ally.type !== 'boss' &&
-              !ally.fieldCaptain &&
-              !ally.captain &&
-              !ally.roomCaptain &&
+              !['travel', 'escape'].includes(this.tacticalRogueRegroup(ally)?.phase) &&
               dist(ally, e) <= radius,
           )
           .sort((a, b) => dist(a, e) - dist(b, e) || a.id.localeCompare(b.id));
@@ -148,11 +144,48 @@
         );
       }
 
+      tacticalPresentOpponents(e) {
+        const radius = R.tacticalFoundation.presenceRadius;
+        const party = this.activeLivingParty().filter(
+          (u) => !u.order && !this.s.recallActive && dist(u, e) <= radius,
+        );
+        const heroHere = this.hero.hp > 0 && dist(this.hero, e) <= radius;
+        return party.length + (heroHere ? 1 : 0);
+      }
+
+      tacticalLocalSupport(e) {
+        return this.zone().enemies.filter(
+          (ally) =>
+            ally.hp > 0 &&
+            !ally.neutral &&
+            !ally.returning &&
+            !['travel', 'escape'].includes(this.tacticalRogueRegroup(ally)?.phase) &&
+            dist(ally, e) <= R.tacticalFoundation.supportRadius + 35,
+        ).length;
+      }
+
+      tacticalRogueWounded(e) {
+        // Bosses and captains retain their own phase/summon mechanics. Ordinary,
+        // guardian and ringleader monsters can seek support when badly hurt.
+        return !!(
+          e &&
+          e.hp > 0 &&
+          e.maxHp > 0 &&
+          e.type !== 'boss' &&
+          !e.captain &&
+          !e.roomCaptain &&
+          (e.type === 'mob' || e.guard || e.form === 'ringleader') &&
+          e.hp / e.maxHp < R.tacticalFoundation.woundedThreshold
+        );
+      }
+
       tacticalRogueEligibility(e, activeTargetCount = 0) {
         const config = R.tacticalFoundation;
-        if (!e || !this.hero || this.hero.hp <= 0 || e.hp <= 0) return false;
+        if (!e || !this.hero || e.hp <= 0 || this.peace) return false;
+        if (this.tacticalPresentOpponents(e) === 0 && activeTargetCount === 0) return false;
         const difference = e.level - this.hero.level;
         if (difference >= config.outlevelProtection) return false;
+        if (this.tacticalRogueWounded(e)) return true;
         if (difference <= -config.heroLevelDisadvantageMinimum) return true;
 
         const pressured = activeTargetCount >= config.simultaneousPressureSources;
@@ -216,7 +249,7 @@
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;
         // All hero/companion damage sources use this same resolver. This
         // reduction is exclusive to active travel; it ends on arrival or abort.
-        if (this.tacticalRogueRegroup(e)?.phase === 'travel')
+        if (['thinking', 'travel', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase))
           amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
         const actualDamage = Math.min(e.hp, amount);
         e.hp = Math.max(0, e.hp - amount);
