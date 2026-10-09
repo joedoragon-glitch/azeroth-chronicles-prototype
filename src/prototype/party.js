@@ -549,9 +549,11 @@
         return context;
       }
       toggleSquadDoctrine() {
-        if ((this.s.expeditionRank || 1) < 3) return false;
         const context = this.syncSquadDoctrine();
-        if (!context.engaged) return false;
+        // Boss orders are available from the first boss. Expedition Rank 3
+        // still unlocks manual doctrine choices in ordinary field battles.
+        if (!context.engaged || (!context.boss && (this.s.expeditionRank || 1) < 3))
+          return false;
         this.s.squadDoctrine = this.s.squadDoctrine === 'focus' ? 'guard' : 'focus';
         // The button is a direct player command. Automatic paladin protection
         // may override only the untouched default, never an explicit BOSS order.
