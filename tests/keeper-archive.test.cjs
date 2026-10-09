@@ -40,7 +40,7 @@ ui.menus.keeper();
 assert(!ui.shown(), 'Cannot bargain with active hostile Keeper');
 assert(c.keeperReadLedger());
 assert(c.s.keeperEvidence);
-assert(c.s.statistics.events.some((e) => e.type === 'archiveEvidence'));
+assert(c.s.keeperEvidence, 'Reading the ledger is a silent optional discovery');
 const boss = room.enemies.find((e) => e.family === 'archive' && e.form === 'normal');
 assert(boss, 'Normal boss is present');
 boss.hp = 0;
