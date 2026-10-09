@@ -294,8 +294,39 @@
         n.kind === 'bundle' && !!this.s.discovered[this.definition().id + ':bundle-' + n.index]
       );
     }
+    keeperAvailable() {
+      if (!this.s.normal.archive) return false;
+      if (this.s.pending.archive?.active) return false;
+      const room = this.s.zones.archive;
+      return !room?.enemies.some(
+        (e) => e.family === 'archive' && e.form === 'true' && e.hp > 0,
+      );
+    }
+    keeperPactReady() {
+      return this.keeperAvailable() && !!this.s.rescued.archive;
+    }
+    promiseKeeper() {
+      if (!this.keeperPactReady() || this.s.keeperPact) return false;
+      this.s.keeperPact = true;
+      this.event('keeperPact');
+      this.say('The Keeper takes your word. His shelves are yours to consult.');
+      return true;
+    }
+    keeperReadLedger() {
+      if (this.s.zone !== 'archive') return false;
+      if (!this.s.keeperEvidence) {
+        this.s.keeperEvidence = true;
+        this.event('archiveEvidence');
+      }
+      return true;
+    }
     visibleNPCs() {
-      return this.zone().npcs.filter((n) => !n.internalSite && !this.bundleCollected(n));
+      return this.zone().npcs.filter(
+        (n) =>
+          !n.internalSite &&
+          !this.bundleCollected(n) &&
+          (n.kind !== 'keeper' || this.keeperAvailable()),
+      );
     }
     siteDescription(n) {
       const z = this.zone(),
