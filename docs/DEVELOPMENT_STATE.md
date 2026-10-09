@@ -212,6 +212,9 @@ Recovered the strictly presentation-only feature-scale and original-export prepa
 
 This is the **initial proportional presentation pass**, not a verified completed spatial-crowding audit, a whole-world art makeover, or completion of issue #160. See PROPORTION_IMPLEMENTATION_CHECKPOINT.md, WORLD_PROPORTION_AND_DENSITY_GUARDRAILS.md, and original art-production checkpoint in PR #145. Publish only after full CI and exact live Pages verification.
 
+## Original-master sprite and road pilots · prepared v0.8.127
+
+The prior v0.8.115 recovery work from #145 is reconciled with proportion-only v0.8.122 main as a separate art-production candidate. Restores two professionally reviewed **576px** Paladin/Goblin body revisions, two-frame 800ms idles for each (four source frames), two regional road materials (Vale and Highlands), and all retained original-generator PNGs, candidate journals, device/day/night reviews, historical leases and rollback. The other 31 active body keys and five existing ground materials remain unchanged. Sources and publication records originate from immutable blobs in source #145 without regenerating artwork. This candidate is **prepared but not released** until full exact-head CI, Pages deployment, native play checks and PWA offline resource verification. Production count after successful release would be 33 active body keys / 7 materials; the rest of the catalog is still open. See SPRITE_PHASE3_PILOT_RELEASE.md, issue #160 and recovery branch.
 
 ## Bounded ground projection · v0.8.124
 

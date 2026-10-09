@@ -1,0 +1,8 @@
+{
+  "tool": "built-in image_gen",
+  "transparentBackground": true,
+  "reference": "tools/sprites/batches/2026-10-08-goblin-face/image-tool-original.png",
+  "resultFile": "exec-a210c6a5-570f-4a36-811b-78f28cedbdf2.png",
+  "requestId": "not exposed separately; original returned file retained",
+  "prompt": "Use case: identity-preserve. Asset type: second idle animation frame of enemy:goblin for Azeroth Chronicles. Edit target is the attached accepted original goblin sprite. Keep the full transparent square canvas, exact character scale, placement, feet grounding, organic ears, equipment, colors, readable black eyes and playful half-smile identical. Make only a very subtle breathing idle pose: shoulder and sword hand settle by approximately one small sprite pixel, torso slightly relaxed, head/ears stay same silhouette. Keep both boots fixed. Preserve small pixel-art styling and simple readable face at 57x74 CSS pixels. No extra details, no background, no text, no shadows baked into sprite. Entire existing transparent canvas remains; do not crop or recenter or enlarge the body."
+}

@@ -1,0 +1,8 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Use case: stylized-concept. Asset type: seamless opaque terrain material tile for Azeroth Chronicles, candidate T006 terrain:road:vale. Input image is palette and current material reference only. Generate one square flat top-down packed woodland soil texture. Match muted warm brown colors #564834 #8e7758 #9c8664 #6f604c, low contrast dense fine earth grain with a very few tiny stones. Seamlessly tileable on both axes, uniform illumination, equal visual density edge to edge. Restrained readable texture at 256x256 export, subtle enough behind small characters. No road edges, no ruts, no seams, no large stones, no grass, no objects, no isometric view, no vignette, no perspective, no text or watermark. Fully opaque canvas.",
+  "transparentBackground": false,
+  "reference": "tools/sprites/batches/2026-10-09-road-materials/T006/reference.png",
+  "requestId": "not exposed separately; original returned file retained",
+  "resultFile": "exec-33bf38e0-31b0-4097-badc-5f2e6eddd13c.png"
+}

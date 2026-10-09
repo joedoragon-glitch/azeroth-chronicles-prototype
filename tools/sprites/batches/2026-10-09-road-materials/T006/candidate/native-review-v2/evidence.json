@@ -1,0 +1,216 @@
+{
+  "key": "terrain:road:vale",
+  "recordHash": "a3c2b144858d92632cf743f75c775c9ea10037bf6ee890970cda6e8d89f29964",
+  "sourceHash": "cf00b49877b545d3d36ac97aec12797021005c96743a48a5afa3c7886ff64b37",
+  "outputHash": "e655205174d24f1f359916071fd764584953e3acaba4451f9d158e304fc87134",
+  "scenes": [
+    {
+      "name": "1280x800-day",
+      "mode": "desktop",
+      "cameraZoom": 1.5,
+      "ratio": 1.7116329922036442,
+      "pixelWidth": 2191,
+      "pixelHeight": 1369,
+      "crop": {
+        "left": 578,
+        "top": 407,
+        "width": 548,
+        "height": 394
+      },
+      "baselineHash": "431d1dad8e2fb832600a2fc3ac427009e69784ab47928286fc29c72a05c7d90d",
+      "candidateHash": "69b30256da535ff8a9fef645e97816ebf7a2e9f2c9d3e463d6cff55a833d92e2"
+    },
+    {
+      "name": "1280x800-night",
+      "mode": "desktop",
+      "cameraZoom": 1.5,
+      "ratio": 1.7116329922036442,
+      "pixelWidth": 2191,
+      "pixelHeight": 1369,
+      "crop": {
+        "left": 578,
+        "top": 407,
+        "width": 548,
+        "height": 394
+      },
+      "baselineHash": "64381cd3144ef96d5841522edef473ece6518e11f395033cfa5bc6d61354eccd",
+      "candidateHash": "1abe5acc043ad5652ceb0d4ad1093fb19ed472e8a17ff7df26c453d8d3a946ef"
+    },
+    {
+      "name": "1024x700-day",
+      "mode": "desktop",
+      "cameraZoom": 1.5,
+      "ratio": 2,
+      "pixelWidth": 2048,
+      "pixelHeight": 1400,
+      "crop": {
+        "left": 420,
+        "top": 376,
+        "width": 640,
+        "height": 460
+      },
+      "baselineHash": "bf2a736ae3038ad96b89a287e387a85e943901130da9acbab084a08f5eb70f97",
+      "candidateHash": "defb4acec8a6d323a071ca61ae3bef45f0d3ef7ca9d3fd980e2efb9e4b45eba5"
+    },
+    {
+      "name": "1024x700-night",
+      "mode": "desktop",
+      "cameraZoom": 1.5,
+      "ratio": 2,
+      "pixelWidth": 2048,
+      "pixelHeight": 1400,
+      "crop": {
+        "left": 420,
+        "top": 376,
+        "width": 640,
+        "height": 460
+      },
+      "baselineHash": "be78ba5fba1045f47d541c956ffdfc0ccd4013f1fa67b99c81c760e633948c78",
+      "candidateHash": "3626bc684c2f2c4ed8c8b7b5b2e96f7d5aa51c5c04439d0a43e1b89b05cc144a"
+    },
+    {
+      "name": "375x800-day",
+      "mode": "phone",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 563,
+      "pixelHeight": 1200,
+      "crop": {
+        "left": 41,
+        "top": 332,
+        "width": 480,
+        "height": 345
+      },
+      "baselineHash": "8ee950f40da984af0ecf8bb9d55fdc52a9abf6780abf9851a33033e6b5072142",
+      "candidateHash": "9d910dd3b9e1d9a500bf000aeb7d45b4c497d83c1ff729a995213f31e3a1df81"
+    },
+    {
+      "name": "375x800-night",
+      "mode": "phone",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 563,
+      "pixelHeight": 1200,
+      "crop": {
+        "left": 41,
+        "top": 332,
+        "width": 480,
+        "height": 345
+      },
+      "baselineHash": "862b47a99b207e1c099e7fdf4893755837982584937791d3afc1df9ec26e26d3",
+      "candidateHash": "4cb7560585d805b71f2ed21692d056a78404c09370022e1e79702e5ac4bafcd1"
+    },
+    {
+      "name": "393x852-day",
+      "mode": "phone",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 590,
+      "pixelHeight": 1278,
+      "crop": {
+        "left": 55,
+        "top": 364,
+        "width": 480,
+        "height": 345
+      },
+      "baselineHash": "4953e5a229bda65328e83cb4970fa7fc2b531e31196eadcf2e12d0fa7c9b7987",
+      "candidateHash": "2dbc3c43d9c0945c50d7e304ff3eb9f136056d5f2508e5b7e053a5a45f0e6a19"
+    },
+    {
+      "name": "393x852-night",
+      "mode": "phone",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 590,
+      "pixelHeight": 1278,
+      "crop": {
+        "left": 55,
+        "top": 364,
+        "width": 480,
+        "height": 345
+      },
+      "baselineHash": "0921c9fe34cde7a73a6dd274e09c957466f64c66742866f528a654feec37a7ad",
+      "candidateHash": "f46cd1c8f42f1088da82fc525403694b4e2b0954ed8524d5d7c192ad505d5301"
+    },
+    {
+      "name": "800x375-day",
+      "mode": "phone",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 1200,
+      "pixelHeight": 563,
+      "crop": {
+        "left": 360,
+        "top": 64,
+        "width": 480,
+        "height": 345
+      },
+      "baselineHash": "6aa3ef07b377f2cc6bcf3fd33b6ec95ffbe40becafd81092cfde86011708d44f",
+      "candidateHash": "53507244983f811baa8d35e523b3950e1665c9a777d4836104a18b6fc997ef46"
+    },
+    {
+      "name": "800x375-night",
+      "mode": "phone",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 1200,
+      "pixelHeight": 563,
+      "crop": {
+        "left": 360,
+        "top": 64,
+        "width": 480,
+        "height": 345
+      },
+      "baselineHash": "e84b5008e34473ee0cd364f710890d168ae6e1f21598639a0fc863d0f251132b",
+      "candidateHash": "3654f796ac87b55a6776ddfdb66256ec6ee953404244a4913f29b6f175c3f472"
+    },
+    {
+      "name": "844x390-day",
+      "mode": "phone",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 1266,
+      "pixelHeight": 585,
+      "crop": {
+        "left": 393,
+        "top": 73,
+        "width": 480,
+        "height": 345
+      },
+      "baselineHash": "b7bc037c47f96c80892c990492d4d099b0c6905972e3bd1a401535e46db4056a",
+      "candidateHash": "3d9550f968c9eaad4cde671b2604f9d501f199afbd14d92387a43934af0114fd"
+    },
+    {
+      "name": "844x390-night",
+      "mode": "phone",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 1266,
+      "pixelHeight": 585,
+      "crop": {
+        "left": 393,
+        "top": 73,
+        "width": 480,
+        "height": 345
+      },
+      "baselineHash": "5937b046737c2c870eabd968d9f40ec20036287c55aabea591e8c4be8824541a",
+      "candidateHash": "3066c52d1530026491b4993c131f67eb30b0a4ee85f349bb3ad3870913667371"
+    }
+  ],
+  "status": {
+    "definitions": 1,
+    "decodedBytes": 262144,
+    "reservedBytes": 0,
+    "decodedBudget": 2097152,
+    "decoded": 1,
+    "queued": 0,
+    "decoding": 0,
+    "failures": 0,
+    "peakDecodedBytes": 262144,
+    "peakConcurrent": 1,
+    "evictions": 0,
+    "staleLoads": 0,
+    "draws": 55
+  },
+  "review": "pending engineer inspection"
+}

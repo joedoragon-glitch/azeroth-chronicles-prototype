@@ -3,11 +3,11 @@
   "artDirection": "High-fidelity sprite translation of canonical procedural visuals — preserve design, do not redesign",
   "sprites": {
     "hero:paladin": {
-      "src": "./assets/sprites/hero-paladin-d784954f7459c31582209b631b5c8384335cbfe0ee8c221b0c5f1db0df002b56.png",
-      "width": 192,
-      "height": 192,
-      "hash": "d784954f7459c31582209b631b5c8384335cbfe0ee8c221b0c5f1db0df002b56",
-      "revision": "b162917a153d83f0bea42abb24a86b40c35f98608bc493cb0b7a27c1a58f9d25",
+      "src": "./assets/sprites/hero-paladin-107657c65e250199632eb716d2d2bcd534670864705438a49f5682d6f0e0c787.png",
+      "width": 576,
+      "height": 576,
+      "hash": "107657c65e250199632eb716d2d2bcd534670864705438a49f5682d6f0e0c787",
+      "revision": "c7b913d308a7d340fe3d307afd74b1071299096e017d629854c4c5da38fc6ef5",
       "displayWidth": 192,
       "displayHeight": 192,
       "anchorX": 0.5,
@@ -18,36 +18,36 @@
           "loop": true,
           "frames": [
             {
-              "src": "./assets/sprites/atlas-2d981fb37361e0e4d4bab38b7a291fbaec3d2b8d5ec66cf5b69a29b08d76df36.png",
-              "width": 392,
-              "height": 196,
-              "hash": "2d981fb37361e0e4d4bab38b7a291fbaec3d2b8d5ec66cf5b69a29b08d76df36",
+              "src": "./assets/sprites/atlas-e99a65fdd8adf3ba3f89a156994f20da4082f405e7b0c97703dba28ccb65176f.png",
+              "width": 580,
+              "height": 580,
+              "hash": "e99a65fdd8adf3ba3f89a156994f20da4082f405e7b0c97703dba28ccb65176f",
               "rect": [
                 2,
                 2,
-                192,
-                192
+                576,
+                576
               ],
               "pivot": [
-                96,
-                144
+                288,
+                432
               ],
               "durationMs": 800
             },
             {
-              "src": "./assets/sprites/atlas-2d981fb37361e0e4d4bab38b7a291fbaec3d2b8d5ec66cf5b69a29b08d76df36.png",
-              "width": 392,
-              "height": 196,
-              "hash": "2d981fb37361e0e4d4bab38b7a291fbaec3d2b8d5ec66cf5b69a29b08d76df36",
+              "src": "./assets/sprites/atlas-d9d7a7656246ef909c89dc24f73fdd304f42a6c73ae7a086c55157b8836f4084.png",
+              "width": 580,
+              "height": 580,
+              "hash": "d9d7a7656246ef909c89dc24f73fdd304f42a6c73ae7a086c55157b8836f4084",
               "rect": [
-                198,
                 2,
-                192,
-                192
+                2,
+                576,
+                576
               ],
               "pivot": [
-                96,
-                144
+                288,
+                432
               ],
               "durationMs": 800
             }
@@ -56,16 +56,57 @@
       }
     },
     "enemy:goblin": {
-      "src": "./assets/sprites/enemy-goblin-a766feaa2f0b00ddc8a4da98745e66c2e8b76e9605c32e2d17e30d365da05ade.png",
-      "width": 192,
-      "height": 192,
-      "hash": "a766feaa2f0b00ddc8a4da98745e66c2e8b76e9605c32e2d17e30d365da05ade",
-      "revision": "06d5419a812e8c477e77be6f81c4b79e297b7592bc32b0282d0d39ff63590377",
+      "src": "./assets/sprites/enemy-goblin-977965160458746599c43cfcc84d7c2b5ba8d6cd4ada9be645fde7f017fc7fc5.png",
+      "width": 576,
+      "height": 576,
+      "hash": "977965160458746599c43cfcc84d7c2b5ba8d6cd4ada9be645fde7f017fc7fc5",
+      "revision": "f1ac50ba48e54eb7b72ef6168b6b7e961ba081f50992a315a999cb2dab70e4aa",
       "displayWidth": 192,
       "displayHeight": 192,
       "anchorX": 0.5,
       "anchorY": 0.75,
-      "labelHeight": 54
+      "labelHeight": 54,
+      "clips": {
+        "idle": {
+          "loop": true,
+          "frames": [
+            {
+              "src": "./assets/sprites/atlas-bc303733e6a11dc9b25132d9e8e56d7d86f8ef0d3da6f8d89c92ece25ba3028b.png",
+              "width": 580,
+              "height": 580,
+              "hash": "bc303733e6a11dc9b25132d9e8e56d7d86f8ef0d3da6f8d89c92ece25ba3028b",
+              "rect": [
+                2,
+                2,
+                576,
+                576
+              ],
+              "pivot": [
+                288,
+                432
+              ],
+              "durationMs": 800
+            },
+            {
+              "src": "./assets/sprites/atlas-8abcf369d3eab6e3d7d62541e666c1f239ed8188bf84110e7af48422fe731bbb.png",
+              "width": 580,
+              "height": 580,
+              "hash": "8abcf369d3eab6e3d7d62541e666c1f239ed8188bf84110e7af48422fe731bbb",
+              "rect": [
+                2,
+                2,
+                576,
+                576
+              ],
+              "pivot": [
+                288,
+                432
+              ],
+              "durationMs": 800
+            }
+          ]
+        }
+      }
     },
     "prop:vale-cottage:vale": {
       "src": "./assets/sprites/prop-vale-cottage-vale-d94098c0186d31ce1b16815a3092957b5e428e35117729a9f2ffd9d8ec79ff3a.png",

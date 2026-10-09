@@ -2,6 +2,8 @@
 
 Baseline: main `05e069f2`, v0.8.126. The released implementation comes from PR #185; closed draft #172 must not be merged again.
 
+Integration: main advanced to `a996688e` (v0.8.127 actor idles and roads) while candidate CI ran. Preserve that complete release, including its added animation gate, manifests and immutable artwork; regenerate the v0.8.128 worker from the combined asset inventory. Only package/build/cache version lines conflict; no Archive or gameplay code conflicts.
+
 ## Confirmed flow
 
 Normal defeat makes the captive visible only while no living Keeper or active TRUE encounter exists. Neri must be rescued before the promise is offered; the promise unlocks optional counsel. The ledger is a separate, optional discovery: defeat, rescue and cooperation do not award its knowledge. Reading it reveals the capture proposal once, with no XP or crown payment. Reading and cooperation persist independently.
