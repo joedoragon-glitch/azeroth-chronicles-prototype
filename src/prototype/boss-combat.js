@@ -217,15 +217,8 @@
             if (roll <= 0 && weights[i] > 0) return i;
           }
         }
-        const low = e.hp <= e.maxHp * 0.5;
-        let fallback = plans.findIndex(
-          (p, i) =>
-            i !== e.lastAttackIndex &&
-            p.kind !== 'summon' &&
-            !(e.family === 'darklord' && i === 3 && !low),
-        );
-        if (fallback < 0) fallback = plans.findIndex((p, i) => i !== e.lastAttackIndex);
-        return Math.max(0, fallback);
+        // No usable special at this distance: pursue rather than waste a telegraph.
+        return -1;
       }
       bossAttackTarget(e, fallback, index) {
         const behavior = R.bossBehavior[e.family] || {};
@@ -359,8 +352,9 @@
         const selected = Number.isInteger(indexOverride)
             ? Math.max(0, Math.min(plans.length - 1, indexOverride))
             : this.chooseBossAttack(e, target),
-          actualTarget = this.bossAttackTarget(e, target, selected),
-          built = this.buildBossAttack(e, selected, actualTarget, true);
+          actualTarget = selected < 0 ? null : this.bossAttackTarget(e, target, selected);
+        if (selected < 0) return false;
+        const built = this.buildBossAttack(e, selected, actualTarget, true);
         e.attackIndex = (e.attackIndex || 0) + 1;
         e.lastAttackIndex = selected;
         e.sequence = [...built.sequence, ...this.bossComboSequence(e, selected, actualTarget)];
