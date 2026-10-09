@@ -131,18 +131,27 @@ body[data-experience='phone'] #skills .potion-button {
   min-height: 48px;
   font-size: 11px;
 }
-body[data-experience='phone'] #recall-button {
+body[data-experience='phone'] #recall-button,
+body[data-experience='phone'] #target-button {
   position: fixed;
-  left: max(8px, env(safe-area-inset-left));
   bottom: calc(124px + env(safe-area-inset-bottom));
-  width: 104px;
   min-height: 44px;
   margin: 0;
+  padding: 6px 4px;
   font-size: 11px;
   text-align: center;
   z-index: 6;
 }
-body[data-experience='phone'] #recall-button small {
+body[data-experience='phone'] #recall-button {
+  left: max(8px, env(safe-area-inset-left));
+  width: 90px;
+}
+body[data-experience='phone'] #target-button {
+  left: calc(max(8px, env(safe-area-inset-left)) + 98px);
+  width: 76px;
+}
+body[data-experience='phone'] #recall-button small,
+body[data-experience='phone'] #target-button small {
   display: none;
 }
 body[data-experience='phone'] #squad-button {
@@ -212,6 +221,11 @@ body[data-experience='phone'][data-phone-layout='left-hand'] #skills {
 body[data-experience='phone'][data-phone-layout='left-hand'] #recall-button {
   left: auto;
   right: max(8px, env(safe-area-inset-right));
+  bottom: max(8px, env(safe-area-inset-bottom));
+}
+body[data-experience='phone'][data-phone-layout='left-hand'] #target-button {
+  left: auto;
+  right: calc(max(8px, env(safe-area-inset-right)) + 98px);
   bottom: max(8px, env(safe-area-inset-bottom));
 }
 body[data-experience='phone'][data-phone-layout='left-hand'] #squad-button {

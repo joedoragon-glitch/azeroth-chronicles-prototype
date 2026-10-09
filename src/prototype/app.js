@@ -246,7 +246,7 @@
     openMenu(
       'Controls',
       input.actions.map(([id, name]) => input.key(id) + ' — ' + name).join('\n') +
-        '\n\nEsc — Menu / back · Enter or Space — Confirm in menus\nMouse or touch — Activate menus and HUD buttons\nSkills 1–3: tap under 0.20 s for normal; hold 0.65 s for charged. Releasing an incomplete hold cancels.\nCharged Skills 1 / 2 / 3 cost 20% / 30% / 35% max MP respectively. Hold through a cooldown to queue the charge; WAIT shows until charging can begin.\nCHARGED means ready to release. NEED MP / NO TARGET / NO HEAL explain a blocked charge. Skills 1–2 lock their target when charging begins.\nNormal Skill 1 builds a same-target combo across three hits; the third adds frontal splash. Switching targets or waiting four seconds resets it.\nSquad doctrine becomes available at Expedition 3 during combat and resets for each encounter.\nMovement autoattack stays active, except while holding Skill 1.\nTouch: use the joystick or tap a reachable place to move when enabled. Keyboard or joystick movement cancels a destination.\nMouse: left click commands Ranger Heal unless click-to-move is enabled; right click commands Mana Recovery. HUD recovery buttons always work.\nNormal Skill 3 heals the hero; charged Skill 3 also heals living active companions. Rangers automatically support the active group; manual Heal can restore the hero or a wounded living companion, and Mana Recovery restores hero MP. Fallen companions require separate recovery.\nSprint remains unavailable.',
+        '\n\nEsc — Menu / back · Enter or Space — Confirm in menus\nMouse or touch — Activate menus and HUD buttons\nSkills 1–3: tap under 0.20 s for normal; hold 0.65 s for charged. Releasing an incomplete hold cancels.\nCharged Skills 1 / 2 / 3 cost 20% / 30% / 35% max MP respectively. Hold through a cooldown to queue the charge; WAIT shows until charging can begin.\nCHARGED means ready to release. NEED MP / NO TARGET / NO HEAL explain a blocked charge. Skills 1–2 lock their target when charging begins; Target changes it deliberately while held.\nTap Q (or your assigned Target key), or tap the Target button, to cycle visible enemies. Hold either for 0.55 s to LOCK the current target for the encounter while dodging or fighting summons; tap again to switch and unlock. A lock clears when the target dies, returns home, or the hero changes area.\nHold Skill 1 or 2 for a fine aim guide: gold means in range and clear, amber means move closer, red means blocked. No target switching is needed for Self-Heal.\nNormal Skill 1 builds a same-target combo across three hits; the third adds frontal splash. Switching targets or waiting four seconds resets it.\nSquad doctrine becomes available at Expedition 3 during combat and resets for each encounter.\nMovement autoattack stays active, except while holding Skill 1.\nTouch: use the joystick or tap a reachable place to move when enabled. Keyboard or joystick movement cancels a destination.\nMouse: left click commands Ranger Heal unless click-to-move is enabled; right click commands Mana Recovery. HUD recovery buttons always work.\nNormal Skill 3 heals the hero; charged Skill 3 also heals living active companions. Rangers automatically support the active group; manual Heal can restore the hero or a wounded living companion, and Mana Recovery restores hero MP. Fallen companions require separate recovery.\nSprint remains unavailable.',
       [
         action('Customize keyboard', () => keyboardMenu(back)),
         action('Touch and mouse options', () => pointerMenu(back)),
@@ -321,6 +321,7 @@
   function clearInput() {
     if (typeof Sprint !== 'undefined') Sprint.release();
     cancelCharge();
+    cancelTargetPress();
     keys = {};
     pointer = null;
     cancelTravel();
@@ -1076,6 +1077,91 @@
       save();
     }
   };
+  const targetHoldMs = 550;
+  let targetPress = null;
+  function visibleHostile(enemy) {
+    const p = renderer.screen(enemy);
+    return p.x > 18 && p.x < viewport.width - 18 && p.y > 76 && p.y < viewport.height - 34;
+  }
+  function useTarget(locked = false, preferredId = null) {
+    if (!activePlay()) return;
+    const target = locked
+      ? game.holdHeroTarget(visibleHostile, preferredId)
+      : game.cycleHeroTarget(visibleHostile);
+    // Explicit selection while charging deliberately switches its aim.
+    if (charge && (charge.slot === 1 || charge.slot === 2)) charge.targetId = target?.id ?? null;
+    status(
+      target
+        ? locked
+          ? 'TARGET LOCKED · ' + target.name + ' · Hold focus until the encounter ends.'
+          : 'Target · ' + target.name + ' · Hold Target to lock.'
+        : 'No visible hostile targets nearby.',
+    );
+    updateHUD();
+  }
+  function beginTargetPress(source, pointerId = null) {
+    if (!activePlay() || targetPress) return false;
+    targetPress = {
+      source,
+      pointerId,
+      started: performance.now(),
+      preferredId: game.selectedHeroTarget()?.id || game.s.heroTarget || null,
+    };
+    $('target-button').classList.add('target-pressing');
+    return true;
+  }
+  function cancelTargetPress() {
+    targetPress = null;
+    $('target-button').classList.remove('target-pressing');
+  }
+  function progressTargetPress() {
+    if (
+      !targetPress ||
+      targetPress.activated ||
+      !activePlay() ||
+      performance.now() - targetPress.started < targetHoldMs
+    )
+      return;
+    targetPress.activated = true;
+    useTarget(true, targetPress.preferredId);
+  }
+  function releaseTargetPress(source, pointerId = null) {
+    if (
+      !targetPress ||
+      targetPress.source !== source ||
+      (source === 'pointer' && targetPress.pointerId !== pointerId)
+    )
+      return;
+    progressTargetPress();
+    const alreadyLocked = targetPress.activated;
+    cancelTargetPress();
+    if (!alreadyLocked) useTarget();
+  }
+  const targetButton = $('target-button');
+  let ignorePointerClickUntil = 0;
+  targetButton.onclick = (e) => {
+    // Touch browsers may synthesize detail=0 clicks after pointerup. Never
+    // cycle twice; genuine keyboard/accessibility clicks still work.
+    if (Date.now() < ignorePointerClickUntil || e?.detail > 0) return;
+    audio.unlock();
+    useTarget();
+  };
+  targetButton.onpointerdown = (e) => {
+    if (e.button > 0) return;
+    e.preventDefault?.();
+    audio.unlock();
+    if (beginTargetPress('pointer', e.pointerId)) targetButton.setPointerCapture?.(e.pointerId);
+  };
+  targetButton.onpointerup = (e) => {
+    if (e.button > 0) return;
+    if (targetPress?.source === 'pointer' && targetPress.pointerId === e.pointerId)
+      ignorePointerClickUntil = Date.now() + 400;
+    releaseTargetPress('pointer', e.pointerId);
+  };
+  targetButton.onpointercancel = targetButton.onlostpointercapture = (e) => {
+    if (targetPress?.source === 'pointer' && targetPress.pointerId === e.pointerId)
+      cancelTargetPress();
+  };
   $('order-button').onclick = (e) => {
     audio.unlock();
     if (menu) buttons[menuIndex]?.click();
@@ -1106,13 +1192,7 @@
     return (Math.ceil(Math.max(0, seconds) * 10) / 10).toFixed(1);
   }
   function chargedTargetRange(slot) {
-    if (slot === 2) {
-      const def = PrototypeRules.chargedSkills?.second?.[game.hero.class];
-      return def?.range || 480;
-    }
-    if (slot === 1)
-      return game.hero.class === 'paladin' ? 120 : game.hero.class === 'mage' ? 400 : 450;
-    return 0;
+    return slot === 1 || slot === 2 ? game.heroSkillRange(slot, true) : 0;
   }
   function chargeTarget(slot, targetId = null) {
     if (slot !== 1 && slot !== 2) return null;
@@ -1128,10 +1208,37 @@
         );
     if (targetId !== null && targetId !== undefined)
       return valid.find((e) => e.id === targetId) || null;
+    const selected = game.selectedHeroTarget();
+    if (selected) return valid.find((e) => e.id === selected.id) || null;
     const preferred = valid.find((e) => e.id === game.s.heroTarget);
     return (
       preferred ||
       valid.sort(
+        (a, b) =>
+          Math.hypot(a.x - game.hero.x, a.y - game.hero.y) -
+          Math.hypot(b.x - game.hero.x, b.y - game.hero.y),
+      )[0] ||
+      null
+    );
+  }
+  // Preview nearby visible hostiles even if they are not yet in range or
+  // behind cover. Only chargeTarget() can authorize the actual release.
+  function chargedPreviewTarget() {
+    const selected = game.selectedHeroTarget();
+    if (selected) return selected;
+    const candidates = game
+      .zone()
+      .enemies.filter(
+        (e) =>
+          e.hp > 0 &&
+          !e.neutral &&
+          !e.returning &&
+          Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= 680 &&
+          visibleHostile(e),
+      );
+    return (
+      candidates.find((e) => e.id === game.s.heroTarget) ||
+      candidates.sort(
         (a, b) =>
           Math.hypot(a.x - game.hero.x, a.y - game.hero.y) -
           Math.hypot(b.x - game.hero.x, b.y - game.hero.y),
@@ -1146,7 +1253,7 @@
     if (!charge || charge.started !== null) return false;
     charge.started = performance.now();
     if (charge.slot === 1 || charge.slot === 2)
-      charge.targetId = chargeTarget(charge.slot)?.id ?? null;
+      charge.targetId = chargedPreviewTarget()?.id ?? null;
     return true;
   }
   function syncChargeReady() {
@@ -1501,7 +1608,8 @@
     else if (actionId === 'recall') {
       recallSquad();
       save();
-    } else if (actionId === 'pause') {
+    } else if (actionId === 'target') beginTargetPress('keyboard');
+    else if (actionId === 'pause') {
       paused = !paused;
       clearInput();
     } else if (actionId === 'map') showMap();
@@ -1521,6 +1629,7 @@
   addEventListener('keyup', (e) => {
     const actionId = input.actionFor(e.code);
     delete keys[actionId];
+    if (actionId === 'target') releaseTargetPress('keyboard');
     if (actionId?.startsWith('skill')) releaseCharge(Number(actionId.slice(5)), 'keyboard');
   });
   const joystick = $('joystick');
@@ -1860,19 +1969,41 @@
     $('desktop-hints').textContent =
       ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('') +
       ' · Move   ' +
+      input.key('target') +
+      ' · Target   ' +
       input.key('interact') +
       ' / ' +
       input.key('confirm') +
       ' · Interact   ' +
       input.key('map') +
-      ' · Map   ' +
-      input.key('inventory') +
-      ' · Inventory   Esc · Menu';
+      ' · Map   Esc · Menu';
     $('talent-button').querySelector('small').textContent = input.key('training');
     if ($('squad-button').querySelector('small'))
       $('squad-button').querySelector('small').textContent = input.key('doctrine');
     if ($('recall-button').querySelector('small'))
       $('recall-button').querySelector('small').textContent = input.key('recall');
+    const selected = game.selectedHeroTarget(),
+      targetButton = $('target-button');
+    targetButton.classList.toggle('has-target', !!selected);
+    targetButton.classList.toggle('target-locked', !!selected && !!game.manualHeroTargetLocked);
+    targetButton.setAttribute(
+      'aria-label',
+      selected
+        ? (game.manualHeroTargetLocked ? 'Locked target: ' : 'Target: ') +
+            selected.name +
+            '. Tap to cycle or hold to lock.'
+        : 'Tap to cycle enemies; hold to lock target',
+    );
+    targetButton.title = selected
+      ? 'Hero target: ' +
+        selected.name +
+        (game.manualHeroTargetLocked ? ' · LOCKED for this encounter' : '') +
+        ' · Tap ' +
+        input.key('target') +
+        ' to cycle, hold to lock'
+      : 'Tap to cycle visible enemies · hold for ' + (targetHoldMs / 1000).toFixed(2) + 's to lock';
+    if (targetButton.querySelector('small'))
+      targetButton.querySelector('small').textContent = input.key('target');
     updateCriticalNotice();
   }
   function frame(now) {
@@ -1893,6 +2024,7 @@
       game.s.challenge.pending ||
       game.s.challenge.gameOver;
     if (typeof PrototypeSprites !== 'undefined') PrototypeSprites.advance(dt * 1000, !!frozen);
+    if (!frozen) progressTargetPress();
     if (menu) {
       menuJoyTime -= dt;
       if (Math.abs(joy.y) > 0.4 && menuJoyTime <= 0 && buttons.length) {

@@ -35,17 +35,18 @@ Forest Crypt, Sunken Archive and Colossus Mine now have distinct authored wings,
 | Ranger recovery | H / left mouse for Heal; M / right mouse for Mana Recovery | Recovery buttons |
 | Squad doctrine | Tab during combat, Expedition 3+ | Contextual Squad button |
 | Recall | Backtick | Recall squad |
+| Change target | Q (customizable), or click Target in the HUD | Target beside Recall, above joystick |
 | Map / inventory / journal | Z / I / J | Adventure menu |
 | Pause / menu / controls | P or V / Escape / G | Menu |
 | Menu navigation | W/A previous; S/D next; F/Enter/Space confirms | Direct tap; joystick and Confirm also work |
 
 These are keyboard defaults. **Game and settings → Controls → Customize keyboard** changes and saves bindings on this browser/device. Menu navigation follows the chosen movement keys; Enter and Space remain confirmation fallbacks, and Esc opens/backtracks menus. Browser shortcuts remain available.
 
-Menus, HUD buttons and skills accept mouse clicks and touch taps on every screen, including touchscreen Chromebooks and tablets. Skills 1–3 support quick taps and charge holds with either input. Movement autoattack remains active.
+Menus, HUD buttons and skills accept mouse clicks and touch taps on every screen, including touchscreen Chromebooks and tablets. Skills 1–3 support quick taps and charge holds with either input. Movement autoattack remains active. Tap Target or Q to cycle visible hostiles; hold for 0.55 seconds to lock the current target throughout the encounter, including while dodging bosses or ignoring summons. Tap again to cycle and release that lock. The lock drops when its foe dies, returns home, or the hero changes area. The hero favors your chosen enemy, and otherwise falls back to automatic targeting. Holding Skill 1 or 2 shows subtle brackets and line-of-sight/range guidance (gold ready, amber out of range, red obstructed). Press Target during the hold to retarget. No persistent targeting circles are added.
 
 **Controls → Touch and mouse options** selects the phone's default two-thumb layout (movement left, skills right) or the alternate left-hand layout. Touch tap-to-move is enabled by default alongside the joystick and can be disabled. Taps use existing collision/pathfinding; manual keyboard or joystick movement immediately takes over. Opening menus, pausing or losing focus cancels travel. Taps move the hero only and do not issue squad orders or automatically interact with services.
 
-Mouse click-to-move is off by default and can be enabled separately. With it off, left-clicking the world commands Ranger Heal; right-clicking commands Mana Recovery. Clickable HUD recovery buttons and their rebindable keyboard shortcuts work in either mode. Sprint remains unavailable; Q can be assigned to another action.
+Mouse click-to-move is off by default and can be enabled separately. With it off, left-clicking the world commands Ranger Heal; right-clicking commands Mana Recovery. Clickable HUD recovery buttons and their rebindable keyboard shortcuts work in either mode. Sprint remains unavailable; Q now defaults to Target, and all keys remain rebindable.
 
 Normal Skill 3 heals the hero; charged Skill 3 also heals living active companions. Active Rangers provide automatic and manually commanded Heal (hero or wounded living active companion) and Mana Recovery (hero MP). Fallen companions need separate recovery at a Captain or barracks. Death removes 20% of positive carried crowns, rounded up, without debt.
 
