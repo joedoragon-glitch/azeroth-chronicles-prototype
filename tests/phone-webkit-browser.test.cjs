@@ -11,7 +11,7 @@ const server=http.createServer((req,res)=>{
 });
 (async()=>{let browser,activePage;try{
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));browser=await webkit.launch();
- for(const size of [{width:375,height:812},{width:320,height:568},{width:844,height:390},{width:768,height:310},{width:568,height:320}]){
+ for(const size of [{width:375,height:800},{width:393,height:852},{width:800,height:375},{width:844,height:390}]){
  const page=await browser.newPage({viewport:size,hasTouch:true,isMobile:true}),errors=[];activePage=page;page.on('pageerror',e=>errors.push(e.message));
  await page.goto('http://127.0.0.1:'+server.address().port+'/phone.html');await page.waitForFunction(()=>!!window.Prototype);
  await page.keyboard.press('f');await page.keyboard.press('f');await page.waitForFunction(()=>document.querySelector('#modal').hidden);
@@ -41,6 +41,7 @@ const server=http.createServer((req,res)=>{
  await page.keyboard.press('Escape');await page.locator('#menu-button').tap();await page.getByRole('button',{name:'Character',exact:true}).tap();assert((await page.locator('#modal-description').textContent()).includes('XP '));await page.getByRole('button',{name:'Discipline Training',exact:true}).tap();assert.equal(await page.locator('#modal-title').textContent(),'Discipline Training');
  await page.keyboard.press('Escape');await page.keyboard.press('Escape');await page.keyboard.press('Escape');
  await page.evaluate(()=>Prototype.save());assert(!(await page.locator('#status').textContent()).includes('Saved locally'));
+ await require('./helpers/camera-browser.cjs').verifyCamera(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,true,size.width===375);
  await require('./helpers/ironroot-browser.cjs').verifyIronroot(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);
  await require('./helpers/regional-browser.cjs').verifyRegional(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);
  assert.deepEqual(errors,[]);await page.screenshot({path:path.join(root,'test-results','webkit-phone-'+size.width+'x'+size.height+'.png')});

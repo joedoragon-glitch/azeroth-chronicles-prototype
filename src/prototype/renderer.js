@@ -2,7 +2,7 @@
 (function (root) {
   'use strict';
   function create({
-    canvas,
+    canvas: viewport,
     ctx,
     getGame,
     platform,
@@ -15,6 +15,17 @@
     PrototypeMaterials,
     now = () => performance.now(),
   }) {
+    // Draw in unzoomed presentation units, preserving one transform for the
+    // world, artwork and effects. Public coordinates remain CSS pixels.
+    const zoom = () => platform.cameraZoom || 1;
+    const canvas = {
+      get width() {
+        return viewport.width / zoom();
+      },
+      get height() {
+        return viewport.height / zoom();
+      },
+    };
     let game = getGame(),
       visualFx = [],
       origin = null;
@@ -25,15 +36,16 @@
     function offset() {
       if (origin) return origin;
       const p = iso(getGame().hero.x, getGame().hero.y),
-        anchor = platform.cameraAnchor(canvas.width, canvas.height);
-      return { x: anchor.x - p.x, y: anchor.y - p.y };
+        anchor = platform.cameraAnchor(viewport.width, viewport.height),
+        scale = zoom();
+      return { x: anchor.x / scale - p.x, y: anchor.y / scale - p.y };
     }
     function screen(e) {
       const p = iso(e.x, e.y),
         o = offset();
       return { x: p.x + o.x, y: p.y + o.y };
     }
-    function world(x, y) {
+    function localWorld(x, y) {
       const o = offset(),
         xx = x - o.x,
         yy = y - o.y;
@@ -47,10 +59,10 @@
     }
     function tileBounds(size) {
       const corners = [
-        world(-160, -100),
-        world(canvas.width + 160, -100),
-        world(-160, canvas.height + 100),
-        world(canvas.width + 160, canvas.height + 100),
+        localWorld(-160, -100),
+        localWorld(canvas.width + 160, -100),
+        localWorld(-160, canvas.height + 100),
+        localWorld(canvas.width + 160, canvas.height + 100),
       ];
       return {
         x1: Math.max(0, Math.ceil(Math.min(...corners.map((p) => p.x)) / 80) * 80),
@@ -65,9 +77,12 @@
       origin = offset();
       PrototypeSprites?.beginFrame?.();
       PrototypeMaterials?.beginFrame?.();
+      ctx.save();
       try {
+        ctx.scale(zoom(), zoom());
         render();
       } finally {
+        ctx.restore();
         PrototypeSprites?.endFrame?.();
         PrototypeMaterials?.endFrame?.();
         origin = null;
@@ -1180,8 +1195,12 @@
     }
     return {
       draw,
-      world,
-      screen,
+      world: (x, y) => localWorld(x / zoom(), y / zoom()),
+      screen: (e) => {
+        const p = screen(e),
+          scale = zoom();
+        return { x: p.x * scale, y: p.y * scale };
+      },
       tileBounds,
       labelVisible: (e) => {
         game = getGame();
@@ -1193,7 +1212,7 @@
         PrototypeSprites?.noteEvents?.(events);
       },
       update: updateVisualFx,
-      metrics: () => ({ ...stats }),
+      metrics: () => ({ ...stats, cameraZoom: zoom() }),
     };
   }
   const api = { create };
