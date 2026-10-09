@@ -19,6 +19,8 @@ jobs:
           echo '===ROGUE_FINAL_FORMAT_START==='
           git diff --no-ext-diff --unified=3 -- src/prototype/engine.js src/prototype/combat.js src/prototype/hero-combat.js src/prototype/party.js src/prototype/app.js src/prototype/rules.js
           echo '===ROGUE_FINAL_FORMAT_END==='
+      - name: Probe combat fixtures
+        run: node tests/rogue-debug-probe.cjs
       - name: Verify focused scenario suite
         run: |
           node tests/audit-regressions.test.cjs
