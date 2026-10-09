@@ -22,7 +22,7 @@ test('F17 idle night health preserves fraction; F19 full barracks are valid reso
 test('F20 legacy region and regional buildings survive while retired potion stock is safely discarded',()=>{const legacy={version:2,activeRegion:'world',player:{heroClass:'mage',level:7,gold:500,wx:3200,maxHp:500,hp:10,maxMp:500,mp:10},inventory:['Arma de las Cumbres','Tónico de las Cumbres','Éter de las Cumbres','Poción de Maná Grande'],squad:{buildings:[{wx:2250,wy:1000,progress:4,queue:0}],units:[],nodes:[]}};const c=C.migrate(legacy);assert.equal(c.zoneId,'crown');assert.equal(c.s.zones.frontier.buildings.length,1);assert(c.equipLegacy('Arma de las Cumbres'));assert.equal(c.power(),c.hero.power+70);assert(!c.equipLegacy('unknown'));assert.deepEqual(c.hero.potions,{health:0,mana:0,greater_health:0,greater_mana:0});assert.deepEqual(c.hero.legacyPotions,[],'legacy potion inventory is retired without affecting the rest of the save');assert(Math.abs(c.hero.mp-2.6)<1e-9,'legacy MP percentage is normalized to the new curve');const restored=C.restore(c.snapshot());assert.equal(restored.zoneId,'crown');assert.equal(restored.s.zones.frontier.buildings.length,1);});
 test('F21 area kill sequence is independent of enemy array order',()=>{const outcomes=[];for(const reverse of [false,true]){const c=fresh();c.hero.skills[4]=1;const a=['goblin','goblin','skeleton'].map((species,i)=>c.makeEnemy({species,name:species,level:1,hp:1,damage:1,gold:0,xp:0},{x:350+i*10,y:350}));c.zone().enemies=reverse?a.reverse():a;c.cast(5);outcomes.push({streak:c.s.streak,pending:Object.keys(c.s.pending)});}assert.deepEqual(outcomes[0],outcomes[1]);});
 test('F23 every authored landmark is reachable, towns have solid structures and dungeon walls differ',()=>{const wallSignatures=[];for(const r of C.data.regions){const c=fresh();c.enter(r.id);const z=c.zone();assert(z.props.some(p=>p.roadBlocker),'regional settlement keeps solid street-defining structures');assert(z.props.some(p=>String(p.id).startsWith('settlement-')&&p.roadBlocker&&!/(?:fence|wall|boardwalk|palisade)$/.test(String(p.structure))),'regional settlement keeps inhabited region-specific buildings');for(const n of z.npcs.filter(n=>n.kind==='landmark')){assert(!c.blocked(n.x,n.y));assert(c.route(c.hero,n).length,r.id+' '+n.name);}}for(const id of C.dungeonIds){const c=fresh();c.enter(id);wallSignatures.push(Array.from({length:100},(_,i)=>c.blocked(600+(i%10)*35,250+Math.floor(i/10)*110,c.zoneId,0)).join());assert(c.route(c.hero,boss(c)).length);}assert(new Set(wallSignatures).size>=3);});
-test('F24 tactical foundation enables AI while keeping burst compression inactive',()=>{const c=fresh(),e=boss(c),cfg=C.rules.tacticalFoundation;assert.equal(cfg.enabled,true);assert.equal(cfg.burstCompression.enabled,false);c.zone().enemies=[e];c.s.party=[];c.hero.level=e.level-3;assert.equal(c.tacticalRogueEligibility(e,6),false);c.hero.level=e.level+1;assert.equal(c.tacticalRogueEligibility(e,0),true);c.hero.level=e.level;assert.equal(c.tacticalRogueEligibility(e,2),false);e.summonCd=3;assert.equal(c.tacticalRogueEligibility(e,2),true);assert.equal(c.tacticalProtectionTier(e),'boss');});
+test('F24 tactical foundation enables AI while keeping burst compression inactive',()=>{const c=fresh(),e=boss(c),cfg=C.rules.tacticalFoundation;assert.equal(cfg.enabled,true);assert.equal(cfg.burstCompression.enabled,false);c.zone().enemies=[e];c.s.party=[];Object.assign(c.hero,{x:e.x+100,y:e.y});c.hero.level=e.level-3;assert.equal(c.tacticalRogueEligibility(e,6),false);c.hero.level=e.level+1;assert.equal(c.tacticalRogueEligibility(e,0),true);c.hero.level=e.level;assert.equal(c.tacticalRogueEligibility(e,2),false);e.summonCd=3;assert.equal(c.tacticalRogueEligibility(e,2),true);assert.equal(c.tacticalProtectionTier(e),'boss');});
 test('F25 tactical telemetry and extended awareness do not trigger aggro',()=>{const c=fresh(),e=boss(c);const ally=c.makeEnemy({species:'wolf',name:'ally',level:2,hp:100,damage:1,gold:0,xp:0},{x:e.x+620,y:e.y});const distant=c.makeEnemy({species:'wolf',name:'distant',level:2,hp:100,damage:1,gold:0,xp:0},{x:e.x+900,y:e.y});c.zone().enemies=[e,ally,distant];assert(c.tacticalRegroupCandidates(e).includes(ally));assert(!c.tacticalRegroupCandidates(e).includes(distant));assert.equal(ally.aggro,false);c.tacticalRecordHit(e,'hero',12);assert.equal(c.tacticalThreatSnapshot(e)[0].damage,12);assert.equal(e.aggro,false);c.s.time+=7;assert.equal(c.tacticalThreatSnapshot(e).length,0);});
 test('F26 threat records expire old hits independently and never carry through travel',()=>{
 const c=fresh(),e=boss(c);c.zone().enemies=[e];c.s.party=[];c.s.time=0;c.tacticalRecordHit(e,'hero',100);c.s.time=5;c.tacticalRecordHit(e,'hero',10);assert.equal(c.tacticalThreatSnapshot(e)[0].damage,110);c.s.time=7;assert.equal(c.tacticalThreatSnapshot(e)[0].damage,10,'old damage must expire even after a fresh hit');c.tacticalRecordHit(e,'hero',5);assert.equal(c.tacticalThreatSnapshot(e)[0].damage,15);c.enter('march');assert.deepEqual(c.tacticalThreatSnapshot(e),[],'zone transitions purge cached threat');assert(!Object.hasOwn(c.snapshot(),'_tacticalThreat'),'telemetry is not persisted');
@@ -31,7 +31,7 @@ test('F27 threat cache cleans up on death and disengagement',()=>{
 const c=fresh(),e=c.makeEnemy({species:'wolf',name:'test wolf',level:1,hp:15,damage:2,gold:0,xp:0},{x:500,y:500});c.zone().enemies=[e];c.tacticalRecordHit(e,'hero',10);assert.equal(c.tacticalThreatSnapshot(e).length,1);e.aggro=true;c.disengage(e,.1);assert.deepEqual(c.tacticalThreatSnapshot(e),[]);e.returning=0;e.deathPaid=false;e.hp=0;c.tacticalRecordHit(e,'hero',10);c.kill(e);assert.deepEqual(c.tacticalThreatSnapshot(e),[]);
 });
 test('F28 non-cunning boss eligibility distinguishes level boundaries and owned support',()=>{
-const c=fresh(),e=c.bossEnemy(c.boss('crypt'),'normal',{x:1400,y:1700});c.zone().enemies=[e];c.hero.level=e.level;const summon=(i)=>{const u=c.makeEnemy({species:'wolf',name:'summon',level:e.level,hp:10,damage:1,gold:0,xp:0},{x:e.x+50+i*15,y:e.y});u.summon=true;u.owner=e.id;return u;};const a=summon(0),b=summon(1);c.zone().enemies.push(a,b);e.summonCd=3;assert.equal(c.tacticalRogueEligibility(e,2),false,'two owned summons protect an equal-level boss');b.hp=0;assert.equal(c.tacticalRogueEligibility(e,2),true,'one summon plus cooldown permits pressure');e.summonCd=0;assert.equal(c.tacticalRogueEligibility(e,2),false,'ready summon does not permit this exception');e.summonCd=3;assert.equal(c.tacticalRogueEligibility(e,1),false,'one attacker cannot create numerical pressure');c.hero.level=e.level-1;assert.equal(c.tacticalRogueEligibility(e,2),true,'one level stronger enemy remains eligible when pressured');c.hero.level=e.level-2;assert.equal(c.tacticalRogueEligibility(e,2),true);c.hero.level=e.level-3;assert.equal(c.tacticalRogueEligibility(e,9),false,'three levels stronger always disables rogue');c.hero.level=e.level+1;assert.equal(c.tacticalRogueEligibility(e,0),true,'hero level advantage independently enables eligibility');
+const c=fresh(),e=c.bossEnemy(c.boss('crypt'),'normal',{x:1400,y:1700});c.zone().enemies=[e];Object.assign(c.hero,{x:e.x+100,y:e.y});c.hero.level=e.level;const summon=(i)=>{const u=c.makeEnemy({species:'wolf',name:'summon',level:e.level,hp:10,damage:1,gold:0,xp:0},{x:e.x+50+i*15,y:e.y});u.summon=true;u.owner=e.id;return u;};const a=summon(0),b=summon(1);c.zone().enemies.push(a,b);e.summonCd=3;assert.equal(c.tacticalRogueEligibility(e,2),false,'two owned summons protect an equal-level boss');b.hp=0;assert.equal(c.tacticalRogueEligibility(e,2),true,'one summon plus cooldown permits pressure');e.summonCd=0;assert.equal(c.tacticalRogueEligibility(e,2),false,'ready summon does not permit this exception');e.summonCd=3;assert.equal(c.tacticalRogueEligibility(e,1),false,'one attacker cannot create numerical pressure');c.hero.level=e.level-1;assert.equal(c.tacticalRogueEligibility(e,2),true,'one level stronger enemy remains eligible when pressured');c.hero.level=e.level-2;assert.equal(c.tacticalRogueEligibility(e,2),true);c.hero.level=e.level-3;assert.equal(c.tacticalRogueEligibility(e,9),false,'three levels stronger always disables rogue');c.hero.level=e.level+1;assert.equal(c.tacticalRogueEligibility(e,0),true,'hero level advantage independently enables eligibility');
 });
 test('F29 regroup assessment finds larger cross-pack groups without engaging them',()=>{
 const c=fresh(),e=boss(c);const add=(id,pack,x,y)=>{const u=c.makeEnemy({species:'wolf',name:id,level:1,hp:40,damage:2,gold:0,xp:0},{x,y});u.pack=pack;return u;};const packA=[add('a1','group-a',e.x+500,e.y),add('a2','group-a',e.x+530,e.y),add('a3','group-a',e.x+560,e.y)],packB=[add('b1','group-b',e.x-200,e.y),add('b2','group-b',e.x-230,e.y)],far=add('far','far',e.x+900,e.y);c.zone().enemies=[e,...packA,...packB,far];const groups=c.tacticalRegroupGroups(e);assert.equal(groups[0].key,'group-b','closer allies win over distant larger packs');assert.equal(groups[0].members.length,2);assert.equal(groups[1].key,'group-a');assert.equal(groups[1].members.length,3);assert(!groups.some(g=>g.key==='far'));assert(c.zone().enemies.every(u=>!u.aggro),'awareness must not pull additional packs');
@@ -40,7 +40,7 @@ const c=fresh(),e=boss(c);const add=(id,pack,x,y)=>{const u=c.makeEnemy({species
 test('F30 explicit rogue regroup keeps original home while approaching separate pack and its anchor',()=>{const c=fresh();c.s.party=[];const e=c.makeEnemy({species:'wolf',name:'scout',level:1,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700}),a=c.makeEnemy({species:'wolf',name:'ally',level:1,hp:100,damage:1,gold:0,xp:0},{x:1950,y:1700});e.pack='scouts';a.pack='second-pack';e.aggro=true;c.zone().enemies=[e,a];Object.assign(c.hero,{x:1400,y:1700,level:3});c.route=()=>[{x:a.x,y:a.y}];c.line=()=>true;c.follow=(unit,goal,speed,dt,stop)=>{unit.x=Math.min(goal.x,unit.x+speed*dt);return true;};const home={...e.home};assert(c.tacticalBeginRogueRegroup(e,a,0));for(let i=0;i<7;i++)c.updateEnemies(.5);assert.equal(c.tacticalRogueRegroup(e)?.phase,'anchored');assert.deepEqual(e.home,home,'regroup must not overwrite respawn home');assert.equal(e.aggro,true);assert.equal(a.aggro,false,'approach alone does not create chain aggro');Object.assign(c.hero,{x:1950,y:1700});c.updateEnemies(.1);assert.equal(e.aggro,true,'being outside original leash must not reset a valid regroup');assert(c.tacticalRogueRegroup(e));const restored=C.restore(c.snapshot());assert.equal(restored.tacticalRogueRegroup(restored.zone().enemies.find(u=>u.id===e.id)),null,'transient retreat anchor cannot survive save restore');});
 test('F31 real escape or protected-town approach always ends rogue leash exception',()=>{for(const protectedTown of [false,true]){const c=fresh(),e=c.makeEnemy({species:'wolf',name:'scout',level:1,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700}),a=c.makeEnemy({species:'wolf',name:'ally',level:1,hp:100,damage:1,gold:0,xp:0},{x:1950,y:1700});c.zone().enemies=[e,a];c.s.party=[];e.aggro=true;c.hero.level=3;Object.assign(c.hero,{x:1400,y:1700});c.route=()=>[{x:a.x,y:a.y}];assert(c.tacticalBeginRogueRegroup(e,a));Object.assign(c.hero,protectedTown?{x:300,y:350}:{x:2600,y:1700});c.updateEnemies(.1);assert(e.returning>0,'escape must trigger normal disengagement');assert.equal(c.tacticalRogueRegroup(e),null);}});
 test('F32 rogue regroup rejects blocked or town-crossing routes and forbids retreat chaining',()=>{const c=fresh(),e=c.makeEnemy({species:'wolf',name:'scout',level:1,hp:100,damage:1,gold:0,xp:0},{x:110,y:350}),a=c.makeEnemy({species:'wolf',name:'ally',level:1,hp:100,damage:1,gold:0,xp:0},{x:620,y:350});e.aggro=true;c.s.party=[];c.zone().enemies=[e,a];c.hero.level=3;c.route=()=>[];assert.equal(c.tacticalBeginRogueRegroup(e,a),false,'unreachable regroup cannot start');c.route=()=>[{x:a.x,y:a.y}];assert.equal(c.tacticalBeginRogueRegroup(e,a),false,'route through protected settlement is prohibited');Object.assign(e,{x:1400,y:1700,home:{x:1400,y:1700}});Object.assign(a,{x:1950,y:1700,home:{x:1950,y:1700}});assert(c.tacticalBeginRogueRegroup(e,a));c.tacticalStopRogueRegroup(e);assert.equal(c.tacticalBeginRogueRegroup(e,a),false,'one regroup per engagement prevents infinite retreat loops');c.tacticalClearRogueRegroup(e);assert(c.tacticalBeginRogueRegroup(e,a));c.tacticalClearRogueRegroup(e);assert.equal(c.tacticalRogueRegroup(e),null);});
-test('F33 failed retreat safely expires without suppressing later normal leash',()=>{const c=fresh(),e=c.makeEnemy({species:'wolf',name:'scout',level:1,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700}),a=c.makeEnemy({species:'wolf',name:'ally',level:1,hp:100,damage:1,gold:0,xp:0},{x:1950,y:1700});c.zone().enemies=[e,a];c.s.party=[];e.aggro=true;Object.assign(c.hero,{x:1400,y:1700,level:3});c.route=()=>[{x:a.x,y:a.y}];c.line=()=>true;assert(c.tacticalBeginRogueRegroup(e,a));c.follow=()=>false;for(let i=0;i<5;i++)c.updateEnemies(.6);assert.equal(c.tacticalRogueRegroup(e),null,'stalled rogue retreat must expire');assert.equal(c.tacticalBeginRogueRegroup(e,a),false,'failed retreat cannot chain indefinitely');Object.assign(c.hero,{x:2600,y:1700});c.updateEnemies(.1);assert(e.returning>0,'normal leash must resume after invalidated retreat');});
+test('F33 failed retreat safely expires without suppressing later normal leash',()=>{const c=fresh(),e=c.makeEnemy({species:'wolf',name:'scout',level:1,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700}),a=c.makeEnemy({species:'wolf',name:'ally',level:1,hp:100,damage:1,gold:0,xp:0},{x:1950,y:1700});c.zone().enemies=[e,a];c.s.party=[];e.aggro=true;Object.assign(c.hero,{x:1400,y:1700,level:3});c.route=()=>[{x:a.x,y:a.y}];c.line=()=>true;assert(c.tacticalBeginRogueRegroup(e,a));c.follow=()=>false;for(let i=0;i<8;i++)c.updateEnemies(.6);assert.equal(c.tacticalRogueRegroup(e)?.phase,'thinking','stalled route reconsiders other tactics instead of repeating the same route');assert.equal(c.tacticalBeginRogueRegroup(e,a),false,'failed route cannot immediately repeat the same ally group');Object.assign(c.hero,{x:2600,y:1700});c.updateEnemies(.1);assert(e.returning>0,'normal leash must resume after invalidated retreat');});
 
 test('F34 a single nearby companion is sufficient for a voluntary regroup',()=>{const c=fresh();const e=c.makeEnemy({species:'wolf',name:'solitary',level:1,hp:80,damage:1,gold:0,xp:0},{x:1400,y:1700}),near=c.makeEnemy({species:'wolf',name:'one ally',level:1,hp:80,damage:1,gold:0,xp:0},{x:1520,y:1700}),far=[0,1,2].map(i=>c.makeEnemy({species:'wolf',name:'distant wolf',level:1,hp:80,damage:1,gold:0,xp:0},{x:1950+i*25,y:1700}));for(const f of far)f.pack='distant-pack';e.aggro=true;c.s.party=[];c.hero.level=2;c.zone().enemies=[e,near,...far];c.route=()=>[{x:near.x,y:near.y}];const groups=c.tacticalRegroupGroups(e);assert.equal(groups[0].members.length,1,'nearest lone ally remains a valid group');assert.equal(groups[0].members[0],near);assert(c.tacticalBeginRogueRegroup(e,near,0),'one ally is sufficient without any 3-member minimum');assert.equal(near.aggro,false,'awareness and route setup do not recruit an ally');});
 
@@ -152,7 +152,7 @@ test('F43 real target pressure counts active companions, not nearby idle party m
   c.zone().enemies=[e];c.s.party=[soldier,archer];
   Object.assign(c.hero,{level:2,x:1400,y:1700});e.aggro=true;c.line=()=>true;
   assert.equal(c.tacticalActiveTargetCount(e),0,'nearby heroes and companions alone do not create numerical pressure');
-  c.s.heroTarget=e.id;assert.equal(c.tacticalActiveTargetCount(e),1);
+  c.s.heroTarget=e.id;assert.equal(c.tacticalActiveTargetCount(e),0,'old target ID alone is not active hero intent');c.hero.order={type:'attack',id:e.id};assert.equal(c.tacticalActiveTargetCount(e),1);
   c._tacticalPartyTargets=new Map([[soldier.id,e.id]]);assert.equal(c.tacticalActiveTargetCount(e),2);
   assert(c.tacticalRogueEligibility(e,c.tacticalActiveTargetCount(e)),'equal-level pressured mob is eligible');
   soldier.order={type:'gather',id:'some-node'};assert.equal(c.tacticalActiveTargetCount(e),1,'busy companion cannot contribute target pressure');
@@ -166,6 +166,8 @@ test('F44 autonomous rogue initiation finds a single ally across packs without c
   c.zone().enemies=[e,ally,other];c.s.party=[];Object.assign(c.hero,{x:1400,y:1700,level:3});
   e.pack='lone';ally.pack='ally-pack';other.pack='ally-pack';e.aggro=true;c.line=()=>true;c.route=()=>[{x:ally.x,y:ally.y}];
   assert(c.tacticalAutoRogue(e,c.hero));
+  assert.equal(c.tacticalRogueRegroup(e)?.phase,'thinking');
+  assert(c.tacticalAdvanceRogueRegroup(e,c.hero,1));
   assert.equal(c.tacticalRogueRegroup(e)?.phase,'travel');
   assert.equal(ally.aggro,false);assert.equal(other.aggro,false);
   assert(!c.tacticalAutoRogue(e,c.hero),'one retreat decision per engagement');
@@ -197,6 +199,8 @@ test('F46 without allies, rogue tactics use one named move then resume ordinary 
   c.zone().enemies=[e];c.s.party=[];e.aggro=true;
   Object.assign(c.hero,{x:1450,y:1700,level:3});c.line=()=>true;
   assert(c.tacticalAutoRogue(e,c.hero));
+  assert.equal(c.tacticalRogueRegroup(e)?.phase,'thinking');
+  assert(c.tacticalAdvanceRogueRegroup(e,c.hero,1));
   assert.equal(c.tacticalRogueRegroup(e),null);
   assert.equal(e.telegraph.name,'Blinding Dust');
   assert.equal(e.telegraph.style,'snare');
@@ -204,7 +208,7 @@ test('F46 without allies, rogue tactics use one named move then resume ordinary 
 });
 test('F47 cunning summoners trigger depleted-support rogue pressure but not level-suppressed',()=>{
   const c=fresh(),e=c.bossEnemy(c.boss('thorn'),'normal',{x:1400,y:1700});
-  c.zone().enemies=[e];e.aggro=true;e.summonCd=4;c.hero.level=e.level;c.line=()=>true;
+  c.zone().enemies=[e];e.aggro=true;e.summonCd=4;Object.assign(c.hero,{x:e.x+100,y:e.y});c.hero.level=e.level;c.line=()=>true;
   assert(c.tacticalRogueEligibility(e,0),'authored cunning boss can respond while unable to resummon');
   e.summonCd=0;assert(!c.tacticalRogueEligibility(e,0),'ready summon does not qualify');
   e.summonCd=4;c.hero.level=e.level-3;assert(!c.tacticalRogueEligibility(e,8),'high level immunity still applies');
@@ -241,9 +245,144 @@ test('F50 interrupted rogue retreat sheds its protection and cannot chain',()=>{
   assert(c.tacticalBeginRogueRegroup(e,ally));
   const start=e.hp;assert(c.damage(e,100));assert.equal(start-e.hp,50);
   ally.hp=0;c.tacticalAdvanceRogueRegroup(e,c.hero,.1);
-  assert.equal(c.tacticalRogueRegroup(e),null,'dead support invalidates rogue route');
-  const after=e.hp;assert(c.damage(e,100));assert.equal(after-e.hp,100,'ordinary damage restored after interrupted retreat');
+  assert.equal(c.tacticalRogueRegroup(e)?.phase,'thinking','dead support triggers another tactical evaluation');
+  const after=e.hp;assert(c.damage(e,100));assert.equal(after-e.hp,50,'re-evaluating a failed retreat retains temporary protection');
   ally.hp=100;
   assert.equal(c.tacticalBeginRogueRegroup(e,ally),false,'unlimited retry is prohibited even when the ally returns');
+});
+
+test('F51 wounded ordinary, guardian and ringleader mobs gain independent rogue eligibility below 30%',()=>{
+  const c=fresh();c.s.party=[];c.line=()=>true;c.hero.level=2;
+  for(const tier of ['ordinary','guardian','ringleader']){
+    const e=c.makeEnemy({species:'wolf',name:tier,level:2,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700});
+    if(tier==='guardian')e.guard=true;
+    if(tier==='ringleader')e.form='ringleader';
+    e.aggro=true;c.zone().enemies=[e];Object.assign(c.hero,{x:1430,y:1700});
+    assert.equal(c.tacticalRogueEligibility(e,0),false,tier+' healthy solo mob does not need to withdraw');
+    e.hp=30;assert.equal(c.tacticalRogueWounded(e),false,tier+' 30% exact threshold does not fire');
+    e.hp=29;assert.equal(c.tacticalRogueWounded(e),true,tier+' below 30% is a disadvantage');
+    assert.equal(c.tacticalRogueEligibility(e,0),true,tier+' wounded solo can request allies');
+    c.hero.level=e.level-3;assert.equal(c.tacticalRogueEligibility(e,3),false,tier+' stronger-by-three immune even wounded');
+    c.hero.level=e.level;
+  }
+});
+test('F52 wound trigger excludes bosses and captains and never activates tiered burst compression',()=>{
+  const c=fresh();c.s.party=[];c.line=()=>true;
+  const bossUnit=c.bossEnemy(c.boss('crypt'),'normal',{x:1400,y:1700});
+  const captain=c.makeEnemy({species:'wolf',name:'captain',level:3,hp:100,damage:1,gold:0,xp:0},{x:1450,y:1700});
+  captain.roomCaptain=true;
+  const ordinary=c.makeEnemy({species:'wolf',name:'summoned mob',level:3,hp:100,damage:1,gold:0,xp:0},{x:1470,y:1700});
+  ordinary.summon=true;
+  for(const e of [bossUnit,captain,ordinary]){e.hp=e.maxHp*.29;assert.equal(c.tacticalRogueWounded(e),e===ordinary);}
+  assert.equal(C.rules.tacticalFoundation.burstCompression.enabled,false);
+});
+test('F53 wounded monster thinks under 50% protection then seeks a single ally',()=>{
+  const c=fresh(),e=c.makeEnemy({species:'wolf',name:'wounded scout',level:2,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700}),
+    ally=c.makeEnemy({species:'goblin',name:'support',level:2,hp:80,damage:1,gold:0,xp:0},{x:1650,y:1700});
+  c.zone().enemies=[e,ally];c.s.party=[];c.line=()=>true;c.route=()=>[{x:ally.x,y:ally.y}];
+  Object.assign(c.hero,{x:1440,y:1700,level:2});e.hp=29;e.aggro=true;
+  assert(c.tacticalAutoRogue(e,c.hero),'wound starts rogue deliberation even during first second');
+  assert.equal(c.tacticalRogueRegroup(e)?.phase,'thinking');
+  const before=e.hp;assert(c.damage(e,10));assert.equal(before-e.hp,5,'thinking wounded monster gets temporary 50%');
+  assert(c.tacticalAdvanceRogueRegroup(e,c.hero,1));
+  assert.equal(c.tacticalRogueRegroup(e)?.phase,'travel','first choice is an ally, not the named maneuver');
+  assert.equal(ally.aggro,false,'discovery alone never auto-pulls');
+  assert(C.rules.tacticalFoundation.enabled);
+});
+test('F54 woundedness can trigger after an earlier rogue response and is limited until reset',()=>{
+  const c=fresh(),e=c.makeEnemy({species:'wolf',name:'second wind',level:2,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700}),
+    ally=c.makeEnemy({species:'wolf',name:'support',level:2,hp:80,damage:1,gold:0,xp:0},{x:1580,y:1700});
+  c.zone().enemies=[e,ally];c.s.party=[];c.line=()=>true;c.route=()=>[{x:ally.x,y:ally.y}];
+  Object.assign(c.hero,{x:1400,y:1700,level:2});e.aggro=true;
+  c._tacticalRegroupUsed=new Set([e.id]);c._tacticalRogueNext=new Map([[e.id,c.s.time+50]]);
+  assert.equal(c.tacticalAutoRogue(e,c.hero),false,'old attempt blocks healthy monster');
+  e.hp=29;assert(c.tacticalAutoRogue(e,c.hero),'new wound overrides previous one-response latch');
+  assert(c._tacticalWoundedUsed.has(e.id));
+  c.tacticalStopRogueRegroup(e);
+  assert.equal(c.tacticalAutoRogue(e,c.hero),false,'same wound cannot spawn infinite immediate retries');
+  c.tacticalClearRogueRegroup(e);
+  assert(!c._tacticalWoundedUsed.has(e.id),'disengagement clears wound latch for next encounter');
+});
+
+test('F55 companions can independently trigger wounded monster retreat without the hero nearby',()=>{
+  const c=fresh(),e=c.makeEnemy({species:'wolf',name:'companion target',level:2,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700});
+  const ally=c.unit('soldier',1430,1700);c.zone().enemies=[e];c.s.party=[ally];c.line=()=>true;
+  Object.assign(c.hero,{x:200,y:250,level:2});e.aggro=true;e.hp=29;
+  assert.equal(c.tacticalPresentOpponents(e),1,'living present Soldier counts even though hero is far away');
+  assert(c.tacticalRogueEligibility(e,0),'wounded monster responds to one companion alone');
+  assert(c.tacticalAutoRogue(e,ally),'companion can cause an autonomous rogue retreat decision');
+  assert.equal(c.tacticalRogueRegroup(e)?.phase,'thinking');
+  c.tacticalClearRogueRegroup(e);
+  ally.active=false;assert.equal(c.tacticalRogueEligibility(e,0),false,'absent companion no longer provides encounter pressure');
+});
+
+test('F56 isolated engaged monster recognizes numerical pressure from living present party',()=>{
+  const c=fresh(),e=c.makeEnemy({species:'wolf',name:'outnumbered foe',level:2,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700});
+  const companions=[0,1,2].map((i)=>c.unit(i%2?'archer':'soldier',1410+i*20,1700));
+  c.zone().enemies=[e];c.s.party=companions;c.hero.level=e.level;
+  Object.assign(c.hero,{x:1450,y:1700});e.aggro=true;c.line=()=>true;
+  assert.equal(c.tacticalActiveTargetCount(e),0,'none of the party has selected this monster');
+  assert.equal(c.tacticalPresentOpponents(e),4,'hero and three living companions are individual opponents');
+  assert(c.tacticalRogueOutnumbered(e),'four opponents overwhelm a solitary defender');
+  assert(c.tacticalAutoRogue(e,c.hero),'numerical disadvantage initiates autonomous planning');
+  assert.equal(c.tacticalRogueRegroup(e)?.phase,'thinking');
+  c.tacticalClearRogueRegroup(e);
+  e.level=c.hero.level+3;
+  assert.equal(c.tacticalAutoRogue(e,c.hero),false,'three-level immunity wins even against a whole squad');
+});
+
+test('F57 every monster faction can seek nearby bosses regardless of their levels',()=>{
+  const c=fresh(),e=c.makeEnemy({species:'wolf',name:'worried wolf',level:1,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700}),
+    leader=c.bossEnemy(c.boss('thorn'),'normal',{x:1760,y:1700});
+  leader.level=20;c.zone().enemies=[e,leader];c.s.party=[];e.aggro=true;
+  Object.assign(c.hero,{x:1400,y:1700,level:3});c.line=()=>true;c.route=()=>[{x:leader.x,y:leader.y}];
+  assert(c.tacticalRegroupCandidates(e).includes(leader),'boss counts as allied support even at a different level');
+  assert(c.tacticalBeginRogueRegroup(e,leader));
+  assert.equal(c.tacticalRogueRegroup(e)?.allyId,leader.id);
+  assert.equal(leader.aggro,false,'finding a boss does not itself start a fight');
+});
+test('F58 sustained player pursuit can trigger successive bounded cross-pack retreats',()=>{
+  const c=fresh(),make=(name,x)=>c.makeEnemy({species:'wolf',name,level:2,hp:180,damage:1,gold:0,xp:0},{x,y:1700});
+  const e=make('scout',1400),a=make('first ally',1570),b=make('next pack',1900);
+  a.pack='first-pack';b.pack='next-pack';c.zone().enemies=[e,a,b];e.aggro=true;
+  c.s.party=[0,1,2].map(i=>c.unit('soldier',1430+i*20,1700));
+  Object.assign(c.hero,{x:1430,y:1700,level:2});c.line=()=>true;c.route=(from,to)=>[{x:to.x,y:to.y}];
+  assert(c.tacticalRogueOutnumbered(e));
+  assert(c.tacticalAutoRogue(e,c.hero));
+  assert(c.tacticalAdvanceRogueRegroup(e,c.hero,1));
+  assert.equal(c.tacticalRogueRegroup(e)?.phase,'travel');
+  Object.assign(e,{x:1540,y:1700});Object.assign(c.hero,{x:1540,y:1700});
+  for(const [i,u] of c.s.party.entries())Object.assign(u,{x:1525+i*20,y:1700});
+  assert(c.tacticalAdvanceRogueRegroup(e,c.hero,.1));
+  assert(a.aggro,'nearby first ally joins when player pursues');
+  e.telegraph=null;c.s.time=7;
+  assert(c.tacticalAdvanceRogueRegroup(e,c.hero,.1));
+  assert.equal(c.tacticalRogueRegroup(e)?.phase,'thinking','continued outnumbering prompts a second decision');
+  assert(c.tacticalAdvanceRogueRegroup(e,c.hero,1));
+  assert.equal(c.tacticalRogueRegroup(e)?.phase,'travel','same monster may seek a second pack');
+  assert.equal(c.tacticalRogueRegroup(e)?.allyId,b.id,'visitation prevents circling straight back to prior pack');
+  assert.equal(b.aggro,false,'the next pack is not recruited until the player follows');
+});
+
+test('F59 two present adventurers outnumber one defender; another monster restores parity',()=>{
+  const c=fresh(),e=c.makeEnemy({species:'wolf',name:'defender',level:2,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700}),
+    soldier=c.unit('soldier',1420,1700),friend=c.makeEnemy({species:'goblin',name:'fellow defender',level:2,hp:100,damage:1,gold:0,xp:0},{x:1460,y:1700});
+  c.s.party=[soldier];c.zone().enemies=[e];c.hero.level=2;Object.assign(c.hero,{x:1400,y:1700});
+  assert.equal(c.tacticalPresentOpponents(e),2);
+  assert(c.tacticalRogueOutnumbered(e),'two living adventurers outnumber one defender');
+  c.zone().enemies.push(friend);
+  assert(!c.tacticalRogueOutnumbered(e),'two local defenders match two adventurers');
+  soldier.hp=0;assert(!c.tacticalRogueOutnumbered(e),'fallen companion does not increase pressure');
+});
+test('F60 wounded monsters three levels above an underleveled hero never retreat or gain damage reduction',()=>{
+  const c=fresh(),e=c.makeEnemy({species:'wolf',name:'dangerous monster',level:7,hp:1000,damage:9,gold:5,xp:200},{x:1400,y:1700});
+  c.s.party=[c.unit('soldier',1410,1700)];c.zone().enemies=[e];c.line=()=>true;
+  Object.assign(c.hero,{x:1450,y:1700,level:4});e.hp=290;e.aggro=true;
+  assert(c.tacticalRogueWounded(e),'a severely hurt monster is still classified as wounded');
+  assert.equal(c.tacticalRogueEligibility(e,3),false,'outlevel protection overrides wounds and numbers');
+  assert.equal(c.tacticalAutoRogue(e,c.hero),false,'underleveled player cannot trigger wounded retreat');
+  const before=e.hp,reward=c.enemyReward(e);
+  assert(c.damage(e,100));assert.equal(before-e.hp,100,'normal damage applies, without tactical mitigation');
+  assert.deepEqual(c.enemyReward(e),reward,'woundedness does not alter earned XP or gold');
 });
 console.log(passed+' audit regression scenarios passed.');
