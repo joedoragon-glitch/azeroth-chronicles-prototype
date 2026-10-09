@@ -1832,6 +1832,8 @@
       if (e.deathPaid) return;
       this.tacticalClearThreat(e);
       this.tacticalClearRogueRegroup(e);
+      this._tacticalScatterLeash?.delete(e.id);
+      this._tacticalRepositions?.delete(e.id);
       const victoryLevel = this.hero.level;
       e.deathPaid = true;
       e.aggro = false;
@@ -2812,8 +2814,11 @@
       if (
         shift &&
         shift.zone === this.zoneId &&
-        shift.until > this.s.time &&
         target?.hp > 0 &&
+        (shift.until > this.s.time ||
+          (dist(e, shift.to) <= 250 &&
+            dist(target, e) <= 350 &&
+            dist(target, e.home) <= territory + 250)) &&
         dist(target, e) <= Math.max(territory, 550) &&
         dist(target, shift.to) <= Math.max(territory + 200, 650) &&
         this.distanceToSegment(target, shift.from, shift.to) <= Math.max(territory, 550)
@@ -2826,8 +2831,9 @@
       if (
         scatter &&
         scatter.zone === this.zoneId &&
-        scatter.until > this.s.time &&
         scatter.victims.has(target === this.hero ? 'hero' : target?.id) &&
+        (scatter.until > this.s.time ||
+          (dist(target, e) <= 350 && dist(target, e.home) <= territory + 250)) &&
         dist(target, e) <= Math.max(territory + 250, 900) &&
         dist(target, scatter.anchor) <= Math.max(territory + 250, 900)
       )
