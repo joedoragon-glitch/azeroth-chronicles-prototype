@@ -73,7 +73,7 @@
           this.hero.hp > 0 &&
           dist(this.hero, e) <= 520 &&
           this.line(this.hero, e) &&
-          (this.hero.order?.type === 'attack' && this.hero.order.id === e.id ||
+          ((this.hero.order?.type === 'attack' && this.hero.order.id === e.id) ||
             (this.basicComboTargetId === e.id && now - this.basicComboAt <= 2.2) ||
             recent.some((entry) => entry.source === 'hero' && now - entry.lastHit <= 2.2));
         let count = attackingHero ? 1 : 0;
@@ -182,8 +182,7 @@
       tacticalRogueEligibility(e, activeTargetCount = 0) {
         const config = R.tacticalFoundation;
         if (!e || !this.hero || e.hp <= 0 || this.peace) return false;
-        if (this.tacticalPresentOpponents(e) === 0 && activeTargetCount === 0)
-          return false;
+        if (this.tacticalPresentOpponents(e) === 0 && activeTargetCount === 0) return false;
         const difference = e.level - this.hero.level;
         if (difference >= config.outlevelProtection) return false;
         if (this.tacticalRogueWounded(e)) return true;
