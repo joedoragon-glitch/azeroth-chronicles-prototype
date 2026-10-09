@@ -1308,6 +1308,18 @@
           }
         }
         if (!e.interactionOnly) sprite(e, p);
+        if (e.renderKind === 'npc' && e.kind === 'keeper') {
+          // A roomy iron cage, drawn around the visible captive, not a tiny icon.
+          ctx.strokeStyle = '#d4bea0';
+          ctx.lineWidth = 2.5;
+          ctx.strokeRect(p.x - 39, p.y - 85, 78, 78);
+          for (let x = -28; x <= 28; x += 14) {
+            ctx.beginPath();
+            ctx.moveTo(p.x + x, p.y - 85);
+            ctx.lineTo(p.x + x, p.y - 7);
+            ctx.stroke();
+          }
+        }
         if (['enemy', 'ally', 'hero'].includes(e.renderKind)) {
           const visibleCombat = e.renderKind !== 'enemy' || worldLabelVisible(e);
           if (visibleCombat && !e.neutral) healthPlate(e, p);
