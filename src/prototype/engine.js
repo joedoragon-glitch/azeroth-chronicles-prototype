@@ -2760,11 +2760,14 @@
         e.noProgress = 0;
         if (state.thinkRemaining > 0) return true;
         const pressure = this.tacticalActiveTargetCount(e);
-        if (!this.tacticalRogueEligibility(e, pressure) && !this.tacticalRogueOutnumbered(e)) {
+        const totalPressure = this.tacticalRogueOutnumbered(e)
+          ? Math.max(pressure, R.tacticalFoundation.simultaneousPressureSources)
+          : pressure;
+        if (!this.tacticalRogueEligibility(e, totalPressure)) {
           this.tacticalStopRogueRegroup(e);
           return false;
         }
-        if (this.tacticalSeekRogueSupport(e, pressure)) return true;
+        if (this.tacticalSeekRogueSupport(e, totalPressure)) return true;
         this.tacticalStopRogueRegroup(e);
         if (this.tacticalRogueMove(e, target)) {
           if (!this._tacticalRegroupUsed) this._tacticalRegroupUsed = new Set();
@@ -2978,7 +2981,10 @@
       )
         return false;
       const pressure = this.tacticalActiveTargetCount(e);
-      if (!this.tacticalRogueEligibility(e, pressure)) return false;
+      const totalPressure = this.tacticalRogueOutnumbered(e)
+        ? Math.max(pressure, cfg.simultaneousPressureSources)
+        : pressure;
+      if (!this.tacticalRogueEligibility(e, totalPressure)) return false;
       if (!this._tacticalRegroups) this._tacticalRegroups = new Map();
       if (!this._tacticalRogueNext) this._tacticalRogueNext = new Map();
       if (newWound) {
