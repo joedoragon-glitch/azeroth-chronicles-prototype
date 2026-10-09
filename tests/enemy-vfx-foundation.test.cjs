@@ -105,11 +105,11 @@ for (const [role, speciesProfiles] of Object.entries(tactics.rogueRingleaderSign
 for (const [kind, profiles] of Object.entries(tactics.rogueSignatures || {})) {
   for (const [id, profile] of Object.entries(profiles)) {
     const actor =
-      kind === 'boss' ? { type: 'boss', family: id } : { roomCaptain: true, captainProfile: id };
+      kind === 'bosses' ? { type: 'boss', family: id } : { roomCaptain: true, captainProfile: id };
     const signature = VFX.describe(actor, {
       rogueMove: true, rogueSignature: true, kind: 'circle', name: profile.name,
     });
-    assert.equal(signature.id, 'rogue/' + (kind === 'boss' ? 'boss/' : 'captain/') + id + '/signature');
+    assert.equal(signature.id, 'rogue/' + (kind === 'bosses' ? 'boss/' : 'captain/') + id + '/signature');
   }
 }
 
