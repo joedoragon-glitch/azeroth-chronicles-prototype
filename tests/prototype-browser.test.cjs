@@ -245,10 +245,11 @@ await check('Paladin, Mage and Ranger Skill 1 charge readiness is identical and 
   assert(state.cd>0&&state.cd<=.85,cls+' free normal Skill 1 keeps the ordinary 0.85s cooldown');
   assert(state.mp>=0&&state.mp<3,cls+' can use the free normal basic at zero starting MP');
   assert(state.title.includes('Charged cost 20% max MP'),cls+' exposes the charged mana requirement');
-  await page.evaluate(()=>{const c=Prototype.game,e=c.zone().enemies[0];Object.assign(c.hero,{x:600,y:900,mp:100,maxMp:100,order:null});c.hero.cd[0]=.45;e.hp=e.maxHp;e.aggro=false;Object.assign(e,{x:680,y:900,home:{x:680,y:900}});});
+  await page.evaluate(()=>{const c=Prototype.game,e=c.zone().enemies[0];Object.assign(c.hero,{x:600,y:900,mp:100,maxMp:100,order:null});c.hero.cd[0]=.85;e.hp=e.maxHp;e.aggro=false;Object.assign(e,{x:680,y:900,home:{x:680,y:900}});});
   await page.keyboard.down('d');await page.waitForTimeout(40);await page.keyboard.down('1');
-  await page.waitForFunction(()=>document.querySelector('#skill-1 small')?.textContent.startsWith('WAIT '));
-  const queued=await page.evaluate(()=>Prototype.chargePresentation());
+  // Capture the WAIT state in the same browser turn as its UI predicate.
+  const queuedState=await page.waitForFunction(()=>{const cast=Prototype.chargePresentation();return document.querySelector('#skill-1 small')?.textContent.startsWith('WAIT ')&&cast?.waiting&&cast.cooldown>0?cast:false;});
+  const queued=await queuedState.jsonValue();await queuedState.dispose();
   assert(queued?.waiting&&queued.cooldown>0,cls+' can queue Skill 1 charge through the ordinary cooldown');
   await page.waitForFunction(()=>document.querySelector('#skill-1 small')?.textContent==='CHARGED',{timeout:2500});
   assert(await page.evaluate(()=>{const e=Prototype.game.zone().enemies[0];return Math.abs(e.hp-e.maxHp)<1e-9;}),cls+' movement auto-basic cannot steal Skill 1 while queued or charging');
