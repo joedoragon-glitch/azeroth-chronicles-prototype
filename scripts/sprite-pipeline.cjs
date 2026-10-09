@@ -304,6 +304,14 @@ function reference(contract, generation = false) {
   return canvas.toBuffer('image/png');
 }
 // Reference display geometry stays fixed; only processed raster pixels change.
+// Native raster budgets include both 150% camera framing and a larger
+// world-space display footprint. They do not authorize scaling 100% exports.
+function targetRasterScaleFor(contract) {
+  const featureScale = require('../src/prototype/visuals.js').featureScale(contract.entity);
+  if (featureScale >= 1.35) return specs.policy.targetScaleForMajorFeatures;
+  if (featureScale >= 1.3) return specs.policy.targetScaleForTrees;
+  return specs.policy.targetRasterScale;
+}
 function rasterFor(contract, scale = 1) {
   const width = contract.canvas.width * scale,
     height = contract.canvas.height * scale;
@@ -375,9 +383,70 @@ async function prepare(key, input, format = 'png', placement = {}) {
       source.width >= raster.width && source.height >= raster.height,
       'Higher-density output requires sufficient original pixels; no source enlargement',
     );
-  const pipeline = sharp(bytes).resize(raster.width, raster.height, {
-    kernel: specs.policy.resizeKernel,
-  });
+  let normalization = null;
+  let pipeline;
+  if (placement.normalization) {
+    const plan = placement.normalization;
+    const size = plan.fullCanvasSize;
+    const pad = Number.isInteger(plan.padding)
+      ? { left: plan.padding, right: plan.padding, top: plan.padding, bottom: plan.padding }
+      : plan.padding;
+    fail(
+      Number.isInteger(size) &&
+        size > 0 &&
+        size <= 4096 &&
+        pad &&
+        ['left', 'right', 'top', 'bottom'].every(
+          (k) => Number.isInteger(pad[k]) && pad[k] >= 0 && pad[k] <= 2048,
+        ),
+      'Invalid original placement normalization',
+    );
+    const virtualWidth = size + pad.left + pad.right;
+    const virtualHeight = size + pad.top + pad.bottom;
+    fail(
+      virtualWidth * raster.height === virtualHeight * raster.width,
+      'Normalized placement aspect must match reference canvas',
+    );
+    fail(
+      (raster.width * size) / virtualWidth <= source.width &&
+        (raster.height * size) / virtualHeight <= source.height,
+      'Original placement would enlarge source pixels',
+    );
+    const { data, info } = await sharp(bytes)
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    const outputPixels = Buffer.alloc(raster.width * raster.height * 4);
+    // Sample the untouched original once. The old resize/padding is geometry only.
+    for (let y = 0; y < raster.height; y++) {
+      const ny = ((y + 0.5) * virtualHeight) / raster.height - pad.top;
+      if (ny < 0 || ny >= size) continue;
+      const sy = Math.floor((ny * info.height) / size);
+      for (let x = 0; x < raster.width; x++) {
+        const nx = ((x + 0.5) * virtualWidth) / raster.width - pad.left;
+        if (nx < 0 || nx >= size) continue;
+        const sx = Math.floor((nx * info.width) / size);
+        const from = (sy * info.width + sx) * 4;
+        data.copy(outputPixels, (y * raster.width + x) * 4, from, from + 4);
+      }
+    }
+    normalization = {
+      fullCanvasSize: size,
+      padding: pad,
+      virtualWidth,
+      virtualHeight,
+      input: 'untouched-original',
+      samplingPasses: 1,
+      intermediatePixelsUsed: false,
+    };
+    pipeline = sharp(outputPixels, {
+      raw: { width: raster.width, height: raster.height, channels: 4 },
+    });
+  } else {
+    pipeline = sharp(bytes).resize(raster.width, raster.height, {
+      kernel: specs.policy.resizeKernel,
+    });
+  }
   let output = await (
     format === 'png'
       ? pipeline.png({ compressionLevel: 9, palette: false })
@@ -435,6 +504,7 @@ async function prepare(key, input, format = 'png', placement = {}) {
             dx,
             dy,
             rasterScale: raster.scale,
+            normalization,
           }),
         ),
       ).slice(0, 12),
@@ -460,6 +530,7 @@ async function prepare(key, input, format = 'png', placement = {}) {
       from: [source.width, source.height],
       to: [report.width, report.height],
       rasterScale: raster.scale,
+      ...(normalization ? { normalization } : {}),
       crop: false,
       trim: false,
       colorConversion: false,
@@ -1041,6 +1112,11 @@ function scene(
   game.s.party = [];
   Object.assign(game.hero, game.safe(800, 800));
   const zone = game.zone();
+  if (options.reviewRoad) {
+    const road = zone.roads.find((r) => r.length >= 2);
+    fail(road, 'Missing authored road for native review');
+    Object.assign(game.hero, game.safe((road[0].x + road[1].x) / 2, (road[0].y + road[1].y) / 2));
+  }
   zone.enemies = [];
   const entity = {
     ...contract.entity,
@@ -1048,6 +1124,7 @@ function scene(
     y: game.hero.y,
     hp: 100,
     maxHp: 100,
+    level: 1,
     neutral: false,
     name: contract.entity.renderKind === 'hero' ? game.hero.name : contract.catalog.name,
     aggro: contract.entity.renderKind === 'enemy',
@@ -1055,7 +1132,8 @@ function scene(
   if (entity.renderKind === 'hero') Object.assign(game.hero, entity);
   else {
     // Keep the reviewed entity inside narrow phone viewports, above the hero.
-    Object.assign(game.hero, game.safe(game.hero.x + 140, game.hero.y + 140));
+    const separation = Math.min(140, height * 0.23);
+    Object.assign(game.hero, game.safe(game.hero.x + separation, game.hero.y + separation));
     if (entity.renderKind === 'enemy') zone.enemies.push(entity);
     else if (entity.renderKind === 'ally') game.s.party.push(entity);
     else if (entity.renderKind === 'npc') zone.npcs.push(entity);
@@ -1243,7 +1321,7 @@ async function generationRequest(key, destination) {
     },
     target: {
       cameraZoom: specs.policy.reviewCameraZoom,
-      raster: rasterFor(contract, specs.policy.targetRasterScale),
+      raster: rasterFor(contract, targetRasterScaleFor(contract)),
       runtime: contract.runtime,
       visibleBodyCSS: body,
       profiles: specs.policy.reviewProfiles,
@@ -1342,7 +1420,7 @@ async function resolutionPlan() {
   walk(path.join(root, 'tools/sprites/batches'));
   const assets = Object.entries(registry.assets).map(([key, record]) => {
     const contract = contractFor(key),
-      target = rasterFor(contract, specs.policy.targetRasterScale),
+      target = rasterFor(contract, targetRasterScaleFor(contract)),
       current = rasterFor(contract, record.processing?.rasterScale ?? 1),
       clipFrames = Object.values(record.presentation?.clips || {}).reduce(
         (sum, c) => sum + c.frames.length,
@@ -1436,6 +1514,7 @@ module.exports = {
   reference,
   prepare,
   rasterFor,
+  targetRasterScaleFor,
   validateRaster,
   validateRecord,
   checkProduction,

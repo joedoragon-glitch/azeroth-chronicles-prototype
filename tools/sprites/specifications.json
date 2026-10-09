@@ -3,7 +3,7 @@
   "policy": {
     "maxSourcePixels": 4194304,
     "maxSourceBytes": 16777216,
-    "maxOutputDimension": 576,
+    "maxOutputDimension": 816,
     "maxOutputBytes": 1048576,
     "minimumPadding": 2,
     "colorSpace": "srgb",
@@ -11,7 +11,7 @@
     "maxActiveDecodedBytes": 16777216,
     "maxPackagedDecodedBytes": 134217728,
     "maxPackagedBytes": 134217728,
-    "maxRasterScale": 3,
+    "maxRasterScale": 4.25,
     "targetRasterScale": 3,
     "reviewCameraZoom": 1.5,
     "reviewProfiles": [
@@ -51,7 +51,9 @@
         "mode": "phone",
         "devicePixelRatio": 1.5
       }
-    ]
+    ],
+    "targetScaleForMajorFeatures": 4.25,
+    "targetScaleForTrees": 4
   },
   "assets": [
     {
@@ -1281,7 +1283,7 @@
       "region": 0,
       "entity": {
         "renderKind": "prop",
-        "icon": "\ud83e\udea8",
+        "icon": "🪨",
         "id": "sprite-reference-295"
       },
       "canvas": {
@@ -1297,7 +1299,7 @@
       "region": 2,
       "entity": {
         "renderKind": "prop",
-        "icon": "\ud83e\udea8",
+        "icon": "🪨",
         "id": "sprite-reference-296"
       },
       "canvas": {

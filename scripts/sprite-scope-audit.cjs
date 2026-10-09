@@ -27,10 +27,10 @@ function audit(options = {}) {
       if (!coverage.includes('| `' + key + '` |'))
         throw Error('Unclassified renderer family: ' + key);
   }
-  const work = source.slice(
-    source.indexOf('function workDetails(role)'),
-    source.indexOf('const type = e.renderKind'),
-  );
+  const workStart = source.indexOf('function workDetails(role)');
+  const workEnd = source.indexOf('const type = e.renderKind', workStart);
+  if (workStart < 0 || workEnd < 0) throw Error('Missing contextual renderer boundary');
+  const work = source.slice(workStart, workEnd);
   const workRoles = [...work.matchAll(/role === '([^']+)'/g)].map((m) => m[1]);
   for (const role of workRoles)
     if (!coverage.includes('`sceneRole:' + role + '`'))
