@@ -376,3 +376,310 @@ console.log(
   assert.equal(windup.geometry.x, 1550);
   assert(c.effects.find((f) => f.type === 'warning').presentationHandled);
 }
+// Concurrent reinforcements retain their own identity and preserve all gameplay state.
+function concurrentBirths(enabled, family, form = 'true', captain = false, ranged = false) {
+  const c = fresh();
+  c.enemyVfxEnabled = enabled;
+  c.zone().props = [];
+  const e = captain
+    ? c.makeEnemy(
+        { species: 'ashbeast', name: 'captain', level: 5, hp: 1000, damage: 10, gold: 0, xp: 0 },
+        { x: 1400, y: 1700 },
+      )
+    : c.bossEnemy(c.boss(family), form, { x: 1400, y: 1700 });
+  if (captain) Object.assign(e, { captain: true, captainProfile: family, ranged });
+  Object.assign(e, { aggro: true, hp: e.maxHp * 0.4, cd: 100, summonCd: 100, fightStart: 0 });
+  c.zone().enemies = [e];
+  c.s.time = 30;
+  if (captain) c.startCaptainAttack(e, c.hero);
+  else c.startAttack(e, c.hero, 0);
+  const pending = e.telegraph;
+  assert(pending && pending.kind !== 'summon');
+  const hp = c.hero.hp;
+  c.updateEnemies(0.01);
+  assert.equal(
+    e.telegraph,
+    pending,
+    'reinforcement cannot resolve or replace the active telegraph',
+  );
+  assert.equal(c.hero.hp, hp, 'automatic births do not inflict attack damage');
+  return { c, e, snapshot: c.snapshot(), births: c.effects.filter((f) => f.stage === 'spawn') };
+}
+for (const family of C.data.bosses.map((b) => b.id)) {
+  const observed = concurrentBirths(true, family),
+    baseline = concurrentBirths(false, family);
+  const slot = C.rules.attacks[family].findIndex((a) => a.kind === 'summon');
+  assert(slot >= 0);
+  assert.deepEqual(
+    observed.snapshot,
+    baseline.snapshot,
+    family + ' preserves counts, positions, timers and saves',
+  );
+  assert.equal(observed.births.length, observed.c.bossOwnedSummons(observed.e).length);
+  for (const f of observed.births) {
+    const born = observed.c.zone().enemies.find((u) => u.id === f.target);
+    assert.equal(f.skillId, 'boss/' + family + '/' + slot);
+    assert.equal(f.variant, 'true');
+    assert.equal(f.stage, 'spawn');
+    assert.equal(f.dangerous, false);
+    assert.equal(f.at, 30);
+    assert.deepEqual([f.x, f.y], [born.x, born.y]);
+    assert.equal(P.route(f).key, 'enemySpawn');
+  }
+}
+for (const ranged of [false, true]) {
+  const observed = concurrentBirths(true, 'supply-crown', 'normal', true, ranged),
+    baseline = concurrentBirths(false, 'supply-crown', 'normal', true, ranged);
+  assert.deepEqual(observed.snapshot, baseline.snapshot);
+  assert(observed.births.length);
+  for (const f of observed.births) {
+    assert.equal(f.skillId, 'captain/supply-crown/phase');
+    assert.equal(f.role, ranged ? 'ranged' : 'melee');
+    assert.equal(f.identity.role, f.role);
+    assert.equal(f.dangerous, false);
+    assert.equal(f.at, 30);
+    const born = observed.c.zone().enemies.find((u) => u.id === f.target);
+    assert.deepEqual([f.x, f.y], [born.x, born.y]);
+  }
+}
+// Explicit captain summon resolution still owns its authored cast slot.
+{
+  const c = fresh(),
+    id = 'supply-crown',
+    plans = C.rules.roomCaptains[id].attacks,
+    slot = plans.findIndex((a) => a.kind === 'summon'),
+    e = c.makeEnemy(
+      { species: 'ashbeast', name: 'captain', level: 5, hp: 1000, damage: 10, gold: 0, xp: 0 },
+      { x: 1400, y: 1700 },
+    );
+  assert(slot >= 0);
+  Object.assign(e, { captain: true, captainProfile: id, ranged: true });
+  c.zone().enemies = [e];
+  c.zone().props = [];
+  e.telegraph = { ...plans[slot], index: slot, x: c.hero.x, y: c.hero.y };
+  c.resolveAttack(e);
+  const births = c.effects.filter((f) => f.stage === 'spawn');
+  assert(births.length);
+  assert(births.every((f) => f.skillId === 'captain/' + id + '/' + slot && f.role === 'ranged'));
+}
+// A different actor's nested summon must not inherit the resolving actor's slot.
+{
+  const c = fresh(),
+    caster = c.bossEnemy(c.boss('mire'), 'normal', { x: 1400, y: 1700 }),
+    reinforcing = c.bossEnemy(c.boss('crypt'), 'true', { x: 1800, y: 1700 }),
+    original = c.summonBossAdds;
+  c.zone().enemies = [caster, reinforcing];
+  c.summonBossAdds = function (...args) {
+    if (args[0] === caster)
+      original.call(
+        this,
+        reinforcing,
+        this.trueSummonPlan(reinforcing),
+        this.bossSummonCap(reinforcing),
+      );
+    return original.apply(this, args);
+  };
+  c.startAttack(caster, c.hero, 3);
+  c.resolveAttack(caster);
+  const births = c.effects.filter((f) => f.stage === 'spawn');
+  assert(births.some((f) => f.source === reinforcing.id));
+  assert(
+    births.filter((f) => f.source === reinforcing.id).every((f) => f.skillId === 'boss/crypt/2'),
+  );
+  assert(births.filter((f) => f.source === caster.id).every((f) => f.skillId === 'boss/mire/3'));
+}
+// Reject unknown stage/layers before any deliberately silent route, including melee.
+for (const action of ['melee', 'circle']) {
+  const presentation = { ...P.profile({ species: 'orc' }, { kind: action }) },
+    event = { skillId: 'test', identity: { id: 'test', presentation }, stage: 'release' };
+  assert(P.route(event));
+  assert.equal(P.route({ ...event, stage: 'invented' }), null);
+  for (const stage of ['release', 'travel', 'linger', 'impact'])
+    for (const layer of ['material', 'personality', 'action', 'accent'])
+      assert.equal(
+        P.route({
+          ...event,
+          stage,
+          identity: { id: 'test', presentation: { ...presentation, [layer]: 'invented' } },
+        }),
+        null,
+        stage + '/' + layer,
+      );
+}
+// The acceptance gate must also reject a personality with no authored audio texture.
+{
+  const inventory = require('../scripts/enemy-vfx-inventory.cjs'),
+    original = inventory.audit;
+  inventory.audit = () => ({
+    total: 1,
+    counts: {},
+    rows: [
+      {
+        id: 'test',
+        presentation: { material: 'steel', personality: 'invented' },
+        stages: ['release'],
+      },
+    ],
+  });
+  try {
+    assert.throws(() => coverage.audit(), /Missing audio personality/);
+  } finally {
+    inventory.audit = original;
+  }
+}
+// All 99 actual rogue basics (84 stable IDs) sound at warning/release/contact.
+{
+  const cases = [];
+  for (const species of Object.keys(C.rules.tacticalFoundation.rogueRingleaderSignatures.melee))
+    for (const ranged of [false, true])
+      for (const tier of ['ordinary', 'guardian', 'ringleader'])
+        cases.push({
+          species,
+          ranged,
+          guard: tier === 'guardian',
+          form: tier === 'ringleader' ? tier : 'normal',
+        });
+  for (const captainProfile of Object.keys(C.rules.roomCaptains))
+    cases.push({ species: 'orc', captain: true, captainProfile });
+  for (const b of C.data.bosses)
+    for (const form of ['normal', 'true']) cases.push({ type: 'boss', family: b.id, form });
+  const ids = new Set();
+  for (const actor of cases) {
+    const c = fresh(),
+      e =
+        actor.type === 'boss'
+          ? c.bossEnemy(c.boss(actor.family), actor.form, { x: 1400, y: 1700 })
+          : c.makeEnemy(
+              {
+                species: actor.species,
+                name: 'opaque',
+                level: 5,
+                hp: 10000,
+                damage: 40,
+                gold: 0,
+                xp: 0,
+              },
+              { x: 1400, y: 1700 },
+            );
+    Object.assign(e, actor, { aggro: true });
+    c.zone().enemies = [e];
+    c.hero.level = e.level + 1;
+    c.s.time = 30;
+    assert(c.tacticalRogueMove(e, c.hero));
+    const id = V.describe(e, e.telegraph).id;
+    ids.add(id);
+    c.resolveAttack(e);
+    const events = c.effects.filter((f) => f.type === 'enemyVfx');
+    assert(
+      events.some((f) => f.stage === 'windup' && f.dangerous && P.route(f).key === 'enemyWindup'),
+    );
+    assert(events.some((f) => f.stage === 'release' && P.route(f).key === 'enemyRelease'));
+    assert(
+      events.some((f) => f.stage === 'impact' && f.contact && P.route(f).key === 'enemyImpact'),
+    );
+    assert(events.every((f) => f.skillId === id));
+    const { a, calls } = listener();
+    for (const f of c.effects) a.effect(f);
+    assert.equal(calls.filter((x) => x[0] === 'duck').length, 1);
+    const n = calls.length;
+    for (const f of c.effects) a.effect(f);
+    assert.equal(calls.length, n);
+  }
+  assert.equal(cases.length, 99);
+  const liveBasics = require('../scripts/enemy-vfx-inventory.cjs')
+    .audit()
+    .rows.filter((r) => r.group === 'rogue-basic');
+  assert.equal(liveBasics.length, 84);
+  assert(
+    liveBasics.every((r) => ids.has(r.id)),
+    'all live basics are exercised; forced test roles may add hypothetical IDs',
+  );
+}
+// Rally signatures warn about real damage; only actual native revival emits spawn.
+for (const actor of [
+  { type: 'boss', family: 'ridge', species: 'wolf', guard: true },
+  { type: 'boss', family: 'warlord', species: 'orc' },
+  { type: 'boss', family: 'cindermaw', species: 'ashbeast' },
+  { type: 'boss', family: 'darklord', species: 'crownguard' },
+  { captainProfile: 'supply-highlands', species: 'wolf', guard: true },
+  { captainProfile: 'frontier-overseer', species: 'orc' },
+]) {
+  const c = fresh(),
+    e =
+      actor.type === 'boss'
+        ? c.bossEnemy(c.boss(actor.family), 'normal', { x: 1400, y: 1700 })
+        : c.makeEnemy(
+            { species: 'orc', name: 'captain', level: 5, hp: 10000, damage: 40, gold: 0, xp: 0 },
+            { x: 1400, y: 1700 },
+          ),
+    troop = c.makeEnemy(
+      { species: actor.species, name: 'native', level: 5, hp: 1000, damage: 10, gold: 0, xp: 0 },
+      { x: 1700, y: 1700 },
+    );
+  if (actor.captainProfile)
+    Object.assign(e, { captain: true, captainProfile: actor.captainProfile });
+  Object.assign(e, { aggro: true });
+  Object.assign(troop, { hp: 0, deathPaid: true, pack: 'native', guard: !!actor.guard });
+  c.zone().props = [];
+  c.zone().enemies = [e, troop];
+  c.hero.level = e.level + 1;
+  c.s.time = 30;
+  assert(c.tacticalRogueMove(e, c.hero, true));
+  const move = e.telegraph;
+  assert(move.coefficient > 0);
+  c.resolveAttack(e);
+  assert(troop.hp > 0);
+  const windup = c.effects.find((f) => f.stage === 'windup'),
+    births = c.effects.filter((f) => f.stage === 'spawn');
+  assert(windup.dangerous);
+  assert.equal(P.route(windup).key, 'enemyWindup');
+  assert.equal(births.length, 1);
+  assert.equal(births[0].target, troop.id);
+  assert.deepEqual([births[0].x, births[0].y], [troop.home.x, troop.home.y]);
+  assert.equal(P.route(births[0]).key, 'enemySpawn');
+  const { a, calls } = listener();
+  a.effect(births[0]);
+  assert(calls.length > 0);
+  c.effects = [];
+  if (['warlord', 'cindermaw', 'darklord'].includes(actor.family))
+    c.tacticalRogueFieldSupport(e, move);
+  else c.tacticalRogueCommanderSupport(e, move);
+  assert(
+    !c.effects.some((f) => f.stage === 'spawn'),
+    'rallying a living defender cannot replay revival sound',
+  );
+}
+console.log(
+  'PASS final synchronization audit: concurrent TRUE/phase births, actor-owned summon slots, strict routing, 99 rogue basics and 6 native revival paths',
+);
+// The registered warning retains two readable local pulses and all master measurements.
+{
+  const fs = require('node:fs'),
+    path = require('node:path'),
+    manifest = require('../assets/audio/manifest.json'),
+    wav = fs.readFileSync(path.join(__dirname, '..', manifest.assets['sfx-critical-warning'].src));
+  assert.equal(wav.toString('ascii', 0, 4), 'RIFF');
+  assert.equal(wav.readUInt16LE(20), 1); // PCM
+  assert.equal(wav.readUInt16LE(22), 1); // mono
+  assert.equal(wav.readUInt16LE(34), 16);
+  const rate = wav.readUInt32LE(24),
+    rms = (from, to) => {
+      let sum = 0,
+        n = 0;
+      for (let i = Math.round(from * rate); i < Math.round(to * rate); i++) {
+        const x = wav.readInt16LE(44 + i * 2) / 32767;
+        sum += x * x;
+        n++;
+      }
+      return Math.sqrt(sum / n);
+    };
+  assert(
+    rms(0.11, 0.185) / rms(0.005, 0.08) > 0.35,
+    'second recorded danger pulse cannot disappear under a global decay',
+  );
+  assert.equal(
+    Object.keys(require('../tools/audio/sfx-measurements.json')).length,
+    30,
+    'single-cue authoring preserves untouched measurements',
+  );
+}
