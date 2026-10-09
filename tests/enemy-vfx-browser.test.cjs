@@ -105,6 +105,7 @@ fs.mkdirSync(out, { recursive: true });
         z.buildings = [];
         c.s.party = [];
         c.line = () => true;
+        c.tacticalAutoRogue = () => false;
         c.blocked = () => false;
         c.move = (e, t, s, dt) => {
           const d = Math.hypot(t.x - e.x, t.y - e.y),
@@ -223,6 +224,19 @@ fs.mkdirSync(out, { recursive: true });
             } else if (row.group === 'rogue-basic' || row.group === 'rogue-signature') {
               c.tacticalRogueMove(e, c.hero, row.group === 'rogue-signature');
               a = e.telegraph || { ...a, rogueMove: true };
+            } else if (row.group === 'ranged') {
+              Object.assign(e, {
+                ranged: true,
+                projectileStyle: p[2],
+                rangedAim: { x: 1400, y: 1700, timer: 0 },
+              });
+              a = { ...a, kind: 'projectile', style: p[2] };
+              c.updateEnemies(0.001);
+              const shot = c.s.projectiles.find((p) => p.sourceId === e.id);
+              if (!shot || c.enemyVfxProjectile(shot)?.identity?.id !== row.id)
+                throw Error('Missing live projectile binding ' + row.id);
+              c.updateProjectiles(0.03);
+              r.queue(c.effects.splice(0));
             } else if (row.group === 'basic-attack') a = { ...a, kind: 'melee', basic: true };
             else if (row.group === 'frenzy') a = { ...a, kind: 'frenzy' };
             if (row.geometry) a = { ...a, ...row.geometry };
@@ -276,6 +290,11 @@ fs.mkdirSync(out, { recursive: true });
               throw Error('Resolved draw mutated ' + row.id);
             const ms = (performance.now() - start) / 5;
             capture(row.id + ' · ' + form);
+            if (row.group === 'ranged') {
+              c.updateProjectiles(0.5);
+              if (!c.effects.some((f) => f.skillId === row.id && f.stage === 'impact' && f.contact))
+                throw Error('Missing live projectile contact ' + row.id);
+            }
             report.push({ id: row.id, form, drawMs: ms, effects: r.metrics().enemyVfxEffects });
           }
         if (cell % 24) sheets.push(sheet.toDataURL('image/png'));
