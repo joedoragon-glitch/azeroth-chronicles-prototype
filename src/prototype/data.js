@@ -12,7 +12,7 @@ const PrototypeData = {
       transport: 'Merchant wagon',
       fare: 25,
       route:
-        "Millhaven at (300, 350) connects to Orchard Hamlet at (900, 700), the Forest Crypt at (2150, 2100), and the wagon stand at (2450, 650). A north to south river at x 1200 can be crossed at the mill bridge near y 750 and a southern footbridge near y 1750. Thornfang's den lies beyond the settled orchard country near (760, 1750).",
+        "Millhaven at (300, 350) connects to Orchard Hamlet at (900, 700), the Forest Crypt at (2150, 2100), and the merchant wagon stand behind Millhaven at (135, 540). A north to south river at x 1200 can be crossed at the mill bridge near y 750 and a southern footbridge near y 1750. Thornfang's den lies beyond the settled orchard country near (760, 1750).",
       obstacle:
         'Dense thickets close direct shortcuts, but broad woodland paths remain walkable. The river, lake shore and mill pond are impassable water. Houses and fences shape streets without blocking exits.',
       exploration:
@@ -64,7 +64,7 @@ const PrototypeData = {
       transport: 'Pack beast caravan',
       fare: 110,
       route:
-        "The ferry landing at (425, 1900) climbs by switchbacks to Stonecross at (850, 1500), Quarry Outpost at (1750, 1150), the Ridge Tyrant's mountain watchtower near (2700, 700), the Colossus Mine entrance at (2850, 2350), and the caravan stand at (3100, 500).",
+        "The ferry landing at (425, 1900) climbs by switchbacks to Stonecross at (850, 1500), Quarry Outpost at (1750, 1150), the Ridge Tyrant's mountain watchtower near (2700, 700), the Colossus Mine entrance at (2850, 2350), and the caravan stand on Stonecross's western approach at (590, 1420).",
       obstacle:
         'Cliffs divide the plateau into connected terraces. Switchbacks, a stone bridge and a timber crossing provide routes. Rock walls and pine thickets block movement and projectiles consistently.',
       exploration:
@@ -90,7 +90,7 @@ const PrototypeData = {
       transport: 'Dragon rider',
       fare: 180,
       route:
-        "The caravan arrives at Emberwatch at (450, 500). The old damaged road has become a working occupation corridor: convoy and repair yards feed the guarded ravine crossing, inspection spurs and the Ashen Warlord's checkpoint near (2600, 1650), while a supply route supports the Dark Lord’s air-superiority project at Abyss Bastion (3000, 2700); the transport dragon roost remains at (3100, 500).",
+        "The caravan arrives at Emberwatch at (450, 500). The old damaged road has become a working occupation corridor: convoy and repair yards feed the guarded ravine crossing, inspection spurs and the Ashen Warlord's checkpoint near (2600, 1650), while a supply route supports the Dark Lord’s air-superiority project at Abyss Bastion (3000, 2700); the civilian transport dragon landing sits behind Emberwatch near (145, 260), distinct from Abyss Bastion's military dragon operation.",
       obstacle:
         'A ravine still splits the scarred region. The guarded northern crossing and longer burned-forest route remain the practical alternatives; charred trunks, fort walls, repairs and collapsed masonry leave visible gaps rather than a healed landscape.',
       exploration:
@@ -487,10 +487,10 @@ const PrototypeData = {
     [1250, 1800],
   ],
   ports: [
-    [2450, 650],
+    [135, 540],
     [2250, 650],
-    [3100, 500],
-    [3100, 500],
+    [590, 1420],
+    [145, 260],
     [350, 600],
   ],
   entrances: [
