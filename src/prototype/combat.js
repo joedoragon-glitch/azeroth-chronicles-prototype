@@ -101,10 +101,13 @@
           group.distance = Math.min(group.distance, dist(e, ally));
         }
         // A group assessment, not a retreat destination or an order to engage.
+        // Any one reachable ally can be sufficient. Favor close support first;
+        // group size only breaks a proximity tie. Actual path viability is
+        // checked when a specific regroup destination is requested.
         return [...groups.values()].sort(
           (a, b) =>
-            b.members.length - a.members.length ||
             a.distance - b.distance ||
+            b.members.length - a.members.length ||
             a.key.localeCompare(b.key),
         );
       }
