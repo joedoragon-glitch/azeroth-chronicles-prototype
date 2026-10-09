@@ -49,7 +49,10 @@
     if (e.kind === 'landmark' && e.id?.startsWith('bridge-')) return; // The full deck is drawn in world space.
     ctx.save();
     ctx.translate(p.x, p.y);
-    const scale = Number.isFinite(e.visualScale) && e.visualScale > 0 ? e.visualScale : 1;
+    const scale =
+      featureScale(e) > 1 && Number.isFinite(e.visualScale) && e.visualScale > 0
+        ? e.visualScale
+        : 1;
     if (scale !== 1) ctx.scale(scale, scale);
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
@@ -12824,7 +12827,10 @@
     return 54;
   }
   function height(e) {
-    const scale = Number.isFinite(e.visualScale) && e.visualScale > 0 ? e.visualScale : 1;
+    const scale =
+      featureScale(e) > 1 && Number.isFinite(e.visualScale) && e.visualScale > 0
+        ? e.visualScale
+        : 1;
     return unscaledHeight(e) * scale;
   }
   const floorPalettes = [
