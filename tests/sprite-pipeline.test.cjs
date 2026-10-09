@@ -62,6 +62,19 @@ const root = path.resolve(__dirname, '..');
       );
     }
     console.log('PASS references and deterministic scenes');
+    const supper = pipeline.contractFor('prop:ridge-supper:highlands'),
+      residence = pipeline.scene(
+        { ...supper, sceneZone: 'supply-highlands', scenePosition: { x: 410, y: 490 } },
+        320,
+        568,
+      );
+    assert.equal(residence.zoneId, 'supply-highlands', 'review enters the authored residence');
+    assert.deepEqual(residence.entityPosition, { x: 410, y: 490 });
+    assert.notEqual(
+      pipeline.hash(residence.bytes),
+      pipeline.hash(pipeline.scene(supper, 320, 568).bytes),
+      'interior review must not silently reuse an outdoor background',
+    );
     const cleanGoblin = await sharp(pipeline.reference(contracts[1], true))
       .ensureAlpha()
       .raw()

@@ -6,7 +6,7 @@
     {
       "key": "prop:mine-old-markings:highlands",
       "original": "prop-mine-old-markings-highlands/image-tool-original.png",
-      "status": "held-contextual-scene"
+      "status": "reviewed-native-mine-context-following-release"
     },
     {
       "key": "prop:mint-workbench:highlands",
@@ -32,5 +32,6 @@
     }
   ],
   "scope": "Static outdoor bodies only; sceneRole and workstation guards preserved.",
-  "next": "Release after previous stage deployment, continue complete grass/reed variant banks and remaining terrain/catalog."
+  "next": "Release after previous stage deployment, continue complete grass/reed variant banks and remaining terrain/catalog.",
+  "contextCorrection": "Initial hold inferred district as sceneRole. Direct live-instance audit corrected this: three mine stones plus ore/cart instances are eligible. Contextual guard unchanged; actual mine captures reviewed before release."
 }

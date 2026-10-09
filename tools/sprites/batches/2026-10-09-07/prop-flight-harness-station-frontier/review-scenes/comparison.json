@@ -1,0 +1,148 @@
+{
+  "key": "prop:flight-harness-station:frontier",
+  "entity": {
+    "renderKind": "prop",
+    "structure": "flight-harness-station",
+    "decorative": true,
+    "id": "sprite-reference-248"
+  },
+  "comparisons": [
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "day",
+      "anchor": {
+        "x": 498,
+        "y": 277.4
+      },
+      "crop": {
+        "left": 434,
+        "top": 189,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "2955487f74ed81af1205132c8dec25cab2a998ee9b4b93384fe10557ca9255cb",
+      "candidateHash": "b2e33f27432f8856434bd65f357e5f0ddc82b48bdbbf81616a30fff926507c37"
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "night",
+      "anchor": {
+        "x": 498,
+        "y": 277.4
+      },
+      "crop": {
+        "left": 434,
+        "top": 189,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "aa986fb913a1fa9df66a8260bb7089194b7f5643102d8bc4c61c61e423a88ea9",
+      "candidateHash": "da81f94f1f1fe3b8c7b9f063bff1b55e726f45b2bd98375d3e50ef8841da2b57"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "day",
+      "anchor": {
+        "x": 187.5,
+        "y": 265.43999999999994
+      },
+      "crop": {
+        "left": 124,
+        "top": 177,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "51d28089bf672b55e457a20d43fbc6a794096641b458784095cbe0bf1953900d",
+      "candidateHash": "0946d4df93747b6fc2be9de065b0d6f215ca2c7d4f712bcc549acbf780bac84d"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "night",
+      "anchor": {
+        "x": 187.5,
+        "y": 265.43999999999994
+      },
+      "crop": {
+        "left": 124,
+        "top": 177,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "404cd8f4583931c9695f6ccae194e9374f682d57565e011681a83c69e4941e19",
+      "candidateHash": "4eb924766849ca2bd81019d31398ecee8b38611e6d6b952de0b7f554efd6e942"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "day",
+      "anchor": {
+        "x": 112,
+        "y": 162.95999999999998
+      },
+      "crop": {
+        "left": 48,
+        "top": 75,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "92ad6a8a8e1649eb7658232e2d7257cab29129b19c33cea61ad74d62271a31c9",
+      "candidateHash": "d3b6df5bfe7a77739b74a4e2ffb424c84469b1d3017b5f4679692e8515bbb0d5"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "night",
+      "anchor": {
+        "x": 112,
+        "y": 162.95999999999998
+      },
+      "crop": {
+        "left": 48,
+        "top": 75,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "427bb4f48f9049ed20c243bd48ba34b185668f1df6bf667ab617dfc47f42c400",
+      "candidateHash": "f2ffff115731a388131f89bb1b99a2d57231eecc7a0d9385b91c2ccd15e83842"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "day",
+      "anchor": {
+        "x": 422,
+        "y": 88.19999999999993
+      },
+      "crop": {
+        "left": 358,
+        "top": 0,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "ef82cbd8581fa3f086d3385eedc4144c0067692e7b3087c5536ea29854da450c",
+      "candidateHash": "cefa6746fcc1be0c6b05a42118e85dfb54993f0c2bdd634483cab19dfbbb8470"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "night",
+      "anchor": {
+        "x": 422,
+        "y": 88.19999999999993
+      },
+      "crop": {
+        "left": 358,
+        "top": 0,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "fd08f39a22fda8c7bb95ec827fd84a5ba5f24906658dc388b56da0e243aeb1cd",
+      "candidateHash": "cab4bbe78b818c8be410090a517eafec72b826df60ccb05400af7abf56ba3e1a"
+    }
+  ],
+  "review": "Passed engineer native fidelity/placement inspection for all eight desktop/phone day/night contexts. No separate user image acceptance claimed."
+}

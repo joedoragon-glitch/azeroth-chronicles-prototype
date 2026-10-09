@@ -1,0 +1,193 @@
+{
+  "key": "prop:caravan-loading-bay:highlands",
+  "entity": {
+    "id": "decor-1",
+    "x": 535,
+    "y": 330,
+    "r": 0,
+    "decorative": true,
+    "structure": "caravan-loading-bay",
+    "icon": "🕯️",
+    "dungeonDistrict": "receiving-haulage",
+    "renderKind": "prop"
+  },
+  "comparisons": [
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "day",
+      "anchor": {
+        "x": 498,
+        "y": 315.2
+      },
+      "crop": {
+        "left": 434,
+        "top": 227,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "f7d881f045f0736a3d201ea72b8cf6b5079cdb85d083d3835e7b6f3866ddaeb7",
+      "candidateHash": "3f36954ebde924ced380c545b7188855c81b74a259bfe341d2330ef6d04dcd62",
+      "zoneId": "mine",
+      "entityPosition": {
+        "x": 535,
+        "y": 330
+      }
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "night",
+      "anchor": {
+        "x": 498,
+        "y": 315.2
+      },
+      "crop": {
+        "left": 434,
+        "top": 227,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "21197655aee4806060341a3cbf80ded430806f219c5976bf631b9cca7d32704f",
+      "candidateHash": "3ce67e7c10a137f905bdf07504251595e149395e7b8e6847bbc3d95ce4ab0efc",
+      "zoneId": "mine",
+      "entityPosition": {
+        "x": 535,
+        "y": 330
+      }
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "day",
+      "anchor": {
+        "x": 187.5,
+        "y": 303.23999999999995
+      },
+      "crop": {
+        "left": 124,
+        "top": 215,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "fb124ae5cbb96226a93531bf0d16da25247d207b902ea2bf494697a070228daa",
+      "candidateHash": "1c4eb14b1ec0ea401ecc3737e2be804197bbd62c4f77c1063f7b6597ad650928",
+      "zoneId": "mine",
+      "entityPosition": {
+        "x": 535,
+        "y": 330
+      }
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "night",
+      "anchor": {
+        "x": 187.5,
+        "y": 303.23999999999995
+      },
+      "crop": {
+        "left": 124,
+        "top": 215,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "4ad659b87bd5480b28b95be3f777d84e2d621d924b03cbf64e9b971b416b6987",
+      "candidateHash": "a5402195260e6be771a7c99d787547c8bcf77c53441087e6b362f4067b6aaffb",
+      "zoneId": "mine",
+      "entityPosition": {
+        "x": 535,
+        "y": 330
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "day",
+      "anchor": {
+        "x": 112,
+        "y": 200.76
+      },
+      "crop": {
+        "left": 48,
+        "top": 113,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "a42135c46bec7641782290400b213f6820e228552f4cd3c32ccc955f86ea203a",
+      "candidateHash": "c1c71560cf55e43cde420d236fba17f3e31a21f506096fd96af7bab7123ccb88",
+      "zoneId": "mine",
+      "entityPosition": {
+        "x": 535,
+        "y": 330
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "night",
+      "anchor": {
+        "x": 112,
+        "y": 200.76
+      },
+      "crop": {
+        "left": 48,
+        "top": 113,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "c3e2762015c3979046effb0741050ee4ad270b6e771f72a1fce6f56bf5fd6e63",
+      "candidateHash": "7776a80547d15fc27f4d88efbf6fd8a97c8d3771bc7d0f5b48759c3e712da67d",
+      "zoneId": "mine",
+      "entityPosition": {
+        "x": 535,
+        "y": 330
+      }
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "day",
+      "anchor": {
+        "x": 422,
+        "y": 125.99999999999997
+      },
+      "crop": {
+        "left": 358,
+        "top": 38,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "ec47ebb5900d4344efc1537d0205893d7cd649d0ea4255ee90ef5ed2214fd3cd",
+      "candidateHash": "0748b5b5b90189dcdbd48662b170a76c70d4c4eac0f324a1115d8423cdd59f88",
+      "zoneId": "mine",
+      "entityPosition": {
+        "x": 535,
+        "y": 330
+      }
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "night",
+      "anchor": {
+        "x": 422,
+        "y": 125.99999999999997
+      },
+      "crop": {
+        "left": 358,
+        "top": 38,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "4772e8eff955cd1c05a9903d67d5954543968e5d785439bfda5c9b8a7e6aa149",
+      "candidateHash": "28cdd218a62152cfe291fd3804bf9bde86a431051b71c63be7e3709999a20eea",
+      "zoneId": "mine",
+      "entityPosition": {
+        "x": 535,
+        "y": 330
+      }
+    }
+  ],
+  "review": "pending visual inspection"
+}

@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "integrated",
+  "designId": "prop-mine-old-markings-highlands",
+  "name": "Mine old-cut marker",
+  "kind": "environment",
+  "nextAction": "Verify release CI and exact live deployment, then continue remaining catalog.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel explicitly resumed full staged mass production from both interruption checkpoints; reuse saved completed art and correct held candidates before new batches.",
+    "decisionDate": "2026-10-08",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+    "contentDocuments": [
+      "docs/DESIGN_TO_SPRITE_WORKFLOW.md",
+      "docs/SPRITE_PRODUCTION_CURRENT_CONTEXT.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": null,
+    "proceduralDesignAcceptance": null,
+    "spriteProductionAuthorization": "Explicit current resume, generation, testing, implementation and publication request.",
+    "generatedAppearanceAcceptance": "Engineer-reviewed faithful implementation; no separate Joel image acceptance claimed.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "181e0bd4a19d60d8650c578fdad0988fdfde1e55",
+    "ownerFilesAndBranches": [],
+    "exactEntityState": {
+      "renderKind": "prop",
+      "structure": "mine-old-markings",
+      "decorative": true,
+      "id": "sprite-reference-241"
+    },
+    "isolatedReferencePath": "tools/sprites/batches/2026-10-09-05/prop-mine-old-markings-highlands/generation-reference.png",
+    "isolatedReferenceHash": "a0f8b9f8a93d37447ef863f1ce8ddb67b055589cba5e8268012c6215b10fa4d9",
+    "gameplayContextPaths": [
+      "tools/sprites/batches/2026-10-09-05/prop-mine-old-markings-highlands/review-scenes/native-review.png",
+      "tools/sprites/batches/2026-10-09-05/prop-mine-old-markings-highlands/review-scenes/comparison.json",
+      "tools/sprites/batches/2026-10-09-05/prop-mine-old-markings-highlands/review-context-mine/native-review.png",
+      "tools/sprites/batches/2026-10-09-05/prop-mine-old-markings-highlands/review-context-mine/comparison.json"
+    ],
+    "traitsToPreserve": [
+      "Single irregular tall gray-green cut-stone fragment, pale angular diamond-like old cut marking and short horizontal lower seam. No invented runes, text, glowing magic or historical symbols.",
+      "Material-appropriate organic shapes, authored component count, native footprint, placement and intrinsic marks."
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [
+      "241"
+    ],
+    "verifiedRuntimeKeys": [
+      "prop:mine-old-markings:highlands"
+    ],
+    "requiredVisibleAssets": [
+      "Static body"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Current exact structure branch is static and seed-invariant."
+    ],
+    "proceduralOwnersAndReasons": [
+      "Placement, collision, day/night shading and shadows remain procedural."
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": "prop:mine-old-markings:highlands",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "tools/sprites/batches/2026-10-09-05/prop-mine-old-markings-highlands/candidate.json"
+    ],
+    "approvedRecordKey": "prop:mine-old-markings:highlands",
+    "activeContentRevision": "53b8a283b4e364aab9aa7db453c9451192bf8b2e44ca68fb9cc4e8addbddf607",
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "procedural",
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

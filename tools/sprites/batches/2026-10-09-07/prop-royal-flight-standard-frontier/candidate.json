@@ -86,7 +86,9 @@
     }
   },
   "review": {
-    "status": "pending",
-    "reference": null
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+    "reviewer": "Codex engineer under current explicit implementation/publication authorization",
+    "appearance": "Native desktop/phone day/night review passed. Natural face/material corrections preserve authored components. No separate Joel image acceptance claimed."
   }
 }

@@ -3,6 +3,13 @@
   "catalogId": "241",
   "prompt": "Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Mine old-cut marker. Single irregular tall gray-green cut-stone fragment, pale angular diamond-like old cut marking and short horizontal lower seam. No invented runes, text, glowing magic or historical symbols. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.",
   "sourceCommit": "181e0bd4a19d60d8650c578fdad0988fdfde1e55",
-  "status": "generated-held-contextual-scene",
-  "holdReason": "All native instances have sceneRole; current resolver deliberately preserves contextual furnishings. Keep original; no unused registry publication or relaxation of contextual guard."
+  "status": "native-review-pending",
+  "original": "tools/sprites/batches/2026-10-09-05/prop-mine-old-markings-highlands/image-tool-original.png",
+  "fullCanvasSize": 1024,
+  "padding": 128,
+  "translation": {
+    "offsetX": -2,
+    "offsetY": 12
+  },
+  "contextCorrection": "Direct live audit: old-workings is regionalDistrict, not sceneRole. Three native mine instances are eligible. Context guard unchanged."
 }

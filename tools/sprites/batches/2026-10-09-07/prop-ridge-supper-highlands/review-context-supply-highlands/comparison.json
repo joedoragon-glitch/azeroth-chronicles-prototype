@@ -1,0 +1,192 @@
+{
+  "key": "prop:ridge-supper:highlands",
+  "entity": {
+    "id": "treasury-3",
+    "x": 410,
+    "y": 490,
+    "r": 0,
+    "decorative": true,
+    "structure": "ridge-supper",
+    "treasuryBoss": "ridge",
+    "renderKind": "prop"
+  },
+  "comparisons": [
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "day",
+      "anchor": {
+        "x": 497.99999999999994,
+        "y": 315.20000000000005
+      },
+      "crop": {
+        "left": 434,
+        "top": 227,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "39d55c793dac393ec932020bceb398d1ddfde635f87b76c87898f840e64e1231",
+      "candidateHash": "d2083468a5a39f43b35b9c9ced496247e9a908b1d6e45dc33348312a7e7bdd18",
+      "zoneId": "supply-highlands",
+      "entityPosition": {
+        "x": 410,
+        "y": 490
+      }
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "night",
+      "anchor": {
+        "x": 497.99999999999994,
+        "y": 315.20000000000005
+      },
+      "crop": {
+        "left": 434,
+        "top": 227,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "5807ac3a4b1a9b1e3e1e28390f7c0ca3cc7eaaedf7a9cfe38f5f8e1958e164ae",
+      "candidateHash": "6275bf7c0361739a618f55a36e5556c4b4d81ed71e16f7c2bbe12e86baa37371",
+      "zoneId": "supply-highlands",
+      "entityPosition": {
+        "x": 410,
+        "y": 490
+      }
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "day",
+      "anchor": {
+        "x": 187.5,
+        "y": 303.24
+      },
+      "crop": {
+        "left": 124,
+        "top": 215,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "f2dbb6183a0d44196f7c8cb0339f7af9fc43214639155d18620ed4fb6ba17a4a",
+      "candidateHash": "a7c0c530a47a580d426b2598058c78dff586a0c64343cbdabea1dc388ab9a590",
+      "zoneId": "supply-highlands",
+      "entityPosition": {
+        "x": 410,
+        "y": 490
+      }
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "night",
+      "anchor": {
+        "x": 187.5,
+        "y": 303.24
+      },
+      "crop": {
+        "left": 124,
+        "top": 215,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "41aa4730e7176380c551909ffb8569532aa5f163db21162c99990a193a776539",
+      "candidateHash": "9de1d43cb6a2776514e1e6aac54f22c9644342bf04af9f01259648cff81efbfc",
+      "zoneId": "supply-highlands",
+      "entityPosition": {
+        "x": 410,
+        "y": 490
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "day",
+      "anchor": {
+        "x": 112.00000000000001,
+        "y": 200.76000000000002
+      },
+      "crop": {
+        "left": 48,
+        "top": 113,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "c0ecfe063baa3b9e3662ddd1628d1274177a2ee397a04ab1838b0690ec4bf377",
+      "candidateHash": "a619154817f6dd55a36adf884dc47d5f4607a6a8e78661964c4f87b016a2032a",
+      "zoneId": "supply-highlands",
+      "entityPosition": {
+        "x": 410,
+        "y": 490
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "night",
+      "anchor": {
+        "x": 112.00000000000001,
+        "y": 200.76000000000002
+      },
+      "crop": {
+        "left": 48,
+        "top": 113,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "1c9bf650617a43e3f0171134f35d089cd5477ea75f618b78233348843f6cd93b",
+      "candidateHash": "44e6d17ed9f70577de28958a002e662a2a7b4786e7a79bb46d36ee0d32e6666a",
+      "zoneId": "supply-highlands",
+      "entityPosition": {
+        "x": 410,
+        "y": 490
+      }
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "day",
+      "anchor": {
+        "x": 422,
+        "y": 126
+      },
+      "crop": {
+        "left": 358,
+        "top": 38,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "652cad912c23aa3f68cbf4b4c31189d480191d3a79cc47ffc892f239a713092f",
+      "candidateHash": "15cba34065eeb93d82ddb65881abf664bdf712034cc0934cbdd7d913ef48c3d1",
+      "zoneId": "supply-highlands",
+      "entityPosition": {
+        "x": 410,
+        "y": 490
+      }
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "night",
+      "anchor": {
+        "x": 422,
+        "y": 126
+      },
+      "crop": {
+        "left": 358,
+        "top": 38,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "592b3c58b0dfd85023969059a2c6cd8d73119d8b4d18471c0e1fb4b09c219aa9",
+      "candidateHash": "81e77d26b319cfe82714c5f4c472589545cc7b1b64ce0bae854ef502ee101df5",
+      "zoneId": "supply-highlands",
+      "entityPosition": {
+        "x": 410,
+        "y": 490
+      }
+    }
+  ],
+  "review": "Passed engineer native fidelity/placement inspection for all eight desktop/phone day/night contexts. No separate user image acceptance claimed."
+}

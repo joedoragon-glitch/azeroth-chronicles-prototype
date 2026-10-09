@@ -1,0 +1,18 @@
+{
+  "id": "T010",
+  "resourceKey": "terrain:road:crown",
+  "name": "Dark Crown road material",
+  "status": "generation-queued",
+  "sourceOwner": "roads",
+  "palette": [
+    "#3f3d45",
+    "#66636e",
+    "#827d89",
+    "#55525d"
+  ],
+  "cues": "Ordered dark slate-violet paving material, fine stone grain. Road margins, joints, wagon ruts and junctions stay in the renderer; do not bake them into the tile.",
+  "prompt": "Create exactly ONE seamless, fully opaque square 2D material texture for Azeroth Chronicles: Dark Crown road material. Use the supplied procedural surface sample only for its current palette and material identity. Canonical palette: #3f3d45, #66636e, #827d89, #55525d. Material cues: Ordered dark slate-violet paving material, fine stone grain. Road margins, joints, wagon ruts and junctions stay in the renderer; do not bake them into the tile.\nFlat top-down material, no isometric perspective. Very fine low-contrast natural micrograin, predominantly the first palette color with restrained variation from the others. Even neutral unlit treatment. Perfectly tile across BOTH horizontal and vertical edges: no border, bands, focal point, large patches or repeating objects. Do not reproduce procedural road margins, ruts or joints from the sample. No road shape, curbs, wagon tracks, paving slab outlines, slab joints, path edges, trees, grass tufts, rocks as isolated objects, puddles, scenery, geometry, grid, markings, runes, shadow, directional lighting, glow, text or UI. The renderer owns all road shapes, intersections and margins. Full canvas covered, no alpha transparency or padding. Intended output is a 256-square repeat tile after explicit downsampling; quiet uniform fine material rather than busy detail.",
+  "tool": "image_gen",
+  "sourceCommit": "4c508e6c383973634f723641d4df210275c822e2",
+  "dependencyHash": "fac35e1721a231bf41b98ab6edfce41aa1f05e9e10b33252c69e4a84209b9b07"
+}

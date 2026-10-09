@@ -1,0 +1,92 @@
+{
+  "version": 2,
+  "key": "prop:highland-pay-station:highlands",
+  "catalogId": "237",
+  "canonHash": "33888bf2168321ed27baea17a11e7cb02cb440b8a1685d4fd40b241e18b3b451",
+  "canonSnapshotHash": "f81c0c5a6a0b78a9c3ded5a70e2d1878173841d5edd3e9af4a4d6e5b1ee5e91f",
+  "catalogHash": "7bfbf332aa71466de977755f79b3c3962830d19c76cf14419c92ed1ec9f37e55",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 2048,
+    "height": 2048,
+    "bytes": 744850,
+    "decodedBytes": 16777216,
+    "hash": "e6c14c950afe4cd02a08ebf8f8a99a3cf20077173f1f0d11b78c8f4ccb3cf942",
+    "pixelHash": "ea9b8656f311801ea794b7c65e6d05b1a2863b75f0b72dd68dae0f781f2dd0ee",
+    "bounds": {
+      "x1": 539,
+      "y1": 539,
+      "x2": 1478,
+      "y2": 1515
+    },
+    "padding": 532,
+    "transparentPixels": 3908387,
+    "visiblePixels": 285917,
+    "lowAlphaPixels": 8671,
+    "materialBounds": {
+      "x1": 660,
+      "y1": 779,
+      "x2": 1387,
+      "y2": 1322
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 8788,
+    "decodedBytes": 147456,
+    "hash": "a724ff68cfad59c0d0885c5a6488b12a142c0e0ff86f013ec346fd65049c9c30",
+    "pixelHash": "b82df904597ec7ea07a12a9a087c6ad4b679d417b06f9183f407b520a533a854",
+    "bounds": {
+      "x1": 62,
+      "y1": 92,
+      "x2": 130,
+      "y2": 164
+    },
+    "padding": 27,
+    "transparentPixels": 34348,
+    "visiblePixels": 2516,
+    "lowAlphaPixels": 69,
+    "materialBounds": {
+      "x1": 62,
+      "y1": 105,
+      "x2": 129,
+      "y2": 155
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      2048,
+      2048
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": 0,
+      "y": 32,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "pending",
+    "reference": null
+  }
+}

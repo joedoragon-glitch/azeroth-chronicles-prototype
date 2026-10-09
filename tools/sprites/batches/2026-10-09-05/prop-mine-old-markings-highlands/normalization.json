@@ -1,0 +1,19 @@
+{
+  "originalHash": "0b4c66ccc359ddc3a148423a30dc46af53527fb03267ffdcb46ad609fc209385",
+  "normalizedHash": "25e2cfbcfc34a8f7c06e8d13498444cf560bb972bcb710138df44a75fb8d093b",
+  "fullCanvasSize": 1024,
+  "padding": {
+    "left": 128,
+    "right": 128,
+    "top": 128,
+    "bottom": 128
+  },
+  "translation": {
+    "offsetX": -2,
+    "offsetY": 12
+  },
+  "crop": false,
+  "trim": false,
+  "alphaDeletion": false,
+  "reason": "Explicit full-canvas resize, transparent padding and root translation; immutable original retained."
+}
