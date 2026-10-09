@@ -210,6 +210,7 @@
       );
     }
     function supplier(n, back = closeMenu) {
+      const manaEnabled = Campaign.rules.resourceMode.manaEnabled;
       const advanced = n.kind === 'alchemist',
         vitalityRank = getGame().companionVitalityRank(),
         vitalityCost = getGame().companionVitalityCost(),
@@ -222,12 +223,16 @@
       if (!advanced) {
         openMenu(
           n.name,
-          'Combat potions have been retired. Rangers now provide field Heal and Mana Recovery, so the supply shop no longer requires you to maintain potion stock.',
+          manaEnabled
+            ? 'Combat potions have been retired. Rangers now provide field Heal and Mana Recovery, so the supply shop no longer requires you to maintain potion stock.'
+            : 'Combat potions have been retired. Rangers provide Heal in the field.',
           [
             action(
               'Ranger field support',
               () => {},
-              'Heal triggers automatically at 50% HP or less · Mana Recovery at 35% MP or less · H/M command them manually',
+              manaEnabled
+                ? 'Heal triggers automatically at 50% HP or less · Mana Recovery at 35% MP or less · H/M command them manually'
+                : 'Heal activates automatically for injured allies; command it manually with H',
               true,
             ),
           ],
@@ -237,7 +242,9 @@
       }
       openMenu(
         n.name,
-        'Neri trains Ranger field support instead of selling health or mana potions. Training is permanent for every Ranger, including Rangers you recruit later.',
+        manaEnabled
+          ? 'Neri trains Ranger field support instead of selling health or mana potions. Training is permanent for every Ranger, including Rangers you recruit later.'
+          : 'Neri trains permanent Ranger Heal, companion vitality and discipline resets.',
         [
           action(
             healRank >= 2
@@ -252,7 +259,7 @@
               : '60 → 150 HP over five seconds to one target · same 10s per-Ranger Heal cooldown',
             healRank >= 2 || getGame().hero.gold < healCost,
           ),
-          action(
+          ...(manaEnabled ? [action(
             manaRank >= 2
               ? 'Ranger Mana Recovery · Rank 2 · MAX'
               : 'Upgrade Ranger Mana Recovery · Rank 2 · ' + manaCost + ' crowns',
@@ -264,7 +271,7 @@
               ? 'Restores 100 MP over five seconds to the hero · maximum training'
               : '40 → 100 MP over five seconds · same 10s per-Ranger Mana Recovery cooldown',
             manaRank >= 2 || getGame().hero.gold < manaCost,
-          ),
+          )] : []),
           action(
             'Train Companion Vitality · Rank ' +
               (vitalityRank + 1) +
@@ -984,7 +991,7 @@
               : 'No active Ranger · recruit or activate one for field healing',
             true,
           ),
-          action(
+          ...(Campaign.rules.resourceMode.manaEnabled ? [action(
             'Ranger Mana Recovery · ' + mana + ' MP',
             () => {},
             rangers.length
@@ -994,7 +1001,7 @@
                   ' · automatic at hero ≤35% MP · command with M'
               : 'No active Ranger · recruit or activate one for field mana recovery',
             true,
-          ),
+          )] : []),
           ...Object.keys(Campaign.legacyWeapons)
             .filter((name) => getGame().s.legacyInventory?.includes(name))
             .map((name) =>
@@ -1167,13 +1174,15 @@
       const p = getGame().talentProfile();
       if (i === 0) return 'Each rank: +' + p.power + ' Power';
       if (i === 1)
-        return (
-          'Each rank: +' +
-          formatTrainingNumber(p.mana * 0.125) +
-          ' MP/s in combat · +' +
-          formatTrainingNumber(p.mana * 0.25) +
-          ' MP/s out of combat'
-        );
+        return Campaign.rules.resourceMode.manaEnabled
+          ? 'Each rank: +' +
+              formatTrainingNumber(p.mana * 0.125) +
+              ' MP/s in combat · +' +
+              formatTrainingNumber(p.mana * 0.25) +
+              ' MP/s out of combat'
+          : 'Each rank: -' +
+              Math.round(Campaign.rules.cooldownBalance.reductionPerTalentRank * 100) +
+              '% to skill cooldowns · up to 20% at Rank 5';
       if (i === 2) return 'Each rank: +' + p.hp + ' maximum HP';
       return 'Each rank: +' + p.speed + ' movement speed';
     }
@@ -1195,7 +1204,12 @@
       );
     }
     function talents(back = closeMenu) {
-      const names = ['Power Training', 'Mana Training', 'Health Training', 'Movement Training'],
+      const names = [
+          'Power Training',
+          Campaign.rules.resourceMode.manaEnabled ? 'Mana Training' : 'Cooldown Training',
+          'Health Training',
+          'Movement Training',
+        ],
         spent = getGame().talentSpent(),
         left = getGame().hero.freeTalentResets || 0,
         actions = names.map((name, i) =>
@@ -1221,7 +1235,7 @@
         ),
       );
       openMenu(
-        'Discipline Training',
+        'Talents',
         'Available training points ' +
           getGame().hero.talentPoints +
           ' · One point raises one discipline by one rank.',
