@@ -19,6 +19,10 @@ jobs:
       - name: Format and evidence check
         if: always()
         run: |
+          npx prettier --write src/prototype/engine.js src/prototype/combat.js
+          echo '===FINAL_PRETTIER_DIFF_START==='
+          git diff --no-ext-diff --unified=3 -- src/prototype/engine.js src/prototype/combat.js
+          echo '===FINAL_PRETTIER_DIFF_END==='
           npx prettier --check src/prototype/engine.js src/prototype/combat.js src/prototype/rules.js src/prototype/hero-combat.js src/prototype/party.js src/prototype/app.js
           sha256sum src/prototype/rules.js
           node tests/sprite-scope.test.cjs
