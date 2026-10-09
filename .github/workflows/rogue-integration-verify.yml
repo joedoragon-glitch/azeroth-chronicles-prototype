@@ -13,6 +13,12 @@ jobs:
         with:
           node-version: '22'
       - run: npm ci --ignore-scripts
+      - name: Show exact hero-combat formatting fix
+        run: |
+          npx prettier --write src/prototype/hero-combat.js
+          echo 'ROGUE_INTEGRATION_FORMAT_BEGIN'
+          git diff --no-ext-diff --unified=3 -- src/prototype/hero-combat.js
+          echo 'ROGUE_INTEGRATION_FORMAT_END'
       - name: Verify formatting
         run: npm run format:check
       - name: Verify generated files and sprite evidence
