@@ -5,7 +5,7 @@ const Campaign = require('../src/prototype/engine.js');
 
 const run = new Campaign('normal', 'paladin', () => 0.9);
 const quests = run.questDefs().filter((q) => q.id !== 'quest-barracks');
-const prose = Campaign.data.questNarration;
+const prose = require('../src/prototype/narration.js');
 assert.equal(quests.length, 30);
 assert.equal(prose.length, 30);
 assert.equal(new Set(prose).size, 30, 'Each quest has a distinct authored payoff');
