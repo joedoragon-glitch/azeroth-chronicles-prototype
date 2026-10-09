@@ -220,8 +220,8 @@ fs.mkdirSync(out, { recursive: true });
             } else if (row.group === 'night') {
               c.startNightSkill(e, c.hero);
               a = e.telegraph;
-            } else if (row.group === 'rogue-basic') {
-              c.tacticalRogueMove(e, c.hero);
+            } else if (row.group === 'rogue-basic' || row.group === 'rogue-signature') {
+              c.tacticalRogueMove(e, c.hero, row.group === 'rogue-signature');
               a = e.telegraph || { ...a, rogueMove: true };
             } else if (row.group === 'basic-attack') a = { ...a, kind: 'melee', basic: true };
             else if (row.group === 'frenzy') a = { ...a, kind: 'frenzy' };
@@ -240,7 +240,9 @@ fs.mkdirSync(out, { recursive: true });
             const saved = JSON.stringify(c.snapshot());
             r.draw();
             if (JSON.stringify(c.snapshot()) !== saved) throw Error('Draw mutated ' + row.id);
-            if (['boss', 'captain', 'night', 'rogue-basic'].includes(row.group)) {
+            if (
+              ['boss', 'captain', 'night', 'rogue-basic', 'rogue-signature'].includes(row.group)
+            ) {
               e.telegraph = a;
               c.resolveAttack(e);
               e.telegraph = null;

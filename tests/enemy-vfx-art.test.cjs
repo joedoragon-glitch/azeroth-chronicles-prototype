@@ -6,7 +6,13 @@ const assert = require('node:assert/strict'),
   Art = require('../src/prototype/enemy-vfx-art.js'),
   FX = require('../src/prototype/combat-visuals.js'),
   Inventory = require('../scripts/enemy-vfx-inventory.cjs');
-const rows = [...Inventory.collect(), ...require('./fixtures/enemy-vfx-rogue-signatures.json')];
+const current = Inventory.collect();
+const rows = [
+  ...current,
+  ...require('./fixtures/enemy-vfx-rogue-signatures.json').filter(
+    (r) => !current.some((c) => c.id === r.id),
+  ),
+];
 for (const r of rows)
   assert(
     Art.recipe(

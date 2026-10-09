@@ -34,6 +34,7 @@
             delete e.path;
             delete e.idleWanderTarget;
             delete e.idleWanderWait;
+            delete e.rogueDustCoverUntil;
             e.returning = 0;
             if (e.hp > 0 && !e.neutral) {
               Object.assign(e, e.home);
@@ -251,6 +252,7 @@
             throw Error('Invalid population');
           const seen = new Set();
           for (const e of z.enemies) {
+            delete e.rogueDustCoverUntil;
             if (seen.has(e.id) || (e.family && !ids.has(e.family))) throw Error('Invalid enemy');
             seen.add(e.id);
             for (const f of ['x', 'y', 'hp', 'maxHp', 'baseHp', 'baseDamage', 'gold', 'xp'])

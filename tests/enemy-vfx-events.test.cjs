@@ -53,7 +53,9 @@ for (const b of C.data.bosses)
 // Every captain plan and live tactical basic preserves the exact underlying resolution.
 const rows = require('../scripts/enemy-vfx-inventory.cjs').collect();
 let additional = 0;
-for (const row of rows.filter((r) => ['captain', 'rogue-basic', 'night'].includes(r.group))) {
+for (const row of rows.filter((r) =>
+  ['captain', 'rogue-basic', 'rogue-signature', 'night'].includes(r.group),
+)) {
   const run = (enabled) => {
     const c = fresh(enabled),
       parts = row.id.split('/');
@@ -78,7 +80,8 @@ for (const row of rows.filter((r) => ['captain', 'rogue-basic', 'night'].include
     c.zone().enemies = [e];
     c.zone();
     e.aggro = true;
-    if (row.group === 'rogue-basic') assert(c.tacticalRogueMove(e, c.hero));
+    if (row.group === 'rogue-basic' || row.group === 'rogue-signature')
+      assert(c.tacticalRogueMove(e, c.hero, row.group === 'rogue-signature'));
     else if (row.group === 'night') assert(c.startNightSkill(e, c.hero));
     else {
       const index = Number(parts[2]),

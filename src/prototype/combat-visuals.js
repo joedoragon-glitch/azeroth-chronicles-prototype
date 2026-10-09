@@ -180,8 +180,10 @@
     for (const e of game.zone().enemies.filter((e) => e.telegraph)) {
       const a = e.telegraph,
         shapes = warningShapes(a, game.attackPatches(a));
-      ctx.strokeStyle = a.rogueSignature ? '#a5e5e0' : a.rogueMove ? '#b0dedb' : '#ffe09a';
-      ctx.fillStyle = a.rogueMove ? '#408e8c20' : '#dc644c30';
+      // Rogue warnings need an identity distinct from ordinary boss attacks:
+      // cool outlines for basic disruption, brighter double-width for signature.
+      ctx.strokeStyle = a.rogueSignature ? '#9cf1f0' : a.rogueMove ? '#8ecde6' : '#ffe09a';
+      ctx.fillStyle = a.rogueSignature ? '#369ab33e' : a.rogueMove ? '#4b95c132' : '#dc644c30';
       ctx.lineWidth = a.rogueSignature ? 3.3 : 2.5;
       ctx.setLineDash(cue ? (a.rogueSignature ? [10, 4] : [8, 5]) : []);
       for (const points of shapes) {
@@ -218,12 +220,19 @@
             4,
             Math.min(viewHeight - h - 4, p.y - (a.kind === 'summon' ? 72 : 31) - h + 21),
           );
-        ctx.fillStyle = '#241d1af2';
+        ctx.fillStyle = a.rogueMove ? '#192a36f2' : '#241d1af2';
         ctx.fillRect(left, top, w, h);
-        ctx.strokeStyle = a.kind === 'summon' ? '#a8bb9b' : a.rogueMove ? '#9ad8d4' : '#f4c984';
+        ctx.strokeStyle =
+          a.kind === 'summon'
+            ? '#a8bb9b'
+            : a.rogueSignature
+              ? '#9cf1f0'
+              : a.rogueMove
+                ? '#8ecde6'
+                : '#f4c984';
         ctx.lineWidth = 1;
         ctx.strokeRect(left, top, w, h);
-        ctx.fillStyle = a.rogueMove ? '#e0f6ef' : '#fff3c8';
+        ctx.fillStyle = a.rogueMove ? '#f2fbff' : '#fff3c8';
         lines.forEach((t, j) => ctx.fillText(t, left + w / 2, top + 16 + j * 15));
       }
     }
