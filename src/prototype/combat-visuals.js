@@ -201,8 +201,10 @@
             if (lines[i] && ctx.measureText(next).width + 20 > maxWidth) lines.push(word);
             else lines[i] = next;
           }
-          const w = Math.min(maxWidth,
-              Math.max(100, ...lines.map((line) => ctx.measureText(line).width + 20))),
+          const w = Math.min(
+              maxWidth,
+              Math.max(100, ...lines.map((line) => ctx.measureText(line).width + 20)),
+            ),
             x = Math.max(w / 2 + 5, Math.min(canvasWidth - w / 2 - 5, p.x)),
             h = 17 + lines.length * 15,
             y = p.y - h - 12;
@@ -217,7 +219,8 @@
           ctx.fillStyle = '#9cf1f0';
           ctx.fillText(
             (a.rogueSignature ? 'SIGNATURE' : 'ROGUE') + ' · ' + a.timer.toFixed(1) + 's',
-            x, y + h - 4,
+            x,
+            y + h - 4,
           );
         } else {
           ctx.font = 'bold 12px system-ui';
