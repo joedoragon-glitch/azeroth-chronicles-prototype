@@ -385,4 +385,28 @@ test('F60 wounded monsters three levels above an underleveled hero never retreat
   assert(c.damage(e,100));assert.equal(before-e.hp,100,'normal damage applies, without tactical mitigation');
   assert.deepEqual(c.enemyReward(e),reward,'woundedness does not alter earned XP or gold');
 });
+
+test('F59 equal-level enemies recognize coordinated companion-only pressure with hero away',()=>{
+  const c=fresh(),e=c.makeEnemy({species:'wolf',name:'companion duel',level:2,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700});
+  const a=c.unit('soldier',1430,1700),b=c.unit('archer',1460,1700);
+  c.zone().enemies=[e];c.s.party=[a,b];c.hero.level=2;
+  Object.assign(c.hero,{x:200,y:200});e.aggro=true;c.line=()=>true;
+  c._tacticalPartyTargets=new Map([[a.id,e.id],[b.id,e.id]]);
+  assert.equal(c.tacticalActiveTargetCount(e),2,'two living companion targets count separately');
+  assert(c.tacticalRogueEligibility(e,2),'hero need not be participating directly');
+  assert(c.tacticalAutoRogue(e,a),'companion-only fight initiates autonomous tactical planning');
+  assert.equal(c.tacticalRogueRegroup(e)?.phase,'thinking');
+});
+test('F60 stopping pursuit ends tactical regroup rather than provoking endless reinforcements',()=>{
+  const c=fresh(),e=c.makeEnemy({species:'wolf',name:'retreating foe',level:2,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700}),
+    friend=c.makeEnemy({species:'wolf',name:'potential ally',level:2,hp:100,damage:1,gold:0,xp:0},{x:1700,y:1700});
+  c.zone().enemies=[e,friend];c.s.party=[];
+  Object.assign(c.hero,{x:1420,y:1700,level:3});c.line=()=>true;c.route=()=>[{x:friend.x,y:friend.y}];e.aggro=true;
+  assert(c.tacticalBeginRogueRegroup(e,friend));
+  Object.assign(c.hero,{x:2600,y:1700});
+  c.updateEnemies(.1);
+  assert(e.returning>0,'abandoned retreat triggers ordinary disengagement');
+  assert.equal(c.tacticalRogueRegroup(e),null);
+  assert.equal(friend.aggro,false,'player withdrawal does not recruit the distant ally');
+});
 console.log(passed+' audit regression scenarios passed.');
