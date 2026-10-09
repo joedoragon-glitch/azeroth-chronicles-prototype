@@ -32,6 +32,8 @@
       rendered: '',
     },
     statusUntil = 0,
+    feedbackGame = null,
+    feedbackId = 0,
     worldPointer = null,
     pointer = null;
   profile = persistence.loadProfile(profile);
@@ -83,12 +85,12 @@
       } else {
         paused = false;
         audio.setPaused(false);
-        status('No update waiting. Check again shortly.');
+        status('No update available.');
       }
     } catch (_) {
       paused = false;
       audio.setPaused(false);
-      status('Update unavailable. Your saved run is safe.');
+      status('Update unavailable · Save is safe.');
     }
   }
   function runningAsApp() {
@@ -109,7 +111,7 @@
   }
   async function installApp() {
     if (runningAsApp()) {
-      status('Azeroth Chronicles is already running as an installed app.');
+      // Already installed; no redundant gameplay status.
       closeMenu();
       return;
     }
@@ -123,7 +125,7 @@
       await prompt.prompt();
       const choice = await prompt.userChoice;
       if (choice && choice.outcome === 'accepted') {
-        status('Azeroth Chronicles installed. Open it from your home screen.');
+        status('Installed · Open from your home screen.');
         closeMenu();
       } else installInstructions();
     } catch (_) {
@@ -133,7 +135,8 @@
   function status(text) {
     if (text === 'Saved locally · export for a backup') return;
     $('status').textContent = text;
-    statusUntil = performance.now() + 5000;
+    const important = /storage unavailable|saving failed|saved run unavailable|invalid backup|legacy save|export before/i.test(text);
+    statusUntil = performance.now() + (important ? 6500 : 2600);
   }
   function persistProfile() {
     return persistence.saveProfile(profile);
@@ -782,9 +785,9 @@
       if (game.peace) profile.nightmareUnlocked = true;
       persistProfile();
       closeMenu();
-      status('Imported successfully.');
+      status('Backup imported.');
     } catch (_) {
-      status('Invalid import. Your current run was kept intact.');
+      status('Invalid backup · Save unchanged.');
     }
     e.target.value = '';
   };
@@ -1098,9 +1101,9 @@
     status(
       target
         ? locked
-          ? 'TARGET LOCKED · ' + target.name + ' · Hold focus until the encounter ends.'
-          : 'Target · ' + target.name + ' · Hold Target to lock.'
-        : 'No visible hostile targets nearby.',
+          ? 'Locked · ' + target.name
+          : 'Target · ' + target.name
+        : 'No target nearby.',
     );
     updateHUD();
   }
@@ -1382,7 +1385,7 @@
       status('Skill ' + slot + ' is ready in ' + cooldownText(game.hero.cd[slot - 1]) + 's.');
       return;
     }
-    if (game.hero.mp < cost) {
+    if (PrototypeRules.resourceMode?.manaEnabled !== false && game.hero.mp < cost) {
       status(
         (charged ? 'Charged ' : '') +
           'Skill ' +
@@ -1399,7 +1402,7 @@
         (charged ? 'Charged ' : '') +
           'Skill ' +
           slot +
-          ' needs a hostile target in range and line of sight.',
+          ' · Need target in range.',
       );
       return;
     }
@@ -1412,7 +1415,7 @@
     }
   }
   function chargeStateStatus(cast) {
-    if (cast.state === 'need-mp') {
+    if (PrototypeRules.resourceMode?.manaEnabled !== false && cast.state === 'need-mp') {
       status(
         'Charged Skill ' +
           cast.slot +
@@ -1428,12 +1431,12 @@
       status(
         'Charged Skill ' +
           cast.slot +
-          ' lost its target · move into range or line of sight and charge again.',
+          ' · Target lost.',
       );
       return;
     }
     if (cast.state === 'no-heal') {
-      status('Charged Self-Heal has no wounded hero or active companion to heal.');
+      status('No healing needed.');
     }
   }
   function releaseCharge(slot, source) {
@@ -1442,13 +1445,7 @@
     if (charge.started === null) {
       const remaining = game.hero.cd[slot - 1];
       charge = null;
-      status(
-        'Skill ' +
-          slot +
-          ' is ready in ' +
-          cooldownText(remaining) +
-          's. Hold through the cooldown to queue the charge.',
-      );
+      status('Skill ' + slot + ' · Ready in ' + cooldownText(remaining) + 's');
       updateHUD();
       return false;
     }
@@ -1459,7 +1456,7 @@
       const quickTap = !wasQueued && held < chargeTapSeconds();
       charge = null;
       if (!quickTap) {
-        status('Skill ' + slot + ' charge canceled safely.');
+        // No message for a harmless canceled charge.
         updateHUD();
         return false;
       }
@@ -1718,7 +1715,7 @@
       Math.hypot(e.clientX - tap.x, e.clientY - tap.y) > 12
     )
       return;
-    if (!PrototypeInput.requestMove(game, tap.target)) status('Choose a reachable place to move.');
+    if (!PrototypeInput.requestMove(game, tap.target)) status('Cannot reach that spot.');
   };
   canvas.onpointercancel = canvas.onlostpointercapture = (e) => {
     if (worldPointer?.id === e.pointerId) worldPointer = null;
@@ -1752,6 +1749,16 @@
     save();
     audio.setPaused(true);
   });
+  function updateActionFeedback() {
+    if (feedbackGame !== game) {
+      feedbackGame = game;
+      feedbackId = 0;
+    }
+    if (game.actionFeedback && game.actionFeedback.id > feedbackId) {
+      feedbackId = game.actionFeedback.id;
+      status(game.actionFeedback.text);
+    }
+  }
   function updateCriticalNotice() {
     const host = $('message'),
       now = performance.now(),
@@ -2043,6 +2050,7 @@
     if (targetButton.querySelector('small'))
       targetButton.querySelector('small').textContent = input.key('target');
     updateCriticalNotice();
+    updateActionFeedback();
   }
   function frame(now) {
     if (document.hidden) {
@@ -2149,15 +2157,7 @@
       )
     )
       save();
-    const levelEvent = events.find((e) => e.type === 'level');
-    if (levelEvent)
-      status(
-        'Level ' +
-          levelEvent.level +
-          '! Training point available · press ' +
-          input.key('training') +
-          ' or use Discipline Training.',
-      );
+
     if (events.some((e) => e.type === 'peace')) ending();
     if (game.s.phase === 'awakening' && !game.s.awakeningAck && !menu) awakeningMenu();
     if (game.s.challenge.pending && !gateDismissed && menu?.title !== 'Choose your successor')
@@ -2200,7 +2200,7 @@
   });
   addEventListener('appinstalled', () => {
     installPrompt = null;
-    status('Azeroth Chronicles installed. Open it from your home screen.');
+    status('Installed · Open from your home screen.');
   });
   if (
     location.protocol === 'https:' ||
