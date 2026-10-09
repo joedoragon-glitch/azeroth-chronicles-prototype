@@ -2719,12 +2719,13 @@
     }
     tacticalRogueLeashAllows(e, target, territory) {
       const state = this.tacticalRogueRegroup(e);
-      if (!state || state.phase === 'thinking') return dist(target, e.home) <= territory;
+      if (!state) return dist(target, e.home) <= territory;
+      if (state.phase === 'thinking' && !state.anchor) return dist(target, e.home) <= territory;
       const separationLimit = R.tacticalFoundation.awarenessRadius + 200;
       if (dist(target, e) > separationLimit) return false;
       if (state.phase === 'travel')
         return this.distanceToSegment(target, e.home, state.destination) <= territory;
-      return ['anchored', 'escape'].includes(state.phase) &&
+      return ['anchored', 'thinking', 'escape'].includes(state.phase) &&
         dist(target, state.anchor || e) <= separationLimit;
     }
     tacticalSeekRogueSupport(e, pressure) {
@@ -2952,7 +2953,6 @@
         this.peace ||
         !target ||
         !e.aggro ||
-        e.summon ||
         e.hp <= 0 ||
         e.returning ||
         e.telegraph ||
