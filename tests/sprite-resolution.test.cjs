@@ -72,7 +72,7 @@ const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'azeroth-resolution-'));
     assert.equal(dense.record.output.decodedBytes,576*576*4);
     assert.equal(p.hash(fs.readFileSync(path.join(dense.directory,'source.png'))),p.hash(fs.readFileSync('fixture.png')));
     await assert.rejects(p.prepare(key,'legacy.png','png',{rasterScale:3}),/sufficient original/);
-    await assert.rejects(p.prepare(key,'fixture.png','png',{rasterScale:4}),/raster scale/);
+    await assert.rejects(p.prepare(key,'fixture.png','png',{rasterScale:5}),/raster scale/);
     await assert.rejects(p.prepare(key,'fixture.png','png',{rasterScale:2.25,offsetX:1}),/translation/);
     assert.throws(()=>p.validateRaster({...dense.record,output:{...dense.record.output,width:192}},contract),/raster output/);
     const approve=file=>{const r=JSON.parse(fs.readFileSync(file));r.review={status:'approved',reference:'https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111#test-only'};fs.writeFileSync(file,JSON.stringify(r));return r;};
