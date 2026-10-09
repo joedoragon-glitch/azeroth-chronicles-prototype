@@ -3,10 +3,10 @@ const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine.js');
 const Menus = require('../src/prototype/menus.js');
 
-function menusFor(c) {
+function menusFor(c, getGame = () => c) {
   let shown;
   const menus = Menus.create({
-    getGame: () => c,
+    getGame,
     Campaign: C,
     D: C.data,
     action: (label, action, detail = '', disabled = false) => ({
@@ -191,4 +191,87 @@ early.kill(earlyTrue);
 assert(early.keeperAvailable(), 'Early TRUE defeat permits recapture');
 console.log(
   'PASS Drowned Keeper capture, Neri bargain, optional codex, TRUE escape and save safety',
+);
+
+// Exercise the actual gates without granting knowledge through defeat or rescue.
+for (const mode of ['normal', 'nightmare']) {
+  for (const roll of [0.1, 0.9]) {
+    const run = new C(mode, 'mage', () => roll);
+    run.enter('archive');
+    const normal = run.zone().enemies.find((e) => e.type === 'boss' && e.family === 'archive');
+    assert(!run.rescue('archive'));
+    assert(!run.promiseKeeper());
+    normal.hp = 0;
+    run.kill(normal);
+    assert(!run.s.keeperEvidence && !run.s.keeperPact);
+    assert(run.rescue('archive'));
+    assert(!run.s.keeperEvidence && !run.s.keeperPact);
+    const rewards = { gold: run.hero.gold, xp: run.hero.xp, paid: { ...run.s.paid } };
+    assert(run.promiseKeeper());
+    assert(!run.promiseKeeper(), 'The bargain cannot repeat');
+    assert(!run.s.keeperEvidence, 'Cooperation is independent of the unread ledger');
+    assert.deepEqual({ gold: run.hero.gold, xp: run.hero.xp, paid: run.s.paid }, rewards);
+    const reload = C.restore(run.snapshot(), () => roll);
+    assert(reload.keeperAvailable(), 'Reload preserves the pre-escape bargain');
+    assert(reload.s.keeperPact);
+    reload.victory('darklord', 'normal');
+    reload.victory('darklord', 'true');
+    reload.awaken();
+    reload.activatePending();
+    const escaped = C.restore(reload.snapshot(), () => roll);
+    assert(!escaped.keeperAvailable() && escaped.s.keeperPact);
+    assert(!escaped.visibleNPCs().some((n) => n.kind === 'keeper'));
+    const hostile = escaped
+      .zone()
+      .enemies.find((e) => e.family === 'archive' && e.form === 'true' && e.hp > 0);
+    assert(hostile);
+    hostile.hp = 0;
+    escaped.kill(hostile);
+    const recaptured = C.restore(escaped.snapshot(), () => roll);
+    assert(recaptured.keeperAvailable() && recaptured.s.keeperPact);
+    assert(!recaptured.s.keeperEvidence);
+    for (const full of [false, true]) {
+      recaptured.enter('vale');
+      const base = { ...barracks, full };
+      recaptured.zone().buildings = recaptured.zone().buildings.filter((b) => b.id !== base.id);
+      recaptured.zone().buildings.push(base);
+      const service = menusFor(recaptured);
+      service.menus.barracksMenu(base);
+      service
+        .shown()
+        .actions.find((a) => a.label === 'Rescued specialists')
+        .action();
+      assert(service.shown().actions.some((a) => a.label.includes('Drowned Keeper')));
+    }
+  }
+}
+
+// Delayed buttons must not make promises for an old run or speak to an escaped Keeper.
+const oldRun = C.restore(c.snapshot());
+delete oldRun.s.keeperPact;
+let currentRun = oldRun;
+const delayed = menusFor(oldRun, () => currentRun);
+delayed.menus.keeper();
+const oldPromise = delayed.shown().actions.find((a) => a.label.includes('Promise'));
+currentRun = C.restore(oldRun.snapshot());
+oldPromise.action();
+assert(!oldRun.s.keeperPact && !currentRun.s.keeperPact);
+currentRun.promiseKeeper();
+delayed.menus.keeper();
+const oldShelf = delayed.shown().actions.find((a) => a.label === 'Your skills');
+currentRun.s.pending.archive = { kind: 'dungeon', count: 1, active: true };
+oldShelf.action();
+assert.equal(delayed.shown().title, 'The Keeper’s shelves', 'A stale shelf must not open');
+delete currentRun.s.pending.archive;
+delayed.menus.keeper();
+delayed
+  .shown()
+  .actions.find((a) => a.label === 'Your skills')
+  .action();
+const oldTopic = delayed.shown().actions[0];
+currentRun.s.pending.archive = { kind: 'dungeon', count: 1, active: true };
+oldTopic.action();
+assert.equal(delayed.shown().title, 'Your skills', 'A stale answer must not open');
+console.log(
+  'PASS Normal/Nightmare unlock matrix, read-independent cooperation, real Awakening, reload/recapture, both Barracks and stale dialogue guards',
 );
