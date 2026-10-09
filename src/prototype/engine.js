@@ -2974,7 +2974,7 @@
         this.tacticalRogueRegroup(e) ||
         (!newWound && this._tacticalRegroupUsed?.has(e.id)) ||
         (!newWound && (this._tacticalRogueNext?.get(e.id) || 0) > this.s.time) ||
-        (Number.isFinite(e.fightStart) && this.s.time - e.fightStart < 1.1)
+        (!newWound && Number.isFinite(e.fightStart) && this.s.time - e.fightStart < 1.1)
       )
         return false;
       const pressure = this.tacticalActiveTargetCount(e);
