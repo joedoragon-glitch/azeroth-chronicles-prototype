@@ -173,3 +173,38 @@ console.log('PASS uncapped 15% Cinder Siphon, companions, immunity, and natural 
     'non-siphoning dragon does not gain implausible drain; separate cooldown heal remains deferred');
 }
 console.log('PASS uncapped 15% supernatural boss AoE lifesteal, natural heal bound and non-siphoning bosses');
+
+{
+  // Worst-case seven-target AoE: a Dark Lord siphon scales with real aggregate
+  // party damage and never applies the rejected 2%-of-boss-max-HP cast cap.
+  const g = new Campaign('normal', 'mage', () => 0.9);
+  const bossDef = Campaign.data.bosses.find(b => b.id === 'darklord');
+  const darkLord = g.bossEnemy(bossDef, 'normal', { x: 500, y: 500 });
+  darkLord.hp = darkLord.maxHp * 0.5;
+  g.s.expeditionRank = 6;
+  g.zone().props = [];
+  g.zone().enemies = [darkLord];
+  Object.assign(g.hero, { x: 500, y: 500, hp: 10000, maxHp: 10000, immune: 0 });
+  g.s.party = Array.from({ length: 6 }, (_, i) => {
+    const u = g.unit(i % 2 ? 'archer' : 'soldier', 520 + (i % 3) * 10, 510 + Math.floor(i / 3) * 20);
+    u.maxHp = u.hp = 10000;
+    return u;
+  });
+  const victims = [g.hero, ...g.s.party];
+  const previousHP = victims.map(u => u.hp);
+  const bossBefore = darkLord.hp;
+  darkLord.damage = 500;
+  g.resolveArea(darkLord, {
+    kind: 'circle', count: 1, x: 520, y: 510, fromX: 500, fromY: 500,
+    radius: 200, coefficient: 1, manaDrain: 0.12, persistent: false,
+  });
+  const totalActualDamage = victims.reduce((sum, u, i) => sum + previousHP[i] - u.hp, 0);
+  const totalHealing = darkLord.hp - bossBefore;
+  assert(totalActualDamage > 0 && victims.every((u, i) => u.hp < previousHP[i]),
+    'the area damages the hero and all six active companions');
+  assert(Math.abs(totalHealing - totalActualDamage * R.vitalitySiphon.healFraction) < 1e-7,
+    'boss heals from each actual HP loss without an artificial per-skill limit');
+  assert(totalHealing > darkLord.maxHp * 0.02,
+    'seven-target life drain legitimately exceeds the rejected 2% boss-HP ceiling');
+}
+console.log('PASS 7-target Dark Lord life-siphon stress case with no percent-max-HP cap');
