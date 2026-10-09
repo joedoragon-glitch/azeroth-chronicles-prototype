@@ -39,8 +39,7 @@
         const opening = (e.open || 0) > 0 ? config.openingMultiplier : 1;
         const knee = hp * profile.knee * opening;
         const tail = hp * profile.tail * opening;
-        const curve = (raw) =>
-          raw <= knee ? raw : knee + tail * Math.log1p((raw - knee) / tail);
+        const curve = (raw) => (raw <= knee ? raw : knee + tail * Math.log1p((raw - knee) / tail));
         const compressed = Math.max(
           0,
           Math.min(rawDamage, curve(beforeRaw + rawDamage) - curve(beforeRaw)),
