@@ -1202,7 +1202,9 @@
         return true;
       }
       this.say(
-        'Combat potions are no longer used. Rangers provide Heal and Mana Recovery in the field.',
+        R.resourceMode.manaEnabled
+          ? 'Combat potions are no longer used. Rangers provide Heal and Mana Recovery in the field.'
+          : 'Combat potions are no longer used. Rangers provide Heal in the field.',
       );
       return false;
     }
