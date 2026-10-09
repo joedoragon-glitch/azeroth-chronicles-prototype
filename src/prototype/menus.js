@@ -124,6 +124,73 @@
         back,
       );
     }
+    function professionSkillDetail(slot) {
+      const g = getGame(),
+        cls = g.hero.class,
+        descriptions = {
+          paladin: {
+            1: 'Sword combo · third hit cleaves nearby enemies',
+            2: 'Heavy melee strike',
+            3: 'Restore hero health',
+            4: 'Brief damage immunity',
+            5: 'Holy area attack',
+            6: 'Frequent melee strike',
+            7: 'Powerful holy area attack',
+            8: 'Final holy area burst · restore health and gain brief protection',
+          },
+          mage: {
+            1: 'Ranged magic combo · third hit emits an arcane wave',
+            2: 'Frost projectile · slows enemy',
+            3: 'Restore hero health',
+            4: 'Protective barrier · brief damage immunity',
+            5: 'Frost area burst · slows enemies',
+            6: 'Frequent magic projectile · short slow',
+            7: 'Powerful frost area spell · slows enemies',
+            8: 'Final arcane burst · restore health and gain brief protection',
+          },
+          ranger: {
+            1: 'Bow combo · third hit scatters additional arrows',
+            2: 'Double shot',
+            3: 'Restore hero health',
+            4: 'Temporary attack haste',
+            5: 'Area arrow attack',
+            6: 'Rapid shot · temporary haste',
+            7: 'Advanced piercing arrow attack',
+            8: 'Final area attack · restore health and gain brief protection',
+          },
+        },
+        charged = {
+          paladin: {
+            1: 'Holy projectile with triple basic damage',
+            2: 'Holy cleave cone',
+            3: 'Heal hero and living active companions',
+          },
+          mage: {
+            1: 'Arcane beam with triple basic damage',
+            2: 'Frost explosion and slow',
+            3: 'Heal hero and living active companions',
+          },
+          ranger: {
+            1: 'Three rapid arrows with triple total basic damage',
+            2: 'Piercing arrow volley',
+            3: 'Heal hero and living active companions',
+          },
+        },
+        normalCd = g.skillCooldown(slot).toFixed(1);
+      return (
+        descriptions[cls][slot] +
+        ' · Normal cooldown ' +
+        normalCd +
+        's' +
+        (slot <= 3
+          ? ' · Charged: ' +
+            charged[cls][slot] +
+            ' · ' +
+            g.skillCooldown(slot, true).toFixed(1) +
+            's cooldown'
+          : '')
+      );
+    }
     function skillBook(back = closeMenu) {
       const rank = getGame().s.expeditionRank || 1,
         next = getGame().expeditionNextInstructor(rank),
@@ -188,20 +255,22 @@
               action(
                 'Skill ' + s[0] + ' ' + s[1] + ' · Rank ' + getGame().hero.skills[s[0] - 1],
                 () => {},
-                s[0] === 1
-                  ? 'Always available · same-target combo: 100% → 110% → 120% + frontal AoE · resets on target switch or 4s gap'
-                  : s[0] === 2
-                    ? getGame().skillTrainingCost(s[0], 0) +
-                      ' crowns · ' +
-                      getGame().boss(s[4]).captive +
-                      ' · ' +
-                      D.regions.find((r) => r.id === getGame().boss(s[4]).region).name +
-                      ' · Rank 1 also teaches companion Holy Cleave and Piercing Volley'
-                    : getGame().skillTrainingCost(s[0], 0) +
-                      ' crowns · ' +
-                      getGame().boss(s[4]).captive +
-                      ' · ' +
-                      D.regions.find((r) => r.id === getGame().boss(s[4]).region).name,
+                Campaign.rules.resourceMode.manaEnabled
+                  ? s[0] === 1
+                    ? 'Always available · same-target combo: 100% → 110% → 120% + frontal AoE · resets on target switch or 4s gap'
+                    : s[0] === 2
+                      ? getGame().skillTrainingCost(s[0], 0) +
+                        ' crowns · ' +
+                        getGame().boss(s[4]).captive +
+                        ' · ' +
+                        D.regions.find((r) => r.id === getGame().boss(s[4]).region).name +
+                        ' · Rank 1 also teaches companion Holy Cleave and Piercing Volley'
+                      : getGame().skillTrainingCost(s[0], 0) +
+                        ' crowns · ' +
+                        getGame().boss(s[4]).captive +
+                        ' · ' +
+                        D.regions.find((r) => r.id === getGame().boss(s[4]).region).name
+                  : professionSkillDetail(s[0]),
                 true,
               ),
             ),
@@ -210,6 +279,7 @@
       );
     }
     function supplier(n, back = closeMenu) {
+      const manaEnabled = Campaign.rules.resourceMode.manaEnabled;
       const advanced = n.kind === 'alchemist',
         vitalityRank = getGame().companionVitalityRank(),
         vitalityCost = getGame().companionVitalityCost(),
@@ -222,12 +292,16 @@
       if (!advanced) {
         openMenu(
           n.name,
-          'Combat potions have been retired. Rangers now provide field Heal and Mana Recovery, so the supply shop no longer requires you to maintain potion stock.',
+          manaEnabled
+            ? 'Combat potions have been retired. Rangers now provide field Heal and Mana Recovery, so the supply shop no longer requires you to maintain potion stock.'
+            : 'Combat potions have been retired. Rangers provide Heal in the field.',
           [
             action(
               'Ranger field support',
               () => {},
-              'Heal triggers automatically at 50% HP or less · Mana Recovery at 35% MP or less · H/M command them manually',
+              manaEnabled
+                ? 'Heal triggers automatically at 50% HP or less · Mana Recovery at 35% MP or less · H/M command them manually'
+                : 'Heal activates automatically for injured allies; command it manually with H',
               true,
             ),
           ],
@@ -237,7 +311,9 @@
       }
       openMenu(
         n.name,
-        'Neri sells Preparation Tonics and trains permanent Ranger field support.',
+        manaEnabled
+          ? 'Neri sells Preparation Tonics and trains permanent Ranger field support.'
+          : 'Neri sells Preparation Tonics and trains permanent Ranger Heal, companion vitality and discipline resets.',
         [
           action(
             'Buy Preparation Tonic · ' + getGame().preparationTonicCost() + ' crowns',
@@ -262,19 +338,23 @@
               : '60 → 150 HP over five seconds to one target · same 10s per-Ranger Heal cooldown',
             healRank >= 2 || getGame().hero.gold < healCost,
           ),
-          action(
-            manaRank >= 2
-              ? 'Ranger Mana Recovery · Rank 2 · MAX'
-              : 'Upgrade Ranger Mana Recovery · Rank 2 · ' + manaCost + ' crowns',
-            () => {
-              getGame().trainRangerSupport('mana', n.family);
-              supplier(n, back);
-            },
-            manaRank >= 2
-              ? 'Restores 100 MP over five seconds to the hero · maximum training'
-              : '40 → 100 MP over five seconds · same 10s per-Ranger Mana Recovery cooldown',
-            manaRank >= 2 || getGame().hero.gold < manaCost,
-          ),
+          ...(manaEnabled
+            ? [
+                action(
+                  manaRank >= 2
+                    ? 'Ranger Mana Recovery · Rank 2 · MAX'
+                    : 'Upgrade Ranger Mana Recovery · Rank 2 · ' + manaCost + ' crowns',
+                  () => {
+                    getGame().trainRangerSupport('mana', n.family);
+                    supplier(n, back);
+                  },
+                  manaRank >= 2
+                    ? 'Restores 100 MP over five seconds to the hero · maximum training'
+                    : '40 → 100 MP over five seconds · same 10s per-Ranger Mana Recovery cooldown',
+                  manaRank >= 2 || getGame().hero.gold < manaCost,
+                ),
+              ]
+            : []),
           action(
             'Train Companion Vitality · Rank ' +
               (vitalityRank + 1) +
@@ -1038,17 +1118,21 @@
               : 'No active Ranger · recruit or activate one for field healing',
             true,
           ),
-          action(
-            'Ranger Mana Recovery · ' + mana + ' MP',
-            () => {},
-            rangers.length
-              ? rangers.length +
-                  ' active Ranger' +
-                  (rangers.length === 1 ? '' : 's') +
-                  ' · automatic at hero ≤35% MP · command with M'
-              : 'No active Ranger · recruit or activate one for field mana recovery',
-            true,
-          ),
+          ...(Campaign.rules.resourceMode.manaEnabled
+            ? [
+                action(
+                  'Ranger Mana Recovery · ' + mana + ' MP',
+                  () => {},
+                  rangers.length
+                    ? rangers.length +
+                        ' active Ranger' +
+                        (rangers.length === 1 ? '' : 's') +
+                        ' · automatic at hero ≤35% MP · command with M'
+                    : 'No active Ranger · recruit or activate one for field mana recovery',
+                  true,
+                ),
+              ]
+            : []),
           ...Object.keys(Campaign.legacyWeapons)
             .filter((name) => getGame().s.legacyInventory?.includes(name))
             .map((name) =>
@@ -1221,13 +1305,15 @@
       const p = getGame().talentProfile();
       if (i === 0) return 'Each rank: +' + p.power + ' Power';
       if (i === 1)
-        return (
-          'Each rank: +' +
-          formatTrainingNumber(p.mana * 0.125) +
-          ' MP/s in combat · +' +
-          formatTrainingNumber(p.mana * 0.25) +
-          ' MP/s out of combat'
-        );
+        return Campaign.rules.resourceMode.manaEnabled
+          ? 'Each rank: +' +
+              formatTrainingNumber(p.mana * 0.125) +
+              ' MP/s in combat · +' +
+              formatTrainingNumber(p.mana * 0.25) +
+              ' MP/s out of combat'
+          : 'Each rank: -' +
+              Math.round(Campaign.rules.cooldownBalance.reductionPerTalentRank * 100) +
+              '% to skill cooldowns · up to 20% at Rank 5';
       if (i === 2) return 'Each rank: +' + p.hp + ' maximum HP';
       return 'Each rank: +' + p.speed + ' movement speed';
     }
@@ -1249,7 +1335,12 @@
       );
     }
     function talents(back = closeMenu) {
-      const names = ['Power Training', 'Mana Training', 'Health Training', 'Movement Training'],
+      const names = [
+          'Power Training',
+          Campaign.rules.resourceMode.manaEnabled ? 'Mana Training' : 'Cooldown Training',
+          'Health Training',
+          'Movement Training',
+        ],
         spent = getGame().talentSpent(),
         left = getGame().hero.freeTalentResets || 0,
         actions = names.map((name, i) =>
@@ -1275,7 +1366,7 @@
         ),
       );
       openMenu(
-        'Discipline Training',
+        'Talents',
         'Available training points ' +
           getGame().hero.talentPoints +
           ' · One point raises one discipline by one rank.',
