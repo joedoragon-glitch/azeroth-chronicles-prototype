@@ -217,6 +217,17 @@
   function resize() {
     viewport.width = innerWidth;
     viewport.height = innerHeight;
+    // Below the supported 375x800 portrait / 800x375 landscape layout,
+    // proportionally fit controls instead of authoring a second smaller UI.
+    // The Canvas continues to render at its actual viewport size.
+    const portrait = innerHeight >= innerWidth;
+    const referenceWidth = portrait ? 375 : 800;
+    const referenceHeight = portrait ? 800 : 375;
+    const phoneUiFit =
+      platform.mode === 'phone'
+        ? Math.max(0.8, Math.min(1, innerWidth / referenceWidth, innerHeight / referenceHeight))
+        : 1;
+    document.body.style.setProperty?.('--phone-ui-fit', phoneUiFit.toFixed(3));
     const ratio = Math.max(
       1,
       Math.min(
