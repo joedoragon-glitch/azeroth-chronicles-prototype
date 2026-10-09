@@ -7,6 +7,20 @@
   class Materials {
     constructor(options = {}) {
       this.Image = options.Image || root.Image;
+      this.createCanvas =
+        options.createCanvas ||
+        ((width, height) => {
+          if (root.OffscreenCanvas) return new root.OffscreenCanvas(width, height);
+          const canvas = root.document?.createElement('canvas');
+          if (canvas) {
+            canvas.width = width;
+            canvas.height = height;
+          }
+          return canvas;
+        });
+      this.projected = new Map();
+      this.projectedBytes = 0;
+      this.projectedBudget = 8 * 1024 * 1024;
       this.timeout = options.timeout || 15000;
       this.fetch = options.fetch || root.fetch?.bind(root);
       this.entries = {};
@@ -26,6 +40,8 @@
         evictions: 0,
         staleLoads: 0,
         draws: 0,
+        projectedBuilds: 0,
+        projectedEvictions: 0,
       };
     }
     identity(e) {
@@ -39,6 +55,7 @@
         return false;
       }
       this.entries = entries;
+      this.clearProjected();
       this.request++;
       this.active = new Set(Object.values(entries).map((e) => this.identity(e)));
       this.failed.clear();
@@ -166,6 +183,70 @@
       this.frame = false;
       this.pump();
     }
+    clearProjected() {
+      for (const item of this.projected.values()) item.canvas.width = item.canvas.height = 0;
+      this.projected.clear();
+      this.projectedBytes = 0;
+    }
+    projectedPattern(ctx, e, item, origin) {
+      const transform = ctx.getTransform?.();
+      if (!transform || transform.b || transform.c || transform.a <= 0 || transform.d <= 0)
+        return null;
+      // Two diagonal world repeats form an axis-aligned screen repeat. Rasterize
+      // its isometric grain once at the current physical scale, rather than
+      // resampling a skewed source independently for every floor tile/frame.
+      const width = 2 * e.worldSpan * 0.76,
+        height = 2 * e.worldSpan * 0.27;
+      const pixelsX = Math.ceil(width * transform.a),
+        pixelsY = Math.ceil(height * transform.d);
+      const bytes = pixelsX * pixelsY * 4;
+      if (!Number.isSafeInteger(bytes) || bytes <= 0 || bytes > this.projectedBudget) return null;
+      const key = this.identity(e) + ':' + e.worldSpan + ':' + pixelsX + 'x' + pixelsY;
+      let cached = this.projected.get(key);
+      if (!cached) {
+        const canvas = this.createCanvas(pixelsX, pixelsY),
+          q = canvas?.getContext('2d');
+        if (!q) return null;
+        const source = q.createPattern(item.image, 'repeat');
+        if (!source) return null;
+        while (this.projectedBytes + bytes > this.projectedBudget) {
+          const [oldKey, old] = this.projected.entries().next().value;
+          this.projected.delete(oldKey);
+          this.projectedBytes -= old.bytes;
+          old.canvas.width = old.canvas.height = 0;
+          this.stats.projectedEvictions++;
+        }
+        q.setTransform(pixelsX / width, 0, 0, pixelsY / height, 0, 0);
+        q.transform(0.76, 0.27, -0.76, 0.27, 0, 0);
+        q.scale(e.worldSpan / e.width, e.worldSpan / e.width);
+        q.fillStyle = source;
+        q.fillRect(-e.width, -e.height, e.width * 4, e.height * 4);
+        // Do not retain a source-image pattern after it leaves the decoded LRU.
+        q.fillStyle = '#000';
+        cached = { canvas, bytes, patterns: new WeakMap() };
+        this.projected.set(key, cached);
+        this.projectedBytes += bytes;
+        this.stats.projectedBuilds++;
+      } else {
+        this.projected.delete(key);
+        this.projected.set(key, cached);
+      }
+      let pattern = cached.patterns.get(ctx);
+      if (!pattern) {
+        pattern = ctx.createPattern(cached.canvas, 'repeat');
+        if (!pattern?.setTransform) return null;
+        cached.patterns.set(ctx, pattern);
+      }
+      pattern.setTransform({
+        a: width / pixelsX,
+        b: 0,
+        c: 0,
+        d: height / pixelsY,
+        e: origin.x,
+        f: origin.y,
+      });
+      return pattern;
+    }
     paint(ctx, key, screen, points, angle = 0) {
       const e = this.entries[key];
       if (
@@ -196,12 +277,30 @@
       // Screen-space clip is captured before changing the existing DPR transform.
       ctx.save();
       try {
+        const projected =
+          angle === 0 && key.startsWith('terrain:ground:')
+            ? this.projectedPattern(ctx, e, item, origin)
+            : null;
+        const projectedPoints = points.map(screen);
         ctx.beginPath();
-        points.map(screen).forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
+        projectedPoints.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
         ctx.closePath();
         ctx.clip();
         ctx.globalAlpha *= e.opacity;
         ctx.imageSmoothingEnabled = true;
+        if (projected) {
+          ctx.fillStyle = projected;
+          const xs = projectedPoints.map((p) => p.x),
+            ys = projectedPoints.map((p) => p.y);
+          ctx.fillRect(
+            Math.min(...xs) - 1,
+            Math.min(...ys) - 1,
+            Math.max(...xs) - Math.min(...xs) + 2,
+            Math.max(...ys) - Math.min(...ys) + 2,
+          );
+          this.stats.draws++;
+          return true;
+        }
         ctx.transform(0.76, 0.27, -0.76, 0.27, origin.x, origin.y);
         ctx.rotate(angle);
         ctx.scale(span, span);
@@ -231,6 +330,9 @@
         reservedBytes: this.reserved,
         decodedBudget: Contract.LIMITS.decodedBytes,
         decoded: this.cache.size,
+        projectedBytes: this.projectedBytes,
+        projectedBudget: this.projectedBudget,
+        projectedRepeats: this.projected.size,
         queued: this.queue.length,
         decoding: this.decoding,
         failures: this.failed.size,

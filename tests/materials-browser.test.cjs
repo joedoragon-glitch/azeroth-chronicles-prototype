@@ -79,6 +79,122 @@ const server = http.createServer((req, res) => {
       assert.equal(production.successful, production.count, 'Published material images decode');
       assert.equal(production.failures, 0);
       assert(production.decodedBytes <= production.decodedBudget);
+      const projection = await page.evaluate(async () => {
+        const M = PrototypeMaterials,
+          cached = M.projectedPattern;
+        const comparison = [];
+        const screen = (p) => ({ x: (p.x - p.y) * 0.76 + 500.35, y: (p.x + p.y) * 0.27 - 300.2 });
+        const points = [
+          { x: 320, y: 800 },
+          { x: 1000, y: 800 },
+          { x: 1000, y: 1500 },
+          { x: 320, y: 1500 },
+        ];
+        const draw = (key, scale, fast, dx = 0) => {
+          const c = document.createElement('canvas');
+          c.width = 600 * scale;
+          c.height = 400 * scale;
+          const q = c.getContext('2d');
+          q.scale(scale, scale);
+          q.fillStyle = '#284f30';
+          q.fillRect(0, 0, 600, 400);
+          M.projectedPattern = fast ? cached : () => null;
+          M.paint(
+            q,
+            key,
+            (p) => {
+              const v = screen(p);
+              return { x: v.x + dx, y: v.y };
+            },
+            points,
+          );
+          return q.getImageData(0, 0, c.width, c.height).data;
+        };
+        try {
+          for (const key of Object.keys(M.entries)) {
+            await M.ensure(key);
+            for (const scale of [1, 1.5, 2.25, 3, 3.5]) {
+              const a = draw(key, scale, false),
+                b = draw(key, scale, true);
+              let sum = 0,
+                max = 0;
+              for (let i = 0; i < a.length; i++) {
+                const difference = Math.abs(a[i] - b[i]);
+                sum += difference;
+                max = Math.max(max, difference);
+              }
+              const xShift = 20 * scale,
+                shifted = draw(key, scale, true, 20);
+              let phaseMax = 0;
+              // Integer physical camera shifts preserve grain and both repeat
+              // boundaries within one channel of browser sampling quantization.
+              for (let y = 60 * scale; y < 210 * scale; y++)
+                for (let x = 240 * scale; x < 340 * scale; x++)
+                  for (let ch = 0; ch < 4; ch++)
+                    phaseMax = Math.max(
+                      phaseMax,
+                      Math.abs(
+                        b[(y * 600 * scale + x) * 4 + ch] -
+                          shifted[(y * 600 * scale + x + xShift) * 4 + ch],
+                      ),
+                    );
+              comparison.push({
+                key,
+                scale,
+                mean: sum / a.length,
+                max,
+                phaseMax,
+                outside: [...b.slice(0, 4)],
+                bytes: M.projectedBytes,
+              });
+            }
+          }
+          const canvases = [...M.projected.values()].map((item) => item.canvas);
+          const before = M.projectedBytes;
+          M.install({ version: 1, materials: M.entries });
+          const q = document.createElement('canvas').getContext('2d');
+          const key = Object.keys(M.entries)[0],
+            entry = M.entries[key],
+            item = M.cache.get(M.identity(entry));
+          q.scale(64, 64);
+          const oversizedFallback = cached.call(M, q, entry, item, { x: 0, y: 0 }) === null;
+          q.resetTransform();
+          q.rotate(0.2);
+          const rotatedFallback = cached.call(M, q, entry, item, { x: 0, y: 0 }) === null;
+          return {
+            comparison,
+            before,
+            after: M.projectedBytes,
+            evictions: M.stats.projectedEvictions,
+            oversizedFallback,
+            rotatedFallback,
+            released: canvases.every((c) => c.width === 0 && c.height === 0),
+          };
+        } finally {
+          M.projectedPattern = cached;
+        }
+      });
+      for (const sample of projection.comparison) {
+        assert(
+          sample.mean < 0.85,
+          'same production grain within sub-channel sampling tolerance: ' + JSON.stringify(sample),
+        );
+        assert(sample.max <= 24, 'no strong seam/phase differences');
+        assert(
+          sample.phaseMax <= 1,
+          'projected grain follows fractional camera origin: ' + JSON.stringify(sample),
+        );
+        assert.deepEqual(sample.outside, [40, 79, 48, 255], 'ground clip preserves exterior');
+        assert(sample.bytes <= 8 * 1024 * 1024, 'projected raster budget is bounded');
+      }
+      assert(projection.before > 0);
+      assert(projection.evictions > 0, 'region/scale churn exercises bounded LRU eviction');
+      assert.equal(projection.after, 0, 'manifest changes invalidate projected grain');
+      assert(projection.released, 'retirement releases canvas backing stores');
+      assert(
+        projection.oversizedFallback && projection.rotatedFallback,
+        'unsupported projections keep original path',
+      );
       const status = await page.evaluate(async () => {
         const M = PrototypeMaterials;
         const materials = Object.fromEntries(

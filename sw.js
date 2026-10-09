@@ -1,5 +1,5 @@
 /* Bump CACHE_VERSION when app assets change. Tester builds activate immediately. */
-const CACHE_VERSION = "azeroth-app-v0.8.122";
+const CACHE_VERSION = "azeroth-app-v0.8.124";
 /* Shared sprite/variant/clip resource contract: runtime, packaging and offline caching. */
 (function (root) {
   'use strict';
