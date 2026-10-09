@@ -398,7 +398,7 @@ test('F61 isolated boss or captain with no usable rogue response defends territo
   assert(!e.returning&&e.aggro,'field boss remains an opponent, not a perpetually resetting coward');
   assert(c._tacticalRegroupUsed.has(e.id),'failed direct maneuver cannot repeat in the same fight');
 });
-test('F61 chained retreat leash follows current hop, never the original spawn line',()=>{
+test('F62 chained retreat leash follows current hop, never the original spawn line',()=>{
  const c=fresh(),e=c.makeEnemy({species:'wolf',name:'chained scout',level:1,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700}),
   ally=c.makeEnemy({species:'goblin',name:'next ally',level:1,hp:100,damage:1,gold:0,xp:0},{x:2150,y:2450});
  const home={...e.home};Object.assign(e,{x:1400,y:2450,aggro:true});
