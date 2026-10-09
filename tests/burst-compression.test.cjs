@@ -15,6 +15,30 @@ const makeTarget = (tier, id = tier) => ({
   captain: tier === 'captain', guard: tier === 'guardian',
 });
 const tiers = ['ordinary', 'guardian', 'ringleader', 'captain', 'boss', 'trueBoss'];
+const previousTiers = {
+  ordinary: { knee: 1.35, tail: 1.75 },
+  guardian: { knee: 0.95, tail: 1.25 },
+  ringleader: { knee: 0.7, tail: 0.95 },
+  captain: { knee: 0.5, tail: 0.75 },
+  boss: { knee: 0.36, tail: 0.55 },
+  trueBoss: { knee: 0.29, tail: 0.48 },
+};
+const previousCurve = (raw, tier, hp = 1000) => {
+  const { knee, tail } = previousTiers[tier], threshold = knee * hp, range = tail * hp;
+  return raw <= threshold ? raw : threshold + range * Math.log1p((raw - threshold) / range);
+};
+// Doubling compression means halving the knee and logarithmic tail in every tier.
+// That doubles curve sensitivity, not necessarily the *percentage* shaved off any given hit.
+for (const tier of tiers) {
+  assert.equal(cfg.tiers[tier].knee * 2, previousTiers[tier].knee, tier + ' threshold is halved');
+  assert.equal(cfg.tiers[tier].tail * 2, previousTiers[tier].tail, tier + ' tail is halved');
+  const c = new C(), raw = 1300;
+  assert(c.tacticalCompressDamage(makeTarget(tier, 'doubled-' + tier), raw) < previousCurve(raw, tier),
+    tier + ' has stronger real damage compression');
+}
+const ordinary = new C();
+assert(ordinary.tacticalCompressDamage(makeTarget('ordinary', 'ordinary-fatal'), 1000) < 1000,
+  'ordinary monster compression now begins before a full-health lethal burst');
 const outputs = [];
 for (const tier of tiers) {
   const c = new C();
@@ -32,14 +56,14 @@ for (let i = 1; i < outputs.length; i++)
 
 const c = new C();
 const e = makeTarget('boss', 'window');
-const first = c.tacticalCompressDamage(e, 300);
-const second = c.tacticalCompressDamage(e, 300);
-assert.equal(first, 300, 'normal hits below the knee retain full value');
-assert(second > 0 && second < 300, 'repeated hits in the window soften');
+const first = c.tacticalCompressDamage(e, 120);
+const second = c.tacticalCompressDamage(e, 120);
+assert.equal(first, 120, 'normal hits below the stronger knee retain full value');
+assert(second > 0 && second < 120, 'repeated hits in the window soften');
 c.s.time += 2.01;
-assert.equal(c.tacticalCompressDamage(e, 300), 300, 'expired hits leave the window');
+assert.equal(c.tacticalCompressDamage(e, 120), 120, 'expired hits leave the window');
 c.tacticalClearBurst(e);
-assert.equal(c.tacticalCompressDamage(e, 300), 300, 'disengagement clears the target window');
+assert.equal(c.tacticalCompressDamage(e, 120), 120, 'disengagement clears the target window');
 
 const x = new C();
 const normal = makeTarget('boss', 'normal');
