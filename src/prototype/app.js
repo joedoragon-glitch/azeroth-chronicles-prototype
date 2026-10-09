@@ -1123,6 +1123,7 @@
           (e) =>
             e.hp > 0 &&
             !e.neutral &&
+            game.tacticalDirectTargetable(e) &&
             Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= range &&
             game.line(game.hero, e),
         );
