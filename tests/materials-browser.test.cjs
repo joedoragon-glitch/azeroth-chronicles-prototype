@@ -124,13 +124,22 @@ const server = http.createServer((req, res) => {
                 max = Math.max(max, difference);
               }
               const xShift = 20 * scale,
-                shifted = draw(key, scale, true, 20);
-              let phaseMax = 0;
-              // Integer physical camera shifts preserve grain and both repeat
-              // boundaries within one channel of browser sampling quantization.
+                shifted = draw(key, scale, true, 20),
+                originalShifted = draw(key, scale, false, 20);
+              let phaseMax = 0,
+                originalPhaseMax = 0;
+              // Projected ground preserves integer physical camera shifts within
+              // one channel; retain the uncached reference for other surfaces.
               for (let y = 60 * scale; y < 210 * scale; y++)
                 for (let x = 240 * scale; x < 340 * scale; x++)
-                  for (let ch = 0; ch < 4; ch++)
+                  for (let ch = 0; ch < 4; ch++) {
+                    originalPhaseMax = Math.max(
+                      originalPhaseMax,
+                      Math.abs(
+                        a[(y * 600 * scale + x) * 4 + ch] -
+                          originalShifted[(y * 600 * scale + x + xShift) * 4 + ch],
+                      ),
+                    );
                     phaseMax = Math.max(
                       phaseMax,
                       Math.abs(
@@ -138,12 +147,14 @@ const server = http.createServer((req, res) => {
                           shifted[(y * 600 * scale + x + xShift) * 4 + ch],
                       ),
                     );
+                  }
               comparison.push({
                 key,
                 scale,
                 mean: sum / a.length,
                 max,
                 phaseMax,
+                originalPhaseMax,
                 outside: [...b.slice(0, 4)],
                 bytes: M.projectedBytes,
               });
@@ -180,10 +191,23 @@ const server = http.createServer((req, res) => {
           'same production grain within sub-channel sampling tolerance: ' + JSON.stringify(sample),
         );
         assert(sample.max <= 24, 'no strong seam/phase differences');
-        assert(
-          sample.phaseMax <= 1,
-          'projected grain follows fractional camera origin: ' + JSON.stringify(sample),
-        );
+        if (sample.key.startsWith('terrain:ground:')) {
+          assert(
+            sample.phaseMax <= 1,
+            'projected grain follows fractional camera origin: ' + JSON.stringify(sample),
+          );
+        } else {
+          // Roads deliberately keep the original skewed projection. Chromium
+          // can quantize its translated samples by two channels; compare with
+          // that unchanged reference rather than the cached-ground tolerance.
+          assert.equal(sample.mean, 0, 'non-ground materials retain exact original pixels');
+          assert.equal(sample.max, 0, 'non-ground materials never use projected caching');
+          assert.equal(
+            sample.phaseMax,
+            sample.originalPhaseMax,
+            'non-ground camera phase matches the original projection',
+          );
+        }
         assert.deepEqual(sample.outside, [40, 79, 48, 255], 'ground clip preserves exterior');
         assert(sample.bytes <= 8 * 1024 * 1024, 'projected raster budget is bounded');
       }

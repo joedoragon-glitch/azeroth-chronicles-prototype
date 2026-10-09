@@ -128,3 +128,9 @@ Developer sprite processing now records explicit raster scale separately from th
 ## Bounded ground projection · v0.8.124
 
 Ground materials reuse a screen-aligned isometric repeat at the current physical Canvas scale. Original world phase, opacity and surface clips remain authoritative. A separate 8 MiB projected RGBA LRU cache supplements the existing 2 MiB source-image budget; eviction and manifest retirement release backing stores. Unsupported/oversized/non-ground transforms keep the original projection. Artwork, scene animation, gameplay and saves remain unchanged. See [MATERIAL_RENDERING_PERFORMANCE.md](MATERIAL_RENDERING_PERFORMANCE.md) for regression evidence, sampling tolerances and device-test limits.
+
+## Outdoor floor reuse · v0.8.126
+
+`ground-cache.js` owns one current outdoor floor picture, bounded to 64 MiB RGBA with a preferred 256-unit movement margin. `renderer.js` reuses it while retaining visible-tile counters and the existing dynamic layers. Zone, material readiness/revision, viewport, physical scale and exhausted camera margin rebuild it. Interiors release it and use their original floor path. Source art, campaign state and save keys are unchanged. See [GROUND_WINDOW_PERFORMANCE.md](GROUND_WINDOW_PERFORMANCE.md).
+
+Joel additionally authorizes a 256 MiB decoded sprite-cache ceiling for continued artwork production (previously 16 MiB). The shared format and tooling active-memory policy agree; lazy loading, two concurrent decodes, LRU/pinning and per-resource/package limits remain unchanged. This is separate from the 64 MiB floor-picture ceiling and is not an upfront allocation.

@@ -57,3 +57,7 @@ Produce individual referenced frames, then assemble atlases deterministically in
 5. Add the backward-compatible clip/atlas adapter and a small actual gameplay animation pilot. Verify pause/background behavior, action synchronization, anchoring, failed clips and offline resources before expanding animation production.
 
 The immediate task is scope and readiness reconciliation. These runtime additions require their own tested implementation/release; neither this document nor the format plan claims they already exist. See tools/sprites/asset-format-plan.json for the concrete proposed shape, and SPRITE_SCOPE_RECONCILIATION.md for the current generation inventory.
+
+## Memory policy update · v0.8.126
+
+Joel explicitly approves a 256 MiB decoded sprite-residency ceiling, superseding the earlier 16 MiB active-runtime policy described above. The current shared contract and production policy agree. Lazy loading, content sharing, two concurrent decodes, LRU eviction/visible pinning, per-image limits, packaged/download limits and original-master art remain unchanged. This is additional cache headroom, not a request to eagerly load the catalog. See GROUND_WINDOW_PERFORMANCE.md.

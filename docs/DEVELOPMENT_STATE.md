@@ -212,10 +212,19 @@ Recovered the strictly presentation-only feature-scale and original-export prepa
 
 This is the **initial proportional presentation pass**, not a verified completed spatial-crowding audit, a whole-world art makeover, or completion of issue #160. See PROPORTION_IMPLEMENTATION_CHECKPOINT.md, WORLD_PROPORTION_AND_DENSITY_GUARDRAILS.md, and original art-production checkpoint in PR #145. Publish only after full CI and exact live Pages verification.
 
+## Original-master sprite and road pilots · prepared v0.8.127
+
+The prior v0.8.115 recovery work from #145 is reconciled with proportion-only v0.8.122 main as a separate art-production candidate. Restores two professionally reviewed **576px** Paladin/Goblin body revisions, two-frame 800ms idles for each (four source frames), two regional road materials (Vale and Highlands), and all retained original-generator PNGs, candidate journals, device/day/night reviews, historical leases and rollback. The other 31 active body keys and five existing ground materials remain unchanged. Sources and publication records originate from immutable blobs in source #145 without regenerating artwork. This candidate is **prepared but not released** until full exact-head CI, Pages deployment, native play checks and PWA offline resource verification. Production count after successful release would be 33 active body keys / 7 materials; the rest of the catalog is still open. See SPRITE_PHASE3_PILOT_RELEASE.md, issue #160 and recovery branch.
 
 ## Bounded ground projection · v0.8.124
 
 Ground materials reuse a screen-aligned isometric repeat at the current physical Canvas scale. Original world phase, opacity and surface clips remain authoritative. A separate 8 MiB projected RGBA LRU cache supplements the existing 2 MiB source-image budget; eviction and manifest retirement release backing stores. Unsupported/oversized/non-ground transforms keep the original projection. Artwork, scene animation, gameplay and saves remain unchanged. See [MATERIAL_RENDERING_PERFORMANCE.md](MATERIAL_RENDERING_PERFORMANCE.md) for regression evidence, sampling tolerances and device-test limits.
+
+## FPS-first outdoor floor reuse · v0.8.126
+
+Joel explicitly favors FPS over moderate extra memory. The current outdoor floor is prepared once with a camera movement margin, within a separate 64 MiB RGBA cap. It supplements v0.8.124 material projection reuse. Only static base tiles/details are cached; roads, water, atmosphere, actors and effects remain live. Interiors release the picture and keep authored floor/clipping behavior. See [GROUND_WINDOW_PERFORMANCE.md](GROUND_WINDOW_PERFORMANCE.md) for measurements, memory and verification; publish only after required CI and live checks.
+
+Joel additionally authorizes a 256 MiB decoded sprite-cache ceiling for continued artwork production (previously 16 MiB). The shared format and tooling active-memory policy agree; lazy loading, two concurrent decodes, LRU/pinning and per-resource/package limits remain unchanged. This is separate from the 64 MiB floor-picture ceiling and is not an upfront allocation.
 
 ## Outbound regional transport restoration · prepared correction
 
