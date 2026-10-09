@@ -29,6 +29,17 @@ announcementNow=530;
 scope.Prototype.updateHUD();
 assert.equal(banner.children.length,0,'third notification expires after its own display window');
 assert(!banner.classList.contains('visible'),'empty stack closes');
+const bulkNotices=Array.from({length:40},(_,i)=>'Bulk milestone '+i),delivered=[];
+for(const text of bulkNotices)scope.Prototype.game.notice(text,.01);
+for(let i=0;i<20;i++){
+  scope.Prototype.updateHUD();
+  delivered.push(...banner.children.map(n=>n.textContent));
+  announcementNow+=11;
+}
+scope.Prototype.updateHUD();
+assert.deepEqual(delivered,bulkNotices,'more than 32 arrivals in one frame all receive their own display slot');
+assert.equal(scope.Prototype.game.notices.length,0,'consumed engine notices do not accumulate as history');
+assert.equal(banner.children.length,0);
 scope.performance.now=announcementClock;
 console.log('PASS amber notices stack two at once, queue excess, and expire independently');
 scope.Prototype.updateHUD();assert(elements.get('health-potion').innerHTML.includes('Heal'),'HUD exposes Ranger Heal command');assert(elements.get('mana-potion').innerHTML.includes('Mana Regen'),'HUD exposes Ranger Mana Recovery command');

@@ -211,7 +211,6 @@
     }
     notice(text, duration = 5.5, detail = '') {
       this.notices.push({ id: ++this.noticeId, text, duration, ...(detail ? { detail } : {}) });
-      if (this.notices.length > 32) this.notices.shift();
     }
     boss(id) {
       return D.bosses.find((b) => b.id === id);

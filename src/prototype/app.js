@@ -1811,7 +1811,9 @@
     }
     // Consume all new notices in order. A third notice waits instead of replacing
     // either visible one, including when several milestones happen in one frame.
-    for (const n of game.notices || [])
+    // Transfer unread notices rather than trimming a history buffer: a bulk
+    // completion or restored run must not lose observations before the next frame.
+    for (const n of (game.notices || []).splice(0))
       if (n.id > state.lastId) {
         state.waiting.push(n);
         state.lastId = n.id;
