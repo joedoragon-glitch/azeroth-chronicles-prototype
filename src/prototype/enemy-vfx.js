@@ -178,8 +178,7 @@
     if (validateManifest(manifest).length) return fallback;
     const entry = manifest.effects[identity.id];
     const chosen =
-      (identity.variant === 'true' && entry?.variants?.true?.[stage]) ||
-      entry?.stages?.[stage];
+      (identity.variant === 'true' && entry?.variants?.true?.[stage]) || entry?.stages?.[stage];
     if (!validAsset(chosen)) return fallback;
     return Object.freeze({ mode: chosen.type, id: identity.id, stage, asset: chosen });
   }
