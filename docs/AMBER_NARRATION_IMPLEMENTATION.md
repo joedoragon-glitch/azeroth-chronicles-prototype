@@ -69,3 +69,7 @@ Writing constraints: plain English, concrete nouns and verbs, occasional dry hum
 ## Release integration checkpoint
 
 The user approved the final 12 Chronicle passages and amber fortress-approach milestone for game release after the voice audit. Final wording includes the polished #20 and #21 and the direct Crownwatch levy/supply description for #29. The feature was reconciled with the current v0.8.118 main release (including Archive evidence and notification-detail support), and the proposed release version is v0.8.119. Do not override newer main behavior, save schema, or the independent Keeper ledger notice. Run release CI and confirm the published build/version before reporting deployment complete.
+
+## Standalone tool integration
+
+The standalone audio audition is a separate browser entry that also loads the shared engine/rewards modules. It must load `src/prototype/narration.js` before `src/prototype/rewards.js`; otherwise the browser-only rewards dependency fails and audition playback tests cannot initialize correctly. `tests/quest-narration.test.cjs` now guards that script order, while the generated desktop/phone script inventory and service-worker precache continue to include narration.
