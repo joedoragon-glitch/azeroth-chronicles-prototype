@@ -1,7 +1,11 @@
-/* Visual-only enemy-skill identity and replacement contract. No combat state or drawing. */
+/* Presentation-only enemy-skill identity and replacement contract. No combat state or drawing. */
 (function (root) {
   'use strict';
 
+  const P =
+    typeof module !== 'undefined'
+      ? require('./enemy-presentation.js')
+      : root.PrototypeEnemyPresentation;
   const STAGES = Object.freeze([
     'windup',
     'release',
@@ -56,6 +60,7 @@
     } else return null;
     return Object.freeze({
       id,
+      presentation: P.profile(enemy, attack),
       tier,
       role,
       variant: tier === 'boss' && enemy.form === 'true' ? 'true' : 'normal',
@@ -72,6 +77,7 @@
     if (!species || !style) return null;
     return Object.freeze({
       id: 'projectile/' + species + '/' + style,
+      presentation: P.profile(enemy || { species }, { kind: 'projectile', style }),
       tier: enemy ? tierOf(enemy) : 'ordinary',
       role: 'ranged',
       variant: enemy && enemy.type === 'boss' && enemy.form === 'true' ? 'true' : 'normal',

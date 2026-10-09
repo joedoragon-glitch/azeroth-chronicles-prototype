@@ -102,6 +102,8 @@ async function offlineContract(checkout) {
   for (const rel of [
     'assets/audio/fixture.wav',
     'assets/audio/manifest.json',
+    'src/prototype/enemy-presentation.js',
+    'src/prototype/audio-enemy.js',
     'src/prototype/audio-catalog.js',
     'src/prototype/audio-assets.js',
     'src/prototype/audio-mixer.js',

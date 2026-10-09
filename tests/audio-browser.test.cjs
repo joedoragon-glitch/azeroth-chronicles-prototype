@@ -162,6 +162,107 @@ const root = path.resolve(__dirname, '..'),
         assert(r.rms > 0.0001, 'silent score ' + r.id);
         assert(r.peak < 1, 'clipped score ' + r.id);
       }
+      const enemyAudio = await page.evaluate(async (phone) => {
+        const materials = Object.keys(PrototypeAudioEnemy.textures),
+          results = [],
+          ctx = new AudioContext();
+        const manifest = await (await fetch('./assets/audio/manifest.json')).json();
+        for (const [id, entry] of Object.entries(manifest.assets).filter(
+          ([, x]) => x.kind === 'effect',
+        )) {
+          const pcm = await ctx.decodeAudioData(await (await fetch(entry.src)).arrayBuffer());
+          let peak = 0,
+            square = 0;
+          for (const x of pcm.getChannelData(0)) {
+            if (!Number.isFinite(x)) throw Error('Bad SFX ' + id);
+            peak = Math.max(peak, Math.abs(x));
+            square += x * x;
+          }
+          if (peak >= 0.85 || Math.sqrt(square / pcm.length) < 0.003)
+            throw Error('Unusable SFX ' + id);
+          results.push({ id, peak });
+        }
+        await ctx.close();
+        const render = async (material, stage, contact = true, variant = 'normal') => {
+          const context = new OfflineAudioContext(1, 22050, 22050),
+            a = new PrototypeAudio();
+          a.ctx = new Proxy(context, {
+            get(target, key) {
+              if (key === 'state') return 'running';
+              const v = Reflect.get(target, key, target);
+              return typeof v === 'function' ? v.bind(target) : v;
+            },
+          });
+          a.buses = {};
+          for (const key of ['master', 'music', 'ambience', 'effects', 'interface'])
+            a.buses[key] = context.createGain();
+          a.buses.master.connect(context.destination);
+          for (const key of ['music', 'ambience', 'effects', 'interface'])
+            a.buses[key].connect(a.buses.master);
+          a.setMixProfile(phone ? 'phone' : 'reference');
+          a.applySettings();
+          a.playSoundEvent = () => false;
+          const p = {
+            material,
+            personality: 'military',
+            action: 'circle',
+            accent: 'darklord',
+            summon: false,
+          };
+          a.effect({
+            type: 'enemyVfx',
+            skillId: 'boss/darklord/0',
+            identity: { id: 'boss/darklord/0', presentation: p },
+            stage,
+            contact,
+            variant,
+            dangerous: true,
+            target: stage === 'spawn' ? 'born-unit' : undefined,
+          });
+          const pcm = (await context.startRendering()).getChannelData(0);
+          let peak = 0,
+            square = 0;
+          for (const x of pcm) {
+            if (!Number.isFinite(x)) throw Error('Invalid enemy render');
+            peak = Math.max(peak, Math.abs(x));
+            square += x * x;
+          }
+          return { material, stage, peak, rms: Math.sqrt(square / pcm.length) };
+        };
+        for (const material of materials)
+          for (const stage of ['windup', 'release', 'impact', 'phase', 'spawn']) {
+            const value = await render(material, stage);
+            // Spawn needs an actual entity ID; expression cannot invent one.
+            if (value.rms < 0.00005 || value.peak >= 1)
+              throw Error('Bad enemy stage ' + JSON.stringify(value));
+          }
+        const missed = await render('steel', 'impact', false);
+        if (missed.peak !== 0) throw Error('Fake impact on miss');
+        const a = Prototype.audio;
+        for (let i = 0; i < 200; i++) {
+          const identity = PrototypeEnemyVfx.describe(
+            { species: 'orc', ranged: true },
+            { kind: 'projectile', style: 'axe' },
+          );
+          a.effect({
+            type: 'enemyVfx',
+            skillId: identity.id,
+            identity,
+            stage: 'release',
+            variant: 'normal',
+            dangerous: true,
+          });
+        }
+        if (a.voices.size > 64) throw Error('Enemy audio exceeded voice bound');
+        return {
+          files: results.length,
+          materials: materials.length,
+          missed,
+          voices: a.voices.size,
+        };
+      }, phone);
+      assert.equal(enemyAudio.files, 30);
+      assert.equal(enemyAudio.materials, 12);
       // Real rendering proves audio output, not musical polish or actual iPhone speaker comfort.
       assert.deepEqual(errors, []);
       console.log(

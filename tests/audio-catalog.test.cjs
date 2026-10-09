@@ -18,7 +18,12 @@ const copy = (v) => structuredClone(v),
     Object.values(production.assets).every(
       (a) =>
         a.generationGuide &&
-        a.managedBy === (a.kind === 'ambience' ? 'environment-book' : 'score-book'),
+        a.managedBy ===
+          (a.kind === 'ambience'
+            ? 'environment-book'
+            : a.kind === 'effect'
+              ? 'sfx-book'
+              : 'score-book'),
     ),
   );
   assert(

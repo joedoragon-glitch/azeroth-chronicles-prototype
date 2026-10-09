@@ -18,6 +18,7 @@ const quick = new Set([
   'combat-feedback',
   'enemy-vfx-foundation',
   'enemy-vfx-events',
+  'enemy-audio',
   'enemy-vfx-inventory',
   'terrain-effects',
   'first-boss-balance',
