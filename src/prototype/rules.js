@@ -3869,7 +3869,7 @@
       mentor: 'thorn',
       name: 'Scornfang',
       visualScale: 1.16,
-      specialRange: 420,
+      specialRange: 470,
       specialCooldown: 4.2,
       phase: { threshold: 0.42, name: "Scavenger's Nerve", kind: 'scramble' },
       attacks: [
@@ -3906,7 +3906,7 @@
       mentor: 'mire',
       name: 'Direjaw',
       visualScale: 1.18,
-      specialRange: 390,
+      specialRange: 437,
       specialCooldown: 4.4,
       phase: { threshold: 0.45, name: 'Sloughskin', kind: 'molt' },
       attacks: [
@@ -3943,7 +3943,7 @@
       mentor: 'ridge',
       name: 'Crag Tyrant',
       visualScale: 1.2,
-      specialRange: 430,
+      specialRange: 482,
       specialCooldown: 4.1,
       phase: { threshold: 0.44, name: 'Lone Howl', kind: 'howl' },
       attacks: [
@@ -3978,7 +3978,7 @@
       visualIdol: 'darklord',
       name: 'Dreadmaw',
       visualScale: 1.19,
-      specialRange: 440,
+      specialRange: 493,
       specialCooldown: 4.0,
       phase: { threshold: 0.45, name: 'Ash Carapace', kind: 'carapace' },
       summon: {
@@ -4035,7 +4035,7 @@
       mentor: 'warlord',
       name: 'Cinder Warlord',
       visualScale: 1.18,
-      specialRange: 440,
+      specialRange: 493,
       specialCooldown: 4.0,
       patrolSpeed: 82,
       inspectionPause: 2.4,
@@ -4109,7 +4109,9 @@
     specialRecoveryMultiplier: 0.25,
     basicCooldown: 0.75,
     skillsPerBasic: 4,
-    specialRange: 560,
+    specialRange: 600,
+    areaRangeMultiplier: 1.15,
+    targetFlexRange: 600,
   };
   const rangedEnemyCombat = {
     projectileMultiplier: 1.7,
