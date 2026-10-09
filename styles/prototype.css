@@ -460,6 +460,42 @@ button:disabled {
   text-align: center;
   letter-spacing: 0.01em;
 }
+/* Narrative prose is deliberately quieter than the golden milestone banner. */
+#message .notice-card.notice-narration {
+  padding: 10px 14px;
+  background: linear-gradient(155deg, #352d23, #242721);
+  color: #f0dfbf;
+  border: 1px solid #b49b6b;
+  box-shadow:
+    0 4px 14px #0009,
+    inset 0 1px #f0d8a326;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: 0;
+}
+#message .notice-card.notice-narration::before {
+  content: 'CHRONICLE';
+  display: block;
+  margin-bottom: 4px;
+  color: #d5b77f;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+#message .notice-card.notice-warning {
+  border-color: #ffb38a;
+  background: linear-gradient(155deg, #f7d089, #e6a66b);
+  box-shadow:
+    0 0 0 2px #9f493488,
+    0 5px 18px #000b;
+}
+body[data-experience='phone'] #message .notice-card.notice-narration {
+  padding: 8px 11px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
 #message.visible {
   opacity: 1;
   visibility: visible;

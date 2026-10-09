@@ -1826,8 +1826,42 @@
         state.lastId = n.id;
       }
     state.active = state.active.filter((n) => now < n.until);
+    // Story prose is optional reading, never a combat overlay or a rival to urgent news.
+    const inCombat = game
+      .zone()
+      .enemies.some(
+        (e) =>
+          e.hp > 0 &&
+          e.aggro &&
+          !e.neutral &&
+          Math.hypot(e.x - game.hero.x, e.y - game.hero.y) < 720,
+      );
+    const canNarrate =
+      !inCombat &&
+      !menu &&
+      !paused &&
+      focused &&
+      !document.hidden &&
+      !game.s.challenge.pending &&
+      !game.s.challenge.gameOver;
+    if (
+      state.active.some((n) => n.kind === 'narration') &&
+      (!canNarrate || state.waiting.some((n) => n.kind !== 'narration'))
+    ) {
+      const interrupted = state.active
+        .filter((n) => n.kind === 'narration')
+        .map(({ until, ...notice }) => notice);
+      state.active = state.active.filter((n) => n.kind !== 'narration');
+      state.waiting.unshift(...interrupted);
+    }
     while (state.active.length < 2 && state.waiting.length) {
-      const notice = state.waiting.shift();
+      // Existing milestones retain their full duration. New warnings lead the
+      // waiting queue, while a story is shown only when both slots are clear.
+      const warningIndex = state.waiting.findIndex((n) => n.kind === 'warning');
+      const milestoneIndex = state.waiting.findIndex((n) => n.kind !== 'narration');
+      const index = warningIndex >= 0 ? warningIndex : milestoneIndex;
+      if (index < 0 && (!canNarrate || state.active.length)) break;
+      const [notice] = state.waiting.splice(index < 0 ? 0 : index, 1);
       state.active.push({
         ...notice,
         until: now + (notice.duration || 5.5) * 1000,
@@ -1839,7 +1873,10 @@
       host.replaceChildren(
         ...state.active.map((n) => {
           const card = document.createElement('div');
-          card.className = 'notice-card';
+          card.className =
+            'notice-card notice-' +
+            (n.kind === 'narration' || n.kind === 'warning' ? n.kind : 'milestone');
+          if (n.kind === 'warning') card.setAttribute('role', 'alert');
           card.textContent = n.text;
           if (n.detail) {
             const detail = document.createElement('small');

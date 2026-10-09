@@ -197,3 +197,7 @@ The interrupted PR #185 is reconciled with the current audio/VFX release. Captiv
 ## Cooldown-only functional candidate · v0.8.119
 
 PR #183 integrates dormant MP, five-rank Cooldown Training and approved HP siphons/independent recovery with v0.8.118 main. Provisional cooldown/heal numbers are preserved. See COOLDOWN_ONLY_COMBAT_MIGRATION.md for preservation and regression evidence. Release status requires the exact-head completed CI/deployment gate; balance measurement follows functional release.
+
+## Selective quest narration · integrated v0.8.120
+
+The user-reviewed 30-quest selection remains authoritative: 12 quiet CHRONICLE passages and one high-priority finale milestone; 17 quests have no narrative card. Existing automatic rewards, quest states, v4 saves, combat notices, Keeper Archive and cooldown-only mechanics remain intact. The prose lives in narration.js, routed through the existing payQuest dispatcher and deferred by combat/menus. See AMBER_NARRATION_IMPLEMENTATION.md and source PR #184 for the approved text and validation.
