@@ -149,3 +149,34 @@ body[data-experience='desktop'] #modal {
     width: calc(100vw - 244px);
   }
 }
+
+/* Center the useful hotbar in playable space, not a permanent ten-slot frame. */
+body[data-experience='desktop'] #skills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  max-width: calc(100vw - 254px);
+  gap: 6px;
+  padding: 7px;
+}
+body[data-experience='desktop'] #skills > button {
+  flex: 0 0 62px;
+  width: 62px;
+}
+body[data-experience='desktop'] #skills > button.locked {
+  display: none;
+}
+body[data-experience='desktop'] #quick-items {
+  flex: 0 0 132px;
+  grid-column: auto;
+}
+body[data-experience='desktop'] #quick-items:not(.has-rangers) {
+  display: none;
+}
+@media (max-width: 1000px) {
+  body[data-experience='desktop'] #skills {
+    max-width: calc(100vw - 244px);
+  }
+}
