@@ -267,7 +267,8 @@
           this.hero.xp -= this.xpRequired();
           this.hero.level++;
           this.hero.maxHp += R.balance.growth.hpPerLevel;
-          if (R.resourceMode.manaEnabled) this.hero.maxMp += R.manaBalance.perLevel;
+          // Keep dormant MP capacity age-correct for a future reactivation.
+          this.hero.maxMp += R.manaBalance.perLevel;
           this.hero.hp = this.hero.maxHp;
           if (R.resourceMode.manaEnabled) this.hero.mp = this.hero.maxMp;
           this.syncCompanionLevelStats();
