@@ -1,0 +1,68 @@
+name: Rogue release quality gates
+on:
+  push:
+    branches: [rogue-final-retest-20261009]
+permissions:
+  contents: read
+jobs:
+  full-regressions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - run: npm run format:check
+      - run: npm run check
+      - run: npm test
+  desktop-and-phone:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - name: Install Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.62.1
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          if [ -n "$CHROME" ]; then
+            echo "CHROMIUM_EXECUTABLE=$CHROME" >> "$GITHUB_ENV"
+          else
+            npx playwright install chromium
+          fi
+      - run: node tests/prototype-browser.test.cjs
+      - run: node tests/audio-browser.test.cjs
+      - run: node tests/audio-audition-browser.test.cjs
+      - run: node tests/materials-browser.test.cjs
+      - run: node tests/sprite-showroom-browser.test.cjs
+  phone-webkit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install WebKit browser
+        timeout-minutes: 5
+        run: |
+          for aptSource in /etc/apt/sources.list /etc/apt/sources.list.d/ubuntu.sources /etc/apt/apt-mirrors.txt; do
+            if [ -f "$aptSource" ]; then
+              sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g' "$aptSource"
+            fi
+          done
+          npm install --no-save --package-lock=false playwright@1.62.1
+          npx playwright install --with-deps webkit
+      - run: node tests/phone-webkit-browser.test.cjs
+      - name: Verify WebKit audio
+        env:
+          AUDIO_BROWSER_ENGINE: webkit
+        run: |
+          node tests/audio-browser.test.cjs
+          node tests/audio-audition-browser.test.cjs
+      - name: Verify WebKit materials
+        env:
+          MATERIAL_BROWSER_ENGINE: webkit
+        run: node tests/materials-browser.test.cjs
