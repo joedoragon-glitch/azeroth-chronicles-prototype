@@ -160,6 +160,9 @@
         rx = 30;
         ry = 8;
       }
+      const scale = Number.isFinite(e.visualScale) && e.visualScale > 0 ? e.visualScale : 1;
+      rx *= scale;
+      ry *= scale;
       ctx.save();
       ctx.fillStyle = '#05100c38';
       ctx.beginPath();
@@ -992,9 +995,15 @@
           stats.entitiesConsidered++;
           if (renderKind === 'enemy' && e.hp <= 0) continue;
           const p = screen(e);
-          if (p.x < -100 || p.x > canvas.width + 100 || p.y < -100 || p.y > canvas.height + 100)
+          if (p.x < -180 || p.x > canvas.width + 180 || p.y < -180 || p.y > canvas.height + 180)
             continue;
-          entities.push({ ...e, renderKind, spriteIdentity: e });
+          // Calculate scale from the same authored rule used by procedural art.
+          // A registered sprite consumes visualScale itself; no source pixels change.
+          const visualScale =
+            Number.isFinite(e.visualScale) && e.visualScale > 0
+              ? e.visualScale
+              : PrototypeVisuals.featureScale({ ...e, renderKind });
+          entities.push({ ...e, renderKind, visualScale, spriteIdentity: e });
         }
       }
       add(z.props, 'prop');
@@ -1010,7 +1019,7 @@
 
       for (const e of entities) {
         const p = screen(e);
-        if (p.x < -100 || p.x > canvas.width + 100 || p.y < -100 || p.y > canvas.height + 100)
+        if (p.x < -180 || p.x > canvas.width + 180 || p.y < -180 || p.y > canvas.height + 180)
           continue;
         if (!e.interactionOnly) {
           groundMarker(e, p);
