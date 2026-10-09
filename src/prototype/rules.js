@@ -2061,9 +2061,24 @@
       vegetation: 'pine',
     },
   };
+  // The vehicle that actually brought the party to a region determines its landing.
+  // Ferry docks remain at their terrain-authored harbors; overland arrivals use rear town stands.
+  const travelArrivalStands = {
+    march: { x: 145, y: 1180 },
+    frontier: { x: 155, y: 615 },
+  };
   const travelArrivals = {
+    'vale>march': { transportId: 'return', dx: 95, dy: 30 },
+    'march>vale': { transportId: 'outbound', dx: 95, dy: 25 },
     'march>highlands': { x: 425, y: 1900 },
     'highlands>march': { x: 2115, y: 675 },
+    'highlands>frontier': { transportId: 'return', dx: 95, dy: 25 },
+    'frontier>highlands': { transportId: 'outbound', dx: 95, dy: 25 },
+    'frontier>crown': { transportId: 'crown-travel-frontier-return', dx: 95, dy: 50 },
+    'crown>frontier': { transportId: 'return', dx: 95, dy: 25 },
+    'crown>highlands': { transportId: 'outbound', dx: 95, dy: 25 },
+    'crown>march': { transportId: 'return', dx: 95, dy: 30 },
+    'crown>vale': { transportId: 'outbound', dx: 95, dy: 25 },
   };
   const dungeonWorkstations = {
     crypt: {
@@ -4390,6 +4405,7 @@
     terrain,
     landforms,
     harbors,
+    travelArrivalStands,
     travelArrivals,
     dungeonWorkstations,
     regionalHandoffScenes,
