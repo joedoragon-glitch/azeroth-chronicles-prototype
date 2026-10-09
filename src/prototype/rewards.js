@@ -1,6 +1,8 @@
 /* Rewards policies on the shared Campaign state. */
 (function (root) {
   'use strict';
+  const Narration =
+    typeof PrototypeNarration !== 'undefined' ? PrototypeNarration : require('./narration.js');
   function install(Campaign, { D, R, dungeonIds }) {
     class Rewards {
       regionalEnemyRewards(regionIndex, kind = 'ordinary') {
@@ -85,7 +87,7 @@
           );
           // The paid flag already persists in v4 saves: no second narrative flag or replay.
           const index = Number(q.id.slice('quest-'.length));
-          const narration = D.questNarration?.[index];
+          const narration = Narration[index];
           if (Number.isInteger(index) && typeof narration === 'string')
             this.notice(narration, 6.8, 'narration');
         }
