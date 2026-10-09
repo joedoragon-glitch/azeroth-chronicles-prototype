@@ -27,3 +27,15 @@ Azeroth Chronicles remains the same multi-file Campaign game on desktop/Chromebo
 - `tests/prototype-browser.test.cjs` checks dialog viewport containment, reduced dimensions, fixed Back and internally scrolling option lists on the existing device matrix, including phone landscape.
 - `tests/prototype-ui.test.cjs` checks the four-option Full Barracks and the absence of duplicated inventory. Keyboard/menu/squad/service tests still exercise existing logic.
 - Run `npm run build`, `npm run format:check`, `npm run check`, `npm test`, desktop/phone Chromium and WebKit paths before merging. CI evidence is not a substitute for a final on-device aesthetic review.
+
+## Approved ergonomic refinement · 9 October 2026
+
+Joel approved the phone and desktop interface refinements and smaller content-responsive dialogs. Preserve the **375×800 CSS pixel portrait and 800×375 landscape support minimum**; do not make 360×780 an optimized design target. Smaller viewports may use a generic proportional control-scale fallback (same composition, no special content or mechanics); the world Canvas keeps rendering at its actual viewport. This is best-effort compatibility, not an expanded support matrix.
+
+- Interact appears in a lower-left thumb-adjacent position only when a nearby action exists. Recall and Target occupy a consistent nearby control row; contextual Squad sits immediately above without competing with the skill cluster. The two-thumb and alternate left-hand controls retain their original mappings.
+- Keep unlocked skill buttons at the right-bottom; on desktop use a centered compact hotbar containing learned abilities and Ranger field commands only while Rangers are present.
+- Desktop camera anchoring follows the revised 214/204px HUD dimensions rather than the old sidebar width.
+- Dialog size is chosen by density (compact, regular, wide) while height remains content-driven up to a strict scroll bound. Short conversations no longer inherit the maximum panel width. Preserve 44px mobile action targets and a fixed Back.
+- Ranger support numbers move into compact Inventory explanatory text instead of two disabled action rows; duplicate Recall disappears from Inventory. Full Barracks Operations now accurately says local objectives/resources, not map.
+- Phone notices appear below the HP/MP bar and suppress conflicting transient status while visible. Menu text is enlarged rather than globally shrinking.
+- Browser regression checks include dialog-size classification, ergonomic contextual Interact placement and a 360x780 visual-fit smoke (not a supported reference viewport). All canonical supported viewports remain tested.
