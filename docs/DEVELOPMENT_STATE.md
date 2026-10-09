@@ -173,3 +173,7 @@ The observation-only bridge and restrained procedural art cover 251 live identit
 ## Prepared v0.8.112 — shared enemy audio/VFX identities
 
 Audio now consumes the existing stable stage envelope, with material/action, creature/faction and restrained important-cast motif routing. Thirty original short synthesized SFX recordings join the existing validated manifest and offline inventory; cold/missing playback remains procedural. Live VFX coverage is a build and regression acceptance gate, including future rogue signatures. See `ENEMY_AUDIO_SYNCHRONIZATION.md` and generated `ENEMY_AUDIO_COVERAGE.md`. This observation-only integration preserves combat rules and v4 save/statistics equivalence. Release requires exact-head full CI and Pages verification.
+
+## Enemy VFX quality audit v0.8.114
+
+The follow-up audit corrects captain/species basic-hit semantics and Ridge Tyrant hammer feedback, observes actual motion/projectile lifetimes for replacement clips, suppresses stale persistent-area art after revival/reentry, preserves effects on failed travel, handles manifest reload races/failures and culls offscreen actor-local stages. The browser catalog now requires real contact for all 28 basic identities. Combat rules, merged rogue mechanics, audio recordings and v4 saves remain unchanged. See [ENEMY_SKILL_VFX_QUALITY_AUDIT.md](ENEMY_SKILL_VFX_QUALITY_AUDIT.md) for matched desktop/phone evidence and verification.

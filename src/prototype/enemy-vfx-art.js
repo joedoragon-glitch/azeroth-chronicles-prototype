@@ -2,7 +2,6 @@
 (function (root) {
   'use strict';
   const V = root.PrototypeEnemyVfx || require('./enemy-vfx.js'),
-    R = root.PrototypeRules || require('./rules.js'),
     FX = root.PrototypeCombatVisuals || require('./combat-visuals.js');
   const boss = Object.freeze({
     thorn: [
@@ -30,7 +29,7 @@
       ['call', 'spectral'],
     ],
     ridge: [
-      ['claw', 'fur'],
+      ['slam', 'steel'],
       ['fall', 'stone'],
       ['rush', 'stone'],
       ['call', 'steel'],
@@ -109,6 +108,27 @@
     'supply-crown': ['carapace', 'ash'],
     'frontier-overseer': ['command', 'steel'],
   });
+  const captainBasics = Object.freeze({
+    'supply-vale': ['bite', 'fur'],
+    'supply-march': ['bite', 'mire'],
+    'supply-highlands': ['claw', 'fur'],
+    'supply-crown': ['claw', 'ember'],
+    'frontier-overseer': ['cleave', 'steel'],
+  });
+  const basicActions = Object.freeze({
+    wolf: 'bite',
+    goblin: 'cleave',
+    skeleton: 'cleave',
+    reedbeast: 'bite',
+    mireling: 'bite',
+    ogre: 'slam',
+    orc: 'cleave',
+    archer: 'sweep',
+    crownguard: 'cleave',
+    ashbeast: 'claw',
+    wraith: 'claw',
+    stalker: 'claw',
+  });
   const species = Object.freeze({
     wolf: 'fur',
     goblin: 'dust',
@@ -148,7 +168,9 @@
       pair =
         parts[2] === 'phase'
           ? phases[parts[1]]
-          : captains[parts[1]]?.[parts[2] === 'basic' ? 0 : Number(parts[2])];
+          : parts[2] === 'basic'
+            ? captainBasics[parts[1]]
+            : captains[parts[1]]?.[Number(parts[2])];
     else if (parts[0] === 'night')
       pair = [parts[2] === 'drain' ? 'drain' : 'landing', species[parts[1]]];
     else if (parts[0] === 'projectile')
@@ -178,7 +200,7 @@
         'shove';
       pair = [action, material];
     } else if (parts[0] === 'enemy')
-      pair = [parts[2] === 'frenzy' ? 'frenzy' : 'claw', species[parts[1]]];
+      pair = [parts[2] === 'frenzy' ? 'frenzy' : basicActions[parts[1]], species[parts[1]]];
     if (!pair?.[0] || !palette[pair[1]]) return null;
     // Individual species keep their actual material even when sharing a tactical action.
     return Object.freeze({
@@ -195,6 +217,7 @@
     manifestSerial = 0;
   const disabled = new Set();
   function installManifest(m) {
+    manifestSerial++;
     const valid = !V.validateManifest(m).length;
     manifest = valid ? m : { version: 1, effects: {} };
     return valid;
@@ -203,10 +226,14 @@
     const serial = ++manifestSerial;
     try {
       const res = await fetch('./assets/vfx/manifest.json');
-      if (!res.ok) return false;
+      if (!res.ok) {
+        if (serial === manifestSerial) installManifest({ version: 1, effects: {} });
+        return false;
+      }
       const m = await res.json();
       return serial === manifestSerial && installManifest(m);
     } catch {
+      if (serial === manifestSerial) installManifest({ version: 1, effects: {} });
       return false;
     }
   }
@@ -223,6 +250,28 @@
       elapsedMs: elapsed * 1000,
       scale: asset.scale || 1,
     });
+  }
+  function localVisible(ctx, screen, f, stage) {
+    const transform = ctx.getTransform?.(),
+      sx = Math.abs(transform?.a || 1),
+      sy = Math.abs(transform?.d || sx),
+      width = (ctx.canvas?.width || 900) / sx,
+      height = (ctx.canvas?.height || 600) / sy,
+      entry = manifest.effects?.[f.identity?.id],
+      asset =
+        (f.identity?.variant === 'true' && entry?.variants?.true?.[stage]) ||
+        entry?.stages?.[stage],
+      definition = V.validAsset(asset) && root.PrototypeSprites?.definition?.(asset.spriteKey),
+      scale = (asset?.scale || 1) * (definition?.scale || 1),
+      margin = Math.max(
+        96,
+        (definition?.displayWidth || 0) * scale,
+        (definition?.displayHeight || 0) * scale,
+      ),
+      p = screen(f);
+    return (
+      p.x + margin >= 0 && p.x - margin <= width && p.y + margin >= 0 && p.y - margin <= height
+    );
   }
   function enabled(game, identity, stage) {
     return game.enemyVfxEnabled !== false && !disabled.has(identity.id + ':' + stage);
@@ -672,6 +721,8 @@
       const m = game.enemyVfxHazard?.(h);
       if (
         !m ||
+        m.epoch !== game.enemyVfxEpoch() ||
+        !game.zone().enemies.includes(m.e) ||
         m.e.hp <= 0 ||
         m.e.returning ||
         !enabled(game, m.identity, h.kind === 'ring' ? 'travel' : 'linger')
@@ -708,13 +759,14 @@
           id = V.describe(e, a);
         if (!id || !enabled(game, id, 'travel')) continue;
         const f = { x: e.x, y: e.y, geometry: a, identity: id, life: 1, max: 1 };
-        if (!stageAsset(ctx, screen, f, 'travel', Math.max(0, 5 - a.life)))
+        const m = game.enemyVfxMotion?.(a);
+        if (m && m.epoch !== game.enemyVfxEpoch()) continue;
+        if (!stageAsset(ctx, screen, f, 'travel', Math.max(0, (m?.initialLife ?? a.life) - a.life)))
           local(ctx, screen, f, { ...recipe(id, a, e), action: 'rush' }, 0.5, 'travel');
       }
     ctx.restore();
   }
   function actors(ctx, screen, game, effects) {
-    if (!active(game)) return;
     if (!active(game)) return;
     for (const e of game.zone().enemies)
       if (e.hp > 0 && !e.returning && e.telegraph) {
@@ -724,6 +776,7 @@
         if (!rec || !enabled(game, id, 'windup')) continue;
         const progress = clamp(1 - a.timer / Math.max(0.01, a.total), 0, 1),
           f = { x: e.x, y: e.y, identity: id, geometry: a, life: 1, max: 1 };
+        if (!localVisible(ctx, screen, f, 'windup')) continue;
         if (!stageAsset(ctx, screen, f, 'windup', Math.max(0, a.total - a.timer)))
           local(ctx, screen, f, rec, progress, 'windup');
       }
@@ -734,6 +787,7 @@
         !(f.stage === 'impact' && !f.target) &&
         enabled(game, f.identity, f.stage)
       ) {
+        if (!localVisible(ctx, screen, f, f.stage)) continue;
         const rec = recipe(f.identity, f.geometry, f);
         if (!rec) continue;
         ctx.save();
@@ -751,9 +805,7 @@
       rec = recipe(id, m?.a || p, e || {});
     if (!rec || !enabled(game, id, 'travel')) return false;
     const f = { ...p, identity: id };
-    if (
-      stageAsset(ctx, screen, f, 'travel', Math.max(0, 2.5 / R.enemyProjectileMultiplier - p.life))
-    )
+    if (stageAsset(ctx, screen, f, 'travel', Math.max(0, (m?.initialLife ?? p.life) - p.life)))
       return true;
     const q = screen(p),
       tail = screen({ x: p.x - (p.dx || 0) * 20, y: p.y - (p.dy || 0) * 20 }),
