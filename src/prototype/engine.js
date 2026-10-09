@@ -2496,15 +2496,17 @@
       if (!plans.length) return false;
       const summonCfg = profile.summon,
         owned = this.captainOwnedSummons(e).length,
+        d = dist(e, target),
         eligible = plans
           .map((plan, index) => ({ plan, index }))
-          .filter(
-            (x) =>
-              x.plan.kind !== 'summon' ||
-              (summonCfg && owned < (summonCfg.cap || 3) && (e.summonCd || 0) <= 0),
-          ),
+          .filter((x) => {
+            if (x.plan.kind === 'summon')
+              return summonCfg && owned < (summonCfg.cap || 3) && (e.summonCd || 0) <= 0;
+            if (x.plan.kind === 'cone')
+              return d <= (x.plan.radius || 145) * R.bossCadence.areaRangeMultiplier + 25;
+            return true;
+          }),
         available = eligible.filter((x) => x.index !== e.lastCaptainAttack),
-        d = dist(e, target),
         weighted = [];
       let chosen = null;
       if (summonCfg?.opening && !e.captainOpeningSummon && owned === 0 && (e.summonCd || 0) <= 0) {
@@ -2536,10 +2538,16 @@
       }
       const plan = chosen.plan,
         index = chosen.index,
-        angle = Math.atan2(target.y - e.y, target.x - e.x),
+        markHero =
+          plan.kind === 'circle' &&
+          this.hero.hp > 0 &&
+          dist(e, this.hero) < profile.specialRange &&
+          this.line(e, this.hero),
+        actualTarget = markHero ? this.hero : target,
+        angle = Math.atan2(actualTarget.y - e.y, actualTarget.x - e.x),
         center = ['cone', 'sector', 'ring'].includes(plan.kind)
           ? { x: e.x, y: e.y }
-          : { x: target.x, y: target.y },
+          : { x: actualTarget.x, y: actualTarget.y },
         a = {
           ...plan,
           captainSkill: true,
@@ -2551,7 +2559,7 @@
           fromY: e.y,
           angle,
           ...center,
-          radius: plan.radius || (plan.kind === 'cone' ? 145 : 85),
+          radius: (plan.radius || (plan.kind === 'cone' ? 145 : 85)) * R.bossCadence.areaRangeMultiplier,
           sequence: [],
         };
       if (plan.sequential && plan.kind === 'circle') {
@@ -2964,9 +2972,9 @@
           e.cd <= 0 &&
           d < R.bossCadence.specialRange &&
           visible &&
-          (!e.basicDue || d > 200)
+          (!e.basicDue || d > 200) &&
+          this.startAttack(e, target)
         ) {
-          this.startAttack(e, target);
           opportunity = true;
         } else if (
           e.nightOnly &&
