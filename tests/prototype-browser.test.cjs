@@ -88,7 +88,13 @@ await check('Target button and Q cycle actual hero combat without unintended fal
  assert.equal(await page.evaluate(()=>Prototype.game.selectedHeroTarget()?.name),'Target near','dodging far away keeps a held lock');
  await page.keyboard.press('q');
  assert.equal(await page.evaluate(()=>Prototype.game.manualHeroTargetLocked),false,'short Q releases lock and cycles');
- await page.evaluate(()=>{const c=Prototype.game;Object.assign(c.hero,{x:600,y:900});c.manualHeroTargetId=null;c.manualHeroTargetLocked=false;});
+ await page.evaluate(()=>{
+   const c=Prototype.game;
+   Object.assign(c.hero,{x:600,y:900});
+   c.manualHeroTargetId=null;c.manualHeroTargetLocked=false;c.s.heroTarget=null;
+   c.zone().enemies.forEach((e,i)=>{e.x=i?685:670;e.y=i?1035:900;e.returning=0;e.aggro=false;e.home={x:e.x,y:e.y};});
+   c.s.mercyTime=10;
+ });
  const tbox=await page.locator('#target-button').boundingBox();
  await page.mouse.move(tbox.x+tbox.width/2,tbox.y+tbox.height/2);
  await page.mouse.down();
