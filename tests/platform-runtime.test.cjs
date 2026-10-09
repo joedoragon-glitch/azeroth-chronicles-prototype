@@ -54,10 +54,23 @@ console.log(
 );
 
 // Presentation preferences are separate from campaign saves and from each other.
+assert.equal(P.defaultCameraZoom, 1.5);
+assert.equal(platform.cameraZoom, 1.5, 'Desktop starts at selected 150% framing');
+const comparison = JSON.stringify({ desktop: 1, phone: 1.75 });
+items.set('azeroth-camera-v1', comparison);
+assert.equal(
+  P.init(env).cameraZoom,
+  1.5,
+  'Old comparison choices do not override finalized framing',
+);
+assert.equal(
+  items.get('azeroth-camera-v1'),
+  comparison,
+  'Comparison preference is retained for rollback',
+);
+platform.selectCameraZoom(1);
 assert.equal(platform.cameraZoom, 1);
-platform.selectCameraZoom(1.5);
-assert.equal(platform.cameraZoom, 1.5);
-assert.equal(P.init(env).cameraZoom, 1, 'Phone keeps its original camera until explicitly changed');
+assert.equal(P.init(env).cameraZoom, 1.5, 'Phone defaults to 150% independently');
 platform.select('phone');
 platform.selectCameraZoom(1.75);
 assert.equal(platform.cameraZoom, 1.75);
@@ -65,9 +78,13 @@ platform.selectCameraZoom(3);
 assert.equal(platform.cameraZoom, 1.75, 'Unsupported camera scales cannot leak into rendering');
 assert.equal(P.init(env).cameraZoom, 1.75, 'Camera choice survives reload');
 platform.select('desktop');
-assert.equal(platform.cameraZoom, 1.5, 'Desktop retains its independent camera choice');
+assert.equal(platform.cameraZoom, 1, 'Desktop retains its independent camera choice');
 items.set(P.cameraPreferenceKey, '{broken');
-assert.equal(P.init(env).cameraZoom, 1, 'Malformed camera preference returns to original');
+assert.equal(
+  P.init(env).cameraZoom,
+  1.5,
+  'Malformed camera preference returns to selected default',
+);
 console.log('PASS independent desktop/phone camera preferences, reload and invalid-data fallback');
 
 const messages = [],

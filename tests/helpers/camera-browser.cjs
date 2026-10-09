@@ -3,6 +3,11 @@ const assert = require('node:assert/strict');
 const path = require('node:path');
 
 exports.verifyCamera = async function (page, results, tag, touch, capture = false) {
+  assert.equal(
+    await page.evaluate(() => Prototype.platform.cameraZoom),
+    1.5,
+    'Chosen 150% default is active',
+  );
   await page.evaluate(() => {
     const p = Prototype;
     window.__cameraAudit = {
