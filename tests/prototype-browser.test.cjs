@@ -110,10 +110,22 @@ await check('Target button and Q cycle actual hero combat without unintended fal
    c.s.mercyTime=10;
  });
  const tbox=await page.locator('#target-button').boundingBox();
- await page.mouse.move(tbox.x+tbox.width/2,tbox.y+tbox.height/2);
- await page.mouse.down();
- await page.waitForTimeout(620);
- await page.mouse.up();
+ const tx=tbox.x+tbox.width/2,ty=tbox.y+tbox.height/2;
+ if(v.touch){
+   // Native Chromium touch dispatch, rather than a mouse simulation on the
+   // phone viewport: verifies real pointer capture / long-press semantics.
+   const session=await page.context().newCDPSession(page);
+   try {
+     await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:tx,y:ty}]});
+     await page.waitForTimeout(620);
+     await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+   } finally {await session.detach();}
+ } else {
+   await page.mouse.move(tx,ty);
+   await page.mouse.down();
+   await page.waitForTimeout(620);
+   await page.mouse.up();
+ }
  assert.equal(await page.evaluate(()=>Prototype.game.manualHeroTargetLocked),true,'holding the HUD button also locks a target');
  assert.equal(await page.evaluate(()=>Prototype.game.selectedHeroTarget()?.name),'Target near','HUD hold selects the nearest when unlocked');
  await page.evaluate(state=>{const c=Prototype.game;c.updateEnemies=window.__targetAuditUpdateEnemies;delete window.__targetAuditUpdateEnemies;c.s=state;c.manualHeroTargetId=null;c.manualHeroTargetZone=null;c.manualHeroTargetLocked=false;Prototype.updateHUD();},saved);
