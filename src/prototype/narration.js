@@ -46,7 +46,7 @@
     null, // 19
     {
       kind: 'narration',
-      text: 'Now the checkpoint makes sense. The convoy brings supplies, the repair yards keep things moving, and the guards make sure both get through.',
+      text: 'Now the checkpoint makes sense. The convoy brings supplies, the repair yards keep wagons rolling, and the guards hold the crossing.',
     }, // 20
     {
       kind: 'narration',
