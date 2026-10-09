@@ -125,6 +125,31 @@ function collect() {
       notes: 'Projectile motion remains owned by combat simulation',
     });
   }
+  // Forced ranged roles (including ringleaders and authored defenders) are
+  // actual configureEnemy outputs, not just the seven optional ranged profiles.
+  const inspector = new Campaign('normal', 'paladin', () => 0.5);
+  const forcedRoster = [
+    ...new Set([
+      ...Campaign.data.species.flat().map((x) => x[0]),
+      ...Object.keys(Campaign.rules.nightEnemyCombat),
+    ]),
+  ].sort();
+  for (const species of forcedRoster) {
+    const actor = { type: 'mob', species, name: species, forcedRole: 'ranged' };
+    inspector.configureEnemy(actor, 0);
+    const visual = VFX.projectile(actor, { style: actor.projectileStyle });
+    if (!known.has(visual.id))
+      add({
+        group: 'ranged',
+        owner: species,
+        id: visual.id,
+        presentation: visual.presentation,
+        name: 'Authored ranged role',
+        kind: 'projectile',
+        stages: ['release', 'travel', 'impact'],
+        notes: 'Actual forced/native ranged role; includes ringleaders and defenders',
+      });
+  }
   // Basic tactical maneuvers are inventoried independently of signatures.
   // Species and actual combat roles determine eligibility; shared mechanics
   // may later share artwork instead of forcing duplicate effect assets.
@@ -294,7 +319,21 @@ function audit() {
     Object.values(Campaign.rules.roomCaptains).filter((c) => c.phase).length,
   );
   assert.equal(counts.night, Object.keys(Campaign.rules.nightEnemyCombat).length);
-  assert.equal(counts.ranged, Object.keys(Campaign.rules.rangedProfiles).length);
+  const projectileIds = new Set(
+    Object.entries(Campaign.rules.rangedProfiles).map(
+      ([species, p]) => VFX.projectile({ species }, { style: p.projectileStyle }).id,
+    ),
+  );
+  const inspector = new Campaign('normal', 'paladin', () => 0.5);
+  for (const species of new Set([
+    ...Campaign.data.species.flat().map((x) => x[0]),
+    ...Object.keys(Campaign.rules.nightEnemyCombat),
+  ])) {
+    const e = { type: 'mob', species, name: species, forcedRole: 'ranged' };
+    inspector.configureEnemy(e, 0);
+    projectileIds.add(VFX.projectile(e, { style: e.projectileStyle }).id);
+  }
+  assert.equal(counts.ranged, projectileIds.size);
   return { counts, total: rows.length, rows };
 }
 

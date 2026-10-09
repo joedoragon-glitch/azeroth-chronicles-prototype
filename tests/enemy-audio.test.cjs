@@ -324,3 +324,55 @@ console.log(
   console.error(error);
   process.exitCode = 1;
 });
+// Caption-less follow-up warnings still own the fresh captain stage; old motion
+// context must not publish the previous attack's footprint as the next windup.
+{
+  const c = fresh(),
+    e = c.makeEnemy(
+      { species: 'orc', name: 'captain', level: 5, hp: 1000, damage: 10, gold: 0, xp: 0 },
+      { x: 1400, y: 1700 },
+    );
+  Object.assign(e, { captain: true, captainProfile: 'supply-crown', hp: 1000, aggro: true });
+  c.zone().enemies = [e];
+  e.telegraph = {
+    ...C.rules.roomCaptains['supply-crown'].attacks[0],
+    index: 0,
+    x: 1500,
+    y: 1720,
+    radius: 78,
+    timer: 1,
+    total: 1,
+  };
+  c.event('warning', { family: null });
+  assert(c.effects.find((f) => f.type === 'warning').presentationHandled);
+  assert(c.effects.some((f) => f.skillId === 'captain/supply-crown/0' && f.stage === 'windup'));
+  c.effects = [];
+  e.telegraph = null;
+  e.motion = {
+    ...C.rules.roomCaptains['supply-crown'].attacks[1],
+    index: 1,
+    x: e.x,
+    y: e.y,
+    target: { x: e.x, y: e.y },
+    hit: [],
+    life: 0,
+    speed: 1,
+    recovery: 1,
+  };
+  e.sequence = [
+    {
+      ...C.rules.roomCaptains['supply-crown'].attacks[0],
+      index: 0,
+      x: 1550,
+      y: 1725,
+      radius: 78,
+      timer: 1,
+      total: 1,
+    },
+  ];
+  c.advanceMotion(e, 0.01);
+  const windup = c.effects.find((f) => f.stage === 'windup');
+  assert.equal(windup.skillId, 'captain/supply-crown/0');
+  assert.equal(windup.geometry.x, 1550);
+  assert(c.effects.find((f) => f.type === 'warning').presentationHandled);
+}

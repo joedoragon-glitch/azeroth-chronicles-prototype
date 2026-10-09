@@ -166,10 +166,13 @@
                 u.telegraph &&
                 ((details.captain && u.captainProfile === details.captain) ||
                   (details.family &&
-                    (u.family === details.family || u.species === details.family)))),
+                    (u.family === details.family || u.species === details.family)) ||
+                  (!details.family &&
+                    !details.captain &&
+                    !s.seen.get(u.telegraph)?.has(u.id + ':windup:')))),
           );
       if (!e) return result;
-      const a = context?.a || e.telegraph;
+      const a = type === 'warning' ? e.telegraph : context?.a || e.telegraph;
       if (type === 'warning' && a) {
         const delivered = emit(this, e, a, 'windup');
         if (V.describe(e, a)?.presentation && (delivered || s.seen.get(a)?.has(e.id + ':windup:')))
