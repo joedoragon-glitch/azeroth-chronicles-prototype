@@ -377,19 +377,22 @@
           // Keeper's separate study is large enough for an actual prisoner cage.
           // Visibility depends on the normal/TRUE boss state, not on quest progress.
           if (id === 'archive')
-            z.npcs.push({
-              id: 'keeper-captive',
-              name: 'The Drowned Keeper',
-              kind: 'keeper',
-              ...this.safe(1030, 945, id),
-              icon: '🧙',
-            }, {
-              id: 'archive-ledger',
-              name: 'The Keeper’s ledger',
-              kind: 'archive-record',
-              ...this.safe(480, 565, id),
-              icon: '📜',
-            });
+            z.npcs.push(
+              {
+                id: 'keeper-captive',
+                name: 'The Drowned Keeper',
+                kind: 'keeper',
+                ...this.safe(1030, 945, id),
+                icon: '🧙',
+              },
+              {
+                id: 'archive-ledger',
+                name: 'The Keeper’s ledger',
+                kind: 'archive-record',
+                ...this.safe(480, 565, id),
+                icon: '📜',
+              },
+            );
           if (id === 'citadel')
             z.npcs.push({
               id: 'fountain',
