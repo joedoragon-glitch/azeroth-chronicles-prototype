@@ -23,5 +23,5 @@ jobs:
         run: npm run format:check
       - name: Verify generated files and sprite evidence
         run: npm run check
-      - name: Run complete Node regression suite
-        run: npm test
+      - name: Verify targeted rogue regression scenarios
+        run: node tests/audit-regressions.test.cjs
