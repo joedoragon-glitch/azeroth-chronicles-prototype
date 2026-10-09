@@ -32,6 +32,7 @@ const scripts = [
     'audio',
     'visuals',
     'combat-visuals',
+    'enemy-vfx-art',
     'sprite-format',
     'sprites',
     'material-contract',
@@ -58,6 +59,7 @@ const core = [
   'icons/icon-192.png',
   'icons/icon-512.png',
   'assets/sprites/manifest.json',
+  'assets/vfx/manifest.json',
   'assets/materials/manifest.json',
   ...require('../src/prototype/material-contract.js')
     .sources(require('../assets/materials/manifest.json'))

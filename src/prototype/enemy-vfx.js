@@ -45,6 +45,10 @@
             : (species && tier + '/' + role + '/' + species) || null;
       if (!category) return null;
       id = 'rogue/' + category + '/' + (attack.rogueSignature ? 'signature' : 'basic');
+    } else if (attack.basic && tier === 'boss' && family) {
+      id = 'boss/' + family + '/basic';
+    } else if (attack.basic && tier === 'captain' && captain) {
+      id = 'captain/' + captain + '/basic';
     } else if (safePart(attack.nightSkill) && species) {
       id = 'night/' + species + '/' + attack.nightSkill;
     } else if (tier === 'boss' && family && index !== null) {

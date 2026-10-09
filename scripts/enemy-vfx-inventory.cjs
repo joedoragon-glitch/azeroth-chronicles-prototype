@@ -87,7 +87,7 @@ function collect() {
         name: captain.phase.name,
         kind: captain.phase.kind,
         stages: ['phase'],
-        notes: 'Unwired phase event; future work must attach at the existing phase trigger',
+        notes: 'Presentation attached at the existing phase trigger',
       });
   }
   for (const [species] of Object.entries(Campaign.rules.nightEnemyCombat)) {
@@ -115,6 +115,52 @@ function collect() {
       kind: 'projectile',
       stages: ['release', 'travel', 'impact'],
       notes: 'Projectile motion remains owned by combat simulation',
+    });
+  }
+  for (const b of Campaign.data.bosses)
+    add({
+      group: 'basic-attack',
+      owner: b.name,
+      id: 'boss/' + b.id + '/basic',
+      name: 'Basic melee',
+      kind: 'melee',
+      stages: ['release', 'impact'],
+      notes: 'Normal/TRUE share authored melee contact',
+    });
+  for (const [id, p] of Object.entries(Campaign.rules.roomCaptains))
+    add({
+      group: 'basic-attack',
+      owner: p.name,
+      id: 'captain/' + id + '/basic',
+      name: 'Basic melee',
+      kind: 'melee',
+      stages: ['release', 'impact'],
+      notes: 'Captain melee contact',
+    });
+  const allSpecies = [
+    ...new Set([
+      ...Campaign.data.species.flat().map((e) => e[0]),
+      ...Object.keys(Campaign.rules.nightEnemyCombat),
+    ]),
+  ].sort();
+  for (const species of allSpecies) {
+    add({
+      group: 'basic-attack',
+      owner: species,
+      id: 'enemy/' + species + '/melee',
+      name: 'Basic melee',
+      kind: 'melee',
+      stages: ['release', 'impact'],
+      notes: 'Ordinary/guardian/ringleader share species material',
+    });
+    add({
+      group: 'frenzy',
+      owner: species,
+      id: 'enemy/' + species + '/frenzy',
+      name: 'Ringleader frenzy',
+      kind: 'frenzy',
+      stages: ['phase'],
+      notes: 'Brief cue at actual frenzy trigger',
     });
   }
   // Basic tactical maneuvers are inventoried independently of signatures.

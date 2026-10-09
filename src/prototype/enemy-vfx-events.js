@@ -34,6 +34,7 @@
     if (!s) {
       s = {
         serial: 0,
+        epoch: 0,
         seen: new WeakMap(),
         projectiles: new WeakMap(),
         hazards: new WeakMap(),
@@ -81,6 +82,7 @@
     if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
     const event = Object.freeze({
       type: 'enemyVfx',
+      epoch: s.epoch,
       eventId: ++s.serial,
       zone: game.zoneId,
       at: game.s.time,
@@ -165,6 +167,34 @@
         s.context = old;
       }
     });
+    wrap('event', function (original, args) {
+      const result = original.apply(this, args),
+        [type, data] = args;
+      if (type === 'melee' && data?.actor === 'enemy' && !store(this).context) {
+        const e = this.zone().enemies.find((e) => e.id === data.source);
+        if (e) {
+          const a = {
+            kind: 'melee',
+            basic: true,
+            x: data.x,
+            y: data.y,
+            angle: Math.atan2(data.y - e.y, data.x - e.x),
+          };
+          emit(this, e, a, 'release');
+          emit(this, e, a, 'impact', { x: data.x, y: data.y, target: data.target });
+        }
+      }
+      return result;
+    });
+    wrap('tacticalResolveRogueMove', function (original, [e, a]) {
+      const before = new Map(this.zone().enemies.map((u) => [u.id, u.hp]));
+      emit(this, e, a, 'impact');
+      const result = original.call(this, e, a);
+      for (const u of this.zone().enemies)
+        if (before.get(u.id) <= 0 && u.hp > 0)
+          emit(this, e, a, 'spawn', { x: u.x, y: u.y, target: u.id });
+      return result;
+    });
     wrap('hitParty', function (original, args) {
       const u = args[0],
         point = { x: u.x, y: u.y, target: u === this.hero ? 'hero' : u.id },
@@ -183,7 +213,14 @@
           before = new Set(this.zone().enemies),
           result = original.apply(this, args);
         const phase = this.captainProfile?.(e)?.phase,
-          a = store(this).context?.a || e.telegraph || { kind: phase?.kind || 'summon' };
+          authoredIndex = Campaign.rules.attacks[e.family]?.findIndex((p) => p.kind === 'summon'),
+          authored =
+            authoredIndex >= 0
+              ? { ...Campaign.rules.attacks[e.family][authoredIndex], index: authoredIndex }
+              : null,
+          a = store(this).context?.a ||
+            e.telegraph ||
+            authored || { kind: phase?.kind || 'summon' };
         const id =
           V.describe(e, a) ||
           (e.captainProfile
@@ -237,6 +274,14 @@
       }
       return result;
     });
+    wrap('enter', function (original, args) {
+      const result = original.apply(this, args);
+      store(this).epoch++;
+      return result;
+    });
+    proto.enemyVfxEpoch = function () {
+      return store(this).epoch;
+    };
     proto.enemyVfxProjectile = function (p) {
       return store(this).projectiles.get(p) || null;
     };

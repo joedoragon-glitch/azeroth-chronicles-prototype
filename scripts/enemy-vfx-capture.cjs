@@ -6,15 +6,16 @@ const fs = require('node:fs'),
   assert = require('node:assert/strict'),
   pw = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = path.resolve(__dirname, '..'),
+  gameRoot = process.env.VFX_GAME_ROOT || root,
   out = path.join(root, 'test-results', 'enemy-vfx', process.env.VFX_CAPTURE_TAG || 'before');
 fs.mkdirSync(out, { recursive: true });
 (async () => {
   const server = http.createServer((req, res) => {
     const file = path.resolve(
-      root,
+      gameRoot,
       decodeURIComponent(req.url.split('?')[0]).replace(/^\//, '') || 'index.html',
     );
-    if (!file.startsWith(root + path.sep) || !fs.existsSync(file)) {
+    if (!file.startsWith(gameRoot + path.sep) || !fs.existsSync(file)) {
       res.writeHead(404);
       return res.end();
     }
@@ -72,7 +73,7 @@ fs.mkdirSync(out, { recursive: true });
         window.requestAnimationFrame = () => 0;
       });
       await page.waitForTimeout(100);
-      for (const zoom of [1, 1.5, 1.75]) {
+      for (const zoom of process.env.VFX_CAPTURE_SMOKE ? [1.5] : [1, 1.5, 1.75]) {
         await page.keyboard.press('Escape');
         await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
         await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
@@ -97,7 +98,7 @@ fs.mkdirSync(out, { recursive: true });
                 c.s.party = [];
                 c.s.projectiles = [];
                 c.s.hazards = [];
-                c.s.clock = night ? 600 : 200;
+                c.s.clock = night ? 450 : 200;
                 c.s.mercyTime = 0;
                 Object.assign(c.hero, {
                   x: 1400,
@@ -117,6 +118,7 @@ fs.mkdirSync(out, { recursive: true });
                   e.y += ((t.y - e.y) / Math.max(1, d)) * n;
                   return n > 0;
                 };
+                Prototype.renderer.update(10);
                 const family = {
                     pounce: 'thorn',
                     volley: 'crypt',
@@ -137,6 +139,13 @@ fs.mkdirSync(out, { recursive: true });
                 }
                 if (pilot === 'carapace') {
                   e.type = 'mob';
+                  e.family = undefined;
+                  e.species = 'ashbeast';
+                  e.form = 'normal';
+                  e.name = 'Dreadmaw';
+                  e.captainMentor = 'cindermaw';
+                  e.captainVisualIdol = 'darklord';
+                  e.visualScale = 1.19;
                   e.captain = true;
                   e.captainProfile = 'supply-crown';
                   e.hp = e.maxHp * 0.4;
@@ -148,7 +157,6 @@ fs.mkdirSync(out, { recursive: true });
                 window.__vfxActor = e;
                 window.__vfxPilot = pilot;
                 Prototype.renderer.queue(c.effects.splice(0));
-                Prototype.renderer.update(10);
                 Prototype.updateHUD();
                 Prototype.renderer.draw();
               },
@@ -174,15 +182,41 @@ fs.mkdirSync(out, { recursive: true });
               Prototype.renderer.draw();
             });
             await page.screenshot({ path: path.join(out, prefix + '-active.png') });
-            const stats = await page.evaluate(() => {
-              const start = performance.now();
-              for (let j = 0; j < 30; j++) Prototype.renderer.draw();
+            const stats = await page.evaluate((visualOnly) => {
+              const c = Prototype.game,
+                r = Prototype.renderer;
+              const measure = (enabled) => {
+                c.enemyVfxEnabled = enabled;
+                const t = performance.now();
+                for (let j = 0; j < (visualOnly ? 1 : 12); j++) r.draw();
+                return (performance.now() - t) / (visualOnly ? 1 : 12);
+              };
+              measure(false);
+              measure(true);
+              const on = [],
+                off = [];
+              for (let j = 0; j < (visualOnly ? 1 : 5); j++) {
+                if (j % 2) {
+                  on.push(measure(true));
+                  off.push(measure(false));
+                } else {
+                  off.push(measure(false));
+                  on.push(measure(true));
+                }
+              }
+              const median = (a) => a.sort((x, y) => x - y)[Math.floor(a.length / 2)];
+              const averageDrawMs = median(on),
+                undecoratedDrawMs = median(off);
+              c.enemyVfxEnabled = true;
               return {
-                averageDrawMs: (performance.now() - start) / 30,
+                averageDrawMs,
+                undecoratedDrawMs,
+                decorationDeltaMs: averageDrawMs - undecoratedDrawMs,
                 renderer: Prototype.renderer.metrics(),
                 sprites: PrototypeSprites.status(),
+                visualOnly,
               };
-            });
+            }, !!process.env.VFX_CAPTURE_VISUAL_ONLY);
             report.push({ width, height, zoom, night, pilot, ...stats });
           }
       }
@@ -195,7 +229,7 @@ fs.mkdirSync(out, { recursive: true });
         report.length +
         ' scenes / ' +
         report.length * 2 +
-        ' images; desktop/phone portrait/landscape, day/night TRUE/crowd, three zooms',
+        ' images; desktop/phone portrait/landscape, day/night TRUE/crowd, configured zooms',
     );
   } finally {
     await browser.close();

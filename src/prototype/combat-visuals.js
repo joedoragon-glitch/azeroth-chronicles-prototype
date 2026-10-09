@@ -43,6 +43,7 @@
     ];
   }
   function warningShapes(a, patches) {
+    if (a.kind === 'summon') return [];
     if (a.kind === 'line' || a.kind === 'volley')
       return (a.kind === 'volley' ? [-0.22, 0, 0.22] : a.count === 2 ? [-85, 85] : [0]).map((o) => {
         const angle = a.angle + (a.kind === 'volley' ? o : 0),
@@ -66,7 +67,12 @@
     if (a.kind === 'cone' || a.kind === 'sector')
       return [sectorPoints(a, a.radius, a.angle, a.kind === 'sector' ? 0.65 : 1.1)];
     if (a.kind === 'ring')
-      return [circlePoints({ x: a.fromX, y: a.fromY }, G.ringSpeed * G.ringLife + G.ringHalfWidth)];
+      return [
+        circlePoints(
+          { x: a.fromX, y: a.fromY },
+          G.ringSpeed * G.ringLife * R.bossCadence.areaRangeMultiplier + G.ringHalfWidth,
+        ),
+      ];
     return patches.map((p) => circlePoints(p, p.radius));
   }
   function strokeWorld(ctx, screen, a, b, color, width = 1) {
@@ -174,28 +180,51 @@
     for (const e of game.zone().enemies.filter((e) => e.telegraph)) {
       const a = e.telegraph,
         shapes = warningShapes(a, game.attackPatches(a));
-      ctx.strokeStyle = '#ffe09a';
-      ctx.fillStyle = '#dc644c30';
-      ctx.lineWidth = 2.5;
-      ctx.setLineDash(cue ? [8, 5] : []);
+      ctx.strokeStyle = a.rogueSignature ? '#a5e5e0' : a.rogueMove ? '#b0dedb' : '#ffe09a';
+      ctx.fillStyle = a.rogueMove ? '#408e8c20' : '#dc644c30';
+      ctx.lineWidth = a.rogueSignature ? 3.3 : 2.5;
+      ctx.setLineDash(cue ? (a.rogueSignature ? [10, 4] : [8, 5]) : []);
       for (const points of shapes) {
         polygon(ctx, screen, points);
         cue ? ctx.stroke() : a.kind !== 'ring' && ctx.fill();
       }
       ctx.setLineDash([]);
       if (cue) {
-        const p = screen(a);
+        const p = screen(a.kind === 'summon' ? e : a);
         ctx.font = 'bold 12px system-ui';
         ctx.textAlign = 'center';
-        const label = a.name + ' · ' + a.timer.toFixed(1),
-          w = ctx.measureText(label).width + 16;
+        const transform = ctx.getTransform?.(),
+          scale = transform?.a || 1,
+          viewWidth = (ctx.canvas?.width || 1280) / scale,
+          viewHeight = (ctx.canvas?.height || 800) / scale,
+          maxWidth = Math.max(60, Math.min(240, viewWidth - 16)),
+          words = (a.name + (a.rogueMove ? '' : ' · ' + a.timer.toFixed(1))).split(' '),
+          lines = [];
+        let current = '';
+        for (const word of words) {
+          const next = current ? current + ' ' + word : word;
+          if (current && ctx.measureText(next).width > maxWidth - 16) {
+            lines.push(current);
+            current = word;
+          } else current = next;
+        }
+        if (current) lines.push(current);
+        if (a.rogueMove)
+          lines.push((a.rogueSignature ? 'SIGNATURE' : 'ROGUE') + ' · ' + a.timer.toFixed(1) + 's');
+        const w = Math.min(maxWidth, Math.max(...lines.map((t) => ctx.measureText(t).width)) + 16),
+          h = 8 + lines.length * 15,
+          left = Math.max(4, Math.min(viewWidth - w - 4, p.x - w / 2)),
+          top = Math.max(
+            4,
+            Math.min(viewHeight - h - 4, p.y - (a.kind === 'summon' ? 72 : 31) - h + 21),
+          );
         ctx.fillStyle = '#241d1af2';
-        ctx.fillRect(p.x - w / 2, p.y - 31, w, 21);
-        ctx.strokeStyle = '#f4c984';
+        ctx.fillRect(left, top, w, h);
+        ctx.strokeStyle = a.kind === 'summon' ? '#a8bb9b' : a.rogueMove ? '#9ad8d4' : '#f4c984';
         ctx.lineWidth = 1;
-        ctx.strokeRect(p.x - w / 2, p.y - 31, w, 21);
-        ctx.fillStyle = '#fff3c8';
-        ctx.fillText(label, p.x, p.y - 16);
+        ctx.strokeRect(left, top, w, h);
+        ctx.fillStyle = a.rogueMove ? '#e0f6ef' : '#fff3c8';
+        lines.forEach((t, j) => ctx.fillText(t, left + w / 2, top + 16 + j * 15));
       }
     }
     for (const a of game.s.hazards) {
@@ -267,7 +296,16 @@
     ctx.restore();
   }
   function queue(events, game, current = []) {
-    const next = current.filter((f) => f.life > 0),
+    const art =
+      root.PrototypeEnemyVfxArt ||
+      (typeof require === 'function' ? require('./enemy-vfx-art.js') : null);
+    const next = art
+        ? art.queue(
+            events,
+            game,
+            current.filter((f) => f.life > 0),
+          )
+        : current.filter((f) => f.life > 0),
       contacts = new Set(
         events.filter((e) => e.type === 'projectileImpact').map((e) => e.x + ':' + e.y),
       ),
@@ -276,7 +314,18 @@
     for (const e of events) {
       if (e.type === 'hit' && Number.isFinite(e.x) && !contacts.has(e.x + ':' + e.y))
         push(e, 'impact', 0.2, 1);
-      else if (e.type === 'projectileImpact' && Number.isFinite(e.x)) push(e, 'contact', 0.32, 1);
+      else if (
+        e.type === 'projectileImpact' &&
+        Number.isFinite(e.x) &&
+        !events.some(
+          (f) =>
+            f.type === 'enemyVfx' &&
+            f.stage === 'impact' &&
+            f.target === e.target &&
+            f.source === e.source,
+        )
+      )
+        push(e, 'contact', 0.32, 1);
       else if (e.type === 'hurt' && Number.isFinite(e.x)) push(e, 'hurt', 0.25, 2);
       else if (e.type === 'heal') {
         const target =
