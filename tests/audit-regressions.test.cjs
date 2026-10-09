@@ -513,4 +513,46 @@ test('F68 commanders rally only already engaged local troops, never innocent nea
  assert(guard.pursuitBurst>previous,'engaged soldier receives a rearguard speed burst');
  assert(!idle.aggro&&!(idle.pursuitBurst>0),'no stealth reinforcement from idle pack');
 });
+
+test('F69 rogue telegraphs do not advance or fabricate normal boss basic-attack cadence',()=>{
+ const c=fresh(),e=c.bossEnemy(c.boss('thorn'),'normal',{x:1400,y:1700});
+ c.zone().enemies=[e];c.s.party=[];e.aggro=true;e.attackIndex=4;e.basicDue=false;
+ Object.assign(c.hero,{x:1490,y:1700,hp:10000,maxHp:10000});
+ c.line=()=>true;c.tacticalRogueOutnumbered=()=>true;
+ assert(c.tacticalRogueMove(e,c.hero),'signature starts');
+ const before=e.attackIndex;
+ e.telegraph.timer=0.01;c.updateEnemies(.1);
+ assert.equal(e.attackIndex,before,'rogue special does not count as a boss rotation skill');
+ assert.equal(e.basicDue,false,'rogue special does not schedule a free follow-up basic attack');
+});
+test('F70 the regroup anchor retains signature eligibility when the local squad reaches parity',()=>{
+ const c=fresh(),e=c.bossEnemy(c.boss('warlord'),'normal',{x:1400,y:1700});
+ c.zone().enemies=[e];c.s.party=[];e.aggro=true;c.line=()=>true;
+ Object.assign(c.hero,{x:1480,y:1700,hp:10000,maxHp:10000});
+ c.tacticalRogueOutnumbered=()=>false;
+ assert(c.tacticalRogueMove(e,c.hero,true),'a maintained regroup anchor counts as tactical pressure');
+ assert.equal(e.telegraph.name,'Ashen Warlord’s Shielded Withdrawal');
+ assert(e.telegraph.rogueSignature);
+});
+test('F71 lengthy rogue warning labels stay inside zoomed narrow-screen canvas',()=>{
+ const fx=require('../src/prototype/combat-visuals.js'),boxes=[];
+ const ctx={
+  canvas:{width:375,height:600},
+  getTransform(){return {a:1.5};},
+  save(){},restore(){},beginPath(){},moveTo(){},lineTo(){},closePath(){},stroke(){},
+  fill(){},setLineDash(){},strokeRect(){},
+  fillRect(x,y,w,h){boxes.push({x,y,w,h});},
+  measureText(value){return {width:value.length*6.8};},
+  fillText(){}
+ };
+ const a={name:'Ashen Warlord’s Shielded Withdrawal',rogueMove:true,rogueSignature:true,
+  kind:'circle',radius:145,timer:1.4,x:1400,y:1700};
+ const game={traps(){return [];},zone(){return {enemies:[{telegraph:a}]}},
+  attackPatches(){return [a]},s:{hazards:[]}};
+ fx.ground(ctx,()=>({x:5,y:5}),game,'cue',0);
+ assert.equal(boxes.length,1,'one readable label box accompanies rogue mark');
+ const b=boxes[0],logicalW=250,logicalH=400;
+ assert(b.x>=0&&b.y>=0&&b.x+b.w<=logicalW&&b.y+b.h<=logicalH,
+  'label must not extend past zoomed phone viewport edges');
+});
 console.log(passed+' audit regression scenarios passed.');
