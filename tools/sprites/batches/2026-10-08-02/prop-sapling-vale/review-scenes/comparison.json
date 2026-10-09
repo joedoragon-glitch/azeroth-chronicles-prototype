@@ -1,0 +1,154 @@
+{
+  "name": "Environmental Sapling",
+  "key": "prop:sapling:vale",
+  "pending": false,
+  "review": {
+    "status": "pending",
+    "reference": null
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "candidateImage": "candidate-isolated.png",
+  "comparisons": [
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "day",
+      "canonical": "canonical-1280x800-day.png",
+      "candidate": "candidate-1280x800-day.png",
+      "anchor": {
+        "x": 475.2,
+        "y": 269.29999999999995
+      },
+      "canonicalHash": "5bbc4e13fb7b97c8e243055c73a873b14f4ab91d74fe1572661f2c8d7bf98bc0",
+      "candidateHash": "6b4c7a9363cc62dd3df8166e91f4038890a6551b4431c067f170a80b92913420"
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "night",
+      "canonical": "canonical-1280x800-night.png",
+      "candidate": "candidate-1280x800-night.png",
+      "anchor": {
+        "x": 475.2,
+        "y": 269.29999999999995
+      },
+      "canonicalHash": "1b24d8647f30c2f1c9d43cf1e4ff350905475fa6bc87ec88a1b8326c234d8e13",
+      "candidateHash": "ec8f2ca85418664a0b30d78b961bda3a95f204c70cf11d4a4272aecf7bbc8b7f"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "day",
+      "canonical": "canonical-375x812-day.png",
+      "candidate": "candidate-375x812-day.png",
+      "anchor": {
+        "x": 164.7,
+        "y": 257.3399999999999
+      },
+      "canonicalHash": "ed3cc70ef9b4d2422495324527a589b647fb6166ef03fb7e2785e951c1a2b9b0",
+      "candidateHash": "66a722989021d2db8ef8b949014f14247624a688abb5d44ee1d3fdeb3d73a835"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "night",
+      "canonical": "canonical-375x812-night.png",
+      "candidate": "candidate-375x812-night.png",
+      "anchor": {
+        "x": 164.7,
+        "y": 257.3399999999999
+      },
+      "canonicalHash": "7b304ae04a2729f0d957d301eb53b84cc7c07475a82d88ca528a10e3f56b1294",
+      "candidateHash": "20a8e71dc6bc9d42188488e1baa3114b2c1c2354a40d41bc8adbea774b7cc160"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "day",
+      "canonical": "canonical-320x568-day.png",
+      "candidate": "candidate-320x568-day.png",
+      "anchor": {
+        "x": 89.2,
+        "y": 154.85999999999996
+      },
+      "canonicalHash": "d53d500293c09423cfea9a12fdc1c0a08018d1bc0acde1ea437a5b4c63a0a5bd",
+      "candidateHash": "6a68e1e630ef1af9772d015eb264b0973eeb55d03f9ce9c63c9fe146107cc685"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "night",
+      "canonical": "canonical-320x568-night.png",
+      "candidate": "candidate-320x568-night.png",
+      "anchor": {
+        "x": 89.2,
+        "y": 154.85999999999996
+      },
+      "canonicalHash": "43a818b6d7001ccb3a4d9080b1f6e801f58ed93771890e12b7cad0d3ef74d41c",
+      "candidateHash": "66408918e8f3d3e408a0774437065bb27d2956321793099c1f1cf45ad3c98449"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "day",
+      "canonical": "canonical-844x390-day.png",
+      "candidate": "candidate-844x390-day.png",
+      "anchor": {
+        "x": 399.2,
+        "y": 80.09999999999991
+      },
+      "canonicalHash": "c578ed93667b0fb7a952994432c79d31d8d685322948a8756ac36b9c21581d4c",
+      "candidateHash": "54350d22391a6e5035c9bf3e3c901cb56fa3c32d78634bbf68cef37acb91442a"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "night",
+      "canonical": "canonical-844x390-night.png",
+      "candidate": "candidate-844x390-night.png",
+      "anchor": {
+        "x": 399.2,
+        "y": 80.09999999999991
+      },
+      "canonicalHash": "2632c4c586e1db007900ed158d3bf1f45001fa1d49d56751abf0877095e648e9",
+      "candidateHash": "5fd2274b27441c2cb98b7159608f057d178247edad27a4108d809d45f68f4aef"
+    }
+  ],
+  "canonHash": "f441733e33b7cdc3d2a1ce180c7b1c95875d385310a472979e9fd13cdac0a83f",
+  "policy": {
+    "maxSourcePixels": 4194304,
+    "maxSourceBytes": 16777216,
+    "maxOutputDimension": 512,
+    "maxOutputBytes": 1048576,
+    "minimumPadding": 2,
+    "colorSpace": "srgb",
+    "resizeKernel": "nearest",
+    "viewports": [
+      [
+        1280,
+        800
+      ],
+      [
+        375,
+        812
+      ],
+      [
+        320,
+        568
+      ],
+      [
+        844,
+        390
+      ]
+    ],
+    "maxActiveDecodedBytes": 16777216,
+    "maxPackagedDecodedBytes": 134217728,
+    "maxPackagedBytes": 134217728
+  }
+}

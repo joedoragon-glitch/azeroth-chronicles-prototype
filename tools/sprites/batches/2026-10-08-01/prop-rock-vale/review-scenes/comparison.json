@@ -1,0 +1,154 @@
+{
+  "name": "Environmental Vale field rock",
+  "key": "prop:rock:vale",
+  "pending": false,
+  "review": {
+    "status": "pending",
+    "reference": null
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "candidateImage": "candidate-isolated.png",
+  "comparisons": [
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "day",
+      "canonical": "canonical-1280x800-day.png",
+      "candidate": "candidate-1280x800-day.png",
+      "anchor": {
+        "x": 475.2,
+        "y": 269.29999999999995
+      },
+      "canonicalHash": "151a26b27356315f167bf7a25d37e51e9097dc7f993c64ce73de4ec14a6c52fc",
+      "candidateHash": "1d4a1464fc2bccfc27379835f07e4cddbef742f0d725c6202541da578b51ffd3"
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "night",
+      "canonical": "canonical-1280x800-night.png",
+      "candidate": "candidate-1280x800-night.png",
+      "anchor": {
+        "x": 475.2,
+        "y": 269.29999999999995
+      },
+      "canonicalHash": "5a9396069dc1b842bb783e6f446d9e8700ba4452bda6751500f015fb86d73f32",
+      "candidateHash": "857455f06f2f19394c8ebcfca7b76a7fcec825a4cfee4d3bb5f71c2ba6adbffc"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "day",
+      "canonical": "canonical-375x812-day.png",
+      "candidate": "candidate-375x812-day.png",
+      "anchor": {
+        "x": 164.7,
+        "y": 257.3399999999999
+      },
+      "canonicalHash": "2966cb52417eef6a318312bd438d51b70470dc9e472a38a0d0576131c95e9a86",
+      "candidateHash": "d3912fa7d829db2220a1452546d60f72e93a5bcfae0ee000a1cd71fb72516986"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "night",
+      "canonical": "canonical-375x812-night.png",
+      "candidate": "candidate-375x812-night.png",
+      "anchor": {
+        "x": 164.7,
+        "y": 257.3399999999999
+      },
+      "canonicalHash": "2b6f9caf4ce8fb3dadf2b301d9a5b373930d9f0bc5961bc33f76fdb673d65f03",
+      "candidateHash": "e0dd373b07ef1d79a2c8c86db5eee301cb361286e48f3619930b8c5cfcb53b51"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "day",
+      "canonical": "canonical-320x568-day.png",
+      "candidate": "candidate-320x568-day.png",
+      "anchor": {
+        "x": 89.2,
+        "y": 154.85999999999996
+      },
+      "canonicalHash": "699dfc7a75b74fbb0930683ee37f7379ba28a524ae3bc602b30b139ed743b1bb",
+      "candidateHash": "40e65c40d195fb0a76a07c317376a7d24123ff72ef476a0d5eea85d026746069"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "night",
+      "canonical": "canonical-320x568-night.png",
+      "candidate": "candidate-320x568-night.png",
+      "anchor": {
+        "x": 89.2,
+        "y": 154.85999999999996
+      },
+      "canonicalHash": "18af3b2f149b727fc70b30caa162bf9c021394238b099cc2a6abb2cd1adc0568",
+      "candidateHash": "11eb4e8bb6e38826c595115140eb8a2198dc40b7056795640feee819520d3779"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "day",
+      "canonical": "canonical-844x390-day.png",
+      "candidate": "candidate-844x390-day.png",
+      "anchor": {
+        "x": 399.2,
+        "y": 80.09999999999991
+      },
+      "canonicalHash": "c7455a462b56ce5e21b51352273dc87e6c7ac25c007d3b0547f7187dd0180e28",
+      "candidateHash": "0097194c0b8d31bac3509751775552266356093fe9c7a2ae89b7cf3817379c04"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "night",
+      "canonical": "canonical-844x390-night.png",
+      "candidate": "candidate-844x390-night.png",
+      "anchor": {
+        "x": 399.2,
+        "y": 80.09999999999991
+      },
+      "canonicalHash": "4e65960f57a87430d38e83485bbba17bce281d67ada8680ec1f8e56935767ad2",
+      "candidateHash": "47079e0637ab7857e6ec2265a794551af93b092e9ece1216e7bbd0e7f9a656e8"
+    }
+  ],
+  "canonHash": "69dc7b2d4cfe9a034b54e72ba65c77a27cb6e93540562f1a572dac415c4830f6",
+  "policy": {
+    "maxSourcePixels": 4194304,
+    "maxSourceBytes": 16777216,
+    "maxOutputDimension": 512,
+    "maxOutputBytes": 1048576,
+    "minimumPadding": 2,
+    "colorSpace": "srgb",
+    "resizeKernel": "nearest",
+    "viewports": [
+      [
+        1280,
+        800
+      ],
+      [
+        375,
+        812
+      ],
+      [
+        320,
+        568
+      ],
+      [
+        844,
+        390
+      ]
+    ],
+    "maxActiveDecodedBytes": 16777216,
+    "maxPackagedDecodedBytes": 134217728,
+    "maxPackagedBytes": 134217728
+  }
+}

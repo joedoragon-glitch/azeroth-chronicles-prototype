@@ -909,11 +909,11 @@
       "review": {
         "status": "approved",
         "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
-        "kind": "engineer-authorized",
-        "userAppearanceAcceptance": false,
-        "nativeScale": true,
-        "scope": "Faithful implementation authorized by Joel’s request to release already completed work on 2026-10-08. Fixed shape/palette preserved with organic plant contours.",
-        "technicalReview": "Four desktop/phone viewports in day/night; native scene comparison and full-scene hashes retained beside the candidate."
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "notes": "Native-size canon and desktop/phone day/night placement reviewed. Current procedural branch is invariant across entity seeds; placement, density and identity remain engine-owned.",
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-01/prop-bush-vale/review-scenes/comparison.json"
       },
       "revision": "aa0612364d5451a516c326c008ff055379f3d531d5a2395c24259bf7dcb0e9a9"
     },
@@ -1001,13 +1001,1669 @@
       "review": {
         "status": "approved",
         "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
-        "kind": "engineer-authorized",
-        "userAppearanceAcceptance": false,
-        "nativeScale": true,
-        "scope": "Faithful implementation authorized by Joel’s request to release already completed work on 2026-10-08. Fixed shape/palette preserved with organic plant contours.",
-        "technicalReview": "Four desktop/phone viewports in day/night; native scene comparison and full-scene hashes retained beside the candidate."
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "notes": "Native-size canon and desktop/phone day/night placement reviewed. Current procedural branch is invariant across entity seeds; placement, density and identity remain engine-owned.",
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-01/prop-wildflowers-vale/review-scenes/comparison.json"
       },
       "revision": "1f5e60a8e25aff8b6f1e3d56b3c4991d71caf5a335b6073bd943961fba028a5e"
+    },
+    "prop:sapling:vale": {
+      "version": 2,
+      "key": "prop:sapling:vale",
+      "catalogId": "276",
+      "canonHash": "f441733e33b7cdc3d2a1ce180c7b1c95875d385310a472979e9fd13cdac0a83f",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "7d21702fb049025beb26507ebbcac5a681eed7957a37ae68b6b8c515b664269a",
+      "source": {
+        "file": "e11c9080b8cb9e18c13089544826c49fae13bc9dcd0d52753bd4834aa431b6e7.png",
+        "format": "png",
+        "width": 1398,
+        "height": 1398,
+        "bytes": 130144,
+        "decodedBytes": 7817616,
+        "hash": "e11c9080b8cb9e18c13089544826c49fae13bc9dcd0d52753bd4834aa431b6e7",
+        "pixelHash": "faa58e0ed10fe0aa716fc165db3b09538dc912bff09f0d0b47ed4710d92f623d",
+        "bounds": {
+          "x1": 250,
+          "y1": 288,
+          "x2": 1112,
+          "y2": 1277
+        },
+        "padding": 120,
+        "transparentPixels": 1913184,
+        "visiblePixels": 41220,
+        "lowAlphaPixels": 3528,
+        "materialBounds": {
+          "x1": 591,
+          "y1": 673,
+          "x2": 852,
+          "y2": 951
+        }
+      },
+      "output": {
+        "file": "prop-sapling-vale-b781bf563ba0b25b370413fdb565d0e676c160930350722cfa5d01e95cf8cae0.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 3187,
+        "decodedBytes": 147456,
+        "hash": "b781bf563ba0b25b370413fdb565d0e676c160930350722cfa5d01e95cf8cae0",
+        "pixelHash": "2f99fddcd0936628c4d885ba44769511b535a7bd70c3e7317e38f48de25b523f",
+        "bounds": {
+          "x1": 78,
+          "y1": 116,
+          "x2": 114,
+          "y2": 155
+        },
+        "padding": 36,
+        "transparentPixels": 36087,
+        "visiblePixels": 777,
+        "lowAlphaPixels": 67,
+        "materialBounds": {
+          "x1": 78,
+          "y1": 118,
+          "x2": 113,
+          "y2": 155
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1398, 1398],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": -3,
+          "y": 25,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-02/prop-sapling-vale/review-scenes/comparison.json",
+        "notes": "Exact current canon, organic material shapes, native silhouette and ground contact reviewed in desktop/small phone/portrait/landscape day and night. Current decoration branch has no seed-dependent body variant. Static body has no obsolete animation attachments."
+      },
+      "revision": "8e6a450d73d2f9c63356dac0b70e33556f225e0d99c0d3f3b91c4fd8a3493c95"
+    },
+    "prop:stump:vale": {
+      "version": 2,
+      "key": "prop:stump:vale",
+      "catalogId": "277",
+      "canonHash": "69bad8ffbf7976c77714fdb11609dbdae75201a99ff4fc6105dbb1c12e6062c8",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "06835177695c8915e234523114818a8ba97c79d94bdc94097c0bc9f5a6575bdc",
+      "source": {
+        "file": "41da5a5a95d3d101df96fd2541705b76beb7543cf10bf511c4ddac643ab12a5f.png",
+        "format": "png",
+        "width": 1286,
+        "height": 1286,
+        "bytes": 51029,
+        "decodedBytes": 6615184,
+        "hash": "41da5a5a95d3d101df96fd2541705b76beb7543cf10bf511c4ddac643ab12a5f",
+        "pixelHash": "d0c77172bd88b6a03f9dabd839c1f196387e422419bf0345893c57c7db6517c6",
+        "bounds": {
+          "x1": 113,
+          "y1": 142,
+          "x2": 1126,
+          "y2": 1079
+        },
+        "padding": 113,
+        "transparentPixels": 1639668,
+        "visiblePixels": 14128,
+        "lowAlphaPixels": 730,
+        "materialBounds": {
+          "x1": 589,
+          "y1": 950,
+          "x2": 702,
+          "y2": 1077
+        }
+      },
+      "output": {
+        "file": "prop-stump-vale-6fda624b035cab979207c23975e25f464c0b7a1e9a7cf7327d9a7fe0786344c0.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 1517,
+        "decodedBytes": 147456,
+        "hash": "6fda624b035cab979207c23975e25f464c0b7a1e9a7cf7327d9a7fe0786344c0",
+        "pixelHash": "a35b0d3b975c1d65edbc15827665ffedb71c475fb54d2b2a3de0fa75ebf6acb8",
+        "bounds": {
+          "x1": 82,
+          "y1": 111,
+          "x2": 103,
+          "y2": 153
+        },
+        "padding": 38,
+        "transparentPixels": 36555,
+        "visiblePixels": 309,
+        "lowAlphaPixels": 10,
+        "materialBounds": {
+          "x1": 87,
+          "y1": 135,
+          "x2": 103,
+          "y2": 153
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1286, 1286],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": -1,
+          "y": -7,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-02/prop-stump-vale/review-scenes/comparison.json",
+        "notes": "Exact current canon, organic material shapes, native silhouette and ground contact reviewed in desktop/small phone/portrait/landscape day and night. Current decoration branch has no seed-dependent body variant. Static body has no obsolete animation attachments."
+      },
+      "revision": "aa17dad256464da8980fa76f32d0f3c831f0d5f08e5aea0a0e104241ed0e0b24"
+    },
+    "prop:fallen-log:vale": {
+      "version": 2,
+      "key": "prop:fallen-log:vale",
+      "catalogId": "278",
+      "canonHash": "c6fb381227b5089a97f8621d2c76e794d8bdee0ae1ddd33b9a0f24bce87d9d4e",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "bd84c289d20319e956a06e78aff507cf59d86cd8d69eca16aa482a7231c7c073",
+      "source": {
+        "file": "378de15f444a8c63d684f9e0fe5d988c439b18d951ae9ba30a0af54cc2af13b6.png",
+        "format": "png",
+        "width": 1545,
+        "height": 1545,
+        "bytes": 155340,
+        "decodedBytes": 9548100,
+        "hash": "378de15f444a8c63d684f9e0fe5d988c439b18d951ae9ba30a0af54cc2af13b6",
+        "pixelHash": "3d8d2104a6b6e0a721c5bcabba56ff94a472b5bc4ff45fff62dc288c3da7d681",
+        "bounds": {
+          "x1": 467,
+          "y1": 328,
+          "x2": 1336,
+          "y2": 1310
+        },
+        "padding": 208,
+        "transparentPixels": 2345386,
+        "visiblePixels": 41639,
+        "lowAlphaPixels": 3263,
+        "materialBounds": {
+          "x1": 610,
+          "y1": 956,
+          "x2": 1010,
+          "y2": 1140
+        }
+      },
+      "output": {
+        "file": "prop-fallen-log-vale-d2edbc197f3aa178c48124ba50d933c0cc4e544b5b0d2b8e000c8fdb138103f8.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 2830,
+        "decodedBytes": 147456,
+        "hash": "d2edbc197f3aa178c48124ba50d933c0cc4e544b5b0d2b8e000c8fdb138103f8",
+        "pixelHash": "bc1bec7b2299fa4d1dbb29a34d628bf8257dcbc6138bc63408a58208780773f0",
+        "bounds": {
+          "x1": 71,
+          "y1": 131,
+          "x2": 120,
+          "y2": 154
+        },
+        "padding": 37,
+        "transparentPixels": 36212,
+        "visiblePixels": 652,
+        "lowAlphaPixels": 56,
+        "materialBounds": {
+          "x1": 71,
+          "y1": 132,
+          "x2": 120,
+          "y2": 154
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1545, 1545],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": -5,
+          "y": 13,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-02/prop-fallen-log-vale/review-scenes/comparison.json",
+        "notes": "Exact current canon, organic material shapes, native silhouette and ground contact reviewed in desktop/small phone/portrait/landscape day and night. Current decoration branch has no seed-dependent body variant. Static body has no obsolete animation attachments."
+      },
+      "revision": "fa2e3569e95289b52a3cae137c101168fc2273d6b63a806453d13f000c260819"
+    },
+    "prop:cattails:march": {
+      "version": 2,
+      "key": "prop:cattails:march",
+      "catalogId": "280",
+      "canonHash": "db78e87356b18374f89dd4a15b05ce2b92226c81858ff7d5f09209ffd72b96db",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "0cf7508d5e0b04e32468218dc41414a60bba2d067008436b8fecadda94c2fb9d",
+      "source": {
+        "file": "a20648db7343c19be6578d9d86a8911654554e4317e63adab0ce4d52cd9149f7.png",
+        "format": "png",
+        "width": 1980,
+        "height": 1980,
+        "bytes": 173860,
+        "decodedBytes": 15681600,
+        "hash": "a20648db7343c19be6578d9d86a8911654554e4317e63adab0ce4d52cd9149f7",
+        "pixelHash": "647bd9543fe09d59e52d3d36a2143aa37796fe6b0fa3b6876523b80b2b958a97",
+        "bounds": {
+          "x1": 539,
+          "y1": 688,
+          "x2": 1238,
+          "y2": 1494
+        },
+        "padding": 485,
+        "transparentPixels": 3870546,
+        "visiblePixels": 49854,
+        "lowAlphaPixels": 10558,
+        "materialBounds": {
+          "x1": 881,
+          "y1": 990,
+          "x2": 1096,
+          "y2": 1340
+        }
+      },
+      "output": {
+        "file": "prop-cattails-march-80fb7024b43b477e547eeb1edd051ce32b34ae948da732bc9e2a9782164e2144.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 2247,
+        "decodedBytes": 147456,
+        "hash": "80fb7024b43b477e547eeb1edd051ce32b34ae948da732bc9e2a9782164e2144",
+        "pixelHash": "f09f03d158f1ddc7c8dde58dc3d7ba924d8da7a5041f0a2ec81954fedde7c0f4",
+        "bounds": {
+          "x1": 85,
+          "y1": 120,
+          "x2": 106,
+          "y2": 153
+        },
+        "padding": 38,
+        "transparentPixels": 36392,
+        "visiblePixels": 472,
+        "lowAlphaPixels": 102,
+        "materialBounds": {
+          "x1": 86,
+          "y1": 120,
+          "x2": 106,
+          "y2": 153
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1980, 1980],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": 0,
+          "y": 24,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-02/prop-cattails-march/review-scenes/comparison.json",
+        "notes": "Exact current canon, organic material shapes, native silhouette and ground contact reviewed in desktop/small phone/portrait/landscape day and night. Current decoration branch has no seed-dependent body variant. Static body has no obsolete animation attachments."
+      },
+      "revision": "52d5ca8189e118025491f40b95ca08de9c612d815dfa31ccb1da92cc7324bae7"
+    },
+    "prop:driftwood:march": {
+      "version": 2,
+      "key": "prop:driftwood:march",
+      "catalogId": "281",
+      "canonHash": "c57bf2d3be69214b9e2a67282d455447fdbac9eb03addabf25c415a288942919",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "1d1be69207657761c8b11a154096d74e9ec0bdc7c87c7faf14f6aa1d0c2909b1",
+      "source": {
+        "file": "a17790876cd89036b6f57155361ef834f7a16bea611c58dd6678ac8e41627d42.png",
+        "format": "png",
+        "width": 1809,
+        "height": 1809,
+        "bytes": 117674,
+        "decodedBytes": 13089924,
+        "hash": "a17790876cd89036b6f57155361ef834f7a16bea611c58dd6678ac8e41627d42",
+        "pixelHash": "caa008362be92f7c5b360bb2dc82f2e7028cdad7a7536a9282613ef99ef7d710",
+        "bounds": {
+          "x1": 616,
+          "y1": 339,
+          "x2": 1355,
+          "y2": 1305
+        },
+        "padding": 339,
+        "transparentPixels": 3241864,
+        "visiblePixels": 30617,
+        "lowAlphaPixels": 3038,
+        "materialBounds": {
+          "x1": 720,
+          "y1": 1000,
+          "x2": 1099,
+          "y2": 1178
+        }
+      },
+      "output": {
+        "file": "prop-driftwood-march-7168c324281a4c17c42f22c21bf883a7d00eeb96e2c4550711eb41a8723c3284.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 1698,
+        "decodedBytes": 147456,
+        "hash": "7168c324281a4c17c42f22c21bf883a7d00eeb96e2c4550711eb41a8723c3284",
+        "pixelHash": "ebd079acff3449083361643bc003b090a5409d72fdd428e9973b2f9c29cd97f7",
+        "bounds": {
+          "x1": 74,
+          "y1": 135,
+          "x2": 114,
+          "y2": 167
+        },
+        "padding": 24,
+        "transparentPixels": 36519,
+        "visiblePixels": 345,
+        "lowAlphaPixels": 41,
+        "materialBounds": {
+          "x1": 74,
+          "y1": 136,
+          "x2": 114,
+          "y2": 153
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1809, 1809],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": -2,
+          "y": 29,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-02/prop-driftwood-march/review-scenes/comparison.json",
+        "notes": "Exact current canon, organic material shapes, native silhouette and ground contact reviewed in desktop/small phone/portrait/landscape day and night. Current decoration branch has no seed-dependent body variant. Static body has no obsolete animation attachments."
+      },
+      "revision": "68a63c60cb772b19ab6988c2413cfe52ea3847fbbe4ae8296dc959833199a51b"
+    },
+    "prop:mangrove:march": {
+      "version": 2,
+      "key": "prop:mangrove:march",
+      "catalogId": "282",
+      "canonHash": "2c843181942287fdd6b431d824b377292bfcb3d82f127b9bbee2a86d2fa4f653",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "679761e9c9832573739d703fd32d6f788925654c743653f754a0e582bb0d430a",
+      "source": {
+        "file": "0df901f063090f5314d44cf7d3c1055ac6804090b7722380c3d59af57444ba61.png",
+        "format": "png",
+        "width": 1380,
+        "height": 1380,
+        "bytes": 210261,
+        "decodedBytes": 7617600,
+        "hash": "0df901f063090f5314d44cf7d3c1055ac6804090b7722380c3d59af57444ba61",
+        "pixelHash": "ab433a030ffa3b3e26ce6270e7733bff1200a617f57d31716bc7bb2719601c60",
+        "bounds": {
+          "x1": 96,
+          "y1": 92,
+          "x2": 1289,
+          "y2": 1244
+        },
+        "padding": 90,
+        "transparentPixels": 1836261,
+        "visiblePixels": 68139,
+        "lowAlphaPixels": 4850,
+        "materialBounds": {
+          "x1": 541,
+          "y1": 750,
+          "x2": 892,
+          "y2": 1110
+        }
+      },
+      "output": {
+        "file": "prop-mangrove-march-6c91cf25f57c4349871c9332c3196a3fa3f3915e345e4705e83d2dcb7643a83a.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 4975,
+        "decodedBytes": 147456,
+        "hash": "6c91cf25f57c4349871c9332c3196a3fa3f3915e345e4705e83d2dcb7643a83a",
+        "pixelHash": "a9d1eb4a2e018d4b59175579fe7457fa484530c158bc1117952b4fb2efa842a9",
+        "bounds": {
+          "x1": 69,
+          "y1": 113,
+          "x2": 118,
+          "y2": 164
+        },
+        "padding": 27,
+        "transparentPixels": 35539,
+        "visiblePixels": 1325,
+        "lowAlphaPixels": 96,
+        "materialBounds": {
+          "x1": 70,
+          "y1": 114,
+          "x2": 117,
+          "y2": 164
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1380, 1380],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": -6,
+          "y": 10,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-02/prop-mangrove-march/review-scenes/comparison.json",
+        "notes": "Exact current canon, organic material shapes, native silhouette and ground contact reviewed in desktop/small phone/portrait/landscape day and night. Current decoration branch has no seed-dependent body variant. Static body has no obsolete animation attachments."
+      },
+      "revision": "d18220a76ccd79877f628284f787805ed904ff748e81ced4ba85a51d5a559212"
+    },
+    "prop:pine-sapling:highlands": {
+      "version": 2,
+      "key": "prop:pine-sapling:highlands",
+      "catalogId": "283",
+      "canonHash": "9bed05c38755d5f6c35b97f656f154bcbfe3dd20ab9e20797ee6281249cebf84",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "50eba33790610be76ef6b65dcef47eb0adfc4ba2ec2f7046215652e237898af8",
+      "source": {
+        "file": "13d7ad5a6bd1f778566f12d6354811e619ee4cf9858990d63915e7042a143b6a.png",
+        "format": "png",
+        "width": 1610,
+        "height": 1610,
+        "bytes": 136258,
+        "decodedBytes": 10368400,
+        "hash": "13d7ad5a6bd1f778566f12d6354811e619ee4cf9858990d63915e7042a143b6a",
+        "pixelHash": "a10ad27d47d4a62d3ef74af7d61000b1d84de0b3cd21bc9ef9d494b078fb5ef6",
+        "bounds": {
+          "x1": 243,
+          "y1": 249,
+          "x2": 1387,
+          "y2": 1333
+        },
+        "padding": 222,
+        "transparentPixels": 2552813,
+        "visiblePixels": 39287,
+        "lowAlphaPixels": 3502,
+        "materialBounds": {
+          "x1": 695,
+          "y1": 831,
+          "x2": 912,
+          "y2": 1173
+        }
+      },
+      "output": {
+        "file": "prop-pine-sapling-highlands-b9d810ff34805ac7304f11e81c42526ff7ea1858b1bfd2598285fcadc07600a2.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 2450,
+        "decodedBytes": 147456,
+        "hash": "b9d810ff34805ac7304f11e81c42526ff7ea1858b1bfd2598285fcadc07600a2",
+        "pixelHash": "b3adeb4946a706d5de6fa0a4c48e54c79af6d001867aeacbf44f24f094907220",
+        "bounds": {
+          "x1": 83,
+          "y1": 107,
+          "x2": 109,
+          "y2": 155
+        },
+        "padding": 36,
+        "transparentPixels": 36309,
+        "visiblePixels": 555,
+        "lowAlphaPixels": 39,
+        "materialBounds": {
+          "x1": 84,
+          "y1": 116,
+          "x2": 108,
+          "y2": 155
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1610, 1610],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": 0,
+          "y": 16,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-02/prop-pine-sapling-highlands/review-scenes/comparison.json",
+        "notes": "Exact current canon, organic material shapes, native silhouette and ground contact reviewed in desktop/small phone/portrait/landscape day and night. Current decoration branch has no seed-dependent body variant. Static body has no obsolete animation attachments."
+      },
+      "revision": "1c5284836edb904e9bbe957b9cba895e4da594303a12f16e253bcb63cccd860f"
+    },
+    "prop:alpine-scrub:highlands": {
+      "version": 2,
+      "key": "prop:alpine-scrub:highlands",
+      "catalogId": "284",
+      "canonHash": "3afa98283abe7c630c06c523a914f815c79c47dce84d54023a44afa7413b56c6",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "bbe26dc0b21d745cc3a57dcecf359a034adb83448feefe511b5e3c7e2d45b5df",
+      "source": {
+        "file": "bc7991ce1b88291deb36849a5143cc5dd5a3bfab8a33f19b45460154d3ceedf4.png",
+        "format": "png",
+        "width": 1756,
+        "height": 1756,
+        "bytes": 85912,
+        "decodedBytes": 12334144,
+        "hash": "bc7991ce1b88291deb36849a5143cc5dd5a3bfab8a33f19b45460154d3ceedf4",
+        "pixelHash": "f72057c13fa5e138ab7511f45acbf6cdd0438198df17fa5a6502ad4e1812f555",
+        "bounds": {
+          "x1": 316,
+          "y1": 320,
+          "x2": 1386,
+          "y2": 1384
+        },
+        "padding": 316,
+        "transparentPixels": 3060496,
+        "visiblePixels": 23040,
+        "lowAlphaPixels": 2362,
+        "materialBounds": {
+          "x1": 783,
+          "y1": 1070,
+          "x2": 1018,
+          "y2": 1197
+        }
+      },
+      "output": {
+        "file": "prop-alpine-scrub-highlands-9dfa887f68a9e97a066944a146c2341a80e0a75c4a1f5c2767c3616a4933be8d.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 1378,
+        "decodedBytes": 147456,
+        "hash": "9dfa887f68a9e97a066944a146c2341a80e0a75c4a1f5c2767c3616a4933be8d",
+        "pixelHash": "a6f05da8c6042cdc472497b81944bb309189d6ba0402d182b68b220e265901f6",
+        "bounds": {
+          "x1": 82,
+          "y1": 137,
+          "x2": 108,
+          "y2": 151
+        },
+        "padding": 40,
+        "transparentPixels": 36594,
+        "visiblePixels": 270,
+        "lowAlphaPixels": 26,
+        "materialBounds": {
+          "x1": 83,
+          "y1": 137,
+          "x2": 108,
+          "y2": 150
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1756, 1756],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": -3,
+          "y": 20,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-02/prop-alpine-scrub-highlands/review-scenes/comparison.json",
+        "notes": "Exact current canon, organic material shapes, native silhouette and ground contact reviewed in desktop/small phone/portrait/landscape day and night. Current decoration branch has no seed-dependent body variant. Static body has no obsolete animation attachments."
+      },
+      "revision": "2cac44b1e710e9b89e425596ae6176044938b6e52352d74c24d35f2b3894e80c"
+    },
+    "prop:marsh-bush:march": {
+      "version": 2,
+      "key": "prop:marsh-bush:march",
+      "catalogId": "274",
+      "canonHash": "8c2cc3be36786671b7cee7e019277a6dc76ca0f7f143487def86b05a1f204ac0",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "e1fb219b4fae6e0de116f405c945a46638aeca0064a0f83422d9bb5efba7f108",
+      "source": {
+        "file": "e50864ed9dca59068af825421f3bba17adef320aa9594a9bb34af1de16b5d72e.png",
+        "format": "png",
+        "width": 1904,
+        "height": 1904,
+        "bytes": 146451,
+        "decodedBytes": 14500864,
+        "hash": "e50864ed9dca59068af825421f3bba17adef320aa9594a9bb34af1de16b5d72e",
+        "pixelHash": "9619341b3a34ba8d6118e67d82d95bbf4a60134032e4ac0e2fd3c416725637ca",
+        "bounds": {
+          "x1": 374,
+          "y1": 453,
+          "x2": 1460,
+          "y2": 1490
+        },
+        "padding": 374,
+        "transparentPixels": 3576140,
+        "visiblePixels": 49076,
+        "lowAlphaPixels": 2341,
+        "materialBounds": {
+          "x1": 807,
+          "y1": 1111,
+          "x2": 1153,
+          "y2": 1307
+        }
+      },
+      "output": {
+        "file": "prop-marsh-bush-march-13cf6cbe224090d4a6a13938f0d346acc49947c58d46c3b659fb49f347d017ee.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 2172,
+        "decodedBytes": 147456,
+        "hash": "13cf6cbe224090d4a6a13938f0d346acc49947c58d46c3b659fb49f347d017ee",
+        "pixelHash": "d6ddcdb49741497d1983a7f887b806119118cb0e279417460aa4abf1e75b8ffc",
+        "bounds": {
+          "x1": 35,
+          "y1": 92,
+          "x2": 124,
+          "y2": 168
+        },
+        "padding": 23,
+        "transparentPixels": 36362,
+        "visiblePixels": 502,
+        "lowAlphaPixels": 30,
+        "materialBounds": {
+          "x1": 78,
+          "y1": 132,
+          "x2": 113,
+          "y2": 151
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1904, 1904],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": -3,
+          "y": 20,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-03/prop-marsh-bush-march/review-scenes/comparison.json",
+        "notes": "Exact fixed decoration branch reviewed against retained native reference and four desktop/phone viewports in day/night. Organic wood/foliage and stone/mineral contours retain colors, branch/cluster counts and grounding. Existing placement and procedural overlays preserved."
+      },
+      "revision": "6e163a732e12968487ef15bc9989f71187925035486bac3df411a23dd3d5f25d"
+    },
+    "prop:rock-cluster:highlands": {
+      "version": 2,
+      "key": "prop:rock-cluster:highlands",
+      "catalogId": "286",
+      "canonHash": "c1ef5cc43b16eea3802fe76688b1b82375a5d81269896dcb26dff9566f151188",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "42ef7c0aa69c09c2d6b587f3a6b83e9752030f2b53e95f2d15c3404e4053acba",
+      "source": {
+        "file": "07ed58f8eafc38270998efbc7ba9348af35c77c232e37e4e787db1a8306d9703.png",
+        "format": "png",
+        "width": 1980,
+        "height": 1980,
+        "bytes": 150787,
+        "decodedBytes": 15681600,
+        "hash": "07ed58f8eafc38270998efbc7ba9348af35c77c232e37e4e787db1a8306d9703",
+        "pixelHash": "1b0d909f6c9dbe30e6ee035a907bb482ab93528402e06458d175545f8f719313",
+        "bounds": {
+          "x1": 509,
+          "y1": 1128,
+          "x2": 1436,
+          "y2": 1583
+        },
+        "padding": 396,
+        "transparentPixels": 3872519,
+        "visiblePixels": 47881,
+        "lowAlphaPixels": 1555,
+        "materialBounds": {
+          "x1": 801,
+          "y1": 1393,
+          "x2": 1174,
+          "y2": 1578
+        }
+      },
+      "output": {
+        "file": "prop-rock-cluster-highlands-e00743923c9bac60506638d6b34fb285743d849ee95678d8ce49a4f3148b41b5.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 2019,
+        "decodedBytes": 147456,
+        "hash": "e00743923c9bac60506638d6b34fb285743d849ee95678d8ce49a4f3148b41b5",
+        "pixelHash": "6f363277f60f234114574bf9d50f2369c893c1eaa669ff0855dd2ee2f13c2fb5",
+        "bounds": {
+          "x1": 78,
+          "y1": 135,
+          "x2": 113,
+          "y2": 153
+        },
+        "padding": 38,
+        "transparentPixels": 36413,
+        "visiblePixels": 451,
+        "lowAlphaPixels": 17,
+        "materialBounds": {
+          "x1": 78,
+          "y1": 135,
+          "x2": 113,
+          "y2": 152
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1980, 1980],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": 0,
+          "y": 0,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-03/prop-rock-cluster-highlands/review-scenes/comparison.json",
+        "notes": "Exact fixed decoration branch reviewed against retained native reference and four desktop/phone viewports in day/night. Organic wood/foliage and stone/mineral contours retain colors, branch/cluster counts and grounding. Existing placement and procedural overlays preserved."
+      },
+      "revision": "a6b4af21c0d76d74efe9aa4350096040879aa8bea66b0fcf25e78e681c3221a4"
+    },
+    "prop:dead-tree:frontier": {
+      "version": 2,
+      "key": "prop:dead-tree:frontier",
+      "catalogId": "287",
+      "canonHash": "ef76f4781c740a4b255d425051bdf418dac501a47068293895853c537c4f50b9",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "6a5361fbea1ea2dbf770a7f884ed8ba0866f78fb77cf4bd39878062798685318",
+      "source": {
+        "file": "26b8231bffb42a593cec42a5de020acedb0b590608f245f4e693b289d6d28604.png",
+        "format": "png",
+        "width": 1909,
+        "height": 1909,
+        "bytes": 156581,
+        "decodedBytes": 14577124,
+        "hash": "26b8231bffb42a593cec42a5de020acedb0b590608f245f4e693b289d6d28604",
+        "pixelHash": "12803810d54e589e1ed01e05f016f66e6822a10b18af762f01bcd6f433995f3e",
+        "bounds": {
+          "x1": 432,
+          "y1": 621,
+          "x2": 1542,
+          "y2": 1644
+        },
+        "padding": 264,
+        "transparentPixels": 3602537,
+        "visiblePixels": 41744,
+        "lowAlphaPixels": 4065,
+        "materialBounds": {
+          "x1": 791,
+          "y1": 1148,
+          "x2": 1128,
+          "y2": 1571
+        }
+      },
+      "output": {
+        "file": "prop-dead-tree-frontier-fad8966de4636cac03f2571a12677040164409fb79a2dce1053fdb4494da8547.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 2035,
+        "decodedBytes": 147456,
+        "hash": "fad8966de4636cac03f2571a12677040164409fb79a2dce1053fdb4494da8547",
+        "pixelHash": "aae370faa3c7697672bfef291e63759adc7d2d5cb490994c921d9d591c566fdd",
+        "bounds": {
+          "x1": 76,
+          "y1": 116,
+          "x2": 110,
+          "y2": 158
+        },
+        "padding": 33,
+        "transparentPixels": 36441,
+        "visiblePixels": 423,
+        "lowAlphaPixels": 43,
+        "materialBounds": {
+          "x1": 77,
+          "y1": 116,
+          "x2": 110,
+          "y2": 157
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1909, 1909],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": -3,
+          "y": 0,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-03/prop-dead-tree-frontier/review-scenes/comparison.json",
+        "notes": "Exact fixed decoration branch reviewed against retained native reference and four desktop/phone viewports in day/night. Organic wood/foliage and stone/mineral contours retain colors, branch/cluster counts and grounding. Existing placement and procedural overlays preserved."
+      },
+      "revision": "9d388809c7727c3d583bb3ca8826dfe3e49cbd716c9e448abddb8aba3a71500c"
+    },
+    "prop:charred-stump:frontier": {
+      "version": 2,
+      "key": "prop:charred-stump:frontier",
+      "catalogId": "288",
+      "canonHash": "1dcb590b97d9125ea9dfaaa177568b71cb51cf9990f9a29567c7e63dc5a9bcf5",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "bccf9e668393251f9df3aca19371febbbe09d0dbd88099770389687a67f64ebc",
+      "source": {
+        "file": "114708d51d402e59be49822786648bd44f112ee875116198caf5efe2a59ec920.png",
+        "format": "png",
+        "width": 1702,
+        "height": 1702,
+        "bytes": 98625,
+        "decodedBytes": 11587216,
+        "hash": "114708d51d402e59be49822786648bd44f112ee875116198caf5efe2a59ec920",
+        "pixelHash": "fbdf351a2ba7173468c6014483f20f87b45fba3744b99a142e43b50aa9d4833e",
+        "bounds": {
+          "x1": 633,
+          "y1": 462,
+          "x2": 1300,
+          "y2": 1526
+        },
+        "padding": 175,
+        "transparentPixels": 2866460,
+        "visiblePixels": 30344,
+        "lowAlphaPixels": 1456,
+        "materialBounds": {
+          "x1": 779,
+          "y1": 1171,
+          "x2": 949,
+          "y2": 1365
+        }
+      },
+      "output": {
+        "file": "prop-charred-stump-frontier-9049fce203b0fc5f2c8c0df937e198738fef24f98a5eb562bbbd6ddfd12b9ccf.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 1718,
+        "decodedBytes": 147456,
+        "hash": "9049fce203b0fc5f2c8c0df937e198738fef24f98a5eb562bbbd6ddfd12b9ccf",
+        "pixelHash": "c59fdfcffcd416f831ecbb5fd41d082dc879129133f5011b9da924fcb4dcf554",
+        "bounds": {
+          "x1": 85,
+          "y1": 52,
+          "x2": 105,
+          "y2": 154
+        },
+        "padding": 37,
+        "transparentPixels": 36477,
+        "visiblePixels": 387,
+        "lowAlphaPixels": 16,
+        "materialBounds": {
+          "x1": 86,
+          "y1": 132,
+          "x2": 105,
+          "y2": 153
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1702, 1702],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": -2,
+          "y": 0,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-03/prop-charred-stump-frontier/review-scenes/comparison.json",
+        "notes": "Exact fixed decoration branch reviewed against retained native reference and four desktop/phone viewports in day/night. Organic wood/foliage and stone/mineral contours retain colors, branch/cluster counts and grounding. Existing placement and procedural overlays preserved."
+      },
+      "revision": "8a224f7840c4f8966cff488d4864b7724de8cb0b08ce74e5bd09ccc63e8c8f4a"
+    },
+    "prop:dry-scrub:frontier": {
+      "version": 2,
+      "key": "prop:dry-scrub:frontier",
+      "catalogId": "289",
+      "canonHash": "4870fe689b4525d55b54339bacde50075279950d99fb4279eb8112472e4447a0",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "15e43e7bb2c9ae931eccbe7c809d624b3f968a42d5f90a482b18f91183bea400",
+      "source": {
+        "file": "acaea54f85afb63887d0ca0c6e852eb06e71d142d238472f1a92112ae0b41688.png",
+        "format": "png",
+        "width": 1981,
+        "height": 1981,
+        "bytes": 77812,
+        "decodedBytes": 15697444,
+        "hash": "acaea54f85afb63887d0ca0c6e852eb06e71d142d238472f1a92112ae0b41688",
+        "pixelHash": "435fbe3502503746c7a59d65391addaaf11b41ac0e4643bcb11f809c0c55e886",
+        "bounds": {
+          "x1": 718,
+          "y1": 1240,
+          "x2": 1264,
+          "y2": 1710
+        },
+        "padding": 270,
+        "transparentPixels": 3906670,
+        "visiblePixels": 17691,
+        "lowAlphaPixels": 4164,
+        "materialBounds": {
+          "x1": 884,
+          "y1": 1394,
+          "x2": 1118,
+          "y2": 1578
+        }
+      },
+      "output": {
+        "file": "prop-dry-scrub-frontier-ae44f0f90ff60cda9d565c33e3c3defa0224cc0d891155188095a74be96d8d22.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 1109,
+        "decodedBytes": 147456,
+        "hash": "ae44f0f90ff60cda9d565c33e3c3defa0224cc0d891155188095a74be96d8d22",
+        "pixelHash": "f08beff3ddeb6e1f5aa4769a15bf0a71228589015ab869dfd2227f19307a06e6",
+        "bounds": {
+          "x1": 84,
+          "y1": 135,
+          "x2": 106,
+          "y2": 153
+        },
+        "padding": 38,
+        "transparentPixels": 36691,
+        "visiblePixels": 173,
+        "lowAlphaPixels": 45,
+        "materialBounds": {
+          "x1": 84,
+          "y1": 135,
+          "x2": 106,
+          "y2": 152
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1981, 1981],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": -2,
+          "y": 0,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-03/prop-dry-scrub-frontier/review-scenes/comparison.json",
+        "notes": "Exact fixed decoration branch reviewed against retained native reference and four desktop/phone viewports in day/night. Organic wood/foliage and stone/mineral contours retain colors, branch/cluster counts and grounding. Existing placement and procedural overlays preserved."
+      },
+      "revision": "2097328423baf057c2036e9b7f7b05e4b3403e1ce6cec78c31e959a6e2cac2c8"
+    },
+    "prop:burned-log:frontier": {
+      "version": 2,
+      "key": "prop:burned-log:frontier",
+      "catalogId": "290",
+      "canonHash": "9cc9359e8e103501fdb3afe6d2d609da63f1d3c919170d559383a21f5790854a",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "f5665542585c5da14908729e0568e5f16f332439918d2ab74f8eb2eb2b037352",
+      "source": {
+        "file": "7244e01d1b2975d2063882b5aaf15e5adaf4769ffd2126d11ed668c17b3ef9ff.png",
+        "format": "png",
+        "width": 1709,
+        "height": 1709,
+        "bytes": 130113,
+        "decodedBytes": 11682724,
+        "hash": "7244e01d1b2975d2063882b5aaf15e5adaf4769ffd2126d11ed668c17b3ef9ff",
+        "pixelHash": "0037f6bf535e49dca0ae3069b02c39e18e5885213883c110200770665ff8747e",
+        "bounds": {
+          "x1": 324,
+          "y1": 413,
+          "x2": 1434,
+          "y2": 1505
+        },
+        "padding": 203,
+        "transparentPixels": 2878843,
+        "visiblePixels": 41838,
+        "lowAlphaPixels": 3219,
+        "materialBounds": {
+          "x1": 691,
+          "y1": 1203,
+          "x2": 1114,
+          "y2": 1380
+        }
+      },
+      "output": {
+        "file": "prop-burned-log-frontier-6c3eed8713b4ceda5b0240a459b446078eca84ebb0fb38abee61434f74943967.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 2193,
+        "decodedBytes": 147456,
+        "hash": "6c3eed8713b4ceda5b0240a459b446078eca84ebb0fb38abee61434f74943967",
+        "pixelHash": "3c3e50da927236c778279d38875d4539ee8387023cec6e7963bb60917f1d6542",
+        "bounds": {
+          "x1": 71,
+          "y1": 134,
+          "x2": 119,
+          "y2": 155
+        },
+        "padding": 36,
+        "transparentPixels": 36329,
+        "visiblePixels": 535,
+        "lowAlphaPixels": 49,
+        "materialBounds": {
+          "x1": 72,
+          "y1": 135,
+          "x2": 118,
+          "y2": 155
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1709, 1709],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": -6,
+          "y": 0,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-03/prop-burned-log-frontier/review-scenes/comparison.json",
+        "notes": "Exact fixed decoration branch reviewed against retained native reference and four desktop/phone viewports in day/night. Organic wood/foliage and stone/mineral contours retain colors, branch/cluster counts and grounding. Existing placement and procedural overlays preserved."
+      },
+      "revision": "68ae554533b7f03d27aec95faafa89b9b80cea9864f4aad0630513efff9addab"
+    },
+    "prop:black-rock:crown": {
+      "version": 2,
+      "key": "prop:black-rock:crown",
+      "catalogId": "291",
+      "canonHash": "75a5fbb523b703bcc70f78b3798265e3f30cf47459b6ca55ae9e16d7a4bb4b52",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "f79b229418725d08c482c681ce1bbb94775fa0eace2db5fefd756be9f106d79f",
+      "source": {
+        "file": "9ed0182100fa380f22360ce6d682f012facdf22d2aa04b5a604eb12ecdf6aca7.png",
+        "format": "png",
+        "width": 1734,
+        "height": 1734,
+        "bytes": 118018,
+        "decodedBytes": 12027024,
+        "hash": "9ed0182100fa380f22360ce6d682f012facdf22d2aa04b5a604eb12ecdf6aca7",
+        "pixelHash": "9d56d64ef0fbae57af8ca21319e3198e58179bbc27a23f94c8b28dbadaab042a",
+        "bounds": {
+          "x1": 506,
+          "y1": 405,
+          "x2": 1415,
+          "y2": 1528
+        },
+        "padding": 205,
+        "transparentPixels": 2965576,
+        "visiblePixels": 41180,
+        "lowAlphaPixels": 1729,
+        "materialBounds": {
+          "x1": 715,
+          "y1": 1213,
+          "x2": 1048,
+          "y2": 1382
+        }
+      },
+      "output": {
+        "file": "prop-black-rock-crown-b881134a10f69136b554dd02c1f656c23323e35cbdab134ccc8348e8ddcc48c8.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 2149,
+        "decodedBytes": 147456,
+        "hash": "b881134a10f69136b554dd02c1f656c23323e35cbdab134ccc8348e8ddcc48c8",
+        "pixelHash": "65b4be2e9ff72e00bfe1179f2165d6bab218a7631acc304ef0c9b155a72a0a69",
+        "bounds": {
+          "x1": 77,
+          "y1": 134,
+          "x2": 114,
+          "y2": 169
+        },
+        "padding": 22,
+        "transparentPixels": 36363,
+        "visiblePixels": 501,
+        "lowAlphaPixels": 17,
+        "materialBounds": {
+          "x1": 77,
+          "y1": 135,
+          "x2": 114,
+          "y2": 152
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1734, 1734],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": -2,
+          "y": 0,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-03/prop-black-rock-crown/review-scenes/comparison.json",
+        "notes": "Exact fixed decoration branch reviewed against retained native reference and four desktop/phone viewports in day/night. Organic wood/foliage and stone/mineral contours retain colors, branch/cluster counts and grounding. Existing placement and procedural overlays preserved."
+      },
+      "revision": "c9bcd0f0f6491f7786033600c1978fd3b53b93554809fb95d23c7de585e67caa"
+    },
+    "prop:crystal-cluster:crown": {
+      "version": 2,
+      "key": "prop:crystal-cluster:crown",
+      "catalogId": "292",
+      "canonHash": "f24c2dfcdd98c181a9902a121990f766f0bacdbf72f6e636da992d4b655d72f7",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "dbc2f10bd54d81e49576e0a2bd12229274770c67294b33e2b276b7658d4fc433",
+      "source": {
+        "file": "16ca008216f5ea310ad777c5f4c2d51b756842b29e1f4189b136e230e0647a78.png",
+        "format": "png",
+        "width": 1739,
+        "height": 1739,
+        "bytes": 199008,
+        "decodedBytes": 12096484,
+        "hash": "16ca008216f5ea310ad777c5f4c2d51b756842b29e1f4189b136e230e0647a78",
+        "pixelHash": "9615e094fdbdea9bf055a225fb13448311cfff02fc1f3b91ef819e1bc889a2cb",
+        "bounds": {
+          "x1": 341,
+          "y1": 489,
+          "x2": 1392,
+          "y2": 1566
+        },
+        "padding": 172,
+        "transparentPixels": 2962044,
+        "visiblePixels": 62077,
+        "lowAlphaPixels": 2640,
+        "materialBounds": {
+          "x1": 743,
+          "y1": 1079,
+          "x2": 1009,
+          "y2": 1395
+        }
+      },
+      "output": {
+        "file": "prop-crystal-cluster-crown-c95d6d5c0721bc28eb8153bff5d54dfc15083d146a7b96f83c4a0a89b3323184.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 3188,
+        "decodedBytes": 147456,
+        "hash": "c95d6d5c0721bc28eb8153bff5d54dfc15083d146a7b96f83c4a0a89b3323184",
+        "pixelHash": "a28de109744fa65769063c5502e0fedf4955f7a501aea23b7136e757387f2a22",
+        "bounds": {
+          "x1": 81,
+          "y1": 119,
+          "x2": 110,
+          "y2": 154
+        },
+        "padding": 37,
+        "transparentPixels": 36099,
+        "visiblePixels": 765,
+        "lowAlphaPixels": 53,
+        "materialBounds": {
+          "x1": 81,
+          "y1": 119,
+          "x2": 110,
+          "y2": 153
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1739, 1739],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": -1,
+          "y": 0,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-03/prop-crystal-cluster-crown/review-scenes/comparison.json",
+        "notes": "Exact fixed decoration branch reviewed against retained native reference and four desktop/phone viewports in day/night. Organic wood/foliage and stone/mineral contours retain colors, branch/cluster counts and grounding. Existing placement and procedural overlays preserved."
+      },
+      "revision": "2c4d5f17e8ca726bb716b46898a7eb8ba4acf7f9921f1fe68a1837424af318f9"
+    },
+    "prop:dead-shrub:crown": {
+      "version": 2,
+      "key": "prop:dead-shrub:crown",
+      "catalogId": "293",
+      "canonHash": "c07e5a74279bc29367714d02407844be0f11c7e87c195aef61bc5d18afc1f551",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "11e73406f7f3f02f27e3acab05303516fc38d77f966000bff479a1c5bc8b238d",
+      "source": {
+        "file": "7d31e03c1aae6adc057c5081dee9ce08cfec4e87dcbc4a08bcd1f946cca49260.png",
+        "format": "png",
+        "width": 1981,
+        "height": 1981,
+        "bytes": 71996,
+        "decodedBytes": 15697444,
+        "hash": "7d31e03c1aae6adc057c5081dee9ce08cfec4e87dcbc4a08bcd1f946cca49260",
+        "pixelHash": "da0699774a7cdcdbbe99fc19e84f7949440b86d34a11ca726f436294355a9803",
+        "bounds": {
+          "x1": 614,
+          "y1": 966,
+          "x2": 1290,
+          "y2": 1637
+        },
+        "padding": 343,
+        "transparentPixels": 3907338,
+        "visiblePixels": 17023,
+        "lowAlphaPixels": 5085,
+        "materialBounds": {
+          "x1": 879,
+          "y1": 1404,
+          "x2": 1102,
+          "y2": 1578
+        }
+      },
+      "output": {
+        "file": "prop-dead-shrub-crown-015a76d4765399ea510cc9567e073944ca8694ec6b6ead0a49e0301d4af4ff46.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 1003,
+        "decodedBytes": 147456,
+        "hash": "015a76d4765399ea510cc9567e073944ca8694ec6b6ead0a49e0301d4af4ff46",
+        "pixelHash": "e27b697f83ef62f6f4cc7bb1500c31ab910059dde83c4200b4c2fc2f3083337a",
+        "bounds": {
+          "x1": 85,
+          "y1": 136,
+          "x2": 106,
+          "y2": 153
+        },
+        "padding": 38,
+        "transparentPixels": 36701,
+        "visiblePixels": 163,
+        "lowAlphaPixels": 52,
+        "materialBounds": {
+          "x1": 85,
+          "y1": 137,
+          "x2": 106,
+          "y2": 152
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1981, 1981],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": 0,
+          "y": 0,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-03/prop-dead-shrub-crown/review-scenes/comparison.json",
+        "notes": "Exact fixed decoration branch reviewed against retained native reference and four desktop/phone viewports in day/night. Organic wood/foliage and stone/mineral contours retain colors, branch/cluster counts and grounding. Existing placement and procedural overlays preserved."
+      },
+      "revision": "ae4419ab4fb9559be4ece0425532ebc733f80afe3e76b2d7b0b2b79da54ab9eb"
+    },
+    "prop:obsidian:crown": {
+      "version": 2,
+      "key": "prop:obsidian:crown",
+      "catalogId": "294",
+      "canonHash": "d8db4ac8390ca15f9a1916fecf224871699574a95395b84eb4d9e159d08cfba7",
+      "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+      "catalogHash": "e0def3cd5bd506a71b428545f4c552da8c402f974568a5db1541ed9f75bb0fa7",
+      "source": {
+        "file": "603d83777bd2f970e987e8233c13ed93018bba9d22feaa340a686ab612e4607b.png",
+        "format": "png",
+        "width": 1980,
+        "height": 1980,
+        "bytes": 185097,
+        "decodedBytes": 15681600,
+        "hash": "603d83777bd2f970e987e8233c13ed93018bba9d22feaa340a686ab612e4607b",
+        "pixelHash": "9674cc798f3ba78adbcbdf6d541d39d4af23ae8eec6d1ff0e607c27345d2b26c",
+        "bounds": {
+          "x1": 562,
+          "y1": 562,
+          "x2": 1485,
+          "y2": 1678
+        },
+        "padding": 301,
+        "transparentPixels": 3853855,
+        "visiblePixels": 66545,
+        "lowAlphaPixels": 2971,
+        "materialBounds": {
+          "x1": 857,
+          "y1": 1255,
+          "x2": 1145,
+          "y2": 1578
+        }
+      },
+      "output": {
+        "file": "prop-obsidian-crown-eee77b0694096f672e4259ec9147327a6b7f05814383a489ed404d19256d2d68.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 2406,
+        "decodedBytes": 147456,
+        "hash": "eee77b0694096f672e4259ec9147327a6b7f05814383a489ed404d19256d2d68",
+        "pixelHash": "0d79ce06b2bae0e014862c92b4f49c234b793583201365229cce53151d496307",
+        "bounds": {
+          "x1": 70,
+          "y1": 76,
+          "x2": 110,
+          "y2": 153
+        },
+        "padding": 38,
+        "transparentPixels": 36232,
+        "visiblePixels": 632,
+        "lowAlphaPixels": 39,
+        "materialBounds": {
+          "x1": 82,
+          "y1": 122,
+          "x2": 110,
+          "y2": 152
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1980, 1980],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": -1,
+          "y": 0,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "reviewer": "Codex engineering review under authorized faithful implementation",
+        "userImageAcceptance": false,
+        "seedInvariant": true,
+        "evidence": "tools/sprites/batches/2026-10-08-03/prop-obsidian-crown/review-scenes/comparison.json",
+        "notes": "Exact fixed decoration branch reviewed against retained native reference and four desktop/phone viewports in day/night. Organic wood/foliage and stone/mineral contours retain colors, branch/cluster counts and grounding. Existing placement and procedural overlays preserved."
+      },
+      "revision": "c9ca949a059591ac5a9070e7fafdfdefadffc8b96d5d0032f1405eed37cad552"
     }
   },
   "history": {

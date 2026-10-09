@@ -1,0 +1,97 @@
+{
+  "version": 2,
+  "key": "prop:dead-shrub:crown",
+  "catalogId": "293",
+  "canonHash": "c07e5a74279bc29367714d02407844be0f11c7e87c195aef61bc5d18afc1f551",
+  "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+  "catalogHash": "11e73406f7f3f02f27e3acab05303516fc38d77f966000bff479a1c5bc8b238d",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1981,
+    "height": 1981,
+    "bytes": 71996,
+    "decodedBytes": 15697444,
+    "hash": "7d31e03c1aae6adc057c5081dee9ce08cfec4e87dcbc4a08bcd1f946cca49260",
+    "pixelHash": "da0699774a7cdcdbbe99fc19e84f7949440b86d34a11ca726f436294355a9803",
+    "bounds": {
+      "x1": 614,
+      "y1": 966,
+      "x2": 1290,
+      "y2": 1637
+    },
+    "padding": 343,
+    "transparentPixels": 3907338,
+    "visiblePixels": 17023,
+    "lowAlphaPixels": 5085,
+    "materialBounds": {
+      "x1": 879,
+      "y1": 1404,
+      "x2": 1102,
+      "y2": 1578
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 1003,
+    "decodedBytes": 147456,
+    "hash": "015a76d4765399ea510cc9567e073944ca8694ec6b6ead0a49e0301d4af4ff46",
+    "pixelHash": "e27b697f83ef62f6f4cc7bb1500c31ab910059dde83c4200b4c2fc2f3083337a",
+    "bounds": {
+      "x1": 85,
+      "y1": 136,
+      "x2": 106,
+      "y2": 153
+    },
+    "padding": 38,
+    "transparentPixels": 36701,
+    "visiblePixels": 163,
+    "lowAlphaPixels": 52,
+    "materialBounds": {
+      "x1": 85,
+      "y1": 137,
+      "x2": 106,
+      "y2": 152
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1981,
+      1981
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": 0,
+      "y": 0,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "reviewer": "Codex engineering review under authorized faithful implementation",
+    "userImageAcceptance": false,
+    "seedInvariant": true,
+    "evidence": "tools/sprites/batches/2026-10-08-03/prop-dead-shrub-crown/review-scenes/comparison.json",
+    "notes": "Exact fixed decoration branch reviewed against retained native reference and four desktop/phone viewports in day/night. Organic wood/foliage and stone/mineral contours retain colors, branch/cluster counts and grounding. Existing placement and procedural overlays preserved."
+  }
+}

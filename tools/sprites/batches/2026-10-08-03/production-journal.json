@@ -1,0 +1,126 @@
+{
+  "version": 1,
+  "status": "local-checks-passed-release-pending",
+  "preparedVersion": "0.8.97",
+  "ownership": "This continuation: nature bodies. Concurrent checkout: Goblin face and terrain grounds.",
+  "previousMain": "0d02d355ce4f59ab83df24fe6fc0f88ea72478b5",
+  "newRegistrations": [
+    {
+      "key": "prop:bush:vale",
+      "revision": "aa0612364d5451a516c326c008ff055379f3d531d5a2395c24259bf7dcb0e9a9",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:wildflowers:vale",
+      "revision": "1f5e60a8e25aff8b6f1e3d56b3c4991d71caf5a335b6073bd943961fba028a5e",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:sapling:vale",
+      "revision": "8e6a450d73d2f9c63356dac0b70e33556f225e0d99c0d3f3b91c4fd8a3493c95",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:stump:vale",
+      "revision": "aa17dad256464da8980fa76f32d0f3c831f0d5f08e5aea0a0e104241ed0e0b24",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:fallen-log:vale",
+      "revision": "fa2e3569e95289b52a3cae137c101168fc2273d6b63a806453d13f000c260819",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:cattails:march",
+      "revision": "52d5ca8189e118025491f40b95ca08de9c612d815dfa31ccb1da92cc7324bae7",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:driftwood:march",
+      "revision": "68a63c60cb772b19ab6988c2413cfe52ea3847fbbe4ae8296dc959833199a51b",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:mangrove:march",
+      "revision": "d18220a76ccd79877f628284f787805ed904ff748e81ced4ba85a51d5a559212",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:pine-sapling:highlands",
+      "revision": "1c5284836edb904e9bbe957b9cba895e4da594303a12f16e253bcb63cccd860f",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:alpine-scrub:highlands",
+      "revision": "2cac44b1e710e9b89e425596ae6176044938b6e52352d74c24d35f2b3894e80c",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:marsh-bush:march",
+      "revision": "6e163a732e12968487ef15bc9989f71187925035486bac3df411a23dd3d5f25d",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:rock-cluster:highlands",
+      "revision": "a6b4af21c0d76d74efe9aa4350096040879aa8bea66b0fcf25e78e681c3221a4",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:dead-tree:frontier",
+      "revision": "9d388809c7727c3d583bb3ca8826dfe3e49cbd716c9e448abddb8aba3a71500c",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:charred-stump:frontier",
+      "revision": "8a224f7840c4f8966cff488d4864b7724de8cb0b08ce74e5bd09ccc63e8c8f4a",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:dry-scrub:frontier",
+      "revision": "2097328423baf057c2036e9b7f7b05e4b3403e1ce6cec78c31e959a6e2cac2c8",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:burned-log:frontier",
+      "revision": "68ae554533b7f03d27aec95faafa89b9b80cea9864f4aad0630513efff9addab",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:black-rock:crown",
+      "revision": "c9bcd0f0f6491f7786033600c1978fd3b53b93554809fb95d23c7de585e67caa",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:crystal-cluster:crown",
+      "revision": "2c4d5f17e8ca726bb716b46898a7eb8ba4acf7f9921f1fe68a1837424af318f9",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:dead-shrub:crown",
+      "revision": "ae4419ab4fb9559be4ece0425532ebc733f80afe3e76b2d7b0b2b79da54ab9eb",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:obsidian:crown",
+      "revision": "c9ca949a059591ac5a9070e7fafdfdefadffc8b96d5d0032f1405eed37cad552",
+      "rollback": "procedural"
+    }
+  ],
+  "imageCalls": {
+    "batch02": 8,
+    "batch03": 11,
+    "heatherCorrection": 1
+  },
+  "held": [
+    "prop:heather:highlands",
+    "prop:grass:vale",
+    "prop:rock:vale"
+  ],
+  "userImageAcceptance": false,
+  "nextAction": "Publish only completed nature assets, verify exact live deployment, then pause remaining production.",
+  "tests": {
+    "regressionSuites": 51,
+    "chromiumChecks": 224,
+    "webkitPhoneViewports": 5
+  }
+}

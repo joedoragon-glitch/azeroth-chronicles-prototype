@@ -88,10 +88,10 @@
   "review": {
     "status": "approved",
     "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
-    "kind": "engineer-authorized",
-    "userAppearanceAcceptance": false,
-    "nativeScale": true,
-    "scope": "Faithful implementation authorized by Joel’s request to release already completed work on 2026-10-08. Fixed shape/palette preserved with organic plant contours.",
-    "technicalReview": "Four desktop/phone viewports in day/night; native scene comparison and full-scene hashes retained beside the candidate."
+    "reviewer": "Codex engineering review under authorized faithful implementation",
+    "userImageAcceptance": false,
+    "notes": "Native-size canon and desktop/phone day/night placement reviewed. Current procedural branch is invariant across entity seeds; placement, density and identity remain engine-owned.",
+    "seedInvariant": true,
+    "evidence": "tools/sprites/batches/2026-10-08-01/prop-bush-vale/review-scenes/comparison.json"
   }
 }

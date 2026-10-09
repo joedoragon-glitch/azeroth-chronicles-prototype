@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "date": "2026-10-08",
+  "sourceCommit": "369cc42889228fb1dbfc1a54c7048deda1f051b0",
+  "releaseVersion": "0.8.95",
+  "status": "registered locally; release gates pending",
+  "authorization": "Continue remaining sprite catalog in staged batches with generation, tests, implementation and publication; preserve approved identity, organic material shapes, animation and rollback. No separate user image acceptance claimed.",
+  "priorRelease": {
+    "pr": 123,
+    "mergeCommit": "369cc42889228fb1dbfc1a54c7048deda1f051b0",
+    "workflow": 37784625938,
+    "status": "success",
+    "exactPublishedBuild": true,
+    "liveDesktopPhoneSmoke": true
+  },
+  "newImageCalls": 8,
+  "recoveredGroundImages": 5,
+  "newRegistrations": [
+    {
+      "key": "prop:bush:vale",
+      "revision": "aa0612364d5451a516c326c008ff055379f3d531d5a2395c24259bf7dcb0e9a9",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:wildflowers:vale",
+      "revision": "1f5e60a8e25aff8b6f1e3d56b3c4991d71caf5a335b6073bd943961fba028a5e",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:sapling:vale",
+      "revision": "8e6a450d73d2f9c63356dac0b70e33556f225e0d99c0d3f3b91c4fd8a3493c95",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:stump:vale",
+      "revision": "aa17dad256464da8980fa76f32d0f3c831f0d5f08e5aea0a0e104241ed0e0b24",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:fallen-log:vale",
+      "revision": "fa2e3569e95289b52a3cae137c101168fc2273d6b63a806453d13f000c260819",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:cattails:march",
+      "revision": "52d5ca8189e118025491f40b95ca08de9c612d815dfa31ccb1da92cc7324bae7",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:driftwood:march",
+      "revision": "68a63c60cb772b19ab6988c2413cfe52ea3847fbbe4ae8296dc959833199a51b",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:mangrove:march",
+      "revision": "d18220a76ccd79877f628284f787805ed904ff748e81ced4ba85a51d5a559212",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:pine-sapling:highlands",
+      "revision": "1c5284836edb904e9bbe957b9cba895e4da594303a12f16e253bcb63cccd860f",
+      "rollback": "procedural"
+    },
+    {
+      "key": "prop:alpine-scrub:highlands",
+      "revision": "2cac44b1e710e9b89e425596ae6176044938b6e52352d74c24d35f2b3894e80c",
+      "rollback": "procedural"
+    }
+  ],
+  "materials": [
+    {
+      "key": "terrain:ground:vale",
+      "revision": "8745ab9dad2252b3fc17a6717d54e9b376fa489fc8d2ccb9fe3cadca249bc74f",
+      "rollback": "procedural"
+    },
+    {
+      "key": "terrain:ground:march",
+      "revision": "583f60ce6e4bab3b4ed6f22680eab2a7dfd32a40e4b5b18e7efd8efab11e0648",
+      "rollback": "procedural"
+    },
+    {
+      "key": "terrain:ground:highlands",
+      "revision": "c825d85ca3f87c8b7d91fb3fb1e4465c7ed4e8af24e2a80e76c0c3904a519f07",
+      "rollback": "procedural"
+    },
+    {
+      "key": "terrain:ground:frontier",
+      "revision": "c9a09db6aed83db02cb784200c9fa1cb9cbfc5e6608a313a5388dcd8d509fe82",
+      "rollback": "procedural"
+    },
+    {
+      "key": "terrain:ground:crown",
+      "revision": "bff0c54cfe529928e3d0b9f552e28fb23393d21ae647b7510ca63d8d7b9134f8",
+      "rollback": "procedural"
+    }
+  ],
+  "pendingSeededNature": [
+    "prop:grass:vale",
+    "prop:rock:vale"
+  ],
+  "nextAction": "Pass exact-head release checks and publish, then resume the third nature batch and remaining open catalog."
+}

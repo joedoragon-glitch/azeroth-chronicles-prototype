@@ -1,0 +1,97 @@
+{
+  "version": 2,
+  "key": "prop:crystal-cluster:crown",
+  "catalogId": "292",
+  "canonHash": "f24c2dfcdd98c181a9902a121990f766f0bacdbf72f6e636da992d4b655d72f7",
+  "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+  "catalogHash": "dbc2f10bd54d81e49576e0a2bd12229274770c67294b33e2b276b7658d4fc433",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1739,
+    "height": 1739,
+    "bytes": 199008,
+    "decodedBytes": 12096484,
+    "hash": "16ca008216f5ea310ad777c5f4c2d51b756842b29e1f4189b136e230e0647a78",
+    "pixelHash": "9615e094fdbdea9bf055a225fb13448311cfff02fc1f3b91ef819e1bc889a2cb",
+    "bounds": {
+      "x1": 341,
+      "y1": 489,
+      "x2": 1392,
+      "y2": 1566
+    },
+    "padding": 172,
+    "transparentPixels": 2962044,
+    "visiblePixels": 62077,
+    "lowAlphaPixels": 2640,
+    "materialBounds": {
+      "x1": 743,
+      "y1": 1079,
+      "x2": 1009,
+      "y2": 1395
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 3188,
+    "decodedBytes": 147456,
+    "hash": "c95d6d5c0721bc28eb8153bff5d54dfc15083d146a7b96f83c4a0a89b3323184",
+    "pixelHash": "a28de109744fa65769063c5502e0fedf4955f7a501aea23b7136e757387f2a22",
+    "bounds": {
+      "x1": 81,
+      "y1": 119,
+      "x2": 110,
+      "y2": 154
+    },
+    "padding": 37,
+    "transparentPixels": 36099,
+    "visiblePixels": 765,
+    "lowAlphaPixels": 53,
+    "materialBounds": {
+      "x1": 81,
+      "y1": 119,
+      "x2": 110,
+      "y2": 153
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1739,
+      1739
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": -1,
+      "y": 0,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "reviewer": "Codex engineering review under authorized faithful implementation",
+    "userImageAcceptance": false,
+    "seedInvariant": true,
+    "evidence": "tools/sprites/batches/2026-10-08-03/prop-crystal-cluster-crown/review-scenes/comparison.json",
+    "notes": "Exact fixed decoration branch reviewed against retained native reference and four desktop/phone viewports in day/night. Organic wood/foliage and stone/mineral contours retain colors, branch/cluster counts and grounding. Existing placement and procedural overlays preserved."
+  }
+}

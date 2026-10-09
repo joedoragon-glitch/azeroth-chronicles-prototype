@@ -1,5 +1,3 @@
-> **Prepared-work release authorized by Joel, 8 October 2026 at 11:22 America/New_York.** Release the five completed ground materials and two reviewed flora sprites. New generation and remaining mass production stay paused. The [saved checkpoint](SPRITE_PRODUCTION_PAUSED_2026-10-08.md) remains historical recovery evidence.
-
 # Sprite production checkpoint · 8 October 2026
 
 ## Implemented lifecycle and pilots · v0.8.92
@@ -32,10 +30,37 @@ Joel reported the live goblin face looked deformed after an interrupted stream. 
 
 PR #123 deployment run 37784625938 succeeded at exact merge SHA `369cc42889228fb1dbfc1a54c7048deda1f051b0`, including exact live build and desktop/phone smoke checks.
 
-## Regional ground stage, v0.8.96
+## Historical interruption recovery · local preparation before concurrency reconciliation
 
-T001–T005 are reviewed and locally registered after terrain pipeline completion. Original tool images remain opaque and unmodified, with explicit Lanczos resizing to 256² and no seam repair. Eight actual scene comparisons per material passed engineer review; source/output hashes and rollback targets are in the material registry. Stage release pending. No terrain production is claimed complete: roads, floors, rock/lava surfaces and bridge grain remain queued. Total image calls remain 16.
+PR #123 is merged at `369cc42889228fb1dbfc1a54c7048deda1f051b0`. Workflow run [37784625938](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/37784625938) passed main regressions, WebKit, deployment, exact published SHA and live desktop/phone smoke. Its actor batch and dedicated terrain pipeline are released.
 
-## Prepared-work release authorization
+The interrupted checkout also held five generated regional ground candidates (T001–T005) and padded bush/wildflower/rock candidates. These were recovered unchanged before further generation. Ground references, prompts, immutable originals, lossless processed tiles, seam measurements, 3 × 3 wraps and desktop/phone day/night scene hashes are retained under `tools/sprites/batches/2026-10-08-terrain`. All five ground pilots are now engineer-reviewed and registered locally. The actual five-image scene probe decoded 1,310,720 bytes, peaked at two concurrent decodes and drew 266 clipped material passes with zero failures; this is software evidence, not a physical-device performance claim.
 
-Joel asked to implement what is already done to reduce pending work. v0.8.96 includes T001–T005 ground materials plus Vale bush and wildflowers, using retained candidates and reviews with no new image calls. Grass and seeded rock variants remain pending. Nine body keys and five materials are registered in this release draft. Goblin v0.8.95 is verified live at merge `0d02d355ce4f59ab83df24fe6fc0f88ea72478b5`, successful deployment run `37789504897`. This release awaits remote CI and exact live deployment. Total image calls remain 16.
+The next body stage registers Vale bush and wildflowers plus eight new exact decoration bodies: sapling, stump, fallen log, cattails, driftwood, mangrove, pine sapling and alpine scrub. There are 17 active body keys and five material keys locally. These decoration branches have fixed bodies across seeds; existing seeded placement and density are unchanged. Full-canvas sizing, transparent padding and explicit root translation preserve native footprints. Originals, prompts, native comparisons and four viewport day/night hashes are under `tools/sprites/batches/2026-10-08-02` and the recovered first batch. The seeded field rock and grass candidates remain pending until their variation is reconciled. No broad `wild` family is flattened into one generic image.
+
+Eight new calls in this recovered chat produced the second nature batch; eleven additional individual environment jobs were started and are being retained/reviewed under `2026-10-08-03`. They are not active in v0.8.95. No candidate inherits user appearance acceptance; every review distinguishes authorized engineer implementation from Joel's image feedback. Follow the catalog's one-completed-request-at-a-time instruction for further image generation. Preserve original accepted Goblin/Paladin/cottage revisions and animation.
+
+This is another staged release, not completion of the 280-body/28-material open inventory. That local preparation was superseded by the concurrency reconciliation below. Re-read main before each later release to preserve concurrent work and chat corrections.
+
+
+
+## Concurrent nature batches · prepared v0.8.97
+
+Joel confirmed he is running two chats to speed production. This checkout owns nature body batches 02 and 03. The other checkout owns the Goblin correction (#124, merged at `0d02d355ce4f59ab83df24fe6fc0f88ea72478b5`) and the five ground-material pilots in its v0.8.96 stage. The nature change carries the corrected Goblin registration and complete rollback history. Ground registrations and terrain evidence from this checkout's earlier local commit were removed from the publication diff to avoid duplicating the other continuation.
+
+Twenty new body registrations are prepared: recovered Vale bush/wildflowers, eight batch-02 bodies, and ten batch-03 bodies covering marsh bush, Highlands rock cluster, Frontier dead tree/charred stump/dry scrub/burned log, and Crown black rock/crystal cluster/dead shrub/obsidian. Total active body keys: 27, with 28 resources including the retained Paladin animation atlas. Packaged sprites: 112,310 bytes; decoded resource census: 4,288,640 bytes. The runtime's 16 MiB residency and two-decode limits remain unchanged. All new bodies correspond to fixed decoration branches; seeded positions/density and procedural shadows/scene effects remain authoritative. Static entries introduce no obsolete animation clips.
+
+Generation counts for this checkout: eight batch-02 requests, eleven batch-03 requests, and one targeted heather correction. Heather is held because the corrected source still has a colored fringe; both originals are retained. Grass, reeds and the recovered field rock remain pending their exact seeded variants. Earlier batch requests overlapped before the sequential workflow instruction was caught; all subsequent generation is one completed request at a time.
+
+No separate user image acceptance is claimed. Authorized engineer review retains isolated references, originals, normalization details and four viewport day/night evidence for each active entry. The batch journal is `tools/sprites/batches/2026-10-08-03/production-journal.json`. Local v0.8.95 checks passed 51 regression suites and WebKit phone/material paths; Chromium's first full run reached a Recall assertion at 980 × 1740, so v0.8.97 must complete fresh build/check/regression/device gates before publication. This stage is not completion of the open catalog. Next: publish the tested nature stage after reconciling main, verify exact deployment, then continue held and remaining entries.
+
+
+## Completed-assets publication authorized · 8 October 2026
+
+Joel authorized implementing only the already-completed work after the pause. Publish these 20 reviewed nature registrations as v0.8.97, preserving the Goblin correction and rollback history. New generation and unfinished candidates remain paused. Final local build/format/registry checks passed, along with 51 regression suites, 224 desktop/mobile Chromium checks and five WebKit phone viewport paths. No remote release is claimed until PR CI and exact live deployment pass. Terrain materials remain owned by the separate continuation and are not activated by this nature release. After publication, update issue #125 with the release evidence; leave the remaining catalog and held variants paused.
+
+## Resumed production · 8 October 2026
+
+Joel explicitly resumed generation, implementation and publication in this chat. Both interruption checkpoints are preserved. PR #121 deployment run 37777751587 was rechecked: main, WebKit, deployment, exact published SHA and desktop/phone live checks all passed. PR #127 merged the 20 saved nature bodies at 3b3fbdfd99771c0a69b4e7e4512a9b8580dc5e0d after successful exact-head run 37809052731.
+
+This v0.8.98 continuation reconciles the five retained ground materials from PR #126 with all 27 body registrations from #127. Duplicate Vale bush/wildflower records retain #127 active revisions; the other candidates and sources remain historical. No generated image has been recreated. Both original checkpoint branches remain untouched. Remote checks and exact live deployment remain pending. Next: verify this recovered stage, correct held heather/grass and preserve exact seeded reed/rock variants, then continue the open catalog.

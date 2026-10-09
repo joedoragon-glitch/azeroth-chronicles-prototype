@@ -1,0 +1,35 @@
+{
+  "originalHash": "9f1b276c4939fcc33dc08d2745931a2cffa385ccd662fe67fa07043059040f70",
+  "sourceHash": "41da5a5a95d3d101df96fd2541705b76beb7543cf10bf511c4ddac643ab12a5f",
+  "fullCanvasResize": {
+    "from": [
+      1254,
+      1254
+    ],
+    "to": [
+      1254,
+      1254
+    ],
+    "kernel": "nearest"
+  },
+  "padding": {
+    "left": 16,
+    "right": 16,
+    "top": 16,
+    "bottom": 16,
+    "background": {
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "alpha": 0
+    }
+  },
+  "translation": {
+    "x": -1,
+    "y": -7
+  },
+  "crop": false,
+  "trim": false,
+  "alphaDeletion": false,
+  "reason": "Explicit full-canvas sizing and transparent padding match current native material footprint; unchanged image-tool original retained."
+}

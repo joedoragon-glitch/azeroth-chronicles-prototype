@@ -1,0 +1,97 @@
+{
+  "version": 2,
+  "key": "prop:driftwood:march",
+  "catalogId": "281",
+  "canonHash": "c57bf2d3be69214b9e2a67282d455447fdbac9eb03addabf25c415a288942919",
+  "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+  "catalogHash": "1d1be69207657761c8b11a154096d74e9ec0bdc7c87c7faf14f6aa1d0c2909b1",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1809,
+    "height": 1809,
+    "bytes": 117674,
+    "decodedBytes": 13089924,
+    "hash": "a17790876cd89036b6f57155361ef834f7a16bea611c58dd6678ac8e41627d42",
+    "pixelHash": "caa008362be92f7c5b360bb2dc82f2e7028cdad7a7536a9282613ef99ef7d710",
+    "bounds": {
+      "x1": 616,
+      "y1": 339,
+      "x2": 1355,
+      "y2": 1305
+    },
+    "padding": 339,
+    "transparentPixels": 3241864,
+    "visiblePixels": 30617,
+    "lowAlphaPixels": 3038,
+    "materialBounds": {
+      "x1": 720,
+      "y1": 1000,
+      "x2": 1099,
+      "y2": 1178
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 1698,
+    "decodedBytes": 147456,
+    "hash": "7168c324281a4c17c42f22c21bf883a7d00eeb96e2c4550711eb41a8723c3284",
+    "pixelHash": "ebd079acff3449083361643bc003b090a5409d72fdd428e9973b2f9c29cd97f7",
+    "bounds": {
+      "x1": 74,
+      "y1": 135,
+      "x2": 114,
+      "y2": 167
+    },
+    "padding": 24,
+    "transparentPixels": 36519,
+    "visiblePixels": 345,
+    "lowAlphaPixels": 41,
+    "materialBounds": {
+      "x1": 74,
+      "y1": 136,
+      "x2": 114,
+      "y2": 153
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1809,
+      1809
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": -2,
+      "y": 29,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "reviewer": "Codex engineering review under authorized faithful implementation",
+    "userImageAcceptance": false,
+    "seedInvariant": true,
+    "evidence": "tools/sprites/batches/2026-10-08-02/prop-driftwood-march/review-scenes/comparison.json",
+    "notes": "Exact current canon, organic material shapes, native silhouette and ground contact reviewed in desktop/small phone/portrait/landscape day and night. Current decoration branch has no seed-dependent body variant. Static body has no obsolete animation attachments."
+  }
+}

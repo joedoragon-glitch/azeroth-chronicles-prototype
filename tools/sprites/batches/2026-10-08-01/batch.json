@@ -18,25 +18,57 @@
       "key": "hero:mage",
       "revision": "482a359a5997d069c2bd66761ebbafcafb234d3abce8acabe54cd1b2c2402254",
       "rollback": "procedural",
-      "stage": "registered; release pending"
+      "stage": "released in v0.8.94",
+      "release": {
+        "pr": 123,
+        "mergeCommit": "369cc42889228fb1dbfc1a54c7048deda1f051b0",
+        "workflow": 37784625938,
+        "status": "success",
+        "exactPublishedBuild": true,
+        "liveDesktopPhoneSmoke": true
+      }
     },
     {
       "key": "hero:ranger",
       "revision": "fbf4d3d59177a51cf4ade65829e2bab7c62491c0728b06fe4ba95f099a578671",
       "rollback": "procedural",
-      "stage": "registered; release pending"
+      "stage": "released in v0.8.94",
+      "release": {
+        "pr": 123,
+        "mergeCommit": "369cc42889228fb1dbfc1a54c7048deda1f051b0",
+        "workflow": 37784625938,
+        "status": "success",
+        "exactPublishedBuild": true,
+        "liveDesktopPhoneSmoke": true
+      }
     },
     {
       "key": "ally:soldier",
       "revision": "a48acfe9940e55581d1598cbd0a8a4a7d10b9bb2dc92f6e4e717ad495a961bd8",
       "rollback": "procedural",
-      "stage": "registered; release pending"
+      "stage": "released in v0.8.94",
+      "release": {
+        "pr": 123,
+        "mergeCommit": "369cc42889228fb1dbfc1a54c7048deda1f051b0",
+        "workflow": 37784625938,
+        "status": "success",
+        "exactPublishedBuild": true,
+        "liveDesktopPhoneSmoke": true
+      }
     },
     {
       "key": "ally:archer",
       "revision": "9b9548bf117f33a4ef68b23be54e217def7f9cbd2fdb871747821846cfc00146",
       "rollback": "procedural",
-      "stage": "registered; release pending"
+      "stage": "released in v0.8.94",
+      "release": {
+        "pr": 123,
+        "mergeCommit": "369cc42889228fb1dbfc1a54c7048deda1f051b0",
+        "workflow": 37784625938,
+        "status": "success",
+        "exactPublishedBuild": true,
+        "liveDesktopPhoneSmoke": true
+      }
     }
   ],
   "pendingNature": [
@@ -61,8 +93,10 @@
     "generated": 0,
     "stage": "dedicated pipeline verified; five-ground image production next"
   },
-  "nextAction": "Publish actor batch and terrain pipeline, then process nature candidates/variants and five regional ground pilots in the next small staged batch.",
+  "nextAction": "Continue staged catalog production from latest production checkpoint",
   "releaseBaseCommit": "c93f64475123260af317cc0435ab81a5c317f4bd",
   "releaseVersion": "0.8.94",
-  "concurrentWork": "Retains main environmental sound v0.8.93 and its audio smoke fixes"
+  "concurrentWork": "Retains main environmental sound v0.8.93 and its audio smoke fixes",
+  "recoveredGroundGenerations": 5,
+  "recoveryNote": "Interrupted chat also generated five regional ground pilots after terrain pipeline verification. Preserved unchanged originals and candidates; newer stage resumes them."
 }

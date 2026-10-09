@@ -1,0 +1,97 @@
+{
+  "version": 2,
+  "key": "prop:marsh-bush:march",
+  "catalogId": "274",
+  "canonHash": "8c2cc3be36786671b7cee7e019277a6dc76ca0f7f143487def86b05a1f204ac0",
+  "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+  "catalogHash": "e1fb219b4fae6e0de116f405c945a46638aeca0064a0f83422d9bb5efba7f108",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1904,
+    "height": 1904,
+    "bytes": 146451,
+    "decodedBytes": 14500864,
+    "hash": "e50864ed9dca59068af825421f3bba17adef320aa9594a9bb34af1de16b5d72e",
+    "pixelHash": "9619341b3a34ba8d6118e67d82d95bbf4a60134032e4ac0e2fd3c416725637ca",
+    "bounds": {
+      "x1": 374,
+      "y1": 453,
+      "x2": 1460,
+      "y2": 1490
+    },
+    "padding": 374,
+    "transparentPixels": 3576140,
+    "visiblePixels": 49076,
+    "lowAlphaPixels": 2341,
+    "materialBounds": {
+      "x1": 807,
+      "y1": 1111,
+      "x2": 1153,
+      "y2": 1307
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 2172,
+    "decodedBytes": 147456,
+    "hash": "13cf6cbe224090d4a6a13938f0d346acc49947c58d46c3b659fb49f347d017ee",
+    "pixelHash": "d6ddcdb49741497d1983a7f887b806119118cb0e279417460aa4abf1e75b8ffc",
+    "bounds": {
+      "x1": 35,
+      "y1": 92,
+      "x2": 124,
+      "y2": 168
+    },
+    "padding": 23,
+    "transparentPixels": 36362,
+    "visiblePixels": 502,
+    "lowAlphaPixels": 30,
+    "materialBounds": {
+      "x1": 78,
+      "y1": 132,
+      "x2": 113,
+      "y2": 151
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1904,
+      1904
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": -3,
+      "y": 20,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "reviewer": "Codex engineering review under authorized faithful implementation",
+    "userImageAcceptance": false,
+    "seedInvariant": true,
+    "evidence": "tools/sprites/batches/2026-10-08-03/prop-marsh-bush-march/review-scenes/comparison.json",
+    "notes": "Exact fixed decoration branch reviewed against retained native reference and four desktop/phone viewports in day/night. Organic wood/foliage and stone/mineral contours retain colors, branch/cluster counts and grounding. Existing placement and procedural overlays preserved."
+  }
+}
