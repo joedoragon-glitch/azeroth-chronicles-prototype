@@ -1795,13 +1795,15 @@
       }
     state.active = state.active.filter((n) => now < n.until);
     // Story prose is optional reading, never a combat overlay or a rival to urgent news.
-    const inCombat = game.zone().enemies.some(
-      (e) =>
-        e.hp > 0 &&
-        e.aggro &&
-        !e.neutral &&
-        Math.hypot(e.x - game.hero.x, e.y - game.hero.y) < 720,
-    );
+    const inCombat = game
+      .zone()
+      .enemies.some(
+        (e) =>
+          e.hp > 0 &&
+          e.aggro &&
+          !e.neutral &&
+          Math.hypot(e.x - game.hero.x, e.y - game.hero.y) < 720,
+      );
     const canNarrate =
       !inCombat &&
       !menu &&
