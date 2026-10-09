@@ -160,8 +160,11 @@ await check('Rebinding updates real input, menus and labels and survives reload 
  await page.keyboard.down('ArrowUp');await page.waitForTimeout(100);await page.keyboard.up('ArrowUp');assert(await page.evaluate(()=>Prototype.game.hero.y)<before);
  assert((await page.locator('#desktop-hints').textContent()).includes('↑'));
  assert((await page.locator('#talent-button').getAttribute('title')).includes('press L'));
- await page.evaluate(()=>Prototype.game.event('level',{level:Prototype.game.hero.level}));
- await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('press L or use Discipline Training'));
+ const beforeLevel=await page.evaluate(()=>Prototype.game.snapshot());
+ await page.evaluate(()=>Prototype.game.xp(Prototype.game.xpRequired()));
+ await page.waitForFunction(()=>[...document.querySelectorAll('#message .notice-card')].some(n=>n.textContent.includes('Training point')));
+ assert(!(await page.locator('#status').textContent()).includes('Training point'),'level-up belongs to amber only');
+ await page.evaluate(state=>{Prototype.game.s=state;},beforeLevel);
  assert((await page.locator('#health-potion small').textContent()).startsWith('U'));
  assert((await page.locator('#mana-potion small').textContent()).startsWith('O'));
  await page.evaluate(()=>Prototype.save());await page.reload();await page.waitForFunction(()=>!!window.Prototype);
