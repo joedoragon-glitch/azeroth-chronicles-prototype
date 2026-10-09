@@ -90,9 +90,7 @@
         );
         const ledger = this.tacticalThreatSnapshot(e);
         for (const record of ledger) {
-          const found = candidates.find(
-            (u) => (u === this.hero ? 'hero' : u.id) === record.source,
-          );
+          const found = candidates.find((u) => (u === this.hero ? 'hero' : u.id) === record.source);
           if (found) return found;
         }
         return candidates.includes(fallback) ? fallback : candidates[0] || null;
