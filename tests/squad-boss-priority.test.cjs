@@ -100,6 +100,9 @@ for (const heroClass of ['mage', 'ranger', 'paladin']) {
   b.aggro = false;
   c.squadDoctrineLabel();
   assert.equal(c.s.squadDoctrine, manual, heroClass + ' keeps the manual mode during adds-only pressure');
+  assert.deepEqual(targets(c), [manual === 'focus' ? b.id : summoned.id,
+    manual === 'focus' ? b.id : summoned.id],
+    heroClass + ' obeys its manual boss/adds instruction during brief boss aggro loss');
   b.aggro = true;
   c.squadDoctrineLabel();
   assert.equal(c.s.squadDoctrine, manual, heroClass + ' retains the manual mode on boss reacquisition');
