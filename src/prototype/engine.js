@@ -2803,9 +2803,10 @@
       return true;
     }
     tacticalResolveRogueMove(e, move) {
-      const target = move.targetId === 'hero'
-        ? this.hero
-        : this.s.party.find((u) => u.id === move.targetId && u.active !== false);
+      const target =
+        move.targetId === 'hero'
+          ? this.hero
+          : this.s.party.find((u) => u.id === move.targetId && u.active !== false);
       if (!target || target.hp <= 0 || dist(target, move) > move.radius || !this.line(e, target))
         return;
       if (move.style === 'dash' && dist(e, target) > 95) {
@@ -2831,8 +2832,7 @@
       let recruited = 0;
       for (const ally of this.tacticalRegroupCandidates(e)) {
         if (recruited >= cfg.maxReinforcements) break;
-        if (ally.aggro || dist(ally, e) > cfg.supportRadius || dist(target, ally) > 320)
-          continue;
+        if (ally.aggro || dist(ally, e) > cfg.supportRadius || dist(target, ally) > 320) continue;
         // Do not create a cascading pack pull across the map.
         if (this.engage(ally, true, false) !== false) recruited++;
       }
@@ -2841,11 +2841,21 @@
     tacticalAutoRogue(e, target) {
       const cfg = R.tacticalFoundation;
       if (
-        !cfg.enabled || this.peace || !target || !e.aggro || e.summon ||
-        e.hp <= 0 || e.returning || e.telegraph || e.motion || e.rangedAim ||
-        this.tacticalRogueRegroup(e) || this._tacticalRegroupUsed?.has(e.id) ||
+        !cfg.enabled ||
+        this.peace ||
+        !target ||
+        !e.aggro ||
+        e.summon ||
+        e.hp <= 0 ||
+        e.returning ||
+        e.telegraph ||
+        e.motion ||
+        e.rangedAim ||
+        this.tacticalRogueRegroup(e) ||
+        this._tacticalRegroupUsed?.has(e.id) ||
         (Number.isFinite(e.fightStart) && this.s.time - e.fightStart < 1.1)
-      ) return false;
+      )
+        return false;
       const pressure = this.tacticalActiveTargetCount(e);
       if (!this.tacticalRogueEligibility(e, pressure)) return false;
       if (!this._tacticalRegroupUsed) this._tacticalRegroupUsed = new Set();
