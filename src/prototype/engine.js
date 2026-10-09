@@ -2305,8 +2305,7 @@
         return;
       this.updateRangerSupport(dt);
       this.autoRangerSupport();
-      if (R.resourceMode.manaEnabled)
-        h.mp = Math.min(h.maxMp, h.mp + this.manaRegenRate() * dt);
+      if (R.resourceMode.manaEnabled) h.mp = Math.min(h.maxMp, h.mp + this.manaRegenRate() * dt);
       this.updateNight();
       this.updateEscort(dt);
       this.checkClear();
