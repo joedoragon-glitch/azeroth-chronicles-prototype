@@ -646,3 +646,12 @@ button:focus-visible {
   border-width: 1px;
   border-radius: 9px;
 }
+
+body.menu-open::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  background: #030c1591;
+  pointer-events: none;
+}
