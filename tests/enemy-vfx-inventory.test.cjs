@@ -46,6 +46,24 @@ assert.deepEqual(
   ['windup', 'travel', 'impact'],
 );
 
+const species = new Set([
+  ...Campaign.data.species.flat().map((entry) => entry[0]),
+  ...Object.keys(Campaign.rules.nightEnemyCombat),
+]);
+const rangedSpecies = new Set([
+  ...Object.keys(Campaign.rules.rangedProfiles),
+  'archer', 'crownguard', 'wraith',
+]);
+const expectedBasics =
+  species.size * 4 +
+  [...rangedSpecies].filter((speciesId) => species.has(speciesId)).length * 2 +
+  Object.keys(Campaign.rules.tacticalFoundation.rogueMoves.bosses || {}).length +
+  Object.keys(Campaign.rules.tacticalFoundation.rogueMoves.captains || {}).length;
+assert.equal(report.counts['rogue-basic'], expectedBasics, 'all appropriate species, role and tier basic maneuvers');
+assert(report.rows.some((r) => r.id === 'rogue/guardian/ranged/ogre/basic'));
+assert(report.rows.some((r) => r.id === 'rogue/ringleader/ranged/wolf/basic'));
+assert(report.rows.some((r) => r.id === 'rogue/boss/thorn/basic'));
+
 const T = Campaign.rules.tacticalFoundation;
 const signatures = Object.values(T.rogueRingleaderSignatures || {}).reduce(
   (n, family) => n + Object.keys(family).length, 0,
