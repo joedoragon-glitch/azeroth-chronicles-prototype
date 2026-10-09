@@ -174,10 +174,12 @@
     for (const e of game.zone().enemies.filter((e) => e.telegraph)) {
       const a = e.telegraph,
         shapes = warningShapes(a, game.attackPatches(a));
-      ctx.strokeStyle = '#ffe09a';
-      ctx.fillStyle = '#dc644c30';
-      ctx.lineWidth = 2.5;
-      ctx.setLineDash(cue ? [8, 5] : []);
+      // Rogue warnings need an identity distinct from ordinary boss attacks:
+      // cool outlines for basic disruption, brighter double-width for signature.
+      ctx.strokeStyle = a.rogueSignature ? '#9cf1f0' : a.rogueMove ? '#8ecde6' : '#ffe09a';
+      ctx.fillStyle = a.rogueSignature ? '#369ab33e' : a.rogueMove ? '#4b95c132' : '#dc644c30';
+      ctx.lineWidth = a.rogueSignature ? 3.3 : 2.5;
+      ctx.setLineDash(cue ? (a.rogueSignature ? [10, 4] : [8, 5]) : []);
       for (const points of shapes) {
         polygon(ctx, screen, points);
         cue ? ctx.stroke() : a.kind !== 'ring' && ctx.fill();
@@ -185,17 +187,55 @@
       ctx.setLineDash([]);
       if (cue) {
         const p = screen(a);
-        ctx.font = 'bold 12px system-ui';
         ctx.textAlign = 'center';
-        const label = a.name + ' · ' + a.timer.toFixed(1),
-          w = ctx.measureText(label).width + 16;
-        ctx.fillStyle = '#241d1af2';
-        ctx.fillRect(p.x - w / 2, p.y - 31, w, 21);
-        ctx.strokeStyle = '#f4c984';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(p.x - w / 2, p.y - 31, w, 21);
-        ctx.fillStyle = '#fff3c8';
-        ctx.fillText(label, p.x, p.y - 16);
+        if (a.rogueMove) {
+          // Wrap the complete named move, rather than shrink an oversized
+          // one-line label to unreadable phone text or clip it off-screen.
+          const zoom = ctx.getTransform?.().a || 1,
+            canvasWidth = (ctx.canvas?.width || 900) / zoom,
+            canvasHeight = (ctx.canvas?.height || 650) / zoom,
+            maxWidth = Math.max(130, canvasWidth - 20);
+          ctx.font = 'bold 11px system-ui';
+          const lines = [''];
+          for (const word of a.name.split(' ')) {
+            const i = lines.length - 1,
+              next = lines[i] ? lines[i] + ' ' + word : word;
+            if (lines[i] && ctx.measureText(next).width + 20 > maxWidth) lines.push(word);
+            else lines[i] = next;
+          }
+          const w = Math.min(
+              maxWidth,
+              Math.max(100, ...lines.map((line) => ctx.measureText(line).width + 20)),
+            ),
+            x = Math.max(w / 2 + 5, Math.min(canvasWidth - w / 2 - 5, p.x)),
+            h = 17 + lines.length * 15,
+            y = Math.max(6, Math.min(canvasHeight - h - 6, p.y - h - 12));
+          ctx.fillStyle = '#192a36f2';
+          ctx.fillRect(x - w / 2, y, w, h);
+          ctx.strokeStyle = a.rogueSignature ? '#9cf1f0' : '#8ecde6';
+          ctx.lineWidth = 1.4;
+          ctx.strokeRect(x - w / 2, y, w, h);
+          ctx.fillStyle = '#f2fbff';
+          lines.forEach((line, j) => ctx.fillText(line, x, y + 13 + j * 15));
+          ctx.font = 'bold 10px system-ui';
+          ctx.fillStyle = '#9cf1f0';
+          ctx.fillText(
+            (a.rogueSignature ? 'SIGNATURE' : 'ROGUE') + ' · ' + a.timer.toFixed(1) + 's',
+            x,
+            y + h - 4,
+          );
+        } else {
+          ctx.font = 'bold 12px system-ui';
+          const label = a.name + ' · ' + a.timer.toFixed(1),
+            w = ctx.measureText(label).width + 16;
+          ctx.fillStyle = '#241d1af2';
+          ctx.fillRect(p.x - w / 2, p.y - 31, w, 21);
+          ctx.strokeStyle = '#f4c984';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(p.x - w / 2, p.y - 31, w, 21);
+          ctx.fillStyle = '#fff3c8';
+          ctx.fillText(label, p.x, p.y - 16);
+        }
       }
     }
     for (const a of game.s.hazards) {
