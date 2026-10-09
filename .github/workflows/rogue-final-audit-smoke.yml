@@ -1,0 +1,27 @@
+name: Rogue Final Audit Probe
+on:
+  push:
+    branches: [rogue-final-audit-smoke-146]
+permissions:
+  contents: read
+jobs:
+  focused-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - name: Audit rogue behavior
+        run: node tests/audit-regressions.test.cjs
+      - name: Inspect exact formatting edits
+        if: always()
+        run: |
+          npx prettier --write src/prototype/rules.js src/prototype/engine.js src/prototype/combat.js src/prototype/combat-visuals.js src/prototype/party.js src/prototype/hero-combat.js src/prototype/app.js
+          echo 'ROGUE_PRETTIER_DIFF_BEGIN'
+          git diff --no-ext-diff --unified=3 -- src/prototype/rules.js src/prototype/engine.js src/prototype/combat.js src/prototype/combat-visuals.js src/prototype/party.js src/prototype/hero-combat.js src/prototype/app.js
+          echo 'ROGUE_PRETTIER_DIFF_END'
+      - name: Verify sprite-scope ledger
+        if: always()
+        run: node tests/sprite-scope.test.cjs
