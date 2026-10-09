@@ -8,7 +8,7 @@ This branch is deliberately separate from the responsive HUD in PR #165, the Dro
 
 ## Authored content
 
-`PrototypeData.questNarration` contains **30 distinct once-only lines** indexed to `PrototypeData.quests` (stable `quest-0`…`quest-29` IDs). Each line is written as an observable consequence, grounded in existing regional/quest canon; the text neither retells the XP/crown transaction nor invents new places, powers, or state changes.
+`src/prototype/narration.js` exports **30 distinct once-only lines** indexed to `PrototypeData.quests` (stable `quest-0`…`quest-29` IDs). It is a separately loaded multi-file/PWA asset so that changes to prose do not modify canonical `data.js` or invalidate the sprite-scope source fingerprint. Each line is written as an observable consequence, grounded in existing regional/quest canon; the text neither retells the XP/crown transaction nor invents new places, powers, or state changes.
 
 `payQuest` emits narration **only when the existing automatic reward is actually paid**. The original paid state already prevents repeats across saves, reloading, retroactive quest completion, or redundant objective checks. Barracks tutorial does not narrate. Rewards, progression, unlocks, combat, map geometry, save shape and quest IDs are unchanged.
 
@@ -20,7 +20,7 @@ Some examples:
 - `An Army Needs Supplies`: the Frontier's authenticated convoy/checkpoint network.
 - `Ready for the Dark Lord`: requires both rescued specialists and the fortress approach.
 
-The 30 lines are working copy for Joel's later prose audit, not a new canon authority.
+The 30 lines are working copy for Joel's later prose audit, not a new canon authority. The asset inventory, generated desktop/phone entries, and service-worker precache include the narration module; the canonical world data file remains byte-identical.
 
 ## Delivery contract
 
