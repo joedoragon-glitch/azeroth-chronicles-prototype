@@ -402,7 +402,10 @@ body[data-experience='phone'] #status {
   line-height: 1.3;
 }
 body[data-experience='phone'] #message {
-  top: calc(max(8px, env(safe-area-inset-top)) + 66px);
+  /* Keep short-lived warnings anchored below the vitals; the shared -10px
+     entry animation otherwise jumps into the HP/MP dock for a brief notice. */
+  top: calc(max(8px, env(safe-area-inset-top)) + 70px);
+  transform: translate(-50%, 0);
 }
 body[data-experience='phone']:has(#message.visible) #status {
   visibility: hidden;
