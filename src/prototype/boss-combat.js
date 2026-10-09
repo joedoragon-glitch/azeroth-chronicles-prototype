@@ -405,7 +405,7 @@
           let hit = false;
           for (const u of this.combatTargets())
             if (dist(u, e) < a.radius && this.line(e, u)) {
-              if (this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0)) {
+              if (this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id)) {
                 u.slow = Math.max(u.slow || 0, a.slowDuration || 0);
                 hit = true;
               }
@@ -417,7 +417,10 @@
               )
                 return;
             }
-          if (hit) e.hp = Math.min(e.maxHp, e.hp + e.maxHp * a.heal);
+          // Legacy MP mode retains the Wraith's fixed heal; in cooldown mode
+          // it siphons actual HP damage per victim instead of healing twice.
+          if (hit && R.resourceMode.manaEnabled)
+            e.hp = Math.min(e.maxHp, e.hp + e.maxHp * a.heal);
           return;
         }
         if (a.nightSkill === 'pounce') {
@@ -483,6 +486,7 @@
             ...a,
             family: e.family,
             species: e.species,
+            sourceId: e.id,
             x: e.x,
             y: e.y,
             life: R.combatGeometry.ringLife * R.bossCadence.areaRangeMultiplier,
@@ -535,7 +539,7 @@
         for (const u of party)
           if (hits(u) && this.line(e, u)) {
             if (
-              this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0) &&
+              this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id) &&
               ['cone', 'sector'].includes(a.kind)
             )
               this.event('melee', {
@@ -558,6 +562,7 @@
               ...p,
               family: e.family,
               species: e.species,
+              sourceId: e.id,
               kind: 'circle',
               life: 4,
               tick: 1,
@@ -581,7 +586,7 @@
               this.line(e, u)
             ) {
               a.hit.push(id);
-              this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0);
+              this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
               if (
                 this.hero !== hero ||
                 this.zoneId !== zone ||
