@@ -1191,6 +1191,27 @@
         }
       }
       dungeonWorkstation(z) {
+        // Rebuild these study objects for old saves as well as new Archive visits.
+        // Boss/captive visibility follows the saved normal/TRUE encounter state.
+        if (z.id === 'archive') {
+          for (const n of [
+            {
+              id: 'keeper-captive',
+              name: 'The Drowned Keeper',
+              kind: 'keeper',
+              ...this.safe(1030, 945, z.id),
+              icon: '🧙',
+            },
+            {
+              id: 'archive-ledger',
+              name: 'The Keeper’s ledger',
+              kind: 'archive-record',
+              ...this.safe(480, 565, z.id),
+              icon: '📜',
+            },
+          ])
+            if (!z.npcs.some((other) => other.id === n.id)) z.npcs.push(n);
+        }
         const spec = R.dungeonWorkstations?.[z.id];
         if (!spec) return;
         const captive = z.npcs.find((n) => n.kind === 'cage' && n.family === z.id);

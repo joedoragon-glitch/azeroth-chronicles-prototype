@@ -488,6 +488,14 @@ textarea,
   display: none;
 }
 
+#message .notice-detail {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.75em;
+  font-weight: 400;
+  color: #4c3a1b;
+}
+
 /* Compact adventure interface: slate, brass and restrained contrast. */
 :root {
   --ui-ink: #eef3f2;

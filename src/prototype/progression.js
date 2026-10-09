@@ -136,13 +136,6 @@
             this.expeditionUnlock(this.s.expeditionRank) +
             '.',
         );
-        this.notice(
-          'EXPEDITION ' +
-            this.s.expeditionRank +
-            ' · ' +
-            this.expeditionUnlock(this.s.expeditionRank),
-          5.5,
-        );
         this.event('expeditionRank', { rank: this.s.expeditionRank, family });
         return true;
       }
@@ -185,10 +178,6 @@
               ? ' Companion training advanced: Soldiers learned Holy Cleave; Archers learned Piercing Volley.'
               : ''),
         );
-        this.notice(
-          def[1].toUpperCase() + ' · RANK 1' + (slot === 2 ? ' · COMPANION SKILLS UNLOCKED' : ''),
-          5,
-        );
         this.event('learning', { slot });
         return true;
       }
@@ -212,7 +201,6 @@
         }
         this.hero.skills[slot - 1] = next;
         this.say(def[1] + ' upgraded · Rank ' + next + '.');
-        this.notice(def[1].toUpperCase() + ' · RANK ' + next, 4.5);
         this.event('upgrade', { slot, rank: next });
         return true;
       }
@@ -253,7 +241,6 @@
               : 'bonus HP, damage and armor') +
             '.',
         );
-        this.notice(def.name.toUpperCase() + ' ' + next + ' · ' + pct + '% inheritance', 5.5);
         this.event('expeditionSupport', { id, rank: next, family });
         return true;
       }
@@ -297,10 +284,6 @@
             pct +
             '%.',
         );
-        this.notice(
-          'COMPANION VITALITY ' + this.companionVitalityRank() + ' · +' + pct + '% HP',
-          5.5,
-        );
         this.event('companionVitality', { rank: this.companionVitalityRank(), family });
         return true;
       }
@@ -338,7 +321,6 @@
             (this.hero.freeTalentResets === 1 ? '' : 's') +
             ' left.',
         );
-        this.notice('FREE TRAINING RESET · ' + this.hero.freeTalentResets + ' LEFT', 5.5);
         this.event('talentRespec', {
           points: spent,
           free: true,
@@ -357,10 +339,6 @@
             ' training point' +
             (spent === 1 ? '' : 's') +
             ' refunded.',
-        );
-        this.notice(
-          'TRAINING RESET · ' + spent + ' point' + (spent === 1 ? '' : 's') + ' refunded',
-          5.5,
         );
         this.event('talentRespec', { points: spent, family, free: false });
         return true;
@@ -399,7 +377,6 @@
             (type === 'health' ? 'HP to the active party' : 'MP to the hero') +
             ' over five seconds.',
         );
-        this.notice((type === 'health' ? 'RANGER HEAL' : 'MANA RECOVERY') + ' · RANK 2', 4.5);
         this.event('rangerSupportTraining', { type, rank: 2 });
         return true;
       }
@@ -484,7 +461,6 @@
               (slot === 'weapon' ? 'power' : 'armor') +
               '.',
           );
-          this.notice(label.toUpperCase() + ' TIER ' + tier + ' · REFORGED', 4.5);
         } else {
           if (old >= tier) {
             this.say(
@@ -516,7 +492,6 @@
               (slot === 'weapon' ? 'power' : 'armor') +
               '.',
           );
-          this.notice(label.toUpperCase() + ' · TIER ' + tier, 4.5);
         }
         if (slot === 'weapon') this.autoEquipBestWeapon();
         this.event('purchase', { slot, tier, reforge });

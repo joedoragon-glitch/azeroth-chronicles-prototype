@@ -205,7 +205,8 @@
       PrototypeVisuals.draw(target, e, q, game.regionIndex(), rescued);
     }
     function spriteHeight(e) {
-      const fallback = PrototypeVisuals.height(e),
+      const fallback =
+          e.kind === 'keeper' ? 140 : e.kind === 'archive-record' ? 45 : PrototypeVisuals.height(e),
         rescued = !!game.s.rescued[e.family];
       return PrototypeSprites
         ? PrototypeSprites.height(e, game.regionIndex(), rescued, fallback)
@@ -1307,7 +1308,27 @@
             ctx.stroke();
           }
         }
-        if (!e.interactionOnly) sprite(e, p);
+        if (!e.interactionOnly)
+          sprite(
+            e.kind === 'archive-record'
+              ? { ...e, renderKind: 'prop', structure: 'scroll-stack', sceneRole: 'dry-stacks' }
+              : e.kind === 'keeper'
+                ? { ...e, renderKind: 'enemy', type: 'boss', family: 'archive', form: 'normal' }
+                : e,
+            p,
+          );
+        if (e.renderKind === 'npc' && e.kind === 'keeper') {
+          // A roomy iron cage, drawn around the visible captive, not a tiny icon.
+          ctx.strokeStyle = '#d4bea0';
+          ctx.lineWidth = 2.5;
+          ctx.strokeRect(p.x - 55, p.y - 112, 110, 144);
+          for (let x = -44; x <= 44; x += 22) {
+            ctx.beginPath();
+            ctx.moveTo(p.x + x, p.y - 112);
+            ctx.lineTo(p.x + x, p.y + 32);
+            ctx.stroke();
+          }
+        }
         if (['enemy', 'ally', 'hero'].includes(e.renderKind)) {
           const visibleCombat = e.renderKind !== 'enemy' || worldLabelVisible(e);
           if (visibleCombat && !e.neutral) healthPlate(e, p);
@@ -1369,7 +1390,7 @@
             ctx.shadowColor = '#07140e';
             ctx.shadowBlur = 4;
             const width =
-              e.presentation === 'workstation'
+              e.presentation === 'workstation' || e.kind === 'keeper' || e.kind === 'archive-record'
                 ? Math.min(ctx.measureText(name).width, canvas.width - 24)
                 : 0;
             const labelX = width

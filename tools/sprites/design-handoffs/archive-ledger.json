@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-design",
+  "designId": "archive-ledger",
+  "name": "Archive evidence ledger",
+  "kind": "environment",
+  "nextAction": "Retain procedural scene overlays; later sprite production must reuse the existing normal Keeper or scroll-stack identity and compare these exact references.",
+  "context": {
+    "originConversation": "https://chatgpt.com/share/6ac91036-0034-83ea-95a3-af377063619b",
+    "decisionSummary": "Joel approved finishing the optional captive Keeper and Archive records using best judgment. This continuation preserves the established boss/prop body and implements the cage and evidence interaction.",
+    "decisionDate": "2026-10-09",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/172",
+    "contentDocuments": [
+      "docs/QUEST_ANNOUNCEMENT_REQUIREMENTS.md",
+      "docs/QUEST_ARCHIVE_CONTINUATION.md"
+    ],
+    "locationAndLore": "Sunken Archive: the captive scholar bargains for Neri\u2019s record-preservation expertise; a discoverable ledger proves his capture proposal."
+  },
+  "decisions": {
+    "conceptAcceptance": "Approved implementation in the recovered conversation and current continuation request.",
+    "proceduralDesignAcceptance": "Engineer-reviewed faithful reuse and implementation; no separate player appearance approval claimed.",
+    "spriteProductionAuthorization": null,
+    "generatedAppearanceAcceptance": null,
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "c81957f3a4c87ead645f3884621c1c3219ff8adb",
+    "ownerFilesAndBranches": [
+      "src/prototype/renderer.js",
+      "src/prototype/world.js",
+      "src/prototype/menus.js"
+    ],
+    "exactEntityState": {
+      "zone": "archive",
+      "id": "archive-ledger",
+      "kind": "archive-record",
+      "body": {
+        "renderKind": "prop",
+        "structure": "scroll-stack",
+        "sceneRole": "dry-stacks"
+      }
+    },
+    "isolatedReferencePath": "tools/sprites/references/2026-10-09-archive/archive-ledger.png",
+    "isolatedReferenceHash": "506d82c777613b74d556998733d37dd5589b7d1776346e9f6c6d9175c7939fe5",
+    "gameplayContextPaths": [
+      "tools/sprites/references/2026-10-09-archive/keeper-captive-webkit-375x800.png",
+      "tools/sprites/references/2026-10-09-archive/keeper-counsel-webkit-375x800.png"
+    ],
+    "traitsToPreserve": [
+      "Existing scroll-stack shape and restrained Archive palette.",
+      "Readable records among dry stacks, not a generic human NPC."
+    ],
+    "assetSpecificDependencies": [
+      "The isolated reference uses the existing procedural body at 3\u00d7 raster scale, not generated artwork."
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "Reused scroll-stack body"
+    ],
+    "reusedDesignIds": [
+      "Existing scroll-stack procedural prop"
+    ],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "renderer.js owns cage, ground placement and labels; engine.js owns availability. No collision or combat changes for art."
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [
+      "Static discoverable evidence"
+    ],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "docs/QUEST_ARCHIVE_CONTINUATION.md"
+  }
+}

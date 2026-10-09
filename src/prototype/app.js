@@ -83,7 +83,7 @@
       } else {
         paused = false;
         audio.setPaused(false);
-        status('No update waiting. Check again shortly.');
+        status('Already up to date.');
       }
     } catch (_) {
       paused = false;
@@ -109,7 +109,6 @@
   }
   async function installApp() {
     if (runningAsApp()) {
-      status('Azeroth Chronicles is already running as an installed app.');
       closeMenu();
       return;
     }
@@ -133,7 +132,15 @@
   function status(text) {
     if (text === 'Saved locally · export for a backup') return;
     $('status').textContent = text;
-    statusUntil = performance.now() + 5000;
+    const important =
+      /storage unavailable|Saving failed|Saved run unavailable|Legacy save|Invalid import|Imported successfully/i.test(
+        text,
+      );
+    statusUntil = performance.now() + (important ? 6000 : 2800);
+  }
+  function manaStatus(text) {
+    // Dormant MP remains recoverable: the restoration flag brings this back.
+    if (PrototypeRules.resourceMode?.manaEnabled !== false) status(text);
   }
   function persistProfile() {
     return persistence.saveProfile(profile);
@@ -179,6 +186,8 @@
     skillBook,
     supplier,
     smith,
+    keeper,
+    keeperLedger,
     regionalSpecialistObjective,
     barracksMenu,
     inventory,
@@ -195,6 +204,7 @@
     recallSquad,
     showMap,
     finaleMenu,
+    status,
   });
 
   window.Prototype = {
@@ -259,10 +269,45 @@
     );
   }
   function help(back = closeMenu) {
+    const skillKeys = Array.from({ length: 8 }, (_, i) => input.key('skill' + (i + 1))).join(' / ');
+    const description =
+      'Move ' +
+      ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('/') +
+      '; phone: joystick. Interact ' +
+      input.key('interact') +
+      '/' +
+      input.key('confirm') +
+      '.\n' +
+      'Skills 1–8: ' +
+      skillKeys +
+      '. Tap for normal; hold Skills 1–3 until CHARGED, then release. Skill 3 heals you; charged Skill 3 heals living companions too.\n' +
+      'Target ' +
+      input.key('target') +
+      ': tap to cycle, hold to lock. Aim: gold is clear, amber is too far, red is blocked. Dodge marked attacks.\n' +
+      'Recall ' +
+      input.key('recall') +
+      '; Ranger Heal ' +
+      input.key('heal') +
+      (PrototypeRules.resourceMode?.manaEnabled !== false
+        ? '; Mana Recovery ' + input.key('mana')
+        : '') +
+      '. Fallen companions need Barracks recovery.\nMap ' +
+      input.key('map') +
+      ', Journal ' +
+      input.key('quests') +
+      ', Menu Esc. In menus: ' +
+      input.key('up') +
+      '/' +
+      input.key('down') +
+      ' selects; ' +
+      input.key('confirm') +
+      '/Enter confirms; Esc returns. Mouse/touch buttons also work.' +
+      (game.s.keeperPact && game.keeperAvailable()
+        ? '\nThe Keeper has deeper answers at your Barracks.'
+        : '');
     openMenu(
       'Controls',
-      input.actions.map(([id, name]) => input.key(id) + ' — ' + name).join('\n') +
-        '\n\nEsc — Menu / back · Enter or Space — Confirm in menus\nMouse or touch — Activate menus and HUD buttons\nSkills 1–3: tap under 0.20 s for normal; hold 0.65 s for charged. Releasing an incomplete hold cancels.\nCharged Skills 1 / 2 / 3 cost 20% / 30% / 35% max MP respectively. Hold through a cooldown to queue the charge; WAIT shows until charging can begin.\nCHARGED means ready to release. NEED MP / NO TARGET / NO HEAL explain a blocked charge. Skills 1–2 lock their target when charging begins; Target changes it deliberately while held.\nTap Q (or your assigned Target key), or tap the Target button, to cycle visible enemies. Hold either for 0.55 s to LOCK the current target for the encounter while dodging or fighting summons; tap again to switch and unlock. A lock clears when the target dies, returns home, or the hero changes area.\nHold Skill 1 or 2 for a fine aim guide: gold means in range and clear, amber means move closer, red means blocked. No target switching is needed for Self-Heal.\nNormal Skill 1 builds a same-target combo across three hits; the third adds frontal splash. Switching targets or waiting four seconds resets it.\nSquad doctrine becomes available at Expedition 3 during combat and resets for each encounter.\nMovement autoattack stays active, except while holding Skill 1.\nTouch: use the joystick or tap a reachable place to move when enabled. Keyboard or joystick movement cancels a destination.\nMouse: left click commands Ranger Heal unless click-to-move is enabled; right click commands Mana Recovery. HUD recovery buttons always work.\nNormal Skill 3 heals the hero; charged Skill 3 also heals living active companions. Rangers automatically support the active group; manual Heal can restore the hero or a wounded living companion, and Mana Recovery restores hero MP. Fallen companions require separate recovery.\nSprint remains unavailable.',
+      description,
       [
         action('Customize keyboard', () => keyboardMenu(back)),
         action('Touch and mouse options', () => pointerMenu(back)),
@@ -826,7 +871,7 @@
   function interact() {
     const n = nearestNPC();
     if (!n) {
-      game.say('Find a marked person or place nearby. Use the map.');
+      status('Nothing nearby to interact with.');
       return;
     }
     if (
@@ -842,7 +887,25 @@
         'mini',
       ].includes(n.kind)
     ) {
-      game.interact(n);
+      const success = game.interact(n);
+      if (!success) {
+        if (n.kind === 'cage' && !game.s.keys[n.family])
+          status('Defeat ' + game.boss(n.family).name + ' before freeing ' + n.name + '.');
+        else if (n.kind === 'rest')
+          status(
+            game.refugeThreat()
+              ? 'Cannot rest during combat.'
+              : 'Rest ready in ' + Math.ceil(game.s.restCooldown) + 's.',
+          );
+        else if (n.kind === 'bundle' || n.kind === 'fountain')
+          status(n.kind === 'bundle' ? 'Clear the guards first.' : 'Fountain unavailable.');
+        else if (n.kind === 'resource')
+          status(
+            (game.s.expeditionRank || 1) < 2
+              ? 'Expedition Rank 2 needed.'
+              : 'An idle companion is needed.',
+          );
+      }
       save();
       updateHUD();
       return;
@@ -850,6 +913,8 @@
     if (n.kind === 'barracks') barracksMenu(n);
     else if (n.kind === 'teacher') teacher(n);
     else if (n.kind === 'smith') smith(n);
+    else if (n.kind === 'keeper') keeper();
+    else if (n.kind === 'archive-record') keeperLedger();
     else if (n.kind === 'supplier' || n.kind === 'alchemist') supplier(n);
     else if (n.kind === 'recruiter') partyMenu();
     else if (n.kind === 'quests') quests(true);
@@ -1117,13 +1182,7 @@
       : game.cycleHeroTarget(visibleHostile);
     // Explicit selection while charging deliberately switches its aim.
     if (charge && (charge.slot === 1 || charge.slot === 2)) charge.targetId = target?.id ?? null;
-    status(
-      target
-        ? locked
-          ? 'TARGET LOCKED · ' + target.name + ' · Hold focus until the encounter ends.'
-          : 'Target · ' + target.name + ' · Hold Target to lock.'
-        : 'No visible hostile targets nearby.',
-    );
+    status(target ? (locked ? 'Locked · ' : 'Target · ') + target.name : 'No target nearby.');
     updateHUD();
   }
   function beginTargetPress(source, pointerId = null) {
@@ -1401,61 +1460,32 @@
     const rank = game.hero.skills[slot - 1],
       cost = game.skillManaCost(slot, rank, charged);
     if (game.hero.cd[slot - 1] > 0) {
-      status('Skill ' + slot + ' is ready in ' + cooldownText(game.hero.cd[slot - 1]) + 's.');
+      status('Skill ' + slot + ' · ' + cooldownText(game.hero.cd[slot - 1]) + 's.');
       return;
     }
     if (game.hero.mp < cost) {
-      status(
-        (charged ? 'Charged ' : '') +
-          'Skill ' +
-          slot +
-          ' needs ' +
-          cost +
-          ' MP' +
-          (charged ? ' (' + chargedManaPercent(slot) + '% max MP).' : '.'),
-      );
+      manaStatus('Need ' + cost + ' MP.');
       return;
     }
     if (slot === 1 || slot === 2) {
-      status(
-        (charged ? 'Charged ' : '') +
-          'Skill ' +
-          slot +
-          ' needs a hostile target in range and line of sight.',
-      );
+      status('No target in range.');
       return;
     }
     if (slot === 3) {
-      status(
-        (charged ? 'Charged ' : '') +
-          'Self-Heal needs a wounded ' +
-          (charged ? 'hero or active companion.' : 'hero.'),
-      );
+      status('No healing needed.');
     }
   }
   function chargeStateStatus(cast) {
     if (cast.state === 'need-mp') {
-      status(
-        'Charged Skill ' +
-          cast.slot +
-          ' needs ' +
-          cast.cost +
-          ' MP (' +
-          chargedManaPercent(cast.slot) +
-          '% max MP).',
-      );
+      manaStatus('Need ' + cast.cost + ' MP.');
       return;
     }
     if (cast.state === 'no-target') {
-      status(
-        'Charged Skill ' +
-          cast.slot +
-          ' lost its target · move into range or line of sight and charge again.',
-      );
+      status('Target lost. Move closer.');
       return;
     }
     if (cast.state === 'no-heal') {
-      status('Charged Self-Heal has no wounded hero or active companion to heal.');
+      status('No healing needed.');
     }
   }
   function releaseCharge(slot, source) {
@@ -1464,13 +1494,7 @@
     if (charge.started === null) {
       const remaining = game.hero.cd[slot - 1];
       charge = null;
-      status(
-        'Skill ' +
-          slot +
-          ' is ready in ' +
-          cooldownText(remaining) +
-          's. Hold through the cooldown to queue the charge.',
-      );
+      status('Skill ' + slot + ' · ' + cooldownText(remaining) + 's.');
       updateHUD();
       return false;
     }
@@ -1481,7 +1505,6 @@
       const quickTap = !wasQueued && held < chargeTapSeconds();
       charge = null;
       if (!quickTap) {
-        status('Skill ' + slot + ' charge canceled safely.');
         updateHUD();
         return false;
       }
@@ -1740,7 +1763,7 @@
       Math.hypot(e.clientX - tap.x, e.clientY - tap.y) > 12
     )
       return;
-    if (!PrototypeInput.requestMove(game, tap.target)) status('Choose a reachable place to move.');
+    if (!PrototypeInput.requestMove(game, tap.target)) status('Path blocked.');
   };
   canvas.onpointercancel = canvas.onlostpointercapture = (e) => {
     if (worldPointer?.id === e.pointerId) worldPointer = null;
@@ -1788,7 +1811,9 @@
     }
     // Consume all new notices in order. A third notice waits instead of replacing
     // either visible one, including when several milestones happen in one frame.
-    for (const n of game.notices || [])
+    // Transfer unread notices rather than trimming a history buffer: a bulk
+    // completion or restored run must not lose observations before the next frame.
+    for (const n of (game.notices || []).splice(0))
       if (n.id > state.lastId) {
         state.waiting.push(n);
         state.lastId = n.id;
@@ -1809,6 +1834,12 @@
           const card = document.createElement('div');
           card.className = 'notice-card';
           card.textContent = n.text;
+          if (n.detail) {
+            const detail = document.createElement('small');
+            detail.className = 'notice-detail';
+            detail.textContent = n.detail;
+            card.append(detail);
+          }
           return card;
         }),
       );
@@ -2147,7 +2178,11 @@
     const events = game.effects.splice(0);
     renderer.queue(events);
     renderer.update(frozen ? 0 : dt);
-    for (const e of events) audio.effect(e);
+    for (const e of events) {
+      audio.effect(e);
+      if (e.type === 'actionFailed' && e.reason === 'crowns')
+        status('Need ' + e.needed + ' crowns.');
+    }
     if (
       events.some((e) =>
         [
@@ -2165,6 +2200,7 @@
           'questComplete',
           'supplies',
           'miniClear',
+          'archiveKnowledge',
           'travel',
           'death',
           'successor',
@@ -2173,15 +2209,6 @@
       )
     )
       save();
-    const levelEvent = events.find((e) => e.type === 'level');
-    if (levelEvent)
-      status(
-        'Level ' +
-          levelEvent.level +
-          '! Training point available · press ' +
-          input.key('training') +
-          ' or use Discipline Training.',
-      );
     if (events.some((e) => e.type === 'peace')) ending();
     if (game.s.phase === 'awakening' && !game.s.awakeningAck && !menu) awakeningMenu();
     if (game.s.challenge.pending && !gateDismissed && menu?.title !== 'Choose your successor')

@@ -189,3 +189,7 @@ The follow-up audit corrects captain/species basic-hit semantics and Ridge Tyran
 ## Final audio/VFX audit · v0.8.117
 
 Automatic TRUE/captain births retain their own authored summon/phase identities while another attack is winding up. Strict routing rejects unknown stages/personality layers; the expanded gate covers all 84 rogue basic identities and 40 signatures. Recorded foreground levels and the warning pair are corrected without changing gameplay. See [ENEMY_AUDIO_FINAL_AUDIT.md](ENEMY_AUDIO_FINAL_AUDIT.md) and its PR for exact candidate CI, published SHA and live desktop/phone verification.
+
+## Keeper and feedback continuation · v0.8.118
+
+The interrupted PR #185 is reconciled with the current audio/VFX release. Captive Keeper, optional live-rule Archive reference, evidence-gated reveal, TRUE escape/recapture, practical Controls, short status, truthful equipment confirmations and milestone notices are completed. Superseded 30-quest prose is excluded; selective narration remains held in draft #184. See QUEST_ARCHIVE_CONTINUATION.md for states and verification.
