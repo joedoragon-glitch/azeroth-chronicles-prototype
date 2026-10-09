@@ -4096,6 +4096,27 @@
       ],
     },
   };
+  // MP is dormant, not deleted. Set manaEnabled=true to reinstate the original resource logic.
+  const resourceMode = Object.freeze({ manaEnabled: false });
+  const cooldownBalance = Object.freeze({
+    reductionPerTalentRank: 0.04,
+    // Charged attacks are repeatable without MP; preserve a meaningful burst/heal interval.
+    chargedSeconds: Object.freeze({ 1: 3, 2: 6, 3: 20 }),
+  });
+  // When MP is dormant, Ash-beast ranged hits feed their ember core using real HP loss.
+  const ashFeeding = Object.freeze({ healFraction: 0.15 });
+  // Life-steal is tied to damage actually inflicted, not the boss's own max HP.
+  // Non-siphoning elemental/mechanical bosses await separate cooldown-heal designs.
+  const vitalitySiphon = Object.freeze({
+    healFraction: 0.15,
+    bossFamilies: Object.freeze(['crypt', 'archive', 'darklord']),
+  });
+  // Provisional non-siphon self-healing, separate from hero skill cooldowns.
+  const bossRecovery = Object.freeze({
+    abyss: { name: 'Ember Renewal', healFraction: 0.08, cooldown: 24, warning: 1.6 },
+    citadel: { name: 'Ash Reforge', healFraction: 0.1, cooldown: 28, warning: 1.8 },
+    threshold: 0.6,
+  });
   const manaBalance = {
     perLevel: 5,
     regen: { combat: 1, outOfCombat: 2.5, talentCombat: 0.25, talentOutOfCombat: 0.5 },
@@ -4773,6 +4794,11 @@
   });
 
   const R = {
+    resourceMode,
+    cooldownBalance,
+    ashFeeding,
+    vitalitySiphon,
+    bossRecovery,
     tacticalFoundation,
     balance,
     combatGeometry,
