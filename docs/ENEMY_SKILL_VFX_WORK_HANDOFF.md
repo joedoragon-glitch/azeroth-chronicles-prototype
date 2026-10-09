@@ -46,7 +46,7 @@ For each pilot, review an ordinary daytime scene, nighttime combat, a crowded si
 
 ## Safe staged implementation backlog
 
-**Preparation / contract (this PR):** independent inventory and design/quality gate; no runtime effect modifications. Run `node scripts/enemy-vfx-inventory.cjs --markdown` for the live 46-boss-move, 16-captain-move, 5-phase, 2-night, 7-ranged catalog. The script discovers the expanded rogue signatures automatically after they merge.
+**Preparation / contract (this PR):** independent inventory and design/quality gate; no runtime effect modifications. Run `node scripts/enemy-vfx-inventory.cjs --markdown` for the live 46-boss-move, 16-captain-move, 5-phase, 2-night, 7-ranged and 84 rogue-basic identity catalog. The script inventories existing ordinary, guardian, ringleader, captain and boss rogue **basic** maneuvers now (including eligible ranged roles), and discovers expanded rogue **signatures** automatically after they merge. These IDs are candidates for shared visual recipes; they are not 84 required unique artworks.
 
 **Next runtime PR (Work mode):** event-envelope delivery/cancellation and test fixture harness. Each event must carry immutable skill ID, actor ID, form/role, phase, authoritative world coordinates/geometry, duration tied to simulation, and source context for z-order. Capture zone-entry/death cancellation, duplicate prevention and lost/missed targets. No effect art or balance changes in this PR.
 
