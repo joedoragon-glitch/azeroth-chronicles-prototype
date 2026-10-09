@@ -337,20 +337,29 @@
         u.hp = Math.max(0, u.hp - Math.max(3, amount - armor * 0.35));
         if (R.resourceMode.manaEnabled && u === this.hero && manaDrain > 0)
           this.drainMana(u, manaDrain);
-        // Ash-beasts consume a share of HP *actually removed*, not the nominal
-        // attack power. This applies to their ranged hero hits only and adds no
-        // second damage tick. Legacy MP mode restores the old mana drain instead.
-        if (!R.resourceMode.manaEnabled && u === this.hero && rangedSourceId) {
+        // Cinder Spitters absorb vitality through their ranged attacks.
+        // Use actual HP lost (after armor and the HP floor), from the hero or
+        // companions; cap recovery per projectile so a large hit cannot
+        // instantly refill an Ash-beast. No bonus damage or group-wide healing.
+        // Legacy MP mode still restores the original mana-drain behavior.
+        if (!R.resourceMode.manaEnabled && rangedSourceId) {
           const source = this.zone().enemies.find((e) => e.id === rangedSourceId);
-          if (source?.species === 'ashbeast' && source.hp > 0 && source.hp < source.maxHp) {
+          if (
+            source?.species === 'ashbeast' &&
+            source.projectileStyle === 'cinder' &&
+            source.hp > 0 &&
+            source.hp < source.maxHp
+          ) {
             const heal = Math.min(
               source.maxHp - source.hp,
               (oldHp - u.hp) * R.ashFeeding.healFraction,
+              source.maxHp * R.ashFeeding.maxHpPerHit,
             );
             if (heal > 0) {
               source.hp += heal;
               this.event('ashFeeding', {
                 source: source.id,
+                target: u === this.hero ? 'hero' : u.id,
                 amount: heal,
                 x: source.x,
                 y: source.y,
