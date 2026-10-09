@@ -4336,16 +4336,17 @@
       hardCap: false,
       windowSeconds: 2,
       openingMultiplier: 1.6,
-      // Double the pressure of the v0.8.105 curve: halving both knee and tail
-      // compresses bursts sooner and steepens the logarithmic reduction.
-      // The two-second window, continuous positive gains and openings stay unchanged.
+      // Stronger v0.8.107 curves with deliberate defensive-role reassignment:
+      // ringleader inherits old captain, captain inherits old TRUE boss,
+      // and TRUE boss shares the normal boss curve. Ordinary/guardian unchanged.
+      // The two-second window, positive marginal damage, and openings persist.
       tiers: Object.freeze({
         ordinary: { knee: 0.675, tail: 0.875 },
         guardian: { knee: 0.475, tail: 0.625 },
-        ringleader: { knee: 0.35, tail: 0.475 },
-        captain: { knee: 0.25, tail: 0.375 },
+        ringleader: { knee: 0.25, tail: 0.375 },
+        captain: { knee: 0.145, tail: 0.24 },
         boss: { knee: 0.18, tail: 0.275 },
-        trueBoss: { knee: 0.145, tail: 0.24 },
+        trueBoss: { knee: 0.18, tail: 0.275 },
       }),
     }),
   });
