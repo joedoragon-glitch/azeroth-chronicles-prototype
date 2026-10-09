@@ -657,3 +657,18 @@ body.menu-open::before {
   background: #030c1591;
   pointer-events: none;
 }
+
+/* Service windows contract to their contents. Long menus scroll without moving Back. */
+#modal[data-dialog-size='compact'] {
+  width: min(300px, calc(100vw - 32px));
+}
+#modal[data-dialog-size='regular'] {
+  width: min(370px, calc(100vw - 32px));
+}
+#modal[data-dialog-size='wide'] {
+  width: min(430px, calc(100vw - 32px));
+}
+#modal-content canvas {
+  max-width: 100%;
+  height: auto;
+}
