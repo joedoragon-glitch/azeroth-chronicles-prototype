@@ -93,41 +93,53 @@ assert.equal(
 // Future sprite/animated asset replacement occurs per stage. Missing stages,
 // missing TRUE override, malformed assets and hostile paths must fail closed.
 const boss = VFX.describe({ type: 'boss', family: 'thorn', form: 'true' }, { kind: 'cone', index: 0 });
-const image = { type: 'image', src: 'assets/vfx/test-flash.png', anchor: { x: 0.5, y: 0.88 } };
-const sheet = {
-  type: 'spritesheet', src: 'assets/vfx/test-hit.webp',
-  frames: 8, fps: 12, frameWidth: 96, frameHeight: 96, loop: false,
-  anchor: { x: 0.5, y: 0.88 },
-};
+const image = { type: 'sprite', spriteKey: 'vfx:thorn-pounce-windup' };
+const sheet = { type: 'sprite', spriteKey: 'vfx:thorn-pounce-impact', clip: 'impact' };
 const pilot = {
   version: 1,
   effects: {
     'boss/thorn/0': {
       stages: { windup: image, impact: sheet },
-      variants: { true: { impact: { ...sheet, src: 'assets/vfx/true-hit.webp' } } },
+      variants: { true: { impact: { ...sheet, spriteKey: 'vfx:thorn-true-impact' } } },
     },
   },
 };
+const availableSprites = {
+  'vfx:thorn-pounce-windup': {},
+  'vfx:thorn-pounce-impact': { clips: { impact: { loop: false, frames: [] } } },
+  'vfx:thorn-true-impact': { clips: { impact: { loop: false, frames: [] } } },
+};
 assert.deepEqual(VFX.validateManifest(pilot), []);
-assert.equal(VFX.select(pilot, boss, 'windup').mode, 'image');
-assert.equal(VFX.select(pilot, boss, 'impact').asset.src, 'assets/vfx/true-hit.webp');
-assert.equal(VFX.select(pilot, boss, 'travel').mode, 'procedural');
+assert.equal(VFX.select(pilot, boss, 'windup', availableSprites).mode, 'sprite');
 assert.equal(
-  VFX.select(pilot, { ...boss, variant: 'normal' }, 'impact').asset.src,
-  'assets/vfx/test-hit.webp',
+  VFX.select(pilot, boss, 'impact', availableSprites).asset.spriteKey,
+  'vfx:thorn-true-impact',
+);
+assert.equal(VFX.select(pilot, boss, 'travel', availableSprites).mode, 'procedural');
+assert.equal(
+  VFX.select(pilot, { ...boss, variant: 'normal' }, 'impact', availableSprites).asset.spriteKey,
+  'vfx:thorn-pounce-impact',
+);
+assert.equal(VFX.select(pilot, boss, 'impact').mode, 'procedural', 'registry not ready');
+assert.equal(VFX.select(pilot, boss, 'impact', {}).mode, 'procedural', 'unregistered resource');
+assert.equal(
+  VFX.select(pilot, boss, 'impact', { 'vfx:thorn-true-impact': { clips: {} } }).mode,
+  'procedural',
+  'missing approved clip',
 );
 for (const bad of [
-  { ...image, src: '../sprites/exploit.png' },
-  { ...image, src: 'https://example.com/bad.png' },
-  { ...sheet, fps: 0 },
+  { ...image, spriteKey: '../sprites/exploit.png' },
+  { ...image, spriteKey: 'https://example.com/bad.png' },
+  { ...image, spriteKey: 'sprites:external' },
+  { ...sheet, clip: '../run' },
+  { ...sheet, scale: 0 },
   { ...sheet, frames: 200 },
-  { ...sheet, frameWidth: Infinity },
-  { ...image, anchor: { x: 1.1, y: 0.8 } },
+  { ...image, src: 'assets/vfx/unapproved.png' },
 ]) {
   assert(!VFX.validAsset(bad));
   const broken = { version: 1, effects: { 'boss/thorn/0': { stages: { impact: bad } } } };
   assert(VFX.validateManifest(broken).length);
-  assert.equal(VFX.select(broken, boss, 'impact').mode, 'procedural');
+  assert.equal(VFX.select(broken, boss, 'impact', availableSprites).mode, 'procedural');
 }
 assert.equal(VFX.select(pilot, null, 'impact').mode, 'procedural');
 assert.equal(VFX.describe(null, null), null);
