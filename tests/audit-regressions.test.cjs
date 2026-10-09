@@ -386,4 +386,16 @@ test('F60 wounded monsters three levels above an underleveled hero never retreat
   assert(c.damage(e,100));assert.equal(before-e.hp,100,'normal damage applies, without tactical mitigation');
   assert.deepEqual(c.enemyReward(e),reward,'woundedness does not alter earned XP or gold');
 });
+
+test('F61 isolated boss or captain with no usable rogue response defends territory instead of endlessly resetting',()=>{
+  const c=fresh(),e=c.bossEnemy(c.boss('thorn'),'normal',{x:1400,y:1700});
+  c.zone().enemies=[e];c.s.party=[];c.line=()=>true;
+  Object.assign(c.hero,{x:1950,y:1700,level:e.level+1});e.aggro=true;
+  assert(c.tacticalAutoRogue(e,c.hero),'disadvantaged field boss can deliberate');
+  assert.equal(c.tacticalRogueRegroup(e)?.phase,'thinking');
+  assert.equal(c.tacticalAdvanceRogueRegroup(e,c.hero,1),false);
+  assert.equal(c.tacticalRogueRegroup(e),null,'no unsupported infinite fallback state');
+  assert(!e.returning&&e.aggro,'field boss remains an opponent, not a perpetually resetting coward');
+  assert(c._tacticalRegroupUsed.has(e.id),'failed direct maneuver cannot repeat in the same fight');
+});
 console.log(passed+' audit regression scenarios passed.');
