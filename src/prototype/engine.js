@@ -2917,36 +2917,70 @@
       }
       return false;
     }
+    // Ordinary creatures retain a species maneuver; ringleaders can instead
+    // use their elite ambush when pressured or wounded. Captains and bosses
+    // keep their basic named feint AND a situational, identity-specific tactic.
+    // One action per rogue opportunity: no extra boss rotation or move spam.
     tacticalRogueMove(e, fallback) {
       if (e.hp <= 0 || e.returning || e.telegraph || e.motion || e.rangedAim) return false;
       const tier = this.tacticalProtectionTier(e),
         cfg = R.tacticalFoundation,
         profiles = cfg.rogueMoves,
-        profile =
+        basic =
           (e.type === 'boss' && profiles.bosses[e.family]) ||
           ((e.captain || e.roomCaptain) && profiles.captains[e.captainProfile]) ||
           profiles.species[e.species] ||
           profiles[tier] ||
           profiles.ordinary,
+        signature =
+          (e.type === 'boss' && cfg.rogueSignatures.bosses[e.family]) ||
+          ((e.captain || e.roomCaptain) && cfg.rogueSignatures.captains[e.captainProfile]),
+        pressured =
+          this.tacticalRogueOutnumbered(e) || !!this.tacticalRogueRegroup(e)?.anchor,
+        eliteAmbush = tier === 'ringleader' && (pressured || this.tacticalRogueWounded(e)),
+        isSignature = !!signature && pressured,
+        profile = isSignature ? signature : eliteAmbush ? profiles.ringleader : basic,
         target = this.tacticalHighestThreatTarget(e, fallback),
         maxRange = e.type === 'boss' ? 500 : e.captain || e.roomCaptain ? 440 : 340;
       if (!target || dist(e, target) > maxRange || !this.line(e, target)) return false;
+      const effect = isSignature ? profile.effect : null,
+        centered = effect === 'scatter' || effect === 'sweep',
+        warning =
+          profile.warning ||
+          (e.type === 'boss' ? 1.05 : e.captain || e.roomCaptain ? 0.95 : eliteAmbush ? 0.9 : 0.75),
+        radius =
+          profile.radius ||
+          (e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 95 : eliteAmbush ? 90 : 80);
       e.telegraph = {
         rogueMove: true,
-        kind: 'circle',
+        rogueSignature: isSignature,
+        kind: effect === 'sweep' ? 'cone' : 'circle',
         name: profile.name,
-        style: profile.style,
+        style: profile.style || null,
+        effect,
         coefficient: profile.coefficient,
         targetId: target === this.hero ? 'hero' : target.id,
-        x: target.x,
-        y: target.y,
-        radius: 85,
-        timer: 0.65,
-        total: 0.65,
-        recovery: 0.8,
+        fromX: e.x,
+        fromY: e.y,
+        angle: Math.atan2(target.y - e.y, target.x - e.x),
+        x: centered ? e.x : target.x,
+        y: centered ? e.y : target.y,
+        radius,
+        slowSeconds: profile.slowSeconds || 0,
+        push: profile.push || 0,
+        sidestep: profile.sidestep || 0,
+        rallySeconds: profile.rallySeconds || 0,
+        timer: warning,
+        total: warning,
+        recovery: isSignature ? 1.05 : 0.8,
       };
       this.event('warning', { family: e.family, rogue: true, name: profile.name });
-      this.event('rogueMove', { actor: e.id, name: profile.name, style: profile.style });
+      this.event('rogueMove', {
+        actor: e.id,
+        name: profile.name,
+        style: effect || profile.style,
+        signature: isSignature,
+      });
       return true;
     }
     tacticalResolveRogueMove(e, move) {
@@ -2954,22 +2988,68 @@
         move.targetId === 'hero'
           ? this.hero
           : this.s.party.find((u) => u.id === move.targetId && u.active !== false);
-      if (!target || target.hp <= 0 || dist(target, move) > move.radius || !this.line(e, target))
+      if (!move.rogueSignature) {
+        // Base movement remains single-target and cover-sensitive.
+        if (!target || target.hp <= 0 || dist(target, move) > move.radius || !this.line(e, target))
+          return;
+        if (move.style === 'dash' && dist(e, target) > 95)
+          this.move(e, target, 300, 0.3, 85);
+        if (!this.hitParty(target, e.damage * move.coefficient)) return;
+        if (move.style === 'shove') {
+          const d = Math.max(1, dist(e, target)),
+            point = {
+              x: target.x + ((target.x - e.x) / d) * 55,
+              y: target.y + ((target.y - e.y) / d) * 55,
+            };
+          this.move(target, point, 220, 0.25);
+        } else target.slow = Math.max(target.slow || 0, move.style === 'snare' ? 1.65 : 0.95);
         return;
-      if (move.style === 'dash' && dist(e, target) > 95) {
-        // Respect solid terrain; this is a short tactical sidestep, never a teleport.
-        this.move(e, target, 300, 0.3, 85);
       }
-      if (!this.hitParty(target, e.damage * move.coefficient)) return;
-      if (move.style === 'shove') {
+      // Warning geometry is also the hit geometry: circle, or a forward cone
+      // for a giant's frontal faultline. Leaving the mark or using cover avoids it.
+      const inside = (unit) => {
+        if (unit.hp <= 0 || !this.line(e, unit)) return false;
+        if (dist(unit, move) > move.radius) return false;
+        if (move.kind !== 'cone') return true;
+        const bearing = Math.atan2(unit.y - move.y, unit.x - move.x),
+          delta = Math.atan2(Math.sin(bearing - move.angle), Math.cos(bearing - move.angle));
+        return Math.abs(delta) <= 1.1;
+      };
+      const startingHero = this.hero,
+        startingZone = this.zoneId;
+      for (const unit of this.combatTargets().filter(inside)) {
+        if (!this.hitParty(unit, e.damage * move.coefficient)) continue;
+        if (this.hero !== startingHero || this.zoneId !== startingZone ||
+          this.s.challenge.pending || this.s.challenge.gameOver) return;
+        if (move.effect === 'scatter' || move.effect === 'sweep') {
+          const d = Math.max(1, dist(e, unit)),
+            push = move.push || 65,
+            point = {
+              x: unit.x + ((unit.x - e.x) / d) * push,
+              y: unit.y + ((unit.y - e.y) / d) * push,
+            };
+          // Navigation prevents displacement through solid walls.
+          this.move(unit, point, 250, 0.36);
+        } else unit.slow = Math.max(unit.slow || 0, move.slowSeconds || 1);
+      }
+      if (move.rallySeconds > 0) {
+        // A commander encourages only units ALREADY fighting. It does not
+        // secretly recruit nearby packs or bypass the pursuit consequence rule.
+        for (const ally of this.zone().enemies) {
+          if (ally === e || ally.hp <= 0 || !ally.aggro || ally.returning ||
+            dist(e, ally) > R.tacticalFoundation.supportRadius || !this.line(e, ally)) continue;
+          ally.pursuitBurst = Math.max(ally.pursuitBurst || 0, move.rallySeconds);
+          ally.cd = Math.min(ally.cd || 0, 0.5);
+        }
+      }
+      if (move.sidestep > 0 && target?.hp > 0) {
         const d = Math.max(1, dist(e, target)),
+          away = { x: (e.x - target.x) / d, y: (e.y - target.y) / d },
           point = {
-            x: target.x + ((target.x - e.x) / d) * 55,
-            y: target.y + ((target.y - e.y) / d) * 55,
+            x: e.x + (away.x * 0.65 - away.y * 0.35) * move.sidestep,
+            y: e.y + (away.y * 0.65 + away.x * 0.35) * move.sidestep,
           };
-        this.move(target, point, 220, 0.25);
-      } else {
-        target.slow = Math.max(target.slow || 0, move.style === 'snare' ? 1.65 : 0.95);
+        if (this.clearSegment(e, point)) this.move(e, point, 380, 0.36);
       }
     }
     tacticalRecruitRegroupAllies(e, state, target) {
