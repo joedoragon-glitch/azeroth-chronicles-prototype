@@ -12,6 +12,44 @@
       }
 
       // Passive combat observations only: no threat-based targeting or rogue actions in phase one.
+      tacticalClearBurst(e = null) {
+        if (!this._tacticalBurstWindow) return;
+        if (e) this._tacticalBurstWindow.delete(e.id);
+        else this._tacticalBurstWindow.clear();
+      }
+
+      tacticalCompressDamage(e, rawDamage) {
+        const config = R.tacticalFoundation.burstCompression;
+        if (!config?.enabled) return rawDamage;
+        const tier = this.tacticalProtectionTier(e);
+        const profile = config.tiers[tier];
+        if (!profile) return rawDamage;
+
+        // This is a transient, target-specific sliding window shared by all
+        // hero/companion hits, not per-skill, per-attacker or per-attack cooldown.
+        if (!this._tacticalBurstWindow) this._tacticalBurstWindow = new Map();
+        const now = this.s.time || 0;
+        const recent = this._tacticalBurstWindow.get(e.id) || [];
+        const cutoff = now - config.windowSeconds;
+        while (recent.length && recent[0].time <= cutoff) recent.shift();
+        const beforeRaw = recent.reduce((total, hit) => total + hit.raw, 0);
+        const hp = Math.max(1, e.maxHp || e.baseHp || 1);
+        // A genuinely exposed opening remains valuable; ordinary attack windows
+        // and existing scripted defenses keep their original multipliers.
+        const opening = (e.open || 0) > 0 ? config.openingMultiplier : 1;
+        const knee = hp * profile.knee * opening;
+        const tail = hp * profile.tail * opening;
+        const curve = (raw) =>
+          raw <= knee ? raw : knee + tail * Math.log1p((raw - knee) / tail);
+        const compressed = Math.max(
+          0,
+          Math.min(rawDamage, curve(beforeRaw + rawDamage) - curve(beforeRaw)),
+        );
+        recent.push({ time: now, raw: rawDamage });
+        this._tacticalBurstWindow.set(e.id, recent);
+        return compressed;
+      }
+
       tacticalClearThreat(e = null) {
         if (!this._tacticalThreat) return;
         if (e) this._tacticalThreat.delete(e.id);
@@ -251,6 +289,7 @@
         // reduction is exclusive to active travel; it ends on arrival or abort.
         if (['thinking', 'travel', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase))
           amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
+        amount = this.tacticalCompressDamage(e, amount);
         const actualDamage = Math.min(e.hp, amount);
         e.hp = Math.max(0, e.hp - amount);
         this.tacticalRecordHit(e, source, actualDamage);
