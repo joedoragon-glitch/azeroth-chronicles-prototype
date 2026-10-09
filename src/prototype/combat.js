@@ -270,6 +270,7 @@
       }
 
       drainMana(u, fraction) {
+        if (!R.resourceMode.manaEnabled) return 0;
         if (u !== this.hero || !fraction || u.mp <= 0 || this.peace) return 0;
         const amount = Math.min(u.mp, Math.max(1, Math.round(u.maxMp * fraction)));
         u.mp = Math.max(0, u.mp - amount);
@@ -333,7 +334,8 @@
               ? this.companionArmor(u.type)
               : 5 + this.hero.level * 0.5;
         u.hp = Math.max(0, u.hp - Math.max(3, amount - armor * 0.35));
-        if (u === this.hero && manaDrain > 0) this.drainMana(u, manaDrain);
+        if (R.resourceMode.manaEnabled && u === this.hero && manaDrain > 0)
+          this.drainMana(u, manaDrain);
         this.event('hurt', { x: u.x, y: u.y, target: u === this.hero ? 'hero' : u.id });
         if (u === this.hero && u.hp === 0) this.die();
         return true;
