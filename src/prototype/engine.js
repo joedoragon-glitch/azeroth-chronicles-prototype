@@ -210,7 +210,7 @@
     }
     notice(text, duration = 5.5) {
       this.notices.push({ id: ++this.noticeId, text, duration });
-      if (this.notices.length > 6) this.notices.shift();
+      if (this.notices.length > 32) this.notices.shift();
     }
     boss(id) {
       return D.bosses.find((b) => b.id === id);
