@@ -41,3 +41,18 @@ The existing rogue thinking/travel/escape damage reduction remains an independen
 `tests/burst-compression.test.cjs`: tier ordering, positive uncapped marginal damage, threshold behavior, window expiry, boss openings, shared production damage resolver, per-enemy cleanup, zone transitions and absence from saves. Existing rogue regressions check independence of tactical decisions from burst activation.
 
 The full CI/device matrix remains the release gate. Tests and runtime behavior should be reviewed again after future map relocation or full animation/sprite passes.
+
+## v0.8.107 — Doubled burst-compression intensity
+
+At Joel's request, strengthen **all six** tiers relative to the initial v0.8.105 calibration. This doubles the curve's sensitivity by halving **both** the soft-knee threshold and its logarithmic tail parameter; it does **not** simply multiply a flat percentage damage reduction by two. No other combat mechanics are retuned in this change.
+
+| Tier | New knee / max HP | New tail / max HP | Before: effective damage from raw 5,000 vs 5,000 HP | After |
+| --- | ---: | ---: | ---: | ---: |
+| Ordinary | 0.675 | 0.875 | 5,000 | 4,757 |
+| Guardian | 0.475 | 0.625 | 4,995 | 4,281 |
+| Ringleader | 0.350 | 0.475 | 4,804 | 3,798 |
+| Captain | 0.250 | 0.375 | 4,416 | 3,310 |
+| Normal boss | 0.180 | 0.275 | 3,922 | 2,800 |
+| TRUE boss | 0.145 | 0.240 | 3,629 | 2,546 |
+
+These are curve comparisons, not assertions that a monster can survive damage beyond its remaining HP. Unlike the initial 135%-HP knee, the ordinary-monster knee now lies below maximum HP, so compression can matter before a nominally lethal burst. The rolling window remains **two seconds**; there is still no fixed cap, attacker-specific budget, cooldown, additional rogue resistance or change to exposed boss opening behavior. Retain the original v0.8.105 table above as historical context.
