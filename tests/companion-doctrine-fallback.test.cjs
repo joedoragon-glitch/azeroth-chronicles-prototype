@@ -78,4 +78,17 @@ for (const cls of ['mage', 'ranger']) {
   add.summon = false;
   assert.deepEqual(update(c), [add.id, add.id], 'hero-directed non-summon threat also gets screened');
 }
+{
+  const { c, boss, add } = createEncounter('mage', 1);
+  assert.equal(c.squadDoctrineLabel().label, 'ADDS');
+  assert(c.toggleSquadDoctrine(), 'boss-mode toggle is available during the first boss at rank 1');
+  add.aggro = true;
+  assert.deepEqual(update(c), [boss.id, boss.id], 'first-boss manual BOSS order remains strict');
+  add.aggro = false;
+  boss.aggro = false;
+  c.squadDoctrineLabel();
+  assert.equal(c._squadDoctrineManual, false, 'combat ending clears explicit order');
+  add.aggro = true; // Field-only encounter; rank 1 field doctrine remains locked.
+  assert.equal(c.toggleSquadDoctrine(), false, 'rank 1 still cannot toggle ordinary-field doctrine');
+}
 console.log('PASS dynamic add/boss fallback, paladin protection and explicit player override');
