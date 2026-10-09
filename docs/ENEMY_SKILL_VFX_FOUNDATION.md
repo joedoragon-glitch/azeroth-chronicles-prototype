@@ -20,7 +20,7 @@ Existing `docs/TERRAIN_EFFECTS_POLISH_V0880.md` establishes world-space projecti
 
 An attack can have these *visual* stages: `windup`, `release`, `travel`, `impact`, `linger`, `spawn` and `phase`. These are **rendering vocabulary, not new simulation phases or durations**. Time should be derived from the actual attack timer, live motion/projectile state, the resolved combat event, or a bounded transient visual queue. Never infer an attack's collision from an animation frame.
 
-Example future asset entry (illustrative, not enabled):
+Example future binding (illustrative, not enabled):
 
 ```json
 {
@@ -28,23 +28,11 @@ Example future asset entry (illustrative, not enabled):
   "effects": {
     "boss/thorn/1": {
       "stages": {
-        "impact": {
-          "type": "spritesheet",
-          "src": "assets/vfx/thorn-pounce-impact.png",
-          "frames": 8,
-          "fps": 12,
-          "frameWidth": 96,
-          "frameHeight": 96,
-          "anchor": { "x": 0.5, "y": 0.88 },
-          "loop": false
-        }
+        "impact": { "type": "sprite", "spriteKey": "vfx:thorn-pounce", "clip": "impact" }
       },
       "variants": {
         "true": {
-          "impact": {
-            "type": "image",
-            "src": "assets/vfx/thorn-true-impact.png"
-          }
+          "impact": { "type": "sprite", "spriteKey": "vfx:thorn-true-pounce", "clip": "impact" }
         }
       }
     }
@@ -52,7 +40,12 @@ Example future asset entry (illustrative, not enabled):
 }
 ```
 
-The actual production pipeline should assign immutable, revisioned art filenames and maintain accepted originals. Images or spritesheets will be optional replacements **per stage**, which keeps procedural telegraph and lingering hazard fallbacks available while art is incomplete. The `anchor` and `scale` metadata are *presentation only*; no changes to gameplay centers, targeting, collision radii, world sorting or projectile coordinates. Optional looping sprites should be visual-time driven and paused with the game. Do not tie hit timing to rendered frames.
+**No second image loader or animation format.** The VFX manifest binds a stable skill/stage to a logical `vfx:...` resource. The existing `sprite-format.js` / sprite lifecycle owns the actual artwork source, content hash, revision, frame rectangles, pivots, timing, validation, decoded cache and offline resources. A static effect references a `spriteKey` alone; an animated stage names a reviewed clip. The resolver falls back procedurally unless the referenced sprite *and exact clip* exist in the approved registry. An invalid file URL, arbitrary image source or duplicated `fps`/`frames` metadata is rejected. Extending the sprite scope/publisher for VFX keys is future production work, not silently enabled here.
+
+The production pipeline must retain reviewed original assets and rollback history. Images or animation clips replace effects **per stage**; other stages keep their procedural treatment. The sprite's anchor/pivot/scale affect *presentation only*—no change to gameplay centers, hit geometry, projectile path, target selection or depth sorting. Animated clips use the existing paused presentation clock, never control collision or attack timing.
+
+Stage placement is determined from authoritative events: windup/release at the emitter, travel at the moving projectile, impact at the resolved hit or ground point, linger at the actual hazard footprint, spawn at each true spawn position, and phase at the actor. A decorative mark must never imply unsafe geometry outside the real attack.
+
 
 No new art style is authorized. The current procedural visual canon remains the sole design blueprint. Future effect paintings, VFX frames, particles and colors must reflect the authored monster and move rather than import unrelated fantasy iconography.
 
@@ -73,7 +66,7 @@ These authored mechanics and the pending PR's warning implementation are **not**
 2. **Boss/captain release + aftermath, not mass art.** Start with one melee cone, one projectile volley, one summon, one charge and one persistent hazard. Preserve existing warning geometry exactly, add actual activation/impact and short-lived effects only. Allow per-stage rollback.
 3. **Distinct boss and captain identity.** Author effects for all 11 boss families and five captains, including captain second phases, normal/TRUE tiers, and the Dark Lord. Avoid full-screen flashes and effect spam on phone.
 4. **Night/ranged/guardian/ringleader.** Improve Soul Drain, Shadow Pounce, ranged projectiles, guardian skills and ringleader Frenzy; after #146 merges, treat basic/signature rogue moves as their own track.
-5. **Reviewed sprite/animation replacement.** Plug the future asset registry into the site's script/core inventory, offline cache, deployment and renderer. Use a bounded lazy decode budget and content-revision invalidation, extending the existing sprite lifecycle safeguards. Do not build a second image loader unaware of `sprites.js` and its eviction/rollback rules.
+5. **Reviewed sprite/animation replacement.** Extend the existing sprite catalog/publisher to allow vetted `vfx:` resources, with the same lazy decode, clip, content revision, memory budget, rollback and offline packaging safeguards. Bind the approved registry to the VFX stage selector. No competing VFX decoder, asset cache or clip timing system.
 
 This PR **does not connect** the descriptor to `renderer.js` or `combat-visuals.js`. That connection belongs to the first reviewed runtime VFX tranche, after the rogue branch is reconciled. Neither procedural effects nor display art should become a required simulation dependency.
 
@@ -90,6 +83,6 @@ This PR **does not connect** the descriptor to `renderer.js` or `combat-visuals.
 
 ### Audit decision and outstanding risks
 
-Foundation is intentionally **inert** until the renderer is attached, so it cannot yet improve visuals or prove future GPU/decode performance. Names are not authoritative; source IDs and authored indexes are. Attack indexes must remain mapped to their original move when reordering the rules; an explicit stable move key can supersede an index if a future authoring migration actually reorders abilities. Asset-source existence, frame atlas bounds, author review, budget and offline packaging cannot be proved by an empty manifest; those are hard blockers on publishing the first live VFX art.
+Foundation is intentionally **inert** until the renderer is attached, so it cannot yet improve visuals or prove future GPU/decode performance. Names are not authoritative; source IDs and authored indexes are. Attack indexes must remain mapped to their original move when reordering the rules; an explicit stable move key can supersede an index if a future authoring migration actually reorders abilities. Asset-source existence, frame atlas bounds, author review, budget and offline packaging cannot be proved by an empty manifest; registration/clip validation must pass through the existing sprite lifecycle before live VFX art is published.
 
 **Acceptance gate:** only merge this foundation if the new tests pass, formatting passes, the build/PWA checks remain green and a separate review finds no gameplay or rogue-branch interference.
