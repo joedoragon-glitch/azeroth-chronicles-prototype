@@ -2640,11 +2640,13 @@
         this._tacticalRegroupUsed?.delete(e.id);
         this._tacticalRogueNext?.delete(e.id);
         this._tacticalVisitedAllies?.delete(e.id);
+        this._tacticalWoundedUsed?.delete(e.id);
       } else {
         this._tacticalRegroups?.clear();
         this._tacticalRegroupUsed?.clear();
         this._tacticalRogueNext?.clear();
         this._tacticalVisitedAllies?.clear();
+        this._tacticalWoundedUsed?.clear();
       }
     }
     tacticalStopRogueRegroup(e) {
@@ -2859,11 +2861,20 @@
         state.holdRemaining = 12;
         this.tacticalRecruitRegroupAllies(e, state, target);
         const pressure = this.tacticalActiveTargetCount(e);
-        if (
+        const wounded = this.tacticalRogueWounded(e);
+        const freshWound = wounded && !this._tacticalWoundedUsed?.has(e.id);
+        const pressureRemains =
           this.tacticalRogueOutnumbered(e) &&
           this.tacticalRogueEligibility(e, Math.max(pressure, 2)) &&
-          (this._tacticalRogueNext?.get(e.id) || 0) <= this.s.time
+          (this._tacticalRogueNext?.get(e.id) || 0) <= this.s.time;
+        if (
+          this.tacticalRogueEligibility(e, pressure) &&
+          (freshWound || pressureRemains)
         ) {
+          if (freshWound) {
+            if (!this._tacticalWoundedUsed) this._tacticalWoundedUsed = new Set();
+            this._tacticalWoundedUsed.add(e.id);
+          }
           this._tacticalRegroups.set(e.id, {
             phase: 'thinking',
             thinkRemaining: R.tacticalFoundation.thinkingSeconds,
@@ -2948,19 +2959,21 @@
     }
     tacticalAutoRogue(e, target) {
       const cfg = R.tacticalFoundation;
+      const newWound =
+        this.tacticalRogueWounded(e) && !this._tacticalWoundedUsed?.has(e?.id);
       if (
         !cfg.enabled ||
         this.peace ||
         !target ||
-        !e.aggro ||
+        !e?.aggro ||
         e.hp <= 0 ||
         e.returning ||
         e.telegraph ||
         e.motion ||
         e.rangedAim ||
         this.tacticalRogueRegroup(e) ||
-        this._tacticalRegroupUsed?.has(e.id) ||
-        (this._tacticalRogueNext?.get(e.id) || 0) > this.s.time ||
+        (!newWound && this._tacticalRegroupUsed?.has(e.id)) ||
+        (!newWound && (this._tacticalRogueNext?.get(e.id) || 0) > this.s.time) ||
         (Number.isFinite(e.fightStart) && this.s.time - e.fightStart < 1.1)
       )
         return false;
@@ -2968,6 +2981,10 @@
       if (!this.tacticalRogueEligibility(e, pressure)) return false;
       if (!this._tacticalRegroups) this._tacticalRegroups = new Map();
       if (!this._tacticalRogueNext) this._tacticalRogueNext = new Map();
+      if (newWound) {
+        if (!this._tacticalWoundedUsed) this._tacticalWoundedUsed = new Set();
+        this._tacticalWoundedUsed.add(e.id);
+      }
       this._tacticalRegroups.set(e.id, {
         phase: 'thinking',
         thinkRemaining: cfg.thinkingSeconds,
