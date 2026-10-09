@@ -88,7 +88,7 @@ function run(id,region,count,weapon,rank,cls,form='normal',kind='boss',style='ta
    const initial={hp:e.hp,heroHp:c.hero.hp,partyHp:c.s.party.reduce((s,u)=>s+u.hp,0)};
    c.hero.order={type:'attack',id:e.id};
    c.engage(e);
-   let t=0,dodgeUntil=0,dodgeMark=null,maxAdds=0,spent=0,skillUses=0;
+   let t=0,dodgeUntil=0,dodgeMark=null,maxAdds=0,spent=0,skillUses=0,nextManualAt=0;
    while(t<limit&&e.hp>0&&c.s.statistics.deaths===0&&c.zoneId===z.id){
      const h=c.hero;
      const warnings=e.telegraph;
@@ -101,12 +101,22 @@ function run(id,region,count,weapon,rank,cls,form='normal',kind='boss',style='ta
      }
      if((!warnings || t>=dodgeUntil)&&h.order?.type!=='attack'){h.order={type:'attack',id:e.id};dodgeMark=null;}
      if(h.hp>0){
-       if(h.hp<h.maxHp*.58 && h.skills[2] && c.cast(3,e.id))skillUses++;
-       if(h.hp<h.maxHp*.62 && h.skills[3] && c.cast(4,e.id))skillUses++;
-       const additions=z.enemies.filter(u=>u.hp>0&&u.summon).length;maxAdds=Math.max(maxAdds,additions);
-       if(additions>=2 && h.skills[4] && c.cast(5,e.id))skillUses++;
-       for(const slot of [8,7,6,2])if(h.skills[slot-1]&&c.cast(slot,e.id))skillUses++;
-       if(h.order?.type==='attack'&&c.cast(1,e.id))skillUses++;
+       const additions=z.enemies.filter(u=>u.hp>0&&u.summon).length;
+       maxAdds=Math.max(maxAdds,additions);
+       // One deliberate keypress at most every 0.4 seconds. Basic attacks keep
+       // their normal engine cooldown and may fire automatically through attack orders.
+       if(t>=nextManualAt){
+         let used=false;
+         if(h.hp<h.maxHp*.58 && h.skills[2])used=c.cast(3,e.id);
+         if(!used && h.hp<h.maxHp*.62 && h.skills[3])used=c.cast(4,e.id);
+         if(!used && style!=='basic'){
+           for(const slot of [8,7,6,5,2]){
+             if(slot===5 && additions<2)continue;
+             if(h.skills[slot-1]&&c.cast(slot,e.id)){used=true;break;}
+           }
+         }
+         if(used){skillUses++;nextManualAt=t+0.4;}
+       }
        if(h.hp<h.maxHp*.45)c.potion('health');
        if(h.mp<h.maxMp*.25)c.potion('mana');
      }
