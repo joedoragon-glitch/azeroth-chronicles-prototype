@@ -1,0 +1,27 @@
+name: Rogue combined audit probe
+on:
+  push:
+    branches: [rogue-final-audit-probe-20261009]
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Format source and show exact changes
+        run: |
+          npm ci --ignore-scripts
+          npx prettier --write src/prototype/engine.js src/prototype/combat.js src/prototype/hero-combat.js src/prototype/party.js src/prototype/app.js src/prototype/rules.js
+          echo '===ROGUE_FINAL_FORMAT_START==='
+          git diff --no-ext-diff --unified=3 -- src/prototype/engine.js src/prototype/combat.js src/prototype/hero-combat.js src/prototype/party.js src/prototype/app.js src/prototype/rules.js
+          echo '===ROGUE_FINAL_FORMAT_END==='
+      - name: Verify focused scenario suite
+        run: |
+          node tests/audit-regressions.test.cjs
+      - name: Verify changed-file formatting
+        run: |
+          npx prettier --check src/prototype/engine.js src/prototype/combat.js src/prototype/hero-combat.js src/prototype/party.js src/prototype/app.js src/prototype/rules.js
