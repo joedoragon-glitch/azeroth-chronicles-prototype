@@ -15,7 +15,6 @@
   const safePart = (value) =>
     typeof value === 'string' && /^[a-z][a-z0-9-]*$/.test(value) ? value : null;
   const plain = (value) => !!value && typeof value === 'object' && !Array.isArray(value);
-  const nonNegative = (value) => Number.isFinite(value) && value >= 0;
 
   function tierOf(enemy) {
     if (enemy.type === 'boss') return 'boss';
@@ -80,22 +79,20 @@
     });
   }
 
+  // VFX stages point at reviewed entries in the existing sprite lifecycle.
+  // Frame rectangles, pivot, timing, hashes and decode/cache rules belong to
+  // sprite-format.js; they are NEVER reinvented in this visual registry.
   function validAsset(asset) {
-    if (!plain(asset) || !['image', 'spritesheet'].includes(asset.type)) return false;
+    if (!plain(asset) || asset.type !== 'sprite') return false;
     if (
-      typeof asset.src !== 'string' ||
-      !/^assets\/vfx\/[a-zA-Z0-9/_-]+\.(png|webp)$/.test(asset.src) ||
-      asset.src.includes('..') ||
-      asset.src.length > 180
+      typeof asset.spriteKey !== 'string' ||
+      !/^vfx:[a-z0-9][a-z0-9_-]*(?::[a-z0-9_-]+)*$/.test(asset.spriteKey) ||
+      asset.spriteKey.length > 100
     )
       return false;
     if (
-      asset.anchor !== undefined &&
-      (!plain(asset.anchor) ||
-        !nonNegative(asset.anchor.x) ||
-        asset.anchor.x > 1 ||
-        !nonNegative(asset.anchor.y) ||
-        asset.anchor.y > 1)
+      asset.clip !== undefined &&
+      (typeof asset.clip !== 'string' || !/^[a-z][a-z0-9-]*(?::[a-z-]+)?$/.test(asset.clip))
     )
       return false;
     if (
@@ -103,29 +100,7 @@
       (!Number.isFinite(asset.scale) || asset.scale <= 0 || asset.scale > 4)
     )
       return false;
-    if (asset.type === 'image') {
-      return (
-        asset.frames === undefined &&
-        asset.fps === undefined &&
-        asset.frameWidth === undefined &&
-        asset.frameHeight === undefined
-      );
-    }
-    return (
-      Number.isInteger(asset.frames) &&
-      asset.frames >= 2 &&
-      asset.frames <= 48 &&
-      Number.isFinite(asset.fps) &&
-      asset.fps >= 1 &&
-      asset.fps <= 30 &&
-      Number.isInteger(asset.frameWidth) &&
-      asset.frameWidth >= 1 &&
-      asset.frameWidth <= 1024 &&
-      Number.isInteger(asset.frameHeight) &&
-      asset.frameHeight >= 1 &&
-      asset.frameHeight <= 1024 &&
-      (asset.loop === undefined || typeof asset.loop === 'boolean')
-    );
+    return Object.keys(asset).every((key) => ['type', 'spriteKey', 'clip', 'scale'].includes(key));
   }
 
   function validateManifest(manifest) {
@@ -168,7 +143,7 @@
   // The caller continues drawing the existing procedural visual unless a
   // reviewed, valid asset exists for THIS exact stage. Partial replacements
   // never hide unconverted warnings, hit regions, or other effects.
-  function select(manifest, identity, stage) {
+  function select(manifest, identity, stage, availableSprites = null) {
     const fallback = Object.freeze({
       mode: 'procedural',
       id: identity?.id || null,
@@ -179,8 +154,13 @@
     const entry = manifest.effects[identity.id];
     const chosen =
       (identity.variant === 'true' && entry?.variants?.true?.[stage]) || entry?.stages?.[stage];
-    if (!validAsset(chosen)) return fallback;
-    return Object.freeze({ mode: chosen.type, id: identity.id, stage, asset: chosen });
+    if (!validAsset(chosen) || !plain(availableSprites)) return fallback;
+    // Fail closed until the existing sprite registry has approved this asset
+    // and, for animated effects, the exact clip. Never draw a phantom sprite.
+    if (!Object.prototype.hasOwnProperty.call(availableSprites, chosen.spriteKey)) return fallback;
+    const sprite = availableSprites[chosen.spriteKey];
+    if (!plain(sprite) || (chosen.clip && !sprite.clips?.[chosen.clip])) return fallback;
+    return Object.freeze({ mode: 'sprite', id: identity.id, stage, asset: chosen });
   }
 
   const api = Object.freeze({
