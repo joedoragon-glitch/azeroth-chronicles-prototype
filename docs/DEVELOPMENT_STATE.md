@@ -157,3 +157,7 @@ v0.8.105 implements region-entry points beside the arriving transport instead of
 ## Stronger burst compression · 9 October 2026
 
 v0.8.107 increases all six soft-knee curve intensities by 2× relative to the initial calibration, halving each threshold and logarithmic tail (ordinary 0.675/0.875, guardian 0.475/0.625, ringleader 0.35/0.475, captain 0.25/0.375, boss 0.18/0.275, TRUE boss 0.145/0.24). The 2-second per-target shared window, no-hard-cap guarantee and opening multiplier remain unchanged. Regression coverage compares every tier to its predecessor. See [TRANSPORT_ARRIVALS_AND_BURST_COMPRESSION.md](TRANSPORT_ARRIVALS_AND_BURST_COMPRESSION.md) for numerical details.
+
+## Tier-specific burst-defense reassignment · 9 October 2026
+
+v0.8.108 replaces the initially doubled all-tier ordering with the explicitly requested inherited profiles: ordinary 0.675/0.875 and guardian 0.475/0.625 unchanged; ringleader 0.25/0.375 (former captain); captain 0.145/0.24 (former TRUE boss); normal boss 0.18/0.275 unchanged; TRUE boss 0.18/0.275 (normal boss parity). Knee/tail are fractions of maximum HP. This is a change to the pending strengthened-compression PR, with no companion AI or boss ability edits. The window remains two seconds. See [TRANSPORT_ARRIVALS_AND_BURST_COMPRESSION.md](TRANSPORT_ARRIVALS_AND_BURST_COMPRESSION.md).
