@@ -1144,9 +1144,9 @@
   ],
   "sources": {
     "src/prototype/visuals.js": "b2508da946110ecfb6f4bebd7ea295f016d31068517ba4fc09bd82c69eff4de2",
-    "src/prototype/world.js": "6aa2a0676074ab16fc73b84de57afd87d187fe00792a290ae12a019e8d13d557",
-    "src/prototype/rules.js": "7e669df634fcbf082363ec3e7e480f35ab06418cf4b3e3d757315d620bd45d5a",
-    "src/prototype/data.js": "ed90d4736ae81ac0c810acca20163e55336e6da392fa0ccfe10a5fb89f40927a",
+    "src/prototype/world.js": "32b947fe1556774814a9eca592fbe0af549865513a261e75a018286a0b217022",
+    "src/prototype/rules.js": "69ad37bccfa45fbbc65e1d27402560b4e4674f7b1c2a85ef6797a8cbf0c9f47f",
+    "src/prototype/data.js": "6ee3fb3b1d5ed017acc42698497eb8659e434da688f5a50280133992c7e6263b",
     "src/prototype/sprites.js": "157fae7b5bcb7883a9c0a107434deb2e1e2692e7905c358f237553d98118a774",
     "src/prototype/renderer.js": "5936594d4a77220463a321cec0f9189389e3cbfef871e65126dccf2115d33348"
   },

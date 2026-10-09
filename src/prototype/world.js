@@ -101,7 +101,7 @@
         if (dungeonIds.includes(z.id) || this.supplyRoom(z.id) || this.sideDungeon(z.id)) return;
         this.settlementLayout(z);
         const i = this.regionIndex(z.id),
-          roadVersion = z.id === 'frontier' ? 11 : 10;
+          roadVersion = z.id === 'frontier' ? 12 : ['vale', 'highlands'].includes(z.id) ? 11 : 10;
         if (z.roadVersion === roadVersion) return;
         const origin = { x: D.towns[i][0], y: D.towns[i][1] },
           field = this.fieldCenter(i),
@@ -574,7 +574,8 @@
         return z;
       }
       regionalDestinations(z) {
-        const destinationVersion = z.id === 'crown' ? 5 : 3;
+        const destinationVersion =
+          z.id === 'crown' ? 5 : ['vale', 'highlands', 'frontier'].includes(z.id) ? 4 : 3;
         if (
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
@@ -591,7 +592,7 @@
             Object.assign(n, this.safe(raw[0], raw[1], z.id));
           };
           move('entrance', D.entrances[i]);
-          // Highlands has an inbound ferry but a separate outbound pack caravan.
+          // Highlands retains its inbound ferry and original distant outbound caravan.
           if (z.id !== 'march') move('outbound', D.ports[i]);
           const rearStand = R.travelArrivalStands?.[z.id];
           if (rearStand) move('return', [rearStand.x, rearStand.y]);
@@ -625,7 +626,8 @@
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
           this.sideDungeon(z.id) ||
-          z.travelSafetyVersion === 1
+          z.travelSafetyVersion ===
+            (['vale', 'highlands', 'frontier'].includes(z.id) ? 2 : 1)
         )
           return;
         const landingIds =
@@ -666,7 +668,7 @@
               break;
             }
           }
-          z.travelSafetyVersion = 1;
+          z.travelSafetyVersion = ['vale', 'highlands', 'frontier'].includes(z.id) ? 2 : 1;
         } finally {
           this.s.zone = previousZone;
         }
@@ -702,7 +704,9 @@
         }
       }
       regionalAesthetics(z) {
-        if (dungeonIds.includes(z.id) || this.supplyRoom(z.id) || z.aestheticVersion === 4) return;
+        const version = ['vale', 'highlands', 'frontier'].includes(z.id) ? 5 : 4;
+        if (dungeonIds.includes(z.id) || this.supplyRoom(z.id) || z.aestheticVersion === version)
+          return;
         const i = this.regionIndex(z.id),
           size = D.regions[i].size,
           major = { x: D.towns[i][0], y: D.towns[i][1] },
@@ -822,13 +826,15 @@
             i < 2 ? 'ration' : i === 2 ? 'watchpost' : i === 3 ? 'barricade' : 'banner';
           add({ x: major.x - 300, y: major.y + 15 }, oppression, 'town');
           add({ x: major.x + 300, y: major.y + 15 }, oppression, 'town');
-          z.aestheticVersion = 4;
+          z.aestheticVersion = version;
         } finally {
           this.s.zone = oldZone;
         }
       }
       worldLife(z) {
-        if (dungeonIds.includes(z.id) || this.supplyRoom(z.id) || z.worldLifeVersion === 1) return;
+        const version = ['vale', 'highlands', 'frontier'].includes(z.id) ? 2 : 1;
+        if (dungeonIds.includes(z.id) || this.supplyRoom(z.id) || z.worldLifeVersion === version)
+          return;
         const i = this.regionIndex(z.id),
           plan = R.worldLifePlans?.[i],
           oldZone = this.s.zone;
@@ -871,13 +877,13 @@
           const field = this.fieldCenter(i);
           for (const [dx, dy, structure] of plan.field || [])
             add(field.x + dx, field.y + dy, structure, 'field');
-          z.worldLifeVersion = 1;
+          z.worldLifeVersion = version;
         } finally {
           this.s.zone = oldZone;
         }
       }
       ironrootLivelihood(z) {
-        if (z.id !== 'highlands' || z.ironrootLifeVersion === 1) return;
+        if (z.id !== 'highlands' || z.ironrootLifeVersion === 2) return;
         const oldZone = this.s.zone;
         this.s.zone = z.id;
         try {
@@ -916,13 +922,13 @@
               });
             }
           }
-          z.ironrootLifeVersion = 1;
+          z.ironrootLifeVersion = 2;
         } finally {
           this.s.zone = oldZone;
         }
       }
       frontierOccupationLayout(z) {
-        if (z.id !== 'frontier' || z.frontierLayoutVersion === 3) return;
+        if (z.id !== 'frontier' || z.frontierLayoutVersion === 4) return;
         const districts = R.frontierDistricts || [],
           routes = R.frontierRoutes || [],
           oldZone = this.s.zone;
@@ -978,7 +984,7 @@
             const center = { x: route.point[0], y: route.point[1] };
             for (const spec of route.props || []) place(center, spec, 'route-' + route.id);
           }
-          z.frontierLayoutVersion = 3;
+          z.frontierLayoutVersion = 4;
         } finally {
           this.s.zone = oldZone;
         }

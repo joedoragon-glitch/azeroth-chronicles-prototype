@@ -2067,7 +2067,7 @@
     },
   };
   // The vehicle that actually brought the party to a region determines its landing.
-  // Ferry docks remain at their terrain-authored harbors; overland arrivals use rear town stands.
+  // Ferries use harbors; inbound overland arrivals use rear town stands, not outbound departures.
   const travelArrivalStands = {
     march: { x: 145, y: 1380 },
     frontier: { x: 155, y: 615 },
