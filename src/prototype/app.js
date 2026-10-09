@@ -35,6 +35,7 @@
     statusUntil = 0,
     worldPointer = null,
     pointer = null;
+  const session = PrototypeSession.create({ getGame: () => game });
   profile = persistence.loadProfile(profile);
   const audio = new PrototypeAudio(profile.audio);
   audio.enableProduction();
@@ -147,6 +148,7 @@
     return persistence.saveProfile(profile);
   }
   function save() {
+    if (session.mode === 'cooperative') return false;
     return persistence.save(game, profile);
   }
   function load(mode) {
@@ -171,7 +173,7 @@
     getGame: () => game,
     platform,
     chargePresentation,
-    isPaused: () => paused || !focused || document.hidden,
+    isPaused: () => sessionTiming().worldPaused,
     Campaign,
     PrototypeVisuals,
     PrototypeCombatVisuals,
@@ -181,6 +183,30 @@
   const { world } = renderer,
     worldLabelVisible = renderer.labelVisible;
   const runtime = PrototypeRuntime.create();
+  let pendingInteraction = null;
+  function sessionTiming() {
+    return session.timing({
+      started,
+      menuOpen: !!menu,
+      paused,
+      focused,
+      hidden: document.hidden,
+      blocked: game.s.challenge.pending || game.s.challenge.gameOver,
+    });
+  }
+  function setSessionMode(mode) {
+    session.setMode(mode);
+    paused = false;
+    closeMenu();
+    last = performance.now();
+    return session.mode;
+  }
+  function validateMenu() {
+    if (!menu || session.interactionValid(menu.interaction)) return true;
+    closeMenu();
+    status('That interaction is no longer available.');
+    return false;
+  }
 
   const {
     teacher,
@@ -220,6 +246,13 @@
     save,
     openMenu,
     closeMenu,
+    setSessionMode,
+    get sessionMode() {
+      return session.mode;
+    },
+    get inputBlocked() {
+      return sessionTiming().inputBlocked;
+    },
     updateHUD,
     labelVisible: worldLabelVisible,
     chargePresentation,
@@ -227,7 +260,7 @@
       return profile;
     },
     get paused() {
-      return paused || !!menu || !focused || document.hidden;
+      return sessionTiming().worldPaused;
     },
   };
   function resize() {
@@ -395,11 +428,20 @@
   function action(label, fn, detail = '', disabled = false) {
     return { label, action: fn, detail, disabled };
   }
-  function openMenu(title, description = '', actions = [], back = closeMenu) {
+  function openMenu(title, description = '', actions = [], back = closeMenu, options = {}) {
     bindingCapture = null;
     clearInput();
     gateDismissed = false;
-    menu = { title, description, actions, back };
+    const interaction = options.global ? null : pendingInteraction || menu?.interaction || null;
+    menu = {
+      title,
+      description,
+      actions,
+      interaction,
+      back: () => {
+        if (validateMenu()) back();
+      },
+    };
     // Small interactions need a small dialog; longer service catalogs keep a readable width.
     const compact =
       actions.length <= 2 &&
@@ -423,6 +465,7 @@
     const host = $('modal-actions');
     host.replaceChildren();
     buttons = [];
+    const owner = menu;
     for (const a of menu.actions) {
       const b = document.createElement('button');
       b.textContent = a.label;
@@ -434,8 +477,10 @@
         b.append(span);
       }
       b.onclick = (e) => {
+        if (menu !== owner || !validateMenu() || a.disabled === true) return;
         audio.unlock().then(() => audio.interfaceSound('confirm'));
         a.action();
+        validateMenu();
         if (started) save();
         updateHUD();
       };
@@ -491,6 +536,10 @@
     updateHUD();
   }
   function chooseClass(mode, succession) {
+    if (session.mode === 'cooperative') {
+      status('Leave the cooperative session before replacing a run.');
+      return;
+    }
     if (succession === undefined) {
       openMenu(
         'Challenge condition',
@@ -597,16 +646,26 @@
   function saveMenu() {
     openMenu(
       'Save and game management',
-      'Backups, reports and run management.',
+      session.mode === 'cooperative'
+        ? 'Reports. Saving and replacing local runs are available in single-player.'
+        : 'Backups, reports and run management.',
       [
-        action('Save run', () => {
-          save();
-          closeMenu();
-        }),
-        action('Export save', () =>
-          exportJSON(game.snapshot(), 'Azeroth_Chronicles_' + game.s.mode + '.json'),
+        action(
+          'Save run',
+          () => {
+            save();
+            closeMenu();
+          },
+          '',
+          session.mode === 'cooperative',
         ),
-        action('Import save', () => $('import-file').click()),
+        action(
+          'Export save',
+          () => exportJSON(game.snapshot(), 'Azeroth_Chronicles_' + game.s.mode + '.json'),
+          '',
+          session.mode === 'cooperative',
+        ),
+        action('Import save', () => $('import-file').click(), '', session.mode === 'cooperative'),
         action('Export playtest report', () =>
           exportJSON(
             {
@@ -625,20 +684,26 @@
             'Azeroth_Playtest_Report.json',
           ),
         ),
-        action('New Normal game', () => chooseClass('normal')),
+        action('New Normal game', () => chooseClass('normal'), '', session.mode === 'cooperative'),
         action(
           'New game in Nightmare Mode',
           () => chooseClass('nightmare'),
           'Unlocked by the peaceful ending',
-          !profile.nightmareUnlocked,
+          !profile.nightmareUnlocked || session.mode === 'cooperative',
         ),
-        action('Load other mode run', () => {
-          const mode = game.s.mode === 'normal' ? 'nightmare' : 'normal';
-          if (load(mode)) {
-            save();
-            closeMenu();
-          } else game.say('No saved ' + mode + ' run yet.');
-        }),
+        action(
+          'Load other mode run',
+          () => {
+            if (session.mode === 'cooperative') return;
+            const mode = game.s.mode === 'normal' ? 'nightmare' : 'normal';
+            if (load(mode)) {
+              save();
+              closeMenu();
+            } else game.say('No saved ' + mode + ' run yet.');
+          },
+          '',
+          session.mode === 'cooperative',
+        ),
       ],
       systemMenu,
     );
@@ -703,10 +768,20 @@
         action('Screen and performance', () => platformMenu(systemMenu)),
         action('Controls', () => help(systemMenu)),
         action('Sound settings', () => soundMenu(systemMenu)),
-        action(paused ? 'Resume play' : 'Pause play', () => {
-          paused = !paused;
-          closeMenu();
-        }),
+        action(
+          session.mode === 'cooperative'
+            ? paused
+              ? 'Resume controls'
+              : 'Pause my controls'
+            : paused
+              ? 'Resume play'
+              : 'Pause play',
+          () => {
+            paused = !paused;
+            closeMenu();
+          },
+          session.mode === 'cooperative' ? 'The shared world continues.' : '',
+        ),
         action('Save and game management', saveMenu),
       ],
       openMain,
@@ -765,6 +840,8 @@
           : []),
         action('Game and settings', systemMenu),
       ],
+      closeMenu,
+      { global: true },
     );
   }
   $('menu-button').onclick = (e) => {
@@ -776,7 +853,10 @@
   };
   $('talent-button').onclick = (e) => {
     audio.unlock();
-    if (started && !game.s.challenge.pending && !game.s.challenge.gameOver) talents();
+    if (started && !game.s.challenge.pending && !game.s.challenge.gameOver) {
+      closeMenu();
+      talents();
+    }
   };
   function ending() {
     profile.nightmareUnlocked = true;
@@ -841,10 +921,16 @@
   $('import-file').onchange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (session.mode === 'cooperative') {
+      status('Leave the cooperative session before importing a run.');
+      e.target.value = '';
+      return;
+    }
     try {
       if (file.size > 5 * 1024 * 1024) throw Error('too large');
       const data = JSON.parse(await file.text()),
         candidate = data.version === 2 ? Campaign.migrate(data) : Campaign.restore(data);
+      if (session.mode === 'cooperative') throw Error('Session changed during import');
       persistence.writeCandidate(candidate);
       game = candidate;
       started = true;
@@ -913,49 +999,54 @@
       updateHUD();
       return;
     }
-    if (n.kind === 'barracks') barracksMenu(n);
-    else if (n.kind === 'teacher') teacher(n);
-    else if (n.kind === 'smith') smith(n);
-    else if (n.kind === 'keeper') keeper();
-    else if (n.kind === 'archive-record') keeperLedger();
-    else if (n.kind === 'supplier' || n.kind === 'alchemist') supplier(n);
-    else if (n.kind === 'recruiter') partyMenu();
-    else if (n.kind === 'quests') quests(true);
-    else if (n.kind === 'transport') {
-      if (n.hub) {
-        const destinations = game.hubDestinations();
-        openMenu(
-          n.name,
-          'Borrow this Dark Crown route to any previously visited region. Every destination arrives directly in its main town.',
-          destinations.map((target) =>
-            action(
-              'Travel to ' + target.name,
-              () => {
-                if (game.travelHub(target.id)) closeMenu();
-              },
-              target.town,
+    pendingInteraction = session.captureInteraction(n);
+    try {
+      if (n.kind === 'barracks') barracksMenu(n);
+      else if (n.kind === 'teacher') teacher(n);
+      else if (n.kind === 'smith') smith(n);
+      else if (n.kind === 'keeper') keeper();
+      else if (n.kind === 'archive-record') keeperLedger();
+      else if (n.kind === 'supplier' || n.kind === 'alchemist') supplier(n);
+      else if (n.kind === 'recruiter') partyMenu();
+      else if (n.kind === 'quests') quests(true);
+      else if (n.kind === 'transport') {
+        if (n.hub) {
+          const destinations = game.hubDestinations();
+          openMenu(
+            n.name,
+            'Borrow this Dark Crown route to any previously visited region. Every destination arrives directly in its main town.',
+            destinations.map((target) =>
+              action(
+                'Travel to ' + target.name,
+                () => {
+                  if (game.travelHub(target.id)) closeMenu();
+                },
+                target.town,
+              ),
             ),
-          ),
-        );
-      } else {
-        const i = game.regionIndex(),
-          r = D.regions[i],
-          target = D.regions[i + n.direction],
-          cost = game.travelFare(D.regions.indexOf(r), n.direction);
-        openMenu(
-          n.name,
-          'Fare ' +
-            cost +
-            (manaEnabled
-              ? ' crowns. Paid outbound travel includes free return. Health, mana and supplies are preserved.'
-              : ' crowns. Paid outbound travel includes free return. Health and supplies are preserved.'),
-          [
-            action('Travel to ' + target.name, () => {
-              if (game.travel(n.direction)) closeMenu();
-            }),
-          ],
-        );
+          );
+        } else {
+          const i = game.regionIndex(),
+            r = D.regions[i],
+            target = D.regions[i + n.direction],
+            cost = game.travelFare(D.regions.indexOf(r), n.direction);
+          openMenu(
+            n.name,
+            'Fare ' +
+              cost +
+              (manaEnabled
+                ? ' crowns. Paid outbound travel includes free return. Health, mana and supplies are preserved.'
+                : ' crowns. Paid outbound travel includes free return. Health and supplies are preserved.'),
+            [
+              action('Travel to ' + target.name, () => {
+                if (game.travel(n.direction)) closeMenu();
+              }),
+            ],
+          );
+        }
       }
+    } finally {
+      pendingInteraction = null;
     }
   }
   $('touch-interact-button').onclick = (e) => {
@@ -2152,7 +2243,8 @@
     updateCriticalNotice();
   }
   function frame(now) {
-    if (document.hidden) {
+    validateMenu();
+    if (document.hidden && session.mode === 'single-player') {
       runtime.suspend();
       last = now;
       requestAnimationFrame(frame);
@@ -2161,13 +2253,7 @@
     const frameStart = performance.now();
     const dt = Math.min(0.1, Math.max(0, (now - last) / 1000));
     last = now;
-    const frozen =
-      paused ||
-      menu ||
-      !focused ||
-      document.hidden ||
-      game.s.challenge.pending ||
-      game.s.challenge.gameOver;
+    const { worldPaused: frozen, inputBlocked } = sessionTiming();
     if (typeof PrototypeSprites !== 'undefined') PrototypeSprites.advance(dt * 1000, !!frozen);
     if (!frozen) progressTargetPress();
     if (menu) {
@@ -2185,9 +2271,9 @@
       started,
     });
     if (!frozen) {
-      let x = (keys.right ? 1 : 0) - (keys.left ? 1 : 0) + joy.x,
-        y = (keys.down ? 1 : 0) - (keys.up ? 1 : 0) + joy.y;
-      if (joy.x || joy.y) {
+      let x = inputBlocked ? 0 : (keys.right ? 1 : 0) - (keys.left ? 1 : 0) + joy.x,
+        y = inputBlocked ? 0 : (keys.down ? 1 : 0) - (keys.up ? 1 : 0) + joy.y;
+      if (!inputBlocked && (joy.x || joy.y)) {
         const p = world(viewport.width * 0.5 + joy.x * 100, viewport.height * 0.5 + joy.y * 100),
           base = world(viewport.width * 0.5, viewport.height * 0.5);
         x = p.x - base.x;
@@ -2203,6 +2289,7 @@
           order: !!movingHero.order,
         };
       game.tick(dt, { x, y, speedFactor });
+      validateMenu();
       syncChargeReady();
       if (
         (x || y || was.order) &&
@@ -2272,7 +2359,8 @@
       hudTimer = 0;
       updateHUD();
     }
-    if (!frozen) runtime.record(now, frameStart, () => renderer.draw());
+    if (document.hidden) runtime.suspend();
+    else if (!frozen) runtime.record(now, frameStart, () => renderer.draw());
     else {
       runtime.suspend();
       if (runtime.shouldDrawIdle(now)) renderer.draw();

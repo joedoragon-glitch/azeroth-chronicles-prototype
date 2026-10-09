@@ -49,6 +49,7 @@ const scripts = [
     'renderer',
     'archive',
     'menus',
+    'session',
     'app',
   ].map((name) => 'src/prototype/' + name + '.js'),
 ];

@@ -3,7 +3,7 @@ const elements=new Map(),events={},frames=[],storage=new Map();
 const ctx=new Proxy({}, {get:(o,k)=>o[k]||(()=>{})});
 function el(){const classes=new Set(),small={textContent:''};return {hidden:false,children:[],style:{},width:1280,height:800,textContent:'',classList:{add:x=>classes.add(x),remove:x=>classes.delete(x),contains:x=>classes.has(x),toggle:(x,v)=>v?classes.add(x):classes.delete(x)},getContext:()=>ctx,append(...x){this.children.push(...x)},replaceChildren(...nodes){this.children=[...nodes]},setAttribute(){},querySelector:()=>small,scrollIntoView(){},click(){if(!this.disabled)this.onclick?.()},getBoundingClientRect:()=>({left:12,top:670,width:110,height:110}),setPointerCapture(){}};}
 const initial=new C();storage.set('azeroth-v4-normal',JSON.stringify(initial.snapshot()));
-const scope={PrototypeMenus:require('../src/prototype/menus'),PrototypeBuild:require('../src/prototype/build-info'),PrototypeInput:require('../src/prototype/input'),PrototypePersistence:require('../src/prototype/persistence'),PrototypePlatform:require('../src/prototype/platform'),PrototypeRuntime:require('../src/prototype/runtime'),PrototypeRenderer:require('../src/prototype/renderer'),PrototypeCombatVisuals:require('../src/prototype/combat-visuals'),Campaign:C,PrototypeAudio:A,PrototypeRules:R,PrototypeVisuals:{draw(){},roads(){},height:()=>40},Sprint:{enabled:false,press(){},release(){},tick:()=>1},console,performance:{now:()=>0},innerWidth:1280,innerHeight:800,localStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)},location:{protocol:'file:',hostname:''},navigator:{},document:{hidden:false,body:el(),getElementById:id=>{if(!elements.has(id))elements.set(id,el());return elements.get(id)},createElement:()=>el(),addEventListener(){}},addEventListener:(name,fn)=>(events[name]??=[]).push(fn),requestAnimationFrame:fn=>frames.push(fn),setTimeout(){},Blob,URL:{createObjectURL:()=>'',revokeObjectURL(){}},confirm:()=>true};scope.window=scope;vm.createContext(scope);vm.runInContext(fs.readFileSync(__dirname+'/../src/prototype/app.js','utf8'),scope);
+const scope={PrototypeSession:require('../src/prototype/session'),PrototypeMenus:require('../src/prototype/menus'),PrototypeBuild:require('../src/prototype/build-info'),PrototypeInput:require('../src/prototype/input'),PrototypePersistence:require('../src/prototype/persistence'),PrototypePlatform:require('../src/prototype/platform'),PrototypeRuntime:require('../src/prototype/runtime'),PrototypeRenderer:require('../src/prototype/renderer'),PrototypeCombatVisuals:require('../src/prototype/combat-visuals'),Campaign:C,PrototypeAudio:A,PrototypeRules:R,PrototypeVisuals:{draw(){},roads(){},height:()=>40},Sprint:{enabled:false,press(){},release(){},tick:()=>1},console,performance:{now:()=>0},innerWidth:1280,innerHeight:800,localStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)},location:{protocol:'file:',hostname:''},navigator:{},document:{hidden:false,body:el(),getElementById:id=>{if(!elements.has(id))elements.set(id,el());return elements.get(id)},createElement:()=>el(),addEventListener(){}},addEventListener:(name,fn)=>(events[name]??=[]).push(fn),requestAnimationFrame:fn=>frames.push(fn),setTimeout(){},Blob,URL:{createObjectURL:()=>'',revokeObjectURL(){}},confirm:()=>true};scope.window=scope;vm.createContext(scope);vm.runInContext(fs.readFileSync(__dirname+'/../src/prototype/app.js','utf8'),scope);
 const key=code=>events.keydown.forEach(fn=>fn({code,preventDefault(){}}));
 
 const assert=require('node:assert/strict');
@@ -104,3 +104,26 @@ scope.Prototype.input.rebind('training','KeyU');scope.Prototype.updateHUD();
 assert(elements.get('talent-button').title.includes('press U'),'training tooltip follows the binding');
 c.hero.talentPoints=1;scope.Prototype.updateHUD();assert(elements.get('talent-button').title.includes('press U'),'unspent training tooltip follows the binding');
 console.log('PASS immediate keyboard/neutral-joystick takeover and rebound training tooltip');
+
+// The actual frame keeps cooperative simulation independent of keyboard/joystick menu navigation.
+scope.Prototype.closeMenu();
+const originalTick=c.tick,originalNow=scope.performance.now,originalDraw=scope.Prototype.renderer.draw;
+scope.Prototype.renderer.draw=()=>{};
+let frameInput=null,frameTicks=0;
+c.tick=(dt,input)=>{frameTicks++;frameInput={...input};c.s.time+=dt;};
+let frameNow=0;scope.performance.now=()=>frameNow;
+const advanceFrame=()=>{frameNow+=100;frames.shift()(frameNow);};
+key('KeyJ');advanceFrame();assert.equal(frameTicks,0,'single-player journal freezes the world');
+scope.Prototype.setSessionMode('cooperative');key('KeyJ');
+joystick.onpointerdown({pointerType:'touch',pointerId:902,clientX:bounds.left+bounds.width/2,clientY:bounds.top+bounds.height*.8,preventDefault(){}});
+key('KeyS');advanceFrame();
+assert.equal(frameTicks,1,'cooperative journal advances the simulation');
+assert.equal(frameInput.x,0);assert.equal(frameInput.y,0,'menu joystick cannot leak into movement');
+assert(scope.Prototype.inputBlocked&&!scope.Prototype.paused);
+joystick.onpointerup({pointerId:902});scope.Prototype.closeMenu();
+key('KeyP');advanceFrame();assert.equal(frameTicks,2,'cooperative control pause keeps the world running');
+assert(scope.Prototype.inputBlocked&&!scope.Prototype.paused);
+scope.Prototype.setSessionMode('single-player');key('KeyJ');advanceFrame();
+assert.equal(frameTicks,2,'return to single-player restores automatic menu pause');
+c.tick=originalTick;scope.performance.now=originalNow;scope.Prototype.renderer.draw=originalDraw;scope.Prototype.closeMenu();
+console.log('PASS actual shell separates cooperative keyboard/joystick menu input and local control pause from world timing');
