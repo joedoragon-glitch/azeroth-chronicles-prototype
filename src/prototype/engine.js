@@ -3536,6 +3536,7 @@
         e.cd = Math.max(0, e.cd - dt);
         e.specialCd = Math.max(0, (e.specialCd || 0) - dt);
         e.summonCd = Math.max(0, (e.summonCd || 0) - dt);
+        e.healCd = Math.max(0, (e.healCd || 0) - dt);
         e.pursuitBurst = Math.max(0, (e.pursuitBurst || 0) - dt);
         e.open = Math.max(0, (e.open || 0) - dt);
         e.captainGuard = Math.max(0, (e.captainGuard || 0) - dt);
@@ -3712,6 +3713,14 @@
           visible &&
           d < (this.captainProfile(e)?.specialRange || 420) &&
           this.startCaptainAttack(e, target)
+        ) {
+          opportunity = true;
+        } else if (
+          e.type === 'boss' &&
+          e.cd <= 0 &&
+          visible &&
+          d < R.bossCadence.specialRange &&
+          this.startBossRecovery(e)
         ) {
           opportunity = true;
         } else if (
