@@ -25,10 +25,7 @@ jobs:
       - name: Install locked development tools
         run: npm ci --ignore-scripts
       - name: Check formatting
-        run: |
-          npx prettier --write src/prototype/data.js src/prototype/rules.js src/prototype/engine.js
-          git diff --unified=3 -- src/prototype/data.js src/prototype/rules.js src/prototype/engine.js
-          npm run format:check
+        run: npm run format:check
       - name: Check generated entries and all published JavaScript
         run: npm run check
       - name: Full regression suite before merge
