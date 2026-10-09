@@ -79,11 +79,16 @@
         return Math.ceil(costs[slot] * (1 + R.manaBalance.rankCostGrowth * Math.max(0, rank - 1)));
       }
       skillCooldown(slot, charged = false) {
-        const base = !R.resourceMode.manaEnabled && charged
-          ? (R.cooldownBalance.chargedSeconds[slot] || cooldowns[slot])
-          : cooldowns[slot];
-        return base * (1 - Math.min(5, this.hero.talents[1] || 0) *
-          (R.resourceMode.manaEnabled ? 0 : R.cooldownBalance.reductionPerTalentRank));
+        const base =
+          !R.resourceMode.manaEnabled && charged
+            ? R.cooldownBalance.chargedSeconds[slot] || cooldowns[slot]
+            : cooldowns[slot];
+        return (
+          base *
+          (1 -
+            Math.min(5, this.hero.talents[1] || 0) *
+              (R.resourceMode.manaEnabled ? 0 : R.cooldownBalance.reductionPerTalentRank))
+        );
       }
       // Target selection is transient: no changes to campaign saves or difficulty.
       // A held Target locks the current foe even while dodging beyond selection range.
