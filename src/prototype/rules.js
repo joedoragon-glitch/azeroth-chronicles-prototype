@@ -4363,6 +4363,7 @@
         warning: 1.35,
         radius: 125,
         slowSeconds: 2.0,
+        sidestep: 105,
         coefficient: 0.09,
       },
       'supply-highlands': {
@@ -4426,6 +4427,7 @@
         warning: 1.45,
         radius: 145,
         slowSeconds: 2.2,
+        sidestep: 115,
         coefficient: 0.08,
       },
       archive: {
@@ -4504,9 +4506,6 @@
         reinforceCap: 3,
         reinforceSpecies: 'ashbeast',
         reinforceName: 'Ash-beast defenders',
-        reinforceBelow: 2,
-        reinforceCap: 3,
-        reinforceSpecies: 'ashbeast',
         reinforceMode: 'ordinary',
       },
       darklord: {
@@ -4521,9 +4520,6 @@
         reinforceCap: 3,
         reinforceSpecies: 'crownguard',
         reinforceName: 'Crown defenders',
-        reinforceBelow: 2,
-        reinforceCap: 3,
-        reinforceSpecies: 'crownguard',
         reinforceMode: 'ordinary',
       },
     },
