@@ -572,4 +572,17 @@ test('F72 close-range boss signatures are not wasted against distant backline pr
  assert.equal(e.telegraph.targetId,soldier.id,'a close soldier is selected over an unreachable high-threat hero');
  assert(e.telegraph.rogueSignature,'the local circle can affect at least one attacker');
 });
+test('F73 rogue targeting resolves escorts as active combat participants',()=>{
+ const c=fresh(),e=c.makeEnemy({species:'goblin',name:'escort harasser',level:2,hp:100,damage:20,gold:0,xp:0},{x:1400,y:1700});
+ const escort={id:'test-escort',type:'escort',x:1480,y:1700,hp:100,maxHp:100,slow:0};
+ c.zone().enemies=[e];c.zone().escort=escort;c.s.party=[];e.aggro=true;c.line=()=>true;
+ Object.assign(c.hero,{x:200,y:250,hp:1000,maxHp:1000});
+ c.tacticalRogueOutnumbered=()=>false;
+ assert(c.tacticalRogueMove(e,escort),'an escort within reach is a valid fallback target');
+ assert.equal(e.telegraph.targetId,escort.id);
+ const before=escort.hp;
+ c.tacticalResolveRogueMove(e,e.telegraph);
+ assert(escort.hp<before,'the named rogue move resolves against its marked escort');
+ assert(escort.slow>0,'the intended disruption effect also applies to the escort');
+});
 console.log(passed+' audit regression scenarios passed.');
