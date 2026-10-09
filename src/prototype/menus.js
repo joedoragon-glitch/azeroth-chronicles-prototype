@@ -717,9 +717,8 @@
         rank = getGame().s.expeditionRank || 1;
       openMenu(
         'Operations',
-        'Regional objectives, routes and expedition labor.',
+        'Local objectives and expedition labor.',
         [
-          action('Regional map and routes', () => showMap(returnHere)),
           action('Local objectives', () => quests(true, returnHere)),
           rank >= 2
             ? action(
@@ -733,17 +732,6 @@
                 'Rescue Mira and train Expedition to Rank 2',
                 true,
               ),
-          ...(getGame().s.phase === 'awakening'
-            ? [
-                action(
-                  'Awakening · Final objective',
-                  () => finaleMenu(returnHere),
-                  'TRUE dungeon guardians ' +
-                    Campaign.dungeonIds.filter((id) => getGame().s.true[id]).length +
-                    '/5',
-                ),
-              ]
-            : []),
         ],
         back,
       );
@@ -866,64 +854,25 @@
         specialists = getGame().barracksSpecialists(),
         exp = expeditionBarracksAction(b, back),
         tonic = barracksTonicAction(b, back),
-        rank2 = rank >= 2,
         baseActions = [
           exp,
           ...(tonic ? [tonic] : []),
           action(
+            'Company',
+            () => barracksCompanyMenu(b, returnHere),
+            'Recruit · active group · recovery',
+          ),
+          action(
             'Rescued specialists',
             () => barracksSpecialistMenu(b, returnHere),
-            (specialists.length
-              ? 'Use ' +
-                specialists.length +
-                ' rescued specialist' +
-                (specialists.length === 1 ? '' : 's') +
-                ' here · '
-              : '') + regionalSpecialistBarracksDetail(),
+            (specialists.length ? specialists.length + ' available here · ' : '') +
+              regionalSpecialistBarracksDetail(),
           ),
           action(
-            'Recovery',
-            () => barracksRecoveryMenu(b, returnHere),
-            'Treat wounded · recover fallen',
+            'Operations',
+            () => barracksOperationsMenu(b, returnHere),
+            'Local objectives · resources and labor',
           ),
-          action(
-            'Manage group',
-            () => barracksGroupMenu(b, returnHere),
-            'With you ' +
-              getGame().activeParty().length +
-              '/' +
-              getGame().barracksFieldCap(b) +
-              ' · employed ' +
-              getGame().rosterCount(),
-          ),
-          rank2
-            ? action(
-                'Recruitment',
-                () => barracksRecruitmentMenu(b, returnHere),
-                'Soldier ' +
-                  getGame().barracksRecruitPrice('soldier') +
-                  ' crowns · Ranger ' +
-                  getGame().barracksRecruitPrice('archer') +
-                  ' crowns · extra hires rest in reserve',
-              )
-            : action(
-                'Recruitment — Expedition 2',
-                () => {},
-                'Rescue Mira and train Expedition to Rank 2',
-                true,
-              ),
-          rank2
-            ? action(
-                'Resources & labor',
-                () => barracksLaborMenu(b, returnHere),
-                'Assign idle active troops to regional deposits',
-              )
-            : action(
-                'Resources — Expedition 2',
-                () => {},
-                'Rescue Mira and train Expedition to Rank 2',
-                true,
-              ),
         ];
       if (!b.full) {
         const upgrading = getGame()
@@ -996,12 +945,7 @@
           action(
             'Operations',
             () => barracksOperationsMenu(b, returnHere),
-            'Map · objectives · resources',
-          ),
-          action(
-            'Inventory & support',
-            () => inventory(returnHere),
-            'Ranger support and equipment',
+            'Local objectives · resources',
           ),
         ],
         back,
@@ -1021,34 +965,17 @@
           getGame().hero.weapon +
           ' · Armor tier ' +
           getGame().hero.armorTier +
-          '\nCrowns are the official currency of the Dark Lord’s regime.',
+          '\nRanger support: ' +
+          (rangers.length
+            ? rangers.length +
+              ' active · Heal ' +
+              heal +
+              ' HP (H) · Mana Recovery ' +
+              mana +
+              ' MP (M). Automatic support remains active.'
+            : 'Recruit a Ranger to unlock field Heal and Mana Recovery.') +
+          '\nChoose equipment below when available.',
         [
-          action('Recall squad', () => {
-            recallSquad();
-            closeMenu();
-          }),
-          action(
-            'Ranger Heal · ' + heal + ' HP',
-            () => {},
-            rangers.length
-              ? rangers.length +
-                  ' active Ranger' +
-                  (rangers.length === 1 ? '' : 's') +
-                  ' · combat: auto at ≤50% HP · out of combat: tops off injured allies · hero priority · command with H'
-              : 'No active Ranger · recruit or activate one for field healing',
-            true,
-          ),
-          action(
-            'Ranger Mana Recovery · ' + mana + ' MP',
-            () => {},
-            rangers.length
-              ? rangers.length +
-                  ' active Ranger' +
-                  (rangers.length === 1 ? '' : 's') +
-                  ' · automatic at hero ≤35% MP · command with M'
-              : 'No active Ranger · recruit or activate one for field mana recovery',
-            true,
-          ),
           ...Object.keys(Campaign.legacyWeapons)
             .filter((name) => getGame().s.legacyInventory?.includes(name))
             .map((name) =>

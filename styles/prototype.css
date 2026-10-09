@@ -487,3 +487,196 @@ textarea,
 #location {
   display: none;
 }
+
+/* Compact adventure interface: slate, brass and restrained contrast. */
+:root {
+  --ui-ink: #eef3f2;
+  --ui-muted: #b7c8ce;
+  --ui-brass: #e1be78;
+  --ui-edge: #7c99a488;
+}
+button {
+  background: linear-gradient(155deg, #293e4a, #182a35);
+  color: var(--ui-ink);
+  border-color: var(--ui-edge);
+  border-radius: 9px;
+  box-shadow:
+    inset 0 1px #e5f6ff17,
+    0 2px 8px #06101988;
+  text-shadow: none;
+}
+button:hover {
+  background: linear-gradient(155deg, #345363, #223743);
+}
+button.selected,
+button:focus-visible {
+  background: linear-gradient(155deg, #455968, #293c47);
+  border-color: var(--ui-brass);
+  box-shadow:
+    inset 3px 0 #e1be78,
+    0 0 0 2px #b18c4b77;
+}
+#hud,
+#modal {
+  background: linear-gradient(155deg, #172b36f5, #0e1c26f2);
+  border-color: var(--ui-edge);
+  box-shadow:
+    inset 0 1px #d7eef225,
+    0 8px 28px #050d16b0;
+}
+#modal {
+  backdrop-filter: blur(8px);
+}
+#hud h1 {
+  display: none;
+}
+#hero-stats .hero-title {
+  margin: 0 0 5px;
+  font-size: 12px;
+  color: #f1e5c7;
+}
+#hero-stats .hero-title small {
+  color: var(--ui-brass);
+  letter-spacing: 0.035em;
+}
+.resource-line {
+  margin: 3px 0 5px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.resource-line span {
+  margin-bottom: 3px;
+  color: #e8eff1;
+}
+.resource-line i {
+  height: 5px;
+  border-color: #afc6d044;
+  background: linear-gradient(to right, #76bf92 var(--fill), #304a43 var(--fill));
+}
+.resource-line.mana i {
+  background: linear-gradient(to right, #76bfe5 var(--fill), #284452 var(--fill));
+}
+#hero-stats .wallet {
+  margin: 6px 0 2px;
+  font-size: 10px;
+  color: var(--ui-muted);
+  font-variant-numeric: tabular-nums;
+}
+#objective {
+  border-left: 0;
+  border-top: 1px solid #95adbb35;
+  padding: 6px 0 0;
+  margin: 5px 0 0;
+  font-size: 10px;
+  line-height: 1.3;
+  color: var(--ui-muted);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+#status {
+  color: #e1bc91;
+}
+#hud #menu-button,
+#talent-button,
+#close-button {
+  color: #f0d398;
+  border-color: #baa16c9c;
+}
+#modal {
+  display: flex;
+  flex-direction: column;
+  border-radius: 13px;
+  padding: 14px;
+  overflow: hidden;
+}
+#modal h2 {
+  flex: 0 0 auto;
+  font-size: 18px;
+  line-height: 1.2;
+  color: #efdaaa;
+  padding-bottom: 8px;
+  margin-bottom: 9px;
+}
+#modal-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-color: #668590 #132833;
+  scrollbar-width: thin;
+}
+#modal-description {
+  margin: 0 0 9px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #cedde0;
+}
+#modal-actions {
+  gap: 5px;
+}
+#modal-actions button {
+  min-height: 40px;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.3;
+  border-left-color: #6e99a7;
+}
+#modal-actions button.selected {
+  border-left-color: var(--ui-brass);
+}
+#modal-actions .detail {
+  font-size: 10px;
+  line-height: 1.4;
+  margin-top: 3px;
+  color: var(--ui-muted);
+}
+#close-button {
+  flex: 0 0 auto;
+  min-height: 40px;
+  margin: 10px 0 0;
+  padding: 7px 10px;
+  text-align: center;
+}
+#skills button {
+  background: linear-gradient(155deg, #334e59, #1c303e);
+  border-color: #81a1a89c;
+}
+#skills .potion-button {
+  background: linear-gradient(155deg, #365a56, #233e42);
+}
+#message {
+  width: min(380px, calc(100vw - 24px));
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+body.menu-open::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  background: #030c1591;
+  pointer-events: none;
+}
+
+/* Service windows contract to their contents. Long menus scroll without moving Back. */
+#modal[data-dialog-size='compact'] {
+  width: min(300px, calc(100vw - 32px));
+}
+#modal[data-dialog-size='regular'] {
+  width: min(370px, calc(100vw - 32px));
+}
+#modal[data-dialog-size='wide'] {
+  width: min(430px, calc(100vw - 32px));
+}
+#modal-content canvas {
+  max-width: 100%;
+  height: auto;
+}

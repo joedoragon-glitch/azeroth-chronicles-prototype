@@ -449,7 +449,8 @@
         const id = dead.id,
           active = dead.active !== false,
           u = this.unit(dead.type, this.hero.x + 40, this.hero.y);
-        Object.assign(dead, u, { id, active });
+        this.tacticalClearScatter(dead);
+        Object.assign(dead, u, { id, active, slow: 0 });
         return true;
       }
       treatCompanions() {

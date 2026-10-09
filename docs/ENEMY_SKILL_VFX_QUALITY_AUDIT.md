@@ -1,6 +1,6 @@
 # Enemy VFX post-implementation quality audit
 
-Runtime **0.8.114**. Audited against main `cdc8286ca499af1de4de53ffa3014bb89203cdab`, including merged rogue repertoire (#146), enemy audio integration, quest polish (#168) and preparation tonics (#171). The release also incorporates the subsequent amber-notice queue integration (#170, main `296356a`) without changing its behavior. The original overhaul and its evidence remain documented in [ENEMY_SKILL_VFX_AUDIT.md](ENEMY_SKILL_VFX_AUDIT.md).
+Runtime **0.8.115**. Audited against main `4a2e6b3d9772f4eb44fb3e351f3a67bfb5ac1bdd`, including merged rogue repertoire (#146), enemy audio integration, quest polish (#168) and preparation tonics (#171). The release also incorporates the subsequent amber-notice queue integration (#170), rogue lethal-hit/recovery fixes (#176) and responsive HUD redesign (#165) without changing its behavior. The original overhaul and its evidence remain documented in [ENEMY_SKILL_VFX_AUDIT.md](ENEMY_SKILL_VFX_AUDIT.md).
 
 ## Findings corrected
 
@@ -17,9 +17,9 @@ Runtime **0.8.114**. Audited against main `cdc8286ca499af1de4de53ffa3014bb89203c
 
 ## Visual inspection
 
-[Desktop comparison](vfx-audit/quality-desktop.jpg) · [Phone comparison](vfx-audit/quality-phone.jpg)
+[Desktop comparison](vfx-audit/quality-desktop.jpg) · [Phone comparison](vfx-audit/quality-phone.jpg) · [Full phone gameplay frames](vfx-audit/quality-gameplay.jpg)
 
-These sheets compare the same real resolutions, actor positions, camera crop and animation time on v0.8.113 main and v0.8.114. They are contact-sheet crops, not full phone screenshots. The sample includes Hammer Blow, all five captains and ordinary teeth/weapon/blunt feedback. Dedicated captures cover all 28 basics plus Hammer Blow normal/TRUE: 30 scenes per viewport per revision. Existing actor silhouettes and legacy contact marks are intentionally preserved; short release accents are restrained rather than permanent glowing auras.
+These sheets compare the same real resolutions, actor positions, camera crop and animation time on v0.8.114 main and v0.8.115. They are contact-sheet crops, not full phone screenshots. The sample includes Hammer Blow, all five captains and ordinary teeth/weapon/blunt feedback. Dedicated captures cover all 28 basics plus Hammer Blow normal/TRUE: 30 scenes per viewport per revision. Existing actor silhouettes and legacy contact marks are intentionally preserved; short release accents are restrained rather than permanent glowing auras. Both sides retain the newly merged compact HUD and its camera anchor.
 
 The full catalog passes **297 scenes per browser/viewport** in Chromium and WebKit at 1280×800 and 375×812. This includes all **251 live identities**, 46 additional TRUE moves, all 40 rogue signatures, guardians/ringleaders, night skills, real projectile travel/contact and real basic contact. Drawing is snapshot-pure; pause, source death and reentry are checked. Full-resolution contact sheets and scene measurements are generated under `test-results/` and retained as CI artifacts.
 
@@ -29,7 +29,7 @@ The five representative full-game pilots were also recaptured in **30 scenes / 6
 
 `npm test` passes **67 regression suites**. `npm run check` and `npm run format:check` pass. Focused quality tests cover the findings above; existing 234-resolution observer on/off comparisons, all 40 signature outcomes, 251-ID/1,440-stage audio coverage, replacement stage fallback, exact clip/pivot handling, replay limits and shared queue caps remain green. No attack tuning, damage timing, hitboxes, AI, progression, v4 save fields or recorded audio assets changed.
 
-The [current performance capture](vfx-audit/quality-measurements.json) contains warmed, alternating decorated/undecorated draws with raster flushing, renderer counters and shared sprite residency for all 30 full-game pilot scenes. Median decoration deltas in this recheck were 0.43 ms desktop, 0.45 ms phone portrait and 0.78 ms phone landscape; scenes peaked at nine enemy transients and 1,192,064 decoded sprite bytes with no pending decodes. Raw timings are retained, including negative differences and scheduling/garbage-collection outliers; they do not establish a hardware speedup. This is a shared headless software renderer, not a physical-phone FPS/thermal measurement. The meaningful resource checks are bounded transient counts, shared decode/cache limits, snapshot-pure drawing and zero offscreen cast raster/asset work.
+The [current performance capture](vfx-audit/quality-measurements.json) contains warmed, alternating decorated/undecorated draws with raster flushing, renderer counters and shared sprite residency for all 30 full-game pilot scenes. Median decoration deltas in this recheck were 3.70 ms desktop, 0.60 ms phone portrait and 1.40 ms phone landscape; scenes peaked at nine enemy transients and 1,192,064 decoded sprite bytes with no pending decodes. Raw timings are retained, including negative differences and scheduling/garbage-collection outliers; they do not establish a hardware speedup. This is a shared headless software renderer, not a physical-phone FPS/thermal measurement. The meaningful resource checks are bounded transient counts, shared decode/cache limits, snapshot-pure drawing and zero offscreen cast raster/asset work.
 
 The production VFX manifest is still empty: the complete procedural repertoire remains the playable default. Illustrated replacements continue through the existing shared asset system, with corrected consumer clocks and safe per-stage fallback. No new image cache or asset pipeline was introduced. Individual stages can still be rolled back without removing gameplay telegraphs.
 
