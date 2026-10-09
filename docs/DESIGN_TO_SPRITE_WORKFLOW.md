@@ -12,6 +12,12 @@ Record the actual request and approval scope in plain language, with a chat link
 
 The handoff must distinguish concept acceptance, procedural-design acceptance, permission to produce sprites, generated-image acceptance and release status. Approval of a procedural design establishes what the sprite must faithfully translate; it does not claim that an unseen generated image was accepted. Carry forward actual corrections and approval wording without introducing a new creative gate when the task already authorizes faithful implementation. The original pilot remains in `tools/sprites/pilots/2026-10-08`; the approved playful Goblin correction and release records are in `tools/sprites/pilots/2026-10-08-refined`.
 
+## Current 150% preparation and interruption recovery
+
+Artwork production is paused until Joel resumes it. Read `SPRITE_WORKFLOW_AUDIT.md` and `SPRITE_RESOLUTION_HOUSEKEEPING.md` before new production. Use `sprite:request` to capture validated exact prompt/reference/context evidence after reconciling the actual accepted handoff; inspect and attach retained accepted originals for edits. This planning capture does not establish creative acceptance or grant generation permission. Retain exact tool request/result IDs and source attachments; never invent missing historical provenance.
+
+Body rasters target 576×576 pixels over unchanged 192×192 logical geometry. Review native 150% scenes, including affected clips/variants. Sprite and terrain publication use a persistent interruption journal; a pending journal blocks validation/publication until `sprite:recover` or `material:recover` restores the prior registry pair. Never bypass recovery by deleting the journal. Existing originals and checkpoints remain immutable.
+
 ## Work stages
 
 | Stage | Agent action and evidence |

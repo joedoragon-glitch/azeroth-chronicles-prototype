@@ -8,6 +8,7 @@ const { createCanvas, Image } = require('@napi-rs/canvas');
 const Contract = require('../src/prototype/material-contract.js');
 const root = path.resolve(__dirname, '..');
 const specs = require('../tools/sprites/terrain-specifications.json');
+const Transactions = require('./asset-registry-transaction.cjs');
 const hash = (bytes) => crypto.createHash('sha256').update(bytes).digest('hex');
 const json = (file) => JSON.parse(fs.readFileSync(file, 'utf8'));
 const write = (file, value) => fs.writeFileSync(file, JSON.stringify(value, null, 2) + '\n');
@@ -307,7 +308,8 @@ function validate(record) {
     'Material edge discontinuity exceeds its grain; revise the image, do not silently repair it',
   );
 }
-async function check() {
+async function check(transactionActive = false) {
+  if (!transactionActive) Transactions.assertClean(root, 'materials');
   const registry = json(registryFile),
     manifest = json(manifestFile),
     expected = {};
@@ -373,8 +375,8 @@ async function publish(candidateFile, expected = 'absent') {
   const record = json(candidateFile),
     directory = path.dirname(candidateFile);
   validate(record);
-  const registry = json(registryFile),
-    manifest = json(manifestFile),
+  const state = Transactions.snapshot([registryFile, manifestFile]),
+    [registry, manifest] = state.data,
     old = registry.assets[record.key];
   fail((old?.revision || 'absent') === expected, 'Stale material replacement lease');
   fail(
@@ -386,49 +388,35 @@ async function publish(candidateFile, expected = 'absent') {
   );
   record.revision = revisionFor(record);
   Contract.entries({ version: 1, materials: { [record.key]: entry(record) } });
-  const files = [manifestFile, registryFile],
-    before = files.map((f) => fs.readFileSync(f));
-  const created = [];
-  try {
-    for (const [source, target] of [
-      [
-        path.join(directory, 'source.png'),
-        path.join(root, 'tools/sprites/materials/sources', record.source.hash + '.png'),
-      ],
-      [
-        path.join(directory, 'candidate.png'),
-        path.join(root, 'assets/materials', record.output.hash + '.png'),
-      ],
-    ]) {
-      if (fs.existsSync(target))
-        fail(
-          hash(fs.readFileSync(source)) === hash(fs.readFileSync(target)),
-          'Immutable material collision',
-        );
-      else {
-        fs.mkdirSync(path.dirname(target), { recursive: true });
-        fs.copyFileSync(source, target, fs.constants.COPYFILE_EXCL);
-        created.push(target);
-      }
-    }
-    registry.history[record.key] ||= [];
-    if (old && !registry.history[record.key].some((r) => r.revision === old.revision))
-      registry.history[record.key].push(old);
-    registry.assets[record.key] = record;
-    manifest.materials[record.key] = entry(record);
-    write(registryFile, registry);
-    write(manifestFile, manifest);
-    await check();
-  } catch (error) {
-    files.forEach((f, i) => fs.writeFileSync(f, before[i]));
-    created.forEach((f) => fs.unlinkSync(f));
-    throw error;
-  }
+  registry.history[record.key] ||= [];
+  if (old && !registry.history[record.key].some((r) => r.revision === old.revision))
+    registry.history[record.key].push(old);
+  registry.assets[record.key] = record;
+  manifest.materials[record.key] = entry(record);
+  await Transactions.commit({
+    root,
+    id: 'materials',
+    state,
+    values: [registry, manifest],
+    copies: [
+      {
+        source: path.join(directory, 'source.png'),
+        target: path.join(root, 'tools/sprites/materials/sources', record.source.hash + '.png'),
+        expectedHash: record.source.hash,
+      },
+      {
+        source: path.join(directory, 'candidate.png'),
+        target: path.join(root, 'assets/materials', record.output.hash + '.png'),
+        expectedHash: record.output.hash,
+      },
+    ],
+    verify: () => check(true),
+  });
   return { key: record.key, revision: record.revision, rollback: old?.revision || 'procedural' };
 }
 async function rollback(key, revision, expected) {
-  const registry = json(registryFile),
-    manifest = json(manifestFile),
+  const state = Transactions.snapshot([registryFile, manifestFile]),
+    [registry, manifest] = state.data,
     current = registry.assets[key];
   fail((current?.revision || 'absent') === expected, 'Stale material rollback lease');
   const target =
@@ -436,33 +424,32 @@ async function rollback(key, revision, expected) {
       ? null
       : (registry.history[key] || []).find((r) => r.revision === revision);
   fail(revision === 'procedural' || target, 'Missing retained material revision');
-  const before = [fs.readFileSync(registryFile), fs.readFileSync(manifestFile)];
-  try {
-    registry.history[key] ||= [];
-    if (current && !registry.history[key].some((r) => r.revision === current.revision))
-      registry.history[key].push(current);
-    if (target) {
-      registry.assets[key] = target;
-      manifest.materials[key] = entry(target);
-    } else {
-      delete registry.assets[key];
-      delete manifest.materials[key];
-    }
-    write(registryFile, registry);
-    write(manifestFile, manifest);
-    await check();
-  } catch (e) {
-    fs.writeFileSync(registryFile, before[0]);
-    fs.writeFileSync(manifestFile, before[1]);
-    throw e;
+  registry.history[key] ||= [];
+  if (current && !registry.history[key].some((r) => r.revision === current.revision))
+    registry.history[key].push(current);
+  if (target) {
+    registry.assets[key] = target;
+    manifest.materials[key] = entry(target);
+  } else {
+    delete registry.assets[key];
+    delete manifest.materials[key];
   }
+  await Transactions.commit({
+    root,
+    id: 'materials',
+    state,
+    values: [registry, manifest],
+    verify: () => check(true),
+  });
   return { key, revision: target?.revision || 'procedural' };
 }
 if (require.main === module)
   (async () => {
     const [command, ...args] = process.argv.slice(2);
     let result;
-    if (command === 'check') result = await check();
+    if (command === 'recover')
+      result = Transactions.recover({ root, id: 'materials', files: [registryFile, manifestFile] });
+    else if (command === 'check') result = await check();
     else if (command === 'reference') {
       fs.writeFileSync(args[1], reference(args[0]));
       result = { file: args[1], hash: hash(reference(args[0])) };

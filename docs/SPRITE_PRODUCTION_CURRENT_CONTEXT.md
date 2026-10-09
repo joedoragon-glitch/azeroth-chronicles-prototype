@@ -1,6 +1,10 @@
 # Sprite production checkpoint · 8 October 2026
 
-## Current resume snapshot · 9 October 2026 UTC
+## Current pause and housekeeping · 9 October 2026
+
+Joel selected 150% and requested housekeeping before adapting existing artwork. Generation, adaptation, replacement and additional asset publication remain paused. v0.8.103 prepares density-aware processing, native desktop/phone review and unchanged runtime geometry, without editing the 33 active keys or historical originals/checkpoints. Read SPRITE_RESOLUTION_HOUSEKEEPING.md and CAMERA_SPRITE_TARGETS.md; run sprite:resolution before the later Paladin/Goblin adaptation pilot. Earlier resumes below are historical authorization within their old scope, not the current instruction.
+
+## Historical resume snapshot · 9 October 2026 UTC
 
 Joel's current instruction explicitly resumes full generation, implementation, testing and publication. Both original interruption checkpoints remain untouched: `checkpoint/sprite-production-paused-2026-10-08` and `recovery/nature-paused-2026-10-08` (277-file save at cde13b483614fe83bfb97887e509cee67fd5fa40). The older chronological sections below record past stages, not the latest active counts.
 
@@ -86,3 +90,5 @@ This stage adds native-reviewed four-stem heather and the retained Vale/Highland
 The field-rock handoff was inaccurate: the live icon-rock branch executes before wildProp and is fixed across seeds/regions. Two hundred exact identity references were pixel-identical. Catalog IDs 295/296 now describe that branch; the saved Vale art is reused without inventing moss. Grass/wet-grass/reeds do have authored height variants. Optional validated procedural-modulo selectors now map the same identity hash to explicit stable IDs, preserving slots across reordering and replacement. Tests cover 1,000 identity samples and malformed selectors. Existing variant banks keep their selection policy. No incomplete grass/reed bank is active.
 
 The development-only sprite-batch-review helper records immutable originals, explicit sizing/padding/root translation and native comparison crops with full-scene hashes. Candidate review and publication remain separate. Further grass corrections and height-bank generation are in progress; this is not completion of the catalog.
+
+End-to-end 150% workflow audit: `SPRITE_WORKFLOW_AUDIT.md`. Developer publication now journals sprite/terrain registry pairs and validates retained sprite history. New planning captures use `sprite:request`; this does not resume image production.

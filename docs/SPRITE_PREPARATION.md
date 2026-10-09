@@ -1,5 +1,9 @@
 # Sprite production preparation
 
+## Current 150% preparation · v0.8.103
+
+SPRITE_RESOLUTION_HOUSEKEEPING.md is the current sizing/processing/review contract. The 33 active images keep their existing bytes and records; reference geometry remains 192×192 display units. Explicit rasterScale supports up to 576×576, density-aware atlases and native capped-device-ratio review. Legacy records and immutable originals/checkpoints remain compatible. `sprite:resolution` reports current source readiness and dependent presentation. Artwork adaptation/generation remain paused.
+
 ## Implemented lifecycle and pilots · v0.8.92
 
 Three production keys are active: `hero:paladin`, `enemy:goblin` and `prop:vale-cottage:vale`. The Goblin uses Joel's explicitly accepted playful half-smile and organic ears. Paladin has a faithful two-frame idle; its static fallback is retained as a rollback revision. Native placement and desktop/phone day/night comparisons are recorded under `tools/sprites/pilots/2026-10-08-refined`. Engineer review of the idle is distinguished from Joel's actual image acceptance.
@@ -68,3 +72,7 @@ Joel accepted the pilot designs on 8 October, except that the Goblin face needs 
 Terrain texture scope is documented separately in GRAPHICS_CANON_TERRAIN_TEXTURE_CANDIDATES.md (28 candidates). Opaque seamless textures cannot use this transparent body processor unchanged; their dedicated validation/registration and clipped world-space rendering must be proven in the five-ground pilot. Natural scenery must retain deterministic placement and actual variant references; see environment-scope.json and SPRITE_SCOPE_RECONCILIATION.md.
 
 For new content, follow DESIGN_TO_SPRITE_WORKFLOW.md and its repository handoff template. Procedural-design acceptance, sprite-production authorization and generated-image acceptance are separate recorded facts. Preserve accepted references across chats and reconcile only affected designs when content changes. The lifecycle audit records required replacement, bounded loading and animation upgrades before bulk integration.
+
+## End-to-end audit follow-up
+
+See `SPRITE_WORKFLOW_AUDIT.md` for generation-request provenance, candidate-bound review, source-normalization guards, validated rollback history and process-interruption recovery. Use `sprite:request` before future production; use `sprite:recover` / `material:recover` if an interrupted registry transaction is detected. Artwork production remains paused.

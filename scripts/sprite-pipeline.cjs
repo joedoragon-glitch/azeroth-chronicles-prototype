@@ -8,6 +8,11 @@ const sharp = require('sharp');
 const { createCanvas, Image } = require('@napi-rs/canvas');
 const root = path.resolve(__dirname, '..');
 const specs = require('../tools/sprites/specifications.json');
+const Transactions = require('./asset-registry-transaction.cjs');
+const registryFiles = [
+  path.join(root, 'tools/sprites/approved.json'),
+  path.join(root, 'assets/sprites/manifest.json'),
+];
 const Sprites = require('../src/prototype/sprites.js');
 const Format = require('../src/prototype/sprite-format.js');
 const visualSandbox = {
@@ -90,60 +95,62 @@ function canonHash() {
     ),
   );
 }
-function contracts() {
+function contracts(requestedKey = null) {
   const entries = catalog();
   const approved = json(path.join(root, 'tools/sprites/approved.json'));
   const snapshotHash = canonHash();
-  return specs.assets.map((spec) => {
-    const item = entries.find((entry) => entry.id === spec.catalogId);
-    fail(item?.status === 'generate', 'Only GENERATE catalog entries can have asset contracts');
-    fail(
-      Sprites.candidateKeys(spec.entity, spec.region)[0] === spec.key,
-      'Exact runtime key mismatch',
-    );
-    fail(!item.declaredKey || item.declaredKey === spec.key, 'Catalog/runtime key mismatch');
-    const { width, height, anchorX, anchorY } = spec.canvas;
-    fail(
-      [width, height].every(
-        (n) => Number.isInteger(n) && n > 0 && n <= specs.policy.maxOutputDimension,
-      ),
-      'Invalid canvas',
-    );
-    fail(
-      [anchorX, anchorY].every((n) => Number.isFinite(n) && n >= 0 && n <= 1),
-      'Invalid anchor',
-    );
-    const result = {
-      ...spec,
-      catalog: item,
-      canonSnapshotHash: snapshotHash,
-      approval: approved.assets[spec.key]?.review?.status || 'pending',
-      runtime: {
-        displayWidth: width,
-        displayHeight: height,
-        anchorX,
-        anchorY,
-        labelHeight: Visuals.height(spec.entity),
-      },
-    };
-    result.canonHash = hash(
-      Buffer.concat([
-        reference(result, true),
-        Buffer.from(
-          JSON.stringify({
-            key: result.key,
-            entity: result.entity,
-            region: result.region,
-            runtime: result.runtime,
-          }),
+  return specs.assets
+    .filter((spec) => !requestedKey || spec.key === requestedKey)
+    .map((spec) => {
+      const item = entries.find((entry) => entry.id === spec.catalogId);
+      fail(item?.status === 'generate', 'Only GENERATE catalog entries can have asset contracts');
+      fail(
+        Sprites.candidateKeys(spec.entity, spec.region)[0] === spec.key,
+        'Exact runtime key mismatch',
+      );
+      fail(!item.declaredKey || item.declaredKey === spec.key, 'Catalog/runtime key mismatch');
+      const { width, height, anchorX, anchorY } = spec.canvas;
+      fail(
+        [width, height].every(
+          (n) => Number.isInteger(n) && n > 0 && n <= specs.policy.maxOutputDimension,
         ),
-      ]),
-    );
-    return result;
-  });
+        'Invalid canvas',
+      );
+      fail(
+        [anchorX, anchorY].every((n) => Number.isFinite(n) && n >= 0 && n <= 1),
+        'Invalid anchor',
+      );
+      const result = {
+        ...spec,
+        catalog: item,
+        canonSnapshotHash: snapshotHash,
+        approval: approved.assets[spec.key]?.review?.status || 'pending',
+        runtime: {
+          displayWidth: width,
+          displayHeight: height,
+          anchorX,
+          anchorY,
+          labelHeight: Visuals.height(spec.entity),
+        },
+      };
+      result.canonHash = hash(
+        Buffer.concat([
+          reference(result, true),
+          Buffer.from(
+            JSON.stringify({
+              key: result.key,
+              entity: result.entity,
+              region: result.region,
+              runtime: result.runtime,
+            }),
+          ),
+        ]),
+      );
+      return result;
+    });
 }
 function contractFor(key) {
-  const contract = contracts().find((item) => item.key === key);
+  const contract = contracts(key).find((item) => item.key === key);
   fail(contract, 'No prepared contract for exact key: ' + key);
   return contract;
 }
@@ -296,16 +303,79 @@ function reference(contract, generation = false) {
   );
   return canvas.toBuffer('image/png');
 }
+// Reference display geometry stays fixed; only processed raster pixels change.
+function rasterFor(contract, scale = 1) {
+  const width = contract.canvas.width * scale,
+    height = contract.canvas.height * scale;
+  fail(
+    Number.isFinite(scale) &&
+      scale >= 1 &&
+      scale <= specs.policy.maxRasterScale &&
+      [width, height].every((n) => Number.isInteger(n) && n <= specs.policy.maxOutputDimension) &&
+      width * height <= Format.LIMITS.resourcePixels,
+    'Invalid raster scale or output pixel budget',
+  );
+  return { width, height, scale };
+}
+function validateRaster(record, contract, report = record.output) {
+  const raster = rasterFor(contract, record.processing?.rasterScale ?? 1);
+  fail(
+    report.width === raster.width &&
+      report.height === raster.height &&
+      report.bytes <= specs.policy.maxOutputBytes,
+    'Invalid raster output dimensions/budget',
+  );
+  if (record.processing?.rasterScale !== undefined) {
+    fail(
+      JSON.stringify(record.processing.to) === JSON.stringify([raster.width, raster.height]),
+      'Raster processing dimensions changed',
+    );
+    if (raster.scale > 1)
+      fail(
+        record.source.width >= raster.width && record.source.height >= raster.height,
+        'Higher-density output requires sufficient original pixels; no source enlargement',
+      );
+  }
+  for (const variant of record.presentation?.variants || [])
+    fail(
+      variant.width === raster.width && variant.height === raster.height,
+      'Variant raster dimensions differ from static fallback',
+    );
+  for (const clip of Object.values(record.presentation?.clips || {}))
+    for (const frame of clip.frames)
+      fail(
+        frame.rect?.[2] === raster.width &&
+          frame.rect?.[3] === raster.height &&
+          frame.pivot?.[0] === raster.width * contract.canvas.anchorX &&
+          frame.pivot?.[1] === raster.height * contract.canvas.anchorY,
+        'Clip raster dimensions/pivot differ from reference geometry',
+      );
+  return raster;
+}
+function validateSource(record, source) {
+  fail(
+    source.hash === record.source.hash &&
+      source.width === record.source.width &&
+      source.height === record.source.height,
+    'Source provenance/dimensions changed',
+  );
+}
 async function prepare(key, input, format = 'png', placement = {}) {
   fail(['png', 'webp'].includes(format), 'Output must be PNG or lossless WebP');
   const contract = contractFor(key),
     bytes = fs.readFileSync(input),
-    source = await inspect(bytes);
+    source = await inspect(bytes),
+    raster = rasterFor(contract, placement.rasterScale ?? 1);
   fail(
     source.width * contract.canvas.height === source.height * contract.canvas.width,
     'Source aspect must match the reference canvas; no implicit crop or distortion',
   );
-  const pipeline = sharp(bytes).resize(contract.canvas.width, contract.canvas.height, {
+  if (raster.scale > 1)
+    fail(
+      source.width >= raster.width && source.height >= raster.height,
+      'Higher-density output requires sufficient original pixels; no source enlargement',
+    );
+  const pipeline = sharp(bytes).resize(raster.width, raster.height, {
     kernel: specs.policy.resizeKernel,
   });
   let output = await (
@@ -313,10 +383,13 @@ async function prepare(key, input, format = 'png', placement = {}) {
       ? pipeline.png({ compressionLevel: 9, palette: false })
       : pipeline.webp({ lossless: true, effort: 6 })
   ).toBuffer();
-  const dx = placement.offsetX || 0,
-    dy = placement.offsetY || 0;
+  const referenceX = placement.offsetX ?? 0,
+    referenceY = placement.offsetY ?? 0,
+    dx = referenceX * raster.scale,
+    dy = referenceY * raster.scale;
   fail(
-    [dx, dy].every((n) => Number.isInteger(n) && Math.abs(n) <= 32),
+    [referenceX, referenceY].every((n) => Number.isFinite(n) && Math.abs(n) <= 32) &&
+      [dx, dy].every(Number.isInteger),
     'Invalid explicit placement translation',
   );
   if (dx || dy) {
@@ -361,6 +434,7 @@ async function prepare(key, input, format = 'png', placement = {}) {
             catalog: contract.catalog.sourceHash,
             dx,
             dy,
+            rasterScale: raster.scale,
           }),
         ),
       ).slice(0, 12),
@@ -385,10 +459,17 @@ async function prepare(key, input, format = 'png', placement = {}) {
       kernel: specs.policy.resizeKernel,
       from: [source.width, source.height],
       to: [report.width, report.height],
+      rasterScale: raster.scale,
       crop: false,
       trim: false,
       colorConversion: false,
-      translation: { x: dx, y: dy, visiblePixelsDiscarded: 0 },
+      translation: {
+        x: referenceX,
+        y: referenceY,
+        rasterX: dx,
+        rasterY: dy,
+        visiblePixelsDiscarded: 0,
+      },
     },
     review: { status: 'pending', reference: null },
   };
@@ -422,6 +503,20 @@ function validateRecord(record, contract, requireApproval = false, allowStale = 
   fail(
     allowStale || JSON.stringify(record.runtime) === JSON.stringify(contract.runtime),
     'Runtime dimensions/anchors differ from the contract',
+  );
+  validateRaster(
+    record,
+    allowStale
+      ? {
+          ...contract,
+          canvas: {
+            width: record.runtime.displayWidth,
+            height: record.runtime.displayHeight,
+            anchorX: record.runtime.anchorX,
+            anchorY: record.runtime.anchorY,
+          },
+        }
+      : contract,
   );
   if (requireApproval)
     fail(
@@ -471,11 +566,15 @@ async function verifyExtra(extra, directory, sourceDirectory) {
   );
   for (const item of extra.sources || []) {
     const source = await inspect(safeFile(sourceDirectory, item.file));
-    fail(source.hash === item.hash, 'Frame/variant source provenance changed');
+    fail(
+      source.hash === item.hash && source.width === item.width && source.height === item.height,
+      'Frame/variant source provenance changed',
+    );
   }
   return output;
 }
 async function checkProduction(options = {}) {
+  if (!options.transactionActive) Transactions.assertClean(root, 'sprites');
   const approved = json(path.join(root, 'tools/sprites/approved.json'));
   fail(
     [1, 2].includes(approved.version) && approved.assets && !Array.isArray(approved.assets),
@@ -483,22 +582,24 @@ async function checkProduction(options = {}) {
   );
   const manifest = json(path.join(root, 'assets/sprites/manifest.json')),
     expected = {},
-    unique = new Map();
+    unique = new Map(),
+    byKey = new Map(contracts().map((c) => [c.key, c]));
   for (const [key, record] of Object.entries(approved.assets)) {
-    const contract = contractFor(key),
+    const contract = byKey.get(key),
       stale = (options.allowStaleKeys || []).includes(key);
     validateRecord(record, contract, true, stale);
     const report = await inspect(safeFile(path.join(root, 'assets/sprites'), record.output.file));
     const source = await inspect(
       safeFile(path.join(root, 'tools/sprites/sources'), record.source.file),
     );
+    validateSource(record, source);
     fail(
       report.hash === record.output.hash && source.hash === record.source.hash,
       'Approved binary provenance changed',
     );
     fail(
-      report.width === (stale ? record.output.width : contract.canvas.width) &&
-        report.height === (stale ? record.output.height : contract.canvas.height) &&
+      report.width === record.output.width &&
+        report.height === record.output.height &&
         report.bytes <= specs.policy.maxOutputBytes,
       'Approved output violates size budget',
     );
@@ -517,6 +618,33 @@ async function checkProduction(options = {}) {
         ? { src: './assets/sprites/' + record.output.file, ...record.runtime }
         : entryFor(record);
     if (record.revision) fail(record.revision === revisionFor(record), 'Asset revision changed');
+  }
+  for (const [key, revisions] of Object.entries(approved.history || {})) {
+    const contract = byKey.get(key);
+    fail(contract, 'Rollback key lacks an exact contract');
+    for (const [revision, record] of Object.entries(revisions)) {
+      fail(lease(record) === revision, 'Rollback revision identity changed');
+      validateRecord(record, contract, true, true);
+      const output = await inspect(safeFile(path.join(root, 'assets/sprites'), record.output.file)),
+        source = await inspect(
+          safeFile(path.join(root, 'tools/sprites/sources'), record.source.file),
+        );
+      validateSource(record, source);
+      fail(
+        output.hash === record.output.hash &&
+          output.width === record.output.width &&
+          output.height === record.output.height,
+        'Retained rollback binary changed',
+      );
+      if (record.revision)
+        fail(record.revision === revisionFor(record), 'Retained rollback revision changed');
+      for (const extra of record.extras || [])
+        await verifyExtra(
+          extra,
+          path.join(root, 'assets/sprites'),
+          path.join(root, 'tools/sprites/sources'),
+        );
+    }
   }
   fail(
     JSON.stringify(manifest.sprites) === JSON.stringify(expected),
@@ -549,32 +677,18 @@ async function checkProduction(options = {}) {
     maxActiveDecodedBytes: activeBudget,
   };
 }
-async function commitRegistry(approved, manifest, copies = []) {
-  const approvedFile = path.join(root, 'tools/sprites/approved.json'),
-    manifestFile = path.join(root, 'assets/sprites/manifest.json');
-  const oldApproved = fs.readFileSync(approvedFile),
-    oldManifest = fs.readFileSync(manifestFile),
-    created = [];
-  try {
-    for (const { source, target, expectedHash } of copies) {
-      const parent = path.dirname(target);
-      fs.mkdirSync(parent, { recursive: true });
-      fail(fs.realpathSync(parent) === parent, 'Asset directory must not be symlinked');
-      if (!fs.existsSync(target)) {
-        fs.copyFileSync(source, target, fs.constants.COPYFILE_EXCL);
-        created.push(target);
-      }
-      fail(hash(fs.readFileSync(target)) === expectedHash, 'Immutable resource hash collision');
-    }
-    writeJSON(approvedFile, approved);
-    writeJSON(manifestFile, manifest);
-    return await checkProduction();
-  } catch (error) {
-    fs.writeFileSync(approvedFile, oldApproved);
-    fs.writeFileSync(manifestFile, oldManifest);
-    for (const file of created) fs.rmSync(file, { force: true });
-    throw error;
-  }
+async function commitRegistry(approved, manifest, copies, state) {
+  return Transactions.commit({
+    root,
+    id: 'sprites',
+    state,
+    values: [approved, manifest],
+    copies,
+    verify: () => checkProduction({ transactionActive: true }),
+  });
+}
+function recover() {
+  return Transactions.recover({ root, id: 'sprites', files: registryFiles });
 }
 function lease(record) {
   return record?.revision || record?.output.hash;
@@ -593,24 +707,20 @@ async function publish(recordFile, expectedRevision = null) {
     source = safeFile(directory, record.source.file);
   const outputReport = await inspect(output),
     sourceReport = await inspect(source);
+  validateSource(record, sourceReport);
   fail(
     outputReport.hash === record.output.hash && sourceReport.hash === record.source.hash,
     'Candidate bytes changed after review',
   );
-  fail(
-    outputReport.width === contract.canvas.width &&
-      outputReport.height === contract.canvas.height &&
-      outputReport.bytes <= specs.policy.maxOutputBytes,
-    'Invalid candidate output dimensions/budget',
-  );
-  const approved = json(path.join(root, 'tools/sprites/approved.json')),
+  validateRaster(record, contract, outputReport);
+  const state = Transactions.snapshot(registryFiles),
+    [approved, manifest] = state.data,
     prior = approved.assets[record.key];
   if (expectedRevision === null)
     fail(!prior, 'Replacement requires an expected active revision; use replace');
   else fail(prior && lease(prior) === expectedRevision, 'Replacement lease mismatch');
   await checkProduction({ allowStaleKeys: expectedRevision ? [record.key] : [] });
-  const manifest = json(path.join(root, 'assets/sprites/manifest.json')),
-    copies = [];
+  const copies = [];
   const outputName =
     record.key.replaceAll(':', '-') + '-' + outputReport.hash + '.' + outputReport.format;
   const sourceName = sourceReport.hash + '.' + sourceReport.format;
@@ -653,10 +763,11 @@ async function publish(recordFile, expectedRevision = null) {
   approved.assets[record.key] = record;
   manifest.formatVersion = 3;
   manifest.sprites[record.key] = entryFor(record);
-  return commitRegistry(approved, manifest, copies);
+  return commitRegistry(approved, manifest, copies, state);
 }
 async function rollback(key, targetRevision, expectedRevision) {
-  const approved = json(path.join(root, 'tools/sprites/approved.json')),
+  const state = Transactions.snapshot(registryFiles),
+    [approved, manifest] = state.data,
     prior = approved.assets[key],
     target = approved.history?.[key]?.[targetRevision];
   fail(
@@ -668,23 +779,22 @@ async function rollback(key, targetRevision, expectedRevision) {
   await checkProduction({ allowStaleKeys: [key] });
   if (prior) retain(approved, key, prior);
   approved.assets[key] = target;
-  const manifest = json(path.join(root, 'assets/sprites/manifest.json'));
   manifest.sprites[key] =
     target.version === 1
       ? { src: './assets/sprites/' + target.output.file, ...target.runtime }
       : entryFor(target);
-  return commitRegistry(approved, manifest);
+  return commitRegistry(approved, manifest, [], state);
 }
 async function remove(key, expectedRevision) {
-  const approved = json(path.join(root, 'tools/sprites/approved.json')),
+  const state = Transactions.snapshot(registryFiles),
+    [approved, manifest] = state.data,
     prior = approved.assets[key];
   fail(prior && lease(prior) === expectedRevision, 'Removal lease mismatch');
   await checkProduction({ allowStaleKeys: [key] });
   retain(approved, key, prior);
   delete approved.assets[key];
-  const manifest = json(path.join(root, 'assets/sprites/manifest.json'));
   delete manifest.sprites[key];
-  return commitRegistry(approved, manifest);
+  return commitRegistry(approved, manifest, [], state);
 }
 async function attachClip(recordFile, name, frameFiles, durations, loop = true) {
   const record = json(recordFile),
@@ -704,8 +814,7 @@ async function attachClip(recordFile, name, frameFiles, durations, loop = true) 
       durations.every((n) => Number.isFinite(n) && n > 0 && n <= 10000),
     'Invalid clip frame timing',
   );
-  const width = contract.canvas.width,
-    height = contract.canvas.height,
+  const { width, height } = validateRaster(record, contract),
     pad = 2;
   const columns = Math.floor(1024 / (width + pad * 2)),
     rows = Math.floor(1024 / (height + pad * 2)),
@@ -728,8 +837,13 @@ async function attachClip(recordFile, name, frameFiles, durations, loop = true) 
           item = json(file),
           folder = path.dirname(file);
         validateRecord(item, contract, true);
+        fail(
+          item.output.width === width && item.output.height === height,
+          'Clip frames must share raster density and reference geometry',
+        );
         const input = safeFile(folder, item.output.file),
           original = safeFile(folder, item.source.file);
+        validateSource(item, await inspect(original));
         fail(
           (await inspect(input)).hash === item.output.hash &&
             (await inspect(original)).hash === item.source.hash,
@@ -815,8 +929,13 @@ async function attachVariants(recordFile, variants) {
         item = json(file),
         folder = path.dirname(file);
       validateRecord(item, contract, true);
+      fail(
+        item.output.width === record.output.width && item.output.height === record.output.height,
+        'Variants must share raster density and reference geometry',
+      );
       const output = safeFile(folder, item.output.file),
         source = safeFile(folder, item.source.file);
+      validateSource(item, await inspect(source));
       fail(
         (await inspect(output)).hash === item.output.hash &&
           (await inspect(source)).hash === item.source.hash,
@@ -863,6 +982,7 @@ async function attachVariants(recordFile, variants) {
   }
 }
 async function spriteLayer(contract, candidateFile, presentation = null) {
+  const raster = await inspect(candidateFile);
   const sandbox = {
     Image: class extends Image {
       set src(_value) {
@@ -879,8 +999,8 @@ async function spriteLayer(contract, candidateFile, presentation = null) {
         sprites: {
           [contract.key]: {
             src: './assets/sprites/preview.png',
-            width: contract.canvas.width,
-            height: contract.canvas.height,
+            width: raster.width,
+            height: raster.height,
             ...contract.runtime,
             ...(presentation || {}),
           },
@@ -903,7 +1023,15 @@ async function spriteLayer(contract, candidateFile, presentation = null) {
   for (let i = 0; i < 160; i++) sandbox.PrototypeSprites.advance(100);
   return sandbox.PrototypeSprites;
 }
-function scene(contract, width, height, sprite = null, lighting = 'day', materials = null) {
+function scene(
+  contract,
+  width,
+  height,
+  sprite = null,
+  lighting = 'day',
+  materials = null,
+  options = {},
+) {
   const Campaign = require('../src/prototype/engine.js');
   let seed = 111;
   const random = () => (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296;
@@ -935,15 +1063,28 @@ function scene(contract, width, height, sprite = null, lighting = 'day', materia
     else if (entity.renderKind === 'building') zone.buildings.push(entity);
     else zone.props.push(entity);
   }
-  const canvas = createCanvas(width, height);
+  const mode = options.mode || (width > 900 ? 'desktop' : 'phone'),
+    cameraZoom = options.cameraZoom ?? specs.policy.reviewCameraZoom,
+    ratio = Math.max(
+      1,
+      Math.min(
+        options.devicePixelRatio || 1,
+        mode === 'phone' ? 1.5 : 2,
+        Math.sqrt(3000000 / (width * height)),
+      ),
+    );
+  const canvas = createCanvas(Math.round(width * ratio), Math.round(height * ratio)),
+    ctx = canvas.getContext('2d');
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
   const platform = require('../src/prototype/platform.js').init({
-    location: { search: '?experience=' + (width > 900 ? 'desktop' : 'phone') },
+    location: { search: '?experience=' + mode },
     localStorage: { getItem: () => null },
     document: { body: { getAttribute: () => null, setAttribute: () => {} } },
   });
+  platform.selectCameraZoom(cameraZoom);
   const renderer = require('../src/prototype/renderer.js').create({
-    canvas,
-    ctx: canvas.getContext('2d'),
+    canvas: { width, height },
+    ctx,
     getGame: () => game,
     platform,
     Campaign,
@@ -956,7 +1097,15 @@ function scene(contract, width, height, sprite = null, lighting = 'day', materia
     isPaused: () => false,
   });
   renderer.draw();
-  return { bytes: canvas.toBuffer('image/png'), anchor: renderer.screen(entity) };
+  return {
+    bytes: canvas.toBuffer('image/png'),
+    anchor: renderer.screen(entity),
+    mode,
+    cameraZoom,
+    ratio,
+    pixelWidth: canvas.width,
+    pixelHeight: canvas.height,
+  };
 }
 async function showroom(recordFile) {
   const keyOnly = recordFile && specs.assets.some((item) => item.key === recordFile);
@@ -981,10 +1130,13 @@ async function showroom(recordFile) {
   fs.mkdirSync(directory, { recursive: true });
   fail(fs.realpathSync(directory) === directory, 'Preview directory must not be symlinked');
   const comparisons = [];
-  for (const [width, height] of specs.policy.viewports)
+  for (const profile of specs.policy.reviewProfiles)
     for (const lighting of ['day', 'night']) {
-      const canonical = scene(contract, width, height, null, lighting),
-        proposed = candidate ? scene(contract, width, height, sprite, lighting) : canonical;
+      const { width, height } = profile;
+      const canonical = scene(contract, width, height, null, lighting, null, profile),
+        proposed = candidate
+          ? scene(contract, width, height, sprite, lighting, null, profile)
+          : canonical;
       const name = width + 'x' + height + '-' + lighting;
       fs.writeFileSync(path.join(directory, 'canonical-' + name + '.png'), canonical.bytes);
       fs.writeFileSync(path.join(directory, 'candidate-' + name + '.png'), proposed.bytes);
@@ -992,6 +1144,11 @@ async function showroom(recordFile) {
         width,
         height,
         lighting,
+        mode: canonical.mode,
+        cameraZoom: canonical.cameraZoom,
+        ratio: canonical.ratio,
+        pixelWidth: canonical.pixelWidth,
+        pixelHeight: canonical.pixelHeight,
         canonical: 'canonical-' + name + '.png',
         candidate: 'candidate-' + name + '.png',
         anchor: canonical.anchor,
@@ -1008,6 +1165,8 @@ async function showroom(recordFile) {
     pending: !candidate,
     review: record?.review || { status: 'pending' },
     runtime: contract.runtime,
+    cameraZoom: specs.policy.reviewCameraZoom,
+    rasterScale: record?.processing?.rasterScale ?? 1,
     candidateImage: candidate
       ? 'candidate-isolated.' + record.output.format
       : 'canonical-isolated.png',
@@ -1030,10 +1189,222 @@ async function showroom(recordFile) {
   );
   return { directory, comparisons, pending: !candidate };
 }
+async function generationRequest(key, destination) {
+  Transactions.assertClean(root, 'sprites');
+  const contract = contractFor(key),
+    text = fs.readFileSync(path.join(root, 'docs/GRAPHICS_CANON_SPRITE_PROMPTS.md'), 'utf8'),
+    organic = text.match(/## Intended design[^\n]*\n\n([^\n]+)/)?.[1],
+    active = json(registryFiles[0]).assets[key],
+    referenceBytes = reference(contract, true),
+    measured = await inspect(referenceBytes),
+    bounds = active?.output.materialBounds || measured.materialBounds,
+    scale = active?.processing?.rasterScale ?? 1,
+    body = {
+      width: ((bounds.x2 - bounds.x1 + 1) / scale) * specs.policy.reviewCameraZoom,
+      height: ((bounds.y2 - bounds.y1 + 1) / scale) * specs.policy.reviewCameraZoom,
+    };
+  fail(
+    typeof contract.catalog.prompt === 'string' &&
+      contract.catalog.prompt.length > 80 &&
+      !/\b(undefined|null)\b/.test(contract.catalog.prompt),
+    'Missing or malformed exact generation prompt',
+  );
+  fail(organic, 'Missing material-appropriate design instruction');
+  const goblin =
+    key === 'enemy:goblin'
+      ? "\nPreserve Joel's accepted playful asymmetrical half-smile, small ivory tooth at one lower mouth corner, separate small nose and organic pointed ears. No robotic polygon face or face-wide triangular mouth."
+      : '';
+  const prompt =
+    contract.catalog.prompt +
+    '\n\n' +
+    organic +
+    goblin +
+    '\n\nViewing contract: 150% camera. The visible body is approximately ' +
+    Math.round(body.width) +
+    ' × ' +
+    Math.round(body.height) +
+    ' CSS pixels. Simplify tiny details to read at that size. Keep the full reference-frame proportions and root; do not fill transparent padding with a larger actor. Use enough source pixels for a 576 × 576 processed frame. Preserve identity, equipment and major silhouette; avoid fine texture that becomes noise.';
+  fail(!/\b(undefined|null)\b/.test(prompt), 'Malformed assembled generation prompt');
+  const request = {
+    version: 1,
+    key,
+    catalogId: contract.catalogId,
+    catalogHash: contract.catalog.sourceHash,
+    canonHash: contract.canonHash,
+    sourceSnapshotHash: contract.canonSnapshotHash,
+    authorization: 'Planning capture only; does not authorize generation, approval or publication',
+    prompt,
+    promptHash: hash(Buffer.from(prompt)),
+    reference: {
+      file: 'procedural-reference.png',
+      hash: hash(referenceBytes),
+      entity: contract.entity,
+      region: contract.region,
+    },
+    target: {
+      cameraZoom: specs.policy.reviewCameraZoom,
+      raster: rasterFor(contract, specs.policy.targetRasterScale),
+      runtime: contract.runtime,
+      visibleBodyCSS: body,
+      profiles: specs.policy.reviewProfiles,
+    },
+    replacement: active
+      ? {
+          expectedRevision: lease(active),
+          retainedSource: 'tools/sprites/sources/' + active.source.file,
+          recordedReview: active.review,
+          dependentPresentation: active.presentation || null,
+          dependentSources: (active.extras || []).flatMap((e) =>
+            (e.sources || []).map((s) => ({ ...s, file: 'tools/sprites/sources/' + s.file })),
+          ),
+          instruction:
+            'Retain accepted appearance and reprocess affected frames/variants together; procedural polygons are identity references, not anatomy requirements',
+        }
+      : null,
+  };
+  const directory = destination
+    ? path.resolve(destination)
+    : path.join(
+        root,
+        '_sprite-work',
+        'requests',
+        key.replaceAll(':', '-') +
+          '-' +
+          hash(
+            Buffer.from(
+              JSON.stringify({
+                prompt: request.promptHash,
+                canon: request.canonHash,
+                revision: request.replacement?.expectedRevision,
+              }),
+            ),
+          ),
+      );
+  fail(!fs.existsSync(directory), 'Request checkpoint is immutable; use a new destination');
+  fs.mkdirSync(path.dirname(directory), { recursive: true });
+  const stage = fs.mkdtempSync(path.join(path.dirname(directory), '.request-'));
+  try {
+    fs.writeFileSync(path.join(stage, 'procedural-reference.png'), referenceBytes);
+    request.contexts = [];
+    for (const profile of specs.policy.reviewProfiles)
+      for (const lighting of ['day', 'night']) {
+        const rendered = scene(
+            contract,
+            profile.width,
+            profile.height,
+            null,
+            lighting,
+            null,
+            profile,
+          ),
+          file = 'context-' + profile.width + 'x' + profile.height + '-' + lighting + '.png';
+        fs.writeFileSync(path.join(stage, file), rendered.bytes);
+        request.contexts.push({
+          file,
+          hash: hash(rendered.bytes),
+          ...profile,
+          lighting,
+          cameraZoom: rendered.cameraZoom,
+          ratio: rendered.ratio,
+          pixelWidth: rendered.pixelWidth,
+          pixelHeight: rendered.pixelHeight,
+        });
+      }
+    fs.writeFileSync(path.join(stage, 'prompt.txt'), prompt + '\n');
+    writeJSON(path.join(stage, 'request.json'), request);
+    fs.renameSync(stage, directory);
+  } finally {
+    fs.rmSync(stage, { recursive: true, force: true });
+  }
+  return { directory, request };
+}
+async function resolutionPlan() {
+  await checkProduction();
+  const registry = json(path.join(root, 'tools/sprites/approved.json')),
+    profiles = specs.policy.reviewProfiles,
+    retainedCandidates = [];
+  const walk = (directory) => {
+    for (const item of fs.readdirSync(directory, { withFileTypes: true })) {
+      const file = path.join(directory, item.name);
+      if (item.isDirectory()) walk(file);
+      else if (item.name === 'candidate.json') {
+        const record = json(file);
+        retainedCandidates.push({
+          file: path.relative(root, file),
+          key: record.key,
+          sourceHash: record.source?.hash,
+          outputHash: record.output?.hash,
+          status: 'retained checkpoint; reconcile current canon before reprocessing',
+        });
+      }
+    }
+  };
+  walk(path.join(root, 'tools/sprites/batches'));
+  const assets = Object.entries(registry.assets).map(([key, record]) => {
+    const contract = contractFor(key),
+      target = rasterFor(contract, specs.policy.targetRasterScale),
+      current = rasterFor(contract, record.processing?.rasterScale ?? 1),
+      clipFrames = Object.values(record.presentation?.clips || {}).reduce(
+        (sum, c) => sum + c.frames.length,
+        0,
+      ),
+      variants = record.presentation?.variants?.length || 0,
+      pad = 2,
+      columns = Math.floor(1024 / (target.width + 2 * pad)),
+      rows = Math.floor(1024 / (target.height + 2 * pad)),
+      frameSourcePixelsSufficient = (record.extras || []).every((extra) =>
+        (extra.sources || []).every(
+          (source) => source.width >= target.width && source.height >= target.height,
+        ),
+      );
+    const material = record.output.materialBounds,
+      body = material
+        ? {
+            width: (material.x2 - material.x1 + 1) / current.scale,
+            height: (material.y2 - material.y1 + 1) / current.scale,
+          }
+        : null;
+    return {
+      key,
+      activeRevision: lease(record),
+      source: 'tools/sprites/sources/' + record.source.file,
+      output: 'assets/sprites/' + record.output.file,
+      currentRaster: current,
+      targetRaster: target,
+      targetDecodedBytes: target.width * target.height * 4,
+      sourcePixelsSufficient:
+        record.source.width >= target.width && record.source.height >= target.height,
+      frameSourcePixelsSufficient,
+      referenceDisplay: record.runtime,
+      visibleBodyCSS: body && {
+        width: body.width * specs.policy.reviewCameraZoom,
+        height: body.height * specs.policy.reviewCameraZoom,
+      },
+      dependentPresentation: { clipFrames, variants, framesPerAtlasPage: columns * rows },
+      nextAction:
+        clipFrames || variants
+          ? 'Reprocess static and dependent frames/variants together; retain fallback and rollback'
+          : 'Reprocess retained source; review selected-size appearance and grounding before replacement',
+    };
+  });
+  return {
+    cameraZoom: specs.policy.reviewCameraZoom,
+    targetRasterScale: specs.policy.targetRasterScale,
+    production: 'paused; this command does not prepare, approve or publish artwork',
+    profiles,
+    activeDecodedLimit: Format.LIMITS.decodedBytes,
+    decodeConcurrency: Format.LIMITS.concurrent,
+    assets,
+    retainedCandidates,
+  };
+}
 async function main() {
   const [command = 'check', key, input, format, placementFile] = process.argv.slice(2);
   let result;
-  if (command === 'catalog') result = catalog();
+  if (command === 'request') result = await generationRequest(key, input);
+  else if (command === 'recover') result = recover();
+  else if (command === 'resolution') result = await resolutionPlan();
+  else if (command === 'catalog') result = catalog();
   else if (command === 'asset') result = asset(key);
   else if (command === 'contracts') result = contracts();
   else if (command === 'inspect') result = await inspect(key);
@@ -1051,7 +1422,7 @@ async function main() {
   else if (command === 'check') result = await checkProduction();
   else
     throw Error(
-      'Use check, catalog, contracts, inspect <image>, prepare <exact-key> <image> [png|webp], showroom [candidate.json], or publish <approved-candidate.json>',
+      'Use check, resolution, catalog, contracts, inspect <image>, prepare <exact-key> <image> [png|webp] [placement.json], showroom [candidate.json], or publish <approved-candidate.json>',
     );
   console.log(JSON.stringify(result, null, 2));
 }
@@ -1064,10 +1435,13 @@ module.exports = {
   inspect,
   reference,
   prepare,
+  rasterFor,
+  validateRaster,
   validateRecord,
   checkProduction,
   publish,
   rollback,
+  recover,
   remove,
   revisionFor,
   entryFor,
@@ -1076,6 +1450,8 @@ module.exports = {
   spriteLayer,
   scene,
   showroom,
+  resolutionPlan,
+  generationRequest,
   safeFile,
   hash,
 };

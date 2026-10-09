@@ -56,8 +56,8 @@ const root = path.resolve(__dirname, '..');
       assert.equal(report.height, contract.canvas.height);
       assert(report.padding >= 2 && report.visiblePixels > 0 && report.transparentPixels > 0);
       assert.equal(
-        pipeline.hash(pipeline.scene(contract, 320, 568).bytes),
-        pipeline.hash(pipeline.scene(contract, 320, 568).bytes),
+        pipeline.hash(pipeline.scene(contract, 375, 800).bytes),
+        pipeline.hash(pipeline.scene(contract, 375, 800).bytes),
         'fixed scene is reproducible: ' + contract.key,
       );
     }
@@ -222,7 +222,7 @@ const root = path.resolve(__dirname, '..');
     );
     console.log('PASS WebP and pending approval guard');
     const preview = success('showroom', recordFile);
-    assert.equal(preview.comparisons.length, 8);
+    assert.equal(preview.comparisons.length, 12);
     assert.equal(preview.pending, false);
     const sprites = await pipeline.spriteLayer(
       contracts[0],
@@ -251,8 +251,8 @@ const root = path.resolve(__dirname, '..');
         '-e',
         `
       const fs=require('fs'), pipeline=require('./scripts/sprite-pipeline.cjs');
-      const write=fs.writeFileSync;let injected=false;
-      fs.writeFileSync=function(file,...args){if(String(file).endsWith('assets/sprites/manifest.json')&&!injected){injected=true;throw Error('simulated write failure');}return write.call(fs,file,...args);};
+      const rename=fs.renameSync;let injected=false;
+      fs.renameSync=function(from,file){if(String(file).endsWith('assets/sprites/manifest.json')&&!injected){injected=true;throw Error('simulated write failure');}return rename.call(fs,from,file);};
       pipeline.publish(process.argv[1]).then(()=>process.exit(1)).catch(error=>{if(!error.message.includes('simulated')){console.error(error);process.exitCode=1;}});
     `,
         recordFile,

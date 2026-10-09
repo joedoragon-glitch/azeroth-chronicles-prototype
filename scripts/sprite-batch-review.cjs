@@ -7,73 +7,143 @@ const fs = require('node:fs'),
 const root = path.resolve(__dirname, '..');
 async function capture(recordFile, entity = null) {
   const directory = path.dirname(path.resolve(recordFile)),
-    record = JSON.parse(fs.readFileSync(recordFile)),
+    recordBytes = fs.readFileSync(recordFile),
+    record = JSON.parse(recordBytes),
     base = pipeline.contractFor(record.key),
     contract = entity ? { ...base, entity } : base,
-    review = path.join(directory, 'review-scenes');
-  fs.mkdirSync(review, { recursive: true });
-  const sprite = await pipeline.spriteLayer(
-    base,
-    path.join(directory, record.output.file),
-    record.presentation,
-  );
-  const rows = [],
-    comparisons = [];
-  for (const [width, height] of [
-    [1280, 800],
-    [375, 812],
-    [320, 568],
-    [844, 390],
-  ])
-    for (const lighting of ['day', 'night']) {
-      const canonical = pipeline.scene(contract, width, height, null, lighting),
-        candidate = pipeline.scene(contract, width, height, sprite, lighting);
-      const anchor = canonical.anchor,
-        crop = {
-          left: Math.max(0, Math.round(anchor.x) - 64),
-          top: Math.max(0, Math.round(anchor.y) - 88),
-          width: 128,
-          height: 112,
-        };
-      const index = comparisons.length;
-      for (const [column, scene] of [canonical, candidate].entries()) {
-        const input = await sharp(scene.bytes).extract(crop).png().toBuffer();
-        rows.push({ input, left: column * 128, top: index * 112 });
+    reviewTarget = path.join(directory, 'review-scenes');
+  pipeline.validateRecord(record, base);
+  if (fs.existsSync(reviewTarget))
+    throw Error('Retain existing review; capture in a new revision directory');
+  const review = fs.mkdtempSync(path.join(directory, '.review-'));
+  try {
+    const output = pipeline.safeFile(directory, record.output.file);
+    const actual = await pipeline.inspect(output);
+    if (actual.hash !== record.output.hash) throw Error('Candidate bytes changed before review');
+    pipeline.validateRaster(record, base, actual);
+    const sprite = await pipeline.spriteLayer(base, output, record.presentation);
+    const rows = [],
+      comparisons = [];
+    for (const profile of require('../tools/sprites/specifications.json').policy.reviewProfiles)
+      for (const lighting of ['day', 'night']) {
+        const { width, height } = profile;
+        const canonical = pipeline.scene(contract, width, height, null, lighting, null, profile),
+          candidate = pipeline.scene(contract, width, height, sprite, lighting, null, profile);
+        const anchor = canonical.anchor,
+          ratio = canonical.ratio,
+          cropWidth = Math.min(
+            canonical.pixelWidth,
+            Math.ceil(record.runtime.displayWidth * canonical.cameraZoom * ratio),
+          ),
+          cropHeight = Math.min(
+            canonical.pixelHeight,
+            Math.ceil(record.runtime.displayHeight * canonical.cameraZoom * ratio),
+          ),
+          crop = {
+            left: Math.max(
+              0,
+              Math.min(
+                canonical.pixelWidth - cropWidth,
+                Math.round(anchor.x * ratio - cropWidth / 2),
+              ),
+            ),
+            top: Math.max(
+              0,
+              Math.min(
+                canonical.pixelHeight - cropHeight,
+                Math.round(anchor.y * ratio - cropHeight * record.runtime.anchorY),
+              ),
+            ),
+            width: cropWidth,
+            height: cropHeight,
+          };
+        const index = comparisons.length;
+        for (const [column, scene] of [canonical, candidate].entries()) {
+          const input = await sharp(scene.bytes).extract(crop).png().toBuffer();
+          fs.writeFileSync(
+            path.join(
+              review,
+              (column ? 'candidate-' : 'canonical-') +
+                width +
+                'x' +
+                height +
+                '-' +
+                lighting +
+                '.png',
+            ),
+            scene.bytes,
+          );
+          rows.push({
+            input: await sharp(input)
+              .resize(288, 288, { fit: 'contain', background: '#19261d' })
+              .png()
+              .toBuffer(),
+            left: column * 288,
+            top: index * 288,
+          });
+        }
+        comparisons.push({
+          width,
+          height,
+          lighting,
+          mode: canonical.mode,
+          cameraZoom: canonical.cameraZoom,
+          ratio,
+          pixelWidth: canonical.pixelWidth,
+          pixelHeight: canonical.pixelHeight,
+          anchor,
+          crop,
+          canonicalHash: pipeline.hash(canonical.bytes),
+          candidateHash: pipeline.hash(candidate.bytes),
+        });
       }
-      comparisons.push({
-        width,
-        height,
-        lighting,
-        anchor,
-        crop,
-        canonicalHash: pipeline.hash(canonical.bytes),
-        candidateHash: pipeline.hash(candidate.bytes),
-      });
-    }
-  await sharp({ create: { width: 256, height: 896, channels: 4, background: '#19261d' } })
-    .composite(rows)
-    .png()
-    .toFile(path.join(review, 'native-review.png'));
-  fs.writeFileSync(
-    path.join(review, 'comparison.json'),
-    JSON.stringify(
-      {
-        key: record.key,
-        entity: contract.entity,
-        comparisons,
-        review: 'pending visual inspection',
-      },
-      null,
-      2,
-    ) + '\n',
-  );
-  return { review, comparisons: comparisons.length };
+    await sharp({
+      create: { width: 576, height: comparisons.length * 288, channels: 4, background: '#19261d' },
+    })
+      .composite(rows)
+      .png()
+      .toFile(path.join(review, 'native-review.png'));
+    fs.writeFileSync(
+      path.join(review, 'comparison.json'),
+      JSON.stringify(
+        {
+          key: record.key,
+          candidateHash: pipeline.hash(recordBytes),
+          sourceHash: record.source.hash,
+          outputHash: record.output.hash,
+          canonHash: record.canonHash,
+          entity: contract.entity,
+          comparisons,
+          review: 'pending visual inspection',
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+    if (pipeline.hash(fs.readFileSync(recordFile)) !== pipeline.hash(recordBytes))
+      throw Error('Candidate changed during review capture; retry against current revision');
+    fs.renameSync(review, reviewTarget);
+    return { review: reviewTarget, comparisons: comparisons.length };
+  } finally {
+    fs.rmSync(review, { recursive: true, force: true });
+  }
 }
 async function prepare(jobFile) {
   const job = JSON.parse(fs.readFileSync(jobFile)),
     directory = path.dirname(path.resolve(jobFile)),
     original = path.resolve(root, job.original),
     contract = pipeline.contractFor(job.key);
+  if (fs.existsSync(path.join(directory, 'candidate.json')))
+    throw Error('Candidate/checkpoint is immutable; prepare in a new revision directory');
+  const originalReport = await pipeline.inspect(original);
+  if (
+    !Number.isInteger(job.fullCanvasSize) ||
+    job.fullCanvasSize < 1 ||
+    !Number.isInteger(job.padding) ||
+    job.padding < 0 ||
+    job.fullCanvasSize > Math.min(originalReport.width, originalReport.height)
+  )
+    throw Error('Normalization must use valid dimensions without source enlargement');
   const target = path.join(directory, 'image-tool-original.png');
   if (!fs.existsSync(target)) fs.copyFileSync(original, target, fs.constants.COPYFILE_EXCL);
   if (pipeline.hash(fs.readFileSync(original)) !== pipeline.hash(fs.readFileSync(target)))
@@ -92,8 +162,11 @@ async function prepare(jobFile) {
     .toBuffer();
   const padded = path.join(directory, 'padded-source.png');
   fs.writeFileSync(padded, normalized);
-  const result = await pipeline.prepare(job.key, padded, 'png', job.translation);
-  for (const file of fs.readdirSync(result.directory))
+  const result = await pipeline.prepare(job.key, padded, 'png', {
+    ...job.translation,
+    rasterScale: job.rasterScale ?? 1,
+  });
+  for (const file of fs.readdirSync(result.directory).filter((name) => name !== 'candidate.json'))
     fs.copyFileSync(path.join(result.directory, file), path.join(directory, file));
   fs.writeFileSync(
     path.join(directory, 'normalization.json'),
@@ -113,6 +186,11 @@ async function prepare(jobFile) {
       null,
       2,
     ) + '\n',
+  );
+  fs.copyFileSync(
+    path.join(result.directory, 'candidate.json'),
+    path.join(directory, 'candidate.json'),
+    fs.constants.COPYFILE_EXCL,
   );
   return capture(path.join(directory, 'candidate.json'), job.entity || null);
 }

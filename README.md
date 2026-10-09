@@ -90,3 +90,6 @@ Phone gameplay uses a compact health/mana/level HUD. Learned skills and availabl
 ## Sprite production preparation
 
 The developer tooling and comparison showroom are documented in [SPRITE_PREPARATION.md](docs/SPRITE_PREPARATION.md). This preparation release keeps the current procedural game visuals. The later art pilot and creative approvals remain separate.
+
+
+Sprite preparation for the selected 150% camera is documented in [SPRITE_RESOLUTION_HOUSEKEEPING.md](docs/SPRITE_RESOLUTION_HOUSEKEEPING.md). `npm run sprite:resolution` audits retained sources and dependent frames before adaptation; production artwork remains paused.
