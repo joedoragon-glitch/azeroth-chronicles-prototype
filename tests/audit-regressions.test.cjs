@@ -555,4 +555,21 @@ test('F71 lengthy rogue warning labels stay inside zoomed narrow-screen canvas',
  assert(b.x>=0&&b.y>=0&&b.x+b.w<=logicalW&&b.y+b.h<=logicalH,
   'label must not extend past zoomed phone viewport edges');
 });
+
+test('F72 close-range boss signatures are not wasted against distant backline pressure',()=>{
+ const c=fresh(),e=c.bossEnemy(c.boss('thorn'),'normal',{x:1400,y:1700});
+ c.zone().enemies=[e];c.s.party=[];e.aggro=true;c.line=()=>true;
+ c.tacticalRogueOutnumbered=()=>true;
+ Object.assign(c.hero,{x:1770,y:1700,hp:10000,maxHp:10000});
+ assert(c.tacticalRogueMove(e,c.hero));
+ assert.equal(e.telegraph.name,'Thornfang’s Pack Feint','a distant lone target receives basic ranged disruption');
+ assert(!e.telegraph.rogueSignature,'no point-blank howl against an empty nearby area');
+ e.telegraph=null;
+ const soldier=c.unit('soldier',1470,1700);c.s.party=[soldier];
+ c.tacticalHighestThreatTarget=()=>c.hero;
+ assert(c.tacticalRogueMove(e,c.hero));
+ assert.equal(e.telegraph.name,'Thornfang’s Packbreaker Howl');
+ assert.equal(e.telegraph.targetId,soldier.id,'a close soldier is selected over an unreachable high-threat hero');
+ assert(e.telegraph.rogueSignature,'the local circle can affect at least one attacker');
+});
 console.log(passed+' audit regression scenarios passed.');
