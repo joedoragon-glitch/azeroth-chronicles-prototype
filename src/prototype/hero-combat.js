@@ -182,7 +182,12 @@
         const i = slot - 1,
           rank = this.hero.skills[i],
           isCharged = !!charged && (slot === 1 || slot === 2 || slot === 3);
-        if (this.s.challenge.pending || this.s.challenge.gameOver || this.tacticalScatterState(this.hero)) return false;
+        if (
+          this.s.challenge.pending ||
+          this.s.challenge.gameOver ||
+          this.tacticalScatterState(this.hero)
+        )
+          return false;
         if (!rank || this.hero.cd[i] > 0 || this.peace) {
           if (!rank) this.say('This skill must be learned from a rescued instructor.');
           return false;
@@ -193,7 +198,12 @@
           range = this.heroSkillRange(slot, isCharged),
           selected = this.selectedHeroTarget(),
           targets = this.zone().enemies.filter(
-            (e) => e.hp > 0 && !e.neutral && this.tacticalDirectTargetable(e) && dist(e, this.hero) <= range && this.line(this.hero, e),
+            (e) =>
+              e.hp > 0 &&
+              !e.neutral &&
+              this.tacticalDirectTargetable(e) &&
+              dist(e, this.hero) <= range &&
+              this.line(this.hero, e),
           ),
           preferredTargetId =
             targetId ??
