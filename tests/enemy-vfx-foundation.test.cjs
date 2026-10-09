@@ -90,6 +90,29 @@ assert.equal(
   'rogue/boss/thorn/basic',
 );
 
+// This becomes an automatic 40-signature coverage gate as soon as the
+// concurrent rogue-repertoire PR lands. Old main intentionally has no table.
+const tactics = R.tacticalFoundation;
+for (const [role, speciesProfiles] of Object.entries(tactics.rogueRingleaderSignatures || {})) {
+  for (const [species, profile] of Object.entries(speciesProfiles)) {
+    const signature = VFX.describe(
+      { form: 'ringleader', species, ranged: role === 'ranged' },
+      { rogueMove: true, rogueSignature: true, kind: 'circle', name: profile.name },
+    );
+    assert.equal(signature.id, 'rogue/ringleader/' + role + '/' + species + '/signature');
+  }
+}
+for (const [kind, profiles] of Object.entries(tactics.rogueSignatures || {})) {
+  for (const [id, profile] of Object.entries(profiles)) {
+    const actor =
+      kind === 'boss' ? { type: 'boss', family: id } : { roomCaptain: true, captainProfile: id };
+    const signature = VFX.describe(actor, {
+      rogueMove: true, rogueSignature: true, kind: 'circle', name: profile.name,
+    });
+    assert.equal(signature.id, 'rogue/' + (kind === 'boss' ? 'boss/' : 'captain/') + id + '/signature');
+  }
+}
+
 // Future sprite/animated asset replacement occurs per stage. Missing stages,
 // missing TRUE override, malformed assets and hostile paths must fail closed.
 const boss = VFX.describe({ type: 'boss', family: 'thorn', form: 'true' }, { kind: 'cone', index: 0 });
