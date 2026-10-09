@@ -468,8 +468,7 @@
             }
           // Legacy MP mode retains the Wraith's fixed heal; in cooldown mode
           // it siphons actual HP damage per victim instead of healing twice.
-          if (hit && R.resourceMode.manaEnabled)
-            e.hp = Math.min(e.maxHp, e.hp + e.maxHp * a.heal);
+          if (hit && R.resourceMode.manaEnabled) e.hp = Math.min(e.maxHp, e.hp + e.maxHp * a.heal);
           return;
         }
         if (a.nightSkill === 'pounce') {
