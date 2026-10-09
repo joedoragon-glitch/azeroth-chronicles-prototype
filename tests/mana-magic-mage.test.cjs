@@ -128,3 +128,44 @@ console.log('PASS fountain MP restoration and one-time persistence');
   assert.equal(c.hero.mp, 0);
 }
 console.log('PASS magical drain floors at zero');
+
+{
+  const frost = arena('mage');
+  frost.c.hero.mp = 100;
+  assert(frost.c.cast(2, frost.target.id), 'Mage second attack casts a frost projectile');
+  assert.equal(frost.c.s.projectiles[0].style, 'magic');
+  assert.equal(frost.c.s.projectiles[0].effect, 'frost');
+  assert.equal(frost.c.s.projectiles[0].slow, 4, 'Mage second attack carries a four-second slow');
+
+  const burst = arena('mage');
+  const nearby = burst.c.makeEnemy(
+    { species: 'goblin', name: 'Mage area recipient', level: 1, hp: 100000, damage: 0, gold: 0, xp: 0 },
+    { x: 615, y: 520 },
+  );
+  burst.c.zone().enemies.push(nearby);
+  burst.c.hero.mp = 100;
+  assert(burst.c.cast(2, burst.target.id, true), 'Mage charged frost burst executes');
+  assert(burst.target.hp < burst.target.maxHp && nearby.hp < nearby.maxHp, 'frost burst reaches both enemies');
+  assert.equal(burst.target.slow, 4);
+  assert.equal(nearby.slow, 4);
+  assert(burst.c.effects.some((e) => e.type === 'chargedArea' && e.effect === 'frost-burst'));
+
+  for (const [slot, slow] of [[5, 5], [7, 6]]) {
+    const area = arena('mage');
+    area.c.hero.mp = 100;
+    assert(area.c.cast(slot, area.target.id), 'Mage area skill ' + slot + ' executes');
+    assert(area.target.hp < area.target.maxHp, 'Mage area skill ' + slot + ' damages hostile target');
+    assert.equal(area.target.slow, slow, 'Mage area skill ' + slot + ' inflicts its intended slow');
+  }
+
+  const defense = arena('mage');
+  defense.c.hero.mp = 100;
+  assert(defense.c.cast(4), 'Mage defensive barrier works without an enemy target');
+  assert(defense.c.hero.immune > 0, 'Mage barrier grants immunity');
+  const final = arena('mage');
+  final.c.hero.mp = 100;
+  const hp = final.c.hero.hp;
+  assert(final.c.cast(8, final.target.id), 'Mage final attack executes');
+  assert(final.c.hero.hp > hp && final.c.hero.immune > 0, 'Mage final skill combines attack, heal and protection');
+}
+console.log('PASS Mage frost identity, ranged magic, area skills, barrier and final special');
