@@ -2559,7 +2559,8 @@
           fromY: e.y,
           angle,
           ...center,
-          radius: (plan.radius || (plan.kind === 'cone' ? 145 : 85)) * R.bossCadence.areaRangeMultiplier,
+          radius:
+            (plan.radius || (plan.kind === 'cone' ? 145 : 85)) * R.bossCadence.areaRangeMultiplier,
           sequence: [],
         };
       if (plan.sequential && plan.kind === 'circle') {
