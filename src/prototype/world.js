@@ -1327,7 +1327,7 @@
         return cfg.center ? { x: cfg.center[0], y: cfg.center[1] } : null;
       }
       creatureStrongholds(z) {
-        const strongholdVersion = z.id === 'crown' ? 7 : 6;
+        const strongholdVersion = z.id === 'crown' ? 8 : z.id === 'highlands' ? 7 : 6;
         if (
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
@@ -1346,6 +1346,13 @@
             );
           const occupied = new Set();
           for (const cfg of plans) {
+            // Saved landmarks must follow an authored fort relocation before garrison placement.
+            if (cfg.reanchorSite && cfg.site) {
+              const canonical = R.sites[this.regionIndex(z.id)].find(([id]) => id === cfg.site),
+                landmark = z.npcs.find((n) => n.id === cfg.site);
+              if (canonical && landmark)
+                Object.assign(landmark, this.safe(canonical[2], canonical[3], z.id));
+            }
             const center = this.creatureStrongholdCenter(z, cfg);
             if (!center) continue;
             // Replace light habitat dressing around the hold with a more deliberate territorial layout.
