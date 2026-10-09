@@ -59,3 +59,9 @@ MP drain applies only to the hero; it never drained companion mana (companions h
 ## Reversibility
 
 The feature flag controls the living rules without deleting legacy functions. Prior git history and this report retain precise earlier behavior. For a future MP restoration, change the flag and run both the retained historical mana tests and browser compatibility checks; review any previous old-save MP state before publishing. Do **not** convert the legacy MP schema destructively or rewrite every historical document to pretend mana never existed.
+
+## Temporary status behavior when MP is retired or restored
+
+The gameplay's short-lived action-feedback channel (`#status`) must follow `PrototypeRules.resourceMode.manaEnabled`. In cooldown-only mode, no "insufficient MP", "need N MP", mana-percentage, or mana-cost explanation should be shown. Cooldown and targeting feedback remain available.
+
+**Restoration checklist:** When `manaEnabled` becomes `true`, restore insufficient-mana feedback automatically for failed normal and charged casts, including the exact current MP requirement where useful. Do not reconstruct deleted text after the fact: retain the original status code behind the same mode guard, and cover both branches in automated tests. Mana Recovery guidance remains subject to the same flag. The temporary status stays separate from the amber milestone/narration banner.
