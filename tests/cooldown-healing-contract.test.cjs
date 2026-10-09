@@ -106,3 +106,37 @@ for (const family of ['abyss', 'citadel']) {
   assert(g.effects.some((e) => e.type === 'heal' && e.target === boss.id));
 }
 console.log('PASS independent healing warnings retain non-damaging green presentation');
+
+const Menus = require('../src/prototype/menus');
+for (const cls of ['paladin', 'mage', 'ranger']) {
+  const g = new C('normal', cls, () => 0.9);
+  g.hero.skills = Array(8).fill(1);
+  let opened;
+  const menus = Menus.create({
+    getGame: () => g,
+    Campaign: C,
+    D: C.data,
+    action: (label, action, detail) => ({ label, action, detail }),
+    openMenu: (title, description, actions) => {
+      opened = { title, description, actions };
+    },
+    closeMenu() {},
+    recallSquad() {},
+    showMap() {},
+    finaleMenu() {},
+  });
+  for (let rank = 0; rank <= 5; rank++) {
+    g.hero.talents[1] = rank;
+    menus.skillBook();
+    for (let slot = 1; slot <= 8; slot++) {
+      const action = opened.actions.find((a) => a.label.startsWith('Skill ' + slot + ' '));
+      const seconds = Math.round(g.skillCooldown(slot) * 1000) / 1000;
+      assert(action.detail.includes('Normal cooldown ' + seconds + 's'));
+    }
+  }
+  menus.inventory();
+  assert(!/MP|Mana Recovery/.test(opened.description), 'Inventory exposes only active HP support');
+}
+console.log(
+  'PASS exact Skills cooldown descriptions for every class and talent rank, no active Inventory MP',
+);

@@ -153,7 +153,7 @@
             1: 'Bow combo · third hit scatters additional arrows',
             2: 'Double shot',
             3: 'Restore hero health',
-            4: 'Temporary attack haste',
+            4: 'Temporary movement haste',
             5: 'Area arrow attack',
             6: 'Rapid shot · temporary haste',
             7: 'Advanced piercing arrow attack',
@@ -177,7 +177,7 @@
             3: 'Heal hero and living active companions',
           },
         },
-        normalCd = g.skillCooldown(slot).toFixed(1);
+        normalCd = Math.round(g.skillCooldown(slot) * 1000) / 1000;
       return (
         descriptions[cls][slot] +
         ' · Normal cooldown ' +
@@ -187,7 +187,7 @@
           ? ' · Charged: ' +
             charged[cls][slot] +
             ' · ' +
-            g.skillCooldown(slot, true).toFixed(1) +
+            Math.round(g.skillCooldown(slot, true) * 1000) / 1000 +
             's cooldown'
           : '')
       );
