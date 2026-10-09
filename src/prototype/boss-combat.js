@@ -232,7 +232,10 @@
         if (this.hero.hp <= 0 || !this.line(e, this.hero)) return fallback;
         const plan = R.attacks[e.family]?.[index];
         // Long-reaching marks may pressure the backline even when Soldiers screen the boss.
-        const reachesHero = dist(e, this.hero) <= R.bossCadence.targetFlexRange;
+        const dHero = dist(e, this.hero);
+        const reachesHero = dHero <= R.bossCadence.targetFlexRange &&
+          (!['cone', 'sector', 'ring'].includes(plan?.kind) ||
+            dHero <= (plan.kind === 'sector' ? 280 : plan.kind === 'ring' ? 105 : 165) * R.bossCadence.areaRangeMultiplier + 30);
         return reachesHero && (behavior.heroTarget?.includes(index) || (plan?.kind === 'circle' && dist(e, fallback) < 200))
           ? this.hero
           : fallback;
