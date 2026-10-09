@@ -330,6 +330,7 @@
             p.x += p.dx * p.speed * dt;
             p.y += p.dy * p.speed * dt;
             if (!this.clearSegment(before, p, 0)) {
+              this.enemyVfxProjectileImpact?.(p, before);
               this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
               continue;
             }
@@ -339,6 +340,11 @@
             if (victim) {
               if (this.hitParty(victim, p.damage, p.manaDrain || 0) && p.slow)
                 victim.slow = Math.max(victim.slow || 0, p.slow);
+              this.enemyVfxProjectileImpact?.(p, {
+                x: victim.x,
+                y: victim.y,
+                target: victim === this.hero ? 'hero' : victim.id,
+              });
               this.event('projectileImpact', {
                 actor: 'enemy',
                 source: p.sourceId || 'enemy',
