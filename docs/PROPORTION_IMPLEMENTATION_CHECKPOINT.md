@@ -6,7 +6,7 @@ The existing outdoor map dimensions remain 2700, 3000, 3400, 3400, and 3800 worl
 
 Runtime classifier `PrototypeVisuals.featureScale` gives cottages and habitable structures 1.40x, major entrances/transports/barracks/occupation buildings 1.35x, and trees including orchard landmarks 1.30x. Small props and combat actors remain at 1.00x. These are world-object presentation multipliers in addition to the selected 150% camera, never new combat or movement scale.
 
-Both procedural rendering and registered sprites consume the same transient `visualScale`. Label positions and shadows scale accordingly. The original gameplay objects and saves are not modified. This gives room for better details but is not itself a completed detailed artwork upgrade.
+Procedural features without an active registered sprite may use the new proportion scale immediately. **Registered 100% sprite exports are not enlarged**: they retain their previous appearance until a fresh original-master asset meets the required 4.00x or 4.25x raster density. The presentation helper checks actual resource dimensions before enabling the new world size for that sprite. When it qualifies, procedural fallbacks, labels and shadows share the same transient `visualScale`. Gameplay objects, saves and existing art binaries remain untouched. This is not itself a completed detailed-artwork upgrade.
 
 Native original-master export budgets: standard 192 logical unit frames use 576px at 1.00x, 768px at 1.30x, and 816px at 1.35–1.40x. They include transparent padding. Source originals must have enough real pixels; never enlarge old small game exports. Future sprite contracts must not bake in another copy of the runtime visual multiplier.
 
