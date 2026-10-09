@@ -34,7 +34,7 @@ test('retained named landmarks sit beside the world feature their names describe
 
 test('Ashen Frontier reads as recovery under a functioning occupation corridor',()=>{
  const c=new Campaign();c.enter('frontier');const z=c.zone(),town={x:Campaign.data.towns[3][0],y:Campaign.data.towns[3][1]},hamlet={x:Campaign.data.minors[3][0],y:Campaign.data.minors[3][1]};
- assert.equal(z.frontierLayoutVersion,3);assert.equal(z.roadVersion,10);
+ assert.equal(z.frontierLayoutVersion,3);assert.equal(z.roadVersion,11);
  assert(R.frontierRoutes.length>=5,'Frontier has separate supply, repair, inspection, checkpoint and Bastion routes');
  const routeIds=new Set(R.frontierRoutes.map(r=>r.id));assert.equal(routeIds.size,R.frontierRoutes.length);
  for(const route of R.frontierRoutes){const target={x:route.point[0],y:route.point[1]};assert(c.route(town,target).length,'route '+route.id+' is reachable');assert(z.roads.some(path=>distance(path.at(-1),target)<2),'road network reaches '+route.id);}
@@ -67,7 +67,7 @@ test('Frontier procedural props gain deterministic local variants instead of rep
 
 test('Dark Crown reads as a regime with separate districts and distributed outward routes',()=>{
  const c=new Campaign();c.enter('crown');const z=c.zone(),town={x:Campaign.data.towns[4][0],y:Campaign.data.towns[4][1]};
- assert.equal(z.crownLayoutVersion,1);assert.equal(z.roadVersion,10);assert.equal(z.destinationLayoutVersion,4);
+ assert.equal(z.crownLayoutVersion,1);assert.equal(z.roadVersion,10);assert.equal(z.destinationLayoutVersion,5);
  assert(R.crownRoutes.length>=5,'Crown has several functionally distinct outward/logistics routes');
  const routeIds=new Set(R.crownRoutes.map(r=>r.id));assert.equal(routeIds.size,R.crownRoutes.length);
  for(let a=0;a<R.crownRoutes.length;a++)for(let b=a+1;b<R.crownRoutes.length;b++)assert(distance({x:R.crownRoutes[a].point[0],y:R.crownRoutes[a].point[1]},{x:R.crownRoutes[b].point[0],y:R.crownRoutes[b].point[1]})>500,'Crown routes are not clumped together');
