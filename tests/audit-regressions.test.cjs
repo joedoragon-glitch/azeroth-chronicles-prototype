@@ -235,7 +235,7 @@ test('F49 TRUE boss rogue level immunity remains despite active burst compressio
   assert.equal(c.tacticalProtectionTier(e),'trueBoss');
   assert.equal(c.tacticalRogueEligibility(e,7),false);
   assert.equal(c.tacticalAutoRogue(e,c.hero),false,'rogue immunity holds even if pressured by seven attackers');
-  assert.equal(C.rules.tacticalFoundation.burstCompression.enabled,true,'phase-three defense remains disabled');
+  assert.equal(C.rules.tacticalFoundation.burstCompression.enabled,true,'tiered compression remains enabled independently of rogue level immunity');
 });
 test('F50 interrupted rogue retreat sheds its protection and cannot chain',()=>{
   const c=fresh(),e=c.makeEnemy({species:'wolf',name:'retreater',level:1,hp:1000,damage:1,gold:0,xp:0},{x:1400,y:1700}),
