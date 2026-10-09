@@ -824,15 +824,40 @@
             if (context.boss) {
               if (this.s.squadDoctrine === 'focus') e = context.bossEnemy;
               else {
-                // ADDS is a priority, not a prohibition on fighting the boss.
-                // Screen active threats (including enemies attacking the hero),
-                // then return to boss damage as soon as no add needs attention.
-                // Explicit BOSS orders above remain authoritative at all times.
-                const adds = context.threats.filter((x) => x.type !== 'boss');
-                e =
-                  (u.type === 'soldier'
-                    ? this.soldierScreenTarget(u, adds, living, claimed)
-                    : crowdTarget(u, adds)) || context.bossEnemy;
+                // ADDS: completely ignore boss damage while living adds need
+                // clearing, then attack the boss until fresh adds appear.
+                // Include this boss's summons even before they approach the hero;
+                // also screen unrelated active attackers pressuring the party.
+                // An explicit BOSS order above always overrides this policy.
+                const adds = [
+                  ...new Map(
+                    [
+                      ...context.threats.filter((x) => x.type !== 'boss'),
+                      ...z.enemies.filter(
+                        (x) =>
+                          x.hp > 0 &&
+                          x.summon &&
+                          x.owner === context.bossEnemy.id &&
+                          !x.neutral &&
+                          !x.returning,
+                      ),
+                    ].map((x) => [x.id, x]),
+                  ).values(),
+                ];
+                if (adds.length) {
+                  e =
+                    (u.type === 'soldier'
+                      ? this.soldierScreenTarget(u, adds, living, claimed)
+                      : crowdTarget(u, adds)) ||
+                    adds
+                      .slice()
+                      .sort(
+                        (a, b) =>
+                          (claimed.has(a.id) ? 1 : 0) - (claimed.has(b.id) ? 1 : 0) ||
+                          dist(a, this.hero) - dist(b, this.hero) ||
+                          dist(a, u) - dist(b, u),
+                      )[0];
+                } else e = context.bossEnemy;
               }
             } else if (this.s.squadDoctrine === 'focus') {
               e =
