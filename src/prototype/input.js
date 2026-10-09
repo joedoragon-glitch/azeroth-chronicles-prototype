@@ -2,6 +2,9 @@
 (function (root) {
   'use strict';
   const preferenceKey = 'azeroth-input-v1';
+  const legacyManaEnabled = (typeof PrototypeRules !== 'undefined'
+    ? PrototypeRules
+    : require('./rules.js')).resourceMode.manaEnabled;
   const actions = [
     ['up', 'Move up / previous menu entry', 'KeyW'],
     ['down', 'Move down / next menu entry', 'KeyS'],
@@ -19,13 +22,13 @@
     ['target', 'Cycle hero target', 'KeyQ'],
     ['map', 'Map', 'KeyZ'],
     ['inventory', 'Inventory', 'KeyI'],
-    ['training', 'Discipline Training', 'KeyC'],
+    ['training', 'Talents', 'KeyC'],
     ['skills', 'Skills and teachers', 'KeyX'],
     ['quests', 'Quest journal', 'KeyJ'],
     ['pause', 'Pause', 'KeyP'],
     ['help', 'Controls', 'KeyG'],
     ['heal', 'Command Ranger Heal', 'KeyH'],
-    ['mana', 'Command Ranger Mana Recovery', 'KeyM'],
+    ...(legacyManaEnabled ? [['mana', 'Command Ranger Mana Recovery', 'KeyM']] : []),
   ];
   const defaults = Object.fromEntries(actions.map(([id, , code]) => [id, code]));
   const aliases = { KeyR: 'inventory', KeyT: 'quests', KeyV: 'pause' };
