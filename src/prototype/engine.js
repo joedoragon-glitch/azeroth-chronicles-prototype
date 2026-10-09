@@ -2776,7 +2776,7 @@
         }
         if (this.tacticalSeekRogueSupport(e, totalPressure)) return true;
         this.tacticalStopRogueRegroup(e);
-        if (this.tacticalRogueMove(e, target)) {
+        if (this.tacticalRogueMove(e, target, !!state.anchor)) {
           if (!this._tacticalRegroupUsed) this._tacticalRegroupUsed = new Set();
           this._tacticalRegroupUsed.add(e.id); // Prevent lone move spam.
           if (state.anchor) {
@@ -2921,7 +2921,7 @@
     // use their elite ambush when pressured or wounded. Captains and bosses
     // keep their basic named feint AND a situational, identity-specific tactic.
     // One action per rogue opportunity: no extra boss rotation or move spam.
-    tacticalRogueMove(e, fallback) {
+    tacticalRogueMove(e, fallback, fromRegroupAnchor = false) {
       if (e.hp <= 0 || e.returning || e.telegraph || e.motion || e.rangedAim) return false;
       const tier = this.tacticalProtectionTier(e),
         cfg = R.tacticalFoundation,
@@ -2935,7 +2935,10 @@
         signature =
           (e.type === 'boss' && cfg.rogueSignatures.bosses[e.family]) ||
           ((e.captain || e.roomCaptain) && cfg.rogueSignatures.captains[e.captainProfile]),
-        pressured = this.tacticalRogueOutnumbered(e) || !!this.tacticalRogueRegroup(e)?.anchor,
+        pressured =
+          fromRegroupAnchor ||
+          this.tacticalRogueOutnumbered(e) ||
+          !!this.tacticalRogueRegroup(e)?.anchor,
         eliteAmbush = tier === 'ringleader' && (pressured || this.tacticalRogueWounded(e)),
         isSignature = !!signature && pressured,
         profile = isSignature ? signature : eliteAmbush ? profiles.ringleader : basic,
@@ -3257,7 +3260,8 @@
             if (e.telegraph) this.event('warning', { family: e.family });
             if (!e.telegraph && !e.motion) {
               e.cd = a.recovery * (e.type === 'boss' ? R.bossCadence.specialRecoveryMultiplier : 1);
-              e.basicDue = e.type === 'boss' && e.attackIndex % R.bossCadence.skillsPerBasic === 0;
+              if (!a.rogueMove)
+                e.basicDue = e.type === 'boss' && e.attackIndex % R.bossCadence.skillsPerBasic === 0;
               if (a.opening)
                 e.open = e.form === 'true' && e.family === 'citadel' ? a.opening / 2 : a.opening;
             }
