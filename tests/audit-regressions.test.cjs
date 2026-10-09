@@ -673,7 +673,8 @@ test('F76 field commander revives existing local soldier spawns but no summons o
   assert(summoned.hp>0 && summoned.summon && summoned.owner===e.id && summoned.hp/summoned.maxHp===1,'owned boss summon remains alive, owned and unwounded');
   e.telegraph=null;
   assert.equal(squad.filter(u=>u.hp>0).length,3);
-  c.tacticalRogueFieldSupport(e,move);
+  if(family==='ridge')c.tacticalRogueCommanderSupport(e,move);
+  else c.tacticalRogueFieldSupport(e,move);
   assert.equal(squad.filter(u=>u.hp>0).length,3,'three local defenders means no forced respawn');
   const restored=squad.find(u=>u.hp>0 && u!==squad[0]);
   restored.hp=0;restored.deathPaid=true;
@@ -741,5 +742,42 @@ test('F78 Blinding Dust redirects auto targeting, respects AoE, and expires exac
  c.s.time=46.64;assert.equal(c.tacticalDirectTargetable(dust),false);
  c.s.time=46.65;assert.equal(c.tacticalDirectTargetable(dust),true);
  assert(c.damage(dust,10,'hero'),'ordinary direct targeting resumes after 1.65 seconds');
+});
+test('F79 skill relocation does not reset the encounter or make the boss immune to nearby counters',()=>{
+ const c=fresh(),e=c.bossEnemy(c.boss('archive'),'normal',{x:1100,y:1200});
+ c.zone().enemies=[e];c.s.party=[];e.aggro=true;e.hp=e.maxHp*.5;c.line=()=>true;
+ Object.assign(c.hero,{x:1820,y:1200,hp:10000,maxHp:10000});
+ const from={x:e.x,y:e.y};e.x=1770;
+ c.tacticalRecordRogueReposition(e,from,c.hero);
+ const before=e.hp;
+ assert(c.tacticalRogueLeashAllows(e,c.hero,700),'skill-created separation permits fight to continue');
+ assert(c.damage(e,20),'wounded boss remains vulnerable inside rogue reposition corridor');
+ assert(e.hp<before&&e.aggro&&!e.returning,'same wounded engagement continues');
+ c.hero.x=3000;
+ assert.equal(c.tacticalRogueLeashAllows(e,c.hero,700),false,'genuine escape still disengages');
+ c.s.time+=4.1;c.hero.x=1820;
+ assert.equal(c.tacticalRogueLeashAllows(e,c.hero,700),false,'temporary allowance expires');
+});
+test('F80 captain guard rally only replenishes at zero or one, and never replaces summoned minions',()=>{
+ for(const [id,species] of [['supply-highlands','wolf'],['frontier-overseer','orc']]){
+  for(const living of [0,1,2]){
+   const c=fresh(),e=c.makeEnemy({species,name:'Captain',level:10,hp:1000,damage:20,gold:0,xp:0},{x:1400,y:1700});
+   e.captain=true;e.captainProfile=id;e.aggro=true;c.zone().enemies=[e];c.s.party=[];
+   c.blocked=()=>false;c.clearSegment=()=>true;c.line=()=>true;
+   Object.assign(c.hero,{x:1560,y:1780,hp:10000,maxHp:10000});
+   const guards=Array.from({length:3},(_,j)=>{
+    const u=c.makeEnemy({species,name:'local defender',level:10,hp:200,damage:5,gold:0,xp:0},{x:1270+j*45,y:1660});
+    u.guard=id==='supply-highlands';u.pack=id+'-detail';u.hp=j<living?200:0;u.deathPaid=j>=living;
+    return u;
+   });
+   const summoned=c.makeEnemy({species,name:'boss summon',level:10,hp:200,damage:5,gold:0,xp:0},{x:1390,y:1560});summoned.summon=true;summoned.owner=e.id;
+   c.zone().enemies.push(...guards,summoned);
+   const ids=c.zone().enemies.map(u=>u.id),sig=C.rules.tacticalFoundation.rogueSignatures.captains[id],move={...sig,reinforceSpecies:sig.reinforceSpecies,reinforceBelow:sig.reinforceBelow,reinforceCap:sig.reinforceCap};
+   assert(c.tacticalRogueCommanderSupport(e,move),'captain rally handler resolves');
+   assert.equal(guards.filter(u=>u.hp>0).length,living<=1?3:2,id+' at '+living);
+   assert.deepEqual(c.zone().enemies.map(u=>u.id),ids,'captain creates no new monster identity');
+   assert(summoned.summon&&summoned.owner===e.id&&summoned.hp>0,'summon remains distinct');
+  }
+ }
 });
 console.log(passed+' audit regression scenarios passed.');
