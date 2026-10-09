@@ -160,12 +160,7 @@
         rx = 30;
         ry = 8;
       }
-      const scale =
-        PrototypeVisuals.featureScale(e) > 1 &&
-        Number.isFinite(e.visualScale) &&
-        e.visualScale > 0
-          ? e.visualScale
-          : 1;
+      const scale = PrototypeVisuals.featureScale(e) > 1 ? e.visualScale : 1;
       rx *= scale;
       ry *= scale;
       ctx.save();
