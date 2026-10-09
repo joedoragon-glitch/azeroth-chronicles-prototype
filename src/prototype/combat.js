@@ -4,6 +4,7 @@
   function install(Campaign, { R }) {
     const clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
       dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+    const ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER = 0.5;
     class Combat {
       combatTargets() {
         const z = this.s.zones[this.s.zone];
@@ -155,11 +156,14 @@
           return false;
         const origin =
           source === 'hero' ? this.hero : this.s.party.find((u) => u.id === source) || this.hero;
-        if (
-          !this.line(origin, e) ||
-          dist(origin, e.home) > (e.type === 'boss' ? (this.isDungeon() ? 1800 : 700) : 500)
-        )
-          return false;
+        const normalDamageTerritory = e.type === 'boss' ? (this.isDungeon() ? 1800 : 700) : 500;
+        // A valid tactical retreat moves the active encounter, not the permanent
+        // spawn. Allow damage near the retreat corridor/anchor; otherwise a
+        // regrouper beyond its original home leash would become invulnerable.
+        const inCombatArea = this.tacticalRogueRegroup(e)
+          ? this.tacticalRogueLeashAllows(e, origin, normalDamageTerritory)
+          : dist(origin, e.home) <= normalDamageTerritory;
+        if (!this.line(origin, e) || !inCombatArea) return false;
         e.mercyProvoked = true;
         this.engage(e, true);
         if (source === 'hero') e.heroParticipated = true;
@@ -175,6 +179,10 @@
         }
         if (e.family === 'citadel' && e.open <= 0) amount *= 0.65;
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;
+        // All hero/companion damage sources use this same resolver. This
+        // reduction is exclusive to active travel; it ends on arrival or abort.
+        if (this.tacticalRogueRegroup(e)?.phase === 'travel')
+          amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
         const actualDamage = Math.min(e.hp, amount);
         e.hp = Math.max(0, e.hp - amount);
         this.tacticalRecordHit(e, source, actualDamage);
