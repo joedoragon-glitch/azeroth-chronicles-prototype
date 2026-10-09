@@ -3168,10 +3168,12 @@
           this.event('rogueSupport', { actor: e.id, allies: returned, respawn: true });
         }
       }
-      // The action orders at most three nearby ordinary defenders, never
-      // activates far-away packs and never summons a new independent entity.
+      // Refresh ordinary spawn positions throughout the local area, but only
+      // call defenders into combat when they are in the existing support radius.
       for (const u of nearby().slice(0, move.reinforceCap)) {
-        if (!u.aggro) this.engage(u, true, false);
+        if (!u.aggro && dist(u, e) <= R.tacticalFoundation.supportRadius &&
+            this.line(e, u))
+          this.engage(u, true, false);
         if (u.aggro) {
           u.pursuitBurst = Math.max(u.pursuitBurst || 0, move.rallySeconds);
           u.cd = Math.min(u.cd || 0, 0.5);
