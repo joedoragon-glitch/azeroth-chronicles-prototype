@@ -144,8 +144,9 @@
           )
           .sort((a, b) => dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b));
         if (!enemies.length) {
-          // A deliberate quick press always releases an existing lock, even
-          // when the former target has moved out of view.
+          // A deliberate quick press releases a lock even offscreen, including
+          // its legacy squad-focus target, so automatic combat can resume.
+          if (this.s.heroTarget === this.manualHeroTargetId) this.s.heroTarget = null;
           this.manualHeroTargetId = null;
           this.manualHeroTargetLocked = false;
           this.manualHeroTargetZone = null;
