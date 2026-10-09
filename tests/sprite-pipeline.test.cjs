@@ -251,8 +251,8 @@ const root = path.resolve(__dirname, '..');
         '-e',
         `
       const fs=require('fs'), pipeline=require('./scripts/sprite-pipeline.cjs');
-      const write=fs.writeFileSync;let injected=false;
-      fs.writeFileSync=function(file,...args){if(String(file).endsWith('assets/sprites/manifest.json')&&!injected){injected=true;throw Error('simulated write failure');}return write.call(fs,file,...args);};
+      const rename=fs.renameSync;let injected=false;
+      fs.renameSync=function(from,file){if(String(file).endsWith('assets/sprites/manifest.json')&&!injected){injected=true;throw Error('simulated write failure');}return rename.call(fs,from,file);};
       pipeline.publish(process.argv[1]).then(()=>process.exit(1)).catch(error=>{if(!error.message.includes('simulated')){console.error(error);process.exitCode=1;}});
     `,
         recordFile,

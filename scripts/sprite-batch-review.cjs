@@ -7,7 +7,8 @@ const fs = require('node:fs'),
 const root = path.resolve(__dirname, '..');
 async function capture(recordFile, entity = null) {
   const directory = path.dirname(path.resolve(recordFile)),
-    record = JSON.parse(fs.readFileSync(recordFile)),
+    recordBytes = fs.readFileSync(recordFile),
+    record = JSON.parse(recordBytes),
     base = pipeline.contractFor(record.key),
     contract = entity ? { ...base, entity } : base,
     reviewTarget = path.join(directory, 'review-scenes');
@@ -16,11 +17,11 @@ async function capture(recordFile, entity = null) {
     throw Error('Retain existing review; capture in a new revision directory');
   const review = fs.mkdtempSync(path.join(directory, '.review-'));
   try {
-    const sprite = await pipeline.spriteLayer(
-      base,
-      path.join(directory, record.output.file),
-      record.presentation,
-    );
+    const output = pipeline.safeFile(directory, record.output.file);
+    const actual = await pipeline.inspect(output);
+    if (actual.hash !== record.output.hash) throw Error('Candidate bytes changed before review');
+    pipeline.validateRaster(record, base, actual);
+    const sprite = await pipeline.spriteLayer(base, output, record.presentation);
     const rows = [],
       comparisons = [];
     for (const profile of require('../tools/sprites/specifications.json').policy.reviewProfiles)
@@ -107,6 +108,10 @@ async function capture(recordFile, entity = null) {
       JSON.stringify(
         {
           key: record.key,
+          candidateHash: pipeline.hash(recordBytes),
+          sourceHash: record.source.hash,
+          outputHash: record.output.hash,
+          canonHash: record.canonHash,
           entity: contract.entity,
           comparisons,
           review: 'pending visual inspection',
@@ -115,6 +120,8 @@ async function capture(recordFile, entity = null) {
         2,
       ) + '\n',
     );
+    if (pipeline.hash(fs.readFileSync(recordFile)) !== pipeline.hash(recordBytes))
+      throw Error('Candidate changed during review capture; retry against current revision');
     fs.renameSync(review, reviewTarget);
     return { review: reviewTarget, comparisons: comparisons.length };
   } finally {
@@ -128,6 +135,15 @@ async function prepare(jobFile) {
     contract = pipeline.contractFor(job.key);
   if (fs.existsSync(path.join(directory, 'candidate.json')))
     throw Error('Candidate/checkpoint is immutable; prepare in a new revision directory');
+  const originalReport = await pipeline.inspect(original);
+  if (
+    !Number.isInteger(job.fullCanvasSize) ||
+    job.fullCanvasSize < 1 ||
+    !Number.isInteger(job.padding) ||
+    job.padding < 0 ||
+    job.fullCanvasSize > Math.min(originalReport.width, originalReport.height)
+  )
+    throw Error('Normalization must use valid dimensions without source enlargement');
   const target = path.join(directory, 'image-tool-original.png');
   if (!fs.existsSync(target)) fs.copyFileSync(original, target, fs.constants.COPYFILE_EXCL);
   if (pipeline.hash(fs.readFileSync(original)) !== pipeline.hash(fs.readFileSync(target)))
@@ -150,7 +166,7 @@ async function prepare(jobFile) {
     ...job.translation,
     rasterScale: job.rasterScale ?? 1,
   });
-  for (const file of fs.readdirSync(result.directory))
+  for (const file of fs.readdirSync(result.directory).filter((name) => name !== 'candidate.json'))
     fs.copyFileSync(path.join(result.directory, file), path.join(directory, file));
   fs.writeFileSync(
     path.join(directory, 'normalization.json'),
@@ -170,6 +186,11 @@ async function prepare(jobFile) {
       null,
       2,
     ) + '\n',
+  );
+  fs.copyFileSync(
+    path.join(result.directory, 'candidate.json'),
+    path.join(directory, 'candidate.json'),
+    fs.constants.COPYFILE_EXCL,
   );
   return capture(path.join(directory, 'candidate.json'), job.entity || null);
 }

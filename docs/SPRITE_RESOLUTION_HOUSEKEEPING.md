@@ -29,3 +29,7 @@ Active decoding remains capped at 16 MiB and two concurrent decodes. A single 57
 After a request to resume artwork adaptation, start with Paladin and Goblin. Read current originals and exact revision leases, retain the accepted identity and organic material/anatomy cues, prepare density-3 candidates with the existing explicit translations, and include Paladin's idle frames. Inspect at native 150% on desktop and the supported minimum phone, in day/night and combat context. Simplify or regenerate only details that fail that review. Replace through the existing leased immutable-revision workflow, preserving rollback. Do not resize the processed 192-pixel outputs to fabricate new detail.
 
 Verification uses synthetic transparent fixtures in isolated checkouts to prove legacy compatibility, no source enlargement, translation guards, logical grounding, physical memory accounting, bounded dense atlases, native reviews, same-session replacement, retained old binaries and legacy rollback. Production assets remain byte-identical.
+
+## End-to-end audit follow-up
+
+See `SPRITE_WORKFLOW_AUDIT.md` for generation-request provenance, candidate-bound review, source-normalization guards, validated rollback history and process-interruption recovery. Use `sprite:request` before future production; use `sprite:recover` / `material:recover` if an interrupted registry transaction is detected. Artwork production remains paused.

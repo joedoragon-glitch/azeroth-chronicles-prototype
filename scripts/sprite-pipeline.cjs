@@ -8,6 +8,11 @@ const sharp = require('sharp');
 const { createCanvas, Image } = require('@napi-rs/canvas');
 const root = path.resolve(__dirname, '..');
 const specs = require('../tools/sprites/specifications.json');
+const Transactions = require('./asset-registry-transaction.cjs');
+const registryFiles = [
+  path.join(root, 'tools/sprites/approved.json'),
+  path.join(root, 'assets/sprites/manifest.json'),
+];
 const Sprites = require('../src/prototype/sprites.js');
 const Format = require('../src/prototype/sprite-format.js');
 const visualSandbox = {
@@ -90,60 +95,62 @@ function canonHash() {
     ),
   );
 }
-function contracts() {
+function contracts(requestedKey = null) {
   const entries = catalog();
   const approved = json(path.join(root, 'tools/sprites/approved.json'));
   const snapshotHash = canonHash();
-  return specs.assets.map((spec) => {
-    const item = entries.find((entry) => entry.id === spec.catalogId);
-    fail(item?.status === 'generate', 'Only GENERATE catalog entries can have asset contracts');
-    fail(
-      Sprites.candidateKeys(spec.entity, spec.region)[0] === spec.key,
-      'Exact runtime key mismatch',
-    );
-    fail(!item.declaredKey || item.declaredKey === spec.key, 'Catalog/runtime key mismatch');
-    const { width, height, anchorX, anchorY } = spec.canvas;
-    fail(
-      [width, height].every(
-        (n) => Number.isInteger(n) && n > 0 && n <= specs.policy.maxOutputDimension,
-      ),
-      'Invalid canvas',
-    );
-    fail(
-      [anchorX, anchorY].every((n) => Number.isFinite(n) && n >= 0 && n <= 1),
-      'Invalid anchor',
-    );
-    const result = {
-      ...spec,
-      catalog: item,
-      canonSnapshotHash: snapshotHash,
-      approval: approved.assets[spec.key]?.review?.status || 'pending',
-      runtime: {
-        displayWidth: width,
-        displayHeight: height,
-        anchorX,
-        anchorY,
-        labelHeight: Visuals.height(spec.entity),
-      },
-    };
-    result.canonHash = hash(
-      Buffer.concat([
-        reference(result, true),
-        Buffer.from(
-          JSON.stringify({
-            key: result.key,
-            entity: result.entity,
-            region: result.region,
-            runtime: result.runtime,
-          }),
+  return specs.assets
+    .filter((spec) => !requestedKey || spec.key === requestedKey)
+    .map((spec) => {
+      const item = entries.find((entry) => entry.id === spec.catalogId);
+      fail(item?.status === 'generate', 'Only GENERATE catalog entries can have asset contracts');
+      fail(
+        Sprites.candidateKeys(spec.entity, spec.region)[0] === spec.key,
+        'Exact runtime key mismatch',
+      );
+      fail(!item.declaredKey || item.declaredKey === spec.key, 'Catalog/runtime key mismatch');
+      const { width, height, anchorX, anchorY } = spec.canvas;
+      fail(
+        [width, height].every(
+          (n) => Number.isInteger(n) && n > 0 && n <= specs.policy.maxOutputDimension,
         ),
-      ]),
-    );
-    return result;
-  });
+        'Invalid canvas',
+      );
+      fail(
+        [anchorX, anchorY].every((n) => Number.isFinite(n) && n >= 0 && n <= 1),
+        'Invalid anchor',
+      );
+      const result = {
+        ...spec,
+        catalog: item,
+        canonSnapshotHash: snapshotHash,
+        approval: approved.assets[spec.key]?.review?.status || 'pending',
+        runtime: {
+          displayWidth: width,
+          displayHeight: height,
+          anchorX,
+          anchorY,
+          labelHeight: Visuals.height(spec.entity),
+        },
+      };
+      result.canonHash = hash(
+        Buffer.concat([
+          reference(result, true),
+          Buffer.from(
+            JSON.stringify({
+              key: result.key,
+              entity: result.entity,
+              region: result.region,
+              runtime: result.runtime,
+            }),
+          ),
+        ]),
+      );
+      return result;
+    });
 }
 function contractFor(key) {
-  const contract = contracts().find((item) => item.key === key);
+  const contract = contracts(key).find((item) => item.key === key);
   fail(contract, 'No prepared contract for exact key: ' + key);
   return contract;
 }
@@ -559,11 +566,15 @@ async function verifyExtra(extra, directory, sourceDirectory) {
   );
   for (const item of extra.sources || []) {
     const source = await inspect(safeFile(sourceDirectory, item.file));
-    fail(source.hash === item.hash, 'Frame/variant source provenance changed');
+    fail(
+      source.hash === item.hash && source.width === item.width && source.height === item.height,
+      'Frame/variant source provenance changed',
+    );
   }
   return output;
 }
 async function checkProduction(options = {}) {
+  if (!options.transactionActive) Transactions.assertClean(root, 'sprites');
   const approved = json(path.join(root, 'tools/sprites/approved.json'));
   fail(
     [1, 2].includes(approved.version) && approved.assets && !Array.isArray(approved.assets),
@@ -571,9 +582,10 @@ async function checkProduction(options = {}) {
   );
   const manifest = json(path.join(root, 'assets/sprites/manifest.json')),
     expected = {},
-    unique = new Map();
+    unique = new Map(),
+    byKey = new Map(contracts().map((c) => [c.key, c]));
   for (const [key, record] of Object.entries(approved.assets)) {
-    const contract = contractFor(key),
+    const contract = byKey.get(key),
       stale = (options.allowStaleKeys || []).includes(key);
     validateRecord(record, contract, true, stale);
     const report = await inspect(safeFile(path.join(root, 'assets/sprites'), record.output.file));
@@ -607,6 +619,33 @@ async function checkProduction(options = {}) {
         : entryFor(record);
     if (record.revision) fail(record.revision === revisionFor(record), 'Asset revision changed');
   }
+  for (const [key, revisions] of Object.entries(approved.history || {})) {
+    const contract = byKey.get(key);
+    fail(contract, 'Rollback key lacks an exact contract');
+    for (const [revision, record] of Object.entries(revisions)) {
+      fail(lease(record) === revision, 'Rollback revision identity changed');
+      validateRecord(record, contract, true, true);
+      const output = await inspect(safeFile(path.join(root, 'assets/sprites'), record.output.file)),
+        source = await inspect(
+          safeFile(path.join(root, 'tools/sprites/sources'), record.source.file),
+        );
+      validateSource(record, source);
+      fail(
+        output.hash === record.output.hash &&
+          output.width === record.output.width &&
+          output.height === record.output.height,
+        'Retained rollback binary changed',
+      );
+      if (record.revision)
+        fail(record.revision === revisionFor(record), 'Retained rollback revision changed');
+      for (const extra of record.extras || [])
+        await verifyExtra(
+          extra,
+          path.join(root, 'assets/sprites'),
+          path.join(root, 'tools/sprites/sources'),
+        );
+    }
+  }
   fail(
     JSON.stringify(manifest.sprites) === JSON.stringify(expected),
     'Runtime manifest must derive exactly from approved records',
@@ -638,32 +677,18 @@ async function checkProduction(options = {}) {
     maxActiveDecodedBytes: activeBudget,
   };
 }
-async function commitRegistry(approved, manifest, copies = []) {
-  const approvedFile = path.join(root, 'tools/sprites/approved.json'),
-    manifestFile = path.join(root, 'assets/sprites/manifest.json');
-  const oldApproved = fs.readFileSync(approvedFile),
-    oldManifest = fs.readFileSync(manifestFile),
-    created = [];
-  try {
-    for (const { source, target, expectedHash } of copies) {
-      const parent = path.dirname(target);
-      fs.mkdirSync(parent, { recursive: true });
-      fail(fs.realpathSync(parent) === parent, 'Asset directory must not be symlinked');
-      if (!fs.existsSync(target)) {
-        fs.copyFileSync(source, target, fs.constants.COPYFILE_EXCL);
-        created.push(target);
-      }
-      fail(hash(fs.readFileSync(target)) === expectedHash, 'Immutable resource hash collision');
-    }
-    writeJSON(approvedFile, approved);
-    writeJSON(manifestFile, manifest);
-    return await checkProduction();
-  } catch (error) {
-    fs.writeFileSync(approvedFile, oldApproved);
-    fs.writeFileSync(manifestFile, oldManifest);
-    for (const file of created) fs.rmSync(file, { force: true });
-    throw error;
-  }
+async function commitRegistry(approved, manifest, copies, state) {
+  return Transactions.commit({
+    root,
+    id: 'sprites',
+    state,
+    values: [approved, manifest],
+    copies,
+    verify: () => checkProduction({ transactionActive: true }),
+  });
+}
+function recover() {
+  return Transactions.recover({ root, id: 'sprites', files: registryFiles });
 }
 function lease(record) {
   return record?.revision || record?.output.hash;
@@ -688,14 +713,14 @@ async function publish(recordFile, expectedRevision = null) {
     'Candidate bytes changed after review',
   );
   validateRaster(record, contract, outputReport);
-  const approved = json(path.join(root, 'tools/sprites/approved.json')),
+  const state = Transactions.snapshot(registryFiles),
+    [approved, manifest] = state.data,
     prior = approved.assets[record.key];
   if (expectedRevision === null)
     fail(!prior, 'Replacement requires an expected active revision; use replace');
   else fail(prior && lease(prior) === expectedRevision, 'Replacement lease mismatch');
   await checkProduction({ allowStaleKeys: expectedRevision ? [record.key] : [] });
-  const manifest = json(path.join(root, 'assets/sprites/manifest.json')),
-    copies = [];
+  const copies = [];
   const outputName =
     record.key.replaceAll(':', '-') + '-' + outputReport.hash + '.' + outputReport.format;
   const sourceName = sourceReport.hash + '.' + sourceReport.format;
@@ -738,10 +763,11 @@ async function publish(recordFile, expectedRevision = null) {
   approved.assets[record.key] = record;
   manifest.formatVersion = 3;
   manifest.sprites[record.key] = entryFor(record);
-  return commitRegistry(approved, manifest, copies);
+  return commitRegistry(approved, manifest, copies, state);
 }
 async function rollback(key, targetRevision, expectedRevision) {
-  const approved = json(path.join(root, 'tools/sprites/approved.json')),
+  const state = Transactions.snapshot(registryFiles),
+    [approved, manifest] = state.data,
     prior = approved.assets[key],
     target = approved.history?.[key]?.[targetRevision];
   fail(
@@ -753,23 +779,22 @@ async function rollback(key, targetRevision, expectedRevision) {
   await checkProduction({ allowStaleKeys: [key] });
   if (prior) retain(approved, key, prior);
   approved.assets[key] = target;
-  const manifest = json(path.join(root, 'assets/sprites/manifest.json'));
   manifest.sprites[key] =
     target.version === 1
       ? { src: './assets/sprites/' + target.output.file, ...target.runtime }
       : entryFor(target);
-  return commitRegistry(approved, manifest);
+  return commitRegistry(approved, manifest, [], state);
 }
 async function remove(key, expectedRevision) {
-  const approved = json(path.join(root, 'tools/sprites/approved.json')),
+  const state = Transactions.snapshot(registryFiles),
+    [approved, manifest] = state.data,
     prior = approved.assets[key];
   fail(prior && lease(prior) === expectedRevision, 'Removal lease mismatch');
   await checkProduction({ allowStaleKeys: [key] });
   retain(approved, key, prior);
   delete approved.assets[key];
-  const manifest = json(path.join(root, 'assets/sprites/manifest.json'));
   delete manifest.sprites[key];
-  return commitRegistry(approved, manifest);
+  return commitRegistry(approved, manifest, [], state);
 }
 async function attachClip(recordFile, name, frameFiles, durations, loop = true) {
   const record = json(recordFile),
@@ -1164,6 +1189,135 @@ async function showroom(recordFile) {
   );
   return { directory, comparisons, pending: !candidate };
 }
+async function generationRequest(key, destination) {
+  Transactions.assertClean(root, 'sprites');
+  const contract = contractFor(key),
+    text = fs.readFileSync(path.join(root, 'docs/GRAPHICS_CANON_SPRITE_PROMPTS.md'), 'utf8'),
+    organic = text.match(/## Intended design[^\n]*\n\n([^\n]+)/)?.[1],
+    active = json(registryFiles[0]).assets[key],
+    referenceBytes = reference(contract, true),
+    measured = await inspect(referenceBytes),
+    bounds = active?.output.materialBounds || measured.materialBounds,
+    scale = active?.processing?.rasterScale ?? 1,
+    body = {
+      width: ((bounds.x2 - bounds.x1 + 1) / scale) * specs.policy.reviewCameraZoom,
+      height: ((bounds.y2 - bounds.y1 + 1) / scale) * specs.policy.reviewCameraZoom,
+    };
+  fail(
+    typeof contract.catalog.prompt === 'string' &&
+      contract.catalog.prompt.length > 80 &&
+      !/\b(undefined|null)\b/.test(contract.catalog.prompt),
+    'Missing or malformed exact generation prompt',
+  );
+  fail(organic, 'Missing material-appropriate design instruction');
+  const goblin =
+    key === 'enemy:goblin'
+      ? "\nPreserve Joel's accepted playful asymmetrical half-smile, small ivory tooth at one lower mouth corner, separate small nose and organic pointed ears. No robotic polygon face or face-wide triangular mouth."
+      : '';
+  const prompt =
+    contract.catalog.prompt +
+    '\n\n' +
+    organic +
+    goblin +
+    '\n\nViewing contract: 150% camera. The visible body is approximately ' +
+    Math.round(body.width) +
+    ' × ' +
+    Math.round(body.height) +
+    ' CSS pixels. Simplify tiny details to read at that size. Keep the full reference-frame proportions and root; do not fill transparent padding with a larger actor. Use enough source pixels for a 576 × 576 processed frame. Preserve identity, equipment and major silhouette; avoid fine texture that becomes noise.';
+  fail(!/\b(undefined|null)\b/.test(prompt), 'Malformed assembled generation prompt');
+  const request = {
+    version: 1,
+    key,
+    catalogId: contract.catalogId,
+    catalogHash: contract.catalog.sourceHash,
+    canonHash: contract.canonHash,
+    sourceSnapshotHash: contract.canonSnapshotHash,
+    authorization: 'Planning capture only; does not authorize generation, approval or publication',
+    prompt,
+    promptHash: hash(Buffer.from(prompt)),
+    reference: {
+      file: 'procedural-reference.png',
+      hash: hash(referenceBytes),
+      entity: contract.entity,
+      region: contract.region,
+    },
+    target: {
+      cameraZoom: specs.policy.reviewCameraZoom,
+      raster: rasterFor(contract, specs.policy.targetRasterScale),
+      runtime: contract.runtime,
+      visibleBodyCSS: body,
+      profiles: specs.policy.reviewProfiles,
+    },
+    replacement: active
+      ? {
+          expectedRevision: lease(active),
+          retainedSource: 'tools/sprites/sources/' + active.source.file,
+          recordedReview: active.review,
+          dependentPresentation: active.presentation || null,
+          dependentSources: (active.extras || []).flatMap((e) =>
+            (e.sources || []).map((s) => ({ ...s, file: 'tools/sprites/sources/' + s.file })),
+          ),
+          instruction:
+            'Retain accepted appearance and reprocess affected frames/variants together; procedural polygons are identity references, not anatomy requirements',
+        }
+      : null,
+  };
+  const directory = destination
+    ? path.resolve(destination)
+    : path.join(
+        root,
+        '_sprite-work',
+        'requests',
+        key.replaceAll(':', '-') +
+          '-' +
+          hash(
+            Buffer.from(
+              JSON.stringify({
+                prompt: request.promptHash,
+                canon: request.canonHash,
+                revision: request.replacement?.expectedRevision,
+              }),
+            ),
+          ),
+      );
+  fail(!fs.existsSync(directory), 'Request checkpoint is immutable; use a new destination');
+  fs.mkdirSync(path.dirname(directory), { recursive: true });
+  const stage = fs.mkdtempSync(path.join(path.dirname(directory), '.request-'));
+  try {
+    fs.writeFileSync(path.join(stage, 'procedural-reference.png'), referenceBytes);
+    request.contexts = [];
+    for (const profile of specs.policy.reviewProfiles)
+      for (const lighting of ['day', 'night']) {
+        const rendered = scene(
+            contract,
+            profile.width,
+            profile.height,
+            null,
+            lighting,
+            null,
+            profile,
+          ),
+          file = 'context-' + profile.width + 'x' + profile.height + '-' + lighting + '.png';
+        fs.writeFileSync(path.join(stage, file), rendered.bytes);
+        request.contexts.push({
+          file,
+          hash: hash(rendered.bytes),
+          ...profile,
+          lighting,
+          cameraZoom: rendered.cameraZoom,
+          ratio: rendered.ratio,
+          pixelWidth: rendered.pixelWidth,
+          pixelHeight: rendered.pixelHeight,
+        });
+      }
+    fs.writeFileSync(path.join(stage, 'prompt.txt'), prompt + '\n');
+    writeJSON(path.join(stage, 'request.json'), request);
+    fs.renameSync(stage, directory);
+  } finally {
+    fs.rmSync(stage, { recursive: true, force: true });
+  }
+  return { directory, request };
+}
 async function resolutionPlan() {
   await checkProduction();
   const registry = json(path.join(root, 'tools/sprites/approved.json')),
@@ -1247,7 +1401,9 @@ async function resolutionPlan() {
 async function main() {
   const [command = 'check', key, input, format, placementFile] = process.argv.slice(2);
   let result;
-  if (command === 'resolution') result = await resolutionPlan();
+  if (command === 'request') result = await generationRequest(key, input);
+  else if (command === 'recover') result = recover();
+  else if (command === 'resolution') result = await resolutionPlan();
   else if (command === 'catalog') result = catalog();
   else if (command === 'asset') result = asset(key);
   else if (command === 'contracts') result = contracts();
@@ -1285,6 +1441,7 @@ module.exports = {
   checkProduction,
   publish,
   rollback,
+  recover,
   remove,
   revisionFor,
   entryFor,
@@ -1294,6 +1451,7 @@ module.exports = {
   scene,
   showroom,
   resolutionPlan,
+  generationRequest,
   safeFile,
   hash,
 };
