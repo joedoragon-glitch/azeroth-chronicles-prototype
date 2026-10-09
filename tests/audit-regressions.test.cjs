@@ -413,4 +413,104 @@ test('F62 chained retreat leash follows current hop, never the original spawn li
  Object.assign(c.hero,{x:3200,y:3100});
  assert.equal(c.tacticalRogueLeashAllows(e,c.hero,500),false,'genuine escape still ends the encounter');
 });
+
+test('F63 ringleaders retain their species feint and gain a pressure-driven ambush',()=>{
+ const c=fresh(),e=c.makeEnemy({species:'wolf',name:'wolf ringleader',level:2,hp:300,damage:12,gold:0,xp:0},{x:1400,y:1700});
+ e.form='ringleader';e.aggro=true;c.zone().enemies=[e];c.s.party=[];c.line=()=>true;
+ Object.assign(c.hero,{x:1500,y:1700,hp:1000,maxHp:1000});
+ c.tacticalRogueOutnumbered=()=>false;c.tacticalRogueWounded=()=>false;
+ assert(c.tacticalRogueMove(e,c.hero));
+ assert.equal(e.telegraph.name,'Flanking Snap','species identity survives elite promotion');
+ assert(!e.telegraph.rogueSignature);
+ e.telegraph=null;c.tacticalRogueOutnumbered=()=>true;
+ assert(c.tacticalRogueMove(e,c.hero));
+ assert.equal(e.telegraph.name,'Ringleader Ambush','outnumbering unlocks elite technique');
+ assert.equal(e.telegraph.style,'dash');
+ assert(e.telegraph.total>0.65,'elite warning must remain readable');
+});
+test('F64 all five captains have a basic move plus an individually authored rogue signature',()=>{
+ const signatures=C.rules.tacticalFoundation.rogueSignatures.captains;
+ const basics=C.rules.tacticalFoundation.rogueMoves.captains;
+ assert.equal(Object.keys(signatures).length,5);
+ for(const id of Object.keys(basics)){
+  const c=fresh(),e=c.makeEnemy({species:'goblin',name:id,level:5,hp:1000,damage:20,gold:0,xp:0},{x:1400,y:1700});
+  e.roomCaptain=true;e.captainProfile=id;e.aggro=true;c.zone().enemies=[e];c.s.party=[];c.line=()=>true;
+  Object.assign(c.hero,{x:1500,y:1700,hp:100000,maxHp:100000});
+  c.tacticalRogueOutnumbered=()=>false;
+  assert(c.tacticalRogueMove(e,c.hero),id+' basic move exists');
+  assert.equal(e.telegraph.name,basics[id].name);
+  assert(!e.telegraph.rogueSignature);
+  e.telegraph=null;c.tacticalRogueOutnumbered=()=>true;
+  assert(c.tacticalRogueMove(e,c.hero),id+' signature is usable under pressure');
+  const a=e.telegraph;
+  assert.equal(a.name,signatures[id].name);
+  assert(a.rogueSignature&&a.total>=1.1&&a.radius>=110,id+' distinct legible special');
+  assert(['bind','scatter','rally','pivot','sweep'].includes(a.effect));
+  assert(a.coefficient<=0.12,'rogue special is not a second boss nuke');
+ }
+});
+test('F65 every normal and TRUE boss has both rogue choices without altering boss attack profiles',()=>{
+ const signatures=C.rules.tacticalFoundation.rogueSignatures.bosses,
+  basics=C.rules.tacticalFoundation.rogueMoves.bosses;
+ assert.equal(Object.keys(signatures).length,11);
+ for(const def of C.data.bosses)for(const form of ['normal','true']){
+  const c=fresh(),e=c.bossEnemy(def,form,{x:1400,y:1700});
+  c.zone().enemies=[e];c.s.party=[];e.aggro=true;c.line=()=>true;
+  Object.assign(c.hero,{x:1500,y:1700,hp:100000,maxHp:100000});
+  c.tacticalRogueOutnumbered=()=>false;
+  assert(c.tacticalRogueMove(e,c.hero),def.id+' basic choice');
+  assert.equal(e.telegraph.name,basics[def.id].name);
+  assert(!e.telegraph.rogueSignature);
+  e.telegraph=null;c.tacticalRogueOutnumbered=()=>true;
+  assert(c.tacticalRogueMove(e,c.hero),def.id+' special choice');
+  const a=e.telegraph;
+  assert.equal(a.name,signatures[def.id].name,def.id+' case-by-case identity');
+  assert(a.rogueSignature&&a.total>=1.2&&a.radius>=120);
+  assert.equal(a.kind,def.id==='mine'?'cone':'circle');
+  assert(a.coefficient<=0.12);
+  assert(C.rules.attacks[def.id].length>=4,'base boss rotation is untouched');
+ }
+});
+test('F66 rogue binding warnings use their actual hit circle and respect cover',()=>{
+ const c=fresh(),e=c.bossEnemy(c.boss('mire'),'normal',{x:1400,y:1700});
+ e.aggro=true;c.zone().enemies=[e];c.s.party=[];c.line=()=>true;c.tacticalRogueOutnumbered=()=>true;
+ Object.assign(c.hero,{x:1490,y:1700,hp:1000,maxHp:1000,slow:0});
+ assert(c.tacticalRogueMove(e,c.hero));const move=e.telegraph;
+ assert(move.rogueSignature&&move.effect==='bind'&&move.total>=1.4);
+ const hp=c.hero.hp;
+ c.hero.x+=move.radius+30;c.tacticalResolveRogueMove(e,move);
+ assert.equal(c.hero.hp,hp,'stepping outside the visible mark avoids the hit');
+ c.hero.x=move.x;c.line=()=>false;c.tacticalResolveRogueMove(e,move);
+ assert.equal(c.hero.hp,hp,'solid cover negates the mark');
+ c.line=()=>true;c.tacticalResolveRogueMove(e,move);
+ assert(c.hero.hp<hp&&c.hero.slow>0,'remaining inside the readable mark gets modest snare');
+});
+test('F67 boss scatter disrupts present attackers without hard control or free summons',()=>{
+ const c=fresh(),e=c.bossEnemy(c.boss('thorn'),'normal',{x:1400,y:1700}),
+  soldier=c.unit('soldier',1450,1700);
+ c.zone().enemies=[e];c.s.party=[soldier];e.aggro=true;c.line=()=>true;
+ c.tacticalRogueOutnumbered=()=>true;
+ Object.assign(c.hero,{x:1450,y:1745,hp:1000,maxHp:1000});
+ assert(c.tacticalRogueMove(e,c.hero));const a=e.telegraph,displaced=[];
+ c.move=(unit,point)=>{displaced.push(unit.id||'hero');return true;};
+ const before=c.hero.hp,allyHp=soldier.hp,enemyCount=c.zone().enemies.length;
+ c.tacticalResolveRogueMove(e,a);
+ assert(c.hero.hp<before&&soldier.hp<allyHp);
+ assert.equal(displaced.length,2,'two attackers are pushed rather than stun-locked');
+ assert.equal(c.zone().enemies.length,enemyCount,'scatter does not summon or auto-pull');
+});
+test('F68 commanders rally only already engaged local troops, never innocent nearby packs',()=>{
+ const c=fresh(),e=c.makeEnemy({species:'orc',name:'Cinder Warlord',level:10,hp:1000,damage:20,gold:0,xp:0},{x:1400,y:1700}),
+  guard=c.makeEnemy({species:'orc',name:'engaged guard',level:10,hp:100,damage:7,gold:0,xp:0},{x:1460,y:1730}),
+  idle=c.makeEnemy({species:'orc',name:'unengaged guard',level:10,hp:100,damage:7,gold:0,xp:0},{x:1480,y:1740});
+ e.captain=true;e.captainProfile='frontier-overseer';e.aggro=true;guard.aggro=true;
+ c.zone().enemies=[e,guard,idle];c.s.party=[];c.line=()=>true;c.tacticalRogueOutnumbered=()=>true;
+ Object.assign(c.hero,{x:1500,y:1700,hp:1000,maxHp:1000});
+ assert(c.tacticalRogueMove(e,c.hero));
+ assert.equal(e.telegraph.effect,'rally');
+ const previous=guard.pursuitBurst||0;
+ c.tacticalResolveRogueMove(e,e.telegraph);
+ assert(guard.pursuitBurst>previous,'engaged soldier receives a rearguard speed burst');
+ assert(!idle.aggro&&!(idle.pursuitBurst>0),'no stealth reinforcement from idle pack');
+});
 console.log(passed+' audit regression scenarios passed.');
