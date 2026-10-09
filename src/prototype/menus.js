@@ -709,7 +709,6 @@
         'Operations',
         'Regional objectives, routes and expedition labor.',
         [
-          action('Regional map and routes', () => showMap(returnHere)),
           action('Local objectives', () => quests(true, returnHere)),
           rank >= 2
             ? action(
@@ -723,17 +722,6 @@
                 'Rescue Mira and train Expedition to Rank 2',
                 true,
               ),
-          ...(getGame().s.phase === 'awakening'
-            ? [
-                action(
-                  'Awakening · Final objective',
-                  () => finaleMenu(returnHere),
-                  'TRUE dungeon guardians ' +
-                    Campaign.dungeonIds.filter((id) => getGame().s.true[id]).length +
-                    '/5',
-                ),
-              ]
-            : []),
         ],
         back,
       );
@@ -814,63 +802,24 @@
         returnHere = () => barracksMenu(b, back),
         specialists = getGame().barracksSpecialists(),
         exp = expeditionBarracksAction(b, back),
-        rank2 = rank >= 2,
         baseActions = [
           exp,
           action(
+            'Company',
+            () => barracksCompanyMenu(b, returnHere),
+            'Recruit · active group · recovery',
+          ),
+          action(
             'Rescued specialists',
             () => barracksSpecialistMenu(b, returnHere),
-            (specialists.length
-              ? 'Use ' +
-                specialists.length +
-                ' rescued specialist' +
-                (specialists.length === 1 ? '' : 's') +
-                ' here · '
-              : '') + regionalSpecialistBarracksDetail(),
+            (specialists.length ? specialists.length + ' available here · ' : '') +
+              regionalSpecialistBarracksDetail(),
           ),
           action(
-            'Recovery',
-            () => barracksRecoveryMenu(b, returnHere),
-            'Treat wounded · recover fallen',
+            'Operations',
+            () => barracksOperationsMenu(b, returnHere),
+            'Local objectives · resources and labor',
           ),
-          action(
-            'Manage group',
-            () => barracksGroupMenu(b, returnHere),
-            'With you ' +
-              getGame().activeParty().length +
-              '/' +
-              getGame().barracksFieldCap(b) +
-              ' · employed ' +
-              getGame().rosterCount(),
-          ),
-          rank2
-            ? action(
-                'Recruitment',
-                () => barracksRecruitmentMenu(b, returnHere),
-                'Soldier ' +
-                  getGame().barracksRecruitPrice('soldier') +
-                  ' crowns · Ranger ' +
-                  getGame().barracksRecruitPrice('archer') +
-                  ' crowns · extra hires rest in reserve',
-              )
-            : action(
-                'Recruitment — Expedition 2',
-                () => {},
-                'Rescue Mira and train Expedition to Rank 2',
-                true,
-              ),
-          rank2
-            ? action(
-                'Resources & labor',
-                () => barracksLaborMenu(b, returnHere),
-                'Assign idle active troops to regional deposits',
-              )
-            : action(
-                'Resources — Expedition 2',
-                () => {},
-                'Rescue Mira and train Expedition to Rank 2',
-                true,
-              ),
         ];
       if (!b.full) {
         const upgrading = getGame()
@@ -943,11 +892,6 @@
             'Operations',
             () => barracksOperationsMenu(b, returnHere),
             'Map · objectives · resources',
-          ),
-          action(
-            'Inventory & support',
-            () => inventory(returnHere),
-            'Ranger support and equipment',
           ),
         ],
         back,
