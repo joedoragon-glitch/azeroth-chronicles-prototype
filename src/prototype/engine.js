@@ -1226,7 +1226,6 @@
         this.hero.hp += this.hero.tonicBonus;
         this.syncCompanionLevelStats();
         this.say('Preparation tonic applied · maximum health +10%.');
-        this.notice('PREPARATION TONIC · ACTIVE', 4.5);
         return true;
       }
       this.say(
@@ -1904,7 +1903,7 @@
         });
       if (e.type === 'boss') {
         const b = this.boss(e.family);
-        this.victory(e.family, e.form);
+        const firstVictory = this.victory(e.family, e.form);
         this.s.statistics.bossSeconds[e.family + ':' + e.form] = Math.round(
           this.s.time - (e.fightStart || this.s.time),
         );
@@ -1924,6 +1923,8 @@
           if (a.summon && a.owner === e.id) a.hp = 0;
         });
         this.say(e.name + ' defeated.');
+        if (firstVictory && e.form === 'normal')
+          this.notice('BOSS VANQUISHED · ' + b.name, 5.5);
         this.event('bossDefeat', { family: e.family, form: e.form });
       }
       if (e.captain || e.roomCaptain) this.s.streak = { key: null, count: 0 };
@@ -2130,6 +2131,7 @@
         this.s.paid['clear:' + id] = true;
         this.grant(this.dungeonClearReward(id), 0);
         this.say('Dungeon first clear reward earned.');
+        this.notice(this.boss(id).place + ' · halls secured', 5.5);
       }
     }
     checkEnding() {
