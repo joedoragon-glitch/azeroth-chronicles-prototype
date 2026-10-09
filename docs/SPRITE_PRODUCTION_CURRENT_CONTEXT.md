@@ -1,5 +1,9 @@
 # Sprite production checkpoint · 8 October 2026
 
+## Structure proportion implementation checkpoint · 9 October 2026
+
+An initial *presentation-only* structure size pass and an original-master export-budget update are being verified in the proportion implementation PR. See [PROPORTION_IMPLEMENTATION_CHECKPOINT.md](PROPORTION_IMPLEMENTATION_CHECKPOINT.md). It keeps all world boundaries, enemy counts, pack homes, entrances and campaign saves unchanged. It is not yet the final detail-rich sprite production or a claim that zone overcrowding is solved; native-size reviews must precede individual replacement approvals.
+
 ## Current prerequisite: spatial proportion and encounter-density audit · 9 October 2026
 
 Joel expanded the pre-sprite pass to cover houses, dwellings/interior-linked entrances, all trees including the Abandoned Orchard, all zone transports and Dark Lord oppressive structures. Review their relative size and detail, generally assessing +25–50% world-display size where appropriate. **Before final exports for these items**, follow [WORLD_PROPORTION_AND_DENSITY_GUARDRAILS.md](WORLD_PROPORTION_AND_DENSITY_GUARDRAILS.md): first declutter and redistribute into suitable unused edge areas of existing maps; only then consider minimal directional boundary expansions. Changing zone size can alter outdoor pack distribution; preserve encounter pacing and existing monster populations, avoid new enemy-production work, verify travel routes, collision, transitions, saves and actual 150% appearances. Do not blindly scale every map. This is an authorization and testing gate, not evidence that any bounds or placements are already changed.
