@@ -15,6 +15,8 @@ const scripts = [
     'party',
     'economy',
     'rewards',
+    'enemy-vfx',
+    'enemy-vfx-events',
     'engine',
     'audio-catalog',
     'audio-contract',

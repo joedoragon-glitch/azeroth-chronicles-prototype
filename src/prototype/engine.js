@@ -4341,6 +4341,11 @@
   const Rewards =
     typeof PrototypeRewards !== 'undefined' ? PrototypeRewards : require('./rewards.js');
   Rewards.install(Campaign, { D, R, dungeonIds });
+  const EnemyVfxEvents =
+    typeof PrototypeEnemyVfxEvents !== 'undefined'
+      ? PrototypeEnemyVfxEvents
+      : require('./enemy-vfx-events.js');
+  EnemyVfxEvents.install(Campaign);
   Campaign.rules = R;
   Campaign.data = D;
   Campaign.classes = classes;

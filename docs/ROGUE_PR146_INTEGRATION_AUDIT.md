@@ -1,10 +1,10 @@
-# PR #146 integrated rogue audit · v0.8.110
+# PR #146 integrated rogue audit · v0.8.111
 
 ## Integration contract
 
-Reconcile `rogue-signature-disruptions-audit` at `274a43e` with main at `9e62703`. Keep the authored repertoire and decisions in `ROGUE_AI_PHASE2.md`: twelve melee/ranged ringleader pairs, five captain basics/signatures and eleven normal/TRUE boss basics/signatures. No new normal boss summons, alternate rotations, level gates, woundedness thresholds, forts, world placements or sprite revisions.
+Reconcile `rogue-signature-disruptions-audit` at `274a43e` with main at `9e62703`. Main then advanced to `527df5d` (PR #161, visual-only enemy VFX event bridge). That additive bridge, generated script graph, projectile-impact hooks and its equivalence tests are also preserved; release advances to v0.8.111 to avoid reusing its cache version. Keep the authored repertoire and decisions in `ROGUE_AI_PHASE2.md`: twelve melee/ranged ringleader pairs, five captain basics/signatures and eleven normal/TRUE boss basics/signatures. No new normal boss summons, alternate rotations, level gates, woundedness thresholds, forts, world placements or sprite revisions.
 
-Main's stronger burst tier redistribution, manual target lock, dynamic BOSS/ADDS companion doctrine, occlusion rendering and pure VFX identity/inventory foundation remain present. A structural comparison of every exported rules table with main found changes only in the authored rogue repertoire; summon plans, compression curves and all other tables remain equal. Sprite scope and source lineage remain unchanged; the checked-in scope report only updates the rules-source fingerprint. Generated build info and service-worker cache advance to v0.8.110.
+Main's stronger burst tier redistribution, manual target lock, dynamic BOSS/ADDS companion doctrine, occlusion rendering and pure VFX identity/inventory foundation remain present. A structural comparison of every exported rules table with main found changes only in the authored rogue repertoire; summon plans, compression curves and all other tables remain equal. Sprite scope and source lineage remain unchanged; the checked-in scope report only updates the rules-source fingerprint. Generated build info and service-worker cache advance to v0.8.111.
 
 ## Behavioral findings and corrections
 
