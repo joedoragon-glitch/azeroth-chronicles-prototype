@@ -4099,6 +4099,8 @@
     // Charged attacks are repeatable without MP; preserve a meaningful burst/heal interval.
     chargedSeconds: Object.freeze({ 1: 3, 2: 6, 3: 20 }),
   });
+  // When MP is dormant, Ash-beast ranged hits feed their ember core using real HP loss.
+  const ashFeeding = Object.freeze({ healFraction: 0.12 });
   const manaBalance = {
     perLevel: 5,
     regen: { combat: 1, outOfCombat: 2.5, talentCombat: 0.25, talentOutOfCombat: 0.5 },
@@ -4778,6 +4780,7 @@
   const R = {
     resourceMode,
     cooldownBalance,
+    ashFeeding,
     tacticalFoundation,
     balance,
     combatGeometry,
