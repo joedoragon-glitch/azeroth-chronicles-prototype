@@ -1,6 +1,10 @@
 # Sprite production checkpoint · 8 October 2026
 
-## Current resume snapshot · 9 October 2026 UTC
+## Current pause and housekeeping · 9 October 2026
+
+Joel selected 150% and requested housekeeping before adapting existing artwork. Generation, adaptation, replacement and additional asset publication remain paused. v0.8.103 prepares density-aware processing, native desktop/phone review and unchanged runtime geometry, without editing the 33 active keys or historical originals/checkpoints. Read SPRITE_RESOLUTION_HOUSEKEEPING.md and CAMERA_SPRITE_TARGETS.md; run sprite:resolution before the later Paladin/Goblin adaptation pilot. Earlier resumes below are historical authorization within their old scope, not the current instruction.
+
+## Historical resume snapshot · 9 October 2026 UTC
 
 Joel's current instruction explicitly resumes full generation, implementation, testing and publication. Both original interruption checkpoints remain untouched: `checkpoint/sprite-production-paused-2026-10-08` and `recovery/nature-paused-2026-10-08` (277-file save at cde13b483614fe83bfb97887e509cee67fd5fa40). The older chronological sections below record past stages, not the latest active counts.
 

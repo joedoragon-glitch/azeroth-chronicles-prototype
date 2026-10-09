@@ -3,20 +3,55 @@
   "policy": {
     "maxSourcePixels": 4194304,
     "maxSourceBytes": 16777216,
-    "maxOutputDimension": 512,
+    "maxOutputDimension": 576,
     "maxOutputBytes": 1048576,
     "minimumPadding": 2,
     "colorSpace": "srgb",
     "resizeKernel": "nearest",
-    "viewports": [
-      [1280, 800],
-      [375, 812],
-      [320, 568],
-      [844, 390]
-    ],
     "maxActiveDecodedBytes": 16777216,
     "maxPackagedDecodedBytes": 134217728,
-    "maxPackagedBytes": 134217728
+    "maxPackagedBytes": 134217728,
+    "maxRasterScale": 3,
+    "targetRasterScale": 3,
+    "reviewCameraZoom": 1.5,
+    "reviewProfiles": [
+      {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      }
+    ]
   },
   "assets": [
     {

@@ -114,3 +114,8 @@ The reconciled scope remains 296 decisions (280 GENERATE, 16 PROCEDURAL), 70 pre
 ## Environmental playback v0.8.93
 
 `audio-environment.js` independently owns contextual loop beds, bounded crossfades, stale-load cancellation and combat/boss attenuation. `director.environment` routes registered looped ambience through the existing bus/cache/source contracts. Fourteen original deterministic textures cover the nineteen current places; the old background noise remains the asset-failure recovery path, without playing under successful recorded beds. Details are sparse and suppressed in combat. Book/renderer ownership preserves external replacements and guides. See `AUDIO_ENVIRONMENT.md`.
+
+
+## 150% sprite preparation
+
+Developer sprite processing now records explicit raster scale separately from the established reference display canvas. Existing manifest displayWidth/displayHeight already keep runtime static/clip/variant geometry independent of resource pixel dimensions. Density-aware preparation, atlas assembly, source provenance and capped-device-ratio review live in sprite-pipeline.cjs and sprite-batch-review.cjs. Existing runtime resource validation, actual-pixel memory accounting, content-aware retirement and offline inventory retain their ownership and limits. No production asset migration is performed by this housekeeping release. See SPRITE_RESOLUTION_HOUSEKEEPING.md.

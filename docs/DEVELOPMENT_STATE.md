@@ -128,3 +128,10 @@ Generation and asset replacement/publication stay paused. No source artwork, reg
 Joel selected 150% on 9 October. Both desktop and phone now default to it; the original 100% and 175% remain optional. A new presentation-only preference key preserves old comparison choices for rollback and lets the finalized default take effect without changing campaign saves. World projection, inverse pointer mapping, hero anchor and gameplay distances keep the v0.8.101 implementation.
 
 CAMERA_SPRITE_TARGETS.md records the selected visible body dimensions and physical raster budgets. Future images must be judged at 150%, with simple readable detail and enough raster pixels for the actual capped device ratio. Current accepted contracts and processing outputs remain immutable; implementing future higher-resolution replacements requires revising processing limits before production. All generation, replacement and further asset publication stay paused until Joel requests resumption.
+
+
+## Sprite resolution housekeeping · v0.8.103
+
+Joel requests housekeeping first, with artwork adaptation deferred. Explicit processing raster scale separates up to 576×576 output pixels from unchanged 192×192 logical display geometry; source enlargement, fractional pixel translation, inconsistent clips/variants and checkpoint overwrites reject. Existing records without density remain valid at 1×. Review tools exercise 150% with actual capped canvas ratios, physical PNG metadata and supported explicit desktop/phone profiles. Current production images/registrations/sources and gameplay remain unchanged.
+
+Read SPRITE_RESOLUTION_HOUSEKEEPING.md and the source-readiness evidence. The inventory reports 33 active keys and 44 retained candidate records; current active originals and dependent Paladin frame sources have sufficient raster pixels. Active decoding remains 16 MiB/two concurrent decodes. Fixture verification covers high-density static/clip grounding, source/placement guards, immutable replacement and old-density rollback. Next production step is a Paladin/Goblin adaptation pilot after resumption is requested.

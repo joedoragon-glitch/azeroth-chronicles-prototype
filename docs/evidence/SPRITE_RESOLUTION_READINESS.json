@@ -1,0 +1,1545 @@
+{
+  "cameraZoom": 1.5,
+  "targetRasterScale": 3,
+  "production": "paused; this command does not prepare, approve or publish artwork",
+  "profiles": [
+    {
+      "width": 1280,
+      "height": 800,
+      "mode": "desktop",
+      "devicePixelRatio": 2
+    },
+    {
+      "width": 1024,
+      "height": 700,
+      "mode": "desktop",
+      "devicePixelRatio": 2
+    },
+    {
+      "width": 375,
+      "height": 800,
+      "mode": "phone",
+      "devicePixelRatio": 1.5
+    },
+    {
+      "width": 393,
+      "height": 852,
+      "mode": "phone",
+      "devicePixelRatio": 1.5
+    },
+    {
+      "width": 800,
+      "height": 375,
+      "mode": "phone",
+      "devicePixelRatio": 1.5
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "mode": "phone",
+      "devicePixelRatio": 1.5
+    }
+  ],
+  "activeDecodedLimit": 16777216,
+  "decodeConcurrency": 2,
+  "assets": [
+    {
+      "key": "hero:paladin",
+      "activeRevision": "b162917a153d83f0bea42abb24a86b40c35f98608bc493cb0b7a27c1a58f9d25",
+      "source": "tools/sprites/sources/9c3684826868a0776a3fd0a2bbed440014d41f9117214ac22fe2900ab0bb62be.png",
+      "output": "assets/sprites/hero-paladin-d784954f7459c31582209b631b5c8384335cbfe0ee8c221b0c5f1db0df002b56.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 54
+      },
+      "visibleBodyCSS": {
+        "width": 75,
+        "height": 97.5
+      },
+      "dependentPresentation": {
+        "clipFrames": 2,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess static and dependent frames/variants together; retain fallback and rollback"
+    },
+    {
+      "key": "enemy:goblin",
+      "activeRevision": "06d5419a812e8c477e77be6f81c4b79e297b7592bc32b0282d0d39ff63590377",
+      "source": "tools/sprites/sources/09b7f153f6b303756e7f71e709b3562c07a6b5597ee8af51902fd30be964d50e.png",
+      "output": "assets/sprites/enemy-goblin-a766feaa2f0b00ddc8a4da98745e66c2e8b76e9605c32e2d17e30d365da05ade.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 54
+      },
+      "visibleBodyCSS": {
+        "width": 57,
+        "height": 73.5
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:vale-cottage:vale",
+      "activeRevision": "3c35ef58fe76061f5fb4f017be965947afba71885b6897781d59b7253237cf15",
+      "source": "tools/sprites/sources/ee52d21f1f1d6a95fb1e545db3fa584a7b9ae86618f9277b1d475d9c1b3778e3.png",
+      "output": "assets/sprites/prop-vale-cottage-vale-d94098c0186d31ce1b16815a3092957b5e428e35117729a9f2ffd9d8ec79ff3a.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 102,
+        "height": 99
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "hero:mage",
+      "activeRevision": "482a359a5997d069c2bd66761ebbafcafb234d3abce8acabe54cd1b2c2402254",
+      "source": "tools/sprites/sources/e3a36670eb4dd2823b37f7eea85e4e52922023864ac81f691a19d33761ec5708.png",
+      "output": "assets/sprites/hero-mage-467c8bdef58eb0741115fbf15c01e1b42a2e6a1e199bf6d028f1f188d82b53e9.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 60,
+        "height": 94.5
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "hero:ranger",
+      "activeRevision": "fbf4d3d59177a51cf4ade65829e2bab7c62491c0728b06fe4ba95f099a578671",
+      "source": "tools/sprites/sources/6a9bb7dc2503878ddfdbc4e0a2d275f47a5d2ea2d4fde33a3024f09bf727c341.png",
+      "output": "assets/sprites/hero-ranger-338fb3907f1b657ab7527d7e72a6b7f8df40aa9b85072e3b98acd58b65a455d7.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 54
+      },
+      "visibleBodyCSS": {
+        "width": 67.5,
+        "height": 87
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "ally:soldier",
+      "activeRevision": "a48acfe9940e55581d1598cbd0a8a4a7d10b9bb2dc92f6e4e717ad495a961bd8",
+      "source": "tools/sprites/sources/d1ba960002f85b3fb396a4c021ac70c40c55d66c929723336ede91483b07b2dd.png",
+      "output": "assets/sprites/ally-soldier-ab89b9cdec45f3f1a509fa700ff56bb6295fc6892218796c33c9854ad5deb25b.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 54
+      },
+      "visibleBodyCSS": {
+        "width": 72,
+        "height": 87
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "ally:archer",
+      "activeRevision": "9b9548bf117f33a4ef68b23be54e217def7f9cbd2fdb871747821846cfc00146",
+      "source": "tools/sprites/sources/5152d566a86ddb5c03d52008002a78efcb42c8011a214c898ee781ea9438d721.png",
+      "output": "assets/sprites/ally-archer-f0179672464cd896cfa06a19ec6a928db6b202a10785e65b290032178612bb4c.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 54
+      },
+      "visibleBodyCSS": {
+        "width": 76.5,
+        "height": 96
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:bush:vale",
+      "activeRevision": "aa0612364d5451a516c326c008ff055379f3d531d5a2395c24259bf7dcb0e9a9",
+      "source": "tools/sprites/sources/55fd9dc986035646929322e6af43c63fec83291ca05474d8c6902089407e215b.png",
+      "output": "assets/sprites/prop-bush-vale-abd74f53e50989b5a50c1d7bf5aacea2a68596ba92beabf7cd5d192e682f212b.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 54,
+        "height": 34.5
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:wildflowers:vale",
+      "activeRevision": "1f5e60a8e25aff8b6f1e3d56b3c4991d71caf5a335b6073bd943961fba028a5e",
+      "source": "tools/sprites/sources/953255dd847bb270d951b2bd01aa6be99d43c7b5fbef32d0b66f75a36e98f5bc.png",
+      "output": "assets/sprites/prop-wildflowers-vale-31ce71511df0b3d280d9a7c0f3de51bb4fa9f66efe2f878fc9b02f07d7f4cf00.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 33,
+        "height": 24
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:sapling:vale",
+      "activeRevision": "8e6a450d73d2f9c63356dac0b70e33556f225e0d99c0d3f3b91c4fd8a3493c95",
+      "source": "tools/sprites/sources/e11c9080b8cb9e18c13089544826c49fae13bc9dcd0d52753bd4834aa431b6e7.png",
+      "output": "assets/sprites/prop-sapling-vale-b781bf563ba0b25b370413fdb565d0e676c160930350722cfa5d01e95cf8cae0.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 54,
+        "height": 57
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:stump:vale",
+      "activeRevision": "aa17dad256464da8980fa76f32d0f3c831f0d5f08e5aea0a0e104241ed0e0b24",
+      "source": "tools/sprites/sources/41da5a5a95d3d101df96fd2541705b76beb7543cf10bf511c4ddac643ab12a5f.png",
+      "output": "assets/sprites/prop-stump-vale-6fda624b035cab979207c23975e25f464c0b7a1e9a7cf7327d9a7fe0786344c0.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 25.5,
+        "height": 28.5
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:fallen-log:vale",
+      "activeRevision": "fa2e3569e95289b52a3cae137c101168fc2273d6b63a806453d13f000c260819",
+      "source": "tools/sprites/sources/378de15f444a8c63d684f9e0fe5d988c439b18d951ae9ba30a0af54cc2af13b6.png",
+      "output": "assets/sprites/prop-fallen-log-vale-d2edbc197f3aa178c48124ba50d933c0cc4e544b5b0d2b8e000c8fdb138103f8.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 75,
+        "height": 34.5
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:cattails:march",
+      "activeRevision": "52d5ca8189e118025491f40b95ca08de9c612d815dfa31ccb1da92cc7324bae7",
+      "source": "tools/sprites/sources/a20648db7343c19be6578d9d86a8911654554e4317e63adab0ce4d52cd9149f7.png",
+      "output": "assets/sprites/prop-cattails-march-80fb7024b43b477e547eeb1edd051ce32b34ae948da732bc9e2a9782164e2144.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 31.5,
+        "height": 51
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:driftwood:march",
+      "activeRevision": "68a63c60cb772b19ab6988c2413cfe52ea3847fbbe4ae8296dc959833199a51b",
+      "source": "tools/sprites/sources/a17790876cd89036b6f57155361ef834f7a16bea611c58dd6678ac8e41627d42.png",
+      "output": "assets/sprites/prop-driftwood-march-7168c324281a4c17c42f22c21bf883a7d00eeb96e2c4550711eb41a8723c3284.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 61.5,
+        "height": 27
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:mangrove:march",
+      "activeRevision": "d18220a76ccd79877f628284f787805ed904ff748e81ced4ba85a51d5a559212",
+      "source": "tools/sprites/sources/0df901f063090f5314d44cf7d3c1055ac6804090b7722380c3d59af57444ba61.png",
+      "output": "assets/sprites/prop-mangrove-march-6c91cf25f57c4349871c9332c3196a3fa3f3915e345e4705e83d2dcb7643a83a.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 72,
+        "height": 76.5
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:pine-sapling:highlands",
+      "activeRevision": "1c5284836edb904e9bbe957b9cba895e4da594303a12f16e253bcb63cccd860f",
+      "source": "tools/sprites/sources/13d7ad5a6bd1f778566f12d6354811e619ee4cf9858990d63915e7042a143b6a.png",
+      "output": "assets/sprites/prop-pine-sapling-highlands-b9d810ff34805ac7304f11e81c42526ff7ea1858b1bfd2598285fcadc07600a2.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 37.5,
+        "height": 60
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:alpine-scrub:highlands",
+      "activeRevision": "2cac44b1e710e9b89e425596ae6176044938b6e52352d74c24d35f2b3894e80c",
+      "source": "tools/sprites/sources/bc7991ce1b88291deb36849a5143cc5dd5a3bfab8a33f19b45460154d3ceedf4.png",
+      "output": "assets/sprites/prop-alpine-scrub-highlands-9dfa887f68a9e97a066944a146c2341a80e0a75c4a1f5c2767c3616a4933be8d.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 39,
+        "height": 21
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:marsh-bush:march",
+      "activeRevision": "6e163a732e12968487ef15bc9989f71187925035486bac3df411a23dd3d5f25d",
+      "source": "tools/sprites/sources/e50864ed9dca59068af825421f3bba17adef320aa9594a9bb34af1de16b5d72e.png",
+      "output": "assets/sprites/prop-marsh-bush-march-13cf6cbe224090d4a6a13938f0d346acc49947c58d46c3b659fb49f347d017ee.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 54,
+        "height": 30
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:rock-cluster:highlands",
+      "activeRevision": "a6b4af21c0d76d74efe9aa4350096040879aa8bea66b0fcf25e78e681c3221a4",
+      "source": "tools/sprites/sources/07ed58f8eafc38270998efbc7ba9348af35c77c232e37e4e787db1a8306d9703.png",
+      "output": "assets/sprites/prop-rock-cluster-highlands-e00743923c9bac60506638d6b34fb285743d849ee95678d8ce49a4f3148b41b5.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 54,
+        "height": 27
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:dead-tree:frontier",
+      "activeRevision": "9d388809c7727c3d583bb3ca8826dfe3e49cbd716c9e448abddb8aba3a71500c",
+      "source": "tools/sprites/sources/26b8231bffb42a593cec42a5de020acedb0b590608f245f4e693b289d6d28604.png",
+      "output": "assets/sprites/prop-dead-tree-frontier-fad8966de4636cac03f2571a12677040164409fb79a2dce1053fdb4494da8547.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 51,
+        "height": 63
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:charred-stump:frontier",
+      "activeRevision": "8a224f7840c4f8966cff488d4864b7724de8cb0b08ce74e5bd09ccc63e8c8f4a",
+      "source": "tools/sprites/sources/114708d51d402e59be49822786648bd44f112ee875116198caf5efe2a59ec920.png",
+      "output": "assets/sprites/prop-charred-stump-frontier-9049fce203b0fc5f2c8c0df937e198738fef24f98a5eb562bbbd6ddfd12b9ccf.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 30,
+        "height": 33
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:dry-scrub:frontier",
+      "activeRevision": "2097328423baf057c2036e9b7f7b05e4b3403e1ce6cec78c31e959a6e2cac2c8",
+      "source": "tools/sprites/sources/acaea54f85afb63887d0ca0c6e852eb06e71d142d238472f1a92112ae0b41688.png",
+      "output": "assets/sprites/prop-dry-scrub-frontier-ae44f0f90ff60cda9d565c33e3c3defa0224cc0d891155188095a74be96d8d22.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 34.5,
+        "height": 27
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:burned-log:frontier",
+      "activeRevision": "68ae554533b7f03d27aec95faafa89b9b80cea9864f4aad0630513efff9addab",
+      "source": "tools/sprites/sources/7244e01d1b2975d2063882b5aaf15e5adaf4769ffd2126d11ed668c17b3ef9ff.png",
+      "output": "assets/sprites/prop-burned-log-frontier-6c3eed8713b4ceda5b0240a459b446078eca84ebb0fb38abee61434f74943967.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 70.5,
+        "height": 31.5
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:black-rock:crown",
+      "activeRevision": "c9bcd0f0f6491f7786033600c1978fd3b53b93554809fb95d23c7de585e67caa",
+      "source": "tools/sprites/sources/9ed0182100fa380f22360ce6d682f012facdf22d2aa04b5a604eb12ecdf6aca7.png",
+      "output": "assets/sprites/prop-black-rock-crown-b881134a10f69136b554dd02c1f656c23323e35cbdab134ccc8348e8ddcc48c8.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 57,
+        "height": 27
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:crystal-cluster:crown",
+      "activeRevision": "2c4d5f17e8ca726bb716b46898a7eb8ba4acf7f9921f1fe68a1837424af318f9",
+      "source": "tools/sprites/sources/16ca008216f5ea310ad777c5f4c2d51b756842b29e1f4189b136e230e0647a78.png",
+      "output": "assets/sprites/prop-crystal-cluster-crown-c95d6d5c0721bc28eb8153bff5d54dfc15083d146a7b96f83c4a0a89b3323184.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 45,
+        "height": 52.5
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:dead-shrub:crown",
+      "activeRevision": "ae4419ab4fb9559be4ece0425532ebc733f80afe3e76b2d7b0b2b79da54ab9eb",
+      "source": "tools/sprites/sources/7d31e03c1aae6adc057c5081dee9ce08cfec4e87dcbc4a08bcd1f946cca49260.png",
+      "output": "assets/sprites/prop-dead-shrub-crown-015a76d4765399ea510cc9567e073944ca8694ec6b6ead0a49e0301d4af4ff46.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 33,
+        "height": 24
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:obsidian:crown",
+      "activeRevision": "c9ca949a059591ac5a9070e7fafdfdefadffc8b96d5d0032f1405eed37cad552",
+      "source": "tools/sprites/sources/603d83777bd2f970e987e8233c13ed93018bba9d22feaa340a686ab612e4607b.png",
+      "output": "assets/sprites/prop-obsidian-crown-eee77b0694096f672e4259ec9147327a6b7f05814383a489ed404d19256d2d68.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 43.5,
+        "height": 46.5
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:heather:highlands",
+      "activeRevision": "1fc62a7ad74c8af52ce673b89130bf1e757b7d796fe56eb0c3cdff4b3bfff388",
+      "source": "tools/sprites/sources/531b42d7ca0b9995c8afe906ea72ebc204f785736e1421b7ca90bdc4aaf07b75.png",
+      "output": "assets/sprites/prop-heather-highlands-874f1e4263a3c9332ff59aa4ffb9e977ed5647019a162a09cbf2fcfae1760b3c.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 24,
+        "height": 34.5
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:rock:vale",
+      "activeRevision": "ea5807ae852c76cbea5e521e7d989481ef505a504326cc87812241c7e645704b",
+      "source": "tools/sprites/sources/ded65ec294b67004f2ce62cd966f51eed80a13d74ace8515829a30614a8f2ed8.png",
+      "output": "assets/sprites/prop-rock-vale-6c91a24ae9be14a3e01308e7a3b8833f7ce7998ed4e0aa53d99965884f1b7611.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 69,
+        "height": 48
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:rock:highlands",
+      "activeRevision": "25c391d966fe234e2951e6dadd402d8ed8d6d493fdb6844f3e100cf1e52b3cdf",
+      "source": "tools/sprites/sources/ded65ec294b67004f2ce62cd966f51eed80a13d74ace8515829a30614a8f2ed8.png",
+      "output": "assets/sprites/prop-rock-highlands-6c91a24ae9be14a3e01308e7a3b8833f7ce7998ed4e0aa53d99965884f1b7611.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 69,
+        "height": 48
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:mint-workbench:highlands",
+      "activeRevision": "a3db347d4eb40224dba8ed89eb66bed04952df81139d2f9e06cb4b9d91a51da5",
+      "source": "tools/sprites/sources/023394e5e934aa33bd804922d6ae2fbc6645832e1dbb10f8a8f7439c509f8433.png",
+      "output": "assets/sprites/prop-mint-workbench-highlands-f7a19742e227b760b732badfda2be3d512c0e49dc7511c7143b3bafeaeb13013.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 105,
+        "height": 84
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:ore-sorting-bay:highlands",
+      "activeRevision": "37e5465902327a792eaeca64986a738e870d1bead5b5e2a4b95a87c5a8a31a56",
+      "source": "tools/sprites/sources/fcffa102d82362aaac6ba813dd7440b41735e8cec8580f6cc394195576e9ab4f.png",
+      "output": "assets/sprites/prop-ore-sorting-bay-highlands-68526686bb7fc6528740e51dfe60c72a86d6200f4b71eadfb36a0eab6dc61b9f.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 102,
+        "height": 78
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    },
+    {
+      "key": "prop:caravan-loading-bay:highlands",
+      "activeRevision": "a30df3dcd7924388160bf5934c8a66e5bf14a296a7ddc4db76fd792a8608b108",
+      "source": "tools/sprites/sources/9140d5df75109164af13f852f9d0c22b17f429b5bc4603fc38f77fbcd6782e2a.png",
+      "output": "assets/sprites/prop-caravan-loading-bay-highlands-1302399f4bf539674742f3e074b4d8c94df75bd2865c2029450b5816c85b92d6.png",
+      "currentRaster": {
+        "width": 192,
+        "height": 192,
+        "scale": 1
+      },
+      "targetRaster": {
+        "width": 576,
+        "height": 576,
+        "scale": 3
+      },
+      "targetDecodedBytes": 1327104,
+      "sourcePixelsSufficient": true,
+      "frameSourcePixelsSufficient": true,
+      "referenceDisplay": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "visibleBodyCSS": {
+        "width": 132,
+        "height": 69
+      },
+      "dependentPresentation": {
+        "clipFrames": 0,
+        "variants": 0,
+        "framesPerAtlasPage": 1
+      },
+      "nextAction": "Reprocess retained source; review selected-size appearance and grounding before replacement"
+    }
+  ],
+  "retainedCandidates": [
+    {
+      "file": "tools/sprites/batches/2026-10-08-01/ally-archer/candidate.json",
+      "key": "ally:archer",
+      "sourceHash": "5152d566a86ddb5c03d52008002a78efcb42c8011a214c898ee781ea9438d721",
+      "outputHash": "f0179672464cd896cfa06a19ec6a928db6b202a10785e65b290032178612bb4c",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-01/ally-soldier/candidate.json",
+      "key": "ally:soldier",
+      "sourceHash": "d1ba960002f85b3fb396a4c021ac70c40c55d66c929723336ede91483b07b2dd",
+      "outputHash": "ab89b9cdec45f3f1a509fa700ff56bb6295fc6892218796c33c9854ad5deb25b",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-01/hero-mage/candidate.json",
+      "key": "hero:mage",
+      "sourceHash": "e3a36670eb4dd2823b37f7eea85e4e52922023864ac81f691a19d33761ec5708",
+      "outputHash": "467c8bdef58eb0741115fbf15c01e1b42a2e6a1e199bf6d028f1f188d82b53e9",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-01/hero-ranger/candidate.json",
+      "key": "hero:ranger",
+      "sourceHash": "6a9bb7dc2503878ddfdbc4e0a2d275f47a5d2ea2d4fde33a3024f09bf727c341",
+      "outputHash": "338fb3907f1b657ab7527d7e72a6b7f8df40aa9b85072e3b98acd58b65a455d7",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-01/prop-bush-vale/candidate.json",
+      "key": "prop:bush:vale",
+      "sourceHash": "55fd9dc986035646929322e6af43c63fec83291ca05474d8c6902089407e215b",
+      "outputHash": "abd74f53e50989b5a50c1d7bf5aacea2a68596ba92beabf7cd5d192e682f212b",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-01/prop-bush-vale/prepared/candidate.json",
+      "key": "prop:bush:vale",
+      "sourceHash": "55fd9dc986035646929322e6af43c63fec83291ca05474d8c6902089407e215b",
+      "outputHash": "abd74f53e50989b5a50c1d7bf5aacea2a68596ba92beabf7cd5d192e682f212b",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-01/prop-rock-vale/candidate.json",
+      "key": "prop:rock:vale",
+      "sourceHash": "ded65ec294b67004f2ce62cd966f51eed80a13d74ace8515829a30614a8f2ed8",
+      "outputHash": "6c91a24ae9be14a3e01308e7a3b8833f7ce7998ed4e0aa53d99965884f1b7611",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-01/prop-rock-vale/prepared/candidate.json",
+      "key": "prop:rock:vale",
+      "sourceHash": "ded65ec294b67004f2ce62cd966f51eed80a13d74ace8515829a30614a8f2ed8",
+      "outputHash": "6c91a24ae9be14a3e01308e7a3b8833f7ce7998ed4e0aa53d99965884f1b7611",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-01/prop-wildflowers-vale/candidate.json",
+      "key": "prop:wildflowers:vale",
+      "sourceHash": "953255dd847bb270d951b2bd01aa6be99d43c7b5fbef32d0b66f75a36e98f5bc",
+      "outputHash": "31ce71511df0b3d280d9a7c0f3de51bb4fa9f66efe2f878fc9b02f07d7f4cf00",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-01/prop-wildflowers-vale/prepared/candidate.json",
+      "key": "prop:wildflowers:vale",
+      "sourceHash": "953255dd847bb270d951b2bd01aa6be99d43c7b5fbef32d0b66f75a36e98f5bc",
+      "outputHash": "31ce71511df0b3d280d9a7c0f3de51bb4fa9f66efe2f878fc9b02f07d7f4cf00",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-02/prop-alpine-scrub-highlands/candidate.json",
+      "key": "prop:alpine-scrub:highlands",
+      "sourceHash": "bc7991ce1b88291deb36849a5143cc5dd5a3bfab8a33f19b45460154d3ceedf4",
+      "outputHash": "9dfa887f68a9e97a066944a146c2341a80e0a75c4a1f5c2767c3616a4933be8d",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-02/prop-cattails-march/candidate.json",
+      "key": "prop:cattails:march",
+      "sourceHash": "a20648db7343c19be6578d9d86a8911654554e4317e63adab0ce4d52cd9149f7",
+      "outputHash": "80fb7024b43b477e547eeb1edd051ce32b34ae948da732bc9e2a9782164e2144",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-02/prop-driftwood-march/candidate.json",
+      "key": "prop:driftwood:march",
+      "sourceHash": "a17790876cd89036b6f57155361ef834f7a16bea611c58dd6678ac8e41627d42",
+      "outputHash": "7168c324281a4c17c42f22c21bf883a7d00eeb96e2c4550711eb41a8723c3284",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-02/prop-fallen-log-vale/candidate.json",
+      "key": "prop:fallen-log:vale",
+      "sourceHash": "378de15f444a8c63d684f9e0fe5d988c439b18d951ae9ba30a0af54cc2af13b6",
+      "outputHash": "d2edbc197f3aa178c48124ba50d933c0cc4e544b5b0d2b8e000c8fdb138103f8",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-02/prop-mangrove-march/candidate.json",
+      "key": "prop:mangrove:march",
+      "sourceHash": "0df901f063090f5314d44cf7d3c1055ac6804090b7722380c3d59af57444ba61",
+      "outputHash": "6c91cf25f57c4349871c9332c3196a3fa3f3915e345e4705e83d2dcb7643a83a",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-02/prop-pine-sapling-highlands/candidate.json",
+      "key": "prop:pine-sapling:highlands",
+      "sourceHash": "13d7ad5a6bd1f778566f12d6354811e619ee4cf9858990d63915e7042a143b6a",
+      "outputHash": "b9d810ff34805ac7304f11e81c42526ff7ea1858b1bfd2598285fcadc07600a2",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-02/prop-sapling-vale/candidate.json",
+      "key": "prop:sapling:vale",
+      "sourceHash": "e11c9080b8cb9e18c13089544826c49fae13bc9dcd0d52753bd4834aa431b6e7",
+      "outputHash": "b781bf563ba0b25b370413fdb565d0e676c160930350722cfa5d01e95cf8cae0",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-02/prop-stump-vale/candidate.json",
+      "key": "prop:stump:vale",
+      "sourceHash": "41da5a5a95d3d101df96fd2541705b76beb7543cf10bf511c4ddac643ab12a5f",
+      "outputHash": "6fda624b035cab979207c23975e25f464c0b7a1e9a7cf7327d9a7fe0786344c0",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-03/prop-black-rock-crown/candidate.json",
+      "key": "prop:black-rock:crown",
+      "sourceHash": "9ed0182100fa380f22360ce6d682f012facdf22d2aa04b5a604eb12ecdf6aca7",
+      "outputHash": "b881134a10f69136b554dd02c1f656c23323e35cbdab134ccc8348e8ddcc48c8",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-03/prop-burned-log-frontier/candidate.json",
+      "key": "prop:burned-log:frontier",
+      "sourceHash": "7244e01d1b2975d2063882b5aaf15e5adaf4769ffd2126d11ed668c17b3ef9ff",
+      "outputHash": "6c3eed8713b4ceda5b0240a459b446078eca84ebb0fb38abee61434f74943967",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-03/prop-charred-stump-frontier/candidate.json",
+      "key": "prop:charred-stump:frontier",
+      "sourceHash": "114708d51d402e59be49822786648bd44f112ee875116198caf5efe2a59ec920",
+      "outputHash": "9049fce203b0fc5f2c8c0df937e198738fef24f98a5eb562bbbd6ddfd12b9ccf",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-03/prop-crystal-cluster-crown/candidate.json",
+      "key": "prop:crystal-cluster:crown",
+      "sourceHash": "16ca008216f5ea310ad777c5f4c2d51b756842b29e1f4189b136e230e0647a78",
+      "outputHash": "c95d6d5c0721bc28eb8153bff5d54dfc15083d146a7b96f83c4a0a89b3323184",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-03/prop-dead-shrub-crown/candidate.json",
+      "key": "prop:dead-shrub:crown",
+      "sourceHash": "7d31e03c1aae6adc057c5081dee9ce08cfec4e87dcbc4a08bcd1f946cca49260",
+      "outputHash": "015a76d4765399ea510cc9567e073944ca8694ec6b6ead0a49e0301d4af4ff46",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-03/prop-dead-tree-frontier/candidate.json",
+      "key": "prop:dead-tree:frontier",
+      "sourceHash": "26b8231bffb42a593cec42a5de020acedb0b590608f245f4e693b289d6d28604",
+      "outputHash": "fad8966de4636cac03f2571a12677040164409fb79a2dce1053fdb4494da8547",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-03/prop-dry-scrub-frontier/candidate.json",
+      "key": "prop:dry-scrub:frontier",
+      "sourceHash": "acaea54f85afb63887d0ca0c6e852eb06e71d142d238472f1a92112ae0b41688",
+      "outputHash": "ae44f0f90ff60cda9d565c33e3c3defa0224cc0d891155188095a74be96d8d22",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-03/prop-marsh-bush-march/candidate.json",
+      "key": "prop:marsh-bush:march",
+      "sourceHash": "e50864ed9dca59068af825421f3bba17adef320aa9594a9bb34af1de16b5d72e",
+      "outputHash": "13cf6cbe224090d4a6a13938f0d346acc49947c58d46c3b659fb49f347d017ee",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-03/prop-obsidian-crown/candidate.json",
+      "key": "prop:obsidian:crown",
+      "sourceHash": "603d83777bd2f970e987e8233c13ed93018bba9d22feaa340a686ab612e4607b",
+      "outputHash": "eee77b0694096f672e4259ec9147327a6b7f05814383a489ed404d19256d2d68",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-03/prop-rock-cluster-highlands/candidate.json",
+      "key": "prop:rock-cluster:highlands",
+      "sourceHash": "07ed58f8eafc38270998efbc7ba9348af35c77c232e37e4e787db1a8306d9703",
+      "outputHash": "e00743923c9bac60506638d6b34fb285743d849ee95678d8ce49a4f3148b41b5",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-goblin-face/candidate.json",
+      "key": "enemy:goblin",
+      "sourceHash": "09b7f153f6b303756e7f71e709b3562c07a6b5597ee8af51902fd30be964d50e",
+      "outputHash": "a766feaa2f0b00ddc8a4da98745e66c2e8b76e9605c32e2d17e30d365da05ade",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-terrain/T001/candidate/candidate.json",
+      "key": "terrain:ground:vale",
+      "sourceHash": "7f9eaf3eae7d9a30baa8f07bafc27b54dd88e592da36fbbb6b9970e996ee72b1",
+      "outputHash": "a1fa0f5fb4fb2f203147fa8ebce4c4a1703dd7161890e69df4592e0e1d6f4334",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-terrain/T002/candidate/candidate.json",
+      "key": "terrain:ground:march",
+      "sourceHash": "4f2acfca7d423ef4c0b1002cf4b0eea447f507caff5ba87e4ac6241803da5b53",
+      "outputHash": "b1782a435760ed6bce0e5b1b5ad87ae8709ac22ae21c880e0b6a70bf13712276",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-terrain/T003/candidate/candidate.json",
+      "key": "terrain:ground:highlands",
+      "sourceHash": "c5274b0e34ceb87967e252343ce090a235be91a9bacaf4d02dbdf86b9c71ced1",
+      "outputHash": "e108c18f0c95bcd577a0cf6a802a33847162af9276d3336be5d9f3b9abbae09d",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-terrain/T004/candidate/candidate.json",
+      "key": "terrain:ground:frontier",
+      "sourceHash": "9504556f05eb570dbd1f12ee6cc3bab52fc224d2c3d99b7d5ef74d3e4410710a",
+      "outputHash": "bf8577c52fb47274c71ce2e8c73c98c66a2515d5b62a89120156e5749c3a4ba7",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-08-terrain/T005/candidate/candidate.json",
+      "key": "terrain:ground:crown",
+      "sourceHash": "c2f3d98cc187c4195afda455b237e98391972085b72355e1eba6a251832335b7",
+      "outputHash": "7985f36f485ad35a0b55907cbb099bd4656695f5b4377373bdeba23f727eb3b2",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-09-04/prop-heather-highlands/candidate.json",
+      "key": "prop:heather:highlands",
+      "sourceHash": "531b42d7ca0b9995c8afe906ea72ebc204f785736e1421b7ca90bdc4aaf07b75",
+      "outputHash": "874f1e4263a3c9332ff59aa4ffb9e977ed5647019a162a09cbf2fcfae1760b3c",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-09-04/prop-heather-highlands/first-sizing/candidate.json",
+      "key": "prop:heather:highlands",
+      "sourceHash": "84f71b61676c9ac9a79f578cdbf5355ce376cae1fa487cb1589b3eeb436e23a0",
+      "outputHash": "2af9950bf9aa798fae57cf8fad770241d0ea11b648e16f95008d91b247150298",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-09-04/prop-rock-highlands/candidate.json",
+      "key": "prop:rock:highlands",
+      "sourceHash": "ded65ec294b67004f2ce62cd966f51eed80a13d74ace8515829a30614a8f2ed8",
+      "outputHash": "6c91a24ae9be14a3e01308e7a3b8833f7ce7998ed4e0aa53d99965884f1b7611",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-09-04/prop-rock-vale/candidate.json",
+      "key": "prop:rock:vale",
+      "sourceHash": "ded65ec294b67004f2ce62cd966f51eed80a13d74ace8515829a30614a8f2ed8",
+      "outputHash": "6c91a24ae9be14a3e01308e7a3b8833f7ce7998ed4e0aa53d99965884f1b7611",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-09-05/prop-caravan-loading-bay-highlands/candidate.json",
+      "key": "prop:caravan-loading-bay:highlands",
+      "sourceHash": "9140d5df75109164af13f852f9d0c22b17f429b5bc4603fc38f77fbcd6782e2a",
+      "outputHash": "1302399f4bf539674742f3e074b4d8c94df75bd2865c2029450b5816c85b92d6",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-09-05/prop-mint-workbench-highlands/candidate.json",
+      "key": "prop:mint-workbench:highlands",
+      "sourceHash": "3a4c4b78af62a5ce4700ff865c0fbf0b7af067cbc828a6a2e9269f8f784202f8",
+      "outputHash": "b734ef8df6cdd861bdeb0e4ec37b19ee4090b5fc0d37ee575e8cff9fd8534e8e",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-09-05/prop-mint-workbench-highlands/steel-handle-correction/candidate.json",
+      "key": "prop:mint-workbench:highlands",
+      "sourceHash": "023394e5e934aa33bd804922d6ae2fbc6645832e1dbb10f8a8f7439c509f8433",
+      "outputHash": "f7a19742e227b760b732badfda2be3d512c0e49dc7511c7143b3bafeaeb13013",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-09-05/prop-ore-sorting-bay-highlands/candidate.json",
+      "key": "prop:ore-sorting-bay:highlands",
+      "sourceHash": "fcffa102d82362aaac6ba813dd7440b41735e8cec8580f6cc394195576e9ab4f",
+      "outputHash": "68526686bb7fc6528740e51dfe60c72a86d6200f4b71eadfb36a0eab6dc61b9f",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-09-07/prop-ridge-supper-highlands/candidate.json",
+      "key": "prop:ridge-supper:highlands",
+      "sourceHash": "bfce61203d5808e61a66258ac054c12de30fc7b2e6becf029a4b812a0f895f15",
+      "outputHash": "8dfb7dc3614b2337ee8ba6e0f24b0ba3c246dd65e7350f2b142e9f04ec2605bb",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    },
+    {
+      "file": "tools/sprites/batches/2026-10-09-07/prop-royal-flight-standard-frontier/candidate.json",
+      "key": "prop:royal-flight-standard:frontier",
+      "sourceHash": "7c61ba141a6b094c957c2a5bee301529f478d590d054606a881b1ab21e3564f3",
+      "outputHash": "d7efceb910df580233308d78cf64b8f59fa78f484fdeb4e51a6da63f41719d52",
+      "status": "retained checkpoint; reconcile current canon before reprocessing"
+    }
+  ]
+}

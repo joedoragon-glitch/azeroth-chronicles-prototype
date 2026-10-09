@@ -56,8 +56,8 @@ const root = path.resolve(__dirname, '..');
       assert.equal(report.height, contract.canvas.height);
       assert(report.padding >= 2 && report.visiblePixels > 0 && report.transparentPixels > 0);
       assert.equal(
-        pipeline.hash(pipeline.scene(contract, 320, 568).bytes),
-        pipeline.hash(pipeline.scene(contract, 320, 568).bytes),
+        pipeline.hash(pipeline.scene(contract, 375, 800).bytes),
+        pipeline.hash(pipeline.scene(contract, 375, 800).bytes),
         'fixed scene is reproducible: ' + contract.key,
       );
     }
@@ -222,7 +222,7 @@ const root = path.resolve(__dirname, '..');
     );
     console.log('PASS WebP and pending approval guard');
     const preview = success('showroom', recordFile);
-    assert.equal(preview.comparisons.length, 8);
+    assert.equal(preview.comparisons.length, 12);
     assert.equal(preview.pending, false);
     const sprites = await pipeline.spriteLayer(
       contracts[0],

@@ -1,6 +1,6 @@
 {
   "name": "azeroth-chronicles-prototype",
-  "version": "0.8.102",
+  "version": "0.8.103",
   "private": true,
   "description": "Offline installable RPG prototype for Chromebook and mobile.",
   "scripts": {
@@ -10,8 +10,8 @@
     "build": "node scripts/build.cjs",
     "check": "node scripts/build.cjs --check && node scripts/sprite-pipeline.cjs check && node scripts/sprite-scope-audit.cjs --check && node scripts/material-pipeline.cjs check",
     "dev": "node scripts/dev.cjs",
-    "format": "prettier --write \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\" \"tools/sprites/*.{js,css,html,json}\" tests/sprite-pipeline.test.cjs tests/sprite-showroom-browser.test.cjs tests/regional-handoffs.test.cjs tests/ironroot-highlands.test.cjs \"tools/audio/*.{js,css,html,json}\" tests/audio-recordings.test.cjs tests/audio-audition-browser.test.cjs tests/campaign-domains.test.cjs tests/economy.test.cjs tests/audio-production.test.cjs tests/audio-browser.test.cjs tests/sprite-scope.test.cjs tests/sprite-lifecycle.test.cjs tests/audio-catalog.test.cjs tests/audio-environment.test.cjs tests/materials.test.cjs tests/materials-browser.test.cjs",
-    "format:check": "prettier --check \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\" \"tools/sprites/*.{js,css,html,json}\" tests/sprite-pipeline.test.cjs tests/sprite-showroom-browser.test.cjs tests/regional-handoffs.test.cjs tests/ironroot-highlands.test.cjs \"tools/audio/*.{js,css,html,json}\" tests/audio-recordings.test.cjs tests/audio-audition-browser.test.cjs tests/campaign-domains.test.cjs tests/economy.test.cjs tests/audio-production.test.cjs tests/audio-browser.test.cjs tests/sprite-scope.test.cjs tests/sprite-lifecycle.test.cjs tests/audio-catalog.test.cjs tests/audio-environment.test.cjs tests/materials.test.cjs tests/materials-browser.test.cjs",
+    "format": "prettier --write \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\" \"tools/sprites/*.{js,css,html,json}\" tests/sprite-pipeline.test.cjs tests/sprite-showroom-browser.test.cjs tests/regional-handoffs.test.cjs tests/ironroot-highlands.test.cjs \"tools/audio/*.{js,css,html,json}\" tests/audio-recordings.test.cjs tests/audio-audition-browser.test.cjs tests/campaign-domains.test.cjs tests/economy.test.cjs tests/audio-production.test.cjs tests/audio-browser.test.cjs tests/sprite-scope.test.cjs tests/sprite-lifecycle.test.cjs tests/audio-catalog.test.cjs tests/audio-environment.test.cjs tests/materials.test.cjs tests/materials-browser.test.cjs tests/sprite-resolution.test.cjs",
+    "format:check": "prettier --check \"src/prototype/*.js\" \"styles/prototype.css\" \"styles/desktop.css\" \"styles/phone.css\" \"scripts/*.cjs\" tests/platform-runtime.test.cjs tests/run.cjs tests/asset-packaging.test.cjs tests/menus.test.cjs \"tests/helpers/*.cjs\" \"tools/sprites/*.{js,css,html,json}\" tests/sprite-pipeline.test.cjs tests/sprite-showroom-browser.test.cjs tests/regional-handoffs.test.cjs tests/ironroot-highlands.test.cjs \"tools/audio/*.{js,css,html,json}\" tests/audio-recordings.test.cjs tests/audio-audition-browser.test.cjs tests/campaign-domains.test.cjs tests/economy.test.cjs tests/audio-production.test.cjs tests/audio-browser.test.cjs tests/sprite-scope.test.cjs tests/sprite-lifecycle.test.cjs tests/audio-catalog.test.cjs tests/audio-environment.test.cjs tests/materials.test.cjs tests/materials-browser.test.cjs tests/sprite-resolution.test.cjs",
     "sprite:check": "node scripts/sprite-pipeline.cjs check",
     "sprite:catalog": "node scripts/sprite-pipeline.cjs catalog",
     "sprite:contracts": "node scripts/sprite-pipeline.cjs contracts",
@@ -30,7 +30,8 @@
     "material:check": "node scripts/material-pipeline.cjs check",
     "material:prepare": "node scripts/material-pipeline.cjs prepare",
     "material:publish": "node scripts/material-pipeline.cjs publish",
-    "material:rollback": "node scripts/material-pipeline.cjs rollback"
+    "material:rollback": "node scripts/material-pipeline.cjs rollback",
+    "sprite:resolution": "node scripts/sprite-pipeline.cjs resolution"
   },
   "engines": {
     "node": ">=20.9.0"
