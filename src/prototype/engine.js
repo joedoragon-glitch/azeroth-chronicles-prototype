@@ -119,6 +119,7 @@
         reforges: {},
         potions: { health: 0, mana: 0, greater_health: 0, greater_mana: 0 },
         tonic: false,
+        tonicStock: 0,
         potionCd: 0,
         slow: 0,
         supportEffects: [],
@@ -433,6 +434,13 @@
           (seen('night-site') ? 'shore observed' : 'observe Lantern shore after dark')
         );
       if (q.kind === 'sites') {
+        if (q.minSites)
+          return (
+            q.sites.filter(seen).length +
+            '/' +
+            q.minSites +
+            ' places discovered · explore naturally'
+          );
         const missing = q.sites
             .filter((id) => !seen(id))
             .map((id) =>
@@ -1181,6 +1189,26 @@
         }));
     }
 
+    preparationTonicStock() {
+      return this.hero.tonicStock || 0;
+    }
+    purchasePreparationTonic() {
+      if (!this.s.rescued.archive || !this.spend(this.preparationTonicCost())) return false;
+      this.hero.tonicStock = this.preparationTonicStock() + 1;
+      this.say('Preparation Tonic purchased. Use it at any completed Barracks.');
+      return true;
+    }
+    usePreparationTonic() {
+      if (this.hero.tonic || this.preparationTonicStock() < 1) return false;
+      this.hero.tonicStock--;
+      this.hero.tonic = true;
+      this.hero.tonicBonus = Math.ceil(this.hero.maxHp * 0.1);
+      this.hero.maxHp += this.hero.tonicBonus;
+      this.hero.hp += this.hero.tonicBonus;
+      this.syncCompanionLevelStats();
+      this.say('Preparation Tonic active · maximum health +10% until rest or defeat.');
+      return true;
+    }
     buyPotion(type, advanced = false) {
       if (type === 'tonic') {
         if (!advanced || !this.s.rescued.archive) return false;
@@ -1616,9 +1644,8 @@
       const onboarding = {
         id: 'quest-barracks',
         region: 'vale',
-        name: 'Build your first Barracks',
-        objective:
-          'Build your first Barracks in the field. A barracks gives companions a nearby recovery base and reduces long return trips. While out in the field, open the Adventure menu (Esc/Menu) and choose Establish Basic Barracks — your first one is free.',
+        name: 'A Place to Recover',
+        objective: 'In the field, choose Establish Basic Barracks from Adventure (free).',
         gold: 0,
         xp: 0,
         index: -1,
@@ -1642,8 +1669,7 @@
             ...rule,
             target: room ? room.count : rule.target,
             objective:
-              (room ? room.objective : q[2]) +
-              (rule.clear ? ' and clear the field dungeon guardians' : ''),
+              (room ? room.objective : q[2]) + (rule.clear ? '; clear compound guards' : ''),
           };
         }),
       ];
@@ -1694,7 +1720,7 @@
                       : q.kind === 'night'
                         ? p.count >= q.target && q.sites.every(seen)
                         : q.kind === 'sites'
-                          ? q.sites.every(seen) &&
+                          ? q.sites.filter(seen).length >= (q.minSites || q.sites.length) &&
                             (!q.requiresRescues ||
                               q.requiresRescues.every((id) => this.s.rescued[id]))
                           : false;
@@ -1804,6 +1830,7 @@
         fresh = new Campaign(this.s.mode, heroClass, this.random, { succession: true }).hero;
       for (const key of ['gold', 'weapon', 'armorTier', 'reforges', 'potions'])
         fresh[key] = clone(old[key]);
+      fresh.tonicStock = this.preparationTonicStock();
       for (const key of [
         'legacyWeaponPower',
         'legacyWeaponName',
