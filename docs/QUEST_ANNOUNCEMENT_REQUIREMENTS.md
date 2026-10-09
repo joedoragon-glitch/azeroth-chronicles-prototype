@@ -34,3 +34,11 @@ Current product: multi-file GitHub Pages/PWA. Do not constrain architecture to o
 ## Technical delivery
 - Prefer incremental isolated PRs, full node/browser/phone regressions, reliable save/restore and no accidental changes to renderer art canon, combat, XP economy or quest IDs.
 - The 30-quest narrative payoff is a separate content pass after the two-slot amber mechanism; do not mass-author canon changes implicitly.
+
+## Drowned Keeper — optional mechanics scholar (new player direction)
+
+- The Keeper is the player's **optional authority on intricate mechanics and calculations**, not only a lore figure: damage and defense, leveling/XP and enemy level gaps, cooldowns and charged actions, companion inheritance, boss/TRUE progression, regional economies and comparable exact rules. Always derive numerical explanations from the current active rules; the archive must not teach stale MP formulas during cooldown-only mode.
+- Keep **Controls** focused on actionable keys, taps and essential on-the-spot instructions. Move optional percentages, formulas, second-order systems and theory into a short, browse-by-topic Keeper reference. Do not move critical first-time survival/control information behind a mid-game dungeon.
+- Ground the reference in the existing **Sunken Archive, Keeper's study, dry stacks and preservation work**. His documented character is a scholar/councillor who desperately wants to keep his records safe. The entry can ask for an **optional promise to protect the Archive from flooding**, with no new mandatory quest, penalty, backtracking or boss prerequisite unless explicitly approved.
+- **Critical compatibility constraint:** the Keeper is presently a hostile dungeon boss. Do not silently turn him into a friendly NPC, change boss respawns/TRUE state, or replace combat with mandatory dialogue. A Keeper-authored annotated ledger/study interaction may carry his distinctive voice while keeping boss behavior intact; direct Keeper dialogue would require a separate reviewed encounter design.
+- Keep each subject optional and skimmable: short headings, concise practical examples, expandable advanced material where appropriate, no long mandatory reading blocks or persistent notification feed.
