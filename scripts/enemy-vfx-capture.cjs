@@ -184,12 +184,16 @@ fs.mkdirSync(out, { recursive: true });
             await page.screenshot({ path: path.join(out, prefix + '-active.png') });
             const stats = await page.evaluate((visualOnly) => {
               const c = Prototype.game,
-                r = Prototype.renderer;
+                r = Prototype.renderer,
+                raster = document.querySelector('canvas').getContext('2d');
               const measure = (enabled) => {
                 c.enemyVfxEnabled = enabled;
                 const t = performance.now();
-                for (let j = 0; j < (visualOnly ? 1 : 12); j++) r.draw();
-                return (performance.now() - t) / (visualOnly ? 1 : 12);
+                for (let j = 0; j < (visualOnly ? 1 : 4); j++) {
+                  r.draw();
+                  raster.getImageData(0, 0, 1, 1);
+                }
+                return (performance.now() - t) / (visualOnly ? 1 : 4);
               };
               measure(false);
               measure(true);
@@ -215,6 +219,7 @@ fs.mkdirSync(out, { recursive: true });
                 renderer: Prototype.renderer.metrics(),
                 sprites: PrototypeSprites.status(),
                 visualOnly,
+                framePaintFlushed: true,
               };
             }, !!process.env.VFX_CAPTURE_VISUAL_ONLY);
             report.push({ width, height, zoom, night, pilot, ...stats });

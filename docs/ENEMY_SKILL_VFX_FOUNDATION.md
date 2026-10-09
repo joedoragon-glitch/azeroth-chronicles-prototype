@@ -1,5 +1,8 @@
 # Enemy skill VFX · foundation and independent audit gate
 
+**Implementation update — v0.8.111:** The production work described below is implemented by PRs #161/#162. Read [ENEMY_SKILL_VFX_AUDIT.md](ENEMY_SKILL_VFX_AUDIT.md) for completed coverage and current evidence. The remaining text records the original foundation/production contract and its baseline findings.
+
+
 Status: **foundation only, no live visual replacement**. This document governs all 11 boss families, 5 authored captain profiles, night specialists, species/role ranged attacks, ordinary/guardian/ringleader maneuvers, and their later variants. It does not authorize new attack timing, collision, AI, summon counts, saves, audio, balance, world art or animation systems.
 
 ## Why a separate foundation
