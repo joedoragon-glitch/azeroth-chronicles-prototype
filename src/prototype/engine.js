@@ -2917,43 +2917,47 @@
       }
       return false;
     }
-    // Ordinary creatures retain a species maneuver; ringleaders can instead
-    // use their elite ambush when pressured or wounded. Captains and bosses
-    // keep their basic named feint AND a situational, identity-specific tactic.
-    // One action per rogue opportunity: no extra boss rotation or move spam.
+    // Tactical one-action repertoire: each species keeps its basic maneuver;
+    // elite signatures are authored for the species AND its actual combat role.
     tacticalRogueMove(e, fallback, fromRegroupAnchor = false) {
       if (e.hp <= 0 || e.returning || e.telegraph || e.motion || e.rangedAim) return false;
       const tier = this.tacticalProtectionTier(e),
         cfg = R.tacticalFoundation,
         profiles = cfg.rogueMoves,
+        ranged = !!e.ranged,
         basic =
           (e.type === 'boss' && profiles.bosses[e.family]) ||
           ((e.captain || e.roomCaptain) && profiles.captains[e.captainProfile]) ||
+          (tier === 'guardian' && ranged && profiles.rangedGuardian) ||
+          (ranged && (profiles.ranged[e.species] || profiles.rangedFallback)) ||
           profiles.species[e.species] ||
           profiles[tier] ||
           profiles.ordinary,
         signature =
           (e.type === 'boss' && cfg.rogueSignatures.bosses[e.family]) ||
-          ((e.captain || e.roomCaptain) && cfg.rogueSignatures.captains[e.captainProfile]),
+          ((e.captain || e.roomCaptain) && cfg.rogueSignatures.captains[e.captainProfile]) ||
+          (tier === 'ringleader' &&
+            cfg.rogueRingleaderSignatures[ranged ? 'ranged' : 'melee'][e.species]),
         pressured =
           fromRegroupAnchor ||
           this.tacticalRogueOutnumbered(e) ||
           !!this.tacticalRogueRegroup(e)?.anchor,
-        eliteAmbush = tier === 'ringleader' && (pressured || this.tacticalRogueWounded(e)),
+        wantsSignature =
+          tier === 'ringleader'
+            ? pressured || this.tacticalRogueWounded(e)
+            : pressured,
         threat = this.tacticalHighestThreatTarget(e, fallback),
         closeTargets =
           signature && ['scatter', 'sweep'].includes(signature.effect)
-            ? this.combatTargets()
-                .filter(
-                  (unit) => unit.hp > 0 && dist(unit, e) <= signature.radius && this.line(e, unit),
-                )
-                .sort((a, b) => dist(e, a) - dist(e, b))
+            ? this.combatTargets().filter((unit) =>
+                unit.hp > 0 && dist(unit, e) <= signature.radius && this.line(e, unit),
+              ).sort((a, b) => dist(e, a) - dist(e, b))
             : [],
         isSignature =
           !!signature &&
-          pressured &&
+          wantsSignature &&
           (!['scatter', 'sweep'].includes(signature.effect) || closeTargets.length > 0),
-        profile = isSignature ? signature : eliteAmbush ? profiles.ringleader : basic,
+        profile = isSignature ? signature : basic,
         target =
           isSignature && closeTargets.length
             ? closeTargets.includes(threat)
@@ -2966,10 +2970,10 @@
         centered = effect === 'scatter' || effect === 'sweep',
         warning =
           profile.warning ||
-          (e.type === 'boss' ? 1.05 : e.captain || e.roomCaptain ? 0.95 : eliteAmbush ? 0.9 : 0.75),
+          (e.type === 'boss' ? 1.05 : e.captain || e.roomCaptain ? 0.95 : 0.75),
         radius =
           profile.radius ||
-          (e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 95 : eliteAmbush ? 90 : 80);
+          (e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 95 : 80);
       e.telegraph = {
         rogueMove: true,
         rogueSignature: isSignature,
@@ -2987,8 +2991,14 @@
         radius,
         slowSeconds: profile.slowSeconds || 0,
         push: profile.push || 0,
+        retreat: profile.retreat || 0,
+        blinds: profile.blinds || 0,
         sidestep: profile.sidestep || 0,
         rallySeconds: profile.rallySeconds || 0,
+        reinforceBelow: profile.reinforceBelow || 0,
+        reinforceCap: profile.reinforceCap || 0,
+        reinforceSpecies: profile.reinforceSpecies || null,
+        reinforceName: profile.reinforceName || null,
         timer: warning,
         total: warning,
         recovery: isSignature ? 1.05 : 0.8,
@@ -3000,6 +3010,83 @@
         style: effect || profile.style,
         signature: isSignature,
       });
+      return true;
+    }
+    tacticalRogueCommanderSupport(e, move) {
+      if (!move.reinforceSpecies || !move.reinforceBelow || !move.reinforceCap ||
+          !['supply-highlands', 'frontier-overseer'].includes(e.captainProfile)) return false;
+      const z = this.zone(),
+        radius = R.tacticalFoundation.supportRadius,
+        usable = () => z.enemies.filter((u) =>
+          u !== e && u.hp > 0 && !u.neutral && !u.returning &&
+          !u.captain && !u.roomCaptain && u.species === move.reinforceSpecies &&
+          dist(u, e) <= radius && this.line(e, u),
+        );
+      const initiallyAvailable = usable(),
+        ownedAlive = z.enemies.filter((u) =>
+          u.hp > 0 && u.summon && u.rogueRearguard && u.owner === e.id,
+        ).length;
+      if (initiallyAvailable.length < move.reinforceBelow) {
+        const need = Math.max(0, Math.min(
+          move.reinforceCap - initiallyAvailable.length,
+          move.reinforceCap - ownedAlive,
+        ));
+        let made = 0;
+        for (let j = 0; j < need; j++) {
+          let point = null;
+          for (let n = 0; n < 32; n++) {
+            const angle = (j * 2 + n) * Math.PI / 6,
+              offset = 90 + Math.floor(n / 12) * 35,
+              candidate = {
+                x: e.x + Math.cos(angle) * offset,
+                y: e.y + Math.sin(angle) * offset,
+              };
+            if (this.blocked(candidate.x, candidate.y, this.s.zone, 12) ||
+                !this.clearSegment(e, candidate, 12) ||
+                dist(candidate, this.hero) < 70 ||
+                z.enemies.some((u) => u.hp > 0 && dist(u, candidate) < 35))
+              continue;
+            point = candidate;
+            break;
+          }
+          if (!point) break;
+          const ranged = (initiallyAvailable.length + made) % 3 === 1,
+            troop = this.makeEnemy(
+              {
+                species: move.reinforceSpecies,
+                name: move.reinforceName + (ranged ? ' archer' : ' soldier'),
+                level: e.level,
+                hp: 50 + e.level * 13,
+                damage: 5 + e.level * 2,
+                gold: 0,
+                xp: 0,
+              },
+              point,
+            );
+          troop.guard = true;
+          troop.summon = true;
+          troop.owner = e.id;
+          troop.rogueRearguard = true;
+          troop.pack = e.id + '-rogue-detail';
+          troop.forcedRole = ranged ? 'ranged' : 'melee';
+          this.summonCombatProfile(troop, { species: troop.species, ranged });
+          z.enemies.push(troop);
+          this.engage(troop, true, false);
+          made++;
+        }
+        if (made) {
+          this.say(e.name + ' calls ' + made + ' ' + move.reinforceName + ' reinforcements.');
+          this.event('captainSummon', { captain: e.captainProfile, count: made });
+        }
+      }
+      // This authored captain order is the exception to generic rally:
+      // it can activate locally present soldiers without chaining distant packs.
+      for (const u of usable()) {
+        if (!u.aggro) this.engage(u, true, false);
+        if (!u.aggro) continue;
+        u.pursuitBurst = Math.max(u.pursuitBurst || 0, move.rallySeconds);
+        u.cd = Math.min(u.cd || 0, 0.5);
+      }
       return true;
     }
     tacticalResolveRogueMove(e, move) {
@@ -3020,11 +3107,28 @@
               y: target.y + ((target.y - e.y) / d) * 55,
             };
           this.move(target, point, 220, 0.25);
-        } else target.slow = Math.max(target.slow || 0, move.style === 'snare' ? 1.65 : 0.95);
+        } else {
+          target.slow = Math.max(target.slow || 0,
+            move.slowSeconds || (move.style === 'snare' ? 1.65 : 0.95));
+        }
+        if (move.blinds > 0) {
+          // Dust blinds the victim narratively: the goblin briefly cannot be
+          // DIRECTLY targeted, but is still vulnerable to area damage.
+          e.rogueDustCoverUntil = Math.max(e.rogueDustCoverUntil || 0, this.s.time + move.blinds);
+          if (this.s.heroTarget === e.id) this.s.heroTarget = null;
+          if (this.hero.order?.type === 'attack' && this.hero.order.id === e.id)
+            this.hero.order = null;
+        }
+        if (move.style === 'withdraw' && move.retreat > 0) {
+          const d = Math.max(1, dist(e, target)),
+            point = {
+              x: e.x + ((e.x - target.x) / d) * move.retreat,
+              y: e.y + ((e.y - target.y) / d) * move.retreat,
+            };
+          if (this.clearSegment(e, point, 12)) this.move(e, point, 350, 0.35);
+        }
         return;
       }
-      // Warning geometry is also the hit geometry: circle, or a forward cone
-      // for a giant's frontal faultline. Leaving the mark or using cover avoids it.
       const inside = (unit) => {
         if (unit.hp <= 0 || !this.line(e, unit)) return false;
         if (dist(unit, move) > move.radius) return false;
@@ -3051,21 +3155,15 @@
               x: unit.x + ((unit.x - e.x) / d) * push,
               y: unit.y + ((unit.y - e.y) / d) * push,
             };
-          // Navigation prevents displacement through solid walls.
           this.move(unit, point, 250, 0.36);
         } else unit.slow = Math.max(unit.slow || 0, move.slowSeconds || 1);
       }
-      if (move.rallySeconds > 0) {
-        // A commander encourages only units ALREADY fighting. It does not
-        // secretly recruit nearby packs or bypass the pursuit consequence rule.
+      if (move.rallySeconds > 0 && !this.tacticalRogueCommanderSupport(e, move)) {
+        // Other commanders motivate only ALREADY engaged units.
         for (const ally of this.zone().enemies) {
           if (
-            ally === e ||
-            ally.hp <= 0 ||
-            !ally.aggro ||
-            ally.returning ||
-            dist(e, ally) > R.tacticalFoundation.supportRadius ||
-            !this.line(e, ally)
+            ally === e || ally.hp <= 0 || !ally.aggro || ally.returning ||
+            dist(e, ally) > R.tacticalFoundation.supportRadius || !this.line(e, ally)
           )
             continue;
           ally.pursuitBurst = Math.max(ally.pursuitBurst || 0, move.rallySeconds);
