@@ -2629,8 +2629,8 @@
       return true;
     }
 
-    // Only an explicit future rogue decision may start this retreat. Ordinary aggro
-    // and the existing leash never create tactical regroup states automatically.
+    // Each monster evaluates its own disadvantage. Support can chain across
+    // packs while the player keeps pursuing; there is no encounter-wide cap.
     tacticalRogueRegroup(e) {
       return this._tacticalRegroups?.get(e?.id) || null;
     }
@@ -2638,9 +2638,15 @@
       if (e) {
         this._tacticalRegroups?.delete(e.id);
         this._tacticalRegroupUsed?.delete(e.id);
+        this._tacticalRogueNext?.delete(e.id);
+        this._tacticalVisitedAllies?.delete(e.id);
+        this._tacticalWoundedUsed?.delete(e.id);
       } else {
         this._tacticalRegroups?.clear();
         this._tacticalRegroupUsed?.clear();
+        this._tacticalRogueNext?.clear();
+        this._tacticalVisitedAllies?.clear();
+        this._tacticalWoundedUsed?.clear();
       }
     }
     tacticalStopRogueRegroup(e) {
@@ -2651,6 +2657,8 @@
       }
     }
     tacticalBeginRogueRegroup(e, ally, activeTargetCount = 0) {
+      const prior = this.tacticalRogueRegroup(e),
+        preparing = prior?.phase === 'thinking' || prior?.phase === 'escape';
       if (
         !e?.aggro ||
         e.hp <= 0 ||
@@ -2659,12 +2667,14 @@
         e.telegraph ||
         e.motion ||
         e.rangedAim ||
-        this.tacticalRogueRegroup(e) ||
-        this._tacticalRegroupUsed?.has(e.id) ||
+        (prior && !preparing) ||
+        (!preparing && (this._tacticalRogueNext?.get(e.id) || 0) > this.s.time) ||
         !this.tacticalRogueEligibility(e, activeTargetCount) ||
         !this.tacticalRegroupCandidates(e).includes(ally)
       )
         return false;
+      const groupKey = ally.pack || ally.id;
+      if (this._tacticalVisitedAllies?.get(e.id)?.has(groupKey)) return false;
       const destination = { x: ally.x, y: ally.y };
       if (!Number.isFinite(destination.x) || !Number.isFinite(destination.y)) return false;
       const path = this.route(e, destination);
@@ -2676,11 +2686,12 @@
         previous = waypoint;
       }
       if (length > R.tacticalFoundation.awarenessRadius * 1.8) return false;
-      // A valid retreat must not cut through a protected settlement.
+      // Keep the established major-town protection; ordinary monster patrols
+      // elsewhere in occupied regions remain legal.
       if (!this.isDungeon()) {
-        const townCoords = D.towns[this.regionIndex()];
-        if (townCoords) {
-          const town = { x: townCoords[0], y: townCoords[1] };
+        const coords = D.towns[this.regionIndex()];
+        if (coords) {
+          const town = { x: coords[0], y: coords[1] };
           previous = e;
           for (const waypoint of path) {
             if (this.distanceToSegment(town, previous, waypoint) < 185) return false;
@@ -2689,7 +2700,11 @@
         }
       }
       if (!this._tacticalRegroups) this._tacticalRegroups = new Map();
-      if (!this._tacticalRegroupUsed) this._tacticalRegroupUsed = new Set();
+      if (!this._tacticalVisitedAllies) this._tacticalVisitedAllies = new Map();
+      if (!this._tacticalRogueNext) this._tacticalRogueNext = new Map();
+      const visited = this._tacticalVisitedAllies.get(e.id) || new Set();
+      visited.add(groupKey);
+      this._tacticalVisitedAllies.set(e.id, visited);
       this._tacticalRegroups.set(e.id, {
         phase: 'travel',
         allyId: ally.id,
@@ -2699,7 +2714,7 @@
         anchor: null,
         holdRemaining: 12,
       });
-      this._tacticalRegroupUsed.add(e.id); // One deliberate retreat per engagement.
+      this._tacticalRogueNext.set(e.id, this.s.time + R.tacticalFoundation.moveCooldownSeconds);
       e.path = [];
       e.routeAge = 0;
       return true;
@@ -2707,54 +2722,152 @@
     tacticalRogueLeashAllows(e, target, territory) {
       const state = this.tacticalRogueRegroup(e);
       if (!state) return dist(target, e.home) <= territory;
+      if (state.phase === 'thinking' && !state.anchor) return dist(target, e.home) <= territory;
       const separationLimit = R.tacticalFoundation.awarenessRadius + 200;
       if (dist(target, e) > separationLimit) return false;
-      if (state.phase === 'travel') {
-        // The player may stand anywhere along the retreat corridor, rather
-        // than being forced to remain within the original spawn leash.
+      if (state.phase === 'travel')
         return this.distanceToSegment(target, e.home, state.destination) <= territory;
+      return ['anchored', 'thinking', 'escape'].includes(state.phase) &&
+        dist(target, state.anchor || e) <= separationLimit;
+    }
+    tacticalSeekRogueSupport(e, pressure) {
+      let attempts = 0;
+      for (const group of this.tacticalRegroupGroups(e)) {
+        for (const ally of group.members) {
+          if (attempts++ >= 5) return false;
+          if (this.tacticalBeginRogueRegroup(e, ally, pressure)) {
+            this.event('rogueRegroup', { actor: e.id, ally: ally.id });
+            return true;
+          }
+        }
       }
-      return state.phase === 'anchored' && dist(target, state.anchor) <= separationLimit;
+      return false;
+    }
+    tacticalRogueOutnumbered(e) {
+      // Present individuals on the hero's side are all effectively hero-level.
+      // Every nearby active monster, of any species or strength, contributes
+      // one defender; summons and bosses are meaningful support too.
+      return (
+        this.tacticalPresentOpponents(e) >= 2 &&
+        this.tacticalPresentOpponents(e) > this.tacticalLocalSupport(e)
+      );
     }
     tacticalAdvanceRogueRegroup(e, target, dt) {
       const state = this.tacticalRogueRegroup(e);
       if (!state) return false;
+      if (state.phase === 'thinking') {
+        state.thinkRemaining -= dt;
+        e.noProgress = 0;
+        if (state.thinkRemaining > 0) return true;
+        const pressure = this.tacticalActiveTargetCount(e);
+        const totalPressure = this.tacticalRogueOutnumbered(e)
+          ? Math.max(pressure, R.tacticalFoundation.simultaneousPressureSources)
+          : pressure;
+        if (!this.tacticalRogueEligibility(e, totalPressure)) {
+          this.tacticalStopRogueRegroup(e);
+          return false;
+        }
+        if (this.tacticalSeekRogueSupport(e, totalPressure)) return true;
+        this.tacticalStopRogueRegroup(e);
+        if (this.tacticalRogueMove(e, target)) {
+          if (!this._tacticalRegroupUsed) this._tacticalRegroupUsed = new Set();
+          this._tacticalRegroupUsed.add(e.id); // Prevent lone move spam.
+          if (state.anchor) {
+            this._tacticalRegroups.set(e.id, {
+              phase: 'anchored',
+              anchor: state.anchor,
+              holdRemaining: 12,
+              moveUsed: true,
+              recruited: true,
+            });
+          }
+          return true;
+        }
+        // No support and no usable special: refuse the fight and flee quickly.
+        this._tacticalRegroups.set(e.id, {
+          phase: 'escape',
+          anchor: { x: e.x, y: e.y },
+          fleeRemaining: R.tacticalFoundation.escapeSeconds,
+          seekDelay: 0.9,
+          stalled: 0,
+        });
+        return true;
+      }
+      if (state.phase === 'escape') {
+        state.fleeRemaining -= dt;
+        state.seekDelay -= dt;
+        if (state.seekDelay <= 0) {
+          state.seekDelay = 1;
+          if (this.tacticalSeekRogueSupport(e, this.tacticalActiveTargetCount(e))) return true;
+        }
+        const before = { x: e.x, y: e.y },
+          d = Math.max(1, dist(e, target)),
+          away = {
+            x: e.x + ((e.x - target.x) / d) * 145,
+            y: e.y + ((e.y - target.y) / d) * 145,
+          };
+        this.move(e, away, (e.type === 'boss' ? 145 : 175) * 1.5, dt, 0);
+        state.stalled = dist(before, e) > Math.max(0.1, dt * 10) ? 0 : state.stalled + dt;
+        e.noProgress = 0;
+        if (dist(target, e) > 480 || state.fleeRemaining <= 0 || state.stalled > 1.8) {
+          this.disengage(e, dt);
+        }
+        return true;
+      }
       if (state.phase === 'travel') {
         state.travelRemaining -= dt;
         const ally = this.zone().enemies.find((unit) => unit.id === state.allyId);
         if (!ally || ally.hp <= 0 || ally.neutral || ally.returning || state.travelRemaining <= 0) {
-          this.tacticalStopRogueRegroup(e);
-          return false;
+          // An interrupted retreat stays attached to the current encounter,
+          // rather than snapping back under the original-home leash.
+          this._tacticalRegroups.set(e.id, {
+            phase: 'thinking',
+            anchor: { x: e.x, y: e.y },
+            thinkRemaining: R.tacticalFoundation.thinkingSeconds,
+          });
+          e.path = [];
+          e.routeAge = 0;
+          e.noProgress = 0;
+          return true;
         }
         if (dist(e, state.destination) > 65) {
           const before = { x: e.x, y: e.y };
           this.follow(e, state.destination, (e.type === 'boss' ? 145 : 175) * 1.5, dt, 55);
           state.stalled = dist(before, e) > Math.max(0.1, dt * 10) ? 0 : state.stalled + dt;
           if (state.stalled >= 2.5) {
-            this.tacticalStopRogueRegroup(e);
-            return false;
+            this._tacticalRegroups.set(e.id, {
+              phase: 'thinking',
+              anchor: { x: e.x, y: e.y },
+              thinkRemaining: R.tacticalFoundation.thinkingSeconds,
+            });
+            e.path = [];
+            e.routeAge = 0;
+            e.noProgress = 0;
+            return true;
           }
           e.noProgress = 0;
           return true;
         }
         state.phase = 'anchored';
-        state.anchor = { x: e.x, y: e.y }; // e.home always remains the original spawn.
+        state.anchor = { x: e.x, y: e.y };
         state.recruited = false;
         state.moveUsed = false;
         e.path = [];
         e.routeAge = 0;
       }
       if (state.phase === 'anchored') {
+        // The temporary combat anchor follows a real continued encounter,
+        // never changing the original respawn home.
         if (dist(e, state.anchor) > 340) {
-          this.tacticalStopRogueRegroup(e);
-          return false;
+          if (dist(target, e) <= 300) state.anchor = { x: e.x, y: e.y };
+          else {
+            this.tacticalStopRogueRegroup(e);
+            return false;
+          }
         }
-        // Hold with allies instead of chasing back to the original spawn.
-        // Approaching players renew the window; abandonment ends the encounter.
         if (dist(target, e) > 280) {
           state.holdRemaining -= dt;
           if (state.holdRemaining <= 0) {
-            this.tacticalStopRogueRegroup(e);
             this.disengage(e, dt);
             return true;
           }
@@ -2763,6 +2876,28 @@
         }
         state.holdRemaining = 12;
         this.tacticalRecruitRegroupAllies(e, state, target);
+        const pressure = this.tacticalActiveTargetCount(e);
+        const wounded = this.tacticalRogueWounded(e);
+        const freshWound = wounded && !this._tacticalWoundedUsed?.has(e.id);
+        const pressureRemains =
+          this.tacticalRogueOutnumbered(e) &&
+          this.tacticalRogueEligibility(e, Math.max(pressure, 2)) &&
+          (this._tacticalRogueNext?.get(e.id) || 0) <= this.s.time;
+        if (
+          this.tacticalRogueEligibility(e, pressure) &&
+          (freshWound || pressureRemains)
+        ) {
+          if (freshWound) {
+            if (!this._tacticalWoundedUsed) this._tacticalWoundedUsed = new Set();
+            this._tacticalWoundedUsed.add(e.id);
+          }
+          this._tacticalRegroups.set(e.id, {
+            phase: 'thinking',
+            thinkRemaining: R.tacticalFoundation.thinkingSeconds,
+            anchor: state.anchor,
+          });
+          return true;
+        }
         if (!state.moveUsed && this.tacticalRogueMove(e, target)) {
           state.moveUsed = true;
           return true;
@@ -2828,53 +2963,54 @@
     tacticalRecruitRegroupAllies(e, state, target) {
       if (state.recruited || dist(target, e) > 280) return;
       state.recruited = true;
-      const cfg = R.tacticalFoundation;
       let recruited = 0;
       for (const ally of this.tacticalRegroupCandidates(e)) {
-        if (recruited >= cfg.maxReinforcements) break;
-        if (ally.aggro || dist(ally, e) > cfg.supportRadius || dist(target, ally) > 320) continue;
-        // Do not create a cascading pack pull across the map.
+        if (ally.aggro || dist(ally, e) > R.tacticalFoundation.supportRadius ||
+            dist(target, ally) > 320) continue;
+        // No global limit or faction restrictions. Nearby reinforcements can
+        // make further independent rogue decisions if the player keeps chasing.
         if (this.engage(ally, true, false) !== false) recruited++;
       }
       if (recruited) this.event('rogueSupport', { actor: e.id, allies: recruited });
     }
     tacticalAutoRogue(e, target) {
       const cfg = R.tacticalFoundation;
+      const newWound =
+        this.tacticalRogueWounded(e) && !this._tacticalWoundedUsed?.has(e?.id);
       if (
         !cfg.enabled ||
         this.peace ||
         !target ||
-        !e.aggro ||
-        e.summon ||
+        !e?.aggro ||
         e.hp <= 0 ||
         e.returning ||
         e.telegraph ||
         e.motion ||
         e.rangedAim ||
         this.tacticalRogueRegroup(e) ||
-        this._tacticalRegroupUsed?.has(e.id) ||
-        (Number.isFinite(e.fightStart) && this.s.time - e.fightStart < 1.1)
+        (!newWound && this._tacticalRegroupUsed?.has(e.id)) ||
+        (!newWound && (this._tacticalRogueNext?.get(e.id) || 0) > this.s.time) ||
+        (!newWound && Number.isFinite(e.fightStart) && this.s.time - e.fightStart < 1.1)
       )
         return false;
       const pressure = this.tacticalActiveTargetCount(e);
-      if (!this.tacticalRogueEligibility(e, pressure)) return false;
-      if (!this._tacticalRegroupUsed) this._tacticalRegroupUsed = new Set();
-      // Try nearby support including an isolated ally; keep a strict attempt
-      // budget so obstructed maps cannot trigger unbounded path searches.
-      let attempts = 0;
-      for (const group of this.tacticalRegroupGroups(e)) {
-        for (const ally of group.members) {
-          if (attempts++ >= 5) break;
-          if (this.tacticalBeginRogueRegroup(e, ally, pressure)) {
-            this.event('rogueRegroup', { actor: e.id, ally: ally.id });
-            return true;
-          }
-        }
-        if (attempts >= 5) break;
+      const totalPressure = this.tacticalRogueOutnumbered(e)
+        ? Math.max(pressure, cfg.simultaneousPressureSources)
+        : pressure;
+      if (!this.tacticalRogueEligibility(e, totalPressure)) return false;
+      if (!this._tacticalRegroups) this._tacticalRegroups = new Map();
+      if (!this._tacticalRogueNext) this._tacticalRogueNext = new Map();
+      if (newWound) {
+        if (!this._tacticalWoundedUsed) this._tacticalWoundedUsed = new Set();
+        this._tacticalWoundedUsed.add(e.id);
       }
-      this._tacticalRegroupUsed.add(e.id);
-      // No accessible support: counterattack instead of running indefinitely.
-      return this.tacticalRogueMove(e, target);
+      this._tacticalRegroups.set(e.id, {
+        phase: 'thinking',
+        thinkRemaining: cfg.thinkingSeconds,
+      });
+      this._tacticalRogueNext.set(e.id, this.s.time + cfg.moveCooldownSeconds);
+      e.noProgress = 0;
+      return true;
     }
     updateEnemies(dt) {
       const z = this.zone(),
