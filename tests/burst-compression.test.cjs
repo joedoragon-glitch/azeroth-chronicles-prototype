@@ -15,7 +15,7 @@ const makeTarget = (tier, id = tier) => ({
   captain: tier === 'captain', guard: tier === 'guardian',
 });
 const tiers = ['ordinary', 'guardian', 'ringleader', 'captain', 'boss', 'trueBoss'];
-const previousTiers = {
+const originalTiers = {
   ordinary: { knee: 1.35, tail: 1.75 },
   guardian: { knee: 0.95, tail: 1.25 },
   ringleader: { knee: 0.7, tail: 0.95 },
@@ -23,19 +23,41 @@ const previousTiers = {
   boss: { knee: 0.36, tail: 0.55 },
   trueBoss: { knee: 0.29, tail: 0.48 },
 };
-const previousCurve = (raw, tier, hp = 1000) => {
-  const { knee, tail } = previousTiers[tier], threshold = knee * hp, range = tail * hp;
+// Previous stronger baseline, before this exact defensive-tier reassignment.
+const priorStrongTiers = Object.fromEntries(
+  Object.entries(originalTiers).map(([tier, profile]) => [
+    tier, { knee: profile.knee / 2, tail: profile.tail / 2 },
+  ]),
+);
+const expected = {
+  ordinary: priorStrongTiers.ordinary,
+  guardian: priorStrongTiers.guardian,
+  ringleader: priorStrongTiers.captain,
+  captain: priorStrongTiers.trueBoss,
+  boss: priorStrongTiers.boss,
+  trueBoss: priorStrongTiers.boss,
+};
+const curve = (raw, profile, hp = 1000) => {
+  const threshold = profile.knee * hp, range = profile.tail * hp;
   return raw <= threshold ? raw : threshold + range * Math.log1p((raw - threshold) / range);
 };
-// Doubling compression means halving the knee and logarithmic tail in every tier.
-// That doubles curve sensitivity, not necessarily the *percentage* shaved off any given hit.
 for (const tier of tiers) {
-  assert.equal(cfg.tiers[tier].knee * 2, previousTiers[tier].knee, tier + ' threshold is halved');
-  assert.equal(cfg.tiers[tier].tail * 2, previousTiers[tier].tail, tier + ' tail is halved');
+  assert.deepEqual(cfg.tiers[tier], expected[tier], tier + ' receives the intended inherited curve');
   const c = new C(), raw = 1300;
-  assert(c.tacticalCompressDamage(makeTarget(tier, 'doubled-' + tier), raw) < previousCurve(raw, tier),
-    tier + ' has stronger real damage compression');
+  const effective = c.tacticalCompressDamage(makeTarget(tier, 'reassigned-' + tier), raw);
+  assert(effective > 0 && effective <= raw, tier + ' retains positive uncapped damage');
+  assert(Math.abs(effective - curve(raw, expected[tier])) < 1e-8,
+    tier + ' uses its exact inherited mathematical curve');
 }
+assert.deepEqual(cfg.tiers.trueBoss, cfg.tiers.boss, 'TRUE and normal bosses now match');
+assert.deepEqual(cfg.tiers.captain, priorStrongTiers.trueBoss, 'captain inherits old TRUE defense');
+assert.deepEqual(cfg.tiers.ringleader, priorStrongTiers.captain,
+  'ringleader inherits old captain defense');
+for (const tier of ['ordinary', 'guardian', 'boss'])
+  assert.deepEqual(cfg.tiers[tier], priorStrongTiers[tier], tier + ' is unchanged by the reassignment');
+for (const tier of ['ordinary', 'guardian', 'ringleader', 'captain', 'boss', 'trueBoss'])
+  assert(curve(1300, expected[tier]) < curve(1300, originalTiers[tier]),
+    tier + ' is still more protected than the original v0.8.105 tuning');
 const ordinary = new C();
 assert(ordinary.tacticalCompressDamage(makeTarget('ordinary', 'ordinary-fatal'), 1000) < 1000,
   'ordinary monster compression now begins before a full-health lethal burst');
@@ -51,8 +73,11 @@ for (const tier of tiers) {
   const extra = c.tacticalCompressDamage(e, 200000);
   assert(extra > 0 && extra < 200000, tier + ': a huge attack still adds damage');
 }
-for (let i = 1; i < outputs.length; i++)
-  assert(outputs[i] < outputs[i - 1], tiers[i] + ' is more burst resilient');
+assert(outputs[0] > outputs[1], 'guardian more resilient than ordinary');
+assert(outputs[1] > outputs[2], 'ringleader more resilient than guardian');
+assert(outputs[2] > outputs[4], 'boss more resilient than ringleader');
+assert.equal(outputs[4], outputs[5], 'TRUE and normal bosses compress identical raw bursts');
+assert(outputs[3] < outputs[4], 'captains inherit stricter previous TRUE protection');
 
 const c = new C();
 const e = makeTarget('boss', 'window');
