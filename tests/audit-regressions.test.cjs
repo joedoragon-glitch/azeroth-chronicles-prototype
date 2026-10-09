@@ -246,4 +246,57 @@ test('F50 interrupted rogue retreat sheds its protection and cannot chain',()=>{
   ally.hp=100;
   assert.equal(c.tacticalBeginRogueRegroup(e,ally),false,'unlimited retry is prohibited even when the ally returns');
 });
+
+test('F51 wounded ordinary, guardian and ringleader mobs gain independent rogue eligibility below 30%',()=>{
+  const c=fresh();c.s.party=[];c.line=()=>true;c.hero.level=2;
+  for(const tier of ['ordinary','guardian','ringleader']){
+    const e=c.makeEnemy({species:'wolf',name:tier,level:2,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700});
+    if(tier==='guardian')e.guard=true;
+    if(tier==='ringleader')e.form='ringleader';
+    e.aggro=true;c.zone().enemies=[e];Object.assign(c.hero,{x:1430,y:1700});
+    assert.equal(c.tacticalRogueEligibility(e,0),false,tier+' healthy solo mob does not need to withdraw');
+    e.hp=30;assert.equal(c.tacticalRogueWounded(e),false,tier+' 30% exact threshold does not fire');
+    e.hp=29;assert.equal(c.tacticalRogueWounded(e),true,tier+' below 30% is a disadvantage');
+    assert.equal(c.tacticalRogueEligibility(e,0),true,tier+' wounded solo can request allies');
+    c.hero.level=e.level-3;assert.equal(c.tacticalRogueEligibility(e,3),false,tier+' stronger-by-three immune even wounded');
+    c.hero.level=e.level;
+  }
+});
+test('F52 wound trigger excludes bosses and captains and never activates tiered burst compression',()=>{
+  const c=fresh();c.s.party=[];c.line=()=>true;
+  const bossUnit=c.bossEnemy(c.boss('crypt'),'normal',{x:1400,y:1700});
+  const captain=c.makeEnemy({species:'wolf',name:'captain',level:3,hp:100,damage:1,gold:0,xp:0},{x:1450,y:1700});
+  captain.roomCaptain=true;
+  const ordinary=c.makeEnemy({species:'wolf',name:'summoned mob',level:3,hp:100,damage:1,gold:0,xp:0},{x:1470,y:1700});
+  ordinary.summon=true;
+  for(const e of [bossUnit,captain,ordinary]){e.hp=e.maxHp*.29;assert.equal(c.tacticalRogueWounded(e),e===ordinary);}
+  assert.equal(C.rules.tacticalFoundation.burstCompression.enabled,false);
+});
+test('F53 wounded monster thinks under 50% protection then seeks a single ally',()=>{
+  const c=fresh(),e=c.makeEnemy({species:'wolf',name:'wounded scout',level:2,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700}),
+    ally=c.makeEnemy({species:'goblin',name:'support',level:2,hp:80,damage:1,gold:0,xp:0},{x:1650,y:1700});
+  c.zone().enemies=[e,ally];c.s.party=[];c.line=()=>true;c.route=()=>[{x:ally.x,y:ally.y}];
+  Object.assign(c.hero,{x:1440,y:1700,level:2});e.hp=29;e.aggro=true;
+  assert(c.tacticalAutoRogue(e,c.hero),'wound starts rogue deliberation even during first second');
+  assert.equal(c.tacticalRogueRegroup(e)?.phase,'thinking');
+  const before=e.hp;assert(c.damage(e,10));assert.equal(before-e.hp,5,'thinking wounded monster gets temporary 50%');
+  assert(c.tacticalAdvanceRogueRegroup(e,c.hero,1));
+  assert.equal(c.tacticalRogueRegroup(e)?.phase,'travel','first choice is an ally, not the named maneuver');
+  assert.equal(ally.aggro,false,'discovery alone never auto-pulls');
+  assert(C.rules.tacticalFoundation.enabled);
+});
+test('F54 woundedness can trigger after an earlier rogue response and is limited until reset',()=>{
+  const c=fresh(),e=c.makeEnemy({species:'wolf',name:'second wind',level:2,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700}),
+    ally=c.makeEnemy({species:'wolf',name:'support',level:2,hp:80,damage:1,gold:0,xp:0},{x:1580,y:1700});
+  c.zone().enemies=[e,ally];c.s.party=[];c.line=()=>true;c.route=()=>[{x:ally.x,y:ally.y}];
+  Object.assign(c.hero,{x:1400,y:1700,level:2});e.aggro=true;
+  c._tacticalRegroupUsed=new Set([e.id]);c._tacticalRogueNext=new Map([[e.id,c.s.time+50]]);
+  assert.equal(c.tacticalAutoRogue(e,c.hero),false,'old attempt blocks healthy monster');
+  e.hp=29;assert(c.tacticalAutoRogue(e,c.hero),'new wound overrides previous one-response latch');
+  assert(c._tacticalWoundedUsed.has(e.id));
+  c.tacticalStopRogueRegroup(e);
+  assert.equal(c.tacticalAutoRogue(e,c.hero),false,'same wound cannot spawn infinite immediate retries');
+  c.tacticalClearRogueRegroup(e);
+  assert(!c._tacticalWoundedUsed.has(e.id),'disengagement clears wound latch for next encounter');
+});
 console.log(passed+' audit regression scenarios passed.');
