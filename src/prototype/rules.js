@@ -1076,7 +1076,7 @@
       count: 2,
       entryOffset: [255, -170],
       name: "Thornfang's Treasury",
-      objective: "Recover two caches from Thornfang's Treasury",
+      objective: "Recover 2 caches from Thornfang's Treasury",
     },
     {
       id: 'supply-march',
@@ -1085,7 +1085,7 @@
       count: 3,
       entryOffset: [260, -165],
       name: "Mirejaw's Treasury",
-      objective: "Recover three caches from Mirejaw's Treasury",
+      objective: "Recover 3 caches from Mirejaw's Treasury",
     },
     {
       id: 'supply-highlands',
@@ -1094,7 +1094,7 @@
       count: 3,
       entryOffset: [-265, 185],
       name: "Ridge Tyrant's Treasury",
-      objective: "Recover three caches from Ridge Tyrant's Treasury",
+      objective: "Recover 3 caches from Ridge Tyrant's Treasury",
     },
     {
       id: 'supply-crown',
@@ -1103,7 +1103,7 @@
       count: 3,
       entryOffset: [285, -185],
       name: "Cindermaw's Treasury",
-      objective: "Recover three caches from Cindermaw's Treasury",
+      objective: "Recover 3 caches from Cindermaw's Treasury",
     },
   ];
   const treasuryWalls = {
@@ -1824,36 +1824,40 @@
     },
   ];
   const quest = (kind, target, sites = []) => ({ kind, target, sites });
+  const explore = (sites, minSites = 3) => ({
+    ...quest('sites', null, sites),
+    minSites,
+  });
   const quests = [
     quest('rescue', 'thorn'),
     quest('patrol', 5),
     quest('bundles', 2),
     quest('rescue', 'crypt'),
     quest('sites', null, ['bridge-north', 'port']),
-    quest('sites', null, ['goblin-camp', 'den-ruins', 'bridge-south']),
+    explore(['goblin-camp', 'orchard', 'den-ruins', 'bridge-south', 'mill-pond', 'cache']),
     quest('rescue', 'mire'),
     quest('patrol', 6),
     quest('rescue', 'archive'),
     quest('bundles', 3),
     quest('night', 2, ['night-site']),
-    quest('sites', null, ['port']),
+    explore(['wagon', 'bridge-lake', 'watch', 'mire-nests', 'port']),
     quest('rescue', 'ridge'),
     quest('patrol', 7),
     quest('rescue', 'mine'),
     quest('bundles', 3),
-    quest('sites', null, ['bridge-north', 'wolf-den', 'ogre-hearth', 'bridge-south']),
-    quest('sites', null, ['port']),
+    explore(['bridge-north', 'wolf-den', 'ogre-hearth', 'bridge-south', 'lookout']),
+    quest('sites', null, ['ore', 'port']),
     quest('rescue', 'warlord'),
     quest('sites', null, ['convoy', 'bridge-north', 'checkpoint']),
     quest('rescue', 'abyss'),
     quest('patrol', 8),
-    quest('sites', null, ['shrine', 'minor', 'orc-bivouac', 'overlook']),
+    explore(['shrine', 'minor', 'orc-bivouac', 'overlook', 'bridge-south']),
     quest('sites', null, ['port']),
     quest('rescue', 'citadel'),
     quest('patrol', 8),
     quest('rescue', 'cindermaw'),
     quest('bundles', 3),
-    quest('sites', null, ['foundry', 'shelf', 'crown-barracks', 'siege']),
+    explore(['foundry', 'shelf', 'crown-barracks', 'siege', 'bridge-north']),
     quest('sites', null, ['fortress-gate']),
   ];
   for (const [index, family] of [
