@@ -514,6 +514,8 @@ button:focus-visible {
   box-shadow:
     inset 0 1px #d7eef225,
     0 8px 28px #050d16b0;
+}
+#modal {
   backdrop-filter: blur(8px);
 }
 #hud h1 {
