@@ -724,3 +724,33 @@ body.menu-open::before {
   max-width: 100%;
   height: auto;
 }
+
+/* Dense dialogs: preserve legibility while removing unused framing. */
+#modal[data-view='adventure'] #modal-title,
+#modal[data-view='adventure'] #modal-description {
+  display: none;
+}
+#modal[data-view='map'] #modal-description {
+  margin: 0 0 6px;
+}
+#modal[data-view='map'] #modal-description canvas {
+  display: block;
+  width: 100%;
+  margin: 0;
+  aspect-ratio: 3 / 2;
+  object-fit: contain;
+  border: 1px solid #60828c;
+  border-radius: 6px;
+}
+#modal[data-view='map'] #modal-actions .route-go {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-left-color: #d8bb7d;
+  background: linear-gradient(155deg, #395866, #263d48);
+  font-weight: 700;
+}
+#modal[data-view='map'] #modal-actions .route-picked {
+  border-color: #b8e5d5;
+  background: linear-gradient(155deg, #304e57, #1c343e);
+}
