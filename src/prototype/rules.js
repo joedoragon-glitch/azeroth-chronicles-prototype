@@ -1517,7 +1517,7 @@
     {
       id: 'raider-drill-redoubt',
       region: 'frontier',
-      center: [3060, 640],
+      center: [3050, 950],
       species: 'archer',
       wall: 'stockade',
       guardCount: 4,

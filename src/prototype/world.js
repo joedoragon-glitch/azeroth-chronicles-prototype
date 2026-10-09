@@ -1333,7 +1333,7 @@
         return cfg.center ? { x: cfg.center[0], y: cfg.center[1] } : null;
       }
       creatureStrongholds(z) {
-        const strongholdVersion = z.id === 'crown' ? 8 : z.id === 'highlands' ? 7 : 6;
+        const strongholdVersion = { crown: 8, highlands: 7, frontier: 7 }[z.id] || 6;
         if (
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
