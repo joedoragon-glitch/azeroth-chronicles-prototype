@@ -13,3 +13,10 @@ All 68 non-browser suites passed. Build, registry/source integrity, scope census
 The managed host exposes a virtual Node process.pid while /proc exposes host IDs. Publisher locks now retain host PID and process start time, so stale aliases and reused process IDs cannot block recovery or masquerade as current owners. Active publisher rejection, hard-kill pair recovery and unrelated-edit refusal pass. An initial local test/install overlap was recovered through the existing journal; subsequent registry verification ran serially. Lock/journal files were not deleted to bypass recovery.
 
 Counts: prepared 2 body keys / 4 frames / 2 materials; final-reviewed 2 body keys / 2 materials; installed 2 body revisions / 2 materials; verified deployed 0. Total active catalog is 33 body keys and 7 materials. This is the saved pilot batch, not completion of the remaining original adaptations, all-master audit or open 296-decision catalog.
+
+
+## Reconciled release candidate · v0.8.127 / PR #193
+
+The retained source-backed Paladin/Goblin idles (two 800ms frames each) and T006/T008 roads are reconciled with v0.8.126 main `05e069f`. The FPS-first outdoor floor reuse, projected ground cache and 256 MiB decoded sprite ceiling remain intact. Current registries validate 33 body identities / 7 terrain materials. No finished image generation was repeated.
+
+The real-browser actor review is now checked in and runs on Chromium/WebKit PR/main CI and against the published game. It checks both 576px definitions and actual rendered frames across six desktop/phone profiles in day/night, gameplay snapshot preservation, paused presentation time and the actual Goblin warning. Existing material-rendering and PWA upgrade checks remain required. CI screenshot artifacts supplement the immutable original candidate evidence. Counts remain 2 sprite revisions and 2 materials integrated, 0 verified deployed until exact published SHA and release checks complete.

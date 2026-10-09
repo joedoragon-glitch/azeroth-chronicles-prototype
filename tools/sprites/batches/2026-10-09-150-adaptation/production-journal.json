@@ -25,20 +25,18 @@
     "mapsExpanded": false,
     "monsterPopulationChanged": false,
     "proceduralSpriteScale": "implemented in PR #145, awaiting release verification",
-    "nativeOriginalAdaptation": "Paladin and Goblin candidates prepared at 576; not installed",
+    "nativeOriginalAdaptation": "Paladin and Goblin original-master revisions integrated at 576px, release pending",
     "pixelMasterAudit816": "pending per asset",
     "visualScreenshots": "24 recaptured sprite scenes, 24 capped-ratio road scene pairs and 36 real WebKit idle/combat screenshots retained",
     "assetPublication": "2 sprite revisions and 2 road materials installed locally; 0 deployed",
     "localAuditRecovery": "Prior unpushed 66 map captures lost during workspace pruning. Committed runtime checkpoint retained. Do not treat prior local evidence as durable or skip release gates.",
     "localRegressionSuites": 68,
-    "browserEvidence": "tools/sprites/batches/2026-10-09-150-adaptation/browser-review-v3/evidence.json"
+    "browserEvidence": "tools/sprites/batches/2026-10-09-150-adaptation/browser-review-v3/evidence.json",
+    "freshBrowserReview": "12 WebKit device/light scenes and 36 frame/combat captures pass on v0.8.127; CI runs retained review script on Chromium/WebKit and live game"
   },
   "nextWork": [
-    "Coordinate with #160/#145 Phase 1 and housekeeping owner; verify actual GitHub state.",
-    "Finish native/dependent-animation checks and install saved pilots via expected-revision leases; do not regenerate existing originals.",
-    "Finish native/wrap/device checks and install T006/T008 road material candidates.",
-    "Publish and verify exact deployed SHA only after release checks.",
-    "Audit/adapt remaining 31 active sprite keys from untouched originals; then finish missing catalog and terrain candidates."
+    "Finish exact-head PR #193 CI, merge, main deployment and exact published SHA verification.",
+    "Remaining 31 original-density adaptations and missing catalog stay tracked in issue #160."
   ],
   "source": "Joel's 9 October 2026 instructions, authorized autonomous technical implementation; no user approval review required.",
   "checkpoint": {
@@ -46,7 +44,8 @@
     "mainAtPreparation": "cdc8286ca499af1de4de53ffa3014bb89203cdab",
     "version": "0.8.115",
     "pr": 145,
-    "mainAtIntegration": "296356a883903459ba68e70291920f9c4538d96b"
+    "mainAtIntegration": "296356a883903459ba68e70291920f9c4538d96b",
+    "integrationCandidate": "v0.8.127 / PR #193"
   },
   "counts": {
     "adaptedSpriteKeysPrepared": 2,

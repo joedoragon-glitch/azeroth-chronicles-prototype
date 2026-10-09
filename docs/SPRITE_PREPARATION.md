@@ -76,3 +76,7 @@ For new content, follow DESIGN_TO_SPRITE_WORKFLOW.md and its repository handoff 
 ## End-to-end audit follow-up
 
 See `SPRITE_WORKFLOW_AUDIT.md` for generation-request provenance, candidate-bound review, source-normalization guards, validated rollback history and process-interruption recovery. Use `sprite:request` before future production; use `sprite:recover` / `material:recover` if an interrupted registry transaction is detected. Artwork production remains paused.
+
+## Memory policy update · v0.8.126
+
+Joel explicitly approves a 256 MiB decoded sprite-residency ceiling, superseding the earlier 16 MiB active-runtime policy described above. The current shared contract and production policy agree. Lazy loading, content sharing, two concurrent decodes, LRU eviction/visible pinning, per-image limits, packaged/download limits and original-master art remain unchanged. This is additional cache headroom, not a request to eagerly load the catalog. See GROUND_WINDOW_PERFORMANCE.md.
