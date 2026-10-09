@@ -12,7 +12,7 @@ assert.equal(new Set(prose).size, 30, 'Each quest has a distinct authored payoff
 for (const [i, text] of prose.entries()) {
   assert.equal(typeof text, 'string');
   assert(text.trim().length >= 45 && text.length <= 180, 'Compact narration ' + i);
-  assert(!/reward delivered|crowns|XP|quest complete/i.test(text), 'Not a reward receipt ' + i);
+  assert(!/reward delivered|\bcrowns\b|\bXP\b|quest complete/i.test(text), 'Not a reward receipt ' + i);
   assert(!/^(you (see|notice|discover)|quest)/i.test(text), 'No boilerplate narrator ' + i);
 }
 
