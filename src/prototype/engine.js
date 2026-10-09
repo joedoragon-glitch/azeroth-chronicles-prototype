@@ -1395,8 +1395,7 @@
       const transport = arrival?.transportId
         ? this.zone().npcs.find((n) => n.id === arrival.transportId && n.kind === 'transport')
         : null;
-      if (arrival?.transportId && !transport)
-        throw Error('Destination transport is missing');
+      if (arrival?.transportId && !transport) throw Error('Destination transport is missing');
       const landing = transport
         ? { x: transport.x + (arrival.dx || 0), y: transport.y + (arrival.dy || 0) }
         : p;
