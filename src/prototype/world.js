@@ -86,10 +86,7 @@
           if (rearStand) {
             const homeward = by('return');
             if (homeward)
-              Object.assign(
-                homeward,
-                terrainSafe(rearStand.x, rearStand.y, 8) || rearStand,
-              );
+              Object.assign(homeward, terrainSafe(rearStand.x, rearStand.y, 8) || rearStand);
           } else if (!R.harbors?.[z.id] && !crownTravelHub) place('return', 150, 175);
           const minorRest = by('minor');
           if (minorRest) Object.assign(minorRest, terrainSafe(minor.x, minor.y, 8) || minor);
@@ -628,16 +625,15 @@
           z.travelSafetyVersion === 1
         )
           return;
-        const landingIds = {
-          vale: ['outbound'],
-          march: ['return'],
-          highlands: ['return', 'outbound'],
-          frontier: ['return'],
-          crown: ['crown-travel-frontier-return'],
-        }[z.id] || [];
-        const landings = landingIds
-          .map((id) => z.npcs.find((n) => n.id === id))
-          .filter(Boolean);
+        const landingIds =
+          {
+            vale: ['outbound'],
+            march: ['return'],
+            highlands: ['return', 'outbound'],
+            frontier: ['return'],
+            crown: ['crown-travel-frontier-return'],
+          }[z.id] || [];
+        const landings = landingIds.map((id) => z.npcs.find((n) => n.id === id)).filter(Boolean);
         // Preserve monster numbers and difficulty; just keep their spawn homes away
         // from the actual arrival and its immediately surrounding companion space.
         const previousZone = this.s.zone;
