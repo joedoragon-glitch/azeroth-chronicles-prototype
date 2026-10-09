@@ -22,10 +22,10 @@ assert.deepEqual(banner.children.map(n=>n.textContent),['First milestone','Secon
 announcementNow=220;
 scope.Prototype.updateHUD();
 assert.deepEqual(banner.children.map(n=>n.textContent),['Second milestone','Third milestone'],'queued third notice appears after a slot clears');
-announcementNow=530;
+announcementNow=510;
 scope.Prototype.updateHUD();
 assert.deepEqual(banner.children.map(n=>n.textContent),['Third milestone'],'each notice expires independently');
-announcementNow=560;
+announcementNow=530;
 scope.Prototype.updateHUD();
 assert.equal(banner.children.length,0,'third notification expires after its own display window');
 assert(!banner.classList.contains('visible'),'empty stack closes');
