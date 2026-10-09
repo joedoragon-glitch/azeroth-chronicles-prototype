@@ -24,8 +24,13 @@
     paused = false,
     charge = null,
     gateDismissed = false,
-    criticalNoticeSeen = null,
-    criticalNoticeUntil = 0,
+    criticalNotices = {
+      game: null,
+      lastId: 0,
+      waiting: [],
+      active: [],
+      rendered: '',
+    },
     statusUntil = 0,
     worldPointer = null,
     pointer = null;
@@ -1771,18 +1776,50 @@
   });
   function updateCriticalNotice() {
     const host = $('message'),
-      latest = game.notices?.at(-1),
-      now = performance.now();
-    if (latest && latest !== criticalNoticeSeen) {
-      criticalNoticeSeen = latest;
-      criticalNoticeUntil = now + (latest.duration || 5.5) * 1000;
-      host.textContent = latest.text;
-      host.classList.add('visible');
+      now = performance.now(),
+      state = criticalNotices;
+    if (state.game !== game) {
+      state.game = game;
+      state.lastId = 0;
+      state.waiting = [];
+      state.active = [];
+      state.rendered = '';
+      host.replaceChildren();
     }
-    if (criticalNoticeUntil && now >= criticalNoticeUntil) {
-      criticalNoticeUntil = 0;
-      host.classList.remove('visible');
+    // Consume all new notices in order. A third notice waits instead of replacing
+    // either visible one, including when several milestones happen in one frame.
+    for (const n of game.notices || [])
+      if (n.id > state.lastId) {
+        state.waiting.push(n);
+        state.lastId = n.id;
+      }
+    state.active = state.active.filter((n) => now < n.until);
+    while (state.active.length < 2 && state.waiting.length) {
+      const notice = state.waiting.shift();
+      state.active.push({
+        ...notice,
+        until: now + (notice.duration || 5.5) * 1000,
+      });
     }
+    const rendered = state.active.map((n) => n.id).join(',');
+    if (rendered !== state.rendered) {
+      state.rendered = rendered;
+      host.replaceChildren(
+        ...state.active.map((n) => {
+          const card = document.createElement('div');
+          card.className = 'notice-card';
+          card.textContent = n.text;
+          return card;
+        }),
+      );
+    }
+    host.classList.toggle('visible', state.active.length > 0);
+    // The separate short-lived phone status must stay below the amber stack.
+    if (platform.mode === 'phone')
+      $('status').style.top = state.active.length
+        ? Math.ceil(host.getBoundingClientRect().bottom + 8) + 'px'
+        : '';
+    else $('status').style.top = '';
   }
   const hudMarkup = new Map();
   function setMarkup(id, html) {

@@ -208,9 +208,11 @@ body[data-experience='phone'] #modal-actions button {
 }
 body[data-experience='phone'] #message {
   width: min(420px, calc(100vw - 16px));
+  top: max(8px, env(safe-area-inset-top));
+}
+body[data-experience='phone'] #message .notice-card {
   font-size: 12px;
   padding: 9px 12px;
-  top: max(8px, env(safe-area-inset-top));
 }
 /* The optional historical layout keeps combat above the left joystick. */
 body[data-experience='phone'][data-phone-layout='left-hand'] #skills {
