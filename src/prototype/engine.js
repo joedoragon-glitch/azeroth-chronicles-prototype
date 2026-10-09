@@ -433,6 +433,13 @@
           (seen('night-site') ? 'shore observed' : 'observe Lantern shore after dark')
         );
       if (q.kind === 'sites') {
+        if (q.minSites)
+          return (
+            q.sites.filter(seen).length +
+            '/' +
+            q.minSites +
+            ' places discovered · explore naturally'
+          );
         const missing = q.sites
             .filter((id) => !seen(id))
             .map((id) =>
@@ -1694,7 +1701,7 @@
                       : q.kind === 'night'
                         ? p.count >= q.target && q.sites.every(seen)
                         : q.kind === 'sites'
-                          ? q.sites.every(seen) &&
+                          ? q.sites.filter(seen).length >= (q.minSites || q.sites.length) &&
                             (!q.requiresRescues ||
                               q.requiresRescues.every((id) => this.s.rescued[id]))
                           : false;
