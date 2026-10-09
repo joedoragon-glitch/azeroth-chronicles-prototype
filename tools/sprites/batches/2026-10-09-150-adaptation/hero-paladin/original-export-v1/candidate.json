@@ -1,0 +1,325 @@
+{
+  "version": 2,
+  "key": "hero:paladin",
+  "catalogId": "001",
+  "canonHash": "4fab05495891ab0599302be747092bb603aa10f658f550d967dd07cfce5293f5",
+  "canonSnapshotHash": "5cbef5f08be5e0740e45e1d1ea2a6149059d499841a053d4e8c7f7bf70ba49dd",
+  "catalogHash": "e28cf4e5912363ba4659a674b95628665b603c03eb207a7f47c3c5ba2180a5a9",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 196666,
+    "decodedBytes": 6290064,
+    "hash": "9c3684826868a0776a3fd0a2bbed440014d41f9117214ac22fe2900ab0bb62be",
+    "pixelHash": "c584c9fbca3cc00f3e155762d77ddc5ef843a1c0e7d746afef2287dedccae43a",
+    "bounds": {
+      "x1": 162,
+      "y1": 70,
+      "x2": 1209,
+      "y2": 1181
+    },
+    "padding": 44,
+    "transparentPixels": 1484717,
+    "visiblePixels": 87799,
+    "lowAlphaPixels": 3989,
+    "materialBounds": {
+      "x1": 498,
+      "y1": 644,
+      "x2": 823,
+      "y2": 1071
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 576,
+    "height": 576,
+    "bytes": 62695,
+    "decodedBytes": 1327104,
+    "hash": "107657c65e250199632eb716d2d2bcd534670864705438a49f5682d6f0e0c787",
+    "pixelHash": "6574544f5707e9e30d63e3443a844957d574e1d3211ea8bb6c1f56e3becc8015",
+    "bounds": {
+      "x1": 62,
+      "y1": 28,
+      "x2": 543,
+      "y2": 519
+    },
+    "padding": 28,
+    "transparentPixels": 313354,
+    "visiblePixels": 18422,
+    "lowAlphaPixels": 791,
+    "materialBounds": {
+      "x1": 217,
+      "y1": 284,
+      "x2": 365,
+      "y2": 479
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 54
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1254,
+      1254
+    ],
+    "to": [
+      576,
+      576
+    ],
+    "rasterScale": 3,
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": -4,
+      "y": -4,
+      "rasterX": -12,
+      "rasterY": -12,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "pending",
+    "reference": null,
+    "inheritedStaticReview": {
+      "status": "approved",
+      "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+      "kind": "engineer-authorized",
+      "userAppearanceAcceptance": false,
+      "scope": "Original source identity retained; preliminary frame preparation verified. Final assembled native review pending."
+    }
+  },
+  "presentation": {
+    "clips": {
+      "idle": {
+        "loop": true,
+        "frames": [
+          {
+            "src": "./assets/sprites/atlas-e99a65fdd8adf3ba3f89a156994f20da4082f405e7b0c97703dba28ccb65176f.png",
+            "width": 580,
+            "height": 580,
+            "hash": "e99a65fdd8adf3ba3f89a156994f20da4082f405e7b0c97703dba28ccb65176f",
+            "rect": [
+              2,
+              2,
+              576,
+              576
+            ],
+            "pivot": [
+              288,
+              432
+            ],
+            "durationMs": 800
+          },
+          {
+            "src": "./assets/sprites/atlas-d9d7a7656246ef909c89dc24f73fdd304f42a6c73ae7a086c55157b8836f4084.png",
+            "width": 580,
+            "height": 580,
+            "hash": "d9d7a7656246ef909c89dc24f73fdd304f42a6c73ae7a086c55157b8836f4084",
+            "rect": [
+              2,
+              2,
+              576,
+              576
+            ],
+            "pivot": [
+              288,
+              432
+            ],
+            "durationMs": 800
+          }
+        ]
+      }
+    }
+  },
+  "extras": [
+    {
+      "role": "atlas",
+      "output": {
+        "format": "png",
+        "width": 580,
+        "height": 580,
+        "bytes": 61622,
+        "decodedBytes": 1345600,
+        "hash": "e99a65fdd8adf3ba3f89a156994f20da4082f405e7b0c97703dba28ccb65176f",
+        "pixelHash": "77b3c0f826afcef181cd08e664f716351acf693fd86e3eb2069edc1b2fe9f0e1",
+        "bounds": {
+          "x1": 64,
+          "y1": 30,
+          "x2": 545,
+          "y2": 521
+        },
+        "padding": 30,
+        "transparentPixels": 317978,
+        "visiblePixels": 18422,
+        "lowAlphaPixels": 791,
+        "materialBounds": {
+          "x1": 219,
+          "y1": 286,
+          "x2": 367,
+          "y2": 481
+        },
+        "file": "atlas-e99a65fdd8adf3ba3f89a156994f20da4082f405e7b0c97703dba28ccb65176f.png"
+      },
+      "sources": [
+        {
+          "file": "frame-source-9c3684826868a0776a3fd0a2bbed440014d41f9117214ac22fe2900ab0bb62be.png",
+          "format": "png",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 196666,
+          "decodedBytes": 6290064,
+          "hash": "9c3684826868a0776a3fd0a2bbed440014d41f9117214ac22fe2900ab0bb62be",
+          "pixelHash": "c584c9fbca3cc00f3e155762d77ddc5ef843a1c0e7d746afef2287dedccae43a",
+          "bounds": {
+            "x1": 162,
+            "y1": 70,
+            "x2": 1209,
+            "y2": 1181
+          },
+          "padding": 44,
+          "transparentPixels": 1484717,
+          "visiblePixels": 87799,
+          "lowAlphaPixels": 3989,
+          "materialBounds": {
+            "x1": 498,
+            "y1": 644,
+            "x2": 823,
+            "y2": 1071
+          },
+          "frameOutputHash": "107657c65e250199632eb716d2d2bcd534670864705438a49f5682d6f0e0c787",
+          "processing": {
+            "tool": "sharp",
+            "version": "0.35.5",
+            "kernel": "nearest",
+            "from": [
+              1254,
+              1254
+            ],
+            "to": [
+              576,
+              576
+            ],
+            "rasterScale": 3,
+            "crop": false,
+            "trim": false,
+            "colorConversion": false,
+            "translation": {
+              "x": -4,
+              "y": -4,
+              "rasterX": -12,
+              "rasterY": -12,
+              "visiblePixelsDiscarded": 0
+            }
+          },
+          "review": {
+            "status": "approved",
+            "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+            "kind": "engineer-authorized",
+            "userAppearanceAcceptance": false,
+            "scope": "Original source identity retained; preliminary frame preparation verified. Final assembled native review pending."
+          }
+        }
+      ]
+    },
+    {
+      "role": "atlas",
+      "output": {
+        "format": "png",
+        "width": 580,
+        "height": 580,
+        "bytes": 62823,
+        "decodedBytes": 1345600,
+        "hash": "d9d7a7656246ef909c89dc24f73fdd304f42a6c73ae7a086c55157b8836f4084",
+        "pixelHash": "4dd9391da321f9d38556bd472649120ad26c8ab01d08f4f9bc3e6b0353c971c1",
+        "bounds": {
+          "x1": 171,
+          "y1": 38,
+          "x2": 493,
+          "y2": 480
+        },
+        "padding": 38,
+        "transparentPixels": 317563,
+        "visiblePixels": 18837,
+        "lowAlphaPixels": 709,
+        "materialBounds": {
+          "x1": 216,
+          "y1": 281,
+          "x2": 365,
+          "y2": 478
+        },
+        "file": "atlas-d9d7a7656246ef909c89dc24f73fdd304f42a6c73ae7a086c55157b8836f4084.png"
+      },
+      "sources": [
+        {
+          "file": "frame-source-61155bf334936860950ef95766a8d33008e1e7ed2d7e6fff88baeec3e5603aea.png",
+          "format": "png",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 193051,
+          "decodedBytes": 6290064,
+          "hash": "61155bf334936860950ef95766a8d33008e1e7ed2d7e6fff88baeec3e5603aea",
+          "pixelHash": "cbc4628158fb73bd821b9c27c2c7bca01f26b48eec64310e804b52110deb97b7",
+          "bounds": {
+            "x1": 226,
+            "y1": 111,
+            "x2": 1126,
+            "y2": 1114
+          },
+          "padding": 111,
+          "transparentPixels": 1483219,
+          "visiblePixels": 89297,
+          "lowAlphaPixels": 3408,
+          "materialBounds": {
+            "x1": 498,
+            "y1": 640,
+            "x2": 824,
+            "y2": 1071
+          },
+          "frameOutputHash": "ca85b15b99b0681e4cab9460269d14254e9d47eba2de26963b553f90affa0ea4",
+          "processing": {
+            "tool": "sharp",
+            "version": "0.35.5",
+            "kernel": "nearest",
+            "from": [
+              1254,
+              1254
+            ],
+            "to": [
+              576,
+              576
+            ],
+            "rasterScale": 3,
+            "crop": false,
+            "trim": false,
+            "colorConversion": false,
+            "translation": {
+              "x": -5,
+              "y": -5,
+              "rasterX": -15,
+              "rasterY": -15,
+              "visiblePixelsDiscarded": 0
+            }
+          },
+          "review": {
+            "status": "approved",
+            "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+            "kind": "engineer-authorized",
+            "userAppearanceAcceptance": false,
+            "scope": "Original source identity retained; preliminary frame preparation verified. Final assembled native review pending."
+          }
+        }
+      ]
+    }
+  ]
+}

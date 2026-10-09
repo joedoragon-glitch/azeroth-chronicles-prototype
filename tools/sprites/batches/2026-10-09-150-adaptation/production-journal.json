@@ -1,7 +1,7 @@
 {
   "version": 1,
   "batch": "2026-10-09-150-adaptation",
-  "status": "spatial presentation retarget candidate; no replacement assets published",
+  "status": "original-pilot-candidates-prepared; final device/release checks pending",
   "sourceOfTruth": [
     "docs/SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md",
     "docs/WORLD_PROPORTION_AND_DENSITY_GUARDRAILS.md",
@@ -25,18 +25,69 @@
     "mapsExpanded": false,
     "monsterPopulationChanged": false,
     "proceduralSpriteScale": "implemented in PR #145, awaiting release verification",
-    "nativeOriginalAdaptation": "not yet completed",
+    "nativeOriginalAdaptation": "Paladin and Goblin candidates prepared at 576; not installed",
     "pixelMasterAudit816": "pending per asset",
-    "visualScreenshots": "pending",
-    "assetPublication": "no replacements made by this batch"
+    "visualScreenshots": "Native crops and evidence retained for two pilot candidates",
+    "assetPublication": "0 new revisions installed or deployed",
+    "localAuditRecovery": "Prior unpushed 66 map captures lost during workspace pruning. Committed runtime checkpoint retained. Do not treat prior local evidence as durable or skip release gates."
   },
   "nextWork": [
-    "Complete PR #145 regressions and deploy only if tests pass.",
-    "Inspect source provenance and recovered original masters for every active replacement, including Paladin and Goblin animation dependencies.",
-    "Audit actual asset/body dimensions against new 150% scale and source pixel sufficiency at 576/768/816 targets; regenerate insufficient originals instead of enlarging 100% processed exports.",
-    "Review new 150% screenshots at supported desktop and phone sizes including day/night, combat, tree occlusion, entrances, collision and layer ordering.",
-    "Document per-asset original hash, intermediate lineage, position/ground anchor, new candidate/review and expected revision before approval and publication.",
-    "Resume remaining missing sprites and texture material production only after prior proportion and native visual checks."
+    "Coordinate with #160/#145 Phase 1 and housekeeping owner; verify actual GitHub state.",
+    "Finish native/dependent-animation checks and install saved pilots via expected-revision leases; do not regenerate existing originals.",
+    "Finish native/wrap/device checks and install T006/T008 road material candidates.",
+    "Publish and verify exact deployed SHA only after release checks.",
+    "Audit/adapt remaining 31 active sprite keys from untouched originals; then finish missing catalog and terrain candidates."
   ],
-  "source": "Joel's 9 October 2026 instructions, authorized autonomous technical implementation; no user approval review required."
+  "source": "Joel's 9 October 2026 instructions, authorized autonomous technical implementation; no user approval review required.",
+  "checkpoint": {
+    "proportionCode": "e61302662612ca81328505eb40ac9d4367dd2f3a",
+    "mainAtPreparation": "cdc8286ca499af1de4de53ffa3014bb89203cdab",
+    "version": "0.8.114",
+    "pr": 145
+  },
+  "counts": {
+    "adaptedSpriteKeysPrepared": 2,
+    "spriteFramesPrepared": 4,
+    "spriteKeysFinalReviewed": 0,
+    "spriteKeysImplemented": 0,
+    "spriteKeysDeployed": 0,
+    "texturesPrepared": 2,
+    "texturesFinalReviewed": 0,
+    "texturesImplemented": 0,
+    "texturesDeployed": 0,
+    "imageGenerationCallsThisResume": 3
+  },
+  "reviewStatus": "Preliminary native visual inspection of representative desktop/phone day/night crops and both idle frame pairs. 12 device/light captures per sprite revision and 8 scenes per texture exist; final complete device/combat review, approval recording, registry installation and release remain pending.",
+  "entries": [
+    {
+      "key": "hero:paladin",
+      "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/hero-paladin/original-export-v1/candidate.json",
+      "sourceHash": "9c3684826868a0776a3fd0a2bbed440014d41f9117214ac22fe2900ab0bb62be",
+      "outputHash": "107657c65e250199632eb716d2d2bcd534670864705438a49f5682d6f0e0c787",
+      "frames": [
+        "tools/sprites/batches/2026-10-09-150-adaptation/hero-paladin/original-export-v1/candidate.json",
+        "tools/sprites/batches/2026-10-09-150-adaptation/hero-paladin-idle-2/original-export-v1/candidate.json"
+      ],
+      "clip": "idle, 800 ms per frame, loop",
+      "reviewEvidence": "tools/sprites/batches/2026-10-09-150-adaptation/hero-paladin/original-export-v1/native-review-v1/evidence.json",
+      "priorRevision": "b162917a153d83f0bea42abb24a86b40c35f98608bc493cb0b7a27c1a58f9d25",
+      "installed": false,
+      "deployed": false
+    },
+    {
+      "key": "enemy:goblin",
+      "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/enemy-goblin/original-export-v1/candidate.json",
+      "sourceHash": "b8423a10966722469bffd137a93b888d2a2ecf9415245f7dddf3520f005e21c1",
+      "outputHash": "977965160458746599c43cfcc84d7c2b5ba8d6cd4ada9be645fde7f017fc7fc5",
+      "frames": [
+        "tools/sprites/batches/2026-10-09-150-adaptation/enemy-goblin/original-export-v1/candidate.json",
+        "tools/sprites/batches/2026-10-09-150-adaptation/enemy-goblin-idle-2/original-export-v1/candidate.json"
+      ],
+      "clip": "idle, 800 ms per frame, loop",
+      "reviewEvidence": "tools/sprites/batches/2026-10-09-150-adaptation/enemy-goblin/original-export-v1/native-review-v1/evidence.json",
+      "priorRevision": "06d5419a812e8c477e77be6f81c4b79e297b7592bc32b0282d0d39ff63590377",
+      "installed": false,
+      "deployed": false
+    }
+  ]
 }

@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "key": "terrain:road:vale",
+  "catalogId": "T006",
+  "dependencyHash": "efddb4d54fddf21d07bd6e66bc285036653c7feb9db62042d5d734d6f027cffb",
+  "source": {
+    "hash": "cf00b49877b545d3d36ac97aec12797021005c96743a48a5afa3c7886ff64b37",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2976878,
+    "opaque": true,
+    "seams": {
+      "x": 9.0337586390218,
+      "y": 9.284954811270602,
+      "interiorX": 5.792457485342059,
+      "interiorY": 5.958554334032251
+    }
+  },
+  "output": {
+    "hash": "e655205174d24f1f359916071fd764584953e3acaba4451f9d158e304fc87134",
+    "width": 256,
+    "height": 256,
+    "bytes": 130920,
+    "opaque": true,
+    "seams": {
+      "x": 6.684895833333336,
+      "y": 8.347656250000002,
+      "interiorX": 7.829279003268038,
+      "interiorY": 7.976516544117657
+    }
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "lanczos3",
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "seamRepair": false
+  },
+  "runtime": {
+    "worldSpan": 320,
+    "opacity": 0.28
+  },
+  "review": {
+    "status": "pending",
+    "reference": null
+  }
+}
