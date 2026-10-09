@@ -1382,6 +1382,7 @@
                 ? { x: 160, y: 240 }
                 : { x: D.towns[i][0], y: D.towns[i][1] });
       this.tacticalClearThreat(); // Transient observations never survive zone travel.
+      this.tacticalClearRogueRegroup();
       this.s.zone = zone;
       this.zone();
       this.s.recallActive = false;
@@ -1820,6 +1821,7 @@
     kill(e) {
       if (e.deathPaid) return;
       this.tacticalClearThreat(e);
+      this.tacticalClearRogueRegroup(e);
       const victoryLevel = this.hero.level;
       e.deathPaid = true;
       e.aggro = false;
@@ -2612,6 +2614,140 @@
       this.event('warning', { family: e.species });
       return true;
     }
+
+    // Only an explicit future rogue decision may start this retreat. Ordinary aggro
+    // and the existing leash never create tactical regroup states automatically.
+    tacticalRogueRegroup(e) {
+      return this._tacticalRegroups?.get(e?.id) || null;
+    }
+    tacticalClearRogueRegroup(e = null) {
+      if (e) {
+        this._tacticalRegroups?.delete(e.id);
+        this._tacticalRegroupUsed?.delete(e.id);
+      } else {
+        this._tacticalRegroups?.clear();
+        this._tacticalRegroupUsed?.clear();
+      }
+    }
+    tacticalStopRogueRegroup(e) {
+      this._tacticalRegroups?.delete(e?.id);
+      if (e) {
+        e.path = [];
+        e.routeAge = 0;
+      }
+    }
+    tacticalBeginRogueRegroup(e, ally, activeTargetCount = 0) {
+      if (
+        !e?.aggro ||
+        e.hp <= 0 ||
+        e.neutral ||
+        e.returning ||
+        e.telegraph ||
+        e.motion ||
+        e.rangedAim ||
+        this.tacticalRogueRegroup(e) ||
+        this._tacticalRegroupUsed?.has(e.id) ||
+        !this.tacticalRogueEligibility(e, activeTargetCount) ||
+        !this.tacticalRegroupCandidates(e).includes(ally)
+      ) return false;
+      const destination = { x: ally.x, y: ally.y };
+      if (!Number.isFinite(destination.x) || !Number.isFinite(destination.y)) return false;
+      const path = this.route(e, destination);
+      if (!path.length) return false;
+      let length = 0;
+      let previous = e;
+      for (const waypoint of path) {
+        length += dist(previous, waypoint);
+        previous = waypoint;
+      }
+      if (length > R.tacticalFoundation.awarenessRadius * 1.8) return false;
+      // A valid retreat must not cut through a protected settlement.
+      if (!this.isDungeon()) {
+        const townCoords = D.towns[this.regionIndex()];
+        if (townCoords) {
+          const town = { x: townCoords[0], y: townCoords[1] };
+          previous = e;
+          for (const waypoint of path) {
+            if (this.distanceToSegment(town, previous, waypoint) < 185) return false;
+            previous = waypoint;
+          }
+        }
+      }
+      if (!this._tacticalRegroups) this._tacticalRegroups = new Map();
+      if (!this._tacticalRegroupUsed) this._tacticalRegroupUsed = new Set();
+      this._tacticalRegroups.set(e.id, {
+        phase: 'travel',
+        allyId: ally.id,
+        destination,
+        travelRemaining: 12,
+        stalled: 0,
+        anchor: null,
+        holdRemaining: 12,
+      });
+      this._tacticalRegroupUsed.add(e.id); // One deliberate retreat per engagement.
+      e.path = [];
+      e.routeAge = 0;
+      return true;
+    }
+    tacticalRogueLeashAllows(e, target, territory) {
+      const state = this.tacticalRogueRegroup(e);
+      if (!state) return dist(target, e.home) <= territory;
+      const separationLimit = R.tacticalFoundation.awarenessRadius + 200;
+      if (dist(target, e) > separationLimit) return false;
+      if (state.phase === 'travel') {
+        // The player may stand anywhere along the retreat corridor, rather
+        // than being forced to remain within the original spawn leash.
+        return this.distanceToSegment(target, e.home, state.destination) <= territory;
+      }
+      return state.phase === 'anchored' && dist(target, state.anchor) <= separationLimit;
+    }
+    tacticalAdvanceRogueRegroup(e, target, dt) {
+      const state = this.tacticalRogueRegroup(e);
+      if (!state) return false;
+      if (state.phase === 'travel') {
+        state.travelRemaining -= dt;
+        const ally = this.zone().enemies.find((unit) => unit.id === state.allyId);
+        if (!ally || ally.hp <= 0 || ally.neutral || ally.returning || state.travelRemaining <= 0) {
+          this.tacticalStopRogueRegroup(e);
+          return false;
+        }
+        if (dist(e, state.destination) > 65) {
+          const before = { x: e.x, y: e.y };
+          this.follow(e, state.destination, (e.type === 'boss' ? 145 : 175) * 1.5, dt, 55);
+          state.stalled = dist(before, e) > Math.max(0.1, dt * 10) ? 0 : state.stalled + dt;
+          if (state.stalled >= 2.5) {
+            this.tacticalStopRogueRegroup(e);
+            return false;
+          }
+          e.noProgress = 0;
+          return true;
+        }
+        state.phase = 'anchored';
+        state.anchor = { x: e.x, y: e.y }; // e.home always remains the original spawn.
+        e.path = [];
+        e.routeAge = 0;
+      }
+      if (state.phase === 'anchored') {
+        if (dist(e, state.anchor) > 340) {
+          this.tacticalStopRogueRegroup(e);
+          return false;
+        }
+        // Hold with allies instead of chasing back to the original spawn.
+        // Approaching players renew the window; abandonment ends the encounter.
+        if (dist(target, e) > 280) {
+          state.holdRemaining -= dt;
+          if (state.holdRemaining <= 0) {
+            this.tacticalStopRogueRegroup(e);
+            this.disengage(e, dt);
+            return true;
+          }
+          e.noProgress = 0;
+          return true;
+        }
+        state.holdRemaining = 12;
+      }
+      return false;
+    }
     updateEnemies(dt) {
       const z = this.zone(),
         deaths = this.s.statistics.deaths;
@@ -2726,7 +2862,7 @@
                   ? 900
                   : 500;
         if (
-          dist(target, e.home) > territory ||
+          !this.tacticalRogueLeashAllows(e, target, territory) ||
           (!this.isDungeon() &&
             dist(target, { x: D.towns[this.regionIndex()][0], y: D.towns[this.regionIndex()][1] }) <
               160)
@@ -2738,6 +2874,9 @@
           this.disengage(e, dt);
           continue;
         }
+        // Explicit rogue retreats are resolved before normal chase/attacks.
+        if (this.tacticalRogueRegroup(e) && this.tacticalAdvanceRogueRegroup(e, target, dt))
+          continue;
         if (e.telegraph) {
           e.telegraph.timer -= dt;
           e.noProgress = 0;
@@ -2910,6 +3049,7 @@
     disengage(e, dt) {
       if (!e.returning) {
         this.tacticalClearThreat(e);
+        this.tacticalClearRogueRegroup(e);
         e.returning = 1;
         e.pursuitBurst = 0;
         this.say(e.name + ' disengages.');
