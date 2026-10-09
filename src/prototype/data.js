@@ -38,7 +38,7 @@ const PrototypeData = {
       transport: 'Ferryman',
       fare: 60,
       route:
-        "The wagon stops behind Reedport near the western map edge at (145, 1180). Raised roads connect Fisher Camp at (1050, 500), Mirejaw's marsh territory near (2180, 1120), the Sunken Archive entrance at (2600, 2350), and the Reedport ferry at (2250, 650).",
+        "The wagon stops behind Reedport near the western map edge at (145, 1380). Raised roads connect Fisher Camp at (1050, 500), Mirejaw's marsh territory near (2180, 1120), the Sunken Archive entrance at (2600, 2350), and the Reedport ferry at (2250, 650).",
       obstacle:
         'A lake occupies the central basin. Two raised crossings and a bridge provide useful choices around it. Reeds are decorative or collision marked; open water is consistently impassable.',
       exploration:
