@@ -347,13 +347,11 @@
           const spectral =
             manaDrain > 0 &&
             (source?.species === 'wraith' ||
-              (source?.type === 'boss' &&
-                R.vitalitySiphon.bossFamilies.includes(source.family)));
+              (source?.type === 'boss' && R.vitalitySiphon.bossFamilies.includes(source.family)));
           if (source && source.hp > 0 && source.hp < source.maxHp && (cinder || spectral)) {
             const heal = Math.min(
               source.maxHp - source.hp,
-              (oldHp - u.hp) *
-                (cinder ? R.ashFeeding.healFraction : R.vitalitySiphon.healFraction),
+              (oldHp - u.hp) * (cinder ? R.ashFeeding.healFraction : R.vitalitySiphon.healFraction),
             );
             if (heal > 0) {
               source.hp += heal;
@@ -491,14 +489,16 @@
                 this.line(a, u)
               ) {
                 a.hit.push(id);
-                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null)) this.enemyVfxHazardImpact?.(a, u);
+                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null))
+                  this.enemyVfxHazardImpact?.(a, u);
               }
             }
           } else if (a.tick <= 0) {
             a.tick = 1;
             for (const u of this.combatTargets())
               if (dist(u, a) < a.radius && this.line({ x: a.fromX ?? a.x, y: a.fromY ?? a.y }, u)) {
-                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null)) this.enemyVfxHazardImpact?.(a, u);
+                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null))
+                  this.enemyVfxHazardImpact?.(a, u);
                 if (a.slow) u.slow = 3;
               }
           }
