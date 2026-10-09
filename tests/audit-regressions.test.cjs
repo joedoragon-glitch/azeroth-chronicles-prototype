@@ -671,11 +671,16 @@ test('F76 field commander revives existing local soldier spawns but no summons o
   assert.deepEqual(c.zone().enemies.map(x=>x.id),ids,'only original monster records survive');
   assert.equal(squad.filter(u=>u.hp>0).length,3,'restore defenders to a 3-member cap');
   assert(summoned.hp>0 && summoned.summon && summoned.owner===e.id && summoned.hp/summoned.maxHp===1,'owned boss summon remains alive, owned and unwounded');
-  e.telegraph=null;squad[3].hp=0;squad[3].deathPaid=true;
-  const previous=squad.filter(u=>u.hp>0).length;
-  assert.equal(previous,3);
+  e.telegraph=null;
+  assert.equal(squad.filter(u=>u.hp>0).length,3);
   c.tacticalRogueFieldSupport(e,move);
-  assert.equal(squad.filter(u=>u.hp>0).length,3,'three local defenders means no new rally spawn');
+  assert.equal(squad.filter(u=>u.hp>0).length,3,'three local defenders means no forced respawn');
+  const restored=squad.find(u=>u.hp>0 && u!==squad[0]);
+  restored.hp=0;restored.deathPaid=true;
+  assert.equal(squad.filter(u=>u.hp>0).length,2);
+  if(family==='ridge')c.tacticalRogueCommanderSupport(e,move);
+  else c.tacticalRogueFieldSupport(e,move);
+  assert.equal(squad.filter(u=>u.hp>0).length,3,'two remaining defenders trigger replenishment');
  }
 });
 
