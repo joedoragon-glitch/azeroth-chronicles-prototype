@@ -157,6 +157,81 @@ for (const [id, p] of Object.entries(C.rules.roomCaptains)) {
   assert(!c.triggerCaptainPhase(e));
   assert.equal(c.effects.filter((f) => f.stage === 'phase').length, 1);
 }
+// Defeat in the current refuge zone must not re-emit contact into the revived encounter.
+for (const succession of [false, true]) {
+  const run = (enabled) => {
+    const c = fresh(enabled);
+    c.s.challenge.succession = succession;
+    c.s.challenge.fallen = [];
+    c.s.refuge = 'vale';
+    c.s.refugeSite = { zone: 'vale', id: 'rest' };
+    const e = c.bossEnemy(c.boss('thorn'), 'normal', { x: 1400, y: 1700 });
+    c.zone().enemies = [e];
+    Object.assign(c.hero, { x: 1450, y: 1700, hp: 1 });
+    c.startAttack(e, c.hero, 0);
+    c.resolveAttack(e);
+    assert.equal(c.s.statistics.deaths, 1);
+    return c;
+  };
+  const on = run(true),
+    off = run(false);
+  assert.deepEqual(on.snapshot(), off.snapshot(), 'fatal encounter stays identical');
+  assert(
+    !on.effects.some((f) => f.type === 'enemyVfx' && f.epoch === on.enemyVfxEpoch()),
+    'no stale impact after same-zone revival or succession defeat',
+  );
+}
+// Projectile contacts happen after hitParty: fatal contacts must retain their original epoch.
+{
+  const run = (enabled) => {
+    const c = fresh(enabled);
+    c.s.refuge = 'vale';
+    c.s.refugeSite = { zone: 'vale', id: 'rest' };
+    c.clearSegment = () => true;
+    const e = c.bossEnemy(c.boss('crypt'), 'normal', { x: 1400, y: 1700 });
+    c.zone().enemies = [e];
+    Object.assign(c.hero, { x: 1450, y: 1700, hp: 1 });
+    c.startAttack(e, c.hero, 1);
+    c.resolveAttack(e);
+    e.telegraph = null;
+    c.updateProjectiles(0.4);
+    assert.equal(c.s.statistics.deaths, 1);
+    return c;
+  };
+  const on = run(true),
+    off = run(false);
+  assert.deepEqual(on.snapshot(), off.snapshot());
+  assert(
+    !on.effects.some((f) => f.type === 'enemyVfx' && f.epoch === on.enemyVfxEpoch()),
+    'projectiles cannot emit an old hit at the revived hero',
+  );
+}
+// Basic-hit callbacks after instant revival are also from the defeated encounter.
+{
+  const run = (enabled) => {
+    const c = fresh(enabled);
+    c.s.refuge = 'vale';
+    c.s.refugeSite = { zone: 'vale', id: 'rest' };
+    const e = c.makeEnemy(
+      { species: 'wolf', name: 'Wolf', level: 1, hp: 100, damage: 1000, gold: 0, xp: 0 },
+      { x: 1400, y: 1700 },
+    );
+    c.zone().enemies = [e];
+    c.zone();
+    e.aggro = true;
+    Object.assign(c.hero, { x: 1450, y: 1700, hp: 1 });
+    c.updateEnemies(0.1);
+    assert.equal(c.s.statistics.deaths, 1);
+    return c;
+  };
+  const on = run(true),
+    off = run(false);
+  assert.deepEqual(on.snapshot(), off.snapshot());
+  assert(
+    !on.effects.some((f) => f.type === 'enemyVfx' && f.epoch === on.enemyVfxEpoch()),
+    'no basic or post-update cue leaks after defeat',
+  );
+}
 // Presentation sidecar is not serialized and can be entirely disabled.
 assert(!JSON.stringify(fresh().snapshot()).includes('enemyVfx'));
 assert.deepEqual(V.geometry({ x: 3, y: 4, kind: 'cone', damage: 999, coefficient: 2 }), {

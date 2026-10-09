@@ -44,7 +44,7 @@ The five pilots were inspected through **90 actual-game scenes / 180 images** ac
 - Ground effects follow authoritative circle/cone/sector/line geometry and clip to that footprint. Ring decoration follows existing hazards; movement follows existing motion. Ground material draws after night grading, with intersected, viewport-culled body exclusions; danger warnings and targeting guidance draw above it.
 - Cyan rogue cues remain distinct from ordinary attack cues. Signatures have a separate dash/weight and a full wrapped label. Names remain presentation only.
 - Visual queue shares the existing **40-effect cap**; incoming observation events cap at 120, replay IDs at 512 per epoch. Crowds reduce motifs, never warning geometry. A 1,000-offscreen-enemy regression bounds body clipping work to visible actors. No cosmetic RNG, new image cache or per-frame asset loading is introduced.
-- Duplicate delivery, stale timestamps, source death/return, player defeat, pending challenge results, zone travel and same-zone reentry suppress decoration. Paused/menu time freezes transient animation. Existing hazards and projectiles retain their original mechanics and danger cues.
+- Duplicate delivery, stale timestamps, source death/return, player defeat, pending challenge results, zone travel and same-zone reentry suppress decoration. Fatal hits cannot re-emit stale impacts after a same-zone refuge revival or succession defeat. Paused/menu time freezes transient animation. Existing hazards and projectiles retain their original mechanics and danger cues.
 - Drawing and replacement assets are read-only with respect to combat state. Automated comparisons cover **234 live boss/captain/rogue/night resolutions**, including all 40 signatures.
 
 ## Illustrated replacement path

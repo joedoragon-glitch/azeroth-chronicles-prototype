@@ -67,8 +67,9 @@
           })
         : V.describe(e, a));
     if (!visual) return null;
-    const s = store(game),
-      seen = s.seen.get(a) || new Set(),
+    const s = store(game);
+    if (s.context && s.context.epoch !== s.epoch) return null;
+    const seen = s.seen.get(a) || new Set(),
       key = e.id + ':' + stage + ':' + (point?.target || '');
     if (seen.has(key)) return null;
     seen.add(key);
@@ -109,8 +110,10 @@
     const s = store(game),
       identity = V.describe(e, a);
     for (const p of game.s.projectiles)
-      if (!beforeShots.has(p) && p.sourceId === e.id) s.projectiles.set(p, { e, a, identity });
-    for (const h of game.s.hazards) if (!beforeHazards.has(h)) s.hazards.set(h, { e, a, identity });
+      if (!beforeShots.has(p) && p.sourceId === e.id)
+        s.projectiles.set(p, { e, a, identity, epoch: s.epoch });
+    for (const h of game.s.hazards)
+      if (!beforeHazards.has(h)) s.hazards.set(h, { e, a, identity, epoch: s.epoch });
   }
   function install(Campaign) {
     const proto = Campaign.prototype;
@@ -133,7 +136,7 @@
         shots = new Set(this.s.projectiles),
         hazards = new Set(this.s.hazards);
       emit(this, e, a, 'release');
-      s.context = { e, a };
+      s.context = { e, a, epoch: s.epoch };
       try {
         return original.call(this, e);
       } finally {
@@ -147,7 +150,7 @@
         hazards = new Set(this.s.hazards);
       // A ground payoff belongs to the real resolved footprint, even on a miss.
       emit(this, e, a, 'impact');
-      s.context = { e, a };
+      s.context = { e, a, epoch: s.epoch };
       try {
         return original.call(this, e, a);
       } finally {
@@ -159,7 +162,7 @@
       const a = e.motion,
         s = store(this),
         old = s.context;
-      if (a) s.context = { e, a };
+      if (a) s.context = { e, a, epoch: s.epoch };
       try {
         return original.call(this, e, dt);
       } finally {
@@ -172,7 +175,7 @@
         [type, data] = args;
       if (type === 'melee' && data?.actor === 'enemy' && !store(this).context) {
         const e = this.zone().enemies.find((e) => e.id === data.source);
-        if (e) {
+        if (e?.aggro && !e.returning) {
           const a = {
             kind: 'melee',
             basic: true,
@@ -201,9 +204,10 @@
         s = store(this),
         context = s.context,
         zone = this.zoneId,
+        epoch = s.epoch,
         hero = this.hero;
       const result = original.apply(this, args);
-      if (result && context && this.zoneId === zone && this.hero === hero)
+      if (result && context && s.epoch === epoch && this.zoneId === zone && this.hero === hero)
         emit(this, context.e, context.a, 'impact', point, context.identity);
       return result;
     });
@@ -243,7 +247,8 @@
       return result;
     });
     wrap('updateEnemies', function (original, args) {
-      const zone = this.zoneId,
+      const epoch = store(this).epoch,
+        zone = this.zoneId,
         hero = this.hero,
         beforeShots = new Set(this.s.projectiles),
         frenzy = new Set(
@@ -252,7 +257,7 @@
             .map((e) => e.id),
         );
       const result = original.apply(this, args);
-      if (zone !== this.zoneId || hero !== this.hero) return result;
+      if (zone !== this.zoneId || hero !== this.hero || epoch !== store(this).epoch) return result;
       const s = store(this);
       for (const e of this.zone().enemies) {
         if (e.telegraph) emit(this, e, e.telegraph, 'windup');
@@ -268,10 +273,15 @@
           if (!beforeShots.has(p) && p.sourceId === e.id && !s.projectiles.has(p)) {
             const a = { kind: 'projectile', style: p.style, x: p.x, y: p.y },
               identity = V.projectile(e, p);
-            s.projectiles.set(p, { e, a, identity });
+            s.projectiles.set(p, { e, a, identity, epoch: s.epoch });
             emit(this, e, a, 'release', null, identity);
           }
       }
+      return result;
+    });
+    wrap('die', function (original, args) {
+      const result = original.apply(this, args);
+      store(this).epoch++;
       return result;
     });
     wrap('enter', function (original, args) {
@@ -290,7 +300,7 @@
     };
     proto.enemyVfxProjectileImpact = function (p, point) {
       const m = this.enemyVfxProjectile(p);
-      if (m) emit(this, m.e, p, 'impact', point, m.identity);
+      if (m && m.epoch === store(this).epoch) emit(this, m.e, p, 'impact', point, m.identity);
     };
   }
   const api = Object.freeze({ install, geometry, emit });
