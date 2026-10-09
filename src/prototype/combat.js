@@ -4,10 +4,135 @@
   function install(Campaign, { R }) {
     const clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
       dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+    const ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER = 0.5;
     class Combat {
       combatTargets() {
         const z = this.s.zones[this.s.zone];
         return [this.hero, ...this.activeLivingParty(), ...(z?.escort?.hp > 0 ? [z.escort] : [])];
+      }
+
+      // Passive combat observations only: no threat-based targeting or rogue actions in phase one.
+      tacticalClearThreat(e = null) {
+        if (!this._tacticalThreat) return;
+        if (e) this._tacticalThreat.delete(e.id);
+        else this._tacticalThreat.clear();
+      }
+
+      tacticalPruneThreat(e) {
+        const ledger = this._tacticalThreat?.get(e?.id);
+        if (!ledger) return null;
+        const cutoff = (this.s.time || 0) - R.tacticalFoundation.threatWindowSeconds;
+        for (const [source, hits] of ledger) {
+          while (hits.length && hits[0].time < cutoff) hits.shift();
+          if (!hits.length) ledger.delete(source);
+        }
+        if (!ledger.size) {
+          this._tacticalThreat.delete(e.id);
+          return null;
+        }
+        return ledger;
+      }
+
+      tacticalThreatSnapshot(e) {
+        const ledger = this.tacticalPruneThreat(e);
+        if (!ledger) return [];
+        return [...ledger.entries()]
+          .map(([source, hits]) => ({
+            source,
+            damage: hits.reduce((total, hit) => total + hit.damage, 0),
+            lastHit: hits[hits.length - 1].time,
+          }))
+          .sort((a, b) => b.damage - a.damage || a.source.localeCompare(b.source));
+      }
+
+      tacticalRecordHit(e, source, damage) {
+        if (!e || !Number.isFinite(damage) || damage <= 0) return;
+        const actor =
+          source === 'hero'
+            ? 'hero'
+            : this.s.party.find((unit) => unit.id === source && unit.hp > 0)?.id;
+        if (!actor) return;
+        if (!this._tacticalThreat) this._tacticalThreat = new Map();
+        const ledger = this.tacticalPruneThreat(e) || new Map();
+        const now = this.s.time || 0;
+        const hits = ledger.get(actor) || [];
+        const last = hits[hits.length - 1];
+        if (last && last.time === now) last.damage += damage;
+        else hits.push({ time: now, damage });
+        // Keep the transient observation cache bounded even in extreme rapid-hit cases.
+        if (hits.length > 128) hits.splice(0, hits.length - 128);
+        ledger.set(actor, hits);
+        this._tacticalThreat.set(e.id, ledger);
+      }
+
+      tacticalProtectionTier(e) {
+        if (e?.type === 'boss') return e.form === 'true' ? 'trueBoss' : 'boss';
+        if (e?.captain || e?.roomCaptain) return 'captain';
+        if (e?.form === 'ringleader') return 'ringleader';
+        if (e?.guard) return 'guardian';
+        return 'ordinary';
+      }
+
+      tacticalRegroupCandidates(e) {
+        if (!e || !this.zone()?.enemies) return [];
+        const radius = R.tacticalFoundation.awarenessRadius;
+        // Awareness crosses packs. Reachability, group compatibility and safe routing
+        // are deliberately deferred until rogue movement is implemented.
+        return this.zone()
+          .enemies.filter(
+            (ally) =>
+              ally !== e &&
+              ally.hp > 0 &&
+              !ally.neutral &&
+              !ally.returning &&
+              !ally.summon &&
+              dist(ally, e) <= radius,
+          )
+          .sort((a, b) => dist(a, e) - dist(b, e) || a.id.localeCompare(b.id));
+      }
+
+      tacticalRegroupGroups(e) {
+        if (!e) return [];
+        const groups = new Map();
+        for (const ally of this.tacticalRegroupCandidates(e)) {
+          const key = ally.pack || ally.id;
+          if (!groups.has(key)) groups.set(key, { key, members: [], distance: Infinity });
+          const group = groups.get(key);
+          group.members.push(ally);
+          group.distance = Math.min(group.distance, dist(e, ally));
+        }
+        // A group assessment, not a retreat destination or an order to engage.
+        // Any one reachable ally can be sufficient. Favor close support first;
+        // group size only breaks a proximity tie. Actual path viability is
+        // checked when a specific regroup destination is requested.
+        return [...groups.values()].sort(
+          (a, b) =>
+            a.distance - b.distance ||
+            b.members.length - a.members.length ||
+            a.key.localeCompare(b.key),
+        );
+      }
+
+      tacticalRogueEligibility(e, activeTargetCount = 0) {
+        const config = R.tacticalFoundation;
+        if (!e || !this.hero || this.hero.hp <= 0 || e.hp <= 0) return false;
+        const difference = e.level - this.hero.level;
+        if (difference >= config.outlevelProtection) return false;
+        if (difference <= -config.heroLevelDisadvantageMinimum) return true;
+
+        const pressured = activeTargetCount >= config.simultaneousPressureSources;
+        if (e.type !== 'boss' && !e.captain && !e.roomCaptain) return pressured;
+        const summonProfile = e.type === 'boss' ? true : !!this.captainProfile(e)?.summon;
+        if (!summonProfile || difference !== 0) return pressured;
+
+        const living = this.zone().enemies.filter(
+          (unit) => unit.summon && unit.owner === e.id && unit.hp > 0,
+        ).length;
+        const depleted = living <= config.summonSupportThreshold && (e.summonCd || 0) > 0;
+        // Cunning status requires an explicit authored entry; no entries exist in phase one.
+        const cunningKey = e.captainProfile || e.family;
+        const cunning = config.cunningEnemies.includes(cunningKey);
+        return depleted && (pressured || cunning);
       }
 
       drainMana(u, fraction) {
@@ -31,11 +156,14 @@
           return false;
         const origin =
           source === 'hero' ? this.hero : this.s.party.find((u) => u.id === source) || this.hero;
-        if (
-          !this.line(origin, e) ||
-          dist(origin, e.home) > (e.type === 'boss' ? (this.isDungeon() ? 1800 : 700) : 500)
-        )
-          return false;
+        const normalDamageTerritory = e.type === 'boss' ? (this.isDungeon() ? 1800 : 700) : 500;
+        // A valid tactical retreat moves the active encounter, not the permanent
+        // spawn. Allow damage near the retreat corridor/anchor; otherwise a
+        // regrouper beyond its original home leash would become invulnerable.
+        const inCombatArea = this.tacticalRogueRegroup(e)
+          ? this.tacticalRogueLeashAllows(e, origin, normalDamageTerritory)
+          : dist(origin, e.home) <= normalDamageTerritory;
+        if (!this.line(origin, e) || !inCombatArea) return false;
         e.mercyProvoked = true;
         this.engage(e, true);
         if (source === 'hero') e.heroParticipated = true;
@@ -51,7 +179,13 @@
         }
         if (e.family === 'citadel' && e.open <= 0) amount *= 0.65;
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;
+        // All hero/companion damage sources use this same resolver. This
+        // reduction is exclusive to active travel; it ends on arrival or abort.
+        if (this.tacticalRogueRegroup(e)?.phase === 'travel')
+          amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
+        const actualDamage = Math.min(e.hp, amount);
         e.hp = Math.max(0, e.hp - amount);
+        this.tacticalRecordHit(e, source, actualDamage);
         this.effects.push({ type: 'hit', x: e.x, y: e.y, amount });
         if (e.hp === 0) this.kill(e);
         return true;
