@@ -117,3 +117,7 @@ The first 7.3-second benchmark was an invalid pre-Thornfang example because it i
 ## Territorial Monster Forts · 9 October 2026
 
 Joel confirms Monster Forts are defended **ordinary-monster territorial homes**, not capturable forts, additional bosses, tribute strongholds, or player Barracks. Preserve native garrison populations, ordinary rewards and respawns, road/transport access and v4 saves; audit existing strongholds instead of introducing conquest systems. The Wolf hunting ground and Ash-beast roost require local placement correction to keep their established residents and navigable defenses together. See [MONSTER_FORTS_TERRITORIAL_AUDIT.md](MONSTER_FORTS_TERRITORIAL_AUDIT.md).
+
+## Single-player pause and cooperative menu behavior · 9 October 2026
+
+Joel explicitly retains automatic menu pause in single-player. In cooperative mode, ordinary menus block only the opening player's gameplay controls and do not stop the shared world. Location-specific dialogs close after travel/death or loss of access, and service actions revalidate conditions when selected. Global inventory/journal are independent of NPC location. A shared combat slowdown remains a separate future feature: a menu opened outside combat must not acquire slowdown merely because combat later begins. This authorizes the session/menu housekeeping foundation while preserving v4 saves and current single-player gameplay; it does not declare online cooperative play available. See [SESSION_MENU_POLICY.md](SESSION_MENU_POLICY.md).

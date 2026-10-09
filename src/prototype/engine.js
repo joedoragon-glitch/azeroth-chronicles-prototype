@@ -1509,6 +1509,7 @@
         if (side.lore) this.say(side.lore);
         this.event('sideInteriorDiscovery', { id: side.id, region: side.region });
       }
+      this.interactionEpoch = (this.interactionEpoch || 0) + 1;
       return true;
     }
     travel(direction) {
