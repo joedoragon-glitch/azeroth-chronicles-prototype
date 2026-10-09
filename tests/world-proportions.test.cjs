@@ -16,6 +16,13 @@ assert.equal(sample('npc', { kind: 'dungeon', name: 'Crypt entrance' }), 1.35);
 assert.equal(sample('npc', { kind: 'transport', name: 'Merchant wagon' }), 1.35);
 assert.equal(sample('npc', { kind: 'transport', interactionOnly: true }), 1);
 assert.equal(sample('prop', { structure: 'crown-fortress-checkpoint' }), 1.35);
+assert.equal(sample('prop', { structure: 'citadel-muster' }), 1.35);
+assert.equal(sample('prop', { structure: 'military-gate' }), 1.35);
+assert.equal(sample('prop', { structure: 'goblin-road-fort' }), 1.35);
+assert.equal(sample('prop', { structure: 'raider-drill-redoubt' }), 1.35);
+assert.equal(sample('prop', { structure: 'dragon-aerie' }), 1.35);
+assert.equal(sample('prop', { structure: 'command-crosswall' }), 1);
+
 assert.equal(sample('building', { kind: 'barracks' }), 1.35);
 assert.equal(sample('hero', { class: 'paladin' }), 1);
 assert.equal(sample('enemy', { species: 'goblin' }), 1);
