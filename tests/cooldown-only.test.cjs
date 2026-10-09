@@ -91,3 +91,85 @@ console.log('PASS legacy saves, talent preservation, disabled mana restoration a
   assert.equal(g.hero.mp,0,'no hidden MP drain');
 }
 console.log('PASS enemy attacks preserve health damage while resource effect remains dormant');
+
+{
+  // Uncapped cinder and boss lifesteal uses actual HP taken; only missing HP limits healing.
+  const g = new Campaign('normal', 'mage', () => 0.9);
+  g.zone().props = [];
+  g.hero.maxHp = g.hero.hp = 10000;
+  g.hero.immune = 0;
+  const ash = g.makeEnemy(
+    { species: 'ashbeast', name: 'Cinder Spitter', level: 1, hp: 1000, damage: 30, gold: 0, xp: 0 },
+    { x: g.hero.x + 80, y: g.hero.y },
+  );
+  Object.assign(ash, { hp: 200, maxHp: 1000, projectileStyle: 'cinder' });
+  g.zone().enemies = [ash];
+  const beforeHero = g.hero.hp, beforeAsh = ash.hp;
+  assert(g.hitParty(g.hero, 160, 0.04, ash.id));
+  const taken = beforeHero - g.hero.hp;
+  assert(Math.abs((ash.hp - beforeAsh) - taken * 0.15) < 1e-8, 'Cinder Siphon heals full 15% of real HP damage');
+  assert(ash.hp - beforeAsh > 0.01 * ash.maxHp, 'Cinder Siphon is NOT capped to 1% of max HP');
+  const soldier = g.s.party.find(u => u.type === 'soldier');
+  soldier.hp = soldier.maxHp;
+  const soldierBefore = soldier.hp, ashBefore = ash.hp;
+  assert(g.hitParty(soldier, 30, 0.04, ash.id));
+  assert(Math.abs((ash.hp - ashBefore) - (soldierBefore - soldier.hp) * 0.15) < 1e-8,
+    'Ash-beasts also siphon companions');
+  g.hero.immune = 2;
+  const immuneBefore = ash.hp;
+  assert(!g.hitParty(g.hero, 160, 0.04, ash.id));
+  assert.equal(ash.hp, immuneBefore, 'immune target cannot feed the Ash-beast');
+  g.hero.immune = 0;
+  ash.hp = ash.maxHp - 1;
+  assert(g.hitParty(g.hero, 160, 0.04, ash.id));
+  assert.equal(ash.hp, ash.maxHp, 'natural missing-HP limit prevents overheal');
+}
+console.log('PASS uncapped 15% Cinder Siphon, companions, immunity, and natural missing-health bound');
+
+{
+  const g = new Campaign('normal', 'paladin', () => 0.9);
+  g.zone().props = [];
+  g.hero.maxHp = g.hero.hp = 10000;
+  g.hero.immune = 0;
+  Object.assign(g.hero, { x: 500, y: 500 });
+  const def = Campaign.data.bosses.find(b => b.id === 'crypt');
+  const crypt = g.bossEnemy(def, 'normal', { x: 480, y: 500 });
+  crypt.hp = crypt.maxHp * 0.5;
+  g.zone().enemies = [crypt];
+  const soldier = g.s.party.find(u => u.type === 'soldier');
+  soldier.hp = soldier.maxHp = 10000;
+  Object.assign(soldier, { x: 510, y: 515, active: true });
+  for (const u of g.s.party.filter(u => u !== soldier)) u.active = false;
+  const heroBefore = g.hero.hp, soldierBefore = soldier.hp, bossBefore = crypt.hp;
+  g.resolveArea(crypt, {
+    kind: 'circle', count: 1, x: 500, y: 505, fromX: 480, fromY: 500,
+    radius: 160, coefficient: 1, manaDrain: 0.05, persistent: false,
+  });
+  const actualLoss = (heroBefore - g.hero.hp) + (soldierBefore - soldier.hp);
+  assert(actualLoss > 0, 'boss area hits active hero and companion');
+  const gained = crypt.hp - bossBefore;
+  assert(Math.abs(gained - actualLoss * 0.15) < 1e-8, 'boss heals from aggregate actual party HP damage');
+  assert(gained > crypt.maxHp * 0.02, 'boss AoE healing is NOT capped at 2% of boss maximum HP');
+
+  crypt.hp = crypt.maxHp - 2;
+  const nearlyFull = crypt.hp;
+  assert(g.hitParty(g.hero, 160, 0.05, crypt.id));
+  assert.equal(crypt.hp, crypt.maxHp, 'boss cannot heal beyond maximum HP');
+  assert(crypt.hp - nearlyFull <= 2, 'only missing HP constrains healing');
+  g.hero.immune = 2;
+  crypt.hp = crypt.maxHp * 0.5;
+  const frozen = crypt.hp;
+  assert(!g.hitParty(g.hero, 160, 0.05, crypt.id));
+  assert.equal(crypt.hp, frozen, 'immunity denies boss life-steal');
+
+  const dragonDef = Campaign.data.bosses.find(b => b.id === 'abyss');
+  const dragon = g.bossEnemy(dragonDef, 'normal', { x: 480, y: 500 });
+  dragon.hp = dragon.maxHp / 2;
+  g.zone().enemies = [dragon];
+  g.hero.immune = 0;
+  const dragonBefore = dragon.hp;
+  assert(g.hitParty(g.hero, 160, 0.08, dragon.id));
+  assert.equal(dragon.hp, dragonBefore,
+    'non-siphoning dragon does not gain implausible drain; separate cooldown heal remains deferred');
+}
+console.log('PASS uncapped 15% supernatural boss AoE lifesteal, natural heal bound and non-siphoning bosses');
