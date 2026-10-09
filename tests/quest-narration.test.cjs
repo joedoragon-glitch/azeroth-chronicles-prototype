@@ -55,7 +55,7 @@ for (let i = 0; i < prose.length; i++) {
     entry.text.trim().length >= 45 && entry.text.length <= 180,
     'Selected quest ' + number + ' remains compact',
   );
-  assert(!/reward delivered|quest complete|\\+\\d+ XP|\\b\\d+ crowns\\b/i.test(entry.text), 'No reward receipt');
+  assert(!/reward delivered|quest complete|\+\d+ XP|\b\d+ crowns\b/i.test(entry.text), 'No reward receipt');
   assert(!/^(you (see|notice|discover)|quest)/i.test(entry.text), 'No generic event feed');
   if (disposition === 'keep')
     assert.equal(entry.text, keptOriginals.get(number), 'Approved keep is unchanged');
