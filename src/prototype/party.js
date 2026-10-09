@@ -540,9 +540,12 @@
           return context;
         }
         if (this.s.squadEngagement !== phase) {
+          // Keep an explicit doctrine choice for the whole continuous encounter,
+          // even if an adds-only phase briefly loses sight of its boss.
+          const enteringCombat = !this.s.squadEngagement;
           this.s.squadEngagement = phase;
           this.s.squadBoss = context.boss;
-          this.s.squadDoctrine = this.squadDefaultDoctrine();
+          if (enteringCombat) this.s.squadDoctrine = this.squadDefaultDoctrine();
         }
         return context;
       }
@@ -821,11 +824,15 @@
             if (context.boss) {
               if (this.s.squadDoctrine === 'focus') e = context.bossEnemy;
               else {
+                // ADDS is a priority, not a prohibition on fighting the boss.
+                // Screen active threats (including enemies attacking the hero),
+                // then return to boss damage as soon as no add needs attention.
+                // Explicit BOSS orders above remain authoritative at all times.
                 const adds = context.threats.filter((x) => x.type !== 'boss');
                 e =
-                  u.type === 'soldier'
+                  (u.type === 'soldier'
                     ? this.soldierScreenTarget(u, adds, living, claimed)
-                    : crowdTarget(u, adds);
+                    : crowdTarget(u, adds)) || context.bossEnemy;
               }
             } else if (this.s.squadDoctrine === 'focus') {
               e =
