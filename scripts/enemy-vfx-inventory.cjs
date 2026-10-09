@@ -117,8 +117,82 @@ function collect() {
       notes: 'Projectile motion remains owned by combat simulation',
     });
   }
+  // Basic tactical maneuvers are inventoried independently of signatures.
+  // Species and actual combat roles determine eligibility; shared mechanics
+  // may later share artwork instead of forcing duplicate effect assets.
+  const T = Campaign.rules.tacticalFoundation,
+    roster = [
+      ...new Set([
+        ...Campaign.data.species.flat().map((entry) => entry[0]),
+        ...Object.keys(Campaign.rules.nightEnemyCombat),
+      ]),
+    ].sort(),
+    rangedRoster = new Set([
+      ...Object.keys(Campaign.rules.rangedProfiles),
+      'archer',
+      'crownguard',
+      'wraith',
+    ]);
+  for (const species of roster)
+    for (const tier of ['ordinary', 'guardian', 'ringleader'])
+      for (const role of ['melee', 'ranged']) {
+        if (role === 'ranged' && tier !== 'ringleader' && !rangedRoster.has(species)) continue;
+        const ranged = role === 'ranged',
+          enemy = {
+            species,
+            form: tier === 'ringleader' ? 'ringleader' : 'normal',
+            guard: tier === 'guardian',
+            ranged,
+          },
+          basic = ranged
+            ? (tier === 'guardian' && T.rogueMoves.rangedGuardian) ||
+              T.rogueMoves.ranged?.[species] ||
+              T.rogueMoves.rangedFallback ||
+              T.rogueMoves.species?.[species] ||
+              T.rogueMoves.ordinary
+            : T.rogueMoves.species?.[species] || T.rogueMoves[tier] || T.rogueMoves.ordinary,
+          visual = VFX.describe(enemy, { rogueMove: true, name: basic.name, kind: 'circle' });
+        add({
+          group: 'rogue-basic',
+          owner: species + ' (' + role + ' ' + tier + ')',
+          id: visual.id,
+          name: basic.name,
+          kind: basic.style || 'disruption',
+          stages: ['windup', 'release', 'impact'],
+          notes: 'Role/tier basic; shared presentation assets are permitted',
+        });
+      }
+  for (const [family, profile] of Object.entries(T.rogueMoves.bosses || {})) {
+    const visual = VFX.describe(
+      { type: 'boss', family },
+      { rogueMove: true, name: profile.name, kind: 'circle' },
+    );
+    add({
+      group: 'rogue-basic',
+      owner: family + ' (boss)',
+      id: visual.id,
+      name: profile.name,
+      kind: profile.style || 'disruption',
+      stages: ['windup', 'release', 'impact'],
+      notes: 'Boss rogue response, not part of normal boss attack rotation',
+    });
+  }
+  for (const [captain, profile] of Object.entries(T.rogueMoves.captains || {})) {
+    const visual = VFX.describe(
+      { roomCaptain: true, captainProfile: captain },
+      { rogueMove: true, name: profile.name, kind: 'circle' },
+    );
+    add({
+      group: 'rogue-basic',
+      owner: captain + ' (captain)',
+      id: visual.id,
+      name: profile.name,
+      kind: profile.style || 'disruption',
+      stages: ['windup', 'release', 'impact'],
+      notes: 'Captain rogue response, separate from authored normal attacks',
+    });
+  }
   // Dynamically adapt when PR #146 adds the expanded rogue signature registry.
-  const T = Campaign.rules.tacticalFoundation;
   for (const [role, profiles] of Object.entries(T.rogueRingleaderSignatures || {}))
     for (const [species, profile] of Object.entries(profiles)) {
       const visual = VFX.describe(
