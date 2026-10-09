@@ -27,3 +27,17 @@ Additional integration scenarios exercise automatic thinking/one-action decision
 Build, formatting, asset/scope checks, all non-browser regressions, the full Chromium presentation/input matrix, phone WebKit, audio/terrain/showroom browser checks, and dedicated rogue browser checks must pass on the integrated candidate. Main deployment remains conditional on main-test and phone-webkit success, then compares published `build.txt` with the exact merge commit and smoke-tests live desktop/phone entries. PWA cache version is independent of v4 campaign save keys.
 
 These deterministic and browser audits establish functional execution and authored tactical outcomes. They do not measure long-term player difficulty, physical iPhone system gestures or actual Chromebook performance. Monster forts and the separate map/structure and full VFX-production work remain independent tasks; this integration does not claim them complete.
+
+## Independent quality follow-up · v0.8.114
+
+PR #146 merged at `b583afe`. PR run `37930467438` and main release run `37932048328` passed all gates, including live desktop/phone smoke and the exact deployed commit. A persistent v0.8.110 test profile upgraded to v0.8.111, retained its v4 campaign, retired the old app cache and reopened the phone entry offline. Later audio/VFX releases preserve the complete authored rogue registry.
+
+The fresh audit on main at `cdc8286` cross-checks the real normal/night roster against both role signature registries, every captain/boss basic and signature, and the VFX inventory (84 basic identities and 40 distinct signature identities; both boss forms produce 51 signature test cases). It reproduced three lifecycle blind spots outside the earlier high-HP effect matrix:
+
+- A lethal area signature could move or slow a fallen companion. Secondary effects now skip that unit while the signature continues to affect living marked attackers.
+- A companion killed during Thornfang scatter retained its transient movement record and could resume the old howl after paid recovery, which reuses the companion object/ID. Fatal party hits now clear slow and forced movement, remove only the fallen victim's leash allowance, and preserve allowances for surviving victims.
+- Leaving and immediately returning reset enemy health/aggro but retained dust cover until its old timer expired. Zone reset now removes dust with the original encounter.
+
+A completeness guard compares the real normal/night roster and elite catalogue with the authored registries. Three additional behavior regressions use live warning/resolution, lethal companion damage, real paid recovery and actual zone entry. Earlier effect, dodge/cover, commander, compression/targeting and VFX equivalence checks remain intact. No rogue selection threshold, move profile, normal/TRUE rotation, summon plan, companion damage or collision geometry changes. Stale candidate/pending and phase-one comments are corrected to distinguish implemented mechanics from historical preparation.
+
+Runtime changes advance the PWA cache to v0.8.114. The follow-up PR records exact-head regression/browser CI and deployment results; this section documents confirmed findings and corrections, not a replacement for those release gates.

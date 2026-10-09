@@ -56,6 +56,23 @@ function resolveThroughAI(c, e, a) {
   assert.notEqual(e.telegraph, a, a.name + ' resolves through enemy AI');
   assert(e.cd > 0, a.name + ' enters recovery');
 }
+test('The live normal/night roster and elite catalogue have complete authored repertoires', () => {
+  const t = C.rules.tacticalFoundation;
+  const species = new Set([
+    ...C.data.species.flat().map((entry) => entry[0]),
+    ...Object.keys(C.rules.nightEnemyCombat),
+  ]);
+  for (const role of ['melee', 'ranged'])
+    assert.deepEqual(new Set(Object.keys(t.rogueRingleaderSignatures[role])), species);
+  assert.deepEqual(new Set(Object.keys(t.rogueMoves.ranged)), species);
+  for (const table of [t.rogueMoves, t.rogueSignatures]) {
+    assert.deepEqual(
+      new Set(Object.keys(table.captains)),
+      new Set(Object.keys(C.rules.roomCaptains)),
+    );
+    assert.deepEqual(new Set(Object.keys(table.bosses)), new Set(C.data.bosses.map((b) => b.id)));
+  }
+});
 test('Every authored basic actually disrupts its marked target through the live resolver', () => {
   const cases = [];
   for (const species of Object.keys(C.rules.tacticalFoundation.rogueRingleaderSignatures.melee))
@@ -333,5 +350,72 @@ test('A lethal rogue hit ends resolution before crowd control or commander reple
     assert.equal(e.rogueDustCoverUntil, undefined, 'dead encounter cannot create dust cover');
     assert.equal(c.hero.slow, 0, 'respawned hero cannot receive a stale slow');
   }
+});
+test('Lethal companion hits skip secondary effects while the signature still affects survivors', () => {
+  const cases = [
+    mob('wolf', 'ringleader'),
+    mob('orc', 'ringleader'),
+    (c) => c.bossEnemy(c.boss('crypt'), 'normal', { x: 1400, y: 1700 }),
+    (c) => c.bossEnemy(c.boss('thorn'), 'true', { x: 1400, y: 1700 }),
+  ];
+  for (const make of cases) {
+    const { c, e } = encounter(make);
+    pressure(c, e);
+    const [victim, survivor] = c.s.party;
+    victim.hp = 1;
+    const before = { x: victim.x, y: victim.y };
+    assert(c.tacticalRogueMove(e, c.hero));
+    assert(e.telegraph.rogueSignature);
+    const survivorHp = survivor.hp;
+    resolveThroughAI(c, e, e.telegraph);
+    assert.equal(victim.hp, 0, 'real companion hit is lethal');
+    assert.deepEqual({ x: victim.x, y: victim.y }, before, 'fallen companion is not displaced');
+    assert.equal(victim.slow || 0, 0, 'lethal hit cannot add a new slow');
+    assert(!c.tacticalScatterState(victim), 'lethal hit cannot begin forced movement');
+    assert(survivor.hp < survivorHp, 'remaining living attackers still receive the signature');
+  }
+});
+test('A companion death clears interrupted scatter before paid recovery of the same record', () => {
+  const { c, e } = encounter((c) => c.bossEnemy(c.boss('thorn'), 'normal', { x: 1400, y: 1700 }));
+  const u = c.unit('archer', e.x + 80, e.y);
+  c.s.party = [u];
+  u.hp = 1;
+  u.slow = 1.65;
+  assert(c.tacticalBeginScatter(e, c.hero, 70));
+  assert(c.tacticalBeginScatter(e, u, 70));
+  assert(c.hitParty(u, 100));
+  assert.equal(u.hp, 0);
+  assert(!c.tacticalScatterState(u), 'death immediately removes the old forced-movement record');
+  assert.equal(u.slow, 0, 'death expires the old pursuit slow');
+  assert(
+    !c._tacticalScatterLeash.get(e.id).victims.has(u.id),
+    'fallen victim loses its leash allowance',
+  );
+  assert(
+    c._tacticalScatterLeash.get(e.id).victims.has('hero'),
+    'living howl victim keeps its allowance',
+  );
+  c.hero.gold = 10000;
+  const id = u.id;
+  assert(c.recover(), 'use the real paid recovery path');
+  assert.equal(c.s.party[0], u, 'recovery intentionally reuses the companion record');
+  assert.equal(u.id, id);
+  assert.equal(u.slow, 0, 'paid recovery does not restore the old slow');
+  const before = { x: u.x, y: u.y };
+  assert(!c.tacticalAdvanceScatter(u, 0.1), 'recovered companion never resumes the old howl');
+  assert.deepEqual({ x: u.x, y: u.y }, before);
+});
+test('Zone reset clears dust cover together with the original encounter', () => {
+  const c = new C('normal', 'paladin', () => 0.9);
+  const e = c.zone().enemies.find((u) => u.species === 'goblin');
+  e.rogueDustCoverUntil = c.s.time + 1.65;
+  assert(!c.tacticalDirectTargetable(e));
+  assert(c.enter('crypt'));
+  assert(c.enter('vale'));
+  assert(
+    c.tacticalDirectTargetable(e),
+    'fresh encounter is targetable without waiting out old dust',
+  );
+  assert(!Object.hasOwn(e, 'rogueDustCoverUntil'));
 });
 console.log(passed + ' integrated rogue effectiveness and preservation checks passed.');
