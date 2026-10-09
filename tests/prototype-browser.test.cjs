@@ -24,7 +24,7 @@ await check('Accepted desktop/phone CSS is pixel-equivalent at fixed presentatio
  // tick/draw alone leaves DOM writes racing the stylesheet replacement.
  await page.evaluate(async()=>{const p=Prototype;window.__layoutRestore={tick:p.game.tick,draw:p.renderer.draw,raf:window.requestAnimationFrame.bind(window)};p.game.tick=()=>{};p.renderer.draw=()=>{};window.requestAnimationFrame=callback=>{__layoutRestore.callback=callback;return 0;};p.updateHUD();await document.fonts.ready;await new Promise(resolve=>__layoutRestore.raf(()=>__layoutRestore.raf(resolve)));});
  const settle=()=>page.evaluate(()=>new Promise(resolve=>{document.body.getBoundingClientRect();__layoutRestore.raf(()=>__layoutRestore.raf(resolve));}));
- let style,probe;
+ let style,probe,authorizedTargetDelta;
  try{
    // Install both stylesheet sets through the same owner and paint path. Mixing
    // an already composited external sheet with a freshly inserted inline sheet
