@@ -177,7 +177,17 @@
         for (let i = live('captain').length; i < composition.captains; i++) spawnRole('captain');
         return made;
       }
-      bossAttackWeights(e, target = this.hero) {
+      bossCenteredReach(e, plan) {
+        const scale = R.bossCadence.areaRangeMultiplier;
+        const kind = plan.kind === 'sector' && e.hp > e.maxHp * 0.5 ? 'cone' : plan.kind;
+        if (kind === 'cone') return 165 * scale;
+        if (kind === 'sector') return 280 * scale;
+        // The moving ring's reach comes from speed × lifetime, not its
+        // initially displayed radius (which is overwritten on every tick).
+        if (kind === 'ring') return R.combatGeometry.ringSpeed * R.combatGeometry.ringLife * scale;
+        return null;
+      }
+      bossAttackWeights(e, target = this.hero, allowRepeat = false) {
         const plans = R.attacks[e.family] || [],
           behavior = R.bossBehavior[e.family] || {},
           d = dist(e, target),
@@ -185,8 +195,14 @@
           alive = this.bossOwnedSummons(e).length,
           cap = this.bossSummonCap(e);
         return plans.map((plan, index) => {
-          if (index === e.lastAttackIndex && plans.length > 1) return 0;
+          if (!allowRepeat && index === e.lastAttackIndex && plans.length > 1) return 0;
           if (e.family === 'darklord' && index === 3 && !low) return 0;
+          const attackTarget = this.bossAttackTarget(e, target, index);
+          const reach = this.bossCenteredReach(e, plan);
+          // A special must have realistic coverage at the moment it is chosen.
+          if (plan.kind !== 'summon' && dist(e, attackTarget) > R.bossCadence.specialRange)
+            return 0;
+          if (reach !== null && dist(e, attackTarget) > reach + 25) return 0;
           let w = 1;
           if (plan.kind === 'summon') {
             if (alive >= cap || (e.summonCd || 0) > 0) return 0;
@@ -204,29 +220,37 @@
         });
       }
       chooseBossAttack(e, target = this.hero) {
-        const plans = R.attacks[e.family] || [],
-          weights = this.bossAttackWeights(e, target),
-          total = weights.reduce((n, w) => n + w, 0);
-        if (total > 0) {
+        const plans = R.attacks[e.family] || [];
+        for (const allowRepeat of [false, true]) {
+          const weights = this.bossAttackWeights(e, target, allowRepeat),
+            total = weights.reduce((n, w) => n + w, 0);
+          if (total <= 0) continue;
           let roll = this.random() * total;
           for (let i = 0; i < weights.length; i++) {
             roll -= weights[i];
             if (roll <= 0 && weights[i] > 0) return i;
           }
         }
-        const low = e.hp <= e.maxHp * 0.5;
-        let fallback = plans.findIndex(
-          (p, i) =>
-            i !== e.lastAttackIndex &&
-            p.kind !== 'summon' &&
-            !(e.family === 'darklord' && i === 3 && !low),
-        );
-        if (fallback < 0) fallback = plans.findIndex((p, i) => i !== e.lastAttackIndex);
-        return Math.max(0, fallback);
+        // If every special is out of reach, resume closing distance.
+        return -1;
       }
       bossAttackTarget(e, fallback, index) {
-        const behavior = R.bossBehavior[e.family] || {};
-        return behavior.heroTarget?.includes(index) && this.hero.hp > 0 ? this.hero : fallback;
+        const behavior = R.bossBehavior[e.family] || {},
+          plan = R.attacks[e.family]?.[index];
+        if (!plan || this.hero.hp <= 0 || !this.line(e, this.hero)) return fallback;
+        const heroDistance = dist(e, this.hero),
+          fallbackDistance = dist(e, fallback),
+          reach = this.bossCenteredReach(e, plan);
+        if (
+          heroDistance > R.bossCadence.specialRange ||
+          (reach !== null && heroDistance > reach + 25)
+        )
+          return fallback;
+        // Authored hero-targeting remains authoritative. Targeted ground
+        // marks can occasionally challenge a protected backline as well.
+        const markBackline =
+          plan.kind === 'circle' && fallbackDistance < 200 && heroDistance > fallbackDistance + 70;
+        return behavior.heroTarget?.includes(index) || markBackline ? this.hero : fallback;
       }
       buildBossAttack(e, index, target, includeTrue = true) {
         const b = this.boss(e.family),
@@ -248,7 +272,7 @@
             angle,
             count: plan.count || 1,
             radius:
-              kind === 'cone'
+              (kind === 'cone'
                 ? 165
                 : kind === 'sector'
                   ? 280
@@ -256,7 +280,7 @@
                     ? 105
                     : index === 0
                       ? 90
-                      : 115,
+                      : 115) * R.bossCadence.areaRangeMultiplier,
           },
           sequence = [];
         if (a.sequential && a.kind === 'circle') {
@@ -315,7 +339,7 @@
               timer: plan.warning,
               total: plan.warning,
               name: 'Delayed flame patch',
-              radius: 90,
+              radius: 90 * R.bossCadence.areaRangeMultiplier,
             });
           if (e.family === 'citadel' && index === 2) a.opening = 2.5;
         }
@@ -337,8 +361,11 @@
           (this.bossOwnedSummons(e).length >= this.bossSummonCap(e) || (e.summonCd || 0) > 0)
         )
           return [];
-        const comboTarget = this.bossAttackTarget(e, this.hero, combo.to),
-          built = this.buildBossAttack(e, combo.to, comboTarget, true);
+        const comboTarget = this.bossAttackTarget(e, target, combo.to),
+          reach = this.bossCenteredReach(e, plan);
+        if (dist(e, comboTarget) > R.bossCadence.specialRange) return [];
+        if (reach !== null && dist(e, comboTarget) > reach + 25) return [];
+        const built = this.buildBossAttack(e, combo.to, comboTarget, true);
         return [built.first, ...built.sequence];
       }
       startAttack(e, target, indexOverride = null) {
@@ -347,8 +374,9 @@
         const selected = Number.isInteger(indexOverride)
             ? Math.max(0, Math.min(plans.length - 1, indexOverride))
             : this.chooseBossAttack(e, target),
-          actualTarget = this.bossAttackTarget(e, target, selected),
-          built = this.buildBossAttack(e, selected, actualTarget, true);
+          actualTarget = selected < 0 ? null : this.bossAttackTarget(e, target, selected);
+        if (selected < 0) return false;
+        const built = this.buildBossAttack(e, selected, actualTarget, true);
         e.attackIndex = (e.attackIndex || 0) + 1;
         e.lastAttackIndex = selected;
         e.sequence = [...built.sequence, ...this.bossComboSequence(e, selected, actualTarget)];
@@ -361,7 +389,7 @@
           ...a,
           x: a.x + (i - ((a.count || 1) - 1) / 2) * 190,
           y: a.y + (i % 2) * 100,
-          radius: a.count > 1 ? 75 : a.radius,
+          radius: a.count > 1 ? 75 * R.bossCadence.areaRangeMultiplier : a.radius,
         }));
       }
       resolveAttack(e) {
@@ -453,7 +481,7 @@
             species: e.species,
             x: e.x,
             y: e.y,
-            life: R.combatGeometry.ringLife,
+            life: R.combatGeometry.ringLife * R.bossCadence.areaRangeMultiplier,
             tick: 0,
             damage: e.damage,
             age: 0,
