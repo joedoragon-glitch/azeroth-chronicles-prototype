@@ -125,6 +125,6 @@ Developer sprite processing now records explicit raster scale separately from th
 `enemy-vfx.js` owns stable attack identities; `enemy-presentation.js` derives their shared material/action/personality profiles. `enemy-vfx-events.js` delivers one immutable observation-only stage envelope. `audio-enemy.js` routes stage decisions and bounded family recipes through the existing effect/recorded binding facade. No gameplay owner imports audio, and transient deduplication/suppression never enters statistics or saves. See `ENEMY_AUDIO_SYNCHRONIZATION.md`; `npm run check` includes live audio/VFX coverage.
 
 
-## Bounded ground projection · v0.8.123
+## Bounded ground projection · v0.8.124
 
 Ground materials reuse a screen-aligned isometric repeat at the current physical Canvas scale. Original world phase, opacity and surface clips remain authoritative. A separate 8 MiB projected RGBA LRU cache supplements the existing 2 MiB source-image budget; eviction and manifest retirement release backing stores. Unsupported/oversized/non-ground transforms keep the original projection. Artwork, scene animation, gameplay and saves remain unchanged. See [MATERIAL_RENDERING_PERFORMANCE.md](MATERIAL_RENDERING_PERFORMANCE.md) for regression evidence, sampling tolerances and device-test limits.

@@ -1,4 +1,4 @@
-# Ground rendering performance · v0.8.123
+# Ground rendering performance · v0.8.124
 
 Joel reports that earlier releases ran smoothly and the updated game became choppy. His Chromebook capture shows 6 FPS at 150% framing; sampled frame work alone does not account for all elapsed time. The task is to recover performance while preserving the current art and gameplay.
 

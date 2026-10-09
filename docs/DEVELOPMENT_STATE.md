@@ -213,6 +213,6 @@ Recovered the strictly presentation-only feature-scale and original-export prepa
 This is the **initial proportional presentation pass**, not a verified completed spatial-crowding audit, a whole-world art makeover, or completion of issue #160. See PROPORTION_IMPLEMENTATION_CHECKPOINT.md, WORLD_PROPORTION_AND_DENSITY_GUARDRAILS.md, and original art-production checkpoint in PR #145. Publish only after full CI and exact live Pages verification.
 
 
-## Bounded ground projection · v0.8.123
+## Bounded ground projection · v0.8.124
 
 Ground materials reuse a screen-aligned isometric repeat at the current physical Canvas scale. Original world phase, opacity and surface clips remain authoritative. A separate 8 MiB projected RGBA LRU cache supplements the existing 2 MiB source-image budget; eviction and manifest retirement release backing stores. Unsupported/oversized/non-ground transforms keep the original projection. Artwork, scene animation, gameplay and saves remain unchanged. See [MATERIAL_RENDERING_PERFORMANCE.md](MATERIAL_RENDERING_PERFORMANCE.md) for regression evidence, sampling tolerances and device-test limits.
