@@ -211,4 +211,38 @@ test('F47 cunning summoners trigger depleted-support rogue pressure but not leve
   c.hero.level=e.level;const u=c.makeEnemy({species:'wolf',name:'summon',level:e.level,hp:15,damage:1,gold:0,xp:0},{x:e.x+20,y:e.y});u.summon=true;u.owner=e.id;const v={...u,id:'second-summon',hp:15};c.zone().enemies.push(u,v);
   assert(!c.tacticalRogueEligibility(e,0),'two surviving owned summons block rogue condition');
 });
+
+test('F48 named rogue attacks prioritize actual high-threat archer over a closer hero',()=>{
+  const c=fresh(),e=c.makeEnemy({species:'wolf',name:'ambusher',level:2,hp:300,damage:12,gold:0,xp:0},{x:1400,y:1700}),
+    archer=c.unit('archer',1510,1700);c.zone().enemies=[e];c.s.party=[archer];
+  Object.assign(c.hero,{x:1450,y:1700,level:3});e.aggro=true;c.line=()=>true;
+  c.s.time=1;c.tacticalRecordHit(e,'hero',20);c.tacticalRecordHit(e,archer.id,85);
+  assert.equal(c.tacticalHighestThreatTarget(e,c.hero),archer);
+  assert(c.tacticalRogueMove(e,c.hero));
+  assert.equal(e.telegraph.targetId,archer.id,'a high-damage archer can be the tactical target');
+  assert.equal(e.telegraph.name,'Flanking Snap');
+  e.telegraph=null;c.s.time=8;
+  assert.equal(c.tacticalHighestThreatTarget(e,c.hero),c.hero,'expired threat no longer outweighs nearest fallback');
+});
+test('F49 TRUE bosses remain protected by the three-level immunity and no burst compression',()=>{
+  const c=fresh(),b=c.boss('thorn'),e=c.bossEnemy(b,'true',{x:1400,y:1700});
+  c.zone().enemies=[e];Object.assign(c.hero,{x:1450,y:1700,level:e.level-3});
+  c.line=()=>true;e.aggro=true;c.s.time=10;
+  assert.equal(c.tacticalProtectionTier(e),'trueBoss');
+  assert.equal(c.tacticalRogueEligibility(e,7),false);
+  assert.equal(c.tacticalAutoRogue(e,c.hero),false,'rogue immunity holds even if pressured by seven attackers');
+  assert.equal(C.rules.tacticalFoundation.burstCompression.enabled,false,'phase-three defense remains disabled');
+});
+test('F50 interrupted rogue retreat sheds its protection and cannot chain',()=>{
+  const c=fresh(),e=c.makeEnemy({species:'wolf',name:'retreater',level:1,hp:1000,damage:1,gold:0,xp:0},{x:1400,y:1700}),
+    ally=c.makeEnemy({species:'wolf',name:'backup',level:1,hp:100,damage:1,gold:0,xp:0},{x:1650,y:1700});
+  c.zone().enemies=[e,ally];c.s.party=[];e.aggro=true;c.line=()=>true;
+  Object.assign(c.hero,{x:1420,y:1700,level:3});c.route=()=>[{x:ally.x,y:ally.y}];
+  assert(c.tacticalBeginRogueRegroup(e,ally));
+  const start=e.hp;assert(c.damage(e,100));assert.equal(start-e.hp,50);
+  ally.hp=0;c.tacticalAdvanceRogueRegroup(e,c.hero,.1);
+  assert.equal(c.tacticalRogueRegroup(e),null,'dead support invalidates rogue route');
+  const after=e.hp;assert(c.damage(e,100));assert.equal(after-e.hp,100,'ordinary damage restored after interrupted retreat');
+  assert.equal(c.tacticalBeginRogueRegroup(e,ally),false,'unlimited retry is prohibited');
+});
 console.log(passed+' audit regression scenarios passed.');
