@@ -267,9 +267,9 @@
           this.hero.xp -= this.xpRequired();
           this.hero.level++;
           this.hero.maxHp += R.balance.growth.hpPerLevel;
-          this.hero.maxMp += R.manaBalance.perLevel;
+          if (R.resourceMode.manaEnabled) this.hero.maxMp += R.manaBalance.perLevel;
           this.hero.hp = this.hero.maxHp;
-          this.hero.mp = this.hero.maxMp;
+          if (R.resourceMode.manaEnabled) this.hero.mp = this.hero.maxMp;
           this.syncCompanionLevelStats();
           delete this.hero.potionEffect;
           this.hero.talentPoints++;
