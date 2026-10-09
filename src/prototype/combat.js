@@ -124,8 +124,7 @@
         const living = this.zone().enemies.filter(
           (unit) => unit.summon && unit.owner === e.id && unit.hp > 0,
         ).length;
-        const depleted =
-          living <= config.summonSupportThreshold && (e.summonCd || 0) > 0;
+        const depleted = living <= config.summonSupportThreshold && (e.summonCd || 0) > 0;
         // Cunning status requires an explicit authored entry; no entries exist in phase one.
         const cunningKey = e.captainProfile || e.family;
         const cunning = config.cunningEnemies.includes(cunningKey);
