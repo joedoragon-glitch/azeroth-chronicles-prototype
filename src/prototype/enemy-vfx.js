@@ -14,8 +14,7 @@
   const STAGE_SET = new Set(STAGES);
   const safePart = (value) =>
     typeof value === 'string' && /^[a-z][a-z0-9-]*$/.test(value) ? value : null;
-  const plain = (value) =>
-    !!value && typeof value === 'object' && !Array.isArray(value);
+  const plain = (value) => !!value && typeof value === 'object' && !Array.isArray(value);
   const nonNegative = (value) => Number.isFinite(value) && value >= 0;
 
   function tierOf(enemy) {
@@ -88,7 +87,8 @@
       !/^assets\/vfx\/[a-zA-Z0-9/_-]+\.(png|webp)$/.test(asset.src) ||
       asset.src.includes('..') ||
       asset.src.length > 180
-    ) return false;
+    )
+      return false;
     if (
       asset.anchor !== undefined &&
       (!plain(asset.anchor) ||
@@ -96,11 +96,13 @@
         asset.anchor.x > 1 ||
         !nonNegative(asset.anchor.y) ||
         asset.anchor.y > 1)
-    ) return false;
+    )
+      return false;
     if (
       asset.scale !== undefined &&
       (!Number.isFinite(asset.scale) || asset.scale <= 0 || asset.scale > 4)
-    ) return false;
+    )
+      return false;
     if (asset.type === 'image') {
       return (
         asset.frames === undefined &&
@@ -141,13 +143,16 @@
       }
     };
     for (const [id, entry] of Object.entries(manifest.effects)) {
-      if (!/^(boss|captain|night|rogue|enemy|projectile)\/[a-z0-9/-]+$/.test(id) || id.includes('//'))
+      if (
+        !/^(boss|captain|night|rogue|enemy|projectile)\/[a-z0-9/-]+$/.test(id) ||
+        id.includes('//')
+      )
         problems.push('Invalid VFX identity: ' + id);
       if (!plain(entry)) {
         problems.push(id + ': entry must be an object');
         continue;
       }
-      checkStages(entry.stages || {}, id);
+      checkStages(entry.stages === undefined ? {} : entry.stages, id);
       if (entry.variants !== undefined) {
         if (!plain(entry.variants)) problems.push(id + ': invalid variants');
         else
