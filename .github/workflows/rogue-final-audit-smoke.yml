@@ -9,19 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: cdcd73fcbf6434a1da7524a43352c27e5fd82fc3
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
       - run: npm ci --ignore-scripts
-      - name: Audit rogue behavior
-        run: node tests/audit-regressions.test.cjs
-      - name: Inspect exact formatting edits
-        if: always()
+      - name: Verify formatting and packaging
         run: |
-          npx prettier --write src/prototype/rules.js src/prototype/engine.js src/prototype/combat.js src/prototype/combat-visuals.js src/prototype/party.js src/prototype/hero-combat.js src/prototype/app.js
-          echo 'ROGUE_PRETTIER_DIFF_BEGIN'
-          git diff --no-ext-diff --unified=3 -- src/prototype/rules.js src/prototype/engine.js src/prototype/combat.js src/prototype/combat-visuals.js src/prototype/party.js src/prototype/hero-combat.js src/prototype/app.js
-          echo 'ROGUE_PRETTIER_DIFF_END'
-      - name: Verify sprite-scope ledger
-        if: always()
+          npm run format:check
+          npm run check
+      - name: Verify all focused rogue regression cases
+        run: node tests/audit-regressions.test.cjs
+      - name: Verify exact sprite scope evidence
         run: node tests/sprite-scope.test.cjs
