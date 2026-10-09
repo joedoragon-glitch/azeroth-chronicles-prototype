@@ -18,6 +18,10 @@ Desktop/browser and phone presentation are distinct. World authoring, navigation
 
 Map and sprite completion are not prerequisites for sound engineering. Conversely, changing frameworks does not complete map design, resolve performance by itself, or turn a PWA into a native package. Keep gameplay decisions in `DECISIONS.md`, engineering ownership in `ARCHITECTURE.md`, and historical releases in `PROJECT_HISTORY.md`.
 
+## Player-selected targeting v0.8.106
+
+Q (rebindable) or a clickable HUD Target button cycles hostiles visible in the current viewport. Manual selection takes precedence for the hero's targeted skills and movement autoattack; out-of-range selected enemies are not silently replaced. A 0.55 s Target/Q hold locks the selected foe through dodging and summons; a short press cycles and releases an existing lock. Encounter lock state is transient and clears on target death, return, or area change. Unlocked selections expire on distance. A held lock is retained during dodging until enemy defeat, disengagement, or area change; automatic targeting then resumes. The transient lock is not saved, and the existing v4 save contract remains unchanged. The phone Target button sits beside Recall above the joystick, and the alternate left-hand layout keeps the pair together. Held Skills 1–2 show clean corner ticks and range/LOS guidance; Q while held deliberately changes the charge target. The self-heal hold uses a small plus cue. Regression tests cover key migration and combat selection; real-device UI verification remains necessary.
+
 ## Input update v0.8.82
 
 Direct menu/HUD clicks and taps, persistent keyboard rebinding, two-thumb phone controls and optional pointer movement replace the inherited input prohibitions. See `README.md` for player settings. Autoattack and death/economy rules are preserved. Real-device comfort remains part of Joel's playtesting.
@@ -145,3 +149,7 @@ Joel authorizes autonomous adaptation of retained sprites to 150%, followed by r
 ## Original-master export policy · 9 October 2026
 
 Joel explicitly requests documenting the approach in GitHub. Read SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md before adaptation: use untouched generator outputs of accepted revisions for fresh 150% exports, never enlarge the smaller runtime exports. Audit older padded/resized masters; bypass detail-losing intermediates and carry only necessary placement metadata into the final export. Verify each original, sizing and grounding; review actual 150% game scenes and simplify/regenerate if detail still reads poorly. All originals, checkpoints and rollback remain preserved. This records the required approach; new export processing and candidates remain separate implementation work until verified and published.
+
+## Regional arrival and burst defense integration · 9 October 2026
+
+v0.8.105 implements region-entry points beside the arriving transport instead of inside the town, keeps the ferry landings and the authored road network reachable, and clears ordinary monster spawn homes around those entries without changing enemy counts. Crown hub travel uses the same entry contract. A shared rolling two-second enemy burst-compression curve now covers all hero and companion outgoing damage through `combat.damage()`; configuration remains in `rules.js`, while the transient per-enemy damage ledger is separate from saved state, rogue tactical threat telemetry, and rogue retreat protection. See [TRANSPORT_ARRIVALS_AND_BURST_COMPRESSION.md](TRANSPORT_ARRIVALS_AND_BURST_COMPRESSION.md) for exact tier constants, ownership, and regression contracts. This does not complete fort placement or the separate structure proportion pass.

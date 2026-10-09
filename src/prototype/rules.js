@@ -2061,9 +2061,24 @@
       vegetation: 'pine',
     },
   };
+  // The vehicle that actually brought the party to a region determines its landing.
+  // Ferry docks remain at their terrain-authored harbors; overland arrivals use rear town stands.
+  const travelArrivalStands = {
+    march: { x: 145, y: 1380 },
+    frontier: { x: 155, y: 615 },
+  };
   const travelArrivals = {
+    'vale>march': { transportId: 'return', dx: 95, dy: 30 },
+    'march>vale': { transportId: 'outbound', dx: 95, dy: 25 },
     'march>highlands': { x: 425, y: 1900 },
     'highlands>march': { x: 2115, y: 675 },
+    'highlands>frontier': { transportId: 'return', dx: 95, dy: 25 },
+    'frontier>highlands': { transportId: 'outbound', dx: 95, dy: 25 },
+    'frontier>crown': { transportId: 'crown-travel-frontier-return', dx: 95, dy: 50 },
+    'crown>frontier': { transportId: 'outbound', dx: 95, dy: 25 },
+    'crown>highlands': { transportId: 'outbound', dx: 95, dy: 25 },
+    'crown>march': { transportId: 'return', dx: 95, dy: 30 },
+    'crown>vale': { transportId: 'outbound', dx: 95, dy: 25 },
   };
   const dungeonWorkstations = {
     crypt: {
@@ -4733,7 +4748,22 @@
     rogueSignatures,
     // Tier names are identifiers, not mitigation percentages.
     protectionTiers: ['ordinary', 'guardian', 'ringleader', 'captain', 'boss', 'trueBoss'],
-    burstCompression: Object.freeze({ enabled: false, model: 'soft-knee', hardCap: false }),
+    burstCompression: Object.freeze({
+      enabled: true,
+      model: 'soft-knee',
+      hardCap: false,
+      windowSeconds: 2,
+      openingMultiplier: 1.6,
+      // Fractions of the target's own maximum HP: knee, then logarithmic tail.
+      tiers: Object.freeze({
+        ordinary: { knee: 1.35, tail: 1.75 },
+        guardian: { knee: 0.95, tail: 1.25 },
+        ringleader: { knee: 0.7, tail: 0.95 },
+        captain: { knee: 0.5, tail: 0.75 },
+        boss: { knee: 0.36, tail: 0.55 },
+        trueBoss: { knee: 0.29, tail: 0.48 },
+      }),
+    }),
   });
 
   const R = {
@@ -4811,6 +4841,7 @@
     terrain,
     landforms,
     harbors,
+    travelArrivalStands,
     travelArrivals,
     dungeonWorkstations,
     regionalHandoffScenes,

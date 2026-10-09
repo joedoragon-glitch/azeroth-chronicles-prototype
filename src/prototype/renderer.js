@@ -1,6 +1,63 @@
 /* Campaign presentation only. Rendering never owns simulation or saved state. */
 (function (root) {
   'use strict';
+  // Large foreground forms can cover actors under the existing depth sort.
+  // Keep this list deliberately conservative: small clutter must not trigger UI.
+  function majorOccluder(e) {
+    if (!e || e.interactionOnly) return false;
+    if (e.renderKind === 'building') return true;
+    if (e.renderKind === 'npc')
+      return ['rest', 'supplier', 'recruiter', 'mini', 'dungeon', 'exit'].includes(e.kind);
+    if (e.renderKind !== 'prop') return false;
+    const structure = String(e.structure || '');
+    if (/(?:^|-)(?:sapling|stump|shrub|grass|flowers|log|post|barrel|crate)(?:-|$)/.test(structure))
+      return false;
+    return (
+      /(?:^|-)(?:house|cottage|workshop|smithy|hut|lodge|hall|tower|watchhouse|watchpost|keep|fort|fortress|gatehouse|barracks|chapel|command-tent|tree|wall|stonewall|stockade|palisade)(?:-|$)/.test(
+        structure,
+      ) ||
+      (['🌲', '🌳', '🪨'].includes(e.icon) && Number(e.r) >= 18)
+    );
+  }
+
+  // The sorted draw order remains authoritative: an obstacle only hides an actor
+  // when it is actually painted after that actor.
+  function occlusionPairs(entities, project, height) {
+    const pairs = [];
+    for (let i = 0; i < entities.length; i++) {
+      const actor = entities[i];
+      if (
+        !['hero', 'ally', 'enemy'].includes(actor.renderKind) ||
+        actor.interactionOnly ||
+        (actor.renderKind === 'enemy' && (actor.hp <= 0 || actor.neutral))
+      )
+        continue;
+      const p = project(actor),
+        front = [];
+      for (let j = i + 1; j < entities.length; j++) {
+        const obstacle = entities[j];
+        if (!majorOccluder(obstacle) || obstacle.x + obstacle.y <= actor.x + actor.y) continue;
+        const q = project(obstacle),
+          dy = q.y - p.y;
+        // Broad phase only. The actual artwork's alpha is intersected below,
+        // preventing a contour from appearing across empty sprite padding.
+        if (dy < 0 || dy > Math.max(100, height(obstacle) + 44) || Math.abs(q.x - p.x) > 155)
+          continue;
+        front.push({ entity: obstacle, position: q });
+        if (front.length === 8) break;
+      }
+      if (front.length) pairs.push({ actor, position: p, front });
+    }
+    // The party takes priority on busy screens; the effect is intentionally bounded.
+    return pairs
+      .sort(
+        (a, b) =>
+          (a.actor.renderKind === 'hero' ? 0 : a.actor.renderKind === 'ally' ? 1 : 2) -
+          (b.actor.renderKind === 'hero' ? 0 : b.actor.renderKind === 'ally' ? 1 : 2),
+      )
+      .slice(0, 12);
+  }
+
   function create({
     canvas: viewport,
     ctx,
@@ -128,11 +185,22 @@
         y: p.y + Math.sin(t * (busy ? 5.2 : 2.4) + phase) * amp,
       };
     }
-    function sprite(e, p) {
+    function sprite(e, p, target = ctx, bodyOnly = false) {
       const q = visualPosition(e, p),
         rescued = !!game.s.rescued[e.family];
-      if (PrototypeSprites && PrototypeSprites.draw(ctx, e, q, game.regionIndex(), rescued)) return;
-      PrototypeVisuals.draw(ctx, e, q, game.regionIndex(), rescued);
+      if (
+        PrototypeSprites &&
+        PrototypeSprites.draw(
+          target,
+          e,
+          q,
+          game.regionIndex(),
+          rescued,
+          bodyOnly ? { silhouette: true } : undefined,
+        )
+      )
+        return;
+      PrototypeVisuals.draw(target, e, q, game.regionIndex(), rescued);
     }
     function spriteHeight(e) {
       const fallback = PrototypeVisuals.height(e),
@@ -140,6 +208,86 @@
       return PrototypeSprites
         ? PrototypeSprites.height(e, game.regionIndex(), rescued, fallback)
         : fallback;
+    }
+    // A thin contour *only inside the pixels of the foreground obstacle*.
+    // Four reused transparent canvases avoid readback, bright halos, filled
+    // ghosts and per-actor allocations. No change to hitboxes or AI visibility.
+    let outlineLayers = null;
+    function drawOcclusionOutlines(entities) {
+      const pairs = occlusionPairs(entities, screen, spriteHeight);
+      if (!pairs.length || typeof document === 'undefined') return;
+      if (!outlineLayers) {
+        const layers = [];
+        for (let i = 0; i < 4; i++) {
+          const surface = document.createElement('canvas');
+          surface.width = 384;
+          surface.height = 384;
+          const brush = surface.getContext('2d');
+          if (!brush) return;
+          layers.push({ surface, brush });
+        }
+        outlineLayers = layers;
+      }
+      const [actorLayer, tintLayer, edgeLayer, coverLayer] = outlineLayers,
+        centerX = 192,
+        footY = 260,
+        ring = [
+          [-1.35, 0],
+          [1.35, 0],
+          [0, -1.35],
+          [0, 1.35],
+          [-0.95, -0.95],
+          [0.95, -0.95],
+          [-0.95, 0.95],
+          [0.95, 0.95],
+        ];
+      for (const pair of pairs) {
+        for (const layer of outlineLayers) {
+          layer.brush.globalCompositeOperation = 'source-over';
+          layer.brush.globalAlpha = 1;
+          layer.brush.clearRect(0, 0, 384, 384);
+        }
+        sprite(pair.actor, { x: centerX, y: footY }, actorLayer.brush, true);
+
+        // Color the real actor alpha, not a rectangle or an ellipse.
+        const tint = tintLayer.brush;
+        tint.drawImage(actorLayer.surface, 0, 0);
+        tint.globalCompositeOperation = 'source-in';
+        tint.fillStyle = pair.actor.renderKind === 'enemy' ? '#d3a69e' : '#b8cfc2';
+        tint.fillRect(0, 0, 384, 384);
+        tint.globalCompositeOperation = 'source-over';
+
+        const edge = edgeLayer.brush;
+        for (const [dx, dy] of ring) edge.drawImage(tintLayer.surface, dx, dy);
+        edge.globalCompositeOperation = 'destination-out';
+        edge.drawImage(actorLayer.surface, 0, 0);
+        edge.globalCompositeOperation = 'source-over';
+
+        // Union the actual foreground artwork. The contour is erased wherever
+        // the actor is visible rather than showing a permanent character glow.
+        const cover = coverLayer.brush;
+        for (const obstacle of pair.front)
+          sprite(
+            obstacle.entity,
+            {
+              x: centerX + obstacle.position.x - pair.position.x,
+              y: footY + obstacle.position.y - pair.position.y,
+            },
+            cover,
+            true,
+          );
+        edge.globalCompositeOperation = 'destination-in';
+        edge.drawImage(coverLayer.surface, 0, 0);
+        edge.globalCompositeOperation = 'source-over';
+        ctx.save();
+        ctx.globalAlpha = 0.46;
+        ctx.drawImage(
+          edgeLayer.surface,
+          Math.round(pair.position.x - centerX),
+          Math.round(pair.position.y - footY),
+        );
+        ctx.restore();
+      }
     }
     function entityShadow(e, p) {
       let rx = 18,
@@ -938,6 +1086,132 @@
       }
     }
 
+    // A few ink-like brackets, not ground circles. Charge hints appear only
+    // while the player is holding an aimed skill; simulation owns the ranges.
+    function targetGuidance() {
+      const cast = chargePresentation(),
+        aimed = cast && (cast.slot === 1 || cast.slot === 2),
+        selected = game.selectedHeroTarget();
+      if (cast?.slot === 3) {
+        const p = screen(game.hero);
+        ctx.save();
+        ctx.strokeStyle = cast.state === 'no-heal' ? '#bcaba0' : cast.color;
+        ctx.globalAlpha = 0.8;
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(p.x - 5, p.y - 34);
+        ctx.lineTo(p.x + 5, p.y - 34);
+        ctx.moveTo(p.x, p.y - 39);
+        ctx.lineTo(p.x, p.y - 29);
+        ctx.stroke();
+        ctx.restore();
+        return;
+      }
+      if (!selected && !aimed) return;
+      const target = aimed
+        ? game.zone().enemies.find((e) => e.id === cast.targetId && e.hp > 0 && !e.neutral)
+        : selected;
+      if (!target) return;
+      const p = screen(target),
+        range = aimed ? game.heroSkillRange(cast.slot, true) : 0,
+        distance = Math.hypot(target.x - game.hero.x, target.y - game.hero.y),
+        clear = game.line(game.hero, target),
+        inRange = !aimed || distance <= range,
+        color = aimed ? (!clear ? '#dc867e' : inRange ? '#f4d894' : '#e2b67b') : '#f4d894',
+        valid = !aimed || (inRange && clear);
+      ctx.save();
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      if (aimed) {
+        const h = screen(game.hero);
+        ctx.strokeStyle = color;
+        ctx.globalAlpha = valid ? 0.38 : 0.26;
+        ctx.lineWidth = 1.3;
+        ctx.setLineDash?.([3, 6]);
+        ctx.beginPath();
+        ctx.moveTo(h.x, h.y - 13);
+        ctx.lineTo(p.x, p.y - 16);
+        ctx.stroke();
+        ctx.setLineDash?.([]);
+        // Short corner ticks suggest other reachable targets without a reticle
+        // or an overdrawn field of radius circles.
+        for (const e of game
+          .zone()
+          .enemies.filter(
+            (e) =>
+              e.id !== target.id &&
+              e.hp > 0 &&
+              !e.neutral &&
+              !e.returning &&
+              Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= range &&
+              game.line(game.hero, e),
+          )
+          .sort(
+            (a, b) =>
+              Math.hypot(a.x - game.hero.x, a.y - game.hero.y) -
+              Math.hypot(b.x - game.hero.x, b.y - game.hero.y),
+          )
+          .slice(0, 3)) {
+          const q = screen(e);
+          if (q.x < 12 || q.x > canvas.width - 12 || q.y < 12 || q.y > canvas.height - 12) continue;
+          ctx.globalAlpha = 0.45;
+          ctx.beginPath();
+          ctx.moveTo(q.x - 17, q.y - 13);
+          ctx.lineTo(q.x - 12, q.y - 16);
+          ctx.moveTo(q.x + 17, q.y - 13);
+          ctx.lineTo(q.x + 12, q.y - 16);
+          ctx.stroke();
+        }
+      }
+      const halfWidth = target.type === 'boss' ? 34 : target.captain ? 28 : 22,
+        top = p.y - (target.type === 'boss' ? 43 : 32),
+        bottom = p.y - 3,
+        corner = 7;
+      ctx.globalAlpha = 0.88;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.shadowColor = '#07140e';
+      ctx.shadowBlur = 3;
+      ctx.beginPath();
+      for (const side of [-1, 1]) {
+        const px = p.x + side * halfWidth;
+        ctx.moveTo(px, top + corner);
+        ctx.lineTo(px, top);
+        ctx.lineTo(px - side * corner, top);
+        ctx.moveTo(px, bottom - corner);
+        ctx.lineTo(px, bottom);
+        ctx.lineTo(px - side * corner, bottom);
+      }
+      ctx.stroke();
+      if (selected?.id === target.id && game.manualHeroTargetLocked) {
+        ctx.globalAlpha = 0.85;
+        ctx.shadowBlur = 2;
+        ctx.font = 'bold 9px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#f4d894';
+        ctx.fillText('LOCK', p.x, top - 7);
+      }
+      if (aimed) {
+        const label = !clear
+          ? 'BLOCKED'
+          : !inRange
+            ? 'MOVE CLOSER'
+            : cast.state === 'need-mp'
+              ? 'NEED MP'
+              : cast.state === 'waiting'
+                ? 'WAIT'
+                : cast.ready
+                  ? 'RELEASE'
+                  : 'CHARGING';
+        ctx.globalAlpha = 0.95;
+        ctx.font = 'bold 9px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = color;
+        ctx.fillText(label, p.x, bottom + 18);
+      }
+      ctx.restore();
+    }
+
     function render() {
       ctx.fillStyle = '#0c1913';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -1180,10 +1454,12 @@
         hero: screen(game.hero),
         lights: ambientLights,
       });
+      drawOcclusionOutlines(entities);
       // Critical outlines and transient effects retain contrast through the night grade.
       PrototypeCombatVisuals.ground(ctx, screen, game, 'cue', now() / 1000);
       for (const p of game.s.projectiles) drawProjectile(p);
       drawVisualFx();
+      targetGuidance();
       if (isPaused()) {
         ctx.fillStyle = '#0006';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -1215,7 +1491,7 @@
       metrics: () => ({ ...stats, cameraZoom: zoom() }),
     };
   }
-  const api = { create };
+  const api = { create, majorOccluder, occlusionPairs };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeRenderer = api;
 })(typeof window !== 'undefined' ? window : globalThis);

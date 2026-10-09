@@ -1382,6 +1382,7 @@
                 ? { x: 160, y: 240 }
                 : { x: D.towns[i][0], y: D.towns[i][1] });
       this.tacticalClearThreat(); // Transient observations never survive zone travel.
+      this.tacticalClearBurst();
       this.tacticalClearRogueRegroup();
       this._tacticalScatter?.clear();
       this._tacticalScatterLeash?.clear();
@@ -1394,7 +1395,14 @@
       this.s.squadBoss = false;
       this.s.squadDoctrine = this.squadDefaultDoctrine();
       this.s.heroTarget = null;
-      const q = this.safe(p.x, p.y);
+      const transport = arrival?.transportId
+        ? this.zone().npcs.find((n) => n.id === arrival.transportId && n.kind === 'transport')
+        : null;
+      if (arrival?.transportId && !transport) throw Error('Destination transport is missing');
+      const landing = transport
+        ? { x: transport.x + (arrival.dx || 0), y: transport.y + (arrival.dy || 0) }
+        : p;
+      const q = this.safe(landing.x, landing.y);
       Object.assign(this.hero, q);
       for (const u of this.activeParty()) {
         Object.assign(u, this.safe(q.x + 40, q.y + 30));
@@ -1482,9 +1490,9 @@
       const before = clone(this.s),
         messageCount = this.messages.length,
         effectCount = this.effects.length,
-        [x, y] = D.towns[targetIndex];
+        arrival = R.travelArrivals?.['crown>' + regionId];
       try {
-        if (!this.enter(regionId, { x, y })) throw Error('Invalid destination');
+        if (!arrival || !this.enter(regionId, arrival)) throw Error('Invalid destination');
         this.event('travel', { from: before.zone, to: this.s.zone, hub: true });
         return true;
       } catch (_) {
@@ -1732,6 +1740,7 @@
       this._tacticalScatter?.clear();
       this._tacticalScatterLeash?.clear();
       this.tacticalClearThreat();
+      this.tacticalClearBurst();
       this._tacticalPartyTargets?.clear();
       this.clearTonic();
       this.hero.supportEffects = [];
@@ -1831,7 +1840,8 @@
     kill(e) {
       if (e.deathPaid) return;
       this.tacticalClearThreat(e);
-      this.tacticalClearRogueRegroup(e);
+      this.tacticalClearBurst(e);
+      this.tacticalRogueRegroup(e);
       this._tacticalScatterLeash?.delete(e.id);
       this._tacticalRepositions?.delete(e.id);
       const victoryLevel = this.hero.level;
@@ -3751,6 +3761,7 @@
     disengage(e, dt) {
       if (!e.returning) {
         this.tacticalClearThreat(e);
+        this.tacticalClearBurst(e);
         this.tacticalClearRogueRegroup(e);
         this._tacticalScatterLeash?.delete(e.id);
         this._tacticalRepositions?.delete(e.id);
