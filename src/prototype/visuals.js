@@ -12,10 +12,45 @@
         ? 'full'
         : 'basic';
   }
+  // World-space artwork proportion is presentation-only, shared by procedural
+  // fallbacks and registered sprites. Never change gameplay/interaction reach here.
+  function featureScale(e) {
+    if (!e || e.interactionOnly) return 1;
+    const type = e.renderKind;
+    const structure = String(e.structure || '').toLowerCase();
+    if (type === 'building') return 1.35;
+    if (['transport', 'dungeon', 'mini'].includes(e.kind)) return 1.35;
+    if (
+      type === 'npc' &&
+      e.kind === 'landmark' &&
+      /orchard|den|lair|cave|gate|fort|tower|shrine|watch|ruin|treasury|vault|crypt|mine/.test(
+        String(e.id || '') + ' ' + String(e.name || ''),
+      )
+    )
+      return 1.3;
+    if (type !== 'prop') return 1;
+    if (String(e.id || '').startsWith('forest-') && /🌲|🌳/.test(e.icon || '')) return 1.3;
+    if (/(?:^|[-_])(tree|sapling|pine)(?:$|[-_])/.test(structure)) return 1.3;
+    if (
+      /cottage|house|workshop|boathouse|smithy|forgehouse|watchhouse|lean-to|longhouse|dwelling|hut|cabin/.test(
+        structure,
+      )
+    )
+      return 1.4;
+    if (
+      /watchpost|watchtower|fortress|stronghold|command-post|barracks|checkpoint|stockade|shrine|altar|monument|gatehouse|ash-den|wolf-den|roost|lair|treasury|vault|cellar/.test(
+        structure,
+      )
+    )
+      return 1.35;
+    return 1;
+  }
   function draw(ctx, e, p, region = 0, rescued = false) {
     if (e.kind === 'landmark' && e.id?.startsWith('bridge-')) return; // The full deck is drawn in world space.
     ctx.save();
     ctx.translate(p.x, p.y);
+    const scale = Number.isFinite(e.visualScale) && e.visualScale > 0 ? e.visualScale : 1;
+    if (scale !== 1) ctx.scale(scale, scale);
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
     const ink = '#25312d',
@@ -12760,7 +12795,7 @@
     }
     ctx.restore();
   }
-  function height(e) {
+  function unscaledHeight(e) {
     if (e.type === 'boss') return 102;
     if (e.captain || e.roomCaptain) return 68;
     if (e.renderKind === 'building' && e.kind === 'barracks') return 88;
@@ -12787,6 +12822,10 @@
     if ((e.renderKind === 'hero' && e.class === 'mage') || e.renderKind === 'prop') return 64;
     if (['dungeon', 'exit', 'transport'].includes(e.kind)) return 64;
     return 54;
+  }
+  function height(e) {
+    const scale = Number.isFinite(e.visualScale) && e.visualScale > 0 ? e.visualScale : 1;
+    return unscaledHeight(e) * scale;
   }
   const floorPalettes = [
     ['#294b36', '#31583e', '#203e30', '#95ad80'],
@@ -13961,6 +14000,7 @@
     allyBodyKind,
     enemyBodyKind,
     barracksVisualState,
+    featureScale,
   };
   if (typeof module !== 'undefined') module.exports = root.PrototypeVisuals;
 })(typeof window !== 'undefined' ? window : globalThis);
