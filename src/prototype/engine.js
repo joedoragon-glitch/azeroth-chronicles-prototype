@@ -3265,9 +3265,16 @@
           // Dust blinds the victim narratively: the goblin briefly cannot be
           // DIRECTLY targeted, but is still vulnerable to area damage.
           e.rogueDustCoverUntil = Math.max(e.rogueDustCoverUntil || 0, this.s.time + move.blinds);
+          // Break locked attacks immediately; party AI can pick another threat.
           if (this.s.heroTarget === e.id) this.s.heroTarget = null;
           if (this.hero.order?.type === 'attack' && this.hero.order.id === e.id)
             this.hero.order = null;
+          if (this.basicComboTargetId === e.id) this.resetBasicCombo();
+          for (const [id, selected] of this._tacticalPartyTargets || [])
+            if (selected === e.id) this._tacticalPartyTargets.delete(id);
+          this.s.projectiles = this.s.projectiles.filter(
+            (projectile) => projectile.source === 'enemy' || projectile.target !== e.id,
+          );
         }
         if (move.style === 'withdraw' && move.retreat > 0) {
           const d = Math.max(1, dist(e, target)),
