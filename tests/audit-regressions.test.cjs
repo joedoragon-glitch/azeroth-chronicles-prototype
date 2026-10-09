@@ -676,4 +676,62 @@ test('F76 field commander revives existing local soldier spawns but no summons o
   assert.equal(squad.filter(u=>u.hp>0).length,3,'three local defenders means no new rally spawn');
  }
 });
+
+test('F74 Blinding Dust immediately drops hero and companion attack locks',()=>{
+ const c=fresh(),dust=c.makeEnemy({species:'goblin',name:'Dust slinger',level:2,hp:200,damage:10,gold:0,xp:0},{x:1400,y:1700}),
+  other=c.makeEnemy({species:'skeleton',name:'other foe',level:2,hp:200,damage:10,gold:0,xp:0},{x:1480,y:1710}),
+  ally=c.unit('soldier',1450,1705);
+ c.zone().enemies=[dust,other];c.s.party=[ally];dust.aggro=true;other.aggro=true;
+ Object.assign(c.hero,{x:1450,y:1700,hp:1000,maxHp:1000});
+ c.line=()=>true;c.tacticalRogueOutnumbered=()=>false;
+ c.s.time=100;c.s.heroTarget=dust.id;c.hero.order={type:'attack',id:dust.id};
+ ally.order={type:'attack',id:dust.id};
+ c.basicComboTargetId=dust.id;c.basicComboStep=2;
+ c._tacticalPartyTargets=new Map([[ally.id,dust.id]]);
+ c.s.projectiles=[
+  {id:'shot-hero',target:dust.id,source:'hero'},
+  {id:'shot-ally',target:dust.id,source:ally.id},
+  {id:'shot-other',target:other.id,source:'hero'},
+  {id:'shot-enemy',target:dust.id,source:'enemy'},
+ ];
+ assert(c.tacticalRogueMove(dust,c.hero));
+ assert.equal(dust.telegraph.name,'Blinding Dust');
+ c.tacticalResolveRogueMove(dust,dust.telegraph);
+ assert.equal(dust.rogueDustCoverUntil,101.65);
+ assert.equal(c.s.heroTarget,null,'hero auto-focus is released');
+ assert.equal(c.hero.order,null,'hero attack-follow is canceled');
+ assert.equal(ally.order,null,'companion attack orders are canceled');
+ assert.equal(c.basicComboTargetId,null,'a combo cannot silently retain the goblin');
+ assert(![...c._tacticalPartyTargets.values()].includes(dust.id),'transient companion focus is removed');
+ assert.deepEqual(c.s.projectiles.map(p=>p.id),['shot-other','shot-enemy'],
+  'only direct homing shots against the covered goblin are canceled');
+ assert.equal(c.tacticalDirectTargetable(dust),false);
+});
+test('F75 Blinding Dust redirects auto targeting, respects AoE, and expires exactly',()=>{
+ const c=fresh(),dust=c.makeEnemy({species:'goblin',name:'Dust slinger',level:2,hp:300,damage:10,gold:0,xp:0},{x:1400,y:1700}),
+  other=c.makeEnemy({species:'skeleton',name:'uncovered foe',level:2,hp:300,damage:10,gold:0,xp:0},{x:1480,y:1700}),
+  ally=c.unit('soldier',1460,1710);
+ c.zone().enemies=[dust,other];c.s.party=[ally];c.s.time=45;c.line=()=>true;
+ Object.assign(c.hero,{x:1450,y:1700,hp:1000,maxHp:1000});
+ dust.aggro=true;other.aggro=true;c.tacticalRogueOutnumbered=()=>false;
+ assert(c.tacticalRogueMove(dust,c.hero));
+ c.tacticalResolveRogueMove(dust,dust.telegraph);
+ const before=dust.hp,otherBefore=other.hp;
+ assert.equal(c.damage(dust,55,'hero'),false,'manual and auto direct damage cannot land');
+ assert.equal(dust.hp,before);
+ assert(!c.squadThreats().includes(dust),'companion doctrine must exclude covered enemy');
+ assert(c.squadThreats().includes(other),'companion may focus another enemy');
+ c.updateParty(.1);
+ assert(![...c._tacticalPartyTargets.values()].includes(dust.id));
+ assert(c._tacticalPartyTargets.get(ally.id)===other.id,
+  'companion changes to an eligible foe instead of attacking dust');
+ c.hero.cd[0]=0;
+ assert(c.cast(1,dust.id),'hero basic auto-attack redirects to an eligible foe');
+ assert.equal(dust.hp,before);
+ assert(other.hp<otherBefore,'uncovered enemy receives the attack');
+ assert(c.damage(dust,10,'hero',{area:true}),'area damage still reaches the dust-covered goblin');
+ c.s.time=46.64;assert.equal(c.tacticalDirectTargetable(dust),false);
+ c.s.time=46.65;assert.equal(c.tacticalDirectTargetable(dust),true);
+ assert(c.damage(dust,10,'hero'),'ordinary direct targeting resumes after 1.65 seconds');
+});
 console.log(passed+' audit regression scenarios passed.');
