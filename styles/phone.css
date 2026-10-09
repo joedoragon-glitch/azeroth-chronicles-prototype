@@ -454,3 +454,27 @@ body[data-experience='phone'][data-phone-layout='left-hand'] #squad-button {
     width: min(390px, 58vw);
   }
 }
+
+/* Best-effort letterbox-style fit for smaller viewports. The design reference
+   remains 375x800 (800x375 rotated); no separate small-phone layout is authored. */
+body[data-experience='phone'] #joystick,
+body[data-experience='phone'] #recall-button,
+body[data-experience='phone'] #target-button,
+body[data-experience='phone'] #squad-button,
+body[data-experience='phone'] #touch-interact-button,
+body[data-experience='phone'] #order-button {
+  transform: scale(var(--phone-ui-fit, 1));
+  transform-origin: bottom left;
+}
+body[data-experience='phone'] #skills {
+  transform: scale(var(--phone-ui-fit, 1));
+  transform-origin: bottom right;
+}
+body[data-experience='phone'][data-phone-layout='left-hand'] #skills {
+  transform-origin: bottom left;
+}
+body[data-experience='phone'][data-phone-layout='left-hand'] #recall-button,
+body[data-experience='phone'][data-phone-layout='left-hand'] #target-button,
+body[data-experience='phone'][data-phone-layout='left-hand'] #squad-button {
+  transform-origin: bottom right;
+}
