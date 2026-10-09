@@ -8,7 +8,7 @@ const assert = require('node:assert/strict');
 function expectedStages(plan) {
   if (plan.kind === 'summon') return ['windup', 'spawn'];
   if (plan.kind === 'volley') return ['windup', 'release', 'travel', 'impact'];
-  if (plan.charge || plan.landing || plan.kind === 'line' && plan.advance)
+  if (plan.charge || plan.landing || (plan.kind === 'line' && plan.advance))
     return ['windup', 'travel', 'impact'];
   if (plan.kind === 'ring') return ['windup', 'release', 'travel'];
   return plan.persistent
@@ -17,25 +17,40 @@ function expectedStages(plan) {
 }
 
 function collect() {
-  const rows = [], known = new Set();
+  const rows = [],
+    known = new Set();
   function add(row) {
     assert(row.id, 'Visual key is required');
     assert(!known.has(row.id), 'Duplicate VFX key: ' + row.id);
-    assert(row.stages.every((s) => VFX.STAGES.includes(s)), 'Unknown stage: ' + row.id);
+    assert(
+      row.stages.every((s) => VFX.STAGES.includes(s)),
+      'Unknown stage: ' + row.id,
+    );
     known.add(row.id);
     rows.push(Object.freeze(row));
   }
 
   for (const b of Campaign.data.bosses) {
     const plans = Campaign.rules.attacks[b.id];
-    assert(Array.isArray(plans) && plans.length === b.attacks.length, b.id + ' rule/prose mismatch');
+    assert(
+      Array.isArray(plans) && plans.length === b.attacks.length,
+      b.id + ' rule/prose mismatch',
+    );
     for (const [index, plan] of plans.entries()) {
-      const normal = VFX.describe({ type: 'boss', family: b.id, form: 'normal' }, {
-        ...plan, index,
-      });
-      const trueForm = VFX.describe({ type: 'boss', family: b.id, form: 'true' }, {
-        ...plan, index,
-      });
+      const normal = VFX.describe(
+        { type: 'boss', family: b.id, form: 'normal' },
+        {
+          ...plan,
+          index,
+        },
+      );
+      const trueForm = VFX.describe(
+        { type: 'boss', family: b.id, form: 'true' },
+        {
+          ...plan,
+          index,
+        },
+      );
       assert.equal(normal.id, trueForm.id, b.id + ' TRUE shares stable attack ID');
       add({
         group: 'boss',
@@ -61,7 +76,7 @@ function collect() {
         name: plan.name,
         kind: plan.kind,
         stages: expectedStages(plan),
-        notes: 'Separate from the captain\'s second-phase presentation',
+        notes: "Separate from the captain's second-phase presentation",
       });
     }
     if (captain.phase)
@@ -85,7 +100,8 @@ function collect() {
       id: visual.id,
       name: species === 'wraith' ? 'Soul Drain' : 'Shadow Pounce',
       kind: 'circle',
-      stages: species === 'stalker' ? ['windup', 'travel', 'impact'] : ['windup', 'release', 'impact'],
+      stages:
+        species === 'stalker' ? ['windup', 'travel', 'impact'] : ['windup', 'release', 'impact'],
       notes: 'Night-exclusive authored skill',
     });
   }
@@ -122,9 +138,10 @@ function collect() {
   for (const [kind, profiles] of Object.entries(T.rogueSignatures || {})) {
     assert(['bosses', 'captains'].includes(kind), 'Unexpected rogue signature group: ' + kind);
     for (const [id, profile] of Object.entries(profiles)) {
-      const actor = kind === 'bosses'
-        ? { type: 'boss', family: id }
-        : { roomCaptain: true, captainProfile: id };
+      const actor =
+        kind === 'bosses'
+          ? { type: 'boss', family: id }
+          : { roomCaptain: true, captainProfile: id };
       const visual = VFX.describe(actor, { rogueMove: true, rogueSignature: true, kind: 'circle' });
       add({
         group: 'rogue-signature',
@@ -144,32 +161,53 @@ function collect() {
 function audit() {
   const rows = collect();
   const counts = Object.fromEntries(
-    [...new Set(rows.map((r) => r.group))].map((g) => [g, rows.filter((r) => r.group === g).length]),
+    [...new Set(rows.map((r) => r.group))].map((g) => [
+      g,
+      rows.filter((r) => r.group === g).length,
+    ]),
   );
-  assert.equal(counts.boss, Campaign.data.bosses.reduce(
-    (total, b) => total + Campaign.rules.attacks[b.id].length, 0,
-  ));
-  assert.equal(counts.captain, Object.values(Campaign.rules.roomCaptains).reduce(
-    (total, c) => total + c.attacks.length, 0,
-  ));
-  assert.equal(counts['captain-phase'],
-    Object.values(Campaign.rules.roomCaptains).filter((c) => c.phase).length);
+  assert.equal(
+    counts.boss,
+    Campaign.data.bosses.reduce((total, b) => total + Campaign.rules.attacks[b.id].length, 0),
+  );
+  assert.equal(
+    counts.captain,
+    Object.values(Campaign.rules.roomCaptains).reduce((total, c) => total + c.attacks.length, 0),
+  );
+  assert.equal(
+    counts['captain-phase'],
+    Object.values(Campaign.rules.roomCaptains).filter((c) => c.phase).length,
+  );
   assert.equal(counts.night, Object.keys(Campaign.rules.nightEnemyCombat).length);
   assert.equal(counts.ranged, Object.keys(Campaign.rules.rangedProfiles).length);
   return { counts, total: rows.length, rows };
 }
 
 function markdown(report) {
-  const lines = ['# Enemy VFX authored-skill inventory (generated, read-only)', '',
+  const lines = [
+    '# Enemy VFX authored-skill inventory (generated, read-only)',
+    '',
     'Generated from live rules and data; does **not** claim implementation of the visual stages.',
-    'Stages below are proposed presentation slots, not gameplay timing or new mechanics.', '',
+    'Stages below are proposed presentation slots, not gameplay timing or new mechanics.',
+    '',
     '| Group | Visual ID | Current authored move | Effect kind | Future visual stages |',
-    '| --- | --- | --- | --- | --- |'];
+    '| --- | --- | --- | --- | --- |',
+  ];
   for (const r of report.rows)
     lines.push(
-      '| ' + r.group + ' | `' + r.id + '` | ' +
-      r.owner.replace(/\|/g, '/') + ': ' + r.name.replace(/\|/g, '/') +
-      ' | ' + r.kind + ' | ' + r.stages.join(', ') + ' |',
+      '| ' +
+        r.group +
+        ' | `' +
+        r.id +
+        '` | ' +
+        r.owner.replace(/\|/g, '/') +
+        ': ' +
+        r.name.replace(/\|/g, '/') +
+        ' | ' +
+        r.kind +
+        ' | ' +
+        r.stages.join(', ') +
+        ' |',
     );
   return lines.join('\n') + '\n';
 }
@@ -177,8 +215,10 @@ function markdown(report) {
 if (require.main === module) {
   const report = audit();
   if (process.argv.includes('--markdown')) process.stdout.write(markdown(report));
-  else if (process.argv.includes('--json')) process.stdout.write(JSON.stringify(report, null, 2) + '\n');
-  else console.log('PASS enemy skill VFX inventory: ' + report.total + ' descriptors', report.counts);
+  else if (process.argv.includes('--json'))
+    process.stdout.write(JSON.stringify(report, null, 2) + '\n');
+  else
+    console.log('PASS enemy skill VFX inventory: ' + report.total + ' descriptors', report.counts);
 }
 
 module.exports = { expectedStages, collect, audit, markdown };
