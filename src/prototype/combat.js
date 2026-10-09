@@ -142,6 +142,11 @@
         // Direct target selection is invalid immediately, not merely at the
         // moment damage would land. Other foes remain auto-targetable.
         if (this.s.heroTarget === e.id) this.s.heroTarget = null;
+        if (this.manualHeroTargetId === e.id) {
+          this.manualHeroTargetId = null;
+          this.manualHeroTargetZone = null;
+          this.manualHeroTargetLocked = false;
+        }
         if (this.hero.order?.type === 'attack' && this.hero.order.id === e.id)
           this.hero.order = null;
         if (this.basicComboTargetId === e.id) this.resetBasicCombo();
