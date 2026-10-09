@@ -3009,7 +3009,7 @@
       const target =
         move.targetId === 'hero'
           ? this.hero
-          : this.s.party.find((u) => u.id === move.targetId && u.active !== false);
+          : this.combatTargets().find((u) => u !== this.hero && u.id === move.targetId);
       if (!move.rogueSignature) {
         // Base movement remains single-target and cover-sensitive.
         if (!target || target.hp <= 0 || dist(target, move) > move.radius || !this.line(e, target))
