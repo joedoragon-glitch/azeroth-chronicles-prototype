@@ -136,7 +136,7 @@
             this.expeditionUnlock(this.s.expeditionRank) +
             '.',
         );
-       this.event('expeditionRank', { rank: this.s.expeditionRank, family });
+        this.event('expeditionRank', { rank: this.s.expeditionRank, family });
         return true;
       }
       teacherCatalog(family) {
@@ -178,7 +178,7 @@
               ? ' Companion training advanced: Soldiers learned Holy Cleave; Archers learned Piercing Volley.'
               : ''),
         );
-       this.event('learning', { slot });
+        this.event('learning', { slot });
         return true;
       }
       upgrade(slot, family) {
@@ -201,7 +201,7 @@
         }
         this.hero.skills[slot - 1] = next;
         this.say(def[1] + ' upgraded · Rank ' + next + '.');
-       this.event('upgrade', { slot, rank: next });
+        this.event('upgrade', { slot, rank: next });
         return true;
       }
 
@@ -241,7 +241,7 @@
               : 'bonus HP, damage and armor') +
             '.',
         );
-       this.event('expeditionSupport', { id, rank: next, family });
+        this.event('expeditionSupport', { id, rank: next, family });
         return true;
       }
 
@@ -284,7 +284,7 @@
             pct +
             '%.',
         );
-       this.event('companionVitality', { rank: this.companionVitalityRank(), family });
+        this.event('companionVitality', { rank: this.companionVitalityRank(), family });
         return true;
       }
 
@@ -321,7 +321,7 @@
             (this.hero.freeTalentResets === 1 ? '' : 's') +
             ' left.',
         );
-       this.event('talentRespec', {
+        this.event('talentRespec', {
           points: spent,
           free: true,
           remaining: this.hero.freeTalentResets,
@@ -340,7 +340,7 @@
             (spent === 1 ? '' : 's') +
             ' refunded.',
         );
-       this.event('talentRespec', { points: spent, family, free: false });
+        this.event('talentRespec', { points: spent, family, free: false });
         return true;
       }
       rangerSupportRank(type) {
@@ -377,7 +377,7 @@
             (type === 'health' ? 'HP to the active party' : 'MP to the hero') +
             ' over five seconds.',
         );
-       this.event('rangerSupportTraining', { type, rank: 2 });
+        this.event('rangerSupportTraining', { type, rank: 2 });
         return true;
       }
       weaponTierBonus(tier = this.hero.weapon) {
@@ -461,7 +461,7 @@
               (slot === 'weapon' ? 'power' : 'armor') +
               '.',
           );
-       } else {
+        } else {
           if (old >= tier) {
             this.say(
               old === tier
@@ -492,7 +492,7 @@
               (slot === 'weapon' ? 'power' : 'armor') +
               '.',
           );
-       }
+        }
         if (slot === 'weapon') this.autoEquipBestWeapon();
         this.event('purchase', { slot, tier, reforge });
         return true;
