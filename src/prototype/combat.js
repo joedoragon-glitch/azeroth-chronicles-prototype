@@ -100,6 +100,26 @@
         return !!e && (e.rogueDustCoverUntil || 0) <= (this.s.time || 0);
       }
 
+      tacticalDropDustTarget(e) {
+        if (!e?.id) return;
+        // Direct target selection is invalid immediately, not merely at the
+        // moment damage would land. Other foes remain auto-targetable.
+        if (this.s.heroTarget === e.id) this.s.heroTarget = null;
+        if (this.hero.order?.type === 'attack' && this.hero.order.id === e.id)
+          this.hero.order = null;
+        if (this.basicComboTargetId === e.id) this.resetBasicCombo();
+        for (const u of this.s.party) {
+          if (u.order?.type === 'attack' && u.order.id === e.id) u.order = null;
+        }
+        if (this._tacticalPartyTargets)
+          for (const [id, targetId] of this._tacticalPartyTargets)
+            if (targetId === e.id) this._tacticalPartyTargets.delete(id);
+        // Already launched single-target shots are abandoned. Area effects
+        // retain their own hit geometry and remain able to damage the goblin.
+        this.s.projectiles = this.s.projectiles.filter(
+          (p) => p.source === 'enemy' || p.target !== e.id,
+        );
+      }
       tacticalProtectionTier(e) {
         if (e?.type === 'boss') return e.form === 'true' ? 'trueBoss' : 'boss';
         if (e?.captain || e?.roomCaptain) return 'captain';
