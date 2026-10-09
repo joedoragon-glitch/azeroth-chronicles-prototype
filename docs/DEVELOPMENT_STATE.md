@@ -212,6 +212,11 @@ Recovered the strictly presentation-only feature-scale and original-export prepa
 
 This is the **initial proportional presentation pass**, not a verified completed spatial-crowding audit, a whole-world art makeover, or completion of issue #160. See PROPORTION_IMPLEMENTATION_CHECKPOINT.md, WORLD_PROPORTION_AND_DENSITY_GUARDRAILS.md, and original art-production checkpoint in PR #145. Publish only after full CI and exact live Pages verification.
 
+
+## Bounded ground projection · v0.8.124
+
+Ground materials reuse a screen-aligned isometric repeat at the current physical Canvas scale. Original world phase, opacity and surface clips remain authoritative. A separate 8 MiB projected RGBA LRU cache supplements the existing 2 MiB source-image budget; eviction and manifest retirement release backing stores. Unsupported/oversized/non-ground transforms keep the original projection. Artwork, scene animation, gameplay and saves remain unchanged. See [MATERIAL_RENDERING_PERFORMANCE.md](MATERIAL_RENDERING_PERFORMANCE.md) for regression evidence, sampling tolerances and device-test limits.
+
 ## Outbound regional transport restoration · prepared correction
 
 Player observed that #147 moved the outgoing merchant wagon, pack caravan and dragon rider away from remote authored departure points, collapsing the intended departure-road visual identity. Correction restores original D.ports for Vale (2450,650), Highlands (3100,500) and Frontier (3100,500), while preserving incoming wagon/ferry landings, travel fares and Crown hubs. Versioned road, NPC and procedural scenery migrations reconstruct existing authored route-linked visual elements on old saves. No monster, boss, sprite, audio or combat change. Publish only after complete CI and live route verification. See TRANSPORT_ARRIVALS_AND_BURST_COMPRESSION.md and transport-departure-canon regression.
