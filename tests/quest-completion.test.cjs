@@ -1,9 +1,6 @@
 'use strict';
 const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine');
-const D = C.data;
-assert.equal(Object.keys(D.questNarration).length, 30);
-assert.equal(new Set(Object.values(D.questNarration)).size, 30);
 function kill(c, e) {
   e.hp = 0;
   e.heroParticipated = false;
@@ -55,35 +52,16 @@ for (const mode of ['normal', 'nightmare']) {
       c.s.quests[q.id].done && c.s.quests[q.id].paid,
       q.id + ' completes through its real objective',
     );
-    const messages = c.notices.filter((n) => n.text === D.questNarration[q.id]);
-    assert.equal(messages.length, 1, q.id + ' speaks once');
-    assert.equal(messages[0].duration, 7);
-    assert.equal(messages[0].detail, q.name + ' · +' + q.xp + ' XP · +' + q.gold + ' crowns');
-    assert(D.questNarration[q.id].length <= 210, 'phone reading budget');
     const before = c.snapshot();
     c.checkQuests();
     assert(!c.claim(q.id));
     assert.equal(c.hero.gold, before.hero.gold);
-    assert.equal(c.notices.filter((n) => n.text === D.questNarration[q.id]).length, 1);
     const restored = C.restore(c.snapshot());
     restored.checkQuests();
-    assert(
-      !restored.notices.some((n) => n.text === D.questNarration[q.id]),
-      'paid saves do not replay narration',
-    );
+    assert(restored.s.quests[q.id].paid, 'paid saves retain completion');
+    assert.equal(restored.notices.length, 0, 'paid saves do not replay notices');
   }
 }
-// A rescue with an unfinished compound remains a distinct milestone; immediate
-// rescue completion combines both meanings in its authored narration.
-const c = new C('normal', 'paladin', () => 0.9);
-c.enter('archive');
-kill(
-  c,
-  c.zone().enemies.find((e) => e.family === 'archive' && e.type === 'boss'),
-);
-c.rescue('archive');
-assert(c.notices.some((n) => n.text === D.questNarration['quest-8']));
-assert(!c.notices.some((n) => n.text.includes('rescued · new services')));
 console.log(
-  'PASS all 30 real quest objectives in both modes, once-only narration, reward details, rescue coordination and paid-save silence',
+  'PASS all 30 real quest objectives in both modes, once-only rewards and paid-save silence',
 );

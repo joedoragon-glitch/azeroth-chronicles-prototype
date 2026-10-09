@@ -10,6 +10,7 @@ function audit() {
   for (const r of live.rows) {
     assert(r.presentation, 'Missing shared presentation profile: ' + r.id);
     assert(E.textures[r.presentation.material], 'Missing audio material: ' + r.id);
+    assert(E.personalities[r.presentation.personality], 'Missing audio personality: ' + r.id);
     if (r.presentation.accent)
       assert(E.motifs[r.presentation.accent], 'Missing important accent: ' + r.id);
     for (const variant of ['normal', 'true'])

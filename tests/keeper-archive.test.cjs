@@ -155,6 +155,40 @@ assert.equal(copy.visibleNPCs().filter((n) => n.id === 'keeper-captive').length,
 const saved = copy.snapshot();
 saved.keeperPact = 'yes';
 assert.throws(() => C.restore(saved), /Invalid Archive knowledge/);
+// Availability remains exclusive even for a restored/inconsistent cached normal actor.
+const duplicate = C.restore(copy.snapshot());
+const liveNormal = duplicate.bossEnemy(duplicate.boss('archive'), 'normal', { x: 1100, y: 1100 });
+duplicate.zone().enemies.push(liveNormal);
+assert(!duplicate.keeperAvailable(), 'Any living Keeper blocks captive and remote counsel');
+liveNormal.hp = 0;
+assert(duplicate.keeperAvailable());
+duplicate.s.pending.archive = { kind: 'dungeon', count: 1, active: false };
+assert(duplicate.keeperAvailable(), 'Inactive later TRUE roll permits the existing bargain');
+// Exercise the real early-TRUE roll rather than only manually scheduling Awakening.
+const early = new C('normal', 'paladin', () => 0.1);
+early.enter('archive');
+const earlyNormal = early.zone().enemies.find((e) => e.type === 'boss' && e.family === 'archive');
+earlyNormal.hp = 0;
+early.kill(earlyNormal);
+assert(
+  early.s.earlyRoll.archive && early.s.pending.archive,
+  'Normal victory records the early TRUE roll',
+);
+assert(early.keeperAvailable(), 'An unactivated early return does not prevent the bargain');
+early.enter('march');
+early.enter('archive');
+assert(early.s.pending.archive?.active, 'Reentry activates the rolled early TRUE return');
+assert(
+  !early.visibleNPCs().some((n) => n.kind === 'keeper'),
+  'Early TRUE escape hides the captive',
+);
+const earlyTrue = early
+  .zone()
+  .enemies.find((e) => e.type === 'boss' && e.form === 'true' && e.hp > 0);
+assert(earlyTrue);
+earlyTrue.hp = 0;
+early.kill(earlyTrue);
+assert(early.keeperAvailable(), 'Early TRUE defeat permits recapture');
 console.log(
   'PASS Drowned Keeper capture, Neri bargain, optional codex, TRUE escape and save safety',
 );

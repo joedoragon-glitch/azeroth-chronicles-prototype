@@ -182,6 +182,14 @@ The desktop/phone presentation now keeps a compact HUD instead of the old broad 
 
 Phone: thumb-adjacent contextual Interact, stable Recall/Target/Squad grouping, clearer labels and notifications. Desktop: compact unlocked-skill hotbar, contextual Ranger commands and corrected camera anchor. Short interaction dialogs now use natural compact/regular widths and natural height under the same scroll limits. Inventory removes duplicate Recall and disabled support actions; Barracks Operations copy matches its real functions. The canonical supported minimum stays 375x800 CSS portrait/800x375 landscape; 360x780 is only a scaled best-effort fallback and does not govern the design or add device support commitments. See RESPONSIVE_UI_AUDIT_20261009.md. Draft branch only until review and CI.
 
-## Quest observations and optional Keeper Archive · v0.8.116 continuation
+## Enemy VFX quality audit v0.8.116
 
-The continuation integrates the previously approved Keeper encounter, short status and amber milestone work, then adds all 30 once-only regional quest observations. Neri's rescue and the Archive promise gate optional counsel; reading a discoverable ledger gates the capture-plan reveal. TRUE activation removes the captive before combat and defeat permits recapture. The categorized read-only reference uses current rules and campaign queries, while Controls keeps the practical survival instructions. Existing quest budgets, v4 saves, UI and rogue changes remain compatible. See `QUEST_ARCHIVE_CONTINUATION.md` for state policy, source decisions and verification; release remains gated on exact-head CI and published-build checks.
+The follow-up audit corrects captain/species basic-hit semantics and Ridge Tyrant hammer feedback, observes actual motion/projectile lifetimes for replacement clips, suppresses stale persistent-area art after revival/reentry, preserves effects on failed travel, handles manifest reload races/failures and culls offscreen actor-local stages. The browser catalog now requires real contact for all 28 basic identities. Combat rules, merged rogue mechanics, audio recordings and v4 saves remain unchanged. See [ENEMY_SKILL_VFX_QUALITY_AUDIT.md](ENEMY_SKILL_VFX_QUALITY_AUDIT.md) for matched desktop/phone evidence and verification.
+
+## Final audio/VFX audit · v0.8.117
+
+Automatic TRUE/captain births retain their own authored summon/phase identities while another attack is winding up. Strict routing rejects unknown stages/personality layers; the expanded gate covers all 84 rogue basic identities and 40 signatures. Recorded foreground levels and the warning pair are corrected without changing gameplay. See [ENEMY_AUDIO_FINAL_AUDIT.md](ENEMY_AUDIO_FINAL_AUDIT.md) and its PR for exact candidate CI, published SHA and live desktop/phone verification.
+
+## Keeper and feedback continuation · v0.8.118
+
+The interrupted PR #185 is reconciled with the current audio/VFX release. Captive Keeper, optional live-rule Archive reference, evidence-gated reveal, TRUE escape/recapture, practical Controls, short status, truthful equipment confirmations and milestone notices are completed. Superseded 30-quest prose is excluded; selective narration remains held in draft #184. See QUEST_ARCHIVE_CONTINUATION.md for states and verification.

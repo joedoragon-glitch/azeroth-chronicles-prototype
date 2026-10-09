@@ -297,7 +297,7 @@
       if (!this.s.normal.archive) return false;
       if (this.s.pending.archive?.active) return false;
       const room = this.s.zones.archive;
-      return !room?.enemies.some((e) => e.family === 'archive' && e.form === 'true' && e.hp > 0);
+      return !room?.enemies.some((e) => e.type === 'boss' && e.family === 'archive' && e.hp > 0);
     }
     keeperPactReady() {
       return this.keeperAvailable() && !!this.s.rescued.archive;
@@ -1184,17 +1184,7 @@
       this.s.rescued[family] = true;
       this.refreshNPCs();
       this.say(this.boss(family).captive + ' is free and returning to town.');
-      const narratedRescue = this.questDefs().some(
-        (q) =>
-          q.kind === 'rescue' &&
-          q.target === family &&
-          !this.s.quests[q.id]?.paid &&
-          !this.s.quests[q.id]?.closedByPeace &&
-          (!q.clear || this.miniCleared(q.clear, q.region)) &&
-          D.questNarration?.[q.id],
-      );
-      if (!narratedRescue)
-        this.notice(this.boss(family).captive + ' rescued · new services unlocked', 5.5);
+      this.notice(this.boss(family).captive + ' rescued · new services unlocked', 5.5);
       this.event('rescue', { family });
       this.checkQuests();
       return true;

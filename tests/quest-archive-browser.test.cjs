@@ -65,35 +65,71 @@ const server = http.createServer((req, res) => {
       await page.keyboard.press('f');
       await page.keyboard.press('f');
       await page.waitForFunction(() => document.querySelector('#modal').hidden);
+      const cuePlacement = await page.evaluate(() => {
+        const c = Prototype.game,
+          ctx = document.querySelector('canvas').getContext('2d');
+        const recruiter = c.zone().npcs.find((n) => n.kind === 'recruiter');
+        c.tick = () => {};
+        Object.assign(c.hero, { x: recruiter.x, y: recruiter.y + 80 });
+        const arc = ctx.arc,
+          fillText = ctx.fillText,
+          glyphs = [];
+        let circle;
+        try {
+          ctx.arc = function (x, y, radius, ...args) {
+            if (radius === 16) circle = { x, y, radius };
+            return arc.call(this, x, y, radius, ...args);
+          };
+          ctx.fillText = function (text, x, y, ...args) {
+            if (text === '!') glyphs.push({ x, y, circle });
+            return fillText.call(this, text, x, y, ...args);
+          };
+          Prototype.renderer.draw();
+        } finally {
+          ctx.arc = arc;
+          ctx.fillText = fillText;
+        }
+        return glyphs;
+      });
+      assert(cuePlacement.length, 'Recruiter cue is rendered near the hero');
+      for (const glyph of cuePlacement) {
+        assert(glyph.circle && Math.abs(glyph.x - glyph.circle.x) < 1);
+        assert(
+          Math.abs(glyph.y - glyph.circle.y) < glyph.circle.radius,
+          'Recruiter glyph remains inside its marker circle',
+        );
+      }
       await page.evaluate(() => {
         const c = Prototype.game;
         c.tick = () => {};
         c.hero.level = 20;
         c.hero.xp = 0;
-        for (const id of ['quest-1', 'quest-5']) {
-          const q = c.questDefs().find((q) => q.id === id);
-          c.s.quests[id].done = true;
-          c.payQuest(q, c.s.quests[id]);
-        }
+        c.notice('BOSS VANQUISHED · The Drowned Keeper', 7, 'The Archive is open to exploration.');
+        c.notice('Sunken Archive · halls secured', 7, 'First clear reward delivered.');
         Prototype.updateHUD();
       });
       await page.waitForFunction(
         () => document.querySelectorAll('#message .notice-card .notice-detail').length === 2,
       );
       const cards = await page.locator('#message .notice-card').allTextContents();
-      assert(cards[0].includes('road is a little quieter') && cards[1].includes('Fields, camps'));
+      assert(cards[0].includes('BOSS VANQUISHED') && cards[1].includes('halls secured'));
       assert.equal(await page.locator('#message .notice-detail').count(), 2);
       const bounds = await page.locator('#message').boundingBox();
       assert(bounds.x >= 0 && bounds.x + bounds.width <= viewport.width + 1);
       if (phone) {
-        await page.evaluate(
-          () => (document.querySelector('#status').textContent = 'Need 70 crowns.'),
-        );
-        await page.waitForTimeout(40);
-        const b = await page.locator('#status').boundingBox();
-        assert(b.y >= bounds.y + bounds.height, 'long narration and status remain separate');
+        const separate = await page.evaluate(() => {
+          document.querySelector('#status').textContent = 'Need 70 crowns.';
+          Prototype.updateHUD();
+          const status = document.querySelector('#status').getBoundingClientRect();
+          const notices = document.querySelector('#message').getBoundingClientRect();
+          return (
+            document.querySelectorAll('#message .notice-card').length === 2 &&
+            status.top >= notices.bottom
+          );
+        });
+        assert(separate, 'stacked milestones and status remain separate');
       }
-      await page.screenshot({ path: path.join(out, 'quest-narration-' + tag + '.png') });
+      await page.screenshot({ path: path.join(out, 'archive-milestones-' + tag + '.png') });
       await page.evaluate(() => (document.querySelector('#status').textContent = ''));
       await page.waitForFunction(
         () => !document.querySelector('#message').classList.contains('visible'),
@@ -191,7 +227,7 @@ const server = http.createServer((req, res) => {
       console.log(
         'PASS ' +
           tag +
-          ' two narrative cards, status spacing, practical controls, cage, bargain, optional knowledge, evidence, save and TRUE escape',
+          ' two milestone cards, status spacing, practical controls, cage, bargain, optional knowledge, evidence, save and TRUE escape',
       );
       await page.close();
     }

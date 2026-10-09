@@ -1411,7 +1411,7 @@
             ctx.stroke();
             ctx.fillStyle = '#19291e';
             ctx.font = 'bold 23px system-ui';
-            ctx.fillText(cue, p.x, p.y + 322);
+            ctx.fillText(cue, p.x, p.y - 72);
           }
         }
         if (e.renderKind === 'building' && worldLabelVisible(e)) {

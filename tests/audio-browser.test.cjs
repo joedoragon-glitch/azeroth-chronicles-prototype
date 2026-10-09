@@ -129,6 +129,7 @@ const root = path.resolve(__dirname, '..'),
               get(target, key) {
                 if (key === 'currentTime') return now;
                 if (key === 'state') return 'running';
+                if (key === 'close') return () => Promise.resolve();
                 const value = Reflect.get(target, key, target);
                 return typeof value === 'function' ? value.bind(target) : value;
               },
@@ -183,12 +184,20 @@ const root = path.resolve(__dirname, '..'),
           results.push({ id, peak });
         }
         await ctx.close();
-        const render = async (material, stage, contact = true, variant = 'normal') => {
+        const render = async (
+          material,
+          stage,
+          contact = true,
+          variant = 'normal',
+          warm = false,
+          accent = 'darklord',
+        ) => {
           const context = new OfflineAudioContext(1, 22050, 22050),
             a = new PrototypeAudio();
           a.ctx = new Proxy(context, {
             get(target, key) {
               if (key === 'state') return 'running';
+              if (key === 'close') return () => Promise.resolve();
               const v = Reflect.get(target, key, target);
               return typeof v === 'function' ? v.bind(target) : v;
             },
@@ -201,12 +210,33 @@ const root = path.resolve(__dirname, '..'),
             a.buses[key].connect(a.buses.master);
           a.setMixProfile(phone ? 'phone' : 'reference');
           a.applySettings();
-          a.playSoundEvent = () => false;
+          if (warm) {
+            a.configureRecordings(manifest, { baseUrl: new URL('./', location.href).href });
+            const store = await a.assetsForRecordings();
+            await store.load(
+              stage === 'windup' ? 'sfx-critical-warning' : 'sfx-' + material + '-' + stage,
+            );
+          } else a.playSoundEvent = () => false;
+          // Freeze cosmetic noise for reproducible cross-engine level comparisons.
+          const noiseBurst = a.noiseBurst;
+          a.noiseBurst = function (...args) {
+            let seed = 9300;
+            const random = Math.random;
+            Math.random = () => {
+              seed = (seed * 1664525 + 1013904223) >>> 0;
+              return seed / 4294967296;
+            };
+            try {
+              return noiseBurst.apply(this, args);
+            } finally {
+              Math.random = random;
+            }
+          };
           const p = {
             material,
             personality: 'military',
             action: 'circle',
-            accent: 'darklord',
+            accent,
             summon: false,
           };
           a.effect({
@@ -219,6 +249,8 @@ const root = path.resolve(__dirname, '..'),
             dangerous: true,
             target: stage === 'spawn' ? 'born-unit' : undefined,
           });
+          if (warm && ![...a.voices].some((v) => v.recorded))
+            throw Error('Warm enemy recording did not dispatch');
           const pcm = (await context.startRendering()).getChannelData(0);
           let peak = 0,
             square = 0;
@@ -227,7 +259,21 @@ const root = path.resolve(__dirname, '..'),
             peak = Math.max(peak, Math.abs(x));
             square += x * x;
           }
-          return { material, stage, peak, rms: Math.sqrt(square / pcm.length) };
+          const windowRms = (start, end) => {
+            const samples = pcm.slice(Math.round(start * 22050), Math.round(end * 22050));
+            return Math.sqrt(samples.reduce((sum, x) => sum + x * x, 0) / samples.length);
+          };
+          const value = {
+            material,
+            stage,
+            warm,
+            peak,
+            rms: Math.sqrt(square / pcm.length),
+            firstPulse: windowRms(0.005, 0.08),
+            secondPulse: windowRms(0.11, 0.185),
+          };
+          a.dispose();
+          return value;
         };
         for (const material of materials)
           for (const stage of ['windup', 'release', 'impact', 'phase', 'spawn']) {
@@ -236,6 +282,44 @@ const root = path.resolve(__dirname, '..'),
             if (value.rms < 0.00005 || value.peak >= 1)
               throw Error('Bad enemy stage ' + JSON.stringify(value));
           }
+        const comparisons = [];
+        for (const material of materials)
+          for (const stage of ['windup', 'release', 'impact']) {
+            const cold = await render(material, stage),
+              warm = await render(material, stage, true, 'normal', true);
+            if (warm.rms < 0.00005 || warm.peak >= 1) throw Error('Invalid warm output');
+            const deltaDb = 20 * Math.log10(warm.rms / cold.rms);
+            if (Math.abs(deltaDb) > 4)
+              throw Error(
+                'Recorded/fallback level jump: ' + material + '/' + stage + ' ' + deltaDb,
+              );
+            if (
+              stage === 'windup' &&
+              (warm.secondPulse / warm.firstPulse < 0.35 ||
+                cold.secondPulse / cold.firstPulse < 0.2)
+            )
+              throw Error('Warning lost its second pulse');
+            comparisons.push({
+              material,
+              stage,
+              cold,
+              warm,
+              deltaDb: 20 * Math.log10(warm.rms / cold.rms),
+            });
+          }
+        for (const material of materials) {
+          const cold = await render(material, 'release', true, 'normal', false, null),
+            warm = await render(material, 'release', true, 'normal', true, null);
+          if (Math.abs(20 * Math.log10(warm.rms / cold.rms)) > 4)
+            throw Error('Common creature recording/fallback level jump: ' + material);
+          comparisons.push({
+            material,
+            stage: 'common-release',
+            cold,
+            warm,
+            deltaDb: 20 * Math.log10(warm.rms / cold.rms),
+          });
+        }
         const missed = await render('steel', 'impact', false);
         if (missed.peak !== 0) throw Error('Fake impact on miss');
         const a = Prototype.audio;
@@ -257,10 +341,32 @@ const root = path.resolve(__dirname, '..'),
         return {
           files: results.length,
           materials: materials.length,
+          comparisons,
           missed,
           voices: a.voices.size,
         };
       }, phone);
+      fs.mkdirSync(path.join(root, 'test-results'), { recursive: true });
+      fs.writeFileSync(
+        path.join(
+          root,
+          'test-results',
+          'enemy-audio-mix-' + engine + '-' + (phone ? 'phone' : 'desktop') + '.json',
+        ),
+        JSON.stringify(enemyAudio.comparisons, null, 2) + '\n',
+      );
+      console.log(
+        'Enemy recorded/procedural mix:',
+        engine,
+        phone ? 'phone' : 'desktop',
+        JSON.stringify(
+          enemyAudio.comparisons.map((x) => ({
+            material: x.material,
+            stage: x.stage,
+            deltaDb: +x.deltaDb.toFixed(2),
+          })),
+        ),
+      );
       assert.equal(enemyAudio.files, 30);
       assert.equal(enemyAudio.materials, 12);
       // Real rendering proves audio output, not musical polish or actual iPhone speaker comfort.
