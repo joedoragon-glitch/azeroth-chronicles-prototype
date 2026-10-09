@@ -7,6 +7,11 @@
       soundKind(input) {
         const e = typeof input === 'string' ? { type: input } : input || {},
           type = e.type;
+        if (e.presentationHandled) return null;
+        if (type === 'enemyVfx') {
+          const d = this.enemySoundDecision(e);
+          return d?.mode === 'shared' ? d.key : null;
+        }
         if (type === 'melee') {
           if (e.special === 'power-strike') return 'powerStrike';
           if (e.special === 'holy-cleave') return null;
@@ -75,7 +80,9 @@
       }
       supportsType(type) {
         return (
-          contextualEffectTypes.has(type) || Object.prototype.hasOwnProperty.call(eventNotes, type)
+          type === 'enemyVfx' ||
+          contextualEffectTypes.has(type) ||
+          Object.prototype.hasOwnProperty.call(eventNotes, type)
         );
       }
       allowSfx(key, now, gap) {
@@ -218,6 +225,7 @@
         this.tone(45, now, 0.16, 0.035, 'triangle', 'effects', 0.004);
       }
       effect(input) {
+        if (input?.type === 'enemyVfx') return this.enemyExpression(input);
         const previous = this.sourcePriority;
         const type = typeof input === 'string' ? input : input?.type;
         this.sourcePriority = ['warning', 'death', 'gameOver'].includes(type) ? 3 : 1;

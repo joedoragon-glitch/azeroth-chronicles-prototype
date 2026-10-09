@@ -211,7 +211,10 @@ async function showroom(recordFile) {
     Materials = require('../src/prototype/materials.js'),
     regions = ['vale', 'march', 'highlands', 'frontier', 'crown'],
     region = regions.indexOf(record.key.split(':')[2]);
-  fail(record.key.startsWith('terrain:ground:') && region >= 0, 'Ground scene review only');
+  fail(
+    ['ground', 'road'].includes(record.key.split(':')[1]) && region >= 0,
+    'Regional ground/road scene review only',
+  );
   class PreviewImage extends Image {
     set src(_) {
       super.src = candidate;
@@ -236,8 +239,9 @@ async function showroom(recordFile) {
     [320, 568],
   ])
     for (const lighting of ['day', 'night']) {
-      const baseline = Sprites.scene(contract, width, height, null, lighting),
-        proposed = Sprites.scene(contract, width, height, null, lighting, layer);
+      const options = { reviewRoad: record.key.startsWith('terrain:road:') };
+      const baseline = Sprites.scene(contract, width, height, null, lighting, null, options),
+        proposed = Sprites.scene(contract, width, height, null, lighting, layer, options);
       fail(hash(baseline.bytes) !== hash(proposed.bytes), 'Material was not painted');
       const cropWidth = Math.min(width, 320),
         cropHeight = Math.min(height, 230),

@@ -1203,6 +1203,7 @@
           (e) =>
             e.hp > 0 &&
             !e.neutral &&
+            game.tacticalDirectTargetable(e) &&
             Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= range &&
             game.line(game.hero, e),
         );
@@ -2084,7 +2085,7 @@
     }
     const events = game.effects.splice(0);
     renderer.queue(events);
-    renderer.update(dt);
+    renderer.update(frozen ? 0 : dt);
     for (const e of events) audio.effect(e);
     if (
       events.some((e) =>

@@ -1,5 +1,9 @@
 # Current development state
 
+## Integrated rogue repertoire · v0.8.111 candidate
+
+PR #146 is reconciled with main's v0.8.109 targeting/compression and VFX foundation. `ROGUE_PR146_INTEGRATION_AUDIT.md` records actual-effect coverage, dust/ADDS targeting, local respawn restraint, active brood/Crown rally and death/save cleanup. Normal boss summons, base rotations and world geometry remain unchanged. Dedicated Chromium/WebKit rogue checks join the existing PR/main gates; deployment still requires exact published-commit verification. See PR #146 for current CI and merge/deployment state.
+
 ## Foundation complete in v0.8.81
 
 Desktop/browser and phone presentation are distinct. World authoring, navigation, rendering, persistence, platform selection and runtime measurements have explicit module boundaries. Entry generation, offline assets, versioning and deployment use a shared build inventory. Existing maps, campaign behavior and procedural sprite canon are preserved.
@@ -161,3 +165,11 @@ The current v0.8.108 balance follows the doubled-curve request and the later exa
 ## Dynamic boss/ADDS squad doctrine · 9 October 2026
 
 v0.8.109 preserves the player's existing BOSS/ADDS toggle, Paladin boss-focus default, and Mage/Ranger adds-first default. In ADDS mode, companions **ignore the boss whenever active non-boss threats or its live summons need clearing**; they fight the boss immediately once no such target remains and automatically resume add clearing on a new wave or active attacker. An owned new summon qualifies even before its aggro flag activates or it enters the usual companion local range. Explicit BOSS orders stay in force throughout the encounter, even if a boss temporarily drops out of the squad's threat list. A player-selected ADDS order likewise stays until disengagement or the user toggles; a full encounter end resets to each class default. No changes to boss summons, compression, classes, damage or formation geometry. Includes three-class target-selection regressions and corrected HUD tooltips.
+
+## Enemy skill VFX overhaul v0.8.113
+
+The observation-only bridge and restrained procedural art cover 251 live identities, with all normal/TRUE boss moves, captain skills/phases, ordinary/guardian/ringleader basics, ranged and night-exclusive attacks, and live rogue basics. The merged PR #146 repertoire is preserved, including all 40 signatures and role-specific basic maneuvers. See [ENEMY_SKILL_VFX_AUDIT.md](ENEMY_SKILL_VFX_AUDIT.md) for actual desktop/phone comparisons, lifecycle safeguards, snapshot equivalence and the shared sprite/clip replacement path. PRs #161 and #162 keep the event contract and completed art reviewable.
+
+## Prepared v0.8.112 — shared enemy audio/VFX identities
+
+Audio now consumes the existing stable stage envelope, with material/action, creature/faction and restrained important-cast motif routing. Thirty original short synthesized SFX recordings join the existing validated manifest and offline inventory; cold/missing playback remains procedural. Live VFX coverage is a build and regression acceptance gate, including future rogue signatures. See `ENEMY_AUDIO_SYNCHRONIZATION.md` and generated `ENEMY_AUDIO_COVERAGE.md`. This observation-only integration preserves combat rules and v4 save/statistics equivalence. Release requires exact-head full CI and Pages verification.
