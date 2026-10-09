@@ -131,4 +131,18 @@ test('F41 backline targeting preserves close-attack geometry and terrain checks'
   c.line=()=>false;
   assert.equal(c.bossAttackTarget(e,front,1),front,'cover blocks forced hero marks');
 });
+test('F42 captain ground marks pressure backline only with a clear targeting line',()=>{
+  const c=fresh();c.enter('supply-highlands');const e=c.zone().enemies.find(u=>u.roomCaptain);
+  assert(e);c.s.party=[];
+  const frontline={x:e.x+90,y:e.y};
+  Object.assign(c.hero,{x:e.x+360,y:e.y});
+  c.random=()=>0;c.line=()=>true;e.lastCaptainAttack=0;
+  assert(c.startCaptainAttack(e,frontline));
+  assert.equal(e.telegraph.kind,'circle');
+  assert.equal(e.telegraph.x,c.hero.x);
+  assert.equal(e.telegraph.radius,86*C.rules.bossCadence.areaRangeMultiplier);
+  c.line=(a,b)=>b!==c.hero;e.lastCaptainAttack=0;
+  assert(c.startCaptainAttack(e,frontline));
+  assert.equal(e.telegraph.x,frontline.x,'blocked hero must not be targeted through cover');
+});
 console.log(passed+' audit regression scenarios passed.');
