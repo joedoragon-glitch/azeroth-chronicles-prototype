@@ -111,6 +111,7 @@ function rasterScene({ actorKind = 'hero', structure = 'house', foreground = tru
     activeLivingParty: () => actorKind === 'ally' ? [actor] : [],
     night: () => false,
     manaCombatActive: () => false,
+    selectedHeroTarget: () => null,
     peace: false,
   };
   const visuals = {
