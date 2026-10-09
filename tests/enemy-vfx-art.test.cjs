@@ -110,6 +110,30 @@ assert.equal(
   false,
 );
 assert(Art.installManifest({ version: 1, effects: {} }));
+// Distant world populations cannot multiply native body clipping work.
+const originalEnemies = c.zone().enemies;
+const clip = ctx.clip.bind(ctx);
+let clips = 0;
+ctx.clip = (...args) => {
+  clips++;
+  return clip(...args);
+};
+c.zone().enemies = [
+  ...originalEnemies,
+  ...Array.from({ length: 1000 }, (_, j) => ({
+    id: 'far-' + j,
+    hp: 100,
+    x: 100000 + j,
+    y: 100000,
+    visualScale: 1,
+  })),
+];
+Art.ground(ctx, screen, c, [
+  { ...fresh[0], stage: 'impact', target: undefined, life: 0.3, max: 0.4 },
+]);
+assert(clips <= 4, 'body exclusions only rasterize visible actors, not 1,000 distant mobs');
+ctx.clip = clip;
+c.zone().enemies = originalEnemies;
 console.log(
   'PASS ' +
     rows.length +

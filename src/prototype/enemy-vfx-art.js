@@ -633,10 +633,21 @@
       return;
     ctx.save();
     // Keep material action visible through night grading without painting over bodies.
+    const transform = ctx.getTransform?.(),
+      scaleToCanvas = transform?.a || 1,
+      viewWidth = (ctx.canvas?.width || 900) / scaleToCanvas,
+      viewHeight = (ctx.canvas?.height || 600) / scaleToCanvas;
     for (const u of [game.hero, ...game.s.party, ...game.zone().enemies])
       if (u.hp > 0 && u.active !== false) {
         const p = screen(u),
           scale = u.visualScale || 1;
+        if (
+          p.x + 18 * scale < 0 ||
+          p.x - 18 * scale > viewWidth ||
+          p.y + 7 * scale < 0 ||
+          p.y - 57 * scale > viewHeight
+        )
+          continue;
         ctx.beginPath();
         ctx.rect(-10000, -10000, 20000, 20000);
         ctx.moveTo(p.x + 18 * scale, p.y - 25 * scale);
