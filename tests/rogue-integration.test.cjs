@@ -217,6 +217,23 @@ test('ADDS doctrine excludes dust-covered owned summons and resumes after exact 
     );
   }
 });
+test('Dust on the last field threat preserves a manual doctrine until genuine disengagement', () => {
+  const { c, e } = encounter(mob('goblin'));
+  c.s.party = [c.unit('soldier', e.x + 90, e.y)];
+  c.s.squadDoctrine = 'guard';
+  c.s.squadEngagement = 'field';
+  e.rogueDustCoverUntil = c.s.time + 1.65;
+  c.updateParty(0.01);
+  assert.equal(c.s.squadDoctrine, 'guard', 'dust cannot reset manual order to Paladin focus');
+  assert.equal(c._tacticalPartyTargets.size, 0, 'covered last foe cannot be targeted');
+  c.s.time += 1.65;
+  c.updateParty(0.01);
+  assert.equal(c.s.squadDoctrine, 'guard');
+  assert.equal(c._tacticalPartyTargets.get(c.s.party[0].id), e.id, 'squad resumes after cover');
+  e.aggro = false;
+  c.updateParty(0.01);
+  assert.equal(c.s.squadDoctrine, 'focus', 'real disengagement restores class default');
+});
 test('Commander respawns keep distant troops at posts, never on top of an active companion', () => {
   const { c, e } = encounter((c) => c.bossEnemy(c.boss('warlord'), 'normal', { x: 1400, y: 1700 }));
   const u = mob('orc')(c);

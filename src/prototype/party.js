@@ -542,7 +542,23 @@
                     threats.some((x) => x.summon && x.owner === e.id)),
               )
               .sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0] || null;
-        return { engaged: threats.length > 0, boss: !!bossEnemy, bossEnemy, threats };
+        // Temporary dust cover blocks selection, not the ongoing encounter.
+        // Keep a manual doctrine when the last active foe is briefly covered.
+        const coveredThreat = this.zone().enemies.some(
+          (e) =>
+            e.hp > 0 &&
+            !e.neutral &&
+            !e.returning &&
+            e.aggro &&
+            !this.tacticalDirectTargetable(e) &&
+            dist(e, this.hero) < (e.type === 'boss' || e.summon ? 720 : 540),
+        );
+        return {
+          engaged: threats.length > 0 || coveredThreat,
+          boss: !!bossEnemy,
+          bossEnemy,
+          threats,
+        };
       }
       syncSquadDoctrine() {
         const context = this.squadContext(),
