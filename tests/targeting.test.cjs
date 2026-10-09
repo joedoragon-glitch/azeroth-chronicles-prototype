@@ -165,4 +165,13 @@ function encounter() {
   assert(!('manualHeroTargetLocked' in game.snapshot()), 'lock state is excluded from v4 saves');
 }
 
+{
+  const { game, a } = encounter();
+  assert.equal(game.cycleHeroTarget((e) => e.id === a.id)?.id, a.id);
+  assert.equal(game.holdHeroTarget()?.id, a.id);
+  assert.equal(game.s.heroTarget, a.id);
+  assert.equal(game.cycleHeroTarget(() => false), null, 'quick press releases an offscreen lock');
+  assert.equal(game.manualHeroTargetLocked, false);
+  assert.equal(game.s.heroTarget, null, 'offscreen unlock also releases stale legacy focus');
+}
 console.log('PASS visible target cycling, manual attack priority, range refusal, fallback and boss/summon lock, disengagement and zone cleanup');
