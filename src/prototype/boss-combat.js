@@ -188,6 +188,9 @@
           if (index === e.lastAttackIndex && plans.length > 1) return 0;
           if (e.family === 'darklord' && index === 3 && !low) return 0;
           let w = 1;
+          const closeRadius = (plan.kind === 'sector' ? 280 : plan.kind === 'ring' ? 105 : 165) * R.bossCadence.areaRangeMultiplier;
+          // Do not spend a special on a centered attack that cannot reasonably reach.
+          if (['cone', 'sector', 'ring'].includes(plan.kind) && d > closeRadius + 30) return 0;
           if (plan.kind === 'summon') {
             if (alive >= cap || (e.summonCd || 0) > 0) return 0;
             const missing = cap - alive;
@@ -226,7 +229,13 @@
       }
       bossAttackTarget(e, fallback, index) {
         const behavior = R.bossBehavior[e.family] || {};
-        return behavior.heroTarget?.includes(index) && this.hero.hp > 0 ? this.hero : fallback;
+        if (this.hero.hp <= 0 || !this.line(e, this.hero)) return fallback;
+        const plan = R.attacks[e.family]?.[index];
+        // Long-reaching marks may pressure the backline even when Soldiers screen the boss.
+        const reachesHero = dist(e, this.hero) <= R.bossCadence.targetFlexRange;
+        return reachesHero && (behavior.heroTarget?.includes(index) || (plan?.kind === 'circle' && dist(e, fallback) < 200))
+          ? this.hero
+          : fallback;
       }
       buildBossAttack(e, index, target, includeTrue = true) {
         const b = this.boss(e.family),
@@ -248,7 +257,7 @@
             angle,
             count: plan.count || 1,
             radius:
-              kind === 'cone'
+              R.bossCadence.areaRangeMultiplier * (kind === 'cone'
                 ? 165
                 : kind === 'sector'
                   ? 280
@@ -256,7 +265,7 @@
                     ? 105
                     : index === 0
                       ? 90
-                      : 115,
+                      : 115),
           },
           sequence = [];
         if (a.sequential && a.kind === 'circle') {
@@ -315,7 +324,7 @@
               timer: plan.warning,
               total: plan.warning,
               name: 'Delayed flame patch',
-              radius: 90,
+              radius: 90 * R.bossCadence.areaRangeMultiplier,
             });
           if (e.family === 'citadel' && index === 2) a.opening = 2.5;
         }
@@ -361,7 +370,7 @@
           ...a,
           x: a.x + (i - ((a.count || 1) - 1) / 2) * 190,
           y: a.y + (i % 2) * 100,
-          radius: a.count > 1 ? 75 : a.radius,
+          radius: a.count > 1 ? 75 * R.bossCadence.areaRangeMultiplier : a.radius,
         }));
       }
       resolveAttack(e) {
