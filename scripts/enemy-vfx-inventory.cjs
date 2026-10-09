@@ -3,13 +3,14 @@
 // Read-only preproduction inventory. Do not duplicate or edit game rules here.
 const Campaign = require('../src/prototype/engine.js');
 const VFX = require('../src/prototype/enemy-vfx.js');
+const P = require('../src/prototype/enemy-presentation.js');
 const assert = require('node:assert/strict');
 
 function expectedStages(plan) {
-  if (plan.kind === 'summon') return ['windup', 'spawn'];
+  if (plan.kind === 'summon') return ['windup', 'release', 'spawn'];
   if (plan.kind === 'volley') return ['windup', 'release', 'travel', 'impact'];
   if (plan.charge || plan.landing || (plan.kind === 'line' && plan.advance))
-    return ['windup', 'travel', 'impact'];
+    return ['windup', 'release', 'travel', 'impact'];
   if (plan.kind === 'ring') return ['windup', 'release', 'travel'];
   return plan.persistent
     ? ['windup', 'release', 'impact', 'linger']
@@ -56,6 +57,7 @@ function collect() {
         group: 'boss',
         owner: b.name,
         id: normal.id,
+        presentation: normal.presentation,
         name: b.attacks[index].split(':')[0],
         kind: plan.kind,
         stages: expectedStages(plan),
@@ -73,6 +75,7 @@ function collect() {
         group: 'captain',
         owner: captain.name,
         id: visual.id,
+        presentation: visual.presentation,
         name: plan.name,
         kind: plan.kind,
         stages: expectedStages(plan),
@@ -84,9 +87,10 @@ function collect() {
         group: 'captain-phase',
         owner: captain.name,
         id: 'captain/' + id + '/phase',
+        presentation: P.profile({ captain: true, captainProfile: id }, captain.phase),
         name: captain.phase.name,
         kind: captain.phase.kind,
-        stages: ['phase'],
+        stages: captain.summon?.opening ? ['phase', 'spawn'] : ['phase'],
         notes: 'Presentation attached at the existing phase trigger',
       });
   }
@@ -98,10 +102,13 @@ function collect() {
       group: 'night',
       owner: species,
       id: visual.id,
+      presentation: visual.presentation,
       name: species === 'wraith' ? 'Soul Drain' : 'Shadow Pounce',
       kind: 'circle',
       stages:
-        species === 'stalker' ? ['windup', 'travel', 'impact'] : ['windup', 'release', 'impact'],
+        species === 'stalker'
+          ? ['windup', 'release', 'travel', 'impact']
+          : ['windup', 'release', 'impact'],
       notes: 'Night-exclusive authored skill',
     });
   }
@@ -111,11 +118,37 @@ function collect() {
       group: 'ranged',
       owner: species,
       id: visual.id,
+      presentation: visual.presentation,
       name: profile.variant,
       kind: 'projectile',
       stages: ['release', 'travel', 'impact'],
       notes: 'Projectile motion remains owned by combat simulation',
     });
+  }
+  // Forced ranged roles (including ringleaders and authored defenders) are
+  // actual configureEnemy outputs, not just the seven optional ranged profiles.
+  const inspector = new Campaign('normal', 'paladin', () => 0.5);
+  const forcedRoster = [
+    ...new Set([
+      ...Campaign.data.species.flat().map((x) => x[0]),
+      ...Object.keys(Campaign.rules.nightEnemyCombat),
+    ]),
+  ].sort();
+  for (const species of forcedRoster) {
+    const actor = { type: 'mob', species, name: species, forcedRole: 'ranged' };
+    inspector.configureEnemy(actor, 0);
+    const visual = VFX.projectile(actor, { style: actor.projectileStyle });
+    if (!known.has(visual.id))
+      add({
+        group: 'ranged',
+        owner: species,
+        id: visual.id,
+        presentation: visual.presentation,
+        name: 'Authored ranged role',
+        kind: 'projectile',
+        stages: ['release', 'travel', 'impact'],
+        notes: 'Actual forced/native ranged role; includes ringleaders and defenders',
+      });
   }
   for (const b of Campaign.data.bosses)
     add({
@@ -125,7 +158,8 @@ function collect() {
       name: 'Basic melee',
       kind: 'melee',
       stages: ['release', 'impact'],
-      notes: 'Normal/TRUE share authored melee contact',
+      presentation: P.profile({ type: 'boss', family: b.id }, { kind: 'melee', basic: true }),
+      notes: 'Normal/TRUE share contact presentation',
     });
   for (const [id, p] of Object.entries(Campaign.rules.roomCaptains))
     add({
@@ -135,15 +169,18 @@ function collect() {
       name: 'Basic melee',
       kind: 'melee',
       stages: ['release', 'impact'],
-      notes: 'Captain melee contact',
+      presentation: P.profile(
+        { captain: true, captainProfile: id },
+        { kind: 'melee', basic: true },
+      ),
+      notes: 'Existing captain contact',
     });
-  const allSpecies = [
+  for (const species of [
     ...new Set([
       ...Campaign.data.species.flat().map((e) => e[0]),
       ...Object.keys(Campaign.rules.nightEnemyCombat),
     ]),
-  ].sort();
-  for (const species of allSpecies) {
+  ].sort())
     add({
       group: 'basic-attack',
       owner: species,
@@ -151,18 +188,9 @@ function collect() {
       name: 'Basic melee',
       kind: 'melee',
       stages: ['release', 'impact'],
+      presentation: P.profile({ species }, { kind: 'melee', basic: true }),
       notes: 'Ordinary/guardian/ringleader share species material',
     });
-    add({
-      group: 'frenzy',
-      owner: species,
-      id: 'enemy/' + species + '/frenzy',
-      name: 'Ringleader frenzy',
-      kind: 'frenzy',
-      stages: ['phase'],
-      notes: 'Brief cue at actual frenzy trigger',
-    });
-  }
   // Basic tactical maneuvers are inventoried independently of signatures.
   // Species and actual combat roles determine eligibility; shared mechanics
   // may later share artwork instead of forcing duplicate effect assets.
@@ -197,11 +225,17 @@ function collect() {
               T.rogueMoves.species?.[species] ||
               T.rogueMoves.ordinary
             : T.rogueMoves.species?.[species] || T.rogueMoves[tier] || T.rogueMoves.ordinary,
-          visual = VFX.describe(enemy, { rogueMove: true, name: basic.name, kind: 'circle' });
+          visual = VFX.describe(enemy, {
+            rogueMove: true,
+            name: basic.name,
+            style: basic.style || 'snare',
+            kind: 'circle',
+          });
         add({
           group: 'rogue-basic',
           owner: species + ' (' + role + ' ' + tier + ')',
           id: visual.id,
+          presentation: visual.presentation,
           name: basic.name,
           kind: basic.style || 'disruption',
           stages: ['windup', 'release', 'impact'],
@@ -211,12 +245,13 @@ function collect() {
   for (const [family, profile] of Object.entries(T.rogueMoves.bosses || {})) {
     const visual = VFX.describe(
       { type: 'boss', family },
-      { rogueMove: true, name: profile.name, kind: 'circle' },
+      { rogueMove: true, name: profile.name, style: profile.style, kind: 'circle' },
     );
     add({
       group: 'rogue-basic',
       owner: family + ' (boss)',
       id: visual.id,
+      presentation: visual.presentation,
       name: profile.name,
       kind: profile.style || 'disruption',
       stages: ['windup', 'release', 'impact'],
@@ -226,12 +261,13 @@ function collect() {
   for (const [captain, profile] of Object.entries(T.rogueMoves.captains || {})) {
     const visual = VFX.describe(
       { roomCaptain: true, captainProfile: captain },
-      { rogueMove: true, name: profile.name, kind: 'circle' },
+      { rogueMove: true, name: profile.name, style: profile.style, kind: 'circle' },
     );
     add({
       group: 'rogue-basic',
       owner: captain + ' (captain)',
       id: visual.id,
+      presentation: visual.presentation,
       name: profile.name,
       kind: profile.style || 'disruption',
       stages: ['windup', 'release', 'impact'],
@@ -243,12 +279,19 @@ function collect() {
     for (const [species, profile] of Object.entries(profiles)) {
       const visual = VFX.describe(
         { form: 'ringleader', species, ranged: role === 'ranged' },
-        { rogueMove: true, rogueSignature: true, name: profile.name, kind: 'circle' },
+        {
+          rogueMove: true,
+          rogueSignature: true,
+          name: profile.name,
+          effect: profile.effect,
+          kind: 'circle',
+        },
       );
       add({
         group: 'rogue-signature',
         owner: species + ' (' + role + ' ringleader)',
         id: visual.id,
+        presentation: visual.presentation,
         name: profile.name,
         kind: profile.effect,
         stages: ['windup', 'release', 'impact'],
@@ -262,19 +305,37 @@ function collect() {
         kind === 'bosses'
           ? { type: 'boss', family: id }
           : { roomCaptain: true, captainProfile: id };
-      const visual = VFX.describe(actor, { rogueMove: true, rogueSignature: true, kind: 'circle' });
+      const visual = VFX.describe(actor, {
+        rogueMove: true,
+        rogueSignature: true,
+        effect: profile.effect,
+        kind: 'circle',
+      });
       add({
         group: 'rogue-signature',
         owner: id,
         id: visual.id,
+        presentation: visual.presentation,
         name: profile.name,
         kind: profile.effect,
-        stages: ['windup', 'release', 'impact'],
-        notes: 'Pending rogue repertoire; never substitute boss rotation visuals',
+        stages: profile.reinforceSpecies
+          ? ['windup', 'release', 'impact', 'spawn']
+          : ['windup', 'release', 'impact'],
+        notes: 'Merged rogue repertoire; never substitute boss rotation visuals',
       });
     }
   }
 
+  for (const species of roster)
+    add({
+      group: 'frenzy',
+      owner: species,
+      id: 'enemy/' + species + '/frenzy',
+      name: 'Frenzy',
+      kind: 'frenzy',
+      stages: ['phase'],
+      presentation: P.profile({ species }, { kind: 'frenzy' }),
+    });
   return rows;
 }
 
@@ -299,7 +360,21 @@ function audit() {
     Object.values(Campaign.rules.roomCaptains).filter((c) => c.phase).length,
   );
   assert.equal(counts.night, Object.keys(Campaign.rules.nightEnemyCombat).length);
-  assert.equal(counts.ranged, Object.keys(Campaign.rules.rangedProfiles).length);
+  const projectileIds = new Set(
+    Object.entries(Campaign.rules.rangedProfiles).map(
+      ([species, p]) => VFX.projectile({ species }, { style: p.projectileStyle }).id,
+    ),
+  );
+  const inspector = new Campaign('normal', 'paladin', () => 0.5);
+  for (const species of new Set([
+    ...Campaign.data.species.flat().map((x) => x[0]),
+    ...Object.keys(Campaign.rules.nightEnemyCombat),
+  ])) {
+    const e = { type: 'mob', species, name: species, forcedRole: 'ranged' };
+    inspector.configureEnemy(e, 0);
+    projectileIds.add(VFX.projectile(e, { style: e.projectileStyle }).id);
+  }
+  assert.equal(counts.ranged, projectileIds.size);
   return { counts, total: rows.length, rows };
 }
 

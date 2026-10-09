@@ -16,7 +16,11 @@ assert.equal(report.counts.boss, 46, 'all currently authored boss actions are in
 assert.equal(report.counts.captain, 16, 'all five captain movesets are inventoried');
 assert.equal(report.counts['captain-phase'], 5, 'captain second phases are independently listed');
 assert.equal(report.counts.night, 2);
-assert.equal(report.counts.ranged, 7);
+assert.equal(report.counts.ranged, 18);
+assert.equal(report.counts['basic-attack'], 28);
+assert(report.rows.some((r) => r.id === 'projectile/crownguard/arrow'));
+assert(report.rows.some((r) => r.id === 'projectile/wraith/spectral'));
+assert(report.rows.some((r) => r.id === 'projectile/wolf/arrow'));
 assert.equal(new Set(report.rows.map((r) => r.id)).size, report.rows.length);
 assert(report.rows.every((r) => r.stages.every((stage) => VFX.STAGES.includes(stage))));
 assert.equal(
@@ -32,7 +36,11 @@ assert.equal(
 for (const row of report.rows) {
   assert(!row.stages.includes('unknown'));
   if (row.kind === 'summon') {
-    assert.deepEqual(row.stages, ['windup', 'spawn'], 'summoning never declares a damage impact');
+    assert.deepEqual(
+      row.stages,
+      ['windup', 'release', 'spawn'],
+      'summoning never declares a damage impact',
+    );
     assert(!row.stages.includes('impact'), 'no misleading damage circle for summons');
   }
 }
@@ -45,6 +53,7 @@ assert.deepEqual(Inventory.expectedStages({ kind: 'circle', persistent: true }),
 ]);
 assert.deepEqual(Inventory.expectedStages({ kind: 'line', charge: true }), [
   'windup',
+  'release',
   'travel',
   'impact',
 ]);

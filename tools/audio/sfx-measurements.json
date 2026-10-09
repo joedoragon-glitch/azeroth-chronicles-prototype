@@ -1,0 +1,182 @@
+{
+  "sfx-steel-release": {
+    "peak": 0.327043,
+    "rms": 0.035228,
+    "first": 0.0,
+    "last": 0.0
+  },
+  "sfx-steel-impact": {
+    "peak": 0.335221,
+    "rms": 0.034964,
+    "first": -0.0,
+    "last": -0.0
+  },
+  "sfx-claw-release": {
+    "peak": 0.225736,
+    "rms": 0.029327,
+    "first": 0.0,
+    "last": 0.0
+  },
+  "sfx-claw-impact": {
+    "peak": 0.307885,
+    "rms": 0.03519,
+    "first": -0.0,
+    "last": -0.0
+  },
+  "sfx-bone-release": {
+    "peak": 0.250459,
+    "rms": 0.031184,
+    "first": 0.0,
+    "last": 0.0
+  },
+  "sfx-bone-impact": {
+    "peak": 0.272283,
+    "rms": 0.035549,
+    "first": 0.0,
+    "last": 0.0
+  },
+  "sfx-stone-release": {
+    "peak": 0.185204,
+    "rms": 0.030131,
+    "first": 0.0,
+    "last": 0.0
+  },
+  "sfx-stone-impact": {
+    "peak": 0.252134,
+    "rms": 0.033527,
+    "first": 0.0,
+    "last": 0.0
+  },
+  "sfx-wet-release": {
+    "peak": 0.320308,
+    "rms": 0.033789,
+    "first": -0.0,
+    "last": -0.0
+  },
+  "sfx-wet-impact": {
+    "peak": 0.261918,
+    "rms": 0.036242,
+    "first": 0.0,
+    "last": 0.0
+  },
+  "sfx-arrow-release": {
+    "peak": 0.303796,
+    "rms": 0.032991,
+    "first": 0.0,
+    "last": 0.0
+  },
+  "sfx-arrow-impact": {
+    "peak": 0.316847,
+    "rms": 0.030656,
+    "first": -0.0,
+    "last": -0.0
+  },
+  "sfx-spectral-release": {
+    "peak": 0.3531,
+    "rms": 0.033822,
+    "first": -0.0,
+    "last": -0.0
+  },
+  "sfx-spectral-impact": {
+    "peak": 0.241101,
+    "rms": 0.030942,
+    "first": 0.0,
+    "last": 0.0
+  },
+  "sfx-ash-release": {
+    "peak": 0.299669,
+    "rms": 0.032372,
+    "first": 0.0,
+    "last": 0.0
+  },
+  "sfx-ash-impact": {
+    "peak": 0.195414,
+    "rms": 0.028852,
+    "first": 0.0,
+    "last": 0.0
+  },
+  "sfx-holy-release": {
+    "peak": 0.277567,
+    "rms": 0.030842,
+    "first": -0.0,
+    "last": -0.0
+  },
+  "sfx-holy-impact": {
+    "peak": 0.31429,
+    "rms": 0.032581,
+    "first": -0.0,
+    "last": -0.0
+  },
+  "sfx-arcane-release": {
+    "peak": 0.254946,
+    "rms": 0.029371,
+    "first": 0.0,
+    "last": 0.0
+  },
+  "sfx-arcane-impact": {
+    "peak": 0.205932,
+    "rms": 0.031342,
+    "first": -0.0,
+    "last": -0.0
+  },
+  "sfx-root-release": {
+    "peak": 0.281971,
+    "rms": 0.03284,
+    "first": -0.0,
+    "last": -0.0
+  },
+  "sfx-root-impact": {
+    "peak": 0.2253,
+    "rms": 0.032925,
+    "first": 0.0,
+    "last": 0.0
+  },
+  "sfx-dust-release": {
+    "peak": 0.25758,
+    "rms": 0.02996,
+    "first": 0.0,
+    "last": 0.0
+  },
+  "sfx-dust-impact": {
+    "peak": 0.252208,
+    "rms": 0.032011,
+    "first": -0.0,
+    "last": -0.0
+  },
+  "sfx-critical-warning": {
+    "peak": 0.189419,
+    "rms": 0.025658,
+    "first": -0.0,
+    "last": -0.0
+  },
+  "sfx-hero-steel-swing": {
+    "peak": 0.280906,
+    "rms": 0.033845,
+    "first": -0.0,
+    "last": -0.0
+  },
+  "sfx-hero-steel-impact": {
+    "peak": 0.300585,
+    "rms": 0.03333,
+    "first": -0.0,
+    "last": -0.0
+  },
+  "sfx-power-strike": {
+    "peak": 0.245396,
+    "rms": 0.032844,
+    "first": -0.0,
+    "last": -0.0
+  },
+  "sfx-holy-cleave": {
+    "peak": 0.284265,
+    "rms": 0.030869,
+    "first": -0.0,
+    "last": -0.0
+  },
+  "sfx-piercing-volley": {
+    "peak": 0.186418,
+    "rms": 0.02347,
+    "first": 0.0,
+    "last": 0.0
+  }
+}

@@ -250,6 +250,7 @@
         this.finaleUntil = 0;
         this.lastWarning = -Infinity;
         this.lastSfx = {};
+        this.enemyAudioSeen = new WeakSet();
         this.voices.clear();
       }
     }

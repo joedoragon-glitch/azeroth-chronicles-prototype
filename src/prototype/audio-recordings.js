@@ -124,7 +124,13 @@
           }
           return false;
         }
-        if (!this.allowSfx('recorded-event:' + key, this.ctx.currentTime, binding.minGap ?? 0.025))
+        if (
+          !this.allowSfx(
+            'recorded-event:' + key + (details.type === 'enemyVfx' ? ':' + details.material : ''),
+            this.ctx.currentTime,
+            binding.minGap ?? 0.025,
+          )
+        )
           return true;
         try {
           const bus =

@@ -1,10 +1,10 @@
 # Enemy Skill VFX Overhaul — implementation and audit
 
-Runtime: **0.8.112**. The foundation and housekeeping remain intact. PR #161 adds the observation-only event bridge; the subsequent art layer completes the live repertoire.
+Runtime: **0.8.113**. The foundation and housekeeping remain intact. PR #161 adds the observation-only event bridge; the subsequent art layer completes the live repertoire.
 
 ## Coverage
 
-`node scripts/enemy-vfx-inventory.cjs` reads the current mechanics. Its proposed stage slots are a source inventory, not a claim that cosmetic stages should introduce extra attacks. The implemented catalog has **240 live identities**:
+`node scripts/enemy-vfx-inventory.cjs` reads the current mechanics. Its proposed stage slots are a source inventory, not a claim that cosmetic stages should introduce extra attacks. The implemented catalog has **251 live identities**:
 
 | Group | Identities | Presentation |
 | --- | ---: | --- |
@@ -12,7 +12,7 @@ Runtime: **0.8.112**. The foundation and housekeeping remain intact. PR #161 add
 | Captain attacks | 16 | All five profiles |
 | Captain transformations/phases | 5 | Scramble, molt, howl, carapace, command |
 | Night-exclusive skills | 2 | Soul Drain and Shadow Pounce |
-| Ranged projectiles | 7 | Actual existing travel and contact |
+| Ranged projectiles | 18 | Actual existing travel and contact |
 | Rogue basics | 84 | Ordinary, guardian, ringleader, melee/ranged, boss and captain identities |
 | Rogue signatures | 40 | All live ringleader, boss and captain repertoires |
 | Basic melee | 28 | Boss, captain and species materials |
@@ -36,7 +36,7 @@ Art uses the established procedural forms and restrained fur, bone, root, mire, 
 
 Comparisons: [desktop](vfx-audit/pilot-desktop.jpg), [phone](vfx-audit/pilot-phone.jpg). Full-resolution pilot and catalog captures are workflow artifacts under `test-results/`. The desktop pairs crop the same combat area; phone pairs retain the actual HUD and controls.
 
-The five pilots were inspected through **90 actual-game scenes / 180 images** across 1280×800, 375×812 and 812×375, day/night, crowded six-companion fights and 100/150/175% camera zooms. WebKit also captured all five in portrait/landscape and day/night at 150%. Native canvas catalog draws inspect intermediate animation times; browser contact sheets cover every live identity, all 46 extra TRUE variants, and 40 live signatures: **286 scenes per browser/viewport**.
+The five pilots were inspected through **90 actual-game scenes / 180 images** across 1280×800, 375×812 and 812×375, day/night, crowded six-companion fights and 100/150/175% camera zooms. WebKit also captured all five in portrait/landscape and day/night at 150%. Native canvas catalog draws inspect intermediate animation times; browser contact sheets cover every live identity, all 46 extra TRUE variants, and 40 live signatures: **297 scenes per browser/viewport**.
 
 ## Combat and lifecycle safeguards
 
@@ -60,3 +60,5 @@ The release gate includes formatting/generated-entry checks, the complete regres
 Performance capture alternates warmed decorated/undecorated frames in the same scene and flushes the canvas raster before reporting draw/paint medians, renderer counters and sprite residency in [measurements.json](vfx-audit/measurements.json). These are shared, headless software-rendering measurements, not physical-device FPS promises. Decorative counts and asset residency stay bounded. The 30 warmed five-pilot scenes measured median decoration deltas of 1.14 ms (desktop), 2.38 ms (phone portrait), and 0.77 ms (phone landscape); scheduling/GC outliers remain in the raw data. Pilot scenes peaked at nine enemy transients, below the shared 40-effect cap. Physical iPhone/Android GPU, thermal and system-callout behavior still require real-device play; this limitation does not change the desktop/mobile browser validation.
 
 Global nighttime grading, existing actor artwork, combat tuning, AI and progression were preserved. The merged rogue mechanics remain owned by PR #146; the overhaul adds their presentation without changing their outcomes.
+
+The subsequent main-branch audio integration (`47d72ba`, v0.8.112) is preserved: all thirty recorded effects, shared presentation identities and exact sound-stage routing remain intact. Its eleven additional forced ranged profiles extend this audited visual catalog to 251 identities. Ordinary melee decoration explicitly retains the original melee sound, avoiding duplicate audio.

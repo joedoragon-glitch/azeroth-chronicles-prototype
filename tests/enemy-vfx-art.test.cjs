@@ -94,7 +94,10 @@ c.effects = [];
 c.startAttack(e, c.hero, 0);
 c.resolveAttack(e);
 const fresh = c.effects.filter((f) => f.type === 'enemyVfx');
-const many = Array.from({ length: 1000 }, (_, j) => ({ ...fresh[0], eventId: 1000 + j }));
+const many = Array.from({ length: 1000 }, (_, j) => ({
+  ...fresh.find((f) => f.stage === 'release'),
+  eventId: 1000 + j,
+}));
 const bounded = FX.queue(many, c);
 assert.equal(bounded.length, 40);
 assert.equal(FX.queue(many, c, bounded).length, 40);
