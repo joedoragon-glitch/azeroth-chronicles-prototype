@@ -705,7 +705,11 @@
       }
       regionalAesthetics(z) {
         const version = ['vale', 'highlands', 'frontier'].includes(z.id) ? 5 : 4;
-        if (dungeonIds.includes(z.id) || this.supplyRoom(z.id) || z.aestheticVersion === version)
+        if (
+          dungeonIds.includes(z.id) ||
+          this.supplyRoom(z.id) ||
+          z.aestheticVersion === version
+        )
           return;
         const i = this.regionIndex(z.id),
           size = D.regions[i].size,
@@ -833,7 +837,11 @@
       }
       worldLife(z) {
         const version = ['vale', 'highlands', 'frontier'].includes(z.id) ? 2 : 1;
-        if (dungeonIds.includes(z.id) || this.supplyRoom(z.id) || z.worldLifeVersion === version)
+        if (
+          dungeonIds.includes(z.id) ||
+          this.supplyRoom(z.id) ||
+          z.worldLifeVersion === version
+        )
           return;
         const i = this.regionIndex(z.id),
           plan = R.worldLifePlans?.[i],
