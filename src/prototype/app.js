@@ -247,8 +247,25 @@
   function help(back = closeMenu) {
     openMenu(
       'Controls',
-      input.actions.map(([id, name]) => input.key(id) + ' — ' + name).join('\n') +
-        '\n\nEsc — Menu / back · Enter or Space — Confirm in menus\nMouse or touch — Activate menus and HUD buttons\nSkills 1–3: tap under 0.20 s for normal; hold 0.65 s for charged. Releasing an incomplete hold cancels.\nCharged Skills 1 / 2 / 3 cost 20% / 30% / 35% max MP respectively. Hold through a cooldown to queue the charge; WAIT shows until charging can begin.\nCHARGED means ready to release. NEED MP / NO TARGET / NO HEAL explain a blocked charge. Skills 1–2 lock their target when charging begins; Target changes it deliberately while held.\nTap Q (or your assigned Target key), or tap the Target button, to cycle visible enemies. Hold either for 0.55 s to LOCK the current target for the encounter while dodging or fighting summons; tap again to switch and unlock. A lock clears when the target dies, returns home, or the hero changes area.\nHold Skill 1 or 2 for a fine aim guide: gold means in range and clear, amber means move closer, red means blocked. No target switching is needed for Self-Heal.\nNormal Skill 1 builds a same-target combo across three hits; the third adds frontal splash. Switching targets or waiting four seconds resets it.\nSquad doctrine becomes available at Expedition 3 during combat and resets for each encounter.\nMovement autoattack stays active, except while holding Skill 1.\nTouch: use the joystick or tap a reachable place to move when enabled. Keyboard or joystick movement cancels a destination.\nMouse: left click commands Ranger Heal unless click-to-move is enabled; right click commands Mana Recovery. HUD recovery buttons always work.\nNormal Skill 3 heals the hero; charged Skill 3 also heals living active companions. Rangers automatically support the active group; manual Heal can restore the hero or a wounded living companion, and Mana Recovery restores hero MP. Fallen companions require separate recovery.\nSprint remains unavailable.',
+      'Move ' +
+        ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('/') +
+        ' or use the joystick. Interact ' +
+        input.key('interact') +
+        '/' +
+        input.key('confirm') +
+        '. Use skills 1–8 with their assigned buttons; hold Skills 1–3 to charge.\n' +
+        'Target ' +
+        input.key('target') +
+        ' (hold to lock). Ranger help ' +
+        input.key('heal') +
+        '/' +
+        input.key('mana') +
+        '. Map ' +
+        input.key('map') +
+        ', Journal ' +
+        input.key('quests') +
+        ', Menu Esc. Move W/S in menus; F or Enter confirms.' +
+        (game.s.keeperPact ? '\nThe Keeper has deeper answers in your Barracks.' : ''),
       [
         action('Customize keyboard', () => keyboardMenu(back)),
         action('Touch and mouse options', () => pointerMenu(back)),
