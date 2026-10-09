@@ -2785,7 +2785,15 @@
           }
           return true;
         }
-        // No support and no usable special: refuse the fight and flee quickly.
+        // Bosses and captains defend their lairs/command posts. If a lone
+        // defender cannot use its rogue maneuver, normal combat continues:
+        // repeatedly fleeing home would make prepared ranged victories impossible.
+        if (e.type === 'boss' || e.captain || e.roomCaptain) {
+          if (!this._tacticalRegroupUsed) this._tacticalRegroupUsed = new Set();
+          this._tacticalRegroupUsed.add(e.id);
+          return false;
+        }
+        // Isolated ordinary enemies may refuse the fight and flee quickly.
         this._tacticalRegroups.set(e.id, {
           phase: 'escape',
           anchor: { x: e.x, y: e.y },
