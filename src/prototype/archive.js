@@ -91,7 +91,13 @@
             ' ranks.' +
             (mana
               ? ' Mana training improves recovery; it does not enlarge the pool.'
-              : 'The former mana discipline now shortens recovery between skills. Your old training ranks are retained.'),
+              : ' Each cooldown lesson shortens the wait between skills by ' +
+                percent(R.cooldownBalance.reductionPerTalentRank) +
+                '% of the original wait, up to ' +
+                percent(
+                  R.cooldownBalance.reductionPerTalentRank * R.balance.disciplines.maxRanks[1],
+                ) +
+                '%.'),
         ],
         [
           'Quests without errands',
@@ -264,12 +270,31 @@
                     (a.species ? ', calls ' + a.species : '') +
                     (a.slow ? ', slows' : '') +
                     (a.persistent ? ', remains on the ground' : '') +
-                    (a.hpSiphonFraction
-                      ? ', draws back ' + percent(a.hpSiphonFraction) + '% of HP actually taken'
-                      : '') +
+                    (a.manaDrain && !mana && R.vitalitySiphon.bossFamilies.includes(boss.id)
+                      ? ', draws back ' +
+                        percent(R.vitalitySiphon.healFraction) +
+                        '% of HP actually taken'
+                      : a.manaDrain && mana
+                        ? ', drains ' +
+                          percent(a.manaDrain) +
+                          '% of the hero’s maximum mana on contact'
+                        : '') +
                     '.',
                 )
                 .join('\n') +
+              (!mana && R.bossRecovery[boss.id]
+                ? '\n\n' +
+                  R.bossRecovery[boss.id].name +
+                  ': below ' +
+                  percent(R.bossRecovery.threshold) +
+                  '% HP, a ' +
+                  R.bossRecovery[boss.id].warning +
+                  '-second warning precedes recovery of ' +
+                  percent(R.bossRecovery[boss.id].healFraction) +
+                  '% of maximum HP, limited by missing health. Its own recovery is ' +
+                  R.bossRecovery[boss.id].cooldown +
+                  ' seconds; this is not life-steal.'
+                : '') +
               '\n\nSummon limit: ' +
               game.bossSummonCap({ family: boss.id, form: 'normal' }) +
               ' normal / ' +
