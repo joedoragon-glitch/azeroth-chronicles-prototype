@@ -116,7 +116,6 @@
               ally.hp > 0 &&
               !ally.neutral &&
               !ally.returning &&
-              !ally.summon &&
               !['travel', 'escape'].includes(this.tacticalRogueRegroup(ally)?.phase) &&
               dist(ally, e) <= radius,
           )
