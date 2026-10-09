@@ -47,7 +47,7 @@
               this.line(from, e),
           )
           .sort((a, b) => this.idOrder(a, b))) {
-          if (this.damage(e, baseDamage * (cfg.secondaryMultiplier || 0.55), source)) hits++;
+          if (this.damage(e, baseDamage * (cfg.secondaryMultiplier || 0.55), source, { area: true })) hits++;
         }
         this.event('basicComboFinisher', {
           class: heroClass,
@@ -96,7 +96,7 @@
                   : 450
                 : 480,
           targets = this.zone().enemies.filter(
-            (e) => e.hp > 0 && !e.neutral && dist(e, this.hero) <= range && this.line(this.hero, e),
+            (e) => e.hp > 0 && !e.neutral && this.tacticalDirectTargetable(e) && dist(e, this.hero) <= range && this.line(this.hero, e),
           ),
           preferredTargetId =
             targetId ?? (slot === 1 ? (this.basicComboTargetId ?? this.s.heroTarget) : null),
@@ -249,7 +249,7 @@
           for (const e of this.zone()
             .enemies.filter((e) => e.hp > 0 && !e.neutral && inside(e) && this.line(this.hero, e))
             .sort((a, b) => this.idOrder(a, b))) {
-            if (this.damage(e, damage)) {
+            if (this.damage(e, damage, 'hero', { area: true })) {
               hits++;
               if (def.slow) e.slow = Math.max(e.slow || 0, def.slow);
             }
@@ -352,6 +352,8 @@
                 : slot === 7
                   ? power * (this.hero.class === 'mage' ? 7 : 6)
                   : power * 2.3) * scale,
+              'hero',
+              { area: true },
             );
             if (this.hero.class === 'mage' && slot !== 8) e.slow = slot === 5 ? 5 : 6;
           }
