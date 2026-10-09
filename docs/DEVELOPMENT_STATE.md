@@ -226,3 +226,7 @@ Joel additionally authorizes a 256 MiB decoded sprite-cache ceiling for continue
 ## Session menu housekeeping · v0.8.127 candidate
 
 Single-player menu pause remains. Explicit cooperative session selection separates running world simulation from blocked local gameplay controls. Nested NPC/Barracks dialogs validate current Campaign/actor, travel epoch, death, source availability and interaction range before actions and during frames; global journal/inventory remain independent. Cooperative policy cannot replace local runs or overwrite single-player saves. The integration hook is implemented and tested; actual Join/Host networking, second hero, shared persistence and combat slowdown remain future work. See [SESSION_MENU_POLICY.md](SESSION_MENU_POLICY.md). Release status is pending exact-head CI and deployment verification.
+
+## Isolated cooperative roster · v0.8.128 candidate
+
+An opt-in, app-disconnected working branch supports host-controlled companion rest, one guest occupying a free slot, shared crown/item/equipment state and independent hero XP/level growth. Guest leave/rejoin retains in-memory character progress. The live source Campaign and its prototype remain unchanged; no Multiplayer/Host/Join button is added. Cooperative tick/saving fail explicitly until two-actor combat and shared persistence are implemented. See [COOPERATIVE_FOUNDATION.md](COOPERATIVE_FOUNDATION.md). CI/publication status must be checked before treating this candidate as released.

@@ -57,6 +57,34 @@ const server = http.createServer((req, res) => {
       await page.keyboard.press('f');
       await page.waitForFunction(() => document.querySelector('#modal').hidden);
       await page.evaluate(() => {
+        const original = Prototype.game;
+        const before = JSON.stringify(original.s);
+        const tick = Campaign.prototype.tick;
+        const roster = PrototypeCooperative.create({ Campaign, source: original });
+        const require = (condition, message) => {
+          if (!condition) throw Error(message);
+        };
+        require(!roster.join({ playerId: 'guest', heroClass: 'ranger' })
+          .ok, 'Full party must refuse admission');
+        require(roster.restCompanion(
+          'host',
+          roster.campaign.activeParty()[0].id,
+        ), 'Host can rest an AI companion');
+        require(roster.join({ playerId: 'guest', heroClass: 'ranger' })
+          .ok, 'Freed companion slot admits guest');
+        roster.awardExperience('guest', roster.campaign.xpRequired());
+        require(roster.character('guest').level === 2 &&
+          roster.character('host').level === 1, 'Progression is individual');
+        require(Prototype.game === original &&
+          JSON.stringify(original.s) === before, 'Live single-player campaign must stay untouched');
+        require(Campaign.prototype.tick === tick &&
+          Prototype.sessionMode === 'single-player', 'No runtime integration or prototype patch');
+        require(!Array.from(document.querySelectorAll('button')).some((b) =>
+          /^(Multiplayer|Host game|Join game)$/i.test(b.textContent.trim()),
+        ), 'No multiplayer menu option');
+      });
+      console.log('PASS isolated cooperative roster leaves live single-player unchanged ' + tag);
+      await page.evaluate(() => {
         const c = Prototype.game;
         c.s.party = [];
         c.zone().enemies = [];
