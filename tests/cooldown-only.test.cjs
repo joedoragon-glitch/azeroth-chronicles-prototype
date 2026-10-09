@@ -208,3 +208,33 @@ console.log('PASS uncapped 15% supernatural boss AoE lifesteal, natural heal bou
     'seven-target life drain legitimately exceeds the rejected 2% boss-HP ceiling');
 }
 console.log('PASS 7-target Dark Lord life-siphon stress case with no percent-max-HP cap');
+
+{
+  // Elemental and construct bosses heal without acquiring implausible life-steal.
+  for (const family of ['abyss', 'citadel']) {
+    const g = new Campaign('normal', 'mage', () => 0.9);
+    const cfg = R.bossRecovery[family];
+    const def = Campaign.data.bosses.find(b => b.id === family);
+    const boss = g.bossEnemy(def, 'normal', { x: 500, y: 500 });
+    g.zone().enemies = [boss];
+    boss.hp = boss.maxHp * 0.5;
+    assert(g.startBossRecovery(boss), family + ' starts its own heal when wounded');
+    assert.equal(boss.telegraph.bossHeal, true, 'healing warns separately from damage');
+    assert.equal(boss.telegraph.name, cfg.name);
+    assert.equal(boss.healCd, cfg.cooldown, family + ' independent heal cooldown starts');
+    assert(!g.startBossRecovery(boss), family + ' cannot queue a duplicate');
+    const before = boss.hp;
+    g.resolveAttack(boss);
+    assert(Math.abs(boss.hp - (before + cfg.healFraction * boss.maxHp)) < 1e-9,
+      family + ' heals exactly the authored fraction');
+    assert(g.effects.some(e => e.type === 'heal' && e.target === boss.id),
+      'boss recovery emits visible healing');
+    boss.telegraph = null;
+    assert(!g.startBossRecovery(boss), family + ' heal cooldown prevents repeats');
+    boss.healCd = 0;
+    boss.hp = boss.maxHp * 0.9;
+    assert(!g.startBossRecovery(boss), family + ' cannot heal when not sufficiently injured');
+    assert.equal(g.hero.hp, g.hero.maxHp, 'self-heal does not damage the party');
+  }
+}
+console.log('PASS independently telegraphed Dragon and Sentinel cooldown healing');
