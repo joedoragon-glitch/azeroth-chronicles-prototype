@@ -253,11 +253,7 @@
         // A valid tactical retreat moves the active encounter, not the permanent
         // spawn. Allow damage near the retreat corridor/anchor; otherwise a
         // regrouper beyond its original home leash would become invulnerable.
-        const inCombatArea = this.tacticalRogueLeashAllows(
-          e,
-          origin,
-          normalDamageTerritory,
-        );
+        const inCombatArea = this.tacticalRogueLeashAllows(e, origin, normalDamageTerritory);
         if (!this.line(origin, e) || !inCombatArea) return false;
         e.mercyProvoked = true;
         this.engage(e, true);
