@@ -670,7 +670,7 @@ test('F76 field commander revives existing local soldier spawns but no summons o
   c.tacticalResolveRogueMove(e,move);
   assert.deepEqual(c.zone().enemies.map(x=>x.id),ids,'only original monster records survive');
   assert.equal(squad.filter(u=>u.hp>0).length,3,'restore defenders to a 3-member cap');
-  assert.equal(summoned.hp,summonBaseline,'personal boss summon remains unaffected by the rally');
+  assert(summoned.hp>0 && summoned.summon && summoned.owner===e.id && summoned.hp/summoned.maxHp===1,'owned boss summon remains alive, owned and unwounded');
   e.telegraph=null;squad[3].hp=0;squad[3].deathPaid=true;
   const previous=squad.filter(u=>u.hp>0).length;
   assert.equal(previous,3);
@@ -724,14 +724,14 @@ test('F78 Blinding Dust redirects auto targeting, respects AoE, and expires exac
  assert(!c.squadThreats().includes(dust),'companion doctrine must exclude covered enemy');
  assert(c.squadThreats().includes(other),'companion may focus another enemy');
  c.updateParty(.1);
- const normalizedDustHp=dust.hp;
+ const normalizedDustHp=dust.hp,otherBeforeCast=other.hp;
  assert(![...c._tacticalPartyTargets.values()].includes(dust.id));
  assert(c._tacticalPartyTargets.get(ally.id)===other.id,
   'companion changes to an eligible foe instead of attacking dust');
  c.hero.cd[0]=0;
  assert(c.cast(1,dust.id),'hero basic auto-attack redirects to an eligible foe');
  assert.equal(dust.hp,normalizedDustHp,'retargeted basic does not strike the covered goblin');
- assert(other.hp<otherBefore,'uncovered enemy receives the attack');
+ assert(other.hp<otherBeforeCast,'uncovered enemy receives the retargeted basic attack');
  assert(c.damage(dust,10,'hero',{area:true}),'area damage still reaches the dust-covered goblin');
  c.s.time=46.64;assert.equal(c.tacticalDirectTargetable(dust),false);
  c.s.time=46.65;assert.equal(c.tacticalDirectTargetable(dust),true);
