@@ -3261,7 +3261,8 @@
             if (!e.telegraph && !e.motion) {
               e.cd = a.recovery * (e.type === 'boss' ? R.bossCadence.specialRecoveryMultiplier : 1);
               if (!a.rogueMove)
-                e.basicDue = e.type === 'boss' && e.attackIndex % R.bossCadence.skillsPerBasic === 0;
+                e.basicDue =
+                  e.type === 'boss' && e.attackIndex % R.bossCadence.skillsPerBasic === 0;
               if (a.opening)
                 e.open = e.form === 'true' && e.family === 'citadel' ? a.opening / 2 : a.opening;
             }
