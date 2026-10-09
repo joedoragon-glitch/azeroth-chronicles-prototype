@@ -4336,14 +4336,16 @@
       hardCap: false,
       windowSeconds: 2,
       openingMultiplier: 1.6,
-      // Fractions of the target's own maximum HP: knee, then logarithmic tail.
+      // Doubled ordinary/guardian protection, then inherited stronger-role curves:
+      // ringleader takes the prior captain profile, captain the prior TRUE boss,
+      // and TRUE bosses share normal-boss compression.
       tiers: Object.freeze({
-        ordinary: { knee: 1.35, tail: 1.75 },
-        guardian: { knee: 0.95, tail: 1.25 },
-        ringleader: { knee: 0.7, tail: 0.95 },
-        captain: { knee: 0.5, tail: 0.75 },
-        boss: { knee: 0.36, tail: 0.55 },
-        trueBoss: { knee: 0.29, tail: 0.48 },
+        ordinary: { knee: 0.675, tail: 0.875 },
+        guardian: { knee: 0.475, tail: 0.625 },
+        ringleader: { knee: 0.25, tail: 0.375 },
+        captain: { knee: 0.145, tail: 0.24 },
+        boss: { knee: 0.18, tail: 0.275 },
+        trueBoss: { knee: 0.18, tail: 0.275 },
       }),
     }),
   });
