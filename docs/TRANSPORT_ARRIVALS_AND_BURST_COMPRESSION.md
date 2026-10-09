@@ -56,3 +56,18 @@ At Joel's request, strengthen **all six** tiers relative to the initial v0.8.105
 | TRUE boss | 0.145 | 0.240 | 3,629 | 2,546 |
 
 These are curve comparisons, not assertions that a monster can survive damage beyond its remaining HP. Unlike the initial 135%-HP knee, the ordinary-monster knee now lies below maximum HP, so compression can matter before a nominally lethal burst. The rolling window remains **two seconds**; there is still no fixed cap, attacker-specific budget, cooldown, additional rogue resistance or change to exposed boss opening behavior. Retain the original v0.8.105 table above as historical context.
+
+## v0.8.108 — Current tier reassignment (supersedes the six-tier v0.8.107 table above)
+
+The previous stronger calibration remains the historical source for these inherited settings; the latest decision **moves** its values between roles rather than applying another global compression increase. Only the following are reassigned: ringleaders inherit the former captain values, captains inherit the former TRUE-boss values, and TRUE bosses use exactly the normal-boss values. Normal bosses, guardians, and ordinary monsters are unchanged relative to the prior stronger baseline.
+
+| Current tier | Knee as max-HP fraction | Tail as max-HP fraction | Previous stronger baseline source |
+| --- | ---: | ---: | --- |
+| Ordinary | 0.675 | 0.875 | Unchanged |
+| Guardian | 0.475 | 0.625 | Unchanged |
+| Ringleader | 0.250 | 0.375 | Former captain |
+| Captain | 0.145 | 0.240 | Former TRUE boss |
+| Normal boss | 0.180 | 0.275 | Unchanged |
+| TRUE boss | 0.180 | 0.275 | Normal boss |
+
+Intentional consequence: captains now have stronger burst compression than either normal or TRUE bosses. That is **not** an accidental reversal in the ranking. Boss and TRUE-boss compression are exactly equal, but other fight mechanics (HP, attacks, summons and phase behavior) remain distinct. The two-second window, no-hard-cap property and opening bonus remain unchanged. Do not interpret the historical tables above as current tuning.
