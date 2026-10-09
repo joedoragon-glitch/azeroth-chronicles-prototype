@@ -179,14 +179,12 @@
       }
       bossCenteredReach(e, plan) {
         const scale = R.bossCadence.areaRangeMultiplier;
-        const kind =
-          plan.kind === 'sector' && e.hp > e.maxHp * 0.5 ? 'cone' : plan.kind;
+        const kind = plan.kind === 'sector' && e.hp > e.maxHp * 0.5 ? 'cone' : plan.kind;
         if (kind === 'cone') return 165 * scale;
         if (kind === 'sector') return 280 * scale;
         // The moving ring's reach comes from speed × lifetime, not its
         // initially displayed radius (which is overwritten on every tick).
-        if (kind === 'ring')
-          return R.combatGeometry.ringSpeed * R.combatGeometry.ringLife * scale;
+        if (kind === 'ring') return R.combatGeometry.ringSpeed * R.combatGeometry.ringLife * scale;
         return null;
       }
       bossAttackWeights(e, target = this.hero, allowRepeat = false) {
@@ -202,10 +200,7 @@
           const attackTarget = this.bossAttackTarget(e, target, index);
           const reach = this.bossCenteredReach(e, plan);
           // A special must have realistic coverage at the moment it is chosen.
-          if (
-            plan.kind !== 'summon' &&
-            dist(e, attackTarget) > R.bossCadence.specialRange
-          )
+          if (plan.kind !== 'summon' && dist(e, attackTarget) > R.bossCadence.specialRange)
             return 0;
           if (reach !== null && dist(e, attackTarget) > reach + 25) return 0;
           let w = 1;
@@ -254,9 +249,7 @@
         // Authored hero-targeting remains authoritative. Targeted ground
         // marks can occasionally challenge a protected backline as well.
         const markBackline =
-          plan.kind === 'circle' &&
-          fallbackDistance < 200 &&
-          heroDistance > fallbackDistance + 70;
+          plan.kind === 'circle' && fallbackDistance < 200 && heroDistance > fallbackDistance + 70;
         return behavior.heroTarget?.includes(index) || markBackline ? this.hero : fallback;
       }
       buildBossAttack(e, index, target, includeTrue = true) {
