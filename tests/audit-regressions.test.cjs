@@ -793,4 +793,32 @@ test('F81 Thornfang howl does not reset a nearby fight when the grace timer expi
  assert.equal(c.tacticalRogueLeashAllows(e,c.hero,400),false,
    'deliberate retreat still escapes');
 });
+test('F82 goblin dust cancels a manually held hero target, not just automatic focus',()=>{
+ const c=fresh(),g=c.makeEnemy({species:'goblin',name:'dust slinger',level:2,hp:300,damage:10,gold:0,xp:0},{x:1400,y:1700}),
+   other=c.makeEnemy({species:'skeleton',name:'other foe',level:2,hp:300,damage:10,gold:0,xp:0},{x:1480,y:1700});
+ c.zone().enemies=[g,other];c.s.party=[];g.aggro=true;other.aggro=true;c.line=()=>true;
+ Object.assign(c.hero,{x:1450,y:1700,hp:10000,maxHp:10000});
+ assert.equal(c.holdHeroTarget(()=>true,g.id)?.id,g.id,'Q held lock is established');
+ assert.equal(c.manualHeroTargetId,g.id);
+ assert.equal(c.manualHeroTargetLocked,true);
+ c.tacticalRogueOutnumbered=()=>false;
+ assert(c.tacticalRogueMove(g,c.hero));
+ c.tacticalResolveRogueMove(g,g.telegraph);
+ assert.equal(c.manualHeroTargetId,null,'dust immediately cancels held manual target');
+ assert.equal(c.manualHeroTargetLocked,false);
+ assert.equal(c.selectedHeroTarget(),null);
+ assert.equal(c.cycleHeroTarget()?.id,other.id,'new manual cycle excludes the covered goblin');
+});
+test('F83 enemy death purges rogue regroup state alongside threat and burst records',()=>{
+ const c=fresh(),e=c.makeEnemy({species:'wolf',name:'wounded wolf',level:1,hp:200,damage:3,gold:0,xp:0},{x:1400,y:1700});
+ c.zone().enemies=[e];c.s.party=[];
+ c._tacticalRegroups=new Map([[e.id,{phase:'thinking',thinkRemaining:0.8}]]);
+ c._tacticalRogueNext=new Map([[e.id,20]]);
+ c.tacticalRecordHit(e,'hero',12);
+ c.tacticalCompressDamage(e,10);
+ e.hp=0;c.kill(e);
+ assert.equal(c.tacticalRogueRegroup(e),null,'rogue regroup state cannot survive death');
+ assert.deepEqual(c.tacticalThreatSnapshot(e),[]);
+ assert.equal(c._tacticalBurstWindow?.has(e.id)||false,false);
+});
 console.log(passed+' audit regression scenarios passed.');
