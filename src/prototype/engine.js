@@ -2766,6 +2766,15 @@
         if (this.tacticalRogueMove(e, target)) {
           if (!this._tacticalRegroupUsed) this._tacticalRegroupUsed = new Set();
           this._tacticalRegroupUsed.add(e.id); // Prevent lone move spam.
+          if (state.anchor) {
+            this._tacticalRegroups.set(e.id, {
+              phase: 'anchored',
+              anchor: state.anchor,
+              holdRemaining: 12,
+              moveUsed: true,
+              recruited: true,
+            });
+          }
           return true;
         }
         // No support and no usable special: refuse the fight and flee quickly.
@@ -2803,8 +2812,11 @@
         state.travelRemaining -= dt;
         const ally = this.zone().enemies.find((unit) => unit.id === state.allyId);
         if (!ally || ally.hp <= 0 || ally.neutral || ally.returning || state.travelRemaining <= 0) {
-          this.tacticalStopRogueRegroup(e);
-          return false;
+          this._tacticalRegroups.set(e.id, {
+            phase: 'thinking',
+            thinkRemaining: R.tacticalFoundation.thinkingSeconds,
+          });
+          return true;
         }
         if (dist(e, state.destination) > 65) {
           const before = { x: e.x, y: e.y };
@@ -2854,6 +2866,7 @@
           this._tacticalRegroups.set(e.id, {
             phase: 'thinking',
             thinkRemaining: R.tacticalFoundation.thinkingSeconds,
+            anchor: state.anchor,
           });
           return true;
         }
@@ -2922,12 +2935,12 @@
     tacticalRecruitRegroupAllies(e, state, target) {
       if (state.recruited || dist(target, e) > 280) return;
       state.recruited = true;
-      const cfg = R.tacticalFoundation;
       let recruited = 0;
       for (const ally of this.tacticalRegroupCandidates(e)) {
-        if (recruited >= cfg.maxReinforcements) break;
-        if (ally.aggro || dist(ally, e) > cfg.supportRadius || dist(target, ally) > 320) continue;
-        // Do not create a cascading pack pull across the map.
+        if (ally.aggro || dist(ally, e) > R.tacticalFoundation.supportRadius ||
+            dist(target, ally) > 320) continue;
+        // No global limit or faction restrictions. Nearby reinforcements can
+        // make further independent rogue decisions if the player keeps chasing.
         if (this.engage(ally, true, false) !== false) recruited++;
       }
       if (recruited) this.event('rogueSupport', { actor: e.id, allies: recruited });
@@ -2947,28 +2960,21 @@
         e.rangedAim ||
         this.tacticalRogueRegroup(e) ||
         this._tacticalRegroupUsed?.has(e.id) ||
+        (this._tacticalRogueNext?.get(e.id) || 0) > this.s.time ||
         (Number.isFinite(e.fightStart) && this.s.time - e.fightStart < 1.1)
       )
         return false;
       const pressure = this.tacticalActiveTargetCount(e);
       if (!this.tacticalRogueEligibility(e, pressure)) return false;
-      if (!this._tacticalRegroupUsed) this._tacticalRegroupUsed = new Set();
-      // Try nearby support including an isolated ally; keep a strict attempt
-      // budget so obstructed maps cannot trigger unbounded path searches.
-      let attempts = 0;
-      for (const group of this.tacticalRegroupGroups(e)) {
-        for (const ally of group.members) {
-          if (attempts++ >= 5) break;
-          if (this.tacticalBeginRogueRegroup(e, ally, pressure)) {
-            this.event('rogueRegroup', { actor: e.id, ally: ally.id });
-            return true;
-          }
-        }
-        if (attempts >= 5) break;
-      }
-      this._tacticalRegroupUsed.add(e.id);
-      // No accessible support: counterattack instead of running indefinitely.
-      return this.tacticalRogueMove(e, target);
+      if (!this._tacticalRegroups) this._tacticalRegroups = new Map();
+      if (!this._tacticalRogueNext) this._tacticalRogueNext = new Map();
+      this._tacticalRegroups.set(e.id, {
+        phase: 'thinking',
+        thinkRemaining: cfg.thinkingSeconds,
+      });
+      this._tacticalRogueNext.set(e.id, this.s.time + cfg.moveCooldownSeconds);
+      e.noProgress = 0;
+      return true;
     }
     updateEnemies(dt) {
       const z = this.zone(),
