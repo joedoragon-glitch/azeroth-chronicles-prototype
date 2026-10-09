@@ -39,6 +39,7 @@
         seen: new WeakMap(),
         projectiles: new WeakMap(),
         hazards: new WeakMap(),
+        motions: new WeakMap(),
         context: null,
       };
       state.set(game, s);
@@ -124,9 +125,10 @@
     if (game.enemyVfxEnabled === false) return;
     const s = store(game),
       identity = V.describe(e, a);
+    if (s.context && s.context.epoch !== s.epoch) return;
     for (const p of game.s.projectiles)
       if (!beforeShots.has(p) && p.sourceId === e.id)
-        s.projectiles.set(p, { e, a, identity, epoch: s.epoch });
+        s.projectiles.set(p, { e, a, identity, epoch: s.epoch, initialLife: p.life });
     for (const h of game.s.hazards)
       if (!beforeHazards.has(h)) s.hazards.set(h, { e, a, identity, epoch: s.epoch });
   }
@@ -205,7 +207,7 @@
           for (const p of shots) {
             const plan = { kind: 'projectile', style: p.style },
               identity = V.projectile(e, p);
-            s.projectiles.set(p, { e, a: plan, identity, epoch: s.epoch });
+            s.projectiles.set(p, { e, a: plan, identity, epoch: s.epoch, initialLife: p.life });
             if (emit(this, e, plan, 'release', null, identity)) legacy.presentationHandled = true;
           }
         }
@@ -250,6 +252,8 @@
         return original.call(this, e);
       } finally {
         bindNew(this, e, a, shots, hazards);
+        if (e.motion && s.context.epoch === s.epoch && !s.motions.has(e.motion))
+          s.motions.set(e.motion, { e, epoch: s.epoch, initialLife: e.motion.life });
         s.context = old;
       }
     });
@@ -271,6 +275,7 @@
       const a = e.motion,
         s = store(this),
         old = s.context;
+      if (a && !s.motions.has(a)) s.motions.set(a, { e, epoch: s.epoch, initialLife: a.life });
       if (a) s.context = { e, a, epoch: s.epoch };
       try {
         return original.call(this, e, dt);
@@ -374,7 +379,7 @@
           if (!beforeShots.has(p) && p.sourceId === e.id && !s.projectiles.has(p)) {
             const a = { kind: 'projectile', style: p.style, x: p.x, y: p.y },
               identity = V.projectile(e, p);
-            s.projectiles.set(p, { e, a, identity, epoch: s.epoch });
+            s.projectiles.set(p, { e, a, identity, epoch: s.epoch, initialLife: p.life });
             emit(this, e, a, 'release', null, identity);
           }
       }
@@ -383,7 +388,7 @@
     for (const name of ['die', 'enter'])
       wrap(name, function (original, args) {
         const result = original.apply(this, args);
-        store(this).epoch++;
+        if (name === 'die' || result !== false) store(this).epoch++;
         return result;
       });
     proto.enemyVfxEpoch = function () {
@@ -394,6 +399,9 @@
     };
     proto.enemyVfxHazard = function (h) {
       return store(this).hazards.get(h) || null;
+    };
+    proto.enemyVfxMotion = function (m) {
+      return store(this).motions.get(m) || null;
     };
     proto.enemyVfxHazardImpact = function (h, u) {
       const m = this.enemyVfxHazard(h);

@@ -181,3 +181,7 @@ The desktop/phone presentation now keeps a compact HUD instead of the old broad 
 ## Approved ergonomic UI refinement · v0.8.114
 
 Phone: thumb-adjacent contextual Interact, stable Recall/Target/Squad grouping, clearer labels and notifications. Desktop: compact unlocked-skill hotbar, contextual Ranger commands and corrected camera anchor. Short interaction dialogs now use natural compact/regular widths and natural height under the same scroll limits. Inventory removes duplicate Recall and disabled support actions; Barracks Operations copy matches its real functions. The canonical supported minimum stays 375x800 CSS portrait/800x375 landscape; 360x780 is only a scaled best-effort fallback and does not govern the design or add device support commitments. See RESPONSIVE_UI_AUDIT_20261009.md. Draft branch only until review and CI.
+
+## Enemy VFX quality audit v0.8.116
+
+The follow-up audit corrects captain/species basic-hit semantics and Ridge Tyrant hammer feedback, observes actual motion/projectile lifetimes for replacement clips, suppresses stale persistent-area art after revival/reentry, preserves effects on failed travel, handles manifest reload races/failures and culls offscreen actor-local stages. The browser catalog now requires real contact for all 28 basic identities. Combat rules, merged rogue mechanics, audio recordings and v4 saves remain unchanged. See [ENEMY_SKILL_VFX_QUALITY_AUDIT.md](ENEMY_SKILL_VFX_QUALITY_AUDIT.md) for matched desktop/phone evidence and verification.
