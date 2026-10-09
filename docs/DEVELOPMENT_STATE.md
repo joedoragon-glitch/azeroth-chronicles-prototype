@@ -205,3 +205,9 @@ PR #183 integrates dormant MP, five-rank Cooldown Training and approved HP sipho
 ## Selective quest narration · integrated v0.8.120
 
 The user-reviewed 30-quest selection remains authoritative: 12 quiet CHRONICLE passages and one high-priority finale milestone; 17 quests have no narrative card. Existing automatic rewards, quest states, v4 saves, combat notices, Keeper Archive and cooldown-only mechanics remain intact. The prose lives in narration.js, routed through the existing payQuest dispatcher and deferred by combat/menus. See AMBER_NARRATION_IMPLEMENTATION.md and source PR #184 for the approved text and validation.
+
+## Spatial proportions and original-master tooling · prepared v0.8.122
+
+Recovered the strictly presentation-only feature-scale and original-export preparation from PR #145 onto the latest v0.8.121 release. Runtime art targets are +40% for houses/workshops, +35% for entrances/transports/oppressive structures, and +30% for trees; ordinary actors and small props stay at prior world-scale. Existing low-density registered sprites are **not** enlarged. The sprite preparation pipeline supports 768/816 raster budgets and one-pass original-master normalization; no production artwork, material texture, image source, approval or rollback revision is changed. All five zone sizes and configured enemy populations remain unchanged, including the v0.8.121 fort migrations.
+
+This is the **initial proportional presentation pass**, not a verified completed spatial-crowding audit, a whole-world art makeover, or completion of issue #160. See PROPORTION_IMPLEMENTATION_CHECKPOINT.md, WORLD_PROPORTION_AND_DENSITY_GUARDRAILS.md, and original art-production checkpoint in PR #145. Publish only after full CI and exact live Pages verification.
