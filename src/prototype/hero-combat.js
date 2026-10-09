@@ -73,6 +73,104 @@
         if (slot === 1) return 0;
         return Math.ceil(costs[slot] * (1 + R.manaBalance.rankCostGrowth * Math.max(0, rank - 1)));
       }
+      // Target selection is transient: no changes to campaign saves or difficulty.
+      // A held Target locks the current foe even while dodging beyond selection range.
+      selectedHeroTarget() {
+        const id = this.manualHeroTargetId;
+        if (!id) return null;
+        const enemy =
+          this.manualHeroTargetZone === this.zoneId
+            ? this.zone().enemies.find((e) => e.id === id)
+            : null;
+        if (
+          this.peace ||
+          this.hero.hp <= 0 ||
+          this.s.challenge?.pending ||
+          this.s.challenge?.gameOver ||
+          !enemy ||
+          enemy.hp <= 0 ||
+          enemy.neutral ||
+          enemy.returning ||
+          (this.manualHeroTargetLocked
+            ? dist(enemy, this.hero) > 1400 && !enemy.aggro
+            : dist(enemy, this.hero) > 680)
+        ) {
+          this.manualHeroTargetId = null;
+          this.manualHeroTargetLocked = false;
+          this.manualHeroTargetZone = null;
+          if (this.s.heroTarget === id) this.s.heroTarget = null;
+          return null;
+        }
+        return enemy;
+      }
+      holdHeroTarget(visible = () => true, preferredId = null) {
+        if (this.peace) return null;
+        let enemy = this.selectedHeroTarget();
+        // A long press holds the foe already being attacked, not necessarily
+        // the nearest summon that appeared while the button was depressed.
+        if (!enemy) {
+          const id = preferredId || this.s.heroTarget;
+          enemy = this.zone().enemies.find(
+            (e) =>
+              e.id === id &&
+              e.hp > 0 &&
+              !e.neutral &&
+              !e.returning &&
+              dist(e, this.hero) <= 680 &&
+              this.line(this.hero, e) &&
+              visible(e),
+          );
+        }
+        if (!enemy) enemy = this.cycleHeroTarget(visible);
+        if (!enemy) return null;
+        this.manualHeroTargetId = enemy.id;
+        this.manualHeroTargetZone = this.zoneId;
+        this.manualHeroTargetLocked = true;
+        this.s.heroTarget = enemy.id;
+        return enemy;
+      }
+      cycleHeroTarget(visible = () => true) {
+        if (this.peace) return null;
+        const current = this.selectedHeroTarget();
+        const enemies = this.zone()
+          .enemies.filter(
+            (e) =>
+              e.hp > 0 &&
+              !e.neutral &&
+              !e.returning &&
+              dist(e, this.hero) <= 680 &&
+              this.line(this.hero, e) &&
+              visible(e),
+          )
+          .sort((a, b) => dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b));
+        if (!enemies.length) {
+          // A deliberate quick press always releases an existing lock, even
+          // when the former target has moved out of view.
+          this.manualHeroTargetId = null;
+          this.manualHeroTargetLocked = false;
+          this.manualHeroTargetZone = null;
+          return null;
+        }
+        const index = enemies.findIndex((e) => e.id === current?.id);
+        const target = enemies[(index + 1) % enemies.length];
+        this.manualHeroTargetId = target.id;
+        this.manualHeroTargetZone = this.zoneId;
+        this.manualHeroTargetLocked = false; // A new manual choice releases an old lock.
+        this.s.heroTarget = target.id;
+        return target;
+      }
+      heroSkillRange(slot, charged = false) {
+        const second = charged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null;
+        return second
+          ? second.range || 480
+          : this.hero.class === 'paladin' && slot < 3
+            ? 120
+            : slot === 1
+              ? this.hero.class === 'mage'
+                ? 400
+                : 450
+              : 480;
+      }
       cast(slot, targetId, charged = false) {
         const i = slot - 1,
           rank = this.hero.skills[i],
@@ -85,24 +183,23 @@
         const scale = 1 + 0.15 * (rank - 1),
           chargedSecond =
             isCharged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null,
-          range = chargedSecond
-            ? chargedSecond.range || 480
-            : this.hero.class === 'paladin' && slot < 3
-              ? 120
-              : slot === 1
-                ? this.hero.class === 'mage'
-                  ? 400
-                  : 450
-                : 480,
+          range = this.heroSkillRange(slot, isCharged),
+          selected = this.selectedHeroTarget(),
           targets = this.zone().enemies.filter(
             (e) => e.hp > 0 && !e.neutral && dist(e, this.hero) <= range && this.line(this.hero, e),
           ),
           preferredTargetId =
-            targetId ?? (slot === 1 ? (this.basicComboTargetId ?? this.s.heroTarget) : null),
+            targetId ??
+            selected?.id ??
+            (slot === 1 ? (this.basicComboTargetId ?? this.s.heroTarget) : null),
+          requiresTarget = [1, 2, 6, 7, 8].includes(slot),
+          lockedOut = !targetId && selected && requiresTarget,
           target =
             targets.find((e) => e.id === preferredTargetId) ||
-            targets.find((e) => slot === 1 && e.id === this.s.heroTarget) ||
-            targets.sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0];
+            (lockedOut
+              ? null
+              : targets.find((e) => slot === 1 && e.id === this.s.heroTarget) ||
+                targets.sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0]);
         if ([1, 2, 6, 7, 8].includes(slot) && !target) return false;
         if (slot === 3) {
           const living = [this.hero, ...this.activeLivingParty()].filter((u) => u.hp > 0);
@@ -114,7 +211,7 @@
         if (this.hero.mp < cost) return false;
         this.hero.mp -= cost;
         this.hero.cd[i] = cooldowns[slot];
-        if (target && [1, 2, 6, 7, 8].includes(slot)) this.s.heroTarget = target.id;
+        if (target && requiresTarget) this.s.heroTarget = selected?.id || target.id;
         const power = this.power();
         if (isCharged && slot === 1) {
           this.resetBasicCombo();

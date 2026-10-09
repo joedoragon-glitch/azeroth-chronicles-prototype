@@ -938,6 +938,132 @@
       }
     }
 
+    // A few ink-like brackets, not ground circles. Charge hints appear only
+    // while the player is holding an aimed skill; simulation owns the ranges.
+    function targetGuidance() {
+      const cast = chargePresentation(),
+        aimed = cast && (cast.slot === 1 || cast.slot === 2),
+        selected = game.selectedHeroTarget();
+      if (cast?.slot === 3) {
+        const p = screen(game.hero);
+        ctx.save();
+        ctx.strokeStyle = cast.state === 'no-heal' ? '#bcaba0' : cast.color;
+        ctx.globalAlpha = 0.8;
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(p.x - 5, p.y - 34);
+        ctx.lineTo(p.x + 5, p.y - 34);
+        ctx.moveTo(p.x, p.y - 39);
+        ctx.lineTo(p.x, p.y - 29);
+        ctx.stroke();
+        ctx.restore();
+        return;
+      }
+      if (!selected && !aimed) return;
+      const target = aimed
+        ? game.zone().enemies.find((e) => e.id === cast.targetId && e.hp > 0 && !e.neutral)
+        : selected;
+      if (!target) return;
+      const p = screen(target),
+        range = aimed ? game.heroSkillRange(cast.slot, true) : 0,
+        distance = Math.hypot(target.x - game.hero.x, target.y - game.hero.y),
+        clear = game.line(game.hero, target),
+        inRange = !aimed || distance <= range,
+        color = aimed ? (!clear ? '#dc867e' : inRange ? '#f4d894' : '#e2b67b') : '#f4d894',
+        valid = !aimed || (inRange && clear);
+      ctx.save();
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      if (aimed) {
+        const h = screen(game.hero);
+        ctx.strokeStyle = color;
+        ctx.globalAlpha = valid ? 0.38 : 0.26;
+        ctx.lineWidth = 1.3;
+        ctx.setLineDash?.([3, 6]);
+        ctx.beginPath();
+        ctx.moveTo(h.x, h.y - 13);
+        ctx.lineTo(p.x, p.y - 16);
+        ctx.stroke();
+        ctx.setLineDash?.([]);
+        // Short corner ticks suggest other reachable targets without a reticle
+        // or an overdrawn field of radius circles.
+        for (const e of game
+          .zone()
+          .enemies.filter(
+            (e) =>
+              e.id !== target.id &&
+              e.hp > 0 &&
+              !e.neutral &&
+              !e.returning &&
+              Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= range &&
+              game.line(game.hero, e),
+          )
+          .sort(
+            (a, b) =>
+              Math.hypot(a.x - game.hero.x, a.y - game.hero.y) -
+              Math.hypot(b.x - game.hero.x, b.y - game.hero.y),
+          )
+          .slice(0, 3)) {
+          const q = screen(e);
+          if (q.x < 12 || q.x > canvas.width - 12 || q.y < 12 || q.y > canvas.height - 12) continue;
+          ctx.globalAlpha = 0.45;
+          ctx.beginPath();
+          ctx.moveTo(q.x - 17, q.y - 13);
+          ctx.lineTo(q.x - 12, q.y - 16);
+          ctx.moveTo(q.x + 17, q.y - 13);
+          ctx.lineTo(q.x + 12, q.y - 16);
+          ctx.stroke();
+        }
+      }
+      const halfWidth = target.type === 'boss' ? 34 : target.captain ? 28 : 22,
+        top = p.y - (target.type === 'boss' ? 43 : 32),
+        bottom = p.y - 3,
+        corner = 7;
+      ctx.globalAlpha = 0.88;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.shadowColor = '#07140e';
+      ctx.shadowBlur = 3;
+      ctx.beginPath();
+      for (const side of [-1, 1]) {
+        const px = p.x + side * halfWidth;
+        ctx.moveTo(px, top + corner);
+        ctx.lineTo(px, top);
+        ctx.lineTo(px - side * corner, top);
+        ctx.moveTo(px, bottom - corner);
+        ctx.lineTo(px, bottom);
+        ctx.lineTo(px - side * corner, bottom);
+      }
+      ctx.stroke();
+      if (selected?.id === target.id && game.manualHeroTargetLocked) {
+        ctx.globalAlpha = 0.85;
+        ctx.shadowBlur = 2;
+        ctx.font = 'bold 9px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#f4d894';
+        ctx.fillText('LOCK', p.x, top - 7);
+      }
+      if (aimed) {
+        const label = !clear
+          ? 'BLOCKED'
+          : !inRange
+            ? 'MOVE CLOSER'
+            : cast.state === 'need-mp'
+              ? 'NEED MP'
+              : cast.state === 'waiting'
+                ? 'WAIT'
+                : cast.ready
+                  ? 'RELEASE'
+                  : 'CHARGING';
+        ctx.globalAlpha = 0.95;
+        ctx.font = 'bold 9px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = color;
+        ctx.fillText(label, p.x, bottom + 18);
+      }
+      ctx.restore();
+    }
+
     function render() {
       ctx.fillStyle = '#0c1913';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -1184,6 +1310,7 @@
       PrototypeCombatVisuals.ground(ctx, screen, game, 'cue', now() / 1000);
       for (const p of game.s.projectiles) drawProjectile(p);
       drawVisualFx();
+      targetGuidance();
       if (isPaused()) {
         ctx.fillStyle = '#0006';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
