@@ -4327,7 +4327,25 @@
     rogueMoves,
     // Tier names are identifiers, not mitigation percentages.
     protectionTiers: ['ordinary', 'guardian', 'ringleader', 'captain', 'boss', 'trueBoss'],
-    burstCompression: Object.freeze({ enabled: false, model: 'soft-knee', hardCap: false }),
+    // Raw incoming damage is summed across the hero and companions over a short
+    // sliding window, then mapped through a smooth logarithmic knee. There is
+    // no hard DPS cap: greater investment and stronger attacks always do more.
+    burstCompression: Object.freeze({
+      enabled: true,
+      model: 'soft-knee',
+      hardCap: false,
+      windowSeconds: 2,
+      openingMultiplier: 1.6,
+      // Fractions of the target's own maximum HP: knee, then logarithmic tail.
+      tiers: Object.freeze({
+        ordinary: { knee: 1.35, tail: 1.75 },
+        guardian: { knee: 0.95, tail: 1.25 },
+        ringleader: { knee: 0.7, tail: 0.95 },
+        captain: { knee: 0.5, tail: 0.75 },
+        boss: { knee: 0.36, tail: 0.55 },
+        trueBoss: { knee: 0.29, tail: 0.48 },
+      }),
+    }),
   });
 
   const R = {
