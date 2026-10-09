@@ -468,8 +468,7 @@
               'hero',
               { area: true },
             );
-            if (landed && this.hero.class === 'mage' && slot !== 8)
-              e.slow = slot === 5 ? 5 : 6;
+            if (landed && this.hero.class === 'mage' && slot !== 8) e.slow = slot === 5 ? 5 : 6;
           }
           if (slot === 8) {
             this.hero.hp = Math.min(this.hero.maxHp, this.hero.hp + this.hero.maxHp * 0.35 * scale);
