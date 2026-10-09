@@ -655,12 +655,13 @@ test('F76 field commander revives existing local soldier spawns but no summons o
   Object.assign(c.hero,{x:1530,y:1720,hp:10000,maxHp:10000});
   const squad=Array.from({length:4},(_,j)=>{
    const u=c.makeEnemy({species,name:'native troop',level:10,hp:200,damage:10,gold:0,xp:0},{x:1240+j*48,y:1640});
-   u.pack='local-'+family;u.hp=j===0?200:0;u.deathPaid=j!==0;
+   u.pack='local-'+family;u.guard=family==='ridge';u.hp=j===0?200:0;u.deathPaid=j!==0;
    return u;
   });
   const summoned=c.makeEnemy({species,name:'owned summon',level:10,hp:200,damage:10,gold:0,xp:0},{x:1470,y:1600});
   summoned.summon=true;summoned.owner=e.id;
   c.zone().enemies.push(...squad,summoned);
+  c.blocked=()=>false;c.clearSegment=()=>true;
   c.tacticalRogueOutnumbered=()=>true;
   assert(c.tacticalRogueMove(e,c.hero));
   const ids=c.zone().enemies.map(x=>x.id),move=e.telegraph,
@@ -719,7 +720,7 @@ test('F78 Blinding Dust redirects auto targeting, respects AoE, and expires exac
  c.tacticalResolveRogueMove(dust,dust.telegraph);
  const before=dust.hp,otherBefore=other.hp;
  assert.equal(c.damage(dust,55,'hero'),false,'manual and auto direct damage cannot land');
- assert.equal(dust.hp,normalizedDustHp,'hero auto attack does not damage dust-covered goblin');
+ assert.equal(dust.hp,before,'direct attacks do not damage the covered goblin');
  assert(!c.squadThreats().includes(dust),'companion doctrine must exclude covered enemy');
  assert(c.squadThreats().includes(other),'companion may focus another enemy');
  c.updateParty(.1);
@@ -729,7 +730,7 @@ test('F78 Blinding Dust redirects auto targeting, respects AoE, and expires exac
   'companion changes to an eligible foe instead of attacking dust');
  c.hero.cd[0]=0;
  assert(c.cast(1,dust.id),'hero basic auto-attack redirects to an eligible foe');
- assert.equal(dust.hp,before);
+ assert.equal(dust.hp,normalizedDustHp,'retargeted basic does not strike the covered goblin');
  assert(other.hp<otherBefore,'uncovered enemy receives the attack');
  assert(c.damage(dust,10,'hero',{area:true}),'area damage still reaches the dust-covered goblin');
  c.s.time=46.64;assert.equal(c.tacticalDirectTargetable(dust),false);
