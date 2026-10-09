@@ -295,16 +295,29 @@
       const archive =
         typeof PrototypeArchive !== 'undefined' ? PrototypeArchive : require('./archive.js');
       const sections = archive.sections(game, { D, R: Campaign.rules });
+      function currentSection(title) {
+        const current = getGame();
+        if (current !== game || !current.s.keeperPact || !current.keeperAvailable()) {
+          back();
+          return null;
+        }
+        return archive.sections(current, { D, R: Campaign.rules }).find((s) => s.title === title);
+      }
       function shelf(section) {
+        section = currentSection(section.title);
+        if (!section) return;
         openMenu(
           section.title,
           section.intro,
-          section.topics.map(([title, answer]) =>
-            action(title, () =>
-              openMenu(title, answer, [action('Another question', () => shelf(section))], () =>
-                shelf(section),
-              ),
-            ),
+          section.topics.map(([title]) =>
+            action(title, () => {
+              const current = currentSection(section.title);
+              const topic = current?.topics.find(([name]) => name === title);
+              if (!topic) return;
+              openMenu(title, topic[1], [action('Another question', () => shelf(current))], () =>
+                shelf(current),
+              );
+            }),
           ),
           () => keeperTopics(back),
         );
@@ -329,7 +342,11 @@
           ready
             ? [
                 action('Promise to protect the Archive', () => {
-                  if (game.promiseKeeper()) keeper(back);
+                  if (getGame() !== game || !getGame().keeperPactReady()) {
+                    back();
+                    return;
+                  }
+                  if (getGame().promiseKeeper()) keeper(back);
                 }),
               ]
             : [action('Leave him to his books', back)],

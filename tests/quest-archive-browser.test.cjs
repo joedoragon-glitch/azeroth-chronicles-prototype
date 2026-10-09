@@ -188,6 +188,19 @@ const server = http.createServer((req, res) => {
       await page.keyboard.press('Escape');
       await page.keyboard.press('Escape');
       await page.keyboard.press('Escape');
+      await page.keyboard.press('e');
+      await page
+        .getByRole('button', { name: 'Adversaries and their attacks', exact: false })
+        .click();
+      await page.getByRole('button', { name: 'Drowned Keeper', exact: true }).click();
+      assert(
+        (await page.locator('#modal-description').textContent()).includes(
+          'draws back 15% of HP actually taken',
+        ),
+      );
+      await page.keyboard.press('Escape');
+      await page.keyboard.press('Escape');
+      await page.keyboard.press('Escape');
       await page.evaluate(() => {
         const c = Prototype.game;
         const n = c.zone().npcs.find((n) => n.id === 'archive-ledger');
@@ -199,6 +212,21 @@ const server = http.createServer((req, res) => {
       assert(await page.evaluate(() => Prototype.game.s.keeperEvidence));
       await page.keyboard.press('Escape');
       await page.evaluate(() => Prototype.save());
+      await page.reload();
+      await page.waitForFunction(() => !!window.Prototype && Prototype.game.s.keeperPact);
+      await page.evaluate(() => {
+        Prototype.game.tick = () => {};
+      });
+      assert(
+        await page.evaluate(
+          () => Prototype.game.s.keeperEvidence && Prototype.game.keeperAvailable(),
+        ),
+      );
+      assert.equal(
+        await page.locator('#modal').isVisible(),
+        false,
+        'Knowledge reload does not force dialogue',
+      );
       const restored = await page.evaluate(() => {
         const c = Campaign.restore(Prototype.game.snapshot());
         return { pact: c.s.keeperPact, evidence: c.s.keeperEvidence };
@@ -223,6 +251,70 @@ const server = http.createServer((req, res) => {
         ),
         1,
       );
+      await page.evaluate(() => Prototype.save());
+      await page.reload();
+      await page.waitForFunction(
+        () => !!window.Prototype && Prototype.game.s.pending.archive?.active,
+      );
+      await page.evaluate(() => {
+        Prototype.game.tick = () => {};
+      });
+      assert(
+        !(await page.evaluate(() => Prototype.game.keeperAvailable())),
+        'Reload preserves escape',
+      );
+      await page.evaluate(() => {
+        const c = Prototype.game;
+        const boss = c
+          .zone()
+          .enemies.find((e) => e.family === 'archive' && e.form === 'true' && e.hp > 0);
+        boss.hp = 0;
+        c.kill(boss);
+        c.notices.length = 0;
+        const n = c.visibleNPCs().find((n) => n.kind === 'keeper');
+        Object.assign(c.hero, { x: n.x, y: n.y + 80 });
+        Prototype.save();
+        Prototype.updateHUD();
+      });
+      await page.keyboard.press('e');
+      assert.equal(
+        await page.locator('#modal-title').textContent(),
+        'The Keeper’s shelves',
+        'Recapture preserves the promise',
+      );
+      await page.keyboard.press('Escape');
+      await page.reload();
+      await page.waitForFunction(() => !!window.Prototype && Prototype.game.s.true.archive);
+      await page.evaluate(() => {
+        const c = Prototype.game;
+        c.tick = () => {};
+        c.enter('vale');
+        const base = {
+          id: 'keeper-browser-base',
+          kind: 'barracks',
+          name: 'Barracks',
+          progress: 4,
+          full: false,
+          upgradeProgress: 0,
+          upgradePaid: false,
+          queue: 0,
+          ...c.safe(800, 800),
+        };
+        c.zone().buildings.push(base);
+        Object.assign(c.hero, { x: base.x, y: base.y });
+        Prototype.updateHUD();
+      });
+      await page.keyboard.press('e');
+      await page.getByRole('button', { name: 'Rescued specialists', exact: false }).click();
+      await page
+        .getByRole('button', { name: 'Drowned Keeper · The Archive', exact: false })
+        .click();
+      assert.equal(
+        await page.locator('#modal-title').textContent(),
+        'The Keeper’s shelves',
+        'Basic Barracks grants genuine remote consultation',
+      );
+      await page.screenshot({ path: path.join(out, 'keeper-barracks-' + tag + '.png') });
       assert.deepEqual(errors, []);
       console.log(
         'PASS ' +
