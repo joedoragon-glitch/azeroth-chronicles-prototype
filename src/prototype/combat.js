@@ -339,8 +339,8 @@
           this.drainMana(u, manaDrain);
         // Cinder Spitters absorb vitality through their ranged attacks.
         // Use actual HP lost (after armor and the HP floor), from the hero or
-        // companions; cap recovery per projectile so a large hit cannot
-        // instantly refill an Ash-beast. No bonus damage or group-wide healing.
+        // companions; the full 15% of actual HP loss heals only the attacker,
+        // up to its missing health. No bonus damage or group-wide healing.
         // Legacy MP mode still restores the original mana-drain behavior.
         if (!R.resourceMode.manaEnabled && rangedSourceId) {
           const source = this.zone().enemies.find((e) => e.id === rangedSourceId);
@@ -353,7 +353,6 @@
             const heal = Math.min(
               source.maxHp - source.hp,
               (oldHp - u.hp) * R.ashFeeding.healFraction,
-              source.maxHp * R.ashFeeding.maxHpPerHit,
             );
             if (heal > 0) {
               source.hp += heal;
