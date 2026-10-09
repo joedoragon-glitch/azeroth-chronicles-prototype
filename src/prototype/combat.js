@@ -343,8 +343,7 @@
             continue;
           }
           const e = this.zone().enemies.find(
-            (e) => e.id === p.target && e.hp > 0 && !e.neutral &&
-              this.tacticalDirectTargetable(e),
+            (e) => e.id === p.target && e.hp > 0 && !e.neutral && this.tacticalDirectTargetable(e),
           );
           if (!e || this.peace) {
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
