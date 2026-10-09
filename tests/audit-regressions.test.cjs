@@ -16,7 +16,7 @@ test('F10 minor refuge survives death and reload',()=>{const c=fresh();Object.as
 test('F11 Succession preserves a recovery crossing after paid outward travel',()=>{const c=fresh('paladin','normal',{succession:true});c.hero.gold=25;assert(c.travel(1));c.die();c.successor('mage');assert(c.travel(1));assert.equal(c.hero.gold,0);});
 test('F12 ranged basics aim and fire faster while remaining dodgeable and terrain-blocked',()=>{const c=fresh();c.enter('frontier');const e=c.zone().enemies.find(e=>e.species==='archer');c.s.party=[];c.zone().enemies=[e];Object.assign(e,{x:1600,y:750,home:{x:1600,y:750}});Object.assign(c.hero,{x:1760,y:750});c.engage(e);const hp=c.hero.hp;c.updateEnemies(.1);assert(e.rangedAim);assert.equal(e.rangedAim.timer,C.rules.rangedEnemyCombat.aimTime);for(let i=0;i<4;i++)c.updateEnemies(.1);assert(c.s.projectiles.length);assert.equal(c.hero.hp,hp);const p=c.s.projectiles[0];assert.equal(p.speed,e.shotSpeed*C.rules.rangedEnemyCombat.projectileMultiplier);assert.equal(e.cd,C.rules.rangedEnemyCombat.cooldown);c.zone().props.push({x:p.x+p.dx*35,y:p.y+p.dy*35,r:24});c.updateProjectiles(.3);assert.equal(c.s.projectiles.length,0);assert.equal(c.hero.hp,hp);const b=c.bossEnemy(c.boss('crypt'),'normal',{x:1000,y:1000});b.attackIndex=0;c.zone().enemies=[b];Object.assign(c.hero,{x:1200,y:1000});c.startAttack(b,c.hero,1);c.resolveAttack(b);assert.equal(c.s.projectiles[0].speed,260*C.rules.enemyProjectileMultiplier);});
 test('F13 boss specials chain rapidly while warnings stay authored and every fourth special yields one fast basic',()=>{const c=fresh(),e=boss(c);c.s.party=[];c.zone().enemies=[e];Object.assign(c.hero,{x:e.x+60,y:e.y,maxHp:100000,hp:100000});c.engage(e);e.attackIndex=2;c.startAttack(e,c.hero,2);const warning=e.telegraph.total,hp=c.hero.hp;c.resolveAttack(e);assert(Math.abs(hp-c.hero.hp-7.2)<1e-8);assert.equal(warning,1.2);e.telegraph.timer=0;c.updateEnemies(.1);assert.equal(e.cd,.25);assert.equal(e.basicDue,false);e.cd=0;c.updateEnemies(.1);assert(e.telegraph,'boss immediately begins another warned special');e.telegraph=null;e.motion=null;e.sequence=[];e.attackIndex=3;e.cd=0;e.basicDue=false;c.startAttack(e,c.hero,3);e.telegraph.timer=0;c.updateEnemies(.1);assert(e.basicDue,'fourth special schedules one basic');e.cd=0;c.updateEnemies(.1);assert.equal(e.telegraph,null);assert.equal(e.basicDue,false);assert.equal(e.cd,.75);assert.equal(C.rules.bossCadence.specialRange,560);});
-test('F14 pounce moves to its mark, mine openings increase output, and Dark Lord Crown phase becomes weighted rather than scripted',()=>{const c=fresh(),e=boss(c);c.zone().props=[];c.s.party=[];c.zone().enemies=[e];Object.assign(c.hero,{x:e.x+150,y:e.y});e.attackIndex=0;c.startAttack(e,c.hero,1);const mark={x:e.telegraph.x,y:e.telegraph.y};c.resolveAttack(e);for(let i=0;i<10&&e.motion;i++)c.advanceMotion(e,.1);assert(Math.hypot(e.x-mark.x,e.y-mark.y)<20);c.enter('mine');const m=boss(c);Object.assign(c.hero,c.safe(m.x-60,m.y));m.open=0;const h=m.hp;c.damage(m,100);const closed=h-m.hp;m.open=3;const h2=m.hp;c.damage(m,100);assert(m.hp<h2-closed);c.enter('crown');const d=c.bossEnemy(c.boss('darklord'),'normal',{x:3250,y:3200});c.zone().enemies=[d];d.hp=d.maxHp*.8;assert.equal(c.bossAttackWeights(d,c.hero)[3],0);d.hp=d.maxHp*.4;const low=c.bossAttackWeights(d,c.hero);assert(low[3]>0);d.lastAttackIndex=3;assert.equal(c.bossAttackWeights(d,c.hero)[3],0,'Crown phase cannot immediately repeat itself');});
+test('F14 pounce moves to its mark, mine openings increase output, and Dark Lord Crown phase becomes weighted rather than scripted',()=>{const c=fresh(),e=boss(c);c.zone().props=[];c.s.party=[];c.zone().enemies=[e];Object.assign(c.hero,{x:e.x+150,y:e.y});e.attackIndex=0;c.startAttack(e,c.hero,1);const mark={x:e.telegraph.x,y:e.telegraph.y};c.resolveAttack(e);for(let i=0;i<10&&e.motion;i++)c.advanceMotion(e,.1);assert(Math.hypot(e.x-mark.x,e.y-mark.y)<20);c.enter('mine');const m=boss(c);Object.assign(c.hero,c.safe(m.x-60,m.y));m.open=0;const h=m.hp;c.damage(m,100);const closed=h-m.hp;m.open=3;const h2=m.hp;c.damage(m,100);assert(m.hp<h2-closed);c.enter('crown');const d=c.bossEnemy(c.boss('darklord'),'normal',{x:3250,y:3200});c.zone().enemies=[d];const crownRangeTarget={x:d.x+210,y:d.y};d.hp=d.maxHp*.8;assert.equal(c.bossAttackWeights(d,crownRangeTarget)[3],0);d.hp=d.maxHp*.4;const low=c.bossAttackWeights(d,crownRangeTarget);assert(low[3]>0);d.lastAttackIndex=3;assert.equal(c.bossAttackWeights(d,c.hero)[3],0,'Crown phase cannot immediately repeat itself');});
 test('F16 arrival failure rolls back fare, ticket and destination even after mutation',()=>{const c=fresh();c.hero.gold=25;const before=c.snapshot();c.enter=()=>{c.s.zone='march';c.hero.gold=0;throw Error('arrival');};assert(!c.travel(1));assert.deepEqual(c.snapshot(),before);});
 test('F17 idle night health preserves fraction; F19 full barracks are valid resource deposits',()=>{const c=fresh(),e=c.zone().enemies.find(x=>x.type==='mob');c.zone().enemies=[e];e.hp=e.baseHp/2;c.s.clock=500;c.updateEnemies(.1);assert(Math.abs(e.hp/e.maxHp-.5)<1e-9);assert(e.maxHp>e.baseHp);c.s.rescued.ridge=true;while(c.s.expeditionRank<4)c.trainExpedition('ridge');c.hero.gold=1000;assert(c.build());const b=c.zone().buildings.at(-1);for(let i=0;i<50;i++)c.updateParty(.1);assert.equal(b.full,false,'Rank 4 build still starts Basic');assert(c.upgradeBarracks(b.id));for(let i=0;i<50;i++)c.updateParty(.1);assert(b.full,'deposit behavior requires the optional Full upgrade');const u=c.activeLivingParty()[0];Object.assign(u,{x:b.x+10,y:b.y+10,carry:35,order:{type:'deposit'}});const g=c.hero.gold;c.updateParty(.1);assert.equal(c.hero.gold,g+35);});
 test('F20 legacy region and regional buildings survive while retired potion stock is safely discarded',()=>{const legacy={version:2,activeRegion:'world',player:{heroClass:'mage',level:7,gold:500,wx:3200,maxHp:500,hp:10,maxMp:500,mp:10},inventory:['Arma de las Cumbres','Tónico de las Cumbres','Éter de las Cumbres','Poción de Maná Grande'],squad:{buildings:[{wx:2250,wy:1000,progress:4,queue:0}],units:[],nodes:[]}};const c=C.migrate(legacy);assert.equal(c.zoneId,'crown');assert.equal(c.s.zones.frontier.buildings.length,1);assert(c.equipLegacy('Arma de las Cumbres'));assert.equal(c.power(),c.hero.power+70);assert(!c.equipLegacy('unknown'));assert.deepEqual(c.hero.potions,{health:0,mana:0,greater_health:0,greater_mana:0});assert.deepEqual(c.hero.legacyPotions,[],'legacy potion inventory is retired without affecting the rest of the save');assert(Math.abs(c.hero.mp-2.6)<1e-9,'legacy MP percentage is normalized to the new curve');const restored=C.restore(c.snapshot());assert.equal(restored.zoneId,'crown');assert.equal(restored.s.zones.frontier.buildings.length,1);});
@@ -46,4 +46,89 @@ test('F34 a single nearby companion is sufficient for a voluntary regroup',()=>{
 
 test('F35 rogue regroup travel halves incoming hero and companion damage only while in transit',()=>{const c=fresh(),e=c.makeEnemy({species:'wolf',name:'regrouper',level:1,hp:1000,damage:1,gold:0,xp:0},{x:1400,y:1700}),ally=c.makeEnemy({species:'wolf',name:'support',level:1,hp:100,damage:1,gold:0,xp:0},{x:1950,y:1700}),archer=c.unit('archer',1400,1700);c.zone().enemies=[e,ally];c.s.party=[archer];e.aggro=true;c.hero.level=3;Object.assign(c.hero,{x:1400,y:1700});c.route=()=>[{x:ally.x,y:ally.y}];c.line=()=>true;assert(c.tacticalBeginRogueRegroup(e,ally));const initial=e.hp;assert(c.damage(e,100));assert.equal(initial-e.hp,50,'hero damage is reduced by 50% during travel');const afterHero=e.hp;assert(c.damage(e,100,archer.id));assert.equal(afterHero-e.hp,50,'companion damage is reduced by 50% during travel');assert.equal(c.tacticalThreatSnapshot(e).reduce((sum,v)=>sum+v.damage,0),100,'threat records actual post-reduction damage');Object.assign(e,{x:1900,y:1700});Object.assign(archer,{x:1900,y:1700});Object.assign(c.hero,{x:1900,y:1700});const atDistance=e.hp;assert(c.damage(e,100,archer.id),'regrouper remains damageable beyond normal home distance');assert.equal(atDistance-e.hp,50,'50% reduction persists through distant portion of valid travel');c.tacticalAdvanceRogueRegroup(e,c.hero,.1);assert.equal(c.tacticalRogueRegroup(e)?.phase,'anchored');const afterArrival=e.hp;assert(c.damage(e,100));assert.equal(afterArrival-e.hp,100,'reduction ends immediately on regroup arrival');c.tacticalStopRogueRegroup(e);const afterStop=e.hp;assert(c.damage(e,100));assert.equal(afterStop-e.hp,100,'cancelled regroup grants no lingering resistance');});
 test('F36 rogue damage protection is never active for normal engaged enemies',()=>{const c=fresh(),e=c.makeEnemy({species:'wolf',name:'ordinary wolf',level:1,hp:1000,damage:1,gold:0,xp:0},{x:1400,y:1700});c.zone().enemies=[e];e.aggro=true;Object.assign(c.hero,{x:1400,y:1700,level:3});c.line=()=>true;const hp=e.hp;assert(c.damage(e,120));assert.equal(hp-e.hp,120,'normal combat damage remains unchanged');});
+
+test('F37 all normal and TRUE boss families preserve warnings while gaining modest reach',()=>{
+  const R=C.rules,scale=R.bossCadence.areaRangeMultiplier;
+  assert.equal(scale,1.15);assert.equal(R.bossCadence.specialRange,600);
+  for(const def of C.data.bosses)for(const form of ['normal','true']){
+    const c=fresh(),e=c.bossEnemy(def,form,{x:1100,y:1250});
+    c.zone().enemies=[e];c.s.party=[];c.line=()=>true;
+    Object.assign(c.hero,{x:e.x+160,y:e.y,maxHp:100000,hp:100000});
+    for(let i=0;i<R.attacks[def.id].length;i++){
+      const plan=R.attacks[def.id][i];
+      assert(c.startAttack(e,c.hero,i),def.id+' '+form+' explicit move can begin');
+      const a=e.telegraph;
+      assert.equal(a.total,plan.warning,def.id+' '+form+' keeps warning time');
+      assert.equal(a.recovery,plan.recovery,def.id+' '+form+' keeps recovery time');
+      const kind=plan.kind==='sector'&&e.hp>e.maxHp*.5?'cone':plan.kind;
+      if(kind==='cone')assert.equal(a.radius,165*scale,def.id+' '+form+' cone');
+      if(kind==='sector')assert.equal(a.radius,280*scale,def.id+' '+form+' sector');
+      if(kind==='ring'){
+        c.s.hazards=[];c.resolveAttack(e);
+        assert.equal(c.s.hazards.at(-1).life,R.combatGeometry.ringLife*scale,def.id+' '+form+' actual expanding ring duration');
+      }
+      if(a.count>1&&kind==='circle'){
+        assert.equal(c.attackPatches(a)[0].radius,75*scale,def.id+' '+form+' multi-target reach');
+      }
+    }
+  }
+});
+test('F38 all captains reject useless distant cones but can still threaten a ranged opponent',()=>{
+  const R=C.rules,scale=R.bossCadence.areaRangeMultiplier;
+  const older={'supply-vale':420,'supply-march':390,'supply-highlands':430,'supply-crown':440,'frontier-overseer':440};
+  for(const [key,oldRange] of Object.entries(older)){
+    const c=fresh(),zone=key==='frontier-overseer'?'frontier':key;
+    c.enter(zone);c.s.party=[];c.line=()=>true;
+    const e=c.zone().enemies.find(u=>u.captainProfile===key && (u.captain||u.roomCaptain));
+    assert(e,key+' captain exists');
+    const cfg=R.roomCaptains[key];assert(cfg.specialRange>oldRange,key+' activation increased');
+    e.captainOpeningSummon=true;c.random=()=>0;
+    const far={x:e.x+cfg.specialRange-8,y:e.y};
+    assert(c.startCaptainAttack(e,far),key+' has a viable distant special');
+    assert.notEqual(e.telegraph.kind,'cone',key+' cannot waste distant cone');
+    const cone=cfg.attacks.find(p=>p.kind==='cone');
+    if(cone){
+      // Even a currently unused close cone gains a measurable but bounded reach.
+      assert((cone.radius||145)*scale<(cfg.specialRange-8),key+' melee cone remains distinct from acquisition range');
+    }
+  }
+});
+test('F39 boss selection respects actual ring reach, anti-repeat fallbacks and Dark Lord phases',()=>{
+  const c=fresh(),R=C.rules,ringReach=R.combatGeometry.ringSpeed*R.combatGeometry.ringLife*R.bossCadence.areaRangeMultiplier;
+  const m=c.bossEnemy(c.boss('mine'),'normal',{x:1100,y:1200});
+  c.zone().enemies=[m];c.s.party=[];c.line=()=>true;m.lastAttackIndex=-1;
+  assert(ringReach>R.combatGeometry.ringSpeed*R.combatGeometry.ringLife);
+  assert(c.bossAttackWeights(m,{x:m.x+320,y:m.y})[2]>0,'wave is available inside actual sweep');
+  assert.equal(c.bossAttackWeights(m,{x:m.x+380,y:m.y})[2],0,'wave not selected beyond actual sweep');
+  const thorn=c.bossEnemy(c.boss('thorn'),'normal',{x:1100,y:1200});
+  c.zone().enemies=[thorn];thorn.summonCd=100;
+  assert.equal(c.bossAttackWeights(thorn,{x:thorn.x+400,y:thorn.y})[0],0,'short bite excluded at range');
+  assert.equal(c.chooseBossAttack(thorn,{x:thorn.x+620,y:thorn.y}),-1,'no imaginary long-distance melee');
+  assert.equal(c.startAttack(thorn,{x:thorn.x+620,y:thorn.y}),false,'invalid selection does not start a telegraph');
+  const lord=c.bossEnemy(c.boss('darklord'),'normal',{x:1100,y:1200});
+  c.zone().enemies=[lord];lord.summonCd=100;lord.lastAttackIndex=1;lord.hp=lord.maxHp*.8;
+  assert.equal(c.chooseBossAttack(lord,{x:lord.x+440,y:lord.y}),1,'repeat the only usable special rather than wasting a cone');
+  lord.hp=lord.maxHp*.4;lord.lastAttackIndex=-1;
+  assert(c.bossAttackWeights(lord,{x:lord.x+240,y:lord.y})[3]>0,'Crown sector available at low health');
+});
+test('F40 distant follow-up combos cannot materialize short-range arcs on backline',()=>{
+  const c=fresh();c.random=()=>0;c.line=()=>true;c.s.party=[];
+  const e=c.bossEnemy(c.boss('darklord'),'normal',{x:1100,y:1200});
+  c.zone().enemies=[e];e.hp=e.maxHp*.8;
+  Object.assign(c.hero,{x:e.x+440,y:e.y});
+  assert(c.startAttack(e,c.hero,1));assert(!e.sequence.some(a=>a.kind==='cone'),'distant bombardment cannot chain ineffective cleave');
+  Object.assign(c.hero,{x:e.x+140,y:e.y});
+  assert(c.startAttack(e,c.hero,1));assert(e.sequence.some(a=>a.kind==='cone'),'same authored combo remains available in melee range');
+});
+test('F41 backline targeting preserves close-attack geometry and terrain checks',()=>{
+  const c=fresh(),e=c.bossEnemy(c.boss('ridge'),'normal',{x:1100,y:1200});
+  c.zone().enemies=[e];c.s.party=[];
+  const front={x:e.x+100,y:e.y};
+  Object.assign(c.hero,{x:e.x+420,y:e.y});
+  c.line=()=>true;
+  assert.equal(c.bossAttackTarget(e,front,0),front,'short-range strike does not warp to distant hero');
+  assert.equal(c.bossAttackTarget(e,front,1),c.hero,'ranged circle can pressure hero behind frontline');
+  c.line=()=>false;
+  assert.equal(c.bossAttackTarget(e,front,1),front,'cover blocks forced hero marks');
+});
 console.log(passed+' audit regression scenarios passed.');
