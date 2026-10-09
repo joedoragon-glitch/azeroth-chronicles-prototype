@@ -60,6 +60,7 @@ Enemy mana drain comes from authored boss/night/ranged magic attacks; `drainMana
 - Ranger recovery over time, no stacking, maxMP cap; expired effects restored from saves cannot poison MP.
 - Fountain MP amount, one-use restriction and persistence across restore.
 - Authored MP-drain helper floor and empty-MP behavior.
+- Mage-only frost projectile, charged Frost Burst multi-target slow, frost area skills, barrier, and final healing/protection.
 
 Existing suites `prototype.test.cjs`, `auto-potions.test.cjs`, `refuge-rest.test.cjs`, and browser/input tests also cover many charged, support, regen, save, and restoration behaviors. The new suite is complementary, not a replacement.
 
