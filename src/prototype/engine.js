@@ -1740,6 +1740,7 @@
       this._tacticalScatter?.clear();
       this._tacticalScatterLeash?.clear();
       this.tacticalClearThreat();
+      this._tacticalRepositions?.clear();
       this.tacticalClearBurst();
       this._tacticalPartyTargets?.clear();
       this.clearTonic();
@@ -1755,6 +1756,7 @@
       if (this.s.lastEdge) this.s.recovery[this.s.lastEdge] = true;
       for (const z of Object.values(this.s.zones))
         for (const e of z.enemies) {
+          delete e.rogueDustCoverUntil;
           e.telegraph = null;
           e.sequence = [];
           e.motion = null;
@@ -1844,6 +1846,7 @@
       this.tacticalClearRogueRegroup(e);
       this._tacticalScatterLeash?.delete(e.id);
       this._tacticalRepositions?.delete(e.id);
+      delete e.rogueDustCoverUntil;
       const victoryLevel = this.hero.level;
       e.deathPaid = true;
       e.aggro = false;
@@ -3199,7 +3202,8 @@
           u.sequence = [];
           u.cd = 0.25;
           u.noProgress = 0;
-          this.engage(u, true, false);
+          if (dist(u, e) <= R.tacticalFoundation.supportRadius && this.line(e, u))
+            this.engage(u, true, false);
           returned++;
         }
         if (returned) {
@@ -3217,6 +3221,23 @@
           u.cd = Math.min(u.cd || 0, 0.5);
         }
       }
+      // Broodscreen and Crown Decree also rally their living, already engaged
+      // owned troops. These summons never enter native respawn counts or caps.
+      if (['cindermaw', 'darklord'].includes(e.family))
+        for (const u of z.enemies) {
+          if (
+            !u.summon ||
+            u.owner !== e.id ||
+            u.hp <= 0 ||
+            !u.aggro ||
+            u.returning ||
+            dist(u, e) > R.tacticalFoundation.supportRadius ||
+            !this.line(e, u)
+          )
+            continue;
+          u.pursuitBurst = Math.max(u.pursuitBurst || 0, move.rallySeconds);
+          u.cd = Math.min(u.cd || 0, 0.5);
+        }
       return true;
     }
     tacticalRogueCommanderSupport(e, move) {
@@ -3242,8 +3263,8 @@
             return false;
           if (e.captainProfile === 'supply-highlands')
             return u.guard && ['wolf', 'ogre', 'archer'].includes(u.species);
-          if (e.captainProfile === 'frontier-overseer' || e.family === 'warlord')
-            return ['orc', 'archer'].includes(u.species);
+          if (e.captainProfile === 'frontier-overseer')
+            return !u.guard && !u.mini && ['orc', 'archer'].includes(u.species);
           return u.guard && ['wolf', 'ogre', 'archer'].includes(u.species);
         },
         live = () =>
@@ -3258,7 +3279,9 @@
               u.hp <= 0 &&
               u.home &&
               dist(u.home, e) <= range &&
-              dist(u.home, this.hero) >= 105 &&
+              [this.hero, ...this.activeLivingParty()].every(
+                (a) => a.hp <= 0 || dist(a, u.home) >= 105,
+              ) &&
               !this.blocked(u.home.x, u.home.y, z.id, 12) &&
               this.clearSegment(e, u.home, 12),
           )
@@ -3305,8 +3328,24 @@
         // Base movement remains single-target and cover-sensitive.
         if (!target || target.hp <= 0 || dist(target, move) > move.radius || !this.line(e, target))
           return;
-        if (move.style === 'dash' && dist(e, target) > 95) this.move(e, target, 300, 0.3, 85);
+        const startingHero = this.hero,
+          startingZone = this.zoneId,
+          startingDeaths = this.s.statistics.deaths;
+        if (move.style === 'dash' && dist(e, target) > 95) {
+          const previous = { x: e.x, y: e.y };
+          this.move(e, target, 300, 0.3, 85);
+          this.tacticalRecordRogueReposition(e, previous, target);
+        }
         if (!this.hitParty(target, e.damage * move.coefficient)) return;
+        if (
+          this.hero !== startingHero ||
+          this.zoneId !== startingZone ||
+          this.s.statistics.deaths !== startingDeaths ||
+          target.hp <= 0 ||
+          this.s.challenge.pending ||
+          this.s.challenge.gameOver
+        )
+          return;
         if (move.style === 'shove') {
           const d = Math.max(1, dist(e, target)),
             point = {
@@ -3346,12 +3385,14 @@
         return Math.abs(delta) <= 1.1;
       };
       const startingHero = this.hero,
-        startingZone = this.zoneId;
+        startingZone = this.zoneId,
+        startingDeaths = this.s.statistics.deaths;
       for (const unit of this.combatTargets().filter(inside)) {
         if (!this.hitParty(unit, e.damage * move.coefficient)) continue;
         if (
           this.hero !== startingHero ||
           this.zoneId !== startingZone ||
+          this.s.statistics.deaths !== startingDeaths ||
           this.s.challenge.pending ||
           this.s.challenge.gameOver
         )
@@ -3765,6 +3806,7 @@
         this.tacticalClearRogueRegroup(e);
         this._tacticalScatterLeash?.delete(e.id);
         this._tacticalRepositions?.delete(e.id);
+        delete e.rogueDustCoverUntil;
         e.returning = 1;
         e.pursuitBurst = 0;
         this.say(e.name + ' disengages.');

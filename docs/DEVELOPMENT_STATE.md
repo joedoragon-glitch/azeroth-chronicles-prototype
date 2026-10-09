@@ -1,5 +1,9 @@
 # Current development state
 
+## Integrated rogue repertoire · v0.8.110 candidate
+
+PR #146 is reconciled with main's v0.8.109 targeting/compression and VFX foundation. `ROGUE_PR146_INTEGRATION_AUDIT.md` records actual-effect coverage, dust/ADDS targeting, local respawn restraint, active brood/Crown rally and death/save cleanup. Normal boss summons, base rotations and world geometry remain unchanged. Dedicated Chromium/WebKit rogue checks join the existing PR/main gates; deployment still requires exact published-commit verification. See PR #146 for current CI and merge/deployment state.
+
 ## Foundation complete in v0.8.81
 
 Desktop/browser and phone presentation are distinct. World authoring, navigation, rendering, persistence, platform selection and runtime measurements have explicit module boundaries. Entry generation, offline assets, versioning and deployment use a shared build inventory. Existing maps, campaign behavior and procedural sprite canon are preserved.
@@ -153,3 +157,11 @@ Joel explicitly requests documenting the approach in GitHub. Read SPRITE_ORIGINA
 ## Regional arrival and burst defense integration · 9 October 2026
 
 v0.8.105 implements region-entry points beside the arriving transport instead of inside the town, keeps the ferry landings and the authored road network reachable, and clears ordinary monster spawn homes around those entries without changing enemy counts. Crown hub travel uses the same entry contract. A shared rolling two-second enemy burst-compression curve now covers all hero and companion outgoing damage through `combat.damage()`; configuration remains in `rules.js`, while the transient per-enemy damage ledger is separate from saved state, rogue tactical threat telemetry, and rogue retreat protection. See [TRANSPORT_ARRIVALS_AND_BURST_COMPRESSION.md](TRANSPORT_ARRIVALS_AND_BURST_COMPRESSION.md) for exact tier constants, ownership, and regression contracts. This does not complete fort placement or the separate structure proportion pass.
+
+## Inherited burst-defense tuning · 9 October 2026
+
+The current v0.8.108 balance follows the doubled-curve request and the later exact tier redistribution. Knee/tail (fractions of target maximum HP): ordinary 0.675/0.875, guardian 0.475/0.625, ringleader 0.25/0.375 (previous captain), captain 0.145/0.24 (previous TRUE boss), normal boss 0.18/0.275, TRUE boss 0.18/0.275 (now matches normal boss). Unlike the original monotonic tier ordering, captains now have greater burst protection than bosses by explicit decision. This change is limited to tuning and tests, not companion AI; the existing rolling 2-second damage window remains intact. See [TRANSPORT_ARRIVALS_AND_BURST_COMPRESSION.md](TRANSPORT_ARRIVALS_AND_BURST_COMPRESSION.md).
+
+## Dynamic boss/ADDS squad doctrine · 9 October 2026
+
+v0.8.109 preserves the player's existing BOSS/ADDS toggle, Paladin boss-focus default, and Mage/Ranger adds-first default. In ADDS mode, companions **ignore the boss whenever active non-boss threats or its live summons need clearing**; they fight the boss immediately once no such target remains and automatically resume add clearing on a new wave or active attacker. An owned new summon qualifies even before its aggro flag activates or it enters the usual companion local range. Explicit BOSS orders stay in force throughout the encounter, even if a boss temporarily drops out of the squad's threat list. A player-selected ADDS order likewise stays until disengagement or the user toggles; a full encounter end resets to each class default. No changes to boss summons, compression, classes, damage or formation geometry. Includes three-class target-selection regressions and corrected HUD tooltips.
