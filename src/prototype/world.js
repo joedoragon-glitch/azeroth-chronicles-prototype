@@ -633,7 +633,7 @@
             vale: ['outbound'],
             march: ['return'],
             highlands: ['return', 'outbound'],
-            frontier: ['return'],
+            frontier: ['return', 'outbound'],
             crown: ['crown-travel-frontier-return'],
           }[z.id] || [];
         const landings = landingIds.map((id) => z.npcs.find((n) => n.id === id)).filter(Boolean);
