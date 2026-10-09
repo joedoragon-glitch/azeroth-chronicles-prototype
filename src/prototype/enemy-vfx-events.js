@@ -301,6 +301,8 @@
         const e = args[0],
           before = new Set(this.zone().enemies),
           result = original.apply(this, args);
+        // Preserve the original guarded no-op; no births means no observation.
+        if (!e || !result) return result;
         const phase = this.captainProfile?.(e)?.phase,
           plans = Campaign.rules.attacks[e.family] || [],
           slot = plans.findIndex((p) => p.kind === 'summon'),

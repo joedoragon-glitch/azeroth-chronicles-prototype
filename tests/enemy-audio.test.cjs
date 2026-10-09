@@ -683,3 +683,16 @@ console.log(
     'single-cue authoring preserves untouched measurements',
   );
 }
+// Observation cannot turn the summon API's guarded no-op into an exception.
+{
+  const c = fresh(),
+    e = c.bossEnemy(c.boss('thorn'), 'normal', { x: 1400, y: 1700 }),
+    before = c.snapshot();
+  assert.equal(c.summonBossAdds(null, { species: 'wolf' }, 3), 0);
+  assert.equal(c.summonBossAdds(e, null, 3), 0);
+  assert.equal(c.summonBossAdds(e, { species: 'wolf' }, 0), 0);
+  assert.equal(c.summonCaptainAdds(null, null), 0);
+  assert.equal(c.summonCaptainAdds(e, null), 0);
+  assert.equal(c.effects.length, 0);
+  assert.deepEqual(c.snapshot(), before);
+}
