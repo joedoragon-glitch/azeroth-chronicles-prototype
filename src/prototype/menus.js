@@ -209,6 +209,92 @@
         back,
       );
     }
+    function keeperLedger(back = closeMenu) {
+      if (!getGame().keeperReadLedger()) return;
+      openMenu(
+        'The Keeper’s ledger',
+        'A damp order bears the Keeper’s seal. He sought Neri’s craft to rescue the Archive’s fading pages; another captive was traded to secure her.',
+        [action('Close the ledger', back)],
+        back,
+      );
+    }
+    function keeperTopics(back = closeMenu) {
+      const game = getGame();
+      if (!game.s.keeperPact || !game.keeperAvailable()) return;
+      const rules = Campaign.rules,
+        gap = rules.progression.levelGapRewards.map((x) => Math.round(x * 100)),
+        mana = rules.resourceMode?.manaEnabled !== false;
+      const topics = [
+        [
+          'Steel, wounds and armor',
+          'A heavy shield makes a blow less cruel, but not harmless. Each point of armor turns aside about 0.35 damage; even the finest armor still lets at least 3 through. Better gear protects you, not your whole company.',
+        ],
+        [
+          'Why old enemies teach little',
+          'A lesson grows thin when you have mastered the foe. Ordinary enemies yield half their listed experience, then the difference in levels cuts it to ' +
+            gap.join(' / ') +
+            '% for gaps of zero through four. The next level costs ' +
+            rules.balance.growth.xpPerLevel +
+            ' experience for every level you already hold.',
+        ],
+        [
+          'The TRUE adversaries',
+          'Some mighty foes will not remain quiet. Field tyrants return after two hard defeats; the Dark Lord answers after one. Dungeon guardians have a one-in-three early chance to stir as TRUE. Later, the Awakening summons any that still remain.',
+        ],
+        [
+          'Discipline and companions',
+          'A soldier learns through the strength of your company, not by magic. Expedition training raises your field capacity. The Shared Training and Shared Strength lessons pass portions of your learned strengths to the companions who stand beside you.',
+        ],
+        [
+          mana ? 'The price of a spell' : 'Keeping your footing in battle',
+          mana
+            ? 'Watch both your spell’s recovery and your remaining mana. Even a ready skill cannot answer when your reserves are low; stronger ranks may demand more. A Ranger can restore mana while your group holds the line.'
+            : 'Every power must catch its breath. Watch its own recovery before striking again; mana has no price in this fighting style. Training your discipline shortens those waits.',
+        ],
+        [
+          'Crowns, mines and roads',
+          'The regime mints its crowns from Ironroot’s ores. Wages keep carts moving, roads keep wages moving, and guards see to it that the Master of Coin collects his share. No ledger can tell you whether the bargain is just.',
+        ],
+      ];
+      if (game.s.keeperEvidence)
+        topics.push([
+          'A prisoner for the Archive',
+          'I asked for Neri. Water had taken my lower shelves, and even a Keeper cannot mend soaked pages with stubbornness alone. I traded another captive for her knowledge. I would not call it my proudest entry.',
+        ]);
+      openMenu(
+        'The Keeper’s shelves',
+        '“Ask what you please. These volumes have survived worse than idle questions.”',
+        topics.map(([title, answer]) =>
+          action(title, () =>
+            openMenu(title, answer, [action('Another question', () => keeperTopics(back))], () => keeperTopics(back)),
+          ),
+        ),
+        back,
+      );
+    }
+    function keeper(back = closeMenu) {
+      const game = getGame();
+      if (!game.keeperAvailable()) return;
+      if (!game.s.keeperPact) {
+        const ready = game.keeperPactReady();
+        openMenu(
+          'The Drowned Keeper',
+          ready
+            ? '“I have lost enough to the water. Promise me you will keep these shelves standing and let Neri tend the records. Then I will share what I know.”'
+            : '“The pages are drowning. Free Neri, and then we may talk of saving them.”',
+          ready
+            ? [
+                action('Promise to protect the Archive', () => {
+                  if (game.promiseKeeper()) keeper(back);
+                }),
+              ]
+            : [action('Leave him to his books', back)],
+          back,
+        );
+        return;
+      }
+      keeperTopics(back);
+    }
     function supplier(n, back = closeMenu) {
       const advanced = n.kind === 'alchemist',
         vitalityRank = getGame().companionVitalityRank(),
@@ -504,22 +590,28 @@
       const specialists = getGame().barracksSpecialists(),
         returnHere = () => barracksSpecialistMenu(b, back),
         regional = regionalSpecialistBarracksDetail();
+      const availableKeeper = !!getGame().s.keeperPact && getGame().keeperAvailable();
       openMenu(
         'Rescued specialists',
         regional +
           ' Rescued specialists work from your barracks. More advanced specialists replace older redundant services.',
-        specialists.length
-          ? specialists.map((s) =>
-              action(s.name, () => {
-                const n = { ...s };
-                s.kind === 'teacher'
-                  ? teacher(n, returnHere)
-                  : s.kind === 'smith'
-                    ? smith(n, returnHere)
-                    : supplier(n, returnHere);
-              }),
-            )
-          : [action('No specialists rescued yet', () => {}, regional, true)],
+        [
+          ...(specialists.length
+            ? specialists.map((s) =>
+                action(s.name, () => {
+                  const n = { ...s };
+                  s.kind === 'teacher'
+                    ? teacher(n, returnHere)
+                    : s.kind === 'smith'
+                      ? smith(n, returnHere)
+                      : supplier(n, returnHere);
+                }),
+              )
+            : [action('No specialists rescued yet', () => {}, regional, true)]),
+          ...(availableKeeper
+            ? [action('Drowned Keeper · The Archive', () => keeper(returnHere), 'Ask for his learning')]
+            : []),
+        ],
         back,
       );
     }
@@ -1313,6 +1405,8 @@
       skillBook,
       supplier,
       smith,
+      keeper,
+      keeperLedger,
       regionalSpecialistObjective,
       barracksMenu,
       inventory,
