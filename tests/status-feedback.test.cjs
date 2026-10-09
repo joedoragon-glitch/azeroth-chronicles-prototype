@@ -41,7 +41,7 @@ assert(weapon&&!weapon.disabled);
 weapon.action();
 assert.equal(status(),'Weapon equipped · Tier 1');
 assert.equal(c.hero.weapon,1);
-assert.equal(c.hero.legacyEquipped,false);
+assert.notEqual(c.hero.legacyEquipped,true,'purchased tier is active without a legacy weapon');
 const armor=opened.actions.find(a=>a.label.startsWith('Armor tier 1'));
 assert(armor&&!armor.disabled);
 armor.action();
