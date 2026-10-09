@@ -119,7 +119,7 @@ function run(id,region,count,weapon,rank,cls,form='normal',kind='boss',style='ta
 // Main representative class for both normal and TRUE fights.
 for(const [id,region,n,weapon,rank] of bosses){
   console.log('BOSS_BENCH '+JSON.stringify(run(id,region,n,weapon,rank,'paladin','normal')));
-  console.log('BOSS_BENCH '+JSON.stringify(run(id,region,Math.min(n+1,regions[region].companions,id==='darklord'?6:6),weapon,rank,'paladin','true')));
+  console.log('BOSS_BENCH '+JSON.stringify(run(id,region,Math.min(n+1,id==='darklord'?6:regions[region].companions),weapon,rank,'paladin','true')));
 }
 for(const [id,region,n,weapon,rank] of captains)
  console.log('BOSS_BENCH '+JSON.stringify(run(id,region,n,weapon,rank,'paladin','normal','captain')));
