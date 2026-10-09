@@ -10,33 +10,58 @@
         return [this.hero, ...this.activeLivingParty(), ...(z?.escort?.hp > 0 ? [z.escort] : [])];
       }
 
-      // Passive tactical telemetry: does not influence target selection, damage or aggro.
-      tacticalThreatSnapshot(e) {
+      // Passive combat observations only: no threat-based targeting or rogue actions in phase one.
+      tacticalClearThreat(e = null) {
+        if (!this._tacticalThreat) return;
+        if (e) this._tacticalThreat.delete(e.id);
+        else this._tacticalThreat.clear();
+      }
+
+      tacticalPruneThreat(e) {
         const ledger = this._tacticalThreat?.get(e?.id);
+        if (!ledger) return null;
+        const cutoff = (this.s.time || 0) - R.tacticalFoundation.threatWindowSeconds;
+        for (const [source, hits] of ledger) {
+          while (hits.length && hits[0].time < cutoff) hits.shift();
+          if (!hits.length) ledger.delete(source);
+        }
+        if (!ledger.size) {
+          this._tacticalThreat.delete(e.id);
+          return null;
+        }
+        return ledger;
+      }
+
+      tacticalThreatSnapshot(e) {
+        const ledger = this.tacticalPruneThreat(e);
         if (!ledger) return [];
-        const now = this.s.time || 0;
-        const window = R.tacticalFoundation.threatWindowSeconds;
         return [...ledger.entries()]
-          .filter(([, hit]) => now - hit.time <= window)
-          .map(([source, hit]) => ({ source, damage: hit.damage, lastHit: hit.time }))
+          .map(([source, hits]) => ({
+            source,
+            damage: hits.reduce((total, hit) => total + hit.damage, 0),
+            lastHit: hits[hits.length - 1].time,
+          }))
           .sort((a, b) => b.damage - a.damage || a.source.localeCompare(b.source));
       }
 
       tacticalRecordHit(e, source, damage) {
         if (!e || !Number.isFinite(damage) || damage <= 0) return;
-        const actor = source === 'hero' ? 'hero' : this.s.party.find((u) => u.id === source && u.hp > 0)?.id;
+        const actor =
+          source === 'hero'
+            ? 'hero'
+            : this.s.party.find((unit) => unit.id === source && unit.hp > 0)?.id;
         if (!actor) return;
         if (!this._tacticalThreat) this._tacticalThreat = new Map();
-        if (!this._tacticalThreat.has(e.id)) this._tacticalThreat.set(e.id, new Map());
-        const ledger = this._tacticalThreat.get(e.id);
-        const now = this.s.time || 0, window = R.tacticalFoundation.threatWindowSeconds;
-        for (const [id, previous] of ledger)
-          if (now - previous.time > window) ledger.delete(id);
-        const previous = ledger.get(actor);
-        ledger.set(actor, {
-          damage: (previous && now - previous.time <= window ? previous.damage : 0) + damage,
-          time: now,
-        });
+        const ledger = this.tacticalPruneThreat(e) || new Map();
+        const now = this.s.time || 0;
+        const hits = ledger.get(actor) || [];
+        const last = hits[hits.length - 1];
+        if (last && last.time === now) last.damage += damage;
+        else hits.push({ time: now, damage });
+        // Keep the transient observation cache bounded even in extreme rapid-hit cases.
+        if (hits.length > 128) hits.splice(0, hits.length - 128);
+        ledger.set(actor, hits);
+        this._tacticalThreat.set(e.id, ledger);
       }
 
       tacticalProtectionTier(e) {
@@ -50,11 +75,38 @@
       tacticalRegroupCandidates(e) {
         if (!e || !this.zone()?.enemies) return [];
         const radius = R.tacticalFoundation.awarenessRadius;
-        return this.zone().enemies
-          .filter((ally) => ally !== e && ally.hp > 0 && !ally.neutral &&
-            !ally.returning && !ally.summon && dist(ally, e) <= radius &&
-            dist(ally, e.home) <= radius)
+        // Awareness crosses packs. Reachability, group compatibility and safe routing
+        // are deliberately deferred until rogue movement is implemented.
+        return this.zone()
+          .enemies.filter(
+            (ally) =>
+              ally !== e &&
+              ally.hp > 0 &&
+              !ally.neutral &&
+              !ally.returning &&
+              !ally.summon &&
+              dist(ally, e) <= radius,
+          )
           .sort((a, b) => dist(a, e) - dist(b, e) || a.id.localeCompare(b.id));
+      }
+
+      tacticalRegroupGroups(e) {
+        if (!e) return [];
+        const groups = new Map();
+        for (const ally of this.tacticalRegroupCandidates(e)) {
+          const key = ally.pack || ally.id;
+          if (!groups.has(key)) groups.set(key, { key, members: [], distance: Infinity });
+          const group = groups.get(key);
+          group.members.push(ally);
+          group.distance = Math.min(group.distance, dist(e, ally));
+        }
+        // A group assessment, not a retreat destination or an order to engage.
+        return [...groups.values()].sort(
+          (a, b) =>
+            b.members.length - a.members.length ||
+            a.distance - b.distance ||
+            a.key.localeCompare(b.key),
+        );
       }
 
       tacticalRogueEligibility(e, activeTargetCount = 0) {
@@ -63,14 +115,21 @@
         const difference = e.level - this.hero.level;
         if (difference >= config.outlevelProtection) return false;
         if (difference <= -config.heroLevelDisadvantageMinimum) return true;
-        // Damage contributors are only evidence; active target intent is supplied separately.
-        if (activeTargetCount < config.simultaneousPressureSources) return false;
-        if (e.type !== 'boss' && !e.captain && !e.roomCaptain) return true;
-        const ownsSummons = e.type === 'boss' || !!this.captainProfile?.(e)?.summon;
-        if (!ownsSummons || difference !== 0) return true;
-        const living = this.zone().enemies.filter((u) =>
-          u.summon && u.owner === e.id && u.hp > 0).length;
-        return living <= config.summonSupportThreshold && (e.summonCd || 0) > 0;
+
+        const pressured = activeTargetCount >= config.simultaneousPressureSources;
+        if (e.type !== 'boss' && !e.captain && !e.roomCaptain) return pressured;
+        const summonProfile = e.type === 'boss' ? true : !!this.captainProfile(e)?.summon;
+        if (!summonProfile || difference !== 0) return pressured;
+
+        const living = this.zone().enemies.filter(
+          (unit) => unit.summon && unit.owner === e.id && unit.hp > 0,
+        ).length;
+        const depleted =
+          living <= config.summonSupportThreshold && (e.summonCd || 0) > 0;
+        // Cunning status requires an explicit authored entry; no entries exist in phase one.
+        const cunningKey = e.captainProfile || e.family;
+        const cunning = config.cunningEnemies.includes(cunningKey);
+        return depleted && (pressured || cunning);
       }
 
       drainMana(u, fraction) {
