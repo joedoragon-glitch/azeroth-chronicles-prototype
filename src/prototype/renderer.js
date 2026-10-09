@@ -999,10 +999,16 @@
             continue;
           // Calculate scale from the same authored rule used by procedural art.
           // A registered sprite consumes visualScale itself; no source pixels change.
+          const visualEntity = { ...e, renderKind };
+          const registered = PrototypeSprites?.definitionFor?.(
+            visualEntity,
+            game.regionIndex(),
+            !!game.s.rescued[e.family],
+          );
           const visualScale =
             Number.isFinite(e.visualScale) && e.visualScale > 0
               ? e.visualScale
-              : PrototypeVisuals.featureScale({ ...e, renderKind });
+              : PrototypeVisuals.assetSafeScale(visualEntity, registered?.entry);
           entities.push({ ...e, renderKind, visualScale, spriteIdentity: e });
         }
       }
