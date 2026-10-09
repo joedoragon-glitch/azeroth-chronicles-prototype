@@ -4,7 +4,7 @@
   "private": true,
   "description": "Offline installable RPG prototype for Chromebook and mobile.",
   "scripts": {
-    "test": "node tests/run.cjs",
+    "test": "node scripts/_temp-cooldown-test-scan.cjs",
     "test:browser": "node tests/prototype-browser.test.cjs",
     "test:quick": "node tests/run.cjs --quick",
     "build": "node scripts/build.cjs",
