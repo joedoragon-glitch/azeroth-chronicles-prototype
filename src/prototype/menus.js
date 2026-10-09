@@ -707,7 +707,7 @@
         rank = getGame().s.expeditionRank || 1;
       openMenu(
         'Operations',
-        'Regional objectives, routes and expedition labor.',
+        'Local objectives and expedition labor.',
         [
           action('Local objectives', () => quests(true, returnHere)),
           rank >= 2
@@ -891,7 +891,7 @@
           action(
             'Operations',
             () => barracksOperationsMenu(b, returnHere),
-            'Map · objectives · resources',
+            'Local objectives · resources',
           ),
         ],
         back,
@@ -911,34 +911,17 @@
           getGame().hero.weapon +
           ' · Armor tier ' +
           getGame().hero.armorTier +
-          '\nCrowns are the official currency of the Dark Lord’s regime.',
+          '\nRanger support: ' +
+          (rangers.length
+            ? rangers.length +
+              ' active · Heal ' +
+              heal +
+              ' HP (H) · Mana Recovery ' +
+              mana +
+              ' MP (M). Automatic support remains active.'
+            : 'Recruit a Ranger to unlock field Heal and Mana Recovery.') +
+          '\nChoose equipment below when available.',
         [
-          action('Recall squad', () => {
-            recallSquad();
-            closeMenu();
-          }),
-          action(
-            'Ranger Heal · ' + heal + ' HP',
-            () => {},
-            rangers.length
-              ? rangers.length +
-                  ' active Ranger' +
-                  (rangers.length === 1 ? '' : 's') +
-                  ' · combat: auto at ≤50% HP · out of combat: tops off injured allies · hero priority · command with H'
-              : 'No active Ranger · recruit or activate one for field healing',
-            true,
-          ),
-          action(
-            'Ranger Mana Recovery · ' + mana + ' MP',
-            () => {},
-            rangers.length
-              ? rangers.length +
-                  ' active Ranger' +
-                  (rangers.length === 1 ? '' : 's') +
-                  ' · automatic at hero ≤35% MP · command with M'
-              : 'No active Ranger · recruit or activate one for field mana recovery',
-            true,
-          ),
           ...Object.keys(Campaign.legacyWeapons)
             .filter((name) => getGame().s.legacyInventory?.includes(name))
             .map((name) =>
