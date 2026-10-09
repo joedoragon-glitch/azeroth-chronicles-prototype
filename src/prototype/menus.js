@@ -237,8 +237,18 @@
       }
       openMenu(
         n.name,
-        'Neri trains Ranger field support instead of selling health or mana potions. Training is permanent for every Ranger, including Rangers you recruit later.',
+        'Neri sells Preparation Tonics and trains permanent Ranger field support.',
         [
+          action(
+            'Buy Preparation Tonic · ' + getGame().preparationTonicCost() + ' crowns',
+            () => {
+              if (getGame().purchasePreparationTonic()) supplier(n, back);
+            },
+            'Owned ' +
+              getGame().preparationTonicStock() +
+              ' · +10% maximum HP until rest or defeat · Use at any completed Barracks',
+            getGame().hero.gold < getGame().preparationTonicCost(),
+          ),
           action(
             healRank >= 2
               ? 'Ranger Heal · Rank 2 · MAX'
@@ -768,6 +778,47 @@
         true,
       );
     }
+    function tonicPurchaseMenu(b, back) {
+      const cost = getGame().preparationTonicCost();
+      openMenu(
+        'Preparation Tonic',
+        'No tonic stored. Buy one to use now, or visit Neri to stock up.',
+        [
+          action(
+            'Buy and use · ' + cost + ' crowns',
+            () => {
+              if (getGame().purchasePreparationTonic() && getGame().usePreparationTonic())
+                barracksMenu(b, back);
+            },
+            '+10% maximum HP until rest or defeat · one-time use',
+            getGame().hero.gold < cost,
+          ),
+        ],
+        () => barracksMenu(b, back),
+      );
+    }
+    function barracksTonicAction(b, back) {
+      if (!getGame().s.rescued.archive) return null;
+      const stock = getGame().preparationTonicStock();
+      if (getGame().hero.tonic)
+        return action(
+          'Preparation Tonic · ACTIVE',
+          () => {},
+          '+10% maximum HP until rest or defeat',
+          true,
+        );
+      return action(
+        stock ? 'Use Preparation Tonic · ' + stock + ' owned' : 'Preparation Tonic · Buy / Use',
+        () => {
+          if (getGame().preparationTonicStock()) {
+            if (getGame().usePreparationTonic()) barracksMenu(b, back);
+          } else tonicPurchaseMenu(b, back);
+        },
+        stock
+          ? 'Consumes one · +10% maximum HP until rest or defeat'
+          : 'None owned · Buy one here or from Neri',
+      );
+    }
     function barracksMenu(ref, back = closeMenu) {
       const b = getGame()
         .zone()
@@ -814,9 +865,11 @@
         returnHere = () => barracksMenu(b, back),
         specialists = getGame().barracksSpecialists(),
         exp = expeditionBarracksAction(b, back),
+        tonic = barracksTonicAction(b, back),
         rank2 = rank >= 2,
         baseActions = [
           exp,
+          ...(tonic ? [tonic] : []),
           action(
             'Rescued specialists',
             () => barracksSpecialistMenu(b, returnHere),
@@ -928,6 +981,7 @@
           ' employed.',
         [
           exp,
+          ...(tonic ? [tonic] : []),
           action(
             'Company',
             () => barracksCompanyMenu(b, returnHere),
