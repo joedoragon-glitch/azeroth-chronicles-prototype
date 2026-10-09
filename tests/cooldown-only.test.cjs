@@ -135,6 +135,8 @@ console.log('PASS uncapped 15% Cinder Siphon, companions, immunity, and natural 
   const def = Campaign.data.bosses.find(b => b.id === 'crypt');
   const crypt = g.bossEnemy(def, 'normal', { x: 480, y: 500 });
   crypt.hp = crypt.maxHp * 0.5;
+  // Stress a high-damage AoE so its 15% transfer demonstrably exceeds 2%.
+  crypt.damage = 160;
   g.zone().enemies = [crypt];
   const soldier = g.s.party.find(u => u.type === 'soldier');
   soldier.hp = soldier.maxHp = 10000;
