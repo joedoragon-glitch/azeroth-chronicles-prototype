@@ -2,6 +2,7 @@
 (function (root) {
   'use strict';
   const V = root.PrototypeEnemyVfx || require('./enemy-vfx.js');
+  const P = root.PrototypeEnemyPresentation || require('./enemy-presentation.js');
   const state = new WeakMap();
   const durations = Object.freeze({
     windup: 0,
@@ -63,6 +64,7 @@
             role: e.ranged ? 'ranged' : 'melee',
             variant: 'normal',
             kind: a.kind,
+            presentation: P.profile(e, a),
           })
         : V.describe(e, a));
     if (!visual) return null;
@@ -70,8 +72,6 @@
       seen = s.seen.get(a) || new Set(),
       key = e.id + ':' + stage + ':' + (point?.target || '');
     if (seen.has(key)) return null;
-    seen.add(key);
-    s.seen.set(a, seen);
     const x =
         point?.x ??
         (stage === 'release' || stage === 'windup' || stage === 'phase' ? e.x : (a.x ?? e.x)),
@@ -91,7 +91,19 @@
       species: e.species,
       profile: e.captainProfile,
       identity: visual,
+      skillId: visual.id,
+      actorId: e.id,
+      actor: 'enemy',
+      tier: visual.tier,
+      role: visual.role,
+      variant: visual.variant,
+      style: a.style || e.projectileStyle,
       stage,
+      contact: stage === 'impact' && !!(point?.target || point?.contact),
+      dangerous:
+        ['windup', 'release', 'travel', 'impact', 'linger'].includes(stage) &&
+        a.kind !== 'summon' &&
+        a.coefficient !== 0,
       geometry: geometry(a),
       x,
       y,
@@ -99,7 +111,10 @@
       duration: durations[stage] || 0.38,
     });
     // Deliberately bypass event(): combat statistics and v4 snapshots stay identical.
-    if (game.effects.filter((f) => f.type === 'enemyVfx').length < 120) game.effects.push(event);
+    if (game.effects.filter((f) => f.type === 'enemyVfx').length >= 120) return null;
+    seen.add(key);
+    s.seen.set(a, seen);
+    game.effects.push(event);
     return event;
   }
   function bindNew(game, e, a, beforeShots, beforeHazards) {
@@ -123,6 +138,90 @@
           },
         });
     };
+    // Decorate only the transient queue AFTER original event statistics are recorded.
+    // Audio deduplication therefore cannot alter snapshots or gameplay diagnostics.
+    wrap('event', function (original, [type, details = {}]) {
+      const result = original.call(this, type, details),
+        legacy = this.effects.at(-1);
+      if (
+        this.enemyVfxEnabled === false ||
+        ![
+          'warning',
+          'captainPhase',
+          'captainSummon',
+          'melee',
+          'projectileLaunch',
+          'projectileImpact',
+        ].includes(type)
+      )
+        return result;
+      const s = store(this),
+        context = s.context,
+        e =
+          context?.e ||
+          this.zone().enemies.find(
+            (u) =>
+              (details.source && u.id === details.source) ||
+              (type === 'warning' &&
+                u.telegraph &&
+                ((details.captain && u.captainProfile === details.captain) ||
+                  (details.family &&
+                    (u.family === details.family || u.species === details.family)) ||
+                  (!details.family &&
+                    !details.captain &&
+                    !s.seen.get(u.telegraph)?.has(u.id + ':windup:')))),
+          );
+      if (!e) return result;
+      const a = type === 'warning' ? e.telegraph : context?.a || e.telegraph;
+      if (type === 'warning' && a) {
+        const delivered = emit(this, e, a, 'windup');
+        if (V.describe(e, a)?.presentation && (delivered || s.seen.get(a)?.has(e.id + ':windup:')))
+          legacy.presentationHandled = true;
+      } else if (['captainPhase', 'captainSummon'].includes(type) && context) {
+        legacy.presentationHandled = true;
+      } else if (type === 'melee' && context?.a) {
+        legacy.presentationHandled = true;
+      } else if (type === 'projectileLaunch' && details.actor === 'enemy') {
+        if (context?.a) legacy.presentationHandled = true;
+        else {
+          const shots = this.s.projectiles.filter(
+            (p) => p.sourceId === e.id && !s.projectiles.has(p),
+          );
+          for (const p of shots) {
+            const plan = { kind: 'projectile', style: p.style },
+              identity = V.projectile(e, p);
+            s.projectiles.set(p, { e, a: plan, identity });
+            if (emit(this, e, plan, 'release', null, identity)) legacy.presentationHandled = true;
+          }
+        }
+      } else if (
+        type === 'projectileImpact' &&
+        details.actor === 'enemy' &&
+        s.lastProjectileContact
+      ) {
+        const p = s.lastProjectileContact;
+        if (p.sourceId === details.source && p.x === details.x && p.y === details.y)
+          legacy.presentationHandled = true;
+        s.lastProjectileContact = null;
+      }
+      return result;
+    });
+    for (const name of [
+      'startAttack',
+      'startCaptainAttack',
+      'startNightSkill',
+      'tacticalRogueMove',
+    ])
+      wrap(name, function (original, args) {
+        const s = store(this),
+          old = s.context;
+        s.context = { e: args[0] };
+        try {
+          return original.apply(this, args);
+        } finally {
+          s.context = old;
+        }
+      });
     wrap('resolveAttack', function (original, [e]) {
       const a = e.telegraph;
       if (!a || this.enemyVfxEnabled === false || e.hp <= 0) return original.call(this, e);
@@ -183,9 +282,14 @@
           before = new Set(this.zone().enemies),
           result = original.apply(this, args);
         const phase = this.captainProfile?.(e)?.phase,
-          a = store(this).context?.a || e.telegraph || { kind: phase?.kind || 'summon' };
+          plans = Campaign.rules.attacks[e.family] || [],
+          slot = plans.findIndex((p) => p.kind === 'summon'),
+          automatic = e.type === 'boss' && slot >= 0 ? { ...plans[slot], index: slot } : null,
+          a = store(this).context?.a ||
+            e.telegraph ||
+            automatic || { kind: phase?.kind || 'summon' };
         const id =
-          V.describe(e, a) ||
+          ((store(this).context?.a || e.telegraph || automatic) && V.describe(e, a)) ||
           (e.captainProfile
             ? {
                 id: 'captain/' + e.captainProfile + '/phase',
@@ -193,6 +297,7 @@
                 role: 'melee',
                 variant: 'normal',
                 kind: phase?.kind || 'summon',
+                presentation: P.profile(e, { kind: phase?.kind || 'summon' }),
               }
             : null);
         for (const u of this.zone().enemies)
@@ -200,10 +305,26 @@
             emit(this, e, a, 'spawn', { x: u.x, y: u.y, target: u.id }, id);
         return result;
       });
+    for (const method of ['tacticalRogueFieldSupport', 'tacticalRogueCommanderSupport'])
+      wrap(method, function (original, [e, a]) {
+        const before = new Set(this.zone().enemies.filter((u) => u.hp > 0)),
+          result = original.call(this, e, a);
+        for (const u of this.zone().enemies)
+          if (u.hp > 0 && !before.has(u))
+            emit(this, e, a, 'spawn', { x: u.x, y: u.y, target: u.id });
+        return result;
+      });
     wrap('triggerCaptainPhase', function (original, [e]) {
-      const result = original.call(this, e);
-      if (result) emit(this, e, this.captainProfile(e).phase, 'phase');
-      return result;
+      const s = store(this),
+        old = s.context;
+      s.context = { e };
+      try {
+        const result = original.call(this, e);
+        if (result) emit(this, e, this.captainProfile(e).phase, 'phase');
+        return result;
+      } finally {
+        s.context = old;
+      }
     });
     wrap('updateEnemies', function (original, args) {
       const zone = this.zoneId,
@@ -226,6 +347,7 @@
             role: e.ranged ? 'ranged' : 'melee',
             variant: 'normal',
             kind: 'frenzy',
+            presentation: P.profile(e, { kind: 'frenzy' }),
           });
         for (const p of this.s.projectiles)
           if (!beforeShots.has(p) && p.sourceId === e.id && !s.projectiles.has(p)) {
@@ -243,9 +365,24 @@
     proto.enemyVfxHazard = function (h) {
       return store(this).hazards.get(h) || null;
     };
+    proto.enemyVfxHazardImpact = function (h, u) {
+      const m = this.enemyVfxHazard(h);
+      if (m)
+        emit(
+          this,
+          m.e,
+          h,
+          'impact',
+          { x: u.x, y: u.y, target: u === this.hero ? 'hero' : u.id, contact: true },
+          m.identity,
+        );
+    };
     proto.enemyVfxProjectileImpact = function (p, point) {
       const m = this.enemyVfxProjectile(p);
-      if (m) emit(this, m.e, p, 'impact', point, m.identity);
+      if (m) {
+        const f = emit(this, m.e, p, 'impact', { ...point, contact: true }, m.identity);
+        if (f) store(this).lastProjectileContact = { sourceId: p.sourceId, x: point.x, y: point.y };
+      }
     };
   }
   const api = Object.freeze({ install, geometry, emit });

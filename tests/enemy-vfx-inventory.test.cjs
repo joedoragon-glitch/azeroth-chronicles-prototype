@@ -16,7 +16,10 @@ assert.equal(report.counts.boss, 46, 'all currently authored boss actions are in
 assert.equal(report.counts.captain, 16, 'all five captain movesets are inventoried');
 assert.equal(report.counts['captain-phase'], 5, 'captain second phases are independently listed');
 assert.equal(report.counts.night, 2);
-assert.equal(report.counts.ranged, 7);
+assert.equal(report.counts.ranged, 18);
+assert(report.rows.some((r) => r.id === 'projectile/crownguard/arrow'));
+assert(report.rows.some((r) => r.id === 'projectile/wraith/spectral'));
+assert(report.rows.some((r) => r.id === 'projectile/wolf/arrow'));
 assert.equal(new Set(report.rows.map((r) => r.id)).size, report.rows.length);
 assert(report.rows.every((r) => r.stages.every((stage) => VFX.STAGES.includes(stage))));
 assert.equal(
@@ -32,19 +35,27 @@ assert.equal(
 for (const row of report.rows) {
   assert(!row.stages.includes('unknown'));
   if (row.kind === 'summon') {
-    assert.deepEqual(row.stages, ['windup', 'spawn'], 'summoning never declares a damage impact');
+    assert.deepEqual(
+      row.stages,
+      ['windup', 'release', 'spawn'],
+      'summoning never declares a damage impact',
+    );
     assert(!row.stages.includes('impact'), 'no misleading damage circle for summons');
   }
 }
 assert.equal(Inventory.expectedStages({ kind: 'ring' }).join(','), 'windup,release,travel');
-assert.deepEqual(
-  Inventory.expectedStages({ kind: 'circle', persistent: true }),
-  ['windup', 'release', 'impact', 'linger'],
-);
-assert.deepEqual(
-  Inventory.expectedStages({ kind: 'line', charge: true }),
-  ['windup', 'travel', 'impact'],
-);
+assert.deepEqual(Inventory.expectedStages({ kind: 'circle', persistent: true }), [
+  'windup',
+  'release',
+  'impact',
+  'linger',
+]);
+assert.deepEqual(Inventory.expectedStages({ kind: 'line', charge: true }), [
+  'windup',
+  'release',
+  'travel',
+  'impact',
+]);
 
 const species = new Set([
   ...Campaign.data.species.flat().map((entry) => entry[0]),
@@ -52,24 +63,31 @@ const species = new Set([
 ]);
 const rangedSpecies = new Set([
   ...Object.keys(Campaign.rules.rangedProfiles),
-  'archer', 'crownguard', 'wraith',
+  'archer',
+  'crownguard',
+  'wraith',
 ]);
 const expectedBasics =
   species.size * 4 +
   [...rangedSpecies].filter((speciesId) => species.has(speciesId)).length * 2 +
   Object.keys(Campaign.rules.tacticalFoundation.rogueMoves.bosses || {}).length +
   Object.keys(Campaign.rules.tacticalFoundation.rogueMoves.captains || {}).length;
-assert.equal(report.counts['rogue-basic'], expectedBasics, 'all appropriate species, role and tier basic maneuvers');
+assert.equal(
+  report.counts['rogue-basic'],
+  expectedBasics,
+  'all appropriate species, role and tier basic maneuvers',
+);
 assert(report.rows.some((r) => r.id === 'rogue/guardian/ranged/ogre/basic'));
 assert(report.rows.some((r) => r.id === 'rogue/ringleader/ranged/wolf/basic'));
 assert(report.rows.some((r) => r.id === 'rogue/boss/thorn/basic'));
 
 const T = Campaign.rules.tacticalFoundation;
-const signatures = Object.values(T.rogueRingleaderSignatures || {}).reduce(
-  (n, family) => n + Object.keys(family).length, 0,
-) + Object.values(T.rogueSignatures || {}).reduce(
-  (n, family) => n + Object.keys(family).length, 0,
-);
+const signatures =
+  Object.values(T.rogueRingleaderSignatures || {}).reduce(
+    (n, family) => n + Object.keys(family).length,
+    0,
+  ) +
+  Object.values(T.rogueSignatures || {}).reduce((n, family) => n + Object.keys(family).length, 0);
 assert.equal(report.counts['rogue-signature'] || 0, signatures);
 const draft = Inventory.markdown(report);
 assert(draft.includes('boss/thorn/0'));
@@ -80,6 +98,7 @@ assert(draft.includes('projectile/ogre/stone'));
 assert(draft.includes('not** claim implementation'));
 
 console.log(
-  'PASS enemy VFX housekeeping: ' + report.total +
-  ' stable inventory entries; accurate non-damage summon stages; rogue expansion ready',
+  'PASS enemy VFX housekeeping: ' +
+    report.total +
+    ' stable inventory entries; accurate non-damage summon stages; rogue expansion ready',
 );
