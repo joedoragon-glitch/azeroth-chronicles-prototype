@@ -125,6 +125,71 @@ function context() {
     );
   }
   {
+    const f = fresh();
+    const bank = entry('rock', {
+      variants: [entry('moss', { id: 'moss' }), entry('bare', { id: 'bare' })],
+      variantSelector: {
+        kind: 'procedural-modulo',
+        modulo: 4,
+        slots: ['moss', 'bare', 'bare', 'bare'],
+      },
+    });
+    f.format.entry(bank);
+    // The production procedural renderer hashes identity, rather than e.seed.
+    // Cover real world ID shapes, fallback fields and reordered/revised banks.
+    const hash = (text) => {
+      let value = 2166136261;
+      for (const ch of text) value = Math.imul(value ^ ch.charCodeAt(0), 16777619);
+      return value >>> 0;
+    };
+    for (const entity of [
+      ...Array.from({ length: 1000 }, (_, i) => ({ id: 'aesthetic-nature-' + i, seed: i + 1 })),
+      { name: 'Rock' },
+      { species: 'stone' },
+      { family: 'wild' },
+      { kind: 'prop' },
+      {},
+    ]) {
+      const seed = String(
+        entity.id || entity.name || entity.species || entity.family || entity.kind || 'azeroth',
+      );
+      const expected = hash(seed) % 4 === 0 ? 'moss' : 'bare';
+      assert.equal(f.sprites.variant(entity, bank).id, expected);
+      assert.equal(
+        f.sprites.variant(entity, {
+          ...bank,
+          variants: bank.variants
+            .toReversed()
+            .map((v) => ({ ...v, src: v.src.replace('.png', '-v2.png') })),
+        }).id,
+        expected,
+      );
+    }
+    const grass = entry('grass', {
+      variants: Array.from({ length: 5 }, (_, i) => entry('height-' + i, { id: 'height-' + i })),
+      variantSelector: {
+        kind: 'procedural-modulo',
+        modulo: 5,
+        slots: Array.from({ length: 5 }, (_, i) => 'height-' + i),
+      },
+    });
+    for (let i = 0; i < 200; i++) {
+      const id = 'aesthetic-nature-' + i;
+      assert.equal(f.sprites.variant({ id }, grass).id, 'height-' + (hash(id) % 5));
+    }
+    for (const selector of [
+      { kind: 'unknown', modulo: 4, slots: bank.variantSelector.slots },
+      { kind: 'procedural-modulo', modulo: 0, slots: [] },
+      { kind: 'procedural-modulo', modulo: 2, slots: ['moss'] },
+      { kind: 'procedural-modulo', modulo: 1, slots: ['missing'] },
+    ])
+      assert.throws(() => f.format.entry({ ...bank, variantSelector: selector }), /selector/);
+    assert.throws(() => f.format.entry({ ...bank, variants: undefined }), /selector/);
+    console.log(
+      'PASS exact procedural moss/height slots, identity fallback, replacement/reordering and invalid selector rejection',
+    );
+  }
+  {
     const f = fresh(),
       c = context();
     f.sprites.installManifest(

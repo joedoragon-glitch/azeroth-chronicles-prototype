@@ -1,0 +1,7 @@
+{
+  "key": "prop:ore-sorting-bay:highlands",
+  "catalogId": "238",
+  "prompt": "Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Highlands ore-sorting bay. Three timber ore bins with paired muted gray-tan angular ore heaps; thin horizontal steel weighing beam above, central upright, two hanging shallow balance pans at left and right. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.",
+  "sourceCommit": "181e0bd4a19d60d8650c578fdad0988fdfde1e55",
+  "status": "generation-queued"
+}

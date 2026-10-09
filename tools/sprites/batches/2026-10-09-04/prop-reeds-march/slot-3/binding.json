@@ -1,0 +1,12 @@
+{
+  "key": "prop:reeds:march",
+  "modulo": 7,
+  "slot": 3,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "reeds",
+    "id": "sprite-slot-4"
+  },
+  "sourceCommit": "181e0bd4a19d60d8650c578fdad0988fdfde1e55"
+}

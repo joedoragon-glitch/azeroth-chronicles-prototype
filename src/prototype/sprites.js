@@ -384,6 +384,15 @@
   }
   function variant(e, entry) {
     if (!entry.variants) return entry;
+    if (entry.variantSelector) {
+      // Match visuals.js exactly so authored blade heights and moss locations
+      // survive raster replacement. Existing banks retain rendezvous selection.
+      const seed = String(e.id || e.name || e.species || e.family || e.kind || 'azeroth');
+      let h = 2166136261;
+      for (const ch of seed) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
+      const selector = entry.variantSelector;
+      return entry.variants.find((item) => item.id === selector.slots[(h >>> 0) % selector.modulo]);
+    }
     const seed = String(e.spriteVariantSeed ?? e.seed ?? e.id ?? (e.x || 0) + ':' + (e.y || 0));
     let best = entry.variants[0],
       score = -1;

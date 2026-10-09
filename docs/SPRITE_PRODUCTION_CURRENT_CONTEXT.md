@@ -64,3 +64,13 @@ Joel authorized implementing only the already-completed work after the pause. Pu
 Joel explicitly resumed generation, implementation and publication in this chat. Both interruption checkpoints are preserved. PR #121 deployment run 37777751587 was rechecked: main, WebKit, deployment, exact published SHA and desktop/phone live checks all passed. PR #127 merged the 20 saved nature bodies at 3b3fbdfd99771c0a69b4e7e4512a9b8580dc5e0d after successful exact-head run 37809052731.
 
 This v0.8.98 continuation reconciles the five retained ground materials from PR #126 with all 27 body registrations from #127. Duplicate Vale bush/wildflower records retain #127 active revisions; the other candidates and sources remain historical. No generated image has been recreated. Both original checkpoint branches remain untouched. Remote checks and exact live deployment remain pending. Next: verify this recovered stage, correct held heather/grass and preserve exact seeded reed/rock variants, then continue the open catalog.
+
+## Held nature corrections · prepared v0.8.99
+
+PR #127 exact merge 3b3fbdfd99771c0a69b4e7e4512a9b8580dc5e0d passed deployment run 37864875566, including all regressions, device matrices, exact published SHA and live smoke. The five saved grounds are reconciled in #126 v0.8.98; its final release checks remain pending.
+
+This stage adds native-reviewed four-stem heather and the retained Vale/Highlands field rock, bringing active body keys to 30. Both correction attempts and the fresh heather master are retained. Alpha is preserved throughout full-canvas normalization; no hidden trim, clipping or color deletion. Heather grounding and all eight day/night device contexts were inspected. Existing Goblin, Paladin clips and rollback sources remain intact.
+
+The field-rock handoff was inaccurate: the live icon-rock branch executes before wildProp and is fixed across seeds/regions. Two hundred exact identity references were pixel-identical. Catalog IDs 295/296 now describe that branch; the saved Vale art is reused without inventing moss. Grass/wet-grass/reeds do have authored height variants. Optional validated procedural-modulo selectors now map the same identity hash to explicit stable IDs, preserving slots across reordering and replacement. Tests cover 1,000 identity samples and malformed selectors. Existing variant banks keep their selection policy. No incomplete grass/reed bank is active.
+
+The development-only sprite-batch-review helper records immutable originals, explicit sizing/padding/root translation and native comparison crops with full-scene hashes. Candidate review and publication remain separate. Further grass corrections and height-bank generation are in progress; this is not completion of the catalog.

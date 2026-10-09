@@ -1,0 +1,97 @@
+{
+  "version": 2,
+  "key": "prop:heather:highlands",
+  "catalogId": "285",
+  "canonHash": "0e130dc7b30dd195a74f0fddf991bb12f609370ab68cca81e407e74c27499636",
+  "canonSnapshotHash": "f81c0c5a6a0b78a9c3ded5a70e2d1878173841d5edd3e9af4a4d6e5b1ee5e91f",
+  "catalogHash": "8213198f2c34ea469990bdd8d47e036ec74b5e20057c8b379926e4ed92951438",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1536,
+    "height": 1536,
+    "bytes": 39970,
+    "decodedBytes": 9437184,
+    "hash": "531b42d7ca0b9995c8afe906ea72ebc204f785736e1421b7ca90bdc4aaf07b75",
+    "pixelHash": "dc77dc2dc47d8b2fcee90bd5337dfe6617a2f6de11371b37de29fb46a8a70102",
+    "bounds": {
+      "x1": 335,
+      "y1": 365,
+      "x2": 1202,
+      "y2": 1233
+    },
+    "padding": 302,
+    "transparentPixels": 2348415,
+    "visiblePixels": 10881,
+    "lowAlphaPixels": 4942,
+    "materialBounds": {
+      "x1": 707,
+      "y1": 859,
+      "x2": 833,
+      "y2": 1041
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 995,
+    "decodedBytes": 147456,
+    "hash": "874f1e4263a3c9332ff59aa4ffb9e977ed5647019a162a09cbf2fcfae1760b3c",
+    "pixelHash": "bb42b0a6f6ea87d2dd8cb780821fbd314eca9d08b811911591bffe855df76695",
+    "bounds": {
+      "x1": 88,
+      "y1": 131,
+      "x2": 104,
+      "y2": 153
+    },
+    "padding": 38,
+    "transparentPixels": 36705,
+    "visiblePixels": 159,
+    "lowAlphaPixels": 60,
+    "materialBounds": {
+      "x1": 88,
+      "y1": 131,
+      "x2": 103,
+      "y2": 153
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1536,
+      1536
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": 0,
+      "y": 24,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+    "reviewer": "Codex engineering review under resumed faithful implementation",
+    "userImageAcceptance": false,
+    "seedInvariant": true,
+    "evidence": "tools/sprites/batches/2026-10-09-04/prop-heather-highlands/review-scenes/comparison.json",
+    "notes": "Fresh four-stem heather translated from procedural canon after two fringe-bearing edits retained as historical sources. Root placement and native flower/stem readability reviewed across eight day/night desktop/phone scenes. Full alpha retained; no clipping, trim or recoloring."
+  }
+}

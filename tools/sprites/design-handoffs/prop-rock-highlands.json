@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "integrated",
+  "designId": "prop-rock-highlands",
+  "name": "Environmental Highlands field rock",
+  "kind": "environment",
+  "nextAction": "Verify release CI and exact live deployment, then continue remaining catalog.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel explicitly resumed full staged mass production from both interruption checkpoints; reuse saved completed art and correct held candidates before new batches.",
+    "decisionDate": "2026-10-08",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+    "contentDocuments": [
+      "docs/DESIGN_TO_SPRITE_WORKFLOW.md",
+      "docs/SPRITE_PRODUCTION_CURRENT_CONTEXT.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": null,
+    "proceduralDesignAcceptance": null,
+    "spriteProductionAuthorization": "Explicit current resume, generation, testing, implementation and publication request.",
+    "generatedAppearanceAcceptance": "Engineer-reviewed faithful implementation; no separate Joel image acceptance claimed.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "181e0bd4a19d60d8650c578fdad0988fdfde1e55",
+    "ownerFilesAndBranches": [],
+    "exactEntityState": {
+      "renderKind": "prop",
+      "icon": "🪨",
+      "id": "sprite-reference-296"
+    },
+    "isolatedReferencePath": "tools/sprites/batches/2026-10-09-04/prop-rock-highlands/reference.png",
+    "isolatedReferenceHash": "14bb9d74c1d629b34a7b263fd0641e1f521cff7cc6175a0c287376c42f936ba6",
+    "gameplayContextPaths": [
+      "tools/sprites/batches/2026-10-09-04/prop-rock-highlands/review-scenes/native-review.png",
+      "tools/sprites/batches/2026-10-09-04/prop-rock-highlands/review-scenes/comparison.json"
+    ],
+    "traitsToPreserve": [
+      "Low fixed five-point field rock from the live icon-rock branch; pale left/top facet (#a0ad9b), gray-green body (#849183) and dark edge line (#647466). This branch is identical across seeds and regions; the unused wildProp moss branch is not its reference. No Crown crystal spike.",
+      "Existing native footprint, root placement and procedural shadows."
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [
+      "296"
+    ],
+    "verifiedRuntimeKeys": [
+      "prop:rock:highlands"
+    ],
+    "requiredVisibleAssets": [
+      "Static body"
+    ],
+    "reusedDesignIds": [
+      "prop-rock-vale"
+    ],
+    "variantRequirements": [
+      "Current body verified seed-invariant."
+    ],
+    "proceduralOwnersAndReasons": [
+      "Placement, collision, day/night shading and shadows remain procedural."
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": "prop:rock:highlands",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "tools/sprites/batches/2026-10-09-04/prop-rock-highlands/candidate.json"
+    ],
+    "approvedRecordKey": "prop:rock:highlands",
+    "activeContentRevision": "25c391d966fe234e2951e6dadd402d8ed8d6d493fdb6844f3e100cf1e52b3cdf",
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "procedural",
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

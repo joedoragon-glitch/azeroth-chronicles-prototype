@@ -1,0 +1,6 @@
+{
+  "fromKey": "prop:rock:vale",
+  "reuseReason": "Live icon-rock branches match across regions and 200 seed IDs; share retained original and output without generation.",
+  "referenceHash": "14bb9d74c1d629b34a7b263fd0641e1f521cff7cc6175a0c287376c42f936ba6",
+  "seedSamples": 200
+}

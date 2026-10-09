@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "status": "prepared-release-pending",
+  "preparedVersion": "0.8.99",
+  "checkpointIssue": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+  "resumeAuthorization": "Joel explicitly resumed full mass production, adjustments, testing, implementation and publication in this turn.",
+  "calls": [
+    {
+      "key": "prop:heather:highlands",
+      "original": "prop-heather-highlands/rejected-fringe-correction.png",
+      "status": "rejected-fringe-remains",
+      "prompt": "Use case: precise-object-edit. Asset type: one isolated transparent Azeroth Chronicles game sprite. Input 1 is the edit target: existing four-stem heather. Input 2 is the procedural canon reference. Fix only the unintended edge fringe in input 1: remove all bright magenta and yellow halo pixels outside the plant, and make those pixels genuinely transparent. Keep the four stems, four muted pale lavender flower heads, gray-green stems, sparse composition, plant dimensions, palette and placement exactly recognizable. Preserve transparent background and the natural thin organic stems. No floor, shadow, glow, scenery, extra plants, text or effects. Crisp clean alpha edges, retaining soft normal plant-edge antialiasing. Same square canvas and existing small asset position. The procedural image is reference for small footprint and four sparse flower heads, not a request to reproduce blocky primitives."
+    },
+    {
+      "key": "prop:heather:highlands",
+      "original": "prop-heather-highlands/image-tool-original.png",
+      "status": "engineer-reviewed-native-candidate",
+      "prompt": "Generate exactly ONE transparent isolated 2D game sprite: four very fine gray-green upright heather stems, each ending in a tiny muted lavender flower head. Use the supplied procedural image as the canonical composition reference: four stems with small flower heads, sparse straight organic stems, no extra leaves. Higher material fidelity but same proportions, palette and footprint. Thin stems, restrained surface shading. These flower heads must be tiny, not large bulbous bouquets. Muted #778067 stems, #b79ab9 and #a99bc6 flowers. Square 1024x1024 canvas. Plant occupies a small rectangle about 96 pixels wide, 112 pixels tall, center at x=512, root ends at y=768, with transparent space around it. Genuine alpha transparency: no colored outline, no fringe, no magenta, no yellow-green halo, no glow, no backdrop, no floor, no baked shadow, no text or unrelated objects. Small native gameplay appearance matters more than ornamental detail. Material-appropriate organic contours instead of blocky procedural primitives."
+    },
+    {
+      "key": "prop:grass:vale",
+      "original": "prop-grass-vale/slot-0/rejected-wide-leaves.png",
+      "status": "rejected-wide-leaves",
+      "prompt": "Use case: stylized-concept. Create exactly ONE isolated transparent 2D game sprite for Azeroth Chronicles: three sparse slender grass blades, matching supplied procedural reference exactly in count, orientation and palette. Thin muted green #739266 blades, smoothly tapering, organic material-appropriate outlines. Left blade leans slightly left, center nearly upright, right blade slightly right. Reference height slot 0: rooted near same horizontal base, tips at about 16 units above roots. A small clump, not a dense tuft, aloe or succulent. Render on square canvas; full asset visible, centered, three individual blades remain separate. Do not add roots, extra blades/leaves, flowers, seed heads, soil, baked ground shadow, text, objects, outline halos or glow. Keep rendering simple and readable at actual ~18x18 gameplay pixels, with restrained shading. Genuine alpha transparency. Procedural image determines identity/composition; translate its lines into fine organic grass, do not reproduce blocky primitives."
+    },
+    {
+      "key": "prop:grass:vale",
+      "original": "prop-grass-vale/slot-0/thin-candidate-original.png",
+      "status": "held-spacing-review",
+      "prompt": "Precise game sprite correction. Edit target input 1: the three green blades. Canon reference input 2: three fine grass strands. Change each blade from a wide leaf into an extremely thin, fine, hair-like grass blade: reduce blade width to ONE FIFTH of its current width, with a smooth taper. They must read as thin grass strands, not leaves or succulent shoots. Keep exactly three separately rooted blades and their left/center/right lean. Match all three tip heights to the canonical reference; the center tip should not tower above its neighbors. Muted gray-green #739266, no prominent veins, no bright green, no outlined colored fringe, no glow. Retain composition and full transparent square canvas. No extra stems, leaves, roots, soil, shadow, flowers, text, or objects. Real alpha transparency. Tiny native-scale silhouette must remain airy and sparse."
+    },
+    {
+      "key": "prop:grass:vale",
+      "original": "prop-grass-vale/slot-0/rejected-spacing-edit.png",
+      "status": "rejected-colored-artifact",
+      "prompt": "Edit only the spacing and lean of the three thin grass blades in input 1, using input 2 as exact placement canon. Keep the corrected very thin width and gray-green palette. Spread the three root endpoints farther apart horizontally: left root under the left blade, middle root under middle blade, right root under right blade, with equal wide gaps like the reference. Roots must NOT converge into a common tuft. Make blades almost upright with only a slight outward lean: the tip span should be about 1.4 times the root span, not three times. Preserve exactly three thin blades, same plant height, nearly level tips, no extra vegetation or objects. No wide leaves, veins, soil, roots drawn below the baseline, shadow, fringe, glow or text. Same transparent square canvas, small isolated sprite. Natural grass outlines."
+    }
+  ],
+  "newRegistrations": [
+    "prop:heather:highlands",
+    "prop:rock:vale",
+    "prop:rock:highlands"
+  ],
+  "nextAction": "Verify recovered ground and corrected nature deployment. Complete native-reviewed exact grass/wet-grass/reed banks and continue open catalog. Do not activate incomplete banks.",
+  "userImageAcceptance": false
+}

@@ -1,0 +1,97 @@
+{
+  "version": 2,
+  "key": "prop:rock:vale",
+  "catalogId": "295",
+  "canonHash": "69dc7b2d4cfe9a034b54e72ba65c77a27cb6e93540562f1a572dac415c4830f6",
+  "canonSnapshotHash": "f81c0c5a6a0b78a9c3ded5a70e2d1878173841d5edd3e9af4a4d6e5b1ee5e91f",
+  "catalogHash": "63d21b55a5e3e098bf33e2ae933e56770218d89bbfa88a99b5f05a770d200423",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1382,
+    "height": 1382,
+    "bytes": 146697,
+    "decodedBytes": 7639696,
+    "hash": "ded65ec294b67004f2ce62cd966f51eed80a13d74ace8515829a30614a8f2ed8",
+    "pixelHash": "10b1ad7c24db1d08296b9c1ec3fdf402582aea76701233118f471f6091cfc892",
+    "bounds": {
+      "x1": 386,
+      "y1": 159,
+      "x2": 1257,
+      "y2": 1291
+    },
+    "padding": 90,
+    "transparentPixels": 1854793,
+    "visiblePixels": 55131,
+    "lowAlphaPixels": 1948,
+    "materialBounds": {
+      "x1": 550,
+      "y1": 869,
+      "x2": 880,
+      "y2": 1096
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 3903,
+    "decodedBytes": 147456,
+    "hash": "6c91a24ae9be14a3e01308e7a3b8833f7ce7998ed4e0aa53d99965884f1b7611",
+    "pixelHash": "72caf8fab605b3be6e06d4c318cf83068f76847d192e2068849f52bb70ec8726",
+    "bounds": {
+      "x1": 74,
+      "y1": 120,
+      "x2": 120,
+      "y2": 152
+    },
+    "padding": 39,
+    "transparentPixels": 35799,
+    "visiblePixels": 1065,
+    "lowAlphaPixels": 44,
+    "materialBounds": {
+      "x1": 75,
+      "y1": 120,
+      "x2": 120,
+      "y2": 151
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1382,
+      1382
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": -2,
+      "y": -1,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+    "reviewer": "Codex engineering review under resumed faithful implementation",
+    "userImageAcceptance": false,
+    "seedInvariant": true,
+    "evidence": "tools/sprites/batches/2026-10-09-04/prop-rock-vale/review-scenes/comparison.json",
+    "notes": "Retained original matches live fixed icon-rock branch. 200 identity references are pixel-identical. Natural stone facets, native footprint and eight day/night desktop/phone scenes inspected. Catalog corrected; no nonexistent moss variant invented."
+  }
+}

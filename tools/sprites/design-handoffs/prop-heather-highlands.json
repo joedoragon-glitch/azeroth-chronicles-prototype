@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "integrated",
+  "designId": "prop-heather-highlands",
+  "name": "Environmental Heather",
+  "kind": "environment",
+  "nextAction": "Verify release CI and exact live deployment, then continue remaining catalog.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel explicitly resumed full staged mass production from both interruption checkpoints; reuse saved completed art and correct held candidates before new batches.",
+    "decisionDate": "2026-10-08",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+    "contentDocuments": [
+      "docs/DESIGN_TO_SPRITE_WORKFLOW.md",
+      "docs/SPRITE_PRODUCTION_CURRENT_CONTEXT.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": null,
+    "proceduralDesignAcceptance": null,
+    "spriteProductionAuthorization": "Explicit current resume, generation, testing, implementation and publication request.",
+    "generatedAppearanceAcceptance": "Engineer-reviewed faithful implementation; no separate Joel image acceptance claimed.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "181e0bd4a19d60d8650c578fdad0988fdfde1e55",
+    "ownerFilesAndBranches": [],
+    "exactEntityState": {
+      "renderKind": "prop",
+      "decorative": true,
+      "structure": "heather",
+      "id": "harbor-heather"
+    },
+    "isolatedReferencePath": "tools/sprites/batches/2026-10-09-04/prop-heather-highlands/reference.png",
+    "isolatedReferenceHash": "8640b3701ef6cb01f568d2aecb85f43194dcaa4fc1ae94ce146aa94362fa8841",
+    "gameplayContextPaths": [
+      "tools/sprites/batches/2026-10-09-04/prop-heather-highlands/review-scenes/native-review.png",
+      "tools/sprites/batches/2026-10-09-04/prop-heather-highlands/review-scenes/comparison.json"
+    ],
+    "traitsToPreserve": [
+      "Four sparse fine gray-green (#778067) stems with tiny muted mauve/lavender (#b79ab9/#a99bc6) flower heads. Preserve the actual current seed/reference; additional visual variants require their own recorded source reference.",
+      "Existing native footprint, root placement and procedural shadows."
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [
+      "285"
+    ],
+    "verifiedRuntimeKeys": [
+      "prop:heather:highlands"
+    ],
+    "requiredVisibleAssets": [
+      "Static body"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Current body verified seed-invariant."
+    ],
+    "proceduralOwnersAndReasons": [
+      "Placement, collision, day/night shading and shadows remain procedural."
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": "prop:heather:highlands",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "tools/sprites/batches/2026-10-09-04/prop-heather-highlands/candidate.json"
+    ],
+    "approvedRecordKey": "prop:heather:highlands",
+    "activeContentRevision": "1fc62a7ad74c8af52ce673b89130bf1e757b7d796fe56eb0c3cdff4b3bfff388",
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "procedural",
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}
