@@ -1,6 +1,6 @@
 # Rogue behavior and tiered survivability — preparation phase
 
-This phase establishes **inactive** infrastructure. No rogue state machine, regroup movement, crowd-control maneuvers, companion AI adjustments, summon changes, or damage compression are enabled. Existing combat must remain behaviorally unchanged.
+This phase establishes passive rogue infrastructure and an **explicitly callable regroup-retreat lifecycle**. No AI decision automatically calls it yet; ordinary enemy behavior, summoning, crowd control, and damage compression remain unchanged until phase two.
 
 ## Reconciled contract
 - Progression target: two companions in Vale, three in Marches, four in Highlands, five in Frontier, five on Crown arrival, six unlocked within Crown. Balance by actual active participants and encounter progression, not assumed six companions.
@@ -21,6 +21,10 @@ This phase establishes **inactive** infrastructure. No rogue state machine, regr
 - `tacticalRecordHit` collects a bounded six-second rolling series of actual hero/companion damage contributions (same-tick hits are combined, with at most 128 time records per attacker and enemy). `tacticalThreatSnapshot` sums live contributions and prunes expired records. This is **not** an active-target count, an AI threat selector, or a persistent save field.
 - Threat observations are cleared on enemy death, encounter disengagement and zone transitions. New Campaign instances and save restores have no carryover ledger.
 - The boss/captain cunning roster is empty and inactive; no enemies are secretly granted cunning status. Detection remains a query rather than an AI activation.
+- `tacticalBeginRogueRegroup(e, ally, activeTargetCount)` explicitly validates eligibility, an eligible cross-pack ally, navigability, route length, and avoidance of protected towns. Future rogue AI may call it, but phase one does not automatically do so.
+- Only **during a real, explicitly begun** regroup may the normal original-home leash be replaced by the original-home-to-destination retreat corridor, and then by a temporary encounter anchor at the regrouped location. The monster moves with a short burst using the existing navigation. The original `home` never changes.
+- A rogue retreat ends on player escape, safe-town approach, ally loss, blocked/stalled navigation, or timeout. On arrival it holds with allies until the player approaches, or eventually disengages if the player refuses the fight. A per-engagement latch prevents repeated chained retreats.
+- Retreat state is transient and discarded on death, disengagement, zone change, and restoration. It is not serialized; regrouping itself does not pull any additional packs.
 - No changed player/enemy attack numbers, healing, movement, aggro, cooldowns or summoning.
 - Foundation regression cases cover three-level immunity, equal-level boss gate and extended awareness without aggro.
 
@@ -30,5 +34,5 @@ This phase establishes **inactive** infrastructure. No rogue state machine, regr
 - Validate path accessibility, territory, safe areas, and group preferences for 600–800-unit cross-pack awareness without chain-pull cascades; the phase-one group summary deliberately never starts aggro.
 - Specify cunning boss/captain roster and group-compatible rogue move archetypes; keep the list empty until those specific decisions.
 - Benchmark compression by zone and intended party cap, verify high-damage builds retain meaningful payoff.
-- Add explicit regression cases: monster-created separation during rogue withdrawal does not reset; regroup arrival retains temporary combat anchor; player-created escape still resets; safe-town crossing and blocked routes fail safely; no extra aggro or unbounded chaining.
+- Regression cases now cover valid retreat corridors, temporary anchors, player-created escape, protected towns, blocked/stalled routes, no extra aggro, save isolation, and avoidance of unbounded reactivation. Phase-two end-to-end autonomous rogue scenarios remain outstanding.
 - Test normal/TRUE boss phases, warning completion, fixed summon caps, walls, towns, leashes, Night and saves.
