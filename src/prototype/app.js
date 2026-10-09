@@ -4,7 +4,8 @@
   const $ = (id) => document.getElementById(id),
     canvas = $('world'),
     ctx = canvas.getContext('2d'),
-    D = Campaign.data;
+    D = Campaign.data,
+    manaEnabled = PrototypeRules.resourceMode.manaEnabled;
   const persistence = PrototypePersistence.create({ storage: localStorage, Campaign, status });
   let profile = {
       nightmareUnlocked: false,
@@ -246,7 +247,9 @@
     openMenu(
       'Controls',
       input.actions.map(([id, name]) => input.key(id) + ' — ' + name).join('\n') +
-        '\n\nEsc — Menu / back · Enter or Space — Confirm in menus\nMouse or touch — Activate menus and HUD buttons\nSkills 1–3: tap under 0.20 s for normal; hold 0.65 s for charged. Releasing an incomplete hold cancels.\nCharged Skills 1 / 2 / 3 cost 20% / 30% / 35% max MP respectively. Hold through a cooldown to queue the charge; WAIT shows until charging can begin.\nCHARGED means ready to release. NEED MP / NO TARGET / NO HEAL explain a blocked charge. Skills 1–2 lock their target when charging begins; Target changes it deliberately while held.\nTap Q (or your assigned Target key), or tap the Target button, to cycle visible enemies. Hold either for 0.55 s to LOCK the current target for the encounter while dodging or fighting summons; tap again to switch and unlock. A lock clears when the target dies, returns home, or the hero changes area.\nHold Skill 1 or 2 for a fine aim guide: gold means in range and clear, amber means move closer, red means blocked. No target switching is needed for Self-Heal.\nNormal Skill 1 builds a same-target combo across three hits; the third adds frontal splash. Switching targets or waiting four seconds resets it.\nSquad doctrine becomes available at Expedition 3 during combat and resets for each encounter.\nMovement autoattack stays active, except while holding Skill 1.\nTouch: use the joystick or tap a reachable place to move when enabled. Keyboard or joystick movement cancels a destination.\nMouse: left click commands Ranger Heal unless click-to-move is enabled; right click commands Mana Recovery. HUD recovery buttons always work.\nNormal Skill 3 heals the hero; charged Skill 3 also heals living active companions. Rangers automatically support the active group; manual Heal can restore the hero or a wounded living companion, and Mana Recovery restores hero MP. Fallen companions require separate recovery.\nSprint remains unavailable.',
+        (manaEnabled
+          ? '\n\nEsc — Menu / back · Enter or Space — Confirm in menus\nMouse or touch — Activate menus and HUD buttons\nSkills 1–3: tap under 0.20 s for normal; hold 0.65 s for charged. Releasing an incomplete hold cancels.\nCharged Skills 1 / 2 / 3 cost 20% / 30% / 35% max MP respectively. Hold through a cooldown to queue the charge; WAIT shows until charging can begin.\nCHARGED means ready to release. NEED MP / NO TARGET / NO HEAL explain a blocked charge. Skills 1–2 lock their target when charging begins; Target changes it deliberately while held.\nTap Q (or your assigned Target key), or tap the Target button, to cycle visible enemies. Hold either for 0.55 s to LOCK the current target for the encounter while dodging or fighting summons; tap again to switch and unlock. A lock clears when the target dies, returns home, or the hero changes area.\nHold Skill 1 or 2 for a fine aim guide: gold means in range and clear, amber means move closer, red means blocked. No target switching is needed for Self-Heal.\nNormal Skill 1 builds a same-target combo across three hits; the third adds frontal splash. Switching targets or waiting four seconds resets it.\nSquad doctrine becomes available at Expedition 3 during combat and resets for each encounter.\nMovement autoattack stays active, except while holding Skill 1.\nTouch: use the joystick or tap a reachable place to move when enabled. Keyboard or joystick movement cancels a destination.\nMouse: left click commands Ranger Heal unless click-to-move is enabled; right click commands Mana Recovery. HUD recovery buttons always work.\nNormal Skill 3 heals the hero; charged Skill 3 also heals living active companions. Rangers automatically support the active group; manual Heal can restore the hero or a wounded living companion, and Mana Recovery restores hero MP. Fallen companions require separate recovery.\nSprint remains unavailable.'
+          : '\n\nEsc — Menu / back · Enter or Space — Confirm in menus\nMouse or touch — Activate menus and HUD buttons\nSkills 1–3: tap under 0.20s for normal; hold 0.65s for charged. Releasing an incomplete hold cancels.\nCooldowns limit skills; Cooldown Training in Talents reduces them. Charged attacks have longer cooldowns to preserve tactical choice. Hold through cooldown to queue, WAIT until charging can begin.\nCHARGED means ready; NO TARGET / NO HEAL explain blocked releases. Skills 1–2 lock their target when charging begins; Target changes it deliberately while held.\nTap Q to cycle visible targets or hold Q for 0.55s to lock; the Target button behaves the same.\nNormal Skill 1 builds a three-hit combo. Switching targets or waiting four seconds resets it.\nSquad doctrine becomes available at Expedition 3 during combat and resets for each encounter.\nMovement autoattack stays active except while holding Skill 1.\nTouch: joystick or enabled tap-to-move. Mouse: left click commands Ranger Heal unless click-to-move is enabled; right-click has no recovery command.\nNormal Skill 3 heals the hero; charged Skill 3 also heals living active companions. Rangers support health recovery. Fallen companions require separate recovery.\nSprint remains unavailable.'),
       [
         action('Customize keyboard', () => keyboardMenu(back)),
         action('Touch and mouse options', () => pointerMenu(back)),
@@ -305,7 +308,9 @@
         action(
           'Mouse click-to-move · ' + (p.mouseMove ? 'ON' : 'OFF'),
           () => select('mouseMove', !p.mouseMove),
-          'When off, left click in the world commands Ranger Heal. Right click commands Mana Recovery.',
+          manaEnabled
+            ? 'When off, left click in the world commands Ranger Heal. Right click commands Mana Recovery.'
+            : 'When off, left click in the world commands Ranger Heal.',
         ),
       ],
       () => help(back),
@@ -445,7 +450,7 @@
           id === 'paladin'
             ? 'Melee, healing and brief immunity'
             : id === 'mage'
-              ? 'Ranged magic, mana recovery and barriers'
+              ? 'Ranged magic, frost control and protective barriers'
               : 'Ranged bow, healing and mobility',
         ),
       ),
@@ -514,7 +519,7 @@
         '\nHero progression only. Troops, resources and construction are managed at town Captains or your barracks.',
       [
         action('Skills and teachers', () => skillBook(characterMenu)),
-        action('Discipline Training', () => talents(characterMenu)),
+        action('Talents', () => talents(characterMenu)),
       ],
       openMain,
     );
@@ -851,7 +856,9 @@
           n.name,
           'Fare ' +
             cost +
-            ' crowns. Paid outbound travel includes free return. Health, mana and supplies are preserved.',
+            (manaEnabled
+              ? ' crowns. Paid outbound travel includes free return. Health, mana and supplies are preserved.'
+              : ' crowns. Paid outbound travel includes free return. Health and supplies are preserved.'),
           [
             action('Travel to ' + target.name, () => {
               if (game.travel(n.direction)) closeMenu();
@@ -1528,10 +1535,12 @@
   }
   const quickItems = document.createElement('div');
   quickItems.id = 'quick-items';
-  for (const [type, label, key] of [
-    ['health', 'Heal', 'H'],
-    ['mana', 'Mana Regen', 'M'],
-  ]) {
+  for (const [type, label, key] of manaEnabled
+    ? [
+        ['health', 'Heal', 'H'],
+        ['mana', 'Mana Regen', 'M'],
+      ]
+    : [['health', 'Heal', 'H']]) {
     const b = document.createElement('button');
     b.id = type + '-potion';
     b.className = 'potion-button';
@@ -1616,7 +1625,7 @@
     } else if (actionId === 'map') showMap();
     else if (actionId === 'inventory') inventory();
     else if (actionId === 'heal') useRangerSupport('health');
-    else if (actionId === 'mana') useRangerSupport('mana');
+    else if (manaEnabled && actionId === 'mana') useRangerSupport('mana');
     else if (actionId === 'training') talents();
     else if (actionId === 'skills') skillBook();
     else if (actionId === 'help') help();
@@ -1667,7 +1676,7 @@
       };
   canvas.onpointerdown = (e) => {
     if (!activePlay() || e.button > 0) {
-      if (activePlay() && e.pointerType === 'mouse' && e.button === 2) {
+      if (manaEnabled && activePlay() && e.pointerType === 'mouse' && e.button === 2) {
         e.preventDefault();
         useRangerSupport('mana');
       }
@@ -1772,7 +1781,7 @@
   function updateHUD() {
     const h = game.hero,
       hp = Math.max(0, Math.min(100, (h.hp / h.maxHp) * 100)),
-      mp = Math.max(0, Math.min(100, (h.mp / h.maxMp) * 100));
+      mp = manaEnabled ? Math.max(0, Math.min(100, (h.mp / h.maxMp) * 100)) : 0;
     const talentButton = $('talent-button'),
       talentCount = $('talent-count');
     talentCount.textContent = h.talentPoints;
@@ -1784,7 +1793,7 @@
           (h.talentPoints === 1 ? '' : 's') +
           ' · press ' +
           input.key('training')
-        : 'Discipline Training · press ' + input.key('training');
+        : 'Talents · press ' + input.key('training');
     let heroMarkup =
       '<div class="hero-title"><span>' +
       Campaign.classes[h.class].icon +
@@ -1798,13 +1807,17 @@
       h.maxHp +
       '</span><i style="--fill:' +
       hp +
-      '%"></i></div><div class="resource-line mana"><span>MP ' +
-      Math.floor(h.mp) +
-      ' / ' +
-      h.maxMp +
-      '</span><i style="--fill:' +
-      mp +
-      '%"></i></div><div class="wallet"><span class="gold">' +
+      '%"></i></div>' +
+      (manaEnabled
+        ? '<div class="resource-line mana"><span>MP ' +
+          Math.floor(h.mp) +
+          ' / ' +
+          h.maxMp +
+          '</span><i style="--fill:' +
+          mp +
+          '%"></i></div>'
+        : '') +
+      '<div class="wallet"><span class="gold">' +
       Math.floor(h.gold) +
       ' crowns</span><span>XP ' +
       Math.floor(h.xp) +
@@ -1812,7 +1825,9 @@
       game.xpRequired(h.level) +
       '</span></div>';
     const heroEffects = h.supportEffects || [],
-      activeRecovery = heroEffects.slice().sort((a, b) => a.seconds - b.seconds)[0];
+      activeRecovery = heroEffects
+        .filter((e) => manaEnabled || e.type === 'health')
+        .sort((a, b) => a.seconds - b.seconds)[0];
     if (activeRecovery)
       heroMarkup +=
         '<small class="restoring">Ranger restoring ' +
@@ -1826,10 +1841,12 @@
       statusUntil = 0;
     }
     const rangers = game.activeLivingParty().filter((u) => u.type === 'archer');
-    for (const [type, label, key, cdKey, threshold] of [
-      ['health', 'Heal', input.key('heal'), 'healCd', 50],
-      ['mana', 'Mana Regen', input.key('mana'), 'manaCd', 35],
-    ]) {
+    for (const [type, label, key, cdKey, threshold] of manaEnabled
+      ? [
+          ['health', 'Heal', input.key('heal'), 'healCd', 50],
+          ['mana', 'Mana Regen', input.key('mana'), 'manaCd', 35],
+        ]
+      : [['health', 'Heal', input.key('heal'), 'healCd', 50]]) {
       const b = $(type + '-potion'),
         ready = rangers.filter((u) => (u[cdKey] || 0) <= 0).length,
         full =
@@ -1917,9 +1934,10 @@
             chargeTapSeconds().toFixed(2) +
             's for normal · hold ' +
             chargeSeconds().toFixed(2) +
-            's for charged · Charged cost ' +
-            chargedManaPercent(slot) +
-            '% max MP'
+            's for charged' +
+            (manaEnabled
+              ? ' · Charged cost ' + chargedManaPercent(slot) + '% max MP'
+              : ' · charged cooldown ' + game.skillCooldown(slot, true).toFixed(1) + 's')
           : '';
       b.title =
         (revealed ? skillNames[i] : 'Undiscovered skill') +
@@ -1939,9 +1957,8 @@
           ' ' +
           (revealed ? skillNames[i] : 'Undiscovered') +
           (chargeableSlots.has(slot)
-            ? ' · tap for normal or hold to charge · charged cost ' +
-              chargedManaPercent(slot) +
-              ' percent max MP'
+            ? ' · tap for normal or hold to charge' +
+              (manaEnabled ? ' · charged cost ' + chargedManaPercent(slot) + ' percent max MP' : '')
             : ''),
       );
       b.querySelector('small').textContent = charging
@@ -2119,7 +2136,7 @@
           levelEvent.level +
           '! Training point available · press ' +
           input.key('training') +
-          ' or use Discipline Training.',
+          ' or use Talents.',
       );
     if (events.some((e) => e.type === 'peace')) ending();
     if (game.s.phase === 'awakening' && !game.s.awakeningAck && !menu) awakeningMenu();
