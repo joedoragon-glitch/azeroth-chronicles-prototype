@@ -1788,7 +1788,7 @@
           (h.talentPoints === 1 ? '' : 's') +
           ' · press ' +
           input.key('training')
-        : 'Discipline Training · press ' + input.key('training');
+        : 'Talents · press ' + input.key('training');
     let heroMarkup =
       '<div class="hero-title"><span>' +
       Campaign.classes[h.class].icon +
@@ -2131,7 +2131,7 @@
           levelEvent.level +
           '! Training point available · press ' +
           input.key('training') +
-          ' or use Discipline Training.',
+          ' or use Talents.',
       );
     if (events.some((e) => e.type === 'peace')) ending();
     if (game.s.phase === 'awakening' && !game.s.awakeningAck && !menu) awakeningMenu();
