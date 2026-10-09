@@ -1,6 +1,12 @@
 # Sprite production checkpoint · 8 October 2026
 
-## Current pause and housekeeping · 9 October 2026
+## Current resumed production · 9 October 2026 02:08 EDT
+
+Joel explicitly resumed artwork adaptation, generation, implementation and publication overnight. Complete adaptation of retained sources to the selected 150% camera, then continue the remaining body and texture catalog. The agent owns technical and native appearance checks; no additional approval round is needed. Preserve originals, checkpoints, accepted identity, organic/material-appropriate shape cues, gameplay geometry and rollback history. Production batch: `2026-10-09-150-adaptation`; its journal and per-asset evidence must accompany the verified implementation. Start with Paladin/Goblin and affected Paladin idle frames, then all retained active sources.
+
+Joel clarified the source policy at approximately 02:10 and requested GitHub documentation at 02:22 EDT. Read [SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md](SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md): use untouched generator outputs of accepted revisions for fresh 150% exports; never enlarge the smaller 100% runtime exports. Audit old padded/resized masters and rebuild from original pixels where an intermediate discarded detail, retaining only required placement information. Verify each original and its sizing/placement, review the actual in-game result, and simplify or regenerate if detail still reads poorly. This is required work, not evidence that every asset has already passed. Earlier pauses below are historical and do not override this authorization.
+
+## Historical pause and housekeeping · 9 October 2026
 
 Joel selected 150% and requested housekeeping before adapting existing artwork. Generation, adaptation, replacement and additional asset publication remain paused. v0.8.103 prepares density-aware processing, native desktop/phone review and unchanged runtime geometry, without editing the 33 active keys or historical originals/checkpoints. Read SPRITE_RESOLUTION_HOUSEKEEPING.md and CAMERA_SPRITE_TARGETS.md; run sprite:resolution before the later Paladin/Goblin adaptation pilot. Earlier resumes below are historical authorization within their old scope, not the current instruction.
 

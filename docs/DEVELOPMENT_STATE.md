@@ -137,3 +137,11 @@ Joel requests housekeeping first, with artwork adaptation deferred. Explicit pro
 Read SPRITE_RESOLUTION_HOUSEKEEPING.md and the source-readiness evidence. The inventory reports 33 active keys and 44 retained candidate records; current active originals and dependent Paladin frame sources have sufficient raster pixels. Active decoding remains 16 MiB/two concurrent decodes. Fixture verification covers high-density static/clip grounding, source/placement guards, immutable replacement and old-density rollback. Next production step is a Paladin/Goblin adaptation pilot after resumption is requested.
 
 End-to-end 150% workflow audit: `SPRITE_WORKFLOW_AUDIT.md`. Developer publication now journals sprite/terrain registry pairs and validates retained sprite history. New planning captures use `sprite:request`; this does not resume image production.
+
+## Resumed sprite production · 9 October 2026 02:08 EDT
+
+Joel authorizes autonomous adaptation of retained sprites to 150%, followed by remaining body/texture generation, implementation, verification and publication. No further technical/appearance approval round required. Preserve all originals, checkpoints and rollback. Read the current production context; the `2026-10-09-150-adaptation` journal and evidence must accompany verified implementation. Earlier pauses are historical.
+
+## Original-master export policy · 9 October 2026
+
+Joel explicitly requests documenting the approach in GitHub. Read SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md before adaptation: use untouched generator outputs of accepted revisions for fresh 150% exports, never enlarge the smaller runtime exports. Audit older padded/resized masters; bypass detail-losing intermediates and carry only necessary placement metadata into the final export. Verify each original, sizing and grounding; review actual 150% game scenes and simplify/regenerate if detail still reads poorly. All originals, checkpoints and rollback remain preserved. This records the required approach; new export processing and candidates remain separate implementation work until verified and published.
