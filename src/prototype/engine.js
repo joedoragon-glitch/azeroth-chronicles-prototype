@@ -3119,10 +3119,11 @@
       });
       return true;
     }
-    // Rally field troops by accelerating ordinary respawns from EXISTING packs.
+    // Field commanders rally native ordinary-monster spawn records; Ridge Tyrant
+    // instead rallies GUARD spawn records via tacticalRogueCommanderSupport.
     // Never manufacture new field enemies or count a boss's summoned warband.
     tacticalRogueFieldSupport(e, move) {
-      if (e.type !== 'boss' || !['ridge', 'warlord', 'cindermaw', 'darklord'].includes(e.family) ||
+      if (e.type !== 'boss' || !['warlord', 'cindermaw', 'darklord'].includes(e.family) ||
           !move.reinforceSpecies || !move.reinforceCap) return false;
       const z = this.zone(),
         radius = 750,
@@ -3181,7 +3182,7 @@
     tacticalRogueCommanderSupport(e, move) {
       if (!move.reinforceSpecies || !move.reinforceCap) return false;
       const captain = ['supply-highlands', 'frontier-overseer'].includes(e.captainProfile),
-        fieldBoss = e.type === 'boss' && ['ridge', 'warlord'].includes(e.family);
+        fieldBoss = e.type === 'boss' && e.family === 'ridge';
       if (!captain && !fieldBoss) return false;
       const z = this.zone(),
         range = fieldBoss ? 750 : 560,
