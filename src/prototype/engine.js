@@ -433,6 +433,13 @@
           (seen('night-site') ? 'shore observed' : 'observe Lantern shore after dark')
         );
       if (q.kind === 'sites') {
+        if (q.minSites)
+          return (
+            q.sites.filter(seen).length +
+            '/' +
+            q.minSites +
+            ' places discovered · explore naturally'
+          );
         const missing = q.sites
             .filter((id) => !seen(id))
             .map((id) =>
@@ -1616,9 +1623,9 @@
       const onboarding = {
         id: 'quest-barracks',
         region: 'vale',
-        name: 'Build your first Barracks',
+        name: 'A Place to Recover',
         objective:
-          'Build your first Barracks in the field. A barracks gives companions a nearby recovery base and reduces long return trips. While out in the field, open the Adventure menu (Esc/Menu) and choose Establish Basic Barracks — your first one is free.',
+          'In the field, choose Establish Basic Barracks from Adventure (free).',
         gold: 0,
         xp: 0,
         index: -1,
@@ -1643,7 +1650,7 @@
             target: room ? room.count : rule.target,
             objective:
               (room ? room.objective : q[2]) +
-              (rule.clear ? ' and clear the field dungeon guardians' : ''),
+              (rule.clear ? '; clear compound guards' : ''),
           };
         }),
       ];
@@ -1694,7 +1701,7 @@
                       : q.kind === 'night'
                         ? p.count >= q.target && q.sites.every(seen)
                         : q.kind === 'sites'
-                          ? q.sites.every(seen) &&
+                          ? q.sites.filter(seen).length >= (q.minSites || q.sites.length) &&
                             (!q.requiresRescues ||
                               q.requiresRescues.every((id) => this.s.rescued[id]))
                           : false;
