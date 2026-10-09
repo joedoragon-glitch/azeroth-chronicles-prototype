@@ -135,7 +135,10 @@
   function status(text) {
     if (text === 'Saved locally · export for a backup') return;
     $('status').textContent = text;
-    const important = /storage unavailable|saving failed|saved run unavailable|invalid backup|legacy save|export before/i.test(text);
+    const important =
+      /storage unavailable|saving failed|saved run unavailable|invalid backup|legacy save|export before/i.test(
+        text,
+      );
     statusUntil = performance.now() + (important ? 6500 : 2600);
   }
   function persistProfile() {
