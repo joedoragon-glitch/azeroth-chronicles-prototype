@@ -315,4 +315,19 @@ test('F55 companions can independently trigger wounded monster retreat without t
   c.tacticalClearRogueRegroup(e);
   ally.active=false;assert.equal(c.tacticalRogueEligibility(e,0),false,'absent companion no longer provides encounter pressure');
 });
+
+test('F56 isolated engaged monster recognizes numerical pressure from living present party',()=>{
+  const c=fresh(),e=c.makeEnemy({species:'wolf',name:'outnumbered foe',level:2,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700});
+  const companions=[0,1,2].map((i)=>c.unit(i%2?'archer':'soldier',1410+i*20,1700));
+  c.zone().enemies=[e];c.s.party=companions;c.hero.level=e.level;
+  Object.assign(c.hero,{x:1450,y:1700});e.aggro=true;c.line=()=>true;
+  assert.equal(c.tacticalActiveTargetCount(e),0,'none of the party has selected this monster');
+  assert.equal(c.tacticalPresentOpponents(e),4,'hero and three living companions are individual opponents');
+  assert(c.tacticalRogueOutnumbered(e),'four opponents overwhelm a solitary defender');
+  assert(c.tacticalAutoRogue(e,c.hero),'numerical disadvantage initiates autonomous planning');
+  assert.equal(c.tacticalRogueRegroup(e)?.phase,'thinking');
+  c.tacticalClearRogueRegroup(e);
+  e.level=c.hero.level+3;
+  assert.equal(c.tacticalAutoRogue(e,c.hero),false,'three-level immunity wins even against a whole squad');
+});
 console.log(passed+' audit regression scenarios passed.');
