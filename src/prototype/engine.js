@@ -2945,10 +2945,7 @@
           signature && ['scatter', 'sweep'].includes(signature.effect)
             ? this.combatTargets()
                 .filter(
-                  (unit) =>
-                    unit.hp > 0 &&
-                    dist(unit, e) <= signature.radius &&
-                    this.line(e, unit),
+                  (unit) => unit.hp > 0 && dist(unit, e) <= signature.radius && this.line(e, unit),
                 )
                 .sort((a, b) => dist(e, a) - dist(e, b))
             : [],
