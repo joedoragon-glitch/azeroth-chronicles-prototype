@@ -59,3 +59,11 @@ Early TRUE encounter trials produced a **mix of rapid victories and defeats**, d
 ## Objective follow-up protocol (deferred)
 
 Before any future boss/captain HP/defense changes, run the harness against the latest deployed version **after** the inherited tier curves and dynamic ADDS targeting both land, and collect multiple RNG seeds per class/region/form. Record encounter duration, victory/defeat, hero/party survival, potions, active additions, player input profile, and how often the boss's signature attacks actually fire. Preserve current XP, companion caps, class-specific doctrine choices, and quest progression in trial setup. Compare sustained basics, deliberate burst, and tactically managed ADDS/BOSS switching. Avoid knee-jerk balancing against a single 0.87-seed script or against the wrong party doctrine. This report is only a baseline for that later investigation.
+
+## Greenwood Vale progression exception — intentional, do not automatically retune
+
+The user clarified that **Crypt Guardian's comparatively quick defeat is intended**. A player may first explore Greenwood Vale, judge Thornfang too dangerous, discover the Forest Crypt, defeat its apparently formidable but more accessible Guardian, and gain confidence before returning to challenge Thornfang. Crypt Guardian may thus be the first boss *actually defeated* despite Thornfang being the zone's central threat.
+
+**Thornfang is the real regional field boss and teaches progression through rescuing Mira**, who unlocks further hero skill instruction. Do not artificially equalize Crypt Guardian's fight length with Thornfang's, or treat the Guardian's short isolated simulation as a balance defect in itself. Preserve both encounters' identities and quest unlocks. The potential short duration of **Mirejaw** remains a separate item for objective future review; no immediate numeric changes are authorized.
+
+This is a **player-directed optional discovery arc**, not a forced boss order. Evaluate Crypt Guardian's fight for clear tells, survivability and satisfaction at the time players actually discover it, rather than enforcing generic encounter-duration targets.
