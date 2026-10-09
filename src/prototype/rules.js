@@ -4373,6 +4373,10 @@
         slowSeconds: 0.8,
         rallySeconds: 2.3,
         coefficient: 0.08,
+        reinforceBelow: 2,
+        reinforceCap: 3,
+        reinforceSpecies: 'wolf',
+        reinforceName: 'Payroll guard',
       },
       'supply-crown': {
         name: 'Dreadmaw’s Idol Defiance',
@@ -4390,6 +4394,10 @@
         slowSeconds: 1,
         rallySeconds: 2.8,
         coefficient: 0.08,
+        reinforceBelow: 2,
+        reinforceCap: 3,
+        reinforceSpecies: 'orc',
+        reinforceName: 'Cinder rearguard',
       },
     },
     bosses: {
