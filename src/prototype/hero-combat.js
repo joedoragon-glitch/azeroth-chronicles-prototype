@@ -47,7 +47,10 @@
               this.line(from, e),
           )
           .sort((a, b) => this.idOrder(a, b))) {
-          if (this.damage(e, baseDamage * (cfg.secondaryMultiplier || 0.55), source, { area: true })) hits++;
+          if (
+            this.damage(e, baseDamage * (cfg.secondaryMultiplier || 0.55), source, { area: true })
+          )
+            hits++;
         }
         this.event('basicComboFinisher', {
           class: heroClass,
@@ -77,8 +80,12 @@
         const i = slot - 1,
           rank = this.hero.skills[i],
           isCharged = !!charged && (slot === 1 || slot === 2 || slot === 3);
-        if (this.s.challenge.pending || this.s.challenge.gameOver ||
-            this.tacticalScatterState(this.hero)) return false;
+        if (
+          this.s.challenge.pending ||
+          this.s.challenge.gameOver ||
+          this.tacticalScatterState(this.hero)
+        )
+          return false;
         if (!rank || this.hero.cd[i] > 0 || this.peace) {
           if (!rank) this.say('This skill must be learned from a rescued instructor.');
           return false;
@@ -96,7 +103,12 @@
                   : 450
                 : 480,
           targets = this.zone().enemies.filter(
-            (e) => e.hp > 0 && !e.neutral && this.tacticalDirectTargetable(e) && dist(e, this.hero) <= range && this.line(this.hero, e),
+            (e) =>
+              e.hp > 0 &&
+              !e.neutral &&
+              this.tacticalDirectTargetable(e) &&
+              dist(e, this.hero) <= range &&
+              this.line(this.hero, e),
           ),
           preferredTargetId =
             targetId ?? (slot === 1 ? (this.basicComboTargetId ?? this.s.heroTarget) : null),
