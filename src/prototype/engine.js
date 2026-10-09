@@ -209,13 +209,13 @@
       this.messages.push(text);
       if (this.messages.length > 7) this.messages.shift();
     }
-    notice(text, duration = 5.5, detail = '', kind = 'milestone') {
+    notice(text, duration = 5.5, detail = '', kind) {
       this.notices.push({
         id: ++this.noticeId,
         text,
         duration,
         ...(detail ? { detail } : {}),
-        ...(kind !== 'milestone' ? { kind } : {}),
+        ...(kind ? { kind } : {}),
       });
     }
     boss(id) {
