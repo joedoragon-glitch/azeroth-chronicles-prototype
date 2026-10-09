@@ -4243,16 +4243,70 @@
     },
   };
 
-  // Phase-one preparation only. No rogue moves or DPS limiting are enabled.
+  // Tactical behavior is enabled independently of future burst compression.
+  // Names and effects are authored here; all species have a fallback maneuver.
+  const rogueMoves = {
+    ordinary: { name: 'Desperate Feint', style: 'snare', coefficient: 0.18 },
+    guardian: { name: 'Territorial Shove', style: 'shove', coefficient: 0.22 },
+    ringleader: { name: 'Ringleader Ambush', style: 'dash', coefficient: 0.24 },
+    captain: { name: 'Captain Reversal', style: 'shove', coefficient: 0.22 },
+    boss: { name: 'Battlefield Reversal', style: 'dash', coefficient: 0.25 },
+    trueBoss: { name: 'TRUE Countermaneuver', style: 'dash', coefficient: 0.27 },
+    species: {
+      wolf: { name: 'Flanking Snap', style: 'dash', coefficient: 0.18 },
+      goblin: { name: 'Blinding Dust', style: 'snare', coefficient: 0.12 },
+      skeleton: { name: 'Bone Hook', style: 'shove', coefficient: 0.15 },
+      wraith: { name: 'Fading Grasp', style: 'snare', coefficient: 0.13 },
+      stalker: { name: 'Shadow Sidestep', style: 'dash', coefficient: 0.18 },
+      mireling: { name: 'Bog Tangle', style: 'snare', coefficient: 0.14 },
+      archer: { name: 'Disengaging Shot', style: 'shove', coefficient: 0.14 },
+      crownguard: { name: 'Shield Reposition', style: 'shove', coefficient: 0.2 },
+      ashbeast: { name: 'Cinder Feint', style: 'dash', coefficient: 0.18 },
+      orc: { name: 'Battle Shove', style: 'shove', coefficient: 0.2 },
+      ogre: { name: 'Rockside Slam', style: 'shove', coefficient: 0.22 },
+    },
+    captains: {
+      'supply-vale': { name: 'Scornfang’s Pocket Trick', style: 'snare', coefficient: 0.2 },
+      'supply-march': { name: 'Direjaw’s Silt Hook', style: 'snare', coefficient: 0.2 },
+      'supply-highlands': {
+        name: 'Crag Tyrant’s Shoulder Feint',
+        style: 'shove',
+        coefficient: 0.22,
+      },
+      'supply-crown': { name: 'Dreadmaw’s Ash Snare', style: 'snare', coefficient: 0.22 },
+      'frontier-overseer': {
+        name: 'Cinder Warlord’s Flank Order',
+        style: 'dash',
+        coefficient: 0.22,
+      },
+    },
+    bosses: {
+      thorn: { name: 'Thornfang’s Pack Feint', style: 'dash', coefficient: 0.23 },
+      crypt: { name: 'Crypt Guardian’s Bone Hook', style: 'shove', coefficient: 0.24 },
+      mire: { name: 'Mirejaw’s Bog Snare', style: 'snare', coefficient: 0.23 },
+      archive: { name: 'Drowned Keeper’s Undertow', style: 'shove', coefficient: 0.24 },
+      ridge: { name: 'Ridge Tyrant’s Stone Feint', style: 'shove', coefficient: 0.24 },
+      mine: { name: 'Stone Colossus’s Quarry Shift', style: 'shove', coefficient: 0.24 },
+      warlord: { name: 'Ashen Warlord’s Flank Command', style: 'dash', coefficient: 0.25 },
+      abyss: { name: 'Abyss Dragon’s Ashwing Feint', style: 'dash', coefficient: 0.25 },
+      citadel: { name: 'Ash Sentinel’s Reversal', style: 'shove', coefficient: 0.24 },
+      cindermaw: { name: 'Cindermaw’s Ember Hook', style: 'snare', coefficient: 0.23 },
+      darklord: { name: 'Dark Lord’s Crown Grasp', style: 'snare', coefficient: 0.26 },
+    },
+  };
   const tacticalFoundation = Object.freeze({
-    enabled: false,
+    enabled: true,
     heroLevelDisadvantageMinimum: 1,
     outlevelProtection: 3,
     simultaneousPressureSources: 2,
     summonSupportThreshold: 1,
     awarenessRadius: 750,
     threatWindowSeconds: 6,
-    cunningEnemies: [], // Explicit boss/captain roster is deferred to phase two.
+    cunningEnemies: ['thorn', 'warlord', 'supply-crown', 'darklord'],
+    maxReinforcements: 2,
+    supportRadius: 195,
+    moveCooldownSeconds: 14,
+    rogueMoves,
     // Tier names are identifiers, not mitigation percentages.
     protectionTiers: ['ordinary', 'guardian', 'ringleader', 'captain', 'boss', 'trueBoss'],
     burstCompression: Object.freeze({ enabled: false, model: 'soft-knee', hardCap: false }),

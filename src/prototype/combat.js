@@ -65,6 +65,37 @@
         this._tacticalThreat.set(e.id, ledger);
       }
 
+      tacticalActiveTargetCount(e) {
+        if (!e || !e.aggro || e.hp <= 0) return 0;
+        const now = this.s.time || 0;
+        const recent = this.tacticalThreatSnapshot(e);
+        const attackingHero =
+          this.hero.hp > 0 &&
+          dist(this.hero, e) <= 520 &&
+          this.line(this.hero, e) &&
+          (this.s.heroTarget === e.id ||
+            this.basicComboTargetId === e.id ||
+            recent.some((entry) => entry.source === 'hero' && now - entry.lastHit <= 1.5));
+        let count = attackingHero ? 1 : 0;
+        for (const u of this.activeLivingParty()) {
+          if (u.order || this.s.recallActive || dist(u, e) > 640) continue;
+          if (this._tacticalPartyTargets?.get(u.id) === e.id) count++;
+        }
+        return count;
+      }
+
+      tacticalHighestThreatTarget(e, fallback = this.hero) {
+        const candidates = this.combatTargets().filter(
+          (u) => u.hp > 0 && dist(e, u) <= (e.type === 'boss' ? 500 : 360) && this.line(e, u),
+        );
+        const ledger = this.tacticalThreatSnapshot(e);
+        for (const record of ledger) {
+          const found = candidates.find((u) => (u === this.hero ? 'hero' : u.id) === record.source);
+          if (found) return found;
+        }
+        return candidates.includes(fallback) ? fallback : candidates[0] || null;
+      }
+
       tacticalProtectionTier(e) {
         if (e?.type === 'boss') return e.form === 'true' ? 'trueBoss' : 'boss';
         if (e?.captain || e?.roomCaptain) return 'captain';
@@ -86,6 +117,10 @@
               !ally.neutral &&
               !ally.returning &&
               !ally.summon &&
+              ally.type !== 'boss' &&
+              !ally.fieldCaptain &&
+              !ally.captain &&
+              !ally.roomCaptain &&
               dist(ally, e) <= radius,
           )
           .sort((a, b) => dist(a, e) - dist(b, e) || a.id.localeCompare(b.id));

@@ -395,6 +395,10 @@
       resolveAttack(e) {
         const a = e.telegraph;
         if (!a) return;
+        if (a.rogueMove) {
+          this.tacticalResolveRogueMove(e, a);
+          return;
+        }
         if (a.nightSkill === 'drain') {
           const hero = this.hero,
             zone = this.zoneId;

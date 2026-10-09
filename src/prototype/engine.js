@@ -1383,6 +1383,7 @@
                 : { x: D.towns[i][0], y: D.towns[i][1] });
       this.tacticalClearThreat(); // Transient observations never survive zone travel.
       this.tacticalClearRogueRegroup();
+      this._tacticalPartyTargets?.clear();
       this.s.zone = zone;
       this.zone();
       this.s.recallActive = false;
@@ -1696,7 +1697,7 @@
       return this.payQuest(q, p);
     }
 
-    engage(e, forced = true) {
+    engage(e, forced = true, spreadPack = true) {
       if (e.aggro || e.neutral) return false;
       if ((this.s.mercyTime || 0) > 0 && !forced && !e.mercyProvoked) return false;
       e.aggro = true;
@@ -1717,12 +1718,16 @@
         this.summonBossAdds(e, this.trueSummonPlan(e), this.bossSummonCap(e));
         if (first) this.say(e.name + ' calls a TRUE warband.');
       }
-      for (const ally of this.zone().enemies)
-        if (ally.pack && ally.pack === e.pack && ally.hp > 0 && !ally.aggro)
-          this.engage(ally, false);
+      if (spreadPack)
+        for (const ally of this.zone().enemies)
+          if (ally.pack && ally.pack === e.pack && ally.hp > 0 && !ally.aggro)
+            this.engage(ally, false);
     }
 
     die() {
+      this.tacticalClearRogueRegroup();
+      this.tacticalClearThreat();
+      this._tacticalPartyTargets?.clear();
       this.clearTonic();
       this.hero.supportEffects = [];
       for (const u of this.s.party) u.supportEffects = [];
@@ -2734,6 +2739,8 @@
         }
         state.phase = 'anchored';
         state.anchor = { x: e.x, y: e.y }; // e.home always remains the original spawn.
+        state.recruited = false;
+        state.moveUsed = false;
         e.path = [];
         e.routeAge = 0;
       }
@@ -2755,8 +2762,119 @@
           return true;
         }
         state.holdRemaining = 12;
+        this.tacticalRecruitRegroupAllies(e, state, target);
+        if (!state.moveUsed && this.tacticalRogueMove(e, target)) {
+          state.moveUsed = true;
+          return true;
+        }
       }
       return false;
+    }
+    tacticalRogueMove(e, fallback) {
+      if (e.hp <= 0 || e.returning || e.telegraph || e.motion || e.rangedAim) return false;
+      const tier = this.tacticalProtectionTier(e),
+        cfg = R.tacticalFoundation,
+        profiles = cfg.rogueMoves,
+        profile =
+          (e.type === 'boss' && profiles.bosses[e.family]) ||
+          ((e.captain || e.roomCaptain) && profiles.captains[e.captainProfile]) ||
+          profiles.species[e.species] ||
+          profiles[tier] ||
+          profiles.ordinary,
+        target = this.tacticalHighestThreatTarget(e, fallback),
+        maxRange = e.type === 'boss' ? 500 : e.captain || e.roomCaptain ? 440 : 340;
+      if (!target || dist(e, target) > maxRange || !this.line(e, target)) return false;
+      e.telegraph = {
+        rogueMove: true,
+        kind: 'circle',
+        name: profile.name,
+        style: profile.style,
+        coefficient: profile.coefficient,
+        targetId: target === this.hero ? 'hero' : target.id,
+        x: target.x,
+        y: target.y,
+        radius: 85,
+        timer: 0.65,
+        total: 0.65,
+        recovery: 0.8,
+      };
+      this.event('warning', { family: e.family, rogue: true, name: profile.name });
+      this.event('rogueMove', { actor: e.id, name: profile.name, style: profile.style });
+      return true;
+    }
+    tacticalResolveRogueMove(e, move) {
+      const target =
+        move.targetId === 'hero'
+          ? this.hero
+          : this.s.party.find((u) => u.id === move.targetId && u.active !== false);
+      if (!target || target.hp <= 0 || dist(target, move) > move.radius || !this.line(e, target))
+        return;
+      if (move.style === 'dash' && dist(e, target) > 95) {
+        // Respect solid terrain; this is a short tactical sidestep, never a teleport.
+        this.move(e, target, 300, 0.3, 85);
+      }
+      if (!this.hitParty(target, e.damage * move.coefficient)) return;
+      if (move.style === 'shove') {
+        const d = Math.max(1, dist(e, target)),
+          point = {
+            x: target.x + ((target.x - e.x) / d) * 55,
+            y: target.y + ((target.y - e.y) / d) * 55,
+          };
+        this.move(target, point, 220, 0.25);
+      } else {
+        target.slow = Math.max(target.slow || 0, move.style === 'snare' ? 1.65 : 0.95);
+      }
+    }
+    tacticalRecruitRegroupAllies(e, state, target) {
+      if (state.recruited || dist(target, e) > 280) return;
+      state.recruited = true;
+      const cfg = R.tacticalFoundation;
+      let recruited = 0;
+      for (const ally of this.tacticalRegroupCandidates(e)) {
+        if (recruited >= cfg.maxReinforcements) break;
+        if (ally.aggro || dist(ally, e) > cfg.supportRadius || dist(target, ally) > 320) continue;
+        // Do not create a cascading pack pull across the map.
+        if (this.engage(ally, true, false) !== false) recruited++;
+      }
+      if (recruited) this.event('rogueSupport', { actor: e.id, allies: recruited });
+    }
+    tacticalAutoRogue(e, target) {
+      const cfg = R.tacticalFoundation;
+      if (
+        !cfg.enabled ||
+        this.peace ||
+        !target ||
+        !e.aggro ||
+        e.summon ||
+        e.hp <= 0 ||
+        e.returning ||
+        e.telegraph ||
+        e.motion ||
+        e.rangedAim ||
+        this.tacticalRogueRegroup(e) ||
+        this._tacticalRegroupUsed?.has(e.id) ||
+        (Number.isFinite(e.fightStart) && this.s.time - e.fightStart < 1.1)
+      )
+        return false;
+      const pressure = this.tacticalActiveTargetCount(e);
+      if (!this.tacticalRogueEligibility(e, pressure)) return false;
+      if (!this._tacticalRegroupUsed) this._tacticalRegroupUsed = new Set();
+      // Try nearby support including an isolated ally; keep a strict attempt
+      // budget so obstructed maps cannot trigger unbounded path searches.
+      let attempts = 0;
+      for (const group of this.tacticalRegroupGroups(e)) {
+        for (const ally of group.members) {
+          if (attempts++ >= 5) break;
+          if (this.tacticalBeginRogueRegroup(e, ally, pressure)) {
+            this.event('rogueRegroup', { actor: e.id, ally: ally.id });
+            return true;
+          }
+        }
+        if (attempts >= 5) break;
+      }
+      this._tacticalRegroupUsed.add(e.id);
+      // No accessible support: counterattack instead of running indefinitely.
+      return this.tacticalRogueMove(e, target);
     }
     updateEnemies(dt) {
       const z = this.zone(),
@@ -2884,7 +3002,8 @@
           this.disengage(e, dt);
           continue;
         }
-        // Explicit rogue retreats are resolved before normal chase/attacks.
+        // A short-lived rogue decision is distinct from normal aggro.
+        if (this.tacticalAutoRogue(e, target)) continue;
         if (this.tacticalRogueRegroup(e) && this.tacticalAdvanceRogueRegroup(e, target, dt))
           continue;
         if (e.telegraph) {

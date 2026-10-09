@@ -558,6 +558,11 @@
     'hit',
     'basicComboFinisher',
     'companionSkill',
+    // Rogue decisions are visually telegraphed; the existing warning cue owns
+    // their audio so crowd encounters do not stack extra alert sounds.
+    'rogueRegroup',
+    'rogueMove',
+    'rogueSupport',
   ]);
   const api = { themes, colors, scale, pitch, defaults, eventNotes, contextualEffectTypes };
   if (typeof module !== 'undefined') module.exports = api;
