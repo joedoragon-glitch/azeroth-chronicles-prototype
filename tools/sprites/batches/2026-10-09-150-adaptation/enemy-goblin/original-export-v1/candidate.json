@@ -103,15 +103,17 @@
     }
   },
   "review": {
-    "status": "pending",
-    "reference": null,
-    "inheritedStaticReview": {
-      "status": "approved",
-      "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
-      "kind": "engineer-authorized",
-      "userAppearanceAcceptance": false,
-      "scope": "Original source identity retained; preliminary frame preparation verified. Final assembled native review pending."
-    }
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+    "kind": "engineer-authorized",
+    "userAppearanceAcceptance": false,
+    "nativeScale": true,
+    "scope": "Engineer native appearance/grounding review of all six device profiles in day/night and retained idle frame pair; identity, root and 800ms timing retained. Browser/combat/release checks are separate pending gates.",
+    "evidence": [
+      "review-scenes/comparison.json",
+      "review-scenes/all-native-crops.png",
+      "native-review-v1/idle-native-pair.png"
+    ]
   },
   "presentation": {
     "clips": {

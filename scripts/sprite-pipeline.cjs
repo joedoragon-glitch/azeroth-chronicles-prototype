@@ -1124,6 +1124,7 @@ function scene(
     y: game.hero.y,
     hp: 100,
     maxHp: 100,
+    level: 1,
     neutral: false,
     name: contract.entity.renderKind === 'hero' ? game.hero.name : contract.catalog.name,
     aggro: contract.entity.renderKind === 'enemy',
@@ -1131,7 +1132,8 @@ function scene(
   if (entity.renderKind === 'hero') Object.assign(game.hero, entity);
   else {
     // Keep the reviewed entity inside narrow phone viewports, above the hero.
-    Object.assign(game.hero, game.safe(game.hero.x + 140, game.hero.y + 140));
+    const separation = Math.min(140, height * 0.23);
+    Object.assign(game.hero, game.safe(game.hero.x + separation, game.hero.y + separation));
     if (entity.renderKind === 'enemy') zone.enemies.push(entity);
     else if (entity.renderKind === 'ally') game.s.party.push(entity);
     else if (entity.renderKind === 'npc') zone.npcs.push(entity);

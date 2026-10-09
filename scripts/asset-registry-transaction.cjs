@@ -27,7 +27,7 @@ function assertClean(root, id) {
   if (
     fs.existsSync(p.journal) &&
     fs.existsSync(p.lock) &&
-    alive(JSON.parse(fs.readFileSync(p.lock)).pid)
+    ownerAlive(JSON.parse(fs.readFileSync(p.lock)))
   )
     throw Error('Asset registry transaction is active; retry after publication completes');
   if (fs.existsSync(p.journal))
@@ -49,19 +49,60 @@ function alive(pid) {
     throw e;
   }
 }
+function publisherPid() {
+  // Some managed hosts virtualize process.pid while exposing host /proc IDs.
+  // Locks must identify the process that other invocations can actually inspect.
+  try {
+    const pid = Number(fs.readFileSync('/proc/self/stat', 'utf8').split(' ')[0]);
+    if (Number.isInteger(pid) && pid > 0) return pid;
+  } catch (_) {}
+  return process.pid;
+}
+function ownerAlive(owner) {
+  if (owner.hostPid) {
+    try {
+      const stat = fs.readFileSync('/proc/' + owner.hostPid + '/stat', 'utf8');
+      const start = stat.slice(stat.lastIndexOf(')') + 2).split(' ')[19];
+      return !owner.start || owner.start === start;
+    } catch (e) {
+      if (e.code === 'ENOENT') return false;
+      throw e;
+    }
+  }
+  if (publisherPid() !== process.pid) {
+    try {
+      const stat = fs.readFileSync('/proc/' + owner.pid + '/stat', 'utf8');
+      // Legacy virtual PID locks can point at an unrelated host process.
+      if (!/\((node|MainThread|nodejs)\)/.test(stat)) return false;
+    } catch (e) {
+      if (e.code === 'ENOENT') return false;
+      throw e;
+    }
+  }
+  return alive(owner.pid);
+}
 function lock(p, recovery = false) {
   fs.mkdirSync(p.dir, { recursive: true });
   if (fs.realpathSync(p.dir) !== p.dir) throw Error('Transaction directory must not be symlinked');
   if (fs.existsSync(p.lock)) {
     const owner = JSON.parse(fs.readFileSync(p.lock));
-    if (alive(owner.pid)) throw Error('Asset registry is busy; active publisher owns the lock');
+    if (ownerAlive(owner)) throw Error('Asset registry is busy; active publisher owns the lock');
     if (!recovery && fs.existsSync(p.journal))
       throw Error('Interrupted transaction requires recovery');
     fs.unlinkSync(p.lock);
   }
   const fd = fs.openSync(p.lock, 'wx');
   try {
-    fs.writeFileSync(fd, JSON.stringify({ pid: process.pid }));
+    const hostPid = publisherPid();
+    let start;
+    try {
+      const stat = fs.readFileSync('/proc/self/stat', 'utf8');
+      start = stat.slice(stat.lastIndexOf(')') + 2).split(' ')[19];
+    } catch (_) {}
+    fs.writeFileSync(
+      fd,
+      JSON.stringify({ pid: process.pid, ...(start ? { hostPid, start } : {}) }),
+    );
   } finally {
     fs.closeSync(fd);
   }

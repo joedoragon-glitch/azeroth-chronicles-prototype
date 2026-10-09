@@ -1,7 +1,7 @@
 {
   "version": 1,
   "batch": "2026-10-09-150-adaptation",
-  "status": "original-pilot-candidates-prepared; final device/release checks pending",
+  "status": "final-reviewed and installed; exact-head CI/merge/deployment pending",
   "sourceOfTruth": [
     "docs/SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md",
     "docs/WORLD_PROPORTION_AND_DENSITY_GUARDRAILS.md",
@@ -27,9 +27,11 @@
     "proceduralSpriteScale": "implemented in PR #145, awaiting release verification",
     "nativeOriginalAdaptation": "Paladin and Goblin candidates prepared at 576; not installed",
     "pixelMasterAudit816": "pending per asset",
-    "visualScreenshots": "Native crops and evidence retained for two pilot candidates",
-    "assetPublication": "0 new revisions installed or deployed",
-    "localAuditRecovery": "Prior unpushed 66 map captures lost during workspace pruning. Committed runtime checkpoint retained. Do not treat prior local evidence as durable or skip release gates."
+    "visualScreenshots": "24 recaptured sprite scenes, 24 capped-ratio road scene pairs and 36 real WebKit idle/combat screenshots retained",
+    "assetPublication": "2 sprite revisions and 2 road materials installed locally; 0 deployed",
+    "localAuditRecovery": "Prior unpushed 66 map captures lost during workspace pruning. Committed runtime checkpoint retained. Do not treat prior local evidence as durable or skip release gates.",
+    "localRegressionSuites": 68,
+    "browserEvidence": "tools/sprites/batches/2026-10-09-150-adaptation/browser-review-v3/evidence.json"
   },
   "nextWork": [
     "Coordinate with #160/#145 Phase 1 and housekeeping owner; verify actual GitHub state.",
@@ -42,22 +44,23 @@
   "checkpoint": {
     "proportionCode": "e61302662612ca81328505eb40ac9d4367dd2f3a",
     "mainAtPreparation": "cdc8286ca499af1de4de53ffa3014bb89203cdab",
-    "version": "0.8.114",
-    "pr": 145
+    "version": "0.8.115",
+    "pr": 145,
+    "mainAtIntegration": "296356a883903459ba68e70291920f9c4538d96b"
   },
   "counts": {
     "adaptedSpriteKeysPrepared": 2,
     "spriteFramesPrepared": 4,
-    "spriteKeysFinalReviewed": 0,
-    "spriteKeysImplemented": 0,
+    "spriteKeysFinalReviewed": 2,
+    "spriteKeysImplemented": 2,
     "spriteKeysDeployed": 0,
     "texturesPrepared": 2,
-    "texturesFinalReviewed": 0,
-    "texturesImplemented": 0,
+    "texturesFinalReviewed": 2,
+    "texturesImplemented": 2,
     "texturesDeployed": 0,
     "imageGenerationCallsThisResume": 3
   },
-  "reviewStatus": "Preliminary native visual inspection of representative desktop/phone day/night crops and both idle frame pairs. 12 device/light captures per sprite revision and 8 scenes per texture exist; final complete device/combat review, approval recording, registry installation and release remain pending.",
+  "reviewStatus": "All six native device profiles day/night; original idle pairs and 36 real WebKit screenshots: both actual atlas frames render, pause freezes the clock, sprite animation preserves campaign snapshots, actual Blinding Dust warning and targeting remain functional. Current capped-ratio road evidence and wrap inspected.",
   "entries": [
     {
       "key": "hero:paladin",
@@ -71,8 +74,9 @@
       "clip": "idle, 800 ms per frame, loop",
       "reviewEvidence": "tools/sprites/batches/2026-10-09-150-adaptation/hero-paladin/original-export-v1/native-review-v1/evidence.json",
       "priorRevision": "b162917a153d83f0bea42abb24a86b40c35f98608bc493cb0b7a27c1a58f9d25",
-      "installed": false,
-      "deployed": false
+      "installed": true,
+      "deployed": false,
+      "finalReviewed": true
     },
     {
       "key": "enemy:goblin",
@@ -86,8 +90,10 @@
       "clip": "idle, 800 ms per frame, loop",
       "reviewEvidence": "tools/sprites/batches/2026-10-09-150-adaptation/enemy-goblin/original-export-v1/native-review-v1/evidence.json",
       "priorRevision": "06d5419a812e8c477e77be6f81c4b79e297b7592bc32b0282d0d39ff63590377",
-      "installed": false,
-      "deployed": false
+      "installed": true,
+      "deployed": false,
+      "finalReviewed": true
     }
-  ]
+  ],
+  "localVerificationNote": "Initial full test run overlapped installation. Transaction recovery restored prior sprite pair; Goblin reinstalled. Fresh serial checks required; no remote release claimed."
 }

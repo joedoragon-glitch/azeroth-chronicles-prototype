@@ -1,6 +1,6 @@
 {
   "batch": "2026-10-09-road-materials",
-  "status": "two prepared originals; final review/install/release pending",
+  "status": "final-reviewed and installed; exact-head CI/merge/deployment pending",
   "keys": [
     "terrain:road:vale",
     "terrain:road:highlands"
@@ -11,11 +11,16 @@
   ],
   "counts": {
     "prepared": 2,
-    "finalReviewed": 0,
-    "implemented": 0,
+    "finalReviewed": 2,
+    "implemented": 2,
     "deployed": 0
   },
   "sourcePolicy": "All untouched originals and references retained. 256 PNG, Lanczos3, no crop/trim/color modification or seam repair. worldSpan 320, opacity 0.28.",
   "preliminaryReview": "8 day/night device scenes per candidate plus 3x3 wrap. Both output seam measurements below 12 and within grain ratio. Need complete device/runtime checks and recorded final review before registry publication.",
-  "nextAction": "Finish review, record engineer acceptance under issue160, material:publish candidate with lease absent, build/regression/device CI then exact deployment."
+  "nextAction": "Exact-head PR CI, merge and exact Pages/PWA verification. Rollback records retained.",
+  "checkpoint": {
+    "mainAtIntegration": "296356a883903459ba68e70291920f9c4538d96b",
+    "version": "0.8.115"
+  },
+  "localVerificationNote": "Initial full test run overlapped installation. Transaction recovery restored prior sprite pair; Goblin reinstalled. Fresh serial checks required; no remote release claimed."
 }
