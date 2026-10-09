@@ -5,7 +5,8 @@
   function install(Campaign, { D, R, dungeonIds, classes }) {
     const clone = (x) => JSON.parse(JSON.stringify(x)),
       clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
-      dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+      dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y),
+      originalDepartureRegion = (id) => ['vale', 'highlands', 'frontier'].includes(id);
     class World {
       settlementLayout(z) {
         if (
@@ -101,7 +102,7 @@
         if (dungeonIds.includes(z.id) || this.supplyRoom(z.id) || this.sideDungeon(z.id)) return;
         this.settlementLayout(z);
         const i = this.regionIndex(z.id),
-          roadVersion = z.id === 'frontier' ? 12 : ['vale', 'highlands'].includes(z.id) ? 11 : 10;
+          roadVersion = z.id === 'frontier' ? 12 : originalDepartureRegion(z.id) ? 11 : 10;
         if (z.roadVersion === roadVersion) return;
         const origin = { x: D.towns[i][0], y: D.towns[i][1] },
           field = this.fieldCenter(i),
@@ -574,8 +575,7 @@
         return z;
       }
       regionalDestinations(z) {
-        const destinationVersion =
-          z.id === 'crown' ? 5 : ['vale', 'highlands', 'frontier'].includes(z.id) ? 4 : 3;
+        const destinationVersion = z.id === 'crown' ? 5 : originalDepartureRegion(z.id) ? 4 : 3;
         if (
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
@@ -626,8 +626,7 @@
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
           this.sideDungeon(z.id) ||
-          z.travelSafetyVersion ===
-            (['vale', 'highlands', 'frontier'].includes(z.id) ? 2 : 1)
+          z.travelSafetyVersion === (originalDepartureRegion(z.id) ? 2 : 1)
         )
           return;
         const landingIds =
@@ -668,7 +667,7 @@
               break;
             }
           }
-          z.travelSafetyVersion = ['vale', 'highlands', 'frontier'].includes(z.id) ? 2 : 1;
+          z.travelSafetyVersion = originalDepartureRegion(z.id) ? 2 : 1;
         } finally {
           this.s.zone = previousZone;
         }
@@ -704,7 +703,7 @@
         }
       }
       regionalAesthetics(z) {
-        const version = ['vale', 'highlands', 'frontier'].includes(z.id) ? 5 : 4;
+        const version = originalDepartureRegion(z.id) ? 5 : 4;
         if (
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
@@ -836,7 +835,7 @@
         }
       }
       worldLife(z) {
-        const version = ['vale', 'highlands', 'frontier'].includes(z.id) ? 2 : 1;
+        const version = originalDepartureRegion(z.id) ? 2 : 1;
         if (
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
