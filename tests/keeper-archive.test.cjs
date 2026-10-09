@@ -32,6 +32,15 @@ const room = c.zone(),
   keeper = room.npcs.find((n) => n.id === 'keeper-captive'),
   ledger = room.npcs.find((n) => n.id === 'archive-ledger');
 assert(keeper && keeper.kind === 'keeper' && ledger);
+const olderArchive = c.snapshot();
+olderArchive.zones.archive.npcs = olderArchive.zones.archive.npcs.filter(
+  (n) => !['keeper-captive', 'archive-ledger'].includes(n.id),
+);
+const upgradedArchive = C.restore(olderArchive).s.zones.archive;
+assert(upgradedArchive.npcs.some((n) => n.id === 'keeper-captive'));
+assert(upgradedArchive.npcs.some((n) => n.id === 'archive-ledger'));
+assert.equal(upgradedArchive.npcs.filter((n) => n.id === 'keeper-captive').length, 1);
+
 assert(c.route(c.hero, keeper).length, 'Keeper cage reachable in the study');
 assert(c.route(c.hero, ledger).length, 'Ledger reachable in dry stacks');
 assert(!c.visibleNPCs().includes(keeper), 'No duplicate Keeper while his normal form fights');
