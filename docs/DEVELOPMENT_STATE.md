@@ -1,5 +1,9 @@
 # Current development state
 
+## Integrated rogue repertoire · v0.8.111 candidate
+
+PR #146 is reconciled with main's v0.8.109 targeting/compression and VFX foundation. `ROGUE_PR146_INTEGRATION_AUDIT.md` records actual-effect coverage, dust/ADDS targeting, local respawn restraint, active brood/Crown rally and death/save cleanup. Normal boss summons, base rotations and world geometry remain unchanged. Dedicated Chromium/WebKit rogue checks join the existing PR/main gates; deployment still requires exact published-commit verification. See PR #146 for current CI and merge/deployment state.
+
 ## Foundation complete in v0.8.81
 
 Desktop/browser and phone presentation are distinct. World authoring, navigation, rendering, persistence, platform selection and runtime measurements have explicit module boundaries. Entry generation, offline assets, versioning and deployment use a shared build inventory. Existing maps, campaign behavior and procedural sprite canon are preserved.

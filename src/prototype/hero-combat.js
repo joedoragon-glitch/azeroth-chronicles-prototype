@@ -47,7 +47,10 @@
               this.line(from, e),
           )
           .sort((a, b) => this.idOrder(a, b))) {
-          if (this.damage(e, baseDamage * (cfg.secondaryMultiplier || 0.55), source)) hits++;
+          if (
+            this.damage(e, baseDamage * (cfg.secondaryMultiplier || 0.55), source, { area: true })
+          )
+            hits++;
         }
         this.event('basicComboFinisher', {
           class: heroClass,
@@ -91,6 +94,7 @@
           enemy.hp <= 0 ||
           enemy.neutral ||
           enemy.returning ||
+          !this.tacticalDirectTargetable(enemy) ||
           (this.manualHeroTargetLocked
             ? dist(enemy, this.hero) > 1400 && !enemy.aggro
             : dist(enemy, this.hero) > 680)
@@ -116,6 +120,7 @@
               e.hp > 0 &&
               !e.neutral &&
               !e.returning &&
+              this.tacticalDirectTargetable(e) &&
               dist(e, this.hero) <= 680 &&
               this.line(this.hero, e) &&
               visible(e),
@@ -138,6 +143,7 @@
               e.hp > 0 &&
               !e.neutral &&
               !e.returning &&
+              this.tacticalDirectTargetable(e) &&
               dist(e, this.hero) <= 680 &&
               this.line(this.hero, e) &&
               visible(e),
@@ -176,7 +182,12 @@
         const i = slot - 1,
           rank = this.hero.skills[i],
           isCharged = !!charged && (slot === 1 || slot === 2 || slot === 3);
-        if (this.s.challenge.pending || this.s.challenge.gameOver) return false;
+        if (
+          this.s.challenge.pending ||
+          this.s.challenge.gameOver ||
+          this.tacticalScatterState(this.hero)
+        )
+          return false;
         if (!rank || this.hero.cd[i] > 0 || this.peace) {
           if (!rank) this.say('This skill must be learned from a rescued instructor.');
           return false;
@@ -187,7 +198,12 @@
           range = this.heroSkillRange(slot, isCharged),
           selected = this.selectedHeroTarget(),
           targets = this.zone().enemies.filter(
-            (e) => e.hp > 0 && !e.neutral && dist(e, this.hero) <= range && this.line(this.hero, e),
+            (e) =>
+              e.hp > 0 &&
+              !e.neutral &&
+              this.tacticalDirectTargetable(e) &&
+              dist(e, this.hero) <= range &&
+              this.line(this.hero, e),
           ),
           preferredTargetId =
             targetId ??
@@ -346,7 +362,7 @@
           for (const e of this.zone()
             .enemies.filter((e) => e.hp > 0 && !e.neutral && inside(e) && this.line(this.hero, e))
             .sort((a, b) => this.idOrder(a, b))) {
-            if (this.damage(e, damage)) {
+            if (this.damage(e, damage, 'hero', { area: true })) {
               hits++;
               if (def.slow) e.slow = Math.max(e.slow || 0, def.slow);
             }
@@ -449,6 +465,8 @@
                 : slot === 7
                   ? power * (this.hero.class === 'mage' ? 7 : 6)
                   : power * 2.3) * scale,
+              'hero',
+              { area: true },
             );
             if (this.hero.class === 'mage' && slot !== 8) e.slow = slot === 5 ? 5 : 6;
           }
