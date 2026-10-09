@@ -18,7 +18,8 @@ const prettier = require('prettier');
   ];
   for (const path of paths) {
     const before = fs.readFileSync(path, 'utf8');
-    const after = await prettier.format(before, { filepath: path });
+    const options = (await prettier.resolveConfig(path)) || {};
+    const after = await prettier.format(before, { ...options, filepath: path });
     if (before === after) continue;
     fs.writeFileSync(path, after);
     const diff = cp.spawnSync('git', ['diff', '--', path], { encoding: 'utf8' }).stdout;
