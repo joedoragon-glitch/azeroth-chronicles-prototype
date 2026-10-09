@@ -32,7 +32,7 @@ Forest Crypt, Sunken Archive and Colossus Mine now have distinct authored wings,
 | Skills 1–5 | 1–5 | Skill buttons |
 | Skills 6–8 | Space / left Shift / B | Skill buttons |
 | Charged skills 1–3 | Quick tap for normal; hold 0.65 seconds for charged | Same tap/hold behavior |
-| Ranger recovery | H / left mouse for Heal; M / right mouse for Mana Recovery | Recovery buttons |
+| Ranger healing | H / left mouse for Heal | Heal button |
 | Squad doctrine | Tab during combat, Expedition 3+ | Contextual Squad button |
 | Recall | Backtick | Recall squad |
 | Change target | Q (customizable), or click Target in the HUD | Target beside Recall, above joystick |
@@ -46,9 +46,15 @@ Menus, HUD buttons and skills accept mouse clicks and touch taps on every screen
 
 **Controls → Touch and mouse options** selects the phone's default two-thumb layout (movement left, skills right) or the alternate left-hand layout. Touch tap-to-move is enabled by default alongside the joystick and can be disabled. Taps use existing collision/pathfinding; manual keyboard or joystick movement immediately takes over. Opening menus, pausing or losing focus cancels travel. Taps move the hero only and do not issue squad orders or automatically interact with services.
 
-Mouse click-to-move is off by default and can be enabled separately. With it off, left-clicking the world commands Ranger Heal; right-clicking commands Mana Recovery. Clickable HUD recovery buttons and their rebindable keyboard shortcuts work in either mode. Sprint remains unavailable; Q now defaults to Target, and all keys remain rebindable.
+Mouse click-to-move is off by default and can be enabled separately. With it off, left-clicking the world commands Ranger Heal. The Heal button and its rebindable keyboard shortcut work in either mode. Sprint remains unavailable; Q now defaults to Target, and all keys remain rebindable.
 
-Normal Skill 3 heals the hero; charged Skill 3 also heals living active companions. Active Rangers provide automatic and manually commanded Heal (hero or wounded living active companion) and Mana Recovery (hero MP). Fallen companions need separate recovery at a Captain or barracks. Death removes 20% of positive carried crowns, rounded up, without debt.
+Normal Skill 3 heals the hero; charged Skill 3 also heals living active companions. Active Rangers provide automatic and manually commanded Heal (hero or wounded living active companion). Fallen companions need separate recovery at a Captain or barracks. Death removes 20% of positive carried crowns, rounded up, without debt.
+
+## Cooldown-only combat (reversible)
+
+The live game has **no MP costs or MP HUD**. Skills are controlled by their cooldowns; Skills 1–3 have longer cooldowns when charged (base 3s / 6s / 20s), and the five-rank Cooldown Training talent reduces all hero skill cooldowns by 4% per rank (20% at rank 5). See **Character → Skills and teachers** for class-specific ability descriptions and cooldowns, and **Character → Talents** for training. Enemy mana-drain effects are dormant pending explicit replacement design; other enemy attacks remain unchanged. Ranger Heal stays, while Ranger Mana Recovery is inactive and no longer shown.
+
+The previous MP rules, original character MP values, effects, Ranger mana training and legacy save fields are deliberately retained under the code feature switch `PrototypeRules.resourceMode.manaEnabled` (currently `false`). A prior-version Git revision provides a complete rollback, and flipping this flag back to `true` re-enables the preserved MP logic and legacy UI paths. Existing v4 saves keep their MP fields without spending or regenerating them in the cooldown-only game. Talent index 1 maps to Cooldown Training at the same invested rank; all other training ranks are preserved. Do not delete legacy fields or MP logic before the design is final.
 
 ## Saves and reports
 
@@ -86,7 +92,7 @@ Browser testing uses Playwright 1.62.1 with Chromium/Chrome and WebKit. CI suppl
 - [Audio foundation and production sequence](docs/AUDIO_FOUNDATION.md)
 - [Historical project narrative through v0.8.80](docs/PROJECT_HISTORY.md)
 
-Phone gameplay uses a compact health/mana/level HUD. Learned skills and available Ranger recovery controls sit at the bottom right; Interact appears separately only within reach of a usable target. Recall stays directly above the left joystick; Character → Discipline Training keeps training in its menu. Map/time labels and routine save reminders no longer occupy the gameplay HUD.
+Phone gameplay uses a compact health/level HUD. Learned skills and available Ranger recovery controls sit at the bottom right; Interact appears separately only within reach of a usable target. Recall stays directly above the left joystick; Character → Talents keeps training in its menu. Map/time labels and routine save reminders no longer occupy the gameplay HUD.
 
 ## Sprite production preparation
 
