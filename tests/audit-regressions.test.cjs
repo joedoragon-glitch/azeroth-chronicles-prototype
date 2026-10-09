@@ -330,4 +330,37 @@ test('F56 isolated engaged monster recognizes numerical pressure from living pre
   e.level=c.hero.level+3;
   assert.equal(c.tacticalAutoRogue(e,c.hero),false,'three-level immunity wins even against a whole squad');
 });
+
+test('F57 every monster faction can seek nearby bosses regardless of their levels',()=>{
+  const c=fresh(),e=c.makeEnemy({species:'wolf',name:'worried wolf',level:1,hp:100,damage:1,gold:0,xp:0},{x:1400,y:1700}),
+    leader=c.bossEnemy(c.boss('thorn'),'normal',{x:1760,y:1700});
+  leader.level=20;c.zone().enemies=[e,leader];c.s.party=[];e.aggro=true;
+  Object.assign(c.hero,{x:1400,y:1700,level:3});c.line=()=>true;c.route=()=>[{x:leader.x,y:leader.y}];
+  assert(c.tacticalRegroupCandidates(e).includes(leader),'boss counts as allied support even at a different level');
+  assert(c.tacticalBeginRogueRegroup(e,leader));
+  assert.equal(c.tacticalRogueRegroup(e)?.allyId,leader.id);
+  assert.equal(leader.aggro,false,'finding a boss does not itself start a fight');
+});
+test('F58 sustained player pursuit can trigger successive bounded cross-pack retreats',()=>{
+  const c=fresh(),make=(name,x)=>c.makeEnemy({species:'wolf',name,level:2,hp:180,damage:1,gold:0,xp:0},{x,y:1700});
+  const e=make('scout',1400),a=make('first ally',1570),b=make('next pack',1900);
+  a.pack='first-pack';b.pack='next-pack';c.zone().enemies=[e,a,b];e.aggro=true;
+  c.s.party=[0,1,2].map(i=>c.unit('soldier',1430+i*20,1700));
+  Object.assign(c.hero,{x:1430,y:1700,level:2});c.line=()=>true;c.route=(from,to)=>[{x:to.x,y:to.y}];
+  assert(c.tacticalRogueOutnumbered(e));
+  assert(c.tacticalAutoRogue(e,c.hero));
+  assert(c.tacticalAdvanceRogueRegroup(e,c.hero,1));
+  assert.equal(c.tacticalRogueRegroup(e)?.phase,'travel');
+  Object.assign(e,{x:1540,y:1700});Object.assign(c.hero,{x:1540,y:1700});
+  for(const [i,u] of c.s.party.entries())Object.assign(u,{x:1525+i*20,y:1700});
+  assert(c.tacticalAdvanceRogueRegroup(e,c.hero,.1));
+  assert(a.aggro,'nearby first ally joins when player pursues');
+  e.telegraph=null;c.s.time=7;
+  assert(c.tacticalAdvanceRogueRegroup(e,c.hero,.1));
+  assert.equal(c.tacticalRogueRegroup(e)?.phase,'thinking','continued outnumbering prompts a second decision');
+  assert(c.tacticalAdvanceRogueRegroup(e,c.hero,1));
+  assert.equal(c.tacticalRogueRegroup(e)?.phase,'travel','same monster may seek a second pack');
+  assert.equal(c.tacticalRogueRegroup(e)?.allyId,b.id,'visitation prevents circling straight back to prior pack');
+  assert.equal(b.aggro,false,'the next pack is not recruited until the player follows');
+});
 console.log(passed+' audit regression scenarios passed.');
