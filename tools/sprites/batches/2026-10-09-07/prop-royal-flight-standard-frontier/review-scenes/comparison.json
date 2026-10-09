@@ -1,0 +1,148 @@
+{
+  "key": "prop:royal-flight-standard:frontier",
+  "entity": {
+    "renderKind": "prop",
+    "structure": "royal-flight-standard",
+    "decorative": true,
+    "id": "sprite-reference-249"
+  },
+  "comparisons": [
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "day",
+      "anchor": {
+        "x": 498,
+        "y": 277.4
+      },
+      "crop": {
+        "left": 434,
+        "top": 189,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "96d1d25a7b405f5956332aafa1e0e83ec06b358d59be4bfc6ee74131eb834560",
+      "candidateHash": "50153aabdacf2cc47d123c08c66d782a8a59ba17a26465bace48dc7f657b956f"
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "night",
+      "anchor": {
+        "x": 498,
+        "y": 277.4
+      },
+      "crop": {
+        "left": 434,
+        "top": 189,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "c1c1120d9936ad6cc7e9dc00f54cc4581e4def369bbaca4ccb4253949a475806",
+      "candidateHash": "fac19d1632d8531c5756a389a80a6cf682c48e661c9286479cb3767d17159e54"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "day",
+      "anchor": {
+        "x": 187.5,
+        "y": 265.43999999999994
+      },
+      "crop": {
+        "left": 124,
+        "top": 177,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "540aef6b106d16f0c4d7de3a88965b1932f4c59e8d87e7f9307fde31a4c0d185",
+      "candidateHash": "92b6d23fba0f302f4bfcca2b16bc2f610ac3a017d22a8d4b4e2eb08b00a72d0c"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "night",
+      "anchor": {
+        "x": 187.5,
+        "y": 265.43999999999994
+      },
+      "crop": {
+        "left": 124,
+        "top": 177,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "9377cb430bc1907ca7afa3a6c74a174c867331b4a8d706cdbba0c2323bd0cbe0",
+      "candidateHash": "50aeaa1854a3a3aa3abc75666a73be66a45614b51bc2432d7cdd769649e12256"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "day",
+      "anchor": {
+        "x": 112,
+        "y": 162.95999999999998
+      },
+      "crop": {
+        "left": 48,
+        "top": 75,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "2dfd917d0cfe0436f504738c37bd5e90789a75e220e236412a7baa6acbed3037",
+      "candidateHash": "43a4ec4f13d4973b04a8f5f29b068c17e020a25cfa3c1e346829b8aeb1fc0141"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "night",
+      "anchor": {
+        "x": 112,
+        "y": 162.95999999999998
+      },
+      "crop": {
+        "left": 48,
+        "top": 75,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "79f74b486d59ebf549ca1ff5640654a779d4c1979e7634e4d5c32bba622f6bb9",
+      "candidateHash": "03f9a73cc3ef2c8e06f76741e36f2a4cbbae7a4b0711e94a6f3912641c2a4647"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "day",
+      "anchor": {
+        "x": 422,
+        "y": 88.19999999999993
+      },
+      "crop": {
+        "left": 358,
+        "top": 0,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "38800ff7d98f23374f397bad1d230b956155d76c966f9bd5ee2bc759dec4e80b",
+      "candidateHash": "238221875857f3fc4a8e2efb33af646a42229be142bb4f1dad55365e28cbbdb1"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "night",
+      "anchor": {
+        "x": 422,
+        "y": 88.19999999999993
+      },
+      "crop": {
+        "left": 358,
+        "top": 0,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "8a45a5fd66246bc1123264df7d946f564900381fc5b5c70be332f6fc8e880c30",
+      "candidateHash": "c37f48ff651c037bdbf7df03f9d546662680478475c4916d1e519054ef78fd22"
+    }
+  ],
+  "review": "pending visual inspection"
+}

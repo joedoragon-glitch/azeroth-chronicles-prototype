@@ -1,19 +1,36 @@
 {
   "batch": "2026-10-09-05",
-  "authorization": "Current explicit staged generation, implementation and publication request",
-  "imageCallsThisBatch": 1,
-  "images": [
+  "authorization": "Current explicit resumed generation, testing, implementation and publication request.",
+  "completedCalls": 5,
+  "calls": [
     {
       "key": "prop:mine-old-markings:highlands",
       "original": "prop-mine-old-markings-highlands/image-tool-original.png",
-      "status": "held-contextual-scene",
-      "promptFile": "prop-mine-old-markings-highlands/job.json"
+      "status": "held-contextual-scene"
+    },
+    {
+      "key": "prop:mint-workbench:highlands",
+      "prompt": "undefined\nUse the attached procedural reference as exact topology and placement canon. Natural wood grain and restrained steel edges; no ornate details. Preserve the three tiny separate coins left, gold disc center, narrow brown block right. Single square transparent image.",
+      "original": "prop-mint-workbench-highlands/image-tool-original.png",
+      "status": "superseded-gold-handle"
+    },
+    {
+      "key": "prop:mint-workbench:highlands",
+      "original": "prop-mint-workbench-highlands/steel-handle-correction/image-tool-original.png",
+      "status": "native-reviewed-release-pending"
+    },
+    {
+      "key": "prop:ore-sorting-bay:highlands",
+      "original": "prop-ore-sorting-bay-highlands/image-tool-original.png",
+      "status": "native-reviewed-release-pending"
+    },
+    {
+      "key": "prop:caravan-loading-bay:highlands",
+      "prompt": "Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Highlands loaded caravan cart. Wide timber cart with two dark circular wheels, two brown sealed crates of different heights, pale horizontal load seam, forward timber shaft at screen-right and one small pale sealed paper on the right crate. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.\nUse attached procedural reference as exact component count, proportions and screen orientation canon. Cart viewed face-on with slight visible depth only where implied, exactly two dark circular wheels under its wide timber load bed. Exactly two sealed rectangular crates: lower/smaller crate screen-left and taller crate screen-right. ONE small pale horizontal sealed shipping paper without writing attached on the FRONT of the RIGHT crate. ONE forward timber shaft extending diagonally to screen-right from the cart side. Material-appropriate worn timber grain and natural round wheels, subdued colors; no invented canopy, harness, animal, sacks, barrels, extra wheels, extra labels, roots, ground or shadow.",
+      "original": "prop-caravan-loading-bay-highlands/image-tool-original.png",
+      "status": "native-reviewed-release-pending"
     }
   ],
-  "queued": [
-    "prop:mint-workbench:highlands",
-    "prop:ore-sorting-bay:highlands",
-    "prop:caravan-loading-bay:highlands"
-  ],
-  "checkpoint": "Save immutable generated masters before more image calls; contextual scene guard preserved."
+  "scope": "Static outdoor bodies only; sceneRole and workstation guards preserved.",
+  "next": "Release after previous stage deployment, continue complete grass/reed variant banks and remaining terrain/catalog."
 }

@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "integrated",
+  "designId": "prop-ore-sorting-bay-highlands",
+  "name": "Highlands ore-sorting bay",
+  "kind": "environment",
+  "nextAction": "Verify release CI and exact live deployment, then continue remaining catalog.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel explicitly resumed full staged mass production from both interruption checkpoints; reuse saved completed art and correct held candidates before new batches.",
+    "decisionDate": "2026-10-08",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+    "contentDocuments": [
+      "docs/DESIGN_TO_SPRITE_WORKFLOW.md",
+      "docs/SPRITE_PRODUCTION_CURRENT_CONTEXT.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": null,
+    "proceduralDesignAcceptance": null,
+    "spriteProductionAuthorization": "Explicit current resume, generation, testing, implementation and publication request.",
+    "generatedAppearanceAcceptance": "Engineer-reviewed faithful implementation; no separate Joel image acceptance claimed.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "181e0bd4a19d60d8650c578fdad0988fdfde1e55",
+    "ownerFilesAndBranches": [],
+    "exactEntityState": {
+      "renderKind": "prop",
+      "structure": "ore-sorting-bay",
+      "decorative": true,
+      "id": "sprite-reference-238"
+    },
+    "isolatedReferencePath": "tools/sprites/batches/2026-10-09-05/prop-ore-sorting-bay-highlands/generation-reference.png",
+    "isolatedReferenceHash": "4efbe3a40a51c9cca0adebfb8dc026a56dbdc8d0708870b49a885f497165bdf7",
+    "gameplayContextPaths": [
+      "tools/sprites/batches/2026-10-09-05/prop-ore-sorting-bay-highlands/review-scenes/native-review.png",
+      "tools/sprites/batches/2026-10-09-05/prop-ore-sorting-bay-highlands/review-scenes/comparison.json"
+    ],
+    "traitsToPreserve": [
+      "Three timber ore bins with paired muted gray-tan angular ore heaps; thin horizontal steel weighing beam above, central upright, two hanging shallow balance pans at left and right.",
+      "Existing footprint, roots/base, world grounding and day/night presentation."
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [
+      "238"
+    ],
+    "verifiedRuntimeKeys": [
+      "prop:ore-sorting-bay:highlands"
+    ],
+    "requiredVisibleAssets": [
+      "Static body"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Current exact structure branch is static and seed-invariant."
+    ],
+    "proceduralOwnersAndReasons": [
+      "Placement, collision, day/night shading and shadows remain procedural."
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": "prop:ore-sorting-bay:highlands",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "tools/sprites/batches/2026-10-09-05/prop-ore-sorting-bay-highlands/candidate.json"
+    ],
+    "approvedRecordKey": "prop:ore-sorting-bay:highlands",
+    "activeContentRevision": "37e5465902327a792eaeca64986a738e870d1bead5b5e2a4b95a87c5a8a31a56",
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "procedural",
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

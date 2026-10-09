@@ -1,5 +1,17 @@
 # Sprite production checkpoint · 8 October 2026
 
+## Current resume snapshot · 9 October 2026 UTC
+
+Joel's current instruction explicitly resumes full generation, implementation, testing and publication. Both original interruption checkpoints remain untouched: `checkpoint/sprite-production-paused-2026-10-08` and `recovery/nature-paused-2026-10-08` (277-file save at cde13b483614fe83bfb97887e509cee67fd5fa40). The older chronological sections below record past stages, not the latest active counts.
+
+PR #121 was verified merged and deployed before new integration. PR #127's saved 20 nature bodies are live at 3b3fbdfd99771c0a69b4e7e4512a9b8580dc5e0d, exact deployment run 37864875566. The terrain pipeline was completed in #123 before terrain material production. PR #126 reconciled all five saved ground textures with the nature release and merged at d5f37905980767b7fb7b8806a51745182371c49b, but its main deployment was blocked by a frame-level mana assertion. No deployment success is claimed for that run.
+
+PR #128 passed full exact-head CI run 37868208872 and merged at 4c508e6c383973634f723641d4df210275c822e2. It retains the five ground materials and adds native-reviewed Highlands heather and Vale/Highlands field rock: 30 body keys. Its exact-SHA deployment is pending. The browser fixture now captures MP at the real native-input cast boundary before legitimate regeneration; all original mana, damage and cooldown assertions remain. Local full matrix passed 224 checks, and WebKit/full remote checks passed. Gameplay rules are unchanged.
+
+Prepared v0.8.100 adds the mint press, ore sorting bins and loaded caravan cart: 33 body keys, 34 packaged sprite resources, 146251 sprite bytes and 5025920 unique decoded bytes. Five terrain materials remain 507307 packaged bytes with a 2 MiB residency limit. Eight desktop/phone day/night native comparisons passed per object; the six real Highlands bindings are recorded in `tools/sprites/batches/2026-10-09-05/live-binding-audit.json`. Full regressions and release CI/deployment remain the next gate. Immutable generated masters, superseded gold-handle mint image, exact prompts, full-alpha normalization and rollback records are retained.
+
+Held: the mine marker's native instances have `sceneRole`, so the contextual furnishing guard is preserved and its generated source is saved without an unused active registration. Grass/wet-grass/reeds need complete authored height banks; no incomplete bank is active. The latest grass attempt has a bright fringe and is retained as rejected. Batch 07 begins the next eligible household/flight props. Remaining body catalog and 23 terrain materials are still open; this is not catalog completion. Existing Goblin correction, Paladin idle and prior source history remain intact.
+
 ## Implemented lifecycle and pilots · v0.8.92
 
 Three production keys are active: `hero:paladin`, `enemy:goblin` and `prop:vale-cottage:vale`. The Goblin uses Joel's explicitly accepted playful half-smile and organic ears. Paladin has a faithful two-frame idle; its static fallback is retained as a rollback revision. Native placement and desktop/phone day/night comparisons are recorded under `tools/sprites/pilots/2026-10-08-refined`. Engineer review of the idle is distinguished from Joel's actual image acceptance.

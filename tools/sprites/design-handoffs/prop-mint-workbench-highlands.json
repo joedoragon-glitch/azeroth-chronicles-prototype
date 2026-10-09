@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "integrated",
+  "designId": "prop-mint-workbench-highlands",
+  "name": "Stonecross mint workbench",
+  "kind": "environment",
+  "nextAction": "Verify release CI and exact live deployment, then continue remaining catalog.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel explicitly resumed full staged mass production from both interruption checkpoints; reuse saved completed art and correct held candidates before new batches.",
+    "decisionDate": "2026-10-08",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+    "contentDocuments": [
+      "docs/DESIGN_TO_SPRITE_WORKFLOW.md",
+      "docs/SPRITE_PRODUCTION_CURRENT_CONTEXT.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": null,
+    "proceduralDesignAcceptance": null,
+    "spriteProductionAuthorization": "Explicit current resume, generation, testing, implementation and publication request.",
+    "generatedAppearanceAcceptance": "Engineer-reviewed faithful implementation; no separate Joel image acceptance claimed.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "181e0bd4a19d60d8650c578fdad0988fdfde1e55",
+    "ownerFilesAndBranches": [],
+    "exactEntityState": {
+      "renderKind": "prop",
+      "structure": "mint-workbench",
+      "decorative": true,
+      "id": "sprite-reference-239"
+    },
+    "isolatedReferencePath": "tools/sprites/batches/2026-10-09-05/prop-mint-workbench-highlands/steel-handle-correction/generation-reference.png",
+    "isolatedReferenceHash": "cadcc10a301234c711e83ae9bcbd32a52c850618a9f0070614f2bdd7991ff25c",
+    "gameplayContextPaths": [
+      "tools/sprites/batches/2026-10-09-05/prop-mint-workbench-highlands/steel-handle-correction/review-scenes/native-review.png",
+      "tools/sprites/batches/2026-10-09-05/prop-mint-workbench-highlands/steel-handle-correction/review-scenes/comparison.json"
+    ],
+    "traitsToPreserve": [
+      "Broad low timber workbench, two steel press uprights, dark gray horizontal cap, centered vertical striking shaft and cross handle, muted metal base/anvil, one gold striking disc and three small gold coins on screen-left, narrow brown block at right. A small manual press, no industrial machinery or large hoard.",
+      "Existing footprint, roots/base, world grounding and day/night presentation."
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [
+      "239"
+    ],
+    "verifiedRuntimeKeys": [
+      "prop:mint-workbench:highlands"
+    ],
+    "requiredVisibleAssets": [
+      "Static body"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Current exact structure branch is static and seed-invariant."
+    ],
+    "proceduralOwnersAndReasons": [
+      "Placement, collision, day/night shading and shadows remain procedural."
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": "prop:mint-workbench:highlands",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "tools/sprites/batches/2026-10-09-05/prop-mint-workbench-highlands/steel-handle-correction/candidate.json"
+    ],
+    "approvedRecordKey": "prop:mint-workbench:highlands",
+    "activeContentRevision": "a3db347d4eb40224dba8ed89eb66bed04952df81139d2f9e06cb4b9d91a51da5",
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "procedural",
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

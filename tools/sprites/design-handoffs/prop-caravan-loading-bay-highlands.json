@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "integrated",
+  "designId": "prop-caravan-loading-bay-highlands",
+  "name": "Highlands loaded caravan cart",
+  "kind": "environment",
+  "nextAction": "Verify release CI and exact live deployment, then continue remaining catalog.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel explicitly resumed full staged mass production from both interruption checkpoints; reuse saved completed art and correct held candidates before new batches.",
+    "decisionDate": "2026-10-08",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+    "contentDocuments": [
+      "docs/DESIGN_TO_SPRITE_WORKFLOW.md",
+      "docs/SPRITE_PRODUCTION_CURRENT_CONTEXT.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": null,
+    "proceduralDesignAcceptance": null,
+    "spriteProductionAuthorization": "Explicit current resume, generation, testing, implementation and publication request.",
+    "generatedAppearanceAcceptance": "Engineer-reviewed faithful implementation; no separate Joel image acceptance claimed.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "181e0bd4a19d60d8650c578fdad0988fdfde1e55",
+    "ownerFilesAndBranches": [],
+    "exactEntityState": {
+      "renderKind": "prop",
+      "structure": "caravan-loading-bay",
+      "decorative": true,
+      "id": "sprite-reference-240"
+    },
+    "isolatedReferencePath": "tools/sprites/batches/2026-10-09-05/prop-caravan-loading-bay-highlands/generation-reference.png",
+    "isolatedReferenceHash": "b26aad958c243d2daeb6757e483def49adf93e13a70f867c7ae8d336a9df008a",
+    "gameplayContextPaths": [
+      "tools/sprites/batches/2026-10-09-05/prop-caravan-loading-bay-highlands/review-scenes/native-review.png",
+      "tools/sprites/batches/2026-10-09-05/prop-caravan-loading-bay-highlands/review-scenes/comparison.json"
+    ],
+    "traitsToPreserve": [
+      "Wide timber cart with two dark circular wheels, two brown sealed crates of different heights, pale horizontal load seam, forward timber shaft at screen-right and one small pale sealed paper on the right crate.",
+      "Existing footprint, roots/base, world grounding and day/night presentation."
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [
+      "240"
+    ],
+    "verifiedRuntimeKeys": [
+      "prop:caravan-loading-bay:highlands"
+    ],
+    "requiredVisibleAssets": [
+      "Static body"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Current exact structure branch is static and seed-invariant."
+    ],
+    "proceduralOwnersAndReasons": [
+      "Placement, collision, day/night shading and shadows remain procedural."
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": "prop:caravan-loading-bay:highlands",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "tools/sprites/batches/2026-10-09-05/prop-caravan-loading-bay-highlands/candidate.json"
+    ],
+    "approvedRecordKey": "prop:caravan-loading-bay:highlands",
+    "activeContentRevision": "a30df3dcd7924388160bf5934c8a66e5bf14a296a7ddc4db76fd792a8608b108",
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "procedural",
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

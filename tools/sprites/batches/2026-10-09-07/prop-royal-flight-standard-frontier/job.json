@@ -1,0 +1,14 @@
+{
+  "key": "prop:royal-flight-standard:frontier",
+  "catalogId": "249",
+  "prompt": "Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Royal purple dragon standard. Tall warm timber pole on screen-left with small gold diamond finial; one purple banner extending screen-right with pale purple angular dragon-wing emblem and small pale gold central Crown diamond, irregular lower edge and restrained pale seam. Preserve this existing aviation emblem, not generic banner lore. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.",
+  "sourceCommit": "8bf01b03f0dfeba669ecc9569e38efafbfb52a42",
+  "status": "native-review-pending",
+  "original": "tools/sprites/batches/2026-10-09-07/prop-royal-flight-standard-frontier/image-tool-original.png",
+  "fullCanvasSize": 1024,
+  "padding": 416,
+  "translation": {
+    "offsetX": -4,
+    "offsetY": 24
+  }
+}

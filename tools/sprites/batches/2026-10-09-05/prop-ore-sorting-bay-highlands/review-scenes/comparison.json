@@ -1,0 +1,148 @@
+{
+  "key": "prop:ore-sorting-bay:highlands",
+  "entity": {
+    "renderKind": "prop",
+    "structure": "ore-sorting-bay",
+    "decorative": true,
+    "id": "sprite-reference-238"
+  },
+  "comparisons": [
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "day",
+      "anchor": {
+        "x": 498,
+        "y": 277.4
+      },
+      "crop": {
+        "left": 434,
+        "top": 189,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "9a777eeb122506b00290d9191f2c95e8657cdc731e04e56115fa6f78c7296a17",
+      "candidateHash": "b8343d550866d7a6abd8efedb5de821cad091d3225011992ed51e1efcc81e6e7"
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "night",
+      "anchor": {
+        "x": 498,
+        "y": 277.4
+      },
+      "crop": {
+        "left": 434,
+        "top": 189,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "73a200d2a4331fb790db01f67930408f66119b542dbf515629d3176cde911bc5",
+      "candidateHash": "808257a002bd33d82a5cc5dc43f384b6771a51abedb82f7d8692475199ba2850"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "day",
+      "anchor": {
+        "x": 187.5,
+        "y": 265.43999999999994
+      },
+      "crop": {
+        "left": 124,
+        "top": 177,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "a17bb2d17cbff701de1a0fc26a6daac288e577fae833f96c522b78e67a885ffe",
+      "candidateHash": "4be1513ef034523f77c549b981728f7eceb76ffeb223dc27ab1ba1581822b1af"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "night",
+      "anchor": {
+        "x": 187.5,
+        "y": 265.43999999999994
+      },
+      "crop": {
+        "left": 124,
+        "top": 177,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "c218aaadb52b60832cb2a853aeeb61649474f928ab1509583f579646aed61df0",
+      "candidateHash": "9bf395cc67fc4ec391db99a3c09835cab4fbb7c9fabf5ea6b1c6e4bf5b05ed1f"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "day",
+      "anchor": {
+        "x": 112,
+        "y": 162.95999999999998
+      },
+      "crop": {
+        "left": 48,
+        "top": 75,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "de1396de966522566852e03b3ee23ded960dd9ab3956b3c437438bd5be628446",
+      "candidateHash": "2aa4628db08b86dd57812fb8bb8eb6d6d6473c5aab7167cfc7a75f04f9a950a3"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "night",
+      "anchor": {
+        "x": 112,
+        "y": 162.95999999999998
+      },
+      "crop": {
+        "left": 48,
+        "top": 75,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "cc6498eef234b0b3681245444d9b1573f2450ec78b2e636586f75d063467b2a9",
+      "candidateHash": "858e6c879fe77e1e3540ad302278b08deedf0c0cc9f73dd45777cc5546e0bd23"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "day",
+      "anchor": {
+        "x": 422,
+        "y": 88.19999999999993
+      },
+      "crop": {
+        "left": 358,
+        "top": 0,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "67c9c7fd4984401dd0e3f444c914607d08c22962866f3690fa4941b79733eefe",
+      "candidateHash": "8a11e94a161209abbb1bf2fdb07bf8dbd27863839af06c8942dfcaecc8dc9488"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "night",
+      "anchor": {
+        "x": 422,
+        "y": 88.19999999999993
+      },
+      "crop": {
+        "left": 358,
+        "top": 0,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "3de55a7cd1245ff40b8a7e61b9922050cbb59d86434c8c855e5e13834cbfd45a",
+      "candidateHash": "3d1d0b34aeae4004487faa63f27451e017d9bb42845f02ba05e35333f41d8f74"
+    }
+  ],
+  "review": "Engineer visual review passed: components, palette, native size and grounding across all eight contexts."
+}

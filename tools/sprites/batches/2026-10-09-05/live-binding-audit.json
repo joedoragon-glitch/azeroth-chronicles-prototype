@@ -1,0 +1,68 @@
+[
+  {
+    "id": "ironroot-life-stonecross-1",
+    "structure": "mint-workbench",
+    "x": 1035,
+    "y": 1299.3782217350893,
+    "sceneRole": null,
+    "key": [
+      "prop:mint-workbench:highlands"
+    ],
+    "resolved": true
+  },
+  {
+    "id": "ironroot-life-stonecross-2",
+    "structure": "caravan-loading-bay",
+    "x": 1135,
+    "y": 1600.6217782649107,
+    "sceneRole": null,
+    "key": [
+      "prop:caravan-loading-bay:highlands"
+    ],
+    "resolved": true
+  },
+  {
+    "id": "ironroot-life-quarry-0",
+    "structure": "ore-sorting-bay",
+    "x": 1650,
+    "y": 1020,
+    "sceneRole": null,
+    "key": [
+      "prop:ore-sorting-bay:highlands"
+    ],
+    "resolved": true
+  },
+  {
+    "id": "ironroot-life-quarry-2",
+    "structure": "caravan-loading-bay",
+    "x": 1920,
+    "y": 1190,
+    "sceneRole": null,
+    "key": [
+      "prop:caravan-loading-bay:highlands"
+    ],
+    "resolved": true
+  },
+  {
+    "id": "ironroot-life-caravan-0",
+    "structure": "caravan-loading-bay",
+    "x": 3000,
+    "y": 620,
+    "sceneRole": null,
+    "key": [
+      "prop:caravan-loading-bay:highlands"
+    ],
+    "resolved": true
+  },
+  {
+    "id": "ironroot-life-ogre-home-0",
+    "structure": "ore-sorting-bay",
+    "x": 2097.5,
+    "y": 1980.3108891324553,
+    "sceneRole": null,
+    "key": [
+      "prop:ore-sorting-bay:highlands"
+    ],
+    "resolved": true
+  }
+]
