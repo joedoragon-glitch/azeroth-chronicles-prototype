@@ -2829,9 +2829,9 @@
           e.cd <= 0 &&
           d < R.bossCadence.specialRange &&
           visible &&
-          (!e.basicDue || d > 200)
+          (!e.basicDue || d > 200) &&
+          this.startAttack(e, target)
         ) {
-          this.startAttack(e, target);
           opportunity = true;
         } else if (
           e.nightOnly &&
