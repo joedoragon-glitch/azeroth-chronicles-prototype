@@ -439,6 +439,67 @@ const PrototypeData = {
     ['crown', 'The Machinery of Rule', 'Discover any 3 Dark Crown sites', 60, 250],
     ['crown', 'Ready for the Dark Lord', 'Free Tovan and Vera; reach fortress gate', 40, 225],
   ],
+  // Completion observations use established, encountered lore; stable IDs preserve old saves.
+  questNarration: {
+    'quest-0':
+      'Mira is free. Whatever Thornfang wanted with a teacher, his den will hold no more lessons.',
+    'quest-1':
+      'The road is a little quieter. Beyond Millhaven’s fences, the woods still keep their own company.',
+    'quest-2':
+      'Thornfang kept a well-stocked treasury. He was rather less careful about its new visitors.',
+    'quest-3':
+      'Borin can leave his workbench. Even the Dark Lord’s woodland retreat will have to wait for its smith.',
+    'quest-4':
+      'The mill turns, and the wagons keep coming. Millhaven has a living to make between all these troubles.',
+    'quest-5':
+      'Fields, camps and old stone share these woods. The Dark Lord’s claim has hardly made them all his home.',
+    'quest-6':
+      'Sela leaves Mirejaw’s island behind. The marsh had more than fishing nets to untangle.',
+    'quest-7':
+      'Another crossing made safer. The raised roads are precious when the rest of the country is water.',
+    'quest-8':
+      'Neri is free, though the soaked records still need her craft. A scholar’s shelves have cost someone else dearly.',
+    'quest-9':
+      'Mirejaw’s reserves are yours. Keeping provisions dry is an achievement in this country.',
+    'quest-10':
+      'The lantern shore is quiet again. Out on the water, darkness has rather too much room to gather.',
+    'quest-11':
+      'The road tells only part of the marsh’s story. Away from it, people and creatures have found their own footholds.',
+    'quest-12':
+      'Orin is free of the Master of Coin. The Tyrant’s accounts will have to manage without an instructor in chains.',
+    'quest-13':
+      'A little breathing room for the quarry roads. Ironroot’s workers have enough to carry without watching every shadow.',
+    'quest-14':
+      'Dara can set down the regime’s repair work. The older stone below the mine was never theirs to command.',
+    'quest-15':
+      'The Master of Coin kept a comfortable reserve. His purse has finally suffered a change of administration.',
+    'quest-16':
+      'Ironroot has hearths and hunting grounds as well as ore. A mountain does not become empty simply because someone owns its mines.',
+    'quest-17':
+      'From ore vein to caravan, the crowns have a long road to travel. The Master of Coin has guards along the way.',
+    'quest-18':
+      'Lyss is out of the checkpoint’s hands. The occupiers have lost an instructor they cannot replace with another inspection.',
+    'quest-19':
+      'Carts, crossings and checkpoints keep this army moving. Even conquest needs someone to mind the supplies.',
+    'quest-20':
+      'Eren is free. Behind the Bastion’s walls, the Dark Lord was preparing far more than one dragon’s roost.',
+    'quest-21':
+      'The contested roads are a little easier to cross. Repairs have not persuaded everyone here to live quietly.',
+    'quest-22': 'People are rebuilding among the scars. The guards have stayed to watch the work.',
+    'quest-23':
+      'This dragon carries travelers. For once, a pair of wings belongs to the road rather than the war.',
+    'quest-24': 'Tovan is free. The Citadel’s command has lost its hold on one last teacher.',
+    'quest-25':
+      'A little room to breathe beneath the fortress. The Dark Lord’s own country still has teeth.',
+    'quest-26':
+      'Vera leaves the roost behind. Cindermaw’s brood will have to get along without a smith in chains.',
+    'quest-27':
+      'The treasury is open at last. Dreadmaw has made a poor day of guarding Cindermaw’s reserves.',
+    'quest-28':
+      'Roads, barracks and supply yards lead back toward the fortress. The Dark Lord’s rule leaves plenty of work behind it.',
+    'quest-29':
+      'Tovan and Vera are free, and the fortress gate lies ahead. The last lessons and the last forge are on your side now.',
+  },
   economy: {
     learning: 3495,
     maximum_upgrades: 17080,

@@ -67,7 +67,17 @@
             : e.class === 'ranger'
               ? 'rangerComboFinisher'
               : 'mageComboFinisher';
-        if (['companionSkill', 'hit', 'rogueRegroup', 'rogueMove', 'rogueSupport'].includes(type))
+        if (
+          [
+            'companionSkill',
+            'hit',
+            'rogueRegroup',
+            'rogueMove',
+            'rogueSupport',
+            'actionFailed',
+            'archiveKnowledge',
+          ].includes(type)
+        )
           return null;
         if (type === 'charged' || type === 'chargedArea' || type === 'chargedImpact')
           return e.class === 'paladin'

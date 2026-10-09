@@ -511,6 +511,9 @@
         for (const f of ['weapon', 'armorTier', 'talentPoints', 'nextId'])
           if (!Number.isInteger(f === 'nextId' ? s[f] : s.hero[f]))
             throw Error('Invalid integer progression');
+        for (const key of ['keeperPact', 'keeperEvidence'])
+          if (s[key] !== undefined && typeof s[key] !== 'boolean')
+            throw Error('Invalid Archive knowledge');
         if (s.awakeningAck !== undefined && typeof s.awakeningAck !== 'boolean')
           throw Error('Invalid awakening acknowledgement');
         if (

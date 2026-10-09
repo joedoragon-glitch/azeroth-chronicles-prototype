@@ -46,6 +46,8 @@
       spend(amount) {
         if (!Number.isFinite(amount) || amount < 0 || this.hero.gold < amount) {
           this.say('Not enough crowns.');
+          if (Number.isFinite(amount) && amount >= 0)
+            this.event('actionFailed', { reason: 'crowns', needed: amount });
           return false;
         }
         this.hero.gold -= amount;

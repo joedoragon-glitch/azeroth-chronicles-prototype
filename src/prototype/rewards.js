@@ -80,6 +80,9 @@
           this.say('First Barracks established. You now have a field base for companion recovery.');
         else {
           this.grant(q.gold, q.xp);
+          const narration = D.questNarration?.[q.id];
+          if (narration)
+            this.notice(narration, 7, q.name + ' · +' + q.xp + ' XP · +' + q.gold + ' crowns');
           this.say(
             q.name + ' complete. Reward delivered: ' + q.gold + ' crowns and ' + q.xp + ' XP.',
           );

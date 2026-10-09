@@ -41,6 +41,8 @@ jobs:
           fi
       - name: Test desktop and full phone matrix before merge
         run: node tests/prototype-browser.test.cjs
+      - name: Verify quest narration and Keeper Archive interaction
+        run: node tests/quest-archive-browser.test.cjs
       - name: Audit integrated rogue warnings and effects in browsers
         run: node tests/rogue-browser.test.cjs
       - name: Verify audio playback and lifecycle
@@ -83,6 +85,10 @@ jobs:
           npx playwright install --with-deps webkit
       - name: Verify WebKit phone presentation and gestures
         run: node tests/phone-webkit-browser.test.cjs
+      - name: Verify WebKit quest narration and Keeper Archive
+        env:
+          QUEST_BROWSER_ENGINE: webkit
+        run: node tests/quest-archive-browser.test.cjs
       - name: Audit integrated rogue warnings and effects in WebKit
         env:
           ROGUE_BROWSER_ENGINE: webkit
@@ -138,6 +144,8 @@ jobs:
           fi
       - name: Test full desktop and mobile matrix
         run: node tests/prototype-browser.test.cjs
+      - name: Verify quest narration and Keeper Archive interaction
+        run: node tests/quest-archive-browser.test.cjs
       - name: Audit integrated rogue warnings and effects in browsers
         run: node tests/rogue-browser.test.cjs
       - name: Verify audio playback and lifecycle
