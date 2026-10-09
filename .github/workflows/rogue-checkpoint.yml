@@ -1,0 +1,24 @@
+name: Rogue last regression checkpoint
+on:
+  push:
+    branches: [rogue-final-checkpoint-20261009]
+permissions:
+  contents: read
+jobs:
+  verification:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install
+        run: npm ci --ignore-scripts
+      - name: Focused rogue regression tests
+        run: node tests/audit-regressions.test.cjs
+      - name: Format and evidence check
+        if: always()
+        run: |
+          npx prettier --check src/prototype/engine.js src/prototype/combat.js src/prototype/rules.js src/prototype/hero-combat.js src/prototype/party.js src/prototype/app.js
+          sha256sum src/prototype/rules.js
+          node tests/sprite-scope.test.cjs
