@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "batch": "2026-10-09-150-adaptation",
+  "status": "spatial presentation retarget candidate; no replacement assets published",
+  "sourceOfTruth": [
+    "docs/SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md",
+    "docs/WORLD_PROPORTION_AND_DENSITY_GUARDRAILS.md",
+    "docs/PROPORTION_IMPLEMENTATION_CHECKPOINT.md",
+    "docs/CAMERA_SPRITE_TARGETS.md"
+  ],
+  "cameraZoom": 1.5,
+  "presentationSizeFactors": {
+    "habitable_structures": 1.4,
+    "entrances_transports_hostile_architecture": 1.35,
+    "trees_orchard": 1.3,
+    "characters_and_small_props": 1
+  },
+  "masterExportTargetPixels": {
+    "standard": 576,
+    "trees": 768,
+    "large_structures": 816
+  },
+  "commitPolicy": "Use new immutable paths from untouched accepted generator originals; audit downsampled intermediates and carry their placement metadata only. Existing originals/approvals and rollback remain authoritative.",
+  "verification": {
+    "mapsExpanded": false,
+    "monsterPopulationChanged": false,
+    "proceduralSpriteScale": "implemented in PR #145, awaiting release verification",
+    "nativeOriginalAdaptation": "not yet completed",
+    "pixelMasterAudit816": "pending per asset",
+    "visualScreenshots": "pending",
+    "assetPublication": "no replacements made by this batch"
+  },
+  "nextWork": [
+    "Complete PR #145 regressions and deploy only if tests pass.",
+    "Inspect source provenance and recovered original masters for every active replacement, including Paladin and Goblin animation dependencies.",
+    "Audit actual asset/body dimensions against new 150% scale and source pixel sufficiency at 576/768/816 targets; regenerate insufficient originals instead of enlarging 100% processed exports.",
+    "Review new 150% screenshots at supported desktop and phone sizes including day/night, combat, tree occlusion, entrances, collision and layer ordering.",
+    "Document per-asset original hash, intermediate lineage, position/ground anchor, new candidate/review and expected revision before approval and publication.",
+    "Resume remaining missing sprites and texture material production only after prior proportion and native visual checks."
+  ],
+  "source": "Joel's 9 October 2026 instructions, authorized autonomous technical implementation; no user approval review required."
+}
