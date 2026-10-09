@@ -86,6 +86,17 @@ fs.mkdirSync(out, { recursive: true });
           A = PrototypeEnemyVfxArt,
           V = PrototypeEnemyVfx,
           C = c.constructor;
+        const captainLooks = {};
+        for (const id of Object.keys(C.rules.roomCaptains)) {
+          c.enter(id === 'frontier-overseer' ? 'frontier' : id);
+          const native = c.zone().enemies.find((e) => e.captainProfile === id);
+          captainLooks[id] = Object.fromEntries(
+            ['name', 'species', 'visualScale', 'captainMentor', 'captainVisualIdol'].map((k) => [
+              k,
+              native[k],
+            ]),
+          );
+        }
         c.enter('vale');
         const z = c.zone();
         z.props = [];
@@ -150,13 +161,25 @@ fs.mkdirSync(out, { recursive: true });
             c.s.clock = cell % 2 ? 450 : 200;
             const p = row.id.split('/');
             let e = c.makeEnemy(
-              { species: 'orc', level: 5, hp: 10000, damage: 10, gold: 0, xp: 0 },
+              {
+                species: 'orc',
+                name: row.owner || row.name,
+                level: 5,
+                hp: 10000,
+                damage: 10,
+                gold: 0,
+                xp: 0,
+              },
               { x: 1480, y: 1680 },
             );
             if (p[0] === 'boss' || (p[0] === 'rogue' && p[1] === 'boss'))
               e = c.bossEnemy(c.boss(p[p[0] === 'rogue' ? 2 : 1]), form, { x: 1480, y: 1680 });
             else if (p[0] === 'captain' || (p[0] === 'rogue' && p[1] === 'captain'))
-              Object.assign(e, { captain: true, captainProfile: p[p[0] === 'rogue' ? 2 : 1] });
+              Object.assign(e, {
+                captain: true,
+                captainProfile: p[p[0] === 'rogue' ? 2 : 1],
+                ...captainLooks[p[p[0] === 'rogue' ? 2 : 1]],
+              });
             else {
               e.species = p[0] === 'rogue' ? p[3] : p[1];
               if (p[0] === 'rogue')
