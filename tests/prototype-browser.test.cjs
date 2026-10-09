@@ -161,7 +161,7 @@ await check('Rebinding updates real input, menus and labels and survives reload 
  assert((await page.locator('#desktop-hints').textContent()).includes('↑'));
  assert((await page.locator('#talent-button').getAttribute('title')).includes('press L'));
  await page.evaluate(()=>Prototype.game.event('level',{level:Prototype.game.hero.level}));
- await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('press L or use Discipline Training'));
+ assert(!(await page.locator('#status').textContent()).includes('press L'),'level-up text belongs to amber, not transient status');
  assert((await page.locator('#health-potion small').textContent()).startsWith('U'));
  assert((await page.locator('#mana-potion small').textContent()).startsWith('O'));
  await page.evaluate(()=>Prototype.save());await page.reload();await page.waitForFunction(()=>!!window.Prototype);
