@@ -306,20 +306,25 @@
         const e = args[0],
           before = new Set(this.zone().enemies),
           result = original.apply(this, args);
+        // Preserve the original guarded no-op; no births means no observation.
+        if (!e || !result) return result;
         const phase = this.captainProfile?.(e)?.phase,
           plans = Campaign.rules.attacks[e.family] || [],
           slot = plans.findIndex((p) => p.kind === 'summon'),
           automatic = e.type === 'boss' && slot >= 0 ? { ...plans[slot], index: slot } : null,
-          a = store(this).context?.a ||
-            e.telegraph ||
-            automatic || { kind: phase?.kind || 'summon' };
+          context = store(this).context,
+          // Only an actual summon resolution owns these births. A concurrent
+          // telegraph (including a rogue move) must not rename automatic waves
+          // or captain phase spawns.
+          cast = context?.e === e && context.a?.kind === 'summon' ? context.a : null,
+          a = cast || automatic || { kind: phase?.kind || 'summon' };
         const id =
-          ((store(this).context?.a || e.telegraph || automatic) && V.describe(e, a)) ||
+          ((cast || automatic) && V.describe(e, a)) ||
           (e.captainProfile
             ? {
                 id: 'captain/' + e.captainProfile + '/phase',
                 tier: 'captain',
-                role: 'melee',
+                role: e.ranged ? 'ranged' : 'melee',
                 variant: 'normal',
                 kind: phase?.kind || 'summon',
                 presentation: P.profile(e, { kind: phase?.kind || 'summon' }),

@@ -23,9 +23,12 @@ def render(cue,rate):
     if cue['material']=='wet':result+=.045*np.sin(phase*1.72)*np.exp(-t/.045)*attack*tail
     if cue['material']=='warning':
         result*=.22
-        for at,hz in [(0,831),(.11,622)]:
+        for at,hz,level in [(0,831,.16),(.11,622,.13)]:
             u=np.maximum(t-at,0); env=np.where(t>=at,np.minimum(u/.004,1)*np.exp(-u/.045),0)
-            result+=.16*np.sin(2*np.pi*hz*u)*env*tail
+            # Each warning pulse owns its local tail; the global envelope
+            # previously reduced the second pulse before it even began.
+            pulse_tail=np.maximum(1-u/.16,0)**2
+            result+=level*np.sin(2*np.pi*hz*u)*env*pulse_tail
     if cue['id']=='sfx-piercing-volley':
         original=result.copy();result*=.55
         for delay in [.07,.14]:
@@ -37,12 +40,16 @@ def render(cue,rate):
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--id');args=parser.parse_args()
     book=json.loads((ROOT/'tools/audio/sfx-book.json').read_text());manifest=json.loads((ROOT/'assets/audio/manifest.json').read_text());metrics={}
+    # A single-cue render must retain measurements for untouched masters.
+    measurements=ROOT/'tools/audio/sfx-measurements.json'
+    if args.id and measurements.exists():metrics=json.loads(measurements.read_text())
+    rendered=0
     outdir=ROOT/'assets/audio/effects';outdir.mkdir(exist_ok=True)
     for cue in book['cues']:
         if args.id and args.id!=cue['id']:continue
         old=manifest['assets'].get(cue['id'])
         if old and old.get('managedBy')!=OWNER:continue
-        signal,metrics[cue['id']]=render(cue,book['sampleRate']);file=outdir/(cue['id']+'.wav')
+        signal,metrics[cue['id']]=render(cue,book['sampleRate']);rendered+=1;file=outdir/(cue['id']+'.wav')
         with wave.open(str(file),'wb') as w:
             w.setnchannels(1);w.setsampwidth(2);w.setframerate(book['sampleRate']);w.writeframes((signal*32767).astype('<i2').tobytes())
         manifest['assets'][cue['id']]={**(old or {}),'kind':'effect','src':'./'+str(file.relative_to(ROOT)),'duration':len(signal)/book['sampleRate'],'sha256':hashlib.sha256(file.read_bytes()).hexdigest(),'credits':{'author':'Azeroth Chronicles original synthesis','license':'CC0-1.0'},'managedBy':OWNER,'creationMethod':'deterministic-spectral-synthesis','title':cue['id'].replace('sfx-','').replace('-',' ').title(),'generationGuide':(old or {}).get('generationGuide',cue['guide']),'recipe':{'source':'tools/audio/sfx-book.json','id':cue['id'],'renderer':'tools/audio/render-sfx.py'}}
@@ -55,5 +62,5 @@ def main():
     finally:
         candidate.unlink(missing_ok=True)
     (ROOT/'tools/audio/sfx-measurements.json').write_text(json.dumps(metrics,indent=2)+'\n')
-    print('Rendered',len(metrics),'original short mono SFX; measured finite peaks/RMS and zero-edge envelopes.')
+    print('Rendered',rendered,'original short mono SFX; measured finite peaks/RMS and zero-edge envelopes.')
 if __name__=='__main__':main()
