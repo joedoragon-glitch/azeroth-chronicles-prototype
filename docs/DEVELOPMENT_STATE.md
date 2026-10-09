@@ -173,3 +173,11 @@ The observation-only bridge and restrained procedural art cover 251 live identit
 ## Prepared v0.8.112 — shared enemy audio/VFX identities
 
 Audio now consumes the existing stable stage envelope, with material/action, creature/faction and restrained important-cast motif routing. Thirty original short synthesized SFX recordings join the existing validated manifest and offline inventory; cold/missing playback remains procedural. Live VFX coverage is a build and regression acceptance gate, including future rogue signatures. See `ENEMY_AUDIO_SYNCHRONIZATION.md` and generated `ENEMY_AUDIO_COVERAGE.md`. This observation-only integration preserves combat rules and v4 save/statistics equivalence. Release requires exact-head full CI and Pages verification.
+
+## Responsive HUD and contextual menu pass · v0.8.112
+
+The desktop/phone presentation now keeps a compact HUD instead of the old broad permanent status window and centers smaller scrollable dialogs with a stable Back action. The palette changes to slate/teal and brass, while skill and movement controls keep their established sizes. Basic and Full Barracks share clear Company/Specialists/Operations groupings; the portable Inventory option is no longer duplicated in Full Barracks. Field Barracks placement remains a unique Adventure-menu action because building at the current field position cannot be delegated to an existing Barracks. The production CSS approval fixture is versioned separately from the historical v0.8.83 fixture. See `RESPONSIVE_UI_AUDIT_20261009.md`.
+
+## Approved ergonomic UI refinement · v0.8.114
+
+Phone: thumb-adjacent contextual Interact, stable Recall/Target/Squad grouping, clearer labels and notifications. Desktop: compact unlocked-skill hotbar, contextual Ranger commands and corrected camera anchor. Short interaction dialogs now use natural compact/regular widths and natural height under the same scroll limits. Inventory removes duplicate Recall and disabled support actions; Barracks Operations copy matches its real functions. The canonical supported minimum stays 375x800 CSS portrait/800x375 landscape; 360x780 is only a scaled best-effort fallback and does not govern the design or add device support commitments. See RESPONSIVE_UI_AUDIT_20261009.md. Draft branch only until review and CI.
