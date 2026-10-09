@@ -140,7 +140,7 @@
           damage = base * def.multiplier,
           angle = Math.atan2(target.y - u.y, target.x - u.x);
         let hits = 0;
-        for (const e of targets) if (this.damage(e, damage, u.id)) hits++;
+        for (const e of targets) if (this.damage(e, damage, u.id, { area: true })) hits++;
         if (!hits) return false;
         u.skill2Cd = cfg.cooldown;
         u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
@@ -515,6 +515,7 @@
             e.hp > 0 &&
             !e.neutral &&
             !e.returning &&
+            this.tacticalDirectTargetable(e) &&
             e.aggro &&
             dist(e, this.hero) < (e.type === 'boss' || e.summon ? 720 : 540),
         );
@@ -735,6 +736,9 @@
           u.skill1Cd = Math.max(0, (u.skill1Cd || 0) - dt);
           u.skill2Cd = Math.max(0, (u.skill2Cd || 0) - dt);
           u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - dt);
+          // Thornfang scatter overrides orders, doctrine and combat until
+          // forced movement ends; then the unit resumes its normal assignment.
+          if (this.tacticalAdvanceScatter(u, dt)) continue;
           if (u.order?.type === 'build') {
             const b = z.buildings.find((b) => b.id === u.order.id);
             if (b && b.progress < 4) {
