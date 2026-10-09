@@ -27,10 +27,8 @@ function audit(options = {}) {
       if (!coverage.includes('| `' + key + '` |'))
         throw Error('Unclassified renderer family: ' + key);
   }
-  const work = source.slice(
-    source.indexOf('function workDetails(role)'),
-    source.indexOf('const type = e.renderKind'),
-  );
+  const workStart = source.indexOf('function workDetails(role)');
+  const work = source.slice(workStart, source.indexOf('const type = e.renderKind', workStart));
   const workRoles = [...work.matchAll(/role === '([^']+)'/g)].map((m) => m[1]);
   for (const role of workRoles)
     if (!coverage.includes('`sceneRole:' + role + '`'))
