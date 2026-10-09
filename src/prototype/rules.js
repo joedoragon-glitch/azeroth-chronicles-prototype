@@ -4336,14 +4336,16 @@
       hardCap: false,
       windowSeconds: 2,
       openingMultiplier: 1.6,
-      // Fractions of the target's own maximum HP: knee, then logarithmic tail.
+      // Double the pressure of the v0.8.105 curve: halving both knee and tail
+      // compresses bursts sooner and steepens the logarithmic reduction.
+      // The two-second window, continuous positive gains and openings stay unchanged.
       tiers: Object.freeze({
-        ordinary: { knee: 1.35, tail: 1.75 },
-        guardian: { knee: 0.95, tail: 1.25 },
-        ringleader: { knee: 0.7, tail: 0.95 },
-        captain: { knee: 0.5, tail: 0.75 },
-        boss: { knee: 0.36, tail: 0.55 },
-        trueBoss: { knee: 0.29, tail: 0.48 },
+        ordinary: { knee: 0.675, tail: 0.875 },
+        guardian: { knee: 0.475, tail: 0.625 },
+        ringleader: { knee: 0.35, tail: 0.475 },
+        captain: { knee: 0.25, tail: 0.375 },
+        boss: { knee: 0.18, tail: 0.275 },
+        trueBoss: { knee: 0.145, tail: 0.24 },
       }),
     }),
   });
