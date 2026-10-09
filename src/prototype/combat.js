@@ -337,26 +337,27 @@
         u.hp = Math.max(0, u.hp - Math.max(3, amount - armor * 0.35));
         if (R.resourceMode.manaEnabled && u === this.hero && manaDrain > 0)
           this.drainMana(u, manaDrain);
-        // Cinder Spitters absorb vitality through their ranged attacks.
-        // Use actual HP lost (after armor and the HP floor), from the hero or
-        // companions; the full 15% of actual HP loss heals only the attacker,
-        // up to its missing health. No bonus damage or group-wide healing.
-        // Legacy MP mode still restores the original mana-drain behavior.
+        // All life-steal uses actual HP lost after armor, immunity and overkill.
+        // It never adds a second damage tick, heals other enemies, or uses a
+        // percentage of the attacker's max HP as an artificial healing cap.
+        // Previous mana-drain semantics remain available in legacy MP mode.
         if (!R.resourceMode.manaEnabled && rangedSourceId) {
           const source = this.zone().enemies.find((e) => e.id === rangedSourceId);
-          if (
-            source?.species === 'ashbeast' &&
-            source.projectileStyle === 'cinder' &&
-            source.hp > 0 &&
-            source.hp < source.maxHp
-          ) {
+          const cinder = source?.species === 'ashbeast' && source.projectileStyle === 'cinder';
+          const spectral =
+            manaDrain > 0 &&
+            (source?.species === 'wraith' ||
+              (source?.type === 'boss' &&
+                R.vitalitySiphon.bossFamilies.includes(source.family)));
+          if (source && source.hp > 0 && source.hp < source.maxHp && (cinder || spectral)) {
             const heal = Math.min(
               source.maxHp - source.hp,
-              (oldHp - u.hp) * R.ashFeeding.healFraction,
+              (oldHp - u.hp) *
+                (cinder ? R.ashFeeding.healFraction : R.vitalitySiphon.healFraction),
             );
             if (heal > 0) {
               source.hp += heal;
-              this.event('ashFeeding', {
+              this.event(cinder ? 'ashFeeding' : 'lifeSiphon', {
                 source: source.id,
                 target: u === this.hero ? 'hero' : u.id,
                 amount: heal,
