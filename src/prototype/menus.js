@@ -191,6 +191,22 @@
           : '')
       );
     }
+    function classSkillBookDetail(skill) {
+      const g = getGame(),
+        slot = skill[0];
+      if (slot === 1) return professionSkillDetail(slot) + ' · Always available';
+      const trainer = g.boss(skill[4]);
+      return (
+        professionSkillDetail(slot) +
+        ' · Learn: ' +
+        g.skillTrainingCost(slot, 0) +
+        ' crowns · ' +
+        trainer.captive +
+        ' · ' +
+        D.regions.find((r) => r.id === trainer.region).name +
+        (slot === 2 ? ' · Rank 1 also teaches companion Holy Cleave and Piercing Volley' : '')
+      );
+    }
     function skillBook(back = closeMenu) {
       const rank = getGame().s.expeditionRank || 1,
         next = getGame().expeditionNextInstructor(rank),
@@ -270,7 +286,7 @@
                         getGame().boss(s[4]).captive +
                         ' · ' +
                         D.regions.find((r) => r.id === getGame().boss(s[4]).region).name
-                  : professionSkillDetail(s[0]),
+                  : classSkillBookDetail(s),
                 true,
               ),
             ),
