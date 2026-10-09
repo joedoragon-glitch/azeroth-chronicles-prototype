@@ -1,0 +1,21 @@
+name: Temporary enemy VFX formatting inspection
+on:
+  pull_request:
+    paths:
+      - scripts/enemy-vfx-inventory.cjs
+      - .github/workflows/enemy-vfx-format-inspection.yml
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - name: Exact formatting diff
+        run: |
+          npx prettier scripts/enemy-vfx-inventory.cjs > /tmp/expected.cjs
+          diff -u scripts/enemy-vfx-inventory.cjs /tmp/expected.cjs || true
