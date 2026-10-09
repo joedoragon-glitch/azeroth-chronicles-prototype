@@ -1385,6 +1385,7 @@
       this.tacticalClearRogueRegroup();
       this._tacticalScatter?.clear();
       this._tacticalScatterLeash?.clear();
+      this._tacticalRepositions?.clear();
       this._tacticalPartyTargets?.clear();
       this.s.zone = zone;
       this.zone();
@@ -2785,7 +2786,29 @@
       if (state.remaining <= 0) this._tacticalScatter.delete(key);
       return true;
     }
+    // A captain/boss sidestep may carry the encounter across the original
+    // home leash, but never heal/reset the encounter merely for that motion.
+    // The temporary corridor is anchored to the actual short skill movement,
+    // bounded to local combat and cannot follow a genuine player escape.
+    tacticalRecordRogueReposition(e, from, target) {
+      if (!(e.type === 'boss' || e.captain || e.roomCaptain) ||
+          !target || dist(from, e) < 1) return;
+      if (!this._tacticalRepositions) this._tacticalRepositions = new Map();
+      this._tacticalRepositions.set(e.id, {
+        zone: this.zoneId,
+        from,
+        to: { x: e.x, y: e.y },
+        until: this.s.time + 4,
+      });
+    }
     tacticalRogueLeashAllows(e, target, territory) {
+      const shift = this._tacticalRepositions?.get(e?.id);
+      if (shift && shift.zone === this.zoneId && shift.until > this.s.time &&
+          target?.hp > 0 &&
+          dist(target, e) <= Math.max(territory, 550) &&
+          dist(target, shift.to) <= Math.max(territory + 200, 650) &&
+          this.distanceToSegment(target, shift.from, shift.to) <= Math.max(territory, 550))
+        return true;
       // The boss must not disengage merely because its own howl forcibly
       // pushed an opponent beyond the normal home leash. This short exception
       // applies only to victims of that howl, near its point of impact.
@@ -3256,7 +3279,11 @@
             x: e.x + (away.x * 0.65 - away.y * 0.35) * move.sidestep,
             y: e.y + (away.y * 0.65 + away.x * 0.35) * move.sidestep,
           };
-        if (this.clearSegment(e, point)) this.move(e, point, 380, 0.36);
+        if (this.clearSegment(e, point)) {
+          const previous = { x: e.x, y: e.y };
+          this.move(e, point, 380, 0.36);
+          this.tacticalRecordRogueReposition(e, previous, target);
+        }
       }
     }
     tacticalRecruitRegroupAllies(e, state, target) {
@@ -3620,6 +3647,7 @@
         this.tacticalClearThreat(e);
         this.tacticalClearRogueRegroup(e);
         this._tacticalScatterLeash?.delete(e.id);
+        this._tacticalRepositions?.delete(e.id);
         e.returning = 1;
         e.pursuitBurst = 0;
         this.say(e.name + ' disengages.');
