@@ -11,6 +11,7 @@
     recallSquad,
     showMap,
     finaleMenu,
+    status = () => {},
   }) {
     function expeditionSupportActions(n, refresh) {
       return Object.entries(Campaign.rules.expeditionSupportSkills).flatMap(([id, def]) => {
@@ -348,7 +349,14 @@
               ? 'Weapon tier ' + tier + ' · ' + (currentWeapon === tier ? 'OWNED' : 'SURPASSED')
               : 'Weapon tier ' + tier + ' · ' + weapon + ' crowns',
             () => {
-              getGame().gear(n.family, 'weapon');
+              if (getGame().gear(n.family, 'weapon')) {
+                const hero = getGame().hero;
+                status(
+                  hero.legacyEquipped
+                    ? 'Weapon bought · stronger one stays equipped.'
+                    : 'Weapon tier ' + hero.weapon + ' equipped.',
+                );
+              }
               smith(n, back);
             },
             'Current tier ' +
@@ -364,7 +372,8 @@
               ? 'Armor tier ' + tier + ' · ' + (currentArmor === tier ? 'OWNED' : 'SURPASSED')
               : 'Armor tier ' + tier + ' · ' + armor + ' crowns',
             () => {
-              getGame().gear(n.family, 'armor');
+              if (getGame().gear(n.family, 'armor'))
+                status('Armor tier ' + getGame().hero.armorTier + ' equipped.');
               smith(n, back);
             },
             'Current tier ' +
@@ -1055,7 +1064,7 @@
               action(
                 'Equip ' + name,
                 () => {
-                  getGame().equipLegacy(name);
+                  if (getGame().equipLegacy(name)) status(name + ' equipped.');
                   inventory(back);
                 },
                 'Saved weapon · +' + Campaign.legacyWeapons[name] + ' power',
@@ -1065,6 +1074,7 @@
             ? [
                 action('Equip current weapon tier ' + getGame().hero.weapon, () => {
                   getGame().hero.legacyEquipped = false;
+                  status('Weapon tier ' + getGame().hero.weapon + ' equipped.');
                   inventory(back);
                 }),
               ]
