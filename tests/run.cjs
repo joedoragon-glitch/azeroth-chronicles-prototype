@@ -16,6 +16,8 @@ const quick = new Set([
   'prototype-ui',
   'auto-potions',
   'combat-feedback',
+  'enemy-vfx-foundation',
+  'enemy-vfx-inventory',
   'terrain-effects',
   'first-boss-balance',
   'dungeon-pressure',

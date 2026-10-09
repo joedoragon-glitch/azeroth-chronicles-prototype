@@ -2061,9 +2061,24 @@
       vegetation: 'pine',
     },
   };
+  // The vehicle that actually brought the party to a region determines its landing.
+  // Ferry docks remain at their terrain-authored harbors; overland arrivals use rear town stands.
+  const travelArrivalStands = {
+    march: { x: 145, y: 1380 },
+    frontier: { x: 155, y: 615 },
+  };
   const travelArrivals = {
+    'vale>march': { transportId: 'return', dx: 95, dy: 30 },
+    'march>vale': { transportId: 'outbound', dx: 95, dy: 25 },
     'march>highlands': { x: 425, y: 1900 },
     'highlands>march': { x: 2115, y: 675 },
+    'highlands>frontier': { transportId: 'return', dx: 95, dy: 25 },
+    'frontier>highlands': { transportId: 'outbound', dx: 95, dy: 25 },
+    'frontier>crown': { transportId: 'crown-travel-frontier-return', dx: 95, dy: 50 },
+    'crown>frontier': { transportId: 'outbound', dx: 95, dy: 25 },
+    'crown>highlands': { transportId: 'outbound', dx: 95, dy: 25 },
+    'crown>march': { transportId: 'return', dx: 95, dy: 30 },
+    'crown>vale': { transportId: 'outbound', dx: 95, dy: 25 },
   };
   const dungeonWorkstations = {
     crypt: {
@@ -4312,7 +4327,27 @@
     rogueMoves,
     // Tier names are identifiers, not mitigation percentages.
     protectionTiers: ['ordinary', 'guardian', 'ringleader', 'captain', 'boss', 'trueBoss'],
-    burstCompression: Object.freeze({ enabled: false, model: 'soft-knee', hardCap: false }),
+    // Raw incoming damage is summed across the hero and companions over a short
+    // sliding window, then mapped through a smooth logarithmic knee. There is
+    // no hard DPS cap: greater investment and stronger attacks always do more.
+    burstCompression: Object.freeze({
+      enabled: true,
+      model: 'soft-knee',
+      hardCap: false,
+      windowSeconds: 2,
+      openingMultiplier: 1.6,
+      // Doubled ordinary/guardian protection, then inherited stronger-role curves:
+      // ringleader takes the prior captain profile, captain the prior TRUE boss,
+      // and TRUE bosses share normal-boss compression.
+      tiers: Object.freeze({
+        ordinary: { knee: 0.675, tail: 0.875 },
+        guardian: { knee: 0.475, tail: 0.625 },
+        ringleader: { knee: 0.25, tail: 0.375 },
+        captain: { knee: 0.145, tail: 0.24 },
+        boss: { knee: 0.18, tail: 0.275 },
+        trueBoss: { knee: 0.18, tail: 0.275 },
+      }),
+    }),
   });
 
   const R = {
@@ -4390,6 +4425,7 @@
     terrain,
     landforms,
     harbors,
+    travelArrivalStands,
     travelArrivals,
     dungeonWorkstations,
     regionalHandoffScenes,

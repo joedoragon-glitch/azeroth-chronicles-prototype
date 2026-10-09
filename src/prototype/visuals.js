@@ -19,6 +19,7 @@
     const type = e.renderKind;
     const structure = String(e.structure || '').toLowerCase();
     if (type === 'building') return 1.35;
+    if (type === 'npc' && e.kind === 'rest') return 1.4;
     if (['transport', 'dungeon', 'mini'].includes(e.kind)) return 1.35;
     if (
       type === 'npc' &&
@@ -27,10 +28,11 @@
         String(e.id || '') + ' ' + String(e.name || ''),
       )
     )
-      return 1.3;
+      return /orchard/.test(String(e.id || '') + ' ' + String(e.name || '')) ? 1.3 : 1.35;
     if (type !== 'prop') return 1;
     if (String(e.id || '').startsWith('forest-') && /🌲|🌳/.test(e.icon || '')) return 1.3;
-    if (/(?:^|[-_])(tree|sapling|pine)(?:$|[-_])/.test(structure)) return 1.3;
+    if (structure === 'mangrove' || /(?:^|[-_])(tree|sapling|pine)(?:$|[-_])/.test(structure))
+      return 1.3;
     if (
       /cottage|house|workshop|boathouse|smithy|forgehouse|watchhouse|lean-to|longhouse|dwelling|hut|cabin/.test(
         structure,

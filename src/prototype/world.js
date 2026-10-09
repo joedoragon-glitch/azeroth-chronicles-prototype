@@ -82,7 +82,12 @@
           place('board', 210, 55);
           place('rest', 0, 0);
           const crownTravelHub = (R.crownRoutes || []).some((r) => z.id === 'crown' && r.travelHub);
-          if (!R.harbors?.[z.id] && !crownTravelHub) place('return', 150, 175);
+          const rearStand = R.travelArrivalStands?.[z.id];
+          if (rearStand) {
+            const homeward = by('return');
+            if (homeward)
+              Object.assign(homeward, terrainSafe(rearStand.x, rearStand.y, 8) || rearStand);
+          } else if (!R.harbors?.[z.id] && !crownTravelHub) place('return', 150, 175);
           const minorRest = by('minor');
           if (minorRest) Object.assign(minorRest, terrainSafe(minor.x, minor.y, 8) || minor);
           z.boardPositionVersion = 2;
@@ -96,7 +101,7 @@
         if (dungeonIds.includes(z.id) || this.supplyRoom(z.id) || this.sideDungeon(z.id)) return;
         this.settlementLayout(z);
         const i = this.regionIndex(z.id),
-          roadVersion = ['frontier', 'crown'].includes(z.id) ? 10 : 9;
+          roadVersion = z.id === 'frontier' ? 11 : 10;
         if (z.roadVersion === roadVersion) return;
         const origin = { x: D.towns[i][0], y: D.towns[i][1] },
           field = this.fieldCenter(i),
@@ -124,6 +129,9 @@
           destinations = [
             D.minors[i],
             D.ports[i],
+            ...(R.travelArrivalStands?.[z.id]
+              ? [[R.travelArrivalStands[z.id].x, R.travelArrivalStands[z.id].y]]
+              : []),
             D.entrances[i],
             [field.x, field.y],
             ...(finalGate ? [[finalGate[2], finalGate[3]]] : []),
@@ -175,6 +183,7 @@
             this.roadNetwork(z);
           }
           this.authoredPlaces(z);
+          this.regionalTravelSafety(z);
           return z;
         }
         const i = this.regionIndex(),
@@ -559,12 +568,13 @@
         this.regionalDestinations(z);
         this.roadNetwork(z);
         this.authoredPlaces(z);
+        this.regionalTravelSafety(z);
         this.refreshNPCs();
         if (this.peace) this.makeHabitat(z);
         return z;
       }
       regionalDestinations(z) {
-        const destinationVersion = z.id === 'crown' ? 4 : 2;
+        const destinationVersion = z.id === 'crown' ? 5 : 3;
         if (
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
@@ -581,7 +591,10 @@
             Object.assign(n, this.safe(raw[0], raw[1], z.id));
           };
           move('entrance', D.entrances[i]);
-          if (!R.harbors?.[z.id]) move('outbound', D.ports[i]);
+          // Highlands has an inbound ferry but a separate outbound pack caravan.
+          if (z.id !== 'march') move('outbound', D.ports[i]);
+          const rearStand = R.travelArrivalStands?.[z.id];
+          if (rearStand) move('return', [rearStand.x, rearStand.y]);
           if (z.id === 'crown') {
             z.npcs = z.npcs.filter((n) => n.id !== 'return' && !n.crownTravelHub);
             for (const route of (R.crownRoutes || []).filter((r) => r.travelHub)) {
@@ -605,6 +618,57 @@
           z.destinationLayoutVersion = destinationVersion;
         } finally {
           this.s.zone = oldZone;
+        }
+      }
+      regionalTravelSafety(z) {
+        if (
+          dungeonIds.includes(z.id) ||
+          this.supplyRoom(z.id) ||
+          this.sideDungeon(z.id) ||
+          z.travelSafetyVersion === 1
+        )
+          return;
+        const landingIds =
+          {
+            vale: ['outbound'],
+            march: ['return'],
+            highlands: ['return', 'outbound'],
+            frontier: ['return', 'outbound'],
+            crown: ['crown-travel-frontier-return'],
+          }[z.id] || [];
+        const landings = landingIds.map((id) => z.npcs.find((n) => n.id === id)).filter(Boolean);
+        // Preserve monster numbers and difficulty; just keep their spawn homes away
+        // from the actual arrival and its immediately surrounding companion space.
+        const previousZone = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          for (const e of z.enemies) {
+            if (e.hp <= 0 || e.neutral || e.type === 'boss' || !e.home) continue;
+            if (!landings.some((p) => dist(p, e.home) < 295)) continue;
+            const nearby = landings.reduce(
+              (best, p) => (!best || dist(p, e.home) < dist(best, e.home) ? p : best),
+              null,
+            );
+            const dx = e.home.x - nearby.x;
+            const dy = e.home.y - nearby.y;
+            const length = Math.hypot(dx, dy) || 1;
+            const directions = [
+              [dx / length, dy / length],
+              [0.8, 0.6],
+              [0.6, -0.8],
+              [-0.6, 0.8],
+            ];
+            for (const [ux, uy] of directions) {
+              const candidate = this.safe(nearby.x + ux * 435, nearby.y + uy * 435, z.id);
+              if (landings.some((p) => dist(p, candidate) < 320)) continue;
+              e.home = { ...candidate };
+              if (!e.aggro) Object.assign(e, candidate);
+              break;
+            }
+          }
+          z.travelSafetyVersion = 1;
+        } finally {
+          this.s.zone = previousZone;
         }
       }
       alignLandmarks(z) {

@@ -200,6 +200,38 @@ body.menu-open #skills {
 #recall-button {
   color: #e7e2c3;
 }
+#target-button {
+  position: relative;
+  color: #f1deb0;
+}
+#target-button.has-target {
+  border-color: #e7cb86;
+  box-shadow:
+    inset 0 1px #fff0bf30,
+    0 0 0 1px #b4924870;
+}
+#target-button.target-pressing {
+  box-shadow: inset 0 0 0 2px #dfc17b88;
+}
+#target-button.target-locked {
+  border-color: #f3d38c;
+  background: linear-gradient(160deg, #4c4531, #343d2d);
+}
+#target-button.target-locked::after {
+  content: 'LOCK';
+  position: absolute;
+  top: -7px;
+  right: 5px;
+  font-size: 8px;
+  letter-spacing: 0.07em;
+  line-height: 1.2;
+  padding: 1px 4px;
+  border-radius: 3px;
+  color: #f6e2aa;
+  background: #233126;
+  border: 1px solid #b99b58;
+}
+
 #desktop-hints {
   display: none;
 }

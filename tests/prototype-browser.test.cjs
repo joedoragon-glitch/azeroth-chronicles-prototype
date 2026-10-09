@@ -24,7 +24,7 @@ await check('Accepted desktop/phone CSS is pixel-equivalent at fixed presentatio
  // tick/draw alone leaves DOM writes racing the stylesheet replacement.
  await page.evaluate(async()=>{const p=Prototype;window.__layoutRestore={tick:p.game.tick,draw:p.renderer.draw,raf:window.requestAnimationFrame.bind(window)};p.game.tick=()=>{};p.renderer.draw=()=>{};window.requestAnimationFrame=callback=>{__layoutRestore.callback=callback;return 0;};p.updateHUD();await document.fonts.ready;await new Promise(resolve=>__layoutRestore.raf(()=>__layoutRestore.raf(resolve)));});
  const settle=()=>page.evaluate(()=>new Promise(resolve=>{document.body.getBoundingClientRect();__layoutRestore.raf(()=>__layoutRestore.raf(resolve));}));
- let style,probe;
+ let style,probe,authorizedTargetDelta;
  try{
    // Install both stylesheet sets through the same owner and paint path. Mixing
    // an already composited external sheet with a freshly inserted inline sheet
@@ -32,6 +32,8 @@ await check('Accepted desktop/phone CSS is pixel-equivalent at fixed presentatio
    const currentCSS=await page.evaluate(async()=>Promise.all([...document.querySelectorAll('link[rel="stylesheet"]')].map(async el=>{const response=await fetch(el.href);if(!response.ok)throw Error('Missing production CSS');return response.text();})));
    await page.evaluate(()=>document.querySelectorAll('link[rel="stylesheet"]').forEach(el=>el.sheet.disabled=true));
    style=await page.addStyleTag({content:currentCSS.join('\n')});
+   // Preserve the original pixel fixture for everything outside the authorized Target/Recall controls.
+   authorizedTargetDelta=await page.addStyleTag({content:'#target-button {display:none !important;} body[data-experience="phone"] #recall-button {width:104px !important;padding:6px 9px !important;}'});
    await settle();
    const current=await page.screenshot({animations:'disabled',caret:'hide',path:path.join(results,'accepted-css-current-'+tag+'.png')});
    await style.evaluate((el,css)=>{el.textContent=css;},Object.values(baseline.css).join('\n'));
@@ -44,6 +46,7 @@ await check('Accepted desktop/phone CSS is pixel-equivalent at fixed presentatio
    assert(!before.equals(await page.screenshot({animations:'disabled',caret:'hide'})),'CSS comparison must detect altered button geometry at '+tag);
  }finally{
    if(probe)await probe.evaluate(el=>el.remove());
+   if(authorizedTargetDelta)await authorizedTargetDelta.evaluate(el=>el.remove());
    if(style)await style.evaluate(el=>el.remove());
    await page.evaluate(()=>{document.querySelectorAll('link[rel="stylesheet"]').forEach(el=>el.sheet.disabled=false);Prototype.game.tick=__layoutRestore.tick;Prototype.renderer.draw=__layoutRestore.draw;window.requestAnimationFrame=__layoutRestore.raf;if(__layoutRestore.callback)window.requestAnimationFrame(__layoutRestore.callback);delete window.__layoutRestore;});
  }
@@ -61,7 +64,72 @@ await check('Terrain and effects module renders Citadel walls, normal abilities 
  await page.evaluate(state=>{__terrainProbe.restore();delete window.__terrainProbe;Prototype.game.s=state;},saved);
 });
 await check('Regional workstations and residence walls render with readable captive labels '+tag,async()=>{await require('./helpers/regional-browser.cjs').verifyRegional(page,results,tag,v.width===1280||v.width===375);assert.deepEqual(errors,[],'regional renderer errors');});
-await check('Movement, split controls, Q dormant, pause and keyboard menus '+tag,async()=>{assert.equal(await page.locator('#message').evaluate(el=>el.classList.contains('visible')),false,'critical notice starts hidden');assert.deepEqual(errors,[],'browser errors before movement '+tag);const a=await page.locator('#skills').boundingBox(),j=await page.locator('#joystick').boundingBox(),primary=await page.locator('#touch-interact-button').boundingBox(),hud=await page.locator('#hud').boundingBox();if(v.touch){if(primary)assert(a.x+a.width<=primary.x||primary.x+primary.width<=a.x||a.y+a.height<=primary.y||primary.y+primary.height<=a.y,'contextual Interact cannot cover skills');assert(hud.height<=60,'compact phone HUD');assert(a.y+a.height>=v.height-12,'combat rests at bottom edge');}else assert.equal(primary,null,'phone Interact is absent from desktop layout');if(!v.touch)assert(hud.x>=v.width/2-1,'desktop status/menu is on the right');else{assert(hud.x>=0&&hud.x+hud.width<=v.width,'phone HUD fits viewport');assert(hud.y+hud.height<a.y,'phone HUD stays above skill controls');const hero=await page.evaluate(()=>Prototype.renderer.screen(Prototype.game.hero));assert(hero.y-50>hud.y+hud.height,'phone HUD cannot cover the hero');}if(v.touch){assert(a.x>=v.width/2-2&&a.x+a.width<=v.width);assert(j.x>=0&&j.y+j.height<=v.height);}else{assert.equal(j,null,'desktop joystick is absent');assert(a.x>=0&&a.x+a.width<hud.x,'desktop skill bar leaves HUD clear');}assert(a.y>=0&&a.y+a.height<=v.height);await page.screenshot({path:path.join(results,'device-layout-'+tag+'.png')});if(v.touch)assert(a.x+a.width<=j.x||j.x+j.width<=a.x||a.y+a.height<=j.y||j.y+j.height<=a.y,'controls overlap');const start=await page.evaluate(()=>[Prototype.game.hero.x,Prototype.game.hero.y]);await page.keyboard.down('d');await page.waitForTimeout(150);await page.keyboard.up('d');const end=await page.evaluate(()=>[Prototype.game.hero.x,Prototype.game.hero.y]);assert(end[0]>start[0]);await page.keyboard.press('q');assert(await page.locator('#sprint-button').isHidden());await page.keyboard.press('Escape');const menuCopy=await page.locator('#modal-description').textContent(),top=await page.locator('#modal-actions button').allTextContents();assert(menuCopy.includes('Global adventure functions'));assert(!menuCopy.includes('WASD moves'));assert(top.length<=7);assert(top.some(x=>x.includes('Game and settings')));assert(!top.some(x=>x==='Continue'));assert(!top.some(x=>x==='Controls'));const t=await page.evaluate(()=>Prototype.game.s.time);await page.waitForTimeout(120);assert.equal(await page.evaluate(()=>Prototype.game.s.time),t);await page.keyboard.press('w');assert(await page.locator('#close-button').evaluate(b=>b.classList.contains('selected')));await page.keyboard.press('f');assert(await page.locator('#modal').isHidden());});
+await check('Movement, split controls, Q targeting, pause and keyboard menus '+tag,async()=>{assert.equal(await page.locator('#message').evaluate(el=>el.classList.contains('visible')),false,'critical notice starts hidden');assert.deepEqual(errors,[],'browser errors before movement '+tag);const a=await page.locator('#skills').boundingBox(),j=await page.locator('#joystick').boundingBox(),primary=await page.locator('#touch-interact-button').boundingBox(),hud=await page.locator('#hud').boundingBox();if(v.touch){if(primary)assert(a.x+a.width<=primary.x||primary.x+primary.width<=a.x||a.y+a.height<=primary.y||primary.y+primary.height<=a.y,'contextual Interact cannot cover skills');assert(hud.height<=60,'compact phone HUD');assert(a.y+a.height>=v.height-12,'combat rests at bottom edge');}else assert.equal(primary,null,'phone Interact is absent from desktop layout');if(!v.touch)assert(hud.x>=v.width/2-1,'desktop status/menu is on the right');else{assert(hud.x>=0&&hud.x+hud.width<=v.width,'phone HUD fits viewport');assert(hud.y+hud.height<a.y,'phone HUD stays above skill controls');const hero=await page.evaluate(()=>Prototype.renderer.screen(Prototype.game.hero));assert(hero.y-50>hud.y+hud.height,'phone HUD cannot cover the hero');}if(v.touch){assert(a.x>=v.width/2-2&&a.x+a.width<=v.width);assert(j.x>=0&&j.y+j.height<=v.height);}else{assert.equal(j,null,'desktop joystick is absent');assert(a.x>=0&&a.x+a.width<hud.x,'desktop skill bar leaves HUD clear');}assert(a.y>=0&&a.y+a.height<=v.height);await page.screenshot({path:path.join(results,'device-layout-'+tag+'.png')});if(v.touch)assert(a.x+a.width<=j.x||j.x+j.width<=a.x||a.y+a.height<=j.y||j.y+j.height<=a.y,'controls overlap');const start=await page.evaluate(()=>[Prototype.game.hero.x,Prototype.game.hero.y]);await page.keyboard.down('d');await page.waitForTimeout(150);await page.keyboard.up('d');const end=await page.evaluate(()=>[Prototype.game.hero.x,Prototype.game.hero.y]);assert(end[0]>start[0]);await page.keyboard.press('q');assert.equal(await page.evaluate(()=>Prototype.input.actionFor('KeyQ')),'target');assert(await page.locator('#sprint-button').isHidden());await page.keyboard.press('Escape');const menuCopy=await page.locator('#modal-description').textContent(),top=await page.locator('#modal-actions button').allTextContents();assert(menuCopy.includes('Global adventure functions'));assert(!menuCopy.includes('WASD moves'));assert(top.length<=7);assert(top.some(x=>x.includes('Game and settings')));assert(!top.some(x=>x==='Continue'));assert(!top.some(x=>x==='Controls'));const t=await page.evaluate(()=>Prototype.game.s.time);await page.waitForTimeout(120);assert.equal(await page.evaluate(()=>Prototype.game.s.time),t);await page.keyboard.press('w');assert(await page.locator('#close-button').evaluate(b=>b.classList.contains('selected')));await page.keyboard.press('f');assert(await page.locator('#modal').isHidden());});
+await check('Target button and Q cycle actual hero combat without unintended fallback '+tag,async()=>{
+ const saved=await page.evaluate(()=>Prototype.game.snapshot());
+ await page.evaluate(()=>{
+   Prototype.closeMenu();const c=Prototype.game;c.enter('vale');c.zone().props=[];c.s.party=[];
+   c.manualHeroTargetId=null;c.manualHeroTargetZone=null;c.manualHeroTargetLocked=false;c.s.heroTarget=null;
+   Object.assign(c.hero,{...c.safe(600,900),order:null});
+   const visible=p=>{const s=Prototype.renderer.screen(p);return s.x>30&&s.x<innerWidth-30&&s.y>100&&s.y<innerHeight-55;};
+   const locate=(radii,exclude)=>{for(const r of radii)for(let k=0;k<24;k++){const a=k*Math.PI/12,p={x:c.hero.x+Math.cos(a)*r,y:c.hero.y+Math.sin(a)*r};if(!c.blocked(p.x,p.y)&&c.line(c.hero,p)&&visible(p)&&(!exclude||Math.hypot(p.x-exclude.x,p.y-exclude.y)>75))return p;}throw Error('Cannot find clear target sightline in gameplay viewport');};
+   const nearSpot=locate([75,90]),farSpot=locate([150,175,195],nearSpot);
+   const make=(name,p)=>c.makeEnemy({species:'goblin',name,level:1,hp:10000,damage:0,gold:0,xp:0},p);
+   const near=make('Target near',nearSpot),far=make('Target far',farSpot);
+   c.zone().enemies=[near,far];c.hero.cd[0]=0;
+   // Real line-of-sight and skill range are kept; only ambient enemy AI is
+   // frozen so its patrol does not invalidate a deterministic input audit.
+   window.__targetAuditUpdateEnemies=c.updateEnemies;c.updateEnemies=()=>{};
+   Prototype.updateHUD();
+ });
+ if(v.touch)await page.locator('#target-button').tap();else await page.locator('#target-button').click();
+ assert.equal(await page.evaluate(()=>Prototype.game.selectedHeroTarget()?.name),'Target near','Target button selects nearest visible foe');
+ assert(await page.locator('#target-button').getAttribute('aria-label').then(s=>s.includes('Target near')),'Target announces selection accessibly');
+ await page.keyboard.press('q');
+ assert.equal(await page.evaluate(()=>Prototype.game.selectedHeroTarget()?.name),'Target far','Q cycles to another foe');
+ const outcome=await page.evaluate(()=>{const c=Prototype.game,near=c.zone().enemies[0],before=near.hp;c.hero.cd[0]=0;return {cast:c.cast(1),before,after:near.hp,cd:c.hero.cd[0]};});
+ assert.equal(outcome.cast,false,'selected out-of-range foe prevents automatic swap');
+ assert.equal(outcome.after,outcome.before,'nearer enemy was not hit instead');
+ assert.equal(outcome.cd,0,'failed locked attack spends no cooldown');
+ await page.keyboard.press('q');
+ assert.equal(await page.evaluate(()=>Prototype.game.selectedHeroTarget()?.name),'Target near');
+ await page.keyboard.down('q');
+ await page.waitForTimeout(620);
+ await page.keyboard.up('q');
+ assert.equal(await page.evaluate(()=>Prototype.game.manualHeroTargetLocked),true,'holding Q locks current target');
+ assert(await page.locator('#target-button').evaluate(b=>b.classList.contains('target-locked')),'HUD identifies an encounter lock');
+ await page.evaluate(()=>{const c=Prototype.game;c.hero.x+=750;c.hero.y+=450;});
+ assert.equal(await page.evaluate(()=>Prototype.game.selectedHeroTarget()?.name),'Target near','dodging far away keeps a held lock');
+ await page.keyboard.press('q');
+ assert.equal(await page.evaluate(()=>Prototype.game.manualHeroTargetLocked),false,'short Q releases lock and cycles');
+ await page.evaluate(()=>{
+   const c=Prototype.game;
+   Object.assign(c.hero,{x:600,y:900});
+   c.manualHeroTargetId=null;c.manualHeroTargetLocked=false;c.s.heroTarget=null;
+   c.zone().enemies.forEach((e)=>{e.returning=0;e.aggro=false;e.home={x:e.x,y:e.y};});
+   c.s.mercyTime=10;
+ });
+ const tbox=await page.locator('#target-button').boundingBox();
+ const tx=tbox.x+tbox.width/2,ty=tbox.y+tbox.height/2;
+ if(v.touch){
+   // Native Chromium touch dispatch, rather than a mouse simulation on the
+   // phone viewport: verifies real pointer capture / long-press semantics.
+   const session=await page.context().newCDPSession(page);
+   try {
+     await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:tx,y:ty}]});
+     await page.waitForTimeout(620);
+     await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+   } finally {await session.detach();}
+ } else {
+   await page.mouse.move(tx,ty);
+   await page.mouse.down();
+   await page.waitForTimeout(620);
+   await page.mouse.up();
+ }
+ assert.equal(await page.evaluate(()=>Prototype.game.manualHeroTargetLocked),true,'holding the HUD button also locks a target');
+ assert.equal(await page.evaluate(()=>Prototype.game.selectedHeroTarget()?.name),'Target near','HUD hold selects the nearest when unlocked');
+ await page.evaluate(state=>{const c=Prototype.game;c.updateEnemies=window.__targetAuditUpdateEnemies;delete window.__targetAuditUpdateEnemies;c.s=state;c.manualHeroTargetId=null;c.manualHeroTargetZone=null;c.manualHeroTargetLocked=false;Prototype.updateHUD();},saved);
+});
 await check('Mouse and touch menus work alongside keyboard; mouse world movement stays optional '+tag,async()=>{
  const saved=await page.evaluate(()=>Prototype.game.snapshot());
  await page.evaluate(()=>{Prototype.closeMenu();const c=Prototype.game;c.enter('vale');Object.assign(c.hero,{x:600,y:900,order:null});c.s.party.forEach(u=>u.order=null);});
@@ -82,6 +150,7 @@ await check('Rebinding updates real input, menus and labels and survives reload 
  await page.getByRole('button',{name:'Move up / previous menu entry · W',exact:true}).click();
  await page.keyboard.press('s');assert((await page.locator('#modal-description').textContent()).includes('already used'));
  await page.keyboard.press('ArrowUp');assert.equal(await page.locator('#modal-title').textContent(),'Customize keyboard');
+ await page.getByRole('button',{name:'Cycle hero target · Q',exact:true}).click();await page.keyboard.press('y');
  await page.getByRole('button',{name:'Skill 1 · 1',exact:true}).click();await page.keyboard.press('q');
  await page.getByRole('button',{name:'Discipline Training · C',exact:true}).click();await page.keyboard.press('l');
  await page.getByRole('button',{name:'Command Ranger Heal · H',exact:true}).click();await page.keyboard.press('u');
@@ -165,7 +234,7 @@ await check('Phone controls preserve world space and contextual interaction '+ta
  assert(skills.y+skills.height>=v.height-12,'combat sits at bottom edge without a reserved Interact row');
  assert(first.width>=(v.width>=480&&v.height<=500?50:64)&&first.height>=50,'skill targets remain thumb-sized');
  assert(joy.width>=102&&joy.height>=102,'joystick keeps a comfortable touch target');
- assert(!overlap(skills,joy));const recall=await box('#recall-button');assert(recall&&recall.height>=44&&!overlap(recall,joy)&&!overlap(recall,skills),'Recall stays reachable beside movement');
+ assert(!overlap(skills,joy));const recall=await box('#recall-button'),target=await box('#target-button');assert(recall&&recall.height>=44&&!overlap(recall,joy)&&!overlap(recall,skills),'Recall stays reachable beside movement');assert(target&&target.height>=44&&!overlap(target,joy)&&!overlap(target,skills)&&!overlap(target,recall),'Target sits beside Recall without blocking movement or skills');
  for(const id of ['#location','#objective','#talent-button','#hero-stats .wallet'])assert(await page.locator(id).isHidden(),id+' stays out of phone gameplay');
  for(let slot=2;slot<=8;slot++)assert(await page.locator('#skill-'+slot).isHidden(),'unlearned skills do not occupy phone screen');
  assert(await page.locator('#touch-interact-button').isHidden(),'no Interact button on empty terrain');
@@ -178,7 +247,7 @@ await check('Phone controls preserve world space and contextual interaction '+ta
  assert(await page.locator('#touch-interact-button').isHidden(),'Interact disappears beyond interaction range');
  await page.evaluate(()=>{const c=Prototype.game;c.s.expeditionRank=3;Object.assign(c.hero,{x:600,y:900,order:null});const e=c.makeEnemy({species:'goblin',level:1,hp:10000,damage:0,gold:0,xp:0},{x:680,y:900});Object.assign(e,{aggro:true,heroParticipated:true});c.zone().enemies=[e];});
  await page.waitForTimeout(220);const squad=await box('#squad-button');assert(squad&&await page.locator('#squad-button').isVisible(),'Doctrine appears during combat');
- assert(!overlap(squad,joy)&&!overlap(squad,skills)&&!overlap(squad,recall));
+ assert(!overlap(squad,joy)&&!overlap(squad,skills)&&!overlap(squad,recall)&&!overlap(squad,target));
  assert((await page.locator('#squad-button').textContent()).includes('TARGET'));await page.keyboard.press('Tab');assert((await page.locator('#squad-button').textContent()).includes('THREATS'));
  const heroBefore=await page.evaluate(()=>Prototype.game.hero.x);await page.keyboard.down('d');await page.waitForFunction(x=>Prototype.game.hero.x>x,heroBefore,{timeout:1500});await page.keyboard.up('d');
  // Observe the immediate input result before follower simulation can finish
