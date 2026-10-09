@@ -1144,8 +1144,8 @@
   ],
   "sources": {
     "src/prototype/visuals.js": "0b55de226c4e485d825812ae7301ebdccfd9e6f045027b7330745a1b0440f5ca",
-    "src/prototype/world.js": "10bf80d877969187b1ca5f49ac28b34bfcecfce0724f547b27568f1e18049237",
-    "src/prototype/rules.js": "30241a9db220b462f7ca9039f83d449a05d3f793ebf3a0edce1858f93b2abafd",
+    "src/prototype/world.js": "6aa2a0676074ab16fc73b84de57afd87d187fe00792a290ae12a019e8d13d557",
+    "src/prototype/rules.js": "7e669df634fcbf082363ec3e7e480f35ab06418cf4b3e3d757315d620bd45d5a",
     "src/prototype/data.js": "ed90d4736ae81ac0c810acca20163e55336e6da392fa0ccfe10a5fb89f40927a",
     "src/prototype/sprites.js": "157fae7b5bcb7883a9c0a107434deb2e1e2692e7905c358f237553d98118a774",
     "src/prototype/renderer.js": "36371ef77d90da18509f31420ba311258386ad8c540f99a5eb078dbd62a47334"
