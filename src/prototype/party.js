@@ -425,7 +425,12 @@
             : candidates.sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
           if (!this.rangerSupport('health', false, target)) break;
         }
-        if (R.resourceMode.manaEnabled && h.mp < h.maxMp && h.mp <= h.maxMp * manaThreshold && !this.hasSupportEffect(h, 'mana'))
+        if (
+          R.resourceMode.manaEnabled &&
+          h.mp < h.maxMp &&
+          h.mp <= h.maxMp * manaThreshold &&
+          !this.hasSupportEffect(h, 'mana')
+        )
           this.rangerSupport('mana', false);
       }
       recruit(type) {
