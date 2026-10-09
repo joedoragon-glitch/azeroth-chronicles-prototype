@@ -65,4 +65,4 @@ The subsequent main-branch audio integration (`47d72ba`, v0.8.112) is preserved:
 
 ## Subsequent quality audit
 
-The v0.8.115 follow-up fixes physical basic/hammer semantics, actual travel-clip clocks, retired hazard associations, failed-entry continuity, manifest races/recovery and offscreen actor-local work. See [ENEMY_SKILL_VFX_QUALITY_AUDIT.md](ENEMY_SKILL_VFX_QUALITY_AUDIT.md) for findings, matched comparisons and regression/performance evidence. The original v0.8.113 measurements above describe that original release.
+The v0.8.116 follow-up fixes physical basic/hammer semantics, actual travel-clip clocks, retired hazard associations, failed-entry continuity, manifest races/recovery and offscreen actor-local work. See [ENEMY_SKILL_VFX_QUALITY_AUDIT.md](ENEMY_SKILL_VFX_QUALITY_AUDIT.md) for findings, matched comparisons and regression/performance evidence. The original v0.8.113 measurements above describe that original release.

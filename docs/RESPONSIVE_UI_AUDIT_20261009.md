@@ -37,5 +37,9 @@ Joel approved the phone and desktop interface refinements and smaller content-re
 - Desktop camera anchoring follows the revised 214/204px HUD dimensions rather than the old sidebar width.
 - Dialog size is chosen by density (compact, regular, wide) while height remains content-driven up to a strict scroll bound. Short conversations no longer inherit the maximum panel width. Preserve 44px mobile action targets and a fixed Back.
 - Ranger support numbers move into compact Inventory explanatory text instead of two disabled action rows; duplicate Recall disappears from Inventory. Full Barracks Operations now accurately says local objectives/resources, not map.
-- Phone notices appear below the HP/MP bar and suppress conflicting transient status while visible. Menu text is enlarged rather than globally shrinking.
+- Phone notices appear below the HP/MP bar; stacked amber cards and independent transient status remain visible without overlapping. Menu text is enlarged rather than globally shrinking.
 - Browser regression checks include dialog-size classification, ergonomic contextual Interact placement and a 360x780 visual-fit smoke (not a supported reference viewport). All canonical supported viewports remain tested.
+
+## Final release integration · v0.8.115
+
+PR #165 merged at `4a2e6b3` after its complete Chromium/WebKit checks passed on `4cb46aed`. Main also includes PR #176 (`647c2df`) and all stacked-notice, tonic and quest updates. Both concurrent candidates used v0.8.114, producing byte-identical service workers despite different runtime content. The final UI release advances package/build/cache metadata to v0.8.115 so installed PWAs install the combined assets and retire the earlier cache. This changes no gameplay or save keys. Publication is accepted only after main CI, exact published-build verification and live desktop/phone/PWA smoke checks.
