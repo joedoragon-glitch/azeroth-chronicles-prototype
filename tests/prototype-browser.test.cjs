@@ -318,8 +318,9 @@ await check('Amber notices stack two at once without hiding a third event '+tag,
  if(v.touch){
   await page.evaluate(()=>document.querySelector('#status').textContent='Temporary action feedback');
   await page.waitForTimeout(30);
-  const positions=await page.evaluate(()=>({notice:document.querySelector('#message').getBoundingClientRect().bottom,status:document.querySelector('#status').getBoundingClientRect().top}));
+  const positions=await page.evaluate(()=>({notice:document.querySelector('#message').getBoundingClientRect().bottom,status:document.querySelector('#status').getBoundingClientRect().top,visibility:getComputedStyle(document.querySelector('#status')).visibility}));
   assert(positions.status>=positions.notice,'phone status does not overlap amber stack');
+  assert.equal(positions.visibility,'visible','temporary phone feedback must remain visible beneath amber notices');
   await page.evaluate(()=>document.querySelector('#status').textContent='');
  }
  await page.waitForFunction(()=>!document.querySelector('#message').classList.contains('visible'),null,{timeout:5000});

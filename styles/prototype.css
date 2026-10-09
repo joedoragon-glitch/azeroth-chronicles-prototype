@@ -652,10 +652,9 @@ button:focus-visible {
 }
 #message {
   width: min(380px, calc(100vw - 24px));
-  padding: 8px 11px;
-  font-size: 12px;
-  border-width: 1px;
-  border-radius: 9px;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
 body.menu-open::before {
