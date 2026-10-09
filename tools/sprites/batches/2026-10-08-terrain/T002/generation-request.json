@@ -1,0 +1,18 @@
+{
+  "id": "T002",
+  "resourceKey": "terrain:ground:march",
+  "name": "Flooded Marches ground",
+  "status": "candidate",
+  "sourceOwner": "floor/groundDetail/terrain",
+  "palette": [
+    "#26444b",
+    "#31535a",
+    "#203b42",
+    "#85ada6"
+  ],
+  "cues": "Muted teal-green marsh earth with darker damp mud and restrained reed/grass grain. No puddles.",
+  "reference": "/workspace/scratch/64ab2c41f702/azeroth-chronicles-prototype/tools/sprites/batches/2026-10-08-terrain/T002/reference.png",
+  "prompt": "Create exactly ONE seamless, fully opaque square 2D material texture for Azeroth Chronicles: Flooded Marches ground. Use the supplied actual procedural surface sample for its current palette and material identity, not as a picture to reproduce. Canonical palette: #26444b, #31535a, #203b42, #85ada6. Visible material cues: Muted teal-green marsh earth with darker damp mud and restrained reed/grass grain. No puddles.\nFlat top-down material, no baked isometric perspective. Low-contrast, very fine irregular natural grain at gameplay scale; predominantly the first palette color, with only restrained variation from the other palette colors. Even neutral unlit treatment. Tile perfectly across BOTH horizontal and vertical edges without a border, bands, central focal point, large patches or repeating isolated objects. Do not reproduce the procedural sample's little plant/stone glyphs as objects; add only subtle material micrograin naturally implied by the existing ground. No trees, bushes, upright grass tufts, rocks, flowers, puddles, roads, scenery, geometry, grid, slabs, marks, runes, cast shadows, directional lighting, glow, text, or UI. Full canvas covered by material, no transparency or padding. Intended output is a 256-square repeat tile after explicit downsampling; source must remain square and fully opaque. This is a muted game material, not a photorealistic landscape. Favor quiet uniform fine texture over busy high-contrast detail.",
+  "tool": "image_gen",
+  "sourceCommit": "369cc42889228fb1dbfc1a54c7048deda1f051b0"
+}

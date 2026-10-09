@@ -69,6 +69,16 @@ const server = http.createServer((req, res) => {
       await page.goto('http://127.0.0.1:' + server.address().port + '/' + entry);
       await page.waitForFunction(() => !!window.PrototypeMaterials && !!window.Prototype);
       await page.evaluate(() => Prototype.openMenu('Material QA', '', []));
+      const production = await page.evaluate(async () => {
+        const M = PrototypeMaterials;
+        await M.load();
+        const keys = Object.keys(M.entries);
+        const decoded = await Promise.all(keys.map((key) => M.ensure(key)));
+        return { count: keys.length, successful: decoded.filter(Boolean).length, ...M.status() };
+      });
+      assert.equal(production.successful, production.count, 'Published material images decode');
+      assert.equal(production.failures, 0);
+      assert(production.decodedBytes <= production.decodedBudget);
       const status = await page.evaluate(async () => {
         const M = PrototypeMaterials;
         const materials = Object.fromEntries(

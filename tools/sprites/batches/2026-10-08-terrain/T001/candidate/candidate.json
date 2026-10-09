@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "key": "terrain:ground:vale",
+  "catalogId": "T001",
+  "dependencyHash": "3bea9060e82355f7fcde2117748e3be031d5b43740ac82a0a3a7f24dc89e71a0",
+  "source": {
+    "hash": "7f9eaf3eae7d9a30baa8f07bafc27b54dd88e592da36fbbb6b9970e996ee72b1",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2584104,
+    "opaque": true,
+    "seams": {
+      "x": 6.115629984051032,
+      "y": 5.406964380648595,
+      "interiorX": 3.9888592736284787,
+      "interiorY": 4.229761172866314
+    }
+  },
+  "output": {
+    "hash": "a1fa0f5fb4fb2f203147fa8ebce4c4a1703dd7161890e69df4592e0e1d6f4334",
+    "width": 256,
+    "height": 256,
+    "bytes": 123625,
+    "opaque": true,
+    "seams": {
+      "x": 4.348958333333334,
+      "y": 4.447916666666666,
+      "interiorX": 5.273549836601345,
+      "interiorY": 5.372569444444484
+    }
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "lanczos3",
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "seamRepair": false
+  },
+  "runtime": {
+    "worldSpan": 320,
+    "opacity": 0.28
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "kind": "engineer-authorized",
+    "userAppearanceAcceptance": false,
+    "nativeScale": true,
+    "wrap": true,
+    "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
+  }
+}

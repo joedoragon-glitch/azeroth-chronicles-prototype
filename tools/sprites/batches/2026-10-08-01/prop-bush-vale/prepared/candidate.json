@@ -1,0 +1,97 @@
+{
+  "version": 2,
+  "key": "prop:bush:vale",
+  "catalogId": "273",
+  "canonHash": "e131df531ec37a17a39fdabac720d23939d04a3e4fcb4525f51a405a15b0d0f0",
+  "canonSnapshotHash": "c3672aad450ae916b95d2d06a10ec0660cf12e47570982deed57f7c99fce7ac5",
+  "catalogHash": "3f58b47d332786e65b2f2e60a34b6c19cee2fe20af92309933dcd8d87a9a952b",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1648,
+    "height": 1648,
+    "bytes": 140921,
+    "decodedBytes": 10863616,
+    "hash": "55fd9dc986035646929322e6af43c63fec83291ca05474d8c6902089407e215b",
+    "pixelHash": "33e31d7f2644e7e3dd0f76b78059d1f2d16be06a9545d18732d584637eacc6e7",
+    "bounds": {
+      "x1": 220,
+      "y1": 284,
+      "x2": 1412,
+      "y2": 1368
+    },
+    "padding": 220,
+    "transparentPixels": 2670267,
+    "visiblePixels": 45637,
+    "lowAlphaPixels": 3680,
+    "materialBounds": {
+      "x1": 670,
+      "y1": 1020,
+      "x2": 978,
+      "y2": 1215
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 2599,
+    "decodedBytes": 147456,
+    "hash": "abd74f53e50989b5a50c1d7bf5aacea2a68596ba92beabf7cd5d192e682f212b",
+    "pixelHash": "8581eb2f8965fa75408bfe0dc50fe2e9f9be29ecd8a6bd4552c0168f36ec7ce4",
+    "bounds": {
+      "x1": 78,
+      "y1": 130,
+      "x2": 114,
+      "y2": 159
+    },
+    "padding": 32,
+    "transparentPixels": 36248,
+    "visiblePixels": 616,
+    "lowAlphaPixels": 40,
+    "materialBounds": {
+      "x1": 78,
+      "y1": 130,
+      "x2": 113,
+      "y2": 152
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1648,
+      1648
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": 0,
+      "y": 11,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "kind": "engineer-authorized",
+    "userAppearanceAcceptance": false,
+    "nativeScale": true,
+    "scope": "Faithful implementation authorized by Joel’s request to release already completed work on 2026-10-08. Fixed shape/palette preserved with organic plant contours.",
+    "technicalReview": "Four desktop/phone viewports in day/night; native scene comparison and full-scene hashes retained beside the candidate."
+  }
+}

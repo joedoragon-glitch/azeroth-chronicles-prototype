@@ -1,1 +1,50 @@
-{ "version": 1, "materials": {} }
+{
+  "version": 1,
+  "materials": {
+    "terrain:ground:vale": {
+      "src": "./assets/materials/a1fa0f5fb4fb2f203147fa8ebce4c4a1703dd7161890e69df4592e0e1d6f4334.png",
+      "hash": "a1fa0f5fb4fb2f203147fa8ebce4c4a1703dd7161890e69df4592e0e1d6f4334",
+      "width": 256,
+      "height": 256,
+      "worldSpan": 320,
+      "opacity": 0.28,
+      "revision": "8745ab9dad2252b3fc17a6717d54e9b376fa489fc8d2ccb9fe3cadca249bc74f"
+    },
+    "terrain:ground:march": {
+      "src": "./assets/materials/b1782a435760ed6bce0e5b1b5ad87ae8709ac22ae21c880e0b6a70bf13712276.png",
+      "hash": "b1782a435760ed6bce0e5b1b5ad87ae8709ac22ae21c880e0b6a70bf13712276",
+      "width": 256,
+      "height": 256,
+      "worldSpan": 320,
+      "opacity": 0.28,
+      "revision": "583f60ce6e4bab3b4ed6f22680eab2a7dfd32a40e4b5b18e7efd8efab11e0648"
+    },
+    "terrain:ground:highlands": {
+      "src": "./assets/materials/e108c18f0c95bcd577a0cf6a802a33847162af9276d3336be5d9f3b9abbae09d.png",
+      "hash": "e108c18f0c95bcd577a0cf6a802a33847162af9276d3336be5d9f3b9abbae09d",
+      "width": 256,
+      "height": 256,
+      "worldSpan": 320,
+      "opacity": 0.28,
+      "revision": "c825d85ca3f87c8b7d91fb3fb1e4465c7ed4e8af24e2a80e76c0c3904a519f07"
+    },
+    "terrain:ground:frontier": {
+      "src": "./assets/materials/bf8577c52fb47274c71ce2e8c73c98c66a2515d5b62a89120156e5749c3a4ba7.png",
+      "hash": "bf8577c52fb47274c71ce2e8c73c98c66a2515d5b62a89120156e5749c3a4ba7",
+      "width": 256,
+      "height": 256,
+      "worldSpan": 320,
+      "opacity": 0.28,
+      "revision": "c9a09db6aed83db02cb784200c9fa1cb9cbfc5e6608a313a5388dcd8d509fe82"
+    },
+    "terrain:ground:crown": {
+      "src": "./assets/materials/7985f36f485ad35a0b55907cbb099bd4656695f5b4377373bdeba23f727eb3b2.png",
+      "hash": "7985f36f485ad35a0b55907cbb099bd4656695f5b4377373bdeba23f727eb3b2",
+      "width": 256,
+      "height": 256,
+      "worldSpan": 320,
+      "opacity": 0.28,
+      "revision": "bff0c54cfe529928e3d0b9f552e28fb23393d21ae647b7510ca63d8d7b9134f8"
+    }
+  }
+}

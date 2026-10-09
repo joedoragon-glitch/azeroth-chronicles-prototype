@@ -180,7 +180,10 @@ await check('Phone controls preserve world space and contextual interaction '+ta
  assert(!overlap(squad,joy)&&!overlap(squad,skills)&&!overlap(squad,recall));
  assert((await page.locator('#squad-button').textContent()).includes('TARGET'));await page.keyboard.press('Tab');assert((await page.locator('#squad-button').textContent()).includes('THREATS'));
  const heroBefore=await page.evaluate(()=>Prototype.game.hero.x);await page.keyboard.down('d');await page.waitForFunction(x=>Prototype.game.hero.x>x,heroBefore,{timeout:1500});await page.keyboard.up('d');
- await page.evaluate(()=>{Prototype.game.zone().enemies=[];Prototype.game.s.party=[Prototype.game.unit('soldier',1100,1050)];Prototype.game.s.party[0].order={type:'wait'};});await page.locator('#recall-button').tap();assert(await page.evaluate(()=>Prototype.game.s.recallActive&&Prototype.game.s.party.every(u=>u.order===null)),'Recall immediately regroups followers');assert(await page.locator('#modal').isHidden(),'Recall preserves active gameplay');
+ // Observe the immediate input result before follower simulation can finish
+ // regrouping while Playwright is still waiting for the native tap to settle.
+ await page.evaluate(()=>{const c=Prototype.game;c.zone().enemies=[];c.s.party=[c.unit('soldier',1100,1050)];c.s.party[0].order={type:'wait'};const recall=c.recallParty;window.__recallProbe={original:recall};c.recallParty=function(...args){const result=recall.apply(this,args);__recallProbe.called=true;__recallProbe.active=this.s.recallActive;__recallProbe.ordersCleared=this.s.party.every(u=>u.order===null);return result;};});
+ try{await page.locator('#recall-button').tap();assert(await page.evaluate(()=>__recallProbe.called&&__recallProbe.active&&__recallProbe.ordersCleared),'Recall immediately regroups followers');assert(await page.locator('#modal').isHidden(),'Recall preserves active gameplay');}finally{await page.evaluate(()=>{Prototype.game.recallParty=__recallProbe.original;delete window.__recallProbe;});}
  await page.keyboard.press('g');const controls=await page.locator('#modal').evaluate(el=>{let prevented=false;el.addEventListener('touchstart',e=>{prevented=e.defaultPrevented;},{once:true});el.dispatchEvent(new Event('touchstart',{bubbles:true,cancelable:true}));const cs=getComputedStyle(el),before=el.scrollTop,max=Math.max(0,el.scrollHeight-el.clientHeight),target=before>1?0:Math.min(80,max);el.scrollTop=target;return {scrollHeight:el.scrollHeight,clientHeight:el.clientHeight,scrollTop:el.scrollTop,overflowY:cs.overflowY,touchAction:cs.touchAction,prevented,before};});
  assert.equal(controls.overflowY,'auto');assert(controls.touchAction.includes('pan-y'));assert.equal(controls.prevented,false);if(controls.scrollHeight>controls.clientHeight)assert.notEqual(controls.scrollTop,controls.before);
  await page.keyboard.press('Escape');await page.evaluate(state=>{Prototype.game.s=state;Prototype.updateHUD();},saved);
@@ -229,6 +232,9 @@ await check('Charged skills use hold-and-release on keyboard and touch '+tag,asy
 });
 await check('Paladin, Mage and Ranger Skill 1 charge readiness is identical and predictable '+tag,async()=>{
  const saved=await page.evaluate(()=>Prototype.game.snapshot());
+ // Keep the damage fixture in range while the real movement key is held.
+ // Slow native-input settlement must not turn a ready hit into NO TARGET.
+ await page.evaluate(()=>{const c=Prototype.game;window.__chargeReadinessAI=c.updateEnemies;c.updateEnemies=function(...args){const result=__chargeReadinessAI.apply(this,args),target=this.zone().enemies[0];if(target&&target.hp>0)Object.assign(target,{x:this.hero.x+80,y:this.hero.y});return result;};});
  const expectedDamage={paladin:90,mage:102,ranger:96};
  for(const cls of ['paladin','mage','ranger']){
   await page.evaluate(cls=>{const c=Prototype.game;c.enter('vale');c.zone().props=[];c.s.party=[];c.s.mercyTime=0;const base=Campaign.classes[cls];Object.assign(c.hero,{class:cls,x:600,y:900,mp:0,maxMp:100,power:base.power,weapon:0,legacyWeaponPower:0,legacyEquipped:false,talents:[0,0,0,0],order:null});c.hero.skills[0]=1;c.hero.cd[0]=0;const target=c.makeEnemy({species:'goblin',name:cls+' charge target',level:1,hp:10000,damage:0,gold:0,xp:0},{x:680,y:900});c.zone().enemies=[target];},cls);
@@ -252,7 +258,7 @@ await check('Paladin, Mage and Ranger Skill 1 charge readiness is identical and 
   assert(state.cd>0&&state.cd<=.85,cls+' charged Skill 1 has no hidden cooldown beyond the ordinary 0.85s cooldown');
   assert(state.mp>79&&state.mp<82.5,cls+' charged Skill 1 spends the documented 20% max MP despite frame-level regeneration');
  }
- await page.evaluate(state=>{Prototype.game.s=state;},saved);
+ await page.evaluate(state=>{Prototype.game.updateEnemies=__chargeReadinessAI;delete window.__chargeReadinessAI;Prototype.game.s=state;},saved);
 });
 await check('Skill 2 and party-heal charge states are target-stable and honest '+tag,async()=>{
  const saved=await page.evaluate(()=>Prototype.game.snapshot());

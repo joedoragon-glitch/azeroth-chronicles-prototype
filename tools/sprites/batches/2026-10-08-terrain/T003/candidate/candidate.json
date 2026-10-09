@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "key": "terrain:ground:highlands",
+  "catalogId": "T003",
+  "dependencyHash": "3968e9ce138276536311f1a3ee36586dc276a2b9469bee5a84ea9121dd744328",
+  "source": {
+    "hash": "c5274b0e34ceb87967e252343ce090a235be91a9bacaf4d02dbdf86b9c71ced1",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2611394,
+    "opaque": true,
+    "seams": {
+      "x": 6.17570441254652,
+      "y": 6.027113237639556,
+      "interiorX": 4.110788016257068,
+      "interiorY": 4.093045377961742
+    }
+  },
+  "output": {
+    "hash": "e108c18f0c95bcd577a0cf6a802a33847162af9276d3336be5d9f3b9abbae09d",
+    "width": 256,
+    "height": 256,
+    "bytes": 103737,
+    "opaque": true,
+    "seams": {
+      "x": 4.805989583333333,
+      "y": 4.680989583333333,
+      "interiorX": 5.284931576797413,
+      "interiorY": 5.0774356617646905
+    }
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "lanczos3",
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "seamRepair": false
+  },
+  "runtime": {
+    "worldSpan": 320,
+    "opacity": 0.28
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+    "kind": "engineer-authorized",
+    "userAppearanceAcceptance": false,
+    "nativeScale": true,
+    "wrap": true,
+    "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
+  }
+}

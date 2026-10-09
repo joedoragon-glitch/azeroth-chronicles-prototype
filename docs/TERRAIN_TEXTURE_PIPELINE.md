@@ -15,3 +15,7 @@ The shared site inventory enumerates every active material for packaging and ser
 Validation covers opaque/square processing, seam measurements, unchanged masters, replacement leases, retained rollback/removal/restoration, atomic failed-install behavior, offline bytes, world-phase stability and exact clipping. A 28-resource stress fixture stays within residency/concurrency bounds. Real WebKit passes on desktop and phone sizes; Chromium and WebKit checks are part of release CI. These software checks do not claim measured performance on Joel's physical device.
 
 Next: produce and review the five regional ground pilots, then proceed through roads, interior floors and stone/lava/wood materials in small batches. Compare current material color, native grain strength, wrap seams, all device sizes and day/night scenes before activation.
+
+## Ground pilot review
+
+The five regional ground pilots retain exact image-generation prompts and original sources under `tools/sprites/batches/2026-10-08-terrain/T001` through `T005`. Review evidence includes 3×3 wraps, edge measurements and four desktop/phone viewport pairs in day/night. Reproduce a native comparison with `node scripts/material-pipeline.cjs showroom tools/sprites/batches/2026-10-08-terrain/T001/candidate/candidate.json`. Its left column is procedural canon and its right column adds the proposed grain. World span 320 and opacity 0.28 remain explicit per-resource settings; no roads, objects, geometry or terrain collision are baked into these images.

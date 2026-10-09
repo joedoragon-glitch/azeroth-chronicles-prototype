@@ -1,1 +1,287 @@
-{ "version": 1, "assets": {}, "history": {} }
+{
+  "version": 1,
+  "assets": {
+    "terrain:ground:vale": {
+      "version": 1,
+      "key": "terrain:ground:vale",
+      "catalogId": "T001",
+      "dependencyHash": "3bea9060e82355f7fcde2117748e3be031d5b43740ac82a0a3a7f24dc89e71a0",
+      "source": {
+        "hash": "7f9eaf3eae7d9a30baa8f07bafc27b54dd88e592da36fbbb6b9970e996ee72b1",
+        "width": 1254,
+        "height": 1254,
+        "bytes": 2584104,
+        "opaque": true,
+        "seams": {
+          "x": 6.115629984051032,
+          "y": 5.406964380648595,
+          "interiorX": 3.9888592736284787,
+          "interiorY": 4.229761172866314
+        }
+      },
+      "output": {
+        "hash": "a1fa0f5fb4fb2f203147fa8ebce4c4a1703dd7161890e69df4592e0e1d6f4334",
+        "width": 256,
+        "height": 256,
+        "bytes": 123625,
+        "opaque": true,
+        "seams": {
+          "x": 4.348958333333334,
+          "y": 4.447916666666666,
+          "interiorX": 5.273549836601345,
+          "interiorY": 5.372569444444484
+        }
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "lanczos3",
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "seamRepair": false
+      },
+      "runtime": {
+        "worldSpan": 320,
+        "opacity": 0.28
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "kind": "engineer-authorized",
+        "userAppearanceAcceptance": false,
+        "nativeScale": true,
+        "wrap": true,
+        "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
+      },
+      "revision": "8745ab9dad2252b3fc17a6717d54e9b376fa489fc8d2ccb9fe3cadca249bc74f"
+    },
+    "terrain:ground:march": {
+      "version": 1,
+      "key": "terrain:ground:march",
+      "catalogId": "T002",
+      "dependencyHash": "25b3d28969ae877432dcefd8a0166d60ba7a2a7a013f1ce1c86d5f35061f8fde",
+      "source": {
+        "hash": "4f2acfca7d423ef4c0b1002cf4b0eea447f507caff5ba87e4ac6241803da5b53",
+        "width": 1254,
+        "height": 1254,
+        "bytes": 2906561,
+        "opaque": true,
+        "seams": {
+          "x": 7.409090909090889,
+          "y": 6.0571504518872885,
+          "interiorX": 5.381465980848742,
+          "interiorY": 5.469520466138705
+        }
+      },
+      "output": {
+        "hash": "b1782a435760ed6bce0e5b1b5ad87ae8709ac22ae21c880e0b6a70bf13712276",
+        "width": 256,
+        "height": 256,
+        "bytes": 106250,
+        "opaque": true,
+        "seams": {
+          "x": 4.62890625,
+          "y": 5.3789062499999964,
+          "interiorX": 4.6683874591502725,
+          "interiorY": 4.5920802696078145
+        }
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "lanczos3",
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "seamRepair": false
+      },
+      "runtime": {
+        "worldSpan": 320,
+        "opacity": 0.28
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "kind": "engineer-authorized",
+        "userAppearanceAcceptance": false,
+        "nativeScale": true,
+        "wrap": true,
+        "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
+      },
+      "revision": "583f60ce6e4bab3b4ed6f22680eab2a7dfd32a40e4b5b18e7efd8efab11e0648"
+    },
+    "terrain:ground:highlands": {
+      "version": 1,
+      "key": "terrain:ground:highlands",
+      "catalogId": "T003",
+      "dependencyHash": "3968e9ce138276536311f1a3ee36586dc276a2b9469bee5a84ea9121dd744328",
+      "source": {
+        "hash": "c5274b0e34ceb87967e252343ce090a235be91a9bacaf4d02dbdf86b9c71ced1",
+        "width": 1254,
+        "height": 1254,
+        "bytes": 2611394,
+        "opaque": true,
+        "seams": {
+          "x": 6.17570441254652,
+          "y": 6.027113237639556,
+          "interiorX": 4.110788016257068,
+          "interiorY": 4.093045377961742
+        }
+      },
+      "output": {
+        "hash": "e108c18f0c95bcd577a0cf6a802a33847162af9276d3336be5d9f3b9abbae09d",
+        "width": 256,
+        "height": 256,
+        "bytes": 103737,
+        "opaque": true,
+        "seams": {
+          "x": 4.805989583333333,
+          "y": 4.680989583333333,
+          "interiorX": 5.284931576797413,
+          "interiorY": 5.0774356617646905
+        }
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "lanczos3",
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "seamRepair": false
+      },
+      "runtime": {
+        "worldSpan": 320,
+        "opacity": 0.28
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "kind": "engineer-authorized",
+        "userAppearanceAcceptance": false,
+        "nativeScale": true,
+        "wrap": true,
+        "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
+      },
+      "revision": "c825d85ca3f87c8b7d91fb3fb1e4465c7ed4e8af24e2a80e76c0c3904a519f07"
+    },
+    "terrain:ground:frontier": {
+      "version": 1,
+      "key": "terrain:ground:frontier",
+      "catalogId": "T004",
+      "dependencyHash": "69e5d2e1455efc2de2040f40eec391dafadf04c92ca69a22d61911933f51ca0b",
+      "source": {
+        "hash": "9504556f05eb570dbd1f12ee6cc3bab52fc224d2c3d99b7d5ef74d3e4410710a",
+        "width": 1254,
+        "height": 1254,
+        "bytes": 2642587,
+        "opaque": true,
+        "seams": {
+          "x": 6.028442317916002,
+          "y": 4.520999468367887,
+          "interiorX": 3.7277519598898308,
+          "interiorY": 3.881519016773654
+        }
+      },
+      "output": {
+        "hash": "bf8577c52fb47274c71ce2e8c73c98c66a2515d5b62a89120156e5749c3a4ba7",
+        "width": 256,
+        "height": 256,
+        "bytes": 91835,
+        "opaque": true,
+        "seams": {
+          "x": 4.541666666666666,
+          "y": 3.393229166666668,
+          "interiorX": 3.1557904411765114,
+          "interiorY": 3.1848651960784666
+        }
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "lanczos3",
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "seamRepair": false
+      },
+      "runtime": {
+        "worldSpan": 320,
+        "opacity": 0.28
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "kind": "engineer-authorized",
+        "userAppearanceAcceptance": false,
+        "nativeScale": true,
+        "wrap": true,
+        "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
+      },
+      "revision": "c9a09db6aed83db02cb784200c9fa1cb9cbfc5e6608a313a5388dcd8d509fe82"
+    },
+    "terrain:ground:crown": {
+      "version": 1,
+      "key": "terrain:ground:crown",
+      "catalogId": "T005",
+      "dependencyHash": "74350b029d3cef23685edb97420d3e435bb08fc08fc20cfae495f4895f6e7420",
+      "source": {
+        "hash": "c2f3d98cc187c4195afda455b237e98391972085b72355e1eba6a251832335b7",
+        "width": 1254,
+        "height": 1254,
+        "bytes": 1945247,
+        "opaque": true,
+        "seams": {
+          "x": 2.4728867623604462,
+          "y": 2.4808612440191378,
+          "interiorX": 1.7886299887184145,
+          "interiorY": 1.8801114433285082
+        }
+      },
+      "output": {
+        "hash": "7985f36f485ad35a0b55907cbb099bd4656695f5b4377373bdeba23f727eb3b2",
+        "width": 256,
+        "height": 256,
+        "bytes": 81860,
+        "opaque": true,
+        "seams": {
+          "x": 2.6822916666666674,
+          "y": 2.9414062500000027,
+          "interiorX": 3.161672794117689,
+          "interiorY": 3.22643484477128
+        }
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "lanczos3",
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "seamRepair": false
+      },
+      "runtime": {
+        "worldSpan": 320,
+        "opacity": 0.28
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+        "kind": "engineer-authorized",
+        "userAppearanceAcceptance": false,
+        "nativeScale": true,
+        "wrap": true,
+        "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
+      },
+      "revision": "bff0c54cfe529928e3d0b9f552e28fb23393d21ae647b7510ca63d8d7b9134f8"
+    }
+  },
+  "history": {
+    "terrain:ground:vale": [],
+    "terrain:ground:march": [],
+    "terrain:ground:highlands": [],
+    "terrain:ground:frontier": [],
+    "terrain:ground:crown": []
+  }
+}

@@ -68,7 +68,7 @@ jobs:
         timeout-minutes: 5
         run: |
           # Avoid slow Azure mirror downloads on fresh hosted runners; packages and signatures stay identical.
-          for aptSource in /etc/apt/sources.list /etc/apt/sources.list.d/ubuntu.sources; do
+          for aptSource in /etc/apt/sources.list /etc/apt/sources.list.d/ubuntu.sources /etc/apt/apt-mirrors.txt; do
             if [ -f "$aptSource" ]; then
               sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g' "$aptSource"
             fi

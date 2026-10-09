@@ -1,0 +1,66 @@
+[
+  {
+    "width": 1280,
+    "height": 800,
+    "lighting": "day",
+    "baselineHash": "1580fbaedb15771cbde15d7f2eb1185e5f6cff133c7f36d46dd50fbbe197946b",
+    "candidateHash": "0b1aecb4b65508a8c32902034a9d4c8bd924f8295ce7016f067cc3570fc585ed",
+    "materialDraws": 517
+  },
+  {
+    "width": 1280,
+    "height": 800,
+    "lighting": "night",
+    "baselineHash": "da337bd812f09f5db852b1b5bbbc83d82429c31108d2a628b98295b3f33966fe",
+    "candidateHash": "abb3a98d8abfcea7d3e8a5402b00a7d40b3cce615c0ba8e4ebd59b648456cb3e",
+    "materialDraws": 517
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "lighting": "day",
+    "baselineHash": "ff43f2f41be95ed7ad51fc926582d57151dbd983de76df624923f56859da3a61",
+    "candidateHash": "bf4cbfe931546085fb45cea99812a1dabb90011986e058645b3352044f8cbd7c",
+    "materialDraws": 252
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "lighting": "night",
+    "baselineHash": "aea42cd30b67be34f2c7e3f63025f55f2ee3b0bc513b5af57dfba186b7bc562a",
+    "candidateHash": "0301d126b9ceb56d46afcd9831e14100806572144da9bb3e6b8003c576fe706a",
+    "materialDraws": 252
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "lighting": "day",
+    "baselineHash": "6e470d9e3c3f26186037e4999497b931467bb9fafecb0f80c4d5b1c8e9b5e833",
+    "candidateHash": "2bf473c18d2b3a048454c3dfcb6695085d72f3044de79b5102e3a8dc2a5ed3d8",
+    "materialDraws": 266
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "lighting": "night",
+    "baselineHash": "b32d8e8d1d2fea1041eea9e1932055748cbbeb94697c1af10d72c7be24a683bb",
+    "candidateHash": "3d089d463c974028f754c7e7e187ea284d4694883434f011dfbde0355bd30828",
+    "materialDraws": 266
+  },
+  {
+    "width": 320,
+    "height": 568,
+    "lighting": "day",
+    "baselineHash": "c7a18737da4885373c07d5cc752e647ed169818f1622d2c5c7d254429919bf98",
+    "candidateHash": "aff50e461d4f3ca7a6ef743365e2db3b2d66d46f6b85f3424150ac7e89c1b091",
+    "materialDraws": 192
+  },
+  {
+    "width": 320,
+    "height": 568,
+    "lighting": "night",
+    "baselineHash": "0a4c888344b87519606ced90dd10a22ce354c3c1256f30385d3d6fc4ef221c75",
+    "candidateHash": "7f69e7b225df0c8649705cbb2f23f9df6c8388443f9ed11b12dab855fa5c7d2d",
+    "materialDraws": 192
+  }
+]

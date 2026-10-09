@@ -58,3 +58,9 @@ No separate user image acceptance is claimed. Authorized engineer review retains
 ## Completed-assets publication authorized · 8 October 2026
 
 Joel authorized implementing only the already-completed work after the pause. Publish these 20 reviewed nature registrations as v0.8.97, preserving the Goblin correction and rollback history. New generation and unfinished candidates remain paused. Final local build/format/registry checks passed, along with 51 regression suites, 224 desktop/mobile Chromium checks and five WebKit phone viewport paths. No remote release is claimed until PR CI and exact live deployment pass. Terrain materials remain owned by the separate continuation and are not activated by this nature release. After publication, update issue #125 with the release evidence; leave the remaining catalog and held variants paused.
+
+## Resumed production · 8 October 2026
+
+Joel explicitly resumed generation, implementation and publication in this chat. Both interruption checkpoints are preserved. PR #121 deployment run 37777751587 was rechecked: main, WebKit, deployment, exact published SHA and desktop/phone live checks all passed. PR #127 merged the 20 saved nature bodies at 3b3fbdfd99771c0a69b4e7e4512a9b8580dc5e0d after successful exact-head run 37809052731.
+
+This v0.8.98 continuation reconciles the five retained ground materials from PR #126 with all 27 body registrations from #127. Duplicate Vale bush/wildflower records retain #127 active revisions; the other candidates and sources remain historical. No generated image has been recreated. Both original checkpoint branches remain untouched. Remote checks and exact live deployment remain pending. Next: verify this recovered stage, correct held heather/grass and preserve exact seeded reed/rock variants, then continue the open catalog.
