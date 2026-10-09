@@ -1381,6 +1381,7 @@
               : dungeonIds.includes(zone)
                 ? { x: 160, y: 240 }
                 : { x: D.towns[i][0], y: D.towns[i][1] });
+      this.tacticalClearThreat(); // Transient observations never survive zone travel.
       this.s.zone = zone;
       this.zone();
       this.s.recallActive = false;
@@ -1818,6 +1819,7 @@
     }
     kill(e) {
       if (e.deathPaid) return;
+      this.tacticalClearThreat(e);
       const victoryLevel = this.hero.level;
       e.deathPaid = true;
       e.aggro = false;
@@ -2907,6 +2909,7 @@
     }
     disengage(e, dt) {
       if (!e.returning) {
+        this.tacticalClearThreat(e);
         e.returning = 1;
         e.pursuitBurst = 0;
         this.say(e.name + ' disengages.');
