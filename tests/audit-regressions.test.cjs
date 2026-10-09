@@ -677,7 +677,7 @@ test('F76 field commander revives existing local soldier spawns but no summons o
  }
 });
 
-test('F74 Blinding Dust immediately drops hero and companion attack locks',()=>{
+test('F77 Blinding Dust immediately drops hero and companion attack locks',()=>{
  const c=fresh(),dust=c.makeEnemy({species:'goblin',name:'Dust slinger',level:2,hp:200,damage:10,gold:0,xp:0},{x:1400,y:1700}),
   other=c.makeEnemy({species:'skeleton',name:'other foe',level:2,hp:200,damage:10,gold:0,xp:0},{x:1480,y:1710}),
   ally=c.unit('soldier',1450,1705);
@@ -707,7 +707,7 @@ test('F74 Blinding Dust immediately drops hero and companion attack locks',()=>{
   'only direct homing shots against the covered goblin are canceled');
  assert.equal(c.tacticalDirectTargetable(dust),false);
 });
-test('F75 Blinding Dust redirects auto targeting, respects AoE, and expires exactly',()=>{
+test('F78 Blinding Dust redirects auto targeting, respects AoE, and expires exactly',()=>{
  const c=fresh(),dust=c.makeEnemy({species:'goblin',name:'Dust slinger',level:2,hp:300,damage:10,gold:0,xp:0},{x:1400,y:1700}),
   other=c.makeEnemy({species:'skeleton',name:'uncovered foe',level:2,hp:300,damage:10,gold:0,xp:0},{x:1480,y:1700}),
   ally=c.unit('soldier',1460,1710);
