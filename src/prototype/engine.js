@@ -2797,8 +2797,8 @@
     // The temporary corridor is anchored to the actual short skill movement,
     // bounded to local combat and cannot follow a genuine player escape.
     tacticalRecordRogueReposition(e, from, target) {
-      if (!(e.type === 'boss' || e.captain || e.roomCaptain) ||
-          !target || dist(from, e) < 1) return;
+      if (!(e.type === 'boss' || e.captain || e.roomCaptain) || !target || dist(from, e) < 1)
+        return;
       if (!this._tacticalRepositions) this._tacticalRepositions = new Map();
       this._tacticalRepositions.set(e.id, {
         zone: this.zoneId,
@@ -2809,11 +2809,15 @@
     }
     tacticalRogueLeashAllows(e, target, territory) {
       const shift = this._tacticalRepositions?.get(e?.id);
-      if (shift && shift.zone === this.zoneId && shift.until > this.s.time &&
-          target?.hp > 0 &&
-          dist(target, e) <= Math.max(territory, 550) &&
-          dist(target, shift.to) <= Math.max(territory + 200, 650) &&
-          this.distanceToSegment(target, shift.from, shift.to) <= Math.max(territory, 550))
+      if (
+        shift &&
+        shift.zone === this.zoneId &&
+        shift.until > this.s.time &&
+        target?.hp > 0 &&
+        dist(target, e) <= Math.max(territory, 550) &&
+        dist(target, shift.to) <= Math.max(territory + 200, 650) &&
+        this.distanceToSegment(target, shift.from, shift.to) <= Math.max(territory, 550)
+      )
         return true;
       // The boss must not disengage merely because its own howl forcibly
       // pushed an opponent beyond the normal home leash. This short exception
@@ -3049,15 +3053,15 @@
           this.tacticalRogueOutnumbered(e) ||
           !!this.tacticalRogueRegroup(e)?.anchor,
         wantsSignature =
-          tier === 'ringleader'
-            ? pressured || this.tacticalRogueWounded(e)
-            : pressured,
+          tier === 'ringleader' ? pressured || this.tacticalRogueWounded(e) : pressured,
         threat = this.tacticalHighestThreatTarget(e, fallback),
         closeTargets =
           signature && ['scatter', 'sweep'].includes(signature.effect)
-            ? this.combatTargets().filter((unit) =>
-                unit.hp > 0 && dist(unit, e) <= signature.radius && this.line(e, unit),
-              ).sort((a, b) => dist(e, a) - dist(e, b))
+            ? this.combatTargets()
+                .filter(
+                  (unit) => unit.hp > 0 && dist(unit, e) <= signature.radius && this.line(e, unit),
+                )
+                .sort((a, b) => dist(e, a) - dist(e, b))
             : [],
         isSignature =
           !!signature &&
@@ -3075,11 +3079,8 @@
       const effect = isSignature ? profile.effect : null,
         centered = effect === 'scatter' || effect === 'sweep',
         warning =
-          profile.warning ||
-          (e.type === 'boss' ? 1.05 : e.captain || e.roomCaptain ? 0.95 : 0.75),
-        radius =
-          profile.radius ||
-          (e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 95 : 80);
+          profile.warning || (e.type === 'boss' ? 1.05 : e.captain || e.roomCaptain ? 0.95 : 0.75),
+        radius = profile.radius || (e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 95 : 80);
       e.telegraph = {
         rogueMove: true,
         rogueSignature: isSignature,
@@ -3123,28 +3124,50 @@
     // instead rallies GUARD spawn records via tacticalRogueCommanderSupport.
     // Never manufacture new field enemies or count a boss's summoned warband.
     tacticalRogueFieldSupport(e, move) {
-      if (e.type !== 'boss' || !['warlord', 'cindermaw', 'darklord'].includes(e.family) ||
-          !move.reinforceSpecies || !move.reinforceCap) return false;
+      if (
+        e.type !== 'boss' ||
+        !['warlord', 'cindermaw', 'darklord'].includes(e.family) ||
+        !move.reinforceSpecies ||
+        !move.reinforceCap
+      )
+        return false;
       const z = this.zone(),
         radius = 750,
         species = [move.reinforceSpecies, move.reinforceRangedSpecies].filter(Boolean),
         nativeTroop = (u) =>
-          u !== e && u.type === 'mob' && u.form === 'normal' && !!u.pack &&
-          !u.guard && !u.summon && !u.neutral && !u.nightOnly &&
-          !u.captain && !u.roomCaptain && !u.mini && !u.site &&
-          species.includes(u.species) && !!u.home && dist(u.home, e) <= radius,
-        nearby = () => z.enemies.filter((u) =>
-          nativeTroop(u) && u.hp > 0 && !u.returning && dist(u, e) <= radius
-        ).sort((a, b) => dist(a, e) - dist(b, e) || this.idOrder(a, b)),
+          u !== e &&
+          u.type === 'mob' &&
+          u.form === 'normal' &&
+          !!u.pack &&
+          !u.guard &&
+          !u.summon &&
+          !u.neutral &&
+          !u.nightOnly &&
+          !u.captain &&
+          !u.roomCaptain &&
+          !u.mini &&
+          !u.site &&
+          species.includes(u.species) &&
+          !!u.home &&
+          dist(u.home, e) <= radius,
+        nearby = () =>
+          z.enemies
+            .filter((u) => nativeTroop(u) && u.hp > 0 && !u.returning && dist(u, e) <= radius)
+            .sort((a, b) => dist(a, e) - dist(b, e) || this.idOrder(a, b)),
         living = nearby();
       if (living.length <= move.reinforceBelow) {
         const wanted = Math.max(0, move.reinforceCap - living.length),
           party = [this.hero, ...this.activeLivingParty()],
-          dormant = z.enemies.filter((u) =>
-            nativeTroop(u) && u.hp <= 0 && u.deathPaid &&
-            !this.blocked(u.home.x, u.home.y, z.id, 12) &&
-            party.every((a) => a.hp <= 0 || dist(a, u.home) >= 115)
-          ).sort((a, b) => dist(a.home, e) - dist(b.home, e) || this.idOrder(a, b));
+          dormant = z.enemies
+            .filter(
+              (u) =>
+                nativeTroop(u) &&
+                u.hp <= 0 &&
+                u.deathPaid &&
+                !this.blocked(u.home.x, u.home.y, z.id, 12) &&
+                party.every((a) => a.hp <= 0 || dist(a, u.home) >= 115),
+            )
+            .sort((a, b) => dist(a.home, e) - dist(b.home, e) || this.idOrder(a, b));
         let returned = 0;
         for (const u of dormant.slice(0, wanted)) {
           Object.assign(u, u.home);
@@ -3189,28 +3212,42 @@
       const z = this.zone(),
         range = fieldBoss ? 750 : 560,
         supports = (u) => {
-          if (u === e || u.neutral || u.summon || u.captain || u.roomCaptain ||
-              u.type !== 'mob' || u.nightOnly || u.form !== 'normal' ||
-              u.site || (u.mini && this.miniCleared(u.mini))) return false;
+          if (
+            u === e ||
+            u.neutral ||
+            u.summon ||
+            u.captain ||
+            u.roomCaptain ||
+            u.type !== 'mob' ||
+            u.nightOnly ||
+            u.form !== 'normal' ||
+            u.site ||
+            (u.mini && this.miniCleared(u.mini))
+          )
+            return false;
           if (e.captainProfile === 'supply-highlands')
             return u.guard && ['wolf', 'ogre', 'archer'].includes(u.species);
           if (e.captainProfile === 'frontier-overseer' || e.family === 'warlord')
             return ['orc', 'archer'].includes(u.species);
           return u.guard && ['wolf', 'ogre', 'archer'].includes(u.species);
         },
-        live = () => z.enemies.filter((u) =>
-          supports(u) && u.hp > 0 && !u.returning && dist(u, e) <= range,
-        ),
+        live = () =>
+          z.enemies.filter((u) => supports(u) && u.hp > 0 && !u.returning && dist(u, e) <= range),
         existing = live();
       if (existing.length <= move.reinforceBelow) {
         // Existing defeated spawn identities only: no new monster objects.
-        const available = z.enemies.filter((u) =>
-          supports(u) && u.hp <= 0 && u.home && dist(u.home, e) <= range &&
-          dist(u.home, this.hero) >= 105 &&
-          !this.blocked(u.home.x, u.home.y, z.id, 12) &&
-          this.clearSegment(e, u.home, 12),
-        ).sort((a, b) => dist(a.home, e) - dist(b.home, e) ||
-          a.id.localeCompare(b.id));
+        const available = z.enemies
+          .filter(
+            (u) =>
+              supports(u) &&
+              u.hp <= 0 &&
+              u.home &&
+              dist(u.home, e) <= range &&
+              dist(u.home, this.hero) >= 105 &&
+              !this.blocked(u.home.x, u.home.y, z.id, 12) &&
+              this.clearSegment(e, u.home, 12),
+          )
+          .sort((a, b) => dist(a.home, e) - dist(b.home, e) || a.id.localeCompare(b.id));
         let revived = 0;
         for (const u of available.slice(0, Math.max(0, move.reinforceCap - existing.length))) {
           Object.assign(u, u.home);
@@ -3263,8 +3300,10 @@
             };
           this.move(target, point, 220, 0.25);
         } else {
-          target.slow = Math.max(target.slow || 0,
-            move.slowSeconds || (move.style === 'snare' ? 1.65 : 0.95));
+          target.slow = Math.max(
+            target.slow || 0,
+            move.slowSeconds || (move.style === 'snare' ? 1.65 : 0.95),
+          );
         }
         if (move.blinds > 0) {
           // Dust blinds the victim narratively: the goblin briefly cannot be
@@ -3314,13 +3353,20 @@
           this.move(unit, point, 250, 0.36);
         } else unit.slow = Math.max(unit.slow || 0, move.slowSeconds || 1);
       }
-      if (move.rallySeconds > 0 && !this.tacticalRogueFieldSupport(e, move) &&
-          !this.tacticalRogueCommanderSupport(e, move)) {
+      if (
+        move.rallySeconds > 0 &&
+        !this.tacticalRogueFieldSupport(e, move) &&
+        !this.tacticalRogueCommanderSupport(e, move)
+      ) {
         // Other commanders motivate only ALREADY engaged units.
         for (const ally of this.zone().enemies) {
           if (
-            ally === e || ally.hp <= 0 || !ally.aggro || ally.returning ||
-            dist(e, ally) > R.tacticalFoundation.supportRadius || !this.line(e, ally)
+            ally === e ||
+            ally.hp <= 0 ||
+            !ally.aggro ||
+            ally.returning ||
+            dist(e, ally) > R.tacticalFoundation.supportRadius ||
+            !this.line(e, ally)
           )
             continue;
           ally.pursuitBurst = Math.max(ally.pursuitBurst || 0, move.rallySeconds);
