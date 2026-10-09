@@ -20,16 +20,20 @@ Current product: multi-file GitHub Pages/PWA. Do not constrain architecture to o
 - Consider a one-time notice for normal boss victories and first dungeon clears. Avoid announcing every ordinary enemy kill, loot pickup or landmark visit; assess landmark discoveries individually.
 - Remove amber notices for routine skill learning/upgrades, expedition ranks/support, equipment/reforges, generic training and preparation tonic **only after the source menu/action UI clearly confirms the completed change**.
 
-## Preparation tonic
-- Existing mechanic is gated behind Neri's rescue, costs 70 crowns and grants +10% max HP; it is cleared by rest or death. The current PWA menus have no player-facing action wired to `buyPotion('tonic', true)`.
-- Make the feature discoverable and actionable without searching obscure NPC/menu paths. Show cost, benefit, ACTIVE state and cancellation conditions at its activation surface. Do not use the amber banner to confirm it.
-- Preserve economy, combat and saved-progress invariants; cover it with tests.
+## Preparation tonic (approved flow; PR #171 underway)
+- Existing effect is +10% maximum HP until rest or defeat and costs 70 crowns. Neri the Alchemist sells *stored* consumable tonics, not instant activation; she is reachable directly and from Rescued Specialists at barracks.
+- A completed Basic or Full Barracks must display a prominent Preparation Tonic action without creating another permanent HUD button. If stock exists, use one; if out of stock, offer a simple **Buy and use** confirmation on the spot. Do not charge twice or silently use stock when purchased from Neri.
+- The sale/activation surfaces clearly state stock, cost, benefit and ACTIVE state and where to find/use the tonic. No amber notice for using or buying it.
+- Preserve the economy, one-use mechanics, old saves, stock persistence, Succession and rest/death expiration. Regression-test both Barracks types.
 
-## Separate temporary status — review pending
-- Keep the PWA's `#status` channel for short actionable errors (target, skill readiness, invalid actions, failed storage/import/update) and never use it for storytelling.
-- Existing `say()` internal message history is not a UI feed and must not be reintroduced as one.
-- **Do not revise/trim temporary status messages until the user finishes the per-message review.** Audit findings and recommendations are not authorization to delete or rewrite them.
-- On phones, keep this status visibly separate from the amber two-slot stack.
+## Separate temporary status — user-approved cleanup (not the amber banner)
+- `#status` remains a *short actionable feedback* channel for errors and confirmations, not storytelling. Never recreate the old persistent `say()` feed.
+- User approved **removing** redundant notices such as already-installed-app confirmations, routine charge cancellation and duplicate level-up status text (level-ups use amber).
+- User approved **shortening** verbose update, targeting and charged-action messages. Use compact actionable text; make ordinary feedback shorter-lived than important save/import/storage failures.
+- **Insufficient MP:** remove this status in cooldown-only combat but **preserve a reversible implementation** behind the same `PrototypeRules.resourceMode.manaEnabled` switch established in draft MP PR #169. Update `docs/COOLDOWN_ONLY_COMBAT_MIGRATION.md` with restoration steps so re-enabling mana automatically restores the warning and related tests.
+- Keep visible failures for insufficient crowns, cannot rest during combat, guarded Treasury, unavailable labor, and **trying to free a specialist before defeating the boss**. Avoid sending routine success chatter.
+- Verify automatic weapon/armor equip behavior; show a brief confirmation when a new item is **equipped**, not just purchased. Armor tier becomes active on purchase; weapons automatically select the higher-powered owned option (including legacy items), so only claim "equipped" for the item actually active.
+- On phones, align temporary feedback with the amber banner region cleanly without overlap or text scattered across the screen. If two amber cards are already visible, position short status beneath the stack (or another reviewed nearby location).
 
 ## Technical delivery
 - Prefer incremental isolated PRs, full node/browser/phone regressions, reliable save/restore and no accidental changes to renderer art canon, combat, XP economy or quest IDs.
