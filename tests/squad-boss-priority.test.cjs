@@ -53,6 +53,48 @@ for (const heroClass of ['mage', 'ranger', 'paladin']) {
     manual === 'focus' ? b.id : summoned.id],
   heroClass + ' manual switch governs current targets');
 
+  // An add owned by the boss takes priority immediately on spawning,
+  // even before its aggro activates or it reaches the normal hero-threat radius.
+  const distant = c.makeEnemy(
+    { species: 'wolf', name: 'Newly spawned add', level: 2, hp: 99999,
+      damage: 1, gold: 0, xp: 0 },
+    c.safe(c.hero.x + 740, c.hero.y + 100),
+  );
+  distant.summon = true;
+  distant.owner = b.id;
+  distant.aggro = false;
+  c.zone().enemies.push(distant);
+  if (manual === 'focus')
+    assert.deepEqual(targets(c), [b.id, b.id],
+      heroClass + ' manual BOSS order ignores even newly spawned adds');
+  else {
+    summoned.hp = 0;
+    assert.deepEqual(targets(c), [distant.id, distant.id],
+      'ADDS mode ignores the boss even when its only summon is still far away');
+    summoned.hp = 99999;
+  }
+  distant.hp = 0;
+
+  // An ordinary aggroed attacker within the hero's threat radius also
+  // takes priority if the companion starts more than 620 units away.
+  if (manual === 'guard') {
+    const distantAlly = c.s.party[0];
+    const saved = { x: distantAlly.x, y: distantAlly.y };
+    const far = c.safe(c.hero.x - 490, c.hero.y + 50);
+    Object.assign(distantAlly, far);
+    const nearHero = c.makeEnemy(
+      { species: 'wolf', name: 'Hero pressure', level: 2, hp: 99999,
+        damage: 1, gold: 0, xp: 0 },
+      c.safe(c.hero.x + 310, c.hero.y),
+    );
+    nearHero.aggro = true;
+    c.zone().enemies.push(nearHero);
+    assert.notEqual(targets(c)[0], b.id,
+      'ADDS mode never switches back to boss when an active threat is beyond a companion local radius');
+    nearHero.hp = 0;
+    Object.assign(distantAlly, saved);
+  }
+
   // Dropping out of boss sight for an instant while the adds are still pressing
   // must not silently overwrite a deliberate player order.
   b.aggro = false;
