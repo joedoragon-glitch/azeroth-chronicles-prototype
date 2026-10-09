@@ -2,9 +2,9 @@
 (function (root) {
   'use strict';
   const preferenceKey = 'azeroth-input-v1';
-  const legacyManaEnabled = (typeof PrototypeRules !== 'undefined'
-    ? PrototypeRules
-    : require('./rules.js')).resourceMode.manaEnabled;
+  const legacyManaEnabled = (
+    typeof PrototypeRules !== 'undefined' ? PrototypeRules : require('./rules.js')
+  ).resourceMode.manaEnabled;
   const actions = [
     ['up', 'Move up / previous menu entry', 'KeyW'],
     ['down', 'Move down / next menu entry', 'KeyS'],
