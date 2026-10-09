@@ -76,6 +76,15 @@
     'cover',
     'withdraw',
   ]);
+  const stages = new Set(['windup', 'release', 'travel', 'impact', 'linger', 'spawn', 'phase']);
+  const bases = [...Object.values(species), ...Object.values(families), ...Object.values(captains)];
+  const materials = new Set([...bases.map((b) => b[0]), ...Object.values(styles)]);
+  const personalities = new Set(bases.map((b) => b[1]));
+  const accents = new Set([
+    ...Object.keys(species),
+    ...Object.keys(families),
+    ...Object.keys(captains),
+  ]);
   function profile(e, a) {
     const base =
       (e.captain || e.roomCaptain ? captains[e.captainProfile] : null) ||
@@ -105,7 +114,17 @@
   }
   function route(event) {
     const p = event.identity?.presentation;
-    if (!p || !event.skillId || event.skillId !== event.identity.id) return null;
+    if (
+      !p ||
+      !event.skillId ||
+      event.skillId !== event.identity.id ||
+      !stages.has(event.stage) ||
+      !materials.has(p.material) ||
+      !personalities.has(p.personality) ||
+      !(actions.has(p.action) || rogueActions.has(p.action)) ||
+      (p.accent != null && !accents.has(p.accent))
+    )
+      return null;
     const stage = event.stage;
     if (p.action === 'melee')
       return Object.freeze({

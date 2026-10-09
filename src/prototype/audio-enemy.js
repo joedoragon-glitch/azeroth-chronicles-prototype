@@ -50,6 +50,19 @@
     root: [620, 49, 34],
     dust: [3200, 65, 52],
   });
+  const personalities = Object.freeze({
+    wolf: 38,
+    skeleton: 69,
+    mire: 41,
+    ogre: 32,
+    orc: 43,
+    dragon: 36,
+    military: 54,
+    spectral: 73,
+    shadow: 47,
+    goblin: 65,
+    stone: 30,
+  });
   function install(Audio) {
     class Owner {
       enemySoundDecision(e) {
@@ -183,19 +196,7 @@
             0.004,
           );
         } else if (impact || spawn) {
-          const pitch = {
-            wolf: 38,
-            skeleton: 69,
-            mire: 41,
-            ogre: 32,
-            orc: 43,
-            dragon: 36,
-            military: 54,
-            spectral: 73,
-            shadow: 47,
-            goblin: 65,
-            stone: 30,
-          }[d.personality];
+          const pitch = personalities[d.personality];
           if (pitch) this.tone(pitch, now + 0.01, 0.065, 0.017, 'triangle', 'effects', 0.003);
         }
       }
@@ -208,7 +209,7 @@
           Object.getOwnPropertyDescriptor(Owner.prototype, name),
         );
   }
-  const api = { install, motifs, textures };
+  const api = { install, motifs, textures, personalities };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeAudioEnemy = api;
 })(typeof window !== 'undefined' ? window : globalThis);

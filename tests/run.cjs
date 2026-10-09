@@ -20,6 +20,7 @@ const quick = new Set([
   'enemy-vfx-events',
   'enemy-vfx-art',
   'enemy-vfx-assets',
+  'enemy-vfx-quality',
 
   'enemy-audio',
   'enemy-vfx-inventory',

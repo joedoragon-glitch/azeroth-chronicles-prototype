@@ -36,3 +36,7 @@ Run `npm run audio:coverage` or `node scripts/enemy-audio-coverage.cjs --markdow
 `tests/enemy-audio.test.cjs` checks real boss/TRUE resolutions, misses versus contacts, exact spawn points, captain phase/slot identity, ordinary projectile ownership, duplicate warning delivery, immediate recovery, mute/menu/pause and snapshot isolation. `tests/audio-browser.test.cjs` additionally decodes every production effect in Chromium/WebKit, measures finite unclipped output, renders all twelve procedural material families across stages, verifies silent missed contacts and exercises voice bounds alongside the existing lifecycle/score/ambience checks. Packaging tests retain atomic offline installation and subpath behavior.
 
 Automated render/level checks establish functioning, finite audio and bounded mix behavior. They cannot establish physical iPhone speaker/headphone comfort or replace later subjective listening. No physical-device certification is claimed.
+
+## Final synchronization audit · v0.8.117
+
+See [ENEMY_AUDIO_FINAL_AUDIT.md](ENEMY_AUDIO_FINAL_AUDIT.md) for concurrent summon/telegraph identity corrections, strict stage/personality acceptance, recorded/procedural foreground matching, the repaired two-pulse recording and added actual rogue/revival regressions. Current shared coverage remains 251 identities and 1,440 stage/variant decisions. Release/physical-device limitations remain explicit.
