@@ -1,7 +1,6 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process');
-const suites=fs.readdirSync(path.join(__dirname,'..','..','tests'))
- .filter(x=>x.endsWith('.test.cjs')&&!x.includes('browser')).sort();
+const suites=['auto-potions.test.cjs','cooldown-only.test.cjs','economy.test.cjs','prototype-ui.test.cjs','prototype.test.cjs','refuge-rest.test.cjs'];
 let failures=[],passes=0;
 for(const name of suites){
  const r=cp.spawnSync(process.execPath,[path.join(__dirname,'..','..','tests',name)],{encoding:'utf8',timeout:120000,maxBuffer:5e6});
