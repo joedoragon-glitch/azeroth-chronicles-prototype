@@ -3173,79 +3173,65 @@
       return true;
     }
     tacticalRogueCommanderSupport(e, move) {
-      if (!move.reinforceSpecies || !move.reinforceBelow || !move.reinforceCap ||
-          !['supply-highlands', 'frontier-overseer'].includes(e.captainProfile)) return false;
+      if (!move.reinforceSpecies || !move.reinforceCap) return false;
+      const captain = ['supply-highlands', 'frontier-overseer'].includes(e.captainProfile),
+        fieldBoss = e.type === 'boss' && ['ridge', 'warlord'].includes(e.family);
+      if (!captain && !fieldBoss) return false;
       const z = this.zone(),
-        radius = R.tacticalFoundation.supportRadius,
-        usable = () => z.enemies.filter((u) =>
-          u !== e && u.hp > 0 && !u.neutral && !u.returning &&
-          !u.captain && !u.roomCaptain && u.species === move.reinforceSpecies &&
-          dist(u, e) <= radius && this.line(e, u),
-        );
-      const initiallyAvailable = usable(),
-        ownedAlive = z.enemies.filter((u) =>
-          u.hp > 0 && u.summon && u.rogueRearguard && u.owner === e.id,
-        ).length;
-      if (initiallyAvailable.length <= move.reinforceBelow) {
-        const need = Math.max(0, Math.min(
-          move.reinforceCap - initiallyAvailable.length,
-          move.reinforceCap - ownedAlive,
-        ));
-        let made = 0;
-        for (let j = 0; j < need; j++) {
-          let point = null;
-          for (let n = 0; n < 32; n++) {
-            const angle = (j * 2 + n) * Math.PI / 6,
-              offset = 90 + Math.floor(n / 12) * 35,
-              candidate = {
-                x: e.x + Math.cos(angle) * offset,
-                y: e.y + Math.sin(angle) * offset,
-              };
-            if (this.blocked(candidate.x, candidate.y, this.s.zone, 12) ||
-                !this.clearSegment(e, candidate, 12) ||
-                dist(candidate, this.hero) < 70 ||
-                z.enemies.some((u) => u.hp > 0 && dist(u, candidate) < 35))
-              continue;
-            point = candidate;
-            break;
-          }
-          if (!point) break;
-          const ranged = (initiallyAvailable.length + made) % 3 === 1,
-            troop = this.makeEnemy(
-              {
-                species: move.reinforceSpecies,
-                name: move.reinforceName + (ranged ? ' archer' : ' soldier'),
-                level: e.level,
-                hp: 50 + e.level * 13,
-                damage: 5 + e.level * 2,
-                gold: 0,
-                xp: 0,
-              },
-              point,
-            );
-          troop.guard = true;
-          troop.summon = true;
-          troop.owner = e.id;
-          troop.rogueRearguard = true;
-          troop.pack = e.id + '-rogue-detail';
-          troop.forcedRole = ranged ? 'ranged' : 'melee';
-          this.summonCombatProfile(troop, { species: troop.species, ranged });
-          z.enemies.push(troop);
-          this.engage(troop, true, false);
-          made++;
+        range = fieldBoss ? 750 : 560,
+        supports = (u) => {
+          if (u === e || u.neutral || u.summon || u.captain || u.roomCaptain ||
+              u.type !== 'mob' || u.nightOnly || u.form !== 'normal' ||
+              u.site || (u.mini && this.miniCleared(u.mini))) return false;
+          if (e.captainProfile === 'supply-highlands')
+            return u.guard && ['wolf', 'ogre', 'archer'].includes(u.species);
+          if (e.captainProfile === 'frontier-overseer' || e.family === 'warlord')
+            return ['orc', 'archer'].includes(u.species);
+          return u.guard && ['wolf', 'ogre', 'archer'].includes(u.species);
+        },
+        live = () => z.enemies.filter((u) =>
+          supports(u) && u.hp > 0 && !u.returning && dist(u, e) <= range,
+        ),
+        existing = live();
+      if (existing.length <= move.reinforceBelow) {
+        // Existing defeated spawn identities only: no new monster objects.
+        const available = z.enemies.filter((u) =>
+          supports(u) && u.hp <= 0 && u.home && dist(u.home, e) <= range &&
+          dist(u.home, this.hero) >= 105 &&
+          !this.blocked(u.home.x, u.home.y, z.id, 12) &&
+          this.clearSegment(e, u.home, 12),
+        ).sort((a, b) => dist(a.home, e) - dist(b.home, e) ||
+          a.id.localeCompare(b.id));
+        let revived = 0;
+        for (const u of available.slice(0, Math.max(0, move.reinforceCap - existing.length))) {
+          Object.assign(u, u.home);
+          u.hp = u.baseHp;
+          u.maxHp = u.baseHp;
+          u.damage = u.baseDamage;
+          u.returning = 0;
+          u.deathPaid = false;
+          u.heroParticipated = false;
+          u.telegraph = null;
+          u.motion = null;
+          u.rangedAim = null;
+          u.aggro = false;
+          u.frenzy = false;
+          u.cd = 0.5;
+          u.pursuitBurst = Math.max(u.pursuitBurst || 0, move.rallySeconds);
+          if (u.pack) delete z.packTimers[u.pack];
+          if (dist(u, e) <= R.tacticalFoundation.supportRadius && this.line(e, u))
+            this.engage(u, true, false);
+          revived++;
         }
-        if (made) {
-          this.say(e.name + ' calls ' + made + ' ' + move.reinforceName + ' reinforcements.');
-          this.event('captainSummon', { captain: e.captainProfile, count: made });
+        if (revived) {
+          this.say(e.name + ' recalls ' + revived + ' nearby defenders to their posts.');
+          this.event('rogueSupport', { actor: e.id, allies: revived, existingSpawns: true });
         }
       }
-      // This authored captain order is the exception to generic rally:
-      // it can activate locally present soldiers without chaining distant packs.
-      for (const u of usable()) {
-        if (!u.aggro) this.engage(u, true, false);
-        if (!u.aggro) continue;
-        u.pursuitBurst = Math.max(u.pursuitBurst || 0, move.rallySeconds);
-        u.cd = Math.min(u.cd || 0, 0.5);
+      // Distant existing spawns occupy their posts, not automatic combat aggro.
+      for (const ally of live()) {
+        ally.pursuitBurst = Math.max(ally.pursuitBurst || 0, move.rallySeconds);
+        if (ally.aggro) ally.cd = Math.min(ally.cd || 0, 0.5);
       }
       return true;
     }
