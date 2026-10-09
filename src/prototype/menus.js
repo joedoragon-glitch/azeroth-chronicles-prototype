@@ -338,7 +338,14 @@
               ? 'Weapon tier ' + tier + ' · ' + (currentWeapon === tier ? 'OWNED' : 'SURPASSED')
               : 'Weapon tier ' + tier + ' · ' + weapon + ' crowns',
             () => {
-              getGame().gear(n.family, 'weapon');
+              if (getGame().gear(n.family, 'weapon')) {
+                const hero = getGame().hero;
+                getGame().inform(
+                  hero.legacyEquipped
+                    ? 'Weapon purchased · ' + hero.legacyWeaponName + ' stays equipped.'
+                    : 'Weapon equipped · Tier ' + hero.weapon,
+                );
+              }
               smith(n, back);
             },
             'Current tier ' +
@@ -354,7 +361,8 @@
               ? 'Armor tier ' + tier + ' · ' + (currentArmor === tier ? 'OWNED' : 'SURPASSED')
               : 'Armor tier ' + tier + ' · ' + armor + ' crowns',
             () => {
-              getGame().gear(n.family, 'armor');
+              if (getGame().gear(n.family, 'armor'))
+                getGame().inform('Armor equipped · Tier ' + getGame().hero.armorTier);
               smith(n, back);
             },
             'Current tier ' +
@@ -1001,7 +1009,7 @@
               action(
                 'Equip ' + name,
                 () => {
-                  getGame().equipLegacy(name);
+                  if (getGame().equipLegacy(name)) getGame().inform('Equipped · ' + name);
                   inventory(back);
                 },
                 'Saved weapon · +' + Campaign.legacyWeapons[name] + ' power',
@@ -1011,6 +1019,7 @@
             ? [
                 action('Equip current weapon tier ' + getGame().hero.weapon, () => {
                   getGame().hero.legacyEquipped = false;
+                  getGame().inform('Weapon equipped · Tier ' + getGame().hero.weapon);
                   inventory(back);
                 }),
               ]
