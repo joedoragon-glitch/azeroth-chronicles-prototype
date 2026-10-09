@@ -2727,8 +2727,10 @@
       if (dist(target, e) > separationLimit) return false;
       if (state.phase === 'travel')
         return this.distanceToSegment(target, e.home, state.destination) <= territory;
-      return ['anchored', 'thinking', 'escape'].includes(state.phase) &&
-        dist(target, state.anchor || e) <= separationLimit;
+      return (
+        ['anchored', 'thinking', 'escape'].includes(state.phase) &&
+        dist(target, state.anchor || e) <= separationLimit
+      );
     }
     tacticalSeekRogueSupport(e, pressure) {
       let attempts = 0;
@@ -2883,10 +2885,7 @@
           this.tacticalRogueOutnumbered(e) &&
           this.tacticalRogueEligibility(e, Math.max(pressure, 2)) &&
           (this._tacticalRogueNext?.get(e.id) || 0) <= this.s.time;
-        if (
-          this.tacticalRogueEligibility(e, pressure) &&
-          (freshWound || pressureRemains)
-        ) {
+        if (this.tacticalRogueEligibility(e, pressure) && (freshWound || pressureRemains)) {
           if (freshWound) {
             if (!this._tacticalWoundedUsed) this._tacticalWoundedUsed = new Set();
             this._tacticalWoundedUsed.add(e.id);
@@ -2965,8 +2964,12 @@
       state.recruited = true;
       let recruited = 0;
       for (const ally of this.tacticalRegroupCandidates(e)) {
-        if (ally.aggro || dist(ally, e) > R.tacticalFoundation.supportRadius ||
-            dist(target, ally) > 320) continue;
+        if (
+          ally.aggro ||
+          dist(ally, e) > R.tacticalFoundation.supportRadius ||
+          dist(target, ally) > 320
+        )
+          continue;
         // No global limit or faction restrictions. Nearby reinforcements can
         // make further independent rogue decisions if the player keeps chasing.
         if (this.engage(ally, true, false) !== false) recruited++;
@@ -2975,8 +2978,7 @@
     }
     tacticalAutoRogue(e, target) {
       const cfg = R.tacticalFoundation;
-      const newWound =
-        this.tacticalRogueWounded(e) && !this._tacticalWoundedUsed?.has(e?.id);
+      const newWound = this.tacticalRogueWounded(e) && !this._tacticalWoundedUsed?.has(e?.id);
       if (
         !cfg.enabled ||
         this.peace ||
