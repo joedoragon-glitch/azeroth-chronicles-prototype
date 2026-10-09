@@ -1,5 +1,5 @@
 'use strict';
-const C=require('../../src/prototype/engine.js');
+const C=require('../src/prototype/engine.js');
 const fresh=()=>new C('normal','paladin',()=>.9);
 for(const [family,species] of [['warlord','orc'],['ridge','wolf']]){
  const c=fresh(),e=c.bossEnemy(c.boss(family),'normal',{x:1400,y:1700});
