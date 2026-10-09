@@ -3,7 +3,7 @@
 ## Decision and guardrails
 The active Azeroth Chronicles multi-file PWA uses **cooldowns, not mana**, for Paladin, Mage and Ranger skills. MP is dormant instead of deleted: original class MP values, growth formulas, MP balance rules, enemy drain definitions, Ranger mana restoration, save fields and the previous HUD/help paths remain in source or version history. The shared switch is `PrototypeRules.resourceMode.manaEnabled = false`. Turning it back to `true` restores the old mana-based behavior, subject to regression tests. Never silently discard MP on save export/restore.
 
-No mana pool/regen/item tuning is authorized. Preserve current damage, geometry, positioning, warning timing, NPCs, boss encounters and quests. No new effects for formerly draining attacks have been approved.
+No mana pool/regen/item tuning is authorized. Preserve current damage, geometry, positioning, warning timing, NPCs, boss encounters and quests. Approved Cinder Siphon and supernatural vitality siphon use 15% actual HP damage with no max-HP-based cap; other boss heal skills remain undecided.
 
 ## Active combat contract
 
@@ -17,7 +17,7 @@ No mana pool/regen/item tuning is authorized. Preserve current damage, geometry,
 
 ## Enemy skills with MP-specific effects
 
-The following entries all still deal their regular authored HP damage. Their MP drain is **disabled only**, leaving all other properties intact for now. One attack can have several simultaneous effects (damage, slowing, persistent hazard, summons); do not strip those accidentally. Attack positions are zero-based in the source; named attacks below are from `src/prototype/data.js`.
+The following entries still deal their regular authored HP damage. MP drain is dormant; approved supernatural attacks now feed actual-HP lifesteal, and non-siphoning bosses await cooldown-based recovery skills. One attack can have several simultaneous effects (damage, slowing, persistent hazard, summons); do not strip those accidentally. Attack positions are zero-based in the source; named attacks below are from `src/prototype/data.js`.
 
 | Enemy / encounter | Authored attack (source rules index) | Former MP drain | Remaining attack behavior | Replacement decision |
 | --- | --- | --- | --- | --- |
@@ -37,11 +37,15 @@ The following entries all still deal their regular authored HP damage. Their MP 
 
 MP drain applies only to the hero; it never drained companion mana (companions have no MP pool). The boss and night attacks remain visually identifiable even while the `manaDrain` config field is dormant.
 
-## Ash-beast replacement candidate — not implemented
+## Active life-steal: player-approved, no artificial max-HP cap
 
-**Cinder Siphon / Ash-feeding (design proposal):** The Ash-beast's corrupted embers consume the target's vitality to sustain the creature's internal fire. On a *successful hero hit*, the existing ranged attack would keep its current HP damage, but heal its Ash-beast source for a small fraction (provisional 10–15%) of the **actual HP damage dealt**, capped at the creature's missing health. Do **not** inflict an extra HP drain tick, permanent debuff, unavoidable damage or introduce new bars. An optional brief ember-trail returning toward the attacker would make the mechanic legible.
+**Cinder Siphon (Ash-beast Cinder Spitters):** The existing cinder projectiles absorb living warmth. They deal precisely their existing HP damage and restore **15% of the HP actually lost** to the individual attacking Ash-beast, including hits on living companions. There is **no 1%-of-max-HP per-hit cap**. Enemy armor/hero armor, immunity, overkill and missing HP naturally limit the transfer; a missed projectile heals nothing. Healing does not transfer to Cindermaw, a captain, a nearby Ash-beast or a summoned owner.
 
-This is a proposed replacement only for the Ash-beast's former 4%-maximum-MP projectile drain, pending approval and quantitative balance tests. Keep the existing Wraith and boss adjustments separate; do not silently enable an Ash-beast lifesteal effect in the cooldown-only migration PR.
+**Vitality Siphon (Crypt Guardian, Drowned Keeper, Dark Lord; Wraiths):** Former MP-draining attacks in these supernatural encounters restore **15% of real HP damage per target hit** to the attacking enemy. All affected area targets contribute, including active companions; a multi-target hit is intentionally stronger than a single-target hit. There is **no 2%-of-boss-max-HP healing cap per cast**, per pulse or per skill. Bosses cannot exceed their normal maximum HP. Existing AoE telegraphs, attack damage, slowdown and persistent zones remain unchanged. The Night Wraith's earlier flat 8%-max-HP heal is replaced in cooldown-only mode rather than stacking with the new siphon; its original behavior remains in legacy MP mode.
+
+**Non-siphoning enemies (Abyss Dragon and Ash Sentinel):** Their old MP-drain effects stay dormant. They do not inherit supernatural life-steal just because their attacks used MP drain historically. A separate, clearly telegraphed healing skill with its own cooldown can be designed for each after balancing; no placeholder heal has been invented. Remaining other enemies without siphon biology should follow this rule.
+
+**Safety contracts:** Siphon heals **only from actual HP damage already dealt**, never from attempted damage or from the attacker's maximum HP. It adds no extra hit. Every participating party member is counted once per successful hit, and periodic hazard damage can feed successive pulses; this is intentionally left uncapped by a percentage of boss maximum HP. Normal maximum health is the only hard healing boundary. Validate high-party-count boss fights for sustained damage/healing balance before merging.
 
 ## Validation requirements
 
