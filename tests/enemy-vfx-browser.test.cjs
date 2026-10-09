@@ -237,8 +237,24 @@ fs.mkdirSync(out, { recursive: true });
                 throw Error('Missing live projectile binding ' + row.id);
               c.updateProjectiles(0.03);
               r.queue(c.effects.splice(0));
-            } else if (row.group === 'basic-attack') a = { ...a, kind: 'melee', basic: true };
-            else if (row.group === 'frenzy') a = { ...a, kind: 'frenzy' };
+            } else if (row.group === 'basic-attack') {
+              a = { ...a, kind: 'melee', basic: true };
+              Object.assign(e, {
+                x: 1435,
+                y: 1700,
+                ranged: false,
+                hybrid: false,
+                basicDue: true,
+                cd: 0,
+                specialCd: 999,
+                summonCd: 999,
+              });
+              c.hero.immune = 0;
+              c.updateEnemies(0.001);
+              if (!c.effects.some((f) => f.skillId === row.id && f.stage === 'impact' && f.contact))
+                throw Error('Missing live basic contact ' + row.id);
+              r.queue(c.effects.splice(0));
+            } else if (row.group === 'frenzy') a = { ...a, kind: 'frenzy' };
             if (row.geometry) a = { ...a, ...row.geometry };
             const identity = {
               id: row.id,
@@ -281,7 +297,7 @@ fs.mkdirSync(out, { recursive: true });
                 stage,
                 duration: 0.65,
               }));
-            r.queue(stages);
+            if (row.group !== 'basic-attack') r.queue(stages);
             r.update(0.12);
             const before = JSON.stringify(c.snapshot()),
               start = performance.now();

@@ -1,8 +1,8 @@
 # Current development state
 
-## Integrated rogue repertoire · v0.8.111 candidate
+## Integrated rogue repertoire · v0.8.111 released
 
-PR #146 is reconciled with main's v0.8.109 targeting/compression and VFX foundation. `ROGUE_PR146_INTEGRATION_AUDIT.md` records actual-effect coverage, dust/ADDS targeting, local respawn restraint, active brood/Crown rally and death/save cleanup. Normal boss summons, base rotations and world geometry remain unchanged. Dedicated Chromium/WebKit rogue checks join the existing PR/main gates; deployment still requires exact published-commit verification. See PR #146 for current CI and merge/deployment state.
+PR #146 merged at `b583afe` and passed main/phone WebKit/deployment CI, exact published-build verification, and PWA upgrade/offline-save checks. It reconciles main's targeting/compression and VFX event bridge. `ROGUE_PR146_INTEGRATION_AUDIT.md` records actual-effect coverage, dust/ADDS targeting, local respawn restraint, active brood/Crown rally and lifecycle cleanup. Normal boss summons, base rotations and world geometry remain unchanged. Dedicated Chromium/WebKit rogue checks remain in PR/main gates. The follow-up quality audit adds lethal-companion/recovery and zone-reset cases; see that audit document and its follow-up PR for final validation.
 
 ## Foundation complete in v0.8.81
 
@@ -173,3 +173,27 @@ The observation-only bridge and restrained procedural art cover 251 live identit
 ## Prepared v0.8.112 — shared enemy audio/VFX identities
 
 Audio now consumes the existing stable stage envelope, with material/action, creature/faction and restrained important-cast motif routing. Thirty original short synthesized SFX recordings join the existing validated manifest and offline inventory; cold/missing playback remains procedural. Live VFX coverage is a build and regression acceptance gate, including future rogue signatures. See `ENEMY_AUDIO_SYNCHRONIZATION.md` and generated `ENEMY_AUDIO_COVERAGE.md`. This observation-only integration preserves combat rules and v4 save/statistics equivalence. Release requires exact-head full CI and Pages verification.
+
+## Responsive HUD and contextual menu pass · v0.8.112
+
+The desktop/phone presentation now keeps a compact HUD instead of the old broad permanent status window and centers smaller scrollable dialogs with a stable Back action. The palette changes to slate/teal and brass, while skill and movement controls keep their established sizes. Basic and Full Barracks share clear Company/Specialists/Operations groupings; the portable Inventory option is no longer duplicated in Full Barracks. Field Barracks placement remains a unique Adventure-menu action because building at the current field position cannot be delegated to an existing Barracks. The production CSS approval fixture is versioned separately from the historical v0.8.83 fixture. See `RESPONSIVE_UI_AUDIT_20261009.md`.
+
+## Approved ergonomic UI refinement · v0.8.114
+
+Phone: thumb-adjacent contextual Interact, stable Recall/Target/Squad grouping, clearer labels and notifications. Desktop: compact unlocked-skill hotbar, contextual Ranger commands and corrected camera anchor. Short interaction dialogs now use natural compact/regular widths and natural height under the same scroll limits. Inventory removes duplicate Recall and disabled support actions; Barracks Operations copy matches its real functions. The canonical supported minimum stays 375x800 CSS portrait/800x375 landscape; 360x780 is only a scaled best-effort fallback and does not govern the design or add device support commitments. See RESPONSIVE_UI_AUDIT_20261009.md. Draft branch only until review and CI.
+
+## Enemy VFX quality audit v0.8.116
+
+The follow-up audit corrects captain/species basic-hit semantics and Ridge Tyrant hammer feedback, observes actual motion/projectile lifetimes for replacement clips, suppresses stale persistent-area art after revival/reentry, preserves effects on failed travel, handles manifest reload races/failures and culls offscreen actor-local stages. The browser catalog now requires real contact for all 28 basic identities. Combat rules, merged rogue mechanics, audio recordings and v4 saves remain unchanged. See [ENEMY_SKILL_VFX_QUALITY_AUDIT.md](ENEMY_SKILL_VFX_QUALITY_AUDIT.md) for matched desktop/phone evidence and verification.
+
+## Final audio/VFX audit · v0.8.117
+
+Automatic TRUE/captain births retain their own authored summon/phase identities while another attack is winding up. Strict routing rejects unknown stages/personality layers; the expanded gate covers all 84 rogue basic identities and 40 signatures. Recorded foreground levels and the warning pair are corrected without changing gameplay. See [ENEMY_AUDIO_FINAL_AUDIT.md](ENEMY_AUDIO_FINAL_AUDIT.md) and its PR for exact candidate CI, published SHA and live desktop/phone verification.
+
+## Keeper and feedback continuation · v0.8.118
+
+The interrupted PR #185 is reconciled with the current audio/VFX release. Captive Keeper, optional live-rule Archive reference, evidence-gated reveal, TRUE escape/recapture, practical Controls, short status, truthful equipment confirmations and milestone notices are completed. Superseded 30-quest prose is excluded; selective narration remains held in draft #184. See QUEST_ARCHIVE_CONTINUATION.md for states and verification.
+
+## Cooldown-only functional candidate · v0.8.119
+
+PR #183 integrates dormant MP, five-rank Cooldown Training and approved HP siphons/independent recovery with v0.8.118 main. Provisional cooldown/heal numbers are preserved. See COOLDOWN_ONLY_COMBAT_MIGRATION.md for preservation and regression evidence. Release status requires the exact-head completed CI/deployment gate; balance measurement follows functional release.

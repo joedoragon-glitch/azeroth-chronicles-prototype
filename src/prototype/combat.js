@@ -11,7 +11,7 @@
         return [this.hero, ...this.activeLivingParty(), ...(z?.escort?.hp > 0 ? [z.escort] : [])];
       }
 
-      // Passive combat observations only: no threat-based targeting or rogue actions in phase one.
+      // Shared tactical observations and authored damage/targeting safeguards.
       tacticalClearBurst(e = null) {
         if (!this._tacticalBurstWindow) return;
         if (e) this._tacticalBurstWindow.delete(e.id);
@@ -173,8 +173,8 @@
       tacticalRegroupCandidates(e) {
         if (!e || !this.zone()?.enemies) return [];
         const radius = R.tacticalFoundation.awarenessRadius;
-        // Awareness crosses packs. Reachability, group compatibility and safe routing
-        // are deliberately deferred until rogue movement is implemented.
+        // Awareness crosses packs; tacticalBeginRogueRegroup separately checks
+        // route length, collision and protected-town safety before movement.
         return this.zone()
           .enemies.filter(
             (ally) =>
@@ -263,7 +263,7 @@
           (unit) => unit.summon && unit.owner === e.id && unit.hp > 0,
         ).length;
         const depleted = living <= config.summonSupportThreshold && (e.summonCd || 0) > 0;
-        // Cunning status requires an explicit authored entry; no entries exist in phase one.
+        // Cunning status requires an explicit authored entry in the live rules.
         const cunningKey = e.captainProfile || e.family;
         const cunning = config.cunningEnemies.includes(cunningKey);
         return depleted && (pressured || cunning);
@@ -368,7 +368,11 @@
           }
         }
         this.event('hurt', { x: u.x, y: u.y, target: u === this.hero ? 'hero' : u.id });
-        if (u === this.hero && u.hp === 0) this.die();
+        if (u.hp === 0) {
+          u.slow = 0;
+          this.tacticalClearScatter(u);
+          if (u === this.hero) this.die();
+        }
         return true;
       }
 

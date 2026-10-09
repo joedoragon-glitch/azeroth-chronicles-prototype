@@ -11,6 +11,7 @@
     recallSquad,
     showMap,
     finaleMenu,
+    status = () => {},
   }) {
     function expeditionSupportActions(n, refresh) {
       return Object.entries(Campaign.rules.expeditionSupportSkills).flatMap(([id, def]) => {
@@ -255,28 +256,88 @@
               action(
                 'Skill ' + s[0] + ' ' + s[1] + ' · Rank ' + getGame().hero.skills[s[0] - 1],
                 () => {},
-                Campaign.rules.resourceMode.manaEnabled
-                  ? s[0] === 1
-                    ? 'Always available · same-target combo: 100% → 110% → 120% + frontal AoE · resets on target switch or 4s gap'
-                    : s[0] === 2
-                      ? getGame().skillTrainingCost(s[0], 0) +
-                        ' crowns · ' +
-                        getGame().boss(s[4]).captive +
-                        ' · ' +
-                        D.regions.find((r) => r.id === getGame().boss(s[4]).region).name +
-                        ' · Rank 1 also teaches companion Holy Cleave and Piercing Volley'
-                      : getGame().skillTrainingCost(s[0], 0) +
-                        ' crowns · ' +
-                        getGame().boss(s[4]).captive +
-                        ' · ' +
-                        D.regions.find((r) => r.id === getGame().boss(s[4]).region).name
-                  : professionSkillDetail(s[0]),
+                (s[0] === 1
+                  ? 'Always available · same-target combo: 100% → 110% → 120% + frontal AoE · resets on target switch or 4s gap'
+                  : s[0] === 2
+                    ? getGame().skillTrainingCost(s[0], 0) +
+                      ' crowns · ' +
+                      getGame().boss(s[4]).captive +
+                      ' · ' +
+                      D.regions.find((r) => r.id === getGame().boss(s[4]).region).name +
+                      ' · Rank 1 also teaches companion Holy Cleave and Piercing Volley'
+                    : getGame().skillTrainingCost(s[0], 0) +
+                      ' crowns · ' +
+                      getGame().boss(s[4]).captive +
+                      ' · ' +
+                      D.regions.find((r) => r.id === getGame().boss(s[4]).region).name) +
+                  (Campaign.rules.resourceMode.manaEnabled
+                    ? ''
+                    : ' · ' + professionSkillDetail(s[0])),
                 true,
               ),
             ),
         ],
         back,
       );
+    }
+    function keeperLedger(back = closeMenu) {
+      if (!getGame().keeperReadLedger()) return;
+      openMenu(
+        'The Keeper’s ledger',
+        'The Keeper’s seal marks a proposal to capture the land’s specialists. A later entry trades another captive for Neri: her craft was needed to save the soaked records.',
+        [action('Close the ledger', back)],
+        back,
+      );
+    }
+    function keeperTopics(back = closeMenu) {
+      const game = getGame();
+      if (!game.s.keeperPact || !game.keeperAvailable()) return;
+      const archive =
+        typeof PrototypeArchive !== 'undefined' ? PrototypeArchive : require('./archive.js');
+      const sections = archive.sections(game, { D, R: Campaign.rules });
+      function shelf(section) {
+        openMenu(
+          section.title,
+          section.intro,
+          section.topics.map(([title, answer]) =>
+            action(title, () =>
+              openMenu(title, answer, [action('Another question', () => shelf(section))], () =>
+                shelf(section),
+              ),
+            ),
+          ),
+          () => keeperTopics(back),
+        );
+      }
+      openMenu(
+        'The Keeper’s shelves',
+        '“Ask what you please. These volumes have survived worse than idle questions.”',
+        sections.map((section) => action(section.title, () => shelf(section), section.intro)),
+        back,
+      );
+    }
+    function keeper(back = closeMenu) {
+      const game = getGame();
+      if (!game.keeperAvailable()) return;
+      if (!game.s.keeperPact) {
+        const ready = game.keeperPactReady();
+        openMenu(
+          'The Drowned Keeper',
+          ready
+            ? '“I have lost enough to the water. Promise me you will keep these shelves standing and let Neri tend the records. Then I will share what I know.”'
+            : '“The pages are drowning. Free Neri, and then we may talk of saving them.”',
+          ready
+            ? [
+                action('Promise to protect the Archive', () => {
+                  if (game.promiseKeeper()) keeper(back);
+                }),
+              ]
+            : [action('Leave him to his books', back)],
+          back,
+        );
+        return;
+      }
+      keeperTopics(back);
     }
     function supplier(n, back = closeMenu) {
       const manaEnabled = Campaign.rules.resourceMode.manaEnabled;
@@ -428,7 +489,14 @@
               ? 'Weapon tier ' + tier + ' · ' + (currentWeapon === tier ? 'OWNED' : 'SURPASSED')
               : 'Weapon tier ' + tier + ' · ' + weapon + ' crowns',
             () => {
-              getGame().gear(n.family, 'weapon');
+              if (getGame().gear(n.family, 'weapon')) {
+                const hero = getGame().hero;
+                status(
+                  hero.legacyEquipped
+                    ? 'Weapon bought · stronger one stays equipped.'
+                    : 'Weapon tier ' + hero.weapon + ' equipped.',
+                );
+              }
               smith(n, back);
             },
             'Current tier ' +
@@ -444,7 +512,8 @@
               ? 'Armor tier ' + tier + ' · ' + (currentArmor === tier ? 'OWNED' : 'SURPASSED')
               : 'Armor tier ' + tier + ' · ' + armor + ' crowns',
             () => {
-              getGame().gear(n.family, 'armor');
+              if (getGame().gear(n.family, 'armor'))
+                status('Armor tier ' + getGame().hero.armorTier + ' equipped.');
               smith(n, back);
             },
             'Current tier ' +
@@ -584,22 +653,34 @@
       const specialists = getGame().barracksSpecialists(),
         returnHere = () => barracksSpecialistMenu(b, back),
         regional = regionalSpecialistBarracksDetail();
+      const availableKeeper = !!getGame().s.keeperPact && getGame().keeperAvailable();
       openMenu(
         'Rescued specialists',
         regional +
           ' Rescued specialists work from your barracks. More advanced specialists replace older redundant services.',
-        specialists.length
-          ? specialists.map((s) =>
-              action(s.name, () => {
-                const n = { ...s };
-                s.kind === 'teacher'
-                  ? teacher(n, returnHere)
-                  : s.kind === 'smith'
-                    ? smith(n, returnHere)
-                    : supplier(n, returnHere);
-              }),
-            )
-          : [action('No specialists rescued yet', () => {}, regional, true)],
+        [
+          ...(specialists.length
+            ? specialists.map((s) =>
+                action(s.name, () => {
+                  const n = { ...s };
+                  s.kind === 'teacher'
+                    ? teacher(n, returnHere)
+                    : s.kind === 'smith'
+                      ? smith(n, returnHere)
+                      : supplier(n, returnHere);
+                }),
+              )
+            : [action('No specialists rescued yet', () => {}, regional, true)]),
+          ...(availableKeeper
+            ? [
+                action(
+                  'Drowned Keeper · The Archive',
+                  () => keeper(returnHere),
+                  'Ask for his learning',
+                ),
+              ]
+            : []),
+        ],
         back,
       );
     }
@@ -797,9 +878,8 @@
         rank = getGame().s.expeditionRank || 1;
       openMenu(
         'Operations',
-        'Regional objectives, routes and expedition labor.',
+        'Local objectives and expedition labor.',
         [
-          action('Regional map and routes', () => showMap(returnHere)),
           action('Local objectives', () => quests(true, returnHere)),
           rank >= 2
             ? action(
@@ -813,17 +893,6 @@
                 'Rescue Mira and train Expedition to Rank 2',
                 true,
               ),
-          ...(getGame().s.phase === 'awakening'
-            ? [
-                action(
-                  'Awakening · Final objective',
-                  () => finaleMenu(returnHere),
-                  'TRUE dungeon guardians ' +
-                    Campaign.dungeonIds.filter((id) => getGame().s.true[id]).length +
-                    '/5',
-                ),
-              ]
-            : []),
         ],
         back,
       );
@@ -946,64 +1015,25 @@
         specialists = getGame().barracksSpecialists(),
         exp = expeditionBarracksAction(b, back),
         tonic = barracksTonicAction(b, back),
-        rank2 = rank >= 2,
         baseActions = [
           exp,
           ...(tonic ? [tonic] : []),
           action(
+            'Company',
+            () => barracksCompanyMenu(b, returnHere),
+            'Recruit · active group · recovery',
+          ),
+          action(
             'Rescued specialists',
             () => barracksSpecialistMenu(b, returnHere),
-            (specialists.length
-              ? 'Use ' +
-                specialists.length +
-                ' rescued specialist' +
-                (specialists.length === 1 ? '' : 's') +
-                ' here · '
-              : '') + regionalSpecialistBarracksDetail(),
+            (specialists.length ? specialists.length + ' available here · ' : '') +
+              regionalSpecialistBarracksDetail(),
           ),
           action(
-            'Recovery',
-            () => barracksRecoveryMenu(b, returnHere),
-            'Treat wounded · recover fallen',
+            'Operations',
+            () => barracksOperationsMenu(b, returnHere),
+            'Local objectives · resources and labor',
           ),
-          action(
-            'Manage group',
-            () => barracksGroupMenu(b, returnHere),
-            'With you ' +
-              getGame().activeParty().length +
-              '/' +
-              getGame().barracksFieldCap(b) +
-              ' · employed ' +
-              getGame().rosterCount(),
-          ),
-          rank2
-            ? action(
-                'Recruitment',
-                () => barracksRecruitmentMenu(b, returnHere),
-                'Soldier ' +
-                  getGame().barracksRecruitPrice('soldier') +
-                  ' crowns · Ranger ' +
-                  getGame().barracksRecruitPrice('archer') +
-                  ' crowns · extra hires rest in reserve',
-              )
-            : action(
-                'Recruitment — Expedition 2',
-                () => {},
-                'Rescue Mira and train Expedition to Rank 2',
-                true,
-              ),
-          rank2
-            ? action(
-                'Resources & labor',
-                () => barracksLaborMenu(b, returnHere),
-                'Assign idle active troops to regional deposits',
-              )
-            : action(
-                'Resources — Expedition 2',
-                () => {},
-                'Rescue Mira and train Expedition to Rank 2',
-                true,
-              ),
         ];
       if (!b.full) {
         const upgrading = getGame()
@@ -1076,12 +1106,7 @@
           action(
             'Operations',
             () => barracksOperationsMenu(b, returnHere),
-            'Map · objectives · resources',
-          ),
-          action(
-            'Inventory & support',
-            () => inventory(returnHere),
-            'Ranger support and equipment',
+            'Local objectives · resources',
           ),
         ],
         back,
@@ -1101,45 +1126,27 @@
           getGame().hero.weapon +
           ' · Armor tier ' +
           getGame().hero.armorTier +
-          '\nCrowns are the official currency of the Dark Lord’s regime.',
+          '\nRanger support: ' +
+          (rangers.length
+            ? rangers.length +
+              ' active · Heal ' +
+              heal +
+              ' HP (H)' +
+              (Campaign.rules.resourceMode.manaEnabled
+                ? ' · Mana Recovery ' + mana + ' MP (M)'
+                : '') +
+              '. Automatic support remains active.'
+            : 'Recruit a Ranger to unlock field Heal' +
+              (Campaign.rules.resourceMode.manaEnabled ? ' and Mana Recovery.' : '.')) +
+          '\nChoose equipment below when available.',
         [
-          action('Recall squad', () => {
-            recallSquad();
-            closeMenu();
-          }),
-          action(
-            'Ranger Heal · ' + heal + ' HP',
-            () => {},
-            rangers.length
-              ? rangers.length +
-                  ' active Ranger' +
-                  (rangers.length === 1 ? '' : 's') +
-                  ' · combat: auto at ≤50% HP · out of combat: tops off injured allies · hero priority · command with H'
-              : 'No active Ranger · recruit or activate one for field healing',
-            true,
-          ),
-          ...(Campaign.rules.resourceMode.manaEnabled
-            ? [
-                action(
-                  'Ranger Mana Recovery · ' + mana + ' MP',
-                  () => {},
-                  rangers.length
-                    ? rangers.length +
-                        ' active Ranger' +
-                        (rangers.length === 1 ? '' : 's') +
-                        ' · automatic at hero ≤35% MP · command with M'
-                    : 'No active Ranger · recruit or activate one for field mana recovery',
-                  true,
-                ),
-              ]
-            : []),
           ...Object.keys(Campaign.legacyWeapons)
             .filter((name) => getGame().s.legacyInventory?.includes(name))
             .map((name) =>
               action(
                 'Equip ' + name,
                 () => {
-                  getGame().equipLegacy(name);
+                  if (getGame().equipLegacy(name)) status(name + ' equipped.');
                   inventory(back);
                 },
                 'Saved weapon · +' + Campaign.legacyWeapons[name] + ' power',
@@ -1149,6 +1156,7 @@
             ? [
                 action('Equip current weapon tier ' + getGame().hero.weapon, () => {
                   getGame().hero.legacyEquipped = false;
+                  status('Weapon tier ' + getGame().hero.weapon + ' equipped.');
                   inventory(back);
                 }),
               ]
@@ -1404,6 +1412,8 @@
       skillBook,
       supplier,
       smith,
+      keeper,
+      keeperLedger,
       regionalSpecialistObjective,
       barracksMenu,
       inventory,

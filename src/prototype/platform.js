@@ -86,10 +86,7 @@
               y: height * 0.42,
             }
           : {
-              x: Math.max(
-                width * 0.35,
-                (width - (width <= 1000 ? 220 : Math.min(260, width * 0.27)) - 24) / 2,
-              ),
+              x: Math.max(width * 0.35, (width - (width <= 1000 ? 204 : 214) - 20) / 2),
               y: (height - 94) / 2,
             };
       },

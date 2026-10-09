@@ -209,9 +209,8 @@
       this.messages.push(text);
       if (this.messages.length > 7) this.messages.shift();
     }
-    notice(text, duration = 5.5) {
-      this.notices.push({ id: ++this.noticeId, text, duration });
-      if (this.notices.length > 32) this.notices.shift();
+    notice(text, duration = 5.5, detail = '') {
+      this.notices.push({ id: ++this.noticeId, text, duration, ...(detail ? { detail } : {}) });
     }
     boss(id) {
       return D.bosses.find((b) => b.id === id);
@@ -294,8 +293,41 @@
         n.kind === 'bundle' && !!this.s.discovered[this.definition().id + ':bundle-' + n.index]
       );
     }
+    keeperAvailable() {
+      if (!this.s.normal.archive) return false;
+      if (this.s.pending.archive?.active) return false;
+      const room = this.s.zones.archive;
+      return !room?.enemies.some((e) => e.type === 'boss' && e.family === 'archive' && e.hp > 0);
+    }
+    keeperPactReady() {
+      return this.keeperAvailable() && !!this.s.rescued.archive;
+    }
+    promiseKeeper() {
+      if (!this.keeperPactReady() || this.s.keeperPact) return false;
+      this.s.keeperPact = true;
+      this.event('archiveKnowledge', { fact: 'keeperPact' });
+      this.say('The Keeper takes your word. His shelves are yours to consult.');
+      return true;
+    }
+    keeperReadLedger() {
+      if (this.s.zone !== 'archive') return false;
+      if (!this.s.keeperEvidence) {
+        this.s.keeperEvidence = true;
+        this.notice(
+          'The orders bear the Keeper’s seal. The plan to seize the specialists began among these shelves.',
+          7,
+        );
+        this.event('archiveKnowledge', { fact: 'keeperEvidence' });
+      }
+      return true;
+    }
     visibleNPCs() {
-      return this.zone().npcs.filter((n) => !n.internalSite && !this.bundleCollected(n));
+      return this.zone().npcs.filter(
+        (n) =>
+          !n.internalSite &&
+          !this.bundleCollected(n) &&
+          (n.kind !== 'keeper' || this.keeperAvailable()),
+      );
     }
     siteDescription(n) {
       const z = this.zone(),
@@ -1226,7 +1258,6 @@
         this.hero.hp += this.hero.tonicBonus;
         this.syncCompanionLevelStats();
         this.say('Preparation tonic applied · maximum health +10%.');
-        this.notice('PREPARATION TONIC · ACTIVE', 4.5);
         return true;
       }
       this.say(
@@ -1450,6 +1481,7 @@
           e.motion = null;
           e.rangedAim = null;
           e.frozen = false;
+          delete e.rogueDustCoverUntil;
           if (e.hp > 0) {
             Object.assign(e, e.home);
             e.hp = e.baseHp;
@@ -1907,7 +1939,7 @@
         });
       if (e.type === 'boss') {
         const b = this.boss(e.family);
-        this.victory(e.family, e.form);
+        const firstVictory = this.victory(e.family, e.form);
         this.s.statistics.bossSeconds[e.family + ':' + e.form] = Math.round(
           this.s.time - (e.fightStart || this.s.time),
         );
@@ -1927,6 +1959,7 @@
           if (a.summon && a.owner === e.id) a.hp = 0;
         });
         this.say(e.name + ' defeated.');
+        if (firstVictory && e.form === 'normal') this.notice('BOSS VANQUISHED · ' + b.name, 5.5);
         this.event('bossDefeat', { family: e.family, form: e.form });
       }
       if (e.captain || e.roomCaptain) this.s.streak = { key: null, count: 0 };
@@ -2133,6 +2166,7 @@
         this.s.paid['clear:' + id] = true;
         this.grant(this.dungeonClearReward(id), 0);
         this.say('Dungeon first clear reward earned.');
+        this.notice(this.boss(id).place + ' · halls secured', 5.5);
       }
     }
     checkEnding() {
@@ -2785,6 +2819,14 @@
     tacticalScatterState(unit) {
       return this._tacticalScatter?.get(unit === this.hero ? 'hero' : unit?.id) || null;
     }
+    tacticalClearScatter(unit) {
+      const key = unit === this.hero ? 'hero' : unit?.id;
+      this._tacticalScatter?.delete(key);
+      for (const [actor, allowance] of this._tacticalScatterLeash || []) {
+        allowance.victims.delete(key);
+        if (!allowance.victims.size) this._tacticalScatterLeash.delete(actor);
+      }
+    }
     tacticalBeginScatter(actor, unit, push) {
       if (!unit || unit.hp <= 0 || !Number.isFinite(push) || push <= 0) return false;
       const key = unit === this.hero ? 'hero' : unit.id,
@@ -3371,23 +3413,26 @@
           this.hero !== startingHero ||
           this.zoneId !== startingZone ||
           this.s.statistics.deaths !== startingDeaths ||
-          target.hp <= 0 ||
           this.s.challenge.pending ||
           this.s.challenge.gameOver
         )
           return;
-        if (move.style === 'shove') {
-          const d = Math.max(1, dist(e, target)),
-            point = {
-              x: target.x + ((target.x - e.x) / d) * 55,
-              y: target.y + ((target.y - e.y) / d) * 55,
-            };
-          this.move(target, point, 220, 0.25);
-        } else {
-          target.slow = Math.max(
-            target.slow || 0,
-            move.slowSeconds || (move.style === 'snare' ? 1.65 : 0.95),
-          );
+        // A successful lethal companion hit still grants the caster's authored
+        // dust/withdrawal, but cannot slow or shove the fallen victim.
+        if (target.hp > 0) {
+          if (move.style === 'shove') {
+            const d = Math.max(1, dist(e, target)),
+              point = {
+                x: target.x + ((target.x - e.x) / d) * 55,
+                y: target.y + ((target.y - e.y) / d) * 55,
+              };
+            this.move(target, point, 220, 0.25);
+          } else {
+            target.slow = Math.max(
+              target.slow || 0,
+              move.slowSeconds || (move.style === 'snare' ? 1.65 : 0.95),
+            );
+          }
         }
         if (move.blinds > 0) {
           // Dust blinds the victim narratively: the goblin briefly cannot be
@@ -3427,6 +3472,9 @@
           this.s.challenge.gameOver
         )
           return;
+        // A fallen companion does not end the hero's encounter, but cannot
+        // receive a new slow or displacement. Other marked survivors still do.
+        if (unit.hp <= 0) continue;
         if (move.effect === 'scatter' && e.family === 'thorn' && e.type === 'boss') {
           this.tacticalBeginScatter(e, unit, move.push || 70);
         } else if (move.effect === 'scatter' || move.effect === 'sweep') {

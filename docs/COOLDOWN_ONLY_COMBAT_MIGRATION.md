@@ -3,7 +3,7 @@
 ## Decision and guardrails
 The active Azeroth Chronicles multi-file PWA uses **cooldowns, not mana**, for Paladin, Mage and Ranger skills. MP is dormant instead of deleted: original class MP values, growth formulas, MP balance rules, enemy drain definitions, Ranger mana restoration, save fields and the previous HUD/help paths remain in source or version history. The shared switch is `PrototypeRules.resourceMode.manaEnabled = false`. Turning it back to `true` restores the old mana-based behavior, subject to regression tests. Never silently discard MP on save export/restore.
 
-No mana pool/regen/item tuning is authorized. Preserve current damage, geometry, positioning, warning timing, NPCs, boss encounters and quests. Approved Cinder Siphon and supernatural vitality siphon use 15% actual HP damage with no max-HP-based cap; other boss heal skills remain undecided.
+No mana pool/regen/item tuning is authorized. Preserve current damage, geometry, positioning, warning timing, NPCs, boss encounters and quests. Approved Cinder Siphon and supernatural vitality siphon use 15% actual HP damage with no max-HP-based cap; Dragon and Sentinel use the approved independent recovery skills below.
 
 ## Active combat contract
 
@@ -17,7 +17,7 @@ No mana pool/regen/item tuning is authorized. Preserve current damage, geometry,
 
 ## Enemy skills with MP-specific effects
 
-The following entries still deal their regular authored HP damage. MP drain is dormant; approved supernatural attacks now feed actual-HP lifesteal, and non-siphoning bosses await cooldown-based recovery skills. One attack can have several simultaneous effects (damage, slowing, persistent hazard, summons); do not strip those accidentally. Attack positions are zero-based in the source; named attacks below are from `src/prototype/data.js`.
+The following entries still deal their regular authored HP damage. MP drain is dormant; approved supernatural attacks now feed actual-HP lifesteal, and non-siphoning bosses use independent cooldown-based recovery skills. One attack can have several simultaneous effects (damage, slowing, persistent hazard, summons); do not strip those accidentally. Attack positions are zero-based in the source; named attacks below are from `src/prototype/data.js`.
 
 | Enemy / encounter | Authored attack (source rules index) | Former MP drain | Remaining attack behavior | Replacement decision |
 | --- | --- | --- | --- | --- |
@@ -69,3 +69,10 @@ The gameplay's short-lived action-feedback channel (`#status`) must follow `Prot
 ## Balance audit reserved for next conversation
 
 Functional release checks must confirm that skill cooldowns, the repurposed five-rank Cooldown Training talent, charge hold/cancel inputs, companion healing, save/import compatibility and enemy self-healing execute without crashes, leaks, unexpected resets or UI errors. The deeper **cooldown balance** discussion is deliberately separate: evaluate the provisional 3/6/20-second charged cooldowns, 4%-per-rank training (20% maximum), 24/28-second boss self-healing cooldowns and 15% actual-damage siphons across all three classes, party sizes, bosses and TRUE encounters before committing to any retune. Existing boss duration baselines are confounded by companion doctrine and should not be treated as current fight length evidence. No automatic balance changes in this release.
+
+
+## Functional reintegration · 9 October 2026
+
+PR #183 is reconciled with main `01238bddc8dde4dafe99ba50148d944141373f49` (v0.8.118). Candidate v0.8.119 retains the latest responsive layouts, compact Controls, amber-only level notices, tonic storage/use, Keeper Archive and world/save migrations, enemy audio/VFX, and existing art assets. Cooldown and healing numbers are unchanged.
+
+The Cinder fixture normalizes its inserted enemy before measuring HP: strict 15%-of-actual-damage accounting passes. Skills retain teacher/region/cost guidance alongside cooldown details; Inventory has no active mana wording. Recovery warnings bypass damaging-circle VFX identity routing and retain the approved green non-damaging warning and healing feedback. Added regression coverage executes historical MP mode, Wraith single siphon, periodic hazard pulses, immunity, companion overkill, and recovery presentation. Full release CI and exact published-build verification remain required before claiming release.

@@ -2193,7 +2193,7 @@
       "kind": "effect",
       "src": "./assets/audio/effects/sfx-critical-warning.wav",
       "duration": 0.3,
-      "sha256": "5bda78c2ca4d8f483a616f0a149e05c4fb5c88fa466d007c1817e94e4a0ca255",
+      "sha256": "24d1fc99e57da1e7588dfb4d7b6212dc62a0b324491f52dc2cda71a76fd79389",
       "credits": {
         "author": "Azeroth Chronicles original synthesis",
         "license": "CC0-1.0"
@@ -2733,7 +2733,7 @@
           "when": {
             "material": "steel"
           },
-          "gain": 0.36,
+          "gain": 0.18,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2742,7 +2742,7 @@
           "when": {
             "material": "claw"
           },
-          "gain": 0.36,
+          "gain": 0.18,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2751,7 +2751,7 @@
           "when": {
             "material": "bone"
           },
-          "gain": 0.36,
+          "gain": 0.18,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2760,7 +2760,7 @@
           "when": {
             "material": "stone"
           },
-          "gain": 0.36,
+          "gain": 0.18,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2769,7 +2769,7 @@
           "when": {
             "material": "wet"
           },
-          "gain": 0.36,
+          "gain": 0.18,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2778,7 +2778,7 @@
           "when": {
             "material": "arrow"
           },
-          "gain": 0.36,
+          "gain": 0.18,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2787,7 +2787,7 @@
           "when": {
             "material": "spectral"
           },
-          "gain": 0.36,
+          "gain": 0.3,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2796,7 +2796,7 @@
           "when": {
             "material": "ash"
           },
-          "gain": 0.36,
+          "gain": 0.18,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2805,7 +2805,7 @@
           "when": {
             "material": "holy"
           },
-          "gain": 0.36,
+          "gain": 0.3,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2814,7 +2814,7 @@
           "when": {
             "material": "arcane"
           },
-          "gain": 0.36,
+          "gain": 0.3,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2823,7 +2823,7 @@
           "when": {
             "material": "root"
           },
-          "gain": 0.36,
+          "gain": 0.18,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2832,7 +2832,7 @@
           "when": {
             "material": "dust"
           },
-          "gain": 0.36,
+          "gain": 0.18,
           "minGap": 0.035,
           "bus": "effects"
         }
@@ -2843,7 +2843,7 @@
           "when": {
             "material": "steel"
           },
-          "gain": 0.4,
+          "gain": 0.22,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2852,7 +2852,7 @@
           "when": {
             "material": "claw"
           },
-          "gain": 0.4,
+          "gain": 0.22,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2861,7 +2861,7 @@
           "when": {
             "material": "bone"
           },
-          "gain": 0.4,
+          "gain": 0.22,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2870,7 +2870,7 @@
           "when": {
             "material": "stone"
           },
-          "gain": 0.4,
+          "gain": 0.22,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2879,7 +2879,7 @@
           "when": {
             "material": "wet"
           },
-          "gain": 0.4,
+          "gain": 0.22,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2888,7 +2888,7 @@
           "when": {
             "material": "arrow"
           },
-          "gain": 0.4,
+          "gain": 0.22,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2897,7 +2897,7 @@
           "when": {
             "material": "spectral"
           },
-          "gain": 0.4,
+          "gain": 0.36,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2906,7 +2906,7 @@
           "when": {
             "material": "ash"
           },
-          "gain": 0.4,
+          "gain": 0.22,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2915,7 +2915,7 @@
           "when": {
             "material": "holy"
           },
-          "gain": 0.4,
+          "gain": 0.36,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2924,7 +2924,7 @@
           "when": {
             "material": "arcane"
           },
-          "gain": 0.4,
+          "gain": 0.36,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2933,7 +2933,7 @@
           "when": {
             "material": "root"
           },
-          "gain": 0.4,
+          "gain": 0.22,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -2942,7 +2942,7 @@
           "when": {
             "material": "dust"
           },
-          "gain": 0.4,
+          "gain": 0.22,
           "minGap": 0.035,
           "bus": "effects"
         }
