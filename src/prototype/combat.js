@@ -119,6 +119,10 @@
               !ally.neutral &&
               !ally.returning &&
               !ally.summon &&
+              ally.type !== 'boss' &&
+              !ally.fieldCaptain &&
+              !ally.captain &&
+              !ally.roomCaptain &&
               dist(ally, e) <= radius,
           )
           .sort((a, b) => dist(a, e) - dist(b, e) || a.id.localeCompare(b.id));
