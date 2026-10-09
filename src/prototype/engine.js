@@ -1828,8 +1828,9 @@
         return false;
       const old = this.hero,
         fresh = new Campaign(this.s.mode, heroClass, this.random, { succession: true }).hero;
-      for (const key of ['gold', 'weapon', 'armorTier', 'reforges', 'potions', 'tonicStock'])
+      for (const key of ['gold', 'weapon', 'armorTier', 'reforges', 'potions'])
         fresh[key] = clone(old[key]);
+      fresh.tonicStock = this.preparationTonicStock();
       for (const key of [
         'legacyWeaponPower',
         'legacyWeaponName',
