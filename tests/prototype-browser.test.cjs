@@ -232,6 +232,9 @@ await check('Charged skills use hold-and-release on keyboard and touch '+tag,asy
 });
 await check('Paladin, Mage and Ranger Skill 1 charge readiness is identical and predictable '+tag,async()=>{
  const saved=await page.evaluate(()=>Prototype.game.snapshot());
+ // Keep the damage fixture in range while the real movement key is held.
+ // Slow native-input settlement must not turn a ready hit into NO TARGET.
+ await page.evaluate(()=>{const c=Prototype.game;window.__chargeReadinessAI=c.updateEnemies;c.updateEnemies=function(...args){const result=__chargeReadinessAI.apply(this,args),target=this.zone().enemies[0];if(target&&target.hp>0)Object.assign(target,{x:this.hero.x+80,y:this.hero.y});return result;};});
  const expectedDamage={paladin:90,mage:102,ranger:96};
  for(const cls of ['paladin','mage','ranger']){
   await page.evaluate(cls=>{const c=Prototype.game;c.enter('vale');c.zone().props=[];c.s.party=[];c.s.mercyTime=0;const base=Campaign.classes[cls];Object.assign(c.hero,{class:cls,x:600,y:900,mp:0,maxMp:100,power:base.power,weapon:0,legacyWeaponPower:0,legacyEquipped:false,talents:[0,0,0,0],order:null});c.hero.skills[0]=1;c.hero.cd[0]=0;const target=c.makeEnemy({species:'goblin',name:cls+' charge target',level:1,hp:10000,damage:0,gold:0,xp:0},{x:680,y:900});c.zone().enemies=[target];},cls);
@@ -255,7 +258,7 @@ await check('Paladin, Mage and Ranger Skill 1 charge readiness is identical and 
   assert(state.cd>0&&state.cd<=.85,cls+' charged Skill 1 has no hidden cooldown beyond the ordinary 0.85s cooldown');
   assert(state.mp>79&&state.mp<82.5,cls+' charged Skill 1 spends the documented 20% max MP despite frame-level regeneration');
  }
- await page.evaluate(state=>{Prototype.game.s=state;},saved);
+ await page.evaluate(state=>{Prototype.game.updateEnemies=__chargeReadinessAI;delete window.__chargeReadinessAI;Prototype.game.s=state;},saved);
 });
 await check('Skill 2 and party-heal charge states are target-stable and honest '+tag,async()=>{
  const saved=await page.evaluate(()=>Prototype.game.snapshot());
