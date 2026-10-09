@@ -2649,7 +2649,8 @@
         this._tacticalRegroupUsed?.has(e.id) ||
         !this.tacticalRogueEligibility(e, activeTargetCount) ||
         !this.tacticalRegroupCandidates(e).includes(ally)
-      ) return false;
+      )
+        return false;
       const destination = { x: ally.x, y: ally.y };
       if (!Number.isFinite(destination.x) || !Number.isFinite(destination.y)) return false;
       const path = this.route(e, destination);
