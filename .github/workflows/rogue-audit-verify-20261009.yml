@@ -1,0 +1,26 @@
+name: Verify rogue mechanics and formatting
+on:
+  push:
+    branches: [rogue-audit-verify-20261009]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install tools
+        run: npm ci --ignore-scripts
+      - name: Rogue regression suite on unchanged source
+        run: node tests/audit-regressions.test.cjs
+      - name: Report exact formatter changes and rules evidence hash
+        if: always()
+        run: |
+          npx prettier --write src/prototype/engine.js src/prototype/combat.js src/prototype/hero-combat.js src/prototype/party.js src/prototype/app.js src/prototype/rules.js
+          echo '===ROGUE_VERIFY_DIFF_BEGIN==='
+          git diff --no-ext-diff --unified=3 -- src/prototype/engine.js src/prototype/combat.js src/prototype/hero-combat.js src/prototype/party.js src/prototype/app.js src/prototype/rules.js
+          echo '===ROGUE_VERIFY_DIFF_END==='
+          sha256sum src/prototype/rules.js
