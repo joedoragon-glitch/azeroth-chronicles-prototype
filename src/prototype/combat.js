@@ -417,7 +417,7 @@
                 p.source,
                 p.comboClass || this.hero.class,
               );
-            if (p.slow) e.slow = Math.max(e.slow || 0, p.slow);
+            if (landed && p.slow) e.slow = Math.max(e.slow || 0, p.slow);
             this.event('projectileImpact', {
               actor: p.source === 'hero' ? 'hero' : 'companion',
               class: p.source === 'hero' ? this.hero.class : undefined,
