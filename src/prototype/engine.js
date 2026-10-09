@@ -2884,7 +2884,10 @@
           this.tacticalRogueEligibility(e, Math.max(pressure, 2)) &&
           (this._tacticalRogueNext?.get(e.id) || 0) <= this.s.time;
         if (
-          this.tacticalRogueEligibility(e, pressure) &&
+          this.tacticalRogueEligibility(
+            e,
+            pressureRemains ? Math.max(pressure, R.tacticalFoundation.simultaneousPressureSources) : pressure,
+          ) &&
           (freshWound || pressureRemains)
         ) {
           if (freshWound) {
