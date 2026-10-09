@@ -402,6 +402,42 @@
       "anchorX": 0.5,
       "anchorY": 0.75,
       "labelHeight": 64
+    },
+    "prop:mint-workbench:highlands": {
+      "src": "./assets/sprites/prop-mint-workbench-highlands-f7a19742e227b760b732badfda2be3d512c0e49dc7511c7143b3bafeaeb13013.png",
+      "width": 192,
+      "height": 192,
+      "hash": "f7a19742e227b760b732badfda2be3d512c0e49dc7511c7143b3bafeaeb13013",
+      "revision": "a3db347d4eb40224dba8ed89eb66bed04952df81139d2f9e06cb4b9d91a51da5",
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 64
+    },
+    "prop:ore-sorting-bay:highlands": {
+      "src": "./assets/sprites/prop-ore-sorting-bay-highlands-68526686bb7fc6528740e51dfe60c72a86d6200f4b71eadfb36a0eab6dc61b9f.png",
+      "width": 192,
+      "height": 192,
+      "hash": "68526686bb7fc6528740e51dfe60c72a86d6200f4b71eadfb36a0eab6dc61b9f",
+      "revision": "37e5465902327a792eaeca64986a738e870d1bead5b5e2a4b95a87c5a8a31a56",
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 64
+    },
+    "prop:caravan-loading-bay:highlands": {
+      "src": "./assets/sprites/prop-caravan-loading-bay-highlands-1302399f4bf539674742f3e074b4d8c94df75bd2865c2029450b5816c85b92d6.png",
+      "width": 192,
+      "height": 192,
+      "hash": "1302399f4bf539674742f3e074b4d8c94df75bd2865c2029450b5816c85b92d6",
+      "revision": "a30df3dcd7924388160bf5934c8a66e5bf14a296a7ddc4db76fd792a8608b108",
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 64
     }
   },
   "formatVersion": 3

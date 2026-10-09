@@ -1,0 +1,92 @@
+{
+  "version": 2,
+  "key": "prop:mint-workbench:highlands",
+  "catalogId": "239",
+  "canonHash": "9a1665a5bc4defd637a741f9e56fa81a53d8596c74de396e2c151e34404f31e8",
+  "canonSnapshotHash": "f81c0c5a6a0b78a9c3ded5a70e2d1878173841d5edd3e9af4a4d6e5b1ee5e91f",
+  "catalogHash": "c9efa7d447aad21a70136569d7c26ad56d89f78d614c273048a37ddc91432de9",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1536,
+    "height": 1536,
+    "bytes": 432500,
+    "decodedBytes": 9437184,
+    "hash": "3a4c4b78af62a5ce4700ff865c0fbf0b7af067cbc828a6a2e9269f8f784202f8",
+    "pixelHash": "125184bc9d3442482d43c0a047a56127b214cf8098911acd3b51157d971a3dff",
+    "bounds": {
+      "x1": 322,
+      "y1": 285,
+      "x2": 1196,
+      "y2": 1258
+    },
+    "padding": 277,
+    "transparentPixels": 2204430,
+    "visiblePixels": 154866,
+    "lowAlphaPixels": 6173,
+    "materialBounds": {
+      "x1": 502,
+      "y1": 643,
+      "x2": 1043,
+      "y2": 1077
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 8405,
+    "decodedBytes": 147456,
+    "hash": "b734ef8df6cdd861bdeb0e4ec37b19ee4090b5fc0d37ee575e8cff9fd8534e8e",
+    "pixelHash": "29ce11ba407ea23f80795af5232f32c78572e986c2cf41126d578a0823f25307",
+    "bounds": {
+      "x1": 62,
+      "y1": 63,
+      "x2": 149,
+      "y2": 146
+    },
+    "padding": 42,
+    "transparentPixels": 34428,
+    "visiblePixels": 2436,
+    "lowAlphaPixels": 146,
+    "materialBounds": {
+      "x1": 63,
+      "y1": 83,
+      "x2": 129,
+      "y2": 137
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1536,
+      1536
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": 0,
+      "y": 3,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "pending",
+    "reference": null
+  }
+}

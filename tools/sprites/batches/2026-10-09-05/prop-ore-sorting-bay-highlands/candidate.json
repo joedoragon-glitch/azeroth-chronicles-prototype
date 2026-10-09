@@ -1,0 +1,94 @@
+{
+  "version": 2,
+  "key": "prop:ore-sorting-bay:highlands",
+  "catalogId": "238",
+  "canonHash": "c28036d00341b79e4fa515db3a941e3af469e24190dd6537cd3df09de506d531",
+  "canonSnapshotHash": "f81c0c5a6a0b78a9c3ded5a70e2d1878173841d5edd3e9af4a4d6e5b1ee5e91f",
+  "catalogHash": "68cc44b557e713da58ba993496202dee21cef6eae311c29c17b9101b8a3eb54d",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1664,
+    "height": 1664,
+    "bytes": 451571,
+    "decodedBytes": 11075584,
+    "hash": "fcffa102d82362aaac6ba813dd7440b41735e8cec8580f6cc394195576e9ab4f",
+    "pixelHash": "35513d223838ce0cd5713006f85a3e36a4015319e614c3f07659d37ec9417d59",
+    "bounds": {
+      "x1": 320,
+      "y1": 378,
+      "x2": 1314,
+      "y2": 1276
+    },
+    "padding": 320,
+    "transparentPixels": 2616701,
+    "visiblePixels": 152195,
+    "lowAlphaPixels": 13820,
+    "materialBounds": {
+      "x1": 537,
+      "y1": 682,
+      "x2": 1127,
+      "y2": 1132
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 7350,
+    "decodedBytes": 147456,
+    "hash": "68526686bb7fc6528740e51dfe60c72a86d6200f4b71eadfb36a0eab6dc61b9f",
+    "pixelHash": "d67b13ae50ff72843a98cc935605a97ed146dbd2569eb3a10a92a5f5c263918a",
+    "bounds": {
+      "x1": 61,
+      "y1": 75,
+      "x2": 151,
+      "y2": 161
+    },
+    "padding": 30,
+    "transparentPixels": 34839,
+    "visiblePixels": 2025,
+    "lowAlphaPixels": 184,
+    "materialBounds": {
+      "x1": 62,
+      "y1": 109,
+      "x2": 129,
+      "y2": 160
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1664,
+      1664
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": 0,
+      "y": 30,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+    "reviewer": "Codex engineer under current explicit implementation/publication authorization",
+    "appearance": "Faithful static body reviewed at native size in eight desktop/phone day/night contexts. Not a claim of separate Joel image acceptance."
+  }
+}

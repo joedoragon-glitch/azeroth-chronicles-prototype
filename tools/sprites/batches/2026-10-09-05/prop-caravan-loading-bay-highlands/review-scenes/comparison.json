@@ -1,0 +1,148 @@
+{
+  "key": "prop:caravan-loading-bay:highlands",
+  "entity": {
+    "renderKind": "prop",
+    "structure": "caravan-loading-bay",
+    "decorative": true,
+    "id": "sprite-reference-240"
+  },
+  "comparisons": [
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "day",
+      "anchor": {
+        "x": 498,
+        "y": 277.4
+      },
+      "crop": {
+        "left": 434,
+        "top": 189,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "d856fcdaf606cac71fba5082f95b40c076480597ac7e55d640cc70400dbbc6ac",
+      "candidateHash": "40ffbadda6b4ddfb73e215d1f8dcaa30b79dcc5389540e017f566ca124b4f1be"
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "night",
+      "anchor": {
+        "x": 498,
+        "y": 277.4
+      },
+      "crop": {
+        "left": 434,
+        "top": 189,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "65b9ff08c46b7ee2cd6545f1b56bd376db8bda49564a983ac300c0bcff527779",
+      "candidateHash": "191f222e67bd3f0d0eecf684429be85a2941bb7c111ff36c6288537bc8d6fd05"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "day",
+      "anchor": {
+        "x": 187.5,
+        "y": 265.43999999999994
+      },
+      "crop": {
+        "left": 124,
+        "top": 177,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "f20676ba8006e1ebce00d322b3cdf0d482b0249ebd610eb7606e59274d5c5538",
+      "candidateHash": "e593bf30b71120615e9668607508af5b783c71a1bef2545753b253bcb546a3da"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "night",
+      "anchor": {
+        "x": 187.5,
+        "y": 265.43999999999994
+      },
+      "crop": {
+        "left": 124,
+        "top": 177,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "c13fb9f8016b7a1d62cf889690e735d0b86f3e45a5ef7543102ece05fe947ada",
+      "candidateHash": "565704afb32ff450c732b66b313a69c4b4c86631414a500a7ec0f3f7262a264e"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "day",
+      "anchor": {
+        "x": 112,
+        "y": 162.95999999999998
+      },
+      "crop": {
+        "left": 48,
+        "top": 75,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "05f20ce02d7563c9d938327f525994761878617049c30fa36fc3ef71591700c4",
+      "candidateHash": "c183a1d5eca784f89abc4ca8e7a03c3775caa499517ec9f0634346817d845492"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "night",
+      "anchor": {
+        "x": 112,
+        "y": 162.95999999999998
+      },
+      "crop": {
+        "left": 48,
+        "top": 75,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "3512762a7c2e4b59ebecc44125161961b89657aedf98d1d3b8c6b01f28bdedb4",
+      "candidateHash": "e03668470a6fc6723712b82526132b551644eff1b8d68d0b3eb0e2af31272832"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "day",
+      "anchor": {
+        "x": 422,
+        "y": 88.19999999999993
+      },
+      "crop": {
+        "left": 358,
+        "top": 0,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "278a4003d8decc3b4263f111aa1073759b9fb3868998209d130cc4c0376b893f",
+      "candidateHash": "6c986317b712757abdf32729c1b3ceebcaeecf9c6b07c8c7065dc06d51cc1904"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "night",
+      "anchor": {
+        "x": 422,
+        "y": 88.19999999999993
+      },
+      "crop": {
+        "left": 358,
+        "top": 0,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "1a2bcac65f62285ec7dd12d00445a0bdf587187f801d4f922b2988b3fa8a0f12",
+      "candidateHash": "10c1d46fd9c126662640f506e1081cd15a110f327d290e09eb40dfe77f53dfc0"
+    }
+  ],
+  "review": "Engineer visual review passed: components, palette, native size and grounding across all eight contexts."
+}
