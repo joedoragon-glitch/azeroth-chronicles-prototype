@@ -115,3 +115,9 @@ User-requested correction simplifies face features to survive nearest downsampli
 Five region-specific ground textures add quiet grass/soil, wet earth, grit, ash and slate grain within existing world-coordinate floor clips. Lazy decoding and procedural fallback remain authoritative; total player texture payload is 507,307 bytes, 256² each. Original masters, exact prompts, seamless-wrap and native device day/night reviews retained. Each registration can roll back to procedural. Reproducible material showroom added. Release pending CI and exact deployment.
 
 The prepared-work release also activates the reviewed fixed-shape Vale bush and wildflowers. Existing flora placement and gameplay geometry remain authoritative. User authorization on 8 October permits release of completed work; new image generation and unfinished assets stay paused.
+
+## Camera comparison · prepared v0.8.101
+
+Game and settings → Screen and performance offers original 100%, 150% and 175% camera framing. Default stays 100% pending Joel's selection; his likely preference is 150%. The renderer scales world presentation around the existing unobstructed hero anchor and applies inverse zoom to pointer mapping. The HUD, gameplay rules and campaign save schema remain unchanged. Camera settings persist independently for desktop and phone. Small-phone support is retired as recorded in DECISIONS.md.
+
+Generation and asset replacement/publication stay paused. No source artwork, registration, processed image, terrain texture or rollback record changes in this pass. Existing Paladin art has an approximate opaque body footprint of 50×65 logical pixels at 100% (75×98 at 150%; 88×114 at 175%); the Goblin is approximately 38×49 (57×74; 67×86). These exclude transparent padding and use alpha >20; animation frames and device pixel ratio can change physical raster dimensions. Target generation budgets remain provisional until viewing-scale review.

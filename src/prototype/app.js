@@ -573,6 +573,9 @@
       'Current screen: ' +
         (platform.mode === 'desktop' ? 'Chromebook / desktop' : 'Phone / touch') +
         '. The two layouts share your saved campaign. Automatic selection uses input capabilities, so a touchscreen Chromebook keeps its desktop layout.\n\n' +
+        'Camera: ' +
+        Math.round((platform.cameraZoom || 1) * 100) +
+        '% for this screen. Compare closer views while movement and attack ranges stay the same.\n\n' +
         runtime.describe(renderer.metrics()),
       [
         action('Automatic screen', () => {
@@ -587,6 +590,16 @@
           platform.select('phone');
           closeMenu();
         }),
+        ...[1, 1.5, 1.75].map((scale) =>
+          action(
+            'Camera ' + Math.round(scale * 100) + '%' + (scale === 1 ? ' · original' : ''),
+            () => {
+              clearInput();
+              platform.selectCameraZoom(scale);
+              closeMenu();
+            },
+          ),
+        ),
         action('Reset performance sample', () => {
           runtime.reset();
           platformMenu(back);

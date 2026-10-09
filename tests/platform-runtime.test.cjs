@@ -53,6 +53,23 @@ console.log(
   'PASS phone, desktop, hybrid Chromebook, explicit entry and persistent screen preferences',
 );
 
+// Presentation preferences are separate from campaign saves and from each other.
+assert.equal(platform.cameraZoom, 1);
+platform.selectCameraZoom(1.5);
+assert.equal(platform.cameraZoom, 1.5);
+assert.equal(P.init(env).cameraZoom, 1, 'Phone keeps its original camera until explicitly changed');
+platform.select('phone');
+platform.selectCameraZoom(1.75);
+assert.equal(platform.cameraZoom, 1.75);
+platform.selectCameraZoom(3);
+assert.equal(platform.cameraZoom, 1.75, 'Unsupported camera scales cannot leak into rendering');
+assert.equal(P.init(env).cameraZoom, 1.75, 'Camera choice survives reload');
+platform.select('desktop');
+assert.equal(platform.cameraZoom, 1.5, 'Desktop retains its independent camera choice');
+items.set(P.cameraPreferenceKey, '{broken');
+assert.equal(P.init(env).cameraZoom, 1, 'Malformed camera preference returns to original');
+console.log('PASS independent desktop/phone camera preferences, reload and invalid-data fallback');
+
 const messages = [],
   storage = { getItem: (k) => items.get(k), setItem: (k, v) => items.set(k, v) },
   store = Store.create({ storage, Campaign: C, status: (s) => messages.push(s) }),
@@ -128,40 +145,59 @@ for (const [width, height] of [
     { x: 50, y: 50 },
     { x: 1700, y: 1700 },
     { x: 3300, y: 3300 },
-  ]) {
-    const g = { hero },
-      renderer = Renderer.create({
-        canvas: { width, height },
-        ctx: {},
-        getGame: () => g,
-        platform: { cameraAnchor: () => ({ x: width * 0.5, y: height * 0.5 }) },
-        Campaign: C,
-        PrototypeVisuals: {},
-        PrototypeCombatVisuals: {},
-        chargePresentation: () => null,
-        isPaused: () => false,
-      }),
-      bounds = renderer.tileBounds(3400);
-    let full = 0,
-      candidates = 0,
-      visible = 0;
-    for (let x = 0; x < 3400; x += 80)
-      for (let y = 0; y < 3400; y += 80) {
-        full++;
-        const p = renderer.screen({ x, y });
-        if (p.x >= -160 && p.x <= width + 160 && p.y >= -100 && p.y <= height + 100) {
-          visible++;
+  ])
+    for (const scale of P.cameraScales) {
+      const g = { hero },
+        renderer = Renderer.create({
+          canvas: { width, height },
+          ctx: {},
+          getGame: () => g,
+          platform: {
+            cameraZoom: scale,
+            cameraAnchor: () => ({ x: width * 0.5, y: height * 0.5 }),
+          },
+          Campaign: C,
+          PrototypeVisuals: {},
+          PrototypeCombatVisuals: {},
+          chargePresentation: () => null,
+          isPaused: () => false,
+        }),
+        bounds = renderer.tileBounds(3400);
+      let full = 0,
+        candidates = 0,
+        visible = 0;
+      for (let x = 0; x < 3400; x += 80)
+        for (let y = 0; y < 3400; y += 80) {
+          full++;
+          const p = renderer.screen({ x, y });
+          const roundTrip = renderer.world(p.x, p.y);
           assert(
-            x >= bounds.x1 && x <= bounds.x2 && y >= bounds.y1 && y <= bounds.y2,
-            'Bounds preserve every original visible floor tile',
+            Math.abs(roundTrip.x - x) < 1e-8 && Math.abs(roundTrip.y - y) < 1e-8,
+            'Pointer inversion matches projection at every zoom',
           );
+          if (
+            p.x >= -160 * scale &&
+            p.x <= width + 160 * scale &&
+            p.y >= -100 * scale &&
+            p.y <= height + 100 * scale
+          ) {
+            visible++;
+            assert(
+              x >= bounds.x1 && x <= bounds.x2 && y >= bounds.y1 && y <= bounds.y2,
+              'Bounds preserve every original visible floor tile',
+            );
+          }
         }
-      }
-    for (let x = bounds.x1; x <= bounds.x2; x += 80)
-      for (let y = bounds.y1; y <= bounds.y2; y += 80) candidates++;
-    assert(candidates <= full);
-    if (width < 400)
-      assert(candidates < full * 0.7, 'Phone bounds avoid scanning most of the full map');
-    assert(visible > 0);
-  }
+      for (let x = bounds.x1; x <= bounds.x2; x += 80)
+        for (let y = bounds.y1; y <= bounds.y2; y += 80) candidates++;
+      assert(candidates <= full);
+      if (width < 400)
+        assert(candidates < full * 0.7, 'Phone bounds avoid scanning most of the full map');
+      assert(visible > 0);
+      const anchor = renderer.screen(hero);
+      assert(
+        Math.abs(anchor.x - width * 0.5) < 1e-8 && Math.abs(anchor.y - height * 0.5) < 1e-8,
+        'Hero anchor stays fixed',
+      );
+    }
 console.log('PASS viewport floor bounds preserve visible coverage while reducing full-map scans');
