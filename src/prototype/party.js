@@ -385,7 +385,9 @@
           if (!Array.isArray(u.supportEffects)) u.supportEffects = [];
           const next = [];
           for (const e of u.supportEffects) {
-            if (u.hp <= 0) continue;
+            // Older or malformed-but-accepted saves can retain an expired effect.
+            // Drop it before dividing by its remaining duration (0 / 0 is NaN).
+            if (u.hp <= 0 || e.seconds <= 0 || e.remaining <= 0) continue;
             const field = e.type === 'health' ? 'hp' : 'mp',
               max = e.type === 'health' ? 'maxHp' : 'maxMp';
             if (field === 'mp' && u !== this.hero) continue;
