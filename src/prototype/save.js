@@ -500,6 +500,14 @@
               for (const f of ['hp', 'damage']) finite(p.nightBonus[f], 0.1, 1000);
             }
           }
+        // Stock is optional on old saves. The active-effect flag stays separate.
+        if (
+          s.hero.tonicStock !== undefined &&
+          (!Number.isInteger(s.hero.tonicStock) ||
+            s.hero.tonicStock < 0 ||
+            s.hero.tonicStock > 10000)
+        )
+          throw Error('Invalid preparation tonic stock');
         for (const f of ['weapon', 'armorTier', 'talentPoints', 'nextId'])
           if (!Number.isInteger(f === 'nextId' ? s[f] : s.hero[f]))
             throw Error('Invalid integer progression');
