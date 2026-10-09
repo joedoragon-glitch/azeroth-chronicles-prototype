@@ -376,7 +376,7 @@
       }
 
       trainRangerSupport(type, family = 'archive') {
-        if (family !== 'archive' || !this.s.rescued.archive || !['health', 'mana'].includes(type))
+        if ((!R.resourceMode.manaEnabled && type === 'mana') || family !== 'archive' || !this.s.rescued.archive || !['health', 'mana'].includes(type))
           return false;
         const key = type === 'health' ? 'heal' : 'mana',
           rank = this.rangerSupportRank(type);
