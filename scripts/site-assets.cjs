@@ -14,6 +14,7 @@ const scripts = [
     'boss-combat',
     'party',
     'economy',
+    'narration',
     'rewards',
     'enemy-presentation',
     'enemy-vfx',

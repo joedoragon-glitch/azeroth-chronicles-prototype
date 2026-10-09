@@ -209,8 +209,14 @@
       this.messages.push(text);
       if (this.messages.length > 7) this.messages.shift();
     }
-    notice(text, duration = 5.5, detail = '') {
-      this.notices.push({ id: ++this.noticeId, text, duration, ...(detail ? { detail } : {}) });
+    notice(text, duration = 5.5, detail = '', kind) {
+      this.notices.push({
+        id: ++this.noticeId,
+        text,
+        duration,
+        ...(detail ? { detail } : {}),
+        ...(kind ? { kind } : {}),
+      });
     }
     boss(id) {
       return D.bosses.find((b) => b.id === id);
@@ -2021,7 +2027,7 @@
       };
       this.event('eliteWarning', { family: key });
       this.say(this.boss(key).name + ' has revealed its TRUE presence.');
-      this.notice(this.boss(key).name + ' TRUE will emerge in 5 seconds', 5.5);
+      this.notice(this.boss(key).name + ' TRUE will emerge in 5 seconds', 5.5, '', 'warning');
     }
     streak(e) {
       if (this.peace || e.summon || e.type === 'boss' || e.captain || e.roomCaptain) {
@@ -4103,6 +4109,8 @@
               this.definition().name +
               ' · Map: Z',
             6.5,
+            '',
+            'warning',
           );
         } else this.say('Ringleaders have appeared.');
       }
