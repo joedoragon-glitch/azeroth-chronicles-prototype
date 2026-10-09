@@ -174,6 +174,8 @@
     skillBook,
     supplier,
     smith,
+    keeper,
+    keeperLedger,
     regionalSpecialistObjective,
     barracksMenu,
     inventory,
@@ -823,6 +825,8 @@
     if (n.kind === 'barracks') barracksMenu(n);
     else if (n.kind === 'teacher') teacher(n);
     else if (n.kind === 'smith') smith(n);
+    else if (n.kind === 'keeper') keeper();
+    else if (n.kind === 'archive-record') keeperLedger();
     else if (n.kind === 'supplier' || n.kind === 'alchemist') supplier(n);
     else if (n.kind === 'recruiter') partyMenu();
     else if (n.kind === 'quests') quests(true);
