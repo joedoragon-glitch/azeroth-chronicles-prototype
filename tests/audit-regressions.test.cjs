@@ -390,7 +390,7 @@ test('F60 wounded monsters three levels above an underleveled hero never retreat
 test('F61 isolated boss or captain with no usable rogue response defends territory instead of endlessly resetting',()=>{
   const c=fresh(),e=c.bossEnemy(c.boss('thorn'),'normal',{x:1400,y:1700});
   c.zone().enemies=[e];c.s.party=[];c.line=()=>true;
-  Object.assign(c.hero,{x:1950,y:1700,level:e.level+1});e.aggro=true;
+  Object.assign(c.hero,{x:1920,y:1700,level:e.level+1});e.aggro=true;
   assert(c.tacticalAutoRogue(e,c.hero),'disadvantaged field boss can deliberate');
   assert.equal(c.tacticalRogueRegroup(e)?.phase,'thinking');
   assert.equal(c.tacticalAdvanceRogueRegroup(e,c.hero,1),false);
