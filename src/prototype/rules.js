@@ -2075,7 +2075,7 @@
     'highlands>frontier': { transportId: 'return', dx: 95, dy: 25 },
     'frontier>highlands': { transportId: 'outbound', dx: 95, dy: 25 },
     'frontier>crown': { transportId: 'crown-travel-frontier-return', dx: 95, dy: 50 },
-    'crown>frontier': { transportId: 'return', dx: 95, dy: 25 },
+    'crown>frontier': { transportId: 'outbound', dx: 95, dy: 25 },
     'crown>highlands': { transportId: 'outbound', dx: 95, dy: 25 },
     'crown>march': { transportId: 'return', dx: 95, dy: 30 },
     'crown>vale': { transportId: 'outbound', dx: 95, dy: 25 },
