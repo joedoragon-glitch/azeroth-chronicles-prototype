@@ -908,10 +908,13 @@ function scene(contract, width, height, sprite = null, lighting = 'day', materia
   let seed = 111;
   const random = () => (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296;
   const game = new Campaign('normal', 'paladin', random);
-  game.enter(['vale', 'march', 'highlands', 'frontier', 'crown'][contract.region]);
+  const sceneZone =
+    contract.sceneZone || ['vale', 'march', 'highlands', 'frontier', 'crown'][contract.region];
+  game.enter(sceneZone);
+  fail(game.zone().id === sceneZone, 'Unknown scene context');
   game.s.clock = lighting === 'night' ? 430 : 120;
   game.s.party = [];
-  Object.assign(game.hero, game.safe(800, 800));
+  Object.assign(game.hero, contract.scenePosition || game.safe(800, 800));
   const zone = game.zone();
   zone.enemies = [];
   const entity = {
@@ -927,13 +930,17 @@ function scene(contract, width, height, sprite = null, lighting = 'day', materia
   if (entity.renderKind === 'hero') Object.assign(game.hero, entity);
   else {
     // Keep the reviewed entity inside narrow phone viewports, above the hero.
-    Object.assign(game.hero, game.safe(game.hero.x + 140, game.hero.y + 140));
+    const distance = contract.scenePosition ? 70 : 140;
+    Object.assign(game.hero, game.safe(game.hero.x + distance, game.hero.y + distance));
     if (entity.renderKind === 'enemy') zone.enemies.push(entity);
     else if (entity.renderKind === 'ally') game.s.party.push(entity);
     else if (entity.renderKind === 'npc') zone.npcs.push(entity);
     else if (entity.renderKind === 'node') zone.nodes.push(entity);
     else if (entity.renderKind === 'building') zone.buildings.push(entity);
-    else zone.props.push(entity);
+    else {
+      zone.props = zone.props.filter((prop) => prop.id !== entity.id);
+      zone.props.push(entity);
+    }
   }
   const canvas = createCanvas(width, height);
   const platform = require('../src/prototype/platform.js').init({
@@ -956,7 +963,12 @@ function scene(contract, width, height, sprite = null, lighting = 'day', materia
     isPaused: () => false,
   });
   renderer.draw();
-  return { bytes: canvas.toBuffer('image/png'), anchor: renderer.screen(entity) };
+  return {
+    bytes: canvas.toBuffer('image/png'),
+    anchor: renderer.screen(entity),
+    zoneId: zone.id,
+    entityPosition: { x: entity.x, y: entity.y },
+  };
 }
 async function showroom(recordFile) {
   const keyOnly = recordFile && specs.assets.some((item) => item.key === recordFile);

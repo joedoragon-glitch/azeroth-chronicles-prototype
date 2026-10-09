@@ -3207,6 +3207,451 @@
         "appearance": "Faithful static body reviewed at native size in eight desktop/phone day/night contexts. Not a claim of separate Joel image acceptance."
       },
       "revision": "a30df3dcd7924388160bf5934c8a66e5bf14a296a7ddc4db76fd792a8608b108"
+    },
+    "prop:mine-old-markings:highlands": {
+      "version": 2,
+      "key": "prop:mine-old-markings:highlands",
+      "catalogId": "241",
+      "canonHash": "a261fd32928e937eb03088f21d002ee1afa29da1cd21622065d2d949e555511f",
+      "canonSnapshotHash": "f81c0c5a6a0b78a9c3ded5a70e2d1878173841d5edd3e9af4a4d6e5b1ee5e91f",
+      "catalogHash": "d8897b2054c72dbff14f28189056bcd72a8112b98d724fee206dad3bb58fe7ea",
+      "source": {
+        "file": "25e2cfbcfc34a8f7c06e8d13498444cf560bb972bcb710138df44a75fb8d093b.png",
+        "format": "png",
+        "width": 1280,
+        "height": 1280,
+        "bytes": 363414,
+        "decodedBytes": 6553600,
+        "hash": "25e2cfbcfc34a8f7c06e8d13498444cf560bb972bcb710138df44a75fb8d093b",
+        "pixelHash": "3d4908ef48d119b05c81909a2e445142fc6372b8fd7906f85dec0d6ccfaff692",
+        "bounds": {
+          "x1": 147,
+          "y1": 173,
+          "x2": 1109,
+          "y2": 1117
+        },
+        "padding": 147,
+        "transparentPixels": 1507556,
+        "visiblePixels": 130844,
+        "lowAlphaPixels": 2889,
+        "materialBounds": {
+          "x1": 455,
+          "y1": 606,
+          "x2": 857,
+          "y2": 988
+        }
+      },
+      "output": {
+        "file": "prop-mine-old-markings-highlands-5f480f9d940b22ea4196d48abf08069426781f11c656ecfaf81b7d08ebedf243.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 10057,
+        "decodedBytes": 147456,
+        "hash": "5f480f9d940b22ea4196d48abf08069426781f11c656ecfaf81b7d08ebedf243",
+        "pixelHash": "e051a946ffa357f3971324b87e8ac414cf68fd0d15220646fffa0ca6946b3413",
+        "bounds": {
+          "x1": 29,
+          "y1": 44,
+          "x2": 164,
+          "y2": 173
+        },
+        "padding": 18,
+        "transparentPixels": 33911,
+        "visiblePixels": 2953,
+        "lowAlphaPixels": 56,
+        "materialBounds": {
+          "x1": 67,
+          "y1": 103,
+          "x2": 126,
+          "y2": 160
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1280, 1280],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": -2,
+          "y": 12,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+        "reviewer": "Codex engineer under current explicit implementation/publication authorization",
+        "appearance": "Native desktop/phone day/night review passed. Natural face/material corrections preserve authored components. No separate Joel image acceptance claimed."
+      },
+      "revision": "53b8a283b4e364aab9aa7db453c9451192bf8b2e44ca68fb9cc4e8addbddf607"
+    },
+    "prop:ridge-supper:highlands": {
+      "version": 2,
+      "key": "prop:ridge-supper:highlands",
+      "catalogId": "242",
+      "canonHash": "7c3e575ffc7afe4bdc101343dd595eb692fe6a824619a92e2fa54e92e85d6a0d",
+      "canonSnapshotHash": "f81c0c5a6a0b78a9c3ded5a70e2d1878173841d5edd3e9af4a4d6e5b1ee5e91f",
+      "catalogHash": "5328eef89fe8d34395c7d20159f622a6998ef4fd83bd1d7b92334120b7019685",
+      "source": {
+        "file": "bfce61203d5808e61a66258ac054c12de30fc7b2e6becf029a4b812a0f895f15.png",
+        "format": "png",
+        "width": 2048,
+        "height": 2048,
+        "bytes": 379354,
+        "decodedBytes": 16777216,
+        "hash": "bfce61203d5808e61a66258ac054c12de30fc7b2e6becf029a4b812a0f895f15",
+        "pixelHash": "ac4a0e024a59dafa1cd8b7816db09027f2903d8e98a73f0fa99270266e00f310",
+        "bounds": {
+          "x1": 638,
+          "y1": 625,
+          "x2": 1496,
+          "y2": 1535
+        },
+        "padding": 512,
+        "transparentPixels": 4062889,
+        "visiblePixels": 131415,
+        "lowAlphaPixels": 3910,
+        "materialBounds": {
+          "x1": 758,
+          "y1": 1004,
+          "x2": 1348,
+          "y2": 1411
+        }
+      },
+      "output": {
+        "file": "prop-ridge-supper-highlands-8dfb7dc3614b2337ee8ba6e0f24b0ba3c246dd65e7350f2b142e9f04ec2605bb.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 4490,
+        "decodedBytes": 147456,
+        "hash": "8dfb7dc3614b2337ee8ba6e0f24b0ba3c246dd65e7350f2b142e9f04ec2605bb",
+        "pixelHash": "fb0e7f995c4d8fd573d06bb9af9323e71b208b5f21e464d39755c2f5a101b01b",
+        "bounds": {
+          "x1": 71,
+          "y1": 126,
+          "x2": 126,
+          "y2": 164
+        },
+        "padding": 27,
+        "transparentPixels": 35712,
+        "visiblePixels": 1152,
+        "lowAlphaPixels": 26,
+        "materialBounds": {
+          "x1": 71,
+          "y1": 126,
+          "x2": 126,
+          "y2": 164
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [2048, 2048],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": 0,
+          "y": 32,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+        "reviewer": "Codex engineer under current explicit implementation/publication authorization",
+        "appearance": "Native desktop/phone day/night review passed. Natural face/material corrections preserve authored components. No separate Joel image acceptance claimed."
+      },
+      "revision": "da8ded87d2efc4a5824a8af7c894e58c1c93e9e191d7cffcdc20d41c04cff588"
+    },
+    "prop:royal-flight-standard:frontier": {
+      "version": 2,
+      "key": "prop:royal-flight-standard:frontier",
+      "catalogId": "249",
+      "canonHash": "d7d78bd096a47f816f7cc2489ddb664a002e82800d1b9ec936db318916ded565",
+      "canonSnapshotHash": "f81c0c5a6a0b78a9c3ded5a70e2d1878173841d5edd3e9af4a4d6e5b1ee5e91f",
+      "catalogHash": "b01a34bfa9e64159619b8d3ce06c98b1a2175ae5721f33b2349491c7e294611a",
+      "source": {
+        "file": "7c61ba141a6b094c957c2a5bee301529f478d590d054606a881b1ab21e3564f3.png",
+        "format": "png",
+        "width": 1856,
+        "height": 1856,
+        "bytes": 396048,
+        "decodedBytes": 13778944,
+        "hash": "7c61ba141a6b094c957c2a5bee301529f478d590d054606a881b1ab21e3564f3",
+        "pixelHash": "e060ff088755180916a0e6f6cfff6ba0fe4076970272b10ea559b343777258c2",
+        "bounds": {
+          "x1": 416,
+          "y1": 433,
+          "x2": 1416,
+          "y2": 1354
+        },
+        "padding": 416,
+        "transparentPixels": 3327141,
+        "visiblePixels": 117595,
+        "lowAlphaPixels": 6089,
+        "materialBounds": {
+          "x1": 756,
+          "y1": 570,
+          "x2": 1172,
+          "y2": 1309
+        }
+      },
+      "output": {
+        "file": "prop-royal-flight-standard-frontier-d7efceb910df580233308d78cf64b8f59fa78f484fdeb4e51a6da63f41719d52.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 4996,
+        "decodedBytes": 147456,
+        "hash": "d7efceb910df580233308d78cf64b8f59fa78f484fdeb4e51a6da63f41719d52",
+        "pixelHash": "df42310233b264d28f1700cacba1a258d5bf9529ace1cd581746e3b649ab2190",
+        "bounds": {
+          "x1": 74,
+          "y1": 83,
+          "x2": 142,
+          "y2": 159
+        },
+        "padding": 32,
+        "transparentPixels": 35604,
+        "visiblePixels": 1260,
+        "lowAlphaPixels": 59,
+        "materialBounds": {
+          "x1": 74,
+          "y1": 83,
+          "x2": 116,
+          "y2": 159
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1856, 1856],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": -4,
+          "y": 24,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+        "reviewer": "Codex engineer under current explicit implementation/publication authorization",
+        "appearance": "Native desktop/phone day/night review passed. Natural face/material corrections preserve authored components. No separate Joel image acceptance claimed."
+      },
+      "revision": "485826d39f89312ebcebab5b96048bbdb1f3fdaf60c332aee06f148d3f50490a"
+    },
+    "prop:flight-harness-station:frontier": {
+      "version": 2,
+      "key": "prop:flight-harness-station:frontier",
+      "catalogId": "248",
+      "canonHash": "70d325b5d7f79d7146d2b11b8fbc2cfd22eea75f3c98d4118b9e7263383de691",
+      "canonSnapshotHash": "f81c0c5a6a0b78a9c3ded5a70e2d1878173841d5edd3e9af4a4d6e5b1ee5e91f",
+      "catalogHash": "9821ae81b732506b0a80a88502afbc8baab1b1879894e9c4e5348fd06945c67f",
+      "source": {
+        "file": "f44abcae5faa74047a539d48d09822c9ef388ca8406597b232de4980d9648625.png",
+        "format": "png",
+        "width": 1536,
+        "height": 1536,
+        "bytes": 498853,
+        "decodedBytes": 9437184,
+        "hash": "f44abcae5faa74047a539d48d09822c9ef388ca8406597b232de4980d9648625",
+        "pixelHash": "98fe98dc0bdac0c73147b3c2088cc4d1af8e4f2b9a748596d8284156cc5e9a26",
+        "bounds": {
+          "x1": 296,
+          "y1": 286,
+          "x2": 1258,
+          "y2": 1227
+        },
+        "padding": 277,
+        "transparentPixels": 2201192,
+        "visiblePixels": 158104,
+        "lowAlphaPixels": 14924,
+        "materialBounds": {
+          "x1": 523,
+          "y1": 662,
+          "x2": 1010,
+          "y2": 1089
+        }
+      },
+      "output": {
+        "file": "prop-flight-harness-station-frontier-46ac49de0623e585d2ce0b8c9d7f01ddbf388e12084c5a38b71596ce8e25e930.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 9141,
+        "decodedBytes": 147456,
+        "hash": "46ac49de0623e585d2ce0b8c9d7f01ddbf388e12084c5a38b71596ce8e25e930",
+        "pixelHash": "06ef5ceb4e5c545a9ab16005ae5ea54e784e9a716900d065d4bf54e6feca8d25",
+        "bounds": {
+          "x1": 65,
+          "y1": 88,
+          "x2": 137,
+          "y2": 174
+        },
+        "padding": 17,
+        "transparentPixels": 34386,
+        "visiblePixels": 2478,
+        "lowAlphaPixels": 284,
+        "materialBounds": {
+          "x1": 65,
+          "y1": 108,
+          "x2": 125,
+          "y2": 160
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [1536, 1536],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": 0,
+          "y": 25,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+        "reviewer": "Codex engineer under current explicit implementation/publication authorization",
+        "appearance": "Native desktop/phone day/night review passed. Natural face/material corrections preserve authored components. No separate Joel image acceptance claimed."
+      },
+      "revision": "034efe95f0746914ae1ba9e50b9965720b04fa1ec86cbf8caca2e252d2fca072"
+    },
+    "prop:highland-pay-station:highlands": {
+      "version": 2,
+      "key": "prop:highland-pay-station:highlands",
+      "catalogId": "237",
+      "canonHash": "33888bf2168321ed27baea17a11e7cb02cb440b8a1685d4fd40b241e18b3b451",
+      "canonSnapshotHash": "f81c0c5a6a0b78a9c3ded5a70e2d1878173841d5edd3e9af4a4d6e5b1ee5e91f",
+      "catalogHash": "7bfbf332aa71466de977755f79b3c3962830d19c76cf14419c92ed1ec9f37e55",
+      "source": {
+        "file": "cb8e631f16ec8a8f73cdf2ea0e5194e348fdae395b87c3d5905c8b6c7849ab0b.png",
+        "format": "png",
+        "width": 2048,
+        "height": 2048,
+        "bytes": 704210,
+        "decodedBytes": 16777216,
+        "hash": "cb8e631f16ec8a8f73cdf2ea0e5194e348fdae395b87c3d5905c8b6c7849ab0b",
+        "pixelHash": "4c2bf75cf0ea8a3284d56da31781ac72806ba1eddfd36c7c76fb61eb9c2fd253",
+        "bounds": {
+          "x1": 512,
+          "y1": 585,
+          "x2": 1468,
+          "y2": 1563
+        },
+        "padding": 484,
+        "transparentPixels": 3904545,
+        "visiblePixels": 289759,
+        "lowAlphaPixels": 9509,
+        "materialBounds": {
+          "x1": 658,
+          "y1": 825,
+          "x2": 1390,
+          "y2": 1371
+        }
+      },
+      "output": {
+        "file": "prop-highland-pay-station-highlands-e95d2068be3726cf63bb339e13b119e9b26beaabe95dd57b79d4c6d5241837f5.png",
+        "format": "png",
+        "width": 192,
+        "height": 192,
+        "bytes": 8779,
+        "decodedBytes": 147456,
+        "hash": "e95d2068be3726cf63bb339e13b119e9b26beaabe95dd57b79d4c6d5241837f5",
+        "pixelHash": "10236521c70a04a1b5f1d01f2eba72cfaf4844210e13d709b8e4f6ff901459a4",
+        "bounds": {
+          "x1": 53,
+          "y1": 102,
+          "x2": 137,
+          "y2": 168
+        },
+        "padding": 23,
+        "transparentPixels": 34291,
+        "visiblePixels": 2573,
+        "lowAlphaPixels": 71,
+        "materialBounds": {
+          "x1": 62,
+          "y1": 109,
+          "x2": 130,
+          "y2": 160
+        }
+      },
+      "runtime": {
+        "displayWidth": 192,
+        "displayHeight": 192,
+        "anchorX": 0.5,
+        "anchorY": 0.75,
+        "labelHeight": 64
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [2048, 2048],
+        "to": [192, 192],
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": 0,
+          "y": 32,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+        "reviewer": "Codex engineer under current explicit implementation/publication authorization",
+        "appearance": "Native desktop/phone day/night review passed. Natural face/material corrections preserve authored components. No separate Joel image acceptance claimed."
+      },
+      "revision": "64cc08a4de9aed21713a400e23bca363c64b8043c4b3b8dc6272747d410e13a9"
     }
   },
   "history": {

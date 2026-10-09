@@ -1,0 +1,198 @@
+[
+  {
+    "zone": "highlands",
+    "region": 2,
+    "id": "ironroot-life-stonecross-0",
+    "structure": "highland-pay-station",
+    "x": 640,
+    "y": 1570,
+    "regionalDistrict": null,
+    "sceneRole": null,
+    "keys": [
+      "prop:highland-pay-station:highlands"
+    ],
+    "resolved": true
+  },
+  {
+    "zone": "highlands",
+    "region": 2,
+    "id": "ironroot-life-stonecross-3",
+    "structure": "ridge-supper",
+    "x": 735,
+    "y": 1690,
+    "regionalDistrict": null,
+    "sceneRole": null,
+    "keys": [
+      "prop:ridge-supper:highlands"
+    ],
+    "resolved": true
+  },
+  {
+    "zone": "highlands",
+    "region": 2,
+    "id": "ironroot-life-quarry-3",
+    "structure": "ridge-supper",
+    "x": 1700,
+    "y": 1270,
+    "regionalDistrict": null,
+    "sceneRole": null,
+    "keys": [
+      "prop:ridge-supper:highlands"
+    ],
+    "resolved": true
+  },
+  {
+    "zone": "highlands",
+    "region": 2,
+    "id": "ironroot-life-ogre-home-1",
+    "structure": "ridge-supper",
+    "x": 1895,
+    "y": 2030.6217782649107,
+    "regionalDistrict": null,
+    "sceneRole": null,
+    "keys": [
+      "prop:ridge-supper:highlands"
+    ],
+    "resolved": true
+  },
+  {
+    "zone": "supply-highlands",
+    "region": 2,
+    "id": "treasury-3",
+    "structure": "ridge-supper",
+    "x": 410,
+    "y": 490,
+    "regionalDistrict": null,
+    "sceneRole": null,
+    "keys": [
+      "prop:ridge-supper:highlands"
+    ],
+    "resolved": true
+  },
+  {
+    "zone": "mine",
+    "region": 2,
+    "id": "decor-6",
+    "structure": "mine-old-markings",
+    "x": 920,
+    "y": 280,
+    "regionalDistrict": null,
+    "sceneRole": null,
+    "keys": [
+      "prop:mine-old-markings:highlands"
+    ],
+    "resolved": true
+  },
+  {
+    "zone": "mine",
+    "region": 2,
+    "id": "decor-7",
+    "structure": "mine-old-markings",
+    "x": 1240,
+    "y": 530,
+    "regionalDistrict": null,
+    "sceneRole": null,
+    "keys": [
+      "prop:mine-old-markings:highlands"
+    ],
+    "resolved": true
+  },
+  {
+    "zone": "mine",
+    "region": 2,
+    "id": "decor-14",
+    "structure": "mine-old-markings",
+    "x": 1060,
+    "y": 1030,
+    "regionalDistrict": null,
+    "sceneRole": null,
+    "keys": [
+      "prop:mine-old-markings:highlands"
+    ],
+    "resolved": true
+  },
+  {
+    "zone": "mine",
+    "region": 2,
+    "id": "decor-25",
+    "structure": "ridge-supper",
+    "x": 190,
+    "y": 1190,
+    "regionalDistrict": null,
+    "sceneRole": null,
+    "keys": [
+      "prop:ridge-supper:highlands"
+    ],
+    "resolved": true
+  },
+  {
+    "zone": "frontier",
+    "region": 3,
+    "id": "frontier-layout-bastion-cordon-30",
+    "structure": "flight-harness-station",
+    "x": 2870,
+    "y": 2340,
+    "regionalDistrict": null,
+    "sceneRole": null,
+    "keys": [
+      "prop:flight-harness-station:frontier"
+    ],
+    "resolved": true
+  },
+  {
+    "zone": "frontier",
+    "region": 3,
+    "id": "frontier-layout-bastion-cordon-34",
+    "structure": "royal-flight-standard",
+    "x": 3145,
+    "y": 2400,
+    "regionalDistrict": null,
+    "sceneRole": null,
+    "keys": [
+      "prop:royal-flight-standard:frontier"
+    ],
+    "resolved": true
+  },
+  {
+    "zone": "abyss",
+    "region": 3,
+    "id": "decor-2",
+    "structure": "flight-harness-station",
+    "x": 350,
+    "y": 560,
+    "regionalDistrict": null,
+    "sceneRole": null,
+    "keys": [
+      "prop:flight-harness-station:frontier"
+    ],
+    "resolved": true
+  },
+  {
+    "zone": "abyss",
+    "region": 3,
+    "id": "decor-12",
+    "structure": "flight-harness-station",
+    "x": 790,
+    "y": 680,
+    "regionalDistrict": null,
+    "sceneRole": null,
+    "keys": [
+      "prop:flight-harness-station:frontier"
+    ],
+    "resolved": true
+  },
+  {
+    "zone": "abyss",
+    "region": 3,
+    "id": "decor-31",
+    "structure": "royal-flight-standard",
+    "x": 1180,
+    "y": 1140,
+    "regionalDistrict": null,
+    "sceneRole": null,
+    "keys": [
+      "prop:royal-flight-standard:frontier"
+    ],
+    "resolved": true
+  }
+]

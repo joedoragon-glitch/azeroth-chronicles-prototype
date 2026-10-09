@@ -1,0 +1,193 @@
+{
+  "key": "prop:mine-old-markings:highlands",
+  "entity": {
+    "id": "decor-6",
+    "x": 920,
+    "y": 280,
+    "r": 0,
+    "decorative": true,
+    "structure": "mine-old-markings",
+    "icon": "\ud83d\udd6f\ufe0f",
+    "dungeonDistrict": "old-workings",
+    "renderKind": "prop"
+  },
+  "comparisons": [
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "day",
+      "anchor": {
+        "x": 481.87796538894673,
+        "y": 305.2795665417281
+      },
+      "crop": {
+        "left": 418,
+        "top": 217,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "3989eb07782e32e515853da170abfc1a48eb073bbafc289da98460dc117c0d5b",
+      "candidateHash": "58aa564262212ca910feeeea590a64ecec877b8c49a2f3c851ea0f5a93b25cea",
+      "zoneId": "mine",
+      "entityPosition": {
+        "x": 920,
+        "y": 280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "night",
+      "anchor": {
+        "x": 481.87796538894673,
+        "y": 305.2795665417281
+      },
+      "crop": {
+        "left": 418,
+        "top": 217,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "9f5ef543597ce9ea9d43ef9479a7be8f4a53da4db055029f6cfb45add32945f3",
+      "candidateHash": "07d0b030cc26c82ed4a4782d60cd42f129459d0f478d4ce3dbb61369838cddcb",
+      "zoneId": "mine",
+      "entityPosition": {
+        "x": 920,
+        "y": 280
+      }
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "day",
+      "anchor": {
+        "x": 171.37796538894673,
+        "y": 293.3195665417281
+      },
+      "crop": {
+        "left": 107,
+        "top": 205,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "22a4cc961584589374113da8738bbcc79dd1ea52bf53a1a120b1ea135a9d5305",
+      "candidateHash": "7ecb297e4ac17fa08fa8841e3991e0df1b1b6ddadbee2eeb64594e46c4365397",
+      "zoneId": "mine",
+      "entityPosition": {
+        "x": 920,
+        "y": 280
+      }
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "night",
+      "anchor": {
+        "x": 171.37796538894673,
+        "y": 293.3195665417281
+      },
+      "crop": {
+        "left": 107,
+        "top": 205,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "23f9a5fb733a89f67888a268adf4399d34dd17325753c40b3840a879373c6184",
+      "candidateHash": "29bccf1652b5e6d24800deb76b45d89a7c6f8728db4be047e23dae660dd083b8",
+      "zoneId": "mine",
+      "entityPosition": {
+        "x": 920,
+        "y": 280
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "day",
+      "anchor": {
+        "x": 95.87796538894673,
+        "y": 190.83956654172812
+      },
+      "crop": {
+        "left": 32,
+        "top": 103,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "0615f4c903ce5a1a5ea9cb01b9ec1da35beaed611d872811a61cb56da34669e8",
+      "candidateHash": "c57eaadb747f6f7819ef3327f8764c4599a59739495f2510da6a33e4d2fa7eb8",
+      "zoneId": "mine",
+      "entityPosition": {
+        "x": 920,
+        "y": 280
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "night",
+      "anchor": {
+        "x": 95.87796538894673,
+        "y": 190.83956654172812
+      },
+      "crop": {
+        "left": 32,
+        "top": 103,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "6c871653fcb3290c02feee75eed990857ba2ae18422ebcbbdcd3c79c294a2094",
+      "candidateHash": "720063ceba7669d31926eadc93b62031c9285c7db286e8dd31f33fcab9c94808",
+      "zoneId": "mine",
+      "entityPosition": {
+        "x": 920,
+        "y": 280
+      }
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "day",
+      "anchor": {
+        "x": 405.87796538894673,
+        "y": 116.0795665417281
+      },
+      "crop": {
+        "left": 342,
+        "top": 28,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "76f1b48e0509b667efe575730a00eb019aef0dbc3f5a1ff04d1ddd1417110baa",
+      "candidateHash": "c60a16f595195e888211f1eff6f05badd2160cca9a2e36f1572a232c93267471",
+      "zoneId": "mine",
+      "entityPosition": {
+        "x": 920,
+        "y": 280
+      }
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "night",
+      "anchor": {
+        "x": 405.87796538894673,
+        "y": 116.0795665417281
+      },
+      "crop": {
+        "left": 342,
+        "top": 28,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "8aa569f47912fd6781b8a543af3d29570bce0d3e1c1e60a5ced239ac0ea9dd91",
+      "candidateHash": "538b0da2c6256f809ae34c170f597ed1b8d25b9548d397519d14552b5b66a354",
+      "zoneId": "mine",
+      "entityPosition": {
+        "x": 920,
+        "y": 280
+      }
+    }
+  ],
+  "review": "Passed engineer native fidelity/placement inspection for all eight desktop/phone day/night contexts. No separate user image acceptance claimed."
+}

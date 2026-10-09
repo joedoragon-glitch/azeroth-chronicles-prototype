@@ -1,0 +1,18 @@
+{
+  "id": "T007",
+  "resourceKey": "terrain:road:march",
+  "name": "Flooded Marches road material",
+  "status": "generation-queued",
+  "sourceOwner": "roads",
+  "palette": [
+    "#4b5043",
+    "#756e57",
+    "#8e8367",
+    "#5a6354"
+  ],
+  "cues": "Packed marsh/mud track, muted olive-brown fine grain. Road margins, joints, wagon ruts and junctions stay in the renderer; do not bake them into the tile.",
+  "prompt": "Create exactly ONE seamless, fully opaque square 2D material texture for Azeroth Chronicles: Flooded Marches road material. Use the supplied procedural surface sample only for its current palette and material identity. Canonical palette: #4b5043, #756e57, #8e8367, #5a6354. Material cues: Packed marsh/mud track, muted olive-brown fine grain. Road margins, joints, wagon ruts and junctions stay in the renderer; do not bake them into the tile.\nFlat top-down material, no isometric perspective. Very fine low-contrast natural micrograin, predominantly the first palette color with restrained variation from the others. Even neutral unlit treatment. Perfectly tile across BOTH horizontal and vertical edges: no border, bands, focal point, large patches or repeating objects. Do not reproduce procedural road margins, ruts or joints from the sample. No road shape, curbs, wagon tracks, paving slab outlines, slab joints, path edges, trees, grass tufts, rocks as isolated objects, puddles, scenery, geometry, grid, markings, runes, shadow, directional lighting, glow, text or UI. The renderer owns all road shapes, intersections and margins. Full canvas covered, no alpha transparency or padding. Intended output is a 256-square repeat tile after explicit downsampling; quiet uniform fine material rather than busy detail.",
+  "tool": "image_gen",
+  "sourceCommit": "4c508e6c383973634f723641d4df210275c822e2",
+  "dependencyHash": "883d697284a752084bb9b9b6af41e8ee94cc54db151b1533ec2a9d2fa78b2ae7"
+}

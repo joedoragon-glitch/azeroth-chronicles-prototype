@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "integrated",
+  "designId": "prop-royal-flight-standard-frontier",
+  "name": "Royal purple dragon standard",
+  "kind": "environment",
+  "nextAction": "Verify release CI and exact live deployment, then continue remaining catalog.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel explicitly resumed full staged mass production from both interruption checkpoints; reuse saved completed art and correct held candidates before new batches.",
+    "decisionDate": "2026-10-08",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+    "contentDocuments": [
+      "docs/DESIGN_TO_SPRITE_WORKFLOW.md",
+      "docs/SPRITE_PRODUCTION_CURRENT_CONTEXT.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": null,
+    "proceduralDesignAcceptance": null,
+    "spriteProductionAuthorization": "Explicit current resume, generation, testing, implementation and publication request.",
+    "generatedAppearanceAcceptance": "Engineer-reviewed faithful implementation; no separate Joel image acceptance claimed.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "181e0bd4a19d60d8650c578fdad0988fdfde1e55",
+    "ownerFilesAndBranches": [],
+    "exactEntityState": {
+      "renderKind": "prop",
+      "structure": "royal-flight-standard",
+      "decorative": true,
+      "id": "sprite-reference-249"
+    },
+    "isolatedReferencePath": "tools/sprites/batches/2026-10-09-07/prop-royal-flight-standard-frontier/generation-reference.png",
+    "isolatedReferenceHash": "86e0154e9c54475b4d039f860fe33fee1c9d52d7cbdb9f47bc7aec05c3fe8a86",
+    "gameplayContextPaths": [
+      "tools/sprites/batches/2026-10-09-07/prop-royal-flight-standard-frontier/review-scenes/native-review.png",
+      "tools/sprites/batches/2026-10-09-07/prop-royal-flight-standard-frontier/review-scenes/comparison.json",
+      "tools/sprites/batches/2026-10-09-07/prop-royal-flight-standard-frontier/review-context-abyss/native-review.png",
+      "tools/sprites/batches/2026-10-09-07/prop-royal-flight-standard-frontier/review-context-abyss/comparison.json"
+    ],
+    "traitsToPreserve": [
+      "Tall warm timber pole on screen-left with small gold diamond finial; one purple banner extending screen-right with pale purple angular dragon-wing emblem and small pale gold central Crown diamond, irregular lower edge and restrained pale seam. Preserve this existing aviation emblem, not generic banner lore.",
+      "Material-appropriate organic shapes, authored component count, native footprint, placement and intrinsic marks."
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [
+      "249"
+    ],
+    "verifiedRuntimeKeys": [
+      "prop:royal-flight-standard:frontier"
+    ],
+    "requiredVisibleAssets": [
+      "Static body"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Current exact structure branch is static and seed-invariant."
+    ],
+    "proceduralOwnersAndReasons": [
+      "Placement, collision, day/night shading and shadows remain procedural."
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": "prop:royal-flight-standard:frontier",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "tools/sprites/batches/2026-10-09-07/prop-royal-flight-standard-frontier/candidate.json"
+    ],
+    "approvedRecordKey": "prop:royal-flight-standard:frontier",
+    "activeContentRevision": "485826d39f89312ebcebab5b96048bbdb1f3fdaf60c332aee06f148d3f50490a",
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "procedural",
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

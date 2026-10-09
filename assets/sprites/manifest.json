@@ -438,6 +438,66 @@
       "anchorX": 0.5,
       "anchorY": 0.75,
       "labelHeight": 64
+    },
+    "prop:mine-old-markings:highlands": {
+      "src": "./assets/sprites/prop-mine-old-markings-highlands-5f480f9d940b22ea4196d48abf08069426781f11c656ecfaf81b7d08ebedf243.png",
+      "width": 192,
+      "height": 192,
+      "hash": "5f480f9d940b22ea4196d48abf08069426781f11c656ecfaf81b7d08ebedf243",
+      "revision": "53b8a283b4e364aab9aa7db453c9451192bf8b2e44ca68fb9cc4e8addbddf607",
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 64
+    },
+    "prop:ridge-supper:highlands": {
+      "src": "./assets/sprites/prop-ridge-supper-highlands-8dfb7dc3614b2337ee8ba6e0f24b0ba3c246dd65e7350f2b142e9f04ec2605bb.png",
+      "width": 192,
+      "height": 192,
+      "hash": "8dfb7dc3614b2337ee8ba6e0f24b0ba3c246dd65e7350f2b142e9f04ec2605bb",
+      "revision": "da8ded87d2efc4a5824a8af7c894e58c1c93e9e191d7cffcdc20d41c04cff588",
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 64
+    },
+    "prop:royal-flight-standard:frontier": {
+      "src": "./assets/sprites/prop-royal-flight-standard-frontier-d7efceb910df580233308d78cf64b8f59fa78f484fdeb4e51a6da63f41719d52.png",
+      "width": 192,
+      "height": 192,
+      "hash": "d7efceb910df580233308d78cf64b8f59fa78f484fdeb4e51a6da63f41719d52",
+      "revision": "485826d39f89312ebcebab5b96048bbdb1f3fdaf60c332aee06f148d3f50490a",
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 64
+    },
+    "prop:flight-harness-station:frontier": {
+      "src": "./assets/sprites/prop-flight-harness-station-frontier-46ac49de0623e585d2ce0b8c9d7f01ddbf388e12084c5a38b71596ce8e25e930.png",
+      "width": 192,
+      "height": 192,
+      "hash": "46ac49de0623e585d2ce0b8c9d7f01ddbf388e12084c5a38b71596ce8e25e930",
+      "revision": "034efe95f0746914ae1ba9e50b9965720b04fa1ec86cbf8caca2e252d2fca072",
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 64
+    },
+    "prop:highland-pay-station:highlands": {
+      "src": "./assets/sprites/prop-highland-pay-station-highlands-e95d2068be3726cf63bb339e13b119e9b26beaabe95dd57b79d4c6d5241837f5.png",
+      "width": 192,
+      "height": 192,
+      "hash": "e95d2068be3726cf63bb339e13b119e9b26beaabe95dd57b79d4c6d5241837f5",
+      "revision": "64cc08a4de9aed21713a400e23bca363c64b8043c4b3b8dc6272747d410e13a9",
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 64
     }
   },
   "formatVersion": 3

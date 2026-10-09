@@ -5,12 +5,15 @@ const fs = require('node:fs'),
   sharp = require('sharp'),
   pipeline = require('./sprite-pipeline.cjs');
 const root = path.resolve(__dirname, '..');
-async function capture(recordFile, entity = null) {
+async function capture(recordFile, entity = null, context = null) {
   const directory = path.dirname(path.resolve(recordFile)),
     record = JSON.parse(fs.readFileSync(recordFile)),
     base = pipeline.contractFor(record.key),
-    contract = entity ? { ...base, entity } : base,
-    review = path.join(directory, 'review-scenes');
+    contract = { ...base, ...(entity ? { entity } : {}), ...(context || {}) },
+    review = path.join(
+      directory,
+      context ? 'review-context-' + context.sceneZone : 'review-scenes',
+    );
   fs.mkdirSync(review, { recursive: true });
   const sprite = await pipeline.spriteLayer(
     base,
@@ -48,6 +51,8 @@ async function capture(recordFile, entity = null) {
         crop,
         canonicalHash: pipeline.hash(canonical.bytes),
         candidateHash: pipeline.hash(candidate.bytes),
+        zoneId: canonical.zoneId,
+        entityPosition: canonical.entityPosition,
       });
     }
   await sharp({ create: { width: 256, height: 896, channels: 4, background: '#19261d' } })
@@ -79,13 +84,22 @@ async function prepare(jobFile) {
   if (pipeline.hash(fs.readFileSync(original)) !== pipeline.hash(fs.readFileSync(target)))
     throw Error('Retained original differs; create a new revision directory');
   fs.writeFileSync(path.join(directory, 'reference.png'), pipeline.reference(contract));
+  const padding =
+    typeof job.padding === 'number'
+      ? { left: job.padding, right: job.padding, top: job.padding, bottom: job.padding }
+      : job.padding;
+  if (
+    !padding ||
+    !['left', 'right', 'top', 'bottom'].every(
+      (side) => Number.isInteger(padding[side]) && padding[side] >= 0,
+    ) ||
+    padding.left + padding.right !== padding.top + padding.bottom
+  )
+    throw Error('Padding must preserve the square full canvas');
   const normalized = await sharp(original)
     .resize(job.fullCanvasSize, job.fullCanvasSize, { kernel: 'nearest' })
     .extend({
-      left: job.padding,
-      right: job.padding,
-      top: job.padding,
-      bottom: job.padding,
+      ...padding,
       background: { r: 0, g: 0, b: 0, alpha: 0 },
     })
     .png()
@@ -102,7 +116,7 @@ async function prepare(jobFile) {
         originalHash: pipeline.hash(fs.readFileSync(original)),
         normalizedHash: pipeline.hash(normalized),
         fullCanvasSize: job.fullCanvasSize,
-        padding: job.padding,
+        padding,
         translation: job.translation,
         crop: false,
         trim: false,

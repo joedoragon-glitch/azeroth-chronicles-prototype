@@ -1,0 +1,40 @@
+{
+  "batch": "2026-10-09-07",
+  "completedCalls": 5,
+  "calls": [
+    {
+      "key": "prop:ridge-supper:highlands",
+      "promptFile": "tools/sprites/batches/2026-10-09-07/prop-ridge-supper-highlands/prompt.txt",
+      "original": "tools/sprites/batches/2026-10-09-07/prop-ridge-supper-highlands/image-tool-original.png",
+      "status": "engineer-native-reviewed-release-pending"
+    },
+    {
+      "key": "prop:royal-flight-standard:frontier",
+      "promptFile": "tools/sprites/batches/2026-10-09-07/prop-royal-flight-standard-frontier/prompt.txt",
+      "original": "tools/sprites/batches/2026-10-09-07/prop-royal-flight-standard-frontier/image-tool-original.png",
+      "status": "engineer-native-reviewed-release-pending"
+    },
+    {
+      "key": "prop:flight-harness-station:frontier",
+      "promptFile": "tools/sprites/batches/2026-10-09-07/prop-flight-harness-station-frontier/prompt.txt",
+      "original": "tools/sprites/batches/2026-10-09-07/prop-flight-harness-station-frontier/image-tool-original.png",
+      "status": "engineer-native-reviewed-release-pending"
+    },
+    {
+      "key": "prop:highland-pay-station:highlands",
+      "promptFile": "tools/sprites/batches/2026-10-09-07/prop-highland-pay-station-highlands/prompt.txt",
+      "original": "tools/sprites/batches/2026-10-09-07/prop-highland-pay-station-highlands/image-tool-original.png",
+      "status": "superseded-faceless-worker"
+    },
+    {
+      "key": "prop:highland-pay-station:highlands",
+      "promptFile": "tools/sprites/batches/2026-10-09-07/prop-highland-pay-station-highlands/organic-face-correction/prompt.txt",
+      "original": "tools/sprites/batches/2026-10-09-07/prop-highland-pay-station-highlands/organic-face-correction/image-tool-original.png",
+      "status": "engineer-native-reviewed-release-pending"
+    }
+  ],
+  "authorization": "Current explicit full generation, testing, implementation and publication request.",
+  "appearanceAcceptance": "Engineer fidelity review; no separate Joel image acceptance claimed.",
+  "priorOriginalReused": "Batch05 mine marker completed by native context review and size correction; no regeneration.",
+  "rollback": "Procedural body, immutable original sources and expected revision lease history retained."
+}

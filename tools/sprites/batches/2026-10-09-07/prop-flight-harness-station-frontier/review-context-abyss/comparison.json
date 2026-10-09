@@ -1,0 +1,193 @@
+{
+  "key": "prop:flight-harness-station:frontier",
+  "entity": {
+    "id": "decor-2",
+    "x": 350,
+    "y": 560,
+    "r": 0,
+    "decorative": true,
+    "structure": "flight-harness-station",
+    "icon": "\ud83d\udd6f\ufe0f",
+    "dungeonDistrict": "rider-preparation",
+    "renderKind": "prop"
+  },
+  "comparisons": [
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "day",
+      "anchor": {
+        "x": 475.19999999999993,
+        "y": 307.1
+      },
+      "crop": {
+        "left": 411,
+        "top": 219,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "2cc46ac595f549df2f05f84047f0955775809509d985c9cc9cd1c2142f86a3a1",
+      "candidateHash": "d3961e9805b0fcaf1fe815db9326987d81885b52f38c466159cebc65faa78332",
+      "zoneId": "abyss",
+      "entityPosition": {
+        "x": 350,
+        "y": 560
+      }
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "night",
+      "anchor": {
+        "x": 475.19999999999993,
+        "y": 307.1
+      },
+      "crop": {
+        "left": 411,
+        "top": 219,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "764034101d5ceb0219b897e5ba66cc4d8f23235b49666aaeebf987338e145de2",
+      "candidateHash": "000d82549e55e0824e96f7026e892808e46a66e914cc048c40dbbf471ef8809e",
+      "zoneId": "abyss",
+      "entityPosition": {
+        "x": 350,
+        "y": 560
+      }
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "day",
+      "anchor": {
+        "x": 164.70000000000002,
+        "y": 295.14
+      },
+      "crop": {
+        "left": 101,
+        "top": 207,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "9ee74fff51e9605f8bd26024f9c175ea33a918b8c51013c35eac1c4b3d42bf3d",
+      "candidateHash": "ff7415c18993824625e0001c02ac4b6d67855147822022c3c5189d943f8e41e9",
+      "zoneId": "abyss",
+      "entityPosition": {
+        "x": 350,
+        "y": 560
+      }
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "night",
+      "anchor": {
+        "x": 164.70000000000002,
+        "y": 295.14
+      },
+      "crop": {
+        "left": 101,
+        "top": 207,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "958e365033f67039bfd0b93331d00c45ca13c236bb2d7d73e27ba92b948cd466",
+      "candidateHash": "e04cb9e8e0d02c13812d97dc3d270804bf03980d7a468c5fb1d09e7215a77e69",
+      "zoneId": "abyss",
+      "entityPosition": {
+        "x": 350,
+        "y": 560
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "day",
+      "anchor": {
+        "x": 89.20000000000002,
+        "y": 192.66
+      },
+      "crop": {
+        "left": 25,
+        "top": 105,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "ae9429f2cf6d40857cbacef19966a7dd7b86cc8e71f8300a41dc605fd218d2eb",
+      "candidateHash": "db9a620675b2fa36ece540c7739b874b32a86f7675469d2f1e3d9dd467cfcdb9",
+      "zoneId": "abyss",
+      "entityPosition": {
+        "x": 350,
+        "y": 560
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "night",
+      "anchor": {
+        "x": 89.20000000000002,
+        "y": 192.66
+      },
+      "crop": {
+        "left": 25,
+        "top": 105,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "50c41e3fed3a024df5165558dcab6894f241a59620faa39088b61917ddc506b7",
+      "candidateHash": "0577ebde1db6bd61455174a0581febe41e9bd5b805a83a688e4bd3fda2b4a74c",
+      "zoneId": "abyss",
+      "entityPosition": {
+        "x": 350,
+        "y": 560
+      }
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "day",
+      "anchor": {
+        "x": 399.19999999999993,
+        "y": 117.89999999999998
+      },
+      "crop": {
+        "left": 335,
+        "top": 30,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "9df93a0fada3b6ab2e6271bdd8f6f233c162cf69206981ce500f47d7d8bd395a",
+      "candidateHash": "c7c6a7da97a9f1266e848e578476d67f45636a5c41bfd81bfbcf45246d5000d1",
+      "zoneId": "abyss",
+      "entityPosition": {
+        "x": 350,
+        "y": 560
+      }
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "night",
+      "anchor": {
+        "x": 399.19999999999993,
+        "y": 117.89999999999998
+      },
+      "crop": {
+        "left": 335,
+        "top": 30,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "c7de76e83dc5650e3cf589011288f88a1ce5894e8e7ec467efa9b1e352aa385c",
+      "candidateHash": "69ccf1f4fde0a4c37e114026e1cc4142f5c9f1b886136a446a8dedd7a33f558c",
+      "zoneId": "abyss",
+      "entityPosition": {
+        "x": 350,
+        "y": 560
+      }
+    }
+  ],
+  "review": "Passed engineer native fidelity/placement inspection for all eight desktop/phone day/night contexts. No separate user image acceptance claimed."
+}

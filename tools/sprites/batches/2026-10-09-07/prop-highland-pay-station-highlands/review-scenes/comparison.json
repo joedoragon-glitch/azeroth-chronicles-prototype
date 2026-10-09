@@ -1,0 +1,188 @@
+{
+  "key": "prop:highland-pay-station:highlands",
+  "entity": {
+    "renderKind": "prop",
+    "structure": "highland-pay-station",
+    "decorative": true,
+    "id": "sprite-reference-237"
+  },
+  "comparisons": [
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "day",
+      "anchor": {
+        "x": 498,
+        "y": 277.4
+      },
+      "crop": {
+        "left": 434,
+        "top": 189,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "0553749629022f2eef31857687fbb801736617294975db9feb8128a59a90f7b4",
+      "candidateHash": "458ef03f5d0a1c2842c6543a6137084f1dbbabddb2d604942f84d29b82439a03",
+      "zoneId": "highlands",
+      "entityPosition": {
+        "x": 800,
+        "y": 800
+      }
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "night",
+      "anchor": {
+        "x": 498,
+        "y": 277.4
+      },
+      "crop": {
+        "left": 434,
+        "top": 189,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "84c57b0b492a211625592ee552741c93f26a1b9a15537f185093e8060f929453",
+      "candidateHash": "0f9b6231b4458b71fc72aa2c8146b7eb25b2653adc6a7cdb307303c8adc9f685",
+      "zoneId": "highlands",
+      "entityPosition": {
+        "x": 800,
+        "y": 800
+      }
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "day",
+      "anchor": {
+        "x": 187.5,
+        "y": 265.43999999999994
+      },
+      "crop": {
+        "left": 124,
+        "top": 177,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "6f41c5da645a31516c8f68d34e1e5ce790769e9692b735cec19754f40f5ad8be",
+      "candidateHash": "797a45f6b21f7146de02c382b3c1a02756b7200eec8cb77bce9230eb9ff22b67",
+      "zoneId": "highlands",
+      "entityPosition": {
+        "x": 800,
+        "y": 800
+      }
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "night",
+      "anchor": {
+        "x": 187.5,
+        "y": 265.43999999999994
+      },
+      "crop": {
+        "left": 124,
+        "top": 177,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "a20d031aaf7cbf576fd7f11303720c14d438335de0b9cece4da3b9f17394f2ab",
+      "candidateHash": "3f3d20da5b1fa19e6077ba3a26bc5a447ae50e3b5ec14a6317e93f94370dec90",
+      "zoneId": "highlands",
+      "entityPosition": {
+        "x": 800,
+        "y": 800
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "day",
+      "anchor": {
+        "x": 112,
+        "y": 162.95999999999998
+      },
+      "crop": {
+        "left": 48,
+        "top": 75,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "c3310ad5ccee81afad136d7f44250b1f0c99be301e7779b93def0db4764c0a2a",
+      "candidateHash": "e0dff74b2a92a625b3e18d6d33bacdbe25613248edc307de0f886e01906ead02",
+      "zoneId": "highlands",
+      "entityPosition": {
+        "x": 800,
+        "y": 800
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "night",
+      "anchor": {
+        "x": 112,
+        "y": 162.95999999999998
+      },
+      "crop": {
+        "left": 48,
+        "top": 75,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "58641d96cfd6ca668ce857e079c514fa946f56d5c29a7708535ed6d0063c8597",
+      "candidateHash": "658c7890ca7e29da597885fe8a98e03cf1a2d75349015ef3d6f10d5e443bbca1",
+      "zoneId": "highlands",
+      "entityPosition": {
+        "x": 800,
+        "y": 800
+      }
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "day",
+      "anchor": {
+        "x": 422,
+        "y": 88.19999999999993
+      },
+      "crop": {
+        "left": 358,
+        "top": 0,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "e2eabfbf129982589c258d1cbaabfbc53f5c86b75fbe0eaeeab3791afbc46fef",
+      "candidateHash": "459fd016952020fdadb87a66361899268f1e7aae0bb746dc6311e8c82dfe5f30",
+      "zoneId": "highlands",
+      "entityPosition": {
+        "x": 800,
+        "y": 800
+      }
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "night",
+      "anchor": {
+        "x": 422,
+        "y": 88.19999999999993
+      },
+      "crop": {
+        "left": 358,
+        "top": 0,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "b78e0f7401cd9fe7552621208273e5a232b4cf676b86c534e82a22c695c91746",
+      "candidateHash": "813bfe921345fa86d2aa95fd617e254a531c175e984eb6b3eecf68319da4ec78",
+      "zoneId": "highlands",
+      "entityPosition": {
+        "x": 800,
+        "y": 800
+      }
+    }
+  ],
+  "review": "pending visual inspection"
+}

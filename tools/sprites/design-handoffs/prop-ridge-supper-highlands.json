@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "integrated",
+  "designId": "prop-ridge-supper-highlands",
+  "name": "Ridge supper table",
+  "kind": "environment",
+  "nextAction": "Verify release CI and exact live deployment, then continue remaining catalog.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel explicitly resumed full staged mass production from both interruption checkpoints; reuse saved completed art and correct held candidates before new batches.",
+    "decisionDate": "2026-10-08",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+    "contentDocuments": [
+      "docs/DESIGN_TO_SPRITE_WORKFLOW.md",
+      "docs/SPRITE_PRODUCTION_CURRENT_CONTEXT.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": null,
+    "proceduralDesignAcceptance": null,
+    "spriteProductionAuthorization": "Explicit current resume, generation, testing, implementation and publication request.",
+    "generatedAppearanceAcceptance": "Engineer-reviewed faithful implementation; no separate Joel image acceptance claimed.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "181e0bd4a19d60d8650c578fdad0988fdfde1e55",
+    "ownerFilesAndBranches": [],
+    "exactEntityState": {
+      "renderKind": "prop",
+      "structure": "ridge-supper",
+      "decorative": true,
+      "id": "sprite-reference-242"
+    },
+    "isolatedReferencePath": "tools/sprites/batches/2026-10-09-07/prop-ridge-supper-highlands/generation-reference.png",
+    "isolatedReferenceHash": "059fc8c83ed7d0bd61f86670071d23c42086df712d66d4798ceee376db5d7c77",
+    "gameplayContextPaths": [
+      "tools/sprites/batches/2026-10-09-07/prop-ridge-supper-highlands/review-scenes/native-review.png",
+      "tools/sprites/batches/2026-10-09-07/prop-ridge-supper-highlands/review-scenes/comparison.json",
+      "tools/sprites/batches/2026-10-09-07/prop-ridge-supper-highlands/review-context-supply-highlands/native-review.png",
+      "tools/sprites/batches/2026-10-09-07/prop-ridge-supper-highlands/review-context-supply-highlands/comparison.json"
+    ],
+    "traitsToPreserve": [
+      "Low wide timber table with two visible supports, two pale oval plates toward left and right, central dark bowl with muted tan food, brown vessel and pale neck at screen-right. No extra diners or feast.",
+      "Material-appropriate organic shapes, authored component count, native footprint, placement and intrinsic marks."
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [
+      "242"
+    ],
+    "verifiedRuntimeKeys": [
+      "prop:ridge-supper:highlands"
+    ],
+    "requiredVisibleAssets": [
+      "Static body"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Current exact structure branch is static and seed-invariant."
+    ],
+    "proceduralOwnersAndReasons": [
+      "Placement, collision, day/night shading and shadows remain procedural."
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": "prop:ridge-supper:highlands",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "tools/sprites/batches/2026-10-09-07/prop-ridge-supper-highlands/candidate.json"
+    ],
+    "approvedRecordKey": "prop:ridge-supper:highlands",
+    "activeContentRevision": "da8ded87d2efc4a5824a8af7c894e58c1c93e9e191d7cffcdc20d41c04cff588",
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "procedural",
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

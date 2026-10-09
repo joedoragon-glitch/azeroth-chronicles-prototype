@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "integrated",
+  "designId": "prop-flight-harness-station-frontier",
+  "name": "Royal flight harness station",
+  "kind": "environment",
+  "nextAction": "Verify release CI and exact live deployment, then continue remaining catalog.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel explicitly resumed full staged mass production from both interruption checkpoints; reuse saved completed art and correct held candidates before new batches.",
+    "decisionDate": "2026-10-08",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+    "contentDocuments": [
+      "docs/DESIGN_TO_SPRITE_WORKFLOW.md",
+      "docs/SPRITE_PRODUCTION_CURRENT_CONTEXT.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": null,
+    "proceduralDesignAcceptance": null,
+    "spriteProductionAuthorization": "Explicit current resume, generation, testing, implementation and publication request.",
+    "generatedAppearanceAcceptance": "Engineer-reviewed faithful implementation; no separate Joel image acceptance claimed.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "181e0bd4a19d60d8650c578fdad0988fdfde1e55",
+    "ownerFilesAndBranches": [],
+    "exactEntityState": {
+      "renderKind": "prop",
+      "structure": "flight-harness-station",
+      "decorative": true,
+      "id": "sprite-reference-248"
+    },
+    "isolatedReferencePath": "tools/sprites/batches/2026-10-09-07/prop-flight-harness-station-frontier/generation-reference.png",
+    "isolatedReferenceHash": "83fa8a702b9ee3c4317a2728cfe274bd475fd01f6f09ecfd68bb42bf082bc706",
+    "gameplayContextPaths": [
+      "tools/sprites/batches/2026-10-09-07/prop-flight-harness-station-frontier/review-scenes/native-review.png",
+      "tools/sprites/batches/2026-10-09-07/prop-flight-harness-station-frontier/review-scenes/comparison.json",
+      "tools/sprites/batches/2026-10-09-07/prop-flight-harness-station-frontier/review-context-abyss/native-review.png",
+      "tools/sprites/batches/2026-10-09-07/prop-flight-harness-station-frontier/review-context-abyss/comparison.json"
+    ],
+    "traitsToPreserve": [
+      "Two brown timber uprights and crossbeam; one suspended muted purple-brown saddle with tan inset, two tan hanging harness/stirrup loops with small pale metal fittings, low brown tool block and diagonal pale maintenance tool. Flight equipment, not restraints or a prisoner rack.",
+      "Material-appropriate organic shapes, authored component count, native footprint, placement and intrinsic marks."
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [
+      "248"
+    ],
+    "verifiedRuntimeKeys": [
+      "prop:flight-harness-station:frontier"
+    ],
+    "requiredVisibleAssets": [
+      "Static body"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Current exact structure branch is static and seed-invariant."
+    ],
+    "proceduralOwnersAndReasons": [
+      "Placement, collision, day/night shading and shadows remain procedural."
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": "prop:flight-harness-station:frontier",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "tools/sprites/batches/2026-10-09-07/prop-flight-harness-station-frontier/candidate.json"
+    ],
+    "approvedRecordKey": "prop:flight-harness-station:frontier",
+    "activeContentRevision": "034efe95f0746914ae1ba9e50b9965720b04fa1ec86cbf8caca2e252d2fca072",
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "procedural",
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

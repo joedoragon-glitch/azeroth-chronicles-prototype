@@ -1,0 +1,18 @@
+{
+  "id": "T006",
+  "resourceKey": "terrain:road:vale",
+  "name": "Greenwood Vale road material",
+  "status": "generation-queued",
+  "sourceOwner": "roads",
+  "palette": [
+    "#564834",
+    "#8e7758",
+    "#9c8664",
+    "#6f604c"
+  ],
+  "cues": "Packed woodland-soil road, warm muted brown grain. Road margins, joints, wagon ruts and junctions stay in the renderer; do not bake them into the tile.",
+  "prompt": "Create exactly ONE seamless, fully opaque square 2D material texture for Azeroth Chronicles: Greenwood Vale road material. Use the supplied procedural surface sample only for its current palette and material identity. Canonical palette: #564834, #8e7758, #9c8664, #6f604c. Material cues: Packed woodland-soil road, warm muted brown grain. Road margins, joints, wagon ruts and junctions stay in the renderer; do not bake them into the tile.\nFlat top-down material, no isometric perspective. Very fine low-contrast natural micrograin, predominantly the first palette color with restrained variation from the others. Even neutral unlit treatment. Perfectly tile across BOTH horizontal and vertical edges: no border, bands, focal point, large patches or repeating objects. Do not reproduce procedural road margins, ruts or joints from the sample. No road shape, curbs, wagon tracks, paving slab outlines, slab joints, path edges, trees, grass tufts, rocks as isolated objects, puddles, scenery, geometry, grid, markings, runes, shadow, directional lighting, glow, text or UI. The renderer owns all road shapes, intersections and margins. Full canvas covered, no alpha transparency or padding. Intended output is a 256-square repeat tile after explicit downsampling; quiet uniform fine material rather than busy detail.",
+  "tool": "image_gen",
+  "sourceCommit": "4c508e6c383973634f723641d4df210275c822e2",
+  "dependencyHash": "efddb4d54fddf21d07bd6e66bc285036653c7feb9db62042d5d734d6f027cffb"
+}
