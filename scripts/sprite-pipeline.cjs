@@ -304,6 +304,14 @@ function reference(contract, generation = false) {
   return canvas.toBuffer('image/png');
 }
 // Reference display geometry stays fixed; only processed raster pixels change.
+// Native raster budgets include both 150% camera framing and a larger
+// world-space display footprint. They do not authorize scaling 100% exports.
+function targetRasterScaleFor(contract) {
+  const featureScale = require('../src/prototype/visuals.js').featureScale(contract.entity);
+  if (featureScale >= 1.35) return specs.policy.targetScaleForMajorFeatures;
+  if (featureScale >= 1.3) return specs.policy.targetScaleForTrees;
+  return specs.policy.targetRasterScale;
+}
 function rasterFor(contract, scale = 1) {
   const width = contract.canvas.width * scale,
     height = contract.canvas.height * scale;
@@ -1243,7 +1251,7 @@ async function generationRequest(key, destination) {
     },
     target: {
       cameraZoom: specs.policy.reviewCameraZoom,
-      raster: rasterFor(contract, specs.policy.targetRasterScale),
+      raster: rasterFor(contract, targetRasterScaleFor(contract)),
       runtime: contract.runtime,
       visibleBodyCSS: body,
       profiles: specs.policy.reviewProfiles,
@@ -1342,7 +1350,7 @@ async function resolutionPlan() {
   walk(path.join(root, 'tools/sprites/batches'));
   const assets = Object.entries(registry.assets).map(([key, record]) => {
     const contract = contractFor(key),
-      target = rasterFor(contract, specs.policy.targetRasterScale),
+      target = rasterFor(contract, targetRasterScaleFor(contract)),
       current = rasterFor(contract, record.processing?.rasterScale ?? 1),
       clipFrames = Object.values(record.presentation?.clips || {}).reduce(
         (sum, c) => sum + c.frames.length,
@@ -1436,6 +1444,7 @@ module.exports = {
   reference,
   prepare,
   rasterFor,
+  targetRasterScaleFor,
   validateRaster,
   validateRecord,
   checkProduction,
