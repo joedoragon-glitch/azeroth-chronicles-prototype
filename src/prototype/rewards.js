@@ -83,6 +83,11 @@
           this.say(
             q.name + ' complete. Reward delivered: ' + q.gold + ' crowns and ' + q.xp + ' XP.',
           );
+          // The paid flag already persists in v4 saves: no second narrative flag or replay.
+          const index = Number(q.id.slice('quest-'.length));
+          const narration = D.questNarration?.[index];
+          if (Number.isInteger(index) && typeof narration === 'string')
+            this.notice(narration, 6.8, 'narration');
         }
         this.event('questComplete', { id: q.id });
         this.event('quest', { id: q.id, automatic: true });
