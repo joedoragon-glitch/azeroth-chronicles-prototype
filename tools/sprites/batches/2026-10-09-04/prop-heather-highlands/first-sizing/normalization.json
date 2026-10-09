@@ -1,0 +1,15 @@
+{
+  "original": "../generated_images/exec-dc29b41d-a0c3-4372-bdfa-41d60583a2df.png",
+  "resize": [
+    1024,
+    1024
+  ],
+  "padding": 512,
+  "translation": [
+    0,
+    24
+  ],
+  "crop": false,
+  "trim": false,
+  "alphaDeletion": false
+}

@@ -1,0 +1,9 @@
+{
+  "key": "prop:heather:highlands",
+  "original": "tools/sprites/batches/2026-10-09-04/prop-heather-highlands/image-tool-original.png",
+  "fullCanvasSize": 1024,
+  "padding": 256,
+  "translation": {
+    "offsetY": 24
+  }
+}

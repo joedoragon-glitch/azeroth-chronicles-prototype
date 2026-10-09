@@ -1,0 +1,19 @@
+{
+  "batch": "2026-10-09-05",
+  "authorization": "Current explicit staged generation, implementation and publication request",
+  "imageCallsThisBatch": 1,
+  "images": [
+    {
+      "key": "prop:mine-old-markings:highlands",
+      "original": "prop-mine-old-markings-highlands/image-tool-original.png",
+      "status": "held-contextual-scene",
+      "promptFile": "prop-mine-old-markings-highlands/job.json"
+    }
+  ],
+  "queued": [
+    "prop:mint-workbench:highlands",
+    "prop:ore-sorting-bay:highlands",
+    "prop:caravan-loading-bay:highlands"
+  ],
+  "checkpoint": "Save immutable generated masters before more image calls; contextual scene guard preserved."
+}

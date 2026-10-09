@@ -366,6 +366,42 @@
       "anchorX": 0.5,
       "anchorY": 0.75,
       "labelHeight": 64
+    },
+    "prop:heather:highlands": {
+      "src": "./assets/sprites/prop-heather-highlands-874f1e4263a3c9332ff59aa4ffb9e977ed5647019a162a09cbf2fcfae1760b3c.png",
+      "width": 192,
+      "height": 192,
+      "hash": "874f1e4263a3c9332ff59aa4ffb9e977ed5647019a162a09cbf2fcfae1760b3c",
+      "revision": "1fc62a7ad74c8af52ce673b89130bf1e757b7d796fe56eb0c3cdff4b3bfff388",
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 64
+    },
+    "prop:rock:vale": {
+      "src": "./assets/sprites/prop-rock-vale-6c91a24ae9be14a3e01308e7a3b8833f7ce7998ed4e0aa53d99965884f1b7611.png",
+      "width": 192,
+      "height": 192,
+      "hash": "6c91a24ae9be14a3e01308e7a3b8833f7ce7998ed4e0aa53d99965884f1b7611",
+      "revision": "ea5807ae852c76cbea5e521e7d989481ef505a504326cc87812241c7e645704b",
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 64
+    },
+    "prop:rock:highlands": {
+      "src": "./assets/sprites/prop-rock-highlands-6c91a24ae9be14a3e01308e7a3b8833f7ce7998ed4e0aa53d99965884f1b7611.png",
+      "width": 192,
+      "height": 192,
+      "hash": "6c91a24ae9be14a3e01308e7a3b8833f7ce7998ed4e0aa53d99965884f1b7611",
+      "revision": "25c391d966fe234e2951e6dadd402d8ed8d6d493fdb6844f3e100cf1e52b3cdf",
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 64
     }
   },
   "formatVersion": 3

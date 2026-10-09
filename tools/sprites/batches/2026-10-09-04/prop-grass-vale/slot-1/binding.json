@@ -1,0 +1,12 @@
+{
+  "key": "prop:grass:vale",
+  "modulo": 5,
+  "slot": 1,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "grass",
+    "id": "sprite-slot-0"
+  },
+  "sourceCommit": "181e0bd4a19d60d8650c578fdad0988fdfde1e55"
+}

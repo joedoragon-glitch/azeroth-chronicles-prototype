@@ -1,0 +1,11 @@
+{
+  "key": "prop:rock:vale",
+  "modulo": 4,
+  "slot": 1,
+  "entity": {
+    "renderKind": "prop",
+    "icon": "🪨",
+    "id": "sprite-slot-1"
+  },
+  "sourceCommit": "181e0bd4a19d60d8650c578fdad0988fdfde1e55"
+}

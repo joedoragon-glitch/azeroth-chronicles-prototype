@@ -1,0 +1,147 @@
+{
+  "key": "prop:rock:highlands",
+  "entity": {
+    "renderKind": "prop",
+    "icon": "🪨",
+    "id": "sprite-reference-296"
+  },
+  "comparisons": [
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "day",
+      "anchor": {
+        "x": 498,
+        "y": 277.4
+      },
+      "crop": {
+        "left": 434,
+        "top": 189,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "4494a4870b8ad9e642418355a43121155e4580393cfe676f060136ee33ae7256",
+      "candidateHash": "4299aa7967cb8328b9b5539c32b94c454a05fd8ba023a31c8aea04e2d30ed7b0"
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "night",
+      "anchor": {
+        "x": 498,
+        "y": 277.4
+      },
+      "crop": {
+        "left": 434,
+        "top": 189,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "12758aa025c22e5b42e87f3f91ba8a14a9f37d7d8a5902a76d349c3a98a69844",
+      "candidateHash": "e511dbf4fc495e1ce7de247ab1825e5b4ee4f9d6b278494ef9d61a6398721578"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "day",
+      "anchor": {
+        "x": 187.5,
+        "y": 265.43999999999994
+      },
+      "crop": {
+        "left": 124,
+        "top": 177,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "bcf4657d124a16d3ba52416e06b16d57034c092182ca299fb3530ad0b5186653",
+      "candidateHash": "4f74e298a75a342a1e805bfabb6254fefb29be173f4b59c36bc6c0c59e86427b"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "lighting": "night",
+      "anchor": {
+        "x": 187.5,
+        "y": 265.43999999999994
+      },
+      "crop": {
+        "left": 124,
+        "top": 177,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "f041049618bb1407f7783133e8710393cb59df8cc9c88ed627dc577c2baf10fc",
+      "candidateHash": "a0190075883f236900e09bbf825e63b5b19b74841cb470b3469eab8b03fab232"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "day",
+      "anchor": {
+        "x": 112,
+        "y": 162.95999999999998
+      },
+      "crop": {
+        "left": 48,
+        "top": 75,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "42df7d6206f59baa5245716ae50234f494a9d7b6de241dd0db5a51cdb5dff5b3",
+      "candidateHash": "3690d3dae4e62bfbeea5221ff2507428b241edbde73b300c16b5a02443f61372"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "lighting": "night",
+      "anchor": {
+        "x": 112,
+        "y": 162.95999999999998
+      },
+      "crop": {
+        "left": 48,
+        "top": 75,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "22f02cbb74da4bb554ac216df11a0f10959529dac68a8fc953bc918917eaf6ab",
+      "candidateHash": "d2a383692214803646d01a8bea7ee745f66055e21a06b2a222d3b3e1c7827f4a"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "day",
+      "anchor": {
+        "x": 422,
+        "y": 88.19999999999993
+      },
+      "crop": {
+        "left": 358,
+        "top": 0,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "435a22c22834ce6181f4a85972df25195cfb90098fa8dc6145d54eb8c007db09",
+      "candidateHash": "080b0904a8e8e3a8388c794fc669b59c08f141ae581857026c86e2d067d0f833"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "night",
+      "anchor": {
+        "x": 422,
+        "y": 88.19999999999993
+      },
+      "crop": {
+        "left": 358,
+        "top": 0,
+        "width": 128,
+        "height": 112
+      },
+      "canonicalHash": "c838baaff901c4bdc3fb190ea0c262ae4cdafa600700f6a1b905579c7c0bed45",
+      "candidateHash": "ef1698f4d07f522b55377a8b3ffa3454b603d46b1d1953dc744ef791d89e27d9"
+    }
+  ],
+  "review": "pending visual inspection"
+}

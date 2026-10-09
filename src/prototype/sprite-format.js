@@ -51,6 +51,22 @@
       if (new Set(out.variants.map((v) => v.src)).size !== out.variants.length)
         throw Error('Duplicate sprite variant');
     }
+    if (out.variantSelector !== undefined) {
+      const selector = out.variantSelector;
+      if (
+        !selector ||
+        selector.kind !== 'procedural-modulo' ||
+        !Number.isInteger(selector.modulo) ||
+        selector.modulo < 1 ||
+        selector.modulo > 64 ||
+        !Array.isArray(selector.slots) ||
+        selector.slots.length !== selector.modulo ||
+        !out.variants ||
+        selector.slots.some((id) => !out.variants.some((v) => v.id === id))
+      )
+        throw Error('Invalid procedural variant selector');
+      out.variantSelector = { ...selector, slots: [...selector.slots] };
+    }
     if (out.clips !== undefined) {
       if (!out.clips || typeof out.clips !== 'object' || Array.isArray(out.clips))
         throw Error('Invalid sprite clips');

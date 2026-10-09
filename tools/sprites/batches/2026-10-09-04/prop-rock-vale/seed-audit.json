@@ -1,0 +1,8 @@
+{
+  "key": "prop:rock:vale",
+  "sourceCommit": "181e0bd4a19d60d8650c578fdad0988fdfde1e55",
+  "samples": 200,
+  "referenceHash": "14bb9d74c1d629b34a7b263fd0641e1f521cff7cc6175a0c287376c42f936ba6",
+  "identical": true,
+  "branch": "live e.icon === rock branch before wildProp; no moss or per-region palette"
+}

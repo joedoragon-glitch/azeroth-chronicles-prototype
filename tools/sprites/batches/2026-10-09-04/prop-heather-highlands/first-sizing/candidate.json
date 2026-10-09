@@ -1,0 +1,92 @@
+{
+  "version": 2,
+  "key": "prop:heather:highlands",
+  "catalogId": "285",
+  "canonHash": "0e130dc7b30dd195a74f0fddf991bb12f609370ab68cca81e407e74c27499636",
+  "canonSnapshotHash": "f81c0c5a6a0b78a9c3ded5a70e2d1878173841d5edd3e9af4a4d6e5b1ee5e91f",
+  "catalogHash": "8213198f2c34ea469990bdd8d47e036ec74b5e20057c8b379926e4ed92951438",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 2048,
+    "height": 2048,
+    "bytes": 47485,
+    "decodedBytes": 16777216,
+    "hash": "84f71b61676c9ac9a79f578cdbf5355ce376cae1fa487cb1589b3eeb436e23a0",
+    "pixelHash": "1a3da69fd62d7b7200f57c1c538b28e031921cb276f61a1a804220b96ff5c914",
+    "bounds": {
+      "x1": 591,
+      "y1": 621,
+      "x2": 1458,
+      "y2": 1489
+    },
+    "padding": 558,
+    "transparentPixels": 4183423,
+    "visiblePixels": 10881,
+    "lowAlphaPixels": 4942,
+    "materialBounds": {
+      "x1": 963,
+      "y1": 1115,
+      "x2": 1089,
+      "y2": 1297
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 192,
+    "height": 192,
+    "bytes": 685,
+    "decodedBytes": 147456,
+    "hash": "2af9950bf9aa798fae57cf8fad770241d0ea11b648e16f95008d91b247150298",
+    "pixelHash": "a1ba4200406df23e2c22eda265f8283e39fcd4aa32946cd648e0b778849f11a8",
+    "bounds": {
+      "x1": 72,
+      "y1": 117,
+      "x2": 102,
+      "y2": 145
+    },
+    "padding": 46,
+    "transparentPixels": 36765,
+    "visiblePixels": 99,
+    "lowAlphaPixels": 58,
+    "materialBounds": {
+      "x1": 91,
+      "y1": 129,
+      "x2": 101,
+      "y2": 145
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      2048,
+      2048
+    ],
+    "to": [
+      192,
+      192
+    ],
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": 0,
+      "y": 24,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "pending",
+    "reference": null
+  }
+}
