@@ -104,6 +104,9 @@ console.log('PASS enemy attacks preserve health damage while resource effect rem
   );
   Object.assign(ash, { hp: 200, maxHp: 1000, projectileStyle: 'cinder' });
   g.zone().enemies = [ash];
+  // Complete the area's lazy enemy normalization before measuring a direct hit;
+  // the world may adjust authored monster HP when first revisited.
+  g.zone();
   const beforeHero = g.hero.hp, beforeAsh = ash.hp;
   assert(g.hitParty(g.hero, 160, 0.04, ash.id));
   const taken = beforeHero - g.hero.hp;
