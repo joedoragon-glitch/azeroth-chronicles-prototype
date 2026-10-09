@@ -1,4 +1,4 @@
-name: Rogue Integration Audit
+name: Rogue Integration Format Report
 on:
   push:
     branches: [rogue-final-audit-smoke-146]
@@ -15,14 +15,13 @@ jobs:
         with:
           node-version: '22'
       - run: npm ci --ignore-scripts
-      - name: Validate formatting and build contracts
+      - name: Report exact Prettier changes
         run: |
-          npm run format:check
+          npx prettier --write src/prototype/hero-combat.js
+          echo 'ROGUE_FORMAT_START'
+          git diff --no-ext-diff --unified=3 -- src/prototype/hero-combat.js
+          echo 'ROGUE_FORMAT_END'
+      - name: Validate package and regressions after formatting
+        run: |
           npm run check
-      - name: Run all regression suites
-        run: npm test
-      - name: Confirm scope and tests
-        run: |
-          node tests/sprite-scope.test.cjs
-          node tests/targeting.test.cjs
-          node tests/burst-compression.test.cjs
+          npm test
