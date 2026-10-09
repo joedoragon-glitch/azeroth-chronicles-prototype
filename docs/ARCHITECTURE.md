@@ -119,3 +119,7 @@ The reconciled scope remains 296 decisions (280 GENERATE, 16 PROCEDURAL), 70 pre
 ## 150% sprite preparation
 
 Developer sprite processing now records explicit raster scale separately from the established reference display canvas. Existing manifest displayWidth/displayHeight already keep runtime static/clip/variant geometry independent of resource pixel dimensions. Density-aware preparation, atlas assembly, source provenance and capped-device-ratio review live in sprite-pipeline.cjs and sprite-batch-review.cjs. Existing runtime resource validation, actual-pixel memory accounting, content-aware retirement and offline inventory retain their ownership and limits. No production asset migration is performed by this housekeeping release. See SPRITE_RESOLUTION_HOUSEKEEPING.md.
+
+## Enemy presentation/audio identity synchronization
+
+`enemy-vfx.js` owns stable attack identities; `enemy-presentation.js` derives their shared material/action/personality profiles. `enemy-vfx-events.js` delivers one immutable observation-only stage envelope. `audio-enemy.js` routes stage decisions and bounded family recipes through the existing effect/recorded binding facade. No gameplay owner imports audio, and transient deduplication/suppression never enters statistics or saves. See `ENEMY_AUDIO_SYNCHRONIZATION.md`; `npm run check` includes live audio/VFX coverage.

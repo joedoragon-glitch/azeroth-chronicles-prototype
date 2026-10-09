@@ -43,6 +43,7 @@
     ];
   }
   function warningShapes(a, patches) {
+    if (a.kind === 'summon') return [];
     if (a.kind === 'line' || a.kind === 'volley')
       return (a.kind === 'volley' ? [-0.22, 0, 0.22] : a.count === 2 ? [-85, 85] : [0]).map((o) => {
         const angle = a.angle + (a.kind === 'volley' ? o : 0),
@@ -66,7 +67,12 @@
     if (a.kind === 'cone' || a.kind === 'sector')
       return [sectorPoints(a, a.radius, a.angle, a.kind === 'sector' ? 0.65 : 1.1)];
     if (a.kind === 'ring')
-      return [circlePoints({ x: a.fromX, y: a.fromY }, G.ringSpeed * G.ringLife + G.ringHalfWidth)];
+      return [
+        circlePoints(
+          { x: a.fromX, y: a.fromY },
+          G.ringSpeed * G.ringLife * R.bossCadence.areaRangeMultiplier + G.ringHalfWidth,
+        ),
+      ];
     return patches.map((p) => circlePoints(p, p.radius));
   }
   function strokeWorld(ctx, screen, a, b, color, width = 1) {
@@ -186,56 +192,48 @@
       }
       ctx.setLineDash([]);
       if (cue) {
-        const p = screen(a);
+        const p = screen(a.kind === 'summon' ? e : a);
+        ctx.font = 'bold 12px system-ui';
         ctx.textAlign = 'center';
-        if (a.rogueMove) {
-          // Wrap the complete named move, rather than shrink an oversized
-          // one-line label to unreadable phone text or clip it off-screen.
-          const zoom = ctx.getTransform?.().a || 1,
-            canvasWidth = (ctx.canvas?.width || 900) / zoom,
-            canvasHeight = (ctx.canvas?.height || 650) / zoom,
-            maxWidth = Math.max(130, canvasWidth - 20);
-          ctx.font = 'bold 11px system-ui';
-          const lines = [''];
-          for (const word of a.name.split(' ')) {
-            const i = lines.length - 1,
-              next = lines[i] ? lines[i] + ' ' + word : word;
-            if (lines[i] && ctx.measureText(next).width + 20 > maxWidth) lines.push(word);
-            else lines[i] = next;
-          }
-          const w = Math.min(
-              maxWidth,
-              Math.max(100, ...lines.map((line) => ctx.measureText(line).width + 20)),
-            ),
-            x = Math.max(w / 2 + 5, Math.min(canvasWidth - w / 2 - 5, p.x)),
-            h = 17 + lines.length * 15,
-            y = Math.max(6, Math.min(canvasHeight - h - 6, p.y - h - 12));
-          ctx.fillStyle = '#192a36f2';
-          ctx.fillRect(x - w / 2, y, w, h);
-          ctx.strokeStyle = a.rogueSignature ? '#9cf1f0' : '#8ecde6';
-          ctx.lineWidth = 1.4;
-          ctx.strokeRect(x - w / 2, y, w, h);
-          ctx.fillStyle = '#f2fbff';
-          lines.forEach((line, j) => ctx.fillText(line, x, y + 13 + j * 15));
-          ctx.font = 'bold 10px system-ui';
-          ctx.fillStyle = '#9cf1f0';
-          ctx.fillText(
-            (a.rogueSignature ? 'SIGNATURE' : 'ROGUE') + ' · ' + a.timer.toFixed(1) + 's',
-            x,
-            y + h - 4,
-          );
-        } else {
-          ctx.font = 'bold 12px system-ui';
-          const label = a.name + ' · ' + a.timer.toFixed(1),
-            w = ctx.measureText(label).width + 16;
-          ctx.fillStyle = '#241d1af2';
-          ctx.fillRect(p.x - w / 2, p.y - 31, w, 21);
-          ctx.strokeStyle = '#f4c984';
-          ctx.lineWidth = 1;
-          ctx.strokeRect(p.x - w / 2, p.y - 31, w, 21);
-          ctx.fillStyle = '#fff3c8';
-          ctx.fillText(label, p.x, p.y - 16);
+        const transform = ctx.getTransform?.(),
+          scale = transform?.a || 1,
+          viewWidth = (ctx.canvas?.width || 1280) / scale,
+          viewHeight = (ctx.canvas?.height || 800) / scale,
+          maxWidth = Math.max(60, Math.min(240, viewWidth - 16)),
+          words = (a.name + (a.rogueMove ? '' : ' · ' + a.timer.toFixed(1))).split(' '),
+          lines = [];
+        let current = '';
+        for (const word of words) {
+          const next = current ? current + ' ' + word : word;
+          if (current && ctx.measureText(next).width > maxWidth - 16) {
+            lines.push(current);
+            current = word;
+          } else current = next;
         }
+        if (current) lines.push(current);
+        if (a.rogueMove)
+          lines.push((a.rogueSignature ? 'SIGNATURE' : 'ROGUE') + ' · ' + a.timer.toFixed(1) + 's');
+        const w = Math.min(maxWidth, Math.max(...lines.map((t) => ctx.measureText(t).width)) + 16),
+          h = 8 + lines.length * 15,
+          left = Math.max(4, Math.min(viewWidth - w - 4, p.x - w / 2)),
+          top = Math.max(
+            4,
+            Math.min(viewHeight - h - 4, p.y - (a.kind === 'summon' ? 72 : 31) - h + 21),
+          );
+        ctx.fillStyle = a.rogueMove ? '#192a36f2' : '#241d1af2';
+        ctx.fillRect(left, top, w, h);
+        ctx.strokeStyle =
+          a.kind === 'summon'
+            ? '#a8bb9b'
+            : a.rogueSignature
+              ? '#9cf1f0'
+              : a.rogueMove
+                ? '#8ecde6'
+                : '#f4c984';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(left, top, w, h);
+        ctx.fillStyle = a.rogueMove ? '#f2fbff' : '#fff3c8';
+        lines.forEach((t, j) => ctx.fillText(t, left + w / 2, top + 16 + j * 15));
       }
     }
     for (const a of game.s.hazards) {
@@ -307,7 +305,16 @@
     ctx.restore();
   }
   function queue(events, game, current = []) {
-    const next = current.filter((f) => f.life > 0),
+    const art =
+      root.PrototypeEnemyVfxArt ||
+      (typeof require === 'function' ? require('./enemy-vfx-art.js') : null);
+    const next = art
+        ? art.queue(
+            events,
+            game,
+            current.filter((f) => f.life > 0),
+          )
+        : current.filter((f) => f.life > 0),
       contacts = new Set(
         events.filter((e) => e.type === 'projectileImpact').map((e) => e.x + ':' + e.y),
       ),
@@ -316,7 +323,18 @@
     for (const e of events) {
       if (e.type === 'hit' && Number.isFinite(e.x) && !contacts.has(e.x + ':' + e.y))
         push(e, 'impact', 0.2, 1);
-      else if (e.type === 'projectileImpact' && Number.isFinite(e.x)) push(e, 'contact', 0.32, 1);
+      else if (
+        e.type === 'projectileImpact' &&
+        Number.isFinite(e.x) &&
+        !events.some(
+          (f) =>
+            f.type === 'enemyVfx' &&
+            f.stage === 'impact' &&
+            f.target === e.target &&
+            f.source === e.source,
+        )
+      )
+        push(e, 'contact', 0.32, 1);
       else if (e.type === 'hurt' && Number.isFinite(e.x)) push(e, 'hurt', 0.25, 2);
       else if (e.type === 'heal') {
         const target =

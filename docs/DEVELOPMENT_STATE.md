@@ -166,10 +166,18 @@ The current v0.8.108 balance follows the doubled-curve request and the later exa
 
 v0.8.109 preserves the player's existing BOSS/ADDS toggle, Paladin boss-focus default, and Mage/Ranger adds-first default. In ADDS mode, companions **ignore the boss whenever active non-boss threats or its live summons need clearing**; they fight the boss immediately once no such target remains and automatically resume add clearing on a new wave or active attacker. An owned new summon qualifies even before its aggro flag activates or it enters the usual companion local range. Explicit BOSS orders stay in force throughout the encounter, even if a boss temporarily drops out of the squad's threat list. A player-selected ADDS order likewise stays until disengagement or the user toggles; a full encounter end resets to each class default. No changes to boss summons, compression, classes, damage or formation geometry. Includes three-class target-selection regressions and corrected HUD tooltips.
 
+## Enemy skill VFX overhaul v0.8.113
+
+The observation-only bridge and restrained procedural art cover 251 live identities, with all normal/TRUE boss moves, captain skills/phases, ordinary/guardian/ringleader basics, ranged and night-exclusive attacks, and live rogue basics. The merged PR #146 repertoire is preserved, including all 40 signatures and role-specific basic maneuvers. See [ENEMY_SKILL_VFX_AUDIT.md](ENEMY_SKILL_VFX_AUDIT.md) for actual desktop/phone comparisons, lifecycle safeguards, snapshot equivalence and the shared sprite/clip replacement path. PRs #161 and #162 keep the event contract and completed art reviewable.
+
+## Prepared v0.8.112 — shared enemy audio/VFX identities
+
+Audio now consumes the existing stable stage envelope, with material/action, creature/faction and restrained important-cast motif routing. Thirty original short synthesized SFX recordings join the existing validated manifest and offline inventory; cold/missing playback remains procedural. Live VFX coverage is a build and regression acceptance gate, including future rogue signatures. See `ENEMY_AUDIO_SYNCHRONIZATION.md` and generated `ENEMY_AUDIO_COVERAGE.md`. This observation-only integration preserves combat rules and v4 save/statistics equivalence. Release requires exact-head full CI and Pages verification.
+
 ## Responsive HUD and contextual menu pass · v0.8.112
 
 The desktop/phone presentation now keeps a compact HUD instead of the old broad permanent status window and centers smaller scrollable dialogs with a stable Back action. The palette changes to slate/teal and brass, while skill and movement controls keep their established sizes. Basic and Full Barracks share clear Company/Specialists/Operations groupings; the portable Inventory option is no longer duplicated in Full Barracks. Field Barracks placement remains a unique Adventure-menu action because building at the current field position cannot be delegated to an existing Barracks. The production CSS approval fixture is versioned separately from the historical v0.8.83 fixture. See `RESPONSIVE_UI_AUDIT_20261009.md`.
 
-## Approved ergonomic UI refinement · v0.8.113
+## Approved ergonomic UI refinement · v0.8.114
 
 Phone: thumb-adjacent contextual Interact, stable Recall/Target/Squad grouping, clearer labels and notifications. Desktop: compact unlocked-skill hotbar, contextual Ranger commands and corrected camera anchor. Short interaction dialogs now use natural compact/regular widths and natural height under the same scroll limits. Inventory removes duplicate Recall and disabled support actions; Barracks Operations copy matches its real functions. The canonical supported minimum stays 375x800 CSS portrait/800x375 landscape; 360x780 is only a scaled best-effort fallback and does not govern the design or add device support commitments. See RESPONSIVE_UI_AUDIT_20261009.md. Draft branch only until review and CI.

@@ -68,6 +68,8 @@
     Campaign,
     PrototypeVisuals,
     PrototypeCombatVisuals,
+    PrototypeEnemyVfxArt = root.PrototypeEnemyVfxArt ||
+      (typeof require === 'function' ? require('./enemy-vfx-art.js') : null),
     PrototypeSprites,
     PrototypeMaterials,
     now = () => performance.now(),
@@ -430,6 +432,7 @@
       return { q, ux: vx / len, uy: vy / len, px: -vy / len, py: vx / len };
     }
     function drawProjectile(p) {
+      if (PrototypeEnemyVfxArt?.projectile(ctx, screen, p, game)) return;
       const { q, ux, uy, px, py } = projectileVector(p),
         style = p.style || 'magic',
         combo = p.combo || 0;
@@ -727,6 +730,7 @@
         const a = Math.max(0, f.life / f.max),
           p = screen(f),
           grow = 1 - a;
+        if (f.type === 'enemyVfx') continue;
         ctx.save();
         ctx.globalAlpha = a;
         if (f.type === 'ability') {
@@ -1454,11 +1458,13 @@
         hero: screen(game.hero),
         lights: ambientLights,
       });
+      PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx);
       drawOcclusionOutlines(entities);
       // Critical outlines and transient effects retain contrast through the night grade.
-      PrototypeCombatVisuals.ground(ctx, screen, game, 'cue', now() / 1000);
+      PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx);
       for (const p of game.s.projectiles) drawProjectile(p);
       drawVisualFx();
+      PrototypeCombatVisuals.ground(ctx, screen, game, 'cue', game.s.time);
       targetGuidance();
       if (isPaused()) {
         ctx.fillStyle = '#0006';
@@ -1488,7 +1494,12 @@
         PrototypeSprites?.noteEvents?.(events);
       },
       update: updateVisualFx,
-      metrics: () => ({ ...stats, cameraZoom: zoom() }),
+      metrics: () => ({
+        ...stats,
+        cameraZoom: zoom(),
+        transientEffects: visualFx.length,
+        enemyVfxEffects: visualFx.filter((f) => f.type === 'enemyVfx').length,
+      }),
     };
   }
   const api = { create, majorOccluder, occlusionPairs };
