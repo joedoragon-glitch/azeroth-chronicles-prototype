@@ -68,13 +68,22 @@
         });
         return hits;
       }
+      // Legacy MP cost stays executable behind resourceMode for reversible restoration.
       skillManaCost(slot, rank = this.hero.skills[slot - 1] || 1, charged = false) {
+        if (!R.resourceMode.manaEnabled) return 0;
         if (charged) {
           const fraction = R.chargedSkills?.manaFractions?.[slot];
           if (fraction) return Math.max(1, Math.ceil(this.hero.maxMp * fraction));
         }
         if (slot === 1) return 0;
         return Math.ceil(costs[slot] * (1 + R.manaBalance.rankCostGrowth * Math.max(0, rank - 1)));
+      }
+      skillCooldown(slot, charged = false) {
+        const base = !R.resourceMode.manaEnabled && charged
+          ? (R.cooldownBalance.chargedSeconds[slot] || cooldowns[slot])
+          : cooldowns[slot];
+        return base * (1 - Math.min(5, this.hero.talents[1] || 0) *
+          (R.resourceMode.manaEnabled ? 0 : R.cooldownBalance.reductionPerTalentRank));
       }
       // Target selection is transient: no changes to campaign saves or difficulty.
       // A held Target locks the current foe even while dodging beyond selection range.
@@ -227,7 +236,7 @@
         const cost = this.skillManaCost(slot, rank, isCharged);
         if (this.hero.mp < cost) return false;
         this.hero.mp -= cost;
-        this.hero.cd[i] = cooldowns[slot];
+        this.hero.cd[i] = this.skillCooldown(slot, isCharged);
         if (target && requiresTarget) this.s.heroTarget = selected?.id || target.id;
         const power = this.power();
         if (isCharged && slot === 1) {
