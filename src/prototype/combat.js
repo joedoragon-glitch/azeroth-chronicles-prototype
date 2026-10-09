@@ -164,6 +164,21 @@
         ).length;
       }
 
+      tacticalRogueWounded(e) {
+        // Bosses and captains retain their own phase/summon mechanics. Ordinary,
+        // guardian and ringleader monsters can seek support when badly hurt.
+        return !!(
+          e &&
+          e.hp > 0 &&
+          e.maxHp > 0 &&
+          e.type !== 'boss' &&
+          !e.captain &&
+          !e.roomCaptain &&
+          (e.type === 'mob' || e.guard || e.form === 'ringleader') &&
+          e.hp / e.maxHp < R.tacticalFoundation.woundedThreshold
+        );
+      }
+
       tacticalRogueEligibility(e, activeTargetCount = 0) {
         const config = R.tacticalFoundation;
         if (!e || !this.hero || e.hp <= 0 || this.peace) return false;
@@ -171,6 +186,7 @@
           return false;
         const difference = e.level - this.hero.level;
         if (difference >= config.outlevelProtection) return false;
+        if (this.tacticalRogueWounded(e)) return true;
         if (difference <= -config.heroLevelDisadvantageMinimum) return true;
 
         const pressured = activeTargetCount >= config.simultaneousPressureSources;
