@@ -108,7 +108,7 @@
       ['bridge-south', 'Timber crossing', 1300, 1870],
       ['lookout', 'Old Signal Keep', 2350, 1500],
       ['ore', 'Stonecross ore vein', 1100, 650],
-      ['wolf-den', 'Wolf hunting ground', 520, 1250],
+      ['wolf-den', 'Wolf hunting ground', 340, 1020],
       ['ogre-hearth', 'Ogre hearth camp', 1980, 1820],
     ],
     [
@@ -1465,6 +1465,7 @@
       id: 'wolf-packhold',
       region: 'highlands',
       site: 'wolf-den',
+      reanchorSite: true,
       species: 'wolf',
       wall: 'stonewall',
       guardCount: 4,
@@ -1551,7 +1552,7 @@
     {
       id: 'ashbeast-roost-hold',
       region: 'crown',
-      center: [1800, 3300],
+      center: [1580, 3260],
       species: 'ashbeast',
       wall: 'stonewall',
       guardCount: 4,
