@@ -67,7 +67,7 @@
     null, // 28
     {
       kind: 'narration',
-      text: "The fortress doesn't run itself. Someone has to collect the levies, move the supplies, and keep the roads guarded.",
+      text: 'Crownwatch collects the levies. Guarded wagons carry tribute and supplies toward the fortress and its siege works.',
     }, // 29
     {
       kind: 'milestone',
