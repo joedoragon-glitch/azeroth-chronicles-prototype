@@ -491,14 +491,14 @@
                 this.line(a, u)
               ) {
                 a.hit.push(id);
-                if (this.hitParty(u, a.damage, a.manaDrain || 0)) this.enemyVfxHazardImpact?.(a, u);
+                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null)) this.enemyVfxHazardImpact?.(a, u);
               }
             }
           } else if (a.tick <= 0) {
             a.tick = 1;
             for (const u of this.combatTargets())
               if (dist(u, a) < a.radius && this.line({ x: a.fromX ?? a.x, y: a.fromY ?? a.y }, u)) {
-                if (this.hitParty(u, a.damage, a.manaDrain || 0)) this.enemyVfxHazardImpact?.(a, u);
+                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null)) this.enemyVfxHazardImpact?.(a, u);
                 if (a.slow) u.slow = 3;
               }
           }
