@@ -756,7 +756,7 @@ test('F79 skill relocation does not reset the encounter or make the boss immune 
  c.hero.x=3000;
  assert.equal(c.tacticalRogueLeashAllows(e,c.hero,700),false,'genuine escape still disengages');
  c.s.time+=4.1;c.hero.x=1820;
- assert.equal(c.tacticalRogueLeashAllows(e,c.hero,700),false,'temporary allowance expires');
+ assert(c.tacticalRogueLeashAllows(e,c.hero,700),'continued close combat is not reset when the timer expires');
 });
 test('F80 captain guard rally only replenishes at zero or one, and never replaces summoned minions',()=>{
  for(const [id,species] of [['supply-highlands','wolf'],['frontier-overseer','orc']]){
@@ -779,5 +779,18 @@ test('F80 captain guard rally only replenishes at zero or one, and never replace
    assert(summoned.summon&&summoned.owner===e.id&&summoned.hp>0,'summon remains distinct');
   }
  }
+});
+test('F81 Thornfang howl does not reset a nearby fight when the grace timer expires',()=>{
+ const c=fresh(),e=c.bossEnemy(c.boss('thorn'),'normal',{x:1400,y:1700});
+ c.zone().enemies=[e];c.s.party=[];e.aggro=true;
+ Object.assign(e,{x:1620,y:1700,home:{x:1400,y:1700}});
+ Object.assign(c.hero,{x:1850,y:1700,hp:10000,maxHp:10000});
+ assert(c.tacticalBeginScatter(e,c.hero,70));
+ c.s.time+=10;
+ assert(c.tacticalRogueLeashAllows(e,c.hero,400),
+   'a boss-created shove does not reset an actively pursued encounter after grace time');
+ c.hero.x=2750;
+ assert.equal(c.tacticalRogueLeashAllows(e,c.hero,400),false,
+   'deliberate retreat still escapes');
 });
 console.log(passed+' audit regression scenarios passed.');
