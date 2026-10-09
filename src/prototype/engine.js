@@ -2885,7 +2885,7 @@
           this.tacticalRogueOutnumbered(e) &&
           this.tacticalRogueEligibility(e, Math.max(pressure, 2)) &&
           (this._tacticalRogueNext?.get(e.id) || 0) <= this.s.time;
-        if (this.tacticalRogueEligibility(e, pressure) && (freshWound || pressureRemains)) {
+        if ((freshWound && this.tacticalRogueEligibility(e, pressure)) || pressureRemains) {
           if (freshWound) {
             if (!this._tacticalWoundedUsed) this._tacticalWoundedUsed = new Set();
             this._tacticalWoundedUsed.add(e.id);
