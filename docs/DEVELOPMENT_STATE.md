@@ -182,6 +182,6 @@ The desktop/phone presentation now keeps a compact HUD instead of the old broad 
 
 Phone: thumb-adjacent contextual Interact, stable Recall/Target/Squad grouping, clearer labels and notifications. Desktop: compact unlocked-skill hotbar, contextual Ranger commands and corrected camera anchor. Short interaction dialogs now use natural compact/regular widths and natural height under the same scroll limits. Inventory removes duplicate Recall and disabled support actions; Barracks Operations copy matches its real functions. The canonical supported minimum stays 375x800 CSS portrait/800x375 landscape; 360x780 is only a scaled best-effort fallback and does not govern the design or add device support commitments. See RESPONSIVE_UI_AUDIT_20261009.md. Draft branch only until review and CI.
 
-## Final audio/VFX audit · v0.8.115
+## Final audio/VFX audit · v0.8.116
 
 Automatic TRUE/captain births retain their own authored summon/phase identities while another attack is winding up. Strict routing rejects unknown stages/personality layers; the expanded gate covers all 84 rogue basic identities and 40 signatures. Recorded foreground levels and the warning pair are corrected without changing gameplay. See [ENEMY_AUDIO_FINAL_AUDIT.md](ENEMY_AUDIO_FINAL_AUDIT.md) and its PR for exact candidate CI, published SHA and live desktop/phone verification.

@@ -37,6 +37,6 @@ Run `npm run audio:coverage` or `node scripts/enemy-audio-coverage.cjs --markdow
 
 Automated render/level checks establish functioning, finite audio and bounded mix behavior. They cannot establish physical iPhone speaker/headphone comfort or replace later subjective listening. No physical-device certification is claimed.
 
-## Final synchronization audit · v0.8.115
+## Final synchronization audit · v0.8.116
 
 See [ENEMY_AUDIO_FINAL_AUDIT.md](ENEMY_AUDIO_FINAL_AUDIT.md) for concurrent summon/telegraph identity corrections, strict stage/personality acceptance, recorded/procedural foreground matching, the repaired two-pulse recording and added actual rogue/revival regressions. Current shared coverage remains 251 identities and 1,440 stage/variant decisions. Release/physical-device limitations remain explicit.
