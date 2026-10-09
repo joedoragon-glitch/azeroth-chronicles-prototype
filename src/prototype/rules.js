@@ -4253,6 +4253,7 @@
     threatWindowSeconds: 6,
     // Tier names are identifiers, not mitigation percentages.
     protectionTiers: ['ordinary', 'guardian', 'ringleader', 'captain', 'boss', 'trueBoss'],
+    burstCompression: Object.freeze({ enabled: false, model: 'soft-knee', hardCap: false }),
   });
 
   const R = {
