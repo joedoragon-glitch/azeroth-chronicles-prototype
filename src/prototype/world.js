@@ -101,7 +101,7 @@
         if (dungeonIds.includes(z.id) || this.supplyRoom(z.id) || this.sideDungeon(z.id)) return;
         this.settlementLayout(z);
         const i = this.regionIndex(z.id),
-          roadVersion = ['frontier', 'crown'].includes(z.id) ? 10 : 9;
+          roadVersion = z.id === 'frontier' ? 11 : z.id === 'crown' ? 10 : 10;
         if (z.roadVersion === roadVersion) return;
         const origin = { x: D.towns[i][0], y: D.towns[i][1] },
           field = this.fieldCenter(i),
@@ -129,6 +129,9 @@
           destinations = [
             D.minors[i],
             D.ports[i],
+            ...(R.travelArrivalStands?.[z.id]
+              ? [[R.travelArrivalStands[z.id].x, R.travelArrivalStands[z.id].y]]
+              : []),
             D.entrances[i],
             [field.x, field.y],
             ...(finalGate ? [[finalGate[2], finalGate[3]]] : []),
