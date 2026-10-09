@@ -368,6 +368,38 @@
         const built = this.buildBossAttack(e, combo.to, comboTarget, true);
         return [built.first, ...built.sequence];
       }
+      startBossRecovery(e) {
+        const cfg = !R.resourceMode.manaEnabled && R.bossRecovery[e.family];
+        if (
+          !cfg ||
+          e.type !== 'boss' ||
+          e.hp <= 0 ||
+          e.hp >= e.maxHp * R.bossRecovery.threshold ||
+          (e.healCd || 0) > 0 ||
+          e.telegraph ||
+          e.motion
+        )
+          return false;
+        e.healCd = cfg.cooldown;
+        e.telegraph = {
+          kind: 'circle',
+          bossHeal: true,
+          name: cfg.name,
+          healFraction: cfg.healFraction,
+          x: e.x,
+          y: e.y,
+          fromX: e.x,
+          fromY: e.y,
+          radius: 115,
+          count: 1,
+          timer: cfg.warning,
+          total: cfg.warning,
+          recovery: 1.8,
+        };
+        e.noProgress = 0;
+        this.event('warning', { family: e.family, bossHeal: true });
+        return true;
+      }
       startAttack(e, target, indexOverride = null) {
         const plans = R.attacks[e.family] || [];
         if (!plans.length) return false;
@@ -397,6 +429,23 @@
         if (!a) return;
         if (a.rogueMove) {
           this.tacticalResolveRogueMove(e, a);
+          return;
+        }
+        if (a.bossHeal) {
+          if (e.hp > 0) {
+            const amount = Math.min(e.maxHp - e.hp, e.maxHp * a.healFraction);
+            if (amount > 0) {
+              e.hp += amount;
+              this.event('heal', {
+                x: e.x,
+                y: e.y,
+                resource: 'health',
+                source: e.id,
+                target: e.id,
+                amount,
+              });
+            }
+          }
           return;
         }
         if (a.nightSkill === 'drain') {
