@@ -1119,7 +1119,7 @@
       this.clearTonic();
       this.hero.supportEffects = [];
       this.hero.hp = this.hero.maxHp;
-      this.hero.mp = this.hero.maxMp;
+      if (R.resourceMode.manaEnabled) this.hero.mp = this.hero.maxMp;
       for (const u of this.activeParty())
         if (u.hp > 0) {
           u.hp = u.maxHp;
@@ -1600,7 +1600,8 @@
             return false;
           this.s.fountains[this.s.zone] = true;
           this.hero.hp = Math.min(this.hero.maxHp, this.hero.hp + 0.6 * this.hero.maxHp);
-          this.hero.mp = Math.min(this.hero.maxMp, this.hero.mp + 0.6 * this.hero.maxMp);
+          if (R.resourceMode.manaEnabled)
+            this.hero.mp = Math.min(this.hero.maxMp, this.hero.mp + 0.6 * this.hero.maxMp);
           this.activeParty().forEach((u) => {
             if (u.hp > 0) u.hp = Math.min(u.maxHp, u.hp + 0.6 * u.maxHp);
           });
@@ -1782,7 +1783,7 @@
         return;
       }
       this.hero.hp = this.hero.maxHp;
-      this.hero.mp = this.hero.maxMp;
+      if (R.resourceMode.manaEnabled) this.hero.mp = this.hero.maxMp;
       this.hero.tonic = false;
       this.hero.immune = 0;
       this.hero.slow = 0;
@@ -2302,7 +2303,8 @@
         return;
       this.updateRangerSupport(dt);
       this.autoRangerSupport();
-      h.mp = Math.min(h.maxMp, h.mp + this.manaRegenRate() * dt);
+      if (R.resourceMode.manaEnabled)
+        h.mp = Math.min(h.maxMp, h.mp + this.manaRegenRate() * dt);
       this.updateNight();
       this.updateEscort(dt);
       this.checkClear();
