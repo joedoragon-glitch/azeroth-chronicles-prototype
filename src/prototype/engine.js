@@ -119,6 +119,7 @@
         reforges: {},
         potions: { health: 0, mana: 0, greater_health: 0, greater_mana: 0 },
         tonic: false,
+        tonicStock: 0,
         potionCd: 0,
         slow: 0,
         supportEffects: [],
@@ -1188,6 +1189,26 @@
         }));
     }
 
+    preparationTonicStock() {
+      return this.hero.tonicStock || 0;
+    }
+    purchasePreparationTonic() {
+      if (!this.s.rescued.archive || !this.spend(this.preparationTonicCost())) return false;
+      this.hero.tonicStock = this.preparationTonicStock() + 1;
+      this.say('Preparation Tonic purchased. Use it at any completed Barracks.');
+      return true;
+    }
+    usePreparationTonic() {
+      if (this.hero.tonic || this.preparationTonicStock() < 1) return false;
+      this.hero.tonicStock--;
+      this.hero.tonic = true;
+      this.hero.tonicBonus = Math.ceil(this.hero.maxHp * 0.1);
+      this.hero.maxHp += this.hero.tonicBonus;
+      this.hero.hp += this.hero.tonicBonus;
+      this.syncCompanionLevelStats();
+      this.say('Preparation Tonic active · maximum health +10% until rest or defeat.');
+      return true;
+    }
     buyPotion(type, advanced = false) {
       if (type === 'tonic') {
         if (!advanced || !this.s.rescued.archive) return false;
@@ -1807,7 +1828,7 @@
         return false;
       const old = this.hero,
         fresh = new Campaign(this.s.mode, heroClass, this.random, { succession: true }).hero;
-      for (const key of ['gold', 'weapon', 'armorTier', 'reforges', 'potions'])
+      for (const key of ['gold', 'weapon', 'armorTier', 'reforges', 'potions', 'tonicStock'])
         fresh[key] = clone(old[key]);
       for (const key of [
         'legacyWeaponPower',
