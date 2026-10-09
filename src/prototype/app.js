@@ -342,6 +342,7 @@
     $('modal').hidden = false;
     $('modal-title').textContent = title;
     $('modal-description').textContent = description;
+    $('modal-content').scrollTop = 0;
     renderActions();
   }
   function renderActions() {
@@ -644,7 +645,7 @@
       costLabel = cost ? cost + ' crowns' : 'FREE';
     openMenu(
       'Adventure menu',
-      'Global adventure functions. Troops, resources and construction are managed through town Captains and barracks.',
+      'Global adventure functions. Establish field Barracks here; use Captains and Barracks for recruitment, recovery and operations.',
       [
         action('Map and travel routes', showMap),
         action('Quest journal', () => quests(false)),
@@ -1891,6 +1892,7 @@
               (5 - remaining.length) +
               '/5 TRUE guardians defeated · Map: Z'
             : regionalSpecialistObjective();
+    $('objective').title = $('objective').textContent;
     const doctrine = game.squadDoctrineLabel(),
       squad = $('squad-button');
     squad.hidden = (game.s.expeditionRank || 1) < 3 || !doctrine.active;
