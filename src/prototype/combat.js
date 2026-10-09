@@ -96,6 +96,10 @@
         return candidates.includes(fallback) ? fallback : candidates[0] || null;
       }
 
+      tacticalDirectTargetable(e) {
+        return !!e && (e.rogueDustCoverUntil || 0) <= (this.s.time || 0);
+      }
+
       tacticalProtectionTier(e) {
         if (e?.type === 'boss') return e.form === 'true' ? 'trueBoss' : 'boss';
         if (e?.captain || e?.roomCaptain) return 'captain';
@@ -211,11 +215,12 @@
         return amount;
       }
 
-      damage(e, amount, source = 'hero') {
+      damage(e, amount, source = 'hero', options = null) {
         if (
           !e ||
           e.hp <= 0 ||
           e.neutral ||
+          (!options?.area && !this.tacticalDirectTargetable(e)) ||
           this.peace ||
           e.returning ||
           !Number.isFinite(amount) ||
@@ -317,7 +322,10 @@
             if (this.hero !== hero || this.s.challenge.pending || this.s.challenge.gameOver) return;
             continue;
           }
-          const e = this.zone().enemies.find((e) => e.id === p.target && e.hp > 0 && !e.neutral);
+          const e = this.zone().enemies.find(
+            (e) => e.id === p.target && e.hp > 0 && !e.neutral &&
+              this.tacticalDirectTargetable(e),
+          );
           if (!e || this.peace) {
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
             continue;
