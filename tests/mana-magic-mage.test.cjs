@@ -169,3 +169,26 @@ console.log('PASS magical drain floors at zero');
   assert(final.c.hero.hp > hp && final.c.hero.immune > 0, 'Mage final skill combines attack, heal and protection');
 }
 console.log('PASS Mage frost identity, ranged magic, area skills, barrier and final special');
+
+{
+  const area = arena('mage');
+  const neutral = area.c.makeEnemy(
+    { species: 'goblin', name: 'Neutral frost bystander', level: 1, hp: 1000, damage: 0, gold: 0, xp: 0 },
+    { x: 550, y: 520 },
+  );
+  neutral.neutral = true;
+  area.c.zone().enemies.push(neutral);
+  area.c.hero.mp = 100;
+  assert(area.c.cast(5), 'Mage frost area spell executes');
+  assert.equal(neutral.hp, neutral.maxHp, 'neutral bystander cannot take spell damage');
+  assert.equal(neutral.slow || 0, 0, 'neutral bystander must not be slowed by rejected damage');
+
+  const missed = arena('mage');
+  missed.c.hero.mp = 100;
+  assert(missed.c.cast(2, missed.target.id), 'Mage frost projectile launches');
+  missed.c.damage = () => false;
+  for (let i = 0; i < 15; i++) missed.c.updateProjectiles(0.1);
+  assert.equal(missed.c.s.projectiles.length, 0, 'frost projectile resolves');
+  assert.equal(missed.target.slow || 0, 0, 'failed hit must not impose frost slow');
+}
+console.log('PASS Mage frost slow requires a valid hit; neutral and rejected hits remain unaffected');
