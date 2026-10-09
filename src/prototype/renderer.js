@@ -1,6 +1,63 @@
 /* Campaign presentation only. Rendering never owns simulation or saved state. */
 (function (root) {
   'use strict';
+  // Large foreground forms can cover actors under the existing depth sort.
+  // Keep this list deliberately conservative: small clutter must not trigger UI.
+  function majorOccluder(e) {
+    if (!e || e.interactionOnly) return false;
+    if (e.renderKind === 'building') return true;
+    if (e.renderKind === 'npc')
+      return ['rest', 'supplier', 'recruiter', 'mini', 'dungeon', 'exit'].includes(e.kind);
+    if (e.renderKind !== 'prop') return false;
+    const structure = String(e.structure || '');
+    if (/(?:^|-)(?:sapling|stump|shrub|grass|flowers|log|post|barrel|crate)(?:-|$)/.test(structure))
+      return false;
+    return (
+      /(?:^|-)(?:house|cottage|workshop|smithy|hut|lodge|hall|tower|watchhouse|watchpost|keep|fort|fortress|gatehouse|barracks|chapel|command-tent|tree|wall|stonewall|stockade|palisade)(?:-|$)/.test(
+        structure,
+      ) ||
+      (['🌲', '🌳', '🪨'].includes(e.icon) && Number(e.r) >= 18)
+    );
+  }
+
+  // The sorted draw order remains authoritative: an obstacle only hides an actor
+  // when it is actually painted after that actor.
+  function occlusionPairs(entities, project, height) {
+    const pairs = [];
+    for (let i = 0; i < entities.length; i++) {
+      const actor = entities[i];
+      if (
+        !['hero', 'ally', 'enemy'].includes(actor.renderKind) ||
+        actor.interactionOnly ||
+        (actor.renderKind === 'enemy' && (actor.hp <= 0 || actor.neutral))
+      )
+        continue;
+      const p = project(actor),
+        front = [];
+      for (let j = i + 1; j < entities.length; j++) {
+        const obstacle = entities[j];
+        if (!majorOccluder(obstacle) || obstacle.x + obstacle.y <= actor.x + actor.y) continue;
+        const q = project(obstacle),
+          dy = q.y - p.y;
+        // Broad phase only. The actual artwork's alpha is intersected below,
+        // preventing a contour from appearing across empty sprite padding.
+        if (dy < 0 || dy > Math.max(100, height(obstacle) + 44) || Math.abs(q.x - p.x) > 155)
+          continue;
+        front.push({ entity: obstacle, position: q });
+        if (front.length === 8) break;
+      }
+      if (front.length) pairs.push({ actor, position: p, front });
+    }
+    // The party takes priority on busy screens; the effect is intentionally bounded.
+    return pairs
+      .sort(
+        (a, b) =>
+          (a.actor.renderKind === 'hero' ? 0 : a.actor.renderKind === 'ally' ? 1 : 2) -
+          (b.actor.renderKind === 'hero' ? 0 : b.actor.renderKind === 'ally' ? 1 : 2),
+      )
+      .slice(0, 12);
+  }
+
   function create({
     canvas: viewport,
     ctx,
@@ -128,11 +185,22 @@
         y: p.y + Math.sin(t * (busy ? 5.2 : 2.4) + phase) * amp,
       };
     }
-    function sprite(e, p) {
+    function sprite(e, p, target = ctx, bodyOnly = false) {
       const q = visualPosition(e, p),
         rescued = !!game.s.rescued[e.family];
-      if (PrototypeSprites && PrototypeSprites.draw(ctx, e, q, game.regionIndex(), rescued)) return;
-      PrototypeVisuals.draw(ctx, e, q, game.regionIndex(), rescued);
+      if (
+        PrototypeSprites &&
+        PrototypeSprites.draw(
+          target,
+          e,
+          q,
+          game.regionIndex(),
+          rescued,
+          bodyOnly ? { silhouette: true } : undefined,
+        )
+      )
+        return;
+      PrototypeVisuals.draw(target, e, q, game.regionIndex(), rescued);
     }
     function spriteHeight(e) {
       const fallback = PrototypeVisuals.height(e),
@@ -140,6 +208,86 @@
       return PrototypeSprites
         ? PrototypeSprites.height(e, game.regionIndex(), rescued, fallback)
         : fallback;
+    }
+    // A thin contour *only inside the pixels of the foreground obstacle*.
+    // Four reused transparent canvases avoid readback, bright halos, filled
+    // ghosts and per-actor allocations. No change to hitboxes or AI visibility.
+    let outlineLayers = null;
+    function drawOcclusionOutlines(entities) {
+      const pairs = occlusionPairs(entities, screen, spriteHeight);
+      if (!pairs.length || typeof document === 'undefined') return;
+      if (!outlineLayers) {
+        const layers = [];
+        for (let i = 0; i < 4; i++) {
+          const surface = document.createElement('canvas');
+          surface.width = 384;
+          surface.height = 384;
+          const brush = surface.getContext('2d');
+          if (!brush) return;
+          layers.push({ surface, brush });
+        }
+        outlineLayers = layers;
+      }
+      const [actorLayer, tintLayer, edgeLayer, coverLayer] = outlineLayers,
+        centerX = 192,
+        footY = 260,
+        ring = [
+          [-1.35, 0],
+          [1.35, 0],
+          [0, -1.35],
+          [0, 1.35],
+          [-0.95, -0.95],
+          [0.95, -0.95],
+          [-0.95, 0.95],
+          [0.95, 0.95],
+        ];
+      for (const pair of pairs) {
+        for (const layer of outlineLayers) {
+          layer.brush.globalCompositeOperation = 'source-over';
+          layer.brush.globalAlpha = 1;
+          layer.brush.clearRect(0, 0, 384, 384);
+        }
+        sprite(pair.actor, { x: centerX, y: footY }, actorLayer.brush, true);
+
+        // Color the real actor alpha, not a rectangle or an ellipse.
+        const tint = tintLayer.brush;
+        tint.drawImage(actorLayer.surface, 0, 0);
+        tint.globalCompositeOperation = 'source-in';
+        tint.fillStyle = pair.actor.renderKind === 'enemy' ? '#d3a69e' : '#b8cfc2';
+        tint.fillRect(0, 0, 384, 384);
+        tint.globalCompositeOperation = 'source-over';
+
+        const edge = edgeLayer.brush;
+        for (const [dx, dy] of ring) edge.drawImage(tintLayer.surface, dx, dy);
+        edge.globalCompositeOperation = 'destination-out';
+        edge.drawImage(actorLayer.surface, 0, 0);
+        edge.globalCompositeOperation = 'source-over';
+
+        // Union the actual foreground artwork. The contour is erased wherever
+        // the actor is visible rather than showing a permanent character glow.
+        const cover = coverLayer.brush;
+        for (const obstacle of pair.front)
+          sprite(
+            obstacle.entity,
+            {
+              x: centerX + obstacle.position.x - pair.position.x,
+              y: footY + obstacle.position.y - pair.position.y,
+            },
+            cover,
+            true,
+          );
+        edge.globalCompositeOperation = 'destination-in';
+        edge.drawImage(coverLayer.surface, 0, 0);
+        edge.globalCompositeOperation = 'source-over';
+        ctx.save();
+        ctx.globalAlpha = 0.46;
+        ctx.drawImage(
+          edgeLayer.surface,
+          Math.round(pair.position.x - centerX),
+          Math.round(pair.position.y - footY),
+        );
+        ctx.restore();
+      }
     }
     function entityShadow(e, p) {
       let rx = 18,
@@ -1306,6 +1454,7 @@
         hero: screen(game.hero),
         lights: ambientLights,
       });
+      drawOcclusionOutlines(entities);
       // Critical outlines and transient effects retain contrast through the night grade.
       PrototypeCombatVisuals.ground(ctx, screen, game, 'cue', now() / 1000);
       for (const p of game.s.projectiles) drawProjectile(p);
@@ -1342,7 +1491,7 @@
       metrics: () => ({ ...stats, cameraZoom: zoom() }),
     };
   }
-  const api = { create };
+  const api = { create, majorOccluder, occlusionPairs };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeRenderer = api;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -585,7 +585,7 @@
     ctx.restore();
   }
 
-  function draw(ctx, e, p, region = 0, rescued = false) {
+  function draw(ctx, e, p, region = 0, rescued = false, options = null) {
     const found = definitionFor(e, region, rescued);
     if (!found) return false;
     const { entry } = found,
@@ -630,7 +630,8 @@
     if (frame) ctx.drawImage(img, ...frame.rect, ...dest);
     else ctx.drawImage(img, ...dest);
     ctx.restore();
-    overlay(ctx, e, p, entry, scale);
+    // A mask pass needs body pixels, not the surrounding TRUE/ringleader aura.
+    if (!options?.silhouette) overlay(ctx, e, p, entry, scale);
     return true;
   }
 
