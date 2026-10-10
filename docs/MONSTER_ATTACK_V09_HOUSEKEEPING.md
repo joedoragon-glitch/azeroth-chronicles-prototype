@@ -1,74 +1,133 @@
-| MA-07 | Dungeon/side/outdoor traps | `spikes`, `jet`, `seal` are separate environmental mechanics, not enemy VFX identities. The merged v0.8.136 contract uses status-first regional timing/damage across main, side and outdoor traps: spike Slow, jet shove and seal longer Slow. | **Integrated by #210.** Preserve authored timing/conditions; final release testing must still confirm danger cues, collision geometry and navigable safe paths. |
+# v0.9 monster-attack housekeeping — authoritative audit handoff
 
-**Status:** proposed documentation/tooling workstream, not a completed gameplay certification.  
-**Audit baseline:** `main` at `905e822da16b5a8ca7f959ee1f3e1a89f92b52d4` (v0.8.136, including merged conditions PR #210), 10 October 2026.  
-**Change policy:** read-only inspection and documentation. No skill/balance/AI/graphics/save changes are authorized by this audit alone.
+**Status:** source audit and review infrastructure proposed in [PR #212](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/212), **not** a claim that every skill has been individually certified.  
+**Baseline:** main commit \`905e822da16b5a8ca7f959ee1f3e1a89f92b52d4\`, v0.8.136, 10 October 2026; includes merged combat-conditions [PR #210](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/210).  
+**Ownership:** this is part of [v0.9 roadmap #192](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/192). The game remains the canonical multi-file Pages/PWA, retaining v4 saves and existing authored designs.
 
-## v0.9 scope decision
+## Decision recorded: stabilize existing skills, do not expand combat
 
-v0.9 should repair **broken existing abilities**, not redesign the combat system. Four dispositions govern each finding:
+v0.9 is housekeeping and beta preparation. Repair **broken existing attacks** before release, but do not turn the audit into a monster redesign, new status-effect program, new TRUE-exclusive move catalogue, or full VFX replacement project. A future developer workbench is helpful but **not a release prerequisite**.
 
-1. **Release blocker:** A live skill fails to resolve, has a materially incorrect target/shape/status/timing, can break an encounter, or violates a critical promised gameplay behavior. Verify a reproducer, fix narrowly, and add a regression.
-2. **Unambiguous repair:** A proven mistake with an unambiguous, non-authorial correction (including inaccurate technical wording). Fix without requiring a creative design decision; gameplay-altering fixes still get targeted verification.
-3. **Authorial decision:** Two defensible design contracts conflict. Record current behavior, intended alternatives and player impact; do not silently select a new mechanic. Only block v0.9 if the inconsistency independently qualifies as a release blocker.
-4. **Deferred polish/expansion:** Optional new statuses, thematic refinement, richer VFX/audio, additional TRUE-exclusive attacks and encounter expansion. Retain a future work item; do not let this become a v0.9 gate.
+| Disposition | Standard | Release action |
+| --- | --- | --- |
+| **Release blocker** | Reproduced attack fails to fire/resolve, applies materially wrong damage, targeting, hit geometry or effects, irreversibly breaks an encounter, or violates an essential promised gameplay contract | Fix narrowly and add failing-before/passing-after regression before v0.9 |
+| **Unambiguous repair** | Reproduced implementation, documentation or presentation error with only one defensible correction and no new creative policy | Correct in the owning module and verify; no authorial meeting required |
+| **Authorial decision** | Name/design and mechanics imply different but defensible player experiences; either choice materially changes the intended gameplay | Record alternatives and consequences. Only release-blocking if a functional defect is independently established |
+| **Deferred polish / expansion** | More attractive VFX, stronger species identity, optional statuses, extra boss moves, additional TRUE-form complexity, noncritical thematic refinements | Document for later; do not hold v0.9 |
 
-A green test suite means tested conditions worked, not that each name, lore description, animation, telegraph and outcome have been independently certified.
+**Evidence labels matter:** *source-verified* means a code path was inspected; *regression-covered* means an existing automated scenario exercises specified behavior; *browser-verified* means actual rendered gameplay was inspected; *human acceptance pending* means no authorial/artistic signoff exists. None of these alone proves all other labels. Do not silently label 251 entries “pass” because the coverage test passes.
 
-## Authoritative, generated read-only registry
+## First deliverable: generated, read-only source registry
 
-Run from repository root:
+\`scripts/monster-attack-audit.cjs\` generates an export directly from the production \`Campaign\` data/rules and the existing \`scripts/enemy-vfx-inventory.cjs\`; it does **not** duplicate, alter, enable, or tune attacks. Use:
 
-```sh
+\`\`\`sh
+node scripts/monster-attack-audit.cjs --summary
 node scripts/monster-attack-audit.cjs --json > /tmp/monster-attacks.json
 node scripts/monster-attack-audit.cjs --markdown > /tmp/monster-attacks.md
-node scripts/monster-attack-audit.cjs --summary
-```
+node tests/monster-attack-audit.test.cjs
+\`\`\`
 
-The new generator reads **existing live sources** and imports `scripts/enemy-vfx-inventory.cjs`; it does not duplicate attack rule tables or create playable moves. Every row retains its stable presentation ID, actor/role, displayed name, mechanic/source data where available, attack kind, proposed rendering stages, and an explicit *unreviewed* status. Normal/TRUE share a stable boss attack ID; their differences must be exercised at runtime, not inferred from a duplicate catalog.
+The existing register counts **251 presentation identities**, not 251 separate combat algorithms or 251 successful reviews:
 
-The established VFX source contains **251 visual identities**, distributed as 46 authored boss attacks, 16 captain attacks, five captain phases, two night skills, 18 projectile identities, 84 rogue basics, 40 rogue signatures, 28 basic melee identities and 12 ringleader frenzy identities. These are **not 251 distinct damage mechanics or 251 pass results**. The generated registry additionally includes the three trap kinds (`spikes`, `jet`, `seal`) and configured boss recovery actions as separate non-attack groups; passive siphon and status sources remain referenced rather than being mislabeled new attack skills.
+| Scope | IDs |
+| --- | ---: |
+| 11 boss families' authored moves (normal/TRUE share stable ID; 92 form resolutions) | 46 |
+| Five captain movesets | 16 |
+| Five captain phase presentations | 5 |
+| Night-exclusive Wraith and Stalker skills | 2 |
+| Native/forced ranged projectile identities | 18 |
+| Ordinary, guardian, ringleader, boss and captain rogue basic identities | 84 |
+| Role/species-specific ringleader, captain and boss rogue signatures | 40 |
+| Boss/captain/species basic melee identities | 28 |
+| Species ringleader Frenzy presentation | 12 |
+| **Total existing VFX identities** | **251** |
 
-Source ownership:
+Three environmental trap kinds (\`spikes\`, \`jet\`, \`seal\`) and the two configured non-attack boss recovery actions (\`Ember Renewal\`, \`Ash Reforge\`) are **separately** indexed: 256 records in all at this baseline, pending actual generator verification. Passive HP siphon, damage compression, protection, enemy summons, special combos, and status applications are **cross-cutting mechanics**, not extra invented moves; a visual ID may be reused across multiple form/role scenarios.
 
-| Contract | Authoritative owner |
+Registry row contract: stable ID, source group, actor/role/name, gameplay plan/configuration, source path, written boss description when present, form/role distinctions, existing presentation identity/material/action when obtainable, prospective windup/release/travel/impact/linger/spawn/phase stages and **explicitly unreviewed** mechanics/description/species/visual/lifecycle fields. **An absent description for an ordinary species basic is not automatically a defect.** Do not silently synthesize lore, gameplay promises or asset requirements.
+
+The existing visual bridge is observation-only. The canonical telegraph, hitbox, damage and duration remain owned by the combat engine, not generated VFX metadata.
+
+### Source ownership
+
+| Subject | Owning source |
 | --- | --- |
-| Boss descriptions and display ordering | `src/prototype/data.js` |
-| Boss plans, captain plans, night/ranged profiles, rogue moves/signatures, trap tunings, recovery | `src/prototype/rules.js` |
-| Boss attack selection and damage geometry | `src/prototype/boss-combat.js` |
-| Rogue activation, status/displacement and trap actual hits | `src/prototype/engine.js` |
-| Projectiles, periodic hazards, siphons and hit resolution | `src/prototype/combat.js` |
-| Warning and danger shapes | `src/prototype/combat-visuals.js` |
-| Procedural effect recipes and optional per-stage replacements | `src/prototype/enemy-vfx-art.js`, `assets/vfx/manifest.json` |
-| Stable visual identities and existing catalog | `src/prototype/enemy-vfx.js`, `scripts/enemy-vfx-inventory.cjs` |
+| Boss names, order and written attack descriptions | \`src/prototype/data.js\` |
+| Boss plans, captains, ranged/night, rogue, recovery, geometry and trap tunings | \`src/prototype/rules.js\` |
+| Boss sequences, target selection, summons, charges, openings, special resolution | \`src/prototype/boss-combat.js\` |
+| Enemy decisions, tactical signatures, encounter lifecycle, environmental traps | \`src/prototype/engine.js\` |
+| Shared HP/status mitigation, siphons, projectiles and periodic hazards | \`src/prototype/combat.js\` |
+| Actual danger indicators/trap shapes | \`src/prototype/combat-visuals.js\` |
+| Procedural VFX recipe, material and action vocabulary | \`src/prototype/enemy-vfx-art.js\` |
+| Stable IDs, observer stages, legacy VFX roster | \`src/prototype/enemy-vfx.js\`, \`src/prototype/enemy-vfx-events.js\`, \`scripts/enemy-vfx-inventory.cjs\` |
+| Evidence and prior regression methods | \`docs/ENEMY_SKILL_VFX_AUDIT.md\`, \`docs/ENEMY_SKILL_VFX_QUALITY_AUDIT.md\`, \`docs/ROGUE_PR146_INTEGRATION_AUDIT.md\`, \`docs/COMBAT_CONDITIONS_V09.md\` |
 
-For each skill, later playtest reviews should assess **execution, written intent, character/species identity, hitbox-versus-telegraph fidelity, presentation fidelity, and encounter/reset integrity** independently. Mark neither passed nor broken based on the registry row alone. Compare rendering at windup, release, travel, actual hit/ground impact, lingering hazard and phase/summon as applicable; include line of sight, protected terrain, missed attacks, immunity, killed party members, saves/returns, normal/TRUE, and rogue variants.
+## What must be accounted for
 
-The eventual developer workbench may consume this JSON to filter/search, preview the actual Canvas effect alongside its authoritative hitbox, and record review decisions. **The workbench is future tooling, not a v0.9 release blocker and is not implemented by this housekeeping pass.** Keep gameplay geometry in the simulation.
+### Boss normal/TRUE authored repertoire
 
-## Reassessment queue — evidence and needed action
+All names below come from \`data.js\`. Geometry and actual timing come from \`rules.js\` and the resolver; the prose is **not** used to calculate hits.
 
-**No widespread or newly proven live skill failure is established by this source pass.** Existing regression suites and the successful exact-main CI run `38024584015` provide substantial prior mechanical coverage. The following are **code-supported discrepancies or review leads**, not a completed browser-test failure list.
+| Family | Existing authored attacks |
+| --- | --- |
+| Thornfang | Bite; Pounce; Root Line; Den Howl |
+| Crypt Guardian | Bone Sweep; Bone Volley; Grave Call; Draining Ground |
+| Mirejaw | Jaw Snap; Mire Rush; Bog Spit; Brood Call |
+| Drowned Keeper | Anchor Swing; Water Jets; Undertow; Echo Call |
+| Ridge Tyrant | Hammer Blow; Boulder Throw; Ridge Charge; War Cry |
+| Stone Colossus | Stone Slam; Rockfall; Shockwave Rings; Wall Rush; Stonebound Call |
+| Ashen Warlord | Cleaving Combo; Banner Bombardment; Guard Command; Pursuit Charge |
+| Abyss Dragon | Flame Cone; Wing Shockwave; Shadow Flight; Hatchling Call |
+| Ash Sentinel | Armor Slam; Ash Lanes; Sentinel Advance; Furnace Pulses; Ash Guard Muster |
+| Cindermaw | Cinder Rend; Ash Rush; Furnace Spit; Brood Command |
+| Dark Lord | Dark Cleave; Fortress Bombardment; Black Guard Call; Crown Phase |
 
-| ID | Skill/system | Source observation | Triage / next evidence |
+TRUE forms reuse the authored slots but **must be executed separately in tests**: extra summons/automatic waves, form multipliers, independent actor targeting, extra family-specific patterns (such as staggered bone volley, shifting channels, delayed rockfall, delayed flame patch), altered openings, phase transitions and game-over/awakening recovery. Never infer normal/TRUE equivalence from identical names or visual IDs.
+
+**Dark Lord priority:** specifically inspect both normal and TRUE Dark Cleave, sequential bombardment, Crown defenders, the half-HP Crown Phase and its safe sectors, TRUE warband/replenishment, backline geometry, HP siphon, and the **separate** tactical Crown Grasp / Crown Decree moves. Lack of a third exclusive TRUE rotation is not a defect unless such a move is already an authored promise.
+
+### Other monster repertoires
+
+Five captains have 16 authored attacks: Scornfang (Hookfang Rush, Briar Pot, Pocket Sand), Direjaw (Bog Skitter, Spatter Fan, Silt Slick), Crag Tyrant (Shoulder Rush, Scree Kick, Ridge Feint), Dreadmaw (Cinder Mark, Blackline Rush, Ember Veil, Brood Call) and Cinder Warlord (Inspection Cleave, Violation Marker, Compliance Charge). Each has a separate authored phase.
+
+Both night specialists must be checked: Wraith **Soul Drain** and Stalker **Shadow Pounce**. Species/role variants include Goblin, Skeleton, Mireling, Reed Beast, Wolf, Ogre, Orc, Archer, Ash Beast, Crown Soldier, Wraith and Stalker; actual native/forced ranged projectiles, basic melee, guardian and ringleader roles and Frenzy are included.
+
+**The rogue system is a distinct attack layer**, not a replacement for normal rotations. Preserve single-target basics, the 12 species × melee/ranged ringleader signatures, five captain signatures and 11 boss signatures; verify warning shape, hit consequences (Slow, shove, scatter, bind, reposition, rally), unique effect, attacker role, protection/retreat eligibility, terrain, target death and reset. Cyan warnings do not prove the effect was applied. Normal and TRUE share each boss's two rogue choices, but must be sampled in both form contexts.
+
+**Environmental hazards are separate**. In merged v0.8.136, main dungeons, side dungeons and outdoor mini-sites share five regional timing/damage profiles: spikes cause short injury Slow; jets attempt collision-safe outward displacement; seals cause longer Slow. Each living hero/active companion has one **attempt** per trap activation, not unlimited damage while standing inside. Immunity prevents on-hit conditions. Hostile creatures do not receive player trap damage. The provisional tuning and historical difference are documented in \`docs/TRAP_ACTIVATION_CYCLE_V09_AUDIT.md\`. This is **already merged #210**, not unfinished scope to implement again.
+
+### Mechanic and presentation acceptance matrix for every row
+
+1. **Availability and triggering:** Eligible target, normal/TRUE/role, cooldown, phase, target-in-range, path/LOS, valid summon count; no ability silently abandoned while other legal moves exist.
+2. **Damage and geometry:** Correct cone/circle/line/ring/sector/projectile/movement path; precise dodge versus yellow/cyan warning; obstruction and invulnerability respected; neither visual-only false damage nor unmarked damaging area.
+3. **Secondary consequences:** Actual Slow, siphon, displacement, recovery, wound/phase opening, reinforcement and target-cover behavior; no status after immunity, fatal hit or zone transition. Dormant MP fields do not imply an active mana system.
+4. **Identity and media:** Skill name, description, species/boss anatomy, timing, procedural recipe, material (fur/roots/water/stone/metal/ash/etc.), projectile, impact and audio agree. Existence of VFX art alone is not a thematic PASS.
+5. **Lifecycle and performance:** Repeated casts, TRUE encounters, summoned units, overlap, reset/escape/return, kill/succession, historical saves, pause, offline PWA, desktop and phone warning readability.
+
+## Source-supported findings awaiting focused disposition
+
+These are **not 8 proven broken skills**. They are a combined shortlist of suspected contracts, previously merged fixes and visual review leads.
+
+| ID | Category | Source observation | Next action and priority |
 | --- | --- | --- | --- |
-| MA-01 | Thornfang Pounce | `data.js` promises a missed-pounce opening of 1.5 s; `rules.attacks.thorn[1]` defines `landing` and `recovery`, but no explicit `opening`. The motion resolver only grants `e.open` when `opening` is present. Boss recovery is globally multiplied by 0.25. | **Potential release blocker / authorial fork.** Reproduce hit/miss; determine whether the promised punish window is intended to be true vulnerability (`open`) or recovery-only. Do not guess a gameplay change. |
-| MA-02 | Stone Colossus Wall Rush | Description makes a three-second core opening conditional on striking a marked pillar. `rules.attacks.mine[3]` grants `opening: 3`; `advanceMotion()` applies it when motion stops, without a pillar-impact condition. | **Potential release blocker / authorial fork.** Test impact with/without pillar and whether the collision condition is essential; repair code or wording after settling intended gameplay. |
-| MA-03 | Persistent elemental effects | `combat-visuals.js` maps any hazard with legacy `manaDrain` to spectral presentation before checking elemental family. Mana mode is dormant. This can make e.g. Ash Sentinel's Furnace Pulses and TRUE Abyss delayed flame patch look spectral while the mechanic is elemental. | **Presentation mismatch, normally unambiguous repair.** Verify actual on-screen samples. Make material styling reflect action/family independently of dormant MP; never change hitbox to match art. |
-| MA-04 | Rogue ranged signatures | `Bone Archer Pinning Volley`, `Axe Thrower Crossfire` and `Crown Volley Screen` use marked-area `bind` resolution; `enemy-vfx-art.js` maps bind to a roots-like procedural recipe. No traveling volley is authored for these signatures. | **Semantic/presentation review**, not automatically broken: a projectile-themed area-denial slow may be intentional. Elevate only if misleading telegraph/danger or a nonfunctional effect is reproduced; otherwise defer better identity cues. |
-| MA-05 | Slow application / immunity | On the baseline, some shared hit paths apply `slow` independently of a successful hit/immunity check. | **Owned by active [PR #210](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/210)**, which centralizes status guards and audits all trap contexts. Re-test after integration; do not independently rewrite its logic. |
-| MA-06 | Dark Lord and TRUE Dark Lord | Both forms share four authored attack slots. TRUE adds combat pressure, warband and form modifications; no independent TRUE-exclusive rotation is required by the current source contract. | **Deferred authorial design**, unless a currently implemented TRUE move is mechanically broken. Inspect Crown Phase, backline marks, call caps, rogue Crown Grasp/Decree and transitions on both forms. |
-| MA-07 | Dungeon/side/outdoor traps | `spikes`, `jet`, `seal` use separate trap mechanics, not enemy VFX identities. Baseline timing, conditions and readouts are under active revision. | **Rebaseline after #210**, which has explicitly authorized condition-first trap behavior, timings and shared regional profiles. Avoid treating unmerged proposal as published gameplay. |
-| MA-08 | Boss recovery prose | Authored recovery strings may suggest full post-cast downtime while `bossCadence.specialRecoveryMultiplier` is 0.25. | **Documentation/behavior verification.** Check per-skill actual recovery and whether a safe punish window was explicitly promised. Do not blanket-retune proven cooldown balance. |
+| **MA-01** | Potential contract defect / possible authorial fork | **Thornfang Pounce:** \`data.js\` describes a 1.5 s opening after a *miss*. \`rules.attacks.thorn[1]\` has \`landing\` and \`recovery\`, but no \`opening\`; \`advanceMotion()\` only grants exposed-core \`e.open\` when configured. General boss cooldown recovery uses a 0.25 multiplier. | **High.** Reproduce hit/miss and effective punish interval. If an actual promised vulnerable opening is absent, flag as blocker; do not assume which alternative mechanic was intended. |
+| **MA-02** | Potential contract defect / possible authorial fork | **Stone Colossus Wall Rush:** prose conditions its 3 s exposed core on *striking a marked pillar*. The move sets \`opening: 3\`; \`advanceMotion()\` grants the opening on motion termination, not a verified pillar hit. | **High.** Reproduce with/without pillar, inspect collision and opening damage. Resolve code-versus-description only after intent is determined. |
+| MA-03 | Visual material mismatch | **Ash Sentinel Furnace Pulses / elemental persistent hazards:** hazard coloring prioritizes a dormant legacy \`manaDrain\` field before the action's ember/stone family, potentially rendering elemental danger spectral. | **Medium.** Observe actual Canvas output. A narrowly scoped material-only correction is normally non-authorial; preserve exact gameplay hit geometry. |
+| MA-04 | Semantic/VFX review lead | **Rogue ranged volleys/crossfire:** several role signatures execute warned area binds, not moving volleys. Generic bind recipe can suggest roots even where bows, axes or Crown gun-lines are named. | **Medium/low.** Check actual cue versus true area effect; only escalate if misleading/dangerous. Do not invent projectiles solely from the move name. |
+| MA-05 | Completed baseline integration | **Slow/immunity:** older hit paths could apply conditions independently of a successful, nonimmune hit. | **Merged as v0.8.136 in #210.** Keep regression coverage and recheck within representative boss/trap encounters; do not reopen as a pending implementation. |
+| MA-06 | Deferred authorial design | **Dark Lord normal/TRUE:** four common authored slots with extra TRUE combat pressure, not a wholly different exclusive rotation. | **Defer new skill design.** Fix only a specific currently implemented ability that fails its contract; the current design need not grow for v0.9. |
+| MA-07 | Completed baseline integration; acceptance pending | **Traps:** status-first spikes/jet/seal, revised regional warnings, cycles, damage, parity across all three contexts. | **Merged as v0.8.136 in #210.** Verify displayed warning, safe path and actual device comfort in beta; further retuning needs data. |
+| MA-08 | Description/timing review | **Boss recovery prose:** authored recovery values and actual post-special cooldowns differ because of the live boss cadence multiplier; an “opening” is separate from \`cd\`. | **Medium.** Inspect every move with a promised safe window, not a blanket cooldown retune. Existing quantitative cooldown audit did not authorize new balance changes. |
 
-The existing `tests/prototype.test.cjs`, `tests/audit-regressions.test.cjs`, `tests/rogue-integration.test.cjs`, `tests/enemy-vfx-inventory.test.cjs`, `tests/enemy-vfx-quality.test.cjs`, `tests/dungeon-pressure.test.cjs`, and browser VFX/rogue suites already test major mechanical contracts. The generator's own regression should prove roster/source linkage and snapshot purity; it is **not** a replacement for runtime behavior tests or subjective animation/identity review.
+No additional definite skill malfunction was established by the source inspection summarized here. **This is an evidence boundary, not proof of zero other bugs.** New symptoms should link an exact skill ID, form, zone, RNG/test state, intended result, actual result and reproduction.
 
-## Release gate and next maintenance order
+## Validation history and release gate
 
-1. Keep the generated roster exhaustive and uniquely keyed; never allow undocumented new attacks or force a review status to PASS by counting entries.
-2. Use the merged v0.8.136 status/condition-first trap contract from PR #210 as the current baseline. Preserve its authored choices and verify the combined release.
-3. Obtain deterministic reproducers for MA-01 and MA-02, inspect MA-03 in real Canvas/browser rendering, then classify each as critical defect, unambiguous fix, or an authorial choice.
-4. Repair **only confirmed release-blocking defects** and unambiguous existing-contract errors, with targeted before/after regression and full release gates. Defer optional new status effects, special attacks and full VFX work.
-5. Run the full stable campaign/desktop/phone/WebKit/TRUE/rogue/save/PWA checks and representative human playtesting before declaring v0.9 ready. Automated evidence does not certify physical-device play comfort.
+Prior work: \`docs/ROGUE_PR146_INTEGRATION_AUDIT.md\` reports 99 basic and 51 signature live-resolution scenarios; \`docs/ENEMY_SKILL_VFX_QUALITY_AUDIT.md\` documents 251 identity coverage, 297 catalog scenes per browser/viewport and actual basic contact checks. Boss range/geometry and 11-family normal/TRUE encounters are separately tested in \`tests/audit-regressions.test.cjs\`, \`tests/prototype.test.cjs\` and related suites. These are **historical evidence in those documents**, not newly rerun full human acceptance of the current PR.
 
-This workstream is **housekeeping**: it creates an inspectable foundation, a decision queue, and a strict threshold for when additional creative attention is actually needed. No authorial decision is required merely to preserve this audit.
+The new generator and test must confirm deterministic, pure source extraction, complete group/role coverage, unique IDs and readable Markdown/JSON output. **Do not merge a failed or incomplete CI run.** After changes, require exact-head format/Node tests, the project's full desktop/phone Chromium + WebKit path, successful main release, exact published SHA and representative real-device play before claiming v0.9 readiness.
+
+**Next work order:** (1) preserve and merge read-only registry/docs once CI is green; (2) produce focused isolated reproducers for MA-01/02 and correct only proven gameplay defects; (3) verify MA-03 visually and check same material rules for comparable hazards; (4) re-evaluate the already merged condition/trap contracts; (5) defer optional media and TRUE redesign for authorial review after the weekend. Future workbench can load this read-only data and replay actual visual effects and hit geometry without mutating simulation.
+
+No new authorial decision is required to finish documentation or source inventory. Any disputed design is explicitly parked, with alternatives and evidence requirements, instead of being silently decided.
