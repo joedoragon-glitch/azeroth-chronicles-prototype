@@ -184,6 +184,7 @@
   const { world } = renderer,
     worldLabelVisible = renderer.labelVisible;
   const runtime = PrototypeRuntime.create();
+  const fps = PrototypeRuntime.createFrameRate(localStorage);
 
   const {
     teacher,
@@ -221,6 +222,7 @@
     renderer,
     platform,
     runtime,
+    fps,
     input,
     save,
     openMenu,
@@ -699,7 +701,11 @@
           exportJSON(
             {
               version: PrototypeBuild.version,
-              performance: runtime.report(renderer.metrics(), platform.mode),
+              performance: {
+                ...runtime.report(renderer.metrics(), platform.mode),
+                frameRatePreference: fps.preference,
+                frameRateTarget: fps.target,
+              },
               audio: audio.status(),
               sprites: typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites.status(),
               materials:
@@ -740,6 +746,9 @@
         'Camera: ' +
         Math.round((platform.cameraZoom || 1) * 100) +
         '% for this screen. Compare closer views while movement and attack ranges stay the same.\n\n' +
+        'Frame rate: ' +
+        (fps.preference === 'auto' ? 'Auto' : fps.preference + ' FPS') +
+        ' · current target ' + fps.target + ' FPS. Rendering only; gameplay stays unchanged.\n\n' +
         runtime.describe(renderer.metrics()),
       [
         action('Automatic screen', () => {
@@ -763,6 +772,17 @@
               closeMenu();
             },
           ),
+        ),
+        ...[
+          ['auto', 'Auto (starts at 30, tries 60)'],
+          ['30', '30 FPS · Relaxed'],
+          ['60', '60 FPS · Smooth'],
+        ].map(([value, label]) =>
+          action('Frame rate · ' + label + (fps.preference === value ? ' ✓' : ''), () => {
+            fps.select(value);
+            runtime.reset();
+            platformMenu(back);
+          }),
         ),
         action('Reset performance sample', () => {
           runtime.reset();
@@ -2335,6 +2355,7 @@
   function frame(now) {
     if (document.hidden) {
       runtime.suspend();
+      fps.suspend();
       last = now;
       requestAnimationFrame(frame);
       return;
@@ -2453,8 +2474,12 @@
       hudTimer = 0;
       updateHUD();
     }
-    if (!frozen) runtime.record(now, frameStart, () => renderer.draw());
-    else {
+    if (!frozen) {
+      const draw = fps.shouldDraw(now);
+      if (draw) runtime.record(now, frameStart, () => renderer.draw());
+      fps.observe(now, performance.now() - frameStart, draw);
+    } else {
+      fps.suspend();
       runtime.suspend();
       if (runtime.shouldDrawIdle(now)) renderer.draw();
     }
@@ -2474,6 +2499,7 @@
     clearInput();
     resize();
     runtime.reset();
+    fps.suspend();
   });
   updateHUD();
   if (!loaded) chooseClass('normal');
