@@ -27,6 +27,72 @@ release gate rather than reopening content or balance.
 | **Patches, traps, rings and other hazards** (world effect) | Warned geometry can deal direct or periodic damage; certain patches add on-hit Slow. A hazard has its own timer, geometry and hit/tick accounting: it is **not itself** a status condition. | `boss-combat.js`, `combat.js`, `engine.js` |
 | **Rally, summon, phase guard, frenzy, threat and burst compression** (AI/encounter modifiers) | Tactical rally changes engaged defenders' pursuit; summons add actors; captain/boss guards and frenzy adjust combat parameters; threat and burst compression affect AI and damage. These are **not** debuffs on the hero. | `engine.js`, `boss-combat.js`, `combat.js`, `rules.js` |
 
+## Source-to-effect audit (attacks, traps, environment and support)
+
+The audit must start from **every gameplay source** that can change an actor's
+health, position, speed, control, target eligibility or recovery—not only the
+list of named skills. The same condition semantics must be true whichever
+source caused the state change.
+
+| Source family | Resolved effects and exclusions | Owner |
+| --- | --- | --- |
+| Hero skills | Mage frost hits and charged Frost Burst add Slow; Ranger mobility skills add Haste; Paladin/Mage defenses and the learned Skill 8 protection use immunity; Skill 3 heals. Charged party healing affects **living** active allies. Other attacks can damage or cleave without applying a condition. | `hero-combat.js` / `combat.js` |
+| Companion actions | Soldier survival guard briefly makes the Soldier immune; Ranger party support applies a timed Heal. Power Strike, Triple Shot, Holy Cleave and Piercing Volley are damage/area skills, **not automatic stuns, blinds or roots**. Doctrine and Recall are commands, not status ailments. | `party.js` / `rules.js` |
+| Ordinary/ranged enemies | Reedbeast and Mireling spitters apply timed Slow on successful projectile contact. Ash-beast cinder attacks can feed HP to the attacking spitter; spectral Wraith projectiles may siphon HP. All ordinary tactical rogue manoeuvres require actual contact and retain the authored snare/shove/withdraw behaviors. | `engine.js` / `combat.js` |
+| Night encounters | Wraith Soul Drain hits an area, adds Slow and siphons actual lost HP in cooldown-only mode. Stalker Shadow Pounce moves the attacker to a warned landing location and can Slow on successful area impact; it does **not** automatically force the victim to move. | `engine.js` / `boss-combat.js` |
+| Boss/captain attacks | The authored slow attacks and puddles add the same timed Slow as other sources; charge and landing move the **attacker**; summons add enemies; phase defense and tactical rally alter combat behavior. Normal/TRUE variants use the existing profiles. | `rules.js` / `boss-combat.js` |
+| **Dungeon trap: spikes** | Warned radial hit causing HP damage once per unit per activation cycle. **No Slow, knockback, bleed, immobilization, or persistent status.** | `dungeonTraps` / `updateTraps` |
+| **Dungeon trap: jet** | Warned line-segment hit causing HP damage once per unit per cycle. **No Slow or forced displacement.** The jet visual is not a knockback contract. | `dungeonTraps` / `updateTraps` |
+| **Dungeon trap: seal** | Warned radial hit causing HP damage **and timed Slow** if the hit is valid. No hard root, silence or disable. | `dungeonTraps` / `updateTraps` |
+| Side-dungeon traps | Exactly the same spike, jet and seal resolvers, using shared side-dungeon timing/geometry tuning. The side location does not create new statuses. | `sideDungeons[].traps` / `sideDungeonTrapTuning` |
+| Outdoor encounter-site traps | The same spike/jet/seal semantics with region-specific trap tuning and authored mini-site positions. A cleared mini-site no longer contributes active traps. | `outdoorMiniTrapKinds` / `outdoorMiniTrapTuning` |
+| Boss persistent hazards | Timed patches and expanding rings cause their authored damage; **only patches explicitly marked Slow** apply it. Non-ring persistent patches can hit once per tick, while an expanding ring records one hit per target. Both preserve obstruction and warning geometry. | `resolveArea` / `updateProjectiles` |
+| Recovery, sanctuary and consumable services | Refuge/town regeneration, resting and healing services restore HP or clear effects through existing systems. Preparation Tonic modifies max HP temporarily; it is **not** a hostile debuff. Recovery does not resurrect a fallen companion except through explicit recovery services. | `engine.js` / `party.js` |
+| Terrain and scenery | Solid walls, rivers, ravines and other collision obstacles block movement/navigation; cosmetic flames, ash, terrain materials, sprite/aura effects and telegraphs do **not** cause damage or a status just because they look dangerous. Only an explicit resolver supplies damage/conditions. | `navigation.js` / `world.js` / `renderer.js` |
+
+### Trap lifecycle and source-specific acceptance criteria
+
+The trap catalog is **spikes, jet, seal**. Each active trap provides a
+`warningTime`, `activeTime`, `cycleLength`, geometry and region-specific
+`damageFraction`. Major dungeon tuning runs from 11% to 17% of the
+victim's maximum HP per valid hit; side dungeons use 9%. Outdoor encounter
+sites reuse their corresponding regional dungeon tuning. Seal Slow ranges
+from 2.2 seconds (side rooms) to 3.5 seconds (late dungeons).
+
+At the start of the warned phase there is no damage or Slow. During the
+active phase, the shared `hitParty` path applies mitigation and immunity
+before a seal applies Slow. A hit-record key tied to zone/layout/index/cycle
+allows at most **one attempt per trap per unit per activation cycle**;
+the attempt is consumed even if the unit is immune. The next cycle
+re-arms the trap, independently for the hero and each living companion.
+Spikes and jets must never gain Slow simply because their tuning table
+contains a `slow` field intended for seals. Peace mode and supply-room
+exceptions disable these hostile trap sources.
+
+**Separate mechanisms:** physical world collision prevents passage;
+hazards and trap pulses resolve HP damage; on-hit Slow changes movement
+speed; scatter overrides controls; dust cover prevents direct targeting.
+These must not be collapsed into a generic “disabled” state.
+
+The companion/Hero and dungeon/side/outdoor trap matrix is exercised by
+`tests/combat-trap-sources.test.cjs`, including both Normal and Nightmare
+modes, telegraph safety, per-cycle hit accounting, immunity, independent
+victims, Slow stacking and actual geometry. The static source inventory
+asserts that every authored trap kind is recognized. This guards against
+future poison/burning/stun effects being silently inferred from art or names.
+
+### Testers' observable contract
+
+A player should be able to tell whether a hazard will merely damage them,
+Slow their movement, force displacement, prevent attacks, or prevent
+target selection. If the actual condition is not visually legible, log an
+**effect-feedback/UI finding** separately from the implementation bug.
+`renderer.js` currently has distinct immunity/haste/support cues, but
+Slow has no equivalent explicitly named persistent actor status overlay
+in that renderer. Treat clarity of Slow, seal warning-vs-active phases,
+Knockback direction and Goblin dust expiry as manual desktop/phone
+acceptance checks; do not substitute graphics changes for mechanical fixes.
+
 ### Existing authoring keys (keep names stable during v0.9)
 
 - **`slow`** may be a *boolean* on an attack/hazard, a *number of seconds* on an actual unit, or a duration in a charged Mage skill definition. **`slowDuration`**, **`slowSeconds`**, and **`projectileSlow`** are authored duration settings, not separate statuses. Call `applySlow(unit, seconds)` at resolution; do not assign an on-hit Slow from presentation events.
