@@ -780,14 +780,11 @@
           ['30', '30 FPS · Relaxed'],
           ['60', '60 FPS · Smooth'],
         ].map(([value, label]) =>
-          action(
-            'Frame rate · ' + label + (fps.preference === value ? ' ✓' : ''),
-            () => {
-              fps.select(value);
-              runtime.reset();
-              platformMenu(back);
-            },
-          ),
+          action('Frame rate · ' + label + (fps.preference === value ? ' ✓' : ''), () => {
+            fps.select(value);
+            runtime.reset();
+            platformMenu(back);
+          }),
         ),
         action('Reset performance sample', () => {
           runtime.reset();
