@@ -329,3 +329,39 @@ console.log('PASS 7-target Dark Lord life-siphon stress case with no percent-max
   }
 }
 console.log('PASS independently telegraphed Dragon and Sentinel cooldown healing');
+
+for (const slot of [5, 7]) {
+  const { g, foe } = targetArena('mage');
+  const neutral = g.makeEnemy(
+    { species: 'goblin', name: 'Neutral bystander', level: 1, hp: 1000, damage: 0, gold: 0, xp: 0 },
+    { x: 550, y: 520 },
+  );
+  neutral.neutral = true;
+  g.zone().enemies.push(neutral);
+  const neutralHp = neutral.hp;
+  assert(g.cast(slot, foe.id), 'Mage frost area ' + slot + ' casts');
+  assert.equal(foe.slow, slot === 5 ? 5 : 6, 'successful area hit applies frost');
+  assert.equal(neutral.hp, neutralHp, 'neutral target receives no damage');
+  assert.equal(neutral.slow || 0, 0, 'neutral target does not receive frost');
+
+  const rejected = targetArena('mage');
+  rejected.g.damage = () => false;
+  assert(rejected.g.cast(slot, rejected.foe.id), 'Mage frost area can resolve a rejected hit');
+  assert.equal(rejected.foe.slow || 0, 0, 'rejected area hit does not apply frost');
+}
+{
+  const { g, foe } = targetArena('mage');
+  assert(g.cast(2, foe.id), 'Mage frost projectile launches');
+  g.updateProjectiles(0.2);
+  assert.equal(g.s.projectiles.length, 0);
+  assert.equal(foe.slow, 4, 'landed frost projectile applies slow');
+}
+{
+  const { g, foe } = targetArena('mage');
+  assert(g.cast(2, foe.id), 'Mage frost projectile launches');
+  g.damage = () => false;
+  g.updateProjectiles(0.2);
+  assert.equal(g.s.projectiles.length, 0);
+  assert.equal(foe.slow || 0, 0, 'rejected projectile hit does not apply frost');
+}
+console.log('PASS Mage frost effects require a landed hit in cooldown-only combat');
