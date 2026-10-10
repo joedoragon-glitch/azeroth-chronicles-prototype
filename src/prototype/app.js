@@ -2154,7 +2154,8 @@
             ? [h, ...game.activeLivingParty()].every((u) => u.hp >= u.maxHp)
             : h.mp >= h.maxMp,
         next = rangers.length ? Math.min(...rangers.map((u) => u[cdKey] || 0)) : 0;
-      b.disabled = !rangers.length || !ready || full;
+      const recovering = type === 'mana' && game.hasSupportEffect(h, 'mana');
+      b.disabled = !rangers.length || !ready || full || recovering;
       b.hidden = platform.mode === 'phone' && !rangers.length;
       setMarkup(
         type + '-potion',
@@ -2162,7 +2163,13 @@
           '<small><span class="key-hint">' +
           key +
           ' · </span>' +
-          (ready ? ready + ' ready' : rangers.length ? next.toFixed(1) + 's' : 'Need Ranger') +
+          (recovering
+            ? 'Restoring'
+            : ready
+              ? ready + ' ready'
+              : rangers.length
+                ? next.toFixed(1) + 's'
+                : 'Need Ranger') +
           '</small>',
       );
       b.title =
