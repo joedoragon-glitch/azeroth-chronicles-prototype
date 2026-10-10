@@ -1,0 +1,29 @@
+{
+  "original": "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/image-tool-original.png",
+  "originalHash": "cddbae61a204982aebc9aa62b3e22baecedc962feb8a0dcf029f4fb5faaa101f",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -3.6666666666666665,
+    "offsetY": 10.666666666666666,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": 227
+    }
+  },
+  "proceduralBounds": {
+    "x1": 61,
+    "y1": 104,
+    "x2": 130,
+    "y2": 160
+  },
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "alphaDeletion": false,
+  "crop": false,
+  "trim": false
+}

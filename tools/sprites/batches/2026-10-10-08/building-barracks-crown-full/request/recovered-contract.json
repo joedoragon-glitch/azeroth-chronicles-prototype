@@ -1,0 +1,29 @@
+{
+  "key": "building:barracks:crown:full",
+  "catalogId": "236",
+  "canonHash": "546df8c92c218df9821b1cde98b65571127b733a598c61b3466a786d8a7ec375",
+  "catalogHash": "e4e7a9fc4896afa1524009b477728f04076a2d47674c24b6181e2da993b1736f",
+  "entity": {
+    "renderKind": "building",
+    "kind": "barracks",
+    "progress": 4,
+    "full": true,
+    "id": "sprite-reference-236"
+  },
+  "region": 4,
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 88
+  },
+  "canonicalReference": "tools/sprites/batches/2026-10-10-08/building-barracks-crown-full/original-export-v1/canonical.png",
+  "canonicalReferenceHash": "26ccc191b13927d705adf7c68b8c82ca94ae6064af1901d91ade19dfcaff0fb6",
+  "originalSource": "tools/sprites/batches/2026-10-10-08/building-barracks-crown-full/original-export-v1/source.png",
+  "originalHash": "8d267a90a87dd64391ca289b85a197126014d150e7117d7ee1b988091eeda873",
+  "preparedOutput": "tools/sprites/batches/2026-10-10-08/building-barracks-crown-full/original-export-v1/candidate.png",
+  "preparedOutputHash": "9609add1f102842f66164fb351f29127fed80ab359527997225e0c331870b59c",
+  "historicalPrompt": "Use existing generation.json when retained. Missing exact tool prompts are not reconstructed.",
+  "recovery": "This current-source contract was recaptured after workspace maintenance; it is not a historical image-generation request."
+}

@@ -1,0 +1,31 @@
+{
+  "key": "hero:ranger",
+  "original": "tools/sprites/batches/2026-10-08-01/hero-ranger/image-tool-original.png",
+  "originalHash": "fab51967f9bd550e64189ad3103fb3abfde3469081c6880c18e4b8b538b33dd2",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/sources/6a9bb7dc2503878ddfdbc4e0a2d275f47a5d2ea2d4fde33a3024f09bf727c341.png",
+  "intermediateHash": "6a9bb7dc2503878ddfdbc4e0a2d275f47a5d2ea2d4fde33a3024f09bf727c341",
+  "intermediateDimensions": [
+    1318,
+    1318
+  ],
+  "priorRevision": "fbf4d3d59177a51cf4ade65829e2bab7c62491c0728b06fe4ba95f099a578671",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -2,
+    "offsetY": 3,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": 32
+    }
+  },
+  "target": 576,
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact binding; no clip or variant bank. Retain prior revision for rollback."
+}

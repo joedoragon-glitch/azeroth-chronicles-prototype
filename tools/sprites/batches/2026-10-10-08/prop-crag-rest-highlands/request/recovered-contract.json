@@ -1,0 +1,28 @@
+{
+  "key": "prop:crag-rest:highlands",
+  "catalogId": "246",
+  "canonHash": "d060129b4ace8f3c20bf42981a8ef47d1c689b191197cbdd928d65c46559611d",
+  "catalogHash": "b006ae4c1ea7fff7b0329f7fa36df27f5cd03269a526d99926d4b57216fb5f22",
+  "entity": {
+    "renderKind": "prop",
+    "structure": "crag-rest",
+    "decorative": true,
+    "id": "sprite-reference-246"
+  },
+  "region": 2,
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "canonicalReference": "tools/sprites/batches/2026-10-10-08/prop-crag-rest-highlands/original-export-v1/canonical.png",
+  "canonicalReferenceHash": "6ff1e0173cc292ef6cd00549519410306434eb4d212b3a69d8d15f6ce7eb7d9c",
+  "originalSource": "tools/sprites/batches/2026-10-10-08/prop-crag-rest-highlands/original-export-v1/source.png",
+  "originalHash": "b58902f38d964032c9d37b40d37ace35cc39c292415e4200c61bf0db146bd2fd",
+  "preparedOutput": "tools/sprites/batches/2026-10-10-08/prop-crag-rest-highlands/original-export-v1/candidate.png",
+  "preparedOutputHash": "d3a367ed39c7ea7e7fc4a4df405db068097a87924f6d4363f1893bfe5da84512",
+  "historicalPrompt": "Use existing generation.json when retained. Missing exact tool prompts are not reconstructed.",
+  "recovery": "This current-source contract was recaptured after workspace maintenance; it is not a historical image-generation request."
+}

@@ -1,0 +1,31 @@
+{
+  "key": "ally:soldier",
+  "original": "tools/sprites/batches/2026-10-08-01/ally-soldier/image-tool-original.png",
+  "originalHash": "f87142b722be5c86dfffa7350af7c57ebba4f0e02164e3adc7de53e907a1ab3f",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/sources/d1ba960002f85b3fb396a4c021ac70c40c55d66c929723336ede91483b07b2dd.png",
+  "intermediateHash": "d1ba960002f85b3fb396a4c021ac70c40c55d66c929723336ede91483b07b2dd",
+  "intermediateDimensions": [
+    1318,
+    1318
+  ],
+  "priorRevision": "a48acfe9940e55581d1598cbd0a8a4a7d10b9bb2dc92f6e4e717ad495a961bd8",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -1,
+    "offsetY": 4,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": 32
+    }
+  },
+  "target": 576,
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact binding; no clip or variant bank. Retain prior revision for rollback."
+}

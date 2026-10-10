@@ -1,0 +1,29 @@
+{
+  "original": "tools/sprites/batches/2026-10-10-08/building-barracks-march-full/image-tool-original.png",
+  "originalHash": "29da4f2489b6048589893346e1d557056241420cd413ffc66e57107175878dd6",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "placement": {
+    "rasterScale": 4.25,
+    "offsetX": -1.6470588235294117,
+    "offsetY": 1.8823529411764706,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": 124
+    }
+  },
+  "proceduralBounds": {
+    "x1": 20,
+    "y1": 89,
+    "x2": 170,
+    "y2": 167
+  },
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "alphaDeletion": false,
+  "crop": false,
+  "trim": false
+}

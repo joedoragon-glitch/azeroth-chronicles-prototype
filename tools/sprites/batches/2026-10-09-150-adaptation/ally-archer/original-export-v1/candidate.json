@@ -1,0 +1,109 @@
+{
+  "version": 2,
+  "key": "ally:archer",
+  "catalogId": "005",
+  "canonHash": "3b955cae0108bd184c7153755fe5cb7b8a8c3314fdfd5cf6bfb3d4118666cb9c",
+  "canonSnapshotHash": "6b36ab7ee5bd2d4f93af1d8960d7b02cb629c473074e07a66f7bac86510adc4d",
+  "catalogHash": "4f00fbaff9ca24e2c4ee164c6c74ec7570465b7caaa132207d351427dd21cfaa",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 250204,
+    "decodedBytes": 6290064,
+    "hash": "df7a370cb7d119c7d90a6b045c542930d0c2f8d68492aa43c0b4ad2fa8c7e238",
+    "pixelHash": "2aafc388cc1e371ee64dca0dfd8616611479f3780a16358847147298a08dd160",
+    "bounds": {
+      "x1": 81,
+      "y1": 57,
+      "x2": 1229,
+      "y2": 1133
+    },
+    "padding": 24,
+    "transparentPixels": 1462057,
+    "visiblePixels": 110459,
+    "lowAlphaPixels": 9196,
+    "materialBounds": {
+      "x1": 472,
+      "y1": 539,
+      "x2": 819,
+      "y2": 981
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 576,
+    "height": 576,
+    "bytes": 72110,
+    "decodedBytes": 1327104,
+    "hash": "ad6dbd7e69f391c9a49f98cb0c679151600299e363b23809e20dca8bfd0853fd",
+    "pixelHash": "293cc2609b918f53e64b225c68d42c4af9a561eb41200fe849b27076d5603ee7",
+    "bounds": {
+      "x1": 72,
+      "y1": 134,
+      "x2": 560,
+      "y2": 545
+    },
+    "padding": 15,
+    "transparentPixels": 310689,
+    "visiblePixels": 21087,
+    "lowAlphaPixels": 1750,
+    "materialBounds": {
+      "x1": 229,
+      "y1": 286,
+      "x2": 380,
+      "y2": 478
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 54
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1254,
+      1254
+    ],
+    "to": [
+      576,
+      576
+    ],
+    "rasterScale": 3,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": {
+        "left": 32,
+        "right": 32,
+        "top": 32,
+        "bottom": 32
+      },
+      "virtualWidth": 1318,
+      "virtualHeight": 1318,
+      "input": "untouched-original",
+      "samplingPasses": 1,
+      "intermediatePixelsUsed": false
+    },
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": 3,
+      "y": 12,
+      "rasterX": 9,
+      "rasterY": 36,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "pending",
+    "reference": null
+  }
+}

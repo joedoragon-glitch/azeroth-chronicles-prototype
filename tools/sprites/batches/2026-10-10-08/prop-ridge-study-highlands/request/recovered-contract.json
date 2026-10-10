@@ -1,0 +1,28 @@
+{
+  "key": "prop:ridge-study:highlands",
+  "catalogId": "244",
+  "canonHash": "294afac3aa54c8b8805968450bb36a34c460061d8a73efa4b101c765066ee571",
+  "catalogHash": "555e003fb439e3380e1a8b84e353ed964361223ffeb54eadeae8bf0f6beee968",
+  "entity": {
+    "renderKind": "prop",
+    "structure": "ridge-study",
+    "decorative": true,
+    "id": "sprite-reference-244"
+  },
+  "region": 2,
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "canonicalReference": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/quill-correction/original-export-v1/canonical.png",
+  "canonicalReferenceHash": "6660f89e4b2f006296281ca3a336a23d5d9bfefebb9d2dc122a197819dbaa593",
+  "originalSource": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/quill-correction/original-export-v1/source.png",
+  "originalHash": "48c82a32efe1bcadccb02c0eee36c63ff243280f175534720a1549ddcdec5e87",
+  "preparedOutput": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/quill-correction/original-export-v1/candidate.png",
+  "preparedOutputHash": "3676776eca0287294a2dac5bbecae5cb25485065114f8ba639739c4892fdc97c",
+  "historicalPrompt": "Use existing generation.json when retained. Missing exact tool prompts are not reconstructed.",
+  "recovery": "This current-source contract was recaptured after workspace maintenance; it is not a historical image-generation request."
+}

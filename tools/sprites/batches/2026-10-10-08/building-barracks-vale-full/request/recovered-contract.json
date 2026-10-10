@@ -1,0 +1,29 @@
+{
+  "key": "building:barracks:vale:full",
+  "catalogId": "232",
+  "canonHash": "774076a8b58646e320a267e2923936350c9eba4532c0df5f5ae91bb621be6479",
+  "catalogHash": "2eff4048965dba229cf1df51bfae1e5fb7b3c5cd8248ef3e71b9567290bd6f5d",
+  "entity": {
+    "renderKind": "building",
+    "kind": "barracks",
+    "progress": 4,
+    "full": true,
+    "id": "sprite-reference-232"
+  },
+  "region": 0,
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 88
+  },
+  "canonicalReference": "tools/sprites/batches/2026-10-10-08/building-barracks-vale-full/original-export-v1/canonical.png",
+  "canonicalReferenceHash": "b28e95d3adad623a79751a9c99fa34b9333a02ddbb78e49c094affce5de8813f",
+  "originalSource": "tools/sprites/batches/2026-10-10-08/building-barracks-vale-full/original-export-v1/source.png",
+  "originalHash": "5ff05e4d22e6f77a1b29a34844786c064477b414ae729580de1f6ed8ce5b3adf",
+  "preparedOutput": "tools/sprites/batches/2026-10-10-08/building-barracks-vale-full/original-export-v1/candidate.png",
+  "preparedOutputHash": "12d41db666d2e14c48945dd76382c2a4bac0f38dd15c406f4d99a05cb383f201",
+  "historicalPrompt": "Use existing generation.json when retained. Missing exact tool prompts are not reconstructed.",
+  "recovery": "This current-source contract was recaptured after workspace maintenance; it is not a historical image-generation request."
+}

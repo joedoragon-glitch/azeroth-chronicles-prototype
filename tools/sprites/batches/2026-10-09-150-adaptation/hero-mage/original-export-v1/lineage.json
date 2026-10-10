@@ -1,0 +1,31 @@
+{
+  "key": "hero:mage",
+  "original": "tools/sprites/batches/2026-10-08-01/hero-mage/image-tool-original.png",
+  "originalHash": "25ca3e73678da20bd97c070247176b042ab79bf529fb316ea3e02eb772e9800f",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/sources/e3a36670eb4dd2823b37f7eea85e4e52922023864ac81f691a19d33761ec5708.png",
+  "intermediateHash": "e3a36670eb4dd2823b37f7eea85e4e52922023864ac81f691a19d33761ec5708",
+  "intermediateDimensions": [
+    1318,
+    1318
+  ],
+  "priorRevision": "482a359a5997d069c2bd66761ebbafcafb234d3abce8acabe54cd1b2c2402254",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": 0,
+    "offsetY": 6,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": 32
+    }
+  },
+  "target": 576,
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact binding; no clip or variant bank. Retain prior revision for rollback."
+}

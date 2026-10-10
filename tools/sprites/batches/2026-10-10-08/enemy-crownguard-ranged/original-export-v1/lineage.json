@@ -1,0 +1,29 @@
+{
+  "original": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/equipment-correction/image-tool-original.png",
+  "originalHash": "b19220550d32e171ecd009337a9cb494d90cd20bef08ec5749bbce57d42011de",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -1.3333333333333333,
+    "offsetY": -3,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": 43
+    }
+  },
+  "proceduralBounds": {
+    "x1": 74,
+    "y1": 96,
+    "x2": 130,
+    "y2": 159
+  },
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "alphaDeletion": false,
+  "crop": false,
+  "trim": false
+}

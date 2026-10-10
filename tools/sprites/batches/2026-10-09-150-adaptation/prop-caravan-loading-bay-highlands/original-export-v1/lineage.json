@@ -1,0 +1,31 @@
+{
+  "key": "prop:caravan-loading-bay:highlands",
+  "original": "tools/sprites/batches/2026-10-09-05/prop-caravan-loading-bay-highlands/image-tool-original.png",
+  "originalHash": "f2340dd15a858fcf0b2f25d33459e031bd705ae4fd50b1afeafae2ee0492d0a8",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/sources/9140d5df75109164af13f852f9d0c22b17f429b5bc4603fc38f77fbcd6782e2a.png",
+  "intermediateHash": "9140d5df75109164af13f852f9d0c22b17f429b5bc4603fc38f77fbcd6782e2a",
+  "intermediateDimensions": [
+    1472,
+    1472
+  ],
+  "priorRevision": "a30df3dcd7924388160bf5934c8a66e5bf14a296a7ddc4db76fd792a8608b108",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": 0,
+    "offsetY": 32,
+    "normalization": {
+      "fullCanvasSize": 1024,
+      "padding": 224
+    }
+  },
+  "target": 576,
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact binding; no clip or variant bank. Retain prior revision for rollback."
+}
