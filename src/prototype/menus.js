@@ -1429,9 +1429,12 @@
         liveBoss('darklord') ||
         findNpc((n) => n.id === 'fortress-gate') ||
         (D.fields?.[4] ? { x: D.fields[4][0], y: D.fields[4][1] } : null);
-      present(game.s.normal.darklord ? 'Find and defeat the TRUE Dark Lord' : 'Specialists rescued · Defeat the Dark Lord', [
-        guideAction('Dark Lord', darklord),
-      ]);
+      present(
+        game.s.normal.darklord
+          ? 'Find and defeat the TRUE Dark Lord'
+          : 'Specialists rescued · Defeat the Dark Lord',
+        [guideAction('Dark Lord', darklord)],
+      );
     }
 
     function quests(atBoard, back = closeMenu) {
