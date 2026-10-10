@@ -123,4 +123,27 @@ for (const mode of ['normal', 'nightmare']) {
   assert(boss.hp < hp, 'dust cover is not invulnerability');
 }
 
+{
+  const game = new Campaign('normal', 'ranger', () => 0.9);
+  game.zone().enemies = [];
+  game.s.party = [];
+  const hero = game.hero;
+  hero.haste = 3;
+  let directSpeed = 0;
+  let orderedSpeed = 0;
+  game.move = (unit, _destination, speed) => {
+    if (unit === hero) directSpeed = speed;
+    return true;
+  };
+  game.tick(0.1, { x: 1, y: 0, speedFactor: 1 });
+  game.follow = (unit, _destination, speed) => {
+    if (unit === hero) orderedSpeed = speed;
+    return true;
+  };
+  hero.order = { type: 'move', x: hero.x + 500, y: hero.y };
+  game.tick(0.1);
+  assert(directSpeed > 0 && orderedSpeed > 0, 'both movement modes were exercised');
+  assert.equal(orderedSpeed, directSpeed, 'Ranger Haste also increases ordered movement speed');
+}
+
 console.log('PASS v0.9 condition contracts: immunity, slows, traps, stacking, death and dust targeting');
