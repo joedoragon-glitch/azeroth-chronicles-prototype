@@ -22,7 +22,9 @@ Measurements below are paired baseline/candidate experiments; they do not establ
 
 Sources: [terrain report](perf-ws1-terrain-road-rendering.md), [occlusion report](PERF_WS2_VISUALS_V09.md), [audio report](perf-ws3-interface-audio-20261010.md), [infrastructure report](PERF_WS4_INFRASTRUCTURE_20261010.md). Both audio timing runs and the zero-actor occlusion control are retained, including unfavorable observations.
 
-The road display list retains world coordinates, exact drawing order and material calls, with mutable geometry/topology/bridge invalidation. Limits are 4,096 commands, 8,192 input scalars and 32,768 coordinate scalars; exceeding them falls back to ordinary rendering. It adds no canvas backing store. Occlusion memoization lasts one synchronous draw call, so it cannot stale across movement or frames. Audio performs ordered sparse-safe observations and skips allocations only for empty bindings. Worker scope/entry URLs are immutable constants; cache, offline, request and install/error policies are equivalent.
+The [combined full-painter report](PERF_WS2_FULL_RENDER_DIAGNOSTICS.md) retains all eight scene results and the focused phone repeat, with [raw samples, hashes and memory counters](perf-ws2-full-render-diagnostics.json). Original full-painter upper medians show five faster and three slower rows, including Vale phone 96 → 116.5 ms (21.35% slower). The same-source-hash repeat measured 193 → 191.5 ms (nearly equal), while an independent unchanged-baseline page took 231 ms (19.69% slower than its baseline twin). All 72 measured checkpoints have exact three-way pixels and unchanged full game state. Full-painter timing is inconclusive on this shared host; no overall rendering/FPS improvement or reliably reproduced phone regression is claimed. For eight batches the reported upper median is sorted sample[4]; every raw batch time is retained.
+
+The road display list retains world coordinates, exact drawing order and material calls, with mutable geometry/topology/bridge invalidation. Limits are 4,096 commands, 8,192 input scalars and 32,768 coordinate scalars; exceeding them disables retention and rebuilds the equivalent draw commands. It adds no canvas backing store. Occlusion memoization lasts one synchronous draw call, so it cannot stale across movement or frames. Audio performs ordered sparse-safe observations and skips allocations only for empty bindings. Worker scope/entry URLs are immutable constants; cache, offline, request and install/error policies are equivalent.
 
 ## Verification
 
@@ -38,6 +40,7 @@ Final review links and exact-head combined CI outcomes are recorded in the final
 
 ## Risks and rejected changes
 
+- Initial exact-head WebKit CI passed controls, charged input and the historical installed-PWA upgrade, then failed a historical phone reload on an audio streaming access-control error. Audio loading/lifecycle and original request handling are unchanged; the existing test already documents canceled bodies on reload. The first failure is retained in CI run 38075122171, and final-head rerun must pass before review readiness. No error assertion is weakened.
 - Shared-worker microbenchmarks and software raster measurements cannot establish real Chromebook/iOS/Android active-play performance. Hardware-specific FPS, battery and memory-pressure measurements remain outstanding.
 - The road cache benefits repeated geometry. Cold/churning scenes and the bounded fallback still pay preparation costs; its maximum retained scalar count is disclosed above.
 - A synthetic occlusion call with no eligible actors adds 0.032–0.039 ms of classification overhead. Normal renderer calls include the hero; the synthetic regression is retained rather than hidden.

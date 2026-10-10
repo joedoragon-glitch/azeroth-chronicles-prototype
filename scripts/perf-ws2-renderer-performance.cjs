@@ -143,6 +143,7 @@ function summarize(samples) {
   const x = samples.slice().sort((a, b) => a - b);
   return {
     n: x.length,
+    medianConvention: 'upper median (sorted samples[Math.floor(n / 2)])',
     medianMs: x[Math.floor(x.length / 2)],
     p95Ms: x[Math.floor((x.length - 1) * 0.95)],
     meanMs: x.reduce((a, b) => a + b, 0) / x.length,
@@ -372,7 +373,7 @@ function summarize(samples) {
           initial.baseline.state,
           'Identical starting campaign ' + JSON.stringify(spec),
         );
-        const samples = { baseline: [], candidate: [] },
+        const samples = { baseline: [], candidate: [], control: [] },
           checkpoints = [];
         for (
           let round = 0;
@@ -385,7 +386,8 @@ function summarize(samples) {
           }
           // Advance the independent baseline control by the same draw count,
           // then compare all three exact outputs at each measured checkpoint.
-          await pages.control.evaluate(sampledDraw, iterations);
+          const controlSample = await pages.control.evaluate(sampledDraw, iterations);
+          samples.control.push(controlSample.ms);
           const checkpoint = { round };
           for (const which of ['baseline', 'candidate', 'control']) {
             await pages[which].evaluate(() => (window.__perfWs2Diagnostic = false));
@@ -444,11 +446,14 @@ function summarize(samples) {
           'Exact independent baseline final pixels ' + JSON.stringify(spec),
         );
         const baseline = summarize(samples.baseline),
-          candidate = summarize(samples.candidate);
+          candidate = summarize(samples.candidate),
+          control = summarize(samples.control);
         const row = {
           ...spec,
           baseline,
           candidate,
+          control,
+          sameSourceControlDifferencePercent: 100 * (control.medianMs / baseline.medianMs - 1),
           medianReductionPercent: 100 * (1 - candidate.medianMs / baseline.medianMs),
           initial,
           final,
@@ -467,6 +472,8 @@ function summarize(samples) {
             width,
             beforeMs: baseline.medianMs,
             afterMs: candidate.medianMs,
+            independentBaselineControlMs: control.medianMs,
+            sameSourceControlDifferencePercent: row.sameSourceControlDifferencePercent,
             reductionPercent: row.medianReductionPercent,
             pixelsIdentical: true,
             stateInvariant: true,
