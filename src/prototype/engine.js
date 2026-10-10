@@ -1293,11 +1293,8 @@
       this.s.recallActive = false;
       const initial = this.safe(this.hero.x + 130, this.hero.y),
         p =
-          this.roadsidePlot(
-            this.zone(),
-            initial,
-            this.roadFootprint({ kind: 'barracks' }),
-          ) || initial,
+          this.roadsidePlot(this.zone(), initial, this.roadFootprint({ kind: 'barracks' })) ||
+          initial,
         b = {
           id: 'barracks-' + this.s.nextId++,
           ...p,
