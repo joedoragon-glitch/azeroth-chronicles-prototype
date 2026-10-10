@@ -122,7 +122,11 @@ for (const mode of ['normal', 'nightmare']) {
     c.s.party = [];
     const z = c.zone();
     const tune = R.dungeonTrapTuning[family];
-    const trap = c.traps()[0];
+    const authoredTraps = c.traps.bind(c);
+    const trap = authoredTraps()[0];
+    // Isolate this real authored trap so a nearby installation cannot mask
+    // independent victim timing and rearm assertions.
+    c.traps = () => authoredTraps().slice(0, 1);
     const h = c.hero;
     Object.assign(h, { x: trap.x, y: trap.y, slow: 0, immune: 0, hp: h.maxHp });
     const companion = c.unit('soldier', trap.x + 240, trap.y + 240);
