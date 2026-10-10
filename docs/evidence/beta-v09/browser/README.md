@@ -6,7 +6,7 @@ Tested candidate: `4a53dedba7201df71b2c9dc6848f5795f2d706a9` (v0.8.137). Evidenc
 
 Three illustrative raw screenshots are retained here: Sunken Archive portrait, Stonecross desktop and Abyss hatchery landscape. Other capture filenames in the manifest describe transient local samples and are not attached. The agent visually inspected this subset for selected route/entrance readability; camera/scenery/collision are unchanged.
 
-Reproduce from a checkout of the tested SHA with Playwright/WebKit installed:
+Reproduce from this evidence branch (its runtime source matches the tested candidate), with Playwright/WebKit installed. Alternatively, copy the script into a checkout of tested `4a53ded` and set `BETA_TARGET_ROOT` to that checkout:
 
 ```sh
 BROWSER_ENGINE=webkit BETA_TARGET_ROOT="$PWD" BETA_CAPTURE_DIR=test-results/beta-spatial node docs/evidence/beta-v09/browser/spatial-browser.cjs
