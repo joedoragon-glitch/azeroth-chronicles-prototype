@@ -129,12 +129,12 @@
               : [],
           destinations = [
             D.minors[i],
+            [field.x, field.y],
             D.ports[i],
             ...(R.travelArrivalStands?.[z.id]
               ? [[R.travelArrivalStands[z.id].x, R.travelArrivalStands[z.id].y]]
               : []),
             D.entrances[i],
-            [field.x, field.y],
             ...(finalGate ? [[finalGate[2], finalGate[3]]] : []),
             ...(harbor ? [[harbor.arrival.x, harbor.arrival.y]] : []),
             ...frontierRoutes,
@@ -161,7 +161,9 @@
               if (visited.has(id) || dist(origin, destination) <= 1) continue;
               visited.add(id);
               let start = origin;
-              if (z.roads.length) {
+              // Main town-to-hamlet and town-to-field arterials retain
+              // their original direct course; spurs join existing streets.
+              if (z.roads.length && !(x === field.x && y === field.y)) {
                 const junctions = z.roads.flatMap((path) => path);
                 const closest = junctions.reduce(
                   (best, p) => (!best || dist(p, destination) < dist(best, destination) ? p : best),
