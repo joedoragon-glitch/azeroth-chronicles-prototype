@@ -2334,7 +2334,9 @@
             this.follow(
               h,
               target,
-              (h.speed + this.heroTalentSpeedBonus()) * (h.slow > 0 ? 0.65 : 1),
+              (h.speed + this.heroTalentSpeedBonus()) *
+                (h.haste > 0 ? 1.25 : 1) *
+                (h.slow > 0 ? 0.65 : 1),
               dt,
               20,
             );
@@ -3467,10 +3469,7 @@
               };
             this.move(target, point, 220, 0.25);
           } else {
-            target.slow = Math.max(
-              target.slow || 0,
-              move.slowSeconds || (move.style === 'snare' ? 1.65 : 0.95),
-            );
+            this.applySlow(target, move.slowSeconds || (move.style === 'snare' ? 1.65 : 0.95));
           }
         }
         if (move.blinds > 0) {
@@ -3524,7 +3523,7 @@
               y: unit.y + ((unit.y - e.y) / d) * push,
             };
           this.move(unit, point, 250, 0.36);
-        } else unit.slow = Math.max(unit.slow || 0, move.slowSeconds || 1);
+        } else this.applySlow(unit, move.slowSeconds || 1);
       }
       if (
         move.rallySeconds > 0 &&
@@ -4360,8 +4359,8 @@
             const key = this.s.zone + ':layout' + (this.zone().dungeonVersion || 2) + ':' + t.index;
             if (u.trapHits[key] !== t.cycle && this.trapContains(t, u)) {
               u.trapHits[key] = t.cycle;
-              this.hitParty(u, u.maxHp * t.damageFraction);
-              if (t.kind === 'seal') u.slow = t.slowSeconds;
+              if (this.hitParty(u, u.maxHp * t.damageFraction) && t.kind === 'seal')
+                this.applySlow(u, t.slowSeconds);
               if (
                 this.hero !== hero ||
                 this.zoneId !== zone ||
