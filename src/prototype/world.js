@@ -271,7 +271,7 @@
         this.s.zone = z.id;
         try {
           for (const house of z.props.filter((p) => p.roadBlocker)) {
-            const setback = (house.r || 0) + 145;
+            const setback = (house.r || 0) + 175;
             if (this.distanceToRoad(z, house) >= setback) continue;
             const origin = { x: house.x, y: house.y };
             let placed = false;
@@ -315,14 +315,17 @@
       }
       roadSetback(p) {
         if (p.roadTrace) return 0; // Only deliberately flat road ruts/repairs.
-        if (p.roadBlocker) return (p.r || 0) + 145;
-        if (p.r > 0) return p.r + 64;
+        // Building anchors sit below much of their painted roof; reserve more
+        // than the collision circle so rooftops do not cover carriageways.
+        if (p.roadBlocker) return (p.r || 0) + 175;
         if (
           /house|cottage|workshop|forge|watchpost|tower|tent|stockade|wall|barracks|gate|roost|lean-to|palisade|foundation|shelter|stable|mangrove|dead-tree/i.test(
             p.structure || '',
           )
         )
-          return 125;
+          return Math.max((p.r || 0) + 125, 165);
+        if (/market|stall|field-kitchen/i.test(p.structure || '')) return 135;
+        if (p.r > 0) return p.r + 64;
         return 72;
       }
       clearStreetCorridors(z) {
