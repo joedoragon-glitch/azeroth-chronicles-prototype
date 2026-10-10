@@ -87,3 +87,30 @@ Before merge:
 - authored Abyss partitions are visible in the live renderer;
 - existing Dreadmaw regression coverage must continue to pass;
 - after merge, the full main regression suite, desktop/mobile browser matrix, Pages deployment and published-build smoke check remain authoritative.
+
+## v0.9 stabilization handoff
+
+The irregular Bastion implementation was merged through #102 and the current royal
+flight-project interpretation through #114. Older overlapping PRs #92, #97 and
+#101 are closed as superseded. There is no outstanding alternate dungeon layout
+waiting to be merged for v0.9.
+
+The `handler-intake`, `containment-spine`, `containment-gate` and guardian
+formation group IDs are historical **internal geometry identifiers**. They do
+not describe captivity in the current story. Leave these internal IDs alone
+during stabilization rather than creating unrelated migration risk.
+
+Automated release coverage includes `tests/dungeon-pressure.test.cjs`
+(fortress geometry, paired zero-reward defenders, inflated-hazard routes to
+the dragon and Eren, legacy v4 migration),
+`tests/abyss-flight-project.test.cjs` (royal-flight dressing, preserved
+progress, once-only lore) and `tests/abyss-v09-routes.test.cjs`
+(round-trip inflated-hazard access to hatchery and feeding/service wings).
+The latter two also run in the quick suite.
+
+**Outstanding human acceptance, not a redesign requirement:** play a complete
+Bastion rescue/boss progression path with companions; assess guardians, warning
+clarity and practical trap avoidance in Normal and Nightmare; inspect
+TRUE/Awakening encounters where unlocked; revisit with a historical save and
+exercise phone movement/interaction on a real device. Record concrete defects
+for narrow fixes without changing the established air-superiority canon.
