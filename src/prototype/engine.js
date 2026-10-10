@@ -1291,7 +1291,13 @@
         cost = this.barracksBuildCost();
       if (!builder || !this.spend(cost)) return false;
       this.s.recallActive = false;
-      const p = this.safe(this.hero.x + 130, this.hero.y),
+      const initial = this.safe(this.hero.x + 130, this.hero.y),
+        p =
+          this.roadsidePlot(
+            this.zone(),
+            initial,
+            this.roadFootprint({ kind: 'barracks' }),
+          ) || initial,
         b = {
           id: 'barracks-' + this.s.nextId++,
           ...p,
