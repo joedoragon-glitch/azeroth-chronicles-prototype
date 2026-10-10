@@ -107,6 +107,42 @@ acceptance checks; do not substitute graphics changes for mechanical fixes.
 - **`scatter`**, **`sweep`**, **`shove`**, **`dash`**, **`pivot`**, **`withdraw`**, **`bind`**, **`rally`** and **`snare`** are tactical move/effect identifiers. A `bind` currently slows rather than roots or silences; a `dash` repositions the enemy rather than disabling the victim.
 - **`manaDrain`** is a **legacy, dormant authoring field** in cooldown-only mode (`resourceMode.manaEnabled = false`). Do not strip it: historical MP mode must remain reversible. The active siphon logic is based on real HP loss, not mana loss. See `COOLDOWN_ONLY_COMBAT_MIGRATION.md`.
 
+## Author direction — condition-first environmental traps (10 October 2026)
+
+**Design principle confirmed:** Environmental traps should chiefly express the status
+or forced-movement consequence suggested by their physical or magical identity.
+Damage is supporting pressure, not a substitute for that identity. This direction
+does not silently approve additional named ailments or a new damage balance.
+
+**Current implementation versus candidate design (do not confuse these):**
+
+| Existing visual | Current live mechanic | Proposed effect-first interpretation using existing systems |
+| --- | --- | --- |
+| Rising **spikes** | One physical HP hit per activation, no condition | A brief **Slow** on successful piercing contact (injury impairs footing), with HP damage secondary. No unimplemented bleed/root/stun. |
+| Long lane of erupting **flame jets** | One HP hit per activation, no displacement or DoT | Short **shove/knockback** to clear the jet's lane, using the existing collision-aware displacement primitive; lower supporting HP damage. Because flames currently rise vertically, directional impulse needs a legible blast cue. No unimplemented Burning status. |
+| Diamond-shaped **magical seal** | One HP hit plus longer **Slow** | Preserve **Slow** as the primary magical binding effect, with modest supporting HP damage and a clearer indication that movement—not spellcasting—is restricted. Do not reinterpret the author's historical slowing seal as a hard root. |
+
+These mappings for spikes and jets are **implementation proposals derived from
+the design principle**, not assertions that the current code already performs them.
+Preserve the established once-per-unit-per-trap activation latch unless a
+separate reviewed design explicitly changes it. The author has not supplied
+new numerical durations, knockback distances, damage fractions, or acceptance
+for a balance retune.
+
+When implementing, keep common rules: effects only on eligible living hero/
+companion targets after a valid hit; immunity prevents damage and secondary
+effects; Slow stacks by longest remaining duration; shove respects solid
+collision and must not force unavoidable entry into another trap or across an
+impassable edge. Cover stationary victims, moving victims, overlapping traps,
+late-entry, party AI, pause, save/import, and both control schemes in regression
+and browser tests. Show the actual effect to players instead of relying on
+the visual similarity of different hazard shapes.
+
+Status-first trap revisions should be reviewed as an explicitly bounded
+gameplay change for v0.9 rather than silently bundled with mechanical
+housekeeping. Existing trap warning, layout, safe routes, party survivability
+and v4 saves are release constraints.
+
 ## Global conditions contract
 
 1. A condition with on-hit semantics is applied **only after the hit succeeds**, not merely because its telegraph overlaps a target. Immunity blocks both damage and the on-hit condition. Lethally struck companions must not retain a fresh Slow.
