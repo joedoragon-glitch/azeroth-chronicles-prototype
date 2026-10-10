@@ -27,7 +27,12 @@
         return (this.hero.talents?.[3] || 0) * this.talentProfile().speed;
       }
       heroOtherHpBonus() {
-        return Math.max(0, this.hero.maxHp - this.heroNaturalMaxHp() - this.heroTalentHpBonus());
+        // Shared Strength inherits persistent bonuses, not a tonic the hero personally drank.
+        const temporaryHp = this.hero.tonic ? this.hero.tonicBonus || 0 : 0;
+        return Math.max(
+          0,
+          this.hero.maxHp - this.heroNaturalMaxHp() - this.heroTalentHpBonus() - temporaryHp,
+        );
       }
       heroOtherDamageBonus() {
         return Math.max(
@@ -405,6 +410,7 @@
         return { name: bestName, power: bestPower };
       }
       autoEquipBestWeapon() {
+        this.hero.weaponSelection = null; // A newly acquired tier uses automatic best-weapon selection.
         if (!Array.isArray(this.s.legacyInventory) && this.hero.legacyEquipped === undefined)
           return 'tier';
         const legacy = this.bestLegacyWeapon(),
@@ -508,7 +514,27 @@
         this.hero.legacyWeaponPower = legacyWeapons[name];
         this.hero.legacyWeaponName = name;
         this.hero.legacyEquipped = true;
+        this.hero.weaponSelection = name;
         return true;
+      }
+      equipTierWeapon() {
+        if (!this.hero.weapon) return false;
+        this.hero.legacyEquipped = false;
+        this.hero.weaponSelection = 'tier';
+        return true;
+      }
+      restoreWeaponSelection() {
+        const choice = this.hero.weaponSelection;
+        if (choice === 'tier' && this.hero.weapon) {
+          this.hero.legacyEquipped = false;
+          return 'tier';
+        }
+        if (typeof choice === 'string' && legacyWeapons[choice] && this.s.legacyInventory?.includes(choice)) {
+          this.equipLegacy(choice);
+          return 'legacy';
+        }
+        // Historical saves without an explicit choice retain the old best-weapon migration.
+        return this.autoEquipBestWeapon();
       }
       power() {
         if (this.hero.legacyEquipped)
