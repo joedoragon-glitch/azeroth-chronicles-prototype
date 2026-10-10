@@ -1,0 +1,29 @@
+{
+  "key": "building:barracks:march:full",
+  "catalogId": "233",
+  "canonHash": "f18476c6dffc19e9d2f3cc5991857d9dcb5b2f75aced53d856ba4eb0e2db8c85",
+  "catalogHash": "73775741ebb078a0f0b1fd6f94a68b5bb1b6f02abe23829e13282f8af078e5e9",
+  "entity": {
+    "renderKind": "building",
+    "kind": "barracks",
+    "progress": 4,
+    "full": true,
+    "id": "sprite-reference-233"
+  },
+  "region": 1,
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 88
+  },
+  "canonicalReference": "tools/sprites/batches/2026-10-10-08/building-barracks-march-full/original-export-v1/canonical.png",
+  "canonicalReferenceHash": "c47e5ac849324069dc43ad6855be81069adf8702624c3810cd4ed3ae4c585ed8",
+  "originalSource": "tools/sprites/batches/2026-10-10-08/building-barracks-march-full/original-export-v1/source.png",
+  "originalHash": "29da4f2489b6048589893346e1d557056241420cd413ffc66e57107175878dd6",
+  "preparedOutput": "tools/sprites/batches/2026-10-10-08/building-barracks-march-full/original-export-v1/candidate.png",
+  "preparedOutputHash": "a10f41a821c1154729f5f5f77e415948d78324c2ec4e9a58dca28a1589421671",
+  "historicalPrompt": "Use existing generation.json when retained. Missing exact tool prompts are not reconstructed.",
+  "recovery": "This current-source contract was recaptured after workspace maintenance; it is not a historical image-generation request."
+}

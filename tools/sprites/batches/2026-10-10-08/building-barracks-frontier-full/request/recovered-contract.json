@@ -1,0 +1,29 @@
+{
+  "key": "building:barracks:frontier:full",
+  "catalogId": "235",
+  "canonHash": "bfa730fe55d92e47477dedd37b5fd0f8ca9b27b2c8f24a1a942876eeffc45252",
+  "catalogHash": "1d3f0e4fac6f47cf810870290dac8fe01dcf7e24edfdc6303afa93a5f4c90175",
+  "entity": {
+    "renderKind": "building",
+    "kind": "barracks",
+    "progress": 4,
+    "full": true,
+    "id": "sprite-reference-235"
+  },
+  "region": 3,
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 88
+  },
+  "canonicalReference": "tools/sprites/batches/2026-10-10-08/building-barracks-frontier-full/original-export-v1/canonical.png",
+  "canonicalReferenceHash": "aebaa83a114ff79a26d912e281b56d1b0ddc07213135cb18cc1a1101daddaa5a",
+  "originalSource": "tools/sprites/batches/2026-10-10-08/building-barracks-frontier-full/original-export-v1/source.png",
+  "originalHash": "e463f6b8f2676f85be9cf22bd595519442b12ea48b85afce8eb83603366b30a8",
+  "preparedOutput": "tools/sprites/batches/2026-10-10-08/building-barracks-frontier-full/original-export-v1/candidate.png",
+  "preparedOutputHash": "98947dccda72e8023f77f506902d8f973d302f8b7289fe7e597d8ab90978dde2",
+  "historicalPrompt": "Use existing generation.json when retained. Missing exact tool prompts are not reconstructed.",
+  "recovery": "This current-source contract was recaptured after workspace maintenance; it is not a historical image-generation request."
+}

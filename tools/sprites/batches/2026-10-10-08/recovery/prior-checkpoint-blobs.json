@@ -1,0 +1,1424 @@
+[
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/ally-archer/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "c19f6816b6e37df556c9ae8f63208df7212c2acb"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/ally-archer/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "c9d81ee4562c0246bc86a4b58f6359304756e762"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/ally-archer/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "36403b716a196aed02c7dc560fb23b8cf5c11e62"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/ally-archer/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "c7807f8d6a11b02830f2415d748a81a91a64eb7c"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/ally-archer/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "7585508af877379a392aec51cad095533fd25199"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/ally-archer/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "4f6187d7d7d8e4bb972aa7c7662da7d9a7e9e432"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/ally-archer/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "999ac363942b360b67acf868ae257751d105f78c"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/ally-soldier/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "8fa50bd9f1453feba66b101c841d2281e5d3aab2"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/ally-soldier/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "b4d060ec4c52a2aab1cd06b5ffe9a4e687a006c1"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/ally-soldier/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "874384afa4b8ee031799790021362c9a01439fbf"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/ally-soldier/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "623e0128faa81b82245343ffe449e95e9a900647"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/ally-soldier/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "18637abe8c19120afabbf1b397768b8e73f5448f"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/ally-soldier/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "dfbf88af1799bd4f71de3be5307a9c96e3ad2c88"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/ally-soldier/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "1679869bfe15b366b3e1ca8b35cad423d2868f5b"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/hero-mage/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "ef7973b67c3337ebb05961fb6161782b363ee997"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/hero-mage/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "a09bfb3a76b0bfca01d2554ed259545c28dc7405"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/hero-mage/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "f7777a188bbbc39f0abc6b38f555f9750f2e18f1"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/hero-mage/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "d885df01447e9b82a8c41d81ecf4c5eecb26f4c8"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/hero-mage/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "7600f6e68229440cb3b5f7e43c88baf69856bbe7"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/hero-mage/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "03ea7cb79a6473dc03137343efba0fcbcb322fb7"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/hero-mage/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "ee261c8444c893c81ac9e7353eccfa727ac9f584"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/hero-ranger/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "c0cb76b26007004fab2f289d816786a3480acd25"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/hero-ranger/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "40659a1dc07a7e7c5af6ced59b9cb77d357ae24c"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/hero-ranger/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "4e58f26d6b80753939963ab0bf7e6d780c18166c"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/hero-ranger/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "08066cc45868cbe8275235c7c9263bee86f852ae"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/hero-ranger/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "4060ce9dddd20edd84ad163c68d35129f7b90705"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/hero-ranger/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "de822da1619993e08bcd759f1fef1d22c4219562"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/hero-ranger/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "f4f0cffa81debc78caefd9e754c60aae308380ea"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/production-journal.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "7416034228c5e192dd30db881d38e52be89ca1b7"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-caravan-loading-bay-highlands/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "5df6244106d9f0e8046f86149fb8b50cbadf6620"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-caravan-loading-bay-highlands/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "480bb80370f83ea4d670503d47acddbb25be6eec"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-caravan-loading-bay-highlands/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "548b1004e3a5b233bc6eff7847066d0acb38b35d"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-caravan-loading-bay-highlands/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "fb1878fb7fc7afcd672c0c4350118078e0e71fd4"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-caravan-loading-bay-highlands/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "02d80d9a3a3dda4b84df451d2eed4471487f635d"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-caravan-loading-bay-highlands/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "8d8706b4210a25871f447c0b11c43f4fd5523560"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-caravan-loading-bay-highlands/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "2c83254c065ac92ca106ad92b0e8f31839b98852"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-mint-workbench-highlands/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "79ea60fb7f483d3113e750bca4ee49924b1be1f2"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-mint-workbench-highlands/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "96da1e795d56d60bf14053384a8622fa80c3f6f6"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-mint-workbench-highlands/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "44297f418ddf1067a93f6fcf3d6db3bba9230720"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-mint-workbench-highlands/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "6b138bfe3c13e8c33d5dfc168f34d6f1fadb6c4f"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-mint-workbench-highlands/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "9c6ad27411cef7ccf48c814fb095ca582a99d79b"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-mint-workbench-highlands/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "6872b74e3b39d8cf48884650e4cb18ac3e3337d5"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-mint-workbench-highlands/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "df4ce043be2fd2301a66b2bad8f959f2a5951e00"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-ore-sorting-bay-highlands/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "95745f2aa584503cb02e5b9263d82a557e9c5484"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-ore-sorting-bay-highlands/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "0cf40c0f80b4fd1f25c799b38135d005cd6ae708"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-ore-sorting-bay-highlands/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "247f1a0b81d2e57195a6975388208349c687f146"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-ore-sorting-bay-highlands/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "6b75901628a98ae7ca4dcf47b7500731040b735d"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-ore-sorting-bay-highlands/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "0a636cb049b10e777dc4e3a0fcdf3b3e21b5565f"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-ore-sorting-bay-highlands/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "3990242b1dfff22bb7871b2c55dae72223c23724"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-ore-sorting-bay-highlands/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "c13a2f307d369069a5b76105ea713a1b2c1382ea"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-vale-cottage-vale/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "ae82ca09d01ec2ef8b12e4694b19409bc4c00483"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-vale-cottage-vale/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "cc4075185262a83c40377006dcf8db713eea07e4"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-vale-cottage-vale/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "c31562cad3be9695d7f0fc034c6c59cf39836703"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-vale-cottage-vale/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "c31562cad3be9695d7f0fc034c6c59cf39836703"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-vale-cottage-vale/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "0448b6cea3ed13c23b1b34c23199ce9abb3c6ca3"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-vale-cottage-vale/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "536edd7787f342c017d63a301dd634a2796b0c7d"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-09-150-adaptation/prop-vale-cottage-vale/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "7487aa4284fc16b7c16ef6e8d793c5dece75cb5d"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-crown-full/generation.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "b316933713fd79f5317d359c919a7a71c3e1b897"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-crown-full/image-tool-original.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "f55955dd84749a55eb43d49dfa38d171fdf1bf5f"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-crown-full/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "562556322c28050f0392bd63a7c8686bc5ba1f11"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-crown-full/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "b9edba23610e104ee2bb06863cd8f27a542bc651"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-crown-full/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "6395eb3ad3c442a84c3ff0b62651fc27109cceec"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-crown-full/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "1ed26a6d078cb459cefa2e7d7808dcd78900839a"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-crown-full/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "400cd2094646f43e634795feafc36a8724433d99"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-crown-full/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "d6ee1467e043808d36320bac856e96182f55fedc"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-crown-full/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "f55955dd84749a55eb43d49dfa38d171fdf1bf5f"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-crown-full/request/context-1024x700-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "8a98bbe075d8afe44594eaf2e03607f68118c1d1"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-crown-full/request/context-375x800-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "d8a96af6314559f8daa5e910991a4629f93918ce"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-crown-full/request/procedural-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "1ed26a6d078cb459cefa2e7d7808dcd78900839a"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-crown-full/request/prompt.txt",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "aefedd8e9ec55d1cfbe23acac9a776f0cb713f2a"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-crown-full/request/request.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "aa10408b921ad3b98870677ef42992a90bc0578d"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-frontier-full/generation.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "7be51a421d7417484ee8fa1819a1f9c57bedf747"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-frontier-full/image-tool-original.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "4f0af13ea3a5b9d04f90233b247c3abb566c2a37"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-frontier-full/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "ee0f04b8a05049c0b2e2039b3d41ee9e31c5e908"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-frontier-full/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "b575c70d7dbc4656a4cd0d5d4a0a841bc571b015"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-frontier-full/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "b56f12ea2dc7f69072ff20987d5280c36c15fee3"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-frontier-full/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "34a1421a69d1f2c1fdf188648801811b4cba9b13"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-frontier-full/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "34b70344d6ce4fee7ba1051181f03426012db296"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-frontier-full/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "94d16afad1354ef449973df6f1fc803cee8eba8e"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-frontier-full/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "4f0af13ea3a5b9d04f90233b247c3abb566c2a37"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-frontier-full/request/context-1024x700-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "5c38f9a3d8451917e74283101cf9e10b12ebc07e"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-frontier-full/request/context-375x800-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "328bd8148b4cc19c467d6ac605126a4bc1b91a30"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-frontier-full/request/procedural-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "34a1421a69d1f2c1fdf188648801811b4cba9b13"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-frontier-full/request/prompt.txt",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "103490b24bc0cf17e37fe38730f1a5a7268fa052"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-frontier-full/request/request.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "d5a3483a7ea23f64635e678ff3e19b6633e82e9f"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/generation.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "cfd43f64c8da0d3c31cc1d6336c8d88758b9f9c5"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/image-tool-original.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "85ac3508cc0af3734dbfe3f575b09ffa1a1a31a9"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "762e5a3663b3eed801695fe7f9d9300ea8d47970"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "ca77ff0a52c8213f99bd34593c08aec631018ce3"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "213b573a072be0eaa3f8fa4df7f23b8855ad7aa3"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "34b7e9d66bc2c6c7a55e5542c814eb2585679912"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "425adeb0f4932d185d245f3ab3346f73c3eba135"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "a19d5910c8d51c0dc6fec29ac6adb7e5d5492b0a"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "fdab23a94b118a01a67bda5d028d6bb82a90acda"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/request/context-1024x700-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "d40d89110d42f976977df10bc2d68bbd8df50d5e"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/request/context-375x800-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "56af850975dda8ea92d36397903403b738eb2989"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/request/procedural-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "34b7e9d66bc2c6c7a55e5542c814eb2585679912"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/request/prompt.txt",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "17e7de2e71cb3e15617306912500f8972017e0e3"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/request/request.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "2f636a5b6aacac6b4d626ea9fbff38341b71598d"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/square-correction/generation.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "5899caf309c5d32ac58b27f89aaf69189496e119"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/square-correction/image-tool-original.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "fdab23a94b118a01a67bda5d028d6bb82a90acda"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-march-full/generation.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "36709f3af0c97c8fe512be7e6f79976020e31176"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-march-full/image-tool-original.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "9ca2e703eab632b54dbd51a9e09f7a98571b1450"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-march-full/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "bec5ca60327b7f16e5e9067f3c1cb0fb5fa387e0"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-march-full/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "28a8aceaca8f14b0fa449a742bd3c8aa1a662f32"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-march-full/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "e3ae1fcac7d2b0b40beb29077ee5f8f24673e308"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-march-full/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "4086773fea3f22d4009f05a1fd3747760c5952fc"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-march-full/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "9fa6457f5cea6701530346a59961b6853e11241d"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-march-full/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "59fecbae5bd04e8e414d0da818fcc6a233dd50e2"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-march-full/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "9ca2e703eab632b54dbd51a9e09f7a98571b1450"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-march-full/request/context-1024x700-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "31424576fee0071fbcc7308c2ecd618fc2280753"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-march-full/request/context-375x800-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "715cdb01bc812c31f2d3158f6e19371557df1927"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-march-full/request/procedural-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "4086773fea3f22d4009f05a1fd3747760c5952fc"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-march-full/request/prompt.txt",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "6a7f2eb0929f799a86713c7063edae9feb2f22c6"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-march-full/request/request.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "ce6a1afe39afab5ca4f55cc297f0bb707186aa99"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-vale-full/image-tool-original.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "2c056fa67003b36cb2ea9fd58da6997398328d79"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-vale-full/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "5df66cbc635d1279f296cedce8ef1563c5ebce2c"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-vale-full/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "d81e608d356c1dcdb5668a0bc6e2325a05a9c368"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-vale-full/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "1ed04c45f96ad1efd38982db18c33fae0f94709b"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-vale-full/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "271a63fb13ed0580e2fd93c2e24d1276905ef7eb"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-vale-full/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "7ce0d2bf029b5120ccfe3e579a689483c93bd442"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-vale-full/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "ff3ada4b73b6343208c071b63be5641452705e9a"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-vale-full/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "2c056fa67003b36cb2ea9fd58da6997398328d79"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-vale-full/request/context-1024x700-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "4a48d82d5d37d4fad54d49c480227d5c26d99f36"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-vale-full/request/context-375x800-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "158033d95149a1d2384d31ac58ccc06c022816a7"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-vale-full/request/procedural-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "271a63fb13ed0580e2fd93c2e24d1276905ef7eb"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-vale-full/request/prompt.txt",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "782690c67ae26507d6224284026e7ae3295da827"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/building-barracks-vale-full/request/request.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "8e36d9f77e1074757e2c5634f804fddb81bea0c6"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/equipment-correction/generation.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "29d1aec8e7aadb08bca763103cfafb96a60818bd"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/equipment-correction/image-tool-original.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "7674e57a5a28b301c0277e90b05bac1f1e3a0640"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/generation.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "3604092ab72e15023969a2d95a70346b8b528029"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/image-tool-original.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "4a9706171cf333bd3de2503299b700f7ec25828e"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "6c3bc57df2c6eb98bb79294dd314a50ef0ee9bb6"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "6899147bfb1e3717d27a0b1bc61c2ee23384ad8f"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "ebb991bab8d2ced5e04c908e4105791884faf6c2"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "fcb85b84ac8d93a56543b827aee122ca04849455"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "c6cd245a25a0c8e009068f6a33874fd3bbabba9c"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "11c16e1cd39a31b5b47404158d956ec374d62416"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "7674e57a5a28b301c0277e90b05bac1f1e3a0640"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/request/context-1024x700-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "9aa69358f7bd8b1d413334d186fb553c1bf6ebb4"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/request/context-375x800-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "98c91aa07a31e32c464c30df4777e77a98a50acb"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/request/procedural-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "fcb85b84ac8d93a56543b827aee122ca04849455"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/request/prompt.txt",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "a10fae45504a047207c45d3f41b5a55a5516528b"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/request/request.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "af84e27112daeb4524cc95205c86b2064646ca5d"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/production-journal.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "0950787061d49b27511ca61bf816be0b7b05205d"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-crag-rest-highlands/generation.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "ff7f7e1c44580400dcbe1969c68370a9bd515a13"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-crag-rest-highlands/image-tool-original.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "8cf31dee3bb82cdb4f1620506a678ac7c6de9064"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-crag-rest-highlands/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "93833e9a76a4b79dcd8bae5e04b6ea7b4b0ceafb"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-crag-rest-highlands/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "463bb3c77d17437ba2adcb0f503899c40513b651"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-crag-rest-highlands/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "62d231f0ab4cfcb59b1b52ae7596ffb12c822ac3"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-crag-rest-highlands/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "410343552590ea547cdd7de0781d1e034cf77ca5"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-crag-rest-highlands/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "a9759f7de3ca1561c51db9f0f9f76b4737832359"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-crag-rest-highlands/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "38f8146e03f2fe663286631e5f6e6a50d82b0f82"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-crag-rest-highlands/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "8cf31dee3bb82cdb4f1620506a678ac7c6de9064"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-crag-rest-highlands/request/context-1024x700-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "93bd0d2bc5983004451c80c38054eb67a28f5e1f"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-crag-rest-highlands/request/context-375x800-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "74753376591ea8bcc95fea2871127afd5c474acc"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-crag-rest-highlands/request/procedural-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "410343552590ea547cdd7de0781d1e034cf77ca5"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-crag-rest-highlands/request/prompt.txt",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "94ef803f18839adab92d3760eb22a024be0112ae"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-crag-rest-highlands/request/request.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "eb7d7606059a9716eb3177a5aa3c19a10f57d9ec"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/generation.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "a4f397da8db98c0ac0aa0f5765a17848a4e56209"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/image-tool-original.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "7e9421d7ead909473f5c4124cb89100d6f673b56"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "0114ad7b77bb09c32a0676d08d2904ccb093d58f"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "4afa9595c3f95ae03c80b44d206c19d5731c3839"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "298a900ece00904409ed667ebf49a3b377efd701"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "9a05b5eedc24ca78b438b1b0999d014fa380b1bc"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "fa059eab48c6fbcd6d868588b802e384a42c2452"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "fafd4ce311b20958b75d8f5c39e134fe3abb26df"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "7e9421d7ead909473f5c4124cb89100d6f673b56"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/request/context-1024x700-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "b2c618e81654c49b767547cb7c8fb3378ac1f903"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/request/context-375x800-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "797c38a28bc90fdabc99cc9f9218ede9999338aa"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/request/procedural-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "9a05b5eedc24ca78b438b1b0999d014fa380b1bc"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/request/prompt.txt",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "700a61feae012eb0f2db4144f04df386d9120bfe"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/request/request.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "deaafb6b69aa1a633fbc34175c4bac45401e4c34"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/generation.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "bc00a52ea09cc3b3836cf6b68af1fd3828b056dd"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/image-tool-original.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "4164e164cef9d9dcbcc7d8d3966d0afed127326c"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "f4335579dbf03cada1da014d0b5f5b0f1434f929"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "cc8a2edef0b582177379366bd32cb625e60fbcb5"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "de88722e32883906e78c55167f21a46d7655151c"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "2e5a539ed693b0642acfd2030f43baac066a4d15"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "bd4caabdc1b90822dc1f7cbb35d6bba95c488f7f"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "c0022a08f307e505fef941a753a948df2571e715"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "4164e164cef9d9dcbcc7d8d3966d0afed127326c"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/request/context-1024x700-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "e465a4dd30312983bbc211e74b20f5f09f680f49"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/request/context-375x800-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "4d8476ab81d286d2469df184b9b16cd65ec7172d"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/request/procedural-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "2e5a539ed693b0642acfd2030f43baac066a4d15"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/request/prompt.txt",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "1d8b1e293e44dcb5f5788cb8c722fd7a4d915574"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/request/request.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "3b9c3b80a2df2c1b4616064d1f1d7f960ed53f16"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-game-corner-highlands/generation.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "9dde46fad2b535419279e1ebaed60f1228457db9"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-game-corner-highlands/image-tool-original.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "8cd3c53ea9afe65c2617eb77c948344004297642"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-game-corner-highlands/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "0c76b767c4b848692ee937008ec8577d6e09f34e"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-game-corner-highlands/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "c1c4d61d9fae14af99ce439c5eb3c6b43910d0eb"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-game-corner-highlands/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "e4ca26162776abb03f3ebc231ea3359f3d8bda71"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-game-corner-highlands/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "809f5edc075d0662a3644c01368943f74c0f5f01"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-game-corner-highlands/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "6fded0ed0ef53bbab0e6e72cda5869259e99b8c4"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-game-corner-highlands/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "26e0d186daa868bbccef8a2bd8eb8bd5e60e9ff4"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-game-corner-highlands/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "8cd3c53ea9afe65c2617eb77c948344004297642"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-game-corner-highlands/request/context-1024x700-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "00c77e3c587cb0039ad920ea69a9bf2ac869459b"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-game-corner-highlands/request/context-375x800-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "5460f07f61d0658e9124e962f5164db495ed350d"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-game-corner-highlands/request/procedural-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "809f5edc075d0662a3644c01368943f74c0f5f01"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-game-corner-highlands/request/prompt.txt",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "91d0c373f2bd450e816c63a5bd724f54b9724023"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-game-corner-highlands/request/request.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "c422435b56eeb7edef1518e3cfbd38e2e3d6aeee"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/generation.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "cc5cb88ef55026aeb582b8e6a31369048d34b261"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/image-tool-original.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "7c386fdc2256802aea2c13240748d9b66893519b"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "7dff12eb0f48a9d328ed1a43bc2c681ce417b335"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "15e0997ccc5c1f444c0366d0bdffc32d62bb0929"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "6dea453982c683fba52ba56c5591d45afdf2a3fd"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "dec0fd8550b5c349e868f5b280218b0baf9b0b78"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "4e612dfd8598c661d1674c80fcc3334f7be0413f"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "72dcdaea1a92dd84dc8df96f52c458cf703b5dd0"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "7c386fdc2256802aea2c13240748d9b66893519b"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/quill-correction/generation.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "82932caec6ae985bd560b7b1b8164168915b23ea"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/quill-correction/image-tool-original.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "c996307123878775eb800b1593d37e6b08a72577"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/quill-correction/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "90ece06c220023070a6985cb1e0b24c6e0759c3a"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/quill-correction/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "37f1ea975ce446e903da060476adcc25e010b7f2"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/quill-correction/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "6dea453982c683fba52ba56c5591d45afdf2a3fd"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/quill-correction/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "dec0fd8550b5c349e868f5b280218b0baf9b0b78"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/quill-correction/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "f4ba70fd5317c4a90f75ff6173a01be6072b9ac6"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/quill-correction/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "531f92f5d89c33bf34debad769eefb7e5fe2a3a4"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/quill-correction/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "c996307123878775eb800b1593d37e6b08a72577"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/request/context-1024x700-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "cc9efeb09915a858c7191c1460fd456820eabeac"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/request/context-375x800-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "8c86df96688be0232170f3dac4abec1b1e8df73f"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/request/procedural-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "dec0fd8550b5c349e868f5b280218b0baf9b0b78"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/request/prompt.txt",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "754e643679f5c78db6bf017a707d8c0591b497d9"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/request/request.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "b3ad00d57d09c73edf0fe8b8d43cf7480b0ff5a3"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-supper-highlands/image-tool-original.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "bf8850fc3523e8eb547dc76ef220fdafb7890469"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-supper-highlands/original-export-v1/candidate.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "1bc1ad51960dfa56388df835b6c6fdb2706199de"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-supper-highlands/original-export-v1/candidate.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "b58560a3be71ddd223e0887a3e859bdfd9cc748e"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-supper-highlands/original-export-v1/canonical.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "01dd64a5d754046eb63be8d65246f8a246e0289b"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-supper-highlands/original-export-v1/generation-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "d52ec8f9cb03afb10381e924bfe009cd7bc99a55"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-supper-highlands/original-export-v1/lineage.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "4c0f6a1b9ed3f7c089cd3d1b126c972c60157f1c"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-supper-highlands/original-export-v1/review-scenes/comparison.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "cc37197376757746b581f348b1c1171a7186a85c"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-supper-highlands/original-export-v1/source.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "bf8850fc3523e8eb547dc76ef220fdafb7890469"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-supper-highlands/request/context-1024x700-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "7848b21e3c2b30fdda42374109f9eb2a9f6fa64a"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-supper-highlands/request/context-375x800-day.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "9e0cb655114995f523a9485bc61eed6fa81bcc5d"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-supper-highlands/request/procedural-reference.png",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "d52ec8f9cb03afb10381e924bfe009cd7bc99a55"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-supper-highlands/request/prompt.txt",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "4f1755fb7ee84b0c6410163e7163b787dff27cc2"
+  },
+  {
+    "path": "tools/sprites/batches/2026-10-10-08/prop-ridge-supper-highlands/request/request.json",
+    "mode": "100644",
+    "type": "blob",
+    "sha": "452f10b3f86c271308ffb7426ca61e9f390b2f35"
+  }
+]

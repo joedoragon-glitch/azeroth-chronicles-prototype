@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "sprite-candidate",
+  "designId": "prop:highland-pay-station:highlands",
+  "name": "Highlands payroll station",
+  "kind": "prop",
+  "nextAction": "Inspect native browser day/night and combat evidence, then publish with prior-revision lease.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel requested a new autonomous sprite batch following the GitHub workflow while asleep.",
+    "decisionDate": "2026-10-10",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+    "contentDocuments": [
+      "docs/DESIGN_TO_SPRITE_WORKFLOW.md",
+      "docs/SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md",
+      "docs/PROPORTION_IMPLEMENTATION_CHECKPOINT.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": "Current authored procedural identity is the canonical translation reference.",
+    "proceduralDesignAcceptance": "Retain current procedural canon; this batch changes artwork only.",
+    "spriteProductionAuthorization": "Joel current task; autonomous faithful generation, implementation and release per issue #160.",
+    "generatedAppearanceAcceptance": {
+      "userAccepted": false,
+      "engineerReview": "pending native review",
+      "scope": "Authorized faithful implementation; no invented user appearance approval."
+    },
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js",
+      "src/prototype/sprites.js"
+    ],
+    "exactEntityState": {
+      "renderKind": "prop",
+      "structure": "highland-pay-station",
+      "decorative": true,
+      "id": "sprite-reference-237",
+      "region": 2
+    },
+    "isolatedReferencePath": "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/original-export-v1/canonical.png",
+    "isolatedReferenceHash": "4ab15a8027f20e107f2e501e8a021e30d4dd1106d356d613ed3e122d6c83d8bd",
+    "gameplayContextPaths": [
+      "tools/sprites/batches/2026-10-10-08/browser-review-webkit/evidence.json"
+    ],
+    "traitsToPreserve": [
+      "Broad muted timber pay table; pale ledger with three ruled lines on screen-left, three small gold crowns on screen-right, raised small framed payroll notice at left/back, one already-authored small worker on screen-right in green-gray work clothing. Keep the worker attached as part of this exact static station; add no queue or new people.",
+      "Logical footprint and root; native 150% proportions"
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [
+      "237"
+    ],
+    "verifiedRuntimeKeys": [
+      "prop:highland-pay-station:highlands"
+    ],
+    "requiredVisibleAssets": [
+      "prop:highland-pay-station:highlands"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "Combat effects, world labels, grounding shadows, context work scenes and construction/basic camp states stay in their owning renderer."
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [
+      "static body fallback"
+    ],
+    "directions": [],
+    "pivotContract": {
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 64
+    },
+    "staticFallbackKey": "prop:highland-pay-station:highlands",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/original-export-v1/candidate.json"
+    ],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

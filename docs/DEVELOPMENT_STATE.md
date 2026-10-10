@@ -4,6 +4,10 @@ This is the authoritative repository status snapshot for the v0.9 stabilization 
 
 Snapshot refreshed **2026-10-10T04:15:13+00:00**. Later source/release changes are tracked in #192 and #160; re-check their exact heads and runs before new work.
 
+## Current sprite continuation
+
+PR #217 continues #160 with 20 prepared candidates: 12 new camps/furnishings/Crown ranged-soldier bindings and eight retained-original density upgrades. v0.8.137 main is incorporated; review/integration/release gates remain pending. The originals and recovery gaps are recorded in the continuation journal; this status does not certify deployment or v0.9 completion.
+
 ## Baseline and release evidence
 
 Current source baseline: **v0.8.135**, released runtime at `170adbf708ac1ea3b26e57621d0089f182932270`, from merged nature adaptation [#208](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/208). Main subsequently advanced to the deployment-evidence-only commit `1e232c71a9e63f87efe152868432bbfcc4a39ffd`. It includes the released road and Abyss work. Exact-head PR run 38020278879 passed; main release [run 38021457158](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38021457158) completed successfully in main-test, phone-webkit and deploy, including the exact published build and live desktop/phone, actor/road and quest/Keeper gates. The #160 handoff and retained journal record the independent 23-output nature hash/dimension/alpha audit and 276 browser scenes. All 23 existing nature identities are deployed; no new artwork was generated. The other eight active adaptations and broader missing catalog remain open under #160.

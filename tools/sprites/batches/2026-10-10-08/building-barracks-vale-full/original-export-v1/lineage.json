@@ -1,0 +1,29 @@
+{
+  "original": "tools/sprites/batches/2026-10-10-08/building-barracks-vale-full/image-tool-original.png",
+  "originalHash": "5ff05e4d22e6f77a1b29a34844786c064477b414ae729580de1f6ed8ce5b3adf",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "placement": {
+    "rasterScale": 4.25,
+    "offsetX": -1.411764705882353,
+    "offsetY": -0.7058823529411765,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": 88
+    }
+  },
+  "proceduralBounds": {
+    "x1": 20,
+    "y1": 89,
+    "x2": 170,
+    "y2": 167
+  },
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "alphaDeletion": false,
+  "crop": false,
+  "trim": false
+}

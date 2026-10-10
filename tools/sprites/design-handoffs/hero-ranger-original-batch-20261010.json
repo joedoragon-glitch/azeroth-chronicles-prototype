@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "sprite-candidate",
+  "designId": "hero:ranger",
+  "name": "Hero — Ranger",
+  "kind": "hero",
+  "nextAction": "Inspect native browser day/night and combat evidence, then publish with prior-revision lease.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel requested a new autonomous sprite batch following the GitHub workflow while asleep.",
+    "decisionDate": "2026-10-10",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+    "contentDocuments": [
+      "docs/DESIGN_TO_SPRITE_WORKFLOW.md",
+      "docs/SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md",
+      "docs/PROPORTION_IMPLEMENTATION_CHECKPOINT.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": "Current authored procedural identity is the canonical translation reference.",
+    "proceduralDesignAcceptance": "Retain current procedural canon; this batch changes artwork only.",
+    "spriteProductionAuthorization": "Joel current task; autonomous faithful generation, implementation and release per issue #160.",
+    "generatedAppearanceAcceptance": {
+      "userAccepted": false,
+      "engineerReview": "pending native review",
+      "scope": "Authorized faithful implementation; no invented user appearance approval."
+    },
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js",
+      "src/prototype/sprites.js"
+    ],
+    "exactEntityState": {
+      "renderKind": "hero",
+      "class": "ranger",
+      "id": "sprite-reference-003",
+      "region": 0
+    },
+    "isolatedReferencePath": "tools/sprites/batches/2026-10-09-150-adaptation/hero-ranger/original-export-v1/canonical.png",
+    "isolatedReferenceHash": "351acbeb430bf9aa0d397ae9ce3f896d3790529e088e7a2f8c4d85207597bd2d",
+    "gameplayContextPaths": [
+      "tools/sprites/batches/2026-10-10-08/browser-review-webkit/evidence.json"
+    ],
+    "traitsToPreserve": [
+      "Compact hooded humanoid. Green clothing and dark green cape; bow on screen-right; quiver on screen-left/back with visible arrows; small gold accent. The canonical human('ranger') body also carries a small teal flask/pouch on screen-left and a small pale-green/gold hand/utility accent on screen-right. The hero layer adds simple facial marks, extra strap/quiver definition and restrained pale-green highlights.",
+      "Logical footprint and root; native 150% proportions"
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [
+      "003"
+    ],
+    "verifiedRuntimeKeys": [
+      "hero:ranger"
+    ],
+    "requiredVisibleAssets": [
+      "hero:ranger"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "Combat effects, world labels, grounding shadows, context work scenes and construction/basic camp states stay in their owning renderer."
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [
+      "static body fallback"
+    ],
+    "directions": [],
+    "pivotContract": {
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 54
+    },
+    "staticFallbackKey": "hero:ranger",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "tools/sprites/batches/2026-10-09-150-adaptation/hero-ranger/original-export-v1/candidate.json"
+    ],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": "fbf4d3d59177a51cf4ade65829e2bab7c62491c0728b06fe4ba95f099a578671",
+    "rollbackRevision": "fbf4d3d59177a51cf4ade65829e2bab7c62491c0728b06fe4ba95f099a578671",
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

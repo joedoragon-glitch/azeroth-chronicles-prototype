@@ -1,0 +1,29 @@
+{
+  "original": "tools/sprites/batches/2026-10-10-08/prop-ridge-study-highlands/quill-correction/image-tool-original.png",
+  "originalHash": "48c82a32efe1bcadccb02c0eee36c63ff243280f175534720a1549ddcdec5e87",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -0.6666666666666666,
+    "offsetY": 15.333333333333334,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": 225
+    }
+  },
+  "proceduralBounds": {
+    "x1": 64,
+    "y1": 110,
+    "x2": 127,
+    "y2": 161
+  },
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "alphaDeletion": false,
+  "crop": false,
+  "trim": false
+}

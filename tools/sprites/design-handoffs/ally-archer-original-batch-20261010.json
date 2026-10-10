@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "sprite-candidate",
+  "designId": "ally:archer",
+  "name": "Companion — Archer / Ranger support",
+  "kind": "ally",
+  "nextAction": "Inspect native browser day/night and combat evidence, then publish with prior-revision lease.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel requested a new autonomous sprite batch following the GitHub workflow while asleep.",
+    "decisionDate": "2026-10-10",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+    "contentDocuments": [
+      "docs/DESIGN_TO_SPRITE_WORKFLOW.md",
+      "docs/SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md",
+      "docs/PROPORTION_IMPLEMENTATION_CHECKPOINT.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": "Current authored procedural identity is the canonical translation reference.",
+    "proceduralDesignAcceptance": "Retain current procedural canon; this batch changes artwork only.",
+    "spriteProductionAuthorization": "Joel current task; autonomous faithful generation, implementation and release per issue #160.",
+    "generatedAppearanceAcceptance": {
+      "userAccepted": false,
+      "engineerReview": "pending native review",
+      "scope": "Authorized faithful implementation; no invented user appearance approval."
+    },
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js",
+      "src/prototype/sprites.js"
+    ],
+    "exactEntityState": {
+      "renderKind": "ally",
+      "class": "archer",
+      "type": "archer",
+      "id": "sprite-reference-005",
+      "region": 0
+    },
+    "isolatedReferencePath": "tools/sprites/batches/2026-10-09-150-adaptation/ally-archer/original-export-v1/canonical.png",
+    "isolatedReferenceHash": "f9634870dce57e558efc7dcd60e70682d4068993e90384722ad5369a78f2db71",
+    "gameplayContextPaths": [
+      "tools/sprites/batches/2026-10-10-08/browser-review-webkit/evidence.json"
+    ],
+    "traitsToPreserve": [
+      "Compact allied goblin scout: semi-human goblin proportions, olive-green goblin skin, long pointed ears and a small goblin facial/nose silhouette. Muted green scout clothing with a darker green hood/cape. Bow on screen-right and quiver/arrows on screen-left/back preserve the established Archer companion role. A diagonal travel strap, small brown side pouch and restrained warm-gold ally knot distinguish the companion from hostile goblins. It does not use the hero Ranger's teal flask/pouch or pale-green utility ornament. Organic pointed ears with natural folds/joins; playful half-smile with a small ivory corner-tooth/sliver and separate narrow nose. Refine procedural shape artifacts rather than copying robotic ear panels.",
+      "Logical footprint and root; native 150% proportions"
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [
+      "005"
+    ],
+    "verifiedRuntimeKeys": [
+      "ally:archer"
+    ],
+    "requiredVisibleAssets": [
+      "ally:archer"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "Combat effects, world labels, grounding shadows, context work scenes and construction/basic camp states stay in their owning renderer."
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [
+      "static body fallback"
+    ],
+    "directions": [],
+    "pivotContract": {
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 54
+    },
+    "staticFallbackKey": "ally:archer",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "tools/sprites/batches/2026-10-09-150-adaptation/ally-archer/original-export-v1/candidate.json"
+    ],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": "9b9548bf117f33a4ef68b23be54e217def7f9cbd2fdb871747821846cfc00146",
+    "rollbackRevision": "9b9548bf117f33a4ef68b23be54e217def7f9cbd2fdb871747821846cfc00146",
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

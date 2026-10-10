@@ -1,0 +1,29 @@
+{
+  "original": "tools/sprites/batches/2026-10-10-08/prop-ridge-supper-highlands/image-tool-original.png",
+  "originalHash": "458838400ac63cb9dc421927b784d57e1a3222462da46eab222ff1d563376848",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -3.6666666666666665,
+    "offsetY": 25.333333333333332,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": 496
+    }
+  },
+  "proceduralBounds": {
+    "x1": 65,
+    "y1": 117,
+    "x2": 126,
+    "y2": 164
+  },
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "alphaDeletion": false,
+  "crop": false,
+  "trim": false
+}

@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "sprite-candidate",
+  "designId": "prop:ridge-bed:highlands",
+  "name": "Ridge private bed",
+  "kind": "prop",
+  "nextAction": "Inspect native browser day/night and combat evidence, then publish with prior-revision lease.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel requested a new autonomous sprite batch following the GitHub workflow while asleep.",
+    "decisionDate": "2026-10-10",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+    "contentDocuments": [
+      "docs/DESIGN_TO_SPRITE_WORKFLOW.md",
+      "docs/SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md",
+      "docs/PROPORTION_IMPLEMENTATION_CHECKPOINT.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": "Current authored procedural identity is the canonical translation reference.",
+    "proceduralDesignAcceptance": "Retain current procedural canon; this batch changes artwork only.",
+    "spriteProductionAuthorization": "Joel current task; autonomous faithful generation, implementation and release per issue #160.",
+    "generatedAppearanceAcceptance": {
+      "userAccepted": false,
+      "engineerReview": "pending native review",
+      "scope": "Authorized faithful implementation; no invented user appearance approval."
+    },
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js",
+      "src/prototype/sprites.js"
+    ],
+    "exactEntityState": {
+      "renderKind": "prop",
+      "structure": "ridge-bed",
+      "decorative": true,
+      "id": "sprite-reference-245",
+      "region": 2
+    },
+    "isolatedReferencePath": "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/original-export-v1/canonical.png",
+    "isolatedReferenceHash": "78715cbf5e3316059f75a20c7263bbb6dd1e0c49fc3dc1dc1f36285a1ff5ca8d",
+    "gameplayContextPaths": [
+      "tools/sprites/batches/2026-10-10-08/browser-review-webkit/evidence.json"
+    ],
+    "traitsToPreserve": [
+      "Low timber bed frame with broad headboard, muted green-gray blanket, pale tan upper pillow/bedding band and one pale lower horizontal blanket seam. No canopy, occupants, extra pillows or new furniture.",
+      "Logical footprint and root; native 150% proportions"
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [
+      "245"
+    ],
+    "verifiedRuntimeKeys": [
+      "prop:ridge-bed:highlands"
+    ],
+    "requiredVisibleAssets": [
+      "prop:ridge-bed:highlands"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "Combat effects, world labels, grounding shadows, context work scenes and construction/basic camp states stay in their owning renderer."
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [
+      "static body fallback"
+    ],
+    "directions": [],
+    "pivotContract": {
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 64
+    },
+    "staticFallbackKey": "prop:ridge-bed:highlands",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/original-export-v1/candidate.json"
+    ],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

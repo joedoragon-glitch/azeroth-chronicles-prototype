@@ -1,0 +1,29 @@
+{
+  "key": "building:barracks:highlands:full",
+  "catalogId": "234",
+  "canonHash": "ac1ab92e808d5686b92246472f9eee0fdbd32bfed5ee25e5282b573ad328bf1c",
+  "catalogHash": "84de888bc05404f2261e1ff1dd976aec3ba3f933ecf57c4f3da69980e178370a",
+  "entity": {
+    "renderKind": "building",
+    "kind": "barracks",
+    "progress": 4,
+    "full": true,
+    "id": "sprite-reference-234"
+  },
+  "region": 2,
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 88
+  },
+  "canonicalReference": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/original-export-v1/canonical.png",
+  "canonicalReferenceHash": "56197b1c0e73336cb921e99c2a6fac3383c0da0f8c7444b14d9fa90e8300857b",
+  "originalSource": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/original-export-v1/source.png",
+  "originalHash": "5d2f60a8b1d746bfa6bcf3b7065874ecdeb71579c147b37fb7dcba1f96b77701",
+  "preparedOutput": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/original-export-v1/candidate.png",
+  "preparedOutputHash": "8d48b74cc35f943e97097acf496a467b0045273c026d10dac5e20515f2da9cab",
+  "historicalPrompt": "Use existing generation.json when retained. Missing exact tool prompts are not reconstructed.",
+  "recovery": "This current-source contract was recaptured after workspace maintenance; it is not a historical image-generation request."
+}

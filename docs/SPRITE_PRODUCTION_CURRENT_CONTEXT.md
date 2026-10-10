@@ -1,5 +1,11 @@
 # Sprite production checkpoint · 8 October 2026
 
+## Camp, furnishings and actor continuation · 10 October 2026
+
+Joel requested another autonomous sprite batch while asleep, following #160. PR #217 preserves the untouched generator originals and recovered candidates. The batch has 20 candidates: 12 new keys (five regional Full barracks camps, six Highlands furnishings, Crown ranged soldier) and the eight remaining active original-density adaptations. The current v0.8.137 gameplay baseline was incorporated; the next runtime candidate is v0.8.138. Native renderer review and publication gates are pending; this checkpoint does not claim a deployed batch or user acceptance of unseen artwork.
+
+Read `tools/sprites/batches/2026-10-10-08/production-journal.json`, `asset-audit.json` and the per-design handoffs. Originals are exact recovered GitHub blobs. Workspace maintenance removed unuploaded intermediate evidence and some exact tool metadata during an interrupted stream; retain the marked gaps instead of inventing historical prompts or identifiers. Fresh browser review requires each candidate to decode and actually draw through the game renderer on six desktop/phone profiles, in day/night combat context. The candidate preview blocks service workers; installed/live verification uses real packaged resources.
+
 ## Structure proportion implementation checkpoint · 9 October 2026
 
 An initial *presentation-only* structure size pass and an original-master export-budget update are being verified in the proportion implementation PR. See [PROPORTION_IMPLEMENTATION_CHECKPOINT.md](PROPORTION_IMPLEMENTATION_CHECKPOINT.md). It keeps all world boundaries, enemy counts, pack homes, entrances and campaign saves unchanged. It is not yet the final detail-rich sprite production or a claim that zone overcrowding is solved; native-size reviews must precede individual replacement approvals.
