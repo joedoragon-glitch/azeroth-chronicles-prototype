@@ -1,21 +1,11 @@
 {
   "captured_at_utc": "2026-10-10T03:14:57.929111+00:00",
   "baseline_main": "5aa50dda1785397d2d1dd819da126b762e775ecc",
-  "remote_branch_count": 226,
+  "remote_branch_count": 225,
   "method": "Local full-history clone; exact SHA ancestry and PR-head association. Squash, rebase and unique source history are retained unless separately reconciled.",
   "remote_deletions": 0,
   "deletion_status": "No branch-deletion capability in the connected GitHub tool set; no authenticated git push is available. Candidates are recorded, not reported deleted.",
   "branches": [
-    {
-      "branch": "origin",
-      "sha": "5aa50dda1785397d2d1dd819da126b762e775ecc",
-      "prs": [],
-      "open_prs": [],
-      "ancestor_of_main": true,
-      "disposition": "retained",
-      "reason": "unique/divergent or squash history; not proved redundant",
-      "deleted": false
-    },
     {
       "branch": "abyss-bastion-clean-merge",
       "sha": "fd02bde7fcf6b77299f2648b3648c49c6f9fee43",

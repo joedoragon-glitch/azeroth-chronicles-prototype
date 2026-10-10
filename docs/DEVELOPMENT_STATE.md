@@ -23,7 +23,7 @@ This maintenance pass is documentation/backlog reconciliation. It does not certi
 
 | Work | Disposition at audit | Next step |
 | --- | --- | --- |
-| #208 nature original density | Active; 23 existing identities adapted; candidate initially v0.8.134 includes #207 | Integrate the now-merged #204, choose a fresh version and verify its new head before deployment/live asset checks. The other eight active adaptations and missing catalog stay with #160. |
+| #208 nature original density | Active; 23 existing identities adapted; now v0.8.135, incorporating #204 | Verify its new exact head before deployment/live asset checks. The other eight active adaptations and missing catalog stay with #160. |
 | #204 outdoor road infrastructure | Completed source integration as v0.8.134; production verification running | Its implementing workstream owns exact deployment/live road checks. Automated coverage and screenshot review do not close all regional human acceptance. |
 | #203 earlier town-planning draft | Superseded by #204; closed without merging obsolete runtime | Original branch/head retained as recovery. |
 | #132 household/mine/flight art | Intentionally deferred integration, not obsolete | Preserve its five additional identities, untouched sources, revisions, reviews and branch. Recover a bounded asset batch against current main under #160. |

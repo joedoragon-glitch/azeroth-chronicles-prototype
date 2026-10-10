@@ -4,7 +4,7 @@ Scope: screenshot tasks 4 (GitHub backlog) and 5 (documentation/project state), 
 
 ## Evidence boundary
 
-Source baseline `5aa50dda1785397d2d1dd819da126b762e775ecc` (v0.8.133). Snapshot covers **226 remote branches** and eight then-open PRs, plus completed successor PRs. GitHub counts and heads are live state and must be refreshed before each mutation. #204/#208 remain with their implementing workstreams; this pass does not merge, reset or delete their branches.
+Source baseline `5aa50dda1785397d2d1dd819da126b762e775ecc` (v0.8.133). Snapshot covers **225 remote branches** and eight then-open PRs, plus completed successor PRs. GitHub counts and heads are live state and must be refreshed before each mutation. #204/#208 remain with their implementing workstreams; this pass does not merge, reset or delete their branches.
 
 The initial inventory is pinned to v0.8.133. Subsequent verification independently confirmed #207's main release run 38018534859 succeeded in main-test, phone-webkit and deploy, including exact published-build and live smoke checks. #204 then merged as v0.8.134 at `54e578d820e6c18234c70f57516d22a739438e4e`; its main production run 38019846959 is running. The current status reflects this newer evidence, while the inventory preserves its original baseline.
 
