@@ -12,7 +12,7 @@
     "src/prototype/economy.js": "fd9701ee01d2748f22f176ce84d06f8769c0eb8b84963460380457a61933487a",
     "src/prototype/rewards.js": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525",
     "src/prototype/rules.js": "0bea5df747d56c3d0ab15021aaa5bd09683c898594292f142bda969c7ee7ccc0",
-    "src/prototype/data.js": "6ee3fb3b1d5ed017acc42698497eb8659e434da688f5a50280133992c7e6263b",
+    "src/prototype/data.js": "a82856323e155405e7fb68a027dc226b75d1563bd6b440450ccf584a9d7724b2",
     "src/prototype/save.js": "4365b4fcfa21bcd8ffa5fe6da2b637dc0653e5aa7459abccc6277e94e6ab6296",
     "src/prototype/input.js": "87aed3b4d743dd011e0b6a0f5f293dc39fae45d76f6faa281139897a0437d616",
     "src/prototype/platform.js": "60107014425663a4607a239ea68359b04d0f0cfbf0eca7e9dc2fcc1a1180710d",
@@ -33,5 +33,11 @@
       "src/prototype/runtime.js": "d75f3f9fc8e7a964420da9b1642aefc7dae433b0a19ca45b704b65c72f7e0652"
     },
     "activeFrameBodySha256": "a042cd0491db3860a8f8c29e9f1471b45be3ca108b2520dcc4df833d0ce81d7a"
+  },
+  "approvedContentRevision": {
+    "file": "src/prototype/data.js",
+    "version": "0.8.139",
+    "scope": "Thornfang Pounce and Stone Colossus Wall Rush authored description-only corrections; no mechanics, layouts or procedural art changed",
+    "evidence": "v0.9 author approval and boss-description-contracts regression; all other baseline hashes unchanged"
   }
 }
