@@ -68,6 +68,7 @@
         this.productionIntensity = null;
       }
       matchingRecordedRule(scene, rules = this.recordedCueRules) {
+        if (!rules?.length) return;
         const observed = {
           ...scene,
           bossFamily: scene.boss?.family || null,
@@ -89,6 +90,8 @@
       playSoundEvent(key, details = {}) {
         if (!this.ctx || this.paused || this.settings.muted || this.ctx.state !== 'running')
           return false;
+        const bindings = this.soundCatalog().director?.events?.[key];
+        if (!bindings?.length) return false;
         const scene = this.context || {},
           observed = {
             ...scene,
@@ -96,7 +99,7 @@
             bossForm: scene.boss?.form || null,
             ...details,
           },
-          binding = this.soundCatalog().director?.events?.[key]?.find((b) =>
+          binding = bindings.find((b) =>
             Object.entries(b.when || {}).every(([field, value]) => observed[field] === value),
           );
         if (!binding) return false;
