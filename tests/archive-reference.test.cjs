@@ -69,6 +69,26 @@ assert(!c.spend(50));
 assert(
   c.effects.some((e) => e.type === 'actionFailed' && e.reason === 'crowns' && e.needed === 50),
 );
+const modeBefore = C.rules.resourceMode;
+try {
+  for (const manaEnabled of [false, true]) {
+    C.rules.resourceMode = { manaEnabled };
+    const shelves = Archive.sections(c, { D: C.data, R: C.rules });
+    const records = shelves.find((s) => s.title === 'Adversaries and their attacks').topics;
+    const keeper = records.find(([title]) => title === 'Drowned Keeper')[1];
+    assert.equal(keeper.includes('draws back 15% of HP actually taken'), !manaEnabled);
+    assert.equal(keeper.includes('drains 8% of the hero’s maximum mana'), manaEnabled);
+    for (const family of ['abyss', 'citadel']) {
+      const boss = C.data.bosses.find((b) => b.id === family);
+      const answer = records.find(([title]) => title === boss.name)[1];
+      assert.equal(answer.includes(C.rules.bossRecovery[family].name), !manaEnabled);
+    }
+    const lesson = shelves.find((s) => s.title === 'Experience and discipline').topics[1][1];
+    assert.equal(lesson.includes('up to 20%'), !manaEnabled);
+  }
+} finally {
+  C.rules.resourceMode = modeBefore;
+}
 console.log(
   'PASS read-only optional Archive, all class/mode references, live costs/cooldowns, evidence gate, armor formula and crown failure event',
 );
