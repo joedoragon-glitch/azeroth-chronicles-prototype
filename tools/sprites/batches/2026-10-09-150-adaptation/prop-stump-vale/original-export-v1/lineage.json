@@ -1,0 +1,42 @@
+{
+  "key": "prop:stump:vale",
+  "original": "tools/sprites/batches/2026-10-08-02/prop-stump-vale/image-tool-original.png",
+  "originalHash": "9f1b276c4939fcc33dc08d2745931a2cffa385ccd662fe67fa07043059040f70",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/batches/2026-10-08-02/prop-stump-vale",
+  "intermediateHash": "41da5a5a95d3d101df96fd2541705b76beb7543cf10bf511c4ddac643ab12a5f",
+  "intermediateDimensions": [
+    1286,
+    1286
+  ],
+  "priorRevision": "aa17dad256464da8980fa76f32d0f3c831f0d5f08e5aea0a0e104241ed0e0b24",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -1,
+    "offsetY": -7,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": {
+        "left": 16,
+        "right": 16,
+        "top": 16,
+        "bottom": 16
+      }
+    }
+  },
+  "target": 576,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "stump",
+    "id": "side-entrance-side-vale-cellars-0"
+  },
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact nature binding; no animation or variant bank. Seeded placement and procedural scene effects retained."
+}

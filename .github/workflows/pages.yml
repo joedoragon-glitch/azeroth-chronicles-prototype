@@ -65,7 +65,9 @@ jobs:
           node tests/audio-browser.test.cjs
           node tests/audio-audition-browser.test.cjs
       - name: Verify original-master actor idles and combat
-        run: node scripts/sprite-production-browser-review.cjs local test-results/sprite-pilot-ci chromium
+        run: |
+          node scripts/sprite-production-browser-review.cjs local test-results/sprite-pilot-ci chromium
+          node scripts/sprite-nature-browser-review.cjs local test-results/sprite-nature-ci chromium
       - name: Verify terrain material rendering
         run: |
           node tests/materials-browser.test.cjs
@@ -134,7 +136,9 @@ jobs:
           node tests/enemy-vfx-browser.test.cjs
           VFX_CAPTURE_TAG=webkit-ci VFX_CAPTURE_SMOKE=1 node scripts/enemy-vfx-capture.cjs
       - name: Verify WebKit original-master actor idles and combat
-        run: node scripts/sprite-production-browser-review.cjs local test-results/sprite-pilot-webkit webkit
+        run: |
+          node scripts/sprite-production-browser-review.cjs local test-results/sprite-pilot-webkit webkit
+          node scripts/sprite-nature-browser-review.cjs local test-results/sprite-nature-webkit webkit
       - name: Verify WebKit terrain material rendering
         env:
           MATERIAL_BROWSER_ENGINE: webkit
@@ -196,7 +200,9 @@ jobs:
           node tests/audio-browser.test.cjs
           node tests/audio-audition-browser.test.cjs
       - name: Verify original-master actor idles and combat
-        run: node scripts/sprite-production-browser-review.cjs local test-results/sprite-pilot-ci chromium
+        run: |
+          node scripts/sprite-production-browser-review.cjs local test-results/sprite-pilot-ci chromium
+          node scripts/sprite-nature-browser-review.cjs local test-results/sprite-nature-ci chromium
       - name: Verify terrain material rendering
         run: |
           node tests/materials-browser.test.cjs
@@ -272,7 +278,9 @@ jobs:
       - name: Verify published original-master actor idles and roads
         env:
           PLAYTEST_URL: ${{ steps.deployment.outputs.page_url }}
-        run: node scripts/sprite-production-browser-review.cjs "$PLAYTEST_URL" test-results/sprite-pilot-live chromium
+        run: |
+          node scripts/sprite-production-browser-review.cjs "$PLAYTEST_URL" test-results/sprite-pilot-live chromium
+          node scripts/sprite-nature-browser-review.cjs "$PLAYTEST_URL" test-results/sprite-nature-live chromium
       - name: Verify published quest completion and Keeper Archive
         env:
           PLAYTEST_URL: ${{ steps.deployment.outputs.page_url }}

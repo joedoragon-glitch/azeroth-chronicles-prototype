@@ -1,0 +1,37 @@
+{
+  "key": "prop:bush:vale",
+  "original": "tools/sprites/batches/2026-10-08-01/prop-bush-vale/image-tool-original.png",
+  "originalHash": "07e1a51842041db5310f26db638b2d614c3c98d3aa5dee7ea25a3704989ece68",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/batches/2026-10-08-01/prop-bush-vale",
+  "intermediateHash": "55fd9dc986035646929322e6af43c63fec83291ca05474d8c6902089407e215b",
+  "intermediateDimensions": [
+    1648,
+    1648
+  ],
+  "priorRevision": "aa0612364d5451a516c326c008ff055379f3d531d5a2395c24259bf7dcb0e9a9",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": 0,
+    "offsetY": 11,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": 197
+    }
+  },
+  "target": 576,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "bush",
+    "id": "aesthetic-nature-7"
+  },
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact nature binding; no animation or variant bank. Seeded placement and procedural scene effects retained."
+}

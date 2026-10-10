@@ -27,7 +27,7 @@ function assertClean(root, id) {
   if (
     fs.existsSync(p.journal) &&
     fs.existsSync(p.lock) &&
-    alive(JSON.parse(fs.readFileSync(p.lock)).pid)
+    alive(JSON.parse(fs.readFileSync(p.lock)))
   )
     throw Error('Asset registry transaction is active; retry after publication completes');
   if (fs.existsSync(p.journal))
@@ -39,8 +39,26 @@ function assertClean(root, id) {
         ':recover before editing or publishing',
     );
 }
-function alive(pid) {
+function processIdentity(pid = 'self') {
+  try {
+    const stat = fs.readFileSync('/proc/' + pid + '/stat', 'utf8');
+    const close = stat.lastIndexOf(')');
+    return {
+      pid: Number(stat.slice(0, stat.indexOf(' '))),
+      started: stat.slice(close + 2).split(' ')[19],
+    };
+  } catch (e) {
+    if (e.code === 'ENOENT') return null;
+    throw e;
+  }
+}
+function alive(owner) {
+  const { pid, started } = owner;
   if (!Number.isInteger(pid) || pid <= 0) throw Error('Cannot verify transaction lock owner');
+  if (process.platform === 'linux' && fs.existsSync('/proc/self/stat')) {
+    const current = processIdentity(pid);
+    return !!current && (!started || current.started === started);
+  }
   try {
     process.kill(pid, 0);
     return true;
@@ -54,14 +72,21 @@ function lock(p, recovery = false) {
   if (fs.realpathSync(p.dir) !== p.dir) throw Error('Transaction directory must not be symlinked');
   if (fs.existsSync(p.lock)) {
     const owner = JSON.parse(fs.readFileSync(p.lock));
-    if (alive(owner.pid)) throw Error('Asset registry is busy; active publisher owns the lock');
+    if (alive(owner)) throw Error('Asset registry is busy; active publisher owns the lock');
     if (!recovery && fs.existsSync(p.journal))
       throw Error('Interrupted transaction requires recovery');
     fs.unlinkSync(p.lock);
   }
   const fd = fs.openSync(p.lock, 'wx');
   try {
-    fs.writeFileSync(fd, JSON.stringify({ pid: process.pid }));
+    fs.writeFileSync(
+      fd,
+      JSON.stringify(
+        process.platform === 'linux'
+          ? processIdentity() || { pid: process.pid }
+          : { pid: process.pid },
+      ),
+    );
   } finally {
     fs.closeSync(fd);
   }

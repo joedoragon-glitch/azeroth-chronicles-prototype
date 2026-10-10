@@ -372,7 +372,10 @@ async function prepare(key, input, format = 'png', placement = {}) {
   fail(['png', 'webp'].includes(format), 'Output must be PNG or lossless WebP');
   const contract = contractFor(key),
     bytes = fs.readFileSync(input),
-    source = await inspect(bytes),
+    source = await inspect(
+      bytes,
+      sourcePolicy({ processing: { normalization: placement.normalization } }),
+    ),
     raster = rasterFor(contract, placement.rasterScale ?? 1);
   fail(
     source.width * contract.canvas.height === source.height * contract.canvas.width,
@@ -622,6 +625,11 @@ function entryFor(record) {
     ...(record.presentation || {}),
   };
 }
+// Untouched originals can have faint edge alpha. Explicit normalization supplies
+// transparent output padding; runtime exports still use the strict margin policy.
+function sourcePolicy(record) {
+  return record.processing?.normalization ? { ...specs.policy, minimumPadding: 0 } : specs.policy;
+}
 async function verifyExtra(extra, directory, sourceDirectory) {
   const output = await inspect(safeFile(directory, extra.output.file));
   fail(
@@ -636,7 +644,7 @@ async function verifyExtra(extra, directory, sourceDirectory) {
     'Extra resource budget exceeded',
   );
   for (const item of extra.sources || []) {
-    const source = await inspect(safeFile(sourceDirectory, item.file));
+    const source = await inspect(safeFile(sourceDirectory, item.file), sourcePolicy(item));
     fail(
       source.hash === item.hash && source.width === item.width && source.height === item.height,
       'Frame/variant source provenance changed',
@@ -662,6 +670,7 @@ async function checkProduction(options = {}) {
     const report = await inspect(safeFile(path.join(root, 'assets/sprites'), record.output.file));
     const source = await inspect(
       safeFile(path.join(root, 'tools/sprites/sources'), record.source.file),
+      sourcePolicy(record),
     );
     validateSource(record, source);
     fail(
@@ -699,6 +708,7 @@ async function checkProduction(options = {}) {
       const output = await inspect(safeFile(path.join(root, 'assets/sprites'), record.output.file)),
         source = await inspect(
           safeFile(path.join(root, 'tools/sprites/sources'), record.source.file),
+          sourcePolicy(record),
         );
       validateSource(record, source);
       fail(
@@ -777,7 +787,7 @@ async function publish(recordFile, expectedRevision = null) {
   const output = safeFile(directory, record.output.file),
     source = safeFile(directory, record.source.file);
   const outputReport = await inspect(output),
-    sourceReport = await inspect(source);
+    sourceReport = await inspect(source, sourcePolicy(record));
   validateSource(record, sourceReport);
   fail(
     outputReport.hash === record.output.hash && sourceReport.hash === record.source.hash,
@@ -914,10 +924,10 @@ async function attachClip(recordFile, name, frameFiles, durations, loop = true) 
         );
         const input = safeFile(folder, item.output.file),
           original = safeFile(folder, item.source.file);
-        validateSource(item, await inspect(original));
+        validateSource(item, await inspect(original, sourcePolicy(item)));
         fail(
           (await inspect(input)).hash === item.output.hash &&
-            (await inspect(original)).hash === item.source.hash,
+            (await inspect(original, sourcePolicy(item))).hash === item.source.hash,
           'Animation frame changed after review',
         );
         const left = (i % cols) * (width + pad * 2) + pad,
@@ -1006,10 +1016,10 @@ async function attachVariants(recordFile, variants) {
       );
       const output = safeFile(folder, item.output.file),
         source = safeFile(folder, item.source.file);
-      validateSource(item, await inspect(source));
+      validateSource(item, await inspect(source, sourcePolicy(item)));
       fail(
         (await inspect(output)).hash === item.output.hash &&
-          (await inspect(source)).hash === item.source.hash,
+          (await inspect(source, sourcePolicy(item))).hash === item.source.hash,
         'Variant bytes changed',
       );
       const filename = 'variant-' + item.output.hash + '.' + item.output.format,

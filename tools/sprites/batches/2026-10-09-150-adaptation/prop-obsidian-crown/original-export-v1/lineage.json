@@ -1,0 +1,42 @@
+{
+  "key": "prop:obsidian:crown",
+  "original": "tools/sprites/batches/2026-10-08-03/prop-obsidian-crown/image-tool-original.png",
+  "originalHash": "a0cd4e6c7704adad9b8bc4205ef6f77e0d8783aff347f9731601371839332b04",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/batches/2026-10-08-03/prop-obsidian-crown",
+  "intermediateHash": "603d83777bd2f970e987e8233c13ed93018bba9d22feaa340a686ab612e4607b",
+  "intermediateDimensions": [
+    1980,
+    1980
+  ],
+  "priorRevision": "c9ca949a059591ac5a9070e7fafdfdefadffc8b96d5d0032f1405eed37cad552",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -1,
+    "offsetY": 0,
+    "normalization": {
+      "fullCanvasSize": 1240,
+      "padding": {
+        "left": 370,
+        "right": 370,
+        "top": 508,
+        "bottom": 232
+      }
+    }
+  },
+  "target": 576,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "obsidian",
+    "id": "aesthetic-nature-16"
+  },
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact nature binding; no animation or variant bank. Seeded placement and procedural scene effects retained."
+}
