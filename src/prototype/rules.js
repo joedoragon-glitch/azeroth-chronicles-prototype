@@ -1800,18 +1800,6 @@
       ],
     },
   ];
-  const sideDungeonTrapTuning = {
-    cycle: 7.2,
-    warning: 1.45,
-    active: 0.7,
-    damage: 0.09,
-    radius: 44,
-    sealRadius: 58,
-    jetLength: 150,
-    jetHalfWidth: 29,
-    slow: 2.2,
-    offset: 1.2,
-  };
 
   const miniPlans = [
     { field: 'Orchard den stockade', resource: 'Woodland cache ruins', theme: 'stockade' },
@@ -3524,10 +3512,10 @@
   };
   const dungeonTrapTuning = {
     crypt: {
-      cycle: 6.8,
-      warning: 1.4,
-      active: 0.8,
-      damage: 0.11,
+      cycle: 3.4,
+      warning: 0.93,
+      active: 1,
+      damage: 0.055,
       radius: 44,
       sealRadius: 60,
       jetLength: 150,
@@ -3536,10 +3524,10 @@
       offset: 1.1,
     },
     archive: {
-      cycle: 6.4,
-      warning: 1.35,
-      active: 0.85,
-      damage: 0.12,
+      cycle: 3.2,
+      warning: 0.9,
+      active: 1.05,
+      damage: 0.06,
       radius: 45,
       sealRadius: 62,
       jetLength: 165,
@@ -3548,10 +3536,10 @@
       offset: 1.05,
     },
     mine: {
-      cycle: 6.0,
-      warning: 1.3,
-      active: 0.9,
-      damage: 0.135,
+      cycle: 3,
+      warning: 0.87,
+      active: 1.1,
+      damage: 0.0675,
       radius: 47,
       sealRadius: 64,
       jetLength: 175,
@@ -3560,10 +3548,10 @@
       offset: 1.0,
     },
     abyss: {
-      cycle: 5.7,
-      warning: 1.25,
-      active: 0.95,
-      damage: 0.15,
+      cycle: 2.85,
+      warning: 0.83,
+      active: 1.15,
+      damage: 0.075,
       radius: 49,
       sealRadius: 66,
       jetLength: 185,
@@ -3572,10 +3560,10 @@
       offset: 0.95,
     },
     citadel: {
-      cycle: 5.4,
-      warning: 1.2,
-      active: 1.0,
-      damage: 0.17,
+      cycle: 2.7,
+      warning: 0.8,
+      active: 1.2,
+      damage: 0.085,
       radius: 51,
       sealRadius: 68,
       jetLength: 195,
@@ -3601,6 +3589,9 @@
     frontier: dungeonTrapTuning.abyss,
     crown: dungeonTrapTuning.citadel,
   };
+  // Side dungeons at every regional tier share the same pressure contract as
+  // that region's outdoor mini-sites and main boss dungeon, including geometry.
+  const sideDungeonTrapTuning = outdoorMiniTrapTuning;
   const outdoorMiniTrapKinds = {
     vale: ['spikes', 'spikes'],
     march: ['spikes', 'seal'],
