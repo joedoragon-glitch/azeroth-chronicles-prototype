@@ -1,0 +1,27 @@
+# Older gameplay-fix reconciliation — 9 October 2026
+
+Baseline: `main` at `ed85b1b2ca620f1d12ce1c6a9a089d72cc9274ee` (v0.8.131). This is an audit of retained behavior and current implementation, **not** a merge of historical branches. The shipped product is the multi-file GitHub Pages/PWA Campaign, with reversible legacy MP save state. Version v0.8.132 contains only the targeted repairs and regression isolation below.
+
+## Findings by historical PR
+
+| PR | Disposition against current main | Evidence / action |
+| --- | --- | --- |
+| [#163](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/163), old mana/Mage audit | **Partially superseded; two still-relevant hit-validation fixes and one dormant-mode HUD correction retained** | Cooldown-only mode made historical MP balancing, costs and readiness tests inapplicable as live rules. `party.js` already rejects expired/empty recovery effects before dividing by duration. Current `hero-combat.js` still applied Mage AoE frost after rejected damage; current `combat.js` still slowed on rejected Mage projectile damage. Both now check `damage(...)` success. The legacy Mana Recovery HUD (only visible if MP is re-enabled) now disables and says “Restoring” while an effect is running. |
+| [#167](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/167), MP relevance trace | **Diagnostic obsolete** | Its 60-second mana-starvation/regen trace was explicitly test-only and is not a gameplay feature. Active rules have `resourceMode.manaEnabled = false`; do not restore the old MP economy or keep diagnostics as required gameplay tests. |
+| [#174](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/174), cooldown integration draft | **Superseded** | Merged [#183](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/183) provides the released reversible cooldown-only system, 5-rank/4%-per-rank Cooldown Training, MP-free casts, approved 15%-of-actual-damage siphons and independently telegraphed Abyss Dragon/Ash Sentinel healing. |
+| [#175](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/175), temporary status and equipment confirmations | **Superseded** | Merged [#185](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/185) already includes short actionable feedback, truthful purchased/equipped gear messages, errors for guarded/rest/captive failures and mobile notice layout. `tests/temporary-status.test.cjs` covers the retained behavior; this patch only adds a dormant Mana Recovery UI state guard. |
+| [#182](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/182), further cooldown integration | **Superseded** | Released [#183](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/183) reconciled newer Keeper, quest, UI, tonic, enemy VFX and save code, and was further followed by [#188](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/188) and subsequent releases. Do not cherry-pick the old large integration diff. |
+| [#77](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/77), optional Full Barracks fixture | **Already incorporated in part** | Merged [#78](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/78) and current F17/F19 fixture already build a Basic Barracks and upgrade it at Expedition 4. No duplicate production logic change is needed. |
+| [#79](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/79), deposit regression isolation | **Regression improvement still relevant; adapted** | Current `tests/audit-regressions.test.cjs` still combined nighttime health normalization and Barracks deposit in one shared Campaign. F17 and F19 now have independent fresh Campaign fixtures; F19 explicitly checks the selected nearest Full deposit site, crown payout and carried-resource reset. |
+
+## Surgical changes
+
+- Mage normal frost AoE (Skill 5/7) and frost projectiles only apply their slow when the shared damage resolver accepts the hit. The charged frost burst already checks successful damage and is unchanged. No change to slow duration, damage, cooldowns, targeting, elemental VFX or skill unlocks.
+- Legacy Ranger Mana Recovery remains disabled during active cooldown-only mode; if MP is intentionally re-enabled, an ongoing mana support effect cannot misleadingly advertise another usable action. Existing guard for zero-second recovery effects remains intact.
+- F17 and F19 use independent fixtures; explicitly guard the Basic-before-Full upgrade, nearest Full deposit site, actual crown payout and carry clearing.
+- Regressions cover Mage successful/rejected area/projectile frost, neutral area bystanders, legacy zero-second save support, and the restored-mode UI text contract. Existing cooldown/healing tests remain authoritative.
+- Bump PWA cache version with the runtime changes. No gameplay balancing, Keeper/story/quest/art/economy changes or restoration of MP to active combat.
+
+## Verification gate
+
+Run `npm run build`, `npm run format:check`, `npm run check`, `npm test`, desktop/phone browser suites and the published-asset/PWA gates. Inspect exact-head CI before merging; a connector-only review cannot establish that these tests have passed. The historical branches stay unmerged, regardless of whether this small fix PR is released. Preserve v4 save compatibility.
