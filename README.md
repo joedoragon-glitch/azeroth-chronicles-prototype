@@ -101,6 +101,8 @@ Performance regression hooks are ready for #223: they activate when `tests/perf-
 
 Work on a separate branch. If interrupted, commit and push completed work to that branch and keep a brief resume note in its PR. Preserve other branches, unfinished work and original assets. A PR is not merge or deployment approval; follow the authorization in the task.
 
+For a new gameplay system, use the [mechanic development workflow](docs/MECHANIC_DEVELOPMENT.md): focused checks while building, complete multi-file updates, recoverable checkpoints and full validation of the integrated candidate. An interrupted chat resumes the existing work; it does not restart the feature or its completed audits.
+
 `node scripts/build.cjs --check --site` packages only the declared public assets into `_site`. One inventory drives entry script order, offline cache contents and deployment. Generated files are committed, so GitHub Pages can also serve the repository directly without a bundler. Historical `legacy.html` and `rts.html` are independent references, loaded and cached only when opened.
 
 ## Project references
