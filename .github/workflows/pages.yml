@@ -24,8 +24,11 @@ jobs:
           node-version: '22'
       - name: Install locked development tools
         run: npm ci --ignore-scripts
-      - name: Check formatting
-        run: npm run format:check
+      - name: Inspect formatter changes
+        run: |
+          npx prettier --write src/prototype/menus.js
+          git diff -- src/prototype/menus.js
+          exit 1
       - name: Check generated entries and all published JavaScript
         run: npm run check
       - name: Full regression suite before merge
