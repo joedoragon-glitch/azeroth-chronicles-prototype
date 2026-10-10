@@ -174,7 +174,7 @@
           props = z.props,
           blockers = z.props
             .filter((p) => p.roadBlocker)
-            .map((p) => ({ ...p, r: (p.r || 0) + (i === 2 ? 65 : 85) }));
+            .map((p) => ({ ...p, r: (p.r || 0) + 145 }));
         z.props = blockers;
         try {
           if (roadPlans.has(key)) z.roads = clone(roadPlans.get(key));
@@ -405,7 +405,7 @@
           // stalls, carts, heaps, decorative houses and trees are visual
           // obstacles too. Keep every ID/scene role; move, do not erase.
           const affected = z.props
-            .filter((p) => !p.roadTrace)
+            .filter((p) => !p.roadTrace && !p.roadBlocker)
             .filter((p) => this.distanceToRoad(z, p) < this.roadSetback(p))
             .sort((a, b) => (b.r || 0) - (a.r || 0) || a.id.localeCompare(b.id));
           for (const prop of affected) moveOffRoad(prop, this.roadSetback(prop));
