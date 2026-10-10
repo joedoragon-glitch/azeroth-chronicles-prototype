@@ -17,6 +17,9 @@ const mime = {
   '.json': 'application/json',
   '.png': 'image/png',
   '.webp': 'image/webp',
+  '.mp3': 'audio/mpeg',
+  '.ogg': 'audio/ogg',
+  '.wav': 'audio/wav',
   '.webmanifest': 'application/manifest+json',
 };
 const server = http.createServer((req, res) => {
@@ -28,6 +31,7 @@ const server = http.createServer((req, res) => {
     return;
   }
   res.setHeader('Content-Type', mime[path.extname(file)] || 'application/octet-stream');
+  res.setHeader('Content-Length', fs.statSync(file).size);
   fs.createReadStream(file).pipe(res);
 });
 (async () => {
@@ -84,6 +88,9 @@ const server = http.createServer((req, res) => {
             );
             const buffer = zlib.gunzipSync(fixture),
               before = JSON.parse(buffer);
+            // Let real audio/asset fetches finish before replacing the campaign.
+            // WebKit can surface a canceled streaming body as a page error on unload.
+            await page.waitForLoadState('networkidle');
             await page
               .locator('#import-file')
               .setInputFiles({ name: 'historical-v4.json', mimeType: 'application/json', buffer });
@@ -118,6 +125,7 @@ const server = http.createServer((req, res) => {
             assert(imported.fallen >= 1);
             // The shell exposes save through its actual persistence adapter.
             assert(await page.evaluate(() => Prototype.save()));
+            await page.waitForLoadState('networkidle');
             await page.reload();
             await page.waitForFunction(() => window.Prototype);
             if (!(await page.evaluate(() => Prototype.paused))) await page.keyboard.press('p');
