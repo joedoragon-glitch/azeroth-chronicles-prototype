@@ -117,3 +117,9 @@ The first 7.3-second benchmark was an invalid pre-Thornfang example because it i
 ## Territorial Monster Forts · 9 October 2026
 
 Joel confirms Monster Forts are defended **ordinary-monster territorial homes**, not capturable forts, additional bosses, tribute strongholds, or player Barracks. Preserve native garrison populations, ordinary rewards and respawns, road/transport access and v4 saves; audit existing strongholds instead of introducing conquest systems. The Wolf hunting ground and Ash-beast roost require local placement correction to keep their established residents and navigable defenses together. See [MONSTER_FORTS_TERRITORIAL_AUDIT.md](MONSTER_FORTS_TERRITORIAL_AUDIT.md).
+
+## Original outward region transport positions are canon · 9 October 2026
+
+Player correction supersedes the **unintended outbound NPC relocation** in PR #147 (v0.8.105). Restore the merchant wagon departure at the far Greenwood road terminus (2450, 650), the Ironroot Highlands outgoing pack caravan at (3100, 500), and Ashen Frontier's civilian outgoing dragon roost at (3100, 500). They are independent overworld destinations, **not town-service NPCs**. The surrounding established roads and regional dressing matter as part of their locations. Do not move these departures to Millhaven, Stonecross or Emberwatch when changing where the player arrives from another region.
+
+Incoming caravan/wagon landings behind Reedport and Emberwatch, the Stonecross and Reedport ferry piers, Crown route travel hubs and safety clearance all stay in place. Existing saves migrate transport positions, roads and authored environment without undoing defeated monsters, rescues, money, quest state or the v4 schema. This overrides only the mistaken departure move, not the safe-arrival or burst-compression features.

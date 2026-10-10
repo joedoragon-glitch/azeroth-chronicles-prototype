@@ -34,3 +34,7 @@ Other holds already had working garrisons, furnishing/defenses and routes. They 
 ## Checks
 
 `tests/monster-forts.test.cjs` covers all 13 live holds and routes, exact resident quotas and local guard positions, road-clear wall placements, minimum defensive and habitation features, day/night spawn cleanup, stable enemy IDs/counts, and restore/re-restore of old Highlands/Crown versions, including killed residents. The full Node/browser/WebKit/Pages suite must pass for this change to publish. Visual structure proportions and any later asset scaling remain a separate workstream.
+
+## Frontier redoubt and original dragon departure separation · v0.8.125
+
+Returning the civilian outbound dragon to its original (3100, 500) stand exposed an overlap with the newer Raider drill redoubt at (3060, 640), previously authored while the transport was near town. The Raider redoubt remains in eastern Frontier but moves south to (3050, 950). Its four original residents, normal rewards and territorial fort mechanics are preserved, without new monsters or fort capture rules. Frontier stronghold migration v7 relocates old-save residents without reviving fallen enemies. This keeps the real dragon departure and its safe landing from overlapping ordinary-monster homes.
