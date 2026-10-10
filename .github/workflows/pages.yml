@@ -19,10 +19,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Determine check scope
+        id: scope
+        run: node .github/scripts/check-scope.cjs
+      - name: Validate prose-only update
+        if: steps.scope.outputs.docs_only == 'true'
+        run: |
+          node tests/architecture.test.cjs
+          node tests/ci-scope.test.cjs
       - name: Run full game checks
+        if: steps.scope.outputs.docs_only != 'true'
         uses: ./.github/actions/check-game
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && steps.scope.outputs.docs_only != 'true'
         with:
           name: pr-smoke-screenshots
           retention-days: 3
@@ -33,13 +42,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Determine check scope
+        id: scope
+        run: node .github/scripts/check-scope.cjs
+      - name: Validate prose-only update
+        if: steps.scope.outputs.docs_only == 'true'
+        run: |
+          node tests/architecture.test.cjs
+          node tests/ci-scope.test.cjs
       - uses: actions/setup-node@v4
+        if: steps.scope.outputs.docs_only != 'true'
         with:
           node-version: '22'
           cache: npm
       - name: Install locked development tools
+        if: steps.scope.outputs.docs_only != 'true'
         run: npm ci --ignore-scripts
       - name: Install WebKit and browser dependencies
+        if: steps.scope.outputs.docs_only != 'true'
         timeout-minutes: 5
         run: |
           # Avoid slow Azure mirror downloads on fresh hosted runners; packages and signatures stay identical.
@@ -50,8 +70,10 @@ jobs:
           done
           npx playwright install --with-deps webkit
       - name: Verify WebKit phone presentation and gestures
+        if: steps.scope.outputs.docs_only != 'true'
         run: node tests/phone-webkit-browser.test.cjs
       - name: Verify WebKit cooldown charge queues and save upgrade
+        if: steps.scope.outputs.docs_only != 'true'
         env:
           BROWSER_ENGINE: webkit
         run: |
@@ -64,37 +86,43 @@ jobs:
           BETA_PREVIOUS_ROOT="$RUNNER_TEMP/cooldown-v118" BETA_FIXTURE_DIR=test-results/beta-historical node scripts/beta-history-audit.cjs > test-results/beta-history-report.json
           BETA_FIXTURE_DIR=test-results/beta-historical node tests/beta-campaign-browser.test.cjs
       - name: Verify WebKit quest completion and Keeper Archive
+        if: steps.scope.outputs.docs_only != 'true'
         env:
           QUEST_BROWSER_ENGINE: webkit
         run: node tests/quest-archive-browser.test.cjs
       - name: Audit integrated rogue warnings and effects in WebKit
+        if: steps.scope.outputs.docs_only != 'true'
         env:
           ROGUE_BROWSER_ENGINE: webkit
         run: node tests/rogue-browser.test.cjs
       - name: Verify WebKit audio playback and lifecycle
+        if: steps.scope.outputs.docs_only != 'true'
         env:
           AUDIO_BROWSER_ENGINE: webkit
         run: |
           node tests/audio-browser.test.cjs
           node tests/audio-audition-browser.test.cjs
       - name: Verify WebKit enemy VFX catalog and pilot captures
+        if: steps.scope.outputs.docs_only != 'true'
         env:
           VFX_BROWSER_ENGINE: webkit
         run: |
           node tests/enemy-vfx-browser.test.cjs
           VFX_CAPTURE_TAG=webkit-ci VFX_CAPTURE_SMOKE=1 node scripts/enemy-vfx-capture.cjs
       - name: Verify WebKit original-master actor idles and combat
+        if: steps.scope.outputs.docs_only != 'true'
         run: |
           node scripts/sprite-production-browser-review.cjs local test-results/sprite-pilot-webkit webkit
           node scripts/sprite-nature-browser-review.cjs local test-results/sprite-nature-webkit webkit
       - name: Verify WebKit terrain material rendering
+        if: steps.scope.outputs.docs_only != 'true'
         env:
           MATERIAL_BROWSER_ENGINE: webkit
         run: |
           node tests/materials-browser.test.cjs
           node tests/ground-cache-browser.test.cjs
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && steps.scope.outputs.docs_only != 'true'
         with:
           name: webkit-phone-screenshots
           retention-days: 3
