@@ -174,7 +174,7 @@
           props = z.props,
           blockers = z.props
             .filter((p) => p.roadBlocker)
-            .map((p) => ({ ...p, r: (p.r || 0) + 85 }));
+            .map((p) => ({ ...p, r: (p.r || 0) + (i === 2 ? 65 : 85) }));
         z.props = blockers;
         try {
           if (roadPlans.has(key)) z.roads = clone(roadPlans.get(key));
