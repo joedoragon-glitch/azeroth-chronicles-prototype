@@ -164,11 +164,11 @@
           !z.buildings.some((q) => q !== moving && dist(p, q) < radius + 75);
         const original = { x: source.x, y: source.y };
         if (valid(original)) return original;
-        const directions = [
-          0, 0.26, -0.26, 0.52, -0.52, 0.79, -0.79, 1.05, -1.05,
-          1.31, -1.31, 1.57, -1.57, 1.83, -1.83, 2.09, -2.09,
-          2.36, -2.36, 2.62, -2.62, 2.88, -2.88, Math.PI,
-        ];
+        const directions = [0];
+        for (let n = 1; n < 12; n++) {
+          directions.push((n * Math.PI) / 12, (-n * Math.PI) / 12);
+        }
+        directions.push(Math.PI);
         for (let step = 25; step <= 700; step += 25)
           for (const turn of directions) {
             const a = heading + turn,
