@@ -287,7 +287,12 @@
           };
           for (const [id, setback] of frontages) {
             const npc = z.npcs.find((n) => n.id === id);
-            if (npc) moveOffRoad(npc, setback);
+            if (!npc) continue;
+            // Services retain their original playable squares even though
+            // their buildings/stands occupy neighboring frontage parcels.
+            if (id === 'rest') npc.servicePoint = { ...major };
+            if (id === 'minor') npc.servicePoint = { ...minor };
+            moveOffRoad(npc, setback);
           }
           // Full corridor audit, not only collision-bearing props: market
           // stalls, carts, heaps, decorative houses and trees are visual
