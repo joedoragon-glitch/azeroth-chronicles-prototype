@@ -258,6 +258,7 @@
         // IDs and captured progress remain intact; authored scenery follows
         // the newly routed network instead of retaining stale locations.
         delete z.worldLifeVersion;
+        delete z.ironrootLifeVersion;
         delete z.frontierLayoutVersion;
         delete z.crownLayoutVersion;
         delete z.streetClearanceVersion;
@@ -1163,7 +1164,7 @@
                   !futureServices.some((n) => dist(n, p) < 85) &&
                   !z.nodes.some((n) => dist(n, p) < 65) &&
                   !z.roads?.some((path) =>
-                    path.some((b, k) => k && this.distanceToSegment(p, path[k - 1], b) < 65),
+                    path.some((b, k) => k && this.distanceToSegment(p, path[k - 1], b) < 72),
                   ) &&
                   !z.props.some((q) => dist(q, p) < (q.r || 0) + 45),
               );
