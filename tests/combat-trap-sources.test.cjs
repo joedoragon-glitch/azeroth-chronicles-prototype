@@ -111,4 +111,72 @@ assert.deepEqual(game.traps().map((t) => t.kind).filter((kind) => !kinds.include
 game.s.phase = 'peace';
 assert.deepEqual(game.traps(), [], 'peace disables hostile environmental traps');
 
+
+// Timed rearming uses the zone clock, not frames spent touching a hazard.
+// Check the exact production trap geometry/cadence, including late entry,
+// leaving/reentering during one activation, and the next activation.
+for (const mode of ['normal', 'nightmare']) {
+  for (const family of Campaign.dungeonIds) {
+    const c = new Campaign(mode, 'paladin', () => 0.9);
+    c.enter(family);
+    c.s.party = [];
+    const z = c.zone();
+    const tune = R.dungeonTrapTuning[family];
+    const trap = c.traps()[0];
+    const h = c.hero;
+    Object.assign(h, { x: trap.x, y: trap.y, slow: 0, immune: 0, hp: h.maxHp });
+    const companion = c.unit('soldier', trap.x + 240, trap.y + 240);
+    c.s.party = [companion];
+    const hitPhase = tune.warning + tune.active * 0.2;
+    // Keep elapsed positive; a full-cycle increment must preserve the phase.
+    const baseCycle = Math.ceil((trap.index * tune.offset) / tune.cycle) + 3;
+    const setPhase = (phase, cycle = baseCycle) => {
+      z.clock = cycle * tune.cycle - trap.index * tune.offset + phase;
+      assert(Math.abs(c.traps()[0].phase - phase) < 1e-7, family + ' trap phase');
+    };
+    setPhase(tune.warning / 2);
+    c.updateTraps(0.1);
+    assert.equal(h.hp, h.maxHp, family + ' warns without damage');
+    setPhase(hitPhase);
+    c.updateTraps(0.1);
+    const afterFirst = h.hp;
+    assert(afterFirst < h.maxHp, family + ' first entry damages');
+    c.updateTraps(0.1);
+    assert.equal(h.hp, afterFirst, family + ' standing inside does not re-hit');
+
+    companion.x = trap.x;
+    companion.y = trap.y;
+    c.updateTraps(0.1);
+    assert(companion.hp < companion.maxHp, family + ' late ally entry is separately eligible');
+    assert.equal(h.hp, afterFirst, family + ' ally hit does not reset hero');
+
+    h.x += 240;
+    h.y += 240;
+    setPhase(tune.warning + tune.active * 0.6);
+    c.updateTraps(0.1);
+    h.x = trap.x;
+    h.y = trap.y;
+    c.updateTraps(0.1);
+    assert.equal(h.hp, afterFirst, family + ' reentry in same activation cannot re-hit');
+
+    setPhase(hitPhase, baseCycle + 1);
+    c.updateTraps(0.1);
+    assert(h.hp < afterFirst, family + ' next activation re-arms damage');
+    const afterSecond = h.hp;
+    setPhase(tune.warning + tune.active + 0.05, baseCycle + 1);
+    c.updateTraps(0.1);
+    assert.equal(h.hp, afterSecond, family + ' inactive interval cannot damage');
+
+    setPhase(hitPhase, baseCycle + 2);
+    h.immune = 1;
+    const beforeImmune = h.hp;
+    c.updateTraps(0.1);
+    assert.equal(h.hp, beforeImmune, family + ' immunity blocks this activation');
+    h.immune = 0;
+    setPhase(tune.warning + tune.active * 0.6, baseCycle + 2);
+    c.updateTraps(0.1);
+    assert.equal(h.hp, beforeImmune, family + ' blocked attempt stays consumed');
+  }
+}
+
 console.log('PASS authored dungeon/side/outdoor trap inventory and source-driven condition matrix');
