@@ -286,8 +286,7 @@
                 if (this.blocked(point.x, point.y, z.id, (house.r || 0) + 9, true)) continue;
                 if (z.npcs.some((n) => dist(n, point) < (house.r || 0) + 80)) continue;
                 if (z.nodes.some((n) => dist(n, point) < (house.r || 0) + 60)) continue;
-                if (z.buildings.some((b) => dist(b, point) < (house.r || 0) + 150))
-                  continue;
+                if (z.buildings.some((b) => dist(b, point) < (house.r || 0) + 150)) continue;
                 if (
                   z.enemies.some(
                     (enemy) =>
