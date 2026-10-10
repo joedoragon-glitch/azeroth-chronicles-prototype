@@ -724,3 +724,8 @@ body.menu-open::before {
   max-width: 100%;
   height: auto;
 }
+
+/* Self-explanatory menus leave no blank explanatory block. */
+#modal-description:empty {
+  display: none;
+}
