@@ -1235,12 +1235,7 @@
             getGame().hero.gold < getGame().companionRecoveryCost(),
         ),
       );
-      openMenu(
-        getGame().definition().town + ' Captain',
-        '',
-        actions,
-        back,
-      );
+      openMenu(getGame().definition().town + ' Captain', '', actions, back);
     }
     function partyMenu(back = closeMenu) {
       townRecruitmentMenu(back);
