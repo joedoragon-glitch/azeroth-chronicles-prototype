@@ -41,10 +41,10 @@ source caused the state change.
 | Ordinary/ranged enemies | Reedbeast and Mireling spitters apply timed Slow on successful projectile contact. Ash-beast cinder attacks can feed HP to the attacking spitter; spectral Wraith projectiles may siphon HP. All ordinary tactical rogue manoeuvres require actual contact and retain the authored snare/shove/withdraw behaviors. | `engine.js` / `combat.js` |
 | Night encounters | Wraith Soul Drain hits an area, adds Slow and siphons actual lost HP in cooldown-only mode. Stalker Shadow Pounce moves the attacker to a warned landing location and can Slow on successful area impact; it does **not** automatically force the victim to move. | `engine.js` / `boss-combat.js` |
 | Boss/captain attacks | The authored slow attacks and puddles add the same timed Slow as other sources; charge and landing move the **attacker**; summons add enemies; phase defense and tactical rally alter combat behavior. Normal/TRUE variants use the existing profiles. | `rules.js` / `boss-combat.js` |
-| **Dungeon trap: spikes** | Warned radial hit causing HP damage once per unit per activation cycle. **No Slow, knockback, bleed, immobilization, or persistent status.** | `dungeonTraps` / `updateTraps` |
-| **Dungeon trap: jet** | Warned line-segment hit causing HP damage once per unit per cycle. **No Slow or forced displacement.** The jet visual is not a knockback contract. | `dungeonTraps` / `updateTraps` |
+| **Dungeon trap: spikes** | Warned radial puncture; a valid hit applies brief **Slow** (35% of region's seal duration) and secondary HP damage once per unit per cycle. No Bleed or Stun. | `dungeonTraps` / `updateTraps` |
+| **Dungeon trap: jet** | Warned flame lane; a valid hit attempts **collision-safe perpendicular knockback** out of the jet lane and applies secondary HP damage, but no Burning/Slow state. | `dungeonTraps` / `updateTraps` |
 | **Dungeon trap: seal** | Warned radial hit causing HP damage **and timed Slow** if the hit is valid. No hard root, silence or disable. | `dungeonTraps` / `updateTraps` |
-| Side-dungeon traps | Exactly the same spike, jet and seal resolvers, using shared side-dungeon timing/geometry tuning. The side location does not create new statuses. | `sideDungeons[].traps` / `sideDungeonTrapTuning` |
+| Side-dungeon traps | Exactly the same spike, jet and seal resolvers and **the exact same regional timing, damage and geometry as the main boss dungeon and outdoor sites**; no generic side-dungeon fallback. | `sideDungeons[].traps` / `sideDungeonTrapTuning` |
 | Outdoor encounter-site traps | The same spike/jet/seal semantics with region-specific trap tuning and authored mini-site positions. A cleared mini-site no longer contributes active traps. | `outdoorMiniTrapKinds` / `outdoorMiniTrapTuning` |
 | Boss persistent hazards | Timed patches and expanding rings cause their authored damage; **only patches explicitly marked Slow** apply it. Non-ring persistent patches can hit once per tick, while an expanding ring records one hit per target. Both preserve obstruction and warning geometry. | `resolveArea` / `updateProjectiles` |
 | Recovery, sanctuary and consumable services | Refuge/town regeneration, resting and healing services restore HP or clear effects through existing systems. Preparation Tonic modifies max HP temporarily; it is **not** a hostile debuff. Recovery does not resurrect a fallen companion except through explicit recovery services. | `engine.js` / `party.js` |
@@ -59,20 +59,22 @@ unreviewed periodic-damage redesign is part of this pull request.
 
 The trap catalog is **spikes, jet, seal**. Each active trap provides a
 `warningTime`, `activeTime`, `cycleLength`, geometry and region-specific
-`damageFraction`. Major dungeon tuning runs from 11% to 17% of the
-victim's maximum HP per valid hit; side dungeons use 9%. Outdoor encounter
-sites reuse their corresponding regional dungeon tuning. Seal Slow ranges
-from 2.2 seconds (side rooms) to 3.5 seconds (late dungeons).
+`damageFraction`. All three contexts—main dungeon, region-matched side
+dungeon and outdoor mini-site—now reuse **one regional profile**, from
+5.5% to 8.5% of victim maximum HP per valid hit before mitigation.
+Warnings range from 0.93 s in Crypt to 0.8 s in Citadel, cycles from
+3.4 s to 2.7 s, and active windows from 1.0 s to 1.2 s. Seal Slow
+remains 2.5–3.5 s; Spike injury Slow is 35% of that duration.
 
 At the start of the warned phase there is no damage or Slow. During the
 active phase, the shared `hitParty` path applies mitigation and immunity
-before a seal applies Slow. Traps currently target the **hero and living active companions**—not monsters,
+before an appropriate on-hit Slow or collision-safe jet blast. Traps target the **hero and living active companions**—not monsters,
 passive scenery or escorts. A hit-record key tied to zone/layout/index/cycle
 allows at most **one attempt per trap per eligible unit per activation cycle**;
 the attempt is consumed even if the unit is immune. The next cycle
 re-arms the trap, independently for the hero and each living companion.
-Spikes and jets must never gain Slow simply because their tuning table
-contains a `slow` field intended for seals. Peace mode and supply-room
+Spikes intentionally derive a shorter Slow from the same regional `slow`
+duration; jets never inherit Slow and instead shove. Peace mode and supply-room
 exceptions disable these hostile trap sources.
 
 **Separate mechanisms:** physical world collision prevents passage;
@@ -116,18 +118,20 @@ does not silently approve additional named ailments or a new damage balance.
 
 **Current implementation versus candidate design (do not confuse these):**
 
-| Existing visual | Current live mechanic | Proposed effect-first interpretation using existing systems |
+| Existing visual | v0.9 branch implementation | Remaining visual/balance review |
 | --- | --- | --- |
-| Rising **spikes** | One physical HP hit per activation, no condition | A brief **Slow** on successful piercing contact (injury impairs footing), with HP damage secondary. No unimplemented bleed/root/stun. |
-| Long lane of erupting **flame jets** | One HP hit per activation, no displacement or DoT | Short **shove/knockback** to clear the jet's lane, using the existing collision-aware displacement primitive; lower supporting HP damage. Because flames currently rise vertically, directional impulse needs a legible blast cue. No unimplemented Burning status. |
-| Diamond-shaped **magical seal** | One HP hit plus longer **Slow** | Preserve **Slow** as the primary magical binding effect, with modest supporting HP damage and a clearer indication that movement—not spellcasting—is restricted. Do not reinterpret the author's historical slowing seal as a hard root. |
+| Rising **spikes** | Brief injury **Slow** on valid contact (35% of region's seal Slow), secondary HP damage | Verify movement impairment reads as a puncture effect. No Bleed/Root/Stun. |
+| Long lane of erupting **flame jets** | **Perpendicular blast movement** toward a clear lane if unobstructed, secondary HP damage | Improve blast cue and assess safe landings under crowding. No Burning status. |
+| Diamond-shaped **magical seal** | Longer regional **Slow** (2.5–3.5 s), secondary HP damage | Clarify visually that movement is impaired, not spellcasting. Do not turn a slowing seal into a hard Root. |
 
-These mappings for spikes and jets are **implementation proposals derived from
-the design principle**, not assertions that the current code already performs them.
-Preserve the established once-per-unit-per-trap activation latch unless a
-separate reviewed design explicitly changes it. The author has not supplied
-new numerical durations, knockback distances, damage fractions, or acceptance
-for a balance retune.
+The mappings are **implemented on this branch** as a playtest balance proposal.
+The author specifically set Citadel warning at 0.8 s, requested proportionally
+longer warnings in earlier regions, substantially faster cycles and longer
+active windows, and clarified that side dungeons inherit their region's
+profile. The derived proportional values, halved raw per-hit damage, short
+Spike Slow and safe jet displacement are implementation choices for beta
+review, **not separately author-approved final numerical balance**.
+The once-per-unit-per-trap activation latch remains unchanged.
 
 When implementing, keep common rules: effects only on eligible living hero/
 companion targets after a valid hit; immunity prevents damage and secondary
@@ -138,9 +142,8 @@ late-entry, party AI, pause, save/import, and both control schemes in regression
 and browser tests. Show the actual effect to players instead of relying on
 the visual similarity of different hazard shapes.
 
-Status-first trap revisions should be reviewed as an explicitly bounded
-gameplay change for v0.9 rather than silently bundled with mechanical
-housekeeping. Existing trap warning, layout, safe routes, party survivability
+Status-first trap revisions on this branch are an explicitly bounded
+gameplay change for v0.9 rather than an undocumented housekeeping fix. Existing trap warning, layout, safe routes, party survivability
 and v4 saves are release constraints.
 
 ## Global conditions contract
