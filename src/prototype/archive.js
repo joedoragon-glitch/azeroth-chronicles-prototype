@@ -24,7 +24,7 @@
         ],
         [
           'Why a great volley loses force',
-          'Landing every blow at once gives less damage than you might expect. Your whole company shares this limit against each foe, so adding another attacker does not bypass it. Save your strongest volley for an exposed opening.',
+          'Landing every blow at once gives less damage than you might expect. Your company’s blows are counted together against each foe, so another attacker does not bypass the reduction. Save your strongest volley for an exposed opening.',
           'Hits share a rolling ' +
             burst.windowSeconds +
             '-second total for each target. Below the threshold, damage is unchanged. Above it: threshold + tail × ln(1 + (raw damage − threshold) / tail). Each hit deals the increase in that total.\n\n' +
