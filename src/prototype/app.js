@@ -405,7 +405,14 @@
     clearInput();
     gateDismissed = false;
     menu = { title, description, actions, back };
-    $('modal').setAttribute('data-view', title === 'Adventure menu' ? 'adventure' : title === 'Game and settings' ? 'settings' : 'default');
+    $('modal').setAttribute(
+      'data-view',
+      title === 'Adventure menu'
+        ? 'adventure'
+        : title === 'Game and settings'
+          ? 'settings'
+          : 'default',
+    );
     // Small interactions need a small dialog; longer service catalogs keep a readable width.
     const compact =
       actions.length <= 2 &&
@@ -719,55 +726,51 @@
       canBuild = !game.isDungeon() && game.availableLabor().length > 0,
       cost = game.barracksBuildCost(),
       costLabel = cost ? cost + ' crowns' : 'FREE';
-    openMenu(
-      'Adventure menu',
-      '',
-      [
-        action('Map and travel routes', showMap),
-        action('Quest journal', () => quests(false)),
-        action('Inventory and support', inventory),
-        action('Talents', () => talents(openMain)),
-        ...(canBuild
-          ? [
-              action(
-                'Establish Basic Barracks · ' + costLabel,
-                () => {
-                  if (game.build()) closeMenu();
-                },
-                cost === 0
-                  ? 'FIRST BARRACKS FREE · Creates a nearby companion recovery base'
-                  : rank >= 4
-                    ? 'One companion builds a Basic camp · optional Full upgrade costs ' +
-                      game.barracksUpgradeCost() +
-                      ' crowns'
-                    : 'One companion builds a recovery base; Full upgrade unlocks at Expedition 4',
-                game.hero.gold < cost,
-              ),
-            ]
-          : []),
-        ...(game.s.phase === 'awakening'
-          ? [
-              action(
-                'Awakening · Final objective',
-                () => finaleMenu(openMain),
-                'TRUE dungeon guardians ' +
-                  Campaign.dungeonIds.filter((id) => game.s.true[id]).length +
-                  '/5',
-              ),
-            ]
-          : []),
-        ...(profile.nightmareUnlocked
-          ? [
-              action(
-                '★ New Game — Nightmare Mode',
-                () => chooseClass('nightmare'),
-                'Unlocked by the peaceful ending · Standard or Succession challenge',
-              ),
-            ]
-          : []),
-        action('Game and settings', systemMenu),
-      ],
-    );
+    openMenu('Adventure menu', '', [
+      action('Map and travel routes', showMap),
+      action('Quest journal', () => quests(false)),
+      action('Inventory and support', inventory),
+      action('Talents', () => talents(openMain)),
+      ...(canBuild
+        ? [
+            action(
+              'Establish Basic Barracks · ' + costLabel,
+              () => {
+                if (game.build()) closeMenu();
+              },
+              cost === 0
+                ? 'FIRST BARRACKS FREE · Creates a nearby companion recovery base'
+                : rank >= 4
+                  ? 'One companion builds a Basic camp · optional Full upgrade costs ' +
+                    game.barracksUpgradeCost() +
+                    ' crowns'
+                  : 'One companion builds a recovery base; Full upgrade unlocks at Expedition 4',
+              game.hero.gold < cost,
+            ),
+          ]
+        : []),
+      ...(game.s.phase === 'awakening'
+        ? [
+            action(
+              'Awakening · Final objective',
+              () => finaleMenu(openMain),
+              'TRUE dungeon guardians ' +
+                Campaign.dungeonIds.filter((id) => game.s.true[id]).length +
+                '/5',
+            ),
+          ]
+        : []),
+      ...(profile.nightmareUnlocked
+        ? [
+            action(
+              '★ New Game — Nightmare Mode',
+              () => chooseClass('nightmare'),
+              'Unlocked by the peaceful ending · Standard or Succession challenge',
+            ),
+          ]
+        : []),
+      action('Game and settings', systemMenu),
+    ]);
   }
   $('menu-button').onclick = (e) => {
     audio.unlock();

@@ -297,16 +297,29 @@
       const archive =
         typeof PrototypeArchive !== 'undefined' ? PrototypeArchive : require('./archive.js');
       const sections = archive.sections(game, { D, R: Campaign.rules });
+      function currentSection(title) {
+        const current = getGame();
+        if (current !== game || !current.s.keeperPact || !current.keeperAvailable()) {
+          back();
+          return null;
+        }
+        return archive.sections(current, { D, R: Campaign.rules }).find((s) => s.title === title);
+      }
       function shelf(section) {
+        section = currentSection(section.title);
+        if (!section) return;
         openMenu(
           section.title,
           section.intro,
-          section.topics.map(([title, answer]) =>
-            action(title, () =>
-              openMenu(title, answer, [action('Another question', () => shelf(section))], () =>
-                shelf(section),
-              ),
-            ),
+          section.topics.map(([title]) =>
+            action(title, () => {
+              const current = currentSection(section.title);
+              const topic = current?.topics.find(([name]) => name === title);
+              if (!topic) return;
+              openMenu(title, topic[1], [action('Another question', () => shelf(current))], () =>
+                shelf(current),
+              );
+            }),
           ),
           () => keeperTopics(back),
         );
@@ -331,7 +344,11 @@
           ready
             ? [
                 action('Promise to protect the Archive', () => {
-                  if (game.promiseKeeper()) keeper(back);
+                  if (getGame() !== game || !getGame().keeperPactReady()) {
+                    back();
+                    return;
+                  }
+                  if (getGame().promiseKeeper()) keeper(back);
                 }),
               ]
             : [action('Leave him to his books', back)],
@@ -1398,21 +1415,16 @@
         here = game.zoneId,
         findNpc = (matches) => zone.npcs.find(matches),
         liveBoss = (id) =>
-          zone.enemies.find((enemy) => enemy.type === 'boss' && enemy.family === id && enemy.hp > 0),
-        guideAction = (label, destination) =>
-          action(
-            'Navigate · ' + label,
-            () => storyNavigate(destination, label),
-            '',
-            !destination,
+          zone.enemies.find(
+            (enemy) => enemy.type === 'boss' && enemy.family === id && enemy.hp > 0,
           ),
+        guideAction = (label, destination) =>
+          action('Navigate · ' + label, () => storyNavigate(destination, label), '', !destination),
         present = (summary, options) => openMenu('Story journal', summary, options, back),
         exit = findNpc((n) => n.kind === 'exit');
       const leaveInterior = () => {
         if (!exit) return false;
-        present('Return to ' + (region?.name || 'the region'), [
-          guideAction('Dungeon exit', exit),
-        ]);
+        present('Return to ' + (region?.name || 'the region'), [guideAction('Dungeon exit', exit)]);
         return true;
       };
 
@@ -1432,9 +1444,9 @@
           return;
         }
         const id =
-          remaining.find((candidate) => candidate === here) ||
-          remaining.find((candidate) => game.boss(candidate).region === regionId) ||
-          remaining[0],
+            remaining.find((candidate) => candidate === here) ||
+            remaining.find((candidate) => game.boss(candidate).region === regionId) ||
+            remaining[0],
           boss = game.boss(id);
         if (inside && inside.id !== id && leaveInterior()) return;
         if (room && leaveInterior()) return;
@@ -1443,9 +1455,7 @@
             transport =
               findNpc((n) => n.kind === 'transport' && n.hub) ||
               findNpc(
-                (n) =>
-                  n.kind === 'transport' &&
-                  n.direction === Math.sign(targetIndex - index),
+                (n) => n.kind === 'transport' && n.direction === Math.sign(targetIndex - index),
               );
           present('Awakening · ' + defeated + '/5 defeated · ' + boss.place, [
             guideAction(transport?.name || 'Regional transport', transport),
@@ -1477,12 +1487,10 @@
           ordered.map((boss) => {
             const destination =
               here === boss.id
-                ? liveBoss(boss.id) ||
-                  findNpc((n) => n.kind === 'cage' && n.family === boss.id)
+                ? liveBoss(boss.id) || findNpc((n) => n.kind === 'cage' && n.family === boss.id)
                 : boss.kind === 'dungeon'
                   ? findNpc((n) => n.kind === 'dungeon' && n.family === boss.id)
-                  : liveBoss(boss.id) ||
-                    findNpc((n) => n.kind === 'cage' && n.family === boss.id);
+                  : liveBoss(boss.id) || findNpc((n) => n.kind === 'cage' && n.family === boss.id);
             return guideAction(boss.captive.split(' the ')[0] + ' · ' + boss.place, destination);
           }),
         );

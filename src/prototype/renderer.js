@@ -1112,7 +1112,6 @@
       }
     }
 
-
     function drawNavigationRoute() {
       const route = getGuideRoute();
       if (!route?.length) return;
