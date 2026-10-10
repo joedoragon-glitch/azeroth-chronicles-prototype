@@ -174,7 +174,7 @@
           props = z.props,
           blockers = z.props
             .filter((p) => p.roadBlocker)
-            .map((p) => ({ ...p, r: (p.r || 0) + (i === 2 ? 110 : 85) }));
+            .map((p) => ({ ...p, r: (p.r || 0) + (i === 2 ? 65 : 85) }));
         z.props = blockers;
         try {
           if (roadPlans.has(key)) z.roads = clone(roadPlans.get(key));
@@ -253,6 +253,9 @@
         z.props = z.props.filter(
           (p) => p.roadBlocker || p.structure || this.distanceToRoad(z, p) >= (p.r || 0) + 60,
         );
+        // Relocate only long-lived settlement houses before livelihood and
+        // occupation scenery is authored, so those scenes remain repeatable.
+        this.clearRoadBlockers(z);
         z.roadVersion = roadVersion;
         // Rebuild road-sensitive life and occupied districts for old saves.
         // IDs and captured progress remain intact; authored scenery follows
@@ -263,6 +266,47 @@
         delete z.crownLayoutVersion;
         delete z.streetClearanceVersion;
       }
+      clearRoadBlockers(z) {
+        const oldZone = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          for (const house of z.props.filter((p) => p.roadBlocker)) {
+            const setback = (house.r || 0) + 145;
+            if (this.distanceToRoad(z, house) >= setback) continue;
+            const origin = { x: house.x, y: house.y };
+            let placed = false;
+            for (const radius of [80, 120, 165, 210, 265, 325, 390, 470, 560]) {
+              for (let j = 0; j < 24; j++) {
+                const angle = (j * Math.PI) / 12,
+                  point = {
+                    x: origin.x + Math.cos(angle) * radius,
+                    y: origin.y + Math.sin(angle) * radius,
+                  };
+                if (this.distanceToRoad(z, point) < setback) continue;
+                if (this.blocked(point.x, point.y, z.id, (house.r || 0) + 9, true)) continue;
+                if (z.npcs.some((n) => dist(n, point) < (house.r || 0) + 80)) continue;
+                if (z.nodes.some((n) => dist(n, point) < (house.r || 0) + 60)) continue;
+                if (z.buildings.some((b) => dist(b, point) < (house.r || 0) + 150))
+                  continue;
+                if (
+                  z.enemies.some(
+                    (enemy) =>
+                      enemy.hp > 0 && dist(enemy.home || enemy, point) < (house.r || 0) + 145,
+                  )
+                )
+                  continue;
+                house.x = point.x;
+                house.y = point.y;
+                placed = true;
+                break;
+              }
+              if (placed) break;
+            }
+          }
+        } finally {
+          this.s.zone = oldZone;
+        }
+      }
       distanceToRoad(z, point) {
         let nearest = Infinity;
         for (const path of z.roads || [])
@@ -272,7 +316,7 @@
       }
       roadSetback(p) {
         if (p.roadTrace) return 0; // Only deliberately flat road ruts/repairs.
-        if (p.roadBlocker) return (p.r || 0) + 78;
+        if (p.roadBlocker) return (p.r || 0) + 145;
         if (p.r > 0) return p.r + 64;
         if (
           /house|cottage|workshop|forge|watchpost|tower|tent|stockade|wall|barracks|gate|roost|lean-to|palisade|foundation|shelter|stable|mangrove|dead-tree/i.test(
