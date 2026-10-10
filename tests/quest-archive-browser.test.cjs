@@ -14,6 +14,10 @@ const mime = {
   '.css': 'text/css',
   '.json': 'application/json',
   '.png': 'image/png',
+  '.webp': 'image/webp',
+  '.mp3': 'audio/mpeg',
+  '.ogg': 'audio/ogg',
+  '.wav': 'audio/wav',
   '.webmanifest': 'application/manifest+json',
 };
 const server = http.createServer((req, res) => {
@@ -31,6 +35,7 @@ const server = http.createServer((req, res) => {
     return;
   }
   res.setHeader('Content-Type', mime[path.extname(file)] || 'application/octet-stream');
+  res.setHeader('Content-Length', fs.statSync(file).size);
   fs.createReadStream(file).pipe(res);
 });
 (async () => {
