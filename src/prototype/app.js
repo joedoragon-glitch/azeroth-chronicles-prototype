@@ -164,6 +164,7 @@
     } else game = new Campaign();
   }
   let started = loaded;
+  let storyRouteActive = false;
   const viewport = { width: innerWidth, height: innerHeight };
   const renderer = PrototypeRenderer.create({
     canvas: viewport,
@@ -172,6 +173,8 @@
     platform,
     chargePresentation,
     isPaused: () => paused || !focused || document.hidden,
+    getGuideRoute: () =>
+      storyRouteActive && game.hero.order?.type === 'move' ? game.hero.path : null,
     Campaign,
     PrototypeVisuals,
     PrototypeCombatVisuals,
@@ -205,6 +208,8 @@
     recallSquad,
     showMap,
     finaleMenu,
+    storyNavigate,
+    chooseNewRun: (mode) => chooseClass(mode),
     status,
   });
 
@@ -995,6 +1000,51 @@
       back,
     );
   }
+
+  function storyNavigate(destination, label) {
+    if (!destination || !Number.isFinite(destination.x) || !Number.isFinite(destination.y)) {
+      status('Destination unavailable.');
+      return;
+    }
+    const size = game.zoneSize();
+    const offsets = [
+      [0, 0],
+      [0, 65],
+      [65, 0],
+      [-65, 0],
+      [0, -65],
+      [65, 65],
+      [-65, 65],
+      [65, -65],
+      [-65, -65],
+    ];
+    let choice = null;
+    for (const [dx, dy] of offsets) {
+      const target = { x: destination.x + dx, y: destination.y + dy };
+      if (
+        target.x < 0 ||
+        target.y < 0 ||
+        target.x > size ||
+        target.y > size ||
+        game.blocked(target.x, target.y)
+      )
+        continue;
+      if (game.route(game.hero, target).length) {
+        choice = target;
+        break;
+      }
+    }
+    if (!choice) {
+      status('No walkable path. Move closer and try again.');
+      return;
+    }
+    closeMenu();
+    if (PrototypeInput.requestMove(game, choice)) {
+      storyRouteActive = true;
+      status('Following path to ' + label + '.');
+    } else status('Route unavailable. Try again nearby.');
+  }
+
   // prettier-ignore
   function showMap(back = closeMenu) {
     const zone = game.zone();
@@ -1056,9 +1106,10 @@
             return;
           }
           closeMenu();
-          if (PrototypeInput.requestMove(game, latest.point))
+          if (PrototypeInput.requestMove(game, latest.point)) {
+            storyRouteActive = true;
             status('Walking to ' + selected.name + '.');
-          else status('Route blocked. Choose another destination.');
+          } else status('Route blocked. Choose another destination.');
         },
         '',
         true,

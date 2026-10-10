@@ -11,6 +11,8 @@
     recallSquad,
     showMap,
     finaleMenu,
+    storyNavigate = () => {},
+    chooseNewRun = () => {},
     status = () => {},
   }) {
     function expeditionSupportActions(n, refresh) {
@@ -1382,7 +1384,133 @@
         back,
       );
     }
+
+    // The global journal is the primary campaign guide. Side quests remain
+    // available from local quest boards without changing their saved progress.
+    function storyJournal(back = closeMenu) {
+      const game = getGame(),
+        zone = game.zone(),
+        room = game.supplyRoom() || game.sideDungeon(),
+        inside = D.bosses.find((boss) => boss.id === game.zoneId),
+        regionId = inside?.region || room?.region || game.definition().id,
+        index = D.regions.findIndex((region) => region.id === regionId),
+        region = D.regions[index],
+        here = game.zoneId,
+        findNpc = (matches) => zone.npcs.find(matches),
+        liveBoss = (id) =>
+          zone.enemies.find((enemy) => enemy.type === 'boss' && enemy.family === id && enemy.hp > 0),
+        guideAction = (label, destination) =>
+          action(
+            'Navigate · ' + label,
+            () => storyNavigate(destination, label),
+            '',
+            !destination,
+          ),
+        present = (summary, options) => openMenu('Story journal', summary, options, back),
+        exit = findNpc((n) => n.kind === 'exit');
+      const leaveInterior = () => {
+        if (!exit) return false;
+        present('Return to ' + (region?.name || 'the region'), [
+          guideAction('Dungeon exit', exit),
+        ]);
+        return true;
+      };
+
+      if (game.peace) {
+        present('Campaign complete · Nightmare unlocked', [
+          action('New Normal adventure', () => chooseNewRun('normal')),
+          action('New Nightmare adventure', () => chooseNewRun('nightmare')),
+        ]);
+        return;
+      }
+
+      if (game.s.phase === 'awakening') {
+        const remaining = Campaign.dungeonIds.filter((id) => !game.s.true[id]),
+          defeated = Campaign.dungeonIds.length - remaining.length;
+        if (!remaining.length) {
+          present('Awakening complete', []);
+          return;
+        }
+        const id =
+          remaining.find((candidate) => candidate === here) ||
+          remaining.find((candidate) => game.boss(candidate).region === regionId) ||
+          remaining[0],
+          boss = game.boss(id);
+        if (inside && inside.id !== id && leaveInterior()) return;
+        if (room && leaveInterior()) return;
+        if (boss.region !== regionId) {
+          const targetIndex = D.regions.findIndex((r) => r.id === boss.region),
+            transport =
+              findNpc((n) => n.kind === 'transport' && n.hub) ||
+              findNpc(
+                (n) =>
+                  n.kind === 'transport' &&
+                  n.direction === Math.sign(targetIndex - index),
+              );
+          present('Awakening · ' + defeated + '/5 defeated · ' + boss.place, [
+            guideAction(transport?.name || 'Regional transport', transport),
+          ]);
+          return;
+        }
+        const destination =
+          here === id
+            ? liveBoss(id) || findNpc((n) => n.kind === 'cage' && n.family === id)
+            : findNpc((n) => n.kind === 'dungeon' && n.family === id);
+        present('Awakening · ' + defeated + '/5 defeated · ' + boss.name, [
+          guideAction(here === id ? boss.name : boss.place, destination),
+        ]);
+        return;
+      }
+
+      const pending = D.bosses.filter(
+        (boss) => boss.region === regionId && boss.captive && !game.s.rescued[boss.id],
+      );
+      if (pending.length) {
+        if (room && leaveInterior()) return;
+        if (inside && !pending.some((boss) => boss.id === here) && leaveInterior()) return;
+        const ordered = [
+          ...pending.filter((boss) => boss.id === here),
+          ...pending.filter((boss) => boss.id !== here),
+        ];
+        present(
+          (region?.name || 'Region') + ' · ' + (2 - pending.length) + '/2 rescued',
+          ordered.map((boss) => {
+            const destination =
+              here === boss.id
+                ? liveBoss(boss.id) ||
+                  findNpc((n) => n.kind === 'cage' && n.family === boss.id)
+                : boss.kind === 'dungeon'
+                  ? findNpc((n) => n.kind === 'dungeon' && n.family === boss.id)
+                  : liveBoss(boss.id) ||
+                    findNpc((n) => n.kind === 'cage' && n.family === boss.id);
+            return guideAction(boss.captive.split(' the ')[0] + ' · ' + boss.place, destination);
+          }),
+        );
+        return;
+      }
+      if (inside && leaveInterior()) return;
+      if (room && leaveInterior()) return;
+
+      if (index >= 0 && index < D.regions.length - 1) {
+        const next = D.regions[index + 1],
+          transport = findNpc((n) => n.kind === 'transport' && n.direction === 1);
+        present('Specialists rescued · Next: ' + next.name, [
+          guideAction(transport?.name || 'Transport to ' + next.name, transport),
+        ]);
+        return;
+      }
+
+      const darklord =
+        liveBoss('darklord') ||
+        findNpc((n) => n.id === 'fortress-gate') ||
+        (D.fields?.[4] ? { x: D.fields[4][0], y: D.fields[4][1] } : null);
+      present('Specialists rescued · Defeat the TRUE Dark Lord', [
+        guideAction('Dark Lord', darklord),
+      ]);
+    }
+
     function quests(atBoard, back = closeMenu) {
+      if (!atBoard) return storyJournal(back);
       const local = atBoard
         ? getGame()
             .questDefs()

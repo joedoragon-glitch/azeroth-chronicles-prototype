@@ -65,6 +65,7 @@
     platform,
     chargePresentation,
     isPaused,
+    getGuideRoute = () => null,
     Campaign,
     PrototypeVisuals,
     PrototypeCombatVisuals,
@@ -1111,6 +1112,26 @@
       }
     }
 
+
+    function drawNavigationRoute() {
+      const route = getGuideRoute();
+      if (!route?.length) return;
+      ctx.save();
+      ctx.strokeStyle = '#98e2c9';
+      ctx.lineWidth = 2;
+      ctx.globalAlpha = 0.75;
+      ctx.setLineDash([5, 7]);
+      ctx.beginPath();
+      const start = screen(game.hero);
+      ctx.moveTo(start.x, start.y);
+      for (const point of route.slice(0, 80)) {
+        const next = screen(point);
+        ctx.lineTo(next.x, next.y);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
     // A few ink-like brackets, not ground circles. Charge hints appear only
     // while the player is holding an aimed skill; simulation owns the ranges.
     function targetGuidance() {
@@ -1548,6 +1569,7 @@
       drawVisualFx();
       PrototypeCombatVisuals.ground(ctx, screen, game, 'cue', game.s.time);
       targetGuidance();
+      drawNavigationRoute();
       if (isPaused()) {
         ctx.fillStyle = '#0006';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
