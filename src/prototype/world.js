@@ -152,27 +152,24 @@
               x: habitat.center[0],
               y: habitat.center[1],
             })),
-            ...(z.id === 'frontier' ? R.frontierDistricts || [] : [])
-              .map((district) => ({
-                id: district.id,
-                name: district.id,
-                x: district.center[0],
-                y: district.center[1],
-              })),
-            ...(z.id === 'crown' ? R.crownDistricts || [] : [])
-              .map((district) => ({
-                id: district.id,
-                name: district.id,
-                x: district.center[0],
-                y: district.center[1],
-              })),
-            ...(z.id === 'highlands' ? R.ironrootLife || [] : [])
-              .map((district) => ({
-                id: district.id,
-                name: district.id,
-                x: district.props.reduce((total, p) => total + p[0], 0) / district.props.length,
-                y: district.props.reduce((total, p) => total + p[1], 0) / district.props.length,
-              })),
+            ...(z.id === 'frontier' ? R.frontierDistricts || [] : []).map((district) => ({
+              id: district.id,
+              name: district.id,
+              x: district.center[0],
+              y: district.center[1],
+            })),
+            ...(z.id === 'crown' ? R.crownDistricts || [] : []).map((district) => ({
+              id: district.id,
+              name: district.id,
+              x: district.center[0],
+              y: district.center[1],
+            })),
+            ...(z.id === 'highlands' ? R.ironrootLife || [] : []).map((district) => ({
+              id: district.id,
+              name: district.id,
+              x: district.props.reduce((total, p) => total + p[0], 0) / district.props.length,
+              y: district.props.reduce((total, p) => total + p[1], 0) / district.props.length,
+            })),
           ],
           props = z.props,
           blockers = z.props
@@ -221,8 +218,7 @@
               if (this.distanceToRoad(z, center) <= 230) continue;
               const junctions = z.roads.flatMap((path) => path);
               const nearest = junctions.reduce(
-                (best, point) =>
-                  !best || dist(point, center) < dist(best, center) ? point : best,
+                (best, point) => (!best || dist(point, center) < dist(best, center) ? point : best),
                 origin,
               );
               const angle = Math.atan2(nearest.y - center.y, nearest.x - center.x);
@@ -233,13 +229,10 @@
                     x: center.x + Math.cos(angle + offset) * radius,
                     y: center.y + Math.sin(angle + offset) * radius,
                   };
-                  if (!this.blocked(candidate.x, candidate.y, z.id, 34))
-                    candidates.push(candidate);
+                  if (!this.blocked(candidate.x, candidate.y, z.id, 34)) candidates.push(candidate);
                 }
               }
-              candidates.sort(
-                (a, b) => dist(a, nearest) - dist(b, nearest),
-              );
+              candidates.sort((a, b) => dist(a, nearest) - dist(b, nearest));
               for (const candidate of candidates) {
                 if (this.distanceToRoad(z, candidate) < 25) break;
                 const path = this.route(nearest, candidate, { road: true });
@@ -369,8 +362,7 @@
           // Saved/player-built barracks are large buildings too. Relocate
           // a historical barracks before placing town services so neither
           // building encroaches on the newly planned right-of-way.
-          for (const building of z.buildings)
-            moveOffRoad(building, 175);
+          for (const building of z.buildings) moveOffRoad(building, 175);
           for (const [id, setback] of frontages) {
             const npc = z.npcs.find((n) => n.id === id);
             if (!npc) continue;
