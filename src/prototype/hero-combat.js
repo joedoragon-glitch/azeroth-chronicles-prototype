@@ -490,10 +490,7 @@
           }
           if (slot === 8) {
             this.hero.hp = Math.min(this.hero.maxHp, this.hero.hp + this.hero.maxHp * 0.35 * scale);
-            this.hero.immune = Math.min(
-              4,
-              Math.max(this.hero.immune || 0, 3 + 0.15 * (rank - 1)),
-            );
+            this.hero.immune = Math.min(4, Math.max(this.hero.immune || 0, 3 + 0.15 * (rank - 1)));
           }
           this.event('spell', {
             actor: 'hero',
