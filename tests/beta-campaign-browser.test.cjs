@@ -54,8 +54,51 @@ const server = http.createServer((req, res) => {
         const phone = viewport.width !== 1280;
         const context = await browser.newContext({ viewport, hasTouch: phone, isMobile: phone });
         const page = await context.newPage(),
-          errors = [];
-        page.on('pageerror', (e) => errors.push(e.message));
+          errors = [],
+          diagnostics = [];
+        let phase = 'fresh';
+        page.on('pageerror', (e) => {
+          errors.push(e.message);
+          diagnostics.push({ at: Date.now(), phase, event: 'pageerror', message: e.message });
+        });
+        page.on('requestfailed', (request) =>
+          diagnostics.push({
+            at: Date.now(),
+            phase,
+            event: 'requestfailed',
+            url: request.url(),
+            failure: request.failure(),
+          }),
+        );
+        const finishAssetWork = async (waitForAudioPause = false) => {
+          // After keyboard pause, the existing frame owner observes it on its
+          // next frame. Menus alone intentionally leave audio running.
+          if (waitForAudioPause)
+            await page.waitForFunction(
+              () => window.Prototype?.paused && window.Prototype.audio.status().paused,
+            );
+          await page.waitForLoadState('networkidle');
+          const observed = await page.evaluate(() => Prototype.audio.recordingStatus().assets);
+          diagnostics.push({ at: Date.now(), phase, event: 'networkidle', assets: observed });
+          if (observed?.pending)
+            console.log(
+              `WAIT ${engine} ${cls} ${viewport.width} ${phase}: ${observed.pending} queued/active audio loads after networkidle`,
+            );
+          // The loader serializes queued fetches behind decoding. Network idle
+          // alone can precede its next fetch; paused playback does not empty it.
+          await page.waitForFunction(() => {
+            const assets = window.Prototype?.audio?.recordingStatus().assets;
+            return !assets || assets.pending === 0;
+          });
+          await page.waitForLoadState('networkidle');
+          diagnostics.push({
+            at: Date.now(),
+            phase,
+            event: 'quiescent',
+            assets: await page.evaluate(() => Prototype.audio.recordingStatus().assets),
+            audioPaused: await page.evaluate(() => Prototype.audio.status().paused),
+          });
+        };
         const url =
           'http://127.0.0.1:' + server.address().port + '/' + (phone ? 'phone.html' : 'index.html');
         try {
@@ -90,7 +133,9 @@ const server = http.createServer((req, res) => {
               before = JSON.parse(buffer);
             // Let real audio/asset fetches finish before replacing the campaign.
             // WebKit can surface a canceled streaming body as a page error on unload.
-            await page.waitForLoadState('networkidle');
+            phase = 'before-import-' + mode;
+            await finishAssetWork();
+            phase = 'import-' + mode;
             await page
               .locator('#import-file')
               .setInputFiles({ name: 'historical-v4.json', mimeType: 'application/json', buffer });
@@ -125,13 +170,21 @@ const server = http.createServer((req, res) => {
             assert(imported.fallen >= 1);
             // The shell exposes save through its actual persistence adapter.
             assert(await page.evaluate(() => Prototype.save()));
-            await page.waitForLoadState('networkidle');
+            phase = 'before-reload-' + mode;
+            await finishAssetWork(true);
+            phase = 'reload-' + mode;
             await page.reload();
             await page.waitForFunction(() => window.Prototype);
             if (!(await page.evaluate(() => Prototype.paused))) await page.keyboard.press('p');
+            phase = 'after-reload-' + mode;
+            await finishAssetWork(true);
             assert.deepEqual(await read(), imported);
             assert.deepEqual(errors, []);
           }
+          fs.writeFileSync(
+            path.join(results, 'trace-' + cls + '-' + viewport.width + '.json'),
+            JSON.stringify({ engine, cls, viewport, errors, diagnostics }, null, 2) + '\n',
+          );
           console.log(
             'PASS ' +
               engine +
@@ -144,6 +197,24 @@ const server = http.createServer((req, res) => {
               ' real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh',
           );
         } catch (e) {
+          fs.writeFileSync(
+            path.join(results, 'failure-' + cls + '-' + viewport.width + '.json'),
+            JSON.stringify(
+              {
+                engine,
+                cls,
+                viewport,
+                phase,
+                errors,
+                diagnostics,
+                assets: await page
+                  .evaluate(() => window.Prototype?.audio?.recordingStatus().assets)
+                  .catch(() => null),
+              },
+              null,
+              2,
+            ) + '\n',
+          );
           await page
             .screenshot({
               path: path.join(results, 'failure-' + cls + '-' + viewport.width + '.png'),

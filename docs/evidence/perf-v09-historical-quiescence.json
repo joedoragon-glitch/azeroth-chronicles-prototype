@@ -1,0 +1,1609 @@
+{
+  "baseline": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+  "candidateRuntime": "05608b1d6f8fe63b7d543be8d261a72106fe4dcf",
+  "scope": "Existing historical UI assertions preserved; existing audio-owner pause acknowledged before/after reload, serial audio-queue quiescence sampled before import and before/after reload. Software WebKit26.5, six historical-engine Normal/Nightmare saves across all classes and three viewports, baseline and candidate. No production implementation changes. Null means no instantiated asset loader. Local passes do not certify real streaming/decode; final CI remains that gate.",
+  "rows": [
+    {
+      "source": "baseline",
+      "class": "mage",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "errors": [],
+      "transitions": [
+        {
+          "phase": "before-import-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": false
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        }
+      ]
+    },
+    {
+      "source": "baseline",
+      "class": "mage",
+      "viewport": {
+        "width": 375,
+        "height": 800
+      },
+      "errors": [],
+      "transitions": [
+        {
+          "phase": "before-import-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": false
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        }
+      ]
+    },
+    {
+      "source": "baseline",
+      "class": "mage",
+      "viewport": {
+        "width": 800,
+        "height": 375
+      },
+      "errors": [],
+      "transitions": [
+        {
+          "phase": "before-import-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": false
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        }
+      ]
+    },
+    {
+      "source": "baseline",
+      "class": "paladin",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "errors": [],
+      "transitions": [
+        {
+          "phase": "before-import-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": false
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        }
+      ]
+    },
+    {
+      "source": "baseline",
+      "class": "paladin",
+      "viewport": {
+        "width": 375,
+        "height": 800
+      },
+      "errors": [],
+      "transitions": [
+        {
+          "phase": "before-import-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": false
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        }
+      ]
+    },
+    {
+      "source": "baseline",
+      "class": "paladin",
+      "viewport": {
+        "width": 800,
+        "height": 375
+      },
+      "errors": [],
+      "transitions": [
+        {
+          "phase": "before-import-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": false
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        }
+      ]
+    },
+    {
+      "source": "baseline",
+      "class": "ranger",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "errors": [],
+      "transitions": [
+        {
+          "phase": "before-import-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": false
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        }
+      ]
+    },
+    {
+      "source": "baseline",
+      "class": "ranger",
+      "viewport": {
+        "width": 375,
+        "height": 800
+      },
+      "errors": [],
+      "transitions": [
+        {
+          "phase": "before-import-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": false
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        }
+      ]
+    },
+    {
+      "source": "baseline",
+      "class": "ranger",
+      "viewport": {
+        "width": 800,
+        "height": 375
+      },
+      "errors": [],
+      "transitions": [
+        {
+          "phase": "before-import-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": false
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        }
+      ]
+    },
+    {
+      "source": "candidate",
+      "class": "mage",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "errors": [],
+      "transitions": [
+        {
+          "phase": "before-import-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": false
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        }
+      ]
+    },
+    {
+      "source": "candidate",
+      "class": "mage",
+      "viewport": {
+        "width": 375,
+        "height": 800
+      },
+      "errors": [],
+      "transitions": [
+        {
+          "phase": "before-import-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": false
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        }
+      ]
+    },
+    {
+      "source": "candidate",
+      "class": "mage",
+      "viewport": {
+        "width": 800,
+        "height": 375
+      },
+      "errors": [],
+      "transitions": [
+        {
+          "phase": "before-import-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": false
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        }
+      ]
+    },
+    {
+      "source": "candidate",
+      "class": "paladin",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "errors": [],
+      "transitions": [
+        {
+          "phase": "before-import-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": false
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        }
+      ]
+    },
+    {
+      "source": "candidate",
+      "class": "paladin",
+      "viewport": {
+        "width": 375,
+        "height": 800
+      },
+      "errors": [],
+      "transitions": [
+        {
+          "phase": "before-import-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": false
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        }
+      ]
+    },
+    {
+      "source": "candidate",
+      "class": "paladin",
+      "viewport": {
+        "width": 800,
+        "height": 375
+      },
+      "errors": [],
+      "transitions": [
+        {
+          "phase": "before-import-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": false
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        }
+      ]
+    },
+    {
+      "source": "candidate",
+      "class": "ranger",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "errors": [],
+      "transitions": [
+        {
+          "phase": "before-import-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": false
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        }
+      ]
+    },
+    {
+      "source": "candidate",
+      "class": "ranger",
+      "viewport": {
+        "width": 375,
+        "height": 800
+      },
+      "errors": [],
+      "transitions": [
+        {
+          "phase": "before-import-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": false
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        }
+      ]
+    },
+    {
+      "source": "candidate",
+      "class": "ranger",
+      "viewport": {
+        "width": 800,
+        "height": 375
+      },
+      "errors": [],
+      "transitions": [
+        {
+          "phase": "before-import-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": false
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-normal",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-import-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "before-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "networkidle",
+          "pending": null,
+          "lastError": null
+        },
+        {
+          "phase": "after-reload-nightmare",
+          "event": "quiescent",
+          "pending": null,
+          "lastError": null,
+          "audioPaused": true
+        }
+      ]
+    }
+  ]
+}
