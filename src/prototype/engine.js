@@ -4292,7 +4292,7 @@
         side = this.sideDungeon(),
         dungeon = dungeonIds.includes(this.s.zone),
         tune = side
-          ? R.sideDungeonTrapTuning
+          ? R.sideDungeonTrapTuning[side.region]
           : dungeon
             ? R.dungeonTrapTuning[this.s.zone]
             : R.outdoorMiniTrapTuning[this.s.zone],
@@ -4349,6 +4349,22 @@
           ) < (t.halfWidth || 28)
         : dist(u, t) < t.radius;
     }
+    // A jet's blast pushes perpendicular to its fiery lane, never through
+    // solid terrain or into the authored footprint of another installation.
+    // This is immediate collision-aware movement, not a saved Stun/Root state.
+    trapJetPush(unit, trap) {
+      const safety = (trap.halfWidth || 28) + 24,
+        direction = unit.y < trap.y ? -1 : 1,
+        landing = { x: unit.x, y: trap.y + direction * safety };
+      if (
+        !this.clearSegment(unit, landing) ||
+        this.traps().some((other) =>
+          other.index !== trap.index && this.trapContains(other, landing),
+        )
+      )
+        return false;
+      return this.move(unit, landing, 260, 0.35);
+    }
     updateTraps(dt) {
       const hero = this.hero,
         zone = this.zoneId;
@@ -4359,8 +4375,7 @@
             const key = this.s.zone + ':layout' + (this.zone().dungeonVersion || 2) + ':' + t.index;
             if (u.trapHits[key] !== t.cycle && this.trapContains(t, u)) {
               u.trapHits[key] = t.cycle;
-              if (this.hitParty(u, u.maxHp * t.damageFraction) && t.kind === 'seal')
-                this.applySlow(u, t.slowSeconds);
+              const landed = this.hitParty(u, u.maxHp * t.damageFraction);
               if (
                 this.hero !== hero ||
                 this.zoneId !== zone ||
@@ -4368,6 +4383,10 @@
                 this.s.challenge.gameOver
               )
                 return;
+              if (!landed || u.hp <= 0) continue;
+              if (t.kind === 'seal') this.applySlow(u, t.slowSeconds);
+              else if (t.kind === 'spikes') this.applySlow(u, t.slowSeconds * 0.35);
+              else if (t.kind === 'jet') this.trapJetPush(u, t);
             }
           }
     }
