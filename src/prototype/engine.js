@@ -1297,10 +1297,36 @@
       if (this.isDungeon()) return false;
       const builder = this.availableLabor()[0],
         cost = this.barracksBuildCost();
-      if (!builder || !this.spend(cost)) return false;
+      if (!builder) return false;
+      const zone = this.zone(),
+        origin = { x: this.hero.x + 130, y: this.hero.y },
+        candidates = [origin];
+      for (const radius of [85, 145, 205, 275, 355, 440])
+        for (let j = 0; j < 24; j++) {
+          const angle = (j * Math.PI) / 12;
+          candidates.push({
+            x: origin.x + Math.cos(angle) * radius,
+            y: origin.y + Math.sin(angle) * radius,
+          });
+        }
+      const p = candidates.find(
+        (point) =>
+          !this.blocked(point.x, point.y, this.zoneId, 50) &&
+          this.distanceToRoad(zone, point) >= 175 &&
+          zone.npcs.every((n) => Math.hypot(n.x - point.x, n.y - point.y) > 105) &&
+          zone.buildings.every((b) => Math.hypot(b.x - point.x, b.y - point.y) > 170) &&
+          zone.props.every(
+            (item) =>
+              Math.hypot(item.x - point.x, item.y - point.y) > (item.r || 0) + 60,
+          ),
+      );
+      if (!p) {
+        this.say('No clear plot for barracks nearby. Move away from the road and try again.');
+        return false;
+      }
+      if (!this.spend(cost)) return false;
       this.s.recallActive = false;
-      const p = this.safe(this.hero.x + 130, this.hero.y),
-        b = {
+      const b = {
           id: 'barracks-' + this.s.nextId++,
           ...p,
           progress: 0,
