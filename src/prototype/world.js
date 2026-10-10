@@ -1317,8 +1317,7 @@
                     Math.max(8, r),
                   );
                   if (!usable(q)) continue;
-                  if (z.props.some((other) => dist(other, q) < (other.r || 0) + r + 27))
-                    continue;
+                  if (z.props.some((other) => dist(other, q) < (other.r || 0) + r + 27)) continue;
                   p = q;
                   break;
                 }
@@ -1347,7 +1346,9 @@
           }
           // Retain the visually distinctive compound scenes and at least one
           // prop in each district/route; suppress only redundant loose dressing.
-          const districtProps = z.props.filter((p) => String(p.id || '').startsWith('crown-layout-'));
+          const districtProps = z.props.filter((p) =>
+            String(p.id || '').startsWith('crown-layout-'),
+          );
           if (districtProps.length > 27) {
             const composed = new Set([
               'crown-levy-yard',
@@ -1357,7 +1358,8 @@
               'crown-fortress-checkpoint',
             ]);
             const kept = new Set(districtProps);
-            const redundant = /^(?:bunk|sleep-roll|war-table|weapon-rack|supply-stack|black-rock|roost|ember-pit)$/;
+            const redundant =
+              /^(?:bunk|sleep-roll|war-table|weapon-rack|supply-stack|black-rock|roost|ember-pit)$/;
             for (const p of [...districtProps].reverse()) {
               if (kept.size <= 27) break;
               if (composed.has(p.structure) || !redundant.test(p.structure)) continue;
