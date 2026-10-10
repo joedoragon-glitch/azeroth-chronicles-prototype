@@ -110,23 +110,8 @@
           key = z.id + ':v' + roadVersion;
         this.s.zone = z.id;
         const harbor = R.harbors?.[z.id],
-          finalGate = i === 4 ? R.sites[i].find((s) => s[0] === 'fortress-gate') : null,
           frontierRoutes = z.id === 'frontier' ? (R.frontierRoutes || []).map((r) => r.point) : [],
-          frontierSites =
-            z.id === 'frontier'
-              ? ['convoy', 'shrine', 'orc-bivouac']
-                  .map((id) => R.sites[i].find((s) => s[0] === id))
-                  .filter(Boolean)
-                  .map((s) => [s[2], s[3]])
-              : [],
           crownRoutes = z.id === 'crown' ? (R.crownRoutes || []).map((r) => r.point) : [],
-          crownSites =
-            z.id === 'crown'
-              ? ['crown-barracks', 'siege']
-                  .map((id) => R.sites[i].find((s) => s[0] === id))
-                  .filter(Boolean)
-                  .map((s) => [s[2], s[3]])
-              : [],
           destinations = [
             D.minors[i],
             [field.x, field.y],
@@ -134,18 +119,22 @@
             ...(R.travelArrivalStands?.[z.id]
               ? [[R.travelArrivalStands[z.id].x, R.travelArrivalStands[z.id].y]]
               : []),
-            D.entrances[i],
-            ...(finalGate ? [[finalGate[2], finalGate[3]]] : []),
+            // Roads finish at an approach to a major entrance or stronghold,
+            // never underneath its artwork or defensive walls.
             ...(harbor ? [[harbor.arrival.x, harbor.arrival.y]] : []),
             ...frontierRoutes,
-            ...frontierSites,
             ...crownRoutes,
-            ...crownSites,
           ],
           // Road approaches serve authored destinations without paving
           // straight through a monster compound, house, shrine, or fort.
           // All of these coordinates already exist in the game world.
           inhabitedSites = [
+            {
+              id: 'main-dungeon-entrance',
+              name: 'Main dungeon entrance',
+              x: D.entrances[i][0],
+              y: D.entrances[i][1],
+            },
             ...R.sites[i]
               .filter(([id]) => !/^(?:bridge-|crossing-)/.test(id))
               .map(([id, name, x, y]) => ({ id, name, x, y })),
