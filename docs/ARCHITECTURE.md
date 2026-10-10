@@ -55,7 +55,7 @@ Performance samples retain at most 180 active frames and stay local. Exported re
 
 The campaign core is precached. Independent legacy games are cached only after they are opened online. Registered sprite assets join the current cache. New cache activation removes only obsolete Azeroth caches. Save keys are independent of cache versions.
 
-CI checks generated artifacts before testing. PRs run all non-browser suites and desktop/phone browser paths. Main runs all suites and the full device matrix, publishes only after success, and checks that the live build identifier matches the tested commit before live smoke verification.
+CI checks generated artifacts before testing. Code PRs run all non-browser suites and desktop/phone browser paths; allowlisted prose-only PRs use lightweight checks. Main requires successful full validation of the identical Git tree: it can reuse the same repository's full PR certificate or run all suites and the full device matrix itself. It always checks and rebuilds the package, publishes only after success, and checks that the live build identifier matches the merged commit before live smoke verification. Manual runs retain full validation. See README for the conservative reuse and fallback rules.
 
 ## Remaining coupling
 

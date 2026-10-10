@@ -19,6 +19,14 @@ runs:
     - name: Full regression suite
       shell: bash
       run: npm test
+    - name: Verify performance equivalence when present
+      if: hashFiles('tests/perf-v09-protected.test.cjs') != ''
+      shell: bash
+      run: |
+        git fetch --depth=1 origin c6ce1af236bddd7ca881903499c4cf5de175f9e2
+        mkdir -p "$RUNNER_TEMP/perf-v09-baseline"
+        git archive c6ce1af236bddd7ca881903499c4cf5de175f9e2 | tar -x -C "$RUNNER_TEMP/perf-v09-baseline"
+        node --expose-gc scripts/perf-v09-equivalence.cjs "$RUNNER_TEMP/perf-v09-baseline"
     - name: Reproduce cooldown balance evidence summary
       shell: bash
       run: |
@@ -73,6 +81,16 @@ runs:
       run: |
         node tests/enemy-vfx-browser.test.cjs
         VFX_CAPTURE_TAG=ci VFX_CAPTURE_SMOKE=1 node scripts/enemy-vfx-capture.cjs
+    - name: Verify Chromium performance changes when present
+      if: hashFiles('tests/perf-v09-protected.test.cjs') != ''
+      shell: bash
+      env:
+        MATERIAL_BROWSER_ENGINE: chromium
+        PERF_WS2_BROWSER_ENGINE: chromium
+      run: |
+        node tests/perf-ws1-roads-browser.test.cjs
+        node tests/perf-ws2-occlusion-browser.test.cjs
+        PERF_WS2_BASELINE_ROOT="$RUNNER_TEMP/perf-v09-baseline" node scripts/perf-ws2-renderer-performance.cjs test-results/perf/combined-chromium.json
     - name: Verify development sprite showroom
       shell: bash
       run: node tests/sprite-showroom-browser.test.cjs

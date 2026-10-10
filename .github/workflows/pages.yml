@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+    branches: [main, perf/v09-integration-20261010]
   workflow_dispatch:
 
 permissions:
@@ -14,9 +14,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  release-plan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      reuse: ${{ steps.reuse.outputs.reuse || 'false' }}
+      run_id: ${{ steps.reuse.outputs.run_id }}
+    steps:
+      - uses: actions/checkout@v4
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      - uses: actions/setup-node@v4
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        with:
+          node-version: '22'
+      - name: Look for successful full validation of this exact tree
+        id: reuse
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node .github/scripts/reuse-validation.cjs
+      - name: Keep full validation for PRs and manual runs
+        if: github.event_name != 'push' || github.ref != 'refs/heads/main'
+        run: echo 'Full validation required unless the PR qualifies for prose-only checks.'
+
   pr-check:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    outputs:
+      full_validation: ${{ steps.full.outcome == 'success' && steps.scope.outputs.docs_only != 'true' }}
     steps:
       - uses: actions/checkout@v4
       - name: Determine check scope
@@ -28,6 +55,7 @@ jobs:
           node tests/architecture.test.cjs
           node tests/ci-scope.test.cjs
       - name: Run full game checks
+        id: full
         if: steps.scope.outputs.docs_only != 'true'
         uses: ./.github/actions/check-game
       - uses: actions/upload-artifact@v4
@@ -39,9 +67,17 @@ jobs:
           if-no-files-found: ignore
 
   phone-webkit:
+    needs: release-plan
     runs-on: ubuntu-latest
+    outputs:
+      full_validation: ${{ steps.full.outputs.validated }}
     steps:
       - uses: actions/checkout@v4
+      - name: Reuse successful full browser validation
+        if: needs.release-plan.outputs.reuse == 'true'
+        env:
+          VALIDATED_RUN: ${{ needs.release-plan.outputs.run_id }}
+        run: echo "Exact tree already passed full checks in run $VALIDATED_RUN."
       - name: Determine check scope
         id: scope
         run: node .github/scripts/check-scope.cjs
@@ -51,15 +87,15 @@ jobs:
           node tests/architecture.test.cjs
           node tests/ci-scope.test.cjs
       - uses: actions/setup-node@v4
-        if: steps.scope.outputs.docs_only != 'true'
+        if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         with:
           node-version: '22'
           cache: npm
       - name: Install locked development tools
-        if: steps.scope.outputs.docs_only != 'true'
+        if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         run: npm ci --ignore-scripts
       - name: Install WebKit and browser dependencies
-        if: steps.scope.outputs.docs_only != 'true'
+        if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         timeout-minutes: 5
         run: |
           # Avoid slow Azure mirror downloads on fresh hosted runners; packages and signatures stay identical.
@@ -70,10 +106,10 @@ jobs:
           done
           npx playwright install --with-deps webkit
       - name: Verify WebKit phone presentation and gestures
-        if: steps.scope.outputs.docs_only != 'true'
+        if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         run: node tests/phone-webkit-browser.test.cjs
       - name: Verify WebKit cooldown charge queues and save upgrade
-        if: steps.scope.outputs.docs_only != 'true'
+        if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         env:
           BROWSER_ENGINE: webkit
         run: |
@@ -86,58 +122,119 @@ jobs:
           BETA_PREVIOUS_ROOT="$RUNNER_TEMP/cooldown-v118" BETA_FIXTURE_DIR=test-results/beta-historical node scripts/beta-history-audit.cjs > test-results/beta-history-report.json
           BETA_FIXTURE_DIR=test-results/beta-historical node tests/beta-campaign-browser.test.cjs
       - name: Verify WebKit quest completion and Keeper Archive
-        if: steps.scope.outputs.docs_only != 'true'
+        if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         env:
           QUEST_BROWSER_ENGINE: webkit
         run: node tests/quest-archive-browser.test.cjs
       - name: Audit integrated rogue warnings and effects in WebKit
-        if: steps.scope.outputs.docs_only != 'true'
+        if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         env:
           ROGUE_BROWSER_ENGINE: webkit
         run: node tests/rogue-browser.test.cjs
       - name: Verify WebKit audio playback and lifecycle
-        if: steps.scope.outputs.docs_only != 'true'
+        if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         env:
           AUDIO_BROWSER_ENGINE: webkit
         run: |
           node tests/audio-browser.test.cjs
           node tests/audio-audition-browser.test.cjs
       - name: Verify WebKit enemy VFX catalog and pilot captures
-        if: steps.scope.outputs.docs_only != 'true'
+        if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         env:
           VFX_BROWSER_ENGINE: webkit
         run: |
           node tests/enemy-vfx-browser.test.cjs
           VFX_CAPTURE_TAG=webkit-ci VFX_CAPTURE_SMOKE=1 node scripts/enemy-vfx-capture.cjs
       - name: Verify WebKit original-master actor idles and combat
-        if: steps.scope.outputs.docs_only != 'true'
+        if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         run: |
           node scripts/sprite-production-browser-review.cjs local test-results/sprite-pilot-webkit webkit
           node scripts/sprite-nature-browser-review.cjs local test-results/sprite-nature-webkit webkit
       - name: Verify WebKit terrain material rendering
-        if: steps.scope.outputs.docs_only != 'true'
+        if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         env:
           MATERIAL_BROWSER_ENGINE: webkit
         run: |
           node tests/materials-browser.test.cjs
           node tests/ground-cache-browser.test.cjs
+      - name: Verify WebKit performance changes when present
+        if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true' && hashFiles('tests/perf-v09-protected.test.cjs') != ''
+        env:
+          MATERIAL_BROWSER_ENGINE: webkit
+          PERF_WS2_BROWSER_ENGINE: webkit
+        run: |
+          git fetch --depth=1 origin c6ce1af236bddd7ca881903499c4cf5de175f9e2
+          mkdir -p "$RUNNER_TEMP/perf-v09-baseline"
+          git archive c6ce1af236bddd7ca881903499c4cf5de175f9e2 | tar -x -C "$RUNNER_TEMP/perf-v09-baseline"
+          node tests/perf-ws1-roads-browser.test.cjs
+          node tests/perf-ws2-occlusion-browser.test.cjs
+          PERF_WS2_BASELINE_ROOT="$RUNNER_TEMP/perf-v09-baseline" node scripts/perf-ws2-renderer-performance.cjs test-results/perf/combined-webkit.json
+      - name: Record completed full WebKit validation
+        id: full
+        if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
+        run: echo 'validated=true' >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@v4
-        if: always() && steps.scope.outputs.docs_only != 'true'
+        if: always() && steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         with:
           name: webkit-phone-screenshots
           retention-days: 3
           path: test-results/
           if-no-files-found: ignore
 
-  main-test:
-    if: github.event_name != 'pull_request'
+  certify-pr:
+    if: github.event_name == 'pull_request' && needs.pr-check.outputs.full_validation == 'true' && needs.phone-webkit.outputs.full_validation == 'true'
+    needs: [pr-check, phone-webkit]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify clean checkout can produce the release package
+        run: node scripts/build.cjs --check --site
+      - name: Certify the exact fully tested tree
+        id: certificate
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const cp = require('node:child_process');
+          const git = (ref) => cp.execFileSync('git', ['rev-parse', ref], { encoding: 'utf8' }).trim();
+          const tree = git('HEAD^{tree}');
+          const certificate = { version: 1, tree, commit: git('HEAD'), run_id: Number(process.env.GITHUB_RUN_ID), full: true };
+          fs.writeFileSync(process.env.RUNNER_TEMP + '/certificate.json', JSON.stringify(certificate));
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, 'tree=' + tree + '\n');
+          NODE
+      - uses: actions/upload-artifact@v4
+        with:
+          name: validated-tree-${{ steps.certificate.outputs.tree }}
+          path: ${{ runner.temp }}/certificate.json
+          retention-days: 7
+          overwrite: true
+          if-no-files-found: error
+
+  main-test:
+    if: github.event_name != 'pull_request'
+    needs: release-plan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        if: needs.release-plan.outputs.reuse == 'true'
+        with:
+          node-version: '22'
+      - name: Reuse successful full regression validation
+        if: needs.release-plan.outputs.reuse == 'true'
+        env:
+          VALIDATED_RUN: ${{ needs.release-plan.outputs.run_id }}
+        run: echo "Exact tree already passed full checks in run $VALIDATED_RUN; rebuilding the release package."
       - name: Run full game checks
+        if: needs.release-plan.outputs.reuse != 'true'
         uses: ./.github/actions/check-game
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && needs.release-plan.outputs.reuse != 'true'
         with:
           name: app-screenshots
           retention-days: 3
