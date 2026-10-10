@@ -14,7 +14,7 @@ release gate rather than reopening content or balance.
 
 | Canonical concept | Representation and current behavior | Authors / entry points |
 | --- | --- | --- |
-| **Slow** (timed condition) | `unit.slow` is **remaining seconds**, not a speed multiplier. Hero and companions move at 65% while slowed; monsters at 50%. The longest remaining duration wins. It does not freeze movement, prevent skills or modify cooldowns. | Mage frost projectile/charged area/area spells; reedbeast/mireling spitter projectiles; Thornfang Root line, Mirejaw bog, Keeper Undertow, night Wraith/Stalker, captain attacks, rogue snares/binds/pivots, persistent patches and seal traps |
+| **Slow** (timed condition) | `unit.slow` is **remaining seconds**, not a speed multiplier. Hero and companions move at 65% while slowed; monsters' ordinary pursuit/retreat moves at 50%. Scripted charges, leaps and forced scatter use their own authored movement speeds. The longest remaining duration wins. Slow does not freeze movement, prevent skills or modify cooldowns. | Mage frost projectile/charged area/area spells; reedbeast/mireling spitter projectiles; Thornfang Root line, Mirejaw bog, Keeper Undertow, night Wraith/Stalker, captain attacks, rogue snares/binds/pivots, persistent patches and seal traps |
 | **Haste** (timed self-buff) | `hero.haste` speeds the hero's movement to 125% during direct input **and ordered following**. Skill 4 Ranger and Skill 6 Ranger grant it. It is not an attack-rate or cooldown buff. | `hero-combat.js`, `engine.js` |
 | **Damage immunity / guard** (timed defensive condition) | `unit.immune` blocks `hitParty` damage and **on-hit conditions**. Paladin/Mage Skill 4 and Skill 8 can grant hero immunity; a Soldier's automatic survival guard grants 2.5s. Reapplication does not shorten longer remaining protection. Immunity does not change collision or environmental impassability. | `hero-combat.js`, `party.js`, `combat.js` |
 | **Dust cover** (temporary direct-target exclusion) | `enemy.rogueDustCoverUntil` is an absolute encounter-clock deadline. Affected Goblins cannot be *directly selected or homed onto* until it expires, and existing direct orders/locks/projectiles are dropped. They **remain vulnerable to area attacks**. This is neither invisibility nor total invulnerability. | Blinding Dust tactical maneuvers; `tacticalDirectTargetable` / `tacticalDropDustTarget` in `combat.js` |
@@ -61,8 +61,9 @@ from 2.2 seconds (side rooms) to 3.5 seconds (late dungeons).
 
 At the start of the warned phase there is no damage or Slow. During the
 active phase, the shared `hitParty` path applies mitigation and immunity
-before a seal applies Slow. A hit-record key tied to zone/layout/index/cycle
-allows at most **one attempt per trap per unit per activation cycle**;
+before a seal applies Slow. Traps currently target the **hero and living active companions**—not monsters,
+passive scenery or escorts. A hit-record key tied to zone/layout/index/cycle
+allows at most **one attempt per trap per eligible unit per activation cycle**;
 the attempt is consumed even if the unit is immune. The next cycle
 re-arms the trap, independently for the hero and each living companion.
 Spikes and jets must never gain Slow simply because their tuning table
