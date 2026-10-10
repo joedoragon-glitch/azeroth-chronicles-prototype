@@ -99,7 +99,8 @@ for (const region of Campaign.data.regions) {
   });
   oldZone.buildings.push({
     id: 'historical-barracks-' + region.id,
-    kind: 'barracks', x: town.x, y: town.y, progress: 4, full: true,
+    kind: 'barracks', x: town.x, y: town.y, progress: 4, queue: 0,
+    queueType: null, full: true, upgradeProgress: 4, upgradePaid: true,
   });
   const originalGold = migrated.hero.gold;
   const restored = Campaign.restore(migrated);
