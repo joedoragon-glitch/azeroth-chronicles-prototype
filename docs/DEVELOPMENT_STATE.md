@@ -2,6 +2,8 @@
 
 This is the authoritative repository status snapshot for the v0.9 stabilization work. [Roadmap #192](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/192) is the cross-workstream navigation record; [#160](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160) owns asset-by-asset production. Earlier chronological notes are [archived intact](DEVELOPMENT_HISTORY_THROUGH_V08133.md).
 
+Snapshot captured **2026-10-10T03:51:00+00:00**. Later source/release changes are tracked in #192 and #160; re-check their exact heads and runs before new work.
+
 ## Baseline and release evidence
 
 Current source baseline: **v0.8.135**, main `170adbf708ac1ea3b26e57621d0089f182932270`, from merged nature adaptation [#208](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/208). It includes the released road and Abyss work. Exact-head PR run 38020278879 passed; main release [run 38021457158](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38021457158) is running at this snapshot. Publication still requires its exact-build, live browser and nature-asset gates. Asset-by-asset completion stays with #160.
@@ -26,6 +28,7 @@ This maintenance pass is documentation/backlog reconciliation. It does not certi
 | Work | Disposition at audit | Next step |
 | --- | --- | --- |
 | #208 nature original density | Completed source integration of 23 existing identities as v0.8.135, incorporating #204; production verification running | Require its exact deployment/live nature-asset gates before marking those assets deployed. The other eight active adaptations and missing catalog stay with #160. |
+| #210 combat conditions and secondary effects | Active v0.8.136 candidate, opened after the initial backlog inventory; based on v0.8.135 | Its own implementation workstream must verify the current head and release. Preserve `audit/v09-combat-conditions-20261009`; housekeeping does not merge its gameplay changes. |
 | #204 outdoor road infrastructure | Completed and independently verified published as v0.8.134 | Exact deployment/live checks passed. Automated coverage and screenshot review do not close all regional human acceptance. |
 | #203 earlier town-planning draft | Superseded by #204; closed without merging obsolete runtime | Original branch/head retained as recovery. |
 | #132 household/mine/flight art | Intentionally deferred integration, not obsolete | Preserve its five additional identities, untouched sources, revisions, reviews and branch. Recover a bounded asset batch against current main under #160. |

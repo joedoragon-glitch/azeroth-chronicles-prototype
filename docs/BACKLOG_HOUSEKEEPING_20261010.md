@@ -20,10 +20,25 @@ The initial inventory is pinned to v0.8.133. Subsequent verification independent
 | #203 | Superseded | #204 replaces narrow clearRoadside/roadsidePlot draft with complete street corridors, named destination/compound access and historical/future barracks checks. Closed without obsolete merge; successor independently verified published | `town-street-planning-audit-20261009` at `a9797b3f74d66d588cb7f6abf3ca5b4de9a081b5` |
 | #204 | Completed | Merged and independently verified published as v0.8.134 | Keep branch and recovery history |
 | #208 | Completed source integration | Merged separately as v0.8.135 at `170adbf708ac1ea3b26e57621d0089f182932270`; exact publication still running in 38021457158 | Keep production branch and journal/originals; deployed status belongs to #160 |
+| #210 | Active | New v0.8.136 combat-condition candidate on v0.8.135, opened after the initial inventory; require its own current-head release gates | Protect `audit/v09-combat-conditions-20261009`; no housekeeping gameplay merge |
 
 Execution: #145, #152 and #203 were re-read at their recorded heads, given successor/recovery comments and closed without merging. #132, #197 and #198 remain open with explicit deferred classifications; the original bodies and authorizations are preserved. #208 subsequently merged in its separate workstream; three deferred implementation PRs remain open. Documentation maintenance #209 is separate from that count.
 
-The seven earlier gameplay PRs #163/#167/#174/#175/#182/#77/#79 were already reconciled by #206 and remain completed/superseded as recorded in [the earlier audit](OLDER_GAMEPLAY_FIXES_AUDIT_20261009.md). No prior closure is presented as new work here.
+The earlier backlog is also accounted for below. Its old “17 open PRs” count is historical; current GitHub state includes subsequent releases, closures and new candidates. No prior closure is presented as new work here.
+
+| Earlier PR | Classification | Successor / preservation |
+| --- | --- | --- |
+| #77 | Completed integration, obsolete PR closed | #78 and #206 retain the Basic-to-Full Barracks fixtures |
+| #79 | Completed regression handoff, obsolete PR closed | #206 adapts the isolated deposit test, payout and carry reset |
+| #92, #97, #101 | Superseded and already closed | #102 fortress mechanics, #114 royal-flight canon and #207 route hardening; all original branches remain retained |
+| #163 | Superseded old mana audit; relevant repairs completed | #206 retains hit-accepted frost and dormant recovery HUD fixes; active cooldown-only rules remain authoritative |
+| #167 | Completed diagnostic handoff, obsolete trace closed | #183 cooldown-only mode and #206 reconciliation; never restore the old mana economy to satisfy this diagnostic |
+| #174, #182 | Superseded and already closed | #183 integrated cooldown/healing system and subsequent releases |
+| #175 | Superseded and already closed | #185 transient status/equipment feedback; #206 reconciliation |
+| #193 | Completed and published | Original-master actor/road pilots, v0.8.127; #145's original source history remains protected |
+| #195 | Completed and published | Original distant departure stands restored, v0.8.129; arrival locations remain distinct |
+
+Detailed seven-PR evidence is retained in [the earlier gameplay audit](OLDER_GAMEPLAY_FIXES_AUDIT_20261009.md). The three Abyss closure comments were independently re-read and still cite #102/#114; no competing fortress implementation is needed. Together with #132/#145/#152/#197/#198 above, these classifications cover the older backlog while the later road, sprite and combat candidates are recorded separately.
 
 ## Asset preservation check
 
