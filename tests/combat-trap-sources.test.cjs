@@ -75,8 +75,11 @@ for (const mode of ['normal', 'nightmare'])
     assert.equal(hero.slow, 0, kind + ' cannot debuff an immune hero');
     assert.equal(companion.slow, 0, kind + ' cannot debuff an immune companion');
 
-    trap.cycle = 3;
     hero.immune = companion.immune = 0;
+    game.updateTraps(0.1);
+    assert.deepEqual([hero.hp, companion.hp], immuneHp,
+      kind + ' an immune attempt still consumes this activation cycle');
+    trap.cycle = 3;
     hero.slow = companion.slow = 5;
     game.updateTraps(0.1);
     assert.equal(hero.slow, 5, kind + ' does not erase a longer hero Slow');
@@ -88,6 +91,17 @@ for (const mode of ['normal', 'nightmare'])
     companion.x += 250;
     game.updateTraps(0.1);
     assert.equal(hero.hp, last, kind + ' respects collision geometry');
+
+    if (kind === 'seal') {
+      companion.x = trap.x;
+      companion.y = trap.y;
+      companion.hp = 1;
+      companion.slow = 0;
+      trap.cycle = 5;
+      game.updateTraps(0.1);
+      assert.equal(companion.hp, 0, 'lethal seal damage still resolves');
+      assert.equal(companion.slow, 0, 'lethal seal cannot Slow a fallen companion');
+    }
   }
 
 // Authored trap types are mutually exclusive with the ongoing periodic
