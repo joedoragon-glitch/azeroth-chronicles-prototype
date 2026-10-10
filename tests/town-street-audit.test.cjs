@@ -85,6 +85,11 @@ for (const region of Campaign.data.regions) {
       region.id + ' ' + id + ' must stand beside a street, not in it');
     assert(distance(npc, settlementCenter) < 460,
       region.id + ' ' + id + ' must remain in its neighborhood');
+    if (id === 'rest' || id === 'minor') {
+      const size = region.size;
+      assert(Math.min(npc.x, npc.y, size - npc.x, size - npc.y) >= 115,
+        region.id + ' refuge artwork must fit within its world boundary');
+    }
   }
   const migrated = game.snapshot();
   const oldZone = migrated.zones[region.id];
