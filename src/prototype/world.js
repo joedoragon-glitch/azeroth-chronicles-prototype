@@ -130,8 +130,7 @@
               x = a.x + t * dx,
               y = a.y + t * dy,
               d = Math.hypot(p.x - x, p.y - y);
-            if (!nearest || d < nearest.distance)
-              nearest = { x, y, dx, dy, distance: d };
+            if (!nearest || d < nearest.distance) nearest = { x, y, dx, dy, distance: d };
           }
         return nearest;
       }
@@ -143,9 +142,7 @@
         const dx = source.x - nearest.x,
           dy = source.y - nearest.y,
           heading =
-            Math.hypot(dx, dy) > 1
-              ? Math.atan2(dy, dx)
-              : Math.atan2(nearest.dx, -nearest.dy),
+            Math.hypot(dx, dy) > 1 ? Math.atan2(dy, dx) : Math.atan2(nearest.dx, -nearest.dy),
           radius = Math.max(8, moving?.r || 0);
         const valid = (p) =>
           p.x > 55 + radius &&
@@ -158,8 +155,7 @@
             (q) =>
               q !== moving &&
               !q.roadTrace &&
-              dist(p, q) <
-                radius + Math.max(q.r || 0, q.structure ? 35 : 18) + 18,
+              dist(p, q) < radius + Math.max(q.r || 0, q.structure ? 35 : 18) + 18,
           ) &&
           !z.npcs.some(
             (q) => q !== moving && dist(p, q) < radius + (q.kind === 'rest' ? 68 : 36),
