@@ -50,6 +50,11 @@ source caused the state change.
 | Recovery, sanctuary and consumable services | Refuge/town regeneration, resting and healing services restore HP or clear effects through existing systems. Preparation Tonic modifies max HP temporarily; it is **not** a hostile debuff. Recovery does not resurrect a fallen companion except through explicit recovery services. | `engine.js` / `party.js` |
 | Terrain and scenery | Solid walls, rivers, ravines and other collision obstacles block movement/navigation; cosmetic flames, ash, terrain materials, sprite/aura effects and telegraphs do **not** cause damage or a status just because they look dangerous. Only an explicit resolver supplies damage/conditions. | `navigation.js` / `world.js` / `renderer.js` |
 
+The trap activation-frequency decision is audited separately in
+[`TRAP_ACTIVATION_CYCLE_V09_AUDIT.md`](TRAP_ACTIVATION_CYCLE_V09_AUDIT.md).
+The historical once-per-activation contact latch remains active for v0.9; no
+unreviewed periodic-damage redesign is part of this pull request.
+
 ### Trap lifecycle and source-specific acceptance criteria
 
 The trap catalog is **spikes, jet, seal**. Each active trap provides a
