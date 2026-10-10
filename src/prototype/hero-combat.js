@@ -472,7 +472,7 @@
           for (const e of this.zone()
             .enemies.filter((e) => e.hp > 0 && dist(e, this.hero) < (slot === 5 ? 350 : 500))
             .sort((a, b) => this.idOrder(a, b))) {
-            this.damage(
+            const landed = this.damage(
               e,
               (slot === 8
                 ? power * 4 + 60
@@ -482,7 +482,8 @@
               'hero',
               { area: true },
             );
-            if (this.hero.class === 'mage' && slot !== 8) e.slow = slot === 5 ? 5 : 6;
+            if (landed && this.hero.class === 'mage' && slot !== 8)
+              e.slow = slot === 5 ? 5 : 6;
           }
           if (slot === 8) {
             this.hero.hp = Math.min(this.hero.maxHp, this.hero.hp + this.hero.maxHp * 0.35 * scale);
