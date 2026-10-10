@@ -136,7 +136,7 @@
       }
       // A deterministic roadside plot search: step out perpendicular to the
       // nearest street, not randomly along it. Keep neighbors and terrain clear.
-      roadsidePlot(z, source, clearance, moving = null) {
+      roadsidePlot(z, source, clearance, moving = null, extraClear = null) {
         const nearest = this.nearestRoad(source, z);
         if (!nearest || !Number.isFinite(nearest.distance)) return { x: source.x, y: source.y };
         const dx = source.x - nearest.x,
@@ -161,7 +161,8 @@
             (q) => q !== moving && dist(p, q) < radius + (q.kind === 'rest' ? 68 : 36),
           ) &&
           !z.nodes.some((q) => q.amount > 0 && dist(p, q) < radius + 48) &&
-          !z.buildings.some((q) => q !== moving && dist(p, q) < radius + 75);
+          !z.buildings.some((q) => q !== moving && dist(p, q) < radius + 75) &&
+          (!extraClear || extraClear(p));
         const original = { x: source.x, y: source.y };
         if (valid(original)) return original;
         const directions = [0];
@@ -838,7 +839,7 @@
         }
       }
       regionalAesthetics(z) {
-        const version = originalDepartureRegion(z.id) ? 5 : 4;
+        const version = originalDepartureRegion(z.id) ? 6 : 5;
         if (dungeonIds.includes(z.id) || this.supplyRoom(z.id) || z.aestheticVersion === version)
           return;
         const i = this.regionIndex(z.id),
@@ -865,10 +866,15 @@
             !z.buildings.some((n) => dist(n, p) < 70) &&
             !z.props.some((q) => q.roadBlocker && dist(q, p) < q.r + 45);
           const add = (p, structure, prefix = 'nature') => {
-            if (!clear(p, prefix === 'town' ? 48 : 65)) return false;
+            const civic = prefix === 'town' || prefix === 'hamlet',
+              margin = civic ? this.roadFootprint({ structure }) : 65;
+            let plot = p;
+            if (civic && !clear(plot, margin))
+              plot = this.roadsidePlot(z, p, margin, null, (q) => clear(q, margin));
+            if (!plot || !clear(plot, margin)) return false;
             z.props.push({
               id: 'aesthetic-' + prefix + '-' + serial++,
-              ...p,
+              ...plot,
               r: 0,
               decorative: true,
               structure,
@@ -1062,7 +1068,7 @@
         }
       }
       frontierOccupationLayout(z) {
-        if (z.id !== 'frontier' || z.frontierLayoutVersion === 4) return;
+        if (z.id !== 'frontier' || z.frontierLayoutVersion === 5) return;
         const districts = R.frontierDistricts || [],
           routes = R.frontierRoutes || [],
           oldZone = this.s.zone;
@@ -1088,17 +1094,18 @@
           const place = (base, spec, prefix) => {
             const [dx, dy, structure] = spec,
               roadTrace = roadTraceStructures.has(structure),
-              p = clearPoint(base.x + dx, base.y + dy);
+              margin = this.roadFootprint({ structure });
+            let p = clearPoint(base.x + dx, base.y + dy);
             if (!p) return false;
-            // Furniture stays off travel lanes; flat ruts/patches are the only authored road-surface exception.
-            if (!roadTrace && roadNear(p, 48)) return false;
-            if (
-              !roadTrace &&
-              (z.npcs.some((n) => dist(n, p) < 45) ||
-                z.nodes.some((n) => n.amount > 0 && dist(n, p) < 48) ||
-                z.buildings.some((n) => dist(n, p) < 55))
-            )
-              return false;
+            const plotClear = (q) =>
+              !roadNear(q, margin) &&
+              !z.npcs.some((n) => dist(n, q) < 45) &&
+              !z.nodes.some((n) => n.amount > 0 && dist(n, q) < 48) &&
+              !z.buildings.some((n) => dist(n, q) < 55);
+            // Road damage belongs on paving; an occupied town's furnishings belong beside it.
+            if (!roadTrace && !plotClear(p))
+              p = this.roadsidePlot(z, p, margin, null, plotClear);
+            if (!p) return false;
             z.props.push({
               id: 'frontier-layout-' + prefix + '-' + serial++,
               ...p,
@@ -1118,7 +1125,7 @@
             const center = { x: route.point[0], y: route.point[1] };
             for (const spec of route.props || []) place(center, spec, 'route-' + route.id);
           }
-          z.frontierLayoutVersion = 4;
+          z.frontierLayoutVersion = 5;
         } finally {
           this.s.zone = oldZone;
         }
