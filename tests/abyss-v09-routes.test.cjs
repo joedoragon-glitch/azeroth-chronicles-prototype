@@ -31,23 +31,6 @@ for (const mode of ['normal', 'nightmare']) {
   ];
   assert(!c.blocked(start.x, start.y, 'abyss', 15), 'entrance must be safe');
 
-  if (mode === 'normal') {
-    const probes = [
-      [610, 1030], [640, 1030], [670, 1030], [700, 1030],
-      [610, 1060], [640, 1060], [670, 1060], [700, 1060],
-      [610, 1090], [640, 1090], [670, 1090], [700, 1090],
-      [730, 1090], [760, 1090], [790, 1090],
-      [650, 1130], [700, 1130], [750, 1130], [800, 1130],
-      [650, 1170], [700, 1170], [750, 1170], [800, 1170],
-      [620, 970], [680, 970], [740, 970], [800, 970],
-    ].map(([x, y]) => {
-      const p = { x, y };
-      const clear = !c.blocked(x, y, 'abyss', 15);
-      return { x, y, clear, reachable: clear && c.route(start, p).length > 0 };
-    });
-    console.log('ABYSS SERVICE SAFE-WING PROBES ' + JSON.stringify(probes));
-  }
-
   for (const [name, destination] of destinations) {
     assert(
       !c.blocked(destination.x, destination.y, 'abyss', 15),
