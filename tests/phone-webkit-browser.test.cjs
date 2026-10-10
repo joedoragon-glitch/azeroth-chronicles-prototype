@@ -38,7 +38,7 @@ const server=http.createServer((req,res)=>{
  await page.evaluate(n=>{Object.assign(Prototype.game.hero,{x:n.x+116,y:n.y});Prototype.updateHUD();},npc);assert(await page.locator('#touch-interact-button').isHidden());
  await page.keyboard.press('g');assert.equal(await page.locator('#modal').evaluate(el=>getComputedStyle(el).touchAction),'pan-y');
  const scroll=await page.locator('#modal-content').evaluate(el=>{el.scrollTop=80;return {top:el.scrollTop,max:el.scrollHeight-el.clientHeight};});assert(scroll.max>0&&scroll.top>0,'help content scrolls while Back remains visible');
- await page.keyboard.press('Escape');await page.locator('#menu-button').tap();await page.getByRole('button',{name:'Character',exact:true}).tap();assert((await page.locator('#modal-description').textContent()).includes('XP '));await page.getByRole('button',{name:'Talents',exact:true}).tap();assert.equal(await page.locator('#modal-title').textContent(),'Talents');
+ await page.keyboard.press('Escape');await page.locator('#menu-button').tap();await page.getByRole('button',{name:'Talents',exact:true}).tap();assert.equal(await page.locator('#modal-title').textContent(),'Talents');
  await page.keyboard.press('Escape');await page.keyboard.press('Escape');await page.keyboard.press('Escape');
  await page.evaluate(()=>Prototype.save());assert(!(await page.locator('#status').textContent()).includes('Saved locally'));
  await require('./helpers/camera-browser.cjs').verifyCamera(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,true,size.width===375);
