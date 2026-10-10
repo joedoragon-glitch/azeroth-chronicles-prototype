@@ -19,68 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - name: Install locked development tools
-        run: npm ci --ignore-scripts
-      - name: Check formatting
-        run: npm run format:check
-      - name: Check generated entries and all published JavaScript
-        run: npm run check
-      - name: Verify authored road access and combat lanes
-        run: |
-          node tests/dungeon-pressure.test.cjs
-          node tests/town-street-audit.test.cjs
-      - name: Full regression suite before merge
-        run: npm test
-      - name: Reproduce cooldown balance evidence summary
-        run: |
-          python3 scripts/summarize-cooldown-balance.py docs/evidence/COOLDOWN_BALANCE_20261009.json.gz "$RUNNER_TEMP/cooldown-summary.json"
-          cmp docs/evidence/COOLDOWN_BALANCE_20261009_SUMMARY.json "$RUNNER_TEMP/cooldown-summary.json"
-      - name: Use runner Chrome for browser smoke tests
-        run: |
-          npm install --no-save --package-lock=false playwright@1.62.1
-          CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
-          if [ -n "$CHROME" ]; then
-            echo "CHROMIUM_EXECUTABLE=$CHROME" >> "$GITHUB_ENV"
-          else
-            npx playwright install chromium
-          fi
-      - name: Test desktop and full phone matrix before merge
-        run: node tests/prototype-browser.test.cjs
-      - name: Verify cooldown charge queues and save upgrade
-        run: |
-          node tests/cooldown-input-browser.test.cjs
-          git fetch --depth=1 origin 01238bddc8dde4dafe99ba50148d944141373f49
-          mkdir -p "$RUNNER_TEMP/cooldown-v118"
-          git archive 01238bddc8dde4dafe99ba50148d944141373f49 | tar -x -C "$RUNNER_TEMP/cooldown-v118"
-          COOLDOWN_PREVIOUS_ROOT="$RUNNER_TEMP/cooldown-v118" node tests/cooldown-pwa-upgrade-browser.test.cjs
-          mkdir -p test-results/beta-historical
-          BETA_PREVIOUS_ROOT="$RUNNER_TEMP/cooldown-v118" BETA_FIXTURE_DIR=test-results/beta-historical node scripts/beta-history-audit.cjs > test-results/beta-history-report.json
-          BETA_FIXTURE_DIR=test-results/beta-historical node tests/beta-campaign-browser.test.cjs
-      - name: Verify quest completion and Keeper Archive interaction
-        run: node tests/quest-archive-browser.test.cjs
-      - name: Audit integrated rogue warnings and effects in browsers
-        run: node tests/rogue-browser.test.cjs
-      - name: Verify audio playback and lifecycle
-        run: |
-          node tests/audio-browser.test.cjs
-          node tests/audio-audition-browser.test.cjs
-      - name: Verify original-master actor idles and combat
-        run: |
-          node scripts/sprite-production-browser-review.cjs local test-results/sprite-pilot-ci chromium
-          node scripts/sprite-nature-browser-review.cjs local test-results/sprite-nature-ci chromium
-      - name: Verify terrain material rendering
-        run: |
-          node tests/materials-browser.test.cjs
-          node tests/ground-cache-browser.test.cjs
-      - name: Verify full enemy VFX catalog and pilot captures
-        run: |
-          node tests/enemy-vfx-browser.test.cjs
-          VFX_CAPTURE_TAG=ci VFX_CAPTURE_SMOKE=1 node scripts/enemy-vfx-capture.cjs
-      - name: Verify development sprite showroom
-        run: node tests/sprite-showroom-browser.test.cjs
+      - name: Run full game checks
+        uses: ./.github/actions/check-game
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -96,6 +36,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
+      - name: Install locked development tools
+        run: npm ci --ignore-scripts
       - name: Install WebKit and browser dependencies
         timeout-minutes: 5
         run: |
@@ -105,7 +48,6 @@ jobs:
               sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g' "$aptSource"
             fi
           done
-          npm install --no-save --package-lock=false playwright@1.62.1
           npx playwright install --with-deps webkit
       - name: Verify WebKit phone presentation and gestures
         run: node tests/phone-webkit-browser.test.cjs
@@ -164,64 +106,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - name: Install locked development tools
-        run: npm ci --ignore-scripts
-      - name: Check formatting
-        run: npm run format:check
-      - name: Check generated entries and all published JavaScript
-        run: npm run check
-      - name: Full regression suite
-        run: npm test
-      - name: Reproduce cooldown balance evidence summary
-        run: |
-          python3 scripts/summarize-cooldown-balance.py docs/evidence/COOLDOWN_BALANCE_20261009.json.gz "$RUNNER_TEMP/cooldown-summary.json"
-          cmp docs/evidence/COOLDOWN_BALANCE_20261009_SUMMARY.json "$RUNNER_TEMP/cooldown-summary.json"
-      - name: Use runner Chrome for full browser matrix
-        run: |
-          npm install --no-save --package-lock=false playwright@1.62.1
-          CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
-          if [ -n "$CHROME" ]; then
-            echo "CHROMIUM_EXECUTABLE=$CHROME" >> "$GITHUB_ENV"
-          else
-            npx playwright install chromium
-          fi
-      - name: Test full desktop and mobile matrix
-        run: node tests/prototype-browser.test.cjs
-      - name: Verify cooldown charge queues and save upgrade
-        run: |
-          node tests/cooldown-input-browser.test.cjs
-          git fetch --depth=1 origin 01238bddc8dde4dafe99ba50148d944141373f49
-          mkdir -p "$RUNNER_TEMP/cooldown-v118"
-          git archive 01238bddc8dde4dafe99ba50148d944141373f49 | tar -x -C "$RUNNER_TEMP/cooldown-v118"
-          COOLDOWN_PREVIOUS_ROOT="$RUNNER_TEMP/cooldown-v118" node tests/cooldown-pwa-upgrade-browser.test.cjs
-          mkdir -p test-results/beta-historical
-          BETA_PREVIOUS_ROOT="$RUNNER_TEMP/cooldown-v118" BETA_FIXTURE_DIR=test-results/beta-historical node scripts/beta-history-audit.cjs > test-results/beta-history-report.json
-          BETA_FIXTURE_DIR=test-results/beta-historical node tests/beta-campaign-browser.test.cjs
-      - name: Verify quest completion and Keeper Archive interaction
-        run: node tests/quest-archive-browser.test.cjs
-      - name: Audit integrated rogue warnings and effects in browsers
-        run: node tests/rogue-browser.test.cjs
-      - name: Verify audio playback and lifecycle
-        run: |
-          node tests/audio-browser.test.cjs
-          node tests/audio-audition-browser.test.cjs
-      - name: Verify original-master actor idles and combat
-        run: |
-          node scripts/sprite-production-browser-review.cjs local test-results/sprite-pilot-ci chromium
-          node scripts/sprite-nature-browser-review.cjs local test-results/sprite-nature-ci chromium
-      - name: Verify terrain material rendering
-        run: |
-          node tests/materials-browser.test.cjs
-          node tests/ground-cache-browser.test.cjs
-      - name: Verify full enemy VFX catalog and pilot captures
-        run: |
-          node tests/enemy-vfx-browser.test.cjs
-          VFX_CAPTURE_TAG=ci VFX_CAPTURE_SMOKE=1 node scripts/enemy-vfx-capture.cjs
-      - name: Verify development sprite showroom
-        run: node tests/sprite-showroom-browser.test.cjs
+      - name: Run full game checks
+        uses: ./.github/actions/check-game
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -255,9 +141,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
+      - name: Install locked development tools
+        run: npm ci --ignore-scripts
       - name: Use runner Chrome for live smoke verification
         run: |
-          npm install --no-save --package-lock=false playwright@1.62.1
           CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
           if [ -n "$CHROME" ]; then
             echo "CHROMIUM_EXECUTABLE=$CHROME" >> "$GITHUB_ENV"
