@@ -91,8 +91,7 @@
               Object.assign(homeward, terrainSafe(rearStand.x, rearStand.y, 8) || rearStand);
           } else if (!R.harbors?.[z.id] && !crownTravelHub) place('return', 150, 175);
           const minorRest = by('minor');
-          if (minorRest)
-            Object.assign(minorRest, terrainSafe(minor.x, minor.y - 125, 8) || minor);
+          if (minorRest) Object.assign(minorRest, terrainSafe(minor.x, minor.y, 8) || minor);
           z.boardPositionVersion = 2;
           if (z.id === 'vale') z.supplierPositionVersion = 2;
           z.settlementLayoutVersion = 4;
@@ -207,7 +206,7 @@
           // Civic services are actual roofed structures. Put their frontage
           // beside the street; keep the street hub itself open and traversable.
           for (const n of z.npcs.filter((n) =>
-            ['rest', 'minor', 'supplier', 'recruiter', 'board'].includes(n.id),
+            ['rest', 'supplier', 'recruiter', 'board'].includes(n.id),
           )) {
             const clearance = this.roadFootprint(n);
             if ((this.nearestRoad(n, z)?.distance ?? Infinity) >= clearance) continue;
@@ -230,6 +229,12 @@
           roadVersion = z.id === 'frontier' ? 13 : originalDepartureRegion(z.id) ? 12 : 11;
         if (z.roadVersion === roadVersion) return;
         const origin = { x: D.towns[i][0], y: D.towns[i][1] },
+          minor = { x: D.minors[i][0], y: D.minors[i][1] },
+          toward = Math.hypot(origin.x - minor.x, origin.y - minor.y) || 1,
+          minorApproach = [
+            Math.round(minor.x + ((origin.x - minor.x) / toward) * 150),
+            Math.round(minor.y + ((origin.y - minor.y) / toward) * 150),
+          ],
           field = this.fieldCenter(i),
           oldZone = this.s.zone,
           key = z.id + ':v' + roadVersion;
@@ -253,7 +258,7 @@
                   .map((s) => [s[2], s[3]])
               : [],
           destinations = [
-            D.minors[i],
+            minorApproach,
             D.ports[i],
             ...(R.travelArrivalStands?.[z.id]
               ? [[R.travelArrivalStands[z.id].x, R.travelArrivalStands[z.id].y]]
@@ -268,9 +273,10 @@
             ...crownSites,
           ],
           props = z.props,
-          blockers = z.props
-            .filter((p) => p.roadBlocker)
-            .map((p) => ({ ...p, r: (p.r || 0) + 55 }));
+          blockers = [
+            ...z.props.filter((p) => p.roadBlocker).map((p) => ({ ...p, r: (p.r || 0) + 55 })),
+            { id: 'minor-refuge-plot', x: minor.x, y: minor.y, r: 95 },
+          ];
         z.props = blockers;
         try {
           if (roadPlans.has(key)) z.roads = clone(roadPlans.get(key));
