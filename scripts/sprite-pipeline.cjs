@@ -662,7 +662,8 @@ async function checkProduction(options = {}) {
   const manifest = json(path.join(root, 'assets/sprites/manifest.json')),
     expected = {},
     unique = new Map(),
-    byKey = new Map(contracts().map((c) => [c.key, c]));
+    prepared = contracts(),
+    byKey = new Map(prepared.map((c) => [c.key, c]));
   for (const [key, record] of Object.entries(approved.assets)) {
     const contract = byKey.get(key),
       stale = (options.allowStaleKeys || []).includes(key);
@@ -749,7 +750,7 @@ async function checkProduction(options = {}) {
   );
   return {
     catalogEntries: catalog().length,
-    preparedContracts: contracts().length,
+    preparedContracts: prepared.length,
     registered: Object.keys(expected).length,
     uniqueImages: decodedContent.size,
     packagedResources: unique.size,

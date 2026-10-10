@@ -68,19 +68,40 @@ Campaigns stay on the current browser/device. Export a save before clearing brow
 
 ## Development
 
-Use Node.js 20 or newer. The shipped game has no third-party runtime dependencies.
+Use Node.js 22 (the CI version; minimum 20.9). The shipped game has no third-party runtime dependencies.
 
 ```sh
-npm ci               # install the locked development tools
-npm run build        # regenerate the three entries, build information and service worker
-npm run dev          # http://127.0.0.1:8080; phone entry is /phone.html
-npm run format:check # verify all hand-authored campaign JS and shared/desktop/phone CSS
-npm run check        # generated-file freshness, published assets and JavaScript syntax
-npm test             # all non-browser regression suites
-npm run test:quick   # focused gameplay, saves, platform and renderer regressions
+npm ci --ignore-scripts # install all locked development tools, including Playwright
+npm run dev            # http://127.0.0.1:8080; phone entry is /phone.html
 ```
 
-Browser testing uses Playwright 1.62.1 with Chromium/Chrome and WebKit. CI supplies them and checks desktop, small phone, portrait, landscape and tablet views, then verifies the exact deployed commit. With those tools installed locally, use `npm run test:browser` and `node tests/phone-webkit-browser.test.cjs`; `CHROMIUM_EXECUTABLE` can select an existing Chrome executable.
+| Change | Local checks |
+| --- | --- |
+| During implementation | Run the affected `node tests/<name>.test.cjs` suites; `npm run test:quick` is an optional broader feedback pass. |
+| Runtime code, styles or published assets | Bump the package version, run `npm run build`, then `npm run format:check`, `npm run check`, `npm test` and relevant browser tests. Commit the generated entries and service worker. |
+| Tests or development tooling | Run formatting/generated checks and affected tests. CI runs the full gate. No runtime version bump or regeneration is needed unless generated inputs change. |
+| Documentation only | Check links and instructions. No runtime version bump or regeneration. |
+
+`npm test` automatically discovers every non-browser `tests/*.test.cjs` suite, including road access and town-street audits. Do not list those suites separately in CI or rerun `test:quick` after the full suite. Browser suites are separate: `npm run test:browser` runs the main Chromium device matrix, not every browser suite.
+
+Install browser binaries once locally:
+
+```sh
+npx playwright install chromium
+npx playwright install --with-deps webkit # Linux may require sudo for system dependencies
+npm run test:browser
+node tests/phone-webkit-browser.test.cjs
+```
+
+`CHROMIUM_EXECUTABLE` can select an existing Chrome executable. Playwright's version is pinned in `package-lock.json`; update it there through npm rather than installing a separate version in CI.
+
+CI keeps the existing `pr-check`, `main-test` and `phone-webkit` checks. PR and main share the full Node/Chromium steps in [check-game](.github/actions/check-game/action.yml); WebKit and deployment remain in [pages.yml](.github/workflows/pages.yml). Add shared checks once in the action. Node suites need no workflow entry. Both browser engines, historical-save/PWA upgrade checks and exact published-build/live verification remain release gates. PRs changing only the small reviewed prose allowlist in [check-scope.cjs](.github/scripts/check-scope.cjs) run lightweight documentation/scope checks without installing dependencies or browsers. Existing job names remain visible and successful. Unknown files, mixed changes, missing comparison data, sprite catalogs, decisions, evidence, runtime, tests and tooling use full checks. Main pushes can reuse successful full PR validation only when the entire Git tree is identical, including workflows, dependencies and tests. Both the PR source tree and its tested merge tree must match main (update the PR branch before its final validation if main has moved). The certificate must come from this repository's completed successful Node/Chromium, WebKit and clean-packaging jobs; prose-only checks never produce it. Missing, expired, ambiguous or unavailable evidence falls back to full checks. Main always rebuilds and checks the package with its own commit in `build.txt`, then deploys and verifies the live site. Manual runs always perform full validation. No main push skips packaging/deployment merely because it changes prose, so it cannot cancel a pending game release without replacing it.
+
+Performance regression hooks are ready for #223: they activate when `tests/perf-v09-protected.test.cjs` is present and retain its baseline equivalence and Chromium/WebKit road/renderer checks. That Node suite is already covered by automatic discovery. When integrating concurrent workflow edits, keep these hooks and the existing release gates.
+
+Work on a separate branch. If interrupted, commit and push completed work to that branch and keep a brief resume note in its PR. Preserve other branches, unfinished work and original assets. A PR is not merge or deployment approval; follow the authorization in the task.
+
+For a new gameplay system, use the [mechanic development workflow](docs/MECHANIC_DEVELOPMENT.md): focused checks while building, complete multi-file updates, recoverable checkpoints and full validation of the integrated candidate. An interrupted chat resumes the existing work; it does not restart the feature or its completed audits.
 
 `node scripts/build.cjs --check --site` packages only the declared public assets into `_site`. One inventory drives entry script order, offline cache contents and deployment. Generated files are committed, so GitHub Pages can also serve the repository directly without a bundler. Historical `legacy.html` and `rts.html` are independent references, loaded and cached only when opened.
 

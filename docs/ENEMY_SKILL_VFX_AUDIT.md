@@ -1,5 +1,9 @@
 # Enemy Skill VFX Overhaul — implementation and audit
 
+**Historical release evidence**
+
+The measurements and release procedure below describe this past release. They are not instructions to repeat the original overhaul. See the [current validation workflow](ENEMY_VFX_VALIDATION.md) for new changes; current GitHub Actions own release gates.
+
 Runtime: **0.8.113**. The foundation and housekeeping remain intact. PR #161 adds the observation-only event bridge; the subsequent art layer completes the live repertoire.
 
 ## Coverage

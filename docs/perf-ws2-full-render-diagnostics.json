@@ -1,0 +1,4603 @@
+{
+  "medianConvention": "upper order-statistic median: sorted samples[Math.floor(n/2)], n=8; not mean of middle two",
+  "interpretation": "Full frozen painter timings are inconclusive on this shared host. Original slower results retained. Independent same-source baseline control differs by 19.69% in focused repeat; this demonstrates sizable same-source page/run variability without proving its precise cause. No active-game or physical-device FPS claim.",
+  "fullEightScenes": {
+    "baselineCommit": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+    "baselineRoot": "/tmp/perf-v09-baseline",
+    "candidateRoot": "/workspace/scratch/454a87484018/perf-repo",
+    "engine": "webkit",
+    "browserVersion": "26.5",
+    "measuredAt": "2026-10-10T18:16:09.667Z",
+    "rounds": 8,
+    "iterations": 4,
+    "warmupFrames": 12,
+    "diagnosticOnly": false,
+    "presentationTimeMs": 16000,
+    "baselineControlRoot": "/tmp/perf-v09-baseline",
+    "scope": "Paired warmed frozen full renderer.draw plus full Canvas getImageData readback at 150% camera; no app/simulation/audio or physical-device FPS claim.",
+    "sourceHashes": {
+      "baseline": {
+        "renderer": "86c88752cc1a6053b74effafc99811ac062edac3124c654a38cf71b0dcbb3fbd",
+        "visuals": "b2508da946110ecfb6f4bebd7ea295f016d31068517ba4fc09bd82c69eff4de2",
+        "ground-cache": "37aa9447ddc05a9e580decd18b53f7d5ce701420e1ec8637ede882b1a6e3fdb2",
+        "sprites": "157fae7b5bcb7883a9c0a107434deb2e1e2692e7905c358f237553d98118a774",
+        "materials": "cfce54402232562b09310b790a29d86c9db1661afa2365aa528ddd76fe505bf0"
+      },
+      "candidate": {
+        "renderer": "2faa81fdd78cb23632fcf93a73199421809e18e0da9f516175c5d8eb97a5fdb9",
+        "visuals": "4819813d8d10aaf95830a9e5bde0a064d95a4a1d8a77f48bc165a21d33aecdd3",
+        "ground-cache": "37aa9447ddc05a9e580decd18b53f7d5ce701420e1ec8637ede882b1a6e3fdb2",
+        "sprites": "157fae7b5bcb7883a9c0a107434deb2e1e2692e7905c358f237553d98118a774",
+        "materials": "cfce54402232562b09310b790a29d86c9db1661afa2365aa528ddd76fe505bf0"
+      },
+      "control": {
+        "renderer": "86c88752cc1a6053b74effafc99811ac062edac3124c654a38cf71b0dcbb3fbd",
+        "visuals": "b2508da946110ecfb6f4bebd7ea295f016d31068517ba4fc09bd82c69eff4de2",
+        "ground-cache": "37aa9447ddc05a9e580decd18b53f7d5ce701420e1ec8637ede882b1a6e3fdb2",
+        "sprites": "157fae7b5bcb7883a9c0a107434deb2e1e2692e7905c358f237553d98118a774",
+        "materials": "cfce54402232562b09310b790a29d86c9db1661afa2365aa528ddd76fe505bf0"
+      }
+    },
+    "rows": [
+      {
+        "zone": "vale",
+        "width": 1280,
+        "height": 800,
+        "baseline": {
+          "n": 8,
+          "medianMs": 220,
+          "p95Ms": 272.75,
+          "meanMs": 220.75,
+          "samplesMs": [265.25, 220, 272.75, 303.5, 179.75, 178.25, 185.75, 160.75]
+        },
+        "candidate": {
+          "n": 8,
+          "medianMs": 198,
+          "p95Ms": 242.5,
+          "meanMs": 208.125,
+          "samplesMs": [239.75, 263.5, 198, 242.5, 188, 156.75, 179.75, 196.75]
+        },
+        "medianReductionPercent": 9.999999999999998,
+        "rasterStableAcrossDraws": {
+          "baseline": true,
+          "candidate": true,
+          "control": true
+        },
+        "exactCheckpoints": [
+          {
+            "round": 0,
+            "pixels": {
+              "baseline": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+              "candidate": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+              "control": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 1,
+            "pixels": {
+              "baseline": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+              "candidate": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+              "control": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 2,
+            "pixels": {
+              "baseline": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+              "candidate": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+              "control": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 3,
+            "pixels": {
+              "baseline": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+              "candidate": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+              "control": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 4,
+            "pixels": {
+              "baseline": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+              "candidate": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+              "control": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 5,
+            "pixels": {
+              "baseline": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+              "candidate": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+              "control": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 6,
+            "pixels": {
+              "baseline": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+              "candidate": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+              "control": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 7,
+            "pixels": {
+              "baseline": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+              "candidate": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+              "control": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          }
+        ],
+        "initial": {
+          "baseline": {
+            "pixels": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+            "state": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+            "render": {
+              "tileCandidates": 289,
+              "tilesDrawn": 195,
+              "entitiesConsidered": 226,
+              "entitiesDrawn": 66,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 12853248,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 12,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 12441792,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 12441792,
+              "peakReservedBytes": 12441792,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 524288,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 2,
+              "projectedBytes": 759200,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 1,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 524288,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 1,
+              "projectedEvictions": 0
+            }
+          },
+          "candidate": {
+            "pixels": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+            "state": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+            "render": {
+              "tileCandidates": 289,
+              "tilesDrawn": 195,
+              "entitiesConsidered": 226,
+              "entitiesDrawn": 66,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 12853248,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 12,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 12441792,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 12441792,
+              "peakReservedBytes": 12441792,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 524288,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 2,
+              "projectedBytes": 759200,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 1,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 524288,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 1,
+              "projectedEvictions": 0
+            }
+          },
+          "control": {
+            "pixels": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+            "state": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+            "render": {
+              "tileCandidates": 289,
+              "tilesDrawn": 195,
+              "entitiesConsidered": 226,
+              "entitiesDrawn": 66,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 12853248,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 12,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 12441792,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 12441792,
+              "peakReservedBytes": 12441792,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 524288,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 2,
+              "projectedBytes": 759200,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 1,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 524288,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 1,
+              "projectedEvictions": 0
+            }
+          }
+        },
+        "final": {
+          "baseline": {
+            "pixels": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+            "state": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+            "render": {
+              "tileCandidates": 289,
+              "tilesDrawn": 195,
+              "entitiesConsidered": 226,
+              "entitiesDrawn": 66,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 12853248,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 12,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 12441792,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 12441792,
+              "peakReservedBytes": 12441792,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 524288,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 2,
+              "projectedBytes": 759200,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 1,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 524288,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 1,
+              "projectedEvictions": 0
+            }
+          },
+          "candidate": {
+            "pixels": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+            "state": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+            "render": {
+              "tileCandidates": 289,
+              "tilesDrawn": 195,
+              "entitiesConsidered": 226,
+              "entitiesDrawn": 66,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 12853248,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 12,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 12441792,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 12441792,
+              "peakReservedBytes": 12441792,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 524288,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 2,
+              "projectedBytes": 759200,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 1,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 524288,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 1,
+              "projectedEvictions": 0
+            }
+          },
+          "control": {
+            "pixels": "2e56bb6d3f7746328d5a9d9144073e0200578d8358bdc0f8934f1cca82cc9ed6",
+            "state": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+            "render": {
+              "tileCandidates": 289,
+              "tilesDrawn": 195,
+              "entitiesConsidered": 226,
+              "entitiesDrawn": 66,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 12853248,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 12,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 12441792,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 12441792,
+              "peakReservedBytes": 12441792,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 524288,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 2,
+              "projectedBytes": 759200,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 1,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 524288,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 1,
+              "projectedEvictions": 0
+            }
+          }
+        }
+      },
+      {
+        "zone": "vale",
+        "width": 375,
+        "height": 812,
+        "baseline": {
+          "n": 8,
+          "medianMs": 96,
+          "p95Ms": 105,
+          "meanMs": 93.75,
+          "samplesMs": [88.5, 105, 85, 84.25, 85.5, 96, 107, 98.75]
+        },
+        "candidate": {
+          "n": 8,
+          "medianMs": 116.5,
+          "p95Ms": 118.75,
+          "meanMs": 107.53125,
+          "samplesMs": [113.75, 133.25, 116.5, 79.25, 84.5, 118.75, 116.75, 97.5]
+        },
+        "medianReductionPercent": -21.354166666666675,
+        "rasterStableAcrossDraws": {
+          "baseline": true,
+          "candidate": true,
+          "control": true
+        },
+        "exactCheckpoints": [
+          {
+            "round": 0,
+            "pixels": {
+              "baseline": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "candidate": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "control": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 1,
+            "pixels": {
+              "baseline": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "candidate": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "control": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 2,
+            "pixels": {
+              "baseline": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "candidate": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "control": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 3,
+            "pixels": {
+              "baseline": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "candidate": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "control": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 4,
+            "pixels": {
+              "baseline": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "candidate": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "control": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 5,
+            "pixels": {
+              "baseline": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "candidate": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "control": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 6,
+            "pixels": {
+              "baseline": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "candidate": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "control": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 7,
+            "pixels": {
+              "baseline": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "candidate": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "control": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          }
+        ],
+        "initial": {
+          "baseline": {
+            "pixels": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+            "state": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+            "render": {
+              "tileCandidates": 210,
+              "tilesDrawn": 110,
+              "entitiesConsidered": 226,
+              "entitiesDrawn": 36,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 12,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 12441792,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 12441792,
+              "peakReservedBytes": 12441792,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 524288,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 2,
+              "projectedBytes": 759200,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 1,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 524288,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 1,
+              "projectedEvictions": 0
+            }
+          },
+          "candidate": {
+            "pixels": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+            "state": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+            "render": {
+              "tileCandidates": 210,
+              "tilesDrawn": 110,
+              "entitiesConsidered": 226,
+              "entitiesDrawn": 36,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 12,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 12441792,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 12441792,
+              "peakReservedBytes": 12441792,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 524288,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 2,
+              "projectedBytes": 759200,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 1,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 524288,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 1,
+              "projectedEvictions": 0
+            }
+          },
+          "control": {
+            "pixels": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+            "state": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+            "render": {
+              "tileCandidates": 210,
+              "tilesDrawn": 110,
+              "entitiesConsidered": 226,
+              "entitiesDrawn": 36,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 12,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 12441792,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 12441792,
+              "peakReservedBytes": 12441792,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 524288,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 2,
+              "projectedBytes": 759200,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 1,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 524288,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 1,
+              "projectedEvictions": 0
+            }
+          }
+        },
+        "final": {
+          "baseline": {
+            "pixels": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+            "state": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+            "render": {
+              "tileCandidates": 210,
+              "tilesDrawn": 110,
+              "entitiesConsidered": 226,
+              "entitiesDrawn": 36,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 12,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 12441792,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 12441792,
+              "peakReservedBytes": 12441792,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 524288,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 2,
+              "projectedBytes": 759200,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 1,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 524288,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 1,
+              "projectedEvictions": 0
+            }
+          },
+          "candidate": {
+            "pixels": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+            "state": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+            "render": {
+              "tileCandidates": 210,
+              "tilesDrawn": 110,
+              "entitiesConsidered": 226,
+              "entitiesDrawn": 36,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 12,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 12441792,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 12441792,
+              "peakReservedBytes": 12441792,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 524288,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 2,
+              "projectedBytes": 759200,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 1,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 524288,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 1,
+              "projectedEvictions": 0
+            }
+          },
+          "control": {
+            "pixels": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+            "state": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+            "render": {
+              "tileCandidates": 210,
+              "tilesDrawn": 110,
+              "entitiesConsidered": 226,
+              "entitiesDrawn": 36,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 12,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 12441792,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 12441792,
+              "peakReservedBytes": 12441792,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 524288,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 2,
+              "projectedBytes": 759200,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 1,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 524288,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 1,
+              "projectedEvictions": 0
+            }
+          }
+        }
+      },
+      {
+        "zone": "highlands",
+        "width": 1280,
+        "height": 800,
+        "baseline": {
+          "n": 8,
+          "medianMs": 271,
+          "p95Ms": 311.75,
+          "meanMs": 285.53125,
+          "samplesMs": [311.75, 276, 265, 228.25, 271, 266.75, 422.75, 242.75]
+        },
+        "candidate": {
+          "n": 8,
+          "medianMs": 266.25,
+          "p95Ms": 302.75,
+          "meanMs": 269.9375,
+          "samplesMs": [266.25, 302.75, 266.25, 249, 256, 269.25, 314.5, 235.5]
+        },
+        "medianReductionPercent": 1.7527675276752808,
+        "rasterStableAcrossDraws": {
+          "baseline": true,
+          "candidate": true,
+          "control": true
+        },
+        "exactCheckpoints": [
+          {
+            "round": 0,
+            "pixels": {
+              "baseline": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+              "candidate": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+              "control": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e"
+            },
+            "state": {
+              "baseline": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "candidate": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "control": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb"
+            }
+          },
+          {
+            "round": 1,
+            "pixels": {
+              "baseline": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+              "candidate": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+              "control": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e"
+            },
+            "state": {
+              "baseline": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "candidate": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "control": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb"
+            }
+          },
+          {
+            "round": 2,
+            "pixels": {
+              "baseline": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+              "candidate": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+              "control": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e"
+            },
+            "state": {
+              "baseline": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "candidate": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "control": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb"
+            }
+          },
+          {
+            "round": 3,
+            "pixels": {
+              "baseline": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+              "candidate": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+              "control": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e"
+            },
+            "state": {
+              "baseline": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "candidate": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "control": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb"
+            }
+          },
+          {
+            "round": 4,
+            "pixels": {
+              "baseline": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+              "candidate": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+              "control": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e"
+            },
+            "state": {
+              "baseline": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "candidate": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "control": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb"
+            }
+          },
+          {
+            "round": 5,
+            "pixels": {
+              "baseline": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+              "candidate": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+              "control": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e"
+            },
+            "state": {
+              "baseline": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "candidate": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "control": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb"
+            }
+          },
+          {
+            "round": 6,
+            "pixels": {
+              "baseline": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+              "candidate": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+              "control": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e"
+            },
+            "state": {
+              "baseline": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "candidate": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "control": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb"
+            }
+          },
+          {
+            "round": 7,
+            "pixels": {
+              "baseline": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+              "candidate": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+              "control": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e"
+            },
+            "state": {
+              "baseline": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "candidate": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "control": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb"
+            }
+          }
+        ],
+        "initial": {
+          "baseline": {
+            "pixels": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+            "state": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+            "render": {
+              "tileCandidates": 621,
+              "tilesDrawn": 314,
+              "entitiesConsidered": 367,
+              "entitiesDrawn": 128,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 12853248,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 97,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "candidate": {
+            "pixels": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+            "state": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+            "render": {
+              "tileCandidates": 621,
+              "tilesDrawn": 314,
+              "entitiesConsidered": 367,
+              "entitiesDrawn": 128,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 12853248,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 97,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "control": {
+            "pixels": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+            "state": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+            "render": {
+              "tileCandidates": 621,
+              "tilesDrawn": 314,
+              "entitiesConsidered": 367,
+              "entitiesDrawn": 128,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 12853248,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 97,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          }
+        },
+        "final": {
+          "baseline": {
+            "pixels": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+            "state": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+            "render": {
+              "tileCandidates": 621,
+              "tilesDrawn": 314,
+              "entitiesConsidered": 367,
+              "entitiesDrawn": 128,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 12853248,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 97,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "candidate": {
+            "pixels": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+            "state": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+            "render": {
+              "tileCandidates": 621,
+              "tilesDrawn": 314,
+              "entitiesConsidered": 367,
+              "entitiesDrawn": 128,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 12853248,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 97,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "control": {
+            "pixels": "4fc38e90bb22f12fea45c4c65ced01f415a144204da7e9280914b315a1759b4e",
+            "state": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+            "render": {
+              "tileCandidates": 621,
+              "tilesDrawn": 314,
+              "entitiesConsidered": 367,
+              "entitiesDrawn": 128,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 12853248,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 97,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          }
+        }
+      },
+      {
+        "zone": "highlands",
+        "width": 375,
+        "height": 812,
+        "baseline": {
+          "n": 8,
+          "medianMs": 168.25,
+          "p95Ms": 190.5,
+          "meanMs": 172.0625,
+          "samplesMs": [168.25, 190.5, 201.25, 171.75, 148.75, 165.75, 166, 164.25]
+        },
+        "candidate": {
+          "n": 8,
+          "medianMs": 182.25,
+          "p95Ms": 262.75,
+          "meanMs": 196.8125,
+          "samplesMs": [205.75, 165.75, 182.25, 262.75, 163.5, 152.5, 178.5, 263.5]
+        },
+        "medianReductionPercent": -8.320950965824657,
+        "rasterStableAcrossDraws": {
+          "baseline": true,
+          "candidate": true,
+          "control": true
+        },
+        "exactCheckpoints": [
+          {
+            "round": 0,
+            "pixels": {
+              "baseline": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+              "candidate": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+              "control": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e"
+            },
+            "state": {
+              "baseline": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "candidate": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "control": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb"
+            }
+          },
+          {
+            "round": 1,
+            "pixels": {
+              "baseline": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+              "candidate": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+              "control": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e"
+            },
+            "state": {
+              "baseline": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "candidate": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "control": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb"
+            }
+          },
+          {
+            "round": 2,
+            "pixels": {
+              "baseline": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+              "candidate": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+              "control": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e"
+            },
+            "state": {
+              "baseline": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "candidate": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "control": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb"
+            }
+          },
+          {
+            "round": 3,
+            "pixels": {
+              "baseline": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+              "candidate": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+              "control": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e"
+            },
+            "state": {
+              "baseline": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "candidate": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "control": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb"
+            }
+          },
+          {
+            "round": 4,
+            "pixels": {
+              "baseline": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+              "candidate": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+              "control": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e"
+            },
+            "state": {
+              "baseline": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "candidate": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "control": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb"
+            }
+          },
+          {
+            "round": 5,
+            "pixels": {
+              "baseline": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+              "candidate": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+              "control": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e"
+            },
+            "state": {
+              "baseline": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "candidate": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "control": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb"
+            }
+          },
+          {
+            "round": 6,
+            "pixels": {
+              "baseline": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+              "candidate": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+              "control": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e"
+            },
+            "state": {
+              "baseline": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "candidate": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "control": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb"
+            }
+          },
+          {
+            "round": 7,
+            "pixels": {
+              "baseline": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+              "candidate": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+              "control": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e"
+            },
+            "state": {
+              "baseline": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "candidate": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+              "control": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb"
+            }
+          }
+        ],
+        "initial": {
+          "baseline": {
+            "pixels": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+            "state": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+            "render": {
+              "tileCandidates": 462,
+              "tilesDrawn": 153,
+              "entitiesConsidered": 367,
+              "entitiesDrawn": 69,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 97,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "candidate": {
+            "pixels": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+            "state": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+            "render": {
+              "tileCandidates": 462,
+              "tilesDrawn": 153,
+              "entitiesConsidered": 367,
+              "entitiesDrawn": 69,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 97,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "control": {
+            "pixels": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+            "state": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+            "render": {
+              "tileCandidates": 462,
+              "tilesDrawn": 153,
+              "entitiesConsidered": 367,
+              "entitiesDrawn": 69,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 97,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          }
+        },
+        "final": {
+          "baseline": {
+            "pixels": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+            "state": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+            "render": {
+              "tileCandidates": 462,
+              "tilesDrawn": 153,
+              "entitiesConsidered": 367,
+              "entitiesDrawn": 69,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 97,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "candidate": {
+            "pixels": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+            "state": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+            "render": {
+              "tileCandidates": 462,
+              "tilesDrawn": 153,
+              "entitiesConsidered": 367,
+              "entitiesDrawn": 69,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 97,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "control": {
+            "pixels": "20d5f1f0eb252f99ecc2aa71e40abab27957223bc5aeb245e7f6a893fff2729e",
+            "state": "e19ae67cfa58c880f71642a55a70c0d726bde4f536718ca474947a94671b5deb",
+            "render": {
+              "tileCandidates": 462,
+              "tilesDrawn": 153,
+              "entitiesConsidered": 367,
+              "entitiesDrawn": 69,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 97,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          }
+        }
+      },
+      {
+        "zone": "crypt",
+        "width": 1280,
+        "height": 800,
+        "baseline": {
+          "n": 8,
+          "medianMs": 178.25,
+          "p95Ms": 312.25,
+          "meanMs": 249.53125,
+          "samplesMs": [178.25, 139, 108, 100, 94, 884.5, 312.25, 180.25]
+        },
+        "candidate": {
+          "n": 8,
+          "medianMs": 143,
+          "p95Ms": 194.75,
+          "meanMs": 162.78125,
+          "samplesMs": [121, 93.25, 122, 118.75, 155, 143, 354.5, 194.75]
+        },
+        "medianReductionPercent": 19.77559607293128,
+        "rasterStableAcrossDraws": {
+          "baseline": true,
+          "candidate": true,
+          "control": true
+        },
+        "exactCheckpoints": [
+          {
+            "round": 0,
+            "pixels": {
+              "baseline": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+              "candidate": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+              "control": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c"
+            },
+            "state": {
+              "baseline": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "candidate": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "control": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8"
+            }
+          },
+          {
+            "round": 1,
+            "pixels": {
+              "baseline": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+              "candidate": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+              "control": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c"
+            },
+            "state": {
+              "baseline": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "candidate": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "control": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8"
+            }
+          },
+          {
+            "round": 2,
+            "pixels": {
+              "baseline": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+              "candidate": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+              "control": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c"
+            },
+            "state": {
+              "baseline": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "candidate": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "control": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8"
+            }
+          },
+          {
+            "round": 3,
+            "pixels": {
+              "baseline": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+              "candidate": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+              "control": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c"
+            },
+            "state": {
+              "baseline": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "candidate": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "control": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8"
+            }
+          },
+          {
+            "round": 4,
+            "pixels": {
+              "baseline": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+              "candidate": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+              "control": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c"
+            },
+            "state": {
+              "baseline": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "candidate": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "control": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8"
+            }
+          },
+          {
+            "round": 5,
+            "pixels": {
+              "baseline": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+              "candidate": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+              "control": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c"
+            },
+            "state": {
+              "baseline": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "candidate": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "control": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8"
+            }
+          },
+          {
+            "round": 6,
+            "pixels": {
+              "baseline": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+              "candidate": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+              "control": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c"
+            },
+            "state": {
+              "baseline": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "candidate": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "control": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8"
+            }
+          },
+          {
+            "round": 7,
+            "pixels": {
+              "baseline": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+              "candidate": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+              "control": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c"
+            },
+            "state": {
+              "baseline": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "candidate": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "control": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8"
+            }
+          }
+        ],
+        "initial": {
+          "baseline": {
+            "pixels": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+            "state": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+            "render": {
+              "tileCandidates": 240,
+              "tilesDrawn": 159,
+              "entitiesConsidered": 46,
+              "entitiesDrawn": 31,
+              "floorTilesPainted": 159,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 0,
+                "budget": 67108864,
+                "builds": 0,
+                "hits": 0,
+                "margin": 0
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 0,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "candidate": {
+            "pixels": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+            "state": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+            "render": {
+              "tileCandidates": 240,
+              "tilesDrawn": 159,
+              "entitiesConsidered": 46,
+              "entitiesDrawn": 31,
+              "floorTilesPainted": 159,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 0,
+                "budget": 67108864,
+                "builds": 0,
+                "hits": 0,
+                "margin": 0
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 0,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "control": {
+            "pixels": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+            "state": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+            "render": {
+              "tileCandidates": 240,
+              "tilesDrawn": 159,
+              "entitiesConsidered": 46,
+              "entitiesDrawn": 31,
+              "floorTilesPainted": 159,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 0,
+                "budget": 67108864,
+                "builds": 0,
+                "hits": 0,
+                "margin": 0
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 0,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          }
+        },
+        "final": {
+          "baseline": {
+            "pixels": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+            "state": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+            "render": {
+              "tileCandidates": 240,
+              "tilesDrawn": 159,
+              "entitiesConsidered": 46,
+              "entitiesDrawn": 31,
+              "floorTilesPainted": 159,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 0,
+                "budget": 67108864,
+                "builds": 0,
+                "hits": 0,
+                "margin": 0
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 0,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "candidate": {
+            "pixels": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+            "state": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+            "render": {
+              "tileCandidates": 240,
+              "tilesDrawn": 159,
+              "entitiesConsidered": 46,
+              "entitiesDrawn": 31,
+              "floorTilesPainted": 159,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 0,
+                "budget": 67108864,
+                "builds": 0,
+                "hits": 0,
+                "margin": 0
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 0,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "control": {
+            "pixels": "45e6a8138b246b11fdc533e075f27226e49f53a323e1cb177348c0d721bde19c",
+            "state": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+            "render": {
+              "tileCandidates": 240,
+              "tilesDrawn": 159,
+              "entitiesConsidered": 46,
+              "entitiesDrawn": 31,
+              "floorTilesPainted": 159,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 0,
+                "budget": 67108864,
+                "builds": 0,
+                "hits": 0,
+                "margin": 0
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 0,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          }
+        }
+      },
+      {
+        "zone": "crypt",
+        "width": 375,
+        "height": 812,
+        "baseline": {
+          "n": 8,
+          "medianMs": 141.5,
+          "p95Ms": 157,
+          "meanMs": 127.53125,
+          "samplesMs": [174.75, 152.25, 115, 141.5, 157, 112, 99.75, 68]
+        },
+        "candidate": {
+          "n": 8,
+          "medianMs": 135.75,
+          "p95Ms": 198.75,
+          "meanMs": 145.25,
+          "samplesMs": [170.75, 257.5, 107, 198.75, 135.75, 88.75, 122.25, 81.25]
+        },
+        "medianReductionPercent": 4.063604240282681,
+        "rasterStableAcrossDraws": {
+          "baseline": true,
+          "candidate": true,
+          "control": true
+        },
+        "exactCheckpoints": [
+          {
+            "round": 0,
+            "pixels": {
+              "baseline": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+              "candidate": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+              "control": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967"
+            },
+            "state": {
+              "baseline": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "candidate": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "control": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8"
+            }
+          },
+          {
+            "round": 1,
+            "pixels": {
+              "baseline": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+              "candidate": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+              "control": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967"
+            },
+            "state": {
+              "baseline": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "candidate": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "control": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8"
+            }
+          },
+          {
+            "round": 2,
+            "pixels": {
+              "baseline": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+              "candidate": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+              "control": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967"
+            },
+            "state": {
+              "baseline": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "candidate": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "control": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8"
+            }
+          },
+          {
+            "round": 3,
+            "pixels": {
+              "baseline": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+              "candidate": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+              "control": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967"
+            },
+            "state": {
+              "baseline": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "candidate": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "control": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8"
+            }
+          },
+          {
+            "round": 4,
+            "pixels": {
+              "baseline": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+              "candidate": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+              "control": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967"
+            },
+            "state": {
+              "baseline": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "candidate": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "control": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8"
+            }
+          },
+          {
+            "round": 5,
+            "pixels": {
+              "baseline": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+              "candidate": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+              "control": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967"
+            },
+            "state": {
+              "baseline": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "candidate": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "control": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8"
+            }
+          },
+          {
+            "round": 6,
+            "pixels": {
+              "baseline": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+              "candidate": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+              "control": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967"
+            },
+            "state": {
+              "baseline": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "candidate": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "control": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8"
+            }
+          },
+          {
+            "round": 7,
+            "pixels": {
+              "baseline": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+              "candidate": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+              "control": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967"
+            },
+            "state": {
+              "baseline": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "candidate": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+              "control": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8"
+            }
+          }
+        ],
+        "initial": {
+          "baseline": {
+            "pixels": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+            "state": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+            "render": {
+              "tileCandidates": 156,
+              "tilesDrawn": 86,
+              "entitiesConsidered": 46,
+              "entitiesDrawn": 22,
+              "floorTilesPainted": 86,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 0,
+                "budget": 67108864,
+                "builds": 0,
+                "hits": 0,
+                "margin": 0
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 0,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "candidate": {
+            "pixels": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+            "state": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+            "render": {
+              "tileCandidates": 156,
+              "tilesDrawn": 86,
+              "entitiesConsidered": 46,
+              "entitiesDrawn": 22,
+              "floorTilesPainted": 86,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 0,
+                "budget": 67108864,
+                "builds": 0,
+                "hits": 0,
+                "margin": 0
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 0,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "control": {
+            "pixels": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+            "state": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+            "render": {
+              "tileCandidates": 156,
+              "tilesDrawn": 86,
+              "entitiesConsidered": 46,
+              "entitiesDrawn": 22,
+              "floorTilesPainted": 86,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 0,
+                "budget": 67108864,
+                "builds": 0,
+                "hits": 0,
+                "margin": 0
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 0,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          }
+        },
+        "final": {
+          "baseline": {
+            "pixels": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+            "state": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+            "render": {
+              "tileCandidates": 156,
+              "tilesDrawn": 86,
+              "entitiesConsidered": 46,
+              "entitiesDrawn": 22,
+              "floorTilesPainted": 86,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 0,
+                "budget": 67108864,
+                "builds": 0,
+                "hits": 0,
+                "margin": 0
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 0,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "candidate": {
+            "pixels": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+            "state": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+            "render": {
+              "tileCandidates": 156,
+              "tilesDrawn": 86,
+              "entitiesConsidered": 46,
+              "entitiesDrawn": 22,
+              "floorTilesPainted": 86,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 0,
+                "budget": 67108864,
+                "builds": 0,
+                "hits": 0,
+                "margin": 0
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 0,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "control": {
+            "pixels": "6177a878fb1e71c9adb5da8224cfca34c8b93a8bcf56b5616db86c3d58f72967",
+            "state": "b5edd686b746e9bc94cc51468fe270a746f8ad487fedc90c2c05e6d6c1d7b5a8",
+            "render": {
+              "tileCandidates": 156,
+              "tilesDrawn": 86,
+              "entitiesConsidered": 46,
+              "entitiesDrawn": 22,
+              "floorTilesPainted": 86,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 0,
+                "budget": 67108864,
+                "builds": 0,
+                "hits": 0,
+                "margin": 0
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 0,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          }
+        }
+      },
+      {
+        "zone": "crowd",
+        "width": 1280,
+        "height": 800,
+        "baseline": {
+          "n": 8,
+          "medianMs": 444,
+          "p95Ms": 499.25,
+          "meanMs": 464.59375,
+          "samplesMs": [450.75, 722.75, 378, 444, 381.25, 432.5, 408.25, 499.25]
+        },
+        "candidate": {
+          "n": 8,
+          "medianMs": 447.75,
+          "p95Ms": 612.75,
+          "meanMs": 472,
+          "samplesMs": [612.75, 449.5, 386, 447.75, 395.25, 390, 423.5, 671.25]
+        },
+        "medianReductionPercent": -0.8445945945946054,
+        "rasterStableAcrossDraws": {
+          "baseline": true,
+          "candidate": true,
+          "control": true
+        },
+        "exactCheckpoints": [
+          {
+            "round": 0,
+            "pixels": {
+              "baseline": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+              "candidate": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+              "control": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4"
+            },
+            "state": {
+              "baseline": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "candidate": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "control": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461"
+            }
+          },
+          {
+            "round": 1,
+            "pixels": {
+              "baseline": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+              "candidate": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+              "control": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4"
+            },
+            "state": {
+              "baseline": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "candidate": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "control": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461"
+            }
+          },
+          {
+            "round": 2,
+            "pixels": {
+              "baseline": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+              "candidate": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+              "control": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4"
+            },
+            "state": {
+              "baseline": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "candidate": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "control": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461"
+            }
+          },
+          {
+            "round": 3,
+            "pixels": {
+              "baseline": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+              "candidate": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+              "control": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4"
+            },
+            "state": {
+              "baseline": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "candidate": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "control": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461"
+            }
+          },
+          {
+            "round": 4,
+            "pixels": {
+              "baseline": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+              "candidate": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+              "control": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4"
+            },
+            "state": {
+              "baseline": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "candidate": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "control": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461"
+            }
+          },
+          {
+            "round": 5,
+            "pixels": {
+              "baseline": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+              "candidate": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+              "control": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4"
+            },
+            "state": {
+              "baseline": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "candidate": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "control": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461"
+            }
+          },
+          {
+            "round": 6,
+            "pixels": {
+              "baseline": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+              "candidate": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+              "control": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4"
+            },
+            "state": {
+              "baseline": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "candidate": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "control": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461"
+            }
+          },
+          {
+            "round": 7,
+            "pixels": {
+              "baseline": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+              "candidate": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+              "control": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4"
+            },
+            "state": {
+              "baseline": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "candidate": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "control": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461"
+            }
+          }
+        ],
+        "initial": {
+          "baseline": {
+            "pixels": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+            "state": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+            "render": {
+              "tileCandidates": 289,
+              "tilesDrawn": 195,
+              "entitiesConsidered": 221,
+              "entitiesDrawn": 88,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 12853248,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "candidate": {
+            "pixels": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+            "state": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+            "render": {
+              "tileCandidates": 289,
+              "tilesDrawn": 195,
+              "entitiesConsidered": 221,
+              "entitiesDrawn": 88,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 12853248,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "control": {
+            "pixels": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+            "state": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+            "render": {
+              "tileCandidates": 289,
+              "tilesDrawn": 195,
+              "entitiesConsidered": 221,
+              "entitiesDrawn": 88,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 12853248,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          }
+        },
+        "final": {
+          "baseline": {
+            "pixels": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+            "state": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+            "render": {
+              "tileCandidates": 289,
+              "tilesDrawn": 195,
+              "entitiesConsidered": 221,
+              "entitiesDrawn": 88,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 12853248,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "candidate": {
+            "pixels": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+            "state": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+            "render": {
+              "tileCandidates": 289,
+              "tilesDrawn": 195,
+              "entitiesConsidered": 221,
+              "entitiesDrawn": 88,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 12853248,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "control": {
+            "pixels": "633800b75244e1e15f673b0686339bc5d83a16e99f473bb85c753c738919c6f4",
+            "state": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+            "render": {
+              "tileCandidates": 289,
+              "tilesDrawn": 195,
+              "entitiesConsidered": 221,
+              "entitiesDrawn": 88,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 12853248,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          }
+        }
+      },
+      {
+        "zone": "crowd",
+        "width": 375,
+        "height": 812,
+        "baseline": {
+          "n": 8,
+          "medianMs": 450.75,
+          "p95Ms": 561.75,
+          "meanMs": 464.65625,
+          "samplesMs": [417, 398.75, 561.75, 594.75, 425.75, 417.25, 450.75, 451.25]
+        },
+        "candidate": {
+          "n": 8,
+          "medianMs": 425.5,
+          "p95Ms": 491.25,
+          "meanMs": 453.40625,
+          "samplesMs": [372.25, 407.25, 491.25, 678.25, 435, 393.75, 424, 425.5]
+        },
+        "medianReductionPercent": 5.601774819744865,
+        "rasterStableAcrossDraws": {
+          "baseline": true,
+          "candidate": true,
+          "control": true
+        },
+        "exactCheckpoints": [
+          {
+            "round": 0,
+            "pixels": {
+              "baseline": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+              "candidate": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+              "control": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c"
+            },
+            "state": {
+              "baseline": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "candidate": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "control": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461"
+            }
+          },
+          {
+            "round": 1,
+            "pixels": {
+              "baseline": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+              "candidate": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+              "control": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c"
+            },
+            "state": {
+              "baseline": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "candidate": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "control": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461"
+            }
+          },
+          {
+            "round": 2,
+            "pixels": {
+              "baseline": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+              "candidate": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+              "control": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c"
+            },
+            "state": {
+              "baseline": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "candidate": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "control": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461"
+            }
+          },
+          {
+            "round": 3,
+            "pixels": {
+              "baseline": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+              "candidate": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+              "control": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c"
+            },
+            "state": {
+              "baseline": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "candidate": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "control": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461"
+            }
+          },
+          {
+            "round": 4,
+            "pixels": {
+              "baseline": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+              "candidate": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+              "control": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c"
+            },
+            "state": {
+              "baseline": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "candidate": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "control": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461"
+            }
+          },
+          {
+            "round": 5,
+            "pixels": {
+              "baseline": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+              "candidate": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+              "control": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c"
+            },
+            "state": {
+              "baseline": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "candidate": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "control": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461"
+            }
+          },
+          {
+            "round": 6,
+            "pixels": {
+              "baseline": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+              "candidate": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+              "control": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c"
+            },
+            "state": {
+              "baseline": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "candidate": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "control": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461"
+            }
+          },
+          {
+            "round": 7,
+            "pixels": {
+              "baseline": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+              "candidate": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+              "control": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c"
+            },
+            "state": {
+              "baseline": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "candidate": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+              "control": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461"
+            }
+          }
+        ],
+        "initial": {
+          "baseline": {
+            "pixels": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+            "state": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+            "render": {
+              "tileCandidates": 210,
+              "tilesDrawn": 110,
+              "entitiesConsidered": 221,
+              "entitiesDrawn": 62,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "candidate": {
+            "pixels": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+            "state": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+            "render": {
+              "tileCandidates": 210,
+              "tilesDrawn": 110,
+              "entitiesConsidered": 221,
+              "entitiesDrawn": 62,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "control": {
+            "pixels": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+            "state": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+            "render": {
+              "tileCandidates": 210,
+              "tilesDrawn": 110,
+              "entitiesConsidered": 221,
+              "entitiesDrawn": 62,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          }
+        },
+        "final": {
+          "baseline": {
+            "pixels": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+            "state": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+            "render": {
+              "tileCandidates": 210,
+              "tilesDrawn": 110,
+              "entitiesConsidered": 221,
+              "entitiesDrawn": 62,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "candidate": {
+            "pixels": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+            "state": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+            "render": {
+              "tileCandidates": 210,
+              "tilesDrawn": 110,
+              "entitiesConsidered": 221,
+              "entitiesDrawn": 62,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          },
+          "control": {
+            "pixels": "4062f4c9db1bb2ef0dec3b92380aacd55c7347aa06d9a5013f13e84909ab783c",
+            "state": "66b3e91f54b2892d5ce95108d8424229380ffa3434cda2598e2b93c3e4c70461",
+            "render": {
+              "tileCandidates": 210,
+              "tilesDrawn": 110,
+              "entitiesConsidered": 221,
+              "entitiesDrawn": 62,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 18,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 19077312,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 19077312,
+              "peakReservedBytes": 19077312,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 1048576,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 4,
+              "projectedBytes": 1518400,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 2,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 1048576,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 2,
+              "projectedEvictions": 0
+            }
+          }
+        }
+      }
+    ],
+    "errors": []
+  },
+  "focusedValePhoneRepeat": {
+    "baselineCommit": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+    "baselineRoot": "/tmp/perf-v09-baseline",
+    "candidateRoot": "/workspace/scratch/454a87484018/perf-repo",
+    "engine": "webkit",
+    "browserVersion": "26.5",
+    "measuredAt": "2026-10-10T18:23:56.176Z",
+    "rounds": 8,
+    "iterations": 4,
+    "warmupFrames": 12,
+    "diagnosticOnly": false,
+    "presentationTimeMs": 16000,
+    "baselineControlRoot": "/tmp/perf-v09-baseline",
+    "scope": "Paired warmed frozen full renderer.draw plus full Canvas getImageData readback at 150% camera; no app/simulation/audio or physical-device FPS claim.",
+    "sourceHashes": {
+      "baseline": {
+        "renderer": "86c88752cc1a6053b74effafc99811ac062edac3124c654a38cf71b0dcbb3fbd",
+        "visuals": "b2508da946110ecfb6f4bebd7ea295f016d31068517ba4fc09bd82c69eff4de2",
+        "ground-cache": "37aa9447ddc05a9e580decd18b53f7d5ce701420e1ec8637ede882b1a6e3fdb2",
+        "sprites": "157fae7b5bcb7883a9c0a107434deb2e1e2692e7905c358f237553d98118a774",
+        "materials": "cfce54402232562b09310b790a29d86c9db1661afa2365aa528ddd76fe505bf0"
+      },
+      "candidate": {
+        "renderer": "2faa81fdd78cb23632fcf93a73199421809e18e0da9f516175c5d8eb97a5fdb9",
+        "visuals": "4819813d8d10aaf95830a9e5bde0a064d95a4a1d8a77f48bc165a21d33aecdd3",
+        "ground-cache": "37aa9447ddc05a9e580decd18b53f7d5ce701420e1ec8637ede882b1a6e3fdb2",
+        "sprites": "157fae7b5bcb7883a9c0a107434deb2e1e2692e7905c358f237553d98118a774",
+        "materials": "cfce54402232562b09310b790a29d86c9db1661afa2365aa528ddd76fe505bf0"
+      },
+      "control": {
+        "renderer": "86c88752cc1a6053b74effafc99811ac062edac3124c654a38cf71b0dcbb3fbd",
+        "visuals": "b2508da946110ecfb6f4bebd7ea295f016d31068517ba4fc09bd82c69eff4de2",
+        "ground-cache": "37aa9447ddc05a9e580decd18b53f7d5ce701420e1ec8637ede882b1a6e3fdb2",
+        "sprites": "157fae7b5bcb7883a9c0a107434deb2e1e2692e7905c358f237553d98118a774",
+        "materials": "cfce54402232562b09310b790a29d86c9db1661afa2365aa528ddd76fe505bf0"
+      }
+    },
+    "rows": [
+      {
+        "zone": "vale",
+        "width": 375,
+        "height": 812,
+        "baseline": {
+          "n": 8,
+          "medianMs": 193,
+          "p95Ms": 246.75,
+          "meanMs": 200,
+          "samplesMs": [180.5, 246.75, 221.25, 123.75, 170.5, 281.5, 193, 182.75]
+        },
+        "candidate": {
+          "n": 8,
+          "medianMs": 191.5,
+          "p95Ms": 220.75,
+          "meanMs": 194.625,
+          "samplesMs": [160, 263.75, 220.75, 161.75, 175.25, 210, 174, 191.5]
+        },
+        "control": {
+          "n": 8,
+          "medianMs": 231,
+          "p95Ms": 357,
+          "meanMs": 255.875,
+          "samplesMs": [386.25, 357, 186.75, 197.75, 231, 353.25, 225.5, 109.5]
+        },
+        "sameSourceControlDifferencePercent": 19.68911917098446,
+        "medianReductionPercent": 0.7772020725388629,
+        "rasterStableAcrossDraws": {
+          "baseline": true,
+          "candidate": true,
+          "control": true
+        },
+        "exactCheckpoints": [
+          {
+            "round": 0,
+            "pixels": {
+              "baseline": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "candidate": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "control": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 1,
+            "pixels": {
+              "baseline": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "candidate": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "control": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 2,
+            "pixels": {
+              "baseline": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "candidate": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "control": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 3,
+            "pixels": {
+              "baseline": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "candidate": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "control": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 4,
+            "pixels": {
+              "baseline": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "candidate": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "control": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 5,
+            "pixels": {
+              "baseline": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "candidate": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "control": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 6,
+            "pixels": {
+              "baseline": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "candidate": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "control": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          },
+          {
+            "round": 7,
+            "pixels": {
+              "baseline": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "candidate": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+              "control": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac"
+            },
+            "state": {
+              "baseline": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "candidate": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+              "control": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff"
+            }
+          }
+        ],
+        "initial": {
+          "baseline": {
+            "pixels": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+            "state": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+            "render": {
+              "tileCandidates": 210,
+              "tilesDrawn": 110,
+              "entitiesConsidered": 226,
+              "entitiesDrawn": 36,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 9,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 8460480,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 8460480,
+              "peakReservedBytes": 8460480,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 524288,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 2,
+              "projectedBytes": 759200,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 1,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 524288,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 1,
+              "projectedEvictions": 0
+            }
+          },
+          "candidate": {
+            "pixels": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+            "state": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+            "render": {
+              "tileCandidates": 210,
+              "tilesDrawn": 110,
+              "entitiesConsidered": 226,
+              "entitiesDrawn": 36,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 9,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 8460480,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 8460480,
+              "peakReservedBytes": 8460480,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 524288,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 2,
+              "projectedBytes": 759200,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 1,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 524288,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 1,
+              "projectedEvictions": 0
+            }
+          },
+          "control": {
+            "pixels": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+            "state": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+            "render": {
+              "tileCandidates": 210,
+              "tilesDrawn": 110,
+              "entitiesConsidered": 226,
+              "entitiesDrawn": 36,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 13,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 9,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 8460480,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 8460480,
+              "peakReservedBytes": 8460480,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 524288,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 2,
+              "projectedBytes": 759200,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 1,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 524288,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 1,
+              "projectedEvictions": 0
+            }
+          }
+        },
+        "final": {
+          "baseline": {
+            "pixels": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+            "state": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+            "render": {
+              "tileCandidates": 210,
+              "tilesDrawn": 110,
+              "entitiesConsidered": 226,
+              "entitiesDrawn": 36,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 9,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 8460480,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 8460480,
+              "peakReservedBytes": 8460480,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 524288,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 2,
+              "projectedBytes": 759200,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 1,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 524288,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 1,
+              "projectedEvictions": 0
+            }
+          },
+          "candidate": {
+            "pixels": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+            "state": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+            "render": {
+              "tileCandidates": 210,
+              "tilesDrawn": 110,
+              "entitiesConsidered": 226,
+              "entitiesDrawn": 36,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 9,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 8460480,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 8460480,
+              "peakReservedBytes": 8460480,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 524288,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 2,
+              "projectedBytes": 759200,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 1,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 524288,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 1,
+              "projectedEvictions": 0
+            }
+          },
+          "control": {
+            "pixels": "b79e744adcf1eff0930be4f453233b17b69a7cf6371d94d72853a34f7e301eac",
+            "state": "3fbf404cee7cfe84cf166b06c0288899957765378d643ce544f2d35a7e7817ff",
+            "render": {
+              "tileCandidates": 210,
+              "tilesDrawn": 110,
+              "entitiesConsidered": 226,
+              "entitiesDrawn": 36,
+              "floorTilesPainted": 0,
+              "cameraZoom": 1.5,
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 7228332,
+                "budget": 67108864,
+                "builds": 1,
+                "hits": 56,
+                "margin": 256
+              }
+            },
+            "sprites": {
+              "manifestVersion": 8,
+              "definitions": 33,
+              "loaded": 9,
+              "loading": 0,
+              "queued": 0,
+              "failed": 0,
+              "decodedBytes": 8460480,
+              "reservedBytes": 0,
+              "maxDecodedBytes": 268435456,
+              "maxConcurrentDecodes": 2,
+              "clockMs": 0,
+              "evictions": 0,
+              "staleLoads": 0,
+              "invalidPresentation": 0,
+              "budgetSkips": 0,
+              "peakDecodedBytes": 8460480,
+              "peakReservedBytes": 8460480,
+              "peakConcurrent": 2
+            },
+            "materials": {
+              "definitions": 7,
+              "decodedBytes": 524288,
+              "reservedBytes": 0,
+              "decodedBudget": 2097152,
+              "decoded": 2,
+              "projectedBytes": 759200,
+              "projectedBudget": 8388608,
+              "projectedRepeats": 1,
+              "queued": 0,
+              "decoding": 0,
+              "failures": 0,
+              "peakDecodedBytes": 524288,
+              "peakConcurrent": 2,
+              "evictions": 0,
+              "staleLoads": 0,
+              "draws": 79,
+              "projectedBuilds": 1,
+              "projectedEvictions": 0
+            }
+          }
+        }
+      }
+    ],
+    "errors": []
+  }
+}

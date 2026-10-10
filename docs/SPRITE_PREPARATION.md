@@ -1,5 +1,7 @@
 # Sprite production preparation
 
+This document retains historical implementation snapshots. Earlier pause statements, pilot counts, memory limits and default-density examples are not current production instructions. Use [the original-master policy](SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md), [the design-to-sprite workflow](DESIGN_TO_SPRITE_WORKFLOW.md) and the latest batch-specific status in [#160](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160). Do not restart completed pilots or regenerate retained originals. A batch-specific pause remains in force until that batch is resumed.
+
 ## Current 150% preparation · v0.8.103
 
 SPRITE_RESOLUTION_HOUSEKEEPING.md is the current sizing/processing/review contract. The 33 active images keep their existing bytes and records; reference geometry remains 192×192 display units. Explicit rasterScale supports up to 576×576, density-aware atlases and native capped-device-ratio review. Legacy records and immutable originals/checkpoints remain compatible. `sprite:resolution` reports current source readiness and dependent presentation. Artwork adaptation/generation remain paused.
