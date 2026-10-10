@@ -34,6 +34,12 @@ jobs:
         run: npm run format:check
       - name: Check generated entries and all published JavaScript
         run: npm run check
+      - name: Audit town streets before the full suite
+        run: |
+          node tests/town-streets.test.cjs
+          node tests/roads.test.cjs
+          node tests/world-aesthetic.test.cjs
+          node tests/ironroot-highlands.test.cjs
       - name: Full regression suite before merge
         run: npm test
       - name: Reproduce cooldown balance evidence summary
