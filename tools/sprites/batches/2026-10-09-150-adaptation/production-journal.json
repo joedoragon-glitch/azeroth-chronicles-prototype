@@ -1,7 +1,7 @@
 {
   "version": 1,
   "batch": "2026-10-09-150-adaptation",
-  "status": "final-reviewed and installed; exact-head CI/merge/deployment pending",
+  "status": "Pilot released through PR #193; nature adaptation batch in preparation",
   "sourceOfTruth": [
     "docs/SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md",
     "docs/WORLD_PROPORTION_AND_DENSITY_GUARDRAILS.md",
@@ -24,19 +24,19 @@
   "verification": {
     "mapsExpanded": false,
     "monsterPopulationChanged": false,
-    "proceduralSpriteScale": "implemented in PR #145, awaiting release verification",
-    "nativeOriginalAdaptation": "Paladin and Goblin original-master revisions integrated at 576px, release pending",
+    "proceduralSpriteScale": "Released through PR #191",
+    "nativeOriginalAdaptation": "Paladin/Goblin 576px looping idle revisions released",
     "pixelMasterAudit816": "pending per asset",
     "visualScreenshots": "24 recaptured sprite scenes, 24 capped-ratio road scene pairs and 36 real WebKit idle/combat screenshots retained",
-    "assetPublication": "2 sprite revisions and 2 road materials installed locally; 0 deployed",
+    "assetPublication": "2 actor revisions and 2 road materials released through PR #193",
     "localAuditRecovery": "Prior unpushed 66 map captures lost during workspace pruning. Committed runtime checkpoint retained. Do not treat prior local evidence as durable or skip release gates.",
     "localRegressionSuites": 68,
     "browserEvidence": "tools/sprites/batches/2026-10-09-150-adaptation/browser-review-v3/evidence.json",
     "freshBrowserReview": "12 WebKit device/light scenes and 36 frame/combat captures pass on v0.8.127; CI runs retained review script on Chromium/WebKit and live game"
   },
   "nextWork": [
-    "Finish exact-head PR #193 CI, merge, main deployment and exact published SHA verification.",
-    "Remaining 31 original-density adaptations and missing catalog stay tracked in issue #160."
+    "Nature batch: 23 retained-original density adaptations in progress; 8 remaining active adaptations follow.",
+    "247 body catalog designs and 21 terrain materials lack registrations; recover retained candidates before generation."
   ],
   "source": "Joel's 9 October 2026 instructions, authorized autonomous technical implementation; no user approval review required.",
   "checkpoint": {
@@ -52,11 +52,11 @@
     "spriteFramesPrepared": 4,
     "spriteKeysFinalReviewed": 2,
     "spriteKeysImplemented": 2,
-    "spriteKeysDeployed": 0,
+    "spriteKeysDeployed": 2,
     "texturesPrepared": 2,
     "texturesFinalReviewed": 2,
     "texturesImplemented": 2,
-    "texturesDeployed": 0,
+    "texturesDeployed": 2,
     "imageGenerationCallsThisResume": 3
   },
   "reviewStatus": "All six native device profiles day/night; original idle pairs and 36 real WebKit screenshots: both actual atlas frames render, pause freezes the clock, sprite animation preserves campaign snapshots, actual Blinding Dust warning and targeting remain functional. Current capped-ratio road evidence and wrap inspected.",
@@ -74,7 +74,7 @@
       "reviewEvidence": "tools/sprites/batches/2026-10-09-150-adaptation/hero-paladin/original-export-v1/native-review-v1/evidence.json",
       "priorRevision": "b162917a153d83f0bea42abb24a86b40c35f98608bc493cb0b7a27c1a58f9d25",
       "installed": true,
-      "deployed": false,
+      "deployed": true,
       "finalReviewed": true
     },
     {
@@ -90,9 +90,1015 @@
       "reviewEvidence": "tools/sprites/batches/2026-10-09-150-adaptation/enemy-goblin/original-export-v1/native-review-v1/evidence.json",
       "priorRevision": "06d5419a812e8c477e77be6f81c4b79e297b7592bc32b0282d0d39ff63590377",
       "installed": true,
-      "deployed": false,
+      "deployed": true,
       "finalReviewed": true
     }
   ],
-  "localVerificationNote": "Initial full test run overlapped installation. Transaction recovery restored prior sprite pair; Goblin reinstalled. Fresh serial checks required; no remote release claimed."
+  "localVerificationNote": "Initial full test run overlapped installation. Transaction recovery restored prior sprite pair; Goblin reinstalled. Fresh serial checks required; no remote release claimed.",
+  "release": {
+    "pr": 193,
+    "version": "0.8.127",
+    "sha": "a996688ea8cbf9a878e05b31cb5fc6bd104e8729",
+    "run": 38005221077,
+    "exactBuildVerified": true
+  },
+  "natureBatch": {
+    "id": "2026-10-10-nature-original-density",
+    "status": "Installed; real browser combat review and exact release pending",
+    "baseMain": "473fc85f57858558307a989f68eaa4e5040201e1",
+    "counts": {
+      "generated": 0,
+      "reused": 23,
+      "prepared": 23,
+      "reviewed": 23,
+      "installed": 23,
+      "deployed": 0
+    },
+    "entries": [
+      {
+        "key": "prop:bush:vale",
+        "original": "tools/sprites/batches/2026-10-08-01/prop-bush-vale/image-tool-original.png",
+        "originalHash": "07e1a51842041db5310f26db638b2d614c3c98d3aa5dee7ea25a3704989ece68",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-01/prop-bush-vale",
+        "intermediateHash": "55fd9dc986035646929322e6af43c63fec83291ca05474d8c6902089407e215b",
+        "intermediateDimensions": [
+          1648,
+          1648
+        ],
+        "priorRevision": "aa0612364d5451a516c326c008ff055379f3d531d5a2395c24259bf7dcb0e9a9",
+        "placement": {
+          "rasterScale": 3,
+          "offsetX": 0,
+          "offsetY": 11,
+          "normalization": {
+            "fullCanvasSize": 1254,
+            "padding": 197
+          }
+        },
+        "target": 576,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "bush",
+          "id": "aesthetic-nature-7"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-bush-vale/original-export-v1/candidate.json",
+        "outputHash": "adf638d1bde016d432a2147dd69f1e34aefd982015f3e8f8f173c1eb9e4644ae",
+        "sourceHash": "07e1a51842041db5310f26db638b2d614c3c98d3aa5dee7ea25a3704989ece68",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:wildflowers:vale",
+        "original": "tools/sprites/batches/2026-10-08-01/prop-wildflowers-vale/image-tool-original.png",
+        "originalHash": "c7d54e71ecb23bdec58e77b1a153a2ec8209701c3bacd669351843ae802463f5",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-01/prop-wildflowers-vale",
+        "intermediateHash": "953255dd847bb270d951b2bd01aa6be99d43c7b5fbef32d0b66f75a36e98f5bc",
+        "intermediateDimensions": [
+          1440,
+          1440
+        ],
+        "priorRevision": "1f5e60a8e25aff8b6f1e3d56b3c4991d71caf5a335b6073bd943961fba028a5e",
+        "placement": {
+          "rasterScale": 3,
+          "offsetX": -1,
+          "offsetY": 15,
+          "normalization": {
+            "fullCanvasSize": 1254,
+            "padding": 93
+          }
+        },
+        "target": 576,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "wildflowers",
+          "id": "aesthetic-nature-10"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-wildflowers-vale/original-export-v1/candidate.json",
+        "outputHash": "9a23c90223c33de4f3cea73796c5d6044a034712280bab304c4aaf73b07afea9",
+        "sourceHash": "c7d54e71ecb23bdec58e77b1a153a2ec8209701c3bacd669351843ae802463f5",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:sapling:vale",
+        "original": "tools/sprites/batches/2026-10-08-02/prop-sapling-vale/image-tool-original.png",
+        "originalHash": "9d3b16c57b6696ddce81068442375a05e5100e80171a3632b6283c70995e4adb",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-02/prop-sapling-vale",
+        "intermediateHash": "e11c9080b8cb9e18c13089544826c49fae13bc9dcd0d52753bd4834aa431b6e7",
+        "intermediateDimensions": [
+          1398,
+          1398
+        ],
+        "priorRevision": "8e6a450d73d2f9c63356dac0b70e33556f225e0d99c0d3f3b91c4fd8a3493c95",
+        "placement": {
+          "rasterScale": 4,
+          "offsetX": -3,
+          "offsetY": 25,
+          "normalization": {
+            "fullCanvasSize": 1254,
+            "padding": {
+              "left": 72,
+              "right": 72,
+              "top": 72,
+              "bottom": 72
+            }
+          }
+        },
+        "target": 768,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "sapling",
+          "id": "sprite-reference-276"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-sapling-vale/original-export-v1/candidate.json",
+        "outputHash": "eb5116c58f33e510c8956e4c34d8e710a588b4ec281e8c964b99abfb4ef15de8",
+        "sourceHash": "9d3b16c57b6696ddce81068442375a05e5100e80171a3632b6283c70995e4adb",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:stump:vale",
+        "original": "tools/sprites/batches/2026-10-08-02/prop-stump-vale/image-tool-original.png",
+        "originalHash": "9f1b276c4939fcc33dc08d2745931a2cffa385ccd662fe67fa07043059040f70",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-02/prop-stump-vale",
+        "intermediateHash": "41da5a5a95d3d101df96fd2541705b76beb7543cf10bf511c4ddac643ab12a5f",
+        "intermediateDimensions": [
+          1286,
+          1286
+        ],
+        "priorRevision": "aa17dad256464da8980fa76f32d0f3c831f0d5f08e5aea0a0e104241ed0e0b24",
+        "placement": {
+          "rasterScale": 3,
+          "offsetX": -1,
+          "offsetY": -7,
+          "normalization": {
+            "fullCanvasSize": 1254,
+            "padding": {
+              "left": 16,
+              "right": 16,
+              "top": 16,
+              "bottom": 16
+            }
+          }
+        },
+        "target": 576,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "stump",
+          "id": "side-entrance-side-vale-cellars-0"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-stump-vale/original-export-v1/candidate.json",
+        "outputHash": "8c294182e436974d3e651c692fa409a0b7461bb29a977892dc890715f44c8316",
+        "sourceHash": "9f1b276c4939fcc33dc08d2745931a2cffa385ccd662fe67fa07043059040f70",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:fallen-log:vale",
+        "original": "tools/sprites/batches/2026-10-08-02/prop-fallen-log-vale/image-tool-original.png",
+        "originalHash": "b9525a87244919d06aa4a4914ca3ec1ac02c4c46a163bd4b41cccf6e59fbebd2",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-02/prop-fallen-log-vale",
+        "intermediateHash": "378de15f444a8c63d684f9e0fe5d988c439b18d951ae9ba30a0af54cc2af13b6",
+        "intermediateDimensions": [
+          1545,
+          1545
+        ],
+        "priorRevision": "fa2e3569e95289b52a3cae137c101168fc2273d6b63a806453d13f000c260819",
+        "placement": {
+          "rasterScale": 3,
+          "offsetX": -5,
+          "offsetY": 13,
+          "normalization": {
+            "fullCanvasSize": 1254,
+            "padding": {
+              "left": 145,
+              "right": 146,
+              "top": 145,
+              "bottom": 146
+            }
+          }
+        },
+        "target": 576,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "fallen-log",
+          "id": "side-entrance-side-vale-cellars-2"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-fallen-log-vale/original-export-v1/candidate.json",
+        "outputHash": "110884d6f0c468007212ca60a365796759bf5440a733b469040b14eb2f5d7094",
+        "sourceHash": "b9525a87244919d06aa4a4914ca3ec1ac02c4c46a163bd4b41cccf6e59fbebd2",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:cattails:march",
+        "original": "tools/sprites/batches/2026-10-08-02/prop-cattails-march/image-tool-original.png",
+        "originalHash": "5251be41d8f2e095ba4e685204fb858ed66507a78c61d4573d4e4d51e17a7e66",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-02/prop-cattails-march",
+        "intermediateHash": "a20648db7343c19be6578d9d86a8911654554e4317e63adab0ce4d52cd9149f7",
+        "intermediateDimensions": [
+          1980,
+          1980
+        ],
+        "priorRevision": "52d5ca8189e118025491f40b95ca08de9c612d815dfa31ccb1da92cc7324bae7",
+        "placement": {
+          "rasterScale": 3,
+          "offsetX": 0,
+          "offsetY": 24,
+          "normalization": {
+            "fullCanvasSize": 1083,
+            "padding": {
+              "left": 448,
+              "right": 449,
+              "top": 448,
+              "bottom": 449
+            }
+          }
+        },
+        "target": 576,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "cattails",
+          "id": "harbor-reeds-b"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-cattails-march/original-export-v1/candidate.json",
+        "outputHash": "527bd4994a724d6fa114f83c0d1f1ca5c8826fee94e76e8e287118e0733f0631",
+        "sourceHash": "5251be41d8f2e095ba4e685204fb858ed66507a78c61d4573d4e4d51e17a7e66",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:driftwood:march",
+        "original": "tools/sprites/batches/2026-10-08-02/prop-driftwood-march/image-tool-original.png",
+        "originalHash": "80271c4ab96e579ee96c0af0bdd6bef4e6e03cf4bcd792dae598ae17baaf2712",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-02/prop-driftwood-march",
+        "intermediateHash": "a17790876cd89036b6f57155361ef834f7a16bea611c58dd6678ac8e41627d42",
+        "intermediateDimensions": [
+          1809,
+          1809
+        ],
+        "priorRevision": "68a63c60cb772b19ab6988c2413cfe52ea3847fbbe4ae8296dc959833199a51b",
+        "placement": {
+          "rasterScale": 3,
+          "offsetX": -2,
+          "offsetY": 29,
+          "normalization": {
+            "fullCanvasSize": 1254,
+            "padding": {
+              "left": 277,
+              "right": 278,
+              "top": 277,
+              "bottom": 278
+            }
+          }
+        },
+        "target": 576,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "driftwood",
+          "id": "harbor-drift"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-driftwood-march/original-export-v1/candidate.json",
+        "outputHash": "ba6bb436ab4095736bf08cd5951b06de660bebc14775c9908ed7f4c1d0cc572c",
+        "sourceHash": "80271c4ab96e579ee96c0af0bdd6bef4e6e03cf4bcd792dae598ae17baaf2712",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:mangrove:march",
+        "original": "tools/sprites/batches/2026-10-08-02/prop-mangrove-march/image-tool-original.png",
+        "originalHash": "e9d940fd2181d5fd2a8345e6b123d509bd11a89919eee9edb2cb955449e19a28",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-02/prop-mangrove-march",
+        "intermediateHash": "0df901f063090f5314d44cf7d3c1055ac6804090b7722380c3d59af57444ba61",
+        "intermediateDimensions": [
+          1380,
+          1380
+        ],
+        "priorRevision": "d18220a76ccd79877f628284f787805ed904ff748e81ced4ba85a51d5a559212",
+        "placement": {
+          "rasterScale": 4,
+          "offsetX": -6,
+          "offsetY": 10,
+          "normalization": {
+            "fullCanvasSize": 1254,
+            "padding": {
+              "left": 63,
+              "right": 63,
+              "top": 63,
+              "bottom": 63
+            }
+          }
+        },
+        "target": 768,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "mangrove",
+          "id": "harbor-mangrove-a"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-mangrove-march/original-export-v1/candidate.json",
+        "outputHash": "66470852c98453954d944e12f08eb9717bb700e5e306b67e2aa0a6f8e3db74f6",
+        "sourceHash": "e9d940fd2181d5fd2a8345e6b123d509bd11a89919eee9edb2cb955449e19a28",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:pine-sapling:highlands",
+        "original": "tools/sprites/batches/2026-10-08-02/prop-pine-sapling-highlands/image-tool-original.png",
+        "originalHash": "4d8274377012a42bce7418ff8be86ac818a5f579bb7fc3bf5a69166133e0682b",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-02/prop-pine-sapling-highlands",
+        "intermediateHash": "13d7ad5a6bd1f778566f12d6354811e619ee4cf9858990d63915e7042a143b6a",
+        "intermediateDimensions": [
+          1610,
+          1610
+        ],
+        "priorRevision": "1c5284836edb904e9bbe957b9cba895e4da594303a12f16e253bcb63cccd860f",
+        "placement": {
+          "rasterScale": 4,
+          "offsetX": 0,
+          "offsetY": 16,
+          "normalization": {
+            "fullCanvasSize": 1254,
+            "padding": {
+              "left": 178,
+              "right": 178,
+              "top": 178,
+              "bottom": 178
+            }
+          }
+        },
+        "target": 768,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "pine-sapling",
+          "id": "harbor-pine-a"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-pine-sapling-highlands/original-export-v1/candidate.json",
+        "outputHash": "7460dfe2bd989d15ba3d8328515ee9871d6dc8c070c89b6cabdaf100ef585394",
+        "sourceHash": "4d8274377012a42bce7418ff8be86ac818a5f579bb7fc3bf5a69166133e0682b",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:alpine-scrub:highlands",
+        "original": "tools/sprites/batches/2026-10-08-02/prop-alpine-scrub-highlands/image-tool-original.png",
+        "originalHash": "8b251a62a55f342dc5becf3dbfe87f87e9b680343106dcf4318db6c6b964bf23",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-02/prop-alpine-scrub-highlands",
+        "intermediateHash": "bc7991ce1b88291deb36849a5143cc5dd5a3bfab8a33f19b45460154d3ceedf4",
+        "intermediateDimensions": [
+          1756,
+          1756
+        ],
+        "priorRevision": "2cac44b1e710e9b89e425596ae6176044938b6e52352d74c24d35f2b3894e80c",
+        "placement": {
+          "rasterScale": 3,
+          "offsetX": -3,
+          "offsetY": 20,
+          "normalization": {
+            "fullCanvasSize": 1254,
+            "padding": {
+              "left": 251,
+              "right": 251,
+              "top": 251,
+              "bottom": 251
+            }
+          }
+        },
+        "target": 576,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "alpine-scrub",
+          "id": "aesthetic-nature-7"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-alpine-scrub-highlands/original-export-v1/candidate.json",
+        "outputHash": "642fe1147d40ee5857e5623e98db6ba6e36230f7f720a681fad3662087fce2af",
+        "sourceHash": "8b251a62a55f342dc5becf3dbfe87f87e9b680343106dcf4318db6c6b964bf23",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:marsh-bush:march",
+        "original": "tools/sprites/batches/2026-10-08-03/prop-marsh-bush-march/image-tool-original.png",
+        "originalHash": "9192ac789708ab46aa011ec533caeacc0a3e0a88d70ac83ee1945c089a4d8679",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-03/prop-marsh-bush-march",
+        "intermediateHash": "e50864ed9dca59068af825421f3bba17adef320aa9594a9bb34af1de16b5d72e",
+        "intermediateDimensions": [
+          1904,
+          1904
+        ],
+        "priorRevision": "6e163a732e12968487ef15bc9989f71187925035486bac3df411a23dd3d5f25d",
+        "placement": {
+          "rasterScale": 3,
+          "offsetX": -3,
+          "offsetY": 20,
+          "normalization": {
+            "fullCanvasSize": 1254,
+            "padding": {
+              "left": 325,
+              "right": 325,
+              "top": 325,
+              "bottom": 325
+            }
+          }
+        },
+        "target": 576,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "marsh-bush",
+          "id": "aesthetic-nature-16"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-marsh-bush-march/original-export-v1/candidate.json",
+        "outputHash": "61da77246ff31080bd7a4b04d44ed6cc68993e7fd6e5e0b8ac36a33ec8623cbd",
+        "sourceHash": "9192ac789708ab46aa011ec533caeacc0a3e0a88d70ac83ee1945c089a4d8679",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:rock-cluster:highlands",
+        "original": "tools/sprites/batches/2026-10-08-03/prop-rock-cluster-highlands/image-tool-original.png",
+        "originalHash": "1e2876868533bb0a2db6c0e77cee59d0421c3bd7a740977d934b2a63da948faf",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-03/prop-rock-cluster-highlands",
+        "intermediateHash": "07ed58f8eafc38270998efbc7ba9348af35c77c232e37e4e787db1a8306d9703",
+        "intermediateDimensions": [
+          1980,
+          1980
+        ],
+        "priorRevision": "a6b4af21c0d76d74efe9aa4350096040879aa8bea66b0fcf25e78e681c3221a4",
+        "placement": {
+          "rasterScale": 3,
+          "offsetX": 0,
+          "offsetY": 0,
+          "normalization": {
+            "fullCanvasSize": 1103,
+            "padding": {
+              "left": 438,
+              "right": 439,
+              "top": 782,
+              "bottom": 95
+            }
+          }
+        },
+        "target": 576,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "rock-cluster",
+          "id": "harbor-rock-a"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-rock-cluster-highlands/original-export-v1/candidate.json",
+        "outputHash": "7234ba4b67bc2843e827f5cd782cefadb46f33da2f9cd979ca52d350c982a41d",
+        "sourceHash": "1e2876868533bb0a2db6c0e77cee59d0421c3bd7a740977d934b2a63da948faf",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:dead-tree:frontier",
+        "original": "tools/sprites/batches/2026-10-08-03/prop-dead-tree-frontier/image-tool-original.png",
+        "originalHash": "3d24bde37cb029409aaf01bf319c9329d47e14161fc651a39775f13f5e60bdd9",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-03/prop-dead-tree-frontier",
+        "intermediateHash": "26b8231bffb42a593cec42a5de020acedb0b590608f245f4e693b289d6d28604",
+        "intermediateDimensions": [
+          1909,
+          1909
+        ],
+        "priorRevision": "9d388809c7727c3d583bb3ca8826dfe3e49cbd716c9e448abddb8aba3a71500c",
+        "placement": {
+          "rasterScale": 4,
+          "offsetX": -3,
+          "offsetY": 0,
+          "normalization": {
+            "fullCanvasSize": 1254,
+            "padding": {
+              "left": 327,
+              "right": 328,
+              "top": 552,
+              "bottom": 103
+            }
+          }
+        },
+        "target": 768,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "dead-tree",
+          "id": "aesthetic-nature-9"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-dead-tree-frontier/original-export-v1/candidate.json",
+        "outputHash": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a",
+        "sourceHash": "3d24bde37cb029409aaf01bf319c9329d47e14161fc651a39775f13f5e60bdd9",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:charred-stump:frontier",
+        "original": "tools/sprites/batches/2026-10-08-03/prop-charred-stump-frontier/image-tool-original.png",
+        "originalHash": "4836661967fbe99c584b8883ad7a64b41a4c22ac990f7a3646fef89b1964b611",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-03/prop-charred-stump-frontier",
+        "intermediateHash": "114708d51d402e59be49822786648bd44f112ee875116198caf5efe2a59ec920",
+        "intermediateDimensions": [
+          1702,
+          1702
+        ],
+        "priorRevision": "8a224f7840c4f8966cff488d4864b7724de8cb0b08ce74e5bd09ccc63e8c8f4a",
+        "placement": {
+          "rasterScale": 3,
+          "offsetX": -2,
+          "offsetY": 0,
+          "normalization": {
+            "fullCanvasSize": 1254,
+            "padding": {
+              "left": 224,
+              "right": 224,
+              "top": 393,
+              "bottom": 55
+            }
+          }
+        },
+        "target": 576,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "charred-stump",
+          "id": "sprite-reference-288"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-charred-stump-frontier/original-export-v1/candidate.json",
+        "outputHash": "38f73cbd6054f7b7abf089f2843ff68e0e1da5222d7331cf83a4d2ff9c716cd3",
+        "sourceHash": "4836661967fbe99c584b8883ad7a64b41a4c22ac990f7a3646fef89b1964b611",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:dry-scrub:frontier",
+        "original": "tools/sprites/batches/2026-10-08-03/prop-dry-scrub-frontier/image-tool-original.png",
+        "originalHash": "a91ed6fe5d8b144a2f72b93fb30ca792a5b99040a00a395322c1197a353e8027",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-03/prop-dry-scrub-frontier",
+        "intermediateHash": "acaea54f85afb63887d0ca0c6e852eb06e71d142d238472f1a92112ae0b41688",
+        "intermediateDimensions": [
+          1981,
+          1981
+        ],
+        "priorRevision": "2097328423baf057c2036e9b7f7b05e4b3403e1ce6cec78c31e959a6e2cac2c8",
+        "placement": {
+          "rasterScale": 3,
+          "offsetX": -2,
+          "offsetY": 0,
+          "normalization": {
+            "fullCanvasSize": 645,
+            "padding": {
+              "left": 668,
+              "right": 668,
+              "top": 1078,
+              "bottom": 258
+            }
+          }
+        },
+        "target": 576,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "dry-scrub",
+          "id": "aesthetic-bank-96"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-dry-scrub-frontier/original-export-v1/candidate.json",
+        "outputHash": "fa5a8422a5cad726a6c703210f03ba72d3d1934530d3c9567c08b9a0f260c1de",
+        "sourceHash": "a91ed6fe5d8b144a2f72b93fb30ca792a5b99040a00a395322c1197a353e8027",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:burned-log:frontier",
+        "original": "tools/sprites/batches/2026-10-08-03/prop-burned-log-frontier/image-tool-original.png",
+        "originalHash": "5f1fdfb14975f52ef3c47a7a3f6923888243a3302143856a37b8f65ee4c3ca08",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-03/prop-burned-log-frontier",
+        "intermediateHash": "7244e01d1b2975d2063882b5aaf15e5adaf4769ffd2126d11ed668c17b3ef9ff",
+        "intermediateDimensions": [
+          1709,
+          1709
+        ],
+        "priorRevision": "68ae554533b7f03d27aec95faafa89b9b80cea9864f4aad0630513efff9addab",
+        "placement": {
+          "rasterScale": 3,
+          "offsetX": -6,
+          "offsetY": 0,
+          "normalization": {
+            "fullCanvasSize": 1254,
+            "padding": {
+              "left": 227,
+              "right": 228,
+              "top": 310,
+              "bottom": 145
+            }
+          }
+        },
+        "target": 576,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "burned-log",
+          "id": "aesthetic-nature-7"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-burned-log-frontier/original-export-v1/candidate.json",
+        "outputHash": "b37ecaaedd9800883d383038e9e8e2d36edb36487979d1f2ac38abe8211b158e",
+        "sourceHash": "5f1fdfb14975f52ef3c47a7a3f6923888243a3302143856a37b8f65ee4c3ca08",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:black-rock:crown",
+        "original": "tools/sprites/batches/2026-10-08-03/prop-black-rock-crown/image-tool-original.png",
+        "originalHash": "4b23e0b158d7a0cb34b34661ede6957546748e935b85693c2101cfe63107dded",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-03/prop-black-rock-crown",
+        "intermediateHash": "9ed0182100fa380f22360ce6d682f012facdf22d2aa04b5a604eb12ecdf6aca7",
+        "intermediateDimensions": [
+          1734,
+          1734
+        ],
+        "priorRevision": "c9bcd0f0f6491f7786033600c1978fd3b53b93554809fb95d23c7de585e67caa",
+        "placement": {
+          "rasterScale": 3,
+          "offsetX": -2,
+          "offsetY": 0,
+          "normalization": {
+            "fullCanvasSize": 1254,
+            "padding": {
+              "left": 240,
+              "right": 240,
+              "top": 275,
+              "bottom": 205
+            }
+          }
+        },
+        "target": 576,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "black-rock",
+          "id": "side-entrance-side-crown-foundry-0"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-black-rock-crown/original-export-v1/candidate.json",
+        "outputHash": "2f7cde535488261055e586386f02bf91e29aa784a4fa2b3e90ea2c9d3c3b53ef",
+        "sourceHash": "4b23e0b158d7a0cb34b34661ede6957546748e935b85693c2101cfe63107dded",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:crystal-cluster:crown",
+        "original": "tools/sprites/batches/2026-10-08-03/prop-crystal-cluster-crown/image-tool-original.png",
+        "originalHash": "393857703b752d88306fc38e29b68a58ffd1e337024ff2b92d5c5e48da9f8f7e",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-03/prop-crystal-cluster-crown",
+        "intermediateHash": "16ca008216f5ea310ad777c5f4c2d51b756842b29e1f4189b136e230e0647a78",
+        "intermediateDimensions": [
+          1739,
+          1739
+        ],
+        "priorRevision": "2c4d5f17e8ca726bb716b46898a7eb8ba4acf7f9921f1fe68a1837424af318f9",
+        "placement": {
+          "rasterScale": 3,
+          "offsetX": -1,
+          "offsetY": 0,
+          "normalization": {
+            "fullCanvasSize": 1254,
+            "padding": {
+              "left": 242,
+              "right": 243,
+              "top": 450,
+              "bottom": 35
+            }
+          }
+        },
+        "target": 576,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "crystal-cluster",
+          "id": "aesthetic-nature-12"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-crystal-cluster-crown/original-export-v1/candidate.json",
+        "outputHash": "c05fbeab6b899c0f12d96508b38f81c6a31c01ab33a91430d6483df6315efc98",
+        "sourceHash": "393857703b752d88306fc38e29b68a58ffd1e337024ff2b92d5c5e48da9f8f7e",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:dead-shrub:crown",
+        "original": "tools/sprites/batches/2026-10-08-03/prop-dead-shrub-crown/image-tool-original.png",
+        "originalHash": "4f2f6e57ffe08a2f210b4ba3069f2c9472bd7f590d69d360573886e828535eff",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-03/prop-dead-shrub-crown",
+        "intermediateHash": "7d31e03c1aae6adc057c5081dee9ce08cfec4e87dcbc4a08bcd1f946cca49260",
+        "intermediateDimensions": [
+          1981,
+          1981
+        ],
+        "priorRevision": "ae4419ab4fb9559be4ece0425532ebc733f80afe3e76b2d7b0b2b79da54ab9eb",
+        "placement": {
+          "rasterScale": 3,
+          "offsetX": 0,
+          "offsetY": 0,
+          "normalization": {
+            "fullCanvasSize": 805,
+            "padding": {
+              "left": 588,
+              "right": 588,
+              "top": 910,
+              "bottom": 266
+            }
+          }
+        },
+        "target": 576,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "dead-shrub",
+          "id": "aesthetic-nature-11"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-dead-shrub-crown/original-export-v1/candidate.json",
+        "outputHash": "818f60932ca7f058edd75068205ff54c5ab66781874fa07f16db95a146916b0c",
+        "sourceHash": "4f2f6e57ffe08a2f210b4ba3069f2c9472bd7f590d69d360573886e828535eff",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:obsidian:crown",
+        "original": "tools/sprites/batches/2026-10-08-03/prop-obsidian-crown/image-tool-original.png",
+        "originalHash": "a0cd4e6c7704adad9b8bc4205ef6f77e0d8783aff347f9731601371839332b04",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-03/prop-obsidian-crown",
+        "intermediateHash": "603d83777bd2f970e987e8233c13ed93018bba9d22feaa340a686ab612e4607b",
+        "intermediateDimensions": [
+          1980,
+          1980
+        ],
+        "priorRevision": "c9ca949a059591ac5a9070e7fafdfdefadffc8b96d5d0032f1405eed37cad552",
+        "placement": {
+          "rasterScale": 3,
+          "offsetX": -1,
+          "offsetY": 0,
+          "normalization": {
+            "fullCanvasSize": 1240,
+            "padding": {
+              "left": 370,
+              "right": 370,
+              "top": 508,
+              "bottom": 232
+            }
+          }
+        },
+        "target": 576,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "obsidian",
+          "id": "aesthetic-nature-16"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-obsidian-crown/original-export-v1/candidate.json",
+        "outputHash": "a4b24f34c911615389eb24ce0e061f09e6db4ecb168ccda842523e853b9305bb",
+        "sourceHash": "a0cd4e6c7704adad9b8bc4205ef6f77e0d8783aff347f9731601371839332b04",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:heather:highlands",
+        "original": "tools/sprites/batches/2026-10-09-04/prop-heather-highlands/image-tool-original.png",
+        "originalHash": "c81e0183876290490229b0e27028eea755a932a29ba87515d02e277de25eed2a",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-09-04/prop-heather-highlands",
+        "intermediateHash": "531b42d7ca0b9995c8afe906ea72ebc204f785736e1421b7ca90bdc4aaf07b75",
+        "intermediateDimensions": [
+          1536,
+          1536
+        ],
+        "priorRevision": "1fc62a7ad74c8af52ce673b89130bf1e757b7d796fe56eb0c3cdff4b3bfff388",
+        "placement": {
+          "rasterScale": 3,
+          "offsetX": 0,
+          "offsetY": 24,
+          "normalization": {
+            "fullCanvasSize": 1024,
+            "padding": 256
+          }
+        },
+        "target": 576,
+        "entity": {
+          "renderKind": "prop",
+          "decorative": true,
+          "structure": "heather",
+          "id": "harbor-heather"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-heather-highlands/original-export-v1/candidate.json",
+        "outputHash": "7e19331a634e148d39c097478172618f9adf9f2c4326aceb28bab81009142baa",
+        "sourceHash": "c81e0183876290490229b0e27028eea755a932a29ba87515d02e277de25eed2a",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:rock:vale",
+        "original": "tools/sprites/batches/2026-10-08-01/prop-rock-vale/image-tool-original.png",
+        "originalHash": "47adfaee0810663baf27dbe825e7719386466565e5f5001d4b925cf16ffe0a4d",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-01/prop-rock-vale",
+        "intermediateHash": "ded65ec294b67004f2ce62cd966f51eed80a13d74ace8515829a30614a8f2ed8",
+        "intermediateDimensions": [
+          1382,
+          1382
+        ],
+        "priorRevision": "ea5807ae852c76cbea5e521e7d989481ef505a504326cc87812241c7e645704b",
+        "placement": {
+          "rasterScale": 3,
+          "offsetX": -2,
+          "offsetY": -1,
+          "normalization": {
+            "fullCanvasSize": 1254,
+            "padding": 64
+          }
+        },
+        "target": 576,
+        "entity": {
+          "renderKind": "prop",
+          "icon": "\ud83e\udea8",
+          "id": "sprite-reference-295"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-rock-vale/original-export-v1/candidate.json",
+        "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+        "sourceHash": "47adfaee0810663baf27dbe825e7719386466565e5f5001d4b925cf16ffe0a4d",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      },
+      {
+        "key": "prop:rock:highlands",
+        "original": "tools/sprites/batches/2026-10-08-01/prop-rock-vale/image-tool-original.png",
+        "originalHash": "47adfaee0810663baf27dbe825e7719386466565e5f5001d4b925cf16ffe0a4d",
+        "originalDimensions": [
+          1254,
+          1254
+        ],
+        "intermediate": "tools/sprites/batches/2026-10-08-01/prop-rock-vale",
+        "intermediateHash": "ded65ec294b67004f2ce62cd966f51eed80a13d74ace8515829a30614a8f2ed8",
+        "intermediateDimensions": [
+          1382,
+          1382
+        ],
+        "priorRevision": "25c391d966fe234e2951e6dadd402d8ed8d6d493fdb6844f3e100cf1e52b3cdf",
+        "placement": {
+          "rasterScale": 3,
+          "offsetX": -2,
+          "offsetY": -1,
+          "normalization": {
+            "fullCanvasSize": 1254,
+            "padding": 64
+          }
+        },
+        "target": 576,
+        "entity": {
+          "renderKind": "prop",
+          "icon": "\ud83e\udea8",
+          "id": "sprite-reference-296"
+        },
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-rock-highlands/original-export-v1/candidate.json",
+        "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+        "sourceHash": "47adfaee0810663baf27dbe825e7719386466565e5f5001d4b925cf16ffe0a4d",
+        "installed": true,
+        "reviewed": true,
+        "deployed": false
+      }
+    ],
+    "nextAction": "One integration PR; required CI then exact live SHA verification.",
+    "nativeEvidence": "nature-native-review-v1: 12 sheets of native physical-pixel crops; 276 full canonical/candidate scene pairs captured, full scenes retained locally in lossless archives; per-asset comparison hashes retained.",
+    "browserReview": {
+      "chromium": {
+        "assets": 23,
+        "scenes": 276,
+        "passed": true,
+        "evidence": "nature-browser-review-v1/chromium/evidence.json"
+      },
+      "webkit": {
+        "assets": 23,
+        "scenes": 276,
+        "passed": true,
+        "evidence": "nature-browser-review-v1/webkit/evidence.json"
+      },
+      "visualReview": "All 24 native physical-pixel crop sheets reviewed across desktop/phone, day/night and active Goblin Blinding Dust warning. Fixture relocation keeps the prop clear of the warning card; gameplay code unchanged."
+    },
+    "release": {
+      "version": "0.8.133",
+      "status": "awaiting-integration-ci",
+      "deployed": false
+    }
+  }
 }

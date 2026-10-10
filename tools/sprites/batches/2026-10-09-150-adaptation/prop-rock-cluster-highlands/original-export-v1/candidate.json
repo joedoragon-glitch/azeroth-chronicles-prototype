@@ -1,0 +1,117 @@
+{
+  "version": 2,
+  "key": "prop:rock-cluster:highlands",
+  "catalogId": "286",
+  "canonHash": "c1ef5cc43b16eea3802fe76688b1b82375a5d81269896dcb26dff9566f151188",
+  "canonSnapshotHash": "de516a171dda84c2ab57ef374636515dc7a3e37d302e9736a3b84acd098c1cd1",
+  "catalogHash": "42ef7c0aa69c09c2d6b587f3a6b83e9752030f2b53e95f2d15c3404e4053acba",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 181694,
+    "decodedBytes": 6290064,
+    "hash": "1e2876868533bb0a2db6c0e77cee59d0421c3bd7a740977d934b2a63da948faf",
+    "pixelHash": "a2aa7819e12e60f94d64f354578a0ff8c22bc8a34435b0adf4bf62f1b4f6b3e1",
+    "bounds": {
+      "x1": 81,
+      "y1": 37,
+      "x2": 1191,
+      "y2": 1237
+    },
+    "padding": 16,
+    "transparentPixels": 1510637,
+    "visiblePixels": 61879,
+    "lowAlphaPixels": 2050,
+    "materialBounds": {
+      "x1": 413,
+      "y1": 695,
+      "x2": 837,
+      "y2": 905
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 576,
+    "height": 576,
+    "bytes": 15412,
+    "decodedBytes": 1327104,
+    "hash": "7234ba4b67bc2843e827f5cd782cefadb46f33da2f9cd979ca52d350c982a41d",
+    "pixelHash": "8eb11ce2d38eff6eb91d4c3271e76abb3681783199bb561f3b7ffbf132bdfff8",
+    "bounds": {
+      "x1": 232,
+      "y1": 404,
+      "x2": 342,
+      "y2": 460
+    },
+    "padding": 115,
+    "transparentPixels": 327734,
+    "visiblePixels": 4042,
+    "lowAlphaPixels": 124,
+    "materialBounds": {
+      "x1": 233,
+      "y1": 405,
+      "x2": 341,
+      "y2": 458
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1254,
+      1254
+    ],
+    "to": [
+      576,
+      576
+    ],
+    "rasterScale": 3,
+    "normalization": {
+      "fullCanvasSize": 1103,
+      "padding": {
+        "left": 438,
+        "right": 439,
+        "top": 782,
+        "bottom": 95
+      },
+      "virtualWidth": 1980,
+      "virtualHeight": 1980,
+      "input": "untouched-original",
+      "samplingPasses": 1,
+      "intermediatePixelsUsed": false
+    },
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": 0,
+      "y": 0,
+      "rasterX": 0,
+      "rasterY": 0,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+    "kind": "engineer-authorized",
+    "userAppearanceAcceptance": false,
+    "nativeScale": true,
+    "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
+    "evidence": [
+      "lineage.json",
+      "review-scenes/comparison.json"
+    ]
+  }
+}

@@ -77,6 +77,14 @@ const reset = () => files.forEach((f, i) => fs.writeFileSync(f, initial[i]));
     assert.equal(killed.signal, 'SIGKILL');
     assert.equal(JSON.parse(fs.readFileSync(files[0])).value, 7);
     assert(fs.readFileSync(files[1]).equals(initial[1]));
+    // A reused PID must not make the dead publisher appear active.
+    if (process.platform === 'linux' && fs.existsSync('/proc/self/stat')) {
+      const pid = Number(fs.readFileSync('/proc/self/stat', 'utf8').split(' ')[0]);
+      fs.writeFileSync(
+        path.join(root, '_asset-transactions/sprites/lock.json'),
+        JSON.stringify({ pid, started: '0' }),
+      );
+    }
     assert.throws(() => T.assertClean(root, 'sprites'), /Interrupted/);
     fs.writeFileSync(files[1], JSON.stringify({ userEdit: true }));
     assert.throws(() => T.recover({ root, id: 'sprites', files }), /refuses overwrite/);

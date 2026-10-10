@@ -1,0 +1,42 @@
+{
+  "key": "prop:sapling:vale",
+  "original": "tools/sprites/batches/2026-10-08-02/prop-sapling-vale/image-tool-original.png",
+  "originalHash": "9d3b16c57b6696ddce81068442375a05e5100e80171a3632b6283c70995e4adb",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/batches/2026-10-08-02/prop-sapling-vale",
+  "intermediateHash": "e11c9080b8cb9e18c13089544826c49fae13bc9dcd0d52753bd4834aa431b6e7",
+  "intermediateDimensions": [
+    1398,
+    1398
+  ],
+  "priorRevision": "8e6a450d73d2f9c63356dac0b70e33556f225e0d99c0d3f3b91c4fd8a3493c95",
+  "placement": {
+    "rasterScale": 4,
+    "offsetX": -3,
+    "offsetY": 25,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": {
+        "left": 72,
+        "right": 72,
+        "top": 72,
+        "bottom": 72
+      }
+    }
+  },
+  "target": 768,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "sapling",
+    "id": "sprite-reference-276"
+  },
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact nature binding; no animation or variant bank. Seeded placement and procedural scene effects retained."
+}

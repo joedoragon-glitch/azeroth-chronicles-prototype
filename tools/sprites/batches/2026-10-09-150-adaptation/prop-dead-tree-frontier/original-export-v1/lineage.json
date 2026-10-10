@@ -1,0 +1,42 @@
+{
+  "key": "prop:dead-tree:frontier",
+  "original": "tools/sprites/batches/2026-10-08-03/prop-dead-tree-frontier/image-tool-original.png",
+  "originalHash": "3d24bde37cb029409aaf01bf319c9329d47e14161fc651a39775f13f5e60bdd9",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/batches/2026-10-08-03/prop-dead-tree-frontier",
+  "intermediateHash": "26b8231bffb42a593cec42a5de020acedb0b590608f245f4e693b289d6d28604",
+  "intermediateDimensions": [
+    1909,
+    1909
+  ],
+  "priorRevision": "9d388809c7727c3d583bb3ca8826dfe3e49cbd716c9e448abddb8aba3a71500c",
+  "placement": {
+    "rasterScale": 4,
+    "offsetX": -3,
+    "offsetY": 0,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": {
+        "left": 327,
+        "right": 328,
+        "top": 552,
+        "bottom": 103
+      }
+    }
+  },
+  "target": 768,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "dead-tree",
+    "id": "aesthetic-nature-9"
+  },
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact nature binding; no animation or variant bank. Seeded placement and procedural scene effects retained."
+}

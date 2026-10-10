@@ -1,0 +1,37 @@
+{
+  "key": "prop:wildflowers:vale",
+  "original": "tools/sprites/batches/2026-10-08-01/prop-wildflowers-vale/image-tool-original.png",
+  "originalHash": "c7d54e71ecb23bdec58e77b1a153a2ec8209701c3bacd669351843ae802463f5",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/batches/2026-10-08-01/prop-wildflowers-vale",
+  "intermediateHash": "953255dd847bb270d951b2bd01aa6be99d43c7b5fbef32d0b66f75a36e98f5bc",
+  "intermediateDimensions": [
+    1440,
+    1440
+  ],
+  "priorRevision": "1f5e60a8e25aff8b6f1e3d56b3c4991d71caf5a335b6073bd943961fba028a5e",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -1,
+    "offsetY": 15,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": 93
+    }
+  },
+  "target": 576,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "wildflowers",
+    "id": "aesthetic-nature-10"
+  },
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact nature binding; no animation or variant bank. Seeded placement and procedural scene effects retained."
+}
