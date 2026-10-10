@@ -643,7 +643,9 @@
                 return;
             }
           }
-        if (dist(e, a.target) < 1 || !moved || a.life <= 0) {
+        // Axis fallback can report success for a zero-length clear segment.
+        // A charge blocked by real geometry must end when it makes no progress.
+        if (dist(e, a.target) < 1 || !moved || dist(before, e) < 0.000001 || a.life <= 0) {
           if (a.landing && dist(e, a.target) < 20) this.resolveArea(e, a);
           e.motion = null;
           e.cd =

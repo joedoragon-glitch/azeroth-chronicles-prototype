@@ -403,14 +403,17 @@
           : 'Neri sells Preparation Tonics and trains permanent Ranger Heal, companion vitality and discipline resets.',
         [
           action(
-            'Buy Preparation Tonic · ' + getGame().preparationTonicCost() + ' crowns',
+            getGame().preparationTonicStock() >= 10000
+              ? 'Preparation Tonics · STORAGE FULL'
+              : 'Buy Preparation Tonic · ' + getGame().preparationTonicCost() + ' crowns',
             () => {
               if (getGame().purchasePreparationTonic()) supplier(n, back);
             },
             'Owned ' +
               getGame().preparationTonicStock() +
               ' · +10% maximum HP until rest or defeat · Use at any completed Barracks',
-            getGame().hero.gold < getGame().preparationTonicCost(),
+            getGame().hero.gold < getGame().preparationTonicCost() ||
+              getGame().preparationTonicStock() >= 10000,
           ),
           action(
             healRank >= 2
@@ -1143,7 +1146,9 @@
           .activeLivingParty()
           .filter((u) => u.type === 'archer'),
         heal = getGame().rangerSupportAmount('health'),
-        mana = getGame().rangerSupportAmount('mana');
+        mana = getGame().rangerSupportAmount('mana'),
+        hero = getGame().hero,
+        equipped = hero.legacyEquipped ? hero.legacyWeaponName : 'tier ' + hero.weapon;
       openMenu(
         'Inventory',
         'Crowns ' +
@@ -1152,6 +1157,22 @@
           getGame().hero.weapon +
           ' · Armor tier ' +
           getGame().hero.armorTier +
+          '\nEquipped weapon: ' +
+          equipped +
+          ' · Weapon reforge: ' +
+          (hero.reforges['weapon:' + hero.weapon]
+            ? hero.legacyEquipped
+              ? 'owned (inactive while legacy weapon equipped)'
+              : 'active'
+            : 'none') +
+          ' · Armor reforge: ' +
+          (hero.reforges['armor:' + hero.armorTier] ? 'active' : 'none') +
+          '\nPreparation Tonics: ' +
+          getGame().preparationTonicStock() +
+          ' stored · ' +
+          (hero.tonic
+            ? 'ACTIVE on hero only (+10% maximum HP until rest or defeat)'
+            : 'inactive · use at a completed Barracks') +
           '\nRanger support: ' +
           (rangers.length
             ? rangers.length +
@@ -1181,8 +1202,8 @@
           ...(getGame().hero.weapon
             ? [
                 action('Equip current weapon tier ' + getGame().hero.weapon, () => {
-                  getGame().hero.legacyEquipped = false;
-                  status('Weapon tier ' + getGame().hero.weapon + ' equipped.');
+                  if (getGame().equipTierWeapon())
+                    status('Weapon tier ' + getGame().hero.weapon + ' equipped.');
                   inventory(back);
                 }),
               ]

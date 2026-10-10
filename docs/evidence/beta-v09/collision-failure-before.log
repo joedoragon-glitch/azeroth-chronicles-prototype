@@ -1,0 +1,74 @@
+node:assert:152
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: a charge that cannot move ends on collision instead of timing out at 5s
++ actual - expected
+
++ {
++   angle: -1.5707963267948966,
++   charge: true,
++   coefficient: 1.4,
++   count: 1,
++   fromX: 600,
++   fromY: 1100,
++   hit: [],
++   index: 3,
++   kind: 'line',
++   life: 4.000000000000021,
++   name: 'Wall rush',
++   opening: 3,
++   radius: 132.25,
++   recovery: 3,
++   speed: 450,
++   target: {
++     x: 600,
++     y: 950
++   },
++   timer: 1.7,
++   total: 1.7,
++   warning: 1.7,
++   x: 600,
++   y: 950
++ }
+- null
+
+    at Object.<anonymous> (/workspace/scratch/9f6f69f47b09/azeroth-chronicles-prototype/tests/boss-motion-collision.test.cjs:22:10)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: {
+    kind: 'line',
+    warning: 1.7,
+    recovery: 3,
+    coefficient: 1.4,
+    charge: true,
+    opening: 3,
+    index: 3,
+    name: 'Wall rush',
+    timer: 1.7,
+    total: 1.7,
+    x: 600,
+    y: 950,
+    fromX: 600,
+    fromY: 1100,
+    angle: -1.5707963267948966,
+    count: 1,
+    radius: 132.25,
+    target: { x: 600, y: 950 },
+    hit: [],
+    speed: 450,
+    life: 4.000000000000021
+  },
+  expected: null,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.19.0
