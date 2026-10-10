@@ -38,6 +38,12 @@ This maintenance pass is documentation/backlog reconciliation. It does not certi
 
 #204 and #208 initially both used v0.8.134; they integrated serially. #204 merged first, and #208 adopted that main state and v0.8.135. Both workflow additions remain in the combined source. A previous head's green run is not evidence for a newer head; publication is a separate gate.
 
+## Proposed monster-attack housekeeping for v0.9
+
+The [critical monster skill reassessment and decision queue](MONSTER_ATTACK_V09_HOUSEKEEPING.md) records a **read-only generated attack registry**, source-to-presentation audit contract, and a four-way disposition: release-blocking defect, unambiguous existing-contract repair, authorial decision, or deferred polish. Its independent generator uses the existing enemy VFX identities; normal/TRUE and rogue attacks stay distinct where their live source differs. **This does not certify 251 successful abilities**, approve additional attacks, or turn the future preview workbench into a release blocker. Current skill findings require reproduced behavior or deliberate design resolution before gameplay changes.
+
+The combat-condition/trap changes remain owned by active PR #210; reconcile its final merged state before revisiting status and trap checks. This documentation branch makes **no production combat, balance, graphics, save, package-version or deployment change**.
+
 ## v0.9 acceptance still to establish
 
 1. Verify the exact combined stabilization commit through generated/asset checks, the full Node suite, relevant Chromium/WebKit device paths, Pages publication, published SHA and live smoke. Keep merged, published and human-tested states distinct.
