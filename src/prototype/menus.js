@@ -1160,7 +1160,11 @@
           '\nEquipped weapon: ' +
           equipped +
           ' · Weapon reforge: ' +
-          (hero.reforges['weapon:' + hero.weapon] ? 'active' : 'none') +
+          (hero.reforges['weapon:' + hero.weapon]
+            ? hero.legacyEquipped
+              ? 'owned (inactive while legacy weapon equipped)'
+              : 'active'
+            : 'none') +
           ' · Armor reforge: ' +
           (hero.reforges['armor:' + hero.armorTier] ? 'active' : 'none') +
           '\nPreparation Tonics: ' +
