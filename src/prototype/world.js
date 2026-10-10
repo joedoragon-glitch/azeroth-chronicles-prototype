@@ -13,7 +13,7 @@
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
           this.sideDungeon(z.id) ||
-          z.settlementLayoutVersion === 3
+          z.settlementLayoutVersion === 4
         )
           return;
         const i = this.regionIndex(z.id),
@@ -81,7 +81,8 @@
           place('supplier', 115, -85);
           place('recruiter', -125, 90);
           place('board', 210, 55);
-          place('rest', 0, 0);
+          // A refuge is a real house, not the paved square from which roads depart.
+          place('rest', -70, -120);
           const crownTravelHub = (R.crownRoutes || []).some((r) => z.id === 'crown' && r.travelHub);
           const rearStand = R.travelArrivalStands?.[z.id];
           if (rearStand) {
@@ -90,10 +91,134 @@
               Object.assign(homeward, terrainSafe(rearStand.x, rearStand.y, 8) || rearStand);
           } else if (!R.harbors?.[z.id] && !crownTravelHub) place('return', 150, 175);
           const minorRest = by('minor');
-          if (minorRest) Object.assign(minorRest, terrainSafe(minor.x, minor.y, 8) || minor);
+          if (minorRest)
+            Object.assign(minorRest, terrainSafe(minor.x, minor.y - 125, 8) || minor);
           z.boardPositionVersion = 2;
           if (z.id === 'vale') z.supplierPositionVersion = 2;
-          z.settlementLayoutVersion = 3;
+          z.settlementLayoutVersion = 4;
+        } finally {
+          this.s.zone = oldZone;
+        }
+      }
+      // Roads are 70 world units wide including shoulders. Artwork needs an
+      // additional verge beyond its collision radius: decorative props usually
+      // have r:0, but that does not make their carts or houses point-sized.
+      roadFootprint(p) {
+        if (p.roadTrace) return 0; // Painted ruts and patches belong on the road.
+        const kind = String(p.structure || '');
+        if (
+          p.roadBlocker ||
+          /house|cottage|workshop|smithy|boathouse|forgehouse|command-tent|barracks/i.test(kind) ||
+          p.kind === 'barracks' ||
+          ['rest', 'minor'].includes(p.id)
+        )
+          return 112;
+        if (/fence|wall|palisade|stockade|watchpost|tower|lean-to|roost/i.test(kind))
+          return Math.max(88, (p.r || 0) + 57);
+        if (/cart|wagon|market|crate|stack|rack|table|kitchen|lumber|barricade/i.test(kind))
+          return Math.max(78, (p.r || 0) + 50);
+        return Math.max(64, (p.r || 0) + 48);
+      }
+      nearestRoad(p, z) {
+        let nearest = null;
+        for (const path of z.roads || [])
+          for (let j = 1; j < path.length; j++) {
+            const a = path[j - 1],
+              b = path[j],
+              dx = b.x - a.x,
+              dy = b.y - a.y,
+              t = clamp(((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy || 1), 0, 1),
+              x = a.x + t * dx,
+              y = a.y + t * dy,
+              d = Math.hypot(p.x - x, p.y - y);
+            if (!nearest || d < nearest.distance)
+              nearest = { x, y, dx, dy, distance: d };
+          }
+        return nearest;
+      }
+      // A deterministic roadside plot search: step out perpendicular to the
+      // nearest street, not randomly along it. Keep neighbors and terrain clear.
+      roadsidePlot(z, source, clearance, moving = null) {
+        const nearest = this.nearestRoad(source, z);
+        if (!nearest || !Number.isFinite(nearest.distance)) return { x: source.x, y: source.y };
+        const dx = source.x - nearest.x,
+          dy = source.y - nearest.y,
+          heading =
+            Math.hypot(dx, dy) > 1
+              ? Math.atan2(dy, dx)
+              : Math.atan2(nearest.dx, -nearest.dy),
+          radius = Math.max(8, moving?.r || 0);
+        const valid = (p) =>
+          p.x > 55 + radius &&
+          p.y > 55 + radius &&
+          p.x < this.zoneSize(z.id) - 55 - radius &&
+          p.y < this.zoneSize(z.id) - 55 - radius &&
+          (this.nearestRoad(p, z)?.distance ?? Infinity) >= clearance &&
+          !this.blocked(p.x, p.y, z.id, radius + 8, true) &&
+          !z.props.some(
+            (q) =>
+              q !== moving &&
+              !q.roadTrace &&
+              dist(p, q) <
+                radius + Math.max(q.r || 0, q.structure ? 35 : 18) + 18,
+          ) &&
+          !z.npcs.some(
+            (q) => q !== moving && dist(p, q) < radius + (q.kind === 'rest' ? 68 : 36),
+          ) &&
+          !z.nodes.some((q) => q.amount > 0 && dist(p, q) < radius + 48) &&
+          !z.buildings.some((q) => q !== moving && dist(p, q) < radius + 75);
+        const original = { x: source.x, y: source.y };
+        if (valid(original)) return original;
+        for (let step = 25; step <= 400; step += 25)
+          for (const turn of [0, 0.35, -0.35, 0.7, -0.7, 1.1, -1.1, 1.55, -1.55, 3.14]) {
+            const a = heading + turn,
+              p = {
+                x: Math.round(source.x + Math.cos(a) * step),
+                y: Math.round(source.y + Math.sin(a) * step),
+              };
+            if (valid(p)) return p;
+          }
+        return null;
+      }
+      clearRoadside(z) {
+        if (
+          dungeonIds.includes(z.id) ||
+          this.supplyRoom(z.id) ||
+          this.sideDungeon(z.id) ||
+          z.roadsideClearanceVersion === 1
+        )
+          return;
+        const oldZone = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          // Surface dressing can be dropped only when there is no sensible plot;
+          // defensive walls, trees and settlement buildings retain their IDs.
+          z.props = z.props.filter((p) => {
+            if (p.roadTrace) return true;
+            const clearance = this.roadFootprint(p);
+            if ((this.nearestRoad(p, z)?.distance ?? Infinity) >= clearance) return true;
+            const site = this.roadsidePlot(z, p, clearance, p);
+            if (site) {
+              Object.assign(p, site);
+              return true;
+            }
+            return !p.decorative;
+          });
+          // Civic services are actual roofed structures. Put their frontage
+          // beside the street; keep the street hub itself open and traversable.
+          for (const n of z.npcs.filter((n) =>
+            ['rest', 'minor', 'supplier', 'recruiter', 'board'].includes(n.id),
+          )) {
+            const clearance = this.roadFootprint(n);
+            if ((this.nearestRoad(n, z)?.distance ?? Infinity) >= clearance) continue;
+            const site = this.roadsidePlot(z, n, clearance, n);
+            if (site) Object.assign(n, site);
+          }
+          for (const b of z.buildings) {
+            const site = this.roadsidePlot(z, b, this.roadFootprint(b), b);
+            if (site) Object.assign(b, site);
+          }
+          z.roadsideClearanceVersion = 1;
         } finally {
           this.s.zone = oldZone;
         }
@@ -102,7 +227,7 @@
         if (dungeonIds.includes(z.id) || this.supplyRoom(z.id) || this.sideDungeon(z.id)) return;
         this.settlementLayout(z);
         const i = this.regionIndex(z.id),
-          roadVersion = z.id === 'frontier' ? 12 : originalDepartureRegion(z.id) ? 11 : 10;
+          roadVersion = z.id === 'frontier' ? 13 : originalDepartureRegion(z.id) ? 12 : 11;
         if (z.roadVersion === roadVersion) return;
         const origin = { x: D.towns[i][0], y: D.towns[i][1] },
           field = this.fieldCenter(i),
@@ -145,7 +270,7 @@
           props = z.props,
           blockers = z.props
             .filter((p) => p.roadBlocker)
-            .map((p) => ({ ...p, r: (p.r || 0) + 30 }));
+            .map((p) => ({ ...p, r: (p.r || 0) + 55 }));
         z.props = blockers;
         try {
           if (roadPlans.has(key)) z.roads = clone(roadPlans.get(key));
@@ -1306,6 +1431,7 @@
         this.finalBossPopulation(z);
         this.regionalHandoffLife(z);
         this.ironrootLivelihood(z);
+        this.clearRoadside(z);
       }
       spaceQuestBoard(z) {
         if (dungeonIds.includes(z.id) || z.boardPositionVersion === 2) return;
