@@ -688,7 +688,7 @@
   function systemMenu() {
     openMenu(
       'Game and settings',
-      'Controls, audio and save management.',
+      '',
       [
         ...(!runningAsApp() && platform.mode === 'phone'
           ? [action('Install on phone', installApp, 'Add Azeroth Chronicles to the home screen')]
@@ -704,10 +704,6 @@
         action('Screen and performance', () => platformMenu(systemMenu)),
         action('Controls', () => help(systemMenu)),
         action('Sound settings', () => soundMenu(systemMenu)),
-        action(paused ? 'Resume play' : 'Pause play', () => {
-          paused = !paused;
-          closeMenu();
-        }),
         action('Save and game management', saveMenu),
       ],
       openMain,
@@ -725,7 +721,7 @@
         action('Map and travel routes', showMap),
         action('Quest journal', () => quests(false)),
         action('Inventory and support', inventory),
-        action('Character', characterMenu),
+        action('Talents', () => talents(openMain)),
         ...(canBuild
           ? [
               action(
@@ -999,6 +995,7 @@
       back,
     );
   }
+  // prettier-ignore
   function showMap(back = closeMenu) {
     const zone = game.zone();
     const room = game.supplyRoom();
