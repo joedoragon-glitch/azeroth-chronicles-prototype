@@ -149,7 +149,7 @@ const PrototypeData = {
       place: 'Orchard den',
       attacks: [
         'Bite: short frontal arc, 0.8 second warning and 0.8 second recovery.',
-        'Pounce: marks a landing circle for 1.3 seconds; misses leave a 1.5 second opening.',
+        'Pounce: marks a landing circle for 1.3 seconds; after the leap ends (hit or miss), Thornfang has 0.375 seconds of normal recovery, with no extra exposed-core vulnerability.',
         'Root line: a narrow ground line warns for 1.2 seconds and briefly slows on contact.',
         'Den howl: warns for 1.5 seconds, then calls three low health pups; a maximum of three pups may be alive.',
       ],
@@ -261,7 +261,7 @@ const PrototypeData = {
         'Stone slam: circle warns for 1.6 seconds and exposes the core for 2.5 seconds afterward.',
         'Rockfall: three separated circles warn for 1.7 seconds; at least one connected safe route remains.',
         'Shockwave rings: visible expanding rings follow a 1.6 second windup and can be crossed after they pass.',
-        'Wall rush: lane warns for 1.7 seconds; striking a marked pillar exposes the core for 3 seconds.',
+        'Wall rush: lane warns for 1.7 seconds; when the charge ends, the core is exposed for 3 seconds, with or without an obstacle collision.',
         'Stonebound call: summons three ogres; TRUE form replenishes its six-unit elite warband.',
       ],
     },

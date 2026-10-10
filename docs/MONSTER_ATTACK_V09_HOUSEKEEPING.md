@@ -1,6 +1,6 @@
 # v0.9 monster-attack housekeeping — authoritative audit handoff
 
-**Status:** source audit and review infrastructure proposed in [PR #212](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/212), **not** a claim that every skill has been individually certified.  
+**Status:** read-only registry and regression foundation integrated via [PR #216](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/216); historical draft [#212](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/212) was closed as superseded. The author has settled MA-01/MA-02 without changing the underlying attacks. This is **not** a certification that all skills are correct.  
 **Baseline:** main commit `905e822da16b5a8ca7f959ee1f3e1a89f92b52d4`, v0.8.136, 10 October 2026; includes merged combat-conditions [PR #210](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/210).  
 **Ownership:** this is part of [v0.9 roadmap #192](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/192). The game remains the canonical multi-file Pages/PWA, retaining v4 saves and existing authored designs.
 
@@ -105,14 +105,14 @@ Both night specialists must be checked: Wraith **Soul Drain** and Stalker **Shad
 4. **Identity and media:** Skill name, description, species/boss anatomy, timing, procedural recipe, material (fur/roots/water/stone/metal/ash/etc.), projectile, impact and audio agree. Existence of VFX art alone is not a thematic PASS.
 5. **Lifecycle and performance:** Repeated casts, TRUE encounters, summoned units, overlap, reset/escape/return, kill/succession, historical saves, pause, offline PWA, desktop and phone warning readability.
 
-## Source-supported findings awaiting focused disposition
+## Source-supported findings and dispositions
 
 These are **not 8 proven broken skills**. They are a combined shortlist of suspected contracts, previously merged fixes and visual review leads.
 
 | ID | Category | Source observation | Next action and priority |
 | --- | --- | --- | --- |
-| **MA-01** | Potential contract defect / possible authorial fork | **Thornfang Pounce:** `data.js` describes a 1.5 s opening after a *miss*. `rules.attacks.thorn[1]` has `landing` and `recovery`, but no `opening`; `advanceMotion()` only grants exposed-core `e.open` when configured. General boss cooldown recovery uses a 0.25 multiplier. | **High.** Reproduce hit/miss and effective punish interval. If an actual promised vulnerable opening is absent, flag as blocker; do not assume which alternative mechanic was intended. |
-| **MA-02** | Potential contract defect / possible authorial fork | **Stone Colossus Wall Rush:** prose conditions its 3 s exposed core on *striking a marked pillar*. The move sets `opening: 3`; `advanceMotion()` grants the opening on motion termination, not a verified pillar hit. | **High.** Reproduce with/without pillar, inspect collision and opening damage. Resolve code-versus-description only after intent is determined. |
+| **MA-01** | **Author-approved; description fixed** | **Thornfang Pounce:** v0.6 text promised a 1.5 s miss-only opening. The current leap instead gives 0.375 s effective normal recovery after hit or miss and no exposed-core state. | **Keep current combat.** The obsolete attack description is corrected; no cooldown, timing, damage or AI retune. |
+| **MA-02** | **Author-approved; description fixed** | **Stone Colossus Wall Rush:** three-second core exposure occurs whenever the charge ends. Historical pillar coordinates are unused and no collision prerequisite exists. | **Keep current combat.** Correct the obsolete pillar-dependent description; preserve v0.8.137 blocked-charge fix. |
 | MA-03 | Visual material mismatch | **Ash Sentinel Furnace Pulses / elemental persistent hazards:** hazard coloring prioritizes a dormant legacy `manaDrain` field before the action's ember/stone family, potentially rendering elemental danger spectral. | **Medium.** Observe actual Canvas output. A narrowly scoped material-only correction is normally non-authorial; preserve exact gameplay hit geometry. |
 | MA-04 | Semantic/VFX review lead | **Rogue ranged volleys/crossfire:** several role signatures execute warned area binds, not moving volleys. Generic bind recipe can suggest roots even where bows, axes or Crown gun-lines are named. | **Medium/low.** Check actual cue versus true area effect; only escalate if misleading/dangerous. Do not invent projectiles solely from the move name. |
 | MA-05 | Completed baseline integration | **Slow/immunity:** older hit paths could apply conditions independently of a successful, nonimmune hit. | **Merged as v0.8.136 in #210.** Keep regression coverage and recheck within representative boss/trap encounters; do not reopen as a pending implementation. |
@@ -128,8 +128,10 @@ Prior work: `docs/ROGUE_PR146_INTEGRATION_AUDIT.md` reports 99 basic and 51 sign
 
 The new generator and test must confirm deterministic, pure source extraction, complete group/role coverage, unique IDs and readable Markdown/JSON output. **Do not merge a failed or incomplete CI run.** After changes, require exact-head format/Node tests, the project's full desktop/phone Chromium + WebKit path, successful main release, exact published SHA and representative real-device play before claiming v0.9 readiness.
 
-**Tracked correctness reproducer:** [issue #214](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/214) owns MA-01 and MA-02, with tests and the exact authorial fork preserved for later. [Beta-readiness issue #213](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213) owns end-to-end release acceptance, not new skill design.
+**Finalized historical reproducers:** [issue #214](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/214) preserves the original MA-01/MA-02 evidence and their author-approved resolution. Neither combat mechanic changes. [Beta-readiness issue #213](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213) owns end-to-end release acceptance, not new skill design.
 
-**Next work order:** (1) preserve and merge read-only registry/docs once CI is green; (2) produce focused isolated reproducers for MA-01/02 and correct only proven gameplay defects; (3) verify MA-03 visually and check same material rules for comparable hazards; (4) re-evaluate the already merged condition/trap contracts; (5) defer optional media and TRUE redesign for authorial review after the weekend. Future workbench can load this read-only data and replay actual visual effects and hit geometry without mutating simulation.
+**Next work order:** (1) verify the two newly corrected descriptions against the unchanged authoritative combat tables; (2) keep the integrated registry as an inspection foundation; (3) defer optional VFX refinement, extra statuses, workbench upgrades and new TRUE-form designs until v0.9. Future workbench can load this read-only data and replay actual visual effects and hit geometry without mutating simulation.
 
 No new authorial decision is required to finish documentation or source inventory. Any disputed design is explicitly parked, with alternatives and evidence requirements, instead of being silently decided.
+
+**Authorial resolution, 10 October 2026:** retain Thornfang's 0.375-second post-Pounce recovery and Stone Colossus's three-second exposure after any Wall Rush. Do not restore historical miss-only vulnerability or imaginary marked pillars. See [DECISIONS.md](DECISIONS.md).
