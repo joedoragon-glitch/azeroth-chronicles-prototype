@@ -529,7 +529,11 @@
           this.hero.legacyEquipped = false;
           return 'tier';
         }
-        if (typeof choice === 'string' && legacyWeapons[choice] && this.s.legacyInventory?.includes(choice)) {
+        if (
+          typeof choice === 'string' &&
+          legacyWeapons[choice] &&
+          this.s.legacyInventory?.includes(choice)
+        ) {
           this.equipLegacy(choice);
           return 'legacy';
         }
