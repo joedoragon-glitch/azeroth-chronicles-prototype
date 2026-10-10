@@ -5,7 +5,7 @@ assert.equal(typeof Visuals.atmosphere,'function','procedural renderer exposes t
 let passed=0;function test(name,fn){try{fn();passed++;console.log('PASS '+name);}catch(e){process.exitCode=1;console.error('FAIL '+name+' '+e.stack);}}
 
 for(const [i,region] of Campaign.data.regions.entries())test(region.id+' overworld reads as a settled, natural place',()=>{
- const c=new Campaign(),ok=c.enter(region.id),z=c.zone();assert(ok);assert.equal(z.roadVersion,region.id==='frontier'?12:['vale','highlands'].includes(region.id)?11:10);assert.equal(z.settlementLayoutVersion,3);assert.equal(z.aestheticVersion,['vale','highlands','frontier'].includes(region.id)?5:4);assert.equal(z.landmarkLayoutVersion,3);assert.equal(z.worldLifeVersion,['vale','highlands','frontier'].includes(region.id)?2:1);
+ const c=new Campaign(),ok=c.enter(region.id),z=c.zone();assert(ok);assert.equal(z.roadVersion, 16);assert.equal(z.settlementLayoutVersion,4);assert.equal(z.aestheticVersion,['vale','highlands','frontier'].includes(region.id)?5:4);assert.equal(z.landmarkLayoutVersion,3);assert.equal(z.worldLifeVersion,['vale','highlands','frontier'].includes(region.id)?2:1);
  const blockers=z.props.filter(p=>p.roadBlocker),life=z.props.filter(p=>String(p.id).startsWith('aesthetic-town-')||String(p.id).startsWith('aesthetic-hamlet-')),nature=z.props.filter(p=>String(p.id).startsWith('aesthetic-nature-')||String(p.id).startsWith('aesthetic-bank-'));
  assert(blockers.length>=13,region.id+' has a real settlement footprint');assert(life.length>=6,region.id+' towns show daily life');assert(nature.length>=25,region.id+' countryside has visible regional nature');assert(new Set(nature.map(p=>p.structure)).size>=3,region.id+' nature is not one repeated prop');const lived=z.props.filter(p=>String(p.id).startsWith('world-life-'));assert(lived.length>=12,region.id+' has civilian, habitat and field living-space details');assert(lived.some(p=>String(p.id).includes('-civilian-')));assert(lived.some(p=>String(p.id).includes('-habitat-')));assert(lived.some(p=>String(p.id).includes('-field-')));assert(R.landforms[i]?.length>=4,region.id+' has authored regional landforms');assert(z.props.length<=380);
  for(const p of blockers)for(const path of z.roads)for(let j=1;j<path.length;j++)assert(c.distanceToSegment(p,path[j-1],path[j])>p.r+15,region.id+' road crosses '+p.id);
@@ -34,7 +34,7 @@ test('retained named landmarks sit beside the world feature their names describe
 
 test('Ashen Frontier reads as recovery under a functioning occupation corridor',()=>{
  const c=new Campaign();c.enter('frontier');const z=c.zone(),town={x:Campaign.data.towns[3][0],y:Campaign.data.towns[3][1]},hamlet={x:Campaign.data.minors[3][0],y:Campaign.data.minors[3][1]};
- assert.equal(z.frontierLayoutVersion,4);assert.equal(z.roadVersion,12);
+ assert.equal(z.frontierLayoutVersion,4);assert.equal(z.roadVersion, 16);
  assert(R.frontierRoutes.length>=5,'Frontier has separate supply, repair, inspection, checkpoint and Bastion routes');
  const routeIds=new Set(R.frontierRoutes.map(r=>r.id));assert.equal(routeIds.size,R.frontierRoutes.length);
  for(const route of R.frontierRoutes){const target={x:route.point[0],y:route.point[1]};assert(c.route(town,target).length,'route '+route.id+' is reachable');assert(z.roads.some(path=>distance(path.at(-1),target)<2),'road network reaches '+route.id);}
@@ -67,7 +67,7 @@ test('Frontier procedural props gain deterministic local variants instead of rep
 
 test('Dark Crown reads as a regime with separate districts and distributed outward routes',()=>{
  const c=new Campaign();c.enter('crown');const z=c.zone(),town={x:Campaign.data.towns[4][0],y:Campaign.data.towns[4][1]};
- assert.equal(z.crownLayoutVersion,1);assert.equal(z.roadVersion,10);assert.equal(z.destinationLayoutVersion,5);
+ assert.equal(z.crownLayoutVersion,1);assert.equal(z.roadVersion, 16);assert.equal(z.destinationLayoutVersion,5);
  assert(R.crownRoutes.length>=5,'Crown has several functionally distinct outward/logistics routes');
  const routeIds=new Set(R.crownRoutes.map(r=>r.id));assert.equal(routeIds.size,R.crownRoutes.length);
  for(let a=0;a<R.crownRoutes.length;a++)for(let b=a+1;b<R.crownRoutes.length;b++)assert(distance({x:R.crownRoutes[a].point[0],y:R.crownRoutes[a].point[1]},{x:R.crownRoutes[b].point[0],y:R.crownRoutes[b].point[1]})>500,'Crown routes are not clumped together');

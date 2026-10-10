@@ -230,14 +230,16 @@
       const n = this.s.zones[zone]?.npcs.find((n) => n.id === id && n.kind === 'rest');
       if (n) {
         this.s.refuge = zone;
-        this.s.refugeSite = { zone, id, x: n.x, y: n.y };
+        const point = n.servicePoint || n;
+        this.s.refugeSite = { zone, id, x: point.x, y: point.y };
       }
     }
     arriveRefuge(site) {
       const n = this.zone().npcs.find((n) => n.id === site.id && n.kind === 'rest');
       if (!n) return;
-      Object.assign(this.hero, this.safe(n.x, n.y));
-      for (const u of this.activeParty()) Object.assign(u, this.safe(n.x + 40, n.y + 30));
+      const point = n.servicePoint || n;
+      Object.assign(this.hero, this.safe(point.x, point.y));
+      for (const u of this.activeParty()) Object.assign(u, this.safe(point.x + 40, point.y + 30));
     }
     miniCleared(id, region = this.s.zone) {
       return !!this.s.zones[region]?.minis?.find((m) => m.id === id)?.cleared;
@@ -1151,8 +1153,14 @@
     }
     rest() {
       const site = this.zone()
-        .npcs.filter((n) => n.kind === 'rest' && dist(n, this.hero) <= 115)
-        .sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0];
+        .npcs.filter(
+          (n) =>
+            n.kind === 'rest' &&
+            (dist(n, this.hero) <= 115 || dist(n.servicePoint || n, this.hero) <= 115),
+        )
+        .sort(
+          (a, b) => dist(a.servicePoint || a, this.hero) - dist(b.servicePoint || b, this.hero),
+        )[0];
       if (!site) return false;
       if (this.refugeThreat()) {
         this.say('Cannot rest while nearby enemies are engaged. Retreat and end the fight first.');
@@ -1289,23 +1297,48 @@
       if (this.isDungeon()) return false;
       const builder = this.availableLabor()[0],
         cost = this.barracksBuildCost();
-      if (!builder || !this.spend(cost)) return false;
+      if (!builder) return false;
+      const zone = this.zone(),
+        origin = { x: this.hero.x + 130, y: this.hero.y },
+        candidates = [origin];
+      for (const radius of [85, 145, 205, 275, 355, 440])
+        for (let j = 0; j < 24; j++) {
+          const angle = (j * Math.PI) / 12;
+          candidates.push({
+            x: origin.x + Math.cos(angle) * radius,
+            y: origin.y + Math.sin(angle) * radius,
+          });
+        }
+      const p = candidates.find(
+        (point) =>
+          !this.blocked(point.x, point.y, this.zoneId, 50) &&
+          this.distanceToRoad(zone, point) >= 175 &&
+          zone.npcs.every((n) => Math.hypot(n.x - point.x, n.y - point.y) > 105) &&
+          zone.buildings.every((b) => Math.hypot(b.x - point.x, b.y - point.y) > 170) &&
+          zone.props.every(
+            (item) => Math.hypot(item.x - point.x, item.y - point.y) > (item.r || 0) + 60,
+          ),
+      );
+      if (!p) {
+        this.say('No clear plot for barracks nearby. Move away from the road and try again.');
+        return false;
+      }
+      if (!this.spend(cost)) return false;
       this.s.recallActive = false;
-      const p = this.safe(this.hero.x + 130, this.hero.y),
-        b = {
-          id: 'barracks-' + this.s.nextId++,
-          ...p,
-          progress: 0,
-          queue: 0,
-          queueType: null,
-          kind: 'barracks',
-          name: 'Barracks',
-          theme: this.zoneId,
-          icon: '🏗️',
-          full: false,
-          upgradeProgress: 0,
-          upgradePaid: false,
-        };
+      const b = {
+        id: 'barracks-' + this.s.nextId++,
+        ...p,
+        progress: 0,
+        queue: 0,
+        queueType: null,
+        kind: 'barracks',
+        name: 'Barracks',
+        theme: this.zoneId,
+        icon: '🏗️',
+        full: false,
+        upgradeProgress: 0,
+        upgradePaid: false,
+      };
       this.zone().buildings.push(b);
       builder.order = { type: 'build', id: b.id };
       this.say(

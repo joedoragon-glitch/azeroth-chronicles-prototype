@@ -1096,12 +1096,17 @@
       "visualReview": "All 24 native physical-pixel crop sheets reviewed across desktop/phone, day/night and active Goblin Blinding Dust warning. Fixture relocation keeps the prop clear of the warning card; gameplay code unchanged."
     },
     "release": {
-      "version": "0.8.134",
+      "version": "0.8.135",
       "status": "awaiting-integration-ci",
       "deployed": false,
       "pr": 208,
       "supersededHead": "46419b2cb1c11bfbc314b3c7de2ac2e0159c4c8b",
-      "reason": "Preserve concurrent Abyss safe-lane release #207 and use a new PWA version."
+      "reason": "Preserve concurrent five-region road/settlement overhaul #204 and Abyss safe-lane #207; unique PWA version.",
+      "supersededHeads": [
+        "46419b2cb1c11bfbc314b3c7de2ac2e0159c4c8b",
+        "bbba26502b9ea79f734c1c4aa926880dbf51adcd"
+      ],
+      "mainAtIntegration": "54e578d820e6c18234c70f57516d22a739438e4e"
     }
   }
 }

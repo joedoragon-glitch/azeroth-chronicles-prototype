@@ -4,7 +4,7 @@ const C = require('../src/prototype/engine.js');
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 const original = { vale: [2450, 650], highlands: [3100, 500], frontier: [3100, 500] };
 const oldTownStands = { vale: [135, 540], highlands: [590, 1420], frontier: [145, 260] };
-const expectedRoad = { vale: 11, highlands: 11, frontier: 12 };
+const expectedRoad = { vale: 16, highlands: 16, frontier: 16 };
 for (const [region, coords] of Object.entries(original)) {
   const c = new C();
   c.enter(region);
