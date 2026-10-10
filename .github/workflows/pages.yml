@@ -28,6 +28,10 @@ jobs:
         run: npm run format:check
       - name: Check generated entries and all published JavaScript
         run: npm run check
+      - name: Verify authored road access and combat lanes
+        run: |
+          node tests/dungeon-pressure.test.cjs
+          node tests/town-street-audit.test.cjs
       - name: Full regression suite before merge
         run: npm test
       - name: Reproduce cooldown balance evidence summary
