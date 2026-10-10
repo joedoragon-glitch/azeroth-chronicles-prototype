@@ -195,10 +195,7 @@
         let nearest = Infinity;
         for (const path of z.roads || [])
           for (let j = 1; j < path.length; j++)
-            nearest = Math.min(
-              nearest,
-              this.distanceToSegment(point, path[j - 1], path[j]),
-            );
+            nearest = Math.min(nearest, this.distanceToSegment(point, path[j - 1], path[j]));
         return nearest;
       }
       roadSetback(p) {
@@ -237,17 +234,13 @@
             ['recruiter', 60],
           ];
           const canPlace = (p, item, setback) => {
-            if (this.blocked(p.x, p.y, z.id, Math.max(12, (item.r || 0) + 9), true))
-              return false;
+            if (this.blocked(p.x, p.y, z.id, Math.max(12, (item.r || 0) + 9), true)) return false;
             if (this.distanceToRoad(z, p) < setback) return false;
             if (
               z.props.some(
                 (other) =>
                   other !== item &&
-                  dist(other, p) <
-                    (other.r || 0) +
-                      (item.r || 0) +
-                      (other.decorative ? 26 : 29),
+                  dist(other, p) < (other.r || 0) + (item.r || 0) + (other.decorative ? 26 : 29),
               )
             )
               return false;
