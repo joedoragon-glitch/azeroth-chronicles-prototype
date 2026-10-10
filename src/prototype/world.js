@@ -1023,8 +1023,36 @@
             return true;
           };
           const townLife = (center, layout, prefix) => {
-            for (const [dx, dy, structure] of layout)
-              add({ x: center.x + dx, y: center.y + dy }, structure, prefix);
+            for (const [dx, dy, structure] of layout) {
+              const original = { x: center.x + dx, y: center.y + dy };
+              if (add(original, structure, prefix)) continue;
+              // Preserve authored daily-life details when clearer road and roof
+              // frontages displace their original coordinates. Search nearby
+              // off-road parcels deterministically rather than discarding them.
+              let placed = false;
+              for (const radius of [45, 80, 115, 150, 185, 225, 270]) {
+                for (let j = 0; j < 24; j++) {
+                  const angle = (j * Math.PI) / 12;
+                  const candidate = {
+                    x: original.x + Math.cos(angle) * radius,
+                    y: original.y + Math.sin(angle) * radius,
+                  };
+                  if (
+                    z.props.some(
+                      (p) =>
+                        String(p.id || '').startsWith('aesthetic-' + prefix + '-') &&
+                        dist(p, candidate) < 36,
+                    )
+                  )
+                    continue;
+                  if (add(candidate, structure, prefix)) {
+                    placed = true;
+                    break;
+                  }
+                }
+                if (placed) break;
+              }
+            }
           };
           townLife(major, R.settlementLayouts.majorLife, 'town');
           townLife(minor, R.settlementLayouts.minorLife, 'hamlet');
