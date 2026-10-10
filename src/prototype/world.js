@@ -185,9 +185,20 @@
           z.props = props;
           this.s.zone = oldZone;
         }
-        // Do not silently delete the scenery that happens to land on a new
-        // street. Relocation is handled after all authored occupation/life
-        // layers have been installed, including on old saves.
+        // As before, thin anonymous forest obstacles beside roads rather
+        // than displacing collision trees into hostile camps. Distinct authored
+        // structures and district props survive for the frontage audit below.
+        z.props = z.props.filter(
+          (p) =>
+            p.roadBlocker ||
+            p.structure ||
+            !z.roads.some((path) =>
+              path.some(
+                (b, j) =>
+                  j && this.distanceToSegment(p, path[j - 1], b) < (p.r || 0) + 60,
+              ),
+            ),
+        );
         z.roadVersion = roadVersion;
         delete z.streetClearanceVersion;
       }
@@ -251,6 +262,17 @@
                   dist(other, p) <
                     (['rest', 'minor'].includes(other.id) ? 82 : 42) +
                       (['rest', 'minor'].includes(item.id) ? 36 : 0),
+              )
+            )
+              return false;
+            // A shifted solid must not block existing patrol homes, ranged
+            // engagement lanes, or the mandatory clear approach to a boss.
+            if (
+              (item.r || 0) > 0 &&
+              z.enemies.some(
+                (enemy) =>
+                  enemy.hp > 0 &&
+                  dist(enemy.home || enemy, p) < (item.r || 0) + 145,
               )
             )
               return false;
