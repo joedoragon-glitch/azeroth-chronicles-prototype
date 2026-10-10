@@ -97,6 +97,10 @@ for (const region of Campaign.data.regions) {
     id: 'historical-cart-' + region.id, x: town.x + 10, y: town.y + 10,
     r: 0, decorative: true, structure: 'cart',
   });
+  oldZone.buildings.push({
+    id: 'historical-barracks-' + region.id,
+    kind: 'barracks', x: town.x, y: town.y, progress: 4, full: true,
+  });
   const originalGold = migrated.hero.gold;
   const restored = Campaign.restore(migrated);
   const restoredZone = restored.zone();
@@ -108,8 +112,19 @@ for (const region of Campaign.data.regions) {
   assert(oldCart, region.id + ' old scenery was preserved');
   assert(restored.distanceToRoad(restoredZone, oldCart) >= restored.roadSetback(oldCart),
     region.id + ' historical clutter moved off road');
+  const priorBarracks = restoredZone.buildings.find(
+    (b) => b.id === 'historical-barracks-' + region.id,
+  );
+  assert(priorBarracks && priorBarracks.progress === 4 && priorBarracks.full,
+    region.id + ' old barracks preserve construction/upgrades');
+  assert(restored.distanceToRoad(restoredZone, priorBarracks) >= 175,
+    region.id + ' historical barracks moved off the street');
   assert(restored.distanceToRoad(restoredZone, restoredZone.npcs.find((n) => n.id === 'rest'))  >= 190,
     region.id + ' restored refuge not on the central avenue');
 }
+const construction = new Campaign();
+assert(construction.build(), 'a new barracks finds a viable plot away from Millhaven roads');
+assert(construction.distanceToRoad(construction.zone(), construction.zone().buildings[0]) >= 175,
+  'new construction cannot obstruct a planned road');
 console.log('PASS ' + Campaign.data.regions.length + ' settlement street plans, ' +
   routes + ' connected routes, ' + inspected + ' roadside props and historical save migration');
