@@ -748,7 +748,9 @@
         '% for this screen. Compare closer views while movement and attack ranges stay the same.\n\n' +
         'Frame rate: ' +
         (fps.preference === 'auto' ? 'Auto' : fps.preference + ' FPS') +
-        ' · current target ' + fps.target + ' FPS. Rendering only; gameplay stays unchanged.\n\n' +
+        ' · current target ' +
+        fps.target +
+        ' FPS. Rendering only; gameplay stays unchanged.\n\n' +
         runtime.describe(renderer.metrics()),
       [
         action('Automatic screen', () => {
@@ -778,11 +780,14 @@
           ['30', '30 FPS · Relaxed'],
           ['60', '60 FPS · Smooth'],
         ].map(([value, label]) =>
-          action('Frame rate · ' + label + (fps.preference === value ? ' ✓' : ''), () => {
-            fps.select(value);
-            runtime.reset();
-            platformMenu(back);
-          }),
+          action(
+            'Frame rate · ' + label + (fps.preference === value ? ' ✓' : ''),
+            () => {
+              fps.select(value);
+              runtime.reset();
+              platformMenu(back);
+            },
+          ),
         ),
         action('Reset performance sample', () => {
           runtime.reset();
