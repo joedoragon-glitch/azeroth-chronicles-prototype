@@ -25,5 +25,13 @@
     "templates/game.html": "2b22eb161a1c4d9de24925ecd669049045287e20d0448c296db40ad069030b03",
     "assets/sprites/manifest.json": "1f2b15b0d3a9735edb1bd9b00d8ad6c78eaefc6f63ab7ad576e4bba8676fa839",
     "assets/materials/manifest.json": "c06e89ba4ed2058681ae3156eaac8f7eb577d1b5af61e272f40d316f855cad41"
+  },
+  "renderingRevision": {
+    "source": "PR #225 plus combined-release slowdown fix; authorized rendering-only changes",
+    "files": {
+      "src/prototype/app.js": "e25db6455fbe9244d67fb672568e32869410b44a85afe02fee3f531dd5fcd333",
+      "src/prototype/runtime.js": "d75f3f9fc8e7a964420da9b1642aefc7dae433b0a19ca45b704b65c72f7e0652"
+    },
+    "activeFrameBodySha256": "a042cd0491db3860a8f8c29e9f1471b45be3ca108b2520dcc4df833d0ce81d7a"
   }
 }

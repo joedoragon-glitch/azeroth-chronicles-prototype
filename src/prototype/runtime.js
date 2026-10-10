@@ -62,7 +62,110 @@
       },
     };
   }
-  const api = { create };
+
+  // Rendering-only limiter. Never gates the animation callback or simulation tick.
+  const fpsPreferenceKey = 'azeroth-fps-v1';
+  function createFrameRate(storage) {
+    let preference = 'auto';
+    try {
+      const saved = storage?.getItem(fpsPreferenceKey);
+      if (['auto', '30', '60'].includes(saved)) preference = saved;
+    } catch (_) {}
+    let target = preference === '60' ? 60 : 30,
+      nextDraw = null,
+      lastFrame = null,
+      lastCheck = null,
+      lastSwitch = null,
+      samples = [];
+    function reset() {
+      nextDraw = null;
+      lastFrame = null;
+      lastCheck = null;
+      lastSwitch = null;
+      samples = [];
+    }
+    function select(value) {
+      if (!['auto', '30', '60'].includes(value)) return false;
+      preference = value;
+      target = value === '60' ? 60 : 30;
+      reset();
+      try {
+        storage?.setItem(fpsPreferenceKey, value);
+      } catch (_) {}
+      return true;
+    }
+    function shouldDraw(now) {
+      if (!Number.isFinite(now)) return false;
+      const period = 1000 / target;
+      if (nextDraw === null) {
+        nextDraw = now + period;
+        return true;
+      }
+      if (now + 0.5 < nextDraw) return false;
+      nextDraw += period;
+      if (nextDraw <= now) nextDraw = now + period;
+      return true;
+    }
+    function observe(now, workMs, drawn) {
+      if (!Number.isFinite(now) || !Number.isFinite(workMs)) return;
+      if (lastFrame !== null) {
+        const interval = now - lastFrame;
+        // Hidden/paused frames call suspend explicitly. Slow active frames remain
+        // evidence, including severe stalls longer than 250 ms.
+        if (interval <= 0) {
+          reset();
+        } else {
+          samples.push({ now, interval, workMs, drawn: !!drawn });
+          while (samples.length && samples[0].now < now - 6000) samples.shift();
+        }
+      }
+      lastFrame = now;
+      if (preference !== 'auto') return;
+      if (lastCheck === null) {
+        lastCheck = now;
+        return;
+      }
+      if (now - lastCheck < 6000 || (lastSwitch !== null && now - lastSwitch < 12000)) return;
+      lastCheck = now;
+      if (samples.length < 2 || samples.at(-1).now - samples[0].now < 4500) return;
+      const frames = samples.filter((s) => s.drawn),
+        work = frames.map((s) => s.workMs).sort((a, b) => a - b),
+        meanInterval = samples.reduce((total, s) => total + s.interval, 0) / samples.length,
+        drawRate =
+          frames.length > 1
+            ? ((frames.length - 1) * 1000) / (frames.at(-1).now - frames[0].now)
+            : 0,
+        p95 = work[Math.floor((work.length - 1) * 0.95)] || Infinity;
+      if (
+        target === 30 &&
+        samples.length >= 90 &&
+        meanInterval <= 19 &&
+        drawRate >= 27 &&
+        p95 < 12
+      ) {
+        target = 60;
+        nextDraw = null;
+        lastSwitch = now;
+      } else if (target === 60 && (drawRate < 49 || p95 > 18)) {
+        target = 30;
+        nextDraw = null;
+        lastSwitch = now;
+      }
+    }
+    return {
+      get preference() {
+        return preference;
+      },
+      get target() {
+        return target;
+      },
+      select,
+      shouldDraw,
+      observe,
+      suspend: reset,
+    };
+  }
+  const api = { create, createFrameRate, fpsPreferenceKey };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeRuntime = api;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -1,4 +1,4 @@
-> Historical foundation handoff. Production and later quality/audio audits have shipped; remaining baseline gap lists below are not a current unfinished-work queue. Read [current development state](DEVELOPMENT_STATE.md), ENEMY_SKILL_VFX_AUDIT.md, ENEMY_SKILL_VFX_QUALITY_AUDIT.md and ENEMY_AUDIO_FINAL_AUDIT.md before new work.
+> Historical foundation handoff. Production and later quality/audio audits have shipped; remaining baseline gap lists below are not a current unfinished-work queue. Read [current development state](DEVELOPMENT_STATE.md), ENEMY_SKILL_VFX_AUDIT.md, ENEMY_SKILL_VFX_QUALITY_AUDIT.md and ENEMY_AUDIO_FINAL_AUDIT.md before new work. Use the [current validation workflow](ENEMY_VFX_VALIDATION.md) for new edits; do not replay the original bridge, pilot and catalog rollout.
 
 # Enemy skill VFX — quality gate, defect register and Work-mode handoff
 

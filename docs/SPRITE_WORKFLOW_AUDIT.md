@@ -1,5 +1,7 @@
 # Sprite workflow audit · 9 October 2026
 
+Historical audit and fixes. The production sequence below records the pilot stage; it is not an instruction to repeat completed Paladin/Goblin work. Use the current [original-master policy](SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md) and latest batch-specific handoff in [#160](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160). Preserve completed work remotely before long validation; a prepared, reviewed, integrated or deployed status must match the committed evidence.
+
 Scope: accepted procedural designs → generation requests → immutable originals → normalization/preparation → native review → approval → registration/replacement/rollback → runtime loading → packaging/offline release. Joel selected 150% camera and requested the agent to audit and fix technical weaknesses before resuming artwork production. This audit does not authorize new image generation or image replacement.
 
 ## Findings and fixes
