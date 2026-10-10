@@ -272,14 +272,16 @@
       }
       roadSetback(p) {
         if (p.roadTrace) return 0; // Only deliberately flat road ruts/repairs.
-        if (p.roadBlocker) return (p.r || 0) + 78;
-        if (p.r > 0) return p.r + 64;
+        // Painted roofs project well beyond the small collision circle.
+        // Clearance must protect the visible silhouette, not just the anchor.
+        if (p.roadBlocker) return (p.r || 0) + 145;
         if (
           /house|cottage|workshop|forge|watchpost|tower|tent|stockade|wall|barracks|gate|roost|lean-to|palisade|foundation|shelter|stable|mangrove|dead-tree/i.test(
             p.structure || '',
           )
         )
-          return 125;
+          return Math.max((p.r || 0) + 115, 160);
+        if (p.r > 0) return p.r + 64;
         return 72;
       }
       clearStreetCorridors(z) {
@@ -403,7 +405,7 @@
           // stalls, carts, heaps, decorative houses and trees are visual
           // obstacles too. Keep every ID/scene role; move, do not erase.
           const affected = z.props
-            .filter((p) => !p.roadTrace && !p.roadBlocker)
+            .filter((p) => !p.roadTrace)
             .filter((p) => this.distanceToRoad(z, p) < this.roadSetback(p))
             .sort((a, b) => (b.r || 0) - (a.r || 0) || a.id.localeCompare(b.id));
           for (const prop of affected) moveOffRoad(prop, this.roadSetback(prop));
