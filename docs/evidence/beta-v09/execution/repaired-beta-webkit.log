@@ -1,0 +1,10 @@
+Skipping host requirements validation logic because `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS` env variable is set.
+PASS webkit paladin 1280x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh
+PASS webkit mage 1280x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh
+PASS webkit ranger 1280x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh
+PASS webkit paladin 375x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh
+PASS webkit mage 375x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh
+PASS webkit ranger 375x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh
+PASS webkit paladin 800x375 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh
+PASS webkit mage 800x375 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh
+PASS webkit ranger 800x375 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh

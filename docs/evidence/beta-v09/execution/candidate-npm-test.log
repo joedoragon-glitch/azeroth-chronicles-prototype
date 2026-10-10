@@ -1,0 +1,648 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> azeroth-chronicles-prototype@0.8.137 test
+> node tests/run.cjs
+
+PASS Existing Bastion and Frontier saves gain flight-project dressing without changing dungeon progress, occupants or collision
+PASS First-entry project context is remembered across travel and reload
+PASS normal Abyss hatchery and feeding/service wings have round-trip inflated-hazard routes
+PASS nightmare Abyss hatchery and feeding/service wings have round-trip inflated-hazard routes
+PASS milestone-only amber notices, first boss victories and first dungeon clears
+PASS Dormant touch sprint ignores pointer input; activated hold clears on cancel and pause reset
+PASS Manifest, app resources and maskable PNG sizes are valid
+PASS Joystick captures one finger, clamps input and ignores other fingers
+PASS Joystick dead zone, cancellation and lost capture reset movement
+PASS Two-thumb input supports movement and held sword; pause resets both
+PASS Sword release/cancel and synthesized clicks do not duplicate casts
+PASS Touch controls default to device input and respect a saved preference
+PASS Install prompt runs only from an explicit install-button click
+PASS App update saves, pauses and reloads once; first activation does not reload
+
+9 app checks passed.
+PASS GitHub Pages/PWA multi-file architecture is canonical and portable HTML cannot constrain releases
+PASS read-only optional Archive, all class/mode references, live figures/cooldowns, evidence gate, armor formula and crown failure event
+PASS empty/populated packaging, duplicate references, unregistered exclusion, missing/unsafe paths and symlink containment
+PASS registry CAS, exclusive publication, validation rollback, hard-kill pair recovery, unrelated-edit retention and atomic immutable copies
+PASS recorded-audio and all owners survive offline subpath/query requests; failed audio install preserves previous cache
+PASS registered-only packaging, deduplication, container/hash/provenance/loop validation, file budget and path/symlink containment
+PASS catalog references, shared loop/tempo contracts and complete creative provenance/guides
+PASS catalog replacement restarts same-scene music, invalid replacement is atomic, pause keeps transport and override selection has one owner
+PASS timely recorded effect/UI/step/ambience replacement, cold fallback, no delayed replay, retained warning/finale behavior and bounded failure retries
+Updated step.grass; run npm run build and release checks.
+PASS registration computes hashes, protects manual overrides, validates before writing and retains broader event bindings
+PASS full/partial score renders retain custom sounds, edited guides and routing; remove only obsolete managed entries
+PASS independent ambience, combat/boss attenuation, menu/mute, pause transport, bounded crossfades, stale loads, safe replacement and failure recovery
+PASS existing catalog, all arrangement note schedules, effects and routing match v0.8.86
+PASS noise sources share the 64-voice budget and disconnect after completion
+PASS mute/volume during ducking, interrupted contexts, pending resume races and repeated disposal
+PASS context exposes actual places, settlement, boss identity, interiors and shell state without changing cue policy
+PASS 19 place identities, night/refuges/peace, 11 boss/TRUE pairs, synchronized loops, transport-preserving intensity and movement-only footsteps
+PASS lazy/deduplicated decode, measured bytes, pinned LRU cache and budget
+PASS hashes, codec retry, local paths, actual duration and encoded/decoded budgets
+PASS synchronized stems, bar transitions, bounded repeated switching, intensity and independent menu/UI mix
+PASS malformed or mismatched recordings return to current procedural score without leaked pins
+PASS pause/resume and dispose during pending decode cannot start stale sounds
+PASS warning priority has reserved capacity and bounded stealing; disposal releases every source
+PASS F22 32-bar contrasting forms, retained night loop, 0.5/2 second fades, newest-cue priority and bounded scores/voices
+PASS Every region, dungeon, combat and ending has an authored melody with musical rests
+PASS All ten places retain their melody identity in peaceful arrangements, even when visited later
+PASS Boss encounters, TRUE intensity, disengagement and awakening select the correct score
+PASS Volumes clamp independently, mute preserves preferences and no context starts on construction
+
+4 soundtrack selection checks passed.
+PASS F01 normal-normal-TRUE cycle uses the five-second remote transition and leaves one normal field boss
+PASS F02 sealed boss resets and no attack shape damages through terrain
+PASS F03 TRUE crypt volleys stagger and family follow-ups retain full warnings
+PASS F04 rejects fractional equipment and missing Nightmare victory records before restore
+PASS F06 class effects retain ice, double shot, haste, distinct burst and final protection
+PASS F07 fortress objective requires both Crown specialists and night observation needs its site
+PASS F08 barracks queues create reserves beyond the active cap without losing paid recruits
+PASS F09 companion presence prevents patrol respawn
+PASS F10 minor refuge survives death and reload
+PASS F11 Succession preserves a recovery crossing after paid outward travel
+PASS F12 ranged basics aim and fire faster while remaining dodgeable and terrain-blocked
+PASS F13 boss specials chain rapidly while warnings stay authored and every fourth special yields one fast basic
+PASS F14 pounce moves to its mark, mine openings increase output, and Dark Lord Crown phase becomes weighted rather than scripted
+PASS F16 arrival failure rolls back fare, ticket and destination even after mutation
+PASS F17 idle night health preserves fraction
+PASS F19 optional Full Barracks are valid resource deposits
+PASS F20 legacy region and regional buildings survive while retired potion stock is safely discarded
+PASS F21 area kill sequence is independent of enemy array order
+PASS F23 every authored landmark is reachable, towns have solid structures and dungeon walls differ
+PASS F24 tactical foundation and tiered burst compression are enabled independently
+PASS F25 tactical telemetry and extended awareness do not trigger aggro
+PASS F26 threat records expire old hits independently and never carry through travel
+PASS F27 threat cache cleans up on death and disengagement
+PASS F28 non-cunning boss eligibility distinguishes level boundaries and owned support
+PASS F29 regroup assessment finds larger cross-pack groups without engaging them
+PASS F30 explicit rogue regroup keeps original home while approaching separate pack and its anchor
+PASS F31 real escape or protected-town approach always ends rogue leash exception
+PASS F32 rogue regroup rejects blocked or town-crossing routes and forbids retreat chaining
+PASS F33 failed retreat safely expires without suppressing later normal leash
+PASS F34 a single nearby companion is sufficient for a voluntary regroup
+PASS F35 rogue regroup travel halves incoming hero and companion damage only while in transit
+PASS F36 rogue damage protection is never active for normal engaged enemies
+PASS F37 all normal and TRUE boss families preserve warnings while gaining modest reach
+PASS F38 all captains reject useless distant cones but can still threaten a ranged opponent
+PASS F39 boss selection respects actual ring reach, anti-repeat fallbacks and Dark Lord phases
+PASS F40 distant follow-up combos cannot materialize short-range arcs on backline
+PASS F41 backline targeting preserves close-attack geometry and terrain checks
+PASS F42 captain ground marks pressure backline only with a clear targeting line
+PASS F43 real target pressure counts active companions, not nearby idle party members
+PASS F44 autonomous rogue initiation finds a single ally across packs without chained aggro
+PASS F45 arrived rogue recruits only immediate support and executes one low damage telegraphed feint
+PASS F46 without allies, rogue tactics use one named move then resume ordinary AI
+PASS F47 cunning summoners trigger depleted-support rogue pressure but not level-suppressed
+PASS F48 named rogue attacks prioritize actual high-threat archer over a closer hero
+PASS F49 TRUE boss rogue level immunity remains despite active burst compression
+PASS F50 interrupted rogue retreat sheds its protection and cannot chain
+PASS F51 wounded ordinary, guardian and ringleader mobs gain independent rogue eligibility below 30%
+PASS F52 wound trigger excludes bosses and captains independently of burst compression
+PASS F53 wounded monster thinks under 50% protection then seeks a single ally
+PASS F54 woundedness can trigger after an earlier rogue response and is limited until reset
+PASS F55 companions can independently trigger wounded monster retreat without the hero nearby
+PASS F56 isolated engaged monster recognizes numerical pressure from living present party
+PASS F57 every monster faction can seek nearby bosses regardless of their levels
+PASS F58 sustained player pursuit can trigger successive bounded cross-pack retreats
+PASS F59 two present adventurers outnumber one defender; another monster restores parity
+PASS F60 wounded monsters three levels above an underleveled hero never retreat or gain damage reduction
+PASS F61 isolated boss or captain with no usable rogue response defends territory instead of endlessly resetting
+PASS F62 chained retreat leash follows current hop, never the original spawn line
+PASS F63 melee and ranged ringleaders retain role basics and species-specific elite signatures
+PASS F64 all five captains have a basic move plus an individually authored rogue signature
+PASS F65 every normal and TRUE boss has both rogue choices without altering boss attack profiles
+PASS F66 rogue binding warnings use their actual hit circle and respect cover
+PASS F67 Thornfang scatter forces living attackers apart with transient terrain-safe movement
+PASS F68 captain orders rally existing defenders without recruiting distant packs
+PASS F69 rogue telegraphs do not advance or fabricate normal boss basic-attack cadence
+PASS F70 the regroup anchor retains signature eligibility when the local squad reaches parity
+PASS F71 lengthy rogue warning labels stay inside zoomed narrow-screen canvas
+PASS F72 close-range boss signatures are not wasted against distant backline pressure
+PASS F73 rogue targeting resolves escorts as active combat participants
+PASS F74 goblin dust cancels active hero locks, squad targeting and homing projectiles
+PASS F75 boss rogue repositions protect encounters without preventing genuine escape
+PASS F76 field commander revives existing local soldier spawns but no summons or new identities
+PASS F77 Blinding Dust immediately drops hero and companion attack locks
+PASS F78 Blinding Dust redirects auto targeting, respects AoE, and expires exactly
+PASS F79 skill relocation does not reset the encounter or make the boss immune to nearby counters
+PASS F80 captain guard rally only replenishes at zero or one, and never replaces summoned minions
+PASS F81 Thornfang howl does not reset a nearby fight when the grace timer expires
+PASS F82 goblin dust cancels a manually held hero target, not just automatic focus
+PASS F83 enemy death purges rogue regroup state alongside threat and burst records
+79 audit regression scenarios passed.
+PASS Ranger single-target sustain, per-Ranger cooldown stacking, Neri upgrades and Soldier Guard survival
+PASS normal awakening captures victory level +2 before XP, returns equal-level guards once, preserves early TRUE clears and survives reload/level-ups
+PASS nightmare awakening captures victory level +2 before XP, returns equal-level guards once, preserves early TRUE clears and survives reload/level-ups
+PASS Succession cannot lower the fixed awakening tier
+PASS legacy awakening save repairs current dungeon boss and guardian wave on load
+PASS higher victory levels increase actual TRUE boss health/damage while retaining boss differences and fixed strength
+PASS combined normal/paladin fresh, five-region rescue/training/equipment, checkpoints, tonic, death and Succession
+PASS combined normal/mage fresh, five-region rescue/training/equipment, checkpoints, tonic, death and Succession
+PASS combined normal/ranger fresh, five-region rescue/training/equipment, checkpoints, tonic, death and Succession
+PASS combined nightmare/paladin fresh, five-region rescue/training/equipment, checkpoints, tonic, death and Succession
+PASS combined nightmare/mage fresh, five-region rescue/training/equipment, checkpoints, tonic, death and Succession
+PASS combined nightmare/ranger fresh, five-region rescue/training/equipment, checkpoints, tonic, death and Succession
+PASS immutable v0.8.118 fixture normal-paladin import, tonic expiry and reimport
+PASS immutable v0.8.118 fixture normal-mage import, tonic expiry and reimport
+PASS immutable v0.8.118 fixture normal-ranger import, tonic expiry and reimport
+PASS immutable v0.8.118 fixture nightmare-paladin import, tonic expiry and reimport
+PASS immutable v0.8.118 fixture nightmare-mage import, tonic expiry and reimport
+PASS immutable v0.8.118 fixture nightmare-ranger import, tonic expiry and reimport
+PASS normal/normal real wall charge ends promptly; free charge and immunity preserved
+PASS normal/true real wall charge ends promptly; free charge and immunity preserved
+PASS nightmare/normal real wall charge ends promptly; free charge and immunity preserved
+PASS nightmare/true real wall charge ends promptly; free charge and immunity preserved
+PASS graduated tier curves, no hard cap, burst reset, boss opening and production damage
+PASS combat and party install through the offline browser graph and match CommonJS simulation for every class/mode
+PASS v0.9 condition contracts: immunity, slows, traps, stacking, death and dust targeting
+PASS landed hero, companion and enemy melee attacks retain actor/weapon identity
+PASS ranged attacks retain launch identity without changing projectile timing or range
+PASS current engine event inventory is explicitly covered by audio routing
+PASS contextual SFX routing gives Paladin steel, bows and magic distinct identities and obeys pause/mute
+PASS authored dungeon/side/outdoor trap inventory and source-driven condition matrix
+PASS repeatable combat audit, charge opportunity costs, six-unit heal accounting, summons and reset attribution
+PASS historical MP restoration, Wraith single siphon, periodic hazards, immunity and overkill
+PASS independent healing warnings retain non-damaging green presentation
+PASS exact Skills cooldown descriptions for every class and talent rank, no active Inventory MP
+PASS three hero classes × all eight normal and three charged skills × six talent ranks
+PASS legacy saves, talent preservation, disabled mana restoration and drain
+PASS enemy attacks preserve health damage while resource effect remains dormant
+PASS uncapped 15% Cinder Siphon, companions, immunity, and natural missing-health bound
+PASS uncapped 15% supernatural boss AoE lifesteal, natural heal bound and non-siphoning bosses
+PASS 7-target Dark Lord life-siphon stress case with no percent-max-HP cap
+PASS independently telegraphed Dragon and Sentinel cooldown healing
+PASS Mage frost effects require a landed hit in cooldown-only combat
+PASS crypt added guards/decor/traps preserve safe routes and readable single-hit pulses
+PASS archive added guards/decor/traps preserve safe routes and readable single-hit pulses
+PASS mine added guards/decor/traps preserve safe routes and readable single-hit pulses
+PASS abyss added guards/decor/traps preserve safe routes and readable single-hit pulses
+PASS citadel added guards/decor/traps preserve safe routes and readable single-hit pulses
+PASS Citadel is an irregular fortress with role formations and a trap-free mandatory path
+PASS Legacy Citadel saves migrate occupants out of new masonry without resetting progress
+PASS Abyss Bastion is an irregular dragon fortress with staged zero-reward defenders and safe trap lanes
+PASS Legacy Abyss saves migrate onto the new fortress without reviving defeated guardians
+PASS Dungeon trap pressure escalates while keeping readable warnings and safe alternatives
+PASS Guardian strength scales by region while main-dungeon guardians give no gold or XP
+PASS Dungeon guardians are materially tougher than equivalent regional field melee mobs
+PASS Existing saved guardians upgrade once to the stronger v0.8.36 scaling without healing wounded guards
+PASS Dungeon guardian streaks spawn two elite guards at the 50% branch and gate the first-clear reward
+PASS Dungeon upgrade keeps dead guardians dead and adds only missing new slots; completed saves remain cleared
+PASS Field goblin and skeleton variants fire aimed projectiles; reed beasts switch between spit and physical attacks
+PASS Pure ranged enemies backpedal when crowded instead of becoming stationary turrets
+PASS March spitter projectiles impose a brief control slow without changing their damage model
+PASS Ringleader hybrids commit to melee sooner and rearm pursuit pressure after landing a hit
+PASS Melee dungeon guardians screen the hero away from a ranged packmate
+PASS All main-dungeon guardians and guardian ringleaders give zero gold and XP, including migrated saves
+PASS Bosses, guardians, guardian elites and summons are immune to every trap pulse
+PASS Peace clears guard elites and deactivates every engineered trap
+PASS Outdoor and guardian ringleaders use elite health and damage without increased reward multipliers
+PASS Ringleaders pursue twenty percent faster while keeping normal slows
+PASS Ringleaders enter permanent Frenzy below half health and shorten their attack cadence
+PASS Dungeon guardians reinforce after eighteen seconds to half population while a boss lives
+PASS Guardian reinforcement groups remain bounded, pause under heavy combat and stop after the boss dies
+PASS Reinforcement guardians still participate in guardian ringleader streaks without farm rewards
+PASS Awakening guardians and reinforcements match the TRUE boss level and use awakened stats
+PASS Legacy ringleaders upgrade once and retain wounded/dead status across reloads
+31 dungeon pressure and ranged-variant checks passed.
+PASS 20 dungeon TRUE roll boundaries, saved outcomes, reentry, single defeat and awakening
+PASS economy actions preserve prices, gates, first-free construction, queued hires, fractions, reward timing, rollback and Succession for every class/mode
+PASS extracted reward and penalty parameters retain every historical number and rounding rule
+PASS changing authored prices updates menu quotes and actual learning, training, equipment and rounded reforge charges together
+PASS EXP remains owned by progression and supports consecutive levels for all three professions
+PASS All 1,024 production ending-state combinations reach permanent peace without losing early TRUE victories.
+PASS enemy audio synchronization: 251 live IDs / 1440 stage variants; actual warnings, misses, contacts, casts, phases, fallback, pause/menu and save isolation
+PASS final synchronization audit: concurrent TRUE/phase births, actor-owned summon slots, strict routing, 99 rogue basics and 6 native revival paths
+PASS production SFX: exact skill/stage/variant bindings, real registered WAV recovery, 64-source warning reservation and disposal
+PASS increased sight radius preserves terrain sight and town protection
+PASS 251 authored recipes, 92 normal/TRUE animation draws, exact summon/ring cues, purity, death/travel/dedupe/crowd/rollback/fallback
+PASS optional VFX stage atlas: shared lazy cache, exact clip/pivot, missing/loading/removal fallback and offline enumeration
+PASS enemy VFX bridge: 92 boss/TRUE and 142 captain/rogue/night equivalence runs, miss/dedupe, spawn origins, phase delivery, save exclusion
+PASS VFX foundation: authored boss/captain/night/ranged inventory; rogue-ready stable IDs; stage and sprite/animation fallback
+PASS enemy VFX housekeeping: 251 stable inventory entries; accurate non-damage summon stages; rogue expansion ready
+PASS VFX quality: actual travel clocks, failed travel, fatal persistent-area equivalence, stale hazards, physical basics, offscreen casts and manifest races/recovery
+PASS prepared first-zone Thornfang {"hp":1200,"cls":"paladin","night":false,"dodge":true,"seconds":17.8,"won":true,"deaths":0,"heroHp":202,"supplies":0,"prepared":true}
+PASS prepared first-zone Thornfang {"hp":1200,"cls":"mage","night":false,"dodge":true,"seconds":33.4,"won":true,"deaths":0,"heroHp":141.7,"supplies":0,"prepared":true}
+PASS prepared first-zone Thornfang {"hp":1200,"cls":"ranger","night":false,"dodge":true,"seconds":23.7,"won":true,"deaths":0,"heroHp":178,"supplies":0,"prepared":true}
+PASS prepared first-zone Thornfang {"hp":1200,"cls":"paladin","night":true,"dodge":true,"seconds":18.7,"won":true,"deaths":0,"heroHp":196,"supplies":0,"prepared":true}
+PASS prepared first-zone Thornfang {"hp":1200,"cls":"mage","night":true,"dodge":true,"seconds":23,"won":true,"deaths":0,"heroHp":153.4,"supplies":0,"prepared":true}
+PASS prepared first-zone Thornfang {"hp":1200,"cls":"ranger","night":true,"dodge":true,"seconds":48.3,"won":true,"deaths":0,"heroHp":146.3,"supplies":0,"prepared":true}
+PASS 6 prepared first-zone party Thornfang scenarios and existing-save health upgrade; fresh or minimally prepared victory is intentionally not required
+PASS Offline bootstrap, help, HUD and finite canvas rendering
+PASS Dormant sprint has no Q action, speed boost, stamina save field or visible controls
+PASS Activated sprint uses Q, boosts direct movement 35 percent and spends 20 stamina per second
+PASS Stamina exhaustion requires release and regeneration respects the complete delay
+PASS Walking and standing cost no stamina; partial final sprint frames cannot overboost
+PASS Activated sprint freezes in menus/background, releases input and never stacks haste
+PASS Sprint preserves validated saved stamina, migrates older saves and rejects imports atomically
+PASS Squad cursor never spends stamina; ordered selected hero can sprint
+PASS Death and dungeon travel clear sprint input without refilling stamina; new game refills
+PASS Re-equipping and swapping weapons preserves one bonus
+PASS Lethal sword attack awards exactly one drop without null-target crash
+PASS Interaction targets enemies without missing function
+PASS Invalid spells, full-health heal and distant target spend no resources
+PASS Fireball retargets a nearby enemy instead of a stale distant target
+PASS Full-resource potions are conserved and equipment purchase is not duplicated
+PASS Trainer adds 25 percent of base power per rank and caps upgrades
+PASS Talent speed description matches the applied improvement
+PASS Menus pause enemies, mana, cooldowns, projectiles and respawns
+PASS Manual pause and focus loss clear keys and freeze the game
+PASS Repeated menu hotkeys do not flicker open and closed
+PASS Village interaction is required to accept and claim a quest
+PASS Mission counts ordinary enemies, excludes the boss, reward pays once
+PASS Large XP awards process every earned level
+PASS Mob and boss respawns use game time and their original spawn locations
+PASS Held movement reaches advertised speed and W moves upward on screen
+PASS Release friction is stable at different frame rates
+PASS Scenery blocks both player and hostile units
+PASS Projectiles cannot overshoot, skip a neighbor, or duplicate kill rewards
+PASS Safe village restores resources, recent damage delays healing
+PASS Boss warning can be dodged, shielded, or cause real damage
+PASS Death restores the hero and ends enemy attacks for that update
+PASS Collected ground gold disappears and cannot pay twice
+PASS Save round-trip preserves progression, equipment, quest, loot and enemy timer
+PASS Expired shield never writes an invalid negative timer
+PASS Malformed or unknown imported items leave the current game intact
+PASS Unavailable storage and corrupt saved JSON do not prevent playing
+PASS Browser reload preserves the save when selecting RPG mode
+PASS Reset clears all progress and opens the starting help
+PASS Every existing menu renders and offers clickable selections where applicable
+PASS End-to-end mission, reward, purchasing, training and boss victory
+PASS Analog touch movement respects direction and speed, and pauses clear it
+PASS Held touch sword obeys cooldown and stops on release without idle feedback spam
+PASS Mission-to-boss combat works with real cooldowns, mana, damage and respawns
+PASS WASD can remain held while all five keyboard abilities cast
+PASS Left-hand confirm and return work through onboarding, menus, equipment and map
+PASS Keyboard bindings stay fixed despite old preferences; browser modifier shortcuts remain
+PASS Mage and ranger classes have unique weapons, abilities and saved progression
+PASS Seventh power validates targets and mana, pays once and pauses its long cooldown
+PASS The sixth ability button and Space use the frequent power
+PASS Older RPG saves without classes or a sixth cooldown still restore
+PASS One adventure starts directly, uses Escape for menus, and leaves Q free
+PASS Every power is usable without a mouse; frequent and rare powers retain separate cooldowns
+PASS Dungeon entry, bounds, enemies and exit are isolated from the overworld
+PASS Dungeon completion rewards once, persists defeated enemies, and never marks the Dark Lord defeated
+PASS Dungeon deaths return to town and retain progress; old five-enemy saves migrate
+PASS Invalid dungeon imports are rejected before changing the current save
+PASS Teachers stop at their rank limits and advanced merchants gate endgame equipment
+PASS Dungeon traps give a warning, cannot one-shot healthy heroes, hit once per pulse, and pause
+PASS Endgame boss armor opens after a dodgeable warning; fountain and expedition pay once
+  ENDGAME paladin: {"elapsed":53.699999999999086,"death":false,"won":true,"hp":543,"bossHp":0,"mp":64.10000000000231,"position":[1140,947.5489323109099],"foes":[{"hp":0,"x":450,"y":420,"returning":false},{"hp":0,"x":673.978409796205,"y":405.900615715621,"returning":false},{"hp":0,"x":569.3439845416445,"y":682.6315777461335,"returning":false},{"hp":0,"x":1096.0233776770674,"y":949.230284503668,"returning":false}],"sp":128,"ranks":{"1":8,"2":8,"3":8,"4":1,"5":8,"6":8,"7":1,"8":1}}
+PASS Prepared level-15 paladin can complete endgame with real cooldowns and dodging
+  ENDGAME mage: {"elapsed":52.34999999999916,"death":false,"won":true,"hp":409.5,"bossHp":0,"mp":302.75000000000006,"position":[1140,60],"foes":[{"hp":0,"x":450,"y":420,"returning":false},{"hp":0,"x":530.2553174758714,"y":336.1302183373412,"returning":false},{"hp":0,"x":504.02465945582344,"y":708.7362563680521,"returning":false},{"hp":0,"x":1131.237173855484,"y":100.85479756374009,"returning":false}],"sp":132,"ranks":{"1":8,"2":8,"3":8,"4":1,"5":8,"6":8,"7":1,"8":1}}
+PASS Prepared level-15 mage can complete endgame with real cooldowns and dodging
+  ENDGAME ranger: {"elapsed":50.64999999999926,"death":false,"won":true,"hp":446,"bossHp":0,"mp":39.00000000000425,"position":[1140,60],"foes":[{"hp":0,"x":450,"y":420,"returning":false},{"hp":0,"x":506.07835215699805,"y":304.7478274393602,"returning":false},{"hp":0,"x":461.4887891341807,"y":654.9080792027949,"returning":false},{"hp":0,"x":1138.4152150645714,"y":104.90175990997938,"returning":false}],"sp":130,"ranks":{"1":8,"2":8,"3":8,"4":1,"5":8,"6":8,"7":1,"8":1}}
+PASS Prepared level-15 ranger can complete endgame with real cooldowns and dodging
+PASS Hero and units share one world, one save, cursor orders and dungeon transitions
+PASS Workers gather and deposit finite gold, build barracks and recruit only within the cap
+PASS Companions fight actual enemies, take boss/trap damage and preserve old RPG progress
+
+65 gameplay checks passed.
+PASS ground cache camera coverage, scene/revision/scale invalidation, bounded replacement and fallback
+PASS rebinding conflicts, persistence, reset, aliases, invalid preferences and unavailable storage
+PASS bounded tap destinations and manual takeover preserve campaign rules
+PASS Ironroot production scenes leave homes, habitats, service spacing and roads intact
+PASS Treasury keeps the Wolf household captain, home comforts and exact cache identity during migration
+PASS Mine production, historic cuts and repair forge have trap-free connected routes
+PASS Legacy Mine occupants migrate without changing money, deaths, damage, paid clears or rescues
+PASS TRUE Colossus and Ridge summons preserve their established species and caps
+PASS Ironroot procedural scenes and Dara render deterministically without changing game state
+PASS 6 Ironroot implementation scenarios
+PASS Temporary tonic HP remains personal even with maxed Shared Strength
+PASS Tonic never grants inherited HP at any Shared Strength rank
+PASS Tonic stock ceiling rejects purchase before crowns are spent
+PASS All equipment and reforge tiers replace rather than stack and update inheritance
+PASS Manual legacy and tier equipment selections persist across save, reload and succession
+PASS Inventory exposes active equipment, reforges and hero-only tonic stock
+PASS pre-v0.9 item and equipment integrity regression cases
+PASS Drowned Keeper capture, Neri bargain, optional codex, TRUE escape and save safety
+PASS Normal/Nightmare unlock matrix, read-independent cooperation, real Awakening, reload/recapture, both Barracks and stale dialogue guards
+PASS vale quests: physical objectives, automatic activation and automatic payment
+PASS march quests: physical objectives, automatic activation and automatic payment
+PASS highlands quests: physical objectives, automatic activation and automatic payment
+PASS frontier quests: physical objectives, automatic activation and automatic payment
+PASS crown quests: physical objectives, automatic activation and automatic payment
+PASS Outdoor patrol objectives are active from the start and exclude dungeon kills
+PASS Every biome contains four outdoor Dark Lord Tribute sources totaling 640 gold without a resource mini-fort
+PASS Barracks scouting reveals hidden tribute one location at a time without exposing exact value on the site
+PASS Assigned troops recover only known tribute and continue through known sources automatically
+PASS Legacy gathering progress becomes credit against the new 640-gold regional tribute pool
+PASS Five consolidated occupied side interiors have traps, lived-in regional decor, ordinary mobs and no gathering nodes or boss slot
+PASS Treasury entrances are reachable and legacy outdoor-crate progress migrates inside without loss
+PASS Field-boss Treasuries are named homes with authored furnishings and migrate old storehouse saves in place
+PASS Cindermaw's Treasury is an irregular den with distinct hoard spaces and safe cache circulation
+PASS legacy Cindermaw Treasury occupants migrate into the irregular den without losing cache progress
+PASS Frontier supply quest is route reconnaissance and stale escort NPCs are retired
+PASS Warlord compound is the single player-facing checkpoint while the old checkpoint name survives only as a quest trigger
+PASS All 30 quest slots and regional XP/crown budgets remain stable after exploration redesign
+PASS Five regional explorations complete through any three natural discoveries, with automatic once-only rewards and save safety
+PASS Quest titles express motivations while objectives stay short, explicit and compatible with completion rules
+20 local quest and expedition scenarios passed.
+PASS opaque material preparation, seam diagnostics, world phase/clipping, stale loads and 28-resource bounded residency
+PASS catalog actions follow the current run, preserve injected Back callbacks and retain public balance aliases
+PASS Actual v2 save migration preserves progression and retains the original export unchanged.
+PASS Current saves migrate to the distributed overworld without losing campaign progress.
+PASS vale keeps one field-boss compound while tribute and creature strongholds remain separate systems
+PASS march keeps one field-boss compound while tribute and creature strongholds remain separate systems
+PASS highlands keeps one field-boss compound while tribute and creature strongholds remain separate systems
+PASS frontier keeps one field-boss compound while tribute and creature strongholds remain separate systems
+PASS crown keeps one field-boss compound while tribute and creature strongholds remain separate systems
+PASS Field compound guardians and the captive remain part of the regional specialist quest
+PASS Pending field-compound ringleaders prevent clear and retain mini identity with reduced rewards
+PASS Old saves with a retired resource mini normalize to one field compound without losing regional progress
+PASS Outdoor mini traps belong only to the field compound and stop after it is cleared
+PASS Side interiors replace failed resource-mini locations without becoming boss or gathering dungeons
+PASS Peace leaves tribute recoverable without paying an unearned field-compound quest
+PASS Malformed field-compound saves are rejected
+12 field-compound, stronghold and side-interior scenarios passed.
+PASS v0.9 monster attack housekeeping: 251 visual identities and separate traps/recovery, source-linked and unreviewed
+PASS vale territorial layout, garrison, access and save identity
+PASS march territorial layout, garrison, access and save identity
+PASS highlands territorial layout, garrison, access and save identity
+PASS frontier territorial layout, garrison, access and save identity
+PASS crown territorial layout, garrison, access and save identity
+PASS previously visited Wolf/Crown saves retain deaths, XP/crowns, IDs and location
+PASS night strongholds, authored spawn quotas and daylight cleanup
+PASS Soft occlusion contours are depth-gated, alpha-clipped and limited to major cover.
+PASS Painted masks reveal only bounded contour pixels behind genuine foreground cover.
+PASS phone, desktop, hybrid Chromebook, explicit entry and persistent screen preferences
+PASS independent desktop/phone camera preferences, reload and invalid-data fallback
+PASS platform-independent v4 saves, independent modes, corrupt-save retention and storage failures
+PASS bounded performance samples, active-time accounting and idle redraw limit
+PASS viewport floor bounds preserve visible coverage while reducing full-map scans
+PASS Neri stock purchases, one-click Barracks buy/use, persistence, rest and Succession
+PASS lower-level XP and gold scale from the first level gap and stop at four
+PASS ordinary kills give half XP in every region and saved bases do not decay on reload
+PASS ringleaders and bosses retain challenge rewards, guardians stay reduced, future levels remain open
+PASS trivial farming pays nothing and one-time quests dominate a complete ordinary population sweep
+PASS ordinary melee and ranged monsters use distinct regional scaling curves
+PASS existing saves upgrade melee and ranged stats once while preserving wounds and avoiding compounding
+PASS tiered narration waits for combat, warnings and milestones
+PASS amber notices stack two at once, queue excess, and expire independently
+PASS F05 pause blocks keyboard/touch/held casts; F15 restored left-hand shortcuts and menu confirmation; F18 teacher guidance
+PASS squad Recall button cancels companion jobs and regroups the party
+PASS Tab is a contextual doctrine switch rather than a separate squad mode
+PASS first specialist exposes Shared Training, companion combat progression and only reached hero skills
+PASS collection button saves and hides crates; journal names remaining objectives; map and nearby interaction expose guarded expedition resources
+PASS Adventure menu keeps global functions while troop management stays out of Character
+PASS HUD tracks both regional specialists and updates after each individual rescue
+PASS Full Barracks stays compact while company and operations functions remain reachable
+PASS immediate keyboard/neutral-joystick takeover and rebound training tooltip
+PASS All three classes start with one skill, two free talent resets and valid save round trips
+PASS Talent growth redistributes the same 80-point budget around each class baseline
+PASS Each hero can refund talents twice for free before Neri paid respec remains available
+PASS New campaigns grant ten seconds of mercy against proximity aggro from hero or companions
+PASS Attacking first waives mercy only for the attacked enemy and suppresses pack cascade
+PASS Mercy expires after ten seconds of active simulation and normal proximity aggro resumes
+PASS Mercy remaining survives save reload, while old saves and legacy migrations never receive a fresh grace window
+PASS Mercy counts down inside the start refuge and cancels early when the hero leaves the start-area leash
+PASS Changing zones during the opening window cancels mercy instead of carrying it elsewhere
+PASS Every town, cage, transport, dungeon and boss is reachable on the terrain graph
+PASS Authored larger populations retain lower rewards and finite resources
+PASS Ranged combat uses readable projectile identities instead of generic orbs
+PASS Charged early skills keep class geometry, cooldowns, and party healing across resource modes
+PASS Basic Skill 1 rewards sustained pressure on one target and third hit cleaves forward
+PASS Companions gain two solid automatic combat skills with Skill 2 progression
+PASS Dark Lord Tribute stays outside refuges and at reachable authored outdoor sites
+PASS Pre-split saves with proven field progress keep migrated mini sites cleared
+PASS Learning and rank advancement require rescue and funds but never hero level
+PASS Ranger support training and smith tiers spend gold only on permanent upgrades
+PASS Better acquired weapons auto-equip while stronger owned weapons remain equipped
+PASS Higher armor tiers immediately become the active armor
+PASS Two hero participating kills trigger two leaders at the 50% branch
+PASS Companion-only kills neither advance nor reset streak; hero participation qualifies last hits
+PASS Mixed species resets; summons are killable and grant no streak, gold or XP
+PASS Outdoor mini-dungeon guardian species remain pairable for two-kill Ringleader streaks
+PASS Supply-room captains are larger boss-disciple minibosses with original translated movesets
+PASS Dreadmaw calls a capped three-member Ash-beast brood
+PASS Dreadmaw Ash Carapace forcibly refills missing brood without exceeding three
+PASS Dreadmaw opens with Brood Call and brood protection resists six-unit focus fire without party-size scaling
+PASS Dreadmaw Ash Carapace combines brood protection with its six-second guard without exceeding the brood cap
+PASS Supply-room captains terminate ordinary kill streaks and cannot seed Ringleaders
+PASS Dark Crown keeps two regional specialist bosses before the specialist-free Dark Lord finale
+PASS Cindermaw owns the Crown Treasury while Dreadmaw keeps the Dark Lord as his visual idol
+PASS Creature strongholds use ordinary regional species, respawning packs and no guaranteed gathering reward
+PASS Night-exclusive species emerge from their authored nocturnal strongholds
+PASS Frontier has a roaming Ashen Warlord disciple captain who patrols and enforces Mandatory Overtime
+PASS The roaming Frontier captain breaks ordinary kill streaks and respawns as the same miniboss
+PASS Critical notice channel is reserved for major progression events
+PASS MP progression uses the smaller level curve and repairs oversized existing saves
+PASS Legacy MP regeneration is dormant while cooldown talent remains active
+PASS Normal skill MP costs stay modest while Mage Skill 3 is Self-Heal
+PASS Only authored magical pressure drains MP; physical damage leaves MP unchanged
+PASS Idle hostile monsters wander locally without moving their authored spawn points
+PASS Every hostile archetype has a bounded idle-wander profile while the Frontier overseer keeps his inspection route
+PASS Normal world cycle is six minutes of day and four minutes of night
+PASS Night enemies are strong and use distinct warned abilities
+PASS Every normal boss can summon three regional adds with scaled threat and zero rewards
+PASS TRUE bosses enter with their authored elite warband size and two ringleader captains
+PASS Legacy generic TRUE warbands normalize to four minions and two captains on engagement
+PASS TRUE summon actions replenish each boss to its authored warband cap
+PASS Ashen Warlord is the summon-count exception: four normal guards and a six-plus-two TRUE warband
+PASS Stone Colossus and Ash Sentinel TRUE forms still force a four-plus-two half-health refill
+PASS TRUE ringleader captains use normal ringleader Frenzy behavior
+PASS Every boss exposes all authored warned mechanics, including universal summon actions
+PASS Boss decision weights react to range, depleted summons, phases and never repeat the last move
+PASS Late boss control mechanics can explicitly pressure the hero through companion screens
+PASS Low-health boss combos chain existing readable mechanics instead of only adding stats
+PASS Unreachable aggression resets after twelve seconds and ignores player damage as progress
+PASS Field TRUE progress is per boss and ordinary kills cannot reset it
+PASS Existing saves reconstruct field-boss TRUE entitlement, including one-kill Dark Lord
+PASS Field normal respawns after 120 seconds, but second kill spawns its identified TRUE remotely after 5 seconds
+PASS Ordinary field bosses still require two normal defeats before the remote TRUE spawn
+PASS The first normal Dark Lord defeat immediately queues Dark Lord TRUE after five seconds
+PASS Dungeon one-third roll is saved, grants an early TRUE at most once and never respawns normal
+PASS Awakening guarantees missed TRUEs, normalizes the common band and retains early victories
+PASS Skipped normal dungeon defeated after awakening guarantees TRUE despite a failed roll
+PASS Night first victories deduplicate; Normal caps at fifteen while Nightmare counts twenty
+PASS Peace is reachable in both modes, includes 60 native residents, 20 dungeon residents and five neutral field bosses
+PASS All early TRUE clears allow immediate peace on TRUE Dark Lord; Dark Lord stays absent
+PASS All quests start active, complete automatically and pay without a board return
+PASS Ferry shoreline scenery stays clear of the walkable road approach
+PASS Dark Crown route structures share one direct-town travel network for previously visited regions
+PASS March-to-Highlands ferry travel arrives on paired docks instead of teleporting into town
+PASS Paid travel preserves supplies and free return while death still applies the universal gold penalty
+PASS Class defaults drive automatic field doctrine; manual switching unlocks at Expedition 3
+PASS Boss doctrine is BOSS for Paladin and ADDS for Mage/Ranger after Expedition 3
+PASS Aggro near the hero defines an active encounter even before the hero attacks
+PASS Expedition instructors train free ranks and higher rescued instructors can cover skipped earlier ranks
+PASS Shared Training follows all five instructors at 20/40/60/80/100 percent and updates applicable talent inheritance live
+PASS Later instructors can cover skipped Shared Training ranks one step at a time
+PASS Shared Strength follows the smith ladder through Vera before the Dark Lord
+PASS Vera can teach skipped Shared Strength ranks one step at a time
+PASS Shared Strength smith ceilings are cumulative from Borin 1 through Vera 4
+PASS Inheritance skills keep their distinct rank counts and complete price ladders
+PASS Veteran, reserve and fallen companions all catch up when inheritance skills or hero bonuses improve
+PASS Neri trains repeatable Companion Vitality at 200 crowns per +10 percent companion max HP without affecting hero HP
+PASS Neri resets talents for 250 crowns, refunds spent points and immediately removes Shared Training talent inheritance
+PASS Companion HP starts from Paladin/Ranger baselines while defense stays at the class baseline until Shared Strength
+PASS Old companions rescale to the new HP baseline on load while preserving wounds and fallen state
+PASS Old maxed Shared Training Rank 4 saves migrate once to new Rank 5 without losing 100 percent inheritance
+PASS Older saves without Companion Vitality load at rank zero
+PASS Every new barracks starts Basic and Full remains an optional Expedition-4 upgrade
+PASS Existing saves with a completed barracks silently satisfy the new tutorial
+PASS Optional Full barracks upgrades become resource deposits and support the larger active group
+PASS Soldiers screen pressure targets in THREATS and ADDS
+PASS Archers fall back toward formation when rushed and step forward only enough to shoot
+PASS Class-aware formations keep the correct combat role closest to the hero
+PASS Formation orientation rotates with the hero movement direction
+PASS Recall cancels troop labor and forces the whole squad to regroup before doctrine resumes
+PASS Expedition 2 unlocks recruitment and gathering while town hiring stops at three total followers
+PASS Barracks can hire unlimited reserves while active group size obeys Expedition and barracks support
+PASS Existing saves convert legacy Workers into Soldiers without losing carried resources or health proportion
+PASS Barracks specialist roster keeps unique teachers and replaces redundant lower services
+PASS Barracks require one troop builder while the hero remains free
+PASS Barracks treat wounded living companions while fallen recovery stays separate
+PASS Barracks treatment is blocked during nearby combat and spends no gold
+PASS Existing companions gain their level-scaled max HP whenever the hero levels without erasing wounds or reviving fallen units
+PASS Succession preserves gold, all world facts and equipment, resets XP/skills/talents and prompts at first death
+PASS Every death mode removes twenty percent of carried gold
+PASS Second succession death automatically selects last unused class; third is terminal across reload
+PASS Malformed saves reject contradictory succession and peace facts without mutating current state
+
+111 expanded campaign checks passed.
+PASS one brief chase burst per engagement, visible pursuit, reload persistence and normal chase recovery
+PASS all 30 real quest objectives in both modes, once-only rewards and paid-save silence
+PASS approved narration catalog, saved-game isolation and standalone tool script order
+PASS refuge restoration heals once, shares cooldown across towns, persists on reload and expires in game time
+PASS Orchard Hamlet cannot restore health or mana during nearby boss combat
+PASS main-town passive healing pauses in combat, old saves remain valid and malformed cooldowns reject
+PASS Citadel fountain blocks live/pending defenders and boss combat, and remains single-use across reload
+PASS normal crypt rooms, inflated hazards, independent rescue, reload and TRUE boss
+PASS normal archive rooms, inflated hazards, independent rescue, reload and TRUE boss
+PASS normal mine rooms, inflated hazards, independent rescue, reload and TRUE boss
+PASS nightmare crypt rooms, inflated hazards, independent rescue, reload and TRUE boss
+PASS nightmare archive rooms, inflated hazards, independent rescue, reload and TRUE boss
+PASS nightmare mine rooms, inflated hazards, independent rescue, reload and TRUE boss
+PASS crypt layout migration retains dead guards, progression and clear state
+PASS archive layout migration retains dead guards, progression and clear state
+PASS mine layout migration retains dead guards, progression and clear state
+PASS Highlands residence preserves Wolf captain, raid circulation and saved cache/death state
+PASS vale support furnishing avoids roads/services and persists without duplicates
+PASS march support furnishing avoids roads/services and persists without duplicates
+PASS highlands support furnishing avoids roads/services and persists without duplicates
+PASS unresolved summon and procedural furnishing contracts remain intact
+PASS 52 one/two ringleader outcomes for every ordinary, night and guardian species, including reload and dawn
+PASS 102 main-road journeys in both directions, clear road edges, legacy-road migration and obstacle-edge movement
+PASS The live normal/night roster and elite catalogue have complete authored repertoires
+PASS Every authored basic actually disrupts its marked target through the live resolver
+PASS Every elite signature affects multiple marked pursuers and keeps normal cadence
+PASS All signature footprints can be dodged and real solid cover blocks their hits
+PASS Automatic AI thinks, warns, resolves once and resumes without a forced basic/signature combo
+PASS ADDS doctrine excludes dust-covered owned summons and resumes after exact cover expiry
+PASS Dust on the last field threat preserves a manual doctrine until genuine disengagement
+PASS Commander respawns keep distant troops at posts, never on top of an active companion
+PASS Broodscreen and Crown Decree rally owned active troops without changing summons or pulling distant ones
+PASS Death, reset and save/restore cannot preserve dust or reposition allowances
+PASS A lethal rogue hit ends resolution before crowd control or commander replenishment after death
+PASS Lethal companion hits skip secondary effects while the signature still affects survivors
+PASS A successful lethal companion hit retains caster dust/withdrawal while expiring victim effects
+PASS A companion death clears interrupted scatter before paid recovery of the same record
+PASS Paid recovery expires prior slows after real enemy projectile and hazard deaths
+PASS Zone reset clears dust cover together with the original encounter
+16 integrated rogue effectiveness and preservation checks passed.
+PASS RTS selections, group formation and context orders are independent
+PASS Gathering deposits real resources and depletes the source without duplication
+PASS Construction requires a worker, resources and free ground; training queues pay once
+PASS Routes cross bridges and avoid river and rock collisions
+PASS Town recovery rewards once and unlocks frontier NPC support
+PASS NPC healing conserves resources at full health; weapon upgrades cannot stack
+PASS Dark lord telegraphs area damage and combat kills grant a single reward
+PASS Victory requires both camps, a barracks, frontier and all enemies; defeat freezes
+PASS RTS save restores progress safely and stops orders; bad saves are rejected
+PASS Full prototype campaign can gather, recruit, cross river and defeat both bosses
+PASS Recruits from a riverside barracks spawn on walkable ground
+PASS Deployment packages both Campaign and historical RTS through the asset inventory
+12 RTS checks passed.
+PASS App asset edits use the current versioned offline cache
+PASS Precache uses the project subpath, includes every offline asset and activates the newest tester build
+PASS Frame/variant-only resources survive offline and missing atlas rejects install
+PASS Activation deletes only obsolete game caches and claims clients
+PASS Offline navigation and versioned assets return cached app resources
+PASS Historical games load only on demand and remain offline after first use
+PASS Foreign origins, sibling apps, unknown assets and POST bypass this cache
+PASS Missing cache falls back to network or a clear offline response
+PASS Tester updates auto-activate while the explicit SKIP_WAITING compatibility message still works
+PASS Phone app install metadata and prototype install flow are present
+PASS Real empty JSON manifest and images precache and survive offline query URLs
+PASS Real populated JSON manifest and images precache and survive offline query URLs
+PASS missing sprite rejects install and retains previous cache
+PASS network sprite rejects install and retains previous cache
+PASS Malformed optional JSON keeps the existing procedural installation policy
+
+15 offline checks passed.
+PASS only Mira the Village Instructor enters town after their own rescue, including reload
+PASS only Borin the Village Smith enters town after their own rescue, including reload
+PASS only Sela the Frontier Instructor enters town after their own rescue, including reload
+PASS only Neri the Alchemist enters town after their own rescue, including reload
+PASS only Orin the Highland Instructor enters town after their own rescue, including reload
+PASS only Dara the Highland Smith enters town after their own rescue, including reload
+PASS only Lyss the Advanced Instructor enters town after their own rescue, including reload
+PASS only Eren the Runewright enters town after their own rescue, including reload
+PASS only Tovan the Final Instructor enters town after their own rescue, including reload
+PASS only Vera the Master Smith enters town after their own rescue, including reload
+PASS final Dark Lord has no specialist captive
+PASS legacy imports no longer blanket-unlock services; corrupted old unlocks and stray town service NPCs are repaired
+PASS 256 MiB sprite residency, reservation bounds, LRU retirement and smaller-budget configuration
+PASS high-density static/clip grounding, legacy display equivalence and actual-pixel memory accounting
+PASS content identity, stale manifest lease and stable variant revision/reordering
+PASS exact procedural moss/height slots, identity fallback, replacement/reordering and invalid selector rejection
+PASS lazy/shared decoding, same-session replacement and removal
+PASS late retired decode, failure fallback and invalid manifest rejection
+PASS full 280-entry lazy registry, bounded concurrency/LRU and visible pinning
+PASS atlas rectangles/pivots, looping, action timing, pause, reduced motion and stable nature variants
+PASS one-pass original exports recover detail, preserve source bytes and reject invalid placement
+PASS reviewed open catalog partition
+PASS references and deterministic scenes
+PASS malformed images and budgets
+PASS isolated checkout
+PASS immutable PNG processing
+PASS WebP and pending approval guard
+PASS replacement leases, retained revisions, rollback/removal, atlas provenance and unrelated-source/catalog additions
+PASS catalog/contracts, transparent binary, deterministic scenes, alpha/margins, PNG/WebP processing, immutable sources, actual decoding, approval/stale-key safeguards and isolated publication
+PASS density-aware processing, unchanged geometry, source/translation guards, bounded atlases, native review, replacement and legacy rollback
+PASS current renderer/map coverage, exact guard/captain loadouts and future scope drift rejection
+PASS Static sprite registry preserves exact variants, anchors, scaling and procedural fallback.
+PASS loaded, failed and absent image paths exercise actual renderer fallback and anchored drawing
+PASS automatic add screening, boss fallback, manual BOSS/ADDS priority and lifecycle for all classes
+PASS visible target cycling, manual attack priority, range refusal, fallback and boss/summon lock, disengagement and zone cleanup
+PASS thorn learning catalogue, independent training catalogue and rank cap survive overleveling
+PASS mire learning catalogue, independent training catalogue and rank cap survive overleveling
+PASS ridge learning catalogue, independent training catalogue and rank cap survive overleveling
+PASS warlord learning catalogue, independent training catalogue and rank cap survive overleveling
+PASS citadel learning catalogue, independent training catalogue and rank cap survive overleveling
+PASS rescue/gold and specialist curriculum remain required while hero level no longer gates services
+PASS short status failures, truthful auto-equipping, and reversible MP feedback
+PASS all nine crossings in both directions, visible-bank collision clearance and restored saves
+PASS projected circle, charge corridor/endcaps and expanding-ring warning agree with collision
+PASS normal abilities, projectile contacts, recipient recovery and bounded high-priority cues
+PASS desktop/mobile rendering is pure, complete and protects cues after atmosphere; dungeon edges follow the exact floor union
+PASS 5 settlement street plans, 51 connected routes, 1257 roadside props and historical save migration
+PASS all regional directions, Crown transit, safe landings and save migration
+PASS original distant outbound stands, road scenery, inbound harbors and v4 save migration
+PASS vale overworld reads as a settled, natural place
+PASS march overworld reads as a settled, natural place
+PASS highlands overworld reads as a settled, natural place
+PASS frontier overworld reads as a settled, natural place
+PASS crown overworld reads as a settled, natural place
+PASS expanded destination migration keeps transports, dungeons and strongholds aligned with canonical data
+PASS Flooded Marches and Ironroot Highlands share a continuous ferry route
+PASS major waterways and ferry waters continue to world boundaries
+PASS Ironroot wilderness is filled by physical nature rather than terrain panels
+PASS retained named landmarks sit beside the world feature their names describe
+PASS Ashen Frontier reads as recovery under a functioning occupation corridor
+PASS Frontier procedural props gain deterministic local variants instead of repeating one identical drawing
+PASS Dark Crown reads as a regime with separate districts and distributed outward routes
+PASS actual occupied side entrances and main dungeons have distinct geometry without mutating campaign state
+PASS Abyss Bastion procedural props and authored partitions are visually distinct
+PASS military Ringleaders read as officers without changing body scale
+PASS Citadel composition continues into an irregular military fortress
+PASS named town utilities use distinct purpose-specific silhouettes while retaining each regional palette
+PASS regional settlements use genuinely different building families rather than recolored generic houses
+PASS expanded regions actually use their extra land for occupation and breathing room
+PASS each field-boss Treasury has a distinct boss-home entrance rather than a dungeon gate
+PASS Basic and Full Barracks are distinct cozy regional expedition camps, not shops or houses
+22 world-aesthetic scenarios passed.
+PASS major feature scale only changes presentation; authored dimensions, enemy populations, combat anchors and routes remain unchanged
+WORLD PROPORTION AUDIT [{"zoneId":"vale","size":2700,"ordinaryBase":32,"actualOrdinary":28,"majorFeatures":53,"outer300":8,"closeFeaturePairs":15,"kinds":10,"sitesChecked":4},{"zoneId":"march","size":3000,"ordinaryBase":40,"actualOrdinary":34,"majorFeatures":47,"outer300":6,"closeFeaturePairs":10,"kinds":9,"sitesChecked":5},{"zoneId":"highlands","size":3400,"ordinaryBase":48,"actualOrdinary":40,"majorFeatures":115,"outer300":18,"closeFeaturePairs":32,"kinds":11,"sitesChecked":5},{"zoneId":"frontier","size":3400,"ordinaryBase":56,"actualOrdinary":47,"majorFeatures":126,"outer300":20,"closeFeaturePairs":31,"kinds":14,"sitesChecked":4},{"zoneId":"crown","size":3800,"ordinaryBase":64,"actualOrdinary":52,"majorFeatures":36,"outer300":9,"closeFeaturePairs":4,"kinds":13,"sitesChecked":7}]
+
+PASS 90 regression suites

@@ -1,0 +1,37 @@
+[
+  {
+    "testedSha": "6dce65d42c7d316f8924b59f53535c747e58ed82",
+    "command": "npm ci --ignore-scripts",
+    "exit": 0,
+    "elapsedSeconds": 4.61,
+    "log": "/tmp/v09-evidence/candidate-npm-ci---ignore-scripts.log"
+  },
+  {
+    "testedSha": "6dce65d42c7d316f8924b59f53535c747e58ed82",
+    "command": "npm run format:check",
+    "exit": 0,
+    "elapsedSeconds": 24.91,
+    "log": "/tmp/v09-evidence/candidate-npm-run-format-check.log"
+  },
+  {
+    "testedSha": "6dce65d42c7d316f8924b59f53535c747e58ed82",
+    "command": "npm run check",
+    "exit": 0,
+    "elapsedSeconds": 35.34,
+    "log": "/tmp/v09-evidence/candidate-npm-run-check.log"
+  },
+  {
+    "testedSha": "6dce65d42c7d316f8924b59f53535c747e58ed82",
+    "command": "npm test",
+    "exit": 0,
+    "elapsedSeconds": 1059.55,
+    "log": "/tmp/v09-evidence/candidate-npm-test.log"
+  },
+  {
+    "testedSha": "6dce65d42c7d316f8924b59f53535c747e58ed82",
+    "command": "npm run build",
+    "exit": 0,
+    "elapsedSeconds": 14.37,
+    "log": "/tmp/v09-evidence/candidate-npm-run-build.log"
+  }
+]

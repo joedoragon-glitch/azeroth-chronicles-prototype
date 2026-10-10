@@ -1,0 +1,33 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> azeroth-chronicles-prototype@0.8.137 check
+> node scripts/build.cjs --check && node scripts/sprite-pipeline.cjs check && node scripts/sprite-scope-audit.cjs --check && node scripts/material-pipeline.cjs check && node scripts/enemy-audio-coverage.cjs
+
+PASS Generated files and syntax verified · 0.8.137 · 199 campaign assets · 14 optional historical assets
+{
+  "catalogEntries": 296,
+  "preparedContracts": 74,
+  "registered": 33,
+  "uniqueImages": 36,
+  "packagedResources": 37,
+  "decodedBytes": 42541312,
+  "packagedBytes": 860305,
+  "maxActiveDecodedBytes": 268435456
+}
+PASS current sprite scope · 296 decisions · 16 guard keys · 19 areas
+{
+  "active": 7,
+  "packagedBytes": 764764,
+  "decodedResidencyLimit": 2097152
+}
+PASS enemy audio/VFX coverage: 251 identities, 1440 stage/variant decisions {
+  boss: 46,
+  captain: 16,
+  'captain-phase': 5,
+  night: 2,
+  ranged: 18,
+  'basic-attack': 28,
+  'rogue-basic': 84,
+  'rogue-signature': 40,
+  frenzy: 12
+}
