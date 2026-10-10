@@ -1032,6 +1032,20 @@
       }
       ironrootLivelihood(z) {
         if (z.id !== 'highlands' || z.ironrootLifeVersion === 3) return;
+        const existing = z.props.filter((p) => p.ironrootDistrict);
+        if (
+          existing.length &&
+          existing.every(
+            (p) =>
+              (this.nearestRoad(p, z)?.distance ?? Infinity) >=
+                Math.max(66, this.roadFootprint(p)) &&
+              z.npcs.every((n) => dist(n, p) >= 85) &&
+              z.nodes.every((n) => n.amount <= 0 || dist(n, p) >= 65),
+          )
+        ) {
+          z.ironrootLifeVersion = 3;
+          return;
+        }
         const oldZone = this.s.zone;
         this.s.zone = z.id;
         try {
