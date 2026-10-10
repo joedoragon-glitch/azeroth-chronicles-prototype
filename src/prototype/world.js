@@ -972,7 +972,7 @@
         }
       }
       worldLife(z) {
-        const version = originalDepartureRegion(z.id) ? 2 : 1;
+        const version = originalDepartureRegion(z.id) ? 3 : 2;
         if (dungeonIds.includes(z.id) || this.supplyRoom(z.id) || z.worldLifeVersion === version)
           return;
         const i = this.regionIndex(z.id),
@@ -996,9 +996,16 @@
                 return false;
               }
             }
-            if (!allowRoad && nearRoad(p, 45)) return false;
-            if (z.npcs.some((n) => dist(n, p) < 45) || z.nodes.some((n) => dist(n, p) < 45))
-              return false;
+            const margin = this.roadFootprint({ structure }),
+              plotClear = (q) =>
+                (allowRoad || !nearRoad(q, margin)) &&
+                !z.npcs.some((n) => dist(n, q) < 45) &&
+                !z.nodes.some((n) => dist(n, q) < 45);
+            if (!plotClear(p)) {
+              if (scope !== 'civilian') return false;
+              p = this.roadsidePlot(z, p, margin, null, plotClear);
+            }
+            if (!p) return false;
             z.props.push({
               id: 'world-life-' + scope + '-' + serial++,
               ...p,
@@ -1103,8 +1110,7 @@
               !z.nodes.some((n) => n.amount > 0 && dist(n, q) < 48) &&
               !z.buildings.some((n) => dist(n, q) < 55);
             // Road damage belongs on paving; an occupied town's furnishings belong beside it.
-            if (!roadTrace && !plotClear(p))
-              p = this.roadsidePlot(z, p, margin, null, plotClear);
+            if (!roadTrace && !plotClear(p)) p = this.roadsidePlot(z, p, margin, null, plotClear);
             if (!p) return false;
             z.props.push({
               id: 'frontier-layout-' + prefix + '-' + serial++,
