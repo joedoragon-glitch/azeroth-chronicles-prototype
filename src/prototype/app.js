@@ -164,6 +164,7 @@
     } else game = new Campaign();
   }
   let started = loaded;
+  let storyRouteActive = false;
   const viewport = { width: innerWidth, height: innerHeight };
   const renderer = PrototypeRenderer.create({
     canvas: viewport,
@@ -172,6 +173,8 @@
     platform,
     chargePresentation,
     isPaused: () => paused || !focused || document.hidden,
+    getGuideRoute: () =>
+      storyRouteActive && game.hero.order?.type === 'move' ? game.hero.path : null,
     Campaign,
     PrototypeVisuals,
     PrototypeCombatVisuals,
@@ -205,6 +208,8 @@
     recallSquad,
     showMap,
     finaleMenu,
+    storyNavigate,
+    chooseNewRun: (mode) => chooseClass(mode),
     status,
   });
 
@@ -400,6 +405,14 @@
     clearInput();
     gateDismissed = false;
     menu = { title, description, actions, back };
+    $('modal').setAttribute(
+      'data-view',
+      title === 'Adventure menu'
+        ? 'adventure'
+        : title === 'Game and settings'
+          ? 'settings'
+          : 'default',
+    );
     // Small interactions need a small dialog; longer service catalogs keep a readable width.
     const compact =
       actions.length <= 2 &&
@@ -462,6 +475,81 @@
     document.body.classList.remove('menu-open');
     clearInput();
   }
+  // A touch outside the dialog dismisses it and cannot activate the world or
+  // a HUD control beneath it. Intro, successor and game-over choices are mandatory.
+  let outsidePointerId = null;
+  function dismissOutside() {
+    if (!menu || !started || game.s.challenge.pending || game.s.challenge.gameOver) return;
+    if (game.peace && !game.s.endingAck) {
+      game.s.endingAck = true;
+      save();
+    }
+    if (menu.title === 'The Dungeons Awaken' && !game.s.awakeningAck) {
+      game.s.awakeningAck = true;
+      save();
+    }
+    closeMenu();
+  }
+  document.addEventListener(
+    'pointerdown',
+    (event) => {
+      if (
+        !menu ||
+        $('modal').contains(event.target) ||
+        event.target.closest?.('#order-button, #joystick, #stick')
+      ) {
+        // WebKit can omit the click after a canceled pointerdown. A fresh
+        // pointerdown must not inherit dismissal from the previous gesture.
+        outsidePointerId = null;
+        return;
+      }
+      outsidePointerId = event.pointerId;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      dismissOutside();
+    },
+    true,
+  );
+  document.addEventListener(
+    'pointerup',
+    (event) => {
+      if (outsidePointerId !== event.pointerId) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    },
+    true,
+  );
+  document.addEventListener(
+    'pointercancel',
+    (event) => {
+      if (outsidePointerId !== event.pointerId) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      outsidePointerId = null;
+    },
+    true,
+  );
+  document.addEventListener(
+    'click',
+    (event) => {
+      // WebKit may not dispatch click after a prevented pointerdown.
+      // Do not let an old outside-tap ID swallow a later, valid menu choice.
+      if (
+        menu &&
+        ($('modal').contains(event.target) ||
+          event.target.closest?.('#order-button, #joystick, #stick'))
+      ) {
+        outsidePointerId = null;
+        return;
+      }
+      if (outsidePointerId === null && !menu) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      outsidePointerId = null;
+      dismissOutside();
+    },
+    true,
+  );
   $('close-button').onclick = () => {
     audio.unlock().then(() => audio.interfaceSound('back'));
     if (!game.s.endingAck && game.peace) {
@@ -687,7 +775,7 @@
   function systemMenu() {
     openMenu(
       'Game and settings',
-      'Controls, audio and save management.',
+      '',
       [
         ...(!runningAsApp() && platform.mode === 'phone'
           ? [action('Install on phone', installApp, 'Add Azeroth Chronicles to the home screen')]
@@ -703,10 +791,6 @@
         action('Screen and performance', () => platformMenu(systemMenu)),
         action('Controls', () => help(systemMenu)),
         action('Sound settings', () => soundMenu(systemMenu)),
-        action(paused ? 'Resume play' : 'Pause play', () => {
-          paused = !paused;
-          closeMenu();
-        }),
         action('Save and game management', saveMenu),
       ],
       openMain,
@@ -717,55 +801,51 @@
       canBuild = !game.isDungeon() && game.availableLabor().length > 0,
       cost = game.barracksBuildCost(),
       costLabel = cost ? cost + ' crowns' : 'FREE';
-    openMenu(
-      'Adventure menu',
-      'Global adventure functions. Establish field Barracks here; use Captains and Barracks for recruitment, recovery and operations.',
-      [
-        action('Map and travel routes', showMap),
-        action('Quest journal', () => quests(false)),
-        action('Inventory and support', inventory),
-        action('Character', characterMenu),
-        ...(canBuild
-          ? [
-              action(
-                'Establish Basic Barracks · ' + costLabel,
-                () => {
-                  if (game.build()) closeMenu();
-                },
-                cost === 0
-                  ? 'FIRST BARRACKS FREE · Creates a nearby companion recovery base'
-                  : rank >= 4
-                    ? 'One companion builds a Basic camp · optional Full upgrade costs ' +
-                      game.barracksUpgradeCost() +
-                      ' crowns'
-                    : 'One companion builds a recovery base; Full upgrade unlocks at Expedition 4',
-                game.hero.gold < cost,
-              ),
-            ]
-          : []),
-        ...(game.s.phase === 'awakening'
-          ? [
-              action(
-                'Awakening · Final objective',
-                () => finaleMenu(openMain),
-                'TRUE dungeon guardians ' +
-                  Campaign.dungeonIds.filter((id) => game.s.true[id]).length +
-                  '/5',
-              ),
-            ]
-          : []),
-        ...(profile.nightmareUnlocked
-          ? [
-              action(
-                '★ New Game — Nightmare Mode',
-                () => chooseClass('nightmare'),
-                'Unlocked by the peaceful ending · Standard or Succession challenge',
-              ),
-            ]
-          : []),
-        action('Game and settings', systemMenu),
-      ],
-    );
+    openMenu('Adventure menu', '', [
+      action('Map and travel routes', showMap),
+      action('Quest journal', () => quests(false)),
+      action('Inventory and support', inventory),
+      action('Talents', () => talents(openMain)),
+      ...(canBuild
+        ? [
+            action(
+              'Establish Basic Barracks · ' + costLabel,
+              () => {
+                if (game.build()) closeMenu();
+              },
+              cost === 0
+                ? 'FIRST BARRACKS FREE · Creates a nearby companion recovery base'
+                : rank >= 4
+                  ? 'One companion builds a Basic camp · optional Full upgrade costs ' +
+                    game.barracksUpgradeCost() +
+                    ' crowns'
+                  : 'One companion builds a recovery base; Full upgrade unlocks at Expedition 4',
+              game.hero.gold < cost,
+            ),
+          ]
+        : []),
+      ...(game.s.phase === 'awakening'
+        ? [
+            action(
+              'Awakening · Final objective',
+              () => finaleMenu(openMain),
+              'TRUE dungeon guardians ' +
+                Campaign.dungeonIds.filter((id) => game.s.true[id]).length +
+                '/5',
+            ),
+          ]
+        : []),
+      ...(profile.nightmareUnlocked
+        ? [
+            action(
+              '★ New Game — Nightmare Mode',
+              () => chooseClass('nightmare'),
+              'Unlocked by the peaceful ending · Standard or Succession challenge',
+            ),
+          ]
+        : []),
+      action('Game and settings', systemMenu),
+    ]);
   }
   $('menu-button').onclick = (e) => {
     audio.unlock();
@@ -998,170 +1078,264 @@
       back,
     );
   }
+
+  function storyNavigate(destination, label) {
+    if (!destination || !Number.isFinite(destination.x) || !Number.isFinite(destination.y)) {
+      status('Destination unavailable.');
+      return;
+    }
+    const size = game.zoneSize();
+    const offsets = [
+      [0, 0],
+      [0, 65],
+      [65, 0],
+      [-65, 0],
+      [0, -65],
+      [65, 65],
+      [-65, 65],
+      [65, -65],
+      [-65, -65],
+    ];
+    let choice = null;
+    for (const [dx, dy] of offsets) {
+      const target = { x: destination.x + dx, y: destination.y + dy };
+      if (
+        target.x < 0 ||
+        target.y < 0 ||
+        target.x > size ||
+        target.y > size ||
+        game.blocked(target.x, target.y)
+      )
+        continue;
+      if (game.route(game.hero, target).length) {
+        choice = target;
+        break;
+      }
+    }
+    if (!choice) {
+      status('No walkable path. Move closer and try again.');
+      return;
+    }
+    closeMenu();
+    if (PrototypeInput.requestMove(game, choice)) {
+      storyRouteActive = true;
+      status('Following path to ' + label + '.');
+    } else status('Route unavailable. Try again nearby.');
+  }
+
+  // prettier-ignore
   function showMap(back = closeMenu) {
-    const r = game.definition(),
-      room = game.supplyRoom(),
-      side = game.sideDungeon(),
-      rawNpcs = game.visibleNPCs(),
-      mapNpcs = game.isDungeon()
-        ? rawNpcs
-        : rawNpcs
-            .filter(
-              (n) =>
-                ![
-                  'supplier',
-                  'recruiter',
-                  'quests',
-                  'teacher',
-                  'smith',
-                  'alchemist',
-                  'cage',
-                  'bundle',
-                ].includes(n.kind),
-            )
-            .map((n) =>
-              n.kind === 'rest' && n.id === 'rest' ? { ...n, name: r.town, icon: '🏘️' } : n,
-            ),
-      fieldTrue = game
-        .zone()
-        .enemies.filter(
-          (e) =>
-            e.hp > 0 &&
-            e.type === 'boss' &&
-            e.form === 'true' &&
-            (game.boss(e.family)?.kind === 'field' ||
-              e.family === 'darklord' ||
-              e.family === 'darklord'),
-        )
-        .map((e) => ({ ...e, kind: 'trueboss', icon: '⚔️' })),
-      fieldBases = game.zone().buildings.map((b) => ({
-        ...b,
-        kind: 'barracks',
-        name: b.name || 'Barracks',
-        icon: b.progress < 4 ? '🏗️' : '🏕️',
-      })),
-      targets = [...fieldTrue, ...mapNpcs, ...fieldBases];
-    openMenu(
-      (room?.name || side?.name || r.name) + ' map',
-      r.biome +
-        (game.zoneId === 'highlands'
-          ? '\n' + r.exploration
-          : game.zoneId === 'mine'
-            ? '\n' + game.boss('mine').history
-            : game.zoneId === 'supply-highlands'
-              ? '\nThe Master of Coin lives here off duty. Supper, a warm hearth and a tabletop game come before the ledger. Crag Tyrant protects the household; the three guarded caches still serve the Treasury raid.'
-              : '') +
-        '\nTransport: ' +
-        D.regions.map((r) => r.name).join(' → ') +
-        '\nNamed places are destinations; tribute values and labor assignments belong in Barracks Operations.',
-      targets.map((n) => {
-        const boss = game.boss(n.family);
-        return action(
-          n.icon + ' ' + n.name,
-          () => {
-            game.hero.order = { type: 'move', x: n.x, y: n.y };
-            closeMenu();
-          },
-          Math.round(n.x) +
-            ', ' +
-            Math.round(n.y) +
-            (n.kind === 'trueboss'
-              ? ' · TRUE boss hunt target'
-              : n.kind === 'barracks'
-                ? n.progress < 4
-                  ? ' · Barracks under construction'
-                  : ' · Regional field base'
-                : n.kind === 'landmark' || n.sideDungeon
-                  ? ' · ' + game.siteDescription(n)
-                  : n.kind === 'dungeon' && boss?.kind === 'dungeon' && game.s.phase === 'awakening'
-                    ? ' · ' +
-                      (game.s.true[n.family]
-                        ? 'TRUE defeated'
-                        : game.s.normal[n.family]
-                          ? 'TRUE awakened — challenge it'
-                          : 'Normal boss still alive — defeat it first')
-                    : n.kind === 'mini'
-                      ? ' · ' + game.miniStatus(n.mini)
-                      : n.hub
-                        ? ' · Crown travel hub — direct town travel to previously visited regions'
-                        : ''),
-        );
-      }),
-      back,
-    );
+    const zone = game.zone();
+    const room = game.supplyRoom();
+    const side = game.sideDungeon();
+    const region = game.definition();
+    const hiddenServices = new Set([
+      'supplier',
+      'recruiter',
+      'quests',
+      'teacher',
+      'smith',
+      'alchemist',
+      'cage',
+      'bundle',
+    ]);
+    const places = game
+      .visibleNPCs()
+      .filter((n) => game.isDungeon() || !hiddenServices.has(n.kind))
+      .map((n) =>
+        n.kind === 'rest' && n.id === 'rest'
+          ? { ...n, name: region.town, icon: '🏘️' }
+          : n,
+      );
+    const bases = zone.buildings.map((b) => ({
+      ...b,
+      kind: 'barracks',
+      name: b.name || 'Barracks',
+      icon: b.progress < 4 ? '🏗️' : '🏕️',
+    }));
+    const bosses = zone.enemies
+      .filter((e) => e.hp > 0 && e.type === 'boss' && !e.neutral)
+      .map((e) => ({
+        ...e,
+        name: e.name || game.boss(e.family)?.name || 'Boss',
+        kind: 'boss',
+        icon: '⚔️',
+      }));
+    const destinations = [...places, ...bases, ...bosses]
+      .filter((n) => Number.isFinite(n.x) && Number.isFinite(n.y) && n.name)
+      .sort(
+        (a, b) =>
+          Math.hypot(a.x - game.hero.x, a.y - game.hero.y) -
+          Math.hypot(b.x - game.hero.x, b.y - game.hero.y),
+      );
+
+    let selected = null;
+    let route = null;
+    const choices = [
+      action(
+        'Navigate to selected',
+        () => {
+          if (!selected) return;
+          // Closing the dialog clears input and cancels the previous movement order.
+          // Start the route only AFTER closing, or selection silently does nothing.
+          const latest = findRoute(selected);
+          if (!latest) {
+            status('No walkable route to ' + selected.name + '.');
+            return;
+          }
+          closeMenu();
+          if (PrototypeInput.requestMove(game, latest.point)) {
+            storyRouteActive = true;
+            status('Walking to ' + selected.name + '.');
+          } else status('Route blocked. Choose another destination.');
+        },
+        '',
+        true,
+      ),
+      ...destinations.map((place) =>
+        action((place.icon || '•') + ' ' + place.name, () => choose(place)),
+      ),
+    ];
+    openMenu((room?.name || side?.name || region.name) + ' map', '', choices, back);
+    $('modal').setAttribute('data-view', 'map');
+    const go = $('modal-actions').children[0];
+    go.classList.add('route-go');
     const map = document.createElement('canvas');
-    map.width = 420;
-    map.height = 280;
-    const ctx = map.getContext('2d'),
-      size = game.zoneSize(),
-      sx = (x) => (x / size) * 420,
-      sy = (y) => (y / size) * 280;
-    ctx.fillStyle = D.colors[game.regionIndex()];
-    ctx.fillRect(0, 0, 420, 280);
-    ctx.strokeStyle = '#e0ddb21b';
-    ctx.lineWidth = 1;
-    for (let x = 35; x < 420; x += 35) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, 280);
-      ctx.stroke();
-    }
-    for (let y = 35; y < 280; y += 35) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(420, y);
-      ctx.stroke();
-    }
-    for (let x = 0; x < size; x += 50)
-      for (let y = 0; y < size; y += 50)
-        if (game.blocked(x, y, game.zoneId, 0)) {
-          ctx.fillStyle = game.isDungeon() ? '#78807d' : '#355d72';
-          ctx.fillRect(sx(x), sy(y), sx(50) + 1, sy(50) + 1);
-        }
-    ctx.strokeStyle = '#d9c898';
-    ctx.lineWidth = 2;
-    for (const road of game.zone().roads || []) {
-      ctx.beginPath();
-      road.forEach((p, j) => (j ? ctx.lineTo(sx(p.x), sy(p.y)) : ctx.moveTo(sx(p.x), sy(p.y))));
-      ctx.stroke();
-    }
-    for (const n of [
-      ...mapNpcs,
-      ...game.zone().buildings.map((b) => ({ ...b, kind: 'barracks' })),
-    ]) {
-      const x = sx(n.x),
-        y = sy(n.y);
-      ctx.fillStyle =
-        n.kind === 'dungeon' || n.kind === 'exit'
-          ? '#a9d4c6'
-          : n.kind === 'barracks'
-            ? '#d7bd86'
-            : '#f2e4b9';
-      ctx.strokeStyle = '#162a25';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.arc(x, y, n.kind === 'barracks' ? 5 : 3.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-    }
-    for (const e of game.zone().enemies.filter((e) => e.hp > 0 && e.type === 'boss')) {
-      ctx.fillStyle = e.neutral ? '#aed6a0' : '#e87b7b';
-      ctx.fillRect(sx(e.x) - 2, sy(e.y) - 2, 5, 5);
-    }
-    ctx.strokeStyle = '#fff2bd';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(sx(game.hero.x), sy(game.hero.y), 6, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(sx(game.hero.x) - 8, sy(game.hero.y));
-    ctx.lineTo(sx(game.hero.x) + 8, sy(game.hero.y));
-    ctx.moveTo(sx(game.hero.x), sy(game.hero.y) - 8);
-    ctx.lineTo(sx(game.hero.x), sy(game.hero.y) + 8);
-    ctx.stroke();
-    ctx.strokeStyle = '#e2cf9a';
-    ctx.strokeRect(1, 1, 418, 278);
+    map.width = 480;
+    map.height = 320;
+    map.setAttribute('aria-label', 'Map of the current area. Select a place to navigate.');
     $('modal-description').append(map);
+    const ctx = map.getContext('2d');
+    const size = game.zoneSize();
+    const sx = (x) => (x / size) * map.width;
+    const sy = (y) => (y / size) * map.height;
+
+    function findRoute(place) {
+      const offsets = [
+        [0, 0],
+        [0, 70],
+        [70, 0],
+        [0, -70],
+        [-70, 0],
+        [70, 70],
+        [-70, 70],
+        [70, -70],
+        [-70, -70],
+      ];
+      for (const [dx, dy] of offsets) {
+        const point = { x: place.x + dx, y: place.y + dy };
+        if (
+          point.x < 0 ||
+          point.y < 0 ||
+          point.x > size ||
+          point.y > size ||
+          game.blocked(point.x, point.y)
+        )
+          continue;
+        const path = game.route(game.hero, point);
+        if (path.length) return { point, path };
+      }
+      return null;
+    }
+
+    function drawMap() {
+      ctx.fillStyle = D.colors[game.regionIndex()] || '#263d40';
+      ctx.fillRect(0, 0, map.width, map.height);
+      ctx.strokeStyle = '#e0ddb21b';
+      ctx.lineWidth = 1;
+      for (let x = 40; x < map.width; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, map.height);
+        ctx.stroke();
+      }
+      for (let y = 40; y < map.height; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(map.width, y);
+        ctx.stroke();
+      }
+      for (let x = 0; x < size; x += 60)
+        for (let y = 0; y < size; y += 60)
+          if (game.blocked(x, y, game.zoneId, 0)) {
+            ctx.fillStyle = game.isDungeon() ? '#78807d' : '#355d72';
+            ctx.fillRect(sx(x), sy(y), sx(60) + 1, sy(60) + 1);
+          }
+      ctx.strokeStyle = '#d9c898';
+      ctx.lineWidth = 2.5;
+      for (const road of zone.roads || []) {
+        ctx.beginPath();
+        road.forEach((point, index) =>
+          index
+            ? ctx.lineTo(sx(point.x), sy(point.y))
+            : ctx.moveTo(sx(point.x), sy(point.y)),
+        );
+        ctx.stroke();
+      }
+      if (route) {
+        ctx.strokeStyle = '#8ee7d0';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(sx(game.hero.x), sy(game.hero.y));
+        for (const point of route.path) ctx.lineTo(sx(point.x), sy(point.y));
+        ctx.stroke();
+      }
+      for (const place of destinations) {
+        const isPicked = place === selected;
+        const x = sx(place.x);
+        const y = sy(place.y);
+        ctx.beginPath();
+        ctx.arc(x, y, isPicked ? 7 : 4, 0, Math.PI * 2);
+        ctx.fillStyle =
+          place.kind === 'boss'
+            ? '#e78d82'
+            : place.kind === 'barracks'
+              ? '#e0c183'
+              : '#b7e1d5';
+        ctx.fill();
+        ctx.lineWidth = isPicked ? 2.5 : 1;
+        ctx.strokeStyle = isPicked ? '#ffffff' : '#142a32';
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.arc(sx(game.hero.x), sy(game.hero.y), 6, 0, Math.PI * 2);
+      ctx.strokeStyle = '#fff2bd';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(sx(game.hero.x) - 9, sy(game.hero.y));
+      ctx.lineTo(sx(game.hero.x) + 9, sy(game.hero.y));
+      ctx.moveTo(sx(game.hero.x), sy(game.hero.y) - 9);
+      ctx.lineTo(sx(game.hero.x), sy(game.hero.y) + 9);
+      ctx.stroke();
+      ctx.strokeStyle = '#d9c898';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(0.5, 0.5, map.width - 1, map.height - 1);
+    }
+
+    function choose(place) {
+      selected = place;
+      route = findRoute(place);
+      go.disabled = !route;
+      go.textContent = route ? 'Navigate · ' + place.name : 'No route · ' + place.name;
+      $('modal-actions').children.forEach((button, index) =>
+        button.classList.toggle('route-picked', destinations[index - 1] === place),
+      );
+      menuIndex = destinations.indexOf(place) + 1;
+      highlight();
+      drawMap();
+    }
+
+    map.onclick = (event) => {
+      const rect = map.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * map.width;
+      const y = ((event.clientY - rect.top) / rect.height) * map.height;
+      const nearest = destinations
+        .map((place) => ({ place, distance: Math.hypot(sx(place.x) - x, sy(place.y) - y) }))
+        .sort((a, b) => a.distance - b.distance)[0];
+      if (nearest && nearest.distance < 16) choose(nearest.place);
+    };
+    drawMap();
   }
   $('squad-button').onclick = (e) => {
     audio.unlock();
