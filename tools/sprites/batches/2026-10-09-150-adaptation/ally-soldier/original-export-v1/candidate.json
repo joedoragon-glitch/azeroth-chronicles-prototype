@@ -1,0 +1,109 @@
+{
+  "version": 2,
+  "key": "ally:soldier",
+  "catalogId": "004",
+  "canonHash": "38c1c26e432e92d4c4132731aa78f5d220be66accf9f8dc51e40196f9349dc71",
+  "canonSnapshotHash": "6b36ab7ee5bd2d4f93af1d8960d7b02cb629c473074e07a66f7bac86510adc4d",
+  "catalogHash": "d6fc6aea04d1a2de02aae01b00b47c9f34cd2e77a855d81a469d0bb5d6d819d0",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 186227,
+    "decodedBytes": 6290064,
+    "hash": "f87142b722be5c86dfffa7350af7c57ebba4f0e02164e3adc7de53e907a1ab3f",
+    "pixelHash": "dd00664f99b8bf3d4c6bb992b3a3733614701d9c0c2df3f1fe76bfce78f585e2",
+    "bounds": {
+      "x1": 296,
+      "y1": 95,
+      "x2": 1177,
+      "y2": 1181
+    },
+    "padding": 72,
+    "transparentPixels": 1491963,
+    "visiblePixels": 80553,
+    "lowAlphaPixels": 3993,
+    "materialBounds": {
+      "x1": 478,
+      "y1": 635,
+      "x2": 803,
+      "y2": 1034
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 576,
+    "height": 576,
+    "bytes": 52767,
+    "decodedBytes": 1327104,
+    "hash": "efbca1cf06373cbc3362f450446e3624ea554d54cb91f9016e8389745570bbfc",
+    "pixelHash": "6b4b189e3f466fc8bcf5a1ab14b60276ba2698f9718c813018f9fcd6b26d2f3f",
+    "bounds": {
+      "x1": 217,
+      "y1": 105,
+      "x2": 525,
+      "y2": 480
+    },
+    "padding": 50,
+    "transparentPixels": 316406,
+    "visiblePixels": 15370,
+    "lowAlphaPixels": 790,
+    "materialBounds": {
+      "x1": 220,
+      "y1": 303,
+      "x2": 361,
+      "y2": 477
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 54
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1254,
+      1254
+    ],
+    "to": [
+      576,
+      576
+    ],
+    "rasterScale": 3,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": {
+        "left": 32,
+        "right": 32,
+        "top": 32,
+        "bottom": 32
+      },
+      "virtualWidth": 1318,
+      "virtualHeight": 1318,
+      "input": "untouched-original",
+      "samplingPasses": 1,
+      "intermediatePixelsUsed": false
+    },
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": -1,
+      "y": 4,
+      "rasterX": -3,
+      "rasterY": 12,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "pending",
+    "reference": null
+  }
+}

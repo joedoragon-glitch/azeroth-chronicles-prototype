@@ -1,0 +1,781 @@
+{
+  "method": "50-unit collision grid, 250-unit edge strip, actual town-to-site routes, 50-unit route samples; 300-unit proximity is descriptive, not an aggro or acceptance threshold",
+  "limitations": "Fresh deterministic Normal/Paladin. No geometry expansion. Does not measure artwork occlusion, subjective pacing, human travel or all districts. Safe interaction approaches are explicitly recorded.",
+  "regions": [
+    {
+      "region": "vale",
+      "size": 2700,
+      "squareArea": 7290000,
+      "sampleGrid": 50,
+      "approximateTraversableArea": 6062500,
+      "collisionOccupiedFraction": 0.1684,
+      "edgeStrip": 250,
+      "edgeCollisionOccupiedFraction": 0.2531,
+      "ordinaryMobActors": 28,
+      "ordinaryPackGroups": 11,
+      "bossActors": 1,
+      "decorativeProps": 109,
+      "physicalProps": 62,
+      "routes": [
+        {
+          "id": "outbound",
+          "kind": "transport",
+          "name": "Merchant wagon to Flooded Marches",
+          "requested": {
+            "x": 2450,
+            "y": 650
+          },
+          "walkableEndpoint": {
+            "x": 2450,
+            "y": 650
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 2222.02,
+          "idealSecondsAtFreshSpeed": 7.41,
+          "nearestMobDistance": {
+            "p50": 256.05,
+            "p90": 504.82,
+            "max": 605.65
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 596.93
+        },
+        {
+          "id": "entrance",
+          "kind": "dungeon",
+          "name": "Forest Crypt",
+          "requested": {
+            "x": 2150,
+            "y": 2100
+          },
+          "walkableEndpoint": {
+            "x": 2150,
+            "y": 2100
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 2675.15,
+          "idealSecondsAtFreshSpeed": 8.92,
+          "nearestMobDistance": {
+            "p50": 282.65,
+            "p90": 497.29,
+            "max": 605.65
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 596.93
+        },
+        {
+          "id": "den-ruins",
+          "kind": "dungeon",
+          "name": "Old Orchard Cellars",
+          "requested": {
+            "x": 540,
+            "y": 2220
+          },
+          "walkableEndpoint": {
+            "x": 540,
+            "y": 2220
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 1925.39,
+          "idealSecondsAtFreshSpeed": 6.42,
+          "nearestMobDistance": {
+            "p50": 360.11,
+            "p90": 529.94,
+            "max": 592.32
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 917.91
+        },
+        {
+          "id": "supply-entrance",
+          "kind": "dungeon",
+          "name": "Thornfang's Treasury",
+          "requested": {
+            "x": 1015,
+            "y": 1580
+          },
+          "walkableEndpoint": {
+            "x": 1015,
+            "y": 1580
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 1486.45,
+          "idealSecondsAtFreshSpeed": 4.95,
+          "nearestMobDistance": {
+            "p50": 213.5,
+            "p90": 456.89,
+            "max": 589.94
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 391.76
+        },
+        {
+          "id": "enemy-35",
+          "kind": "field-boss",
+          "name": "Thornfang",
+          "requested": {
+            "x": 760,
+            "y": 1750
+          },
+          "walkableEndpoint": {
+            "x": 760,
+            "y": 1750
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 1574.98,
+          "idealSecondsAtFreshSpeed": 5.25,
+          "nearestMobDistance": {
+            "p50": 185,
+            "p90": 414.96,
+            "max": 589.74
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 397.77
+        }
+      ]
+    },
+    {
+      "region": "march",
+      "size": 3000,
+      "squareArea": 9000000,
+      "sampleGrid": 50,
+      "approximateTraversableArea": 7197500,
+      "collisionOccupiedFraction": 0.2003,
+      "edgeStrip": 250,
+      "edgeCollisionOccupiedFraction": 0.2564,
+      "ordinaryMobActors": 34,
+      "ordinaryPackGroups": 13,
+      "bossActors": 1,
+      "decorativeProps": 147,
+      "physicalProps": 65,
+      "routes": [
+        {
+          "id": "outbound",
+          "kind": "transport",
+          "name": "Ferry to Ironroot Highlands",
+          "requested": {
+            "x": 2200,
+            "y": 735
+          },
+          "walkableEndpoint": {
+            "x": 2178.7867965644036,
+            "y": 713.7867965644036
+          },
+          "approachOffset": 30,
+          "reachable": true,
+          "length": 2145.71,
+          "idealSecondsAtFreshSpeed": 7.15,
+          "nearestMobDistance": {
+            "p50": 244.29,
+            "p90": 367.83,
+            "max": 436.07
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 296.57
+        },
+        {
+          "id": "return",
+          "kind": "transport",
+          "name": "Return to Greenwood Vale",
+          "requested": {
+            "x": 145,
+            "y": 1380
+          },
+          "walkableEndpoint": {
+            "x": 145,
+            "y": 1380
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 347.02,
+          "idealSecondsAtFreshSpeed": 1.16,
+          "nearestMobDistance": {
+            "p50": 553.59,
+            "p90": 612.02,
+            "max": 644.98
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 347.02
+        },
+        {
+          "id": "entrance",
+          "kind": "dungeon",
+          "name": "Sunken Archive",
+          "requested": {
+            "x": 2600,
+            "y": 2350
+          },
+          "walkableEndpoint": {
+            "x": 2600,
+            "y": 2350
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 3401.53,
+          "idealSecondsAtFreshSpeed": 11.34,
+          "nearestMobDistance": {
+            "p50": 189.07,
+            "p90": 376.39,
+            "max": 433.58
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 346.31
+        },
+        {
+          "id": "watch",
+          "kind": "dungeon",
+          "name": "Drowned Watchhouse",
+          "requested": {
+            "x": 2550,
+            "y": 1480
+          },
+          "walkableEndpoint": {
+            "x": 2550,
+            "y": 1480
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 2532.29,
+          "idealSecondsAtFreshSpeed": 8.44,
+          "nearestMobDistance": {
+            "p50": 213.88,
+            "p90": 386.96,
+            "max": 433.58
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 346.31
+        },
+        {
+          "id": "supply-entrance",
+          "kind": "dungeon",
+          "name": "Mirejaw's Treasury",
+          "requested": {
+            "x": 2440,
+            "y": 955
+          },
+          "walkableEndpoint": {
+            "x": 2440,
+            "y": 955
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 2208.55,
+          "idealSecondsAtFreshSpeed": 7.36,
+          "nearestMobDistance": {
+            "p50": 231.14,
+            "p90": 401.46,
+            "max": 434.12
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 345.65
+        },
+        {
+          "id": "enemy-76",
+          "kind": "field-boss",
+          "name": "Mirejaw",
+          "requested": {
+            "x": 2180,
+            "y": 1120
+          },
+          "walkableEndpoint": {
+            "x": 2180,
+            "y": 1120
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 1830.11,
+          "idealSecondsAtFreshSpeed": 6.1,
+          "nearestMobDistance": {
+            "p50": 197.42,
+            "p90": 390.54,
+            "max": 434.08
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 346.24
+        }
+      ]
+    },
+    {
+      "region": "highlands",
+      "size": 3400,
+      "squareArea": 11560000,
+      "sampleGrid": 50,
+      "approximateTraversableArea": 9822500,
+      "collisionOccupiedFraction": 0.1503,
+      "edgeStrip": 250,
+      "edgeCollisionOccupiedFraction": 0.2532,
+      "ordinaryMobActors": 40,
+      "ordinaryPackGroups": 12,
+      "bossActors": 1,
+      "decorativeProps": 201,
+      "physicalProps": 95,
+      "routes": [
+        {
+          "id": "outbound",
+          "kind": "transport",
+          "name": "Pack beast caravan to Ashen Frontier",
+          "requested": {
+            "x": 3100,
+            "y": 500
+          },
+          "walkableEndpoint": {
+            "x": 3100,
+            "y": 500
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 2610.34,
+          "idealSecondsAtFreshSpeed": 8.7,
+          "nearestMobDistance": {
+            "p50": 542.58,
+            "p90": 663.87,
+            "max": 765.97
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 2610.34
+        },
+        {
+          "id": "return",
+          "kind": "transport",
+          "name": "Ferry back to Flooded Marches",
+          "requested": {
+            "x": 340,
+            "y": 1960
+          },
+          "walkableEndpoint": {
+            "x": 347.7645713530756,
+            "y": 1931.0222252113279
+          },
+          "approachOffset": 30,
+          "reachable": true,
+          "length": 701.63,
+          "idealSecondsAtFreshSpeed": 2.34,
+          "nearestMobDistance": {
+            "p50": 400.38,
+            "p90": 590.26,
+            "max": 665.23
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 701.63
+        },
+        {
+          "id": "entrance",
+          "kind": "dungeon",
+          "name": "Colossus Mine",
+          "requested": {
+            "x": 2850,
+            "y": 2350
+          },
+          "walkableEndpoint": {
+            "x": 2850,
+            "y": 2350
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 2276.28,
+          "idealSecondsAtFreshSpeed": 7.59,
+          "nearestMobDistance": {
+            "p50": 367.61,
+            "p90": 673.24,
+            "max": 719.06
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 952.1
+        },
+        {
+          "id": "lookout",
+          "kind": "dungeon",
+          "name": "Old Signal Keep",
+          "requested": {
+            "x": 2380,
+            "y": 1500
+          },
+          "walkableEndpoint": {
+            "x": 2380,
+            "y": 1500
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 1943.43,
+          "idealSecondsAtFreshSpeed": 6.48,
+          "nearestMobDistance": {
+            "p50": 235.79,
+            "p90": 673.24,
+            "max": 719.06
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 926.04
+        },
+        {
+          "id": "supply-entrance",
+          "kind": "dungeon",
+          "name": "Ridge Tyrant's Treasury",
+          "requested": {
+            "x": 2435,
+            "y": 885
+          },
+          "walkableEndpoint": {
+            "x": 2435,
+            "y": 885
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 1803.75,
+          "idealSecondsAtFreshSpeed": 6.01,
+          "nearestMobDistance": {
+            "p50": 574.26,
+            "p90": 692.48,
+            "max": 771.92
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 1803.75
+        },
+        {
+          "id": "enemy-125",
+          "kind": "field-boss",
+          "name": "Ridge Tyrant",
+          "requested": {
+            "x": 2700,
+            "y": 700
+          },
+          "walkableEndpoint": {
+            "x": 2700,
+            "y": 700
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 2105.92,
+          "idealSecondsAtFreshSpeed": 7.02,
+          "nearestMobDistance": {
+            "p50": 550.61,
+            "p90": 672.67,
+            "max": 764.87
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 2105.92
+        }
+      ]
+    },
+    {
+      "region": "frontier",
+      "size": 3400,
+      "squareArea": 11560000,
+      "sampleGrid": 50,
+      "approximateTraversableArea": 9982500,
+      "collisionOccupiedFraction": 0.1365,
+      "edgeStrip": 250,
+      "edgeCollisionOccupiedFraction": 0.2317,
+      "ordinaryMobActors": 47,
+      "ordinaryPackGroups": 15,
+      "bossActors": 1,
+      "decorativeProps": 221,
+      "physicalProps": 97,
+      "routes": [
+        {
+          "id": "outbound",
+          "kind": "transport",
+          "name": "Dragon rider to Dark Crown",
+          "requested": {
+            "x": 3100,
+            "y": 500
+          },
+          "walkableEndpoint": {
+            "x": 3100,
+            "y": 500
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 2673.54,
+          "idealSecondsAtFreshSpeed": 8.91,
+          "nearestMobDistance": {
+            "p50": 236.55,
+            "p90": 350.31,
+            "max": 428.75
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 297.1
+        },
+        {
+          "id": "return",
+          "kind": "transport",
+          "name": "Return to Ironroot Highlands",
+          "requested": {
+            "x": 133.78679656440357,
+            "y": 636.2132034355964
+          },
+          "walkableEndpoint": {
+            "x": 133.78679656440357,
+            "y": 636.2132034355964
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 395.38,
+          "idealSecondsAtFreshSpeed": 1.32,
+          "nearestMobDistance": {
+            "p50": 546.29,
+            "p90": 585.87,
+            "max": 606.33
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 395.38
+        },
+        {
+          "id": "entrance",
+          "kind": "dungeon",
+          "name": "Abyss Bastion",
+          "requested": {
+            "x": 3000,
+            "y": 2700
+          },
+          "walkableEndpoint": {
+            "x": 3000,
+            "y": 2700
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 4198.63,
+          "idealSecondsAtFreshSpeed": 14,
+          "nearestMobDistance": {
+            "p50": 205.42,
+            "p90": 395.46,
+            "max": 509.31
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 495.12
+        },
+        {
+          "id": "shrine",
+          "kind": "dungeon",
+          "name": "Ruined Shrine",
+          "requested": {
+            "x": 1050,
+            "y": 1850
+          },
+          "walkableEndpoint": {
+            "x": 1050,
+            "y": 1850
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 1661.8,
+          "idealSecondsAtFreshSpeed": 5.54,
+          "nearestMobDistance": {
+            "p50": 175.72,
+            "p90": 310.3,
+            "max": 412.95
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 196.14
+        },
+        {
+          "id": "enemy-182",
+          "kind": "field-boss",
+          "name": "Ashen Warlord",
+          "requested": {
+            "x": 2600,
+            "y": 1650
+          },
+          "walkableEndpoint": {
+            "x": 2600,
+            "y": 1650
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 2614.91,
+          "idealSecondsAtFreshSpeed": 8.72,
+          "nearestMobDistance": {
+            "p50": 331.55,
+            "p90": 516.65,
+            "max": 576.84
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 1198.5
+        }
+      ]
+    },
+    {
+      "region": "crown",
+      "size": 3800,
+      "squareArea": 14440000,
+      "sampleGrid": 50,
+      "approximateTraversableArea": 12780000,
+      "collisionOccupiedFraction": 0.115,
+      "edgeStrip": 250,
+      "edgeCollisionOccupiedFraction": 0.2211,
+      "ordinaryMobActors": 52,
+      "ordinaryPackGroups": 15,
+      "bossActors": 1,
+      "decorativeProps": 183,
+      "physicalProps": 81,
+      "routes": [
+        {
+          "id": "entrance",
+          "kind": "dungeon",
+          "name": "Citadel of Ashes",
+          "requested": {
+            "x": 2400,
+            "y": 1100
+          },
+          "walkableEndpoint": {
+            "x": 2400,
+            "y": 1100
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 2242.93,
+          "idealSecondsAtFreshSpeed": 7.48,
+          "nearestMobDistance": {
+            "p50": 521.88,
+            "p90": 732.61,
+            "max": 885.28
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 2242.93
+        },
+        {
+          "id": "crown-travel-frontier-return",
+          "kind": "transport",
+          "name": "Crown dragon platform",
+          "requested": {
+            "x": 620,
+            "y": 220
+          },
+          "walkableEndpoint": {
+            "x": 620,
+            "y": 220
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 466.15,
+          "idealSecondsAtFreshSpeed": 1.55,
+          "nearestMobDistance": {
+            "p50": 999.43,
+            "p90": 1041.12,
+            "max": 1053.05
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 466.15
+        },
+        {
+          "id": "crown-travel-levy-road",
+          "kind": "transport",
+          "name": "Crown levy caravan",
+          "requested": {
+            "x": 180,
+            "y": 1600
+          },
+          "walkableEndpoint": {
+            "x": 180,
+            "y": 1600
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 1033.89,
+          "idealSecondsAtFreshSpeed": 3.45,
+          "nearestMobDistance": {
+            "p50": 789.56,
+            "p90": 880.09,
+            "max": 911.23
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 1033.89
+        },
+        {
+          "id": "crown-travel-military-gate",
+          "kind": "transport",
+          "name": "Crown military transit",
+          "requested": {
+            "x": 3570,
+            "y": 980
+          },
+          "walkableEndpoint": {
+            "x": 3570,
+            "y": 980
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 3314.59,
+          "idealSecondsAtFreshSpeed": 11.05,
+          "nearestMobDistance": {
+            "p50": 480.86,
+            "p90": 700.5,
+            "max": 885.28
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 2275.54
+        },
+        {
+          "id": "crown-travel-fortress-service",
+          "kind": "transport",
+          "name": "Crown fortress convoy",
+          "requested": {
+            "x": 3570,
+            "y": 2480
+          },
+          "walkableEndpoint": {
+            "x": 3570,
+            "y": 2480
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 4563.82,
+          "idealSecondsAtFreshSpeed": 15.21,
+          "nearestMobDistance": {
+            "p50": 449.47,
+            "p90": 667.89,
+            "max": 885.28
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 2275.54
+        },
+        {
+          "id": "foundry",
+          "kind": "dungeon",
+          "name": "Ruined Foundry",
+          "requested": {
+            "x": 1850,
+            "y": 2700
+          },
+          "walkableEndpoint": {
+            "x": 1850,
+            "y": 2700
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 2959.78,
+          "idealSecondsAtFreshSpeed": 9.87,
+          "nearestMobDistance": {
+            "p50": 496.69,
+            "p90": 756.08,
+            "max": 885.28
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 2667.79
+        },
+        {
+          "id": "supply-entrance",
+          "kind": "dungeon",
+          "name": "Cindermaw's Treasury",
+          "requested": {
+            "x": 2485,
+            "y": 1565
+          },
+          "walkableEndpoint": {
+            "x": 2485,
+            "y": 1565
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 2736.9,
+          "idealSecondsAtFreshSpeed": 9.12,
+          "nearestMobDistance": {
+            "p50": 507.01,
+            "p90": 722.49,
+            "max": 885.28
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 2736.9
+        },
+        {
+          "id": "enemy-248",
+          "kind": "field-boss",
+          "name": "Cindermaw",
+          "requested": {
+            "x": 2200,
+            "y": 1750
+          },
+          "walkableEndpoint": {
+            "x": 2200,
+            "y": 1750
+          },
+          "approachOffset": 0,
+          "reachable": true,
+          "length": 2370.41,
+          "idealSecondsAtFreshSpeed": 7.9,
+          "nearestMobDistance": {
+            "p50": 661.75,
+            "p90": 843.65,
+            "max": 888.03
+          },
+          "longestRouteGapBeyond300UnitsOfMobHome": 2370.41
+        }
+      ]
+    }
+  ]
+}

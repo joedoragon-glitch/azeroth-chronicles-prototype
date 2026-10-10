@@ -1135,5 +1135,95 @@
         "concurrentPreservation": "Retains #204 five-region road/settlement overhaul and #207 Abyss safe-lane/route release; gameplay modules match 54e578d820e6c18234c70f57516d22a739438e4e."
       }
     }
+  },
+  "completionBatch": {
+    "status": "preparing",
+    "sourceCommit": "905e822da16b5a8ca7f959ee1f3e1a89f92b52d4",
+    "entries": [
+      {
+        "key": "prop:vale-cottage:vale",
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-vale-cottage-vale/original-export-v1/candidate.json",
+        "target": 816,
+        "priorRevision": "3c35ef58fe76061f5fb4f017be965947afba71885b6897781d59b7253237cf15",
+        "prepared": true,
+        "reviewed": false,
+        "installed": false,
+        "deployed": false
+      },
+      {
+        "key": "hero:mage",
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/hero-mage/original-export-v1/candidate.json",
+        "target": 576,
+        "priorRevision": "482a359a5997d069c2bd66761ebbafcafb234d3abce8acabe54cd1b2c2402254",
+        "prepared": true,
+        "reviewed": false,
+        "installed": false,
+        "deployed": false
+      },
+      {
+        "key": "hero:ranger",
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/hero-ranger/original-export-v1/candidate.json",
+        "target": 576,
+        "priorRevision": "fbf4d3d59177a51cf4ade65829e2bab7c62491c0728b06fe4ba95f099a578671",
+        "prepared": true,
+        "reviewed": false,
+        "installed": false,
+        "deployed": false
+      },
+      {
+        "key": "ally:soldier",
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/ally-soldier/original-export-v1/candidate.json",
+        "target": 576,
+        "priorRevision": "a48acfe9940e55581d1598cbd0a8a4a7d10b9bb2dc92f6e4e717ad495a961bd8",
+        "prepared": true,
+        "reviewed": false,
+        "installed": false,
+        "deployed": false
+      },
+      {
+        "key": "ally:archer",
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/ally-archer/original-export-v1/candidate.json",
+        "target": 576,
+        "priorRevision": "9b9548bf117f33a4ef68b23be54e217def7f9cbd2fdb871747821846cfc00146",
+        "prepared": true,
+        "reviewed": false,
+        "installed": false,
+        "deployed": false
+      },
+      {
+        "key": "prop:mint-workbench:highlands",
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-mint-workbench-highlands/original-export-v1/candidate.json",
+        "target": 576,
+        "priorRevision": "a3db347d4eb40224dba8ed89eb66bed04952df81139d2f9e06cb4b9d91a51da5",
+        "prepared": true,
+        "reviewed": false,
+        "installed": false,
+        "deployed": false
+      },
+      {
+        "key": "prop:ore-sorting-bay:highlands",
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-ore-sorting-bay-highlands/original-export-v1/candidate.json",
+        "target": 576,
+        "priorRevision": "37e5465902327a792eaeca64986a738e870d1bead5b5e2a4b95a87c5a8a31a56",
+        "prepared": true,
+        "reviewed": false,
+        "installed": false,
+        "deployed": false
+      },
+      {
+        "key": "prop:caravan-loading-bay:highlands",
+        "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-caravan-loading-bay-highlands/original-export-v1/candidate.json",
+        "target": 576,
+        "priorRevision": "a30df3dcd7924388160bf5934c8a66e5bf14a296a7ddc4db76fd792a8608b108",
+        "prepared": true,
+        "reviewed": false,
+        "installed": false,
+        "deployed": false
+      }
+    ],
+    "prepared": 8,
+    "reviewed": 0,
+    "installed": 0,
+    "deployed": 0
   }
 }

@@ -56,6 +56,9 @@ jobs:
           mkdir -p "$RUNNER_TEMP/cooldown-v118"
           git archive 01238bddc8dde4dafe99ba50148d944141373f49 | tar -x -C "$RUNNER_TEMP/cooldown-v118"
           COOLDOWN_PREVIOUS_ROOT="$RUNNER_TEMP/cooldown-v118" node tests/cooldown-pwa-upgrade-browser.test.cjs
+          mkdir -p test-results/beta-historical
+          BETA_PREVIOUS_ROOT="$RUNNER_TEMP/cooldown-v118" BETA_FIXTURE_DIR=test-results/beta-historical node scripts/beta-history-audit.cjs > test-results/beta-history-report.json
+          BETA_FIXTURE_DIR=test-results/beta-historical node tests/beta-campaign-browser.test.cjs
       - name: Verify quest completion and Keeper Archive interaction
         run: node tests/quest-archive-browser.test.cjs
       - name: Audit integrated rogue warnings and effects in browsers
@@ -115,6 +118,9 @@ jobs:
           mkdir -p "$RUNNER_TEMP/cooldown-v118"
           git archive 01238bddc8dde4dafe99ba50148d944141373f49 | tar -x -C "$RUNNER_TEMP/cooldown-v118"
           COOLDOWN_PREVIOUS_ROOT="$RUNNER_TEMP/cooldown-v118" node tests/cooldown-pwa-upgrade-browser.test.cjs
+          mkdir -p test-results/beta-historical
+          BETA_PREVIOUS_ROOT="$RUNNER_TEMP/cooldown-v118" BETA_FIXTURE_DIR=test-results/beta-historical node scripts/beta-history-audit.cjs > test-results/beta-history-report.json
+          BETA_FIXTURE_DIR=test-results/beta-historical node tests/beta-campaign-browser.test.cjs
       - name: Verify WebKit quest completion and Keeper Archive
         env:
           QUEST_BROWSER_ENGINE: webkit
@@ -191,6 +197,9 @@ jobs:
           mkdir -p "$RUNNER_TEMP/cooldown-v118"
           git archive 01238bddc8dde4dafe99ba50148d944141373f49 | tar -x -C "$RUNNER_TEMP/cooldown-v118"
           COOLDOWN_PREVIOUS_ROOT="$RUNNER_TEMP/cooldown-v118" node tests/cooldown-pwa-upgrade-browser.test.cjs
+          mkdir -p test-results/beta-historical
+          BETA_PREVIOUS_ROOT="$RUNNER_TEMP/cooldown-v118" BETA_FIXTURE_DIR=test-results/beta-historical node scripts/beta-history-audit.cjs > test-results/beta-history-report.json
+          BETA_FIXTURE_DIR=test-results/beta-historical node tests/beta-campaign-browser.test.cjs
       - name: Verify quest completion and Keeper Archive interaction
         run: node tests/quest-archive-browser.test.cjs
       - name: Audit integrated rogue warnings and effects in browsers
