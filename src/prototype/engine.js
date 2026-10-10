@@ -239,8 +239,7 @@
       if (!n) return;
       const point = n.servicePoint || n;
       Object.assign(this.hero, this.safe(point.x, point.y));
-      for (const u of this.activeParty())
-        Object.assign(u, this.safe(point.x + 40, point.y + 30));
+      for (const u of this.activeParty()) Object.assign(u, this.safe(point.x + 40, point.y + 30));
     }
     miniCleared(id, region = this.s.zone) {
       return !!this.s.zones[region]?.minis?.find((m) => m.id === id)?.cleared;
@@ -1160,8 +1159,7 @@
             (dist(n, this.hero) <= 115 || dist(n.servicePoint || n, this.hero) <= 115),
         )
         .sort(
-          (a, b) =>
-            dist(a.servicePoint || a, this.hero) - dist(b.servicePoint || b, this.hero),
+          (a, b) => dist(a.servicePoint || a, this.hero) - dist(b.servicePoint || b, this.hero),
         )[0];
       if (!site) return false;
       if (this.refugeThreat()) {
