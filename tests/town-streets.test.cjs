@@ -3,7 +3,9 @@ const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
 
 // Roads serve the square rather than passing through homes, stalls, walls or refuse.
+const failures = [];
 for (const [i, region] of Campaign.data.regions.entries()) {
+  try {
   const game = new Campaign();
   game.enter(region.id);
   const zone = game.zone(),
@@ -23,16 +25,19 @@ for (const [i, region] of Campaign.data.regions.entries()) {
   );
   const homes = zone.props.filter((p) => p.roadBlocker);
   assert(homes.length >= 12, region.id + ' retains established housing');
-  for (const home of homes)
-    assert(
-      game.nearestRoad(home, zone).distance >= game.roadFootprint(home),
-      region.id + ' building intrudes into the paved street: ' + home.id,
-    );
-  for (const p of zone.props.filter((p) => p.structure && !p.roadTrace))
-    assert(
-      game.nearestRoad(p, zone).distance >= game.roadFootprint(p) || !p.decorative,
-      region.id + ' prop intrudes into street: ' + p.id,
-    );
+  const roadIntrusions = homes
+    .filter((p) => game.nearestRoad(p, zone).distance < game.roadFootprint(p))
+    .map((p) => ({
+      id: p.id, structure: p.structure, x: p.x, y: p.y,
+      distance: Math.round(game.nearestRoad(p, zone).distance),
+      clearance: game.roadFootprint(p),
+    }));
+  assert.deepEqual(roadIntrusions, [], region.id + ' settlement buildings occupy road space');
+  const strayProps = zone.props
+    .filter((p) => p.decorative && p.structure && !p.roadTrace)
+    .filter((p) => game.nearestRoad(p, zone).distance < game.roadFootprint(p))
+    .map((p) => p.id + ':' + p.structure);
+  assert.deepEqual(strayProps, [], region.id + ' roadside props occupy road space');
   const refuge = zone.npcs.find((n) => n.id === 'rest'),
     smallerRefuge = zone.npcs.find((n) => n.id === 'minor');
   assert(refuge && smallerRefuge, region.id + ' retains both refuge services');
@@ -63,5 +68,10 @@ for (const [i, region] of Campaign.data.regions.entries()) {
     homes.map((p) => p.id),
     region.id + ' keeps stable house IDs through migration',
   );
+  } catch (error) {
+    failures.push(region.id + ': ' + error.message);
+    console.error('FAIL_TOWN_STREETS', region.id, error.stack);
+  }
 }
+assert.deepEqual(failures, [], 'five-region town street audit');
 console.log('PASS five town street plans, visual clearances and saved layout migrations');
