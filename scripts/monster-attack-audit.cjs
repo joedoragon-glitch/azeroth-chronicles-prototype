@@ -62,9 +62,18 @@ function sourceMechanic(row, inspector) {
     }
     case 'ranged': {
       const species = parts[1];
-      const enemy = { type: 'mob', species, name: species, forcedRole: 'ranged' };
+      const enemy = {
+        type: 'mob',
+        species,
+        name: species,
+        forcedRole: 'ranged',
+      };
       inspector.configureEnemy(enemy, 0);
-      assert.equal(enemy.projectileStyle, parts[2], row.id + ': projectile role mismatch');
+      assert.equal(
+        enemy.projectileStyle,
+        parts[2],
+        row.id + ': projectile role mismatch',
+      );
       return {
         source: 'rules.rangedProfiles / configureEnemy(forcedRole=ranged)',
         mechanic: copy({
@@ -101,7 +110,11 @@ function sourceMechanic(row, inspector) {
         source = 'rules.tacticalFoundation.rogueMoves (role/tier/species resolved at runtime)';
       }
       assert(profile, row.id + ': missing basic rogue maneuver');
-      assert.equal(profile.name, row.name, row.id + ': rogue basic name mismatch');
+      assert.equal(
+        profile.name,
+        row.name,
+        row.id + ': rogue basic name mismatch',
+      );
       return { source, mechanic: copy(profile) };
     }
     case 'rogue-signature': {
@@ -120,13 +133,20 @@ function sourceMechanic(row, inspector) {
           'rules.tacticalFoundation.rogueRingleaderSignatures.' + role + '.' + species;
       }
       assert(profile, row.id + ': missing signature');
-      assert.equal(profile.name, row.name, row.id + ': rogue signature name mismatch');
+      assert.equal(
+        profile.name,
+        row.name,
+        row.id + ': rogue signature name mismatch',
+      );
       return { source, mechanic: copy(profile) };
     }
     case 'basic-attack':
       return {
         source: 'engine.updateEnemies / shared melee resolution',
-        mechanic: { action: 'melee contact', basis: 'species/captain/boss runtime combat statistics' },
+        mechanic: {
+          action: 'melee contact',
+          basis: 'species/captain/boss runtime combat statistics',
+        },
       };
     case 'frenzy':
       return {
@@ -191,7 +211,9 @@ function report() {
     },
   }));
   const recoveries = Object.entries(Campaign.rules.bossRecovery)
-    .filter(([, plan]) => !!plan && typeof plan === 'object' && typeof plan.name === 'string')
+    .filter(
+      ([, plan]) => !!plan && typeof plan === 'object' && typeof plan.name === 'string',
+    )
     .map(([family, plan]) => ({
       id: 'boss/' + family + '/recovery',
       group: 'boss-recovery',
@@ -211,20 +233,30 @@ function report() {
       },
     }));
   const rows = [...entries, ...traps, ...recoveries];
-  assert.equal(new Set(rows.map((row) => row.id)).size, rows.length, 'duplicate registry ID');
+  assert.equal(
+    new Set(rows.map((row) => row.id)).size,
+    rows.length,
+    'duplicate registry ID',
+  );
   const counts = Object.fromEntries(
     [...new Set(rows.map((row) => row.group))].map((group) => [
       group,
       rows.filter((row) => row.group === group).length,
     ]),
   );
-  assert.equal(entries.length, existing.total, 'VFX roster must not lose an identity');
+  assert.equal(
+    entries.length,
+    existing.total,
+    'VFX roster must not lose an identity',
+  );
   assert.equal(traps.length, 3, 'all three trap kinds are included');
   return {
     schemaVersion: 1,
     purpose: 'v0.9 read-only audit inventory, not certification of correctness',
     authority: 'live Campaign data/rules and existing enemy VFX identity inventory',
-    activeCombatMode: Campaign.rules.resourceMode.manaEnabled ? 'legacy-mana' : 'cooldown-only',
+    activeCombatMode: Campaign.rules.resourceMode.manaEnabled
+      ? 'legacy-mana'
+      : 'cooldown-only',
     counts,
     totalVisualIdentities: entries.length,
     additionalTrapKinds: traps.length,
@@ -235,7 +267,10 @@ function report() {
 }
 
 function markdown(audit) {
-  const escape = (value) => String(value ?? '').replace(/\|/g, '/').replace(/\n/g, ' ');
+  const escape = (value) =>
+    String(value ?? '')
+      .replace(/\|/g, '/')
+      .replace(/\n/g, ' ');
   const lines = [
     '# v0.9 generated monster-attack audit registry',
     '',
@@ -251,7 +286,8 @@ function markdown(audit) {
   ];
   for (const row of audit.rows) {
     const mechanics = row.mechanic || {};
-    const kind = mechanics.effect || mechanics.style || mechanics.kind || row.kind;
+    const kind =
+      mechanics.effect || mechanics.style || mechanics.kind || row.kind;
     lines.push(
       '| ' +
         escape(row.group) +
@@ -270,13 +306,18 @@ function markdown(audit) {
         ' |',
     );
   }
-  lines.push('', 'Detailed mechanics, authored descriptions and all review dimensions are in the JSON export.', '');
+  lines.push(
+    '',
+    'Detailed mechanics, authored descriptions and all review dimensions are in the JSON export.',
+    '',
+  );
   return lines.join('\n');
 }
 
 if (require.main === module) {
   const audit = report();
-  if (process.argv.includes('--markdown')) process.stdout.write(markdown(audit));
+  if (process.argv.includes('--markdown'))
+    process.stdout.write(markdown(audit));
   else if (process.argv.includes('--summary')) {
     console.log(
       'Monster attack read-only registry: ' +
