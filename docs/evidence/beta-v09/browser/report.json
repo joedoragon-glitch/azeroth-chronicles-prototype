@@ -1,0 +1,964 @@
+{
+  "testedSha": "4a53dedba7201df71b2c9dc6848f5795f2d706a9",
+  "platform": "local WebKit",
+  "method": "Controlled teleports to actual town/dungeon positions; paused real renderer at 150%. Day scene. Not a manual traversal, full occlusion census or physical-device check.",
+  "rows": [
+    {
+      "region": "vale",
+      "scene": "town",
+      "position": {
+        "x": 300,
+        "y": 350
+      },
+      "requested": {
+        "x": 300,
+        "y": 350
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 1280,
+      "height": 800,
+      "file": "vale-town-1280.png"
+    },
+    {
+      "region": "vale",
+      "scene": "entrance",
+      "position": {
+        "x": 2150,
+        "y": 2100
+      },
+      "requested": {
+        "x": 2150,
+        "y": 2100
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 1280,
+      "height": 800,
+      "file": "vale-entrance-1280.png"
+    },
+    {
+      "region": "march",
+      "scene": "town",
+      "position": {
+        "x": 350,
+        "y": 1100
+      },
+      "requested": {
+        "x": 350,
+        "y": 1100
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 1280,
+      "height": 800,
+      "file": "march-town-1280.png"
+    },
+    {
+      "region": "march",
+      "scene": "entrance",
+      "position": {
+        "x": 2600,
+        "y": 2350
+      },
+      "requested": {
+        "x": 2600,
+        "y": 2350
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 1280,
+      "height": 800,
+      "file": "march-entrance-1280.png"
+    },
+    {
+      "region": "highlands",
+      "scene": "town",
+      "position": {
+        "x": 850,
+        "y": 1500
+      },
+      "requested": {
+        "x": 850,
+        "y": 1500
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 1280,
+      "height": 800,
+      "file": "highlands-town-1280.png"
+    },
+    {
+      "region": "highlands",
+      "scene": "entrance",
+      "position": {
+        "x": 2850,
+        "y": 2350
+      },
+      "requested": {
+        "x": 2850,
+        "y": 2350
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 1280,
+      "height": 800,
+      "file": "highlands-entrance-1280.png"
+    },
+    {
+      "region": "frontier",
+      "scene": "town",
+      "position": {
+        "x": 450,
+        "y": 500
+      },
+      "requested": {
+        "x": 450,
+        "y": 500
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 1280,
+      "height": 800,
+      "file": "frontier-town-1280.png"
+    },
+    {
+      "region": "frontier",
+      "scene": "entrance",
+      "position": {
+        "x": 3000,
+        "y": 2700
+      },
+      "requested": {
+        "x": 3000,
+        "y": 2700
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 1280,
+      "height": 800,
+      "file": "frontier-entrance-1280.png"
+    },
+    {
+      "region": "crown",
+      "scene": "town",
+      "position": {
+        "x": 350,
+        "y": 600
+      },
+      "requested": {
+        "x": 350,
+        "y": 600
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 1280,
+      "height": 800,
+      "file": "crown-town-1280.png"
+    },
+    {
+      "region": "crown",
+      "scene": "entrance",
+      "position": {
+        "x": 2400,
+        "y": 1100
+      },
+      "requested": {
+        "x": 2400,
+        "y": 1100
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 1280,
+      "height": 800,
+      "file": "crown-entrance-1280.png"
+    },
+    {
+      "region": "abyss",
+      "scene": "entrance",
+      "position": {
+        "x": 1020,
+        "y": 615
+      },
+      "requested": {
+        "x": 1020,
+        "y": 615
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 1280,
+      "height": 800,
+      "file": "abyss-entrance-1280.png"
+    },
+    {
+      "region": "vale",
+      "scene": "town",
+      "position": {
+        "x": 300,
+        "y": 350
+      },
+      "requested": {
+        "x": 300,
+        "y": 350
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 375,
+      "height": 800,
+      "file": "vale-town-375.png"
+    },
+    {
+      "region": "vale",
+      "scene": "entrance",
+      "position": {
+        "x": 2150,
+        "y": 2100
+      },
+      "requested": {
+        "x": 2150,
+        "y": 2100
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 375,
+      "height": 800,
+      "file": "vale-entrance-375.png"
+    },
+    {
+      "region": "march",
+      "scene": "town",
+      "position": {
+        "x": 350,
+        "y": 1100
+      },
+      "requested": {
+        "x": 350,
+        "y": 1100
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 375,
+      "height": 800,
+      "file": "march-town-375.png"
+    },
+    {
+      "region": "march",
+      "scene": "entrance",
+      "position": {
+        "x": 2600,
+        "y": 2350
+      },
+      "requested": {
+        "x": 2600,
+        "y": 2350
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 375,
+      "height": 800,
+      "file": "march-entrance-375.png"
+    },
+    {
+      "region": "highlands",
+      "scene": "town",
+      "position": {
+        "x": 850,
+        "y": 1500
+      },
+      "requested": {
+        "x": 850,
+        "y": 1500
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 375,
+      "height": 800,
+      "file": "highlands-town-375.png"
+    },
+    {
+      "region": "highlands",
+      "scene": "entrance",
+      "position": {
+        "x": 2850,
+        "y": 2350
+      },
+      "requested": {
+        "x": 2850,
+        "y": 2350
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 375,
+      "height": 800,
+      "file": "highlands-entrance-375.png"
+    },
+    {
+      "region": "frontier",
+      "scene": "town",
+      "position": {
+        "x": 450,
+        "y": 500
+      },
+      "requested": {
+        "x": 450,
+        "y": 500
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 375,
+      "height": 800,
+      "file": "frontier-town-375.png"
+    },
+    {
+      "region": "frontier",
+      "scene": "entrance",
+      "position": {
+        "x": 3000,
+        "y": 2700
+      },
+      "requested": {
+        "x": 3000,
+        "y": 2700
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 375,
+      "height": 800,
+      "file": "frontier-entrance-375.png"
+    },
+    {
+      "region": "crown",
+      "scene": "town",
+      "position": {
+        "x": 350,
+        "y": 600
+      },
+      "requested": {
+        "x": 350,
+        "y": 600
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 375,
+      "height": 800,
+      "file": "crown-town-375.png"
+    },
+    {
+      "region": "crown",
+      "scene": "entrance",
+      "position": {
+        "x": 2400,
+        "y": 1100
+      },
+      "requested": {
+        "x": 2400,
+        "y": 1100
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 375,
+      "height": 800,
+      "file": "crown-entrance-375.png"
+    },
+    {
+      "region": "abyss",
+      "scene": "entrance",
+      "position": {
+        "x": 1020,
+        "y": 615
+      },
+      "requested": {
+        "x": 1020,
+        "y": 615
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 375,
+      "height": 800,
+      "file": "abyss-entrance-375.png"
+    },
+    {
+      "region": "vale",
+      "scene": "town",
+      "position": {
+        "x": 300,
+        "y": 350
+      },
+      "requested": {
+        "x": 300,
+        "y": 350
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 800,
+      "height": 375,
+      "file": "vale-town-800.png"
+    },
+    {
+      "region": "vale",
+      "scene": "entrance",
+      "position": {
+        "x": 2150,
+        "y": 2100
+      },
+      "requested": {
+        "x": 2150,
+        "y": 2100
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 800,
+      "height": 375,
+      "file": "vale-entrance-800.png"
+    },
+    {
+      "region": "march",
+      "scene": "town",
+      "position": {
+        "x": 350,
+        "y": 1100
+      },
+      "requested": {
+        "x": 350,
+        "y": 1100
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 800,
+      "height": 375,
+      "file": "march-town-800.png"
+    },
+    {
+      "region": "march",
+      "scene": "entrance",
+      "position": {
+        "x": 2600,
+        "y": 2350
+      },
+      "requested": {
+        "x": 2600,
+        "y": 2350
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 800,
+      "height": 375,
+      "file": "march-entrance-800.png"
+    },
+    {
+      "region": "highlands",
+      "scene": "town",
+      "position": {
+        "x": 850,
+        "y": 1500
+      },
+      "requested": {
+        "x": 850,
+        "y": 1500
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 800,
+      "height": 375,
+      "file": "highlands-town-800.png"
+    },
+    {
+      "region": "highlands",
+      "scene": "entrance",
+      "position": {
+        "x": 2850,
+        "y": 2350
+      },
+      "requested": {
+        "x": 2850,
+        "y": 2350
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 800,
+      "height": 375,
+      "file": "highlands-entrance-800.png"
+    },
+    {
+      "region": "frontier",
+      "scene": "town",
+      "position": {
+        "x": 450,
+        "y": 500
+      },
+      "requested": {
+        "x": 450,
+        "y": 500
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 800,
+      "height": 375,
+      "file": "frontier-town-800.png"
+    },
+    {
+      "region": "frontier",
+      "scene": "entrance",
+      "position": {
+        "x": 3000,
+        "y": 2700
+      },
+      "requested": {
+        "x": 3000,
+        "y": 2700
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 800,
+      "height": 375,
+      "file": "frontier-entrance-800.png"
+    },
+    {
+      "region": "crown",
+      "scene": "town",
+      "position": {
+        "x": 350,
+        "y": 600
+      },
+      "requested": {
+        "x": 350,
+        "y": 600
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 800,
+      "height": 375,
+      "file": "crown-town-800.png"
+    },
+    {
+      "region": "crown",
+      "scene": "entrance",
+      "position": {
+        "x": 2400,
+        "y": 1100
+      },
+      "requested": {
+        "x": 2400,
+        "y": 1100
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 800,
+      "height": 375,
+      "file": "crown-entrance-800.png"
+    },
+    {
+      "region": "abyss",
+      "scene": "entrance",
+      "position": {
+        "x": 1020,
+        "y": 615
+      },
+      "requested": {
+        "x": 1020,
+        "y": 615
+      },
+      "camera": 1.5,
+      "blocked": false,
+      "party": [
+        {
+          "type": "soldier",
+          "active": true,
+          "hp": 120
+        },
+        {
+          "type": "archer",
+          "active": true,
+          "hp": 105
+        }
+      ],
+      "width": 800,
+      "height": 375,
+      "file": "abyss-entrance-800.png"
+    }
+  ]
+}
