@@ -230,14 +230,17 @@
       const n = this.s.zones[zone]?.npcs.find((n) => n.id === id && n.kind === 'rest');
       if (n) {
         this.s.refuge = zone;
-        this.s.refugeSite = { zone, id, x: n.x, y: n.y };
+        const point = n.servicePoint || n;
+        this.s.refugeSite = { zone, id, x: point.x, y: point.y };
       }
     }
     arriveRefuge(site) {
       const n = this.zone().npcs.find((n) => n.id === site.id && n.kind === 'rest');
       if (!n) return;
-      Object.assign(this.hero, this.safe(n.x, n.y));
-      for (const u of this.activeParty()) Object.assign(u, this.safe(n.x + 40, n.y + 30));
+      const point = n.servicePoint || n;
+      Object.assign(this.hero, this.safe(point.x, point.y));
+      for (const u of this.activeParty())
+        Object.assign(u, this.safe(point.x + 40, point.y + 30));
     }
     miniCleared(id, region = this.s.zone) {
       return !!this.s.zones[region]?.minis?.find((m) => m.id === id)?.cleared;
@@ -1151,8 +1154,15 @@
     }
     rest() {
       const site = this.zone()
-        .npcs.filter((n) => n.kind === 'rest' && dist(n, this.hero) <= 115)
-        .sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0];
+        .npcs.filter(
+          (n) =>
+            n.kind === 'rest' &&
+            (dist(n, this.hero) <= 115 || dist(n.servicePoint || n, this.hero) <= 115),
+        )
+        .sort(
+          (a, b) =>
+            dist(a.servicePoint || a, this.hero) - dist(b.servicePoint || b, this.hero),
+        )[0];
       if (!site) return false;
       if (this.refugeThreat()) {
         this.say('Cannot rest while nearby enemies are engaged. Retreat and end the fight first.');
