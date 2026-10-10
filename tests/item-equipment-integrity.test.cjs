@@ -171,6 +171,12 @@ test('Inventory exposes active equipment, reforges and hero-only tonic stock', (
   assert(c.usePreparationTonic());
   ui.inventory();
   assert(opened.description.includes('ACTIVE on hero only'));
+  c.s.legacyInventory = ['Arma de las Cumbres'];
+  c.hero.reforges['weapon:1'] = true;
+  assert(c.equipLegacy('Arma de las Cumbres'));
+  ui.inventory();
+  assert(opened.description.includes('Equipped weapon: Arma de las Cumbres'));
+  assert(opened.description.includes('Weapon reforge: owned (inactive while legacy weapon equipped)'));
 });
 
 console.log('PASS pre-v0.9 item and equipment integrity regression cases');
