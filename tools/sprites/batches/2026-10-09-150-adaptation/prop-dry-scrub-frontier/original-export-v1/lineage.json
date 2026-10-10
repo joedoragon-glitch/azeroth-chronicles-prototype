@@ -1,0 +1,42 @@
+{
+  "key": "prop:dry-scrub:frontier",
+  "original": "tools/sprites/batches/2026-10-08-03/prop-dry-scrub-frontier/image-tool-original.png",
+  "originalHash": "a91ed6fe5d8b144a2f72b93fb30ca792a5b99040a00a395322c1197a353e8027",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/batches/2026-10-08-03/prop-dry-scrub-frontier",
+  "intermediateHash": "acaea54f85afb63887d0ca0c6e852eb06e71d142d238472f1a92112ae0b41688",
+  "intermediateDimensions": [
+    1981,
+    1981
+  ],
+  "priorRevision": "2097328423baf057c2036e9b7f7b05e4b3403e1ce6cec78c31e959a6e2cac2c8",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -2,
+    "offsetY": 0,
+    "normalization": {
+      "fullCanvasSize": 645,
+      "padding": {
+        "left": 668,
+        "right": 668,
+        "top": 1078,
+        "bottom": 258
+      }
+    }
+  },
+  "target": 576,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "dry-scrub",
+    "id": "aesthetic-bank-96"
+  },
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact nature binding; no animation or variant bank. Seeded placement and procedural scene effects retained."
+}
