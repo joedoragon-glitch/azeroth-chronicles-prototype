@@ -1,0 +1,37 @@
+{
+  "key": "prop:heather:highlands",
+  "original": "tools/sprites/batches/2026-10-09-04/prop-heather-highlands/image-tool-original.png",
+  "originalHash": "c81e0183876290490229b0e27028eea755a932a29ba87515d02e277de25eed2a",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/batches/2026-10-09-04/prop-heather-highlands",
+  "intermediateHash": "531b42d7ca0b9995c8afe906ea72ebc204f785736e1421b7ca90bdc4aaf07b75",
+  "intermediateDimensions": [
+    1536,
+    1536
+  ],
+  "priorRevision": "1fc62a7ad74c8af52ce673b89130bf1e757b7d796fe56eb0c3cdff4b3bfff388",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": 0,
+    "offsetY": 24,
+    "normalization": {
+      "fullCanvasSize": 1024,
+      "padding": 256
+    }
+  },
+  "target": 576,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "heather",
+    "id": "harbor-heather"
+  },
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact nature binding; no animation or variant bank. Seeded placement and procedural scene effects retained."
+}

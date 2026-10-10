@@ -4,7 +4,9 @@ This is the authoritative repository status snapshot for the v0.9 stabilization 
 
 ## Baseline and release evidence
 
-Audited source and independently verified published baseline: **v0.8.134**, main `54e578d820e6c18234c70f57516d22a739438e4e`, from merged road overhaul [#204](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/204). Main release [run 38019846959](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38019846959) completed successfully in main-test, phone-webkit and deploy. The exact published-build, live desktop/phone smoke, original-master actor/road and quest/Keeper Archive checks all passed. This completes the road technical release without certifying every human regional/device acceptance criterion.
+Current source baseline: **v0.8.135**, main `170adbf708ac1ea3b26e57621d0089f182932270`, from merged nature adaptation [#208](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/208). It includes the released road and Abyss work. Exact-head PR run 38020278879 passed; main release [run 38021457158](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38021457158) is running at this snapshot. Publication still requires its exact-build, live browser and nature-asset gates. Asset-by-asset completion stays with #160.
+
+Independently verified published baseline: **v0.8.134**, `54e578d820e6c18234c70f57516d22a739438e4e`, from merged road overhaul [#204](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/204). Main release [run 38019846959](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38019846959) completed successfully in main-test, phone-webkit and deploy. The exact published-build, live desktop/phone smoke, original-master actor/road and quest/Keeper Archive checks all passed. Independent live reads confirmed the exact SHA and v0.8.134 build-info/service-worker versions. This completes the road technical release without certifying every human regional/device acceptance criterion.
 
 Preserved prior production checkpoint: **v0.8.133**, `5aa50dda1785397d2d1dd819da126b762e775ecc`, Abyss integration [#207](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/207), [run 38018534859](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38018534859). Main-test, phone-webkit and deploy all succeeded, including exact published build, live desktop/phone, actor/road and Keeper checks. Abyss technical integration is complete; human acceptance remains open. #204 preserves this work and the earlier v0.8.132 gameplay fixes.
 
@@ -23,7 +25,7 @@ This maintenance pass is documentation/backlog reconciliation. It does not certi
 
 | Work | Disposition at audit | Next step |
 | --- | --- | --- |
-| #208 nature original density | Active; 23 existing identities adapted; now v0.8.135, incorporating #204 | Verify its new exact head before deployment/live asset checks. The other eight active adaptations and missing catalog stay with #160. |
+| #208 nature original density | Completed source integration of 23 existing identities as v0.8.135, incorporating #204; production verification running | Require its exact deployment/live nature-asset gates before marking those assets deployed. The other eight active adaptations and missing catalog stay with #160. |
 | #204 outdoor road infrastructure | Completed and independently verified published as v0.8.134 | Exact deployment/live checks passed. Automated coverage and screenshot review do not close all regional human acceptance. |
 | #203 earlier town-planning draft | Superseded by #204; closed without merging obsolete runtime | Original branch/head retained as recovery. |
 | #132 household/mine/flight art | Intentionally deferred integration, not obsolete | Preserve its five additional identities, untouched sources, revisions, reviews and branch. Recover a bounded asset batch against current main under #160. |
@@ -31,7 +33,7 @@ This maintenance pass is documentation/backlog reconciliation. It does not certi
 | #145 old proportion/art branch | Superseded by #191 (proportions) and #193 (pilot art); closed | Original branch and all original artwork/history retained as a protected checkpoint. |
 | #152 encounter experiment | Completed analysis handoff; closed, experimental harness intentionally unmerged | Branch/harness retained. #159 preserves encounter findings and #190 owns the current quantitative cooldown audit. |
 
-#204 and #208 initially both used v0.8.134; #204 merged first. The sprite release must adopt that main state, retain both workflow additions, choose a fresh package/cache version, regenerate entries and pass checks on the combined commit. A previous head's green run is not evidence for a newer head.
+#204 and #208 initially both used v0.8.134; they integrated serially. #204 merged first, and #208 adopted that main state and v0.8.135. Both workflow additions remain in the combined source. A previous head's green run is not evidence for a newer head; publication is a separate gate.
 
 ## v0.9 acceptance still to establish
 

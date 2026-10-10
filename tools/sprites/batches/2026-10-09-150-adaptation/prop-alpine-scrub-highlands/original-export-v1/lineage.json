@@ -1,0 +1,42 @@
+{
+  "key": "prop:alpine-scrub:highlands",
+  "original": "tools/sprites/batches/2026-10-08-02/prop-alpine-scrub-highlands/image-tool-original.png",
+  "originalHash": "8b251a62a55f342dc5becf3dbfe87f87e9b680343106dcf4318db6c6b964bf23",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/batches/2026-10-08-02/prop-alpine-scrub-highlands",
+  "intermediateHash": "bc7991ce1b88291deb36849a5143cc5dd5a3bfab8a33f19b45460154d3ceedf4",
+  "intermediateDimensions": [
+    1756,
+    1756
+  ],
+  "priorRevision": "2cac44b1e710e9b89e425596ae6176044938b6e52352d74c24d35f2b3894e80c",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -3,
+    "offsetY": 20,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": {
+        "left": 251,
+        "right": 251,
+        "top": 251,
+        "bottom": 251
+      }
+    }
+  },
+  "target": 576,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "alpine-scrub",
+    "id": "aesthetic-nature-7"
+  },
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact nature binding; no animation or variant bank. Seeded placement and procedural scene effects retained."
+}

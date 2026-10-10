@@ -1,0 +1,42 @@
+{
+  "key": "prop:pine-sapling:highlands",
+  "original": "tools/sprites/batches/2026-10-08-02/prop-pine-sapling-highlands/image-tool-original.png",
+  "originalHash": "4d8274377012a42bce7418ff8be86ac818a5f579bb7fc3bf5a69166133e0682b",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/batches/2026-10-08-02/prop-pine-sapling-highlands",
+  "intermediateHash": "13d7ad5a6bd1f778566f12d6354811e619ee4cf9858990d63915e7042a143b6a",
+  "intermediateDimensions": [
+    1610,
+    1610
+  ],
+  "priorRevision": "1c5284836edb904e9bbe957b9cba895e4da594303a12f16e253bcb63cccd860f",
+  "placement": {
+    "rasterScale": 4,
+    "offsetX": 0,
+    "offsetY": 16,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": {
+        "left": 178,
+        "right": 178,
+        "top": 178,
+        "bottom": 178
+      }
+    }
+  },
+  "target": 768,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "pine-sapling",
+    "id": "harbor-pine-a"
+  },
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact nature binding; no animation or variant bank. Seeded placement and procedural scene effects retained."
+}

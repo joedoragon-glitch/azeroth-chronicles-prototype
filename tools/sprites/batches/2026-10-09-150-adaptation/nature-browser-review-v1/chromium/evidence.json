@@ -1,0 +1,5803 @@
+{
+  "engine": "chromium",
+  "assets": 23,
+  "scenes": [
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:bush:vale",
+      "outputHash": "adf638d1bde016d432a2147dd69f1e34aefd982015f3e8f8f173c1eb9e4644ae",
+      "revision": "f1b1b8008157a434a9ba64d719a1189eb59246a17d120ee71487359229511c84",
+      "sceneHash": "ad45255e23906274ab207675cd8fb9aa5c92dfda14df0e355a4aefb5390e747c",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:wildflowers:vale",
+      "outputHash": "9a23c90223c33de4f3cea73796c5d6044a034712280bab304c4aaf73b07afea9",
+      "revision": "ff31e0ad5ed18ff9fc426bbfbf8684912f810cea58d24eaa58ea1caf16cb1149",
+      "sceneHash": "107f36abe31023c0190ac041c5742a6d61a884f56ceac28b0eff2f892fc648c8",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:sapling:vale",
+      "outputHash": "eb5116c58f33e510c8956e4c34d8e710a588b4ec281e8c964b99abfb4ef15de8",
+      "revision": "76907cf4c9ecb33ed204925bb5379a2fc5290a4594b79a08fd229e2b3521f040",
+      "sceneHash": "c941b1448a4c3e5e64c8996ba1f18151eca50ab10f3e0f31c883a7d624862710",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:stump:vale",
+      "outputHash": "8c294182e436974d3e651c692fa409a0b7461bb29a977892dc890715f44c8316",
+      "revision": "f0f827e26f9cf8b3d0fe7c8784074ed73aa3ac65943a04beedbb49bf8958d336",
+      "sceneHash": "b69999ee550caf21e79391e8628b1149aef4f90394045c27137241a78616cbbc",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:fallen-log:vale",
+      "outputHash": "110884d6f0c468007212ca60a365796759bf5440a733b469040b14eb2f5d7094",
+      "revision": "89c900b2d34c96781cfcbf6adf6b65fcb20ea3e54105144d3e1eeb4f1fcf08d1",
+      "sceneHash": "e176efe77bd7414299e3b441a955f27081e22b68f01bbec578a96af810dde759",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:cattails:march",
+      "outputHash": "527bd4994a724d6fa114f83c0d1f1ca5c8826fee94e76e8e287118e0733f0631",
+      "revision": "bcbf13293dfeda0622209b09cd8f8fa6d82f9e9ef556f59fe31ad7bb8fbe088f",
+      "sceneHash": "76613b9ba5c87ee29a36b8f4adf4e8ce09cfc73a2a47925c0a65e6e446d6b5e8",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:driftwood:march",
+      "outputHash": "ba6bb436ab4095736bf08cd5951b06de660bebc14775c9908ed7f4c1d0cc572c",
+      "revision": "e4b76afc204bf6c6ab32d5b27f8724bab1b44785dd73df16b5da4375c16d8fef",
+      "sceneHash": "3d53476f24cd1f211ca7bb9dc0f00a0f56467e241ffc8b98fe70a518ad5c9bc4",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:mangrove:march",
+      "outputHash": "66470852c98453954d944e12f08eb9717bb700e5e306b67e2aa0a6f8e3db74f6",
+      "revision": "03b33a59106f2f06d7ccc631e91aefbf24979a41deb6982330a222ab7b4b988b",
+      "sceneHash": "862eb0c9a7676cbc379fa2e923d1fdbb47b2198f49579be9189f7fd9361dd5af",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:pine-sapling:highlands",
+      "outputHash": "7460dfe2bd989d15ba3d8328515ee9871d6dc8c070c89b6cabdaf100ef585394",
+      "revision": "e69104a8e4db20d089730c89f144818ae7d5694ad6256ea3764f72c4e67db1ff",
+      "sceneHash": "f96430b8b8139db1fb46eda50bdb8795eb96dfa99b209b51f52d78c3d37bffa6",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:alpine-scrub:highlands",
+      "outputHash": "642fe1147d40ee5857e5623e98db6ba6e36230f7f720a681fad3662087fce2af",
+      "revision": "467ccfb86255a551b1b0915beee60a30690d5a1789e5a49207f03b636f56e926",
+      "sceneHash": "d9a7d54528b5d200108a7f6ecad9898f04efc567bfcbf4349c878c2299192c09",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:marsh-bush:march",
+      "outputHash": "61da77246ff31080bd7a4b04d44ed6cc68993e7fd6e5e0b8ac36a33ec8623cbd",
+      "revision": "118fbe63dae6b52d36264e7daf4e059fc96b8ca44eec12f4866c72de25c00dbd",
+      "sceneHash": "84f6c3be6750a8417cd4ff7f725c8d2e5cc4f1cf0e133b4691b81c18d9873016",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:rock-cluster:highlands",
+      "outputHash": "7234ba4b67bc2843e827f5cd782cefadb46f33da2f9cd979ca52d350c982a41d",
+      "revision": "12d861bfbd8e444de15347b30c3a84dd202ca70356a72348fde03911e295470e",
+      "sceneHash": "bb3d8bb54018e6af275e8663c49dd42f218bdbb5a5998ec83bc282851dfaa0d6",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:dead-tree:frontier",
+      "outputHash": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a",
+      "revision": "11f292f12c942d594578672c806d5762917f58b0ebd9fef240b1513f0d266659",
+      "sceneHash": "5903068226f2342d4841f2a495b7d868642b33f76839971693c99a3cf35291a6",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:charred-stump:frontier",
+      "outputHash": "38f73cbd6054f7b7abf089f2843ff68e0e1da5222d7331cf83a4d2ff9c716cd3",
+      "revision": "65fd474dd3462b6c2ced3ea8164680f10e7ce547ceefb9feb783b14ed967bee6",
+      "sceneHash": "907e9ddc92f56b5eee80f947af6fa1a6aeb05ce524aa98194f752dd3e4cbdaa1",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:dry-scrub:frontier",
+      "outputHash": "fa5a8422a5cad726a6c703210f03ba72d3d1934530d3c9567c08b9a0f260c1de",
+      "revision": "30ff5df7b21aafd0c6d5ecbc25b4f3ae53db3c621f976894661b1aea5eec03fc",
+      "sceneHash": "ab2bba8d2242850de03760b35282df79bac5836a475daf09ee1addb2aa2ea055",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:burned-log:frontier",
+      "outputHash": "b37ecaaedd9800883d383038e9e8e2d36edb36487979d1f2ac38abe8211b158e",
+      "revision": "0812beebd4d6cd157958b66d7db150a75a3cf788aed91be7fd8623d597d7b9b2",
+      "sceneHash": "23d2f3d2d7abd0e13a39c188fc615a100a317b8749495fdb1d2aba8e5303727a",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:black-rock:crown",
+      "outputHash": "2f7cde535488261055e586386f02bf91e29aa784a4fa2b3e90ea2c9d3c3b53ef",
+      "revision": "1a59626c1194c2cbc73973cd4949e6da6ae5e01f64dacf5dc26c530f213330bf",
+      "sceneHash": "72a4368a9cefeb8d928f187a0ff67e8857a17d7fc122d0ed1d67ac10b83a6bf1",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:crystal-cluster:crown",
+      "outputHash": "c05fbeab6b899c0f12d96508b38f81c6a31c01ab33a91430d6483df6315efc98",
+      "revision": "e39d03d38d285320391cd994edb8fa789c5f125dda26f8027a5c6737c207af25",
+      "sceneHash": "b1c872ca2115a050f7ca1fae7755efb6a6f5e4f80691c4ad0f151245cffb5499",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:dead-shrub:crown",
+      "outputHash": "818f60932ca7f058edd75068205ff54c5ab66781874fa07f16db95a146916b0c",
+      "revision": "8fb97ece19a3d6710a65400279b1c9a62e0b58d5efe716d12535febb8ea70271",
+      "sceneHash": "fa5dca44b400c5b5ea44b76886bdaf04fe735902a1f7079e9663ab8bf6273a88",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:obsidian:crown",
+      "outputHash": "a4b24f34c911615389eb24ce0e061f09e6db4ecb168ccda842523e853b9305bb",
+      "revision": "44977ce2beb6c690e25365f81c8b4f44025b45027f99b21cf98a336e199bd934",
+      "sceneHash": "d51c9a544ed9ae483493e7c51396c26c397bcd6cf775b963da7fedf973dc00e2",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:heather:highlands",
+      "outputHash": "7e19331a634e148d39c097478172618f9adf9f2c4326aceb28bab81009142baa",
+      "revision": "8918256a9324e1943a0945bfc710a47c751d81ba616095376969f5b366fadbd1",
+      "sceneHash": "07a9f193dd3f00c13d9e982c24d44a915f073c2c65edbfdb7b60cae268940881",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:rock:vale",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "f9f92ed67e329fcb87de9115d88da706efcfbe5731caf8530c57b53f840884cf",
+      "sceneHash": "4e5e0573b302b1d75df5b007fe46963223110b9e3bc38ba7954ccbd1ef6f46ca",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:rock:highlands",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "eb9c913e0e3c53e89007d2527339c15c0dc750187d743ac3d38ba02ea321b914",
+      "sceneHash": "c9637df8e7ad7d7c6f1721c1e492b1ddc4bd9512d34ba706366589720f9b4897",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:bush:vale",
+      "outputHash": "adf638d1bde016d432a2147dd69f1e34aefd982015f3e8f8f173c1eb9e4644ae",
+      "revision": "f1b1b8008157a434a9ba64d719a1189eb59246a17d120ee71487359229511c84",
+      "sceneHash": "31351d01ba5a9c64c7e7367c8b3abc4016a0c82e0308fcb57614c165ba0e0df6",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:wildflowers:vale",
+      "outputHash": "9a23c90223c33de4f3cea73796c5d6044a034712280bab304c4aaf73b07afea9",
+      "revision": "ff31e0ad5ed18ff9fc426bbfbf8684912f810cea58d24eaa58ea1caf16cb1149",
+      "sceneHash": "ae9966b4a264f4c41e76e039a0fe22cfe60914ec1ddbb3176113f77cefc43123",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:sapling:vale",
+      "outputHash": "eb5116c58f33e510c8956e4c34d8e710a588b4ec281e8c964b99abfb4ef15de8",
+      "revision": "76907cf4c9ecb33ed204925bb5379a2fc5290a4594b79a08fd229e2b3521f040",
+      "sceneHash": "2592a409f1eb3ff843d142f0786727e897797cd62f07cacb364c07a7ab63ef04",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:stump:vale",
+      "outputHash": "8c294182e436974d3e651c692fa409a0b7461bb29a977892dc890715f44c8316",
+      "revision": "f0f827e26f9cf8b3d0fe7c8784074ed73aa3ac65943a04beedbb49bf8958d336",
+      "sceneHash": "cd904400b6d1ad9510eb52b4d9a0f81e06ca9cde8b48c0c94a4753bb084e3ca7",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:fallen-log:vale",
+      "outputHash": "110884d6f0c468007212ca60a365796759bf5440a733b469040b14eb2f5d7094",
+      "revision": "89c900b2d34c96781cfcbf6adf6b65fcb20ea3e54105144d3e1eeb4f1fcf08d1",
+      "sceneHash": "6732cd758a55e861bfdf94187a754a20caca949fd0f9035488a6b749a341dfc8",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:cattails:march",
+      "outputHash": "527bd4994a724d6fa114f83c0d1f1ca5c8826fee94e76e8e287118e0733f0631",
+      "revision": "bcbf13293dfeda0622209b09cd8f8fa6d82f9e9ef556f59fe31ad7bb8fbe088f",
+      "sceneHash": "ef5fd01e3628e1f9679cc37917f5fa52208f38d03c18622986010fd23f479f3e",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:driftwood:march",
+      "outputHash": "ba6bb436ab4095736bf08cd5951b06de660bebc14775c9908ed7f4c1d0cc572c",
+      "revision": "e4b76afc204bf6c6ab32d5b27f8724bab1b44785dd73df16b5da4375c16d8fef",
+      "sceneHash": "485913541d978b1cc63576d2954e9eec0ec07dfe5a0da81c3348c87d42a718a7",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:mangrove:march",
+      "outputHash": "66470852c98453954d944e12f08eb9717bb700e5e306b67e2aa0a6f8e3db74f6",
+      "revision": "03b33a59106f2f06d7ccc631e91aefbf24979a41deb6982330a222ab7b4b988b",
+      "sceneHash": "3925b3a2d478a3bbcfdaf9b90fc26185a7ea8a90a254e27a1ea3b2a35b0a4ce8",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:pine-sapling:highlands",
+      "outputHash": "7460dfe2bd989d15ba3d8328515ee9871d6dc8c070c89b6cabdaf100ef585394",
+      "revision": "e69104a8e4db20d089730c89f144818ae7d5694ad6256ea3764f72c4e67db1ff",
+      "sceneHash": "4c414b65781093380db922aed2aa87308b893ca2e7acb4ceca2e6b2036063627",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:alpine-scrub:highlands",
+      "outputHash": "642fe1147d40ee5857e5623e98db6ba6e36230f7f720a681fad3662087fce2af",
+      "revision": "467ccfb86255a551b1b0915beee60a30690d5a1789e5a49207f03b636f56e926",
+      "sceneHash": "64056ab46c91f1d8914f3b284a8a203982a5309b303fdd02b469c6d1367eae71",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:marsh-bush:march",
+      "outputHash": "61da77246ff31080bd7a4b04d44ed6cc68993e7fd6e5e0b8ac36a33ec8623cbd",
+      "revision": "118fbe63dae6b52d36264e7daf4e059fc96b8ca44eec12f4866c72de25c00dbd",
+      "sceneHash": "d74b3b2d387015b056baabe18d3c995b4e41d798ac8e52d1fe56078862858ea2",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:rock-cluster:highlands",
+      "outputHash": "7234ba4b67bc2843e827f5cd782cefadb46f33da2f9cd979ca52d350c982a41d",
+      "revision": "12d861bfbd8e444de15347b30c3a84dd202ca70356a72348fde03911e295470e",
+      "sceneHash": "88749e4622a42dbf5f7644419da746aeb0e1edc12120f3b9fced552ab7fb488d",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:dead-tree:frontier",
+      "outputHash": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a",
+      "revision": "11f292f12c942d594578672c806d5762917f58b0ebd9fef240b1513f0d266659",
+      "sceneHash": "687e73a01f47de91abfbba74419cf9f0ac64e162d0f49e384aff6434982e4d2a",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:charred-stump:frontier",
+      "outputHash": "38f73cbd6054f7b7abf089f2843ff68e0e1da5222d7331cf83a4d2ff9c716cd3",
+      "revision": "65fd474dd3462b6c2ced3ea8164680f10e7ce547ceefb9feb783b14ed967bee6",
+      "sceneHash": "56cfa32be01dd5562278429a53eb76271b36fc0ebdb0d3517834e70089eefef0",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:dry-scrub:frontier",
+      "outputHash": "fa5a8422a5cad726a6c703210f03ba72d3d1934530d3c9567c08b9a0f260c1de",
+      "revision": "30ff5df7b21aafd0c6d5ecbc25b4f3ae53db3c621f976894661b1aea5eec03fc",
+      "sceneHash": "6dddaeb0d528d1d99006f18d89ec4ee04eb856cc8c4e6dd2afec996505ec2b57",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:burned-log:frontier",
+      "outputHash": "b37ecaaedd9800883d383038e9e8e2d36edb36487979d1f2ac38abe8211b158e",
+      "revision": "0812beebd4d6cd157958b66d7db150a75a3cf788aed91be7fd8623d597d7b9b2",
+      "sceneHash": "2c88f74baad88fb9afe933c2d1437f7f3894f2111c3b81b5678ca0e11283d72b",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:black-rock:crown",
+      "outputHash": "2f7cde535488261055e586386f02bf91e29aa784a4fa2b3e90ea2c9d3c3b53ef",
+      "revision": "1a59626c1194c2cbc73973cd4949e6da6ae5e01f64dacf5dc26c530f213330bf",
+      "sceneHash": "d5b254311082a12ed82eb838434e18d2663f1568fbfd38d9151d800e5561885b",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:crystal-cluster:crown",
+      "outputHash": "c05fbeab6b899c0f12d96508b38f81c6a31c01ab33a91430d6483df6315efc98",
+      "revision": "e39d03d38d285320391cd994edb8fa789c5f125dda26f8027a5c6737c207af25",
+      "sceneHash": "a35ec1d841d9ce2ba9dfff0bccd86878509a8fd468f811b560c8ab3ee126aa82",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:dead-shrub:crown",
+      "outputHash": "818f60932ca7f058edd75068205ff54c5ab66781874fa07f16db95a146916b0c",
+      "revision": "8fb97ece19a3d6710a65400279b1c9a62e0b58d5efe716d12535febb8ea70271",
+      "sceneHash": "0a466ba0727c64fddad96fb482fd5920499d30c35e755dc9bf861c770e02343b",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:obsidian:crown",
+      "outputHash": "a4b24f34c911615389eb24ce0e061f09e6db4ecb168ccda842523e853b9305bb",
+      "revision": "44977ce2beb6c690e25365f81c8b4f44025b45027f99b21cf98a336e199bd934",
+      "sceneHash": "f1b74f86117cd57253550175e7ce98d8c45f9dfcf9ac36d9ea0542cdc364db3f",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:heather:highlands",
+      "outputHash": "7e19331a634e148d39c097478172618f9adf9f2c4326aceb28bab81009142baa",
+      "revision": "8918256a9324e1943a0945bfc710a47c751d81ba616095376969f5b366fadbd1",
+      "sceneHash": "c14d64ca70e71e0a71a90c2563f00d773fe9280062f8f346beaa23bd9d4db255",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:rock:vale",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "f9f92ed67e329fcb87de9115d88da706efcfbe5731caf8530c57b53f840884cf",
+      "sceneHash": "7b5354a878b24181ed04d355e9865fa8b6d06f7098890b3059deeb9b4189e450",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:rock:highlands",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "eb9c913e0e3c53e89007d2527339c15c0dc750187d743ac3d38ba02ea321b914",
+      "sceneHash": "782c9955c39ce60d1556dfcc848a9c43dae906fe3476f41a66f6b00a1ffa89a4",
+      "anchor": {
+        "x": 409,
+        "y": 409.7
+      },
+      "ratio": 1.71171875,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:bush:vale",
+      "outputHash": "adf638d1bde016d432a2147dd69f1e34aefd982015f3e8f8f173c1eb9e4644ae",
+      "revision": "f1b1b8008157a434a9ba64d719a1189eb59246a17d120ee71487359229511c84",
+      "sceneHash": "5a6aa4d0c82677dea38fb3cf1d51629f161357723bc346c43fc8c5cd560fdaf9",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:wildflowers:vale",
+      "outputHash": "9a23c90223c33de4f3cea73796c5d6044a034712280bab304c4aaf73b07afea9",
+      "revision": "ff31e0ad5ed18ff9fc426bbfbf8684912f810cea58d24eaa58ea1caf16cb1149",
+      "sceneHash": "812db4266ffa47b2cc2f6cf7b59c317d0213cb434ae0e96edd85c8307bd010c1",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:sapling:vale",
+      "outputHash": "eb5116c58f33e510c8956e4c34d8e710a588b4ec281e8c964b99abfb4ef15de8",
+      "revision": "76907cf4c9ecb33ed204925bb5379a2fc5290a4594b79a08fd229e2b3521f040",
+      "sceneHash": "38da7ae6513d1a2fc95964630b705b1eecd3a25489a0571edfb24ebb1ffeeb1f",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:stump:vale",
+      "outputHash": "8c294182e436974d3e651c692fa409a0b7461bb29a977892dc890715f44c8316",
+      "revision": "f0f827e26f9cf8b3d0fe7c8784074ed73aa3ac65943a04beedbb49bf8958d336",
+      "sceneHash": "620b5417851312bc1e7a7813ce22b04711d2d218e5de869cc435aef389812933",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:fallen-log:vale",
+      "outputHash": "110884d6f0c468007212ca60a365796759bf5440a733b469040b14eb2f5d7094",
+      "revision": "89c900b2d34c96781cfcbf6adf6b65fcb20ea3e54105144d3e1eeb4f1fcf08d1",
+      "sceneHash": "d6bda570f3eb399d3cc77b85ea726fe76179b16f8539fd49f71cd39040e6323b",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:cattails:march",
+      "outputHash": "527bd4994a724d6fa114f83c0d1f1ca5c8826fee94e76e8e287118e0733f0631",
+      "revision": "bcbf13293dfeda0622209b09cd8f8fa6d82f9e9ef556f59fe31ad7bb8fbe088f",
+      "sceneHash": "4dadc5464ccee0f78c02d8d16e94902bf292d248e720130756512eb93b51b2aa",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:driftwood:march",
+      "outputHash": "ba6bb436ab4095736bf08cd5951b06de660bebc14775c9908ed7f4c1d0cc572c",
+      "revision": "e4b76afc204bf6c6ab32d5b27f8724bab1b44785dd73df16b5da4375c16d8fef",
+      "sceneHash": "37a38a4ac2c7d3ec9697e3b963768d65e1dc394e8ddd9892332fe60468cd6ee0",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:mangrove:march",
+      "outputHash": "66470852c98453954d944e12f08eb9717bb700e5e306b67e2aa0a6f8e3db74f6",
+      "revision": "03b33a59106f2f06d7ccc631e91aefbf24979a41deb6982330a222ab7b4b988b",
+      "sceneHash": "c33041a0547c851a6eaf4a83a4a0c182c54bb6ecb935eb0ef018d1ae5d2193b8",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:pine-sapling:highlands",
+      "outputHash": "7460dfe2bd989d15ba3d8328515ee9871d6dc8c070c89b6cabdaf100ef585394",
+      "revision": "e69104a8e4db20d089730c89f144818ae7d5694ad6256ea3764f72c4e67db1ff",
+      "sceneHash": "93981ba8500afe572a8cce843b0a00af5522c881b36ed28e8ca5ac4c3ca0e5c5",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:alpine-scrub:highlands",
+      "outputHash": "642fe1147d40ee5857e5623e98db6ba6e36230f7f720a681fad3662087fce2af",
+      "revision": "467ccfb86255a551b1b0915beee60a30690d5a1789e5a49207f03b636f56e926",
+      "sceneHash": "18d5b0a7a02ca1e36bb47a0d2b9500769cd8b1d8a2b3785c9b1fa6efe31fc0dc",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:marsh-bush:march",
+      "outputHash": "61da77246ff31080bd7a4b04d44ed6cc68993e7fd6e5e0b8ac36a33ec8623cbd",
+      "revision": "118fbe63dae6b52d36264e7daf4e059fc96b8ca44eec12f4866c72de25c00dbd",
+      "sceneHash": "a80a1bdf0b55b893e878e855ea46cb6ca0252f5f3f3babc001503369c0c4e29f",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:rock-cluster:highlands",
+      "outputHash": "7234ba4b67bc2843e827f5cd782cefadb46f33da2f9cd979ca52d350c982a41d",
+      "revision": "12d861bfbd8e444de15347b30c3a84dd202ca70356a72348fde03911e295470e",
+      "sceneHash": "83a69e21285548c4d3d4386a0d6b29044beb8f13b35a4ec74b8b0931de0742ff",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:dead-tree:frontier",
+      "outputHash": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a",
+      "revision": "11f292f12c942d594578672c806d5762917f58b0ebd9fef240b1513f0d266659",
+      "sceneHash": "9626c8180f41a605cb7089c45e7a6f15f3fe14bfe5d8d97721b08d07a6a34857",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:charred-stump:frontier",
+      "outputHash": "38f73cbd6054f7b7abf089f2843ff68e0e1da5222d7331cf83a4d2ff9c716cd3",
+      "revision": "65fd474dd3462b6c2ced3ea8164680f10e7ce547ceefb9feb783b14ed967bee6",
+      "sceneHash": "7f7305291f8f8d31e017a2a39cfe98dce028b3c5a121f8297b782e2e2482458a",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:dry-scrub:frontier",
+      "outputHash": "fa5a8422a5cad726a6c703210f03ba72d3d1934530d3c9567c08b9a0f260c1de",
+      "revision": "30ff5df7b21aafd0c6d5ecbc25b4f3ae53db3c621f976894661b1aea5eec03fc",
+      "sceneHash": "d779bb73b9ace049e9cb1b0b4bc50e923a15f8affb72fc84f3cd3ee73905d43e",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:burned-log:frontier",
+      "outputHash": "b37ecaaedd9800883d383038e9e8e2d36edb36487979d1f2ac38abe8211b158e",
+      "revision": "0812beebd4d6cd157958b66d7db150a75a3cf788aed91be7fd8623d597d7b9b2",
+      "sceneHash": "aa7910d823bf04e95f889bf2796c82e9f7ae2bd47c3c8cc6131887aa62d932a9",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:black-rock:crown",
+      "outputHash": "2f7cde535488261055e586386f02bf91e29aa784a4fa2b3e90ea2c9d3c3b53ef",
+      "revision": "1a59626c1194c2cbc73973cd4949e6da6ae5e01f64dacf5dc26c530f213330bf",
+      "sceneHash": "ef5a824cea1229c6923f94ff47ffe960aaf19fef9c1c9c5abfc83dcb946ad419",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:crystal-cluster:crown",
+      "outputHash": "c05fbeab6b899c0f12d96508b38f81c6a31c01ab33a91430d6483df6315efc98",
+      "revision": "e39d03d38d285320391cd994edb8fa789c5f125dda26f8027a5c6737c207af25",
+      "sceneHash": "869cb1ea390efec82115395bf92aff702c719a2489ff1dfffdf89052e7861982",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:dead-shrub:crown",
+      "outputHash": "818f60932ca7f058edd75068205ff54c5ab66781874fa07f16db95a146916b0c",
+      "revision": "8fb97ece19a3d6710a65400279b1c9a62e0b58d5efe716d12535febb8ea70271",
+      "sceneHash": "ab161c05d9e25108f9f9b0aef584a677d010cab7ca18a9e0378faf871442b48b",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:obsidian:crown",
+      "outputHash": "a4b24f34c911615389eb24ce0e061f09e6db4ecb168ccda842523e853b9305bb",
+      "revision": "44977ce2beb6c690e25365f81c8b4f44025b45027f99b21cf98a336e199bd934",
+      "sceneHash": "a4c93c637b9987503688dc642ea13c73dd0c19b47095b42fe7a4649643073914",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:heather:highlands",
+      "outputHash": "7e19331a634e148d39c097478172618f9adf9f2c4326aceb28bab81009142baa",
+      "revision": "8918256a9324e1943a0945bfc710a47c751d81ba616095376969f5b366fadbd1",
+      "sceneHash": "338803ca2384d66107afe3441544d9b54477b8089df33b88421322f714c8aae6",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:rock:vale",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "f9f92ed67e329fcb87de9115d88da706efcfbe5731caf8530c57b53f840884cf",
+      "sceneHash": "4125d2c8d6e8b688eca90fdf0caf8a5cf77f76dac36e60ec3c58035e88062eae",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "day",
+      "key": "prop:rock:highlands",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "eb9c913e0e3c53e89007d2527339c15c0dc750187d743ac3d38ba02ea321b914",
+      "sceneHash": "83c15319e73a25c4c5bb6e38feef0d23bae3112c18a792dc438727b9d9cac393",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:bush:vale",
+      "outputHash": "adf638d1bde016d432a2147dd69f1e34aefd982015f3e8f8f173c1eb9e4644ae",
+      "revision": "f1b1b8008157a434a9ba64d719a1189eb59246a17d120ee71487359229511c84",
+      "sceneHash": "dba1ea2549375d375a642c60330ee4ffc230022a4faf2685313eadcf8e2e5c8b",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:wildflowers:vale",
+      "outputHash": "9a23c90223c33de4f3cea73796c5d6044a034712280bab304c4aaf73b07afea9",
+      "revision": "ff31e0ad5ed18ff9fc426bbfbf8684912f810cea58d24eaa58ea1caf16cb1149",
+      "sceneHash": "c0a7ebf815f8b5073bc1185df0bf8b190c44a2b4a41edf858e4a56542b1838e7",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:sapling:vale",
+      "outputHash": "eb5116c58f33e510c8956e4c34d8e710a588b4ec281e8c964b99abfb4ef15de8",
+      "revision": "76907cf4c9ecb33ed204925bb5379a2fc5290a4594b79a08fd229e2b3521f040",
+      "sceneHash": "dae22b76b2af5071392a38c4ab5cc828cbce16ca0da6afa05f29c8eb8e6fc1e8",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:stump:vale",
+      "outputHash": "8c294182e436974d3e651c692fa409a0b7461bb29a977892dc890715f44c8316",
+      "revision": "f0f827e26f9cf8b3d0fe7c8784074ed73aa3ac65943a04beedbb49bf8958d336",
+      "sceneHash": "9d91a2f34eea053c50edb5d5e079611fffc6356c4075157fc927777729bac223",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:fallen-log:vale",
+      "outputHash": "110884d6f0c468007212ca60a365796759bf5440a733b469040b14eb2f5d7094",
+      "revision": "89c900b2d34c96781cfcbf6adf6b65fcb20ea3e54105144d3e1eeb4f1fcf08d1",
+      "sceneHash": "daaa00f7d352742c464f55ba2155c4f32c560547c291282d6a1037dd700d006a",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:cattails:march",
+      "outputHash": "527bd4994a724d6fa114f83c0d1f1ca5c8826fee94e76e8e287118e0733f0631",
+      "revision": "bcbf13293dfeda0622209b09cd8f8fa6d82f9e9ef556f59fe31ad7bb8fbe088f",
+      "sceneHash": "ea02664620577043aafeee557aa0336a6a4273aadfe5b2cf63a3b20c89b0cfe4",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:driftwood:march",
+      "outputHash": "ba6bb436ab4095736bf08cd5951b06de660bebc14775c9908ed7f4c1d0cc572c",
+      "revision": "e4b76afc204bf6c6ab32d5b27f8724bab1b44785dd73df16b5da4375c16d8fef",
+      "sceneHash": "5520d4121255186a34de5f95b8a2abcb1e94a333f54a8207930c1ede3b8dbc39",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:mangrove:march",
+      "outputHash": "66470852c98453954d944e12f08eb9717bb700e5e306b67e2aa0a6f8e3db74f6",
+      "revision": "03b33a59106f2f06d7ccc631e91aefbf24979a41deb6982330a222ab7b4b988b",
+      "sceneHash": "708c86722bc0396afbacc65fa2f39bc2f1b9df92dcb231055371fecdd616e546",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:pine-sapling:highlands",
+      "outputHash": "7460dfe2bd989d15ba3d8328515ee9871d6dc8c070c89b6cabdaf100ef585394",
+      "revision": "e69104a8e4db20d089730c89f144818ae7d5694ad6256ea3764f72c4e67db1ff",
+      "sceneHash": "7dd97aa1caf1e706894790b14320815a5b494adf7e4269b4495ed12200ab21fa",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:alpine-scrub:highlands",
+      "outputHash": "642fe1147d40ee5857e5623e98db6ba6e36230f7f720a681fad3662087fce2af",
+      "revision": "467ccfb86255a551b1b0915beee60a30690d5a1789e5a49207f03b636f56e926",
+      "sceneHash": "8316c4ce376be7a93b5dea6f799136175f2ca3d470d6477babdefd76783f1a7f",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:marsh-bush:march",
+      "outputHash": "61da77246ff31080bd7a4b04d44ed6cc68993e7fd6e5e0b8ac36a33ec8623cbd",
+      "revision": "118fbe63dae6b52d36264e7daf4e059fc96b8ca44eec12f4866c72de25c00dbd",
+      "sceneHash": "c041f95250ea596655be98cfa2de4e84d3ce215534fc4e0ff00220d461650bbe",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:rock-cluster:highlands",
+      "outputHash": "7234ba4b67bc2843e827f5cd782cefadb46f33da2f9cd979ca52d350c982a41d",
+      "revision": "12d861bfbd8e444de15347b30c3a84dd202ca70356a72348fde03911e295470e",
+      "sceneHash": "70e73b4620dda24e80cfb996a93872d637214312f78a116b440e2386ef4fd59e",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:dead-tree:frontier",
+      "outputHash": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a",
+      "revision": "11f292f12c942d594578672c806d5762917f58b0ebd9fef240b1513f0d266659",
+      "sceneHash": "6fb1cce19c39c758cbe18af39bae50b0a26578236a7fcb4b5f46ee48571e1c33",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:charred-stump:frontier",
+      "outputHash": "38f73cbd6054f7b7abf089f2843ff68e0e1da5222d7331cf83a4d2ff9c716cd3",
+      "revision": "65fd474dd3462b6c2ced3ea8164680f10e7ce547ceefb9feb783b14ed967bee6",
+      "sceneHash": "c532732ed7c755eff560e3e42166fd484bb7a3820bf104c54d7d7d1b8901ba84",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:dry-scrub:frontier",
+      "outputHash": "fa5a8422a5cad726a6c703210f03ba72d3d1934530d3c9567c08b9a0f260c1de",
+      "revision": "30ff5df7b21aafd0c6d5ecbc25b4f3ae53db3c621f976894661b1aea5eec03fc",
+      "sceneHash": "29fb951f06ce85ddc3d44857574693f4782dd71d3992f4b605b6d9c0ce9f0141",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:burned-log:frontier",
+      "outputHash": "b37ecaaedd9800883d383038e9e8e2d36edb36487979d1f2ac38abe8211b158e",
+      "revision": "0812beebd4d6cd157958b66d7db150a75a3cf788aed91be7fd8623d597d7b9b2",
+      "sceneHash": "03e5838a3845a2e85ef1f9a784c594dbc25e17f23779751ed1fa6268e18490c8",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:black-rock:crown",
+      "outputHash": "2f7cde535488261055e586386f02bf91e29aa784a4fa2b3e90ea2c9d3c3b53ef",
+      "revision": "1a59626c1194c2cbc73973cd4949e6da6ae5e01f64dacf5dc26c530f213330bf",
+      "sceneHash": "ac82a8e8e0833fdd63d1237a5e8bb742e5a45033c1dec9a29f43789f66d9e251",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:crystal-cluster:crown",
+      "outputHash": "c05fbeab6b899c0f12d96508b38f81c6a31c01ab33a91430d6483df6315efc98",
+      "revision": "e39d03d38d285320391cd994edb8fa789c5f125dda26f8027a5c6737c207af25",
+      "sceneHash": "771a5d8870f1f747727feba6b97b40806c620c6fc5ad3154cf4599448b53f797",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:dead-shrub:crown",
+      "outputHash": "818f60932ca7f058edd75068205ff54c5ab66781874fa07f16db95a146916b0c",
+      "revision": "8fb97ece19a3d6710a65400279b1c9a62e0b58d5efe716d12535febb8ea70271",
+      "sceneHash": "c68c00f673e8c4e2e35c7d31d93e0ec90870cf1ae3bb1f4e1123eb006a131ba0",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:obsidian:crown",
+      "outputHash": "a4b24f34c911615389eb24ce0e061f09e6db4ecb168ccda842523e853b9305bb",
+      "revision": "44977ce2beb6c690e25365f81c8b4f44025b45027f99b21cf98a336e199bd934",
+      "sceneHash": "c804d5e201e02e29aa45fa27a72ad6936518acc5bbfb3b7b9a44787ace5b26a0",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:heather:highlands",
+      "outputHash": "7e19331a634e148d39c097478172618f9adf9f2c4326aceb28bab81009142baa",
+      "revision": "8918256a9324e1943a0945bfc710a47c751d81ba616095376969f5b366fadbd1",
+      "sceneHash": "a6bca4f16cd0afbf2c7c336e120c95731992397c486d78f7eab385da573afe24",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:rock:vale",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "f9f92ed67e329fcb87de9115d88da706efcfbe5731caf8530c57b53f840884cf",
+      "sceneHash": "15140846a533f61793728c9676faaaf79df316088387ff2b2f5d0ff88bc81a2a",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      "lighting": "night",
+      "key": "prop:rock:highlands",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "eb9c913e0e3c53e89007d2527339c15c0dc750187d743ac3d38ba02ea321b914",
+      "sceneHash": "7b3331748194f29d54a413049838ba03104df7e2f678d17c86679d7e6e975a12",
+      "anchor": {
+        "x": 281,
+        "y": 359.70000000000005
+      },
+      "ratio": 2,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:bush:vale",
+      "outputHash": "adf638d1bde016d432a2147dd69f1e34aefd982015f3e8f8f173c1eb9e4644ae",
+      "revision": "f1b1b8008157a434a9ba64d719a1189eb59246a17d120ee71487359229511c84",
+      "sceneHash": "5856eff0f6814854ec9423a743a7e537e0a1ef2f6866d01e3e21615b90b7ddc8",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:wildflowers:vale",
+      "outputHash": "9a23c90223c33de4f3cea73796c5d6044a034712280bab304c4aaf73b07afea9",
+      "revision": "ff31e0ad5ed18ff9fc426bbfbf8684912f810cea58d24eaa58ea1caf16cb1149",
+      "sceneHash": "040181455c766dc1a7b0a2cc72a8746811c8d991efa41654304a0557cac78eac",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:sapling:vale",
+      "outputHash": "eb5116c58f33e510c8956e4c34d8e710a588b4ec281e8c964b99abfb4ef15de8",
+      "revision": "76907cf4c9ecb33ed204925bb5379a2fc5290a4594b79a08fd229e2b3521f040",
+      "sceneHash": "fd2d7d6a9522fdb45c81f5c4f76634db354ee5d1cab0144d70996ad1fd306f7b",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:stump:vale",
+      "outputHash": "8c294182e436974d3e651c692fa409a0b7461bb29a977892dc890715f44c8316",
+      "revision": "f0f827e26f9cf8b3d0fe7c8784074ed73aa3ac65943a04beedbb49bf8958d336",
+      "sceneHash": "a0f8b85dd560f0b06fd09e7da3125eb076d1c11ed63614372e3fb19047026b83",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:fallen-log:vale",
+      "outputHash": "110884d6f0c468007212ca60a365796759bf5440a733b469040b14eb2f5d7094",
+      "revision": "89c900b2d34c96781cfcbf6adf6b65fcb20ea3e54105144d3e1eeb4f1fcf08d1",
+      "sceneHash": "d8e510370b00c20b3f607a8f9951a17245d2b05baf5db8d4033fb7c44aa62d81",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:cattails:march",
+      "outputHash": "527bd4994a724d6fa114f83c0d1f1ca5c8826fee94e76e8e287118e0733f0631",
+      "revision": "bcbf13293dfeda0622209b09cd8f8fa6d82f9e9ef556f59fe31ad7bb8fbe088f",
+      "sceneHash": "91d9d372e910c6910784c40f728a2d33e62c74adda7b68a0238bae25265f6003",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:driftwood:march",
+      "outputHash": "ba6bb436ab4095736bf08cd5951b06de660bebc14775c9908ed7f4c1d0cc572c",
+      "revision": "e4b76afc204bf6c6ab32d5b27f8724bab1b44785dd73df16b5da4375c16d8fef",
+      "sceneHash": "2469e20542a203874a3a28694aaab63b25e2363b57e008a4521d8f95616e98bb",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:mangrove:march",
+      "outputHash": "66470852c98453954d944e12f08eb9717bb700e5e306b67e2aa0a6f8e3db74f6",
+      "revision": "03b33a59106f2f06d7ccc631e91aefbf24979a41deb6982330a222ab7b4b988b",
+      "sceneHash": "3e9f1710dbab661c436c64e3d7ad0ed0b32224a93efc610dbd59003455e78bf2",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:pine-sapling:highlands",
+      "outputHash": "7460dfe2bd989d15ba3d8328515ee9871d6dc8c070c89b6cabdaf100ef585394",
+      "revision": "e69104a8e4db20d089730c89f144818ae7d5694ad6256ea3764f72c4e67db1ff",
+      "sceneHash": "7c541886cad22a3ac630af086f32b0fdfd85dc5625fe4c1f89f95711cbf45923",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:alpine-scrub:highlands",
+      "outputHash": "642fe1147d40ee5857e5623e98db6ba6e36230f7f720a681fad3662087fce2af",
+      "revision": "467ccfb86255a551b1b0915beee60a30690d5a1789e5a49207f03b636f56e926",
+      "sceneHash": "f1dd8f967c4e0dbd34dd2952318d62cb628f9b709f73a2f0216e0405f2928845",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:marsh-bush:march",
+      "outputHash": "61da77246ff31080bd7a4b04d44ed6cc68993e7fd6e5e0b8ac36a33ec8623cbd",
+      "revision": "118fbe63dae6b52d36264e7daf4e059fc96b8ca44eec12f4866c72de25c00dbd",
+      "sceneHash": "2f61807cdf821d23f91db616fe032cfc06ba708a37c612666dc1d39201ae774a",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:rock-cluster:highlands",
+      "outputHash": "7234ba4b67bc2843e827f5cd782cefadb46f33da2f9cd979ca52d350c982a41d",
+      "revision": "12d861bfbd8e444de15347b30c3a84dd202ca70356a72348fde03911e295470e",
+      "sceneHash": "8f8df32ad0164e943d54bbf2210a73dfe50a2f976d2d8eee28b881bde8bd2ddd",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:dead-tree:frontier",
+      "outputHash": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a",
+      "revision": "11f292f12c942d594578672c806d5762917f58b0ebd9fef240b1513f0d266659",
+      "sceneHash": "f064beb396241801b15501353ed3f235851879f8ceae9c4f466d7f160e61195b",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:charred-stump:frontier",
+      "outputHash": "38f73cbd6054f7b7abf089f2843ff68e0e1da5222d7331cf83a4d2ff9c716cd3",
+      "revision": "65fd474dd3462b6c2ced3ea8164680f10e7ce547ceefb9feb783b14ed967bee6",
+      "sceneHash": "1b58a77e19866eb67d1d093dc57e9c011c94aea74e9ac7b76a6d6c0d49357a02",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:dry-scrub:frontier",
+      "outputHash": "fa5a8422a5cad726a6c703210f03ba72d3d1934530d3c9567c08b9a0f260c1de",
+      "revision": "30ff5df7b21aafd0c6d5ecbc25b4f3ae53db3c621f976894661b1aea5eec03fc",
+      "sceneHash": "dc00dbfe7ec880ee52f5ee1646835a3f775640fede16ebb333007544fb460d9e",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:burned-log:frontier",
+      "outputHash": "b37ecaaedd9800883d383038e9e8e2d36edb36487979d1f2ac38abe8211b158e",
+      "revision": "0812beebd4d6cd157958b66d7db150a75a3cf788aed91be7fd8623d597d7b9b2",
+      "sceneHash": "8e09562554b5f37022c9f4b0af1958889d6a13bb52de23190f95e35e516f9bab",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:black-rock:crown",
+      "outputHash": "2f7cde535488261055e586386f02bf91e29aa784a4fa2b3e90ea2c9d3c3b53ef",
+      "revision": "1a59626c1194c2cbc73973cd4949e6da6ae5e01f64dacf5dc26c530f213330bf",
+      "sceneHash": "5167aefdce0e63fec8f607eea91dddf74127c83cfe0b52394740844cd1813d36",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:crystal-cluster:crown",
+      "outputHash": "c05fbeab6b899c0f12d96508b38f81c6a31c01ab33a91430d6483df6315efc98",
+      "revision": "e39d03d38d285320391cd994edb8fa789c5f125dda26f8027a5c6737c207af25",
+      "sceneHash": "f7eaed6858ee63ef894a2e4db475fcbc9bf11f7cf07d383f16878944edf1bba4",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:dead-shrub:crown",
+      "outputHash": "818f60932ca7f058edd75068205ff54c5ab66781874fa07f16db95a146916b0c",
+      "revision": "8fb97ece19a3d6710a65400279b1c9a62e0b58d5efe716d12535febb8ea70271",
+      "sceneHash": "74e7559d6475948fd8e31af058021b1a714595578216cc578ef96ebf1723c924",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:obsidian:crown",
+      "outputHash": "a4b24f34c911615389eb24ce0e061f09e6db4ecb168ccda842523e853b9305bb",
+      "revision": "44977ce2beb6c690e25365f81c8b4f44025b45027f99b21cf98a336e199bd934",
+      "sceneHash": "11500868309158d84f605e13b42a6699f179e61edc520dd4bd7e9fd15d934e57",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:heather:highlands",
+      "outputHash": "7e19331a634e148d39c097478172618f9adf9f2c4326aceb28bab81009142baa",
+      "revision": "8918256a9324e1943a0945bfc710a47c751d81ba616095376969f5b366fadbd1",
+      "sceneHash": "cc15592277cc5bb2b6d99050fe0d77f8037202d28daeab8154278ef885d32c1c",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:rock:vale",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "f9f92ed67e329fcb87de9115d88da706efcfbe5731caf8530c57b53f840884cf",
+      "sceneHash": "0a413bc682b7c0b03308f644e43fd1afab3dd730032471c60ea726914f3de5d1",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:rock:highlands",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "eb9c913e0e3c53e89007d2527339c15c0dc750187d743ac3d38ba02ea321b914",
+      "sceneHash": "856f49e8ddf5be99944941a82db39cd020e744f5830b15adc0d75b74f90770fd",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:bush:vale",
+      "outputHash": "adf638d1bde016d432a2147dd69f1e34aefd982015f3e8f8f173c1eb9e4644ae",
+      "revision": "f1b1b8008157a434a9ba64d719a1189eb59246a17d120ee71487359229511c84",
+      "sceneHash": "23da4ae77859a0292ff5e4e03717f63a4ac7d04d2f341e477d0913c9767bfa58",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:wildflowers:vale",
+      "outputHash": "9a23c90223c33de4f3cea73796c5d6044a034712280bab304c4aaf73b07afea9",
+      "revision": "ff31e0ad5ed18ff9fc426bbfbf8684912f810cea58d24eaa58ea1caf16cb1149",
+      "sceneHash": "1fb8702cf613b1a65989157284d2d0ff1ec913a0f0128d92add80089a1194168",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:sapling:vale",
+      "outputHash": "eb5116c58f33e510c8956e4c34d8e710a588b4ec281e8c964b99abfb4ef15de8",
+      "revision": "76907cf4c9ecb33ed204925bb5379a2fc5290a4594b79a08fd229e2b3521f040",
+      "sceneHash": "8c99482b02867a4b63cb45c377bd943c07fccd956b2bd118bad8389eafb2f22a",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:stump:vale",
+      "outputHash": "8c294182e436974d3e651c692fa409a0b7461bb29a977892dc890715f44c8316",
+      "revision": "f0f827e26f9cf8b3d0fe7c8784074ed73aa3ac65943a04beedbb49bf8958d336",
+      "sceneHash": "411ec91fc102ac443b6adcae9ef2cb49e77388009a4121de591bf41322a24aec",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:fallen-log:vale",
+      "outputHash": "110884d6f0c468007212ca60a365796759bf5440a733b469040b14eb2f5d7094",
+      "revision": "89c900b2d34c96781cfcbf6adf6b65fcb20ea3e54105144d3e1eeb4f1fcf08d1",
+      "sceneHash": "72fa83f847e04d41b3291fe5e213aa1faca2a3d71e73c7f5edf244e16e4408d4",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:cattails:march",
+      "outputHash": "527bd4994a724d6fa114f83c0d1f1ca5c8826fee94e76e8e287118e0733f0631",
+      "revision": "bcbf13293dfeda0622209b09cd8f8fa6d82f9e9ef556f59fe31ad7bb8fbe088f",
+      "sceneHash": "0d333ccc3d3d4e5fa1ad33ec4140df6b18337511a4f9b392b4e8438c7bc0e0dc",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:driftwood:march",
+      "outputHash": "ba6bb436ab4095736bf08cd5951b06de660bebc14775c9908ed7f4c1d0cc572c",
+      "revision": "e4b76afc204bf6c6ab32d5b27f8724bab1b44785dd73df16b5da4375c16d8fef",
+      "sceneHash": "1d62a9085fb520ff1624b87e9876ba87e9f7b6e36ae4c8602f57366804f4c786",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:mangrove:march",
+      "outputHash": "66470852c98453954d944e12f08eb9717bb700e5e306b67e2aa0a6f8e3db74f6",
+      "revision": "03b33a59106f2f06d7ccc631e91aefbf24979a41deb6982330a222ab7b4b988b",
+      "sceneHash": "665072ce8df0e41c511a0eaf191d5de9478be723b15651e66111b6ecbaec9f9c",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:pine-sapling:highlands",
+      "outputHash": "7460dfe2bd989d15ba3d8328515ee9871d6dc8c070c89b6cabdaf100ef585394",
+      "revision": "e69104a8e4db20d089730c89f144818ae7d5694ad6256ea3764f72c4e67db1ff",
+      "sceneHash": "ae186d17c6a688f6d2f570700f588289cb0b362b4dc0f2ec438e3b7458bc1e00",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:alpine-scrub:highlands",
+      "outputHash": "642fe1147d40ee5857e5623e98db6ba6e36230f7f720a681fad3662087fce2af",
+      "revision": "467ccfb86255a551b1b0915beee60a30690d5a1789e5a49207f03b636f56e926",
+      "sceneHash": "4e0e2cdefa7d2350413023e7039574120a611e2e9f826b8424216932164a0ddf",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:marsh-bush:march",
+      "outputHash": "61da77246ff31080bd7a4b04d44ed6cc68993e7fd6e5e0b8ac36a33ec8623cbd",
+      "revision": "118fbe63dae6b52d36264e7daf4e059fc96b8ca44eec12f4866c72de25c00dbd",
+      "sceneHash": "577f63e4e79de5b1a02b6d6b34a5a29505299c8e0bb5e5f4a2644150ed9faaa9",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:rock-cluster:highlands",
+      "outputHash": "7234ba4b67bc2843e827f5cd782cefadb46f33da2f9cd979ca52d350c982a41d",
+      "revision": "12d861bfbd8e444de15347b30c3a84dd202ca70356a72348fde03911e295470e",
+      "sceneHash": "3bfba47f50c76e4014782192e6ae36f2dd919823b62c0601eb483a26f882cbfb",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:dead-tree:frontier",
+      "outputHash": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a",
+      "revision": "11f292f12c942d594578672c806d5762917f58b0ebd9fef240b1513f0d266659",
+      "sceneHash": "08b64150e19dd5a2a3c59ac065d3d1ee3ca10f2070fa6e1fa132e2f45da52416",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:charred-stump:frontier",
+      "outputHash": "38f73cbd6054f7b7abf089f2843ff68e0e1da5222d7331cf83a4d2ff9c716cd3",
+      "revision": "65fd474dd3462b6c2ced3ea8164680f10e7ce547ceefb9feb783b14ed967bee6",
+      "sceneHash": "04bed5d655ab314475f1b9421bb6200289b8fc4907af7d968ef506909a66d0a7",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:dry-scrub:frontier",
+      "outputHash": "fa5a8422a5cad726a6c703210f03ba72d3d1934530d3c9567c08b9a0f260c1de",
+      "revision": "30ff5df7b21aafd0c6d5ecbc25b4f3ae53db3c621f976894661b1aea5eec03fc",
+      "sceneHash": "148a1c6804bd7f5a24ad339612b82dfc460524baea51a68a68546f08d02a5bbe",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:burned-log:frontier",
+      "outputHash": "b37ecaaedd9800883d383038e9e8e2d36edb36487979d1f2ac38abe8211b158e",
+      "revision": "0812beebd4d6cd157958b66d7db150a75a3cf788aed91be7fd8623d597d7b9b2",
+      "sceneHash": "a162c0170bce2898442b63247c8cf06b502ac9a4644b2cf73bb7e62a0ce90dc2",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:black-rock:crown",
+      "outputHash": "2f7cde535488261055e586386f02bf91e29aa784a4fa2b3e90ea2c9d3c3b53ef",
+      "revision": "1a59626c1194c2cbc73973cd4949e6da6ae5e01f64dacf5dc26c530f213330bf",
+      "sceneHash": "037777d813c5865137fe698db0f36f83ae913bcc6c2d61925affa6ff7f8bb2cd",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:crystal-cluster:crown",
+      "outputHash": "c05fbeab6b899c0f12d96508b38f81c6a31c01ab33a91430d6483df6315efc98",
+      "revision": "e39d03d38d285320391cd994edb8fa789c5f125dda26f8027a5c6737c207af25",
+      "sceneHash": "bc99124b6fbb055c7dc623b32bbeb1c5e3c6f1e8f77ce9a7adedd194b5f50fb2",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:dead-shrub:crown",
+      "outputHash": "818f60932ca7f058edd75068205ff54c5ab66781874fa07f16db95a146916b0c",
+      "revision": "8fb97ece19a3d6710a65400279b1c9a62e0b58d5efe716d12535febb8ea70271",
+      "sceneHash": "37a4ea0178a02c88358975cf38e452bb8e17b1c015426e045dbea33dc86adcce",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:obsidian:crown",
+      "outputHash": "a4b24f34c911615389eb24ce0e061f09e6db4ecb168ccda842523e853b9305bb",
+      "revision": "44977ce2beb6c690e25365f81c8b4f44025b45027f99b21cf98a336e199bd934",
+      "sceneHash": "2fc88f32ed2bd81bad00b2bab01a9b775a73843602aef46a502db15156834d30",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:heather:highlands",
+      "outputHash": "7e19331a634e148d39c097478172618f9adf9f2c4326aceb28bab81009142baa",
+      "revision": "8918256a9324e1943a0945bfc710a47c751d81ba616095376969f5b366fadbd1",
+      "sceneHash": "2c373a218732a1fa2f0ab1bf5e3abd29f6df60e7ef5fa1a485d8a197e7576e1f",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:rock:vale",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "f9f92ed67e329fcb87de9115d88da706efcfbe5731caf8530c57b53f840884cf",
+      "sceneHash": "ecb2e9d138b3a960ab113ff1ff3424a32c1a2d842fdc406f0a6ff1ba7b314e34",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:rock:highlands",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "eb9c913e0e3c53e89007d2527339c15c0dc750187d743ac3d38ba02ea321b914",
+      "sceneHash": "14917884934abf7071f5a804fae175412e8433b704422e61846e66100f489220",
+      "anchor": {
+        "x": 73.5,
+        "y": 392.70000000000005
+      },
+      "ratio": 1.5013333333333334,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:bush:vale",
+      "outputHash": "adf638d1bde016d432a2147dd69f1e34aefd982015f3e8f8f173c1eb9e4644ae",
+      "revision": "f1b1b8008157a434a9ba64d719a1189eb59246a17d120ee71487359229511c84",
+      "sceneHash": "c08efa520e82f6d4319214877d2c0e7d8a31616ee0bb801680eb7bfc6763b956",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:wildflowers:vale",
+      "outputHash": "9a23c90223c33de4f3cea73796c5d6044a034712280bab304c4aaf73b07afea9",
+      "revision": "ff31e0ad5ed18ff9fc426bbfbf8684912f810cea58d24eaa58ea1caf16cb1149",
+      "sceneHash": "3c06e0167afb8424e44e8b3f701a8767b72344f433a25305ae62318452181047",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:sapling:vale",
+      "outputHash": "eb5116c58f33e510c8956e4c34d8e710a588b4ec281e8c964b99abfb4ef15de8",
+      "revision": "76907cf4c9ecb33ed204925bb5379a2fc5290a4594b79a08fd229e2b3521f040",
+      "sceneHash": "07120abb1e9dce7069a8d9369e6838125e0766faa95af047ac4dcd0e23f36701",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:stump:vale",
+      "outputHash": "8c294182e436974d3e651c692fa409a0b7461bb29a977892dc890715f44c8316",
+      "revision": "f0f827e26f9cf8b3d0fe7c8784074ed73aa3ac65943a04beedbb49bf8958d336",
+      "sceneHash": "882f53f3e151bf7c5668b685787bf6b28fa67482acc9ad7e256f0aa5c8baaf4a",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:fallen-log:vale",
+      "outputHash": "110884d6f0c468007212ca60a365796759bf5440a733b469040b14eb2f5d7094",
+      "revision": "89c900b2d34c96781cfcbf6adf6b65fcb20ea3e54105144d3e1eeb4f1fcf08d1",
+      "sceneHash": "e21c8db307203ec0075d682b6f5c6db7dc38559ae66837b26b1fb85affc4ccc4",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:cattails:march",
+      "outputHash": "527bd4994a724d6fa114f83c0d1f1ca5c8826fee94e76e8e287118e0733f0631",
+      "revision": "bcbf13293dfeda0622209b09cd8f8fa6d82f9e9ef556f59fe31ad7bb8fbe088f",
+      "sceneHash": "79c1212ead70381bf5118a2f9b17d9eab569c0dbfc8644f63d67917664bd1826",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:driftwood:march",
+      "outputHash": "ba6bb436ab4095736bf08cd5951b06de660bebc14775c9908ed7f4c1d0cc572c",
+      "revision": "e4b76afc204bf6c6ab32d5b27f8724bab1b44785dd73df16b5da4375c16d8fef",
+      "sceneHash": "1e5dc5df1623611c71f27114e1de9070d979c04d4f705645a2bef7e21033dbbd",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:mangrove:march",
+      "outputHash": "66470852c98453954d944e12f08eb9717bb700e5e306b67e2aa0a6f8e3db74f6",
+      "revision": "03b33a59106f2f06d7ccc631e91aefbf24979a41deb6982330a222ab7b4b988b",
+      "sceneHash": "a4254b4394981b6a64df523929ad9efb4efee2e0f896d1f8fb82cfce9c8f8bfd",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:pine-sapling:highlands",
+      "outputHash": "7460dfe2bd989d15ba3d8328515ee9871d6dc8c070c89b6cabdaf100ef585394",
+      "revision": "e69104a8e4db20d089730c89f144818ae7d5694ad6256ea3764f72c4e67db1ff",
+      "sceneHash": "0cbdccc70bc36f5faf28497978cd53e346020f400b7f96b24a0854d6c114b05d",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:alpine-scrub:highlands",
+      "outputHash": "642fe1147d40ee5857e5623e98db6ba6e36230f7f720a681fad3662087fce2af",
+      "revision": "467ccfb86255a551b1b0915beee60a30690d5a1789e5a49207f03b636f56e926",
+      "sceneHash": "fe1e7e672dfc54657e9d77dcc54095bda8f1b8d5874b8a5bfab1304dc8bb52aa",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:marsh-bush:march",
+      "outputHash": "61da77246ff31080bd7a4b04d44ed6cc68993e7fd6e5e0b8ac36a33ec8623cbd",
+      "revision": "118fbe63dae6b52d36264e7daf4e059fc96b8ca44eec12f4866c72de25c00dbd",
+      "sceneHash": "39122e4bc8745eab9f4623e57312903ef23f0198038672c2581939ae367e51d5",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:rock-cluster:highlands",
+      "outputHash": "7234ba4b67bc2843e827f5cd782cefadb46f33da2f9cd979ca52d350c982a41d",
+      "revision": "12d861bfbd8e444de15347b30c3a84dd202ca70356a72348fde03911e295470e",
+      "sceneHash": "6b860f4841f2e31c5f8ba6ec2ab7bd3aaa4c963d0acc68e337ea9fc729428416",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:dead-tree:frontier",
+      "outputHash": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a",
+      "revision": "11f292f12c942d594578672c806d5762917f58b0ebd9fef240b1513f0d266659",
+      "sceneHash": "041797430252e6405b08fa4be2a3a5193ecb3b47cc04f0b40b47a167224386c0",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:charred-stump:frontier",
+      "outputHash": "38f73cbd6054f7b7abf089f2843ff68e0e1da5222d7331cf83a4d2ff9c716cd3",
+      "revision": "65fd474dd3462b6c2ced3ea8164680f10e7ce547ceefb9feb783b14ed967bee6",
+      "sceneHash": "a2a69ab3ea1ddc7b4e13b5c5d8685d314927490ac17053ef57f64f5949809aac",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:dry-scrub:frontier",
+      "outputHash": "fa5a8422a5cad726a6c703210f03ba72d3d1934530d3c9567c08b9a0f260c1de",
+      "revision": "30ff5df7b21aafd0c6d5ecbc25b4f3ae53db3c621f976894661b1aea5eec03fc",
+      "sceneHash": "295c7d57aa258fa88ac839de0e2bbc0e20d3c9a39a8ed0634f1b2c3517080b17",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:burned-log:frontier",
+      "outputHash": "b37ecaaedd9800883d383038e9e8e2d36edb36487979d1f2ac38abe8211b158e",
+      "revision": "0812beebd4d6cd157958b66d7db150a75a3cf788aed91be7fd8623d597d7b9b2",
+      "sceneHash": "9943837d1366885146a408ed325882dd72efeca5b5de0ed19820a17177c1711c",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:black-rock:crown",
+      "outputHash": "2f7cde535488261055e586386f02bf91e29aa784a4fa2b3e90ea2c9d3c3b53ef",
+      "revision": "1a59626c1194c2cbc73973cd4949e6da6ae5e01f64dacf5dc26c530f213330bf",
+      "sceneHash": "75348fb8f7c562e24fa2b14a7b2ced7e6cc2a38d04eba8f485bcd3179412a642",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:crystal-cluster:crown",
+      "outputHash": "c05fbeab6b899c0f12d96508b38f81c6a31c01ab33a91430d6483df6315efc98",
+      "revision": "e39d03d38d285320391cd994edb8fa789c5f125dda26f8027a5c6737c207af25",
+      "sceneHash": "aa42cf4e46e2c7513b26d517b4d004d7e407c071f8740867504186716b071a0d",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:dead-shrub:crown",
+      "outputHash": "818f60932ca7f058edd75068205ff54c5ab66781874fa07f16db95a146916b0c",
+      "revision": "8fb97ece19a3d6710a65400279b1c9a62e0b58d5efe716d12535febb8ea70271",
+      "sceneHash": "8b07829383abcef2134d9ba0351a71f80b53e09f2bec17245eff73b575b69e34",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:obsidian:crown",
+      "outputHash": "a4b24f34c911615389eb24ce0e061f09e6db4ecb168ccda842523e853b9305bb",
+      "revision": "44977ce2beb6c690e25365f81c8b4f44025b45027f99b21cf98a336e199bd934",
+      "sceneHash": "0da6947ae3a6fb0af81caa8d23eada94a51aeb52718a0f6f26ad71f8f79d0716",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:heather:highlands",
+      "outputHash": "7e19331a634e148d39c097478172618f9adf9f2c4326aceb28bab81009142baa",
+      "revision": "8918256a9324e1943a0945bfc710a47c751d81ba616095376969f5b366fadbd1",
+      "sceneHash": "d6670a787a553d5920a1f1333f70f456b364c94f2c2ce354b8e2c5f3f1e3c7fb",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:rock:vale",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "f9f92ed67e329fcb87de9115d88da706efcfbe5731caf8530c57b53f840884cf",
+      "sceneHash": "a7f300ceeb3e39ccfb23794abe795397a1ba39a0badb926a87adc63d03a7b255",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:rock:highlands",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "eb9c913e0e3c53e89007d2527339c15c0dc750187d743ac3d38ba02ea321b914",
+      "sceneHash": "37d049b042355b3df3af76e9569c9e578f1e5f1628e4019482e5ade6030dafa9",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:bush:vale",
+      "outputHash": "adf638d1bde016d432a2147dd69f1e34aefd982015f3e8f8f173c1eb9e4644ae",
+      "revision": "f1b1b8008157a434a9ba64d719a1189eb59246a17d120ee71487359229511c84",
+      "sceneHash": "b16c4a11d5bb5e6e20bbd20fc64dfdef1d5b1bb9e34a4b0100387a8a4f784beb",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:wildflowers:vale",
+      "outputHash": "9a23c90223c33de4f3cea73796c5d6044a034712280bab304c4aaf73b07afea9",
+      "revision": "ff31e0ad5ed18ff9fc426bbfbf8684912f810cea58d24eaa58ea1caf16cb1149",
+      "sceneHash": "2cb118755688a51d2b3e13fccdc7f18597f711ec8d63d9ae57b8b0fa87603c4f",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:sapling:vale",
+      "outputHash": "eb5116c58f33e510c8956e4c34d8e710a588b4ec281e8c964b99abfb4ef15de8",
+      "revision": "76907cf4c9ecb33ed204925bb5379a2fc5290a4594b79a08fd229e2b3521f040",
+      "sceneHash": "818f93c68aa4d3ba335720b2fa712fdeafb86baf6fc9b76b33ed8719604d4a6e",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:stump:vale",
+      "outputHash": "8c294182e436974d3e651c692fa409a0b7461bb29a977892dc890715f44c8316",
+      "revision": "f0f827e26f9cf8b3d0fe7c8784074ed73aa3ac65943a04beedbb49bf8958d336",
+      "sceneHash": "91297587b04c7848efea9b860570a37aedf114175fa07a7350e154a59861a2a8",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:fallen-log:vale",
+      "outputHash": "110884d6f0c468007212ca60a365796759bf5440a733b469040b14eb2f5d7094",
+      "revision": "89c900b2d34c96781cfcbf6adf6b65fcb20ea3e54105144d3e1eeb4f1fcf08d1",
+      "sceneHash": "3d55dc29e581eec2cba9db15900bc81a6cef2a2a9b8847b5de06e1f0df04ac37",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:cattails:march",
+      "outputHash": "527bd4994a724d6fa114f83c0d1f1ca5c8826fee94e76e8e287118e0733f0631",
+      "revision": "bcbf13293dfeda0622209b09cd8f8fa6d82f9e9ef556f59fe31ad7bb8fbe088f",
+      "sceneHash": "118c409dfa44ae747da969576da12305b9d5f265ceafae3ffbfcdbc34ffd5613",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:driftwood:march",
+      "outputHash": "ba6bb436ab4095736bf08cd5951b06de660bebc14775c9908ed7f4c1d0cc572c",
+      "revision": "e4b76afc204bf6c6ab32d5b27f8724bab1b44785dd73df16b5da4375c16d8fef",
+      "sceneHash": "e794ad59a51283c82555e266d46f9e629466c0707c03fdf0b5a5905e2b509f86",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:mangrove:march",
+      "outputHash": "66470852c98453954d944e12f08eb9717bb700e5e306b67e2aa0a6f8e3db74f6",
+      "revision": "03b33a59106f2f06d7ccc631e91aefbf24979a41deb6982330a222ab7b4b988b",
+      "sceneHash": "e65a1f4ae09a386573907163b86435f01724b97f3892f575d7afde46cc14033d",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:pine-sapling:highlands",
+      "outputHash": "7460dfe2bd989d15ba3d8328515ee9871d6dc8c070c89b6cabdaf100ef585394",
+      "revision": "e69104a8e4db20d089730c89f144818ae7d5694ad6256ea3764f72c4e67db1ff",
+      "sceneHash": "1aad6aa6e21718b95380b056b96acbdf464c5e35dadbb417362aa860f27ed24e",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:alpine-scrub:highlands",
+      "outputHash": "642fe1147d40ee5857e5623e98db6ba6e36230f7f720a681fad3662087fce2af",
+      "revision": "467ccfb86255a551b1b0915beee60a30690d5a1789e5a49207f03b636f56e926",
+      "sceneHash": "9a2b380acfdd59e8802a26bfd77b62cb627689268b8fd5e172ab18b80c43bcdc",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:marsh-bush:march",
+      "outputHash": "61da77246ff31080bd7a4b04d44ed6cc68993e7fd6e5e0b8ac36a33ec8623cbd",
+      "revision": "118fbe63dae6b52d36264e7daf4e059fc96b8ca44eec12f4866c72de25c00dbd",
+      "sceneHash": "10a181bcececa4e13c560ff36bd9d71276655ee84fe59ab8e5b9ed43fcbc80d1",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:rock-cluster:highlands",
+      "outputHash": "7234ba4b67bc2843e827f5cd782cefadb46f33da2f9cd979ca52d350c982a41d",
+      "revision": "12d861bfbd8e444de15347b30c3a84dd202ca70356a72348fde03911e295470e",
+      "sceneHash": "1deb993d161d5f39defac6e0f7f8188644f5b9f389d923cbec97b29257c9103c",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:dead-tree:frontier",
+      "outputHash": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a",
+      "revision": "11f292f12c942d594578672c806d5762917f58b0ebd9fef240b1513f0d266659",
+      "sceneHash": "7d45e02eed583c3afa7f9adec70187eac05ccb02708e43c4f12e0f3d6cb6b688",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:charred-stump:frontier",
+      "outputHash": "38f73cbd6054f7b7abf089f2843ff68e0e1da5222d7331cf83a4d2ff9c716cd3",
+      "revision": "65fd474dd3462b6c2ced3ea8164680f10e7ce547ceefb9feb783b14ed967bee6",
+      "sceneHash": "86301c320db6cbf3ab98149b86076a7d7c2b20d5a4b68882257aba63ddb7c146",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:dry-scrub:frontier",
+      "outputHash": "fa5a8422a5cad726a6c703210f03ba72d3d1934530d3c9567c08b9a0f260c1de",
+      "revision": "30ff5df7b21aafd0c6d5ecbc25b4f3ae53db3c621f976894661b1aea5eec03fc",
+      "sceneHash": "3575fd1c0839111578f3f9fcab1c6684420886bc6da065eaeffd7a590f96d5eb",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:burned-log:frontier",
+      "outputHash": "b37ecaaedd9800883d383038e9e8e2d36edb36487979d1f2ac38abe8211b158e",
+      "revision": "0812beebd4d6cd157958b66d7db150a75a3cf788aed91be7fd8623d597d7b9b2",
+      "sceneHash": "e235db6670f83a0da125d81b83a259d2286ce9c4a918d3001e7f2ab050d30e80",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:black-rock:crown",
+      "outputHash": "2f7cde535488261055e586386f02bf91e29aa784a4fa2b3e90ea2c9d3c3b53ef",
+      "revision": "1a59626c1194c2cbc73973cd4949e6da6ae5e01f64dacf5dc26c530f213330bf",
+      "sceneHash": "6e4b8ad3074e320844a6a6d16857dc80ac1b13ab9d541927fe7833c068b18d86",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:crystal-cluster:crown",
+      "outputHash": "c05fbeab6b899c0f12d96508b38f81c6a31c01ab33a91430d6483df6315efc98",
+      "revision": "e39d03d38d285320391cd994edb8fa789c5f125dda26f8027a5c6737c207af25",
+      "sceneHash": "672482e8b0b3a8b7023b2709b68343b340252475f75e45b2b11f66d15fa6cd98",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:dead-shrub:crown",
+      "outputHash": "818f60932ca7f058edd75068205ff54c5ab66781874fa07f16db95a146916b0c",
+      "revision": "8fb97ece19a3d6710a65400279b1c9a62e0b58d5efe716d12535febb8ea70271",
+      "sceneHash": "8b4adafbb71af1c7d2018df9da7ca0c9f5b693aac036886f0e0e2c3c27990beb",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:obsidian:crown",
+      "outputHash": "a4b24f34c911615389eb24ce0e061f09e6db4ecb168ccda842523e853b9305bb",
+      "revision": "44977ce2beb6c690e25365f81c8b4f44025b45027f99b21cf98a336e199bd934",
+      "sceneHash": "45fae158bed536468b968cb3b36d7b73ef833c40c3c566a9d12f21fb79c4f076",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:heather:highlands",
+      "outputHash": "7e19331a634e148d39c097478172618f9adf9f2c4326aceb28bab81009142baa",
+      "revision": "8918256a9324e1943a0945bfc710a47c751d81ba616095376969f5b366fadbd1",
+      "sceneHash": "0516eb24d5152cd48aa4a4181b8827d772c94b500b96bd8b0f85fab4a8028527",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:rock:vale",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "f9f92ed67e329fcb87de9115d88da706efcfbe5731caf8530c57b53f840884cf",
+      "sceneHash": "ed9b191087ea679bf1327894947aa973d07dcd6c8ee94ec073695d773353bdb5",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:rock:highlands",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "eb9c913e0e3c53e89007d2527339c15c0dc750187d743ac3d38ba02ea321b914",
+      "sceneHash": "3955e64d8d41407902139cc53464939b653fe8d2f937aa1d293958677fbe2548",
+      "anchor": {
+        "x": 82.5,
+        "y": 414.54
+      },
+      "ratio": 1.5012722646310432,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:bush:vale",
+      "outputHash": "adf638d1bde016d432a2147dd69f1e34aefd982015f3e8f8f173c1eb9e4644ae",
+      "revision": "f1b1b8008157a434a9ba64d719a1189eb59246a17d120ee71487359229511c84",
+      "sceneHash": "7c2cf9fe4e692ec48e4310e0555c98bf1f2c95717a20885149e4fa2bbbe64d5e",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:wildflowers:vale",
+      "outputHash": "9a23c90223c33de4f3cea73796c5d6044a034712280bab304c4aaf73b07afea9",
+      "revision": "ff31e0ad5ed18ff9fc426bbfbf8684912f810cea58d24eaa58ea1caf16cb1149",
+      "sceneHash": "dc6012f73c6ddd84854e09b12c1a00fdf877dceb3cd608b83682492da7ede227",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:sapling:vale",
+      "outputHash": "eb5116c58f33e510c8956e4c34d8e710a588b4ec281e8c964b99abfb4ef15de8",
+      "revision": "76907cf4c9ecb33ed204925bb5379a2fc5290a4594b79a08fd229e2b3521f040",
+      "sceneHash": "e2dd99957a2d28eea3d487c224177ad5a3e776510bcfd7976d0f8703f0bf4f8c",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:stump:vale",
+      "outputHash": "8c294182e436974d3e651c692fa409a0b7461bb29a977892dc890715f44c8316",
+      "revision": "f0f827e26f9cf8b3d0fe7c8784074ed73aa3ac65943a04beedbb49bf8958d336",
+      "sceneHash": "97401833bba9332d5a20a671ddd2b2d2acebf707403c5eec57955f7b933a0cf9",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:fallen-log:vale",
+      "outputHash": "110884d6f0c468007212ca60a365796759bf5440a733b469040b14eb2f5d7094",
+      "revision": "89c900b2d34c96781cfcbf6adf6b65fcb20ea3e54105144d3e1eeb4f1fcf08d1",
+      "sceneHash": "e59d097b1a554271e42534e68966764e06a42bd628b1801f4649cfa1050a6a8b",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:cattails:march",
+      "outputHash": "527bd4994a724d6fa114f83c0d1f1ca5c8826fee94e76e8e287118e0733f0631",
+      "revision": "bcbf13293dfeda0622209b09cd8f8fa6d82f9e9ef556f59fe31ad7bb8fbe088f",
+      "sceneHash": "533eb00ddea52c99eee915b677286559d14b3c63d38aef90290f5f7879677aa5",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:driftwood:march",
+      "outputHash": "ba6bb436ab4095736bf08cd5951b06de660bebc14775c9908ed7f4c1d0cc572c",
+      "revision": "e4b76afc204bf6c6ab32d5b27f8724bab1b44785dd73df16b5da4375c16d8fef",
+      "sceneHash": "535f8c9de0f1b6e5c70236d1df886b6c5a9a6695818f5d47a31988a9a5ef9fac",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:mangrove:march",
+      "outputHash": "66470852c98453954d944e12f08eb9717bb700e5e306b67e2aa0a6f8e3db74f6",
+      "revision": "03b33a59106f2f06d7ccc631e91aefbf24979a41deb6982330a222ab7b4b988b",
+      "sceneHash": "94bf44018889c8bf5fface3960b66697987c51ac7c1502c0ea917e42e1aa4649",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:pine-sapling:highlands",
+      "outputHash": "7460dfe2bd989d15ba3d8328515ee9871d6dc8c070c89b6cabdaf100ef585394",
+      "revision": "e69104a8e4db20d089730c89f144818ae7d5694ad6256ea3764f72c4e67db1ff",
+      "sceneHash": "77dd87298a4b9cf2812e78a2adc986c0bf1c847acce34f1ba6ade0383113e272",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:alpine-scrub:highlands",
+      "outputHash": "642fe1147d40ee5857e5623e98db6ba6e36230f7f720a681fad3662087fce2af",
+      "revision": "467ccfb86255a551b1b0915beee60a30690d5a1789e5a49207f03b636f56e926",
+      "sceneHash": "513145a088d2e4bc643adf87eaebb47f3cbc0330fba6d2ab377bfaebec806e27",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:marsh-bush:march",
+      "outputHash": "61da77246ff31080bd7a4b04d44ed6cc68993e7fd6e5e0b8ac36a33ec8623cbd",
+      "revision": "118fbe63dae6b52d36264e7daf4e059fc96b8ca44eec12f4866c72de25c00dbd",
+      "sceneHash": "37379a978eed7aa190910db87c0868e38d2f8064adb2f382f789e6d4618c384b",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:rock-cluster:highlands",
+      "outputHash": "7234ba4b67bc2843e827f5cd782cefadb46f33da2f9cd979ca52d350c982a41d",
+      "revision": "12d861bfbd8e444de15347b30c3a84dd202ca70356a72348fde03911e295470e",
+      "sceneHash": "112181182723812e80f7d3f4a2fdc495da74f69d357988a1866cbec7765dfe04",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:dead-tree:frontier",
+      "outputHash": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a",
+      "revision": "11f292f12c942d594578672c806d5762917f58b0ebd9fef240b1513f0d266659",
+      "sceneHash": "e1c292836fb43978f29bb487793626ac79d4d56889eadd1181c5e44b579f2518",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:charred-stump:frontier",
+      "outputHash": "38f73cbd6054f7b7abf089f2843ff68e0e1da5222d7331cf83a4d2ff9c716cd3",
+      "revision": "65fd474dd3462b6c2ced3ea8164680f10e7ce547ceefb9feb783b14ed967bee6",
+      "sceneHash": "427a774fdfc6f9086577c5f49ab9bbf9383c639fa450dae7c1eabf3af4c128d1",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:dry-scrub:frontier",
+      "outputHash": "fa5a8422a5cad726a6c703210f03ba72d3d1934530d3c9567c08b9a0f260c1de",
+      "revision": "30ff5df7b21aafd0c6d5ecbc25b4f3ae53db3c621f976894661b1aea5eec03fc",
+      "sceneHash": "0c76c91601790ed7ee0545ed57302a3f1ee5af25c888b8aed591a666f00323cc",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:burned-log:frontier",
+      "outputHash": "b37ecaaedd9800883d383038e9e8e2d36edb36487979d1f2ac38abe8211b158e",
+      "revision": "0812beebd4d6cd157958b66d7db150a75a3cf788aed91be7fd8623d597d7b9b2",
+      "sceneHash": "b453d94bfa5a02de05133043d7b99726ed52a6e4bb750c008a5ef7943d343ca7",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:black-rock:crown",
+      "outputHash": "2f7cde535488261055e586386f02bf91e29aa784a4fa2b3e90ea2c9d3c3b53ef",
+      "revision": "1a59626c1194c2cbc73973cd4949e6da6ae5e01f64dacf5dc26c530f213330bf",
+      "sceneHash": "c5542138e69563313250cd36a51e4cc43a7b1b3803d72107a98c478a8786ac4a",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:crystal-cluster:crown",
+      "outputHash": "c05fbeab6b899c0f12d96508b38f81c6a31c01ab33a91430d6483df6315efc98",
+      "revision": "e39d03d38d285320391cd994edb8fa789c5f125dda26f8027a5c6737c207af25",
+      "sceneHash": "b1e9fe80285844f9ad0f6dd83707f3fc23648b9118a2f47ccedad7988ba7e92e",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:dead-shrub:crown",
+      "outputHash": "818f60932ca7f058edd75068205ff54c5ab66781874fa07f16db95a146916b0c",
+      "revision": "8fb97ece19a3d6710a65400279b1c9a62e0b58d5efe716d12535febb8ea70271",
+      "sceneHash": "d9ded81c745ef619ae1103c5209460da8852d03f2bc0b7115a5213ded5f2b0a7",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:obsidian:crown",
+      "outputHash": "a4b24f34c911615389eb24ce0e061f09e6db4ecb168ccda842523e853b9305bb",
+      "revision": "44977ce2beb6c690e25365f81c8b4f44025b45027f99b21cf98a336e199bd934",
+      "sceneHash": "adf932dba6e29d9d14d81357b118fefa9f572805543413e170e0af1587205add",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:heather:highlands",
+      "outputHash": "7e19331a634e148d39c097478172618f9adf9f2c4326aceb28bab81009142baa",
+      "revision": "8918256a9324e1943a0945bfc710a47c751d81ba616095376969f5b366fadbd1",
+      "sceneHash": "eceed7bf7d0ca3d74658a422d4cdac2fd21804dccb01047daab688bd3978b2f0",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:rock:vale",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "f9f92ed67e329fcb87de9115d88da706efcfbe5731caf8530c57b53f840884cf",
+      "sceneHash": "7ac3f11ce0138929ea3c3c18711deff5c2ee56e89e9e22f9820d89d966099511",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:rock:highlands",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "eb9c913e0e3c53e89007d2527339c15c0dc750187d743ac3d38ba02ea321b914",
+      "sceneHash": "aac18d7c2d93bcc30cb91001bb43eb6a5ba8659ebe3e58c7cb7f17409549b2d5",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:bush:vale",
+      "outputHash": "adf638d1bde016d432a2147dd69f1e34aefd982015f3e8f8f173c1eb9e4644ae",
+      "revision": "f1b1b8008157a434a9ba64d719a1189eb59246a17d120ee71487359229511c84",
+      "sceneHash": "ff37d89e77b951a98ae6943d9bcbb15cec7a670c0294d2194ca610bf0754f942",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:wildflowers:vale",
+      "outputHash": "9a23c90223c33de4f3cea73796c5d6044a034712280bab304c4aaf73b07afea9",
+      "revision": "ff31e0ad5ed18ff9fc426bbfbf8684912f810cea58d24eaa58ea1caf16cb1149",
+      "sceneHash": "af70b56f9818538c2568ad92fde840e324ba0d3ad160f6b31267a9ef917204fc",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:sapling:vale",
+      "outputHash": "eb5116c58f33e510c8956e4c34d8e710a588b4ec281e8c964b99abfb4ef15de8",
+      "revision": "76907cf4c9ecb33ed204925bb5379a2fc5290a4594b79a08fd229e2b3521f040",
+      "sceneHash": "35c2f13c7a6f127c6221d82d061f3b574a109d78b7033bec895813b157ff2aef",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:stump:vale",
+      "outputHash": "8c294182e436974d3e651c692fa409a0b7461bb29a977892dc890715f44c8316",
+      "revision": "f0f827e26f9cf8b3d0fe7c8784074ed73aa3ac65943a04beedbb49bf8958d336",
+      "sceneHash": "49880627aee26dcfe3e5a821f7ca6fbd39590233e8b1d35aea4477b6a6f91d99",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:fallen-log:vale",
+      "outputHash": "110884d6f0c468007212ca60a365796759bf5440a733b469040b14eb2f5d7094",
+      "revision": "89c900b2d34c96781cfcbf6adf6b65fcb20ea3e54105144d3e1eeb4f1fcf08d1",
+      "sceneHash": "fd1fbed646c4c133674e247044ea409124f01865117321a4beba0bd50cc42d3f",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:cattails:march",
+      "outputHash": "527bd4994a724d6fa114f83c0d1f1ca5c8826fee94e76e8e287118e0733f0631",
+      "revision": "bcbf13293dfeda0622209b09cd8f8fa6d82f9e9ef556f59fe31ad7bb8fbe088f",
+      "sceneHash": "de51b76c1f1e009b84bcfb636d9deb87350ddc5394bca96a4a26a4e00ad13ab0",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:driftwood:march",
+      "outputHash": "ba6bb436ab4095736bf08cd5951b06de660bebc14775c9908ed7f4c1d0cc572c",
+      "revision": "e4b76afc204bf6c6ab32d5b27f8724bab1b44785dd73df16b5da4375c16d8fef",
+      "sceneHash": "cc167843b7fa19e2fc1c197413ff8b2f798812845fe5f2ad53d1498d6520bac6",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:mangrove:march",
+      "outputHash": "66470852c98453954d944e12f08eb9717bb700e5e306b67e2aa0a6f8e3db74f6",
+      "revision": "03b33a59106f2f06d7ccc631e91aefbf24979a41deb6982330a222ab7b4b988b",
+      "sceneHash": "f9ff2625b22a1fb5ca21867213396b46a9c1d5b77b3b3b21837e8d082b9237ec",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:pine-sapling:highlands",
+      "outputHash": "7460dfe2bd989d15ba3d8328515ee9871d6dc8c070c89b6cabdaf100ef585394",
+      "revision": "e69104a8e4db20d089730c89f144818ae7d5694ad6256ea3764f72c4e67db1ff",
+      "sceneHash": "1bba49f9f3f9083f8a8da2bb21d4bf48dfdca37b2bc5f2bdc7593f6cbd21aed8",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:alpine-scrub:highlands",
+      "outputHash": "642fe1147d40ee5857e5623e98db6ba6e36230f7f720a681fad3662087fce2af",
+      "revision": "467ccfb86255a551b1b0915beee60a30690d5a1789e5a49207f03b636f56e926",
+      "sceneHash": "d4a04058313bfbf382526de76235ede27802f44e97114f2e9e8affe8f0693dd3",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:marsh-bush:march",
+      "outputHash": "61da77246ff31080bd7a4b04d44ed6cc68993e7fd6e5e0b8ac36a33ec8623cbd",
+      "revision": "118fbe63dae6b52d36264e7daf4e059fc96b8ca44eec12f4866c72de25c00dbd",
+      "sceneHash": "62a12a834f96efec1ff71b712ae1a768436cd00dfa2980da576f56bb0fbafa2e",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:rock-cluster:highlands",
+      "outputHash": "7234ba4b67bc2843e827f5cd782cefadb46f33da2f9cd979ca52d350c982a41d",
+      "revision": "12d861bfbd8e444de15347b30c3a84dd202ca70356a72348fde03911e295470e",
+      "sceneHash": "b7090660c51becdf1d14a6104219f23ebf4bb15b9ed2823c48f212fcefa1de6b",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:dead-tree:frontier",
+      "outputHash": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a",
+      "revision": "11f292f12c942d594578672c806d5762917f58b0ebd9fef240b1513f0d266659",
+      "sceneHash": "1c2c67d86d4f9cc1263be3db310bf27074ff7b3523d5c49e522fd627212bb888",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:charred-stump:frontier",
+      "outputHash": "38f73cbd6054f7b7abf089f2843ff68e0e1da5222d7331cf83a4d2ff9c716cd3",
+      "revision": "65fd474dd3462b6c2ced3ea8164680f10e7ce547ceefb9feb783b14ed967bee6",
+      "sceneHash": "4c38b0c7a0f8c9ea47f780d042f8b3a7170e3dbaf53ec3612eded24ee34df7d7",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:dry-scrub:frontier",
+      "outputHash": "fa5a8422a5cad726a6c703210f03ba72d3d1934530d3c9567c08b9a0f260c1de",
+      "revision": "30ff5df7b21aafd0c6d5ecbc25b4f3ae53db3c621f976894661b1aea5eec03fc",
+      "sceneHash": "60e8e333e99deb5c3361cc958f6ee8ab2c5f771b876a2c0e9e6a2f5042395161",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:burned-log:frontier",
+      "outputHash": "b37ecaaedd9800883d383038e9e8e2d36edb36487979d1f2ac38abe8211b158e",
+      "revision": "0812beebd4d6cd157958b66d7db150a75a3cf788aed91be7fd8623d597d7b9b2",
+      "sceneHash": "f29d0bf6bfa9606e994f8c4204e0015001e7fce9de96bbe82c31ce4f7b6b8aa8",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:black-rock:crown",
+      "outputHash": "2f7cde535488261055e586386f02bf91e29aa784a4fa2b3e90ea2c9d3c3b53ef",
+      "revision": "1a59626c1194c2cbc73973cd4949e6da6ae5e01f64dacf5dc26c530f213330bf",
+      "sceneHash": "77fa7990ae699881ed1713181b80f00059d98837f459ffdf53424cbcab0a160c",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:crystal-cluster:crown",
+      "outputHash": "c05fbeab6b899c0f12d96508b38f81c6a31c01ab33a91430d6483df6315efc98",
+      "revision": "e39d03d38d285320391cd994edb8fa789c5f125dda26f8027a5c6737c207af25",
+      "sceneHash": "bd801c682c1fd9c1b66a8b2334d3b6f7b73e3c047b6dffa0c5fece9189fc37d1",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:dead-shrub:crown",
+      "outputHash": "818f60932ca7f058edd75068205ff54c5ab66781874fa07f16db95a146916b0c",
+      "revision": "8fb97ece19a3d6710a65400279b1c9a62e0b58d5efe716d12535febb8ea70271",
+      "sceneHash": "4cac69b705fe047bf387309de9fde07931cc23940a6c38ee97a8eed4c37936cc",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:obsidian:crown",
+      "outputHash": "a4b24f34c911615389eb24ce0e061f09e6db4ecb168ccda842523e853b9305bb",
+      "revision": "44977ce2beb6c690e25365f81c8b4f44025b45027f99b21cf98a336e199bd934",
+      "sceneHash": "f8e1531bdf5fdb3acba49f9ff09d157c21a49410af0f8458ac472dcfd5d2edff",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:heather:highlands",
+      "outputHash": "7e19331a634e148d39c097478172618f9adf9f2c4326aceb28bab81009142baa",
+      "revision": "8918256a9324e1943a0945bfc710a47c751d81ba616095376969f5b366fadbd1",
+      "sceneHash": "5857a00b83ef6477dda5af8d33083ab7ee8e9ab098dc5e648e6484cfa7b75e1d",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:rock:vale",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "f9f92ed67e329fcb87de9115d88da706efcfbe5731caf8530c57b53f840884cf",
+      "sceneHash": "5be69124ea854d2fa5dc00228f80b2c5ce5ba03aba13ccbed5bf87c0d2fa6f2a",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:rock:highlands",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "eb9c913e0e3c53e89007d2527339c15c0dc750187d743ac3d38ba02ea321b914",
+      "sceneHash": "c0f336d68ee66c00c98d9fe21822d32da82991f1a382422ac6ad3d4bfa8fd68d",
+      "anchor": {
+        "x": 286,
+        "y": 214.20000000000002
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:bush:vale",
+      "outputHash": "adf638d1bde016d432a2147dd69f1e34aefd982015f3e8f8f173c1eb9e4644ae",
+      "revision": "f1b1b8008157a434a9ba64d719a1189eb59246a17d120ee71487359229511c84",
+      "sceneHash": "463edacdad099a4ac2b55407aadf7020fc45fdd21ae0d658a93f09fb31c1f954",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:wildflowers:vale",
+      "outputHash": "9a23c90223c33de4f3cea73796c5d6044a034712280bab304c4aaf73b07afea9",
+      "revision": "ff31e0ad5ed18ff9fc426bbfbf8684912f810cea58d24eaa58ea1caf16cb1149",
+      "sceneHash": "5ee0513f09ebc810e0f80d21b6a2f989ef90ef5496fc3d19cbfe10db17e4729b",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:sapling:vale",
+      "outputHash": "eb5116c58f33e510c8956e4c34d8e710a588b4ec281e8c964b99abfb4ef15de8",
+      "revision": "76907cf4c9ecb33ed204925bb5379a2fc5290a4594b79a08fd229e2b3521f040",
+      "sceneHash": "044f251ed6703aa4e08a6c86e3394ff158dd0d517ce5355cff0b91feddcd91ce",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:stump:vale",
+      "outputHash": "8c294182e436974d3e651c692fa409a0b7461bb29a977892dc890715f44c8316",
+      "revision": "f0f827e26f9cf8b3d0fe7c8784074ed73aa3ac65943a04beedbb49bf8958d336",
+      "sceneHash": "7f916c50ca4a9cfb4aefca4cc4774e668c100d3686ba50d9107729e881c09b8b",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:fallen-log:vale",
+      "outputHash": "110884d6f0c468007212ca60a365796759bf5440a733b469040b14eb2f5d7094",
+      "revision": "89c900b2d34c96781cfcbf6adf6b65fcb20ea3e54105144d3e1eeb4f1fcf08d1",
+      "sceneHash": "27c13ef513b74707dec53c40324748b9102823b5499ec57e1619b8ac554bb1b7",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:cattails:march",
+      "outputHash": "527bd4994a724d6fa114f83c0d1f1ca5c8826fee94e76e8e287118e0733f0631",
+      "revision": "bcbf13293dfeda0622209b09cd8f8fa6d82f9e9ef556f59fe31ad7bb8fbe088f",
+      "sceneHash": "050fd9408416d88a675da539f7409a8cdfd288e80a8de6c29575bc69fadbb112",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:driftwood:march",
+      "outputHash": "ba6bb436ab4095736bf08cd5951b06de660bebc14775c9908ed7f4c1d0cc572c",
+      "revision": "e4b76afc204bf6c6ab32d5b27f8724bab1b44785dd73df16b5da4375c16d8fef",
+      "sceneHash": "f0dac72da796affb5af149294759b595b65ae6ad0009610a4f5839e119ac56a7",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:mangrove:march",
+      "outputHash": "66470852c98453954d944e12f08eb9717bb700e5e306b67e2aa0a6f8e3db74f6",
+      "revision": "03b33a59106f2f06d7ccc631e91aefbf24979a41deb6982330a222ab7b4b988b",
+      "sceneHash": "460c9995df9ce37609c978dde85008708e2cb37b283d9df7d15886009caa1ed6",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:pine-sapling:highlands",
+      "outputHash": "7460dfe2bd989d15ba3d8328515ee9871d6dc8c070c89b6cabdaf100ef585394",
+      "revision": "e69104a8e4db20d089730c89f144818ae7d5694ad6256ea3764f72c4e67db1ff",
+      "sceneHash": "a00e095f010e642e2967fb4ae349ca7fc6698f688a43790284ded20ef0313e45",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:alpine-scrub:highlands",
+      "outputHash": "642fe1147d40ee5857e5623e98db6ba6e36230f7f720a681fad3662087fce2af",
+      "revision": "467ccfb86255a551b1b0915beee60a30690d5a1789e5a49207f03b636f56e926",
+      "sceneHash": "6d766376b8a84104274d1c99abd90aa99bb33991eafeaf06d752f21b9f576a29",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:marsh-bush:march",
+      "outputHash": "61da77246ff31080bd7a4b04d44ed6cc68993e7fd6e5e0b8ac36a33ec8623cbd",
+      "revision": "118fbe63dae6b52d36264e7daf4e059fc96b8ca44eec12f4866c72de25c00dbd",
+      "sceneHash": "5349de720d9129c8282186f68ebc261933f3ba08f154fcb53ccc59d108729cca",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:rock-cluster:highlands",
+      "outputHash": "7234ba4b67bc2843e827f5cd782cefadb46f33da2f9cd979ca52d350c982a41d",
+      "revision": "12d861bfbd8e444de15347b30c3a84dd202ca70356a72348fde03911e295470e",
+      "sceneHash": "a4c379328239849512897a5a81c608bac97d6ab684f80be66fdbfb1f534d1dcf",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:dead-tree:frontier",
+      "outputHash": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a",
+      "revision": "11f292f12c942d594578672c806d5762917f58b0ebd9fef240b1513f0d266659",
+      "sceneHash": "40e85cdd47d474301183caf1b331c86dd6f572dd77844e78dd3de2d2752674cf",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:charred-stump:frontier",
+      "outputHash": "38f73cbd6054f7b7abf089f2843ff68e0e1da5222d7331cf83a4d2ff9c716cd3",
+      "revision": "65fd474dd3462b6c2ced3ea8164680f10e7ce547ceefb9feb783b14ed967bee6",
+      "sceneHash": "4a36238c5ca4df8dfc79487c8bc75caeec63d9c20de6d35b97612b3e6b3d51d6",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:dry-scrub:frontier",
+      "outputHash": "fa5a8422a5cad726a6c703210f03ba72d3d1934530d3c9567c08b9a0f260c1de",
+      "revision": "30ff5df7b21aafd0c6d5ecbc25b4f3ae53db3c621f976894661b1aea5eec03fc",
+      "sceneHash": "713262dbbf29f5cc848d2b24a738fe4845b49b728e82a411faa084a0f2bf6715",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:burned-log:frontier",
+      "outputHash": "b37ecaaedd9800883d383038e9e8e2d36edb36487979d1f2ac38abe8211b158e",
+      "revision": "0812beebd4d6cd157958b66d7db150a75a3cf788aed91be7fd8623d597d7b9b2",
+      "sceneHash": "833a988251eb6a8726752ab4f57b0e7a3e0684a756cd59f49479163ecdc439e8",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:black-rock:crown",
+      "outputHash": "2f7cde535488261055e586386f02bf91e29aa784a4fa2b3e90ea2c9d3c3b53ef",
+      "revision": "1a59626c1194c2cbc73973cd4949e6da6ae5e01f64dacf5dc26c530f213330bf",
+      "sceneHash": "59e78173bcad35763707e7fd36c7067a90ea72d5ca5853ddd3b2fa57d5336f48",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:crystal-cluster:crown",
+      "outputHash": "c05fbeab6b899c0f12d96508b38f81c6a31c01ab33a91430d6483df6315efc98",
+      "revision": "e39d03d38d285320391cd994edb8fa789c5f125dda26f8027a5c6737c207af25",
+      "sceneHash": "dc2b69b4af9f8589a2e72b15049ce1d66cf0bbb848233ad0871a4ff61518c16f",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:dead-shrub:crown",
+      "outputHash": "818f60932ca7f058edd75068205ff54c5ab66781874fa07f16db95a146916b0c",
+      "revision": "8fb97ece19a3d6710a65400279b1c9a62e0b58d5efe716d12535febb8ea70271",
+      "sceneHash": "8fe570f5edbe740788b08bbd767f2fea1a478dd32719af019967d09aa2c404e0",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:obsidian:crown",
+      "outputHash": "a4b24f34c911615389eb24ce0e061f09e6db4ecb168ccda842523e853b9305bb",
+      "revision": "44977ce2beb6c690e25365f81c8b4f44025b45027f99b21cf98a336e199bd934",
+      "sceneHash": "ad97ab328bd31a694b353f2af2dca33083b741cf624d4104b653b9a670108031",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:heather:highlands",
+      "outputHash": "7e19331a634e148d39c097478172618f9adf9f2c4326aceb28bab81009142baa",
+      "revision": "8918256a9324e1943a0945bfc710a47c751d81ba616095376969f5b366fadbd1",
+      "sceneHash": "90d0056d73493b4ce04f840f39a375a255f173c3c0b5f379c7eb9436c1057cab",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:rock:vale",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "f9f92ed67e329fcb87de9115d88da706efcfbe5731caf8530c57b53f840884cf",
+      "sceneHash": "9dd378d2ba936059c6adafba1cb25219b22a6fe045512866b9d62855ce0253a6",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "day",
+      "key": "prop:rock:highlands",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "eb9c913e0e3c53e89007d2527339c15c0dc750187d743ac3d38ba02ea321b914",
+      "sceneHash": "bc6c3ecdf948e2f430949fb5228fecf15a813cc107c4c3c66b90c0d1702d8712",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:bush:vale",
+      "outputHash": "adf638d1bde016d432a2147dd69f1e34aefd982015f3e8f8f173c1eb9e4644ae",
+      "revision": "f1b1b8008157a434a9ba64d719a1189eb59246a17d120ee71487359229511c84",
+      "sceneHash": "2aae4ace692d45411000e9e7d98def9e81ac4c92acc738cad19f0a36cc002af1",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:wildflowers:vale",
+      "outputHash": "9a23c90223c33de4f3cea73796c5d6044a034712280bab304c4aaf73b07afea9",
+      "revision": "ff31e0ad5ed18ff9fc426bbfbf8684912f810cea58d24eaa58ea1caf16cb1149",
+      "sceneHash": "bc680f877216baf4837fd8fbb411e458072e5b696b5ff25bde0f3e9b5fb4b1d2",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:sapling:vale",
+      "outputHash": "eb5116c58f33e510c8956e4c34d8e710a588b4ec281e8c964b99abfb4ef15de8",
+      "revision": "76907cf4c9ecb33ed204925bb5379a2fc5290a4594b79a08fd229e2b3521f040",
+      "sceneHash": "7940b687d5b82792a7eeff5e5c48d2fdfe2d132b129e59aaead6ef048cd8f5c8",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:stump:vale",
+      "outputHash": "8c294182e436974d3e651c692fa409a0b7461bb29a977892dc890715f44c8316",
+      "revision": "f0f827e26f9cf8b3d0fe7c8784074ed73aa3ac65943a04beedbb49bf8958d336",
+      "sceneHash": "79b87c70ea59b360ddefa7703f1d4d545e6618a634049432c223ffe7123c16a2",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:fallen-log:vale",
+      "outputHash": "110884d6f0c468007212ca60a365796759bf5440a733b469040b14eb2f5d7094",
+      "revision": "89c900b2d34c96781cfcbf6adf6b65fcb20ea3e54105144d3e1eeb4f1fcf08d1",
+      "sceneHash": "503c2396df3b15e41dbb65d6a45f56a41eddfcbcbf7d0b12e38403abdabacff0",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:cattails:march",
+      "outputHash": "527bd4994a724d6fa114f83c0d1f1ca5c8826fee94e76e8e287118e0733f0631",
+      "revision": "bcbf13293dfeda0622209b09cd8f8fa6d82f9e9ef556f59fe31ad7bb8fbe088f",
+      "sceneHash": "4c7576b96584a20da0641ebd7bc7175e6f394b34618f58777c127e83783a60fe",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:driftwood:march",
+      "outputHash": "ba6bb436ab4095736bf08cd5951b06de660bebc14775c9908ed7f4c1d0cc572c",
+      "revision": "e4b76afc204bf6c6ab32d5b27f8724bab1b44785dd73df16b5da4375c16d8fef",
+      "sceneHash": "9f83c7761fc5397b6a1eb9f7baaf959bd67d43077c065b8902ceccfcad882aee",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:mangrove:march",
+      "outputHash": "66470852c98453954d944e12f08eb9717bb700e5e306b67e2aa0a6f8e3db74f6",
+      "revision": "03b33a59106f2f06d7ccc631e91aefbf24979a41deb6982330a222ab7b4b988b",
+      "sceneHash": "66e7de1875fa7afd5294b889ce29cfd80cbd16a05083c8334a17d991d61139af",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:pine-sapling:highlands",
+      "outputHash": "7460dfe2bd989d15ba3d8328515ee9871d6dc8c070c89b6cabdaf100ef585394",
+      "revision": "e69104a8e4db20d089730c89f144818ae7d5694ad6256ea3764f72c4e67db1ff",
+      "sceneHash": "78128bf3e9fceb0844859e7efa1c345f124c218c3073777510939d97d8338eae",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:alpine-scrub:highlands",
+      "outputHash": "642fe1147d40ee5857e5623e98db6ba6e36230f7f720a681fad3662087fce2af",
+      "revision": "467ccfb86255a551b1b0915beee60a30690d5a1789e5a49207f03b636f56e926",
+      "sceneHash": "a99151e813f200ad102d3823e5516ae77e9b8f08698b5570e2ef630785d856f4",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:marsh-bush:march",
+      "outputHash": "61da77246ff31080bd7a4b04d44ed6cc68993e7fd6e5e0b8ac36a33ec8623cbd",
+      "revision": "118fbe63dae6b52d36264e7daf4e059fc96b8ca44eec12f4866c72de25c00dbd",
+      "sceneHash": "f93224c7f8eb58029865e96c4d1439d94fd9da202081e0841aba19aff6fe5920",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:rock-cluster:highlands",
+      "outputHash": "7234ba4b67bc2843e827f5cd782cefadb46f33da2f9cd979ca52d350c982a41d",
+      "revision": "12d861bfbd8e444de15347b30c3a84dd202ca70356a72348fde03911e295470e",
+      "sceneHash": "2d024c3927dde8a1840deb908c2db7eae92445c9883be562f096c65e667df432",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:dead-tree:frontier",
+      "outputHash": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a",
+      "revision": "11f292f12c942d594578672c806d5762917f58b0ebd9fef240b1513f0d266659",
+      "sceneHash": "333c33998de7f5d7c2303c1cfd18c0a86297b56a1d27536f97ee49473198127a",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:charred-stump:frontier",
+      "outputHash": "38f73cbd6054f7b7abf089f2843ff68e0e1da5222d7331cf83a4d2ff9c716cd3",
+      "revision": "65fd474dd3462b6c2ced3ea8164680f10e7ce547ceefb9feb783b14ed967bee6",
+      "sceneHash": "a42d5d0130fa675ba29d849080d162c467323964d68c773098fe5f5297a65c6e",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:dry-scrub:frontier",
+      "outputHash": "fa5a8422a5cad726a6c703210f03ba72d3d1934530d3c9567c08b9a0f260c1de",
+      "revision": "30ff5df7b21aafd0c6d5ecbc25b4f3ae53db3c621f976894661b1aea5eec03fc",
+      "sceneHash": "0a9f8f2be98895c3593a8529b30d09d8c6c28c00fecd27f97862119e374e0035",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:burned-log:frontier",
+      "outputHash": "b37ecaaedd9800883d383038e9e8e2d36edb36487979d1f2ac38abe8211b158e",
+      "revision": "0812beebd4d6cd157958b66d7db150a75a3cf788aed91be7fd8623d597d7b9b2",
+      "sceneHash": "7487b266f3f6080d8a9f191853ac10a9b967655da790751393e9d5aa8a945a70",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:black-rock:crown",
+      "outputHash": "2f7cde535488261055e586386f02bf91e29aa784a4fa2b3e90ea2c9d3c3b53ef",
+      "revision": "1a59626c1194c2cbc73973cd4949e6da6ae5e01f64dacf5dc26c530f213330bf",
+      "sceneHash": "7458c5a832bec0d2002065d43fc922ed6edac80e27c2b939e3f3816aea8c5d7f",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:crystal-cluster:crown",
+      "outputHash": "c05fbeab6b899c0f12d96508b38f81c6a31c01ab33a91430d6483df6315efc98",
+      "revision": "e39d03d38d285320391cd994edb8fa789c5f125dda26f8027a5c6737c207af25",
+      "sceneHash": "73194239b1a223508b902b85675c9fa2133940025ce434e4616c7172da862a99",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:dead-shrub:crown",
+      "outputHash": "818f60932ca7f058edd75068205ff54c5ab66781874fa07f16db95a146916b0c",
+      "revision": "8fb97ece19a3d6710a65400279b1c9a62e0b58d5efe716d12535febb8ea70271",
+      "sceneHash": "d14a6a1b7b555c00168d3b0c2d056adff20935b96ea506abf67786f41e7d1bb3",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:obsidian:crown",
+      "outputHash": "a4b24f34c911615389eb24ce0e061f09e6db4ecb168ccda842523e853b9305bb",
+      "revision": "44977ce2beb6c690e25365f81c8b4f44025b45027f99b21cf98a336e199bd934",
+      "sceneHash": "3832d1f34dea2b721236b520c7997487238cdf112823dfbcc57399c1251769d2",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:heather:highlands",
+      "outputHash": "7e19331a634e148d39c097478172618f9adf9f2c4326aceb28bab81009142baa",
+      "revision": "8918256a9324e1943a0945bfc710a47c751d81ba616095376969f5b366fadbd1",
+      "sceneHash": "b1258771093dbc3ea87fc92e64306b75db8f8aeaa5ec4bc8959096dba194a84e",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:rock:vale",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "f9f92ed67e329fcb87de9115d88da706efcfbe5731caf8530c57b53f840884cf",
+      "sceneHash": "9fb06a30589cfaaf3dd40d6bf3590e68d6616f1c4386f378eddb10cee2be5024",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    },
+    {
+      "profile": {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      "lighting": "night",
+      "key": "prop:rock:highlands",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc",
+      "revision": "eb9c913e0e3c53e89007d2527339c15c0dc750187d743ac3d38ba02ea321b914",
+      "sceneHash": "478809e876221d684d79bee748d93d9f6eed5f9da326e5ee411773e9a7deeb41",
+      "anchor": {
+        "x": 308,
+        "y": 220.5
+      },
+      "ratio": 1.5,
+      "warning": "Blinding Dust",
+      "decodedBytes": 41804032,
+      "maxDecodedBytes": 268435456
+    }
+  ],
+  "review": "pending visual inspection"
+}

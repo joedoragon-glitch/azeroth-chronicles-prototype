@@ -1,0 +1,42 @@
+{
+  "key": "prop:black-rock:crown",
+  "original": "tools/sprites/batches/2026-10-08-03/prop-black-rock-crown/image-tool-original.png",
+  "originalHash": "4b23e0b158d7a0cb34b34661ede6957546748e935b85693c2101cfe63107dded",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/batches/2026-10-08-03/prop-black-rock-crown",
+  "intermediateHash": "9ed0182100fa380f22360ce6d682f012facdf22d2aa04b5a604eb12ecdf6aca7",
+  "intermediateDimensions": [
+    1734,
+    1734
+  ],
+  "priorRevision": "c9bcd0f0f6491f7786033600c1978fd3b53b93554809fb95d23c7de585e67caa",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -2,
+    "offsetY": 0,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": {
+        "left": 240,
+        "right": 240,
+        "top": 275,
+        "bottom": 205
+      }
+    }
+  },
+  "target": 576,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "black-rock",
+    "id": "side-entrance-side-crown-foundry-0"
+  },
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact nature binding; no animation or variant bank. Seeded placement and procedural scene effects retained."
+}

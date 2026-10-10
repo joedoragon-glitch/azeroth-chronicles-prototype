@@ -19,9 +19,9 @@ The initial inventory is pinned to v0.8.133. Subsequent verification independent
 | #198 | Intentionally deferred | Stacked directly on #197, detached roster foundation; not playable co-op | `feature/cooperative-roster-foundation-20261009` at `433cbf11d36a7f8687545a0a6e5b5d3b8e07254e` |
 | #203 | Superseded | #204 replaces narrow clearRoadside/roadsidePlot draft with complete street corridors, named destination/compound access and historical/future barracks checks. Closed without obsolete merge; successor independently verified published | `town-street-planning-audit-20261009` at `a9797b3f74d66d588cb7f6abf3ca5b4de9a081b5` |
 | #204 | Completed | Merged and independently verified published as v0.8.134 | Keep branch and recovery history |
-| #208 | Active | Latest 23-identity adaptation incorporates #207; prior-head CI is not current-head evidence | Keep active branch and production journal/originals |
+| #208 | Completed source integration | Merged separately as v0.8.135 at `170adbf708ac1ea3b26e57621d0089f182932270`; exact publication still running in 38021457158 | Keep production branch and journal/originals; deployed status belongs to #160 |
 
-Execution: #145, #152 and #203 were re-read at their recorded heads, given successor/recovery comments and closed without merging. #132, #197 and #198 remain open with explicit deferred classifications; the original bodies and authorizations are preserved. Four implementation PRs remain open: active #208 and deferred #132/#197/#198. A documentation maintenance PR is separate from that count.
+Execution: #145, #152 and #203 were re-read at their recorded heads, given successor/recovery comments and closed without merging. #132, #197 and #198 remain open with explicit deferred classifications; the original bodies and authorizations are preserved. #208 subsequently merged in its separate workstream; three deferred implementation PRs remain open. Documentation maintenance #209 is separate from that count.
 
 The seven earlier gameplay PRs #163/#167/#174/#175/#182/#77/#79 were already reconciled by #206 and remain completed/superseded as recorded in [the earlier audit](OLDER_GAMEPLAY_FIXES_AUDIT_20261009.md). No prior closure is presented as new work here.
 
