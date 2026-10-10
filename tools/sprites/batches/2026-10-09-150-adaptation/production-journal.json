@@ -105,7 +105,7 @@
   "natureBatch": {
     "id": "2026-10-10-nature-original-density",
     "status": "Installed; real browser combat review and exact release pending",
-    "baseMain": "473fc85f57858558307a989f68eaa4e5040201e1",
+    "baseMain": "5aa50dda1785397d2d1dd819da126b762e775ecc",
     "counts": {
       "generated": 0,
       "reused": 23,
@@ -1096,9 +1096,12 @@
       "visualReview": "All 24 native physical-pixel crop sheets reviewed across desktop/phone, day/night and active Goblin Blinding Dust warning. Fixture relocation keeps the prop clear of the warning card; gameplay code unchanged."
     },
     "release": {
-      "version": "0.8.133",
+      "version": "0.8.134",
       "status": "awaiting-integration-ci",
-      "deployed": false
+      "deployed": false,
+      "pr": 208,
+      "supersededHead": "46419b2cb1c11bfbc314b3c7de2ac2e0159c4c8b",
+      "reason": "Preserve concurrent Abyss safe-lane release #207 and use a new PWA version."
     }
   }
 }
