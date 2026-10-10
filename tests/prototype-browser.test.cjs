@@ -115,6 +115,7 @@ await check('Outside tap dismisses menus without clicking through to the world '
 await check('Subminimum phone uses visual fitting, not a new design breakpoint '+tag,async()=>{
  if(!v.touch||v.width!==375||v.height>812||smoke)return;
  await page.setViewportSize({width:360,height:780});
+ await page.waitForFunction(()=>parseFloat(document.body.style.getPropertyValue('--phone-ui-fit'))<1);
  const fit=await page.evaluate(()=>({ratio:parseFloat(document.body.style.getPropertyValue('--phone-ui-fit')),experience:Prototype.platform.mode}));
  assert.equal(fit.experience,'phone');
  assert(fit.ratio>.94&&fit.ratio<.98,'360-wide screen proportionally reduces existing controls');
