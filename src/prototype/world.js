@@ -174,7 +174,7 @@
           props = z.props,
           blockers = z.props
             .filter((p) => p.roadBlocker)
-            .map((p) => ({ ...p, r: (p.r || 0) + 145 }));
+            .map((p) => ({ ...p, r: (p.r || 0) + (i === 2 ? 110 : 85) }));
         z.props = blockers;
         try {
           if (roadPlans.has(key)) z.roads = clone(roadPlans.get(key));
@@ -272,16 +272,14 @@
       }
       roadSetback(p) {
         if (p.roadTrace) return 0; // Only deliberately flat road ruts/repairs.
-        // Painted roofs project well beyond the small collision circle.
-        // Clearance must protect the visible silhouette, not just the anchor.
-        if (p.roadBlocker) return (p.r || 0) + 145;
+        if (p.roadBlocker) return (p.r || 0) + 78;
+        if (p.r > 0) return p.r + 64;
         if (
           /house|cottage|workshop|forge|watchpost|tower|tent|stockade|wall|barracks|gate|roost|lean-to|palisade|foundation|shelter|stable|mangrove|dead-tree/i.test(
             p.structure || '',
           )
         )
-          return Math.max((p.r || 0) + 115, 160);
-        if (p.r > 0) return p.r + 64;
+          return 125;
         return 72;
       }
       clearStreetCorridors(z) {
