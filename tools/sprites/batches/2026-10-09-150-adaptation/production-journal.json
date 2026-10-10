@@ -1,7 +1,7 @@
 {
   "version": 1,
   "batch": "2026-10-09-150-adaptation",
-  "status": "Pilot released through PR #193; nature adaptation batch in preparation",
+  "status": "Pilot and 23-asset nature original-density batch released; eight active adaptations remain",
   "sourceOfTruth": [
     "docs/SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md",
     "docs/WORLD_PROPORTION_AND_DENSITY_GUARDRAILS.md",
@@ -35,7 +35,7 @@
     "freshBrowserReview": "12 WebKit device/light scenes and 36 frame/combat captures pass on v0.8.127; CI runs retained review script on Chromium/WebKit and live game"
   },
   "nextWork": [
-    "Nature batch: 23 retained-original density adaptations in progress; 8 remaining active adaptations follow.",
+    "Nature batch complete: 23 retained-original density adaptations deployed. Eight active adaptations remain: Mage, Ranger, Soldier, Archer, Vale cottage, mint press, ore sorting bins and caravan cart.",
     "247 body catalog designs and 21 terrain materials lack registrations; recover retained candidates before generation."
   ],
   "source": "Joel's 9 October 2026 instructions, authorized autonomous technical implementation; no user approval review required.",
@@ -104,7 +104,7 @@
   },
   "natureBatch": {
     "id": "2026-10-10-nature-original-density",
-    "status": "Installed; real browser combat review and exact release pending",
+    "status": "Released and exact live build/browser/assets verified",
     "baseMain": "5aa50dda1785397d2d1dd819da126b762e775ecc",
     "counts": {
       "generated": 0,
@@ -112,7 +112,7 @@
       "prepared": 23,
       "reviewed": 23,
       "installed": 23,
-      "deployed": 0
+      "deployed": 23
     },
     "entries": [
       {
@@ -151,7 +151,7 @@
         "sourceHash": "07e1a51842041db5310f26db638b2d614c3c98d3aa5dee7ea25a3704989ece68",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:wildflowers:vale",
@@ -189,7 +189,7 @@
         "sourceHash": "c7d54e71ecb23bdec58e77b1a153a2ec8209701c3bacd669351843ae802463f5",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:sapling:vale",
@@ -232,7 +232,7 @@
         "sourceHash": "9d3b16c57b6696ddce81068442375a05e5100e80171a3632b6283c70995e4adb",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:stump:vale",
@@ -275,7 +275,7 @@
         "sourceHash": "9f1b276c4939fcc33dc08d2745931a2cffa385ccd662fe67fa07043059040f70",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:fallen-log:vale",
@@ -318,7 +318,7 @@
         "sourceHash": "b9525a87244919d06aa4a4914ca3ec1ac02c4c46a163bd4b41cccf6e59fbebd2",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:cattails:march",
@@ -361,7 +361,7 @@
         "sourceHash": "5251be41d8f2e095ba4e685204fb858ed66507a78c61d4573d4e4d51e17a7e66",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:driftwood:march",
@@ -404,7 +404,7 @@
         "sourceHash": "80271c4ab96e579ee96c0af0bdd6bef4e6e03cf4bcd792dae598ae17baaf2712",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:mangrove:march",
@@ -447,7 +447,7 @@
         "sourceHash": "e9d940fd2181d5fd2a8345e6b123d509bd11a89919eee9edb2cb955449e19a28",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:pine-sapling:highlands",
@@ -490,7 +490,7 @@
         "sourceHash": "4d8274377012a42bce7418ff8be86ac818a5f579bb7fc3bf5a69166133e0682b",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:alpine-scrub:highlands",
@@ -533,7 +533,7 @@
         "sourceHash": "8b251a62a55f342dc5becf3dbfe87f87e9b680343106dcf4318db6c6b964bf23",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:marsh-bush:march",
@@ -576,7 +576,7 @@
         "sourceHash": "9192ac789708ab46aa011ec533caeacc0a3e0a88d70ac83ee1945c089a4d8679",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:rock-cluster:highlands",
@@ -619,7 +619,7 @@
         "sourceHash": "1e2876868533bb0a2db6c0e77cee59d0421c3bd7a740977d934b2a63da948faf",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:dead-tree:frontier",
@@ -662,7 +662,7 @@
         "sourceHash": "3d24bde37cb029409aaf01bf319c9329d47e14161fc651a39775f13f5e60bdd9",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:charred-stump:frontier",
@@ -705,7 +705,7 @@
         "sourceHash": "4836661967fbe99c584b8883ad7a64b41a4c22ac990f7a3646fef89b1964b611",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:dry-scrub:frontier",
@@ -748,7 +748,7 @@
         "sourceHash": "a91ed6fe5d8b144a2f72b93fb30ca792a5b99040a00a395322c1197a353e8027",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:burned-log:frontier",
@@ -791,7 +791,7 @@
         "sourceHash": "5f1fdfb14975f52ef3c47a7a3f6923888243a3302143856a37b8f65ee4c3ca08",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:black-rock:crown",
@@ -834,7 +834,7 @@
         "sourceHash": "4b23e0b158d7a0cb34b34661ede6957546748e935b85693c2101cfe63107dded",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:crystal-cluster:crown",
@@ -877,7 +877,7 @@
         "sourceHash": "393857703b752d88306fc38e29b68a58ffd1e337024ff2b92d5c5e48da9f8f7e",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:dead-shrub:crown",
@@ -920,7 +920,7 @@
         "sourceHash": "4f2f6e57ffe08a2f210b4ba3069f2c9472bd7f590d69d360573886e828535eff",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:obsidian:crown",
@@ -963,7 +963,7 @@
         "sourceHash": "a0cd4e6c7704adad9b8bc4205ef6f77e0d8783aff347f9731601371839332b04",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:heather:highlands",
@@ -1001,7 +1001,7 @@
         "sourceHash": "c81e0183876290490229b0e27028eea755a932a29ba87515d02e277de25eed2a",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:rock:vale",
@@ -1030,7 +1030,7 @@
         "target": 576,
         "entity": {
           "renderKind": "prop",
-          "icon": "\ud83e\udea8",
+          "icon": "🪨",
           "id": "sprite-reference-295"
         },
         "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-rock-vale/original-export-v1/candidate.json",
@@ -1038,7 +1038,7 @@
         "sourceHash": "47adfaee0810663baf27dbe825e7719386466565e5f5001d4b925cf16ffe0a4d",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       },
       {
         "key": "prop:rock:highlands",
@@ -1067,7 +1067,7 @@
         "target": 576,
         "entity": {
           "renderKind": "prop",
-          "icon": "\ud83e\udea8",
+          "icon": "🪨",
           "id": "sprite-reference-296"
         },
         "candidate": "tools/sprites/batches/2026-10-09-150-adaptation/prop-rock-highlands/original-export-v1/candidate.json",
@@ -1075,10 +1075,10 @@
         "sourceHash": "47adfaee0810663baf27dbe825e7719386466565e5f5001d4b925cf16ffe0a4d",
         "installed": true,
         "reviewed": true,
-        "deployed": false
+        "deployed": true
       }
     ],
-    "nextAction": "One integration PR; required CI then exact live SHA verification.",
+    "nextAction": "Batch complete. Keep Issue #160 open for eight remaining active adaptations and the broader missing catalog; no unrelated production started.",
     "nativeEvidence": "nature-native-review-v1: 12 sheets of native physical-pixel crops; 276 full canonical/candidate scene pairs captured, full scenes retained locally in lossless archives; per-asset comparison hashes retained.",
     "browserReview": {
       "chromium": {
@@ -1097,8 +1097,8 @@
     },
     "release": {
       "version": "0.8.135",
-      "status": "awaiting-integration-ci",
-      "deployed": false,
+      "status": "released-and-live-verified",
+      "deployed": true,
       "pr": 208,
       "supersededHead": "46419b2cb1c11bfbc314b3c7de2ac2e0159c4c8b",
       "reason": "Preserve concurrent five-region road/settlement overhaul #204 and Abyss safe-lane #207; unique PWA version.",
@@ -1106,7 +1106,34 @@
         "46419b2cb1c11bfbc314b3c7de2ac2e0159c4c8b",
         "bbba26502b9ea79f734c1c4aa926880dbf51adcd"
       ],
-      "mainAtIntegration": "54e578d820e6c18234c70f57516d22a739438e4e"
+      "mainAtIntegration": "54e578d820e6c18234c70f57516d22a739438e4e",
+      "sha": "170adbf708ac1ea3b26e57621d0089f182932270",
+      "candidateHead": "a8874fc27ea370c71d434bfc411ab54fd7ac6759",
+      "candidateTree": "53beca0f36b8696957424f3dd2d62410d5ce7cb1",
+      "prRun": 38020278879,
+      "run": 38021457158,
+      "exactBuildVerified": true,
+      "liveUrl": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/",
+      "verification": {
+        "mainTest": "success",
+        "phoneWebkit": "success",
+        "deploy": "success",
+        "localRegressionSuites": 83,
+        "localChromiumNatureScenes": 276,
+        "publishedBrowserGates": [
+          "desktop/phone smoke",
+          "original-master actor idles and roads",
+          "23 nature assets across 276 device/light/combat scenes",
+          "quest completion and Keeper Archive"
+        ],
+        "independentLiveAssetAudit": "Exact build before/after; sprite/material manifests and service worker match tested tree; all 23 SHA256 PNG outputs, decoded dimensions and transparent alpha pass.",
+        "sourceAudit": "All 23 retained untouched original hashes/dimensions and installed output hashes/dimensions/alpha verified; no originals or source lineage rewritten.",
+        "inventory": {
+          "bodyIdentities": 33,
+          "terrainMaterials": 7
+        },
+        "concurrentPreservation": "Retains #204 five-region road/settlement overhaul and #207 Abyss safe-lane/route release; gameplay modules match 54e578d820e6c18234c70f57516d22a739438e4e."
+      }
     }
   }
 }
