@@ -123,14 +123,12 @@
         lastCheck = now;
         return;
       }
-      if (now - lastCheck < 6000 || (lastSwitch !== null && now - lastSwitch < 12000))
-        return;
+      if (now - lastCheck < 6000 || (lastSwitch !== null && now - lastSwitch < 12000)) return;
       lastCheck = now;
       if (samples.length < 90 || samples.at(-1).now - samples[0].now < 4500) return;
       const frames = samples.filter((s) => s.drawn),
         work = frames.map((s) => s.workMs).sort((a, b) => a - b),
-        meanInterval =
-          samples.reduce((total, s) => total + s.interval, 0) / samples.length,
+        meanInterval = samples.reduce((total, s) => total + s.interval, 0) / samples.length,
         drawRate =
           frames.length > 1
             ? ((frames.length - 1) * 1000) / (frames.at(-1).now - frames[0].now)
