@@ -4,9 +4,9 @@ This is the authoritative repository status snapshot for the v0.9 stabilization 
 
 ## Baseline and release evidence
 
-Audited source baseline: **v0.8.134**, main `54e578d820e6c18234c70f57516d22a739438e4e`, from merged road overhaul [#204](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/204). Its main release [run 38019846959](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38019846959) is running at this snapshot; publication requires deployment, exact published SHA and live smoke success.
+Audited source and independently verified published baseline: **v0.8.134**, main `54e578d820e6c18234c70f57516d22a739438e4e`, from merged road overhaul [#204](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/204). Main release [run 38019846959](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38019846959) completed successfully in main-test, phone-webkit and deploy. The exact published-build, live desktop/phone smoke, original-master actor/road and quest/Keeper Archive checks all passed. This completes the road technical release without certifying every human regional/device acceptance criterion.
 
-Latest independently checked successful production baseline: **v0.8.133**, `5aa50dda1785397d2d1dd819da126b762e775ecc`, Abyss integration [#207](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/207), [run 38018534859](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38018534859). Main-test, phone-webkit and deploy all succeeded, including exact published build, live desktop/phone, actor/road and Keeper checks. Abyss technical integration is complete; human acceptance remains open.
+Preserved prior production checkpoint: **v0.8.133**, `5aa50dda1785397d2d1dd819da126b762e775ecc`, Abyss integration [#207](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/207), [run 38018534859](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38018534859). Main-test, phone-webkit and deploy all succeeded, including exact published build, live desktop/phone, actor/road and Keeper checks. Abyss technical integration is complete; human acceptance remains open. #204 preserves this work and the earlier v0.8.132 gameplay fixes.
 
 This maintenance pass is documentation/backlog reconciliation. It does not certify a completed v0.9 release. Later commits and runs supersede the snapshot only when independently verified.
 
@@ -24,7 +24,7 @@ This maintenance pass is documentation/backlog reconciliation. It does not certi
 | Work | Disposition at audit | Next step |
 | --- | --- | --- |
 | #208 nature original density | Active; 23 existing identities adapted; now v0.8.135, incorporating #204 | Verify its new exact head before deployment/live asset checks. The other eight active adaptations and missing catalog stay with #160. |
-| #204 outdoor road infrastructure | Completed source integration as v0.8.134; production verification running | Its implementing workstream owns exact deployment/live road checks. Automated coverage and screenshot review do not close all regional human acceptance. |
+| #204 outdoor road infrastructure | Completed and independently verified published as v0.8.134 | Exact deployment/live checks passed. Automated coverage and screenshot review do not close all regional human acceptance. |
 | #203 earlier town-planning draft | Superseded by #204; closed without merging obsolete runtime | Original branch/head retained as recovery. |
 | #132 household/mine/flight art | Intentionally deferred integration, not obsolete | Preserve its five additional identities, untouched sources, revisions, reviews and branch. Recover a bounded asset batch against current main under #160. |
 | #197 session timing; #198 cooperative roster | Intentionally deferred from this stabilization pass; #198 depends on #197 | Preserve both branches. No playable networking/Host/Join feature exists in current main. Their earlier authorizations are not revoked. |
