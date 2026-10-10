@@ -247,7 +247,11 @@
               z.props.some(
                 (other) =>
                   other !== item &&
-                  dist(other, p) < (other.r || 0) + (item.r || 0) + (other.decorative ? 26 : 29),
+                  dist(other, p) <
+                    Math.max(
+                      other.ironrootDistrict ? 85 : other.regionalDistrict ? 65 : 0,
+                      (other.r || 0) + (item.r || 0) + (other.decorative ? 26 : 29),
+                    ),
               )
             )
               return false;
