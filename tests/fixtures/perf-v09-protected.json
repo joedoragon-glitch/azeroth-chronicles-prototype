@@ -1,0 +1,29 @@
+{
+  "baseline": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+  "files": {
+    "src/prototype/engine.js": "291155d18505d46012250b92ad083e4e64a7ce5e4a67d32d99d7e961cf72c265",
+    "src/prototype/world.js": "fd696a65bf4e1b9067291f6c6d3d57b508f2b2ecb7164c222299ef8fa5edaa53",
+    "src/prototype/navigation.js": "dbb700f55909a4908b64aec2c97583b07af93d7aeafe32d111dbbe16a7f79c36",
+    "src/prototype/party.js": "41a66f5b3c95a09414b1308df557aff1cbb232d341f601b1f1fcaf1d2d40d726",
+    "src/prototype/combat.js": "8b14cc8e5e0a1519b83cd7201a82a6b2b2e08d7d4e4294b641dfa5d5b6a0aa4b",
+    "src/prototype/hero-combat.js": "9873768cf15322246de3a2892785ebdecc9cc9ed72ff7bbb377a264647135070",
+    "src/prototype/boss-combat.js": "be74a2d6d5336cd851073c7c6814a64cb22cc01af2ef7a0854fd9f4148edc27f",
+    "src/prototype/progression.js": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
+    "src/prototype/economy.js": "fd9701ee01d2748f22f176ce84d06f8769c0eb8b84963460380457a61933487a",
+    "src/prototype/rewards.js": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525",
+    "src/prototype/rules.js": "0bea5df747d56c3d0ab15021aaa5bd09683c898594292f142bda969c7ee7ccc0",
+    "src/prototype/data.js": "6ee3fb3b1d5ed017acc42698497eb8659e434da688f5a50280133992c7e6263b",
+    "src/prototype/save.js": "4365b4fcfa21bcd8ffa5fe6da2b637dc0653e5aa7459abccc6277e94e6ab6296",
+    "src/prototype/input.js": "87aed3b4d743dd011e0b6a0f5f293dc39fae45d76f6faa281139897a0437d616",
+    "src/prototype/platform.js": "60107014425663a4607a239ea68359b04d0f0cfbf0eca7e9dc2fcc1a1180710d",
+    "src/prototype/runtime.js": "baeae0441fd164f90bda835381d6f99772332eb8d850f2e18d7ccc8838b19e86",
+    "src/prototype/app.js": "5a86b4d67f9b5e5ee29f39aa81f431d20ea59432a869e82068e7af04140973e0",
+    "src/prototype/persistence.js": "262f2f07b8ff6a6286d38fc887cbce9416425f89f91afdbf609caca08e54846b",
+    "styles/prototype.css": "947c0575743e3b832ff0702549f1b1522d7d22d34cc9c796e86e3a75e2bc3146",
+    "styles/desktop.css": "acab28572dad41bc8928cb1b612e3229034ff6ff64adc53e3dbdd0e5a7b186cf",
+    "styles/phone.css": "e1e6a917ddf1ae6bce51bfee66907c50c1adbe8c581b53b4674e7f1b0810877c",
+    "templates/game.html": "2b22eb161a1c4d9de24925ecd669049045287e20d0448c296db40ad069030b03",
+    "assets/sprites/manifest.json": "1f2b15b0d3a9735edb1bd9b00d8ad6c78eaefc6f63ab7ad576e4bba8676fa839",
+    "assets/materials/manifest.json": "c06e89ba4ed2058681ae3156eaac8f7eb577d1b5af61e272f40d316f855cad41"
+  }
+}

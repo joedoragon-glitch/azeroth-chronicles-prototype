@@ -1,5 +1,5 @@
 /* Bump CACHE_VERSION when app assets change. Tester builds activate immediately. */
-const CACHE_VERSION = "azeroth-app-v0.8.137";
+const CACHE_VERSION = "azeroth-app-v0.8.138-perf.1";
 /* Shared sprite/variant/clip resource contract: runtime, packaging and offline caching. */
 (function (root) {
   'use strict';
@@ -171,6 +171,16 @@ const appURL = path => new URL(path, self.registration.scope).href;
 const appFiles = new Set(APP_FILES.map(appURL));
 const legacyFiles = new Set(LEGACY_FILES.map(appURL));
 const spriteBase = appURL('./assets/sprites/');
+// Registration scope and public entry URLs are immutable for this worker.
+const scope = new URL(self.registration.scope);
+const navigationURLs = {
+    phone: appURL('./phone.html'),
+    legacy: appURL('./legacy.html'),
+    prototype: appURL('./prototype.html'),
+    rts: appURL('./rts.html'),
+    index: appURL('./index.html')
+};
+const rtsPath = new URL(navigationURLs.rts).pathname;
 async function spriteAssetURLs(cache){
     try {
         const response = await cache.match(appURL('./assets/sprites/manifest.json'));
@@ -195,11 +205,11 @@ self.addEventListener('message', event => {
     if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 self.addEventListener('fetch', event => {
-    const request = event.request, url = new URL(request.url), scope = new URL(self.registration.scope);
+    const request = event.request, url = new URL(request.url);
     if (request.method !== 'GET' || url.origin !== scope.origin || !url.pathname.startsWith(scope.pathname)) return;
-    const key = new URL(url); key.search = ''; key.hash = '';
+    const key = url; key.search = ''; key.hash = '';
     const isNavigation = request.mode === 'navigate';
-    const navigationKey = appFiles.has(key.href) && key.pathname.endsWith('.html') ? key.href : key.pathname.endsWith('/phone.html') ? appURL('./phone.html') : key.pathname.endsWith('/legacy.html') ? appURL('./legacy.html') : key.pathname.endsWith('/prototype.html') ? appURL('./prototype.html') : key.pathname === appURL('./rts.html').replace(scope.origin, '') ? appURL('./rts.html') : appURL('./index.html');
+    const navigationKey = isNavigation ? appFiles.has(key.href) && key.pathname.endsWith('.html') ? key.href : key.pathname.endsWith('/phone.html') ? navigationURLs.phone : key.pathname.endsWith('/legacy.html') ? navigationURLs.legacy : key.pathname.endsWith('/prototype.html') ? navigationURLs.prototype : key.pathname === rtsPath ? navigationURLs.rts : navigationURLs.index : null;
     const isSprite = key.href.startsWith(spriteBase);
     if (!isNavigation && !appFiles.has(key.href) && !legacyFiles.has(key.href) && !isSprite) return;
     event.respondWith(caches.open(CACHE_VERSION).then(async cache => {

@@ -1,0 +1,49 @@
+# v0.9 performance candidate: combined review
+
+This performance project starts from main v0.8.137, commit `c6ce1af236bddd7ca881903499c4cf5de175f9e2`. Candidate build is `0.8.138-perf.1`; it does not publish v0.9 or include the separate art PR #217. Ownership, dependencies and the protected-gameplay rule were established before edits in [the project contract](PERFORMANCE_V09_PROJECT.md) and [issue #218](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/218).
+
+## Integration and protection
+
+Four independent branches were reviewed through PRs [#219](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/219) (infrastructure), [#220](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/220) (interface/audio), [#221](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/221) (visuals), and [#222](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/222) (terrain). All targeted and merged into `perf/v09-integration-20261010`, never main. Runtime ownership was disjoint; the integration owner serialized version, generated worker, CI and shared evidence changes.
+
+The only runtime implementation changes are `visuals.js`, `renderer.js`, `audio-score.js`, `audio-recordings.js`, and `templates/service-worker.js`, plus the worker regenerated from its template and build version. Enemy AI, companion AI, combat, simulation, input and frame scheduler files are unchanged. The guard verifies SHA-256 against the shared baseline for 24 protected gameplay, persistence, shell, stylesheet and asset-manifest files. Persistence, save schemas, loading budgets, original art and HUD/menu rendering are unchanged.
+
+## Measurements
+
+Measurements below are paired baseline/candidate experiments; they do not establish active-play FPS, startup speed or battery life. Raw samples, environment details and exact scope are retained in each workstream's evidence.
+
+| Scope | Baseline → candidate | Result and limits |
+|---|---|---|
+| Road layer, five authored regions, software Canvas raster medians | Vale 26.23 → 21.46 ms; March 21.93 → 17.80; Highlands 53.69 → 43.65; Frontier 17.98 → 14.14; Crown 15.95 → 13.75 | 13.8–21.4% faster layer raster; JavaScript preparation 74.8–97% faster. Hot display-list reuse, not complete frames. |
+| Occlusion pairing, Highlands desktop / phone | 2.187 → 0.182 ms / 0.360 → 0.062 ms | 91.7% / 82.9% faster helper. All 19 authored/stress profiles improve; no reduced actor/cover eligibility or pair limit. |
+| Audio observation descriptions | 64 entries: 35–46% faster; 1,024 entries: 33–38% faster | Differential behavior passes. Representative complete 64-entry updates and steady production observations are inconclusive across repeated runs; no overall audio-frame claim. |
+| Audio unbound recorded fallback | 69–80% faster helper | Avoids unused spreads; same cue/sound/lifecycle behavior. |
+| Worker static / navigation routing | 14.51 → 4.68 µs / 10.16 → 4.61 µs | 67.7% / 54.6% faster synchronous VM routing; five → one URL allocations per request (80% fewer). Network/decode/startup not measured. |
+
+Sources: [terrain report](perf-ws1-terrain-road-rendering.md), [occlusion report](PERF_WS2_VISUALS_V09.md), [audio report](perf-ws3-interface-audio-20261010.md), [infrastructure report](PERF_WS4_INFRASTRUCTURE_20261010.md). Both audio timing runs and the zero-actor occlusion control are retained, including unfavorable observations.
+
+The road display list retains world coordinates, exact drawing order and material calls, with mutable geometry/topology/bridge invalidation. Limits are 4,096 commands, 8,192 input scalars and 32,768 coordinate scalars; exceeding them falls back to ordinary rendering. It adds no canvas backing store. Occlusion memoization lasts one synchronous draw call, so it cannot stale across movement or frames. Audio performs ordered sparse-safe observations and skips allocations only for empty bindings. Worker scope/entry URLs are immutable constants; cache, offline, request and install/error policies are equivalent.
+
+## Verification
+
+The exact baseline [CI run 38034475845](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38034475845) passed. Workstream differential suites cover road draw-operation order and geometry mutation; exact native/WebKit road pixels; 1,200 occlusion cases and authored scenes; real mask pixels; 400 audio cases, cue/event/gain/lifecycle traces; and worker requests at three deployment scopes with query strings, offline/install failures and cache/network traces.
+
+Local combined build, formatting and generated-entry/asset checks pass. The 24 protected hashes pass, and [combined equivalence evidence](evidence/perf-v09-combined-equivalence.json) records 2,880 exact paired frames, six historical saves and 40 exact full native render images.
+
+The combined workflow retains the complete existing regression suite and Chromium/WebKit matrices, historical save and PWA upgrades, audio, sprites, terrain, VFX, gestures and shell checks. It adds protected-source hashes; 2,880 paired combat/companion simulation frames across normal/nightmare, all three classes and both succession settings; six actual historical-engine save fixtures, unchanged-source checks, continued simulation and save round trips; exact full native-render comparisons at desktop/phone sizes and day/night clocks; and browser comparisons against the immutable baseline.
+
+Full-painter browser experiments freeze the presentation clock while measuring with a separate real monotonic clock. An initial mismatch was caused by independently advancing animation clocks in the harness; the production implementation was not changed to address it. Baseline-versus-baseline controls and exact raster/state comparisons remain mandatory. Timings are reported rather than used as noisy pass/fail thresholds.
+
+Final review links and exact-head combined CI outcomes are recorded in the final PR and project issue after validation. A locally started exploratory regression run is not represented as an exact-head baseline or combined certification because source integration occurred while it was running.
+
+## Risks and rejected changes
+
+- Shared-worker microbenchmarks and software raster measurements cannot establish real Chromebook/iOS/Android active-play performance. Hardware-specific FPS, battery and memory-pressure measurements remain outstanding.
+- The road cache benefits repeated geometry. Cold/churning scenes and the bounded fallback still pay preparation costs; its maximum retained scalar count is disclosed above.
+- A synthetic occlusion call with no eligible actors adds 0.032–0.039 ms of classification overhead. Normal renderer calls include the hero; the synthetic regression is retained rather than hidden.
+- Audio end-to-end timings vary in sign and are inconclusive. Small helper gains are not promoted to overall audio wins.
+- The six historical fixtures were exported by actual older engines. Joel's personal exported saves and real installed-device PWA recovery remain a separate validation gap, not a historical-save compatibility claim.
+- Rejected AI/companion/combat tick culling, scheduling reductions, clock changes, simulation-driven LOD and balance changes because gameplay is protected. Rejected stale audio observation/menu callback caches, audio throttling, altered voice policy, noise/convolution recipes and eager/parallel decoding because timing or audible behavior might change.
+- Rejected road raster caching because fractional cameras/material textures might differ; no visual threshold was relaxed. Rejected persistence write deduplication/skipping, cache-response memoization, loading-budget changes and optional offline inventory/install failures because save durability, loading or failure behavior might change. Audio catalog has 127 IDs with 127 unique sources, so decoded-source deduplication offers no demonstrated gain.
+
+Only the final combined PR may target main. It must remain unmerged until Joel approves; preparing or marking it ready does not authorize merging or deployment.

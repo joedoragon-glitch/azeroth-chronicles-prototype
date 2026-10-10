@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+    branches: [main, perf/v09-integration-20261010]
   workflow_dispatch:
 
 permissions:
@@ -34,6 +34,13 @@ jobs:
           node tests/town-street-audit.test.cjs
       - name: Full regression suite before merge
         run: npm test
+      - name: Verify protected performance baseline and combined equivalence
+        run: |
+          git fetch --depth=1 origin c6ce1af236bddd7ca881903499c4cf5de175f9e2
+          mkdir -p "$RUNNER_TEMP/perf-v09-baseline"
+          git archive c6ce1af236bddd7ca881903499c4cf5de175f9e2 | tar -x -C "$RUNNER_TEMP/perf-v09-baseline"
+          node tests/perf-v09-protected.test.cjs
+          node --expose-gc scripts/perf-v09-equivalence.cjs "$RUNNER_TEMP/perf-v09-baseline"
       - name: Reproduce cooldown balance evidence summary
         run: |
           python3 scripts/summarize-cooldown-balance.py docs/evidence/COOLDOWN_BALANCE_20261009.json.gz "$RUNNER_TEMP/cooldown-summary.json"
@@ -79,6 +86,11 @@ jobs:
         run: |
           node tests/enemy-vfx-browser.test.cjs
           VFX_CAPTURE_TAG=ci VFX_CAPTURE_SMOKE=1 node scripts/enemy-vfx-capture.cjs
+      - name: Verify performance rendering against the unchanged baseline
+        run: |
+          MATERIAL_BROWSER_ENGINE=chromium node tests/perf-ws1-roads-browser.test.cjs
+          PERF_WS2_BROWSER_ENGINE=chromium node tests/perf-ws2-occlusion-browser.test.cjs
+          PERF_WS2_BASELINE_ROOT="$RUNNER_TEMP/perf-v09-baseline" PERF_WS2_BROWSER_ENGINE=chromium node scripts/perf-ws2-renderer-performance.cjs test-results/perf/combined-chromium.json
       - name: Verify development sprite showroom
         run: node tests/sprite-showroom-browser.test.cjs
       - uses: actions/upload-artifact@v4
@@ -151,6 +163,14 @@ jobs:
         run: |
           node tests/materials-browser.test.cjs
           node tests/ground-cache-browser.test.cjs
+      - name: Verify WebKit performance rendering against the unchanged baseline
+        run: |
+          git fetch --depth=1 origin c6ce1af236bddd7ca881903499c4cf5de175f9e2
+          mkdir -p "$RUNNER_TEMP/perf-v09-baseline"
+          git archive c6ce1af236bddd7ca881903499c4cf5de175f9e2 | tar -x -C "$RUNNER_TEMP/perf-v09-baseline"
+          MATERIAL_BROWSER_ENGINE=webkit node tests/perf-ws1-roads-browser.test.cjs
+          PERF_WS2_BROWSER_ENGINE=webkit node tests/perf-ws2-occlusion-browser.test.cjs
+          PERF_WS2_BASELINE_ROOT="$RUNNER_TEMP/perf-v09-baseline" PERF_WS2_BROWSER_ENGINE=webkit node scripts/perf-ws2-renderer-performance.cjs test-results/perf/combined-webkit.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -175,6 +195,13 @@ jobs:
         run: npm run check
       - name: Full regression suite
         run: npm test
+      - name: Verify protected performance baseline and combined equivalence
+        run: |
+          git fetch --depth=1 origin c6ce1af236bddd7ca881903499c4cf5de175f9e2
+          mkdir -p "$RUNNER_TEMP/perf-v09-baseline"
+          git archive c6ce1af236bddd7ca881903499c4cf5de175f9e2 | tar -x -C "$RUNNER_TEMP/perf-v09-baseline"
+          node tests/perf-v09-protected.test.cjs
+          node --expose-gc scripts/perf-v09-equivalence.cjs "$RUNNER_TEMP/perf-v09-baseline"
       - name: Reproduce cooldown balance evidence summary
         run: |
           python3 scripts/summarize-cooldown-balance.py docs/evidence/COOLDOWN_BALANCE_20261009.json.gz "$RUNNER_TEMP/cooldown-summary.json"
@@ -220,6 +247,11 @@ jobs:
         run: |
           node tests/enemy-vfx-browser.test.cjs
           VFX_CAPTURE_TAG=ci VFX_CAPTURE_SMOKE=1 node scripts/enemy-vfx-capture.cjs
+      - name: Verify performance rendering against the unchanged baseline
+        run: |
+          MATERIAL_BROWSER_ENGINE=chromium node tests/perf-ws1-roads-browser.test.cjs
+          PERF_WS2_BROWSER_ENGINE=chromium node tests/perf-ws2-occlusion-browser.test.cjs
+          PERF_WS2_BASELINE_ROOT="$RUNNER_TEMP/perf-v09-baseline" PERF_WS2_BROWSER_ENGINE=chromium node scripts/perf-ws2-renderer-performance.cjs test-results/perf/combined-chromium.json
       - name: Verify development sprite showroom
         run: node tests/sprite-showroom-browser.test.cjs
       - uses: actions/upload-artifact@v4

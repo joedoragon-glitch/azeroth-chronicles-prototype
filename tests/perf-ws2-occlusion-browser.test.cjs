@@ -74,6 +74,7 @@ const server = http.createServer((req, res) => {
       ).replace('root.PrototypeRenderer = api', 'root.PerfWs2BaselineRenderer = api'),
     });
     const comparisons = await page.evaluate(async () => {
+      performance.now = () => 16000;
       await PrototypeSprites.preload();
       await PrototypeSprites.warm(['hero:paladin'], { clips: true });
       const results = [];
