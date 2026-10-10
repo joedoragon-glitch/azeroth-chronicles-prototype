@@ -27,7 +27,8 @@ function sourceMechanic(row, inspector) {
         mechanic: copy(plan),
         authoredDescription: authored.attacks[slot],
         forms: ['normal', 'true'],
-        runtimeModifiers: 'TRUE variations, sequences and effective range are resolved by buildBossAttack / bossCombat at runtime',
+        runtimeModifiers:
+          'TRUE variations, sequences and effective range are resolved by buildBossAttack / bossCombat at runtime',
       };
     }
     case 'captain': {
@@ -69,11 +70,7 @@ function sourceMechanic(row, inspector) {
         forcedRole: 'ranged',
       };
       inspector.configureEnemy(enemy, 0);
-      assert.equal(
-        enemy.projectileStyle,
-        parts[2],
-        row.id + ': projectile role mismatch',
-      );
+      assert.equal(enemy.projectileStyle, parts[2], row.id + ': projectile role mismatch');
       return {
         source: 'rules.rangedProfiles / configureEnemy(forcedRole=ranged)',
         mechanic: copy({
@@ -110,11 +107,7 @@ function sourceMechanic(row, inspector) {
         source = 'rules.tacticalFoundation.rogueMoves (role/tier/species resolved at runtime)';
       }
       assert(profile, row.id + ': missing basic rogue maneuver');
-      assert.equal(
-        profile.name,
-        row.name,
-        row.id + ': rogue basic name mismatch',
-      );
+      assert.equal(profile.name, row.name, row.id + ': rogue basic name mismatch');
       return { source, mechanic: copy(profile) };
     }
     case 'rogue-signature': {
@@ -129,15 +122,10 @@ function sourceMechanic(row, inspector) {
         const role = parts[2];
         const species = parts[3];
         profile = tactical.rogueRingleaderSignatures[role]?.[species];
-        source =
-          'rules.tacticalFoundation.rogueRingleaderSignatures.' + role + '.' + species;
+        source = 'rules.tacticalFoundation.rogueRingleaderSignatures.' + role + '.' + species;
       }
       assert(profile, row.id + ': missing signature');
-      assert.equal(
-        profile.name,
-        row.name,
-        row.id + ': rogue signature name mismatch',
-      );
+      assert.equal(profile.name, row.name, row.id + ': rogue signature name mismatch');
       return { source, mechanic: copy(profile) };
     }
     case 'basic-attack':
@@ -189,7 +177,8 @@ function report() {
     owner: 'dungeon / side dungeon / outdoor mini-site',
     name: kind,
     kind: kind === 'jet' ? 'capsule' : 'circle',
-    source: 'rules.dungeonTrapTuning / rules.sideDungeonTrapTuning / rules.outdoorMiniTrapTuning; engine.traps / trapContains / updateTraps',
+    source:
+      'rules.dungeonTrapTuning / rules.sideDungeonTrapTuning / rules.outdoorMiniTrapTuning; engine.traps / trapContains / updateTraps',
     mechanic: {
       hit: 'once per active cycle per living hero/companion in geometric footprint',
       damage: 'a fraction of victim max HP derived from the active regional/context tuning',
@@ -211,9 +200,7 @@ function report() {
     },
   }));
   const recoveries = Object.entries(Campaign.rules.bossRecovery)
-    .filter(
-      ([, plan]) => !!plan && typeof plan === 'object' && typeof plan.name === 'string',
-    )
+    .filter(([, plan]) => !!plan && typeof plan === 'object' && typeof plan.name === 'string')
     .map(([family, plan]) => ({
       id: 'boss/' + family + '/recovery',
       group: 'boss-recovery',
@@ -233,35 +220,26 @@ function report() {
       },
     }));
   const rows = [...entries, ...traps, ...recoveries];
-  assert.equal(
-    new Set(rows.map((row) => row.id)).size,
-    rows.length,
-    'duplicate registry ID',
-  );
+  assert.equal(new Set(rows.map((row) => row.id)).size, rows.length, 'duplicate registry ID');
   const counts = Object.fromEntries(
     [...new Set(rows.map((row) => row.group))].map((group) => [
       group,
       rows.filter((row) => row.group === group).length,
     ]),
   );
-  assert.equal(
-    entries.length,
-    existing.total,
-    'VFX roster must not lose an identity',
-  );
+  assert.equal(entries.length, existing.total, 'VFX roster must not lose an identity');
   assert.equal(traps.length, 3, 'all three trap kinds are included');
   return {
     schemaVersion: 1,
     purpose: 'v0.9 read-only audit inventory, not certification of correctness',
     authority: 'live Campaign data/rules and existing enemy VFX identity inventory',
-    activeCombatMode: Campaign.rules.resourceMode.manaEnabled
-      ? 'legacy-mana'
-      : 'cooldown-only',
+    activeCombatMode: Campaign.rules.resourceMode.manaEnabled ? 'legacy-mana' : 'cooldown-only',
     counts,
     totalVisualIdentities: entries.length,
     additionalTrapKinds: traps.length,
     additionalRecoveryActions: recoveries.length,
-    reviewPolicy: 'unreviewed until an independent mechanic, description, identity, VFX and lifecycle audit',
+    reviewPolicy:
+      'unreviewed until an independent mechanic, description, identity, VFX and lifecycle audit',
     rows,
   };
 }
@@ -277,17 +255,20 @@ function markdown(audit) {
     '> Read-only live-source inventory. No skill is certified correct merely by appearing here.',
     '> Counts are presentation IDs, not unique damage formulas. TRUE boss forms share authored IDs.',
     '',
-    'Visual identities: **' + audit.totalVisualIdentities + '**; trap kinds: **' +
-      audit.additionalTrapKinds + '**; configured recovery actions: **' +
-      audit.additionalRecoveryActions + '**.',
+    'Visual identities: **' +
+      audit.totalVisualIdentities +
+      '**; trap kinds: **' +
+      audit.additionalTrapKinds +
+      '**; configured recovery actions: **' +
+      audit.additionalRecoveryActions +
+      '**.',
     '',
     '| Group | Stable ID | Owner | Skill / action | Mechanics | Stages | Review |',
     '| --- | --- | --- | --- | --- | --- | --- |',
   ];
   for (const row of audit.rows) {
     const mechanics = row.mechanic || {};
-    const kind =
-      mechanics.effect || mechanics.style || mechanics.kind || row.kind;
+    const kind = mechanics.effect || mechanics.style || mechanics.kind || row.kind;
     lines.push(
       '| ' +
         escape(row.group) +
@@ -316,8 +297,7 @@ function markdown(audit) {
 
 if (require.main === module) {
   const audit = report();
-  if (process.argv.includes('--markdown'))
-    process.stdout.write(markdown(audit));
+  if (process.argv.includes('--markdown')) process.stdout.write(markdown(audit));
   else if (process.argv.includes('--summary')) {
     console.log(
       'Monster attack read-only registry: ' +
