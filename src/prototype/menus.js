@@ -403,7 +403,9 @@
           : 'Neri sells Preparation Tonics and trains permanent Ranger Heal, companion vitality and discipline resets.',
         [
           action(
-            'Buy Preparation Tonic · ' + getGame().preparationTonicCost() + ' crowns',
+            getGame().preparationTonicStock() >= 10000
+              ? 'Preparation Tonics · STORAGE FULL'
+              : 'Buy Preparation Tonic · ' + getGame().preparationTonicCost() + ' crowns',
             () => {
               if (getGame().purchasePreparationTonic()) supplier(n, back);
             },
