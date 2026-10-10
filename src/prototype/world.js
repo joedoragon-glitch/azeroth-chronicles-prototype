@@ -337,7 +337,7 @@
             if ((item.r || 0) > 0 && nearEnemyHome(p, (item.r || 0) + 145)) return false;
             return (
               !z.nodes.some((node) => dist(node, p) < (item.r || 0) + 55) &&
-              !z.buildings.some((building) => dist(building, p) < (item.r || 0) + 72)
+              !z.buildings.some((building) => building !== item && dist(building, p) < 165)
             );
           };
           const moveOffRoad = (item, setback) => {
@@ -366,6 +366,11 @@
             }
             return false;
           };
+          // Saved/player-built barracks are large buildings too. Relocate
+          // a historical barracks before placing town services so neither
+          // building encroaches on the newly planned right-of-way.
+          for (const building of z.buildings)
+            moveOffRoad(building, 175);
           for (const [id, setback] of frontages) {
             const npc = z.npcs.find((n) => n.id === id);
             if (!npc) continue;
