@@ -754,3 +754,9 @@ body.menu-open::before {
   border-color: #b8e5d5;
   background: linear-gradient(155deg, #304e57, #1c343e);
 }
+
+/* Hub menus have self-explanatory choices; omit redundant page headings. */
+#modal[data-view='settings'] #modal-title,
+#modal[data-view='settings'] #modal-description {
+  display: none;
+}

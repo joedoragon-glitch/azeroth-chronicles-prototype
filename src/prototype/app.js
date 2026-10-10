@@ -405,7 +405,7 @@
     clearInput();
     gateDismissed = false;
     menu = { title, description, actions, back };
-    $('modal').setAttribute('data-view', title === 'Adventure menu' ? 'adventure' : 'default');
+    $('modal').setAttribute('data-view', title === 'Adventure menu' ? 'adventure' : title === 'Game and settings' ? 'settings' : 'default');
     // Small interactions need a small dialog; longer service catalogs keep a readable width.
     const compact =
       actions.length <= 2 &&

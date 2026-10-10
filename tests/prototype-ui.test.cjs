@@ -149,3 +149,6 @@ c.s.phase = 'peace';
 key('KeyJ');
 assert(elements.get('modal-actions').children.some((b) => b.textContent.includes('New Nightmare adventure')),'completed story offers nightmare mode');
 scope.Prototype.closeMenu();
+
+// Settings retain their choices but do not need an introduction or pause toggle.
+assert(!elements.get('modal-actions').children.some((b) => /Pause play|Resume play/.test(b.textContent)));
