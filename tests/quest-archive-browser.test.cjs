@@ -14,6 +14,10 @@ const mime = {
   '.css': 'text/css',
   '.json': 'application/json',
   '.png': 'image/png',
+  '.webp': 'image/webp',
+  '.mp3': 'audio/mpeg',
+  '.ogg': 'audio/ogg',
+  '.wav': 'audio/wav',
   '.webmanifest': 'application/manifest+json',
 };
 const server = http.createServer((req, res) => {
@@ -31,6 +35,7 @@ const server = http.createServer((req, res) => {
     return;
   }
   res.setHeader('Content-Type', mime[path.extname(file)] || 'application/octet-stream');
+  res.setHeader('Content-Length', fs.statSync(file).size);
   fs.createReadStream(file).pipe(res);
 });
 (async () => {
@@ -193,11 +198,13 @@ const server = http.createServer((req, res) => {
         .getByRole('button', { name: 'Adversaries and their attacks', exact: false })
         .click();
       await page.getByRole('button', { name: 'Drowned Keeper', exact: true }).click();
+      await page.getByRole('button', { name: 'Show me the figures', exact: true }).click();
       assert(
         (await page.locator('#modal-description').textContent()).includes(
           'draws back 15% of HP actually taken',
         ),
       );
+      await page.keyboard.press('Escape');
       await page.keyboard.press('Escape');
       await page.keyboard.press('Escape');
       await page.keyboard.press('Escape');
