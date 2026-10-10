@@ -49,6 +49,7 @@ for (const mode of ['normal', 'nightmare'])
       slowSeconds: 2.75,
     };
     game.traps = () => [trap];
+    if (kind === 'jet') game.clearSegment = () => true;
     game.updateTraps(0.1);
     assert.equal(hero.hp, 1000, kind + ' warning does not damage the hero');
     assert.equal(companion.hp, 1000, kind + ' warning does not damage companions');
@@ -229,6 +230,7 @@ for (const mode of ['normal', 'nightmare']) {
     slowSeconds: 2.5,
   };
   game.traps = () => [jet];
+  game.clearSegment = () => true;
   game.s.party = [];
   const oldHp = hero.hp;
   game.updateTraps(0.1);
