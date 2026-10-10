@@ -1316,8 +1316,7 @@
           zone.npcs.every((n) => Math.hypot(n.x - point.x, n.y - point.y) > 105) &&
           zone.buildings.every((b) => Math.hypot(b.x - point.x, b.y - point.y) > 170) &&
           zone.props.every(
-            (item) =>
-              Math.hypot(item.x - point.x, item.y - point.y) > (item.r || 0) + 60,
+            (item) => Math.hypot(item.x - point.x, item.y - point.y) > (item.r || 0) + 60,
           ),
       );
       if (!p) {
@@ -1327,19 +1326,19 @@
       if (!this.spend(cost)) return false;
       this.s.recallActive = false;
       const b = {
-          id: 'barracks-' + this.s.nextId++,
-          ...p,
-          progress: 0,
-          queue: 0,
-          queueType: null,
-          kind: 'barracks',
-          name: 'Barracks',
-          theme: this.zoneId,
-          icon: '🏗️',
-          full: false,
-          upgradeProgress: 0,
-          upgradePaid: false,
-        };
+        id: 'barracks-' + this.s.nextId++,
+        ...p,
+        progress: 0,
+        queue: 0,
+        queueType: null,
+        kind: 'barracks',
+        name: 'Barracks',
+        theme: this.zoneId,
+        icon: '🏗️',
+        full: false,
+        upgradeProgress: 0,
+        upgradePaid: false,
+      };
       this.zone().buildings.push(b);
       builder.order = { type: 'build', id: b.id };
       this.say(
