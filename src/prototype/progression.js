@@ -243,7 +243,7 @@
             '% of ' +
             (id === 'sharedTraining'
               ? 'applicable discipline-training HP, damage and movement speed'
-              : 'bonus HP, damage and armor') +
+              : 'permanent bonus HP, damage and armor') +
             '.',
         );
         this.event('expeditionSupport', { id, rank: next, family });
