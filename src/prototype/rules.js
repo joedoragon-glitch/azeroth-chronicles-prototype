@@ -3701,7 +3701,7 @@
       maxRank: 4,
       costs: [0, 125, 200, 300, 425],
       detail:
-        'Companions inherit other bonus HP and damage plus armor-tier and reforge defense bonuses.',
+        'Companions inherit permanent bonus HP and damage plus armor-tier and reforge defense bonuses; temporary self-only buffs and consumables do not transfer.',
     },
   };
   const progression = { ordinaryXpMultiplier: 0.5, levelGapRewards: [1, 0.75, 0.4, 0.1, 0] };
