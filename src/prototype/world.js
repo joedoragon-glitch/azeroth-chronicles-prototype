@@ -308,6 +308,12 @@
           const nearEnemyHome = (p, radius) =>
             z.enemies.some((enemy) => enemy.hp > 0 && dist(enemy.home || enemy, p) < radius);
           const canPlace = (p, item, setback) => {
+            // The world coordinate is the building anchor, not its outer wall.
+            // Refuge artwork must fit inside map edges at its actual scale.
+            if (['rest', 'minor'].includes(item.id)) {
+              const size = D.regions[i].size;
+              if (Math.min(p.x, p.y, size - p.x, size - p.y) < 115) return false;
+            }
             if (this.blocked(p.x, p.y, z.id, Math.max(12, (item.r || 0) + 9), true)) return false;
             if (this.distanceToRoad(z, p) < setback) return false;
             if (
