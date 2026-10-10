@@ -144,7 +144,7 @@ jobs:
           VFX_BROWSER_ENGINE: webkit
         run: |
           node tests/enemy-vfx-browser.test.cjs
-          VFX_CAPTURE_TAG=webkit-ci VFX_CAPTURE_SMOKE=1 node scripts/enemy-vfx-capture.cjs
+          VFX_CAPTURE_TAG=webkit-ci VFX_CAPTURE_SMOKE=1 VFX_CAPTURE_VISUAL_ONLY=1 node scripts/enemy-vfx-capture.cjs
       - name: Verify WebKit original-master actor idles and combat
         if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         run: |

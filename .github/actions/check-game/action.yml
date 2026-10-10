@@ -80,7 +80,7 @@ runs:
       shell: bash
       run: |
         node tests/enemy-vfx-browser.test.cjs
-        VFX_CAPTURE_TAG=ci VFX_CAPTURE_SMOKE=1 node scripts/enemy-vfx-capture.cjs
+        VFX_CAPTURE_TAG=ci VFX_CAPTURE_SMOKE=1 VFX_CAPTURE_VISUAL_ONLY=1 node scripts/enemy-vfx-capture.cjs
     - name: Verify Chromium performance changes when present
       if: hashFiles('tests/perf-v09-protected.test.cjs') != ''
       shell: bash
