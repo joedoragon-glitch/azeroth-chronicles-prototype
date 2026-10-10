@@ -27,7 +27,7 @@ for (const mode of ['normal', 'nightmare']) {
   // c.safe() to silently move an unsafe requested destination elsewhere.
   const destinations = [
     ['hatchery/flight-training wing', { x: 1020, y: 615 }],
-    ['feeding/service wing', { x: 630, y: 1090 }],
+    ['feeding/service wing', { x: 735, y: 1080 }],
   ];
   assert(!c.blocked(start.x, start.y, 'abyss', 15), 'entrance must be safe');
 
