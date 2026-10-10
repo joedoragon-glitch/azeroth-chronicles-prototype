@@ -6,8 +6,8 @@ Azeroth Chronicles remains the same multi-file Campaign game on desktop/Chromebo
 
 ## Navigation ownership
 
-- **Adventure menu**: global map, journal, portable inventory/support, character/training and system settings. An **Establish Basic Barracks** action deliberately remains available in the field because its placement requires the hero's current location and cannot be performed at an existing Barracks. Town Captains retain their equivalent starter construction route for discovery.
-- **Town Captains**: starter recruitment/recovery and construction/resources.
+- **Adventure menu**: global map, journal, portable inventory/support, character/training and system settings. An **Establish Basic Barracks** action deliberately remains available in the field because its placement requires the hero's current location and cannot be performed at an existing Barracks. Town Captains no longer offer Barracks construction; this remains a field-position action in Adventure.
+- **Town Captains**: direct starter recruitment and recovery; no construction shortcut.
 - **Basic Barracks**: Expedition Skill, Company (group/recruitment/recovery), Rescued specialists, Operations (local objectives/resources), plus a context-specific Full upgrade.
 - **Full Barracks**: the same four sections; no duplicate Inventory & support, global map or global Awakening action. Inventory remains usable wherever the character is, rather than requiring a Barracks.
 - **NPCs/structures**: their existing service permissions, unlocks, data and Back navigation remain intact. Section names are stable and nested services are scrollable.
@@ -43,3 +43,7 @@ Joel approved the phone and desktop interface refinements and smaller content-re
 ## Final release integration · v0.8.115
 
 PR #165 merged at `4a2e6b3` after its complete Chromium/WebKit checks passed on `4cb46aed`. Main also includes PR #176 (`647c2df`) and all stacked-notice, tonic and quest updates. Both concurrent candidates used v0.8.114, producing byte-identical service workers despite different runtime content. The final UI release advances package/build/cache metadata to v0.8.115 so installed PWAs install the combined assets and retire the earlier cache. This changes no gameplay or save keys. Publication is accepted only after main CI, exact published-build verification and live desktop/phone/PWA smoke checks.
+
+## Compact navigation follow-up · 9 October 2026
+
+Adventure and Game and settings omit unnecessary headings and explanatory paragraphs. Adventure opens Talents directly without a Character submenu. Game and settings removes the redundant Pause play command; single-player menus already pause automatically. Town Captains open recruitment and recovery directly and no longer expose construction. Contextual prices, service requirements, field construction and mechanical shortcuts remain available.
