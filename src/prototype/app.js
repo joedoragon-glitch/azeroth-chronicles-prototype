@@ -493,7 +493,11 @@
   document.addEventListener(
     'pointerdown',
     (event) => {
-      if (!menu || $('modal').contains(event.target)) {
+      if (
+        !menu ||
+        $('modal').contains(event.target) ||
+        event.target.closest?.('#order-button, #joystick, #stick')
+      ) {
         // WebKit can omit the click after a canceled pointerdown. A fresh
         // pointerdown must not inherit dismissal from the previous gesture.
         outsidePointerId = null;
@@ -530,7 +534,11 @@
     (event) => {
       // WebKit may not dispatch click after a prevented pointerdown.
       // Do not let an old outside-tap ID swallow a later, valid menu choice.
-      if (menu && $('modal').contains(event.target)) {
+      if (
+        menu &&
+        ($('modal').contains(event.target) ||
+          event.target.closest?.('#order-button, #joystick, #stick'))
+      ) {
         outsidePointerId = null;
         return;
       }
