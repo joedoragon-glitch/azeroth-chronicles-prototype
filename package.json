@@ -4,6 +4,7 @@
   "private": true,
   "description": "Offline installable RPG prototype for Chromebook and mobile.",
   "scripts": {
+    "preformat:check": "prettier src/prototype/world.js > /tmp/roads-world-prettier.js && diff -u src/prototype/world.js /tmp/roads-world-prettier.js || true",
     "test": "node tests/run.cjs",
     "test:browser": "node tests/prototype-browser.test.cjs",
     "test:quick": "node tests/run.cjs --quick",
