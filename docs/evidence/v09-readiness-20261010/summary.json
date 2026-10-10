@@ -1,0 +1,179 @@
+{
+  "testedSha": "6c2381b34ce63fb935936a4e69ec404996f7765a",
+  "earlyCheckpointPasses": 3,
+  "attempts": 6,
+  "wholeCampaignAccepted": false,
+  "rows": [
+    {
+      "mode": "normal",
+      "class": "paladin",
+      "checkpoint": null,
+      "end": {
+        "label": "visit failed goblin-camp",
+        "time": 75.6,
+        "zone": "vale",
+        "xy": [
+          300,
+          350
+        ],
+        "hp": 145,
+        "level": 2,
+        "crowns": 68,
+        "kills": 9,
+        "deaths": 1,
+        "party": [
+          0,
+          19
+        ],
+        "rescued": []
+      },
+      "completedQuests": [
+        "quest-barracks",
+        "quest-1"
+      ]
+    },
+    {
+      "mode": "normal",
+      "class": "mage",
+      "checkpoint": null,
+      "end": {
+        "label": "visit failed goblin-camp",
+        "time": 76.7,
+        "zone": "vale",
+        "xy": [
+          900,
+          700
+        ],
+        "hp": 115,
+        "level": 2,
+        "crowns": 56,
+        "kills": 12,
+        "deaths": 1,
+        "party": [
+          0,
+          114
+        ],
+        "rescued": []
+      },
+      "completedQuests": [
+        "quest-barracks",
+        "quest-1"
+      ]
+    },
+    {
+      "mode": "normal",
+      "class": "ranger",
+      "checkpoint": "PASS earned-state save restore: money, XP, skills, equipment, quests, living/fallen party; original unchanged",
+      "end": {
+        "label": "early earned-state pilot complete; whole campaign NOT RUN",
+        "time": 94.8,
+        "zone": "vale",
+        "xy": [
+          792,
+          1365
+        ],
+        "hp": 124,
+        "level": 3,
+        "crowns": 109,
+        "kills": 16,
+        "deaths": 0,
+        "party": [
+          0,
+          82
+        ],
+        "rescued": []
+      },
+      "completedQuests": [
+        "quest-barracks",
+        "quest-1",
+        "quest-5"
+      ]
+    },
+    {
+      "mode": "nightmare",
+      "class": "paladin",
+      "checkpoint": null,
+      "end": {
+        "label": "visit failed goblin-camp",
+        "time": 63.4,
+        "zone": "vale",
+        "xy": [
+          300,
+          350
+        ],
+        "hp": 145,
+        "level": 2,
+        "crowns": 76,
+        "kills": 9,
+        "deaths": 1,
+        "party": [
+          0,
+          1
+        ],
+        "rescued": []
+      },
+      "completedQuests": [
+        "quest-barracks",
+        "quest-1"
+      ]
+    },
+    {
+      "mode": "nightmare",
+      "class": "mage",
+      "checkpoint": "PASS earned-state save restore: money, XP, skills, equipment, quests, living/fallen party; original unchanged",
+      "end": {
+        "label": "early earned-state pilot complete; whole campaign NOT RUN",
+        "time": 110.5,
+        "zone": "vale",
+        "xy": [
+          792,
+          1366
+        ],
+        "hp": 96,
+        "level": 3,
+        "crowns": 128,
+        "kills": 16,
+        "deaths": 0,
+        "party": [
+          0,
+          49
+        ],
+        "rescued": []
+      },
+      "completedQuests": [
+        "quest-barracks",
+        "quest-1",
+        "quest-5"
+      ]
+    },
+    {
+      "mode": "nightmare",
+      "class": "ranger",
+      "checkpoint": "PASS earned-state save restore: money, XP, skills, equipment, quests, living/fallen party; original unchanged",
+      "end": {
+        "label": "early earned-state pilot complete; whole campaign NOT RUN",
+        "time": 57.8,
+        "zone": "vale",
+        "xy": [
+          794,
+          1335
+        ],
+        "hp": 155,
+        "level": 3,
+        "crowns": 108,
+        "kills": 11,
+        "deaths": 0,
+        "party": [
+          114,
+          111
+        ],
+        "rescued": []
+      },
+      "completedQuests": [
+        "quest-barracks",
+        "quest-1",
+        "quest-5"
+      ]
+    }
+  ]
+}

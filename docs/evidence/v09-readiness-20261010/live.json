@@ -1,0 +1,48 @@
+{
+  "checkedAt": "2026-10-10T23:20:46.892580+00:00",
+  "baseline": "6c2381b34ce63fb935936a4e69ec404996f7765a",
+  "rows": [
+    {
+      "path": "build.txt",
+      "http": 200,
+      "sha256": "202d7b72b16f0cd595c48e419994dc9b603cd780726c4e08640ffa78f73f277c",
+      "matchesCheckout": null,
+      "value": "6c2381b34ce63fb935936a4e69ec404996f7765a"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "http": 200,
+      "sha256": "1993538ce0e8451d2e380f800b2e58d3be3df0cdd674f5a62c4232a8eee2bea4",
+      "matchesCheckout": true,
+      "value": "/* Generated from package.json. Run npm run build after a version change. */\n(function(root){'use strict';const api=Object.freeze({version:\"0.8.138\"});if(typeof module!=='undefined')module.exports=api;else root.PrototypeBuild=api;})(typeof window!=='undefined'?window:globalThis);"
+    },
+    {
+      "path": "sw.js",
+      "http": 200,
+      "sha256": "cbfbae82fa8bdb15b19403b157428e559bba8b939ffa661d6d116ec7777912ac",
+      "matchesCheckout": true,
+      "value": null
+    },
+    {
+      "path": "src/prototype/runtime.js",
+      "http": 200,
+      "sha256": "d75f3f9fc8e7a964420da9b1642aefc7dae433b0a19ca45b704b65c72f7e0652",
+      "matchesCheckout": true,
+      "value": null
+    },
+    {
+      "path": "src/prototype/app.js",
+      "http": 200,
+      "sha256": "e25db6455fbe9244d67fb672568e32869410b44a85afe02fee3f531dd5fcd333",
+      "matchesCheckout": true,
+      "value": null
+    },
+    {
+      "path": "src/prototype/data.js",
+      "http": 200,
+      "sha256": "6ee3fb3b1d5ed017acc42698497eb8659e434da688f5a50280133992c7e6263b",
+      "matchesCheckout": true,
+      "value": null
+    }
+  ]
+}

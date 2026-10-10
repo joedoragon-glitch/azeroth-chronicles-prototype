@@ -1,0 +1,284 @@
+{
+  "checkpointResult": null,
+  "sha": "6c2381b34ce63fb935936a4e69ec404996f7765a",
+  "mode": "nightmare",
+  "class": "paladin",
+  "provenance": "Fresh current-engine automated action pilot; fixed RNG 0.9; only movement/attack orders and public player actions; no resource/stat/kill/position injection; not human or historical save",
+  "events": [
+    {
+      "label": "fresh",
+      "time": 0,
+      "zone": "vale",
+      "xy": [
+        300,
+        350
+      ],
+      "hp": 120,
+      "level": 1,
+      "crowns": 30,
+      "kills": 0,
+      "deaths": 0,
+      "party": [
+        120,
+        105
+      ],
+      "rescued": []
+    },
+    {
+      "label": "natural construction",
+      "time": 30,
+      "zone": "vale",
+      "xy": [
+        300,
+        350
+      ],
+      "hp": 120,
+      "level": 1,
+      "crowns": 30,
+      "kills": 0,
+      "deaths": 0,
+      "party": [
+        120,
+        105
+      ],
+      "rescued": []
+    },
+    {
+      "label": "visit failed goblin-camp",
+      "time": 63.4,
+      "zone": "vale",
+      "xy": [
+        300,
+        350
+      ],
+      "hp": 145,
+      "level": 2,
+      "crowns": 76,
+      "kills": 9,
+      "deaths": 1,
+      "party": [
+        0,
+        1
+      ],
+      "rescued": []
+    }
+  ],
+  "final": {
+    "quests": {
+      "quest-barracks": {
+        "active": false,
+        "count": 0,
+        "done": true,
+        "paid": true
+      },
+      "quest-0": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-1": {
+        "active": false,
+        "count": 5,
+        "done": true,
+        "paid": true
+      },
+      "quest-2": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-3": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-4": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-5": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-6": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-7": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-8": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-9": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-10": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-11": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-12": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-13": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-14": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-15": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-16": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-17": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-18": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-19": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-20": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-21": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-22": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-23": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-24": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-25": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-26": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-27": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-28": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      },
+      "quest-29": {
+        "active": true,
+        "count": 0,
+        "done": false,
+        "paid": false
+      }
+    },
+    "statistics": {
+      "kills": 9,
+      "deaths": 1,
+      "goldEarned": 65,
+      "suppliesUsed": 0,
+      "bossSeconds": {}
+    },
+    "skills": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "barracks": [
+      {
+        "progress": 4,
+        "full": false
+      }
+    ],
+    "thornHp": 1200
+  },
+  "eventHistoryOmitted": {
+    "reason": "Presentation/combat event stream is not needed for the reported progression checkpoints; counts and checkpoint outcomes retained",
+    "entries": 391
+  }
+}

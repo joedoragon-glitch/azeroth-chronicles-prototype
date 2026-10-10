@@ -1,0 +1,17 @@
+{
+  "pass": true,
+  "deltas": [
+    {
+      "id": "thorn",
+      "index": 1,
+      "before": "Pounce: marks a landing circle for 1.3 seconds; misses leave a 1.5 second opening.",
+      "after": "Pounce: marks a landing circle for 1.3 seconds; after the leap ends (hit or miss), Thornfang has 0.375 seconds of normal recovery, with no extra exposed-core vulnerability."
+    },
+    {
+      "id": "mine",
+      "index": 3,
+      "before": "Wall rush: lane warns for 1.7 seconds; striking a marked pillar exposes the core for 3 seconds.",
+      "after": "Wall rush: lane warns for 1.7 seconds; when the charge ends, the core is exposed for 3 seconds, with or without an obstacle collision."
+    }
+  ]
+}
