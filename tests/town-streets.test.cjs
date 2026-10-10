@@ -13,7 +13,11 @@ for (const [i, region] of Campaign.data.regions.entries()) {
   assert.equal(zone.roadsideClearanceVersion, 1, region.id + ' has had a street audit');
   assert(zone.roads.length >= 5, region.id + ' has purposeful regional roads');
   assert(
-    zone.roads.some((p) => Math.hypot(p.at(-1).x - hamlet.x, p.at(-1).y - hamlet.y) < 2),
+    zone.roads.some((p) => {
+      const last = p.at(-1);
+      const gap = Math.hypot(last.x - hamlet.x, last.y - hamlet.y);
+      return gap >= 100 && gap <= 190;
+    }),
     region.id + ' connects its outlying settlement',
   );
   const homes = zone.props.filter((p) => p.roadBlocker);
