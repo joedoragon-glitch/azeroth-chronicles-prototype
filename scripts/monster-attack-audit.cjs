@@ -70,15 +70,21 @@ function sourceMechanic(row, inspector) {
         forcedRole: 'ranged',
       };
       inspector.configureEnemy(enemy, 0);
-      assert.equal(enemy.projectileStyle, parts[2], row.id + ': projectile role mismatch');
+      const named = rules.rangedProfiles[species];
+      const authoredVariant = named?.projectileStyle === parts[2];
+      const forcedVariant = enemy.projectileStyle === parts[2];
+      assert(authoredVariant || forcedVariant, row.id + ': unknown ranged role');
+      const profile = authoredVariant ? named : enemy;
       return {
-        source: 'rules.rangedProfiles / configureEnemy(forcedRole=ranged)',
+        source: authoredVariant
+          ? 'rules.rangedProfiles.' + species
+          : 'configureEnemy(forcedRole=ranged)',
         mechanic: copy({
-          style: enemy.projectileStyle,
-          range: enemy.shotRange,
-          speed: enemy.shotSpeed,
-          slow: enemy.projectileSlow || 0,
-          role: 'ranged',
+          style: parts[2],
+          range: profile.shotRange,
+          speed: profile.shotSpeed,
+          slow: profile.projectileSlow || 0,
+          role: authoredVariant ? named.variant : 'forced ranged',
         }),
       };
     }
