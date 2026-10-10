@@ -29,7 +29,7 @@ for (const mode of ['normal', 'nightmare'])
     try {
       C.rules.balance.skills.cooldowns[1] = 9.125;
       sections = Archive.sections(c, { D: C.data, R: C.rules });
-      assert(sections.find((s) => s.title === 'Your skills').topics[0][1].includes('9.13 seconds'));
+      assert(sections.find((s) => s.title === 'Your skills').topics[0][2].includes('9.13 seconds'));
     } finally {
       C.rules.balance.skills.cooldowns[1] = original;
     }
@@ -39,14 +39,14 @@ for (const mode of ['normal', 'nightmare'])
       C.rules.resourceMode = { manaEnabled: false };
       c.skillCooldown = (slot, charged) => (charged ? 11 : 4);
       sections = Archive.sections(c, { D: C.data, R: C.rules });
-      const skill = sections.find((s) => s.title === 'Your skills').topics[0][1];
+      const skill = sections.find((s) => s.title === 'Your skills').topics[0][2];
       assert(skill.includes('recovery 4 seconds') && skill.includes('Charged recovery: 11'));
       assert(!skill.includes('MP'));
       assert(
         !sections
           .find((s) => s.title === 'Companions and field bases')
-          .topics.find((t) => t[0] === 'A Ranger’s care')[1]
-          .includes('Mana Recovery'),
+          .topics.find((t) => t[0] === 'A Ranger’s care')[2]
+          .includes('Mana recovery'),
       );
     } finally {
       if (oldMode === undefined) delete C.rules.resourceMode;
@@ -75,20 +75,57 @@ try {
     C.rules.resourceMode = { manaEnabled };
     const shelves = Archive.sections(c, { D: C.data, R: C.rules });
     const records = shelves.find((s) => s.title === 'Adversaries and their attacks').topics;
-    const keeper = records.find(([title]) => title === 'Drowned Keeper')[1];
+    const keeper = records.find(([title]) => title === 'Drowned Keeper')[2];
     assert.equal(keeper.includes('draws back 15% of HP actually taken'), !manaEnabled);
     assert.equal(keeper.includes('drains 8% of the hero’s maximum mana'), manaEnabled);
     for (const family of ['abyss', 'citadel']) {
       const boss = C.data.bosses.find((b) => b.id === family);
-      const answer = records.find(([title]) => title === boss.name)[1];
+      const answer = records.find(([title]) => title === boss.name)[2];
       assert.equal(answer.includes(C.rules.bossRecovery[family].name), !manaEnabled);
     }
-    const lesson = shelves.find((s) => s.title === 'Experience and discipline').topics[1][1];
+    const lesson = shelves.find((s) => s.title === 'Experience and discipline').topics[1][2];
     assert.equal(lesson.includes('up to 20%'), !manaEnabled);
   }
 } finally {
   C.rules.resourceMode = modeBefore;
 }
+// Distinct observed variants must survive deduplication, including equal-species
+// creatures whose region, role or scaled stats differ.
+const statsCampaign = new C(),
+  originalCreature = statsCampaign.zone().enemies[0];
+statsCampaign
+  .zone()
+  .enemies.push(
+    { ...originalCreature, id: 'reference-stronger', maxHp: 987.5, damage: 123.25 },
+    { ...originalCreature, id: 'reference-ranged', ranged: true },
+    { ...originalCreature, id: 'reference-captain', roomCaptain: true },
+  );
+const reference = Archive.sections(statsCampaign, { D: C.data, R: C.rules });
+const creatures = reference
+  .find((s) => s.title === 'Adversaries and their attacks')
+  .topics.find((t) => t[0] === 'Creatures encountered')[1];
+assert(creatures.includes('HP 987.5 · damage 123.25'));
+assert(creatures.includes('ranged') && creatures.includes('captain'));
+assert(creatures.includes('Greenwood Vale'));
+const battle = reference.find((s) => s.title === 'Battle and protection').topics;
+const rogue = battle.find((t) => t[0] === 'Enemies under pressure');
+assert(rogue[1].includes('rogue tactics') && rogue[1].includes('break pursuit'));
+assert(rogue[2].includes('below 30% HP') && rogue[2].includes('half damage'));
+assert(!battle.find((t) => t[0] === 'Why a great volley loses force')[1].includes('ln('));
+assert(battle.find((t) => t[0] === 'Why a great volley loses force')[2].includes('67.5%'));
+assert(
+  !reference
+    .flatMap((s) => s.topics)
+    .some((t) =>
+      [
+        'Quests without errands',
+        'Room in the company',
+        'Preparation before danger',
+        'The cost of keeping a company',
+        'Steel from the smith',
+      ].includes(t[0]),
+    ),
+);
 console.log(
-  'PASS read-only optional Archive, all class/mode references, live costs/cooldowns, evidence gate, armor formula and crown failure event',
+  'PASS read-only optional Archive, all class/mode references, live figures/cooldowns, evidence gate, armor formula and crown failure event',
 );

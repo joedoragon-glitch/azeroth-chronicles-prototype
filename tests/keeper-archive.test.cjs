@@ -80,6 +80,10 @@ ui.shown()
 const topic = ui.shown().actions.find((a) => a.label === 'Why old enemies teach little');
 assert(topic);
 topic.action();
+assert(!ui.shown().description.includes('100 / 75'), 'Figures require a deliberate request');
+ui.shown()
+  .actions.find((a) => a.label === 'Show me the figures')
+  .action();
 assert(ui.shown().description.includes('100 / 75 / 40 / 10 / 0%'));
 assert(ui.shown().description.includes(String(C.rules.balance.growth.xpPerLevel)));
 ui.menus.keeper();
@@ -272,6 +276,12 @@ const oldTopic = delayed.shown().actions[0];
 currentRun.s.pending.archive = { kind: 'dungeon', count: 1, active: true };
 oldTopic.action();
 assert.equal(delayed.shown().title, 'Your skills', 'A stale answer must not open');
+delete currentRun.s.pending.archive;
+oldTopic.action();
+const oldFigures = delayed.shown().actions.find((a) => a.label === 'Show me the figures');
+currentRun.s.pending.archive = { kind: 'dungeon', count: 1, active: true };
+oldFigures.action();
+assert(!delayed.shown().description.includes('recovery '), 'Stale figures must not open');
 console.log(
   'PASS Normal/Nightmare unlock matrix, read-independent cooperation, real Awakening, reload/recapture, both Barracks and stale dialogue guards',
 );

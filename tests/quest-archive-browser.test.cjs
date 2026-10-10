@@ -193,11 +193,13 @@ const server = http.createServer((req, res) => {
         .getByRole('button', { name: 'Adversaries and their attacks', exact: false })
         .click();
       await page.getByRole('button', { name: 'Drowned Keeper', exact: true }).click();
+      await page.getByRole('button', { name: 'Show me the figures', exact: true }).click();
       assert(
         (await page.locator('#modal-description').textContent()).includes(
           'draws back 15% of HP actually taken',
         ),
       );
+      await page.keyboard.press('Escape');
       await page.keyboard.press('Escape');
       await page.keyboard.press('Escape');
       await page.keyboard.press('Escape');

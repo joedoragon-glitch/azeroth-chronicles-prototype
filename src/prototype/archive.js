@@ -1,113 +1,152 @@
-/* Optional, read-only Archive reference. Numbers come from live rules and Campaign queries. */
+/* Optional, read-only Archive reference. Figures come from live rules and Campaign queries. */
 (function (root) {
   'use strict';
   function sections(game, { D, R }) {
-    const percent = (value) => Math.round(value * 100),
-      number = (value) => Math.round(value * 100) / 100,
+    const number = (value) => Math.round(value * 100) / 100,
+      percent = (value) => number(value * 100),
       mana = R.resourceMode?.manaEnabled !== false,
       allEnemies = Object.values(game.s.zones).flatMap((z) => z.enemies),
-      gap = R.progression.levelGapRewards.map(percent),
-      support = R.rangerSupport,
       profile = game.talentProfile(),
+      support = R.rangerSupport,
+      tactics = R.tacticalFoundation,
+      burst = tactics.burstCompression,
       shelves = [];
     shelves.push({
       title: 'Battle and protection',
-      intro: 'Steel, spells and the value of an opening.',
+      intro: 'Armor, openings and rogue tactics.',
       topics: [
         [
           'Steel, wounds and armor',
-          'Armor softens a blow; it does not erase it. Against your party, a landed blow takes max(3, incoming damage − armor × 0.35). Immunity prevents the hit entirely. Your armor is ' +
+          'Armor takes the edge off a blow. Even a well-armored fighter can be wounded; immunity is what stops the hit entirely. Your companions rely on their own armor and any bonuses your training passes to them.',
+          'Damage taken = max(3, incoming damage − armor × 0.35). Your armor: ' +
             number(game.armor()) +
-            '; equipment and reforges are already included. Companions use their own armor, with inherited bonuses only when trained.',
+            ', including equipment and reforges.',
         ],
         [
           'Why a great volley loses force',
-          (() => {
-            const cfg = R.tacticalFoundation.burstCompression;
-            return (
-              'A formidable foe can weather a sudden barrage. Across ' +
-              cfg.windowSeconds +
-              ' seconds, all your company’s hits share one account for that target. Below its knee, damage is unchanged; above it, the account follows knee + tail × ln(1 + (raw − knee) / tail). Each hit receives only the rise in that account. An exposed opening multiplies the knee and tail by ' +
-              cfg.openingMultiplier +
-              '.\n\n' +
-              Object.entries(cfg.tiers)
-                .map(
-                  ([tier, p]) =>
-                    tier +
-                    ': knee ' +
-                    percent(p.knee) +
-                    '% of maximum HP; tail ' +
-                    percent(p.tail) +
-                    '%.',
-                )
-                .join('\n')
-            );
-          })(),
-        ],
-        [
-          'Choosing a foe',
-          'A chosen target remains your choice, even when too far away. Move into reach and clear sight rather than expecting your spell to switch enemies. A held lock lasts through the encounter; death, retreat home or changing areas releases it. Dust can hide a foe from direct aim, while a well-placed area attack can still reach it.',
+          'Landing every blow at once gives less damage than you might expect. Your whole company shares this limit against each foe, so adding another attacker does not bypass it. Save your strongest volley for an exposed opening.',
+          'Hits share a rolling ' +
+            burst.windowSeconds +
+            '-second total for each target. Below the threshold, damage is unchanged. Above it: threshold + tail × ln(1 + (raw damage − threshold) / tail). Each hit deals the increase in that total.\n\n' +
+            Object.entries(burst.tiers)
+              .map(
+                ([tier, p]) =>
+                  ({
+                    ordinary: 'Ordinary',
+                    guardian: 'Guardian',
+                    ringleader: 'Ringleader',
+                    captain: 'Captain',
+                    boss: 'Normal boss',
+                    trueBoss: 'TRUE boss',
+                  })[tier] +
+                  ': threshold ' +
+                  percent(p.knee) +
+                  '% of maximum HP; tail ' +
+                  percent(p.tail) +
+                  '%.',
+              )
+              .join('\n') +
+            '\n\nDuring an opening, both figures are multiplied by ' +
+            burst.openingMultiplier +
+            '.',
         ],
         [
           'Openings and stubborn defenders',
-          'The Ash Sentinel takes 65% of ordinary damage while its armor is closed. The Stone Colossus takes 125% while its core is exposed. Some captains gain protection from their surviving followers. These defenses apply before the shared burst account. Watch the warning, leave its path, then answer during the opening.',
+          'The Ash Sentinel takes 65% damage while its armor is closed; the Stone Colossus takes 125% while its core is exposed. Some captains gain protection from their followers. Clear the warning, then strike during the opening.',
         ],
         [
           'Enemies under pressure',
-          'A wounded or outnumbered enemy may retreat, break formation or attempt its own escape. Low health alone does not mean surrender. Keep your company together; a threatened commander may replenish nearby guards, and a scattered companion cannot help you at once.',
+          'A wounded or outmatched foe may use rogue tactics: withdraw toward allies, slow a pursuer, shove attackers away or rally defenders. Chase blindly and you may gather a larger fight. Leave the marked attack area; if the retreat draws you into fresh enemies, break pursuit and regroup. Goblin dust breaks direct targeting, but area attacks can still reach the goblin.',
+          'Ordinary creatures, guardians and ringleaders can seek help below ' +
+            percent(tactics.woundedThreshold) +
+            '% HP. A foe at least ' +
+            tactics.heroLevelDisadvantageMinimum +
+            ' level below you can react to that disadvantage; otherwise ' +
+            tactics.simultaneousPressureSources +
+            ' living attackers must focus it. Nearby companions do not count unless they are actually attacking that foe. Enemies ' +
+            tactics.outlevelProtection +
+            ' or more levels above you do not use rogue tactics.\n\n' +
+            'At your level, summoning bosses and captains need at most ' +
+            tactics.summonSupportThreshold +
+            ' living owned summon and a summon still waiting to recover. Thornfang, Ashen Warlord, Dark Lord and Dreadmaw can also act cunningly under that same summon condition.\n\n' +
+            'A retreat seeks reachable allies within ' +
+            tactics.awarenessRadius +
+            ' paces; one ally is enough. Continued pursuit can lead to another local retreat and more allies. The foe takes half damage while preparing to withdraw, withdrawing or making a tactical escape; that protection ends when it settles or abandons the retreat.\n\n' +
+            'Ringleaders, captains and bosses have distinct basic maneuvers and stronger situational tricks. Watch the named warning: these are choices, not an automatic pair of attacks. Some commanders rally living troops or refill nearby defeated guard posts; their usual summoned creatures remain separate.',
         ],
       ],
     });
     shelves.push({
       title: 'Experience and discipline',
-      intro: 'What battles teach, and what training passes on.',
+      intro: 'Level gains and training.',
       topics: [
         [
           'Why old enemies teach little',
-          'A lesson grows thin when you have mastered the foe. Ordinary enemies yield ' +
+          'Fighting beneath your level brings less experience and fewer crowns. Ordinary creatures also give less experience than their listed value. If you want to grow, seek a stronger opponent.',
+          'Ordinary enemies give ' +
             percent(R.progression.ordinaryXpMultiplier) +
-            '% of their listed experience; then your advantage of zero, one, two, three, or four-or-more levels leaves ' +
-            gap.join(' / ') +
-            '%. Crowns use the same level-gap reduction, but not the ordinary-experience reduction. Both are rounded down. Your next level costs ' +
+            '% of listed XP. A level advantage of 0 / 1 / 2 / 3 / 4 or more leaves ' +
+            R.progression.levelGapRewards.map(percent).join(' / ') +
+            '% of XP and crowns. Crowns do not take the ordinary-XP reduction. Both rewards round down.\n\nNext level: ' +
             game.xpRequired() +
-            ' experience: ' +
+            ' XP (' +
             R.balance.growth.xpPerLevel +
-            ' × your current level.',
+            ' × current level).',
         ],
         [
           'The next lesson',
-          'Every level grants a discipline point and ' +
-            R.balance.growth.hpPerLevel +
-            ' maximum HP. For your ' +
-            game.hero.class +
-            ', each strength lesson adds ' +
-            profile.power +
-            ' power, each vitality lesson adds ' +
-            profile.hp +
-            ' HP, and each movement lesson adds ' +
-            profile.speed +
-            ' speed. Training limits are ' +
-            R.balance.disciplines.maxRanks.join(' / ') +
-            ' ranks.' +
+          'Each level gives you a discipline point and more health. Strength, vitality and movement training improve different parts of your fighting ability.' +
             (mana
-              ? ' Mana training improves recovery; it does not enlarge the pool.'
-              : ' Each cooldown lesson shortens the wait between skills by ' +
+              ? ' Mana training improves recovery, not the size of your reserves.'
+              : ' Cooldown training shortens the wait between skills.'),
+          'Per level: 1 discipline point and ' +
+            R.balance.growth.hpPerLevel +
+            ' maximum HP.\nYour ' +
+            game.hero.class +
+            ': strength +' +
+            profile.power +
+            ' power; vitality +' +
+            profile.hp +
+            ' HP; movement +' +
+            profile.speed +
+            ' speed per rank. Rank limits: ' +
+            R.balance.disciplines.maxRanks.join(' / ') +
+            '.' +
+            (mana
+              ? ''
+              : '\nCooldown training: ' +
                 percent(R.cooldownBalance.reductionPerTalentRank) +
-                '% of the original wait, up to ' +
+                '% of the original wait per rank, up to ' +
                 percent(
                   R.cooldownBalance.reductionPerTalentRank * R.balance.disciplines.maxRanks[1],
                 ) +
-                '%.'),
-        ],
-        [
-          'Quests without errands',
-          'Explore, interact and free the captives; the rewards find you without a return to the board. Each regional quest pays once. Experience arrives immediately, and quest crowns go straight to your purse. Enemy crowns must still be collected from the ground. A regional survey needs any three of its marked places, never a memorized route.',
+                '% reduction.'),
         ],
       ],
     });
+    const skills = {
+      paladin: {
+        4: 'You become briefly immune to damage.',
+        5: 'Holy power strikes nearby enemies.',
+        6: 'A melee strike with a short recovery.',
+        7: 'A stronger holy attack strikes nearby enemies.',
+      },
+      mage: {
+        4: 'Your barrier grants brief immunity to damage.',
+        5: 'A frost burst damages and slows nearby enemies.',
+        6: 'A magic projectile briefly slows its target.',
+        7: 'A stronger frost spell damages and slows nearby enemies.',
+      },
+      ranger: {
+        4: 'A burst of speed helps you escape or reposition.',
+        5: 'Arrows strike enemies around you.',
+        6: 'A rapid shot also briefly hastens your movement.',
+        7: 'A piercing arrow follows your chosen foe.',
+      },
+    };
     shelves.push({
       title: 'Your skills',
-      intro: 'The powers you carry, measured for your present training.',
+      intro: 'Effects first; current ranks and timing on request.',
       topics: D.skills.map(([slot, title]) => {
         const rank = game.hero.skills[slot - 1] || 1,
           cooldown = (charged) =>
@@ -116,55 +155,48 @@
               : R.balance.skills.cooldowns[slot],
           shape = R.chargedSkills.second[game.hero.class],
           effects = {
-            1:
-              'Three normal strikes on one foe build a finishing splash; changing foes or waiting ' +
-              R.basicAttackCombo.resetSeconds +
-              ' seconds breaks the sequence. A charged strike uses ' +
-              R.chargedSkills.basicDamageMultiplier +
-              ' times its ordinary power before defenses.',
+            1: 'Three normal strikes on the same foe build a finishing splash. Changing foes or waiting too long breaks the sequence; charging delivers a stronger strike.',
             2:
-              'The charged version spreads through a ' +
+              'Charge this attack to spread it through a ' +
               shape.shape +
-              '. ' +
-              (shape.range
-                ? 'Its reach is ' + shape.range + ' paces.'
-                : 'Its radius is ' + shape.radius + ' paces.') +
-              (shape.slow ? ' Frost also slows a struck foe for ' + shape.slow + ' seconds.' : ''),
-            3: 'Tap to heal yourself; charge to heal wounded living companions too. Neither restores the fallen. Each receives at most its missing health.',
-            4:
-              game.hero.class === 'ranger'
-                ? 'A burst of speed helps you leave danger.'
-                : 'Brief protection lets you weather a dangerous moment.',
-            5: 'Strike nearby foes with an area attack. The Mage’s frost can slow its victims.',
-            6: 'A frequent focused attack; choose a reachable foe in clear sight.',
-            7:
-              game.hero.class === 'ranger'
-                ? 'A powerful shot follows your chosen foe.'
-                : 'An advanced attack reaches nearby enemies; frost and holy power behave differently.',
-            8: 'The final lesson strikes nearby foes, restores some of your health and briefly protects you.',
+              (shape.slow ? ' and slow the foes it hits.' : '.'),
+            3: 'Tap to heal yourself; charge to heal wounded living companions too. Neither restores the fallen.',
+            8: 'Strike nearby foes, restore some of your health and briefly become immune to damage.',
+            ...skills[game.hero.class],
           };
         return [
           'Skill ' + slot + ' · ' + title,
-          'For your ' +
+          effects[slot],
+          'Your ' +
             game.hero.class +
-            ', Rank ' +
+            ' · Rank ' +
             rank +
             (game.hero.skills[slot - 1] ? '' : ' (not learned)') +
             ': recovery ' +
             number(cooldown(false)) +
             ' seconds' +
-            (mana ? '; cost ' + game.skillManaCost(slot, rank, false) + ' MP' : '; no mana cost') +
-            '.\n\n' +
-            effects[slot] +
+            (mana ? '; cost ' + game.skillManaCost(slot, rank, false) + ' MP' : '') +
+            '.' +
+            (slot === 1
+              ? '\nCombo expires after ' +
+                R.basicAttackCombo.resetSeconds +
+                ' seconds. Charged damage: ×' +
+                R.chargedSkills.basicDamageMultiplier +
+                ' before defenses.'
+              : '') +
+            (slot === 2
+              ? '\nCharged ' +
+                shape.shape +
+                ': ' +
+                (shape.range ? 'reach ' + shape.range : 'radius ' + shape.radius) +
+                ' paces.' +
+                (shape.slow ? ' Slow lasts ' + shape.slow + ' seconds.' : '')
+              : '') +
             (slot <= 3
-              ? '\n\nCharged recovery: ' +
+              ? '\nCharged recovery: ' +
                 number(cooldown(true)) +
                 ' seconds' +
-                (mana
-                  ? '; cost ' +
-                    game.skillManaCost(slot, rank, true) +
-                    ' MP, rounded up from your current reserves’ maximum'
-                  : '; no mana cost') +
+                (mana ? '; cost ' + game.skillManaCost(slot, rank, true) + ' MP, rounded up' : '') +
                 '.'
               : ''),
         ];
@@ -172,18 +204,11 @@
     });
     shelves.push({
       title: 'Companions and field bases',
-      intro: 'A company needs more than a strong captain.',
+      intro: 'Shared bonuses and Ranger care.',
       topics: [
         [
-          'Room in the company',
-          'Expedition ranks allow ' +
-            R.balance.companions.activeCaps.slice(1).join(' / ') +
-            ' active companions. You presently have room for ' +
-            game.expeditionPartyCap() +
-            '. Instructors expand that capacity without charging for the Expedition lesson. A Barracks gives the company somewhere to recover.',
-        ],
-        [
           'Shared lessons and equipment',
+          'Shared Training passes your discipline bonuses to companions. Shared Strength passes other health and damage bonuses, plus armor and reforges. Each lesson passes more of its own bonuses as its rank rises.',
           Object.entries(R.expeditionSupportSkills)
             .map(
               ([id, def]) =>
@@ -192,69 +217,81 @@
                 game.expeditionSupportRank(id) +
                 '/' +
                 def.maxRank +
-                ' passes on ' +
+                ' passes ' +
                 percent(game.expeditionSupportRank(id) / def.maxRank) +
-                '% of its applicable bonuses. ' +
-                def.detail,
+                '% of those bonuses.',
             )
-            .join('\n\n') +
-            '\n\nThe two lessons share different sources; they do not copy your whole character twice. Companion Vitality adds ' +
+            .join('\n') +
+            '\nCompanion Vitality adds ' +
             percent(R.balance.companions.vitalityPerRank) +
             '% of base companion HP per rank.',
         ],
         [
           'A Ranger’s care',
-          'A Ranger begins automatic care at ' +
+          'A Ranger treats one wounded living member of the company at a time, with you first when you need it. Recall brings companions back to your side; Barracks recovery brings back the fallen.' +
+            (mana ? ' Rangers can also restore your mana.' : ''),
+          'Healing begins at ' +
             percent(support.healThreshold) +
             '% HP or less. Heal Rank ' +
             game.rangerSupportRank('health') +
-            ' restores ' +
+            ': ' +
             support.healAmounts[game.rangerSupportRank('health') - 1] +
             ' HP over ' +
             support.duration +
-            ' seconds to one living target, with the hero first in need. Its recovery is ' +
+            ' seconds; recovery ' +
             support.cooldown +
             ' seconds per Ranger.' +
             (mana
-              ? '\n\nMana Recovery begins at ' +
+              ? '\nMana recovery begins at ' +
                 percent(support.manaThreshold) +
-                '% MP or less and restores ' +
+                '% MP or less. Rank ' +
+                game.rangerSupportRank('mana') +
+                ': ' +
                 support.manaAmounts[game.rangerSupportRank('mana') - 1] +
-                ' MP to the hero over ' +
+                ' MP over ' +
                 support.duration +
                 ' seconds.'
-              : '') +
-            '\n\nRecall draws companions back; Barracks recovery is what returns the fallen.',
-        ],
-        [
-          'Preparation before danger',
-          'Neri sells a stored tonic for ' +
-            game.preparationTonicCost() +
-            ' crowns. Use it at a completed Basic or Full Barracks; if your shelf is empty, you may buy and use one there. It adds 10% maximum HP until rest or defeat, and another bottle cannot stack the blessing. Your stock: ' +
-            game.preparationTonicStock() +
-            '.',
+              : ''),
         ],
       ],
     });
     shelves.push({
       title: 'Adversaries and their attacks',
-      intro: 'Boss records, field observations and TRUE returns.',
+      intro: 'Boss histories, attacks and creature statistics.',
       topics: [
         [
           'The TRUE adversaries',
-          'Field tyrants can return as TRUE after two qualifying defeats; the Dark Lord after one. A dungeon guardian has a one-in-three early chance, rolled once after its normal defeat. Later, the Awakening calls those still undefeated in their late TRUE form. A return can bring a warband, not merely a larger adversary.',
+          'Field tyrants can return as TRUE after two qualifying defeats; the Dark Lord after one. A dungeon guardian has a one-in-three chance to return early, decided once after its normal defeat. Awakening calls the remaining undefeated dungeon guardians in their late TRUE form. Expect a warband as well as a stronger foe.',
         ],
         ...D.bosses.map((boss) => {
           const observed = allEnemies.filter((e) => e.type === 'boss' && e.family === boss.id),
-            plans = R.attacks[boss.id] || [];
+            plans = R.attacks[boss.id] || [],
+            recovery = R.bossRecovery[boss.id];
           return [
             boss.name,
             boss.place +
-              ' · normal daylight record: Level ' +
+              '. ' +
+              (boss.history || '') +
+              '\n\nAttacks: ' +
+              plans
+                .map(
+                  (a, i) =>
+                    (boss.attacks[i]?.split(':')[0] || 'Attack ' + (i + 1)) +
+                    (a.species
+                      ? ' — calls ' + a.species
+                      : a.persistent
+                        ? ' — leaves danger on the ground'
+                        : a.slow
+                          ? ' — slows its victims'
+                          : ''),
+                )
+                .join('; ') +
+              '.',
+            'Normal daytime: Level ' +
               boss.level +
-              ', ' +
+              ' · HP ' +
               boss.hp +
-              ' HP, base blow ' +
+              ' · base damage ' +
               boss.damage +
               '.\n\n' +
               plans
@@ -263,37 +300,32 @@
                     (boss.attacks[i]?.split(':')[0] || 'Attack ' + (i + 1)) +
                     ': ' +
                     a.kind +
-                    ', base warning ' +
+                    '; warning ' +
                     a.warning +
-                    's, damage ×' +
+                    's; damage ×' +
                     a.coefficient +
-                    (a.species ? ', calls ' + a.species : '') +
-                    (a.slow ? ', slows' : '') +
-                    (a.persistent ? ', remains on the ground' : '') +
                     (a.manaDrain && !mana && R.vitalitySiphon.bossFamilies.includes(boss.id)
-                      ? ', draws back ' +
+                      ? '; draws back ' +
                         percent(R.vitalitySiphon.healFraction) +
                         '% of HP actually taken'
                       : a.manaDrain && mana
-                        ? ', drains ' +
-                          percent(a.manaDrain) +
-                          '% of the hero’s maximum mana on contact'
+                        ? '; drains ' + percent(a.manaDrain) + '% of the hero’s maximum mana'
                         : '') +
                     '.',
                 )
                 .join('\n') +
-              (!mana && R.bossRecovery[boss.id]
+              (!mana && recovery
                 ? '\n\n' +
-                  R.bossRecovery[boss.id].name +
+                  recovery.name +
                   ': below ' +
                   percent(R.bossRecovery.threshold) +
-                  '% HP, a ' +
-                  R.bossRecovery[boss.id].warning +
-                  '-second warning precedes recovery of ' +
-                  percent(R.bossRecovery[boss.id].healFraction) +
-                  '% of maximum HP, limited by missing health. Its own recovery is ' +
-                  R.bossRecovery[boss.id].cooldown +
-                  ' seconds; this is not life-steal.'
+                  '% HP, warning ' +
+                  recovery.warning +
+                  's; restores ' +
+                  percent(recovery.healFraction) +
+                  '% of maximum HP, up to missing health; recovery ' +
+                  recovery.cooldown +
+                  's.'
                 : '') +
               '\n\nSummon limit: ' +
               game.bossSummonCap({ family: boss.id, form: 'normal' }) +
@@ -301,114 +333,101 @@
               game.bossSummonCap({ family: boss.id, form: 'true' }) +
               ' TRUE.' +
               (observed.length
-                ? '\n\nYour visited encounter records: ' +
+                ? '\n\nVisited encounters:\n' +
                   observed
                     .map(
                       (e) =>
                         e.form +
                         ' · Level ' +
                         e.level +
-                        ', maximum HP ' +
+                        ' · HP ' +
                         number(e.maxHp) +
-                        ', current blow ' +
+                        ' · damage ' +
                         number(e.damage),
                     )
-                    .join('; ') +
-                  '. Night and Awakening may change those figures.'
-                : '\n\nYou have no visited encounter record yet; these are base values, before night or TRUE scaling.') +
-              (boss.history ? '\n\n' + boss.history : ''),
+                    .join('\n')
+                : '\n\nNo visited encounter yet. These base figures change with night and TRUE form.'),
           ];
         }),
         [
           'Creatures encountered',
-          (() => {
-            const known = allEnemies.filter((e) => e.type !== 'boss' && !e.summon),
-              unique = new Map();
-            for (const e of known) {
-              const key =
-                e.species + ':' + e.form + ':' + (e.ranged ? 'ranged' : 'melee') + ':' + !!e.guard;
-              if (!unique.has(key)) unique.set(key, e);
-            }
-            return (
-              'These are observations from places you have visited, not promises that every member of a species is alike. Guards, captains, ringleaders and ranged cousins differ.\n\n' +
-              [...unique.values()]
-                .map(
-                  (e) =>
-                    e.name +
-                    ' · ' +
-                    e.form +
-                    (e.ranged ? ', ranged' : ', melee') +
-                    (e.guard ? ', guardian' : '') +
-                    ': Level ' +
-                    e.level +
-                    ', ' +
-                    number(e.maxHp) +
-                    ' maximum HP, blow ' +
-                    number(e.damage) +
-                    '.',
-                )
-                .join('\n')
-            );
-          })(),
+          'These figures belong to the creatures in places you have visited. Compare their level, maximum health and damage; guards, ringleaders and ranged creatures can differ.\n\n' +
+            Object.entries(game.s.zones)
+              .map(([id, z]) => {
+                const unique = new Map();
+                for (const e of z.enemies.filter(
+                  (e) => e.type !== 'boss' && !e.summon && !e.neutral,
+                )) {
+                  const role =
+                      e.roomCaptain || e.captain
+                        ? 'captain'
+                        : e.guard
+                          ? 'guardian'
+                          : e.form === 'ringleader'
+                            ? 'ringleader'
+                            : 'ordinary',
+                    key = [
+                      e.name,
+                      e.species,
+                      e.form,
+                      role,
+                      !!e.ranged,
+                      e.level,
+                      e.maxHp,
+                      e.damage,
+                    ].join(':');
+                  if (!unique.has(key))
+                    unique.set(
+                      key,
+                      e.name +
+                        ' · ' +
+                        role +
+                        ' · ' +
+                        e.form +
+                        ' · ' +
+                        (e.ranged ? 'ranged' : 'melee') +
+                        '\nLevel ' +
+                        e.level +
+                        ' · HP ' +
+                        number(e.maxHp) +
+                        ' · damage ' +
+                        number(e.damage),
+                    );
+                }
+                const place =
+                  D.regions.find((r) => r.id === id)?.name ||
+                  D.bosses.find((b) => b.id === id)?.place ||
+                  game.supplyRoom?.(id)?.name ||
+                  game.sideDungeon?.(id)?.name ||
+                  'Visited chamber';
+                return unique.size ? place + '\n' + [...unique.values()].join('\n\n') : '';
+              })
+              .filter(Boolean)
+              .join('\n\n'),
         ],
       ],
     });
     shelves.push({
-      title: 'Crowns, roads and the world',
-      intro: 'The provinces behind the figures in the ledger.',
-      topics: [
-        [
-          'The cost of keeping a company',
-          'Recruiting at a Barracks costs ' +
-            game.barracksRecruitPrice('soldier') +
-            ' crowns for a Soldier and ' +
-            game.barracksRecruitPrice('archer') +
-            ' for a Ranger. Fallen-companion recovery costs ' +
-            game.companionRecoveryCost() +
-            '; treatment costs ' +
-            game.companionTreatmentCost() +
-            '. Your first Basic Barracks is free; later ones cost ' +
-            R.balance.barracks.buildCost +
-            ', and the Full upgrade costs ' +
-            game.barracksUpgradeCost() +
-            '.',
-        ],
-        [
-          'Steel from the smith',
-          'Each purchased tier replaces the earlier one; its bonus does not stack with every old purchase. A new weapon equips automatically only if stronger than your owned alternatives. Armor equips immediately. Reforging adds ' +
-            R.balance.equipment.reforgeBonus.weapon +
-            ' weapon power or ' +
-            R.balance.equipment.reforgeBonus.armor +
-            ' armor, once at that tier. Shared Strength can pass applicable gear bonuses to companions.',
-        ],
-        ...D.regions.map((region) => [
-          region.name,
-          (game.s.keeperEvidence
-            ? region.exploration
-            : region.exploration.replace(
-                'and councillor who proposed capturing the specialists',
-                'and councillor',
-              )) +
-            '\n\nRegional quests together offer ' +
-            region.questxp +
-            ' experience and ' +
-            region.questgold +
-            ' crowns, once. Ordinary outdoor base crown drops range from ' +
-            region.gold_range.join(' to ') +
-            '; listed experience is ' +
-            region.enemy_xp +
-            ', before ordinary and level-gap reductions.',
-        ]),
-      ],
+      title: 'The provinces',
+      intro: 'The five provinces and their histories.',
+      topics: D.regions.map((region) => [
+        region.name,
+        game.s.keeperEvidence
+          ? region.exploration
+          : region.exploration.replace(
+              'and councillor who proposed capturing the specialists',
+              'and councillor',
+            ),
+      ]),
     });
     if (game.s.keeperEvidence)
       shelves.push({
         title: 'The orders among the shelves',
-        intro: 'An entry he cannot pretend was written by someone else.',
+        intro: 'His part in the capture.',
         topics: [
           [
             'A prisoner for the Archive',
-            '“Yes. I proposed taking the specialists. When the lower shelves flooded, I traded another captive for Neri’s skill. You have read my seal; I will not ask you to misread it. Keep these records dry, and I will put what I know to better use.”',
+            '“Yes. I proposed taking the specialists. When the lower shelves flooded, I traded another captive for Neri’s skill. You have read my seal. Keep these records dry, and I will put what I know to better use.”',
           ],
         ],
       });

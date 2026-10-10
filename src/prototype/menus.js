@@ -311,12 +311,19 @@
           section.intro,
           section.topics.map(([title]) =>
             action(title, () => {
-              const current = currentSection(section.title);
-              const topic = current?.topics.find(([name]) => name === title);
-              if (!topic) return;
-              openMenu(title, topic[1], [action('Another question', () => shelf(current))], () =>
-                shelf(current),
-              );
+              function answer(figures = false) {
+                const current = currentSection(section.title);
+                const topic = current?.topics.find(([name]) => name === title);
+                if (!topic || (figures && !topic[2])) return;
+                const actions = [];
+                if (!figures && topic[2])
+                  actions.push(action('Show me the figures', () => answer(true)));
+                actions.push(action('Another question', () => shelf(current)));
+                openMenu(title, topic[figures ? 2 : 1], actions, () =>
+                  figures ? answer() : shelf(current),
+                );
+              }
+              answer();
             }),
           ),
           () => keeperTopics(back),
