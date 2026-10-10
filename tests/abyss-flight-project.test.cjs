@@ -34,7 +34,7 @@ assert.deepEqual(z.props.map(({ id, x, y, r }) => ({ id, x, y, r })),
 const structures = new Set(z.props.map((p) => p.structure));
 for (const kind of ['flight-planning-table', 'flight-harness-station', 'royal-launch-platform', 'royal-flight-standard', 'egg-cradle']) assert(structures.has(kind));
 assert(!structures.has('containment-post'));
-assert.equal(restored.s.zones.frontier.frontierLayoutVersion, 4);
+assert.equal(restored.s.zones.frontier.frontierLayoutVersion, 5);
 assert.equal(Campaign.rules.frontierDistricts.find((d) => d.id === 'bastion-cordon').role, 'air-superiority-project');
 assert.deepEqual(Campaign.restore(restored.snapshot()).zone().props, z.props);
 console.log('PASS Existing Bastion and Frontier saves gain flight-project dressing without changing dungeon progress, occupants or collision');
