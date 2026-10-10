@@ -133,6 +133,9 @@ test('Manual legacy and tier equipment selections persist across save, reload an
   c.hero.gold = 10000;
   c.s.rescued.crypt = true;
   c.s.rescued.cindermaw = true;
+  // Legitimate rescue evidence survives the historical v2 service-unlock repair.
+  c.s.keys.crypt = true;
+  c.s.keys.cindermaw = true;
   c.s.legacyInventory = ['Espada de Cruzado', 'Arma de las Cumbres'];
   assert(c.gear('crypt', 'weapon'));
   assert.equal(c.hero.legacyEquipped, true);
