@@ -415,6 +415,7 @@
     document.body.classList.add('menu-open');
     $('modal').hidden = false;
     $('modal-title').textContent = title;
+    $('modal-title').hidden = title === 'Adventure menu' || title === 'Game and settings';
     $('modal-description').textContent = description;
     $('modal-content').scrollTop = 0;
     renderActions();
@@ -575,25 +576,6 @@
       acknowledgeAwakening,
     );
   }
-  function characterMenu() {
-    const h = game.hero;
-    openMenu(
-      'Character',
-      h.class +
-        ' · Level ' +
-        h.level +
-        '\nXP ' +
-        Math.floor(h.xp) +
-        ' / ' +
-        game.xpRequired(h.level) +
-        '\nHero progression only. Troops, resources and construction are managed at town Captains or your barracks.',
-      [
-        action('Skills and teachers', () => skillBook(characterMenu)),
-        action('Talents', () => talents(characterMenu)),
-      ],
-      openMain,
-    );
-  }
   function saveMenu() {
     openMenu(
       'Save and game management',
@@ -687,7 +669,7 @@
   function systemMenu() {
     openMenu(
       'Game and settings',
-      'Controls, audio and save management.',
+      '',
       [
         ...(!runningAsApp() && platform.mode === 'phone'
           ? [action('Install on phone', installApp, 'Add Azeroth Chronicles to the home screen')]
@@ -703,10 +685,6 @@
         action('Screen and performance', () => platformMenu(systemMenu)),
         action('Controls', () => help(systemMenu)),
         action('Sound settings', () => soundMenu(systemMenu)),
-        action(paused ? 'Resume play' : 'Pause play', () => {
-          paused = !paused;
-          closeMenu();
-        }),
         action('Save and game management', saveMenu),
       ],
       openMain,
@@ -719,12 +697,12 @@
       costLabel = cost ? cost + ' crowns' : 'FREE';
     openMenu(
       'Adventure menu',
-      'Global adventure functions. Establish field Barracks here; use Captains and Barracks for recruitment, recovery and operations.',
+      '',
       [
         action('Map and travel routes', showMap),
         action('Quest journal', () => quests(false)),
         action('Inventory and support', inventory),
-        action('Character', characterMenu),
+        action('Talents', () => talents(openMain)),
         ...(canBuild
           ? [
               action(
