@@ -56,10 +56,20 @@ for (const mode of ['normal', 'nightmare'])
     game.updateTraps(0.1);
     assert(hero.hp < 1000, kind + ' hits a vulnerable hero in ' + mode);
     assert(companion.hp < 1000, kind + ' hits a living companion in ' + mode);
-    assert.equal(hero.slow, kind === 'seal' ? trap.slowSeconds : 0,
-      kind + ' applies only its authored condition');
-    assert.equal(companion.slow, kind === 'seal' ? trap.slowSeconds : 0,
+    const expectedSlow = kind === 'seal' ? trap.slowSeconds :
+      kind === 'spikes' ? trap.slowSeconds * 0.35 : 0;
+    assert.equal(hero.slow, expectedSlow,
+      kind + ' applies only its authored timed condition');
+    assert.equal(companion.slow, expectedSlow,
       kind + ' applies the same condition to companions');
+    if (kind === 'jet') {
+      assert(hero.y > trap.y + trap.halfWidth,
+        'a vulnerable hero is pushed out of a jet lane');
+      assert(companion.y > trap.y + trap.halfWidth,
+        'a vulnerable ally is pushed out of a jet lane');
+      // Return to the jet to explicitly verify consumed activation stamps.
+      hero.y = companion.y = trap.y;
+    }
 
     const previous = [hero.hp, companion.hp];
     game.updateTraps(0.1);
@@ -181,6 +191,72 @@ for (const mode of ['normal', 'nightmare']) {
     c.updateTraps(0.1);
     assert.equal(h.hp, beforeImmune, family + ' blocked attempt stays consumed');
   }
+}
+
+
+// Actual side dungeons must inherit their REGION'S trap profile, not the old
+// generic 7.2s/9% profile. Outdoor mini encounters have the exact same rule.
+const sideRegions = {vale: 'crypt', march: 'archive', highlands: 'mine', frontier: 'abyss', crown: 'citadel'};
+for (const side of R.sideDungeons) {
+  const game = new Campaign('normal', 'paladin', () => 0.9);
+  game.enter(side.id);
+  const traps = game.traps();
+  const tuning = R.dungeonTrapTuning[sideRegions[side.region]];
+  assert(traps.length, side.id + ' has traps');
+  assert.strictEqual(R.sideDungeonTrapTuning[side.region], tuning,
+    side.id + ' reuses the exact regional data object');
+  assert.strictEqual(R.outdoorMiniTrapTuning[side.region], tuning,
+    side.id + ' and outdoor sites share a regional identity');
+  for (const trap of traps) {
+    assert.equal(trap.cycleLength, tuning.cycle, side.id + ' cycle');
+    assert.equal(trap.warningTime, tuning.warning, side.id + ' warning');
+    assert.equal(trap.activeTime, tuning.active, side.id + ' active window');
+    assert.equal(trap.damageFraction, tuning.damage, side.id + ' damage');
+    assert.equal(trap.radius, trap.kind === 'seal' ? tuning.sealRadius : tuning.radius,
+      side.id + ' trap footprint');
+  }
+}
+
+// Independently verify directional impact, collision and other-trap safety.
+for (const mode of ['normal', 'nightmare']) {
+  const game = new Campaign(mode, 'paladin', () => 0.9);
+  const hero = game.hero;
+  Object.assign(hero, {x: 300, y: 350, hp: 1000, maxHp: 1000});
+  const jet = {
+    kind: 'jet', x: 300, y: 350, radius: 45, length: 160,
+    halfWidth: 32, index: 94, cycle: 1, phase: 1.1,
+    warningTime: 0.9, activeTime: 1, damageFraction: 0.05,
+    slowSeconds: 2.5,
+  };
+  game.traps = () => [jet];
+  game.s.party = [];
+  const oldHp = hero.hp;
+  game.updateTraps(0.1);
+  assert(hero.hp < oldHp, mode + ' jet impact has secondary chip damage');
+  assert(hero.y >= 350 + jet.halfWidth,
+    mode + ' jet blast clears its own danger lane');
+  assert.equal(hero.slow, 0, 'jet causes displacement, not a fictitious Burning ailment');
+
+  // Repeat as an immune target; blast cannot bypass the damage resolver.
+  hero.y = jet.y;
+  hero.immune = 1;
+  jet.cycle = 2;
+  game.updateTraps(0.1);
+  assert.equal(hero.y, jet.y, mode + ' immunity blocks displacement');
+
+  // Wall collision and a second hazard footprint must stop the shove.
+  hero.immune = 0;
+  jet.cycle = 3;
+  const clear = game.clearSegment;
+  game.clearSegment = () => false;
+  game.updateTraps(0.1);
+  assert.equal(hero.y, jet.y, mode + ' blocked lane forbids phasing through solid walls');
+  game.clearSegment = clear;
+  const other = {...jet, kind: 'seal', y: jet.y + jet.halfWidth + 24, index: 95};
+  game.traps = () => [jet, other];
+  jet.cycle = 4;
+  game.updateTraps(0.1);
+  assert.equal(hero.y, jet.y, mode + ' jet avoids shoving into another trap footprint');
 }
 
 console.log('PASS authored dungeon/side/outdoor trap inventory and source-driven condition matrix');
