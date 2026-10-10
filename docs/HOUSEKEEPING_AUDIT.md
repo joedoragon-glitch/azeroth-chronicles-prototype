@@ -1,3 +1,5 @@
+> Historical v0.8.84 engineering audit. Its empty-manifest and candidate-release statements apply to that baseline; use [current development state](DEVELOPMENT_STATE.md) and [current backlog audit](BACKLOG_HOUSEKEEPING_20261010.md) for present status.
+
 # v0.8.84 engineering handoff audit
 
 ## Scope and identity

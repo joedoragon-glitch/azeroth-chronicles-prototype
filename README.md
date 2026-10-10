@@ -1,8 +1,12 @@
-# Azeroth Chronicles · v0.8.90
+# Azeroth Chronicles
 
 An offline-capable RPG across five regions, ten settlements and five main dungeons. Rescue the specialists, build your expedition, and challenge the Dark Lord. The regime's currency is **crowns**.
 
 The canonical Azeroth Chronicles product is the multi-file GitHub Pages/PWA application. It uses JavaScript, Canvas 2D and Web Audio; there is no game backend. The campaign engine is shared, while desktop and phone have separate presentation rules. Map reviews and sprite production can continue on this foundation.
+
+## Release status
+
+The project is stabilizing toward v0.9. The source baseline, independently verified published release, active candidates and known limitations are maintained in [Current development state](docs/DEVELOPMENT_STATE.md). The version in an exported playtest report identifies the build actually running on your device. A merged PR is not proof of publication or completed human playtesting.
 
 ## Play
 
@@ -13,13 +17,13 @@ Automatic selection uses pointer capabilities, including a mouse/trackpad on a t
 
 Choose a Standard run or the optional Succession challenge, then Paladin, Mage or Ranger. Normal and Nightmare have independent saves. Nightmare unlocks after the peaceful ending. Updates preserve local campaigns and adopt the tested published build automatically; a manual update check is also available in settings.
 
-## Contextual soundtrack · v0.8.90
+## Contextual soundtrack
 
 An original warm-fantasy score now follows the hero through all five regions, main dungeons, treasuries and side interiors. Night, settlement and peaceful arrangements change the mood; combat adds a synchronized rhythm layer, and each of the eleven bosses has its own theme and TRUE-form layer. Menus have soft musical backing and distinct selection/confirmation sounds. Footsteps follow actual movement and surface type, with sparse local ambience.
 
 [Open the audio audition room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) to compare the new score with the original sound, hear individual tracks and inspect listening mixes. It never reads or writes game saves. Music, ambience, effects and interface volumes are adjustable; phone and quiet mixes are available. See `docs/AUDIO_SOUND_PASS.md` for coverage and `docs/AUDIO_PLAYBACK.md` for playback contracts.
 
-## Regional handoff foundations · v0.8.87
+## Regional authored context
 
 Forest Crypt, Sunken Archive and Colossus Mine now have distinct authored wings, practical work areas and contextual captive presentations. The Highlands Treasury has domestic rooms alongside its protected caches. Existing specialist unlocks, boss progression and v4 saves carry forward. This is the first iteration of Joel's three regional handoffs; see `docs/REGIONAL_HANDOFF_AUDIT.md` for settled canon, open choices and audit coverage.
 
@@ -52,7 +56,7 @@ Normal Skill 3 heals the hero; charged Skill 3 also heals living active companio
 
 ## Cooldown-only combat (reversible)
 
-The live game has **no MP costs or MP HUD**. Skills are controlled by their cooldowns; Skills 1–3 have longer cooldowns when charged (base 3s / 6s / 20s), and the five-rank Cooldown Training talent reduces all hero skill cooldowns by 4% per rank (20% at rank 5). See **Character → Skills and teachers** for class-specific ability descriptions and cooldowns, and **Character → Talents** for training. Enemy mana-drain effects are dormant pending explicit replacement design; other enemy attacks remain unchanged. Ranger Heal stays, while Ranger Mana Recovery is inactive and no longer shown.
+The live game has **no MP costs or MP HUD**. Skills are controlled by their cooldowns; Skills 1–3 have longer cooldowns when charged (base 3s / 6s / 20s), and the five-rank Cooldown Training talent reduces all hero skill cooldowns by 4% per rank (20% at rank 5). Open **Adventure → Talents** for training. Enemy mana-drain effects are dormant pending explicit replacement design; other enemy attacks remain unchanged. Ranger Heal stays, while Ranger Mana Recovery is inactive and no longer shown.
 
 The previous MP rules, original character MP values, effects, Ranger mana training and legacy save fields are deliberately retained under the code feature switch `PrototypeRules.resourceMode.manaEnabled` (currently `false`). A prior-version Git revision provides a complete rollback, and flipping this flag back to `true` re-enables the preserved MP logic and legacy UI paths. Existing v4 saves keep their MP fields without spending or regenerating them in the cooldown-only game. Talent index 1 maps to Cooldown Training at the same invested rank; all other training ranks are preserved. Do not delete legacy fields or MP logic before the design is final.
 
@@ -84,7 +88,9 @@ Browser testing uses Playwright 1.62.1 with Chromium/Chrome and WebKit. CI suppl
 
 - [Architecture and module boundaries](docs/ARCHITECTURE.md)
 - [Current work and sequencing](docs/DEVELOPMENT_STATE.md)
-- [Current housekeeping audit and preservation evidence](docs/HOUSEKEEPING_AUDIT.md)
+- [Current backlog audit and recovery evidence](docs/BACKLOG_HOUSEKEEPING_20261010.md)
+- [Archived development notes](docs/DEVELOPMENT_HISTORY_THROUGH_V08133.md)
+- [Historical v0.8.84 engineering audit](docs/HOUSEKEEPING_AUDIT.md)
 - [Historical v0.8.81 housekeeping](docs/HOUSEKEEPING_V0881.md)
 - [Gameplay decisions](docs/DECISIONS.md)
 - [Sprite production contract](docs/GRAPHICS_OVERHAUL_PHASE1.md)
@@ -92,11 +98,16 @@ Browser testing uses Playwright 1.62.1 with Chromium/Chrome and WebKit. CI suppl
 - [Audio foundation and production sequence](docs/AUDIO_FOUNDATION.md)
 - [Historical project narrative through v0.8.80](docs/PROJECT_HISTORY.md)
 
-Phone gameplay uses a compact health/level HUD. Learned skills and available Ranger recovery controls sit at the bottom right; Interact appears separately only within reach of a usable target. Recall stays directly above the left joystick; Character → Talents keeps training in its menu. Map/time labels and routine save reminders no longer occupy the gameplay HUD.
+Phone gameplay uses a compact health/level HUD. Learned skills and available Ranger recovery controls sit at the bottom right; Interact appears separately only within reach of a usable target. Recall and Target remain grouped near the movement controls; **Adventure → Talents** opens training directly. Map/time labels and routine save reminders no longer occupy the gameplay HUD.
 
-## Sprite production preparation
+## Story guidance and services
 
-The developer tooling and comparison showroom are documented in [SPRITE_PREPARATION.md](docs/SPRITE_PREPARATION.md). This preparation release keeps the current procedural game visuals. The later art pilot and creative approvals remain separate.
+**Adventure → Quest journal** opens the Story journal: specialist rescues, the next regional transport, the Dark Lord, five TRUE guardians during Awakening, and completion. Ordinary local jobs stay on settlement quest boards. **Adventure → Map and travel routes** shows the current region; choose a destination and use **Navigate** to start its reachable route. Manual movement takes over from automatic travel.
 
+Adventure also provides **Inventory and support**, **Talents**, and eligible field **Establish Basic Barracks** construction. Captains provide recruitment and recovery directly. Menus pause single-player play; the former Settings Pause play option is no longer needed. Ordinary dialogs close on an outside tap/click without passing that gesture through to movement; mandatory character/succession choices remain protected.
 
-Sprite preparation for the selected 150% camera is documented in [SPRITE_RESOLUTION_HOUSEKEEPING.md](docs/SPRITE_RESOLUTION_HOUSEKEEPING.md). `npm run sprite:resolution` audits retained sources and dependent frames before adaptation; production artwork remains paused.
+## Artwork and known limits
+
+Registered artwork is active: the audited baseline has 33 sprite identities and seven ground/road materials, with procedural fallback for missing/unavailable artwork. Original-master adaptation and the broader missing catalog continue under issue #160; developer tooling is documented in [SPRITE_PREPARATION.md](docs/SPRITE_PREPARATION.md) and [SPRITE_RESOLUTION_HOUSEKEEPING.md](docs/SPRITE_RESOLUTION_HOUSEKEEPING.md). The old production pause is historical.
+
+Saves stay on the browser/device; there is no cloud synchronization or playable co-op. Native Android/iOS packages are not current distribution targets. Browser tests do not certify physical-device comfort, every map's artistic completion or a full human campaign playthrough. See the [current limitations and v0.9 acceptance work](docs/DEVELOPMENT_STATE.md).

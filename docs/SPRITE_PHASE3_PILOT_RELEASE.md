@@ -1,3 +1,5 @@
+> Historical pilot preparation record. The Paladin/Goblin idles and Vale/Highlands roads below were subsequently merged and published through #193 (v0.8.127, a996688ea8cbf9a878e05b31cb5fc6bd104e8729; successful release run 38005221077). Earlier zero-deployed counts are checkpoint history. Continue remaining work under #160 and [current development state](DEVELOPMENT_STATE.md).
+
 # Phase 3 saved pilot integration · v0.8.115
 
 Recovered e8d52105fe89c3d204c37da07ffb68e72eb96509 and reconciled main 296356a883903459ba68e70291920f9c4538d96b. PR #170 notices, rogue repertoire, audio and VFX remain in the merge. No image generation repeated.
