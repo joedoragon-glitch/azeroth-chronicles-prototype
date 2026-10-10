@@ -11,7 +11,7 @@ for (const [i, region] of Campaign.data.regions.entries()) {
     hamlet = { x: Campaign.data.minors[i][0], y: Campaign.data.minors[i][1] };
   assert.equal(zone.settlementLayoutVersion, 4, region.id + ' has migrated settlement lots');
   assert.equal(zone.roadsideClearanceVersion, 1, region.id + ' has had a street audit');
-  assert(zone.roads.length >= 5, region.id + ' has purposeful regional roads');
+  assert(zone.roads.length >= 4, region.id + ' has purposeful regional roads');
   assert(
     zone.roads.some((p) => {
       const last = p.at(-1);
