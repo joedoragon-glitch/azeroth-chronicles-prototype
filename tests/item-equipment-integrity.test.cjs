@@ -35,14 +35,24 @@ test('Temporary tonic HP remains personal even with maxed Shared Strength', () =
   assert.deepEqual(c.s.party.map((u) => ({ hp: u.hp, maxHp: u.maxHp })), before);
   assert.equal(fallen.hp, 0);
 
-  const restored = Campaign.restore(c.snapshot());
+  const withTonic = c.snapshot();
+  const withoutTonic = JSON.parse(JSON.stringify(withTonic));
+  withoutTonic.hero.maxHp -= withoutTonic.hero.tonicBonus;
+  withoutTonic.hero.hp = Math.min(withoutTonic.hero.hp, withoutTonic.hero.maxHp);
+  withoutTonic.hero.tonic = false;
+  withoutTonic.hero.tonicBonus = 0;
+  // Restore can legitimately award pending quest XP, so compare identical restored campaigns.
+  const reference = Campaign.restore(withoutTonic);
+  const restored = Campaign.restore(withTonic);
+  const restoredParty = (campaign) =>
+    campaign.s.party.map((u) => ({ hp: u.hp, maxHp: u.maxHp }));
   assert(restored.hero.tonic);
   assert.equal(restored.companionInheritedHpBonus(), 40);
-  assert.deepEqual(restored.s.party.map((u) => ({ hp: u.hp, maxHp: u.maxHp })), before);
+  assert.deepEqual(restoredParty(restored), restoredParty(reference));
   restored.clearTonic();
-  assert.equal(restored.hero.maxHp, 160);
+  assert.equal(restored.hero.maxHp, reference.hero.maxHp);
   assert.equal(restored.companionInheritedHpBonus(), 40);
-  assert.deepEqual(restored.s.party.map((u) => ({ hp: u.hp, maxHp: u.maxHp })), before);
+  assert.deepEqual(restoredParty(restored), restoredParty(reference));
 
   c.clearTonic();
   assert(c.buyPotion('tonic', true), 'legacy tonic entry uses the same personal-effect path');
@@ -50,7 +60,9 @@ test('Temporary tonic HP remains personal even with maxed Shared Strength', () =
   assert.deepEqual(c.s.party.map((u) => ({ hp: u.hp, maxHp: u.maxHp })), before);
   c.die();
   assert(!c.hero.tonic);
-  assert.deepEqual(c.s.party.map((u) => u.maxHp), before.map((u) => u.maxHp));
+  assert.equal(c.companionInheritedHpBonus(), 40);
+  for (const u of c.s.party)
+    assert.equal(u.maxHp, c.companionMaxHp(u.type), 'no ghost tonic HP after defeat');
 });
 
 test('Tonic never grants inherited HP at any Shared Strength rank', () => {
