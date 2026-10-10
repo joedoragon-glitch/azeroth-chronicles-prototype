@@ -269,6 +269,22 @@
         return depleted && (pressured || cunning);
       }
 
+      // One contract for the shared timed Slow condition: living, vulnerable
+      // targets only; repeat hits refresh duration but never shorten it.
+      applySlow(unit, seconds) {
+        if (
+          !unit ||
+          unit.hp <= 0 ||
+          (unit.immune || 0) > 0 ||
+          this.peace ||
+          !Number.isFinite(seconds) ||
+          seconds <= 0
+        )
+          return false;
+        unit.slow = Math.max(unit.slow || 0, seconds);
+        return true;
+      }
+
       drainMana(u, fraction) {
         if (!R.resourceMode.manaEnabled) return 0;
         if (u !== this.hero || !fraction || u.mp <= 0 || this.peace) return 0;
@@ -404,7 +420,7 @@
             );
             if (victim) {
               if (this.hitParty(victim, p.damage, p.manaDrain || 0, p.sourceId) && p.slow)
-                victim.slow = Math.max(victim.slow || 0, p.slow);
+                this.applySlow(victim, p.slow);
               this.enemyVfxProjectileImpact?.(p, {
                 x: victim.x,
                 y: victim.y,
@@ -454,7 +470,7 @@
                 p.source,
                 p.comboClass || this.hero.class,
               );
-            if (landed && p.slow) e.slow = Math.max(e.slow || 0, p.slow);
+            if (landed && p.slow) this.applySlow(e, p.slow);
             this.event('projectileImpact', {
               actor: p.source === 'hero' ? 'hero' : 'companion',
               class: p.source === 'hero' ? this.hero.class : undefined,
@@ -501,9 +517,10 @@
             a.tick = 1;
             for (const u of this.combatTargets())
               if (dist(u, a) < a.radius && this.line({ x: a.fromX ?? a.x, y: a.fromY ?? a.y }, u)) {
-                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null))
+                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null)) {
                   this.enemyVfxHazardImpact?.(a, u);
-                if (a.slow) u.slow = 3;
+                  if (a.slow) this.applySlow(u, a.slowSeconds || 3);
+                }
               }
           }
           if (a.life <= 0 || this.peace) this.s.hazards.splice(this.s.hazards.indexOf(a), 1);

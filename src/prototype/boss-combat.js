@@ -455,7 +455,7 @@
           for (const u of this.combatTargets())
             if (dist(u, e) < a.radius && this.line(e, u)) {
               if (this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id)) {
-                u.slow = Math.max(u.slow || 0, a.slowDuration || 0);
+                this.applySlow(u, a.slowDuration || 0);
                 hit = true;
               }
               if (
@@ -586,10 +586,8 @@
                 : patches.some((p) => dist(u, p) < p.radius);
         for (const u of party)
           if (hits(u) && this.line(e, u)) {
-            if (
-              this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id) &&
-              ['cone', 'sector'].includes(a.kind)
-            )
+            const landed = this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
+            if (landed && ['cone', 'sector'].includes(a.kind))
               this.event('melee', {
                 actor: 'enemy',
                 source: e.id,
@@ -600,7 +598,7 @@
                 y: u.y,
                 target: u === this.hero ? 'hero' : u.id,
               });
-            if (a.slow || a.slowDuration) u.slow = Math.max(u.slow || 0, a.slowDuration || 4);
+            if (landed && (a.slow || a.slowDuration)) this.applySlow(u, a.slowDuration || 4);
             if (party[0] !== this.hero || this.s.challenge.pending || this.s.challenge.gameOver)
               return;
           }
