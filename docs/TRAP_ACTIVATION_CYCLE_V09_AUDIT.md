@@ -2,6 +2,30 @@
 
 **Audit outcome: RETAIN the once-per-trap, per-unit, per-activation contact limit for v0.9.** It is an explicit historical combat contract, not an accidental obsolete guard. This is a risk assessment, not approval of new trap damage or timing. Revisit only through playtest evidence and a separate, class/party/difficulty balance decision.
 
+## Implemented v0.9 playtest tuning (10 October 2026)
+
+Following the historical-contract audit below, the author explicitly directed
+**shorter warnings, much faster cycles, longer active windows, status-first
+effects and exact regional parity for side dungeons**. This branch implements
+that later instruction while **retaining the one-contact-per-activation limit**.
+The historical timing table and risk calculations below are preserved as the
+**pre-change baseline**, not current configuration. See
+`COMBAT_CONDITIONS_V09.md` for the live branch effect semantics.
+
+| Region (same profile in main dungeon, side dungeon, outdoor mini) | Cycle | Warning | Active | Nominal hit damage |
+| --- | ---: | ---: | ---: | ---: |
+| Crypt / Vale | 3.40 s | 0.93 s | 1.00 s | 5.5% max HP |
+| Archive / March | 3.20 s | 0.90 s | 1.05 s | 6.0% max HP |
+| Mine / Highlands | 3.00 s | 0.87 s | 1.10 s | 6.75% max HP |
+| Abyss / Frontier | 2.85 s | 0.83 s | 1.15 s | 7.5% max HP |
+| Citadel / Crown | 2.70 s | 0.80 s | 1.20 s | 8.5% max HP |
+
+Rising spikes now apply brief injury Slow; flame jets now attempt a clear,
+collision-safe perpendicular displacement instead of adding a Burning status;
+seals retain stronger Slow. Effects require a valid, living, nonimmune hit.
+Numeric values beyond the authored 0.8-second Citadel warning are provisional
+balance choices to validate in Normal/Nightmare/TRUE and on mobile.
+
 ## Primary evidence and effective clock
 
 - `docs/AUDIT_FIXES_V070.md` explicitly records the original author-facing rule: warned spikes, jets and slowing seals hit a unit **once per pulse**, with alternatives to avoid every trap. Hostile enemies remain trap-immune. This precedes the current v0.8 tuning.
@@ -11,7 +35,7 @@
 - Each target entering late in the same activation can be hit; an already hit target can leave and re-enter the still-active area without another hit. The next cycle re-arms that trap for that unit. If immunity blocks the attempted contact, that activation is still consumed. This is a deterministic mitigation of multi-frame collision rather than a duration-based damage-over-time status.
 - The proposed combat-conditions PR additionally ensures a seal's Slow requires a **successful damaging hit**; the existing one-attempt rule is not changed.
 
-## Authored current timing and nominal per-hit pressure
+## Historical pre-rebalance timing and nominal per-hit pressure
 
 | Trap setting | Full cycle | Warning | Active window | Inactive interval after active | Damage per hit |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -22,7 +46,7 @@
 | Abyss / Frontier outdoor | 5.70 s | 1.25 s | 0.95 s | 3.50 s | 15% max HP |
 | Citadel / Crown outdoor | 5.40 s | 1.20 s | 1.00 s | 3.20 s | 17% max HP |
 
-The **last column is raw `maxHp * damageFraction`**, not guaranteed final HP loss. `hitParty` applies armor, a minimum damage floor, immunity, current HP and death. All three types share the same regional percentage; **only seals apply Slow**. Active traps affect the hero and living active companions; enemies, guardians and their summons are excluded.
+In the historical table, the **last column is raw `maxHp * damageFraction`**, not guaranteed final HP loss. `hitParty` applies armor, a minimum damage floor, immunity, current HP and death. All three types share the same regional percentage; **only seals apply Slow**. Active traps affect the hero and living active companions; enemies, guardians and their summons are excluded.
 
 The percentage of nominal maximum HP lost when continuously standing on *one* trap, averaged over full cycles, increases from ~1.25%/s in side dungeons to ~3.15%/s in the Citadel, before mitigation. Multiple different traps can each hit the same hero in one interval, subject to independent cycle stamps.
 
@@ -45,4 +69,4 @@ A sustained jet or magical seal *could* someday use authored repeated ticks, but
 
 The dedicated `tests/combat-trap-sources.test.cjs` regression covers each of the five dungeon trap timings in Normal and Nightmare with real authored trap geometry and clocks: warnings, late entrant independently hit, no same-cycle repeated hit while stationary or after reentry, next-cycle re-arming, inactive safety and immunity consuming an activation. Existing tests cover all kinds, side/outdoor source catalogs, hero/companion damage, lethal seal cleanup and room routing.
 
-For beta, manually cross an active spike, jet and seal in early and late regions; deliberately enter late; cross an overlapping area, step out/reenter, and try immunity expiring mid-activation. Assess whether the player understands that **one contact per active cycle** is the rule. If frustration or apparent invulnerability is reproducible, file a **trap readability or balance finding** with device, region, mode, class, party, screenshot and current source build. Do not convert the trap system to continuous HP drain without a separately tested and explicitly authorized balance design.
+For beta on the new tuning, manually cross an active spike, jet and seal in early and late regions; deliberately enter late; cross an overlapping area, step out/reenter, and try immunity expiring mid-activation. Assess whether the player understands that **one contact per active cycle** is the rule. If frustration or apparent invulnerability is reproducible, file a **trap readability or balance finding** with device, region, mode, class, party, screenshot and current source build. Do not convert the trap system to continuous HP drain without a separately tested and explicitly authorized balance design.
