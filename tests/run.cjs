@@ -27,6 +27,8 @@ const quick = new Set([
   'terrain-effects',
   'first-boss-balance',
   'dungeon-pressure',
+  'abyss-flight-project',
+  'abyss-v09-routes',
   'awakening-anchor',
   'local-sites',
   'world-aesthetic',
