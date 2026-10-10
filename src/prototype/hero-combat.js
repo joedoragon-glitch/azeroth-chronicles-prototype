@@ -378,7 +378,7 @@
             .sort((a, b) => this.idOrder(a, b))) {
             if (this.damage(e, damage, 'hero', { area: true })) {
               hits++;
-              if (def.slow) e.slow = Math.max(e.slow || 0, def.slow);
+              if (def.slow) this.applySlow(e, def.slow);
             }
           }
           this.event(this.hero.class === 'paladin' ? 'melee' : 'spell', {
@@ -458,7 +458,10 @@
           else
             this.hero.immune = Math.min(
               4,
-              (this.hero.class === 'paladin' ? 2.5 : 2) + 0.15 * (rank - 1),
+              Math.max(
+                this.hero.immune || 0,
+                (this.hero.class === 'paladin' ? 2.5 : 2) + 0.15 * (rank - 1),
+              ),
             );
           this.event('spell', {
             actor: 'hero',
@@ -482,11 +485,15 @@
               'hero',
               { area: true },
             );
-            if (landed && this.hero.class === 'mage' && slot !== 8) e.slow = slot === 5 ? 5 : 6;
+            if (landed && this.hero.class === 'mage' && slot !== 8)
+              this.applySlow(e, slot === 5 ? 5 : 6);
           }
           if (slot === 8) {
             this.hero.hp = Math.min(this.hero.maxHp, this.hero.hp + this.hero.maxHp * 0.35 * scale);
-            this.hero.immune = Math.min(4, 3 + 0.15 * (rank - 1));
+            this.hero.immune = Math.min(
+              4,
+              Math.max(this.hero.immune || 0, 3 + 0.15 * (rank - 1)),
+            );
           }
           this.event('spell', {
             actor: 'hero',
