@@ -120,6 +120,7 @@
         potions: { health: 0, mana: 0, greater_health: 0, greater_mana: 0 },
         tonic: false,
         tonicStock: 0,
+        weaponSelection: null,
         potionCd: 0,
         slow: 0,
         supportEffects: [],
@@ -1239,21 +1240,28 @@
       return this.hero.tonicStock || 0;
     }
     purchasePreparationTonic() {
-      if (!this.s.rescued.archive || !this.spend(this.preparationTonicCost())) return false;
+      // Match the inventory limit enforced by v4 save validation; never charge for unusable stock.
+      if (!this.s.rescued.archive || this.preparationTonicStock() >= 10000) return false;
+      if (!this.spend(this.preparationTonicCost())) return false;
       this.hero.tonicStock = this.preparationTonicStock() + 1;
       this.say('Preparation Tonic purchased. Use it at any completed Barracks.');
+      return true;
+    }
+    activatePreparationTonic() {
+      if (this.hero.tonic) return false;
+      this.hero.tonic = true;
+      this.hero.tonicBonus = Math.ceil(this.hero.maxHp * 0.1);
+      this.hero.maxHp += this.hero.tonicBonus;
+      this.hero.hp += this.hero.tonicBonus;
+      // Personal consumables do not add inheritable HP to companions.
+      this.syncCompanionLevelStats();
+      this.say('Preparation Tonic active · maximum health +10% until rest or defeat.');
       return true;
     }
     usePreparationTonic() {
       if (this.hero.tonic || this.preparationTonicStock() < 1) return false;
       this.hero.tonicStock--;
-      this.hero.tonic = true;
-      this.hero.tonicBonus = Math.ceil(this.hero.maxHp * 0.1);
-      this.hero.maxHp += this.hero.tonicBonus;
-      this.hero.hp += this.hero.tonicBonus;
-      this.syncCompanionLevelStats();
-      this.say('Preparation Tonic active · maximum health +10% until rest or defeat.');
-      return true;
+      return this.activatePreparationTonic();
     }
     buyPotion(type, advanced = false) {
       if (type === 'tonic') {
@@ -1266,13 +1274,7 @@
           this.say('Not enough crowns for a Preparation tonic.');
           return false;
         }
-        this.hero.tonic = true;
-        this.hero.tonicBonus = Math.ceil(this.hero.maxHp * 0.1);
-        this.hero.maxHp += this.hero.tonicBonus;
-        this.hero.hp += this.hero.tonicBonus;
-        this.syncCompanionLevelStats();
-        this.say('Preparation tonic applied · maximum health +10%.');
-        return true;
+        return this.activatePreparationTonic();
       }
       this.say(
         R.resourceMode.manaEnabled
@@ -1910,6 +1912,7 @@
         'legacyWeaponName',
         'legacyPotions',
         'legacyEquipped',
+        'weaponSelection',
       ])
         if (old[key] !== undefined) fresh[key] = clone(old[key]);
       this.s.hero = fresh;
