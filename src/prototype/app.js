@@ -523,7 +523,13 @@
   document.addEventListener(
     'click',
     (event) => {
-      if (outsidePointerId === null && (!menu || $('modal').contains(event.target))) return;
+      // WebKit may not dispatch click after a prevented pointerdown.
+      // Do not let an old outside-tap ID swallow a later, valid menu choice.
+      if (menu && $('modal').contains(event.target)) {
+        outsidePointerId = null;
+        return;
+      }
+      if (outsidePointerId === null && !menu) return;
       event.preventDefault();
       event.stopImmediatePropagation();
       outsidePointerId = null;
