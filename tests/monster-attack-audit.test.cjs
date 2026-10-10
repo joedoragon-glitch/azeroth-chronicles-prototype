@@ -33,6 +33,30 @@ assert.equal(
 );
 assert.equal(new Set(report.rows.map((row) => row.id)).size, report.rows.length);
 assert(report.rows.every((row) => row.source && row.mechanic));
+assert.equal(report.rows.length, 256, '251 presentation IDs + three trap kinds + two recoveries');
+assert(
+  report.rows
+    .filter((row) => baseline.rows.some((item) => item.id === row.id))
+    .every((row) => row.visualRecipe?.action && row.visualRecipe?.material),
+  'every VFX identity resolves a real authored procedural action and material',
+);
+assert.equal(
+  report.rows.find((row) => row.id === 'boss/mine/3').visualRecipe.action,
+  'rush',
+);
+assert.equal(
+  report.rows.find((row) => row.id === 'rogue/ringleader/ranged/orc/signature')
+    .visualRecipe.material,
+  'steel',
+);
+for (const region of Campaign.data.regions) {
+  const profiles = report.rows.find((row) => row.id === 'trap/jet')
+    .mechanic.regionalProfiles[region.id];
+  assert(profiles?.main && profiles?.side && profiles?.outdoor, region.id);
+  assert.deepEqual(profiles.main, profiles.side, region.id + ' main/side parity');
+  assert.deepEqual(profiles.main, profiles.outdoor, region.id + ' main/outdoor parity');
+}
+
 assert(report.rows.every((row) => row.review.mechanics === 'unreviewed'));
 assert(
   report.rows.every((row) =>
