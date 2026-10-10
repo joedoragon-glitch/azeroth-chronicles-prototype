@@ -254,6 +254,12 @@
           (p) => p.roadBlocker || p.structure || this.distanceToRoad(z, p) >= (p.r || 0) + 60,
         );
         z.roadVersion = roadVersion;
+        // Rebuild road-sensitive life and occupied districts for old saves.
+        // IDs and captured progress remain intact; authored scenery follows
+        // the newly routed network instead of retaining stale locations.
+        delete z.worldLifeVersion;
+        delete z.frontierLayoutVersion;
+        delete z.crownLayoutVersion;
         delete z.streetClearanceVersion;
       }
       distanceToRoad(z, point) {
@@ -320,8 +326,11 @@
                 (other) =>
                   other !== item &&
                   dist(other, p) <
-                    (['rest', 'minor'].includes(other.id) ? 82 : 42) +
-                      (['rest', 'minor'].includes(item.id) ? 36 : 0),
+                    Math.max(
+                      96,
+                      (['rest', 'minor'].includes(other.id) ? 82 : 42) +
+                        (['rest', 'minor'].includes(item.id) ? 36 : 0),
+                    ),
               )
             )
               return false;
@@ -1078,9 +1087,34 @@
                 return false;
               }
             }
-            if (!allowRoad && nearRoad(p, 45)) return false;
-            if (z.npcs.some((n) => dist(n, p) < 45) || z.nodes.some((n) => dist(n, p) < 45))
-              return false;
+            // Habitual camps keep their households when an access road passes
+            // through an old furniture coordinate. Move within the habitat,
+            // never into the carriageway or a neighboring resource site.
+            const usable = (point) =>
+              !this.blocked(point.x, point.y, z.id, 8, true) &&
+              (allowRoad || !nearRoad(point, 65)) &&
+              !z.npcs.some((n) => dist(n, point) < 45) &&
+              !z.nodes.some((n) => dist(n, point) < 45);
+            if (!usable(p)) {
+              if (scope !== 'habitat') return false;
+              let relocated = null;
+              for (const radius of [55, 90, 125, 165, 210]) {
+                for (let j = 0; j < 16; j++) {
+                  const angle = (j * Math.PI) / 8;
+                  const q = {
+                    x: x + Math.cos(angle) * radius,
+                    y: y + Math.sin(angle) * radius,
+                  };
+                  if (usable(q) && !z.props.some((other) => dist(other, q) < (other.r || 0) + 30)) {
+                    relocated = q;
+                    break;
+                  }
+                }
+                if (relocated) break;
+              }
+              if (!relocated) return false;
+              p = relocated;
+            }
             z.props.push({
               id: 'world-life-' + scope + '-' + serial++,
               ...p,
@@ -1176,17 +1210,34 @@
           const place = (base, spec, prefix) => {
             const [dx, dy, structure] = spec,
               roadTrace = roadTraceStructures.has(structure),
-              p = clearPoint(base.x + dx, base.y + dy);
-            if (!p) return false;
-            // Furniture stays off travel lanes; flat ruts/patches are the only authored road-surface exception.
-            if (!roadTrace && roadNear(p, 48)) return false;
-            if (
-              !roadTrace &&
-              (z.npcs.some((n) => dist(n, p) < 45) ||
-                z.nodes.some((n) => n.amount > 0 && dist(n, p) < 48) ||
-                z.buildings.some((n) => dist(n, p) < 55))
-            )
-              return false;
+              raw = { x: base.x + dx, y: base.y + dy };
+            const usable = (point) =>
+              !!point &&
+              (roadTrace ||
+                (!roadNear(point, 48) &&
+                  !z.npcs.some((n) => dist(n, point) < 45) &&
+                  !z.nodes.some((n) => n.amount > 0 && dist(n, point) < 48) &&
+                  !z.buildings.some((n) => dist(n, point) < 55)));
+            let p = clearPoint(raw.x, raw.y);
+            if (!usable(p) && !roadTrace) {
+              // Work yards and checkpoint standards remain in their district
+              // on roadside plots rather than silently disappearing.
+              for (const radius of [45, 80, 115, 150, 190, 240]) {
+                for (let j = 0; j < 16; j++) {
+                  const angle = (j * Math.PI) / 8;
+                  const q = clearPoint(
+                    raw.x + Math.cos(angle) * radius,
+                    raw.y + Math.sin(angle) * radius,
+                  );
+                  if (!usable(q)) continue;
+                  if (z.props.some((other) => dist(other, q) < (other.r || 0) + 35)) continue;
+                  p = q;
+                  break;
+                }
+                if (usable(p)) break;
+              }
+            }
+            if (!usable(p)) return false;
             z.props.push({
               id: 'frontier-layout-' + prefix + '-' + serial++,
               ...p,
@@ -1248,15 +1299,33 @@
           };
           const place = (base, spec, prefix) => {
             const [dx, dy, structure, r = 0] = spec,
-              p = clearPoint(base.x + dx, base.y + dy, Math.max(8, r));
-            if (!p) return false;
-            if (
-              roadNear(p, r > 0 ? r + 62 : 50) ||
-              z.npcs.some((n) => dist(n, p) < 48) ||
-              z.nodes.some((n) => dist(n, p) < 50) ||
-              z.buildings.some((n) => dist(n, p) < 60)
-            )
-              return false;
+              raw = { x: base.x + dx, y: base.y + dy };
+            const usable = (point) =>
+              !!point &&
+              !roadNear(point, r > 0 ? r + 62 : 50) &&
+              !z.npcs.some((n) => dist(n, point) < 48) &&
+              !z.nodes.some((n) => dist(n, point) < 50) &&
+              !z.buildings.some((n) => dist(n, point) < 60);
+            let p = clearPoint(raw.x, raw.y, Math.max(8, r));
+            if (!usable(p)) {
+              for (const radius of [45, 85, 125, 170, 210, 255]) {
+                for (let j = 0; j < 16; j++) {
+                  const angle = (j * Math.PI) / 8;
+                  const q = clearPoint(
+                    raw.x + Math.cos(angle) * radius,
+                    raw.y + Math.sin(angle) * radius,
+                    Math.max(8, r),
+                  );
+                  if (!usable(q)) continue;
+                  if (z.props.some((other) => dist(other, q) < (other.r || 0) + r + 27))
+                    continue;
+                  p = q;
+                  break;
+                }
+                if (usable(p)) break;
+              }
+            }
+            if (!usable(p)) return false;
             z.props.push({
               id: 'crown-layout-' + prefix + '-' + serial++,
               ...p,
@@ -1275,6 +1344,30 @@
             const center = { x: route.point[0], y: route.point[1] };
             for (const spec of route.props || [])
               place(center, [spec[0], spec[1], spec[2], 0], 'route-' + route.id);
+          }
+          // Retain the visually distinctive compound scenes and at least one
+          // prop in each district/route; suppress only redundant loose dressing.
+          const districtProps = z.props.filter((p) => String(p.id || '').startsWith('crown-layout-'));
+          if (districtProps.length > 27) {
+            const composed = new Set([
+              'crown-levy-yard',
+              'crown-command-post',
+              'ashbeast-roost-scene',
+              'crown-logistics-bay',
+              'crown-fortress-checkpoint',
+            ]);
+            const kept = new Set(districtProps);
+            const redundant = /^(?:bunk|sleep-roll|war-table|weapon-rack|supply-stack|black-rock|roost|ember-pit)$/;
+            for (const p of [...districtProps].reverse()) {
+              if (kept.size <= 27) break;
+              if (composed.has(p.structure) || !redundant.test(p.structure)) continue;
+              if ([...kept].filter((q) => q.crownDistrict === p.crownDistrict).length <= 1)
+                continue;
+              kept.delete(p);
+            }
+            z.props = z.props.filter(
+              (p) => !String(p.id || '').startsWith('crown-layout-') || kept.has(p),
+            );
           }
           z.crownLayoutVersion = 1;
         } finally {
