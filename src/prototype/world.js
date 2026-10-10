@@ -102,7 +102,7 @@
         if (dungeonIds.includes(z.id) || this.supplyRoom(z.id) || this.sideDungeon(z.id)) return;
         this.settlementLayout(z);
         const i = this.regionIndex(z.id),
-          roadVersion = 15;
+          roadVersion = 16;
         if (z.roadVersion === roadVersion) return;
         const origin = { x: D.towns[i][0], y: D.towns[i][1] },
           field = this.fieldCenter(i),
@@ -141,6 +141,49 @@
             ...frontierSites,
             ...crownRoutes,
             ...crownSites,
+          ],
+          // Road approaches serve authored destinations without paving
+          // straight through a monster compound, house, shrine, or fort.
+          // All of these coordinates already exist in the game world.
+          inhabitedSites = [
+            ...R.sites[i]
+              .filter(([id]) => !/^(?:bridge-|crossing-)/.test(id))
+              .map(([id, name, x, y]) => ({ id, name, x, y })),
+            ...(R.creatureStrongholds || [])
+              .filter((hold) => hold.region === z.id && hold.center)
+              .map((hold) => ({
+                id: hold.id,
+                name: hold.id,
+                x: hold.center[0],
+                y: hold.center[1],
+              })),
+            ...(R.worldLifePlans?.[i]?.habitats || []).map((habitat) => ({
+              id: habitat.id,
+              name: habitat.id,
+              x: habitat.center[0],
+              y: habitat.center[1],
+            })),
+            ...(z.id === 'frontier' ? R.frontierDistricts || [] : [])
+              .map((district) => ({
+                id: district.id,
+                name: district.id,
+                x: district.center[0],
+                y: district.center[1],
+              })),
+            ...(z.id === 'crown' ? R.crownDistricts || [] : [])
+              .map((district) => ({
+                id: district.id,
+                name: district.id,
+                x: district.center[0],
+                y: district.center[1],
+              })),
+            ...(z.id === 'highlands' ? R.ironrootLife || [] : [])
+              .map((district) => ({
+                id: district.id,
+                name: district.id,
+                x: district.props.reduce((total, p) => total + p[0], 0) / district.props.length,
+                y: district.props.reduce((total, p) => total + p[1], 0) / district.props.length,
+              })),
           ],
           props = z.props,
           blockers = z.props
@@ -181,6 +224,41 @@
                 path = this.route(origin, destination, { road: true });
               if (path.length > 1) z.roads.push(path);
             }
+            // A coherent settlement road network also serves local economic,
+            // military, hostile, and named places. Add only missing branches:
+            // wilderness does not become a grid of needless paved spokes.
+            for (const place of inhabitedSites) {
+              const center = { x: place.x, y: place.y };
+              if (this.distanceToRoad(z, center) <= 230) continue;
+              const junctions = z.roads.flatMap((path) => path);
+              const nearest = junctions.reduce(
+                (best, point) =>
+                  !best || dist(point, center) < dist(best, center) ? point : best,
+                origin,
+              );
+              const angle = Math.atan2(nearest.y - center.y, nearest.x - center.x);
+              const candidates = [];
+              for (const radius of [160, 195, 220]) {
+                for (const offset of [0, 0.35, -0.35, 0.7, -0.7, 1.1, -1.1, 1.6, -1.6]) {
+                  const candidate = {
+                    x: center.x + Math.cos(angle + offset) * radius,
+                    y: center.y + Math.sin(angle + offset) * radius,
+                  };
+                  if (!this.blocked(candidate.x, candidate.y, z.id, 34))
+                    candidates.push(candidate);
+                }
+              }
+              candidates.sort(
+                (a, b) => dist(a, nearest) - dist(b, nearest),
+              );
+              for (const candidate of candidates) {
+                if (this.distanceToRoad(z, candidate) < 25) break;
+                const path = this.route(nearest, candidate, { road: true });
+                if (path.length < 2) continue;
+                z.roads.push(path);
+                break;
+              }
+            }
             roadPlans.set(key, clone(z.roads));
           }
         } finally {
@@ -205,22 +283,22 @@
       }
       roadSetback(p) {
         if (p.roadTrace) return 0; // Only deliberately flat road ruts/repairs.
-        if (p.roadBlocker) return (p.r || 0) + 70;
-        if (p.r > 0) return p.r + 57;
+        if (p.roadBlocker) return (p.r || 0) + 78;
+        if (p.r > 0) return p.r + 64;
         if (
           /house|cottage|workshop|forge|watchpost|tower|tent|stockade|wall|barracks|gate|roost|lean-to|palisade|foundation|shelter|stable|mangrove|dead-tree/i.test(
             p.structure || '',
           )
         )
-          return 88;
-        return 63;
+          return 125;
+        return 72;
       }
       clearStreetCorridors(z) {
         if (
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
           this.sideDungeon(z.id) ||
-          z.streetClearanceVersion === 1
+          z.streetClearanceVersion === 2
         )
           return;
         const oldZone = this.s.zone;
@@ -232,11 +310,11 @@
           // Reposition the two refuge buildings: the canonical settlement
           // coordinates are STREET SQUARES, not house footprints.
           const frontages = [
-            ['rest', 110],
-            ['minor', 105],
-            ['board', 72],
-            ['supplier', 60],
-            ['recruiter', 60],
+            ['rest', 190],
+            ['minor', 180],
+            ['board', 95],
+            ['supplier', 92],
+            ['recruiter', 92],
           ];
           const nearEnemyHome = (p, radius) =>
             z.enemies.some((enemy) => enemy.hp > 0 && dist(enemy.home || enemy, p) < radius);
@@ -283,7 +361,7 @@
               dist(base, center) > 10
                 ? Math.atan2(base.y - center.y, base.x - center.x)
                 : -Math.PI * 0.75;
-            for (const radius of [55, 85, 115, 145, 180, 220, 270, 320, 380]) {
+            for (const radius of [55, 85, 115, 145, 180, 220, 270, 320, 380, 430, 480]) {
               for (let j = 0; j < 24; j++) {
                 const fan = j === 0 ? 0 : Math.ceil(j / 2) * (j % 2 ? 1 : -1);
                 const angle = outward + (fan * Math.PI) / 12,
@@ -316,7 +394,7 @@
             .filter((p) => this.distanceToRoad(z, p) < this.roadSetback(p))
             .sort((a, b) => (b.r || 0) - (a.r || 0) || a.id.localeCompare(b.id));
           for (const prop of affected) moveOffRoad(prop, this.roadSetback(prop));
-          z.streetClearanceVersion = 1;
+          z.streetClearanceVersion = 2;
         } finally {
           this.s.zone = oldZone;
         }
