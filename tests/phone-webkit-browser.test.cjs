@@ -40,6 +40,7 @@ const server=http.createServer((req,res)=>{
  const scroll=await page.locator('#modal-content').evaluate(el=>{el.scrollTop=80;return {top:el.scrollTop,max:el.scrollHeight-el.clientHeight};});assert(scroll.max===0||scroll.top>0,'compact help fits or scrolls while Back remains visible');
  await page.keyboard.press('Escape');await page.locator('#menu-button').tap();await page.getByRole('button',{name:'Talents',exact:true}).tap();assert.equal(await page.locator('#modal-title').textContent(),'Talents');
  await page.keyboard.press('Escape');await page.keyboard.press('Escape');await page.keyboard.press('Escape');
+ await page.evaluate(()=>{Prototype.closeMenu();Prototype.game.hero.order=null;Prototype.openMenu('Outside dismissal test','Tap outside',[{label:'Stay',action:()=>{}}]);});await page.touchscreen.tap(4,Math.round(size.height/2));assert(await page.locator('#modal').isHidden(),'WebKit outside tap dismisses dialog');assert.equal(await page.evaluate(()=>Prototype.game.hero.order),null,'dismissal does not start movement');
  await page.evaluate(()=>Prototype.save());assert(!(await page.locator('#status').textContent()).includes('Saved locally'));
  await require('./helpers/camera-browser.cjs').verifyCamera(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,true,size.width===375);
  await require('./helpers/ironroot-browser.cjs').verifyIronroot(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);

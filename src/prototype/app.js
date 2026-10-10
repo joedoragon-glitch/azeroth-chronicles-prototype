@@ -475,6 +475,62 @@
     document.body.classList.remove('menu-open');
     clearInput();
   }
+  // A touch outside the dialog dismisses it and cannot activate the world or
+  // a HUD control beneath it. Intro, successor and game-over choices are mandatory.
+  let outsidePointerId = null;
+  function dismissOutside() {
+    if (!menu || !started || game.s.challenge.pending || game.s.challenge.gameOver) return;
+    if (game.peace && !game.s.endingAck) {
+      game.s.endingAck = true;
+      save();
+    }
+    if (menu.title === 'The Dungeons Awaken' && !game.s.awakeningAck) {
+      game.s.awakeningAck = true;
+      save();
+    }
+    closeMenu();
+  }
+  document.addEventListener(
+    'pointerdown',
+    (event) => {
+      if (!menu || $('modal').contains(event.target)) return;
+      outsidePointerId = event.pointerId;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      dismissOutside();
+    },
+    true,
+  );
+  document.addEventListener(
+    'pointerup',
+    (event) => {
+      if (outsidePointerId !== event.pointerId) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    },
+    true,
+  );
+  document.addEventListener(
+    'pointercancel',
+    (event) => {
+      if (outsidePointerId !== event.pointerId) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      outsidePointerId = null;
+    },
+    true,
+  );
+  document.addEventListener(
+    'click',
+    (event) => {
+      if (outsidePointerId === null && (!menu || $('modal').contains(event.target))) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      outsidePointerId = null;
+      dismissOutside();
+    },
+    true,
+  );
   $('close-button').onclick = () => {
     audio.unlock().then(() => audio.interfaceSound('back'));
     if (!game.s.endingAck && game.peace) {
