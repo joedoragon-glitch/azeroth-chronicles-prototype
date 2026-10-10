@@ -128,6 +128,8 @@ Prior work: `docs/ROGUE_PR146_INTEGRATION_AUDIT.md` reports 99 basic and 51 sign
 
 The new generator and test must confirm deterministic, pure source extraction, complete group/role coverage, unique IDs and readable Markdown/JSON output. **Do not merge a failed or incomplete CI run.** After changes, require exact-head format/Node tests, the project's full desktop/phone Chromium + WebKit path, successful main release, exact published SHA and representative real-device play before claiming v0.9 readiness.
 
+**Tracked correctness reproducer:** [issue #214](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/214) owns MA-01 and MA-02, with tests and the exact authorial fork preserved for later. [Beta-readiness issue #213](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213) owns end-to-end release acceptance, not new skill design.
+
 **Next work order:** (1) preserve and merge read-only registry/docs once CI is green; (2) produce focused isolated reproducers for MA-01/02 and correct only proven gameplay defects; (3) verify MA-03 visually and check same material rules for comparable hazards; (4) re-evaluate the already merged condition/trap contracts; (5) defer optional media and TRUE redesign for authorial review after the weekend. Future workbench can load this read-only data and replay actual visual effects and hit geometry without mutating simulation.
 
 No new authorial decision is required to finish documentation or source inventory. Any disputed design is explicitly parked, with alternatives and evidence requirements, instead of being silently decided.
