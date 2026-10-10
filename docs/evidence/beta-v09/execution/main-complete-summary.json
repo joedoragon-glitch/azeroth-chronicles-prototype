@@ -1,0 +1,676 @@
+{
+  "testedSha": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+  "runtimeTree": "0857ea83ad3acd1d2e8f2f33eb4fce4ff590e99d",
+  "version": "0.8.137",
+  "runId": 38034475845,
+  "event": "push",
+  "status": "completed",
+  "conclusion": "success",
+  "runStartedAt": "2026-10-10T07:27:18Z",
+  "runUpdatedAt": "2026-10-10T07:56:12Z",
+  "requiredJobsPassed": true,
+  "jobs": [
+    {
+      "id": 114161951932,
+      "name": "main-test",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-10T07:27:20Z",
+      "completed_at": "2026-10-10T07:50:41Z",
+      "elapsedSeconds": 1401,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T07:27:21Z",
+          "completed_at": "2026-10-10T07:27:22Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T07:27:22Z",
+          "completed_at": "2026-10-10T07:27:26Z"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T07:27:26Z",
+          "completed_at": "2026-10-10T07:27:29Z"
+        },
+        {
+          "name": "Install locked development tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T07:27:29Z",
+          "completed_at": "2026-10-10T07:27:32Z"
+        },
+        {
+          "name": "Check formatting",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T07:27:32Z",
+          "completed_at": "2026-10-10T07:27:37Z"
+        },
+        {
+          "name": "Check generated entries and all published JavaScript",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-10T07:27:37Z",
+          "completed_at": "2026-10-10T07:27:45Z"
+        },
+        {
+          "name": "Full regression suite",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-10T07:27:45Z",
+          "completed_at": "2026-10-10T07:32:31Z"
+        },
+        {
+          "name": "Reproduce cooldown balance evidence summary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T07:32:31Z",
+          "completed_at": "2026-10-10T07:32:31Z"
+        },
+        {
+          "name": "Use runner Chrome for full browser matrix",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-10T07:32:31Z",
+          "completed_at": "2026-10-10T07:32:34Z"
+        },
+        {
+          "name": "Test full desktop and mobile matrix",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-10T07:32:34Z",
+          "completed_at": "2026-10-10T07:39:53Z"
+        },
+        {
+          "name": "Verify cooldown charge queues and save upgrade",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-10T07:39:53Z",
+          "completed_at": "2026-10-10T07:41:51Z"
+        },
+        {
+          "name": "Verify quest completion and Keeper Archive interaction",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-10T07:41:51Z",
+          "completed_at": "2026-10-10T07:42:41Z"
+        },
+        {
+          "name": "Audit integrated rogue warnings and effects in browsers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-10T07:42:41Z",
+          "completed_at": "2026-10-10T07:42:56Z"
+        },
+        {
+          "name": "Verify audio playback and lifecycle",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-10T07:42:56Z",
+          "completed_at": "2026-10-10T07:44:12Z"
+        },
+        {
+          "name": "Verify original-master actor idles and combat",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-10T07:44:12Z",
+          "completed_at": "2026-10-10T07:46:46Z"
+        },
+        {
+          "name": "Verify terrain material rendering",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-10-10T07:46:46Z",
+          "completed_at": "2026-10-10T07:47:34Z"
+        },
+        {
+          "name": "Verify full enemy VFX catalog and pilot captures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-10-10T07:47:34Z",
+          "completed_at": "2026-10-10T07:49:47Z"
+        },
+        {
+          "name": "Verify development sprite showroom",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-10-10T07:49:47Z",
+          "completed_at": "2026-10-10T07:50:03Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-10T07:50:03Z",
+          "completed_at": "2026-10-10T07:50:35Z"
+        },
+        {
+          "name": "Prepare app files",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-10-10T07:50:35Z",
+          "completed_at": "2026-10-10T07:50:37Z"
+        },
+        {
+          "name": "Run actions/upload-pages-artifact@v3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-10-10T07:50:37Z",
+          "completed_at": "2026-10-10T07:50:39Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 41,
+          "started_at": "2026-10-10T07:50:39Z",
+          "completed_at": "2026-10-10T07:50:39Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 42,
+          "started_at": "2026-10-10T07:50:39Z",
+          "completed_at": "2026-10-10T07:50:39Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 43,
+          "started_at": "2026-10-10T07:50:39Z",
+          "completed_at": "2026-10-10T07:50:40Z"
+        }
+      ]
+    },
+    {
+      "id": 114161951993,
+      "name": "phone-webkit",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-10T07:27:20Z",
+      "completed_at": "2026-10-10T07:40:56Z",
+      "elapsedSeconds": 816,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T07:27:21Z",
+          "completed_at": "2026-10-10T07:27:22Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T07:27:22Z",
+          "completed_at": "2026-10-10T07:27:26Z"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T07:27:26Z",
+          "completed_at": "2026-10-10T07:27:27Z"
+        },
+        {
+          "name": "Install WebKit and browser dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T07:27:27Z",
+          "completed_at": "2026-10-10T07:28:24Z"
+        },
+        {
+          "name": "Verify WebKit phone presentation and gestures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T07:28:24Z",
+          "completed_at": "2026-10-10T07:29:11Z"
+        },
+        {
+          "name": "Verify WebKit cooldown charge queues and save upgrade",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-10T07:29:11Z",
+          "completed_at": "2026-10-10T07:31:07Z"
+        },
+        {
+          "name": "Verify WebKit quest completion and Keeper Archive",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-10T07:31:07Z",
+          "completed_at": "2026-10-10T07:32:00Z"
+        },
+        {
+          "name": "Audit integrated rogue warnings and effects in WebKit",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T07:32:00Z",
+          "completed_at": "2026-10-10T07:32:12Z"
+        },
+        {
+          "name": "Verify WebKit audio playback and lifecycle",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-10T07:32:12Z",
+          "completed_at": "2026-10-10T07:33:18Z"
+        },
+        {
+          "name": "Verify WebKit enemy VFX catalog and pilot captures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-10T07:33:18Z",
+          "completed_at": "2026-10-10T07:36:01Z"
+        },
+        {
+          "name": "Verify WebKit original-master actor idles and combat",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-10T07:36:01Z",
+          "completed_at": "2026-10-10T07:39:31Z"
+        },
+        {
+          "name": "Verify WebKit terrain material rendering",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-10T07:39:31Z",
+          "completed_at": "2026-10-10T07:40:42Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-10T07:40:42Z",
+          "completed_at": "2026-10-10T07:40:54Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-10-10T07:40:54Z",
+          "completed_at": "2026-10-10T07:40:54Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26,
+          "started_at": "2026-10-10T07:40:54Z",
+          "completed_at": "2026-10-10T07:40:54Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27,
+          "started_at": "2026-10-10T07:40:54Z",
+          "completed_at": "2026-10-10T07:40:54Z"
+        }
+      ]
+    },
+    {
+      "id": 114161952687,
+      "name": "pr-check",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-10-10T07:27:19Z",
+      "completed_at": "2026-10-10T07:27:18Z",
+      "elapsedSeconds": null,
+      "steps": []
+    },
+    {
+      "id": 114165889445,
+      "name": "deploy",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-10T07:50:45Z",
+      "completed_at": "2026-10-10T07:56:12Z",
+      "elapsedSeconds": 327,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T07:50:46Z",
+          "completed_at": "2026-10-10T07:50:47Z"
+        },
+        {
+          "name": "Run actions/configure-pages@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T07:50:47Z",
+          "completed_at": "2026-10-10T07:50:48Z"
+        },
+        {
+          "name": "Deploy to GitHub Pages",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T07:50:48Z",
+          "completed_at": "2026-10-10T07:50:55Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T07:50:55Z",
+          "completed_at": "2026-10-10T07:51:01Z"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T07:51:01Z",
+          "completed_at": "2026-10-10T07:51:02Z"
+        },
+        {
+          "name": "Use runner Chrome for live smoke verification",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-10T07:51:02Z",
+          "completed_at": "2026-10-10T07:51:06Z"
+        },
+        {
+          "name": "Wait for the exact published build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-10T07:51:06Z",
+          "completed_at": "2026-10-10T07:51:06Z"
+        },
+        {
+          "name": "Verify published desktop and phone smoke paths",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T07:51:06Z",
+          "completed_at": "2026-10-10T07:53:13Z"
+        },
+        {
+          "name": "Verify published original-master actor idles and roads",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-10T07:53:13Z",
+          "completed_at": "2026-10-10T07:55:23Z"
+        },
+        {
+          "name": "Verify published quest completion and Keeper Archive",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-10T07:55:23Z",
+          "completed_at": "2026-10-10T07:56:09Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11,
+          "started_at": "2026-10-10T07:56:09Z",
+          "completed_at": "2026-10-10T07:56:09Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-10-10T07:56:09Z",
+          "completed_at": "2026-10-10T07:56:09Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-10-10T07:56:09Z",
+          "completed_at": "2026-10-10T07:56:09Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-10-10T07:56:09Z",
+          "completed_at": "2026-10-10T07:56:10Z"
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 11664276609,
+      "name": "app-screenshots",
+      "size_in_bytes": 814878409,
+      "digest": "sha256:fd9794d6814e1f0eab2ef7c968dbfe7f0bfe6ce2b8ad4a27a5ceda5490675e4b",
+      "expires_at": "2026-10-13T07:50:03Z"
+    },
+    {
+      "id": 11664256609,
+      "name": "github-pages",
+      "size_in_bytes": 26943523,
+      "digest": "sha256:c11dc56720c92d7cec4149ab57fc6e81f5e907359364eb85d9ebb07fe15092d5",
+      "expires_at": "2026-10-11T07:50:37Z"
+    },
+    {
+      "id": 11664030870,
+      "name": "webkit-phone-screenshots",
+      "size_in_bytes": 334921205,
+      "digest": "sha256:1b9c94588f0e11769d4e590dff849319dc51f2e1125770eb68af3f36c5147e6a",
+      "expires_at": "2026-10-13T07:40:42Z"
+    }
+  ],
+  "mainEvidence": [
+    "2026-10-10T07:32:31.5448071Z PASS 90 regression suites",
+    "2026-10-10T07:39:53.5868530Z 228 desktop/mobile browser checks passed.",
+    "2026-10-10T07:40:47.4354070Z PASS Chromium keyboard 54 zero-MP queued charges across all classes, ranks 0–5 and charged slots, plus cancellation",
+    "2026-10-10T07:40:55.4962401Z PASS Chromium installed PWA 0.8.118 → 0.8.137, cache retirement, dormant MP/talent/save retention and offline phone reopen",
+    "2026-10-10T07:41:06.0859388Z PASS chromium paladin 1280x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:41:12.7416143Z PASS chromium mage 1280x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:41:19.6368225Z PASS chromium ranger 1280x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:41:24.9100415Z PASS chromium paladin 375x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:41:30.0722133Z PASS chromium mage 375x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:41:35.2472009Z PASS chromium ranger 375x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:41:40.5579802Z PASS chromium paladin 800x375 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:41:45.8068242Z PASS chromium mage 800x375 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:41:50.9896559Z PASS chromium ranger 800x375 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:42:06.5252286Z PASS chromium-1280x800 two milestone cards, status spacing, practical controls, cage, bargain, optional knowledge, evidence, save and TRUE escape",
+    "2026-10-10T07:42:17.9869306Z PASS chromium-375x800 two milestone cards, status spacing, practical controls, cage, bargain, optional knowledge, evidence, save and TRUE escape",
+    "2026-10-10T07:42:29.3868060Z PASS chromium-393x852 two milestone cards, status spacing, practical controls, cage, bargain, optional knowledge, evidence, save and TRUE escape",
+    "2026-10-10T07:42:40.8828006Z PASS chromium-800x375 two milestone cards, status spacing, practical controls, cage, bargain, optional knowledge, evidence, save and TRUE escape",
+    "2026-10-10T07:42:45.3280493Z PASS chromium rogue warning/DPR day/night, dust locks and scatter recovery 1280x800",
+    "2026-10-10T07:42:48.7654694Z PASS chromium rogue warning/DPR day/night, dust locks and scatter recovery 375x800",
+    "2026-10-10T07:42:52.3883582Z PASS chromium rogue warning/DPR day/night, dust locks and scatter recovery 393x852",
+    "2026-10-10T07:42:55.9995098Z PASS chromium rogue warning/DPR day/night, dust locks and scatter recovery 844x390",
+    "2026-10-10T07:43:40.3115974Z PASS chromium index.html: gesture unlock, soft menu/background suspend, unchanged frozen saves, bounded/released voices and 28 non-silent finite unclipped score renders",
+    "2026-10-10T07:44:01.6521949Z PASS chromium phone.html: gesture unlock, soft menu/background suspend, unchanged frozen saves, bounded/released voices and 28 non-silent finite unclipped score renders",
+    "2026-10-10T07:44:09.7927432Z PASS chromium desktop: diagnostic WAV decode/render, shared stems, menu/UI mix, pause clock, actual TRUE boss, untouched saves, offline subpath audition and reopen",
+    "2026-10-10T07:44:12.4734891Z PASS chromium phone: diagnostic WAV decode/render, shared stems, menu/UI mix, pause clock, actual TRUE boss, untouched saves, offline subpath audition and reopen",
+    "2026-10-10T07:46:51.8597311Z PASS chromium index.html bounded 28-material loading, camera phase, clipping and retirement",
+    "2026-10-10T07:46:55.6222280Z PASS chromium phone.html bounded 28-material loading, camera phase, clipping and retirement",
+    "2026-10-10T07:47:20.0826277Z PASS chromium index.html ground appearance, camera reuse, travel, material reload and memory",
+    "2026-10-10T07:47:34.5270704Z PASS chromium phone.html ground appearance, camera reuse, travel, material reload and memory",
+    "2026-10-10T07:48:29.5103004Z PASS chromium 1280px: 297 catalog/TRUE scenes, real resolutions, render purity, pause/death/travel",
+    "2026-10-10T07:48:56.0290156Z PASS chromium 375px: 297 catalog/TRUE scenes, real resolutions, render purity, pause/death/travel",
+    "2026-10-10T07:49:46.8849297Z PASS actual-game captures: 30 scenes / 60 images; desktop/phone portrait/landscape, day/night TRUE/crowd, configured zooms",
+    "2026-10-10T07:50:35.1138298Z Artifact app-screenshots.zip successfully finalized. Artifact ID 11664276609",
+    "2026-10-10T07:50:35.1140019Z Artifact app-screenshots has been successfully uploaded! Final size is 814878409 bytes. Artifact ID is 11664276609",
+    "2026-10-10T07:50:39.4770070Z Artifact github-pages.zip successfully finalized. Artifact ID 11664256609",
+    "2026-10-10T07:50:39.4771107Z Artifact github-pages has been successfully uploaded! Final size is 26943523 bytes. Artifact ID is 11664256609"
+  ],
+  "webkitEvidence": [
+    "2026-10-10T07:28:44.8018697Z PASS WebKit phone input, selection, compact HUD, learned controls, interaction and menu access 375x800",
+    "2026-10-10T07:28:54.0733113Z PASS WebKit phone input, selection, compact HUD, learned controls, interaction and menu access 393x852",
+    "2026-10-10T07:29:03.1900155Z PASS WebKit phone input, selection, compact HUD, learned controls, interaction and menu access 800x375",
+    "2026-10-10T07:29:11.1872294Z PASS WebKit phone input, selection, compact HUD, learned controls, interaction and menu access 844x390",
+    "2026-10-10T07:29:55.4614221Z PASS WebKit touch 54 zero-MP queued charges across all classes, ranks 0–5 and charged slots, plus cancellation",
+    "2026-10-10T07:30:00.9002249Z PASS WebKit installed PWA 0.8.118 → 0.8.137, cache retirement, dormant MP/talent/save retention and offline phone reopen",
+    "2026-10-10T07:30:12.9663497Z PASS webkit paladin 1280x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:30:21.0019837Z PASS webkit mage 1280x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:30:29.0959904Z PASS webkit ranger 1280x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:30:35.5134518Z PASS webkit paladin 375x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:30:41.5098778Z PASS webkit mage 375x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:30:47.7233700Z PASS webkit ranger 375x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:30:54.1248053Z PASS webkit paladin 800x375 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:31:00.4705876Z PASS webkit mage 800x375 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:31:06.9425005Z PASS webkit ranger 800x375 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:31:23.2800216Z PASS webkit-1280x800 two milestone cards, status spacing, practical controls, cage, bargain, optional knowledge, evidence, save and TRUE escape",
+    "2026-10-10T07:31:35.8239071Z PASS webkit-375x800 two milestone cards, status spacing, practical controls, cage, bargain, optional knowledge, evidence, save and TRUE escape",
+    "2026-10-10T07:31:47.8925012Z PASS webkit-393x852 two milestone cards, status spacing, practical controls, cage, bargain, optional knowledge, evidence, save and TRUE escape",
+    "2026-10-10T07:32:00.5528970Z PASS webkit-800x375 two milestone cards, status spacing, practical controls, cage, bargain, optional knowledge, evidence, save and TRUE escape",
+    "2026-10-10T07:32:04.4739079Z PASS webkit rogue warning/DPR day/night, dust locks and scatter recovery 1280x800",
+    "2026-10-10T07:32:07.2259504Z PASS webkit rogue warning/DPR day/night, dust locks and scatter recovery 375x800",
+    "2026-10-10T07:32:09.7325776Z PASS webkit rogue warning/DPR day/night, dust locks and scatter recovery 393x852",
+    "2026-10-10T07:32:12.2509391Z PASS webkit rogue warning/DPR day/night, dust locks and scatter recovery 844x390",
+    "2026-10-10T07:32:45.3303017Z PASS webkit index.html: gesture unlock, soft menu/background suspend, unchanged frozen saves, bounded/released voices and 28 non-silent finite unclipped score renders",
+    "2026-10-10T07:33:05.7622111Z PASS webkit phone.html: gesture unlock, soft menu/background suspend, unchanged frozen saves, bounded/released voices and 28 non-silent finite unclipped score renders",
+    "2026-10-10T07:33:15.7123590Z PASS webkit desktop: diagnostic WAV decode/render, shared stems, menu/UI mix, pause clock, actual TRUE boss, untouched saves, offline subpath audition and reopen",
+    "2026-10-10T07:33:18.5231610Z PASS webkit phone: diagnostic WAV decode/render, shared stems, menu/UI mix, pause clock, actual TRUE boss, untouched saves, offline subpath audition and reopen",
+    "2026-10-10T07:34:16.6823197Z PASS webkit 1280px: 297 catalog/TRUE scenes, real resolutions, render purity, pause/death/travel",
+    "2026-10-10T07:34:49.8439696Z PASS webkit 375px: 297 catalog/TRUE scenes, real resolutions, render purity, pause/death/travel",
+    "2026-10-10T07:36:01.4990214Z PASS actual-game captures: 30 scenes / 60 images; desktop/phone portrait/landscape, day/night TRUE/crowd, configured zooms",
+    "2026-10-10T07:39:36.0609155Z PASS webkit index.html bounded 28-material loading, camera phase, clipping and retirement",
+    "2026-10-10T07:39:39.7033521Z PASS webkit phone.html bounded 28-material loading, camera phase, clipping and retirement",
+    "2026-10-10T07:40:17.8537885Z PASS webkit index.html ground appearance, camera reuse, travel, material reload and memory",
+    "2026-10-10T07:40:41.7058896Z PASS webkit phone.html ground appearance, camera reuse, travel, material reload and memory",
+    "2026-10-10T07:40:54.4124713Z Artifact webkit-phone-screenshots.zip successfully finalized. Artifact ID 11664030870",
+    "2026-10-10T07:40:54.4126869Z Artifact webkit-phone-screenshots has been successfully uploaded! Final size is 334921205 bytes. Artifact ID is 11664030870"
+  ],
+  "deploymentEvidence": [
+    "2026-10-10T07:50:46.2492312Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md",
+    "2026-10-10T07:50:46.2493946Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327",
+    "2026-10-10T07:51:06.3712684Z Published build matches commit c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+    "2026-10-10T07:51:09.4118069Z PASS New-game premise, Succession opt-in and audio gesture 1280x800",
+    "2026-10-10T07:51:10.3589913Z PASS Production registry preserves exact sprites and procedural fallback 1280x800",
+    "2026-10-10T07:51:17.9288897Z PASS Camera comparison, native pointer mapping and unchanged HUD 1280x800",
+    "2026-10-10T07:51:21.8747567Z PASS Ironroot settlements, household and working captive render on 1280x800",
+    "2026-10-10T07:51:21.8770986Z PASS Approved responsive UI CSS is pixel-equivalent at fixed presentation 1280x800",
+    "2026-10-10T07:51:22.2800573Z PASS Terrain and effects module renders Citadel walls, normal abilities and protected night cues 1280x800",
+    "2026-10-10T07:51:24.6285480Z PASS Regional workstations and residence walls render with readable captive labels 1280x800",
+    "2026-10-10T07:51:24.9230626Z PASS Compact HUD and readable scrolling dialogs 1280x800",
+    "2026-10-10T07:51:25.1565589Z PASS Outside tap dismisses menus without clicking through to the world 1280x800",
+    "2026-10-10T07:51:25.1580191Z PASS Subminimum phone uses visual fitting, not a new design breakpoint 1280x800",
+    "2026-10-10T07:51:29.1362164Z PASS Movement, split controls, Q targeting, pause and keyboard menus 1280x800",
+    "2026-10-10T07:51:31.9041519Z PASS Target button and Q cycle actual hero combat without unintended fallback 1280x800",
+    "2026-10-10T07:51:33.0122098Z PASS Mouse and touch menus work alongside keyboard; mouse world movement stays optional 1280x800",
+    "2026-10-10T07:51:37.3670492Z PASS Rebinding updates real input, menus and labels and survives reload 1280x800",
+    "2026-10-10T07:51:39.6533510Z PASS HUD surfaces shield the world and real pointer skills charge safely 1280x800",
+    "2026-10-10T07:51:41.2271063Z PASS Reachable pointer destinations, cancellation and legacy phone layout 1280x800",
+    "2026-10-10T07:51:41.2276840Z PASS Phone controls preserve world space and contextual interaction 1280x800",
+    "2026-10-10T07:51:44.2289436Z PASS Critical notices are top-center, selective and self-clearing 1280x800",
+    "2026-10-10T07:51:46.1828852Z PASS Amber notices stack two at once without hiding a third event 1280x800",
+    "2026-10-10T07:51:46.3135914Z PASS Prototype art palette and resource display 1280x800",
+    "2026-10-10T07:51:48.3135717Z PASS Talents shows rank caps, per-rank gains and free resets without interrupting level-ups 1280x800",
+    "2026-10-10T07:51:48.4710743Z PASS World labels stay quiet until combat or proximity 1280x800",
+    "2026-10-10T07:51:51.3113736Z PASS Movement basic uses per-class switches and keeps manual skill 1 1280x800",
+    "2026-10-10T07:51:54.3387591Z PASS Charged skills use hold-and-release on keyboard and touch 1280x800",
+    "2026-10-10T07:51:57.1761677Z PASS Paladin, Mage and Ranger Skill 1 charge readiness is identical and predictable 1280x800",
+    "2026-10-10T07:52:01.5814611Z PASS Skill 2 and party-heal charge states are target-stable and honest 1280x800",
+    "2026-10-10T07:52:02.3148076Z PASS Ranger sustain thresholds and direct commands 1280x800",
+    "2026-10-10T07:52:02.5386098Z PASS Audit pause, left-hand aliases and touch menu controls 1280x800",
+    "2026-10-10T07:52:03.2739718Z PASS Guarded sites, automatic quest boards, journal feedback and map destinations 1280x800",
+    "2026-10-10T07:52:06.5466267Z PASS Field dungeon defenses and independent captive unlocks 1280x800",
+    "2026-10-10T07:52:12.9403101Z PASS Visible terrain and all nine bridge crossings 1280x800",
+    "2026-10-10T07:52:13.7138916Z PASS First specialist only offers its own skills even to an advanced hero 1280x800",
+    "2026-10-10T07:52:14.1752360Z PASS Awakening transition explains the finale and stays available in the branched menu 1280x800",
+    "2026-10-10T07:52:16.3746734Z PASS Every boss warning renders with restored motion and explicit stages 1280x800",
+    "2026-10-10T07:52:18.3901314Z PASS Succession first death choice, persistence, automatic last class and game over 1280x800",
+    "2026-10-10T07:52:18.8044864Z PASS Fresh Standard run resets challenge and preserves profile sound settings 1280x800",
+    "2026-10-10T07:52:19.8642802Z PASS Peace ending exposes Nightmare in Adventure menu and Nightmare supports Succession 1280x800",
+    "2026-10-10T07:52:26.4683230Z PASS Distinct screen modes, resize stability, phone entry and offline saves 1280x800",
+    "2026-10-10T07:52:28.1433819Z PASS New-game premise, Succession opt-in and audio gesture 375x812",
+    "2026-10-10T07:52:28.6581489Z PASS Production registry preserves exact sprites and procedural fallback 375x812",
+    "2026-10-10T07:52:33.2586428Z PASS Camera comparison, native pointer mapping and unchanged HUD 375x812",
+    "2026-10-10T07:52:34.8858874Z PASS Ironroot settlements, household and working captive render on 375x812",
+    "2026-10-10T07:52:34.8860393Z PASS Approved responsive UI CSS is pixel-equivalent at fixed presentation 375x812",
+    "2026-10-10T07:52:35.1215933Z PASS Terrain and effects module renders Citadel walls, normal abilities and protected night cues 375x812",
+    "2026-10-10T07:52:35.9496091Z PASS Regional workstations and residence walls render with readable captive labels 375x812",
+    "2026-10-10T07:52:36.1006876Z PASS Compact HUD and readable scrolling dialogs 375x812",
+    "2026-10-10T07:52:36.2292614Z PASS Outside tap dismisses menus without clicking through to the world 375x812",
+    "2026-10-10T07:52:36.2293724Z PASS Subminimum phone uses visual fitting, not a new design breakpoint 375x812",
+    "2026-10-10T07:52:38.0627993Z PASS Movement, split controls, Q targeting, pause and keyboard menus 375x812",
+    "2026-10-10T07:52:39.7438158Z PASS Target button and Q cycle actual hero combat without unintended fallback 375x812",
+    "2026-10-10T07:52:40.2106575Z PASS Mouse and touch menus work alongside keyboard; mouse world movement stays optional 375x812",
+    "2026-10-10T07:52:42.7757912Z PASS Rebinding updates real input, menus and labels and survives reload 375x812",
+    "2026-10-10T07:52:44.5147051Z PASS HUD surfaces shield the world and real pointer skills charge safely 375x812",
+    "2026-10-10T07:52:46.8887720Z PASS Reachable pointer destinations, cancellation and legacy phone layout 375x812",
+    "2026-10-10T07:52:47.9641445Z PASS Phone controls preserve world space and contextual interaction 375x812",
+    "2026-10-10T07:52:50.0449844Z PASS Critical notices are top-center, selective and self-clearing 375x812",
+    "2026-10-10T07:52:52.0005504Z PASS Amber notices stack two at once without hiding a third event 375x812",
+    "2026-10-10T07:52:52.0519671Z PASS Prototype art palette and resource display 375x812",
+    "2026-10-10T07:52:52.9049319Z PASS Talents shows rank caps, per-rank gains and free resets without interrupting level-ups 375x812",
+    "2026-10-10T07:52:52.9769262Z PASS World labels stay quiet until combat or proximity 375x812",
+    "2026-10-10T07:52:54.4443622Z PASS Movement basic uses per-class switches and keeps manual skill 1 375x812",
+    "2026-10-10T07:52:57.5960138Z PASS Charged skills use hold-and-release on keyboard and touch 375x812",
+    "2026-10-10T07:53:00.2805289Z PASS Paladin, Mage and Ranger Skill 1 charge readiness is identical and predictable 375x812",
+    "2026-10-10T07:53:03.3139473Z PASS Skill 2 and party-heal charge states are target-stable and honest 375x812",
+    "2026-10-10T07:53:03.7363718Z PASS Ranger sustain thresholds and direct commands 375x812",
+    "2026-10-10T07:53:04.0664363Z PASS Audit pause, left-hand aliases and touch menu controls 375x812",
+    "2026-10-10T07:53:04.6044341Z PASS Guarded sites, automatic quest boards, journal feedback and map destinations 375x812",
+    "2026-10-10T07:53:05.8849562Z PASS Field dungeon defenses and independent captive unlocks 375x812",
+    "2026-10-10T07:53:08.4429633Z PASS Visible terrain and all nine bridge crossings 375x812",
+    "2026-10-10T07:53:08.8748607Z PASS First specialist only offers its own skills even to an advanced hero 375x812",
+    "2026-10-10T07:53:09.2010621Z PASS Awakening transition explains the finale and stays available in the branched menu 375x812",
+    "2026-10-10T07:53:10.2406839Z PASS Every boss warning renders with restored motion and explicit stages 375x812",
+    "2026-10-10T07:53:11.4973514Z PASS Succession first death choice, persistence, automatic last class and game over 375x812",
+    "2026-10-10T07:53:11.7949841Z PASS Fresh Standard run resets challenge and preserves profile sound settings 375x812",
+    "2026-10-10T07:53:12.4283404Z PASS Peace ending exposes Nightmare in Adventure menu and Nightmare supports Succession 375x812",
+    "2026-10-10T07:53:13.5378494Z PASS Distinct screen modes, resize stability, phone entry and offline saves 375x812",
+    "2026-10-10T07:53:13.6296979Z 76 desktop/mobile browser checks passed.",
+    "2026-10-10T07:53:58.0764449Z {\"engine\":\"chromium\",\"deviceLightingScenes\":12,\"images\":36,\"directory\":\"test-results/sprite-pilot-live\"}",
+    "2026-10-10T07:55:23.2375488Z {\"engine\":\"chromium\",\"assets\":23,\"deviceLightCombatScenes\":276}",
+    "2026-10-10T07:55:36.9755238Z PASS chromium-1280x800 two milestone cards, status spacing, practical controls, cage, bargain, optional knowledge, evidence, save and TRUE escape",
+    "2026-10-10T07:55:47.7194211Z PASS chromium-375x800 two milestone cards, status spacing, practical controls, cage, bargain, optional knowledge, evidence, save and TRUE escape",
+    "2026-10-10T07:55:58.7737431Z PASS chromium-393x852 two milestone cards, status spacing, practical controls, cage, bargain, optional knowledge, evidence, save and TRUE escape",
+    "2026-10-10T07:56:09.4841371Z PASS chromium-800x375 two milestone cards, status spacing, practical controls, cage, bargain, optional knowledge, evidence, save and TRUE escape"
+  ]
+}
