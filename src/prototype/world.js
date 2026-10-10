@@ -105,6 +105,8 @@
       roadFootprint(p) {
         if (p.roadTrace) return 0; // Painted ruts and patches belong on the road.
         const kind = String(p.structure || '');
+        if (/fence|wall|palisade|stockade|watchpost|tower|lean-to|roost/i.test(kind))
+          return Math.max(88, (p.r || 0) + 57);
         if (
           p.roadBlocker ||
           /house|cottage|workshop|smithy|boathouse|forgehouse|command-tent|barracks/i.test(kind) ||
@@ -112,8 +114,6 @@
           ['rest', 'minor'].includes(p.id)
         )
           return 112;
-        if (/fence|wall|palisade|stockade|watchpost|tower|lean-to|roost/i.test(kind))
-          return Math.max(88, (p.r || 0) + 57);
         if (/cart|wagon|market|crate|stack|rack|table|kitchen|lumber|barricade/i.test(kind))
           return Math.max(78, (p.r || 0) + 50);
         return Math.max(64, (p.r || 0) + 48);
@@ -164,7 +164,7 @@
           !z.buildings.some((q) => q !== moving && dist(p, q) < radius + 75);
         const original = { x: source.x, y: source.y };
         if (valid(original)) return original;
-        for (let step = 25; step <= 400; step += 25)
+        for (let step = 25; step <= 700; step += 25)
           for (const turn of [0, 0.35, -0.35, 0.7, -0.7, 1.1, -1.1, 1.55, -1.55, 3.14]) {
             const a = heading + turn,
               p = {
@@ -197,7 +197,9 @@
               Object.assign(p, site);
               return true;
             }
-            return !p.decorative;
+            // Roadside fence fragments may be omitted if there is no safe lot;
+            // real houses and permanent buildings are never silently deleted.
+            return !p.decorative && !/fence|wall|palisade|boardwalk/i.test(p.structure || '');
           });
           // Civic services are actual roofed structures. Put their frontage
           // beside the street; keep the street hub itself open and traversable.
