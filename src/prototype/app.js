@@ -493,7 +493,12 @@
   document.addEventListener(
     'pointerdown',
     (event) => {
-      if (!menu || $('modal').contains(event.target)) return;
+      if (!menu || $('modal').contains(event.target)) {
+        // WebKit can omit the click after a canceled pointerdown. A fresh
+        // pointerdown must not inherit dismissal from the previous gesture.
+        outsidePointerId = null;
+        return;
+      }
       outsidePointerId = event.pointerId;
       event.preventDefault();
       event.stopImmediatePropagation();
