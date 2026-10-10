@@ -4358,8 +4358,8 @@
         landing = { x: unit.x, y: trap.y + direction * safety };
       if (
         !this.clearSegment(unit, landing) ||
-        this.traps().some((other) =>
-          other.index !== trap.index && this.trapContains(other, landing),
+        this.traps().some(
+          (other) => other.index !== trap.index && this.trapContains(other, landing),
         )
       )
         return false;
