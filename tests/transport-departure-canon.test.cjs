@@ -4,7 +4,7 @@ const C = require('../src/prototype/engine.js');
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 const original = { vale: [2450, 650], highlands: [3100, 500], frontier: [3100, 500] };
 const oldTownStands = { vale: [135, 540], highlands: [590, 1420], frontier: [145, 260] };
-const expectedRoad = { vale: 11, highlands: 11, frontier: 12 };
+const expectedRoad = { vale: 12, highlands: 12, frontier: 13 };
 for (const [region, coords] of Object.entries(original)) {
   const c = new C();
   c.enter(region);
@@ -21,8 +21,8 @@ for (const [region, coords] of Object.entries(original)) {
     region + ' separate route ends at the outbound transport');
   assert.equal(z.roadVersion, expectedRoad[region]);
   assert.equal(z.destinationLayoutVersion, 4);
-  assert.equal(z.aestheticVersion, 5);
-  assert.equal(z.worldLifeVersion, 2);
+  assert.equal(z.aestheticVersion, 6);
+  assert.equal(z.worldLifeVersion, 3);
   assert.equal(z.travelSafetyVersion, 2);
   const old = c.snapshot();
   const priorEnemies = old.zones[region].enemies.length;
@@ -54,7 +54,7 @@ for (const [region, coords] of Object.entries(original)) {
   assert.equal(restored.hero.gold, 832, 'travel migration cannot change crowns');
   assert(migrated.props.length > 0 && priorProps > 0, region + ' retains original scenery');
   if (region === 'highlands') {
-    assert.equal(migrated.ironrootLifeVersion, 2);
+    assert.equal(migrated.ironrootLifeVersion, 3);
     assert(migrated.props.some((p) => p.ironrootDistrict === 'caravan' &&
       p.structure === 'caravan-loading-bay'), 'original Highlands caravan facilities restored');
     const boat = migrated.npcs.find((n) => n.id === 'return');
@@ -62,7 +62,7 @@ for (const [region, coords] of Object.entries(original)) {
       'inbound ferry remains at its original dock');
   }
   if (region === 'frontier') {
-    assert.equal(migrated.frontierLayoutVersion, 4);
+    assert.equal(migrated.frontierLayoutVersion, 5);
     const inbound = migrated.npcs.find((n) => n.id === 'return');
     assert(distance(inbound, C.rules.travelArrivalStands.frontier) < 75,
       'incoming civilian caravan remains on Emberwatch rear approach');
