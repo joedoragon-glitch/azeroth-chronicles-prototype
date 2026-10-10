@@ -23,27 +23,39 @@
   // The sorted draw order remains authoritative: an obstacle only hides an actor
   // when it is actually painted after that actor.
   function occlusionPairs(entities, project, height) {
-    const pairs = [];
+    const pairs = [],
+      actors = [],
+      obstacles = [];
+    // These inputs are immutable for this draw. Index only genuine cover once;
+    // no retained cache can outlive a camera, sprite-manifest or scene change.
     for (let i = 0; i < entities.length; i++) {
-      const actor = entities[i];
+      const entity = entities[i];
       if (
-        !['hero', 'ally', 'enemy'].includes(actor.renderKind) ||
-        actor.interactionOnly ||
-        (actor.renderKind === 'enemy' && (actor.hp <= 0 || actor.neutral))
+        ['hero', 'ally', 'enemy'].includes(entity.renderKind) &&
+        !entity.interactionOnly &&
+        !(entity.renderKind === 'enemy' && (entity.hp <= 0 || entity.neutral))
       )
-        continue;
+        actors.push({ entity, index: i });
+      else if (majorOccluder(entity))
+        obstacles.push({ entity, index: i, position: null, height: undefined });
+    }
+    let first = 0;
+    for (const { entity: actor, index } of actors) {
       const p = project(actor),
         front = [];
-      for (let j = i + 1; j < entities.length; j++) {
-        const obstacle = entities[j];
-        if (!majorOccluder(obstacle) || obstacle.x + obstacle.y <= actor.x + actor.y) continue;
-        const q = project(obstacle),
+      while (first < obstacles.length && obstacles[first].index <= index) first++;
+      for (let j = first; j < obstacles.length; j++) {
+        const obstacle = obstacles[j],
+          entity = obstacle.entity;
+        if (entity.x + entity.y <= actor.x + actor.y) continue;
+        const q = obstacle.position || (obstacle.position = project(entity)),
           dy = q.y - p.y;
         // Broad phase only. The actual artwork's alpha is intersected below,
         // preventing a contour from appearing across empty sprite padding.
-        if (dy < 0 || dy > Math.max(100, height(obstacle) + 44) || Math.abs(q.x - p.x) > 155)
-          continue;
-        front.push({ entity: obstacle, position: q });
+        if (dy < 0) continue;
+        if (obstacle.height === undefined) obstacle.height = height(entity);
+        if (dy > Math.max(100, obstacle.height + 44) || Math.abs(q.x - p.x) > 155) continue;
+        front.push({ entity, position: q });
         if (front.length === 8) break;
       }
       if (front.length) pairs.push({ actor, position: p, front });
