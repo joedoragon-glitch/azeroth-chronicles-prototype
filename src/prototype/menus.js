@@ -1184,6 +1184,7 @@
         back,
       );
     }
+    // prettier-ignore
     function townRecruitmentMenu(back) {
       const rank = getGame().s.expeditionRank || 1,
         atLimit = getGame().rosterCount() >= 3,
@@ -1237,6 +1238,7 @@
       );
       openMenu(getGame().definition().town + ' Captain', '', actions, back);
     }
+    // prettier-ignore
     function partyMenu(back = closeMenu) {
       townRecruitmentMenu(back);
     }
