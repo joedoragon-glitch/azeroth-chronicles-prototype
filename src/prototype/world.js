@@ -155,7 +155,8 @@
             (q) =>
               q !== moving &&
               !q.roadTrace &&
-              dist(p, q) < radius + Math.max(q.r || 0, q.structure ? 35 : 18) + 18,
+              dist(p, q) <
+                radius + Math.max(q.r || 0, q.ironrootDistrict ? 65 : q.structure ? 35 : 18) + 18,
           ) &&
           !z.npcs.some(
             (q) => q !== moving && dist(p, q) < radius + (q.kind === 'rest' ? 68 : 36),
@@ -1030,7 +1031,7 @@
         }
       }
       ironrootLivelihood(z) {
-        if (z.id !== 'highlands' || z.ironrootLifeVersion === 2) return;
+        if (z.id !== 'highlands' || z.ironrootLifeVersion === 3) return;
         const oldZone = this.s.zone;
         this.s.zone = z.id;
         try {
@@ -1054,7 +1055,8 @@
                   !futureServices.some((n) => dist(n, p) < 85) &&
                   !z.nodes.some((n) => dist(n, p) < 65) &&
                   !z.roads?.some((path) =>
-                    path.some((b, k) => k && this.distanceToSegment(p, path[k - 1], b) < 65),
+                    path.some((b, k) => k && this.distanceToSegment(p, path[k - 1], b) <
+                      Math.max(66, this.roadFootprint({ structure }))),
                   ) &&
                   !z.props.some((q) => dist(q, p) < (q.r || 0) + 45),
               );
@@ -1069,7 +1071,7 @@
               });
             }
           }
-          z.ironrootLifeVersion = 2;
+          z.ironrootLifeVersion = 3;
         } finally {
           this.s.zone = oldZone;
         }
