@@ -1236,94 +1236,14 @@
         ),
       );
       openMenu(
-        'Town recruitment',
-        'Town recruitment stops at 3 total employed companions, including resting or fallen ones. Build a barracks for further hiring.',
-        actions,
-        back,
-      );
-    }
-    function townLaborMenu(back) {
-      const rank = getGame().s.expeditionRank || 1,
-        nodes = getGame()
-          .zone()
-          .nodes.filter((n) => n.amount > 0),
-        canBuild = !getGame().isDungeon() && getGame().availableLabor().length > 0,
-        cost = getGame().barracksBuildCost(),
-        costLabel = cost ? cost + ' crowns' : 'FREE',
-        actions = [];
-      if (canBuild)
-        actions.push(
-          action(
-            'Establish Basic Barracks · ' + costLabel,
-            () => {
-              getGame().build();
-              townLaborMenu(back);
-            },
-            cost === 0
-              ? 'First barracks is free · establishes nearby companion recovery'
-              : rank >= 4
-                ? 'Basic camp · optional Full upgrade ' +
-                  getGame().barracksUpgradeCost() +
-                  ' crowns'
-                : 'Basic recovery base; Full upgrade unlocks at Expedition 4',
-            getGame().hero.gold < cost,
-          ),
-        );
-      if (rank >= 2)
-        actions.push(
-          ...nodes.map((n) =>
-            action(
-              'Gather ' + n.name + ' ' + n.icon,
-              () => {
-                getGame().gather(n.id);
-                closeMenu();
-              },
-              Math.floor(n.amount) + ' crowns remaining · assigns all idle active troops',
-            ),
-          ),
-        );
-      else
-        actions.push(
-          action(
-            'Resources — Expedition 2 required',
-            () => {},
-            'Rescue Mira and train Expedition to Rank 2',
-            true,
-          ),
-        );
-      openMenu(
-        'Construction & resources',
-        'The hero does not build. One active companion provides construction labor.',
+        getGame().definition().town + ' Captain',
+        '',
         actions,
         back,
       );
     }
     function partyMenu(back = closeMenu) {
-      const title = getGame().definition().town + ' Captain',
-        returnHere = () => partyMenu(back);
-      openMenu(
-        title,
-        'Town services cover the starter expedition. For a larger roster: build a barracks.',
-        [
-          action(
-            'Recruitment & recovery',
-            () => townRecruitmentMenu(returnHere),
-            getGame().rosterCount() >= 3
-              ? '3+ employed · further recruiting requires a barracks'
-              : 'Town hiring limit: 3 total companions',
-          ),
-          action(
-            'Construction & resources',
-            () => townLaborMenu(returnHere),
-            getGame().barracksBuildCost() === 0
-              ? 'First barracks FREE · companion recovery base'
-              : 'Basic barracks ' +
-                  getGame().barracksBuildCost() +
-                  ' crowns · Full upgrade optional at Expedition 4',
-          ),
-        ],
-        back,
-      );
+      townRecruitmentMenu(back);
     }
     function formatTrainingNumber(n) {
       return Number(n.toFixed(2)).toString();
