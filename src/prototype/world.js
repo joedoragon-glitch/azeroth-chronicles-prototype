@@ -270,7 +270,7 @@
           ],
           props = z.props,
           blockers = [
-            ...z.props.filter((p) => p.roadBlocker).map((p) => ({ ...p, r: (p.r || 0) + 55 })),
+            ...z.props.filter((p) => p.roadBlocker).map((p) => ({ ...p, r: (p.r || 0) + 30 })),
             { id: 'minor-refuge-plot', x: minor.x, y: minor.y, r: 95 },
           ];
         z.props = blockers;
