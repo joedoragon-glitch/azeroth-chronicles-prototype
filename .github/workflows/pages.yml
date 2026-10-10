@@ -25,14 +25,7 @@ jobs:
       - name: Install locked development tools
         run: npm ci --ignore-scripts
       - name: Check formatting
-        run: |
-          npm run format:check || {
-            npx prettier src/prototype/app.js > /tmp/fps-app-formatted
-            diff -u src/prototype/app.js /tmp/fps-app-formatted || true
-            npx prettier src/prototype/runtime.js > /tmp/fps-runtime-formatted
-            diff -u src/prototype/runtime.js /tmp/fps-runtime-formatted || true
-            exit 1
-          }
+        run: npm run format:check
       - name: Check generated entries and all published JavaScript
         run: npm run check
       - name: Verify authored road access and combat lanes
