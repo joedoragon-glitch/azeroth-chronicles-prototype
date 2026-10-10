@@ -189,15 +189,7 @@
         // than displacing collision trees into hostile camps. Distinct authored
         // structures and district props survive for the frontage audit below.
         z.props = z.props.filter(
-          (p) =>
-            p.roadBlocker ||
-            p.structure ||
-            !z.roads.some((path) =>
-              path.some(
-                (b, j) =>
-                  j && this.distanceToSegment(p, path[j - 1], b) < (p.r || 0) + 60,
-              ),
-            ),
+          (p) => p.roadBlocker || p.structure || this.distanceToRoad(z, p) >= (p.r || 0) + 60,
         );
         z.roadVersion = roadVersion;
         delete z.streetClearanceVersion;
@@ -244,6 +236,8 @@
             ['supplier', 60],
             ['recruiter', 60],
           ];
+          const nearEnemyHome = (p, radius) =>
+            z.enemies.some((enemy) => enemy.hp > 0 && dist(enemy.home || enemy, p) < radius);
           const canPlace = (p, item, setback) => {
             if (this.blocked(p.x, p.y, z.id, Math.max(12, (item.r || 0) + 9), true)) return false;
             if (this.distanceToRoad(z, p) < setback) return false;
@@ -267,15 +261,7 @@
               return false;
             // A shifted solid must not block existing patrol homes, ranged
             // engagement lanes, or the mandatory clear approach to a boss.
-            if (
-              (item.r || 0) > 0 &&
-              z.enemies.some(
-                (enemy) =>
-                  enemy.hp > 0 &&
-                  dist(enemy.home || enemy, p) < (item.r || 0) + 145,
-              )
-            )
-              return false;
+            if ((item.r || 0) > 0 && nearEnemyHome(p, (item.r || 0) + 145)) return false;
             return (
               !z.nodes.some((node) => dist(node, p) < (item.r || 0) + 55) &&
               !z.buildings.some((building) => dist(building, p) < (item.r || 0) + 72)
