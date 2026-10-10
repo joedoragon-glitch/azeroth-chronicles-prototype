@@ -5,6 +5,7 @@
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
 const VfxInventory = require('./enemy-vfx-inventory.cjs');
+const VfxArt = require('../src/prototype/enemy-vfx-art.js');
 
 function copy(value) {
   return value === undefined ? null : JSON.parse(JSON.stringify(value));
@@ -159,24 +160,33 @@ function sourceMechanic(row, inspector) {
 function report() {
   const existing = VfxInventory.audit();
   const inspector = new Campaign('normal', 'paladin', () => 0.5);
-  const entries = existing.rows.map((row) => ({
-    id: row.id,
-    group: row.group,
-    owner: row.owner,
-    name: row.name,
-    kind: row.kind,
-    proposedStages: [...row.stages],
-    presentation: copy(row.presentation),
-    notes: row.notes || '',
-    ...sourceMechanic(row, inspector),
-    review: {
-      mechanics: 'unreviewed',
-      description: 'unreviewed',
-      speciesAndLore: 'unreviewed',
-      telegraphAndVisuals: 'unreviewed',
-      lifecycle: 'unreviewed',
-    },
-  }));
+  const entries = existing.rows.map((row) => {
+    const linked = sourceMechanic(row, inspector);
+    const recipe = VfxArt.recipe(
+      { id: row.id, variant: 'normal' },
+      { ...linked.mechanic, rogueSignature: row.group === 'rogue-signature' },
+    );
+    assert(recipe, row.id + ': no visual recipe');
+    return {
+      id: row.id,
+      group: row.group,
+      owner: row.owner,
+      name: row.name,
+      kind: row.kind,
+      proposedStages: [...row.stages],
+      presentation: copy(row.presentation),
+      visualRecipe: copy(recipe),
+      notes: row.notes || '',
+      ...linked,
+      review: {
+        mechanics: 'unreviewed',
+        description: 'unreviewed',
+        speciesAndLore: 'unreviewed',
+        telegraphAndVisuals: 'unreviewed',
+        lifecycle: 'unreviewed',
+      },
+    };
+  });
   const traps = ['spikes', 'jet', 'seal'].map((kind) => ({
     id: 'trap/' + kind,
     group: 'environment-trap',
@@ -195,6 +205,20 @@ function report() {
             ? 'short Slow on successful hit (v0.8.136)'
             : 'collision-aware outward shove on successful hit (v0.8.136)',
       activation: 'warning, active and cycle times from live context tuning',
+      regionalProfiles: Object.fromEntries(
+        Campaign.data.regions.map((region, index) => {
+          const dungeon = Campaign.dungeonIds[index];
+          return [
+            region.id,
+            {
+              dungeon,
+              main: copy(Campaign.rules.dungeonTrapTuning[dungeon]),
+              side: copy(Campaign.rules.sideDungeonTrapTuning[region.id]),
+              outdoor: copy(Campaign.rules.outdoorMiniTrapTuning[region.id]),
+            },
+          ];
+        }),
+      ),
     },
     proposedStages: ['windup', 'impact'],
     review: {
