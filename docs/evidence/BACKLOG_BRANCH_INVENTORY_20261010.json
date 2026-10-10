@@ -1,0 +1,2690 @@
+{
+  "captured_at_utc": "2026-10-10T03:14:57.929111+00:00",
+  "baseline_main": "5aa50dda1785397d2d1dd819da126b762e775ecc",
+  "remote_branch_count": 226,
+  "method": "Local full-history clone; exact SHA ancestry and PR-head association. Squash, rebase and unique source history are retained unless separately reconciled.",
+  "remote_deletions": 0,
+  "deletion_status": "No branch-deletion capability in the connected GitHub tool set; no authenticated git push is available. Candidates are recorded, not reported deleted.",
+  "branches": [
+    {
+      "branch": "origin",
+      "sha": "5aa50dda1785397d2d1dd819da126b762e775ecc",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "abyss-bastion-clean-merge",
+      "sha": "fd02bde7fcf6b77299f2648b3648c49c6f9fee43",
+      "prs": [
+        91
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "abyss-bastion-current-main-clean",
+      "sha": "e8e8df5e6cd65cdc8e6f07fabc940c5cdd54afcd",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "abyss-bastion-dreadmaw-safe",
+      "sha": "cb258a3d3da4298b949f15fa5ef5413e060c7233",
+      "prs": [
+        102
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "abyss-bastion-final-check",
+      "sha": "52e96274eeef63beeac198ee173e174226003438",
+      "prs": [
+        90
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "abyss-bastion-final-clean",
+      "sha": "9fa52a0be6b2b3903ff5e1a4cd3149f5a5551ea3",
+      "prs": [
+        92
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "abyss-bastion-final-current-main",
+      "sha": "8e0c4ae588ffb63072d8a93d724b29566c26f59e",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "abyss-bastion-final-hardened-v2",
+      "sha": "8167a498797974a6c846e55a067e2839015f7d2e",
+      "prs": [
+        89
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "abyss-bastion-final-latest-v3",
+      "sha": "6511d50bd03207a883f2c642058c9f5012e975e4",
+      "prs": [
+        97
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "abyss-bastion-latest-main-v2",
+      "sha": "27a1b8a90711aed9d7b6f085d1b2d539cf9a9924",
+      "prs": [
+        101
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "abyss-bastion-prop-depth",
+      "sha": "52e96274eeef63beeac198ee173e174226003438",
+      "prs": [
+        86
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "abyss-bastion-prop-depth-v2",
+      "sha": "d429c70c1717d6900e092c1a4cc7d518dca0ed23",
+      "prs": [
+        87
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "abyss-bastion-redesign-final",
+      "sha": "78ecda2b64c2cef76d6d3b186aa0131603251ed6",
+      "prs": [
+        88
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "abyss-bastion-safe-lane-check",
+      "sha": "fd02bde7fcf6b77299f2648b3648c49c6f9fee43",
+      "prs": [
+        95
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "amber-banner-cleanup-v1",
+      "sha": "16f3806099ef1a2afc340227032aaf7fafc9d133",
+      "prs": [
+        170
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "amber-milestones-not-upgrades",
+      "sha": "017eb462096f908918dedd19a18dba0a5ea2db50",
+      "prs": [
+        181
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "amber-notice-two-stack",
+      "sha": "8907a9046e8c0bf3c8e1e9c09d5d7a2f4a159a6b",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "analysis/real-combat-time-to-kill-20261009",
+      "sha": "a2f338a808b2da2d4db9ffd5b31b258117b75775",
+      "prs": [
+        152
+      ],
+      "open_prs": [
+        152
+      ],
+      "ancestor_of_main": false,
+      "disposition": "protected",
+      "reason": "open PR or unfinished dependency",
+      "deleted": false
+    },
+    {
+      "branch": "ashen-frontier-occupation-recovery",
+      "sha": "a34372f600455cc51606c291d96effe21f08e58c",
+      "prs": [
+        81
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "protected",
+      "reason": "source, asset or explicit recovery history",
+      "deleted": false
+    },
+    {
+      "branch": "audio-overhaul-phase-1",
+      "sha": "c4d0ccf7130bbc946c5bd4be2f7ac266bc261235",
+      "prs": [
+        60
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "audio-overhaul-v071",
+      "sha": "f3229a41e769c8e7eb8c56faee425f60e0096035",
+      "prs": [
+        66
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "audio/enemy-presentation-sync",
+      "sha": "afa1a269fdbe768e64d9ab250fa4b7ef97bf88e6",
+      "prs": [
+        164
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "audio/enemy-sync-audit",
+      "sha": "d050ddbb4ab324a1cbceecd196a17edbd7ba684b",
+      "prs": [
+        178
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "audit-boss-captain-range-on-main",
+      "sha": "b1437b3a40bd2b00d5425fc34510a321baaedb11",
+      "prs": [
+        136
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "audit/boss-captain-timing-20261009",
+      "sha": "9d38e2ce6e1648fb36f8e01225c82785cc81f0f9",
+      "prs": [
+        153
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "audit/cooldown-balance-20261009",
+      "sha": "9a81713414d80ebd968365fb3dd8467504c406ab",
+      "prs": [
+        190
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "audit/keeper-unlocks-20261009",
+      "sha": "5b3691e756ba7ae21b458a17bc7032e610bd3c38",
+      "prs": [
+        199
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "audit/mana-magic-mage-20261009",
+      "sha": "776118766905c31527cd15dccfd3f3fafabb4f59",
+      "prs": [
+        163
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "audit/mp-relevance-diagnostics-20261009",
+      "sha": "81934f5d12295ce767e5617e13a7d5cb9a016052",
+      "prs": [
+        167
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "audit/retain-fast-encounter-times-20261009",
+      "sha": "226b5cd46587a8a767d19f45d89c24f2b418fb04",
+      "prs": [
+        158
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "audit/rogue-quality-followup",
+      "sha": "3a9738e65b5891b178a2acb962534a8aaa469c3e",
+      "prs": [
+        176
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "backup/cooldown-only-preintegration-20261009",
+      "sha": "e935e397eee5774b3c3e28642140c69e85691e69",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "protected",
+      "reason": "source, asset or explicit recovery history",
+      "deleted": false
+    },
+    {
+      "branch": "balance-boss-captain-range-pressure",
+      "sha": "af4f749bde033e6973db372290795c802ce00482",
+      "prs": [
+        129
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "balance/double-burst-compression-20261009",
+      "sha": "ff97a0e4fc9da5126b5408330ea99a29b87a790c",
+      "prs": [
+        151
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "balance/role-inherited-burst-curves-v108",
+      "sha": "38aec5acb75094c3c0ddbddae23f8da03826d90b",
+      "prs": [
+        155
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "barracks-v0874-cache-bump",
+      "sha": "1074911c5947558928beef9ae1433cdc097f7578",
+      "prs": [
+        76
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "canon/abyss-air-superiority",
+      "sha": "05f911507667a34c4be3c21dbd196eb7c799dc19",
+      "prs": [
+        114
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "charge-bar-aoe-feedback",
+      "sha": "6c42d5413e04ad52c9eee0dd919657bdce4214f7",
+      "prs": [
+        42
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "charge-target-lock-id",
+      "sha": "8875bdc48f0aea665d0001d9693d8f60b942d37a",
+      "prs": [
+        55
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "charge-target-lock-regression-fix",
+      "sha": "be68545ad908b7b8dcb3bddc3740a0fa74b85098",
+      "prs": [
+        54
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "charged-basic-all-classes-regression",
+      "sha": "c2ed8b7a87e14de3481f41d218127f8ed72a20f1",
+      "prs": [
+        52
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "charged-basic-readiness-fix",
+      "sha": "959d41647012f55bcceee507ac7849130615275f",
+      "prs": [
+        51
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "charged-heal-inheritance-balance",
+      "sha": "19fe97adaec8c5961eb976be1d5481fa1b2a689a",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "charged-skill2-and-basic-combo",
+      "sha": "73207238687d81da9a31a9b2728e5580e6309838",
+      "prs": [
+        53
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "charged-skills-1-2",
+      "sha": "167d4bfc0aee3660eb4554668bb8ce75c1e9ca43",
+      "prs": [
+        39
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "charged-skills-ci-stability",
+      "sha": "bc4e7daeab719ca7c3935a6082bac45a66cf8af6",
+      "prs": [
+        40
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "checkpoint/sprite-production-paused-2026-10-08",
+      "sha": "2493338b4f1426a2367f4ed65b6c32aa05b56791",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "protected",
+      "reason": "source, asset or explicit recovery history",
+      "deleted": false
+    },
+    {
+      "branch": "cindermaw-treasury-irregular-den",
+      "sha": "a613c51ceeb13f4f975f8d10c3a2a75987eba469",
+      "prs": [
+        98
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "citadel-irregular-fortress-layout",
+      "sha": "b2b3d26d5b29d77a90ca9e9259618e96fa91a1ed",
+      "prs": [
+        93
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "citadel-open-barracks-safe-lane",
+      "sha": "d1b039b103482b406cd77cbe22c248bad5701421",
+      "prs": [
+        94
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/adventure-sustain-pass",
+      "sha": "dfc6cf3151143e27a6b67e2b92d0f3e01c00683f",
+      "prs": [
+        18
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/audio-catalog-housekeeping",
+      "sha": "0efd18433b866f3c9920bb13145d3e4df6a2d358",
+      "prs": [
+        120
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/audio-foundation",
+      "sha": "bf3376e2f20a8c850400b45e6a94cf3aca468051",
+      "prs": [
+        116
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/audio-playback-v0889",
+      "sha": "ad6efaafd612bb4da093096fb431d75ddfcf4a4e",
+      "prs": [
+        117
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/audit-fixes-v070",
+      "sha": "43cc7e790438c9a001cfc7ffb80921c954578597",
+      "prs": [
+        5
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "removal_candidate",
+      "reason": "exact head belongs to closed merged PR and is an ancestor of main",
+      "deleted": false
+    },
+    {
+      "branch": "codex/camera-framing-v08101",
+      "sha": "083cd2277b59ee4e544db63921b0eb9364b121c5",
+      "prs": [
+        133
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "removal_candidate",
+      "reason": "exact head belongs to closed merged PR and is an ancestor of main",
+      "deleted": false
+    },
+    {
+      "branch": "codex/camera150-default-v08102",
+      "sha": "c3bca20db788b831996c2319fc98f447d6dae3a0",
+      "prs": [
+        135
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "removal_candidate",
+      "reason": "exact head belongs to closed merged PR and is an ancestor of main",
+      "deleted": false
+    },
+    {
+      "branch": "codex/combat-party-housekeeping",
+      "sha": "7501ce22fa9562cdc1106246ac610f5e1998c9b1",
+      "prs": [
+        118
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "removal_candidate",
+      "reason": "exact head belongs to closed merged PR and is an ancestor of main",
+      "deleted": false
+    },
+    {
+      "branch": "codex/dormant-sprint",
+      "sha": "1323d21436ef4c86b1c2d35305efc8647c68931e",
+      "prs": [
+        1
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/enemy-vfx-contract",
+      "sha": "2da0a481ec67d8e74a27a6168439824c4fb689f0",
+      "prs": [
+        161
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/enemy-vfx-overhaul",
+      "sha": "9ac2891989a37da84a4911aaaf942d79726c6c31",
+      "prs": [
+        162
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/enemy-vfx-quality-audit",
+      "sha": "1cdc8f457132e3b63d82a42f9c891c5f6484f213",
+      "prs": [
+        180
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/environmental-audio-recovery",
+      "sha": "574b13cb111b54b0979090a281f75a18cd6edf10",
+      "prs": [
+        122
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "protected",
+      "reason": "source, asset or explicit recovery history",
+      "deleted": false
+    },
+    {
+      "branch": "codex/exact-live-build-marker",
+      "sha": "925d2fbe8cd558f90ca1215b9d0cde0a21704355",
+      "prs": [
+        37
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/expanded-prototype",
+      "sha": "ea4fd43735adb2c32ce8858e00747f06de643eb9",
+      "prs": [
+        2
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "removal_candidate",
+      "reason": "exact head belongs to closed merged PR and is an ancestor of main",
+      "deleted": false
+    },
+    {
+      "branch": "codex/faster-ci-workflow",
+      "sha": "0fd4ba774d8ab7bf1851cce30786f2f5b5d29f73",
+      "prs": [
+        20
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/ferry-road-clearance",
+      "sha": "fa5c632982572a027ed3f18d51a7bca3ac09daf0",
+      "prs": [
+        24
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/finalize-world-fidelity",
+      "sha": "60b023a1defae7b7ee660a4e06594ff2b2e8df27",
+      "prs": [
+        32
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/first-barracks-tutorial",
+      "sha": "5ff6ece180032c203cb7e8091ffb3771abb8b62a",
+      "prs": [
+        21
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/fix-fortress-gate-audit",
+      "sha": "d0f5d4599f231192590a95e577381f882cceed59",
+      "prs": [
+        36
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/fix-split-mini-migration-assertion",
+      "sha": "a7fe79e97d5bc99bd7e9310bf0f98244ebdf3c6a",
+      "prs": [
+        46
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/geography-resource-escort-cleanup",
+      "sha": "08b39166aea8c743c3f64aa8b70636d860f7808e",
+      "prs": [
+        41
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/inheritance-charged-heal-balance",
+      "sha": "541f099b4df0ec9c369966b8e50141d1979bc961",
+      "prs": [
+        47
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/input-audit",
+      "sha": "896d37faa694cdf03b6ce5decbdfc62c694e2ad8",
+      "prs": [
+        109
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/input-choice",
+      "sha": "bd6ba6fd816871bfae09fff4cd1ab3060656201c",
+      "prs": [
+        108
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/local-quest-sites",
+      "sha": "2336b6088d57defe95acc04c960304e0dc6fc3bf",
+      "prs": [
+        8
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/movement-basics-chase-v080",
+      "sha": "ad76d13bc1522bba736c962d08d552126971d3f9",
+      "prs": [
+        13
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/pair-mini-guard-species",
+      "sha": "374c0a20de5e32a0a6f0a35a79f437452d10decf",
+      "prs": [
+        35
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/paladin-moving-basic-v079",
+      "sha": "01324cd00f0a8187eeffbddb14a09c6929750e38",
+      "prs": [
+        12
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/procedural-canon-polish-v0879",
+      "sha": "77d5d76777914f2e308f7007bb49e31a511f2e40",
+      "prs": [
+        105
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/procedural-visual-overhaul",
+      "sha": "4443cdc4b12ab5917a6329f58df1c2137913af07",
+      "prs": [
+        22
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/proportion-layout-density-guard-20261009",
+      "sha": "bbe65b4682d59c07bce6309008e12005d1b9d8b5",
+      "prs": [
+        144
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/proportions-implementation-20261009",
+      "sha": "502b69bb03c1cc6ec7e03609a78ade70a105a8fc",
+      "prs": [
+        145
+      ],
+      "open_prs": [
+        145
+      ],
+      "ancestor_of_main": false,
+      "disposition": "protected",
+      "reason": "open PR or unfinished dependency",
+      "deleted": false
+    },
+    {
+      "branch": "codex/reconciled-regional-handoffs",
+      "sha": "e682031c91159f539653446cef1fae9501e1c90e",
+      "prs": [
+        115
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/refuge-rest-cooldown",
+      "sha": "93d98b67ecccd4552aa5f9a452e25ac52fc92c15",
+      "prs": [
+        9
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/repair-mini-reachability",
+      "sha": "1aff147ed0b72c412d56e54e66c5d44b8def849a",
+      "prs": [
+        34,
+        33
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/responsive-ui-audit-20261009",
+      "sha": "4cb46aedd1e622be9f42184b1b6c6cef9934d07d",
+      "prs": [
+        165
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/restore-phone-interact",
+      "sha": "8313e8ee5d2c16ffbd15bb3338d95cb76fedf7c7",
+      "prs": [
+        19
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/ringleader-v071",
+      "sha": "88c53b048b49fb1ae0c6361b5bff681998e2e698",
+      "prs": [
+        6
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "removal_candidate",
+      "reason": "exact head belongs to closed merged PR and is an ancestor of main",
+      "deleted": false
+    },
+    {
+      "branch": "codex/roads-and-clearance",
+      "sha": "93a0351d8659d6323c532e9ba965fc9ee1a49610",
+      "prs": [
+        4
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "removal_candidate",
+      "reason": "exact head belongs to closed merged PR and is an ancestor of main",
+      "deleted": false
+    },
+    {
+      "branch": "codex/schematic-visual-polish",
+      "sha": "0d52370e237d23e5d33917b7bdf5be9a198456c2",
+      "prs": [
+        3
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "removal_candidate",
+      "reason": "exact head belongs to closed merged PR and is an ancestor of main",
+      "deleted": false
+    },
+    {
+      "branch": "codex/specialist-v072",
+      "sha": "f107f0020735c649294e70b761baaa35562fe6a2",
+      "prs": [
+        7
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "removal_candidate",
+      "reason": "exact head belongs to closed merged PR and is an ancestor of main",
+      "deleted": false
+    },
+    {
+      "branch": "codex/specialists-sight-v078",
+      "sha": "a5634a5f029cf6485a7fc91f1dca721834ab3e7e",
+      "prs": [
+        11
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/sprite-density-housekeeping-v08103",
+      "sha": "8c16f5ed26fc23e41ea418df2cdce07169e38590",
+      "prs": [
+        138
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "protected",
+      "reason": "source, asset or explicit recovery history",
+      "deleted": false
+    },
+    {
+      "branch": "codex/stonecross-ferry-landing",
+      "sha": "246c34f50efc2c07f8243c8fc6aae531d340d50e",
+      "prs": [
+        23
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/subtle-landform-washes",
+      "sha": "2c326545300e0d94b8e29634e438c16da30f152a",
+      "prs": [
+        38
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/terrain-effects-polish-v0880",
+      "sha": "3e13d2800e6b1524687f2fba05a65e9fcb7fbec1",
+      "prs": [
+        106
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/testing-ux-fixes-oct06",
+      "sha": "f9b7d2c21260fafacb68ea512338edcd829ed927",
+      "prs": [
+        17
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/update-world-aesthetic-version-tests",
+      "sha": "5e5acfedce2cf6eddf188f6814e3a32e207574de",
+      "prs": [
+        48
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/visible-rivers-v077",
+      "sha": "c7833f08de714956d993dabaac15605d4531f5b8",
+      "prs": [
+        10
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/world-fidelity-audit-regression-fix",
+      "sha": "337845b91a090a7c43c7e8e583e00ee555370119",
+      "prs": [
+        28
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/world-fidelity-audit-regression-fix-2",
+      "sha": "3bd6fa37f94048ab72c25634cea557b1e1326c9d",
+      "prs": [
+        29
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/world-fidelity-combat-regression-audit",
+      "sha": "f6fa30b4ee46e54db4c50b5b54cf987a7e237238",
+      "prs": [
+        30
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/world-fidelity-release-fix",
+      "sha": "39c22a7ab7af2e00ba8e4a6c36997f02fbeefa2d",
+      "prs": [
+        26
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/world-fidelity-ringleader-fixture-fix",
+      "sha": "17cf15f14df5540ab0dee6b4370a2968ba0e8d38",
+      "prs": [
+        31
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "codex/world-fidelity-road-clearance-2",
+      "sha": "f3c190b8189c6f9b772f19bc92fdaa7c8b9595ce",
+      "prs": [
+        27
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "continuation/quest-archive-20261009",
+      "sha": "89262f4519b28b0481d7c473f7623e5497454148",
+      "prs": [
+        185
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "crown-procedural-composition-hierarchy",
+      "sha": "c978f2add8ca4712a5ee46a88f37c05c62d23d04",
+      "prs": [
+        85
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "dark-crown-dragon-wayfinding",
+      "sha": "7942f0ab040c5c4ba084a714d7b1fc9a1825d0fc",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "dark-crown-regime-layout",
+      "sha": "32cf7e0af351d97f4a0e7289b992aece246ab726",
+      "prs": [
+        80
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "dark-crown-shared-travel-hubs",
+      "sha": "5ca5980654d20bcfd7037e01c0ee547a91dc3604",
+      "prs": [
+        83
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "discipline-training-ui",
+      "sha": "9049e3651c711b266875ca00d8835a43565e8294",
+      "prs": [
+        50
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "docs/crypt-guardian-learning-pacing-20261009",
+      "sha": "7a3dc5714a98324cb91060af57faee1db32f0aa1",
+      "prs": [
+        159
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "docs/original-master-150-export-policy",
+      "sha": "628997f4ae04b18c6885f5ec8706f75d034b1de7",
+      "prs": [
+        142
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "protected",
+      "reason": "source, asset or explicit recovery history",
+      "deleted": false
+    },
+    {
+      "branch": "dreadmaw-anti-squad-pressure",
+      "sha": "cbb2cf9067063ecb6ffcfec4f702e871ab59a19f",
+      "prs": [
+        100
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "dreadmaw-low-hp-brood-refill",
+      "sha": "04295d07cf9ee6fead8a43ebad1d5e5608f74244",
+      "prs": [
+        99
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "feature/cooldown-only-combat-20261009",
+      "sha": "e935e397eee5774b3c3e28642140c69e85691e69",
+      "prs": [
+        169
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "feature/cooldown-only-combat-integrated-20261009",
+      "sha": "77b20f7fdfab0786d06cb88e0bc17f358b871a74",
+      "prs": [
+        183
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "feature/cooperative-roster-foundation-20261009",
+      "sha": "433cbf11d36a7f8687545a0a6e5b5d3b8e07254e",
+      "prs": [
+        198
+      ],
+      "open_prs": [
+        198
+      ],
+      "ancestor_of_main": false,
+      "disposition": "protected",
+      "reason": "open PR or unfinished dependency",
+      "deleted": false
+    },
+    {
+      "branch": "feature/manual-targeting-and-aim-cues",
+      "sha": "892458426ccd4921f3e7a4504312e8669789ac02",
+      "prs": [
+        149
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "feature/quest-narration-tiered-20261009",
+      "sha": "e18781de3ef3fcbbebe16b82b601474062dfc0d5",
+      "prs": [
+        184
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "feature/session-menu-timing-20261009",
+      "sha": "43ad214459f977b27ac59608b8c7b83880619249",
+      "prs": [
+        197
+      ],
+      "open_prs": [
+        197
+      ],
+      "ancestor_of_main": false,
+      "disposition": "protected",
+      "reason": "open PR or unfinished dependency",
+      "deleted": false
+    },
+    {
+      "branch": "feature/soft-occlusion-outlines",
+      "sha": "2e54374e0611cb8038a82f0b08ad74fc7e800e2a",
+      "prs": [
+        148
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "feature/territorial-monster-forts-20261009",
+      "sha": "36b533e291dd736b8dd2bcf526872af14830ff80",
+      "prs": [
+        187
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "feature/transport-arrivals-burst-compression-20261009",
+      "sha": "6dd7482ea5c07ef49f234b19b0e365ecf59fb5a6",
+      "prs": [
+        147
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "first-boss-companion-pacing",
+      "sha": "dd8205077c3fb57475fe13e893f16cbb1da5da55",
+      "prs": [
+        64
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "first-boss-pacing-regression-fix",
+      "sha": "e92b0d06b08dd23badac0aec9633fe76c9e62d93",
+      "prs": [
+        67
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "first-boss-pacing-regression-fix-v2",
+      "sha": "468267d8e7a7b6e1f0b477d7a7a9cf15e529071b",
+      "prs": [
+        68
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "fix-dreadmaw-treasury-migration-regression",
+      "sha": "1feaee87cd3d38b14150d3eaec06a8dfe0cd5ec8",
+      "prs": [
+        103
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "fix-frontier-roadside-clearance",
+      "sha": "c6d99108c57a4ce45bb588f0b2e63cddeea89644",
+      "prs": [
+        82
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "removal_candidate",
+      "reason": "exact head belongs to closed merged PR and is an ancestor of main",
+      "deleted": false
+    },
+    {
+      "branch": "fix-full-barracks-audit-fixture",
+      "sha": "cbc8273c1f12750d4e2b3d1260feaf217b3f0bd1",
+      "prs": [
+        78
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "fix-full-barracks-deposit-regression",
+      "sha": "e8e8849eb6c9d8e39e79ea28800cc4eff1db560f",
+      "prs": [
+        79
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "fix-optional-full-barracks-audit",
+      "sha": "88037763c85db845e5151146e260546267d96fbc",
+      "prs": [
+        77
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "fix-stable-css-comparison-v0885",
+      "sha": "d11d22a6de721c2ab964563fe1519160952e1639",
+      "prs": [
+        113
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "fix/compact-mobile-menus-map-navigation-20261009",
+      "sha": "d135d2197af0b472b7fcbc7c1993403b303737f2",
+      "prs": [
+        200
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "fix/companion-boss-priority-fallback-20261009",
+      "sha": "56a941dfac43f75f2281e5d7a0d34997c9ec716d",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "fix/consolidated-compact-ui-story-navigation-20261009",
+      "sha": "137d4af32d33ccaa6dff98af1b1219787b8a10f0",
+      "prs": [
+        202
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "fix/older-gameplay-audit-20261009",
+      "sha": "ee6acabbc621def679e8b5258f1840a00bc5bde8",
+      "prs": [
+        206
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "fix/restore-original-transport-departures-20261009",
+      "sha": "df34fc48fe1ff923f23aedaa548a9fe2f24b04ce",
+      "prs": [
+        195
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "removal_candidate",
+      "reason": "exact head belongs to closed merged PR and is an ancestor of main",
+      "deleted": false
+    },
+    {
+      "branch": "fix/squad-adds-priority-boss-fallback-20261009",
+      "sha": "1795ae5c9c19e0c2ae6b3b34c5fb75c27d8f81ce",
+      "prs": [
+        156
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "fix/squad-adds-priority-boss-fallback-v109",
+      "sha": "4315368452a4aa205fb457770e3250938578d4f5",
+      "prs": [
+        157
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "fix/streamlined-navigator-captain-settings-20261009",
+      "sha": "53f2a182f633f84f2fdbbcda1d94c749dc7109c5",
+      "prs": [
+        201
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "foundation/enemy-skill-vfx-pipeline-20261009",
+      "sha": "0473134a953165853f58b17d8b011bf8c8d2b365",
+      "prs": [
+        150
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "frontier-prop-depth-pass",
+      "sha": "dfe3285fa8c9d1dc71dabf53cf175af23acd6086",
+      "prs": [
+        84
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "goblin-native-face-v0895",
+      "sha": "faaaf7006b4b412bfe3717e1b7108ba7e6816b46",
+      "prs": [
+        124
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "removal_candidate",
+      "reason": "exact head belongs to closed merged PR and is an ancestor of main",
+      "deleted": false
+    },
+    {
+      "branch": "graphics-canon-sprite-contract",
+      "sha": "c0ddd2603d0a22317ca878aeb8c1ae3e1182a6fe",
+      "prs": [
+        65
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "protected",
+      "reason": "source, asset or explicit recovery history",
+      "deleted": false
+    },
+    {
+      "branch": "graphics-canon-sprite-production",
+      "sha": "6c6a8c2113362433a50c065bbc9d1a3e2f3e5578",
+      "prs": [
+        70
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "protected",
+      "reason": "source, asset or explicit recovery history",
+      "deleted": false
+    },
+    {
+      "branch": "graphics-foundation-current",
+      "sha": "252fe187945026bfa7820bf8bdad6b9cbb256823",
+      "prs": [
+        15
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "graphics-overhaul-phase-1",
+      "sha": "55c6494dab734cdc9e3132dfa28984ebd76d1162",
+      "prs": [
+        14
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "hold/hp-siphon-after-cooldown-validation-20261009",
+      "sha": "ba78e35d714c4f15fd6fb7ec2f7b86a234822454",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "housekeeping-desktop-foundation",
+      "sha": "2a219001f0b37d4b4cf8b2373133f95029bf6baa",
+      "prs": [
+        107
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "housekeeping-v0884",
+      "sha": "f8ddc8c5780448ef41a25f7823c4a53290d6e13c",
+      "prs": [
+        110
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "integration/cooldown-hp-20261009",
+      "sha": "70b20103b4f44907069ccb1980507f0575245314",
+      "prs": [
+        182
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "integration/cooldown-only-current-main-20261009",
+      "sha": "7daebabe5de1cf1d87279e1d43763f45336e06a3",
+      "prs": [
+        174
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "integration/monster-forts-after-narration-20261009",
+      "sha": "0b8740393a62c043589f347bd4a2bfe30917a2f4",
+      "prs": [
+        189
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "removal_candidate",
+      "reason": "exact head belongs to closed merged PR and is an ancestor of main",
+      "deleted": false
+    },
+    {
+      "branch": "integration/quest-narration-main-20261009",
+      "sha": "3fd533c764ecce1f2149acedada012d27db949d9",
+      "prs": [
+        188
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "removal_candidate",
+      "reason": "exact head belongs to closed merged PR and is an ancestor of main",
+      "deleted": false
+    },
+    {
+      "branch": "integration/rogue-146-main-20261009",
+      "sha": "95696007ac02450a153d6135972914498b22c1a9",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "integration/rogue-phase2-pr146-main",
+      "sha": "9bfd20240e743d75dd0fa042fae13a02518e448b",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "integration/sprite-original-master-pilots-20261009",
+      "sha": "48c366891e7210d8ead8c83baa32a170a3ba8405",
+      "prs": [
+        193
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "protected",
+      "reason": "source, asset or explicit recovery history",
+      "deleted": false
+    },
+    {
+      "branch": "integration/territorial-forts-after-cooldown-20261009",
+      "sha": "8c3a8fb285b660b48840403900be16f9c520fba7",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "integration/world-proportions-v0822-20261009",
+      "sha": "0556860331bff948122e2d14c0fd416fb0d7b0e7",
+      "prs": [
+        191
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "removal_candidate",
+      "reason": "exact head belongs to closed merged PR and is an ancestor of main",
+      "deleted": false
+    },
+    {
+      "branch": "keeper-archive-knowledge",
+      "sha": "0a6730e581ba964b69f2eccc01cded5b2422074d",
+      "prs": [
+        172
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "keeper-format-probe",
+      "sha": "ba74bbeb30388c25699baded92f49bdf5ed19fa9",
+      "prs": [
+        173
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "keeper/reference-writing-20261010",
+      "sha": "8ba182c1190ba90a43512e2e0a2f14a61cc39587",
+      "prs": [
+        205
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "legacy-mini-fixture-hotfix",
+      "sha": "a40596263c0dc089d2aa63e8eeb25d1ac24d54bb",
+      "prs": [
+        45
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "main",
+      "sha": "5aa50dda1785397d2d1dd819da126b762e775ecc",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "protected",
+      "reason": "default branch",
+      "deleted": false
+    },
+    {
+      "branch": "optional-full-barracks-followup",
+      "sha": "ce51186b7c7c8b9da6f8c2289b0e0088638efa16",
+      "prs": [
+        74
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "perf/ground-cache-v08123-20261009",
+      "sha": "827dc7a9b6375800bb66d0db96131bd745463252",
+      "prs": [
+        194
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "perf/ground-window-cache-20261009",
+      "sha": "6224b4ef3867fb3278d1422cf8b574834487187e",
+      "prs": [
+        196
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "phase2-autonomous-rogue-ai",
+      "sha": "cbbfd17a58b8d3b6d0df5a5e47af21bc15a4aae8",
+      "prs": [
+        137
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "phase2-paladin-canary",
+      "sha": "2213bbe405fa5b5d444b0ec376df39aa95dd1929",
+      "prs": [
+        16
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "prep/enemy-vfx-quality-and-coverage-20261009",
+      "sha": "e90744917fa1f2dd6b85cff1ec920fa58840bf39",
+      "prs": [
+        154
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "procedural-full-barracks-canon",
+      "sha": "b35304e11aab188e27269fa5dabd348aed9165b1",
+      "prs": [
+        73,
+        72
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "procedural-goblin-archer-canon",
+      "sha": "b0cb756638f5ca6b3da25d6cea7635712be6576b",
+      "prs": [
+        71
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "production/environment-v08100",
+      "sha": "33ccf9184770e9e57e42e673537c3b5243c6d9a2",
+      "prs": [
+        130
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "protected",
+      "reason": "source, asset or explicit recovery history",
+      "deleted": false
+    },
+    {
+      "branch": "production/held-nature-v0899",
+      "sha": "8bf01b03f0dfeba669ecc9569e38efafbfb52a42",
+      "prs": [
+        128
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "protected",
+      "reason": "source, asset or explicit recovery history",
+      "deleted": false
+    },
+    {
+      "branch": "production/household-flight-v08101",
+      "sha": "57506c52483e81987d0d1f73e22027c865ee7fbf",
+      "prs": [
+        132
+      ],
+      "open_prs": [
+        132
+      ],
+      "ancestor_of_main": false,
+      "disposition": "protected",
+      "reason": "open PR or unfinished dependency",
+      "deleted": false
+    },
+    {
+      "branch": "production/nature-original-density-20261010",
+      "sha": "bbba26502b9ea79f734c1c4aa926880dbf51adcd",
+      "prs": [
+        208
+      ],
+      "open_prs": [
+        208
+      ],
+      "ancestor_of_main": false,
+      "disposition": "protected",
+      "reason": "open PR or unfinished dependency",
+      "deleted": false
+    },
+    {
+      "branch": "quest-organic-exploration-audit",
+      "sha": "58a35e1b72715f9ce043c92184bb10cf9feb0b34",
+      "prs": [
+        166
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "quest-organic-exploration-clean",
+      "sha": "d224c998ff7e64c41512dbd3a276daf114b27287",
+      "prs": [
+        168
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "quest-organic-exploration-rebased-20261009",
+      "sha": "a8ebe8aba5bef4bb255c58607b5443d233e6ea79",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "reconcile-optional-full-barracks",
+      "sha": "b3e40ca43fc064b108fe07079f5a251b476d33ac",
+      "prs": [
+        75
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "recovery/nature-paused-2026-10-08",
+      "sha": "cde13b483614fe83bfb97887e509cee67fd5fa40",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "protected",
+      "reason": "source, asset or explicit recovery history",
+      "deleted": false
+    },
+    {
+      "branch": "release-prepared-v0896",
+      "sha": "06dca793d26e883a1a05fdd9b6f60b8aac7225d5",
+      "prs": [
+        126
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "removal_candidate",
+      "reason": "exact head belongs to closed merged PR and is an ancestor of main",
+      "deleted": false
+    },
+    {
+      "branch": "release/completed-nature-v0897",
+      "sha": "12fdf04a5c58762effab9ce3c746d478cd72ae12",
+      "prs": [
+        127
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "protected",
+      "reason": "source, asset or explicit recovery history",
+      "deleted": false
+    },
+    {
+      "branch": "rename-currency-crowns",
+      "sha": "58393ce5a4560723ca818c385215c1c1e8b155e9",
+      "prs": [
+        104
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "repair-first-boss-pacing-gate",
+      "sha": "d895ffdaf122007a01aa4769450c0d0792f6d68f",
+      "prs": [
+        69
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "resource-deposit-patrol-hotfix",
+      "sha": "4dcd3cb26a60d246a866240e4ada5b4935f4510d",
+      "prs": [
+        43
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "resource-deposit-refuge-hotfix",
+      "sha": "693707af662161ac210817d21a9fe7986e70888f",
+      "prs": [
+        44
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "rogue-audit-verify-20261009",
+      "sha": "003221ab5b3a1538beb5ff39d6f78362df0a2593",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "rogue-core-audit-corrections",
+      "sha": "2903dcaf5f09d65d3b8f0c2bb1be1a3eb0897fe4",
+      "prs": [
+        139
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "rogue-core-audit-current-main",
+      "sha": "05334de6d0040db70b6074d767104bac360d265a",
+      "prs": [
+        140
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "rogue-core-final-ci",
+      "sha": "daa03289557a275cbccd0f83f5e8eaee58f4a1cc",
+      "prs": [
+        141
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "rogue-core-final-integration",
+      "sha": "2fbc9973115e44a0e212963deb2fac83451168a9",
+      "prs": [
+        143
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "rogue-dust-targeting-smoke",
+      "sha": "7a48fbd98bc56388f5272b8a40d6da23b5e79d08",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "rogue-final-audit-probe-20261009",
+      "sha": "a82be03630548ef6d0277d30a7ed1167239c6a6d",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "rogue-final-audit-smoke-146",
+      "sha": "d9e4480dde72d2258756bd46ca4fe83d6f8ba7b8",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "rogue-final-checkpoint-20261009",
+      "sha": "2e8a44bbeb807a7b1d2c9688c78f6069435d900c",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "protected",
+      "reason": "source, asset or explicit recovery history",
+      "deleted": false
+    },
+    {
+      "branch": "rogue-final-retest-20261009",
+      "sha": "9e351b8621191972073ace88c6145616facfe4e1",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "rogue-format-probe",
+      "sha": "fd4284e7109db2a5bcde2095fcec4f8e2e30b0b5",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "rogue-foundation-main-integration",
+      "sha": "d3fc3219a5e6f2a6f89a074e8c4a63f69444949a",
+      "prs": [
+        134
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "rogue-foundation-phase-one",
+      "sha": "cc5d880f265a857e27856935ae1b1eef0270c49a",
+      "prs": [
+        131
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "rogue-release-gates-20261009",
+      "sha": "ef99af0833a3b6d6bed1cdac8597d6fb8b6b77b0",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "rogue-signature-disruptions-audit",
+      "sha": "cd6eacec3745b608d06436b23c6b8641424cce82",
+      "prs": [
+        146
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "protected",
+      "reason": "source, asset or explicit recovery history",
+      "deleted": false
+    },
+    {
+      "branch": "short-action-status-feedback",
+      "sha": "00c7f48c70475aa22ce8e3f55e47fd8cf2db42bf",
+      "prs": [],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "short-status-rebased",
+      "sha": "a678e308bd00de9dc5ff4fcaad96a5a213c43021",
+      "prs": [
+        179
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "sprite-lifecycle-pilots-v0892",
+      "sha": "591dc0dd63acf2df9e3db54ee49c6924b43a07ed",
+      "prs": [
+        121
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "protected",
+      "reason": "source, asset or explicit recovery history",
+      "deleted": false
+    },
+    {
+      "branch": "sprite-mass-production-v0894",
+      "sha": "dcc68541beb157d0e338f046797d836bde448c35",
+      "prs": [
+        123
+      ],
+      "open_prs": [],
+      "ancestor_of_main": true,
+      "disposition": "protected",
+      "reason": "source, asset or explicit recovery history",
+      "deleted": false
+    },
+    {
+      "branch": "sprite-preparation-v0885",
+      "sha": "1fdc21102cbcc48745c282a2d5b6e432ce16f3f7",
+      "prs": [
+        112
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "protected",
+      "reason": "source, asset or explicit recovery history",
+      "deleted": false
+    },
+    {
+      "branch": "sprite-scope-reconciled-20261008",
+      "sha": "1dde571055ef5a10fac52cd9c4c35c9bb2eb7434",
+      "prs": [
+        119
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "protected",
+      "reason": "source, asset or explicit recovery history",
+      "deleted": false
+    },
+    {
+      "branch": "stabilize-live-charged-basic-smoke",
+      "sha": "7d3a8bf9688b3633f4781f99d9ae7ebf140ae533",
+      "prs": [
+        96
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "status-feedback-and-menu-confirmations",
+      "sha": "7c9be385ad14b08c4bf8a77bf635117f3668bde1",
+      "prs": [
+        175
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "status-format-probe",
+      "sha": "6cda9623f7a628cbe2a9d699b78a76bebfabd385",
+      "prs": [
+        177
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "talent-class-weighting",
+      "sha": "2dead3dad71d5b7bf2e240f27e17e41f818b132b",
+      "prs": [
+        49
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "target-combo-and-companion-skills",
+      "sha": "3dd7b53805d749de8049d096fc6b978fa3032ad4",
+      "prs": [
+        56
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "target-combo-companion-skills-v2",
+      "sha": "2ed8f17b135a819fa715ec5e999d38f07432e9f0",
+      "prs": [
+        58
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "target-combo-companions-audio-merged",
+      "sha": "33e8f1d957604407db24c0b7ad2d0e55f43215a2",
+      "prs": [
+        63
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "target-combo-companions-final",
+      "sha": "67eaaed02415f6f5b85634c2d261c8c943905692",
+      "prs": [
+        61
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "target-combo-companions-latest",
+      "sha": "bb78a23c8445b3bba1a7470f820d454104dda5be",
+      "prs": [
+        59
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "target-combo-companions-v2",
+      "sha": "783655f809d4a286730db75674ff616588d39363",
+      "prs": [
+        57
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "target-combo-companions-v3",
+      "sha": "b71beeee4b5a892bef7595ac632e17b828da1303",
+      "prs": [
+        62
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "tonic-buy-at-neri-use-at-barracks",
+      "sha": "88206033d03cd3e6ffadeb4d194bd1310051d654",
+      "prs": [
+        171
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "town-road-corridor-audit-20261009",
+      "sha": "20b56ed64a19bde9aad22433ee643c957e814af0",
+      "prs": [
+        204
+      ],
+      "open_prs": [
+        204
+      ],
+      "ancestor_of_main": false,
+      "disposition": "protected",
+      "reason": "open PR or unfinished dependency",
+      "deleted": false
+    },
+    {
+      "branch": "town-street-planning-audit-20261009",
+      "sha": "a9797b3f74d66d588cb7f6abf3ca5b4de9a081b5",
+      "prs": [
+        203
+      ],
+      "open_prs": [
+        203
+      ],
+      "ancestor_of_main": false,
+      "disposition": "protected",
+      "reason": "open PR or unfinished dependency",
+      "deleted": false
+    },
+    {
+      "branch": "v09-abyss-readiness-regressions",
+      "sha": "b73e86675b1b87a4d333a0513847344bbb7b01c0",
+      "prs": [
+        207
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    },
+    {
+      "branch": "world-life-fidelity-pass",
+      "sha": "5642c8e854efd09e3c9cb8076a4ebb282e74935d",
+      "prs": [
+        25
+      ],
+      "open_prs": [],
+      "ancestor_of_main": false,
+      "disposition": "retained",
+      "reason": "unique/divergent or squash history; not proved redundant",
+      "deleted": false
+    }
+  ]
+}
