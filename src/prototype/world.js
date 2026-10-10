@@ -372,6 +372,17 @@
             if (id === 'minor') npc.servicePoint = { ...minor };
             moveOffRoad(npc, setback);
           }
+          // Generated forest obstacles must not invade the immediate living
+          // and firing space of established ranged monster homes. Named habitat
+          // architecture is untouched; only anonymous random trees are thinned.
+          const rangedHomes = z.enemies
+            .filter((enemy) => enemy.hp > 0 && (enemy.ranged || enemy.hybrid))
+            .map((enemy) => enemy.home || enemy);
+          z.props = z.props.filter(
+            (p) =>
+              !String(p.id || '').startsWith('forest-') ||
+              !rangedHomes.some((home) => dist(p, home) < (p.r || 0) + 70),
+          );
           // Full corridor audit, not only collision-bearing props: market
           // stalls, carts, heaps, decorative houses and trees are visual
           // obstacles too. Keep every ID/scene role; move, do not erase.
