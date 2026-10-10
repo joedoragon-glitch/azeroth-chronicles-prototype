@@ -1,0 +1,400 @@
+{
+  "candidateHead": "4a53dedba7201df71b2c9dc6848f5795f2d706a9",
+  "checkedOutSha": "3e16f741924763838ab51bfd94452d9ca103ca75",
+  "verifiedTree": "0857ea83ad3acd1d2e8f2f33eb4fce4ff590e99d",
+  "runId": 38033273492,
+  "runConclusion": "success",
+  "jobs": [
+    {
+      "id": 114158473090,
+      "name": "pr-check",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-10T07:06:50Z",
+      "completed_at": "2026-10-10T07:26:29Z",
+      "elapsedSeconds": 1179,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T07:06:51Z",
+          "completed_at": "2026-10-10T07:06:51Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T07:06:51Z",
+          "completed_at": "2026-10-10T07:06:55Z"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T07:06:55Z",
+          "completed_at": "2026-10-10T07:06:56Z"
+        },
+        {
+          "name": "Install locked development tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T07:06:56Z",
+          "completed_at": "2026-10-10T07:06:58Z"
+        },
+        {
+          "name": "Check formatting",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T07:06:58Z",
+          "completed_at": "2026-10-10T07:07:03Z"
+        },
+        {
+          "name": "Check generated entries and all published JavaScript",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-10T07:07:03Z",
+          "completed_at": "2026-10-10T07:07:09Z"
+        },
+        {
+          "name": "Verify authored road access and combat lanes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-10T07:07:09Z",
+          "completed_at": "2026-10-10T07:07:12Z"
+        },
+        {
+          "name": "Full regression suite before merge",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T07:07:12Z",
+          "completed_at": "2026-10-10T07:11:45Z"
+        },
+        {
+          "name": "Reproduce cooldown balance evidence summary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-10T07:11:45Z",
+          "completed_at": "2026-10-10T07:11:45Z"
+        },
+        {
+          "name": "Use runner Chrome for browser smoke tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-10T07:11:45Z",
+          "completed_at": "2026-10-10T07:11:47Z"
+        },
+        {
+          "name": "Test desktop and full phone matrix before merge",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-10T07:11:47Z",
+          "completed_at": "2026-10-10T07:17:39Z"
+        },
+        {
+          "name": "Verify cooldown charge queues and save upgrade",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-10T07:17:39Z",
+          "completed_at": "2026-10-10T07:19:26Z"
+        },
+        {
+          "name": "Verify quest completion and Keeper Archive interaction",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-10T07:19:26Z",
+          "completed_at": "2026-10-10T07:20:12Z"
+        },
+        {
+          "name": "Audit integrated rogue warnings and effects in browsers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-10T07:20:12Z",
+          "completed_at": "2026-10-10T07:20:25Z"
+        },
+        {
+          "name": "Verify audio playback and lifecycle",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-10T07:20:25Z",
+          "completed_at": "2026-10-10T07:21:29Z"
+        },
+        {
+          "name": "Verify original-master actor idles and combat",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-10-10T07:21:29Z",
+          "completed_at": "2026-10-10T07:23:33Z"
+        },
+        {
+          "name": "Verify terrain material rendering",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-10-10T07:23:33Z",
+          "completed_at": "2026-10-10T07:24:11Z"
+        },
+        {
+          "name": "Verify full enemy VFX catalog and pilot captures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-10-10T07:24:11Z",
+          "completed_at": "2026-10-10T07:25:47Z"
+        },
+        {
+          "name": "Verify development sprite showroom",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-10T07:25:47Z",
+          "completed_at": "2026-10-10T07:26:00Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-10-10T07:26:00Z",
+          "completed_at": "2026-10-10T07:26:27Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 39,
+          "started_at": "2026-10-10T07:26:27Z",
+          "completed_at": "2026-10-10T07:26:27Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 40,
+          "started_at": "2026-10-10T07:26:27Z",
+          "completed_at": "2026-10-10T07:26:27Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 41,
+          "started_at": "2026-10-10T07:26:27Z",
+          "completed_at": "2026-10-10T07:26:27Z"
+        }
+      ]
+    },
+    {
+      "id": 114158473287,
+      "name": "phone-webkit",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-10T07:06:50Z",
+      "completed_at": "2026-10-10T07:19:59Z",
+      "elapsedSeconds": 789,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T07:06:51Z",
+          "completed_at": "2026-10-10T07:06:52Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T07:06:52Z",
+          "completed_at": "2026-10-10T07:06:55Z"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T07:06:55Z",
+          "completed_at": "2026-10-10T07:06:56Z"
+        },
+        {
+          "name": "Install WebKit and browser dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T07:06:56Z",
+          "completed_at": "2026-10-10T07:07:49Z"
+        },
+        {
+          "name": "Verify WebKit phone presentation and gestures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T07:07:49Z",
+          "completed_at": "2026-10-10T07:08:34Z"
+        },
+        {
+          "name": "Verify WebKit cooldown charge queues and save upgrade",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-10T07:08:34Z",
+          "completed_at": "2026-10-10T07:10:26Z"
+        },
+        {
+          "name": "Verify WebKit quest completion and Keeper Archive",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-10T07:10:26Z",
+          "completed_at": "2026-10-10T07:11:20Z"
+        },
+        {
+          "name": "Audit integrated rogue warnings and effects in WebKit",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-10T07:11:20Z",
+          "completed_at": "2026-10-10T07:11:31Z"
+        },
+        {
+          "name": "Verify WebKit audio playback and lifecycle",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-10T07:11:31Z",
+          "completed_at": "2026-10-10T07:12:34Z"
+        },
+        {
+          "name": "Verify WebKit enemy VFX catalog and pilot captures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-10T07:12:34Z",
+          "completed_at": "2026-10-10T07:15:16Z"
+        },
+        {
+          "name": "Verify WebKit original-master actor idles and combat",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-10T07:15:16Z",
+          "completed_at": "2026-10-10T07:18:38Z"
+        },
+        {
+          "name": "Verify WebKit terrain material rendering",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-10T07:18:38Z",
+          "completed_at": "2026-10-10T07:19:46Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-10T07:19:46Z",
+          "completed_at": "2026-10-10T07:19:57Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-10-10T07:19:57Z",
+          "completed_at": "2026-10-10T07:19:57Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26,
+          "started_at": "2026-10-10T07:19:57Z",
+          "completed_at": "2026-10-10T07:19:58Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27,
+          "started_at": "2026-10-10T07:19:58Z",
+          "completed_at": "2026-10-10T07:19:58Z"
+        }
+      ]
+    },
+    {
+      "id": 114158473992,
+      "name": "main-test",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-10-10T07:06:48Z",
+      "completed_at": "2026-10-10T07:06:48Z",
+      "elapsedSeconds": null,
+      "steps": []
+    },
+    {
+      "id": 114160738711,
+      "name": "deploy",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-10-10T07:20:00Z",
+      "completed_at": "2026-10-10T07:19:59Z",
+      "elapsedSeconds": null,
+      "steps": []
+    }
+  ],
+  "selectedChromiumEvidence": [
+    "2026-10-10T07:06:55.4181081Z HEAD is now at 3e16f74 Merge 4a53dedba7201df71b2c9dc6848f5795f2d706a9 into 905e822da16b5a8ca7f959ee1f3e1a89f92b52d4",
+    "2026-10-10T07:11:45.1020905Z PASS 90 regression suites",
+    "2026-10-10T07:17:39.5107409Z 228 desktop/mobile browser checks passed.",
+    "2026-10-10T07:18:29.5485400Z PASS Chromium keyboard 54 zero-MP queued charges across all classes, ranks 0–5 and charged slots, plus cancellation",
+    "2026-10-10T07:18:36.9672267Z PASS Chromium installed PWA 0.8.118 → 0.8.137, cache retirement, dormant MP/talent/save retention and offline phone reopen",
+    "2026-10-10T07:18:46.3992004Z PASS chromium paladin 1280x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:18:52.3468530Z PASS chromium mage 1280x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:18:58.2641769Z PASS chromium ranger 1280x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:19:02.8143865Z PASS chromium paladin 375x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:19:07.2910291Z PASS chromium mage 375x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:19:11.7520178Z PASS chromium ranger 375x800 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:19:16.5182914Z PASS chromium paladin 800x375 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:19:21.3972968Z PASS chromium mage 800x375 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:19:26.2263796Z PASS chromium ranger 800x375 real fresh UI, 150% camera, inventory, historical Normal/Nightmare file import, save and refresh",
+    "2026-10-10T07:19:40.0862696Z PASS chromium-1280x800 two milestone cards, status spacing, practical controls, cage, bargain, optional knowledge, evidence, save and TRUE escape",
+    "2026-10-10T07:19:51.0104939Z PASS chromium-375x800 two milestone cards, status spacing, practical controls, cage, bargain, optional knowledge, evidence, save and TRUE escape",
+    "2026-10-10T07:20:02.0452751Z PASS chromium-393x852 two milestone cards, status spacing, practical controls, cage, bargain, optional knowledge, evidence, save and TRUE escape",
+    "2026-10-10T07:20:12.8222285Z PASS chromium-800x375 two milestone cards, status spacing, practical controls, cage, bargain, optional knowledge, evidence, save and TRUE escape",
+    "2026-10-10T07:20:16.4251552Z PASS chromium rogue warning/DPR day/night, dust locks and scatter recovery 1280x800",
+    "2026-10-10T07:20:19.2881915Z PASS chromium rogue warning/DPR day/night, dust locks and scatter recovery 375x800",
+    "2026-10-10T07:20:22.2570476Z PASS chromium rogue warning/DPR day/night, dust locks and scatter recovery 393x852",
+    "2026-10-10T07:20:25.2173119Z PASS chromium rogue warning/DPR day/night, dust locks and scatter recovery 844x390",
+    "2026-10-10T07:21:00.9434230Z PASS chromium index.html: gesture unlock, soft menu/background suspend, unchanged frozen saves, bounded/released voices and 28 non-silent finite unclipped score renders",
+    "2026-10-10T07:21:19.3196392Z PASS chromium phone.html: gesture unlock, soft menu/background suspend, unchanged frozen saves, bounded/released voices and 28 non-silent finite unclipped score renders",
+    "2026-10-10T07:21:26.7156053Z PASS chromium desktop: diagnostic WAV decode/render, shared stems, menu/UI mix, pause clock, actual TRUE boss, untouched saves, offline subpath audition and reopen",
+    "2026-10-10T07:21:29.2007023Z PASS chromium phone: diagnostic WAV decode/render, shared stems, menu/UI mix, pause clock, actual TRUE boss, untouched saves, offline subpath audition and reopen",
+    "2026-10-10T07:23:37.8249576Z PASS chromium index.html bounded 28-material loading, camera phase, clipping and retirement",
+    "2026-10-10T07:23:41.2153404Z PASS chromium phone.html bounded 28-material loading, camera phase, clipping and retirement",
+    "2026-10-10T07:24:00.0839189Z PASS chromium index.html ground appearance, camera reuse, travel, material reload and memory",
+    "2026-10-10T07:24:11.5271048Z PASS chromium phone.html ground appearance, camera reuse, travel, material reload and memory",
+    "2026-10-10T07:24:51.9546687Z PASS chromium 1280px: 297 catalog/TRUE scenes, real resolutions, render purity, pause/death/travel",
+    "2026-10-10T07:25:10.6688466Z PASS chromium 375px: 297 catalog/TRUE scenes, real resolutions, render purity, pause/death/travel",
+    "2026-10-10T07:25:47.6707066Z PASS actual-game captures: 30 scenes / 60 images; desktop/phone portrait/landscape, day/night TRUE/crowd, configured zooms",
+    "2026-10-10T07:26:27.3549011Z Artifact pr-smoke-screenshots.zip successfully finalized. Artifact ID 11663234345",
+    "2026-10-10T07:26:27.3550097Z Artifact pr-smoke-screenshots has been successfully uploaded! Final size is 813654363 bytes. Artifact ID is 11663234345"
+  ]
+}
