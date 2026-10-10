@@ -1,0 +1,80 @@
+{
+  "verifiedAtUtc": "2026-10-10T07:52:34.745962+00:00",
+  "testedSha": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+  "packageVersion": "0.8.137",
+  "method": "Independent no-cache GETs; exact build.txt SHA, build/cache version and byte comparison of both entries, SW and every changed runtime module against the clean tested checkout. This is not physical-device acceptance.",
+  "rows": [
+    {
+      "path": "build.txt",
+      "url": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/build.txt?qa_sha=c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+      "sha256": "2c096660d5b6361e24fd885c4adc13fe2869c8f53eeca45fdca410d3c3d8d2b5",
+      "bytes": 41,
+      "publishedSha": "c6ce1af236bddd7ca881903499c4cf5de175f9e2"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "url": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/src/prototype/build-info.js?qa_sha=c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+      "sha256": "45c2536b4ff62ecea1184d515911755896705c9be7cb154c88a41734e427ecb3",
+      "bytes": 281,
+      "matchesCheckout": true,
+      "version": "0.8.137"
+    },
+    {
+      "path": "sw.js",
+      "url": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/sw.js?qa_sha=c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+      "sha256": "4a1e8db7a243ec7e924d4a5a2c80c9a0d2235fd241864acc7e530c8bdb5c653b",
+      "bytes": 18081,
+      "matchesCheckout": true,
+      "cacheVersion": "azeroth-app-v0.8.137"
+    },
+    {
+      "path": "index.html",
+      "url": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/index.html?qa_sha=c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+      "sha256": "4e8784c510854d9dbbe285a99ce51b5dde50aef678b60051d4a4062f9f66950e",
+      "bytes": 4970,
+      "matchesCheckout": true
+    },
+    {
+      "path": "phone.html",
+      "url": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html?qa_sha=c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+      "sha256": "b09d70acd8c0af0d2a64eec8956648ee24ba0fc2d4e42be95252b28f1ef609f9",
+      "bytes": 4971,
+      "matchesCheckout": true
+    },
+    {
+      "path": "src/prototype/boss-combat.js",
+      "url": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/src/prototype/boss-combat.js?qa_sha=c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+      "sha256": "be74a2d6d5336cd851073c7c6814a64cb22cc01af2ef7a0854fd9f4148edc27f",
+      "bytes": 26485,
+      "matchesCheckout": true
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "url": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/src/prototype/engine.js?qa_sha=c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+      "sha256": "291155d18505d46012250b92ad083e4e64a7ce5e4a67d32d99d7e961cf72c265",
+      "bytes": 170920,
+      "matchesCheckout": true
+    },
+    {
+      "path": "src/prototype/progression.js",
+      "url": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/src/prototype/progression.js?qa_sha=c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+      "sha256": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
+      "bytes": 23066,
+      "matchesCheckout": true
+    },
+    {
+      "path": "src/prototype/save.js",
+      "url": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/src/prototype/save.js?qa_sha=c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+      "sha256": "4365b4fcfa21bcd8ffa5fe6da2b637dc0653e5aa7459abccc6277e94e6ab6296",
+      "bytes": 36321,
+      "matchesCheckout": true
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "url": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/src/prototype/menus.js?qa_sha=c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+      "sha256": "ff10d5f825d4fe1d59a18e3c7f478e8c222af1fb2eb5d796c15c9c5f0f8dd522",
+      "bytes": 57298,
+      "matchesCheckout": true
+    }
+  ]
+}
