@@ -177,6 +177,51 @@
         for (let i = live('captain').length; i < composition.captains; i++) spawnRole('captain');
         return made;
       }
+      sentinelPatternPath(e) {
+        const directions = [[1, 0], [1, 1], [-1, 1], [-1, -1], [1, -1]];
+        const origin = { x: e.x, y: e.y };
+        for (const size of [150, 120, 90, 65]) {
+          const path = directions.map(([x, y]) => ({ x: origin.x + x * size, y: origin.y + y * size }));
+          if (path.every((p, i) => !this.blocked(p.x, p.y, this.zoneId, 23) &&
+            this.clearSegment(i ? path[i - 1] : origin, p))) return path;
+        }
+        return [];
+      }
+      sentinelBoardCells(e) {
+        if (!e.board) return [];
+        const pairs = [[0, 15], [3, 12], [5, 10], [6, 9], [1, 14], [4, 11], [2, 13], [7, 8]];
+        const active = pairs[e.board.beat % pairs.length];
+        return Array.from({ length: 16 }, (_, i) => ({
+          x: e.board.x + ((i % 4) - 1.5) * e.board.size,
+          y: e.board.y + (Math.floor(i / 4) - 1.5) * e.board.size,
+          size: e.board.size,
+          selected: active.includes(i),
+        }));
+      }
+      sentinelUpdateBoard(e, dt) {
+        if (!e.board || e.hp <= 0 || !e.aggro || this.peace) return;
+        const b = e.board;
+        b.timer -= dt;
+        if (b.timer > 0) return;
+        if (b.phase === 'warn') {
+          b.phase = 'rest';
+          b.timer += 0.45;
+          const hero = this.hero, zone = this.zoneId;
+          for (const u of this.combatTargets()) {
+            if (!this.sentinelBoardCells(e).some((cell) => cell.selected &&
+              Math.abs(u.x - cell.x) <= cell.size / 2 &&
+              Math.abs(u.y - cell.y) <= cell.size / 2)) continue;
+            this.hitParty(u, e.damage, 0, e.id);
+            if (this.hero !== hero || this.zoneId !== zone ||
+              this.s.challenge.pending || this.s.challenge.gameOver) return;
+          }
+        } else {
+          b.phase = 'warn';
+          b.beat = (b.beat + 1) % 8;
+          b.timer += 1.45;
+        }
+        b.timer = Math.max(0.05, b.timer);
+      }
       bossCenteredReach(e, plan) {
         const scale = R.bossCadence.areaRangeMultiplier;
         const kind = plan.kind === 'sector' && e.hp > e.maxHp * 0.5 ? 'cone' : plan.kind;
@@ -195,6 +240,7 @@
           alive = this.bossOwnedSummons(e).length,
           cap = this.bossSummonCap(e);
         return plans.map((plan, index) => {
+          if (e.family === 'citadel' && index === 3 && e.board) return 0;
           if (!allowRepeat && index === e.lastAttackIndex && plans.length > 1) return 0;
           if (e.family === 'darklord' && index === 3 && !low) return 0;
           const attackTarget = this.bossAttackTarget(e, target, index);
@@ -221,6 +267,7 @@
       }
       chooseBossAttack(e, target = this.hero) {
         const plans = R.attacks[e.family] || [];
+        if (e.family === 'citadel' && !e.board && dist(e, target) <= R.bossCadence.specialRange) return 3;
         for (const allowRepeat of [false, true]) {
           const weights = this.bossAttackWeights(e, target, allowRepeat),
             total = weights.reduce((n, w) => n + w, 0);
@@ -306,6 +353,22 @@
               timer: plan.warning,
               total: plan.warning,
             });
+        }
+        if (e.family === 'citadel') {
+          if (index === 0) { a.kind = 'canister'; a.radius = 360; }
+          if (index === 1) { a.kind = 'formation'; a.radius = 230; }
+          if (index === 2) {
+            a.kind = 'pattern-charge';
+            a.path = this.sentinelPatternPath(e);
+            a.count = 1;
+            if (a.path.length) Object.assign(a, a.path[a.path.length - 1]);
+          }
+          if (index === 3) {
+            a.kind = 'checkerboard';
+            a.x = e.home.x;
+            a.y = e.home.y;
+            a.count = 1;
+          }
         }
         if (includeTrue && e.form === 'true') {
           if (e.family === 'crypt' && index === 1) a.staggered = true;
@@ -473,6 +536,47 @@
         }
         if (a.nightSkill === 'pounce') {
           e.motion = { ...a, target: { x: a.x, y: a.y }, hit: [], speed: a.pounceSpeed, life: 2 };
+          return;
+        }
+        if (e.family === 'citadel' && a.kind === 'checkerboard') {
+          if (!e.board) e.board = { x: e.home.x, y: e.home.y, size: 112,
+            beat: 0, phase: 'warn', timer: 1.45 };
+          return;
+        }
+        if (e.family === 'citadel' && a.kind === 'formation') {
+          const posts = [[-115, -70], [-115, 70], [115, -70], [115, 70]];
+          const guards = this.zone().enemies.filter((u) => u !== e && u.hp > 0 &&
+            u.species === 'crownguard' && !u.neutral && dist(u, e) < 390)
+            .sort((a, b) => dist(a, e) - dist(b, e)).slice(0, 4);
+          for (const [i, u] of guards.entries()) {
+            const p = this.safe(e.x + posts[i][0], e.y + posts[i][1]);
+            if (dist(u, p) <= 240 && this.clearSegment(u, p)) {
+              Object.assign(u, p);
+              u.aggro = true;
+            }
+          }
+          e.dressUntil = this.s.time + 5;
+          return;
+        }
+        if (e.family === 'citadel' && a.kind === 'canister') {
+          for (let i = -4; i <= 4; i++) {
+            const angle = a.angle + i * 0.115;
+            this.s.projectiles.push({
+              id: 'projectile-' + this.s.nextId++, x: e.x, y: e.y,
+              dx: Math.cos(angle), dy: Math.sin(angle), speed: 490,
+              life: 0.8, damage: e.damage * 0.25, manaDrain: 0,
+              source: 'enemy', sourceId: e.id, species: e.species, style: 'stone',
+            });
+          }
+          this.event('projectileLaunch', { actor: 'enemy', source: e.id,
+            family: e.family, species: e.species, boss: true,
+            style: 'stone', count: 9, x: e.x, y: e.y });
+          return;
+        }
+        if (e.family === 'citadel' && a.kind === 'pattern-charge') {
+          if (!a.path?.length) return;
+          e.motion = { ...a, target: { ...a.path[0] }, leg: 0,
+            hit: [], speed: 600, life: 8, charge: true };
           return;
         }
         if (a.kind === 'summon') {
@@ -643,6 +747,13 @@
                 return;
             }
           }
+        if (a.kind === 'pattern-charge' && dist(e, a.target) < 5 &&
+          a.leg + 1 < a.path.length) {
+          a.leg++;
+          a.target = { ...a.path[a.leg] };
+          a.hit = [];
+          return;
+        }
         // Axis fallback can report success for a zero-length clear segment.
         // A charge blocked by real geometry must end when it makes no progress.
         if (dist(e, a.target) < 1 || !moved || dist(before, e) < 0.000001 || a.life <= 0) {

@@ -22,14 +22,14 @@ const entry = pages
   .topics.find(([title]) => title === 'Ash Sentinel');
 assert(entry && entry[1].includes(boss.history), 'existing Archive displays the biography');
 
-assert.deepEqual(boss.attacks.map((a) => a.split(':')[0]), ['Microdermabrasion', 'Dress Ranks', 'Deep-Tissue Contouring', 'Fractional Resurfacing', 'Regimental Muster']);
+assert.deepEqual(boss.attacks.map((a) => a.split(':')[0]), ['Microdermabrasion', 'Dress Ranks', 'Deep-Tissue Contouring', 'Fractional Resurfacing', 'Volumize']);
 assert(Campaign.rules.dungeonDecor.citadel.some((row) => row[2] === 'citadel-vanity-quarters'));
 const moves = Campaign.rules.attacks.citadel;
-assert.deepEqual(moves.map((move) => move.kind), ['circle', 'line', 'line', 'circle', 'summon']);
-assert.equal(moves[0].opening, 3, 'shield opening unchanged');
-assert.equal(moves[1].count, 2, 'two tactical lanes unchanged');
-assert.equal(moves[2].advance, true, 'measured advance unchanged');
-assert.equal(moves[3].sequential, true, 'Citadel ward pulses unchanged');
+assert.deepEqual(moves.map((move) => move.kind), ['canister', 'formation', 'pattern-charge', 'checkerboard', 'summon']);
+assert.equal(moves[0].warning, 1.6, 'canister warning');
+assert.equal(moves[1].kind, 'formation', 'no original ash lanes');
+assert.equal(moves[2].kind, 'pattern-charge', 'fixed five-leg route');
+assert.equal(moves[3].kind, 'checkerboard', 'persistent squares');
 assert.equal(moves[4].species, 'crownguard', 'living troop muster unchanged');
 
 for (const mode of ['normal', 'nightmare']) {

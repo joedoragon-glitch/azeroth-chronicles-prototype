@@ -82,12 +82,20 @@
   sentinel.history =
     "Marshal Veyra was a coastal road warden and practicing cosmetologist who joined the former hero as a regimental drillmaster. She made goblin, ogre, human and other irregular fighters into the Dark Lord's professional standing army, with ranks, shared drills, discipline, uniforms and officers. Veyra has exacting opinions on grooming, architecture and the appearance of military equipment: functional work should also be beautiful. The Stone Colossus is her good friend, and both enjoy discussing workmanship and proportion. She loyally serves the Dark Lord and dreads politics, believing she could not govern better than he does. Yet her officers and garrisons could support her as a military dictator who rules the five regions as one giant barracks.";
   sentinel.attacks = [
-    'Microdermabrasion: armor slam warns for 1.6 seconds; a 3-second opening follows.',
-    'Dress Ranks: two ordered ash lanes warn for 1.8 seconds, leaving one safe lane.',
-    'Deep-Tissue Contouring: marked frontal advance warns for 1.8 seconds, ending in recovery.',
-    'Fractional Resurfacing: three staggered furnace pulses warn for 2 seconds.',
-    'Regimental Muster: summons Crown soldiers; TRUE form reinforces the elite warband.',
+    'Microdermabrasion: nine short-range canister fragments spray in a warned fan.',
+    'Dress Ranks: Crown soldiers pivot into a protective formation for five seconds.',
+    'Deep-Tissue Contouring: five damaging charges trace a fixed clockwise route telegraphed in full.',
+    'Fractional Resurfacing: a 4-by-4 square grid keeps pulsing during other attacks until the Sentinel falls.',
+    'Volumize: replenishes Crown soldiers; TRUE form reinforces the elite warband.',
   ];
+  Object.assign(Rules.attacks.citadel[0], { kind: 'canister', warning: 1.6, recovery: 1.5 });
+  Object.assign(Rules.attacks.citadel[1], { kind: 'formation', warning: 1.8, recovery: 1.6,
+    count: 1, manaDrain: 0 });
+  Object.assign(Rules.attacks.citadel[2], { kind: 'pattern-charge', warning: 2.6, recovery: 2.5,
+    charge: true, advance: false, opening: 0, coefficient: 1 });
+  Object.assign(Rules.attacks.citadel[3], { kind: 'checkerboard', warning: 2.2, recovery: 1.2,
+    count: 1, sequential: false, persistent: false, manaDrain: 0 });
+
   Rules.dungeonLore.citadel =
     "The Citadel of Ashes is Marshal Veyra's academy and the headquarters of the Dark Lord's professional army. Its officers turn diverse irregulars into regiments. Her private quarters hold polished mirrors, cosmetic brushes and carefully arranged complexion jars beside her parade uniform.";
   if (!Rules.dungeonDecor.citadel.some((row) => row[2] === 'citadel-vanity-quarters'))
