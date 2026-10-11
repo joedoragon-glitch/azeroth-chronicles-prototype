@@ -286,6 +286,8 @@ These additions were procedural at v0.8.87. The 8 October reconciliation promote
 
 | Renderer family | Classification |
 | --- | --- |
+| `silver-ore-face` | PROCEDURAL — locally placed dark argentiferous ore seam with repeated faceted deposits |
+| `silver-refining-hearth` | PROCEDURAL — composed furnace, cupel, slag and metal-button station |
 | `highland-pay-station` | GENERATE 237 — current exact static body |
 | `ore-sorting-bay` | GENERATE 238 — current exact static body |
 | `mint-workbench` | GENERATE 239 — current exact static body |
