@@ -6768,6 +6768,47 @@
             3,
           );
           break;
+        case 'copper-ore-face':
+          shade(42, 12, 0.15);
+          poly(
+            [
+              [-36, 13],
+              [-29, -29],
+              [-5, -42],
+              [25, -31],
+              [38, 12],
+            ],
+            '#6a625d',
+          );
+          for (const [x, y] of [
+            [-22, -12],
+            [-5, -29],
+            [13, -18],
+            [22, 3],
+          ]) {
+            oval(x, y, 9, 5, '#bd744b');
+            glint(x + 3, y - 2, '#d6a078', 1.4);
+          }
+          for (const [x, y] of [
+            [-14, 6],
+            [9, -2],
+          ])
+            oval(x, y, 6, 3, '#6b927c');
+          break;
+        case 'copper-sort-samples':
+          shade(37, 10, 0.13);
+          rect(-31, -12, 62, 28, '#766d5b');
+          rect(-27, -10, 54, 19, '#514d46');
+          for (const [x, y] of [
+            [-21, -5],
+            [-10, 1],
+            [4, -6],
+            [16, 2],
+          ]) {
+            oval(x, y, 7, 4, '#b9754e');
+            glint(x + 2, y - 2, '#d8a07b', 1.2);
+          }
+          break;
         case 'silver-refining-hearth':
           // A compact cupellation/assay station: oxidizing fire, cupel and silver buttons.
           shade(43, 12, 0.17);
@@ -6852,9 +6893,17 @@
               1,
             );
           }
-          // Five separate die teeth mark the five regions without using gold.
-          for (const x of [-8, -4, 0, 4, 8]) rect(x, -27, 3, 5, '#d7e1e2');
-          rect(-11, -22, 23, 5, '#88979a');
+          // Coin die: the Dark Lord's profile, not a new heraldic emblem.
+          oval(0, -24, 9, 8, '#c5d1d1');
+          oval(-2, -25, 4, 6, '#718185');
+          poly(
+            [
+              [1, -24],
+              [8, -22],
+              [1, -20],
+            ],
+            '#718185',
+          );
           break;
         case 'sealed-crown-consignment':
           // Distinct silver Crown seals; ordinary wagon/crate sprites remain unchanged.
@@ -6863,7 +6912,16 @@
           rect(-28, -22, 55, 13, '#98836b');
           for (const x of [-23, 21]) rect(x, -21, 5, 36, '#50585a');
           rect(-9, -20, 17, 11, '#c3ced0');
-          for (const x of [-7, -4, -1, 2, 5]) rect(x, -23, 2, 5, '#eef0ea');
+          oval(0, -17, 6, 5, '#edf0ed');
+          oval(-2, -18, 3, 4, '#708087');
+          poly(
+            [
+              [0, -18],
+              [5, -16],
+              [0, -14],
+            ],
+            '#708087',
+          );
           line(
             [
               [-9, -8],
