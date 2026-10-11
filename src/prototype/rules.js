@@ -754,6 +754,7 @@
       id: 'stonecross',
       props: [
         [640, 1430, 'highland-pay-station'],
+        [930, 1250, 'silver-refining-hearth'],
         [1070, 1360, 'mint-workbench'],
         [1100, 1540, 'caravan-loading-bay'],
         [700, 1690, 'ridge-supper'],
@@ -781,6 +782,8 @@
     {
       id: 'roads',
       props: [
+        [1180, 530, 'silver-ore-face'],
+        [2600, 2210, 'silver-ore-face'],
         [1160, 1040, 'mine-supports'],
         [1440, 1840, 'tool-rack'],
       ],
@@ -794,7 +797,7 @@
     },
   ];
   const ironrootLore = {
-    ore: 'Ironroot became the crown-production province after the Dark Lord seized its mineral wealth. Sorted metal goes to Stonecross for processing and striking; finished crowns leave under guard. A miner gets a wage, but the mountain belongs to the regime.',
+    ore: 'Dark lead-grey stone from these veins bears silver. It goes to Quarry Outpost for sorting, then to Stonecross: smelting, cupellation, a little copper for harder silver, and the five-point Crown die. Sealed chests travel under guard. The wages are real; so is the levy.',
     'bridge-north':
       'Fresh stone repairs and spare hauling timbers keep mineral carts moving. The Master of Coin counts reliable roads as proof of better rule; traders welcome fewer delays without necessarily welcoming their ruler.',
     'bridge-south':
