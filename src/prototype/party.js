@@ -696,7 +696,7 @@
         const d = dist(u, this.hero),
           speed =
             this.companionMoveSpeed(d > 650 ? 500 : d > 350 ? 390 : d > 200 ? 315 : 255) *
-            (u.slow > 0 ? 0.65 : 1) * this.mireBogMovementFactor(u);
+            (u.slow > 0 ? 0.65 : 1) * this.mireBogMovementFactor(u) * this.ashMovementFactor(u);
         return this.follow(u, this.partyFollowPoint(u, living), speed, dt, 45);
       }
       soldierScreenTarget(u, targets, living, claimed) {
