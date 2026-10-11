@@ -509,8 +509,10 @@
                 this.line(a, u)
               ) {
                 a.hit.push(id);
-                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null))
+                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null)) {
                   this.enemyVfxHazardImpact?.(a, u);
+                  if (a.slowDuration && u.hp > 0) this.applySlow(u, a.slowDuration);
+                }
               }
             }
           } else if (a.tick <= 0) {
