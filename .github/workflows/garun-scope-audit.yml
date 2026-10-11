@@ -1,0 +1,24 @@
+name: Temporary Garun scope evidence diff
+on:
+  push:
+    paths:
+      - '.github/workflows/garun-scope-audit.yml'
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - name: Compare exact live sprite scope JSON
+        run: |
+          node scripts/sprite-scope-audit.cjs > /tmp/garun-scope-actual.json
+          diff -u docs/evidence/SPRITE_SCOPE_RECONCILIATION.json /tmp/garun-scope-actual.json || true
+          node - <<'NODE'
+          const fs=require('fs');
+          const a=JSON.parse(fs.readFileSync('/tmp/garun-scope-actual.json','utf8')), b=JSON.parse(fs.readFileSync('docs/evidence/SPRITE_SCOPE_RECONCILIATION.json','utf8'));
+          console.log('CHANGED KEYS',Object.keys(a).filter(k=>JSON.stringify(a[k])!==JSON.stringify(b[k])));
+          console.log('SOURCES',JSON.stringify(a.sources));
+          NODE
