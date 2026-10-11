@@ -39,5 +39,15 @@
     "version": "0.8.139",
     "scope": "Thornfang Pounce and Stone Colossus Wall Rush authored description-only corrections; no mechanics, layouts or procedural art changed",
     "evidence": "v0.9 author approval and boss-description-contracts regression; all other baseline hashes unchanged"
+  },
+  "ashStalkerAnonymousCastRevision": {
+    "source": "PR #260; owner-approved generic cast bar retains original 0.7-second Stalker preparation without disclosing attack/target/area",
+    "scope": "Only the four identified source files; v0.9 baseline hashes remain unchanged; preserves collision, landing-only damage and multi-file PWA architecture",
+    "gitBlobSha1": {
+      "src/prototype/combat-visuals.js": "ee75895ff01ccce87531a2c18f21fc75918cdb56",
+      "src/prototype/engine.js": "6e3f8a6754c5a8d4a6c64068fa739b452be1ba41",
+      "src/prototype/renderer.js": "0b85edd8d43b1d78b77a7cc2888666db15c9ffcf",
+      "src/prototype/rules.js": "aa362c59294df7355580eace35143eecb4705f38"
+    }
   }
 }
