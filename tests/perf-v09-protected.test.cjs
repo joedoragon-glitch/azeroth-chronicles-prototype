@@ -5,6 +5,13 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const manifest = require('./fixtures/perf-v09-protected.json');
 const revision = manifest.renderingRevision;
+const captainRevision = manifest.captainBalanceRevision;
+assert.deepEqual(Object.keys(captainRevision.files).sort(), [
+  'src/prototype/boss-combat.js',
+  'src/prototype/combat.js',
+  'src/prototype/engine.js',
+  'src/prototype/rules.js',
+]);
 assert.deepEqual(Object.keys(revision.files).sort(), [
   'src/prototype/app.js',
   'src/prototype/runtime.js',
@@ -16,7 +23,7 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    revision.files[file] || expected,
+    captainRevision.files[file] || revision.files[file] || expected,
     file + ' is protected against baseline / reviewed rendering revision ' + manifest.baseline,
   );
 }
@@ -34,5 +41,5 @@ assert.equal(
 console.log(
   'PASS ' +
     Object.keys(manifest.files).length +
-    ' exact protected simulation/scheduling/save/UI/art hashes',
+    ' exact protected baseline plus approved captain-mechanics hashes',
 );
