@@ -1,13 +1,13 @@
 {
   "baseline": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
   "files": {
-    "src/prototype/engine.js": "6107621b2a5dfcb76d841a8a03a18381ac1fd5253002aa1b10bd4838f20d63e9",
+    "src/prototype/engine.js": "ee13318c09223b6b5efc2dcb49904cf1da715d13023db4f90d4b10ec78508ec8",
     "src/prototype/world.js": "fd696a65bf4e1b9067291f6c6d3d57b508f2b2ecb7164c222299ef8fa5edaa53",
     "src/prototype/navigation.js": "dbb700f55909a4908b64aec2c97583b07af93d7aeafe32d111dbbe16a7f79c36",
     "src/prototype/party.js": "41a66f5b3c95a09414b1308df557aff1cbb232d341f601b1f1fcaf1d2d40d726",
     "src/prototype/combat.js": "7156a5d816c1aee96909bdf55000717f9efd16ed0302f0a7b5aa337f3eeacf20",
     "src/prototype/hero-combat.js": "9873768cf15322246de3a2892785ebdecc9cc9ed72ff7bbb377a264647135070",
-    "src/prototype/boss-combat.js": "61e275993e355e0eca5fcd6c065c5dfd06175e9393d6dc119d4823ea130c0f7e",
+    "src/prototype/boss-combat.js": "d1658ea8fc8606d9851d413dc494681292e716d3259d2036c12414e7f6a4afef",
     "src/prototype/progression.js": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
     "src/prototype/economy.js": "fd9701ee01d2748f22f176ce84d06f8769c0eb8b84963460380457a61933487a",
     "src/prototype/rewards.js": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525",
@@ -62,5 +62,23 @@
       "src/prototype/combat.js": "7156a5d816c1aee96909bdf55000717f9efd16ed0302f0a7b5aa337f3eeacf20"
     },
     "evidence": "Exact sha256sum output from GitHub Actions focused source audit #38144550201; both Colossus and seven-move regression suites green. Full CI and browser verification remain required."
+  },
+  "candidateGarunEngineeringFixRevision": {
+    "issue": "#242 / #257",
+    "parents": [
+      "#253",
+      "#264"
+    ],
+    "status": "isolated unmerged owner-authorized technical correction; no merge or deployment",
+    "scope": "Preserve locked seven moves, existing visual correction, and baseline controls. Reserve construction sites at their telegraph, preview a Collapse queued by Compaction, recheck occupancy/routes at impact without unseen fallback supports, apply slab damage to all targets remaining in its physical line, and clean Mine works on boss reset/death.",
+    "priorProtectedSha256": {
+      "src/prototype/engine.js": "6107621b2a5dfcb76d841a8a03a18381ac1fd5253002aa1b10bd4838f20d63e9",
+      "src/prototype/boss-combat.js": "61e275993e355e0eca5fcd6c065c5dfd06175e9393d6dc119d4823ea130c0f7e"
+    },
+    "candidateProtectedSha256": {
+      "src/prototype/engine.js": "ee13318c09223b6b5efc2dcb49904cf1da715d13023db4f90d4b10ec78508ec8",
+      "src/prototype/boss-combat.js": "d1658ea8fc8606d9851d413dc494681292e716d3259d2036c12414e7f6a4afef"
+    },
+    "evidence": "Exact SHA-256 of isolated GitHub source blobs verified against the earlier #253 pins; new focused mechanic/AI regressions and exact-head CI are required; other protected hashes retained."
   }
 }
