@@ -164,35 +164,9 @@ const architect = builderZone.enemies.find((e) => e.family === 'mine' && e.type 
 const baselineExit = builder.route(builder.hero, builderZone.npcs.find((n) => n.kind === 'exit')).length > 0;
 const baselineDara = builder.route(builder.hero, builderZone.npcs.find((n) => n.kind === 'cage')).length > 0;
 let built = 0;
-for (const point of [[1100, 1100], [1100, 920], [1180, 1220], [990, 1190]]) {
-  built += builder.raiseMineWorks(architect, point);
+for (const [x, y] of [[1100, 1100], [1100, 920], [1180, 1220], [990, 1190]]) {
+  built += builder.raiseMineWorks(architect, { x, y });
   if (built > 0) break;
-}
-if (!built) {
-  for (const center of [[1100,1100],[1100,920],[1180,1220],[990,1190]]) {
-    console.log('DIAG center', JSON.stringify(center));
-    for (const [dx,dy] of [[-160,-100],[160,-100],[-180,110],[180,110],[-80,185],[80,185]]) {
-      const p = {x:center[0]+dx,y:center[1]+dy};
-      const danger = builder.traps().some((t)=>builder.trapContains({...t,radius:(t.radius||0)+40,length:(t.length||0)+80,halfWidth:(t.halfWidth||0)+40},p));
-      console.log('DIAG candidate',JSON.stringify(p),'blocked',builder.blocked(p.x,p.y,'mine',28),'trap',danger,'hero',Math.hypot(builder.hero.x-p.x,builder.hero.y-p.y),'boss',Math.hypot(architect.x-p.x,architect.y-p.y));
-    }
-  }
-  console.log('DIAG initial paths', baselineExit,baselineDara);
-  console.log('DIAG boss flags',architect.family,architect.hp,builder.peace,builder.s.zone);
-  const points = [{x:940,y:1000},{x:1180,y:1285},{x:920,y:1030},{x:1020,y:1105},{x:1340,y:1120},{x:830,y:1090}];
-  const exit = builderZone.npcs.find(n=>n.kind==='exit');
-  const captive = builderZone.npcs.find(n=>n.kind==='cage');
-  const targets = [builder.hero, ...builder.activeLivingParty(),architect,captive,exit].filter(Boolean);
-  console.log('DIAG baseline blocked', targets.map(u=>[u.id||u.kind,u.x,u.y,builder.blocked(u.x,u.y,'mine',12)]));
-  for(const p of points){
-    const prop = {id:'diagnostic',...p,r:24};
-    builderZone.props.push(prop);
-    const open = targets.map(u=>[u.id||u.kind,builder.blocked(u.x,u.y,'mine',12)]);
-    const route = targets.filter(u=>u!==exit).map(u=>[u.id||u.kind,builder.route(u,exit).length]);
-    const dara = builder.route(builder.hero,captive).length;
-    builderZone.props.pop();
-    console.log('DIAG after prop',p,open,route,dara);
-  }
 }
 assert(built > 0 && built <= 2, 'construction finds at least one safe, temporary support');
 const supports = builderZone.props.filter((p) => p.garunTemporary);
