@@ -131,7 +131,25 @@ async function proof() {
       ).join('');
   return {
     pixels: await digest(bytes),
-    state: await digest(new TextEncoder().encode(JSON.stringify(s.game))),
+    state: await digest(
+      new TextEncoder().encode(
+        JSON.stringify(s.game, (key, value) => {
+          // #237 only changes the Crypt's optional arrival text and boss title.
+          // Normalize those precise authorial differences while retaining exact
+          // simulation, rendering, timing and every other state field.
+          if (key === 'name' && value === 'Lifebinder') return 'Crypt Guardian';
+          if (key === 'name' && value === 'Lifebinder TRUE') return 'Crypt Guardian TRUE';
+          if (key === 'messages' && Array.isArray(value))
+            return value.filter(
+              (message) =>
+                typeof message !== 'string' ||
+                !message.startsWith('An old ossuary opens onto unfinished Crown guest rooms.'),
+            );
+          if (key === 'crypt:dungeon-lore:crypt' && value === true) return undefined;
+          return value;
+        }),
+      ),
+    ),
     render: s.renderer.metrics(),
     sprites: PrototypeSprites.status(),
     materials: PrototypeMaterials.status(),
