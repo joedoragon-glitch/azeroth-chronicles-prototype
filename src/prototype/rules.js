@@ -4354,7 +4354,12 @@
       mire: { name: 'Mirejaw’s Bog Snare', style: 'snare', coefficient: 0.23 },
       archive: { name: 'Drowned Keeper’s Undertow', style: 'shove', coefficient: 0.24 },
       ridge: { name: 'Ridge Tyrant’s Stone Feint', style: 'shove', coefficient: 0.24 },
-      mine: { name: 'Garun’s Lateral Load Transfer', style: 'slab', coefficient: 0.6, warning: 1.3 },
+      mine: {
+        name: 'Garun’s Lateral Load Transfer',
+        style: 'slab',
+        coefficient: 0.6,
+        warning: 1.3,
+      },
       warlord: { name: 'Ashen Warlord’s Flank Command', style: 'dash', coefficient: 0.25 },
       abyss: { name: 'Abyss Dragon’s Ashwing Feint', style: 'dash', coefficient: 0.25 },
       citadel: { name: 'Ash Sentinel’s Reversal', style: 'shove', coefficient: 0.24 },
