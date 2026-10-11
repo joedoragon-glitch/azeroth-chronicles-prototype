@@ -184,7 +184,7 @@
         ctx.stroke();
       }
     }
-    for (const e of game.zone().enemies.filter((e) => e.telegraph)) {
+    for (const e of game.zone().enemies.filter((e) => e.telegraph && (e.telegraph.total > 0 || !e.telegraph.captainSkill))) {
       const a = e.telegraph,
         shapes = warningShapes(a, game.attackPatches(a));
       // Rogue warnings need an identity distinct from ordinary boss attacks:
