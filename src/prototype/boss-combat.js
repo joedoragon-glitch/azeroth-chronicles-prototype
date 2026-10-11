@@ -555,10 +555,7 @@
         }
         if (a.royalSidestep) {
           const sideways = a.angle + Math.PI / 2;
-          const goal = this.safe(
-            e.x + Math.cos(sideways) * 80,
-            e.y + Math.sin(sideways) * 80,
-          );
+          const goal = this.safe(e.x + Math.cos(sideways) * 80, e.y + Math.sin(sideways) * 80);
           if (this.clearSegment(e, goal, 15)) {
             e.motion = {
               ...a,
