@@ -268,6 +268,7 @@
       }
       sceneDetails(scene) {
         if (
+          this.optimizationMode ||
           !this.ctx ||
           !this.cue ||
           scene.situation === 'menu' ||
