@@ -178,6 +178,7 @@ if (!built) {
     }
   }
   console.log('DIAG initial paths', baselineExit,baselineDara);
+  console.log('DIAG boss flags',architect.family,architect.hp,builder.peace,builder.s.zone);
   const points = [{x:940,y:1000},{x:1180,y:1285},{x:920,y:1030},{x:1020,y:1105},{x:1340,y:1120},{x:830,y:1090}];
   const exit = builderZone.npcs.find(n=>n.kind==='exit');
   const captive = builderZone.npcs.find(n=>n.kind==='cage');
@@ -187,7 +188,7 @@ if (!built) {
     const prop = {id:'diagnostic',...p,r:24};
     builderZone.props.push(prop);
     const open = targets.map(u=>[u.id||u.kind,builder.blocked(u.x,u.y,'mine',12)]);
-    const route = [builder.hero,architect,captive].map(u=>[u.id||u.kind,builder.route(u,exit).length]);
+    const route = targets.filter(u=>u!==exit).map(u=>[u.id||u.kind,builder.route(u,exit).length]);
     const dara = builder.route(builder.hero,captive).length;
     builderZone.props.pop();
     console.log('DIAG after prop',p,open,route,dara);
