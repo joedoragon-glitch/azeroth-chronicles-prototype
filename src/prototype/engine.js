@@ -948,7 +948,8 @@
       // Append Garun's tiny gallery to existing v3 Mine saves without resetting occupants.
       if (z.id === 'mine' && z.dungeonVersion === targetVersion) {
         for (const [j, [x, y, structure, district, sceneRole]] of R.dungeonDecor.mine.entries()) {
-          if (!['geometric-gallery', 'kinetic-collection', 'art-object'].includes(sceneRole)) continue;
+          if (!['geometric-gallery', 'kinetic-collection', 'art-object'].includes(sceneRole))
+            continue;
           if (z.props.some((p) => p.id === 'decor-' + j)) continue;
           z.props.push({
             id: 'decor-' + j,
@@ -2481,17 +2482,31 @@
     updateIdleWander(e, dt) {
       if (!e || e.aggro || e.returning || e.neutral || e.hp <= 0 || e.fieldCaptain) return false;
       if (e.family === 'mine' && e.type === 'boss' && this.s.zone === 'mine') {
-        const anchors = [[1120, 1010], [1260, 1120], [1160, 1240]],
+        const anchors = [
+            [1120, 1010],
+            [1260, 1120],
+            [1160, 1240],
+          ],
           next = anchors[(e.inspectionIndex || 0) % anchors.length],
           destination = { x: next[0], y: next[1] };
         e.inspectionWait = Math.max(0, (e.inspectionWait ?? 1.5) - dt);
         if (e.inspectionWait > 0) return true;
         const danger = this.traps().some((t) =>
-          this.trapContains({ ...t, radius: (t.radius || 0) + 26,
-            length: (t.length || 0) + 52, halfWidth: (t.halfWidth || 0) + 26 }, destination),
+          this.trapContains(
+            {
+              ...t,
+              radius: (t.radius || 0) + 26,
+              length: (t.length || 0) + 52,
+              halfWidth: (t.halfWidth || 0) + 26,
+            },
+            destination,
+          ),
         );
-        if (danger || this.blocked(destination.x, destination.y, 'mine', 24) ||
-            !this.route(e, destination).length) {
+        if (
+          danger ||
+          this.blocked(destination.x, destination.y, 'mine', 24) ||
+          !this.route(e, destination).length
+        ) {
           e.inspectionIndex = (e.inspectionIndex || 0) + 1;
           e.inspectionWait = 1.2;
           return true;
