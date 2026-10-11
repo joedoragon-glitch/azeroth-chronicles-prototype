@@ -49,7 +49,7 @@ assert.equal(normal.form, 'normal');
 assert.equal(normal.baseHp, 650);
 assert.equal(normal.baseDamage, 16);
 const trueBoss = game.bossEnemy(crypt, 'true', { x: 1000, y: 1100 });
-assert.equal(trueBoss.name, 'TRUE Lifebinder');
+assert.equal(trueBoss.name, 'Lifebinder TRUE');
 assert.equal(trueBoss.form, 'true');
 assert.equal(trueBoss.baseHp, Math.round(crypt.hp * 1.8));
 assert.equal(trueBoss.baseDamage, crypt.damage * 1.25);
@@ -83,7 +83,7 @@ const loadedTrue = revived.s.zones.crypt.enemies.find(
   (e) => e.family === 'crypt' && e.type === 'boss' && e.form === 'true',
 );
 assert(loadedTrue);
-assert.equal(loadedTrue.name, 'TRUE Lifebinder', 'legacy TRUE entity is renamed in place');
+assert.equal(loadedTrue.name, 'Lifebinder TRUE', 'legacy TRUE entity is renamed in place');
 assert.equal(loadedTrue.baseHp, Math.round(crypt.hp * 1.8));
 assert.equal(loadedTrue.baseDamage, crypt.damage * 1.25);
 console.log('PASS Lifebinder canon, early balance, legacy names, normal/TRUE and save identity');
