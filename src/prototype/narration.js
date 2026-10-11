@@ -41,8 +41,7 @@
     null, // 17
     {
       kind: 'narration',
-      text:
-        "Ironroot's silver and copper reach Stonecross to be refined and struck into crowns bearing the Dark Lord's face. Guarded wagons carry them across the realm.",
+      text: "Ironroot's silver and copper reach Stonecross to be refined and struck into crowns bearing the Dark Lord's face. Guarded wagons carry them across the realm.",
     }, // 18
     null, // 19
     {
