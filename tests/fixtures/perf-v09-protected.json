@@ -27,10 +27,10 @@
     "assets/materials/manifest.json": "c06e89ba4ed2058681ae3156eaac8f7eb577d1b5af61e272f40d316f855cad41"
   },
   "renderingRevision": {
-    "source": "PR #225 plus #271 reviewed device-local presentation switch; byte-for-byte simulation frame preserved",
+    "source": "PR #225 plus #271 reviewed local-presentation/report revisions; byte-for-byte simulation frame preserved",
     "files": {
       "src/prototype/app.js": "c65dea63014b7f5e3d8c7af1cc7cc6fd9d887054fc6e3585b361e647a5316d91",
-      "src/prototype/runtime.js": "d75f3f9fc8e7a964420da9b1642aefc7dae433b0a19ca45b704b65c72f7e0652"
+      "src/prototype/runtime.js": "953bbc9a92e9576e7ea6e7620cffe6d473c7d721cabb7878dbe04d23283dda43"
     },
     "activeFrameBodySha256": "a042cd0491db3860a8f8c29e9f1471b45be3ca108b2520dcc4df833d0ce81d7a"
   },
