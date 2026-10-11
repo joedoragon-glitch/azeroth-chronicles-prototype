@@ -18,5 +18,13 @@
   "earned-march-economy": {
     "outcome": "PASS route prepare (engine actions only)",
     "finalSaveSha256": "471fd12b0002539c037fab57295d7c1213a261b3523226f62335a21bca4ad9c5"
+  },
+  "earned-highlands": {
+    "outcome": "INCOMPLETE: cannot reach outbound",
+    "finalSaveSha256": "33866db48a1eeba50c394dd256deb3b528dc8e53d97f608f8d43a9b4edec471d"
+  },
+  "earned-highlands-continued": {
+    "outcome": "PASS route highlands (engine actions only)",
+    "finalSaveSha256": "3f744bef5bc409a9f14f7462fa470a7270a94368717f429bd0376b84568a2aad"
   }
 }

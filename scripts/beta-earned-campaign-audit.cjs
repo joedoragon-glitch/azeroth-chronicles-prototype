@@ -75,8 +75,13 @@ function record(label) {
   );
   console.log(JSON.stringify(r));
 }
+let nextHeartbeat = c.s.time + 60;
 function tick() {
   c.tick(0.1);
+  if (c.s.time >= nextHeartbeat) {
+    nextHeartbeat = c.s.time + 60;
+    record('campaign heartbeat');
+  }
   capture();
   while (c.hero.talentPoints > 0) {
     if (!c.talent(0) && !c.talent(2) && !c.talent(1) && !c.talent(3)) break;
@@ -125,7 +130,7 @@ function fight(e, seconds = 180) {
       lastProgress = c.s.time;
       lastHp = e.hp;
     }
-    if (c.s.time - lastProgress > 35 && dist(c.hero, e) < 430) {
+    if (c.s.time - lastProgress > 35) {
       record(
         'combat no-progress: ' +
           e.name +
@@ -187,9 +192,14 @@ function fight(e, seconds = 180) {
   return e.hp <= 0;
 }
 function walk(p, combat = true, seconds = 100, arrival = 65) {
-  const deaths = c.s.statistics.deaths;
+  const deaths = c.s.statistics.deaths,
+    started = c.s.time;
   for (let i = 0; i < seconds * 10; i++) {
     if (dist(c.hero, p) < arrival) return true;
+    if (c.s.time - started > seconds) {
+      record('travel approach time budget exhausted');
+      return false;
+    }
     if (c.s.statistics.deaths > deaths) return false;
     const e = combat && near();
     if (e && e.aggro && dist(e, c.hero) < 360) {
@@ -213,7 +223,7 @@ function rest() {
     .zone()
     .npcs.filter((n) => n.kind === 'rest')
     .sort((a, b) => dist(a.servicePoint || a, c.hero) - dist(b.servicePoint || b, c.hero))[0];
-  if (!n || !walk(n.servicePoint || n, false)) return false;
+  if (!n || !walk(n.servicePoint || n, false, 60, 105)) return false;
   for (let i = 0; i < 1000; i++) {
     if (c.rest()) return true;
     tick();
@@ -221,11 +231,20 @@ function rest() {
   return false;
 }
 
-function approach(n) {
-  if (!n || !walk(n.servicePoint || n)) throw Error('cannot reach ' + (n?.id || 'missing NPC'));
+function approach(n, combat = true) {
+  if (!n || !walk(n.servicePoint || n, combat, 100, 105))
+    throw Error('cannot reach ' + (n?.id || 'missing NPC'));
   if (dist(c.hero, n.servicePoint || n) > 115) throw Error('service out of reach');
 }
 function services() {
+  const recruiter = c.zone().npcs.find((n) => n.kind === 'recruiter');
+  if (recruiter) {
+    approach(recruiter);
+    while (c.s.party.some((u) => u.hp <= 0) && c.recover()) capture();
+    if (c.rosterCount() < 3 && c.hero.gold > 120) c.recruit('archer');
+    record('town party service');
+  }
+
   for (const n of [...c.zone().npcs].filter((n) => n.kind === 'teacher' && c.s.rescued[n.family])) {
     approach(n);
     const catalog = c.teacherCatalog(n.family);
@@ -244,17 +263,12 @@ function services() {
     for (const slot of ['weapon', 'armor']) c.gear(n.family, slot);
     record('smith service ' + n.family);
   }
-  const recruiter = c.zone().npcs.find((n) => n.kind === 'recruiter');
-  if (recruiter) {
-    approach(recruiter);
-    while (c.s.party.some((u) => u.hp <= 0) && c.recover()) capture();
-    if (c.rosterCount() < 3 && c.hero.gold > 120) c.recruit('archer');
-    record('town party service');
-  }
   rest();
   record('rest before departure');
 }
 function earnPreparation() {
+  const budget = Number(process.env.BETA_BUDGET || 700);
+  while (c.scoutTribute()) capture();
   const node = c
     .zone()
     .nodes.filter((n) => n.amount > 0 && c.tributeKnown(n))
@@ -264,7 +278,7 @@ function earnPreparation() {
     deaths = c.s.statistics.deaths;
   if (!c.gather(node.id)) throw Error('resource assignment rejected');
   record('resource gathering assigned ' + node.id);
-  for (let i = 0; i < 2400 && c.hero.gold < 360; i++) {
+  for (let i = 0; i < 2400 && c.hero.gold < budget; i++) {
     if (c.s.statistics.deaths > deaths) throw Error('defeated during gathering');
     const enemy = near();
     if (enemy?.aggro) {
@@ -276,6 +290,12 @@ function earnPreparation() {
     if (i % 300 === 299) record('gathering progress');
   }
   c.recallParty();
+  for (let i = 0; i < 20 && c.hero.gold < budget; i++) {
+    const loot = c.s.loot
+      .filter((l) => l.zone === c.zoneId)
+      .sort((a, b) => dist(a, c.hero) - dist(b, c.hero))[0];
+    if (!loot || !walk(loot, false)) break;
+  }
   record('resource deposits earned ' + (c.hero.gold - before) + ' crowns');
 }
 function collectLocalLoot() {
@@ -314,8 +334,15 @@ function defeatAndRescue(family) {
   }
 }
 function travelOnward() {
+  const fareNeeded = c.travelFare(c.regionIndex(), 1);
+  for (let i = 0; i < 10 && c.hero.gold < fareNeeded; i++) {
+    const loot = c.s.loot
+      .filter((l) => l.zone === c.zoneId)
+      .sort((a, b) => dist(a, c.hero) - dist(b, c.hero))[0];
+    if (!loot || !walk(loot, false)) break;
+  }
   const n = c.zone().npcs.find((n) => n.kind === 'transport' && n.direction === 1);
-  approach(n);
+  approach(n, false);
   const from = c.zoneId,
     gold = c.hero.gold,
     fare = c.travelFare(c.regionIndex(), 1);
@@ -346,7 +373,7 @@ function verifySave() {
 }
 record('resumed earned campaign');
 try {
-  services();
+  if (!process.env.BETA_SKIP_SERVICES) services();
   const routes = {
     prepare: [],
     crypt: ['crypt'],
