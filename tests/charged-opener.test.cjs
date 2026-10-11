@@ -32,11 +32,36 @@ for (const tier of ['boss', 'true', 'captain', 'roomCaptain'])
       const { c, e } = setup(heroClass, tier);
       const before = c.chargedEncounterSnapshot();
       c.engage(e); // Subsequent aggro must not validate an earlier hold.
+      e.x += 4;
+      e.y += 2;
+      e.open = 2;
+      e.slow = 1;
+      const encounter = {
+        hp: e.hp,
+        maxHp: e.maxHp,
+        x: e.x,
+        y: e.y,
+        open: e.open,
+        slow: e.slow,
+        fightStart: e.fightStart,
+      };
       charged(c, e, slot, before);
-      assert.equal(e.hp, e.maxHp, 'precharged damage rolled back');
-      assert.equal(e.aggro, false, 'protected enemy resets');
-      assert.deepEqual({ x: e.x, y: e.y }, e.home, 'enemy returned home');
+      assert.deepEqual(
+        {
+          hp: e.hp,
+          maxHp: e.maxHp,
+          x: e.x,
+          y: e.y,
+          open: e.open,
+          slow: e.slow,
+          fightStart: e.fightStart,
+        },
+        encounter,
+        'deflected precharge leaves the encounter state unchanged',
+      );
+      assert.equal(e.aggro, true, 'protected enemy stays engaged');
       assert.equal(c.s.projectiles.length, 0, 'no delayed Ranger hit');
+      assert(c.messages.some((message) => message.includes('deflects')), 'deflection feedback');
       cases++;
       const valid = setup(heroClass, tier);
       valid.c.engage(valid.e);
@@ -65,8 +90,24 @@ for (const heroClass of ['paladin', 'mage', 'ranger']) {
   c.disengage(e, 1);
   c.s.time += 1;
   c.engage(e);
+  const hp = e.hp;
   charged(c, e, 1, stale);
-  assert.equal(e.aggro, false, 'new encounter cannot use stale charge receipt');
+  assert.equal(e.hp, hp, 'stale receipt cannot damage new encounter');
+  assert.equal(e.aggro, true, 'stale charge does not reset new encounter');
+  cases++;
+}
+{
+  const { c, e } = setup('ranger', 'boss');
+  const before = c.chargedEncounterSnapshot();
+  c.engage(e);
+  c.s.party = [{ id: 'ally-test', type: 'soldier', x: c.hero.x, y: c.hero.y, hp: 120, maxHp: 120 }];
+  assert(c.damage(e, 37, 'ally-test'), 'companion hit lands before charged release');
+  const woundedHp = e.hp;
+  assert(woundedHp < e.maxHp, 'companion wounded the boss');
+  charged(c, e, 1, before);
+  assert.equal(e.hp, woundedHp, 'deflection preserves earlier companion damage');
+  assert.equal(e.aggro, true, 'companion encounter continues after deflection');
+  assert.equal(c.s.projectiles.length, 0, 'whole invalid burst is cancelled');
   cases++;
 }
 console.log('PASS ' + cases + ' charged opener/encounter scenarios');
