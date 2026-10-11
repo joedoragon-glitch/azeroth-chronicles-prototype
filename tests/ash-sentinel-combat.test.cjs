@@ -89,6 +89,8 @@ shooter.telegraph = canister;
 shotgun.resolveAttack(shooter);
 assert.equal(shotgun.s.projectiles.length, 9);
 assert(shotgun.s.projectiles.every(p => p.damage === shooter.damage / 9));
+assert(shotgun.s.projectiles.every(p => p.speed * p.life <= canister.radius),
+  'no canister pellet may outrun the rendered fan warning');
 for (let n = 0; n < 85; n++) shotgun.updateProjectiles(.016);
 assert(100000 - shotgun.hero.hp <= shooter.damage + 0.01,
   'even all nine pellets cannot exceed one unarmored boss strike');

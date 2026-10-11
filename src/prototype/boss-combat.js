@@ -622,7 +622,7 @@
               dx: Math.cos(angle),
               dy: Math.sin(angle),
               speed: 490,
-              life: 0.8,
+              life: 0.72, // 490 paces/s × 0.72 s remains inside the 360-pace warning.
               damage: e.damage / 9, // At close range nine fragments cap at one raw boss hit.
               manaDrain: 0,
               source: 'enemy',

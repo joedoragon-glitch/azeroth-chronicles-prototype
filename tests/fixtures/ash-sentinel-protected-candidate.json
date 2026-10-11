@@ -3,7 +3,7 @@
   "status": "draft-only",
   "description": "Pinned candidate-only combat source exceptions; historical v0.9 SHA256 evidence remains immutable. Not a finding of behavioral equivalence or release acceptance.",
   "changedFiles": {
-    "src/prototype/boss-combat.js": "446ed684f1e23b1617c0d3d171829f019c769e71",
+    "src/prototype/boss-combat.js": "86721a200b1c3248d979cbca4a62b9737211bbaa",
     "src/prototype/combat.js": "f6de112eef3f1ca19855d19639b7df53563b4cfc",
     "src/prototype/engine.js": "4e26506cb18763323060665da9fd7df06ce105ab"
   }
