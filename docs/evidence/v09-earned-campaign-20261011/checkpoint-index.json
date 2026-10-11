@@ -54,5 +54,13 @@
   "earned-abyss-reinforced": {
     "outcome": "INCOMPLETE: encounter incomplete abyss",
     "finalSaveSha256": "047d0d32a3163b17ff225e82115ca0f55bc6d300efeaa884da953fbc89a10033"
+  },
+  "earned-frontier-recovery2": {
+    "outcome": "PASS route recover (engine actions only)",
+    "finalSaveSha256": "57094e8fbdf550c80bcd5633a593616699adfd52f3f0b8fc684e7bb2d59f9d50"
+  },
+  "earned-abyss-tactical": {
+    "outcome": "PASS route frontier (engine actions only)",
+    "finalSaveSha256": "0383e5e96ac1ffcb1c6e30202f1a0c90b6aeffcb56b3a8207c337cbc676f5fbf"
   }
 }

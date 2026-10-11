@@ -447,6 +447,25 @@ function defeatAndRescue(family) {
     if (!fight(boss, 300)) throw Error('encounter incomplete ' + family);
     capture();
     record('encounter completed ' + family + ' ' + boss.form);
+    if (family === 'darklord' && boss.form === 'normal') {
+      assert(c.s.pending.darklord, 'normal Dark Lord defeat schedules TRUE form');
+      const scheduled = c.s.time;
+      record('TRUE Dark Lord scheduled; delay=' + c.s.pending.darklord.delay);
+      let trueBoss;
+      for (let i = 0; i < 60; i++) {
+        tick();
+        trueBoss = c
+          .zone()
+          .enemies.find((e) => e.family === 'darklord' && e.form === 'true' && e.hp > 0);
+        if (trueBoss) break;
+      }
+      assert(trueBoss, 'TRUE Dark Lord actually spawns after normal defeat');
+      record('TRUE Dark Lord spawned after ' + (c.s.time - scheduled).toFixed(1) + ' seconds');
+      if (!fight(trueBoss, 300)) throw Error('TRUE Dark Lord encounter incomplete');
+      assert(c.s.true.darklord, 'TRUE Dark Lord victory recorded');
+      assert.equal(c.s.phase, 'awakening', 'TRUE Dark Lord defeat triggers Awakening');
+      record('TRUE Dark Lord defeated; Awakening verified');
+    }
   } else if (!c.s.normal[family] && !c.s.true[family]) throw Error('boss missing ' + family);
   collectLocalLoot();
   const captive = c.zone().npcs.find((n) => n.kind === 'cage' && n.family === family);
