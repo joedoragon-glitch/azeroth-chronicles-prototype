@@ -288,7 +288,7 @@
       ashMovementFactor(unit) {
         if (!unit) return 1;
         const now = this.s.time;
-        const cloud = this.zone().enemies.find(
+        const cloud = this.s.zones[this.s.zone]?.enemies.find(
           (e) =>
             e.type === 'boss' &&
             e.family === 'warlord' &&
