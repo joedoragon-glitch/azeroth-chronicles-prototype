@@ -4,7 +4,7 @@ Ironroot remains a mountain province with pine forest, homes, wild Wolf territor
 
 ## Proposed #239 P0 metal pass (unmerged)
 
-The isolated beta-essential draft adds dark silver-bearing ore at the existing vein and Mine approach, silver-rich chips in existing Quarry sorting, a small Stonecross refining/cupellation hearth before the current die bench, silver-coloured pay/striking pieces, and stamped Crown seals on existing loading crates. The material is **provisional 92.5% silver / 7.5% copper**, with a five-point Crown die; owner review is required before calling this approved canon. See [full researched proposal and visible acceptance route](IRONROOT_CROWNS_239_PROPOSAL.md). The quarry still cuts construction stone; mountain roads and Wolf/Ogre homes remain. No alternate money, new economic resources, convoy encounter, mounted combat or gameplay progression is introduced.
+The corrected beta draft distinguishes **silver-bearing and copper-bearing veins**, including the Colossus Mine workings; sorts the metals separately from construction-stone quarrying; adds Stonecross refining, portrait-stamped crowns showing **the Dark Lord's face**, and guarded shipments on existing roads. No new amount, currency, mechanic, troop or route is introduced. See [#239 corrected implementation](IRONROOT_CROWNS_239_PROPOSAL.md).
 
 The ancient-isolated Colossus interpretation recorded below is **superseded as future canon by #232/#251**; replacement work belongs to #242 and should not be settled by #239.
 
