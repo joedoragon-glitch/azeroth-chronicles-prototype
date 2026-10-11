@@ -18,6 +18,7 @@ assert.equal(c.bossAttackWeights(boss, c.hero)[3], 0);
 boss.telegraph = c.buildBossAttack(boss, 0, c.hero).first;
 c.resolveAttack(boss);
 assert.equal(c.s.projectiles.length, 9);
+c.zone().enemies = [boss];
 boss.telegraph = c.buildBossAttack(boss, 1, c.hero).first;
 c.resolveAttack(boss);
 assert.equal(boss.dressUntil, 0, 'no defensive formation without actual soldiers');
