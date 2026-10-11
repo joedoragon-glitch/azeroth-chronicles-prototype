@@ -67,6 +67,7 @@
   const rogueActions = new Set([
     'dash',
     'shove',
+    'slab',
     'snare',
     'scatter',
     'pivot',
