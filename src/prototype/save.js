@@ -662,7 +662,7 @@
           for (const e of z.enemies) {
             // Historical bosses retain their `crypt` save identity and all combat stats.
             if (e.family === 'crypt' && e.type === 'boss')
-              e.name = e.form === 'true' ? 'TRUE Lifebinder' : 'Lifebinder';
+              e.name = e.form === 'true' ? 'Lifebinder TRUE' : 'Lifebinder';
             if (e.family === 'thorn' && e.type === 'boss') {
               const base = c.boss('thorn').hp * (e.form === 'true' ? 1.8 : 1),
                 fraction = e.hp / e.maxHp,
