@@ -21,6 +21,10 @@ for (const mode of ['normal', 'nightmare']) {
   boss.lastAttackIndex = -1;
   boss.summonCd = 0;
   const seen = new Set();
+  // The checkerboard is intentionally prioritized on first entry, then
+  // excluded while active so other attacks can run concurrently.
+  boss.board = { x: boss.home.x, y: boss.home.y, size: 112,
+    beat: 0, phase: 'warn', timer: 1.45 };
   // Sweep deterministic selector rolls, without passing a forced attack index.
   for (let n = 0; n <= 100; n++) {
     c.random = () => (n + 0.001) / 101;
@@ -29,14 +33,21 @@ for (const mode of ['normal', 'nightmare']) {
     if (chosen >= 0) {
       assert(c.startAttack(boss, c.hero), 'normal selector starts chosen attack');
       assert.equal(boss.lastAttackIndex, chosen, 'selected attack reaches live start');
-      assert(boss.telegraph && boss.telegraph.family === 'citadel');
+      assert(boss.telegraph && boss.telegraph.index === chosen);
       seen.add(chosen);
       boss.telegraph = null;
       boss.sequence = [];
     }
   }
-  assert.deepEqual([...seen].sort(), [0, 1, 2, 3, 4],
-    mode + ' selector must reach all five specified attacks');
+  assert.deepEqual([...seen].sort(), [0, 1, 2, 4],
+    mode + ' selector must reach other skills while the independent board runs');
+  delete boss.board;
+  assert.equal(c.chooseBossAttack(boss, c.hero), 3,
+    mode + ' natural opener starts the independent resurfacing board');
+  assert(c.startAttack(boss, c.hero));
+  assert.equal(boss.lastAttackIndex, 3);
+  boss.telegraph = null;
+  boss.sequence = [];
 
   c.random = () => 0.5;
   boss.lastAttackIndex = -1;
