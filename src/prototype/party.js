@@ -271,7 +271,7 @@
       }
       availableRangers(type) {
         const key = type === 'health' ? 'healCd' : 'manaCd';
-        return this.activeLivingParty().filter((u) => u.type === 'archer' && (u[key] || 0) <= 0);
+        return this.activeLivingParty().filter((u) => u.type === 'archer' && !u.keeperHeld && (u[key] || 0) <= 0);
       }
       supportEffectActive(type) {
         return [this.hero, ...this.activeLivingParty()].some((u) =>
@@ -784,7 +784,7 @@
           u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - dt);
           // Thornfang scatter overrides orders, doctrine and combat until
           // forced movement ends; then the unit resumes its normal assignment.
-          if (u.deathRollHeld || this.tacticalAdvanceScatter(u, dt)) continue;
+          if (u.deathRollHeld || u.keeperHeld || this.tacticalAdvanceScatter(u, dt)) continue;
           if (u.order?.type === 'build') {
             const b = z.buildings.find((b) => b.id === u.order.id);
             if (b && b.progress < 4) {
