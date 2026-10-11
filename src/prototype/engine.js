@@ -3531,9 +3531,8 @@
           ? this.hero
           : this.combatTargets().find((u) => u !== this.hero && u.id === move.targetId);
       if (!move.rogueSignature) {
-        // Base movement remains single-target and cover-sensitive.
-        if (!target || target.hp <= 0 || dist(target, move) > move.radius || !this.line(e, target))
-          return;
+        // The slab is a physical lane: dodging the originally marked target
+        // must not cancel contact with other party members still inside it.
         if (e.family === 'mine' && move.style === 'slab') {
           const start = { x: move.fromX, y: move.fromY },
             side = Math.sign(move.x - move.fromX) || 1,
@@ -3560,6 +3559,9 @@
           }
           return;
         }
+        // All other rogue basics remain single-target and cover-sensitive.
+        if (!target || target.hp <= 0 || dist(target, move) > move.radius || !this.line(e, target))
+          return;
         const startingHero = this.hero,
           startingZone = this.zoneId,
           startingDeaths = this.s.statistics.deaths;
