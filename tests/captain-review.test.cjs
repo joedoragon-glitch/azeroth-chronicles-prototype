@@ -21,7 +21,12 @@ for (const [zone, hp, name] of cases) {
   const again = restored.zone().enemies.find(x => x.id === e.id);
   assert(again, name + ' saved encounter');
   assert.equal(again.baseHp, hp, name + ' reload must not double-scale');
-  assert(Math.abs(again.hp / again.maxHp - 0.37) < 1e-8, name + ' HP fraction survives');
+  assert.equal(again.hp, again.maxHp, name + ' existing save contract restores enemies at full HP');
+  // Verify old-save migration retains combat progress before serialization.
+  const old = { ...e, captainEnduranceVersion: 0, baseHp: hp / 2, maxHp: hp / 2, hp: hp * 0.185 };
+  c.upgradeCaptainEndurance(old, profiles[e.captainProfile]);
+  assert.equal(old.baseHp, hp, name + ' legacy HP migration budget');
+  assert(Math.abs(old.hp / old.maxHp - 0.37) < 1e-8, name + ' migration retains HP fraction');
 }
 assert.equal(profiles['supply-vale'].phase.threshold, .55);
 assert.equal(profiles['supply-vale'].attacks[1].radius, 100);
