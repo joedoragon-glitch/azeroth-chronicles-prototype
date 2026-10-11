@@ -11,16 +11,20 @@ assert.equal(boss.kind, 'dungeon');
 assert.equal(boss.region, 'highlands');
 assert.equal(boss.name, 'Stone Colossus');
 assert.equal(boss.captive, 'Dara the Highland Smith');
-assert.match(boss.role, /Kharun.*First Wall.*Bastion/);
+assert.match(boss.role, /Garun the Firstborn.*Bastion/);
 for (const fact of [
-  'Ogre bastion-mason',
+  'Ogre Bastion',
   'heartstone',
-  'diamond-shaped core',
+  'golden eyes',
   'Dark Lord',
-  'Crown Peace',
-  'Dara',
+  'council',
+  'connected roads',
+  'settlement relocations',
+  'monster peoples',
   'Ridge Tyrant',
-  'compulsory shelter',
+  'Dara',
+  'artistic commissions',
+  'compulsory safety',
 ])
   assert(boss.history.includes(fact), 'biography covers ' + fact);
 assert.doesNotMatch(boss.history, /ancient guardian|exposed by.*workings/i);
@@ -50,7 +54,7 @@ console.log('PASS Colossus identity leaves Ridge authority, attack slots and vul
 const c = fresh();
 assert(c.enter('mine'));
 const mineLore = R.dungeonLore.mine;
-assert.match(mineLore, /Kharun.*First Wall/);
+assert.match(mineLore, /Garun the Firstborn/);
 assert(c.messages.includes(mineLore), 'mine-entry clue is visible to the player');
 assert(c.s.discovered['highlands:dungeon-lore:mine'], 'lore is recorded without a schema bump');
 const z = c.zone();
@@ -64,11 +68,12 @@ assert(normal && normal.form === 'normal');
 const dara = z.npcs.find((n) => n.family === 'mine' && n.kind === 'cage');
 assert(dara);
 assert.equal(dara.workstation, 'equipment-repair');
-assert.match(dara.context, /diamond seal/);
+assert.match(dara.context, /pays for repairs/);
+assert.match(dara.context, /not leave the Mine/);
 c.hero.x = dara.x;
 c.hero.y = dara.y;
 assert.equal(c.interact(dara), false, 'narrative change must not unlock the captive');
-assert(c.messages.some((m) => m.includes('diamond seal')));
+assert(c.messages.some((m) => m.includes('pays for repairs')));
 assert(!c.s.rescued.mine);
 assert(!c.s.keys.mine);
 const messages = [];
