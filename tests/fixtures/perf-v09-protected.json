@@ -39,5 +39,14 @@
     "version": "0.8.139",
     "scope": "Thornfang Pounce and Stone Colossus Wall Rush authored description-only corrections; no mechanics, layouts or procedural art changed",
     "evidence": "v0.9 author approval and boss-description-contracts regression; all other baseline hashes unchanged"
+  },
+  "captainBalanceRevision": {
+    "source": "Draft PR #231: individually approved five-captain encounter mechanics; retained original v0.9 performance baseline and rendering-only revision",
+    "files": {
+      "src/prototype/engine.js": "a9cc0015c7429e66fd9c3c28431ea133f97ac2c5d18a477686e1b6734524b968",
+      "src/prototype/combat.js": "3f2b0b52875927a091c57da0a62e5d37c50917421025a7b2acd12b68a0d63e10",
+      "src/prototype/boss-combat.js": "062f653687a9a1256cabd89ea383771cb27f70dea827919dfac45d6b74609f6a",
+      "src/prototype/rules.js": "449d14c06513533d41c2ba0348ee837ba3aac3750a88910aca5f74d4dc005c2c"
+    }
   }
 }
