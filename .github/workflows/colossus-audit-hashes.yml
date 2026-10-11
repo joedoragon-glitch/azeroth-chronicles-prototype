@@ -1,4 +1,4 @@
-name: Temporary Garun seven mechanics audit
+name: Temporary Garun final source audit
 on:
   push:
     paths:
