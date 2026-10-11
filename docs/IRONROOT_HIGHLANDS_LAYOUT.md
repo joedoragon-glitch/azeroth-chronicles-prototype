@@ -14,14 +14,14 @@ Colossus Mine replaces the legacy divider with receiving/haulage, new supported 
 
 | Open choice | Implemented interpretation |
 | --- | --- |
-| Colossus history | **Superseded by draft #242:** Kharun, an Ogre adventuring Bastion who chose a living stone body, directs the fortified mine passages and its guards; not a creature accidentally exposed by mining |
+| Colossus history | **Superseded by draft #242:** Garun the Firstborn, the Dark Lord's loyal Ogre architect and former Bastion, oversees Mine safety, passages and guards; not a creature accidentally exposed by mining |
 | Dara's compelled work | Repairing mining tools, cart axles and supports at a secured repair bench |
 | Tyrant's private comfort | Supper and a tabletop game by a warm hearth |
 | Minting visibility | One small Stonecross striking workbench, supported by sorted ore and sealed shipments |
 | Ridge archers | Hired convoy/payroll escorts; established species, caps, stats and attacks retained |
 | Direct Dark Crown presence | Restrained sealed correspondence and guarded movement; no new administrative district |
 
-These are the implemented setting choices for further playtesting, except the Colossus origin row, which records its **draft replacement for owner review** rather than a published canon decision. The old workings, historic carvings and internal `ancient-threshold` partition ID describe existing stone and collision geometry, **not an ancient Colossus**; keep those stable for old saves. The Ridge Tyrant remains Master of Coin while Kharun controls mine approaches, gates and supports. See [Stone Colossus: the First Wall](STONE_COLOSSUS_FIRST_WALL.md).
+These are the implemented setting choices for further playtesting, except the Colossus origin row, which records its **draft replacement for owner review** rather than a published canon decision. The old workings, historic carvings and internal `ancient-threshold` partition ID describe existing stone and collision geometry, **not an ancient Colossus**; keep those stable for old saves. The Ridge Tyrant remains Master of Coin while Garun oversees security and supports, pursues personal collections, and pays Dara for commissioned objects despite retaining the smith as a captive. See [Stone Colossus: the First Wall](STONE_COLOSSUS_FIRST_WALL.md).
 
 ## Compatibility and verification
 
