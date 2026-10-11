@@ -1095,7 +1095,10 @@
       return this.makeEnemy(
         {
           family: b.id,
-          name: b.name + (form === 'true' ? ' TRUE' : ''),
+          name:
+            form === 'true' && b.id === 'crypt'
+              ? 'TRUE ' + b.name
+              : b.name + (form === 'true' ? ' TRUE' : ''),
           icon: b.id === 'darklord' ? '😈' : b.kind === 'field' ? '👹' : '💀',
           form,
           type: 'boss',
@@ -2161,7 +2164,11 @@
         }
         p.active = true;
         this.s.origins[this.s.zone] = this.s.phase === 'adventure' ? 'early' : 'awakening';
-        this.say(this.boss(this.s.zone).name + ' TRUE waits in the chamber.');
+        this.say(
+          (this.s.zone === 'crypt'
+            ? 'TRUE ' + this.boss('crypt').name
+            : this.boss(this.s.zone).name + ' TRUE') + ' waits in the chamber.',
+        );
       }
     }
     awaken(victoryLevel = this.hero.level) {
