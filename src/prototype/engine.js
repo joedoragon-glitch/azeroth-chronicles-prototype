@@ -713,6 +713,17 @@
         e.name = e.name.replace(/ store guard/i, ' treasury guard');
       z.treasuryVersion = targetVersion;
     }
+    // Captain endurance pass: more time for authored attacks and phase mechanics,
+    // without altering their outgoing damage or cooldowns. Versioned for old saves.
+    upgradeCaptainEndurance(e) {
+      if (!e || e.captainEnduranceVersion === 1) return;
+      const multiplier = 1.6;
+      const fraction = e.maxHp > 0 ? Math.max(0, Math.min(1, e.hp / e.maxHp)) : 0;
+      e.baseHp = Math.round(e.baseHp * multiplier);
+      e.maxHp = Math.round(e.maxHp * multiplier);
+      e.hp = e.hp > 0 ? e.maxHp * fraction : 0;
+      e.captainEnduranceVersion = 1;
+    }
     roomCaptainPopulation(z) {
       const profile = R.roomCaptains?.[z.id];
       if (!profile) return;
@@ -727,6 +738,7 @@
       captain.visualScale = profile.visualScale || 1.16;
       captain.specialCd = Math.min(captain.specialCd ?? 1.25, 1.25);
       captain.roomCaptainVersion = 1;
+      this.upgradeCaptainEndurance(captain);
       if (captain.name !== profile.name) captain.name = profile.name;
     }
     fieldCaptainPopulation(z) {
@@ -774,6 +786,7 @@
         : 0;
       captain.captainPatrolWait = Math.max(0, captain.captainPatrolWait || 0);
       captain.fieldCaptainVersion = 1;
+      this.upgradeCaptainEndurance(captain);
       if (captain.name !== profile.name) captain.name = profile.name;
       z.fieldCaptainVersion = 1;
     }
