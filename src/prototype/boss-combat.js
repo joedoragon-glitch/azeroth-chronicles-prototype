@@ -197,6 +197,7 @@
         return plans.map((plan, index) => {
           if (!allowRepeat && index === e.lastAttackIndex && plans.length > 1) return 0;
           if (e.family === 'darklord' && index === 3 && !low) return 0;
+          if (e.family === 'darklord' && index === 4 && e.hp > e.maxHp * 0.3) return 0;
           const attackTarget = this.bossAttackTarget(e, target, index);
           const reach = this.bossCenteredReach(e, plan);
           // A special must have realistic coverage at the moment it is chosen.
@@ -288,7 +289,26 @@
           Object.assign(a, patches[0], { count: 1 });
           for (const p of patches.slice(1)) sequence.push({ ...a, ...p, count: 1 });
         }
-        if (a.combo)
+        if (e.family === 'darklord' && index === 0) {
+          sequence.push(
+            {
+              ...a,
+              angle: angle + 0.7,
+              timer: 0.5,
+              total: 0.5,
+              coefficient: 0.85,
+              name: a.name + ' — shield feint',
+            },
+            {
+              ...a,
+              angle: angle - 0.7,
+              timer: 0.8,
+              total: 0.8,
+              coefficient: 1.3,
+              name: a.name + ' — final thrust',
+            },
+          );
+        } else if (a.combo)
           sequence.push({
             ...a,
             angle: angle + 0.7,
@@ -296,6 +316,35 @@
             total: 0.8,
             name: a.name + ' — second arc',
           });
+        if (e.family === 'darklord' && index === 1) {
+          const side = angle + Math.PI / 2;
+          const flank = this.safe(e.x + Math.cos(side) * 110, e.y + Math.sin(side) * 110);
+          const crossing = this.safe(
+            target.x - Math.cos(side) * 110,
+            target.y - Math.sin(side) * 110,
+          );
+          Object.assign(a, { x: flank.x, y: flank.y, coefficient: 0.55 });
+          sequence.push(
+            {
+              ...a,
+              x: crossing.x,
+              y: crossing.y,
+              timer: 0.85,
+              total: 0.85,
+              coefficient: 0.65,
+              name: a.name + ' — crossing',
+            },
+            {
+              ...a,
+              x: target.x,
+              y: target.y,
+              timer: 0.85,
+              total: 0.85,
+              coefficient: 1.4,
+              name: a.name + ' — flank strike',
+            },
+          );
+        }
         if (a.kind === 'sector') {
           a.angle = angle + Math.PI / 2;
           a.count = 1;

@@ -39,5 +39,13 @@
     "version": "0.8.139",
     "scope": "Thornfang Pounce and Stone Colossus Wall Rush authored description-only corrections; no mechanics, layouts or procedural art changed",
     "evidence": "v0.9 author approval and boss-description-contracts regression; all other baseline hashes unchanged"
+  },
+  "darkLordPhaseOne": {
+    "status": "unmerged implementation slice; explicitly reviewed exact-source hashes, baseline preserved",
+    "gitBlobSha1": {
+      "src/prototype/data.js": "e94e3da3b880f9013f001efdb27ac98d887615d3",
+      "src/prototype/rules.js": "a36b6aa54a373813f32d06eeba0da61c6c74f362",
+      "src/prototype/boss-combat.js": "c8b8643a78814aaa76ed225049a92e10a14ba2f7"
+    }
   }
 }

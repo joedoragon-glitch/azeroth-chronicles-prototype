@@ -80,10 +80,11 @@
       attack('summon', 1.8, 1.5, { species: 'ashbeast', ranged: false }),
     ],
     darklord: [
-      attack('cone', 1.3, 1.5, { combo: true, manaDrain: 0.08 }),
-      attack('circle', 1.9, 1.6, { count: 3, sequential: true, manaDrain: 0.1 }),
+      attack('cone', 1.1, 1.5, { coefficient: 0.85, manaDrain: 0.08 }),
+      attack('circle', 1.2, 1.6, { landing: true, coefficient: 1.4 }),
       attack('summon', 2, 1.6, { species: 'crownguard', ranged: true }),
-      attack('sector', 2, 2, { sequential: true, count: 3, manaDrain: 0.12 }),
+      attack('sector', 1.4, 2, { sequential: true, count: 3, coefficient: 1.1, manaDrain: 0.12 }),
+      attack('line', 1.5, 8, { coefficient: 1.5 }),
     ],
   };
   const sites = [
@@ -3818,11 +3819,11 @@
       combos: [{ from: 2, to: 1, phase: 'low', chance: 0.45 }],
     },
     darklord: {
-      close: [0, 3],
-      far: [1, 2, 3],
-      heroTarget: [0, 1, 3],
-      phasePreferred: [3, 1, 2],
-      combos: [{ from: 1, to: 0, phase: 'high', chance: 0.4 }],
+      close: [0, 3, 4],
+      far: [1, 2, 3, 4],
+      heroTarget: [0, 1, 3, 4],
+      phasePreferred: [3, 4, 1, 2],
+      combos: [],
     },
   };
   const trueBossSummons = {
@@ -4354,7 +4355,7 @@
       abyss: { name: 'Abyss Dragon’s Ashwing Feint', style: 'dash', coefficient: 0.25 },
       citadel: { name: 'Ash Sentinel’s Reversal', style: 'shove', coefficient: 0.24 },
       cindermaw: { name: 'Cindermaw’s Ember Hook', style: 'snare', coefficient: 0.23 },
-      darklord: { name: 'Dark Lord’s Crown Grasp', style: 'snare', coefficient: 0.26 },
+      darklord: { name: 'Writ of Restraint', style: 'snare', coefficient: 0.26 },
     },
   };
   // Species × role ringleader signatures. They are tactical specials, not
