@@ -383,6 +383,40 @@ function summarize(samples) {
             initial.baseline.pixels,
             'Full baseline/candidate pixels ' + JSON.stringify(spec),
           );
+        if (initial.candidate.gameplayState !== initial.baseline.gameplayState) {
+          const diagnostic = await Promise.all(
+            ['baseline', 'candidate'].map((which) =>
+              pages[which].evaluate(() =>
+                JSON.stringify(__perfWs2.game, (key, value) => {
+                  if (key === 'ironrootLifeVersion') return undefined;
+                  if (key === 'props' && Array.isArray(value))
+                    return value.filter(
+                      (p) =>
+                        !String(p.id || '').startsWith('ironroot-life-') &&
+                        !/^(silver|copper)-(ore-face|sort-samples)$/.test(p.structure),
+                    );
+                  return value;
+                }),
+              ),
+            ),
+          );
+          const [a, b] = diagnostic.map(JSON.parse);
+          const differences = [];
+          const walk = (x, y, prefix) => {
+            if (differences.length >= 18) return;
+            if (JSON.stringify(x) === JSON.stringify(y)) return;
+            if (!x || !y || typeof x !== 'object' || typeof y !== 'object') {
+              differences.push({ path: prefix, baseline: x, candidate: y });
+              return;
+            }
+            for (const key of new Set([...Object.keys(x), ...Object.keys(y)])) {
+              walk(x[key], y[key], prefix + '.' + key);
+              if (differences.length >= 18) break;
+            }
+          };
+          walk(a, b, 'game');
+          console.log('IRONROOT_GAMEPLAY_DIFFERENCE', JSON.stringify(differences));
+        }
         assert.equal(
           initial.candidate.gameplayState,
           initial.baseline.gameplayState,
