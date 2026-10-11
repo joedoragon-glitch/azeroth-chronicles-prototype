@@ -1,0 +1,41 @@
+'use strict';
+const assert = require('node:assert/strict');
+const Campaign = require('../src/prototype/engine.js');
+const D = Campaign.data, R = Campaign.rules;
+const boss = (id) => D.bosses.find((b) => b.id === id);
+const rules = (id) => R.attacks[id];
+
+assert.equal(boss('crypt').name, 'Lifebinder');
+assert.equal(boss('crypt').id, 'crypt', 'existing save key must remain stable');
+assert.equal(boss('crypt').hp, 650, 'first boss base HP unchanged');
+assert.equal(boss('crypt').damage, 16, 'first boss damage unchanged');
+assert.equal(rules('crypt')[2].attendant, true);
+assert.equal(rules('crypt')[2].kind, 'summon');
+assert.equal(rules('crypt')[3].count, 4);
+assert.equal(rules('warlord')[1].count, 6);
+assert.equal(R.bossSummoning.overrides.crypt.normalCap, 12);
+assert.equal(R.bossSummoning.overrides.crypt.trueCap, 6);
+assert.equal(boss('mire').hp, 1100);
+assert.equal(boss('warlord').hp, 4300);
+
+const game = new Campaign('normal', 'ranger', () => 0.87);
+game.enter('crypt');
+const e = game.bossEnemy(boss('crypt'), 'normal', {x: 1050, y: 1100});
+game.zone().enemies = [e];
+const plan = game.trueSummonPlan(e);
+assert.equal(plan.attendant, true);
+let added = game.summonBossAdds(e, plan, game.bossSummonCap(e));
+assert.equal(added, 3, 'first Call the Attendants produces exactly three');
+added = game.summonBossAdds(e, plan, game.bossSummonCap(e));
+assert.equal(added, 3, 'second call adds another three instead of replacing the first shift');
+const attendants = game.bossOwnedSummons(e);
+assert.equal(attendants.length, 6);
+assert(attendants.every(u => u.estateAttendant && u.name === 'Estate attendant' && u.visualScale === 0.78));
+for(let i=0;i<4;i++) game.summonBossAdds(e, plan, game.bossSummonCap(e));
+assert.equal(game.bossOwnedSummons(e).length, 12, 'population stops at safety ceiling');
+assert.equal(game.summonBossAdds(e, plan, game.bossSummonCap(e)), 0);
+
+const trueBoss = game.bossEnemy(boss('crypt'), 'true', {x: 1050, y: 1100});
+assert.equal(trueBoss.name, 'Lifebinder TRUE');
+assert.equal(game.bossSummonCap(trueBoss), 6, 'TRUE initial entourage retains established six-person composition');
+console.log('PASS staged Lifebinder and pit-stop combat contracts');
