@@ -55,6 +55,8 @@ The clues complement rather than replace all Forest Crypt props: coffins, ossuar
 | Wraiths | Marches nighttime wraith and Keeper's own wraith summons remain distinct | Do not relabel them as Lifebinder-made or as junior Crown attendants |
 | Checks | Targeted identity/old-save contract test plus existing quest, victory and TRUE regression expectations | #230's reviewed head (35f95e3) had an unsuccessful full Actions run; this PR does **not** absorb its unstable combat changes |
 
+**Protected-performance baseline:** the audited v0.9 reference SHA remains immutable. Only `data.js`, `rules.js` and `save.js` have declared, fixed SHA-256 exceptions in `tests/fixtures/perf-v09-protected.json`, checked by `tests/perf-v09-protected.test.cjs`. `engine.js` was returned exactly to the shipped baseline to avoid an unjustified simulation change; TRUE displays as `Lifebinder TRUE` under the established name-suffix convention. Draft #230 requests the alternate `TRUE Lifebinder` ordering and must reconcile this explicitly if selected. All other performance-protected files still require their exact prior SHA-256 checks. These narrowly declared hash exceptions are not proof of runtime behavior; the separate regression and device gates remain required.
+
 **Cross-branch reconciliation:** When the owner selects changes for the one later worldbuilding release, combine from the approved integration base and resolve overlaps in data, rules, engine, save and tests. Keep this biography, clue wording and save-ID invariants; take only individually audited mechanics from #230. Do not merge this PR into #230, copy all of #230 into this PR, or silently retune first-dungeon combat.
 
 ## Review evidence and further gates
