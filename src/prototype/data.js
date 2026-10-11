@@ -248,14 +248,7 @@ const PrototypeData = {
       name: 'Stone Colossus',
       role: 'Kharun, the First Wall — former adventuring Bastion',
       history:
-        'Before he was the Stone Colossus, Kharun was an Ogre bastion-mason—the party\'s shield, siege-breaker and road-builder—who traveled with the hero now known as the Dark Lord. ' +
-        'When a mountain gate collapsed on his companions, he bound a glowing heartstone to his chest and pulled the shattered cliff around his body, holding the roof until they escaped. ' +
-        'His armored stone limbs, gold-lit eyes and diamond-shaped core were made by choice, not unearthed from an ancient creature. ' +
-        'Patient, precise and dryly funny, he trusted his friend\'s promise that no companion would ever be abandoned. ' +
-        'He helped fortify the Crown Peace but now doubts the friend who uses safety to excuse forced work and closed passages. ' +
-        'Free to choose his own orders, Kharun now commands Ogre wardens and Wolf sentries from Colossus Mine, whose braced galleries and mineral exits he can close at will; Dara repairs its hauling machinery under guard. ' +
-        'The Ridge Tyrant sets wages and mints crowns, but Kharun controls access and fortifications, not accounts. ' +
-        'If the Dark Lord falls, the First Wall intends to build a realm of protected corridors and compulsory shelter: no one left outside, and no one permitted to walk unguarded.',
+        "Before he was the Stone Colossus, Kharun was an Ogre bastion-mason—the party's shield, siege-breaker and road-builder—who traveled with the hero now known as the Dark Lord. When a mountain gate collapsed on his companions, he bound a glowing heartstone to his chest and pulled the shattered cliff around his body, holding the roof until they escaped. His armored stone limbs, gold-lit eyes and diamond-shaped core were made by choice, not unearthed from an ancient creature. Patient, precise and dryly funny, he trusted his friend's promise that no companion would ever be abandoned. He helped fortify the Crown Peace but now doubts the friend who uses safety to excuse forced work and closed passages. Free to choose his own orders, Kharun now commands Ogre wardens and Wolf sentries from Colossus Mine, whose braced galleries and mineral exits he can close at will; Dara repairs its hauling machinery under guard. The Ridge Tyrant sets wages and mints crowns, but Kharun controls access and fortifications, not accounts. If the Dark Lord falls, the First Wall intends to build a realm of protected corridors and compulsory shelter: no one left outside, and no one permitted to walk unguarded.",
       level: 9,
       captive: 'Dara the Highland Smith',
       service: 'Highland weapons armor and equipment improvements',
