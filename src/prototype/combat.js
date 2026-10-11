@@ -354,7 +354,6 @@
           e.open = 0;
           e.slow = 0;
           this.say(e.name + ' resets: charge powerful attacks after engaging.');
-          this.event('chargedOpenerRejected', { enemy: e.id, x: e.x, y: e.y });
           return false;
         }
         e.mercyProvoked = true;
