@@ -1,29 +1,33 @@
 'use strict';
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine');
+const narration = require('../src/prototype/narration');
 
 const dragon = Campaign.data.bosses.find((boss) => boss.id === 'abyss');
 assert(dragon, 'Abyss dungeon boss keeps its stable family');
 assert.equal(dragon.name, 'Abyss Dragon', 'Public combat identity does not change');
 assert.equal(dragon.captive, 'Eren the Runewright', 'Eren rescue remains intact');
 
-const lore = Campaign.rules.dungeonLore.abyss;
+const firstEntry = Campaign.rules.dungeonLore.abyss;
 for (const phrase of [
-  'purple dragon, Veyrith',
-  'personal flying mount',
-  'already flown together',
+  'purple dragon is his personal flying mount',
   'future air force',
   'royal launch platform is still being built',
-  'flight-planning table',
-  'claw marks',
-  'route home',
-]) assert(lore.includes(phrase), 'Missing approved foundation or new character cue: ' + phrase);
-assert(!/prisoner|imprisoned|captive dragon|completed fleet/i.test(lore));
+])
+  assert(firstEntry.includes(phrase), 'Existing air project lore must remain: ' + phrase);
+
+const clue = narration[20];
+assert.equal(clue.kind, 'narration');
+assert(clue.text.startsWith('Eren is free. The dragons bred at Abyss Bastion are meant for an army.'));
+for (const phrase of ['flight map', 'purple mount', 'Veyrith', 'route home'])
+  assert(clue.text.includes(phrase), 'Missing new character clue: ' + phrase);
+assert(clue.text.length <= 180, 'Eren quest payoff remains a compact narrative card');
+assert(!/prisoner|imprisoned|captive dragon|completed fleet/i.test(firstEntry + clue.text));
 
 const fresh = new Campaign('normal', 'paladin', () => 0.9);
 fresh.enter('abyss');
 const zone = fresh.zone();
-assert.equal(fresh.messages.filter((m) => m === lore).length, 1);
+assert.equal(fresh.messages.filter((m) => m === firstEntry).length, 1);
 const structures = new Set(zone.props.map((p) => p.structure));
 for (const kind of [
   'flight-planning-table',
@@ -37,12 +41,23 @@ assert(zone.npcs.some((n) => n.kind === 'cage'), 'Eren remains in the dungeon');
 assert(zone.enemies.some((e) => e.type === 'boss' && e.family === 'abyss'));
 assert.equal(fresh.traps().length, 18);
 
+const quest = fresh.questDefs().find((q) => q.id === 'quest-20');
+assert(quest && quest.name === 'Wings of War', 'Existing specialist rescue quest keeps its identity');
+fresh.s.quests[quest.id].done = true;
+fresh.checkQuests();
+assert.equal(fresh.s.quests[quest.id].paid, true);
+assert.equal(fresh.notices.filter((n) => n.text === clue.text).length, 1);
+fresh.checkQuests();
+assert.equal(fresh.notices.filter((n) => n.text === clue.text).length, 1, 'Rescue cue is once-only');
+
 fresh.enter('frontier');
 fresh.enter('abyss');
-assert.equal(fresh.messages.filter((m) => m === lore).length, 1, 'Return does not replay first-visit clue');
+assert.equal(fresh.messages.filter((m) => m === firstEntry).length, 1, 'Return does not replay first-entry project lore');
 const restored = Campaign.restore(fresh.snapshot(), () => 0.9);
 restored.enter('abyss');
-assert(!restored.messages.includes(lore), 'Reload preserves existing once-only discovery gate');
+restored.checkQuests();
+assert(!restored.messages.includes(firstEntry), 'Reload preserves original dungeon lore discovery gate');
+assert.equal(restored.notices.filter((n) => n.text === clue.text).length, 0, 'Paid Eren clue never replays after reload');
 
 const rules = Campaign.rules;
 assert.deepEqual(
@@ -53,7 +68,7 @@ assert.deepEqual(
     ['circle', 1.8, 2],
     ['summon', 2, 1.6],
   ],
-  'No damage, timing or telegraph retuning belongs to the identity change',
+  'No timing or telegraph retuning belongs to the identity change',
 );
 assert.equal(rules.attacks.abyss[2].count, 2);
 assert.equal(rules.attacks.abyss[2].sequential, true);
@@ -63,4 +78,4 @@ assert.deepEqual(rules.bossBehavior.abyss.close, [0, 1]);
 assert.deepEqual(rules.bossBehavior.abyss.far, [2]);
 assert.equal(rules.bossRecovery.abyss.healFraction, 0.08);
 assert.equal(rules.dungeonArchitecture.abyss.version, 1);
-console.log('PASS Veyrith lore, existing-Bastion clue, normal combat contract, Eren, 18 hazards, and saved discovery');
+console.log('PASS Veyrith rescue clue, original Bastion lore, saved quest/discovery gates, Eren, 18 traps and unchanged normal attack contract');

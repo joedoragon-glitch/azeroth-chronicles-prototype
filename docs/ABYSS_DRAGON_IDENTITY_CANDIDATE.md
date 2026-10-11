@@ -14,7 +14,7 @@ This is a **credible future claimant, not a forced ending**. The Bastion has egg
 
 ## Player-observable evidence
 
-1. **Already-existing flight-planning table, first Bastion entrance:** the once-only dungeon introduction identifies Veyrith and describes his neat claw marks pairing strike routes with routes home. The map and its existing purple routes remain; this is authored readable story text, not a claim that microscopic lettering is drawn on the table. Existing save-discovery flags still control one-time narration.
+1. **Existing Bastion flight-planning table, `Wings of War` rescue payoff:** Eren's once-only quest narration names Veyrith and reports a marked route home for every attack. The map and its existing purple routes remain; this is readable story text, not microscopic lettering drawn onto the table. Existing paid-quest flags keep the cue from replaying after reload. The original once-only Bastion entrance description remains unchanged.
 2. **Already-existing encounter, no balance retune:** Shadow Flight forces the hero to follow two sequential landing warnings; Wing Shockwave clears a ring; Hatchling Call brings a capped brood; and the existing **Wingward Break** scatter makes him feel like a defensive airspace commander. These are suggestive behaviors, not proof that individual summoned hatchlings receive new protective AI.
 
 ## Combat and safety audit
