@@ -3305,12 +3305,16 @@
         fromY: profile.style === 'slab' ? target.y : e.y,
         angle:
           profile.style === 'slab'
-            ? target.x >= e.x ? 0 : Math.PI
+            ? target.x >= e.x
+              ? 0
+              : Math.PI
             : Math.atan2(target.y - e.y, target.x - e.x),
         x:
           profile.style === 'slab'
             ? target.x + (target.x >= e.x ? 100 : -100)
-            : centered ? e.x : target.x,
+            : centered
+              ? e.x
+              : target.x,
         y: centered ? e.y : target.y,
         radius,
         slowSeconds: profile.slowSeconds || 0,
@@ -3540,7 +3544,12 @@
               continue;
             const destination = { x: unit.x + side * 100, y: unit.y };
             const landed = this.hitParty(unit, e.damage * move.coefficient);
-            if (this.hero !== hero || this.zoneId !== zone || this.s.challenge.pending || this.s.challenge.gameOver)
+            if (
+              this.hero !== hero ||
+              this.zoneId !== zone ||
+              this.s.challenge.pending ||
+              this.s.challenge.gameOver
+            )
               return;
             if (landed && unit.hp > 0 && this.clearSegment(unit, destination, 12))
               this.move(unit, destination, 280, 0.42);
