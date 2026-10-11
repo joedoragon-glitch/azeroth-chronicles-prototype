@@ -36,19 +36,17 @@
       deathPenaltyFraction(zone = this.s.zone) {
         if (this.s.challenge?.succession) return 0;
         const region = D.regions[this.regionIndex(zone)]?.id;
-        const barracks = (this.s.zones[region]?.buildings || []).filter(
-          (b) => b.kind === 'barracks' && b.progress >= 4,
-        );
-        if (barracks.some((b) => b.full))
-          return R.balance.economy.fullBarracksDeathPenaltyFraction;
-        return barracks.length
-          ? R.balance.economy.basicBarracksDeathPenaltyFraction
-          : R.balance.economy.deathPenaltyFraction;
+        const buildings = this.s.zones[region]?.buildings || [];
+        const completed = (b) => b.kind === 'barracks' && b.progress >= 4;
+        const built = buildings.filter(completed);
+        const config = R.balance.economy;
+        if (built.some((b) => b.full)) return config.fullBarracksDeathPenaltyFraction;
+        if (built.length) return config.basicBarracksDeathPenaltyFraction;
+        return config.deathPenaltyFraction;
       }
       deathPenaltyAmount() {
-        return this.hero.gold > 0
-          ? Math.ceil(this.hero.gold * this.deathPenaltyFraction())
-          : 0;
+        if (this.hero.gold <= 0) return 0;
+        return Math.ceil(this.hero.gold * this.deathPenaltyFraction());
       }
       applyDeathPenalty() {
         const lost = this.deathPenaltyAmount();
