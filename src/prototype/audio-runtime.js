@@ -6,6 +6,7 @@
       status() {
         return {
           state: this.ctx?.state || 'locked',
+          optimizationMode: !!this.optimizationMode,
           paused: this.paused,
           cue: this.cue ? { ...this.cue } : null,
           context: this.context
@@ -117,6 +118,7 @@
         }
       }
       tone(midi, at, duration, volume = 0.04, type = 'sine', bus = 'music', attack = 0.03) {
+        if (this.optimizationMode && bus === 'ambience') return;
         const priority = this.sourcePriority ?? (bus === 'music' ? 0 : bus === 'interface' ? 3 : 1);
         if (!this.ctx || !this.reserveVoice(priority)) return;
         const osc = this.ctx.createOscillator(),
