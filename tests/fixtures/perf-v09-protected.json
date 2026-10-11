@@ -29,7 +29,7 @@
   "renderingRevision": {
     "source": "PR #225 plus combined-release slowdown fix; authorized rendering-only changes",
     "files": {
-      "src/prototype/app.js": "2818fcfa641e5901c4c797e0401d6f43b9713549b5f28c9d897b96d62642f331",
+      "src/prototype/app.js": "08a9523dd5a3b2b3077a90fcede789925b1d76edd55b9991cf429151323eeb3a",
       "src/prototype/runtime.js": "d75f3f9fc8e7a964420da9b1642aefc7dae433b0a19ca45b704b65c72f7e0652"
     },
     "activeFrameBodySha256": "a042cd0491db3860a8f8c29e9f1471b45be3ca108b2520dcc4df833d0ce81d7a"
@@ -43,8 +43,8 @@
   "approvedUxRevision": {
     "source": "Issue #270 post-beta UI-only draft; actual Chromium behavior regression and reviewed menu focus",
     "previousAppSha256": "e25db6455fbe9244d67fb672568e32869410b44a85afe02fee3f531dd5fcd333",
-    "newAppSha256": "2818fcfa641e5901c4c797e0401d6f43b9713549b5f28c9d897b96d62642f331",
-    "scope": "Menu selection, dialog keyboard focus and Tab navigation only; no frame-loop/body changes; reviewed phone menu/Back 32px to 44px minimum",
+    "newAppSha256": "08a9523dd5a3b2b3077a90fcede789925b1d76edd55b9991cf429151323eeb3a",
+    "scope": "Menu selection, dialog keyboard focus and Tab navigation only; no frame-loop/body changes; reviewed phone menu/Back 32px to 44px minimum; optional focus call for Node fake-DOM compatibility",
     "baseline": "d7d2c22485b08265b31bf595305ef952b40b72cd",
     "previousPhoneSha256": "e1e6a917ddf1ae6bce51bfee66907c50c1adbe8c581b53b4674e7f1b0810877c",
     "newPhoneSha256": "bbec348a8f6448191c07bb700f7e5ae2ee7c5e217798488f096388783c2fbbcf"

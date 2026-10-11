@@ -435,7 +435,7 @@
     renderActions();
     // Give keyboard and assistive-technology users a reliable dialog focus entry.
     $('modal').tabIndex = -1;
-    $('modal').focus({ preventScroll: true });
+    $('modal').focus?.({ preventScroll: true });
   }
   function renderActions() {
     const host = $('modal-actions');
@@ -476,7 +476,7 @@
     buttons.forEach((b, i) => b.classList.toggle('selected', i === menuIndex));
     const selected = buttons[menuIndex];
     if (moveFocus && selected)
-      (selected.disabled ? $('modal') : selected).focus({ preventScroll: true });
+      (selected.disabled ? $('modal') : selected).focus?.({ preventScroll: true });
     selected?.scrollIntoView({ block: 'nearest' });
   }
   function closeMenu() {
