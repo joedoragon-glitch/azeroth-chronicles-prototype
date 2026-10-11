@@ -44,6 +44,27 @@
   }
   function warningShapes(a, patches) {
     if (a.kind === 'summon') return [];
+    if (a.kind === 'pattern-charge') {
+      const path = [{ x: a.fromX, y: a.fromY }, ...(a.path || [])];
+      return path.slice(1).map((to, i) => capsulePoints(path[i], to, G.chargeHalfWidth));
+    }
+    if (a.kind === 'canister')
+      return [sectorPoints({ x: a.fromX, y: a.fromY }, a.radius, a.angle, 0.58)];
+    if (a.kind === 'checkerboard') {
+      const size = 112;
+      return Array.from({ length: 16 }, (_, i) => {
+        const x = a.x + ((i % 4) - 1.5) * size;
+        const y = a.y + (Math.floor(i / 4) - 1.5) * size;
+        const h = size / 2;
+        return [
+          { x: x - h, y: y - h },
+          { x: x + h, y: y - h },
+          { x: x + h, y: y + h },
+          { x: x - h, y: y + h },
+        ];
+      });
+    }
+
     if (a.kind === 'line' || a.kind === 'volley')
       return (a.kind === 'volley' ? [-0.22, 0, 0.22] : a.count === 2 ? [-85, 85] : [0]).map((o) => {
         const angle = a.angle + (a.kind === 'volley' ? o : 0),
@@ -158,6 +179,30 @@
             );
             ctx.stroke();
           }
+      }
+    }
+    // Persistent 4x4 board telegraphs independently of Veyra's active attack.
+    for (const boss of game
+      .zone()
+      .enemies.filter((e) => e.family === 'citadel' && e.hp > 0 && e.board)) {
+      for (const cell of game.sentinelBoardCells(boss)) {
+        const h = cell.size / 2;
+        polygon(ctx, screen, [
+          { x: cell.x - h, y: cell.y - h },
+          { x: cell.x + h, y: cell.y - h },
+          { x: cell.x + h, y: cell.y + h },
+          { x: cell.x - h, y: cell.y + h },
+        ]);
+        const warning = cell.selected && boss.board.phase === 'warn';
+        const impact = cell.selected && boss.board.phase === 'rest';
+        ctx.lineWidth = warning || impact ? 2.2 : 1.1;
+        ctx.strokeStyle = warning ? '#fff1a7' : impact ? '#ff9267' : '#8794a766';
+        ctx.fillStyle = warning ? '#df795655' : impact ? '#e84b3d88' : '#536b8917';
+        if (cue) ctx.stroke();
+        else {
+          ctx.fill();
+          ctx.stroke();
+        }
       }
     }
     for (const e of game.zone().enemies.filter((e) => e.rangedAim)) {

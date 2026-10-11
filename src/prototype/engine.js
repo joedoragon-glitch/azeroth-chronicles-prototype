@@ -1516,6 +1516,11 @@
       this.s.hazards = [];
       for (const z of Object.values(this.s.zones))
         for (const e of z.enemies) {
+          if (e.family === 'citadel') {
+            delete e.board;
+            delete e.dressUntil;
+          }
+          delete e.dressPost;
           e.aggro = false;
           e.telegraph = null;
           e.sequence = [];
@@ -3636,6 +3641,32 @@
           }
           continue;
         }
+        if (e.family === 'citadel' && e.board && e.aggro && !e.returning) {
+          this.sentinelUpdateBoard(e, dt);
+          if (
+            this.s.statistics.deaths !== deaths ||
+            z !== this.zone() ||
+            this.s.challenge.pending ||
+            this.s.challenge.gameOver
+          )
+            return;
+        }
+        if (e.dressPost) {
+          const post = e.dressPost;
+          if (
+            post.expires <= this.s.time ||
+            e.returning ||
+            !z.enemies.some((boss) => boss.id === post.owner && boss.hp > 0 && boss.aggro)
+          ) {
+            delete e.dressPost;
+          } else if (Math.hypot(e.x - post.x, e.y - post.y) > 7) {
+            this.move(e, post, 145, dt);
+            e.noProgress = 0;
+            continue;
+          } else {
+            delete e.dressPost;
+          }
+        }
         if (e.neutral) {
           const t = this.s.time * 0.1 + Number(e.id.split('-')[1]);
           this.move(e, { x: e.home.x + Math.cos(t) * 35, y: e.home.y + Math.sin(t) * 35 }, 12, dt);
@@ -3962,6 +3993,10 @@
         e.captainPhaseMove = 1;
         e.captainAttackRate = 1;
         e.captainGuard = 0;
+        if (e.family === 'citadel') {
+          delete e.board;
+          delete e.dressUntil;
+        }
         e.quotaOvertime = 0;
         e.captainOpeningSummon = false;
         delete e.quotaTarget;
