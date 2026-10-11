@@ -314,7 +314,7 @@ function fortify() {
   approach(recruiter, false);
   while (c.s.party.some((u) => u.hp <= 0) && c.recover()) capture();
   assert(c.activeLivingParty().length, 'living resource escort');
-  earnPreparation(true);
+  if (c.hero.gold < 500) earnPreparation(true);
   approach(recruiter, false);
   while (c.s.party.some((u) => u.hp <= 0) && c.recover()) capture();
   assert(rest(), 'rest before construction');
@@ -325,19 +325,28 @@ function fortify() {
     assert(c.build(), 'paid barracks construction accepted');
     b = c.zone().buildings.at(-1);
   }
-  for (let i = 0; i < 600 && b.progress < 4; i++) tick();
+  approach(b);
+  if (b.progress < 4) c.assignBuilder(b.id);
+  const guardTick = () => {
+    const enemy = near();
+    if (enemy?.aggro)
+      for (const slot of [1, 2, 6, 5, 7]) if (c.hero.skills[slot - 1]) c.cast(slot, enemy.id);
+    if (c.hero.hp < c.hero.maxHp * 0.8) c.cast(3);
+    tick();
+  };
+  for (let i = 0; i < 600 && b.progress < 4; i++) guardTick();
   assert(b.progress >= 4, 'construction completed through worker ticks');
   approach(b, false);
   if (!b.full) {
     assert(c.upgradeBarracks(b.id), 'paid full barracks upgrade accepted');
-    for (let i = 0; i < 600 && !b.full; i++) tick();
+    for (let i = 0; i < 600 && !b.full; i++) guardTick();
   }
   assert(b.full, 'full barracks completed through worker ticks');
   record('earned full barracks completed');
   for (const type of ['soldier', 'archer']) {
     approach(b, false);
     assert(c.train(b.id, type), 'paid recruitment ' + type);
-    for (let i = 0; i < 100 && b.queue > 0; i++) tick();
+    for (let i = 0; i < 100 && b.queue > 0; i++) guardTick();
     assert.equal(b.queue, 0, 'recruitment completed through ticks');
   }
   assert.equal(c.activeLivingParty().length, 5, 'five living active companions');

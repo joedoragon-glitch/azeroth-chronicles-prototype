@@ -42,5 +42,17 @@
   "earned-abyss": {
     "outcome": "INCOMPLETE: approach incomplete abyss",
     "finalSaveSha256": "edc98d25e7b4bb46ed7787ebb6ca519a2c369a57e272672fc8390596804f4526"
+  },
+  "earned-frontier-fortify": {
+    "outcome": "INCOMPLETE: construction completed through worker ticks",
+    "finalSaveSha256": "bc6f838678b33adad1a7636c93f4e5a527f2fed450e4b6bad0c7092c6fa1a1d0"
+  },
+  "earned-frontier-fortify-continued": {
+    "outcome": "PASS route fortify (engine actions only)",
+    "finalSaveSha256": "0c0d1842b687980a934e30036b9274f063c96f1e05e45dc2858fd9e618eefe44"
+  },
+  "earned-abyss-reinforced": {
+    "outcome": "INCOMPLETE: encounter incomplete abyss",
+    "finalSaveSha256": "047d0d32a3163b17ff225e82115ca0f55bc6d300efeaa884da953fbc89a10033"
   }
 }
