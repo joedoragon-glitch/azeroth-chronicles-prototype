@@ -6920,10 +6920,8 @@
                   [x + dx, -17],
                   [x + dx + 5, -6],
                 ],
-                '#67747b',
+                '#a19a80',
               );
-            // Flat lead-grey ore chips with bright silver-bearing flecks.
-            for (const dx of [5, 13]) glint(x + dx, -10, '#cdd8d9', 1.7);
           }
           line(
             [
@@ -6950,7 +6948,7 @@
               steel,
               1,
             );
-            oval(x, -7, 9, 3, '#9faeb2');
+            oval(x, -7, 9, 3, '#a7a08a');
           }
           break;
         case 'mint-workbench':
@@ -6976,10 +6974,8 @@
             3,
           );
           rect(-9, -6, 26, 6, '#969c90');
-          oval(4, -8, 5, 2, '#dce4e3');
-          for (const x of [-27, -23, -19]) oval(x, -3, 2, 2, '#cbd6d8');
-          // Five-point die: one tooth per governed region.
-          for (const x of [-7, -4, -1, 2, 5]) rect(x, -45, 2, 4, '#d7e0df');
+          oval(4, -8, 5, 2, gold);
+          for (const x of [-27, -23, -19]) oval(x, -3, 2, 2, gold);
           rect(26, -15, 7, 12, '#8b7761');
           break;
         case 'caravan-loading-bay':
@@ -7008,9 +7004,6 @@
             4,
           );
           rect(9, -26, 13, 7, '#ded0ad');
-          rect(-22, -22, 16, 4, '#a7b6ba');
-          for (const x of [-20, -17, -14, -11, -8])
-            rect(x, -25, 2, 3, '#d6dedf');
           line(
             [
               [13, -24],
