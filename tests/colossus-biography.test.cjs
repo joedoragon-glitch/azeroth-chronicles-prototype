@@ -92,7 +92,11 @@ for (const phase of ['adventure', 'awakening']) {
   const game = fresh();
   game.s.normal.mine = true;
   game.s.phase = phase;
-  if (phase === 'awakening') game.s.awakeningLevel = 21;
+  if (phase === 'awakening') {
+    game.s.awakeningLevel = 21;
+    game.s.normal.darklord = true;
+    game.s.true.darklord = true;
+  }
   game.s.pending.mine = { kind: 'dungeon', count: 1 };
   assert(game.enter('mine'));
   const trueBoss = game.zone().enemies.find((e) => e.family === 'mine' && e.form === 'true');
