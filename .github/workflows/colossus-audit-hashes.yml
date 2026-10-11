@@ -1,4 +1,4 @@
-name: Temporary Colossus actor path diagnostic
+name: Temporary Colossus valid-coordinate audit
 on:
   push:
     paths:
