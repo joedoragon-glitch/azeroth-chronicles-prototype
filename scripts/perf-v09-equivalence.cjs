@@ -22,12 +22,10 @@ const live = (c) => {
   for (const save of [state.s, state.snapshot]) {
     const zone = save?.zones?.highlands;
     if (zone) {
-      // Decorative Highlands flora can be renumbered after scene placement;
-      // its appearance is deliberately tested separately, not combat state.
+      // Exclude only the new cosmetic Ironroot-work scenes; keep nature, roads
+      // and all other world state identical to the historical baseline.
       zone.props = zone.props.filter(
-        (p) =>
-          !String(p.id || '').startsWith('ironroot-life-') &&
-          !String(p.id || '').startsWith('aesthetic-nature-'),
+        (p) => !String(p.id || '').startsWith('ironroot-life-'),
       );
       delete zone.ironrootLifeVersion;
     }
