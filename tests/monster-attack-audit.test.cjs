@@ -33,7 +33,7 @@ assert.equal(
 );
 assert.equal(new Set(report.rows.map((row) => row.id)).size, report.rows.length);
 assert(report.rows.every((row) => row.source && row.mechanic));
-assert.equal(report.rows.length, 256, '251 presentation IDs + three trap kinds + two recoveries');
+assert.equal(report.rows.length, 257, '252 presentation IDs + three trap kinds + two recoveries');
 assert(
   report.rows
     .filter((row) => baseline.rows.some((item) => item.id === row.id))
