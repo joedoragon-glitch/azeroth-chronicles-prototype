@@ -3793,7 +3793,7 @@
             roll.elapsed += dt;
             while (roll.hits < 3 && roll.elapsed + 1e-9 >= (roll.hits + 1) * 0.5 && victim.hp > 0) {
               roll.hits++;
-              this.hitParty(victim, e.damage / 3, 0, e.id);
+              this.hitParty(victim, roll.totalDamage / 3, 0, e.id, true);
             }
             if (roll.life <= 0 || victim.hp <= 0) {
               victim.deathRollHeld = false;
