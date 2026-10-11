@@ -16,7 +16,7 @@ const PrototypeData = {
       obstacle:
         'Dense thickets close direct shortcuts, but broad woodland paths remain walkable. The river, lake shore and mill pond are impassable water. Houses and fences shape streets without blocking exits.',
       exploration:
-        'Millhaven, Orchard Hamlet and the working mill remain rural woodland country. The Forest Crypt is becoming the Dark Lord's unfinished winter estate, under the care of the Lifebinder, his former adventuring companion. The Lifebinder binds the fallen into an enduring existence rather than restoring life; some Greenwood skeletons retain their own names and allegiances.',
+        "Millhaven, Orchard Hamlet and the working mill remain rural woodland country. The Forest Crypt is becoming the Dark Lord's unfinished winter estate, under the care of the Lifebinder, his former adventuring companion. The Lifebinder binds the fallen into an enduring existence rather than restoring life; some Greenwood skeletons retain their own names and allegiances.",
       resource: 640,
       questgold: 160,
       questxp: 600,
