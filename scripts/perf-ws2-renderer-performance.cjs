@@ -132,6 +132,12 @@ async function proof(withState = false) {
             typeof message !== 'string' ||
             !message.startsWith('An old ossuary opens onto unfinished Crown guest rooms.'),
         );
+      if (
+        key === 'context' &&
+        value ===
+          "Borin is forced to finish the Dark Lord's winter rooms. Beside his tools lies the Lifebinder's ledger: names of the fallen, under BOUND and RELEASED."
+      )
+        return "Borin is held here because the Guardian needs his craftsmanship to finish the Dark Lord's woodland retreat.";
       if (key === 'vale:dungeon-lore:crypt' && value === true) return undefined;
       return value;
     });
