@@ -407,6 +407,8 @@
         e.lastAttackIndex = selected;
         e.sequence = [...built.sequence, ...this.bossComboSequence(e, selected, actualTarget)];
         e.telegraph = built.first;
+        if (e.family === 'mine' && selected === 1)
+          this.previewMineWorks(e, built.sequence.at(-1) || built.first);
         this.event('warning', { family: e.family, index: selected });
         return true;
       }
@@ -418,11 +420,36 @@
           radius: a.count > 1 ? 75 * R.bossCadence.areaRangeMultiplier : a.radius,
         }));
       }
+      previewMineWorks(e, attack) {
+        if (e.family !== 'mine' || this.s.zone !== 'mine') return;
+        const z = this.zone(),
+          existing = z.props.filter((p) => p.garunTemporary),
+          priorId = this.s.nextId;
+        this.raiseMineWorks(e, attack);
+        const planned = z.props.filter((p) => p.garunTemporary);
+        this.s.nextId = priorId;
+        z.props = z.props.filter((p) => !p.garunTemporary && !p.garunPreview);
+        z.props.push(...existing);
+        for (const [i, p] of planned.entries())
+          z.props.push({
+            id: 'garun-preview-' + e.id + '-' + i,
+            x: p.x,
+            y: p.y,
+            r: 0,
+            decorative: true,
+            structure: 'mine-old-markings',
+            dungeonDistrict: 'colossus-chamber',
+            sceneRole: 'construction-warning',
+            icon: '⚠️',
+            garunPreview: true,
+            expiresAt: this.s.time + 8,
+          });
+      }
       raiseMineWorks(e, attack) {
         if (e.family !== 'mine' || e.hp <= 0 || this.peace || this.s.zone !== 'mine') return 0;
         const z = this.zone();
         // A maximum of two pieces of temporary construction may obstruct the arena.
-        z.props = z.props.filter((p) => !p.garunTemporary);
+        z.props = z.props.filter((p) => !p.garunTemporary && !p.garunPreview);
         const captive = z.npcs.find((n) => n.family === 'mine' && n.kind === 'cage'),
           exit = z.npcs.find((n) => n.kind === 'exit'),
           targets = [this.hero, ...this.activeLivingParty(), e, captive, exit].filter(Boolean),
