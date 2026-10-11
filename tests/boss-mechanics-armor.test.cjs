@@ -17,8 +17,15 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
   c.clearSegment = () => true;
   const plan = Campaign.rules.attacks.mire[0];
   const jaw = {
-    ...plan, index: 0, kind: 'cone', x: 500, y: 500,
-    fromX: 500, fromY: 500, angle: 0, radius: 190,
+    ...plan,
+    index: 0,
+    kind: 'cone',
+    x: 500,
+    y: 500,
+    fromX: 500,
+    fromY: 500,
+    angle: 0,
+    radius: 190,
   };
   const armor = c.armor();
   const expectedLoss = Math.max(3, boss.damage * jaw.coefficient - armor * 0.35);
@@ -29,8 +36,10 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
   assert(Math.abs(declaredDamage - expectedLoss) < 1e-8);
   for (let beat = 0; beat < 3; beat++) {
     c.updateEnemies(0.5);
-    assert(Math.abs(c.hero.hp - (2000 - expectedLoss * (beat + 1) / 3)) < 1e-7,
-      cls + ': damage on roll beat ' + (beat + 1));
+    assert(
+      Math.abs(c.hero.hp - (2000 - (expectedLoss * (beat + 1)) / 3)) < 1e-7,
+      cls + ': damage on roll beat ' + (beat + 1),
+    );
   }
   assert.equal(boss.deathRoll, null);
   assert.equal(c.hero.deathRollHeld, false);
