@@ -52,6 +52,12 @@ async function verifyIronroot(page, results, tag, capture = false) {
         { zone, target },
       );
       await page.waitForFunction((target) => !!__ironrootRender.seen[target], target);
+      if (target.startsWith('silver-') || target === 'sealed-crown-consignment')
+        assert.equal(
+          await page.evaluate((target) => __ironrootRender.seen[target], target),
+          true,
+          'new monetary details must use their procedural source and not an unrelated old sprite',
+        );
       if (capture)
         await page.screenshot({
           path: path.join(results, 'ironroot-' + label + '-' + tag + '.png'),
