@@ -115,3 +115,63 @@ for (const phase of ['adventure', 'awakening']) {
   assert(restored.zone().enemies.some((e) => e.family === 'mine' && e.form === 'true'));
 }
 console.log('PASS early TRUE and Awakening Colossus retain six Ogre warband and save family');
+
+const workshop = fresh();
+workshop.enter('mine');
+const workshopZone = workshop.zone();
+const collection = workshopZone.props.filter((p) =>
+  ['geometric-gallery', 'kinetic-collection', 'art-object'].includes(p.sceneRole),
+);
+assert.equal(collection.length, 3, 'Garun owns three compact collectible displays');
+assert(collection.every((p) => p.decorative && p.r === 0), 'gallery cannot change travel geometry');
+const beforeGallery = workshop.snapshot();
+beforeGallery.zones.mine.props = beforeGallery.zones.mine.props.filter(
+  (p) => !['geometric-gallery', 'kinetic-collection', 'art-object'].includes(p.sceneRole),
+);
+const restoredGallery = Campaign.restore(beforeGallery);
+assert.equal(
+  restoredGallery.zone().props.filter((p) =>
+    ['geometric-gallery', 'kinetic-collection', 'art-object'].includes(p.sceneRole),
+  ).length,
+  3,
+  'old Mine saves receive the collection without resetting the dungeon version',
+);
+const inspecting = workshopZone.enemies.find((e) => e.family === 'mine' && e.type === 'boss');
+const originalPosition = { x: inspecting.x, y: inspecting.y };
+for (let t = 0; t < 900; t++) workshop.updateIdleWander(inspecting, 0.1);
+assert(
+  Math.hypot(inspecting.x - originalPosition.x, inspecting.y - originalPosition.y) > 3,
+  'Garun visibly leaves his post to inspect valid Mine stations',
+);
+assert(!workshop.blocked(inspecting.x, inspecting.y, 'mine', 16));
+assert.equal(inspecting.aggro, false);
+inspecting.aggro = true;
+const frozenPosition = { x: inspecting.x, y: inspecting.y };
+workshop.updateIdleWander(inspecting, 0.1);
+assert.deepEqual([inspecting.x, inspecting.y], [frozenPosition.x, frozenPosition.y]);
+console.log('PASS historical Mine gallery and bounded nonaggressive inspection patrol');
+
+const builder = fresh();
+builder.enter('mine');
+const builderZone = builder.zone();
+const architect = builderZone.enemies.find((e) => e.family === 'mine' && e.type === 'boss');
+let built = 0;
+for (const point of [[1100, 1100], [1100, 920], [1180, 1220], [990, 1190]]) {
+  built += builder.raiseMineWorks(architect, point);
+  if (built > 0) break;
+}
+assert(built > 0 && built <= 2, 'construction finds at least one safe, temporary support');
+const supports = builderZone.props.filter((p) => p.garunTemporary);
+assert.equal(supports.length, built);
+assert(supports.every((p) => p.r === 24 && !p.decorative && builder.blocked(p.x, p.y, 'mine', 12)));
+const mineExit = builderZone.npcs.find((n) => n.kind === 'exit');
+const smith = builderZone.npcs.find((n) => n.family === 'mine' && n.kind === 'cage');
+assert(builder.route(builder.hero, mineExit).length && builder.route(builder.hero, smith).length);
+assert(!builder.snapshot().zones.mine.props.some((p) => p.garunTemporary));
+const afterLoad = Campaign.restore(builder.snapshot());
+assert(!afterLoad.zone().props.some((p) => p.garunTemporary));
+builder.s.time += 10;
+builder.tick(0.05);
+assert(!builderZone.props.some((p) => p.garunTemporary), 'supports expire without becoming permanent walls');
+assert.equal(builderZone.enemies.filter((e) => e.guard).length, 18);
+console.log('PASS temporary support placement, collision, route access, save exclusion and expiry');
