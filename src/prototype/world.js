@@ -1239,7 +1239,7 @@
                 }
               const p = candidates.find(
                 (p) =>
-                  !this.blocked(p.x, p.y, z.id, 8, true) &&
+                  !this.blocked(p.x, p.y, z.id, 24, true) &&
                   !z.npcs.some((n) => dist(n, p) < 85) &&
                   !futureServices.some((n) => dist(n, p) < 85) &&
                   !z.nodes.some((n) => dist(n, p) < 65) &&
