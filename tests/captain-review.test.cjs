@@ -24,7 +24,13 @@ for (const [zone, hp, name] of cases) {
   assert.equal(again.hp, again.maxHp, name + ' existing save contract restores enemies at full HP');
   // Verify old-save migration retains combat progress before serialization.
   const old = { ...e, captainEnduranceVersion: 0, baseHp: hp / 2, maxHp: hp / 2, hp: hp * 0.185 };
+  old.captainPhase = true;
+  old.captainGuard = 6;
+  old.captainPhaseMove = 1.22;
   c.upgradeCaptainEndurance(old, profiles[e.captainProfile]);
+  assert.equal(old.captainPhase, false, name + ' stale phase flag reset on migration');
+  assert.equal(old.captainGuard, 0, name + ' stale protection removed on migration');
+  assert.equal(old.captainPhaseMove, 1, name + ' old movement boost removed');
   assert.equal(old.baseHp, hp, name + ' legacy HP migration budget');
   assert(Math.abs(old.hp / old.maxHp - 0.37) < 1e-8, name + ' migration retains HP fraction');
 }
