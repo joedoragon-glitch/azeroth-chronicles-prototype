@@ -2326,6 +2326,7 @@
             (h.speed + this.heroTalentSpeedBonus()) *
             (h.haste > 0 ? 1.25 : 1) *
             (h.slow > 0 ? 0.65 : 1) *
+            this.mireBogMovementFactor(h) *
             clamp(input.speedFactor || 1, 1, 1.35);
         this.move(h, { x: h.x + (input.x / n) * speed, y: h.y + (input.y / n) * speed }, speed, dt);
       } else if (h.order) {
