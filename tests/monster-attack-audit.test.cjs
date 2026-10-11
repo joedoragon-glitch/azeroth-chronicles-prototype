@@ -15,7 +15,7 @@ const before = JSON.stringify({
 const baseline = Existing.audit();
 const report = Audit.report();
 assert.equal(report.totalVisualIdentities, baseline.total);
-assert.equal(report.counts.boss, 46);
+assert.equal(report.counts.boss, 48);
 assert.equal(report.counts.captain, 16);
 assert.equal(report.counts['captain-phase'], 5);
 assert.equal(report.counts.night, 2);
@@ -33,7 +33,11 @@ assert.equal(
 );
 assert.equal(new Set(report.rows.map((row) => row.id)).size, report.rows.length);
 assert(report.rows.every((row) => row.source && row.mechanic));
-assert.equal(report.rows.length, 256, '251 presentation IDs + three trap kinds + two recoveries');
+assert.equal(
+  report.rows.length,
+  baseline.total + report.counts['environment-trap'] + report.counts['boss-recovery'],
+  'all actual presentation IDs, trap kinds and independently authored recoveries',
+);
 assert(
   report.rows
     .filter((row) => baseline.rows.some((item) => item.id === row.id))

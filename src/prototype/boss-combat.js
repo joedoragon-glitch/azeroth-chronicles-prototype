@@ -197,6 +197,7 @@
         return plans.map((plan, index) => {
           if (!allowRepeat && index === e.lastAttackIndex && plans.length > 1) return 0;
           if (e.family === 'darklord' && index === 3 && !low) return 0;
+          if (e.family === 'darklord' && index === 4 && e.hp > e.maxHp * 0.3) return 0;
           const attackTarget = this.bossAttackTarget(e, target, index);
           const reach = this.bossCenteredReach(e, plan);
           // A special must have realistic coverage at the moment it is chosen.
@@ -288,7 +289,27 @@
           Object.assign(a, patches[0], { count: 1 });
           for (const p of patches.slice(1)) sequence.push({ ...a, ...p, count: 1 });
         }
-        if (a.combo)
+        if (e.family === 'darklord' && index === 0) {
+          sequence.push(
+            {
+              ...a,
+              angle: angle + 0.7,
+              timer: 0.5,
+              total: 0.5,
+              coefficient: 0.85,
+              name: a.name + ' — shield feint',
+              royalSidestep: true,
+            },
+            {
+              ...a,
+              angle: angle - 0.7,
+              timer: 0.8,
+              total: 0.8,
+              coefficient: 1.3,
+              name: a.name + ' — final thrust',
+            },
+          );
+        } else if (a.combo)
           sequence.push({
             ...a,
             angle: angle + 0.7,
@@ -296,6 +317,35 @@
             total: 0.8,
             name: a.name + ' — second arc',
           });
+        if (e.family === 'darklord' && index === 1) {
+          const side = angle + Math.PI / 2;
+          const flank = this.safe(e.x + Math.cos(side) * 110, e.y + Math.sin(side) * 110);
+          const crossing = this.safe(
+            target.x - Math.cos(side) * 110,
+            target.y - Math.sin(side) * 110,
+          );
+          Object.assign(a, { x: flank.x, y: flank.y, coefficient: 0.55 });
+          sequence.push(
+            {
+              ...a,
+              x: crossing.x,
+              y: crossing.y,
+              timer: 0.85,
+              total: 0.85,
+              coefficient: 0.65,
+              name: a.name + ' — crossing',
+            },
+            {
+              ...a,
+              x: target.x,
+              y: target.y,
+              timer: 0.85,
+              total: 0.85,
+              coefficient: 1.4,
+              name: a.name + ' — flank strike',
+            },
+          );
+        }
         if (a.kind === 'sector') {
           a.angle = angle + Math.PI / 2;
           a.count = 1;
@@ -307,6 +357,11 @@
               total: plan.warning,
             });
         }
+        if (e.family === 'darklord' && index === 3)
+          for (const beat of [a, ...sequence]) {
+            beat.royalTerritory = true;
+            beat.protectedAngle = beat.angle + Math.PI;
+          }
         if (includeTrue && e.form === 'true') {
           if (e.family === 'crypt' && index === 1) a.staggered = true;
           if (e.family === 'archive' && index === 1)
@@ -369,21 +424,29 @@
         return [built.first, ...built.sequence];
       }
       startBossRecovery(e) {
-        const cfg = !R.resourceMode.manaEnabled && R.bossRecovery[e.family];
+        const cfg =
+          (e.family === 'darklord' || !R.resourceMode.manaEnabled) && R.bossRecovery[e.family];
         if (
           !cfg ||
           e.type !== 'boss' ||
           e.hp <= 0 ||
-          e.hp >= e.maxHp * R.bossRecovery.threshold ||
+          e.hp >= e.maxHp * (cfg.threshold || R.bossRecovery.threshold) ||
+          (e.family === 'darklord' && e.secondWindUsed) ||
           (e.healCd || 0) > 0 ||
           e.telegraph ||
           e.motion
         )
           return false;
         e.healCd = cfg.cooldown;
+        if (e.family === 'darklord') {
+          e.secondWindUsed = true;
+          e.secondWindCancelled = false;
+          e.secondWindFacing = Math.atan2(this.hero.y - e.y, this.hero.x - e.x);
+        }
         e.telegraph = {
           kind: 'circle',
           bossHeal: true,
+          secondWind: e.family === 'darklord',
           name: cfg.name,
           healFraction: cfg.healFraction,
           x: e.x,
@@ -428,11 +491,18 @@
         const a = e.telegraph;
         if (!a) return;
         if (a.rogueMove) {
+          if (e.family === 'darklord' && a.effect === 'bind' && a.rogueSignature)
+            e.crownDecreeZone = {
+              x: a.x,
+              y: a.y,
+              radius: a.radius,
+              expires: this.s.time + 3,
+            };
           this.tacticalResolveRogueMove(e, a);
           return;
         }
         if (a.bossHeal) {
-          if (e.hp > 0) {
+          if (e.hp > 0 && (!a.secondWind || !e.secondWindCancelled)) {
             const amount = Math.min(e.maxHp - e.hp, e.maxHp * a.healFraction);
             if (amount > 0) {
               e.hp += amount;
@@ -475,6 +545,29 @@
           e.motion = { ...a, target: { x: a.x, y: a.y }, hit: [], speed: a.pounceSpeed, life: 2 };
           return;
         }
+        if (a.royalTaxation) {
+          const marked = this.combatTargets()
+            .filter((unit) => unit.hp > 0 && dist(unit, a) <= a.radius && this.line(e, unit))
+            .slice(0, 2)
+            .map((unit) => (unit === this.hero ? 'hero' : unit.id));
+          e.royalTaxation = { marked, expires: this.s.time + 5, sources: [] };
+          return;
+        }
+        if (a.royalSidestep) {
+          const sideways = a.angle + Math.PI / 2;
+          const goal = this.safe(e.x + Math.cos(sideways) * 80, e.y + Math.sin(sideways) * 80);
+          if (this.clearSegment(e, goal, 15)) {
+            e.motion = {
+              ...a,
+              royalSidestep: true,
+              target: goal,
+              hit: [],
+              speed: 280,
+              life: 0.5,
+            };
+            return;
+          }
+        }
         if (a.kind === 'summon') {
           if (a.captainSkill && (e.captain || e.roomCaptain))
             this.summonCaptainAdds(
@@ -494,6 +587,10 @@
             );
             e.summonCd =
               e.form === 'true' ? R.bossSummoning.trueCooldown : R.bossSummoning.normalCooldown;
+            if (e.family === 'darklord')
+              for (const guard of this.bossOwnedSummons(e)) {
+                guard.royalFormationUntil = this.s.time + 3;
+              }
           }
           return;
         }
@@ -647,6 +744,8 @@
         // A charge blocked by real geometry must end when it makes no progress.
         if (dist(e, a.target) < 1 || !moved || dist(before, e) < 0.000001 || a.life <= 0) {
           if (a.landing && dist(e, a.target) < 20) this.resolveArea(e, a);
+          if (a.royalSidestep)
+            this.resolveArea(e, { ...a, fromX: e.x, fromY: e.y, x: e.x, y: e.y });
           e.motion = null;
           e.cd =
             a.recovery *

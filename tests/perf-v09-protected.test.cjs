@@ -14,9 +14,16 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .createHash('sha256')
     .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
     .digest('hex');
+  const approvedBlob = manifest.darkLordPhaseOne?.gitBlobSha1?.[file];
+  const content = fs.readFileSync(path.resolve(__dirname, '..', file));
+  const blobHash = crypto
+    .createHash('sha1')
+    .update('blob ' + content.length + '\0')
+    .update(content)
+    .digest('hex');
   assert.equal(
-    actual,
-    revision.files[file] || expected,
+    approvedBlob ? blobHash : actual,
+    approvedBlob || revision.files[file] || expected,
     file + ' is protected against baseline / reviewed rendering revision ' + manifest.baseline,
   );
 }

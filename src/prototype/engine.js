@@ -3964,6 +3964,17 @@
         e.captainGuard = 0;
         e.quotaOvertime = 0;
         e.captainOpeningSummon = false;
+        // Once-per-fight royal counters must not survive a complete leash reset.
+        // A retreat is not a permanent Second Wind use or an active taxation.
+        if (e.family === 'darklord') {
+          delete e.secondWindUsed;
+          delete e.secondWindCancelled;
+          delete e.secondWindFacing;
+          delete e.royalTaxation;
+          delete e.royalTaxShield;
+          delete e.royalPrerogativeReadyAt;
+          delete e.crownDecreeZone;
+        }
         delete e.quotaTarget;
         delete e.idleWanderTarget;
         e.idleWanderWait = 1.5;

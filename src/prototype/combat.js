@@ -318,6 +318,7 @@
         this.engage(e, true);
         if (source === 'hero') e.heroParticipated = true;
         if (e.roomCaptain && e.captainGuard > 0) amount *= 0.7;
+        if (e.summon && e.owner && e.royalFormationUntil > this.s.time) amount *= 0.8;
         if (e.roomCaptain) {
           const profile = this.captainProfile(e),
             summon = profile?.summon;
@@ -327,6 +328,28 @@
             amount *= 1 - guard;
           }
         }
+        let createdTaxShield = false;
+        if (e.family === 'darklord' && e.royalTaxation) {
+          const tax = e.royalTaxation;
+          if (this.s.time > tax.expires) e.royalTaxation = null;
+          else if (tax.marked.includes(source) && !tax.sources.includes(source)) {
+            tax.sources.push(source);
+            if (tax.sources.length >= 2) {
+              e.royalTaxShield = e.maxHp * 0.03;
+              createdTaxShield = true;
+              e.royalTaxation = null;
+            }
+          }
+        }
+        if (e.family === 'darklord' && e.telegraph?.secondWind) {
+          // The defensive stance reduces incoming damage until the warning ends.
+          // A rear hit cancels only the heal; it never grants immunity or creates
+          // a second damage source.
+          const facing = e.secondWindFacing || 0;
+          const angle = Math.atan2(origin.y - e.y, origin.x - e.x);
+          if (Math.cos(angle - facing) < -0.5) e.secondWindCancelled = true;
+          amount *= R.bossRecovery.darklord.damageMultiplier;
+        }
         if (e.family === 'citadel' && e.open <= 0) amount *= 0.65;
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;
         // All hero/companion damage sources use this same resolver. This
@@ -334,6 +357,11 @@
         if (['thinking', 'travel', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase))
           amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
         amount = this.tacticalCompressDamage(e, amount);
+        if (e.family === 'darklord' && e.royalTaxShield > 0 && !createdTaxShield) {
+          const absorbed = Math.min(e.royalTaxShield, amount);
+          e.royalTaxShield -= absorbed;
+          amount -= absorbed;
+        }
         const actualDamage = Math.min(e.hp, amount);
         e.hp = Math.max(0, e.hp - amount);
         this.tacticalRecordHit(e, source, actualDamage);
@@ -461,16 +489,30 @@
             continue;
           }
           if (d < step + 15) {
-            const landed = this.damage(e, p.damage, p.source);
+            const guard =
+              e.family === 'darklord' && this.s.time >= (e.royalPrerogativeReadyAt || 0)
+                ? this.zone().enemies.find(
+                    (unit) =>
+                      unit.owner === e.id &&
+                      unit.summon &&
+                      unit.hp > 0 &&
+                      dist(unit, e) < 165 &&
+                      this.distanceToSegment(unit, before, p) < 45 &&
+                      this.line(unit, e),
+                  )
+                : null;
+            const victim = guard || e;
+            if (guard) e.royalPrerogativeReadyAt = this.s.time + 18;
+            const landed = this.damage(victim, p.damage, p.source);
             if (landed && p.basicComboFinisher)
               this.basicComboFinisher(
-                e,
+                victim,
                 { x: p.finisherFromX, y: p.finisherFromY },
                 p.finisherBaseDamage,
                 p.source,
                 p.comboClass || this.hero.class,
               );
-            if (landed && p.slow) this.applySlow(e, p.slow);
+            if (landed && p.slow) this.applySlow(victim, p.slow);
             this.event('projectileImpact', {
               actor: p.source === 'hero' ? 'hero' : 'companion',
               class: p.source === 'hero' ? this.hero.class : undefined,
@@ -479,9 +521,9 @@
               style: p.style || 'arrow',
               effect: p.effect,
               slot: p.slot,
-              x: e.x,
-              y: e.y,
-              target: e.id,
+              x: victim.x,
+              y: victim.y,
+              target: victim.id,
               charged: !!p.charged,
             });
             if (p.charged && (!p.rapid || p.chargedBurst))

@@ -9,7 +9,7 @@
     null, // 3
     {
       kind: 'narration',
-      text: "The Dark Lord wanted a woodland retreat. The Crypt Guardian supervised construction, and Borin wasn't exactly there by choice.",
+      text: "Borin found a travel ledger in the caretaker's study: six signatures, then 'Victory.' The next pages plan a quiet winter home. He was forced to build it.",
     }, // 4
     {
       kind: 'narration',
