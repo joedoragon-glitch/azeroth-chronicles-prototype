@@ -8,20 +8,20 @@ Stonecross adds payroll, a small striking press, shipment loading and domestic s
 
 The personal Treasury retains its entrance, guard quota, three-cache quest and rewards. A connected domestic floor plan replaces the old dividers, with drawn walls matching collision. Supper, hearth, bed, game corner and a small study now dominate its furnishings. Wealth remains in a secure reserve. Crag Tyrant keeps the same Wolf body and captain attacks; his bedding identifies him as a trusted household protector.
 
-Colossus Mine replaces the legacy divider with receiving/haulage, new supported workings, older cuts, a repair forge, collapsed shafts, an ancient boss chamber and a reconnecting hauling loop. The 18 guardians retain the original species allocation and ranged profiles, including stone-throwing Ogres; no ranged Wolves or new weapon identities are introduced. Traps still number 18, with unchanged tuning. Routes to the boss, Dara and work areas allow travel without entering a trap footprint.
+Colossus Mine replaces the legacy divider with receiving/haulage, new supported workings, older cuts, a repair forge, collapsed shafts, the Colossus's bastion chamber and a reconnecting hauling loop. The 18 guardians retain the original species allocation and ranged profiles, including stone-throwing Ogres; no ranged Wolves or new weapon identities are introduced. Traps still number 18, with unchanged tuning. Routes to the boss, Dara and work areas allow travel without entering a trap footprint.
 
 ## Deliberate choices from the open handoff
 
 | Open choice | Implemented interpretation |
 | --- | --- |
-| Colossus history | Ancient guardian exposed by old workings; current production routes around its territory rather than controlling it |
+| Colossus history | **Superseded by draft #242:** Kharun, an Ogre adventuring Bastion who chose a living stone body, directs the fortified mine passages and its guards; not a creature accidentally exposed by mining |
 | Dara's compelled work | Repairing mining tools, cart axles and supports at a secured repair bench |
 | Tyrant's private comfort | Supper and a tabletop game by a warm hearth |
 | Minting visibility | One small Stonecross striking workbench, supported by sorted ore and sealed shipments |
 | Ridge archers | Hired convoy/payroll escorts; established species, caps, stats and attacks retained |
 | Direct Dark Crown presence | Restrained sealed correspondence and guarded movement; no new administrative district |
 
-These interpretations are recorded as implementation decisions for further playtesting. They were not fixed in the earlier discussion.
+These are the implemented setting choices for further playtesting, except the Colossus origin row, which records its **draft replacement for owner review** rather than a published canon decision. The old workings, historic carvings and internal `ancient-threshold` partition ID describe existing stone and collision geometry, **not an ancient Colossus**; keep those stable for old saves. The Ridge Tyrant remains Master of Coin while Kharun controls mine approaches, gates and supports. See [Stone Colossus: the First Wall](STONE_COLOSSUS_FIRST_WALL.md).
 
 ## Compatibility and verification
 
