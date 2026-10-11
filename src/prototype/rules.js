@@ -4651,7 +4651,7 @@
         coefficient: 0.08,
       },
       crypt: {
-        name: 'Crypt Guardian’s Grave Threshold',
+        name: 'Lifebinder’s Grave Threshold',
         effect: 'bind',
         warning: 1.4,
         radius: 120,
