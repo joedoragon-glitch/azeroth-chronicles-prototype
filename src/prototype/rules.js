@@ -3868,7 +3868,6 @@
       hp: 2.6,
       damage: 2.0,
       skillCooldown: 4.2,
-      warning: 0.7,
       radius: 78,
       coefficient: 1.6,
       pounceSpeed: 560,
