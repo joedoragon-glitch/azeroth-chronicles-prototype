@@ -21,8 +21,8 @@ const hash = (x) =>
     .createHash('sha256')
     .update(Buffer.isBuffer(x) ? x : JSON.stringify(x))
     .digest('hex');
-const approvedCaptainRevision = require('../tests/fixtures/perf-v09-protected.json')
-  .captainBalanceRevision;
+const approvedCaptainRevision =
+  require('../tests/fixtures/perf-v09-protected.json').captainBalanceRevision;
 const stripCaptainChanges = (state) => {
   const copy = json(state);
   for (const zones of [copy.s?.zones, copy.snapshot?.zones])
