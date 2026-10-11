@@ -724,6 +724,14 @@
       e.baseHp = profile.enduranceHp;
       e.maxHp = e.baseHp * ratio;
       e.hp = e.hp > 0 ? e.maxHp * fraction : 0;
+      // Saves restore living enemies at full HP but may retain legacy phase
+      // flags. Let the revised phase trigger cleanly at its new threshold.
+      e.captainPhase = false;
+      e.captainPhaseMove = 1;
+      e.captainAttackRate = 1;
+      e.captainGuard = 0;
+      e.captainReflect = 0;
+      e.captainOvertimeCd = 0;
       e.captainEnduranceVersion = 2;
     }
     roomCaptainPopulation(z) {
