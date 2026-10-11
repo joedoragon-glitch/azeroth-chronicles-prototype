@@ -137,11 +137,17 @@ async function proof() {
         JSON.stringify(s.game, (key, value) => {
           if (key === 'ironrootLifeVersion') return undefined;
           if (key === 'props' && Array.isArray(value))
-            return value.filter(
-              (p) =>
-                !String(p.id || '').startsWith('ironroot-life-') &&
-                !/^(silver|copper)-(ore-face|sort-samples)$/.test(p.structure),
-            );
+            return value
+              .filter(
+                (p) =>
+                  !String(p.id || '').startsWith('ironroot-life-') &&
+                  !/^(silver|copper)-(ore-face|sort-samples)$/.test(p.structure),
+              )
+              .map((p) =>
+                p.decorative && p.r === 0 && String(p.id || '').startsWith('aesthetic-nature-')
+                  ? { ...p, x: 0, y: 0 }
+                  : p,
+              );
           return value;
         }),
       ),
@@ -390,11 +396,17 @@ function summarize(samples) {
                 JSON.stringify(__perfWs2.game, (key, value) => {
                   if (key === 'ironrootLifeVersion') return undefined;
                   if (key === 'props' && Array.isArray(value))
-                    return value.filter(
-                      (p) =>
-                        !String(p.id || '').startsWith('ironroot-life-') &&
-                        !/^(silver|copper)-(ore-face|sort-samples)$/.test(p.structure),
-                    );
+                    return value
+                      .filter(
+                        (p) =>
+                          !String(p.id || '').startsWith('ironroot-life-') &&
+                          !/^(silver|copper)-(ore-face|sort-samples)$/.test(p.structure),
+                      )
+                      .map((p) =>
+                        p.decorative && p.r === 0 && String(p.id || '').startsWith('aesthetic-nature-')
+                          ? { ...p, x: 0, y: 0 }
+                          : p,
+                      );
                   return value;
                 }),
               ),
