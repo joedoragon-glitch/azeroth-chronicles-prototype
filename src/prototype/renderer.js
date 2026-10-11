@@ -1685,6 +1685,8 @@
       setOptimizationMode: (enabled) => {
         if (optimized === !!enabled) return;
         optimized = !!enabled;
+        phaseSamples.length = 0;
+        drawCount = 0;
         groundCache?.clear();
       },
       labelVisible: (e) => {
