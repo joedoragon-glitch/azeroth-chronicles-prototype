@@ -938,13 +938,16 @@
       z.rangedBalanceVersion = 1;
     }
     decorateDungeon(z) {
-      const targetVersion = R.dungeonWorkstations?.[z.id]
-        ? 3
-        : z.id === 'abyss'
+      const targetVersion =
+        z.id === 'crypt'
           ? 4
-          : z.id === 'citadel'
+          : R.dungeonWorkstations?.[z.id]
             ? 3
-            : 2;
+            : z.id === 'abyss'
+              ? 4
+              : z.id === 'citadel'
+                ? 3
+                : 2;
       if (z.dungeonVersion === targetVersion) return;
       z.props = z.props.filter((p) => !p.decorative || !String(p.id).startsWith('decor-'));
       z.dungeonVersion = targetVersion;
@@ -1095,7 +1098,10 @@
       return this.makeEnemy(
         {
           family: b.id,
-          name: b.name + (form === 'true' ? ' TRUE' : ''),
+          name:
+            form === 'true' && b.id === 'crypt'
+              ? 'TRUE ' + b.name
+              : b.name + (form === 'true' ? ' TRUE' : ''),
           icon: b.id === 'darklord' ? '😈' : b.kind === 'field' ? '👹' : '💀',
           form,
           type: 'boss',
@@ -1823,6 +1829,17 @@
       e.hp = e.maxHp * ratio;
       e.damage = e.baseDamage * m.damage;
       e.fightStart = this.s.time;
+      if (e.type === 'boss' && e.family === 'mire') e.mireLowestHpRatio = 1;
+      if (e.family === 'ridge' && e.type === 'boss') {
+        e.ledgerOpen = true;
+        e.ledgerNextAt = this.s.time + 12;
+        e.ledgerMarkUntil = 0;
+      }
+      if (e.family === 'warlord' && e.type === 'boss') {
+        // Ash hangs at its birthplace; the Warlord never drags a moving cloud.
+        e.ashCloud = { x: e.x, y: e.y, expires: this.s.time + 6 };
+        e.ashNextAt = this.s.time + 18;
+      }
       e.heroParticipated = false;
       e.noProgress = 0;
       if (e.type === 'boss' && e.form === 'true') {
@@ -1957,6 +1974,25 @@
       e.telegraph = null;
       e.motion = null;
       e.rangedAim = null;
+      delete e.ashCloud;
+      delete e.ashNextAt;
+      delete e.ledgerOpen;
+      delete e.ledgerMarkedId;
+      delete e.ledgerMarkUntil;
+      if (e.hookedVictim) {
+        const held =
+          e.hookedVictim === 'hero' ? this.hero : this.s.party.find((u) => u.id === e.hookedVictim);
+        if (held) held.keeperHeld = null;
+        e.hookedVictim = null;
+      }
+      if (e.deathRoll) {
+        const victim =
+          e.deathRoll.victim === 'hero'
+            ? this.hero
+            : this.s.party.find((u) => u.id === e.deathRoll.victim);
+        if (victim) victim.deathRollHeld = false;
+        e.deathRoll = null;
+      }
       e.sequence = [];
       if (e.summon) {
         return;
@@ -2301,16 +2337,37 @@
         z = this.zone(),
         formationStart = { x: h.x, y: h.y };
       z.clock += dt;
+      // No capture may outlive its owner through death, dungeon transitions or a loaded save.
+      for (const unit of [h, ...this.s.party]) {
+        if (
+          unit.keeperHeld &&
+          !z.enemies.some((e) => e.id === unit.keeperHeld && e.hp > 0 && e.aggro)
+        )
+          unit.keeperHeld = null;
+        if (
+          unit.deathRollHeld &&
+          !z.enemies.some(
+            (e) =>
+              e.family === 'mire' &&
+              e.hp > 0 &&
+              e.deathRoll &&
+              e.deathRoll.victim === (unit === h ? 'hero' : unit.id),
+          )
+        )
+          unit.deathRollHeld = false;
+      }
       h.cd = h.cd.map((c) => Math.max(0, c - dt));
       for (const f of ['immune', 'haste', 'potionCd', 'slow']) h[f] = Math.max(0, h[f] - dt);
       for (const u of this.s.party) {
-        u.healCd = Math.max(0, (u.healCd || 0) - dt);
+        if (!u.keeperHeld) u.healCd = Math.max(0, (u.healCd || 0) - dt);
         u.manaCd = Math.max(0, (u.manaCd || 0) - dt);
         u.survivalCd = Math.max(0, (u.survivalCd || 0) - dt);
         u.immune = Math.max(0, (u.immune || 0) - dt);
       }
       this.syncCompanionLevelStats();
-      if (this.tacticalAdvanceScatter(h, dt)) {
+      if (h.deathRollHeld || h.keeperHeld) {
+        h.order = null;
+      } else if (this.tacticalAdvanceScatter(h, dt)) {
         h.order = null;
       } else if (input.x || input.y) {
         h.order = null;
@@ -2319,6 +2376,8 @@
             (h.speed + this.heroTalentSpeedBonus()) *
             (h.haste > 0 ? 1.25 : 1) *
             (h.slow > 0 ? 0.65 : 1) *
+            this.mireBogMovementFactor(h) *
+            this.ashMovementFactor(h) *
             clamp(input.speedFactor || 1, 1, 1.35);
         this.move(h, { x: h.x + (input.x / n) * speed, y: h.y + (input.y / n) * speed }, speed, dt);
       } else if (h.order) {
@@ -2339,7 +2398,9 @@
               target,
               (h.speed + this.heroTalentSpeedBonus()) *
                 (h.haste > 0 ? 1.25 : 1) *
-                (h.slow > 0 ? 0.65 : 1),
+                (h.slow > 0 ? 0.65 : 1) *
+                this.mireBogMovementFactor(h) *
+                this.ashMovementFactor(h),
               dt,
               20,
             );
@@ -3652,12 +3713,43 @@
         e.cd = Math.max(0, e.cd - dt);
         e.specialCd = Math.max(0, (e.specialCd || 0) - dt);
         e.summonCd = Math.max(0, (e.summonCd || 0) - dt);
+        if (e.type === 'boss' && e.family === 'archive')
+          e.sabotageCd = Math.max(0, (e.sabotageCd || 0) - dt);
         e.healCd = Math.max(0, (e.healCd || 0) - dt);
         e.pursuitBurst = Math.max(0, (e.pursuitBurst || 0) - dt);
         e.open = Math.max(0, (e.open || 0) - dt);
         e.captainGuard = Math.max(0, (e.captainGuard || 0) - dt);
         e.quotaOvertime = Math.max(0, (e.quotaOvertime || 0) - dt);
         if (!e.quotaOvertime) delete e.quotaTarget;
+        if (
+          e.family === 'ridge' &&
+          e.type === 'boss' &&
+          e.aggro &&
+          this.s.time >= (e.ledgerNextAt || Infinity)
+        ) {
+          const biggest = this.tacticalThreatSnapshot(e).find(
+            (a) => a.source === 'hero' || this.s.party.some((u) => u.id === a.source && u.hp > 0),
+          );
+          e.ledgerMarkedId = biggest?.source || 'hero';
+          e.ledgerMarkUntil = this.s.time + 5;
+          e.ledgerNextAt = this.s.time + 12;
+        }
+        if (
+          e.family === 'warlord' &&
+          e.type === 'boss' &&
+          e.aggro &&
+          this.s.time >= (e.ashNextAt || Infinity)
+        ) {
+          e.ashCloud = { x: e.x, y: e.y, expires: this.s.time + 6 };
+          e.ashNextAt = this.s.time + 18;
+        }
+        if (
+          e.family === 'warlord' &&
+          e.type === 'boss' &&
+          e.ashCloud &&
+          e.ashCloud.expires > this.s.time
+        )
+          for (const victim of this.combatTargets()) this.ashMovementFactor(victim);
         if (e.captain || e.roomCaptain) this.triggerCaptainPhase(e);
         if (
           e.form === 'ringleader' &&
@@ -3688,16 +3780,77 @@
           z !== this.zone()
         )
           return;
+        // Mirejaw commits completely to its death roll; the victim cannot act.
+        if (e.family === 'mire' && e.type === 'boss' && e.deathRoll) {
+          const roll = e.deathRoll,
+            victim =
+              roll.victim === 'hero' ? this.hero : this.s.party.find((u) => u.id === roll.victim);
+          if (!victim || victim.hp <= 0 || e.hp <= 0) {
+            if (victim) victim.deathRollHeld = false;
+            e.deathRoll = null;
+          } else {
+            roll.life -= dt;
+            roll.elapsed += dt;
+            while (roll.hits < 3 && roll.elapsed + 1e-9 >= (roll.hits + 1) * 0.5 && victim.hp > 0) {
+              roll.hits++;
+              this.hitParty(victim, roll.totalDamage / 3, 0, e.id, true);
+            }
+            if (roll.life <= 0 || victim.hp <= 0) {
+              victim.deathRollHeld = false;
+              if (victim.hp > 0) this.applySlow(victim, 2);
+              e.deathRoll = null;
+            }
+            continue;
+          }
+        }
         const candidates = this.combatTargets();
+        // Keeper focuses available archers, the healers, within normal combat reach.
+        const ridgeOwner = e.summon
+          ? z.enemies.find((u) => u.id === e.owner && u.type === 'boss' && u.family === 'ridge')
+          : null;
+        const ridgeLeader =
+          ridgeOwner && e.ranged
+            ? ridgeOwner.ledgerMarkUntil > this.s.time
+              ? ridgeOwner.ledgerMarkedId
+              : this.tacticalThreatSnapshot(ridgeOwner)[0]?.source
+            : null;
+        const ridgeTarget =
+          ridgeLeader === 'hero'
+            ? this.hero
+            : candidates.find((u) => u.id === ridgeLeader && u.hp > 0) || null;
+        const keeperHealer =
+          e.type === 'boss' && e.family === 'archive'
+            ? candidates
+                .filter(
+                  (u) =>
+                    u.type === 'archer' &&
+                    !u.keeperHeld &&
+                    u.hp > 0 &&
+                    dist(e, u) <= 600 &&
+                    this.line(e, u),
+                )
+                .sort((u, v) => dist(e, u) - dist(e, v))[0]
+            : null;
+        const keeperHero =
+          e.type === 'boss' &&
+          e.family === 'archive' &&
+          !candidates.some((u) => u.type === 'archer' && u.hp > 0)
+            ? this.hero
+            : null;
         let target =
-          e.quotaOvertime > 0 && this.hero.hp > 0
+          keeperHero ||
+          (ridgeTarget && dist(e, ridgeTarget) < 700 && this.line(e, ridgeTarget)
+            ? ridgeTarget
+            : null) ||
+          keeperHealer ||
+          (e.quotaOvertime > 0 && this.hero.hp > 0
             ? this.hero
             : e.summon &&
                 (e.ranged || e.trueSummonRole === 'captain') &&
                 this.hero.hp > 0 &&
                 dist(e, this.hero) < 700
               ? this.hero
-              : candidates.sort((a, b) => dist(e, a) - dist(b, e))[0];
+              : candidates.sort((a, b) => dist(e, a) - dist(b, e))[0]);
         if (!e.aggro && e.fieldCaptain) this.updateCaptainPatrol(e, dt);
         else if (!e.aggro) this.updateIdleWander(e, dt);
         if (e.guard && !e.ranged && this.hero.hp > 0) {
@@ -3944,6 +4097,11 @@
       if (e.returning <= 0) {
         Object.assign(e, e.home);
         e.aggro = false;
+        delete e.ashCloud;
+        delete e.ashNextAt;
+        delete e.ledgerOpen;
+        delete e.ledgerMarkedId;
+        delete e.ledgerMarkUntil;
         e.telegraph = null;
         e.sequence = [];
         e.motion = null;
@@ -3969,6 +4127,16 @@
         e.idleWanderWait = 1.5;
         e.specialCd = e.captain || e.roomCaptain ? 1.25 : e.nightOnly ? 1.5 : 0;
         e.summonCd = 0;
+        e.sabotageCd = 0;
+        delete e.mireLowestHpRatio;
+        if (e.hookedVictim) {
+          const held =
+            e.hookedVictim === 'hero'
+              ? this.hero
+              : this.s.party.find((u) => u.id === e.hookedVictim);
+          if (held) held.keeperHeld = null;
+          e.hookedVictim = null;
+        }
         if (e.captain || e.roomCaptain)
           this.zone().enemies = this.zone().enemies.filter((u) => !(u.summon && u.owner === e.id));
         if (e.type === 'boss' && e.form === 'true') {

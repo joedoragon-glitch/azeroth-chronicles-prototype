@@ -27,6 +27,7 @@
       ['channel', 'water'],
       ['pool', 'water'],
       ['call', 'spectral'],
+      ['seal', 'spectral'], // Cooldown Sabotage: targeted scholarly binding, no hit damage.
     ],
     ridge: [
       ['slam', 'steel'],

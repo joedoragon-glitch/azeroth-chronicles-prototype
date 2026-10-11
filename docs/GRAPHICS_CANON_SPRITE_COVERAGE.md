@@ -69,6 +69,9 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `fang-trophy` | GENERATE 139 |
 | `root-table` | GENERATE 140 |
 | `warm-brazier` | GENERATE 192 |
+| `estate-rug` | PROCEDURAL — flat ground-integrated Crown-style furnishing |
+| `estate-hearth` | PROCEDURAL — warm animated-light-adjacent estate furnishing |
+| `estate-lounge` | PROCEDURAL — interim Crown-style winter-estate furniture |
 | `treasure-hoard` | GENERATE 141 |
 | `boss-chest` | GENERATE 142 |
 | `mire-pool` | GENERATE 143 |

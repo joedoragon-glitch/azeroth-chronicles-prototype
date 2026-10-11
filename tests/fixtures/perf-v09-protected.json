@@ -1,19 +1,19 @@
 {
   "baseline": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
   "files": {
-    "src/prototype/engine.js": "291155d18505d46012250b92ad083e4e64a7ce5e4a67d32d99d7e961cf72c265",
+    "src/prototype/engine.js": "3b4dd7dbc77197abe6788b6627508f49824ff3e87441fcdc90afd6758b26b498",
     "src/prototype/world.js": "fd696a65bf4e1b9067291f6c6d3d57b508f2b2ecb7164c222299ef8fa5edaa53",
     "src/prototype/navigation.js": "dbb700f55909a4908b64aec2c97583b07af93d7aeafe32d111dbbe16a7f79c36",
-    "src/prototype/party.js": "41a66f5b3c95a09414b1308df557aff1cbb232d341f601b1f1fcaf1d2d40d726",
-    "src/prototype/combat.js": "8b14cc8e5e0a1519b83cd7201a82a6b2b2e08d7d4e4294b641dfa5d5b6a0aa4b",
-    "src/prototype/hero-combat.js": "9873768cf15322246de3a2892785ebdecc9cc9ed72ff7bbb377a264647135070",
-    "src/prototype/boss-combat.js": "be74a2d6d5336cd851073c7c6814a64cb22cc01af2ef7a0854fd9f4148edc27f",
+    "src/prototype/party.js": "ce4077278ef832d7e4eaf354081a2a07025c217f6395fad2ba4d5852160ad1b9",
+    "src/prototype/combat.js": "f7c696b9182d30a355afd2622a3cce28b0b6e3b695f9fda565c2e8c970802638",
+    "src/prototype/hero-combat.js": "60ab0232116208084b7b44e91ca2ab0a45b30a2b89b7cfd6843dbe5426ea16c1",
+    "src/prototype/boss-combat.js": "ad4fc95a6265641c9892de9b117f5f2e06a044ce2cc9fa8b59c8ff4748472152",
     "src/prototype/progression.js": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
     "src/prototype/economy.js": "fd9701ee01d2748f22f176ce84d06f8769c0eb8b84963460380457a61933487a",
     "src/prototype/rewards.js": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525",
-    "src/prototype/rules.js": "0bea5df747d56c3d0ab15021aaa5bd09683c898594292f142bda969c7ee7ccc0",
-    "src/prototype/data.js": "a82856323e155405e7fb68a027dc226b75d1563bd6b440450ccf584a9d7724b2",
-    "src/prototype/save.js": "4365b4fcfa21bcd8ffa5fe6da2b637dc0653e5aa7459abccc6277e94e6ab6296",
+    "src/prototype/rules.js": "44a28b6cbc1f601d0f2dc8000a405d56d3d49f94b1a06ad844dcfddb53f46e4c",
+    "src/prototype/data.js": "26faefb4360fab014febda134e5fe53607b022e3c7013a339e976d3b73e26764",
+    "src/prototype/save.js": "82012e2c23e4a29365834b1007936d96df1cefc041d7b9899737bd3155f647a9",
     "src/prototype/input.js": "87aed3b4d743dd011e0b6a0f5f293dc39fae45d76f6faa281139897a0437d616",
     "src/prototype/platform.js": "60107014425663a4607a239ea68359b04d0f0cfbf0eca7e9dc2fcc1a1180710d",
     "src/prototype/runtime.js": "baeae0441fd164f90bda835381d6f99772332eb8d850f2e18d7ccc8838b19e86",
@@ -39,5 +39,10 @@
     "version": "0.8.139",
     "scope": "Thornfang Pounce and Stone Colossus Wall Rush authored description-only corrections; no mechanics, layouts or procedural art changed",
     "evidence": "v0.9 author approval and boss-description-contracts regression; all other baseline hashes unchanged"
+  },
+  "reviewedBossPitstop": {
+    "branch": "feature/boss-identity-pitstop-20261011",
+    "scope": "Approved Mirejaw, Warlord, Drowned Keeper, Ridge Tyrant, Lifebinder and winter estate mechanics and save-compatibility changes. Unchanged app/runtime scheduler hashes remain protected.",
+    "requires": "Full Node/browser CI, explicit gameplay audit, and separate final author merge approval."
   }
 }

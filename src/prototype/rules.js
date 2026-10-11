@@ -26,13 +26,13 @@
     crypt: [
       attack('cone', 1, 1),
       attack('volley', 1.2, 1.4),
-      attack('summon', 1.6, 1.4, { species: 'skeleton', ranged: false }),
-      attack('circle', 1.6, 1.4, { persistent: true, manaDrain: 0.05 }),
+      attack('summon', 1.6, 1.4, { species: 'crownguard', ranged: false, attendant: true }),
+      attack('circle', 1.6, 1.4, { count: 4, persistent: true, manaDrain: 0.05 }),
     ],
     mire: [
       attack('cone', 0.9, 1),
       attack('line', 1.4, 1.5, { charge: true, coefficient: 1.4 }),
-      attack('circle', 1.5, 1.4, { count: 3, persistent: true, slow: true }),
+      attack('circle', 1.5, 1.4, { count: 3, persistent: true }),
       attack('summon', 1.6, 1.5, { species: 'mireling', ranged: false }),
     ],
     archive: [
@@ -40,10 +40,11 @@
       attack('line', 1.5, 1.5, { count: 2, manaDrain: 0.08 }),
       attack('circle', 1.5, 1.5, { slow: true, persistent: true, manaDrain: 0.04 }),
       attack('summon', 1.7, 1.5, { species: 'wraith', ranged: true }),
+      attack('circle', 1.5, 1.5, { sabotage: true }),
     ],
     ridge: [
       attack('cone', 1, 1),
-      attack('circle', 1.5, 1.5, { coefficient: 1.4 }),
+      attack('line', 1.5, 1.5, { coefficient: 1.4, cargo: true }),
       attack('line', 1.5, 2, { charge: true, coefficient: 1.4 }),
       attack('summon', 1.8, 1.5, { species: 'archer', ranged: true }),
     ],
@@ -56,7 +57,7 @@
     ],
     warlord: [
       attack('cone', 1.2, 1.5, { combo: true }),
-      attack('circle', 1.8, 1.5, { count: 2 }),
+      attack('circle', 1.8, 1.5, { count: 6 }),
       attack('summon', 1.8, 1.5, { species: 'orc', ranged: false }),
       attack('line', 1.6, 2.5, { charge: true, coefficient: 1.4 }),
     ],
@@ -2395,7 +2396,7 @@
       ],
     },
     crypt: {
-      version: 3,
+      version: 4,
       surfaces: [
         {
           kind: 'unfinished',
@@ -3383,6 +3384,11 @@
       [1040, 640, 'weapon-rack', 'craft-wing', 'construction'],
       [1240, 650, 'supply-stack', 'craft-wing', 'construction'],
       [280, 1120, 'sleep-roll', 'guest-lodge'],
+      [365, 1120, 'estate-rug', 'guest-lodge'],
+      [650, 1210, 'estate-hearth', 'guest-lodge'],
+      [525, 1340, 'estate-lounge', 'guest-lodge'],
+      [520, 1300, 'warm-brazier', 'guest-lodge'],
+      [340, 1020, 'banner', 'guest-lodge'],
       [400, 1240, 'sleep-roll', 'guest-lodge'],
       [590, 1170, 'warm-brazier', 'guest-lodge'],
       [480, 1060, 'game-table', 'guest-lodge'],
@@ -3391,6 +3397,11 @@
       [1000, 1250, 'scroll-stack', 'caretaker-study'],
       [800, 960, 'torch', 'caretaker-study'],
       [1110, 900, 'stone-seat', 'protected-retreat'],
+      [1150, 1120, 'estate-rug', 'protected-retreat'],
+      [1030, 1300, 'estate-hearth', 'protected-retreat'],
+      [1240, 1100, 'estate-lounge', 'protected-retreat'],
+      [1170, 1100, 'warm-brazier', 'protected-retreat'],
+      [1200, 1290, 'stone-seat', 'protected-retreat'],
       [1290, 920, 'warm-brazier', 'protected-retreat'],
       [1270, 1200, 'game-table', 'protected-retreat'],
       [1090, 1280, 'banner', 'protected-retreat'],
@@ -3738,7 +3749,10 @@
     normalCooldown: 7,
     trueCooldown: 5.5,
     pressureFloor: 2,
-    overrides: { warlord: { normalCap: 4, trueCap: 8, minions: 6, captains: 2 } },
+    overrides: {
+      warlord: { normalCap: 4, trueCap: 8, minions: 6, captains: 2 },
+      crypt: { normalCap: 12, trueCap: 6, minions: 4, captains: 2 },
+    },
   };
   const bossBehavior = {
     thorn: {

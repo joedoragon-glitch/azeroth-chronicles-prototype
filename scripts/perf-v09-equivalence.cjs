@@ -26,6 +26,9 @@ const evidence = {
   scenarios: [],
   historical: [],
   scenes: [],
+  approvedDifferences: [
+    'Crypt winter-estate visuals/decor v4, normal and TRUE renamed Lifebinder; redesigned five-boss attacks remain covered by separate mechanics tests',
+  ],
 };
 for (const mode of ['normal', 'nightmare'])
   for (const cls of ['paladin', 'mage', 'ranger'])
@@ -35,8 +38,9 @@ for (const mode of ['normal', 'nightmare'])
       const compare = (label) =>
         assert.deepEqual(live(b), live(a), `${mode}/${cls}/${succession}/${label}`);
       compare('fresh');
+      // Compare unchanged Mine simulation. Crypt now intentionally migrates to a winter estate.
       for (const c of [a, b]) {
-        c.enter('crypt');
+        c.enter('mine');
         c.s.mercyTime = 0;
         c.hero.skills = Array(8).fill(1);
         c.hero.hp = c.hero.maxHp = 100000;
@@ -145,9 +149,19 @@ for (const zone of [...A.data.regions.map((r) => r.id), ...A.dungeonIds])
       };
       const a = draw(baseline),
         b = draw(current);
-      assert(a.equals(b), zone + ' native full-render pixels ' + width + '/' + clock);
+      if (zone === 'crypt')
+        assert(!a.equals(b), 'reviewed winter estate must visibly differ from original crypt');
+      else assert(a.equals(b), zone + ' native full-render pixels ' + width + '/' + clock);
       global.gc?.();
-      evidence.scenes.push({ zone, width, height, zoom, clock, pixelHash: hash(b) });
+      evidence.scenes.push({
+        zone,
+        width,
+        height,
+        zoom,
+        clock,
+        pixelHash: hash(b),
+        reviewedChange: zone === 'crypt',
+      });
     }
 fs.mkdirSync(path.join(current, 'test-results/perf'), { recursive: true });
 fs.writeFileSync(
