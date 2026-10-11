@@ -298,6 +298,7 @@
               total: 0.5,
               coefficient: 0.85,
               name: a.name + ' — shield feint',
+              royalSidestep: true,
             },
             {
               ...a,
@@ -544,6 +545,32 @@
           e.motion = { ...a, target: { x: a.x, y: a.y }, hit: [], speed: a.pounceSpeed, life: 2 };
           return;
         }
+        if (a.royalTaxation) {
+          const marked = this.combatTargets()
+            .filter((unit) => unit.hp > 0 && dist(unit, a) <= a.radius && this.line(e, unit))
+            .slice(0, 2)
+            .map((unit) => (unit === this.hero ? 'hero' : unit.id));
+          e.royalTaxation = { marked, expires: this.s.time + 5, sources: [] };
+          return;
+        }
+        if (a.royalSidestep) {
+          const sideways = a.angle + Math.PI / 2;
+          const goal = this.safe(
+            e.x + Math.cos(sideways) * 80,
+            e.y + Math.sin(sideways) * 80,
+          );
+          if (this.clearSegment(e, goal, 15)) {
+            e.motion = {
+              ...a,
+              royalSidestep: true,
+              target: goal,
+              hit: [],
+              speed: 280,
+              life: 0.5,
+            };
+            return;
+          }
+        }
         if (a.kind === 'summon') {
           if (a.captainSkill && (e.captain || e.roomCaptain))
             this.summonCaptainAdds(
@@ -720,6 +747,8 @@
         // A charge blocked by real geometry must end when it makes no progress.
         if (dist(e, a.target) < 1 || !moved || dist(before, e) < 0.000001 || a.life <= 0) {
           if (a.landing && dist(e, a.target) < 20) this.resolveArea(e, a);
+          if (a.royalSidestep)
+            this.resolveArea(e, { ...a, fromX: e.x, fromY: e.y, x: e.x, y: e.y });
           e.motion = null;
           e.cd =
             a.recovery *
