@@ -1829,6 +1829,7 @@
       e.hp = e.maxHp * ratio;
       e.damage = e.baseDamage * m.damage;
       e.fightStart = this.s.time;
+      if (e.type === 'boss' && e.family === 'mire') e.mireLowestHpRatio = 1;
       if (e.family === 'ridge' && e.type === 'boss') {
         e.ledgerOpen = true;
         e.ledgerNextAt = this.s.time + 12;
@@ -3829,7 +3830,10 @@
                 )
                 .sort((u, v) => dist(e, u) - dist(e, v))[0]
             : null;
+        const keeperHero = e.type === 'boss' && e.family === 'archive' &&
+            !candidates.some(u => u.type === 'archer' && u.hp > 0) ? this.hero : null;
         let target =
+          keeperHero ||
           (ridgeTarget && dist(e, ridgeTarget) < 700 && this.line(e, ridgeTarget)
             ? ridgeTarget
             : null) ||
@@ -4119,6 +4123,7 @@
         e.specialCd = e.captain || e.roomCaptain ? 1.25 : e.nightOnly ? 1.5 : 0;
         e.summonCd = 0;
         e.sabotageCd = 0;
+        delete e.mireLowestHpRatio;
         if (e.hookedVictim) {
           const held =
             e.hookedVictim === 'hero'
