@@ -1,6 +1,6 @@
 # Boss identity pit stop — implementation and audit register
 
-Status: **DRAFT — NOT MERGE READY**. Owner-approved design, independently auditable implementation checklist. This file is intentionally candid: a changed name or config value is not proof that a gameplay mechanic works.
+Status: **Implemented on isolated PR #230; final exact-head CI and owner merge authorization required**. This register distinguishes actual game code, test evidence and deliberate post-merge balance observation.
 
 ## Invariants
 
@@ -44,28 +44,29 @@ Status: **DRAFT — NOT MERGE READY**. Owner-approved design, independently audi
 - Call the Attendants: each cast calls **three** estate retainers in junior Crown style (dark crimson/black/muted gold, lighter uniform, guard-servant blend), not generic skeletons or full Crown military. They persist while alive; normal three-unit living cap is bypassed, but a higher safe ceiling is required for performance. Existing summon cooldown stays. TRUE form retains its special warband composition and scaling, with ability identity respected.
 - Forest Crypt is the Dark Lord's **unfinished private winter estate**: older crypt remains only as repurposed heritage; completed spaces deeply cozy and Crown-styled (black/crimson/gold, warm amber light, rugs, hearths, chairs, game tables, guest quarters), active construction in unfinished rooms (scaffolds, stone, lumber, tools), unobstructed walkthrough, functional workstations, safe save migration and unchanged combat geometry.
 
-## Implemented so far on this branch
+## Implemented and source-audited
 
-- Lifebinder name and approved attack labels in boss data; Ridge Tyrant identity labels.
-- Lifebinder Groundwork count of four and Warlord bombardment count of six in authored attack config.
-- Raised Lifebinder normal-attendant safety cap to 12 with three generated per cast; TRUE retained established six-unit (4 + 2) warband composition; reduced Crown-style attendant render scale and names.
-- Mirejaw 40%-to-0% HP-dependent damage resistance using centralized damage resolver.
-- Crypt winter estate warmer floor/wall palettes and added existing cozy props.
+- [x] Mirejaw has the 40%-to-0% health-dependent scales, one-victim 1.5-second Death Roll with three damage beats and no duplicated upfront bite damage, 2-second post-release Slow, plus Bog Spit's progressively stronger movement penalties and 2-second fade. All movement/casting restrictions are owned by real combat state.
+- [x] Ashen Warlord's stationary 180-unit Choking Ash has 6s active/12s downtime, visible ground art, accuracy and movement penalties with a 2s aftermath. Banner Bombardment resolves six **simultaneous** circles with authored dodge lanes and unchanged per-hit damage.
+- [x] Drowned Keeper selects reachable living Archer healers first, locks Anchor Swing's single hooked victim until the next anchor attack, suppresses actions/heals and freezes the held Archer's healing cooldown. Cooldown Sabotage is a distinct warned non-damaging attack with a 12s attempt cooldown and a 3s extension on the chosen heal/hero skill. Death/reset/load orphan-release safeguards are present.
+- [x] Ridge Tyrant displays Ledger of Losses at engagement, removes the Tyrant's ground warning graphics (not windup time or actor animations), tracks actual damage for his mark/payroll archers, uses a visible moving Cargo projectile with shove and a slowing Toll Collection charge, and retains base HP/damage.
+- [x] The existing `crypt` family is **renamed**, not duplicated: Lifebinder / TRUE Lifebinder. All base progression, family IDs, first-clear rewards, captive and TRUE transitions remain under old stable keys. Existing-save names are normalized on restore.
+- [x] Groundwork chooses four positions **at cast time**, then freezes them for telegraph, impact and persistent hazard resolution. The normal-form Call the Attendants supplies three per cast with a safety ceiling of twelve; TRUE retains its 4-minion / 2-ringleader warband.
+- [x] Attendants are custom junior Crown-style **estate staff**, not the normal military Crown soldier presentation. Their style is an approved procedural art family and does not demand a separate sprite asset to block this release.
+- [x] Forest Crypt still has its older repurposed core, but the new winter estate shows warm Crown/crimson-gold floors, contrasting walls, rugs, upholstered lounges, fireplaces and active construction. Decor version 4 migrates previously visited Crypt saves without changing geometry or quest/service gates.
+- [x] Legacy VFX/audio identities remain the stable `crypt` family slots. A new authored VFX recipe and updated exhaustive inventory cover Keeper's additional sabotage ability; old presentation IDs remain stable.
+- [x] Normal/TRUE mechanics, names, summon population, solo/squad state, visual recipe coverage, event routing and first-boss contract have automated regressions in `tests/boss-identity-pitstop.test.cjs` and existing compatibility suites.
 
-## Audit blockers — MUST fix before ready-for-review or merge
+## Strict pre-merge verification
 
-- [ ] Implement Mirejaw Death Roll (grab, exact damage schedule, stun, release/slow, cleanup) and progressive Bog Spit slow including hero/companions and all saved/restore paths.
-- [ ] Implement Choking Ash's stationary cloud, miss and movement effects, reset semantics; validate six circles' actual geometry, telegraph visibility and escape lanes.
-- [ ] Implement Keeper's healer-focus AI, anchor capture/release, cooldown freezing/sabotage, and safety on death/disengage/reload.
-- [ ] Implement Tyrant's knockback/slow, focused archers, Ledger Audit, immediate Ledger of Losses and still-readable attack animations. Current data labels alone DO NOT implement these.
-- [ ] Validate Lifebinder four Groundwork marks target the intended positions, not merely generic linearly offset circles; validate TRUE summons receive intended attendant styling and per-cast policy without breaking baseline TRUE combat.
-- [ ] Produce original junior-Crown attendant art; temporary smaller Crown enemy silhouettes are placeholders, not a finished sprite conversion.
-- [ ] Complete estate environment: cozy completed rooms, half-finished wings, Crown palette, detailed construction, correct room layout; current palette/prop changes are only initial pass.
-- [ ] Audit old boss name across UI, quest logs, historical saves, achievements, descriptions, audio, visual keys, event strings and deterministic fixture references. Do not rename family ID `crypt`.
-- [ ] Add automated tests for all mechanics, forms, multiplayer-independent solo combat, cooldown boundary cases, summoning cap, save migration, and no offender damage change.
-- [ ] Run full Node regressions, browser UI coverage, mobile/desktop, production Pages/PWA/offline checks, performance and a complete historical-save test. Verify CI on the exact branch SHA.
-- [ ] Re-run Ranger/Paladin/Mage encounter audit across Normal and TRUE with multiple seeds, logging boss duration, mechanic executions, outcomes, companions, potions, hero health, and visual clarity. One Astra run is baseline, not target proof.
-- [ ] Review PR diff against this spec; manually classify every check as pass/blocker with evidence before merging.
+- **Required:** the exact PR head must pass Node regressions, production build/syntax, snapshot/source-ownership checks, Chromium and WebKit mobile/browser tests, historical-save tests and Pages artifact checks. Read this from GitHub Actions on the **final SHA**, never from a previous cancelled run.
+- **Required:** retain the baseline-equivalence gate for unchanged simulation and all unrelated regions. The `crypt` presentation is intentionally different; the modified comparison explicitly asserts that it changed visually and checks that drawing still does not modify campaign state. `mine` replaces the changed Crypt as the unchanged simulation control.
+- **Required:** inspect the PR diff and confirm no unrelated gameplay damage/HP retunes, no enemy-family ID changes, no changes to the app's shared frame/input/audio loop, and no new single-file packaging requirement.
+- **Release policy:** do **not** merge without the author's explicit instruction.
+
+## Playtesting after release preparation
+
+A fresh human/AI encounter playthrough with multiple classes and seeds is useful for tuning kill times, actual mechanics displayed, companion losses and touch readability. It is intentionally **not** evidence that these mechanics are broken; it must not be used to quietly increase boss base HP or damage. Re-evaluate pacing only after code correctness and user review.
 
 ## Baseline and tuning rule
 
