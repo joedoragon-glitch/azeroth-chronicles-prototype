@@ -7,6 +7,7 @@ const manifest = require('./fixtures/perf-v09-protected.json');
 const revision = manifest.renderingRevision;
 const ironroot = manifest.ironrootRevision;
 assert.deepEqual(Object.keys(ironroot.files).sort(), [
+  'src/prototype/data.js',
   'src/prototype/rules.js',
   'src/prototype/world.js',
 ]);
