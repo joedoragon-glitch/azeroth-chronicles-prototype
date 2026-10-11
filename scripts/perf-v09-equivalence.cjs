@@ -124,7 +124,11 @@ for (const zone of [...A.data.regions.map((r) => r.id), ...A.dungeonIds])
           assert.equal(zone, 'citadel');
           const originalCount = c.zone().props.length;
           c.zone().props = c.zone().props.filter((p) => p.structure !== 'citadel-vanity-quarters');
-          assert.equal(originalCount - c.zone().props.length, 1, 'exactly one authorized Citadel vanity');
+          assert.equal(
+            originalCount - c.zone().props.length,
+            1,
+            'exactly one authorized Citadel vanity',
+          );
         }
         c.s.clock = clock;
         Object.assign(c.hero, c.safe(800, 800));
@@ -152,8 +156,15 @@ for (const zone of [...A.data.regions.map((r) => r.id), ...A.dungeonIds])
       };
       const a = draw(baseline),
         b = draw(current, zone === 'citadel');
-      assert(a.equals(b), zone + ' native full-render pixels ' + width + '/' + clock +
-        ' with only Veyra vanity excluded');
+      assert(
+        a.equals(b),
+        zone +
+          ' native full-render pixels ' +
+          width +
+          '/' +
+          clock +
+          ' with only Veyra vanity excluded',
+      );
       if (zone === 'citadel') {
         const withVanity = draw(current);
         if (!a.equals(withVanity)) observedIntentionalCitadelPixels++;
@@ -161,8 +172,16 @@ for (const zone of [...A.data.regions.map((r) => r.id), ...A.dungeonIds])
       global.gc?.();
       evidence.scenes.push({ zone, width, height, zoom, clock, pixelHash: hash(b) });
     }
-assert(observedIntentionalCitadelPixels > 0, 'Veyra vanity must produce an observable native-render difference');
-evidence.authorizedVisualDelta = { zone: 'citadel', structure: 'citadel-vanity-quarters', visibleScenes: observedIntentionalCitadelPixels, rule: 'all other native pixels exactly match baseline with that single added prop excluded' };
+assert(
+  observedIntentionalCitadelPixels > 0,
+  'Veyra vanity must produce an observable native-render difference',
+);
+evidence.authorizedVisualDelta = {
+  zone: 'citadel',
+  structure: 'citadel-vanity-quarters',
+  visibleScenes: observedIntentionalCitadelPixels,
+  rule: 'all other native pixels exactly match baseline with that single added prop excluded',
+};
 fs.mkdirSync(path.join(current, 'test-results/perf'), { recursive: true });
 fs.writeFileSync(
   path.join(current, 'test-results/perf/combined-equivalence.json'),
