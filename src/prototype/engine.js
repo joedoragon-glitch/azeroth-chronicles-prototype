@@ -1310,7 +1310,7 @@
       );
       if (!barracks) return false;
       this.s.barracksRespawn = { zone: this.zoneId, id: barracks.id };
-      this.say('Death recovery set to these barracks. You can change it at any completed barracks.');
+      this.say('Barracks selected for death recovery. You can change camps later.');
       return true;
     }
     clearBarracksRespawn() {

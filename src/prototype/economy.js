@@ -46,7 +46,9 @@
           : R.balance.economy.deathPenaltyFraction;
       }
       deathPenaltyAmount() {
-        return this.hero.gold > 0 ? Math.ceil(this.hero.gold * this.deathPenaltyFraction()) : 0;
+        return this.hero.gold > 0
+          ? Math.ceil(this.hero.gold * this.deathPenaltyFraction())
+          : 0;
       }
       applyDeathPenalty() {
         const lost = this.deathPenaltyAmount();

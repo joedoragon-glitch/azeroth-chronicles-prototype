@@ -1051,7 +1051,7 @@
           ? []
           : [
               action(
-                selected ? 'Return death recovery to refuge' : 'Set these barracks as death recovery point',
+                selected ? 'Return death recovery to refuge' : 'Set death recovery point',
                 () => {
                   if (selected) getGame().clearBarracksRespawn();
                   else getGame().setBarracksRespawn(b.id);
@@ -1059,7 +1059,7 @@
                 },
                 selected
                   ? 'Selected recovery point · choose this to use your last refuge instead'
-                  : 'On defeat, respawn near this completed barracks rather than at your last refuge',
+                  : 'On defeat, respawn here rather than at your last refuge',
               ),
             ],
         baseActions = [
