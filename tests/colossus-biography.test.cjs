@@ -36,10 +36,19 @@ assert.equal(boss.xp, 375);
 assert.equal(boss.attacks.length, 5);
 assert.deepEqual(
   boss.attacks.map((line) => line.split(':')[0]),
-  ['Punching Shear', 'Progressive Collapse', 'Dynamic Compaction', 'Pile Driving', 'Mass Underpinning'],
+  [
+    'Punching Shear',
+    'Progressive Collapse',
+    'Dynamic Compaction',
+    'Pile Driving',
+    'Mass Underpinning',
+  ],
 );
 assert.equal(R.tacticalFoundation.rogueMoves.bosses.mine.name, 'Garun’s Lateral Load Transfer');
-assert.equal(R.tacticalFoundation.rogueSignatures.bosses.mine.name, 'Garun’s Passive Earth Pressure');
+assert.equal(
+  R.tacticalFoundation.rogueSignatures.bosses.mine.name,
+  'Garun’s Passive Earth Pressure',
+);
 assert.deepEqual(
   R.attacks.mine.map((a) => [a.kind, a.warning, a.recovery]),
   [
@@ -55,7 +64,9 @@ assert.equal(R.attacks.mine[3].opening, 3);
 assert.equal(R.attacks.mine[3].charge, true);
 assert.equal(R.attacks.mine[4].species, 'ogre');
 assert.equal(R.tacticalFoundation.rogueSignatures.bosses.mine.effect, 'sweep');
-console.log('PASS Colossus identity leaves Ridge authority, attack slots and vulnerability windows intact');
+console.log(
+  'PASS Colossus identity leaves Ridge authority, attack slots and vulnerability windows intact',
+);
 
 const c = fresh();
 assert(c.enter('mine'));
@@ -97,7 +108,9 @@ assert(!old.s.rescued.mine);
 assert.equal(old.s.keys.mine, undefined);
 assert.equal(old.zone().npcs.find((n) => n.family === 'mine').workstation, 'equipment-repair');
 assert.equal(old.zone().enemies.filter((e) => e.guard).length, 18);
-console.log('PASS player-visible Mine and Dara clues, locked rescue, old-save-compatible first discovery');
+console.log(
+  'PASS player-visible Mine and Dara clues, locked rescue, old-save-compatible first discovery',
+);
 
 for (const phase of ['adventure', 'awakening']) {
   const game = fresh();
@@ -129,16 +142,21 @@ const collection = workshopZone.props.filter((p) =>
   ['geometric-gallery', 'kinetic-collection', 'art-object'].includes(p.sceneRole),
 );
 assert.equal(collection.length, 3, 'Garun owns three compact collectible displays');
-assert(collection.every((p) => p.decorative && p.r === 0), 'gallery cannot change travel geometry');
+assert(
+  collection.every((p) => p.decorative && p.r === 0),
+  'gallery cannot change travel geometry',
+);
 const beforeGallery = workshop.snapshot();
 beforeGallery.zones.mine.props = beforeGallery.zones.mine.props.filter(
   (p) => !['geometric-gallery', 'kinetic-collection', 'art-object'].includes(p.sceneRole),
 );
 const restoredGallery = Campaign.restore(beforeGallery);
 assert.equal(
-  restoredGallery.zone().props.filter((p) =>
-    ['geometric-gallery', 'kinetic-collection', 'art-object'].includes(p.sceneRole),
-  ).length,
+  restoredGallery
+    .zone()
+    .props.filter((p) =>
+      ['geometric-gallery', 'kinetic-collection', 'art-object'].includes(p.sceneRole),
+    ).length,
   3,
   'old Mine saves receive the collection without resetting the dungeon version',
 );
@@ -161,10 +179,23 @@ const builder = fresh();
 builder.enter('mine');
 const builderZone = builder.zone();
 const architect = builderZone.enemies.find((e) => e.family === 'mine' && e.type === 'boss');
-const baselineExit = builder.route(builder.hero, builderZone.npcs.find((n) => n.kind === 'exit')).length > 0;
-const baselineDara = builder.route(builder.hero, builderZone.npcs.find((n) => n.kind === 'cage')).length > 0;
+const baselineExit =
+  builder.route(
+    builder.hero,
+    builderZone.npcs.find((n) => n.kind === 'exit'),
+  ).length > 0;
+const baselineDara =
+  builder.route(
+    builder.hero,
+    builderZone.npcs.find((n) => n.kind === 'cage'),
+  ).length > 0;
 let built = 0;
-for (const [x, y] of [[1100, 1100], [1100, 920], [1180, 1220], [990, 1190]]) {
+for (const [x, y] of [
+  [1100, 1100],
+  [1100, 920],
+  [1180, 1220],
+  [990, 1190],
+]) {
   built += builder.raiseMineWorks(architect, { x, y });
   if (built > 0) break;
 }
@@ -181,16 +212,21 @@ const afterLoad = Campaign.restore(builder.snapshot());
 assert(!afterLoad.zone().props.some((p) => p.garunTemporary));
 builder.s.time += 10;
 builder.tick(0.05);
-assert(!builderZone.props.some((p) => p.garunTemporary), 'supports expire without becoming permanent walls');
+assert(
+  !builderZone.props.some((p) => p.garunTemporary),
+  'supports expire without becoming permanent walls',
+);
 assert.equal(builderZone.enemies.filter((e) => e.guard).length, 18);
 console.log('PASS temporary support placement, collision, route access, save exclusion and expiry');
 
 const works = fresh();
 works.enter('mine');
 const mineBoss = works.zone().enemies.find((e) => e.family === 'mine' && e.type === 'boss');
-const gallery = works.zone().props.filter((p) =>
-  ['geometric-gallery', 'kinetic-collection', 'art-object'].includes(p.sceneRole),
-);
+const gallery = works
+  .zone()
+  .props.filter((p) =>
+    ['geometric-gallery', 'kinetic-collection', 'art-object'].includes(p.sceneRole),
+  );
 assert.equal(gallery.length, 3, 'Garun has three existing-art geometric collectibles');
 assert(gallery.every((p) => p.decorative && p.r === 0));
 works.updateIdleWander(mineBoss, 0.1);
@@ -211,5 +247,6 @@ assert.equal(works.zone().props.filter((p) => p.garunTemporary).length, 0);
 works.raiseMineWorks(mineBoss, { x: mineBoss.x, y: mineBoss.y });
 works.enter('highlands');
 assert.equal(works.s.zones.mine.props.filter((p) => p.garunTemporary).length, 0);
-console.log('PASS Garun inspection, gallery, temporary route-checked supports, expiry and save cleanup');
-
+console.log(
+  'PASS Garun inspection, gallery, temporary route-checked supports, expiry and save cleanup',
+);
