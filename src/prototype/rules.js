@@ -768,6 +768,7 @@
       props: [
         [1510, 1020, 'ore-sorting-bay'],
         [1640, 1080, 'silver-sort-samples'],
+        [1790, 1090, 'copper-sort-samples'],
         [1830, 980, 'mine-supports'],
         [1920, 1190, 'caravan-loading-bay'],
         [1630, 1270, 'ridge-supper'],
@@ -787,7 +788,9 @@
       id: 'roads',
       props: [
         [1180, 530, 'silver-ore-face'],
+        [1290, 610, 'copper-ore-face'],
         [2600, 2210, 'silver-ore-face'],
+        [2780, 2190, 'copper-ore-face'],
         [1160, 1040, 'mine-supports'],
         [1440, 1840, 'tool-rack'],
       ],
@@ -801,7 +804,7 @@
     },
   ];
   const ironrootLore = {
-    ore: 'Dark lead-grey stone from these veins bears silver. It goes to Quarry Outpost for sorting, then to Stonecross: smelting, cupellation, a little copper for harder silver, and the five-point Crown die. Sealed chests travel under guard. The wages are real; so is the levy.',
+    ore: 'Ironroot miners extract silver-bearing ore and copper ore from separate veins. The ores are sorted and refined, then worked into crowns bearing the Dark Lord’s face at Stonecross. Sealed shipments travel under guard. The stone quarry supplies building material separately.',
     'bridge-north':
       'Fresh stone repairs and spare hauling timbers keep mineral carts moving. The Master of Coin counts reliable roads as proof of better rule; traders welcome fewer delays without necessarily welcoming their ruler.',
     'bridge-south':
@@ -3439,8 +3442,12 @@
     ],
     mine: [
       [310, 315, 'ore-sorting-bay', 'receiving-haulage'],
+      [370, 350, 'silver-sort-samples', 'receiving-haulage'],
+      [450, 345, 'copper-sort-samples', 'receiving-haulage'],
       [535, 330, 'caravan-loading-bay', 'receiving-haulage'],
       [480, 470, 'mine-supports', 'standard-workings'],
+      [500, 555, 'silver-ore-face', 'standard-workings'],
+      [680, 555, 'copper-ore-face', 'standard-workings'],
       [700, 670, 'mine-supports', 'standard-workings'],
       [650, 800, 'rail', 'standard-workings'],
       [820, 920, 'rail', 'standard-workings'],
