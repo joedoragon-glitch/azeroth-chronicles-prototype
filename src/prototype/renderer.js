@@ -1445,7 +1445,7 @@
             const label =
               e.renderKind === 'enemy'
                 ? isTrueBoss
-                  ? 'TRUE · ' + e.name.replace(/\s+TRUE$/, '') + ' · Lv ' + e.level
+                  ? 'TRUE · ' + e.name.replace(/^TRUE\s+|\s+TRUE$/g, '') + ' · Lv ' + e.level
                   : e.name + ' · Lv ' + e.level
                 : e.renderKind === 'ally'
                   ? e.type || e.name
