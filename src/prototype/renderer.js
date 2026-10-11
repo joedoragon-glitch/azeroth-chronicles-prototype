@@ -1426,6 +1426,35 @@
                 : e,
             p,
           );
+        if (e.renderKind === 'enemy' && e.family === 'ridge' && e.ledgerOpen) {
+          // The Ledger of Losses remains visibly carried throughout the fight.
+          ctx.save();
+          ctx.fillStyle = '#49312c';
+          ctx.strokeStyle = '#dcba80';
+          ctx.lineWidth = 2;
+          ctx.fillRect(p.x + 16, p.y - 53, 23, 28);
+          ctx.strokeRect(p.x + 16, p.y - 53, 23, 28);
+          ctx.strokeStyle = '#be9674';
+          for (let k = 0; k < 3; k++) {
+            ctx.beginPath();
+            ctx.moveTo(p.x + 21, p.y - 46 + 7 * k);
+            ctx.lineTo(p.x + 34, p.y - 46 + 7 * k);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+        if (['hero', 'ally'].includes(e.renderKind) &&
+            z.enemies.some(b => b.family === 'ridge' && b.hp > 0 &&
+              b.ledgerMarkUntil > game.s.time &&
+              b.ledgerMarkedId === (e.renderKind === 'hero' ? 'hero' : e.id))) {
+          ctx.save();
+          ctx.strokeStyle = '#ebc479';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.ellipse(p.x, p.y + 3, 23, 10, 0, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        }
         if (e.renderKind === 'npc' && e.kind === 'keeper') {
           // A roomy iron cage, drawn around the visible captive, not a tiny icon.
           ctx.strokeStyle = '#d4bea0';
