@@ -5,6 +5,11 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const manifest = require('./fixtures/perf-v09-protected.json');
 const revision = manifest.renderingRevision;
+const ironroot = manifest.ironrootRevision;
+assert.deepEqual(Object.keys(ironroot.files).sort(), [
+  'src/prototype/rules.js',
+  'src/prototype/world.js',
+]);
 assert.deepEqual(Object.keys(revision.files).sort(), [
   'src/prototype/app.js',
   'src/prototype/runtime.js',
@@ -16,7 +21,7 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    revision.files[file] || expected,
+    revision.files[file] || ironroot.files[file] || expected,
     file + ' is protected against baseline / reviewed rendering revision ' + manifest.baseline,
   );
 }
