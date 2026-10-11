@@ -1915,7 +1915,7 @@
       this.hero.haste = 0;
       const chosen = this.selectedBarracksRespawn();
       if (chosen) {
-        this.enter(chosen.zone, { x: chosen.barracks.x + 110, y: chosen.barracks.y + 90 });
+        this.enter(chosen.zone, { x: chosen.barracks.x + 85, y: chosen.barracks.y + 50 });
         this.say('Recovered at your selected barracks in ' + this.definition().name + '.');
       } else {
         if (this.s.barracksRespawn) this.s.barracksRespawn = null;

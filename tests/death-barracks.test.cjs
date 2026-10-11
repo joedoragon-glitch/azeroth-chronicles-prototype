@@ -65,7 +65,7 @@ for (const mode of ['normal', 'nightmare']) {
   restored.die();
   assert.equal(restored.hero.gold, 80, 'crown penalty uses death region, not chosen spawn region');
   assert.equal(restored.zoneId, 'vale', 'recovery uses selected barracks in another region');
-  assert(Math.hypot(restored.hero.x - second.x, restored.hero.y - second.y) < 350);
+  assert(Math.hypot(restored.hero.x - second.x, restored.hero.y - second.y) < 115, 'respawn point is within immediate Barracks interaction range');
   assert.equal(restored.clearBarracksRespawn(), true);
   assert.equal(restored.s.barracksRespawn, null);
   restored.enter('march');
