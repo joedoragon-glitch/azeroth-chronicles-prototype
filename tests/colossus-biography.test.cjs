@@ -35,6 +35,12 @@ assert.equal(boss.gold, 300);
 assert.equal(boss.xp, 375);
 assert.equal(boss.attacks.length, 5);
 assert.deepEqual(
+  boss.attacks.map((line) => line.split(':')[0]),
+  ['Punching Shear', 'Progressive Collapse', 'Dynamic Compaction', 'Pile Driving', 'Mass Underpinning'],
+);
+assert.equal(R.tacticalFoundation.rogueMoves.bosses.mine.name, 'Garun’s Lateral Load Transfer');
+assert.equal(R.tacticalFoundation.rogueSignatures.bosses.mine.name, 'Garun’s Passive Earth Pressure');
+assert.deepEqual(
   R.attacks.mine.map((a) => [a.kind, a.warning, a.recovery]),
   [
     ['circle', 1.6, 2.5],
