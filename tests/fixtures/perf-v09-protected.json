@@ -11,8 +11,8 @@
     "src/prototype/progression.js": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
     "src/prototype/economy.js": "fd9701ee01d2748f22f176ce84d06f8769c0eb8b84963460380457a61933487a",
     "src/prototype/rewards.js": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525",
-    "src/prototype/rules.js": "44a28b6cbc1f601d0f2dc8000a405d56d3d49f94b1a06ad844dcfddb53f46e4c",
-    "src/prototype/data.js": "26faefb4360fab014febda134e5fe53607b022e3c7013a339e976d3b73e26764",
+    "src/prototype/rules.js": "4b1b3fc13341497a5ad343b446c776d109c9d8bcca1e9afa7dcd1282584d14cc",
+    "src/prototype/data.js": "bba5a5e454fa4cf39a37a06996f9b276432a75b5cfc175681d06d657076b9e3d",
     "src/prototype/save.js": "82012e2c23e4a29365834b1007936d96df1cefc041d7b9899737bd3155f647a9",
     "src/prototype/input.js": "87aed3b4d743dd011e0b6a0f5f293dc39fae45d76f6faa281139897a0437d616",
     "src/prototype/platform.js": "60107014425663a4607a239ea68359b04d0f0cfbf0eca7e9dc2fcc1a1180710d",
@@ -44,5 +44,21 @@
     "branch": "feature/boss-identity-pitstop-20261011",
     "scope": "Approved Mirejaw, Warlord, Drowned Keeper, Ridge Tyrant, Lifebinder and winter estate mechanics and save-compatibility changes. Unchanged app/runtime scheduler hashes remain protected.",
     "requires": "Full Node/browser CI, explicit gameplay audit, and separate final author merge approval."
+  },
+  "lifebinderCanonReconciliation": {
+    "parents": [
+      "#230",
+      "#258"
+    ],
+    "scope": "Locked free-willed skeletons, former companion, Borin ledger, six-seat Crypt lore and compatible quest text; preserves #230 approved combat and estate geometry",
+    "priorProtectedSha256": {
+      "src/prototype/data.js": "26faefb4360fab014febda134e5fe53607b022e3c7013a339e976d3b73e26764",
+      "src/prototype/rules.js": "44a28b6cbc1f601d0f2dc8000a405d56d3d49f94b1a06ad844dcfddb53f46e4c"
+    },
+    "candidateProtectedSha256": {
+      "src/prototype/data.js": "bba5a5e454fa4cf39a37a06996f9b276432a75b5cfc175681d06d657076b9e3d",
+      "src/prototype/rules.js": "4b1b3fc13341497a5ad343b446c776d109c9d8bcca1e9afa7dcd1282584d14cc"
+    },
+    "status": "unmerged dependent branch; local focused checks only; full CI still required"
   }
 }
