@@ -42,6 +42,9 @@
       }),
     ];
   }
+  function visibleWarning(e) {
+    return e.telegraph && (e.telegraph.total > 0 || !e.telegraph.captainSkill);
+  }
   function warningShapes(a, patches) {
     if (a.kind === 'summon') return [];
     if (a.kind === 'line' || a.kind === 'volley')
@@ -184,7 +187,7 @@
         ctx.stroke();
       }
     }
-    for (const e of game.zone().enemies.filter((e) => e.telegraph && (e.telegraph.total > 0 || !e.telegraph.captainSkill))) {
+    for (const e of game.zone().enemies.filter(visibleWarning)) {
       const a = e.telegraph,
         shapes = warningShapes(a, game.attackPatches(a));
       // Rogue warnings need an identity distinct from ordinary boss attacks:
