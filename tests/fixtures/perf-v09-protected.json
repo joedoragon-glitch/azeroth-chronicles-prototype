@@ -48,7 +48,7 @@
     "files": {
       "src/prototype/engine.js": "5880cfa6cf0e67bea2c43d16acbd278ac263b1a7b0969d83a4cd16e8aa6bbb72",
       "src/prototype/world.js": "c68852d33901084dc2c9abae7662c1059a65365e66efa1c45b9f6a66c2612bfa",
-      "src/prototype/app.js": "7012187db20ca71b50a0bb41ec3386ae27a026aad9f53fffc9a4650ebd3db7dd"
+      "src/prototype/app.js": "f887e0a9fe138810457354c71b8cb2d4847b0161b4d4d6814d4b5e973c23e481"
     }
   }
 }
