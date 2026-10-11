@@ -725,6 +725,17 @@
               // Exactly one jaw victim, then three evenly spaced roll impacts.
               e.deathRoll = {
                 victim: u === this.hero ? 'hero' : u.id,
+                // Calculate the original single-hit loss once. Each of the
+                // three roll ticks is already mitigated; armor must not apply thrice.
+                totalDamage: Math.max(
+                  3,
+                  e.damage * a.coefficient -
+                    (u === this.hero
+                      ? this.armor()
+                      : ['soldier', 'archer'].includes(u.type)
+                        ? this.companionArmor(u.type)
+                        : 5 + this.hero.level * 0.5) * 0.35,
+                ),
                 life: 1.5,
                 elapsed: 0,
                 hits: 0,
