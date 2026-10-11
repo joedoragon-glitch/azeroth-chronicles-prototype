@@ -287,6 +287,8 @@ These additions were procedural at v0.8.87. The 8 October reconciliation promote
 | Renderer family | Classification |
 | --- | --- |
 | `silver-ore-face` | PROCEDURAL — locally placed dark argentiferous ore seam with repeated faceted deposits |
+| `copper-ore-face` | PROCEDURAL — separate copper-rich mine seam with warm and oxidized flecks |
+| `copper-sort-samples` | PROCEDURAL — copper ore sorted independently of silver and quarry rock |
 | `silver-refining-hearth` | PROCEDURAL — composed furnace, cupel, slag and metal-button station |
 | `silver-sort-samples` | PROCEDURAL — small silver-bearing ore sorting overlay beside the existing approved sorting sprite |
 | `silver-die-tray` | PROCEDURAL — coin dies and silver blanks beside the existing approved striking sprite |
