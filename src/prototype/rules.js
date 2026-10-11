@@ -3879,10 +3879,11 @@
     'supply-vale': {
       mentor: 'thorn',
       name: 'Scornfang',
+      enduranceHp: 260,
       visualScale: 1.16,
       specialRange: 470,
       specialCooldown: 4.2,
-      phase: { threshold: 0.42, name: "Scavenger's Nerve", kind: 'scramble' },
+      phase: { threshold: 0.55, name: "Scavenger's Nerve", kind: 'scramble' },
       attacks: [
         {
           name: 'Hookfang Rush',
@@ -3900,7 +3901,7 @@
           coefficient: 0.75,
           persistent: true,
           slow: true,
-          radius: 82,
+          radius: 100,
         },
         {
           name: 'Pocket Sand',
@@ -3916,21 +3917,23 @@
     'supply-march': {
       mentor: 'mire',
       name: 'Direjaw',
+      enduranceHp: 680,
       visualScale: 1.18,
       specialRange: 437,
       specialCooldown: 4.4,
-      phase: { threshold: 0.45, name: 'Sloughskin', kind: 'molt' },
+      phase: { threshold: 0.55, name: 'Sloughskin', kind: 'molt' },
       attacks: [
         {
           name: 'Bog Skitter',
           kind: 'line',
-          warning: 0.9,
+          warning: 0,
           recovery: 1.2,
           coefficient: 1.2,
           charge: true,
         },
         {
           name: 'Spatter Fan',
+          angleDegrees: 196,
           kind: 'cone',
           warning: 1.0,
           recovery: 1.05,
@@ -3940,6 +3943,8 @@
         },
         {
           name: 'Silt Slick',
+          count: 4,
+          captainSpread: true,
           kind: 'circle',
           warning: 1.2,
           recovery: 1.1,
@@ -3953,13 +3958,14 @@
     'supply-highlands': {
       mentor: 'ridge',
       name: 'Crag Tyrant',
+      enduranceHp: 1650,
       visualScale: 1.2,
       specialRange: 482,
       specialCooldown: 4.1,
-      phase: { threshold: 0.44, name: 'Lone Howl', kind: 'howl' },
+      phase: { threshold: 0.55, name: 'Hostile Liquidation', kind: 'howl' },
       attacks: [
         {
-          name: 'Shoulder Rush',
+          name: 'Hostile Takeover',
           kind: 'line',
           warning: 0.95,
           recovery: 1.25,
@@ -3967,7 +3973,9 @@
           charge: true,
         },
         {
-          name: 'Scree Kick',
+          name: 'Margin Call',
+          count: 5,
+          captainSpread: true,
           kind: 'circle',
           warning: 1.15,
           recovery: 1.05,
@@ -3975,7 +3983,8 @@
           radius: 86,
         },
         {
-          name: 'Ridge Feint',
+          name: 'Bad Deal',
+          angleDegrees: 360,
           kind: 'cone',
           warning: 0.8,
           recovery: 1.0,
@@ -3988,6 +3997,7 @@
       mentor: 'cindermaw',
       visualIdol: 'darklord',
       name: 'Dreadmaw',
+      enduranceHp: 5000,
       visualScale: 1.19,
       specialRange: 493,
       specialCooldown: 4.0,
@@ -3995,13 +4005,13 @@
       summon: {
         name: 'Brood Call',
         species: 'ashbeast',
-        cap: 3,
+        cap: 4,
         cooldown: 12,
         warning: 1.15,
-        composition: ['melee', 'melee', 'ranged'],
+        composition: ['melee', 'melee', 'melee', 'ranged'],
         opening: true,
-        guardPerSummon: 0.08,
-        guardCap: 0.24,
+        guardPerSummon: 0.25,
+        guardCap: 1,
       },
       attacks: [
         {
@@ -4045,6 +4055,7 @@
     'frontier-overseer': {
       mentor: 'warlord',
       name: 'Cinder Warlord',
+      enduranceHp: 3000,
       visualScale: 1.18,
       specialRange: 493,
       specialCooldown: 4.0,
@@ -4057,7 +4068,7 @@
         [1100, 1080],
         [1740, 1050],
       ],
-      phase: { threshold: 0.45, name: 'Mandatory Overtime', kind: 'overtime' },
+      phase: { threshold: 0.6, name: 'Mandatory Overtime', kind: 'overtime' },
       attacks: [
         {
           name: 'Inspection Cleave',
@@ -4069,6 +4080,7 @@
         },
         {
           name: 'Violation Marker',
+          captainRadiusMultiplier: 2,
           kind: 'circle',
           warning: 1.15,
           recovery: 1.0,
