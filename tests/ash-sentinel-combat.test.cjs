@@ -60,4 +60,18 @@ boss.hp = 0;
 const frozenBeat = boss.board.beat;
 c.sentinelUpdateBoard(boss, 5);
 assert.equal(boss.board.beat, frozenBeat, 'board stops when Veyra dies');
+// A mid-fight save preserves the live board; a normal exit resets the encounter.
+const exitCase = new C();
+exitCase.enter('citadel');
+const exitBoss = exitCase.zone().enemies.find(e => e.family === 'citadel');
+exitBoss.board = { x: exitBoss.home.x, y: exitBoss.home.y, size: 112,
+  beat: 3, phase: 'warn', timer: 0.9 };
+exitBoss.dressUntil = exitCase.s.time + 5;
+const reloaded = C.restore(exitCase.snapshot());
+assert.equal(reloaded.zone().enemies.find(e => e.family === 'citadel').board.beat, 3);
+exitCase.enter('crown');
+exitCase.enter('citadel');
+const resetBoss = exitCase.zone().enemies.find(e => e.family === 'citadel');
+assert.equal(resetBoss.board, undefined, 'leaving a fight clears persistent board state');
+assert.equal(resetBoss.dressUntil, undefined, 'leaving a fight clears the formation order');
 console.log('PASS Sentinel mechanics');

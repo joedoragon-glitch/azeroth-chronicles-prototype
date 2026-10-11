@@ -1516,6 +1516,10 @@
       this.s.hazards = [];
       for (const z of Object.values(this.s.zones))
         for (const e of z.enemies) {
+          if (e.family === 'citadel') {
+            delete e.board;
+            delete e.dressUntil;
+          }
           e.aggro = false;
           e.telegraph = null;
           e.sequence = [];
