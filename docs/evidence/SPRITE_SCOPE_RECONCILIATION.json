@@ -32,6 +32,13 @@
       "reed-nest",
       "shell-hoard",
       "drift-seat",
+      "silver-ore-face",
+      "copper-ore-face",
+      "copper-sort-samples",
+      "silver-refining-hearth",
+      "silver-sort-samples",
+      "silver-die-tray",
+      "sealed-crown-consignment",
       "highland-pay-station",
       "ore-sorting-bay",
       "mint-workbench",
@@ -1143,10 +1150,10 @@
     }
   ],
   "sources": {
-    "src/prototype/visuals.js": "4819813d8d10aaf95830a9e5bde0a064d95a4a1d8a77f48bc165a21d33aecdd3",
-    "src/prototype/world.js": "fd696a65bf4e1b9067291f6c6d3d57b508f2b2ecb7164c222299ef8fa5edaa53",
-    "src/prototype/rules.js": "0bea5df747d56c3d0ab15021aaa5bd09683c898594292f142bda969c7ee7ccc0",
-    "src/prototype/data.js": "a82856323e155405e7fb68a027dc226b75d1563bd6b440450ccf584a9d7724b2",
+    "src/prototype/visuals.js": "ea8386f72b144067e193eaacddd1c3ed084119a1df589b1abbbeb2a98050f329",
+    "src/prototype/world.js": "db8d911b0fc00bee50e984ede620f356774661243506def8671a32cd43864cf3",
+    "src/prototype/rules.js": "1696d68ec6d907bc8ca75bf961a6c49f89610d0adee1b3c9bc515b1e840dece6",
+    "src/prototype/data.js": "0bd0e66cd10556ac6e67de76d1d38fb3ec1e8d29981f0f6964cf825c5b5e0fd9",
     "src/prototype/sprites.js": "157fae7b5bcb7883a9c0a107434deb2e1e2692e7905c358f237553d98118a774",
     "src/prototype/renderer.js": "2faa81fdd78cb23632fcf93a73199421809e18e0da9f516175c5d8eb97a5fdb9"
   },
