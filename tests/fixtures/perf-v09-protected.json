@@ -11,7 +11,7 @@
     "src/prototype/progression.js": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
     "src/prototype/economy.js": "fd9701ee01d2748f22f176ce84d06f8769c0eb8b84963460380457a61933487a",
     "src/prototype/rewards.js": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525",
-    "src/prototype/rules.js": "f8c6480ddf2b80d5b396b84084c48efe0f7aaa96ab06f4fcbb8844ea848d4e45",
+    "src/prototype/rules.js": "a19fe6807736357b857975056f18aff63d7e93bef282327d95a5217248ae94b3",
     "src/prototype/data.js": "159ce9b4253f5aebf73b4624ae8f1ff9b59ac03bf8b308dd3324ebd2c9019c94",
     "src/prototype/save.js": "4365b4fcfa21bcd8ffa5fe6da2b637dc0653e5aa7459abccc6277e94e6ab6296",
     "src/prototype/input.js": "87aed3b4d743dd011e0b6a0f5f293dc39fae45d76f6faa281139897a0437d616",
@@ -51,7 +51,7 @@
     },
     "candidateProtectedSha256": {
       "src/prototype/data.js": "159ce9b4253f5aebf73b4624ae8f1ff9b59ac03bf8b308dd3324ebd2c9019c94",
-      "src/prototype/rules.js": "f8c6480ddf2b80d5b396b84084c48efe0f7aaa96ab06f4fcbb8844ea848d4e45"
+      "src/prototype/rules.js": "a19fe6807736357b857975056f18aff63d7e93bef282327d95a5217248ae94b3"
     },
     "evidence": "Exact source diff on PR #253 and focused Colossus, Ironroot, boss-description and Awakening tests. All other protected fixture hashes are retained."
   }
