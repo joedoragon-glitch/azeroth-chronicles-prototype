@@ -150,4 +150,18 @@ const near = (u, e, degrees, distance = 100) => {
   assert(c.damage(e, 100, 'hero'));
   assert.equal(c.hero.hp, after, 'reflection stops after its eight-second window');
 }
+{
+  const { c, e } = captain('supply-crown', 'Dreadmaw');
+  c.hero.x = e.x + 150;
+  c.hero.y = e.y;
+  const profile = Campaign.rules.roomCaptains['supply-crown'];
+  assert.equal(c.summonCaptainAdds(e, profile.summon), 4,
+    'Dreadmaw must create the complete four-brood shield');
+  for (const u of c.captainOwnedSummons(e)) {
+    assert(!c.blocked(u.x, u.y, c.s.zone, 12),
+      'shield broodling cannot spawn inside blocked geometry');
+    assert(c.route(c.hero, u).length,
+      'shield broodling must remain reachable from a nearby player');
+  }
+}
 console.log('PASS captain attack angles, zero-warning fatigue, brood shield/reflection, and overtime repeat');
