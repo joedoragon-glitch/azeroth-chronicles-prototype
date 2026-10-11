@@ -41,7 +41,10 @@
             hit: [],
             speed: 350,
             life: 5,
-            rogueMove: move,
+            rogueMove: true,
+            rogueSignature: false,
+            style: move.style,
+            rogueAttack: move,
             recovery: move.recovery,
           };
           return;
@@ -63,7 +66,11 @@
             hit: [],
             speed: 350,
             life: 4,
-            rogueMove: move,
+            rogueMove: true,
+            rogueSignature: true,
+            effect: move.effect,
+            style: move.style,
+            rogueAttack: move,
             recovery: move.recovery,
           };
           return;
@@ -749,7 +756,7 @@
           a.life <= 0
         ) {
           if (a.aerial === 'high-yo-yo') {
-            const move = a.rogueMove,
+            const move = a.rogueAttack,
               victim =
                 move.targetId === 'hero'
                   ? this.hero
@@ -757,7 +764,7 @@
             if (victim?.hp > 0 && dist(victim, move) <= move.radius && this.line(e, victim))
               this.hitParty(victim, e.damage * move.coefficient);
           } else if (a.aerial === 'wingover') {
-            originalRogueMove.call(this, e, a.rogueMove);
+            originalRogueMove.call(this, e, a.rogueAttack);
           } else if (a.aerial === 'go-around' && e.hp > 0) {
             const amount = Math.min(e.maxHp - e.hp, e.maxHp * a.healFraction);
             if (amount > 0) {
