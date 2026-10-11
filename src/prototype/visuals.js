@@ -12556,6 +12556,18 @@
           break;
         case 'crownguard':
           {
+            if (e.estateAttendant) {
+              // Winter-estate household retainer: Crown colors, lighter apron and
+              // soft cap, no full legionary helm or heavy frontline shield.
+              humanoid('#493038', '#aa9381', 0.91);
+              poly([[-13, -29], [0, -40], [13, -29], [9, -24], [-9, -24]], '#6d343e');
+              rect(-11, -21, 22, 24, '#322b37');
+              rect(-8, -18, 16, 19, '#72535a');
+              line([[-8, -16], [8, -16]], '#b79c67', 2.4);
+              poly([[-8, -42], [0, -48], [8, -42], [8, -38], [-8, -38]], '#563944');
+              line([[15, -17], [16, 7]], '#988373', 3);
+              line([[-15, -15], [-15, 7]], '#7a5653', 3);
+            } else {
             const cloth = e.guard ? '#51495d' : '#62566e',
               metal = e.guard ? '#aab2b5' : '#939fa7';
             humanoid(cloth, metal, 1.03);
@@ -12658,6 +12670,7 @@
                 '#e0c989',
                 2,
               );
+            }
             }
           }
           break;
