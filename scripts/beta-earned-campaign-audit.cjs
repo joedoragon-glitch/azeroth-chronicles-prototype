@@ -19,6 +19,27 @@ const D = require('../src/prototype/data');
 const R = require('../src/prototype/rules');
 const route = process.argv[2] || 'crypt';
 const trace = [];
+const incoming = [];
+const originalHitParty = c.hitParty;
+c.hitParty = function (unit, damage, manaDrain, sourceId) {
+  const before = unit.hp,
+    time = this.s.time,
+    zone = this.zoneId;
+  const source = this.zone().enemies.find((e) => e.id === sourceId);
+  const result = originalHitParty.call(this, unit, damage, manaDrain, sourceId);
+  if (unit === this.hero || before - unit.hp > 0)
+    incoming.push({
+      time: +time.toFixed(1),
+      zone,
+      unit: unit.id || 'hero',
+      damage,
+      loss: before - unit.hp,
+      source: source?.name || sourceId || 'trap/unspecified',
+      xy: [Math.round(unit.x), Math.round(unit.y)],
+    });
+  if (incoming.length > 600) incoming.shift();
+  return result;
+};
 const watch = new Set([
   'bossDefeat',
   'rescue',
@@ -86,7 +107,10 @@ function healParty() {
     return;
   }
   const wounded = c.activeLivingParty().some((u) => u.hp < u.maxHp * 0.8);
-  if (wounded) {
+  if (c.hero.hp < c.hero.maxHp * 0.8) {
+    healHeldAt = null;
+    c.cast(3);
+  } else if (wounded) {
     if (healHeldAt === null) healHeldAt = c.s.time;
     if (c.s.time - healHeldAt >= R.chargedSkills.holdSeconds) {
       c.cast(3, undefined, true);
@@ -112,7 +136,9 @@ function tick() {
 function near() {
   return c
     .zone()
-    .enemies.filter((e) => e.hp > 0 && !e.neutral && !e.returning && dist(e, c.hero) < 420)
+    .enemies.filter(
+      (e) => e.hp > 0 && !e.neutral && !e.returning && dist(e, c.hero) < 420 && c.line(c.hero, e),
+    )
     .sort((a, b) => dist(a, c.hero) - dist(b, c.hero))[0];
 }
 // Instrumented controller: reads geometry, issues ordinary casts/movement only.
@@ -173,6 +199,15 @@ function fight(e, seconds = 180) {
     started = c.s.time;
   let lastHp = e.hp,
     lastProgress = c.s.time;
+  trace.push({
+    time: +c.s.time.toFixed(1),
+    type: 'combatTarget',
+    name: e.name,
+    id: e.id,
+    xy: [e.x, e.y],
+    hero: [c.hero.x, c.hero.y],
+    hp: e.hp,
+  });
   if (e.type === 'boss') record('boss combat started ' + e.family + ':' + e.form);
   for (let i = 0; i < seconds * 10 && e.hp > 0; i++) {
     if (e.hp < lastHp) {
@@ -713,6 +748,7 @@ fs.writeFileSync(
         'Resume of earned Normal Ranger fixed RNG 0.9; instrumented engine actions, not UI/physical/historical player-save acceptance',
       events,
       trace,
+      incoming,
     },
     null,
     2,

@@ -86,5 +86,25 @@
   "earned-regional-resupply": {
     "outcome": "PASS route resupply (engine actions only)",
     "finalSaveSha256": "926b53862ad7893fd8a80d3f7f0e30786a3f258d56845d26509513bf9a2b34d8"
+  },
+  "earned-crown-reinforced": {
+    "outcome": "INCOMPLETE: encounter incomplete cindermaw",
+    "finalSaveSha256": "793304017800374a35223f4df1c0727fd1f294c37e5261749f03f01a39e362da"
+  },
+  "earned-crown-recovery3": {
+    "outcome": "PASS route recover (engine actions only)",
+    "finalSaveSha256": "d2b9d88000aa89afa8530d2aa2010335c7f921e62bf503299d8f14c92f848005"
+  },
+  "earned-crown-observed": {
+    "outcome": "INCOMPLETE: approach incomplete citadel",
+    "finalSaveSha256": "ea1629258632070e1c37d760b4257563d51496f380c44846f9a3284e8f9bf10a"
+  },
+  "earned-citadel-recovery": {
+    "outcome": "PASS route recover (engine actions only)",
+    "finalSaveSha256": "b821a29a27d0cb65858016ce01315416bbcc12342cb29b86412efff10143b511"
+  },
+  "earned-citadel-visible": {
+    "outcome": "INCOMPLETE: approach incomplete citadel",
+    "finalSaveSha256": "9546d63668064313de32dab0033da785b3da21fe651ef550990ebfda23128f46"
   }
 }

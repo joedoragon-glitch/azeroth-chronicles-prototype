@@ -43,11 +43,12 @@ message names the unmet condition; it does not mean that condition passed.
 
 ## Confirmed progression
 
-- Seven normal boss families: Thornfang, Crypt Guardian, Mirejaw, Drowned Keeper,
-  Ridge Tyrant, Stone Colossus and Ashen Warlord.
-- TRUE Thornfang and seven specialist rescues, through Lyss.
-- Paid Vale → Marches → Highlands → Frontier transport; level 11, Expedition 5,
-  skills 1–7 learned, tier-2 weapon and armor, Ranger Heal rank 2.
+- Nine normal regional boss families: Thornfang, Crypt Guardian, Mirejaw, Drowned
+  Keeper, Ridge Tyrant, Stone Colossus, Ashen Warlord, Abyss Dragon and Cindermaw.
+- TRUE Thornfang and nine specialist rescues, through Vera.
+- Paid Vale → Marches → Highlands → Frontier → Crown transport; level 13, Expedition 5,
+  skills 1–7 learned, tier-2 weapon and armor, Ranger Heal rank 2, Self-Heal rank 3,
+  Shared Training rank 4 and Shared Strength rank 3.
 - Resource assignments, worker deposits, quest rewards, paid companion recovery,
   training and equipment purchases exercised with earned crowns.
 - Every completed segment checks isolated engine restore of progression, economy,
@@ -75,12 +76,32 @@ recruitment produced five living active companions. Self-Heal reached rank 3,
 and a purchased tonic was consumed after recovery. Companion maximum HP did not
 inherit the hero's tonic bonus. The party reached level 12 with 242 crowns.
 
-The subsequent reinforced Abyss attempt reached the encounter but ended in
-defeat. This is not a passed boss encounter. The exact latest primary resume point
-is `earned-abyss-reinforced/final-save.json`: time 2540.6, level 12, Frontier refuge,
-193 crowns, four hero deaths, all five companions fallen. Full barracks, earned
-progression, skills and equipment persist. Abyss, Crown and the campaign ending
-remain unverified. No further test process is running after this checkpoint.
+The reinforced Abyss attempt initially failed. The later `earned-abyss-tactical`
+segment defeated Abyss Dragon and rescued Eren with all five companions surviving.
+The controller added trap-aware movement and timed charged party healing.
+
+The Crown continuation retained further losses, paid recoveries and an ordinary
+return trip to collect previously untouched resources in earlier regions. Those
+funded companion inheritance training. `earned-crown-observed` then defeated
+Cindermaw and rescued Vera, before a death during the Citadel approach. At that
+checkpoint nine regional bosses are defeated, level 13, nine hero deaths, and
+468 crowns. No failed attempt was replaced by a successful fork.
+
+The user's explicit target is all **ten regional bosses**, then normal Dark Lord,
+its actual TRUE spawn and the TRUE encounter. Source inspection establishes the
+five-second pending spawn rule, not earned end-to-end success. Ash Sentinel and
+the Dark Lord sequence remain open at this checkpoint. The controller now filters
+nearby attack targets by line of sight to avoid pursuing guards behind walls.
+The latest `earned-citadel-visible` attempt also failed during the approach.
+Exact resume: `earned-citadel-visible/final-save.json`, time 3410.0, Crown refuge,
+level 13, 278 crowns, ten deaths, three living and two fallen companions.
+All ten regional bosses and the Dark Lord/TRUE sequence remain the active target.
+No test process is running at this handoff.
+
+Incoming-damage telemetry observes the existing engine method without changing its
+result. Its raw before/after HP difference can cross a death/refuge reset; do not
+interpret a negative difference as damage or lifesteal. Reports retain the raw
+observations for diagnosis.
 
 No scoped runtime defect has been reproduced from these attempts. Controller
 failures and losses are evidence of incomplete coverage, not proof of a runtime
