@@ -50,3 +50,23 @@ jobs:
           name: ash-sentinel-desktop-phone
           path: test-results/ash-sentinel/
           if-no-files-found: ignore
+  sentinel-webkit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps webkit
+      - name: Capture and verify Citadel telegraphs in WebKit
+        env:
+          SENTINEL_BROWSER_ENGINE: webkit
+        run: node tests/ash-sentinel-browser.test.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ash-sentinel-webkit-phone-desktop
+          path: test-results/ash-sentinel/
+          if-no-files-found: ignore

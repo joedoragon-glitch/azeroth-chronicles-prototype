@@ -3,7 +3,9 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
-const { chromium } = require('playwright');
+const { chromium, webkit } = require('playwright');
+const engine = process.env.SENTINEL_BROWSER_ENGINE === 'webkit' ? webkit : chromium;
+const engineName = process.env.SENTINEL_BROWSER_ENGINE === 'webkit' ? 'webkit' : 'chromium';
 const root = path.resolve(__dirname, '..');
 const out = path.join(root, 'test-results', 'ash-sentinel');
 fs.mkdirSync(out, { recursive: true });
@@ -19,7 +21,7 @@ const server = http.createServer((req, res) => {
 });
 (async () => {
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  const browser = await chromium.launch({ headless: true });
+  const browser = await engine.launch({ headless: true });
   try {
     for (const viewport of [{ width: 1280, height: 800 }, { width: 375, height: 800 }]) {
       const page = await browser.newPage({ viewport, isMobile: viewport.width < 400, hasTouch: viewport.width < 400 });
@@ -48,7 +50,7 @@ const server = http.createServer((req, res) => {
       });
       assert.equal(charge.kind, 'pattern-charge');
       assert.equal(charge.legs, 5);
-      await page.screenshot({ path: path.join(out, 'contouring-' + viewport.width + '.png') });
+      await page.screenshot({ path: path.join(out, 'contouring-' + engineName + '-' + viewport.width + '.png') });
       const board = await page.evaluate(() => {
         const c = Prototype.game;
         const e = c.zone().enemies.find(u => u.family === 'citadel');
@@ -58,9 +60,9 @@ const server = http.createServer((req, res) => {
         return { cells: c.sentinelBoardCells(e).length, selected: c.sentinelBoardCells(e).filter(x => x.selected).length };
       });
       assert.deepEqual(board, { cells: 16, selected: 2 });
-      await page.screenshot({ path: path.join(out, 'fractional-' + viewport.width + '.png') });
+      await page.screenshot({ path: path.join(out, 'fractional-' + engineName + '-' + viewport.width + '.png') });
       assert.deepEqual(errors, [], 'real browser scene has no canvas/runtime errors');
-      console.log('PASS Veyra charge/board scene ' + viewport.width + 'x' + viewport.height);
+      console.log('PASS Veyra ' + engineName + ' charge/board scene ' + viewport.width + 'x' + viewport.height);
       await page.close();
     }
   } finally {
