@@ -148,7 +148,11 @@ function arena(id) {
   const victim =
     e.deathRoll.victim === 'hero' ? c.hero : c.s.party.find((u) => u.id === e.deathRoll.victim);
   assert(victim.deathRollHeld);
-  assert.equal(victim.hp, beforeBite.get(victim === c.hero ? 'hero' : victim.id), 'roll victim does not receive an extra upfront Jaw Snap');
+  assert.equal(
+    victim.hp,
+    beforeBite.get(victim === c.hero ? 'hero' : victim.id),
+    'roll victim does not receive an extra upfront Jaw Snap',
+  );
   for (let i = 0; i < 3; i++) c.updateEnemies(0.5);
   assert.equal(e.deathRoll, null);
   assert.equal(victim.deathRollHeld, false);

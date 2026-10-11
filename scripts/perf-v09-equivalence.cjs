@@ -26,7 +26,9 @@ const evidence = {
   scenarios: [],
   historical: [],
   scenes: [],
-  approvedDifferences: ['Crypt winter-estate visuals/decor v4, normal and TRUE renamed Lifebinder; redesigned five-boss attacks remain covered by separate mechanics tests'],
+  approvedDifferences: [
+    'Crypt winter-estate visuals/decor v4, normal and TRUE renamed Lifebinder; redesigned five-boss attacks remain covered by separate mechanics tests',
+  ],
 };
 for (const mode of ['normal', 'nightmare'])
   for (const cls of ['paladin', 'mage', 'ranger'])
@@ -151,7 +153,15 @@ for (const zone of [...A.data.regions.map((r) => r.id), ...A.dungeonIds])
         assert(!a.equals(b), 'reviewed winter estate must visibly differ from original crypt');
       else assert(a.equals(b), zone + ' native full-render pixels ' + width + '/' + clock);
       global.gc?.();
-      evidence.scenes.push({ zone, width, height, zoom, clock, pixelHash: hash(b), reviewedChange: zone === 'crypt' });
+      evidence.scenes.push({
+        zone,
+        width,
+        height,
+        zoom,
+        clock,
+        pixelHash: hash(b),
+        reviewedChange: zone === 'crypt',
+      });
     }
 fs.mkdirSync(path.join(current, 'test-results/perf'), { recursive: true });
 fs.writeFileSync(
