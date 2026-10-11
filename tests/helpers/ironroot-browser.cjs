@@ -24,6 +24,11 @@ async function verifyIronroot(page, results, tag, capture = false) {
   });
   try {
     for (const [label, zone, target] of [
+      ['ore-silver', 'highlands', 'silver-ore-face'],
+      ['sorting-silver', 'highlands', 'silver-sort-samples'],
+      ['refining-silver', 'highlands', 'silver-refining-hearth'],
+      ['struck-silver', 'highlands', 'silver-die-tray'],
+      ['shipment-seal', 'highlands', 'sealed-crown-consignment'],
       ['stonecross', 'highlands', 'mint-workbench'],
       ['quarry', 'highlands', 'ore-sorting-bay'],
       ['home', 'supply-highlands', 'ridge-game-corner'],
