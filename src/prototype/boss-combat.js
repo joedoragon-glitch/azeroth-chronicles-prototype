@@ -431,7 +431,7 @@
           ...a,
           x: a.x + (i - ((a.count || 1) - 1) / 2) * 190,
           y: a.y + (i % 2) * 100,
-          radius: a.count > 1 ? 75 * R.bossCadence.areaRangeMultiplier : a.radius,
+          radius: a.captainRadiusMultiplier ? a.radius : a.count > 1 ? 75 * R.bossCadence.areaRangeMultiplier : a.radius,
         }));
       }
       resolveAttack(e) {
