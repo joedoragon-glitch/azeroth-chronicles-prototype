@@ -131,6 +131,47 @@ const server = http.createServer((req, res) => {
           (phone ? 'phone' : 'desktop'),
       );
       await context.close();
+      // High-DPR cold start and reload exercise the setting before the first
+      // material/audio request, then restore normal backing density.
+      const hiContext = await browser.newContext({
+        viewport: { width: phone ? 393 : 1280, height: phone ? 852 : 800 },
+        deviceScaleFactor: 3,
+        hasTouch: phone,
+        isMobile: phone,
+      });
+      const hi = await hiContext.newPage();
+      await hi.addInitScript(() => {
+        localStorage.setItem('azeroth-optimization-mode-v1', 'on');
+      });
+      await hi.goto(
+        'http://127.0.0.1:' + server.address().port + (phone ? '/phone.html' : '/index.html'),
+      );
+      await hi.waitForFunction(() => !!window.Prototype);
+      const optimized = await hi.evaluate(() => ({
+        canvas: document.getElementById('world').width,
+        viewport: innerWidth,
+        materials: PrototypeMaterials.status(),
+        renderer: Prototype.renderer.metrics(),
+        audio: Prototype.audio.status(),
+      }));
+      assert.equal(optimized.canvas, optimized.viewport, 'optimized boot caps internal DPR at 1');
+      assert.equal(optimized.materials.optimizationMode, true);
+      assert.equal(optimized.materials.definitions, 0, 'no texture manifest fetched on optimized cold boot');
+      assert.equal(optimized.audio.optimizationMode, true);
+      assert.equal(optimized.renderer.optimizationMode, 'on');
+      await hi.evaluate(() => localStorage.setItem('azeroth-optimization-mode-v1', 'off'));
+      await hi.reload();
+      await hi.waitForFunction(() => !!window.Prototype);
+      const restored = await hi.evaluate(() => ({
+        canvas: document.getElementById('world').width,
+        viewport: innerWidth,
+        materials: PrototypeMaterials.status().optimizationMode,
+        audio: Prototype.audio.status().optimizationMode,
+      }));
+      assert(restored.canvas > restored.viewport, 'normal boot restores higher DPR');
+      assert.equal(restored.materials, false);
+      assert.equal(restored.audio, false);
+      await hiContext.close();
     }
   } finally {
     await browser?.close();
