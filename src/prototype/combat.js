@@ -351,7 +351,8 @@
         // Mirejaw's crocodilian scales lose their protection permanently as health falls.
         // At full health they stop 40%; by half health they stop none.
         if (e.family === 'mire' && e.type === 'boss') {
-          const ratio = Math.max(0, Math.min(1, e.hp / Math.max(1, e.maxHp)));
+          e.mireLowestHpRatio = Math.min(e.mireLowestHpRatio ?? 1, Math.max(0, e.hp / Math.max(1, e.maxHp)));
+          const ratio = Math.max(0, Math.min(1, e.mireLowestHpRatio));
           amount *= 1 - 0.4 * Math.max(0, Math.min(1, (ratio - 0.5) * 2));
         }
         if (e.family === 'citadel' && e.open <= 0) amount *= 0.65;
