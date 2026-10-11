@@ -12,7 +12,11 @@ const rulesBefore = JSON.stringify({
 });
 
 const report = Inventory.audit();
-assert.equal(report.counts.boss, 47, 'all currently authored boss actions (including Keeper sabotage) are inventoried');
+assert.equal(
+  report.counts.boss,
+  47,
+  'all currently authored boss actions (including Keeper sabotage) are inventoried',
+);
 assert.equal(report.counts.captain, 16, 'all five captain movesets are inventoried');
 assert.equal(report.counts['captain-phase'], 5, 'captain second phases are independently listed');
 assert.equal(report.counts.night, 2);
