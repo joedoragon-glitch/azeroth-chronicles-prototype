@@ -390,7 +390,21 @@ function summarize(samples) {
             await pages.baseline.evaluate(() => serializedPerformanceState(__perfWs2.game)),
           );
           const differing = [];
-          const inspect = (a, b, key = '
+          const inspect = (a, b, key = '$') => {
+            if (differing.length >= 30 || JSON.stringify(a) === JSON.stringify(b)) return;
+            if (a === null || b === null || typeof a !== 'object' || typeof b !== 'object') {
+              differing.push({ key, actual: a, expected: b });
+              return;
+            }
+            for (const child of new Set([...Object.keys(a), ...Object.keys(b)]))
+              inspect(a[child], b[child], key + '.' + child);
+          };
+          inspect(actual, expected);
+          console.error('CRYPT EXACT-STATE DIFFERENCES', JSON.stringify(differing));
+        }
+        assert.equal(
+          initial.candidate.state,
+          initial.baseline.state,
           'Identical starting campaign ' + JSON.stringify(spec),
         );
         const samples = { baseline: [], candidate: [], control: [] },
