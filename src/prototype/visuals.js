@@ -6725,6 +6725,80 @@
               1,
             );
           break;
+        case 'silver-ore-face':
+          // Argentiferous dark ore, deliberately unlike the beige quarry rubble.
+          shade(42, 12, 0.15);
+          poly(
+            [
+              [-37, 13],
+              [-33, -15],
+              [-15, -40],
+              [16, -42],
+              [35, -16],
+              [39, 12],
+            ],
+            '#555f64',
+          );
+          poly(
+            [
+              [-16, -36],
+              [5, -31],
+              [22, -13],
+              [7, 10],
+              [-22, -2],
+            ],
+            '#727c81',
+          );
+          for (const [x, y] of [
+            [-22, -14],
+            [-5, -23],
+            [14, -10],
+            [24, 3],
+            [-8, 4],
+          ]) {
+            rect(x, y, 7, 5, '#aeb8bd');
+            rect(x + 2, y + 1, 3, 2, '#e0e5e5');
+          }
+          line(
+            [
+              [-30, 13],
+              [13, 14],
+            ],
+            '#887b65',
+            3,
+          );
+          break;
+        case 'silver-refining-hearth':
+          // A compact cupellation/assay station: oxidizing fire, cupel and silver buttons.
+          shade(43, 12, 0.17);
+          rect(-34, -8, 67, 22, '#756f65');
+          rect(-25, -33, 48, 27, '#989083');
+          rect(16, -49, 13, 36, '#6a655e');
+          oval(0, -9, 17, 7, '#443b38');
+          for (const x of [-11, 0, 11])
+            poly(
+              [
+                [x - 5, -8],
+                [x, -23],
+                [x + 5, -8],
+              ],
+              '#c57945',
+            );
+          oval(-24, 3, 10, 5, '#b7aa95');
+          oval(-24, 1, 6, 3, '#d8e0de');
+          for (const x of [10, 20]) {
+            rect(x - 4, 3, 8, 4, '#b7c4c5');
+            line(
+              [
+                [x - 3, 4],
+                [x + 3, 4],
+              ],
+              '#e6e9e5',
+              1,
+            );
+          }
+          oval(-1, 11, 8, 3, '#55524e');
+          break;
         case 'highland-pay-station':
           shade(40, 12, 0.15);
           rect(-34, -6, 68, 22, localWood);
@@ -6738,7 +6812,7 @@
               '#776f5f',
               1,
             );
-          for (const x of [13, 20, 27]) oval(x, -3, 3, 2, gold);
+          for (const x of [13, 20, 27]) oval(x, -3, 3, 2, '#c8d3d5');
           rect(-34, -39, 19, 20, '#8b795c');
           rect(-32, -37, 15, 14, '#d8cb9f');
           line(
@@ -6763,8 +6837,10 @@
                   [x + dx, -17],
                   [x + dx + 5, -6],
                 ],
-                '#a19a80',
+                '#67747b',
               );
+            // Flat lead-grey ore chips with bright silver-bearing flecks.
+            for (const dx of [5, 13]) glint(x + dx, -10, '#cdd8d9', 1.7);
           }
           line(
             [
@@ -6791,7 +6867,7 @@
               steel,
               1,
             );
-            oval(x, -7, 9, 3, '#a7a08a');
+            oval(x, -7, 9, 3, '#9faeb2');
           }
           break;
         case 'mint-workbench':
@@ -6817,8 +6893,10 @@
             3,
           );
           rect(-9, -6, 26, 6, '#969c90');
-          oval(4, -8, 5, 2, gold);
-          for (const x of [-27, -23, -19]) oval(x, -3, 2, 2, gold);
+          oval(4, -8, 5, 2, '#dce4e3');
+          for (const x of [-27, -23, -19]) oval(x, -3, 2, 2, '#cbd6d8');
+          // Five-point die: one tooth per governed region.
+          for (const x of [-7, -4, -1, 2, 5]) rect(x, -45, 2, 4, '#d7e0df');
           rect(26, -15, 7, 12, '#8b7761');
           break;
         case 'caravan-loading-bay':
@@ -6847,6 +6925,9 @@
             4,
           );
           rect(9, -26, 13, 7, '#ded0ad');
+          rect(-22, -22, 16, 4, '#a7b6ba');
+          for (const x of [-20, -17, -14, -11, -8])
+            rect(x, -25, 2, 3, '#d6dedf');
           line(
             [
               [13, -24],
