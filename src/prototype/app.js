@@ -292,6 +292,7 @@
       ': tap to cycle, hold to lock. Aim: gold is clear, amber is too far, red is blocked. Dodge marked attacks.\n' +
       'Recall ' +
       input.key('recall') +
+      (input.actionFor('KeyQ') === 'recall' ? ' / Q' : '') +
       '; Ranger Heal ' +
       input.key('heal') +
       (PrototypeRules.resourceMode?.manaEnabled !== false
@@ -2325,7 +2326,8 @@
     if ($('squad-button').querySelector('small'))
       $('squad-button').querySelector('small').textContent = input.key('doctrine');
     if ($('recall-button').querySelector('small'))
-      $('recall-button').querySelector('small').textContent = input.key('recall');
+      $('recall-button').querySelector('small').textContent =
+        input.key('recall') + (input.actionFor('KeyQ') === 'recall' ? ' / Q' : '');
     const selected = game.selectedHeroTarget(),
       targetButton = $('target-button');
     targetButton.classList.toggle('has-target', !!selected);
