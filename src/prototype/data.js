@@ -259,11 +259,11 @@ const PrototypeData = {
       xp: 375,
       place: 'Colossus Mine',
       attacks: [
-        'Stone slam: circle warns for 1.6 seconds and exposes the core for 2.5 seconds afterward.',
-        'Rockfall: three separated circles warn for 1.7 seconds, closing approach lanes while at least one connected safe route remains.',
-        'Shockwave rings: visible expanding rings follow a 1.6 second windup and can be crossed after they pass.',
-        'Wall rush: lane warns for 1.7 seconds; when the charge ends, the core is exposed for 3 seconds, with or without an obstacle collision.',
-        'Stonebound call: signals three Ogre wardens; TRUE form replenishes its six-unit elite warband.',
+        'Punching Shear: circle warns for 1.6 seconds and exposes the core for 2.5 seconds afterward.',
+        'Progressive Collapse: three separated circles warn for 1.7 seconds, closing approach lanes while at least one connected safe route remains.',
+        'Dynamic Compaction: visible expanding rings follow a 1.6 second windup and can be crossed after they pass.',
+        'Pile Driving: lane warns for 1.7 seconds; when the charge ends, the core is exposed for 3 seconds, with or without an obstacle collision.',
+        'Mass Underpinning: signals three Ogre wardens; TRUE form replenishes its six-unit elite warband.',
       ],
     },
     {
