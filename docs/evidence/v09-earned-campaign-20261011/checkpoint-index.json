@@ -6,5 +6,17 @@
   "earned-march": {
     "outcome": "INCOMPLETE: cannot reach outbound",
     "finalSaveSha256": "dba38592536c81cfaa8fc90e3e4264a1289605367afa5a48ecfec3b779cffae4"
+  },
+  "earned-march-continued": {
+    "outcome": "INCOMPLETE: encounter incomplete mire",
+    "finalSaveSha256": "a96d4c65e43693b14ae799cf875f17e7deffa856db9448836c63ce2bb0462ff2"
+  },
+  "earned-march-recovery": {
+    "outcome": "PASS route march (engine actions only)",
+    "finalSaveSha256": "af0a7beba71ee3711bad9d46b2148e7e0523b405c9decdcaf51a026be55968d4"
+  },
+  "earned-march-economy": {
+    "outcome": "PASS route prepare (engine actions only)",
+    "finalSaveSha256": "471fd12b0002539c037fab57295d7c1213a261b3523226f62335a21bca4ad9c5"
   }
 }

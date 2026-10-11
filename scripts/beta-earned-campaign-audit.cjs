@@ -85,7 +85,7 @@ function tick() {
 function near() {
   return c
     .zone()
-    .enemies.filter((e) => e.hp > 0 && !e.neutral && dist(e, c.hero) < 420)
+    .enemies.filter((e) => e.hp > 0 && !e.neutral && !e.returning && dist(e, c.hero) < 420)
     .sort((a, b) => dist(a, c.hero) - dist(b, c.hero))[0];
 }
 // Instrumented controller: reads geometry, issues ordinary casts/movement only.
@@ -186,10 +186,10 @@ function fight(e, seconds = 180) {
     );
   return e.hp <= 0;
 }
-function walk(p, combat = true, seconds = 100) {
+function walk(p, combat = true, seconds = 100, arrival = 65) {
   const deaths = c.s.statistics.deaths;
   for (let i = 0; i < seconds * 10; i++) {
-    if (dist(c.hero, p) < 65) return true;
+    if (dist(c.hero, p) < arrival) return true;
     if (c.s.statistics.deaths > deaths) return false;
     const e = combat && near();
     if (e && e.aggro && dist(e, c.hero) < 360) {
@@ -254,6 +254,30 @@ function services() {
   rest();
   record('rest before departure');
 }
+function earnPreparation() {
+  const node = c
+    .zone()
+    .nodes.filter((n) => n.amount > 0 && c.tributeKnown(n))
+    .sort((a, b) => dist(a, c.hero) - dist(b, c.hero))[0];
+  approach(node);
+  const before = c.hero.gold,
+    deaths = c.s.statistics.deaths;
+  if (!c.gather(node.id)) throw Error('resource assignment rejected');
+  record('resource gathering assigned ' + node.id);
+  for (let i = 0; i < 2400 && c.hero.gold < 360; i++) {
+    if (c.s.statistics.deaths > deaths) throw Error('defeated during gathering');
+    const enemy = near();
+    if (enemy?.aggro) {
+      c.cast(1, enemy.id);
+      if (c.hero.skills[1]) c.cast(2, enemy.id);
+    }
+    if (c.hero.skills[2] && c.hero.hp < c.hero.maxHp * 0.8) c.cast(3);
+    tick();
+    if (i % 300 === 299) record('gathering progress');
+  }
+  c.recallParty();
+  record('resource deposits earned ' + (c.hero.gold - before) + ' crowns');
+}
 function collectLocalLoot() {
   for (const l of [...c.s.loot].filter((l) => l.zone === c.zoneId && dist(l, c.hero) < 300))
     if (!walk(l)) break;
@@ -270,6 +294,7 @@ function defeatAndRescue(family) {
   const boss = c.zone().enemies.find((e) => e.type === 'boss' && e.family === family && e.hp > 0);
   if (boss) {
     record('encounter approach ' + family + ' ' + boss.form);
+    if (!walk(boss, true, 180, 420)) throw Error('approach incomplete ' + family);
     if (!fight(boss, 300)) throw Error('encounter incomplete ' + family);
     capture();
     record('encounter completed ' + family + ' ' + boss.form);
@@ -323,6 +348,7 @@ record('resumed earned campaign');
 try {
   services();
   const routes = {
+    prepare: [],
     crypt: ['crypt'],
     march: ['mire', 'archive'],
     highlands: ['ridge', 'mine'],
@@ -331,7 +357,17 @@ try {
   };
   const targets = routes[route];
   if (!targets) throw Error('unknown route ' + route);
-  const region = D.bosses.find((b) => b.id === targets[0]).region;
+  const region = targets.length ? D.bosses.find((b) => b.id === targets[0]).region : c.zoneId;
+  if (route === 'prepare') {
+    earnPreparation();
+    services();
+    const alchemist = c.zone().npcs.find((n) => n.family === 'archive' && n.kind === 'alchemist');
+    if (alchemist) {
+      approach(alchemist);
+      c.trainRangerSupport('health', 'archive');
+      record('paid Ranger Heal training');
+    }
+  }
   if (c.zoneId !== region) {
     travelOnward();
     if (c.zoneId !== region) throw Error('unexpected arrival');
