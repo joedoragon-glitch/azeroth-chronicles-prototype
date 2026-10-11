@@ -24,9 +24,12 @@ test('Ironroot production scenes leave homes, habitats, service spacing and road
   for (const s of [
     'silver-ore-face',
     'ore-sorting-bay',
+    'silver-sort-samples',
     'silver-refining-hearth',
     'mint-workbench',
+    'silver-die-tray',
     'caravan-loading-bay',
+    'sealed-crown-consignment',
     'highland-pay-station',
     'ridge-supper',
   ])
@@ -38,9 +41,12 @@ test('Ironroot production scenes leave homes, habitats, service spacing and road
   for (const [structure, district] of [
     ['silver-ore-face', 'roads'],
     ['ore-sorting-bay', 'quarry'],
+    ['silver-sort-samples', 'quarry'],
     ['silver-refining-hearth', 'stonecross'],
     ['mint-workbench', 'stonecross'],
+    ['silver-die-tray', 'stonecross'],
     ['caravan-loading-bay', 'caravan'],
+    ['sealed-crown-consignment', 'caravan'],
   ])
     assert(
       life.some((p) => p.structure === structure && p.ironrootDistrict === district),
@@ -83,7 +89,14 @@ test('Existing Ironroot saves acquire the mint details without new currency, rou
     oldZone = old.zones.highlands;
   oldZone.ironrootLifeVersion = 2;
   oldZone.props = oldZone.props.filter(
-    (p) => !['silver-ore-face', 'silver-refining-hearth'].includes(p.structure),
+    (p) =>
+      ![
+        'silver-ore-face',
+        'silver-sort-samples',
+        'silver-refining-hearth',
+        'silver-die-tray',
+        'sealed-crown-consignment',
+      ].includes(p.structure),
   );
   const r = C.restore(old);
   r.enter('highlands');
@@ -93,7 +106,13 @@ test('Existing Ironroot saves acquire the mint details without new currency, rou
   assert.equal(r.hero.gold, 777, 'historical carried crowns survive');
   assert(r.s.discovered['highlands:ore'], 'site discoveries survive');
   assert.equal(C.data.regions.find((d) => d.id === 'highlands').resource, 640);
-  for (const structure of ['silver-ore-face', 'silver-refining-hearth'])
+  for (const structure of [
+    'silver-ore-face',
+    'silver-sort-samples',
+    'silver-refining-hearth',
+    'silver-die-tray',
+    'sealed-crown-consignment',
+  ])
     assert(life.some((p) => p.structure === structure));
   assert.equal(new Set(life.map((p) => p.id)).size, life.length);
   const restored = C.restore(r.snapshot());
@@ -285,9 +304,12 @@ test('Ironroot procedural scenes and Dara render deterministically without chang
     'highland-pay-station',
     'silver-ore-face',
     'ore-sorting-bay',
+    'silver-sort-samples',
     'silver-refining-hearth',
     'mint-workbench',
+    'silver-die-tray',
     'caravan-loading-bay',
+    'sealed-crown-consignment',
     'mine-supports',
     'mine-old-markings',
     'mine-collapse',
