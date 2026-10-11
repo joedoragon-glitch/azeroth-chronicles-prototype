@@ -425,7 +425,11 @@
         z.props = z.props.filter((p) => !p.garunTemporary);
         const captive = z.npcs.find((n) => n.family === 'mine' && n.kind === 'cage'),
           exit = z.npcs.find((n) => n.kind === 'exit'),
-          targets = [this.hero, e, captive, exit].filter(Boolean),
+          targets = [this.hero, ...this.activeLivingParty(), e, captive, exit].filter(Boolean),
+          essentialRoutes = [
+            ...(exit ? targets.filter((u) => u !== exit).map((u) => [u, exit]) : []),
+            ...(captive ? [[this.hero, captive]] : []),
+          ].filter(([from, to]) => this.route(from, to).length > 0),
           offsets = [
             [-160, -100],
             [160, -100],
@@ -465,11 +469,9 @@
             expiresAt: this.s.time + 9,
           };
           z.props.push(prop);
-          const reachable = [this.hero, e, captive, exit].filter(Boolean);
           if (
-            reachable.some((u) => this.blocked(u.x, u.y, z.id, 12)) ||
-            (exit && reachable.some((u) => u !== exit && !this.route(u, exit).length)) ||
-            (captive && !this.route(this.hero, captive).length)
+            targets.some((u) => this.blocked(u.x, u.y, z.id, 12)) ||
+            essentialRoutes.some(([from, to]) => !this.route(from, to).length)
           ) {
             z.props.pop();
             continue;
