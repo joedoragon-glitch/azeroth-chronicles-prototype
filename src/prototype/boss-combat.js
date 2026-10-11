@@ -309,6 +309,23 @@
                       : 115) * R.bossCadence.areaRangeMultiplier,
           },
           sequence = [];
+        if (e.family === 'crypt' && index === 3) {
+          // Snapshot all Groundwork pads on cast. No chasing a dodging player.
+          const heroMark = dist(e, this.hero) <= R.bossCadence.specialRange && this.line(e, this.hero)
+            ? { x: this.hero.x, y: this.hero.y }
+            : { x: a.x, y: a.y };
+          const closest = this.activeLivingParty()
+            .filter(u => u.hp > 0 && dist(e,u) <= R.bossCadence.specialRange)
+            .sort((u,v) => dist(u,heroMark) - dist(v,heroMark))[0];
+          const allyMark = closest && dist(closest,heroMark) >= 170
+            ? { x: closest.x, y: closest.y }
+            : { x: heroMark.x, y: heroMark.y + 172 };
+          a.groundworkMarks = [
+            heroMark, allyMark,
+            { x: a.x - 185, y: a.y - 95 },
+            { x: a.x + 185, y: a.y + 95 },
+          ];
+        }
         if (a.sequential && a.kind === 'circle') {
           const patches = this.attackPatches(a);
           Object.assign(a, patches[0], { count: 1 });
@@ -455,17 +472,8 @@
         if (a.index === 3 && a.count === 4 && a.name === 'Groundwork') {
           // A target-centered construction grid: four offset hazard pads,
           // leaving deliberate corridors rather than a solid damage carpet.
-          const closest = this.activeLivingParty()
-            .filter((u) => u.hp > 0)
-            .sort((u, v) => dist(u, this.hero) - dist(v, this.hero))[0];
-          const heroMark = { x: this.hero.x, y: this.hero.y };
-          const allyMark =
-            closest && dist(closest, this.hero) >= 170
-              ? { x: closest.x, y: closest.y }
-              : { x: this.hero.x, y: this.hero.y + 172 };
-          const marks = [
-            heroMark,
-            allyMark,
+          const marks = a.groundworkMarks || [
+            { x: a.x, y: a.y }, { x: a.x, y: a.y + 172 },
             { x: a.x - 185, y: a.y - 95 },
             { x: a.x + 185, y: a.y + 95 },
           ];
