@@ -34,10 +34,7 @@ const live = (c) => {
     const mine = save?.zones?.mine;
     if (mine)
       mine.props = mine.props.filter(
-        (p) =>
-          !['silver-ore-face', 'copper-ore-face', 'silver-sort-samples', 'copper-sort-samples'].includes(
-            p.structure,
-          ),
+        (p) => !/^(silver|copper)-(ore-face|sort-samples)$/.test(p.structure),
       );
   }
   return state;
