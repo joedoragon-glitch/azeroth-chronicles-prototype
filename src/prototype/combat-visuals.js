@@ -48,23 +48,20 @@
       const path = [{ x: a.fromX, y: a.fromY }, ...(a.path || [])];
       return path.slice(1).map((to, i) => capsulePoints(path[i], to, G.chargeHalfWidth));
     }
-    if (a.kind === 'canister')
-      return [sectorPoints({ x: a.fromX, y: a.fromY }, a.radius, a.angle, 0.58)];
-    if (a.kind === 'checkerboard') {
-      const size = 112;
-      return Array.from({ length: 16 }, (_, i) => {
-        const x = a.x + ((i % 4) - 1.5) * size;
-        const y = a.y + (Math.floor(i / 4) - 1.5) * size;
-        const h = size / 2;
-        return [
-          { x: x - h, y: y - h },
-          { x: x + h, y: y - h },
-          { x: x + h, y: y + h },
-          { x: x - h, y: y + h },
-        ];
+    if (a.kind === 'canister') {
+      // Match the nine real fragment bearings instead of advertising solid-sector damage.
+      const from = { x: a.fromX, y: a.fromY };
+      return Array.from({ length: 9 }, (_, i) => {
+        const angle = a.angle + (i - 4) * 0.115;
+        return [from, {
+          x: from.x + Math.cos(angle) * a.radius,
+          y: from.y + Math.sin(angle) * a.radius,
+        }];
       });
     }
-
+    // Formation orders are harmless. The independent board renderer below
+    // marks the two actually damaging tiles, not the entire sixteen-cell board.
+    if (a.kind === 'formation' || a.kind === 'checkerboard') return [];
     if (a.kind === 'line' || a.kind === 'volley')
       return (a.kind === 'volley' ? [-0.22, 0, 0.22] : a.count === 2 ? [-85, 85] : [0]).map((o) => {
         const angle = a.angle + (a.kind === 'volley' ? o : 0),
@@ -204,6 +201,22 @@
           ctx.stroke();
         }
       }
+    }
+    // Real Dress Ranks posts are navigation targets, not damaging telegraphs.
+    if (cue) for (const guard of game.zone().enemies.filter(
+      (e) => e.hp > 0 && e.dressPost && e.dressPost.expires > game.s.time
+    )) {
+      const from = screen(guard), to = screen(guard.dressPost);
+      ctx.strokeStyle = '#b8d5eb';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([3, 5]);
+      ctx.beginPath();
+      ctx.moveTo(from.x, from.y);
+      ctx.lineTo(to.x, to.y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      circlePath(ctx, screen, guard.dressPost, 15);
+      ctx.stroke();
     }
     for (const e of game.zone().enemies.filter((e) => e.rangedAim)) {
       const p = screen(e),
