@@ -6,6 +6,7 @@ const path = require('node:path');
 const outputDir =
   process.env.BETA_NATURAL_OUTPUT || path.join(__dirname, '../test-results/readiness');
 fs.mkdirSync(outputDir, { recursive: true });
+fs.copyFileSync(__filename, path.join(outputDir, 'controller.cjs'));
 const inputPath = process.env.BETA_RESUME;
 if (!inputPath)
   throw Error(
@@ -270,7 +271,7 @@ function services() {
   rest();
   record('rest before departure');
 }
-function earnPreparation() {
+function earnPreparation(escort = false) {
   const budget = Number(process.env.BETA_BUDGET || 700);
   while (c.scoutTribute()) capture();
   const node = c
@@ -287,7 +288,13 @@ function earnPreparation() {
     const enemy = near();
     if (enemy?.aggro) {
       c.cast(1, enemy.id);
-      if (c.hero.skills[1]) c.cast(2, enemy.id);
+      for (const slot of escort ? [2, 6, 5, 7] : [2])
+        if (c.hero.skills[slot - 1]) c.cast(slot, enemy.id);
+    }
+    if (escort) {
+      const worker = c.activeLivingParty().find((u) => u.order);
+      if (!worker) break;
+      c.hero.order = { type: 'move', x: worker.x, y: worker.y };
     }
     if (c.hero.skills[2] && c.hero.hp < c.hero.maxHp * 0.8) c.cast(3);
     tick();
@@ -300,7 +307,56 @@ function earnPreparation() {
       .sort((a, b) => dist(a, c.hero) - dist(b, c.hero))[0];
     if (!loot || !walk(loot, false)) break;
   }
-  record('resource deposits earned ' + (c.hero.gold - before) + ' crowns');
+  record('resource deposits and loot earned ' + (c.hero.gold - before) + ' crowns');
+}
+function fortify() {
+  const recruiter = c.zone().npcs.find((n) => n.kind === 'recruiter');
+  approach(recruiter, false);
+  while (c.s.party.some((u) => u.hp <= 0) && c.recover()) capture();
+  assert(c.activeLivingParty().length, 'living resource escort');
+  earnPreparation(true);
+  approach(recruiter, false);
+  while (c.s.party.some((u) => u.hp <= 0) && c.recover()) capture();
+  assert(rest(), 'rest before construction');
+  c.recallParty();
+  for (let i = 0; i < 20; i++) tick();
+  let b = c.zone().buildings.find((b) => b.kind === 'barracks');
+  if (!b) {
+    assert(c.build(), 'paid barracks construction accepted');
+    b = c.zone().buildings.at(-1);
+  }
+  for (let i = 0; i < 600 && b.progress < 4; i++) tick();
+  assert(b.progress >= 4, 'construction completed through worker ticks');
+  approach(b, false);
+  if (!b.full) {
+    assert(c.upgradeBarracks(b.id), 'paid full barracks upgrade accepted');
+    for (let i = 0; i < 600 && !b.full; i++) tick();
+  }
+  assert(b.full, 'full barracks completed through worker ticks');
+  record('earned full barracks completed');
+  for (const type of ['soldier', 'archer']) {
+    approach(b, false);
+    assert(c.train(b.id, type), 'paid recruitment ' + type);
+    for (let i = 0; i < 100 && b.queue > 0; i++) tick();
+    assert.equal(b.queue, 0, 'recruitment completed through ticks');
+  }
+  assert.equal(c.activeLivingParty().length, 5, 'five living active companions');
+  const teacher = c.zone().npcs.find((n) => n.kind === 'teacher' && n.family === 'warlord');
+  approach(teacher, false);
+  while (c.hero.skills[2] < 3 && c.upgrade(3, 'warlord')) capture();
+  assert(c.hero.skills[2] >= 3, 'earned Self-Heal rank 3');
+  assert(rest(), 'final recovery');
+  approach(b, false);
+  const partyHp = c.s.party.map((u) => u.maxHp);
+  if (c.purchasePreparationTonic()) {
+    assert(c.usePreparationTonic(), 'purchased tonic consumed');
+    assert.deepEqual(
+      c.s.party.map((u) => u.maxHp),
+      partyHp,
+      'tonic does not inflate companions',
+    );
+  }
+  record('fortified expedition');
 }
 function collectLocalLoot() {
   for (const l of [...c.s.loot].filter((l) => l.zone === c.zoneId && dist(l, c.hero) < 300))
@@ -377,9 +433,10 @@ function verifySave() {
 }
 record('resumed earned campaign');
 try {
-  if (!process.env.BETA_SKIP_SERVICES) services();
+  if (!process.env.BETA_SKIP_SERVICES && route !== 'fortify') services();
   const routes = {
     prepare: [],
+    fortify: [],
     crypt: ['crypt'],
     march: ['mire', 'archive'],
     highlands: ['ridge', 'mine'],
@@ -388,6 +445,7 @@ try {
   };
   const targets = routes[route];
   if (!targets) throw Error('unknown route ' + route);
+  if (route === 'fortify') fortify();
   const region = targets.length ? D.bosses.find((b) => b.id === targets[0]).region : c.zoneId;
   if (route === 'prepare') {
     earnPreparation();

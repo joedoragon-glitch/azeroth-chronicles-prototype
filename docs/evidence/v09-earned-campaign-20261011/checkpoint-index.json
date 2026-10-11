@@ -38,5 +38,9 @@
   "earned-frontier-continued": {
     "outcome": "INCOMPLETE: cannot reach entrance",
     "finalSaveSha256": "329b99c6286e27f37985f835a9fd2504b7a482f4ca720489900a985e80cb4bb6"
+  },
+  "earned-abyss": {
+    "outcome": "INCOMPLETE: approach incomplete abyss",
+    "finalSaveSha256": "edc98d25e7b4bb46ed7787ebb6ca519a2c369a57e272672fc8390596804f4526"
   }
 }
