@@ -22,6 +22,8 @@
         sampleFrames: samples.length,
         fps: mean ? Math.round(1000 / mean) : 0,
         workP95Ms: Math.round((work[Math.floor((work.length - 1) * 0.95)] || 0) * 100) / 100,
+        workP99Ms: Math.round((work[Math.floor((work.length - 1) * 0.99)] || 0) * 100) / 100,
+        sampledWindowMs: Math.round(intervals.reduce((sum, ms) => sum + ms, 0)),
         render: { ...render },
       };
     }
