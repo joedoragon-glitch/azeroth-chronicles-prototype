@@ -177,7 +177,9 @@
         ctx.stroke();
       }
     }
-    for (const e of game.zone().enemies.filter((e) => e.telegraph)) {
+    // Hidden casts keep their timing and release path but never reveal damage
+    // geometry or the ability name as a normal telegraph would.
+    for (const e of game.zone().enemies.filter((e) => e.telegraph && !e.telegraph.castOnly)) {
       const a = e.telegraph,
         shapes = warningShapes(a, game.attackPatches(a));
       // Rogue warnings need an identity distinct from ordinary boss attacks:

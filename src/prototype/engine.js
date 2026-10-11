@@ -2744,10 +2744,12 @@
           recovery: 0.55,
         };
       } else if (e.species === 'stalker') {
-        // The Stalker's visible approach is its warning. Launch the existing
-        // collision-aware pounce motion directly, without a target marker.
-        const a = {
+        // Hide the attack identity and impact location, but retain the original
+        // 0.7-second preparation and the existing collision-aware landing.
+        // castOnly is presentation metadata, not a new gameplay attack kind.
+        e.telegraph = {
           nightSkill: 'pounce',
+          castOnly: true,
           kind: 'circle',
           name: 'Shadow Pounce',
           x: target.x,
@@ -2757,9 +2759,10 @@
           slowDuration: cfg.slow,
           pounceSpeed: cfg.pounceSpeed,
           landing: true,
+          timer: cfg.warning,
+          total: cfg.warning,
           recovery: 0.6,
         };
-        e.motion = { ...a, target: { x: a.x, y: a.y }, hit: [], speed: a.pounceSpeed, life: 2 };
       } else return false;
       e.specialCd = cfg.skillCooldown * (e.frenzy ? 0.7 : 1);
       if (e.species === 'wraith') this.event('warning', { family: e.species });
