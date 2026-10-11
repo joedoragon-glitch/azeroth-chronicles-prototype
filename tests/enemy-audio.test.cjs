@@ -48,9 +48,16 @@ for (const b of C.data.bosses)
       assert(events.filter((x) => x.stage === 'impact').every((x) => P.route(x).mode === 'silent'));
       const { a, calls } = listener();
       for (const f of c.effects) a.effect(f);
+      // Only a genuinely harmful windup warrants a warning-volume duck.
+      // Royal Taxation marks targets without dealing damage; summoning does
+      // not become a false damaging warning merely to satisfy this test.
+      const dangerousWindup = events.some(
+        (f) => f.stage === 'windup' && f.dangerous && P.route(f)?.mode === 'shared',
+      );
       assert.equal(
         calls.filter((x) => x[0] === 'duck').length,
-        C.rules.attacks[b.id][i].kind === 'summon' ? 0 : 1,
+        dangerousWindup ? 1 : 0,
+        b.id + '/' + i + ' audio must match the actual damaging windup',
       );
       const n = calls.length;
       for (const f of c.effects) a.effect(f);
