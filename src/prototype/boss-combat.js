@@ -417,6 +417,16 @@
         return true;
       }
       attackPatches(a) {
+        if (a.captainSpread) {
+          // Separate footprints; no stacked damage and a gap between neighboring circles.
+          const gap = a.radius * 2 + 24;
+          const offsets = a.count === 4
+            ? [[-1, -1], [1, -1], [-1, 1], [1, 1]]
+            : [[0, 0], [-1, -1], [1, -1], [-1, 1], [1, 1]];
+          return offsets.slice(0, a.count).map(([x, y]) => ({
+            ...a, x: a.x + x * gap, y: a.y + y * gap, count: 1,
+          }));
+        }
         return Array.from({ length: a.count || 1 }, (_, i) => ({
           ...a,
           x: a.x + (i - ((a.count || 1) - 1) / 2) * 190,
@@ -581,8 +591,9 @@
                   R.combatGeometry.lineHalfWidth
               : ['cone', 'sector'].includes(a.kind)
                 ? dist(u, a) < a.radius &&
-                  Math.cos(Math.atan2(u.y - a.y, u.x - a.x) - a.angle) >
-                    (a.kind === 'sector' ? Math.cos(0.65) : Math.cos(1.1))
+                  (a.angleDegrees === 360 ||
+                    Math.cos(Math.atan2(u.y - a.y, u.x - a.x) - a.angle) >
+                    (a.kind === 'sector' ? Math.cos(0.65) : Math.cos(1.1)))
                 : patches.some((p) => dist(u, p) < p.radius);
         for (const u of party)
           if (hits(u) && this.line(e, u)) {
@@ -646,6 +657,8 @@
         // Axis fallback can report success for a zero-length clear segment.
         // A charge blocked by real geometry must end when it makes no progress.
         if (dist(e, a.target) < 1 || !moved || dist(before, e) < 0.000001 || a.life <= 0) {
+          if (a.captainSkill && e.captainProfile === 'supply-vale' && a.name === 'Hookfang Rush')
+            e.captainPursuit = 2.5;
           if (a.landing && dist(e, a.target) < 20) this.resolveArea(e, a);
           e.motion = null;
           e.cd =
