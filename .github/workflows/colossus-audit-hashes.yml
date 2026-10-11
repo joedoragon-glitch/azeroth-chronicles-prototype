@@ -1,0 +1,17 @@
+name: Temporary Colossus protected hash audit
+on:
+  push:
+    paths:
+      - '.github/workflows/colossus-audit-hashes.yml'
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Source hashes
+        run: sha256sum src/prototype/data.js src/prototype/rules.js src/prototype/engine.js
+      - name: Prettier diff (read-only)
+        run: |
+          npm ci --ignore-scripts
+          npx --no-install prettier --write src/prototype/data.js src/prototype/rules.js src/prototype/engine.js
+          git diff -- src/prototype/data.js src/prototype/rules.js src/prototype/engine.js
