@@ -634,6 +634,11 @@
               u.deathRollHeld = true;
               this.event('warning', { family: 'mire', deathRoll: true });
             }
+            if (landed && e.family === 'ridge' && e.type === 'boss' && a.index === 1 && u.hp > 0) {
+              const d = Math.max(1, dist(u, a));
+              const dest = this.safe(u.x + (u.x - a.x) * 75 / d, u.y + (u.y - a.y) * 75 / d);
+              if (this.clearSegment(u, dest)) { u.x = dest.x; u.y = dest.y; }
+            }
             if (landed && u === anchorVictim && u.hp > 0) {
               const d = Math.max(1, dist(u, e));
               const where = this.safe(e.x + (u.x - e.x) * 62 / d, e.y + (u.y - e.y) * 62 / d);
@@ -687,7 +692,13 @@
               this.line(e, u)
             ) {
               a.hit.push(id);
-              this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
+              const landed = this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
+              if (landed && e.family === 'ridge' && a.index === 2 && u.hp > 0) {
+                const d = Math.max(1, dist(u, e));
+                const dest = this.safe(u.x + (u.x - e.x) * 85 / d, u.y + (u.y - e.y) * 85 / d);
+                if (this.clearSegment(u, dest)) { u.x = dest.x; u.y = dest.y; }
+                this.applySlow(u, 2);
+              }
               if (
                 this.hero !== hero ||
                 this.zoneId !== zone ||
