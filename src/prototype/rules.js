@@ -2096,8 +2096,7 @@
       presentation: 'workstation',
       workKind: 'smith',
       workstation: 'equipment-repair',
-      context:
-        'Dara is compelled to repair cart axles, quarry tools and mine supports. The Colossus stamps his diamond seal on each guarded route order.',
+      context: 'Dara repairs mine tools by force. Kharun’s diamond seal marks route orders.',
     },
   };
   const regionalHandoffScenes = {
