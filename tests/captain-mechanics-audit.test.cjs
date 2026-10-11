@@ -142,7 +142,9 @@ const near = (u, e, degrees, distance = 100) => {
   const hp = e.hp, hero = c.hero.hp;
   assert(c.damage(e, 100, 'hero'));
   assert(e.hp < hp && c.hero.hp < hero,
-    'unshielded Ash Carapace reflects damage through normal party defenses');
+    'unshielded Ash Carapace reflects actual received damage');
+  assert(Math.abs((hero - c.hero.hp) - (hp - e.hp) * 0.3) < 1e-8,
+    'reflection is exactly 30% after incoming mitigation, without a 3-point floor or armor reduction');
   e.captainReflect = 0;
   const after = c.hero.hp;
   assert(c.damage(e, 100, 'hero'));
