@@ -68,7 +68,7 @@ The three supplied audited handoffs are reconciled against the reorganized v0.8.
 
 Dungeon layout migration retains guard death state, rescued services, clear state, progression and currency. Treasury migration retains the exact collected-cache indices and captain death. New contextual furnishings remain procedural so a generic cage or generic prop sprite cannot overwrite their scene meaning. The approved sprite catalog and production registry remain unchanged.
 
-This is an implementation foundation for further regional iteration, not a declaration that the regions are finished. Greenwood biography, flood cause and captive-trade identities stay open; the separate Ironroot pass records provisional repair-work, ancient-Colossus and convoy-escort interpretations for later revision. See REGIONAL_HANDOFF_AUDIT.md.
+This is an implementation foundation for further regional iteration, not a declaration that the regions are finished. Greenwood biography, flood cause and captive-trade identities stay open; the separate Ironroot pass originally recorded provisional repair-work, ancient-Colossus and convoy-escort interpretations. **The ancient-Colossus interpretation was later rejected and replaced by the #242 owner-review draft; the old note is historical, not active canon.** See REGIONAL_HANDOFF_AUDIT.md and STONE_COLOSSUS_FIRST_WALL.md.
 
 ## Audio foundation v0.8.88
 
