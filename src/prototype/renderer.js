@@ -1343,7 +1343,17 @@
             p.x += o.x;
             p.y += o.y;
             if (p.x < -160 || p.x > width + 160 || p.y < -100 || p.y > height + 100) continue;
-            PrototypeVisuals.floor(target, p, x, y, i, false, '', false, optimized ? null : PrototypeMaterials);
+            PrototypeVisuals.floor(
+              target,
+              p,
+              x,
+              y,
+              i,
+              false,
+              '',
+              false,
+              optimized ? null : PrototypeMaterials,
+            );
             stats.floorTilesPainted++;
           }
       };
@@ -1355,7 +1365,9 @@
           height: canvas.height,
           origin,
           scene: z,
-          revision: optimized ? 'optimization-procedural-v1' : PrototypeMaterials?.surfaceRevision?.(key) || 'procedural',
+          revision: optimized
+            ? 'optimization-procedural-v1'
+            : PrototypeMaterials?.surfaceRevision?.(key) || 'procedural',
           paint: paintFloor,
         });
       } else groundCache?.clear();
