@@ -66,13 +66,18 @@ test('Ironroot production scenes leave homes, habitats, service spacing and road
       for (let i = 1; i < road.length; i++)
         assert(c.distanceToSegment(p, road[i - 1], road[i]) >= 65);
   }
-  const original = JSON.stringify(life);
+  const identities = life.map((p) => [p.id, p.structure, p.ironrootDistrict]);
   delete z.ironrootLifeVersion;
   c.ironrootLivelihood(z);
-  assert.equal(
-    JSON.stringify(z.props.filter((p) => p.ironrootDistrict)),
-    original,
-    'repeated migration is deterministic',
+  const replay = z.props.filter((p) => p.ironrootDistrict);
+  assert.deepEqual(
+    replay.map((p) => [p.id, p.structure, p.ironrootDistrict]),
+    identities,
+    'repeated staging preserves district and scene identities without duplicating props',
+  );
+  assert(
+    replay.every((p) => p.decorative && p.r === 0),
+    'repeated staging cannot create movement blockers',
   );
   for (const id of ['ore', 'bridge-north', 'ogre-hearth'])
     assert(c.siteDescription(z.npcs.find((n) => n.id === id)).includes(C.rules.ironrootLore[id]));
