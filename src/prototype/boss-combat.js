@@ -277,7 +277,8 @@
           cap = this.bossSummonCap(e);
         return plans.map((plan, index) => {
           if (e.family === 'citadel' && index === 3 && e.board) return 0;
-          if (e.family === 'citadel' && index === 2 && !this.sentinelPatternPath(e).length) return 0;
+          if (e.family === 'citadel' && index === 2 && !this.sentinelPatternPath(e).length)
+            return 0;
           if (!allowRepeat && index === e.lastAttackIndex && plans.length > 1) return 0;
           if (e.family === 'darklord' && index === 3 && !low) return 0;
           const attackTarget = this.bossAttackTarget(e, target, index);
