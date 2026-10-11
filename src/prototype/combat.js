@@ -379,7 +379,7 @@
         if (e.hp === 0) this.kill(e);
         return true;
       }
-      hitParty(u, amount, manaDrain = 0, rangedSourceId = null) {
+      hitParty(u, amount, manaDrain = 0, rangedSourceId = null, alreadyMitigated = false) {
         if (this.peace || u.hp <= 0 || (u.immune || 0) > 0) return false;
         const armor =
           u === this.hero
@@ -388,7 +388,7 @@
               ? this.companionArmor(u.type)
               : 5 + this.hero.level * 0.5;
         const oldHp = u.hp;
-        u.hp = Math.max(0, u.hp - Math.max(3, amount - armor * 0.35));
+        u.hp = Math.max(0, u.hp - (alreadyMitigated ? Math.max(0, amount) : Math.max(3, amount - armor * 0.35)));
         if (R.resourceMode.manaEnabled && u === this.hero && manaDrain > 0)
           this.drainMana(u, manaDrain);
         // All life-steal uses actual HP lost after armor, immunity and overkill.
