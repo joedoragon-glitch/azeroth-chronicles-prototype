@@ -623,7 +623,7 @@
               dy: Math.sin(angle),
               speed: 490,
               life: 0.8,
-              damage: e.damage * 0.25,
+              damage: e.damage / 9, // At close range nine fragments cap at one raw boss hit.
               manaDrain: 0,
               source: 'enemy',
               sourceId: e.id,

@@ -74,4 +74,22 @@ exitCase.enter('citadel');
 const resetBoss = exitCase.zone().enemies.find(e => e.family === 'citadel');
 assert.equal(resetBoss.board, undefined, 'leaving a fight clears persistent board state');
 assert.equal(resetBoss.dressUntil, undefined, 'leaving a fight clears the formation order');
+// Canister pellets share one strike's raw budget even at point-blank range.
+const shotgun = new C('normal', 'paladin', () => .9);
+shotgun.enter('citadel');
+const shooter = shotgun.zone().enemies.find(e => e.family === 'citadel');
+shotgun.zone().enemies = [shooter];
+shotgun.s.party = [];
+shotgun.s.mercyTime = 0;
+shotgun.hero.maxHp = shotgun.hero.hp = 100000;
+shotgun.hero.immune = 0;
+Object.assign(shotgun.hero, { x: shooter.x + 45, y: shooter.y });
+const canister = shotgun.buildBossAttack(shooter, 0, shotgun.hero).first;
+shooter.telegraph = canister;
+shotgun.resolveAttack(shooter);
+assert.equal(shotgun.s.projectiles.length, 9);
+assert(shotgun.s.projectiles.every(p => p.damage === shooter.damage / 9));
+for (let n = 0; n < 85; n++) shotgun.updateProjectiles(.016);
+assert(100000 - shotgun.hero.hp <= shooter.damage + 0.01,
+  'even all nine pellets cannot exceed one unarmored boss strike');
 console.log('PASS Sentinel mechanics');
