@@ -9,9 +9,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Source hashes
-        run: sha256sum src/prototype/data.js src/prototype/rules.js src/prototype/engine.js
+        run: sha256sum src/prototype/data.js src/prototype/rules.js src/prototype/engine.js src/prototype/boss-combat.js src/prototype/save.js
       - name: Prettier diff (read-only)
         run: |
           npm ci --ignore-scripts
-          npx --no-install prettier --write src/prototype/data.js src/prototype/rules.js src/prototype/engine.js
-          git diff -- src/prototype/data.js src/prototype/rules.js src/prototype/engine.js
+          npx --no-install prettier --write src/prototype/data.js src/prototype/rules.js src/prototype/engine.js src/prototype/boss-combat.js src/prototype/save.js tests/colossus-biography.test.cjs
+          git diff -- src/prototype/data.js src/prototype/rules.js src/prototype/engine.js src/prototype/boss-combat.js src/prototype/save.js tests/colossus-biography.test.cjs
