@@ -1,4 +1,4 @@
-name: Temporary Colossus valid-coordinate audit
+name: Temporary Garun seven mechanics audit
 on:
   push:
     paths:
@@ -13,7 +13,9 @@ jobs:
         run: sha256sum src/prototype/data.js src/prototype/rules.js src/prototype/engine.js src/prototype/boss-combat.js src/prototype/save.js src/prototype/combat.js
       - name: Formatting diff
         run: |
-          npx --no-install prettier --write src/prototype/rules.js src/prototype/engine.js src/prototype/boss-combat.js src/prototype/combat.js tests/colossus-biography.test.cjs
-          git diff -- src/prototype/rules.js src/prototype/engine.js src/prototype/boss-combat.js src/prototype/combat.js tests/colossus-biography.test.cjs
+          npx --no-install prettier --write src/prototype/rules.js src/prototype/engine.js src/prototype/boss-combat.js src/prototype/combat.js tests/colossus-biography.test.cjs tests/garun-mechanics.test.cjs
+          git diff -- src/prototype/rules.js src/prototype/engine.js src/prototype/boss-combat.js src/prototype/combat.js tests/colossus-biography.test.cjs tests/garun-mechanics.test.cjs
       - name: Focused live scenarios
-        run: node tests/colossus-biography.test.cjs
+        run: |
+          node tests/colossus-biography.test.cjs
+          node tests/garun-mechanics.test.cjs
