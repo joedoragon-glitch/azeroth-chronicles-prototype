@@ -62,5 +62,17 @@
   "earned-abyss-tactical": {
     "outcome": "PASS route frontier (engine actions only)",
     "finalSaveSha256": "0383e5e96ac1ffcb1c6e30202f1a0c90b6aeffcb56b3a8207c337cbc676f5fbf"
+  },
+  "earned-crown": {
+    "outcome": "INCOMPLETE: approach incomplete cindermaw",
+    "finalSaveSha256": "ed4bd69754139033801c44643c2fbbc8e855d46f417e298d2ad2de2e4187bc24"
+  },
+  "earned-crown-recovery": {
+    "outcome": "PASS route recover (engine actions only)",
+    "finalSaveSha256": "f7f4eff62aa7df4422d6dc0cf1ecfa29e940ab3f915500833634237e3bad225a"
+  },
+  "earned-crown-south": {
+    "outcome": "INCOMPLETE: encounter incomplete cindermaw",
+    "finalSaveSha256": "4bbc045d1e2602e96a94d1712e2e5c34127977b2fb75ffba928f96301ece4c83"
   }
 }

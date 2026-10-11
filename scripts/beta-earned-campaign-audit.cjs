@@ -278,6 +278,10 @@ function rest() {
   if (!n || !walk(n.servicePoint || n, false, 60, 105)) return false;
   for (let i = 0; i < 1000; i++) {
     if (c.rest()) return true;
+    if (c.hero.hp >= c.hero.maxHp && c.activeLivingParty().every((u) => u.hp >= u.maxHp)) {
+      record('party healed while waiting for refuge cooldown');
+      return true;
+    }
     tick();
   }
   return false;
@@ -325,7 +329,7 @@ function earnPreparation(escort = false) {
     .zone()
     .nodes.filter((n) => n.amount > 0 && c.tributeKnown(n))
     .sort((a, b) => dist(a, c.hero) - dist(b, c.hero))[0];
-  approach(node);
+  approach(node, false);
   const before = c.hero.gold,
     deaths = c.s.statistics.deaths;
   if (!c.gather(node.id)) throw Error('resource assignment rejected');
@@ -419,7 +423,8 @@ function collectLocalLoot() {
     if (!walk(l)) break;
 }
 function recoverExpedition() {
-  for (let i = 0; i < 15 && c.hero.gold < 700; i++) {
+  const recoveryBudget = c.s.party.filter((u) => u.hp <= 0).length * c.companionRecoveryCost();
+  for (let i = 0; i < 15 && c.hero.gold < recoveryBudget; i++) {
     const loot = c.s.loot
       .filter((l) => l.zone === c.zoneId)
       .sort((a, b) => dist(a, c.hero) - dist(b, c.hero))[0];
@@ -431,9 +436,43 @@ function recoverExpedition() {
   assert(rest(), 'recovery rest');
   record('paid expedition recovery');
 }
+function supportPreparation() {
+  recoverExpedition();
+  if (c.zone().nodes.some((n) => n.amount > 0)) earnPreparation(true);
+  recoverExpedition();
+  c.recallParty();
+  for (let i = 0; i < 20; i++) tick();
+  let b = c.zone().buildings.find((b) => b.kind === 'barracks');
+  if (!b) {
+    assert(c.build(), 'support barracks construction accepted');
+    b = c.zone().buildings.at(-1);
+  }
+  approach(b);
+  if (b.progress < 4) c.assignBuilder(b.id);
+  for (let i = 0; i < 600 && b.progress < 4; i++) {
+    const enemy = near();
+    if (enemy?.aggro)
+      for (const slot of [1, 2, 6, 5, 7]) if (c.hero.skills[slot - 1]) c.cast(slot, enemy.id);
+    tick();
+  }
+  assert(b.progress >= 4, 'support barracks completed');
+  approach(b, false);
+  while (c.trainExpeditionSupport('sharedTraining', 'warlord')) capture();
+  while (c.trainExpeditionSupport('sharedStrength', 'abyss')) capture();
+  record('paid companion inheritance ' + JSON.stringify(c.s.expeditionSkills));
+  rest();
+}
 function defeatAndRescue(family) {
   const def = D.bosses.find((b) => b.id === family);
   if (!def) throw Error('unknown boss ' + family);
+  if (family === 'cindermaw' && !c.s.normal.cindermaw) {
+    const bridge = c.zone().npcs.find((n) => n.id === 'bridge-south');
+    approach(bridge, false);
+    const refuge = c.zone().npcs.find((n) => n.id === 'minor');
+    approach(refuge, false);
+    assert(rest(), 'southern approach refuge');
+    record('Cindermaw approach via southern bridge and refuge');
+  }
   if (def.kind === 'dungeon' && c.zoneId !== family) {
     const door = c.zone().npcs.find((n) => n.kind === 'dungeon' && n.family === family);
     approach(door, false);
@@ -443,7 +482,7 @@ function defeatAndRescue(family) {
   const boss = c.zone().enemies.find((e) => e.type === 'boss' && e.family === family && e.hp > 0);
   if (boss) {
     record('encounter approach ' + family + ' ' + boss.form);
-    if (!walk(boss, true, 180, 420)) throw Error('approach incomplete ' + family);
+    if (!walk(boss, def.kind !== 'field', 180, 420)) throw Error('approach incomplete ' + family);
     if (!fight(boss, 300)) throw Error('encounter incomplete ' + family);
     capture();
     record('encounter completed ' + family + ' ' + boss.form);
@@ -521,11 +560,13 @@ function verifySave() {
 }
 record('resumed earned campaign');
 try {
-  if (!process.env.BETA_SKIP_SERVICES && !['fortify', 'recover'].includes(route)) services();
+  if (!process.env.BETA_SKIP_SERVICES && !['fortify', 'recover', 'support'].includes(route))
+    services();
   const routes = {
     prepare: [],
     fortify: [],
     recover: [],
+    support: [],
     crypt: ['crypt'],
     march: ['mire', 'archive'],
     highlands: ['ridge', 'mine'],
@@ -536,6 +577,7 @@ try {
   if (!targets) throw Error('unknown route ' + route);
   if (route === 'fortify') fortify();
   if (route === 'recover') recoverExpedition();
+  if (route === 'support') supportPreparation();
   const region = targets.length ? D.bosses.find((b) => b.id === targets[0]).region : c.zoneId;
   if (route === 'prepare') {
     earnPreparation();
