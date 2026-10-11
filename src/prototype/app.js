@@ -885,7 +885,7 @@
     persistProfile();
     openMenu(
       'Peace for everyone',
-      'The Dark Lord ended the old wars. He also left five former companions able to enforce his peace after his death. Their claims are broken now.\n\nThe bridges stand; ferries still run. Crowns pass between people and creatures who once fought one another. They keep the roads open without a command from the Citadel.\n\nIn its audience hall, someone has placed a plain chair beside the empty throne, for any traveler who wishes to speak.\n\nYou could sit in either. No voice tells you which.',
+      'The Dark Lord ended the old wars. He also left five former companions able to enforce his peace after his death. Their claims are broken now.\n\nThe bridges stand; ferries still run. Crowns pass between people and creatures who once fought one another. They keep the roads open without a command from the Citadel.\n\nAt the Dark Fortress, someone has placed a plain chair beside the empty throne, for any traveler who wishes to speak.\n\nYou could sit in either. No voice tells you which.',
       [
         action('Continue in the peaceful world', () => {
           game.s.endingAck = true;
