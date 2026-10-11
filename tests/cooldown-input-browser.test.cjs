@@ -66,8 +66,8 @@ const server = http.createServer((req, res) => {
       g.updateElites = () => {};
       window.__cooldownCasts = [];
       const cast = g.cast;
-      g.cast = function (slot, target, charged) {
-        const result = cast.call(this, slot, target, charged);
+      g.cast = function (slot, target, charged, ...rest) {
+        const result = cast.call(this, slot, target, charged, ...rest);
         if (result)
           __cooldownCasts.push({
             slot,
@@ -161,6 +161,71 @@ const server = http.createServer((req, res) => {
           );
           count++;
         }
+    // Real keyboard/touch holds must carry the pre-aggro receipt to impact.
+    for (const kind of ['boss', 'captain']) {
+      await page.evaluate((kind) => {
+        const g = Prototype.game;
+        const e = g.makeEnemy(
+          { species: 'goblin', name: 'Opener', level: 1, hp: 10000, damage: 0, xp: 0, gold: 0 },
+          { x: 680, y: 900 },
+        );
+        if (kind === 'boss') e.type = 'boss';
+        else e.captain = true;
+        g.zone().enemies = [e];
+        g.s.projectiles = [];
+        Object.assign(g.hero, { class: 'ranger', x: 600, y: 900, order: null });
+        g.hero.skills[0] = 1;
+        g.hero.cd[0] = 0;
+        g.s.heroTarget = e.id;
+        Prototype.updateHUD();
+      }, kind);
+      await press(1);
+      await page.waitForFunction(() => Prototype.chargePresentation()?.ready, null, {
+        timeout: 3000,
+      });
+      const earlierHit = await page.evaluate(() => {
+        const g = Prototype.game;
+        const e = g.zone().enemies[0];
+        g.engage(e);
+        const ally = g.s.party.find((unit) => unit.hp > 0);
+        if (ally) Object.assign(ally, { x: g.hero.x, y: g.hero.y });
+        const landed = g.damage(e, 37, ally?.id || 'hero');
+        return { landed, hp: e.hp, maxHp: e.maxHp };
+      });
+      assert(earlierHit.landed && earlierHit.hp < earlierHit.maxHp);
+      await release(1);
+      const deflected = await page.evaluate(() => {
+        const g = Prototype.game;
+        g.updateProjectiles(0.2);
+        g.updateProjectiles(0.2);
+        const e = g.zone().enemies[0];
+        return {
+          hp: e.hp,
+          aggro: e.aggro,
+          shots: g.s.projectiles.length,
+          feedback: g.messages.some((message) => message.includes('deflects')),
+        };
+      });
+      assert.equal(deflected.hp, earlierHit.hp, 'prior damage survives deflection');
+      assert.equal(deflected.aggro, true, kind + ' remains engaged');
+      assert.equal(deflected.shots, 0, 'no delayed Ranger arrows remain');
+      assert(deflected.feedback, kind + ' displays deflection feedback');
+      await page.evaluate(() => {
+        Prototype.game.hero.cd[0] = 0;
+      });
+      await press(1);
+      await page.waitForFunction(() => Prototype.chargePresentation()?.ready, null, {
+        timeout: 3000,
+      });
+      await release(1);
+      const valid = await page.evaluate(() => {
+        const g = Prototype.game;
+        g.updateProjectiles(0.2);
+        const e = g.zone().enemies[0];
+        return { hp: e.hp, maxHp: e.maxHp, aggro: e.aggro };
+      });
+      assert(valid.aggro && valid.hp < earlierHit.hp, kind + ' accepts in-combat charges');
+    }
     // Releasing a queued hold before readiness never spends or resets the slot.
     await page.evaluate(() => {
       Prototype.game.hero.cd[0] = 5;

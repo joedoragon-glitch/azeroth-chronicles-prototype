@@ -5,8 +5,8 @@
     "src/prototype/world.js": "fd696a65bf4e1b9067291f6c6d3d57b508f2b2ecb7164c222299ef8fa5edaa53",
     "src/prototype/navigation.js": "dbb700f55909a4908b64aec2c97583b07af93d7aeafe32d111dbbe16a7f79c36",
     "src/prototype/party.js": "41a66f5b3c95a09414b1308df557aff1cbb232d341f601b1f1fcaf1d2d40d726",
-    "src/prototype/combat.js": "8b14cc8e5e0a1519b83cd7201a82a6b2b2e08d7d4e4294b641dfa5d5b6a0aa4b",
-    "src/prototype/hero-combat.js": "9873768cf15322246de3a2892785ebdecc9cc9ed72ff7bbb377a264647135070",
+    "src/prototype/combat.js": "93077fdf33d92a8fed4efec9e5431724a6fd3d7be5b54fb65051e22af5061572",
+    "src/prototype/hero-combat.js": "2096a5b33d15e8177f6754de4cd92cccddee91c6b1f47d99f1597d0fe49f441a",
     "src/prototype/boss-combat.js": "be74a2d6d5336cd851073c7c6814a64cb22cc01af2ef7a0854fd9f4148edc27f",
     "src/prototype/progression.js": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
     "src/prototype/economy.js": "081440c4f0167d3e4b1129f9e605a7b7177bf68fb83cb8a824aa309b52774fb5",
@@ -27,9 +27,9 @@
     "assets/materials/manifest.json": "c06e89ba4ed2058681ae3156eaac8f7eb577d1b5af61e272f40d316f855cad41"
   },
   "renderingRevision": {
-    "source": "PR #225 plus combined-release slowdown fix; authorized rendering-only changes",
+    "source": "PR #225 plus combined-release slowdown fix; authorized rendering-only changes; reviewed v0.9.1 charge input receipt",
     "files": {
-      "src/prototype/app.js": "91baa323181096ef3b3eeb09038fe0ec3cf005726da8aef876a448db82ffcd59",
+      "src/prototype/app.js": "94078c0b4dfb517fae3ee8b0f69d3f52099474449afb774d85eb31a7dd820ade",
       "src/prototype/runtime.js": "d75f3f9fc8e7a964420da9b1642aefc7dae433b0a19ca45b704b65c72f7e0652"
     },
     "activeFrameBodySha256": "a042cd0491db3860a8f8c29e9f1471b45be3ca108b2520dcc4df833d0ce81d7a"
