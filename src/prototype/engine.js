@@ -3295,16 +3295,22 @@
       e.telegraph = {
         rogueMove: true,
         rogueSignature: isSignature,
-        kind: effect === 'sweep' ? 'cone' : 'circle',
+        kind: profile.style === 'slab' ? 'line' : effect === 'sweep' ? 'cone' : 'circle',
         name: profile.name,
         style: profile.style || null,
         effect,
         coefficient: profile.coefficient,
         targetId: target === this.hero ? 'hero' : target.id,
-        fromX: e.x,
-        fromY: e.y,
-        angle: Math.atan2(target.y - e.y, target.x - e.x),
-        x: centered ? e.x : target.x,
+        fromX: profile.style === 'slab' ? target.x - (target.x >= e.x ? 60 : -60) : e.x,
+        fromY: profile.style === 'slab' ? target.y : e.y,
+        angle:
+          profile.style === 'slab'
+            ? target.x >= e.x ? 0 : Math.PI
+            : Math.atan2(target.y - e.y, target.x - e.x),
+        x:
+          profile.style === 'slab'
+            ? target.x + (target.x >= e.x ? 100 : -100)
+            : centered ? e.x : target.x,
         y: centered ? e.y : target.y,
         radius,
         slowSeconds: profile.slowSeconds || 0,
@@ -3521,11 +3527,24 @@
         if (!target || target.hp <= 0 || dist(target, move) > move.radius || !this.line(e, target))
           return;
         if (e.family === 'mine' && move.style === 'slab') {
-          const side = target.x >= e.x ? 1 : -1;
-          const destination = { x: target.x + side * 100, y: target.y };
-          if (!this.clearSegment(target, destination, 12)) return;
-          if (this.hitParty(target, e.damage * move.coefficient) && target.hp > 0)
-            this.move(target, destination, 280, 0.42);
+          const start = { x: move.fromX, y: move.fromY },
+            side = Math.sign(move.x - move.fromX) || 1,
+            hero = this.hero,
+            zone = this.zoneId;
+          for (const unit of this.combatTargets()) {
+            if (
+              unit.hp <= 0 ||
+              this.distanceToSegment(unit, start, move) > R.combatGeometry.lineHalfWidth ||
+              !this.line(e, unit)
+            )
+              continue;
+            const destination = { x: unit.x + side * 100, y: unit.y };
+            const landed = this.hitParty(unit, e.damage * move.coefficient);
+            if (this.hero !== hero || this.zoneId !== zone || this.s.challenge.pending || this.s.challenge.gameOver)
+              return;
+            if (landed && unit.hp > 0 && this.clearSegment(unit, destination, 12))
+              this.move(unit, destination, 280, 0.42);
+          }
           return;
         }
         const startingHero = this.hero,
