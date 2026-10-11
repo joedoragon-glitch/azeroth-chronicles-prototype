@@ -43,8 +43,11 @@
     ];
   }
   function visibleWarning(e) {
-    return e.telegraph && !e.telegraph.anonymousCast &&
-      (e.telegraph.total > 0 || !e.telegraph.captainSkill);
+    return (
+      e.telegraph &&
+      !e.telegraph.anonymousCast &&
+      (e.telegraph.total > 0 || !e.telegraph.captainSkill)
+    );
   }
   function warningShapes(a, patches) {
     if (a.kind === 'summon') return [];
@@ -190,8 +193,12 @@
     }
     if (cue)
       for (const e of game.zone().enemies.filter((e) => e.telegraph?.anonymousCast)) {
-        const a = e.telegraph, p = screen(e);
-        const width = 70, height = 8, x = p.x - width / 2, y = p.y - 65;
+        const a = e.telegraph,
+          p = screen(e);
+        const width = 70,
+          height = 8,
+          x = p.x - width / 2,
+          y = p.y - 65;
         const fill = Math.max(0, Math.min(1, 1 - a.timer / a.total));
         ctx.fillStyle = '#1b2330dd';
         ctx.fillRect(x - 2, y - 2, width + 4, height + 4);

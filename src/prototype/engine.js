@@ -2707,7 +2707,8 @@
       const plan = chosen.plan,
         index = chosen.index,
         fatigued = e.captainProfile === 'supply-highlands' && e.hp <= 550,
-        anonymousCast = (e.captainProfile === 'supply-highlands' && !fatigued) ||
+        anonymousCast =
+          (e.captainProfile === 'supply-highlands' && !fatigued) ||
           (e.captainProfile === 'supply-march' && plan.warning === 0),
         attackWarning = anonymousCast ? 0.9 : plan.warning,
         markHero =
@@ -2755,9 +2756,12 @@
       delete a.sequence;
       e.telegraph = a;
       e.specialCd = profile.specialCooldown * (e.captainPhase ? 0.82 : 1);
-      this.event('warning', anonymousCast
-        ? { captain: e.captainProfile, anonymousCast: true }
-        : { captain: e.captainProfile, index });
+      this.event(
+        'warning',
+        anonymousCast
+          ? { captain: e.captainProfile, anonymousCast: true }
+          : { captain: e.captainProfile, index },
+      );
       return true;
     }
     startNightSkill(e, target) {
@@ -3802,9 +3806,13 @@
             const a = e.telegraph;
             this.resolveAttack(e);
             e.telegraph = e.motion ? null : e.sequence?.shift() || null;
-            if (e.telegraph) this.event('warning', e.telegraph.anonymousCast
-              ? { captain: e.captainProfile, anonymousCast: true }
-              : { family: e.family });
+            if (e.telegraph)
+              this.event(
+                'warning',
+                e.telegraph.anonymousCast
+                  ? { captain: e.captainProfile, anonymousCast: true }
+                  : { family: e.family },
+              );
             if (!e.telegraph && !e.motion) {
               e.cd = a.recovery * (e.type === 'boss' ? R.bossCadence.specialRecoveryMultiplier : 1);
               if (!a.rogueMove)
