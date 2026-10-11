@@ -2370,7 +2370,7 @@
               target,
               (h.speed + this.heroTalentSpeedBonus()) *
                 (h.haste > 0 ? 1.25 : 1) *
-                (h.slow > 0 ? 0.65 : 1),
+                (h.slow > 0 ? 0.65 : 1) * this.mireBogMovementFactor(h) * this.ashMovementFactor(h),
               dt,
               20,
             );
