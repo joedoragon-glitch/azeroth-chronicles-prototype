@@ -43,7 +43,7 @@
   "captainBalanceRevision": {
     "source": "Draft PR #231: individually approved five-captain encounter mechanics; retained original v0.9 performance baseline and rendering-only revision",
     "files": {
-      "src/prototype/engine.js": "7a32b48378f926f7c93336337fb265ce9f6e1c8c1a74dfd5fc6430037873fb08",
+      "src/prototype/engine.js": "2c2e43cbe84309ed56f561f9cbc55a0f48803f97958830467453ee322e3b279e",
       "src/prototype/combat.js": "b21e3b5528a09b45b143815e773e342147683dfd7a3f7ccac66c50c340927b9e",
       "src/prototype/boss-combat.js": "062f653687a9a1256cabd89ea383771cb27f70dea827919dfac45d6b74609f6a",
       "src/prototype/rules.js": "449d14c06513533d41c2ba0348ee837ba3aac3750a88910aca5f74d4dc005c2c"
