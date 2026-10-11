@@ -2328,6 +2328,14 @@
         z = this.zone(),
         formationStart = { x: h.x, y: h.y };
       z.clock += dt;
+      // No capture may outlive its owner through death, dungeon transitions or a loaded save.
+      for (const unit of [h, ...this.s.party]) {
+        if (unit.keeperHeld && !z.enemies.some(e => e.id === unit.keeperHeld && e.hp > 0 && e.aggro))
+          unit.keeperHeld = null;
+        if (unit.deathRollHeld && !z.enemies.some(e => e.family === 'mire' && e.hp > 0 &&
+          e.deathRoll && e.deathRoll.victim === (unit === h ? 'hero' : unit.id)))
+          unit.deathRollHeld = false;
+      }
       h.cd = h.cd.map((c) => Math.max(0, c - dt));
       for (const f of ['immune', 'haste', 'potionCd', 'slow']) h[f] = Math.max(0, h[f] - dt);
       for (const u of this.s.party) {
