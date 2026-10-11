@@ -444,11 +444,15 @@
               continue;
             }
             const victim = this.combatTargets().find(
-              (u) => this.distanceToSegment(u, before, p) < 22,
+              (u) => this.distanceToSegment(u, before, p) < (p.style === 'cargo' ? 34 : 22),
             );
             if (victim) {
-              if (this.hitParty(victim, p.damage, p.manaDrain || 0, p.sourceId) && p.slow)
-                this.applySlow(victim, p.slow);
+              const landed = this.hitParty(victim, p.damage, p.manaDrain || 0, p.sourceId);
+              if (landed && p.slow) this.applySlow(victim, p.slow);
+              if (landed && victim.hp > 0 && p.style === 'cargo') {
+                const away = this.safe(victim.x + p.dx * 75, victim.y + p.dy * 75);
+                if (this.clearSegment(victim, away)) { victim.x = away.x; victim.y = away.y; }
+              }
               this.enemyVfxProjectileImpact?.(p, {
                 x: victim.x,
                 y: victim.y,
