@@ -144,7 +144,7 @@ async function proof() {
                   !/^(silver|copper)-(ore-face|sort-samples)$/.test(p.structure),
               )
               .map((p) =>
-                p.decorative && p.r === 0 && String(p.id || '').startsWith('aesthetic-nature-')
+                p.decorative && p.r === 0 && /^aesthetic-nature-/.test(p.id)
                   ? { ...p, x: 0, y: 0 }
                   : p,
               );
@@ -403,7 +403,7 @@ function summarize(samples) {
                           !/^(silver|copper)-(ore-face|sort-samples)$/.test(p.structure),
                       )
                       .map((p) =>
-                        p.decorative && p.r === 0 && String(p.id || '').startsWith('aesthetic-nature-')
+                        p.decorative && p.r === 0 && /^aesthetic-nature-/.test(p.id)
                           ? { ...p, x: 0, y: 0 }
                           : p,
                       );
