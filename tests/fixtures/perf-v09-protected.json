@@ -5,7 +5,7 @@
     "src/prototype/world.js": "fd696a65bf4e1b9067291f6c6d3d57b508f2b2ecb7164c222299ef8fa5edaa53",
     "src/prototype/navigation.js": "dbb700f55909a4908b64aec2c97583b07af93d7aeafe32d111dbbe16a7f79c36",
     "src/prototype/party.js": "41a66f5b3c95a09414b1308df557aff1cbb232d341f601b1f1fcaf1d2d40d726",
-    "src/prototype/combat.js": "f900021e37b14511787fda60648a83fce422b9f98bafa5766badbeeeecd6d6f0",
+    "src/prototype/combat.js": "93077fdf33d92a8fed4efec9e5431724a6fd3d7be5b54fb65051e22af5061572",
     "src/prototype/hero-combat.js": "2096a5b33d15e8177f6754de4cd92cccddee91c6b1f47d99f1597d0fe49f441a",
     "src/prototype/boss-combat.js": "be74a2d6d5336cd851073c7c6814a64cb22cc01af2ef7a0854fd9f4148edc27f",
     "src/prototype/progression.js": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
