@@ -35,7 +35,7 @@ const polishedKeeps = new Map([
   ],
   [
     21,
-    'Eren is free. The dragons bred at Abyss Bastion are meant for an army. The Dark Lord has plans beyond his own mount.',
+    'Eren is free. The dragons bred at Abyss Bastion are meant for an army. But on the flight map, Veyrith, the purple mount of the Dark Lord, marked a route home for every attack.',
   ],
 ]);
 const authored = prose.filter(Boolean);

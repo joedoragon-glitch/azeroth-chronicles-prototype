@@ -50,7 +50,7 @@
     }, // 20
     {
       kind: 'narration',
-      text: 'Eren is free. The dragons bred at Abyss Bastion are meant for an army. The Dark Lord has plans beyond his own mount.',
+      text: 'Eren is free. The dragons bred at Abyss Bastion are meant for an army. But on the flight map, Veyrith, the purple mount of the Dark Lord, marked a route home for every attack.',
     }, // 21
     null, // 22
     {

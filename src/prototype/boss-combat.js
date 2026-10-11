@@ -3,7 +3,80 @@
   'use strict';
   function install(Campaign, { R }) {
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+    const originalRogueMove = Campaign.prototype.tacticalResolveRogueMove;
     class BossCombat {
+      abyssFlightLegs(e, target, sign = 1) {
+        const dx = target.x - e.x,
+          dy = target.y - e.y,
+          len = Math.max(1, Math.hypot(dx, dy)),
+          perp = { x: -dy / len, y: dx / len },
+          first = this.safe(
+            e.x + dx * 0.33 + perp.x * sign * 105,
+            e.y + dy * 0.33 + perp.y * sign * 105,
+          ),
+          second = this.safe(
+            e.x + dx * 0.67 - perp.x * sign * 105,
+            e.y + dy * 0.67 - perp.y * sign * 105,
+          ),
+          last = this.safe(target.x, target.y);
+        // Never cut through walls to achieve an attractive pattern.
+        return this.clearSegment(e, first, 15) &&
+          this.clearSegment(first, second, 15) &&
+          this.clearSegment(second, last, 15)
+          ? [first, second, last]
+          : [last];
+      }
+      tacticalResolveRogueMove(e, move) {
+        if (e.family !== 'abyss' || e.type !== 'boss') return originalRogueMove.call(this, e, move);
+        if (!move.rogueSignature && move.style === 'dash') {
+          const target =
+            move.targetId === 'hero'
+              ? this.hero
+              : this.combatTargets().find((u) => u.id === move.targetId);
+          if (!target || target.hp <= 0 || !this.line(e, target)) return;
+          e.motion = {
+            aerial: 'high-yo-yo',
+            flightPath: this.abyssFlightLegs(e, move, 1),
+            target: { x: move.x, y: move.y },
+            hit: [],
+            speed: 350,
+            life: 5,
+            rogueMove: true,
+            rogueSignature: false,
+            style: move.style,
+            rogueAttack: move,
+            recovery: move.recovery,
+          };
+          return;
+        }
+        if (move.rogueSignature && move.effect === 'scatter') {
+          const origin = { x: e.x, y: e.y },
+            side = this.safe(
+              e.x + Math.cos(move.angle + Math.PI / 2) * 105,
+              e.y + Math.sin(move.angle + Math.PI / 2) * 105,
+            ),
+            path =
+              this.clearSegment(e, side, 15) && this.clearSegment(side, origin, 15)
+                ? [side, origin]
+                : [origin];
+          e.motion = {
+            aerial: 'wingover',
+            flightPath: path,
+            target: origin,
+            hit: [],
+            speed: 350,
+            life: 4,
+            rogueMove: true,
+            rogueSignature: true,
+            effect: move.effect,
+            style: move.style,
+            rogueAttack: move,
+            recovery: move.recovery,
+          };
+          return;
+        }
+        return originalRogueMove.call(this, e, move);
+      }
       trueSummonPlan(e) {
         const authored = R.attacks[e.family]?.find((a) => a.kind === 'summon');
         return authored
@@ -288,6 +361,15 @@
           Object.assign(a, patches[0], { count: 1 });
           for (const p of patches.slice(1)) sequence.push({ ...a, ...p, count: 1 });
         }
+        if (e.family === 'abyss' && index === 2) {
+          // Lazy Eight: opposite banks, each ending at its own separately warned impact.
+          a.flightPath = this.abyssFlightLegs(e, a, 1);
+          let previousLanding = a;
+          sequence.forEach((stage, i) => {
+            stage.flightPath = this.abyssFlightLegs(previousLanding, stage, i % 2 === 0 ? -1 : 1);
+            previousLanding = stage;
+          });
+        }
         if (a.combo)
           sequence.push({
             ...a,
@@ -431,6 +513,25 @@
           this.tacticalResolveRogueMove(e, a);
           return;
         }
+        if (a.bossHeal && e.family === 'abyss') {
+          const hero = this.hero,
+            length = Math.max(1, dist(e, hero)),
+            point = this.safe(
+              e.x + ((e.x - hero.x) / length) * 110,
+              e.y + ((e.y - hero.y) / length) * 110,
+            );
+          e.motion = {
+            aerial: 'go-around',
+            target: point,
+            flightPath: [point],
+            speed: 280,
+            life: 2,
+            hit: [],
+            recovery: a.recovery,
+            healFraction: a.healFraction,
+          };
+          return;
+        }
         if (a.bossHeal) {
           if (e.hp > 0) {
             const amount = Math.min(e.maxHp - e.hp, e.maxHp * a.healFraction);
@@ -551,7 +652,8 @@
             target: { x: a.x, y: a.y },
             hit: [],
             speed: a.advance ? 100 : 450,
-            life: 5,
+            flightPath: a.flightPath ? a.flightPath.map(({ x, y }) => ({ x, y })) : null,
+            life: a.flightPath ? 7 : 5,
           };
           return;
         }
@@ -622,7 +724,9 @@
           zone = this.zoneId,
           before = { x: e.x, y: e.y };
         a.life -= dt;
-        const moved = this.move(e, a.target, a.speed || a.pounceSpeed || 450, dt);
+        const leg = a.flightPath?.length ? a.flightPath[0] : a.target;
+        const moved = this.move(e, leg, a.speed || a.pounceSpeed || 450, dt);
+        if (a.flightPath?.length && dist(e, leg) < 10) a.flightPath.shift();
         if (a.charge)
           for (const u of this.combatTargets()) {
             const id = u === this.hero ? 'hero' : u.id;
@@ -645,7 +749,38 @@
           }
         // Axis fallback can report success for a zero-length clear segment.
         // A charge blocked by real geometry must end when it makes no progress.
-        if (dist(e, a.target) < 1 || !moved || dist(before, e) < 0.000001 || a.life <= 0) {
+        if (
+          (!a.flightPath?.length && dist(e, a.target) < (a.flightPath ? 10 : 1)) ||
+          !moved ||
+          dist(before, e) < 0.000001 ||
+          a.life <= 0
+        ) {
+          if (a.aerial === 'high-yo-yo') {
+            const move = a.rogueAttack,
+              victim =
+                move.targetId === 'hero'
+                  ? this.hero
+                  : this.combatTargets().find((u) => u.id === move.targetId);
+            if (victim?.hp > 0 && dist(victim, move) <= move.radius && this.line(e, victim)) {
+              const hit = this.hitParty(victim, e.damage * move.coefficient);
+              if (hit && victim.hp > 0) this.applySlow(victim, move.slowSeconds || 0.95);
+            }
+          } else if (a.aerial === 'wingover') {
+            originalRogueMove.call(this, e, a.rogueAttack);
+          } else if (a.aerial === 'go-around' && e.hp > 0) {
+            const amount = Math.min(e.maxHp - e.hp, e.maxHp * a.healFraction);
+            if (amount > 0) {
+              e.hp += amount;
+              this.event('heal', {
+                x: e.x,
+                y: e.y,
+                resource: 'health',
+                source: e.id,
+                target: e.id,
+                amount,
+              });
+            }
+          }
           if (a.landing && dist(e, a.target) < 20) this.resolveArea(e, a);
           e.motion = null;
           e.cd =
@@ -656,7 +791,8 @@
             e.open = e.form === 'true' && e.family === 'citadel' ? a.opening / 2 : a.opening;
           e.telegraph = e.sequence?.shift() || null;
           if (e.telegraph) this.event('warning', { family: e.family });
-          else e.basicDue = e.type === 'boss' && e.attackIndex % R.bossCadence.skillsPerBasic === 0;
+          else if (!a.rogueMove)
+            e.basicDue = e.type === 'boss' && e.attackIndex % R.bossCadence.skillsPerBasic === 0;
         }
       }
     }

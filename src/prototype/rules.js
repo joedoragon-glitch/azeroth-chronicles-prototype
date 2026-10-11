@@ -4105,7 +4105,7 @@
   });
   // Provisional non-siphon self-healing, separate from hero skill cooldowns.
   const bossRecovery = Object.freeze({
-    abyss: { name: 'Ember Renewal', healFraction: 0.08, cooldown: 24, warning: 1.6 },
+    abyss: { name: 'Go-Around', healFraction: 0.08, cooldown: 24, warning: 1.6 },
     citadel: { name: 'Ash Reforge', healFraction: 0.1, cooldown: 28, warning: 1.8 },
     threshold: 0.6,
   });
@@ -4351,7 +4351,7 @@
       ridge: { name: 'Ridge Tyrant’s Stone Feint', style: 'shove', coefficient: 0.24 },
       mine: { name: 'Stone Colossus’s Quarry Shift', style: 'shove', coefficient: 0.24 },
       warlord: { name: 'Ashen Warlord’s Flank Command', style: 'dash', coefficient: 0.25 },
-      abyss: { name: 'Abyss Dragon’s Ashwing Feint', style: 'dash', coefficient: 0.25 },
+      abyss: { name: 'Abyss Dragon’s High Yo-Yo', style: 'dash', coefficient: 0.25 },
       citadel: { name: 'Ash Sentinel’s Reversal', style: 'shove', coefficient: 0.24 },
       cindermaw: { name: 'Cindermaw’s Ember Hook', style: 'snare', coefficient: 0.23 },
       darklord: { name: 'Dark Lord’s Crown Grasp', style: 'snare', coefficient: 0.26 },
@@ -4698,7 +4698,7 @@
         reinforceName: 'Warlord rearguard',
       },
       abyss: {
-        name: 'Abyss Dragon’s Wingward Break',
+        name: 'Abyss Dragon’s Wingover',
         effect: 'scatter',
         warning: 1.7,
         radius: 205,

@@ -7,12 +7,12 @@
     "src/prototype/party.js": "41a66f5b3c95a09414b1308df557aff1cbb232d341f601b1f1fcaf1d2d40d726",
     "src/prototype/combat.js": "8b14cc8e5e0a1519b83cd7201a82a6b2b2e08d7d4e4294b641dfa5d5b6a0aa4b",
     "src/prototype/hero-combat.js": "9873768cf15322246de3a2892785ebdecc9cc9ed72ff7bbb377a264647135070",
-    "src/prototype/boss-combat.js": "be74a2d6d5336cd851073c7c6814a64cb22cc01af2ef7a0854fd9f4148edc27f",
+    "src/prototype/boss-combat.js": "2568b170d6dbd5d0032a262ff5049835b71c5ccff33dcbe2946a094b16956cd1",
     "src/prototype/progression.js": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
     "src/prototype/economy.js": "fd9701ee01d2748f22f176ce84d06f8769c0eb8b84963460380457a61933487a",
     "src/prototype/rewards.js": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525",
-    "src/prototype/rules.js": "0bea5df747d56c3d0ab15021aaa5bd09683c898594292f142bda969c7ee7ccc0",
-    "src/prototype/data.js": "a82856323e155405e7fb68a027dc226b75d1563bd6b440450ccf584a9d7724b2",
+    "src/prototype/rules.js": "c73ed1c07ce12e7d2cec0dd2f3bd76ab70dcdb0a7b69aaf1e977d3f93df4c297",
+    "src/prototype/data.js": "0c92ddacd05e2b28bca1fc0e0868ca09b8237acfb7c90f58e25907169332af41",
     "src/prototype/save.js": "4365b4fcfa21bcd8ffa5fe6da2b637dc0653e5aa7459abccc6277e94e6ab6296",
     "src/prototype/input.js": "87aed3b4d743dd011e0b6a0f5f293dc39fae45d76f6faa281139897a0437d616",
     "src/prototype/platform.js": "60107014425663a4607a239ea68359b04d0f0cfbf0eca7e9dc2fcc1a1180710d",
@@ -39,5 +39,19 @@
     "version": "0.8.139",
     "scope": "Thornfang Pounce and Stone Colossus Wall Rush authored description-only corrections; no mechanics, layouts or procedural art changed",
     "evidence": "v0.9 author approval and boss-description-contracts regression; all other baseline hashes unchanged"
+  },
+  "approvedCombatRevision": {
+    "ticket": "#243",
+    "sourceCommit": "ddef76d878383786d6fedb9aab6628bbfd14ea0d",
+    "scope": "Approved seven aviation techniques: changed data names, secondary rules names and isolated Abyss boss movement",
+    "preserved": "All nonlisted baseline file hashes and active-frame checksum remain protected",
+    "comparison": "Full Node and browser regression plus isolated maneuver tests required before integration",
+    "formattedBy": "Prettier 3.5.3 CI diagnostic exact output",
+    "formattedSourceSha256": "20f7cdc2430e1e33ba6d2a37971bed43f9dd0b7f46800ac82fcafc6482d3471b",
+    "motionCorrection": "Unchanged legacy charges retain one-unit destination threshold; aerial paths use ten-unit waypoint tolerance",
+    "flightPathCorrection": "Second Lazy Eight path originates from first landing; original collision guard unchanged",
+    "vfxContract": "Aerial motion carries the original rogue move signature fields so VFX and audio routing retain stable identity",
+    "rogueSlowFix": "High Yo-Yo retains original on-hit pursuit slow in addition to damage",
+    "rogueCadenceFix": "Aerial rogue moves no longer queue normal basic attack at motion completion; existing normal motion remains unchanged"
   }
 }

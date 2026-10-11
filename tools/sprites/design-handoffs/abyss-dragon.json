@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "idea",
+  "designId": "abyss-dragon",
+  "name": "Abyss Dragon — Veyrith",
+  "kind": "boss",
+  "nextAction": "Keep Veyrith as the canonical name; complete combat testing and review remaining proposed biography details. Preserve the existing approved purple-dragon design.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Owner explicitly confirmed Veyrith as the Abyss Dragon's canonical name on 2026-10-11. Existing personal mount, previous flights, and unfinished air project remain approved; detailed biography and succession proposals are tracked separately.",
+    "decisionDate": "2026-10-11",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/243",
+    "contentDocuments": [
+      "docs/ABYSS_AIR_SUPERIORITY_CANON.md",
+      "docs/ABYSS_DRAGON_IDENTITY_CANDIDATE.md"
+    ],
+    "locationAndLore": "Abyss Bastion royal aerie, hatchery, rider preparation, feeding and unfinished launch platform; potential successor rests on flight logistics and a policy of compulsory safe passage."
+  },
+  "decisions": {
+    "conceptAcceptance": "Veyrith name explicitly approved by owner on 2026-10-11. Other biography and succession details remain separately reviewable.",
+    "proceduralDesignAcceptance": "Existing procedural Abyss Dragon appearance must be retained; no new appearance proposal or approval.",
+    "spriteProductionAuthorization": null,
+    "generatedAppearanceAcceptance": null,
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "d7d2c22485b08265b31bf595305ef952b40b72cd",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js",
+      "src/prototype/rules.js",
+      "src/prototype/data.js"
+    ],
+    "exactEntityState": {
+      "zone": "abyss",
+      "family": "abyss",
+      "type": "boss",
+      "forms": [
+        "normal",
+        "true"
+      ],
+      "publicName": "Abyss Dragon",
+      "proposedPersonalName": "Veyrith"
+    },
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [],
+    "traitsToPreserve": [
+      "Approved purple draconic appearance, silhouette and size from the current procedural boss art.",
+      "Personal flying mount of the Dark Lord; royal Bastion aerie, flight table, hatchery, purple standards and unfinished launch platform.",
+      "Existing cone, ring, sequential flight landings and capped hatchling summons, including TRUE and Awakening."
+    ],
+    "assetSpecificDependencies": [
+      "No new sprite, nameplate, prop, animation or graphic revision is introduced by this proposal."
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [],
+    "reusedDesignIds": [
+      "Existing Abyss Dragon normal/TRUE procedural depiction"
+    ],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "Current visuals.js and combat-visuals.js remain authoritative; no render changes requested."
+    ]
+  },
+  "animationRequirements": {
+    "status": "undecided",
+    "gameplayStates": [
+      "Normal",
+      "TRUE",
+      "Awakening"
+    ],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

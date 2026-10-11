@@ -30,6 +30,7 @@ const quick = new Set([
   'first-boss-balance',
   'dungeon-pressure',
   'abyss-flight-project',
+  'abyss-dragon-identity',
   'abyss-v09-routes',
   'awakening-anchor',
   'local-sites',
