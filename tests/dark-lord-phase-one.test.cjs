@@ -134,16 +134,20 @@ for (const mode of ['normal', 'nightmare']) {
     x: 800, y: 1100, damage: 40, life: 2, style: 'arrow',
   });
   const previousLordHp = lord.hp;
-  const previousGuardHp = guard.hp;
   c.updateProjectiles(0.25);
-  console.log('ROYAL_INTERCEPT_DIAGNOSTIC', JSON.stringify({
-    time: c.s.time,
-    lord: { id: lord.id, hp: lord.hp, cooldown: lord.royalPrerogativeReadyAt },
-    guard: { id: guard.id, hp: guard.hp, owner: guard.owner, x: guard.x, y: guard.y },
-    projectileCount: c.s.projectiles.length,
-    lastEvents: c.effects.slice(-4),
-  }));
-  assert(guard.hp < previousGuardHp, 'Actual projectile strikes intercepting guard');
+  assert(guard.hp < guard.maxHp, 'Guard takes an actual post-scaling wound');
+  assert(
+    c.effects.some(
+      (effect) => effect.type === 'projectileImpact' && effect.target === guard.id,
+    ),
+    'Projectile impact is attributed to the guard, not silently deleted',
+  );
+  assert(
+    c.effects.some(
+      (effect) => effect.type === 'hit' && effect.x === guard.x && effect.amount > 0,
+    ),
+    'Interception applies actual combat damage',
+  );
   assert.equal(lord.hp, previousLordHp, 'Intercepted hit does not damage the ruler');
   assert.equal(lord.royalPrerogativeReadyAt, c.s.time + 18);
 }
