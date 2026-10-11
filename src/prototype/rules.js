@@ -3823,7 +3823,7 @@
       far: [1, 2, 3, 4],
       heroTarget: [0, 1, 3, 4],
       phasePreferred: [3, 4, 1, 2],
-      combos: [],
+      combos: [{ from: 1, to: 0, phase: 'high', chance: 0.4 }],
     },
   };
   const trueBossSummons = {
