@@ -1,0 +1,29 @@
+name: Temporary boss pitstop formatter
+on:
+  push:
+    branches:
+      - feature/boss-identity-pitstop-20261011
+permissions:
+  contents: write
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - run: npx prettier --write 'src/prototype/*.js' tests/boss-identity-pitstop.test.cjs
+      - name: Commit formatting only
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/prototype tests/boss-identity-pitstop.test.cjs
+          if ! git diff --cached --quiet; then
+            git commit -m 'Format boss identity implementation with repository Prettier'
+            git push origin HEAD:feature/boss-identity-pitstop-20261011
+          fi
