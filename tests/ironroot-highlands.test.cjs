@@ -23,8 +23,10 @@ test('Ironroot production scenes leave homes, habitats, service spacing and road
     );
   for (const s of [
     'silver-ore-face',
+    'copper-ore-face',
     'ore-sorting-bay',
     'silver-sort-samples',
+    'copper-sort-samples',
     'silver-refining-hearth',
     'mint-workbench',
     'silver-die-tray',
@@ -40,8 +42,10 @@ test('Ironroot production scenes leave homes, habitats, service spacing and road
   // Each production stage is present in an established working district, not a new economy.
   for (const [structure, district] of [
     ['silver-ore-face', 'roads'],
+    ['copper-ore-face', 'roads'],
     ['ore-sorting-bay', 'quarry'],
     ['silver-sort-samples', 'quarry'],
+    ['copper-sort-samples', 'quarry'],
     ['silver-refining-hearth', 'stonecross'],
     ['mint-workbench', 'stonecross'],
     ['silver-die-tray', 'stonecross'],
@@ -52,6 +56,8 @@ test('Ironroot production scenes leave homes, habitats, service spacing and road
       life.some((p) => p.structure === structure && p.ironrootDistrict === district),
       structure + ' is staged in ' + district,
     );
+  assert(C.rules.ironrootLore.ore.includes('Dark Lord’s face'));
+  assert(!C.rules.ironrootLore.ore.includes('five-point'));
   assert.equal(z.ironrootLifeVersion, 3);
   assert(z.props.some((p) => p.structure === 'highland-stone-house'));
   assert(z.props.some((p) => p.structure === 'wolf-den'));
@@ -97,7 +103,9 @@ test('Existing Ironroot saves acquire the mint details without new currency, rou
     (p) =>
       ![
         'silver-ore-face',
+    'copper-ore-face',
         'silver-sort-samples',
+    'copper-sort-samples',
         'silver-refining-hearth',
         'silver-die-tray',
         'sealed-crown-consignment',
@@ -113,7 +121,9 @@ test('Existing Ironroot saves acquire the mint details without new currency, rou
   assert.equal(C.data.regions.find((d) => d.id === 'highlands').resource, 640);
   for (const structure of [
     'silver-ore-face',
+    'copper-ore-face',
     'silver-sort-samples',
+    'copper-sort-samples',
     'silver-refining-hearth',
     'silver-die-tray',
     'sealed-crown-consignment',
@@ -308,8 +318,10 @@ test('Ironroot procedural scenes and Dara render deterministically without chang
   const structures = [
     'highland-pay-station',
     'silver-ore-face',
+    'copper-ore-face',
     'ore-sorting-bay',
     'silver-sort-samples',
+    'copper-sort-samples',
     'silver-refining-hearth',
     'mint-workbench',
     'silver-die-tray',
