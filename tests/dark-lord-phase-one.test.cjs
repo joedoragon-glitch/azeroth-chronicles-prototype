@@ -175,4 +175,30 @@ for (const mode of ['normal', 'nightmare']) {
   assert.equal(lord.crownDecreeZone.radius, 175);
   assert.equal(lord.crownDecreeZone.expires, c.s.time + 3);
 }
+// A fully reset encounter must not retain royal claims from the previous fight.
+{
+  const c = new C('normal', 'paladin', () => 0.9);
+  c.enter('crown');
+  const lord = c.bossEnemy(boss, 'normal', { x: 1100, y: 1100 });
+  c.zone().enemies = [lord];
+  Object.assign(lord, {
+    returning: 0.05,
+    secondWindUsed: true,
+    secondWindCancelled: true,
+    secondWindFacing: 0,
+    royalTaxation: { marked: ['hero'], expires: c.s.time + 5, sources: [] },
+    royalTaxShield: 30,
+    royalPrerogativeReadyAt: c.s.time + 18,
+    crownDecreeZone: { x: lord.x, y: lord.y, radius: 175, expires: c.s.time + 3 },
+  });
+  c.disengage(lord, 0.1);
+  assert.equal(lord.hp, lord.baseHp);
+  for (const key of [
+    'secondWindUsed', 'secondWindCancelled', 'secondWindFacing',
+    'royalTaxation', 'royalTaxShield', 'royalPrerogativeReadyAt', 'crownDecreeZone',
+  ]) assert(!Object.hasOwn(lord, key), 'reset clears stale ' + key);
+  lord.hp = lord.maxHp * 0.3;
+  assert(c.startBossRecovery(lord), 'Second Wind is usable again in a new engagement');
+}
+
 console.log('PASS Dark Lord royal taxation, formations, decree, sector warnings and interception');
