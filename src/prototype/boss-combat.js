@@ -707,16 +707,19 @@
                 .filter((u) => u.hp > 0 && !u.keeperHeld && hits(u) && this.line(e, u))
                 .sort((u, v) => Number(v.type === 'archer') - Number(u.type === 'archer'))[0]
             : null;
+        const jawVictim =
+          e.type === 'boss' && e.family === 'mire' && a.index === 0 && !e.deathRoll
+            ? party.find((u) => u.hp > 0 && !(u.immune > 0) && !this.peace &&
+                hits(u) && this.line(e, u))
+            : null;
         for (const u of party)
           if (hits(u) && this.line(e, u)) {
-            const landed = this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
-            if (
-              landed &&
-              e.type === 'boss' &&
-              e.family === 'mire' &&
-              a.index === 0 &&
-              !e.deathRoll
-            ) {
+            // The grabbed victim's Jaw Snap damage is distributed into roll
+            // ticks instead of being applied once now and a second time later.
+            const landed = u === jawVictim
+              ? true
+              : this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
+            if (landed && u === jawVictim) {
               // Exactly one jaw victim, then three evenly spaced roll impacts.
               e.deathRoll = {
                 victim: u === this.hero ? 'hero' : u.id,
