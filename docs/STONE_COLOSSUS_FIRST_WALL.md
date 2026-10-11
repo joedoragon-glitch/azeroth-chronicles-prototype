@@ -32,6 +32,22 @@ His succession claim is **contingent**, not a long-running plot to overthrow his
 - **Dara's guarded workstation:** mention fairly paid *but compulsory* repairs and artistic commissions. His rescue remains keyed to defeating `mine`.
 - **Mine personality:** a small geometric collection beside the existing forge/chamber is a strong visual cue. Reuse existing no-collision procedural objects, such as a stone marker, crystal, seat or game table, **only if** existing pathfinding/render equivalence and old-save placement checks remain green. No new building family is required for P0.
 
+## Engineering-term combat names — proposed and applied
+
+Garun announces authentic civil and structural engineering language with absolute seriousness. The humor comes from the technical accuracy: an unsuspecting player hears threatening incantations while an engineer recognizes a construction-site vocabulary lesson.
+
+| Move slot | In-game attack name | Engineering reference |
+| --- | --- | --- |
+| Stone Slam | **Punching Shear** | Concentrated load punches into supporting material |
+| Rockfall / temporary supports | **Progressive Collapse** | Local structural failure propagates; the temporary supports are his improvised remedy |
+| Shockwave Rings | **Dynamic Compaction** | Heavy impacts and stress waves densify ground |
+| Wall Rush | **Pile Driving** | Delivering impact to install structural piles |
+| Stonebound Call | **Mass Underpinning** | Strengthening an existing foundation with new support |
+| Quarry Shift tactical move | **Lateral Load Transfer** | Redistributing sideways loads through supporting members |
+| Faultline Brace tactical signature | **Passive Earth Pressure** | Soil resistance when a wall pushes into retained ground |
+
+All **seven labels** are text-only changes, with no timing, coefficient, shape, health, summoning or AI change. The technical move names replace the earlier fantasy names in `data.js` and tactical definitions in `rules.js`, keeping the underlying attack slot indices stable. No extra attack is added: `Raise the Works` is the temporary-support consequence of Progressive Collapse.
+
 ## Combat and roaming audit — author has permitted mechanical innovation
 
 The current fight has five authored attack slots: Stone Slam (circle; 1.6s warning and 2.5s exposed core), Rockfall (three circles; 1.7s), Shockwave Rings (1.6s), Wall Rush (warned 1.7s lane and **unconditional 3s exposed core**), and Stonebound Call (Ogre summon, six elite allies in TRUE). Its other tactical moves are Quarry Shift shove and Faultline Brace sweep. These are serviceable but not strongly distinctive of an *architect who builds during a fight*. Boss attack selection is weighted across existing shared shapes, so merely renaming those attacks does not satisfy the owner's new direction.
