@@ -136,6 +136,13 @@ for (const mode of ['normal', 'nightmare']) {
   const previousLordHp = lord.hp;
   const previousGuardHp = guard.hp;
   c.updateProjectiles(0.25);
+  console.log('ROYAL_INTERCEPT_DIAGNOSTIC', JSON.stringify({
+    time: c.s.time,
+    lord: { id: lord.id, hp: lord.hp, cooldown: lord.royalPrerogativeReadyAt },
+    guard: { id: guard.id, hp: guard.hp, owner: guard.owner, x: guard.x, y: guard.y },
+    projectileCount: c.s.projectiles.length,
+    lastEvents: c.effects.slice(-4),
+  }));
   assert(guard.hp < previousGuardHp, 'Actual projectile strikes intercepting guard');
   assert.equal(lord.hp, previousLordHp, 'Intercepted hit does not damage the ruler');
   assert.equal(lord.royalPrerogativeReadyAt, c.s.time + 18);
