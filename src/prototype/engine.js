@@ -3520,6 +3520,14 @@
         // Base movement remains single-target and cover-sensitive.
         if (!target || target.hp <= 0 || dist(target, move) > move.radius || !this.line(e, target))
           return;
+        if (e.family === 'mine' && move.style === 'slab') {
+          const side = target.x >= e.x ? 1 : -1;
+          const destination = { x: target.x + side * 100, y: target.y };
+          if (!this.clearSegment(target, destination, 12)) return;
+          if (this.hitParty(target, e.damage * move.coefficient) && target.hp > 0)
+            this.move(target, destination, 280, 0.42);
+          return;
+        }
         const startingHero = this.hero,
           startingZone = this.zoneId,
           startingDeaths = this.s.statistics.deaths;
