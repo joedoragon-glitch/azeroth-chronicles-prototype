@@ -39,5 +39,16 @@
     "version": "0.8.139",
     "scope": "Thornfang Pounce and Stone Colossus Wall Rush authored description-only corrections; no mechanics, layouts or procedural art changed",
     "evidence": "v0.9 author approval and boss-description-contracts regression; all other baseline hashes unchanged"
+  },
+  "approvedWorldbuildingRevision": {
+    "issue": 248,
+    "source": "Draft PR #256: reviewed Awakening narration and peaceful shared-interior population; separate from v0.9 performance optimization",
+    "base": "d7d2c22485b08265b31bf595305ef952b40b72cd",
+    "scope": "Only three source files permitted to differ in exact, hashed content: engine Awakening/makeHabitat; world zone peace entries; app's existing endgame prose. All simulation/frame scheduling unchanged and remains differential-tested.",
+    "files": {
+      "src/prototype/engine.js": "5880cfa6cf0e67bea2c43d16acbd278ac263b1a7b0969d83a4cd16e8aa6bbb72",
+      "src/prototype/world.js": "c68852d33901084dc2c9abae7662c1059a65365e66efa1c45b9f6a66c2612bfa",
+      "src/prototype/app.js": "f887e0a9fe138810457354c71b8cb2d4847b0161b4d4d6814d4b5e973c23e481"
+    }
   }
 }

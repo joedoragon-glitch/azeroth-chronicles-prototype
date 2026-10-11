@@ -639,7 +639,7 @@
     const done = Campaign.dungeonIds.filter((id) => game.s.true[id]).length;
     openMenu(
       'Awakening · Final objective',
-      'The TRUE Dark Lord is gone forever. Defeat every remaining TRUE dungeon guardian to end the war.\n\nProgress: ' +
+      'The Dark Lord once ended the wars between the five regions. His former companions still hold the means to impose his Crown Peace: bound dead, the Archive, stoneworks, the skies and the Citadel’s army.\n\nDefeat the remaining TRUE successors; earlier TRUE victories still count.\n\nProgress: ' +
         done +
         '/5 TRUE guardians defeated.',
       awakeningChecklist().map((x) => action(x.label, () => {}, x.detail, true)),
@@ -655,7 +655,7 @@
     const done = Campaign.dungeonIds.filter((id) => game.s.true[id]).length;
     openMenu(
       'The Dungeons Awaken',
-      'The TRUE Dark Lord has fallen and will not return. His defeat has awakened the remaining TRUE guardians of the five great dungeons. Defeat every remaining TRUE dungeon guardian to end the war. Previously defeated TRUE guardians remain defeated.\n\nProgress: ' +
+      'The Dark Lord has fallen, but his five former companions could each rebuild his rule. They hold life-binding, knowledge, the realm’s stoneworks, flight and military command.\n\nDefeat the remaining TRUE successors. Companions already defeated in TRUE form stay defeated.\n\nProgress: ' +
         done +
         '/5 defeated.',
       [
@@ -885,7 +885,7 @@
     persistProfile();
     openMenu(
       'Peace for everyone',
-      'The evil is defeated. Every dungeon guardian has fallen. The war is over for people and creatures alike.\n\nCreatures are neutral and cannot harm or be harmed. The reclaimed dungeons are their homes.',
+      'The Dark Lord ended the old wars. He also left five former companions able to enforce his peace after his death. Their claims are broken now.\n\nThe bridges stand; ferries still run. Crowns pass between people and creatures who once fought one another. They keep the roads open without a command from the Citadel.\n\nAt the Dark Fortress, someone has placed a plain chair beside the empty throne, for any traveler who wishes to speak.\n\nYou could sit in either. No voice tells you which.',
       [
         action('Continue in the peaceful world', () => {
           game.s.endingAck = true;
