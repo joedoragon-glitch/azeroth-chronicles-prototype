@@ -1823,6 +1823,11 @@
       e.hp = e.maxHp * ratio;
       e.damage = e.baseDamage * m.damage;
       e.fightStart = this.s.time;
+      if (e.family === 'warlord' && e.type === 'boss') {
+        // Ash hangs at its birthplace; the Warlord never drags a moving cloud.
+        e.ashCloud = { x: e.x, y: e.y, expires: this.s.time + 6 };
+        e.ashNextAt = this.s.time + 18;
+      }
       e.heroParticipated = false;
       e.noProgress = 0;
       if (e.type === 'boss' && e.form === 'true') {
@@ -1957,6 +1962,8 @@
       e.telegraph = null;
       e.motion = null;
       e.rangedAim = null;
+      delete e.ashCloud;
+      delete e.ashNextAt;
       if (e.deathRoll) {
         const victim = e.deathRoll.victim === 'hero' ? this.hero : this.s.party.find(u => u.id === e.deathRoll.victim);
         if (victim) victim.deathRollHeld = false;
@@ -2327,6 +2334,7 @@
             (h.haste > 0 ? 1.25 : 1) *
             (h.slow > 0 ? 0.65 : 1) *
             this.mireBogMovementFactor(h) *
+            this.ashMovementFactor(h) *
             clamp(input.speedFactor || 1, 1, 1.35);
         this.move(h, { x: h.x + (input.x / n) * speed, y: h.y + (input.y / n) * speed }, speed, dt);
       } else if (h.order) {
@@ -3666,6 +3674,11 @@
         e.captainGuard = Math.max(0, (e.captainGuard || 0) - dt);
         e.quotaOvertime = Math.max(0, (e.quotaOvertime || 0) - dt);
         if (!e.quotaOvertime) delete e.quotaTarget;
+        if (e.family === 'warlord' && e.type === 'boss' && e.aggro &&
+            this.s.time >= (e.ashNextAt || Infinity)) {
+          e.ashCloud = { x: e.x, y: e.y, expires: this.s.time + 6 };
+          e.ashNextAt = this.s.time + 18;
+        }
         if (e.captain || e.roomCaptain) this.triggerCaptainPhase(e);
         if (
           e.form === 'ringleader' &&
@@ -3979,6 +3992,8 @@
       if (e.returning <= 0) {
         Object.assign(e, e.home);
         e.aggro = false;
+        delete e.ashCloud;
+        delete e.ashNextAt;
         e.telegraph = null;
         e.sequence = [];
         e.motion = null;
