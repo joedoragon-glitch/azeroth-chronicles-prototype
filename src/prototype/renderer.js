@@ -463,7 +463,7 @@
       return { q, ux: vx / len, uy: vy / len, px: -vy / len, py: vx / len };
     }
     function drawProjectile(p) {
-      if (PrototypeEnemyVfxArt?.projectile(ctx, screen, p, game)) return;
+      if (p.style !== 'cargo' && PrototypeEnemyVfxArt?.projectile(ctx, screen, p, game)) return;
       const { q, ux, uy, px, py } = projectileVector(p),
         style = p.style || 'magic',
         combo = p.combo || 0;
@@ -475,6 +475,22 @@
       }
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
+      if (style === 'cargo') {
+        ctx.translate(q.x, q.y);
+        ctx.rotate(Math.atan2(uy, ux));
+        ctx.fillStyle = '#5e4e40';
+        ctx.fillRect(-23, -13, 46, 26);
+        ctx.fillStyle = '#98846b';
+        ctx.fillRect(-19, -17, 38, 10);
+        ctx.fillStyle = '#443a35';
+        for (const x of [-14, 14]) {
+          ctx.beginPath(); ctx.arc(x, 14, 6, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.strokeStyle = '#c3b097';
+        ctx.strokeRect(-23, -13, 46, 26);
+        ctx.restore();
+        return;
+      }
       if (p.effect === 'frost') {
         ctx.strokeStyle = '#b5edf3';
         ctx.lineWidth = 1.5;
