@@ -1,4 +1,4 @@
-name: Temporary Colossus route regression
+name: Temporary Colossus placement diagnostic
 on:
   push:
     paths:
