@@ -27,8 +27,7 @@
           : [last];
       }
       tacticalResolveRogueMove(e, move) {
-        if (e.family !== 'abyss' || e.type !== 'boss')
-          return originalRogueMove.call(this, e, move);
+        if (e.family !== 'abyss' || e.type !== 'boss') return originalRogueMove.call(this, e, move);
         if (!move.rogueSignature && move.style === 'dash') {
           const target =
             move.targetId === 'hero'

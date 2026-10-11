@@ -10,13 +10,6 @@ runs:
     - name: Install locked development tools
       shell: bash
       run: npm ci --ignore-scripts
-    - name: Capture reviewed formatter output for the isolated Abyss candidate
-      shell: bash
-      run: |
-        echo 'BEGIN_ABYSS_FORMAT'
-        npx prettier src/prototype/boss-combat.js | base64 -w0
-        echo
-        echo 'END_ABYSS_FORMAT'
     - name: Check formatting
       shell: bash
       run: npm run format:check
