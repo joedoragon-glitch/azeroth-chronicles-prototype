@@ -214,6 +214,17 @@
         ctx.fillStyle = '#58ba8540';
         ctx.lineWidth = 2.5;
         cue ? ctx.stroke() : ctx.fill();
+        if (cue) {
+          // This half is the protected rear territory, not the sector being hit.
+          const label = screen({
+            x: a.x + Math.cos(a.protectedAngle) * a.radius * 0.58,
+            y: a.y + Math.sin(a.protectedAngle) * a.radius * 0.58,
+          });
+          ctx.font = 'bold 11px system-ui';
+          ctx.textAlign = 'center';
+          ctx.fillStyle = '#c7ffe0';
+          ctx.fillText('PROTECTED SIDE', label.x, label.y);
+        }
       }
       // Rogue warnings need an identity distinct from ordinary boss attacks:
       // cool outlines for basic disruption, brighter double-width for signature.
