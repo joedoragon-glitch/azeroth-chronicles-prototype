@@ -152,8 +152,7 @@ const near = (u, e, degrees, distance = 100) => {
 }
 {
   const { c, e } = captain('supply-crown', 'Dreadmaw');
-  c.hero.x = e.x + 150;
-  c.hero.y = e.y;
+  Object.assign(c.hero, c.safe(e.x + 150, e.y, c.s.zone));
   const profile = Campaign.rules.roomCaptains['supply-crown'];
   assert.equal(c.summonCaptainAdds(e, profile.summon), 4,
     'Dreadmaw must create the complete four-brood shield');
