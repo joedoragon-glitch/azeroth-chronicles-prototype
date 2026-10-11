@@ -1572,6 +1572,23 @@
         hero: screen(game.hero),
         lights: ambientLights,
       });
+      // Choking Ash is intentionally visible and remains fixed where cast.
+      for (const e of z.enemies)
+        if (e.type === 'boss' && e.family === 'warlord' && e.aggro && e.hp > 0 &&
+            e.ashCloud && e.ashCloud.expires > game.s.time) {
+          const center = screen(e.ashCloud);
+          const edge = screen({ x: e.ashCloud.x + 180, y: e.ashCloud.y });
+          const span = Math.max(35, Math.abs(edge.x - center.x));
+          ctx.save();
+          ctx.fillStyle = '#786d64a0';
+          ctx.strokeStyle = '#d4bba088';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.ellipse(center.x, center.y, span, span * 0.48, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+        }
       PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx);
       drawOcclusionOutlines(entities);
       // Critical outlines and transient effects retain contrast through the night grade.
