@@ -3711,6 +3711,9 @@
           e.ashCloud = { x: e.x, y: e.y, expires: this.s.time + 6 };
           e.ashNextAt = this.s.time + 18;
         }
+        if (e.family === 'warlord' && e.type === 'boss' && e.ashCloud &&
+            e.ashCloud.expires > this.s.time)
+          for (const victim of this.combatTargets()) this.ashMovementFactor(victim);
         if (e.captain || e.roomCaptain) this.triggerCaptainPhase(e);
         if (
           e.form === 'ringleader' &&
