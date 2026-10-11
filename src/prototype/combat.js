@@ -285,6 +285,15 @@
         return true;
       }
 
+      mireBogMovementFactor(unit) {
+        if (!unit || !Number.isFinite(unit.mireBogLastAt)) return 1;
+        const away = Math.max(0, this.s.time - unit.mireBogLastAt);
+        if (away >= 2) return 1;
+        const seconds = unit.mireBogExposure || 0;
+        const inMudSpeed = seconds < 1 ? 0.75 : seconds < 2 ? 0.6 : seconds < 3 ? 0.45 : 0.35;
+        // When no longer standing in the bog, movement recovers smoothly over two seconds.
+        return 1 - (1 - inMudSpeed) * (away > 0.11 ? Math.max(0, 1 - away / 2) : 1);
+      }
       drainMana(u, fraction) {
         if (!R.resourceMode.manaEnabled) return 0;
         if (u !== this.hero || !fraction || u.mp <= 0 || this.peace) return 0;
@@ -502,6 +511,16 @@
           }
         }
         for (const a of [...this.s.hazards]) {
+          if (a.family === 'mire' && a.index === 2 && a.kind === 'circle') {
+            for (const u of this.combatTargets()) {
+              if (u.hp <= 0 || dist(u, a) >= a.radius) continue;
+              if ((u.mireBogLastAt || -100) < this.s.time - dt * 1.5)
+                u.mireBogExposure = 0;
+              if (u.mireBogLastAt !== this.s.time)
+                u.mireBogExposure = Math.min(4, (u.mireBogExposure || 0) + dt);
+              u.mireBogLastAt = this.s.time;
+            }
+          }
           a.life -= dt;
           a.tick -= dt;
           a.age = (a.age || 0) + dt;
