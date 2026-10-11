@@ -601,6 +601,12 @@
         for (const u of party)
           if (hits(u) && this.line(e, u)) {
             const landed = this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
+            if (landed && e.type === 'boss' && e.family === 'mire' && a.index === 0 && !e.deathRoll) {
+              // Exactly one jaw victim, then three evenly spaced roll impacts.
+              e.deathRoll = { victim: u === this.hero ? 'hero' : u.id, life: 1.5, elapsed: 0, hits: 0 };
+              u.deathRollHeld = true;
+              this.event('warning', { family: 'mire', deathRoll: true });
+            }
             if (landed && ['cone', 'sector'].includes(a.kind))
               this.event('melee', {
                 actor: 'enemy',
