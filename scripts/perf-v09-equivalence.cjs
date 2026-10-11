@@ -21,9 +21,24 @@ const live = (c) => {
   const state = json({ ...c, snapshot: c.snapshot() });
   for (const save of [state.s, state.snapshot]) {
     const zone = save?.zones?.highlands;
-    if (!zone) continue;
-    zone.props = zone.props.filter((p) => !String(p.id || '').startsWith('ironroot-life-'));
-    delete zone.ironrootLifeVersion;
+    if (zone) {
+      // Decorative Highlands flora can be renumbered after scene placement;
+      // its appearance is deliberately tested separately, not combat state.
+      zone.props = zone.props.filter(
+        (p) =>
+          !String(p.id || '').startsWith('ironroot-life-') &&
+          !String(p.id || '').startsWith('aesthetic-nature-'),
+      );
+      delete zone.ironrootLifeVersion;
+    }
+    const mine = save?.zones?.mine;
+    if (mine)
+      mine.props = mine.props.filter(
+        (p) =>
+          !['silver-ore-face', 'copper-ore-face', 'silver-sort-samples', 'copper-sort-samples'].includes(
+            p.structure,
+          ),
+      );
   }
   return state;
 };
