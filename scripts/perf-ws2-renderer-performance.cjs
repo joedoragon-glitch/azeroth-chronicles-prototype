@@ -368,24 +368,29 @@ function summarize(samples) {
         const reviewedEstate = zone === 'crypt';
         if (reviewedEstate) {
           assert.notEqual(
-            initial.candidate.pixels, initial.baseline.pixels,
+            initial.candidate.pixels,
+            initial.baseline.pixels,
             'Approved winter-estate artwork must visibly differ from the old crypt',
           );
           assert.notEqual(
-            initial.candidate.state, initial.baseline.state,
+            initial.candidate.state,
+            initial.baseline.state,
             'Approved Crypt version-4 decoration migration must be reflected in state',
           );
           assert.equal(
-            initial.candidate.state, (await pages.candidate.evaluate(proof)).state,
+            initial.candidate.state,
+            (await pages.candidate.evaluate(proof)).state,
             'Winter-estate state remains stable after rendering',
           );
         } else {
           assert.equal(
-            initial.candidate.pixels, initial.baseline.pixels,
+            initial.candidate.pixels,
+            initial.baseline.pixels,
             'Full baseline/candidate pixels ' + JSON.stringify(spec),
           );
           assert.equal(
-            initial.candidate.state, initial.baseline.state,
+            initial.candidate.state,
+            initial.baseline.state,
             'Identical starting campaign ' + JSON.stringify(spec),
           );
         }
@@ -419,7 +424,10 @@ function summarize(samples) {
             checkpoint.candidate.pixels,
             reviewedEstate ? initial.candidate.pixels : checkpoint.baseline.pixels,
             (reviewedEstate ? 'Stable authored winter-estate pixels' : 'Exact paired pixels') +
-              ' round ' + round + ' ' + JSON.stringify(spec),
+              ' round ' +
+              round +
+              ' ' +
+              JSON.stringify(spec),
           );
           assert.equal(
             checkpoint.control.pixels,
@@ -456,7 +464,8 @@ function summarize(samples) {
           final.candidate.pixels,
           reviewedEstate ? initial.candidate.pixels : final.baseline.pixels,
           (reviewedEstate ? 'Stable final winter-estate pixels' : 'Exact paired final pixels') +
-            ' ' + JSON.stringify(spec),
+            ' ' +
+            JSON.stringify(spec),
         );
         assert.equal(
           final.control.pixels,
@@ -513,7 +522,10 @@ function summarize(samples) {
     );
     fs.mkdirSync(path.dirname(target), { recursive: true });
     fs.writeFileSync(target, JSON.stringify(report, null, 2) + '\n');
-    console.log('PASS paired painter benchmark: exact unchanged scenes, stable reviewed winter estate, and invariant state: ' + target);
+    console.log(
+      'PASS paired painter benchmark: exact unchanged scenes, stable reviewed winter estate, and invariant state: ' +
+        target,
+    );
   } finally {
     await browser?.close();
     await new Promise((r) => server.close(r));
