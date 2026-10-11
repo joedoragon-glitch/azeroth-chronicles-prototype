@@ -288,9 +288,16 @@
       ashMovementFactor(unit) {
         if (!unit) return 1;
         const now = this.s.time;
-        const cloud = this.zone().enemies.find(e => e.type === 'boss' && e.family === 'warlord' &&
-          e.aggro && e.hp > 0 && e.ashCloud && e.ashCloud.expires > now &&
-          dist(unit, e.ashCloud) < 180);
+        const cloud = this.zone().enemies.find(
+          (e) =>
+            e.type === 'boss' &&
+            e.family === 'warlord' &&
+            e.aggro &&
+            e.hp > 0 &&
+            e.ashCloud &&
+            e.ashCloud.expires > now &&
+            dist(unit, e.ashCloud) < 180,
+        );
         if (cloud) unit.ashLastAt = now;
         return cloud || (Number.isFinite(unit.ashLastAt) && now - unit.ashLastAt <= 2) ? 0.7 : 1;
       }
@@ -351,7 +358,10 @@
         // Mirejaw's crocodilian scales lose their protection permanently as health falls.
         // At full health they stop 40%; by half health they stop none.
         if (e.family === 'mire' && e.type === 'boss') {
-          e.mireLowestHpRatio = Math.min(e.mireLowestHpRatio ?? 1, Math.max(0, e.hp / Math.max(1, e.maxHp)));
+          e.mireLowestHpRatio = Math.min(
+            e.mireLowestHpRatio ?? 1,
+            Math.max(0, e.hp / Math.max(1, e.maxHp)),
+          );
           const ratio = Math.max(0, Math.min(1, e.mireLowestHpRatio));
           amount *= 1 - 0.4 * Math.max(0, Math.min(1, (ratio - 0.5) * 2));
         }
@@ -451,7 +461,10 @@
               if (landed && p.slow) this.applySlow(victim, p.slow);
               if (landed && victim.hp > 0 && p.style === 'cargo') {
                 const away = this.safe(victim.x + p.dx * 75, victim.y + p.dy * 75);
-                if (this.clearSegment(victim, away)) { victim.x = away.x; victim.y = away.y; }
+                if (this.clearSegment(victim, away)) {
+                  victim.x = away.x;
+                  victim.y = away.y;
+                }
               }
               this.enemyVfxProjectileImpact?.(p, {
                 x: victim.x,
@@ -531,8 +544,7 @@
           if (a.family === 'mire' && a.index === 2 && a.kind === 'circle') {
             for (const u of this.combatTargets()) {
               if (u.hp <= 0 || dist(u, a) >= a.radius) continue;
-              if ((u.mireBogLastAt || -100) < this.s.time - dt * 1.5)
-                u.mireBogExposure = 0;
+              if ((u.mireBogLastAt || -100) < this.s.time - dt * 1.5) u.mireBogExposure = 0;
               if (u.mireBogLastAt !== this.s.time)
                 u.mireBogExposure = Math.min(4, (u.mireBogExposure || 0) + dt);
               u.mireBogLastAt = this.s.time;

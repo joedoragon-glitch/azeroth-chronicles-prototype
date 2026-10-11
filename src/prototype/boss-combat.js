@@ -7,7 +7,11 @@
       trueSummonPlan(e) {
         const authored = R.attacks[e.family]?.find((a) => a.kind === 'summon');
         return authored
-          ? { species: authored.species, ranged: !!authored.ranged, attendant: !!authored.attendant }
+          ? {
+              species: authored.species,
+              ranged: !!authored.ranged,
+              attendant: !!authored.attendant,
+            }
           : R.trueBossSummons.families[e.family];
       }
       bossOwnedSummons(e) {
@@ -102,7 +106,10 @@
                 p,
               );
             s.summon = true;
-            if (plan.attendant) { s.estateAttendant = true; s.visualScale = 0.78; }
+            if (plan.attendant) {
+              s.estateAttendant = true;
+              s.visualScale = 0.78;
+            }
             s.summonBalanceVersion = 1;
             s.owner = e.id;
             this.summonCombatProfile(s, plan);
@@ -148,7 +155,13 @@
             s = this.makeEnemy(
               {
                 species: plan.species,
-                name: plan.attendant ? (captain ? 'TRUE Estate attendant captain' : 'TRUE Estate attendant') : captain ? 'TRUE ' + baseName + ' Ringleader' : 'TRUE-bound ' + baseName,
+                name: plan.attendant
+                  ? captain
+                    ? 'TRUE Estate attendant captain'
+                    : 'TRUE Estate attendant'
+                  : captain
+                    ? 'TRUE ' + baseName + ' Ringleader'
+                    : 'TRUE-bound ' + baseName,
                 icon: '👻',
                 form: captain ? 'ringleader' : 'normal',
                 level: e.level,
@@ -164,7 +177,10 @@
           s.owner = e.id;
           this.summonCombatProfile(s, plan);
           s.trueSummon = true;
-          if (plan.attendant) { s.estateAttendant = true; s.visualScale = captain ? 0.9 : 0.78; }
+          if (plan.attendant) {
+            s.estateAttendant = true;
+            s.visualScale = captain ? 0.9 : 0.78;
+          }
           s.trueSummonRole = role;
           s.pack = e.id + '-summons';
           if (captain) s.ringleaderHealthVersion = 3;
@@ -255,8 +271,10 @@
         const markBackline =
           plan.kind === 'circle' && fallbackDistance < 200 && heroDistance > fallbackDistance + 70;
         // The Keeper's chosen healer remains priority even for ground-targeted spells.
-        if (e.family === 'archive' &&
-            this.activeLivingParty().some(u => u.type === 'archer' && u.hp > 0 && !u.keeperHeld))
+        if (
+          e.family === 'archive' &&
+          this.activeLivingParty().some((u) => u.type === 'archer' && u.hp > 0 && !u.keeperHeld)
+        )
           return fallback;
         return behavior.heroTarget?.includes(index) || markBackline ? this.hero : fallback;
       }
@@ -417,7 +435,10 @@
           actualTarget = selected < 0 ? null : this.bossAttackTarget(e, target, selected);
         if (selected < 0) return false;
         if (e.family === 'archive' && selected === 0 && e.hookedVictim) {
-          const held = e.hookedVictim === 'hero' ? this.hero : this.s.party.find(u => u.id === e.hookedVictim);
+          const held =
+            e.hookedVictim === 'hero'
+              ? this.hero
+              : this.s.party.find((u) => u.id === e.hookedVictim);
           if (held) held.keeperHeld = null;
           e.hookedVictim = null;
         }
@@ -435,19 +456,31 @@
           // A target-centered construction grid: four offset hazard pads,
           // leaving deliberate corridors rather than a solid damage carpet.
           const closest = this.activeLivingParty()
-            .filter(u => u.hp > 0)
-            .sort((u,v) => dist(u,this.hero) - dist(v,this.hero))[0];
-          const heroMark = {x:this.hero.x,y:this.hero.y};
-          const allyMark = closest && dist(closest,this.hero) >= 170
-            ? {x:closest.x,y:closest.y}
-            : {x:this.hero.x,y:this.hero.y + 172};
-          const marks = [heroMark, allyMark,
-            {x:a.x - 185,y:a.y - 95}, {x:a.x + 185,y:a.y + 95}];
-          return marks.map(mark => ({ ...a, x:mark.x, y:mark.y, radius:72 }));
+            .filter((u) => u.hp > 0)
+            .sort((u, v) => dist(u, this.hero) - dist(v, this.hero))[0];
+          const heroMark = { x: this.hero.x, y: this.hero.y };
+          const allyMark =
+            closest && dist(closest, this.hero) >= 170
+              ? { x: closest.x, y: closest.y }
+              : { x: this.hero.x, y: this.hero.y + 172 };
+          const marks = [
+            heroMark,
+            allyMark,
+            { x: a.x - 185, y: a.y - 95 },
+            { x: a.x + 185, y: a.y + 95 },
+          ];
+          return marks.map((mark) => ({ ...a, x: mark.x, y: mark.y, radius: 72 }));
         }
         if (a.count === 6 && a.kind === 'circle' && a.index === 1) {
           // Spread Warlord artillery around the target with dodgeable lanes.
-          const offsets = [[-220, -100], [0, -100], [220, -100], [-220, 125], [0, 125], [220, 125]];
+          const offsets = [
+            [-220, -100],
+            [0, -100],
+            [220, -100],
+            [-220, 125],
+            [0, 125],
+            [220, 125],
+          ];
           return offsets.map(([dx, dy]) => ({ ...a, x: a.x + dx, y: a.y + dy, radius: 72 }));
         }
         return Array.from({ length: a.count || 1 }, (_, i) => ({
@@ -511,22 +544,34 @@
         if (a.cargo && e.family === 'ridge') {
           const d = Math.max(1, Math.hypot(a.x - e.x, a.y - e.y));
           this.s.projectiles.push({
-            id: 'projectile-' + this.s.nextId++, x: e.x, y: e.y,
-            dx: (a.x - e.x) / d, dy: (a.y - e.y) / d,
-            speed: 260, life: 2, damage: e.damage * a.coefficient,
-            source: 'enemy', sourceId: e.id, species: 'cargo', style: 'cargo'
+            id: 'projectile-' + this.s.nextId++,
+            x: e.x,
+            y: e.y,
+            dx: (a.x - e.x) / d,
+            dy: (a.y - e.y) / d,
+            speed: 260,
+            life: 2,
+            damage: e.damage * a.coefficient,
+            source: 'enemy',
+            sourceId: e.id,
+            species: 'cargo',
+            style: 'cargo',
           });
           return;
         }
         if (a.sabotage && e.family === 'archive') {
           // The Scholar punishes a visibly marked healer or hero, without direct damage.
-          const victims = this.combatTargets().filter(u => u.hp > 0 && !u.keeperHeld &&
-            dist(u, a) < a.radius && this.line(e, u));
-          const victim = victims.find(u => u.type === 'archer') || victims.find(u => u === this.hero);
+          const victims = this.combatTargets().filter(
+            (u) => u.hp > 0 && !u.keeperHeld && dist(u, a) < a.radius && this.line(e, u),
+          );
+          const victim =
+            victims.find((u) => u.type === 'archer') || victims.find((u) => u === this.hero);
           if (victim) {
             if (victim.type === 'archer') victim.healCd = (victim.healCd || 0) + 3;
             else {
-              const choices = victim.cd.map((time, i) => ({ time, i })).filter(x => this.hero.skills[x.i] > 0)
+              const choices = victim.cd
+                .map((time, i) => ({ time, i }))
+                .filter((x) => this.hero.skills[x.i] > 0)
                 .sort((x, y) => y.time - x.time);
               if (choices.length) victim.cd[choices[0].i] += 3;
             }
@@ -643,28 +688,47 @@
                   Math.cos(Math.atan2(u.y - a.y, u.x - a.x) - a.angle) >
                     (a.kind === 'sector' ? Math.cos(0.65) : Math.cos(1.1))
                 : patches.some((p) => dist(u, p) < p.radius);
-        const anchorVictim = e.type === 'boss' && e.family === 'archive' && a.index === 0
-          ? party.filter(u => u.hp > 0 && !u.keeperHeld && hits(u) && this.line(e, u))
-              .sort((u, v) => Number(v.type === 'archer') - Number(u.type === 'archer'))[0]
-          : null;
+        const anchorVictim =
+          e.type === 'boss' && e.family === 'archive' && a.index === 0
+            ? party
+                .filter((u) => u.hp > 0 && !u.keeperHeld && hits(u) && this.line(e, u))
+                .sort((u, v) => Number(v.type === 'archer') - Number(u.type === 'archer'))[0]
+            : null;
         for (const u of party)
           if (hits(u) && this.line(e, u)) {
             const landed = this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
-            if (landed && e.type === 'boss' && e.family === 'mire' && a.index === 0 && !e.deathRoll) {
+            if (
+              landed &&
+              e.type === 'boss' &&
+              e.family === 'mire' &&
+              a.index === 0 &&
+              !e.deathRoll
+            ) {
               // Exactly one jaw victim, then three evenly spaced roll impacts.
-              e.deathRoll = { victim: u === this.hero ? 'hero' : u.id, life: 1.5, elapsed: 0, hits: 0 };
+              e.deathRoll = {
+                victim: u === this.hero ? 'hero' : u.id,
+                life: 1.5,
+                elapsed: 0,
+                hits: 0,
+              };
               u.deathRollHeld = true;
               this.event('warning', { family: 'mire', deathRoll: true });
             }
             if (landed && e.family === 'ridge' && e.type === 'boss' && a.index === 1 && u.hp > 0) {
               const d = Math.max(1, dist(u, a));
-              const dest = this.safe(u.x + (u.x - a.x) * 75 / d, u.y + (u.y - a.y) * 75 / d);
-              if (this.clearSegment(u, dest)) { u.x = dest.x; u.y = dest.y; }
+              const dest = this.safe(u.x + ((u.x - a.x) * 75) / d, u.y + ((u.y - a.y) * 75) / d);
+              if (this.clearSegment(u, dest)) {
+                u.x = dest.x;
+                u.y = dest.y;
+              }
             }
             if (landed && u === anchorVictim && u.hp > 0) {
               const d = Math.max(1, dist(u, e));
-              const where = this.safe(e.x + (u.x - e.x) * 62 / d, e.y + (u.y - e.y) * 62 / d);
-              if (this.clearSegment(u, where)) { u.x = where.x; u.y = where.y; }
+              const where = this.safe(e.x + ((u.x - e.x) * 62) / d, e.y + ((u.y - e.y) * 62) / d);
+              if (this.clearSegment(u, where)) {
+                u.x = where.x;
+                u.y = where.y;
+              }
               u.keeperHeld = e.id;
               e.hookedVictim = u === this.hero ? 'hero' : u.id;
               this.event('warning', { family: 'archive', anchorCaptured: true });
@@ -717,8 +781,11 @@
               const landed = this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
               if (landed && e.family === 'ridge' && a.index === 2 && u.hp > 0) {
                 const d = Math.max(1, dist(u, e));
-                const dest = this.safe(u.x + (u.x - e.x) * 85 / d, u.y + (u.y - e.y) * 85 / d);
-                if (this.clearSegment(u, dest)) { u.x = dest.x; u.y = dest.y; }
+                const dest = this.safe(u.x + ((u.x - e.x) * 85) / d, u.y + ((u.y - e.y) * 85) / d);
+                if (this.clearSegment(u, dest)) {
+                  u.x = dest.x;
+                  u.y = dest.y;
+                }
                 this.applySlow(u, 2);
               }
               if (

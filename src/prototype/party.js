@@ -271,7 +271,9 @@
       }
       availableRangers(type) {
         const key = type === 'health' ? 'healCd' : 'manaCd';
-        return this.activeLivingParty().filter((u) => u.type === 'archer' && !u.keeperHeld && (u[key] || 0) <= 0);
+        return this.activeLivingParty().filter(
+          (u) => u.type === 'archer' && !u.keeperHeld && (u[key] || 0) <= 0,
+        );
       }
       supportEffectActive(type) {
         return [this.hero, ...this.activeLivingParty()].some((u) =>
@@ -696,7 +698,9 @@
         const d = dist(u, this.hero),
           speed =
             this.companionMoveSpeed(d > 650 ? 500 : d > 350 ? 390 : d > 200 ? 315 : 255) *
-            (u.slow > 0 ? 0.65 : 1) * this.mireBogMovementFactor(u) * this.ashMovementFactor(u);
+            (u.slow > 0 ? 0.65 : 1) *
+            this.mireBogMovementFactor(u) *
+            this.ashMovementFactor(u);
         return this.follow(u, this.partyFollowPoint(u, living), speed, dt, 45);
       }
       soldierScreenTarget(u, targets, living, claimed) {
@@ -789,7 +793,16 @@
             const b = z.buildings.find((b) => b.id === u.order.id);
             if (b && b.progress < 4) {
               if (dist(u, b) > 85)
-                this.follow(u, b, this.companionMoveSpeed(230) * (u.slow > 0 ? 0.65 : 1) * this.mireBogMovementFactor(u) * this.ashMovementFactor(u), dt, 70);
+                this.follow(
+                  u,
+                  b,
+                  this.companionMoveSpeed(230) *
+                    (u.slow > 0 ? 0.65 : 1) *
+                    this.mireBogMovementFactor(u) *
+                    this.ashMovementFactor(u),
+                  dt,
+                  70,
+                );
               else {
                 b.progress = Math.min(4, b.progress + dt);
                 if (b.progress >= 4) {
@@ -806,7 +819,16 @@
             const b = z.buildings.find((b) => b.id === u.order.id);
             if (b && b.progress >= 4 && !b.full && b.upgradePaid) {
               if (dist(u, b) > 85)
-                this.follow(u, b, this.companionMoveSpeed(230) * (u.slow > 0 ? 0.65 : 1) * this.mireBogMovementFactor(u) * this.ashMovementFactor(u), dt, 70);
+                this.follow(
+                  u,
+                  b,
+                  this.companionMoveSpeed(230) *
+                    (u.slow > 0 ? 0.65 : 1) *
+                    this.mireBogMovementFactor(u) *
+                    this.ashMovementFactor(u),
+                  dt,
+                  70,
+                );
               else {
                 b.upgradeProgress = Math.min(4, (b.upgradeProgress || 0) + dt);
                 if (b.upgradeProgress >= 4) {
@@ -824,7 +846,15 @@
             const n = z.nodes.find((n) => n.id === u.order.id);
             if (n && n.amount > 0 && (!n.mini || this.peace || this.miniCleared(n.mini))) {
               if (dist(u, n) > 60)
-                this.follow(u, n, this.companionMoveSpeed(230) * (u.slow > 0 ? 0.65 : 1) * this.mireBogMovementFactor(u) * this.ashMovementFactor(u), dt);
+                this.follow(
+                  u,
+                  n,
+                  this.companionMoveSpeed(230) *
+                    (u.slow > 0 ? 0.65 : 1) *
+                    this.mireBogMovementFactor(u) *
+                    this.ashMovementFactor(u),
+                  dt,
+                );
               else {
                 const amount = Math.min(n.amount, 12 * dt);
                 n.amount = Math.max(0, n.amount - amount);
@@ -840,7 +870,15 @@
           if (u.order?.type === 'deposit') {
             const deposit = this.depositSite(u);
             if (dist(u, deposit) > 130)
-              this.follow(u, deposit, this.companionMoveSpeed(230) * (u.slow > 0 ? 0.65 : 1) * this.mireBogMovementFactor(u) * this.ashMovementFactor(u), dt);
+              this.follow(
+                u,
+                deposit,
+                this.companionMoveSpeed(230) *
+                  (u.slow > 0 ? 0.65 : 1) *
+                  this.mireBogMovementFactor(u) *
+                  this.ashMovementFactor(u),
+                dt,
+              );
             else {
               const payout = this.resourceDepositReward(u.carry);
               this.grant(payout, 0);
@@ -934,7 +972,10 @@
               this.follow(
                 u,
                 this.archerFallbackPoint(u, e, living),
-                this.companionMoveSpeed(270) * (u.slow > 0 ? 0.65 : 1) * this.mireBogMovementFactor(u) * this.ashMovementFactor(u),
+                this.companionMoveSpeed(270) *
+                  (u.slow > 0 ? 0.65 : 1) *
+                  this.mireBogMovementFactor(u) *
+                  this.ashMovementFactor(u),
                 dt,
                 35,
               );
@@ -944,7 +985,10 @@
               this.follow(
                 u,
                 this.archerCombatPoint(u, e, living),
-                this.companionMoveSpeed(260) * (u.slow > 0 ? 0.65 : 1) * this.mireBogMovementFactor(u) * this.ashMovementFactor(u),
+                this.companionMoveSpeed(260) *
+                  (u.slow > 0 ? 0.65 : 1) *
+                  this.mireBogMovementFactor(u) *
+                  this.ashMovementFactor(u),
                 dt,
                 35,
               );
@@ -954,7 +998,10 @@
               this.follow(
                 u,
                 anchor,
-                this.companionMoveSpeed(245) * (u.slow > 0 ? 0.65 : 1) * this.mireBogMovementFactor(u) * this.ashMovementFactor(u),
+                this.companionMoveSpeed(245) *
+                  (u.slow > 0 ? 0.65 : 1) *
+                  this.mireBogMovementFactor(u) *
+                  this.ashMovementFactor(u),
                 dt,
                 35,
               );
@@ -993,7 +1040,10 @@
             this.follow(
               u,
               e,
-              this.companionMoveSpeed(250) * (u.slow > 0 ? 0.65 : 1) * this.mireBogMovementFactor(u) * this.ashMovementFactor(u),
+              this.companionMoveSpeed(250) *
+                (u.slow > 0 ? 0.65 : 1) *
+                this.mireBogMovementFactor(u) *
+                this.ashMovementFactor(u),
               dt,
               this.line(u, e) ? 55 : 0,
             );

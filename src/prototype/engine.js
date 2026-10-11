@@ -938,15 +938,16 @@
       z.rangedBalanceVersion = 1;
     }
     decorateDungeon(z) {
-      const targetVersion = z.id === 'crypt'
-        ? 4
-        : R.dungeonWorkstations?.[z.id]
-        ? 3
-        : z.id === 'abyss'
+      const targetVersion =
+        z.id === 'crypt'
           ? 4
-          : z.id === 'citadel'
+          : R.dungeonWorkstations?.[z.id]
             ? 3
-            : 2;
+            : z.id === 'abyss'
+              ? 4
+              : z.id === 'citadel'
+                ? 3
+                : 2;
       if (z.dungeonVersion === targetVersion) return;
       z.props = z.props.filter((p) => !p.decorative || !String(p.id).startsWith('decor-'));
       z.dungeonVersion = targetVersion;
@@ -1097,7 +1098,10 @@
       return this.makeEnemy(
         {
           family: b.id,
-          name: form === 'true' && b.id === 'crypt' ? 'TRUE ' + b.name : b.name + (form === 'true' ? ' TRUE' : ''),
+          name:
+            form === 'true' && b.id === 'crypt'
+              ? 'TRUE ' + b.name
+              : b.name + (form === 'true' ? ' TRUE' : ''),
           icon: b.id === 'darklord' ? '😈' : b.kind === 'field' ? '👹' : '💀',
           form,
           type: 'boss',
@@ -1975,12 +1979,16 @@
       delete e.ledgerMarkedId;
       delete e.ledgerMarkUntil;
       if (e.hookedVictim) {
-        const held = e.hookedVictim === 'hero' ? this.hero : this.s.party.find(u => u.id === e.hookedVictim);
+        const held =
+          e.hookedVictim === 'hero' ? this.hero : this.s.party.find((u) => u.id === e.hookedVictim);
         if (held) held.keeperHeld = null;
         e.hookedVictim = null;
       }
       if (e.deathRoll) {
-        const victim = e.deathRoll.victim === 'hero' ? this.hero : this.s.party.find(u => u.id === e.deathRoll.victim);
+        const victim =
+          e.deathRoll.victim === 'hero'
+            ? this.hero
+            : this.s.party.find((u) => u.id === e.deathRoll.victim);
         if (victim) victim.deathRollHeld = false;
         e.deathRoll = null;
       }
@@ -2330,10 +2338,21 @@
       z.clock += dt;
       // No capture may outlive its owner through death, dungeon transitions or a loaded save.
       for (const unit of [h, ...this.s.party]) {
-        if (unit.keeperHeld && !z.enemies.some(e => e.id === unit.keeperHeld && e.hp > 0 && e.aggro))
+        if (
+          unit.keeperHeld &&
+          !z.enemies.some((e) => e.id === unit.keeperHeld && e.hp > 0 && e.aggro)
+        )
           unit.keeperHeld = null;
-        if (unit.deathRollHeld && !z.enemies.some(e => e.family === 'mire' && e.hp > 0 &&
-          e.deathRoll && e.deathRoll.victim === (unit === h ? 'hero' : unit.id)))
+        if (
+          unit.deathRollHeld &&
+          !z.enemies.some(
+            (e) =>
+              e.family === 'mire' &&
+              e.hp > 0 &&
+              e.deathRoll &&
+              e.deathRoll.victim === (unit === h ? 'hero' : unit.id),
+          )
+        )
           unit.deathRollHeld = false;
       }
       h.cd = h.cd.map((c) => Math.max(0, c - dt));
@@ -2378,7 +2397,9 @@
               target,
               (h.speed + this.heroTalentSpeedBonus()) *
                 (h.haste > 0 ? 1.25 : 1) *
-                (h.slow > 0 ? 0.65 : 1) * this.mireBogMovementFactor(h) * this.ashMovementFactor(h),
+                (h.slow > 0 ? 0.65 : 1) *
+                this.mireBogMovementFactor(h) *
+                this.ashMovementFactor(h),
               dt,
               20,
             );
@@ -3698,21 +3719,34 @@
         e.captainGuard = Math.max(0, (e.captainGuard || 0) - dt);
         e.quotaOvertime = Math.max(0, (e.quotaOvertime || 0) - dt);
         if (!e.quotaOvertime) delete e.quotaTarget;
-        if (e.family === 'ridge' && e.type === 'boss' && e.aggro &&
-            this.s.time >= (e.ledgerNextAt || Infinity)) {
-          const biggest = this.tacticalThreatSnapshot(e).find(a =>
-            a.source === 'hero' || this.s.party.some(u => u.id === a.source && u.hp > 0));
+        if (
+          e.family === 'ridge' &&
+          e.type === 'boss' &&
+          e.aggro &&
+          this.s.time >= (e.ledgerNextAt || Infinity)
+        ) {
+          const biggest = this.tacticalThreatSnapshot(e).find(
+            (a) => a.source === 'hero' || this.s.party.some((u) => u.id === a.source && u.hp > 0),
+          );
           e.ledgerMarkedId = biggest?.source || 'hero';
           e.ledgerMarkUntil = this.s.time + 5;
           e.ledgerNextAt = this.s.time + 12;
         }
-        if (e.family === 'warlord' && e.type === 'boss' && e.aggro &&
-            this.s.time >= (e.ashNextAt || Infinity)) {
+        if (
+          e.family === 'warlord' &&
+          e.type === 'boss' &&
+          e.aggro &&
+          this.s.time >= (e.ashNextAt || Infinity)
+        ) {
           e.ashCloud = { x: e.x, y: e.y, expires: this.s.time + 6 };
           e.ashNextAt = this.s.time + 18;
         }
-        if (e.family === 'warlord' && e.type === 'boss' && e.ashCloud &&
-            e.ashCloud.expires > this.s.time)
+        if (
+          e.family === 'warlord' &&
+          e.type === 'boss' &&
+          e.ashCloud &&
+          e.ashCloud.expires > this.s.time
+        )
           for (const victim of this.combatTargets()) this.ashMovementFactor(victim);
         if (e.captain || e.roomCaptain) this.triggerCaptainPhase(e);
         if (
@@ -3747,7 +3781,8 @@
         // Mirejaw commits completely to its death roll; the victim cannot act.
         if (e.family === 'mire' && e.type === 'boss' && e.deathRoll) {
           const roll = e.deathRoll,
-            victim = roll.victim === 'hero' ? this.hero : this.s.party.find((u) => u.id === roll.victim);
+            victim =
+              roll.victim === 'hero' ? this.hero : this.s.party.find((u) => u.id === roll.victim);
           if (!victim || victim.hp <= 0 || e.hp <= 0) {
             if (victim) victim.deathRollHeld = false;
             e.deathRoll = null;
@@ -3769,22 +3804,37 @@
         const candidates = this.combatTargets();
         // Keeper focuses available archers, the healers, within normal combat reach.
         const ridgeOwner = e.summon
-          ? z.enemies.find(u => u.id === e.owner && u.type === 'boss' && u.family === 'ridge')
+          ? z.enemies.find((u) => u.id === e.owner && u.type === 'boss' && u.family === 'ridge')
           : null;
-        const ridgeLeader = ridgeOwner && e.ranged
-          ? (ridgeOwner.ledgerMarkUntil > this.s.time
+        const ridgeLeader =
+          ridgeOwner && e.ranged
+            ? ridgeOwner.ledgerMarkUntil > this.s.time
               ? ridgeOwner.ledgerMarkedId
-              : this.tacticalThreatSnapshot(ridgeOwner)[0]?.source)
-          : null;
-        const ridgeTarget = ridgeLeader === 'hero' ? this.hero :
-          candidates.find(u => u.id === ridgeLeader && u.hp > 0) || null;
-        const keeperHealer = e.type === 'boss' && e.family === 'archive'
-          ? candidates.filter((u) => u.type === 'archer' && !u.keeperHeld && u.hp > 0 &&
-              dist(e, u) <= 600 && this.line(e, u)).sort((u, v) => dist(e, u) - dist(e, v))[0]
-          : null;
+              : this.tacticalThreatSnapshot(ridgeOwner)[0]?.source
+            : null;
+        const ridgeTarget =
+          ridgeLeader === 'hero'
+            ? this.hero
+            : candidates.find((u) => u.id === ridgeLeader && u.hp > 0) || null;
+        const keeperHealer =
+          e.type === 'boss' && e.family === 'archive'
+            ? candidates
+                .filter(
+                  (u) =>
+                    u.type === 'archer' &&
+                    !u.keeperHeld &&
+                    u.hp > 0 &&
+                    dist(e, u) <= 600 &&
+                    this.line(e, u),
+                )
+                .sort((u, v) => dist(e, u) - dist(e, v))[0]
+            : null;
         let target =
-          (ridgeTarget && dist(e, ridgeTarget) < 700 && this.line(e, ridgeTarget) ? ridgeTarget : null) ||
-          keeperHealer || (e.quotaOvertime > 0 && this.hero.hp > 0
+          (ridgeTarget && dist(e, ridgeTarget) < 700 && this.line(e, ridgeTarget)
+            ? ridgeTarget
+            : null) ||
+          keeperHealer ||
+          (e.quotaOvertime > 0 && this.hero.hp > 0
             ? this.hero
             : e.summon &&
                 (e.ranged || e.trueSummonRole === 'captain') &&
@@ -4070,7 +4120,10 @@
         e.summonCd = 0;
         e.sabotageCd = 0;
         if (e.hookedVictim) {
-          const held = e.hookedVictim === 'hero' ? this.hero : this.s.party.find(u => u.id === e.hookedVictim);
+          const held =
+            e.hookedVictim === 'hero'
+              ? this.hero
+              : this.s.party.find((u) => u.id === e.hookedVictim);
           if (held) held.keeperHeld = null;
           e.hookedVictim = null;
         }

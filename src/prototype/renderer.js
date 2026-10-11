@@ -484,7 +484,9 @@
         ctx.fillRect(-19, -17, 38, 10);
         ctx.fillStyle = '#443a35';
         for (const x of [-14, 14]) {
-          ctx.beginPath(); ctx.arc(x, 14, 6, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath();
+          ctx.arc(x, 14, 6, 0, Math.PI * 2);
+          ctx.fill();
         }
         ctx.strokeStyle = '#c3b097';
         ctx.strokeRect(-23, -13, 46, 26);
@@ -1443,10 +1445,16 @@
           }
           ctx.restore();
         }
-        if (['hero', 'ally'].includes(e.renderKind) &&
-            z.enemies.some(b => b.family === 'ridge' && b.hp > 0 &&
+        if (
+          ['hero', 'ally'].includes(e.renderKind) &&
+          z.enemies.some(
+            (b) =>
+              b.family === 'ridge' &&
+              b.hp > 0 &&
               b.ledgerMarkUntil > game.s.time &&
-              b.ledgerMarkedId === (e.renderKind === 'hero' ? 'hero' : e.id))) {
+              b.ledgerMarkedId === (e.renderKind === 'hero' ? 'hero' : e.id),
+          )
+        ) {
           ctx.save();
           ctx.strokeStyle = '#ebc479';
           ctx.lineWidth = 2;
@@ -1619,8 +1627,14 @@
       });
       // Choking Ash is intentionally visible and remains fixed where cast.
       for (const e of z.enemies)
-        if (e.type === 'boss' && e.family === 'warlord' && e.aggro && e.hp > 0 &&
-            e.ashCloud && e.ashCloud.expires > game.s.time) {
+        if (
+          e.type === 'boss' &&
+          e.family === 'warlord' &&
+          e.aggro &&
+          e.hp > 0 &&
+          e.ashCloud &&
+          e.ashCloud.expires > game.s.time
+        ) {
           const center = screen(e.ashCloud);
           const edge = screen({ x: e.ashCloud.x + 180, y: e.ashCloud.y });
           const span = Math.max(35, Math.abs(edge.x - center.x));
