@@ -199,7 +199,8 @@
         if (
           this.s.challenge.pending ||
           this.s.challenge.gameOver ||
-          this.tacticalScatterState(this.hero)
+          this.tacticalScatterState(this.hero) ||
+          this.hero.deathRollHeld
         )
           return false;
         if (!rank || this.hero.cd[i] > 0 || this.peace) {
