@@ -2,6 +2,12 @@
 
 Ironroot remains a mountain province with pine forest, homes, wild Wolf territory and Ogre households. Small production scenes connect its mineral wealth to the Dark Lord's crowns. The Ridge Tyrant serves as the competent Master of Coin; paid work and usable roads support his political argument without making the narrator endorse it.
 
+## Proposed #239 P0 metal pass (unmerged)
+
+The isolated beta-essential draft adds dark silver-bearing ore at the existing vein and Mine approach, silver-rich chips in existing Quarry sorting, a small Stonecross refining/cupellation hearth before the current die bench, silver-coloured pay/striking pieces, and stamped Crown seals on existing loading crates. The material is **provisional 92.5% silver / 7.5% copper**, with a five-point Crown die; owner review is required before calling this approved canon. See [full researched proposal and visible acceptance route](IRONROOT_CROWNS_239_PROPOSAL.md). The quarry still cuts construction stone; mountain roads and Wolf/Ogre homes remain. No alternate money, new economic resources, convoy encounter, mounted combat or gameplay progression is introduced.
+
+The ancient-isolated Colossus interpretation recorded below is **superseded as future canon by #232/#251**; replacement work belongs to #242 and should not be settled by #239.
+
 ## Implemented places
 
 Stonecross adds payroll, a small striking press, shipment loading and domestic supper/garden details. Quarry Outpost gains sorting, supports, equipment and rest details. Caravan staging and maintained-road supplies connect the settlements. Ogre hearth life retains its games, bedding and cooking; limited work details do not extend into Wolf habitats. Existing strongholds and Old Signal Keep are preserved.
