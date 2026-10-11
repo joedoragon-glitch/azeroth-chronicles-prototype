@@ -312,6 +312,13 @@ console.log('PASS 7-target Dark Lord life-siphon stress case with no percent-max
     assert(!g.startBossRecovery(boss), family + ' cannot queue a duplicate');
     const before = boss.hp;
     g.resolveAttack(boss);
+    if (family === 'abyss') {
+      assert.equal(boss.hp, before, 'Go-Around defers healing until withdrawal ends');
+      assert.equal(boss.motion?.aerial, 'go-around');
+      boss.telegraph = null;
+      for (let tick = 0; tick < 160 && boss.motion; tick++) g.advanceMotion(boss, 0.02);
+      assert.equal(boss.motion, null, 'Go-Around withdrawal terminates');
+    }
     assert(
       Math.abs(boss.hp - (before + cfg.healFraction * boss.maxHp)) < 1e-9,
       family + ' heals exactly the authored fraction',
