@@ -2096,7 +2096,8 @@
       presentation: 'workstation',
       workKind: 'smith',
       workstation: 'equipment-repair',
-      context: 'Dara is compelled to repair cart axles, quarry tools and mine supports.',
+      context:
+        'Dara is compelled to repair cart axles, quarry tools and mine supports. The Colossus stamps his diamond seal on each guarded route order.',
     },
   };
   const regionalHandoffScenes = {
@@ -3361,6 +3362,8 @@
     ],
   }; // Curated occupied spaces: each dungeon has an entrance, work/ritual zone, command markers and a boss approach.
   const dungeonLore = {
+    mine:
+      'Diamond marks repeat from old stone to new mine supports. An Ogre ward order reads: “No road unwatched. No worker abandoned. — Kharun, First Wall.” The Ridge Tyrant pays the crews; another hand decides which passages stay open.',
     abyss:
       'Abyss Bastion is the Dark Lord’s air-superiority project. His purple dragon is his personal flying mount; the hatchery will grow his future air force. Riders prepare harnesses, supplies arrive, and the royal launch platform is still being built.',
   };
