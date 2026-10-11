@@ -29,7 +29,7 @@
   "renderingRevision": {
     "source": "PR #225 plus #271 reviewed local-presentation/report revisions; byte-for-byte simulation frame preserved",
     "files": {
-      "src/prototype/app.js": "c65dea63014b7f5e3d8c7af1cc7cc6fd9d887054fc6e3585b361e647a5316d91",
+      "src/prototype/app.js": "2bef212a5feba5ba5fd997bf462fdda1987d5c618848cee6a4a3c1abf137be8a",
       "src/prototype/runtime.js": "953bbc9a92e9576e7ea6e7620cffe6d473c7d721cabb7878dbe04d23283dda43"
     },
     "activeFrameBodySha256": "a042cd0491db3860a8f8c29e9f1471b45be3ca108b2520dcc4df833d0ce81d7a"
