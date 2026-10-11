@@ -158,7 +158,7 @@ const PrototypeData = {
       id: 'crypt',
       region: 'vale',
       kind: 'dungeon',
-      name: 'Crypt Guardian',
+      name: 'Lifebinder',
       level: 3,
       captive: 'Borin the Village Smith',
       service: 'Village weapon improvements and basic equipment crafting',
@@ -169,10 +169,10 @@ const PrototypeData = {
       xp: 55,
       place: 'Forest Crypt',
       attacks: [
-        'Bone sweep: frontal cone, 1.0 second warning and a safe rear arc.',
-        'Bone volley: three visible projectiles with 1.2 second windup; solid pillars block them.',
-        'Grave call: 1.6 second warning, then three skeletons; existing summons count toward the cap.',
-        'Draining ground: marks one patch for 1.6 seconds; it lasts 4 seconds and leaves a route around it.',
+        'Binding Sweep: frontal cone, 1.0 second warning and a safe rear arc.',
+        'Stay Alive: three visible projectiles with 1.2 second windup; solid pillars block them.',
+        'Call the Attendants: 1.6 second warning, then three estate attendants; each cast adds a new group up to the encounter safety ceiling.',
+        'Groundwork: marks four separated patches for 1.6 seconds; they last 4 seconds and leave escape routes.',
       ],
     },
     {
@@ -235,10 +235,10 @@ const PrototypeData = {
       xp: 262,
       place: 'Mountain watchtower',
       attacks: [
-        'Hammer blow: frontal arc, 1.0 second warning.',
-        'Boulder throw: marks one landing point for 1.5 seconds.',
-        'Ridge charge: straight lane with 1.5 second warning and a 2 second recovery.',
-        'War cry: calls three ridge archers after 1.8 seconds; the summon action uses a short cooldown before replenishing losses.',
+        'Coinage Blow: frontal hammer arc with the normal attack timing.',
+        'Rolling Cargo: marks one landing point for 1.5 seconds.',
+        'Toll Collection: straight charge lane with a 1.5 second attack windup.',
+        'Payroll Order: calls three contracted archers after 1.8 seconds, subject to the summon cooldown.',
       ],
     },
     {
