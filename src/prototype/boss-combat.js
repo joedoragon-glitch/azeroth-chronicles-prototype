@@ -356,6 +356,11 @@
               total: plan.warning,
             });
         }
+        if (e.family === 'darklord' && index === 3)
+          for (const beat of [a, ...sequence]) {
+            beat.royalTerritory = true;
+            beat.protectedAngle = beat.angle + Math.PI;
+          }
         if (includeTrue && e.form === 'true') {
           if (e.family === 'crypt' && index === 1) a.staggered = true;
           if (e.family === 'archive' && index === 1)

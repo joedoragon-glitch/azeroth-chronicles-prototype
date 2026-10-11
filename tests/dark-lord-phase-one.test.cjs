@@ -97,6 +97,10 @@ for (const mode of ['normal', 'nightmare']) {
   c.line = () => true;
   c.tacticalRogueLeashAllows = () => true;
 
+  const crownsBefore = c.hero.gold;
+  const territory = c.buildBossAttack(lord, 3, c.hero);
+  assert(territory.first.royalTerritory);
+  assert(territory.sequence.every((beat) => beat.royalTerritory));
   const tax = c.buildBossAttack(lord, 5, c.hero).first;
   lord.telegraph = tax;
   c.resolveAttack(lord);
@@ -114,8 +118,9 @@ for (const mode of ['normal', 'nightmare']) {
   const shield = lord.royalTaxShield;
   c.damage(lord, 15, 'hero');
   assert(lord.royalTaxShield < shield, 'Shield absorbs real subsequent damage');
-  assert.equal(c.hero.gold, 0, 'Tax never touches real crowns');
+  assert.equal(c.hero.gold, crownsBefore, 'Tax never touches real crowns');
 
+  c.clearSegment = () => true;
   const guard = c.makeEnemy(
     { species: 'crownguard', name: 'Royal escort', level: 16, hp: 100, damage: 4, gold: 0, xp: 0 },
     { x: 1080, y: 1100 },
@@ -135,4 +140,15 @@ for (const mode of ['normal', 'nightmare']) {
   assert.equal(lord.hp, previousLordHp, 'Intercepted hit does not damage the ruler');
   assert.equal(lord.royalPrerogativeReadyAt, c.s.time + 18);
 }
-console.log('PASS Dark Lord Royal Taxation, intercepting guards and real damage routing');
+{
+  const c = new C('normal', 'paladin', () => 0.9);
+  c.enter('crown');
+  const ruler = c.bossEnemy(boss, 'normal', { x: 1100, y: 1100 });
+  c.zone().enemies = [ruler];
+  ruler.telegraph = c.buildBossAttack(ruler, 2, c.hero).first;
+  c.resolveAttack(ruler);
+  const guards = c.bossOwnedSummons(ruler);
+  assert(guards.length > 0 && guards.length <= 3);
+  assert(guards.every((guard) => guard.royalFormationUntil === c.s.time + 3));
+}
+console.log('PASS Dark Lord Royal Taxation, guard formations, sector warnings and interception');

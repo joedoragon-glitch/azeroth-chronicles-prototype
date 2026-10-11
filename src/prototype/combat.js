@@ -318,6 +318,8 @@
         this.engage(e, true);
         if (source === 'hero') e.heroParticipated = true;
         if (e.roomCaptain && e.captainGuard > 0) amount *= 0.7;
+        if (e.summon && e.owner && e.royalFormationUntil > this.s.time)
+          amount *= 0.8;
         if (e.roomCaptain) {
           const profile = this.captainProfile(e),
             summon = profile?.summon;

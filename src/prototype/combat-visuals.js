@@ -177,9 +177,36 @@
         ctx.stroke();
       }
     }
+    for (const ruler of game.zone().enemies.filter((e) => e.family === 'darklord')) {
+      if (ruler.royalTaxation && ruler.royalTaxation.expires >= game.s.time)
+        for (const id of ruler.royalTaxation.marked) {
+          const target = id === 'hero' ? game.hero : game.s.party.find((u) => u.id === id);
+          if (!target || target.hp <= 0) continue;
+          circlePath(ctx, screen, target, 35);
+          ctx.strokeStyle = '#c49df4';
+          ctx.fillStyle = '#8d62b52b';
+          ctx.lineWidth = cue ? 2.5 : 1.5;
+          ctx.setLineDash(cue ? [6, 3] : []);
+          cue ? ctx.stroke() : ctx.fill();
+          ctx.setLineDash([]);
+        }
+      if (ruler.royalTaxShield > 0) {
+        circlePath(ctx, screen, ruler, 60);
+        ctx.strokeStyle = '#d9b5fa';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    }
     for (const e of game.zone().enemies.filter((e) => e.telegraph)) {
       const a = e.telegraph,
         shapes = warningShapes(a, game.attackPatches(a));
+      if (a.royalTerritory) {
+        polygon(ctx, screen, sectorPoints(a, a.radius, a.protectedAngle, 0.65));
+        ctx.strokeStyle = '#9de6bd';
+        ctx.fillStyle = '#58ba8540';
+        ctx.lineWidth = 2.5;
+        cue ? ctx.stroke() : ctx.fill();
+      }
       // Rogue warnings need an identity distinct from ordinary boss attacks:
       // cool outlines for basic disruption, brighter double-width for signature.
       ctx.strokeStyle = a.bossHeal
