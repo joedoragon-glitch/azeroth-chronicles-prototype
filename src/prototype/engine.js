@@ -713,6 +713,27 @@
         e.name = e.name.replace(/ store guard/i, ' treasury guard');
       z.treasuryVersion = targetVersion;
     }
+    upgradeCaptainEndurance(e, profile) {
+      if (!e || !profile?.enduranceHp || e.captainEnduranceVersion === 2) return;
+      const previous = e.maxHp || e.baseHp || 1;
+      const fraction = Math.max(0, Math.min(1, (e.hp || 0) / previous));
+      const oldBase = e.baseHp || previous;
+      const ratio = previous / oldBase;
+      // Authoritative base HP is a fixed captain budget, not a multiplier of
+      // historical treasury/scaling revisions (which would stack on old saves).
+      e.baseHp = profile.enduranceHp;
+      e.maxHp = e.baseHp * ratio;
+      e.hp = e.hp > 0 ? e.maxHp * fraction : 0;
+      // Saves restore living enemies at full HP but may retain legacy phase
+      // flags. Let the revised phase trigger cleanly at its new threshold.
+      e.captainPhase = false;
+      e.captainPhaseMove = 1;
+      e.captainAttackRate = 1;
+      e.captainGuard = 0;
+      e.captainReflect = 0;
+      e.captainOvertimeCd = 0;
+      e.captainEnduranceVersion = 2;
+    }
     roomCaptainPopulation(z) {
       const profile = R.roomCaptains?.[z.id];
       if (!profile) return;
@@ -727,6 +748,7 @@
       captain.visualScale = profile.visualScale || 1.16;
       captain.specialCd = Math.min(captain.specialCd ?? 1.25, 1.25);
       captain.roomCaptainVersion = 1;
+      this.upgradeCaptainEndurance(captain, profile);
       if (captain.name !== profile.name) captain.name = profile.name;
     }
     fieldCaptainPopulation(z) {
@@ -774,6 +796,7 @@
         : 0;
       captain.captainPatrolWait = Math.max(0, captain.captainPatrolWait || 0);
       captain.fieldCaptainVersion = 1;
+      this.upgradeCaptainEndurance(captain, profile);
       if (captain.name !== profile.name) captain.name = profile.name;
       z.fieldCaptainVersion = 1;
     }
@@ -2514,16 +2537,16 @@
         e.cd = Math.min(e.cd, 0.15);
         e.specialCd = 0;
       } else if (phase.kind === 'molt') {
-        e.hp = Math.min(e.maxHp, e.hp + e.maxHp * 0.12);
-        e.captainPhaseMove = 1.12;
+        e.hp = Math.min(e.maxHp, e.hp + e.maxHp * 0.5);
+        e.captainPhaseMove = 1.2;
         e.specialCd = 0;
       } else if (phase.kind === 'howl') {
-        e.captainPhaseMove = 1.22;
+        e.captainPhaseMove = 1.35;
         e.captainAttackRate = 0.75;
         e.cd = Math.min(e.cd, 0.15);
         e.specialCd = 0;
       } else if (phase.kind === 'carapace') {
-        e.captainGuard = 6;
+        e.captainReflect = 8;
         e.captainAttackRate = 0.85;
         e.specialCd = 0;
         if (profile.summon) this.summonCaptainAdds(e, profile.summon);
@@ -2531,34 +2554,38 @@
         e.captainPhaseMove = 1.15;
         e.captainAttackRate = 0.8;
         e.specialCd = 0;
-        const candidates = this.zone()
-            .enemies.filter(
-              (u) =>
-                u !== e &&
-                u.hp > 0 &&
-                !u.neutral &&
-                !u.captain &&
-                !u.roomCaptain &&
-                !u.summon &&
-                u.type === 'mob' &&
-                dist(u, e) < 900,
-            )
-            .sort((a, b) => dist(a, e) - dist(b, e)),
-          workers =
-            candidates.length <= 7
-              ? candidates
-              : [...candidates.slice(0, 3), ...candidates.slice(-4)];
-        for (const u of workers) {
-          u.quotaOvertime = Math.max(u.quotaOvertime || 0, 9);
-          u.quotaTarget = { x: this.hero.x, y: this.hero.y };
-          u.pursuitBurst = Math.max(u.pursuitBurst || 0, 4);
-          u.cd = Math.min(u.cd || 0, 0.2);
-          this.engage(u);
-        }
+        e.captainOvertimeCd = 12;
+        this.captainOvertimeRecruit(e);
       }
       this.say(e.name + ' uses ' + phase.name + '.');
       this.event('captainPhase', { profile: e.captainProfile, name: phase.name });
       return true;
+    }
+    captainOvertimeRecruit(e) {
+      const candidates = this.zone()
+          .enemies.filter(
+            (u) =>
+              u !== e &&
+              u.hp > 0 &&
+              !u.neutral &&
+              !u.captain &&
+              !u.roomCaptain &&
+              !u.summon &&
+              u.type === 'mob' &&
+              dist(u, e) < 900,
+          )
+          .sort((a, b) => dist(a, e) - dist(b, e)),
+        workers =
+          candidates.length <= 7
+            ? candidates
+            : [...candidates.slice(0, 3), ...candidates.slice(-4)];
+      for (const u of workers) {
+        u.quotaOvertime = Math.max(u.quotaOvertime || 0, 9);
+        u.quotaTarget = { x: this.hero.x, y: this.hero.y };
+        u.pursuitBurst = Math.max(u.pursuitBurst || 0, 4);
+        u.cd = Math.min(u.cd || 0, 0.2);
+        this.engage(u);
+      }
     }
     captainOwnedSummons(e) {
       return this.zone().enemies.filter((u) => u.summon && u.owner === e.id && u.hp > 0);
@@ -2679,6 +2706,11 @@
       }
       const plan = chosen.plan,
         index = chosen.index,
+        fatigued = e.captainProfile === 'supply-highlands' && e.hp <= 550,
+        anonymousCast =
+          (e.captainProfile === 'supply-highlands' && !fatigued) ||
+          (e.captainProfile === 'supply-march' && plan.warning === 0),
+        attackWarning = anonymousCast ? 0.9 : plan.warning,
         markHero =
           plan.kind === 'circle' &&
           this.hero.hp > 0 &&
@@ -2692,16 +2724,19 @@
         a = {
           ...plan,
           captainSkill: true,
+          anonymousCast,
           index,
-          timer: plan.warning,
-          total: plan.warning,
+          timer: attackWarning,
+          total: attackWarning,
           coefficient: plan.coefficient ?? 1,
           fromX: e.x,
           fromY: e.y,
           angle,
           ...center,
           radius:
-            (plan.radius || (plan.kind === 'cone' ? 145 : 85)) * R.bossCadence.areaRangeMultiplier,
+            (plan.radius || (plan.kind === 'cone' ? 145 : 85)) *
+            R.bossCadence.areaRangeMultiplier *
+            (plan.captainRadiusMultiplier || 1),
           sequence: [],
         };
       if (plan.sequential && plan.kind === 'circle') {
@@ -2711,8 +2746,8 @@
           ...a,
           ...p,
           count: 1,
-          timer: plan.warning * 0.72,
-          total: plan.warning * 0.72,
+          timer: attackWarning * 0.72,
+          total: attackWarning * 0.72,
           name: plan.name + ' follow-up',
         }));
       }
@@ -2721,7 +2756,12 @@
       delete a.sequence;
       e.telegraph = a;
       e.specialCd = profile.specialCooldown * (e.captainPhase ? 0.82 : 1);
-      this.event('warning', { captain: e.captainProfile, index });
+      this.event(
+        'warning',
+        anonymousCast
+          ? { captain: e.captainProfile, anonymousCast: true }
+          : { captain: e.captainProfile, index },
+      );
       return true;
     }
     startNightSkill(e, target) {
@@ -3656,8 +3696,19 @@
         e.pursuitBurst = Math.max(0, (e.pursuitBurst || 0) - dt);
         e.open = Math.max(0, (e.open || 0) - dt);
         e.captainGuard = Math.max(0, (e.captainGuard || 0) - dt);
+        if (e.captain || e.roomCaptain) {
+          e.captainReflect = Math.max(0, (e.captainReflect || 0) - dt);
+          e.captainPursuit = Math.max(0, (e.captainPursuit || 0) - dt);
+        }
         e.quotaOvertime = Math.max(0, (e.quotaOvertime || 0) - dt);
         if (!e.quotaOvertime) delete e.quotaTarget;
+        if (e.fieldCaptain && e.captainPhase && e.aggro && e.hp > 0) {
+          e.captainOvertimeCd = Math.max(0, (e.captainOvertimeCd ?? 12) - dt);
+          if (e.captainOvertimeCd === 0) {
+            this.captainOvertimeRecruit(e);
+            e.captainOvertimeCd = 12;
+          }
+        }
         if (e.captain || e.roomCaptain) this.triggerCaptainPhase(e);
         if (
           e.form === 'ringleader' &&
@@ -3755,7 +3806,13 @@
             const a = e.telegraph;
             this.resolveAttack(e);
             e.telegraph = e.motion ? null : e.sequence?.shift() || null;
-            if (e.telegraph) this.event('warning', { family: e.family });
+            if (e.telegraph)
+              this.event(
+                'warning',
+                e.telegraph.anonymousCast
+                  ? { captain: e.captainProfile, anonymousCast: true }
+                  : { family: e.family },
+              );
             if (!e.telegraph && !e.motion) {
               e.cd = a.recovery * (e.type === 'boss' ? R.bossCadence.specialRecoveryMultiplier : 1);
               if (!a.rogueMove)
@@ -3914,6 +3971,7 @@
             (e.type === 'boss' ? 145 : 175) *
               (e.form === 'ringleader' ? R.ringleaderScaling.pursuit : 1) *
               (e.captainPhaseMove || 1) *
+              (e.captainPursuit > 0 ? 1.2 : 1) *
               (e.quotaOvertime > 0 ? 1.15 : 1) *
               (e.slow > 0 ? 0.5 : 1) *
               (e.pursuitBurst > 0 ? pursuitBurstMultiplier : 1),
@@ -3962,6 +4020,11 @@
         e.captainPhaseMove = 1;
         e.captainAttackRate = 1;
         e.captainGuard = 0;
+        if (e.captain || e.roomCaptain) {
+          e.captainReflect = 0;
+          e.captainPursuit = 0;
+          e.captainOvertimeCd = 0;
+        }
         e.quotaOvertime = 0;
         e.captainOpeningSummon = false;
         delete e.quotaTarget;
@@ -4282,6 +4345,9 @@
               e.captainPhaseMove = 1;
               e.captainAttackRate = 1;
               e.captainGuard = 0;
+              e.captainReflect = 0;
+              e.captainPursuit = 0;
+              e.captainOvertimeCd = 0;
               e.specialCd = 1.25;
             }
           }
