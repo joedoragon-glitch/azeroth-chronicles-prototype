@@ -3461,6 +3461,9 @@
       [190, 1190, 'ridge-supper', 'repair-forge'],
       [900, 1150, 'rail', 'haulage-loop'],
       [1280, 1340, 'torch', 'colossus-chamber'],
+      [970, 1030, 'stone-seat', 'colossus-chamber', 'geometric-gallery'],
+      [1300, 1270, 'game-table', 'colossus-chamber', 'kinetic-collection'],
+      [1030, 1280, 'crystal', 'colossus-chamber', 'art-object'],
     ],
     abyss: [
       [300, 340, 'torch', 'rider-preparation'],
