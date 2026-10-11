@@ -9,7 +9,7 @@
     null, // 3
     {
       kind: 'narration',
-      text: 'The Lifebinder once traveled beside the Dark Lord. He let their fallen companions live on as thinking skeletons, not restored flesh. Borin was forced to finish their winter retreat.',
+      text: 'The Lifebinder once traveled with the Dark Lord. He let the fallen live on as thinking skeletons, not restored flesh. Borin was forced to build their winter retreat.',
     }, // 4
     {
       kind: 'narration',
