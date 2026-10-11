@@ -1540,6 +1540,8 @@
   function startChargeClock() {
     if (!charge || charge.started !== null) return false;
     charge.started = performance.now();
+    // Record which protected encounters were active at the instant charging began.
+    charge.encountersAtStart = game.chargedEncounterSnapshot();
     if (charge.slot === 1 || charge.slot === 2)
       charge.targetId = chargedPreviewTarget()?.id ?? null;
     return true;
@@ -1701,7 +1703,8 @@
     }
     const held = (performance.now() - charge.started) / 1000,
       wasQueued = charge.queued,
-      targetId = charge.targetId;
+      targetId = charge.targetId,
+      encountersAtStart = charge.encountersAtStart;
     if (held < chargeSeconds()) {
       const quickTap = !wasQueued && held < chargeTapSeconds();
       charge = null;
@@ -1723,7 +1726,8 @@
     }
     charge = null;
     const cast =
-      activePlay() && game.cast(slot, slot === 1 || slot === 2 ? targetId : undefined, true);
+      activePlay() &&
+      game.cast(slot, slot === 1 || slot === 2 ? targetId : undefined, true, encountersAtStart);
     if (!cast && activePlay()) chargeFailureStatus(slot, true);
     updateHUD();
     return cast;

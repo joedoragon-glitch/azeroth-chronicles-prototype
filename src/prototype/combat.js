@@ -11,6 +11,33 @@
         return [this.hero, ...this.activeLivingParty(), ...(z?.escort?.hp > 0 ? [z.escort] : [])];
       }
 
+      // The hold receipt identifies enemies already engaged at charge start;
+      // it never changes the persistent campaign or save format.
+      chargedEncounterProtected(e) {
+        return !!e && (e.type === 'boss' || e.captain || e.roomCaptain);
+      }
+      chargedEncounterSnapshot() {
+        return {
+          zone: this.zoneId,
+          engaged: this.zone().enemies.filter(
+            (e) => this.chargedEncounterProtected(e) && e.hp > 0 && e.aggro && !e.returning,
+          ).map((e) => ({ id: e.id, fightStart: e.fightStart })),
+        };
+      }
+      invalidChargedOpener(e, receipt) {
+        // Direct engine simulations without held-input receipts preserve their
+        // existing behavior. Real keyboard and touch charges always pass one.
+        return !!(
+          receipt &&
+          this.chargedEncounterProtected(e) &&
+          (receipt.zone !== this.zoneId ||
+            !Array.isArray(receipt.engaged) ||
+            !receipt.engaged.some(
+              (fight) => fight.id === e.id && fight.fightStart === e.fightStart,
+            ))
+        );
+      }
+
       // Shared tactical observations and authored damage/targeting safeguards.
       tacticalClearBurst(e = null) {
         if (!this._tacticalBurstWindow) return;
@@ -314,6 +341,20 @@
         // regrouper beyond its original home leash would become invulnerable.
         const inCombatArea = this.tacticalRogueLeashAllows(e, origin, normalDamageTerritory);
         if (!this.line(origin, e) || !inCombatArea) return false;
+        if (this.invalidChargedOpener(e, options?.encountersAtStart)) {
+          // Kill every arrow from the same precharged attack, including the
+          // copied projectile iterator's later Ranger shots.
+          for (const shot of this.s.projectiles)
+            if (shot.target === e.id && shot.encountersAtStart === options.encountersAtStart)
+              shot.cancelledChargedOpener = true;
+          this.s.projectiles = this.s.projectiles.filter((shot) => !shot.cancelledChargedOpener);
+          this.disengage(e, 1);
+          e.open = 0;
+          e.slow = 0;
+          this.say(e.name + ' resets: charge powerful attacks after engaging.');
+          this.event('chargedOpenerRejected', { enemy: e.id, x: e.x, y: e.y });
+          return false;
+        }
         e.mercyProvoked = true;
         this.engage(e, true);
         if (source === 'hero') e.heroParticipated = true;
@@ -401,6 +442,7 @@
       updateProjectiles(dt) {
         const hero = this.hero;
         for (const p of [...this.s.projectiles]) {
+          if (p.cancelledChargedOpener) continue;
           if (p.delay > 0) {
             p.delay -= dt;
             continue;
@@ -461,7 +503,13 @@
             continue;
           }
           if (d < step + 15) {
-            const landed = this.damage(e, p.damage, p.source);
+            const landed = this.damage(
+              e,
+              p.damage,
+              p.source,
+              p.encountersAtStart ? { encountersAtStart: p.encountersAtStart } : null,
+            );
+            if (p.cancelledChargedOpener) continue;
             if (landed && p.basicComboFinisher)
               this.basicComboFinisher(
                 e,

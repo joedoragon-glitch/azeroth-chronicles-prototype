@@ -66,8 +66,8 @@ const server = http.createServer((req, res) => {
       g.updateElites = () => {};
       window.__cooldownCasts = [];
       const cast = g.cast;
-      g.cast = function (slot, target, charged) {
-        const result = cast.call(this, slot, target, charged);
+      g.cast = function (slot, target, charged, ...rest) {
+        const result = cast.call(this, slot, target, charged, ...rest);
         if (result)
           __cooldownCasts.push({
             slot,
@@ -161,6 +161,54 @@ const server = http.createServer((req, res) => {
           );
           count++;
         }
+    // Real keyboard/touch holds must carry the pre-aggro receipt to impact.
+    for (const kind of ['boss', 'captain']) {
+      await page.evaluate((kind) => {
+        const g = Prototype.game;
+        const e = g.makeEnemy(
+          { species: 'goblin', name: 'Opener', level: 1, hp: 10000, damage: 0, xp: 0, gold: 0 },
+          { x: 680, y: 900 },
+        );
+        if (kind === 'boss') e.type = 'boss';
+        else e.captain = true;
+        g.zone().enemies = [e];
+        g.s.projectiles = [];
+        Object.assign(g.hero, { class: 'ranger', x: 600, y: 900, order: null });
+        g.hero.skills[0] = 1;
+        g.hero.cd[0] = 0;
+        g.s.heroTarget = e.id;
+        Prototype.updateHUD();
+      }, kind);
+      await press(1);
+      await page.waitForFunction(() => Prototype.chargePresentation()?.ready, null, { timeout: 3000 });
+      await page.evaluate(() => Prototype.game.engage(Prototype.game.zone().enemies[0]));
+      await release(1);
+      const reset = await page.evaluate(() => {
+        const g = Prototype.game;
+        g.updateProjectiles(0.2);
+        g.updateProjectiles(0.2);
+        const e = g.zone().enemies[0];
+        return { hp: e.hp, maxHp: e.maxHp, aggro: e.aggro, shots: g.s.projectiles.length };
+      });
+      assert.equal(reset.hp, reset.maxHp);
+      assert.equal(reset.aggro, false, kind + ' rejects pre-aggro charged input');
+      assert.equal(reset.shots, 0, 'no delayed Ranger arrows remain');
+      await page.evaluate(() => {
+        const g = Prototype.game;
+        g.hero.cd[0] = 0;
+        g.engage(g.zone().enemies[0]);
+      });
+      await press(1);
+      await page.waitForFunction(() => Prototype.chargePresentation()?.ready, null, { timeout: 3000 });
+      await release(1);
+      const valid = await page.evaluate(() => {
+        const g = Prototype.game;
+        g.updateProjectiles(0.2);
+        const e = g.zone().enemies[0];
+        return { hp: e.hp, maxHp: e.maxHp, aggro: e.aggro };
+      });
+      assert(valid.aggro && valid.hp < valid.maxHp, kind + ' accepts in-combat charges');
+    }
     // Releasing a queued hold before readiness never spends or resets the slot.
     await page.evaluate(() => {
       Prototype.game.hero.cd[0] = 5;
