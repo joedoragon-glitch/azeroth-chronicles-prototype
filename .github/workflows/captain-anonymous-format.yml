@@ -1,0 +1,29 @@
+name: Temporary anonymous cast formatter
+on:
+  push:
+    branches: [captain-individual-overhaul-review]
+permissions:
+  contents: write
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: captain-individual-overhaul-review
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx prettier --write src/prototype/engine.js src/prototype/combat-visuals.js
+      - name: Commit formatting
+        run: |
+          if ! git diff --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add src/prototype/engine.js src/prototype/combat-visuals.js
+            git commit -m 'Format anonymous captain cast implementation'
+            git push origin HEAD:captain-individual-overhaul-review
+          fi
