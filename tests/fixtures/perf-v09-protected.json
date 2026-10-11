@@ -27,9 +27,9 @@
     "assets/materials/manifest.json": "c06e89ba4ed2058681ae3156eaac8f7eb577d1b5af61e272f40d316f855cad41"
   },
   "renderingRevision": {
-    "source": "PR #225 plus combined-release slowdown fix; authorized rendering-only changes",
+    "source": "PR #225 plus #271 reviewed device-local presentation switch; byte-for-byte simulation frame preserved",
     "files": {
-      "src/prototype/app.js": "e25db6455fbe9244d67fb672568e32869410b44a85afe02fee3f531dd5fcd333",
+      "src/prototype/app.js": "c65dea63014b7f5e3d8c7af1cc7cc6fd9d887054fc6e3585b361e647a5316d91",
       "src/prototype/runtime.js": "d75f3f9fc8e7a964420da9b1642aefc7dae433b0a19ca45b704b65c72f7e0652"
     },
     "activeFrameBodySha256": "a042cd0491db3860a8f8c29e9f1471b45be3ca108b2520dcc4df833d0ce81d7a"
