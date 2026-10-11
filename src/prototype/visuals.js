@@ -14023,8 +14023,16 @@
       sun.addColorStop(0, 'rgba(255,244,203,.07)');
       sun.addColorStop(0.45, 'rgba(255,255,255,0)');
       sun.addColorStop(1, region >= 3 ? 'rgba(97,56,55,.035)' : 'rgba(22,55,42,.025)');
-      ctx.fillStyle = sun;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      if (!opts.optimized) {
+        ctx.fillStyle = sun;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+    // Keep the night safety grade and useful light pools, but omit purely
+    // decorative pollen/mist/sparks and vignette in Optimization Mode.
+    if (opts.optimized) {
+      ctx.restore();
+      return;
     }
     // Atmospheric motes are screen-space and intentionally sparse: pollen, marsh mist, alpine dust, ash and Crown sparks.
     const moteColors = night

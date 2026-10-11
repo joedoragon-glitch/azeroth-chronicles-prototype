@@ -3,6 +3,20 @@
   'use strict';
   // Large foreground forms can cover actors under the existing depth sort.
   // Keep this list deliberately conservative: small clutter must not trigger UI.
+  // Only explicitly decorative, nonblocking, small clutter is eligible for
+  // tighter culling. World objects and gameplay eligibility remain untouched.
+  function optimizationClutter(e) {
+    return !!(
+      e &&
+      e.decorative === true &&
+      !e.r &&
+      !e.roadBlocker &&
+      !e.sceneRole &&
+      /(?:^|[-_])(?:grass|wildflowers|flowers|reeds?|mushrooms?|pebbles?|fern|shrub|bush|sapling)(?:$|[-_])/i.test(
+        String(e.structure || ''),
+      )
+    );
+  }
   function majorOccluder(e) {
     if (!e || e.interactionOnly) return false;
     if (e.renderKind === 'building') return true;
@@ -104,7 +118,36 @@
       visualFx = [],
       origin = null;
     const groundCache = PrototypeGroundCache ? new PrototypeGroundCache() : null;
-    let cacheGround = true;
+    let cacheGround = true,
+      optimized = false;
+    const phaseSamples = [];
+    let drawCount = 0,
+      phaseSample = null,
+      phaseAt = 0;
+    function finishPhase(name) {
+      if (!phaseSample) return;
+      const stamp = now();
+      phaseSample[name] = Math.max(0, stamp - phaseAt);
+      phaseAt = stamp;
+    }
+    function phaseReport() {
+      const quantile = (values, p) => {
+        const list = values.slice().sort((a, b) => a - b);
+        return Number((list[Math.floor((list.length - 1) * p)] || 0).toFixed(2));
+      };
+      const labels = ['floor', 'terrain', 'entities', 'effects'];
+      return {
+        sampledFrames: phaseSamples.length,
+        sampleEvery: 12,
+        // Sampled renderer phases, not exclusive CPU attribution or simulation time.
+        ...Object.fromEntries(
+          labels.map((label) => {
+            const values = phaseSamples.map((row) => row[label]);
+            return [label, { p95Ms: quantile(values, 0.95), p99Ms: quantile(values, 0.99) }];
+          }),
+        ),
+      };
+    }
     const stats = {
       tileCandidates: 0,
       tilesDrawn: 0,
@@ -159,6 +202,8 @@
     }
     function draw() {
       game = getGame();
+      phaseSample = ++drawCount % 12 === 0 ? {} : null;
+      phaseAt = phaseSample ? now() : 0;
       for (const key of Object.keys(stats)) stats[key] = 0;
       origin = offset();
       PrototypeSprites?.beginFrame?.();
@@ -169,6 +214,11 @@
         render();
       } finally {
         ctx.restore();
+        if (phaseSample?.effects !== undefined) {
+          phaseSamples.push(phaseSample);
+          if (phaseSamples.length > 64) phaseSamples.shift();
+        }
+        phaseSample = null;
         PrototypeSprites?.endFrame?.();
         PrototypeMaterials?.endFrame?.();
         origin = null;
@@ -1293,7 +1343,17 @@
             p.x += o.x;
             p.y += o.y;
             if (p.x < -160 || p.x > width + 160 || p.y < -100 || p.y > height + 100) continue;
-            PrototypeVisuals.floor(target, p, x, y, i, false, '', false, PrototypeMaterials);
+            PrototypeVisuals.floor(
+              target,
+              p,
+              x,
+              y,
+              i,
+              false,
+              '',
+              false,
+              optimized ? null : PrototypeMaterials,
+            );
             stats.floorTilesPainted++;
           }
       };
@@ -1305,7 +1365,9 @@
           height: canvas.height,
           origin,
           scene: z,
-          revision: PrototypeMaterials?.surfaceRevision?.(key) || 'procedural',
+          revision: optimized
+            ? 'optimization-procedural-v1'
+            : PrototypeMaterials?.surfaceRevision?.(key) || 'procedural',
           paint: paintFloor,
         });
       } else groundCache?.clear();
@@ -1332,15 +1394,19 @@
             room,
             room ? game.zoneId : dungeon ? game.zoneId : '',
             blocked,
-            PrototypeMaterials,
+            optimized ? null : PrototypeMaterials,
           );
         }
       ctx.restore();
+      finishPhase('floor');
       if (authoredFloor) PrototypeVisuals.dungeonArchitecture(ctx, screen, game.zoneId, size);
-      if (!game.isDungeon()) PrototypeVisuals.terrain(ctx, screen, i, size, PrototypeMaterials);
-      PrototypeVisuals.roads(ctx, z.roads || [], screen, i, PrototypeMaterials);
-      if (!game.isDungeon()) PrototypeVisuals.bridges(ctx, screen, i, PrototypeMaterials);
+      if (!game.isDungeon())
+        PrototypeVisuals.terrain(ctx, screen, i, size, optimized ? null : PrototypeMaterials);
+      PrototypeVisuals.roads(ctx, z.roads || [], screen, i, optimized ? null : PrototypeMaterials);
+      if (!game.isDungeon())
+        PrototypeVisuals.bridges(ctx, screen, i, optimized ? null : PrototypeMaterials);
       PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000);
+      finishPhase('terrain');
       const boardCue = null,
         captainCue = game.zoneId === 'vale' && game.s.party.length <= 2;
       const entities = [];
@@ -1350,6 +1416,15 @@
           if (renderKind === 'enemy' && e.hp <= 0) continue;
           const p = screen(e);
           if (p.x < -180 || p.x > canvas.width + 180 || p.y < -180 || p.y > canvas.height + 180)
+            continue;
+          // Keep the normal draw eligibility for actors, blockers, resources,
+          // buildings and all other interactive or identity-bearing objects.
+          if (
+            optimized &&
+            renderKind === 'prop' &&
+            optimizationClutter(e) &&
+            (p.x < -20 || p.x > canvas.width + 20 || p.y < -40 || p.y > canvas.height + 30)
+          )
             continue;
           // Calculate scale from the same authored rule used by procedural art.
           // A registered sprite consumes visualScale itself; no source pixels change.
@@ -1543,6 +1618,7 @@
         ctx.fillStyle = '#fff0bb';
         ctx.fillRect(p.x - 3, p.y - 8, 2, 2);
       }
+      finishPhase('entities');
       const ambientLights = [
         ...game
           .visibleNPCs()
@@ -1569,6 +1645,7 @@
         peace: game.peace,
         dungeon,
         room,
+        optimized,
         hero: screen(game.hero),
         lights: ambientLights,
       });
@@ -1589,6 +1666,7 @@
         ctx.textAlign = 'center';
         ctx.fillText('Paused', canvas.width * 0.65, canvas.height * 0.45);
       }
+      finishPhase('effects');
     }
     return {
       draw,
@@ -1604,6 +1682,13 @@
         cacheGround = !!enabled;
         groundCache?.clear();
       },
+      setOptimizationMode: (enabled) => {
+        if (optimized === !!enabled) return;
+        optimized = !!enabled;
+        phaseSamples.length = 0;
+        drawCount = 0;
+        groundCache?.clear();
+      },
       labelVisible: (e) => {
         game = getGame();
         return worldLabelVisible(e);
@@ -1617,13 +1702,15 @@
       metrics: () => ({
         ...stats,
         cameraZoom: zoom(),
+        optimizationMode: optimized ? 'on' : 'off',
         transientEffects: visualFx.length,
         enemyVfxEffects: visualFx.filter((f) => f.type === 'enemyVfx').length,
         groundCache: groundCache?.status() || null,
+        phases: phaseReport(),
       }),
     };
   }
-  const api = { create, majorOccluder, occlusionPairs };
+  const api = { create, majorOccluder, occlusionPairs, optimizationClutter };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeRenderer = api;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -134,6 +134,8 @@ for (let i = 0; i < 240; i++) {
 const report = runtime.report({}, 'phone');
 assert.equal(report.sampleFrames, 180);
 assert.equal(report.workP95Ms, 3);
+assert.equal(report.workP99Ms, 3);
+assert(report.sampledWindowMs > 0, 'bounded report includes a sampled interval window');
 assert.equal(report.fps, 63);
 assert.equal(draws, 240);
 assert(runtime.shouldDrawIdle(0));

@@ -3,6 +3,24 @@
   'use strict';
   function install(Audio) {
     class Owner {
+      // Independent of audio volume and campaign state. Cancels environment
+      // selection and stops active ambience at the source on every entry.
+      setOptimizationMode(enabled) {
+        const next = !!enabled;
+        if (this.optimizationMode === next) return false;
+        this.optimizationMode = next;
+        if (next) {
+          this.stopEnvironment(0);
+          for (const voice of [...this.voices])
+            if (voice.bus === 'ambience' && !voice.recorded)
+              try {
+                voice.osc.stop(this.ctx?.currentTime || 0);
+              } catch (_) {}
+        }
+        this.ambient();
+        if (!next && this.environmentScene) this.updateEnvironment(this.environmentScene);
+        return true;
+      }
       environmentCue(scene) {
         if (
           scene.started === false ||
@@ -42,8 +60,15 @@
         );
       }
       updateEnvironment(scene) {
-        if (!this.production || !this.ctx || this.paused || this.ctx.state !== 'running') return;
         this.environmentScene = scene;
+        if (
+          this.optimizationMode ||
+          !this.production ||
+          !this.ctx ||
+          this.paused ||
+          this.ctx.state !== 'running'
+        )
+          return;
         const rule = this.environmentCue(scene);
         if (!rule) {
           if (this.environmentKey || this.environmentVoice) {

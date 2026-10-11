@@ -34,6 +34,7 @@
       this.decoding = 0;
       this.request = 0;
       this.frame = false;
+      this.optimizationMode = false;
       this.stats = {
         peakDecodedBytes: 0,
         peakConcurrent: 0,
@@ -74,7 +75,28 @@
       this.pump();
       return true;
     }
+    setOptimizationMode(enabled) {
+      const next = !!enabled;
+      if (next === this.optimizationMode) return false;
+      this.optimizationMode = next;
+      // Invalidates stale manifest fetches; on re-entry normal mode may load.
+      this.request++;
+      this.clearProjected();
+      if (next) {
+        this.pins.clear();
+        // Deferred work should never run after enabling procedural terrain.
+        for (const job of this.queue.splice(0)) {
+          this.pending.delete(job.id);
+          job.resolve(null);
+        }
+      } else {
+        if (!Object.keys(this.entries).length) void this.load();
+        else this.pump();
+      }
+      return true;
+    }
     async load(url = './assets/materials/manifest.json') {
+      if (this.optimizationMode) return this.status();
       const request = ++this.request;
       try {
         const response = await this.fetch?.(url, { cache: 'no-cache' });
@@ -96,7 +118,7 @@
       return true;
     }
     pump() {
-      if (this.frame || !this.Image) return;
+      if (this.optimizationMode || this.frame || !this.Image) return;
       while (this.queue.length && this.decoding < Contract.LIMITS.concurrent) {
         const job = this.queue[0],
           size = job.entry.width * job.entry.height * 4;
@@ -117,7 +139,7 @@
           this.pending.delete(job.id);
           const w = img.naturalWidth || img.width,
             h = img.naturalHeight || img.height;
-          if (!this.active.has(job.id)) {
+          if (this.optimizationMode || !this.active.has(job.id)) {
             this.stats.staleLoads++;
             ok = false;
           } else if (!ok || w !== job.entry.width || h !== job.entry.height) {
@@ -154,6 +176,7 @@
       }
     }
     ensure(key) {
+      if (this.optimizationMode) return Promise.resolve(null);
       const entry = this.entries[key];
       if (!entry) return Promise.resolve(null);
       const id = this.identity(entry),
@@ -175,6 +198,7 @@
       return promise;
     }
     surfaceRevision(key) {
+      if (this.optimizationMode) return 'optimization-procedural-v1';
       const entry = this.entries[key];
       if (!entry) return this.request + ':missing';
       const id = this.identity(entry);
@@ -257,6 +281,7 @@
       return pattern;
     }
     paint(ctx, key, screen, points, angle = 0) {
+      if (this.optimizationMode) return false;
       const e = this.entries[key];
       if (
         !e ||
@@ -334,6 +359,7 @@
     }
     status() {
       return {
+        optimizationMode: this.optimizationMode,
         definitions: Object.keys(this.entries).length,
         decodedBytes: this.bytes,
         reservedBytes: this.reserved,

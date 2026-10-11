@@ -16,6 +16,46 @@ const b=await pw.chromium.launch(launch),page=await b.newPage({viewport:{width:v
 await check('New-game premise, Succession opt-in and audio gesture '+tag,async()=>{assert.equal(await page.locator('#modal-title').textContent(),'Challenge condition');const premise=await page.locator('#modal-description').textContent();assert(premise.includes('Dark Lord rules the land'));assert(premise.includes('captured the specialists'));assert.equal(await page.evaluate(()=>Prototype.audio.ctx),null);await page.keyboard.press('s');assert((await page.locator('#modal-actions button.selected').textContent()).includes('Succession challenge'));await page.keyboard.press('f');assert((await page.locator('#modal-title').textContent()).includes('New Normal adventure'));await page.keyboard.press('f');await page.waitForFunction(()=>document.querySelector('#modal').hidden);assert(await page.evaluate(()=>Prototype.game.s.challenge.succession));await page.waitForFunction(()=>Prototype.audio.ctx?.state==='running');assert.deepEqual(await page.evaluate(()=>Prototype.game.hero.skills),[1,0,0,0,0,0,0,0]);});
 await check('Production registry preserves exact sprites and procedural fallback '+tag,async()=>{await page.waitForFunction(()=>typeof PrototypeSprites!=='undefined'&&typeof PrototypeVisuals!=='undefined');await page.evaluate(()=>PrototypeSprites.preload());const manifest=await page.evaluate(async()=>await (await fetch('./assets/sprites/manifest.json')).json());const state=await page.evaluate(()=>({status:PrototypeSprites.status(),def:PrototypeSprites.definitionFor({...Prototype.game.hero,renderKind:'hero'},Prototype.game.regionIndex(),false),atmosphere:typeof PrototypeVisuals.atmosphere}));assert.equal(state.status.definitions,Object.keys(manifest.sprites).length,'production registry contract');assert(state.status.decodedBytes<=state.status.maxDecodedBytes);assert(state.status.loading<=state.status.maxConcurrentDecodes);if(!manifest.sprites['hero:'+ (await page.evaluate(()=>Prototype.game.hero.class))])assert.equal(state.def,null,'unregistered hero uses procedural fallback');else assert(state.def,'registered hero selects its exact key');assert.equal(state.atmosphere,'function');if(!smoke&&(v.width===1280||v.width===375)){const before=await page.evaluate(()=>Prototype.game.snapshot());await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');const z=c.zone();c.s.party=[];z.enemies=[];z.props=[];z.npcs=[];z.nodes=[];z.buildings=[];z.roads=[];Object.assign(c.hero,{x:1100,y:1100});});await page.waitForTimeout(80);await page.screenshot({path:path.join(results,'procedural-paladin-'+tag+'.png')});await page.evaluate(state=>{Prototype.game.s=state;},before);}});
 await check('Camera comparison, native pointer mapping and unchanged HUD '+tag,async()=>{await require('./helpers/camera-browser.cjs').verifyCamera(page,results,tag,v.touch,v.width===1280||v.width===375);assert.deepEqual(errors,[],'camera renderer errors');});
+await check('Optimization Mode reversible device preference and cache/audio/DPR lifecycle '+tag,async()=>{
+ assert.equal(await page.evaluate(()=>localStorage.getItem('azeroth-optimization-mode-v1')),null,'default mode is Off');
+ await page.keyboard.press('Escape');
+ await page.getByRole('button',{name:'Game and settings',exact:true}).click();
+ await page.getByRole('button',{name:'Screen and performance',exact:true}).click();
+ const before=await page.evaluate(()=>({
+  save:JSON.stringify(Prototype.game.snapshot()),
+  renderer:Prototype.renderer.metrics(),
+  material:PrototypeMaterials.status(),
+  audio:Prototype.audio.status(),
+  backing:document.getElementById('world').width
+ }));
+ await page.getByRole('button',{name:/^Optimization Mode · Off ✓/}).click();
+ const low=await page.evaluate(()=>{
+  Prototype.renderer.draw();Prototype.renderer.draw();
+  return {render:Prototype.renderer.metrics(),materials:PrototypeMaterials.status(),audio:Prototype.audio.status(),width:document.getElementById('world').width,height:document.getElementById('world').height,local:localStorage.getItem('azeroth-optimization-mode-v1'),save:JSON.stringify(Prototype.game.snapshot())};
+ });
+ assert.equal(low.local,'on');
+ assert.equal(low.render.optimizationMode,'on');
+ assert.equal(low.materials.optimizationMode,true);
+ assert.equal(low.audio.optimizationMode,true);
+ assert.equal(low.width,v.width);
+ assert.equal(low.height,v.height);
+ assert.equal(low.render.groundCache?.bytes>=0,true);
+ assert.equal(low.save,before.save,'setting never changes campaign snapshot');
+ await page.getByRole('button',{name:/^Optimization Mode · On ✓/}).click();
+ const restored=await page.evaluate(()=>{
+  Prototype.renderer.draw();
+  return {render:Prototype.renderer.metrics(),materials:PrototypeMaterials.status(),audio:Prototype.audio.status(),width:document.getElementById('world').width,local:localStorage.getItem('azeroth-optimization-mode-v1'),save:JSON.stringify(Prototype.game.snapshot())};
+ });
+ assert.equal(restored.local,'off');
+ assert.equal(restored.render.optimizationMode,'off');
+ assert.equal(restored.materials.optimizationMode,false);
+ assert.equal(restored.audio.optimizationMode,false);
+ assert.equal(restored.width,before.backing);
+ assert.equal(restored.save,before.save,'restoring mode keeps save identical');
+ assert.deepEqual(restored.audio.settings,before.audio.settings,'sound preferences retained');
+ await page.evaluate(()=>Prototype.closeMenu());
+ assert.deepEqual(errors,[],'mode switches cause no browser errors');
+});
 await check('Ironroot settlements, household and working captive render on '+tag,async()=>{await require('./helpers/ironroot-browser.cjs').verifyIronroot(page,results,tag,v.width===1280||v.width===375);assert.deepEqual(errors,[],'Ironroot renderer errors');});
 await check('Approved responsive UI CSS is pixel-equivalent at fixed presentation '+tag,async()=>{
  if(smoke)return;
@@ -77,6 +117,7 @@ await check('Compact HUD and readable scrolling dialogs '+tag,async()=>{
  assert(metrics.modal.width<=(phone?(v.height<=500?390:330):430)+2,'dialog width is bounded');
  assert(metrics.modal.height<=v.height*(phone?(v.height<=500?0.89:0.74):0.73)+2,'dialog no longer fills the screen');
  assert(metrics.back.bottom<=metrics.modal.bottom+1,'Back remains inside the dialog');
+ if(!phone)assert(metrics.modal.x>=0&&metrics.modal.x<=Math.max(48,v.width*0.08),'desktop dialog sits within left-side reach');
  assert(metrics.scrollHeight>metrics.clientHeight,'long option lists scroll inside the dialog');
  if(phone){
   const targets=await page.evaluate(()=>{const r=el=>{const b=el.getBoundingClientRect();return {width:Math.round(b.width*10)/10,height:Math.round(b.height*10)/10};};return {first:r(document.querySelector('#modal-actions button')),back:r(document.querySelector('#close-button')),computedMinHeight:getComputedStyle(document.querySelector('#modal-actions button')).minHeight};});
@@ -98,6 +139,15 @@ await check('Compact HUD and readable scrolling dialogs '+tag,async()=>{
  assert(natural.small.width<natural.regular.width,'short interactions do not occupy a large panel');
  assert(natural.small.height<metrics.modal.height,'short interactions contract vertically');
  await page.evaluate(()=>Prototype.closeMenu());
+});
+await check('M and Z both open Map and navigation from gameplay '+tag,async()=>{
+ await page.evaluate(()=>Prototype.closeMenu());
+ for(const key of ['m','z']){
+  await page.keyboard.press(key);
+  assert(await page.locator('#modal').isVisible(),key+' opens the map');
+  assert((await page.locator('#modal-title').textContent()).includes('map'),key+' opens a map dialog');
+  await page.keyboard.press('Escape');
+ }
 });
 await check('Outside tap dismisses menus without clicking through to the world '+tag,async()=>{
  await page.evaluate(()=>{

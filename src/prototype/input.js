@@ -119,6 +119,9 @@
       actionFor(code) {
         const bound = actions.find(([id]) => preferences.bindings[id] === code)?.[0];
         if (bound) return bound;
+        // M also opens the map without taking away Z or a custom map binding.
+        // If legacy mana is enabled, its historical M shortcut takes priority.
+        if (code === 'KeyM' && !legacyManaEnabled) return 'map';
         const alias = aliases[code];
         return alias && preferences.bindings[alias] === defaults[alias] ? alias : null;
       },

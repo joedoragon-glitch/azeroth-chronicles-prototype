@@ -20,17 +20,17 @@
     "src/prototype/app.js": "5a86b4d67f9b5e5ee29f39aa81f431d20ea59432a869e82068e7af04140973e0",
     "src/prototype/persistence.js": "262f2f07b8ff6a6286d38fc887cbce9416425f89f91afdbf609caca08e54846b",
     "styles/prototype.css": "947c0575743e3b832ff0702549f1b1522d7d22d34cc9c796e86e3a75e2bc3146",
-    "styles/desktop.css": "acab28572dad41bc8928cb1b612e3229034ff6ff64adc53e3dbdd0e5a7b186cf",
+    "styles/desktop.css": "95fcb8bdad9f22c32950a1f1c6c51b1f2f886fc89e33d59248d3aef415137dac",
     "styles/phone.css": "bbec348a8f6448191c07bb700f7e5ae2ee7c5e217798488f096388783c2fbbcf",
     "templates/game.html": "2b22eb161a1c4d9de24925ecd669049045287e20d0448c296db40ad069030b03",
     "assets/sprites/manifest.json": "1f2b15b0d3a9735edb1bd9b00d8ad6c78eaefc6f63ab7ad576e4bba8676fa839",
     "assets/materials/manifest.json": "c06e89ba4ed2058681ae3156eaac8f7eb577d1b5af61e272f40d316f855cad41"
   },
   "renderingRevision": {
-    "source": "PR #225 plus combined-release slowdown fix; authorized rendering-only changes; reviewed v0.9.1 charge input receipt",
+    "source": "PR #225 plus combined-release slowdown fix; authorized rendering-only changes; reviewed v0.9.1 charge input receipt; PR #277 Optimization Mode presentation and diagnostics",
     "files": {
-      "src/prototype/app.js": "51e2f561350327a1cfab27ffcac8b538d3a190e27eb389a95bfbace7fae3eeb2",
-      "src/prototype/runtime.js": "d75f3f9fc8e7a964420da9b1642aefc7dae433b0a19ca45b704b65c72f7e0652"
+      "src/prototype/app.js": "e6ea0d525e4a827da13cdb95a2c6b1185432781bf269ab9b4370e6dd1b2f48e3",
+      "src/prototype/runtime.js": "953bbc9a92e9576e7ea6e7620cffe6d473c7d721cabb7878dbe04d23283dda43"
     },
     "activeFrameBodySha256": "a042cd0491db3860a8f8c29e9f1471b45be3ca108b2520dcc4df833d0ce81d7a"
   },
@@ -45,18 +45,33 @@
     "scope": "Audited E target, F confirm/interact, Q/backquote recall, Space/H preserved, historical keyboard preferences migrated, and full combined app source guard",
     "evidence": "PR #269 independently green on 2c9ae7e; combined head requires its own CI",
     "files": {
-      "src/prototype/app.js": "51e2f561350327a1cfab27ffcac8b538d3a190e27eb389a95bfbace7fae3eeb2",
-      "src/prototype/input.js": "65eba7616f0f314db513ce91d5328838be2d7ffc082118885471be4cb5a2199e",
+      "src/prototype/app.js": "e6ea0d525e4a827da13cdb95a2c6b1185432781bf269ab9b4370e6dd1b2f48e3",
+      "src/prototype/input.js": "3b01e8b5df5b7b8fedc8deb24bba4f93f979ef111e2fa2fa55950891b58b5da5",
       "templates/game.html": "a13554d30e17d6b4ef4b8176147fcdb6806bf82891e61f9bccd0b615ee699fd8"
     }
   },
   "approvedUxRevision": {
     "source": "Issue #270, PR #276 menu selection/focus/phone targets; integrated with #273 and #269",
     "previousAppSha256": "354cc8ec3dc488da095f6b31fed2c13d4cf2a04997f15bf3633cb9aa42a2be4b",
-    "newAppSha256": "51e2f561350327a1cfab27ffcac8b538d3a190e27eb389a95bfbace7fae3eeb2",
+    "newAppSha256": "e6ea0d525e4a827da13cdb95a2c6b1185432781bf269ab9b4370e6dd1b2f48e3",
     "scope": "Dialog focus/selection/Tab behavior and 44px phone targets; preserved simulation frame and mechanics",
     "baseline": "d7d2c22485b08265b31bf595305ef952b40b72cd",
     "previousPhoneSha256": "e1e6a917ddf1ae6bce51bfee66907c50c1adbe8c581b53b4674e7f1b0810877c",
     "newPhoneSha256": "bbec348a8f6448191c07bb700f7e5ae2ee7c5e217798488f096388783c2fbbcf"
+  },
+  "approvedOptimizationRevision": {
+    "source": "PR #277 / Issue #271; owner-authorized Optimization Mode integration on v0.9.1, candidate v0.9.2",
+    "scope": "Device-local reversible graphics/audio-only presentation preset in Screen and performance. Native input, save v4, gameplay, charged attacks and menus preserved. Real-hardware A/B remains to be measured.",
+    "previousAppSha256": "51e2f561350327a1cfab27ffcac8b538d3a190e27eb389a95bfbace7fae3eeb2",
+    "newAppSha256": "e6ea0d525e4a827da13cdb95a2c6b1185432781bf269ab9b4370e6dd1b2f48e3",
+    "previousRuntimeSha256": "d75f3f9fc8e7a964420da9b1642aefc7dae433b0a19ca45b704b65c72f7e0652",
+    "newRuntimeSha256": "953bbc9a92e9576e7ea6e7620cffe6d473c7d721cabb7878dbe04d23283dda43"
+  },
+  "approvedMaintenanceRevision": {
+    "source": "Owner 2026-10-11: Optimization Mode is part of v0.9.1 maintenance release; add M map alias and left-side desktop menus.",
+    "scope": "M and existing Z both open Map and navigation; respect explicitly rebound M and historical mana. Desktop menu panel left-aligned, phone touch remains unchanged; no combat or save schema revisions.",
+    "appSha256": "e6ea0d525e4a827da13cdb95a2c6b1185432781bf269ab9b4370e6dd1b2f48e3",
+    "inputSha256": "3b01e8b5df5b7b8fedc8deb24bba4f93f979ef111e2fa2fa55950891b58b5da5",
+    "desktopCssSha256": "95fcb8bdad9f22c32950a1f1c6c51b1f2f886fc89e33d59248d3aef415137dac"
   }
 }
