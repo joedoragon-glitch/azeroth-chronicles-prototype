@@ -1823,6 +1823,11 @@
       e.hp = e.maxHp * ratio;
       e.damage = e.baseDamage * m.damage;
       e.fightStart = this.s.time;
+      if (e.family === 'ridge' && e.type === 'boss') {
+        e.ledgerOpen = true;
+        e.ledgerNextAt = this.s.time + 12;
+        e.ledgerMarkUntil = 0;
+      }
       if (e.family === 'warlord' && e.type === 'boss') {
         // Ash hangs at its birthplace; the Warlord never drags a moving cloud.
         e.ashCloud = { x: e.x, y: e.y, expires: this.s.time + 6 };
@@ -1964,6 +1969,9 @@
       e.rangedAim = null;
       delete e.ashCloud;
       delete e.ashNextAt;
+      delete e.ledgerOpen;
+      delete e.ledgerMarkedId;
+      delete e.ledgerMarkUntil;
       if (e.hookedVictim) {
         const held = e.hookedVictim === 'hero' ? this.hero : this.s.party.find(u => u.id === e.hookedVictim);
         if (held) held.keeperHeld = null;
@@ -3680,6 +3688,14 @@
         e.captainGuard = Math.max(0, (e.captainGuard || 0) - dt);
         e.quotaOvertime = Math.max(0, (e.quotaOvertime || 0) - dt);
         if (!e.quotaOvertime) delete e.quotaTarget;
+        if (e.family === 'ridge' && e.type === 'boss' && e.aggro &&
+            this.s.time >= (e.ledgerNextAt || Infinity)) {
+          const biggest = this.tacticalThreatSnapshot(e).find(a =>
+            a.source === 'hero' || this.s.party.some(u => u.id === a.source && u.hp > 0));
+          e.ledgerMarkedId = biggest?.source || 'hero';
+          e.ledgerMarkUntil = this.s.time + 5;
+          e.ledgerNextAt = this.s.time + 12;
+        }
         if (e.family === 'warlord' && e.type === 'boss' && e.aggro &&
             this.s.time >= (e.ashNextAt || Infinity)) {
           e.ashCloud = { x: e.x, y: e.y, expires: this.s.time + 6 };
@@ -3739,11 +3755,22 @@
         }
         const candidates = this.combatTargets();
         // Keeper focuses available archers, the healers, within normal combat reach.
+        const ridgeOwner = e.summon
+          ? z.enemies.find(u => u.id === e.owner && u.type === 'boss' && u.family === 'ridge')
+          : null;
+        const ridgeLeader = ridgeOwner && e.ranged
+          ? (ridgeOwner.ledgerMarkUntil > this.s.time
+              ? ridgeOwner.ledgerMarkedId
+              : this.tacticalThreatSnapshot(ridgeOwner)[0]?.source)
+          : null;
+        const ridgeTarget = ridgeLeader === 'hero' ? this.hero :
+          candidates.find(u => u.id === ridgeLeader && u.hp > 0) || null;
         const keeperHealer = e.type === 'boss' && e.family === 'archive'
           ? candidates.filter((u) => u.type === 'archer' && !u.keeperHeld && u.hp > 0 &&
               dist(e, u) <= 600 && this.line(e, u)).sort((u, v) => dist(e, u) - dist(e, v))[0]
           : null;
         let target =
+          (ridgeTarget && dist(e, ridgeTarget) < 700 && this.line(e, ridgeTarget) ? ridgeTarget : null) ||
           keeperHealer || (e.quotaOvertime > 0 && this.hero.hp > 0
             ? this.hero
             : e.summon &&
@@ -4000,6 +4027,9 @@
         e.aggro = false;
         delete e.ashCloud;
         delete e.ashNextAt;
+        delete e.ledgerOpen;
+        delete e.ledgerMarkedId;
+        delete e.ledgerMarkUntil;
         e.telegraph = null;
         e.sequence = [];
         e.motion = null;
