@@ -246,8 +246,16 @@ const PrototypeData = {
       region: 'highlands',
       kind: 'dungeon',
       name: 'Stone Colossus',
+      role: 'Kharun, the First Wall — former adventuring Bastion',
       history:
-        'An ancient guardian exposed by the older Ironroot workings. The regime routes production around its territory rather than controlling it; new supports and haulage lanes stop at the older stone. Dara is compelled to repair mining equipment so shipments can continue.',
+        'Before he was the Stone Colossus, Kharun was an Ogre bastion-mason—the party\'s shield, siege-breaker and road-builder—who traveled with the hero now known as the Dark Lord. ' +
+        'When a mountain gate collapsed on his companions, he bound a glowing heartstone to his chest and pulled the shattered cliff around his body, holding the roof until they escaped. ' +
+        'His armored stone limbs, gold-lit eyes and diamond-shaped core were made by choice, not unearthed from an ancient creature. ' +
+        'Patient, precise and dryly funny, he trusted his friend\'s promise that no companion would ever be abandoned. ' +
+        'He helped fortify the Crown Peace but now doubts the friend who uses safety to excuse forced work and closed passages. ' +
+        'Free to choose his own orders, Kharun now commands Ogre wardens and Wolf sentries from Colossus Mine, whose braced galleries and mineral exits he can close at will; Dara repairs its hauling machinery under guard. ' +
+        'The Ridge Tyrant sets wages and mints crowns, but Kharun controls access and fortifications, not accounts. ' +
+        'If the Dark Lord falls, the First Wall intends to build a realm of protected corridors and compulsory shelter: no one left outside, and no one permitted to walk unguarded.',
       level: 9,
       captive: 'Dara the Highland Smith',
       service: 'Highland weapons armor and equipment improvements',
@@ -259,10 +267,10 @@ const PrototypeData = {
       place: 'Colossus Mine',
       attacks: [
         'Stone slam: circle warns for 1.6 seconds and exposes the core for 2.5 seconds afterward.',
-        'Rockfall: three separated circles warn for 1.7 seconds; at least one connected safe route remains.',
+        'Rockfall: three separated circles warn for 1.7 seconds, closing approach lanes while at least one connected safe route remains.',
         'Shockwave rings: visible expanding rings follow a 1.6 second windup and can be crossed after they pass.',
         'Wall rush: lane warns for 1.7 seconds; when the charge ends, the core is exposed for 3 seconds, with or without an obstacle collision.',
-        'Stonebound call: summons three ogres; TRUE form replenishes its six-unit elite warband.',
+        'Stonebound call: signals three Ogre wardens; TRUE form replenishes its six-unit elite warband.',
       ],
     },
     {
