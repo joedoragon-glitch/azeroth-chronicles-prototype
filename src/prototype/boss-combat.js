@@ -426,6 +426,7 @@
         const captive = z.npcs.find((n) => n.family === 'mine' && n.kind === 'cage'),
           exit = z.npcs.find((n) => n.kind === 'exit'),
           targets = [this.hero, ...this.activeLivingParty(), e, captive, exit].filter(Boolean),
+          initiallyWalkable = targets.filter((u) => !this.blocked(u.x, u.y, z.id, 12)),
           essentialRoutes = [
             ...(exit ? targets.filter((u) => u !== exit).map((u) => [u, exit]) : []),
             ...(captive ? [[this.hero, captive]] : []),
@@ -470,7 +471,7 @@
           };
           z.props.push(prop);
           if (
-            targets.some((u) => this.blocked(u.x, u.y, z.id, 12)) ||
+            initiallyWalkable.some((u) => this.blocked(u.x, u.y, z.id, 12)) ||
             essentialRoutes.some(([from, to]) => !this.route(from, to).length)
           ) {
             z.props.pop();
