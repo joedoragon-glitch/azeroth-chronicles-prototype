@@ -74,6 +74,24 @@
       text: 'FINAL APPROACH · Tovan and Vera are free · The Dark Lord waits beyond the fortress gate',
     }, // 30
   ];
+  // Authorial boss and dungeon-entry text sits with other narration. The underlying
+  // simulation, balance and performance-protected content tables remain untouched.
+  const Data = typeof PrototypeData !== 'undefined' ? PrototypeData : require('./data.js'),
+    Rules = typeof PrototypeRules !== 'undefined' ? PrototypeRules : require('./rules.js');
+  const sentinel = Data.bosses.find((boss) => boss.id === 'citadel');
+  sentinel.history =
+    "Marshal Veyra was a coastal road warden and practicing cosmetologist who joined the former hero as a regimental drillmaster. She made goblin, ogre, human and other irregular fighters into the Dark Lord's professional standing army, with ranks, shared drills, discipline, uniforms and officers. Veyra has exacting opinions on grooming, architecture and the appearance of military equipment: functional work should also be beautiful. The Stone Colossus is her good friend, and both enjoy discussing workmanship and proportion. She loyally serves the Dark Lord and dreads politics, believing she could not govern better than he does. Yet her officers and garrisons could support her as a military dictator who rules the five regions as one giant barracks.";
+  sentinel.attacks = [
+    'Microdermabrasion: armor slam warns for 1.6 seconds; a 3-second opening follows.',
+    'Dress Ranks: two ordered ash lanes warn for 1.8 seconds, leaving one safe lane.',
+    'Deep-Tissue Contouring: marked frontal advance warns for 1.8 seconds, ending in recovery.',
+    'Fractional Resurfacing: three staggered furnace pulses warn for 2 seconds.',
+    'Regimental Muster: summons Crown soldiers; TRUE form reinforces the elite warband.',
+  ];
+  Rules.dungeonLore.citadel =
+    "The Citadel of Ashes is Marshal Veyra's academy and the headquarters of the Dark Lord's professional army. Its officers turn diverse irregulars into regiments. Her private quarters hold polished mirrors, cosmetic brushes and carefully arranged complexion jars beside her parade uniform.";
+  if (!Rules.dungeonDecor.citadel.some((row) => row[2] === 'citadel-vanity-quarters'))
+    Rules.dungeonDecor.citadel.push([1080, 1280, 'citadel-vanity-quarters']);
   if (typeof module !== 'undefined') module.exports = lines;
   else root.PrototypeNarration = lines;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "idea",
+  "designId": "ash-sentinel",
+  "name": "Ash Sentinel / Marshal Veyra",
+  "kind": "boss",
+  "nextAction": "Retain existing procedural normal/TRUE body. If future sprite work is requested and the authorial candidate is accepted, capture isolated normal/TRUE reference and phone/desktop scenes, validate asset registry/runtime keys, then plan faithful sprite production; no artwork is authorized by issue #244.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Owner rejected rescue/scar/idealism story. Veyra is a loyal Dark Lord commander, creator of professional mixed-species military doctrine, cosmetologist and close friend of the Stone Colossus; she fears politics yet could govern as a military dictator. Owner explicitly requires visible personal grooming quarters.",
+    "decisionDate": "2026-10-11",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/244",
+    "contentDocuments": [
+      "docs/ASH_SENTINEL_CITADEL_BETA.md",
+      "docs/DARK_CROWN_REGIME_LAYOUT.md"
+    ],
+    "locationAndLore": "Citadel of Ashes, command headquarters in Dark Crown; living former Vanguard Marshal Veyra retains military authority and an ash-sealed armored appearance."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner supplied military-professionalization, cosmetology, Colossus friendship, dictatorship and private-quarters corrections directly. Full artwork/candidate acceptance remains open.",
+    "proceduralDesignAcceptance": "No newly authored visual design or owner appearance acceptance; reuses existing procedural sprite identity.",
+    "spriteProductionAuthorization": null,
+    "generatedAppearanceAcceptance": null,
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "d7d2c22485b08265b31bf595305ef952b40b72cd",
+    "ownerFilesAndBranches": [
+      "src/prototype/narration.js",
+      "src/prototype/visuals.js",
+      "src/prototype/data.js",
+      "src/prototype/rules.js"
+    ],
+    "exactEntityState": {
+      "zone": "citadel",
+      "renderKind": "enemy",
+      "type": "boss",
+      "family": "citadel",
+      "forms": [
+        "normal",
+        "true"
+      ]
+    },
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [],
+    "traitsToPreserve": [
+      "Existing armored boss silhouette, shield, polearm and military crest",
+      "Veyra is a trained cosmetologist rather than a burned/tragic warrior",
+      "Personal vanity includes mirror, cosmetic jars, brushes, folded textiles and dress uniform",
+      "Military and cosmetics identities coexist without adding a new boss family or class"
+    ],
+    "assetSpecificDependencies": [
+      "No renderer/art change in issue #244; reference capture and exact runtime sprite key remain unverified."
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "Existing Ash Sentinel body and military stations",
+      "Decorative personal vanity in existing Citadel inner court"
+    ],
+    "reusedDesignIds": [
+      "Current in-game Ash Sentinel"
+    ],
+    "variantRequirements": [
+      "Existing normal and TRUE forms; no new variant"
+    ],
+    "proceduralOwnersAndReasons": [
+      "narration.js installs authored boss and first-entry text plus an additional decorative Citadel station",
+      "visuals.js renders the vanity without changing collision, combat or save schema"
+    ]
+  },
+  "animationRequirements": {
+    "status": "undecided",
+    "gameplayStates": [
+      "normal boss",
+      "TRUE boss",
+      "Awakening TRUE boss",
+      "peace after victory"
+    ],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}
