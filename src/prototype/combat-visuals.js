@@ -160,6 +160,47 @@
           }
       }
     }
+    // Garun's projected works are passable plans; completed supports block travel.
+    // These cues follow the actual props, not an invented damage footprint.
+    for (const prop of game.zone().props.filter((p) => p.garunPreview || p.garunTemporary)) {
+      const solid = !!prop.garunTemporary;
+      circlePath(ctx, screen, prop, solid ? Math.max(24, prop.r || 0) : 28);
+      ctx.strokeStyle = solid ? '#e8b77b' : '#8bd9e4';
+      ctx.lineWidth = solid ? 3 : 1.8;
+      ctx.setLineDash(solid ? [] : [5, 5]);
+      if (!cue && solid) {
+        ctx.fillStyle = '#b77d4d58';
+        ctx.fill();
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+      if (cue) {
+        const p = screen(prop);
+        ctx.font = 'bold 10px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = solid ? '#ffe4b5' : '#b8f5ff';
+        ctx.fillText(solid ? 'BLOCKED' : 'PLANNED', p.x, p.y - 18);
+      }
+    }
+    // The core's combat opening is a genuine e.open timer, so never show it
+    // simply because Garun is charging or an unrelated effect is resolving.
+    for (const boss of game.zone().enemies.filter(
+      (e) => e.family === 'mine' && e.hp > 0 && e.open > 0
+    )) {
+      circlePath(ctx, screen, boss, 44);
+      ctx.strokeStyle = '#aef0ff';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([4, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      if (cue) {
+        const p = screen(boss);
+        ctx.fillStyle = '#d9faff';
+        ctx.font = 'bold 11px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('CORE EXPOSED', p.x, p.y - 62);
+      }
+    }
     for (const e of game.zone().enemies.filter((e) => e.rangedAim)) {
       const p = screen(e),
         q = screen(e.rangedAim);
