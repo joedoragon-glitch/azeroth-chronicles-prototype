@@ -1964,6 +1964,11 @@
       e.rangedAim = null;
       delete e.ashCloud;
       delete e.ashNextAt;
+      if (e.hookedVictim) {
+        const held = e.hookedVictim === 'hero' ? this.hero : this.s.party.find(u => u.id === e.hookedVictim);
+        if (held) held.keeperHeld = null;
+        e.hookedVictim = null;
+      }
       if (e.deathRoll) {
         const victim = e.deathRoll.victim === 'hero' ? this.hero : this.s.party.find(u => u.id === e.deathRoll.victim);
         if (victim) victim.deathRollHeld = false;
@@ -2316,13 +2321,13 @@
       h.cd = h.cd.map((c) => Math.max(0, c - dt));
       for (const f of ['immune', 'haste', 'potionCd', 'slow']) h[f] = Math.max(0, h[f] - dt);
       for (const u of this.s.party) {
-        u.healCd = Math.max(0, (u.healCd || 0) - dt);
+        if (!u.keeperHeld) u.healCd = Math.max(0, (u.healCd || 0) - dt);
         u.manaCd = Math.max(0, (u.manaCd || 0) - dt);
         u.survivalCd = Math.max(0, (u.survivalCd || 0) - dt);
         u.immune = Math.max(0, (u.immune || 0) - dt);
       }
       this.syncCompanionLevelStats();
-      if (h.deathRollHeld) {
+      if (h.deathRollHeld || h.keeperHeld) {
         h.order = null;
       } else if (this.tacticalAdvanceScatter(h, dt)) {
         h.order = null;
@@ -3668,6 +3673,7 @@
         e.cd = Math.max(0, e.cd - dt);
         e.specialCd = Math.max(0, (e.specialCd || 0) - dt);
         e.summonCd = Math.max(0, (e.summonCd || 0) - dt);
+        e.sabotageCd = Math.max(0, (e.sabotageCd || 0) - dt);
         e.healCd = Math.max(0, (e.healCd || 0) - dt);
         e.pursuitBurst = Math.max(0, (e.pursuitBurst || 0) - dt);
         e.open = Math.max(0, (e.open || 0) - dt);
@@ -3734,7 +3740,7 @@
         const candidates = this.combatTargets();
         // Keeper focuses available archers, the healers, within normal combat reach.
         const keeperHealer = e.type === 'boss' && e.family === 'archive'
-          ? candidates.filter((u) => u.type === 'archer' && u.hp > 0 &&
+          ? candidates.filter((u) => u.type === 'archer' && !u.keeperHeld && u.hp > 0 &&
               dist(e, u) <= 600 && this.line(e, u)).sort((u, v) => dist(e, u) - dist(e, v))[0]
           : null;
         let target =
@@ -4019,6 +4025,12 @@
         e.idleWanderWait = 1.5;
         e.specialCd = e.captain || e.roomCaptain ? 1.25 : e.nightOnly ? 1.5 : 0;
         e.summonCd = 0;
+        e.sabotageCd = 0;
+        if (e.hookedVictim) {
+          const held = e.hookedVictim === 'hero' ? this.hero : this.s.party.find(u => u.id === e.hookedVictim);
+          if (held) held.keeperHeld = null;
+          e.hookedVictim = null;
+        }
         if (e.captain || e.roomCaptain)
           this.zone().enemies = this.zone().enemies.filter((u) => !(u.summon && u.owner === e.id));
         if (e.type === 'boss' && e.form === 'true') {
