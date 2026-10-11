@@ -187,6 +187,8 @@ test('Mine production, historic cuts and repair forge have trap-free connected r
     a = C.rules.dungeonArchitecture.mine,
     traps = c.traps();
   assert.equal(z.dungeonVersion, 3);
+  for (const ore of ['silver-ore-face', 'copper-ore-face', 'silver-sort-samples', 'copper-sort-samples'])
+    assert(z.props.some((p) => p.structure === ore), 'Mine displays mined ' + ore);
   assert.equal(z.enemies.filter((e) => e.guard).length, 18);
   assert.equal(z.enemies.filter((e) => e.guard && e.ranged).length, 6);
   assert(
