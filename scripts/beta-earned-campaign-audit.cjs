@@ -16,6 +16,7 @@ const inputBytes = fs.readFileSync(inputPath);
 const inputHash = require('node:crypto').createHash('sha256').update(inputBytes).digest('hex');
 const c = C.restore(JSON.parse(inputBytes), () => 0.9);
 const D = require('../src/prototype/data');
+const R = require('../src/prototype/rules');
 const route = process.argv[2] || 'crypt';
 const trace = [];
 const watch = new Set([
@@ -77,7 +78,26 @@ function record(label) {
   console.log(JSON.stringify(r));
 }
 let nextHeartbeat = c.s.time + 60;
+let healHeldAt = null;
+function healParty() {
+  if (!c.hero.skills[2] || c.hero.cd[2] > 0) {
+    healHeldAt = null;
+    return;
+  }
+  const wounded = c.activeLivingParty().some((u) => u.hp < u.maxHp * 0.8);
+  if (wounded) {
+    if (healHeldAt === null) healHeldAt = c.s.time;
+    if (c.s.time - healHeldAt >= R.chargedSkills.holdSeconds) {
+      c.cast(3, undefined, true);
+      healHeldAt = null;
+    }
+  } else {
+    healHeldAt = null;
+    if (c.hero.hp < c.hero.maxHp * 0.8) c.cast(3);
+  }
+}
 function tick() {
+  healParty();
   c.tick(0.1);
   if (c.s.time >= nextHeartbeat) {
     nextHeartbeat = c.s.time + 60;
@@ -96,8 +116,24 @@ function near() {
 }
 // Instrumented controller: reads geometry, issues ordinary casts/movement only.
 // This is not a browser perception test or evidence of human playability.
+let trapCacheTime = -1,
+  trapCache = [];
 function danger(p, e) {
   let risk = 0;
+  if (trapCacheTime !== c.s.time) {
+    trapCacheTime = c.s.time;
+    trapCache = c.traps();
+  }
+  for (const t of trapCache) {
+    const expanded = { ...t, radius: t.radius + 35, halfWidth: t.halfWidth + 30 };
+    if (c.trapContains(expanded, p)) risk += 2500;
+  }
+  for (const a of c.s.hazards) {
+    if (a.kind === 'ring') {
+      const radius = (a.age + 0.3) * R.combatGeometry.ringSpeed;
+      if (Math.abs(dist(p, a) - radius) < 75) risk += 2000;
+    } else if (dist(p, a) < a.radius + 35) risk += 2200;
+  }
   for (const u of c.zone().enemies.filter((u) => u.hp > 0 && !u.neutral)) {
     const d = dist(p, u);
     if (d < 150) risk += (150 - d) * 5;
@@ -107,7 +143,14 @@ function danger(p, e) {
       risk += 1500;
     if (a.kind === 'line' && c.distanceToSegment(p, { x: a.fromX, y: a.fromY }, a) < 100)
       risk += 1500;
-    if (a.kind === 'cone' && d < (a.radius || 250) + 40) {
+    if (
+      a.kind === 'ring' &&
+      d <
+        R.combatGeometry.ringSpeed * R.combatGeometry.ringLife * R.bossCadence.areaRangeMultiplier +
+          45
+    )
+      risk += 1800;
+    if (['cone', 'sector'].includes(a.kind) && d < (a.radius || 250) + 40) {
       const delta = Math.atan2(
         Math.sin(Math.atan2(p.y - u.y, p.x - u.x) - a.angle),
         Math.cos(Math.atan2(p.y - u.y, p.x - u.x) - a.angle),
@@ -128,6 +171,7 @@ function fight(e, seconds = 180) {
     started = c.s.time;
   let lastHp = e.hp,
     lastProgress = c.s.time;
+  if (e.type === 'boss') record('boss combat started ' + e.family + ':' + e.form);
   for (let i = 0; i < seconds * 10 && e.hp > 0; i++) {
     if (e.hp < lastHp) {
       lastProgress = c.s.time;
@@ -148,7 +192,10 @@ function fight(e, seconds = 180) {
       );
       return false;
     }
-    if (c.s.statistics.deaths > deaths) return false;
+    if (c.s.statistics.deaths > deaths) {
+      record('combat defeat ' + e.name + ' minimum observed HP=' + Math.round(lastHp));
+      return false;
+    }
     if (!c.zone().enemies.includes(e)) {
       record('combat target removed by engine: ' + e.id);
       return false;
@@ -159,7 +206,7 @@ function fight(e, seconds = 180) {
     c.cast(1, target.id);
     for (const slot of [2, 6, 5, 7, 8]) if (c.hero.skills[slot - 1]) c.cast(slot, target.id);
     if (c.hero.skills[3] && dist(target, c.hero) < 130) c.cast(4, target.id);
-    if (c.hero.skills[2] && c.hero.hp < c.hero.maxHp * 0.8) c.cast(3, target.id);
+    healParty();
     if (dist(c.hero, e) > 430 || !c.line(c.hero, e)) {
       c.hero.order = !c.line(c.hero, e)
         ? { type: 'move', x: e.x, y: e.y }
@@ -199,7 +246,7 @@ function walk(p, combat = true, seconds = 100, arrival = 65) {
     started = c.s.time;
   for (let i = 0; i < seconds * 10; i++) {
     if (dist(c.hero, p) < arrival) return true;
-    if (c.hero.skills[2] && c.hero.hp < c.hero.maxHp * 0.8) c.cast(3);
+    healParty();
     if (!combat && c.hero.skills[3] && c.hero.hp < c.hero.maxHp * 0.65) c.cast(4);
     if (c.s.time - started > seconds) {
       record('travel approach time budget exhausted');
@@ -371,6 +418,19 @@ function collectLocalLoot() {
   for (const l of [...c.s.loot].filter((l) => l.zone === c.zoneId && dist(l, c.hero) < 300))
     if (!walk(l)) break;
 }
+function recoverExpedition() {
+  for (let i = 0; i < 15 && c.hero.gold < 700; i++) {
+    const loot = c.s.loot
+      .filter((l) => l.zone === c.zoneId)
+      .sort((a, b) => dist(a, c.hero) - dist(b, c.hero))[0];
+    if (!loot || !walk(loot, false)) break;
+  }
+  const recruiter = c.zone().npcs.find((n) => n.kind === 'recruiter');
+  approach(recruiter, false);
+  while (c.s.party.some((u) => u.hp <= 0) && c.recover()) capture();
+  assert(rest(), 'recovery rest');
+  record('paid expedition recovery');
+}
 function defeatAndRescue(family) {
   const def = D.bosses.find((b) => b.id === family);
   if (!def) throw Error('unknown boss ' + family);
@@ -442,10 +502,11 @@ function verifySave() {
 }
 record('resumed earned campaign');
 try {
-  if (!process.env.BETA_SKIP_SERVICES && route !== 'fortify') services();
+  if (!process.env.BETA_SKIP_SERVICES && !['fortify', 'recover'].includes(route)) services();
   const routes = {
     prepare: [],
     fortify: [],
+    recover: [],
     crypt: ['crypt'],
     march: ['mire', 'archive'],
     highlands: ['ridge', 'mine'],
@@ -455,6 +516,7 @@ try {
   const targets = routes[route];
   if (!targets) throw Error('unknown route ' + route);
   if (route === 'fortify') fortify();
+  if (route === 'recover') recoverExpedition();
   const region = targets.length ? D.bosses.find((b) => b.id === targets[0]).region : c.zoneId;
   if (route === 'prepare') {
     earnPreparation();
