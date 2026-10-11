@@ -29,7 +29,7 @@
   "renderingRevision": {
     "source": "PR #225 plus combined-release slowdown fix; authorized rendering-only changes",
     "files": {
-      "src/prototype/app.js": "e25db6455fbe9244d67fb672568e32869410b44a85afe02fee3f531dd5fcd333",
+      "src/prototype/app.js": "2818fcfa641e5901c4c797e0401d6f43b9713549b5f28c9d897b96d62642f331",
       "src/prototype/runtime.js": "d75f3f9fc8e7a964420da9b1642aefc7dae433b0a19ca45b704b65c72f7e0652"
     },
     "activeFrameBodySha256": "a042cd0491db3860a8f8c29e9f1471b45be3ca108b2520dcc4df833d0ce81d7a"
@@ -39,5 +39,12 @@
     "version": "0.8.139",
     "scope": "Thornfang Pounce and Stone Colossus Wall Rush authored description-only corrections; no mechanics, layouts or procedural art changed",
     "evidence": "v0.9 author approval and boss-description-contracts regression; all other baseline hashes unchanged"
+  },
+  "approvedUxRevision": {
+    "source": "Issue #270 post-beta UI-only draft; actual Chromium behavior regression and reviewed menu focus",
+    "previousAppSha256": "e25db6455fbe9244d67fb672568e32869410b44a85afe02fee3f531dd5fcd333",
+    "newAppSha256": "2818fcfa641e5901c4c797e0401d6f43b9713549b5f28c9d897b96d62642f331",
+    "scope": "Menu selection, dialog keyboard focus and Tab navigation only; no frame-loop/body changes",
+    "baseline": "d7d2c22485b08265b31bf595305ef952b40b72cd"
   }
 }
