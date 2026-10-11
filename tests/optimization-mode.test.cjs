@@ -88,7 +88,7 @@ const manifest = { version: 1, materials: { [key]: entry } };
   assert.equal(sound.voices.size, 1, 'combat/effects bus remains available');
   sound.environmentScene = { started: true, interior: 'outdoors' };
   sound.updateEnvironment(sound.environmentScene);
-  assert.equal(sound.environmentVoice, undefined);
+  assert.equal(sound.environmentVoice, null, 'no environment voice starts while optimized');
   assert.equal(sound.setOptimizationMode(false), true);
   assert.equal(sound.optimizationMode, false);
   sound.dispose();
