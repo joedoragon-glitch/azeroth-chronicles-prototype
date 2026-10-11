@@ -10,6 +10,11 @@ runs:
     - name: Install locked development tools
       shell: bash
       run: npm ci --ignore-scripts
+    - name: Temporary formatting diagnostic
+      shell: bash
+      run: |
+        npx prettier --write src/prototype/narration.js tests/ironroot-highlands.test.cjs
+        git diff -- src/prototype/narration.js tests/ironroot-highlands.test.cjs
     - name: Check formatting
       shell: bash
       run: npm run format:check
