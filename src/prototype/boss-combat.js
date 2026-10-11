@@ -7,7 +7,7 @@
       trueSummonPlan(e) {
         const authored = R.attacks[e.family]?.find((a) => a.kind === 'summon');
         return authored
-          ? { species: authored.species, ranged: !!authored.ranged }
+          ? { species: authored.species, ranged: !!authored.ranged, attendant: !!authored.attendant }
           : R.trueBossSummons.families[e.family];
       }
       bossOwnedSummons(e) {
@@ -83,14 +83,15 @@
           };
         if (e.form !== 'true') {
           const owned = () => z.enemies.filter((u) => u.summon && u.owner === e.id && u.hp > 0),
-            limit = Math.min(cap, this.bossSummonProfile(e).normalCap);
+            limit = Math.min(cap, this.bossSummonProfile(e).normalCap),
+            nextCount = Math.min(limit, owned().length + (plan.attendant ? 3 : limit));
           let made = 0;
-          for (let i = owned().length; i < limit; i++) {
+          for (let i = owned().length; i < nextCount; i++) {
             const p = spawnPoint(i),
               s = this.makeEnemy(
                 {
                   species: plan.species,
-                  name: this.summonName(plan.species),
+                  name: plan.attendant ? 'Estate attendant' : this.summonName(plan.species),
                   icon: '👻',
                   level: e.level,
                   hp: Math.round(baseHp * (plan.normalHpScale || 1)),
@@ -101,6 +102,7 @@
                 p,
               );
             s.summon = true;
+            if (plan.attendant) { s.estateAttendant = true; s.visualScale = 0.78; }
             s.summonBalanceVersion = 1;
             s.owner = e.id;
             this.summonCombatProfile(s, plan);
@@ -146,7 +148,7 @@
             s = this.makeEnemy(
               {
                 species: plan.species,
-                name: captain ? 'TRUE ' + baseName + ' Ringleader' : 'TRUE-bound ' + baseName,
+                name: plan.attendant ? (captain ? 'TRUE Estate attendant captain' : 'TRUE Estate attendant') : captain ? 'TRUE ' + baseName + ' Ringleader' : 'TRUE-bound ' + baseName,
                 icon: '👻',
                 form: captain ? 'ringleader' : 'normal',
                 level: e.level,
@@ -162,6 +164,7 @@
           s.owner = e.id;
           this.summonCombatProfile(s, plan);
           s.trueSummon = true;
+          if (plan.attendant) { s.estateAttendant = true; s.visualScale = captain ? 0.9 : 0.78; }
           s.trueSummonRole = role;
           s.pack = e.id + '-summons';
           if (captain) s.ringleaderHealthVersion = 3;
