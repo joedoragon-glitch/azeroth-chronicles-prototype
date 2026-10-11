@@ -2396,7 +2396,7 @@
       ],
     },
     crypt: {
-      version: 3,
+      version: 4,
       surfaces: [
         {
           kind: 'unfinished',
