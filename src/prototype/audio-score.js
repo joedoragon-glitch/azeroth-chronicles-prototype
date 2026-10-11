@@ -235,7 +235,7 @@
           this.noise.gain.disconnect();
           this.noise = null;
         }
-        if (!this.cue) return;
+        if (this.optimizationMode || !this.cue) return;
         if (
           this.production &&
           this.soundCatalog().director?.environment &&
