@@ -612,7 +612,11 @@
                 ? dist(u, a) < a.radius &&
                   (a.angleDegrees === 360 ||
                     Math.cos(Math.atan2(u.y - a.y, u.x - a.x) - a.angle) >
-                      (a.kind === 'sector' ? Math.cos(0.65) : Math.cos(1.1)))
+                      (a.angleDegrees
+                        ? Math.cos((a.angleDegrees * Math.PI) / 360)
+                        : a.kind === 'sector'
+                          ? Math.cos(0.65)
+                          : Math.cos(1.1)))
                 : patches.some((p) => dist(u, p) < p.radius);
         for (const u of party)
           if (hits(u) && this.line(e, u)) {
