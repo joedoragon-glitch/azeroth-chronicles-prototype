@@ -328,6 +328,7 @@
             amount *= 1 - guard;
           }
         }
+        let createdTaxShield = false;
         if (e.family === 'darklord' && e.royalTaxation) {
           const tax = e.royalTaxation;
           if (this.s.time > tax.expires) e.royalTaxation = null;
@@ -335,6 +336,7 @@
             tax.sources.push(source);
             if (tax.sources.length >= 2) {
               e.royalTaxShield = e.maxHp * 0.03;
+              createdTaxShield = true;
               e.royalTaxation = null;
             }
           }
@@ -355,7 +357,7 @@
         if (['thinking', 'travel', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase))
           amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
         amount = this.tacticalCompressDamage(e, amount);
-        if (e.family === 'darklord' && e.royalTaxShield > 0) {
+        if (e.family === 'darklord' && e.royalTaxShield > 0 && !createdTaxShield) {
           const absorbed = Math.min(e.royalTaxShield, amount);
           e.royalTaxShield -= absorbed;
           amount -= absorbed;
