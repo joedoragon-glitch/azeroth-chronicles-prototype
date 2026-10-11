@@ -157,8 +157,8 @@
                 species: plan.species,
                 name: plan.attendant
                   ? captain
-                    ? 'TRUE Estate attendant captain'
-                    : 'TRUE Estate attendant'
+                    ? 'TRUE Estate attendant Ringleader'
+                    : 'TRUE-bound Estate attendant'
                   : captain
                     ? 'TRUE ' + baseName + ' Ringleader'
                     : 'TRUE-bound ' + baseName,
@@ -605,6 +605,7 @@
                 ranged: !!a.ranged,
                 normalHpScale: a.normalHpScale,
                 normalDamageScale: a.normalDamageScale,
+                attendant: !!a.attendant,
               },
               this.bossSummonCap(e),
             );
