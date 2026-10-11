@@ -285,6 +285,15 @@
         return true;
       }
 
+      ashMovementFactor(unit) {
+        if (!unit) return 1;
+        const now = this.s.time;
+        const cloud = this.zone().enemies.find(e => e.type === 'boss' && e.family === 'warlord' &&
+          e.aggro && e.hp > 0 && e.ashCloud && e.ashCloud.expires > now &&
+          dist(unit, e.ashCloud) < 180);
+        if (cloud) unit.ashLastAt = now;
+        return cloud || (Number.isFinite(unit.ashLastAt) && now - unit.ashLastAt <= 2) ? 0.7 : 1;
+      }
       mireBogMovementFactor(unit) {
         if (!unit || !Number.isFinite(unit.mireBogLastAt)) return 1;
         const away = Math.max(0, this.s.time - unit.mireBogLastAt);
@@ -326,6 +335,9 @@
         e.mercyProvoked = true;
         this.engage(e, true);
         if (source === 'hero') e.heroParticipated = true;
+        // Ash abrades eyes: attacks issued by a party member inside or recently
+        // outside Choking Ash have a 35% miss chance, without extra damage.
+        if (this.ashMovementFactor(origin) < 1 && this.random() < 0.35) return false;
         if (e.roomCaptain && e.captainGuard > 0) amount *= 0.7;
         if (e.roomCaptain) {
           const profile = this.captainProfile(e),
