@@ -178,6 +178,20 @@ if (!built) {
     }
   }
   console.log('DIAG initial paths', baselineExit,baselineDara);
+  const points = [{x:940,y:1000},{x:1180,y:1285},{x:920,y:1030},{x:1020,y:1105},{x:1340,y:1120},{x:830,y:1090}];
+  const exit = builderZone.npcs.find(n=>n.kind==='exit');
+  const captive = builderZone.npcs.find(n=>n.kind==='cage');
+  const targets = [builder.hero, ...builder.activeLivingParty(),architect,captive,exit].filter(Boolean);
+  console.log('DIAG baseline blocked', targets.map(u=>[u.id||u.kind,u.x,u.y,builder.blocked(u.x,u.y,'mine',12)]));
+  for(const p of points){
+    const prop = {id:'diagnostic',...p,r:24};
+    builderZone.props.push(prop);
+    const open = targets.map(u=>[u.id||u.kind,builder.blocked(u.x,u.y,'mine',12)]);
+    const route = [builder.hero,architect,captive].map(u=>[u.id||u.kind,builder.route(u,exit).length]);
+    const dara = builder.route(builder.hero,captive).length;
+    builderZone.props.pop();
+    console.log('DIAG after prop',p,open,route,dara);
+  }
 }
 assert(built > 0 && built <= 2, 'construction finds at least one safe, temporary support');
 const supports = builderZone.props.filter((p) => p.garunTemporary);
