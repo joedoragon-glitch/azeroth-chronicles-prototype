@@ -24,6 +24,8 @@
           u.order = null;
         });
         for (const z of Object.values(out.zones))
+          z.props = z.props.filter((p) => !p.garunTemporary && !p.garunPreview);
+        for (const z of Object.values(out.zones))
           for (const e of z.enemies) {
             e.telegraph = null;
             e.motion = null;

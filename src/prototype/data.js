@@ -246,8 +246,9 @@ const PrototypeData = {
       region: 'highlands',
       kind: 'dungeon',
       name: 'Stone Colossus',
+      role: 'Garun the Firstborn — council architect and former Bastion',
       history:
-        'An ancient guardian exposed by the older Ironroot workings. The regime routes production around its territory rather than controlling it; new supports and haulage lanes stop at the older stone. Dara is compelled to repair mining equipment so shipments can continue.',
+        "Garun the Firstborn was the former hero's Ogre Bastion and chief architect, the companion who designed the realm's connected roads, practical settlement relocations, and distinct homes and fortresses for its many monster peoples. He chose a body of fitted stone around a luminous heartstone during an expedition when holding a collapsing mountain gate saved his party; the angular shell, golden eyes, and diamond core are his own design. Now a respected member of the Dark Lord's council, Garun still believes their ruler's order works, although he would much rather inspect a sound bridge than spend another meeting being assigned a construction project. At Colossus Mine he provides security with Ogre wardens and Wolf sentries, while the Ridge Tyrant, his captain, and the working crews handle the region's accounts, currency, and routine production. Comfortably paid for his duties but still obliged to meet the Mine's costs, he spends his spare crowns on charming junk, clever useless machines, striking geometric objects, and stark architectural experiments rather than hoarding valuable metal. He keeps Dara nominally captive yet pays the smith reasonably for repairs and peculiar artistic commissions, allowing negotiated freedom inside the guarded Mine while retaining the power to deny departure. Garun enjoys his quieter life, trusts his old friend, and sees the Mine as a workshop, refuge, gallery, and manageable post—not a retreat from politics or a secret bid for the throne. Should the Dark Lord fall, his control of roads, strongholds, safe passage, and defensive labor could make him a convincing successor whose genuine wish to shelter everyone becomes a realm of protected corridors and compulsory safety.",
       level: 9,
       captive: 'Dara the Highland Smith',
       service: 'Highland weapons armor and equipment improvements',
@@ -258,11 +259,11 @@ const PrototypeData = {
       xp: 375,
       place: 'Colossus Mine',
       attacks: [
-        'Stone slam: circle warns for 1.6 seconds and exposes the core for 2.5 seconds afterward.',
-        'Rockfall: three separated circles warn for 1.7 seconds; at least one connected safe route remains.',
-        'Shockwave rings: visible expanding rings follow a 1.6 second windup and can be crossed after they pass.',
-        'Wall rush: lane warns for 1.7 seconds; when the charge ends, the core is exposed for 3 seconds, with or without an obstacle collision.',
-        'Stonebound call: summons three ogres; TRUE form replenishes its six-unit elite warband.',
+        'Punching Shear: circle warns for 1.6 seconds and exposes the core for 2.5 seconds afterward.',
+        'Progressive Collapse: three successive impacts each warn for 1.7 seconds, followed by up to two nine-second stone supports previewed on the floor.',
+        'Dynamic Compaction: two expanding shockwaves, separated by 0.7 seconds after a 1.6 second warning, damage and slow anyone caught by their moving edge.',
+        'Pile Driving: lane warns for 1.7 seconds; when the charge ends, the core is exposed for 3 seconds, with or without an obstacle collision.',
+        'Mass Underpinning: signals three Ogre wardens; TRUE form replenishes its six-unit elite warband.',
       ],
     },
     {
