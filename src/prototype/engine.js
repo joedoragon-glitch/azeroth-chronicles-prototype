@@ -1508,6 +1508,8 @@
       this._tacticalScatterLeash?.clear();
       this._tacticalRepositions?.clear();
       this._tacticalPartyTargets?.clear();
+      for (const oldZone of Object.values(this.s.zones))
+        oldZone.props = oldZone.props.filter((p) => !p.garunTemporary);
       this.s.zone = zone;
       this.zone();
       this.s.recallActive = false;
@@ -2319,6 +2321,10 @@
         z = this.zone(),
         formationStart = { x: h.x, y: h.y };
       z.clock += dt;
+      if (z.id === 'mine')
+        z.props = z.props.filter((p) => !p.garunTemporary ||
+          (p.expiresAt > this.s.time && !this.peace &&
+            z.enemies.some((e) => e.family === 'mine' && e.hp > 0)));
       h.cd = h.cd.map((c) => Math.max(0, c - dt));
       for (const f of ['immune', 'haste', 'potionCd', 'slow']) h[f] = Math.max(0, h[f] - dt);
       for (const u of this.s.party) {
