@@ -3638,7 +3638,13 @@
         }
         if (e.family === 'citadel' && e.board && e.aggro && !e.returning) {
           this.sentinelUpdateBoard(e, dt);
-          if (this.s.statistics.deaths !== deaths || z !== this.zone() || this.s.challenge.pending || this.s.challenge.gameOver) return;
+          if (
+            this.s.statistics.deaths !== deaths ||
+            z !== this.zone() ||
+            this.s.challenge.pending ||
+            this.s.challenge.gameOver
+          )
+            return;
         }
         if (e.neutral) {
           const t = this.s.time * 0.1 + Number(e.id.split('-')[1]);
@@ -3966,7 +3972,10 @@
         e.captainPhaseMove = 1;
         e.captainAttackRate = 1;
         e.captainGuard = 0;
-        if (e.family === 'citadel') { delete e.board; delete e.dressUntil; }
+        if (e.family === 'citadel') {
+          delete e.board;
+          delete e.dressUntil;
+        }
         e.quotaOvertime = 0;
         e.captainOpeningSummon = false;
         delete e.quotaTarget;

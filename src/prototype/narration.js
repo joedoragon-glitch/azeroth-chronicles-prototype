@@ -89,12 +89,31 @@
     'Volumize: replenishes Crown soldiers; TRUE form reinforces the elite warband.',
   ];
   Object.assign(Rules.attacks.citadel[0], { kind: 'canister', warning: 1.6, recovery: 1.5 });
-  Object.assign(Rules.attacks.citadel[1], { kind: 'formation', warning: 1.8, recovery: 1.6,
-    count: 1, manaDrain: 0 });
-  Object.assign(Rules.attacks.citadel[2], { kind: 'pattern-charge', warning: 2.6, recovery: 2.5,
-    charge: true, advance: false, opening: 0, coefficient: 1 });
-  Object.assign(Rules.attacks.citadel[3], { kind: 'checkerboard', warning: 2.2, recovery: 1.2,
-    count: 1, sequential: false, persistent: false, manaDrain: 0 });
+  Object.assign(Rules.attacks.citadel[1], {
+    kind: 'formation',
+    warning: 1.8,
+    recovery: 1.6,
+    count: 1,
+    manaDrain: 0,
+  });
+  Object.assign(Rules.attacks.citadel[2], {
+    kind: 'pattern-charge',
+    warning: 2.6,
+    recovery: 2.5,
+    charge: true,
+    advance: false,
+    opening: 0,
+    coefficient: 1,
+  });
+  Object.assign(Rules.attacks.citadel[3], {
+    kind: 'checkerboard',
+    warning: 2.2,
+    recovery: 1.2,
+    count: 1,
+    sequential: false,
+    persistent: false,
+    manaDrain: 0,
+  });
 
   Rules.dungeonLore.citadel =
     "The Citadel of Ashes is Marshal Veyra's academy and the headquarters of the Dark Lord's professional army. Its officers turn diverse irregulars into regiments. Her private quarters hold polished mirrors, cosmetic brushes and carefully arranged complexion jars beside her parade uniform.";

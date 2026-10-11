@@ -56,7 +56,12 @@
         const x = a.x + ((i % 4) - 1.5) * size;
         const y = a.y + (Math.floor(i / 4) - 1.5) * size;
         const h = size / 2;
-        return [{x:x-h,y:y-h},{x:x+h,y:y-h},{x:x+h,y:y+h},{x:x-h,y:y+h}];
+        return [
+          { x: x - h, y: y - h },
+          { x: x + h, y: y - h },
+          { x: x + h, y: y + h },
+          { x: x - h, y: y + h },
+        ];
       });
     }
 
@@ -177,8 +182,9 @@
       }
     }
     // Persistent 4x4 board telegraphs independently of Veyra's active attack.
-    for (const boss of game.zone().enemies.filter((e) => e.family === 'citadel' &&
-      e.hp > 0 && e.board)) {
+    for (const boss of game
+      .zone()
+      .enemies.filter((e) => e.family === 'citadel' && e.hp > 0 && e.board)) {
       for (const cell of game.sentinelBoardCells(boss)) {
         const h = cell.size / 2;
         polygon(ctx, screen, [
@@ -192,7 +198,10 @@
         ctx.strokeStyle = warning ? '#fff1a7' : '#8794a766';
         ctx.fillStyle = warning ? '#df795655' : '#536b8917';
         if (cue) ctx.stroke();
-        else { ctx.fill(); ctx.stroke(); }
+        else {
+          ctx.fill();
+          ctx.stroke();
+        }
       }
     }
     for (const e of game.zone().enemies.filter((e) => e.rangedAim)) {
