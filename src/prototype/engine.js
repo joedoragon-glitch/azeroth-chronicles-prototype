@@ -1957,6 +1957,11 @@
       e.telegraph = null;
       e.motion = null;
       e.rangedAim = null;
+      if (e.deathRoll) {
+        const victim = e.deathRoll.victim === 'hero' ? this.hero : this.s.party.find(u => u.id === e.deathRoll.victim);
+        if (victim) victim.deathRollHeld = false;
+        e.deathRoll = null;
+      }
       e.sequence = [];
       if (e.summon) {
         return;
@@ -2310,7 +2315,9 @@
         u.immune = Math.max(0, (u.immune || 0) - dt);
       }
       this.syncCompanionLevelStats();
-      if (this.tacticalAdvanceScatter(h, dt)) {
+      if (h.deathRollHeld) {
+        h.order = null;
+      } else if (this.tacticalAdvanceScatter(h, dt)) {
         h.order = null;
       } else if (input.x || input.y) {
         h.order = null;
@@ -3688,6 +3695,28 @@
           z !== this.zone()
         )
           return;
+        // Mirejaw commits completely to its death roll; the victim cannot act.
+        if (e.family === 'mire' && e.type === 'boss' && e.deathRoll) {
+          const roll = e.deathRoll,
+            victim = roll.victim === 'hero' ? this.hero : this.s.party.find((u) => u.id === roll.victim);
+          if (!victim || victim.hp <= 0 || e.hp <= 0) {
+            if (victim) victim.deathRollHeld = false;
+            e.deathRoll = null;
+          } else {
+            roll.life -= dt;
+            roll.elapsed += dt;
+            while (roll.hits < 3 && roll.elapsed + 1e-9 >= (roll.hits + 1) * 0.5 && victim.hp > 0) {
+              roll.hits++;
+              this.hitParty(victim, e.damage / 3, 0, e.id);
+            }
+            if (roll.life <= 0 || victim.hp <= 0) {
+              victim.deathRollHeld = false;
+              if (victim.hp > 0) this.applySlow(victim, 2);
+              e.deathRoll = null;
+            }
+            continue;
+          }
+        }
         const candidates = this.combatTargets();
         // Keeper focuses available archers, the healers, within normal combat reach.
         const keeperHealer = e.type === 'boss' && e.family === 'archive'
