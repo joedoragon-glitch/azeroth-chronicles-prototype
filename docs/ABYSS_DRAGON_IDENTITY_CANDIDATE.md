@@ -17,6 +17,10 @@ This is a **credible future claimant, not a forced ending**. The Bastion has egg
 1. **Existing Bastion flight-planning table, `Wings of War` rescue payoff:** Eren's once-only quest narration names Veyrith and reports a marked route home for every attack. The map and its existing purple routes remain; this is readable story text, not microscopic lettering drawn onto the table. Existing paid-quest flags keep the cue from replaying after reload. The original once-only Bastion entrance description remains unchanged.
 2. **Already-existing encounter, no balance retune:** Shadow Flight forces the hero to follow two sequential landing warnings; Wing Shockwave clears a ring; Hatchling Call brings a capped brood; and the existing **Wingward Break** scatter makes him feel like a defensive airspace commander. These are suggestive behaviors, not proof that individual summoned hatchlings receive new protective AI.
 
+## Aviation move-name direction
+
+The owner agreed in principle to a technical-aviation naming theme and authorized the implementation phase. The [seven-term combat handoff](ABYSS_DRAGON_AVIATION_MOVE_HANDOFF.md) maps the proposed names to exact existing attack behavior, with no claim that they have already been wired into the game. **Air Force One** remains an affectionate comparison for the Dark Lord's personal mount, not evidence of a deployed air force.
+
 ## Combat and safety audit
 
 Current normal repertoire from `rules.attacks.abyss`: Flame Cone (1.5 s warning, safe flank), Wing Shockwave (1.7 s expanding-ring warning), Shadow Flight (two sequential landing circles, 1.8 s warning), Hatchling Call (2 s warning, cap through existing summoning logic). Existing `bossBehavior.abyss` favors cone/ring up close, targeted landings at range, and phase combinations, including a flight-to-call possibility. `Ashwing Feint`, `Wingward Break` and `Ember Renewal` already supply additional identity in their existing systems.
