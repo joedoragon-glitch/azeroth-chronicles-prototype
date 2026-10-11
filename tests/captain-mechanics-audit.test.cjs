@@ -96,4 +96,56 @@ const near = (u, e, degrees, distance = 100) => {
   assert(worker.quotaOvertime > 0, 'overtime order repeats after timer expires');
   assert.equal(e.captainOvertimeCd, 12, 'next recruitment repeats after 12 seconds');
 }
+{
+  const { c, e } = captain('supply-march', 'Direjaw');
+  c.hero.hp = c.hero.maxHp = 10000;
+  c.s.hazards = [];
+  const plan = Campaign.rules.roomCaptains['supply-march'].attacks[2];
+  const a = {
+    ...plan, fromX: e.x, fromY: e.y, x: c.hero.x, y: c.hero.y,
+    radius: plan.radius * Campaign.rules.bossCadence.areaRangeMultiplier,
+    captainSkill: true,
+  };
+  c.resolveArea(e, a);
+  assert.equal(c.s.hazards.length, 4, 'Silt Slick creates four real hazard actors');
+  for (let i = 0; i < 4; i++)
+    for (let j = i + 1; j < 4; j++) {
+      const x = c.s.hazards[i], y = c.s.hazards[j];
+      assert(Math.hypot(x.x - y.x, x.y - y.y) > x.radius + y.radius,
+        'persistent Silt Slick patches never overlap');
+    }
+}
+{
+  const { c, e } = captain('supply-highlands', 'Crag Tyrant');
+  const plan = Campaign.rules.roomCaptains['supply-highlands'].attacks[1];
+  const a = {
+    ...plan, x: e.x, y: e.y, fromX: e.x, fromY: e.y,
+    radius: plan.radius * Campaign.rules.bossCadence.areaRangeMultiplier,
+    captainSkill: true,
+  };
+  const patches = c.attackPatches(a);
+  assert.equal(patches.length, 5, 'Margin Call creates all five impact areas');
+  assert(patches.some(p => p.x === a.x && p.y === a.y),
+    'Margin Call retains the targeted impact zone');
+  for (let i = 0; i < 5; i++) for (let j = i + 1; j < 5; j++)
+    assert(Math.hypot(patches[i].x-patches[j].x,patches[i].y-patches[j].y) >
+      patches[i].radius+patches[j].radius, 'Margin Call areas must not overlap');
+}
+{
+  const { c, e } = captain('supply-crown', 'Dreadmaw');
+  c.hero.hp = c.hero.maxHp = 10000;
+  c.tacticalDirectTargetable = () => true;
+  c.tacticalRogueLeashAllows = () => true;
+  c.hero.x = e.x + 70;
+  c.hero.y = e.y;
+  e.captainReflect = 8;
+  const hp = e.hp, hero = c.hero.hp;
+  assert(c.damage(e, 100, 'hero'));
+  assert(e.hp < hp && c.hero.hp < hero,
+    'unshielded Ash Carapace reflects damage through normal party defenses');
+  e.captainReflect = 0;
+  const after = c.hero.hp;
+  assert(c.damage(e, 100, 'hero'));
+  assert.equal(c.hero.hp, after, 'reflection stops after its eight-second window');
+}
 console.log('PASS captain attack angles, zero-warning fatigue, brood shield/reflection, and overtime repeat');
