@@ -1,4 +1,4 @@
-name: Temporary Colossus protected hash audit (formatted)
+name: Temporary Colossus move name SHA audit
 on:
   push:
     paths:
