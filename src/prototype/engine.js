@@ -938,7 +938,9 @@
       z.rangedBalanceVersion = 1;
     }
     decorateDungeon(z) {
-      const targetVersion = R.dungeonWorkstations?.[z.id]
+      const targetVersion = z.id === 'crypt'
+        ? 4
+        : R.dungeonWorkstations?.[z.id]
         ? 3
         : z.id === 'abyss'
           ? 4
