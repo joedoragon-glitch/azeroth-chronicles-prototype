@@ -15,11 +15,10 @@
       'Skill ' + (i + 1),
       i < 5 ? 'Digit' + (i + 1) : ['Space', 'ShiftLeft', 'KeyB'][i - 5],
     ]),
-    ['interact', 'Interact', 'KeyE'],
     ['confirm', 'Confirm / interact', 'KeyF'],
     ['doctrine', 'Squad doctrine', 'Tab'],
     ['recall', 'Recall squad', 'Backquote'],
-    ['target', 'Cycle hero target', 'KeyQ'],
+    ['target', 'Cycle hero target', 'KeyE'],
     ['map', 'Map', 'KeyZ'],
     ['inventory', 'Inventory', 'KeyI'],
     ['training', 'Talents', 'KeyC'],
@@ -70,21 +69,26 @@
     try {
       const saved = JSON.parse(storage.getItem(preferenceKey) || 'null');
       if (saved && typeof saved === 'object') {
-        const candidate = { ...defaults, ...saved.bindings };
-        // Pre-targeting custom maps could already use Q. Preserve those bindings
-        // instead of resetting every control when adding the new action.
-        if (!Object.hasOwn(saved.bindings || {}, 'target')) {
-          const used = new Set(
-            actions.filter(([id]) => id !== 'target').map(([id]) => candidate[id]),
-          );
-          if (used.has(candidate.target))
-            for (const key of 'YUOLNKJIPBVCXZFGRTH1234567890') {
-              const code = (/^[0-9]$/.test(key) ? 'Digit' : 'Key') + key;
-              if (validCode(code) && !used.has(code)) {
-                candidate.target = code;
-                break;
-              }
+        const storedBindings =
+          saved.bindings && typeof saved.bindings === 'object' ? saved.bindings : {};
+        const candidate = { ...defaults, ...storedBindings };
+        const used = new Set(
+          actions.filter(([id]) => id !== 'target').map(([id]) => candidate[id]),
+        );
+        // F already covers both field interaction and menu confirmation.
+        // Upgrade the previous Q targeting default to E unless E belongs to
+        // a custom binding; custom target keys are kept unchanged.
+        if (candidate.target === 'KeyQ' && !used.has('KeyE')) candidate.target = 'KeyE';
+        // Older profiles may predate targeting entirely. Preserve their
+        // custom controls and choose an unused key for the new action.
+        if (!Object.hasOwn(storedBindings, 'target') && used.has(candidate.target)) {
+          for (const key of 'QYUOLNKJIPBVCXZFGRTH1234567890') {
+            const code = (/^[0-9]$/.test(key) ? 'Digit' : 'Key') + key;
+            if (validCode(code) && !used.has(code)) {
+              candidate.target = code;
+              break;
             }
+          }
         }
         // Reject malformed/duplicate maps as a whole so movement is never stranded.
         if (
