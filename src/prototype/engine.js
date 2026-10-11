@@ -2463,6 +2463,30 @@
     }
     updateIdleWander(e, dt) {
       if (!e || e.aggro || e.returning || e.neutral || e.hp <= 0 || e.fieldCaptain) return false;
+      if (e.family === 'mine' && e.type === 'boss' && this.s.zone === 'mine') {
+        const anchors = [[1120, 1010], [1260, 1120], [1160, 1240]],
+          next = anchors[(e.inspectionIndex || 0) % anchors.length],
+          destination = { x: next[0], y: next[1] };
+        e.inspectionWait = Math.max(0, (e.inspectionWait ?? 1.5) - dt);
+        if (e.inspectionWait > 0) return true;
+        const danger = this.traps().some((t) =>
+          this.trapContains({ ...t, radius: (t.radius || 0) + 26,
+            length: (t.length || 0) + 52, halfWidth: (t.halfWidth || 0) + 26 }, destination),
+        );
+        if (danger || this.blocked(destination.x, destination.y, 'mine', 24) ||
+            !this.route(e, destination).length) {
+          e.inspectionIndex = (e.inspectionIndex || 0) + 1;
+          e.inspectionWait = 1.2;
+          return true;
+        }
+        if (dist(e, destination) < 32) {
+          e.inspectionIndex = (e.inspectionIndex || 0) + 1;
+          e.inspectionWait = 3;
+          return true;
+        }
+        this.follow(e, destination, 38, dt, 20);
+        return true;
+      }
       const cfg = this.idleWanderProfile(e);
       if (!cfg || !e.home) return false;
       e.idleWanderWait = Math.max(
