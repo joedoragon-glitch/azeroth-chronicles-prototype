@@ -3689,15 +3689,20 @@
         )
           return;
         const candidates = this.combatTargets();
+        // Keeper focuses available archers, the healers, within normal combat reach.
+        const keeperHealer = e.type === 'boss' && e.family === 'archive'
+          ? candidates.filter((u) => u.type === 'archer' && u.hp > 0 &&
+              dist(e, u) <= 600 && this.line(e, u)).sort((u, v) => dist(e, u) - dist(e, v))[0]
+          : null;
         let target =
-          e.quotaOvertime > 0 && this.hero.hp > 0
+          keeperHealer || (e.quotaOvertime > 0 && this.hero.hp > 0
             ? this.hero
             : e.summon &&
                 (e.ranged || e.trueSummonRole === 'captain') &&
                 this.hero.hp > 0 &&
                 dist(e, this.hero) < 700
               ? this.hero
-              : candidates.sort((a, b) => dist(e, a) - dist(b, e))[0];
+              : candidates.sort((a, b) => dist(e, a) - dist(b, e))[0]);
         if (!e.aggro && e.fieldCaptain) this.updateCaptainPatrol(e, dt);
         else if (!e.aggro) this.updateIdleWander(e, dt);
         if (e.guard && !e.ranged && this.hero.hp > 0) {
