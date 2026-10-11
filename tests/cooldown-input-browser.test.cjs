@@ -183,22 +183,35 @@ const server = http.createServer((req, res) => {
       await page.waitForFunction(() => Prototype.chargePresentation()?.ready, null, {
         timeout: 3000,
       });
-      await page.evaluate(() => Prototype.game.engage(Prototype.game.zone().enemies[0]));
+      const earlierHit = await page.evaluate(() => {
+        const g = Prototype.game;
+        const e = g.zone().enemies[0];
+        g.engage(e);
+        const ally = g.s.party.find((unit) => unit.hp > 0);
+        if (ally) Object.assign(ally, { x: g.hero.x, y: g.hero.y });
+        const landed = g.damage(e, 37, ally?.id || 'hero');
+        return { landed, hp: e.hp, maxHp: e.maxHp };
+      });
+      assert(earlierHit.landed && earlierHit.hp < earlierHit.maxHp);
       await release(1);
-      const reset = await page.evaluate(() => {
+      const deflected = await page.evaluate(() => {
         const g = Prototype.game;
         g.updateProjectiles(0.2);
         g.updateProjectiles(0.2);
         const e = g.zone().enemies[0];
-        return { hp: e.hp, maxHp: e.maxHp, aggro: e.aggro, shots: g.s.projectiles.length };
+        return {
+          hp: e.hp,
+          aggro: e.aggro,
+          shots: g.s.projectiles.length,
+          feedback: g.messages.some((message) => message.includes('deflects')),
+        };
       });
-      assert.equal(reset.hp, reset.maxHp);
-      assert.equal(reset.aggro, false, kind + ' rejects pre-aggro charged input');
-      assert.equal(reset.shots, 0, 'no delayed Ranger arrows remain');
+      assert.equal(deflected.hp, earlierHit.hp, 'prior damage survives deflection');
+      assert.equal(deflected.aggro, true, kind + ' remains engaged');
+      assert.equal(deflected.shots, 0, 'no delayed Ranger arrows remain');
+      assert(deflected.feedback, kind + ' displays deflection feedback');
       await page.evaluate(() => {
-        const g = Prototype.game;
-        g.hero.cd[0] = 0;
-        g.engage(g.zone().enemies[0]);
+        Prototype.game.hero.cd[0] = 0;
       });
       await press(1);
       await page.waitForFunction(() => Prototype.chargePresentation()?.ready, null, {
@@ -211,7 +224,7 @@ const server = http.createServer((req, res) => {
         const e = g.zone().enemies[0];
         return { hp: e.hp, maxHp: e.maxHp, aggro: e.aggro };
       });
-      assert(valid.aggro && valid.hp < valid.maxHp, kind + ' accepts in-combat charges');
+      assert(valid.aggro && valid.hp < earlierHit.hp, kind + ' accepts in-combat charges');
     }
     // Releasing a queued hold before readiness never spends or resets the slot.
     await page.evaluate(() => {
