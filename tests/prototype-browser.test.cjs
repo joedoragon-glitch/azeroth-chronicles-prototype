@@ -28,7 +28,7 @@ await check('Optimization Mode reversible device preference and cache/audio/DPR 
   audio:Prototype.audio.status(),
   backing:document.getElementById('world').width
  }));
- await page.getByRole('button',{name:'Optimization Mode · Off ✓',exact:true}).click();
+ await page.getByRole('button',{name:/^Optimization Mode · Off ✓/}).click();
  const low=await page.evaluate(()=>{
   Prototype.renderer.draw();Prototype.renderer.draw();
   return {render:Prototype.renderer.metrics(),materials:PrototypeMaterials.status(),audio:Prototype.audio.status(),width:document.getElementById('world').width,height:document.getElementById('world').height,local:localStorage.getItem('azeroth-optimization-mode-v1'),save:JSON.stringify(Prototype.game.snapshot())};
@@ -41,7 +41,7 @@ await check('Optimization Mode reversible device preference and cache/audio/DPR 
  assert.equal(low.height,v.height);
  assert.equal(low.render.groundCache?.bytes>=0,true);
  assert.equal(low.save,before.save,'setting never changes campaign snapshot');
- await page.getByRole('button',{name:'Optimization Mode · On ✓',exact:true}).click();
+ await page.getByRole('button',{name:/^Optimization Mode · On ✓/}).click();
  const restored=await page.evaluate(()=>{
   Prototype.renderer.draw();
   return {render:Prototype.renderer.metrics(),materials:PrototypeMaterials.status(),audio:Prototype.audio.status(),width:document.getElementById('world').width,local:localStorage.getItem('azeroth-optimization-mode-v1'),save:JSON.stringify(Prototype.game.snapshot())};
