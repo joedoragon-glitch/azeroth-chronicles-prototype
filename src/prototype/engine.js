@@ -49,6 +49,7 @@
         restCooldown: 0,
         zone: 'vale',
         refuge: 'vale',
+        barracksRespawn: null,
         nextId: 1,
         manaBalanceVersion: 1,
         talentBalanceVersion: 1,
@@ -1294,6 +1295,30 @@
         z?.buildings?.some((b) => b.kind === 'barracks' && b.progress >= 4),
       );
     }
+    selectedBarracksRespawn() {
+      const selected = this.s.barracksRespawn;
+      if (!selected || this.s.challenge.succession) return null;
+      const barracks = this.s.zones[selected.zone]?.buildings?.find(
+        (b) => b.id === selected.id && b.kind === 'barracks' && b.progress >= 4,
+      );
+      return barracks ? { zone: selected.zone, barracks } : null;
+    }
+    setBarracksRespawn(id) {
+      if (this.s.challenge.succession || this.isDungeon()) return false;
+      const barracks = this.zone().buildings.find(
+        (b) => b.id === id && b.kind === 'barracks' && b.progress >= 4,
+      );
+      if (!barracks) return false;
+      this.s.barracksRespawn = { zone: this.zoneId, id: barracks.id };
+      this.say('Death recovery set to these barracks. You can change it at any completed barracks.');
+      return true;
+    }
+    clearBarracksRespawn() {
+      if (this.s.challenge.succession || !this.s.barracksRespawn) return false;
+      this.s.barracksRespawn = null;
+      this.say('Death recovery returned to your last refuge.');
+      return true;
+    }
 
     build() {
       if (this.isDungeon()) return false;
@@ -1889,10 +1914,17 @@
       this.hero.immune = 0;
       this.hero.slow = 0;
       this.hero.haste = 0;
-      const refuge = clone(this.s.refugeSite || { zone: this.s.refuge, id: 'rest' });
-      this.enter(refuge.zone);
-      this.arriveRefuge(refuge);
-      this.say('Returned to your refuge. Learning and rescue progress are safe.');
+      const chosen = this.selectedBarracksRespawn();
+      if (chosen) {
+        this.enter(chosen.zone, { x: chosen.barracks.x + 110, y: chosen.barracks.y + 90 });
+        this.say('Recovered at your selected barracks in ' + this.definition().name + '.');
+      } else {
+        if (this.s.barracksRespawn) this.s.barracksRespawn = null;
+        const refuge = clone(this.s.refugeSite || { zone: this.s.refuge, id: 'rest' });
+        this.enter(refuge.zone);
+        this.arriveRefuge(refuge);
+        this.say('Returned to your refuge. Learning and rescue progress are safe.');
+      }
     }
     successor(heroClass) {
       if (

@@ -1044,9 +1044,28 @@
         specialists = getGame().barracksSpecialists(),
         exp = expeditionBarracksAction(b, back),
         tonic = barracksTonicAction(b, back),
+        selected =
+          getGame().s.barracksRespawn?.zone === getGame().zoneId &&
+          getGame().s.barracksRespawn?.id === b.id,
+        respawnActions = getGame().s.challenge.succession
+          ? []
+          : [
+              action(
+                selected ? 'Return death recovery to refuge' : 'Set these barracks as death recovery point',
+                () => {
+                  if (selected) getGame().clearBarracksRespawn();
+                  else getGame().setBarracksRespawn(b.id);
+                  barracksMenu(b, back);
+                },
+                selected
+                  ? 'Selected recovery point · choose this to use your last refuge instead'
+                  : 'On defeat, respawn near this completed barracks rather than at your last refuge',
+              ),
+            ],
         baseActions = [
           exp,
           ...(tonic ? [tonic] : []),
+          ...respawnActions,
           action(
             'Company',
             () => barracksCompanyMenu(b, returnHere),
@@ -1102,7 +1121,8 @@
           );
         openMenu(
           'Basic Barracks',
-          getGame().definition().name + ' · cheap recovery and expedition base.',
+          getGame().definition().name +
+            ' · completed Basic Barracks reduce local death loss to 15%, including regional dungeons.',
           baseActions,
           back,
         );
@@ -1117,10 +1137,11 @@
           getGame().barracksFieldCap(b) +
           ' with you · ' +
           getGame().rosterCount() +
-          ' employed.',
+          ' employed. Local death loss drops to 5%, including regional dungeons.',
         [
           exp,
           ...(tonic ? [tonic] : []),
+          ...respawnActions,
           action(
             'Company',
             () => barracksCompanyMenu(b, returnHere),

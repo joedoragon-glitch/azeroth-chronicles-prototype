@@ -1,7 +1,7 @@
 {
   "baseline": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
   "files": {
-    "src/prototype/engine.js": "291155d18505d46012250b92ad083e4e64a7ce5e4a67d32d99d7e961cf72c265",
+    "src/prototype/engine.js": "df0ee6800f5e5a6e0b188a478d2036e70fb5c10c7b5955699c6e40d6a2515843",
     "src/prototype/world.js": "fd696a65bf4e1b9067291f6c6d3d57b508f2b2ecb7164c222299ef8fa5edaa53",
     "src/prototype/navigation.js": "dbb700f55909a4908b64aec2c97583b07af93d7aeafe32d111dbbe16a7f79c36",
     "src/prototype/party.js": "41a66f5b3c95a09414b1308df557aff1cbb232d341f601b1f1fcaf1d2d40d726",
@@ -9,11 +9,11 @@
     "src/prototype/hero-combat.js": "9873768cf15322246de3a2892785ebdecc9cc9ed72ff7bbb377a264647135070",
     "src/prototype/boss-combat.js": "be74a2d6d5336cd851073c7c6814a64cb22cc01af2ef7a0854fd9f4148edc27f",
     "src/prototype/progression.js": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
-    "src/prototype/economy.js": "fd9701ee01d2748f22f176ce84d06f8769c0eb8b84963460380457a61933487a",
+    "src/prototype/economy.js": "312e887c5786a41135b4f807941884f1c9e8c6e599d6608ee2accf71b6e45e50",
     "src/prototype/rewards.js": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525",
-    "src/prototype/rules.js": "0bea5df747d56c3d0ab15021aaa5bd09683c898594292f142bda969c7ee7ccc0",
+    "src/prototype/rules.js": "2ea90233f249dbca6074a22ee564fe6a5cc3e158ca4a46a98241409ff15ffc7c",
     "src/prototype/data.js": "a82856323e155405e7fb68a027dc226b75d1563bd6b440450ccf584a9d7724b2",
-    "src/prototype/save.js": "4365b4fcfa21bcd8ffa5fe6da2b637dc0653e5aa7459abccc6277e94e6ab6296",
+    "src/prototype/save.js": "908736e4b65eff25223bcdba358ad4015f7815ce4c0482329a5f9822b60b3a80",
     "src/prototype/input.js": "87aed3b4d743dd011e0b6a0f5f293dc39fae45d76f6faa281139897a0437d616",
     "src/prototype/platform.js": "60107014425663a4607a239ea68359b04d0f0cfbf0eca7e9dc2fcc1a1180710d",
     "src/prototype/runtime.js": "baeae0441fd164f90bda835381d6f99772332eb8d850f2e18d7ccc8838b19e86",
@@ -29,7 +29,7 @@
   "renderingRevision": {
     "source": "PR #225 plus combined-release slowdown fix; authorized rendering-only changes",
     "files": {
-      "src/prototype/app.js": "e25db6455fbe9244d67fb672568e32869410b44a85afe02fee3f531dd5fcd333",
+      "src/prototype/app.js": "91baa323181096ef3b3eeb09038fe0ec3cf005726da8aef876a448db82ffcd59",
       "src/prototype/runtime.js": "d75f3f9fc8e7a964420da9b1642aefc7dae433b0a19ca45b704b65c72f7e0652"
     },
     "activeFrameBodySha256": "a042cd0491db3860a8f8c29e9f1471b45be3ca108b2520dcc4df833d0ce81d7a"

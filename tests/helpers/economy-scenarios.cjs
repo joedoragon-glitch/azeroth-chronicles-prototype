@@ -210,10 +210,10 @@ module.exports = function replay(C, mode = 'normal', cls = 'paladin', succession
   c.hero.gold = 103;
   c.hero.hp = 0;
   c.die();
-  assert.equal(c.hero.gold, 82);
+  assert.equal(c.hero.gold, succession ? 103 : 82);
   if (succession) {
     assert(c.successor(cls === 'paladin' ? 'mage' : 'paladin'));
-    assert.equal(c.hero.gold, 82);
+    assert.equal(c.hero.gold, 103);
     assert.equal(c.hero.level, 1);
   }
   record('death-and-succession');

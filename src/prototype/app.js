@@ -908,9 +908,7 @@
       'Choose your successor',
       'The ' +
         game.hero.class +
-        ' has fallen permanently. The death penalty has already removed ' +
-        Math.round(Campaign.rules.balance.economy.deathPenaltyFraction * 100) +
-        '% of carried crowns; the remaining crowns, rescues, quests and boss progress survive. Your successor starts at level 1 in Millhaven and must learn their skills.',
+        ' has fallen permanently. Succession carries no crown penalty; all crowns, rescues, quests and boss progress survive. Your successor starts at level 1 in Millhaven and must learn their skills.',
       Object.entries(Campaign.classes)
         .filter(([id]) => !game.s.challenge.fallen.includes(id))
         .map(([id, c]) =>

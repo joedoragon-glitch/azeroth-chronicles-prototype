@@ -33,10 +33,20 @@
       payTravelFare(amount) {
         this.hero.gold -= amount;
       }
+      deathPenaltyFraction(zone = this.s.zone) {
+        if (this.s.challenge?.succession) return 0;
+        const region = D.regions[this.regionIndex(zone)]?.id;
+        const barracks = (this.s.zones[region]?.buildings || []).filter(
+          (b) => b.kind === 'barracks' && b.progress >= 4,
+        );
+        if (barracks.some((b) => b.full))
+          return R.balance.economy.fullBarracksDeathPenaltyFraction;
+        return barracks.length
+          ? R.balance.economy.basicBarracksDeathPenaltyFraction
+          : R.balance.economy.deathPenaltyFraction;
+      }
       deathPenaltyAmount() {
-        return this.hero.gold > 0
-          ? Math.ceil(this.hero.gold * R.balance.economy.deathPenaltyFraction)
-          : 0;
+        return this.hero.gold > 0 ? Math.ceil(this.hero.gold * this.deathPenaltyFraction()) : 0;
       }
       applyDeathPenalty() {
         const lost = this.deathPenaltyAmount();
