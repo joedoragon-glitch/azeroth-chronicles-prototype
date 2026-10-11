@@ -39,11 +39,13 @@ const near = (u, e, degrees, distance = 100) => {
   e.lastCaptainAttack = -1;
   assert(c.startCaptainAttack(e, target));
   assert.equal(e.telegraph.name, 'Hostile Takeover');
-  assert.equal(e.telegraph.timer, 0, 'Broker gives no initial warning above 550 HP');
+  assert.equal(e.telegraph.timer, .9, 'Broker has a generic 0.9s cast above 550 HP');
+  assert.equal(e.telegraph.anonymousCast, true, 'cast conceals the move');
   e.hp = 550;
   e.lastCaptainAttack = -1;
   assert(c.startCaptainAttack(e, target));
   assert.equal(e.telegraph.timer, .95, 'Broker restores original warnings in final 550 HP');
+  assert.equal(e.telegraph.anonymousCast, false, 'fatigued broker uses normal footprint warnings');
   c.hero.hp = c.hero.maxHp = 10000;
   near(c.hero, e, 180);
   const a = {kind: 'cone', angleDegrees: 360, x: e.x, y: e.y,
