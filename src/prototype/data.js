@@ -301,10 +301,10 @@ const PrototypeData = {
       xp: 725,
       place: 'Abyss Bastion',
       attacks: [
-        'Flame cone: 1.5 second warning with a safe flank.',
-        'Wing shockwave: an expanding ring follows a 1.7 second warning.',
-        'Shadow flight: two marked landing circles resolve sequentially after 1.8 second warnings.',
-        'Hatchling call: summons three hatchlings after 2 seconds; no more than three remain alive.',
+        'Compressor Surge: 1.5 second warning with a safe flank.',
+        'Wake Vortex: an expanding ring follows a 1.7 second warning.',
+        'Lazy Eight: two marked landing circles resolve sequentially after 1.8 second warnings.',
+        'Scramble Order: summons three hatchlings after 2 seconds; no more than three remain alive.',
       ],
     },
     {
