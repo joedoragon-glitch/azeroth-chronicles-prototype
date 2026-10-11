@@ -123,10 +123,18 @@ for (const zone of [...A.data.regions.map((r) => r.id), ...A.dungeonIds])
         // Compare the untouched world beneath it to the protected v0.9 image;
         // the collection itself is independently tested in colossus-biography.
         if (root === current && zone === 'mine') {
-          const room = c.zone();
-          room.props = room.props.filter(
-            (p) => !['geometric-gallery', 'kinetic-collection', 'art-object'].includes(p.sceneRole),
-          );
+          const originalZone = c.zone.bind(c);
+          // The engine lazily restores its authored Mine decor on zone()
+          // calls. Filter only the reviewed new gallery in this paired
+          // historic-art comparator, including during renderer.draw().
+          c.zone = () => {
+            const room = originalZone();
+            room.props = room.props.filter(
+              (p) => !['geometric-gallery', 'kinetic-collection', 'art-object'].includes(p.sceneRole),
+            );
+            return room;
+          };
+          c.zone();
         }
         c.s.clock = clock;
         Object.assign(c.hero, c.safe(800, 800));
@@ -147,15 +155,7 @@ for (const zone of [...A.data.regions.map((r) => r.id), ...A.dungeonIds])
         });
         renderer.draw();
         renderer.draw();
-        const afterDraw = JSON.stringify(live(c));
-        if (afterDraw !== before) {
-          let offset = 0;
-          while (offset < before.length && before[offset] === afterDraw[offset]) offset++;
-          console.error('First renderer state difference at', offset);
-          console.error('Before:', before.slice(offset, offset + 150));
-          console.error('After:', afterDraw.slice(offset, offset + 150));
-          assert.equal(afterDraw, before, 'drawing may not mutate gameplay');
-        }
+        assert.equal(JSON.stringify(live(c)), before, 'drawing may not mutate gameplay');
         const pixels = Buffer.from(ctx.getImageData(0, 0, width, height).data);
         canvas.width = canvas.height = 1;
         return pixels;
