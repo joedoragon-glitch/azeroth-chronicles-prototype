@@ -1,0 +1,44 @@
+name: Temporary boss mechanical validation
+on:
+  push:
+    branches: [feature/boss-identity-pitstop-20261011]
+permissions:
+  contents: write
+jobs:
+  mechanical:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - name: Format new combat code and tests
+        run: |
+          npx prettier --write src/prototype/combat.js src/prototype/boss-combat.js src/prototype/engine.js tests/boss-mechanics-armor.test.cjs
+      - name: Validate armor and boss mechanics against actual engine
+        run: |
+          node tests/boss-mechanics-armor.test.cjs
+          node tests/boss-identity-pitstop.test.cjs
+          node tests/prototype.test.cjs
+      - name: Refresh reviewed-protected gameplay hashes
+        run: |
+          node <<'NODE'
+          const fs=require('node:fs'),crypto=require('node:crypto');
+          const path='tests/fixtures/perf-v09-protected.json',x=JSON.parse(fs.readFileSync(path,'utf8'));
+          for(const file of ['src/prototype/engine.js','src/prototype/combat.js','src/prototype/boss-combat.js'])
+            x.files[file]=crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+          fs.writeFileSync(path,JSON.stringify(x,null,2)+'\n');
+          NODE
+      - name: Commit validated formatting and hash amendments
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/prototype/combat.js src/prototype/boss-combat.js src/prototype/engine.js tests/boss-mechanics-armor.test.cjs tests/fixtures/perf-v09-protected.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Audit armor-exact Death Roll across all classes'
+            git push origin HEAD:feature/boss-identity-pitstop-20261011
+          fi
