@@ -784,7 +784,7 @@
           u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - dt);
           // Thornfang scatter overrides orders, doctrine and combat until
           // forced movement ends; then the unit resumes its normal assignment.
-          if (this.tacticalAdvanceScatter(u, dt)) continue;
+          if (u.deathRollHeld || this.tacticalAdvanceScatter(u, dt)) continue;
           if (u.order?.type === 'build') {
             const b = z.buildings.find((b) => b.id === u.order.id);
             if (b && b.progress < 4) {
