@@ -19,9 +19,11 @@
       chargedEncounterSnapshot() {
         return {
           zone: this.zoneId,
-          engaged: this.zone().enemies.filter(
-            (e) => this.chargedEncounterProtected(e) && e.hp > 0 && e.aggro && !e.returning,
-          ).map((e) => ({ id: e.id, fightStart: e.fightStart })),
+          engaged: this.zone()
+            .enemies.filter(
+              (e) => this.chargedEncounterProtected(e) && e.hp > 0 && e.aggro && !e.returning,
+            )
+            .map((e) => ({ id: e.id, fightStart: e.fightStart })),
         };
       }
       invalidChargedOpener(e, receipt) {

@@ -180,7 +180,9 @@ const server = http.createServer((req, res) => {
         Prototype.updateHUD();
       }, kind);
       await press(1);
-      await page.waitForFunction(() => Prototype.chargePresentation()?.ready, null, { timeout: 3000 });
+      await page.waitForFunction(() => Prototype.chargePresentation()?.ready, null, {
+        timeout: 3000,
+      });
       await page.evaluate(() => Prototype.game.engage(Prototype.game.zone().enemies[0]));
       await release(1);
       const reset = await page.evaluate(() => {
@@ -199,7 +201,9 @@ const server = http.createServer((req, res) => {
         g.engage(g.zone().enemies[0]);
       });
       await press(1);
-      await page.waitForFunction(() => Prototype.chargePresentation()?.ready, null, { timeout: 3000 });
+      await page.waitForFunction(() => Prototype.chargePresentation()?.ready, null, {
+        timeout: 3000,
+      });
       await release(1);
       const valid = await page.evaluate(() => {
         const g = Prototype.game;
