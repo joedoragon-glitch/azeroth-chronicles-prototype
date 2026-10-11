@@ -407,8 +407,7 @@
         e.lastAttackIndex = selected;
         e.sequence = [...built.sequence, ...this.bossComboSequence(e, selected, actualTarget)];
         e.telegraph = built.first;
-        if (e.family === 'mine' && selected === 1)
-          this.previewMineWorks(e, built.sequence.at(-1) || built.first);
+        if (e.family === 'mine' && selected === 1) this.prepareMineWorksPreview(e);
         this.event('warning', { family: e.family, index: selected });
         return true;
       }
@@ -419,6 +418,13 @@
           y: a.y + (i % 2) * 100,
           radius: a.count > 1 ? 75 * R.bossCadence.areaRangeMultiplier : a.radius,
         }));
+      }
+      prepareMineWorksPreview(e) {
+        if (e.family !== 'mine' || e.telegraph?.index !== 1) return;
+        // Predict from the last marked impact, not the first one. This also
+        // works when Collapse is chained after a different engineering skill.
+        const lastCollapse = (e.sequence || []).filter((a) => a.index === 1).at(-1);
+        this.previewMineWorks(e, lastCollapse || e.telegraph);
       }
       previewMineWorks(e, attack) {
         if (e.family !== 'mine' || this.s.zone !== 'mine') return;
@@ -445,7 +451,7 @@
             expiresAt: this.s.time + 8,
           });
       }
-      raiseMineWorks(e, attack) {
+      raiseMineWorks(e, attack, reservedSites = null) {
         if (e.family !== 'mine' || e.hp <= 0 || this.peace || this.s.zone !== 'mine') return 0;
         const z = this.zone();
         // A maximum of two pieces of temporary construction may obstruct the arena.
@@ -466,10 +472,16 @@
             [-80, 185],
             [80, 185],
           ],
+          candidates =
+            reservedSites === null
+              ? offsets.map(([dx, dy]) => ({ x: attack.x + dx, y: attack.y + dy }))
+              : reservedSites,
           newlyBuilt = [];
-        for (const [dx, dy] of offsets) {
+        // At impact, only the previously previewed positions may become solid.
+        // Revalidate each one against moving occupants and routes; cancel an
+        // unsafe site rather than secretly constructing somewhere else.
+        for (const p of candidates) {
           if (newlyBuilt.length >= 2) break;
-          const p = { x: attack.x + dx, y: attack.y + dy };
           if (
             this.blocked(p.x, p.y, z.id, 28) ||
             targets.some((u) => dist(u, p) < 110) ||
@@ -641,8 +653,12 @@
           return;
         }
         this.resolveArea(e, a);
-        if (e.family === 'mine' && a.index === 1 && !(e.sequence || []).some((t) => t.index === 1))
-          this.raiseMineWorks(e, a);
+        if (e.family === 'mine' && a.index === 1 && !(e.sequence || []).some((t) => t.index === 1)) {
+          const reserved = this.zone().props
+            .filter((p) => p.garunPreview)
+            .map((p) => ({ x: p.x, y: p.y }));
+          this.raiseMineWorks(e, a, reserved);
+        }
       }
       resolveArea(e, a) {
         const party = this.combatTargets(),
@@ -742,6 +758,8 @@
           if (a.opening)
             e.open = e.form === 'true' && e.family === 'citadel' ? a.opening / 2 : a.opening;
           e.telegraph = e.sequence?.shift() || null;
+          if (e.family === 'mine' && a.index !== 1 && e.telegraph?.index === 1)
+            this.prepareMineWorksPreview(e);
           if (e.telegraph) this.event('warning', { family: e.family });
           else e.basicDue = e.type === 'boss' && e.attackIndex % R.bossCadence.skillsPerBasic === 0;
         }
