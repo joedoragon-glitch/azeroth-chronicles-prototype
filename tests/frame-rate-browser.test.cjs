@@ -141,7 +141,11 @@ const server = http.createServer((req, res) => {
       });
       const hi = await hiContext.newPage();
       await hi.addInitScript(() => {
-        localStorage.setItem('azeroth-optimization-mode-v1', 'on');
+        // Seed only the first load; subsequent reloads must honor saved changes.
+        if (!sessionStorage.getItem('optimization-seeded')) {
+          localStorage.setItem('azeroth-optimization-mode-v1', 'on');
+          sessionStorage.setItem('optimization-seeded', 'true');
+        }
       });
       await hi.goto(
         'http://127.0.0.1:' + server.address().port + (phone ? '/phone.html' : '/index.html'),
