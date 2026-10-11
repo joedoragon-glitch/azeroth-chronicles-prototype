@@ -36,6 +36,6 @@ assert.equal(game.bossOwnedSummons(e).length, 12, 'population stops at safety ce
 assert.equal(game.summonBossAdds(e, plan, game.bossSummonCap(e)), 0);
 
 const trueBoss = game.bossEnemy(boss('crypt'), 'true', {x: 1050, y: 1100});
-assert.equal(trueBoss.name, 'Lifebinder TRUE');
+assert.equal(trueBoss.name, 'TRUE Lifebinder');
 assert.equal(game.bossSummonCap(trueBoss), 6, 'TRUE initial entourage retains established six-person composition');
 console.log('PASS staged Lifebinder and pit-stop combat contracts');
