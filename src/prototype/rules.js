@@ -2096,7 +2096,8 @@
       presentation: 'workstation',
       workKind: 'smith',
       workstation: 'equipment-repair',
-      context: 'Dara is kept here, but Garun pays for repairs and his odd little sculptures; the smith can move about the workshop, not leave the Mine.',
+      context:
+        'Dara is kept here, but Garun pays for repairs and his odd little sculptures; the smith can move about the workshop, not leave the Mine.',
     },
   };
   const regionalHandoffScenes = {
