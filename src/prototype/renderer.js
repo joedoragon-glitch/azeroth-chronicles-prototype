@@ -120,6 +120,34 @@
     const groundCache = PrototypeGroundCache ? new PrototypeGroundCache() : null;
     let cacheGround = true,
       optimized = false;
+    const phaseSamples = [];
+    let drawCount = 0,
+      phaseSample = null,
+      phaseAt = 0;
+    function finishPhase(name) {
+      if (!phaseSample) return;
+      const stamp = now();
+      phaseSample[name] = Math.max(0, stamp - phaseAt);
+      phaseAt = stamp;
+    }
+    function phaseReport() {
+      const quantile = (values, p) => {
+        const list = values.slice().sort((a, b) => a - b);
+        return Number((list[Math.floor((list.length - 1) * p)] || 0).toFixed(2));
+      };
+      const labels = ['floor', 'terrain', 'entities', 'effects'];
+      return {
+        sampledFrames: phaseSamples.length,
+        sampleEvery: 12,
+        // Sampled renderer phases, not exclusive CPU attribution or simulation time.
+        ...Object.fromEntries(
+          labels.map((label) => {
+            const values = phaseSamples.map((row) => row[label]);
+            return [label, { p95Ms: quantile(values, 0.95), p99Ms: quantile(values, 0.99) }];
+          }),
+        ),
+      };
+    }
     const stats = {
       tileCandidates: 0,
       tilesDrawn: 0,
@@ -174,6 +202,8 @@
     }
     function draw() {
       game = getGame();
+      phaseSample = ++drawCount % 12 === 0 ? {} : null;
+      phaseAt = phaseSample ? now() : 0;
       for (const key of Object.keys(stats)) stats[key] = 0;
       origin = offset();
       PrototypeSprites?.beginFrame?.();
@@ -184,6 +214,11 @@
         render();
       } finally {
         ctx.restore();
+        if (phaseSample?.effects !== undefined) {
+          phaseSamples.push(phaseSample);
+          if (phaseSamples.length > 64) phaseSamples.shift();
+        }
+        phaseSample = null;
         PrototypeSprites?.endFrame?.();
         PrototypeMaterials?.endFrame?.();
         origin = null;
@@ -1351,6 +1386,7 @@
           );
         }
       ctx.restore();
+      finishPhase('floor');
       if (authoredFloor) PrototypeVisuals.dungeonArchitecture(ctx, screen, game.zoneId, size);
       if (!game.isDungeon())
         PrototypeVisuals.terrain(ctx, screen, i, size, optimized ? null : PrototypeMaterials);
@@ -1358,6 +1394,7 @@
       if (!game.isDungeon())
         PrototypeVisuals.bridges(ctx, screen, i, optimized ? null : PrototypeMaterials);
       PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000);
+      finishPhase('terrain');
       const boardCue = null,
         captainCue = game.zoneId === 'vale' && game.s.party.length <= 2;
       const entities = [];
@@ -1569,6 +1606,7 @@
         ctx.fillStyle = '#fff0bb';
         ctx.fillRect(p.x - 3, p.y - 8, 2, 2);
       }
+      finishPhase('entities');
       const ambientLights = [
         ...game
           .visibleNPCs()
@@ -1615,6 +1653,7 @@
         ctx.textAlign = 'center';
         ctx.fillText('Paused', canvas.width * 0.65, canvas.height * 0.45);
       }
+      finishPhase('effects');
     }
     return {
       draw,
@@ -1652,6 +1691,7 @@
         transientEffects: visualFx.length,
         enemyVfxEffects: visualFx.filter((f) => f.type === 'enemyVfx').length,
         groundCache: groundCache?.status() || null,
+        phases: phaseReport(),
       }),
     };
   }
