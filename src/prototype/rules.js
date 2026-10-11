@@ -40,6 +40,7 @@
       attack('line', 1.5, 1.5, { count: 2, manaDrain: 0.08 }),
       attack('circle', 1.5, 1.5, { slow: true, persistent: true, manaDrain: 0.04 }),
       attack('summon', 1.7, 1.5, { species: 'wraith', ranged: true }),
+      attack('circle', 1.5, 1.5, { sabotage: true }),
     ],
     ridge: [
       attack('cone', 1, 1),
