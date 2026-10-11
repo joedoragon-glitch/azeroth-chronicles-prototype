@@ -22,9 +22,7 @@ const live = (c) => {
   for (const save of [state.s, state.snapshot]) {
     const zone = save?.zones?.highlands;
     if (!zone) continue;
-    zone.props = zone.props.filter(
-      (p) => !String(p.id || '').startsWith('ironroot-life-'),
-    );
+    zone.props = zone.props.filter((p) => !String(p.id || '').startsWith('ironroot-life-'));
     delete zone.ironrootLifeVersion;
   }
   return state;
