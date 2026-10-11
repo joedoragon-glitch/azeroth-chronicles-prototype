@@ -1509,7 +1509,7 @@
       this._tacticalRepositions?.clear();
       this._tacticalPartyTargets?.clear();
       for (const oldZone of Object.values(this.s.zones))
-        oldZone.props = oldZone.props.filter((p) => !p.garunTemporary);
+        oldZone.props = oldZone.props.filter((p) => !p.garunTemporary && !p.garunPreview);
       this.s.zone = zone;
       this.zone();
       this.s.recallActive = false;
@@ -2324,7 +2324,7 @@
       if (z.id === 'mine')
         z.props = z.props.filter(
           (p) =>
-            !p.garunTemporary ||
+            (!p.garunTemporary && !p.garunPreview) ||
             (p.expiresAt > this.s.time &&
               !this.peace &&
               z.enemies.some((e) => e.family === 'mine' && e.hp > 0)),
