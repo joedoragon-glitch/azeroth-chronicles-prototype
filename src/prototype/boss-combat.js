@@ -761,8 +761,10 @@
                 move.targetId === 'hero'
                   ? this.hero
                   : this.combatTargets().find((u) => u.id === move.targetId);
-            if (victim?.hp > 0 && dist(victim, move) <= move.radius && this.line(e, victim))
-              this.hitParty(victim, e.damage * move.coefficient);
+            if (victim?.hp > 0 && dist(victim, move) <= move.radius && this.line(e, victim)) {
+              const hit = this.hitParty(victim, e.damage * move.coefficient);
+              if (hit && victim.hp > 0) this.applySlow(victim, move.slowSeconds || 0.95);
+            }
           } else if (a.aerial === 'wingover') {
             originalRogueMove.call(this, e, a.rogueAttack);
           } else if (a.aerial === 'go-around' && e.hp > 0) {

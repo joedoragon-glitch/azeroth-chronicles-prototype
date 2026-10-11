@@ -54,6 +54,12 @@ function resolveThroughAI(c, e, a) {
     elapsed += 0.05;
   }
   assert.notEqual(e.telegraph, a, a.name + ' resolves through enemy AI');
+  while (e.motion && elapsed < a.total + 8) {
+    c.s.time += 0.05;
+    c.updateEnemies(0.05);
+    elapsed += 0.05;
+  }
+  assert.equal(e.motion, null, a.name + ' finishes its warned movement');
   assert(e.cd > 0, a.name + ' enters recovery');
 }
 test('The live normal/night roster and elite catalogue have complete authored repertoires', () => {
@@ -178,6 +184,8 @@ test('All signature footprints can be dodged and real solid cover blocks their h
         assert(!c.line(e, c.hero), 'real solid blocks sight');
       } else Object.assign(c.hero, { x: a.x + a.radius + 15, y: a.y });
       c.tacticalResolveRogueMove(e, a);
+      for (let tick = 0; tick < 160 && e.motion; tick++) c.advanceMotion(e, 0.05);
+      assert.equal(e.motion, null, a.name + ' finishes without an unavoidable hit');
       assert.equal(c.hero.hp, hp, a.name + (cover ? ' respects cover' : ' respects mark'));
       assert.equal(c.hero.slow, 0, 'avoided hit cannot slow');
       assert(!c.tacticalScatterState(c.hero), 'avoided hit cannot scatter');

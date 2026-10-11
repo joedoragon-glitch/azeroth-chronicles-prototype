@@ -7,7 +7,7 @@
     "src/prototype/party.js": "41a66f5b3c95a09414b1308df557aff1cbb232d341f601b1f1fcaf1d2d40d726",
     "src/prototype/combat.js": "8b14cc8e5e0a1519b83cd7201a82a6b2b2e08d7d4e4294b641dfa5d5b6a0aa4b",
     "src/prototype/hero-combat.js": "9873768cf15322246de3a2892785ebdecc9cc9ed72ff7bbb377a264647135070",
-    "src/prototype/boss-combat.js": "5e042ad1f4d7048db96bae8786e2e0a14580a8a6b5d03cff7c8a15e417c40dc1",
+    "src/prototype/boss-combat.js": "3e78ea86abcf4dd653adc59b03f2386d850456309d7a073f3f476459742b4baf",
     "src/prototype/progression.js": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
     "src/prototype/economy.js": "fd9701ee01d2748f22f176ce84d06f8769c0eb8b84963460380457a61933487a",
     "src/prototype/rewards.js": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525",
@@ -50,6 +50,7 @@
     "formattedSourceSha256": "20f7cdc2430e1e33ba6d2a37971bed43f9dd0b7f46800ac82fcafc6482d3471b",
     "motionCorrection": "Unchanged legacy charges retain one-unit destination threshold; aerial paths use ten-unit waypoint tolerance",
     "flightPathCorrection": "Second Lazy Eight path originates from first landing; original collision guard unchanged",
-    "vfxContract": "Aerial motion carries the original rogue move signature fields so VFX and audio routing retain stable identity"
+    "vfxContract": "Aerial motion carries the original rogue move signature fields so VFX and audio routing retain stable identity",
+    "rogueSlowFix": "High Yo-Yo retains original on-hit pursuit slow in addition to damage"
   }
 }
