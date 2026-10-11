@@ -175,3 +175,32 @@ builder.tick(0.05);
 assert(!builderZone.props.some((p) => p.garunTemporary), 'supports expire without becoming permanent walls');
 assert.equal(builderZone.enemies.filter((e) => e.guard).length, 18);
 console.log('PASS temporary support placement, collision, route access, save exclusion and expiry');
+
+const works = fresh();
+works.enter('mine');
+const mineBoss = works.zone().enemies.find((e) => e.family === 'mine' && e.type === 'boss');
+const gallery = works.zone().props.filter((p) =>
+  ['geometric-gallery', 'kinetic-collection', 'art-object'].includes(p.sceneRole),
+);
+assert.equal(gallery.length, 3, 'Garun has three existing-art geometric collectibles');
+assert(gallery.every((p) => p.decorative && p.r === 0));
+works.updateIdleWander(mineBoss, 0.1);
+assert(Number.isFinite(mineBoss.inspectionWait), 'boss begins a bounded inspection patrol');
+const originalProps = works.zone().props.length;
+const placed = works.raiseMineWorks(mineBoss, { x: mineBoss.x, y: mineBoss.y });
+assert(placed >= 0 && placed <= 2, 'only two supports may be raised');
+assert.equal(works.zone().props.length, originalProps + placed);
+const structures = works.zone().props.filter((p) => p.garunTemporary);
+assert(structures.every((p) => p.r === 24 && !p.decorative));
+assert(!works.snapshot().zones.mine.props.some((p) => p.garunTemporary));
+const reload = Campaign.restore(works.snapshot());
+assert.equal(reload.zone().props.filter((p) => p.garunTemporary).length, 0);
+assert.equal(reload.zone().props.filter((p) => p.sceneRole === 'art-object').length, 1);
+works.s.time += 10;
+works.tick(0.1);
+assert.equal(works.zone().props.filter((p) => p.garunTemporary).length, 0);
+works.raiseMineWorks(mineBoss, { x: mineBoss.x, y: mineBoss.y });
+works.enter('highlands');
+assert.equal(works.s.zones.mine.props.filter((p) => p.garunTemporary).length, 0);
+console.log('PASS Garun inspection, gallery, temporary route-checked supports, expiry and save cleanup');
+
