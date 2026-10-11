@@ -47,8 +47,8 @@ The clues complement rather than replace all Forest Crypt props: coffins, ossuar
 
 | Surface | This PR | #230 / integration warning |
 | --- | --- | --- |
-| Identity | Name “Lifebinder” for existing family **crypt**, never a second Great Lifekeeper | #230 also renames this table; reconcile by intent, not blind cherry-pick |
-| Encounter | Normal name “Lifebinder”; TRUE instance “TRUE Lifebinder” | Existing early-dungeon HP **650**, damage **16**, level **3** and original moves stay here |
+| Identity | Name “Lifebinder” for existing family **crypt**, never a second Great Lifekeeper | #230 also renames this table and uses the different `TRUE Lifebinder` ordering; adopt that title only with its separately reviewed runtime changes |
+| Encounter | Normal name “Lifebinder”; TRUE instance “Lifebinder TRUE” | Existing early-dungeon HP **650**, damage **16**, level **3** and original moves stay here |
 | Quests / saves | Quest 3 name, id, target, rewards, rescued/keys/victory flags unchanged; on v4 restore, old boss entity labels are updated in place | Do not rewrite legacy key strings, audio and sprite family keys or historical snapshots |
 | Combat | This PR deliberately retains the baseline skeleton grave call, three living normal summons, and six-unit TRUE roster; no changed base damage or geometry | #230 experiments with three Crown-styled estate retainers per cast up to twelve living normal adds; ground circles expand to four. The draft itself marks target placement, TRUE styling, original artwork, mobile solo audits and tests incomplete |
 | Estate | Adds text to existing dungeon and workstation inspection; old geometry and props untouched | #230 stages warmer palette and furniture but has unfinished art, construction detail and save/phone route QA |
