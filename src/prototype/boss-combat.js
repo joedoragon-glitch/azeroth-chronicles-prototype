@@ -419,8 +419,7 @@
       }
       startBossRecovery(e) {
         const cfg =
-          (e.family === 'darklord' || !R.resourceMode.manaEnabled) &&
-          R.bossRecovery[e.family];
+          (e.family === 'darklord' || !R.resourceMode.manaEnabled) && R.bossRecovery[e.family];
         if (
           !cfg ||
           e.type !== 'boss' ||

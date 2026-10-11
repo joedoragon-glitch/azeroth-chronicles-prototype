@@ -45,7 +45,7 @@
     "gitBlobSha1": {
       "src/prototype/data.js": "e94e3da3b880f9013f001efdb27ac98d887615d3",
       "src/prototype/rules.js": "4d990309151951e2a64ec5eb579546233cfa834e",
-      "src/prototype/boss-combat.js": "f67597cc27b1f0ebe500eca8002e92ebf1c24a5d",
+      "src/prototype/boss-combat.js": "6ace8d749b08164426a6efa83b1aceac1eb2233a",
       "src/prototype/combat.js": "e32fcda7976f4acd2eca7b2a488dc51bbe9cebfb"
     }
   }
