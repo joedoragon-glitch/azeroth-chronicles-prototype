@@ -47,7 +47,10 @@
               this.line(from, e),
           )
           .sort((a, b) => this.idOrder(a, b))) {
-          if (this.damage(e, baseDamage * (cfg.secondaryMultiplier || 0.55), source)) hits++;
+          if (
+            this.damage(e, baseDamage * (cfg.secondaryMultiplier || 0.55), source, { area: true })
+          )
+            hits++;
         }
         this.event('basicComboFinisher', {
           class: heroClass,
@@ -65,7 +68,9 @@
         });
         return hits;
       }
+      // Legacy MP cost stays executable behind resourceMode for reversible restoration.
       skillManaCost(slot, rank = this.hero.skills[slot - 1] || 1, charged = false) {
+        if (!R.resourceMode.manaEnabled) return 0;
         if (charged) {
           const fraction = R.chargedSkills?.manaFractions?.[slot];
           if (fraction) return Math.max(1, Math.ceil(this.hero.maxMp * fraction));
@@ -73,11 +78,130 @@
         if (slot === 1) return 0;
         return Math.ceil(costs[slot] * (1 + R.manaBalance.rankCostGrowth * Math.max(0, rank - 1)));
       }
+      skillCooldown(slot, charged = false) {
+        const base =
+          !R.resourceMode.manaEnabled && charged
+            ? R.cooldownBalance.chargedSeconds[slot] || cooldowns[slot]
+            : cooldowns[slot];
+        return (
+          base *
+          (1 -
+            Math.min(5, this.hero.talents[1] || 0) *
+              (R.resourceMode.manaEnabled ? 0 : R.cooldownBalance.reductionPerTalentRank))
+        );
+      }
+      // Target selection is transient: no changes to campaign saves or difficulty.
+      // A held Target locks the current foe even while dodging beyond selection range.
+      selectedHeroTarget() {
+        const id = this.manualHeroTargetId;
+        if (!id) return null;
+        const enemy =
+          this.manualHeroTargetZone === this.zoneId
+            ? this.zone().enemies.find((e) => e.id === id)
+            : null;
+        if (
+          this.peace ||
+          this.hero.hp <= 0 ||
+          this.s.challenge?.pending ||
+          this.s.challenge?.gameOver ||
+          !enemy ||
+          enemy.hp <= 0 ||
+          enemy.neutral ||
+          enemy.returning ||
+          !this.tacticalDirectTargetable(enemy) ||
+          (this.manualHeroTargetLocked
+            ? dist(enemy, this.hero) > 1400 && !enemy.aggro
+            : dist(enemy, this.hero) > 680)
+        ) {
+          this.manualHeroTargetId = null;
+          this.manualHeroTargetLocked = false;
+          this.manualHeroTargetZone = null;
+          if (this.s.heroTarget === id) this.s.heroTarget = null;
+          return null;
+        }
+        return enemy;
+      }
+      holdHeroTarget(visible = () => true, preferredId = null) {
+        if (this.peace) return null;
+        let enemy = this.selectedHeroTarget();
+        // A long press holds the foe already being attacked, not necessarily
+        // the nearest summon that appeared while the button was depressed.
+        if (!enemy) {
+          const id = preferredId || this.s.heroTarget;
+          enemy = this.zone().enemies.find(
+            (e) =>
+              e.id === id &&
+              e.hp > 0 &&
+              !e.neutral &&
+              !e.returning &&
+              this.tacticalDirectTargetable(e) &&
+              dist(e, this.hero) <= 680 &&
+              this.line(this.hero, e) &&
+              visible(e),
+          );
+        }
+        if (!enemy) enemy = this.cycleHeroTarget(visible);
+        if (!enemy) return null;
+        this.manualHeroTargetId = enemy.id;
+        this.manualHeroTargetZone = this.zoneId;
+        this.manualHeroTargetLocked = true;
+        this.s.heroTarget = enemy.id;
+        return enemy;
+      }
+      cycleHeroTarget(visible = () => true) {
+        if (this.peace) return null;
+        const current = this.selectedHeroTarget();
+        const enemies = this.zone()
+          .enemies.filter(
+            (e) =>
+              e.hp > 0 &&
+              !e.neutral &&
+              !e.returning &&
+              this.tacticalDirectTargetable(e) &&
+              dist(e, this.hero) <= 680 &&
+              this.line(this.hero, e) &&
+              visible(e),
+          )
+          .sort((a, b) => dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b));
+        if (!enemies.length) {
+          // A deliberate quick press releases a lock even offscreen, including
+          // its legacy squad-focus target, so automatic combat can resume.
+          if (this.s.heroTarget === this.manualHeroTargetId) this.s.heroTarget = null;
+          this.manualHeroTargetId = null;
+          this.manualHeroTargetLocked = false;
+          this.manualHeroTargetZone = null;
+          return null;
+        }
+        const index = enemies.findIndex((e) => e.id === current?.id);
+        const target = enemies[(index + 1) % enemies.length];
+        this.manualHeroTargetId = target.id;
+        this.manualHeroTargetZone = this.zoneId;
+        this.manualHeroTargetLocked = false; // A new manual choice releases an old lock.
+        this.s.heroTarget = target.id;
+        return target;
+      }
+      heroSkillRange(slot, charged = false) {
+        const second = charged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null;
+        return second
+          ? second.range || 480
+          : this.hero.class === 'paladin' && slot < 3
+            ? 120
+            : slot === 1
+              ? this.hero.class === 'mage'
+                ? 400
+                : 450
+              : 480;
+      }
       cast(slot, targetId, charged = false) {
         const i = slot - 1,
           rank = this.hero.skills[i],
           isCharged = !!charged && (slot === 1 || slot === 2 || slot === 3);
-        if (this.s.challenge.pending || this.s.challenge.gameOver) return false;
+        if (
+          this.s.challenge.pending ||
+          this.s.challenge.gameOver ||
+          this.tacticalScatterState(this.hero)
+        )
+          return false;
         if (!rank || this.hero.cd[i] > 0 || this.peace) {
           if (!rank) this.say('This skill must be learned from a rescued instructor.');
           return false;
@@ -85,24 +209,28 @@
         const scale = 1 + 0.15 * (rank - 1),
           chargedSecond =
             isCharged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null,
-          range = chargedSecond
-            ? chargedSecond.range || 480
-            : this.hero.class === 'paladin' && slot < 3
-              ? 120
-              : slot === 1
-                ? this.hero.class === 'mage'
-                  ? 400
-                  : 450
-                : 480,
+          range = this.heroSkillRange(slot, isCharged),
+          selected = this.selectedHeroTarget(),
           targets = this.zone().enemies.filter(
-            (e) => e.hp > 0 && !e.neutral && dist(e, this.hero) <= range && this.line(this.hero, e),
+            (e) =>
+              e.hp > 0 &&
+              !e.neutral &&
+              this.tacticalDirectTargetable(e) &&
+              dist(e, this.hero) <= range &&
+              this.line(this.hero, e),
           ),
           preferredTargetId =
-            targetId ?? (slot === 1 ? (this.basicComboTargetId ?? this.s.heroTarget) : null),
+            targetId ??
+            selected?.id ??
+            (slot === 1 ? (this.basicComboTargetId ?? this.s.heroTarget) : null),
+          requiresTarget = [1, 2, 6, 7, 8].includes(slot),
+          lockedOut = !targetId && selected && requiresTarget,
           target =
             targets.find((e) => e.id === preferredTargetId) ||
-            targets.find((e) => slot === 1 && e.id === this.s.heroTarget) ||
-            targets.sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0];
+            (lockedOut
+              ? null
+              : targets.find((e) => slot === 1 && e.id === this.s.heroTarget) ||
+                targets.sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0]);
         if ([1, 2, 6, 7, 8].includes(slot) && !target) return false;
         if (slot === 3) {
           const living = [this.hero, ...this.activeLivingParty()].filter((u) => u.hp > 0);
@@ -113,8 +241,8 @@
         const cost = this.skillManaCost(slot, rank, isCharged);
         if (this.hero.mp < cost) return false;
         this.hero.mp -= cost;
-        this.hero.cd[i] = cooldowns[slot];
-        if (target && [1, 2, 6, 7, 8].includes(slot)) this.s.heroTarget = target.id;
+        this.hero.cd[i] = this.skillCooldown(slot, isCharged);
+        if (target && requiresTarget) this.s.heroTarget = selected?.id || target.id;
         const power = this.power();
         if (isCharged && slot === 1) {
           this.resetBasicCombo();
@@ -248,9 +376,9 @@
           for (const e of this.zone()
             .enemies.filter((e) => e.hp > 0 && !e.neutral && inside(e) && this.line(this.hero, e))
             .sort((a, b) => this.idOrder(a, b))) {
-            if (this.damage(e, damage)) {
+            if (this.damage(e, damage, 'hero', { area: true })) {
               hits++;
-              if (def.slow) e.slow = Math.max(e.slow || 0, def.slow);
+              if (def.slow) this.applySlow(e, def.slow);
             }
           }
           this.event(this.hero.class === 'paladin' ? 'melee' : 'spell', {
@@ -330,7 +458,10 @@
           else
             this.hero.immune = Math.min(
               4,
-              (this.hero.class === 'paladin' ? 2.5 : 2) + 0.15 * (rank - 1),
+              Math.max(
+                this.hero.immune || 0,
+                (this.hero.class === 'paladin' ? 2.5 : 2) + 0.15 * (rank - 1),
+              ),
             );
           this.event('spell', {
             actor: 'hero',
@@ -344,19 +475,22 @@
           for (const e of this.zone()
             .enemies.filter((e) => e.hp > 0 && dist(e, this.hero) < (slot === 5 ? 350 : 500))
             .sort((a, b) => this.idOrder(a, b))) {
-            this.damage(
+            const landed = this.damage(
               e,
               (slot === 8
                 ? power * 4 + 60
                 : slot === 7
                   ? power * (this.hero.class === 'mage' ? 7 : 6)
                   : power * 2.3) * scale,
+              'hero',
+              { area: true },
             );
-            if (this.hero.class === 'mage' && slot !== 8) e.slow = slot === 5 ? 5 : 6;
+            if (landed && this.hero.class === 'mage' && slot !== 8)
+              this.applySlow(e, slot === 5 ? 5 : 6);
           }
           if (slot === 8) {
             this.hero.hp = Math.min(this.hero.maxHp, this.hero.hp + this.hero.maxHp * 0.35 * scale);
-            this.hero.immune = Math.min(4, 3 + 0.15 * (rank - 1));
+            this.hero.immune = Math.min(4, Math.max(this.hero.immune || 0, 3 + 0.15 * (rank - 1)));
           }
           this.event('spell', {
             actor: 'hero',

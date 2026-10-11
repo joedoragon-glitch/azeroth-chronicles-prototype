@@ -1,0 +1,112 @@
+{
+  "version": 2,
+  "key": "enemy:goblin",
+  "catalogId": "016",
+  "canonHash": "aaae81634188dec92335c2937ebbff673f5cd456580ac3730c9395c63cd70f19",
+  "canonSnapshotHash": "5cbef5f08be5e0740e45e1d1ea2a6149059d499841a053d4e8c7f7bf70ba49dd",
+  "catalogHash": "afea6b2cccaad719db7caf0f8f7351d250bd5779d1beb9305e05da0d5262c4f5",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 159294,
+    "decodedBytes": 6290064,
+    "hash": "b8423a10966722469bffd137a93b888d2a2ecf9415245f7dddf3520f005e21c1",
+    "pixelHash": "d8d18d60d978d1f784424c2636c83b8add4435147e5dc35f0510db71875a1094",
+    "bounds": {
+      "x1": 121,
+      "y1": 47,
+      "x2": 1183,
+      "y2": 1138
+    },
+    "padding": 47,
+    "transparentPixels": 1511131,
+    "visiblePixels": 61385,
+    "lowAlphaPixels": 5526,
+    "materialBounds": {
+      "x1": 535,
+      "y1": 728,
+      "x2": 793,
+      "y2": 1056
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 576,
+    "height": 576,
+    "bytes": 42500,
+    "decodedBytes": 1327104,
+    "hash": "977965160458746599c43cfcc84d7c2b5ba8d6cd4ada9be645fde7f017fc7fc5",
+    "pixelHash": "cae7d6fe62ceaeb1a556fd7978f71511492b3b4e1fc8b813611d0db62a24f6f1",
+    "bounds": {
+      "x1": 52,
+      "y1": 25,
+      "x2": 525,
+      "y2": 503
+    },
+    "padding": 25,
+    "transparentPixels": 319536,
+    "visiblePixels": 12240,
+    "lowAlphaPixels": 1077,
+    "materialBounds": {
+      "x1": 238,
+      "y1": 330,
+      "x2": 353,
+      "y2": 477
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 54
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1254,
+      1254
+    ],
+    "to": [
+      576,
+      576
+    ],
+    "rasterScale": 3,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": {
+        "left": 16,
+        "right": 16,
+        "top": 16,
+        "bottom": 16
+      },
+      "virtualWidth": 1286,
+      "virtualHeight": 1286,
+      "input": "untouched-original",
+      "samplingPasses": 1,
+      "intermediatePixelsUsed": false
+    },
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": -3,
+      "y": -1,
+      "rasterX": -9,
+      "rasterY": -3,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+    "kind": "engineer-authorized",
+    "userAppearanceAcceptance": false,
+    "scope": "Original source identity retained; preliminary frame preparation verified. Final assembled native review pending."
+  }
+}

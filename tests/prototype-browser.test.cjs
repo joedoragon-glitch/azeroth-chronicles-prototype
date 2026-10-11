@@ -10,20 +10,21 @@ if(!baseURL){
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});
  baseURL='http://127.0.0.1:'+server.address().port+'/';
 }
-const viewports=smoke?[{width:1280,height:800,touch:false},{width:375,height:812,touch:true}]:[{width:1280,height:800,touch:false},{width:375,height:812,touch:true},{width:320,height:568,touch:true},{width:844,height:390,touch:true},{width:768,height:310,touch:true},{width:568,height:320,touch:true},{width:980,height:1740,touch:true}];
+const viewports=smoke?[{width:1280,height:800,touch:false},{width:375,height:812,touch:true}]:[{width:1280,height:800,touch:false},{width:375,height:800,touch:true},{width:393,height:852,touch:true},{width:800,height:375,touch:true},{width:844,height:390,touch:true},{width:980,height:1740,touch:true}];
 for(const v of viewports){
 const b=await pw.chromium.launch(launch),page=await b.newPage({viewport:{width:v.width,height:v.height},hasTouch:v.touch,isMobile:v.touch}),errors=[];activePage=page;page.setDefaultTimeout(15000);page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());await page.goto(baseURL);const tag=v.width+'x'+v.height;
 await check('New-game premise, Succession opt-in and audio gesture '+tag,async()=>{assert.equal(await page.locator('#modal-title').textContent(),'Challenge condition');const premise=await page.locator('#modal-description').textContent();assert(premise.includes('Dark Lord rules the land'));assert(premise.includes('captured the specialists'));assert.equal(await page.evaluate(()=>Prototype.audio.ctx),null);await page.keyboard.press('s');assert((await page.locator('#modal-actions button.selected').textContent()).includes('Succession challenge'));await page.keyboard.press('f');assert((await page.locator('#modal-title').textContent()).includes('New Normal adventure'));await page.keyboard.press('f');await page.waitForFunction(()=>document.querySelector('#modal').hidden);assert(await page.evaluate(()=>Prototype.game.s.challenge.succession));await page.waitForFunction(()=>Prototype.audio.ctx?.state==='running');assert.deepEqual(await page.evaluate(()=>Prototype.game.hero.skills),[1,0,0,0,0,0,0,0]);});
 await check('Production registry preserves exact sprites and procedural fallback '+tag,async()=>{await page.waitForFunction(()=>typeof PrototypeSprites!=='undefined'&&typeof PrototypeVisuals!=='undefined');await page.evaluate(()=>PrototypeSprites.preload());const manifest=await page.evaluate(async()=>await (await fetch('./assets/sprites/manifest.json')).json());const state=await page.evaluate(()=>({status:PrototypeSprites.status(),def:PrototypeSprites.definitionFor({...Prototype.game.hero,renderKind:'hero'},Prototype.game.regionIndex(),false),atmosphere:typeof PrototypeVisuals.atmosphere}));assert.equal(state.status.definitions,Object.keys(manifest.sprites).length,'production registry contract');assert(state.status.decodedBytes<=state.status.maxDecodedBytes);assert(state.status.loading<=state.status.maxConcurrentDecodes);if(!manifest.sprites['hero:'+ (await page.evaluate(()=>Prototype.game.hero.class))])assert.equal(state.def,null,'unregistered hero uses procedural fallback');else assert(state.def,'registered hero selects its exact key');assert.equal(state.atmosphere,'function');if(!smoke&&(v.width===1280||v.width===375)){const before=await page.evaluate(()=>Prototype.game.snapshot());await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');const z=c.zone();c.s.party=[];z.enemies=[];z.props=[];z.npcs=[];z.nodes=[];z.buildings=[];z.roads=[];Object.assign(c.hero,{x:1100,y:1100});});await page.waitForTimeout(80);await page.screenshot({path:path.join(results,'procedural-paladin-'+tag+'.png')});await page.evaluate(state=>{Prototype.game.s=state;},before);}});
+await check('Camera comparison, native pointer mapping and unchanged HUD '+tag,async()=>{await require('./helpers/camera-browser.cjs').verifyCamera(page,results,tag,v.touch,v.width===1280||v.width===375);assert.deepEqual(errors,[],'camera renderer errors');});
 await check('Ironroot settlements, household and working captive render on '+tag,async()=>{await require('./helpers/ironroot-browser.cjs').verifyIronroot(page,results,tag,v.width===1280||v.width===375);assert.deepEqual(errors,[],'Ironroot renderer errors');});
-await check('Accepted desktop/phone CSS is pixel-equivalent at fixed presentation '+tag,async()=>{
+await check('Approved responsive UI CSS is pixel-equivalent at fixed presentation '+tag,async()=>{
  if(smoke)return;
- const baseline=require('./fixtures/presentation-v0883.json');
+ const baseline=require('./fixtures/presentation-20261009.json');
  // Stop the entire frame loop, including its closed-over HUD refresh. Freezing
  // tick/draw alone leaves DOM writes racing the stylesheet replacement.
  await page.evaluate(async()=>{const p=Prototype;window.__layoutRestore={tick:p.game.tick,draw:p.renderer.draw,raf:window.requestAnimationFrame.bind(window)};p.game.tick=()=>{};p.renderer.draw=()=>{};window.requestAnimationFrame=callback=>{__layoutRestore.callback=callback;return 0;};p.updateHUD();await document.fonts.ready;await new Promise(resolve=>__layoutRestore.raf(()=>__layoutRestore.raf(resolve)));});
  const settle=()=>page.evaluate(()=>new Promise(resolve=>{document.body.getBoundingClientRect();__layoutRestore.raf(()=>__layoutRestore.raf(resolve));}));
- let style,probe;
+ let style,probe,authorizedTargetDelta;
  try{
    // Install both stylesheet sets through the same owner and paint path. Mixing
    // an already composited external sheet with a freshly inserted inline sheet
@@ -31,6 +32,8 @@ await check('Accepted desktop/phone CSS is pixel-equivalent at fixed presentatio
    const currentCSS=await page.evaluate(async()=>Promise.all([...document.querySelectorAll('link[rel="stylesheet"]')].map(async el=>{const response=await fetch(el.href);if(!response.ok)throw Error('Missing production CSS');return response.text();})));
    await page.evaluate(()=>document.querySelectorAll('link[rel="stylesheet"]').forEach(el=>el.sheet.disabled=true));
    style=await page.addStyleTag({content:currentCSS.join('\n')});
+   // Apply the older Target/Recall comparison mask consistently to both copies.
+   authorizedTargetDelta=await page.addStyleTag({content:'#target-button {display:none !important;} body[data-experience="phone"] #recall-button {width:104px !important;padding:6px 9px !important;}'});
    await settle();
    const current=await page.screenshot({animations:'disabled',caret:'hide',path:path.join(results,'accepted-css-current-'+tag+'.png')});
    await style.evaluate((el,css)=>{el.textContent=css;},Object.values(baseline.css).join('\n'));
@@ -43,6 +46,7 @@ await check('Accepted desktop/phone CSS is pixel-equivalent at fixed presentatio
    assert(!before.equals(await page.screenshot({animations:'disabled',caret:'hide'})),'CSS comparison must detect altered button geometry at '+tag);
  }finally{
    if(probe)await probe.evaluate(el=>el.remove());
+   if(authorizedTargetDelta)await authorizedTargetDelta.evaluate(el=>el.remove());
    if(style)await style.evaluate(el=>el.remove());
    await page.evaluate(()=>{document.querySelectorAll('link[rel="stylesheet"]').forEach(el=>el.sheet.disabled=false);Prototype.game.tick=__layoutRestore.tick;Prototype.renderer.draw=__layoutRestore.draw;window.requestAnimationFrame=__layoutRestore.raf;if(__layoutRestore.callback)window.requestAnimationFrame(__layoutRestore.callback);delete window.__layoutRestore;});
  }
@@ -60,7 +64,133 @@ await check('Terrain and effects module renders Citadel walls, normal abilities 
  await page.evaluate(state=>{__terrainProbe.restore();delete window.__terrainProbe;Prototype.game.s=state;},saved);
 });
 await check('Regional workstations and residence walls render with readable captive labels '+tag,async()=>{await require('./helpers/regional-browser.cjs').verifyRegional(page,results,tag,v.width===1280||v.width===375);assert.deepEqual(errors,[],'regional renderer errors');});
-await check('Movement, split controls, Q dormant, pause and keyboard menus '+tag,async()=>{assert.equal(await page.locator('#message').evaluate(el=>el.classList.contains('visible')),false,'critical notice starts hidden');assert.deepEqual(errors,[],'browser errors before movement '+tag);const a=await page.locator('#skills').boundingBox(),j=await page.locator('#joystick').boundingBox(),primary=await page.locator('#touch-interact-button').boundingBox(),hud=await page.locator('#hud').boundingBox();if(v.touch){if(primary)assert(a.x+a.width<=primary.x||primary.x+primary.width<=a.x||a.y+a.height<=primary.y||primary.y+primary.height<=a.y,'contextual Interact cannot cover skills');assert(hud.height<=60,'compact phone HUD');assert(a.y+a.height>=v.height-12,'combat rests at bottom edge');}else assert.equal(primary,null,'phone Interact is absent from desktop layout');if(!v.touch)assert(hud.x>=v.width/2-1,'desktop status/menu is on the right');else{assert(hud.x>=0&&hud.x+hud.width<=v.width,'phone HUD fits viewport');assert(hud.y+hud.height<a.y,'phone HUD stays above skill controls');const hero=await page.evaluate(()=>Prototype.renderer.screen(Prototype.game.hero));assert(hero.y-50>hud.y+hud.height,'phone HUD cannot cover the hero');}if(v.touch){assert(a.x>=v.width/2-2&&a.x+a.width<=v.width);assert(j.x>=0&&j.y+j.height<=v.height);}else{assert.equal(j,null,'desktop joystick is absent');assert(a.x>=0&&a.x+a.width<hud.x,'desktop skill bar leaves HUD clear');}assert(a.y>=0&&a.y+a.height<=v.height);await page.screenshot({path:path.join(results,'device-layout-'+tag+'.png')});if(v.touch)assert(a.x+a.width<=j.x||j.x+j.width<=a.x||a.y+a.height<=j.y||j.y+j.height<=a.y,'controls overlap');const start=await page.evaluate(()=>[Prototype.game.hero.x,Prototype.game.hero.y]);await page.keyboard.down('d');await page.waitForTimeout(150);await page.keyboard.up('d');const end=await page.evaluate(()=>[Prototype.game.hero.x,Prototype.game.hero.y]);assert(end[0]>start[0]);await page.keyboard.press('q');assert(await page.locator('#sprint-button').isHidden());await page.keyboard.press('Escape');const menuCopy=await page.locator('#modal-description').textContent(),top=await page.locator('#modal-actions button').allTextContents();assert(menuCopy.includes('Global adventure functions'));assert(!menuCopy.includes('WASD moves'));assert(top.length<=7);assert(top.some(x=>x.includes('Game and settings')));assert(!top.some(x=>x==='Continue'));assert(!top.some(x=>x==='Controls'));const t=await page.evaluate(()=>Prototype.game.s.time);await page.waitForTimeout(120);assert.equal(await page.evaluate(()=>Prototype.game.s.time),t);await page.keyboard.press('w');assert(await page.locator('#close-button').evaluate(b=>b.classList.contains('selected')));await page.keyboard.press('f');assert(await page.locator('#modal').isHidden());});
+await check('Compact HUD and readable scrolling dialogs '+tag,async()=>{
+ const metrics=await page.evaluate(()=>{
+  Prototype.openMenu('Dialogue size audit','Context and actions stay readable in a restrained window.',Array.from({length:14},(_,i)=>({label:'Action '+(i+1),detail:'A short NPC or structure option',action:()=>{}})));
+  const rect=id=>{const r=document.getElementById(id).getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom};};
+  const c=document.getElementById('modal-content');
+  return {modal:rect('modal'),back:rect('close-button'),hud:rect('hud'),scrollHeight:c.scrollHeight,clientHeight:c.clientHeight,mode:document.body.dataset.experience};
+ });
+ const phone=metrics.mode==='phone';
+ assert(metrics.modal.x>=0&&metrics.modal.x+metrics.modal.width<=v.width,'dialog fits horizontally');
+ assert(metrics.modal.y>=0&&metrics.modal.bottom<=v.height,'dialog fits vertically');
+ assert(metrics.modal.width<=(phone?(v.height<=500?390:330):430)+2,'dialog width is bounded');
+ assert(metrics.modal.height<=v.height*(phone?(v.height<=500?0.89:0.74):0.73)+2,'dialog no longer fills the screen');
+ assert(metrics.back.bottom<=metrics.modal.bottom+1,'Back remains inside the dialog');
+ assert(metrics.scrollHeight>metrics.clientHeight,'long option lists scroll inside the dialog');
+ if(phone)assert(metrics.hud.width<=310,'phone HUD is not a full-width banner');
+ else assert(metrics.hud.width<=214,'desktop status dock is compact');
+ const natural=await page.evaluate(()=>{
+  Prototype.openMenu('Small NPC','A short greeting.',[{label:'Talk',action:()=>{}}]);
+  const el=document.getElementById('modal');
+  const small={kind:el.dataset.dialogSize,width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height};
+  Prototype.openMenu('Regular shop','Choose a service.',Array.from({length:4},(_,i)=>({label:'Service '+i,action:()=>{}})));
+  const regular={kind:el.dataset.dialogSize,width:el.getBoundingClientRect().width};
+  Prototype.closeMenu();return {small,regular};
+ });
+ assert.equal(natural.small.kind,'compact','one-action NPC dialog has compact treatment');
+ assert.equal(natural.regular.kind,'regular','short vendor list has regular treatment');
+ assert(natural.small.width<natural.regular.width,'short interactions do not occupy a large panel');
+ assert(natural.small.height<metrics.modal.height,'short interactions contract vertically');
+ await page.evaluate(()=>Prototype.closeMenu());
+});
+await check('Outside tap dismisses menus without clicking through to the world '+tag,async()=>{
+ await page.evaluate(()=>{
+   Prototype.closeMenu();
+   Prototype.game.hero.order=null;
+   Prototype.openMenu('Outside tap test','Tap inside or outside the panel.',[{label:'Keep open',action:()=>{}}]);
+ });
+ await page.locator('#modal-description').click();
+ assert(await page.locator('#modal').isVisible(),'touching panel background keeps it open');
+ if(v.touch)await page.touchscreen.tap(4,Math.round(v.height/2));
+ else await page.mouse.click(4,Math.round(v.height/2));
+ assert(await page.locator('#modal').isHidden(),'tapping outside closes the dialog');
+ assert.equal(await page.evaluate(()=>Prototype.game.hero.order),null,'outside tap never queues world travel');
+ await page.evaluate(()=>Prototype.openMenu('Another dialog','', [{label:'Stay',action:()=>{}}]));
+ const hud=await page.locator('#menu-button').boundingBox();
+ if(v.touch)await page.touchscreen.tap(hud.x+hud.width/2,hud.y+hud.height/2);
+ else await page.mouse.click(hud.x+hud.width/2,hud.y+hud.height/2);
+ assert(await page.locator('#modal').isHidden(),'outside tap on HUD does not reopen another menu');
+});
+await check('Subminimum phone uses visual fitting, not a new design breakpoint '+tag,async()=>{
+ if(!v.touch||v.width!==375||v.height>812||smoke)return;
+ await page.setViewportSize({width:360,height:780});
+ await page.waitForFunction(()=>parseFloat(document.body.style.getPropertyValue('--phone-ui-fit'))<1);
+ const fit=await page.evaluate(()=>({ratio:parseFloat(document.body.style.getPropertyValue('--phone-ui-fit')),experience:Prototype.platform.mode}));
+ assert.equal(fit.experience,'phone');
+ assert(fit.ratio>.94&&fit.ratio<.98,'360-wide screen proportionally reduces existing controls');
+ const sk=await page.locator('#skills').boundingBox(),joy=await page.locator('#joystick').boundingBox();
+ assert(sk.x>=0&&sk.x+sk.width<=361,'fitted skills stay on screen');
+ assert(joy.x>=0&&joy.x+joy.width<=361,'fitted movement stays on screen');
+ await page.setViewportSize({width:v.width,height:v.height});
+ await page.waitForFunction(()=>document.body.style.getPropertyValue('--phone-ui-fit')==='1.000');
+});
+await check('Movement, split controls, Q targeting, pause and keyboard menus '+tag,async()=>{assert.equal(await page.locator('#message').evaluate(el=>el.classList.contains('visible')),false,'critical notice starts hidden');assert.deepEqual(errors,[],'browser errors before movement '+tag);const a=await page.locator('#skills').boundingBox(),j=await page.locator('#joystick').boundingBox(),primary=await page.locator('#touch-interact-button').boundingBox(),hud=await page.locator('#hud').boundingBox();if(v.touch){if(primary)assert(a.x+a.width<=primary.x||primary.x+primary.width<=a.x||a.y+a.height<=primary.y||primary.y+primary.height<=a.y,'contextual Interact cannot cover skills');assert(hud.height<=60,'compact phone HUD');assert(a.y+a.height>=v.height-12,'combat rests at bottom edge');}else assert.equal(primary,null,'phone Interact is absent from desktop layout');if(!v.touch)assert(hud.x>=v.width/2-1,'desktop status/menu is on the right');else{assert(hud.x>=0&&hud.x+hud.width<=v.width,'phone HUD fits viewport');assert(hud.y+hud.height<a.y,'phone HUD stays above skill controls');const hero=await page.evaluate(()=>Prototype.renderer.screen(Prototype.game.hero));assert(hero.y-50>hud.y+hud.height,'phone HUD cannot cover the hero');}if(v.touch){assert(a.x>=v.width/2-2&&a.x+a.width<=v.width);assert(j.x>=0&&j.y+j.height<=v.height);}else{assert.equal(j,null,'desktop joystick is absent');assert(a.x>=0&&a.x+a.width<hud.x,'desktop skill bar leaves HUD clear');}assert(a.y>=0&&a.y+a.height<=v.height);await page.screenshot({path:path.join(results,'device-layout-'+tag+'.png')});if(v.touch)assert(a.x+a.width<=j.x||j.x+j.width<=a.x||a.y+a.height<=j.y||j.y+j.height<=a.y,'controls overlap');const start=await page.evaluate(()=>[Prototype.game.hero.x,Prototype.game.hero.y]);await page.keyboard.down('d');await page.waitForTimeout(150);await page.keyboard.up('d');const end=await page.evaluate(()=>[Prototype.game.hero.x,Prototype.game.hero.y]);assert(end[0]>start[0]);await page.keyboard.press('q');assert.equal(await page.evaluate(()=>Prototype.input.actionFor('KeyQ')),'target');assert(await page.locator('#sprint-button').isHidden());await page.keyboard.press('Escape');const menuCopy=await page.locator('#modal-description').textContent(),top=await page.locator('#modal-actions button').allTextContents();assert(!menuCopy.includes('Global adventure functions'),'Adventure menu removes obsolete introductory text');assert(!menuCopy.includes('WASD moves'));assert(top.length<=7);assert(top.some(x=>x.includes('Game and settings')));assert(!top.some(x=>x==='Continue'));assert(!top.some(x=>x==='Controls'));const t=await page.evaluate(()=>Prototype.game.s.time);await page.waitForTimeout(120);assert.equal(await page.evaluate(()=>Prototype.game.s.time),t);await page.keyboard.press('w');assert(await page.locator('#close-button').evaluate(b=>b.classList.contains('selected')));await page.keyboard.press('f');assert(await page.locator('#modal').isHidden());});
+await check('Target button and Q cycle actual hero combat without unintended fallback '+tag,async()=>{
+ const saved=await page.evaluate(()=>Prototype.game.snapshot());
+ await page.evaluate(()=>{
+   Prototype.closeMenu();const c=Prototype.game;c.enter('vale');c.zone().props=[];c.s.party=[];
+   c.manualHeroTargetId=null;c.manualHeroTargetZone=null;c.manualHeroTargetLocked=false;c.s.heroTarget=null;
+   Object.assign(c.hero,{...c.safe(600,900),order:null});
+   const visible=p=>{const s=Prototype.renderer.screen(p);return s.x>30&&s.x<innerWidth-30&&s.y>100&&s.y<innerHeight-55;};
+   const locate=(radii,exclude)=>{for(const r of radii)for(let k=0;k<24;k++){const a=k*Math.PI/12,p={x:c.hero.x+Math.cos(a)*r,y:c.hero.y+Math.sin(a)*r};if(!c.blocked(p.x,p.y)&&c.line(c.hero,p)&&visible(p)&&(!exclude||Math.hypot(p.x-exclude.x,p.y-exclude.y)>75))return p;}throw Error('Cannot find clear target sightline in gameplay viewport');};
+   const nearSpot=locate([75,90]),farSpot=locate([150,175,195],nearSpot);
+   const make=(name,p)=>c.makeEnemy({species:'goblin',name,level:1,hp:10000,damage:0,gold:0,xp:0},p);
+   const near=make('Target near',nearSpot),far=make('Target far',farSpot);
+   c.zone().enemies=[near,far];c.hero.cd[0]=0;
+   // Real line-of-sight and skill range are kept; only ambient enemy AI is
+   // frozen so its patrol does not invalidate a deterministic input audit.
+   window.__targetAuditUpdateEnemies=c.updateEnemies;c.updateEnemies=()=>{};
+   Prototype.updateHUD();
+ });
+ if(v.touch)await page.locator('#target-button').tap();else await page.locator('#target-button').click();
+ assert.equal(await page.evaluate(()=>Prototype.game.selectedHeroTarget()?.name),'Target near','Target button selects nearest visible foe');
+ assert(await page.locator('#target-button').getAttribute('aria-label').then(s=>s.includes('Target near')),'Target announces selection accessibly');
+ await page.keyboard.press('q');
+ assert.equal(await page.evaluate(()=>Prototype.game.selectedHeroTarget()?.name),'Target far','Q cycles to another foe');
+ const outcome=await page.evaluate(()=>{const c=Prototype.game,near=c.zone().enemies[0],before=near.hp;c.hero.cd[0]=0;return {cast:c.cast(1),before,after:near.hp,cd:c.hero.cd[0]};});
+ assert.equal(outcome.cast,false,'selected out-of-range foe prevents automatic swap');
+ assert.equal(outcome.after,outcome.before,'nearer enemy was not hit instead');
+ assert.equal(outcome.cd,0,'failed locked attack spends no cooldown');
+ await page.keyboard.press('q');
+ assert.equal(await page.evaluate(()=>Prototype.game.selectedHeroTarget()?.name),'Target near');
+ await page.keyboard.down('q');
+ await page.waitForTimeout(620);
+ await page.keyboard.up('q');
+ assert.equal(await page.evaluate(()=>Prototype.game.manualHeroTargetLocked),true,'holding Q locks current target');
+ assert(await page.locator('#target-button').evaluate(b=>b.classList.contains('target-locked')),'HUD identifies an encounter lock');
+ await page.evaluate(()=>{const c=Prototype.game;c.hero.x+=750;c.hero.y+=450;});
+ assert.equal(await page.evaluate(()=>Prototype.game.selectedHeroTarget()?.name),'Target near','dodging far away keeps a held lock');
+ await page.keyboard.press('q');
+ assert.equal(await page.evaluate(()=>Prototype.game.manualHeroTargetLocked),false,'short Q releases lock and cycles');
+ await page.evaluate(()=>{
+   const c=Prototype.game;
+   Object.assign(c.hero,{x:600,y:900});
+   c.manualHeroTargetId=null;c.manualHeroTargetLocked=false;c.s.heroTarget=null;
+   c.zone().enemies.forEach((e)=>{e.returning=0;e.aggro=false;e.home={x:e.x,y:e.y};});
+   c.s.mercyTime=10;
+ });
+ const tbox=await page.locator('#target-button').boundingBox();
+ const tx=tbox.x+tbox.width/2,ty=tbox.y+tbox.height/2;
+ if(v.touch){
+   // Native Chromium touch dispatch, rather than a mouse simulation on the
+   // phone viewport: verifies real pointer capture / long-press semantics.
+   const session=await page.context().newCDPSession(page);
+   try {
+     await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:tx,y:ty}]});
+     await page.waitForTimeout(620);
+     await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+   } finally {await session.detach();}
+ } else {
+   await page.mouse.move(tx,ty);
+   await page.mouse.down();
+   await page.waitForTimeout(620);
+   await page.mouse.up();
+ }
+ assert.equal(await page.evaluate(()=>Prototype.game.manualHeroTargetLocked),true,'holding the HUD button also locks a target');
+ assert.equal(await page.evaluate(()=>Prototype.game.selectedHeroTarget()?.name),'Target near','HUD hold selects the nearest when unlocked');
+ await page.evaluate(state=>{const c=Prototype.game;c.updateEnemies=window.__targetAuditUpdateEnemies;delete window.__targetAuditUpdateEnemies;c.s=state;c.manualHeroTargetId=null;c.manualHeroTargetZone=null;c.manualHeroTargetLocked=false;Prototype.updateHUD();},saved);
+});
 await check('Mouse and touch menus work alongside keyboard; mouse world movement stays optional '+tag,async()=>{
  const saved=await page.evaluate(()=>Prototype.game.snapshot());
  await page.evaluate(()=>{Prototype.closeMenu();const c=Prototype.game;c.enter('vale');Object.assign(c.hero,{x:600,y:900,order:null});c.s.party.forEach(u=>u.order=null);});
@@ -81,19 +211,21 @@ await check('Rebinding updates real input, menus and labels and survives reload 
  await page.getByRole('button',{name:'Move up / previous menu entry · W',exact:true}).click();
  await page.keyboard.press('s');assert((await page.locator('#modal-description').textContent()).includes('already used'));
  await page.keyboard.press('ArrowUp');assert.equal(await page.locator('#modal-title').textContent(),'Customize keyboard');
+ await page.getByRole('button',{name:'Cycle hero target · Q',exact:true}).click();await page.keyboard.press('y');
  await page.getByRole('button',{name:'Skill 1 · 1',exact:true}).click();await page.keyboard.press('q');
- await page.getByRole('button',{name:'Discipline Training · C',exact:true}).click();await page.keyboard.press('l');
+ await page.getByRole('button',{name:'Talents · C',exact:true}).click();await page.keyboard.press('l');
  await page.getByRole('button',{name:'Command Ranger Heal · H',exact:true}).click();await page.keyboard.press('u');
- await page.getByRole('button',{name:'Command Ranger Mana Recovery · M',exact:true}).click();await page.keyboard.press('o');
  await page.keyboard.press('Escape');await page.keyboard.press('Escape');
  const before=await page.evaluate(()=>{const c=Prototype.game;c.hero.x=600;c.hero.y=900;return c.hero.y;});
  await page.keyboard.down('ArrowUp');await page.waitForTimeout(100);await page.keyboard.up('ArrowUp');assert(await page.evaluate(()=>Prototype.game.hero.y)<before);
  assert((await page.locator('#desktop-hints').textContent()).includes('↑'));
  assert((await page.locator('#talent-button').getAttribute('title')).includes('press L'));
- await page.evaluate(()=>Prototype.game.event('level',{level:Prototype.game.hero.level}));
- await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('press L or use Discipline Training'));
+ const beforeLevel=await page.evaluate(()=>Prototype.game.snapshot());
+ await page.evaluate(()=>Prototype.game.xp(Prototype.game.xpRequired()));
+ await page.waitForFunction(()=>[...document.querySelectorAll('#message .notice-card')].some(n=>n.textContent.includes('Training point')));
+ assert(!(await page.locator('#status').textContent()).includes('Training point'),'level-up belongs to amber only');
+ await page.evaluate(state=>{Prototype.game.s=state;},beforeLevel);
  assert((await page.locator('#health-potion small').textContent()).startsWith('U'));
- assert((await page.locator('#mana-potion small').textContent()).startsWith('O'));
  await page.evaluate(()=>Prototype.save());await page.reload();await page.waitForFunction(()=>!!window.Prototype);
  assert.equal(await page.evaluate(()=>Prototype.input.actionFor('KeyQ')),'skill1');
  assert.equal(await page.evaluate(()=>Prototype.input.actionFor('ArrowUp')),'up');
@@ -164,7 +296,7 @@ await check('Phone controls preserve world space and contextual interaction '+ta
  assert(skills.y+skills.height>=v.height-12,'combat sits at bottom edge without a reserved Interact row');
  assert(first.width>=(v.width>=480&&v.height<=500?50:64)&&first.height>=50,'skill targets remain thumb-sized');
  assert(joy.width>=102&&joy.height>=102,'joystick keeps a comfortable touch target');
- assert(!overlap(skills,joy));const recall=await box('#recall-button');assert(recall&&recall.height>=44&&!overlap(recall,joy)&&!overlap(recall,skills),'Recall stays reachable beside movement');
+ assert(!overlap(skills,joy));const recall=await box('#recall-button'),target=await box('#target-button');assert(recall&&recall.height>=44&&!overlap(recall,joy)&&!overlap(recall,skills),'Recall stays reachable beside movement');assert(target&&target.height>=44&&!overlap(target,joy)&&!overlap(target,skills)&&!overlap(target,recall),'Target sits beside Recall without blocking movement or skills');
  for(const id of ['#location','#objective','#talent-button','#hero-stats .wallet'])assert(await page.locator(id).isHidden(),id+' stays out of phone gameplay');
  for(let slot=2;slot<=8;slot++)assert(await page.locator('#skill-'+slot).isHidden(),'unlearned skills do not occupy phone screen');
  assert(await page.locator('#touch-interact-button').isHidden(),'no Interact button on empty terrain');
@@ -172,25 +304,49 @@ await check('Phone controls preserve world space and contextual interaction '+ta
  const npc=await page.evaluate(()=>{const c=Prototype.game,n=c.zone().npcs.find(n=>n.kind==='quests');c.zone().npcs=[n];c.zone().nodes=[];c.zone().buildings=[];Object.assign(c.hero,{x:n.x,y:n.y});Prototype.updateHUD();return {x:n.x,y:n.y};});
  const interact=await box('#touch-interact-button');assert(interact&&interact.height>=44);
  assert(!overlap(interact,skills)&&!overlap(interact,joy),'context prompt never displaces combat');
+ if(v.height>500)assert(interact.y>=joy.y-2,'contextual Interact stays in the thumb region');
+ else assert(interact.y>=v.height-75,'landscape Interact is bottom-aligned');
  await page.locator('#touch-interact-button').tap();assert((await page.locator('#modal-title').textContent())==='Local quests','nearby interaction really activates the target');await page.keyboard.press('Escape');
  await page.evaluate(n=>{Object.assign(Prototype.game.hero,{x:n.x+116,y:n.y});Prototype.updateHUD();},npc);
  assert(await page.locator('#touch-interact-button').isHidden(),'Interact disappears beyond interaction range');
  await page.evaluate(()=>{const c=Prototype.game;c.s.expeditionRank=3;Object.assign(c.hero,{x:600,y:900,order:null});const e=c.makeEnemy({species:'goblin',level:1,hp:10000,damage:0,gold:0,xp:0},{x:680,y:900});Object.assign(e,{aggro:true,heroParticipated:true});c.zone().enemies=[e];});
  await page.waitForTimeout(220);const squad=await box('#squad-button');assert(squad&&await page.locator('#squad-button').isVisible(),'Doctrine appears during combat');
- assert(!overlap(squad,joy)&&!overlap(squad,skills)&&!overlap(squad,recall));
+ assert(!overlap(squad,joy)&&!overlap(squad,skills)&&!overlap(squad,recall)&&!overlap(squad,target));
  assert((await page.locator('#squad-button').textContent()).includes('TARGET'));await page.keyboard.press('Tab');assert((await page.locator('#squad-button').textContent()).includes('THREATS'));
  const heroBefore=await page.evaluate(()=>Prototype.game.hero.x);await page.keyboard.down('d');await page.waitForFunction(x=>Prototype.game.hero.x>x,heroBefore,{timeout:1500});await page.keyboard.up('d');
  // Observe the immediate input result before follower simulation can finish
  // regrouping while Playwright is still waiting for the native tap to settle.
  await page.evaluate(()=>{const c=Prototype.game;c.zone().enemies=[];c.s.party=[c.unit('soldier',1100,1050)];c.s.party[0].order={type:'wait'};const recall=c.recallParty;window.__recallProbe={original:recall};c.recallParty=function(...args){const result=recall.apply(this,args);__recallProbe.called=true;__recallProbe.active=this.s.recallActive;__recallProbe.ordersCleared=this.s.party.every(u=>u.order===null);return result;};});
  try{await page.locator('#recall-button').tap();assert(await page.evaluate(()=>__recallProbe.called&&__recallProbe.active&&__recallProbe.ordersCleared),'Recall immediately regroups followers');assert(await page.locator('#modal').isHidden(),'Recall preserves active gameplay');}finally{await page.evaluate(()=>{Prototype.game.recallParty=__recallProbe.original;delete window.__recallProbe;});}
- await page.keyboard.press('g');const controls=await page.locator('#modal').evaluate(el=>{let prevented=false;el.addEventListener('touchstart',e=>{prevented=e.defaultPrevented;},{once:true});el.dispatchEvent(new Event('touchstart',{bubbles:true,cancelable:true}));const cs=getComputedStyle(el),before=el.scrollTop,max=Math.max(0,el.scrollHeight-el.clientHeight),target=before>1?0:Math.min(80,max);el.scrollTop=target;return {scrollHeight:el.scrollHeight,clientHeight:el.clientHeight,scrollTop:el.scrollTop,overflowY:cs.overflowY,touchAction:cs.touchAction,prevented,before};});
+ await page.keyboard.press('g');const controls=await page.locator('#modal-content').evaluate(el=>{let prevented=false;el.addEventListener('touchstart',e=>{prevented=e.defaultPrevented;},{once:true});el.dispatchEvent(new Event('touchstart',{bubbles:true,cancelable:true}));const cs=getComputedStyle(el),before=el.scrollTop,max=Math.max(0,el.scrollHeight-el.clientHeight),target=before>1?0:Math.min(80,max);el.scrollTop=target;return {scrollHeight:el.scrollHeight,clientHeight:el.clientHeight,scrollTop:el.scrollTop,overflowY:cs.overflowY,touchAction:cs.touchAction,prevented,before};});
  assert.equal(controls.overflowY,'auto');assert(controls.touchAction.includes('pan-y'));assert.equal(controls.prevented,false);if(controls.scrollHeight>controls.clientHeight)assert.notEqual(controls.scrollTop,controls.before);
  await page.keyboard.press('Escape');await page.evaluate(state=>{Prototype.game.s=state;Prototype.updateHUD();},saved);
 });
-await check('Critical notices are top-center, selective and self-clearing '+tag,async()=>{const message=page.locator('#message');await page.evaluate(()=>{Prototype.game.say('routine chatter');});await page.waitForTimeout(30);assert.equal(await message.evaluate(el=>el.classList.contains('visible')),false,'routine say() does not use critical banner');await page.evaluate(()=>{Prototype.game.notice('Critical test',.12);});await page.waitForFunction(()=>document.querySelector('#message').classList.contains('visible'));assert.equal(await message.textContent(),'Critical test');const box=await message.boundingBox();assert(box&&Math.abs((box.x+box.width/2)-v.width/2)<3,'critical notice is centered');assert(box.y<=20,'critical notice is near top');await page.waitForTimeout(180);await page.waitForFunction(()=>!document.querySelector('#message').classList.contains('visible'));});
-await check('Prototype art palette and resource display '+tag,async()=>{assert.equal(await page.locator('#hero-stats .resource-line').count(),2);assert(await page.locator('#hero-stats .resource-line i').first().isVisible());if(smoke||v.width!==1280&&v.width!==375)return;const before=await page.evaluate(()=>Prototype.game.snapshot());for(const region of ['vale','march','highlands','frontier','crown']){await page.evaluate(id=>Prototype.game.enter(id),region);await page.waitForTimeout(45);await page.screenshot({path:path.join(results,'visual-town-'+region+'-'+tag+'.png')});}await page.evaluate(()=>Prototype.game.enter('supply-vale'));await page.waitForTimeout(45);await page.screenshot({path:path.join(results,'visual-storehouse-'+tag+'.png')});await page.evaluate(state=>{Prototype.game.s=state;},before);await page.keyboard.press('Escape');await page.screenshot({path:path.join(results,'visual-menu-'+tag+'.png')});await page.keyboard.press('Escape');});
-await check('Discipline Training shows rank caps, per-rank gains and free resets without interrupting level-ups '+tag,async()=>{const before=await page.evaluate(()=>Prototype.game.snapshot());assert.equal(await page.locator('#talent-button').isVisible(),!v.touch);await page.evaluate(()=>{const c=Prototype.game;c.hero.xp=0;c.hero.talentPoints=0;c.xp(120*c.hero.level);});await page.waitForFunction(()=>document.querySelector('#talent-button').classList.contains('talent-ready'));assert.equal(await page.locator('#talent-count').textContent(),'1');assert(await page.locator('#modal').isHidden(),'level-up reminder does not interrupt play');await page.waitForFunction(()=>document.querySelector('#message').classList.contains('visible'));assert((await page.locator('#message').textContent()).includes('Training point'));await page.locator('#talent-button').evaluate(el=>el.click());assert.equal(await page.locator('#modal-title').textContent(),'Discipline Training');assert.equal(await page.locator('#modal-description').textContent(),'Available training points 1 · One point raises one discipline by one rank.');const actions=await page.locator('#modal-actions button').allTextContents();for(const label of ['Power Training · Rank 0/5','Each rank: +7 Power','Mana Training · Rank 0/5','Each rank: +0.25 MP/s in combat · +0.5 MP/s out of combat','Health Training · Rank 0/5','Each rank: +33 maximum HP','Movement Training · Rank 0/3','Each rank: +38 movement speed','Reset discipline training · FREE · 2 left'])assert(actions.some(x=>x.includes(label)),label);await page.keyboard.press('Escape');await page.evaluate(state=>{Prototype.game.s=state;},before);});
+await check('Critical notices are top-center, selective and self-clearing '+tag,async()=>{const message=page.locator('#message');await page.evaluate(()=>{Prototype.game.say('routine chatter');});await page.waitForTimeout(30);assert.equal(await message.evaluate(el=>el.classList.contains('visible')),false,'routine say() does not use critical banner');await page.evaluate(()=>{Prototype.game.notice('Critical test',.8);});await page.waitForFunction(()=>[...document.querySelectorAll('#message .notice-card')].some(n=>n.textContent==='Critical test'));assert((await message.locator('.notice-card').allTextContents()).includes('Critical test'));const box=await message.boundingBox();assert(box&&Math.abs((box.x+box.width/2)-v.width/2)<3,'critical notice is centered');if(v.touch){const hud=await page.locator('#hud').boundingBox();assert(box.y>=hud.y+hud.height+3&&box.y<=hud.y+hud.height+26,'phone notice stays below the HP/MP panel');}else assert(box.y<=20,'desktop notice stays at the top');await page.waitForTimeout(840);await page.waitForFunction(()=>!document.querySelector('#message .notice-card'));});
+await check('Amber notices stack two at once without hiding a third event '+tag,async()=>{
+ const host=page.locator('#message');
+ await page.evaluate(()=>{
+  const c=Prototype.game;
+  c.notice('Amber one',.8);
+  c.notice('Amber two',1.5);
+  c.notice('Amber three',.7);
+ });
+ await page.waitForFunction(()=>document.querySelectorAll('#message .notice-card').length===2);
+ assert.deepEqual(await host.locator('.notice-card').allTextContents(),['Amber one','Amber two']);
+ await page.waitForFunction(()=>[...document.querySelectorAll('#message .notice-card')].some(n=>n.textContent==='Amber three'),null,{timeout:5000});
+ assert((await host.locator('.notice-card').count())<=2,'never more than two visible notices');
+ if(v.touch){
+  await page.evaluate(()=>document.querySelector('#status').textContent='Temporary action feedback');
+  await page.waitForTimeout(30);
+  const positions=await page.evaluate(()=>({notice:document.querySelector('#message').getBoundingClientRect().bottom,status:document.querySelector('#status').getBoundingClientRect().top,visibility:getComputedStyle(document.querySelector('#status')).visibility}));
+  assert(positions.status>=positions.notice,'phone status does not overlap amber stack');
+  assert.equal(positions.visibility,'visible','temporary phone feedback must remain visible beneath amber notices');
+  await page.evaluate(()=>document.querySelector('#status').textContent='');
+ }
+ await page.waitForFunction(()=>!document.querySelector('#message').classList.contains('visible'),null,{timeout:5000});
+});
+await check('Prototype art palette and resource display '+tag,async()=>{assert.equal(await page.locator('#hero-stats .resource-line').count(),1);assert(await page.locator('#hero-stats .resource-line i').first().isVisible());if(smoke||v.width!==1280&&v.width!==375)return;const before=await page.evaluate(()=>Prototype.game.snapshot());for(const region of ['vale','march','highlands','frontier','crown']){await page.evaluate(id=>Prototype.game.enter(id),region);await page.waitForTimeout(45);await page.screenshot({path:path.join(results,'visual-town-'+region+'-'+tag+'.png')});}await page.evaluate(()=>Prototype.game.enter('supply-vale'));await page.waitForTimeout(45);await page.screenshot({path:path.join(results,'visual-storehouse-'+tag+'.png')});await page.evaluate(state=>{Prototype.game.s=state;},before);await page.keyboard.press('Escape');await page.screenshot({path:path.join(results,'visual-menu-'+tag+'.png')});await page.keyboard.press('Escape');});
+await check('Talents shows rank caps, per-rank gains and free resets without interrupting level-ups '+tag,async()=>{const before=await page.evaluate(()=>Prototype.game.snapshot());assert.equal(await page.locator('#talent-button').isVisible(),false,'unneeded Training is hidden until there are available points');await page.evaluate(()=>{const c=Prototype.game;c.hero.xp=0;c.hero.talentPoints=0;c.xp(120*c.hero.level);});await page.waitForFunction(()=>document.querySelector('#talent-button').classList.contains('talent-ready'));assert.equal(await page.locator('#talent-button').isVisible(),!v.touch,'desktop Training appears when points are ready; phone uses Character menu');assert.equal(await page.locator('#talent-count').textContent(),'1');assert(await page.locator('#modal').isHidden(),'level-up reminder does not interrupt play');await page.waitForFunction(()=>document.querySelector('#message').classList.contains('visible'));assert((await page.locator('#message').textContent()).includes('Training point'));await page.locator('#talent-button').evaluate(el=>el.click());assert.equal(await page.locator('#modal-title').textContent(),'Talents');assert.equal(await page.locator('#modal-description').textContent(),'Available training points 1 · One point raises one discipline by one rank.');const actions=await page.locator('#modal-actions button').allTextContents();for(const label of ['Power Training · Rank 0/5','Each rank: +7 Power','Cooldown Training · Rank 0/5','Each rank: -4% to skill cooldowns · up to 20% at Rank 5','Health Training · Rank 0/5','Each rank: +33 maximum HP','Movement Training · Rank 0/3','Each rank: +38 movement speed','Reset discipline training · FREE · 2 left'])assert(actions.some(x=>x.includes(label)),label);await page.keyboard.press('Escape');await page.evaluate(state=>{Prototype.game.s=state;},before);});
 await check('World labels stay quiet until combat or proximity '+tag,async()=>{const state=await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');const enemy=c.zone().enemies.find(e=>e.type==='mob'&&e.hp>0),npc=c.zone().npcs.find(n=>n.kind==='quests');Object.assign(c.hero,c.safe(npc.x+520,npc.y+520));const building={id:'barracks-test',x:c.hero.x+400,y:c.hero.y+400,renderKind:'building'};const idle=Prototype.labelVisible({...enemy,renderKind:'enemy'}),farNpc=Prototype.labelVisible({...npc,renderKind:'npc'}),farBuilding=Prototype.labelVisible(building);c.engage(enemy);const aggro=Prototype.labelVisible({...enemy,renderKind:'enemy'});Object.assign(c.hero,c.safe(npc.x,npc.y));const nearNpc=Prototype.labelVisible({...npc,renderKind:'npc'});building.x=c.hero.x+100;building.y=c.hero.y;const nearBuilding=Prototype.labelVisible(building);return {idle,aggro,farNpc,nearNpc,farBuilding,nearBuilding};});assert.equal(state.idle,false);assert.equal(state.aggro,true);assert.equal(state.farNpc,false);assert.equal(state.nearNpc,true);assert.equal(state.farBuilding,false);assert.equal(state.nearBuilding,true);});
 await check('Movement basic uses per-class switches and keeps manual skill 1 '+tag,async()=>{
  assert.deepEqual(errors,[],'renderer errors before movement-basic test '+tag);
@@ -223,27 +379,43 @@ await check('Charged skills use hold-and-release on keyboard and touch '+tag,asy
  // Stationary geometry targets preserve the authored area checks.
  // Capture MP at the real native-input cast boundary; later frames legitimately regenerate it.
  const hold=async slot=>{if(v.touch)await page.locator('#skill-'+slot).evaluate((el,slot)=>{el.setPointerCapture=()=>{};el.onpointerdown({pointerType:'touch',pointerId:90+slot,preventDefault(){}});},slot);else await page.keyboard.down(String(slot));await page.waitForFunction(slot=>document.querySelector('#skill-'+slot+' small')?.textContent==='CHARGED',slot,{timeout:1600});const cast=await page.evaluate(()=>Prototype.chargePresentation());assert(cast&&cast.ready&&cast.progress===1,'world charge bar shares the completed cast state');assert.equal(cast.slot,slot);if(v.touch)await page.locator('#skill-'+slot).evaluate((el,slot)=>el.onpointerup({pointerType:'touch',pointerId:90+slot}),slot);else await page.keyboard.up(String(slot));};
- await hold(1);await page.evaluate(()=>Prototype.game.updateProjectiles(.25));const basic=await page.evaluate(()=>({lost:Prototype.game.zone().enemies[0].maxHp-Prototype.game.zone().enemies[0].hp,cd:Prototype.game.hero.cd[0],mp:__chargeGeometryCasts.find(c=>c.slot===1)?.after}));assert(Math.abs(basic.lost-90)<.001,'Paladin charged basic deals triple 30-point basic damage: '+JSON.stringify(basic));assert(basic.cd>0&&basic.cd<=.85,'charged basic uses normal cooldown');assert(Math.abs(basic.mp-800)<.2,'charged basic spends 20% max MP');
+ await hold(1);await page.evaluate(()=>Prototype.game.updateProjectiles(.25));const basic=await page.evaluate(()=>({lost:Prototype.game.zone().enemies[0].maxHp-Prototype.game.zone().enemies[0].hp,cd:Prototype.game.hero.cd[0],mp:__chargeGeometryCasts.find(c=>c.slot===1)?.after}));assert(Math.abs(basic.lost-90)<.001,'Paladin charged basic deals triple 30-point basic damage: '+JSON.stringify(basic));assert(basic.cd>0&&basic.cd<=3,'charged basic uses its dedicated cooldown');assert(Math.abs(basic.mp-1000)<.2,'charged basic costs no MP');
  assert.equal(await page.evaluate(()=>PrototypeRules.chargedSkills.second.paladin.shape),'cone','Paladin charged Skill 2 uses the authored holy cleave cone');
  await page.evaluate(()=>{const c=Prototype.game;c.hero.cd[1]=0;c.hero.mp=1000;for(const e of c.zone().enemies){e.hp=e.maxHp=10000;e.aggro=false;}});
- await hold(2);const area=await page.evaluate(()=>({lost:Prototype.game.zone().enemies.map(e=>e.maxHp-e.hp),cd:Prototype.game.hero.cd[1],mp:__chargeGeometryCasts.find(c=>c.slot===2)?.after}));assert(area.lost[0]>0&&area.lost[1]>0,'charged skill 2 hits target and nearby enemy');assert.equal(area.lost[2],0,'charged skill 2 leaves distant enemy untouched');assert(area.cd>0&&area.cd<=3);assert(Math.abs(area.mp-700)<.2,'charged skill 2 spends 30% max MP despite frame-level regeneration');
+ await hold(2);const area=await page.evaluate(()=>({lost:Prototype.game.zone().enemies.map(e=>e.maxHp-e.hp),cd:Prototype.game.hero.cd[1],mp:__chargeGeometryCasts.find(c=>c.slot===2)?.after}));assert(area.lost[0]>0&&area.lost[1]>0,'charged skill 2 hits target and nearby enemy');assert.equal(area.lost[2],0,'charged skill 2 leaves distant enemy untouched');assert(area.cd>0&&area.cd<=6);assert(Math.abs(area.mp-1000)<.2,'charged skill 2 costs no MP');
  await page.evaluate(()=>{const c=Prototype.game;c.hero.cd[2]=0;c.hero.mp=1000;c.hero.maxMp=1000;c.hero.hp=c.hero.maxHp-40;const soldier=c.unit('soldier',620,930),ranger=c.unit('archer',640,930);soldier.hp=soldier.maxHp-35;ranger.hp=ranger.maxHp-30;c.s.party=[soldier,ranger];});
- await hold(3);const heal=await page.evaluate(()=>({mp:__chargeGeometryCasts.find(c=>c.slot===3)?.after,hero:[Prototype.game.hero.hp,Prototype.game.hero.maxHp],party:Prototype.game.s.party.map(u=>[u.hp,u.maxHp])}));assert(Math.abs(heal.mp-650)<.2,'charged skill 3 spends 35% max MP');assert(heal.hero[0]===heal.hero[1]||heal.hero[0]>heal.hero[1]-40,'charged Skill 3 heals hero');assert(heal.party.every(([hp,max])=>hp>max-40),'charged Skill 3 heals active companions');
+ await hold(3);const heal=await page.evaluate(()=>({mp:__chargeGeometryCasts.find(c=>c.slot===3)?.after,hero:[Prototype.game.hero.hp,Prototype.game.hero.maxHp],party:Prototype.game.s.party.map(u=>[u.hp,u.maxHp])}));assert(Math.abs(heal.mp-1000)<.2,'charged skill 3 costs no MP');assert(heal.hero[0]===heal.hero[1]||heal.hero[0]>heal.hero[1]-40,'charged Skill 3 heals hero');assert(heal.party.every(([hp,max])=>hp>max-40),'charged Skill 3 heals active companions');
  await page.evaluate(state=>{Prototype.game.updateEnemies=__chargeGeometryAI;Prototype.game.cast=__chargeGeometryCast;delete window.__chargeGeometryAI;delete window.__chargeGeometryCast;delete window.__chargeGeometryCasts;Prototype.game.s=state;},saved);
 });
 await check('Paladin, Mage and Ranger Skill 1 charge readiness is identical and predictable '+tag,async()=>{
+ if(!(await page.evaluate(()=>PrototypeRules.resourceMode.manaEnabled))){
+  const saved=await page.evaluate(()=>Prototype.game.snapshot());
+  for(const cls of ['paladin','mage','ranger']){
+   await page.evaluate(cls=>{const c=Prototype.game;c.enter('vale');c.zone().props=[];c.s.party=[];c.s.mercyTime=0;Object.assign(c.hero,{class:cls,x:600,y:900,mp:0,order:null});c.hero.skills[0]=1;c.hero.cd[0]=0;const enemy=c.makeEnemy({species:'goblin',name:'Cooldown-only target',level:1,hp:10000,damage:0,gold:0,xp:0},{x:680,y:900});c.zone().enemies=[enemy];c.s.heroTarget=enemy.id;},cls);
+   await page.keyboard.down('1');
+   await page.waitForFunction(()=>document.querySelector('#skill-1 small')?.textContent==='CHARGED',null,{timeout:2500});
+   await page.keyboard.up('1');
+   const result=await page.evaluate(()=>({mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[0]}));
+   assert.equal(result.mp,0,cls+' charged attack works without MP');
+   assert(result.cd>0&&result.cd<=3,cls+' charged attack uses the separate three-second cooldown');
+  }
+  await page.evaluate(state=>{Prototype.game.s=state;},saved);
+  return;
+ }
+
  const saved=await page.evaluate(()=>Prototype.game.snapshot());
  // Keep the damage fixture in range while the real movement key is held.
- // Slow native-input settlement must not turn a ready hit into NO TARGET.
- await page.evaluate(()=>{const c=Prototype.game;window.__chargeReadinessAI=c.updateEnemies;c.updateEnemies=function(...args){const result=__chargeReadinessAI.apply(this,args),target=this.zone().enemies[0];if(target&&target.hp>0){const point={x:this.hero.x+80,y:this.hero.y};Object.assign(target,{...point,home:{...point},returning:0});}return result;};});
+ // Freeze fixture AI so rogue dust cannot invalidate this input-only charge audit.
+ // Capture exact MP/cooldown at the cast boundary; frame-time regeneration is unrelated.
+ await page.evaluate(()=>{const c=Prototype.game;window.__chargeReadinessAI=c.updateEnemies;window.__chargeReadinessCast=c.cast;c.updateEnemies=function(){const target=this.zone().enemies[0];if(target&&target.hp>0){const point={x:this.hero.x+80,y:this.hero.y};Object.assign(target,{...point,home:{...point},returning:0});}};c.cast=function(slot,targetId,charged){const before=this.hero.mp,result=__chargeReadinessCast.call(this,slot,targetId,charged);if(slot===1&&result)window.__chargeReadinessMana={before,after:this.hero.mp,charged:!!charged,cd:this.hero.cd[0]};return result;};});
  const expectedDamage={paladin:90,mage:102,ranger:96};
  for(const cls of ['paladin','mage','ranger']){
   await page.evaluate(cls=>{const c=Prototype.game;c.enter('vale');c.zone().props=[];c.zone().buildings=[];c.zone().nodes=[];c.zone().npcs=[];c.s.party=[];c.s.mercyTime=0;const base=Campaign.classes[cls];Object.assign(c.hero,{class:cls,x:200,y:300,mp:0,maxMp:100,power:base.power,weapon:0,legacyWeaponPower:0,legacyEquipped:false,talents:[0,0,0,0],order:null});c.hero.skills[0]=1;c.hero.cd[0]=0;const target=c.makeEnemy({species:'goblin',name:cls+' charge target',level:1,hp:10000,damage:0,gold:0,xp:0},{x:280,y:300});c.zone().enemies=[target];Prototype.updateHUD();},cls);
   if(v.touch)await page.locator('#skill-1').tap();else await page.locator('#skill-1').click();
   await page.waitForFunction(()=>Prototype.game.zone().enemies[0].hp<Prototype.game.zone().enemies[0].maxHp);
-  let state=await page.evaluate(()=>({mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[0],title:document.querySelector('#skill-1').title}));
+  let state=await page.evaluate(()=>({...__chargeReadinessMana,title:document.querySelector('#skill-1').title}));
   assert(state.cd>0&&state.cd<=.85,cls+' free normal Skill 1 keeps the ordinary 0.85s cooldown');
-  assert(state.mp>=0&&state.mp<3,cls+' can use the free normal basic at zero starting MP');
+  assert.equal(state.after,state.before,cls+' normal basic spends zero MP at its actual cast boundary');assert.equal(state.charged,false);
   assert(state.title.includes('Charged cost 20% max MP'),cls+' exposes the charged mana requirement');
   await page.evaluate(()=>{const c=Prototype.game,e=c.zone().enemies[0];Object.assign(c.hero,{x:200,y:300,mp:100,maxMp:100,order:null});c.hero.cd[0]=.85;e.hp=e.maxHp;e.aggro=false;Object.assign(e,{x:280,y:300,home:{x:280,y:300}});});
   await page.keyboard.down('d');await page.waitForTimeout(40);await page.keyboard.down('1');
@@ -255,12 +427,12 @@ await check('Paladin, Mage and Ranger Skill 1 charge readiness is identical and 
   assert(await page.evaluate(()=>{const e=Prototype.game.zone().enemies[0];return Math.abs(e.hp-e.maxHp)<1e-9;}),cls+' movement auto-basic cannot steal Skill 1 while queued or charging');
   await page.keyboard.up('d');await page.keyboard.up('1');
   await page.waitForFunction(()=>!Prototype.game.s.projectiles.some(p=>p.charged),null,{timeout:2500});
-  state=await page.evaluate(()=>({lost:Prototype.game.zone().enemies[0].maxHp-Prototype.game.zone().enemies[0].hp,mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[0]}));
+  state=await page.evaluate(()=>({...__chargeReadinessMana,lost:Prototype.game.zone().enemies[0].maxHp-Prototype.game.zone().enemies[0].hp}));
   assert(Math.abs(state.lost-expectedDamage[cls])<.001,cls+' charged basic deals the expected triple basic damage: '+JSON.stringify(state));
   assert(state.cd>0&&state.cd<=.85,cls+' charged Skill 1 has no hidden cooldown beyond the ordinary 0.85s cooldown');
-  assert(state.mp>79&&state.mp<82.5,cls+' charged Skill 1 spends the documented 20% max MP despite frame-level regeneration');
+  assert.equal(state.before-state.after,20,cls+' charged Skill 1 spends exactly 20% max MP at its cast boundary');assert.equal(state.charged,true);
  }
- await page.evaluate(state=>{Prototype.game.updateEnemies=__chargeReadinessAI;delete window.__chargeReadinessAI;Prototype.game.s=state;},saved);
+ await page.evaluate(state=>{Prototype.game.updateEnemies=__chargeReadinessAI;Prototype.game.cast=__chargeReadinessCast;delete window.__chargeReadinessAI;delete window.__chargeReadinessCast;delete window.__chargeReadinessMana;Prototype.game.s=state;},saved);
 });
 await check('Skill 2 and party-heal charge states are target-stable and honest '+tag,async()=>{
  const saved=await page.evaluate(()=>Prototype.game.snapshot());
@@ -306,6 +478,21 @@ await check('Skill 2 and party-heal charge states are target-stable and honest '
  await page.evaluate(state=>{Prototype.game.s=state;},saved);
 });
 await check('Ranger sustain thresholds and direct commands '+tag,async()=>{
+ if(!(await page.evaluate(()=>PrototypeRules.resourceMode.manaEnabled))){
+  const saved=await page.evaluate(()=>Prototype.game.snapshot());
+  await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');c.s.mercyTime=0;const foe=c.zone().enemies.find(e=>e.type==='mob');c.zone().enemies=[foe];Object.assign(c.hero,{x:600,y:900,hp:c.hero.maxHp*.3});Object.assign(foe,{x:690,y:900,home:{x:690,y:900},aggro:true,damage:0,baseDamage:0,hp:100000,maxHp:100000});const ranger=c.unit('archer',630,900);c.s.party=[ranger];c.hero.supportEffects=[];});
+  await page.waitForFunction(()=>Prototype.game.s.party[0].healCd>0);
+  assert(await page.evaluate(()=>Prototype.game.hero.supportEffects.some(e=>e.type==='health')),'Ranger still automatically heals the wounded hero');
+  assert.equal(await page.locator('#mana-potion').count(),0,'retired Mana Recovery control is absent');
+  await page.evaluate(()=>{const c=Prototype.game,r=c.s.party[0];c.hero.hp=c.hero.maxHp*.6;c.hero.supportEffects=[];r.healCd=0;});
+  await page.keyboard.press('h');
+  await page.waitForFunction(()=>Prototype.game.s.party[0].healCd>0);
+  assert(await page.evaluate(()=>Prototype.game.hero.supportEffects.some(e=>e.type==='health')),'manual Heal remains available');
+  assert.equal(await page.evaluate(()=>Prototype.game.rangerSupport('mana')),false,'retired mana command remains unavailable');
+  await page.evaluate(state=>{Prototype.game.s=state;},saved);
+  return;
+ }
+
  const saved=await page.evaluate(()=>Prototype.game.snapshot());
  await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');c.s.mercyTime=0;const e=c.zone().enemies.find(e=>e.type==='mob');c.zone().enemies=[e];Object.assign(c.hero,{x:600,y:900,hp:c.hero.maxHp*.3,mp:c.hero.maxMp});Object.assign(e,{x:690,y:900,home:{x:690,y:900},aggro:true,damage:0,baseDamage:0,hp:100000,maxHp:100000});const ranger=c.s.party.find(u=>u.type==='archer'),soldier=c.s.party.find(u=>u.type==='soldier');Object.assign(ranger,{healCd:0,manaCd:0});soldier.hp=soldier.maxHp*.3;c.hero.supportEffects=[];soldier.supportEffects=[];});
  await page.waitForFunction(()=>Prototype.game.s.party.find(u=>u.type==='archer').healCd>0);
@@ -325,8 +512,8 @@ await check('Ranger sustain thresholds and direct commands '+tag,async()=>{
  if(!v.touch){const canvas=await page.locator('#world').boundingBox();await page.evaluate(()=>{const c=Prototype.game,r=c.s.party.find(u=>u.type==='archer');c.hero.hp=c.hero.maxHp*.6;c.hero.supportEffects=[];r.healCd=0;});await page.mouse.click(canvas.x+canvas.width*.55,canvas.y+canvas.height*.55,{button:'left'});await page.waitForFunction(()=>Prototype.game.s.party.find(u=>u.type==='archer').healCd>0);await page.evaluate(()=>{const c=Prototype.game,r=c.s.party.find(u=>u.type==='archer');c.hero.mp=c.hero.maxMp*.6;c.hero.supportEffects=c.hero.supportEffects.filter(e=>e.type!=='mana');r.manaCd=0;});await page.mouse.click(canvas.x+canvas.width*.55,canvas.y+canvas.height*.55,{button:'right'});await page.waitForFunction(()=>Prototype.game.s.party.find(u=>u.type==='archer').manaCd>0);}
  await page.evaluate(state=>{Prototype.game.s=state;},saved);
 });
-await check('Audit pause, left-hand aliases and touch menu controls '+tag,async()=>{await page.keyboard.press('v');assert(await page.evaluate(()=>Prototype.paused));const before=await page.evaluate(()=>JSON.stringify(Prototype.game.snapshot()));await page.keyboard.press('1');await page.locator('#skill-1').evaluate(el=>el.click());assert.equal(await page.evaluate(()=>JSON.stringify(Prototype.game.snapshot())),before);await page.keyboard.press('v');for(const [key,title]of [['r','Inventory'],['c','Discipline Training'],['x','Skills and teachers'],['t','Quest'],['g','Controls']]){await page.keyboard.press(key);assert((await page.locator('#modal-title').textContent()).includes(title));if(key==='x'){const text=await page.locator('#modal-actions').textContent();assert(text.includes('Greenwood Vale'));assert(text.includes('Companion combat skills'));assert(text.includes('Power Strike'));assert(text.includes('Triple Shot'));}assert(await page.locator('#close-button').isVisible());await page.keyboard.press('Escape');}await page.evaluate(()=>Prototype.openMenu('Touch menu regression','Joystick selects; Confirm activates.',[{label:'First',action:()=>globalThis.menuProbe='first'},{label:'Second',action:()=>globalThis.menuProbe='second'}]));assert.equal(await page.locator('#joystick').isVisible(),v.touch);assert.equal(await page.locator('#order-button').isVisible(),v.touch);if(v.touch){const first=await page.locator('#modal-actions button').first().boundingBox();await page.touchscreen.tap(first.x+first.width/2,first.y+first.height/2);assert.equal(await page.evaluate(()=>globalThis.menuProbe),'first','touch activates menu choices directly');}const r=await page.locator('#joystick').boundingBox();if(v.touch){await page.evaluate(()=>{const j=document.querySelector('#joystick'),r=j.getBoundingClientRect();j.setPointerCapture=()=>{};j.onpointerdown({pointerType:'touch',pointerId:78,clientX:r.left+r.width/2,clientY:r.top+r.height*.85,preventDefault(){}});});await page.waitForFunction(()=>document.querySelector('#modal-actions .selected')?.textContent==='Second');await page.evaluate(()=>document.querySelector('#joystick').onpointerup({pointerId:78}));await page.locator('#order-button').evaluate(el=>el.click());}else{await page.keyboard.press('s');assert.equal(await page.locator('#modal-actions .selected').textContent(),'Second');await page.keyboard.press('f');}assert.equal(await page.evaluate(()=>globalThis.menuProbe),'second');await page.evaluate(()=>Prototype.closeMenu());await page.evaluate(()=>Prototype.openMenu('Back regression','All menus close with the last entry.',[{label:'First',action:()=>{}}]));await page.keyboard.press('w');assert(await page.locator('#close-button').evaluate(b=>b.classList.contains('selected')));if(v.touch)await page.locator('#order-button').evaluate(el=>el.click());else await page.keyboard.press('f');assert(await page.locator('#modal').isHidden());});
-await check('Guarded sites, automatic quest boards, journal feedback and map destinations '+tag,async()=>{const before=await page.evaluate(()=>Prototype.game.snapshot());await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');const board=c.zone().npcs.find(n=>n.kind==='quests');Object.assign(c.hero,{x:board.x,y:board.y});});await page.locator('#touch-interact-button').evaluate(el=>el.click());assert((await page.locator('#modal-description').textContent()).includes('already ACTIVE'));assert((await page.locator('#modal-description').textContent()).includes('automatically delivered'));await page.keyboard.press('Escape');await page.evaluate(()=>{const c=Prototype.game;c.enter('supply-vale');for(const e of c.zone().enemies.filter(e=>e.guard))e.hp=0;const n=c.zone().npcs.find(n=>n.id==='bundle-0');Object.assign(c.hero,{x:n.x,y:n.y});});await page.locator('#touch-interact-button').evaluate(el=>el.click());assert(await page.evaluate(()=>Prototype.game.s.discovered['vale:bundle-0']));assert(!(await page.evaluate(()=>Prototype.game.visibleNPCs().some(n=>n.id==='bundle-0'))));await page.keyboard.press('j');assert((await page.locator('#modal-actions').textContent()).includes('1/2 supplies recovered'));await page.keyboard.press('Escape');await page.evaluate(()=>Prototype.game.enter('vale'));await page.keyboard.press('z');const text=await page.locator('#modal-actions').textContent();assert(text.includes('Woodland supply cache'),'map keeps the named place');assert(!text.includes('Woodland timber'),'retired resource identity is gone');assert(!text.includes('Clear guardians to unlock'),'resource mini-fort gating is gone');assert(!text.includes('crowns remaining'),'map does not advertise tribute balances');assert(!/\b\d+\s+gold\s+remaining\b/i.test(text),'map never exposes an exact tribute balance');assert(!text.includes('Abandoned orchard supplies'));assert(!(await page.evaluate(()=>Prototype.game.zone().npcs.some(n=>n.kind==='bundle'))),'no Treasury quest cache remains outdoors');await page.evaluate(state=>{Prototype.closeMenu();Prototype.game.s=state;},before);});
+await check('Audit pause, left-hand aliases and touch menu controls '+tag,async()=>{await page.keyboard.press('v');assert(await page.evaluate(()=>Prototype.paused));const before=await page.evaluate(()=>JSON.stringify(Prototype.game.snapshot()));await page.keyboard.press('1');await page.locator('#skill-1').evaluate(el=>el.click());assert.equal(await page.evaluate(()=>JSON.stringify(Prototype.game.snapshot())),before);await page.keyboard.press('v');for(const [key,title]of [['r','Inventory'],['c','Talents'],['x','Skills and teachers'],['t','Story journal'],['g','Controls']]){await page.keyboard.press(key);const observedTitle=await page.locator('#modal-title').textContent();assert(observedTitle.includes(title),key+' expected '+title+'; saw '+observedTitle+'; open='+!(await page.locator('#modal').isHidden()));if(key==='x'){const text=await page.locator('#modal-actions').textContent();assert(text.includes('Greenwood Vale'));assert(text.includes('Companion combat skills'));assert(text.includes('Power Strike'));assert(text.includes('Triple Shot'));}assert(await page.locator('#close-button').isVisible());await page.keyboard.press('Escape');}await page.evaluate(()=>Prototype.openMenu('Touch menu regression','Joystick selects; Confirm activates.',[{label:'First',action:()=>globalThis.menuProbe='first'},{label:'Second',action:()=>globalThis.menuProbe='second'}]));assert.equal(await page.locator('#joystick').isVisible(),v.touch);assert.equal(await page.locator('#order-button').isVisible(),v.touch);if(v.touch){const first=await page.locator('#modal-actions button').first().boundingBox();await page.touchscreen.tap(first.x+first.width/2,first.y+first.height/2);assert.equal(await page.evaluate(()=>globalThis.menuProbe),'first','touch activates menu choices directly');}const r=await page.locator('#joystick').boundingBox();if(v.touch){await page.evaluate(()=>{const j=document.querySelector('#joystick'),r=j.getBoundingClientRect();j.setPointerCapture=()=>{};j.onpointerdown({pointerType:'touch',pointerId:78,clientX:r.left+r.width/2,clientY:r.top+r.height*.85,preventDefault(){}});});await page.waitForFunction(()=>document.querySelector('#modal-actions .selected')?.textContent==='Second');await page.evaluate(()=>document.querySelector('#joystick').onpointerup({pointerId:78}));await page.locator('#order-button').evaluate(el=>el.click());}else{await page.keyboard.press('s');assert.equal(await page.locator('#modal-actions .selected').textContent(),'Second');await page.keyboard.press('f');}assert.equal(await page.evaluate(()=>globalThis.menuProbe),'second');await page.evaluate(()=>Prototype.closeMenu());await page.evaluate(()=>Prototype.openMenu('Back regression','All menus close with the last entry.',[{label:'First',action:()=>{}}]));await page.keyboard.press('w');assert(await page.locator('#close-button').evaluate(b=>b.classList.contains('selected')));if(v.touch)await page.locator('#order-button').evaluate(el=>el.click());else await page.keyboard.press('f');assert(await page.locator('#modal').isHidden());});
+await check('Guarded sites, automatic quest boards, journal feedback and map destinations '+tag,async()=>{const before=await page.evaluate(()=>Prototype.game.snapshot());await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');const board=c.zone().npcs.find(n=>n.kind==='quests');Object.assign(c.hero,{x:board.x,y:board.y});});await page.locator('#touch-interact-button').evaluate(el=>el.click());assert((await page.locator('#modal-description').textContent()).includes('already ACTIVE'));assert((await page.locator('#modal-description').textContent()).includes('automatically delivered'));await page.keyboard.press('Escape');await page.evaluate(()=>{const c=Prototype.game;c.enter('supply-vale');for(const e of c.zone().enemies.filter(e=>e.guard))e.hp=0;const n=c.zone().npcs.find(n=>n.id==='bundle-0');Object.assign(c.hero,{x:n.x,y:n.y});});await page.locator('#touch-interact-button').evaluate(el=>el.click());assert(await page.evaluate(()=>Prototype.game.s.discovered['vale:bundle-0']));assert(!(await page.evaluate(()=>Prototype.game.visibleNPCs().some(n=>n.id==='bundle-0'))));await page.keyboard.press('j');assert((await page.locator('#modal-title').textContent())==='Story journal');assert(!(await page.locator('#modal-actions').textContent()).includes('supplies recovered'));await page.keyboard.press('Escape');await page.evaluate(()=>Prototype.game.enter('vale'));await page.keyboard.press('z');const text=await page.locator('#modal-actions').textContent();assert(text.includes('Woodland supply cache'),'map keeps the named place');assert(!text.includes('Woodland timber'),'retired resource identity is gone');assert(!text.includes('Clear guardians to unlock'),'resource mini-fort gating is gone');assert(!text.includes('crowns remaining'),'map does not advertise tribute balances');assert(!/\b\d+\s+gold\s+remaining\b/i.test(text),'map never exposes an exact tribute balance');assert(!text.includes('Abandoned orchard supplies'));assert(!(await page.evaluate(()=>Prototype.game.zone().npcs.some(n=>n.kind==='bundle'))),'no Treasury quest cache remains outdoors');await page.evaluate(state=>{Prototype.closeMenu();Prototype.game.s=state;},before);});
 await check('Field dungeon defenses and independent captive unlocks '+tag,async()=>{const before=await page.evaluate(()=>Prototype.game.snapshot());await page.keyboard.press('p');for(const region of ['vale','march','highlands','frontier','crown']){const summary=await page.evaluate(region=>{const c=Prototype.game;c.enter(region);const z=c.zone(),m=z.minis.find(m=>m.type==='field');Object.assign(c.hero,{x:m.x,y:m.y+110});return {count:z.minis.length,resourceMini:z.minis.some(x=>x.type==='resource'),guards:z.enemies.filter(e=>e.mini===m.id).length,walls:z.props.filter(p=>p.mini===m.id).length};},region);assert.equal(summary.count,1,'one field-boss compound per biome');assert.equal(summary.resourceMini,false,'retired resource mini-fort stays retired');assert(summary.guards>=4);assert(summary.walls>=3);if(v.width===1280){await page.waitForTimeout(30);await page.screenshot({path:path.join(results,'field-dungeon-'+region+'-'+tag+'.png')});}}await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');c.s.keys.thorn=true;const n=c.zone().npcs.find(n=>n.kind==='cage'&&n.family==='thorn');Object.assign(c.hero,{x:n.x,y:n.y});});await page.keyboard.press('p');await page.locator('#touch-interact-button').evaluate(el=>el.click());const unlocked=await page.evaluate(()=>{const c=Prototype.game;return {rescued:Object.keys(c.s.rescued),services:Object.values(c.s.zones).flatMap(z=>z.npcs.filter(n=>['teacher','smith','alchemist'].includes(n.kind)).map(n=>n.family))};});assert.deepEqual(unlocked.rescued,['thorn']);assert.deepEqual(unlocked.services,['thorn']);await page.evaluate(state=>{Prototype.closeMenu();Prototype.game.s=state;},before);});
 await check('Visible terrain and all nine bridge crossings '+tag,async()=>{
  const before=await page.evaluate(()=>Prototype.game.snapshot());

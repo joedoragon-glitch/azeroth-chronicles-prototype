@@ -25,10 +25,11 @@ async function verifyRegional(page, results, tag, capture = false) {
         ['Borin the Village Smith', 'Neri the Alchemist', 'Dara the Highland Smith'].includes(text)
       ) {
         const width = Math.min(this.measureText(text).width, maxWidth || Infinity);
+        const transform = this.getTransform();
         __regionalProbe.labels.push({
           text,
-          left: x - width / 2,
-          right: x + width / 2,
+          left: transform.a * (x - width / 2) + transform.c * y + transform.e,
+          right: transform.a * (x + width / 2) + transform.c * y + transform.e,
           canvas: this.canvas.width,
         });
       }

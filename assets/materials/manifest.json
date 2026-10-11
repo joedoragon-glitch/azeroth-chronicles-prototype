@@ -45,6 +45,24 @@
       "worldSpan": 320,
       "opacity": 0.28,
       "revision": "bff0c54cfe529928e3d0b9f552e28fb23393d21ae647b7510ca63d8d7b9134f8"
+    },
+    "terrain:road:vale": {
+      "src": "./assets/materials/e655205174d24f1f359916071fd764584953e3acaba4451f9d158e304fc87134.png",
+      "hash": "e655205174d24f1f359916071fd764584953e3acaba4451f9d158e304fc87134",
+      "width": 256,
+      "height": 256,
+      "worldSpan": 320,
+      "opacity": 0.28,
+      "revision": "cff0219382ae8e530213e01e9564e51d461685f081c13861938d8edeb9cb3445"
+    },
+    "terrain:road:highlands": {
+      "src": "./assets/materials/15ad70f49d7ba8593468ebd9cd1dca34b9df8fc70975f8b757d0686bc0881f22.png",
+      "hash": "15ad70f49d7ba8593468ebd9cd1dca34b9df8fc70975f8b757d0686bc0881f22",
+      "width": 256,
+      "height": 256,
+      "worldSpan": 320,
+      "opacity": 0.28,
+      "revision": "13c98eed9c5be3ddf092032a628aac30d2b414bdfb587c41ac0247ef99625082"
     }
   }
 }

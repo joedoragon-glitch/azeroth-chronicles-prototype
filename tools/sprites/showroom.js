@@ -24,34 +24,38 @@
       load(data.candidateImage),
     ]);
     function draw() {
+      const profile = data.comparisons[Number(byId('viewport').value) || 0],
+        ratio = profile.ratio || 1,
+        zoom = profile.cameraZoom || data.cameraZoom || 1,
+        extent = 312;
       for (const id of ['canonical', 'candidate', 'overlay']) {
-        const canvas = byId(id),
-          ctx = canvas.getContext('2d'),
+        const canvas = byId(id);
+        canvas.width = Math.round(extent * ratio);
+        canvas.height = Math.round(extent * ratio);
+        canvas.style.width = extent + 'px';
+        const ctx = canvas.getContext('2d'),
           size = 12;
-        for (let y = 0; y < canvas.height; y += size)
-          for (let x = 0; x < canvas.width; x += size) {
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        for (let y = 0; y < extent; y += size)
+          for (let x = 0; x < extent; x += size) {
             ctx.fillStyle = ((x + y) / size) % 2 ? '#27342d' : '#1a2721';
             ctx.fillRect(x, y, size, size);
           }
         ctx.imageSmoothingEnabled = false;
-        const x = (canvas.width - data.runtime.displayWidth) / 2,
-          y = (canvas.height - data.runtime.displayHeight) / 2;
+        const dw = data.runtime.displayWidth * zoom,
+          dh = data.runtime.displayHeight * zoom,
+          x = (extent - dw) / 2,
+          y = (extent - dh) / 2;
         ctx.globalAlpha = 1;
-        ctx.drawImage(
-          id === 'candidate' ? candidate : canonical,
-          x,
-          y,
-          data.runtime.displayWidth,
-          data.runtime.displayHeight,
-        );
+        ctx.drawImage(id === 'candidate' ? candidate : canonical, x, y, dw, dh);
         if (id === 'overlay') {
           ctx.globalAlpha = Number(byId('blend').value) / 100;
-          ctx.drawImage(candidate, x, y, data.runtime.displayWidth, data.runtime.displayHeight);
+          ctx.drawImage(candidate, x, y, dw, dh);
           ctx.globalAlpha = 1;
         }
         if (byId('guides').checked) {
-          const ax = x + data.runtime.displayWidth * data.runtime.anchorX,
-            ay = y + data.runtime.displayHeight * data.runtime.anchorY;
+          const ax = x + dw * data.runtime.anchorX,
+            ay = y + dh * data.runtime.anchorY;
           ctx.strokeStyle = '#efca74';
           ctx.beginPath();
           ctx.moveTo(ax - 15, ay);
@@ -62,8 +66,8 @@
           ctx.strokeStyle = '#83c5dc';
           ctx.setLineDash([4, 4]);
           ctx.beginPath();
-          ctx.moveTo(0, ay - data.runtime.labelHeight);
-          ctx.lineTo(canvas.width, ay - data.runtime.labelHeight);
+          ctx.moveTo(0, ay - data.runtime.labelHeight * zoom);
+          ctx.lineTo(extent, ay - data.runtime.labelHeight * zoom);
           ctx.stroke();
           ctx.setLineDash([]);
         }
@@ -73,11 +77,30 @@
     data.comparisons.forEach((item, index) => {
       const option = document.createElement('option');
       option.value = index;
-      option.textContent = item.width + ' × ' + item.height + ' · ' + item.lighting;
+      option.textContent =
+        item.width +
+        ' × ' +
+        item.height +
+        ' · ' +
+        item.lighting +
+        ' · ' +
+        Math.round((item.cameraZoom || 1) * 100) +
+        '% · ' +
+        Number((item.ratio || 1).toFixed(2)) +
+        '× pixels';
       select.append(option);
     });
     function scene() {
       const item = data.comparisons[Number(select.value)];
+      byId('viewing-size').textContent =
+        Math.round((item.cameraZoom || 1) * 100) +
+        '% camera · ' +
+        Number((item.ratio || 1).toFixed(2)) +
+        '× canvas density · ' +
+        (item.pixelWidth || item.width) +
+        ' × ' +
+        (item.pixelHeight || item.height) +
+        ' raster. Open scene images for a 1:1 pixel inspection.';
       for (const [id, link, src] of [
         ['current-scene', 'current-link', item.canonical],
         ['proposed-scene', 'proposed-link', item.candidate],
@@ -90,7 +113,10 @@
     }
     byId('blend').addEventListener('input', draw);
     byId('guides').addEventListener('change', draw);
-    select.addEventListener('change', scene);
+    select.addEventListener('change', () => {
+      scene();
+      draw();
+    });
     draw();
     scene();
     window.SpriteShowroom = { ready: true, key: data.key, pending: data.pending };

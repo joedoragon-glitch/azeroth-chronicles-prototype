@@ -558,6 +558,14 @@
     'hit',
     'basicComboFinisher',
     'companionSkill',
+    // UI/save bookkeeping has no separate sound cue.
+    'actionFailed',
+    'archiveKnowledge',
+    // Rogue decisions are visually telegraphed; the existing warning cue owns
+    // their audio so crowd encounters do not stack extra alert sounds.
+    'rogueRegroup',
+    'rogueMove',
+    'rogueSupport',
   ]);
   const api = { themes, colors, scale, pitch, defaults, eventNotes, contextualEffectTypes };
   if (typeof module !== 'undefined') module.exports = api;

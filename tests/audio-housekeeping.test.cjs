@@ -108,6 +108,7 @@ function harness() {
   root.window = root;
   vm.createContext(root);
   for (const file of [
+    'enemy-presentation',
     'audio-catalog',
     'audio-contract',
     'audio-library',
@@ -115,6 +116,7 @@ function harness() {
     'audio-mixer',
     'audio-runtime',
     'audio-score',
+    'audio-enemy',
     'audio-effects',
     'audio-recordings',
     'audio-production',

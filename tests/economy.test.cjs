@@ -121,7 +121,7 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
   assert.equal(g.hero.maxHp, hp + 75);
   assert.equal(g.hero.maxMp, mp + R.manaBalance.perLevel * 3);
   assert.equal(g.hero.hp, g.hero.maxHp);
-  assert.equal(g.hero.mp, g.hero.maxMp);
+  assert.equal(g.hero.mp, R.resourceMode.manaEnabled ? g.hero.maxMp : C.classes[cls].mp);
   assert.equal(g.hero.talentPoints, 3);
 }
 console.log(

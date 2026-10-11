@@ -19,7 +19,10 @@ const root = path.resolve(__dirname, '..');
     fs.copyFileSync(path.join(root, 'package.json'), path.join(checkout, 'package.json'));
     fs.writeFileSync(
       path.join(checkout, 'source.png'),
-      pipeline.reference(pipeline.contractFor('hero:paladin')),
+      await require('sharp')(pipeline.reference(pipeline.contractFor('hero:paladin')))
+        .resize(576, 576, { kernel: 'nearest' })
+        .png()
+        .toBuffer(),
     );
     const run = (...args) =>
       JSON.parse(
@@ -29,7 +32,8 @@ const root = path.resolve(__dirname, '..');
           { cwd: checkout, encoding: 'utf8' },
         ),
       );
-    const prepared = run('prepare', 'hero:paladin', 'source.png');
+    fs.writeFileSync(path.join(checkout, 'raster.json'), JSON.stringify({ rasterScale: 3 }));
+    const prepared = run('prepare', 'hero:paladin', 'source.png', 'png', 'raster.json');
     run('showroom', path.join(prepared.directory, 'candidate.json'));
     server = http.createServer((request, response) => {
       const relative = new URL(request.url, 'http://localhost').pathname.slice(1) || 'index.html';
@@ -41,6 +45,8 @@ const root = path.resolve(__dirname, '..');
         manifest.sprites = {
           'hero:paladin': {
             src: './assets/sprites/reference-fixture.png',
+            width: 576,
+            height: 576,
             ...prepared.record.runtime,
           },
         };
@@ -86,8 +92,16 @@ const root = path.resolve(__dirname, '..');
     }
     browser = await pw.chromium.launch(launch);
     fs.mkdirSync(path.join(root, 'test-results'), { recursive: true });
-    for (const [width, height] of require('../tools/sprites/specifications.json').policy
-      .viewports) {
+    for (const profile of require('../tools/sprites/specifications.json').policy.reviewProfiles) {
+      const { width, height } = profile;
+      const ratio = Math.max(
+        1,
+        Math.min(
+          profile.devicePixelRatio,
+          profile.mode === 'phone' ? 1.5 : 2,
+          Math.sqrt(3000000 / (width * height)),
+        ),
+      );
       const page = await browser.newPage({ viewport: { width, height }, hasTouch: width < 900 });
       const errors = [];
       page.on('pageerror', (error) => errors.push(error.message));
@@ -95,8 +109,10 @@ const root = path.resolve(__dirname, '..');
       await page.waitForFunction(() => window.SpriteShowroom?.ready);
       assert.deepEqual(errors, []);
       assert.equal(await page.locator('#name').textContent(), 'Hero — Paladin');
-      assert.equal(await page.locator('#viewport option').count(), 8);
-      await page.locator('#viewport').selectOption({ label: width + ' × ' + height + ' · day' });
+      assert.equal(await page.locator('#viewport option').count(), 12);
+      await page.locator('#viewport').selectOption({
+        label: width + ' × ' + height + ' · day · 150% · ' + Number(ratio.toFixed(2)) + '× pixels',
+      });
       await page.waitForFunction(() =>
         [...document.querySelectorAll('.scenes img')].every(
           (image) => image.complete && image.naturalWidth > 0,
@@ -104,11 +120,11 @@ const root = path.resolve(__dirname, '..');
       );
       assert.equal(
         await page.locator('#current-scene').evaluate((image) => image.naturalWidth),
-        width,
+        Math.round(width * ratio),
       );
       assert.equal(
         await page.locator('#current-scene').evaluate((image) => image.naturalHeight),
-        height,
+        Math.round(height * ratio),
       );
       assert(
         await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),

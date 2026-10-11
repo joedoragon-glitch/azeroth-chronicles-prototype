@@ -1,0 +1,42 @@
+{
+  "key": "prop:dead-shrub:crown",
+  "original": "tools/sprites/batches/2026-10-08-03/prop-dead-shrub-crown/image-tool-original.png",
+  "originalHash": "4f2f6e57ffe08a2f210b4ba3069f2c9472bd7f590d69d360573886e828535eff",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/batches/2026-10-08-03/prop-dead-shrub-crown",
+  "intermediateHash": "7d31e03c1aae6adc057c5081dee9ce08cfec4e87dcbc4a08bcd1f946cca49260",
+  "intermediateDimensions": [
+    1981,
+    1981
+  ],
+  "priorRevision": "ae4419ab4fb9559be4ece0425532ebc733f80afe3e76b2d7b0b2b79da54ab9eb",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": 0,
+    "offsetY": 0,
+    "normalization": {
+      "fullCanvasSize": 805,
+      "padding": {
+        "left": 588,
+        "right": 588,
+        "top": 910,
+        "bottom": 266
+      }
+    }
+  },
+  "target": 576,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "dead-shrub",
+    "id": "aesthetic-nature-11"
+  },
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact nature binding; no animation or variant bank. Seeded placement and procedural scene effects retained."
+}

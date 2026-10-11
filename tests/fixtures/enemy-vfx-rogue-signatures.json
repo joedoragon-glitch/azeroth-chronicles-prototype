@@ -1,0 +1,762 @@
+[
+  {
+    "id": "rogue/ringleader/melee/wolf/signature",
+    "group": "rogue-signature",
+    "name": "Alpha Crossbite",
+    "kind": "scatter",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "scatter",
+      "style": null,
+      "radius": 120,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/melee/goblin/signature",
+    "group": "rogue-signature",
+    "name": "Gang Boss Smoke Trick",
+    "kind": "pivot",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "pivot",
+      "style": null,
+      "radius": 115,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/melee/skeleton/signature",
+    "group": "rogue-signature",
+    "name": "Ossuary Rattle",
+    "kind": "sweep",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "cone",
+      "effect": "sweep",
+      "style": null,
+      "radius": 135,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/melee/wraith/signature",
+    "group": "rogue-signature",
+    "name": "Graveveil Retreat",
+    "kind": "pivot",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "pivot",
+      "style": null,
+      "radius": 125,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/melee/stalker/signature",
+    "group": "rogue-signature",
+    "name": "Nightclaw Reversal",
+    "kind": "scatter",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "scatter",
+      "style": null,
+      "radius": 125,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/melee/mireling/signature",
+    "group": "rogue-signature",
+    "name": "Broodbank Coil",
+    "kind": "bind",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "bind",
+      "style": null,
+      "radius": 125,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/melee/reedbeast/signature",
+    "group": "rogue-signature",
+    "name": "Reedquake Kick",
+    "kind": "sweep",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "cone",
+      "effect": "sweep",
+      "style": null,
+      "radius": 135,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/melee/archer/signature",
+    "group": "rogue-signature",
+    "name": "Bow Captain Shoulder Break",
+    "kind": "scatter",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "scatter",
+      "style": null,
+      "radius": 105,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/melee/crownguard/signature",
+    "group": "rogue-signature",
+    "name": "Shieldwall Counterturn",
+    "kind": "sweep",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "cone",
+      "effect": "sweep",
+      "style": null,
+      "radius": 140,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/melee/ashbeast/signature",
+    "group": "rogue-signature",
+    "name": "Ashmane Backlash",
+    "kind": "scatter",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "scatter",
+      "style": null,
+      "radius": 145,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/melee/orc/signature",
+    "group": "rogue-signature",
+    "name": "Warband Shoulder Drive",
+    "kind": "sweep",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "cone",
+      "effect": "sweep",
+      "style": null,
+      "radius": 140,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/melee/ogre/signature",
+    "group": "rogue-signature",
+    "name": "Boulderhand Sweep",
+    "kind": "sweep",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "cone",
+      "effect": "sweep",
+      "style": null,
+      "radius": 165,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/ranged/wolf/signature",
+    "group": "rogue-signature",
+    "name": "Alpha Covering Howl",
+    "kind": "pivot",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "pivot",
+      "style": null,
+      "radius": 145,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/ranged/goblin/signature",
+    "group": "rogue-signature",
+    "name": "Slingmaster Split Screen",
+    "kind": "bind",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "bind",
+      "style": null,
+      "radius": 140,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/ranged/skeleton/signature",
+    "group": "rogue-signature",
+    "name": "Bone Archer Pinning Volley",
+    "kind": "bind",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "bind",
+      "style": null,
+      "radius": 145,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/ranged/wraith/signature",
+    "group": "rogue-signature",
+    "name": "Spectral Withdrawal",
+    "kind": "pivot",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "pivot",
+      "style": null,
+      "radius": 150,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/ranged/stalker/signature",
+    "group": "rogue-signature",
+    "name": "Dusktrail Screen",
+    "kind": "pivot",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "pivot",
+      "style": null,
+      "radius": 150,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/ranged/mireling/signature",
+    "group": "rogue-signature",
+    "name": "Broodspit Barrage",
+    "kind": "bind",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "bind",
+      "style": null,
+      "radius": 145,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/ranged/reedbeast/signature",
+    "group": "rogue-signature",
+    "name": "Reedbank Mudscreen",
+    "kind": "bind",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "bind",
+      "style": null,
+      "radius": 145,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/ranged/archer/signature",
+    "group": "rogue-signature",
+    "name": "Veteran Archer Denial Shot",
+    "kind": "pivot",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "pivot",
+      "style": null,
+      "radius": 150,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/ranged/crownguard/signature",
+    "group": "rogue-signature",
+    "name": "Crown Volley Screen",
+    "kind": "bind",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "bind",
+      "style": null,
+      "radius": 155,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/ranged/ashbeast/signature",
+    "group": "rogue-signature",
+    "name": "Cinder Spitter Smokecloud",
+    "kind": "pivot",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "pivot",
+      "style": null,
+      "radius": 155,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/ranged/orc/signature",
+    "group": "rogue-signature",
+    "name": "Axe Thrower Crossfire",
+    "kind": "bind",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "bind",
+      "style": null,
+      "radius": 145,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/ringleader/ranged/ogre/signature",
+    "group": "rogue-signature",
+    "name": "Stone Thrower Denial",
+    "kind": "bind",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "bind",
+      "style": null,
+      "radius": 160,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/boss/thorn/signature",
+    "group": "rogue-signature",
+    "name": "Thornfang’s Packbreaker Howl",
+    "kind": "scatter",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "scatter",
+      "style": null,
+      "radius": 165,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/boss/crypt/signature",
+    "group": "rogue-signature",
+    "name": "Crypt Guardian’s Grave Threshold",
+    "kind": "bind",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "bind",
+      "style": null,
+      "radius": 120,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/boss/mire/signature",
+    "group": "rogue-signature",
+    "name": "Mirejaw’s Sinking Bank",
+    "kind": "bind",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "bind",
+      "style": null,
+      "radius": 145,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/boss/archive/signature",
+    "group": "rogue-signature",
+    "name": "Drowned Keeper’s Floodgate Turn",
+    "kind": "pivot",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "pivot",
+      "style": null,
+      "radius": 140,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/boss/ridge/signature",
+    "group": "rogue-signature",
+    "name": "Ridge Tyrant’s Payroll Screen",
+    "kind": "rally",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "rally",
+      "style": null,
+      "radius": 135,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/boss/mine/signature",
+    "group": "rogue-signature",
+    "name": "Stone Colossus’s Faultline Brace",
+    "kind": "sweep",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "cone",
+      "effect": "sweep",
+      "style": null,
+      "radius": 195,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/boss/warlord/signature",
+    "group": "rogue-signature",
+    "name": "Ashen Warlord’s Shielded Withdrawal",
+    "kind": "rally",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "rally",
+      "style": null,
+      "radius": 155,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/boss/abyss/signature",
+    "group": "rogue-signature",
+    "name": "Abyss Dragon’s Wingward Break",
+    "kind": "scatter",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "scatter",
+      "style": null,
+      "radius": 205,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/boss/citadel/signature",
+    "group": "rogue-signature",
+    "name": "Ash Sentinel’s Guard Pivot",
+    "kind": "pivot",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "pivot",
+      "style": null,
+      "radius": 150,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/boss/cindermaw/signature",
+    "group": "rogue-signature",
+    "name": "Cindermaw’s Broodscreen Roar",
+    "kind": "scatter",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "scatter",
+      "style": null,
+      "radius": 180,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/boss/darklord/signature",
+    "group": "rogue-signature",
+    "name": "Dark Lord’s Crown Decree",
+    "kind": "bind",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "bind",
+      "style": null,
+      "radius": 175,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/captain/supply-vale/signature",
+    "group": "rogue-signature",
+    "name": "Scornfang’s Bait-and-Switch",
+    "kind": "pivot",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "pivot",
+      "style": null,
+      "radius": 115,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/captain/supply-march/signature",
+    "group": "rogue-signature",
+    "name": "Direjaw’s Silt Curtain",
+    "kind": "bind",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "bind",
+      "style": null,
+      "radius": 125,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/captain/supply-highlands/signature",
+    "group": "rogue-signature",
+    "name": "Crag Tyrant’s Paid Screen",
+    "kind": "rally",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "rally",
+      "style": null,
+      "radius": 120,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/captain/supply-crown/signature",
+    "group": "rogue-signature",
+    "name": "Dreadmaw’s Idol Defiance",
+    "kind": "scatter",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "scatter",
+      "style": null,
+      "radius": 160,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  },
+  {
+    "id": "rogue/captain/frontier-overseer/signature",
+    "group": "rogue-signature",
+    "name": "Cinder Warlord’s Rearguard Order",
+    "kind": "rally",
+    "stages": [
+      "windup",
+      "release",
+      "impact"
+    ],
+    "geometry": {
+      "kind": "circle",
+      "effect": "rally",
+      "style": null,
+      "radius": 135,
+      "rogueMove": true,
+      "rogueSignature": true
+    }
+  }
+]

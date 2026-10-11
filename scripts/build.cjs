@@ -40,7 +40,6 @@ for (const [file, content] of generated) {
 }
 for (const file of [...core, ...legacy]) {
   if (!fs.existsSync(path.join(root, file))) throw Error('Missing published asset: ' + file);
-  if (file.endsWith('.js')) cp.execFileSync(process.execPath, ['--check', path.join(root, file)]);
 }
 const order = [...template.matchAll(/<script src="\.\/([^"]+)"/g)].map((m) => m[1]);
 if (JSON.stringify(order) !== JSON.stringify(scripts))
@@ -60,6 +59,9 @@ for (const entry of spriteResources)
     )
       throw Error('Missing or invalid sprite: ' + file);
   }
+// Reject invalid assets before starting a syntax-check process for every script.
+for (const file of [...core, ...legacy])
+  if (file.endsWith('.js')) cp.execFileSync(process.execPath, ['--check', path.join(root, file)]);
 if (site) {
   const target = path.join(root, '_site');
   fs.rmSync(target, { recursive: true, force: true });

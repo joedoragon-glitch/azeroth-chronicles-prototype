@@ -23,6 +23,18 @@
     'special',
     'combo',
     'surface',
+    'skillId',
+    'stage',
+    'tier',
+    'variant',
+    'family',
+    'profile',
+    'material',
+    'personality',
+    'action',
+    'accent',
+    'dangerous',
+    'signature',
   ];
   function validateCatalog(manifest) {
     const director = manifest.director;

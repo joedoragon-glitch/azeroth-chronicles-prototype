@@ -14,7 +14,7 @@ const combat=()=>{
  assert.equal(c.hero.hp,hp*.5,'Heal starts recovery over time rather than instantly');
  for(let i=0;i<25;i++)c.tick(.1);assert(Math.abs(c.hero.hp-(hp*.5+30))<.01,'Rank 1 Heal restores half of its 60 HP after 2.5 seconds');
  assert.equal(ranger.manaCd,0,'Heal does not place Mana Recovery on cooldown');
- c.hero.mp=c.hero.maxMp*.35;c.tick(.1);assert(ranger.manaCd>9,'same Ranger can use independent Mana Recovery');assert(c.hero.supportEffects.some(e=>e.type==='mana'));
+ c.hero.mp=c.hero.maxMp*.35;c.tick(.1);if(Campaign.rules.resourceMode.manaEnabled){assert(ranger.manaCd>9,'same Ranger can use independent Mana Recovery');assert(c.hero.supportEffects.some(e=>e.type==='mana'));}else{assert.equal(ranger.manaCd,0,'retired mana recovery remains idle');assert(!c.hero.supportEffects.some(e=>e.type==='mana'),'no retired mana effect is created');}
 }
 {
  const c=combat(),first=c.s.party.find(u=>u.type==='archer'),second=c.unit('archer',c.hero.x+40,c.hero.y+40),soldier=c.s.party.find(u=>u.type==='soldier');c.s.party.push(second);
@@ -28,15 +28,15 @@ const combat=()=>{
  c.hero.hp=c.hero.maxHp*.9;soldier.hp=soldier.maxHp*.9;c.hero.mp=c.hero.maxMp*.8;c.tick(.1);
  assert(ranger.healCd>9,'out of combat Ranger tops off health even above the combat threshold');
  assert(c.hero.supportEffects.some(e=>e.type==='health'),'hero remains first healing priority out of combat');
- assert(ranger.manaCd>9&&c.hero.supportEffects.some(e=>e.type==='mana'),'out of combat Ranger also tops off hero mana');
+ if(Campaign.rules.resourceMode.manaEnabled)assert(ranger.manaCd>9&&c.hero.supportEffects.some(e=>e.type==='mana'),'out of combat Ranger also tops off hero mana');else assert.equal(ranger.manaCd,0,'out-of-combat recovery no longer spends a mana cooldown');
  for(let i=0;i<101;i++)c.tick(.1);
  assert(soldier.supportEffects.some(e=>e.type==='health')||soldier.hp===soldier.maxHp,'after cooldown the Ranger proceeds to wounded companions');
 }
 {
  const c=new Campaign();c.hero.gold=500;c.s.rescued.archive=true;
  assert.equal(c.rangerSupportAmount('health'),60);assert.equal(c.rangerSupportAmount('mana'),40);
- assert(c.trainRangerSupport('health','archive'));assert(c.trainRangerSupport('mana','archive'));
- assert.equal(c.rangerSupportAmount('health'),150);assert.equal(c.rangerSupportAmount('mana'),100);
+ assert(c.trainRangerSupport('health','archive'));if(Campaign.rules.resourceMode.manaEnabled)assert(c.trainRangerSupport('mana','archive'));else assert(!c.trainRangerSupport('mana','archive'),'mana training retired without spending crowns');
+ assert.equal(c.rangerSupportAmount('health'),150);assert.equal(c.rangerSupportAmount('mana'),Campaign.rules.resourceMode.manaEnabled?100:40);
  assert(!c.trainRangerSupport('health','archive'),'Neri training is a one-time permanent upgrade');
 }
 {

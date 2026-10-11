@@ -2,6 +2,10 @@
 (function (root) {
   'use strict';
   const preferenceKey = 'azeroth-screen-v1';
+  // Preserve comparison preferences for rollback; finalized framing starts at 150%.
+  const cameraPreferenceKey = 'azeroth-camera-v2';
+  const defaultCameraZoom = 1.5;
+  const cameraScales = [1, 1.5, 1.75];
   function resolve({ requested = 'auto', fine = false, coarse = false }) {
     if (requested === 'desktop' || requested === 'phone') return requested;
     return fine || !coarse ? 'desktop' : 'phone';
@@ -18,6 +22,12 @@
     if (requested === 'desktop' || requested === 'phone') preference = requested;
     else if (entry === 'phone' && !['desktop', 'phone'].includes(preference)) preference = 'phone';
     let mode;
+    let cameraPreferences = {};
+    try {
+      const stored = JSON.parse(env.localStorage.getItem(cameraPreferenceKey) || '{}');
+      if (stored && typeof stored === 'object' && !Array.isArray(stored))
+        cameraPreferences = stored;
+    } catch (_) {}
     const listeners = new Set();
     function apply() {
       const previous = mode;
@@ -43,6 +53,17 @@
       get preference() {
         return preference;
       },
+      get cameraZoom() {
+        const value = cameraPreferences[mode];
+        return cameraScales.includes(value) ? value : defaultCameraZoom;
+      },
+      selectCameraZoom(value) {
+        if (!cameraScales.includes(value)) return;
+        cameraPreferences[mode] = value;
+        try {
+          env.localStorage.setItem(cameraPreferenceKey, JSON.stringify(cameraPreferences));
+        } catch (_) {}
+      },
       select(value) {
         preference = ['desktop', 'phone'].includes(value) ? value : 'auto';
         try {
@@ -65,16 +86,20 @@
               y: height * 0.42,
             }
           : {
-              x: Math.max(
-                width * 0.35,
-                (width - (width <= 1000 ? 220 : Math.min(260, width * 0.27)) - 24) / 2,
-              ),
+              x: Math.max(width * 0.35, (width - (width <= 1000 ? 204 : 214) - 20) / 2),
               y: (height - 94) / 2,
             };
       },
     };
   }
-  const api = { resolve, init, preferenceKey };
+  const api = {
+    resolve,
+    init,
+    preferenceKey,
+    cameraPreferenceKey,
+    cameraScales,
+    defaultCameraZoom,
+  };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypePlatform = api;
 })(typeof window !== 'undefined' ? window : globalThis);

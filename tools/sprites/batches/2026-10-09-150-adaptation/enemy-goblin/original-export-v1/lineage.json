@@ -1,0 +1,46 @@
+{
+  "key": "enemy:goblin",
+  "original": "tools/sprites/batches/2026-10-08-goblin-face/image-tool-original.png",
+  "originalHash": "b8423a10966722469bffd137a93b888d2a2ecf9415245f7dddf3520f005e21c1",
+  "priorRevision": "06d5419a812e8c477e77be6f81c4b79e297b7592bc32b0282d0d39ff63590377",
+  "placement": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1254,
+      1254
+    ],
+    "to": [
+      576,
+      576
+    ],
+    "rasterScale": 3,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": {
+        "left": 16,
+        "right": 16,
+        "top": 16,
+        "bottom": 16
+      },
+      "virtualWidth": 1286,
+      "virtualHeight": 1286,
+      "input": "untouched-original",
+      "samplingPasses": 1,
+      "intermediatePixelsUsed": false
+    },
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": -3,
+      "y": -1,
+      "rasterX": -9,
+      "rasterY": -3,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "neverUsesRuntimeExport": true,
+  "nativeReview": "pending"
+}

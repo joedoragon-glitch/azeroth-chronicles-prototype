@@ -119,6 +119,8 @@
         reforges: {},
         potions: { health: 0, mana: 0, greater_health: 0, greater_mana: 0 },
         tonic: false,
+        tonicStock: 0,
+        weaponSelection: null,
         potionCd: 0,
         slow: 0,
         supportEffects: [],
@@ -208,9 +210,14 @@
       this.messages.push(text);
       if (this.messages.length > 7) this.messages.shift();
     }
-    notice(text, duration = 5.5) {
-      this.notices.push({ id: ++this.noticeId, text, duration });
-      if (this.notices.length > 6) this.notices.shift();
+    notice(text, duration = 5.5, detail = '', kind) {
+      this.notices.push({
+        id: ++this.noticeId,
+        text,
+        duration,
+        ...(detail ? { detail } : {}),
+        ...(kind ? { kind } : {}),
+      });
     }
     boss(id) {
       return D.bosses.find((b) => b.id === id);
@@ -224,14 +231,16 @@
       const n = this.s.zones[zone]?.npcs.find((n) => n.id === id && n.kind === 'rest');
       if (n) {
         this.s.refuge = zone;
-        this.s.refugeSite = { zone, id, x: n.x, y: n.y };
+        const point = n.servicePoint || n;
+        this.s.refugeSite = { zone, id, x: point.x, y: point.y };
       }
     }
     arriveRefuge(site) {
       const n = this.zone().npcs.find((n) => n.id === site.id && n.kind === 'rest');
       if (!n) return;
-      Object.assign(this.hero, this.safe(n.x, n.y));
-      for (const u of this.activeParty()) Object.assign(u, this.safe(n.x + 40, n.y + 30));
+      const point = n.servicePoint || n;
+      Object.assign(this.hero, this.safe(point.x, point.y));
+      for (const u of this.activeParty()) Object.assign(u, this.safe(point.x + 40, point.y + 30));
     }
     miniCleared(id, region = this.s.zone) {
       return !!this.s.zones[region]?.minis?.find((m) => m.id === id)?.cleared;
@@ -293,8 +302,41 @@
         n.kind === 'bundle' && !!this.s.discovered[this.definition().id + ':bundle-' + n.index]
       );
     }
+    keeperAvailable() {
+      if (!this.s.normal.archive) return false;
+      if (this.s.pending.archive?.active) return false;
+      const room = this.s.zones.archive;
+      return !room?.enemies.some((e) => e.type === 'boss' && e.family === 'archive' && e.hp > 0);
+    }
+    keeperPactReady() {
+      return this.keeperAvailable() && !!this.s.rescued.archive;
+    }
+    promiseKeeper() {
+      if (!this.keeperPactReady() || this.s.keeperPact) return false;
+      this.s.keeperPact = true;
+      this.event('archiveKnowledge', { fact: 'keeperPact' });
+      this.say('The Keeper takes your word. His shelves are yours to consult.');
+      return true;
+    }
+    keeperReadLedger() {
+      if (this.s.zone !== 'archive') return false;
+      if (!this.s.keeperEvidence) {
+        this.s.keeperEvidence = true;
+        this.notice(
+          'The orders bear the Keeper’s seal. The plan to seize the specialists began among these shelves.',
+          7,
+        );
+        this.event('archiveKnowledge', { fact: 'keeperEvidence' });
+      }
+      return true;
+    }
     visibleNPCs() {
-      return this.zone().npcs.filter((n) => !n.internalSite && !this.bundleCollected(n));
+      return this.zone().npcs.filter(
+        (n) =>
+          !n.internalSite &&
+          !this.bundleCollected(n) &&
+          (n.kind !== 'keeper' || this.keeperAvailable()),
+      );
     }
     siteDescription(n) {
       const z = this.zone(),
@@ -433,6 +475,13 @@
           (seen('night-site') ? 'shore observed' : 'observe Lantern shore after dark')
         );
       if (q.kind === 'sites') {
+        if (q.minSites)
+          return (
+            q.sites.filter(seen).length +
+            '/' +
+            q.minSites +
+            ' places discovered · explore naturally'
+          );
         const missing = q.sites
             .filter((id) => !seen(id))
             .map((id) =>
@@ -1105,8 +1154,14 @@
     }
     rest() {
       const site = this.zone()
-        .npcs.filter((n) => n.kind === 'rest' && dist(n, this.hero) <= 115)
-        .sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0];
+        .npcs.filter(
+          (n) =>
+            n.kind === 'rest' &&
+            (dist(n, this.hero) <= 115 || dist(n.servicePoint || n, this.hero) <= 115),
+        )
+        .sort(
+          (a, b) => dist(a.servicePoint || a, this.hero) - dist(b.servicePoint || b, this.hero),
+        )[0];
       if (!site) return false;
       if (this.refugeThreat()) {
         this.say('Cannot rest while nearby enemies are engaged. Retreat and end the fight first.');
@@ -1119,7 +1174,7 @@
       this.clearTonic();
       this.hero.supportEffects = [];
       this.hero.hp = this.hero.maxHp;
-      this.hero.mp = this.hero.maxMp;
+      if (R.resourceMode.manaEnabled) this.hero.mp = this.hero.maxMp;
       for (const u of this.activeParty())
         if (u.hp > 0) {
           u.hp = u.maxHp;
@@ -1181,6 +1236,33 @@
         }));
     }
 
+    preparationTonicStock() {
+      return this.hero.tonicStock || 0;
+    }
+    purchasePreparationTonic() {
+      // Match the inventory limit enforced by v4 save validation; never charge for unusable stock.
+      if (!this.s.rescued.archive || this.preparationTonicStock() >= 10000) return false;
+      if (!this.spend(this.preparationTonicCost())) return false;
+      this.hero.tonicStock = this.preparationTonicStock() + 1;
+      this.say('Preparation Tonic purchased. Use it at any completed Barracks.');
+      return true;
+    }
+    activatePreparationTonic() {
+      if (this.hero.tonic) return false;
+      this.hero.tonic = true;
+      this.hero.tonicBonus = Math.ceil(this.hero.maxHp * 0.1);
+      this.hero.maxHp += this.hero.tonicBonus;
+      this.hero.hp += this.hero.tonicBonus;
+      // Personal consumables do not add inheritable HP to companions.
+      this.syncCompanionLevelStats();
+      this.say('Preparation Tonic active · maximum health +10% until rest or defeat.');
+      return true;
+    }
+    usePreparationTonic() {
+      if (this.hero.tonic || this.preparationTonicStock() < 1) return false;
+      this.hero.tonicStock--;
+      return this.activatePreparationTonic();
+    }
     buyPotion(type, advanced = false) {
       if (type === 'tonic') {
         if (!advanced || !this.s.rescued.archive) return false;
@@ -1192,17 +1274,12 @@
           this.say('Not enough crowns for a Preparation tonic.');
           return false;
         }
-        this.hero.tonic = true;
-        this.hero.tonicBonus = Math.ceil(this.hero.maxHp * 0.1);
-        this.hero.maxHp += this.hero.tonicBonus;
-        this.hero.hp += this.hero.tonicBonus;
-        this.syncCompanionLevelStats();
-        this.say('Preparation tonic applied · maximum health +10%.');
-        this.notice('PREPARATION TONIC · ACTIVE', 4.5);
-        return true;
+        return this.activatePreparationTonic();
       }
       this.say(
-        'Combat potions are no longer used. Rangers provide Heal and Mana Recovery in the field.',
+        R.resourceMode.manaEnabled
+          ? 'Combat potions are no longer used. Rangers provide Heal and Mana Recovery in the field.'
+          : 'Combat potions are no longer used. Rangers provide Heal in the field.',
       );
       return false;
     }
@@ -1222,23 +1299,48 @@
       if (this.isDungeon()) return false;
       const builder = this.availableLabor()[0],
         cost = this.barracksBuildCost();
-      if (!builder || !this.spend(cost)) return false;
+      if (!builder) return false;
+      const zone = this.zone(),
+        origin = { x: this.hero.x + 130, y: this.hero.y },
+        candidates = [origin];
+      for (const radius of [85, 145, 205, 275, 355, 440])
+        for (let j = 0; j < 24; j++) {
+          const angle = (j * Math.PI) / 12;
+          candidates.push({
+            x: origin.x + Math.cos(angle) * radius,
+            y: origin.y + Math.sin(angle) * radius,
+          });
+        }
+      const p = candidates.find(
+        (point) =>
+          !this.blocked(point.x, point.y, this.zoneId, 50) &&
+          this.distanceToRoad(zone, point) >= 175 &&
+          zone.npcs.every((n) => Math.hypot(n.x - point.x, n.y - point.y) > 105) &&
+          zone.buildings.every((b) => Math.hypot(b.x - point.x, b.y - point.y) > 170) &&
+          zone.props.every(
+            (item) => Math.hypot(item.x - point.x, item.y - point.y) > (item.r || 0) + 60,
+          ),
+      );
+      if (!p) {
+        this.say('No clear plot for barracks nearby. Move away from the road and try again.');
+        return false;
+      }
+      if (!this.spend(cost)) return false;
       this.s.recallActive = false;
-      const p = this.safe(this.hero.x + 130, this.hero.y),
-        b = {
-          id: 'barracks-' + this.s.nextId++,
-          ...p,
-          progress: 0,
-          queue: 0,
-          queueType: null,
-          kind: 'barracks',
-          name: 'Barracks',
-          theme: this.zoneId,
-          icon: '🏗️',
-          full: false,
-          upgradeProgress: 0,
-          upgradePaid: false,
-        };
+      const b = {
+        id: 'barracks-' + this.s.nextId++,
+        ...p,
+        progress: 0,
+        queue: 0,
+        queueType: null,
+        kind: 'barracks',
+        name: 'Barracks',
+        theme: this.zoneId,
+        icon: '🏗️',
+        full: false,
+        upgradeProgress: 0,
+        upgradePaid: false,
+      };
       this.zone().buildings.push(b);
       builder.order = { type: 'build', id: b.id };
       this.say(
@@ -1381,6 +1483,13 @@
               : dungeonIds.includes(zone)
                 ? { x: 160, y: 240 }
                 : { x: D.towns[i][0], y: D.towns[i][1] });
+      this.tacticalClearThreat(); // Transient observations never survive zone travel.
+      this.tacticalClearBurst();
+      this.tacticalClearRogueRegroup();
+      this._tacticalScatter?.clear();
+      this._tacticalScatterLeash?.clear();
+      this._tacticalRepositions?.clear();
+      this._tacticalPartyTargets?.clear();
       this.s.zone = zone;
       this.zone();
       this.s.recallActive = false;
@@ -1388,7 +1497,14 @@
       this.s.squadBoss = false;
       this.s.squadDoctrine = this.squadDefaultDoctrine();
       this.s.heroTarget = null;
-      const q = this.safe(p.x, p.y);
+      const transport = arrival?.transportId
+        ? this.zone().npcs.find((n) => n.id === arrival.transportId && n.kind === 'transport')
+        : null;
+      if (arrival?.transportId && !transport) throw Error('Destination transport is missing');
+      const landing = transport
+        ? { x: transport.x + (arrival.dx || 0), y: transport.y + (arrival.dy || 0) }
+        : p;
+      const q = this.safe(landing.x, landing.y);
       Object.assign(this.hero, q);
       for (const u of this.activeParty()) {
         Object.assign(u, this.safe(q.x + 40, q.y + 30));
@@ -1406,6 +1522,7 @@
           e.motion = null;
           e.rangedAim = null;
           e.frozen = false;
+          delete e.rogueDustCoverUntil;
           if (e.hp > 0) {
             Object.assign(e, e.home);
             e.hp = e.baseHp;
@@ -1476,9 +1593,9 @@
       const before = clone(this.s),
         messageCount = this.messages.length,
         effectCount = this.effects.length,
-        [x, y] = D.towns[targetIndex];
+        arrival = R.travelArrivals?.['crown>' + regionId];
       try {
-        if (!this.enter(regionId, { x, y })) throw Error('Invalid destination');
+        if (!arrival || !this.enter(regionId, arrival)) throw Error('Invalid destination');
         this.event('travel', { from: before.zone, to: this.s.zone, hub: true });
         return true;
       } catch (_) {
@@ -1586,7 +1703,8 @@
             return false;
           this.s.fountains[this.s.zone] = true;
           this.hero.hp = Math.min(this.hero.maxHp, this.hero.hp + 0.6 * this.hero.maxHp);
-          this.hero.mp = Math.min(this.hero.maxMp, this.hero.mp + 0.6 * this.hero.maxMp);
+          if (R.resourceMode.manaEnabled)
+            this.hero.mp = Math.min(this.hero.maxMp, this.hero.mp + 0.6 * this.hero.maxMp);
           this.activeParty().forEach((u) => {
             if (u.hp > 0) u.hp = Math.min(u.maxHp, u.hp + 0.6 * u.maxHp);
           });
@@ -1602,9 +1720,8 @@
       const onboarding = {
         id: 'quest-barracks',
         region: 'vale',
-        name: 'Build your first Barracks',
-        objective:
-          'Build your first Barracks in the field. A barracks gives companions a nearby recovery base and reduces long return trips. While out in the field, open the Adventure menu (Esc/Menu) and choose Establish Basic Barracks — your first one is free.',
+        name: 'A Place to Recover',
+        objective: 'In the field, choose Establish Basic Barracks from Adventure (free).',
         gold: 0,
         xp: 0,
         index: -1,
@@ -1628,8 +1745,7 @@
             ...rule,
             target: room ? room.count : rule.target,
             objective:
-              (room ? room.objective : q[2]) +
-              (rule.clear ? ' and clear the field dungeon guardians' : ''),
+              (room ? room.objective : q[2]) + (rule.clear ? '; clear compound guards' : ''),
           };
         }),
       ];
@@ -1680,7 +1796,7 @@
                       : q.kind === 'night'
                         ? p.count >= q.target && q.sites.every(seen)
                         : q.kind === 'sites'
-                          ? q.sites.every(seen) &&
+                          ? q.sites.filter(seen).length >= (q.minSites || q.sites.length) &&
                             (!q.requiresRescues ||
                               q.requiresRescues.every((id) => this.s.rescued[id]))
                           : false;
@@ -1694,7 +1810,7 @@
       return this.payQuest(q, p);
     }
 
-    engage(e, forced = true) {
+    engage(e, forced = true, spreadPack = true) {
       if (e.aggro || e.neutral) return false;
       if ((this.s.mercyTime || 0) > 0 && !forced && !e.mercyProvoked) return false;
       e.aggro = true;
@@ -1715,12 +1831,20 @@
         this.summonBossAdds(e, this.trueSummonPlan(e), this.bossSummonCap(e));
         if (first) this.say(e.name + ' calls a TRUE warband.');
       }
-      for (const ally of this.zone().enemies)
-        if (ally.pack && ally.pack === e.pack && ally.hp > 0 && !ally.aggro)
-          this.engage(ally, false);
+      if (spreadPack)
+        for (const ally of this.zone().enemies)
+          if (ally.pack && ally.pack === e.pack && ally.hp > 0 && !ally.aggro)
+            this.engage(ally, false);
     }
 
     die() {
+      this.tacticalClearRogueRegroup();
+      this._tacticalScatter?.clear();
+      this._tacticalScatterLeash?.clear();
+      this.tacticalClearThreat();
+      this._tacticalRepositions?.clear();
+      this.tacticalClearBurst();
+      this._tacticalPartyTargets?.clear();
       this.clearTonic();
       this.hero.supportEffects = [];
       for (const u of this.s.party) u.supportEffects = [];
@@ -1734,6 +1858,7 @@
       if (this.s.lastEdge) this.s.recovery[this.s.lastEdge] = true;
       for (const z of Object.values(this.s.zones))
         for (const e of z.enemies) {
+          delete e.rogueDustCoverUntil;
           e.telegraph = null;
           e.sequence = [];
           e.motion = null;
@@ -1759,7 +1884,7 @@
         return;
       }
       this.hero.hp = this.hero.maxHp;
-      this.hero.mp = this.hero.maxMp;
+      if (R.resourceMode.manaEnabled) this.hero.mp = this.hero.maxMp;
       this.hero.tonic = false;
       this.hero.immune = 0;
       this.hero.slow = 0;
@@ -1781,11 +1906,13 @@
         fresh = new Campaign(this.s.mode, heroClass, this.random, { succession: true }).hero;
       for (const key of ['gold', 'weapon', 'armorTier', 'reforges', 'potions'])
         fresh[key] = clone(old[key]);
+      fresh.tonicStock = this.preparationTonicStock();
       for (const key of [
         'legacyWeaponPower',
         'legacyWeaponName',
         'legacyPotions',
         'legacyEquipped',
+        'weaponSelection',
       ])
         if (old[key] !== undefined) fresh[key] = clone(old[key]);
       this.s.hero = fresh;
@@ -1818,6 +1945,12 @@
     }
     kill(e) {
       if (e.deathPaid) return;
+      this.tacticalClearThreat(e);
+      this.tacticalClearBurst(e);
+      this.tacticalClearRogueRegroup(e);
+      this._tacticalScatterLeash?.delete(e.id);
+      this._tacticalRepositions?.delete(e.id);
+      delete e.rogueDustCoverUntil;
       const victoryLevel = this.hero.level;
       e.deathPaid = true;
       e.aggro = false;
@@ -1848,7 +1981,7 @@
         });
       if (e.type === 'boss') {
         const b = this.boss(e.family);
-        this.victory(e.family, e.form);
+        const firstVictory = this.victory(e.family, e.form);
         this.s.statistics.bossSeconds[e.family + ':' + e.form] = Math.round(
           this.s.time - (e.fightStart || this.s.time),
         );
@@ -1868,6 +2001,7 @@
           if (a.summon && a.owner === e.id) a.hp = 0;
         });
         this.say(e.name + ' defeated.');
+        if (firstVictory && e.form === 'normal') this.notice('BOSS VANQUISHED · ' + b.name, 5.5);
         this.event('bossDefeat', { family: e.family, form: e.form });
       }
       if (e.captain || e.roomCaptain) this.s.streak = { key: null, count: 0 };
@@ -1929,7 +2063,7 @@
       };
       this.event('eliteWarning', { family: key });
       this.say(this.boss(key).name + ' has revealed its TRUE presence.');
-      this.notice(this.boss(key).name + ' TRUE will emerge in 5 seconds', 5.5);
+      this.notice(this.boss(key).name + ' TRUE will emerge in 5 seconds', 5.5, '', 'warning');
     }
     streak(e) {
       if (this.peace || e.summon || e.type === 'boss' || e.captain || e.roomCaptain) {
@@ -2074,6 +2208,7 @@
         this.s.paid['clear:' + id] = true;
         this.grant(this.dungeonClearReward(id), 0);
         this.say('Dungeon first clear reward earned.');
+        this.notice(this.boss(id).place + ' · halls secured', 5.5);
       }
     }
     checkEnding() {
@@ -2175,7 +2310,9 @@
         u.immune = Math.max(0, (u.immune || 0) - dt);
       }
       this.syncCompanionLevelStats();
-      if (input.x || input.y) {
+      if (this.tacticalAdvanceScatter(h, dt)) {
+        h.order = null;
+      } else if (input.x || input.y) {
         h.order = null;
         const n = Math.hypot(input.x, input.y),
           speed =
@@ -2186,15 +2323,23 @@
         this.move(h, { x: h.x + (input.x / n) * speed, y: h.y + (input.y / n) * speed }, speed, dt);
       } else if (h.order) {
         const target =
-          h.order.type === 'attack' ? z.enemies.find((e) => e.id === h.order.id) : h.order;
-        if (target && !target.neutral) {
+          h.order.type === 'attack'
+            ? z.enemies.find((e) => e.id === h.order.id && this.tacticalDirectTargetable(e))
+            : h.order;
+        if (
+          target &&
+          !target.neutral &&
+          (h.order.type !== 'attack' || (target.hp > 0 && this.tacticalDirectTargetable(target)))
+        ) {
           if (
             dist(h, target) > (h.order.type === 'attack' ? (h.class === 'paladin' ? 105 : 350) : 25)
           )
             this.follow(
               h,
               target,
-              (h.speed + this.heroTalentSpeedBonus()) * (h.slow > 0 ? 0.65 : 1),
+              (h.speed + this.heroTalentSpeedBonus()) *
+                (h.haste > 0 ? 1.25 : 1) *
+                (h.slow > 0 ? 0.65 : 1),
               dt,
               20,
             );
@@ -2265,7 +2410,7 @@
         return;
       this.updateRangerSupport(dt);
       this.autoRangerSupport();
-      h.mp = Math.min(h.maxMp, h.mp + this.manaRegenRate() * dt);
+      if (R.resourceMode.manaEnabled) h.mp = Math.min(h.maxMp, h.mp + this.manaRegenRate() * dt);
       this.updateNight();
       this.updateEscort(dt);
       this.checkClear();
@@ -2492,15 +2637,17 @@
       if (!plans.length) return false;
       const summonCfg = profile.summon,
         owned = this.captainOwnedSummons(e).length,
+        d = dist(e, target),
         eligible = plans
           .map((plan, index) => ({ plan, index }))
-          .filter(
-            (x) =>
-              x.plan.kind !== 'summon' ||
-              (summonCfg && owned < (summonCfg.cap || 3) && (e.summonCd || 0) <= 0),
-          ),
+          .filter((x) => {
+            if (x.plan.kind === 'summon')
+              return summonCfg && owned < (summonCfg.cap || 3) && (e.summonCd || 0) <= 0;
+            if (x.plan.kind === 'cone')
+              return d <= (x.plan.radius || 145) * R.bossCadence.areaRangeMultiplier + 25;
+            return true;
+          }),
         available = eligible.filter((x) => x.index !== e.lastCaptainAttack),
-        d = dist(e, target),
         weighted = [];
       let chosen = null;
       if (summonCfg?.opening && !e.captainOpeningSummon && owned === 0 && (e.summonCd || 0) <= 0) {
@@ -2532,10 +2679,16 @@
       }
       const plan = chosen.plan,
         index = chosen.index,
-        angle = Math.atan2(target.y - e.y, target.x - e.x),
+        markHero =
+          plan.kind === 'circle' &&
+          this.hero.hp > 0 &&
+          dist(e, this.hero) < profile.specialRange &&
+          this.line(e, this.hero),
+        actualTarget = markHero ? this.hero : target,
+        angle = Math.atan2(actualTarget.y - e.y, actualTarget.x - e.x),
         center = ['cone', 'sector', 'ring'].includes(plan.kind)
           ? { x: e.x, y: e.y }
-          : { x: target.x, y: target.y },
+          : { x: actualTarget.x, y: actualTarget.y },
         a = {
           ...plan,
           captainSkill: true,
@@ -2547,7 +2700,8 @@
           fromY: e.y,
           angle,
           ...center,
-          radius: plan.radius || (plan.kind === 'cone' ? 145 : 85),
+          radius:
+            (plan.radius || (plan.kind === 'cone' ? 145 : 85)) * R.bossCadence.areaRangeMultiplier,
           sequence: [],
         };
       if (plan.sequential && plan.kind === 'circle') {
@@ -2610,6 +2764,859 @@
       this.event('warning', { family: e.species });
       return true;
     }
+
+    // Each monster evaluates its own disadvantage. Support can chain across
+    // packs while the player keeps pursuing; there is no encounter-wide cap.
+    tacticalRogueRegroup(e) {
+      return this._tacticalRegroups?.get(e?.id) || null;
+    }
+    tacticalClearRogueRegroup(e = null) {
+      if (e) {
+        this._tacticalRegroups?.delete(e.id);
+        this._tacticalRegroupUsed?.delete(e.id);
+        this._tacticalRogueNext?.delete(e.id);
+        this._tacticalVisitedAllies?.delete(e.id);
+        this._tacticalWoundedUsed?.delete(e.id);
+      } else {
+        this._tacticalRegroups?.clear();
+        this._tacticalRegroupUsed?.clear();
+        this._tacticalRogueNext?.clear();
+        this._tacticalVisitedAllies?.clear();
+        this._tacticalWoundedUsed?.clear();
+      }
+    }
+    tacticalStopRogueRegroup(e) {
+      this._tacticalRegroups?.delete(e?.id);
+      if (e) {
+        e.path = [];
+        e.routeAge = 0;
+      }
+    }
+    tacticalBeginRogueRegroup(e, ally, activeTargetCount = 0) {
+      const prior = this.tacticalRogueRegroup(e),
+        preparing = prior?.phase === 'thinking' || prior?.phase === 'escape';
+      if (
+        !e?.aggro ||
+        e.hp <= 0 ||
+        e.neutral ||
+        e.returning ||
+        e.telegraph ||
+        e.motion ||
+        e.rangedAim ||
+        (prior && !preparing) ||
+        (!preparing && (this._tacticalRogueNext?.get(e.id) || 0) > this.s.time) ||
+        !this.tacticalRogueEligibility(e, activeTargetCount) ||
+        !this.tacticalRegroupCandidates(e).includes(ally)
+      )
+        return false;
+      const groupKey = ally.pack || ally.id;
+      if (this._tacticalVisitedAllies?.get(e.id)?.has(groupKey)) return false;
+      const destination = { x: ally.x, y: ally.y },
+        retreatOrigin = { x: e.x, y: e.y };
+      if (!Number.isFinite(destination.x) || !Number.isFinite(destination.y)) return false;
+      const path = this.route(e, destination);
+      if (!path.length) return false;
+      let length = 0;
+      let previous = e;
+      for (const waypoint of path) {
+        length += dist(previous, waypoint);
+        previous = waypoint;
+      }
+      if (length > R.tacticalFoundation.awarenessRadius * 1.8) return false;
+      // Keep the established major-town protection; ordinary monster patrols
+      // elsewhere in occupied regions remain legal.
+      if (!this.isDungeon()) {
+        const coords = D.towns[this.regionIndex()];
+        if (coords) {
+          const town = { x: coords[0], y: coords[1] };
+          previous = e;
+          for (const waypoint of path) {
+            if (this.distanceToSegment(town, previous, waypoint) < 185) return false;
+            previous = waypoint;
+          }
+        }
+      }
+      if (!this._tacticalRegroups) this._tacticalRegroups = new Map();
+      if (!this._tacticalVisitedAllies) this._tacticalVisitedAllies = new Map();
+      if (!this._tacticalRogueNext) this._tacticalRogueNext = new Map();
+      const visited = this._tacticalVisitedAllies.get(e.id) || new Set();
+      visited.add(groupKey);
+      this._tacticalVisitedAllies.set(e.id, visited);
+      this._tacticalRegroups.set(e.id, {
+        phase: 'travel',
+        allyId: ally.id,
+        destination,
+        retreatOrigin,
+        travelRemaining: 12,
+        stalled: 0,
+        anchor: null,
+        holdRemaining: 12,
+      });
+      this._tacticalRogueNext.set(e.id, this.s.time + R.tacticalFoundation.moveCooldownSeconds);
+      e.path = [];
+      e.routeAge = 0;
+      return true;
+    }
+    // Transient forced movement is shared by hero and companions, but never
+    // serialized. While scattering, no player movement or party AI can override
+    // the direction. World collision remains authoritative.
+    tacticalScatterState(unit) {
+      return this._tacticalScatter?.get(unit === this.hero ? 'hero' : unit?.id) || null;
+    }
+    tacticalClearScatter(unit) {
+      const key = unit === this.hero ? 'hero' : unit?.id;
+      this._tacticalScatter?.delete(key);
+      for (const [actor, allowance] of this._tacticalScatterLeash || []) {
+        allowance.victims.delete(key);
+        if (!allowance.victims.size) this._tacticalScatterLeash.delete(actor);
+      }
+    }
+    tacticalBeginScatter(actor, unit, push) {
+      if (!unit || unit.hp <= 0 || !Number.isFinite(push) || push <= 0) return false;
+      const key = unit === this.hero ? 'hero' : unit.id,
+        distance = Math.max(1, dist(actor, unit)),
+        direction =
+          distance > 1
+            ? { x: (unit.x - actor.x) / distance, y: (unit.y - actor.y) / distance }
+            : { x: 1, y: 0 },
+        duration = 0.6;
+      if (!this._tacticalScatter) this._tacticalScatter = new Map();
+      this._tacticalScatter.set(key, {
+        zone: this.zoneId,
+        unit,
+        direction,
+        speed: push / duration,
+        remaining: duration,
+      });
+      if (unit === this.hero) this.hero.order = null;
+      // The short leash allowance is boss-specific and cannot become a
+      // permanent extended territory or a new aggro/recruitment rule.
+      if (actor?.family === 'thorn' && actor.type === 'boss') {
+        if (!this._tacticalScatterLeash) this._tacticalScatterLeash = new Map();
+        const prior = this._tacticalScatterLeash.get(actor.id),
+          victims = prior?.until > this.s.time ? prior.victims : new Set();
+        victims.add(key);
+        this._tacticalScatterLeash.set(actor.id, {
+          zone: this.zoneId,
+          anchor: { x: actor.x, y: actor.y },
+          victims,
+          until: this.s.time + 1.6,
+        });
+      }
+      return true;
+    }
+    tacticalAdvanceScatter(unit, dt) {
+      const key = unit === this.hero ? 'hero' : unit?.id,
+        state = this._tacticalScatter?.get(key);
+      if (!state) return false;
+      if (state.zone !== this.zoneId || state.unit !== unit || unit.hp <= 0) {
+        this._tacticalScatter.delete(key);
+        return false;
+      }
+      const step = Math.min(dt, state.remaining),
+        goal = {
+          x: unit.x + state.direction.x * state.speed * step,
+          y: unit.y + state.direction.y * state.speed * step,
+        };
+      if (step > 0) this.move(unit, goal, state.speed, step, 0);
+      state.remaining = Math.max(0, state.remaining - dt);
+      if (state.remaining <= 0) this._tacticalScatter.delete(key);
+      return true;
+    }
+    // A captain/boss sidestep may carry the encounter across the original
+    // home leash, but never heal/reset the encounter merely for that motion.
+    // The temporary corridor is anchored to the actual short skill movement,
+    // bounded to local combat and cannot follow a genuine player escape.
+    tacticalRecordRogueReposition(e, from, target) {
+      if (!(e.type === 'boss' || e.captain || e.roomCaptain) || !target || dist(from, e) < 1)
+        return;
+      if (!this._tacticalRepositions) this._tacticalRepositions = new Map();
+      this._tacticalRepositions.set(e.id, {
+        zone: this.zoneId,
+        from,
+        to: { x: e.x, y: e.y },
+        until: this.s.time + 4,
+      });
+    }
+    tacticalRogueLeashAllows(e, target, territory) {
+      const shift = this._tacticalRepositions?.get(e?.id);
+      if (
+        shift &&
+        shift.zone === this.zoneId &&
+        target?.hp > 0 &&
+        (shift.until > this.s.time ||
+          (dist(e, shift.to) <= 250 &&
+            dist(target, e) <= 350 &&
+            dist(target, e.home) <= territory + 250)) &&
+        dist(target, e) <= Math.max(territory, 550) &&
+        dist(target, shift.to) <= Math.max(territory + 200, 650) &&
+        this.distanceToSegment(target, shift.from, shift.to) <= Math.max(territory, 550)
+      )
+        return true;
+      // The boss must not disengage merely because its own howl forcibly
+      // pushed an opponent beyond the normal home leash. This short exception
+      // applies only to victims of that howl, near its point of impact.
+      const scatter = this._tacticalScatterLeash?.get(e?.id);
+      if (
+        scatter &&
+        scatter.zone === this.zoneId &&
+        scatter.victims.has(target === this.hero ? 'hero' : target?.id) &&
+        (scatter.until > this.s.time ||
+          (dist(target, e) <= 350 && dist(target, e.home) <= territory + 250)) &&
+        dist(target, e) <= Math.max(territory + 250, 900) &&
+        dist(target, scatter.anchor) <= Math.max(territory + 250, 900)
+      )
+        return true;
+      const state = this.tacticalRogueRegroup(e);
+      if (!state) return dist(target, e.home) <= territory;
+      if (state.phase === 'thinking' && !state.anchor) return dist(target, e.home) <= territory;
+      const separationLimit = R.tacticalFoundation.awarenessRadius + 200;
+      if (dist(target, e) > separationLimit) return false;
+      if (state.phase === 'travel')
+        return (
+          this.distanceToSegment(target, state.retreatOrigin || e.home, state.destination) <=
+          territory
+        );
+      return (
+        ['anchored', 'thinking', 'escape'].includes(state.phase) &&
+        dist(target, state.anchor || e) <= separationLimit
+      );
+    }
+    tacticalSeekRogueSupport(e, pressure) {
+      let attempts = 0;
+      for (const group of this.tacticalRegroupGroups(e)) {
+        for (const ally of group.members) {
+          if (attempts++ >= 5) return false;
+          if (this.tacticalBeginRogueRegroup(e, ally, pressure)) {
+            this.event('rogueRegroup', { actor: e.id, ally: ally.id });
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+    tacticalRogueOutnumbered(e) {
+      // Present individuals on the hero's side are all effectively hero-level.
+      // Every nearby active monster, of any species or strength, contributes
+      // one defender; summons and bosses are meaningful support too.
+      return (
+        this.tacticalPresentOpponents(e) >= 2 &&
+        this.tacticalPresentOpponents(e) > this.tacticalLocalSupport(e)
+      );
+    }
+    tacticalAdvanceRogueRegroup(e, target, dt) {
+      const state = this.tacticalRogueRegroup(e);
+      if (!state) return false;
+      if (state.phase === 'thinking') {
+        state.thinkRemaining -= dt;
+        e.noProgress = 0;
+        if (state.thinkRemaining > 0) return true;
+        const pressure = this.tacticalActiveTargetCount(e);
+        const totalPressure = this.tacticalRogueOutnumbered(e)
+          ? Math.max(pressure, R.tacticalFoundation.simultaneousPressureSources)
+          : pressure;
+        if (!this.tacticalRogueEligibility(e, totalPressure)) {
+          this.tacticalStopRogueRegroup(e);
+          return false;
+        }
+        if (this.tacticalSeekRogueSupport(e, totalPressure)) return true;
+        this.tacticalStopRogueRegroup(e);
+        if (this.tacticalRogueMove(e, target, !!state.anchor)) {
+          if (!this._tacticalRegroupUsed) this._tacticalRegroupUsed = new Set();
+          this._tacticalRegroupUsed.add(e.id); // Prevent lone move spam.
+          if (state.anchor) {
+            this._tacticalRegroups.set(e.id, {
+              phase: 'anchored',
+              anchor: state.anchor,
+              holdRemaining: 12,
+              moveUsed: true,
+              recruited: true,
+            });
+          }
+          return true;
+        }
+        // Bosses and captains defend their lairs/command posts. If a lone
+        // defender cannot use its rogue maneuver, normal combat continues:
+        // repeatedly fleeing home would make prepared ranged victories impossible.
+        if (e.type === 'boss' || e.captain || e.roomCaptain) {
+          if (!this._tacticalRegroupUsed) this._tacticalRegroupUsed = new Set();
+          this._tacticalRegroupUsed.add(e.id);
+          return false;
+        }
+        // Isolated ordinary enemies may refuse the fight and flee quickly.
+        this._tacticalRegroups.set(e.id, {
+          phase: 'escape',
+          anchor: { x: e.x, y: e.y },
+          fleeRemaining: R.tacticalFoundation.escapeSeconds,
+          seekDelay: 0.9,
+          stalled: 0,
+        });
+        return true;
+      }
+      if (state.phase === 'escape') {
+        state.fleeRemaining -= dt;
+        state.seekDelay -= dt;
+        if (state.seekDelay <= 0) {
+          state.seekDelay = 1;
+          if (this.tacticalSeekRogueSupport(e, this.tacticalActiveTargetCount(e))) return true;
+        }
+        const before = { x: e.x, y: e.y },
+          d = Math.max(1, dist(e, target)),
+          away = {
+            x: e.x + ((e.x - target.x) / d) * 145,
+            y: e.y + ((e.y - target.y) / d) * 145,
+          };
+        this.move(e, away, (e.type === 'boss' ? 145 : 175) * 1.5, dt, 0);
+        state.stalled = dist(before, e) > Math.max(0.1, dt * 10) ? 0 : state.stalled + dt;
+        e.noProgress = 0;
+        if (dist(target, e) > 480 || state.fleeRemaining <= 0 || state.stalled > 1.8) {
+          this.disengage(e, dt);
+        }
+        return true;
+      }
+      if (state.phase === 'travel') {
+        state.travelRemaining -= dt;
+        const ally = this.zone().enemies.find((unit) => unit.id === state.allyId);
+        if (!ally || ally.hp <= 0 || ally.neutral || ally.returning || state.travelRemaining <= 0) {
+          // An interrupted retreat stays attached to the current encounter,
+          // rather than snapping back under the original-home leash.
+          this._tacticalRegroups.set(e.id, {
+            phase: 'thinking',
+            anchor: { x: e.x, y: e.y },
+            thinkRemaining: R.tacticalFoundation.thinkingSeconds,
+          });
+          e.path = [];
+          e.routeAge = 0;
+          e.noProgress = 0;
+          return true;
+        }
+        if (dist(e, state.destination) > 65) {
+          const before = { x: e.x, y: e.y };
+          this.follow(e, state.destination, (e.type === 'boss' ? 145 : 175) * 1.5, dt, 55);
+          state.stalled = dist(before, e) > Math.max(0.1, dt * 10) ? 0 : state.stalled + dt;
+          if (state.stalled >= 2.5) {
+            this._tacticalRegroups.set(e.id, {
+              phase: 'thinking',
+              anchor: { x: e.x, y: e.y },
+              thinkRemaining: R.tacticalFoundation.thinkingSeconds,
+            });
+            e.path = [];
+            e.routeAge = 0;
+            e.noProgress = 0;
+            return true;
+          }
+          e.noProgress = 0;
+          return true;
+        }
+        state.phase = 'anchored';
+        state.anchor = { x: e.x, y: e.y };
+        state.recruited = false;
+        state.moveUsed = false;
+        e.path = [];
+        e.routeAge = 0;
+      }
+      if (state.phase === 'anchored') {
+        // The temporary combat anchor follows a real continued encounter,
+        // never changing the original respawn home.
+        if (dist(e, state.anchor) > 340) {
+          if (dist(target, e) <= 300) state.anchor = { x: e.x, y: e.y };
+          else {
+            this.tacticalStopRogueRegroup(e);
+            return false;
+          }
+        }
+        if (dist(target, e) > 280) {
+          state.holdRemaining -= dt;
+          if (state.holdRemaining <= 0) {
+            this.disengage(e, dt);
+            return true;
+          }
+          e.noProgress = 0;
+          return true;
+        }
+        state.holdRemaining = 12;
+        this.tacticalRecruitRegroupAllies(e, state, target);
+        const pressure = this.tacticalActiveTargetCount(e);
+        const wounded = this.tacticalRogueWounded(e);
+        const freshWound = wounded && !this._tacticalWoundedUsed?.has(e.id);
+        const pressureRemains =
+          this.tacticalRogueOutnumbered(e) &&
+          this.tacticalRogueEligibility(e, Math.max(pressure, 2)) &&
+          (this._tacticalRogueNext?.get(e.id) || 0) <= this.s.time;
+        if ((freshWound && this.tacticalRogueEligibility(e, pressure)) || pressureRemains) {
+          if (freshWound) {
+            if (!this._tacticalWoundedUsed) this._tacticalWoundedUsed = new Set();
+            this._tacticalWoundedUsed.add(e.id);
+          }
+          this._tacticalRegroups.set(e.id, {
+            phase: 'thinking',
+            thinkRemaining: R.tacticalFoundation.thinkingSeconds,
+            anchor: state.anchor,
+          });
+          return true;
+        }
+        if (!state.moveUsed && this.tacticalRogueMove(e, target)) {
+          state.moveUsed = true;
+          return true;
+        }
+      }
+      return false;
+    }
+    // Tactical one-action repertoire: each species keeps its basic maneuver;
+    // elite signatures are authored for the species AND its actual combat role.
+    tacticalRogueMove(e, fallback, fromRegroupAnchor = false) {
+      if (e.hp <= 0 || e.returning || e.telegraph || e.motion || e.rangedAim) return false;
+      const tier = this.tacticalProtectionTier(e),
+        cfg = R.tacticalFoundation,
+        profiles = cfg.rogueMoves,
+        ranged = !!e.ranged,
+        basic =
+          (e.type === 'boss' && profiles.bosses[e.family]) ||
+          ((e.captain || e.roomCaptain) && profiles.captains[e.captainProfile]) ||
+          (tier === 'guardian' && ranged && profiles.rangedGuardian) ||
+          (ranged && (profiles.ranged[e.species] || profiles.rangedFallback)) ||
+          profiles.species[e.species] ||
+          profiles[tier] ||
+          profiles.ordinary,
+        signature =
+          (e.type === 'boss' && cfg.rogueSignatures.bosses[e.family]) ||
+          ((e.captain || e.roomCaptain) && cfg.rogueSignatures.captains[e.captainProfile]) ||
+          (tier === 'ringleader' &&
+            cfg.rogueRingleaderSignatures[ranged ? 'ranged' : 'melee'][e.species]),
+        pressured =
+          fromRegroupAnchor ||
+          this.tacticalRogueOutnumbered(e) ||
+          !!this.tacticalRogueRegroup(e)?.anchor,
+        wantsSignature =
+          tier === 'ringleader' ? pressured || this.tacticalRogueWounded(e) : pressured,
+        threat = this.tacticalHighestThreatTarget(e, fallback),
+        closeTargets =
+          signature && ['scatter', 'sweep'].includes(signature.effect)
+            ? this.combatTargets()
+                .filter(
+                  (unit) => unit.hp > 0 && dist(unit, e) <= signature.radius && this.line(e, unit),
+                )
+                .sort((a, b) => dist(e, a) - dist(e, b))
+            : [],
+        isSignature =
+          !!signature &&
+          wantsSignature &&
+          (!['scatter', 'sweep'].includes(signature.effect) || closeTargets.length > 0),
+        profile = isSignature ? signature : basic,
+        target =
+          isSignature && closeTargets.length
+            ? closeTargets.includes(threat)
+              ? threat
+              : closeTargets[0]
+            : threat,
+        maxRange = e.type === 'boss' ? 500 : e.captain || e.roomCaptain ? 440 : 340;
+      if (!target || dist(e, target) > maxRange || !this.line(e, target)) return false;
+      const effect = isSignature ? profile.effect : null,
+        centered = effect === 'scatter' || effect === 'sweep',
+        warning =
+          profile.warning || (e.type === 'boss' ? 1.05 : e.captain || e.roomCaptain ? 0.95 : 0.75),
+        radius = profile.radius || (e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 95 : 80);
+      e.telegraph = {
+        rogueMove: true,
+        rogueSignature: isSignature,
+        kind: effect === 'sweep' ? 'cone' : 'circle',
+        name: profile.name,
+        style: profile.style || null,
+        effect,
+        coefficient: profile.coefficient,
+        targetId: target === this.hero ? 'hero' : target.id,
+        fromX: e.x,
+        fromY: e.y,
+        angle: Math.atan2(target.y - e.y, target.x - e.x),
+        x: centered ? e.x : target.x,
+        y: centered ? e.y : target.y,
+        radius,
+        slowSeconds: profile.slowSeconds || 0,
+        push: profile.push || 0,
+        retreat: profile.retreat || 0,
+        blinds: profile.blinds || 0,
+        sidestep: profile.sidestep || 0,
+        rallySeconds: profile.rallySeconds || 0,
+        reinforceBelow: profile.reinforceBelow || 0,
+        reinforceCap: profile.reinforceCap || 0,
+        reinforceSpecies: profile.reinforceSpecies || null,
+        reinforceRangedSpecies: profile.reinforceRangedSpecies || null,
+        reinforceName: profile.reinforceName || null,
+        timer: warning,
+        total: warning,
+        recovery: isSignature ? 1.05 : 0.8,
+      };
+      this.event('warning', { family: e.family, rogue: true, name: profile.name });
+      this.event('rogueMove', {
+        actor: e.id,
+        name: profile.name,
+        style: effect || profile.style,
+        signature: isSignature,
+      });
+      return true;
+    }
+    // Field commanders rally native ordinary-monster spawn records; Ridge Tyrant
+    // instead rallies GUARD spawn records via tacticalRogueCommanderSupport.
+    // Never manufacture new field enemies or count a boss's summoned warband.
+    tacticalRogueFieldSupport(e, move) {
+      if (
+        e.type !== 'boss' ||
+        !['warlord', 'cindermaw', 'darklord'].includes(e.family) ||
+        !move.reinforceSpecies ||
+        !move.reinforceCap
+      )
+        return false;
+      const z = this.zone(),
+        radius = 750,
+        species = [move.reinforceSpecies, move.reinforceRangedSpecies].filter(Boolean),
+        nativeTroop = (u) =>
+          u !== e &&
+          u.type === 'mob' &&
+          u.form === 'normal' &&
+          !!u.pack &&
+          !u.guard &&
+          !u.summon &&
+          !u.neutral &&
+          !u.nightOnly &&
+          !u.captain &&
+          !u.roomCaptain &&
+          !u.mini &&
+          !u.site &&
+          species.includes(u.species) &&
+          !!u.home &&
+          dist(u.home, e) <= radius,
+        nearby = () =>
+          z.enemies
+            .filter((u) => nativeTroop(u) && u.hp > 0 && !u.returning && dist(u, e) <= radius)
+            .sort((a, b) => dist(a, e) - dist(b, e) || this.idOrder(a, b)),
+        living = nearby();
+      if (living.length <= move.reinforceBelow) {
+        const wanted = Math.max(0, move.reinforceCap - living.length),
+          party = [this.hero, ...this.activeLivingParty()],
+          dormant = z.enemies
+            .filter(
+              (u) =>
+                nativeTroop(u) &&
+                u.hp <= 0 &&
+                u.deathPaid &&
+                !this.blocked(u.home.x, u.home.y, z.id, 12) &&
+                party.every((a) => a.hp <= 0 || dist(a, u.home) >= 115),
+            )
+            .sort((a, b) => dist(a.home, e) - dist(b.home, e) || this.idOrder(a, b));
+        let returned = 0;
+        for (const u of dormant.slice(0, wanted)) {
+          Object.assign(u, u.home);
+          u.hp = u.maxHp = u.baseHp;
+          u.damage = u.baseDamage;
+          u.deathPaid = false;
+          u.heroParticipated = false;
+          u.aggro = false;
+          u.returning = 0;
+          u.telegraph = null;
+          u.rangedAim = null;
+          u.motion = null;
+          u.sequence = [];
+          u.cd = 0.25;
+          u.noProgress = 0;
+          if (dist(u, e) <= R.tacticalFoundation.supportRadius && this.line(e, u))
+            this.engage(u, true, false);
+          returned++;
+        }
+        if (returned) {
+          this.say(e.name + ' rallies ' + returned + ' returning ' + move.reinforceName + '.');
+          this.event('rogueSupport', { actor: e.id, allies: returned, respawn: true });
+        }
+      }
+      // Refresh ordinary spawn positions throughout the local area, but only
+      // call defenders into combat when they are in the existing support radius.
+      for (const u of nearby().slice(0, move.reinforceCap)) {
+        if (!u.aggro && dist(u, e) <= R.tacticalFoundation.supportRadius && this.line(e, u))
+          this.engage(u, true, false);
+        if (u.aggro) {
+          u.pursuitBurst = Math.max(u.pursuitBurst || 0, move.rallySeconds);
+          u.cd = Math.min(u.cd || 0, 0.5);
+        }
+      }
+      // Broodscreen and Crown Decree also rally their living, already engaged
+      // owned troops. These summons never enter native respawn counts or caps.
+      if (['cindermaw', 'darklord'].includes(e.family))
+        for (const u of z.enemies) {
+          if (
+            !u.summon ||
+            u.owner !== e.id ||
+            u.hp <= 0 ||
+            !u.aggro ||
+            u.returning ||
+            dist(u, e) > R.tacticalFoundation.supportRadius ||
+            !this.line(e, u)
+          )
+            continue;
+          u.pursuitBurst = Math.max(u.pursuitBurst || 0, move.rallySeconds);
+          u.cd = Math.min(u.cd || 0, 0.5);
+        }
+      return true;
+    }
+    tacticalRogueCommanderSupport(e, move) {
+      if (!move.reinforceSpecies || !move.reinforceCap) return false;
+      const captain = ['supply-highlands', 'frontier-overseer'].includes(e.captainProfile),
+        fieldBoss = e.type === 'boss' && e.family === 'ridge';
+      if (!captain && !fieldBoss) return false;
+      const z = this.zone(),
+        range = fieldBoss ? 750 : 560,
+        supports = (u) => {
+          if (
+            u === e ||
+            u.neutral ||
+            u.summon ||
+            u.captain ||
+            u.roomCaptain ||
+            u.type !== 'mob' ||
+            u.nightOnly ||
+            u.form !== 'normal' ||
+            u.site ||
+            (u.mini && this.miniCleared(u.mini))
+          )
+            return false;
+          if (e.captainProfile === 'supply-highlands')
+            return u.guard && ['wolf', 'ogre', 'archer'].includes(u.species);
+          if (e.captainProfile === 'frontier-overseer')
+            return !u.guard && !u.mini && ['orc', 'archer'].includes(u.species);
+          return u.guard && ['wolf', 'ogre', 'archer'].includes(u.species);
+        },
+        live = () =>
+          z.enemies.filter((u) => supports(u) && u.hp > 0 && !u.returning && dist(u, e) <= range),
+        existing = live();
+      if (existing.length <= move.reinforceBelow) {
+        // Existing defeated spawn identities only: no new monster objects.
+        const available = z.enemies
+          .filter(
+            (u) =>
+              supports(u) &&
+              u.hp <= 0 &&
+              u.home &&
+              dist(u.home, e) <= range &&
+              [this.hero, ...this.activeLivingParty()].every(
+                (a) => a.hp <= 0 || dist(a, u.home) >= 105,
+              ) &&
+              !this.blocked(u.home.x, u.home.y, z.id, 12) &&
+              this.clearSegment(e, u.home, 12),
+          )
+          .sort((a, b) => dist(a.home, e) - dist(b.home, e) || a.id.localeCompare(b.id));
+        let revived = 0;
+        for (const u of available.slice(0, Math.max(0, move.reinforceCap - existing.length))) {
+          Object.assign(u, u.home);
+          u.hp = u.baseHp;
+          u.maxHp = u.baseHp;
+          u.damage = u.baseDamage;
+          u.returning = 0;
+          u.deathPaid = false;
+          u.heroParticipated = false;
+          u.telegraph = null;
+          u.motion = null;
+          u.rangedAim = null;
+          u.aggro = false;
+          u.frenzy = false;
+          u.cd = 0.5;
+          u.pursuitBurst = Math.max(u.pursuitBurst || 0, move.rallySeconds);
+          if (u.pack) delete z.packTimers[u.pack];
+          if (dist(u, e) <= R.tacticalFoundation.supportRadius && this.line(e, u))
+            this.engage(u, true, false);
+          revived++;
+        }
+        if (revived) {
+          this.say(e.name + ' recalls ' + revived + ' nearby defenders to their posts.');
+          this.event('rogueSupport', { actor: e.id, allies: revived, existingSpawns: true });
+        }
+      }
+      // Distant existing spawns occupy their posts, not automatic combat aggro.
+      for (const ally of live()) {
+        ally.pursuitBurst = Math.max(ally.pursuitBurst || 0, move.rallySeconds);
+        if (ally.aggro) ally.cd = Math.min(ally.cd || 0, 0.5);
+      }
+      return true;
+    }
+    tacticalResolveRogueMove(e, move) {
+      const target =
+        move.targetId === 'hero'
+          ? this.hero
+          : this.combatTargets().find((u) => u !== this.hero && u.id === move.targetId);
+      if (!move.rogueSignature) {
+        // Base movement remains single-target and cover-sensitive.
+        if (!target || target.hp <= 0 || dist(target, move) > move.radius || !this.line(e, target))
+          return;
+        const startingHero = this.hero,
+          startingZone = this.zoneId,
+          startingDeaths = this.s.statistics.deaths;
+        if (move.style === 'dash' && dist(e, target) > 95) {
+          const previous = { x: e.x, y: e.y };
+          this.move(e, target, 300, 0.3, 85);
+          this.tacticalRecordRogueReposition(e, previous, target);
+        }
+        if (!this.hitParty(target, e.damage * move.coefficient)) return;
+        if (
+          this.hero !== startingHero ||
+          this.zoneId !== startingZone ||
+          this.s.statistics.deaths !== startingDeaths ||
+          this.s.challenge.pending ||
+          this.s.challenge.gameOver
+        )
+          return;
+        // A successful lethal companion hit still grants the caster's authored
+        // dust/withdrawal, but cannot slow or shove the fallen victim.
+        if (target.hp > 0) {
+          if (move.style === 'shove') {
+            const d = Math.max(1, dist(e, target)),
+              point = {
+                x: target.x + ((target.x - e.x) / d) * 55,
+                y: target.y + ((target.y - e.y) / d) * 55,
+              };
+            this.move(target, point, 220, 0.25);
+          } else {
+            this.applySlow(target, move.slowSeconds || (move.style === 'snare' ? 1.65 : 0.95));
+          }
+        }
+        if (move.blinds > 0) {
+          // Dust blinds the victim narratively: the goblin briefly cannot be
+          // DIRECTLY targeted, but is still vulnerable to area damage.
+          e.rogueDustCoverUntil = Math.max(e.rogueDustCoverUntil || 0, this.s.time + move.blinds);
+          // Break locked attacks immediately; party AI can pick another threat.
+          this.tacticalDropDustTarget(e);
+        }
+        if (move.style === 'withdraw' && move.retreat > 0) {
+          const d = Math.max(1, dist(e, target)),
+            point = {
+              x: e.x + ((e.x - target.x) / d) * move.retreat,
+              y: e.y + ((e.y - target.y) / d) * move.retreat,
+            };
+          if (this.clearSegment(e, point, 12)) this.move(e, point, 350, 0.35);
+        }
+        return;
+      }
+      const inside = (unit) => {
+        if (unit.hp <= 0 || !this.line(e, unit)) return false;
+        if (dist(unit, move) > move.radius) return false;
+        if (move.kind !== 'cone') return true;
+        const bearing = Math.atan2(unit.y - move.y, unit.x - move.x),
+          delta = Math.atan2(Math.sin(bearing - move.angle), Math.cos(bearing - move.angle));
+        return Math.abs(delta) <= 1.1;
+      };
+      const startingHero = this.hero,
+        startingZone = this.zoneId,
+        startingDeaths = this.s.statistics.deaths;
+      for (const unit of this.combatTargets().filter(inside)) {
+        if (!this.hitParty(unit, e.damage * move.coefficient)) continue;
+        if (
+          this.hero !== startingHero ||
+          this.zoneId !== startingZone ||
+          this.s.statistics.deaths !== startingDeaths ||
+          this.s.challenge.pending ||
+          this.s.challenge.gameOver
+        )
+          return;
+        // A fallen companion does not end the hero's encounter, but cannot
+        // receive a new slow or displacement. Other marked survivors still do.
+        if (unit.hp <= 0) continue;
+        if (move.effect === 'scatter' && e.family === 'thorn' && e.type === 'boss') {
+          this.tacticalBeginScatter(e, unit, move.push || 70);
+        } else if (move.effect === 'scatter' || move.effect === 'sweep') {
+          const d = Math.max(1, dist(e, unit)),
+            push = move.push || 65,
+            point = {
+              x: unit.x + ((unit.x - e.x) / d) * push,
+              y: unit.y + ((unit.y - e.y) / d) * push,
+            };
+          this.move(unit, point, 250, 0.36);
+        } else this.applySlow(unit, move.slowSeconds || 1);
+      }
+      if (
+        move.rallySeconds > 0 &&
+        !this.tacticalRogueFieldSupport(e, move) &&
+        !this.tacticalRogueCommanderSupport(e, move)
+      ) {
+        // Other commanders motivate only ALREADY engaged units.
+        for (const ally of this.zone().enemies) {
+          if (
+            ally === e ||
+            ally.hp <= 0 ||
+            !ally.aggro ||
+            ally.returning ||
+            dist(e, ally) > R.tacticalFoundation.supportRadius ||
+            !this.line(e, ally)
+          )
+            continue;
+          ally.pursuitBurst = Math.max(ally.pursuitBurst || 0, move.rallySeconds);
+          ally.cd = Math.min(ally.cd || 0, 0.5);
+        }
+      }
+      if (move.sidestep > 0 && target?.hp > 0) {
+        const d = Math.max(1, dist(e, target)),
+          away = { x: (e.x - target.x) / d, y: (e.y - target.y) / d },
+          point = {
+            x: e.x + (away.x * 0.65 - away.y * 0.35) * move.sidestep,
+            y: e.y + (away.y * 0.65 + away.x * 0.35) * move.sidestep,
+          };
+        if (this.clearSegment(e, point)) {
+          const previous = { x: e.x, y: e.y };
+          this.move(e, point, 380, 0.36);
+          this.tacticalRecordRogueReposition(e, previous, target);
+        }
+      }
+    }
+    tacticalRecruitRegroupAllies(e, state, target) {
+      if (state.recruited || dist(target, e) > 280) return;
+      state.recruited = true;
+      let recruited = 0;
+      for (const ally of this.tacticalRegroupCandidates(e)) {
+        if (
+          ally.aggro ||
+          dist(ally, e) > R.tacticalFoundation.supportRadius ||
+          dist(target, ally) > 320
+        )
+          continue;
+        // No global limit or faction restrictions. Nearby reinforcements can
+        // make further independent rogue decisions if the player keeps chasing.
+        if (this.engage(ally, true, false) !== false) recruited++;
+      }
+      if (recruited) this.event('rogueSupport', { actor: e.id, allies: recruited });
+    }
+    tacticalAutoRogue(e, target) {
+      const cfg = R.tacticalFoundation;
+      const newWound = this.tacticalRogueWounded(e) && !this._tacticalWoundedUsed?.has(e?.id);
+      if (
+        !cfg.enabled ||
+        this.peace ||
+        !target ||
+        !e?.aggro ||
+        e.hp <= 0 ||
+        e.returning ||
+        e.telegraph ||
+        e.motion ||
+        e.rangedAim ||
+        this.tacticalRogueRegroup(e) ||
+        (!newWound && this._tacticalRegroupUsed?.has(e.id)) ||
+        (!newWound && (this._tacticalRogueNext?.get(e.id) || 0) > this.s.time) ||
+        (!newWound && Number.isFinite(e.fightStart) && this.s.time - e.fightStart < 1.1)
+      )
+        return false;
+      const pressure = this.tacticalActiveTargetCount(e);
+      const totalPressure = this.tacticalRogueOutnumbered(e)
+        ? Math.max(pressure, cfg.simultaneousPressureSources)
+        : pressure;
+      if (!this.tacticalRogueEligibility(e, totalPressure)) return false;
+      if (!this._tacticalRegroups) this._tacticalRegroups = new Map();
+      if (!this._tacticalRogueNext) this._tacticalRogueNext = new Map();
+      if (newWound) {
+        if (!this._tacticalWoundedUsed) this._tacticalWoundedUsed = new Set();
+        this._tacticalWoundedUsed.add(e.id);
+      }
+      this._tacticalRegroups.set(e.id, {
+        phase: 'thinking',
+        thinkRemaining: cfg.thinkingSeconds,
+      });
+      this._tacticalRogueNext.set(e.id, this.s.time + cfg.moveCooldownSeconds);
+      e.noProgress = 0;
+      return true;
+    }
     updateEnemies(dt) {
       const z = this.zone(),
         deaths = this.s.statistics.deaths;
@@ -2645,6 +3652,7 @@
         e.cd = Math.max(0, e.cd - dt);
         e.specialCd = Math.max(0, (e.specialCd || 0) - dt);
         e.summonCd = Math.max(0, (e.summonCd || 0) - dt);
+        e.healCd = Math.max(0, (e.healCd || 0) - dt);
         e.pursuitBurst = Math.max(0, (e.pursuitBurst || 0) - dt);
         e.open = Math.max(0, (e.open || 0) - dt);
         e.captainGuard = Math.max(0, (e.captainGuard || 0) - dt);
@@ -2724,7 +3732,7 @@
                   ? 900
                   : 500;
         if (
-          dist(target, e.home) > territory ||
+          !this.tacticalRogueLeashAllows(e, target, territory) ||
           (!this.isDungeon() &&
             dist(target, { x: D.towns[this.regionIndex()][0], y: D.towns[this.regionIndex()][1] }) <
               160)
@@ -2736,6 +3744,10 @@
           this.disengage(e, dt);
           continue;
         }
+        // A short-lived rogue decision is distinct from normal aggro.
+        if (this.tacticalAutoRogue(e, target)) continue;
+        if (this.tacticalRogueRegroup(e) && this.tacticalAdvanceRogueRegroup(e, target, dt))
+          continue;
         if (e.telegraph) {
           e.telegraph.timer -= dt;
           e.noProgress = 0;
@@ -2746,7 +3758,9 @@
             if (e.telegraph) this.event('warning', { family: e.family });
             if (!e.telegraph && !e.motion) {
               e.cd = a.recovery * (e.type === 'boss' ? R.bossCadence.specialRecoveryMultiplier : 1);
-              e.basicDue = e.type === 'boss' && e.attackIndex % R.bossCadence.skillsPerBasic === 0;
+              if (!a.rogueMove)
+                e.basicDue =
+                  e.type === 'boss' && e.attackIndex % R.bossCadence.skillsPerBasic === 0;
               if (a.opening)
                 e.open = e.form === 'true' && e.family === 'citadel' ? a.opening / 2 : a.opening;
             }
@@ -2820,11 +3834,19 @@
         } else if (
           e.type === 'boss' &&
           e.cd <= 0 &&
+          visible &&
+          d < R.bossCadence.specialRange &&
+          this.startBossRecovery(e)
+        ) {
+          opportunity = true;
+        } else if (
+          e.type === 'boss' &&
+          e.cd <= 0 &&
           d < R.bossCadence.specialRange &&
           visible &&
-          (!e.basicDue || d > 200)
+          (!e.basicDue || d > 200) &&
+          this.startAttack(e, target)
         ) {
-          this.startAttack(e, target);
           opportunity = true;
         } else if (
           e.nightOnly &&
@@ -2907,6 +3929,12 @@
     }
     disengage(e, dt) {
       if (!e.returning) {
+        this.tacticalClearThreat(e);
+        this.tacticalClearBurst(e);
+        this.tacticalClearRogueRegroup(e);
+        this._tacticalScatterLeash?.delete(e.id);
+        this._tacticalRepositions?.delete(e.id);
+        delete e.rogueDustCoverUntil;
         e.returning = 1;
         e.pursuitBurst = 0;
         this.say(e.name + ' disengages.');
@@ -3116,6 +4144,8 @@
               this.definition().name +
               ' · Map: Z',
             6.5,
+            '',
+            'warning',
           );
         } else this.say('Ringleaders have appeared.');
       }
@@ -3265,7 +4295,7 @@
         side = this.sideDungeon(),
         dungeon = dungeonIds.includes(this.s.zone),
         tune = side
-          ? R.sideDungeonTrapTuning
+          ? R.sideDungeonTrapTuning[side.region]
           : dungeon
             ? R.dungeonTrapTuning[this.s.zone]
             : R.outdoorMiniTrapTuning[this.s.zone],
@@ -3322,6 +4352,22 @@
           ) < (t.halfWidth || 28)
         : dist(u, t) < t.radius;
     }
+    // A jet's blast pushes perpendicular to its fiery lane, never through
+    // solid terrain or into the authored footprint of another installation.
+    // This is immediate collision-aware movement, not a saved Stun/Root state.
+    trapJetPush(unit, trap) {
+      const safety = (trap.halfWidth || 28) + 24,
+        direction = unit.y < trap.y ? -1 : 1,
+        landing = { x: unit.x, y: trap.y + direction * safety };
+      if (
+        !this.clearSegment(unit, landing) ||
+        this.traps().some(
+          (other) => other.index !== trap.index && this.trapContains(other, landing),
+        )
+      )
+        return false;
+      return this.move(unit, landing, 260, 0.35);
+    }
     updateTraps(dt) {
       const hero = this.hero,
         zone = this.zoneId;
@@ -3332,8 +4378,7 @@
             const key = this.s.zone + ':layout' + (this.zone().dungeonVersion || 2) + ':' + t.index;
             if (u.trapHits[key] !== t.cycle && this.trapContains(t, u)) {
               u.trapHits[key] = t.cycle;
-              this.hitParty(u, u.maxHp * t.damageFraction);
-              if (t.kind === 'seal') u.slow = t.slowSeconds;
+              const landed = this.hitParty(u, u.maxHp * t.damageFraction);
               if (
                 this.hero !== hero ||
                 this.zoneId !== zone ||
@@ -3341,6 +4386,10 @@
                 this.s.challenge.gameOver
               )
                 return;
+              if (!landed || u.hp <= 0) continue;
+              if (t.kind === 'seal') this.applySlow(u, t.slowSeconds);
+              else if (t.kind === 'spikes') this.applySlow(u, t.slowSeconds * 0.35);
+              else if (t.kind === 'jet') this.trapJetPush(u, t);
             }
           }
     }
@@ -3441,6 +4490,11 @@
   const Rewards =
     typeof PrototypeRewards !== 'undefined' ? PrototypeRewards : require('./rewards.js');
   Rewards.install(Campaign, { D, R, dungeonIds });
+  const EnemyVfxEvents =
+    typeof PrototypeEnemyVfxEvents !== 'undefined'
+      ? PrototypeEnemyVfxEvents
+      : require('./enemy-vfx-events.js');
+  EnemyVfxEvents.install(Campaign);
   Campaign.rules = R;
   Campaign.data = D;
   Campaign.classes = classes;

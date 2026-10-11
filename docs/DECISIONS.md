@@ -71,3 +71,64 @@ The Marches stay inhabited fishing wetlands. The Keeper is a capable scholar/cou
 Ironroot stays mountains first. Its established mineral/coin economy supports the regime's crowns; the Ridge Tyrant is a capable Master of Coin. Roads, wages, trade and ordinary homes make the system function while coercion remains. The Treasury is a private residence with retained protected raid caches and an unchanged Wolf protector. Dara belongs in the mine's repair/metallurgy area. The separate Ironroot implementation above records provisional interpretations for her work, Colossus origins and Ridge escorts; they do not change combat or establish those details as earlier user decisions.
 
 These handoffs authorize regional authoring while preserving existing campaign rescue gates, services, boss attacks, normal/TRUE progression and saves. The remaining Greenwood/Marches questions stay open, and Ironroot interpretations remain available for revision. This does not declare all three regions complete.
+
+## Camera framing and supported phones · 8 October 2026
+
+Joel requests camera comparisons at 150% and 175%, retaining 100% as the original baseline. On 9 October, Joel selected 150% as the final standard for desktop and phone. The finalized preference key starts both at 150% while preserving the old comparison preference unchanged for rollback. Players can still choose original 100% or 175% independently for each screen. Camera scale belongs to presentation: world units, simulation timing, collision, target acquisition and attack distances stay authoritative. World drawing, artwork and cues use one camera transform; pointer input uses its inverse. The HTML HUD retains its layout. Desktop and phone remember separate optional camera settings outside campaign saves.
+
+Stop maintaining small-phone layouts: supported phone viewports begin at a short side of 375 CSS pixels and a long side of 800 CSS pixels, including rotation. Release browser coverage exercises that exact minimum, a 393×852 modern phone, 800×375 and 844×390 landscapes, and larger screens. CSS viewport space is distinct from physical panel resolution; a high-density panel does not make a cramped viewport larger. Smaller screens may still open the app but are outside the supported layout matrix; no access block is introduced. Narrow desktop windows keep their desktop identity.
+
+The camera-selection stage initially paused sprite generation, replacement, bulk implementation and additional asset publication pending resumption. Joel resumed that work on 9 October 2026; see the subsequent original-master export decision below. Camera framing is now selected; the native-size artwork targets are recorded in CAMERA_SPRITE_TARGETS.md. This decision does not authorize new artwork or replacements. Preserve all immutable sources, accepted designs, rollback revisions and checkpoints. Test existing artwork first; camera zoom cannot recover detail already discarded in a processed sprite. Judge future art by its actual visible body footprint at the selected zoom and device pixel ratio, not by the transparent canvas dimensions.
+
+## Original-master exports at 150% · 9 October 2026
+
+Joel authorizes autonomous adaptation and publication of existing sprites, followed by remaining sprites and textures. Fresh 150% exports must start from untouched generator outputs of the accepted revisions. Never enlarge the smaller 100% runtime exports. Verify each original's lineage, dimensions, sizing and placement, including older padded/resized masters. Where an intermediate discarded detail, rebuild directly from the untouched output, preserving only the placement information needed for the new export. Review each replacement in actual game scenes at 150%; simplify or regenerate if its detail still reads poorly. Preserve originals, intermediates, checkpoints and rollback. The agent owns implementation and verification; no further technical approval round is needed.
+
+[SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md](SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md) is the detailed policy. This decision records the required approach, not a claim that all assets have been reviewed or released.
+
+## Structure scale, edge-space and encounter density · 9 October 2026
+
+Joel extends the 150% sprite pre-pass to houses and interior-linked entrances, all trees including the Abandoned Orchard, player-used zone transports, Dark Lord oppressive architecture, and related major world features. Audit proportion and detail; generally consider 25–50% more **object world-space display size** where justified by hero-relative scale. Do not merely enlarge older 100% raster exports. Add readable structural detail through original-master exports/regeneration.
+
+Spatial arrangement must be audited before major asset finalization. Prefer moving buildings and scenery into suitable underused outer-zone space, with decluttering of redundant props, while respecting geography, path access and settlements. Joel authorizes **cautious map-edge expansion only when required** to fit appropriately spaced objects. Prefer the smallest necessary directional extension over globally enlarging a zone. World size affects enemy positions and pathfinding, so **do not dilute monster encounters, create empty traversal or impose new monster production work**. Preserve normal mob counts, authored encounter groups, road access, travel pace, boss/quest anchors and saves unless a measured, separately justified gameplay fix is essential. Test before/after representative routes and encounter gaps, environmental composition, collision, transitions and mobile/desktop readability. See [WORLD_PROPORTION_AND_DENSITY_GUARDRAILS.md](WORLD_PROPORTION_AND_DENSITY_GUARDRAILS.md).
+
+This records permission and the evaluation procedure, not a claim that map bounds have changed or that the audit has passed.
+
+## Arrival breathing room and tiered soft-knee burst defense · 9 October 2026
+
+For interregional travel, arrive beside the vehicle/dock that actually brought the party, on a navigable rear/outskirts approach rather than in a central settlement square. Ordinary monsters whose spawn homes crowd the immediate landing should be shifted, not deleted or weakened; keep normal aggro, pathfinding, fees, encounter counts, rewards and save compatibility. Maintain the separate fort-placement and structure-proportion review.
+
+Burst protection is a smooth, windowed reduction to **combined** hero-and-companion damage against an individual monster, tiered from ordinary enemies to TRUE bosses. Never impose a hard DPS cap, per-attacker budgets or stealth changes to boss summons/attack geometry. The shared combat resolver owns the transient window and the live `rules.js` table owns tuning; rogue retreat damage protection remains independent. See [TRANSPORT_ARRIVALS_AND_BURST_COMPRESSION.md](TRANSPORT_ARRIVALS_AND_BURST_COMPRESSION.md) for the implementation and audit contract.
+
+## Reassigned burst defense · 9 October 2026
+
+Following the stronger compression baseline, **ringleaders inherit the previous captains' 0.25/0.375 curve**, **captains inherit the previous TRUE bosses' 0.145/0.24 curve**, and **TRUE bosses inherit normal bosses' unchanged 0.18/0.275 curve**. Ordinary monsters keep 0.675/0.875 and guardians 0.475/0.625. Knee/tail are both maximum-HP fractions; both parameters move together. Captain burst defense is intentionally stricter than boss defense. Keep the 2-second window, exposed openings, no hard damage cap, enemy summons and all companion targeting mechanics unchanged. Do not merge or release stale branches carrying the now-superseded tier ordering.
+
+## Boss/ADDS priorities, not idle companions · 9 October 2026
+
+Existing squad-mode switching remains a player choice. Paladin defaults to BOSS, Mage and Ranger default to ADDS. While ADDS mode is selected, every companion ignores the boss as long as an engaged non-boss enemy is pressuring the party or a live summon belonging to that boss remains; when none remain, companions automatically return to the boss, and re-prioritize new adds instantly. An explicit BOSS order is absolute until the user changes it or combat fully ends. Manual ADDS is equally authoritative as the mode choice, though its target alternates automatically. A short change between boss-present and adds-only phases is not full disengagement and must not silently reset a manual choice. Do not retune class stats or boss compression to compensate for previously idle companions; audit those topics independently.
+
+## Crypt Guardian must teach readable boss mechanics without overtaking Thornfang · 9 October 2026
+
+The Crypt Guardian's low relative difficulty is intentional. Before encountering or defeating Thornfang, a Greenwood Vale player with just two companions and basic Skill 1 may discover the Forest Crypt and win an encouraging first boss encounter. This should introduce dodgeable telegraphs and the Guardian's bone sweep, volley, grave call, and draining-ground behavior. **Do not inflate its damage or punish early exploration simply to lengthen the fight**; the desirable review target is sufficient *mechanic readability*, not parity with Thornfang, who remains the true zone boss unlocking Mira's teaching.
+
+The first 7.3-second benchmark was an invalid pre-Thornfang example because it included a third companion and Skill 2. A corrected 12-trial v0.8.109 audit (level 3, only Skill 1, two companions) yielded 10.9–11.7s Paladin, 16.7–39.1s Mage and 16.7–39.5s Ranger, each victorious and exposed to at least three different resolved boss special types. Paladin's short 11s fight remains worth observing for clarity. Preserve this evidence and deferred evaluation in [DEFERRED_ENCOUNTER_TIME_AUDIT.md](DEFERRED_ENCOUNTER_TIME_AUDIT.md). **Mirejaw remains separately flagged for future objective review.** No combat parameters change from this decision.
+
+## Territorial Monster Forts · 9 October 2026
+
+Joel confirms Monster Forts are defended **ordinary-monster territorial homes**, not capturable forts, additional bosses, tribute strongholds, or player Barracks. Preserve native garrison populations, ordinary rewards and respawns, road/transport access and v4 saves; audit existing strongholds instead of introducing conquest systems. The Wolf hunting ground and Ash-beast roost require local placement correction to keep their established residents and navigable defenses together. See [MONSTER_FORTS_TERRITORIAL_AUDIT.md](MONSTER_FORTS_TERRITORIAL_AUDIT.md).
+
+## Original outward region transport positions are canon · 9 October 2026
+
+Player correction supersedes the **unintended outbound NPC relocation** in PR #147 (v0.8.105). Restore the merchant wagon departure at the far Greenwood road terminus (2450, 650), the Ironroot Highlands outgoing pack caravan at (3100, 500), and Ashen Frontier's civilian outgoing dragon roost at (3100, 500). They are independent overworld destinations, **not town-service NPCs**. The surrounding established roads and regional dressing matter as part of their locations. Do not move these departures to Millhaven, Stonecross or Emberwatch when changing where the player arrives from another region.
+
+Incoming caravan/wagon landings behind Reedport and Emberwatch, the Stonecross and Reedport ferry piers, Crown route travel hubs and safety clearance all stay in place. Existing saves migrate transport positions, roads and authored environment without undoing defeated monsters, rescues, money, quest state or the v4 schema. This overrides only the mistaken departure move, not the safe-arrival or burst-compression features.
+
+## Final v0.9 boss-opening disposition · 10 October 2026
+
+The author explicitly approves **the current combat mechanics** for the two historically disputed boss attacks, superseding old v0.6 prose.
+
+- **Thornfang Pounce:** keep the current **0.375-second** effective post-leap recovery (authored 1.5 s × boss cadence 0.25), whether the leap hits or misses. Do not introduce a 1.5-second miss-only stun, exposed-core state or bonus-damage vulnerability. The written Pounce description is updated; geometry, cooldown rules and balance are unchanged.
+- **Stone Colossus Wall Rush:** keep the existing **three-second** exposed-core state whenever the warned charge ends, regardless of contact with walls or historical pillars. The original marked-pillar condition was never wired into the attack; unused old pillar coordinates do not justify recreating arena obstacles. Preserve the v0.8.137 blocked-charge motion fix and all existing damage/geometry behavior.
+
+The discrepancy and historical test evidence remain in [issue #214](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/214). These are **description corrections**, not fresh combat design or rebalance. Future changes to effective recovery should update corresponding numerical text and regression tests.

@@ -137,14 +137,17 @@ const root = path.resolve(__dirname, '..'),
         await page.waitForFunction(
           () =>
             AudioAudition.audio.recordingManifest &&
-            Object.keys(AudioAudition.audio.recordingManifest.assets).length === 97,
+            Object.keys(AudioAudition.audio.recordingManifest.assets).length === 127,
         );
         await press('#record-play');
         await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'place-vale');
         assert((await page.locator('#message').textContent()).includes('Playing place-vale'));
         assert((await page.locator('#guide-text').inputValue()).includes('Orchard Roads'));
         assert((await page.locator('#guide-recipe').textContent()).includes('score-book.json'));
-        assert.equal(await page.locator('#guide-event option').count(), 91);
+        assert.equal(
+          await page.locator('#guide-event option').count(),
+          Object.keys(require('../assets/audio/manifest.json').director.eventGuides).length + 1,
+        );
         await page.locator('#guide-event').selectOption('step.wet');
         assert((await page.locator('#guide-text').inputValue()).includes('wet footstep'));
         await page.locator('#guide-event').selectOption('');
@@ -172,7 +175,10 @@ const root = path.resolve(__dirname, '..'),
             }
             return output;
           });
-          assert.equal(decoded.length, 97);
+          assert.equal(
+            decoded.length,
+            Object.keys(require('../assets/audio/manifest.json').assets).length,
+          );
           for (const item of decoded) {
             assert(item.peak < 0.98 && item.rms > 0.005, item.id);
             assert(item.bytes <= 32 * 1024 * 1024, item.id);

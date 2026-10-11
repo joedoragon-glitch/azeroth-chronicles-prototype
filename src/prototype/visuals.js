@@ -12,10 +12,71 @@
         ? 'full'
         : 'basic';
   }
+  // World-space artwork proportion is presentation-only, shared by procedural
+  // fallbacks and registered sprites. Never change gameplay/interaction reach here.
+  function featureScale(e) {
+    if (!e || e.interactionOnly) return 1;
+    const type = e.renderKind;
+    const structure = String(e.structure || '').toLowerCase();
+    if (type === 'building') return 1.35;
+    if (type === 'npc' && e.kind === 'rest') return 1.4;
+    if (['transport', 'dungeon', 'mini'].includes(e.kind)) return 1.35;
+    if (
+      type === 'npc' &&
+      e.kind === 'landmark' &&
+      /orchard|den|lair|cave|gate|fort|tower|shrine|watch|ruin|treasury|vault|crypt|mine/.test(
+        String(e.id || '') + ' ' + String(e.name || ''),
+      )
+    )
+      return /orchard/.test(String(e.id || '') + ' ' + String(e.name || '')) ? 1.3 : 1.35;
+    if (type !== 'prop') return 1;
+    if (String(e.id || '').startsWith('forest-') && /🌲|🌳/.test(e.icon || '')) return 1.3;
+    if (structure === 'mangrove' || /(?:^|[-_])(tree|sapling|pine)(?:$|[-_])/.test(structure))
+      return 1.3;
+    if (
+      /cottage|house|workshop|boathouse|smithy|forgehouse|watchhouse|lean-to|longhouse|dwelling|hut|cabin/.test(
+        structure,
+      )
+    )
+      return 1.4;
+    if (
+      /watchpost|watchtower|fortress|stronghold|command-post|barracks|checkpoint|stockade|shrine|altar|monument|gatehouse|ash-den|wolf-den|roost|lair|treasury|vault|cellar/.test(
+        structure,
+      ) ||
+      /(?:^|[-_])(fort|gate|watch|redoubt|aerie|den|keep|prison)(?:$|[-_])/.test(structure) ||
+      /citadel-|dragon-logistics|command-tent|occupation-administration|military-command|goblin-road-camp|goblin-orchard-camp|archer-drill-camp/.test(
+        structure,
+      )
+    )
+      return 1.35;
+    return 1;
+  }
+  // A larger original-master export is required before an existing registered
+  // sprite can use the world-size increase. Low-resolution runtime PNGs must
+  // never be stretched to impersonate a high-density replacement.
+  function assetSafeScale(e, entry) {
+    const target = featureScale(e);
+    if (target <= 1 || !entry) return target;
+    const density = target >= 1.35 ? 4.25 : 4;
+    const width = Number(entry.width);
+    const height = Number(entry.height);
+    const logicalWidth = Number(entry.displayWidth) || width;
+    const logicalHeight = Number(entry.displayHeight) || height;
+    if (!Number.isFinite(width) || !Number.isFinite(height)) return 1;
+    if (!Number.isFinite(logicalWidth) || !Number.isFinite(logicalHeight)) return 1;
+    if (width < Math.ceil(logicalWidth * density)) return 1;
+    if (height < Math.ceil(logicalHeight * density)) return 1;
+    return target;
+  }
   function draw(ctx, e, p, region = 0, rescued = false) {
     if (e.kind === 'landmark' && e.id?.startsWith('bridge-')) return; // The full deck is drawn in world space.
     ctx.save();
     ctx.translate(p.x, p.y);
+    const scale =
+      featureScale(e) > 1 && Number.isFinite(e.visualScale) && e.visualScale > 0
+        ? e.visualScale
+        : 1;
+    if (scale !== 1) ctx.scale(scale, scale);
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
     const ink = '#25312d',
@@ -12760,7 +12821,7 @@
     }
     ctx.restore();
   }
-  function height(e) {
+  function unscaledHeight(e) {
     if (e.type === 'boss') return 102;
     if (e.captain || e.roomCaptain) return 68;
     if (e.renderKind === 'building' && e.kind === 'barracks') return 88;
@@ -12787,6 +12848,13 @@
     if ((e.renderKind === 'hero' && e.class === 'mage') || e.renderKind === 'prop') return 64;
     if (['dungeon', 'exit', 'transport'].includes(e.kind)) return 64;
     return 54;
+  }
+  function height(e) {
+    const scale =
+      featureScale(e) > 1 && Number.isFinite(e.visualScale) && e.visualScale > 0
+        ? e.visualScale
+        : 1;
+    return unscaledHeight(e) * scale;
   }
   const floorPalettes = [
     ['#294b36', '#31583e', '#203e30', '#95ad80'],
@@ -13686,7 +13754,33 @@
     }
     ctx.restore();
   }
-  function roads(ctx, paths, screen, region = 0, materials = null) {
+  // One bounded presentation-only display list: retain world geometry, never pixels,
+  // actor state or projected coordinates. Mutable saved roads and bridge definitions
+  // are compared numerically before reuse, rather than relying on their identities.
+  let roadCache = null;
+  function roadCacheMatches(paths, region, barrier) {
+    const item = roadCache;
+    if (!item || item.region !== region || item.paths.length !== paths.length) return false;
+    for (let i = 0; i < paths.length; i++) {
+      const path = paths[i],
+        saved = item.paths[i];
+      if (path.length !== saved.length) return false;
+      for (let j = 0; j < path.length; j++)
+        if (path[j].x !== saved[j][0] || path[j].y !== saved[j][1]) return false;
+    }
+    if (barrier.bounds.length !== item.bounds.length || barrier.gaps.length !== item.gaps.length)
+      return false;
+    for (let i = 0; i < barrier.bounds.length; i++)
+      if (barrier.bounds[i] !== item.bounds[i]) return false;
+    for (let i = 0; i < barrier.gaps.length; i++) {
+      if (barrier.gaps[i].length !== item.gaps[i].length) return false;
+      for (let j = 0; j < barrier.gaps[i].length; j++)
+        if (barrier.gaps[i][j] !== item.gaps[i][j]) return false;
+    }
+    return true;
+  }
+  function roadGeometry(paths, region) {
+    const commands = [];
     const barrier = R.barriers[region],
       palettes = [
         { shoulder: '#564834', base: '#8e7758', inner: '#9c8664', seam: '#6f604c' },
@@ -13701,23 +13795,8 @@
         p.x <= barrier.bounds[1] + 12 &&
         barrier.gaps.some(([lo, hi]) => p.y >= lo && p.y <= hi),
       stone = region >= 2;
-    const poly = (points, color) => {
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      points.forEach((q, j) => {
-        const p = screen(q);
-        j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
-      });
-      ctx.closePath();
-      ctx.fill();
-      if (color === road.inner)
-        materials?.paint(
-          ctx,
-          'terrain:road:' + ['vale', 'march', 'highlands', 'frontier', 'crown'][region],
-          screen,
-          points,
-        );
-    };
+    const poly = (points, color) =>
+      commands.push({ points, color, material: color === road.inner });
     const disk = (q, r, color) =>
       poly(
         Array.from({ length: 16 }, (_, j) => {
@@ -13741,16 +13820,7 @@
         color,
       );
     };
-    const stroke = (a, b, color, width = 1) => {
-      a = screen(a);
-      b = screen(b);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = width;
-      ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      ctx.lineTo(b.x, b.y);
-      ctx.stroke();
-    };
+    const stroke = (a, b, color, width = 1) => commands.push({ a, b, color, width });
     const edges = [],
       seen = new Set(),
       nodes = new Map();
@@ -13766,9 +13836,6 @@
         }
       }
     }
-    ctx.save();
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
     for (const [w, color] of [
       [35, road.shoulder],
       [29, road.base],
@@ -13841,6 +13908,60 @@
             region === 1 ? 1.4 : 1.2,
           );
         }
+      }
+    }
+    return commands;
+  }
+  function roads(ctx, paths, screen, region = 0, materials = null) {
+    const barrier = R.barriers[region];
+    let commands;
+    if (roadCacheMatches(paths, region, barrier)) commands = roadCache.commands;
+    else {
+      commands = roadGeometry(paths, region);
+      const inputs =
+        paths.reduce((n, path) => n + 1 + path.length * 2, 1) +
+        barrier.bounds.length +
+        barrier.gaps.reduce((n, gap) => n + 1 + gap.length, 1);
+      const coordinates = commands.reduce(
+        (n, command) => n + (command.points ? command.points.length * 2 : 4),
+        0,
+      );
+      roadCache =
+        commands.length <= 4096 && inputs <= 8192 && coordinates <= 32768
+          ? {
+              region,
+              paths: paths.map((path) => path.map((p) => [p.x, p.y])),
+              bounds: [...barrier.bounds],
+              gaps: barrier.gaps.map((gap) => [...gap]),
+              commands,
+            }
+          : null;
+    }
+    const materialKey =
+      'terrain:road:' + ['vale', 'march', 'highlands', 'frontier', 'crown'][region];
+    ctx.save();
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    for (const command of commands) {
+      if (command.points) {
+        ctx.fillStyle = command.color;
+        ctx.beginPath();
+        command.points.forEach((q, j) => {
+          const p = screen(q);
+          j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
+        });
+        ctx.closePath();
+        ctx.fill();
+        if (command.material) materials?.paint(ctx, materialKey, screen, command.points);
+      } else {
+        const a = screen(command.a),
+          b = screen(command.b);
+        ctx.strokeStyle = command.color;
+        ctx.lineWidth = command.width;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
       }
     }
     ctx.restore();
@@ -13961,6 +14082,8 @@
     allyBodyKind,
     enemyBodyKind,
     barracksVisualState,
+    featureScale,
+    assetSafeScale,
   };
   if (typeof module !== 'undefined') module.exports = root.PrototypeVisuals;
 })(typeof window !== 'undefined' ? window : globalThis);

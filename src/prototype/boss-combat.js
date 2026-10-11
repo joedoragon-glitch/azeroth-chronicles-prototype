@@ -177,7 +177,17 @@
         for (let i = live('captain').length; i < composition.captains; i++) spawnRole('captain');
         return made;
       }
-      bossAttackWeights(e, target = this.hero) {
+      bossCenteredReach(e, plan) {
+        const scale = R.bossCadence.areaRangeMultiplier;
+        const kind = plan.kind === 'sector' && e.hp > e.maxHp * 0.5 ? 'cone' : plan.kind;
+        if (kind === 'cone') return 165 * scale;
+        if (kind === 'sector') return 280 * scale;
+        // The moving ring's reach comes from speed × lifetime, not its
+        // initially displayed radius (which is overwritten on every tick).
+        if (kind === 'ring') return R.combatGeometry.ringSpeed * R.combatGeometry.ringLife * scale;
+        return null;
+      }
+      bossAttackWeights(e, target = this.hero, allowRepeat = false) {
         const plans = R.attacks[e.family] || [],
           behavior = R.bossBehavior[e.family] || {},
           d = dist(e, target),
@@ -185,8 +195,14 @@
           alive = this.bossOwnedSummons(e).length,
           cap = this.bossSummonCap(e);
         return plans.map((plan, index) => {
-          if (index === e.lastAttackIndex && plans.length > 1) return 0;
+          if (!allowRepeat && index === e.lastAttackIndex && plans.length > 1) return 0;
           if (e.family === 'darklord' && index === 3 && !low) return 0;
+          const attackTarget = this.bossAttackTarget(e, target, index);
+          const reach = this.bossCenteredReach(e, plan);
+          // A special must have realistic coverage at the moment it is chosen.
+          if (plan.kind !== 'summon' && dist(e, attackTarget) > R.bossCadence.specialRange)
+            return 0;
+          if (reach !== null && dist(e, attackTarget) > reach + 25) return 0;
           let w = 1;
           if (plan.kind === 'summon') {
             if (alive >= cap || (e.summonCd || 0) > 0) return 0;
@@ -204,29 +220,37 @@
         });
       }
       chooseBossAttack(e, target = this.hero) {
-        const plans = R.attacks[e.family] || [],
-          weights = this.bossAttackWeights(e, target),
-          total = weights.reduce((n, w) => n + w, 0);
-        if (total > 0) {
+        const plans = R.attacks[e.family] || [];
+        for (const allowRepeat of [false, true]) {
+          const weights = this.bossAttackWeights(e, target, allowRepeat),
+            total = weights.reduce((n, w) => n + w, 0);
+          if (total <= 0) continue;
           let roll = this.random() * total;
           for (let i = 0; i < weights.length; i++) {
             roll -= weights[i];
             if (roll <= 0 && weights[i] > 0) return i;
           }
         }
-        const low = e.hp <= e.maxHp * 0.5;
-        let fallback = plans.findIndex(
-          (p, i) =>
-            i !== e.lastAttackIndex &&
-            p.kind !== 'summon' &&
-            !(e.family === 'darklord' && i === 3 && !low),
-        );
-        if (fallback < 0) fallback = plans.findIndex((p, i) => i !== e.lastAttackIndex);
-        return Math.max(0, fallback);
+        // If every special is out of reach, resume closing distance.
+        return -1;
       }
       bossAttackTarget(e, fallback, index) {
-        const behavior = R.bossBehavior[e.family] || {};
-        return behavior.heroTarget?.includes(index) && this.hero.hp > 0 ? this.hero : fallback;
+        const behavior = R.bossBehavior[e.family] || {},
+          plan = R.attacks[e.family]?.[index];
+        if (!plan || this.hero.hp <= 0 || !this.line(e, this.hero)) return fallback;
+        const heroDistance = dist(e, this.hero),
+          fallbackDistance = dist(e, fallback),
+          reach = this.bossCenteredReach(e, plan);
+        if (
+          heroDistance > R.bossCadence.specialRange ||
+          (reach !== null && heroDistance > reach + 25)
+        )
+          return fallback;
+        // Authored hero-targeting remains authoritative. Targeted ground
+        // marks can occasionally challenge a protected backline as well.
+        const markBackline =
+          plan.kind === 'circle' && fallbackDistance < 200 && heroDistance > fallbackDistance + 70;
+        return behavior.heroTarget?.includes(index) || markBackline ? this.hero : fallback;
       }
       buildBossAttack(e, index, target, includeTrue = true) {
         const b = this.boss(e.family),
@@ -248,7 +272,7 @@
             angle,
             count: plan.count || 1,
             radius:
-              kind === 'cone'
+              (kind === 'cone'
                 ? 165
                 : kind === 'sector'
                   ? 280
@@ -256,7 +280,7 @@
                     ? 105
                     : index === 0
                       ? 90
-                      : 115,
+                      : 115) * R.bossCadence.areaRangeMultiplier,
           },
           sequence = [];
         if (a.sequential && a.kind === 'circle') {
@@ -315,7 +339,7 @@
               timer: plan.warning,
               total: plan.warning,
               name: 'Delayed flame patch',
-              radius: 90,
+              radius: 90 * R.bossCadence.areaRangeMultiplier,
             });
           if (e.family === 'citadel' && index === 2) a.opening = 2.5;
         }
@@ -337,9 +361,44 @@
           (this.bossOwnedSummons(e).length >= this.bossSummonCap(e) || (e.summonCd || 0) > 0)
         )
           return [];
-        const comboTarget = this.bossAttackTarget(e, this.hero, combo.to),
-          built = this.buildBossAttack(e, combo.to, comboTarget, true);
+        const comboTarget = this.bossAttackTarget(e, target, combo.to),
+          reach = this.bossCenteredReach(e, plan);
+        if (dist(e, comboTarget) > R.bossCadence.specialRange) return [];
+        if (reach !== null && dist(e, comboTarget) > reach + 25) return [];
+        const built = this.buildBossAttack(e, combo.to, comboTarget, true);
         return [built.first, ...built.sequence];
+      }
+      startBossRecovery(e) {
+        const cfg = !R.resourceMode.manaEnabled && R.bossRecovery[e.family];
+        if (
+          !cfg ||
+          e.type !== 'boss' ||
+          e.hp <= 0 ||
+          e.hp >= e.maxHp * R.bossRecovery.threshold ||
+          (e.healCd || 0) > 0 ||
+          e.telegraph ||
+          e.motion
+        )
+          return false;
+        e.healCd = cfg.cooldown;
+        e.telegraph = {
+          kind: 'circle',
+          bossHeal: true,
+          name: cfg.name,
+          healFraction: cfg.healFraction,
+          x: e.x,
+          y: e.y,
+          fromX: e.x,
+          fromY: e.y,
+          radius: 115,
+          count: 1,
+          timer: cfg.warning,
+          total: cfg.warning,
+          recovery: 1.8,
+        };
+        e.noProgress = 0;
+        this.event('warning', { family: e.family, bossHeal: true });
+        return true;
       }
       startAttack(e, target, indexOverride = null) {
         const plans = R.attacks[e.family] || [];
@@ -347,8 +406,9 @@
         const selected = Number.isInteger(indexOverride)
             ? Math.max(0, Math.min(plans.length - 1, indexOverride))
             : this.chooseBossAttack(e, target),
-          actualTarget = this.bossAttackTarget(e, target, selected),
-          built = this.buildBossAttack(e, selected, actualTarget, true);
+          actualTarget = selected < 0 ? null : this.bossAttackTarget(e, target, selected);
+        if (selected < 0) return false;
+        const built = this.buildBossAttack(e, selected, actualTarget, true);
         e.attackIndex = (e.attackIndex || 0) + 1;
         e.lastAttackIndex = selected;
         e.sequence = [...built.sequence, ...this.bossComboSequence(e, selected, actualTarget)];
@@ -361,20 +421,41 @@
           ...a,
           x: a.x + (i - ((a.count || 1) - 1) / 2) * 190,
           y: a.y + (i % 2) * 100,
-          radius: a.count > 1 ? 75 : a.radius,
+          radius: a.count > 1 ? 75 * R.bossCadence.areaRangeMultiplier : a.radius,
         }));
       }
       resolveAttack(e) {
         const a = e.telegraph;
         if (!a) return;
+        if (a.rogueMove) {
+          this.tacticalResolveRogueMove(e, a);
+          return;
+        }
+        if (a.bossHeal) {
+          if (e.hp > 0) {
+            const amount = Math.min(e.maxHp - e.hp, e.maxHp * a.healFraction);
+            if (amount > 0) {
+              e.hp += amount;
+              this.event('heal', {
+                x: e.x,
+                y: e.y,
+                resource: 'health',
+                source: e.id,
+                target: e.id,
+                amount,
+              });
+            }
+          }
+          return;
+        }
         if (a.nightSkill === 'drain') {
           const hero = this.hero,
             zone = this.zoneId;
           let hit = false;
           for (const u of this.combatTargets())
             if (dist(u, e) < a.radius && this.line(e, u)) {
-              if (this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0)) {
-                u.slow = Math.max(u.slow || 0, a.slowDuration || 0);
+              if (this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id)) {
+                this.applySlow(u, a.slowDuration || 0);
                 hit = true;
               }
               if (
@@ -385,7 +466,9 @@
               )
                 return;
             }
-          if (hit) e.hp = Math.min(e.maxHp, e.hp + e.maxHp * a.heal);
+          // Legacy MP mode retains the Wraith's fixed heal; in cooldown mode
+          // it siphons actual HP damage per victim instead of healing twice.
+          if (hit && R.resourceMode.manaEnabled) e.hp = Math.min(e.maxHp, e.hp + e.maxHp * a.heal);
           return;
         }
         if (a.nightSkill === 'pounce') {
@@ -451,9 +534,10 @@
             ...a,
             family: e.family,
             species: e.species,
+            sourceId: e.id,
             x: e.x,
             y: e.y,
-            life: R.combatGeometry.ringLife,
+            life: R.combatGeometry.ringLife * R.bossCadence.areaRangeMultiplier,
             tick: 0,
             damage: e.damage,
             age: 0,
@@ -502,10 +586,8 @@
                 : patches.some((p) => dist(u, p) < p.radius);
         for (const u of party)
           if (hits(u) && this.line(e, u)) {
-            if (
-              this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0) &&
-              ['cone', 'sector'].includes(a.kind)
-            )
+            const landed = this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
+            if (landed && ['cone', 'sector'].includes(a.kind))
               this.event('melee', {
                 actor: 'enemy',
                 source: e.id,
@@ -516,7 +598,7 @@
                 y: u.y,
                 target: u === this.hero ? 'hero' : u.id,
               });
-            if (a.slow || a.slowDuration) u.slow = Math.max(u.slow || 0, a.slowDuration || 4);
+            if (landed && (a.slow || a.slowDuration)) this.applySlow(u, a.slowDuration || 4);
             if (party[0] !== this.hero || this.s.challenge.pending || this.s.challenge.gameOver)
               return;
           }
@@ -526,6 +608,7 @@
               ...p,
               family: e.family,
               species: e.species,
+              sourceId: e.id,
               kind: 'circle',
               life: 4,
               tick: 1,
@@ -549,7 +632,7 @@
               this.line(e, u)
             ) {
               a.hit.push(id);
-              this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0);
+              this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
               if (
                 this.hero !== hero ||
                 this.zoneId !== zone ||
@@ -560,7 +643,9 @@
                 return;
             }
           }
-        if (dist(e, a.target) < 1 || !moved || a.life <= 0) {
+        // Axis fallback can report success for a zero-length clear segment.
+        // A charge blocked by real geometry must end when it makes no progress.
+        if (dist(e, a.target) < 1 || !moved || dist(before, e) < 0.000001 || a.life <= 0) {
           if (a.landing && dist(e, a.target) < 20) this.resolveArea(e, a);
           e.motion = null;
           e.cd =

@@ -55,7 +55,7 @@ Performance samples retain at most 180 active frames and stay local. Exported re
 
 The campaign core is precached. Independent legacy games are cached only after they are opened online. Registered sprite assets join the current cache. New cache activation removes only obsolete Azeroth caches. Save keys are independent of cache versions.
 
-CI checks generated artifacts before testing. PRs run all non-browser suites and desktop/phone browser paths. Main runs all suites and the full device matrix, publishes only after success, and checks that the live build identifier matches the tested commit before live smoke verification.
+CI checks generated artifacts before testing. Code PRs run all non-browser suites and desktop/phone browser paths; allowlisted prose-only PRs use lightweight checks. Main requires successful full validation of the identical Git tree: it can reuse the same repository's full PR certificate or run all suites and the full device matrix itself. It always checks and rebuilds the package, publishes only after success, and checks that the live build identifier matches the merged commit before live smoke verification. Manual runs retain full validation. See README for the conservative reuse and fallback rules.
 
 ## Remaining coupling
 
@@ -114,3 +114,23 @@ The reconciled scope remains 296 decisions (280 GENERATE, 16 PROCEDURAL), 70 pre
 ## Environmental playback v0.8.93
 
 `audio-environment.js` independently owns contextual loop beds, bounded crossfades, stale-load cancellation and combat/boss attenuation. `director.environment` routes registered looped ambience through the existing bus/cache/source contracts. Fourteen original deterministic textures cover the nineteen current places; the old background noise remains the asset-failure recovery path, without playing under successful recorded beds. Details are sparse and suppressed in combat. Book/renderer ownership preserves external replacements and guides. See `AUDIO_ENVIRONMENT.md`.
+
+
+## 150% sprite preparation
+
+Developer sprite processing now records explicit raster scale separately from the established reference display canvas. Existing manifest displayWidth/displayHeight already keep runtime static/clip/variant geometry independent of resource pixel dimensions. Density-aware preparation, atlas assembly, source provenance and capped-device-ratio review live in sprite-pipeline.cjs and sprite-batch-review.cjs. Existing runtime resource validation, actual-pixel memory accounting, content-aware retirement and offline inventory retain their ownership and limits. No production asset migration is performed by this housekeeping release. See SPRITE_RESOLUTION_HOUSEKEEPING.md.
+
+## Enemy presentation/audio identity synchronization
+
+`enemy-vfx.js` owns stable attack identities; `enemy-presentation.js` derives their shared material/action/personality profiles. `enemy-vfx-events.js` delivers one immutable observation-only stage envelope. `audio-enemy.js` routes stage decisions and bounded family recipes through the existing effect/recorded binding facade. No gameplay owner imports audio, and transient deduplication/suppression never enters statistics or saves. See `ENEMY_AUDIO_SYNCHRONIZATION.md`; `npm run check` includes live audio/VFX coverage.
+
+
+## Bounded ground projection · v0.8.124
+
+Ground materials reuse a screen-aligned isometric repeat at the current physical Canvas scale. Original world phase, opacity and surface clips remain authoritative. A separate 8 MiB projected RGBA LRU cache supplements the existing 2 MiB source-image budget; eviction and manifest retirement release backing stores. Unsupported/oversized/non-ground transforms keep the original projection. Artwork, scene animation, gameplay and saves remain unchanged. See [MATERIAL_RENDERING_PERFORMANCE.md](MATERIAL_RENDERING_PERFORMANCE.md) for regression evidence, sampling tolerances and device-test limits.
+
+## Outdoor floor reuse · v0.8.126
+
+`ground-cache.js` owns one current outdoor floor picture, bounded to 64 MiB RGBA with a preferred 256-unit movement margin. `renderer.js` reuses it while retaining visible-tile counters and the existing dynamic layers. Zone, material readiness/revision, viewport, physical scale and exhausted camera margin rebuild it. Interiors release it and use their original floor path. Source art, campaign state and save keys are unchanged. See [GROUND_WINDOW_PERFORMANCE.md](GROUND_WINDOW_PERFORMANCE.md).
+
+Joel additionally authorizes a 256 MiB decoded sprite-cache ceiling for continued artwork production (previously 16 MiB). The shared format and tooling active-memory policy agree; lazy loading, two concurrent decodes, LRU/pinning and per-resource/package limits remain unchanged. This is separate from the 64 MiB floor-picture ceiling and is not an upfront allocation.

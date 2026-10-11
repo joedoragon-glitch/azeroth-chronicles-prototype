@@ -4,13 +4,289 @@
   function install(Campaign, { R }) {
     const clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
       dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+    const ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER = 0.5;
     class Combat {
       combatTargets() {
         const z = this.s.zones[this.s.zone];
         return [this.hero, ...this.activeLivingParty(), ...(z?.escort?.hp > 0 ? [z.escort] : [])];
       }
 
+      // Shared tactical observations and authored damage/targeting safeguards.
+      tacticalClearBurst(e = null) {
+        if (!this._tacticalBurstWindow) return;
+        if (e) this._tacticalBurstWindow.delete(e.id);
+        else this._tacticalBurstWindow.clear();
+      }
+
+      tacticalCompressDamage(e, rawDamage) {
+        const config = R.tacticalFoundation.burstCompression;
+        if (!config?.enabled) return rawDamage;
+        const tier = this.tacticalProtectionTier(e);
+        const profile = config.tiers[tier];
+        if (!profile) return rawDamage;
+
+        // This is a transient, target-specific sliding window shared by all
+        // hero/companion hits, not per-skill, per-attacker or per-attack cooldown.
+        if (!this._tacticalBurstWindow) this._tacticalBurstWindow = new Map();
+        const now = this.s.time || 0;
+        const recent = this._tacticalBurstWindow.get(e.id) || [];
+        const cutoff = now - config.windowSeconds;
+        while (recent.length && recent[0].time <= cutoff) recent.shift();
+        const beforeRaw = recent.reduce((total, hit) => total + hit.raw, 0);
+        const hp = Math.max(1, e.maxHp || e.baseHp || 1);
+        // A genuinely exposed opening remains valuable; ordinary attack windows
+        // and existing scripted defenses keep their original multipliers.
+        const opening = (e.open || 0) > 0 ? config.openingMultiplier : 1;
+        const knee = hp * profile.knee * opening;
+        const tail = hp * profile.tail * opening;
+        const curve = (raw) => (raw <= knee ? raw : knee + tail * Math.log1p((raw - knee) / tail));
+        const compressed = Math.max(
+          0,
+          Math.min(rawDamage, curve(beforeRaw + rawDamage) - curve(beforeRaw)),
+        );
+        recent.push({ time: now, raw: rawDamage });
+        this._tacticalBurstWindow.set(e.id, recent);
+        return compressed;
+      }
+
+      tacticalClearThreat(e = null) {
+        if (!this._tacticalThreat) return;
+        if (e) this._tacticalThreat.delete(e.id);
+        else this._tacticalThreat.clear();
+      }
+
+      tacticalPruneThreat(e) {
+        const ledger = this._tacticalThreat?.get(e?.id);
+        if (!ledger) return null;
+        const cutoff = (this.s.time || 0) - R.tacticalFoundation.threatWindowSeconds;
+        for (const [source, hits] of ledger) {
+          while (hits.length && hits[0].time < cutoff) hits.shift();
+          if (!hits.length) ledger.delete(source);
+        }
+        if (!ledger.size) {
+          this._tacticalThreat.delete(e.id);
+          return null;
+        }
+        return ledger;
+      }
+
+      tacticalThreatSnapshot(e) {
+        const ledger = this.tacticalPruneThreat(e);
+        if (!ledger) return [];
+        return [...ledger.entries()]
+          .map(([source, hits]) => ({
+            source,
+            damage: hits.reduce((total, hit) => total + hit.damage, 0),
+            lastHit: hits[hits.length - 1].time,
+          }))
+          .sort((a, b) => b.damage - a.damage || a.source.localeCompare(b.source));
+      }
+
+      tacticalRecordHit(e, source, damage) {
+        if (!e || !Number.isFinite(damage) || damage <= 0) return;
+        const actor =
+          source === 'hero'
+            ? 'hero'
+            : this.s.party.find((unit) => unit.id === source && unit.hp > 0)?.id;
+        if (!actor) return;
+        if (!this._tacticalThreat) this._tacticalThreat = new Map();
+        const ledger = this.tacticalPruneThreat(e) || new Map();
+        const now = this.s.time || 0;
+        const hits = ledger.get(actor) || [];
+        const last = hits[hits.length - 1];
+        if (last && last.time === now) last.damage += damage;
+        else hits.push({ time: now, damage });
+        // Keep the transient observation cache bounded even in extreme rapid-hit cases.
+        if (hits.length > 128) hits.splice(0, hits.length - 128);
+        ledger.set(actor, hits);
+        this._tacticalThreat.set(e.id, ledger);
+      }
+
+      tacticalActiveTargetCount(e) {
+        if (!e || !e.aggro || e.hp <= 0) return 0;
+        const now = this.s.time || 0;
+        const recent = this.tacticalThreatSnapshot(e);
+        const attackingHero =
+          this.hero.hp > 0 &&
+          dist(this.hero, e) <= 520 &&
+          this.line(this.hero, e) &&
+          ((this.hero.order?.type === 'attack' && this.hero.order.id === e.id) ||
+            (this.basicComboTargetId === e.id && now - this.basicComboAt <= 2.2) ||
+            recent.some((entry) => entry.source === 'hero' && now - entry.lastHit <= 2.2));
+        let count = attackingHero ? 1 : 0;
+        for (const u of this.activeLivingParty()) {
+          if (u.order || this.s.recallActive || dist(u, e) > 640) continue;
+          if (this._tacticalPartyTargets?.get(u.id) === e.id) count++;
+        }
+        return count;
+      }
+
+      tacticalHighestThreatTarget(e, fallback = this.hero) {
+        const candidates = this.combatTargets().filter(
+          (u) => u.hp > 0 && dist(e, u) <= (e.type === 'boss' ? 500 : 360) && this.line(e, u),
+        );
+        const ledger = this.tacticalThreatSnapshot(e);
+        for (const record of ledger) {
+          const found = candidates.find((u) => (u === this.hero ? 'hero' : u.id) === record.source);
+          if (found) return found;
+        }
+        return candidates.includes(fallback) ? fallback : candidates[0] || null;
+      }
+
+      tacticalDirectTargetable(e) {
+        return !!e && (e.rogueDustCoverUntil || 0) <= (this.s.time || 0);
+      }
+
+      tacticalDropDustTarget(e) {
+        if (!e?.id) return;
+        // Direct target selection is invalid immediately, not merely at the
+        // moment damage would land. Other foes remain auto-targetable.
+        if (this.s.heroTarget === e.id) this.s.heroTarget = null;
+        if (this.manualHeroTargetId === e.id) {
+          this.manualHeroTargetId = null;
+          this.manualHeroTargetLocked = false;
+          this.manualHeroTargetZone = null;
+        }
+        if (this.hero.order?.type === 'attack' && this.hero.order.id === e.id)
+          this.hero.order = null;
+        if (this.basicComboTargetId === e.id) this.resetBasicCombo();
+        for (const u of this.s.party) {
+          if (u.order?.type === 'attack' && u.order.id === e.id) u.order = null;
+        }
+        if (this._tacticalPartyTargets)
+          for (const [id, targetId] of this._tacticalPartyTargets)
+            if (targetId === e.id) this._tacticalPartyTargets.delete(id);
+        // Already launched single-target shots are abandoned. Area effects
+        // retain their own hit geometry and remain able to damage the goblin.
+        this.s.projectiles = this.s.projectiles.filter(
+          (p) => p.source === 'enemy' || p.target !== e.id,
+        );
+      }
+      tacticalProtectionTier(e) {
+        if (e?.type === 'boss') return e.form === 'true' ? 'trueBoss' : 'boss';
+        if (e?.captain || e?.roomCaptain) return 'captain';
+        if (e?.form === 'ringleader') return 'ringleader';
+        if (e?.guard) return 'guardian';
+        return 'ordinary';
+      }
+
+      tacticalRegroupCandidates(e) {
+        if (!e || !this.zone()?.enemies) return [];
+        const radius = R.tacticalFoundation.awarenessRadius;
+        // Awareness crosses packs; tacticalBeginRogueRegroup separately checks
+        // route length, collision and protected-town safety before movement.
+        return this.zone()
+          .enemies.filter(
+            (ally) =>
+              ally !== e &&
+              ally.hp > 0 &&
+              !ally.neutral &&
+              !ally.returning &&
+              !['travel', 'escape'].includes(this.tacticalRogueRegroup(ally)?.phase) &&
+              dist(ally, e) <= radius,
+          )
+          .sort((a, b) => dist(a, e) - dist(b, e) || a.id.localeCompare(b.id));
+      }
+
+      tacticalRegroupGroups(e) {
+        if (!e) return [];
+        const groups = new Map();
+        for (const ally of this.tacticalRegroupCandidates(e)) {
+          const key = ally.pack || ally.id;
+          if (!groups.has(key)) groups.set(key, { key, members: [], distance: Infinity });
+          const group = groups.get(key);
+          group.members.push(ally);
+          group.distance = Math.min(group.distance, dist(e, ally));
+        }
+        // A group assessment, not a retreat destination or an order to engage.
+        // Any one reachable ally can be sufficient. Favor close support first;
+        // group size only breaks a proximity tie. Actual path viability is
+        // checked when a specific regroup destination is requested.
+        return [...groups.values()].sort(
+          (a, b) =>
+            a.distance - b.distance ||
+            b.members.length - a.members.length ||
+            a.key.localeCompare(b.key),
+        );
+      }
+
+      tacticalPresentOpponents(e) {
+        const radius = R.tacticalFoundation.presenceRadius;
+        const party = this.activeLivingParty().filter(
+          (u) => !u.order && !this.s.recallActive && dist(u, e) <= radius,
+        );
+        const heroHere = this.hero.hp > 0 && dist(this.hero, e) <= radius;
+        return party.length + (heroHere ? 1 : 0);
+      }
+
+      tacticalLocalSupport(e) {
+        return this.zone().enemies.filter(
+          (ally) =>
+            ally.hp > 0 &&
+            !ally.neutral &&
+            !ally.returning &&
+            !['travel', 'escape'].includes(this.tacticalRogueRegroup(ally)?.phase) &&
+            dist(ally, e) <= R.tacticalFoundation.supportRadius + 35,
+        ).length;
+      }
+
+      tacticalRogueWounded(e) {
+        // Bosses and captains retain their own phase/summon mechanics. Ordinary,
+        // guardian and ringleader monsters can seek support when badly hurt.
+        return !!(
+          e &&
+          e.hp > 0 &&
+          e.maxHp > 0 &&
+          e.type !== 'boss' &&
+          !e.captain &&
+          !e.roomCaptain &&
+          (e.type === 'mob' || e.guard || e.form === 'ringleader') &&
+          e.hp / e.maxHp < R.tacticalFoundation.woundedThreshold
+        );
+      }
+
+      tacticalRogueEligibility(e, activeTargetCount = 0) {
+        const config = R.tacticalFoundation;
+        if (!e || !this.hero || e.hp <= 0 || this.peace) return false;
+        if (this.tacticalPresentOpponents(e) === 0 && activeTargetCount === 0) return false;
+        const difference = e.level - this.hero.level;
+        if (difference >= config.outlevelProtection) return false;
+        if (this.tacticalRogueWounded(e)) return true;
+        if (difference <= -config.heroLevelDisadvantageMinimum) return true;
+
+        const pressured = activeTargetCount >= config.simultaneousPressureSources;
+        if (e.type !== 'boss' && !e.captain && !e.roomCaptain) return pressured;
+        const summonProfile = e.type === 'boss' ? true : !!this.captainProfile(e)?.summon;
+        if (!summonProfile || difference !== 0) return pressured;
+
+        const living = this.zone().enemies.filter(
+          (unit) => unit.summon && unit.owner === e.id && unit.hp > 0,
+        ).length;
+        const depleted = living <= config.summonSupportThreshold && (e.summonCd || 0) > 0;
+        // Cunning status requires an explicit authored entry in the live rules.
+        const cunningKey = e.captainProfile || e.family;
+        const cunning = config.cunningEnemies.includes(cunningKey);
+        return depleted && (pressured || cunning);
+      }
+
+      // One contract for the shared timed Slow condition: living, vulnerable
+      // targets only; repeat hits refresh duration but never shorten it.
+      applySlow(unit, seconds) {
+        if (
+          !unit ||
+          unit.hp <= 0 ||
+          (unit.immune || 0) > 0 ||
+          this.peace ||
+          !Number.isFinite(seconds) ||
+          seconds <= 0
+        )
+          return false;
+        unit.slow = Math.max(unit.slow || 0, seconds);
+        return true;
+      }
+
       drainMana(u, fraction) {
+        if (!R.resourceMode.manaEnabled) return 0;
         if (u !== this.hero || !fraction || u.mp <= 0 || this.peace) return 0;
         const amount = Math.min(u.mp, Math.max(1, Math.round(u.maxMp * fraction)));
         u.mp = Math.max(0, u.mp - amount);
@@ -18,11 +294,12 @@
         return amount;
       }
 
-      damage(e, amount, source = 'hero') {
+      damage(e, amount, source = 'hero', options = null) {
         if (
           !e ||
           e.hp <= 0 ||
           e.neutral ||
+          (!options?.area && !this.tacticalDirectTargetable(e)) ||
           this.peace ||
           e.returning ||
           !Number.isFinite(amount) ||
@@ -31,11 +308,12 @@
           return false;
         const origin =
           source === 'hero' ? this.hero : this.s.party.find((u) => u.id === source) || this.hero;
-        if (
-          !this.line(origin, e) ||
-          dist(origin, e.home) > (e.type === 'boss' ? (this.isDungeon() ? 1800 : 700) : 500)
-        )
-          return false;
+        const normalDamageTerritory = e.type === 'boss' ? (this.isDungeon() ? 1800 : 700) : 500;
+        // A valid tactical retreat moves the active encounter, not the permanent
+        // spawn. Allow damage near the retreat corridor/anchor; otherwise a
+        // regrouper beyond its original home leash would become invulnerable.
+        const inCombatArea = this.tacticalRogueLeashAllows(e, origin, normalDamageTerritory);
+        if (!this.line(origin, e) || !inCombatArea) return false;
         e.mercyProvoked = true;
         this.engage(e, true);
         if (source === 'hero') e.heroParticipated = true;
@@ -51,12 +329,19 @@
         }
         if (e.family === 'citadel' && e.open <= 0) amount *= 0.65;
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;
+        // All hero/companion damage sources use this same resolver. This
+        // reduction is exclusive to active travel; it ends on arrival or abort.
+        if (['thinking', 'travel', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase))
+          amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
+        amount = this.tacticalCompressDamage(e, amount);
+        const actualDamage = Math.min(e.hp, amount);
         e.hp = Math.max(0, e.hp - amount);
+        this.tacticalRecordHit(e, source, actualDamage);
         this.effects.push({ type: 'hit', x: e.x, y: e.y, amount });
         if (e.hp === 0) this.kill(e);
         return true;
       }
-      hitParty(u, amount, manaDrain = 0) {
+      hitParty(u, amount, manaDrain = 0, rangedSourceId = null) {
         if (this.peace || u.hp <= 0 || (u.immune || 0) > 0) return false;
         const armor =
           u === this.hero
@@ -64,10 +349,46 @@
             : ['soldier', 'archer'].includes(u.type)
               ? this.companionArmor(u.type)
               : 5 + this.hero.level * 0.5;
+        const oldHp = u.hp;
         u.hp = Math.max(0, u.hp - Math.max(3, amount - armor * 0.35));
-        if (u === this.hero && manaDrain > 0) this.drainMana(u, manaDrain);
+        if (R.resourceMode.manaEnabled && u === this.hero && manaDrain > 0)
+          this.drainMana(u, manaDrain);
+        // All life-steal uses actual HP lost after armor, immunity and overkill.
+        // It never adds a second damage tick, heals other enemies, or uses a
+        // percentage of the attacker's max HP as an artificial healing cap.
+        // Previous mana-drain semantics remain available in legacy MP mode.
+        if (!R.resourceMode.manaEnabled && rangedSourceId) {
+          const source = this.zone().enemies.find((e) => e.id === rangedSourceId);
+          const cinder = source?.species === 'ashbeast' && source.projectileStyle === 'cinder';
+          const spectral =
+            manaDrain > 0 &&
+            (source?.species === 'wraith' ||
+              (source?.type === 'boss' && R.vitalitySiphon.bossFamilies.includes(source.family)));
+          if (source && source.hp > 0 && source.hp < source.maxHp && (cinder || spectral)) {
+            const heal = Math.min(
+              source.maxHp - source.hp,
+              (oldHp - u.hp) * (cinder ? R.ashFeeding.healFraction : R.vitalitySiphon.healFraction),
+            );
+            if (heal > 0) {
+              source.hp += heal;
+              this.event(cinder ? 'ashFeeding' : 'lifeSiphon', {
+                source: source.id,
+                target: u === this.hero ? 'hero' : u.id,
+                amount: heal,
+                x: source.x,
+                y: source.y,
+                fromX: u.x,
+                fromY: u.y,
+              });
+            }
+          }
+        }
         this.event('hurt', { x: u.x, y: u.y, target: u === this.hero ? 'hero' : u.id });
-        if (u === this.hero && u.hp === 0) this.die();
+        if (u.hp === 0) {
+          u.slow = 0;
+          this.tacticalClearScatter(u);
+          if (u === this.hero) this.die();
+        }
         return true;
       }
 
@@ -90,6 +411,7 @@
             p.x += p.dx * p.speed * dt;
             p.y += p.dy * p.speed * dt;
             if (!this.clearSegment(before, p, 0)) {
+              this.enemyVfxProjectileImpact?.(p, before);
               this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
               continue;
             }
@@ -97,8 +419,13 @@
               (u) => this.distanceToSegment(u, before, p) < 22,
             );
             if (victim) {
-              if (this.hitParty(victim, p.damage, p.manaDrain || 0) && p.slow)
-                victim.slow = Math.max(victim.slow || 0, p.slow);
+              if (this.hitParty(victim, p.damage, p.manaDrain || 0, p.sourceId) && p.slow)
+                this.applySlow(victim, p.slow);
+              this.enemyVfxProjectileImpact?.(p, {
+                x: victim.x,
+                y: victim.y,
+                target: victim === this.hero ? 'hero' : victim.id,
+              });
               this.event('projectileImpact', {
                 actor: 'enemy',
                 source: p.sourceId || 'enemy',
@@ -115,7 +442,9 @@
             if (this.hero !== hero || this.s.challenge.pending || this.s.challenge.gameOver) return;
             continue;
           }
-          const e = this.zone().enemies.find((e) => e.id === p.target && e.hp > 0 && !e.neutral);
+          const e = this.zone().enemies.find(
+            (e) => e.id === p.target && e.hp > 0 && !e.neutral && this.tacticalDirectTargetable(e),
+          );
           if (!e || this.peace) {
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
             continue;
@@ -141,7 +470,7 @@
                 p.source,
                 p.comboClass || this.hero.class,
               );
-            if (p.slow) e.slow = Math.max(e.slow || 0, p.slow);
+            if (landed && p.slow) this.applySlow(e, p.slow);
             this.event('projectileImpact', {
               actor: p.source === 'hero' ? 'hero' : 'companion',
               class: p.source === 'hero' ? this.hero.class : undefined,
@@ -180,15 +509,18 @@
                 this.line(a, u)
               ) {
                 a.hit.push(id);
-                this.hitParty(u, a.damage, a.manaDrain || 0);
+                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null))
+                  this.enemyVfxHazardImpact?.(a, u);
               }
             }
           } else if (a.tick <= 0) {
             a.tick = 1;
             for (const u of this.combatTargets())
               if (dist(u, a) < a.radius && this.line({ x: a.fromX ?? a.x, y: a.fromY ?? a.y }, u)) {
-                this.hitParty(u, a.damage, a.manaDrain || 0);
-                if (a.slow) u.slow = 3;
+                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null)) {
+                  this.enemyVfxHazardImpact?.(a, u);
+                  if (a.slow) this.applySlow(u, a.slowSeconds || 3);
+                }
               }
           }
           if (a.life <= 0 || this.peace) this.s.hazards.splice(this.s.hazards.indexOf(a), 1);

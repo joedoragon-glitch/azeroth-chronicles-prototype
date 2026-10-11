@@ -27,7 +27,12 @@
         return (this.hero.talents?.[3] || 0) * this.talentProfile().speed;
       }
       heroOtherHpBonus() {
-        return Math.max(0, this.hero.maxHp - this.heroNaturalMaxHp() - this.heroTalentHpBonus());
+        // Shared Strength inherits persistent bonuses, not a tonic the hero personally drank.
+        const temporaryHp = this.hero.tonic ? this.hero.tonicBonus || 0 : 0;
+        return Math.max(
+          0,
+          this.hero.maxHp - this.heroNaturalMaxHp() - this.heroTalentHpBonus() - temporaryHp,
+        );
       }
       heroOtherDamageBonus() {
         return Math.max(
@@ -136,13 +141,6 @@
             this.expeditionUnlock(this.s.expeditionRank) +
             '.',
         );
-        this.notice(
-          'EXPEDITION ' +
-            this.s.expeditionRank +
-            ' · ' +
-            this.expeditionUnlock(this.s.expeditionRank),
-          5.5,
-        );
         this.event('expeditionRank', { rank: this.s.expeditionRank, family });
         return true;
       }
@@ -185,10 +183,6 @@
               ? ' Companion training advanced: Soldiers learned Holy Cleave; Archers learned Piercing Volley.'
               : ''),
         );
-        this.notice(
-          def[1].toUpperCase() + ' · RANK 1' + (slot === 2 ? ' · COMPANION SKILLS UNLOCKED' : ''),
-          5,
-        );
         this.event('learning', { slot });
         return true;
       }
@@ -212,7 +206,6 @@
         }
         this.hero.skills[slot - 1] = next;
         this.say(def[1] + ' upgraded · Rank ' + next + '.');
-        this.notice(def[1].toUpperCase() + ' · RANK ' + next, 4.5);
         this.event('upgrade', { slot, rank: next });
         return true;
       }
@@ -250,10 +243,9 @@
             '% of ' +
             (id === 'sharedTraining'
               ? 'applicable discipline-training HP, damage and movement speed'
-              : 'bonus HP, damage and armor') +
+              : 'permanent bonus HP, damage and armor') +
             '.',
         );
-        this.notice(def.name.toUpperCase() + ' ' + next + ' · ' + pct + '% inheritance', 5.5);
         this.event('expeditionSupport', { id, rank: next, family });
         return true;
       }
@@ -267,9 +259,10 @@
           this.hero.xp -= this.xpRequired();
           this.hero.level++;
           this.hero.maxHp += R.balance.growth.hpPerLevel;
+          // Keep dormant MP capacity age-correct for a future reactivation.
           this.hero.maxMp += R.manaBalance.perLevel;
           this.hero.hp = this.hero.maxHp;
-          this.hero.mp = this.hero.maxMp;
+          if (R.resourceMode.manaEnabled) this.hero.mp = this.hero.maxMp;
           this.syncCompanionLevelStats();
           delete this.hero.potionEffect;
           this.hero.talentPoints++;
@@ -296,10 +289,6 @@
             ' learned · companion max HP +' +
             pct +
             '%.',
-        );
-        this.notice(
-          'COMPANION VITALITY ' + this.companionVitalityRank() + ' · +' + pct + '% HP',
-          5.5,
         );
         this.event('companionVitality', { rank: this.companionVitalityRank(), family });
         return true;
@@ -338,7 +327,6 @@
             (this.hero.freeTalentResets === 1 ? '' : 's') +
             ' left.',
         );
-        this.notice('FREE TRAINING RESET · ' + this.hero.freeTalentResets + ' LEFT', 5.5);
         this.event('talentRespec', {
           points: spent,
           free: true,
@@ -358,10 +346,6 @@
             (spent === 1 ? '' : 's') +
             ' refunded.',
         );
-        this.notice(
-          'TRAINING RESET · ' + spent + ' point' + (spent === 1 ? '' : 's') + ' refunded',
-          5.5,
-        );
         this.event('talentRespec', { points: spent, family, free: false });
         return true;
       }
@@ -376,7 +360,12 @@
       }
 
       trainRangerSupport(type, family = 'archive') {
-        if (family !== 'archive' || !this.s.rescued.archive || !['health', 'mana'].includes(type))
+        if (
+          (!R.resourceMode.manaEnabled && type === 'mana') ||
+          family !== 'archive' ||
+          !this.s.rescued.archive ||
+          !['health', 'mana'].includes(type)
+        )
           return false;
         const key = type === 'health' ? 'heal' : 'mana',
           rank = this.rangerSupportRank(type);
@@ -399,7 +388,6 @@
             (type === 'health' ? 'HP to the active party' : 'MP to the hero') +
             ' over five seconds.',
         );
-        this.notice((type === 'health' ? 'RANGER HEAL' : 'MANA RECOVERY') + ' · RANK 2', 4.5);
         this.event('rangerSupportTraining', { type, rank: 2 });
         return true;
       }
@@ -422,6 +410,7 @@
         return { name: bestName, power: bestPower };
       }
       autoEquipBestWeapon() {
+        this.hero.weaponSelection = null; // A newly acquired tier uses automatic best-weapon selection.
         if (!Array.isArray(this.s.legacyInventory) && this.hero.legacyEquipped === undefined)
           return 'tier';
         const legacy = this.bestLegacyWeapon(),
@@ -484,7 +473,6 @@
               (slot === 'weapon' ? 'power' : 'armor') +
               '.',
           );
-          this.notice(label.toUpperCase() + ' TIER ' + tier + ' · REFORGED', 4.5);
         } else {
           if (old >= tier) {
             this.say(
@@ -516,7 +504,6 @@
               (slot === 'weapon' ? 'power' : 'armor') +
               '.',
           );
-          this.notice(label.toUpperCase() + ' · TIER ' + tier, 4.5);
         }
         if (slot === 'weapon') this.autoEquipBestWeapon();
         this.event('purchase', { slot, tier, reforge });
@@ -527,7 +514,31 @@
         this.hero.legacyWeaponPower = legacyWeapons[name];
         this.hero.legacyWeaponName = name;
         this.hero.legacyEquipped = true;
+        this.hero.weaponSelection = name;
         return true;
+      }
+      equipTierWeapon() {
+        if (!this.hero.weapon) return false;
+        this.hero.legacyEquipped = false;
+        this.hero.weaponSelection = 'tier';
+        return true;
+      }
+      restoreWeaponSelection() {
+        const choice = this.hero.weaponSelection;
+        if (choice === 'tier' && this.hero.weapon) {
+          this.hero.legacyEquipped = false;
+          return 'tier';
+        }
+        if (
+          typeof choice === 'string' &&
+          legacyWeapons[choice] &&
+          this.s.legacyInventory?.includes(choice)
+        ) {
+          this.equipLegacy(choice);
+          return 'legacy';
+        }
+        // Historical saves without an explicit choice retain the old best-weapon migration.
+        return this.autoEquipBestWeapon();
       }
       power() {
         if (this.hero.legacyEquipped)

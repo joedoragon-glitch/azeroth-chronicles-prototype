@@ -1,117 +1,71 @@
-# Current development state
+# Current development state and v0.9 readiness
 
-## Foundation complete in v0.8.81
+## v0.9.0 candidate preparation · 10 October 2026
 
-Desktop/browser and phone presentation are distinct. World authoring, navigation, rendering, persistence, platform selection and runtime measurements have explicit module boundaries. Entry generation, offline assets, versioning and deployment use a shared build inventory. Existing maps, campaign behavior and procedural sprite canon are preserved.
+**Candidate only; not published or accepted.** This addendum supersedes the old active-work labels below. The earlier snapshot is retained as dated history.
 
-## Continue existing work
+- Last independently verified production at preparation: **v0.8.138**, commit `6c2381b34ce63fb935936a4e69ec404996f7765a`, tree `d5616558097655755e581d75f4707a1571b03c24`. Combined #226 integrates performance, Auto/30/60 render scheduling and development/CI workflow changes. Full identical-tree [run 38087706102](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38087706102) and merged-main [publication 38091031125](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38091031125) passed. Subsequent source versions require their own evidence.
+- Combat conditions #210 and item/equipment/collision QA #216 are integrated. #211/#212 are superseded. #223/#224/#225 were combined in #226 rather than separately merged. Old active-candidate references below are historical.
+- The #214 boss decision is settled: preserve current Pounce recovery and Wall Rush opening; change only the inaccurate descriptions. This candidate includes #227 source through `3e2b3136de8f8b9ce5da7caff4afa365f60d6935`. Its parent release workstream owns any separate v0.8.139 publication. Current acceptance remains tracked in [#213](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213); do not infer live deployment from this branch.
+- This candidate changes release version/cache metadata and documentation. It adds no mechanics, art or save schema changes beyond the already scoped #227 descriptions. Core save keys, authored geometry, combat numbers and approved presentation are retained.
+- Joel reports ordinary play working so far and uninterrupted save retention across major updates throughout development, with no forced restart from corruption. This is positive user-reported longitudinal evidence. It is not an independently tested historical export/import round trip, a full campaign completion, or physical offline/performance measurement.
+- Complete natural campaign/late-game acceptance, a genuine historical export/import cycle and the remaining physical device/PWA checks are open. Joel has not completed the game and is not being assigned code-level verification. These criteria need evidence or explicit release-scope disposition before the beta is declared accepted; this preparation does not waive them.
+- #217 sprites remain paused and excluded. #132 art recovery and #197/#198 co-op remain deferred. Original branches, artwork and rollback references remain protected.
 
-| Workstream | Current evidence and next step |
-| --- | --- |
-| Regional playtesting | v0.8.87 implements the first Greenwood/Marches/Highlands handoff pass. Continue Joel's region-by-region review and corrections using REGIONAL_HANDOFF_AUDIT.md. Recent Frontier/Crown work remains in place. Housekeeping does not certify every map as artistically finished. |
-| Procedural canon | Static polish v0.8.79 and terrain/effects polish v0.8.80 are retained. New feedback should improve current canon in the owning modules. |
-| Sprite production | v0.8.92 activates Paladin (two-frame idle), playful Goblin and Vale cottage pilots. Bounded lazy loading, chat asset discovery, revision leases/rollback and optional clips/variants are implemented. Continue staged production from 296 decisions, 70 body contracts and 28 separate terrain candidates; see SPRITE_PRODUCTION_CURRENT_CONTEXT.md. |
-| Chromebook tuning | Play the desktop entry on the actual laptop. Reports now include active frame cadence, work time and renderer counters for reproducible tuning. |
-| Phone playtesting | Use the dedicated phone entry or installed PWA. Check real-device thumb reach, portrait/landscape behavior and offline reopening. |
-| Engineering | v0.8.84 extracts progression, save handling and the specialist/expedition menu catalog; balance and formatter coverage are consolidated. The prepared v0.8.88 pass separates hero skills, boss attacks/summons, shared combat resolution and party behavior. Enemy AI, encounters, quests and global shell menus remain substantial. Benchmark before introducing caches, workers or a different renderer. |
-| Distribution | Browser desktop and installed phone web app are current targets. Native packaging is a later distribution decision, independent of finishing maps or sprites. |
+See [v0.9 release notes, gate and rollback](V09_RELEASE_NOTES.md). The [10 October evidence branch](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/tree/audit/v09-readiness-20261010) preserves independent live reads, 28 named boss scenarios, description-only semantic comparisons and six bounded early-progression action pilots. The pilots are not full campaign certification; three completed the early-route save check and three stopped after a death.
 
-Map and sprite completion are not prerequisites for sound engineering. Conversely, changing frameworks does not complete map design, resolve performance by itself, or turn a PWA into a native package. Keep gameplay decisions in `DECISIONS.md`, engineering ownership in `ARCHITECTURE.md`, and historical releases in `PROJECT_HISTORY.md`.
+## Preserved earlier status snapshot
 
-## Input update v0.8.82
+This is a dated repository status snapshot for the v0.9 stabilization work. [Roadmap #192](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/192) is the cross-workstream navigation record; [#160](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160) owns asset-by-asset production. Earlier chronological notes are [archived intact](DEVELOPMENT_HISTORY_THROUGH_V08133.md).
 
-Direct menu/HUD clicks and taps, persistent keyboard rebinding, two-thumb phone controls and optional pointer movement replace the inherited input prohibitions. See `README.md` for player settings. Autoattack and death/economy rules are preserved. Real-device comfort remains part of Joel's playtesting.
+Snapshot refreshed **2026-10-10T04:15:13+00:00**. The baseline and work dispositions below describe that audit, not live branch state. Before resuming work, use current `origin/main`, `package.json`, open PRs and their latest runs; #192 and #160 retain the workstream handoffs. Historical candidate labels below are not instructions to replay or merge them.
 
-## Input audit v0.8.83
+## Baseline and release evidence
 
-Manual keys and joystick contact cancel pointer travel before simulation advances. HUD readouts shield world input, and visible training prompts follow rebinding. Browser coverage includes native mouse/touch charging and menu cancellation alongside the existing input/device checks.
+Source baseline at this audit: **v0.8.135**, released runtime at `170adbf708ac1ea3b26e57621d0089f182932270`, from merged nature adaptation [#208](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/208). Main subsequently advanced to the deployment-evidence-only commit `1e232c71a9e63f87efe152868432bbfcc4a39ffd`. It includes the released road and Abyss work. Exact-head PR run 38020278879 passed; main release [run 38021457158](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38021457158) completed successfully in main-test, phone-webkit and deploy, including the exact published build and live desktop/phone, actor/road and quest/Keeper gates. The #160 handoff and retained journal record the independent 23-output nature hash/dimension/alpha audit and 276 browser scenes. All 23 existing nature identities are deployed; no new artwork was generated. The other eight active adaptations and broader missing catalog remain open under #160.
 
-Joel’s iPhone feedback drives a compact phone HUD, bottom-right learned skills/recovery, contextual in-range Interact and removal of routine map/time/save labels. Game text blocks selection/callouts while form inputs retain normal behavior and menus retain vertical scrolling. WebKit phone regressions supplement the Chromium device matrix; real iOS system gesture and comfort checks remain device playtests.
+Independently verified published baseline: **v0.8.135**, `170adbf708ac1ea3b26e57621d0089f182932270`, from #208 and run 38021457158. The preserved road checkpoint is **v0.8.134**, `54e578d820e6c18234c70f57516d22a739438e4e`, from merged road overhaul [#204](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/204). Its main release [run 38019846959](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38019846959) also completed successfully in all three jobs and exact published-build/live gates. Both technical releases are complete without certifying every human regional/device acceptance criterion.
 
-## Engineering handoff v0.8.84
+Preserved prior production checkpoint: **v0.8.133**, `5aa50dda1785397d2d1dd819da126b762e775ecc`, Abyss integration [#207](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/207), [run 38018534859](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38018534859). Main-test, phone-webkit and deploy all succeeded, including exact published build, live desktop/phone, actor/road and Keeper checks. Abyss technical integration is complete; human acceptance remains open. #204 preserves this work and the earlier v0.8.132 gameplay fixes.
 
-The v0.8.83 accepted phone layout and input behavior are preserved. Progression (62 methods), save handling (five instance/static methods) and 28 menu definitions/actions now have explicit owners; the catalog exports ten shell entry points. The public Campaign API, v4 keys/schema, mode separation, legacy backup retention and live balance remain compatible.
+This maintenance pass is documentation/backlog reconciliation. It does not certify a completed v0.9 release. Later commits and runs supersede the snapshot only when independently verified.
 
-Current recovery guidance distinguishes ordinary hero-only Skill 3 from charged party healing. Automatic/manual Ranger Heal supports living active allies, Mana Recovery is hero-only, and fallen-unit recovery stays separate. Current inheritance costs are 140 crowns per Shared Training rank and 125/200/300/425 for Shared Strength; historical higher prices are not current rules. Rescue/curriculum gates remain unchanged.
+## Current playable contracts
 
-All hand-authored campaign JS and the three campaign CSS files have repeatable formatter coverage. Registry contract, packaging, realistic precache/offline reads and failed-image procedural fallback accept both empty and populated test registries. Production manifest/art are unchanged. Review `HOUSEKEEPING_AUDIT.md` and `HOUSEKEEPING_PROGRESS.md` for preservation evidence, review findings and release recovery.
+- Multi-file GitHub Pages/PWA application, shared Campaign engine, distinct desktop and phone presentation; local saves and no game backend. Existing v4 keys and v2 backup import remain compatible.
+- Camera defaults to the selected 150%; 100% and 175% remain optional per screen. Supported phone space begins at 375x800 CSS pixels or its rotation. Browser emulation does not certify real-device comfort or performance.
+- Cooldown-only combat is authoritative: no live MP spending/HUD, five Cooldown Training ranks reduce cooldowns by 4% each, and approved actual-damage healing remains. MP fields and switchable historical logic are recovery data, not permission to restore an old MP economy. The quantitative audit recommends no retune.
+- The main Story journal guides specialist rescues, onward transport, the Dark Lord, five TRUE guardians and completion. Local jobs remain on quest boards. Map navigation starts through explicit Navigate; Talents is directly available in Adventure. Single-player menus pause the simulation.
+- Authored regional handoffs and the Abyss royal-flight canon remain authoritative. The purple dragon is the Dark Lord's personal mount, and the air force is unfinished. #207 restores one feeding/service safe lane and adds round-trip route regressions; it is not a new dungeon or flight system.
+- Original-master Paladin/Goblin idles and Vale/Highlands roads shipped in #193. Baseline manifests contain **33 sprite identities and 7 materials**. The decoded sprite ceiling is **256 MiB**, separate from the 64 MiB outdoor-floor picture; both are bounded lazy caches, not guaranteed device allocations. Earlier 16 MiB or empty-manifest notes are historical.
 
-## Sprite preparation v0.8.85
+## Work disposition and preservation
 
-Issue 111 preparation provides a pinned processing toolchain, parsed catalog, three exact reference contracts, immutable sources, approval/provenance checks and a development-only day/night comparison showroom at four device sizes. Tests use current procedural drawings and isolated fixtures. The production manifest stays empty and byte-identical; no art is generated or activated. The later three-asset creative pilot and image-tool generation are deferred at Joel’s request. See `SPRITE_PREPARATION.md` and `SPRITE_PREPARATION_AUDIT.md`; the implementing agent owns technical checks and release.
+| Work | Disposition at audit | Next step |
+| --- | --- | --- |
+| #208 nature original density | Completed and independently verified published: 23 existing identities as v0.8.135, incorporating #204 | Preserve originals, journal and exact release evidence. The other eight active adaptations and missing catalog stay with #160. |
+| #210 combat conditions and secondary effects | Active v0.8.136 candidate, opened after the initial backlog inventory; based on v0.8.135 | Its own implementation workstream must verify the current head and release. Preserve `audit/v09-combat-conditions-20261009`; housekeeping does not merge its gameplay changes. |
+| #204 outdoor road infrastructure | Completed and independently verified published as v0.8.134 | Exact deployment/live checks passed. Automated coverage and screenshot review do not close all regional human acceptance. |
+| #203 earlier town-planning draft | Superseded by #204; closed without merging obsolete runtime | Original branch/head retained as recovery. |
+| #132 household/mine/flight art | Intentionally deferred integration, not obsolete | Preserve its five additional identities, untouched sources, revisions, reviews and branch. Recover a bounded asset batch against current main under #160. |
+| #197 session timing; #198 cooperative roster | Intentionally deferred from this stabilization pass; #198 depends on #197 | Preserve both branches. No playable networking/Host/Join feature exists in current main. Their earlier authorizations are not revoked. |
+| #145 old proportion/art branch | Superseded by #191 (proportions) and #193 (pilot art); closed | Original branch and all original artwork/history retained as a protected checkpoint. |
+| #152 encounter experiment | Completed analysis handoff; closed, experimental harness intentionally unmerged | Branch/harness retained. #159 preserves encounter findings and #190 owns the current quantitative cooldown audit. |
 
-## Ironroot Highlands v0.8.87
+#204 and #208 initially both used v0.8.134; they integrated serially. #204 merged first, and #208 adopted that main state and v0.8.135. Both workflow additions remain in the combined source. A previous head's green run is not evidence for a newer head; publication is a separate gate.
 
-Ironroot's existing mountain settlements, Wolf territories, Ogre homes and Old Signal Keep remain. Small pay, sorting, mint and hauling scenes connect the province to crown production. The Ridge Tyrant's Treasury now prioritizes off-duty comforts; Crag Tyrant remains a Wolf household protector. Colossus Mine has seven connected functional/historical areas with a repair forge for Dara. See `IRONROOT_HIGHLANDS_LAYOUT.md` for the deliberately selected lore and preservation checks. The production sprite manifest is unchanged.
+## v0.9 acceptance still to establish
 
-## Regional canon correction v0.8.86
+1. Verify the exact combined stabilization commit through generated/asset checks, the full Node suite, relevant Chromium/WebKit device paths, Pages publication, published SHA and live smoke. Keep merged, published and human-tested states distinct.
+2. Validate the Abyss campaign end to end: full-party handling, trap readability, Eren rescue, boss/TRUE/Awakening transitions, outward and return wing routes, and actual phone movement/interaction. Automated route and save regressions support but do not replace this human acceptance.
+3. Continue observed regional playtesting in Greenwood, Marches, Highlands, Frontier and Crown: travel/departure identity, collision/road/entrance access, rescue/escort/quest progression, settlement life and encounter pacing. Record reproducible defects before changes; open lore choices remain open.
+4. Complete the measured crowding/play-distance review required by WORLD_PROPORTION_AND_DENSITY_GUARDRAILS.md. The released size classifier alone is not a completed density audit; #204's street tests alone do not certify every visual footprint or encounter gap. Do not add enemies or expand maps to compensate for decoration without the required measurements.
+5. Keep backlog classifications, recovery references and player instructions aligned with actual releases. Finish only verified redundant branch deletion; no branch-count target is a release criterion.
 
-Abyss Bastion now visibly prepares the Dark Lord’s air-superiority project. His purple dragon is his own personal flying mount; hatchery, rider equipment, aerial planning, royal standards and an unfinished launch platform support a future air force. See `ABYSS_AIR_SUPERIORITY_CANON.md`. Existing mechanics and geometry are preserved; presentation migrates on old saves. Cindermaw/Dreadmaw preview alternatives remain unimplemented.
+The remaining complete artwork catalog is explicitly **not a v0.9 release blocker** in #192. Co-op groundwork, new wrappers and unresolved optional lore are preserved separate workstreams; this cleanup makes no claim that they are complete or cancelled.
 
-## Regional handoff foundations v0.8.87
+## Limits and recovery
 
-The three supplied audited handoffs are reconciled against the reorganized v0.8.85 modules. Forest Crypt becomes an unfinished private retreat with older crypt fabric, craft work, guest space and a caretaker study. Sunken Archive has dry stacks, forced restoration, shallow flooded sections and the Keeper's working study. Colossus Mine has active and older workings, haulage, repair/metallurgy, collapsed shafts and a Colossus chamber. Borin, Neri and Dara retain independent boss/key rescue gates while appearing at workstations. The Highlands Treasury has a domestic floor plan; its Wolf captain and three caches remain. Small outdoor support scenes avoid roads and present/future services.
+Campaigns remain browser/device-local; there is no cloud sync or multiplayer backend. Real iOS gesture behavior, thumb reach, target Chromebook cadence, full human campaign progression and subjective visual/audio quality are not certified by CI. Export a save before clearing browser data. Keep historical MP fields, accepted sprite originals, animation dependencies and rollback history.
 
-Dungeon layout migration retains guard death state, rescued services, clear state, progression and currency. Treasury migration retains the exact collected-cache indices and captain death. New contextual furnishings remain procedural so a generic cage or generic prop sprite cannot overwrite their scene meaning. The approved sprite catalog and production registry remain unchanged.
-
-This is an implementation foundation for further regional iteration, not a declaration that the regions are finished. Greenwood biography, flood cause and captive-trade identities stay open; the separate Ironroot pass records provisional repair-work, ancient-Colossus and convoy-escort interpretations for later revision. See REGIONAL_HANDOFF_AUDIT.md.
-
-## Audio foundation v0.8.88
-
-Joel requests professional place/situation/boss-specific audio, with housekeeping before sound creation. Warm fantasy is the broad direction. The existing catalog and cue policy are preserved while catalog, score/ambience, runtime/mixer/lifecycle and effects gain separate owners. Noise sources now obey the voice bound and clean up connections; disposal/resume races, interrupted-context retries, initial warnings and mute/volume edits during ducking have focused checks. Playtest exports gain local audio diagnostics and exact scene/boss metadata is observable without changing gameplay.
-
-The recorded-audio production manifest is empty. Validated registration now feeds packaging/offline inventory; no new music/effect is created or played. Recorded playback/decode, richer mixing, menu audio and the contextual soundtrack belong to the subsequent production work. See `AUDIO_FOUNDATION.md` for the concrete gap audit and sequence, including unhandled side-zone musical identity and the need to audition music rather than equate tests with musical quality.
-
-## Recorded playback and mixing v0.8.89
-
-The next technical audio phase is implemented: local hash verification and codec variants, cancellable lazy fetching, serialized decoding, pinned 32 MiB decoded LRU memory, synchronized 1–4 loop stems, bar-aligned transitions, exact-context opt-in cue rules, procedural fallback, independent UI/foreground mixing, reference/quiet/phone audition profiles and reserved/stealable warning capacity. The normal campaign keeps its original score policy and menu silence because no replacement sound or cue rule is activated.
-
-A separate offline-capable listening room at `tools/audio/index.html` auditions actual campaign regions/interiors and all eleven normal/TRUE boss identities, existing procedural sound, diagnostic WAVs, synchronized stems and scene mixes. It includes waveform/loop-edge measurements and a local downloadable report. It never loads persistence or reads/writes saves. Production music and sprite manifests remain empty. See `AUDIO_PLAYBACK.md`; contextual composition/sound design and actual-device listening remain the next creative pilot.
-
-## Contextual sound pass v0.8.90
-
-Joel authorized proceeding through soundtrack implementation and publication. The game now activates 83 original rendered music cues across 19 locations, five outdoor night/refuge variants, peaceful arrangements and eleven distinct boss/TRUE pairs, plus title/defeat/finale music. Layered combat intensity, shared reflections, interface sounds, movement-driven footsteps and sparse environmental detail extend the existing contextual combat effects. All music is original virtual-instrument composition, not licensed third-party recordings or live orchestra. The audition room compares new/original scoring and individual production tracks without touching saves. See `AUDIO_SOUND_PASS.md` for coverage, limits and verification. Real-device musical feedback remains creative iteration, not an implementation approval gate.
-
-## Audio authoring housekeeping v0.8.91
-
-Joel authorized completing the review findings so adding/replacing sound is maintainable. One recorded catalog now supplies music routing/tempo/gains and contextual effect/menu/step/ambience bindings. Catalog replacement resets same-scene selection; explicit overrides and production no longer compete; pause/resume retains transport. Renderer-owned assets are distinguished from imports and overrides, which survive regeneration. Registration checks hashes/duration/provenance before atomic updates, including multi-stem batches. All 83 music recipes and 90 synthesized event identities have reusable creative briefs, clearly identified as guides written after original procedural creation rather than historical model prompts. The listening room exposes them for copying. See `AUDIO_AUTHORING.md`.
-
-## Prepared economy and EXP housekeeping v0.8.89
-
-Local branch `codex/combat-party-housekeeping` combines the combat/party split with main's v0.8.88 audio foundation. `economy.js` owns crown transactions and all quoted prices; `rewards.js` owns regional/boss profiles, drop/quest payouts and reward reductions; EXP leveling remains in `progression.js`. Existing authored amounts, rank/rescue gates, v4 saves, reward timing, first-free barracks and transportation rollback remain compatible. No balance tuning or new art/audio content is included. See `ECONOMY_EXP_HOUSEKEEPING.md`. Joel lifted the initial publication pause and authorized release through the existing CI gates; the historical combat report describes its earlier regional-baseline verification. Local WebKit execution remains unavailable; release CI must run that check.
-
-## Sprite scope reconciliation · 8 October 2026
-
-Joel requested a full current-map scope reconciliation before further sprite implementation. Full Barracks, fourteen new static regional/flight/household props, Crown ranged troops and sixteen guard bodies gain exact decisions/bindings. Old Borin/Neri/Dara closed-cage prompts are superseded by procedural secured workstations. Named captains now bind their current treasury ranged/guard loadouts. There are 70 prepared exact contracts. Pilot appearances are acceptable; Goblin face correction and technical grounding remain pending. Production manifest stays empty. Refer to SPRITE_SCOPE_RECONCILIATION.md for current source evidence and next steps; generation may later extend this inventory through reviewed additions.
-
-The reconciled scope also includes current smaller flora/rocks and 28 separate terrain material candidates. The lifecycle/animation review identifies eager loading, same-key stale decoded images, no replacement command and no clip support as required follow-ups before bulk integration. See SPRITE_ASSET_LIFECYCLE_ANIMATION_AUDIT.md; no animation runtime is activated by the current scope pass.
-
-Future content/lore work uses DESIGN_TO_SPRITE_WORKFLOW.md: accepted procedural designs retain repository handoffs and exact references, so sprite requests from their originating chats can resume directly. New locations identify body/material/NPC requirements and reuse accepted assets; stable identities, replacement revisions and animation requirements persist with the design. This is an agent-owned workflow, with no technical tasks assigned to Joel.
-
-## Implemented lifecycle and pilots · v0.8.92
-
-Three production keys are active: `hero:paladin`, `enemy:goblin` and `prop:vale-cottage:vale`. The Goblin uses Joel's explicitly accepted playful half-smile and organic ears. Paladin has a faithful two-frame idle; its static fallback is retained as a rollback revision. Native placement and desktop/phone day/night comparisons are recorded under `tools/sprites/pilots/2026-10-08-refined`. Engineer review of the idle is distinguished from Joel's actual image acceptance.
-
-The versioned optional format supports clip rectangles/pivots/timing and stable-ID variant banks. The loader is lazy, deduplicates content, limits concurrent decodes to two and active decoded residency to 16 MiB, pins visible resources and retires obsolete revisions. Replacement, removal and rollback use expected revision leases and immutable retained originals. Atlas assembly requires a final visual review. Build/offline enumeration shares the same resource schema. Asset-scoped evidence isolates unrelated catalog/map additions. Playtest exports include sprite diagnostics.
-
-Chat edits follow `DESIGN_TO_SPRITE_WORKFLOW.md`; `npm run sprite:asset -- "name or exact key"` exposes current originals, revision, dependent presentation and history. An authorized edit proceeds through generation, visual checks, implementation and release. Reconcile affected frames/variants together, or temporarily use the new static design. Preserve material-appropriate contours across every candidate, rather than copying accidental procedural blockiness.
-
-The reconciled scope remains 296 decisions (280 GENERATE, 16 PROCEDURAL), 70 prepared body contracts and 28 separate terrain material candidates. This release completes the lifecycle foundation and three pilots. Remaining body production, terrain texture processing/world mapping, authored directions and additional motion clips are subsequent asset jobs. Runtime memory bounds are software checks; they do not claim a measured physical-device performance guarantee.
-
-## Environmental sound v0.8.93
-
-Joel requests place-specific atmosphere without dense jungle noise, with preparation before creation. An independent environmental owner now provides bounded smooth transitions, pause/resume transport, validated replacement and combat/menu attenuation. Fourteen quiet original textures cover all nineteen current places; daytime/night woodland and marsh differ, and interiors stay restrained. Sparse details occur 18–36 seconds apart outside combat. Recipes, reusable briefs, import-safe regeneration and audition references are included. The sound catalog totals 83 music cues plus 14 environmental beds, 23.9 MiB encoded. See `AUDIO_ENVIRONMENT.md`; source-positioned/occluded environmental objects remain a future creative scope.
-
-## Sprite continuation and terrain foundation · prepared v0.8.94
-
-PR #121 is merged and verified live at commit `5bdfa149`. The first continuation stage registers Mage, Ranger, Soldier and allied Goblin Archer, retaining all three approved pilots. Native desktop/phone day/night checks and exact immutable sources are recorded with honest engineer-review provenance. The dedicated opaque terrain processor, seam checks, revision rollback, clipped world mapping, bounded loading and offline inventory are implemented before terrain image production. Terrain remains procedural in this stage. See SPRITE_PRODUCTION_CURRENT_CONTEXT.md and TERRAIN_TEXTURE_PIPELINE.md; the remaining catalog is still in production.
-
-### v0.8.95 — Goblin native face readability
-
-User-requested correction simplifies face features to survive nearest downsampling at native game size. Same runtime dimensions and anchors; no gameplay changes. Prior approved source/output retained in history. Native desktop/phone day/night comparison evidence accompanies the asset. Release pending CI and exact live deployment verification.
-
-### v0.8.96 — Regional ground texture pilots
-
-Five region-specific ground textures add quiet grass/soil, wet earth, grit, ash and slate grain within existing world-coordinate floor clips. Lazy decoding and procedural fallback remain authoritative; total player texture payload is 507,307 bytes, 256² each. Original masters, exact prompts, seamless-wrap and native device day/night reviews retained. Each registration can roll back to procedural. Reproducible material showroom added. Release pending CI and exact deployment.
-
-The prepared-work release also activates the reviewed fixed-shape Vale bush and wildflowers. Existing flora placement and gameplay geometry remain authoritative. User authorization on 8 October permits release of completed work; new image generation and unfinished assets stay paused.
+See [backlog audit and recovery inventory](BACKLOG_HOUSEKEEPING_20261010.md), [gameplay decisions](DECISIONS.md), [architecture](ARCHITECTURE.md), [regional handoffs](REGIONAL_HANDOFF_AUDIT.md) and [Abyss canon](ABYSS_AIR_SUPERIORITY_CANON.md). Historical handoffs are evidence of past work, not a current instruction to replay it.

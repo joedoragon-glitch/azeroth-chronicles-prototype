@@ -2,6 +2,9 @@
 (function (root) {
   'use strict';
   const preferenceKey = 'azeroth-input-v1';
+  const legacyManaEnabled = (
+    typeof PrototypeRules !== 'undefined' ? PrototypeRules : require('./rules.js')
+  ).resourceMode.manaEnabled;
   const actions = [
     ['up', 'Move up / previous menu entry', 'KeyW'],
     ['down', 'Move down / next menu entry', 'KeyS'],
@@ -16,15 +19,16 @@
     ['confirm', 'Confirm / interact', 'KeyF'],
     ['doctrine', 'Squad doctrine', 'Tab'],
     ['recall', 'Recall squad', 'Backquote'],
+    ['target', 'Cycle hero target', 'KeyQ'],
     ['map', 'Map', 'KeyZ'],
     ['inventory', 'Inventory', 'KeyI'],
-    ['training', 'Discipline Training', 'KeyC'],
+    ['training', 'Talents', 'KeyC'],
     ['skills', 'Skills and teachers', 'KeyX'],
     ['quests', 'Quest journal', 'KeyJ'],
     ['pause', 'Pause', 'KeyP'],
     ['help', 'Controls', 'KeyG'],
     ['heal', 'Command Ranger Heal', 'KeyH'],
-    ['mana', 'Command Ranger Mana Recovery', 'KeyM'],
+    ...(legacyManaEnabled ? [['mana', 'Command Ranger Mana Recovery', 'KeyM']] : []),
   ];
   const defaults = Object.fromEntries(actions.map(([id, , code]) => [id, code]));
   const aliases = { KeyR: 'inventory', KeyT: 'quests', KeyV: 'pause' };
@@ -67,6 +71,21 @@
       const saved = JSON.parse(storage.getItem(preferenceKey) || 'null');
       if (saved && typeof saved === 'object') {
         const candidate = { ...defaults, ...saved.bindings };
+        // Pre-targeting custom maps could already use Q. Preserve those bindings
+        // instead of resetting every control when adding the new action.
+        if (!Object.hasOwn(saved.bindings || {}, 'target')) {
+          const used = new Set(
+            actions.filter(([id]) => id !== 'target').map(([id]) => candidate[id]),
+          );
+          if (used.has(candidate.target))
+            for (const key of 'YUOLNKJIPBVCXZFGRTH1234567890') {
+              const code = (/^[0-9]$/.test(key) ? 'Digit' : 'Key') + key;
+              if (validCode(code) && !used.has(code)) {
+                candidate.target = code;
+                break;
+              }
+            }
+        }
         // Reject malformed/duplicate maps as a whole so movement is never stranded.
         if (
           actions.every(([id]) => validCode(candidate[id])) &&

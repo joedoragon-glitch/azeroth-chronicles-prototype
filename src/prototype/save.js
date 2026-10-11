@@ -34,6 +34,7 @@
             delete e.path;
             delete e.idleWanderTarget;
             delete e.idleWanderWait;
+            delete e.rogueDustCoverUntil;
             e.returning = 0;
             if (e.hp > 0 && !e.neutral) {
               Object.assign(e, e.home);
@@ -251,6 +252,7 @@
             throw Error('Invalid population');
           const seen = new Set();
           for (const e of z.enemies) {
+            delete e.rogueDustCoverUntil;
             if (seen.has(e.id) || (e.family && !ids.has(e.family))) throw Error('Invalid enemy');
             seen.add(e.id);
             for (const f of ['x', 'y', 'hp', 'maxHp', 'baseHp', 'baseDamage', 'gold', 'xp'])
@@ -498,9 +500,27 @@
               for (const f of ['hp', 'damage']) finite(p.nightBonus[f], 0.1, 1000);
             }
           }
+        // Stock is optional on old saves. The active-effect flag stays separate.
+        if (
+          s.hero.tonicStock !== undefined &&
+          (!Number.isInteger(s.hero.tonicStock) ||
+            s.hero.tonicStock < 0 ||
+            s.hero.tonicStock > 10000)
+        )
+          throw Error('Invalid preparation tonic stock');
         for (const f of ['weapon', 'armorTier', 'talentPoints', 'nextId'])
           if (!Number.isInteger(f === 'nextId' ? s[f] : s.hero[f]))
             throw Error('Invalid integer progression');
+        if (
+          s.hero.weaponSelection !== undefined &&
+          s.hero.weaponSelection !== null &&
+          s.hero.weaponSelection !== 'tier' &&
+          !Object.prototype.hasOwnProperty.call(Campaign.legacyWeapons, s.hero.weaponSelection)
+        )
+          throw Error('Invalid weapon selection');
+        for (const key of ['keeperPact', 'keeperEvidence'])
+          if (s[key] !== undefined && typeof s[key] !== 'boolean')
+            throw Error('Invalid Archive knowledge');
         if (s.awakeningAck !== undefined && typeof s.awakeningAck !== 'boolean')
           throw Error('Invalid awakening acknowledgement');
         if (
@@ -674,7 +694,7 @@
         c.refreshNPCs();
         c.initializeQuests();
         c.checkQuests();
-        c.autoEquipBestWeapon();
+        c.restoreWeaponSelection();
         c.syncCompanionLevelStats();
         for (const u of [c.hero, ...c.s.party])
           if (c.blocked(u.x, u.y)) Object.assign(u, c.safe(u.x, u.y));

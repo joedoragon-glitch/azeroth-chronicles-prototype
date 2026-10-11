@@ -1,6 +1,8 @@
 /* Rewards policies on the shared Campaign state. */
 (function (root) {
   'use strict';
+  const Narration =
+    typeof PrototypeNarration !== 'undefined' ? PrototypeNarration : require('./narration.js');
   function install(Campaign, { D, R, dungeonIds }) {
     class Rewards {
       regionalEnemyRewards(regionIndex, kind = 'ordinary') {
@@ -83,6 +85,11 @@
           this.say(
             q.name + ' complete. Reward delivered: ' + q.gold + ' crowns and ' + q.xp + ' XP.',
           );
+          // The paid flag already persists in v4 saves: no second narrative flag or replay.
+          const index = Number(q.id.slice('quest-'.length));
+          const payoff = Number.isInteger(index) ? Narration[index] : null;
+          if (payoff && (payoff.kind === 'narration' || payoff.kind === 'milestone'))
+            this.notice(payoff.text, payoff.kind === 'milestone' ? 5.5 : 6.8, '', payoff.kind);
         }
         this.event('questComplete', { id: q.id });
         this.event('quest', { id: q.id, automatic: true });

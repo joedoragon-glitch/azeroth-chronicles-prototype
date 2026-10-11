@@ -275,6 +275,118 @@
         "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
       },
       "revision": "bff0c54cfe529928e3d0b9f552e28fb23393d21ae647b7510ca63d8d7b9134f8"
+    },
+    "terrain:road:vale": {
+      "version": 1,
+      "key": "terrain:road:vale",
+      "catalogId": "T006",
+      "dependencyHash": "efddb4d54fddf21d07bd6e66bc285036653c7feb9db62042d5d734d6f027cffb",
+      "source": {
+        "hash": "cf00b49877b545d3d36ac97aec12797021005c96743a48a5afa3c7886ff64b37",
+        "width": 1254,
+        "height": 1254,
+        "bytes": 2976878,
+        "opaque": true,
+        "seams": {
+          "x": 9.0337586390218,
+          "y": 9.284954811270602,
+          "interiorX": 5.792457485342059,
+          "interiorY": 5.958554334032251
+        }
+      },
+      "output": {
+        "hash": "e655205174d24f1f359916071fd764584953e3acaba4451f9d158e304fc87134",
+        "width": 256,
+        "height": 256,
+        "bytes": 130920,
+        "opaque": true,
+        "seams": {
+          "x": 6.684895833333336,
+          "y": 8.347656250000002,
+          "interiorX": 7.829279003268038,
+          "interiorY": 7.976516544117657
+        }
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "lanczos3",
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "seamRepair": false
+      },
+      "runtime": {
+        "worldSpan": 320,
+        "opacity": 0.28
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+        "kind": "engineer-authorized",
+        "userAppearanceAcceptance": false,
+        "nativeScale": true,
+        "wrap": true,
+        "scope": "Engineer appearance review: restrained soil/gravel grain, opaque tile, 3x3 wrap and six capped-ratio device profiles in day/night. Browser/offline release gates pending.",
+        "evidence": "native-review-v2/evidence.json"
+      },
+      "revision": "cff0219382ae8e530213e01e9564e51d461685f081c13861938d8edeb9cb3445"
+    },
+    "terrain:road:highlands": {
+      "version": 1,
+      "key": "terrain:road:highlands",
+      "catalogId": "T008",
+      "dependencyHash": "532b47b87cd84d3363e15124c83dcae7c6fc011d3fd12fb892975cf450c7afab",
+      "source": {
+        "hash": "358ffc144c6e905bd9e738d20bbacc5332972bd948d5072d683ca3715ec0eb5d",
+        "width": 1254,
+        "height": 1254,
+        "bytes": 3783401,
+        "opaque": true,
+        "seams": {
+          "x": 14.213981924508243,
+          "y": 14.964646464646469,
+          "interiorX": 10.235812784033813,
+          "interiorY": 10.546996618005629
+        }
+      },
+      "output": {
+        "hash": "15ad70f49d7ba8593468ebd9cd1dca34b9df8fc70975f8b757d0686bc0881f22",
+        "width": 256,
+        "height": 256,
+        "bytes": 126537,
+        "opaque": true,
+        "seams": {
+          "x": 8.843750000000004,
+          "y": 10.692708333333341,
+          "interiorX": 8.995169526143828,
+          "interiorY": 8.994658905228762
+        }
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "lanczos3",
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "seamRepair": false
+      },
+      "runtime": {
+        "worldSpan": 320,
+        "opacity": 0.28
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+        "kind": "engineer-authorized",
+        "userAppearanceAcceptance": false,
+        "nativeScale": true,
+        "wrap": true,
+        "scope": "Engineer appearance review: restrained soil/gravel grain, opaque tile, 3x3 wrap and six capped-ratio device profiles in day/night. Browser/offline release gates pending.",
+        "evidence": "native-review-v2/evidence.json"
+      },
+      "revision": "13c98eed9c5be3ddf092032a628aac30d2b414bdfb587c41ac0247ef99625082"
     }
   },
   "history": {
@@ -282,6 +394,8 @@
     "terrain:ground:march": [],
     "terrain:ground:highlands": [],
     "terrain:ground:frontier": [],
-    "terrain:ground:crown": []
+    "terrain:ground:crown": [],
+    "terrain:road:vale": [],
+    "terrain:road:highlands": []
   }
 }

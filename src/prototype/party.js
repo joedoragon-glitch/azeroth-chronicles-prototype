@@ -140,7 +140,7 @@
           damage = base * def.multiplier,
           angle = Math.atan2(target.y - u.y, target.x - u.x);
         let hits = 0;
-        for (const e of targets) if (this.damage(e, damage, u.id)) hits++;
+        for (const e of targets) if (this.damage(e, damage, u.id, { area: true })) hits++;
         if (!hits) return false;
         u.skill2Cd = cfg.cooldown;
         u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
@@ -286,6 +286,7 @@
         u.supportEffects.push({ type, remaining: amount, seconds: R.rangerSupport.duration });
       }
       rangerSupport(type, manual = true, targetOverride = null) {
+        if (type === 'mana' && !R.resourceMode.manaEnabled) return false;
         if (
           !['health', 'mana'].includes(type) ||
           this.s.challenge.pending ||
@@ -385,7 +386,11 @@
           if (!Array.isArray(u.supportEffects)) u.supportEffects = [];
           const next = [];
           for (const e of u.supportEffects) {
-            if (u.hp <= 0) continue;
+            if (e.type === 'mana' && !R.resourceMode.manaEnabled) {
+              next.push(e); // Dormant legacy state remains available for restoration.
+              continue;
+            }
+            if (u.hp <= 0 || e.seconds <= 0 || e.remaining <= 0) continue;
             const field = e.type === 'health' ? 'hp' : 'mp',
               max = e.type === 'health' ? 'maxHp' : 'maxMp';
             if (field === 'mp' && u !== this.hero) continue;
@@ -420,7 +425,12 @@
             : candidates.sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
           if (!this.rangerSupport('health', false, target)) break;
         }
-        if (h.mp < h.maxMp && h.mp <= h.maxMp * manaThreshold && !this.hasSupportEffect(h, 'mana'))
+        if (
+          R.resourceMode.manaEnabled &&
+          h.mp < h.maxMp &&
+          h.mp <= h.maxMp * manaThreshold &&
+          !this.hasSupportEffect(h, 'mana')
+        )
           this.rangerSupport('mana', false);
       }
       recruit(type) {
@@ -449,7 +459,8 @@
         const id = dead.id,
           active = dead.active !== false,
           u = this.unit(dead.type, this.hero.x + 40, this.hero.y);
-        Object.assign(dead, u, { id, active });
+        this.tacticalClearScatter(dead);
+        Object.assign(dead, u, { id, active, slow: 0 });
         return true;
       }
       treatCompanions() {
@@ -515,17 +526,50 @@
             e.hp > 0 &&
             !e.neutral &&
             !e.returning &&
+            this.tacticalDirectTargetable(e) &&
             e.aggro &&
             dist(e, this.hero) < (e.type === 'boss' || e.summon ? 720 : 540),
         );
       }
       squadContext() {
         const threats = this.squadThreats(),
+          liveBosses = this.zone().enemies.filter(
+            (e) =>
+              e.type === 'boss' &&
+              e.hp > 0 &&
+              !e.neutral &&
+              !e.returning &&
+              this.tacticalDirectTargetable(e),
+          ),
           bossEnemy =
-            threats
-              .filter((e) => e.type === 'boss')
+            liveBosses
+              .filter(
+                (e) =>
+                  threats.includes(e) ||
+                  // If a boss briefly drops aggro during its summon phase,
+                  // retain that encounter and obey a manual BOSS order.
+                  (this.s.squadEngagement === 'boss' &&
+                    dist(e, this.hero) < 720 &&
+                    threats.some((x) => x.summon && x.owner === e.id)),
+              )
               .sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0] || null;
-        return { engaged: threats.length > 0, boss: !!bossEnemy, bossEnemy, threats };
+        // Temporary dust cover blocks selection, not the ongoing encounter.
+        // Keep a manual doctrine when the last active foe is briefly covered.
+        const coveredThreat = this.zone().enemies.some(
+          (e) =>
+            e.hp > 0 &&
+            !e.neutral &&
+            !e.returning &&
+            e.aggro &&
+            !this.tacticalDirectTargetable(e) &&
+            dist(e, this.hero) < (e.type === 'boss' || e.summon ? 720 : 540),
+        );
+        return {
+          engaged: threats.length > 0 || coveredThreat,
+          boss: !!bossEnemy,
+          bossEnemy,
+          threats,
+        };
       }
       syncSquadDoctrine() {
         const context = this.squadContext(),
@@ -540,9 +584,12 @@
           return context;
         }
         if (this.s.squadEngagement !== phase) {
+          // Keep an explicit doctrine choice for the whole continuous encounter,
+          // even if an adds-only phase briefly loses sight of its boss.
+          const enteringCombat = !this.s.squadEngagement;
           this.s.squadEngagement = phase;
           this.s.squadBoss = context.boss;
-          this.s.squadDoctrine = this.squadDefaultDoctrine();
+          if (enteringCombat) this.s.squadDoctrine = this.squadDefaultDoctrine();
         }
         return context;
       }
@@ -705,6 +752,8 @@
           living = this.activeLivingParty(),
           context = this.syncSquadDoctrine(),
           claimed = new Set();
+        // Target intent is transient: active selection, not proximity or party size.
+        this._tacticalPartyTargets = new Map();
         for (const u of living)
           if (
             context.engaged &&
@@ -733,6 +782,9 @@
           u.skill1Cd = Math.max(0, (u.skill1Cd || 0) - dt);
           u.skill2Cd = Math.max(0, (u.skill2Cd || 0) - dt);
           u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - dt);
+          // Thornfang scatter overrides orders, doctrine and combat until
+          // forced movement ends; then the unit resumes its normal assignment.
+          if (this.tacticalAdvanceScatter(u, dt)) continue;
           if (u.order?.type === 'build') {
             const b = z.buildings.find((b) => b.id === u.order.id);
             if (b && b.progress < 4) {
@@ -819,11 +871,41 @@
             if (context.boss) {
               if (this.s.squadDoctrine === 'focus') e = context.bossEnemy;
               else {
-                const adds = context.threats.filter((x) => x.type !== 'boss');
-                e =
-                  u.type === 'soldier'
-                    ? this.soldierScreenTarget(u, adds, living, claimed)
-                    : crowdTarget(u, adds);
+                // ADDS: completely ignore boss damage while living adds need
+                // clearing, then attack the boss until fresh adds appear.
+                // Include this boss's summons even before they approach the hero;
+                // also screen unrelated active attackers pressuring the party.
+                // An explicit BOSS order above always overrides this policy.
+                const adds = [
+                  ...new Map(
+                    [
+                      ...context.threats.filter((x) => x.type !== 'boss'),
+                      ...z.enemies.filter(
+                        (x) =>
+                          x.hp > 0 &&
+                          x.summon &&
+                          x.owner === context.bossEnemy.id &&
+                          !x.neutral &&
+                          this.tacticalDirectTargetable(x) &&
+                          !x.returning,
+                      ),
+                    ].map((x) => [x.id, x]),
+                  ).values(),
+                ];
+                if (adds.length) {
+                  e =
+                    (u.type === 'soldier'
+                      ? this.soldierScreenTarget(u, adds, living, claimed)
+                      : crowdTarget(u, adds)) ||
+                    adds
+                      .slice()
+                      .sort(
+                        (a, b) =>
+                          (claimed.has(a.id) ? 1 : 0) - (claimed.has(b.id) ? 1 : 0) ||
+                          dist(a, this.hero) - dist(b, this.hero) ||
+                          dist(a, u) - dist(b, u),
+                      )[0];
+                } else e = context.bossEnemy;
               }
             } else if (this.s.squadDoctrine === 'focus') {
               e =
@@ -843,6 +925,7 @@
             continue;
           }
           claimed.add(e.id);
+          this._tacticalPartyTargets.set(u.id, e.id);
           if (u.type === 'archer') {
             const d = dist(u, e),
               visible = this.line(u, e),

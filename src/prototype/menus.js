@@ -11,6 +11,9 @@
     recallSquad,
     showMap,
     finaleMenu,
+    storyNavigate = () => {},
+    chooseNewRun = () => {},
+    status = () => {},
   }) {
     function expeditionSupportActions(n, refresh) {
       return Object.entries(Campaign.rules.expeditionSupportSkills).flatMap(([id, def]) => {
@@ -124,6 +127,73 @@
         back,
       );
     }
+    function professionSkillDetail(slot) {
+      const g = getGame(),
+        cls = g.hero.class,
+        descriptions = {
+          paladin: {
+            1: 'Sword combo · third hit cleaves nearby enemies',
+            2: 'Heavy melee strike',
+            3: 'Restore hero health',
+            4: 'Brief damage immunity',
+            5: 'Holy area attack',
+            6: 'Frequent melee strike',
+            7: 'Powerful holy area attack',
+            8: 'Final holy area burst · restore health and gain brief protection',
+          },
+          mage: {
+            1: 'Ranged magic combo · third hit emits an arcane wave',
+            2: 'Frost projectile · slows enemy',
+            3: 'Restore hero health',
+            4: 'Protective barrier · brief damage immunity',
+            5: 'Frost area burst · slows enemies',
+            6: 'Frequent magic projectile · short slow',
+            7: 'Powerful frost area spell · slows enemies',
+            8: 'Final arcane burst · restore health and gain brief protection',
+          },
+          ranger: {
+            1: 'Bow combo · third hit scatters additional arrows',
+            2: 'Double shot',
+            3: 'Restore hero health',
+            4: 'Temporary movement haste',
+            5: 'Area arrow attack',
+            6: 'Rapid shot · temporary haste',
+            7: 'Advanced piercing arrow attack',
+            8: 'Final area attack · restore health and gain brief protection',
+          },
+        },
+        charged = {
+          paladin: {
+            1: 'Holy projectile with triple basic damage',
+            2: 'Holy cleave cone',
+            3: 'Heal hero and living active companions',
+          },
+          mage: {
+            1: 'Arcane beam with triple basic damage',
+            2: 'Frost explosion and slow',
+            3: 'Heal hero and living active companions',
+          },
+          ranger: {
+            1: 'Three rapid arrows with triple total basic damage',
+            2: 'Piercing arrow volley',
+            3: 'Heal hero and living active companions',
+          },
+        },
+        normalCd = Math.round(g.skillCooldown(slot) * 1000) / 1000;
+      return (
+        descriptions[cls][slot] +
+        ' · Normal cooldown ' +
+        normalCd +
+        's' +
+        (slot <= 3
+          ? ' · Charged: ' +
+            charged[cls][slot] +
+            ' · ' +
+            Math.round(g.skillCooldown(slot, true) * 1000) / 1000 +
+            's cooldown'
+          : '')
+      );
+    }
     function skillBook(back = closeMenu) {
       const rank = getGame().s.expeditionRank || 1,
         next = getGame().expeditionNextInstructor(rank),
@@ -188,7 +258,7 @@
               action(
                 'Skill ' + s[0] + ' ' + s[1] + ' · Rank ' + getGame().hero.skills[s[0] - 1],
                 () => {},
-                s[0] === 1
+                (s[0] === 1
                   ? 'Always available · same-target combo: 100% → 110% → 120% + frontal AoE · resets on target switch or 4s gap'
                   : s[0] === 2
                     ? getGame().skillTrainingCost(s[0], 0) +
@@ -201,7 +271,10 @@
                       ' crowns · ' +
                       getGame().boss(s[4]).captive +
                       ' · ' +
-                      D.regions.find((r) => r.id === getGame().boss(s[4]).region).name,
+                      D.regions.find((r) => r.id === getGame().boss(s[4]).region).name) +
+                  (Campaign.rules.resourceMode.manaEnabled
+                    ? ''
+                    : ' · ' + professionSkillDetail(s[0])),
                 true,
               ),
             ),
@@ -209,7 +282,91 @@
         back,
       );
     }
+    function keeperLedger(back = closeMenu) {
+      if (!getGame().keeperReadLedger()) return;
+      openMenu(
+        'The Keeper’s ledger',
+        'The Keeper’s seal marks a proposal to capture the land’s specialists. A later entry trades another captive for Neri: her craft was needed to save the soaked records.',
+        [action('Close the ledger', back)],
+        back,
+      );
+    }
+    function keeperTopics(back = closeMenu) {
+      const game = getGame();
+      if (!game.s.keeperPact || !game.keeperAvailable()) return;
+      const archive =
+        typeof PrototypeArchive !== 'undefined' ? PrototypeArchive : require('./archive.js');
+      const sections = archive.sections(game, { D, R: Campaign.rules });
+      function currentSection(title) {
+        const current = getGame();
+        if (current !== game || !current.s.keeperPact || !current.keeperAvailable()) {
+          back();
+          return null;
+        }
+        return archive.sections(current, { D, R: Campaign.rules }).find((s) => s.title === title);
+      }
+      function shelf(section) {
+        section = currentSection(section.title);
+        if (!section) return;
+        openMenu(
+          section.title,
+          section.intro,
+          section.topics.map(([title]) =>
+            action(title, () => {
+              function answer(figures = false) {
+                const current = currentSection(section.title);
+                const topic = current?.topics.find(([name]) => name === title);
+                if (!topic || (figures && !topic[2])) return;
+                const actions = [];
+                if (!figures && topic[2])
+                  actions.push(action('Show me the figures', () => answer(true)));
+                actions.push(action('Another question', () => shelf(current)));
+                openMenu(title, topic[figures ? 2 : 1], actions, () =>
+                  figures ? answer() : shelf(current),
+                );
+              }
+              answer();
+            }),
+          ),
+          () => keeperTopics(back),
+        );
+      }
+      openMenu(
+        'The Keeper’s shelves',
+        '“Ask what you please. These volumes have survived worse than idle questions.”',
+        sections.map((section) => action(section.title, () => shelf(section), section.intro)),
+        back,
+      );
+    }
+    function keeper(back = closeMenu) {
+      const game = getGame();
+      if (!game.keeperAvailable()) return;
+      if (!game.s.keeperPact) {
+        const ready = game.keeperPactReady();
+        openMenu(
+          'The Drowned Keeper',
+          ready
+            ? '“I have lost enough to the water. Promise me you will keep these shelves standing and let Neri tend the records. Then I will share what I know.”'
+            : '“The pages are drowning. Free Neri, and then we may talk of saving them.”',
+          ready
+            ? [
+                action('Promise to protect the Archive', () => {
+                  if (getGame() !== game || !getGame().keeperPactReady()) {
+                    back();
+                    return;
+                  }
+                  if (getGame().promiseKeeper()) keeper(back);
+                }),
+              ]
+            : [action('Leave him to his books', back)],
+          back,
+        );
+        return;
+      }
+      keeperTopics(back);
+    }
     function supplier(n, back = closeMenu) {
+      const manaEnabled = Campaign.rules.resourceMode.manaEnabled;
       const advanced = n.kind === 'alchemist',
         vitalityRank = getGame().companionVitalityRank(),
         vitalityCost = getGame().companionVitalityCost(),
@@ -222,12 +379,16 @@
       if (!advanced) {
         openMenu(
           n.name,
-          'Combat potions have been retired. Rangers now provide field Heal and Mana Recovery, so the supply shop no longer requires you to maintain potion stock.',
+          manaEnabled
+            ? 'Combat potions have been retired. Rangers now provide field Heal and Mana Recovery, so the supply shop no longer requires you to maintain potion stock.'
+            : 'Combat potions have been retired. Rangers provide Heal in the field.',
           [
             action(
               'Ranger field support',
               () => {},
-              'Heal triggers automatically at 50% HP or less · Mana Recovery at 35% MP or less · H/M command them manually',
+              manaEnabled
+                ? 'Heal triggers automatically at 50% HP or less · Mana Recovery at 35% MP or less · H/M command them manually'
+                : 'Heal activates automatically for injured allies; command it manually with H',
               true,
             ),
           ],
@@ -237,8 +398,23 @@
       }
       openMenu(
         n.name,
-        'Neri trains Ranger field support instead of selling health or mana potions. Training is permanent for every Ranger, including Rangers you recruit later.',
+        manaEnabled
+          ? 'Neri sells Preparation Tonics and trains permanent Ranger field support.'
+          : 'Neri sells Preparation Tonics and trains permanent Ranger Heal, companion vitality and discipline resets.',
         [
+          action(
+            getGame().preparationTonicStock() >= 10000
+              ? 'Preparation Tonics · STORAGE FULL'
+              : 'Buy Preparation Tonic · ' + getGame().preparationTonicCost() + ' crowns',
+            () => {
+              if (getGame().purchasePreparationTonic()) supplier(n, back);
+            },
+            'Owned ' +
+              getGame().preparationTonicStock() +
+              ' · +10% maximum HP until rest or defeat · Use at any completed Barracks',
+            getGame().hero.gold < getGame().preparationTonicCost() ||
+              getGame().preparationTonicStock() >= 10000,
+          ),
           action(
             healRank >= 2
               ? 'Ranger Heal · Rank 2 · MAX'
@@ -252,19 +428,23 @@
               : '60 → 150 HP over five seconds to one target · same 10s per-Ranger Heal cooldown',
             healRank >= 2 || getGame().hero.gold < healCost,
           ),
-          action(
-            manaRank >= 2
-              ? 'Ranger Mana Recovery · Rank 2 · MAX'
-              : 'Upgrade Ranger Mana Recovery · Rank 2 · ' + manaCost + ' crowns',
-            () => {
-              getGame().trainRangerSupport('mana', n.family);
-              supplier(n, back);
-            },
-            manaRank >= 2
-              ? 'Restores 100 MP over five seconds to the hero · maximum training'
-              : '40 → 100 MP over five seconds · same 10s per-Ranger Mana Recovery cooldown',
-            manaRank >= 2 || getGame().hero.gold < manaCost,
-          ),
+          ...(manaEnabled
+            ? [
+                action(
+                  manaRank >= 2
+                    ? 'Ranger Mana Recovery · Rank 2 · MAX'
+                    : 'Upgrade Ranger Mana Recovery · Rank 2 · ' + manaCost + ' crowns',
+                  () => {
+                    getGame().trainRangerSupport('mana', n.family);
+                    supplier(n, back);
+                  },
+                  manaRank >= 2
+                    ? 'Restores 100 MP over five seconds to the hero · maximum training'
+                    : '40 → 100 MP over five seconds · same 10s per-Ranger Mana Recovery cooldown',
+                  manaRank >= 2 || getGame().hero.gold < manaCost,
+                ),
+              ]
+            : []),
           action(
             'Train Companion Vitality · Rank ' +
               (vitalityRank + 1) +
@@ -338,7 +518,14 @@
               ? 'Weapon tier ' + tier + ' · ' + (currentWeapon === tier ? 'OWNED' : 'SURPASSED')
               : 'Weapon tier ' + tier + ' · ' + weapon + ' crowns',
             () => {
-              getGame().gear(n.family, 'weapon');
+              if (getGame().gear(n.family, 'weapon')) {
+                const hero = getGame().hero;
+                status(
+                  hero.legacyEquipped
+                    ? 'Weapon bought · stronger one stays equipped.'
+                    : 'Weapon tier ' + hero.weapon + ' equipped.',
+                );
+              }
               smith(n, back);
             },
             'Current tier ' +
@@ -354,7 +541,8 @@
               ? 'Armor tier ' + tier + ' · ' + (currentArmor === tier ? 'OWNED' : 'SURPASSED')
               : 'Armor tier ' + tier + ' · ' + armor + ' crowns',
             () => {
-              getGame().gear(n.family, 'armor');
+              if (getGame().gear(n.family, 'armor'))
+                status('Armor tier ' + getGame().hero.armorTier + ' equipped.');
               smith(n, back);
             },
             'Current tier ' +
@@ -494,22 +682,34 @@
       const specialists = getGame().barracksSpecialists(),
         returnHere = () => barracksSpecialistMenu(b, back),
         regional = regionalSpecialistBarracksDetail();
+      const availableKeeper = !!getGame().s.keeperPact && getGame().keeperAvailable();
       openMenu(
         'Rescued specialists',
         regional +
           ' Rescued specialists work from your barracks. More advanced specialists replace older redundant services.',
-        specialists.length
-          ? specialists.map((s) =>
-              action(s.name, () => {
-                const n = { ...s };
-                s.kind === 'teacher'
-                  ? teacher(n, returnHere)
-                  : s.kind === 'smith'
-                    ? smith(n, returnHere)
-                    : supplier(n, returnHere);
-              }),
-            )
-          : [action('No specialists rescued yet', () => {}, regional, true)],
+        [
+          ...(specialists.length
+            ? specialists.map((s) =>
+                action(s.name, () => {
+                  const n = { ...s };
+                  s.kind === 'teacher'
+                    ? teacher(n, returnHere)
+                    : s.kind === 'smith'
+                      ? smith(n, returnHere)
+                      : supplier(n, returnHere);
+                }),
+              )
+            : [action('No specialists rescued yet', () => {}, regional, true)]),
+          ...(availableKeeper
+            ? [
+                action(
+                  'Drowned Keeper · The Archive',
+                  () => keeper(returnHere),
+                  'Ask for his learning',
+                ),
+              ]
+            : []),
+        ],
         back,
       );
     }
@@ -707,9 +907,8 @@
         rank = getGame().s.expeditionRank || 1;
       openMenu(
         'Operations',
-        'Regional objectives, routes and expedition labor.',
+        'Local objectives and expedition labor.',
         [
-          action('Regional map and routes', () => showMap(returnHere)),
           action('Local objectives', () => quests(true, returnHere)),
           rank >= 2
             ? action(
@@ -723,17 +922,6 @@
                 'Rescue Mira and train Expedition to Rank 2',
                 true,
               ),
-          ...(getGame().s.phase === 'awakening'
-            ? [
-                action(
-                  'Awakening · Final objective',
-                  () => finaleMenu(returnHere),
-                  'TRUE dungeon guardians ' +
-                    Campaign.dungeonIds.filter((id) => getGame().s.true[id]).length +
-                    '/5',
-                ),
-              ]
-            : []),
         ],
         back,
       );
@@ -766,6 +954,47 @@
               getGame().expeditionUnlock(next)
           : '',
         true,
+      );
+    }
+    function tonicPurchaseMenu(b, back) {
+      const cost = getGame().preparationTonicCost();
+      openMenu(
+        'Preparation Tonic',
+        'No tonic stored. Buy one to use now, or visit Neri to stock up.',
+        [
+          action(
+            'Buy and use · ' + cost + ' crowns',
+            () => {
+              if (getGame().purchasePreparationTonic() && getGame().usePreparationTonic())
+                barracksMenu(b, back);
+            },
+            '+10% maximum HP until rest or defeat · one-time use',
+            getGame().hero.gold < cost,
+          ),
+        ],
+        () => barracksMenu(b, back),
+      );
+    }
+    function barracksTonicAction(b, back) {
+      if (!getGame().s.rescued.archive) return null;
+      const stock = getGame().preparationTonicStock();
+      if (getGame().hero.tonic)
+        return action(
+          'Preparation Tonic · ACTIVE',
+          () => {},
+          '+10% maximum HP until rest or defeat',
+          true,
+        );
+      return action(
+        stock ? 'Use Preparation Tonic · ' + stock + ' owned' : 'Preparation Tonic · Buy / Use',
+        () => {
+          if (getGame().preparationTonicStock()) {
+            if (getGame().usePreparationTonic()) barracksMenu(b, back);
+          } else tonicPurchaseMenu(b, back);
+        },
+        stock
+          ? 'Consumes one · +10% maximum HP until rest or defeat'
+          : 'None owned · Buy one here or from Neri',
       );
     }
     function barracksMenu(ref, back = closeMenu) {
@@ -814,63 +1043,26 @@
         returnHere = () => barracksMenu(b, back),
         specialists = getGame().barracksSpecialists(),
         exp = expeditionBarracksAction(b, back),
-        rank2 = rank >= 2,
+        tonic = barracksTonicAction(b, back),
         baseActions = [
           exp,
+          ...(tonic ? [tonic] : []),
+          action(
+            'Company',
+            () => barracksCompanyMenu(b, returnHere),
+            'Recruit · active group · recovery',
+          ),
           action(
             'Rescued specialists',
             () => barracksSpecialistMenu(b, returnHere),
-            (specialists.length
-              ? 'Use ' +
-                specialists.length +
-                ' rescued specialist' +
-                (specialists.length === 1 ? '' : 's') +
-                ' here · '
-              : '') + regionalSpecialistBarracksDetail(),
+            (specialists.length ? specialists.length + ' available here · ' : '') +
+              regionalSpecialistBarracksDetail(),
           ),
           action(
-            'Recovery',
-            () => barracksRecoveryMenu(b, returnHere),
-            'Treat wounded · recover fallen',
+            'Operations',
+            () => barracksOperationsMenu(b, returnHere),
+            'Local objectives · resources and labor',
           ),
-          action(
-            'Manage group',
-            () => barracksGroupMenu(b, returnHere),
-            'With you ' +
-              getGame().activeParty().length +
-              '/' +
-              getGame().barracksFieldCap(b) +
-              ' · employed ' +
-              getGame().rosterCount(),
-          ),
-          rank2
-            ? action(
-                'Recruitment',
-                () => barracksRecruitmentMenu(b, returnHere),
-                'Soldier ' +
-                  getGame().barracksRecruitPrice('soldier') +
-                  ' crowns · Ranger ' +
-                  getGame().barracksRecruitPrice('archer') +
-                  ' crowns · extra hires rest in reserve',
-              )
-            : action(
-                'Recruitment — Expedition 2',
-                () => {},
-                'Rescue Mira and train Expedition to Rank 2',
-                true,
-              ),
-          rank2
-            ? action(
-                'Resources & labor',
-                () => barracksLaborMenu(b, returnHere),
-                'Assign idle active troops to regional deposits',
-              )
-            : action(
-                'Resources — Expedition 2',
-                () => {},
-                'Rescue Mira and train Expedition to Rank 2',
-                true,
-              ),
         ];
       if (!b.full) {
         const upgrading = getGame()
@@ -928,6 +1120,7 @@
           ' employed.',
         [
           exp,
+          ...(tonic ? [tonic] : []),
           action(
             'Company',
             () => barracksCompanyMenu(b, returnHere),
@@ -942,12 +1135,7 @@
           action(
             'Operations',
             () => barracksOperationsMenu(b, returnHere),
-            'Map · objectives · resources',
-          ),
-          action(
-            'Inventory & support',
-            () => inventory(returnHere),
-            'Ranger support and equipment',
+            'Local objectives · resources',
           ),
         ],
         back,
@@ -958,7 +1146,9 @@
           .activeLivingParty()
           .filter((u) => u.type === 'archer'),
         heal = getGame().rangerSupportAmount('health'),
-        mana = getGame().rangerSupportAmount('mana');
+        mana = getGame().rangerSupportAmount('mana'),
+        hero = getGame().hero,
+        equipped = hero.legacyEquipped ? hero.legacyWeaponName : 'tier ' + hero.weapon;
       openMenu(
         'Inventory',
         'Crowns ' +
@@ -967,41 +1157,43 @@
           getGame().hero.weapon +
           ' · Armor tier ' +
           getGame().hero.armorTier +
-          '\nCrowns are the official currency of the Dark Lord’s regime.',
+          '\nEquipped weapon: ' +
+          equipped +
+          ' · Weapon reforge: ' +
+          (hero.reforges['weapon:' + hero.weapon]
+            ? hero.legacyEquipped
+              ? 'owned (inactive while legacy weapon equipped)'
+              : 'active'
+            : 'none') +
+          ' · Armor reforge: ' +
+          (hero.reforges['armor:' + hero.armorTier] ? 'active' : 'none') +
+          '\nPreparation Tonics: ' +
+          getGame().preparationTonicStock() +
+          ' stored · ' +
+          (hero.tonic
+            ? 'ACTIVE on hero only (+10% maximum HP until rest or defeat)'
+            : 'inactive · use at a completed Barracks') +
+          '\nRanger support: ' +
+          (rangers.length
+            ? rangers.length +
+              ' active · Heal ' +
+              heal +
+              ' HP (H)' +
+              (Campaign.rules.resourceMode.manaEnabled
+                ? ' · Mana Recovery ' + mana + ' MP (M)'
+                : '') +
+              '. Automatic support remains active.'
+            : 'Recruit a Ranger to unlock field Heal' +
+              (Campaign.rules.resourceMode.manaEnabled ? ' and Mana Recovery.' : '.')) +
+          '\nChoose equipment below when available.',
         [
-          action('Recall squad', () => {
-            recallSquad();
-            closeMenu();
-          }),
-          action(
-            'Ranger Heal · ' + heal + ' HP',
-            () => {},
-            rangers.length
-              ? rangers.length +
-                  ' active Ranger' +
-                  (rangers.length === 1 ? '' : 's') +
-                  ' · combat: auto at ≤50% HP · out of combat: tops off injured allies · hero priority · command with H'
-              : 'No active Ranger · recruit or activate one for field healing',
-            true,
-          ),
-          action(
-            'Ranger Mana Recovery · ' + mana + ' MP',
-            () => {},
-            rangers.length
-              ? rangers.length +
-                  ' active Ranger' +
-                  (rangers.length === 1 ? '' : 's') +
-                  ' · automatic at hero ≤35% MP · command with M'
-              : 'No active Ranger · recruit or activate one for field mana recovery',
-            true,
-          ),
           ...Object.keys(Campaign.legacyWeapons)
             .filter((name) => getGame().s.legacyInventory?.includes(name))
             .map((name) =>
               action(
                 'Equip ' + name,
                 () => {
-                  getGame().equipLegacy(name);
+                  if (getGame().equipLegacy(name)) status(name + ' equipped.');
                   inventory(back);
                 },
                 'Saved weapon · +' + Campaign.legacyWeapons[name] + ' power',
@@ -1010,7 +1202,8 @@
           ...(getGame().hero.weapon
             ? [
                 action('Equip current weapon tier ' + getGame().hero.weapon, () => {
-                  getGame().hero.legacyEquipped = false;
+                  if (getGame().equipTierWeapon())
+                    status('Weapon tier ' + getGame().hero.weapon + ' equipped.');
                   inventory(back);
                 }),
               ]
@@ -1019,6 +1212,7 @@
         back,
       );
     }
+    // prettier-ignore
     function townRecruitmentMenu(back) {
       const rank = getGame().s.expeditionRank || 1,
         atLimit = getGame().rosterCount() >= 3,
@@ -1070,95 +1264,11 @@
             getGame().hero.gold < getGame().companionRecoveryCost(),
         ),
       );
-      openMenu(
-        'Town recruitment',
-        'Town recruitment stops at 3 total employed companions, including resting or fallen ones. Build a barracks for further hiring.',
-        actions,
-        back,
-      );
+      openMenu(getGame().definition().town + ' Captain', '', actions, back);
     }
-    function townLaborMenu(back) {
-      const rank = getGame().s.expeditionRank || 1,
-        nodes = getGame()
-          .zone()
-          .nodes.filter((n) => n.amount > 0),
-        canBuild = !getGame().isDungeon() && getGame().availableLabor().length > 0,
-        cost = getGame().barracksBuildCost(),
-        costLabel = cost ? cost + ' crowns' : 'FREE',
-        actions = [];
-      if (canBuild)
-        actions.push(
-          action(
-            'Establish Basic Barracks · ' + costLabel,
-            () => {
-              getGame().build();
-              townLaborMenu(back);
-            },
-            cost === 0
-              ? 'First barracks is free · establishes nearby companion recovery'
-              : rank >= 4
-                ? 'Basic camp · optional Full upgrade ' +
-                  getGame().barracksUpgradeCost() +
-                  ' crowns'
-                : 'Basic recovery base; Full upgrade unlocks at Expedition 4',
-            getGame().hero.gold < cost,
-          ),
-        );
-      if (rank >= 2)
-        actions.push(
-          ...nodes.map((n) =>
-            action(
-              'Gather ' + n.name + ' ' + n.icon,
-              () => {
-                getGame().gather(n.id);
-                closeMenu();
-              },
-              Math.floor(n.amount) + ' crowns remaining · assigns all idle active troops',
-            ),
-          ),
-        );
-      else
-        actions.push(
-          action(
-            'Resources — Expedition 2 required',
-            () => {},
-            'Rescue Mira and train Expedition to Rank 2',
-            true,
-          ),
-        );
-      openMenu(
-        'Construction & resources',
-        'The hero does not build. One active companion provides construction labor.',
-        actions,
-        back,
-      );
-    }
+    // prettier-ignore
     function partyMenu(back = closeMenu) {
-      const title = getGame().definition().town + ' Captain',
-        returnHere = () => partyMenu(back);
-      openMenu(
-        title,
-        'Town services cover the starter expedition. For a larger roster: build a barracks.',
-        [
-          action(
-            'Recruitment & recovery',
-            () => townRecruitmentMenu(returnHere),
-            getGame().rosterCount() >= 3
-              ? '3+ employed · further recruiting requires a barracks'
-              : 'Town hiring limit: 3 total companions',
-          ),
-          action(
-            'Construction & resources',
-            () => townLaborMenu(returnHere),
-            getGame().barracksBuildCost() === 0
-              ? 'First barracks FREE · companion recovery base'
-              : 'Basic barracks ' +
-                  getGame().barracksBuildCost() +
-                  ' crowns · Full upgrade optional at Expedition 4',
-          ),
-        ],
-        back,
-      );
+      townRecruitmentMenu(back);
     }
     function formatTrainingNumber(n) {
       return Number(n.toFixed(2)).toString();
@@ -1167,13 +1277,15 @@
       const p = getGame().talentProfile();
       if (i === 0) return 'Each rank: +' + p.power + ' Power';
       if (i === 1)
-        return (
-          'Each rank: +' +
-          formatTrainingNumber(p.mana * 0.125) +
-          ' MP/s in combat · +' +
-          formatTrainingNumber(p.mana * 0.25) +
-          ' MP/s out of combat'
-        );
+        return Campaign.rules.resourceMode.manaEnabled
+          ? 'Each rank: +' +
+              formatTrainingNumber(p.mana * 0.125) +
+              ' MP/s in combat · +' +
+              formatTrainingNumber(p.mana * 0.25) +
+              ' MP/s out of combat'
+          : 'Each rank: -' +
+              Math.round(Campaign.rules.cooldownBalance.reductionPerTalentRank * 100) +
+              '% to skill cooldowns · up to 20% at Rank 5';
       if (i === 2) return 'Each rank: +' + p.hp + ' maximum HP';
       return 'Each rank: +' + p.speed + ' movement speed';
     }
@@ -1195,7 +1307,12 @@
       );
     }
     function talents(back = closeMenu) {
-      const names = ['Power Training', 'Mana Training', 'Health Training', 'Movement Training'],
+      const names = [
+          'Power Training',
+          Campaign.rules.resourceMode.manaEnabled ? 'Mana Training' : 'Cooldown Training',
+          'Health Training',
+          'Movement Training',
+        ],
         spent = getGame().talentSpent(),
         left = getGame().hero.freeTalentResets || 0,
         actions = names.map((name, i) =>
@@ -1221,7 +1338,7 @@
         ),
       );
       openMenu(
-        'Discipline Training',
+        'Talents',
         'Available training points ' +
           getGame().hero.talentPoints +
           ' · One point raises one discipline by one rank.',
@@ -1229,7 +1346,127 @@
         back,
       );
     }
+
+    // The global journal is the primary campaign guide. Side quests remain
+    // available from local quest boards without changing their saved progress.
+    function storyJournal(back = closeMenu) {
+      const game = getGame(),
+        zone = game.zone(),
+        room = game.supplyRoom() || game.sideDungeon(),
+        inside = D.bosses.find((boss) => boss.id === game.zoneId),
+        regionId = inside?.region || room?.region || game.definition().id,
+        index = D.regions.findIndex((region) => region.id === regionId),
+        region = D.regions[index],
+        here = game.zoneId,
+        findNpc = (matches) => zone.npcs.find(matches),
+        liveBoss = (id) =>
+          zone.enemies.find(
+            (enemy) => enemy.type === 'boss' && enemy.family === id && enemy.hp > 0,
+          ),
+        guideAction = (label, destination) =>
+          action('Navigate · ' + label, () => storyNavigate(destination, label), '', !destination),
+        present = (summary, options) => openMenu('Story journal', summary, options, back),
+        exit = findNpc((n) => n.kind === 'exit');
+      const leaveInterior = () => {
+        if (!exit) return false;
+        present('Return to ' + (region?.name || 'the region'), [guideAction('Dungeon exit', exit)]);
+        return true;
+      };
+
+      if (game.peace) {
+        present('Campaign complete · Nightmare unlocked', [
+          action('New Normal adventure', () => chooseNewRun('normal')),
+          action('New Nightmare adventure', () => chooseNewRun('nightmare')),
+        ]);
+        return;
+      }
+
+      if (game.s.phase === 'awakening') {
+        const remaining = Campaign.dungeonIds.filter((id) => !game.s.true[id]),
+          defeated = Campaign.dungeonIds.length - remaining.length;
+        if (!remaining.length) {
+          present('Awakening complete', []);
+          return;
+        }
+        const id =
+            remaining.find((candidate) => candidate === here) ||
+            remaining.find((candidate) => game.boss(candidate).region === regionId) ||
+            remaining[0],
+          boss = game.boss(id);
+        if (inside && inside.id !== id && leaveInterior()) return;
+        if (room && leaveInterior()) return;
+        if (boss.region !== regionId) {
+          const targetIndex = D.regions.findIndex((r) => r.id === boss.region),
+            transport =
+              findNpc((n) => n.kind === 'transport' && n.hub) ||
+              findNpc(
+                (n) => n.kind === 'transport' && n.direction === Math.sign(targetIndex - index),
+              );
+          present('Awakening · ' + defeated + '/5 defeated · ' + boss.place, [
+            guideAction(transport?.name || 'Regional transport', transport),
+          ]);
+          return;
+        }
+        const destination =
+          here === id
+            ? liveBoss(id) || findNpc((n) => n.kind === 'cage' && n.family === id)
+            : findNpc((n) => n.kind === 'dungeon' && n.family === id);
+        present('Awakening · ' + defeated + '/5 defeated · ' + boss.name, [
+          guideAction(here === id ? boss.name : boss.place, destination),
+        ]);
+        return;
+      }
+
+      const pending = D.bosses.filter(
+        (boss) => boss.region === regionId && boss.captive && !game.s.rescued[boss.id],
+      );
+      if (pending.length) {
+        if (room && leaveInterior()) return;
+        if (inside && !pending.some((boss) => boss.id === here) && leaveInterior()) return;
+        const ordered = [
+          ...pending.filter((boss) => boss.id === here),
+          ...pending.filter((boss) => boss.id !== here),
+        ];
+        present(
+          (region?.name || 'Region') + ' · ' + (2 - pending.length) + '/2 rescued',
+          ordered.map((boss) => {
+            const destination =
+              here === boss.id
+                ? liveBoss(boss.id) || findNpc((n) => n.kind === 'cage' && n.family === boss.id)
+                : boss.kind === 'dungeon'
+                  ? findNpc((n) => n.kind === 'dungeon' && n.family === boss.id)
+                  : liveBoss(boss.id) || findNpc((n) => n.kind === 'cage' && n.family === boss.id);
+            return guideAction(boss.captive.split(' the ')[0] + ' · ' + boss.place, destination);
+          }),
+        );
+        return;
+      }
+      if (inside && leaveInterior()) return;
+      if (room && leaveInterior()) return;
+
+      if (index >= 0 && index < D.regions.length - 1) {
+        const next = D.regions[index + 1],
+          transport = findNpc((n) => n.kind === 'transport' && n.direction === 1);
+        present('Specialists rescued · Next: ' + next.name, [
+          guideAction(transport?.name || 'Transport to ' + next.name, transport),
+        ]);
+        return;
+      }
+
+      const darklord =
+        liveBoss('darklord') ||
+        findNpc((n) => n.id === 'fortress-gate') ||
+        (D.fields?.[4] ? { x: D.fields[4][0], y: D.fields[4][1] } : null);
+      present(
+        game.s.normal.darklord
+          ? 'Find and defeat the TRUE Dark Lord'
+          : 'Specialists rescued · Defeat the Dark Lord',
+        [guideAction('Dark Lord', darklord)],
+      );
+    }
+
     function quests(atBoard, back = closeMenu) {
+      if (!atBoard) return storyJournal(back);
       const local = atBoard
         ? getGame()
             .questDefs()
@@ -1259,6 +1496,8 @@
       skillBook,
       supplier,
       smith,
+      keeper,
+      keeperLedger,
       regionalSpecialistObjective,
       barracksMenu,
       inventory,

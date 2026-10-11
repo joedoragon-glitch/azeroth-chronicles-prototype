@@ -87,3 +87,106 @@ body[data-experience='desktop'].menu-open #desktop-hints {
 body[data-experience='desktop'] #world {
   cursor: default;
 }
+
+/* Desktop: an information dock, not a permanent sidebar. */
+body[data-experience='desktop'] #hud {
+  right: 10px;
+  top: 10px;
+  width: 214px;
+  max-height: calc(100dvh - 20px);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 5px;
+  padding: 9px;
+  font-size: 11px;
+}
+body[data-experience='desktop'] #hud button {
+  min-width: 0;
+  min-height: 32px;
+  width: 100%;
+  margin: 0;
+  padding: 5px 6px;
+  font-size: 11px;
+  text-align: center;
+}
+body[data-experience='desktop'] #hud #menu-button,
+body[data-experience='desktop'] #hero-stats,
+body[data-experience='desktop'] #objective,
+body[data-experience='desktop'] #status,
+body[data-experience='desktop'] #squad-button,
+body[data-experience='desktop'] #talent-button {
+  grid-column: 1 / -1;
+}
+body[data-experience='desktop'] #talent-button:not(.talent-ready) {
+  display: none;
+}
+body[data-experience='desktop'] #hero-stats .wallet {
+  margin: 5px 0 1px;
+}
+body[data-experience='desktop'] #desktop-hints {
+  display: none;
+}
+body[data-experience='desktop'] #skills {
+  left: calc((100vw - 238px) / 2);
+  width: min(780px, calc(100vw - 254px));
+}
+body[data-experience='desktop'] #modal {
+  top: 50%;
+  bottom: auto;
+  left: 50%;
+  width: min(430px, calc(100vw - 32px));
+  max-height: min(72dvh, 650px);
+  padding: 16px;
+  transform: translate(-50%, -50%);
+}
+@media (max-width: 1000px) {
+  body[data-experience='desktop'] #hud {
+    width: 204px;
+  }
+  body[data-experience='desktop'] #skills {
+    left: calc((100vw - 228px) / 2);
+    width: calc(100vw - 244px);
+  }
+}
+
+/* Center the useful hotbar in playable space, not a permanent ten-slot frame. */
+body[data-experience='desktop'] #skills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  max-width: calc(100vw - 254px);
+  gap: 6px;
+  padding: 7px;
+}
+body[data-experience='desktop'] #skills > button {
+  flex: 0 0 62px;
+  width: 62px;
+}
+body[data-experience='desktop'] #skills > button.locked {
+  display: none;
+}
+body[data-experience='desktop'] #quick-items {
+  flex: 0 0 132px;
+  grid-column: auto;
+}
+body[data-experience='desktop'] #quick-items:not(.has-rangers) {
+  display: none;
+}
+@media (max-width: 1000px) {
+  body[data-experience='desktop'] #skills {
+    max-width: calc(100vw - 244px);
+  }
+}
+
+body[data-experience='desktop'] #modal[data-dialog-size='compact'] {
+  width: min(300px, calc(100vw - 32px));
+}
+body[data-experience='desktop'] #modal[data-dialog-size='regular'] {
+  width: min(370px, calc(100vw - 32px));
+}
+body[data-experience='desktop'] #modal[data-dialog-size='wide'] {
+  width: min(430px, calc(100vw - 32px));
+}

@@ -102,6 +102,8 @@ async function offlineContract(checkout) {
   for (const rel of [
     'assets/audio/fixture.wav',
     'assets/audio/manifest.json',
+    'src/prototype/enemy-presentation.js',
+    'src/prototype/audio-enemy.js',
     'src/prototype/audio-catalog.js',
     'src/prototype/audio-assets.js',
     'src/prototype/audio-mixer.js',
@@ -135,7 +137,7 @@ async function offlineContract(checkout) {
   try {
     const checkout = path.join(temp, 'checkout');
     fs.mkdirSync(checkout);
-    for (const dir of ['src', 'scripts', 'styles', 'templates', 'icons', 'assets', 'tools'])
+    for (const dir of ['src', 'scripts', 'styles', 'templates', 'icons', 'assets', 'tools/audio'])
       fs.cpSync(path.join(root, dir), path.join(checkout, dir), { recursive: true });
     for (const file of [
       'package.json',

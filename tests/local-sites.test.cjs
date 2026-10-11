@@ -34,4 +34,75 @@ test("legacy Cindermaw Treasury occupants migrate into the irregular den without
 test('Frontier supply quest is route reconnaissance and stale escort NPCs are retired',()=>{const c=fresh();const q=c.questDefs().find(q=>q.id==='quest-19');assert.equal(q.kind,'sites');assert.deepEqual(q.sites,['convoy','bridge-north','checkpoint']);c.enter('frontier');c.zone().escort={id:'supply-escort',x:1000,y:800,hp:1,maxHp:250};c.updateEscort(.1);assert.equal(c.zone().escort,undefined);for(const id of q.sites)c.discover(id);assert(c.s.quests[q.id].done&&c.s.quests[q.id].paid);});
 test('Warlord compound is the single player-facing checkpoint while the old checkpoint name survives only as a quest trigger',()=>{const c=fresh();c.enter('frontier');const hidden=c.zone().npcs.find(n=>n.id==='checkpoint'),compound=c.zone().npcs.find(n=>n.kind==='mini'&&n.mini==='field-warlord');assert(hidden&&hidden.internalSite);assert(compound&&compound.name==='Warlord checkpoint');assert(!c.visibleNPCs().includes(hidden),'duplicate Occupied checkpoint is hidden from map/world rendering');assert(Math.hypot(hidden.x-compound.x,hidden.y-compound.y)<220,'quest trigger belongs to the same compound');Object.assign(c.hero,{x:hidden.x,y:hidden.y});c.tick(.01);assert(c.s.discovered['frontier:checkpoint'],'approaching the visible compound still fulfills the checkpoint visit');});
 
+
+test('All 30 quest slots and regional XP/crown budgets remain stable after exploration redesign',()=>{
+ const c=fresh(),expected={vale:[160,600],march:[380,1200],highlands:[700,1800],frontier:[1200,2400],crown:[1900,3000]};
+ assert.equal(c.questDefs().length,31);
+ for(const [region,[crowns,xp]] of Object.entries(expected)){
+  const qs=c.questDefs().filter(q=>q.region===region&&!q.tutorial);
+  assert.equal(qs.length,6,region+' unchanged quest count');
+  assert.equal(qs.reduce((sum,q)=>sum+q.gold,0),crowns,region+' crown budget');
+  assert.equal(qs.reduce((sum,q)=>sum+q.xp,0),xp,region+' XP budget');
+  for(const q of qs.filter(q=>q.kind==='sites')){
+   assert((q.minSites||q.sites.length)<=q.sites.length);
+   assert.equal(new Set(q.sites).size,q.sites.length,q.id+' unique discoveries');
+   for(const id of q.sites){
+    if(['port','minor'].includes(id))continue;
+    assert(C.rules.sites[c.regionIndex(q.region)].some(s=>s[0]===id),q.id+' unknown landmark '+id);
+   }
+  }
+ }
+});
+test('Five regional explorations complete through any three natural discoveries, with automatic once-only rewards and save safety',()=>{
+ const ids=['quest-5','quest-11','quest-16','quest-22','quest-28'];
+ const experience=c=>c.hero.xp+120*c.hero.level*(c.hero.level-1)/2;
+ for(const id of ids){
+  let c=fresh(),q=c.questDefs().find(q=>q.id===id);
+  c.enter(q.region);
+  for(const [other,p] of Object.entries(c.s.quests))if(other!==id)Object.assign(p,{done:true,paid:true,active:false});
+  const sites=q.sites.filter(id=>!['port','minor'].includes(id)).slice(0,3);
+  assert.equal(q.minSites,3,id+' three natural discoveries');
+  assert.equal(sites.length,3);
+  const beforeGold=c.hero.gold,beforeXp=experience(c);
+  for(let i=0;i<sites.length;i++){
+   const n=c.zone().npcs.find(n=>n.id===sites[i]);
+   assert(n,id+' physical landmark '+sites[i]);
+   assert(c.route(c.hero,n).length,id+' reachable landmark '+sites[i]);
+   Object.assign(c.hero,{x:n.x,y:n.y});
+   c.tick(.01); // Auto-discovery on proximity; no board, quest UI, or Interact call.
+   if(i===0){
+    assert(!c.s.quests[id].paid,id+' not prematurely rewarded');
+    c=C.restore(c.snapshot()); // Discovery survives reload before completion.
+    q=c.questDefs().find(q=>q.id===id);
+   }
+  }
+  assert(c.s.quests[id].done&&c.s.quests[id].paid,id+' auto-completes on exploration');
+  assert.equal(c.hero.gold,beforeGold+q.gold,id+' correct crowns');
+  assert.equal(experience(c),beforeXp+q.xp,id+' correct XP');
+  assert(!c.claim(id),id+' cannot double-claim');
+  const saved=C.restore(c.snapshot());
+  saved.checkQuests();
+  assert.equal(saved.hero.gold,c.hero.gold,id+' no repeated payment after reload');
+  assert.equal(experience(saved),experience(c),id+' no repeated XP after reload');
+ }
+});
+
+
+test('Quest titles express motivations while objectives stay short, explicit and compatible with completion rules',()=>{
+ const c=fresh(),quests=c.questDefs(),intended=[["A Teacher Taken","Defeat Thornfang; free Mira"],["Roads Under Threat","Defeat 5 outdoor enemies in Greenwood Vale"],["Stolen Stores","Recover 2 caches from Thornfang's Treasury"],["An Unfinished Retreat","Defeat Crypt Guardian; free Borin"],["Keeping Trade Open","Visit Mill bridge and wagon stand"],["Who Owns the Woods?","Discover any 3 Greenwood Vale sites"],["The Island Prisoner","Defeat Mirejaw; free Sela"],["Unsafe Crossings","Defeat 6 outdoor enemies in Flooded Marches"],["Records at Risk","Defeat Drowned Keeper; free Neri"],["Hidden Provisions","Recover 3 caches from Mirejaw's Treasury"],["Shadows After Sundown","Visit Lantern shore at night; defeat 2 wraiths"],["Beyond the Main Road","Discover any 3 Flooded Marches sites"],["The Tyrant's Grip","Defeat Ridge Tyrant; free Orin"],["Quarry Workers at Risk","Defeat 7 outdoor enemies in Ironroot Highlands"],["An Unwilling Hand","Defeat Stone Colossus; free Dara"],["The Master's Reserve","Recover 3 caches from Ridge Tyrant's Treasury"],["Whose Mountain?","Discover any 3 Ironroot Highlands sites"],["Follow the Crowns","Visit Stonecross ore vein and caravan stand"],["Captive at the Front","Defeat Ashen Warlord; free Lyss"],["An Army Needs Supplies","Visit convoy, guarded ravine bridge and checkpoint"],["Wings of War","Defeat Abyss Dragon; free Eren"],["Roads Still Contested","Defeat 8 outdoor enemies in Ashen Frontier"],["Rebuilding Under Guard","Discover any 3 Ashen Frontier sites"],["A Different Kind of Flight","Visit civilian dragon landing behind Emberwatch"],["The Last Lesson","Defeat Ash Sentinel; free Tovan"],["Hostile Ground","Defeat 8 outdoor enemies in Dark Crown"],["A Smith in Chains","Defeat Cindermaw; free Vera"],["Dreadmaw's Duty","Recover 3 caches from Cindermaw's Treasury"],["The Machinery of Rule","Discover any 3 Dark Crown sites"],["Ready for the Dark Lord","Free Tovan and Vera; reach fortress gate"]];
+ assert.equal(quests.length,31);
+ assert.equal(quests[0].name,'A Place to Recover');
+ assert(quests[0].objective.length<=85);
+ for(let i=0;i<intended.length;i++){
+  const q=quests[i+1],[name,description]=intended[i];
+  assert.equal(q.name,name,'quest '+i+' narrative title');
+  assert(q.name.length<=30,'quest '+i+' title is compact');
+  assert(!/^(Visit|Defeat|Recover|Discover|Free|Find) /i.test(q.name),'quest '+i+' title is not a repeated instruction');
+  assert(q.objective.startsWith(description),'quest '+i+' functional objective');
+  assert(q.objective.length<=85,'quest '+i+' objective is concise');
+  if(q.clear)assert(q.objective.endsWith('; clear compound guards'),'field guardian requirement is explicit');
+  if(q.minSites)assert(q.objective.includes('any 3'),'flexible survey is described accurately');
+ }
+});
+
 console.log(passed+' local quest and expedition scenarios passed.');

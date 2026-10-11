@@ -1,0 +1,902 @@
+{
+  "version": "0.8.126",
+  "groundSourceHash": "37aa9447ddc05a9e580decd18b53f7d5ce701420e1ec8637ede882b1a6e3fdb2",
+  "rendererSourceHash": "9f865f6654167d231eb67172f318c115c528a6d30f2457bf66f79d28ff477c67",
+  "browser": "143.0.7499.0",
+  "errors": [],
+  "raster": [
+    {
+      "phone": false,
+      "old": {
+        "median": 49.79999999701977,
+        "values": [
+          49.79999999701977,
+          48.3999999910593,
+          47.70000000298023,
+          49.3999999910593,
+          52,
+          48.70000000298023,
+          51.6000000089407,
+          50.30000001192093,
+          52.5,
+          47.19999998807907,
+          49.6000000089407,
+          55.099999994039536
+        ]
+      },
+      "cached": {
+        "median": 27.799999997019768,
+        "values": [
+          27.900000005960464,
+          29.30000001192093,
+          28.599999994039536,
+          27.400000005960464,
+          27.30000001192093,
+          27.799999997019768,
+          27.19999998807907,
+          26.80000001192093,
+          36.8999999910593,
+          27.400000005960464,
+          28.200000002980232,
+          27.5
+        ]
+      }
+    },
+    {
+      "phone": true,
+      "old": {
+        "median": 36.70000000298023,
+        "values": [
+          36.70000000298023,
+          35,
+          35.8999999910593,
+          37.400000005960464,
+          37.3999999910593,
+          35,
+          37.400000005960464,
+          34.70000000298023,
+          35.900000005960464,
+          37.099999994039536,
+          35.5,
+          37
+        ]
+      },
+      "cached": {
+        "median": 24.19999998807907,
+        "values": [
+          24.5,
+          22.900000005960464,
+          24.700000002980232,
+          24.200000002980232,
+          24.19999998807907,
+          24.799999997019768,
+          22.399999991059303,
+          23.200000002980232,
+          24.399999991059303,
+          23.700000002980232,
+          23.299999997019768,
+          23.400000005960464
+        ]
+      }
+    }
+  ],
+  "frames": [
+    {
+      "phone": false,
+      "mode": "old",
+      "moving": false,
+      "fps": 19.1891853188412,
+      "work": {
+        "n": 135,
+        "mean": 9.605925925683092,
+        "p50": 9,
+        "p95": 13.700000002980232,
+        "p99": 18.100000008940697,
+        "max": 20.100000008940697
+      },
+      "materials": {
+        "definitions": 5,
+        "decodedBytes": 262144,
+        "reservedBytes": 0,
+        "decodedBudget": 2097152,
+        "decoded": 1,
+        "projectedBytes": 759200,
+        "projectedBudget": 8388608,
+        "projectedRepeats": 1,
+        "queued": 0,
+        "decoding": 0,
+        "failures": 0,
+        "peakDecodedBytes": 262144,
+        "peakConcurrent": 1,
+        "evictions": 0,
+        "staleLoads": 0,
+        "draws": 338,
+        "projectedBuilds": 1,
+        "projectedEvictions": 0
+      },
+      "renderer": {
+        "tileCandidates": 675,
+        "tilesDrawn": 338,
+        "entitiesConsidered": 226,
+        "entitiesDrawn": 122,
+        "floorTilesPainted": 338,
+        "cameraZoom": 1.5,
+        "transientEffects": 5,
+        "enemyVfxEffects": 3,
+        "groundCache": {
+          "bytes": 0,
+          "budget": 67108864,
+          "builds": 19,
+          "hits": 59,
+          "margin": 0
+        }
+      }
+    },
+    {
+      "phone": false,
+      "mode": "cached",
+      "moving": false,
+      "fps": 32.363849866105305,
+      "work": {
+        "n": 227,
+        "mean": 7.15154185037781,
+        "p50": 6.600000008940697,
+        "p95": 8.699999988079071,
+        "p99": 17.100000008940697,
+        "max": 32
+      },
+      "materials": {
+        "definitions": 5,
+        "decodedBytes": 262144,
+        "reservedBytes": 0,
+        "decodedBudget": 2097152,
+        "decoded": 1,
+        "projectedBytes": 759200,
+        "projectedBudget": 8388608,
+        "projectedRepeats": 1,
+        "queued": 0,
+        "decoding": 0,
+        "failures": 0,
+        "peakDecodedBytes": 262144,
+        "peakConcurrent": 1,
+        "evictions": 0,
+        "staleLoads": 0,
+        "draws": 0,
+        "projectedBuilds": 1,
+        "projectedEvictions": 0
+      },
+      "renderer": {
+        "tileCandidates": 675,
+        "tilesDrawn": 338,
+        "entitiesConsidered": 226,
+        "entitiesDrawn": 122,
+        "floorTilesPainted": 0,
+        "cameraZoom": 1.5,
+        "transientEffects": 6,
+        "enemyVfxEffects": 3,
+        "groundCache": {
+          "bytes": 12853248,
+          "budget": 67108864,
+          "builds": 20,
+          "hits": 300,
+          "margin": 256
+        }
+      }
+    },
+    {
+      "phone": false,
+      "mode": "cached",
+      "moving": false,
+      "fps": 28.210966476206835,
+      "work": {
+        "n": 198,
+        "mean": 7.858585858134308,
+        "p50": 6.799999997019768,
+        "p95": 11.699999988079071,
+        "p99": 13.200000002980232,
+        "max": 17.399999991059303
+      },
+      "materials": {
+        "definitions": 5,
+        "decodedBytes": 262144,
+        "reservedBytes": 0,
+        "decodedBudget": 2097152,
+        "decoded": 1,
+        "projectedBytes": 759200,
+        "projectedBudget": 8388608,
+        "projectedRepeats": 1,
+        "queued": 0,
+        "decoding": 0,
+        "failures": 0,
+        "peakDecodedBytes": 262144,
+        "peakConcurrent": 1,
+        "evictions": 0,
+        "staleLoads": 0,
+        "draws": 0,
+        "projectedBuilds": 1,
+        "projectedEvictions": 0
+      },
+      "renderer": {
+        "tileCandidates": 675,
+        "tilesDrawn": 338,
+        "entitiesConsidered": 226,
+        "entitiesDrawn": 122,
+        "floorTilesPainted": 0,
+        "cameraZoom": 1.5,
+        "transientEffects": 4,
+        "enemyVfxEffects": 4,
+        "groundCache": {
+          "bytes": 12853248,
+          "budget": 67108864,
+          "builds": 21,
+          "hits": 515,
+          "margin": 256
+        }
+      }
+    },
+    {
+      "phone": false,
+      "mode": "old",
+      "moving": false,
+      "fps": 18.51745521359669,
+      "work": {
+        "n": 130,
+        "mean": 9.419230768657648,
+        "p50": 8.600000008940697,
+        "p95": 14.399999991059303,
+        "p99": 16.700000002980232,
+        "max": 21.799999997019768
+      },
+      "materials": {
+        "definitions": 5,
+        "decodedBytes": 262144,
+        "reservedBytes": 0,
+        "decodedBudget": 2097152,
+        "decoded": 1,
+        "projectedBytes": 759200,
+        "projectedBudget": 8388608,
+        "projectedRepeats": 1,
+        "queued": 0,
+        "decoding": 0,
+        "failures": 0,
+        "peakDecodedBytes": 262144,
+        "peakConcurrent": 1,
+        "evictions": 0,
+        "staleLoads": 0,
+        "draws": 338,
+        "projectedBuilds": 1,
+        "projectedEvictions": 0
+      },
+      "renderer": {
+        "tileCandidates": 675,
+        "tilesDrawn": 338,
+        "entitiesConsidered": 226,
+        "entitiesDrawn": 122,
+        "floorTilesPainted": 338,
+        "cameraZoom": 1.5,
+        "transientEffects": 4,
+        "enemyVfxEffects": 4,
+        "groundCache": {
+          "bytes": 0,
+          "budget": 67108864,
+          "builds": 21,
+          "hits": 518,
+          "margin": 0
+        }
+      }
+    },
+    {
+      "phone": false,
+      "mode": "old",
+      "moving": true,
+      "fps": 16.71500207151734,
+      "work": {
+        "n": 118,
+        "mean": 13.993220338882026,
+        "p50": 13.799999997019768,
+        "p95": 21.5,
+        "p99": 25.799999997019768,
+        "max": 30.799999997019768
+      },
+      "materials": {
+        "definitions": 5,
+        "decodedBytes": 262144,
+        "reservedBytes": 0,
+        "decodedBudget": 2097152,
+        "decoded": 1,
+        "projectedBytes": 759200,
+        "projectedBudget": 8388608,
+        "projectedRepeats": 1,
+        "queued": 0,
+        "decoding": 0,
+        "failures": 0,
+        "peakDecodedBytes": 262144,
+        "peakConcurrent": 1,
+        "evictions": 0,
+        "staleLoads": 0,
+        "draws": 340,
+        "projectedBuilds": 1,
+        "projectedEvictions": 0
+      },
+      "renderer": {
+        "tileCandidates": 729,
+        "tilesDrawn": 340,
+        "entitiesConsidered": 226,
+        "entitiesDrawn": 140,
+        "floorTilesPainted": 340,
+        "cameraZoom": 1.5,
+        "transientEffects": 6,
+        "enemyVfxEffects": 5,
+        "groundCache": {
+          "bytes": 0,
+          "budget": 67108864,
+          "builds": 21,
+          "hits": 518,
+          "margin": 0
+        }
+      }
+    },
+    {
+      "phone": false,
+      "mode": "cached",
+      "moving": true,
+      "fps": 27.208546347610664,
+      "work": {
+        "n": 191,
+        "mean": 8.873298429381785,
+        "p50": 7.4000000059604645,
+        "p95": 12.899999991059303,
+        "p99": 20.099999994039536,
+        "max": 53.20000000298023
+      },
+      "materials": {
+        "definitions": 5,
+        "decodedBytes": 262144,
+        "reservedBytes": 0,
+        "decodedBudget": 2097152,
+        "decoded": 1,
+        "projectedBytes": 759200,
+        "projectedBudget": 8388608,
+        "projectedRepeats": 1,
+        "queued": 0,
+        "decoding": 0,
+        "failures": 0,
+        "peakDecodedBytes": 262144,
+        "peakConcurrent": 1,
+        "evictions": 0,
+        "staleLoads": 0,
+        "draws": 0,
+        "projectedBuilds": 1,
+        "projectedEvictions": 0
+      },
+      "renderer": {
+        "tileCandidates": 702,
+        "tilesDrawn": 340,
+        "entitiesConsidered": 226,
+        "entitiesDrawn": 140,
+        "floorTilesPainted": 0,
+        "cameraZoom": 1.5,
+        "transientEffects": 9,
+        "enemyVfxEffects": 7,
+        "groundCache": {
+          "bytes": 12853248,
+          "budget": 67108864,
+          "builds": 24,
+          "hits": 719,
+          "margin": 256
+        }
+      }
+    },
+    {
+      "phone": false,
+      "mode": "cached",
+      "moving": true,
+      "fps": 27.286493899825725,
+      "work": {
+        "n": 192,
+        "mean": 9.261458334513009,
+        "p50": 7.600000008940697,
+        "p95": 13,
+        "p99": 20.200000002980232,
+        "max": 60.79999999701977
+      },
+      "materials": {
+        "definitions": 5,
+        "decodedBytes": 262144,
+        "reservedBytes": 0,
+        "decodedBudget": 2097152,
+        "decoded": 1,
+        "projectedBytes": 759200,
+        "projectedBudget": 8388608,
+        "projectedRepeats": 1,
+        "queued": 0,
+        "decoding": 0,
+        "failures": 0,
+        "peakDecodedBytes": 262144,
+        "peakConcurrent": 1,
+        "evictions": 0,
+        "staleLoads": 0,
+        "draws": 0,
+        "projectedBuilds": 1,
+        "projectedEvictions": 0
+      },
+      "renderer": {
+        "tileCandidates": 702,
+        "tilesDrawn": 340,
+        "entitiesConsidered": 226,
+        "entitiesDrawn": 140,
+        "floorTilesPainted": 0,
+        "cameraZoom": 1.5,
+        "transientEffects": 4,
+        "enemyVfxEffects": 4,
+        "groundCache": {
+          "bytes": 12853248,
+          "budget": 67108864,
+          "builds": 27,
+          "hits": 924,
+          "margin": 256
+        }
+      }
+    },
+    {
+      "phone": false,
+      "mode": "old",
+      "moving": true,
+      "fps": 18.000771461634077,
+      "work": {
+        "n": 127,
+        "mean": 12.1062992117771,
+        "p50": 10.200000002980232,
+        "p95": 16.700000002980232,
+        "p99": 21.600000008940697,
+        "max": 34.900000005960464
+      },
+      "materials": {
+        "definitions": 5,
+        "decodedBytes": 262144,
+        "reservedBytes": 0,
+        "decodedBudget": 2097152,
+        "decoded": 1,
+        "projectedBytes": 759200,
+        "projectedBudget": 8388608,
+        "projectedRepeats": 1,
+        "queued": 0,
+        "decoding": 0,
+        "failures": 0,
+        "peakDecodedBytes": 262144,
+        "peakConcurrent": 1,
+        "evictions": 0,
+        "staleLoads": 0,
+        "draws": 340,
+        "projectedBuilds": 1,
+        "projectedEvictions": 0
+      },
+      "renderer": {
+        "tileCandidates": 729,
+        "tilesDrawn": 340,
+        "entitiesConsidered": 226,
+        "entitiesDrawn": 140,
+        "floorTilesPainted": 340,
+        "cameraZoom": 1.5,
+        "transientEffects": 9,
+        "enemyVfxEffects": 7,
+        "groundCache": {
+          "bytes": 0,
+          "budget": 67108864,
+          "builds": 27,
+          "hits": 927,
+          "margin": 0
+        }
+      }
+    },
+    {
+      "phone": true,
+      "mode": "old",
+      "moving": false,
+      "fps": 25.633681798653875,
+      "work": {
+        "n": 180,
+        "mean": 8.06388888930281,
+        "p50": 7.800000011920929,
+        "p95": 9.900000005960464,
+        "p99": 12.599999994039536,
+        "max": 13.5
+      },
+      "materials": {
+        "definitions": 5,
+        "decodedBytes": 262144,
+        "reservedBytes": 0,
+        "decodedBudget": 2097152,
+        "decoded": 1,
+        "projectedBytes": 1703820,
+        "projectedBudget": 8388608,
+        "projectedRepeats": 1,
+        "queued": 0,
+        "decoding": 0,
+        "failures": 0,
+        "peakDecodedBytes": 262144,
+        "peakConcurrent": 1,
+        "evictions": 0,
+        "staleLoads": 0,
+        "draws": 175,
+        "projectedBuilds": 1,
+        "projectedEvictions": 0
+      },
+      "renderer": {
+        "tileCandidates": 484,
+        "tilesDrawn": 175,
+        "entitiesConsidered": 226,
+        "entitiesDrawn": 85,
+        "floorTilesPainted": 175,
+        "cameraZoom": 1.5,
+        "transientEffects": 5,
+        "enemyVfxEffects": 3,
+        "groundCache": {
+          "bytes": 0,
+          "budget": 67108864,
+          "builds": 19,
+          "hits": 66,
+          "margin": 0
+        }
+      }
+    },
+    {
+      "phone": true,
+      "mode": "cached",
+      "moving": false,
+      "fps": 38.481272447408934,
+      "work": {
+        "n": 271,
+        "mean": 6.056826569112465,
+        "p50": 5.9000000059604645,
+        "p95": 7,
+        "p99": 10.100000008940697,
+        "max": 14.900000005960464
+      },
+      "materials": {
+        "definitions": 5,
+        "decodedBytes": 262144,
+        "reservedBytes": 0,
+        "decodedBudget": 2097152,
+        "decoded": 1,
+        "projectedBytes": 1703820,
+        "projectedBudget": 8388608,
+        "projectedRepeats": 1,
+        "queued": 0,
+        "decoding": 0,
+        "failures": 0,
+        "peakDecodedBytes": 262144,
+        "peakConcurrent": 1,
+        "evictions": 0,
+        "staleLoads": 0,
+        "draws": 0,
+        "projectedBuilds": 1,
+        "projectedEvictions": 0
+      },
+      "renderer": {
+        "tileCandidates": 484,
+        "tilesDrawn": 175,
+        "entitiesConsidered": 226,
+        "entitiesDrawn": 85,
+        "floorTilesPainted": 0,
+        "cameraZoom": 1.5,
+        "transientEffects": 5,
+        "enemyVfxEffects": 3,
+        "groundCache": {
+          "bytes": 16932240,
+          "budget": 67108864,
+          "builds": 20,
+          "hits": 353,
+          "margin": 256
+        }
+      }
+    },
+    {
+      "phone": true,
+      "mode": "cached",
+      "moving": false,
+      "fps": 38.85880823463862,
+      "work": {
+        "n": 273,
+        "mean": 5.91684981754848,
+        "p50": 5.700000002980232,
+        "p95": 6.899999991059303,
+        "p99": 11.399999991059303,
+        "max": 12.5
+      },
+      "materials": {
+        "definitions": 5,
+        "decodedBytes": 262144,
+        "reservedBytes": 0,
+        "decodedBudget": 2097152,
+        "decoded": 1,
+        "projectedBytes": 1703820,
+        "projectedBudget": 8388608,
+        "projectedRepeats": 1,
+        "queued": 0,
+        "decoding": 0,
+        "failures": 0,
+        "peakDecodedBytes": 262144,
+        "peakConcurrent": 1,
+        "evictions": 0,
+        "staleLoads": 0,
+        "draws": 0,
+        "projectedBuilds": 1,
+        "projectedEvictions": 0
+      },
+      "renderer": {
+        "tileCandidates": 484,
+        "tilesDrawn": 175,
+        "entitiesConsidered": 226,
+        "entitiesDrawn": 85,
+        "floorTilesPainted": 0,
+        "cameraZoom": 1.5,
+        "transientEffects": 6,
+        "enemyVfxEffects": 4,
+        "groundCache": {
+          "bytes": 16932240,
+          "budget": 67108864,
+          "builds": 21,
+          "hits": 645,
+          "margin": 256
+        }
+      }
+    },
+    {
+      "phone": true,
+      "mode": "old",
+      "moving": false,
+      "fps": 26.286840864608468,
+      "work": {
+        "n": 185,
+        "mean": 7.220540540604978,
+        "p50": 7,
+        "p95": 8.400000005960464,
+        "p99": 13.200000002980232,
+        "max": 13.599999994039536
+      },
+      "materials": {
+        "definitions": 5,
+        "decodedBytes": 262144,
+        "reservedBytes": 0,
+        "decodedBudget": 2097152,
+        "decoded": 1,
+        "projectedBytes": 1703820,
+        "projectedBudget": 8388608,
+        "projectedRepeats": 1,
+        "queued": 0,
+        "decoding": 0,
+        "failures": 0,
+        "peakDecodedBytes": 262144,
+        "peakConcurrent": 1,
+        "evictions": 0,
+        "staleLoads": 0,
+        "draws": 175,
+        "projectedBuilds": 1,
+        "projectedEvictions": 0
+      },
+      "renderer": {
+        "tileCandidates": 484,
+        "tilesDrawn": 175,
+        "entitiesConsidered": 226,
+        "entitiesDrawn": 85,
+        "floorTilesPainted": 175,
+        "cameraZoom": 1.5,
+        "transientEffects": 7,
+        "enemyVfxEffects": 5,
+        "groundCache": {
+          "bytes": 0,
+          "budget": 67108864,
+          "builds": 21,
+          "hits": 648,
+          "margin": 0
+        }
+      }
+    },
+    {
+      "phone": true,
+      "mode": "old",
+      "moving": true,
+      "fps": 24.05842760990978,
+      "work": {
+        "n": 169,
+        "mean": 11.719526627800875,
+        "p50": 12.299999997019768,
+        "p95": 18.200000002980232,
+        "p99": 25.400000005960464,
+        "max": 28.200000002980232
+      },
+      "materials": {
+        "definitions": 5,
+        "decodedBytes": 262144,
+        "reservedBytes": 0,
+        "decodedBudget": 2097152,
+        "decoded": 1,
+        "projectedBytes": 1703820,
+        "projectedBudget": 8388608,
+        "projectedRepeats": 1,
+        "queued": 0,
+        "decoding": 0,
+        "failures": 0,
+        "peakDecodedBytes": 262144,
+        "peakConcurrent": 1,
+        "evictions": 0,
+        "staleLoads": 0,
+        "draws": 180,
+        "projectedBuilds": 1,
+        "projectedEvictions": 0
+      },
+      "renderer": {
+        "tileCandidates": 506,
+        "tilesDrawn": 180,
+        "entitiesConsidered": 226,
+        "entitiesDrawn": 78,
+        "floorTilesPainted": 180,
+        "cameraZoom": 1.5,
+        "transientEffects": 8,
+        "enemyVfxEffects": 4,
+        "groundCache": {
+          "bytes": 0,
+          "budget": 67108864,
+          "builds": 21,
+          "hits": 648,
+          "margin": 0
+        }
+      }
+    },
+    {
+      "phone": true,
+      "mode": "cached",
+      "moving": true,
+      "fps": 31.57233063801822,
+      "work": {
+        "n": 222,
+        "mean": 8.994594594379803,
+        "p50": 7.200000002980232,
+        "p95": 14.400000005960464,
+        "p99": 23.19999998807907,
+        "max": 74.40000000596046
+      },
+      "materials": {
+        "definitions": 5,
+        "decodedBytes": 262144,
+        "reservedBytes": 0,
+        "decodedBudget": 2097152,
+        "decoded": 1,
+        "projectedBytes": 1703820,
+        "projectedBudget": 8388608,
+        "projectedRepeats": 1,
+        "queued": 0,
+        "decoding": 0,
+        "failures": 0,
+        "peakDecodedBytes": 262144,
+        "peakConcurrent": 1,
+        "evictions": 0,
+        "staleLoads": 0,
+        "draws": 0,
+        "projectedBuilds": 1,
+        "projectedEvictions": 0
+      },
+      "renderer": {
+        "tileCandidates": 506,
+        "tilesDrawn": 180,
+        "entitiesConsidered": 226,
+        "entitiesDrawn": 80,
+        "floorTilesPainted": 0,
+        "cameraZoom": 1.5,
+        "transientEffects": 5,
+        "enemyVfxEffects": 3,
+        "groundCache": {
+          "bytes": 16932240,
+          "budget": 67108864,
+          "builds": 24,
+          "hits": 877,
+          "margin": 256
+        }
+      }
+    },
+    {
+      "phone": true,
+      "mode": "cached",
+      "moving": true,
+      "fps": 32.00137148734947,
+      "work": {
+        "n": 225,
+        "mean": 9.240444444153043,
+        "p50": 7.5999999940395355,
+        "p95": 12.800000011920929,
+        "p99": 24,
+        "max": 110.79999999701977
+      },
+      "materials": {
+        "definitions": 5,
+        "decodedBytes": 262144,
+        "reservedBytes": 0,
+        "decodedBudget": 2097152,
+        "decoded": 1,
+        "projectedBytes": 1703820,
+        "projectedBudget": 8388608,
+        "projectedRepeats": 1,
+        "queued": 0,
+        "decoding": 0,
+        "failures": 0,
+        "peakDecodedBytes": 262144,
+        "peakConcurrent": 1,
+        "evictions": 0,
+        "staleLoads": 0,
+        "draws": 0,
+        "projectedBuilds": 1,
+        "projectedEvictions": 0
+      },
+      "renderer": {
+        "tileCandidates": 506,
+        "tilesDrawn": 180,
+        "entitiesConsidered": 226,
+        "entitiesDrawn": 94,
+        "floorTilesPainted": 0,
+        "cameraZoom": 1.5,
+        "transientEffects": 3,
+        "enemyVfxEffects": 3,
+        "groundCache": {
+          "bytes": 16932240,
+          "budget": 67108864,
+          "builds": 27,
+          "hits": 1117,
+          "margin": 256
+        }
+      }
+    },
+    {
+      "phone": true,
+      "mode": "old",
+      "moving": true,
+      "fps": 25.42966127119735,
+      "work": {
+        "n": 179,
+        "mean": 8.843016759310355,
+        "p50": 7.600000008940697,
+        "p95": 15.5,
+        "p99": 21,
+        "max": 22
+      },
+      "materials": {
+        "definitions": 5,
+        "decodedBytes": 262144,
+        "reservedBytes": 0,
+        "decodedBudget": 2097152,
+        "decoded": 1,
+        "projectedBytes": 1703820,
+        "projectedBudget": 8388608,
+        "projectedRepeats": 1,
+        "queued": 0,
+        "decoding": 0,
+        "failures": 0,
+        "peakDecodedBytes": 262144,
+        "peakConcurrent": 1,
+        "evictions": 0,
+        "staleLoads": 0,
+        "draws": 180,
+        "projectedBuilds": 1,
+        "projectedEvictions": 0
+      },
+      "renderer": {
+        "tileCandidates": 506,
+        "tilesDrawn": 180,
+        "entitiesConsidered": 226,
+        "entitiesDrawn": 94,
+        "floorTilesPainted": 180,
+        "cameraZoom": 1.5,
+        "transientEffects": 6,
+        "enemyVfxEffects": 5,
+        "groundCache": {
+          "bytes": 0,
+          "budget": 67108864,
+          "builds": 27,
+          "hits": 1120,
+          "margin": 0
+        }
+      }
+    }
+  ],
+  "pixels": []
+}

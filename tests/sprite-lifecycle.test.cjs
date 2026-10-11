@@ -74,6 +74,105 @@ function context() {
 }
 (async () => {
   {
+    const f = fresh();
+    assert.equal(f.sprites.status().maxDecodedBytes, 256 * 1024 * 1024);
+    const catalog = Object.fromEntries(
+      Array.from({ length: 80 }, (_, i) => [
+        'prop:large-' + i + ':vale',
+        entry('large-' + i, { width: 1024, height: 1024 }),
+      ]),
+    );
+    assert(f.sprites.installManifest(manifest(catalog)));
+    const warm = f.sprites.warm(Object.keys(catalog));
+    let count = 0;
+    while (f.pending.length) {
+      await f.settle(f.pending.shift(), true, 1024, 1024);
+      count++;
+    }
+    await warm;
+    const status = f.sprites.status();
+    assert.equal(count, 80);
+    assert.equal(status.decodedBytes, 256 * 1024 * 1024);
+    assert.equal(status.loaded, 64);
+    assert.equal(status.evictions, 16);
+    assert(status.peakReservedBytes <= 256 * 1024 * 1024);
+    assert(status.peakConcurrent <= 2);
+    assert(f.sprites.configure({ decodedBytes: 32 * 1024 * 1024 }));
+    assert(f.sprites.status().decodedBytes <= 32 * 1024 * 1024);
+    assert(f.sprites.configure({ decodedBytes: 256 * 1024 * 1024 }));
+    f.sprites.installManifest(manifest({}));
+    assert.equal(f.sprites.status().decodedBytes, 0);
+    console.log(
+      'PASS 256 MiB sprite residency, reservation bounds, LRU retirement and smaller-budget configuration',
+    );
+  }
+
+  {
+    const f = fresh(),
+      c = context(),
+      point = { x: 100, y: 200 };
+    const legacy = entry('density-old', {
+      width: 192,
+      height: 192,
+      displayWidth: 192,
+      displayHeight: 192,
+    });
+    f.sprites.installManifest(manifest({ 'hero:paladin': legacy }));
+    let warm = f.sprites.warm(['hero:paladin']);
+    await f.settle(f.pending.shift(), true, 192, 192);
+    await warm;
+    assert(f.sprites.draw(c.ctx, hero, point));
+    const destination = c.draws.at(-1).slice(1);
+    assert.deepEqual(destination, [4, 56, 192, 192]);
+    const dense = entry('density-new', {
+      width: 576,
+      height: 576,
+      displayWidth: 192,
+      displayHeight: 192,
+      clips: {
+        idle: {
+          loop: true,
+          frames: [
+            {
+              src: './assets/sprites/density-atlas.png',
+              width: 580,
+              height: 580,
+              rect: [2, 2, 576, 576],
+              pivot: [288, 432],
+              durationMs: 100,
+            },
+          ],
+        },
+      },
+    });
+    f.sprites.installManifest(manifest({ 'hero:paladin': dense }));
+    warm = f.sprites.warm(['hero:paladin']);
+    await f.settle(f.pending.shift(), true, 576, 576);
+    await warm;
+    assert(f.sprites.draw(c.ctx, hero, point));
+    assert.deepEqual(
+      c.draws.at(-1).slice(1),
+      destination,
+      'dense static has identical grounding and display extent',
+    );
+    await f.settle(f.pending.shift(), true, 580, 580);
+    assert(f.sprites.draw(c.ctx, hero, point));
+    assert.deepEqual(
+      c.draws.at(-1).slice(1),
+      [2, 2, 576, 576, ...destination],
+      'dense clip uses raster pivot with fixed logical grounding',
+    );
+    assert.equal(
+      f.sprites.status().decodedBytes,
+      (576 * 576 + 580 * 580) * 4,
+      'memory uses actual raster pixels',
+    );
+    assert.equal(f.sprites.height(hero), 144, 'labels retain logical clearance');
+    console.log(
+      'PASS high-density static/clip grounding, legacy display equivalence and actual-pixel memory accounting',
+    );
+  }
+  {
     const f = fresh(),
       digest = 'a'.repeat(64);
     f.sprites.installManifest(
@@ -273,9 +372,9 @@ function context() {
     await blocked;
     assert(f.sprites.draw(c.ctx, entity, { x: 0, y: 0 }), 'visible resource stays pinned');
     assert.equal(
-      f.sprites.configure({ decodedBytes: 32 * 1024 * 1024 }),
+      f.sprites.configure({ decodedBytes: 257 * 1024 * 1024 }),
       false,
-      'cannot raise the runtime cap',
+      'cannot exceed the approved 256 MiB runtime cap',
     );
     console.log('PASS full 280-entry lazy registry, bounded concurrency/LRU and visible pinning');
   }
