@@ -16,7 +16,7 @@ const PrototypeData = {
       obstacle:
         'Dense thickets close direct shortcuts, but broad woodland paths remain walkable. The river, lake shore and mill pond are impassable water. Houses and fences shape streets without blocking exits.',
       exploration:
-        'Millhaven, Orchard Hamlet and the working mill remain a rural woodland country. Beyond the local goblin camps and skeleton territories, the Crypt Guardian oversees an unfinished seasonal retreat for the Dark Lord and his trusted friends. The Guardian is an outsider and trusted friend who acts as caretaker and project overseer. The Dark Lord owns these woods because he wanted a place here; Dark Crown remains his permanent seat.',
+        'Millhaven, Orchard Hamlet and the working mill remain rural woodland country. The Forest Crypt is becoming the Dark Lord's unfinished winter estate, under the care of the Lifebinder, his former adventuring companion. The Lifebinder binds the fallen into an enduring existence rather than restoring life; some Greenwood skeletons retain their own names and allegiances.',
       resource: 640,
       questgold: 160,
       questxp: 600,
@@ -158,7 +158,7 @@ const PrototypeData = {
       id: 'crypt',
       region: 'vale',
       kind: 'dungeon',
-      name: 'Crypt Guardian',
+      name: 'Lifebinder',
       level: 3,
       captive: 'Borin the Village Smith',
       service: 'Village weapon improvements and basic equipment crafting',
@@ -386,7 +386,7 @@ const PrototypeData = {
     ['vale', 'A Teacher Taken', 'Defeat Thornfang; free Mira', 45, 50],
     ['vale', 'Roads Under Threat', 'Defeat 5 outdoor enemies in Greenwood Vale', 25, 88],
     ['vale', 'Stolen Stores', "Recover 2 caches from Thornfang's Treasury", 35, 100],
-    ['vale', 'An Unfinished Retreat', 'Defeat Crypt Guardian; free Borin', 45, 137],
+    ['vale', 'An Unfinished Retreat', 'Defeat Lifebinder; free Borin', 45, 137],
     ['vale', 'Keeping Trade Open', 'Visit Mill bridge and wagon stand', 0, 50],
     ['vale', 'Who Owns the Woods?', 'Discover any 3 Greenwood Vale sites', 10, 175],
     ['march', 'The Island Prisoner', 'Defeat Mirejaw; free Sela', 100, 225],
