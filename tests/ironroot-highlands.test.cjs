@@ -103,9 +103,9 @@ test('Existing Ironroot saves acquire the mint details without new currency, rou
     (p) =>
       ![
         'silver-ore-face',
-    'copper-ore-face',
+        'copper-ore-face',
         'silver-sort-samples',
-    'copper-sort-samples',
+        'copper-sort-samples',
         'silver-refining-hearth',
         'silver-die-tray',
         'sealed-crown-consignment',
