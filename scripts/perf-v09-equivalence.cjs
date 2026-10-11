@@ -147,7 +147,22 @@ for (const zone of [...A.data.regions.map((r) => r.id), ...A.dungeonIds])
         });
         renderer.draw();
         renderer.draw();
-        assert.equal(JSON.stringify(live(c)), before, 'drawing may not mutate gameplay');
+        const afterDraw = JSON.stringify(live(c));
+        if (afterDraw !== before) {
+          const lhs = JSON.parse(before), rhs = JSON.parse(afterDraw);
+          const firstDifference = (a, b, location = 'game') => {
+            if (Object.is(a, b)) return null;
+            if (a && b && typeof a === 'object' && typeof b === 'object') {
+              for (const key of new Set([...Object.keys(a), ...Object.keys(b)])) {
+                const diff = firstDifference(a[key], b[key], location + '.' + key);
+                if (diff) return diff;
+              }
+              return null;
+            }
+            return { location, before: String(a).slice(0, 160), after: String(b).slice(0, 160) };
+          };
+          assert.fail('drawing may not mutate gameplay: ' + JSON.stringify(firstDifference(lhs, rhs)));
+        }
         const pixels = Buffer.from(ctx.getImageData(0, 0, width, height).data);
         canvas.width = canvas.height = 1;
         return pixels;
