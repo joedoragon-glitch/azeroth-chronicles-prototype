@@ -12,10 +12,14 @@
 - **Writ of Restraint:** the tactical Crown Grasp renamed, with existing snare mechanics and 0.26 coefficient unchanged.
 - **Crown Decree:** existing tactical command/rally move unchanged.
 
+## Second Wind implementation
+
+Once below 35% HP, the Dark Lord can perform one 1.8-second recovery stance: 35% incoming damage reduction and a 5% maximum-HP heal. His facing is locked on initiation; an actual rear hit cancels the healing without preventing damage. Its once-only encounter flag prevents healing loops. This requires exact-head QA, including old saves and device visibility.
+
 ## Still required before the approved kit is complete
 
-Second Wind (once-only heal and rear interrupt), Royal Taxation (combat-only marks and temporary shield), Royal Prerogative (guard-intercepted projectile), soldier formations, actual shield sidestep, and protected/prohibited sector geometry. These must be implemented in separate authoritative combat slices with deterministic state tests.
+Royal Taxation (combat-only marks and temporary shield), Royal Prerogative (guard-intercepted projectile), soldier formations, actual shield sidestep, and protected/prohibited sector geometry. These must be implemented in separate authoritative combat slices with deterministic state tests.
 
-This PR preserves boss family `darklord`, other boss attack tables, v4 saves, Awakening flags, treasure/rewards, existing region geometry and the multi-file PWA. The source-protection regression retains all old hashes, with explicit exact Git blob hashes for the three intentionally edited boss-owner files; that exception is not blanket permission for other changes.
+This PR preserves boss family `darklord`, other boss attack tables, v4 saves, Awakening flags, treasure/rewards, existing region geometry and the multi-file PWA. The source-protection regression retains all old hashes, with explicit exact Git blob hashes for the four intentionally edited boss/combat-owner files; that exception is not blanket permission for other changes.
 
 Required before integration: exact-head CI full Node/build/format, representative Chromium/WebKit desktop/mobile, telegraph-to-hitbox equivalence, old-saves, TRUE/Nightmare, all classes and party sizes, and an owner-approved combined #232 release. Do not mistake successful static tests for real automated encounter acceptance.

@@ -44,8 +44,9 @@
     "status": "unmerged implementation slice; explicitly reviewed exact-source hashes, baseline preserved",
     "gitBlobSha1": {
       "src/prototype/data.js": "e94e3da3b880f9013f001efdb27ac98d887615d3",
-      "src/prototype/rules.js": "727c927e9664bcbfcfd221bf20cdeeeb7d64ecbc",
-      "src/prototype/boss-combat.js": "c8b8643a78814aaa76ed225049a92e10a14ba2f7"
+      "src/prototype/rules.js": "4d990309151951e2a64ec5eb579546233cfa834e",
+      "src/prototype/boss-combat.js": "f67597cc27b1f0ebe500eca8002e92ebf1c24a5d",
+      "src/prototype/combat.js": "e32fcda7976f4acd2eca7b2a488dc51bbe9cebfb"
     }
   }
 }

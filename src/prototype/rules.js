@@ -4108,6 +4108,14 @@
   const bossRecovery = Object.freeze({
     abyss: { name: 'Ember Renewal', healFraction: 0.08, cooldown: 24, warning: 1.6 },
     citadel: { name: 'Ash Reforge', healFraction: 0.1, cooldown: 28, warning: 1.8 },
+    darklord: {
+      name: 'Second Wind',
+      healFraction: 0.05,
+      cooldown: 9999,
+      warning: 1.8,
+      threshold: 0.35,
+      damageMultiplier: 0.65,
+    },
     threshold: 0.6,
   });
   const manaBalance = {

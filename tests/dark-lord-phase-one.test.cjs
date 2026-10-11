@@ -36,4 +36,49 @@ for (const mode of ['normal', 'nightmare']) {
     assert.equal(C.restore(c.snapshot()).s.version, 4);
   }
 }
-console.log('PASS Dark Lord phase-one attack contracts, health gates and save schema');
+// Second Wind is available exactly once per boss incarnation.
+for (const mode of ['normal', 'nightmare']) {
+  const c = new C(mode, 'paladin', () => 0.9);
+  c.enter('crown');
+  const boss = c.bossEnemy(d, 'normal', { x: 1100, y: 1100 });
+  c.zone().enemies = [boss];
+  boss.hp = boss.maxHp * 0.3;
+  c.hero.x = 1200;
+  c.hero.y = 1100;
+  assert(c.startBossRecovery(boss));
+  assert.equal(boss.telegraph.name, 'Second Wind');
+  assert.equal(boss.secondWindUsed, true);
+  assert(!c.startBossRecovery(boss), 'Cannot repeat a once-only stance');
+  const before = boss.hp;
+  c.resolveAttack(boss);
+  assert.equal(boss.hp, before + boss.maxHp * 0.05);
+  boss.telegraph = null;
+  assert(!c.startBossRecovery(boss));
+  const restored = C.restore(c.snapshot(), () => 0.9);
+  assert.equal(restored.s.version, 4);
+}
+
+{
+  const c = new C('normal', 'ranger', () => 0.9);
+  c.enter('crown');
+  const boss = c.bossEnemy(d, 'normal', { x: 1100, y: 1100 });
+  c.zone().enemies = [boss];
+  boss.hp = boss.maxHp * 0.3;
+  c.hero.x = 1200;
+  c.hero.y = 1100;
+  assert(c.startBossRecovery(boss));
+  const face = boss.secondWindFacing;
+  const hp = boss.hp;
+  c.hero.x = 1000;
+  c.hero.y = 1100;
+  c.line = () => true;
+  c.tacticalRogueLeashAllows = () => true;
+  assert(c.damage(boss, 100, 'hero'), 'Rear hit lands through stance defense');
+  assert.equal(face, 0);
+  assert.equal(boss.secondWindCancelled, true);
+  assert(boss.hp < hp);
+  const before = boss.hp;
+  c.resolveAttack(boss);
+  assert.equal(boss.hp, before, 'Rear counter cancels only the healing');
+}
+console.log('PASS Dark Lord phase-one attacks, Second Wind and unchanged save schema');

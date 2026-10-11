@@ -327,6 +327,15 @@
             amount *= 1 - guard;
           }
         }
+        if (e.family === 'darklord' && e.telegraph?.secondWind) {
+          // The defensive stance reduces incoming damage until the warning ends.
+          // A rear hit cancels only the heal; it never grants immunity or creates
+          // a second damage source.
+          const facing = e.secondWindFacing || 0;
+          const angle = Math.atan2(origin.y - e.y, origin.x - e.x);
+          if (Math.cos(angle - facing) < -0.5) e.secondWindCancelled = true;
+          amount *= R.bossRecovery.darklord.damageMultiplier;
+        }
         if (e.family === 'citadel' && e.open <= 0) amount *= 0.65;
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;
         // All hero/companion damage sources use this same resolver. This
