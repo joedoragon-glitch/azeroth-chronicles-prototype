@@ -150,6 +150,7 @@
         q = 0.7,
         bus = 'effects',
       ) {
+        if (this.optimizationMode && bus === 'ambience') return;
         const priority = this.sourcePriority ?? 1;
         if (!this.ctx || !this.buses?.[bus] || !this.reserveVoice(priority)) return;
         const length = Math.max(8, Math.floor(this.ctx.sampleRate * duration)),
