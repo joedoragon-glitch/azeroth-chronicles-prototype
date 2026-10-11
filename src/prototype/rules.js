@@ -3362,7 +3362,7 @@
   }; // Curated occupied spaces: each dungeon has an entrance, work/ritual zone, command markers and a boss approach.
   const dungeonLore = {
     abyss:
-      'Abyss Bastion is the Dark Lord’s air-superiority project. His purple dragon is his personal flying mount; the hatchery will grow his future air force. Riders prepare harnesses, supplies arrive, and the royal launch platform is still being built.',
+      'Abyss Bastion is the Dark Lord’s air-superiority project. His purple dragon, Veyrith, is his personal flying mount; they have already flown together, and the hatchery will grow his future air force. Riders prepare harnesses, supplies arrive, and the royal launch platform is still being built. On the flight-planning table, Veyrith’s claw marks pair every strike route with a route home.',
   };
   const dungeonDecor = {
     crypt: [
