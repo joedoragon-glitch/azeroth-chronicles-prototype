@@ -1,0 +1,21 @@
+name: Temporary boss pitstop baseline check
+on:
+  push:
+    branches: [feature/boss-identity-pitstop-20261011]
+permissions:
+  contents: read
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - name: Compare unaffected simulation and reviewed estate
+        run: |
+          git fetch --depth=1 origin c6ce1af236bddd7ca881903499c4cf5de175f9e2
+          mkdir -p "$RUNNER_TEMP/pitstop-baseline"
+          git archive c6ce1af236bddd7ca881903499c4cf5de175f9e2 | tar -x -C "$RUNNER_TEMP/pitstop-baseline"
+          node --expose-gc scripts/perf-v09-equivalence.cjs "$RUNNER_TEMP/pitstop-baseline"
