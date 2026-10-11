@@ -357,8 +357,10 @@
         if (e.family === 'abyss' && index === 2) {
           // Lazy Eight: opposite banks, each ending at its own separately warned impact.
           a.flightPath = this.abyssFlightLegs(e, a, 1);
+          let previousLanding = a;
           sequence.forEach((stage, i) => {
-            stage.flightPath = this.abyssFlightLegs(e, stage, i % 2 === 0 ? -1 : 1);
+            stage.flightPath = this.abyssFlightLegs(previousLanding, stage, i % 2 === 0 ? -1 : 1);
+            previousLanding = stage;
           });
         }
         if (a.combo)
