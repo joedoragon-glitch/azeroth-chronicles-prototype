@@ -17,18 +17,17 @@ await check('New-game premise, Succession opt-in and audio gesture '+tag,async()
 await check('Production registry preserves exact sprites and procedural fallback '+tag,async()=>{await page.waitForFunction(()=>typeof PrototypeSprites!=='undefined'&&typeof PrototypeVisuals!=='undefined');await page.evaluate(()=>PrototypeSprites.preload());const manifest=await page.evaluate(async()=>await (await fetch('./assets/sprites/manifest.json')).json());const state=await page.evaluate(()=>({status:PrototypeSprites.status(),def:PrototypeSprites.definitionFor({...Prototype.game.hero,renderKind:'hero'},Prototype.game.regionIndex(),false),atmosphere:typeof PrototypeVisuals.atmosphere}));assert.equal(state.status.definitions,Object.keys(manifest.sprites).length,'production registry contract');assert(state.status.decodedBytes<=state.status.maxDecodedBytes);assert(state.status.loading<=state.status.maxConcurrentDecodes);if(!manifest.sprites['hero:'+ (await page.evaluate(()=>Prototype.game.hero.class))])assert.equal(state.def,null,'unregistered hero uses procedural fallback');else assert(state.def,'registered hero selects its exact key');assert.equal(state.atmosphere,'function');if(!smoke&&(v.width===1280||v.width===375)){const before=await page.evaluate(()=>Prototype.game.snapshot());await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');const z=c.zone();c.s.party=[];z.enemies=[];z.props=[];z.npcs=[];z.nodes=[];z.buildings=[];z.roads=[];Object.assign(c.hero,{x:1100,y:1100});});await page.waitForTimeout(80);await page.screenshot({path:path.join(results,'procedural-paladin-'+tag+'.png')});await page.evaluate(state=>{Prototype.game.s=state;},before);}});
 await check('Camera comparison, native pointer mapping and unchanged HUD '+tag,async()=>{await require('./helpers/camera-browser.cjs').verifyCamera(page,results,tag,v.touch,v.width===1280||v.width===375);assert.deepEqual(errors,[],'camera renderer errors');});
 await check('Optimization Mode reversible device preference and cache/audio/DPR lifecycle '+tag,async()=>{
+ assert.equal(await page.evaluate(()=>localStorage.getItem('azeroth-optimization-mode-v1')),null,'default mode is Off');
+ await page.keyboard.press('Escape');
+ await page.getByRole('button',{name:'Game and settings',exact:true}).click();
+ await page.getByRole('button',{name:'Screen and performance',exact:true}).click();
  const before=await page.evaluate(()=>({
   save:JSON.stringify(Prototype.game.snapshot()),
   renderer:Prototype.renderer.metrics(),
   material:PrototypeMaterials.status(),
   audio:Prototype.audio.status(),
-  backing:document.getElementById('world').width,
-  pref:localStorage.getItem('azeroth-optimization-mode-v1')
+  backing:document.getElementById('world').width
  }));
- assert.equal(before.pref,null,'default mode is Off');
- await page.keyboard.press('Escape');
- await page.getByRole('button',{name:'Game and settings',exact:true}).click();
- await page.getByRole('button',{name:'Screen and performance',exact:true}).click();
  await page.getByRole('button',{name:'Optimization Mode · Off ✓',exact:true}).click();
  const low=await page.evaluate(()=>{
   Prototype.renderer.draw();Prototype.renderer.draw();
