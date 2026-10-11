@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine');
 
 const boss = C.data.bosses.find((b) => b.id === 'darklord');
+const d = boss;
 const expected = [
   "Veteran's Repertoire",
   "Pathfinder's Gambit",
