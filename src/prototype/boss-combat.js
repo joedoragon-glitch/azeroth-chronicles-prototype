@@ -430,7 +430,14 @@
           captive = z.npcs.find((n) => n.family === 'mine' && n.kind === 'cage'),
           exit = z.npcs.find((n) => n.kind === 'exit'),
           targets = [this.hero, e, captive, exit].filter(Boolean),
-          offsets = [[-160, -100], [160, -100], [-180, 110], [180, 110], [-80, 185], [80, 185]],
+          offsets = [
+            [-160, -100],
+            [160, -100],
+            [-180, 110],
+            [180, 110],
+            [-80, 185],
+            [80, 185],
+          ],
           newlyBuilt = [];
         for (const [dx, dy] of offsets) {
           if (newlyBuilt.length >= 2) break;
@@ -439,17 +446,23 @@
             this.blocked(p.x, p.y, z.id, 28) ||
             targets.some((u) => dist(u, p) < 110) ||
             this.traps().some((t) =>
-              this.trapContains({
-                ...t,
-                radius: (t.radius || 0) + 40,
-                length: (t.length || 0) + 80,
-                halfWidth: (t.halfWidth || 0) + 40,
-              }, p),
+              this.trapContains(
+                {
+                  ...t,
+                  radius: (t.radius || 0) + 40,
+                  length: (t.length || 0) + 80,
+                  halfWidth: (t.halfWidth || 0) + 40,
+                },
+                p,
+              ),
             )
-          ) continue;
+          )
+            continue;
           const prop = {
             id: 'garun-work-' + this.s.nextId++,
-            x: p.x, y: p.y, r: 24,
+            x: p.x,
+            y: p.y,
+            r: 24,
             structure: 'mine-supports',
             icon: '🪨',
             garunTemporary: true,
@@ -457,9 +470,11 @@
           };
           z.props.push(prop);
           const reachable = [this.hero, e, captive, exit].filter(Boolean);
-          if (reachable.some((u) => this.blocked(u.x, u.y, z.id, 12)) ||
-              (exit && reachable.some((u) => u !== exit && !this.route(u, exit).length)) ||
-              (captive && !this.route(this.hero, captive).length)) {
+          if (
+            reachable.some((u) => this.blocked(u.x, u.y, z.id, 12)) ||
+            (exit && reachable.some((u) => u !== exit && !this.route(u, exit).length)) ||
+            (captive && !this.route(this.hero, captive).length)
+          ) {
             z.props.pop();
             continue;
           }
