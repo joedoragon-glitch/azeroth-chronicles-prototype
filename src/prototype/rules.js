@@ -756,7 +756,9 @@
         [640, 1430, 'highland-pay-station'],
         [930, 1250, 'silver-refining-hearth'],
         [1070, 1360, 'mint-workbench'],
+        [1065, 1240, 'silver-die-tray'],
         [1100, 1540, 'caravan-loading-bay'],
+        [1150, 1625, 'sealed-crown-consignment'],
         [700, 1690, 'ridge-supper'],
         [610, 1570, 'garden'],
       ],
@@ -765,6 +767,7 @@
       id: 'quarry',
       props: [
         [1510, 1020, 'ore-sorting-bay'],
+        [1640, 1080, 'silver-sort-samples'],
         [1830, 980, 'mine-supports'],
         [1920, 1190, 'caravan-loading-bay'],
         [1630, 1270, 'ridge-supper'],
@@ -775,6 +778,7 @@
       id: 'caravan',
       props: [
         [3000, 620, 'caravan-loading-bay'],
+        [3010, 735, 'sealed-crown-consignment'],
         [3210, 620, 'supply-stack'],
         [3180, 390, 'animal-pen'],
       ],
