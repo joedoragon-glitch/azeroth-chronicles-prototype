@@ -1,0 +1,32 @@
+name: Temporary Veyra differential formatter
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/perf-v09-equivalence.cjs
+permissions:
+  contents: write
+jobs:
+  one-file-prettier:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'content/ash-sentinel-fifth-pillar-244-20261011'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: content/ash-sentinel-fifth-pillar-244-20261011
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx prettier --write scripts/perf-v09-equivalence.cjs
+      - name: Commit only script formatting
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/perf-v09-equivalence.cjs
+          if ! git diff --cached --quiet; then
+            git commit -m "style: format Veyra differential-render audit"
+            git push origin HEAD:content/ash-sentinel-fifth-pillar-244-20261011
+          fi
