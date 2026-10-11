@@ -64,8 +64,11 @@
                   : G.lineHalfWidth;
         return capsulePoints(from, to, width);
       });
-    if (a.kind === 'cone' || a.kind === 'sector')
-      return [sectorPoints(a, a.radius, a.angle, a.kind === 'sector' ? 0.65 : 1.1)];
+    if (a.kind === 'cone' || a.kind === 'sector') {
+      if (a.angleDegrees === 360) return [circlePoints(a, a.radius)];
+      const halfAngle = a.angleDegrees ? (a.angleDegrees * Math.PI) / 360 : a.kind === 'sector' ? 0.65 : 1.1;
+      return [sectorPoints(a, a.radius, a.angle, halfAngle)];
+    }
     if (a.kind === 'ring')
       return [
         circlePoints(
