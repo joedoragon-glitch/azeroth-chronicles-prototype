@@ -254,6 +254,10 @@
         // marks can occasionally challenge a protected backline as well.
         const markBackline =
           plan.kind === 'circle' && fallbackDistance < 200 && heroDistance > fallbackDistance + 70;
+        // The Keeper's chosen healer remains priority even for ground-targeted spells.
+        if (e.family === 'archive' &&
+            this.activeLivingParty().some(u => u.type === 'archer' && u.hp > 0 && !u.keeperHeld))
+          return fallback;
         return behavior.heroTarget?.includes(index) || markBackline ? this.hero : fallback;
       }
       buildBossAttack(e, index, target, includeTrue = true) {
