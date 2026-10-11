@@ -15,7 +15,11 @@ const collapse = builder.buildBossAttack(mason, 1, { x: 910, y: 1100 });
 assert.equal(collapse.first.kind, 'circle');
 assert.equal(collapse.first.count, 1);
 assert.equal(collapse.first.warning, 1.7);
-assert.equal(collapse.sequence.length, 2, 'three separate damage warnings, not one simultaneous volley');
+assert.equal(
+  collapse.sequence.length,
+  2,
+  'three separate damage warnings, not one simultaneous volley',
+);
 assert(collapse.sequence.every((stage) => stage.kind === 'circle' && stage.count === 1));
 assert(collapse.sequence[0].x !== collapse.sequence[1].x);
 assert(builder.startAttack(mason, { x: 910, y: 1100 }, 1));
@@ -39,7 +43,9 @@ assert(supports.every((p) => p.r === 24 && builder.blocked(p.x, p.y, 'mine', 12)
 assert(!builder.snapshot().zones.mine.props.some((p) => p.garunTemporary));
 assert.equal(builder.zone().enemies.filter((e) => e.guard).length, 18);
 assert.equal(builder.traps().length, 18);
-console.log('PASS Progressive Collapse sequential warnings, visible previews and capped solid supports');
+console.log(
+  'PASS Progressive Collapse sequential warnings, visible previews and capped solid supports',
+);
 
 const { game: waveGame, boss: waveBoss } = fresh();
 const compaction = waveGame.buildBossAttack(waveBoss, 2, { x: waveBoss.x, y: waveBoss.y });
