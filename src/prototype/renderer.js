@@ -1633,6 +1633,7 @@
         peace: game.peace,
         dungeon,
         room,
+        optimized,
         hero: screen(game.hero),
         lights: ambientLights,
       });
