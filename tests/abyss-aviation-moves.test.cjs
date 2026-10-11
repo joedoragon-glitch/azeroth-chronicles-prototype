@@ -33,6 +33,9 @@ for (const mode of ['normal', 'nightmare']) for (const form of ['normal', 'true'
   assert(boss.telegraph && boss.telegraph.name === 'Lazy Eight',
     'second landing retains its separate warning');
 
+  // The real rogue AI requires sight; place the test hero in an unobstructed lane.
+  Object.assign(c.hero, { x: boss.x, y: boss.y });
+  assert(c.line(boss, c.hero));
   const strike = { rogueMove: true, rogueSignature: false, style: 'dash',
     targetId: 'hero', x: c.hero.x, y: c.hero.y, radius: 105,
     coefficient: 0.25, recovery: 0.8 };
