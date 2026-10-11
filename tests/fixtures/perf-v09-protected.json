@@ -41,12 +41,13 @@
     "evidence": "v0.9 author approval and boss-description-contracts regression; all other baseline hashes unchanged"
   },
   "darkLordPhaseOne": {
-    "status": "unmerged implementation slice; explicitly reviewed exact-source hashes, baseline preserved",
+    "status": "Unmerged veteran combat slice with exact-source hashes; owner-authorized reset of royal encounter state on full disengage; original protected v0.9 baseline unchanged",
     "gitBlobSha1": {
       "src/prototype/data.js": "2f5d351fd966ad5308fa0229f89273ece0f3e6ca",
       "src/prototype/rules.js": "4e0a20a17b606480f43e61a7afbd9db5f61dd8a0",
       "src/prototype/boss-combat.js": "99879b3cf1c580bfd5718a327dcd91c225ed1b5f",
-      "src/prototype/combat.js": "ad728985dbd6385caba2c9907638361b8b2aaa23"
+      "src/prototype/combat.js": "ad728985dbd6385caba2c9907638361b8b2aaa23",
+      "src/prototype/engine.js": "a68a2f7152ef4a1ad502f0338da8714eb431edb3"
     }
   }
 }
