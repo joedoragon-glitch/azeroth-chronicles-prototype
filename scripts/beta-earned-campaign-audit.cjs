@@ -141,6 +141,10 @@ function fight(e, seconds = 180) {
       return false;
     }
     if (c.s.statistics.deaths > deaths) return false;
+    if (!c.zone().enemies.includes(e)) {
+      record('combat target removed by engine: ' + e.id);
+      return false;
+    }
     // Adds take priority once they are close; no target HP or position writes.
     const close = near();
     const target = close && close !== e && dist(close, c.hero) < 220 ? close : e;
@@ -189,7 +193,7 @@ function walk(p, combat = true, seconds = 100) {
     if (c.s.statistics.deaths > deaths) return false;
     const e = combat && near();
     if (e && e.aggro && dist(e, c.hero) < 360) {
-      if (!fight(e)) return false;
+      if (!fight(e) && c.zone().enemies.includes(e)) return false;
     }
     c.hero.order = { type: 'move', x: p.x, y: p.y };
     tick();
@@ -203,6 +207,8 @@ function visit(id) {
   record(id);
 }
 function rest() {
+  if (c.hero.hp >= c.hero.maxHp && c.s.party.every((u) => u.hp <= 0 || u.hp >= u.maxHp))
+    return true;
   const n = c
     .zone()
     .npcs.filter((n) => n.kind === 'rest')

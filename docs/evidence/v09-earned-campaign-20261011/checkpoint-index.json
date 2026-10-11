@@ -1,0 +1,10 @@
+{
+  "earned-crypt": {
+    "outcome": "PASS route crypt (engine actions only)",
+    "finalSaveSha256": "8ba6a2562e92182e52303566f528bd03e80ade73c96f721dffe2c644d3830c5c"
+  },
+  "earned-march": {
+    "outcome": "INCOMPLETE: cannot reach outbound",
+    "finalSaveSha256": "dba38592536c81cfaa8fc90e3e4264a1289605367afa5a48ecfec3b779cffae4"
+  }
+}
