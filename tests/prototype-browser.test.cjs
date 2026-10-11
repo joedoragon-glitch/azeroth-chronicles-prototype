@@ -155,6 +155,8 @@ await check('Target button and E cycle actual hero combat without unintended fal
  await page.keyboard.up('d');
  assert(await page.evaluate(()=>Prototype.game.hero.x)>movingStart,'hero continues moving while E cycles targeting');
  assert.equal(await page.evaluate(()=>Prototype.game.selectedHeroTarget()?.name),'Target far','E cycles to another foe');
+ // Restore original distance so the next cast remains out of range.
+ await page.evaluate(x=>{Prototype.game.hero.x=x;},movingStart);
  const outcome=await page.evaluate(()=>{const c=Prototype.game,near=c.zone().enemies[0],before=near.hp;c.hero.cd[0]=0;return {cast:c.cast(1),before,after:near.hp,cd:c.hero.cd[0]};});
  assert.equal(outcome.cast,false,'selected out-of-range foe prevents automatic swap');
  assert.equal(outcome.after,outcome.before,'nearer enemy was not hit instead');
