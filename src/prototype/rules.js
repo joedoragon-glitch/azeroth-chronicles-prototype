@@ -2096,8 +2096,7 @@
       presentation: 'workstation',
       workKind: 'smith',
       workstation: 'equipment-repair',
-      context:
-        'Dara is kept here, but Garun pays for repairs and his odd little sculptures; the smith can move about the workshop, not leave the Mine.',
+      context: 'Dara is kept here, but Garun pays for repairs and his odd little sculptures; the smith can move about the workshop, not leave the Mine.',
     },
   };
   const regionalHandoffScenes = {
@@ -3362,8 +3361,7 @@
     ],
   }; // Curated occupied spaces: each dungeon has an entrance, work/ritual zone, command markers and a boss approach.
   const dungeonLore = {
-    mine:
-      'The interregional roads and relocated settlements bear Garun the Firstborn’s geometric maker mark. The Dark Lord’s old companion inspects this Mine’s wardens and supports; the Ridge Tyrant handles wages. Past the forge, little machines and angular ornaments clutter his quiet workshop.'
+    mine: 'The interregional roads and relocated settlements bear Garun the Firstborn’s geometric maker mark. The Dark Lord’s old companion inspects this Mine’s wardens and supports; the Ridge Tyrant handles wages. Past the forge, little machines and angular ornaments clutter his quiet workshop.',
     abyss:
       'Abyss Bastion is the Dark Lord’s air-superiority project. His purple dragon is his personal flying mount; the hatchery will grow his future air force. Riders prepare harnesses, supplies arrive, and the royal launch platform is still being built.',
   };
