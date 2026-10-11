@@ -88,6 +88,7 @@
         else this.stopRecordedScore();
       }
       playSoundEvent(key, details = {}) {
+        if (this.optimizationMode && key.startsWith('ambience.')) return false;
         if (!this.ctx || this.paused || this.settings.muted || this.ctx.state !== 'running')
           return false;
         const bindings = this.soundCatalog().director?.events?.[key];
