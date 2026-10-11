@@ -145,7 +145,7 @@ async function proof() {
                 typeof message !== 'string' ||
                 !message.startsWith('An old ossuary opens onto unfinished Crown guest rooms.'),
             );
-          if (key === 'crypt:dungeon-lore:crypt' && value === true) return undefined;
+          if (key === 'vale:dungeon-lore:crypt' && value === true) return undefined;
           return value;
         }),
       ),
