@@ -945,6 +945,23 @@
           : z.id === 'citadel'
             ? 3
             : 2;
+      // Append Garun's tiny gallery to existing v3 Mine saves without resetting occupants.
+      if (z.id === 'mine' && z.dungeonVersion === targetVersion) {
+        for (const [j, [x, y, structure, district, sceneRole]] of R.dungeonDecor.mine.entries()) {
+          if (!['geometric-gallery', 'kinetic-collection', 'art-object'].includes(sceneRole)) continue;
+          if (z.props.some((p) => p.id === 'decor-' + j)) continue;
+          z.props.push({
+            id: 'decor-' + j,
+            ...this.safe(x, y, z.id),
+            r: 0,
+            decorative: true,
+            structure,
+            dungeonDistrict: district,
+            sceneRole,
+            icon: '🕯️',
+          });
+        }
+      }
       if (z.dungeonVersion === targetVersion) return;
       z.props = z.props.filter((p) => !p.decorative || !String(p.id).startsWith('decor-'));
       z.dungeonVersion = targetVersion;
