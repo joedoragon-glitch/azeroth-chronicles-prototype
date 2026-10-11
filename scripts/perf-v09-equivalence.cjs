@@ -124,14 +124,12 @@ for (const zone of [...A.data.regions.map((r) => r.id), ...A.dungeonIds])
         // the collection itself is independently tested in colossus-biography.
         if (root === current && zone === 'mine') {
           const originalZone = c.zone.bind(c);
-          // The engine lazily restores its authored Mine decor on zone()
-          // calls. Filter only the reviewed new gallery in this paired
-          // historic-art comparator, including during renderer.draw().
+          // The engine lazily restores authored Mine decor on zone() calls.
+          // Keep only the approved gallery excluded in this historic comparison.
+          const galleryRoles = new Set(['geometric-gallery', 'kinetic-collection', 'art-object']);
           c.zone = () => {
             const room = originalZone();
-            room.props = room.props.filter(
-              (p) => !['geometric-gallery', 'kinetic-collection', 'art-object'].includes(p.sceneRole),
-            );
+            room.props = room.props.filter((p) => !galleryRoles.has(p.sceneRole));
             return room;
           };
           c.zone();
