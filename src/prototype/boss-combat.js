@@ -496,6 +496,16 @@
           e.motion = { ...a, target: { x: a.x, y: a.y }, hit: [], speed: a.pounceSpeed, life: 2 };
           return;
         }
+        if (a.cargo && e.family === 'ridge') {
+          const d = Math.max(1, Math.hypot(a.x - e.x, a.y - e.y));
+          this.s.projectiles.push({
+            id: 'projectile-' + this.s.nextId++, x: e.x, y: e.y,
+            dx: (a.x - e.x) / d, dy: (a.y - e.y) / d,
+            speed: 260, life: 2, damage: e.damage * a.coefficient,
+            source: 'enemy', sourceId: e.id, species: 'cargo', style: 'cargo'
+          });
+          return;
+        }
         if (a.sabotage && e.family === 'archive') {
           // The Scholar punishes a visibly marked healer or hero, without direct damage.
           const victims = this.combatTargets().filter(u => u.hp > 0 && !u.keeperHeld &&
