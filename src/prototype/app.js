@@ -6,6 +6,12 @@
     ctx = canvas.getContext('2d'),
     D = Campaign.data,
     manaEnabled = PrototypeRules.resourceMode.manaEnabled;
+  // A device-only display preference: never part of the campaign or profile export.
+  const optimizationKey = 'azeroth-optimization-mode-v1';
+  let optimizationMode = false;
+  try {
+    optimizationMode = localStorage.getItem(optimizationKey) === 'on';
+  } catch (_) {}
   const persistence = PrototypePersistence.create({ storage: localStorage, Campaign, status });
   let profile = {
       nightmareUnlocked: false,
@@ -37,7 +43,10 @@
     pointer = null;
   profile = persistence.loadProfile(profile);
   const audio = new PrototypeAudio(profile.audio);
+  audio.setOptimizationMode(optimizationMode);
   audio.enableProduction();
+  if (typeof PrototypeMaterials !== 'undefined')
+    PrototypeMaterials.setOptimizationMode(optimizationMode);
   const platform = PrototypePlatform.init(window);
   audio.setMixProfile(platform.mode === 'phone' ? 'phone' : 'reference');
   const input = PrototypeInput.create(localStorage, status);
@@ -181,6 +190,7 @@
     PrototypeSprites: typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites,
     PrototypeMaterials: typeof PrototypeMaterials === 'undefined' ? null : PrototypeMaterials,
   });
+  renderer.setOptimizationMode(optimizationMode);
   const { world } = renderer,
     worldLabelVisible = renderer.labelVisible;
   const runtime = PrototypeRuntime.create();
@@ -251,14 +261,16 @@
         ? Math.max(0.8, Math.min(1, innerWidth / referenceWidth, innerHeight / referenceHeight))
         : 1;
     document.body.style.setProperty?.('--phone-ui-fit', phoneUiFit.toFixed(3));
-    const ratio = Math.max(
-      1,
-      Math.min(
-        window.devicePixelRatio || 1,
-        platform.mode === 'phone' ? 1.5 : 2,
-        Math.sqrt(3000000 / (innerWidth * innerHeight)),
-      ),
-    );
+    const ratio = optimizationMode
+      ? 1
+      : Math.max(
+          1,
+          Math.min(
+            window.devicePixelRatio || 1,
+            platform.mode === 'phone' ? 1.5 : 2,
+            Math.sqrt(3000000 / (innerWidth * innerHeight)),
+          ),
+        );
     canvas.width = Math.round(innerWidth * ratio);
     canvas.height = Math.round(innerHeight * ratio);
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -705,6 +717,11 @@
                 ...runtime.report(renderer.metrics(), platform.mode),
                 frameRatePreference: fps.preference,
                 frameRateTarget: fps.target,
+                optimizationMode: optimizationMode ? 'on' : 'off',
+                devicePixelRatio: window.devicePixelRatio || 1,
+                backingPixelRatio: canvas.width / Math.max(1, viewport.width),
+                backingWidth: canvas.width,
+                backingHeight: canvas.height,
               },
               audio: audio.status(),
               sprites: typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites.status(),
@@ -746,6 +763,9 @@
         'Camera: ' +
         Math.round((platform.cameraZoom || 1) * 100) +
         '% for this screen. Compare closer views while movement and attack ranges stay the same.\n\n' +
+        'Optimization Mode: ' +
+        (optimizationMode ? 'On' : 'Off') +
+        '. When On: procedural terrain, less decorative scenery and ambience, and lower internal rendering resolution. Combat warnings and gameplay rules are unchanged.\n\n' +
         'Frame rate: ' +
         (fps.preference === 'auto' ? 'Auto' : fps.preference + ' FPS') +
         ' · current target ' +
@@ -775,6 +795,20 @@
             },
           ),
         ),
+        action('Optimization Mode · ' + (optimizationMode ? 'On ✓' : 'Off ✓'), () => {
+          optimizationMode = !optimizationMode;
+          try {
+            localStorage.setItem(optimizationKey, optimizationMode ? 'on' : 'off');
+          } catch (_) {}
+          if (typeof PrototypeMaterials !== 'undefined')
+            PrototypeMaterials.setOptimizationMode(optimizationMode);
+          audio.setOptimizationMode(optimizationMode);
+          renderer.setOptimizationMode(optimizationMode);
+          resize();
+          runtime.reset();
+          fps.suspend();
+          platformMenu(back);
+        }, 'Device-only preference · reduced graphics and possible decorative pop-in'),
         ...[
           ['auto', 'Auto (starts at 30, tries 60)'],
           ['30', '30 FPS · Relaxed'],
