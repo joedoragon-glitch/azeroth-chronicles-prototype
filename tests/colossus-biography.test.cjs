@@ -168,6 +168,17 @@ for (const point of [[1100, 1100], [1100, 920], [1180, 1220], [990, 1190]]) {
   built += builder.raiseMineWorks(architect, point);
   if (built > 0) break;
 }
+if (!built) {
+  for (const center of [[1100,1100],[1100,920],[1180,1220],[990,1190]]) {
+    console.log('DIAG center', JSON.stringify(center));
+    for (const [dx,dy] of [[-160,-100],[160,-100],[-180,110],[180,110],[-80,185],[80,185]]) {
+      const p = {x:center[0]+dx,y:center[1]+dy};
+      const danger = builder.traps().some((t)=>builder.trapContains({...t,radius:(t.radius||0)+40,length:(t.length||0)+80,halfWidth:(t.halfWidth||0)+40},p));
+      console.log('DIAG candidate',JSON.stringify(p),'blocked',builder.blocked(p.x,p.y,'mine',28),'trap',danger,'hero',Math.hypot(builder.hero.x-p.x,builder.hero.y-p.y),'boss',Math.hypot(architect.x-p.x,architect.y-p.y));
+    }
+  }
+  console.log('DIAG initial paths', baselineExit,baselineDara);
+}
 assert(built > 0 && built <= 2, 'construction finds at least one safe, temporary support');
 const supports = builderZone.props.filter((p) => p.garunTemporary);
 assert.equal(supports.length, built);
