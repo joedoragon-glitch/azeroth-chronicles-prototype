@@ -1,6 +1,6 @@
 # Abyss Dragon — Veyrith, the Navigator (#243)
 
-**Status:** proposed canon on an isolated draft branch, awaiting owner review. This does not override the already-approved [Abyss air-superiority canon](ABYSS_AIR_SUPERIORITY_CANON.md) or authorize a separate content release.
+**Status:** Veyrith is the owner-approved canonical name of the Abyss Dragon (11 October 2026). Detailed biography and succession proposals remain open for review. This does not override the already-approved [Abyss air-superiority canon](ABYSS_AIR_SUPERIORITY_CANON.md) or authorize a separate content release.
 
 ## Eight-sentence character candidate
 
@@ -31,4 +31,4 @@ Current normal repertoire from `rules.attacks.abyss`: Flame Cone (1.5 s warning,
 
 Keep internal boss family `abyss`, displayed boss label `Abyss Dragon`, existing purple body/sprite/procedural art, all structural and prop IDs, air project, Eren's rescue, rewards, stable save v4 keys, normal/TRUE/Awakening and separate civilian Frontier dragon transport unchanged. The distinct name is dialogue/lore only. No new art required; [design handoff](../tools/sprites/design-handoffs/abyss-dragon.json) records this idea without asserting an accepted new visual.
 
-**Approval needed:** owner accepts or revises Veyrith's biography and the in-game clue before the single combined #232 worldbuilding publication. The draft PR itself neither approves nor deploys this canon.
+**Owner decision:** Veyrith is no longer a provisional name. Remaining biography details and the in-game clue remain subject to combined #232 review; no merge or deployment is authorized. The draft PR itself neither approves nor deploys this canon.

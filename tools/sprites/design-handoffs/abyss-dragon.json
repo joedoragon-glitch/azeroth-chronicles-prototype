@@ -3,12 +3,12 @@
   "templateOnly": false,
   "status": "idea",
   "designId": "abyss-dragon",
-  "name": "Abyss Dragon (personal name candidate: Veyrith)",
+  "name": "Abyss Dragon — Veyrith",
   "kind": "boss",
-  "nextAction": "Owner review of #243 character candidate; do not create new images or change the already-accepted purple dragon design. If future sprite work is requested, verify runtime key and capture exact 150% procedural references first.",
+  "nextAction": "Keep Veyrith as the canonical name; complete combat testing and review remaining proposed biography details. Preserve the existing approved purple-dragon design.",
   "context": {
     "originConversation": null,
-    "decisionSummary": "Issue #243 delegated autonomous authoring of a distinct former-companion biography and possible successor claim. Veyrith is an unmerged proposal; the purple personal flying mount, previous flights and incomplete Bastion air project are previously established canon.",
+    "decisionSummary": "Owner explicitly confirmed Veyrith as the Abyss Dragon's canonical name on 2026-10-11. Existing personal mount, previous flights, and unfinished air project remain approved; detailed biography and succession proposals are tracked separately.",
     "decisionDate": "2026-10-11",
     "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/243",
     "contentDocuments": [
@@ -18,7 +18,7 @@
     "locationAndLore": "Abyss Bastion royal aerie, hatchery, rider preparation, feeding and unfinished launch platform; potential successor rests on flight logistics and a policy of compulsory safe passage."
   },
   "decisions": {
-    "conceptAcceptance": "Previously approved: purple personal mount, prior shared flight, unfinished air project, not imprisoned. Proposed new name, temperament and succession politics await owner review.",
+    "conceptAcceptance": "Veyrith name explicitly approved by owner on 2026-10-11. Other biography and succession details remain separately reviewable.",
     "proceduralDesignAcceptance": "Existing procedural Abyss Dragon appearance must be retained; no new appearance proposal or approval.",
     "spriteProductionAuthorization": null,
     "generatedAppearanceAcceptance": null,
