@@ -795,20 +795,24 @@
             },
           ),
         ),
-        action('Optimization Mode · ' + (optimizationMode ? 'On ✓' : 'Off ✓'), () => {
-          optimizationMode = !optimizationMode;
-          try {
-            localStorage.setItem(optimizationKey, optimizationMode ? 'on' : 'off');
-          } catch (_) {}
-          if (typeof PrototypeMaterials !== 'undefined')
-            PrototypeMaterials.setOptimizationMode(optimizationMode);
-          audio.setOptimizationMode(optimizationMode);
-          renderer.setOptimizationMode(optimizationMode);
-          resize();
-          runtime.reset();
-          fps.suspend();
-          platformMenu(back);
-        }, 'Device-only preference · reduced graphics and possible decorative pop-in'),
+        action(
+          'Optimization Mode · ' + (optimizationMode ? 'On ✓' : 'Off ✓'),
+          () => {
+            optimizationMode = !optimizationMode;
+            try {
+              localStorage.setItem(optimizationKey, optimizationMode ? 'on' : 'off');
+            } catch (_) {}
+            if (typeof PrototypeMaterials !== 'undefined')
+              PrototypeMaterials.setOptimizationMode(optimizationMode);
+            audio.setOptimizationMode(optimizationMode);
+            renderer.setOptimizationMode(optimizationMode);
+            resize();
+            runtime.reset();
+            fps.suspend();
+            platformMenu(back);
+          },
+          'Device-only preference · reduced graphics and possible decorative pop-in',
+        ),
         ...[
           ['auto', 'Auto (starts at 30, tries 60)'],
           ['30', '30 FPS · Relaxed'],
