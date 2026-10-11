@@ -3687,8 +3687,10 @@
         e.pursuitBurst = Math.max(0, (e.pursuitBurst || 0) - dt);
         e.open = Math.max(0, (e.open || 0) - dt);
         e.captainGuard = Math.max(0, (e.captainGuard || 0) - dt);
-        e.captainReflect = Math.max(0, (e.captainReflect || 0) - dt);
-        e.captainPursuit = Math.max(0, (e.captainPursuit || 0) - dt);
+        if (e.captain || e.roomCaptain) {
+          e.captainReflect = Math.max(0, (e.captainReflect || 0) - dt);
+          e.captainPursuit = Math.max(0, (e.captainPursuit || 0) - dt);
+        }
         e.quotaOvertime = Math.max(0, (e.quotaOvertime || 0) - dt);
         if (!e.quotaOvertime) delete e.quotaTarget;
         if (e.fieldCaptain && e.captainPhase && e.aggro && e.hp > 0) {
@@ -4003,9 +4005,11 @@
         e.captainPhaseMove = 1;
         e.captainAttackRate = 1;
         e.captainGuard = 0;
-        e.captainReflect = 0;
-        e.captainPursuit = 0;
-        e.captainOvertimeCd = 0;
+        if (e.captain || e.roomCaptain) {
+          e.captainReflect = 0;
+          e.captainPursuit = 0;
+          e.captainOvertimeCd = 0;
+        }
         e.quotaOvertime = 0;
         e.captainOpeningSummon = false;
         delete e.quotaTarget;
