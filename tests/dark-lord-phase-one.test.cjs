@@ -123,19 +123,19 @@ for (const mode of ['normal', 'nightmare']) {
   c.clearSegment = () => true;
   const guard = c.makeEnemy(
     { species: 'crownguard', name: 'Royal escort', level: 16, hp: 100, damage: 4, gold: 0, xp: 0 },
-    { x: 1080, y: 1100 },
+    { x: 980, y: 1100 },
   );
   guard.owner = lord.id;
   guard.summon = true;
   c.zone().enemies.push(guard);
   lord.royalTaxShield = 0;
   c.s.projectiles.push({
-    id: 'test-royal-arrow', source: 'hero', target: lord.id, speed: 800,
-    x: 1000, y: 1100, damage: 40, life: 2, style: 'arrow',
+    id: 'test-royal-arrow', source: 'hero', target: lord.id, speed: 1200,
+    x: 800, y: 1100, damage: 40, life: 2, style: 'arrow',
   });
   const previousLordHp = lord.hp;
   const previousGuardHp = guard.hp;
-  c.updateProjectiles(0.15);
+  c.updateProjectiles(0.25);
   assert(guard.hp < previousGuardHp, 'Actual projectile strikes intercepting guard');
   assert.equal(lord.hp, previousLordHp, 'Intercepted hit does not damage the ruler');
   assert.equal(lord.royalPrerogativeReadyAt, c.s.time + 18);

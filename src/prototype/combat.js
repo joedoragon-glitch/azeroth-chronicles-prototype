@@ -496,7 +496,7 @@
                       unit.owner === e.id &&
                       unit.summon &&
                       unit.hp > 0 &&
-                      dist(unit, e) < 120 &&
+                      dist(unit, e) < 165 &&
                       this.distanceToSegment(unit, before, p) < 45 &&
                       this.line(unit, e),
                   )
