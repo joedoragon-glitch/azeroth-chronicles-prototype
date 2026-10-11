@@ -6799,6 +6799,89 @@
           }
           oval(-1, 11, 8, 3, '#55524e');
           break;
+        case 'silver-sort-samples':
+          // An ore-sorter's flat slate pans separate silver-bearing pieces from waste stone.
+          shade(37, 10, 0.13);
+          rect(-31, -12, 62, 28, '#766d5b');
+          rect(-27, -10, 24, 19, '#484f52');
+          for (const [x, y] of [
+            [-22, -5],
+            [-13, 0],
+            [-8, -6],
+            [-19, 5],
+          ]) {
+            rect(x, y, 6, 4, '#a6b8bc');
+            glint(x + 3, y, '#dce5e4', 1);
+          }
+          for (const [x, y] of [
+            [7, -4],
+            [16, 2],
+            [24, -5],
+          ])
+            oval(x, y, 5, 4, '#948876');
+          line(
+            [
+              [-31, 14],
+              [31, 14],
+            ],
+            localWood,
+            3,
+          );
+          break;
+        case 'silver-die-tray':
+          // A readable issue of Crown pieces next to the approved striking-bench sprite.
+          shade(40, 10, 0.14);
+          rect(-32, -10, 64, 25, localWood);
+          rect(-27, -13, 54, 20, '#625c54');
+          for (const [x, y] of [
+            [-20, -7],
+            [-9, -6],
+            [3, -7],
+            [16, -5],
+            [-14, 2],
+            [-1, 3],
+            [12, 4],
+          ]) {
+            oval(x, y, 6, 4, '#d3dcdd');
+            line(
+              [
+                [x - 3, y],
+                [x + 3, y],
+              ],
+              '#859ba1',
+              1,
+            );
+          }
+          // Five separate die teeth mark the five regions without using gold.
+          for (const x of [-8, -4, 0, 4, 8]) rect(x, -27, 3, 5, '#d7e1e2');
+          rect(-11, -22, 23, 5, '#88979a');
+          break;
+        case 'sealed-crown-consignment':
+          // Distinct silver Crown seals; ordinary wagon/crate sprites remain unchanged.
+          shade(40, 11, 0.14);
+          rect(-32, -12, 63, 28, '#76654f');
+          rect(-28, -22, 55, 13, '#98836b');
+          for (const x of [-23, 21]) rect(x, -21, 5, 36, '#50585a');
+          rect(-9, -20, 17, 11, '#c3ced0');
+          for (const x of [-7, -4, -1, 2, 5]) rect(x, -23, 2, 5, '#eef0ea');
+          line(
+            [
+              [-9, -8],
+              [8, -8],
+            ],
+            '#64757a',
+            2,
+          );
+          rect(12, -34, 18, 12, '#d6cbb0');
+          line(
+            [
+              [16, -30],
+              [25, -30],
+            ],
+            '#64757a',
+            2,
+          );
+          break;
         case 'highland-pay-station':
           shade(40, 12, 0.15);
           rect(-34, -6, 68, 22, localWood);
