@@ -283,6 +283,9 @@
                       : 115) * R.bossCadence.areaRangeMultiplier,
           },
           sequence = [];
+        if (e.family === 'mine' && index === 2 && a.doubleWave) {
+          sequence.push({ ...a, timer: 0.7, total: 0.7, name: 'Dynamic Compaction — second wave' });
+        }
         if (a.sequential && a.kind === 'circle') {
           const patches = this.attackPatches(a);
           Object.assign(a, patches[0], { count: 1 });
@@ -318,16 +321,7 @@
               total: plan.warning,
               name: 'Shifting water channels',
             });
-          if (e.family === 'mine' && index === 1)
-            sequence.push({
-              ...a,
-              x: a.x + 150,
-              y: a.y + 50,
-              count: 1,
-              timer: plan.warning,
-              total: plan.warning,
-              name: 'Delayed rockfall',
-            });
+          // Progressive Collapse already sequences its three marked impacts in both forms.
           if (e.family === 'abyss' && index === 0)
             sequence.push({
               ...a,
@@ -426,8 +420,10 @@
       }
       raiseMineWorks(e, attack) {
         if (e.family !== 'mine' || e.hp <= 0 || this.peace || this.s.zone !== 'mine') return 0;
-        const z = this.zone(),
-          captive = z.npcs.find((n) => n.family === 'mine' && n.kind === 'cage'),
+        const z = this.zone();
+        // A maximum of two pieces of temporary construction may obstruct the arena.
+        z.props = z.props.filter((p) => !p.garunTemporary);
+        const captive = z.npcs.find((n) => n.family === 'mine' && n.kind === 'cage'),
           exit = z.npcs.find((n) => n.kind === 'exit'),
           targets = [this.hero, e, captive, exit].filter(Boolean),
           offsets = [
@@ -598,6 +594,7 @@
             life: R.combatGeometry.ringLife * R.bossCadence.areaRangeMultiplier,
             tick: 0,
             damage: e.damage,
+            slowDuration: a.slowDuration || 0,
             age: 0,
             hit: [],
           });
@@ -614,7 +611,7 @@
           return;
         }
         this.resolveArea(e, a);
-        if (e.family === 'mine' && a.index === 1 && a.name !== 'Delayed rockfall')
+        if (e.family === 'mine' && a.index === 1 && !(e.sequence || []).some((t) => t.index === 1))
           this.raiseMineWorks(e, a);
       }
       resolveArea(e, a) {
