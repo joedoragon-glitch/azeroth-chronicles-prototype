@@ -9,6 +9,7 @@ on:
       - src/prototype/engine.js
       - src/prototype/narration.js
       - tests/ash-sentinel-combat.test.cjs
+      - tests/ash-sentinel-soak.test.cjs
       - tests/ash-sentinel-identity.test.cjs
       - tests/ash-sentinel-browser.test.cjs
   workflow_dispatch:
@@ -26,6 +27,8 @@ jobs:
       - run: npm ci --ignore-scripts
       - name: Sentinel new mechanics
         run: node tests/ash-sentinel-combat.test.cjs
+      - name: Normal and TRUE AI soak across classes
+        run: node tests/ash-sentinel-soak.test.cjs
       - name: Citadel identity and old saves
         run: node tests/ash-sentinel-identity.test.cjs
       - name: Citadel routes and awakening
