@@ -32,7 +32,7 @@
     mire: [
       attack('cone', 0.9, 1),
       attack('line', 1.4, 1.5, { charge: true, coefficient: 1.4 }),
-      attack('circle', 1.5, 1.4, { count: 3, persistent: true, slow: true }),
+      attack('circle', 1.5, 1.4, { count: 3, persistent: true }),
       attack('summon', 1.6, 1.5, { species: 'mireling', ranged: false }),
     ],
     archive: [
