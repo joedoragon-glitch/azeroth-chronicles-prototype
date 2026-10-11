@@ -1,4 +1,4 @@
-name: Temporary Colossus safety retest
+name: Temporary Colossus path diagnostics
 on:
   push:
     paths:
