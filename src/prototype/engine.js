@@ -3830,8 +3830,12 @@
                 )
                 .sort((u, v) => dist(e, u) - dist(e, v))[0]
             : null;
-        const keeperHero = e.type === 'boss' && e.family === 'archive' &&
-            !candidates.some(u => u.type === 'archer' && u.hp > 0) ? this.hero : null;
+        const keeperHero =
+          e.type === 'boss' &&
+          e.family === 'archive' &&
+          !candidates.some((u) => u.type === 'archer' && u.hp > 0)
+            ? this.hero
+            : null;
         let target =
           keeperHero ||
           (ridgeTarget && dist(e, ridgeTarget) < 700 && this.line(e, ridgeTarget)
