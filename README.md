@@ -6,7 +6,9 @@ The canonical Azeroth Chronicles product is the multi-file GitHub Pages/PWA appl
 
 ## Release status
 
-This branch prepares the **v0.9.0 beta release candidate**. It is not a publication or acceptance announcement. [Release notes and remaining acceptance](docs/V09_RELEASE_NOTES.md) distinguish implemented features, verified evidence and open checks; [Current development state](docs/DEVELOPMENT_STATE.md) records the production baseline and release workflow. The version in an exported playtest report identifies the build actually running on your device. A merged PR is not proof of publication or completed human playtesting.
+**Azeroth Chronicles v0.9.0 beta is published on GitHub Pages.** The production release is [d7d2c22485b08265b31bf595305ef952b40b72cd](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/d7d2c22485b08265b31bf595305ef952b40b72cd), merged through [release PR #229](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/229) and live-verified by the successful [production workflow 38100402483](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38100402483). The published build reports version **0.9.0**, with the matching service-worker cache.
+
+[Release notes and known limitations](docs/V09_RELEASE_NOTES.md) record what shipped and the release evidence. [Current development state](docs/DEVELOPMENT_STATE.md) distinguishes the published beta from earlier preparation snapshots. At publication, **7 of 13 acceptance criteria were verified**; the remaining six are post-release beta follow-ups in [beta acceptance #213](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213), not a publication hold. Published does not mean every full-campaign or physical-device test is complete. The version in an exported playtest report identifies the build actually running on your device.
 
 ## Play
 

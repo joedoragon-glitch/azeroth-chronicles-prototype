@@ -1,5 +1,7 @@
 # v0.9 beta-readiness regression execution
 
+> **Historical pre-release QA snapshot (10 October 2026).** The NO-GO disposition below applies to the earlier v0.8.137 candidate, **not** to the published v0.9.0 beta. Publication is verified at [d7d2c22485b08265b31bf595305ef952b40b72cd](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/d7d2c22485b08265b31bf595305ef952b40b72cd) through [release PR #229](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/229); [beta acceptance #213](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213) tracks six remaining post-release acceptance criteria. The original candidate findings are retained without rewriting their historical outcomes.
+
 Authoritative tracker: [#213](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213).
 **Disposition: NO-GO for v0.9 publication.** This is a pre-release v0.8.137 QA candidate, not v0.9 or certification of a complete human playthrough.
 

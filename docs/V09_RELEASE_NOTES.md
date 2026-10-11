@@ -1,8 +1,10 @@
-# Azeroth Chronicles v0.9.0 beta — release candidate
+# Azeroth Chronicles v0.9.0 beta — published
 
-**Not published. Acceptance and release approval are pending.** This is a prepared release candidate, not a declaration that the checklist is complete. [Issue #213](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213) owns current evidence and the go/no-go decision.
+**Published to GitHub Pages and live-verified on 11 October 2026 UTC.** The released `main` commit is [d7d2c22485b08265b31bf595305ef952b40b72cd](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/d7d2c22485b08265b31bf595305ef952b40b72cd), merged through [release PR #229](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/229) and verified by [production workflow 38100402483](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38100402483). The published `build.txt`, version metadata and service-worker cache match v0.9.0. See the [production verification record](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213#issuecomment-6104016838).
 
-## Included in the candidate
+Publication was explicitly authorized with the remaining beta-testing gaps retained as follow-up work. At publication, **7/13 acceptance criteria were verified; six remain unverified** in [beta acceptance #213](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213). A successful release does not certify a complete natural campaign playthrough or physical-device acceptance.
+
+## Included in v0.9.0 beta
 
 - Five-region single-player campaign in the multi-file installable web app, with distinct desktop keyboard/trackpad and phone touch presentation.
 - Integrated road infrastructure, restored independent transport departure scenes, regional dungeon work and quest/specialist progression updates.
@@ -20,20 +22,19 @@ Joel reports that his ongoing saves have survived major updates throughout devel
 
 Full natural campaign and late-game acceptance are incomplete. Browser emulation and bounded action pilots do not certify physical input comfort, installed offline behavior, sustained device memory/temperature/performance, or a complete player journey. Those are outstanding acceptance checks, not reported proof of broken gameplay.
 
-## Publication gate
+## Published release evidence
 
-Before merging/publishing this candidate:
+- The author approved release with explicitly documented beta follow-ups on 10 October 2026 (Eastern time). [release PR #229](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/229) was merged at the tested release tree `0e36da9718e65f466e414a7d94f55905099543b8`, producing production commit [d7d2c22485b08265b31bf595305ef952b40b72cd](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/d7d2c22485b08265b31bf595305ef952b40b72cd).
+- [production workflow 38100402483](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38100402483) succeeded in release-plan, main-test, phone-webkit and deploy. Its evidence includes **99 Node regression suites**, desktop/mobile Chromium, phone WebKit, historical-engine save/PWA upgrade coverage, packaging and live smoke paths.
+- Independent live HTTP verification reported `build.txt` at the production commit above, `src/prototype/build-info.js` version **0.9.0**, and `sw.js` cache **azeroth-app-v0.9.0**. See the [exact release and deployment evidence](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213#issuecomment-6104016838).
+- The post-release [beta acceptance #213](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213) remains open with **six unverified criteria**, grouped into natural campaign/late-game play (two criteria), a genuine historical player-created save export/import (one), and actual-device controls, installed-PWA/offline/update and sustained performance/memory (three). These are **not** marked PASS by automated release checks or by the publication decision.
 
-1. Confirm the final source includes the accepted #227 correction and no unrelated work. Reconcile with current main and record exact head/tree.
-2. Resolve remaining acceptance in #213 through evidence or an explicit author-approved beta scope/risk decision. Neither positive automation nor this document silently waives open criteria.
-3. Pass the final candidate's formatting, generated/asset, full Node, Chromium, WebKit, historical-save/PWA and packaging gates. Prior v0.8.138 success alone cannot certify this version/cache change.
-4. Obtain the release order for this tested candidate. Merge once, use the existing deployment workflow and only its normal identical-tree certificate reuse.
-5. Verify exact live `build.txt`, build-info/cache version and all production smoke gates. Record actual release commit and workflow links. Create a release tag only at the verified commit if requested as part of publication.
+## Historical candidate preparation (superseded)
 
-At preparation, last independently verified production was **v0.8.138**, commit `6c2381b34ce63fb935936a4e69ec404996f7765a`, [main run 38091031125](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38091031125), backed by full identical-tree [run 38087706102](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38087706102). Candidate validation is recorded in its PR; v0.9 publication evidence does not exist yet.
+On 10 October 2026, before authorization and deployment, these notes described an unpublished candidate and listed pre-publication gates. At that point, v0.8.138 (`6c2381b34ce63fb935936a4e69ec404996f7765a`) was the previously verified production baseline. The later verified v0.9.0 publication above supersedes that status; retain the earlier candidate and test records through [release PR #229](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/229) and [beta acceptance #213](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213) rather than treating their hold instructions as current.
 
 ## Rollback reference
 
-Known verified recovery source: v0.8.138 `6c2381b34ce63fb935936a4e69ec404996f7765a`. Earlier recovery: v0.8.137 `c6ce1af236bddd7ca881903499c4cf5de175f9e2`.
+Verified pre-release recovery sources: v0.8.139 `ea7bd4193d18762d343cd93260351cb29fcb6739` and exact-tree recovery `99bd657f844a13594cfbffd87925d3ea0905c4c5` ([successful recovery run 38097888583](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38097888583)). Earlier verified v0.8.138: `6c2381b34ce63fb935936a4e69ec404996f7765a`.
 
 If needed, prepare a forward corrective release from an accepted stable source with a fresh unique package/cache version. Validate save compatibility using copies, preserve all player exports/legacy originals, pass normal release checks and verify the published SHA. Do not clear player storage or rely on an old cache appearing automatically. No rollback is executed by these notes.

@@ -1,8 +1,16 @@
-# Current development state and v0.9 readiness
+# Current development state and v0.9 beta follow-up
 
-## v0.9.0 candidate preparation · 10 October 2026
+## v0.9.0 beta — published and live verified · 11 October 2026 UTC
 
-**Candidate only; not published or accepted.** This addendum supersedes the old active-work labels below. The earlier snapshot is retained as dated history.
+**v0.9.0 beta has shipped on GitHub Pages.** [release PR #229](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/229) was authorized, merged and deployed from the tested tree `0e36da9718e65f466e414a7d94f55905099543b8`. Production `main` commit: [d7d2c22485b08265b31bf595305ef952b40b72cd](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/d7d2c22485b08265b31bf595305ef952b40b72cd); the successful [production workflow 38100402483](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38100402483) includes the release, Node/Chromium, WebKit, packaging and deploy gates. The independent [publication record](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213#issuecomment-6104016838) verifies the live `build.txt` SHA, build version **0.9.0** and service-worker cache **azeroth-app-v0.9.0**.
+
+Publication was author-approved with known beta acceptance gaps, not full human certification. At publication, **7/13 criteria were verified and six were still unverified**: natural full-campaign and representative late-game encounters (two), genuine historical player save export/import (one), and physical-device controls, installed PWA/offline/update and sustained performance/memory (three). [beta acceptance #213](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213) is now the **post-release** evidence tracker, not a blocker to a release that has already occurred. Preserve ongoing user-reported save retention as evidence distinct from an independently tested historical save round trip.
+
+The shipped scope and remaining limitations are in [v0.9 release notes](V09_RELEASE_NOTES.md). Deferred sprite/catalog and co-op work is not retroactively part of this beta. The dated candidate and v0.8.x snapshots below are retained for historical provenance; **their pre-publication hold and baseline statements are superseded by this published status**.
+
+## Historical v0.9.0 candidate preparation · 10 October 2026 (superseded)
+
+**Status at the time of preparation (not current):** This was an unpublished candidate, with release approval and acceptance still pending. The published v0.9.0 beta status above now supersedes these preparation notes; the earlier snapshot remains as dated evidence.
 
 - Last independently verified production at preparation: **v0.8.138**, commit `6c2381b34ce63fb935936a4e69ec404996f7765a`, tree `d5616558097655755e581d75f4707a1571b03c24`. Combined #226 integrates performance, Auto/30/60 render scheduling and development/CI workflow changes. Full identical-tree [run 38087706102](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38087706102) and merged-main [publication 38091031125](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38091031125) passed. Subsequent source versions require their own evidence.
 - Combat conditions #210 and item/equipment/collision QA #216 are integrated. #211/#212 are superseded. #223/#224/#225 were combined in #226 rather than separately merged. Old active-candidate references below are historical.
@@ -54,7 +62,9 @@ This maintenance pass is documentation/backlog reconciliation. It does not certi
 
 #204 and #208 initially both used v0.8.134; they integrated serially. #204 merged first, and #208 adopted that main state and v0.8.135. Both workflow additions remain in the combined source. A previous head's green run is not evidence for a newer head; publication is a separate gate.
 
-## v0.9 acceptance still to establish
+## Historical pre-release v0.9 acceptance checklist (superseded)
+
+The following five-item checklist reflects the earlier v0.8-era audit, not the current beta publication gate. See [beta acceptance #213](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213) for the six outstanding **post-release** acceptance criteria and their evidence.
 
 1. Verify the exact combined stabilization commit through generated/asset checks, the full Node suite, relevant Chromium/WebKit device paths, Pages publication, published SHA and live smoke. Keep merged, published and human-tested states distinct.
 2. Validate the Abyss campaign end to end: full-party handling, trap readability, Eren rescue, boss/TRUE/Awakening transitions, outward and return wing routes, and actual phone movement/interaction. Automated route and save regressions support but do not replace this human acceptance.
