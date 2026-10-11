@@ -117,6 +117,27 @@ for (const mode of ['normal', 'nightmare']) {
   const c = new Campaign(mode, 'paladin', () => 0.9, { succession: true });
   const b = barracks(c, 'vale', { full: true });
   assert.equal(c.setBarracksRespawn(b.id), false, 'Succession cannot select a respawn point');
+  let successionMenu;
+  const successionUi = Menus.create({
+    getGame: () => c,
+    Campaign,
+    D: Campaign.data,
+    action: (label, action, detail = '', disabled = false) => ({ label, action, detail, disabled }),
+    openMenu: (title, description, actions) => {
+      successionMenu = { title, description, actions };
+    },
+    closeMenu() {},
+    recallSquad() {},
+    showMap() {},
+    finaleMenu() {},
+  });
+  successionUi.barracksMenu(b);
+  assert(!successionMenu.actions.some((a) => a.label.includes('death recovery point')));
+  assert(successionMenu.description.includes('Succession deaths never cost crowns'));
+  b.full = false;
+  successionUi.barracksMenu(b);
+  assert(successionMenu.description.includes('Succession deaths never cost crowns'));
+  b.full = true;
   assert.equal(c.deathPenaltyFraction(), 0, 'Succession ignores completed Full Barracks for crowns');
   assert.equal(carrying(c, 101), 0);
   c.hero.gold = 101;

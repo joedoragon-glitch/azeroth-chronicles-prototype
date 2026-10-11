@@ -1122,7 +1122,9 @@
         openMenu(
           'Basic Barracks',
           getGame().definition().name +
-            ' · completed Basic Barracks reduce local death loss to 15%, including regional dungeons.',
+            (getGame().s.challenge.succession
+              ? ' · Succession deaths never cost crowns; class loss is the penalty.'
+              : ' · completed Basic Barracks reduce local death loss to 15%, including regional dungeons.'),
           baseActions,
           back,
         );
@@ -1137,7 +1139,10 @@
           getGame().barracksFieldCap(b) +
           ' with you · ' +
           getGame().rosterCount() +
-          ' employed. Local death loss drops to 5%, including regional dungeons.',
+          ' employed. ' +
+          (getGame().s.challenge.succession
+            ? 'Succession deaths never cost crowns; class loss is the penalty.'
+            : 'Local death loss drops to 5%, including regional dungeons.'),
         [
           exp,
           ...(tonic ? [tonic] : []),
