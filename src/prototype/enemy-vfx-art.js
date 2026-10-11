@@ -67,10 +67,11 @@
       ['call', 'ember'],
     ],
     darklord: [
-      ['cleave', 'shadow'],
-      ['bombard', 'shadow'],
+      ['cleave', 'steel'],
+      ['landing', 'shadow'],
       ['command', 'steel'],
       ['sweep', 'shadow'],
+      ['rush', 'steel'],
     ],
   });
   const captains = Object.freeze({
