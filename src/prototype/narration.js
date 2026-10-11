@@ -41,7 +41,7 @@
     null, // 17
     {
       kind: 'narration',
-      text: "So that's where the crowns come from. The ore goes to Stonecross; the finished crowns leave by guarded caravan.",
+      text: "Silver from the dark ore is sorted, refined, and struck at Stonecross. The Crown seals the chests and guards the road out.",
     }, // 18
     null, // 19
     {
