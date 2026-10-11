@@ -34,6 +34,16 @@
     },
     "activeFrameBodySha256": "a042cd0491db3860a8f8c29e9f1471b45be3ca108b2520dcc4df833d0ce81d7a"
   },
+  "approvedKeyboardRevision": {
+    "source": "PR #269; explicitly requested desktop keyboard ergonomics, with historical input preferences preserved",
+    "scope": "Only target/interaction/recall keyboard mapping, associated HUD help and initial HTML labels; no simulation, art, collision, saves or rendering-loop logic",
+    "evidence": "New input regression coverage, simultaneous WASD+E browser test, F Keeper interactions and full CI required before merge",
+    "files": {
+      "src/prototype/input.js": "65eba7616f0f314db513ce91d5328838be2d7ffc082118885471be4cb5a2199e",
+      "src/prototype/app.js": "13e626660c619dc7fb1a673f250ac8f27a8cfd301d6135ee3e8846d5e2029f74",
+      "templates/game.html": "a13554d30e17d6b4ef4b8176147fcdb6806bf82891e61f9bccd0b615ee699fd8"
+    }
+  },
   "approvedContentRevision": {
     "file": "src/prototype/data.js",
     "version": "0.8.139",
