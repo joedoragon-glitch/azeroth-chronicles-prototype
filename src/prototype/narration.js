@@ -41,7 +41,8 @@
     null, // 17
     {
       kind: 'narration',
-      text: "Silver from the dark ore is sorted, refined, and struck at Stonecross. The Crown seals the chests and guards the road out.",
+      text:
+        'Silver from the dark ore is sorted, refined, and struck at Stonecross. The Crown seals the chests and guards the road out.',
     }, // 18
     null, // 19
     {
