@@ -12864,7 +12864,7 @@
     ['#343644', '#414351', '#2c2f3c', '#a09b9e'],
   ];
   const dungeonFloors = {
-    crypt: ['#343c39', '#414945', '#2b3331', '#a9b1a0'],
+    crypt: ['#453843', '#57414a', '#342b39', '#c9a16e'],
     archive: ['#30464a', '#3b5558', '#283d42', '#8fb6b4'],
     mine: ['#44433b', '#524f43', '#39382f', '#ada88c'],
     abyss: ['#44373b', '#544349', '#382f34', '#c09a89'],
@@ -13639,6 +13639,8 @@
         ? { top: '#857965', side: '#52483d', edge: '#b2a28a' }
         : dungeonId === 'abyss'
           ? { top: '#6f5b5d', side: '#463b3d', edge: '#a77a6b' }
+          : dungeonId === 'crypt'
+            ? { top: '#69565d', side: '#41343f', edge: '#bf9870' }
           : dungeonId === 'archive'
             ? { top: '#697978', side: '#3e5458', edge: '#9eb2ac' }
             : dungeonId === 'mine'
