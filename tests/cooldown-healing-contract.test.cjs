@@ -126,7 +126,9 @@ for (const family of ['abyss', 'citadel']) {
   );
   assert(g.effects.some((e) => e.type === 'heal' && e.target === boss.id));
 }
-console.log('PASS independent healing warnings retain green presentation and bounded Go-Around withdrawal');
+console.log(
+  'PASS independent healing warnings retain green presentation and bounded Go-Around withdrawal',
+);
 
 const Menus = require('../src/prototype/menus');
 for (const cls of ['paladin', 'mage', 'ranger']) {
