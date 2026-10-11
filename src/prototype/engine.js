@@ -718,19 +718,10 @@
       const previous = e.maxHp || e.baseHp || 1;
       const fraction = Math.max(0, Math.min(1, (e.hp || 0) / previous));
       const oldBase = e.baseHp || previous;
-      const scaled =
-        oldBase *
-        (profile.enduranceHp /
-          (e.fieldCaptain
-            ? 1444
-            : {
-                'supply-vale': 130,
-                'supply-march': 340,
-                'supply-highlands': 550,
-                'supply-crown': 970,
-              }[e.captainProfile] || oldBase));
       const ratio = previous / oldBase;
-      e.baseHp = Math.round(scaled);
+      // Authoritative base HP is a fixed captain budget, not a multiplier of
+      // historical treasury/scaling revisions (which would stack on old saves).
+      e.baseHp = profile.enduranceHp;
       e.maxHp = e.baseHp * ratio;
       e.hp = e.hp > 0 ? e.maxHp * fraction : 0;
       e.captainEnduranceVersion = 2;
