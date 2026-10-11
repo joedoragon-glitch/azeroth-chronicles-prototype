@@ -133,7 +133,7 @@ console.log('PASS Lateral Load Transfer damages and physically pushes across a w
 const { game: laneGame, boss: laneBoss } = fresh();
 laneGame.zone().enemies = [laneBoss];
 Object.assign(laneGame.hero, position);
-const soldier = laneGame.unit('soldier', position.x + 35, position.y);
+const soldier = laneGame.unit('soldier', position.x, position.y);
 laneGame.s.party = [soldier];
 laneGame.hero.immune = 0;
 soldier.immune = 0;
