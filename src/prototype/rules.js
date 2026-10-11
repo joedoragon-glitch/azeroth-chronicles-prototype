@@ -44,7 +44,7 @@
     ],
     ridge: [
       attack('cone', 1, 1),
-      attack('circle', 1.5, 1.5, { coefficient: 1.4 }),
+      attack('line', 1.5, 1.5, { coefficient: 1.4, cargo: true }),
       attack('line', 1.5, 2, { charge: true, coefficient: 1.4 }),
       attack('summon', 1.8, 1.5, { species: 'archer', ranged: true }),
     ],
