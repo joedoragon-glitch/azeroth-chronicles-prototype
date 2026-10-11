@@ -16,6 +16,14 @@ assert.equal(controls.actionFor('KeyQ'),'recall','Q is an additional shortcut fo
 assert.equal(controls.actionFor('Backquote'),'recall','the original recall shortcut still works');
 assert.equal(controls.actionFor('Space'),'skill6','Space remains skill 6');
 assert.equal(controls.actionFor('KeyH'),'heal','Ranger Heal remains on H');
+assert.equal(controls.actionFor('KeyZ'),'map','Z remains the original map shortcut');
+assert.equal(controls.actionFor('KeyM'),'map','M also opens Map and navigation');
+const customMap=Input.create({getItem(){return null},setItem(){}});
+assert.equal(customMap.rebind('map','KeyL'),null);
+assert.equal(customMap.actionFor('KeyM'),'map','M still opens Map after custom map rebinding');
+assert.equal(customMap.actionFor('KeyZ'),null,'old Z binding is not forced after customization');
+assert.equal(customMap.rebind('heal','KeyM'),null);
+assert.equal(customMap.actionFor('KeyM'),'heal','explicit M custom binding wins');
 assert(!controls.actions.some(([id])=>id==='interact'),'E interaction was redundant');
 assert(controls.rebind('up','Escape'));
 assert.equal(controls.rebind('up','ArrowUp'),null);

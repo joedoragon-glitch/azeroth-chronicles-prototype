@@ -117,6 +117,7 @@ await check('Compact HUD and readable scrolling dialogs '+tag,async()=>{
  assert(metrics.modal.width<=(phone?(v.height<=500?390:330):430)+2,'dialog width is bounded');
  assert(metrics.modal.height<=v.height*(phone?(v.height<=500?0.89:0.74):0.73)+2,'dialog no longer fills the screen');
  assert(metrics.back.bottom<=metrics.modal.bottom+1,'Back remains inside the dialog');
+ if(!phone)assert(metrics.modal.x>=0&&metrics.modal.x<=Math.max(48,v.width*0.08),'desktop dialog sits within left-side reach');
  assert(metrics.scrollHeight>metrics.clientHeight,'long option lists scroll inside the dialog');
  if(phone){
   const targets=await page.evaluate(()=>{const r=el=>{const b=el.getBoundingClientRect();return {width:Math.round(b.width*10)/10,height:Math.round(b.height*10)/10};};return {first:r(document.querySelector('#modal-actions button')),back:r(document.querySelector('#close-button')),computedMinHeight:getComputedStyle(document.querySelector('#modal-actions button')).minHeight};});
@@ -138,6 +139,15 @@ await check('Compact HUD and readable scrolling dialogs '+tag,async()=>{
  assert(natural.small.width<natural.regular.width,'short interactions do not occupy a large panel');
  assert(natural.small.height<metrics.modal.height,'short interactions contract vertically');
  await page.evaluate(()=>Prototype.closeMenu());
+});
+await check('M and Z both open Map and navigation from gameplay '+tag,async()=>{
+ await page.evaluate(()=>Prototype.closeMenu());
+ for(const key of ['m','z']){
+  await page.keyboard.press(key);
+  assert(await page.locator('#modal').isVisible(),key+' opens the map');
+  assert((await page.locator('#modal-title').textContent()).includes('map'),key+' opens a map dialog');
+  await page.keyboard.press('Escape');
+ }
 });
 await check('Outside tap dismisses menus without clicking through to the world '+tag,async()=>{
  await page.evaluate(()=>{

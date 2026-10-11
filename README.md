@@ -6,14 +6,14 @@ The canonical Azeroth Chronicles product is the multi-file GitHub Pages/PWA appl
 
 ## Release status
 
-This branch prepares the **v0.9.0 beta release candidate**. It is not a publication or acceptance announcement. [Release notes and remaining acceptance](docs/V09_RELEASE_NOTES.md) distinguish implemented features, verified evidence and open checks; [Current development state](docs/DEVELOPMENT_STATE.md) records the production baseline and release workflow. The version in an exported playtest report identifies the build actually running on your device. A merged PR is not proof of publication or completed human playtesting.
+This project is in the **v0.9.1 beta maintenance line**. A v0.9.1 maintenance revision adds the opt-in Optimization Mode and improves keyboard/menu ergonomics; a merged PR alone does not establish deployment. [Release notes and remaining acceptance](docs/V09_RELEASE_NOTES.md) distinguish implemented features, verified evidence and open checks; [Current development state](docs/DEVELOPMENT_STATE.md) records the production baseline and release workflow. The version in an exported playtest report identifies the build actually running on your device. A merged PR is not proof of publication or completed human playtesting.
 
 ## Play
 
 - [Chromebook / browser](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/): keyboard layout, compact skill bar, unobstructed play-space camera, no joystick or touch confirmation buttons.
 - [Phone](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html): compact top HUD, dedicated touch layout, portrait/landscape controls and safe-area spacing. **Game and settings → Install on phone** opens installation instructions or the browser's install prompt. This remains a web app, not a native Android/iOS package.
 
-Automatic selection uses pointer capabilities, including a mouse/trackpad on a touchscreen Chromebook. Resizing a desktop window does not turn it into a phone screen. **Game and settings → Screen and performance** changes the screen preference and shows local performance measurements. Both entries use the same on-device saves. Camera framing defaults to the selected 150%; that menu also offers original 100% and 175%, remembered separately for desktop and phone. Supported phone viewports start at 375 × 800 CSS pixels (or landscape rotation); smaller layouts are no longer release targets.
+Automatic selection uses pointer capabilities, including a mouse/trackpad on a touchscreen Chromebook. Resizing a desktop window does not turn it into a phone screen. **Game and settings → Screen and performance** offers the reversible, device-local **Optimization Mode · Off / On** for weaker computers, alongside camera selection, Auto/30/60 FPS and local performance measurements. Optimization Mode reduces optional illustrated terrain, ambient audio, decorative scenery and Canvas backing resolution without changing campaign saves or combat telegraphs; actual hardware gains must be measured. Both entries use the same on-device saves. Camera framing defaults to the selected 150%; that menu also offers original 100% and 175%, remembered separately for desktop and phone. Supported phone viewports start at 375 × 800 CSS pixels (or landscape rotation); smaller layouts are no longer release targets.
 
 Choose a Standard run or the optional Succession challenge, then Paladin, Mage or Ranger. Normal and Nightmare have independent saves. Nightmare unlocks after the peaceful ending. Updates preserve local campaigns and adopt the tested published build automatically; a manual update check is also available in settings.
 
@@ -32,21 +32,21 @@ Forest Crypt, Sunken Archive and Colossus Mine now have distinct authored wings,
 | Action | Desktop | Phone |
 | --- | --- | --- |
 | Move | WASD | Left joystick or tap a reachable destination |
-| Interact | E / F | Interact |
+| Interact | F | Interact |
 | Skills 1–5 | 1–5 | Skill buttons |
 | Skills 6–8 | Space / left Shift / B | Skill buttons |
 | Charged skills 1–3 | Quick tap for normal; hold 0.65 seconds for charged | Same tap/hold behavior |
 | Ranger healing | H / left mouse for Heal | Heal button |
 | Squad doctrine | Tab during combat, Expedition 3+ | Contextual Squad button |
-| Recall | Backtick | Recall squad |
-| Change target | Q (customizable), or click Target in the HUD | Target beside Recall, above joystick |
-| Map / inventory / journal | Z / I / J | Adventure menu |
+| Recall | Q or backtick | Recall squad |
+| Change target | E (customizable), or click Target in the HUD | Target beside Recall, above joystick |
+| Map / inventory / journal | M or Z / I / J | Adventure menu |
 | Pause / menu / controls | P or V / Escape / G | Menu |
 | Menu navigation | W/A previous; S/D next; F/Enter/Space confirms | Direct tap; joystick and Confirm also work |
 
 These are keyboard defaults. **Game and settings → Controls → Customize keyboard** changes and saves bindings on this browser/device. Menu navigation follows the chosen movement keys; Enter and Space remain confirmation fallbacks, and Esc opens/backtracks menus. Browser shortcuts remain available.
 
-Menus, HUD buttons and skills accept mouse clicks and touch taps on every screen, including touchscreen Chromebooks and tablets. Skills 1–3 support quick taps and charge holds with either input. Movement autoattack remains active. Tap Target or Q to cycle visible hostiles; hold for 0.55 seconds to lock the current target throughout the encounter, including while dodging bosses or ignoring summons. Tap again to cycle and release that lock. The lock drops when its foe dies, returns home, or the hero changes area. The hero favors your chosen enemy, and otherwise falls back to automatic targeting. Holding Skill 1 or 2 shows subtle brackets and line-of-sight/range guidance (gold ready, amber out of range, red obstructed). Press Target during the hold to retarget. No persistent targeting circles are added.
+Menus, HUD buttons and skills accept mouse clicks and touch taps on every screen, including touchscreen Chromebooks and tablets. Skills 1–3 support quick taps and charge holds with either input. Movement autoattack remains active. Tap Target or E to cycle visible hostiles; hold for 0.55 seconds to lock the current target throughout the encounter, including while dodging bosses or ignoring summons. Tap again to cycle and release that lock. The lock drops when its foe dies, returns home, or the hero changes area. The hero favors your chosen enemy, and otherwise falls back to automatic targeting. Holding Skill 1 or 2 shows subtle brackets and line-of-sight/range guidance (gold ready, amber out of range, red obstructed). Press Target during the hold to retarget. No persistent targeting circles are added.
 
 **Controls → Touch and mouse options** selects the phone's default two-thumb layout (movement left, skills right) or the alternate left-hand layout. Touch tap-to-move is enabled by default alongside the joystick and can be disabled. Taps use existing collision/pathfinding; manual keyboard or joystick movement immediately takes over. Opening menus, pausing or losing focus cancels travel. Taps move the hero only and do not issue squad orders or automatically interact with services.
 

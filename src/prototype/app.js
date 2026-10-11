@@ -312,6 +312,7 @@
         : '') +
       '. Fallen companions need Barracks recovery.\nMap ' +
       input.key('map') +
+      (input.actionFor('KeyM') === 'map' && input.key('map') !== 'M' ? ' / M' : '') +
       ', Journal ' +
       input.key('quests') +
       ', Menu Esc. In menus: ' +
