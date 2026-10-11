@@ -433,12 +433,15 @@
     $('modal-description').textContent = description;
     $('modal-content').scrollTop = 0;
     renderActions();
+    // Give keyboard and assistive-technology users a reliable dialog focus entry.
+    $('modal').tabIndex = -1;
+    $('modal').focus({ preventScroll: true });
   }
   function renderActions() {
     const host = $('modal-actions');
     host.replaceChildren();
     buttons = [];
-    for (const a of menu.actions) {
+    for (const [index, a] of menu.actions.entries()) {
       const b = document.createElement('button');
       b.textContent = a.label;
       b.disabled = a.disabled === true;
@@ -449,6 +452,11 @@
         b.append(span);
       }
       b.onclick = (e) => {
+        // A mouse/touch choice must become the keyboard-confirmed choice too.
+        if (buttons[index] === b && menuIndex !== index) {
+          menuIndex = index;
+          highlight();
+        }
         audio.unlock().then(() => audio.interfaceSound('confirm'));
         a.action();
         if (started) save();
@@ -463,10 +471,13 @@
     buttons.push(back);
     highlight();
   }
-  function highlight() {
+  function highlight(moveFocus = false) {
     audio.interfaceSound('select');
     buttons.forEach((b, i) => b.classList.toggle('selected', i === menuIndex));
-    buttons[menuIndex]?.scrollIntoView({ block: 'nearest' });
+    const selected = buttons[menuIndex];
+    if (moveFocus && selected)
+      (selected.disabled ? $('modal') : selected).focus({ preventScroll: true });
+    selected?.scrollIntoView({ block: 'nearest' });
   }
   function closeMenu() {
     audio.interfaceSound('close');
@@ -1838,13 +1849,27 @@
       return;
     }
     if (menu) {
+      // Reserve ordinary Tab navigation inside dialogs, but honor a player's
+      // explicit Tab remap to a menu direction or confirmation action.
+      if (code === 'Tab' && !['up', 'down', 'left', 'right', 'confirm'].includes(actionId)) {
+        e.preventDefault();
+        if (e.repeat) return;
+        const available = buttons.filter((b) => !b.disabled);
+        if (!available.length) return;
+        const focusedIndex = available.indexOf(document.activeElement);
+        const from = focusedIndex < 0 ? (e.shiftKey ? 0 : -1) : focusedIndex;
+        const next = available[(from + (e.shiftKey ? -1 : 1) + available.length) % available.length];
+        menuIndex = buttons.indexOf(next);
+        highlight(true);
+        return;
+      }
       if (e.repeat) return;
       if (['down', 'right'].includes(actionId)) {
         menuIndex = (menuIndex + 1) % Math.max(1, buttons.length);
-        highlight();
+        highlight(true);
       } else if (['up', 'left'].includes(actionId)) {
         menuIndex = (menuIndex - 1 + buttons.length) % Math.max(1, buttons.length);
-        highlight();
+        highlight(true);
       } else if (actionId === 'confirm' || ['Enter', 'Space'].includes(code))
         if (buttons[menuIndex]?.disabled) audio.interfaceSound('denied');
         else buttons[menuIndex]?.click();

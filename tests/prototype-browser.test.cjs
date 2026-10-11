@@ -78,7 +78,12 @@ await check('Compact HUD and readable scrolling dialogs '+tag,async()=>{
  assert(metrics.modal.height<=v.height*(phone?(v.height<=500?0.89:0.74):0.73)+2,'dialog no longer fills the screen');
  assert(metrics.back.bottom<=metrics.modal.bottom+1,'Back remains inside the dialog');
  assert(metrics.scrollHeight>metrics.clientHeight,'long option lists scroll inside the dialog');
- if(phone)assert(metrics.hud.width<=310,'phone HUD is not a full-width banner');
+ if(phone){
+  const targets=await page.evaluate(()=>{const r=el=>{const b=el.getBoundingClientRect();return {width:Math.round(b.width*10)/10,height:Math.round(b.height*10)/10};};return {first:r(document.querySelector('#modal-actions button')),back:r(document.querySelector('#close-button')),computedMinHeight:getComputedStyle(document.querySelector('#modal-actions button')).minHeight};});
+  console.log('UX_TOUCH_TARGET_CHECK '+tag+' '+JSON.stringify(targets));
+  assert(targets.first.height>=44&&targets.back.height>=44,'all phone actions and Back have at least 44 CSS-pixel touch targets');
+  assert(metrics.hud.width<=310,'phone HUD is not a full-width banner');
+ }
  else assert(metrics.hud.width<=214,'desktop status dock is compact');
  const natural=await page.evaluate(()=>{
   Prototype.openMenu('Small NPC','A short greeting.',[{label:'Talk',action:()=>{}}]);
@@ -199,8 +204,20 @@ await check('Mouse and touch menus work alongside keyboard; mouse world movement
  const second=page.locator('#modal-actions button').nth(1);
  if(v.touch)await second.tap();else await second.click();
  assert.equal(await page.evaluate(()=>globalThis.menuInputProbe),'second','direct click/tap activates menu choice');
- await page.keyboard.press('s');await page.keyboard.press('f');assert.equal(await page.evaluate(()=>globalThis.menuInputProbe),'second','keyboard navigation still works');
+ await page.keyboard.press('f');assert.equal(await page.evaluate(()=>globalThis.menuInputProbe),'second','pointer-selected action stays selected for immediate F confirmation');
+ assert(await second.evaluate(b=>b.classList.contains('selected')),'logical selection matches clicked/tapped choice');
+ await page.keyboard.press('s');assert(await page.locator('#close-button').evaluate(b=>b.classList.contains('selected')),'next row after second is Back');
+ await page.keyboard.press('w');assert(await second.evaluate(b=>document.activeElement===b),'W returns focus to second action');
+ await page.keyboard.press('Tab');assert(await page.locator('#close-button').evaluate(b=>document.activeElement===b),'Tab moves focus to Back');
+ await page.keyboard.press('Shift+Tab');assert(await second.evaluate(b=>document.activeElement===b),'Shift+Tab returns focus to second action');
+ await page.keyboard.press('Enter');assert.equal(await page.evaluate(()=>globalThis.menuInputProbe),'second','keyboard Enter confirms focused selection');
  await page.locator('#close-button').click();assert(await page.locator('#modal').isHidden(),'Back accepts pointer input');
+ await page.evaluate(()=>{globalThis.disabledMenuProbe='';Prototype.openMenu('Disabled menu choices','', [{label:'Available',action:()=>globalThis.disabledMenuProbe='available'},{label:'Unavailable explained',detail:'Unlock later',disabled:true,action:()=>globalThis.disabledMenuProbe='unavailable'},{label:'Another available',action:()=>globalThis.disabledMenuProbe='another'}]);});
+ await page.keyboard.press('s');assert(await page.locator('#modal-actions button').nth(1).evaluate(b=>b.classList.contains('selected')&&b.disabled),'disabled choices remain visible and navigable');
+ await page.keyboard.press('f');assert.equal(await page.evaluate(()=>globalThis.disabledMenuProbe),'','keyboard cannot activate disabled option');
+ await page.keyboard.press('s');assert(await page.locator('#modal-actions button').nth(2).evaluate(b=>document.activeElement===b),'focus returns to next enabled choice');
+ await page.keyboard.press('f');assert.equal(await page.evaluate(()=>globalThis.disabledMenuProbe),'another','enabled option still executes');
+ await page.keyboard.press('Escape');
  await page.evaluate(()=>{const c=Prototype.game,board=c.zone().npcs.find(n=>n.kind==='quests');Object.assign(c.hero,{x:board.x,y:board.y});});
  await page.keyboard.press('e');assert(!await page.locator('#modal').isHidden());await page.keyboard.press('Escape');
  await page.evaluate(state=>{Prototype.closeMenu();Prototype.game.s=state;},saved);
