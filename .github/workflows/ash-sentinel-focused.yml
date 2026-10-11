@@ -1,0 +1,33 @@
+name: Ash Sentinel focused regression
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - src/prototype/boss-combat.js
+      - src/prototype/combat.js
+      - src/prototype/combat-visuals.js
+      - src/prototype/engine.js
+      - src/prototype/narration.js
+      - tests/ash-sentinel-combat.test.cjs
+      - tests/ash-sentinel-identity.test.cjs
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sentinel-focused:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Sentinel new mechanics
+        run: node tests/ash-sentinel-combat.test.cjs
+      - name: Citadel identity and old saves
+        run: node tests/ash-sentinel-identity.test.cjs
+      - name: Citadel routes and awakening
+        run: |
+          node tests/dungeon-pressure.test.cjs
+          node tests/awakening-anchor.test.cjs
