@@ -1965,6 +1965,10 @@
     }
     kill(e) {
       if (e.deathPaid) return;
+      if (e.family === 'mine' && e.type === 'boss')
+        this.zone().props = this.zone().props.filter(
+          (p) => !p.garunTemporary && !p.garunPreview,
+        );
       this.tacticalClearThreat(e);
       this.tacticalClearBurst(e);
       this.tacticalClearRogueRegroup(e);
@@ -3867,6 +3871,8 @@
             const a = e.telegraph;
             this.resolveAttack(e);
             e.telegraph = e.motion ? null : e.sequence?.shift() || null;
+            if (e.family === 'mine' && a.index !== 1 && e.telegraph?.index === 1)
+              this.prepareMineWorksPreview(e);
             if (e.telegraph) this.event('warning', { family: e.family });
             if (!e.telegraph && !e.motion) {
               e.cd = a.recovery * (e.type === 'boss' ? R.bossCadence.specialRecoveryMultiplier : 1);
@@ -4041,6 +4047,10 @@
     }
     disengage(e, dt) {
       if (!e.returning) {
+        if (e.family === 'mine' && e.type === 'boss')
+          this.zone().props = this.zone().props.filter(
+            (p) => !p.garunTemporary && !p.garunPreview,
+          );
         this.tacticalClearThreat(e);
         this.tacticalClearBurst(e);
         this.tacticalClearRogueRegroup(e);
