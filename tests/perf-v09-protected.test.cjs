@@ -5,6 +5,12 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const manifest = require('./fixtures/perf-v09-protected.json');
 const revision = manifest.renderingRevision;
+const loreRevision = manifest.lifebinderRevision;
+assert.deepEqual(Object.keys(loreRevision.files).sort(), [
+  'src/prototype/data.js',
+  'src/prototype/rules.js',
+  'src/prototype/save.js',
+]);
 assert.deepEqual(Object.keys(revision.files).sort(), [
   'src/prototype/app.js',
   'src/prototype/runtime.js',
@@ -16,8 +22,8 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    revision.files[file] || expected,
-    file + ' is protected against baseline / reviewed rendering revision ' + manifest.baseline,
+    revision.files[file] || loreRevision.files[file] || expected,
+    file + ' is protected against the baseline and explicit rendering/Lifebinder revisions (' + manifest.baseline + ')',
   );
 }
 const app = fs.readFileSync(path.resolve(__dirname, '../src/prototype/app.js'), 'utf8');
@@ -34,5 +40,5 @@ assert.equal(
 console.log(
   'PASS ' +
     Object.keys(manifest.files).length +
-    ' exact protected simulation/scheduling/save/UI/art hashes',
+    ' exact protected simulation/scheduling/save/UI/art hashes (three explicit Lifebinder revisions)',
 );
