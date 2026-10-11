@@ -39,5 +39,12 @@
     "version": "0.8.139",
     "scope": "Thornfang Pounce and Stone Colossus Wall Rush authored description-only corrections; no mechanics, layouts or procedural art changed",
     "evidence": "v0.9 author approval and boss-description-contracts regression; all other baseline hashes unchanged"
+  },
+  "ironrootRevision": {
+    "source": "Issue #239 isolated draft PR #259 — decorative five-region silver Crown production scenes; strict reviewed hashes, no mechanics.",
+    "files": {
+      "src/prototype/rules.js": "f52df6be2a86109f612eaa41fbf7202e960baf5122985d08d152372594d5bcf5",
+      "src/prototype/world.js": "01e909b65eb773734669aae55cf89efd06eb4221bbc1eda4ed26f5075230d055"
+    }
   }
 }
