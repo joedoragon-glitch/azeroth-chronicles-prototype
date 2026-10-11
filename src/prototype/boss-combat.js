@@ -490,6 +490,13 @@
         const a = e.telegraph;
         if (!a) return;
         if (a.rogueMove) {
+          if (e.family === 'darklord' && a.effect === 'bind' && a.rogueSignature)
+            e.crownDecreeZone = {
+              x: a.x,
+              y: a.y,
+              radius: a.radius,
+              expires: this.s.time + 3,
+            };
           this.tacticalResolveRogueMove(e, a);
           return;
         }

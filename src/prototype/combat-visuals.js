@@ -190,6 +190,14 @@
           cue ? ctx.stroke() : ctx.fill();
           ctx.setLineDash([]);
         }
+      if (ruler.crownDecreeZone && ruler.crownDecreeZone.expires >= game.s.time) {
+        circlePath(ctx, screen, ruler.crownDecreeZone, ruler.crownDecreeZone.radius);
+        ctx.strokeStyle = '#9c91c8';
+        ctx.lineWidth = cue ? 2.5 : 1.5;
+        ctx.setLineDash([7, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
       if (ruler.royalTaxShield > 0) {
         circlePath(ctx, screen, ruler, 60);
         ctx.strokeStyle = '#d9b5fa';

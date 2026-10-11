@@ -151,4 +151,17 @@ for (const mode of ['normal', 'nightmare']) {
   assert(guards.length > 0 && guards.length <= 3);
   assert(guards.every((guard) => guard.royalFormationUntil === c.s.time + 3));
 }
-console.log('PASS Dark Lord Royal Taxation, guard formations, sector warnings and interception');
+{
+  const c = new C('normal', 'paladin', () => 0.9);
+  c.enter('crown');
+  const lord = c.bossEnemy(boss, 'normal', { x: 1100, y: 1100 });
+  lord.telegraph = {
+    rogueMove: true, rogueSignature: true, effect: 'bind',
+    x: lord.x, y: lord.y, radius: 175,
+  };
+  c.tacticalResolveRogueMove = () => true;
+  c.resolveAttack(lord);
+  assert.equal(lord.crownDecreeZone.radius, 175);
+  assert.equal(lord.crownDecreeZone.expires, c.s.time + 3);
+}
+console.log('PASS Dark Lord royal taxation, formations, decree, sector warnings and interception');
