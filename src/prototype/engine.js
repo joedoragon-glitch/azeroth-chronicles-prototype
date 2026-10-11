@@ -49,7 +49,6 @@
         restCooldown: 0,
         zone: 'vale',
         refuge: 'vale',
-        barracksRespawn: null,
         nextId: 1,
         manaBalanceVersion: 1,
         talentBalanceVersion: 1,
