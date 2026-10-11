@@ -2184,12 +2184,15 @@
               Object.assign(e, upgraded);
             }
       }
+      const remaining = dungeonIds.filter((id) => !this.s.true[id]).length;
       this.say(
-        'The TRUE Dark Lord is gone forever. Returning dungeon bosses and guardians are fixed at level ' +
-          this.s.awakeningLevel +
-          '.',
+        remaining
+          ? 'The TRUE Dark Lord is gone. ' +
+              remaining +
+              ' former companions can still claim the Crown.'
+          : 'The TRUE Dark Lord is gone. All five former companions were already defeated in TRUE form.',
       );
-      this.notice('AWAKENING · The five TRUE dungeon guardians have risen', 6.5);
+      if (remaining) this.notice('AWAKENING · ' + remaining + ' TRUE successors remain', 6.5);
       this.event('awakening', { level: this.s.awakeningLevel });
       this.checkEnding();
     }
@@ -2241,17 +2244,22 @@
       }
     }
     makeHabitat(z) {
-      if (z.habitat) return;
+      // Historical peaceful Treasuries were marked as habitats but left empty.
+      if (z.habitat && (z.enemies.length || !this.supplyRoom(z.id))) return;
       z.habitat = true;
       z.enemies = [];
-      if (this.supplyRoom(z.id)) return;
       const i = this.regionIndex(z.id),
+        room = this.supplyRoom(z.id),
         side = this.sideDungeon(z.id),
         dungeon = dungeonIds.includes(z.id),
-        count = side ? 5 : dungeon ? 4 : [8, 10, 12, 14, 16][i];
+        indoor = !!room || !!side || dungeon,
+        count = room ? 4 : side ? 5 : dungeon ? 6 : [8, 10, 12, 14, 16][i];
       for (let j = 0; j < count; j++) {
-        const sp = D.species[i][Math.floor(j / 2) % 2],
-          size = side ? side.size || 1100 : dungeon ? 1500 : D.regions[i].size,
+        const visiting = indoor && j >= Math.ceil(count / 2),
+          sp = visiting
+            ? D.species[(i + j - Math.ceil(count / 2) + 1) % D.regions.length][0]
+            : D.species[i][Math.floor(j / 2) % 2],
+          size = room ? 900 : side ? side.size || 1100 : dungeon ? 1500 : D.regions[i].size,
           p = this.safe(
             350 + ((Math.floor(j / 2) * 337) % (size - 600)) + (j % 2) * 55,
             400 + ((Math.floor(j / 2) * 277) % (size - 650)),
@@ -2260,7 +2268,7 @@
         const e = this.makeEnemy(
           {
             species: sp[0],
-            name: sp[1] + ' resident',
+            name: sp[1] + (visiting ? ' visitor' : ' resident'),
             icon: sp[2],
             level: 1,
             hp: 1,
@@ -2273,7 +2281,7 @@
         e.neutral = true;
         z.enemies.push(e);
       }
-      if (!dungeon && !side) {
+      if (!indoor) {
         const b = D.bosses.find((b) => b.region === z.id && b.kind === 'field');
         if (b) {
           const p = this.fieldCenter(i),
