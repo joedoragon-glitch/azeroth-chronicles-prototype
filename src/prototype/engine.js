@@ -1520,6 +1520,7 @@
             delete e.board;
             delete e.dressUntil;
           }
+          delete e.dressPost;
           e.aggro = false;
           e.telegraph = null;
           e.sequence = [];
@@ -3649,6 +3650,19 @@
             this.s.challenge.gameOver
           )
             return;
+        }
+        if (e.dressPost) {
+          const post = e.dressPost;
+          if (post.expires <= this.s.time || e.returning ||
+              !z.enemies.some((boss) => boss.id === post.owner && boss.hp > 0 && boss.aggro)) {
+            delete e.dressPost;
+          } else if (Math.hypot(e.x - post.x, e.y - post.y) > 7) {
+            this.move(e, post, 145, dt);
+            e.noProgress = 0;
+            continue;
+          } else {
+            delete e.dressPost;
+          }
         }
         if (e.neutral) {
           const t = this.s.time * 0.1 + Number(e.id.split('-')[1]);

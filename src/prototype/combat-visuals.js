@@ -194,9 +194,10 @@
           { x: cell.x - h, y: cell.y + h },
         ]);
         const warning = cell.selected && boss.board.phase === 'warn';
-        ctx.lineWidth = warning ? 2.2 : 1.1;
-        ctx.strokeStyle = warning ? '#fff1a7' : '#8794a766';
-        ctx.fillStyle = warning ? '#df795655' : '#536b8917';
+        const impact = cell.selected && boss.board.phase === 'rest';
+        ctx.lineWidth = warning || impact ? 2.2 : 1.1;
+        ctx.strokeStyle = warning ? '#fff1a7' : impact ? '#ff9267' : '#8794a766';
+        ctx.fillStyle = warning ? '#df795655' : impact ? '#e84b3d88' : '#536b8917';
         if (cue) ctx.stroke();
         else {
           ctx.fill();

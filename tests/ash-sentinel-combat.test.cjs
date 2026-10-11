@@ -20,7 +20,20 @@ c.resolveAttack(boss);
 assert.equal(c.s.projectiles.length, 9);
 boss.telegraph = c.buildBossAttack(boss, 1, c.hero).first;
 c.resolveAttack(boss);
-assert(boss.dressUntil > c.s.time);
+assert.equal(boss.dressUntil, 0, 'no defensive formation without actual soldiers');
+const escort = c.makeEnemy({ species: 'crownguard', level: boss.level, hp: 1000,
+  damage: 10, gold: 0, xp: 0 }, { x: boss.x + 30, y: boss.y + 30 });
+escort.species = 'crownguard';
+c.zone().enemies.push(escort);
+boss.telegraph = c.buildBossAttack(boss, 1, c.hero).first;
+const originalPost = { x: escort.x, y: escort.y };
+c.resolveAttack(boss);
+assert(boss.dressUntil > c.s.time, 'living soldier makes the order meaningful');
+assert(escort.dressPost, 'soldier receives a finite movement order');
+assert.deepEqual({ x: escort.x, y: escort.y }, originalPost, 'Dress Ranks does not teleport');
+for (let frame = 0; frame < 20; frame++) c.updateEnemies(.03);
+assert(Math.hypot(escort.x - originalPost.x, escort.y - originalPost.y) > 0,
+  'soldier marches toward the post over simulation ticks');
 assert(C.restore(c.snapshot()).zone().enemies.some(e => e.family === 'citadel' && e.board));
 // Full cast warns a fixed route without retargeting after the first leg.
 const charge = c.buildBossAttack(boss, 2, c.hero).first;

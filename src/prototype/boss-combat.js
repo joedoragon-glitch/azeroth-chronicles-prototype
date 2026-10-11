@@ -602,14 +602,17 @@
             )
             .sort((a, b) => dist(a, e) - dist(b, e))
             .slice(0, 4);
+          let ordered = 0;
           for (const [i, u] of guards.entries()) {
             const p = this.safe(e.x + posts[i][0], e.y + posts[i][1]);
             if (dist(u, p) <= 240 && this.clearSegment(u, p)) {
-              Object.assign(u, p);
+              // Issue a visible marching order; never teleport live soldiers.
+              u.dressPost = { ...p, owner: e.id, expires: this.s.time + 5 };
               u.aggro = true;
+              ordered++;
             }
           }
-          e.dressUntil = this.s.time + 5;
+          e.dressUntil = ordered ? this.s.time + 5 : 0;
           return;
         }
         if (e.family === 'citadel' && a.kind === 'canister') {
