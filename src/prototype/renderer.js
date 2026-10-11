@@ -443,6 +443,25 @@
           }
         }
       }
+      // Generic cast bar: preparation is visible, but the attack's name,
+      // target and hit geometry are not. The bar shares the hero HP anchor.
+      if (e.renderKind === 'enemy' && e.telegraph?.castOnly) {
+        const cast = e.telegraph,
+          progress = Math.max(0, Math.min(1, 1 - cast.timer / Math.max(0.001, cast.total))),
+          cy = y - 12;
+        ctx.save();
+        ctx.fillStyle = '#0c1a19dd';
+        ctx.fillRect(left - 2, cy - 2, w + 4, 9);
+        ctx.fillStyle = '#544b3b';
+        ctx.fillRect(left, cy, w, 5);
+        ctx.fillStyle = '#e9cf8f';
+        ctx.fillRect(left, cy, w * progress, 5);
+        ctx.font = 'bold 8px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#f6e5c2';
+        ctx.fillText('CASTING', p.x, cy - 4);
+        ctx.restore();
+      }
       ctx.fillStyle = '#0c1a19dd';
       ctx.fillRect(left - 2, y - 2, w + 4, 8);
       ctx.fillStyle = '#5a645b';

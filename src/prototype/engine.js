@@ -2744,8 +2744,12 @@
           recovery: 0.55,
         };
       } else if (e.species === 'stalker') {
+        // Hide the attack identity and impact location, but retain the original
+        // 0.7-second preparation and the existing collision-aware landing.
+        // castOnly is presentation metadata, not a new gameplay attack kind.
         e.telegraph = {
           nightSkill: 'pounce',
+          castOnly: true,
           kind: 'circle',
           name: 'Shadow Pounce',
           x: target.x,
@@ -2761,7 +2765,7 @@
         };
       } else return false;
       e.specialCd = cfg.skillCooldown * (e.frenzy ? 0.7 : 1);
-      this.event('warning', { family: e.species });
+      if (e.species === 'wraith') this.event('warning', { family: e.species });
       return true;
     }
 
