@@ -718,9 +718,17 @@
       const previous = e.maxHp || e.baseHp || 1;
       const fraction = Math.max(0, Math.min(1, (e.hp || 0) / previous));
       const oldBase = e.baseHp || previous;
-      const scaled = oldBase * (profile.enduranceHp / (
-        e.fieldCaptain ? 1444 : ({ 'supply-vale': 130, 'supply-march': 340, 'supply-highlands': 550, 'supply-crown': 970 }[e.captainProfile] || oldBase)
-      ));
+      const scaled =
+        oldBase *
+        (profile.enduranceHp /
+          (e.fieldCaptain
+            ? 1444
+            : {
+                'supply-vale': 130,
+                'supply-march': 340,
+                'supply-highlands': 550,
+                'supply-crown': 970,
+              }[e.captainProfile] || oldBase));
       const ratio = previous / oldBase;
       e.baseHp = Math.round(scaled);
       e.maxHp = e.baseHp * ratio;
@@ -2555,30 +2563,30 @@
       return true;
     }
     captainOvertimeRecruit(e) {
-        const candidates = this.zone()
-            .enemies.filter(
-              (u) =>
-                u !== e &&
-                u.hp > 0 &&
-                !u.neutral &&
-                !u.captain &&
-                !u.roomCaptain &&
-                !u.summon &&
-                u.type === 'mob' &&
-                dist(u, e) < 900,
-            )
-            .sort((a, b) => dist(a, e) - dist(b, e)),
-          workers =
-            candidates.length <= 7
-              ? candidates
-              : [...candidates.slice(0, 3), ...candidates.slice(-4)];
-        for (const u of workers) {
-          u.quotaOvertime = Math.max(u.quotaOvertime || 0, 9);
-          u.quotaTarget = { x: this.hero.x, y: this.hero.y };
-          u.pursuitBurst = Math.max(u.pursuitBurst || 0, 4);
-          u.cd = Math.min(u.cd || 0, 0.2);
-          this.engage(u);
-        }
+      const candidates = this.zone()
+          .enemies.filter(
+            (u) =>
+              u !== e &&
+              u.hp > 0 &&
+              !u.neutral &&
+              !u.captain &&
+              !u.roomCaptain &&
+              !u.summon &&
+              u.type === 'mob' &&
+              dist(u, e) < 900,
+          )
+          .sort((a, b) => dist(a, e) - dist(b, e)),
+        workers =
+          candidates.length <= 7
+            ? candidates
+            : [...candidates.slice(0, 3), ...candidates.slice(-4)];
+      for (const u of workers) {
+        u.quotaOvertime = Math.max(u.quotaOvertime || 0, 9);
+        u.quotaTarget = { x: this.hero.x, y: this.hero.y };
+        u.pursuitBurst = Math.max(u.pursuitBurst || 0, 4);
+        u.cd = Math.min(u.cd || 0, 0.2);
+        this.engage(u);
+      }
     }
     captainOwnedSummons(e) {
       return this.zone().enemies.filter((u) => u.summon && u.owner === e.id && u.hp > 0);
@@ -2723,7 +2731,9 @@
           angle,
           ...center,
           radius:
-            (plan.radius || (plan.kind === 'cone' ? 145 : 85)) * R.bossCadence.areaRangeMultiplier * (plan.captainRadiusMultiplier || 1),
+            (plan.radius || (plan.kind === 'cone' ? 145 : 85)) *
+            R.bossCadence.areaRangeMultiplier *
+            (plan.captainRadiusMultiplier || 1),
           sequence: [],
         };
       if (plan.sequential && plan.kind === 'circle') {
@@ -3678,8 +3688,8 @@
         e.pursuitBurst = Math.max(0, (e.pursuitBurst || 0) - dt);
         e.open = Math.max(0, (e.open || 0) - dt);
         e.captainGuard = Math.max(0, (e.captainGuard || 0) - dt);
-      e.captainReflect = Math.max(0, (e.captainReflect || 0) - dt);
-      e.captainPursuit = Math.max(0, (e.captainPursuit || 0) - dt);
+        e.captainReflect = Math.max(0, (e.captainReflect || 0) - dt);
+        e.captainPursuit = Math.max(0, (e.captainPursuit || 0) - dt);
         e.quotaOvertime = Math.max(0, (e.quotaOvertime || 0) - dt);
         if (!e.quotaOvertime) delete e.quotaTarget;
         if (e.fieldCaptain && e.captainPhase && e.hp > 0) {
