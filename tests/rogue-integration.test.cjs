@@ -185,7 +185,7 @@ test('All signature footprints can be dodged and real solid cover blocks their h
       } else Object.assign(c.hero, { x: a.x + a.radius + 15, y: a.y });
       c.tacticalResolveRogueMove(e, a);
       for (let tick = 0; tick < 160 && e.motion; tick++) c.advanceMotion(e, 0.05);
-      assert.equal(e.motion, null, a.name + ' finishes without an unavoidable hit');
+      assert(!e.motion, a.name + ' finishes without an unavoidable hit');
       assert.equal(c.hero.hp, hp, a.name + (cover ? ' respects cover' : ' respects mark'));
       assert.equal(c.hero.slow, 0, 'avoided hit cannot slow');
       assert(!c.tacticalScatterState(c.hero), 'avoided hit cannot scatter');
