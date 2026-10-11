@@ -2322,9 +2322,13 @@
         formationStart = { x: h.x, y: h.y };
       z.clock += dt;
       if (z.id === 'mine')
-        z.props = z.props.filter((p) => !p.garunTemporary ||
-          (p.expiresAt > this.s.time && !this.peace &&
-            z.enemies.some((e) => e.family === 'mine' && e.hp > 0)));
+        z.props = z.props.filter(
+          (p) =>
+            !p.garunTemporary ||
+            (p.expiresAt > this.s.time &&
+              !this.peace &&
+              z.enemies.some((e) => e.family === 'mine' && e.hp > 0)),
+        );
       h.cd = h.cd.map((c) => Math.max(0, c - dt));
       for (const f of ['immune', 'haste', 'potionCd', 'slow']) h[f] = Math.max(0, h[f] - dt);
       for (const u of this.s.party) {
