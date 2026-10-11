@@ -215,6 +215,7 @@ const PrototypeData = {
         'Water jets: two parallel lanes warn for 1.5 seconds and leave a safe channel.',
         'Undertow: one patch slows rather than immobilizes; 1.5 second warning and 4 second duration.',
         'Echo call: summons three drowned echoes after 1.7 seconds; the arena remains navigable.',
+        'Cooldown Sabotage: after a 1.5-second targeted warning, adds 3 seconds to an available healer or hero cooldown without dealing damage.',
       ],
     },
     {
