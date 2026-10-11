@@ -59,7 +59,7 @@ function resolveThroughAI(c, e, a) {
     c.updateEnemies(0.05);
     elapsed += 0.05;
   }
-  assert.equal(e.motion, null, a.name + ' finishes its warned movement');
+  assert(!e.motion, a.name + ' finishes its warned movement');
   assert(e.cd > 0, a.name + ' enters recovery');
 }
 test('The live normal/night roster and elite catalogue have complete authored repertoires', () => {
