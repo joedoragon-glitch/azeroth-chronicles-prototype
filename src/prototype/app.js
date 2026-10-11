@@ -282,8 +282,6 @@
       'Move ' +
       ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('/') +
       '; phone: joystick. Interact ' +
-      input.key('interact') +
-      '/' +
       input.key('confirm') +
       '.\n' +
       'Skills 1–8: ' +
@@ -1858,7 +1856,7 @@
     if (actionId === 'doctrine') {
       game.toggleSquadDoctrine();
       updateHUD();
-    } else if (actionId === 'interact' || actionId === 'confirm') interact();
+    } else if (actionId === 'confirm') interact();
     else if (actionId === 'recall') {
       recallSquad();
       save();
@@ -2319,8 +2317,6 @@
       ' · Move   ' +
       input.key('target') +
       ' · Target   ' +
-      input.key('interact') +
-      ' / ' +
       input.key('confirm') +
       ' · Interact   ' +
       input.key('map') +
