@@ -791,7 +791,8 @@
             e.open = e.form === 'true' && e.family === 'citadel' ? a.opening / 2 : a.opening;
           e.telegraph = e.sequence?.shift() || null;
           if (e.telegraph) this.event('warning', { family: e.family });
-          else e.basicDue = e.type === 'boss' && e.attackIndex % R.bossCadence.skillsPerBasic === 0;
+          else if (!a.rogueMove)
+            e.basicDue = e.type === 'boss' && e.attackIndex % R.bossCadence.skillsPerBasic === 0;
         }
       }
     }
