@@ -3683,7 +3683,7 @@
         e.captainPursuit = Math.max(0, (e.captainPursuit || 0) - dt);
         e.quotaOvertime = Math.max(0, (e.quotaOvertime || 0) - dt);
         if (!e.quotaOvertime) delete e.quotaTarget;
-        if (e.fieldCaptain && e.captainPhase && e.hp > 0) {
+        if (e.fieldCaptain && e.captainPhase && e.aggro && e.hp > 0) {
           e.captainOvertimeCd = Math.max(0, (e.captainOvertimeCd ?? 12) - dt);
           if (e.captainOvertimeCd === 0) {
             this.captainOvertimeRecruit(e);
