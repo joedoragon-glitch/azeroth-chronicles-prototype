@@ -7,7 +7,9 @@ const outputDir =
   process.env.BETA_NATURAL_OUTPUT || path.join(__dirname, '../test-results/readiness');
 fs.mkdirSync(outputDir, { recursive: true });
 const c = new C('normal', 'ranger', () => 0.9);
-const sourceCommit = require('node:child_process').execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+const sourceCommit = require('node:child_process')
+  .execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' })
+  .trim();
 let checkpointIndex = 0;
 let outcome = 'INCOMPLETE';
 const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y),
@@ -28,7 +30,10 @@ function record(label) {
     rescued: Object.keys(c.s.rescued),
   };
   events.push(r);
-  fs.writeFileSync(path.join(outputDir, String(checkpointIndex++).padStart(2, '0') + '-save.json'), JSON.stringify(c.snapshot(), null, 2));
+  fs.writeFileSync(
+    path.join(outputDir, String(checkpointIndex++).padStart(2, '0') + '-save.json'),
+    JSON.stringify(c.snapshot(), null, 2),
+  );
   console.log(JSON.stringify(r));
 }
 function tick() {
@@ -48,23 +53,28 @@ function near() {
 // This is not a browser perception test or evidence of human playability.
 function danger(p, e) {
   let risk = 0;
-  for (const u of c.zone().enemies.filter(u => u.hp > 0 && !u.neutral)) {
+  for (const u of c.zone().enemies.filter((u) => u.hp > 0 && !u.neutral)) {
     const d = dist(p, u);
     if (d < 150) risk += (150 - d) * 5;
     const a = u.telegraph || u.motion;
     if (!a || a.kind === 'summon' || a.bossHeal) continue;
-    if (a.kind === 'circle' && c.attackPatches(a).some(q => dist(p,q) < (q.radius || 120) + 40)) risk += 1500;
-    if (a.kind === 'line' && c.distanceToSegment(p, {x:a.fromX,y:a.fromY},a) < 100) risk += 1500;
+    if (a.kind === 'circle' && c.attackPatches(a).some((q) => dist(p, q) < (q.radius || 120) + 40))
+      risk += 1500;
+    if (a.kind === 'line' && c.distanceToSegment(p, { x: a.fromX, y: a.fromY }, a) < 100)
+      risk += 1500;
     if (a.kind === 'cone' && d < (a.radius || 250) + 40) {
-      const delta = Math.atan2(Math.sin(Math.atan2(p.y-u.y,p.x-u.x)-a.angle),Math.cos(Math.atan2(p.y-u.y,p.x-u.x)-a.angle));
+      const delta = Math.atan2(
+        Math.sin(Math.atan2(p.y - u.y, p.x - u.x) - a.angle),
+        Math.cos(Math.atan2(p.y - u.y, p.x - u.x) - a.angle),
+      );
       if (Math.abs(delta) < 1.2) risk += 1500;
     }
   }
-  for (const q of c.s.projectiles.filter(q => q.source === 'enemy')) {
-    const end = {x:q.x+q.dx*q.speed*0.4,y:q.y+q.dy*q.speed*0.4};
-    if(c.distanceToSegment(p,q,end)<45) risk+=500;
+  for (const q of c.s.projectiles.filter((q) => q.source === 'enemy')) {
+    const end = { x: q.x + q.dx * q.speed * 0.4, y: q.y + q.dy * q.speed * 0.4 };
+    if (c.distanceToSegment(p, q, end) < 45) risk += 500;
   }
-  return risk + Math.abs(dist(p,e)-310)*0.5;
+  return risk + Math.abs(dist(p, e) - 310) * 0.5;
 }
 function fight(e, seconds = 180) {
   const deaths = c.s.statistics.deaths;
@@ -72,22 +82,26 @@ function fight(e, seconds = 180) {
     if (c.s.statistics.deaths > deaths) return false;
     // Adds take priority once they are close; no target HP or position writes.
     const close = near();
-    const target = close && close !== e && dist(close,c.hero)<220 ? close : e;
+    const target = close && close !== e && dist(close, c.hero) < 220 ? close : e;
     c.cast(1, target.id);
     if (c.hero.skills[1]) c.cast(2, target.id);
     if (c.hero.skills[2] && c.hero.hp < c.hero.maxHp * 0.8) c.cast(3, target.id);
-    if (dist(c.hero,e)>430 || !c.line(c.hero,e)) {
-      c.hero.order = {type:'attack',id:e.id};
+    if (dist(c.hero, e) > 430 || !c.line(c.hero, e)) {
+      c.hero.order = { type: 'attack', id: e.id };
     } else {
-      let best = {x:c.hero.x,y:c.hero.y}, score=danger(best,e);
-      for(let k=0;k<16;k++) {
-        const angle=k*Math.PI/8;
-        const p={x:c.hero.x+Math.cos(angle)*80,y:c.hero.y+Math.sin(angle)*80};
-        if(c.blocked(p.x,p.y,c.zoneId,16) || !c.line(c.hero,p) || !c.line(p,e)) continue;
-        const next=danger(p,e)+8;
-        if(next<score){best=p;score=next;}
+      let best = { x: c.hero.x, y: c.hero.y },
+        score = danger(best, e);
+      for (let k = 0; k < 16; k++) {
+        const angle = (k * Math.PI) / 8;
+        const p = { x: c.hero.x + Math.cos(angle) * 80, y: c.hero.y + Math.sin(angle) * 80 };
+        if (c.blocked(p.x, p.y, c.zoneId, 16) || !c.line(c.hero, p) || !c.line(p, e)) continue;
+        const next = danger(p, e) + 8;
+        if (next < score) {
+          best = p;
+          score = next;
+        }
       }
-      c.hero.order={type:'move',...best};
+      c.hero.order = { type: 'move', ...best };
     }
     tick();
   }
@@ -133,7 +147,7 @@ try {
   record('natural construction');
   for (const id of ['goblin-camp', 'orchard', 'mill-pond']) {
     visit(id);
-    if (c.hero.hp < c.hero.maxHp * 0.85 || c.s.party.some(u => u.hp < u.maxHp * 0.6)) {
+    if (c.hero.hp < c.hero.maxHp * 0.85 || c.s.party.some((u) => u.hp < u.maxHp * 0.6)) {
       rest();
       record('rest');
     }
@@ -165,13 +179,14 @@ try {
     }
     for (const l of [...c.s.loot].filter((l) => l.zone === c.zoneId && dist(l, c.hero) < 400))
       walk(l);
-    if (c.hero.hp < c.hero.maxHp * 0.85 || c.s.party.some(u => u.hp < u.maxHp * 0.6)) rest();
+    if (c.hero.hp < c.hero.maxHp * 0.85 || c.s.party.some((u) => u.hp < u.maxHp * 0.6)) rest();
   }
   record('earned preparation');
   rest();
-  const recruiter = c.zone().npcs.find(n => n.kind === 'recruiter');
+  const recruiter = c.zone().npcs.find((n) => n.kind === 'recruiter');
   if (recruiter && walk(recruiter)) {
-    while (c.s.party.some(u => u.hp <= 0) && c.recover()) record('paid companion recovery at town captain');
+    while (c.s.party.some((u) => u.hp <= 0) && c.recover())
+      record('paid companion recovery at town captain');
   }
   record('boss departure');
   const boss = c.zone().enemies.find((e) => e.family === 'thorn');
@@ -206,7 +221,4 @@ const report = {
     thornHp: c.zone().enemies.find((e) => e.family === 'thorn')?.hp,
   },
 };
-fs.writeFileSync(
-  path.join(outputDir, 'earned-thorn-report.json'),
-  JSON.stringify(report, null, 2),
-);
+fs.writeFileSync(path.join(outputDir, 'earned-thorn-report.json'), JSON.stringify(report, null, 2));
