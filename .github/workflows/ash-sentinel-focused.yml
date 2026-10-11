@@ -10,6 +10,7 @@ on:
       - src/prototype/narration.js
       - tests/ash-sentinel-combat.test.cjs
       - tests/ash-sentinel-identity.test.cjs
+      - tests/ash-sentinel-browser.test.cjs
   workflow_dispatch:
 permissions:
   contents: read
@@ -31,3 +32,21 @@ jobs:
         run: |
           node tests/dungeon-pressure.test.cjs
           node tests/awakening-anchor.test.cjs
+  sentinel-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps chromium
+      - name: Capture and verify Citadel charge and chessboard scenes
+        run: node tests/ash-sentinel-browser.test.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ash-sentinel-desktop-phone
+          path: test-results/ash-sentinel/
+          if-no-files-found: ignore
