@@ -741,7 +741,7 @@
         // Axis fallback can report success for a zero-length clear segment.
         // A charge blocked by real geometry must end when it makes no progress.
         if (
-          (!a.flightPath?.length && dist(e, a.target) < 10) ||
+          (!a.flightPath?.length && dist(e, a.target) < (a.flightPath ? 10 : 1)) ||
           !moved ||
           dist(before, e) < 0.000001 ||
           a.life <= 0

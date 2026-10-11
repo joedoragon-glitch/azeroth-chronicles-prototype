@@ -7,7 +7,7 @@
     "src/prototype/party.js": "41a66f5b3c95a09414b1308df557aff1cbb232d341f601b1f1fcaf1d2d40d726",
     "src/prototype/combat.js": "8b14cc8e5e0a1519b83cd7201a82a6b2b2e08d7d4e4294b641dfa5d5b6a0aa4b",
     "src/prototype/hero-combat.js": "9873768cf15322246de3a2892785ebdecc9cc9ed72ff7bbb377a264647135070",
-    "src/prototype/boss-combat.js": "8703a6583c84de7e9f512dd8e711efcdfc43d9a3039b62ec56e3b36b63504252",
+    "src/prototype/boss-combat.js": "20f7cdc2430e1e33ba6d2a37971bed43f9dd0b7f46800ac82fcafc6482d3471b",
     "src/prototype/progression.js": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
     "src/prototype/economy.js": "fd9701ee01d2748f22f176ce84d06f8769c0eb8b84963460380457a61933487a",
     "src/prototype/rewards.js": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525",
@@ -47,6 +47,7 @@
     "preserved": "All nonlisted baseline file hashes and active-frame checksum remain protected",
     "comparison": "Full Node and browser regression plus isolated maneuver tests required before integration",
     "formattedBy": "Prettier 3.5.3 CI diagnostic exact output",
-    "formattedSourceSha256": "8703a6583c84de7e9f512dd8e711efcdfc43d9a3039b62ec56e3b36b63504252"
+    "formattedSourceSha256": "20f7cdc2430e1e33ba6d2a37971bed43f9dd0b7f46800ac82fcafc6482d3471b",
+    "motionCorrection": "Unchanged legacy charges retain one-unit destination threshold; aerial paths use ten-unit waypoint tolerance"
   }
 }
