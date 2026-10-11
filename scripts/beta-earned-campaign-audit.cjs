@@ -67,6 +67,7 @@ function record(label) {
     weapon: h.weapon,
     armorTier: h.armorTier,
     expeditionRank: c.s.expeditionRank,
+    expeditionSkills: { ...c.s.expeditionSkills },
     messages: [...c.messages],
   };
   events.push(JSON.parse(JSON.stringify(r)));
@@ -164,6 +165,7 @@ function danger(p, e) {
   }
   const territory = e.type === 'boss' ? (c.isDungeon() ? 1600 : 600) : e.fieldCaptain ? 750 : 380;
   if (e.home) risk += Math.max(0, dist(p, e.home) - territory) * 20;
+  if (e.family === 'cindermaw' && e.home) risk += Math.max(0, e.home.y - 40 - p.y) * 30;
   return risk + Math.abs(dist(p, e) - 310) * 0.5;
 }
 function fight(e, seconds = 180) {
@@ -199,6 +201,27 @@ function fight(e, seconds = 180) {
     if (!c.zone().enemies.includes(e)) {
       record('combat target removed by engine: ' + e.id);
       return false;
+    }
+    if (e.type === 'boss') {
+      const add = c
+        .zone()
+        .enemies.filter(
+          (u) =>
+            u !== e &&
+            u.type !== 'boss' &&
+            u.hp > 0 &&
+            !u.neutral &&
+            !u.returning &&
+            u.aggro &&
+            dist(u, c.hero) < 450 &&
+            c.line(c.hero, u),
+        )
+        .sort((a, b) => dist(a, c.hero) - dist(b, c.hero))[0];
+      if (add) {
+        fight(add, 60);
+        lastProgress = c.s.time;
+        if (c.s.statistics.deaths > deaths) return false;
+      }
     }
     // Adds take priority once they are close; no target HP or position writes.
     const close = near();
@@ -316,7 +339,7 @@ function services() {
   }
   for (const n of [...c.zone().npcs].filter((n) => n.kind === 'smith' && c.s.rescued[n.family])) {
     approach(n);
-    for (const slot of ['weapon', 'armor']) c.gear(n.family, slot);
+    for (const slot of ['armor', 'weapon']) c.gear(n.family, slot);
     record('smith service ' + n.family);
   }
   rest();
@@ -462,6 +485,41 @@ function supportPreparation() {
   record('paid companion inheritance ' + JSON.stringify(c.s.expeditionSkills));
   rest();
 }
+function resupply() {
+  assert.equal(c.zoneId, 'crown');
+  const hub = c
+    .zone()
+    .npcs.filter((n) => n.hub)
+    .sort((a, b) => dist(a, c.hero) - dist(b, c.hero))[0];
+  approach(hub, false);
+  assert(c.travelHub('vale'), 'ordinary Crown return transport');
+  record('returned to Vale for remaining earned resources');
+  for (const region of ['vale', 'march', 'highlands', 'frontier']) {
+    assert.equal(c.zoneId, region);
+    recoverExpedition();
+    if (c.zone().nodes.some((n) => n.amount > 0)) earnPreparation(true);
+    recoverExpedition();
+    if (region !== 'frontier') travelOnward();
+  }
+  const b = c.zone().buildings.find((b) => b.progress >= 4);
+  approach(b, false);
+  const reserve = c.travelFare(c.regionIndex(), 1);
+  while (
+    c.hero.gold - c.expeditionSupportCost('sharedTraining') >= reserve &&
+    c.trainExpeditionSupport('sharedTraining', 'warlord')
+  )
+    capture();
+  while (
+    c.hero.gold - c.expeditionSupportCost('sharedStrength') >= reserve &&
+    c.trainExpeditionSupport('sharedStrength', 'abyss')
+  )
+    capture();
+  if (c.hero.gold >= reserve + 700) c.gear('abyss', 'armor');
+  record('resupplied company ' + JSON.stringify(c.s.expeditionSkills));
+  rest();
+  travelOnward();
+  record('returned to Crown with earned reinforcement');
+}
 function defeatAndRescue(family) {
   const def = D.bosses.find((b) => b.id === family);
   if (!def) throw Error('unknown boss ' + family);
@@ -541,9 +599,32 @@ function verifySave() {
   const original = c.snapshot(),
     bytes = JSON.stringify(original),
     restored = C.restore(original, () => 0.9);
-  for (const key of ['gold', 'level', 'xp', 'skills', 'weapon', 'armorTier', 'reforges', 'talents'])
+  for (const key of [
+    'gold',
+    'level',
+    'xp',
+    'skills',
+    'weapon',
+    'armorTier',
+    'reforges',
+    'talents',
+    'tonic',
+    'tonicStock',
+  ])
     assert.deepEqual(restored.hero[key], c.hero[key], key);
-  for (const key of ['normal', 'true', 'rescued', 'quests', 'expeditionRank', 'tickets', 'phase'])
+  for (const key of [
+    'normal',
+    'true',
+    'rescued',
+    'quests',
+    'expeditionRank',
+    'tickets',
+    'phase',
+    'expeditionSkills',
+    'rangerSupport',
+    'companionVitalityRank',
+    'awakeningLevel',
+  ])
     assert.deepEqual(restored.s[key], c.s[key], key);
   assert.deepEqual(
     restored.s.party.map((u) => [u.id, u.hp, u.maxHp, u.active]),
@@ -560,13 +641,17 @@ function verifySave() {
 }
 record('resumed earned campaign');
 try {
-  if (!process.env.BETA_SKIP_SERVICES && !['fortify', 'recover', 'support'].includes(route))
+  if (
+    !process.env.BETA_SKIP_SERVICES &&
+    !['fortify', 'recover', 'support', 'resupply'].includes(route)
+  )
     services();
   const routes = {
     prepare: [],
     fortify: [],
     recover: [],
     support: [],
+    resupply: [],
     crypt: ['crypt'],
     march: ['mire', 'archive'],
     highlands: ['ridge', 'mine'],
@@ -578,6 +663,7 @@ try {
   if (route === 'fortify') fortify();
   if (route === 'recover') recoverExpedition();
   if (route === 'support') supportPreparation();
+  if (route === 'resupply') resupply();
   const region = targets.length ? D.bosses.find((b) => b.id === targets[0]).region : c.zoneId;
   if (route === 'prepare') {
     earnPreparation();

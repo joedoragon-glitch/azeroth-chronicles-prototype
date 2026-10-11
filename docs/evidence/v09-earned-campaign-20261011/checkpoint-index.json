@@ -74,5 +74,17 @@
   "earned-crown-south": {
     "outcome": "INCOMPLETE: encounter incomplete cindermaw",
     "finalSaveSha256": "4bbc045d1e2602e96a94d1712e2e5c34127977b2fb75ffba928f96301ece4c83"
+  },
+  "earned-crown-support": {
+    "outcome": "PASS route support (engine actions only)",
+    "finalSaveSha256": "8cefd84ef7d274e887f2124628bafcdba8f907691b975920fb2e16bf016053ef"
+  },
+  "earned-crown-trained": {
+    "outcome": "INCOMPLETE: encounter incomplete cindermaw",
+    "finalSaveSha256": "0e6034e3499b63d71bac7628da5a5a259a20f41092d92fe9b9cefc36ce9918f9"
+  },
+  "earned-regional-resupply": {
+    "outcome": "PASS route resupply (engine actions only)",
+    "finalSaveSha256": "926b53862ad7893fd8a80d3f7f0e30786a3f258d56845d26509513bf9a2b34d8"
   }
 }
