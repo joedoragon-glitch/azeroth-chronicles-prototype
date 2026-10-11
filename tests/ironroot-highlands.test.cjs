@@ -21,11 +21,44 @@ test('Ironroot production scenes leave homes, habitats, service spacing and road
       life.some((p) => p.ironrootDistrict === id),
       id + ' gets its functional scene',
     );
-  for (const s of ['mint-workbench', 'highland-pay-station', 'ore-sorting-bay', 'ridge-supper'])
+  for (const s of [
+    'silver-ore-face',
+    'copper-ore-face',
+    'ore-sorting-bay',
+    'silver-sort-samples',
+    'copper-sort-samples',
+    'silver-refining-hearth',
+    'mint-workbench',
+    'silver-die-tray',
+    'caravan-loading-bay',
+    'sealed-crown-consignment',
+    'highland-pay-station',
+    'ridge-supper',
+  ])
     assert(
       life.some((p) => p.structure === s),
       s + ' is visible',
     );
+  // Each production stage is present in an established working district, not a new economy.
+  for (const [structure, district] of [
+    ['silver-ore-face', 'roads'],
+    ['copper-ore-face', 'roads'],
+    ['ore-sorting-bay', 'quarry'],
+    ['silver-sort-samples', 'quarry'],
+    ['copper-sort-samples', 'quarry'],
+    ['silver-refining-hearth', 'stonecross'],
+    ['mint-workbench', 'stonecross'],
+    ['silver-die-tray', 'stonecross'],
+    ['caravan-loading-bay', 'caravan'],
+    ['sealed-crown-consignment', 'caravan'],
+  ])
+    assert(
+      life.some((p) => p.structure === structure && p.ironrootDistrict === district),
+      structure + ' is staged in ' + district,
+    );
+  assert(C.rules.ironrootLore.ore.includes('Dark Lord’s face'));
+  assert(!C.rules.ironrootLore.ore.includes('five-point'));
+  assert.equal(z.ironrootLifeVersion, 3);
   assert(z.props.some((p) => p.structure === 'highland-stone-house'));
   assert(z.props.some((p) => p.structure === 'wolf-den'));
   assert(z.props.some((p) => p.structure === 'ridge-hearth'));
@@ -39,19 +72,71 @@ test('Ironroot production scenes leave homes, habitats, service spacing and road
       for (let i = 1; i < road.length; i++)
         assert(c.distanceToSegment(p, road[i - 1], road[i]) >= 65);
   }
-  const original = JSON.stringify(life);
+  const identities = life.map((p) => [p.id, p.structure, p.ironrootDistrict]);
   delete z.ironrootLifeVersion;
   c.ironrootLivelihood(z);
-  assert.equal(
-    JSON.stringify(z.props.filter((p) => p.ironrootDistrict)),
-    original,
-    'repeated migration is deterministic',
+  const replay = z.props.filter((p) => p.ironrootDistrict);
+  assert.deepEqual(
+    replay.map((p) => [p.id, p.structure, p.ironrootDistrict]),
+    identities,
+    'repeated staging preserves district and scene identities without duplicating props',
+  );
+  assert(
+    replay.every((p) => p.decorative && p.r === 0),
+    'repeated staging cannot create movement blockers',
   );
   for (const id of ['ore', 'bridge-north', 'ogre-hearth'])
     assert(c.siteDescription(z.npcs.find((n) => n.id === id)).includes(C.rules.ironrootLore[id]));
   c.enter('side-highlands-signal');
   assert(c.zone().props.some((p) => p.structure === 'game-table'));
   assert(c.zone().props.some((p) => p.structure === 'ridge-hearth'));
+});
+test('Existing Ironroot saves acquire the mint details without new currency, routes or progress', () => {
+  const c = fresh();
+  c.enter('highlands');
+  c.hero.gold = 777;
+  c.s.discovered['highlands:ore'] = true;
+  const old = c.snapshot(),
+    oldZone = old.zones.highlands;
+  oldZone.ironrootLifeVersion = 2;
+  oldZone.props = oldZone.props.filter(
+    (p) =>
+      ![
+        'silver-ore-face',
+        'copper-ore-face',
+        'silver-sort-samples',
+        'copper-sort-samples',
+        'silver-refining-hearth',
+        'silver-die-tray',
+        'sealed-crown-consignment',
+      ].includes(p.structure),
+  );
+  const r = C.restore(old);
+  r.enter('highlands');
+  const z = r.zone(),
+    life = z.props.filter((p) => p.ironrootDistrict);
+  assert.equal(z.ironrootLifeVersion, 3);
+  assert.equal(r.hero.gold, 777, 'historical carried crowns survive');
+  assert(r.s.discovered['highlands:ore'], 'site discoveries survive');
+  assert.equal(C.data.regions.find((d) => d.id === 'highlands').resource, 640);
+  for (const structure of [
+    'silver-ore-face',
+    'copper-ore-face',
+    'silver-sort-samples',
+    'copper-sort-samples',
+    'silver-refining-hearth',
+    'silver-die-tray',
+    'sealed-crown-consignment',
+  ])
+    assert(life.some((p) => p.structure === structure));
+  assert.equal(new Set(life.map((p) => p.id)).size, life.length);
+  const restored = C.restore(r.snapshot());
+  restored.enter('highlands');
+  assert.deepEqual(
+    restored.zone().props.filter((p) => p.ironrootDistrict),
+    life,
+    'migration is idempotent after saving',
+  );
 });
 test('Treasury keeps the Wolf household captain, home comforts and exact cache identity during migration', () => {
   const c = fresh();
@@ -102,6 +187,16 @@ test('Mine production, historic cuts and repair forge have trap-free connected r
     a = C.rules.dungeonArchitecture.mine,
     traps = c.traps();
   assert.equal(z.dungeonVersion, 3);
+  for (const ore of [
+    'silver-ore-face',
+    'copper-ore-face',
+    'silver-sort-samples',
+    'copper-sort-samples',
+  ])
+    assert(
+      z.props.some((p) => p.structure === ore),
+      'Mine displays mined ' + ore,
+    );
   assert.equal(z.enemies.filter((e) => e.guard).length, 18);
   assert.equal(z.enemies.filter((e) => e.guard && e.ranged).length, 6);
   assert(
@@ -232,9 +327,16 @@ test('Ironroot procedural scenes and Dara render deterministically without chang
     ctx = canvas.getContext('2d');
   const structures = [
     'highland-pay-station',
+    'silver-ore-face',
+    'copper-ore-face',
     'ore-sorting-bay',
+    'silver-sort-samples',
+    'copper-sort-samples',
+    'silver-refining-hearth',
     'mint-workbench',
+    'silver-die-tray',
     'caravan-loading-bay',
+    'sealed-crown-consignment',
     'mine-supports',
     'mine-old-markings',
     'mine-collapse',

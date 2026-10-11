@@ -24,6 +24,11 @@ async function verifyIronroot(page, results, tag, capture = false) {
   });
   try {
     for (const [label, zone, target] of [
+      ['ore-silver', 'highlands', 'silver-ore-face'],
+      ['sorting-silver', 'highlands', 'silver-sort-samples'],
+      ['refining-silver', 'highlands', 'silver-refining-hearth'],
+      ['struck-silver', 'highlands', 'silver-die-tray'],
+      ['shipment-seal', 'highlands', 'sealed-crown-consignment'],
       ['stonecross', 'highlands', 'mint-workbench'],
       ['quarry', 'highlands', 'ore-sorting-bay'],
       ['home', 'supply-highlands', 'ridge-game-corner'],
@@ -47,6 +52,12 @@ async function verifyIronroot(page, results, tag, capture = false) {
         { zone, target },
       );
       await page.waitForFunction((target) => !!__ironrootRender.seen[target], target);
+      if (target.startsWith('silver-') || target === 'sealed-crown-consignment')
+        assert.equal(
+          await page.evaluate((target) => __ironrootRender.seen[target], target),
+          true,
+          'new monetary details must use their procedural source and not an unrelated old sprite',
+        );
       if (capture)
         await page.screenshot({
           path: path.join(results, 'ironroot-' + label + '-' + tag + '.png'),

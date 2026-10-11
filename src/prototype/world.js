@@ -164,12 +164,22 @@
               x: district.center[0],
               y: district.center[1],
             })),
-            ...(z.id === 'highlands' ? R.ironrootLife || [] : []).map((district) => ({
-              id: district.id,
-              name: district.id,
-              x: district.props.reduce((total, p) => total + p[0], 0) / district.props.length,
-              y: district.props.reduce((total, p) => total + p[1], 0) / district.props.length,
-            })),
+            ...(z.id === 'highlands' ? R.ironrootLife || [] : []).map((district) => {
+              // Only established livelihood props determine historical road destinations.
+              // Later decorative mint/ore additions must never reroute saved roads.
+              const routeProps = district.props.filter(
+                ([, , structure]) =>
+                  !/^(silver|copper)-(ore-face|sort-samples|refining-hearth|die-tray)$/.test(
+                    structure,
+                  ) && structure !== 'sealed-crown-consignment',
+              );
+              return {
+                id: district.id,
+                name: district.id,
+                x: routeProps.reduce((total, p) => total + p[0], 0) / routeProps.length,
+                y: routeProps.reduce((total, p) => total + p[1], 0) / routeProps.length,
+              };
+            }),
           ],
           props = z.props,
           blockers = z.props
@@ -1220,7 +1230,7 @@
         }
       }
       ironrootLivelihood(z) {
-        if (z.id !== 'highlands' || z.ironrootLifeVersion === 2) return;
+        if (z.id !== 'highlands' || z.ironrootLifeVersion === 3) return;
         const oldZone = this.s.zone;
         this.s.zone = z.id;
         try {
@@ -1239,7 +1249,7 @@
                 }
               const p = candidates.find(
                 (p) =>
-                  !this.blocked(p.x, p.y, z.id, 8, true) &&
+                  !this.blocked(p.x, p.y, z.id, 24, true) &&
                   !z.npcs.some((n) => dist(n, p) < 85) &&
                   !futureServices.some((n) => dist(n, p) < 85) &&
                   !z.nodes.some((n) => dist(n, p) < 65) &&
@@ -1259,7 +1269,7 @@
               });
             }
           }
-          z.ironrootLifeVersion = 2;
+          z.ironrootLifeVersion = 3;
         } finally {
           this.s.zone = oldZone;
         }
