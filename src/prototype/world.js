@@ -1220,7 +1220,7 @@
         }
       }
       ironrootLivelihood(z) {
-        if (z.id !== 'highlands' || z.ironrootLifeVersion === 2) return;
+        if (z.id !== 'highlands' || z.ironrootLifeVersion === 3) return;
         const oldZone = this.s.zone;
         this.s.zone = z.id;
         try {
@@ -1259,7 +1259,7 @@
               });
             }
           }
-          z.ironrootLifeVersion = 2;
+          z.ironrootLifeVersion = 3;
         } finally {
           this.s.zone = oldZone;
         }
