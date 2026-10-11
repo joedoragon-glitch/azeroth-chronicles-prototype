@@ -468,6 +468,9 @@
           this.authoredPlaces(z);
           this.clearStreetCorridors(z);
           this.regionalTravelSafety(z);
+          // Older peaceful saves can contain a Treasury emptied before indoor habitats existed.
+          if (this.peace && (!z.habitat || (this.supplyRoom(z.id) && !z.enemies.length)))
+            this.makeHabitat(z);
           return z;
         }
         const i = this.regionIndex(),
@@ -566,6 +569,7 @@
           this.treasuryInterior(z);
           this.guardianPopulation(z);
           this.roomCaptainPopulation(z);
+          if (this.peace) this.makeHabitat(z);
           return z;
         }
         const side = this.sideDungeon();
@@ -639,6 +643,7 @@
             this.ordinaryRangedPopulation(z);
           }
           z.sideDungeonVersion = 1;
+          if (this.peace) this.makeHabitat(z);
           return z;
         }
         const region = r.id,
