@@ -1095,7 +1095,7 @@
       return this.makeEnemy(
         {
           family: b.id,
-          name: b.name + (form === 'true' ? ' TRUE' : ''),
+          name: form === 'true' && b.id === 'crypt' ? 'TRUE ' + b.name : b.name + (form === 'true' ? ' TRUE' : ''),
           icon: b.id === 'darklord' ? '😈' : b.kind === 'field' ? '👹' : '💀',
           form,
           type: 'boss',
