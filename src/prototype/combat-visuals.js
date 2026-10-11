@@ -231,6 +231,10 @@
           : a.rogueMove
             ? '#4b95c132'
             : '#dc644c30';
+      if (a.royalTaxation) {
+        ctx.strokeStyle = '#c49df4';
+        ctx.fillStyle = '#8d62b52b';
+      }
       ctx.lineWidth = a.rogueSignature ? 3.3 : 2.5;
       ctx.setLineDash(cue ? (a.rogueSignature ? [10, 4] : [8, 5]) : []);
       for (const points of shapes) {
