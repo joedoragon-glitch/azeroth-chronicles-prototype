@@ -119,6 +119,13 @@ for (const zone of [...A.data.regions.map((r) => r.id), ...A.dungeonIds])
         const C = load(root, 'engine'),
           c = new C('normal', 'paladin', rng());
         c.enter(zone);
+        // The Firstborn's approved collection is a deliberate Mine-only visual addition.
+        // Compare the untouched world beneath it to the protected v0.9 image;
+        // the collection itself is independently tested in colossus-biography.
+        if (root === current && zone === 'mine')
+          c.zone().props = c.zone().props.filter(
+            (p) => !['geometric-gallery', 'kinetic-collection', 'art-object'].includes(p.sceneRole),
+          );
         c.s.clock = clock;
         Object.assign(c.hero, c.safe(800, 800));
         const before = JSON.stringify(live(c));
