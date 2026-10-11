@@ -24,9 +24,7 @@ const live = (c) => {
     if (zone) {
       // Exclude only the new cosmetic Ironroot-work scenes; keep nature, roads
       // and all other world state identical to the historical baseline.
-      zone.props = zone.props.filter(
-        (p) => !String(p.id || '').startsWith('ironroot-life-'),
-      );
+      zone.props = zone.props.filter((p) => !String(p.id || '').startsWith('ironroot-life-'));
       delete zone.ironrootLifeVersion;
     }
     const mine = save?.zones?.mine;
