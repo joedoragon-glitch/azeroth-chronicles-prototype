@@ -434,8 +434,16 @@
         if (a.index === 3 && a.count === 4 && a.name === 'Groundwork') {
           // A target-centered construction grid: four offset hazard pads,
           // leaving deliberate corridors rather than a solid damage carpet.
-          const offsets = [[-145, -80], [145, -80], [-145, 110], [145, 110]];
-          return offsets.map(([dx, dy]) => ({ ...a, x: a.x + dx, y: a.y + dy, radius: 72 }));
+          const closest = this.activeLivingParty()
+            .filter(u => u.hp > 0)
+            .sort((u,v) => dist(u,this.hero) - dist(v,this.hero))[0];
+          const heroMark = {x:this.hero.x,y:this.hero.y};
+          const allyMark = closest && dist(closest,this.hero) >= 170
+            ? {x:closest.x,y:closest.y}
+            : {x:this.hero.x,y:this.hero.y + 172};
+          const marks = [heroMark, allyMark,
+            {x:a.x - 185,y:a.y - 95}, {x:a.x + 185,y:a.y + 95}];
+          return marks.map(mark => ({ ...a, x:mark.x, y:mark.y, radius:72 }));
         }
         if (a.count === 6 && a.kind === 'circle' && a.index === 1) {
           // Spread Warlord artillery around the target with dodgeable lanes.
