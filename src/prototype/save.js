@@ -660,6 +660,10 @@
           z.props = z.props.filter((p) => !c.blocked(p.x, p.y, z.id, p.r || 0, true));
           c.roadNetwork(z);
           for (const e of z.enemies) {
+            // Rename the existing boss in historical saves; never change 'crypt'
+            // save keys, rewards, quest/rescue flags or normal/TRUE progression.
+            if (e.family === 'crypt' && e.type === 'boss')
+              e.name = e.form === 'true' ? 'TRUE Lifebinder' : 'Lifebinder';
             if (e.family === 'thorn' && e.type === 'boss') {
               const base = c.boss('thorn').hp * (e.form === 'true' ? 1.8 : 1),
                 fraction = e.hp / e.maxHp,
