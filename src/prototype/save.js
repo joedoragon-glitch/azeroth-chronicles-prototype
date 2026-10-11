@@ -544,6 +544,28 @@
           finite(s.refugeSite.x, 0, 5000);
           finite(s.refugeSite.y, 0, 5000);
         }
+        // Optional v4 preference: old saves continue using the last refuge.
+        if (s.barracksRespawn != null) {
+          const selected = s.barracksRespawn;
+          if (
+            !selected ||
+            typeof selected !== 'object' ||
+            Array.isArray(selected) ||
+            s.challenge?.succession ||
+            !D.regions.some((r) => r.id === selected.zone) ||
+            typeof selected.id !== 'string' ||
+            selected.id.length < 1 ||
+            selected.id.length > 100
+          )
+            throw Error('Invalid barracks recovery point');
+          // A removed/unfinished barracks is never a dangerous or unusable spawn.
+          if (
+            !s.zones[selected.zone]?.buildings?.some(
+              (b) => b.id === selected.id && b.kind === 'barracks' && b.progress >= 4,
+            )
+          )
+            s.barracksRespawn = null;
+        }
         const allIds = new Set();
         for (const u of s.party) {
           if (allIds.has(u.id)) throw Error('Duplicate companion');

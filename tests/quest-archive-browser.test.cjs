@@ -162,7 +162,7 @@ const server = http.createServer((req, res) => {
       });
       await page.waitForTimeout(80);
       await page.screenshot({ path: path.join(out, 'keeper-captive-' + tag + '.png') });
-      await page.keyboard.press('e');
+      await page.keyboard.press('f');
       assert.equal(await page.locator('#modal-title').textContent(), 'The Drowned Keeper');
       assert((await page.locator('#modal-description').textContent()).includes('Free Neri'));
       await page.keyboard.press('Escape');
@@ -172,7 +172,7 @@ const server = http.createServer((req, res) => {
         c.notices.length = 0;
         Prototype.updateHUD();
       });
-      await page.keyboard.press('e');
+      await page.keyboard.press('f');
       await page
         .getByRole('button', { name: 'Promise to protect the Archive', exact: true })
         .click();
@@ -193,7 +193,7 @@ const server = http.createServer((req, res) => {
       await page.keyboard.press('Escape');
       await page.keyboard.press('Escape');
       await page.keyboard.press('Escape');
-      await page.keyboard.press('e');
+      await page.keyboard.press('f');
       await page
         .getByRole('button', { name: 'Adversaries and their attacks', exact: false })
         .click();
@@ -214,7 +214,7 @@ const server = http.createServer((req, res) => {
         Object.assign(c.hero, { x: n.x, y: n.y });
         Prototype.updateHUD();
       });
-      await page.keyboard.press('e');
+      await page.keyboard.press('f');
       assert.equal(await page.locator('#modal-title').textContent(), 'The Keeper’s ledger');
       assert(await page.evaluate(() => Prototype.game.s.keeperEvidence));
       await page.keyboard.press('Escape');
@@ -283,7 +283,7 @@ const server = http.createServer((req, res) => {
         Prototype.save();
         Prototype.updateHUD();
       });
-      await page.keyboard.press('e');
+      await page.keyboard.press('f');
       assert.equal(
         await page.locator('#modal-title').textContent(),
         'The Keeper’s shelves',
@@ -311,7 +311,7 @@ const server = http.createServer((req, res) => {
         Object.assign(c.hero, { x: base.x, y: base.y });
         Prototype.updateHUD();
       });
-      await page.keyboard.press('e');
+      await page.keyboard.press('f');
       await page.getByRole('button', { name: 'Rescued specialists', exact: false }).click();
       await page
         .getByRole('button', { name: 'Drowned Keeper · The Archive', exact: false })

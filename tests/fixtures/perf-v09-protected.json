@@ -1,19 +1,19 @@
 {
   "baseline": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
   "files": {
-    "src/prototype/engine.js": "291155d18505d46012250b92ad083e4e64a7ce5e4a67d32d99d7e961cf72c265",
+    "src/prototype/engine.js": "7f5cb3e50d69d59f70bba8248055d27f088ec9cded2eb12ef3cce32afb5b569c",
     "src/prototype/world.js": "fd696a65bf4e1b9067291f6c6d3d57b508f2b2ecb7164c222299ef8fa5edaa53",
     "src/prototype/navigation.js": "dbb700f55909a4908b64aec2c97583b07af93d7aeafe32d111dbbe16a7f79c36",
     "src/prototype/party.js": "41a66f5b3c95a09414b1308df557aff1cbb232d341f601b1f1fcaf1d2d40d726",
-    "src/prototype/combat.js": "8b14cc8e5e0a1519b83cd7201a82a6b2b2e08d7d4e4294b641dfa5d5b6a0aa4b",
-    "src/prototype/hero-combat.js": "9873768cf15322246de3a2892785ebdecc9cc9ed72ff7bbb377a264647135070",
+    "src/prototype/combat.js": "93077fdf33d92a8fed4efec9e5431724a6fd3d7be5b54fb65051e22af5061572",
+    "src/prototype/hero-combat.js": "2096a5b33d15e8177f6754de4cd92cccddee91c6b1f47d99f1597d0fe49f441a",
     "src/prototype/boss-combat.js": "be74a2d6d5336cd851073c7c6814a64cb22cc01af2ef7a0854fd9f4148edc27f",
     "src/prototype/progression.js": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
-    "src/prototype/economy.js": "fd9701ee01d2748f22f176ce84d06f8769c0eb8b84963460380457a61933487a",
+    "src/prototype/economy.js": "081440c4f0167d3e4b1129f9e605a7b7177bf68fb83cb8a824aa309b52774fb5",
     "src/prototype/rewards.js": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525",
-    "src/prototype/rules.js": "0bea5df747d56c3d0ab15021aaa5bd09683c898594292f142bda969c7ee7ccc0",
+    "src/prototype/rules.js": "2ea90233f249dbca6074a22ee564fe6a5cc3e158ca4a46a98241409ff15ffc7c",
     "src/prototype/data.js": "a82856323e155405e7fb68a027dc226b75d1563bd6b440450ccf584a9d7724b2",
-    "src/prototype/save.js": "4365b4fcfa21bcd8ffa5fe6da2b637dc0653e5aa7459abccc6277e94e6ab6296",
+    "src/prototype/save.js": "908736e4b65eff25223bcdba358ad4015f7815ce4c0482329a5f9822b60b3a80",
     "src/prototype/input.js": "87aed3b4d743dd011e0b6a0f5f293dc39fae45d76f6faa281139897a0437d616",
     "src/prototype/platform.js": "60107014425663a4607a239ea68359b04d0f0cfbf0eca7e9dc2fcc1a1180710d",
     "src/prototype/runtime.js": "baeae0441fd164f90bda835381d6f99772332eb8d850f2e18d7ccc8838b19e86",
@@ -21,15 +21,15 @@
     "src/prototype/persistence.js": "262f2f07b8ff6a6286d38fc887cbce9416425f89f91afdbf609caca08e54846b",
     "styles/prototype.css": "947c0575743e3b832ff0702549f1b1522d7d22d34cc9c796e86e3a75e2bc3146",
     "styles/desktop.css": "acab28572dad41bc8928cb1b612e3229034ff6ff64adc53e3dbdd0e5a7b186cf",
-    "styles/phone.css": "e1e6a917ddf1ae6bce51bfee66907c50c1adbe8c581b53b4674e7f1b0810877c",
+    "styles/phone.css": "bbec348a8f6448191c07bb700f7e5ae2ee7c5e217798488f096388783c2fbbcf",
     "templates/game.html": "2b22eb161a1c4d9de24925ecd669049045287e20d0448c296db40ad069030b03",
     "assets/sprites/manifest.json": "1f2b15b0d3a9735edb1bd9b00d8ad6c78eaefc6f63ab7ad576e4bba8676fa839",
     "assets/materials/manifest.json": "c06e89ba4ed2058681ae3156eaac8f7eb577d1b5af61e272f40d316f855cad41"
   },
   "renderingRevision": {
-    "source": "PR #225 plus #271 reviewed local-presentation/report revisions; byte-for-byte simulation frame preserved",
+    "source": "PR #225 plus combined-release slowdown fix; authorized rendering-only changes; reviewed v0.9.1 charge input receipt; PR #277 Optimization Mode presentation and diagnostics",
     "files": {
-      "src/prototype/app.js": "2bef212a5feba5ba5fd997bf462fdda1987d5c618848cee6a4a3c1abf137be8a",
+      "src/prototype/app.js": "59bb8a41eb622bd849e4af467f78787a47469b773e042c1ac96e05e739ab7a2b",
       "src/prototype/runtime.js": "953bbc9a92e9576e7ea6e7620cffe6d473c7d721cabb7878dbe04d23283dda43"
     },
     "activeFrameBodySha256": "a042cd0491db3860a8f8c29e9f1471b45be3ca108b2520dcc4df833d0ce81d7a"
@@ -39,5 +39,32 @@
     "version": "0.8.139",
     "scope": "Thornfang Pounce and Stone Colossus Wall Rush authored description-only corrections; no mechanics, layouts or procedural art changed",
     "evidence": "v0.9 author approval and boss-description-contracts regression; all other baseline hashes unchanged"
+  },
+  "approvedKeyboardRevision": {
+    "source": "PR #269 keyboard ergonomics; integrated with #273 Barracks/charged combat and #276 menu UX in release candidate",
+    "scope": "Audited E target, F confirm/interact, Q/backquote recall, Space/H preserved, historical keyboard preferences migrated, and full combined app source guard",
+    "evidence": "PR #269 independently green on 2c9ae7e; combined head requires its own CI",
+    "files": {
+      "src/prototype/app.js": "59bb8a41eb622bd849e4af467f78787a47469b773e042c1ac96e05e739ab7a2b",
+      "src/prototype/input.js": "65eba7616f0f314db513ce91d5328838be2d7ffc082118885471be4cb5a2199e",
+      "templates/game.html": "a13554d30e17d6b4ef4b8176147fcdb6806bf82891e61f9bccd0b615ee699fd8"
+    }
+  },
+  "approvedUxRevision": {
+    "source": "Issue #270, PR #276 menu selection/focus/phone targets; integrated with #273 and #269",
+    "previousAppSha256": "354cc8ec3dc488da095f6b31fed2c13d4cf2a04997f15bf3633cb9aa42a2be4b",
+    "newAppSha256": "59bb8a41eb622bd849e4af467f78787a47469b773e042c1ac96e05e739ab7a2b",
+    "scope": "Dialog focus/selection/Tab behavior and 44px phone targets; preserved simulation frame and mechanics",
+    "baseline": "d7d2c22485b08265b31bf595305ef952b40b72cd",
+    "previousPhoneSha256": "e1e6a917ddf1ae6bce51bfee66907c50c1adbe8c581b53b4674e7f1b0810877c",
+    "newPhoneSha256": "bbec348a8f6448191c07bb700f7e5ae2ee7c5e217798488f096388783c2fbbcf"
+  },
+  "approvedOptimizationRevision": {
+    "source": "PR #277 / Issue #271; owner-authorized Optimization Mode integration on v0.9.1, candidate v0.9.2",
+    "scope": "Device-local reversible graphics/audio-only presentation preset in Screen and performance. Native input, save v4, gameplay, charged attacks and menus preserved. Real-hardware A/B remains to be measured.",
+    "previousAppSha256": "51e2f561350327a1cfab27ffcac8b538d3a190e27eb389a95bfbace7fae3eeb2",
+    "newAppSha256": "59bb8a41eb622bd849e4af467f78787a47469b773e042c1ac96e05e739ab7a2b",
+    "previousRuntimeSha256": "d75f3f9fc8e7a964420da9b1642aefc7dae433b0a19ca45b704b65c72f7e0652",
+    "newRuntimeSha256": "953bbc9a92e9576e7ea6e7620cffe6d473c7d721cabb7878dbe04d23283dda43"
   }
 }

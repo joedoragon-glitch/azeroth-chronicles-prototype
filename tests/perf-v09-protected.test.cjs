@@ -9,6 +9,17 @@ assert.deepEqual(Object.keys(revision.files).sort(), [
   'src/prototype/app.js',
   'src/prototype/runtime.js',
 ]);
+// Explicitly audited UX-only hashes supersede the original protected baseline
+// only for the three reviewed keyboard/HUD source files.
+const keyboardRevision = manifest.approvedKeyboardRevision;
+if (keyboardRevision) {
+  assert.deepEqual(Object.keys(keyboardRevision.files).sort(), [
+    'src/prototype/app.js',
+    'src/prototype/input.js',
+    'templates/game.html',
+  ]);
+  assert.match(keyboardRevision.source, /PR #269/);
+}
 for (const [file, expected] of Object.entries(manifest.files)) {
   const actual = crypto
     .createHash('sha256')
@@ -16,7 +27,7 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    revision.files[file] || expected,
+    keyboardRevision?.files[file] || revision.files[file] || expected,
     file + ' is protected against baseline / reviewed rendering revision ' + manifest.baseline,
   );
 }
