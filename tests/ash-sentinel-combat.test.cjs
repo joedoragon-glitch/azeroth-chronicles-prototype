@@ -45,6 +45,17 @@ const refuge = c.sentinelBoardCells(boss).find(cell => !cell.selected);
 Object.assign(c.hero, { x: refuge.x, y: refuge.y });
 c.sentinelUpdateBoard(boss, 1.46);
 assert.equal(c.hero.hp, afterHit, 'unmarked square is safe');
+// The fully warned maneuver physically completes all five legs, not five recasts.
+boss.telegraph = c.buildBossAttack(boss, 2, c.hero).first;
+c.resolveAttack(boss);
+assert(boss.motion && boss.motion.kind === 'pattern-charge');
+const visited = new Set();
+for (let i = 0; i < 500 && boss.motion; i++) {
+  visited.add(boss.motion.leg);
+  c.advanceMotion(boss, 0.016);
+}
+assert.deepEqual([...visited].sort(), [0, 1, 2, 3, 4], 'all five charge legs execute');
+assert.equal(boss.motion, null, 'the patterned attack ends without a new cast');
 boss.hp = 0;
 const frozenBeat = boss.board.beat;
 c.sentinelUpdateBoard(boss, 5);
