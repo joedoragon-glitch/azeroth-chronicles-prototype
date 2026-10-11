@@ -282,8 +282,6 @@
       'Move ' +
       ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('/') +
       '; phone: joystick. Interact ' +
-      input.key('interact') +
-      '/' +
       input.key('confirm') +
       '.\n' +
       'Skills 1–8: ' +
@@ -294,6 +292,7 @@
       ': tap to cycle, hold to lock. Aim: gold is clear, amber is too far, red is blocked. Dodge marked attacks.\n' +
       'Recall ' +
       input.key('recall') +
+      (input.actionFor('KeyQ') === 'recall' ? ' / Q' : '') +
       '; Ranger Heal ' +
       input.key('heal') +
       (PrototypeRules.resourceMode?.manaEnabled !== false
@@ -433,12 +432,15 @@
     $('modal-description').textContent = description;
     $('modal-content').scrollTop = 0;
     renderActions();
+    // Give keyboard and assistive-technology users a reliable dialog focus entry.
+    $('modal').tabIndex = -1;
+    $('modal').focus?.({ preventScroll: true });
   }
   function renderActions() {
     const host = $('modal-actions');
     host.replaceChildren();
     buttons = [];
-    for (const a of menu.actions) {
+    for (const [index, a] of menu.actions.entries()) {
       const b = document.createElement('button');
       b.textContent = a.label;
       b.disabled = a.disabled === true;
@@ -449,6 +451,11 @@
         b.append(span);
       }
       b.onclick = (e) => {
+        // A mouse/touch choice must become the keyboard-confirmed choice too.
+        if (buttons[index] === b && menuIndex !== index) {
+          menuIndex = index;
+          highlight();
+        }
         audio.unlock().then(() => audio.interfaceSound('confirm'));
         a.action();
         if (started) save();
@@ -463,10 +470,13 @@
     buttons.push(back);
     highlight();
   }
-  function highlight() {
+  function highlight(moveFocus = false) {
     audio.interfaceSound('select');
     buttons.forEach((b, i) => b.classList.toggle('selected', i === menuIndex));
-    buttons[menuIndex]?.scrollIntoView({ block: 'nearest' });
+    const selected = buttons[menuIndex];
+    if (moveFocus && selected)
+      (selected.disabled ? $('modal') : selected).focus?.({ preventScroll: true });
+    selected?.scrollIntoView({ block: 'nearest' });
   }
   function closeMenu() {
     audio.interfaceSound('close');
@@ -908,9 +918,7 @@
       'Choose your successor',
       'The ' +
         game.hero.class +
-        ' has fallen permanently. The death penalty has already removed ' +
-        Math.round(Campaign.rules.balance.economy.deathPenaltyFraction * 100) +
-        '% of carried crowns; the remaining crowns, rescues, quests and boss progress survive. Your successor starts at level 1 in Millhaven and must learn their skills.',
+        ' has fallen permanently. Succession carries no crown penalty; all crowns, rescues, quests and boss progress survive. Your successor starts at level 1 in Millhaven and must learn their skills.',
       Object.entries(Campaign.classes)
         .filter(([id]) => !game.s.challenge.fallen.includes(id))
         .map(([id, c]) =>
@@ -1540,6 +1548,8 @@
   function startChargeClock() {
     if (!charge || charge.started !== null) return false;
     charge.started = performance.now();
+    // Record which protected encounters were active at the instant charging began.
+    charge.encountersAtStart = game.chargedEncounterSnapshot();
     if (charge.slot === 1 || charge.slot === 2)
       charge.targetId = chargedPreviewTarget()?.id ?? null;
     return true;
@@ -1701,7 +1711,8 @@
     }
     const held = (performance.now() - charge.started) / 1000,
       wasQueued = charge.queued,
-      targetId = charge.targetId;
+      targetId = charge.targetId,
+      encountersAtStart = charge.encountersAtStart;
     if (held < chargeSeconds()) {
       const quickTap = !wasQueued && held < chargeTapSeconds();
       charge = null;
@@ -1723,7 +1734,8 @@
     }
     charge = null;
     const cast =
-      activePlay() && game.cast(slot, slot === 1 || slot === 2 ? targetId : undefined, true);
+      activePlay() &&
+      game.cast(slot, slot === 1 || slot === 2 ? targetId : undefined, true, encountersAtStart);
     if (!cast && activePlay()) chargeFailureStatus(slot, true);
     updateHUD();
     return cast;
@@ -1838,13 +1850,28 @@
       return;
     }
     if (menu) {
+      // Reserve ordinary Tab navigation inside dialogs, but honor a player's
+      // explicit Tab remap to a menu direction or confirmation action.
+      if (code === 'Tab' && !['up', 'down', 'left', 'right', 'confirm'].includes(actionId)) {
+        e.preventDefault();
+        if (e.repeat) return;
+        const available = buttons.filter((b) => !b.disabled);
+        if (!available.length) return;
+        const focusedIndex = available.indexOf(document.activeElement);
+        const from = focusedIndex < 0 ? (e.shiftKey ? 0 : -1) : focusedIndex;
+        const next =
+          available[(from + (e.shiftKey ? -1 : 1) + available.length) % available.length];
+        menuIndex = buttons.indexOf(next);
+        highlight(true);
+        return;
+      }
       if (e.repeat) return;
       if (['down', 'right'].includes(actionId)) {
         menuIndex = (menuIndex + 1) % Math.max(1, buttons.length);
-        highlight();
+        highlight(true);
       } else if (['up', 'left'].includes(actionId)) {
         menuIndex = (menuIndex - 1 + buttons.length) % Math.max(1, buttons.length);
-        highlight();
+        highlight(true);
       } else if (actionId === 'confirm' || ['Enter', 'Space'].includes(code))
         if (buttons[menuIndex]?.disabled) audio.interfaceSound('denied');
         else buttons[menuIndex]?.click();
@@ -1858,7 +1885,7 @@
     if (actionId === 'doctrine') {
       game.toggleSquadDoctrine();
       updateHUD();
-    } else if (actionId === 'interact' || actionId === 'confirm') interact();
+    } else if (actionId === 'confirm') interact();
     else if (actionId === 'recall') {
       recallSquad();
       save();
@@ -2319,8 +2346,6 @@
       ' · Move   ' +
       input.key('target') +
       ' · Target   ' +
-      input.key('interact') +
-      ' / ' +
       input.key('confirm') +
       ' · Interact   ' +
       input.key('map') +
@@ -2329,7 +2354,8 @@
     if ($('squad-button').querySelector('small'))
       $('squad-button').querySelector('small').textContent = input.key('doctrine');
     if ($('recall-button').querySelector('small'))
-      $('recall-button').querySelector('small').textContent = input.key('recall');
+      $('recall-button').querySelector('small').textContent =
+        input.key('recall') + (input.actionFor('KeyQ') === 'recall' ? ' / Q' : '');
     const selected = game.selectedHeroTarget(),
       targetButton = $('target-button');
     targetButton.classList.toggle('has-target', !!selected);

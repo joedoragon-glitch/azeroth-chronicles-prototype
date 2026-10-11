@@ -4215,6 +4215,8 @@
     economy: {
       startingCrowns: 30,
       deathPenaltyFraction: 0.2,
+      basicBarracksDeathPenaltyFraction: 0.15,
+      fullBarracksDeathPenaltyFraction: 0.05,
       preparationTonicCost: 70,
       reforgePriceDivisor: 2,
     },

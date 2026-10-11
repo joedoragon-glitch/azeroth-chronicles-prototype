@@ -503,7 +503,7 @@ body[data-experience='phone'] #modal-actions {
 }
 body[data-experience='phone'] #modal-actions button,
 body[data-experience='phone'] #close-button {
-  min-height: 32px;
+  min-height: 44px;
   padding: 5px 8px;
   font-size: 11px;
   line-height: 1.2;

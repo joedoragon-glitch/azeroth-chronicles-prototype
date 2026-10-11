@@ -192,7 +192,7 @@
                 : 450
               : 480;
       }
-      cast(slot, targetId, charged = false) {
+      cast(slot, targetId, charged = false, encountersAtStart = null) {
         const i = slot - 1,
           rank = this.hero.skills[i],
           isCharged = !!charged && (slot === 1 || slot === 2 || slot === 3);
@@ -267,6 +267,7 @@
               delay: 0,
               style: 'beam',
               charged: true,
+              ...(encountersAtStart ? { encountersAtStart } : {}),
             });
             this.event('projectileLaunch', {
               actor: 'hero',
@@ -295,6 +296,7 @@
                 delay: j * 0.08,
                 style: 'arrow',
                 charged: true,
+                ...(encountersAtStart ? { encountersAtStart } : {}),
                 rapid: true,
                 chargedBurst: j === 2,
               });
@@ -325,6 +327,7 @@
               delay: 0,
               style: 'holy',
               charged: true,
+              ...(encountersAtStart ? { encountersAtStart } : {}),
             });
             this.event('projectileLaunch', {
               actor: 'hero',
@@ -376,7 +379,7 @@
           for (const e of this.zone()
             .enemies.filter((e) => e.hp > 0 && !e.neutral && inside(e) && this.line(this.hero, e))
             .sort((a, b) => this.idOrder(a, b))) {
-            if (this.damage(e, damage, 'hero', { area: true })) {
+            if (this.damage(e, damage, 'hero', { area: true, encountersAtStart })) {
               hits++;
               if (def.slow) this.applySlow(e, def.slow);
             }
