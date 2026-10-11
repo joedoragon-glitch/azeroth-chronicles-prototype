@@ -420,6 +420,17 @@
         return true;
       }
       attackPatches(a) {
+        if (a.index === 3 && a.count === 4 && a.name === 'Groundwork') {
+          // A target-centered construction grid: four offset hazard pads,
+          // leaving deliberate corridors rather than a solid damage carpet.
+          const offsets = [[-145, -80], [145, -80], [-145, 110], [145, 110]];
+          return offsets.map(([dx, dy]) => ({ ...a, x: a.x + dx, y: a.y + dy, radius: 72 }));
+        }
+        if (a.count === 6 && a.kind === 'circle' && a.index === 1) {
+          // Spread Warlord artillery around the target with dodgeable lanes.
+          const offsets = [[-220, -100], [0, -100], [220, -100], [-220, 125], [0, 125], [220, 125]];
+          return offsets.map(([dx, dy]) => ({ ...a, x: a.x + dx, y: a.y + dy, radius: 72 }));
+        }
         return Array.from({ length: a.count || 1 }, (_, i) => ({
           ...a,
           x: a.x + (i - ((a.count || 1) - 1) / 2) * 190,
