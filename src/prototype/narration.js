@@ -88,7 +88,7 @@
     'Fractional Resurfacing: a 4-by-4 square grid keeps pulsing during other attacks until the Sentinel falls.',
     'Volumize: replenishes Crown soldiers; TRUE form reinforces the elite warband.',
   ];
-  Object.assign(Rules.attacks.citadel[0], { kind: 'canister', warning: 1.6, recovery: 1.5 });
+  Object.assign(Rules.attacks.citadel[0], { kind: 'canister', warning: 1.6, recovery: 1.5, opening: 0 });
   Object.assign(Rules.attacks.citadel[1], {
     kind: 'formation',
     warning: 1.8,
