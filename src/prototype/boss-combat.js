@@ -551,6 +551,10 @@
             );
             e.summonCd =
               e.form === 'true' ? R.bossSummoning.trueCooldown : R.bossSummoning.normalCooldown;
+            if (e.family === 'darklord')
+              for (const guard of this.bossOwnedSummons(e)) {
+                guard.royalFormationUntil = this.s.time + 3;
+              }
           }
           return;
         }

@@ -43,10 +43,10 @@
   "darkLordPhaseOne": {
     "status": "unmerged implementation slice; explicitly reviewed exact-source hashes, baseline preserved",
     "gitBlobSha1": {
-      "src/prototype/data.js": "e94e3da3b880f9013f001efdb27ac98d887615d3",
-      "src/prototype/rules.js": "4d990309151951e2a64ec5eb579546233cfa834e",
-      "src/prototype/boss-combat.js": "6ace8d749b08164426a6efa83b1aceac1eb2233a",
-      "src/prototype/combat.js": "e32fcda7976f4acd2eca7b2a488dc51bbe9cebfb"
+      "src/prototype/data.js": "2f5d351fd966ad5308fa0229f89273ece0f3e6ca",
+      "src/prototype/rules.js": "4e0a20a17b606480f43e61a7afbd9db5f61dd8a0",
+      "src/prototype/boss-combat.js": "8c4063255b7d7b306711e7efb6c94fdc044d9f80",
+      "src/prototype/combat.js": "e08be6e07aafd6677e7cb66cd792d4c7d997d27a"
     }
   }
 }

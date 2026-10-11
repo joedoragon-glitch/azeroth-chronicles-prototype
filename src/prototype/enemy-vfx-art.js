@@ -72,6 +72,7 @@
       ['command', 'steel'],
       ['sweep', 'shadow'],
       ['rush', 'steel'],
+      ['channel', 'shadow'],
     ],
   });
   const captains = Object.freeze({

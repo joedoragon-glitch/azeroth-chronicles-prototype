@@ -10,9 +10,10 @@ const expected = [
   'Royal Muster',
   'Freedom Has a Price',
   'No More Heroes',
+  'Royal Taxation',
 ];
 assert.deepEqual(boss.attacks.map((line) => line.split(':')[0]), expected);
-assert.equal(C.rules.attacks.darklord.length, 5);
+assert.equal(C.rules.attacks.darklord.length, 6);
 assert.equal(C.rules.tacticalFoundation.rogueMoves.bosses.darklord.name, 'Writ of Restraint');
 
 for (const mode of ['normal', 'nightmare']) {
@@ -35,6 +36,8 @@ for (const mode of ['normal', 'nightmare']) {
     assert.equal(duel.first.kind, 'line');
     assert.equal(duel.first.coefficient, 1.5);
     assert.equal(C.restore(c.snapshot()).s.version, 4);
+    const taxation = c.buildBossAttack(e, 5, c.hero);
+    assert.equal(taxation.first.royalTaxation, true);
   }
 }
 // Second Wind is available exactly once per boss incarnation.
@@ -83,3 +86,53 @@ for (const mode of ['normal', 'nightmare']) {
   assert.equal(boss.hp, before, 'Rear counter cancels only the healing');
 }
 console.log('PASS Dark Lord phase-one attacks, Second Wind and unchanged save schema');
+
+for (const mode of ['normal', 'nightmare']) {
+  const c = new C(mode, 'paladin', () => 0.9);
+  c.enter('crown');
+  const lord = c.bossEnemy(boss, 'normal', { x: 1100, y: 1100 });
+  lord.hp = lord.maxHp * 0.6;
+  c.zone().enemies = [lord];
+  Object.assign(c.hero, { x: 1120, y: 1100 });
+  c.line = () => true;
+  c.tacticalRogueLeashAllows = () => true;
+
+  const tax = c.buildBossAttack(lord, 5, c.hero).first;
+  lord.telegraph = tax;
+  c.resolveAttack(lord);
+  assert(lord.royalTaxation.marked.includes('hero'));
+  assert(!lord.royalTaxShield);
+  c.damage(lord, 20, 'hero');
+  assert(!lord.royalTaxShield, 'Single marked attacker cannot finance a shield');
+  lord.royalTaxation = {
+    marked: ['hero', 'test-companion'],
+    expires: c.s.time + 5,
+    sources: ['hero'],
+  };
+  c.damage(lord, 20, 'test-companion');
+  assert.equal(lord.royalTaxShield, lord.maxHp * 0.03);
+  const shield = lord.royalTaxShield;
+  c.damage(lord, 15, 'hero');
+  assert(lord.royalTaxShield < shield, 'Shield absorbs real subsequent damage');
+  assert.equal(c.hero.gold, 0, 'Tax never touches real crowns');
+
+  const guard = c.makeEnemy(
+    { species: 'crownguard', name: 'Royal escort', level: 16, hp: 100, damage: 4, gold: 0, xp: 0 },
+    { x: 1080, y: 1100 },
+  );
+  guard.owner = lord.id;
+  guard.summon = true;
+  c.zone().enemies.push(guard);
+  lord.royalTaxShield = 0;
+  c.s.projectiles.push({
+    id: 'test-royal-arrow', source: 'hero', target: lord.id, speed: 800,
+    x: 1000, y: 1100, damage: 40, life: 2, style: 'arrow',
+  });
+  const previousLordHp = lord.hp;
+  const previousGuardHp = guard.hp;
+  c.updateProjectiles(0.15);
+  assert(guard.hp < previousGuardHp, 'Actual projectile strikes intercepting guard');
+  assert.equal(lord.hp, previousLordHp, 'Intercepted hit does not damage the ruler');
+  assert.equal(lord.royalPrerogativeReadyAt, c.s.time + 18);
+}
+console.log('PASS Dark Lord Royal Taxation, intercepting guards and real damage routing');

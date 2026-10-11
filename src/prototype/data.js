@@ -370,6 +370,7 @@ const PrototypeData = {
         'Royal Muster: summons Crown guards within the existing Normal and TRUE caps.',
         'Freedom Has a Price: below half health, three warned territorial sectors.',
         'No More Heroes: below 30% health, a focused line thrust.',
+        'Royal Taxation: marks the attackers whose blows fund a temporary Crown shield.',
       ],
     },
   ],

@@ -85,6 +85,7 @@
       attack('summon', 2, 1.6, { species: 'crownguard', ranged: true }),
       attack('sector', 1.4, 2, { sequential: true, count: 3, coefficient: 1.1, manaDrain: 0.12 }),
       attack('line', 1.5, 8, { coefficient: 1.5 }),
+      attack('circle', 1.25, 1.6, { royalTaxation: true, coefficient: 0 }),
     ],
   };
   const sites = [
@@ -3820,8 +3821,8 @@
     },
     darklord: {
       close: [0, 3, 4],
-      far: [1, 2, 3, 4],
-      heroTarget: [0, 1, 3, 4],
+      far: [1, 2, 3, 4, 5],
+      heroTarget: [0, 1, 3, 4, 5],
       phasePreferred: [3, 4, 1, 2],
       combos: [{ from: 1, to: 0, phase: 'high', chance: 0.4 }],
     },
