@@ -118,6 +118,8 @@ function danger(p, e) {
     const end = { x: q.x + q.dx * q.speed * 0.4, y: q.y + q.dy * q.speed * 0.4 };
     if (c.distanceToSegment(p, q, end) < 45) risk += 500;
   }
+  const territory = e.type === 'boss' ? (c.isDungeon() ? 1600 : 600) : e.fieldCaptain ? 750 : 380;
+  if (e.home) risk += Math.max(0, dist(p, e.home) - territory) * 20;
   return risk + Math.abs(dist(p, e) - 310) * 0.5;
 }
 function fight(e, seconds = 180) {
@@ -196,6 +198,8 @@ function walk(p, combat = true, seconds = 100, arrival = 65) {
     started = c.s.time;
   for (let i = 0; i < seconds * 10; i++) {
     if (dist(c.hero, p) < arrival) return true;
+    if (c.hero.skills[2] && c.hero.hp < c.hero.maxHp * 0.8) c.cast(3);
+    if (!combat && c.hero.skills[3] && c.hero.hp < c.hero.maxHp * 0.65) c.cast(4);
     if (c.s.time - started > seconds) {
       record('travel approach time budget exhausted');
       return false;
@@ -239,7 +243,7 @@ function approach(n, combat = true) {
 function services() {
   const recruiter = c.zone().npcs.find((n) => n.kind === 'recruiter');
   if (recruiter) {
-    approach(recruiter);
+    approach(recruiter, false);
     while (c.s.party.some((u) => u.hp <= 0) && c.recover()) capture();
     if (c.rosterCount() < 3 && c.hero.gold > 120) c.recruit('archer');
     record('town party service');
@@ -307,7 +311,7 @@ function defeatAndRescue(family) {
   if (!def) throw Error('unknown boss ' + family);
   if (def.kind === 'dungeon' && c.zoneId !== family) {
     const door = c.zone().npcs.find((n) => n.kind === 'dungeon' && n.family === family);
-    approach(door);
+    approach(door, false);
     if (!c.interact(door) || c.zoneId !== family) throw Error('entry failed ' + family);
     record('entered ' + family);
   }
@@ -401,6 +405,7 @@ try {
     services();
   }
   for (const family of targets) {
+    if (c.s.rescued[family] && c.s.normal[family] && !c.isDungeon()) continue;
     defeatAndRescue(family);
     services();
   }

@@ -26,5 +26,17 @@
   "earned-highlands-continued": {
     "outcome": "PASS route highlands (engine actions only)",
     "finalSaveSha256": "3f744bef5bc409a9f14f7462fa470a7270a94368717f429bd0376b84568a2aad"
+  },
+  "earned-highlands-economy": {
+    "outcome": "PASS route prepare (engine actions only)",
+    "finalSaveSha256": "52ac83313ae960656b2ded3a429b0509270de1cd59fb76bdf389bedc78073513"
+  },
+  "earned-frontier": {
+    "outcome": "INCOMPLETE: approach incomplete warlord",
+    "finalSaveSha256": "3c774388eea8fccaa6e10bb5c8dccb55401bac71ff06f1bbba230959b094a86e"
+  },
+  "earned-frontier-continued": {
+    "outcome": "INCOMPLETE: cannot reach entrance",
+    "finalSaveSha256": "329b99c6286e27f37985f835a9fd2504b7a482f4ca720489900a985e80cb4bb6"
   }
 }
