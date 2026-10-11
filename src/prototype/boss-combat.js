@@ -207,6 +207,7 @@
             return 0;
           if (reach !== null && dist(e, attackTarget) > reach + 25) return 0;
           let w = 1;
+          if (plan.sabotage && (e.sabotageCd || 0) > 0) return 0;
           if (plan.kind === 'summon') {
             if (alive >= cap || (e.summonCd || 0) > 0) return 0;
             const missing = cap - alive;
@@ -411,6 +412,12 @@
             : this.chooseBossAttack(e, target),
           actualTarget = selected < 0 ? null : this.bossAttackTarget(e, target, selected);
         if (selected < 0) return false;
+        if (e.family === 'archive' && selected === 0 && e.hookedVictim) {
+          const held = e.hookedVictim === 'hero' ? this.hero : this.s.party.find(u => u.id === e.hookedVictim);
+          if (held) held.keeperHeld = null;
+          e.hookedVictim = null;
+        }
+        if (e.family === 'archive' && plans[selected].sabotage) e.sabotageCd = 12;
         const built = this.buildBossAttack(e, selected, actualTarget, true);
         e.attackIndex = (e.attackIndex || 0) + 1;
         e.lastAttackIndex = selected;
@@ -487,6 +494,22 @@
         }
         if (a.nightSkill === 'pounce') {
           e.motion = { ...a, target: { x: a.x, y: a.y }, hit: [], speed: a.pounceSpeed, life: 2 };
+          return;
+        }
+        if (a.sabotage && e.family === 'archive') {
+          // The Scholar punishes a visibly marked healer or hero, without direct damage.
+          const victims = this.combatTargets().filter(u => u.hp > 0 && !u.keeperHeld &&
+            dist(u, a) < a.radius && this.line(e, u));
+          const victim = victims.find(u => u.type === 'archer') || victims.find(u => u === this.hero);
+          if (victim) {
+            if (victim.type === 'archer') victim.healCd = (victim.healCd || 0) + 3;
+            else {
+              const choices = victim.cd.map((time, i) => ({ time, i })).filter(x => this.hero.skills[x.i] > 0)
+                .sort((x, y) => y.time - x.time);
+              if (choices.length) victim.cd[choices[0].i] += 3;
+            }
+            this.event('warning', { family: 'archive', cooldownSabotageHit: true });
+          }
           return;
         }
         if (a.kind === 'summon') {
@@ -598,6 +621,10 @@
                   Math.cos(Math.atan2(u.y - a.y, u.x - a.x) - a.angle) >
                     (a.kind === 'sector' ? Math.cos(0.65) : Math.cos(1.1))
                 : patches.some((p) => dist(u, p) < p.radius);
+        const anchorVictim = e.type === 'boss' && e.family === 'archive' && a.index === 0
+          ? party.filter(u => u.hp > 0 && !u.keeperHeld && hits(u) && this.line(e, u))
+              .sort((u, v) => Number(v.type === 'archer') - Number(u.type === 'archer'))[0]
+          : null;
         for (const u of party)
           if (hits(u) && this.line(e, u)) {
             const landed = this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
@@ -606,6 +633,14 @@
               e.deathRoll = { victim: u === this.hero ? 'hero' : u.id, life: 1.5, elapsed: 0, hits: 0 };
               u.deathRollHeld = true;
               this.event('warning', { family: 'mire', deathRoll: true });
+            }
+            if (landed && u === anchorVictim && u.hp > 0) {
+              const d = Math.max(1, dist(u, e));
+              const where = this.safe(e.x + (u.x - e.x) * 62 / d, e.y + (u.y - e.y) * 62 / d);
+              if (this.clearSegment(u, where)) { u.x = where.x; u.y = where.y; }
+              u.keeperHeld = e.id;
+              e.hookedVictim = u === this.hero ? 'hero' : u.id;
+              this.event('warning', { family: 'archive', anchorCaptured: true });
             }
             if (landed && ['cone', 'sector'].includes(a.kind))
               this.event('melee', {
