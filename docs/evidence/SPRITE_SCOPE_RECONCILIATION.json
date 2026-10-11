@@ -65,6 +65,7 @@
       "citadel-ritual-array",
       "citadel-barracks-bay",
       "citadel-forge-bay",
+      "citadel-vanity-quarters",
       "citadel-boss-approach",
       "animal-pen",
       "drying-rack",
@@ -1143,7 +1144,7 @@
     }
   ],
   "sources": {
-    "src/prototype/visuals.js": "4819813d8d10aaf95830a9e5bde0a064d95a4a1d8a77f48bc165a21d33aecdd3",
+    "src/prototype/visuals.js": "18c486227eb0b43a3f60a928084ee29b90f530df5dc92005efd00dd4be7eb87e",
     "src/prototype/world.js": "fd696a65bf4e1b9067291f6c6d3d57b508f2b2ecb7164c222299ef8fa5edaa53",
     "src/prototype/rules.js": "0bea5df747d56c3d0ab15021aaa5bd09683c898594292f142bda969c7ee7ccc0",
     "src/prototype/data.js": "a82856323e155405e7fb68a027dc226b75d1563bd6b440450ccf584a9d7724b2",
