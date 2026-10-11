@@ -12,7 +12,7 @@ const expected = [
 ];
 assert.deepEqual(boss.attacks.map((line) => line.split(':')[0]), expected);
 assert.equal(C.rules.attacks.darklord.length, 5);
-assert.equal(C.rules.rogueMoves.bosses.darklord.name, 'Writ of Restraint');
+assert.equal(C.rules.tacticalFoundation.rogueMoves.bosses.darklord.name, 'Writ of Restraint');
 
 for (const mode of ['normal', 'nightmare']) {
   for (const heroClass of Object.keys(C.classes)) {
