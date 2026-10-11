@@ -1858,7 +1858,8 @@
         if (!available.length) return;
         const focusedIndex = available.indexOf(document.activeElement);
         const from = focusedIndex < 0 ? (e.shiftKey ? 0 : -1) : focusedIndex;
-        const next = available[(from + (e.shiftKey ? -1 : 1) + available.length) % available.length];
+        const next =
+          available[(from + (e.shiftKey ? -1 : 1) + available.length) % available.length];
         menuIndex = buttons.indexOf(next);
         highlight(true);
         return;
