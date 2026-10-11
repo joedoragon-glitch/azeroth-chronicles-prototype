@@ -121,6 +121,20 @@ function sampledDraw(iterations) {
   }
   return { ms: (window.__perfWs2WallNow() - start) / iterations, alpha };
 }
+function serializedPerformanceState(game) {
+  return JSON.stringify(game, (key, value) => {
+    if (key === 'name' && value === 'Lifebinder') return 'Crypt Guardian';
+    if (key === 'name' && value === 'Lifebinder TRUE') return 'Crypt Guardian TRUE';
+    if (key === 'messages' && Array.isArray(value))
+      return value.filter(
+        (message) =>
+          typeof message !== 'string' ||
+          !message.startsWith('An old ossuary opens onto unfinished Crown guest rooms.'),
+      );
+    if (key === 'vale:dungeon-lore:crypt' && value === true) return undefined;
+    return value;
+  });
+}
 async function proof() {
   const s = window.__perfWs2;
   s.renderer.draw();
@@ -131,25 +145,7 @@ async function proof() {
       ).join('');
   return {
     pixels: await digest(bytes),
-    state: await digest(
-      new TextEncoder().encode(
-        JSON.stringify(s.game, (key, value) => {
-          // #237 only changes the Crypt's optional arrival text and boss title.
-          // Normalize those precise authorial differences while retaining exact
-          // simulation, rendering, timing and every other state field.
-          if (key === 'name' && value === 'Lifebinder') return 'Crypt Guardian';
-          if (key === 'name' && value === 'Lifebinder TRUE') return 'Crypt Guardian TRUE';
-          if (key === 'messages' && Array.isArray(value))
-            return value.filter(
-              (message) =>
-                typeof message !== 'string' ||
-                !message.startsWith('An old ossuary opens onto unfinished Crown guest rooms.'),
-            );
-          if (key === 'vale:dungeon-lore:crypt' && value === true) return undefined;
-          return value;
-        }),
-      ),
-    ),
+    state: await digest(new TextEncoder().encode(serializedPerformanceState(s.game))),
     render: s.renderer.metrics(),
     sprites: PrototypeSprites.status(),
     materials: PrototypeMaterials.status(),
@@ -386,6 +382,163 @@ function summarize(samples) {
           initial.baseline.pixels,
           'Full baseline/candidate pixels ' + JSON.stringify(spec),
         );
+        if (initial.candidate.state !== initial.baseline.state && zone === 'crypt') {
+          const actual = JSON.parse(
+            await pages.candidate.evaluate(() => serializedPerformanceState(__perfWs2.game)),
+          );
+          const expected = JSON.parse(
+            await pages.baseline.evaluate(() => serializedPerformanceState(__perfWs2.game)),
+          );
+          const differing = [];
+          const inspect = (a, b, key = '
+          'Identical starting campaign ' + JSON.stringify(spec),
+        );
+        const samples = { baseline: [], candidate: [], control: [] },
+          checkpoints = [];
+        for (
+          let round = 0;
+          round < (process.env.PERF_WS2_RENDER_DIAGNOSTIC ? 0 : rounds);
+          round++
+        ) {
+          for (const which of round % 2 ? ['candidate', 'baseline'] : ['baseline', 'candidate']) {
+            const sample = await pages[which].evaluate(sampledDraw, iterations);
+            samples[which].push(sample.ms);
+          }
+          // Advance the independent baseline control by the same draw count,
+          // then compare all three exact outputs at each measured checkpoint.
+          const controlSample = await pages.control.evaluate(sampledDraw, iterations);
+          samples.control.push(controlSample.ms);
+          const checkpoint = { round };
+          for (const which of ['baseline', 'candidate', 'control']) {
+            await pages[which].evaluate(() => (window.__perfWs2Diagnostic = false));
+            checkpoint[which] = await pages[which].evaluate(proof);
+            await pages[which].evaluate(() => (window.__perfWs2Diagnostic = true));
+            assert.equal(
+              checkpoint[which].state,
+              initial[which].state,
+              'State invariant ' + which + ' round ' + round,
+            );
+          }
+          assert.equal(
+            checkpoint.candidate.pixels,
+            checkpoint.baseline.pixels,
+            'Exact paired pixels round ' + round + ' ' + JSON.stringify(spec),
+          );
+          assert.equal(
+            checkpoint.control.pixels,
+            checkpoint.baseline.pixels,
+            'Exact independent baseline control pixels round ' + round + ' ' + JSON.stringify(spec),
+          );
+          checkpoints.push(checkpoint);
+        }
+        const final = {};
+        for (const which of ['baseline', 'candidate', 'control'])
+          final[which] = await pages[which].evaluate(proof);
+        const finalDir = path.join(
+          candidateRoot,
+          'test-results',
+          'perf-ws2-diagnostic',
+          zone + '-' + width,
+        );
+        fs.mkdirSync(finalDir, { recursive: true });
+        for (const which of ['baseline', 'candidate', 'control']) {
+          fs.writeFileSync(
+            path.join(finalDir, which + '-final.png'),
+            Buffer.from(final[which].png, 'base64'),
+          );
+          delete final[which].png;
+        }
+        fs.writeFileSync(
+          path.join(finalDir, 'final-comparison.json'),
+          JSON.stringify({ spec, initial, final }, null, 2) + '\n',
+        );
+        for (const which of ['baseline', 'candidate', 'control']) {
+          assert.equal(final[which].state, initial[which].state, 'State invariant ' + which);
+        }
+        assert.equal(
+          final.candidate.pixels,
+          final.baseline.pixels,
+          'Exact paired final pixels ' + JSON.stringify(spec),
+        );
+        assert.equal(
+          final.control.pixels,
+          final.baseline.pixels,
+          'Exact independent baseline final pixels ' + JSON.stringify(spec),
+        );
+        const baseline = summarize(samples.baseline),
+          candidate = summarize(samples.candidate),
+          control = summarize(samples.control);
+        const row = {
+          ...spec,
+          baseline,
+          candidate,
+          control,
+          sameSourceControlDifferencePercent: 100 * (control.medianMs / baseline.medianMs - 1),
+          medianReductionPercent: 100 * (1 - candidate.medianMs / baseline.medianMs),
+          initial,
+          final,
+          checkpoints,
+          rasterStableAcrossDraws: Object.fromEntries(
+            ['baseline', 'candidate', 'control'].map((which) => [
+              which,
+              initial[which].pixels === final[which].pixels,
+            ]),
+          ),
+        };
+        report.rows.push(row);
+        console.log(
+          JSON.stringify({
+            zone,
+            width,
+            beforeMs: baseline.medianMs,
+            afterMs: candidate.medianMs,
+            independentBaselineControlMs: control.medianMs,
+            sameSourceControlDifferencePercent: row.sameSourceControlDifferencePercent,
+            reductionPercent: row.medianReductionPercent,
+            pixelsIdentical: true,
+            stateInvariant: true,
+          }),
+        );
+        for (const page of Object.values(pages))
+          await page.evaluate(() => {
+            __perfWs2.canvas.width = 0;
+            __perfWs2 = null;
+          });
+      }
+    assert.deepEqual(errors, []);
+    report.errors = errors;
+    const target = path.resolve(
+      process.argv[2] ||
+        path.join(candidateRoot, 'test-results', 'perf-ws2-full-renderer-' + engine + '.json'),
+    );
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.writeFileSync(target, JSON.stringify(report, null, 2) + '\n');
+    console.log('PASS paired full-source painter benchmark and exact pixels/state: ' + target);
+  } finally {
+    await browser?.close();
+    await new Promise((r) => server.close(r));
+  }
+})().catch((e) => {
+  console.error(e);
+  process.exitCode = 1;
+});
+) => {
+            if (differing.length >= 30 || JSON.stringify(a) === JSON.stringify(b)) return;
+            if (
+              a === null ||
+              b === null ||
+              typeof a !== 'object' ||
+              typeof b !== 'object'
+            ) {
+              differing.push({ key, actual: a, expected: b });
+              return;
+            }
+            for (const child of new Set([...Object.keys(a), ...Object.keys(b)]))
+              inspect(a[child], b[child], key + '.' + child);
+          };
+          inspect(actual, expected);
+          console.error('CRYPT EXACT-STATE DIFFERENCES', JSON.stringify(differing));
+        }
         assert.equal(
           initial.candidate.state,
           initial.baseline.state,
