@@ -88,4 +88,60 @@ assert.equal(game.zone().dungeonVersion,4,'historical crypt decor must migrate')
 assert.equal(game.zone().props.filter(p=>p.decorative && p.structure==='estate-hearth').length>=1,true);
 assert.equal(oldCryptVersion,4);
 
-console.log('PASS boss pit-stop identity, positioning, scaling, summons, estate and movement contracts');
+
+function arena(id) {
+  const c = new Campaign('normal', 'ranger', () => 0.87);
+  c.enter(boss(id).kind === 'dungeon' ? id : boss(id).region);
+  const e = c.bossEnemy(boss(id), 'normal', {x:500,y:500});
+  c.zone().enemies = [e];
+  c.hero.x = 555;
+  c.hero.y = 500;
+  c.hero.immune = 0;
+  for (const member of c.s.party) { member.x = 555; member.y = 500; member.immune = 0; }
+  c.line = () => true;
+  c.safe = (x,y) => ({x,y});
+  c.clearSegment = () => true;
+  c.hitParty = (unit, damage) => { unit.hp = Math.max(1, unit.hp - damage); return true; };
+  return {c,e};
+}
+{
+  const {c,e} = arena('mire');
+  const jaw = {...rules('mire')[0],kind:'cone',index:0,x:e.x,y:e.y,
+    fromX:e.x,fromY:e.y,angle:0,radius:190};
+  c.resolveArea(e,jaw);
+  assert(e.deathRoll, 'one victim enters the roll on a landed jaw');
+  const victim = e.deathRoll.victim === 'hero' ? c.hero : c.s.party.find(u=>u.id===e.deathRoll.victim);
+  assert(victim.deathRollHeld);
+  for(let i=0;i<3;i++) c.updateEnemies(0.5);
+  assert.equal(e.deathRoll,null);
+  assert.equal(victim.deathRollHeld,false);
+  assert(victim.slow>0,'release imposes a two-second slow');
+}
+{
+  const {c,e} = arena('archive');
+  const archer = c.s.party.find(u=>u.type==='archer');
+  assert(archer);
+  const anchor = {...rules('archive')[0],kind:'cone',index:0,x:e.x,y:e.y,
+    fromX:e.x,fromY:e.y,angle:0,radius:190};
+  c.resolveArea(e,anchor);
+  assert.equal(e.hookedVictim,archer.id,'Anchor Swing prioritizes the healer');
+  assert.equal(archer.keeperHeld,e.id);
+  archer.healCd=4;
+  c.startAttack(e,c.hero,0);
+  assert.equal(archer.keeperHeld,null,'anchor reuse releases the held healer');
+  assert.equal(e.hookedVictim,null);
+  e.telegraph={...rules('archive')[4],index:4,x:archer.x,y:archer.y,
+    fromX:e.x,fromY:e.y,radius:155,count:1,kind:'circle'};
+  c.resolveAttack(e);
+  assert.equal(archer.healCd,7,'sabotage adds exactly 3 seconds to archer heal');
+}
+{
+  const {c,e} = arena('ridge');
+  c.engage(e);
+  assert.equal(e.ledgerOpen,true);
+  e.telegraph={...rules('ridge')[1],index:1,kind:'line',cargo:true,
+    fromX:e.x,fromY:e.y,x:c.hero.x,y:c.hero.y};
+  c.resolveAttack(e);
+  assert(c.s.projectiles.some(p=>p.style==='cargo'),'Rolling Cargo creates a real projectile');
+}
+console.log('PASS boss pit-stop combat mechanics and estate regression contracts');
