@@ -32,7 +32,25 @@ His succession claim is **contingent**, not a long-running plot to overthrow his
 - **Dara's guarded workstation:** mention fairly paid *but compulsory* repairs and artistic commissions. His rescue remains keyed to defeating `mine`.
 - **Mine personality:** a small geometric collection beside the existing forge/chamber is a strong visual cue. Reuse existing no-collision procedural objects, such as a stone marker, crystal, seat or game table, **only if** existing pathfinding/render equivalence and old-save placement checks remain green. No new building family is required for P0.
 
-## Engineering-term combat names — proposed and applied
+## LOCKED OWNER DESIGN — Seven combat moves (2026-10-11)
+
+**Decision: ACCEPTED AND LOCKED as a combat design specification.** Do not reopen the naming, roster or intended mechanics without another owner request. **Approval of the design is not approval to merge or deploy, and does not imply all mechanics below are already implemented.** Keep the five old attack slots and their ids/indices compatible while engineering the complete seven-move behavior, with two existing tactical signatures converted into distinct attacks.
+
+| # | Engineering-term move | Approved mechanical behavior |
+| --- | --- | --- |
+| 1 | **Punching Shear** | 1.6s circular warning, concentrated hit dealing **1.4× base damage**, exposes heartstone **2.5s** after impact; exposed core takes **+25% incoming damage**. |
+| 2 | **Progressive Collapse** | **Three sequential** marked falling-rock impacts, first warning **1.7s**, each **1.4× base damage**. Then **up to two active**, collision-bearing temporary stone supports, each **9s lifetime**. If capped, retire older supports before adding new ones. Preview their future positions, protect exits and paths to Dara, respect all trap/collision rules; no permanent architecture changes. |
+| 3 | **Dynamic Compaction** | **1.6s warning**, then **two expanding radial waves** separated by about **0.7s**; each **1.0× base damage** plus **1.5s slow** on a landed hit. The player must have an actual dodge/crossing opportunity, with no unavoidable double-hit lock. |
+| 4 | **Pile Driving** | **1.7s visible lane warning**, fast charge with **1.4× base damage**. After the charge terminates for *any reason*, open core **3s**, including an unobstructed end or collision. No stuck charges on temporary supports. |
+| 5 | **Lateral Load Transfer** | **1.3s warned lateral lane**. A *stone slab/environment* moves sideways rather than Garun moving; hit applies **0.6× base damage** and pushes ~**100 world units** laterally. The slab cannot penetrate walls/supports, and the lane must have an escape. Replaces, rather than merely renames, the existing Quarry Shift shove behavior. |
+| 6 | **Passive Earth Pressure** | **1.65s warned frontal sector**, ~**195-world-unit reach**, **0.1× base damage** and ~**95-unit knockback**. Defensive response to melee pressure; derived from, but replaces the fantasy-named Faultline Brace tactic. |
+| 7 | **Mass Underpinning** | **1.8s telegraphed call** for real Ogre wardens. **Normal: maximum 3** active. **TRUE: maximum 6**, with **two elite ringleaders**, preserving species, existing fight scheduling and current **7s Normal / 5.5s TRUE** summon cooldowns. |
+
+**Unified rules:** Existing exposed-core damage bonus **+25%** and vulnerability windows **2.5s / 3s** are sacred contracts. Garun retains his normal guard force and his six-unit TRUE warband. Keep a **single at-50%-HP strategic escalation** that favors Progressive Collapse and Dynamic Compaction rather than creating a new save-sensitive phase. No untelegraphed collision walls under the player's feet; no inaccessible mine exits or Dara; no permanent/saved construction props; no change to the public boss name, internal `mine` identity or historical clear flags. Before aggro, he follows his inspected-point Mine patrol; during aggro, combat logic replaces his patrol.
+
+**Implementation reality on this draft:** All seven engineering-term *names* are present. The five original attack slots remain, plus the two existing tactical signatures. The code now attempts temporary supports after Rockfall / Progressive Collapse and includes a short inspection patrol plus a gallery, but the complete two-wave slow, sequential-collapse + cap/preview, lateral slab with new damage coefficient, and fully distinct seven-ability scheduling **are not yet implemented or signed off**. Do not misrepresent the approved specification as passing live tests. Browser/mobile, old saves, Normal/early TRUE/Awakening, pathfinding/line-of-sight, performance and core-window regressions are release gates.
+
+## Engineering-term combat names — labels applied
 
 Garun announces authentic civil and structural engineering language with absolute seriousness. The humor comes from the technical accuracy: an unsuspecting player hears threatening incantations while an engineer recognizes a construction-site vocabulary lesson.
 
