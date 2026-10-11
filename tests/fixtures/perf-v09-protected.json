@@ -44,7 +44,7 @@
     "source": "Issue #239 isolated draft PR #259 — decorative five-region silver Crown production scenes; strict reviewed hashes, no mechanics.",
     "files": {
       "src/prototype/rules.js": "1696d68ec6d907bc8ca75bf961a6c49f89610d0adee1b3c9bc515b1e840dece6",
-      "src/prototype/world.js": "01e909b65eb773734669aae55cf89efd06eb4221bbc1eda4ed26f5075230d055",
+      "src/prototype/world.js": "db8d911b0fc00bee50e984ede620f356774661243506def8671a32cd43864cf3",
       "src/prototype/data.js": "0bd0e66cd10556ac6e67de76d1d38fb3ec1e8d29981f0f6964cf825c5b5e0fd9"
     }
   }
