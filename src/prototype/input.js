@@ -30,7 +30,7 @@
     ...(legacyManaEnabled ? [['mana', 'Command Ranger Mana Recovery', 'KeyM']] : []),
   ];
   const defaults = Object.fromEntries(actions.map(([id, , code]) => [id, code]));
-  const aliases = { KeyR: 'inventory', KeyT: 'quests', KeyV: 'pause' };
+  const aliases = { KeyR: 'inventory', KeyT: 'quests', KeyV: 'pause', KeyQ: 'recall' };
   const validCode = (code) =>
     typeof code === 'string' &&
     /^(Key[A-Z]|Digit[0-9]|Space|ShiftLeft|ShiftRight|Tab|Backquote|Minus|Equal|BracketLeft|BracketRight|Backslash|Semicolon|Quote|Comma|Period|Slash|ArrowUp|ArrowDown|ArrowLeft|ArrowRight|Home|End|PageUp|PageDown|F[1-4]|F[6-9]|F10)$/.test(
