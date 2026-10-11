@@ -2080,7 +2080,7 @@
       presentation: 'workstation',
       workKind: 'smith',
       context:
-        "Borin is held here because the Guardian needs his craftsmanship to finish the Dark Lord's woodland retreat.",
+        "Borin is forced to finish the Dark Lord's winter rooms. Beside his tools lies the Lifebinder's ledger: names of the fallen, under BOUND and RELEASED.",
     },
     archive: {
       x: 1130,
@@ -3361,6 +3361,8 @@
     ],
   }; // Curated occupied spaces: each dungeon has an entrance, work/ritual zone, command markers and a boss approach.
   const dungeonLore = {
+    crypt:
+      'An old ossuary opens onto unfinished Crown guest rooms. A building plan shows six seats at the winter table; the memorial stones give the dead names, not numbers.',
     abyss:
       'Abyss Bastion is the Dark Lord’s air-superiority project. His purple dragon is his personal flying mount; the hatchery will grow his future air force. Riders prepare harnesses, supplies arrive, and the royal launch platform is still being built.',
   };

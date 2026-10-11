@@ -49,7 +49,7 @@ guardian.hp = 0;
 dungeon.kill(guardian);
 assert(dungeon.s.paid['clear:crypt'], 'Dungeon first clear remains rewarded');
 assert.equal(
-  dungeon.notices.filter((n) => n.text === 'BOSS VANQUISHED · Crypt Guardian').length,
+  dungeon.notices.filter((n) => n.text === 'BOSS VANQUISHED · Lifebinder').length,
   1,
 );
 assert.equal(

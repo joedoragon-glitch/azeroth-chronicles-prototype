@@ -660,6 +660,9 @@
           z.props = z.props.filter((p) => !c.blocked(p.x, p.y, z.id, p.r || 0, true));
           c.roadNetwork(z);
           for (const e of z.enemies) {
+            // Historical bosses retain their `crypt` save identity and all combat stats.
+            if (e.family === 'crypt' && e.type === 'boss')
+              e.name = e.form === 'true' ? 'Lifebinder TRUE' : 'Lifebinder';
             if (e.family === 'thorn' && e.type === 'boss') {
               const base = c.boss('thorn').hp * (e.form === 'true' ? 1.8 : 1),
                 fraction = e.hp / e.maxHp,

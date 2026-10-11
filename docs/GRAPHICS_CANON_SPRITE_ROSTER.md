@@ -73,7 +73,7 @@ Ringleaders do not get separate base art: they reuse the exact underlying approv
 ## D. Bosses
 
 35. Thornfang
-36. Crypt Guardian
+36. Lifebinder (formerly Crypt Guardian; same `crypt` boss body)
 37. Mirejaw
 38. Drowned Keeper
 39. Ridge Tyrant

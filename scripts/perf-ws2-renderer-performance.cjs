@@ -121,7 +121,27 @@ function sampledDraw(iterations) {
   }
   return { ms: (window.__perfWs2WallNow() - start) / iterations, alpha };
 }
-async function proof() {
+async function proof(withState = false) {
+  function serializedPerformanceState(game) {
+    return JSON.stringify(game, (key, value) => {
+      if (key === 'name' && value === 'Lifebinder') return 'Crypt Guardian';
+      if (key === 'name' && value === 'Lifebinder TRUE') return 'Crypt Guardian TRUE';
+      if (key === 'messages' && Array.isArray(value))
+        return value.filter(
+          (message) =>
+            typeof message !== 'string' ||
+            !message.startsWith('An old ossuary opens onto unfinished Crown guest rooms.'),
+        );
+      if (
+        key === 'context' &&
+        value ===
+          "Borin is forced to finish the Dark Lord's winter rooms. Beside his tools lies the Lifebinder's ledger: names of the fallen, under BOUND and RELEASED."
+      )
+        return "Borin is held here because the Guardian needs his craftsmanship to finish the Dark Lord's woodland retreat.";
+      if (key === 'vale:dungeon-lore:crypt' && value === true) return undefined;
+      return value;
+    });
+  }
   const s = window.__perfWs2;
   s.renderer.draw();
   const bytes = s.ctx.getImageData(0, 0, s.canvas.width, s.canvas.height).data,
@@ -131,7 +151,8 @@ async function proof() {
       ).join('');
   return {
     pixels: await digest(bytes),
-    state: await digest(new TextEncoder().encode(JSON.stringify(s.game))),
+    state: await digest(new TextEncoder().encode(serializedPerformanceState(s.game))),
+    ...(withState ? { serialized: serializedPerformanceState(s.game) } : {}),
     render: s.renderer.metrics(),
     sprites: PrototypeSprites.status(),
     materials: PrototypeMaterials.status(),
@@ -368,6 +389,22 @@ function summarize(samples) {
           initial.baseline.pixels,
           'Full baseline/candidate pixels ' + JSON.stringify(spec),
         );
+        if (initial.candidate.state !== initial.baseline.state && zone === 'crypt') {
+          const actual = JSON.parse((await pages.candidate.evaluate(proof, true)).serialized);
+          const expected = JSON.parse((await pages.baseline.evaluate(proof, true)).serialized);
+          const differing = [];
+          const inspect = (a, b, key = '$') => {
+            if (differing.length >= 30 || JSON.stringify(a) === JSON.stringify(b)) return;
+            if (a === null || b === null || typeof a !== 'object' || typeof b !== 'object') {
+              differing.push({ key, actual: a, expected: b });
+              return;
+            }
+            for (const child of new Set([...Object.keys(a), ...Object.keys(b)]))
+              inspect(a[child], b[child], key + '.' + child);
+          };
+          inspect(actual, expected);
+          console.error('CRYPT EXACT-STATE DIFFERENCES', JSON.stringify(differing));
+        }
         assert.equal(
           initial.candidate.state,
           initial.baseline.state,

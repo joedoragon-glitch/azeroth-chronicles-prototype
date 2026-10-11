@@ -10,12 +10,43 @@ assert(process.argv[2], 'Provide untouched c6ce1af baseline checkout');
 const load = (root, name) => require(path.join(root, 'src/prototype', name + '.js'));
 const A = load(baseline, 'engine'),
   B = load(current, 'engine');
+// The performance harness compares simulation against the immutable pre-worldbuilding
+// release. Rewind only #237's authored text in this isolated comparison process;
+// the running game and its dedicated Lifebinder regression keep the new canon.
+const baselineCrypt = A.data.bosses.find((boss) => boss.id === 'crypt'),
+  currentCrypt = B.data.bosses.find((boss) => boss.id === 'crypt'),
+  isLifebinderRevision = currentCrypt?.name === 'Lifebinder';
+if (isLifebinderRevision) {
+  assert.equal(baselineCrypt.name, 'Crypt Guardian');
+  assert.equal(B.rules.dungeonLore.crypt?.includes('six seats'), true);
+  currentCrypt.name = baselineCrypt.name;
+  B.data.regions.find((region) => region.id === 'vale').exploration = A.data.regions.find(
+    (region) => region.id === 'vale',
+  ).exploration;
+  B.data.quests[3][2] = A.data.quests[3][2];
+  B.rules.dungeonWorkstations.crypt.context = A.rules.dungeonWorkstations.crypt.context;
+  delete B.rules.dungeonLore.crypt;
+  load(current, 'narration')[3].text = load(baseline, 'narration')[3].text;
+}
+const canonicalGameplayState = (record) => {
+  if (!isLifebinderRevision || !record || typeof record !== 'object') return record;
+  if (Array.isArray(record)) {
+    record.forEach(canonicalGameplayState);
+    return record;
+  }
+  if (record.family === 'crypt' && record.type === 'boss') {
+    if (record.name === 'Lifebinder') record.name = 'Crypt Guardian';
+    if (record.name === 'Lifebinder TRUE') record.name = 'Crypt Guardian TRUE';
+  }
+  Object.values(record).forEach(canonicalGameplayState);
+  return record;
+};
 const rng = () => {
   let state = 73129;
   return () => (state = (Math.imul(state, 1664525) + 1013904223) >>> 0) / 4294967296;
 };
 const json = (x) => JSON.parse(JSON.stringify(x));
-const live = (c) => json({ ...c, snapshot: c.snapshot() });
+const live = (c) => canonicalGameplayState(json({ ...c, snapshot: c.snapshot() }));
 const hash = (x) =>
   crypto
     .createHash('sha256')

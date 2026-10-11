@@ -39,5 +39,13 @@
     "version": "0.8.139",
     "scope": "Thornfang Pounce and Stone Colossus Wall Rush authored description-only corrections; no mechanics, layouts or procedural art changed",
     "evidence": "v0.9 author approval and boss-description-contracts regression; all other baseline hashes unchanged"
+  },
+  "lifebinderRevision": {
+    "source": "Independent draft PR #258 (#237), identity and lore-only changes; existing v0.9 performance baselines retained",
+    "files": {
+      "src/prototype/data.js": "055c9fb78a0e9b1b2db291036eca506039830e56d0ebbf8e1b7e78e3fea03a22",
+      "src/prototype/rules.js": "a3f005b0a63f782e1ae392b3ccb3e35c8ddfa0cc4fb068ed733bfd1c0df00146",
+      "src/prototype/save.js": "aba62523118e53749e0a4b94a8a1a207344037833b5836f86feb7e305b259331"
+    }
   }
 }
