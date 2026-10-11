@@ -82,7 +82,7 @@ c.enter('mine');
 assert(!messages.includes(mineLore), 'entry clue should not repeat after discovery');
 const old = Campaign.restore(c.snapshot());
 assert(old.s.discovered['highlands:dungeon-lore:mine']);
-assert.equal(old.s.rescued.mine, false);
+assert(!old.s.rescued.mine);
 assert.equal(old.s.keys.mine, undefined);
 assert.equal(old.zone().npcs.find((n) => n.family === 'mine').workstation, 'equipment-repair');
 assert.equal(old.zone().enemies.filter((e) => e.guard).length, 18);
