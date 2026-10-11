@@ -6207,6 +6207,26 @@
             '#f2cf7c',
           );
           break;
+        case 'estate-rug':
+          // Finished Crown luxury, deliberately non-colliding with the original route.
+          poly([[-42, -4], [8, -20], [45, -5], [-4, 12]], '#4c2d40');
+          poly([[-32, -4], [7, -16], [36, -5], [-4, 8]], '#7d4655');
+          line([[-30, -3], [7, -15], [34, -5], [-4, 7]], '#c8a671', 2);
+          break;
+        case 'estate-hearth':
+          rect(-28, -34, 56, 43, '#57454a');
+          rect(-21, -27, 42, 31, '#2b2329');
+          poly([[-12, 0], [-6, -22], [0, -11], [7, -27], [16, 0]], '#d58b47');
+          poly([[-7, 0], [0, -15], [8, 0]], '#ffd17e');
+          rect(-33, -39, 66, 7, '#9b8280');
+          break;
+        case 'estate-lounge':
+          rect(-27, -21, 54, 20, '#513343');
+          rect(-26, -10, 52, 20, '#77505c');
+          rect(-28, 0, 7, 14, '#856e60');
+          rect(21, 0, 7, 14, '#856e60');
+          line([[-22, -12], [22, -12]], '#d4b57b', 2);
+          break;
         case 'coffin':
           poly(
             [
