@@ -511,6 +511,13 @@
         for (const f of ['weapon', 'armorTier', 'talentPoints', 'nextId'])
           if (!Number.isInteger(f === 'nextId' ? s[f] : s.hero[f]))
             throw Error('Invalid integer progression');
+        if (
+          s.hero.weaponSelection !== undefined &&
+          s.hero.weaponSelection !== null &&
+          s.hero.weaponSelection !== 'tier' &&
+          !Object.prototype.hasOwnProperty.call(Campaign.legacyWeapons, s.hero.weaponSelection)
+        )
+          throw Error('Invalid weapon selection');
         for (const key of ['keeperPact', 'keeperEvidence'])
           if (s[key] !== undefined && typeof s[key] !== 'boolean')
             throw Error('Invalid Archive knowledge');
@@ -687,7 +694,7 @@
         c.refreshNPCs();
         c.initializeQuests();
         c.checkQuests();
-        c.autoEquipBestWeapon();
+        c.restoreWeaponSelection();
         c.syncCompanionLevelStats();
         for (const u of [c.hero, ...c.s.party])
           if (c.blocked(u.x, u.y)) Object.assign(u, c.safe(u.x, u.y));

@@ -1,0 +1,42 @@
+{
+  "key": "prop:marsh-bush:march",
+  "original": "tools/sprites/batches/2026-10-08-03/prop-marsh-bush-march/image-tool-original.png",
+  "originalHash": "9192ac789708ab46aa011ec533caeacc0a3e0a88d70ac83ee1945c089a4d8679",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/batches/2026-10-08-03/prop-marsh-bush-march",
+  "intermediateHash": "e50864ed9dca59068af825421f3bba17adef320aa9594a9bb34af1de16b5d72e",
+  "intermediateDimensions": [
+    1904,
+    1904
+  ],
+  "priorRevision": "6e163a732e12968487ef15bc9989f71187925035486bac3df411a23dd3d5f25d",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -3,
+    "offsetY": 20,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": {
+        "left": 325,
+        "right": 325,
+        "top": 325,
+        "bottom": 325
+      }
+    }
+  },
+  "target": 576,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "marsh-bush",
+    "id": "aesthetic-nature-16"
+  },
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact nature binding; no animation or variant bank. Seeded placement and procedural scene effects retained."
+}

@@ -1,0 +1,36 @@
+{
+  "key": "prop:rock:vale",
+  "original": "tools/sprites/batches/2026-10-08-01/prop-rock-vale/image-tool-original.png",
+  "originalHash": "47adfaee0810663baf27dbe825e7719386466565e5f5001d4b925cf16ffe0a4d",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/batches/2026-10-08-01/prop-rock-vale",
+  "intermediateHash": "ded65ec294b67004f2ce62cd966f51eed80a13d74ace8515829a30614a8f2ed8",
+  "intermediateDimensions": [
+    1382,
+    1382
+  ],
+  "priorRevision": "ea5807ae852c76cbea5e521e7d989481ef505a504326cc87812241c7e645704b",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -2,
+    "offsetY": -1,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": 64
+    }
+  },
+  "target": 576,
+  "entity": {
+    "renderKind": "prop",
+    "icon": "🪨",
+    "id": "sprite-reference-295"
+  },
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact nature binding; no animation or variant bank. Seeded placement and procedural scene effects retained."
+}

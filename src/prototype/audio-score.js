@@ -7,9 +7,19 @@
       describe(campaign, activity = {}) {
         const zone = campaign.zone(),
           region = campaign.definition(),
-          hero = campaign.hero;
-        const engaged = zone.enemies.filter((e) => e.hp > 0 && e.aggro && !e.neutral);
-        const boss = engaged.find((e) => e.type === 'boss');
+          hero = campaign.hero,
+          enemies = zone.enemies;
+        let engaged = 0,
+          boss;
+        for (let i = 0; i < enemies.length; i++) {
+          // Read-only audio observation; retain array order and skip sparse slots like filter.
+          if (!(i in enemies)) continue;
+          const enemy = enemies[i];
+          if (enemy.hp > 0 && enemy.aggro && !enemy.neutral) {
+            engaged++;
+            if (!boss && enemy.type === 'boss') boss = enemy;
+          }
+        }
         const interior = campaign.supplyRoom()
           ? 'treasury'
           : campaign.sideDungeon()
@@ -39,7 +49,7 @@
                       ? 'peace'
                       : boss
                         ? 'boss'
-                        : engaged.length
+                        : engaged
                           ? 'combat'
                           : refuge
                             ? 'settlement'
@@ -47,7 +57,7 @@
           night: campaign.night(),
           peace: campaign.peace,
           boss: boss ? { family: boss.family, form: boss.form, name: boss.name } : null,
-          engaged: engaged.length,
+          engaged,
           lowHealth: hero.hp > 0 && hero.hp / hero.maxHp <= 0.25,
           started: activity.started !== false,
           gameOver: !!campaign.s.challenge.gameOver,

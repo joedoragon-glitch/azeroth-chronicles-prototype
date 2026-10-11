@@ -31,6 +31,15 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
   assert(g.drainMana(g.hero, 0.12) > 0);
 }
 
+const expired = new L('normal', 'mage', () => 0.9);
+const expiredSave = expired.snapshot();
+expiredSave.hero.mp = 10;
+expiredSave.hero.supportEffects = [{ type: 'mana', remaining: 40, seconds: 0 }];
+const restored = L.restore(expiredSave, () => 0.9);
+restored.updateRangerSupport(1);
+assert.equal(restored.hero.mp, 10, 'zero-second legacy effect cannot corrupt MP');
+assert.equal(restored.hero.supportEffects.length, 0, 'expired legacy recovery is discarded');
+
 const g = new C('normal', 'mage', () => 0.9);
 g.enter('march');
 g.s.clock = 500;

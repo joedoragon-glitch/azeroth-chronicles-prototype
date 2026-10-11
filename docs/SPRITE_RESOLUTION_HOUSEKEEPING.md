@@ -1,5 +1,7 @@
 # Sprite resolution housekeeping · 150%
 
+Historical preparation snapshot: the pause and next-pilot instructions below describe this earlier release, not the current batch. The later memory-policy update supersedes the old limit. For new work, follow [the original-master policy](SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md) and the latest batch-specific status in [#160](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160); do not replay completed pilots or override a current batch pause.
+
 Joel requested preparation before adapting the existing artwork. This release changes developer tooling and review safeguards; no production image, manifest, approval, original, animation or historical checkpoint is replaced. Camera framing remains 150%. Artwork adaptation and generation are paused.
 
 ## Compatible units and processing

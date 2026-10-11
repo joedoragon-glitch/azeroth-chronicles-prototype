@@ -1,0 +1,42 @@
+{
+  "key": "prop:driftwood:march",
+  "original": "tools/sprites/batches/2026-10-08-02/prop-driftwood-march/image-tool-original.png",
+  "originalHash": "80271c4ab96e579ee96c0af0bdd6bef4e6e03cf4bcd792dae598ae17baaf2712",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/batches/2026-10-08-02/prop-driftwood-march",
+  "intermediateHash": "a17790876cd89036b6f57155361ef834f7a16bea611c58dd6678ac8e41627d42",
+  "intermediateDimensions": [
+    1809,
+    1809
+  ],
+  "priorRevision": "68a63c60cb772b19ab6988c2413cfe52ea3847fbbe4ae8296dc959833199a51b",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -2,
+    "offsetY": 29,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": {
+        "left": 277,
+        "right": 278,
+        "top": 277,
+        "bottom": 278
+      }
+    }
+  },
+  "target": 576,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "driftwood",
+    "id": "harbor-drift"
+  },
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact nature binding; no animation or variant bank. Seeded placement and procedural scene effects retained."
+}

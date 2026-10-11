@@ -1,0 +1,42 @@
+{
+  "key": "prop:charred-stump:frontier",
+  "original": "tools/sprites/batches/2026-10-08-03/prop-charred-stump-frontier/image-tool-original.png",
+  "originalHash": "4836661967fbe99c584b8883ad7a64b41a4c22ac990f7a3646fef89b1964b611",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/batches/2026-10-08-03/prop-charred-stump-frontier",
+  "intermediateHash": "114708d51d402e59be49822786648bd44f112ee875116198caf5efe2a59ec920",
+  "intermediateDimensions": [
+    1702,
+    1702
+  ],
+  "priorRevision": "8a224f7840c4f8966cff488d4864b7724de8cb0b08ce74e5bd09ccc63e8c8f4a",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -2,
+    "offsetY": 0,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": {
+        "left": 224,
+        "right": 224,
+        "top": 393,
+        "bottom": 55
+      }
+    }
+  },
+  "target": 576,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "charred-stump",
+    "id": "sprite-reference-288"
+  },
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact nature binding; no animation or variant bank. Seeded placement and procedural scene effects retained."
+}

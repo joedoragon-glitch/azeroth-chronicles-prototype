@@ -28,7 +28,6 @@ The browser is the current desktop playtest target, especially Chromebook keyboa
 | `audio-score.js` | Cue selection, contextual observation, score scheduling, fades and ambience |
 | `audio-runtime.js` / `audio-effects.js` | Context lifecycle, mixer/source cleanup/bounds, diagnostics and contextual effect recipes |
 | `runtime.js` | Bounded active-frame measurements and idle redraw scheduling |
-| `session.js` | Transient single-player/cooperative menu timing and location-interaction validation; no networking or saved state |
 | `menus.js` | Specialist, barracks, party, inventory and training menu definitions/actions; current game and shell callbacks injected |
 | `app.js` | Shell lifecycle, global/settings menus, map presentation, keyboard/touch coordination, charge input, frame scheduling and app updates |
 
@@ -56,7 +55,7 @@ Performance samples retain at most 180 active frames and stay local. Exported re
 
 The campaign core is precached. Independent legacy games are cached only after they are opened online. Registered sprite assets join the current cache. New cache activation removes only obsolete Azeroth caches. Save keys are independent of cache versions.
 
-CI checks generated artifacts before testing. PRs run all non-browser suites and desktop/phone browser paths. Main runs all suites and the full device matrix, publishes only after success, and checks that the live build identifier matches the tested commit before live smoke verification.
+CI checks generated artifacts before testing. Code PRs run all non-browser suites and desktop/phone browser paths; allowlisted prose-only PRs use lightweight checks. Main requires successful full validation of the identical Git tree: it can reuse the same repository's full PR certificate or run all suites and the full device matrix itself. It always checks and rebuilds the package, publishes only after success, and checks that the live build identifier matches the merged commit before live smoke verification. Manual runs retain full validation. See README for the conservative reuse and fallback rules.
 
 ## Remaining coupling
 
@@ -135,7 +134,3 @@ Ground materials reuse a screen-aligned isometric repeat at the current physical
 `ground-cache.js` owns one current outdoor floor picture, bounded to 64 MiB RGBA with a preferred 256-unit movement margin. `renderer.js` reuses it while retaining visible-tile counters and the existing dynamic layers. Zone, material readiness/revision, viewport, physical scale and exhausted camera margin rebuild it. Interiors release it and use their original floor path. Source art, campaign state and save keys are unchanged. See [GROUND_WINDOW_PERFORMANCE.md](GROUND_WINDOW_PERFORMANCE.md).
 
 Joel additionally authorizes a 256 MiB decoded sprite-cache ceiling for continued artwork production (previously 16 MiB). The shared format and tooling active-memory policy agree; lazy loading, two concurrent decodes, LRU/pinning and per-resource/package limits remain unchanged. This is separate from the 64 MiB floor-picture ceiling and is not an upfront allocation.
-
-## Session menu policy
-
-Single-player retains automatic menu pause. Cooperative selection uses an explicit transient session policy that separates blocked local controls from a running shared world. NPC/Barracks dialogs retain location leases through nested menus and close/reject stale actions on travel, death, unavailable services or lost range. Global menus remain independent. The current release implements the policy and future selection hook, not a multiplayer connection flow; local cooperative scheduling is not a guarantee of background-host continuity. See [SESSION_MENU_POLICY.md](SESSION_MENU_POLICY.md) for contracts and verification.

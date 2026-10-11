@@ -20,7 +20,7 @@ try {
     'assets',
     'tests',
     'docs',
-    'tools',
+    'tools/audio',
   ])
     fs.cpSync(path.join(root, name), path.join(checkout, name), { recursive: true });
   for (const name of [

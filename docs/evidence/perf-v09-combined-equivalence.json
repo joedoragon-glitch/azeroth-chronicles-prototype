@@ -1,0 +1,455 @@
+{
+  "baseline": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+  "scenarios": [
+    {
+      "mode": "normal",
+      "cls": "paladin",
+      "succession": false,
+      "frames": 240,
+      "finalHash": "25f6422d816ab99112f3e204e1fb955a4321f50a5068750a84cbf43a84cbe55e",
+      "events": 85
+    },
+    {
+      "mode": "normal",
+      "cls": "paladin",
+      "succession": true,
+      "frames": 240,
+      "finalHash": "7ec476422b4f8f14af505ed12f709b5653adf982d54a5649f84363a60338d99d",
+      "events": 85
+    },
+    {
+      "mode": "normal",
+      "cls": "mage",
+      "succession": false,
+      "frames": 240,
+      "finalHash": "884c15f1fac2feaaa83af0cf7cfc3d5de6f018a03c7d90dcc3fdda6d80ea7be7",
+      "events": 102
+    },
+    {
+      "mode": "normal",
+      "cls": "mage",
+      "succession": true,
+      "frames": 240,
+      "finalHash": "40cc88b16ab6a58916ff1d4335ccdd28ff00d15e390c9a8d0a6c7700ae504e1c",
+      "events": 102
+    },
+    {
+      "mode": "normal",
+      "cls": "ranger",
+      "succession": false,
+      "frames": 240,
+      "finalHash": "67cb2b1223515e05c17cfd702dc43f7b328e18843b8a3a3d435c762f63182b21",
+      "events": 95
+    },
+    {
+      "mode": "normal",
+      "cls": "ranger",
+      "succession": true,
+      "frames": 240,
+      "finalHash": "19300f58e51b94677d3b3b1180c8cd2a8af8573a6ae5457ea3c732ed917c3142",
+      "events": 95
+    },
+    {
+      "mode": "nightmare",
+      "cls": "paladin",
+      "succession": false,
+      "frames": 240,
+      "finalHash": "d141b02430967521cd76a5e5c2299a73f6abf26fbc3a991e8b45907d45f18b53",
+      "events": 87
+    },
+    {
+      "mode": "nightmare",
+      "cls": "paladin",
+      "succession": true,
+      "frames": 240,
+      "finalHash": "6f0b0599e318d15688974bfe53695f05efb4f1d1e3b1ece489bfc809751ff837",
+      "events": 87
+    },
+    {
+      "mode": "nightmare",
+      "cls": "mage",
+      "succession": false,
+      "frames": 240,
+      "finalHash": "60d084b45a974c77fbe5528457f9464912b798b060f954b7003e9d061851274b",
+      "events": 102
+    },
+    {
+      "mode": "nightmare",
+      "cls": "mage",
+      "succession": true,
+      "frames": 240,
+      "finalHash": "2151bf663f75b830501a78000277da64372bf37dbb61d59752f3d748f003d418",
+      "events": 102
+    },
+    {
+      "mode": "nightmare",
+      "cls": "ranger",
+      "succession": false,
+      "frames": 240,
+      "finalHash": "36b7f48083bfc2001326b1394f86966f307d16f328bab262d49bdc9b5def1897",
+      "events": 95
+    },
+    {
+      "mode": "nightmare",
+      "cls": "ranger",
+      "succession": true,
+      "frames": 240,
+      "finalHash": "b7505a9ee6a594124c439f54de41c8af7fa069678581d1b14cab2ccf14235f85",
+      "events": 95
+    }
+  ],
+  "historical": [
+    {
+      "file": "nightmare-mage-v08118.json.gz",
+      "sourceHash": "5de11238aeb43d3cb5f7c94be88bbdefdb449f09dc948702dbb49e8170e06809",
+      "restoredHash": "6a9e56d3a449d58a27044d423ff0c3e7d04cd54c877c563efee7dd81fc11f41c"
+    },
+    {
+      "file": "nightmare-paladin-v08118.json.gz",
+      "sourceHash": "a6a1ef76e2e1939a95e2f24767e429dd00ed928afcc81d514889da746be91bfc",
+      "restoredHash": "fc3bf42f3a4ab12ee12954c383dd0b74e4767526dc984cc7ce41d50916b8fd31"
+    },
+    {
+      "file": "nightmare-ranger-v08118.json.gz",
+      "sourceHash": "75c28b0ea8dd858a618ab552930e5c68b4aa4f75756dea340955ca9233327aa1",
+      "restoredHash": "e2c756562aaacd9e85b7b809733817deed94a2d8a8d59260422498f9e624ccee"
+    },
+    {
+      "file": "normal-mage-v08118.json.gz",
+      "sourceHash": "dfc4fdefabd92b0a876360f0faf89646f628c9d401f5e61d4f61f67aaa25b4d1",
+      "restoredHash": "774fed9502b48af5032899643d7767b74e9bb0c7540aaec815ec0a0cac20f409"
+    },
+    {
+      "file": "normal-paladin-v08118.json.gz",
+      "sourceHash": "b13c0cb99f21e9e77b002044d5b4751a2bf89cc92f52c503e7734cda50594b58",
+      "restoredHash": "347d076c7653cb00bdd71d9bcafbe1919e8aa560e0be8fa3ada3630291dc4a5e"
+    },
+    {
+      "file": "normal-ranger-v08118.json.gz",
+      "sourceHash": "d09c7718397cef6fc036bf93a1f54c67a0433f80ceef35a1260eeb6b05e0a104",
+      "restoredHash": "9dc9911dc8b0b07c5b799d3e658e7756bb0215a1e8b2a4c57d1fc326f9ba0ba5"
+    }
+  ],
+  "scenes": [
+    {
+      "zone": "vale",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "edc01e220ebd1c522a5a997ad84906ca01d6260cec37a93f9997acacf4a7bbb1"
+    },
+    {
+      "zone": "vale",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "edc01e220ebd1c522a5a997ad84906ca01d6260cec37a93f9997acacf4a7bbb1"
+    },
+    {
+      "zone": "vale",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "8c4d723dc37241278baf535db5bc8a3f674c713d1594df047d80b3422872ad4d"
+    },
+    {
+      "zone": "vale",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "8c4d723dc37241278baf535db5bc8a3f674c713d1594df047d80b3422872ad4d"
+    },
+    {
+      "zone": "march",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "d9fa587120ab203dd208c33f779262367592e661c7ea5d10b60165375d28a0d7"
+    },
+    {
+      "zone": "march",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "d9fa587120ab203dd208c33f779262367592e661c7ea5d10b60165375d28a0d7"
+    },
+    {
+      "zone": "march",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "276706be91e3c1d1bea53ae867cb84a006bcaf356fd90b4faab2448e25b05349"
+    },
+    {
+      "zone": "march",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "276706be91e3c1d1bea53ae867cb84a006bcaf356fd90b4faab2448e25b05349"
+    },
+    {
+      "zone": "highlands",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "38ab3168a469994856493342e4edfc9a70b24190893890ebb10a5d517b8b29d2"
+    },
+    {
+      "zone": "highlands",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "38ab3168a469994856493342e4edfc9a70b24190893890ebb10a5d517b8b29d2"
+    },
+    {
+      "zone": "highlands",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "c2a1ef9d98098478b84b17317f45dc23602f01755419bb9dfed9ab62073ad862"
+    },
+    {
+      "zone": "highlands",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "c2a1ef9d98098478b84b17317f45dc23602f01755419bb9dfed9ab62073ad862"
+    },
+    {
+      "zone": "frontier",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "326c73beb8aa7717b760ec44b4e7a3b56da9b26502d8e827f280d39795131107"
+    },
+    {
+      "zone": "frontier",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "326c73beb8aa7717b760ec44b4e7a3b56da9b26502d8e827f280d39795131107"
+    },
+    {
+      "zone": "frontier",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "972258226032d2b57735276883558625aadab14af16ac73bdb3af44ec37287d3"
+    },
+    {
+      "zone": "frontier",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "972258226032d2b57735276883558625aadab14af16ac73bdb3af44ec37287d3"
+    },
+    {
+      "zone": "crown",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "41fc89bd64ab9f00d5e6ae821d133662825e798c41681c75388d297f942deed2"
+    },
+    {
+      "zone": "crown",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "41fc89bd64ab9f00d5e6ae821d133662825e798c41681c75388d297f942deed2"
+    },
+    {
+      "zone": "crown",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "62a24ee9b2ee2b200ada435307ce00b66912e0d58339aee9b3b31f324c0f73d3"
+    },
+    {
+      "zone": "crown",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "62a24ee9b2ee2b200ada435307ce00b66912e0d58339aee9b3b31f324c0f73d3"
+    },
+    {
+      "zone": "crypt",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "55500d9536b701f755bcc3a2c25e94d94403da893bd854624995d61b06175906"
+    },
+    {
+      "zone": "crypt",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "55500d9536b701f755bcc3a2c25e94d94403da893bd854624995d61b06175906"
+    },
+    {
+      "zone": "crypt",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "aa1261112744b1b799e57bdb42616acb8703cbfa237206f8f6c2d6790158b168"
+    },
+    {
+      "zone": "crypt",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "aa1261112744b1b799e57bdb42616acb8703cbfa237206f8f6c2d6790158b168"
+    },
+    {
+      "zone": "archive",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "7a0301842ff14bef72fab4514282bb6d0278b9471854e75fe8210c058c9e0712"
+    },
+    {
+      "zone": "archive",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "7a0301842ff14bef72fab4514282bb6d0278b9471854e75fe8210c058c9e0712"
+    },
+    {
+      "zone": "archive",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "ab7d272403f3ef0030f30b7b8155ad18a33192d03fd62c01dd8bd959c170280e"
+    },
+    {
+      "zone": "archive",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "ab7d272403f3ef0030f30b7b8155ad18a33192d03fd62c01dd8bd959c170280e"
+    },
+    {
+      "zone": "mine",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "bff3b1750199da148125e0df7b3f8170586b5e5f2c0c58518635be1da1a9c94e"
+    },
+    {
+      "zone": "mine",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "bff3b1750199da148125e0df7b3f8170586b5e5f2c0c58518635be1da1a9c94e"
+    },
+    {
+      "zone": "mine",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "45038a6519daeb89cc51f0002f2eb5b1f6ec5e2983137db2193325ed30671159"
+    },
+    {
+      "zone": "mine",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "45038a6519daeb89cc51f0002f2eb5b1f6ec5e2983137db2193325ed30671159"
+    },
+    {
+      "zone": "abyss",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "965ba8a9dae0726bc18c904f6a2646150af43801a7daff4521d921eda22c5ff9"
+    },
+    {
+      "zone": "abyss",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "965ba8a9dae0726bc18c904f6a2646150af43801a7daff4521d921eda22c5ff9"
+    },
+    {
+      "zone": "abyss",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "76cef8345e6a4e4da484585679f5036f3a790de7a5891d3a533d9eeff1dd7409"
+    },
+    {
+      "zone": "abyss",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "76cef8345e6a4e4da484585679f5036f3a790de7a5891d3a533d9eeff1dd7409"
+    },
+    {
+      "zone": "citadel",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "de00794c50385edb9d3e2a0573e201b11f87ad3f3b10c420098dd0192eee8e30"
+    },
+    {
+      "zone": "citadel",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "de00794c50385edb9d3e2a0573e201b11f87ad3f3b10c420098dd0192eee8e30"
+    },
+    {
+      "zone": "citadel",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 200,
+      "pixelHash": "f9c5bbd57a67cda0eb9db6a4bb46966a1aff243594f4dda5b2b69962e64ecd58"
+    },
+    {
+      "zone": "citadel",
+      "width": 375,
+      "height": 800,
+      "zoom": 1.5,
+      "clock": 600,
+      "pixelHash": "f9c5bbd57a67cda0eb9db6a4bb46966a1aff243594f4dda5b2b69962e64ecd58"
+    }
+  ]
+}

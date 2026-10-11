@@ -1,0 +1,42 @@
+{
+  "key": "prop:fallen-log:vale",
+  "original": "tools/sprites/batches/2026-10-08-02/prop-fallen-log-vale/image-tool-original.png",
+  "originalHash": "b9525a87244919d06aa4a4914ca3ec1ac02c4c46a163bd4b41cccf6e59fbebd2",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/batches/2026-10-08-02/prop-fallen-log-vale",
+  "intermediateHash": "378de15f444a8c63d684f9e0fe5d988c439b18d951ae9ba30a0af54cc2af13b6",
+  "intermediateDimensions": [
+    1545,
+    1545
+  ],
+  "priorRevision": "fa2e3569e95289b52a3cae137c101168fc2273d6b63a806453d13f000c260819",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -5,
+    "offsetY": 13,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": {
+        "left": 145,
+        "right": 146,
+        "top": 145,
+        "bottom": 146
+      }
+    }
+  },
+  "target": 576,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "fallen-log",
+    "id": "side-entrance-side-vale-cellars-2"
+  },
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact nature binding; no animation or variant bank. Seeded placement and procedural scene effects retained."
+}

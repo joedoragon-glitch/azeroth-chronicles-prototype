@@ -1,0 +1,75 @@
+{
+  "baselineCommit": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+  "runtime": "v24.19.0",
+  "platform": "linux-x64",
+  "scope": "service-worker synchronous request routing only; VM/Node, excludes disk cache, network and total page loading; not a physical-device FPS result",
+  "environment": "Shared worker; root baseline tests continued filesystem packaging work. Other agents held CPU benchmarks and root held additional CPU-heavy tasks. Counterbalanced paired runs, not a pristine-machine result.",
+  "rounds": 9,
+  "iterations": 50000,
+  "results": {
+    "registeredStatic": {
+      "requests": 450000,
+      "baselineMedianUsPerRequest": 14.508697960000008,
+      "candidateMedianUsPerRequest": 4.679563579999995,
+      "reductionPercent": 67.74649528923,
+      "baselineURLConstructions": 2250000,
+      "candidateURLConstructions": 450000,
+      "samplesUsPerRequest": {
+        "baseline": [
+          13.916915399999999,
+          13.681553719999993,
+          23.041739859999996,
+          14.508697960000008,
+          23.271935479999996,
+          16.91813883999999,
+          17.049667420000006,
+          12.826339699999991,
+          11.6089905
+        ],
+        "candidate": [
+          4.399671400000006,
+          4.738140879999992,
+          4.952417500000011,
+          5.229728720000002,
+          4.560038860000004,
+          4.679563579999995,
+          4.816940780000005,
+          4.1170739399999725,
+          3.9381149999999976
+        ]
+      }
+    },
+    "publicNavigation": {
+      "requests": 450000,
+      "baselineMedianUsPerRequest": 10.159514060000001,
+      "candidateMedianUsPerRequest": 4.614774079999989,
+      "reductionPercent": 54.57682274224849,
+      "baselineURLConstructions": 1799991,
+      "candidateURLConstructions": 450000,
+      "samplesUsPerRequest": {
+        "baseline": [
+          15.384461520000004,
+          8.220942299999988,
+          9.173209600000009,
+          10.159514060000001,
+          10.950079559999978,
+          47.169926559999986,
+          56.647743199999965,
+          8.389116300000023,
+          8.066256820000055
+        ],
+        "candidate": [
+          5.468969819999985,
+          4.186663859999971,
+          4.0803864199999955,
+          6.123382899999997,
+          7.555147259999976,
+          5.248509440000016,
+          4.3019933400000445,
+          4.614774079999989,
+          4.114263339999962
+        ]
+      }
+    }
+  }
+}

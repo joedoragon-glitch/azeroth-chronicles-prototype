@@ -88,6 +88,16 @@ const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'azeroth-resolution-'));
     await assert.rejects(p.prepare(key,'fixture.png','png',{rasterScale:2.25,offsetX:1}),/translation/);
     assert.throws(()=>p.validateRaster({...dense.record,output:{...dense.record.output,width:192}},contract),/raster output/);
     const approve=file=>{const r=JSON.parse(fs.readFileSync(file));r.review={status:'approved',reference:'https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111#test-only'};fs.writeFileSync(file,JSON.stringify(r));return r;};
+    // Recover faint generator alpha at the edge through explicit geometry, retaining the original.
+    const edge=await sharp(fs.readFileSync("fixture.png")).composite([{input:await sharp({create:{width:1,height:1,channels:4,background:{r:100,g:80,b:60,alpha:0.1}}}).png().toBuffer(),left:0,top:0}]).png().toBuffer();
+    fs.writeFileSync('edge-original.png',edge);
+    await assert.rejects(p.prepare('hero:mage','edge-original.png','png',{rasterScale:3}),/transparent margin/);
+    const normalized=await p.prepare('hero:mage','edge-original.png','png',{rasterScale:3,normalization:{fullCanvasSize:576,padding:32}});
+    assert.equal(normalized.record.source.hash,p.hash(edge));
+    assert.equal(normalized.record.processing.normalization.intermediatePixelsUsed,false);
+    assert(normalized.record.output.padding>=2);
+    const normalizedFile=path.join(normalized.directory,'candidate.json');approve(normalizedFile);
+    await p.publish(normalizedFile);await p.checkProduction();
     const legacyFile=path.join(legacy.directory,'candidate.json'),denseFile=path.join(dense.directory,'candidate.json'),phoneFile=path.join(phone.directory,'candidate.json');
     const batch=require('./scripts/sprite-batch-review.cjs');
     const denseOutput=path.join(dense.directory,'candidate.png'),savedOutput=fs.readFileSync(denseOutput);

@@ -13754,7 +13754,33 @@
     }
     ctx.restore();
   }
-  function roads(ctx, paths, screen, region = 0, materials = null) {
+  // One bounded presentation-only display list: retain world geometry, never pixels,
+  // actor state or projected coordinates. Mutable saved roads and bridge definitions
+  // are compared numerically before reuse, rather than relying on their identities.
+  let roadCache = null;
+  function roadCacheMatches(paths, region, barrier) {
+    const item = roadCache;
+    if (!item || item.region !== region || item.paths.length !== paths.length) return false;
+    for (let i = 0; i < paths.length; i++) {
+      const path = paths[i],
+        saved = item.paths[i];
+      if (path.length !== saved.length) return false;
+      for (let j = 0; j < path.length; j++)
+        if (path[j].x !== saved[j][0] || path[j].y !== saved[j][1]) return false;
+    }
+    if (barrier.bounds.length !== item.bounds.length || barrier.gaps.length !== item.gaps.length)
+      return false;
+    for (let i = 0; i < barrier.bounds.length; i++)
+      if (barrier.bounds[i] !== item.bounds[i]) return false;
+    for (let i = 0; i < barrier.gaps.length; i++) {
+      if (barrier.gaps[i].length !== item.gaps[i].length) return false;
+      for (let j = 0; j < barrier.gaps[i].length; j++)
+        if (barrier.gaps[i][j] !== item.gaps[i][j]) return false;
+    }
+    return true;
+  }
+  function roadGeometry(paths, region) {
+    const commands = [];
     const barrier = R.barriers[region],
       palettes = [
         { shoulder: '#564834', base: '#8e7758', inner: '#9c8664', seam: '#6f604c' },
@@ -13769,23 +13795,8 @@
         p.x <= barrier.bounds[1] + 12 &&
         barrier.gaps.some(([lo, hi]) => p.y >= lo && p.y <= hi),
       stone = region >= 2;
-    const poly = (points, color) => {
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      points.forEach((q, j) => {
-        const p = screen(q);
-        j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
-      });
-      ctx.closePath();
-      ctx.fill();
-      if (color === road.inner)
-        materials?.paint(
-          ctx,
-          'terrain:road:' + ['vale', 'march', 'highlands', 'frontier', 'crown'][region],
-          screen,
-          points,
-        );
-    };
+    const poly = (points, color) =>
+      commands.push({ points, color, material: color === road.inner });
     const disk = (q, r, color) =>
       poly(
         Array.from({ length: 16 }, (_, j) => {
@@ -13809,16 +13820,7 @@
         color,
       );
     };
-    const stroke = (a, b, color, width = 1) => {
-      a = screen(a);
-      b = screen(b);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = width;
-      ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      ctx.lineTo(b.x, b.y);
-      ctx.stroke();
-    };
+    const stroke = (a, b, color, width = 1) => commands.push({ a, b, color, width });
     const edges = [],
       seen = new Set(),
       nodes = new Map();
@@ -13834,9 +13836,6 @@
         }
       }
     }
-    ctx.save();
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
     for (const [w, color] of [
       [35, road.shoulder],
       [29, road.base],
@@ -13909,6 +13908,60 @@
             region === 1 ? 1.4 : 1.2,
           );
         }
+      }
+    }
+    return commands;
+  }
+  function roads(ctx, paths, screen, region = 0, materials = null) {
+    const barrier = R.barriers[region];
+    let commands;
+    if (roadCacheMatches(paths, region, barrier)) commands = roadCache.commands;
+    else {
+      commands = roadGeometry(paths, region);
+      const inputs =
+        paths.reduce((n, path) => n + 1 + path.length * 2, 1) +
+        barrier.bounds.length +
+        barrier.gaps.reduce((n, gap) => n + 1 + gap.length, 1);
+      const coordinates = commands.reduce(
+        (n, command) => n + (command.points ? command.points.length * 2 : 4),
+        0,
+      );
+      roadCache =
+        commands.length <= 4096 && inputs <= 8192 && coordinates <= 32768
+          ? {
+              region,
+              paths: paths.map((path) => path.map((p) => [p.x, p.y])),
+              bounds: [...barrier.bounds],
+              gaps: barrier.gaps.map((gap) => [...gap]),
+              commands,
+            }
+          : null;
+    }
+    const materialKey =
+      'terrain:road:' + ['vale', 'march', 'highlands', 'frontier', 'crown'][region];
+    ctx.save();
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    for (const command of commands) {
+      if (command.points) {
+        ctx.fillStyle = command.color;
+        ctx.beginPath();
+        command.points.forEach((q, j) => {
+          const p = screen(q);
+          j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
+        });
+        ctx.closePath();
+        ctx.fill();
+        if (command.material) materials?.paint(ctx, materialKey, screen, command.points);
+      } else {
+        const a = screen(command.a),
+          b = screen(command.b);
+        ctx.strokeStyle = command.color;
+        ctx.lineWidth = command.width;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
       }
     }
     ctx.restore();

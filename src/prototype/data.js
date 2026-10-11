@@ -12,7 +12,7 @@ const PrototypeData = {
       transport: 'Merchant wagon',
       fare: 25,
       route:
-        "Millhaven at (300, 350) connects to Orchard Hamlet at (900, 700), the Forest Crypt at (2150, 2100), and the merchant wagon stand behind Millhaven at (135, 540). A north to south river at x 1200 can be crossed at the mill bridge near y 750 and a southern footbridge near y 1750. Thornfang's den lies beyond the settled orchard country near (760, 1750).",
+        "Millhaven at (300, 350) connects to Orchard Hamlet at (900, 700), the Forest Crypt at (2150, 2100), and the original merchant wagon stand at (2450, 650). A north to south river at x 1200 can be crossed at the mill bridge near y 750 and a southern footbridge near y 1750. Thornfang's den lies beyond the settled orchard country near (760, 1750).",
       obstacle:
         'Dense thickets close direct shortcuts, but broad woodland paths remain walkable. The river, lake shore and mill pond are impassable water. Houses and fences shape streets without blocking exits.',
       exploration:
@@ -64,7 +64,7 @@ const PrototypeData = {
       transport: 'Pack beast caravan',
       fare: 110,
       route:
-        "The ferry landing at (425, 1900) climbs by switchbacks to Stonecross at (850, 1500), Quarry Outpost at (1750, 1150), the Ridge Tyrant's mountain watchtower near (2700, 700), the Colossus Mine entrance at (2850, 2350), and the caravan stand on Stonecross's western approach at (590, 1420).",
+        "The ferry landing at (425, 1900) climbs by switchbacks to Stonecross at (850, 1500), Quarry Outpost at (1750, 1150), the Ridge Tyrant's mountain watchtower near (2700, 700), the Colossus Mine entrance at (2850, 2350), and the original outbound caravan stand at (3100, 500).",
       obstacle:
         'Cliffs divide the plateau into connected terraces. Switchbacks, a stone bridge and a timber crossing provide routes. Rock walls and pine thickets block movement and projectiles consistently.',
       exploration:
@@ -90,7 +90,7 @@ const PrototypeData = {
       transport: 'Dragon rider',
       fare: 180,
       route:
-        "The caravan stops behind Emberwatch near (155, 615). The old damaged road has become a working occupation corridor: convoy and repair yards feed the guarded ravine crossing, inspection spurs and the Ashen Warlord's checkpoint near (2600, 1650), while a supply route supports the Dark Lord’s air-superiority project at Abyss Bastion (3000, 2700); the civilian transport dragon landing sits behind Emberwatch near (145, 260), distinct from Abyss Bastion's military dragon operation.",
+        "The caravan stops behind Emberwatch near (155, 615). The old damaged road has become a working occupation corridor: convoy and repair yards feed the guarded ravine crossing, inspection spurs and the Ashen Warlord's checkpoint near (2600, 1650), while a supply route supports the Dark Lord’s air-superiority project at Abyss Bastion (3000, 2700); the civilian outbound dragon roost remains at (3100, 500), distinct from the incoming caravan behind Emberwatch and Abyss Bastion's military dragon operation.",
       obstacle:
         'A ravine still splits the scarred region. The guarded northern crossing and longer burned-forest route remain the practical alternatives; charred trunks, fort walls, repairs and collapsed masonry leave visible gaps rather than a healed landscape.',
       exploration:
@@ -149,7 +149,7 @@ const PrototypeData = {
       place: 'Orchard den',
       attacks: [
         'Bite: short frontal arc, 0.8 second warning and 0.8 second recovery.',
-        'Pounce: marks a landing circle for 1.3 seconds; misses leave a 1.5 second opening.',
+        'Pounce: marks a landing circle for 1.3 seconds; after the leap ends (hit or miss), Thornfang has 0.375 seconds of normal recovery, with no extra exposed-core vulnerability.',
         'Root line: a narrow ground line warns for 1.2 seconds and briefly slows on contact.',
         'Den howl: warns for 1.5 seconds, then calls three low health pups; a maximum of three pups may be alive.',
       ],
@@ -261,7 +261,7 @@ const PrototypeData = {
         'Stone slam: circle warns for 1.6 seconds and exposes the core for 2.5 seconds afterward.',
         'Rockfall: three separated circles warn for 1.7 seconds; at least one connected safe route remains.',
         'Shockwave rings: visible expanding rings follow a 1.6 second windup and can be crossed after they pass.',
-        'Wall rush: lane warns for 1.7 seconds; striking a marked pillar exposes the core for 3 seconds.',
+        'Wall rush: lane warns for 1.7 seconds; when the charge ends, the core is exposed for 3 seconds, with or without an obstacle collision.',
         'Stonebound call: summons three ogres; TRUE form replenishes its six-unit elite warband.',
       ],
     },
@@ -468,10 +468,10 @@ const PrototypeData = {
     [1250, 1800],
   ],
   ports: [
-    [135, 540],
+    [2450, 650],
     [2250, 650],
-    [590, 1420],
-    [145, 260],
+    [3100, 500],
+    [3100, 500],
     [350, 600],
   ],
   entrances: [

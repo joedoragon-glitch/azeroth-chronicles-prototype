@@ -1,0 +1,99 @@
+name: Check game
+description: Shared full Node and Chromium checks for pull requests and main.
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: npm
+    - name: Install locked development tools
+      shell: bash
+      run: npm ci --ignore-scripts
+    - name: Check formatting
+      shell: bash
+      run: npm run format:check
+    - name: Check generated entries and all published JavaScript
+      shell: bash
+      run: npm run check
+    - name: Full regression suite
+      shell: bash
+      run: npm test
+    - name: Verify performance equivalence when present
+      if: hashFiles('tests/perf-v09-protected.test.cjs') != ''
+      shell: bash
+      run: |
+        git fetch --depth=1 origin c6ce1af236bddd7ca881903499c4cf5de175f9e2
+        mkdir -p "$RUNNER_TEMP/perf-v09-baseline"
+        git archive c6ce1af236bddd7ca881903499c4cf5de175f9e2 | tar -x -C "$RUNNER_TEMP/perf-v09-baseline"
+        node --expose-gc scripts/perf-v09-equivalence.cjs "$RUNNER_TEMP/perf-v09-baseline"
+    - name: Reproduce cooldown balance evidence summary
+      shell: bash
+      run: |
+        python3 scripts/summarize-cooldown-balance.py docs/evidence/COOLDOWN_BALANCE_20261009.json.gz "$RUNNER_TEMP/cooldown-summary.json"
+        cmp docs/evidence/COOLDOWN_BALANCE_20261009_SUMMARY.json "$RUNNER_TEMP/cooldown-summary.json"
+    - name: Use runner Chrome for full browser matrix
+      shell: bash
+      run: |
+        CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+        if [ -n "$CHROME" ]; then
+          echo "CHROMIUM_EXECUTABLE=$CHROME" >> "$GITHUB_ENV"
+        else
+          npx playwright install chromium
+        fi
+    - name: Test full desktop and mobile matrix
+      shell: bash
+      run: node tests/prototype-browser.test.cjs
+    - name: Verify FPS settings and rendering-only scheduling
+      shell: bash
+      run: node tests/frame-rate-browser.test.cjs
+    - name: Verify cooldown charge queues and save upgrade
+      shell: bash
+      run: |
+        node tests/cooldown-input-browser.test.cjs
+        git fetch --depth=1 origin 01238bddc8dde4dafe99ba50148d944141373f49
+        mkdir -p "$RUNNER_TEMP/cooldown-v118"
+        git archive 01238bddc8dde4dafe99ba50148d944141373f49 | tar -x -C "$RUNNER_TEMP/cooldown-v118"
+        COOLDOWN_PREVIOUS_ROOT="$RUNNER_TEMP/cooldown-v118" node tests/cooldown-pwa-upgrade-browser.test.cjs
+        mkdir -p test-results/beta-historical
+        BETA_PREVIOUS_ROOT="$RUNNER_TEMP/cooldown-v118" BETA_FIXTURE_DIR=test-results/beta-historical node scripts/beta-history-audit.cjs > test-results/beta-history-report.json
+        BETA_FIXTURE_DIR=test-results/beta-historical node tests/beta-campaign-browser.test.cjs
+    - name: Verify quest completion and Keeper Archive interaction
+      shell: bash
+      run: node tests/quest-archive-browser.test.cjs
+    - name: Audit integrated rogue warnings and effects in browsers
+      shell: bash
+      run: node tests/rogue-browser.test.cjs
+    - name: Verify audio playback and lifecycle
+      shell: bash
+      run: |
+        node tests/audio-browser.test.cjs
+        node tests/audio-audition-browser.test.cjs
+    - name: Verify original-master actor idles and combat
+      shell: bash
+      run: |
+        node scripts/sprite-production-browser-review.cjs local test-results/sprite-pilot-ci chromium
+        node scripts/sprite-nature-browser-review.cjs local test-results/sprite-nature-ci chromium
+    - name: Verify terrain material rendering
+      shell: bash
+      run: |
+        node tests/materials-browser.test.cjs
+        node tests/ground-cache-browser.test.cjs
+    - name: Verify full enemy VFX catalog and pilot captures
+      shell: bash
+      run: |
+        node tests/enemy-vfx-browser.test.cjs
+        VFX_CAPTURE_TAG=ci VFX_CAPTURE_SMOKE=1 VFX_CAPTURE_VISUAL_ONLY=1 node scripts/enemy-vfx-capture.cjs
+    - name: Verify Chromium performance changes when present
+      if: hashFiles('tests/perf-v09-protected.test.cjs') != ''
+      shell: bash
+      env:
+        MATERIAL_BROWSER_ENGINE: chromium
+        PERF_WS2_BROWSER_ENGINE: chromium
+      run: |
+        node tests/perf-ws1-roads-browser.test.cjs
+        node tests/perf-ws2-occlusion-browser.test.cjs
+        PERF_WS2_BASELINE_ROOT="$RUNNER_TEMP/perf-v09-baseline" node scripts/perf-ws2-renderer-performance.cjs test-results/perf/combined-chromium.json
+    - name: Verify development sprite showroom
+      shell: bash
+      run: node tests/sprite-showroom-browser.test.cjs

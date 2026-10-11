@@ -1,0 +1,280 @@
+{
+  "key": "prop:driftwood:march",
+  "candidateHash": "c911b0f307d82b048b4e3f5f49d63d2ba998c35503f34e26dfbdd47e8263c173",
+  "sourceHash": "80271c4ab96e579ee96c0af0bdd6bef4e6e03cf4bcd792dae598ae17baaf2712",
+  "outputHash": "ba6bb436ab4095736bf08cd5951b06de660bebc14775c9908ed7f4c1d0cc572c",
+  "canonHash": "c57bf2d3be69214b9e2a67282d455447fdbac9eb03addabf25c415a288942919",
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "driftwood",
+    "id": "harbor-drift"
+  },
+  "comparisons": [
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "day",
+      "mode": "desktop",
+      "cameraZoom": 1.5,
+      "ratio": 1.7116329922036442,
+      "pixelWidth": 2191,
+      "pixelHeight": 1369,
+      "anchor": {
+        "x": 523,
+        "y": 239.60000000000002
+      },
+      "crop": {
+        "left": 649,
+        "top": 40,
+        "width": 493,
+        "height": 493
+      },
+      "canonicalHash": "9d9444973030fd8549d3fd8776f8dbacfb7102171ea506870ec6a38c21b74a57",
+      "candidateHash": "48fc903aa2c14d18ca717b04ea3e8618b7ef66ffdb0aba2e167c44e7af3e7abe"
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "lighting": "night",
+      "mode": "desktop",
+      "cameraZoom": 1.5,
+      "ratio": 1.7116329922036442,
+      "pixelWidth": 2191,
+      "pixelHeight": 1369,
+      "anchor": {
+        "x": 523,
+        "y": 239.60000000000002
+      },
+      "crop": {
+        "left": 649,
+        "top": 40,
+        "width": 493,
+        "height": 493
+      },
+      "canonicalHash": "59d9390f528a21529b453083ce62d6e95cd7e7a526e208db7509fd71b8f89fed",
+      "candidateHash": "7ab1aee8af82f6629b0227fc183348a0c4c6e9fd34d90155b8f40e6cb96812a1"
+    },
+    {
+      "width": 1024,
+      "height": 700,
+      "lighting": "day",
+      "mode": "desktop",
+      "cameraZoom": 1.5,
+      "ratio": 2,
+      "pixelWidth": 2048,
+      "pixelHeight": 1400,
+      "anchor": {
+        "x": 395,
+        "y": 189.59999999999997
+      },
+      "crop": {
+        "left": 502,
+        "top": 0,
+        "width": 576,
+        "height": 576
+      },
+      "canonicalHash": "26ac762f4cc8edb2079b1ad518368978a77b40783ef7dfbd7685bc010fb358e9",
+      "candidateHash": "1a17f09c43e8d093d7214e90a6438990d7c85b534f5c5e1b29a1a4e8f86c18b7"
+    },
+    {
+      "width": 1024,
+      "height": 700,
+      "lighting": "night",
+      "mode": "desktop",
+      "cameraZoom": 1.5,
+      "ratio": 2,
+      "pixelWidth": 2048,
+      "pixelHeight": 1400,
+      "anchor": {
+        "x": 395,
+        "y": 189.59999999999997
+      },
+      "crop": {
+        "left": 502,
+        "top": 0,
+        "width": 576,
+        "height": 576
+      },
+      "canonicalHash": "527b2fb16225ac0443a7eefce6b5c6b3d1eb05934e27c17dcb2b1ea45e5cec31",
+      "candidateHash": "11f2ec8b7dea8ea349ea0479284cd9c6665879589d101986833f36733dedba91"
+    },
+    {
+      "width": 375,
+      "height": 800,
+      "lighting": "day",
+      "mode": "phone",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 563,
+      "pixelHeight": 1200,
+      "anchor": {
+        "x": 187.5,
+        "y": 222.59999999999997
+      },
+      "crop": {
+        "left": 65,
+        "top": 10,
+        "width": 432,
+        "height": 432
+      },
+      "canonicalHash": "ce00a6e4074bc04b5950f5ce7dcad8073f63c77f44de919334634d5531a2dd25",
+      "candidateHash": "6af76a6e803a9ce679bec7042d6952cc79f3fefb024571977a6bfba71083a0cf"
+    },
+    {
+      "width": 375,
+      "height": 800,
+      "lighting": "night",
+      "mode": "phone",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 563,
+      "pixelHeight": 1200,
+      "anchor": {
+        "x": 187.5,
+        "y": 222.59999999999997
+      },
+      "crop": {
+        "left": 65,
+        "top": 10,
+        "width": 432,
+        "height": 432
+      },
+      "canonicalHash": "7c21a20d39faf4c234fd123b985357643de3ff5fb35646c505008107fe78642c",
+      "candidateHash": "32209175bafd64a497089746c309f5f9ba835777a333b8c0e84955a6bf8188e5"
+    },
+    {
+      "width": 393,
+      "height": 852,
+      "lighting": "day",
+      "mode": "phone",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 590,
+      "pixelHeight": 1278,
+      "anchor": {
+        "x": 196.5,
+        "y": 244.43999999999988
+      },
+      "crop": {
+        "left": 79,
+        "top": 43,
+        "width": 432,
+        "height": 432
+      },
+      "canonicalHash": "3f4d38d79358c39abfc8b07c2b736af4b34eb33afc123ea8a5a9d1cabd58334b",
+      "candidateHash": "7123564840ef80563b8b48ebe1345fb16472475dff93826d87774e259176da09"
+    },
+    {
+      "width": 393,
+      "height": 852,
+      "lighting": "night",
+      "mode": "phone",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 590,
+      "pixelHeight": 1278,
+      "anchor": {
+        "x": 196.5,
+        "y": 244.43999999999988
+      },
+      "crop": {
+        "left": 79,
+        "top": 43,
+        "width": 432,
+        "height": 432
+      },
+      "canonicalHash": "4cc7b4545a24bc8a3e6081d19e6bc09e3bf84ea20a5b249987d44941613d6e67",
+      "candidateHash": "7aee4c6413f049dd51033ef4b73bd0b9ff7d38dc4c3049b9101fa9c41ceed633"
+    },
+    {
+      "width": 800,
+      "height": 375,
+      "lighting": "day",
+      "mode": "phone",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 1200,
+      "pixelHeight": 563,
+      "anchor": {
+        "x": 400,
+        "y": 87.63749999999993
+      },
+      "crop": {
+        "left": 384,
+        "top": 0,
+        "width": 432,
+        "height": 432
+      },
+      "canonicalHash": "a718dbed0ee5674311cbe7dbc0f31906992002b2ae649b53e0e947f89767f5e7",
+      "candidateHash": "eb9098d5d25de0a70415a26b80ceb4b4ab70f66e6591cf3716e49c9262fedb53"
+    },
+    {
+      "width": 800,
+      "height": 375,
+      "lighting": "night",
+      "mode": "phone",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 1200,
+      "pixelHeight": 563,
+      "anchor": {
+        "x": 400,
+        "y": 87.63749999999993
+      },
+      "crop": {
+        "left": 384,
+        "top": 0,
+        "width": 432,
+        "height": 432
+      },
+      "canonicalHash": "151ab2227b594e844f312afb7a52e24ea3b9dfeacad42194b8082d2d854d45bf",
+      "candidateHash": "73115ae78488743e848dfed0cd08154eccfd18e7e7103ade5a5a78679d69f68b"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "day",
+      "mode": "phone",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 1266,
+      "pixelHeight": 585,
+      "anchor": {
+        "x": 422,
+        "y": 91.14299999999992
+      },
+      "crop": {
+        "left": 417,
+        "top": 0,
+        "width": 432,
+        "height": 432
+      },
+      "canonicalHash": "3ad684aa8239664c1336a62001c08e69f746b0528f9ed0f3ada992455dc2ff9b",
+      "candidateHash": "94eadfc5d56a949a84a28a95cff5b43379148abfb7b58dbc58dfc6c6a486b45b"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lighting": "night",
+      "mode": "phone",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 1266,
+      "pixelHeight": 585,
+      "anchor": {
+        "x": 422,
+        "y": 91.14299999999992
+      },
+      "crop": {
+        "left": 417,
+        "top": 0,
+        "width": 432,
+        "height": 432
+      },
+      "canonicalHash": "655531f3dc09a502907fd92a1c1b190314fa2fd637de8d0c7e01fa7ea5e96cea",
+      "candidateHash": "6103f845fc025c6b2d9f32824121a9acba250d3a5a0681afc613a9b598445dd8"
+    }
+  ],
+  "review": "pending visual inspection"
+}

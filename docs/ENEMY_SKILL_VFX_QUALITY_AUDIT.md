@@ -1,5 +1,9 @@
 # Enemy VFX post-implementation quality audit
 
+**Historical quality audit**
+
+This preserves the completed quality audit and its evidence. For new changes, use the [current validation workflow](ENEMY_VFX_VALIDATION.md); do not replay all historical benchmark and comparison work for an unrelated edit.
+
 Runtime **0.8.116**. Audited against main `4a2e6b3d9772f4eb44fb3e351f3a67bfb5ac1bdd`, including merged rogue repertoire (#146), enemy audio integration, quest polish (#168) and preparation tonics (#171). The release also incorporates the subsequent amber-notice queue integration (#170), rogue lethal-hit/recovery fixes (#176) and responsive HUD redesign (#165) without changing its behavior. Final main `ee44a5f` advances only UI cache/version metadata and its notice documentation; the VFX release uses a separate v0.8.116 cache. Its effect and layout sources are identical to the fully audited v0.8.115 candidate. The original overhaul and its evidence remain documented in [ENEMY_SKILL_VFX_AUDIT.md](ENEMY_SKILL_VFX_AUDIT.md).
 
 ## Findings corrected

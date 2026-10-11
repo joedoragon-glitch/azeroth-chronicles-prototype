@@ -61,5 +61,5 @@ for (const z of Object.values(snapshot.zones)) {
 }
 const loaded = C.restore(snapshot);
 assert.equal(loaded.zone().enemies.length, beforeCount, 'travel migrations preserve population');
-assert(loaded.zone().travelSafetyVersion === 1);
+assert(loaded.zone().travelSafetyVersion === 2);
 console.log('PASS all regional directions, Crown transit, safe landings and save migration');

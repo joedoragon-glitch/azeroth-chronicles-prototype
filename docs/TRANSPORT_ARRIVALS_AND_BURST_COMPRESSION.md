@@ -56,3 +56,13 @@ After the initial v0.8.105 values shown above, the user requested stronger compr
 | TRUE boss | 0.180 | 0.275 | Exactly the normal-boss curve |
 
 *Captains deliberately have the strongest compression*, even stronger than TRUE bosses. TRUE bosses still differ through HP, summons, phases and attacks; only the burst defense is identical to normal bosses. The two-second rolling window, exposed-opening multiplier (1.6), shared hero/companion damage path, and no-hard-cap rule are unchanged. No companion targeting, boss abilities, encounter counts or world layouts are modified.
+
+## Outbound geography restoration · 9 October 2026
+
+After player review, the v0.8.105 move of three **outbound** travel NPCs into settlement approaches was identified as a regression. Their original authored destinations are Greenwood merchant wagon (2450, 650), Ironroot outbound pack caravan (3100, 500) and Ashen Frontier civilian outbound dragon roost (3100, 500). Keep the Marches ferry at its harbor. The incoming transport from a previous region and its **arrival** point behind Reedport/Emberwatch or at Stonecross ferry remain separate from an outbound departure. Transport IDs, fares, Crown links and safe landings are retained.
+
+This correction restores the outer-area roads and regenerates existing authored region-specific roadside and wilderness dressing on saved games. It does not invent new transport systems, modify boss/monster content or reset progression. The one-time environment/road migrations are scoped to the three previously relocated departures. Earlier source PR #147 remains available as a historical explanation, not a mandate to keep an unintended placement.
+
+### Remote dragon and Raider territorial fort coexistence
+
+The restored Frontier dragon departure at (3100, 500) and the newer ordinary Raider drill redoubt now occupy separate nearby locations; the redoubt shifts south to (3050, 950) with a v7 old-save migration. The original dragon NPC must not be relocated to town again to solve this spatial conflict. This retains the Crown-to-Frontier arrival breathing room and existing Raider population and death states.

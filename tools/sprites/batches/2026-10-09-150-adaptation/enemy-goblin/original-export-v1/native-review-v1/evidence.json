@@ -1,0 +1,232 @@
+{
+  "key": "enemy:goblin",
+  "outputHash": "977965160458746599c43cfcc84d7c2b5ba8d6cd4ada9be645fde7f017fc7fc5",
+  "sourceHash": "b8423a10966722469bffd137a93b888d2a2ecf9415245f7dddf3520f005e21c1",
+  "clips": {
+    "clips": {
+      "idle": {
+        "loop": true,
+        "frames": [
+          {
+            "src": "./assets/sprites/atlas-bc303733e6a11dc9b25132d9e8e56d7d86f8ef0d3da6f8d89c92ece25ba3028b.png",
+            "width": 580,
+            "height": 580,
+            "hash": "bc303733e6a11dc9b25132d9e8e56d7d86f8ef0d3da6f8d89c92ece25ba3028b",
+            "rect": [
+              2,
+              2,
+              576,
+              576
+            ],
+            "pivot": [
+              288,
+              432
+            ],
+            "durationMs": 800
+          },
+          {
+            "src": "./assets/sprites/atlas-8abcf369d3eab6e3d7d62541e666c1f239ed8188bf84110e7af48422fe731bbb.png",
+            "width": 580,
+            "height": 580,
+            "hash": "8abcf369d3eab6e3d7d62541e666c1f239ed8188bf84110e7af48422fe731bbb",
+            "rect": [
+              2,
+              2,
+              576,
+              576
+            ],
+            "pivot": [
+              288,
+              432
+            ],
+            "durationMs": 800
+          }
+        ]
+      }
+    }
+  },
+  "scenes": [
+    {
+      "name": "1280x800-day",
+      "mode": "desktop",
+      "zoom": 1.5,
+      "ratio": 1.7116329922036442,
+      "pixelWidth": 2191,
+      "pixelHeight": 1369,
+      "crop": {
+        "left": 547,
+        "top": 81,
+        "width": 493,
+        "height": 411
+      },
+      "fullSceneHash": "1aa526df60ec1ffad00d252912eaae428a0ebd241d8147460d0d98d9c6cf22fe"
+    },
+    {
+      "name": "1280x800-night",
+      "mode": "desktop",
+      "zoom": 1.5,
+      "ratio": 1.7116329922036442,
+      "pixelWidth": 2191,
+      "pixelHeight": 1369,
+      "crop": {
+        "left": 547,
+        "top": 81,
+        "width": 493,
+        "height": 411
+      },
+      "fullSceneHash": "98fb92686ee6861185aacd241b9887a4b5d157659fcf9c361b995ee5f16c00c0"
+    },
+    {
+      "name": "1024x700-day",
+      "mode": "desktop",
+      "zoom": 1.5,
+      "ratio": 2,
+      "pixelWidth": 2048,
+      "pixelHeight": 1400,
+      "crop": {
+        "left": 384,
+        "top": 0,
+        "width": 576,
+        "height": 480
+      },
+      "fullSceneHash": "e6c33eeb4592f4ee02e04aaa4eccc9f857b160db8111d57df9b5254bd2805e22"
+    },
+    {
+      "name": "1024x700-night",
+      "mode": "desktop",
+      "zoom": 1.5,
+      "ratio": 2,
+      "pixelWidth": 2048,
+      "pixelHeight": 1400,
+      "crop": {
+        "left": 384,
+        "top": 0,
+        "width": 576,
+        "height": 480
+      },
+      "fullSceneHash": "e2bda165111704940ebb3cebc28f667880b036c1457911d9798a61a6e0031499"
+    },
+    {
+      "name": "375x800-day",
+      "mode": "phone",
+      "zoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 563,
+      "pixelHeight": 1200,
+      "crop": {
+        "left": 14,
+        "top": 46,
+        "width": 432,
+        "height": 360
+      },
+      "fullSceneHash": "5c3ce1c371a1430e4a74a540d8e8e9f5dceb94f93f00e8a5e03ab00d6d82f31b"
+    },
+    {
+      "name": "375x800-night",
+      "mode": "phone",
+      "zoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 563,
+      "pixelHeight": 1200,
+      "crop": {
+        "left": 14,
+        "top": 46,
+        "width": 432,
+        "height": 360
+      },
+      "fullSceneHash": "16bf7ff66e6e3d074952261a241ad2b721e186feda1fed08e487ca96cf9867f4"
+    },
+    {
+      "name": "393x852-day",
+      "mode": "phone",
+      "zoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 590,
+      "pixelHeight": 1278,
+      "crop": {
+        "left": 27,
+        "top": 78,
+        "width": 432,
+        "height": 360
+      },
+      "fullSceneHash": "110e098adf826316c2901ba9d7116057098741664e91102ecafd3f0dbcf928ad"
+    },
+    {
+      "name": "393x852-night",
+      "mode": "phone",
+      "zoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 590,
+      "pixelHeight": 1278,
+      "crop": {
+        "left": 27,
+        "top": 78,
+        "width": 432,
+        "height": 360
+      },
+      "fullSceneHash": "1b07f16192ce5b3a9189bfe71b9af994629b93b6b0c58c974e488b66a1c26726"
+    },
+    {
+      "name": "800x375-day",
+      "mode": "phone",
+      "zoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 1200,
+      "pixelHeight": 563,
+      "crop": {
+        "left": 333,
+        "top": 0,
+        "width": 432,
+        "height": 360
+      },
+      "fullSceneHash": "16a708122f1fc2e93f449f86f472d03e76b822f498701401826f57615d8800f7"
+    },
+    {
+      "name": "800x375-night",
+      "mode": "phone",
+      "zoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 1200,
+      "pixelHeight": 563,
+      "crop": {
+        "left": 333,
+        "top": 0,
+        "width": 432,
+        "height": 360
+      },
+      "fullSceneHash": "c6c25dbe4508f1fe1ee35c667ce40baa330b5a1239e361cfab85ebcc18bb974b"
+    },
+    {
+      "name": "844x390-day",
+      "mode": "phone",
+      "zoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 1266,
+      "pixelHeight": 585,
+      "crop": {
+        "left": 366,
+        "top": 0,
+        "width": 432,
+        "height": 360
+      },
+      "fullSceneHash": "d499c8e213f786c130546eea1c0be6693636dfe3c2bd0bb284df4dce6bdda9c0"
+    },
+    {
+      "name": "844x390-night",
+      "mode": "phone",
+      "zoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 1266,
+      "pixelHeight": 585,
+      "crop": {
+        "left": 366,
+        "top": 0,
+        "width": 432,
+        "height": 360
+      },
+      "fullSceneHash": "b9c3c1ee07479e253cf45fca09a624693eca80202fe6e6d70de67be935d54e7c"
+    }
+  ],
+  "review": "pending engineer visual inspection",
+  "countsAsProductionAsset": false
+}

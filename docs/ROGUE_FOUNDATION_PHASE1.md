@@ -1,5 +1,7 @@
 # Rogue behavior and tiered survivability — preparation phase
 
+> Historical preparation snapshot, superseded by the shipped [phase-two behavior](ROGUE_AI_PHASE2.md) and [integration audit](ROGUE_PR146_INTEGRATION_AUDIT.md). Statements below that AI is inactive or phase two is outstanding describe that earlier phase, not current production. Preserve the record; do not rebuild or disable the live rogue system from these instructions. New work follows [mechanic development](MECHANIC_DEVELOPMENT.md).
+
 This phase establishes passive rogue infrastructure and an **explicitly callable regroup-retreat lifecycle**. No AI decision automatically calls it yet; ordinary enemy behavior, summoning, crowd control, and damage compression remain unchanged until phase two.
 
 ## Reconciled contract

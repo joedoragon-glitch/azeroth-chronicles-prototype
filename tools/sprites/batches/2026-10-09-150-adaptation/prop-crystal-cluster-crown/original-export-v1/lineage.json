@@ -1,0 +1,42 @@
+{
+  "key": "prop:crystal-cluster:crown",
+  "original": "tools/sprites/batches/2026-10-08-03/prop-crystal-cluster-crown/image-tool-original.png",
+  "originalHash": "393857703b752d88306fc38e29b68a58ffd1e337024ff2b92d5c5e48da9f8f7e",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/batches/2026-10-08-03/prop-crystal-cluster-crown",
+  "intermediateHash": "16ca008216f5ea310ad777c5f4c2d51b756842b29e1f4189b136e230e0647a78",
+  "intermediateDimensions": [
+    1739,
+    1739
+  ],
+  "priorRevision": "2c4d5f17e8ca726bb716b46898a7eb8ba4acf7f9921f1fe68a1837424af318f9",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -1,
+    "offsetY": 0,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": {
+        "left": 242,
+        "right": 243,
+        "top": 450,
+        "bottom": 35
+      }
+    }
+  },
+  "target": 576,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "crystal-cluster",
+    "id": "aesthetic-nature-12"
+  },
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact nature binding; no animation or variant bank. Seeded placement and procedural scene effects retained."
+}

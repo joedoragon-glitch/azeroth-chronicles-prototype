@@ -1,0 +1,65 @@
+{
+  "baselineCommit": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+  "measuredAt": "2026-10-10T18:02:09.871Z",
+  "node": "v24.19.0",
+  "platform": "linux/x64",
+  "iterations": 500,
+  "rounds": 16,
+  "scope": "Occlusion broad phase only; no browser frame-rate or physical-device claim. Authored campaigns use native visible entity lists and sprite/procedural label heights at 150% camera. Stress fixtures are synthetic.",
+  "rows": [
+    {
+      "name": "no-actor-cover-stress",
+      "entities": 160,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.0031257839999998395,
+        "p95Ms": 0.007940912000000026,
+        "meanMs": 0.0036300384999997277
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.03525044800000069,
+        "p95Ms": 0.07205778999999893,
+        "meanMs": 0.042116243999999595
+      },
+      "medianReductionPercent": -1027.7314107437526,
+      "baselineWork": {
+        "pairs": 0,
+        "projectCalls": 0,
+        "heightCalls": 0
+      },
+      "candidateWork": {
+        "pairs": 0,
+        "projectCalls": 0,
+        "heightCalls": 0
+      }
+    },
+    {
+      "name": "dead-neutral-only-cover-stress",
+      "entities": 191,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.004565867999999682,
+        "p95Ms": 0.033417272000000595,
+        "meanMs": 0.010364922374999992
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.04339328999999998,
+        "p95Ms": 0.16972039200000108,
+        "meanMs": 0.06033102475000033
+      },
+      "medianReductionPercent": -850.3842423828941,
+      "baselineWork": {
+        "pairs": 0,
+        "projectCalls": 0,
+        "heightCalls": 0
+      },
+      "candidateWork": {
+        "pairs": 0,
+        "projectCalls": 0,
+        "heightCalls": 0
+      }
+    }
+  ]
+}

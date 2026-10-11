@@ -64,6 +64,35 @@ for (const region of Campaign.data.regions) {
   console.log('PASS ' + region.id + ' territorial layout, garrison, access and save identity');
 }
 
+const raiderHold = R.creatureStrongholds.find((h) => h.id === 'raider-drill-redoubt');
+assert.deepEqual(raiderHold.center, [3050, 950], 'Raider fort moves south of original dragon roost');
+assert(
+  distance({ x: raiderHold.center[0], y: raiderHold.center[1] }, { x: 3100, y: 500 }) > 400,
+  'outbound dragon roost and Raider garrison retain separate safe spaces',
+);
+{
+  const c = new Campaign();
+  c.enter('frontier');
+  const snapshot = c.snapshot();
+  const z = snapshot.zones.frontier;
+  z.creatureStrongholdsVersion = 6;
+  const resident = z.enemies.find((e) => e.stronghold === 'raider-drill-redoubt');
+  const originalId = resident.id;
+  const originalReward = resident.gold;
+  resident.home = { x: 3060, y: 640 };
+  resident.hp = 0;
+  const saved = Campaign.restore(snapshot);
+  const migrated = saved.zone();
+  const newHome = migrated.enemies.find((e) => e.id === originalId);
+  assert.equal(migrated.creatureStrongholdsVersion, 7);
+  assert.equal(newHome.hp, 0, 'migrating Raider fort does not revive dead residents');
+  assert.equal(newHome.gold, originalReward);
+  assert(
+    distance(newHome.home, { x: 3050, y: 950 }) <= 165,
+    'existing Raider garrison reanchors with its fort',
+  );
+}
+
 const wolfSite = R.sites[2].find((s) => s[0] === 'wolf-den');
 assert.deepEqual(wolfSite.slice(2), [340, 1020], 'Wolf home leaves the caravan arrival buffer');
 {

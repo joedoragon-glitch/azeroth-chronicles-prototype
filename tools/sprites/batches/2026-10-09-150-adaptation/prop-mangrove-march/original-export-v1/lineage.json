@@ -1,0 +1,42 @@
+{
+  "key": "prop:mangrove:march",
+  "original": "tools/sprites/batches/2026-10-08-02/prop-mangrove-march/image-tool-original.png",
+  "originalHash": "e9d940fd2181d5fd2a8345e6b123d509bd11a89919eee9edb2cb955449e19a28",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/batches/2026-10-08-02/prop-mangrove-march",
+  "intermediateHash": "0df901f063090f5314d44cf7d3c1055ac6804090b7722380c3d59af57444ba61",
+  "intermediateDimensions": [
+    1380,
+    1380
+  ],
+  "priorRevision": "d18220a76ccd79877f628284f787805ed904ff748e81ced4ba85a51d5a559212",
+  "placement": {
+    "rasterScale": 4,
+    "offsetX": -6,
+    "offsetY": 10,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": {
+        "left": 63,
+        "right": 63,
+        "top": 63,
+        "bottom": 63
+      }
+    }
+  },
+  "target": 768,
+  "entity": {
+    "renderKind": "prop",
+    "decorative": true,
+    "structure": "mangrove",
+    "id": "harbor-mangrove-a"
+  },
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact nature binding; no animation or variant bank. Seeded placement and procedural scene effects retained."
+}

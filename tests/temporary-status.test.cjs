@@ -65,6 +65,10 @@ const app = fs.readFileSync(require.resolve('../src/prototype/app.js'), 'utf8');
 assert(app.includes('PrototypeRules.resourceMode?.manaEnabled !== false'),
   'insufficient MP feedback returns automatically with the saved MP mode flag');
 assert(app.includes('manaStatus('), 'both normal and charged MP errors use the same guard');
+assert(app.includes("type === 'mana' && game.hasSupportEffect(h, 'mana')"),
+  'restored Mana Recovery button detects an effect in progress');
+assert(app.includes("? 'Restoring'"),
+  'restored Mana Recovery button advertises ongoing restoration');
 assert(!app.includes('charge canceled safely'), 'routine charge cancellation is quiet');
 assert(!app.includes('Training point available · press '), 'duplicate level-up status is removed');
 assert(app.includes('Defeat ') && app.includes('before freeing '),

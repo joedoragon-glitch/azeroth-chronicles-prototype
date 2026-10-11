@@ -1,0 +1,524 @@
+{
+  "baselineCommit": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+  "measuredAt": "2026-10-10T17:59:48.066Z",
+  "node": "v24.19.0",
+  "platform": "linux/x64",
+  "iterations": 500,
+  "rounds": 16,
+  "scope": "Occlusion broad phase only; no browser frame-rate or physical-device claim. Authored campaigns use native visible entity lists and sprite/procedural label heights at 150% camera. Stress fixtures are synthetic.",
+  "rows": [
+    {
+      "name": "vale-1280",
+      "entities": 74,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.21403769599999942,
+        "p95Ms": 0.34662511799999995,
+        "meanMs": 0.23112487200000034
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.055531865999997536,
+        "p95Ms": 0.1692235359999977,
+        "meanMs": 0.07145197649999954
+      },
+      "medianReductionPercent": 74.05510008853875,
+      "baselineWork": {
+        "pairs": 7,
+        "projectCalls": 112,
+        "heightCalls": 99
+      },
+      "candidateWork": {
+        "pairs": 7,
+        "projectCalls": 34,
+        "heightCalls": 21
+      }
+    },
+    {
+      "name": "vale-375",
+      "entities": 39,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.07034447200000069,
+        "p95Ms": 0.2916252859999986,
+        "meanMs": 0.11193545912499916
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.029084972000000563,
+        "p95Ms": 0.14793823200000042,
+        "meanMs": 0.05465015812499996
+      },
+      "medianReductionPercent": 58.65350727204224,
+      "baselineWork": {
+        "pairs": 4,
+        "projectCalls": 30,
+        "heightCalls": 25
+      },
+      "candidateWork": {
+        "pairs": 4,
+        "projectCalls": 13,
+        "heightCalls": 8
+      }
+    },
+    {
+      "name": "march-1280",
+      "entities": 74,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.7929805300000007,
+        "p95Ms": 1.8661344279999976,
+        "meanMs": 0.8292297756250007
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.06388373600000341,
+        "p95Ms": 0.3744555020000043,
+        "meanMs": 0.13048777925000013
+      },
+      "medianReductionPercent": 91.94384558218556,
+      "baselineWork": {
+        "pairs": 9,
+        "projectCalls": 118,
+        "heightCalls": 106
+      },
+      "candidateWork": {
+        "pairs": 9,
+        "projectCalls": 26,
+        "heightCalls": 14
+      }
+    },
+    {
+      "name": "march-375",
+      "entities": 48,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.24693548200000076,
+        "p95Ms": 0.5907098719999995,
+        "meanMs": 0.3190417508750016
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.055118446000000404,
+        "p95Ms": 0.14224464199999784,
+        "meanMs": 0.06885677999999916
+      },
+      "medianReductionPercent": 77.67900928875007,
+      "baselineWork": {
+        "pairs": 8,
+        "projectCalls": 88,
+        "heightCalls": 79
+      },
+      "candidateWork": {
+        "pairs": 8,
+        "projectCalls": 21,
+        "heightCalls": 12
+      }
+    },
+    {
+      "name": "highlands-1280",
+      "entities": 134,
+      "baseline": {
+        "n": 16,
+        "medianMs": 2.1871430480000056,
+        "p95Ms": 4.173267297999999,
+        "meanMs": 2.461698038499999
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.18174048599999515,
+        "p95Ms": 0.670244021999999,
+        "meanMs": 0.29812382362500056
+      },
+      "medianReductionPercent": 91.69050757031259,
+      "baselineWork": {
+        "pairs": 9,
+        "projectCalls": 548,
+        "heightCalls": 532
+      },
+      "candidateWork": {
+        "pairs": 9,
+        "projectCalls": 58,
+        "heightCalls": 42
+      }
+    },
+    {
+      "name": "highlands-375",
+      "entities": 70,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.3595710640000034,
+        "p95Ms": 1.049033144000001,
+        "meanMs": 0.48954689287500064
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.061578386000008326,
+        "p95Ms": 0.5147790400000085,
+        "meanMs": 0.17243148625000046
+      },
+      "medianReductionPercent": 82.87448792041627,
+      "baselineWork": {
+        "pairs": 6,
+        "projectCalls": 113,
+        "heightCalls": 102
+      },
+      "candidateWork": {
+        "pairs": 6,
+        "projectCalls": 24,
+        "heightCalls": 13
+      }
+    },
+    {
+      "name": "frontier-1280",
+      "entities": 112,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.6225652899999986,
+        "p95Ms": 0.7002487919999985,
+        "meanMs": 0.6346806036250001
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.1096276760000037,
+        "p95Ms": 0.13171484200000122,
+        "meanMs": 0.11145481574999849
+      },
+      "medianReductionPercent": 82.39097525016147,
+      "baselineWork": {
+        "pairs": 12,
+        "projectCalls": 250,
+        "heightCalls": 236
+      },
+      "candidateWork": {
+        "pairs": 12,
+        "projectCalls": 42,
+        "heightCalls": 28
+      }
+    },
+    {
+      "name": "frontier-375",
+      "entities": 69,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.1934095420000085,
+        "p95Ms": 0.3365603540000011,
+        "meanMs": 0.22045382550000067
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.04217107599999872,
+        "p95Ms": 0.04942379399998754,
+        "meanMs": 0.043163540499997904
+      },
+      "medianReductionPercent": 78.19596925574807,
+      "baselineWork": {
+        "pairs": 10,
+        "projectCalls": 78,
+        "heightCalls": 67
+      },
+      "candidateWork": {
+        "pairs": 10,
+        "projectCalls": 21,
+        "heightCalls": 10
+      }
+    },
+    {
+      "name": "crown-1280",
+      "entities": 70,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.11746672199999739,
+        "p95Ms": 0.20020337400000426,
+        "meanMs": 0.13082368287499868
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.049075164000008956,
+        "p95Ms": 0.0588799660000077,
+        "meanMs": 0.04839726887500092
+      },
+      "medianReductionPercent": 58.22207075803985,
+      "baselineWork": {
+        "pairs": 3,
+        "projectCalls": 60,
+        "heightCalls": 52
+      },
+      "candidateWork": {
+        "pairs": 3,
+        "projectCalls": 26,
+        "heightCalls": 18
+      }
+    },
+    {
+      "name": "crown-375",
+      "entities": 54,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.11170123599999351,
+        "p95Ms": 0.1433283780000056,
+        "meanMs": 0.11167247475000024
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.0414633540000068,
+        "p95Ms": 0.054328827999997886,
+        "meanMs": 0.043880698874999326
+      },
+      "medianReductionPercent": 62.880129634367506,
+      "baselineWork": {
+        "pairs": 3,
+        "projectCalls": 60,
+        "heightCalls": 52
+      },
+      "candidateWork": {
+        "pairs": 3,
+        "projectCalls": 26,
+        "heightCalls": 18
+      }
+    },
+    {
+      "name": "crypt-1280",
+      "entities": 34,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.037085954000009226,
+        "p95Ms": 0.049048641999994286,
+        "meanMs": 0.04406026112499966
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.008039789999995264,
+        "p95Ms": 0.012404125999993994,
+        "meanMs": 0.008562210874996708
+      },
+      "medianReductionPercent": 78.32119944927595,
+      "baselineWork": {
+        "pairs": 0,
+        "projectCalls": 11,
+        "heightCalls": 0
+      },
+      "candidateWork": {
+        "pairs": 0,
+        "projectCalls": 11,
+        "heightCalls": 0
+      }
+    },
+    {
+      "name": "crypt-375",
+      "entities": 25,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.01952273399999831,
+        "p95Ms": 0.03468815800000448,
+        "meanMs": 0.02155898674999662
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.004600677999987966,
+        "p95Ms": 0.00674326800002018,
+        "meanMs": 0.005100493874999302
+      },
+      "medianReductionPercent": 76.43425352213289,
+      "baselineWork": {
+        "pairs": 0,
+        "projectCalls": 10,
+        "heightCalls": 0
+      },
+      "candidateWork": {
+        "pairs": 0,
+        "projectCalls": 10,
+        "heightCalls": 0
+      }
+    },
+    {
+      "name": "mine-1280",
+      "entities": 41,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.04781189399998402,
+        "p95Ms": 0.0686628020000062,
+        "meanMs": 0.05135673837500144
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.008604269999981625,
+        "p95Ms": 0.019618635999999242,
+        "meanMs": 0.010878656124996267
+      },
+      "medianReductionPercent": 82.00391308492297,
+      "baselineWork": {
+        "pairs": 0,
+        "projectCalls": 18,
+        "heightCalls": 0
+      },
+      "candidateWork": {
+        "pairs": 0,
+        "projectCalls": 18,
+        "heightCalls": 0
+      }
+    },
+    {
+      "name": "mine-375",
+      "entities": 28,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.02448753599997144,
+        "p95Ms": 0.030512232000008226,
+        "meanMs": 0.024632333250001467
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.006838496000011219,
+        "p95Ms": 0.009887033999984852,
+        "meanMs": 0.006965840250000838
+      },
+      "medianReductionPercent": 72.07356428176688,
+      "baselineWork": {
+        "pairs": 0,
+        "projectCalls": 12,
+        "heightCalls": 0
+      },
+      "candidateWork": {
+        "pairs": 0,
+        "projectCalls": 12,
+        "heightCalls": 0
+      }
+    },
+    {
+      "name": "archive-1280",
+      "entities": 41,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.059815769999986515,
+        "p95Ms": 0.07343794199998956,
+        "meanMs": 0.058435634124998616
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.009959691999974894,
+        "p95Ms": 0.013599562000017613,
+        "meanMs": 0.010351519125000777
+      },
+      "medianReductionPercent": 83.34938762808346,
+      "baselineWork": {
+        "pairs": 0,
+        "projectCalls": 16,
+        "heightCalls": 0
+      },
+      "candidateWork": {
+        "pairs": 0,
+        "projectCalls": 16,
+        "heightCalls": 0
+      }
+    },
+    {
+      "name": "archive-375",
+      "entities": 29,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.039274723999988055,
+        "p95Ms": 0.08098394199999166,
+        "meanMs": 0.04979763349999848
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.007737911999982316,
+        "p95Ms": 0.015096455999999307,
+        "meanMs": 0.008939963624998198
+      },
+      "medianReductionPercent": 80.29798503489249,
+      "baselineWork": {
+        "pairs": 0,
+        "projectCalls": 12,
+        "heightCalls": 0
+      },
+      "candidateWork": {
+        "pairs": 0,
+        "projectCalls": 12,
+        "heightCalls": 0
+      }
+    },
+    {
+      "name": "cover-clutter-stress",
+      "entities": 191,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.29222968799999216,
+        "p95Ms": 0.37602372200001266,
+        "meanMs": 0.30381839212499834
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.0883137679999927,
+        "p95Ms": 0.17689918999999646,
+        "meanMs": 0.09156338000000142
+      },
+      "medianReductionPercent": 69.77933056548483,
+      "baselineWork": {
+        "pairs": 12,
+        "projectCalls": 279,
+        "heightCalls": 248
+      },
+      "candidateWork": {
+        "pairs": 12,
+        "projectCalls": 53,
+        "heightCalls": 22
+      }
+    },
+    {
+      "name": "actor-cover-stress",
+      "entities": 225,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.6354941320000216,
+        "p95Ms": 0.7437402860000147,
+        "meanMs": 0.6472631635000035
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.14972934600000734,
+        "p95Ms": 0.1986237759999931,
+        "meanMs": 0.16272693762500237
+      },
+      "medianReductionPercent": 76.43890974590427,
+      "baselineWork": {
+        "pairs": 12,
+        "projectCalls": 558,
+        "heightCalls": 497
+      },
+      "candidateWork": {
+        "pairs": 12,
+        "projectCalls": 104,
+        "heightCalls": 43
+      }
+    },
+    {
+      "name": "empty-cover-stress",
+      "entities": 191,
+      "baseline": {
+        "n": 16,
+        "medianMs": 0.6180338219999976,
+        "p95Ms": 0.7946609259999823,
+        "meanMs": 0.6592654018749982
+      },
+      "candidate": {
+        "n": 16,
+        "medianMs": 0.03125783799999044,
+        "p95Ms": 0.07749261399998796,
+        "meanMs": 0.03938887299999806
+      },
+      "medianReductionPercent": 94.94237420553489,
+      "baselineWork": {
+        "pairs": 0,
+        "projectCalls": 31,
+        "heightCalls": 0
+      },
+      "candidateWork": {
+        "pairs": 0,
+        "projectCalls": 31,
+        "heightCalls": 0
+      }
+    }
+  ]
+}
