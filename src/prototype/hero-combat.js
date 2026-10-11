@@ -267,7 +267,7 @@
               delay: 0,
               style: 'beam',
               charged: true,
-              encountersAtStart,
+              ...(encountersAtStart ? { encountersAtStart } : {}),
             });
             this.event('projectileLaunch', {
               actor: 'hero',
@@ -296,7 +296,7 @@
                 delay: j * 0.08,
                 style: 'arrow',
                 charged: true,
-                encountersAtStart,
+                ...(encountersAtStart ? { encountersAtStart } : {}),
                 rapid: true,
                 chargedBurst: j === 2,
               });
@@ -327,7 +327,7 @@
               delay: 0,
               style: 'holy',
               charged: true,
-              encountersAtStart,
+              ...(encountersAtStart ? { encountersAtStart } : {}),
             });
             this.event('projectileLaunch', {
               actor: 'hero',
