@@ -26,6 +26,12 @@ const evidence = {
   scenarios: [],
   historical: [],
   scenes: [],
+  approvedDifferences: [
+    'Crypt winter-estate visual and historical boss-label migration (family crypt unchanged)',
+    'Garun geometric gallery inside the Mine; three authored nonblocking props',
+    'Veyra one authored Citadel vanity station',
+    'All four redesigned boss mechanics are checked by dedicated runtime tests',
+  ],
 };
 for (const mode of ['normal', 'nightmare'])
   for (const cls of ['paladin', 'mage', 'ranger'])
@@ -35,8 +41,10 @@ for (const mode of ['normal', 'nightmare'])
       const compare = (label) =>
         assert.deepEqual(live(b), live(a), `${mode}/${cls}/${succession}/${label}`);
       compare('fresh');
+      // Archive is unchanged by the four selected boss drafts; Crypt and Mine
+      // intentionally gained estate and gallery content and are not controls.
       for (const c of [a, b]) {
-        c.enter('crypt');
+        c.enter('archive');
         c.s.mercyTime = 0;
         c.hero.skills = Array(8).fill(1);
         c.hero.hp = c.hero.maxHp = 100000;
@@ -115,10 +123,33 @@ for (const zone of [...A.data.regions.map((r) => r.id), ...A.dungeonIds])
     [375, 800, 1.5],
   ])
     for (const clock of [200, 600]) {
-      const draw = (root) => {
+      const draw = (root, omitReviewedDecor = false) => {
         const C = load(root, 'engine'),
           c = new C('normal', 'paladin', rng());
         c.enter(zone);
+        if (root === current && omitReviewedDecor && zone === 'mine') {
+          // The Mine lazily restores the three approved gallery objects.
+          // Remove just those for the immutable v0.9 pixel comparison.
+          const originalZone = c.zone.bind(c),
+            roles = new Set(['geometric-gallery', 'kinetic-collection', 'art-object']);
+          assert.equal(
+            originalZone().props.filter((p) => roles.has(p.sceneRole)).length,
+            3,
+            'exactly three authored Garun collection props',
+          );
+          c.zone = () => {
+            const room = originalZone();
+            room.props = room.props.filter((p) => !roles.has(p.sceneRole));
+            return room;
+          };
+          c.zone();
+        }
+        if (root === current && omitReviewedDecor && zone === 'citadel') {
+          const z = c.zone(),
+            count = z.props.length;
+          z.props = z.props.filter((p) => p.structure !== 'citadel-vanity-quarters');
+          assert.equal(count - z.props.length, 1, 'one reviewed Veyra vanity station');
+        }
         c.s.clock = clock;
         Object.assign(c.hero, c.safe(800, 800));
         const before = JSON.stringify(live(c));
@@ -144,10 +175,28 @@ for (const zone of [...A.data.regions.map((r) => r.id), ...A.dungeonIds])
         return pixels;
       };
       const a = draw(baseline),
-        b = draw(current);
-      assert(a.equals(b), zone + ' native full-render pixels ' + width + '/' + clock);
+        b = draw(current, zone === 'mine' || zone === 'citadel');
+      if (zone === 'crypt') {
+        assert(!a.equals(b), 'reviewed winter estate changes the original Crypt visual');
+      } else {
+        assert(
+          a.equals(b),
+          zone + ' native full-render pixels ' + width + '/' + clock +
+            ' with only approved Mine/Citadel furnishings excluded',
+        );
+      }
       global.gc?.();
-      evidence.scenes.push({ zone, width, height, zoom, clock, pixelHash: hash(b) });
+      evidence.scenes.push({
+        zone,
+        width,
+        height,
+        zoom,
+        clock,
+        pixelHash: hash(b),
+        reviewedVisualDifference: zone === 'crypt',
+        removedForComparison: zone === 'mine' ? 'three Garun gallery props' :
+          zone === 'citadel' ? 'one Veyra vanity prop' : null,
+      });
     }
 fs.mkdirSync(path.join(current, 'test-results/perf'), { recursive: true });
 fs.writeFileSync(
@@ -155,5 +204,5 @@ fs.writeFileSync(
   JSON.stringify(evidence, null, 2) + '\n',
 );
 console.log(
-  `PASS ${evidence.scenarios.length * 240} paired simulation frames, ${evidence.historical.length} historical saves, ${evidence.scenes.length} exact full-render images`,
+  `PASS ${evidence.scenarios.length * 240} archive-control simulation frames, ${evidence.historical.length} historical saves, ${evidence.scenes.length} exact or explicitly scoped full-render comparisons`,
 );
