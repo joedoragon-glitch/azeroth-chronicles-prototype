@@ -8,11 +8,11 @@ Related: master #232; five-region continuity #235; Greenwood #236; Lifebinder #2
 
 ## Current approved Greenwood move-name register — 12 October 2026 (latest refinement)
 
-**LATEST OWNER CORRECTION — 12 October 2026:** After expressly approving the prior eight-move/two-passive terminology refinement, the Dark Lord subsequently requested **three exact restorations**: Thornfang's first attack **Use-of-Force Continuum** (not Pain Compliance), Lifebinder's first attack **Excarnation** (not Lateral Thrust), and Lifebinder's defensive rogue shove **Disarticulation** (not Luxation). The owner prefers their intimidating, technically suggestive sound even if the name does not literally describe the hitbox. **Do not automatically rewrite these choices into plainer/action-oriented alternatives**; a more active-sounding use-of-force variation was mused about but **no replacement wording was selected or approved**. All prior history remains recorded below, but **the roster immediately below is the binding latest naming authority** over past ballots, audits, older draft PRs or historical labels. These are **three name-only restorations**: no changes to attack mechanics, damage, duration, HP, cooldowns, defensive modifiers, summon counts, target behavior, phase triggers, rogue gameplay, quests, assets, saves or scenes.
+**LATEST OWNER DIRECTION — 12 October 2026:** Following the ratified terminology audit, the Dark Lord explicitly preferred Lifebinder's original **Excarnation** (rather than Lateral Thrust) and **Disarticulation** (rather than Luxation), for their menacing anatomical/mortuary sound. For Thornfang he preferred the **Use-of-Force Continuum** concept to Pain Compliance, but clarified that it must sound as though Thornfang is actively *using/escalating* force. The concise adaptation chosen is **Use-of-Force Escalation**, retaining the real security notion of escalation of force (owner-directed adaptation; wording supplied here, not verbatim by the owner). **The roster below is the latest design naming authority**; the earlier audit entries are historical. All of these are **name-only** changes: no attack mechanics, HP, damage, durations, warning shapes, passive effects, summon counts, phase triggers, rogue execution, quests, save data or other game systems change.
 
 | Character | Final regular move names, in order | Separate rogue moves / phase |
 | --- | --- | --- |
-| **Thornfang** | **Use-of-Force Continuum**; **Dynamic Entry**; **Tripwire**; **Quick Reaction Force** | Rogue: **Break Contact**; rogue signature: **Crowd Dispersal** |
+| **Thornfang** | **Use-of-Force Escalation**; **Dynamic Entry**; **Tripwire**; **Quick Reaction Force** | Rogue: **Break Contact**; rogue signature: **Crowd Dispersal** |
 | **Scornfang** | **Mechanical Shearing**; **Encapsulation**; **Dust Entrainment**; **Cradle-to-Grave Tracking**; **Hot Zone** | 55%-HP phase: **Corrective Action**; rogue: **Impoundment**; rogue signature: **Emergency Egress** |
 | **Lifebinder** | **Excarnation**; **Stay Alive**; **Clerk of Works**; **Differential Settlement**; **Algor Mortis**; **Anastylosis** | Rogue: **Disarticulation**; rogue signature: **Pressure Grouting** |
 
@@ -20,7 +20,7 @@ Related: master #232; five-region continuity #235; Greenwood #236; Lifebinder #2
 
 | Character | Earlier name → intermediate audit choice (historical; three later restored) | Rationale considered during that audit |
 | --- | --- | --- |
-| Thornfang | Use-of-Force Continuum → **Pain Compliance** (**REVERSED: Use-of-Force Continuum restored**) | Earlier security/control suggestion, superseded by owner's preference for the more ominous original |
+| Thornfang | Use-of-Force Continuum → **Pain Compliance** (**REVERSED**; new final: **Use-of-Force Escalation**) | Owner preferred original use-of-force wording with more active phrasing instead of the interim control-term suggestion |
 | Thornfang | Anti-Passback → **Tripwire** | Real security boundary-crossing sensor; instantly evokes his narrow slowing root line |
 | Scornfang | Selective Deconstruction → **Mechanical Shearing** | Real industrial dismantling process; sounds like his destructive rush through the worksite |
 | Scornfang | Pocket Trick → **Impoundment** | Environmental containment/storage concept; suits a short snare without changing rogue behavior |
@@ -64,7 +64,7 @@ All names are **authentic professional security/access-control or protective ope
 
 | Existing move / slot | Final approved name | Protected behavior |
 | --- | --- | --- |
-| Bite (regular 1) | **Use-of-Force Continuum** | Existing short warned frontal bite/arc |
+| Bite (regular 1) | **Use-of-Force Escalation** | Existing short warned frontal bite/arc |
 | Pounce (regular 2) | **Dynamic Entry** | Existing warned landing/leap and its actual recovery contract |
 | Root Line (regular 3) | **Tripwire** | Existing marked narrow line and slow |
 | Den Howl (regular 4) | **Quick Reaction Force** | Existing bounded wolf-pup summon |
@@ -204,24 +204,24 @@ Six regular moves must **remain manageable for a beginner**: bounded timings and
 
 ### Post-audit terminology refinements (chronology; latest roster above is authoritative)
 
-This **owner-delegated editorial audit, subsequently and explicitly ratified by the owner**, preceded the **three additional owner-requested reversions** (Use-of-Force Continuum, Excarnation, Disarticulation). The original audit verified eight renamed combat slots and two renamed passives, but its three replaced names are now historical only. The current **22-name roster at the top of this document** governs implementation. The move counts and skill indices are unchanged: **Thornfang 4 regular + 2 rogues; Scornfang 5 regular + 2 rogues + 55%-HP phase; Lifebinder 6 regular + 2 rogues**, plus exactly one passive each.
+This **owner-delegated editorial audit, subsequently explicitly ratified by the owner**, came before the later two owner-chosen restorations (**Excarnation**, **Disarticulation**) and the requested active variation of Thornfang's **Use-of-Force Continuum**, now **Use-of-Force Escalation**. Its three superseded intermediate names are historical only. The **latest 22-name roster above** governs implementation. Skill counts and indices remain **Thornfang 4 regular + 2 rogues; Scornfang 5 regular + 2 rogues + 55%-HP phase; Lifebinder 6 regular + 2 rogues**, plus exactly one passive each.
 
 - **No mechanics change:** The original physical bite, narrow root line, Scornfang charge/snare/sidestep, Lifebinder cone shove and slowing bind retain existing damage, geometry, telegraphs, trigger timing and cooldown contracts. The shortened professional names are **not** additional attacks.
 - **No passive change:** **Rapid Deployment** preserves 8% Normal / 15% TRUE owned-wolf movement, **Prolonged Exposure** preserves 10% Normal / 20% Corrective Action slow-duration increases to *regular attacks only*, and **Structural Consolidation** preserves 6% Normal / 12% TRUE Lifebinder mitigation. `Anastylosis` remains 20% for four seconds, multiplicatively combined with Lifebinder's passive.
 - **Preserve recognizable animations:** `Tripwire` must visibly read as the same marked root line, `Excarnation` as the same short cone/knockback, `Mechanical Shearing` as the same charging movement, and `Pressure Grouting` as the same local slowing bind. A future artist may convey the names more legibly **without** changing hitboxes, attack timing, rewards or first-boss difficulty.
 - **Not an integration pass:** This refines documentation in draft PR #289. No gameplay files have been altered and no cross-branch or save/TRUE regression has been run. All separate PRs #230/#231/#258 and the earlier integration risk ledger remain protected.
 
-### Final follow-up restorations — 12 October 2026 (latest owner direction)
+### Latest follow-up: two restorations and one action-oriented adaptation — 12 October 2026
 
 The Dark Lord re-approved the previously established sound-first joke for three names, **after** the terminology audit. These are the current authoritative replacements of the intermediate audit names:
 
 | Character / technique | Intermediate name | Final restored name | Mechanical identity unchanged |
 | --- | --- | --- | --- |
-| Thornfang — regular frontal bite | Pain Compliance | **Use-of-Force Continuum** | Existing short warned frontal bite/arc |
+| Thornfang — regular frontal bite | Pain Compliance / Use-of-Force Continuum | **Use-of-Force Escalation** | Existing short warned frontal bite/arc |
 | Lifebinder — regular frontal sweep | Lateral Thrust | **Excarnation** | Existing warned frontal cone with approved light knockback |
 | Lifebinder — defensive rogue shove | Luxation | **Disarticulation** | Existing short tactical shove |
 
-**Naming philosophy:** obscure professional terminology should sound like something frightening is happening, while attack telegraphs and animations communicate the actual dodgeable action. A strictly literal verbal description of the hitbox is **not required** for the joke. The user's remark about possibly making Use-of-Force Continuum sound more actionable was **not a final proposed word choice**; retain its exact spelling until the owner chooses otherwise. No new boss or captain moves or passives have been added.
+**Naming philosophy:** genuine professional terminology should sound like something frightening is happening, while the actual telegraph and animation communicate the dodgeable behavior. A literal verbal description of the hitbox is not required. The Dark Lord specifically requested that **Use-of-Force Continuum** become more active while preserving similar language; **Use-of-Force Escalation** is the selected concise adaptation. This is an assistant-selected formulation of his requested direction, not a claim that he independently supplied those exact words. **Excarnation** and **Disarticulation** are his exact preferred names. No new move slots or passives were added.
 
 **Scope:** this is a documentation-only naming correction on PR #289. All numerical values, warning times, duration, the two-pair Differential Settlement, four-second Anastylosis and its passive stacking, summon compositions, TRUE/early TRUE/Awakening variants, saves, captive rescues, patrol plans, and integration safeguards are unchanged. Historical wording that names Pain Compliance, Lateral Thrust or Luxation as a past interim choice must **not** be read as current canon.
 
