@@ -230,3 +230,57 @@ for (const role of ['pages', 'pump', 'submerged', 'alchemy', 'construction', 'co
   );
 }
 console.log('PASS unresolved summon and procedural furnishing contracts remain intact');
+
+{
+  const c = new C();
+  c.enter('vale');
+  const z = c.zone();
+  const orchard = z.props.filter((p) => p.regionalDistrict === 'hamlet-orchard');
+  const carpentry = z.props.filter((p) => p.regionalDistrict === 'millhaven-carpentry');
+  assert(
+    orchard.filter((p) => p.structure === 'fruit-tree').length >= 3,
+    'Orchard Hamlet retains a small visible productive fruit grove',
+  );
+  assert(
+    orchard.some((p) => p.sceneRole === 'harvest'),
+    'a small harvest delivery stays near the grove',
+  );
+  assert(
+    carpentry.some((p) => p.structure === 'stacked-lumber'),
+    'existing Millhaven workshop gains identifiable lumber',
+  );
+  const abandoned = z.npcs.find((n) => n.id === 'orchard');
+  for (const p of [...orchard, ...carpentry]) {
+    assert.equal(p.r, 0, 'small village scenery is decorative');
+    assert(!c.blocked(p.x, p.y, 'vale', 24), 'village scenery has clear ground');
+    assert(
+      !z.roads.some((road) =>
+        road.some((b, j) => j && c.distanceToSegment(p, road[j - 1], b) < 60),
+      ),
+      'village scenery stays off existing roads',
+    );
+  }
+  assert(
+    orchard.every((p) => Math.hypot(p.x - abandoned.x, p.y - abandoned.y) > 210),
+    'productive grove remains distinct from the Abandoned Orchard',
+  );
+  const old = c.snapshot();
+  old.zones.vale.regionalHandoffVersion = 1;
+  old.zones.vale.props = old.zones.vale.props.filter(
+    (p) => !['hamlet-orchard', 'millhaven-carpentry'].includes(p.regionalDistrict),
+  );
+  const upgraded = C.restore(old);
+  assert.equal(upgraded.s.zones.vale.regionalHandoffVersion, 2);
+  const upgradeProps = (state) =>
+    state.zones.vale.props.filter((p) =>
+      ['hamlet-orchard', 'millhaven-carpentry'].includes(p.regionalDistrict),
+    );
+  assert.deepEqual(
+    upgradeProps(upgraded.snapshot()),
+    upgradeProps(C.restore(upgraded.snapshot()).snapshot()),
+    'regional scenery migration remains idempotent',
+  );
+  assert.equal(upgraded.hero.gold, c.hero.gold, 'currency remains unchanged');
+  assert.deepEqual(upgraded.s.quests, c.s.quests, 'quests remain unchanged');
+  console.log('PASS Greenwood livelihood and old-save scenery migration');
+}

@@ -73,5 +73,12 @@
     "appSha256": "e6ea0d525e4a827da13cdb95a2c6b1185432781bf269ab9b4370e6dd1b2f48e3",
     "inputSha256": "3b01e8b5df5b7b8fedc8deb24bba4f93f979ef111e2fa2fa55950891b58b5da5",
     "desktopCssSha256": "95fcb8bdad9f22c32950a1f1c6c51b1f2f886fc89e33d59248d3aef415137dac"
+  },
+  "approvedGreenwoodRevision": {
+    "source": "PR #284 approved bounded Greenwood scenery: productive Orchard Hamlet fruit trees, Millhaven woodworking cues, region-only scenery migration; no changes to gameplay or baseline protected hashes",
+    "files": {
+      "src/prototype/rules.js": "7f08dd3e6929cc8c3f1cc39d622c82aa814590961a3aef2a89917f01b5e1518b",
+      "src/prototype/world.js": "f01f854c25e73f70b05e7236b0e54a94643f8c7cad7fad81caae3d26edfcad0c"
+    }
   }
 }
