@@ -99,7 +99,7 @@ test('Every authored basic actually disrupts its marked target through the live 
     assert(!a.rogueSignature);
     resolveThroughAI(c, e, a);
     assert(c.hero.hp < hp, a.name + ' has a real hit');
-    if (a.style === 'shove')
+    if (['shove', 'slab'].includes(a.style))
       assert(
         Math.hypot(c.hero.x - before.x, c.hero.y - before.y) > 1,
         a.name + ' displaces its target',
