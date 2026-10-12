@@ -20,6 +20,12 @@ if (keyboardRevision) {
   ]);
   assert.match(keyboardRevision.source, /PR #269/);
 }
+// Permit only the exact audited Frontier domestic scenery source.
+const frontierRevision = manifest.approvedFrontierRecoveryRevision;
+if (frontierRevision) {
+  assert.deepEqual(Object.keys(frontierRevision.files), ['src/prototype/rules.js']);
+  assert.match(frontierRevision.source, /Burned Hamlet/);
+}
 for (const [file, expected] of Object.entries(manifest.files)) {
   const actual = crypto
     .createHash('sha256')
@@ -27,7 +33,7 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    keyboardRevision?.files[file] || revision.files[file] || expected,
+    frontierRevision?.files[file] || keyboardRevision?.files[file] || revision.files[file] || expected,
     file + ' is protected against baseline / reviewed rendering revision ' + manifest.baseline,
   );
 }
