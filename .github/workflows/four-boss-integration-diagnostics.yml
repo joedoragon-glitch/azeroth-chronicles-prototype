@@ -19,7 +19,7 @@ jobs:
       - name: Print exact Prettier differences without altering source
         shell: bash
         run: |
-          for file in src/prototype/boss-combat.js src/prototype/combat-visuals.js src/prototype/engine.js; do
+          for file in src/prototype/boss-combat.js src/prototype/combat-visuals.js src/prototype/engine.js scripts/perf-v09-equivalence.cjs; do
             echo "=== PRETTIER-DIFF $file ==="
             ./node_modules/.bin/prettier "$file" | diff -u --label "source/$file" --label "formatted/$file" "$file" - || true
           done
