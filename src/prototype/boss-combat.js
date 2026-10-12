@@ -177,6 +177,30 @@
         for (let i = live('captain').length; i < composition.captains; i++) spawnRole('captain');
         return made;
       }
+      sentinelFormationOrders(e) {
+        // Only select Dress Ranks when living soldiers can really take posts.
+        // This is also the execution source, preventing AI/cast mismatches.
+        const posts = [
+          [-115, -70],
+          [-115, 70],
+          [115, -70],
+          [115, 70],
+        ];
+        return this.zone()
+          .enemies.filter(
+            (u) =>
+              u !== e && u.hp > 0 && u.species === 'crownguard' && !u.neutral && dist(u, e) < 390,
+          )
+          .sort((a, b) => dist(a, e) - dist(b, e))
+          .slice(0, 4)
+          .flatMap((unit, i) => {
+            const [dx, dy] = posts[i];
+            const post = this.safe(e.x + dx, e.y + dy);
+            return dist(unit, post) <= 240 && this.clearSegment(unit, post)
+              ? [{ unit, post }]
+              : [];
+          });
+      }
       sentinelPatternPath(e) {
         const directions = [
           [1, 0],
@@ -277,6 +301,8 @@
           cap = this.bossSummonCap(e);
         return plans.map((plan, index) => {
           if (e.family === 'citadel' && index === 3 && e.board) return 0;
+          if (e.family === 'citadel' && index === 1 && !this.sentinelFormationOrders(e).length)
+            return 0;
           if (e.family === 'citadel' && index === 2 && !this.sentinelPatternPath(e).length)
             return 0;
           if (!allowRepeat && index === e.lastAttackIndex && plans.length > 1) return 0;
@@ -589,30 +615,13 @@
           return;
         }
         if (e.family === 'citadel' && a.kind === 'formation') {
-          const posts = [
-            [-115, -70],
-            [-115, 70],
-            [115, -70],
-            [115, 70],
-          ];
-          const guards = this.zone()
-            .enemies.filter(
-              (u) =>
-                u !== e && u.hp > 0 && u.species === 'crownguard' && !u.neutral && dist(u, e) < 390,
-            )
-            .sort((a, b) => dist(a, e) - dist(b, e))
-            .slice(0, 4);
-          let ordered = 0;
-          for (const [i, u] of guards.entries()) {
-            const p = this.safe(e.x + posts[i][0], e.y + posts[i][1]);
-            if (dist(u, p) <= 240 && this.clearSegment(u, p)) {
-              // Issue a visible marching order; never teleport live soldiers.
-              u.dressPost = { ...p, owner: e.id, expires: this.s.time + 5 };
-              u.aggro = true;
-              ordered++;
-            }
+          const orders = this.sentinelFormationOrders(e);
+          for (const { unit, post } of orders) {
+            // Orders remain movement, never teleportation or invented guards.
+            unit.dressPost = { ...post, owner: e.id, expires: this.s.time + 5 };
+            unit.aggro = true;
           }
-          e.dressUntil = ordered ? this.s.time + 5 : 0;
+          e.dressUntil = orders.length ? this.s.time + 5 : 0;
           return;
         }
         if (e.family === 'citadel' && a.kind === 'canister') {

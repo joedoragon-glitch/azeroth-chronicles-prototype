@@ -22,6 +22,9 @@ c.zone().enemies = [boss];
 boss.telegraph = c.buildBossAttack(boss, 1, c.hero).first;
 c.resolveAttack(boss);
 assert.equal(boss.dressUntil, 0, 'no defensive formation without actual soldiers');
+const nearby = { x: boss.x + 90, y: boss.y };
+assert.equal(c.bossAttackWeights(boss, nearby)[1], 0,
+  'automatic boss AI must not schedule Dress Ranks without real available guards');
 const escort = c.makeEnemy({ species: 'crownguard', level: boss.level, hp: 1000,
   damage: 10, gold: 0, xp: 0 }, { x: boss.x + 30, y: boss.y + 30 });
 escort.species = 'crownguard';
@@ -32,6 +35,8 @@ c.resolveAttack(boss);
 assert(boss.dressUntil > c.s.time, 'living soldier makes the order meaningful');
 assert(escort.dressPost, 'soldier receives a finite movement order');
 assert.deepEqual({ x: escort.x, y: escort.y }, originalPost, 'Dress Ranks does not teleport');
+assert(c.bossAttackWeights(boss, nearby)[1] > 0,
+  'Dress Ranks is selectable by AI when a real soldier can receive an order');
 for (let frame = 0; frame < 20; frame++) c.updateEnemies(.03);
 assert(Math.hypot(escort.x - originalPost.x, escort.y - originalPost.y) > 0,
   'soldier marches toward the post over simulation ticks');
