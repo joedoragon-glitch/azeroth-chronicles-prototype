@@ -230,3 +230,45 @@ for (const role of ['pages', 'pump', 'submerged', 'alchemy', 'construction', 'co
   );
 }
 console.log('PASS unresolved summon and procedural furnishing contracts remain intact');
+
+{
+  const c = new C();
+  c.enter('march');
+  const z = c.zone();
+  const trade = z.props.filter((p) => p.regionalDistrict === 'reedport-catch');
+  const camp = z.props.filter((p) => p.regionalDistrict === 'camp-work');
+  assert.equal(trade.length, 2, 'Reedport gains only two fishing trade details');
+  assert(trade.some((p) => p.sceneRole === 'sorting' && p.structure === 'crate'));
+  assert(trade.some((p) => p.sceneRole === 'delivery' && p.structure === 'cart'));
+  assert(camp.some((p) => p.sceneRole === 'boat-maintenance' && p.structure === 'tool-rack'));
+  for (const p of [...trade, ...camp]) {
+    assert.equal(p.r, 0, 'fishing scenery has no collision radius');
+    assert(!c.blocked(p.x, p.y, 'march', 24), 'fishing scenery is walkable');
+    assert(
+      !z.roads.some((road) =>
+        road.some((b, j) => j && c.distanceToSegment(p, road[j - 1], b) < 60),
+      ),
+      'fishing scenery does not occupy an existing road',
+    );
+  }
+  const old = c.snapshot();
+  old.zones.march.regionalHandoffVersion = 1;
+  old.zones.march.props = old.zones.march.props.filter(
+    (p) => !['reedport-catch'].includes(p.regionalDistrict) && p.sceneRole !== 'boat-maintenance',
+  );
+  const migrated = C.restore(old);
+  const selectedProps = (snapshot) =>
+    snapshot.zones.march.props.filter(
+      (p) => p.regionalDistrict === 'reedport-catch' || p.sceneRole === 'boat-maintenance',
+    );
+  assert.equal(migrated.s.zones.march.regionalHandoffVersion, 2);
+  assert.deepEqual(
+    selectedProps(C.restore(migrated.snapshot()).snapshot()),
+    selectedProps(migrated.snapshot()),
+    'old-save fishing scenery regenerates only once',
+  );
+  assert.equal(migrated.hero.gold, c.hero.gold, 'crowns stay unchanged');
+  assert.deepEqual(migrated.s.quests, c.s.quests, 'quest progress stays unchanged');
+  assert.deepEqual(migrated.s.rescued, c.s.rescued, 'specialist state stays unchanged');
+  console.log('PASS Marches fishing trade scenery, paths and historical-save compatibility');
+}

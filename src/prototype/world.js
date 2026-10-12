@@ -1547,7 +1547,8 @@
       }
       regionalHandoffLife(z) {
         const scenes = R.regionalHandoffScenes?.[z.id];
-        if (!scenes || z.regionalHandoffVersion === 1) return;
+        const version = z.id === 'march' ? 2 : 1;
+        if (!scenes || z.regionalHandoffVersion === version) return;
         const previous = this.s.zone;
         this.s.zone = z.id;
         try {
@@ -1589,7 +1590,7 @@
                 ...(sceneRole ? { sceneRole } : {}),
               });
           }
-          z.regionalHandoffVersion = 1;
+          z.regionalHandoffVersion = version;
         } finally {
           this.s.zone = previous;
         }

@@ -2111,6 +2111,10 @@
       [2700, 2250, 'scroll-stack', 'archive-relief'],
       [650, 1040, 'fishing-net', 'shore-work'],
       [1090, 680, 'fish-rack', 'camp-work'],
+      // Small fishing-trade details in existing Reedport and Fisher Camp.
+      [740, 980, 'crate', 'reedport-catch', 'sorting'],
+      [730, 1170, 'cart', 'reedport-catch', 'delivery'],
+      [1150, 640, 'tool-rack', 'camp-work', 'boat-maintenance'],
     ],
   };
   const dungeonWalls = {
