@@ -26,8 +26,8 @@
     crypt: [
       attack('cone', 1, 1),
       attack('volley', 1.2, 1.4),
-      attack('summon', 1.6, 1.4, { species: 'skeleton', ranged: false }),
-      attack('circle', 1.6, 1.4, { persistent: true, manaDrain: 0.05 }),
+      attack('summon', 1.6, 1.4, { species: 'crownguard', ranged: false, attendant: true }),
+      attack('circle', 1.6, 1.4, { count: 4, persistent: true, manaDrain: 0.05 }),
     ],
     mire: [
       attack('cone', 0.9, 1),
@@ -49,8 +49,8 @@
     ],
     mine: [
       attack('circle', 1.6, 2.5, { coefficient: 1.4, opening: 2.5 }),
-      attack('circle', 1.7, 1.5, { count: 3, coefficient: 1.4 }),
-      attack('ring', 1.6, 1.6),
+      attack('circle', 1.7, 1.5, { count: 3, sequential: true, coefficient: 1.4 }),
+      attack('ring', 1.6, 1.6, { slowDuration: 1.5, doubleWave: true }),
       attack('line', 1.7, 3, { charge: true, coefficient: 1.4, opening: 3 }),
       attack('summon', 1.8, 1.5, { species: 'ogre', ranged: false }),
     ],
@@ -2080,7 +2080,7 @@
       presentation: 'workstation',
       workKind: 'smith',
       context:
-        "Borin is held here because the Guardian needs his craftsmanship to finish the Dark Lord's woodland retreat.",
+        "Borin is forced to finish the Dark Lord's winter rooms. Beside his tools lies the Lifebinder's ledger: names of the fallen, under BOUND and RELEASED.",
     },
     archive: {
       x: 1130,
@@ -2096,7 +2096,8 @@
       presentation: 'workstation',
       workKind: 'smith',
       workstation: 'equipment-repair',
-      context: 'Dara is compelled to repair cart axles, quarry tools and mine supports.',
+      context:
+        'Dara is kept here, but Garun pays for repairs and his odd little sculptures; the smith can move about the workshop, not leave the Mine.',
     },
   };
   const regionalHandoffScenes = {
@@ -2395,7 +2396,7 @@
       ],
     },
     crypt: {
-      version: 3,
+      version: 4,
       surfaces: [
         {
           kind: 'unfinished',
@@ -3361,6 +3362,9 @@
     ],
   }; // Curated occupied spaces: each dungeon has an entrance, work/ritual zone, command markers and a boss approach.
   const dungeonLore = {
+    crypt:
+      'An old ossuary opens onto unfinished Crown guest rooms. A building plan shows six seats at the winter table; the memorial stones give the dead names, not numbers.',
+    mine: 'The interregional roads and relocated settlements bear Garun the Firstborn’s geometric maker mark. The Dark Lord’s old companion inspects this Mine’s wardens and supports; the Ridge Tyrant handles wages. Past the forge, little machines and angular ornaments clutter his quiet workshop.',
     abyss:
       'Abyss Bastion is the Dark Lord’s air-superiority project. His purple dragon is his personal flying mount; the hatchery will grow his future air force. Riders prepare harnesses, supplies arrive, and the royal launch platform is still being built.',
   };
@@ -3383,6 +3387,11 @@
       [1040, 640, 'weapon-rack', 'craft-wing', 'construction'],
       [1240, 650, 'supply-stack', 'craft-wing', 'construction'],
       [280, 1120, 'sleep-roll', 'guest-lodge'],
+      [365, 1120, 'estate-rug', 'guest-lodge'],
+      [650, 1210, 'estate-hearth', 'guest-lodge'],
+      [525, 1340, 'estate-lounge', 'guest-lodge'],
+      [520, 1300, 'warm-brazier', 'guest-lodge'],
+      [340, 1020, 'banner', 'guest-lodge'],
       [400, 1240, 'sleep-roll', 'guest-lodge'],
       [590, 1170, 'warm-brazier', 'guest-lodge'],
       [480, 1060, 'game-table', 'guest-lodge'],
@@ -3391,6 +3400,11 @@
       [1000, 1250, 'scroll-stack', 'caretaker-study'],
       [800, 960, 'torch', 'caretaker-study'],
       [1110, 900, 'stone-seat', 'protected-retreat'],
+      [1150, 1120, 'estate-rug', 'protected-retreat'],
+      [1030, 1300, 'estate-hearth', 'protected-retreat'],
+      [1240, 1100, 'estate-lounge', 'protected-retreat'],
+      [1170, 1100, 'warm-brazier', 'protected-retreat'],
+      [1200, 1290, 'stone-seat', 'protected-retreat'],
       [1290, 920, 'warm-brazier', 'protected-retreat'],
       [1270, 1200, 'game-table', 'protected-retreat'],
       [1090, 1280, 'banner', 'protected-retreat'],
@@ -3459,6 +3473,9 @@
       [190, 1190, 'ridge-supper', 'repair-forge'],
       [900, 1150, 'rail', 'haulage-loop'],
       [1280, 1340, 'torch', 'colossus-chamber'],
+      [970, 1030, 'stone-seat', 'colossus-chamber', 'geometric-gallery'],
+      [1300, 1270, 'game-table', 'colossus-chamber', 'kinetic-collection'],
+      [1030, 1280, 'crystal', 'colossus-chamber', 'art-object'],
     ],
     abyss: [
       [300, 340, 'torch', 'rider-preparation'],
@@ -3738,7 +3755,9 @@
     normalCooldown: 7,
     trueCooldown: 5.5,
     pressureFloor: 2,
-    overrides: { warlord: { normalCap: 4, trueCap: 8, minions: 6, captains: 2 } },
+    overrides: {
+      crypt: { normalCap: 12, trueCap: 6, minions: 4, captains: 2 },
+    },
   };
   const bossBehavior = {
     thorn: {
@@ -4105,7 +4124,7 @@
   });
   // Provisional non-siphon self-healing, separate from hero skill cooldowns.
   const bossRecovery = Object.freeze({
-    abyss: { name: 'Ember Renewal', healFraction: 0.08, cooldown: 24, warning: 1.6 },
+    abyss: { name: 'Go-Around', healFraction: 0.08, cooldown: 24, warning: 1.6 },
     citadel: { name: 'Ash Reforge', healFraction: 0.1, cooldown: 28, warning: 1.8 },
     threshold: 0.6,
   });
@@ -4347,13 +4366,18 @@
     },
     bosses: {
       thorn: { name: 'Thornfang’s Pack Feint', style: 'dash', coefficient: 0.23 },
-      crypt: { name: 'Crypt Guardian’s Bone Hook', style: 'shove', coefficient: 0.24 },
+      crypt: { name: 'Lifebinder’s Bone Hook', style: 'shove', coefficient: 0.24 },
       mire: { name: 'Mirejaw’s Bog Snare', style: 'snare', coefficient: 0.23 },
       archive: { name: 'Drowned Keeper’s Undertow', style: 'shove', coefficient: 0.24 },
       ridge: { name: 'Ridge Tyrant’s Stone Feint', style: 'shove', coefficient: 0.24 },
-      mine: { name: 'Stone Colossus’s Quarry Shift', style: 'shove', coefficient: 0.24 },
+      mine: {
+        name: 'Garun’s Lateral Load Transfer',
+        style: 'slab',
+        coefficient: 0.6,
+        warning: 1.3,
+      },
       warlord: { name: 'Ashen Warlord’s Flank Command', style: 'dash', coefficient: 0.25 },
-      abyss: { name: 'Abyss Dragon’s Ashwing Feint', style: 'dash', coefficient: 0.25 },
+      abyss: { name: 'Abyss Dragon’s High Yo-Yo', style: 'dash', coefficient: 0.25 },
       citadel: { name: 'Ash Sentinel’s Reversal', style: 'shove', coefficient: 0.24 },
       cindermaw: { name: 'Cindermaw’s Ember Hook', style: 'snare', coefficient: 0.23 },
       darklord: { name: 'Dark Lord’s Crown Grasp', style: 'snare', coefficient: 0.26 },
@@ -4637,7 +4661,7 @@
         coefficient: 0.08,
       },
       crypt: {
-        name: 'Crypt Guardian’s Grave Threshold',
+        name: 'Lifebinder’s Grave Threshold',
         effect: 'bind',
         warning: 1.4,
         radius: 120,
@@ -4678,7 +4702,7 @@
         reinforceName: 'Payroll watchguard',
       },
       mine: {
-        name: 'Stone Colossus’s Faultline Brace',
+        name: 'Garun’s Passive Earth Pressure',
         effect: 'sweep',
         warning: 1.65,
         radius: 195,
@@ -4700,7 +4724,7 @@
         reinforceName: 'Warlord rearguard',
       },
       abyss: {
-        name: 'Abyss Dragon’s Wingward Break',
+        name: 'Abyss Dragon’s Wingover',
         effect: 'scatter',
         warning: 1.7,
         radius: 205,
