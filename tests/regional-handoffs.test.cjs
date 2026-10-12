@@ -19,7 +19,11 @@ for (const mode of ['normal', 'nightmare'])
       a.walkable.length >= 6 && a.partitions.length >= 3,
       id + ' has functional rooms and real partitions',
     );
-    assert.equal(z.dungeonVersion, id === 'crypt' ? 4 : 3, 'only the winter estate advances dungeon decor version');
+    assert.equal(
+      z.dungeonVersion,
+      id === 'crypt' ? 4 : 3,
+      'only the winter estate advances dungeon decor version',
+    );
     assert.equal(captive.presentation, 'workstation');
     assert.equal(captive.family, id);
     assert.deepEqual(
