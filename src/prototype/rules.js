@@ -3756,6 +3756,7 @@
     trueCooldown: 5.5,
     pressureFloor: 2,
     overrides: {
+      warlord: { normalCap: 4, trueCap: 8, minions: 6, captains: 2 },
       crypt: { normalCap: 12, trueCap: 6, minions: 4, captains: 2 },
     },
   };
