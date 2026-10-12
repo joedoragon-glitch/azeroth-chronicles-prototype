@@ -20,6 +20,16 @@ if (keyboardRevision) {
   ]);
   assert.match(keyboardRevision.source, /PR #269/);
 }
+// Compare exact independently reviewed Marches decorative files while retaining
+// the protected v0.9 gameplay baseline everywhere else.
+const marchesRevision = manifest.approvedMarchesRevision;
+if (marchesRevision) {
+  assert.deepEqual(Object.keys(marchesRevision.files).sort(), [
+    'src/prototype/rules.js',
+    'src/prototype/world.js',
+  ]);
+  assert.match(marchesRevision.source, /PR #286/);
+}
 for (const [file, expected] of Object.entries(manifest.files)) {
   const actual = crypto
     .createHash('sha256')
@@ -27,7 +37,7 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    keyboardRevision?.files[file] || revision.files[file] || expected,
+    marchesRevision?.files[file] || keyboardRevision?.files[file] || revision.files[file] || expected,
     file + ' is protected against baseline / reviewed rendering revision ' + manifest.baseline,
   );
 }
