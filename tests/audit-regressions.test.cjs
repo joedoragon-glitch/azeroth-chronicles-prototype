@@ -69,7 +69,7 @@ test('F37 all normal and TRUE boss families preserve warnings while gaining mode
         assert.equal(c.s.hazards.at(-1).life,R.combatGeometry.ringLife*scale,def.id+' '+form+' actual expanding ring duration');
       }
       if(a.count>1&&kind==='circle'){
-        assert.equal(c.attackPatches(a)[0].radius,(def.id==='crypt'&&i===3)||(def.id==='warlord'&&i===1)?72:75*scale,def.id+' '+form+' multi-target reach');
+        assert.equal(c.attackPatches(a)[0].radius,def.id==='crypt'&&i===3?72:75*scale,def.id+' '+form+' multi-target reach');
       }
     }
   }
