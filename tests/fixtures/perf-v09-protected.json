@@ -73,5 +73,11 @@
     "appSha256": "e6ea0d525e4a827da13cdb95a2c6b1185432781bf269ab9b4370e6dd1b2f48e3",
     "inputSha256": "3b01e8b5df5b7b8fedc8deb24bba4f93f979ef111e2fa2fa55950891b58b5da5",
     "desktopCssSha256": "95fcb8bdad9f22c32950a1f1c6c51b1f2f886fc89e33d59248d3aef415137dac"
+  },
+  "approvedFrontierRecoveryRevision": {
+    "source": "Owner-approved Ashen Frontier Burned Hamlet household scenery draft #240 (one garden, one laundry); exact source hash is limited to rules.js; gameplay, world.js, save format and v0.9 protections remain unchanged",
+    "files": {
+      "src/prototype/rules.js": "59fa8ef790e07d3cc459a258c37d2b4f05041b7383f2e9df32b093a21d22acc4"
+    }
   }
 }

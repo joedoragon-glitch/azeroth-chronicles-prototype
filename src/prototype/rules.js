@@ -2112,6 +2112,12 @@
       [650, 1040, 'fishing-net', 'shore-work'],
       [1090, 680, 'fish-rack', 'camp-work'],
     ],
+    // A modest domestic corner beside Burned Hamlet's existing repairs.
+    // The ruins, houses, garrison and road network are unchanged.
+    frontier: [
+      [1270, 1240, 'garden', 'burned-hamlet-home'],
+      [1440, 1200, 'laundry', 'burned-hamlet-home'],
+    ],
   };
   const dungeonWalls = {
     crypt: [
