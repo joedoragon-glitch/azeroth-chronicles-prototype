@@ -53,10 +53,13 @@
       const from = { x: a.fromX, y: a.fromY };
       return Array.from({ length: 9 }, (_, i) => {
         const angle = a.angle + (i - 4) * 0.115;
-        return [from, {
-          x: from.x + Math.cos(angle) * a.radius,
-          y: from.y + Math.sin(angle) * a.radius,
-        }];
+        return [
+          from,
+          {
+            x: from.x + Math.cos(angle) * a.radius,
+            y: from.y + Math.sin(angle) * a.radius,
+          },
+        ];
       });
     }
     // Formation orders are harmless. The independent board renderer below
@@ -202,9 +205,9 @@
     }
     // The core's combat opening is a genuine e.open timer, so never show it
     // simply because Garun is charging or an unrelated effect is resolving.
-    for (const boss of game.zone().enemies.filter(
-      (e) => e.family === 'mine' && e.hp > 0 && e.open > 0
-    )) {
+    for (const boss of game
+      .zone()
+      .enemies.filter((e) => e.family === 'mine' && e.hp > 0 && e.open > 0)) {
       circlePath(ctx, screen, boss, 44);
       ctx.strokeStyle = '#aef0ff';
       ctx.lineWidth = 3;
@@ -244,21 +247,23 @@
       }
     }
     // Real Dress Ranks posts are navigation targets, not damaging telegraphs.
-    if (cue) for (const guard of game.zone().enemies.filter(
-      (e) => e.hp > 0 && e.dressPost && e.dressPost.expires > game.s.time
-    )) {
-      const from = screen(guard), to = screen(guard.dressPost);
-      ctx.strokeStyle = '#b8d5eb';
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([3, 5]);
-      ctx.beginPath();
-      ctx.moveTo(from.x, from.y);
-      ctx.lineTo(to.x, to.y);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      circlePath(ctx, screen, guard.dressPost, 15);
-      ctx.stroke();
-    }
+    if (cue)
+      for (const guard of game
+        .zone()
+        .enemies.filter((e) => e.hp > 0 && e.dressPost && e.dressPost.expires > game.s.time)) {
+        const from = screen(guard),
+          to = screen(guard.dressPost);
+        ctx.strokeStyle = '#b8d5eb';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([3, 5]);
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y);
+        ctx.lineTo(to.x, to.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        circlePath(ctx, screen, guard.dressPost, 15);
+        ctx.stroke();
+      }
     for (const e of game.zone().enemies.filter((e) => e.rangedAim)) {
       const p = screen(e),
         q = screen(e.rangedAim);
