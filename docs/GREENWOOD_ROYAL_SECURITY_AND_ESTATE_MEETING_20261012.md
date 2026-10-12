@@ -10,10 +10,12 @@ Related: master #232; five-region continuity #235; Greenwood #236; Lifebinder #2
 
 **LATEST OWNER DIRECTION — 12 October 2026:** Following the ratified terminology audit, the Dark Lord explicitly preferred Lifebinder's original **Excarnation** (rather than Lateral Thrust) and **Disarticulation** (rather than Luxation), for their menacing anatomical/mortuary sound. For Thornfang he preferred the **Use-of-Force Continuum** concept to Pain Compliance, but clarified that it must sound as though Thornfang is actively *using/escalating* force. The concise adaptation chosen is **Use-of-Force Escalation**, retaining the real security notion of escalation of force (owner-directed adaptation; wording supplied here, not verbatim by the owner). **The roster below is the latest design naming authority**; the earlier audit entries are historical. All of these are **name-only** changes: no attack mechanics, HP, damage, durations, warning shapes, passive effects, summon counts, phase triggers, rogue execution, quests, save data or other game systems change.
 
+**MOST RECENT OWNER FOLLOW-UP:** Scornfang's first regular charge is restored to **Selective Deconstruction**, explicitly requested after the Mechanical Shearing experiment. The humorous implication is that he is professionally and selectively deconstructing the *adventurer*. This supersedes any older "Mechanical Shearing" references in historical audit rows. No other Scornfang technique, phase, passive, or numbers change. Separately, the Dark Lord granted Thornfang **professional K9/canine handling and training expertise** with the spoken spell **BIBIDI BABIDI BOO**; this is narrative knowledge, not an additional attack or passive effect.
+
 | Character | Final regular move names, in order | Separate rogue moves / phase |
 | --- | --- | --- |
 | **Thornfang** | **Use-of-Force Escalation**; **Dynamic Entry**; **Tripwire**; **Quick Reaction Force** | Rogue: **Break Contact**; rogue signature: **Crowd Dispersal** |
-| **Scornfang** | **Mechanical Shearing**; **Encapsulation**; **Dust Entrainment**; **Cradle-to-Grave Tracking**; **Hot Zone** | 55%-HP phase: **Corrective Action**; rogue: **Impoundment**; rogue signature: **Emergency Egress** |
+| **Scornfang** | **Selective Deconstruction**; **Encapsulation**; **Dust Entrainment**; **Cradle-to-Grave Tracking**; **Hot Zone** | 55%-HP phase: **Corrective Action**; rogue: **Impoundment**; rogue signature: **Emergency Egress** |
 | **Lifebinder** | **Excarnation**; **Stay Alive**; **Clerk of Works**; **Differential Settlement**; **Algor Mortis**; **Anastylosis** | Rogue: **Disarticulation**; rogue signature: **Pressure Grouting** |
 
 **Revision history, not current nomenclature:** the prior four-option ballot changed **nine** initial names: Thornfang (Interdiction → Dynamic Entry; Response Force → Quick Reaction Force; Counter-Surveillance → Break Contact); Scornfang (In Situ Stabilization → Encapsulation; Particulate Resuspension → Dust Entrainment; Exclusion Zone → Hot Zone; Final Clearance Inspection → Corrective Action); Lifebinder (Thanatopraxy → Excarnation; Groundwork → Differential Settlement). The later authorized joke/readability audit changed **eight more combat names** and **two passive names**; the owner then **restored three of those combat names**. All surviving move slots and values are unchanged.
@@ -22,7 +24,7 @@ Related: master #232; five-region continuity #235; Greenwood #236; Lifebinder #2
 | --- | --- | --- |
 | Thornfang | Use-of-Force Continuum → **Pain Compliance** (**REVERSED**; new final: **Use-of-Force Escalation**) | Owner preferred original use-of-force wording with more active phrasing instead of the interim control-term suggestion |
 | Thornfang | Anti-Passback → **Tripwire** | Real security boundary-crossing sensor; instantly evokes his narrow slowing root line |
-| Scornfang | Selective Deconstruction → **Mechanical Shearing** | Real industrial dismantling process; sounds like his destructive rush through the worksite |
+| Scornfang | Selective Deconstruction → **Mechanical Shearing** (**REVERSED: Selective Deconstruction restored**) | Intermediate industrial term. Owner prefers the darkly comic implication that Scornfang is selectively dismantling the adventurer. Mechanical Shearing is historical, not current canon. |
 | Scornfang | Pocket Trick → **Impoundment** | Environmental containment/storage concept; suits a short snare without changing rogue behavior |
 | Scornfang | Bait-and-Switch → **Emergency Egress** | Real worksite safety/exit term; evokes a sudden evasive sidestep |
 | Lifebinder | Excarnation → **Lateral Thrust** (**REVERSED: Excarnation restored**) | Earlier visually literal wording, superseded by owner's preferred unsettling mortuary term |
@@ -58,6 +60,16 @@ Thornfang is **not native to Greenwood Vale**. The Dark Lord assigned him there 
 - Preserve Thornfang's original field-Treasury association, all rewards, existing guardians, normal/TRUE encounter and TRUE availability/reappearance behavior. A patrol must not break the specific two-normal-defeat/TRUE field encounter chain or an existing-save state.
 - The established roaming **Cinder Warlord field captain** provides a precedent for real route navigation, but its different territorial/combat rules cannot be copied blindly. Thornfang is a boss with a separate leash, encounter respawn and TRUE identity.
 
+### Royal enchantment: professional K9 training (owner granted)
+
+The Dark Lord explicitly bestowed **proper K9 training qualifications and practical working-canine handling expertise** upon Thornfang, by royal spell: **“BIBIDI BABIDI BOO.”** This supplements Thornfang's already-approved **security and protective-operations expertise**. It is not a second named ministry, a species change, or proof of a new player-facing skill.
+
+**Professional knowledge now canonically available:** training and handling working canines; obedience and reliable recall; scent-work and tracking principles; command cues, marking and reward-based reinforcement; safe deployment, retrieval and disengagement; handler/working-animal communication; teamwork, animal welfare, and appropriate care. As a **giant wolf** leading other wolves, Thornfang may narratively apply transferable canine-training concepts to his own pack, without implying that wolves have become domestic dogs or that new K9 NPCs have been introduced.
+
+**Existing gameplay boundaries:** continue using **Quick Reaction Force** as the unchanged summon action, with the existing three-wolf Normal behavior and four-minion/two-ringleader TRUE composition. His approved **Rapid Deployment** passive remains exactly **+8% owned-summoned-wolf movement in Normal** / **+15% in TRUE**. The new professional qualification does **not** authorize a fifth regular attack, more summons, altered targeting/command AI, auto-tracking, improved pathfinding, further buffs, revised phases, altered patrols or additional powers. Any gameplay expression of this knowledge requires a separate, explicit design and authorization. Existing save/TRUE/quest and encounter safety invariants remain intact.
+
+**Status:** Owner-granted story qualification, recorded on documentation-only draft PR #289; no game implementation.
+
 ### Six approved names, unchanged mechanics
 
 All names are **authentic professional security/access-control or protective operations terms** intended to sound like formidable attack names to newcomers. This is **strictly a thematic rename** of his four existing regular attacks and two existing tactical rogue actions; no damage/HP/range/count/phase/cooldown/VFX geometry changes were approved.
@@ -90,7 +102,7 @@ Retain current attack/VFX/audio **stable internal family and slot IDs**, and upd
 
 | # | Final approved name | Relationship to #231 | Final conceptual behavior |
 | --- | --- | --- | --- |
-| 1 | **Mechanical Shearing** | Reworks/renames Hookfang Rush | Warned straight-line charge, original hit contract; preserve approved **20% post-charge pursuit for 2.5 seconds** |
+| 1 | **Selective Deconstruction** | Reworks/renames Hookfang Rush | Warned straight-line charge, original hit contract; preserve approved **20% post-charge pursuit for 2.5 seconds** |
 | 2 | **Encapsulation** | Reworks/renames Briar Pot | Thrown binding compound produces existing damaging/slowing persistent area, approved **100-unit radius** |
 | 3 | **Dust Entrainment** | Reworks/renames Pocket Sand | Existing short damaging/slowing cone; professional particulate-dust framing |
 | 4 | **Cradle-to-Grave Tracking** | **New regular move** | Clearly marks a chosen target with a numbered tracking tag, then launches a **short sequence of aimed, dodgeable sling shots**; provide usable warning/counterplay |
@@ -208,7 +220,7 @@ This **owner-delegated editorial audit, subsequently explicitly ratified by the 
 
 - **No mechanics change:** The original physical bite, narrow root line, Scornfang charge/snare/sidestep, Lifebinder cone shove and slowing bind retain existing damage, geometry, telegraphs, trigger timing and cooldown contracts. The shortened professional names are **not** additional attacks.
 - **No passive change:** **Rapid Deployment** preserves 8% Normal / 15% TRUE owned-wolf movement, **Prolonged Exposure** preserves 10% Normal / 20% Corrective Action slow-duration increases to *regular attacks only*, and **Structural Consolidation** preserves 6% Normal / 12% TRUE Lifebinder mitigation. `Anastylosis` remains 20% for four seconds, multiplicatively combined with Lifebinder's passive.
-- **Preserve recognizable animations:** `Tripwire` must visibly read as the same marked root line, `Excarnation` as the same short cone/knockback, `Mechanical Shearing` as the same charging movement, and `Pressure Grouting` as the same local slowing bind. A future artist may convey the names more legibly **without** changing hitboxes, attack timing, rewards or first-boss difficulty.
+- **Preserve recognizable animations:** `Tripwire` must visibly read as the same marked root line, `Excarnation` as the same short cone/knockback, `Selective Deconstruction` as the same charging movement, and `Pressure Grouting` as the same local slowing bind. A future artist may convey the names more legibly **without** changing hitboxes, attack timing, rewards or first-boss difficulty.
 - **Not an integration pass:** This refines documentation in draft PR #289. No gameplay files have been altered and no cross-branch or save/TRUE regression has been run. All separate PRs #230/#231/#258 and the earlier integration risk ledger remain protected.
 
 ### Latest follow-up: two restorations and one action-oriented adaptation — 12 October 2026
@@ -224,6 +236,12 @@ The Dark Lord re-approved the previously established sound-first joke for three 
 **Naming philosophy:** genuine professional terminology should sound like something frightening is happening, while the actual telegraph and animation communicate the dodgeable behavior. A literal verbal description of the hitbox is not required. The Dark Lord specifically requested that **Use-of-Force Continuum** become more active while preserving similar language; **Use-of-Force Escalation** is the selected concise adaptation. This is an assistant-selected formulation of his requested direction, not a claim that he independently supplied those exact words. **Excarnation** and **Disarticulation** are his exact preferred names. No new move slots or passives were added.
 
 **Scope:** this is a documentation-only naming correction on PR #289. All numerical values, warning times, duration, the two-pair Differential Settlement, four-second Anastylosis and its passive stacking, summon compositions, TRUE/early TRUE/Awakening variants, saves, captive rescues, patrol plans, and integration safeguards are unchanged. Historical wording that names Pain Compliance, Lateral Thrust or Luxation as a past interim choice must **not** be read as current canon.
+
+### Latest royal follow-up — Scornfang and Thornfang (12 October 2026)
+
+- **Scornfang:** after reviewing the revised names, the owner expressly requested **Selective Deconstruction** back for Scornfang's first regular charge, over the intermediate **Mechanical Shearing**. He likes the sinister joke of *selectively deconstructing the adventurer*. All attack timings, area, coefficients, **20% pursuit for 2.5 seconds**, 260 base HP, rogue techniques and 55%-HP **Corrective Action** phase remain unchanged.
+- **Thornfang:** the owner granted **professional K9 training** by magic, on top of his security qualification. This does **not** change the agreed **Use-of-Force Escalation** attack, the six current technique names, the 1,200 base HP, pack counts, owner-scoped 8%/15% **Rapid Deployment** passive, or patrol/rescue mechanics. Training knowledge is narrative canon only until further owner instruction.
+- All other earlier Greenwood appointments, roles, qualifications, passives, move names and source-branch integration safeguards remain unchanged.
 
 ### Deliberately not settled by this meeting
 
