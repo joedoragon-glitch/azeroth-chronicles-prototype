@@ -20,6 +20,16 @@ if (keyboardRevision) {
   ]);
   assert.match(keyboardRevision.source, /PR #269/);
 }
+// Preserve the protected v0.9 baseline while allowing only the exact reviewed
+// Greenwood scenery files on draft PR #284. This is not a blanket rebaseline.
+const greenwoodRevision = manifest.approvedGreenwoodRevision;
+if (greenwoodRevision) {
+  assert.deepEqual(Object.keys(greenwoodRevision.files).sort(), [
+    'src/prototype/rules.js',
+    'src/prototype/world.js',
+  ]);
+  assert.match(greenwoodRevision.source, /PR #284/);
+}
 for (const [file, expected] of Object.entries(manifest.files)) {
   const actual = crypto
     .createHash('sha256')
@@ -27,7 +37,10 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    keyboardRevision?.files[file] || revision.files[file] || expected,
+    greenwoodRevision?.files[file] ||
+      keyboardRevision?.files[file] ||
+      revision.files[file] ||
+      expected,
     file + ' is protected against baseline / reviewed rendering revision ' + manifest.baseline,
   );
 }
