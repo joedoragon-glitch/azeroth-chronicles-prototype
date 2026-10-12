@@ -2008,9 +2008,7 @@
     kill(e) {
       if (e.deathPaid) return;
       if (e.family === 'mine' && e.type === 'boss')
-        this.zone().props = this.zone().props.filter(
-          (p) => !p.garunTemporary && !p.garunPreview,
-        );
+        this.zone().props = this.zone().props.filter((p) => !p.garunTemporary && !p.garunPreview);
       this.tacticalClearThreat(e);
       this.tacticalClearBurst(e);
       this.tacticalClearRogueRegroup(e);
@@ -4118,9 +4116,7 @@
     disengage(e, dt) {
       if (!e.returning) {
         if (e.family === 'mine' && e.type === 'boss')
-          this.zone().props = this.zone().props.filter(
-            (p) => !p.garunTemporary && !p.garunPreview,
-          );
+          this.zone().props = this.zone().props.filter((p) => !p.garunTemporary && !p.garunPreview);
         this.tacticalClearThreat(e);
         this.tacticalClearBurst(e);
         this.tacticalClearRogueRegroup(e);
