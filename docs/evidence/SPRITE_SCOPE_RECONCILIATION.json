@@ -527,10 +527,10 @@
       "key": "terrain:floor:crypt",
       "owner": "floor/dungeonFloors",
       "palette": [
-        "#343c39",
-        "#414945",
-        "#2b3331",
-        "#a9b1a0"
+        "#453843",
+        "#57414a",
+        "#342b39",
+        "#c9a16e"
       ]
     },
     {
