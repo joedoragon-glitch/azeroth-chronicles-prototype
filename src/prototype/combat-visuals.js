@@ -44,6 +44,24 @@
   }
   function warningShapes(a, patches) {
     if (a.kind === 'summon') return [];
+    if (a.kind === 'pattern-charge') {
+      const path = [{ x: a.fromX, y: a.fromY }, ...(a.path || [])];
+      return path.slice(1).map((to, i) => capsulePoints(path[i], to, G.chargeHalfWidth));
+    }
+    if (a.kind === 'canister') {
+      // Match the nine real fragment bearings instead of advertising solid-sector damage.
+      const from = { x: a.fromX, y: a.fromY };
+      return Array.from({ length: 9 }, (_, i) => {
+        const angle = a.angle + (i - 4) * 0.115;
+        return [from, {
+          x: from.x + Math.cos(angle) * a.radius,
+          y: from.y + Math.sin(angle) * a.radius,
+        }];
+      });
+    }
+    // Formation orders are harmless. The independent board renderer below
+    // marks the two actually damaging tiles, not the entire sixteen-cell board.
+    if (a.kind === 'formation' || a.kind === 'checkerboard') return [];
     if (a.kind === 'line' || a.kind === 'volley')
       return (a.kind === 'volley' ? [-0.22, 0, 0.22] : a.count === 2 ? [-85, 85] : [0]).map((o) => {
         const angle = a.angle + (a.kind === 'volley' ? o : 0),
@@ -159,6 +177,87 @@
             ctx.stroke();
           }
       }
+    }
+    // Garun's projected works are passable plans; completed supports block travel.
+    // These cues follow the actual props, not an invented damage footprint.
+    for (const prop of game.zone().props.filter((p) => p.garunPreview || p.garunTemporary)) {
+      const solid = !!prop.garunTemporary;
+      circlePath(ctx, screen, prop, solid ? Math.max(24, prop.r || 0) : 28);
+      ctx.strokeStyle = solid ? '#e8b77b' : '#8bd9e4';
+      ctx.lineWidth = solid ? 3 : 1.8;
+      ctx.setLineDash(solid ? [] : [5, 5]);
+      if (!cue && solid) {
+        ctx.fillStyle = '#b77d4d58';
+        ctx.fill();
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+      if (cue) {
+        const p = screen(prop);
+        ctx.font = 'bold 10px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = solid ? '#ffe4b5' : '#b8f5ff';
+        ctx.fillText(solid ? 'BLOCKED' : 'PLANNED', p.x, p.y - 18);
+      }
+    }
+    // The core's combat opening is a genuine e.open timer, so never show it
+    // simply because Garun is charging or an unrelated effect is resolving.
+    for (const boss of game.zone().enemies.filter(
+      (e) => e.family === 'mine' && e.hp > 0 && e.open > 0
+    )) {
+      circlePath(ctx, screen, boss, 44);
+      ctx.strokeStyle = '#aef0ff';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([4, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      if (cue) {
+        const p = screen(boss);
+        ctx.fillStyle = '#d9faff';
+        ctx.font = 'bold 11px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('CORE EXPOSED', p.x, p.y - 62);
+      }
+    }
+    // Persistent 4x4 board telegraphs independently of Veyra's active attack.
+    for (const boss of game
+      .zone()
+      .enemies.filter((e) => e.family === 'citadel' && e.hp > 0 && e.board)) {
+      for (const cell of game.sentinelBoardCells(boss)) {
+        const h = cell.size / 2;
+        polygon(ctx, screen, [
+          { x: cell.x - h, y: cell.y - h },
+          { x: cell.x + h, y: cell.y - h },
+          { x: cell.x + h, y: cell.y + h },
+          { x: cell.x - h, y: cell.y + h },
+        ]);
+        const warning = cell.selected && boss.board.phase === 'warn';
+        const impact = cell.selected && boss.board.phase === 'rest';
+        ctx.lineWidth = warning || impact ? 2.2 : 1.1;
+        ctx.strokeStyle = warning ? '#fff1a7' : impact ? '#ff9267' : '#8794a766';
+        ctx.fillStyle = warning ? '#df795655' : impact ? '#e84b3d88' : '#536b8917';
+        if (cue) ctx.stroke();
+        else {
+          ctx.fill();
+          ctx.stroke();
+        }
+      }
+    }
+    // Real Dress Ranks posts are navigation targets, not damaging telegraphs.
+    if (cue) for (const guard of game.zone().enemies.filter(
+      (e) => e.hp > 0 && e.dressPost && e.dressPost.expires > game.s.time
+    )) {
+      const from = screen(guard), to = screen(guard.dressPost);
+      ctx.strokeStyle = '#b8d5eb';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([3, 5]);
+      ctx.beginPath();
+      ctx.moveTo(from.x, from.y);
+      ctx.lineTo(to.x, to.y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      circlePath(ctx, screen, guard.dressPost, 15);
+      ctx.stroke();
     }
     for (const e of game.zone().enemies.filter((e) => e.rangedAim)) {
       const p = screen(e),
