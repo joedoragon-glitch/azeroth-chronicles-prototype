@@ -220,7 +220,9 @@ for (const region of ['vale', 'march', 'highlands']) {
   const c = new C();
   c.enter('frontier');
   const z = c.zone();
-  const home = z.props.filter((p) => p.regionalDistrict === 'burned-hamlet-home');
+  const home = z.props.filter(
+    (p) => p.regionalDistrict === 'burned-hamlet-home',
+  );
   assert.deepEqual(
     home.map((p) => p.structure).sort(),
     ['garden', 'laundry'],
@@ -229,8 +231,14 @@ for (const region of ['vale', 'march', 'highlands']) {
   const [hx, hy] = C.data.minors[3];
   for (const p of home) {
     assert.equal(p.r, 0, 'domestic scenery is nonblocking');
-    assert(!c.blocked(p.x, p.y, 'frontier', 24), 'household furniture stays on clear ground');
-    assert(Math.hypot(p.x - hx, p.y - hy) < 440, 'new details stay near the hamlet');
+    assert(
+      !c.blocked(p.x, p.y, 'frontier', 24),
+      'household furniture stays on clear ground',
+    );
+    assert(
+      Math.hypot(p.x - hx, p.y - hy) < 440,
+      'new details stay near the hamlet',
+    );
     assert(
       !z.roads.some((road) =>
         road.some((b, j) => j && c.distanceToSegment(p, road[j - 1], b) < 60),
@@ -239,7 +247,11 @@ for (const region of ['vale', 'march', 'highlands']) {
     );
   }
   assert(
-    z.props.some((p) => p.frontierDistrict === 'burned-hamlet-recovery' && p.structure === 'charred-foundation'),
+    z.props.some(
+      (p) =>
+        p.frontierDistrict === 'burned-hamlet-recovery' &&
+        p.structure === 'charred-foundation',
+    ),
     'the hamlet retains visible wartime damage',
   );
   const saved = c.snapshot();
@@ -251,12 +263,27 @@ for (const region of ['vale', 'march', 'highlands']) {
   const upgraded = C.restore(old);
   assert.equal(upgraded.s.zones.frontier.regionalHandoffVersion, 1);
   const details = (state) =>
-    state.zones.frontier.props.filter((p) => p.regionalDistrict === 'burned-hamlet-home');
-  assert.deepEqual(details(upgraded.snapshot()), details(C.restore(upgraded.snapshot()).snapshot()));
-  assert.deepEqual(upgraded.s.quests, c.s.quests, 'quest progress stays unchanged');
-  assert.deepEqual(upgraded.s.rescued, c.s.rescued, 'rescue progress stays unchanged');
+    state.zones.frontier.props.filter(
+      (p) => p.regionalDistrict === 'burned-hamlet-home',
+    );
+  assert.deepEqual(
+    details(upgraded.snapshot()),
+    details(C.restore(upgraded.snapshot()).snapshot()),
+  );
+  assert.deepEqual(
+    upgraded.s.quests,
+    c.s.quests,
+    'quest progress stays unchanged',
+  );
+  assert.deepEqual(
+    upgraded.s.rescued,
+    c.s.rescued,
+    'rescue progress stays unchanged',
+  );
   assert.equal(upgraded.hero.gold, c.hero.gold, 'crowns stay unchanged');
-  console.log('PASS Burned Hamlet modest domestic life and historical-save compatibility');
+  console.log(
+    'PASS Burned Hamlet modest domestic life and historical-save compatibility',
+  );
 }
 assert.equal(
   C.rules.attacks.ridge.find((a) => a.kind === 'summon').species,
