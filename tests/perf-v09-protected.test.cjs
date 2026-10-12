@@ -28,7 +28,7 @@ if (marchesRevision) {
     'src/prototype/rules.js',
     'src/prototype/world.js',
   ]);
-  assert.match(marchesRevision.source, /PR #285/);
+  assert.match(marchesRevision.source, /PR #286/);
 }
 for (const [file, expected] of Object.entries(manifest.files)) {
   const actual = crypto
