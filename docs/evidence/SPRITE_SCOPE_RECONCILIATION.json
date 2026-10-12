@@ -9,6 +9,9 @@
   "families": {
     "decoration": [
       "torch",
+      "estate-rug",
+      "estate-hearth",
+      "estate-lounge",
       "coffin",
       "bones",
       "banner",
@@ -65,6 +68,7 @@
       "citadel-ritual-array",
       "citadel-barracks-bay",
       "citadel-forge-bay",
+      "citadel-vanity-quarters",
       "citadel-boss-approach",
       "animal-pen",
       "drying-rack",
