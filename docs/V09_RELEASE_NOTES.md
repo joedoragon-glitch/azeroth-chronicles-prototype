@@ -1,4 +1,4 @@
-# Azeroth Chronicles v0.9.0 beta — release candidate
+# So I Became the Dark Lord's Problem v0.9.0 beta — release candidate
 
 **Not published. Acceptance and release approval are pending.** This is a prepared release candidate, not a declaration that the checklist is complete. [Issue #213](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213) owns current evidence and the go/no-go decision.
 

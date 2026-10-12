@@ -1,8 +1,10 @@
-# Azeroth Chronicles
+# So I Became the Dark Lord's Problem
 
 An offline-capable RPG across five regions, ten settlements and five main dungeons. Rescue the specialists, build your expedition, and challenge the Dark Lord. The regime's currency is **crowns**.
 
-The canonical Azeroth Chronicles product is the multi-file GitHub Pages/PWA application. It uses JavaScript, Canvas 2D and Web Audio; there is no game backend. The campaign engine is shared, while desktop and phone have separate presentation rules. Map reviews and sprite production can continue on this foundation.
+The canonical game is the multi-file GitHub Pages/PWA application. It uses JavaScript, Canvas 2D and Web Audio; there is no game backend. The campaign engine is shared, while desktop and phone have separate presentation rules. Map reviews and sprite production can continue on this foundation.
+
+**Previously titled Azeroth Chronicles.** This is a branding change, not a new game or a new save format. Existing GitHub Pages links remain unchanged so current players and installed PWAs keep working.
 
 ## Release status
 
