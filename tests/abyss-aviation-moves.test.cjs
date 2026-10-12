@@ -66,5 +66,25 @@ for (const mode of ['normal', 'nightmare']) for (const form of ['normal', 'true'
   assert.equal(boss.motion, null, 'Go-Around terminates');
   assert(boss.hp > beforeHeal && boss.hp <= boss.maxHp,
     'withdrawal completes before bounded recovery');
+  // A blocked retreat is not a completed maneuver and cannot heal for free.
+  const retryHp = boss.maxHp * 0.3;
+  boss.hp = retryHp;
+  boss.healCd = 0;
+  const originalSegment = c.clearSegment.bind(c);
+  c.clearSegment = () => false;
+  assert.equal(c.startBossRecovery(boss), false,
+    'AI must not initiate a recovery without any navigable retreat');
+  assert.equal(boss.healCd, 0, 'rejected recovery does not consume cooldown');
+  c.clearSegment = originalSegment;
+  assert(c.startBossRecovery(boss), 'recovery becomes available once retreat is clear');
+  c.resolveAttack(boss);
+  assert.equal(boss.motion?.aerial, 'go-around');
+  const originalMove = c.move.bind(c);
+  c.move = () => false;
+  c.advanceMotion(boss, 0.02);
+  c.move = originalMove;
+  assert.equal(boss.motion, null, 'blocked withdrawal terminates safely');
+  assert.equal(boss.hp, retryHp, 'blocked or unfinished Go-Around never grants healing');
+
   console.log('PASS ' + mode + '/' + form + ' aviation paths, warnings, capped summons and recovery');
 }
