@@ -1149,7 +1149,7 @@
   "sources": {
     "src/prototype/visuals.js": "fd8c164488a3b74bf6f701fa09007220f2afe20970ddf94c103af94a77d19729",
     "src/prototype/world.js": "fd696a65bf4e1b9067291f6c6d3d57b508f2b2ecb7164c222299ef8fa5edaa53",
-    "src/prototype/rules.js": "62d13e0a2f71670524fde9883443e38c3bd54ea521b86e397855bc1ec4b3354e",
+    "src/prototype/rules.js": "0d9d380f6b3778223cd09ad57935e70fa0d38eeee235d2e98b289b95a5a72f11",
     "src/prototype/data.js": "397c2b12074bad7af838c7d0f5da05affe6d3e56200e02711b009a24f2ee2ef5",
     "src/prototype/sprites.js": "157fae7b5bcb7883a9c0a107434deb2e1e2692e7905c358f237553d98118a774",
     "src/prototype/renderer.js": "ce5c13ab48102da52001c51122a5f21e374fbbd297be5b76e76c337a47a474fe"
