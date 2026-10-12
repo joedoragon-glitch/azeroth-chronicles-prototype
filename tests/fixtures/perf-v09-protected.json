@@ -1,19 +1,19 @@
 {
   "baseline": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
   "files": {
-    "src/prototype/engine.js": "7f5cb3e50d69d59f70bba8248055d27f088ec9cded2eb12ef3cce32afb5b569c",
+    "src/prototype/engine.js": "902a4beeb8a2f46f9e5463dc801477ee5c4a35a4942e842ffb306bfec763299a",
     "src/prototype/world.js": "fd696a65bf4e1b9067291f6c6d3d57b508f2b2ecb7164c222299ef8fa5edaa53",
     "src/prototype/navigation.js": "dbb700f55909a4908b64aec2c97583b07af93d7aeafe32d111dbbe16a7f79c36",
     "src/prototype/party.js": "41a66f5b3c95a09414b1308df557aff1cbb232d341f601b1f1fcaf1d2d40d726",
-    "src/prototype/combat.js": "93077fdf33d92a8fed4efec9e5431724a6fd3d7be5b54fb65051e22af5061572",
+    "src/prototype/combat.js": "b226383156f2834edaa875a52cb6ab42bcc74af32b4efecdc5f2426318139e62",
     "src/prototype/hero-combat.js": "2096a5b33d15e8177f6754de4cd92cccddee91c6b1f47d99f1597d0fe49f441a",
-    "src/prototype/boss-combat.js": "be74a2d6d5336cd851073c7c6814a64cb22cc01af2ef7a0854fd9f4148edc27f",
+    "src/prototype/boss-combat.js": "ef6e6d3030f1f56ca944cec8db3a8139ecb0549f7b89969baaabdb796494f4b9",
     "src/prototype/progression.js": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
     "src/prototype/economy.js": "081440c4f0167d3e4b1129f9e605a7b7177bf68fb83cb8a824aa309b52774fb5",
     "src/prototype/rewards.js": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525",
-    "src/prototype/rules.js": "2ea90233f249dbca6074a22ee564fe6a5cc3e158ca4a46a98241409ff15ffc7c",
-    "src/prototype/data.js": "a82856323e155405e7fb68a027dc226b75d1563bd6b440450ccf584a9d7724b2",
-    "src/prototype/save.js": "908736e4b65eff25223bcdba358ad4015f7815ce4c0482329a5f9822b60b3a80",
+    "src/prototype/rules.js": "62d13e0a2f71670524fde9883443e38c3bd54ea521b86e397855bc1ec4b3354e",
+    "src/prototype/data.js": "397c2b12074bad7af838c7d0f5da05affe6d3e56200e02711b009a24f2ee2ef5",
+    "src/prototype/save.js": "79c55697e282ffaad7632861a80b51bd5a46300f1e4c117bf3a6f66a21a58cd3",
     "src/prototype/input.js": "87aed3b4d743dd011e0b6a0f5f293dc39fae45d76f6faa281139897a0437d616",
     "src/prototype/platform.js": "60107014425663a4607a239ea68359b04d0f0cfbf0eca7e9dc2fcc1a1180710d",
     "src/prototype/runtime.js": "baeae0441fd164f90bda835381d6f99772332eb8d850f2e18d7ccc8838b19e86",
@@ -73,5 +73,32 @@
     "appSha256": "e6ea0d525e4a827da13cdb95a2c6b1185432781bf269ab9b4370e6dd1b2f48e3",
     "inputSha256": "3b01e8b5df5b7b8fedc8deb24bba4f93f979ef111e2fa2fa55950891b58b5da5",
     "desktopCssSha256": "95fcb8bdad9f22c32950a1f1c6c51b1f2f886fc89e33d59248d3aef415137dac"
+  },
+  "fourBossIntegrationRevision": {
+    "base": "6f8089b2013647184efb04932fe6157f548238b9",
+    "selection": [
+      "#279 Garun",
+      "#281 Veyra",
+      "#283 Veyrith",
+      "#280 Lifebinder"
+    ],
+    "status": "DRAFT only; same SHA full Node/mobile/browser/PWA certification required; never a baseline waiver",
+    "scope": "Selected four boss and estate behavior, no unrelated #230 boss rewrites; current main UX/performance input intact",
+    "priorProtectedSha256": {
+      "src/prototype/engine.js": "7f5cb3e50d69d59f70bba8248055d27f088ec9cded2eb12ef3cce32afb5b569c",
+      "src/prototype/combat.js": "93077fdf33d92a8fed4efec9e5431724a6fd3d7be5b54fb65051e22af5061572",
+      "src/prototype/boss-combat.js": "be74a2d6d5336cd851073c7c6814a64cb22cc01af2ef7a0854fd9f4148edc27f",
+      "src/prototype/rules.js": "2ea90233f249dbca6074a22ee564fe6a5cc3e158ca4a46a98241409ff15ffc7c",
+      "src/prototype/data.js": "a82856323e155405e7fb68a027dc226b75d1563bd6b440450ccf584a9d7724b2",
+      "src/prototype/save.js": "908736e4b65eff25223bcdba358ad4015f7815ce4c0482329a5f9822b60b3a80"
+    },
+    "candidateProtectedSha256": {
+      "src/prototype/engine.js": "902a4beeb8a2f46f9e5463dc801477ee5c4a35a4942e842ffb306bfec763299a",
+      "src/prototype/combat.js": "b226383156f2834edaa875a52cb6ab42bcc74af32b4efecdc5f2426318139e62",
+      "src/prototype/boss-combat.js": "ef6e6d3030f1f56ca944cec8db3a8139ecb0549f7b89969baaabdb796494f4b9",
+      "src/prototype/rules.js": "62d13e0a2f71670524fde9883443e38c3bd54ea521b86e397855bc1ec4b3354e",
+      "src/prototype/data.js": "397c2b12074bad7af838c7d0f5da05affe6d3e56200e02711b009a24f2ee2ef5",
+      "src/prototype/save.js": "79c55697e282ffaad7632861a80b51bd5a46300f1e4c117bf3a6f66a21a58cd3"
+    }
   }
 }
