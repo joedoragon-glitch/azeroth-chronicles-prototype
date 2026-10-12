@@ -181,7 +181,11 @@ for (const zone of [...A.data.regions.map((r) => r.id), ...A.dungeonIds])
       } else {
         assert(
           a.equals(b),
-          zone + ' native full-render pixels ' + width + '/' + clock +
+          zone +
+            ' native full-render pixels ' +
+            width +
+            '/' +
+            clock +
             ' with only approved Mine/Citadel furnishings excluded',
         );
       }
@@ -194,8 +198,12 @@ for (const zone of [...A.data.regions.map((r) => r.id), ...A.dungeonIds])
         clock,
         pixelHash: hash(b),
         reviewedVisualDifference: zone === 'crypt',
-        removedForComparison: zone === 'mine' ? 'three Garun gallery props' :
-          zone === 'citadel' ? 'one Veyra vanity prop' : null,
+        removedForComparison:
+          zone === 'mine'
+            ? 'three Garun gallery props'
+            : zone === 'citadel'
+              ? 'one Veyra vanity prop'
+              : null,
       });
     }
 fs.mkdirSync(path.join(current, 'test-results/perf'), { recursive: true });
