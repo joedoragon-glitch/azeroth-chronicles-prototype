@@ -9124,6 +9124,15 @@
             glint(x, -5, c, 1.8);
           }
           break;
+        case 'fruit-tree':
+          rect(-3, -12, 6, 26, '#76573d');
+          for (const [x, y] of [[-10, -23], [1, -28], [12, -21]]) {
+            oval(x, y, 11, 9, '#58794f');
+          }
+          for (const [x, y] of [[-10, -20], [2, -31], [13, -18]]) {
+            glint(x, y, '#cf8a67', 2);
+          }
+          break;
         case 'sapling':
           rect(-2, -8, 4, 20, '#74583e');
           for (const [x, y] of [

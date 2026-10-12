@@ -2104,6 +2104,15 @@
       [2000, 2180, 'woodpile', 'estate-approach'],
       [2120, 2240, 'tool-rack', 'estate-approach'],
       [2240, 2180, 'supply-stack', 'estate-approach', 'construction'],
+      // A tiny working grove south of Orchard Hamlet; the named abandoned orchard stays wild.
+      [840, 1040, 'fruit-tree', 'hamlet-orchard'],
+      [910, 1040, 'fruit-tree', 'hamlet-orchard'],
+      [840, 1110, 'fruit-tree', 'hamlet-orchard'],
+      [910, 1110, 'fruit-tree', 'hamlet-orchard'],
+      [970, 1090, 'crate', 'hamlet-orchard', 'harvest'],
+      // Reuse the existing Millhaven workshop; do not create another building.
+      [230, 710, 'stacked-lumber', 'millhaven-carpentry'],
+      [275, 760, 'tool-rack', 'millhaven-carpentry'],
     ],
     march: [
       [2480, 2230, 'drying-rack', 'archive-relief', 'pages'],
