@@ -6,17 +6,32 @@ This records the Dark Lord's decisions for **Thornfang, Scornfang and Lifebinder
 
 Related: master #232; five-region continuity #235; Greenwood #236; Lifebinder #237; boss/captain reconciliation #247; audit #251; unmerged PRs #230 (boss identities and estate), #231 (captain endurance), #258 (Lifebinder identity), #288 (separate royal meeting). **Approval here is authorial design approval, not a statement that the approved changes exist in main or have passed gameplay tests.**
 
-## Final owner naming ballot — 12 October 2026 (latest ruling)
+## Current approved Greenwood move-name register — 12 October 2026 (latest refinement)
 
-The Dark Lord's four-option selection ballot is **fully approved**. These **22 final technique names** supersede older names from this meeting **only where changed**. The final ballot reaffirms every unchanged name and **does not change any attack mechanic, damage, duration, HP, cooldown, defense coefficient, summon cap, target behavior, phase trigger, rogue implementation, quest, asset, save key or scene**.
+The original four-option naming ballot was approved; **a subsequent owner-delegated terminology audit refines eight weak combat labels** and two passive labels, keeping the same 22 combat slots and three passive slots. **This table is the current binding naming authority**, overriding historical snapshots elsewhere in the document or older draft PRs. The refinement is **nomenclature only**: no change to attack mechanics, damage, duration, HP, cooldowns, defense coefficients, summon caps, target behavior, phase triggers, rogue gameplay, quests, assets, saves or scenes.
 
 | Character | Final regular move names, in order | Separate rogue moves / phase |
 | --- | --- | --- |
-| **Thornfang** | **Use-of-Force Continuum**; **Dynamic Entry**; **Anti-Passback**; **Quick Reaction Force** | Rogue: **Break Contact**; rogue signature: **Crowd Dispersal** |
-| **Scornfang** | **Selective Deconstruction**; **Encapsulation**; **Dust Entrainment**; **Cradle-to-Grave Tracking**; **Hot Zone** | 55%-HP phase: **Corrective Action**; rogue: **Pocket Trick**; rogue signature: **Bait-and-Switch** |
-| **Lifebinder** | **Excarnation**; **Stay Alive**; **Clerk of Works**; **Differential Settlement**; **Algor Mortis**; **Anastylosis** | Rogue: **Disarticulation**; rogue signature: **Repointing** |
+| **Thornfang** | **Pain Compliance**; **Dynamic Entry**; **Tripwire**; **Quick Reaction Force** | Rogue: **Break Contact**; rogue signature: **Crowd Dispersal** |
+| **Scornfang** | **Mechanical Shearing**; **Encapsulation**; **Dust Entrainment**; **Cradle-to-Grave Tracking**; **Hot Zone** | 55%-HP phase: **Corrective Action**; rogue: **Impoundment**; rogue signature: **Emergency Egress** |
+| **Lifebinder** | **Lateral Thrust**; **Stay Alive**; **Clerk of Works**; **Differential Settlement**; **Algor Mortis**; **Anastylosis** | Rogue: **Luxation**; rogue signature: **Pressure Grouting** |
 
-**Exactly nine name changes** against the preceding revision: Thornfang (Interdiction → Dynamic Entry; Response Force → Quick Reaction Force; Counter-Surveillance → Break Contact); Scornfang (In Situ Stabilization → Encapsulation; Particulate Resuspension → Dust Entrainment; Exclusion Zone → Hot Zone; Final Clearance Inspection → Corrective Action); Lifebinder (Thanatopraxy → Excarnation; Groundwork → Differential Settlement). The other **thirteen existing names** are affirmatively retained.
+**Revision history, not current nomenclature:** the prior four-option ballot changed **nine** initial names: Thornfang (Interdiction → Dynamic Entry; Response Force → Quick Reaction Force; Counter-Surveillance → Break Contact); Scornfang (In Situ Stabilization → Encapsulation; Particulate Resuspension → Dust Entrainment; Exclusion Zone → Hot Zone; Final Clearance Inspection → Corrective Action); Lifebinder (Thanatopraxy → Excarnation; Groundwork → Differential Settlement). The later authorized joke/readability audit changed **eight more combat names** and **two passive names**. All surviving move slots and values are unchanged.
+
+| Character | Superseded label → CURRENT label | Why this is a better move-name joke |
+| --- | --- | --- |
+| Thornfang | Use-of-Force Continuum → **Pain Compliance** | Security/law-enforcement control term; sounds like an immediate painful strike from the wolf |
+| Thornfang | Anti-Passback → **Tripwire** | Real security boundary-crossing sensor; instantly evokes his narrow slowing root line |
+| Scornfang | Selective Deconstruction → **Mechanical Shearing** | Real industrial dismantling process; sounds like his destructive rush through the worksite |
+| Scornfang | Pocket Trick → **Impoundment** | Environmental containment/storage concept; suits a short snare without changing rogue behavior |
+| Scornfang | Bait-and-Switch → **Emergency Egress** | Real worksite safety/exit term; evokes a sudden evasive sidestep |
+| Lifebinder | Excarnation → **Lateral Thrust** | Real masonry/structural force; directly communicates the frontal pushback arc |
+| Lifebinder | Disarticulation → **Luxation** | Medical term for joint dislocation; suggests a violent shove/displacement |
+| Lifebinder | Repointing → **Pressure Grouting** | Real masonry repair technique; suggests forcefully binding/sealing a target's movement |
+| Thornfang passive | Force Multiplication → **Rapid Deployment** | Reinforcements move faster; **not** extra wolves or greater damage |
+| Scornfang passive | Exposure Duration → **Prolonged Exposure** | Occupational-hygiene term that means a debuff lasts longer; **not** added damage |
+
+**Terminology check (real-world uses, not invented fantasy disciplines):** [pain compliance — US DOJ/OJP](https://www.ojp.gov/ncjrs/virtual-library/abstracts/use-force-tactics-and-non-lethal-weaponry); [tripwire intrusion detection — security industry](https://www.advantor.com/intrusion-detection-systems/); [mechanical shearing — industrial demolition](https://industrialdemolitionusa.com/); [surface impoundment — US EPA](https://www.epa.gov/hwpermitting/hazardous-waste-management-facilities-and-units); [emergency egress — OSHA](https://www.osha.gov/emergency-preparedness%2Fgetting-started); [lateral thrust — structural masonry research](https://www.sciencedirect.com/science/article/abs/pii/S0950061806001589); [luxation — Cleveland Clinic](https://my.clevelandclinic.org/health/diseases/17873-dislocation); [historic masonry grouting — research](https://ojs.cvut.cz/ojs/index.php/cej/article/view/8727); [rapid deployment — protective response services](https://www.spearsecurityops.net/srt); [prolonged exposure — OSHA](https://www.osha.gov/worker-fatigue/hazards). This is an **editorial naming improvement**, not evidence that the game's VFX have already been updated.
 
 **Mechanical invariants specifically restated:** Thornfang's four regular + two rogue actions retain every pre-ballot behavior. Scornfang's pot radius remains **100 units**, 55%-HP phase activates once and preserves its approved effects, charge pursuit remains **20% for 2.5 seconds**, and his two rogue maneuvers remain untouched. Lifebinder keeps **three attendants per Normal cast / twelve concurrent Normal ceiling**, his **four hazards resolving in two pairs**, and **Anastylosis's 20% damage reduction for four (4) seconds**; **Stay Alive** remains literally named *Stay Alive*. The beginner encounter and all published/unmerged safeguards below still apply.
 
@@ -49,9 +64,9 @@ All names are **authentic professional security/access-control or protective ope
 
 | Existing move / slot | Final approved name | Protected behavior |
 | --- | --- | --- |
-| Bite (regular 1) | **Use-of-Force Continuum** | Existing short warned frontal bite/arc |
+| Bite (regular 1) | **Pain Compliance** | Existing short warned frontal bite/arc |
 | Pounce (regular 2) | **Dynamic Entry** | Existing warned landing/leap and its actual recovery contract |
-| Root Line (regular 3) | **Anti-Passback** | Existing marked narrow line and slow |
+| Root Line (regular 3) | **Tripwire** | Existing marked narrow line and slow |
 | Den Howl (regular 4) | **Quick Reaction Force** | Existing bounded wolf-pup summon |
 | Pack Feint (rogue basic) | **Break Contact** | Existing tactical reposition/dash |
 | Packbreaker Howl (rogue signature) | **Crowd Dispersal** | Existing warned local forced scatter, including its 0.6-second transient control behavior |
@@ -75,14 +90,14 @@ Retain current attack/VFX/audio **stable internal family and slot IDs**, and upd
 
 | # | Final approved name | Relationship to #231 | Final conceptual behavior |
 | --- | --- | --- | --- |
-| 1 | **Selective Deconstruction** | Reworks/renames Hookfang Rush | Warned straight-line charge, original hit contract; preserve approved **20% post-charge pursuit for 2.5 seconds** |
+| 1 | **Mechanical Shearing** | Reworks/renames Hookfang Rush | Warned straight-line charge, original hit contract; preserve approved **20% post-charge pursuit for 2.5 seconds** |
 | 2 | **Encapsulation** | Reworks/renames Briar Pot | Thrown binding compound produces existing damaging/slowing persistent area, approved **100-unit radius** |
 | 3 | **Dust Entrainment** | Reworks/renames Pocket Sand | Existing short damaging/slowing cone; professional particulate-dust framing |
 | 4 | **Cradle-to-Grave Tracking** | **New regular move** | Clearly marks a chosen target with a numbered tracking tag, then launches a **short sequence of aimed, dodgeable sling shots**; provide usable warning/counterplay |
 | 5 | **Hot Zone** | **New regular move** | Scornfang deploys several **separated, temporary danger patches** representing hazardous-worksite markers; clear navigable escape gaps and bounded lifetime |
 | Phase | **Corrective Action** | **Renames** #231 Scavenger's Nerve | Triggers **once at 55% HP**; preserve its movement/aggression/attack-rate effects; **no additional HP, heal or invulnerability** |
 
-The owner explicitly re-confirms Scornfang's two separate rogue names and unchanged mechanics: **Pocket Trick** (snare) and **Bait-and-Switch** (slow/sidestep). No unrequested rogue rework. Five regular moves are **not** seven regular moves plus rogue skills. For the two new regular moves, exact damage coefficients, hit radii/timing, cooldown cadence and visuals remain **engineering specifications to design under owner approval and beginner readability**, not numbers to invent. Do not retune other captains or shared rogue AI to make the two moves fit.
+Scornfang's separately approved rogue techniques are now **Impoundment** (formerly Pocket Trick; **snare**) and **Emergency Egress** (formerly Bait-and-Switch; **slow/sidestep**). **Only their player-facing names change.** Preserve rogue triggers, warnings, coefficients, movement, target and status handling, entirely unchanged. No unrequested rogue mechanic rework. Five regular moves are **not** seven regular moves plus rogue skills. For the two new regular moves, exact damage coefficients, hit radii/timing, cooldown cadence and visuals remain **engineering specifications to design under owner approval and beginner readability**, not numbers to invent. Do not retune other captains or shared rogue AI to make the two moves fit.
 
 ## 4. Lifebinder — mortuary preservation and winter-estate stewardship
 
@@ -99,7 +114,7 @@ The owner explicitly re-confirms Scornfang's two separate rogue names and unchan
 
 | # | Final approved name | Function and approved mechanic |
 | --- | --- | --- |
-| 1 | **Excarnation** | Reworked Binding Sweep: **warned frontal arc** with modest damage and **light backward knockback**; no stun/prolonged lockout |
+| 1 | **Lateral Thrust** | Reworked Binding Sweep: **warned frontal arc** with modest damage and **light backward knockback**; no stun/prolonged lockout |
 | 2 | **Stay Alive** | Retained funny original name (owner explicitly rejected the proposed "Taphonomy" rename): **three visible sequential bone projectiles**, dodgeable and blocked by solid pillars; preserve existing windup baseline |
 | 3 | **Clerk of Works** | Renamed **Call the Attendants**: **keep the summon skill**. Each Normal cast summons **three junior Crown-style estate attendants** with #230's **twelve concurrent Normal safe ceiling**; TRUE remains the separately approved **six-member (four minion + two elite) warband**, preserving source-specific cap/role logic |
 | 4 | **Differential Settlement** | Renames the previously approved Groundwork (the interim "Underpinning" proposal had been rejected): **four clearly marked ground eruptions in two successive pairs**, rather than #230's four simultaneous resolves; existing persistent-hazard intent and safe paths remain |
@@ -110,8 +125,8 @@ Two existing rogue/tactical moves get *names only* changed, retaining their dist
 
 | Existing rogue action | Final approved name | Preserved action |
 | --- | --- | --- |
-| Bone Hook | **Disarticulation** | Short defensive shove |
-| Grave Threshold | **Repointing** | Warned slowing/binding control |
+| Bone Hook | **Luxation** | Short defensive shove |
+| Grave Threshold | **Pressure Grouting** | Warned slowing/binding control |
 
 **Important overlap:** #230 implements four **simultaneous** marks under the earlier **Groundwork** name and its four-attack scheduler; the final **Differential Settlement** design approves two **successive pairs** and **six regular** moves, plus renamed separate rogues. #258 intentionally keeps the baseline three Skeleton summons in its isolated story-only branch; the owner's combined target **keeps #230's approved Crown-attendant design and summon cap while retaining #258's independent life-bound Skeleton lore**. Resolve these explicitly rather than taking one draft as sole truth. The new wave/defense attacks require actual scheduler, VFX/audio, resolver and save/reset work; renaming data alone does not implement them.
 
@@ -119,18 +134,18 @@ Six regular moves must **remain manageable for a beginner**: bounded timings and
 
 ## 5. Royal enchantments — three approved always-active passives (12 October 2026)
 
-**LATEST OWNER APPROVAL.** After the final 22-technique naming ballot and TRUE-form discussion, the Dark Lord bestowed one permanent combat **passive** upon **each** Greenwood dignitary and explicitly approved the numerical specifications below. This approval is **new authorial design, not code on shipped main or on any existing gameplay draft**. Passives are intrinsic effects, **not** regular attacks, rogue maneuvers, additional boss phases, new selectable player skills or extra moveset slots. The passive exists from encounter start and needs no new attack/cast or resource meter; its eligible effects operate when their existing combat condition applies. TRUE-strength scaling is **form-based**, not an extra separate technique.
+**OWNER-APPROVED DESIGN.** After the initial 22-technique naming ballot and TRUE-form discussion, the Dark Lord bestowed one permanent combat **passive** upon **each** Greenwood dignitary and explicitly approved the numerical specifications below; the two revised passive labels in the current register are **Rapid Deployment** and **Prolonged Exposure**. This approval is **new authorial design, not code on shipped main or on any existing gameplay draft**. Passives are intrinsic effects, **not** regular attacks, rogue maneuvers, additional boss phases, new selectable player skills or extra moveset slots. The passive exists from encounter start and needs no new attack/cast or resource meter; its eligible effects operate when their existing combat condition applies. TRUE-strength scaling is **form-based**, not an extra separate technique.
 
 | Character | Owner-approved passive | Always-active Normal value | Maximum value in existing enhanced state | Scope |
 | --- | --- | --- | --- | --- |
-| **Thornfang** | **Force Multiplication** | **+8% movement speed** for his **own summoned wolf reinforcements** | **+15% movement speed** for his **own TRUE wolf warband** | Summoned wolves' movement **only**; no Thornfang movement boost, extra wolf spawns, damage/HP bonus, increased summon cap or changed attack schedule |
-| **Scornfang** | **Exposure Duration** | **+10% duration** on slows inflicted by his **regular techniques** | **+20% duration** on those same slows once **Corrective Action activates at 55% HP** | Slow **duration only**; no extra damage, hazard patches, hazard lifetime, lingering damage, instant immobilization or buff to separate rogue skills |
+| **Thornfang** | **Rapid Deployment** | **+8% movement speed** for his **own summoned wolf reinforcements** | **+15% movement speed** for his **own TRUE wolf warband** | Summoned wolves' movement **only**; no Thornfang movement boost, extra wolf spawns, damage/HP bonus, increased summon cap or changed attack schedule |
+| **Scornfang** | **Prolonged Exposure** | **+10% duration** on slows inflicted by his **regular techniques** | **+20% duration** on those same slows once **Corrective Action activates at 55% HP** | Slow **duration only**; no extra damage, hazard patches, hazard lifetime, lingering damage, instant immobilization or buff to separate rogue skills |
 | **Lifebinder** | **Structural Consolidation** | **6% constant incoming damage reduction** | **12% constant incoming damage reduction in TRUE form** | Applies to damage received by **Lifebinder himself**; not his attendants, and not additional HP, healing or invulnerability |
 
 ### Final integration contracts, without creating a fourth combat system
 
 1. **Thornfang:** keep **Quick Reaction Force** as his **existing summon action**. Normal summons remain three wolf pups with the same cap; TRUE keeps the existing **four minions + two ringleaders** composition, with no more units summoned than before. The passive applies a **1.08× movement-speed modifier** to his own live Normal reinforcements and a **1.15× modifier** to his own TRUE reinforcements. Do not globally buff ordinary wild wolves, unrelated summons or himself; avoid reapplying the multiplier on every tick/load.
-2. **Scornfang:** `Exposure Duration` scales the **time component only** for existing regular-attack slows: Normal **1.10×**; after `Corrective Action` activates once at **55% HP**, **1.20× total instead of stacking another +20% on top of +10%**. The passive persists even when he is not casting an attack; its effect applies only when a regular move actually inflicts a slow. No application to the separate `Pocket Trick` or `Bait-and-Switch` rogue system. Do not lengthen the hazardous area itself or retroactively duplicate/slap new effects onto existing status records; deterministic rounding/refresh rules can be specified during later implementation without inventing new damage.
+2. **Scornfang:** `Prolonged Exposure` scales the **time component only** for existing regular-attack slows: Normal **1.10×**; after `Corrective Action` activates once at **55% HP**, **1.20× total instead of stacking another +20% on top of +10%**. The passive persists even when he is not casting an attack; its effect applies only when a regular move actually inflicts a slow. No application to the separate `Pocket Trick` or `Bait-and-Switch` rogue system. Do not lengthen the hazardous area itself or retroactively duplicate/slap new effects onto existing status records; deterministic rounding/refresh rules can be specified during later implementation without inventing new damage.
 3. **Lifebinder:** the constant base passive mitigates incoming damage **once**, using a **0.94× incoming-damage factor** in Normal and **0.88×** in TRUE. His approved `Anastylosis` remains an independently activated **20% reduction for exactly four seconds**. When both apply, **multiply remaining incoming damage**, not the reduction percentages: Normal + Anastylosis `0.94 × 0.80 = 0.752` damage received (**24.8% total reduction**); TRUE + Anastylosis `0.88 × 0.80 = 0.704` damage received (**29.6% total reduction**). Revert to the constant 6% / 12% at expiry. Do not alter his existing **650 Normal base HP**, **1,170 ordinary early TRUE base HP** before contextual modifiers, or separate Awakening HP system.
 4. **TRUE interpretation:** these are **one passive per individual**, **not an expanded TRUE-exclusive moveset**. Thornfang's TRUE passive value becomes fully effective with his TRUE wolf warband; Lifebinder's with his TRUE form. **Scornfang has no separate TRUE form**; `Corrective Action` is the existing permitted moment at which his passive reaches its stronger value. Do not create a TRUE Scornfang or extra special attack.
 5. **Keep the first-dungeon experience manageable:** Lifebinder remains a beginner-friendly first dungeon encounter with his **six approved regular moves**, two separate rogue moves and this single defensive passive. Prevent stacking errors, unintuitive repeated mitigation, too-durable TRUE attendants, and effective invulnerability. Existing HP, attack damages, warnings, summons, cooldowns, keys, saves, night/Nightmare and tactical systems are protected unless explicitly specified above.
@@ -155,7 +170,7 @@ Six regular moves must **remain manageable for a beginner**: bounded timings and
 | Scornfang combat | Three regular + phase + two rogues | #231 **260 HP**, 55% phase, widened pot, pursuit; old-save upgrade | Five named regular, two new mechanics and renamed phase; rogue unchanged | Real scheduling, range/cooldown balance, no global rogue edits |
 | Lifebinder identity | Internal crypt family, 650 HP level-3 dungeon with Borin and legacy naming | #258 story, independent skeleton agency and safe name migration | Full dual profession and trusted estate role retained | Compatible quest/TRUE/save/narration and no second boss |
 | Lifebinder combat/estate | Four regular moves, Skeleton summon, older Crypt appearance | #230 attendants, warm estate, four marks and extra counterplay | Six final move names/mechanics, four patches in two pairs, 4-second Anastylosis, separate rogue renames | Combined #230/#258 integration with real AI attack and scene tests |
-| Three Greenwood passives | None of these passives is present in published main | #230/#231/#258 contain separate abilities and encounter scaling, not these new passives | Force Multiplication (8%/15% wolf movement); Exposure Duration (10%/20% regular-slow duration); Structural Consolidation (6%/12% Lifebinder reduction, multiplicative with 4s Anastylosis) | Isolated ownership/duration/mitigation state, normal/TRUE or 55% phase, save and reset tests; no added skills |
+| Three Greenwood passives | None of these passives is present in published main | #230/#231/#258 contain separate abilities and encounter scaling, not these new passives | Rapid Deployment (8%/15% wolf movement); Prolonged Exposure (10%/20% regular-slow duration); Structural Consolidation (6%/12% Lifebinder reduction, multiplicative with 4s Anastylosis) | Isolated ownership/duration/mitigation state, normal/TRUE or 55% phase, save and reset tests; no added skills |
 
 ### Engineering/QA requirements before any later authorized implementation
 
@@ -169,7 +184,7 @@ Six regular moves must **remain manageable for a beginner**: bounded timings and
 
 ### Independent documentation cross-check — 12 October 2026
 
-**Audit purpose:** prevent a later developer from mistaking a complete creative meeting for verified gameplay. Audited against **published main** `src/prototype/data.js`, `rules.js`, `engine.js`, `world.js`, `boss-combat.js`; **unmerged** #230's `docs/BOSS_IDENTITY_PITSTOP_AUDIT.md`, #231's `roomCaptains` and migration code, and #258's `docs/LIFEBINDER_CANON_AND_COMPATIBILITY.md`. The final **22-name ballot** above was checked slot by slot (4 + 2 Thornfang; 5 + phase + 2 Scornfang; 6 + 2 Lifebinder). These are **source/document comparisons**, **not executed tests**.
+**Audit purpose:** prevent a later developer from mistaking a complete creative meeting for verified gameplay. Audited against **published main** `src/prototype/data.js`, `rules.js`, `engine.js`, `world.js`, `boss-combat.js`; **unmerged** #230's `docs/BOSS_IDENTITY_PITSTOP_AUDIT.md`, #231's `roomCaptains` and migration code, and #258's `docs/LIFEBINDER_CANON_AND_COMPATIBILITY.md`. The historical **22-name ballot** was checked slot by slot (4 + 2 Thornfang; 5 + phase + 2 Scornfang; 6 + 2 Lifebinder). These are **source/document comparisons**, **not executed tests**.
 
 | Verified finding / integration risk | Evidence boundary | Required treatment |
 | --- | --- | --- |
@@ -183,9 +198,18 @@ Six regular moves must **remain manageable for a beginner**: bounded timings and
 | Current main and #230 still hold Treasury's **two distinct collectible caches**; salvage candidates have **not been demonstrated unused** | Main/#230 `rules.js` `supplyRooms`, `treasuryDecor`; #230 Crypt decor | Perform an actual **cross-reference inventory** of props, active visual art, old-save item keys and renderer fallbacks. Populate only verified non-loot dressing; never delete or repurpose still-live sprites or quest objects. |
 | The final ballot changes **names only relative to the already approved October 12 design**, not relative to released v0.9 or each individual older feature PR | Owner's 22 final selections, this document's section 1–4 | **Do not mistake “names only” for “all mechanics already shipped.”** Thornfang is strictly a rename except for separately approved patrol; Scornfang adds two moves; Lifebinder adds two and changes ground sequencing, sweep and slow wave as separately approved. |
 
-**Audit disposition:** final nomenclature and core authorial constraints **reconciled on paper**; source-code implementation of this meeting **not attempted**.
+**Audit disposition:** the earlier nomenclature and core authorial constraints were **reconciled on paper at the time of that audit**; the current final register includes a subsequent naming-only refinement. Source-code implementation of this meeting **not attempted**.
 
-**Subsequent approval note:** the three passives in section 5 were approved **after** this nomenclature/source cross-check. They are recorded as a separately dated addendum, **not retroactively declared covered by the earlier audit or existing code.** Open engineering decisions remain intentionally deferred, not filled by conjecture: actual Thornfang path points/patrol timers, Scornfang's two new ability coefficients and timings, Lifebinder's new wave/defense scheduler and VFX, the TRUE name conflict, Crown attendants vs skeletal provenance, and real unused Crypt asset identification. Full cross-branch integration and gameplay QA are **NOT PASS/NOT RUN**, not waived. **No merge, code changes, release or deployment** authorized.
+**Subsequent approval note:** the three passives in section 5 and the newer eight-move/two-passive terminology refinement were approved **after** this original source cross-check. They are recorded as a separately dated addendum, **not retroactively declared covered by the earlier audit or existing code.** Open engineering decisions remain intentionally deferred, not filled by conjecture: actual Thornfang path points/patrol timers, Scornfang's two new ability coefficients and timings, Lifebinder's new wave/defense scheduler and VFX, the TRUE name conflict, Crown attendants vs skeletal provenance, and real unused Crypt asset identification. Full cross-branch integration and gameplay QA are **NOT PASS/NOT RUN**, not waived. **No merge, code changes, release or deployment** authorized.
+
+### Post-audit terminology refinement (current source of truth)
+
+This **later owner-delegated editorial audit** is distinct from the earlier independent consistency audit above. It verified the **eight renamed combat slots** and **two renamed passives** in the actual tables, rather than only in the historical discussion. The latest **22-name roster** is at the top of this document. The move counts and skill indices are unchanged: **Thornfang 4 regular + 2 rogues; Scornfang 5 regular + 2 rogues + 55%-HP phase; Lifebinder 6 regular + 2 rogues**, plus exactly one passive each.
+
+- **No mechanics change:** The original physical bite, narrow root line, Scornfang charge/snare/sidestep, Lifebinder cone shove and slowing bind retain existing damage, geometry, telegraphs, trigger timing and cooldown contracts. The shortened professional names are **not** additional attacks.
+- **No passive change:** **Rapid Deployment** preserves 8% Normal / 15% TRUE owned-wolf movement, **Prolonged Exposure** preserves 10% Normal / 20% Corrective Action slow-duration increases to *regular attacks only*, and **Structural Consolidation** preserves 6% Normal / 12% TRUE Lifebinder mitigation. `Anastylosis` remains 20% for four seconds, multiplicatively combined with Lifebinder's passive.
+- **Preserve recognizable animations:** `Tripwire` must visibly read as the same marked root line, `Lateral Thrust` as the same short cone/knockback, `Mechanical Shearing` as the same charging movement, and `Pressure Grouting` as the same local slowing bind. A future artist may convey the names more legibly **without** changing hitboxes, attack timing, rewards or first-boss difficulty.
+- **Not an integration pass:** This refines documentation in draft PR #289. No gameplay files have been altered and no cross-branch or save/TRUE regression has been run. All separate PRs #230/#231/#258 and the earlier integration risk ledger remain protected.
 
 ### Deliberately not settled by this meeting
 
