@@ -288,9 +288,7 @@
           .flatMap((unit, i) => {
             const [dx, dy] = posts[i];
             const post = this.safe(e.x + dx, e.y + dy);
-            return dist(unit, post) <= 240 && this.clearSegment(unit, post)
-              ? [{ unit, post }]
-              : [];
+            return dist(unit, post) <= 240 && this.clearSegment(unit, post) ? [{ unit, post }] : [];
           });
       }
       sentinelPatternPath(e) {
@@ -629,8 +627,7 @@
                 x: e.x + Math.cos(direction) * radius,
                 y: e.y + Math.sin(direction) * radius,
               };
-            if (!this.blocked(point.x, point.y, this.zoneId, 15) &&
-                this.clearSegment(e, point, 15))
+            if (!this.blocked(point.x, point.y, this.zoneId, 15) && this.clearSegment(e, point, 15))
               return point;
           }
         return null;
@@ -1018,9 +1015,13 @@
           return;
         }
         this.resolveArea(e, a);
-        if (e.family === 'mine' && a.index === 1 && !(e.sequence || []).some((t) => t.index === 1)) {
-          const reserved = this.zone().props
-            .filter((p) => p.garunPreview)
+        if (
+          e.family === 'mine' &&
+          a.index === 1 &&
+          !(e.sequence || []).some((t) => t.index === 1)
+        ) {
+          const reserved = this.zone()
+            .props.filter((p) => p.garunPreview)
             .map((p) => ({ x: p.x, y: p.y }));
           this.raiseMineWorks(e, a, reserved);
         }
