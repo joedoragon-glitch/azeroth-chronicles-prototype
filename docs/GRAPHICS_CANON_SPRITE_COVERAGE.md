@@ -136,6 +136,7 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `marsh-bush` | GENERATE 274 — current isolated natural body; seeded placement/variants remain source-owned |
 | `wildflowers` | GENERATE 275 — current isolated natural body; seeded placement/variants remain source-owned |
 | `sapling` | GENERATE 276 — current isolated natural body; seeded placement/variants remain source-owned |
+| `fruit-tree` | PROCEDURAL — Greenwood's small productive orchard grove; source-owned fruit-tree silhouette |
 | `stump` | GENERATE 277 — current isolated natural body; seeded placement/variants remain source-owned |
 | `fallen-log` | GENERATE 278 — current isolated natural body; seeded placement/variants remain source-owned |
 | `reeds` | GENERATE 279 — current isolated natural body; seeded placement/variants remain source-owned |
