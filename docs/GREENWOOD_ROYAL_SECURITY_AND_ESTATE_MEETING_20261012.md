@@ -6,6 +6,20 @@ This records the Dark Lord's decisions for **Thornfang, Scornfang and Lifebinder
 
 Related: master #232; five-region continuity #235; Greenwood #236; Lifebinder #237; boss/captain reconciliation #247; audit #251; unmerged PRs #230 (boss identities and estate), #231 (captain endurance), #258 (Lifebinder identity), #288 (separate royal meeting). **Approval here is authorial design approval, not a statement that the approved changes exist in main or have passed gameplay tests.**
 
+## Final owner naming ballot — 12 October 2026 (latest ruling)
+
+The Dark Lord's four-option selection ballot is **fully approved**. These **22 final technique names** supersede older names from this meeting **only where changed**. The final ballot reaffirms every unchanged name and **does not change any attack mechanic, damage, duration, HP, cooldown, defense coefficient, summon cap, target behavior, phase trigger, rogue implementation, quest, asset, save key or scene**.
+
+| Character | Final regular move names, in order | Separate rogue moves / phase |
+| --- | --- | --- |
+| **Thornfang** | **Use-of-Force Continuum**; **Dynamic Entry**; **Anti-Passback**; **Quick Reaction Force** | Rogue: **Break Contact**; rogue signature: **Crowd Dispersal** |
+| **Scornfang** | **Selective Deconstruction**; **Encapsulation**; **Dust Entrainment**; **Cradle-to-Grave Tracking**; **Hot Zone** | 55%-HP phase: **Corrective Action**; rogue: **Pocket Trick**; rogue signature: **Bait-and-Switch** |
+| **Lifebinder** | **Excarnation**; **Stay Alive**; **Clerk of Works**; **Differential Settlement**; **Algor Mortis**; **Anastylosis** | Rogue: **Disarticulation**; rogue signature: **Repointing** |
+
+**Exactly nine name changes** against the preceding revision: Thornfang (Interdiction → Dynamic Entry; Response Force → Quick Reaction Force; Counter-Surveillance → Break Contact); Scornfang (In Situ Stabilization → Encapsulation; Particulate Resuspension → Dust Entrainment; Exclusion Zone → Hot Zone; Final Clearance Inspection → Corrective Action); Lifebinder (Thanatopraxy → Excarnation; Groundwork → Differential Settlement). The other **thirteen existing names** are affirmatively retained.
+
+**Mechanical invariants specifically restated:** Thornfang's four regular + two rogue actions retain every pre-ballot behavior. Scornfang's pot radius remains **100 units**, 55%-HP phase activates once and preserves its approved effects, charge pursuit remains **20% for 2.5 seconds**, and his two rogue maneuvers remain untouched. Lifebinder keeps **three attendants per Normal cast / twelve concurrent Normal ceiling**, his **four hazards resolving in two pairs**, and **Anastylosis's 20% damage reduction for four (4) seconds**; **Stay Alive** remains literally named *Stay Alive*. The beginner encounter and all published/unmerged safeguards below still apply.
+
 ## 1. Canon hierarchy and protected regional identity
 
 - **Published baseline:** v0.9.0 on main; Greenwood Vale is a rural wooded/farming **level 1–4** province, with Millhaven as the beginning town, Orchard Hamlet, the working mill, local Goblin and Skeleton communities/territories, Thornfang's den and Treasury, and the Forest Crypt.
@@ -36,10 +50,10 @@ All names are **authentic professional security/access-control or protective ope
 | Existing move / slot | Final approved name | Protected behavior |
 | --- | --- | --- |
 | Bite (regular 1) | **Use-of-Force Continuum** | Existing short warned frontal bite/arc |
-| Pounce (regular 2) | **Interdiction** | Existing warned landing/leap and its actual recovery contract |
+| Pounce (regular 2) | **Dynamic Entry** | Existing warned landing/leap and its actual recovery contract |
 | Root Line (regular 3) | **Anti-Passback** | Existing marked narrow line and slow |
-| Den Howl (regular 4) | **Response Force** | Existing bounded wolf-pup summon |
-| Pack Feint (rogue basic) | **Counter-Surveillance** | Existing tactical reposition/dash |
+| Den Howl (regular 4) | **Quick Reaction Force** | Existing bounded wolf-pup summon |
+| Pack Feint (rogue basic) | **Break Contact** | Existing tactical reposition/dash |
 | Packbreaker Howl (rogue signature) | **Crowd Dispersal** | Existing warned local forced scatter, including its 0.6-second transient control behavior |
 
 Retain current attack/VFX/audio **stable internal family and slot IDs**, and update player-facing labels consistently. New names must not leak mechanically hidden information earlier than approved telegraphs.
@@ -62,13 +76,13 @@ Retain current attack/VFX/audio **stable internal family and slot IDs**, and upd
 | # | Final approved name | Relationship to #231 | Final conceptual behavior |
 | --- | --- | --- | --- |
 | 1 | **Selective Deconstruction** | Reworks/renames Hookfang Rush | Warned straight-line charge, original hit contract; preserve approved **20% post-charge pursuit for 2.5 seconds** |
-| 2 | **In Situ Stabilization** | Reworks/renames Briar Pot | Thrown binding compound produces existing damaging/slowing persistent area, approved **100-unit radius** |
-| 3 | **Particulate Resuspension** | Reworks/renames Pocket Sand | Existing short damaging/slowing cone; professional particulate-dust framing |
+| 2 | **Encapsulation** | Reworks/renames Briar Pot | Thrown binding compound produces existing damaging/slowing persistent area, approved **100-unit radius** |
+| 3 | **Dust Entrainment** | Reworks/renames Pocket Sand | Existing short damaging/slowing cone; professional particulate-dust framing |
 | 4 | **Cradle-to-Grave Tracking** | **New regular move** | Clearly marks a chosen target with a numbered tracking tag, then launches a **short sequence of aimed, dodgeable sling shots**; provide usable warning/counterplay |
-| 5 | **Exclusion Zone** | **New regular move** | Scornfang deploys several **separated, temporary danger patches** representing hazardous-worksite markers; clear navigable escape gaps and bounded lifetime |
-| Phase | **Final Clearance Inspection** | **Renames** #231 Scavenger's Nerve | Triggers **once at 55% HP**; preserve its movement/aggression/attack-rate effects; **no additional HP, heal or invulnerability** |
+| 5 | **Hot Zone** | **New regular move** | Scornfang deploys several **separated, temporary danger patches** representing hazardous-worksite markers; clear navigable escape gaps and bounded lifetime |
+| Phase | **Corrective Action** | **Renames** #231 Scavenger's Nerve | Triggers **once at 55% HP**; preserve its movement/aggression/attack-rate effects; **no additional HP, heal or invulnerability** |
 
-Scornfang retains his separate existing rogue actions, **Pocket Trick** (snare) and **Bait-and-Switch** (slow/sidestep), without unrequested rework. Five regular moves are **not** seven regular moves plus rogue skills. For the two new regular moves, exact damage coefficients, hit radii/timing, cooldown cadence and visuals remain **engineering specifications to design under owner approval and beginner readability**, not numbers to invent. Do not retune other captains or shared rogue AI to make the two moves fit.
+The owner explicitly re-confirms Scornfang's two separate rogue names and unchanged mechanics: **Pocket Trick** (snare) and **Bait-and-Switch** (slow/sidestep). No unrequested rogue rework. Five regular moves are **not** seven regular moves plus rogue skills. For the two new regular moves, exact damage coefficients, hit radii/timing, cooldown cadence and visuals remain **engineering specifications to design under owner approval and beginner readability**, not numbers to invent. Do not retune other captains or shared rogue AI to make the two moves fit.
 
 ## 4. Lifebinder — mortuary preservation and winter-estate stewardship
 
@@ -85,10 +99,10 @@ Scornfang retains his separate existing rogue actions, **Pocket Trick** (snare) 
 
 | # | Final approved name | Function and approved mechanic |
 | --- | --- | --- |
-| 1 | **Thanatopraxy** | Reworked Binding Sweep: **warned frontal arc** with modest damage and **light backward knockback**; no stun/prolonged lockout |
+| 1 | **Excarnation** | Reworked Binding Sweep: **warned frontal arc** with modest damage and **light backward knockback**; no stun/prolonged lockout |
 | 2 | **Stay Alive** | Retained funny original name (owner explicitly rejected the proposed "Taphonomy" rename): **three visible sequential bone projectiles**, dodgeable and blocked by solid pillars; preserve existing windup baseline |
 | 3 | **Clerk of Works** | Renamed **Call the Attendants**: **keep the summon skill**. Each Normal cast summons **three junior Crown-style estate attendants** with #230's **twelve concurrent Normal safe ceiling**; TRUE remains the separately approved **six-member (four minion + two elite) warband**, preserving source-specific cap/role logic |
-| 4 | **Groundwork** | Original name deliberately restored (owner rejected interim "Underpinning"): **four clearly marked ground eruptions in two successive pairs**, rather than #230's four simultaneous resolves; existing persistent-hazard intent and safe paths remain |
+| 4 | **Differential Settlement** | Renames the previously approved Groundwork (the interim "Underpinning" proposal had been rejected): **four clearly marked ground eruptions in two successive pairs**, rather than #230's four simultaneous resolves; existing persistent-hazard intent and safe paths remain |
 | 5 | **Algor Mortis** | **New:** warned expanding supernatural cold wave producing **brief Slow but no direct HP damage**, with readable travel/escape |
 | 6 | **Anastylosis** | **New:** visible temporary assembled-stone defensive treatment, **20% damage reduction lasting FOUR (4) seconds** (owner corrected the former 2 seconds). **No invulnerability or lasting blocking walls** |
 
@@ -99,7 +113,7 @@ Two existing rogue/tactical moves get *names only* changed, retaining their dist
 | Bone Hook | **Disarticulation** | Short defensive shove |
 | Grave Threshold | **Repointing** | Warned slowing/binding control |
 
-**Important overlap:** #230 implements four **simultaneous** Groundwork marks and its four-attack scheduler; this meeting approves two **successive pairs** and **six regular** moves, plus renamed separate rogues. #258 intentionally keeps the baseline three Skeleton summons in its isolated story-only branch; the owner's combined target **keeps #230's approved Crown-attendant design and summon cap while retaining #258's independent life-bound Skeleton lore**. Resolve these explicitly rather than taking one draft as sole truth. The new wave/defense attacks require actual scheduler, VFX/audio, resolver and save/reset work; renaming data alone does not implement them.
+**Important overlap:** #230 implements four **simultaneous** marks under the earlier **Groundwork** name and its four-attack scheduler; the final **Differential Settlement** design approves two **successive pairs** and **six regular** moves, plus renamed separate rogues. #258 intentionally keeps the baseline three Skeleton summons in its isolated story-only branch; the owner's combined target **keeps #230's approved Crown-attendant design and summon cap while retaining #258's independent life-bound Skeleton lore**. Resolve these explicitly rather than taking one draft as sole truth. The new wave/defense attacks require actual scheduler, VFX/audio, resolver and save/reset work; renaming data alone does not implement them.
 
 Six regular moves must **remain manageable for a beginner**: bounded timings and non-overlapping unavoidable damage; avoid forcing level-specific skills, adding new boss phases, HP buffs, or requiring either Thornfang or Scornfang to be beaten first. TRUE and Awakening may use the game's existing scaling/warband rules, not invented new versions of this fight.
 
@@ -120,7 +134,7 @@ Six regular moves must **remain manageable for a beginner**: bounded timings and
 2. **Fight and rescue:** players may fight Thornfang at any reachable leg; his key/rewards and **stationary Mira cage** remain correctly findable and usable. Confirm normal, two-defeat field TRUE transition, early TRUE where applicable, defeat/resurrection state, retreat/leash, all three classes, solo/party, original quest progress and historical saves.
 3. **Treasury inventory:** inventory original #230 and main Crypt decorative props and currently registered art/visual assets to identify actual retired content before reuse. Reuse by **reference**, not destructive moves/deletions. Keep active copies and source assets, and verify Scornfang Treasury's two exact cache records, portal/exit, wall collision, captain state and old-save versions. Salvage props yield no extra loot/rewards.
 4. **Scornfang skills:** preserve exact #231 balance, HP migration and two rogue moves; prove each of five regular moves is actually selected, warns/resolves/hits, stays dodgeable, cleans up on reset/death/save and works on desktop/phone. Five-slot scheduling cannot silently remove normal goblin ranged role.
-5. **Lifebinder skills:** six regular moves must execute through **real tick/AI** and render/audio paths, not just renamed descriptions. Test successive two-pair Groundwork and nonoverlapping escapes, Pillar collision for Stay Alive, Clerk of Works 3-at-once Normal summons and 12-living safety ceiling, separate TRUE warband, non-damaging slow wave, exactly 20% reduction for 4 seconds, cooldowns and phase/reentry cleanup. Keep easy first-dungeon experience and Borin's rescue.
+5. **Lifebinder skills:** six regular moves must execute through **real tick/AI** and render/audio paths, not just renamed descriptions. Test successive two-pair Differential Settlement and nonoverlapping escapes, Pillar collision for Stay Alive, Clerk of Works 3-at-once Normal summons and 12-living safety ceiling, separate TRUE warband, non-damaging slow wave, exactly 20% reduction for 4 seconds, cooldowns and phase/reentry cleanup. Keep easy first-dungeon experience and Borin's rescue.
 6. **Continuity:** preserve free-willed Skeleton identities, named original cave/estate spaces, no invented forced undead relocation; remain consistent with #230/#258, #231 and #288 without replacing any branch or importing obsolete naming/biography over newer approvals.
 7. **Release discipline:** follow #232's **single consolidated integration** and explicit owner gate. Before any selected gameplay publication: exact-head Node/build/format, browser desktop/phone Chromium/WebKit, save migrations, route/encounter tests, PWA/offline/asset caches, sprite fallback, audiovisual hitbox/telegraph matching, a second independent scope audit and rollback reference. Never claim these passed because the narrative document exists.
 
