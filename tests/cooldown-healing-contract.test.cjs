@@ -111,21 +111,24 @@ for (const family of ['abyss', 'citadel']) {
   assert(g.startBossRecovery(boss));
   assert(!g.effects.at(-1).presentationHandled, 'recovery retains the green warning path');
   assert(!g.effects.some((e) => e.type === 'enemyVfx'), 'recovery is not a damaging circle');
-  const hp = boss.hp;
+  const before = boss.hp;
   g.resolveAttack(boss);
   if (family === 'abyss') {
-    assert.equal(boss.motion?.aerial, 'go-around', 'the dragon begins the warned withdrawal');
-    assert(!g.effects.some((e) => e.type === 'heal' && e.target === boss.id),
-      'Go-Around cannot heal before its flight finishes');
-    for (let i = 0; i < 180 && boss.motion; i++) g.advanceMotion(boss, 0.02);
-    assert.equal(boss.motion, null, 'the bounded Go-Around reaches its endpoint');
-    assert(boss.hp > hp, 'a completed retreat restores health');
-  } else {
-    assert(g.effects.some((e) => e.type === 'heal' && e.target === boss.id),
-      'the Sentinel retains immediate recovery');
+    assert.equal(boss.motion?.aerial, 'go-around', 'Go-Around withdraws before healing');
+    assert.equal(boss.hp, before, 'Go-Around does not heal during its warning');
+    boss.telegraph = null;
+    for (let tick = 0; tick < 160 && boss.motion; tick++) g.advanceMotion(boss, 0.02);
+    assert.equal(boss.motion, null, 'Go-Around withdrawal finishes without freezing');
   }
+  assert(
+    Math.abs(boss.hp - before - boss.maxHp * C.rules.bossRecovery[family].healFraction) < 1e-8,
+    'recovery keeps its authored HP budget',
+  );
+  assert(g.effects.some((e) => e.type === 'heal' && e.target === boss.id));
 }
-console.log('PASS independent healing warnings and completed Go-Around stay non-damaging');
+console.log(
+  'PASS independent healing warnings retain green presentation and bounded Go-Around withdrawal',
+);
 
 const Menus = require('../src/prototype/menus');
 for (const cls of ['paladin', 'mage', 'ranger']) {
