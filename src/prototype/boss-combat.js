@@ -450,6 +450,24 @@
         const built = this.buildBossAttack(e, combo.to, comboTarget, true);
         return [built.first, ...built.sequence];
       }
+      abyssGoAroundPoint(e) {
+        const hero = this.hero,
+          away = Math.atan2(e.y - hero.y, e.x - hero.x);
+        // Prefer a full retreat, then smaller side steps if the arena is tight.
+        // Neither terrain nor blocked walls can become a false successful escape.
+        for (const radius of [110, 80, 55])
+          for (const offset of [0, Math.PI / 4, -Math.PI / 4, Math.PI / 2, -Math.PI / 2]) {
+            const direction = away + offset,
+              point = {
+                x: e.x + Math.cos(direction) * radius,
+                y: e.y + Math.sin(direction) * radius,
+              };
+            if (!this.blocked(point.x, point.y, this.zoneId, 15) &&
+                this.clearSegment(e, point, 15))
+              return point;
+          }
+        return null;
+      }
       startBossRecovery(e) {
         const cfg = !R.resourceMode.manaEnabled && R.bossRecovery[e.family];
         if (
@@ -462,6 +480,8 @@
           e.motion
         )
           return false;
+        // Go-Around must have a real escape path before spending its heal cast.
+        if (e.family === 'abyss' && !this.abyssGoAroundPoint(e)) return false;
         e.healCd = cfg.cooldown;
         e.telegraph = {
           kind: 'circle',
@@ -514,12 +534,10 @@
           return;
         }
         if (a.bossHeal && e.family === 'abyss') {
-          const hero = this.hero,
-            length = Math.max(1, dist(e, hero)),
-            point = this.safe(
-              e.x + ((e.x - hero.x) / length) * 110,
-              e.y + ((e.y - hero.y) / length) * 110,
-            );
+          const point = this.abyssGoAroundPoint(e);
+          // A blocked retreat can never grant free healing. The next recovery
+          // opportunity retains the existing authored cooldown rules.
+          if (!point) return;
           e.motion = {
             aerial: 'go-around',
             target: point,
@@ -767,7 +785,9 @@
             }
           } else if (a.aerial === 'wingover') {
             originalRogueMove.call(this, e, a.rogueAttack);
-          } else if (a.aerial === 'go-around' && e.hp > 0) {
+          } else if (a.aerial === 'go-around' && e.hp > 0 && dist(e, a.target) < 10) {
+            // Retreat must physically finish. A blocked/expired motion is not
+            // a successful Go-Around, even when its windup was valid.
             const amount = Math.min(e.maxHp - e.hp, e.maxHp * a.healFraction);
             if (amount > 0) {
               e.hp += amount;
