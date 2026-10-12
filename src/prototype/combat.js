@@ -368,6 +368,18 @@
             amount *= 1 - guard;
           }
         }
+        if (
+          e.family === 'citadel' &&
+          e.dressUntil > this.s.time &&
+          this.zone().enemies.some(
+            (u) =>
+              u !== e &&
+              u.species === 'crownguard' &&
+              u.hp > 0 &&
+              Math.hypot(u.x - e.x, u.y - e.y) < 240,
+          )
+        )
+          amount *= 0.85;
         if (e.family === 'citadel' && e.open <= 0) amount *= 0.65;
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;
         // All hero/companion damage sources use this same resolver. This
@@ -557,8 +569,10 @@
                 this.line(a, u)
               ) {
                 a.hit.push(id);
-                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null))
+                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null)) {
                   this.enemyVfxHazardImpact?.(a, u);
+                  if (a.slowDuration && u.hp > 0) this.applySlow(u, a.slowDuration);
+                }
               }
             }
           } else if (a.tick <= 0) {

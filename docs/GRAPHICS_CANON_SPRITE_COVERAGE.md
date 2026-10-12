@@ -69,6 +69,9 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `fang-trophy` | GENERATE 139 |
 | `root-table` | GENERATE 140 |
 | `warm-brazier` | GENERATE 192 |
+| `estate-rug` | PROCEDURAL — flat ground-integrated Crown-style furnishing |
+| `estate-hearth` | PROCEDURAL — warm animated-light-adjacent estate furnishing |
+| `estate-lounge` | PROCEDURAL — interim Crown-style winter-estate furniture |
 | `treasure-hoard` | GENERATE 141 |
 | `boss-chest` | GENERATE 142 |
 | `mire-pool` | GENERATE 143 |
@@ -98,6 +101,7 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `citadel-barracks-bay` | PROCEDURAL — composed Citadel barracks/training station |
 | `citadel-forge-bay` | PROCEDURAL — composed Citadel forge/supply station |
 | `citadel-boss-approach` | PROCEDURAL — composed Citadel final-approach station |
+| `citadel-vanity-quarters` | PROCEDURAL — Veyra's personal cosmetology vanity in the Citadel inner court; mirror, grooming bottles, brushes and formal dress details |
 | `animal-pen` | GENERATE 194 |
 | `drying-rack` | GENERATE 195/196 by region |
 | `tax-post` | GENERATE 219–223 by region |

@@ -69,7 +69,7 @@ test('F37 all normal and TRUE boss families preserve warnings while gaining mode
         assert.equal(c.s.hazards.at(-1).life,R.combatGeometry.ringLife*scale,def.id+' '+form+' actual expanding ring duration');
       }
       if(a.count>1&&kind==='circle'){
-        assert.equal(c.attackPatches(a)[0].radius,75*scale,def.id+' '+form+' multi-target reach');
+        assert.equal(c.attackPatches(a)[0].radius,def.id==='crypt'&&i===3?72:75*scale,def.id+' '+form+' multi-target reach');
       }
     }
   }
@@ -558,7 +558,7 @@ test('F71 lengthy rogue warning labels stay inside zoomed narrow-screen canvas',
  };
  const a={name:'Ashen Warlord’s Shielded Withdrawal',rogueMove:true,rogueSignature:true,
   kind:'circle',radius:145,timer:1.4,x:1400,y:1700};
- const game={traps(){return [];},zone(){return {enemies:[{telegraph:a}]}},
+ const game={traps(){return [];},zone(){return {props:[],enemies:[{telegraph:a}]}},
   attackPatches(){return [a]},s:{hazards:[]}};
  fx.ground(ctx,()=>({x:5,y:5}),game,'cue',0);
  assert.equal(boxes.length,1,'one readable label box accompanies rogue mark');

@@ -938,13 +938,34 @@
       z.rangedBalanceVersion = 1;
     }
     decorateDungeon(z) {
-      const targetVersion = R.dungeonWorkstations?.[z.id]
-        ? 3
-        : z.id === 'abyss'
+      const targetVersion =
+        z.id === 'crypt'
           ? 4
-          : z.id === 'citadel'
+          : R.dungeonWorkstations?.[z.id]
             ? 3
-            : 2;
+            : z.id === 'abyss'
+              ? 4
+              : z.id === 'citadel'
+                ? 3
+                : 2;
+      // Append Garun's tiny gallery to existing v3 Mine saves without resetting occupants.
+      if (z.id === 'mine' && z.dungeonVersion === targetVersion) {
+        for (const [j, [x, y, structure, district, sceneRole]] of R.dungeonDecor.mine.entries()) {
+          if (!['geometric-gallery', 'kinetic-collection', 'art-object'].includes(sceneRole))
+            continue;
+          if (z.props.some((p) => p.id === 'decor-' + j)) continue;
+          z.props.push({
+            id: 'decor-' + j,
+            ...this.safe(x, y, z.id),
+            r: 0,
+            decorative: true,
+            structure,
+            dungeonDistrict: district,
+            sceneRole,
+            icon: '🕯️',
+          });
+        }
+      }
       if (z.dungeonVersion === targetVersion) return;
       z.props = z.props.filter((p) => !p.decorative || !String(p.id).startsWith('decor-'));
       z.dungeonVersion = targetVersion;
@@ -1095,7 +1116,10 @@
       return this.makeEnemy(
         {
           family: b.id,
-          name: b.name + (form === 'true' ? ' TRUE' : ''),
+          name:
+            form === 'true' && b.id === 'crypt'
+              ? 'TRUE ' + b.name
+              : b.name + (form === 'true' ? ' TRUE' : ''),
           icon: b.id === 'darklord' ? '😈' : b.kind === 'field' ? '👹' : '💀',
           form,
           type: 'boss',
@@ -1514,6 +1538,8 @@
       this._tacticalScatterLeash?.clear();
       this._tacticalRepositions?.clear();
       this._tacticalPartyTargets?.clear();
+      for (const oldZone of Object.values(this.s.zones))
+        oldZone.props = oldZone.props.filter((p) => !p.garunTemporary && !p.garunPreview);
       this.s.zone = zone;
       this.zone();
       this.s.recallActive = false;
@@ -1540,6 +1566,11 @@
       this.s.hazards = [];
       for (const z of Object.values(this.s.zones))
         for (const e of z.enemies) {
+          if (e.family === 'citadel') {
+            delete e.board;
+            delete e.dressUntil;
+          }
+          delete e.dressPost;
           e.aggro = false;
           e.telegraph = null;
           e.sequence = [];
@@ -1976,6 +2007,8 @@
     }
     kill(e) {
       if (e.deathPaid) return;
+      if (e.family === 'mine' && e.type === 'boss')
+        this.zone().props = this.zone().props.filter((p) => !p.garunTemporary && !p.garunPreview);
       this.tacticalClearThreat(e);
       this.tacticalClearBurst(e);
       this.tacticalClearRogueRegroup(e);
@@ -2332,6 +2365,14 @@
         z = this.zone(),
         formationStart = { x: h.x, y: h.y };
       z.clock += dt;
+      if (z.id === 'mine')
+        z.props = z.props.filter(
+          (p) =>
+            (!p.garunTemporary && !p.garunPreview) ||
+            (p.expiresAt > this.s.time &&
+              !this.peace &&
+              z.enemies.some((e) => e.family === 'mine' && e.hp > 0)),
+        );
       h.cd = h.cd.map((c) => Math.max(0, c - dt));
       for (const f of ['immune', 'haste', 'potionCd', 'slow']) h[f] = Math.max(0, h[f] - dt);
       for (const u of this.s.party) {
@@ -2494,6 +2535,54 @@
     }
     updateIdleWander(e, dt) {
       if (!e || e.aggro || e.returning || e.neutral || e.hp <= 0 || e.fieldCaptain) return false;
+      if (e.family === 'mine' && e.type === 'boss' && this.s.zone === 'mine') {
+        const anchors = [
+            [1120, 1010],
+            [1260, 1120],
+            [1160, 1240],
+          ],
+          index = (e.inspectionIndex || 0) % anchors.length,
+          destination = { x: anchors[index][0], y: anchors[index][1] };
+        e.inspectionWait = Math.max(0, (e.inspectionWait ?? 1.5) - dt);
+        if (e.inspectionWait > 0) return true;
+        // Geometry and trap checks are stable between inspections. Avoid a path search per frame.
+        if (e.inspectionValidatedIndex !== index) {
+          const danger = this.traps().some((t) =>
+            this.trapContains(
+              {
+                ...t,
+                radius: (t.radius || 0) + 26,
+                length: (t.length || 0) + 52,
+                halfWidth: (t.halfWidth || 0) + 26,
+              },
+              destination,
+            ),
+          );
+          if (
+            danger ||
+            this.blocked(destination.x, destination.y, 'mine', 24) ||
+            !this.route(e, destination).length
+          ) {
+            e.inspectionIndex = index + 1;
+            e.inspectionValidatedIndex = -1;
+            e.inspectionWait = 1.2;
+            return true;
+          }
+          e.inspectionValidatedIndex = index;
+        }
+        if (dist(e, destination) < 32) {
+          e.inspectionIndex = index + 1;
+          e.inspectionValidatedIndex = -1;
+          e.inspectionWait = 3;
+          return true;
+        }
+        if (!this.follow(e, destination, 38, dt, 20)) {
+          e.inspectionIndex = index + 1;
+          e.inspectionValidatedIndex = -1;
+          e.inspectionWait = 1.2;
+        }
+        return true;
+      }
       const cfg = this.idleWanderProfile(e);
       if (!cfg || !e.home) return false;
       e.idleWanderWait = Math.max(
@@ -3250,16 +3339,26 @@
       e.telegraph = {
         rogueMove: true,
         rogueSignature: isSignature,
-        kind: effect === 'sweep' ? 'cone' : 'circle',
+        kind: profile.style === 'slab' ? 'line' : effect === 'sweep' ? 'cone' : 'circle',
         name: profile.name,
         style: profile.style || null,
         effect,
         coefficient: profile.coefficient,
         targetId: target === this.hero ? 'hero' : target.id,
-        fromX: e.x,
-        fromY: e.y,
-        angle: Math.atan2(target.y - e.y, target.x - e.x),
-        x: centered ? e.x : target.x,
+        fromX: profile.style === 'slab' ? target.x - (target.x >= e.x ? 60 : -60) : e.x,
+        fromY: profile.style === 'slab' ? target.y : e.y,
+        angle:
+          profile.style === 'slab'
+            ? target.x >= e.x
+              ? 0
+              : Math.PI
+            : Math.atan2(target.y - e.y, target.x - e.x),
+        x:
+          profile.style === 'slab'
+            ? target.x + (target.x >= e.x ? 100 : -100)
+            : centered
+              ? e.x
+              : target.x,
         y: centered ? e.y : target.y,
         radius,
         slowSeconds: profile.slowSeconds || 0,
@@ -3472,7 +3571,35 @@
           ? this.hero
           : this.combatTargets().find((u) => u !== this.hero && u.id === move.targetId);
       if (!move.rogueSignature) {
-        // Base movement remains single-target and cover-sensitive.
+        // The slab is a physical lane: dodging the originally marked target
+        // must not cancel contact with other party members still inside it.
+        if (e.family === 'mine' && move.style === 'slab') {
+          const start = { x: move.fromX, y: move.fromY },
+            side = Math.sign(move.x - move.fromX) || 1,
+            hero = this.hero,
+            zone = this.zoneId;
+          for (const unit of this.combatTargets()) {
+            if (
+              unit.hp <= 0 ||
+              this.distanceToSegment(unit, start, move) > R.combatGeometry.lineHalfWidth ||
+              !this.line(e, unit)
+            )
+              continue;
+            const destination = { x: unit.x + side * 100, y: unit.y };
+            const landed = this.hitParty(unit, e.damage * move.coefficient);
+            if (
+              this.hero !== hero ||
+              this.zoneId !== zone ||
+              this.s.challenge.pending ||
+              this.s.challenge.gameOver
+            )
+              return;
+            if (landed && unit.hp > 0 && this.clearSegment(unit, destination, 12))
+              this.move(unit, destination, 280, 0.42);
+          }
+          return;
+        }
+        // All other rogue basics remain single-target and cover-sensitive.
         if (!target || target.hp <= 0 || dist(target, move) > move.radius || !this.line(e, target))
           return;
         const startingHero = this.hero,
@@ -3667,6 +3794,32 @@
           }
           continue;
         }
+        if (e.family === 'citadel' && e.board && e.aggro && !e.returning) {
+          this.sentinelUpdateBoard(e, dt);
+          if (
+            this.s.statistics.deaths !== deaths ||
+            z !== this.zone() ||
+            this.s.challenge.pending ||
+            this.s.challenge.gameOver
+          )
+            return;
+        }
+        if (e.dressPost) {
+          const post = e.dressPost;
+          if (
+            post.expires <= this.s.time ||
+            e.returning ||
+            !z.enemies.some((boss) => boss.id === post.owner && boss.hp > 0 && boss.aggro)
+          ) {
+            delete e.dressPost;
+          } else if (Math.hypot(e.x - post.x, e.y - post.y) > 7) {
+            this.move(e, post, 145, dt);
+            e.noProgress = 0;
+            continue;
+          } else {
+            delete e.dressPost;
+          }
+        }
         if (e.neutral) {
           const t = this.s.time * 0.1 + Number(e.id.split('-')[1]);
           this.move(e, { x: e.home.x + Math.cos(t) * 35, y: e.home.y + Math.sin(t) * 35 }, 12, dt);
@@ -3786,6 +3939,8 @@
             const a = e.telegraph;
             this.resolveAttack(e);
             e.telegraph = e.motion ? null : e.sequence?.shift() || null;
+            if (e.family === 'mine' && a.index !== 1 && e.telegraph?.index === 1)
+              this.prepareMineWorksPreview(e);
             if (e.telegraph) this.event('warning', { family: e.family });
             if (!e.telegraph && !e.motion) {
               e.cd = a.recovery * (e.type === 'boss' ? R.bossCadence.specialRecoveryMultiplier : 1);
@@ -3960,6 +4115,8 @@
     }
     disengage(e, dt) {
       if (!e.returning) {
+        if (e.family === 'mine' && e.type === 'boss')
+          this.zone().props = this.zone().props.filter((p) => !p.garunTemporary && !p.garunPreview);
         this.tacticalClearThreat(e);
         this.tacticalClearBurst(e);
         this.tacticalClearRogueRegroup(e);
@@ -3993,6 +4150,10 @@
         e.captainPhaseMove = 1;
         e.captainAttackRate = 1;
         e.captainGuard = 0;
+        if (e.family === 'citadel') {
+          delete e.board;
+          delete e.dressUntil;
+        }
         e.quotaOvertime = 0;
         e.captainOpeningSummon = false;
         delete e.quotaTarget;

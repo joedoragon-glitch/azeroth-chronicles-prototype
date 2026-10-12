@@ -1,0 +1,32 @@
+name: Four-boss integration diagnostics (non-release)
+on:
+  push:
+    branches:
+      - integration/four-boss-mechanics-20261011
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    name: Read-only integration diagnostics
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Print exact Prettier differences without altering source
+        shell: bash
+        run: |
+          for file in src/prototype/boss-combat.js src/prototype/combat-visuals.js src/prototype/engine.js scripts/perf-v09-equivalence.cjs; do
+            echo "=== PRETTIER-DIFF $file ==="
+            ./node_modules/.bin/prettier "$file" | diff -u --label "source/$file" --label "formatted/$file" "$file" - || true
+          done
+      - name: Exercise four-boss mechanics without running a deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in garun-mechanics garun-scheduler-smoke colossus-biography ash-sentinel-combat ash-sentinel-identity abyss-aviation-moves abyss-dragon-identity lifebinder-consolidation rogue-integration; do
+            node "tests/$name.test.cjs"
+          done

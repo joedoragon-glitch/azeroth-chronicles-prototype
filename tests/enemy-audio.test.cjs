@@ -569,6 +569,13 @@ for (const action of ['melee', 'circle']) {
     const id = V.describe(e, e.telegraph).id;
     ids.add(id);
     c.resolveAttack(e);
+    // Veyrith's real High Yo-Yo strikes at the end of a warned flight,
+    // unlike instantaneous Rogue basics. Exercise its actual hit before
+    // validating the shared release/contact audio contract.
+    if (e.motion?.rogueMove) {
+      for (let frame = 0; frame < 400 && e.motion; frame++) c.advanceMotion(e, 0.02);
+      assert.equal(e.motion, null, 'aerial rogue attack completes before impact audit');
+    }
     const events = c.effects.filter((f) => f.type === 'enemyVfx');
     assert(
       events.some((f) => f.stage === 'windup' && f.dangerous && P.route(f).key === 'enemyWindup'),

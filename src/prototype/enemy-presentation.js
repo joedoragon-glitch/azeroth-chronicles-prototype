@@ -55,6 +55,10 @@
     'ring',
     'summon',
     'projectile',
+    'canister',
+    'formation',
+    'pattern-charge',
+    'checkerboard',
     'frenzy',
     'scramble',
     'molt',
@@ -67,6 +71,7 @@
   const rogueActions = new Set([
     'dash',
     'shove',
+    'slab',
     'snare',
     'scatter',
     'pivot',
