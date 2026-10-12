@@ -117,11 +117,11 @@
     {
       "id": "T011",
       "resourceKey": "terrain:floor:crypt",
-      "name": "Crypt floor material",
+      "name": "Lifebinder winter estate floor material",
       "status": "candidate",
       "sourceOwner": "floor/dungeonFloors",
-      "palette": ["#343c39", "#414945", "#2b3331", "#a9b1a0"],
-      "cues": "Restrained current interior stone/mineral material with fine worn grain and low-contrast chips. Preserve the current floor palette. Slab outlines and wall/room boundaries stay procedural; no drawn joints, symbols, props or water."
+      "palette": ["#453843", "#57414a", "#342b39", "#c9a16e"],
+      "cues": "Cozy winter-estate interior: dark Crown crimson-violet stone with warm amber accents, low-contrast mineral grain. Existing routes, slabs and room geometry stay procedural."
     },
     {
       "id": "T012",
