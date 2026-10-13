@@ -276,10 +276,10 @@ const server = http.createServer((req, res) => {
             const g = Prototype.game;
             g.zone().enemies = g.zone().enemies.filter((e) => e.id !== __retargetFoes.original);
             if (scenario === 'selected') {
-              g.manualHeroTargetId = __retargetFoes.chosen;
-              g.manualHeroTargetZone = g.zoneId;
-              g.manualHeroTargetLocked = false;
-              g.s.heroTarget = __retargetFoes.chosen;
+              // Use the public player targeting action rather than inserting
+              // synthetic targeting state directly into the running game.
+              const selected = g.cycleHeroTarget((e) => e.id === __retargetFoes.chosen);
+              window.__selectedRetargetId = selected?.id ?? null;
             } else {
               g.manualHeroTargetId = null;
               g.manualHeroTargetZone = null;
@@ -287,6 +287,16 @@ const server = http.createServer((req, res) => {
               g.s.heroTarget = null;
             }
           }, scenario);
+          if (scenario === 'selected') {
+            const selectedId = await page.evaluate(
+              () => Prototype.game.selectedHeroTarget()?.id ?? null,
+            );
+            assert.equal(
+              selectedId,
+              await page.evaluate(() => __retargetFoes.chosen),
+              'selected fallback must be a valid player target before release',
+            );
+          }
           assert.equal(await page.evaluate(() => Prototype.chargePresentation()?.state), 'ready');
           await release(slot);
           const result = await page.evaluate(() => ({
