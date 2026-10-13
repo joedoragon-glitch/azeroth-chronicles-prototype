@@ -61,6 +61,33 @@ const server = http.createServer((req, res) => {
 function prepare({ zone, width, height }) {
   const game = new Campaign('normal', 'paladin', () => 0.7);
   game.enter(zone === 'crowd' ? 'vale' : zone);
+  game.s.clock = 200;
+  if (zone === 'crowd') {
+    game.zone().enemies = [];
+    game.s.party = [];
+    for (let i = 0; i < 6; i++)
+      game.s.party.push(
+        game.unit(i % 2 ? 'archer' : 'soldier', game.hero.x + (i - 3) * 18, game.hero.y - 30),
+      );
+    for (let i = 0; i < 24; i++) {
+      const a = (i * Math.PI * 2) / 24,
+        p = { x: game.hero.x + Math.cos(a) * 105, y: game.hero.y + Math.sin(a) * 105 },
+        e = game.makeEnemy(
+          {
+            species: i % 3 ? 'goblin' : 'archer',
+            name: 'Audit ' + i,
+            level: 1,
+            hp: 1000,
+            damage: 8,
+            gold: 0,
+            xp: 0,
+          },
+          p,
+        );
+      e.aggro = true;
+      game.zone().enemies.push(e);
+    }
+  }
   // This renderer benchmark compares the same content before/after rendering
   // optimizations. Remove only the twelve explicitly approved snapshot props;
   // their actual drawings are verified by the combined regional browser probe.
@@ -89,35 +116,6 @@ function prepare({ zone, width, height }) {
               p.sceneRole === 'boat-maintenance'))
         ),
     );
-    if (region === 'frontier' && z.regionalHandoffVersion === 1) delete z.regionalHandoffVersion;
-    else if (region !== 'frontier' && z.regionalHandoffVersion === 2) z.regionalHandoffVersion = 1;
-  }
-  game.s.clock = 200;
-  if (zone === 'crowd') {
-    game.zone().enemies = [];
-    game.s.party = [];
-    for (let i = 0; i < 6; i++)
-      game.s.party.push(
-        game.unit(i % 2 ? 'archer' : 'soldier', game.hero.x + (i - 3) * 18, game.hero.y - 30),
-      );
-    for (let i = 0; i < 24; i++) {
-      const a = (i * Math.PI * 2) / 24,
-        p = { x: game.hero.x + Math.cos(a) * 105, y: game.hero.y + Math.sin(a) * 105 },
-        e = game.makeEnemy(
-          {
-            species: i % 3 ? 'goblin' : 'archer',
-            name: 'Audit ' + i,
-            level: 1,
-            hp: 1000,
-            damage: 8,
-            gold: 0,
-            xp: 0,
-          },
-          p,
-        );
-      e.aggro = true;
-      game.zone().enemies.push(e);
-    }
   }
   const canvas = document.createElement('canvas');
   canvas.width = width;
@@ -160,9 +158,19 @@ async function proof() {
       Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', data)), (n) =>
         n.toString(16).padStart(2, '0'),
       ).join('');
+  // Normalize version metadata only in the copied comparison state. Keeping
+  // the live engine's current markers prevents it from regenerating removed
+  // comparison props whenever a draw calls zone(). All other state stays exact.
+  const state = JSON.parse(JSON.stringify(s.game));
+  for (const region of ['vale', 'march', 'frontier']) {
+    const z = state.s?.zones?.[region];
+    if (!z) continue;
+    if (region === 'frontier' && z.regionalHandoffVersion === 1) delete z.regionalHandoffVersion;
+    else if (region !== 'frontier' && z.regionalHandoffVersion === 2) z.regionalHandoffVersion = 1;
+  }
   return {
     pixels: await digest(bytes),
-    state: await digest(new TextEncoder().encode(JSON.stringify(s.game))),
+    state: await digest(new TextEncoder().encode(JSON.stringify(state))),
     render: s.renderer.metrics(),
     sprites: PrototypeSprites.status(),
     materials: PrototypeMaterials.status(),
