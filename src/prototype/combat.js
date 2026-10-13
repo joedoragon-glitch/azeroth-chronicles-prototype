@@ -358,8 +358,11 @@
         e.mercyProvoked = true;
         this.engage(e, true);
         if (source === 'hero') e.heroParticipated = true;
-        if (e.roomCaptain && e.captainGuard > 0) amount *= 0.7;
-        if (e.roomCaptain) {
+        // Piercing is defensive penetration, not immunity to terrain, range, or LOS.
+        // Only the authored hero piercing shot can bypass enemy mitigation.
+        const piercing = source === 'hero' && options?.piercing === true;
+        if (!piercing && e.roomCaptain && e.captainGuard > 0) amount *= 0.7;
+        if (e.roomCaptain && !piercing) {
           const profile = this.captainProfile(e),
             summon = profile?.summon;
           if (summon?.guardPerSummon) {
@@ -368,13 +371,13 @@
             amount *= 1 - guard;
           }
         }
-        if (e.family === 'citadel' && e.open <= 0) amount *= 0.65;
+        if (!piercing && e.family === 'citadel' && e.open <= 0) amount *= 0.65;
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;
         // All hero/companion damage sources use this same resolver. This
         // reduction is exclusive to active travel; it ends on arrival or abort.
-        if (['thinking', 'travel', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase))
+        if (!piercing && ['thinking', 'travel', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase))
           amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
-        amount = this.tacticalCompressDamage(e, amount);
+        if (!piercing) amount = this.tacticalCompressDamage(e, amount);
         const actualDamage = Math.min(e.hp, amount);
         e.hp = Math.max(0, e.hp - amount);
         this.tacticalRecordHit(e, source, actualDamage);
@@ -485,7 +488,11 @@
             continue;
           }
           const e = this.zone().enemies.find(
-            (e) => e.id === p.target && e.hp > 0 && !e.neutral && this.tacticalDirectTargetable(e),
+            (e) =>
+              e.id === p.target &&
+              e.hp > 0 &&
+              !e.neutral &&
+              (p.area || this.tacticalDirectTargetable(e)),
           );
           if (!e || this.peace) {
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
@@ -507,7 +514,13 @@
               e,
               p.damage,
               p.source,
-              p.encountersAtStart ? { encountersAtStart: p.encountersAtStart } : null,
+              p.encountersAtStart || p.area || p.piercing
+                ? {
+                    ...(p.encountersAtStart ? { encountersAtStart: p.encountersAtStart } : {}),
+                    ...(p.area ? { area: true } : {}),
+                    ...(p.piercing ? { piercing: true } : {}),
+                  }
+                : null,
             );
             if (p.cancelledChargedOpener) continue;
             if (landed && p.basicComboFinisher)
