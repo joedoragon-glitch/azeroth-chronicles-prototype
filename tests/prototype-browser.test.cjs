@@ -449,6 +449,52 @@ await check('Movement basic uses per-class switches and keeps manual skill 1 '+t
  const r=await page.locator('#joystick').boundingBox();if(v.touch){await page.evaluate(()=>{const j=document.querySelector('#joystick'),r=j.getBoundingClientRect();j.setPointerCapture=()=>{};j.onpointerdown({pointerType:'touch',pointerId:77,clientX:r.left+r.width*.8,clientY:r.top+r.height*.5,preventDefault(){}});});await page.waitForTimeout(130);await page.evaluate(()=>document.querySelector('#joystick').onpointerup({pointerId:77}));assert(await page.evaluate(()=>Prototype.game.zone().enemies[0].hp)<10000,'touch joystick movement activates Paladin basic');}else{const before=await page.evaluate(()=>[Prototype.game.hero.x,Prototype.game.hero.y]);assert.equal(r,null,'Desktop has no joystick');await page.mouse.move(60,v.height-60);await page.mouse.down();await page.waitForTimeout(130);await page.mouse.up();assert.deepEqual(await page.evaluate(()=>[Prototype.game.hero.x,Prototype.game.hero.y]),before,'desktop mouse cannot drive the joystick');}
  await page.evaluate(state=>{Prototype.game.s=state;},saved);
 });
+
+await check('Joystick recovers missing releases without breaking two-thumb control '+tag,async()=>{
+ if(!v.touch)return;
+ const result=await page.evaluate(()=>{
+  Prototype.closeMenu();
+  const j=document.querySelector('#joystick'),stick=document.querySelector('#stick'),r=j.getBoundingClientRect();
+  const capture=j.setPointerCapture,hasCapture=j.hasPointerCapture;
+  j.setPointerCapture=()=>{};j.hasPointerCapture=()=>true;
+  const down=(id,x,primary=true)=>j.onpointerdown({pointerType:'touch',pointerId:id,isPrimary:primary,clientX:r.left+r.width/2+x,clientY:r.top+r.height/2,preventDefault(){}});
+  const touch=(id,x)=>({identifier:id,clientX:r.left+r.width/2+x,clientY:r.top+r.height/2});
+  const emit=(target,type,changed,touches)=>{const e=new Event(type,{bubbles:true});Object.defineProperties(e,{changedTouches:{value:changed},touches:{value:touches}});target.dispatchEvent(e);};
+  try{
+   down(301,30);
+   const original=stick.style.transform;
+   down(302,-30,false);
+   const keepsOriginal=stick.style.transform===original;
+   document.dispatchEvent(new PointerEvent('pointerup',{bubbles:true,pointerId:301,pointerType:'touch'}));
+   const globalRelease=stick.style.transform==='';
+   down(303,30);
+   down(304,-30);
+   const recovered=stick.style.transform.startsWith('translate(-');
+   j.onpointerup({pointerId:303});
+   const ignoresOldRelease=stick.style.transform.startsWith('translate(-');
+   j.onpointerup({pointerId:304});
+   const reclaimedRelease=stick.style.transform==='';
+   down(305,30);
+   const active=touch(601,30),other=touch(602,-30);
+   emit(j,'touchstart',[active],[active,other]);
+   emit(document,'touchend',[other],[active]);
+   const otherFingerSafe=stick.style.transform!=='';
+   emit(document,'touchcancel',[active],[]);
+   const touchCancel=stick.style.transform==='';
+   down(306,30);
+   emit(document,'touchend',[touch(999,0)],[]);
+   const lastTouchFallback=stick.style.transform==='';
+   down(307,30);
+   window.dispatchEvent(new Event('resize'));
+   const resizeRelease=stick.style.transform==='';
+   down(308,30);
+   window.dispatchEvent(new Event('pagehide'));
+   const pagehideRelease=stick.style.transform==='';
+   return {keepsOriginal,globalRelease,recovered,ignoresOldRelease,reclaimedRelease,otherFingerSafe,touchCancel,lastTouchFallback,resizeRelease,pagehideRelease};
+  }finally{j.setPointerCapture=capture;j.hasPointerCapture=hasCapture;}
+ });
+ assert(Object.values(result).every(Boolean),'joystick gesture recovery: '+JSON.stringify(result));
+});
 await check('Charged skills use hold-and-release on keyboard and touch '+tag,async()=>{
  const saved=await page.evaluate(()=>{window.__chargeGeometryAI=Prototype.game.updateEnemies;window.__chargeGeometryCast=Prototype.game.cast;window.__chargeGeometryCasts=[];Prototype.game.cast=function(slot,targetId,charged){const before=this.hero.mp,result=__chargeGeometryCast.call(this,slot,targetId,charged);if(charged)__chargeGeometryCasts.push({slot,before,after:this.hero.mp,result});return result;};return Prototype.game.snapshot();});
  await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');c.updateEnemies=()=>{};c.zone().props=[];c.s.party=[];Object.assign(c.hero,{class:'paladin',x:600,y:900,mp:1000,maxMp:1000,power:18,weapon:0,legacyWeaponPower:0,legacyEquipped:false,talents:[0,0,0,0],order:null});c.s.projectiles=[];c.s.hazards=[];c.basicComboTargetId=null;c.hero.skills[0]=1;c.hero.skills[1]=1;c.hero.skills[2]=1;c.hero.cd[0]=0;c.hero.cd[1]=0;c.hero.cd[2]=0;const target=c.makeEnemy({species:'goblin',name:'Charge target',level:1,hp:10000,damage:0,gold:0,xp:0},{x:680,y:900}),near=c.makeEnemy({species:'goblin',name:'Charge neighbor',level:1,hp:10000,damage:0,gold:0,xp:0},{x:690,y:965}),far=c.makeEnemy({species:'goblin',name:'Charge far',level:1,hp:10000,damage:0,gold:0,xp:0},{x:900,y:900});c.zone().enemies=[target,near,far];c.s.heroTarget=target.id;c.s.mercyTime=0;});
