@@ -1785,7 +1785,12 @@
     charge = null;
     const cast =
       activePlay() &&
-      game.cast(slot, slot === 1 || slot === 2 ? releaseTarget?.id : undefined, true, encountersAtStart);
+      game.cast(
+        slot,
+        slot === 1 || slot === 2 ? releaseTarget?.id : undefined,
+        true,
+        encountersAtStart,
+      );
     if (!cast && activePlay()) chargeFailureStatus(slot, true);
     updateHUD();
     return cast;
