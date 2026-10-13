@@ -189,3 +189,6 @@ Current integrated recovery source is on PR300 at c40a85df/treea2e8b109 (dev.6),
 
 
 Final batch3 presentation inspection corrected the actual TRUE Crypt health-plate label: generic rendering still put TRUE before the canonical name despite the saved/fresh object using the approved suffix. Crypt now renders exactly Lifebinder TRUE; other families retain existing labels. Added actual Chromium/WebKit fillText and screenshot proof for the TRUE plate. Runtime builddev.7; final combined gate applies to this head, not older dev.6. Full snapshot still incomplete and no release actions authorized.
+
+
+Final dev.7 hosted run38462357489 passed actual new phone cast/TRUE-label/estate/Crag probes, charge/PWA/historical upgrades, quest/Rogue and audio checks. WebKit VFX catalog then stopped solely on the old expected TRUE-variant count (actual305scenes, expected303); its per-scene rendering/resolution checks had completed and measurements were saved. Updated the exact expectation from47to49boss variants (six-slot Lifebinder adds two). Kept every capture, per-scene resolution, mutation, contact, pause/death/travel assertion. This is a browser fixture correction, no runtime change or reduced coverage. Final exact-head full gate must pass after this correction; no PASS inherited from the failing run.

@@ -335,7 +335,7 @@ fs.mkdirSync(out, { recursive: true });
         path.join(out, viewport.width + '-measurements.json'),
         JSON.stringify(results.report, null, 2),
       );
-      assert.equal(results.report.length, catalog.length + 47);
+      assert.equal(results.report.length, catalog.length + 49);
       assert.deepEqual(errors, []);
       console.log(
         'PASS ' +
