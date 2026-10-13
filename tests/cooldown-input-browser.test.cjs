@@ -233,29 +233,32 @@ const server = http.createServer((req, res) => {
     for (const cls of ['paladin', 'mage', 'ranger'])
       for (const slot of [1, 2])
         for (const scenario of ['selected', 'nearest']) {
-          await page.evaluate(({ cls }) => {
-            const g = Prototype.game;
-            Object.assign(g.hero, { class: cls, x: 600, y: 900, order: null });
-            g.hero.skills = Array(8).fill(1);
-            g.hero.cd = Array(8).fill(0);
-            g.manualHeroTargetId = null;
-            g.manualHeroTargetZone = null;
-            g.manualHeroTargetLocked = false;
-            const make = (name, x) =>
-              g.makeEnemy(
-                { species: 'goblin', name, level: 1, hp: 10000, damage: 0, xp: 0, gold: 0 },
-                { x, y: 900 },
-              );
-            const original = make('Original', 680),
-              nearer = make('Nearest', 650),
-              chosen = make('Selected', 695);
-            g.zone().enemies = [original, nearer, chosen];
-            g.s.heroTarget = original.id;
-            g.s.projectiles = [];
-            window.__retargetFoes = { original: original.id, nearer: nearer.id, chosen: chosen.id };
-            window.__cooldownCasts = [];
-            Prototype.updateHUD();
-          }, { cls });
+          await page.evaluate(
+            ({ cls }) => {
+              const g = Prototype.game;
+              Object.assign(g.hero, { class: cls, x: 600, y: 900, order: null });
+              g.hero.skills = Array(8).fill(1);
+              g.hero.cd = Array(8).fill(0);
+              g.manualHeroTargetId = null;
+              g.manualHeroTargetZone = null;
+              g.manualHeroTargetLocked = false;
+              const make = (name, x) =>
+                g.makeEnemy(
+                  { species: 'goblin', name, level: 1, hp: 10000, damage: 0, xp: 0, gold: 0 },
+                  { x, y: 900 },
+                );
+              const original = make('Original', 680),
+                nearer = make('Nearest', 650),
+                chosen = make('Selected', 695);
+              g.zone().enemies = [original, nearer, chosen];
+              g.s.heroTarget = original.id;
+              g.s.projectiles = [];
+              window.__retargetFoes = { original: original.id, nearer: nearer.id, chosen: chosen.id };
+              window.__cooldownCasts = [];
+              Prototype.updateHUD();
+            },
+            { cls },
+          );
           await press(slot);
           await page.waitForFunction(() => Prototype.chargePresentation()?.ready, null, {
             timeout: 3000,
