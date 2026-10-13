@@ -284,7 +284,6 @@ const server = http.createServer((req, res) => {
           await release(slot);
           const result = await page.evaluate(() => ({
             casts: __cooldownCasts,
-            cooldown: Prototype.game.hero.cd[slot - 1],
             foes: __retargetFoes,
           }));
           assert.equal(result.casts.length, 1, JSON.stringify({ cls, slot, scenario, result }));
