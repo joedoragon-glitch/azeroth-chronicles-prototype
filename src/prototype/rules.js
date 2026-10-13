@@ -26,13 +26,13 @@
     crypt: [
       attack('cone', 1, 1),
       attack('volley', 1.2, 1.4),
-      attack('summon', 1.6, 1.4, { species: 'skeleton', ranged: false }),
-      attack('circle', 1.6, 1.4, { persistent: true, manaDrain: 0.05 }),
+      attack('summon', 1.6, 1.4, { species: 'crownguard', ranged: false, attendant: true }),
+      attack('circle', 1.6, 1.4, { count: 4, persistent: true, manaDrain: 0.05 }),
     ],
     mire: [
       attack('cone', 0.9, 1),
       attack('line', 1.4, 1.5, { charge: true, coefficient: 1.4 }),
-      attack('circle', 1.5, 1.4, { count: 3, persistent: true, slow: true }),
+      attack('circle', 1.5, 1.4, { count: 3, persistent: true }),
       attack('summon', 1.6, 1.5, { species: 'mireling', ranged: false }),
     ],
     archive: [
@@ -40,10 +40,11 @@
       attack('line', 1.5, 1.5, { count: 2, manaDrain: 0.08 }),
       attack('circle', 1.5, 1.5, { slow: true, persistent: true, manaDrain: 0.04 }),
       attack('summon', 1.7, 1.5, { species: 'wraith', ranged: true }),
+      attack('circle', 1.5, 1.5, { sabotage: true }),
     ],
     ridge: [
       attack('cone', 1, 1),
-      attack('circle', 1.5, 1.5, { coefficient: 1.4 }),
+      attack('line', 1.5, 1.5, { coefficient: 1.4, cargo: true }),
       attack('line', 1.5, 2, { charge: true, coefficient: 1.4 }),
       attack('summon', 1.8, 1.5, { species: 'archer', ranged: true }),
     ],
@@ -56,7 +57,7 @@
     ],
     warlord: [
       attack('cone', 1.2, 1.5, { combo: true }),
-      attack('circle', 1.8, 1.5, { count: 2 }),
+      attack('circle', 1.8, 1.5, { count: 6 }),
       attack('summon', 1.8, 1.5, { species: 'orc', ranged: false }),
       attack('line', 1.6, 2.5, { charge: true, coefficient: 1.4 }),
     ],
@@ -2080,7 +2081,7 @@
       presentation: 'workstation',
       workKind: 'smith',
       context:
-        "Borin is held here because the Guardian needs his craftsmanship to finish the Dark Lord's woodland retreat.",
+        "Borin is forced to finish the Dark Lord's winter rooms. Beside his tools lies the Lifebinder's ledger: names of the fallen, under BOUND and RELEASED.",
     },
     archive: {
       x: 1130,
@@ -2414,7 +2415,7 @@
       ],
     },
     crypt: {
-      version: 3,
+      version: 4,
       surfaces: [
         {
           kind: 'unfinished',
@@ -3380,6 +3381,8 @@
     ],
   }; // Curated occupied spaces: each dungeon has an entrance, work/ritual zone, command markers and a boss approach.
   const dungeonLore = {
+    crypt:
+      'An old ossuary opens onto unfinished Crown guest rooms. A building plan shows six seats at the winter table; the memorial stones give the dead names, not numbers.',
     abyss:
       'Abyss Bastion is the Dark Lord’s air-superiority project. His purple dragon is his personal flying mount; the hatchery will grow his future air force. Riders prepare harnesses, supplies arrive, and the royal launch platform is still being built.',
   };
@@ -3402,6 +3405,11 @@
       [1040, 640, 'weapon-rack', 'craft-wing', 'construction'],
       [1240, 650, 'supply-stack', 'craft-wing', 'construction'],
       [280, 1120, 'sleep-roll', 'guest-lodge'],
+      [365, 1120, 'estate-rug', 'guest-lodge'],
+      [650, 1210, 'estate-hearth', 'guest-lodge'],
+      [525, 1340, 'estate-lounge', 'guest-lodge'],
+      [520, 1300, 'warm-brazier', 'guest-lodge'],
+      [340, 1020, 'banner', 'guest-lodge'],
       [400, 1240, 'sleep-roll', 'guest-lodge'],
       [590, 1170, 'warm-brazier', 'guest-lodge'],
       [480, 1060, 'game-table', 'guest-lodge'],
@@ -3410,6 +3418,11 @@
       [1000, 1250, 'scroll-stack', 'caretaker-study'],
       [800, 960, 'torch', 'caretaker-study'],
       [1110, 900, 'stone-seat', 'protected-retreat'],
+      [1150, 1120, 'estate-rug', 'protected-retreat'],
+      [1030, 1300, 'estate-hearth', 'protected-retreat'],
+      [1240, 1100, 'estate-lounge', 'protected-retreat'],
+      [1170, 1100, 'warm-brazier', 'protected-retreat'],
+      [1200, 1290, 'stone-seat', 'protected-retreat'],
       [1290, 920, 'warm-brazier', 'protected-retreat'],
       [1270, 1200, 'game-table', 'protected-retreat'],
       [1090, 1280, 'banner', 'protected-retreat'],
@@ -3757,7 +3770,10 @@
     normalCooldown: 7,
     trueCooldown: 5.5,
     pressureFloor: 2,
-    overrides: { warlord: { normalCap: 4, trueCap: 8, minions: 6, captains: 2 } },
+    overrides: {
+      warlord: { normalCap: 4, trueCap: 8, minions: 6, captains: 2 },
+      crypt: { normalCap: 12, trueCap: 6, minions: 4, captains: 2 },
+    },
   };
   const bossBehavior = {
     thorn: {
@@ -3898,10 +3914,11 @@
     'supply-vale': {
       mentor: 'thorn',
       name: 'Scornfang',
+      enduranceHp: 260,
       visualScale: 1.16,
       specialRange: 470,
       specialCooldown: 4.2,
-      phase: { threshold: 0.42, name: "Scavenger's Nerve", kind: 'scramble' },
+      phase: { threshold: 0.55, name: "Scavenger's Nerve", kind: 'scramble' },
       attacks: [
         {
           name: 'Hookfang Rush',
@@ -3919,7 +3936,7 @@
           coefficient: 0.75,
           persistent: true,
           slow: true,
-          radius: 82,
+          radius: 100,
         },
         {
           name: 'Pocket Sand',
@@ -3935,21 +3952,23 @@
     'supply-march': {
       mentor: 'mire',
       name: 'Direjaw',
+      enduranceHp: 680,
       visualScale: 1.18,
       specialRange: 437,
       specialCooldown: 4.4,
-      phase: { threshold: 0.45, name: 'Sloughskin', kind: 'molt' },
+      phase: { threshold: 0.55, name: 'Sloughskin', kind: 'molt' },
       attacks: [
         {
           name: 'Bog Skitter',
           kind: 'line',
-          warning: 0.9,
+          warning: 0,
           recovery: 1.2,
           coefficient: 1.2,
           charge: true,
         },
         {
           name: 'Spatter Fan',
+          angleDegrees: 196,
           kind: 'cone',
           warning: 1.0,
           recovery: 1.05,
@@ -3959,6 +3978,8 @@
         },
         {
           name: 'Silt Slick',
+          count: 4,
+          captainSpread: true,
           kind: 'circle',
           warning: 1.2,
           recovery: 1.1,
@@ -3972,13 +3993,14 @@
     'supply-highlands': {
       mentor: 'ridge',
       name: 'Crag Tyrant',
+      enduranceHp: 1650,
       visualScale: 1.2,
       specialRange: 482,
       specialCooldown: 4.1,
-      phase: { threshold: 0.44, name: 'Lone Howl', kind: 'howl' },
+      phase: { threshold: 0.55, name: 'Hostile Liquidation', kind: 'howl' },
       attacks: [
         {
-          name: 'Shoulder Rush',
+          name: 'Hostile Takeover',
           kind: 'line',
           warning: 0.95,
           recovery: 1.25,
@@ -3986,7 +4008,9 @@
           charge: true,
         },
         {
-          name: 'Scree Kick',
+          name: 'Margin Call',
+          count: 5,
+          captainSpread: true,
           kind: 'circle',
           warning: 1.15,
           recovery: 1.05,
@@ -3994,7 +4018,8 @@
           radius: 86,
         },
         {
-          name: 'Ridge Feint',
+          name: 'Bad Deal',
+          angleDegrees: 360,
           kind: 'cone',
           warning: 0.8,
           recovery: 1.0,
@@ -4007,6 +4032,7 @@
       mentor: 'cindermaw',
       visualIdol: 'darklord',
       name: 'Dreadmaw',
+      enduranceHp: 5000,
       visualScale: 1.19,
       specialRange: 493,
       specialCooldown: 4.0,
@@ -4014,13 +4040,13 @@
       summon: {
         name: 'Brood Call',
         species: 'ashbeast',
-        cap: 3,
+        cap: 4,
         cooldown: 12,
         warning: 1.15,
-        composition: ['melee', 'melee', 'ranged'],
+        composition: ['melee', 'melee', 'melee', 'ranged'],
         opening: true,
-        guardPerSummon: 0.08,
-        guardCap: 0.24,
+        guardPerSummon: 0.25,
+        guardCap: 1,
       },
       attacks: [
         {
@@ -4064,6 +4090,7 @@
     'frontier-overseer': {
       mentor: 'warlord',
       name: 'Cinder Warlord',
+      enduranceHp: 3000,
       visualScale: 1.18,
       specialRange: 493,
       specialCooldown: 4.0,
@@ -4076,7 +4103,7 @@
         [1100, 1080],
         [1740, 1050],
       ],
-      phase: { threshold: 0.45, name: 'Mandatory Overtime', kind: 'overtime' },
+      phase: { threshold: 0.6, name: 'Mandatory Overtime', kind: 'overtime' },
       attacks: [
         {
           name: 'Inspection Cleave',
@@ -4088,6 +4115,7 @@
         },
         {
           name: 'Violation Marker',
+          captainRadiusMultiplier: 2,
           kind: 'circle',
           warning: 1.15,
           recovery: 1.0,
@@ -4366,7 +4394,7 @@
     },
     bosses: {
       thorn: { name: 'Thornfang’s Pack Feint', style: 'dash', coefficient: 0.23 },
-      crypt: { name: 'Crypt Guardian’s Bone Hook', style: 'shove', coefficient: 0.24 },
+      crypt: { name: 'Lifebinder’s Bone Hook', style: 'shove', coefficient: 0.24 },
       mire: { name: 'Mirejaw’s Bog Snare', style: 'snare', coefficient: 0.23 },
       archive: { name: 'Drowned Keeper’s Undertow', style: 'shove', coefficient: 0.24 },
       ridge: { name: 'Ridge Tyrant’s Stone Feint', style: 'shove', coefficient: 0.24 },
@@ -4656,7 +4684,7 @@
         coefficient: 0.08,
       },
       crypt: {
-        name: 'Crypt Guardian’s Grave Threshold',
+        name: 'Lifebinder’s Grave Threshold',
         effect: 'bind',
         warning: 1.4,
         radius: 120,

@@ -57,6 +57,8 @@
   }
   function emit(game, e, a, stage, point = null, identity = null) {
     if (game.enemyVfxEnabled === false || !e || e.hp <= 0) return null;
+    if (stage === 'windup' && (a.anonymousCast || (e.family === 'ridge' && e.ledgerOpen)))
+      return null;
     const visual =
       identity ||
       (stage === 'phase'

@@ -42,6 +42,13 @@
       }),
     ];
   }
+  function visibleWarning(e) {
+    return (
+      e.telegraph &&
+      !e.telegraph.anonymousCast &&
+      (e.telegraph.total > 0 || !e.telegraph.captainSkill)
+    );
+  }
   function warningShapes(a, patches) {
     if (a.kind === 'summon') return [];
     if (a.kind === 'line' || a.kind === 'volley')
@@ -64,8 +71,15 @@
                   : G.lineHalfWidth;
         return capsulePoints(from, to, width);
       });
-    if (a.kind === 'cone' || a.kind === 'sector')
-      return [sectorPoints(a, a.radius, a.angle, a.kind === 'sector' ? 0.65 : 1.1)];
+    if (a.kind === 'cone' || a.kind === 'sector') {
+      if (a.angleDegrees === 360) return [circlePoints(a, a.radius)];
+      const halfAngle = a.angleDegrees
+        ? (a.angleDegrees * Math.PI) / 360
+        : a.kind === 'sector'
+          ? 0.65
+          : 1.1;
+      return [sectorPoints(a, a.radius, a.angle, halfAngle)];
+    }
     if (a.kind === 'ring')
       return [
         circlePoints(
@@ -177,7 +191,30 @@
         ctx.stroke();
       }
     }
-    for (const e of game.zone().enemies.filter((e) => e.telegraph)) {
+    if (cue)
+      for (const e of game.zone().enemies.filter((e) => e.telegraph?.anonymousCast)) {
+        const a = e.telegraph,
+          p = screen(e);
+        const width = 70,
+          height = 8,
+          x = p.x - width / 2,
+          y = p.y - 65;
+        const fill = Math.max(0, Math.min(1, 1 - a.timer / a.total));
+        ctx.fillStyle = '#1b2330dd';
+        ctx.fillRect(x - 2, y - 2, width + 4, height + 4);
+        ctx.fillStyle = '#e5b963';
+        ctx.fillRect(x, y, width * fill, height);
+        ctx.strokeStyle = '#f2d99b';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(x, y, width, height);
+        ctx.font = 'bold 11px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#fff1c7';
+        ctx.fillText('Preparing…', p.x, y - 5);
+      }
+    for (const e of game
+      .zone()
+      .enemies.filter((e) => visibleWarning(e) && !(e.family === 'ridge' && e.ledgerOpen))) {
       const a = e.telegraph,
         shapes = warningShapes(a, game.attackPatches(a));
       // Rogue warnings need an identity distinct from ordinary boss attacks:

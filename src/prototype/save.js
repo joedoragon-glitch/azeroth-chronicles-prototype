@@ -19,12 +19,15 @@
         delete out.holdFire;
         out.projectiles = [];
         out.hazards = [];
+        this.clearEncounterUnits([out.hero, ...out.party]);
         out.party.forEach((u) => {
           delete u.path;
           u.order = null;
         });
-        for (const z of Object.values(out.zones))
+        for (const z of Object.values(out.zones)) {
+          z.enemies = z.enemies.filter((e) => !e.summon);
           for (const e of z.enemies) {
+            this.clearEncounterState(e, [out.hero, ...out.party]);
             e.telegraph = null;
             e.motion = null;
             e.sequence = [];
@@ -43,6 +46,7 @@
               e.mercyProvoked = false;
             }
           }
+        }
         return out;
       }
       static validate(data) {
@@ -607,6 +611,7 @@
         const s = Campaign.validate(data),
           c = new Campaign(s.mode, s.hero.class, random);
         c.s = s;
+        c.clearEncounterUnits();
         c.hero.potions = { health: 0, mana: 0, greater_health: 0, greater_mana: 0 };
         delete c.hero.legacyPotions;
         for (const u of c.s.party)
@@ -679,9 +684,21 @@
         c.messages = [];
         c.effects = [];
         for (const z of Object.values(c.s.zones)) {
+          z.enemies = z.enemies.filter((e) => !e.summon);
           z.props = z.props.filter((p) => !c.blocked(p.x, p.y, z.id, p.r || 0, true));
           c.roadNetwork(z);
           for (const e of z.enemies) {
+            c.clearEncounterState(e);
+            e.aggro = false;
+            e.returning = 0;
+            if (e.hp > 0 && !e.neutral) {
+              Object.assign(e, e.home);
+              e.hp = e.maxHp;
+            }
+            // Rename the existing boss in historical saves; never change 'crypt'
+            // save keys, rewards, quest/rescue flags or normal/TRUE progression.
+            if (e.family === 'crypt' && e.type === 'boss')
+              e.name = e.form === 'true' ? 'Lifebinder TRUE' : 'Lifebinder';
             if (e.family === 'thorn' && e.type === 'boss') {
               const base = c.boss('thorn').hp * (e.form === 'true' ? 1.8 : 1),
                 fraction = e.hp / e.maxHp,

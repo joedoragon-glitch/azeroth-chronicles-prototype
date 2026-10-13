@@ -4,10 +4,71 @@
   function install(Campaign, { R }) {
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     class BossCombat {
+      clearEncounterState(e, units = [this.hero, ...this.s.party]) {
+        for (const u of units) {
+          if (u.keeperHeld === e.id) delete u.keeperHeld;
+          if (e.deathRoll?.victim === (u === units[0] ? 'hero' : u.id)) delete u.deathRollHeld;
+        }
+        e.telegraph = null;
+        e.sequence = [];
+        e.motion = null;
+        e.rangedAim = null;
+        for (const key of [
+          'hookedVictim',
+          'deathRoll',
+          'ashCloud',
+          'ashNextAt',
+          'ledgerOpen',
+          'ledgerMarkedId',
+          'ledgerMarkUntil',
+          'ledgerNextAt',
+          'mireLowestHpRatio',
+          'sabotageCd',
+          'quotaTarget',
+          'quotaOvertime',
+        ])
+          delete e[key];
+        if (e.type === 'boss') {
+          e.trueEntourageSpawned = false;
+          e.trueHalfSummonWave = false;
+        }
+        if (e.captain || e.roomCaptain) {
+          e.captainPhase = false;
+          e.captainPhaseMove = 1;
+          e.captainAttackRate = 1;
+          e.captainGuard = 0;
+          e.captainReflect = 0;
+          e.captainPursuit = 0;
+          e.captainOvertimeCd = 0;
+          e.captainOpeningSummon = false;
+        }
+      }
+      cancelEncounter(e) {
+        this.clearEncounterState(e);
+        this.s.projectiles = this.s.projectiles.filter((p) => p.sourceId !== e.id);
+        this.s.hazards = this.s.hazards.filter((h) => h.source !== e.id && h.sourceId !== e.id);
+        this.zone().enemies = this.zone().enemies.filter((u) => !(u.summon && u.owner === e.id));
+      }
+      clearEncounterUnits(units = [this.hero, ...this.s.party]) {
+        for (const u of units)
+          for (const key of [
+            'keeperHeld',
+            'deathRollHeld',
+            'ashLastAt',
+            'mireBogLastAt',
+            'mireBogExposure',
+          ])
+            delete u[key];
+      }
+
       trueSummonPlan(e) {
         const authored = R.attacks[e.family]?.find((a) => a.kind === 'summon');
         return authored
-          ? { species: authored.species, ranged: !!authored.ranged }
+          ? {
+              species: authored.species,
+              ranged: !!authored.ranged,
+              attendant: !!authored.attendant,
+            }
           : R.trueBossSummons.families[e.family];
       }
       bossOwnedSummons(e) {
@@ -83,14 +144,15 @@
           };
         if (e.form !== 'true') {
           const owned = () => z.enemies.filter((u) => u.summon && u.owner === e.id && u.hp > 0),
-            limit = Math.min(cap, this.bossSummonProfile(e).normalCap);
+            limit = Math.min(cap, this.bossSummonProfile(e).normalCap),
+            nextCount = Math.min(limit, owned().length + (plan.attendant ? 3 : limit));
           let made = 0;
-          for (let i = owned().length; i < limit; i++) {
+          for (let i = owned().length; i < nextCount; i++) {
             const p = spawnPoint(i),
               s = this.makeEnemy(
                 {
                   species: plan.species,
-                  name: this.summonName(plan.species),
+                  name: plan.attendant ? 'Estate attendant' : this.summonName(plan.species),
                   icon: '👻',
                   level: e.level,
                   hp: Math.round(baseHp * (plan.normalHpScale || 1)),
@@ -101,6 +163,10 @@
                 p,
               );
             s.summon = true;
+            if (plan.attendant) {
+              s.estateAttendant = true;
+              s.visualScale = 0.78;
+            }
             s.summonBalanceVersion = 1;
             s.owner = e.id;
             this.summonCombatProfile(s, plan);
@@ -146,7 +212,13 @@
             s = this.makeEnemy(
               {
                 species: plan.species,
-                name: captain ? 'TRUE ' + baseName + ' Ringleader' : 'TRUE-bound ' + baseName,
+                name: plan.attendant
+                  ? captain
+                    ? 'TRUE Estate attendant Ringleader'
+                    : 'TRUE-bound Estate attendant'
+                  : captain
+                    ? 'TRUE ' + baseName + ' Ringleader'
+                    : 'TRUE-bound ' + baseName,
                 icon: '👻',
                 form: captain ? 'ringleader' : 'normal',
                 level: e.level,
@@ -162,6 +234,10 @@
           s.owner = e.id;
           this.summonCombatProfile(s, plan);
           s.trueSummon = true;
+          if (plan.attendant) {
+            s.estateAttendant = true;
+            s.visualScale = captain ? 0.9 : 0.78;
+          }
           s.trueSummonRole = role;
           s.pack = e.id + '-summons';
           if (captain) s.ringleaderHealthVersion = 3;
@@ -204,6 +280,7 @@
             return 0;
           if (reach !== null && dist(e, attackTarget) > reach + 25) return 0;
           let w = 1;
+          if (plan.sabotage && (e.sabotageCd || 0) > 0) return 0;
           if (plan.kind === 'summon') {
             if (alive >= cap || (e.summonCd || 0) > 0) return 0;
             const missing = cap - alive;
@@ -250,6 +327,12 @@
         // marks can occasionally challenge a protected backline as well.
         const markBackline =
           plan.kind === 'circle' && fallbackDistance < 200 && heroDistance > fallbackDistance + 70;
+        // The Keeper's chosen healer remains priority even for ground-targeted spells.
+        if (
+          e.family === 'archive' &&
+          this.activeLivingParty().some((u) => u.type === 'archer' && u.hp > 0 && !u.keeperHeld)
+        )
+          return fallback;
         return behavior.heroTarget?.includes(index) || markBackline ? this.hero : fallback;
       }
       buildBossAttack(e, index, target, includeTrue = true) {
@@ -261,6 +344,7 @@
           center = ['cone', 'ring', 'sector'].includes(kind) ? from : { x: target.x, y: target.y },
           a = {
             ...plan,
+            family: e.family,
             index,
             name: b.attacks[index]?.split(':')[0] || 'Attack ' + (index + 1),
             timer: plan.warning,
@@ -283,6 +367,26 @@
                       : 115) * R.bossCadence.areaRangeMultiplier,
           },
           sequence = [];
+        if (e.family === 'crypt' && index === 3) {
+          // Snapshot all Groundwork pads on cast. No chasing a dodging player.
+          const heroMark =
+            dist(e, this.hero) <= R.bossCadence.specialRange && this.line(e, this.hero)
+              ? { x: this.hero.x, y: this.hero.y }
+              : { x: a.x, y: a.y };
+          const closest = this.activeLivingParty()
+            .filter((u) => u.hp > 0 && dist(e, u) <= R.bossCadence.specialRange)
+            .sort((u, v) => dist(u, heroMark) - dist(v, heroMark))[0];
+          const allyMark =
+            closest && dist(closest, heroMark) >= 170
+              ? { x: closest.x, y: closest.y }
+              : { x: heroMark.x, y: heroMark.y + 172 };
+          a.groundworkMarks = [
+            heroMark,
+            allyMark,
+            { x: a.x - 185, y: a.y - 95 },
+            { x: a.x + 185, y: a.y + 95 },
+          ];
+        }
         if (a.sequential && a.kind === 'circle') {
           const patches = this.attackPatches(a);
           Object.assign(a, patches[0], { count: 1 });
@@ -408,6 +512,15 @@
             : this.chooseBossAttack(e, target),
           actualTarget = selected < 0 ? null : this.bossAttackTarget(e, target, selected);
         if (selected < 0) return false;
+        if (e.family === 'archive' && selected === 0 && e.hookedVictim) {
+          const held =
+            e.hookedVictim === 'hero'
+              ? this.hero
+              : this.s.party.find((u) => u.id === e.hookedVictim);
+          if (held) held.keeperHeld = null;
+          e.hookedVictim = null;
+        }
+        if (e.family === 'archive' && plans[selected].sabotage) e.sabotageCd = 12;
         const built = this.buildBossAttack(e, selected, actualTarget, true);
         e.attackIndex = (e.attackIndex || 0) + 1;
         e.lastAttackIndex = selected;
@@ -417,11 +530,69 @@
         return true;
       }
       attackPatches(a) {
+        if (a.family === 'crypt' && a.index === 3 && a.count === 4 && !a.captainSkill) {
+          // A target-centered construction grid: four offset hazard pads,
+          // leaving deliberate corridors rather than a solid damage carpet.
+          const marks = a.groundworkMarks || [
+            { x: a.x, y: a.y },
+            { x: a.x, y: a.y + 172 },
+            { x: a.x - 185, y: a.y - 95 },
+            { x: a.x + 185, y: a.y + 95 },
+          ];
+          return marks.map((mark) => ({ ...a, x: mark.x, y: mark.y, radius: 72 }));
+        }
+        if (
+          a.family === 'warlord' &&
+          a.count === 6 &&
+          a.kind === 'circle' &&
+          a.index === 1 &&
+          !a.captainSkill
+        ) {
+          // Spread Warlord artillery around the target with dodgeable lanes.
+          const offsets = [
+            [-220, -100],
+            [0, -100],
+            [220, -100],
+            [-220, 125],
+            [0, 125],
+            [220, 125],
+          ];
+          return offsets.map(([dx, dy]) => ({ ...a, x: a.x + dx, y: a.y + dy, radius: 72 }));
+        }
+        if (a.captainSpread) {
+          // Separate footprints; no stacked damage and a gap between neighboring circles.
+          const gap = a.radius * 2 + 24;
+          const offsets =
+            a.count === 4
+              ? [
+                  [0, 0],
+                  [-1, -1],
+                  [1, -1],
+                  [0, 1.5],
+                ]
+              : [
+                  [0, 0],
+                  [-1, -1],
+                  [1, -1],
+                  [-1, 1],
+                  [1, 1],
+                ];
+          return offsets.slice(0, a.count).map(([x, y]) => ({
+            ...a,
+            x: a.x + x * gap,
+            y: a.y + y * gap,
+            count: 1,
+          }));
+        }
         return Array.from({ length: a.count || 1 }, (_, i) => ({
           ...a,
           x: a.x + (i - ((a.count || 1) - 1) / 2) * 190,
           y: a.y + (i % 2) * 100,
-          radius: a.count > 1 ? 75 * R.bossCadence.areaRangeMultiplier : a.radius,
+          radius: a.captainRadiusMultiplier
+            ? 75 * R.bossCadence.areaRangeMultiplier * a.captainRadiusMultiplier
+            : a.count > 1
+              ? 75 * R.bossCadence.areaRangeMultiplier
+              : a.radius,
         }));
       }
       resolveAttack(e) {
@@ -475,6 +646,44 @@
           e.motion = { ...a, target: { x: a.x, y: a.y }, hit: [], speed: a.pounceSpeed, life: 2 };
           return;
         }
+        if (a.cargo && e.family === 'ridge') {
+          const d = Math.max(1, Math.hypot(a.x - e.x, a.y - e.y));
+          this.s.projectiles.push({
+            id: 'projectile-' + this.s.nextId++,
+            x: e.x,
+            y: e.y,
+            dx: (a.x - e.x) / d,
+            dy: (a.y - e.y) / d,
+            speed: 260,
+            life: 2,
+            damage: e.damage * a.coefficient,
+            source: 'enemy',
+            sourceId: e.id,
+            species: 'cargo',
+            style: 'cargo',
+          });
+          return;
+        }
+        if (a.sabotage && e.family === 'archive') {
+          // The Scholar punishes a visibly marked healer or hero, without direct damage.
+          const victims = this.combatTargets().filter(
+            (u) => u.hp > 0 && !u.keeperHeld && dist(u, a) < a.radius && this.line(e, u),
+          );
+          const victim =
+            victims.find((u) => u.type === 'archer') || victims.find((u) => u === this.hero);
+          if (victim) {
+            if (victim.type === 'archer') victim.healCd = (victim.healCd || 0) + 3;
+            else {
+              const choices = victim.cd
+                .map((time, i) => ({ time, i }))
+                .filter((x) => this.hero.skills[x.i] > 0)
+                .sort((x, y) => y.time - x.time);
+              if (choices.length) victim.cd[choices[0].i] += 3;
+            }
+            this.event('warning', { family: 'archive', cooldownSabotageHit: true });
+          }
+          return;
+        }
         if (a.kind === 'summon') {
           if (a.captainSkill && (e.captain || e.roomCaptain))
             this.summonCaptainAdds(
@@ -489,6 +698,7 @@
                 ranged: !!a.ranged,
                 normalHpScale: a.normalHpScale,
                 normalDamageScale: a.normalDamageScale,
+                attendant: !!a.attendant,
               },
               this.bossSummonCap(e),
             );
@@ -581,12 +791,76 @@
                   R.combatGeometry.lineHalfWidth
               : ['cone', 'sector'].includes(a.kind)
                 ? dist(u, a) < a.radius &&
-                  Math.cos(Math.atan2(u.y - a.y, u.x - a.x) - a.angle) >
-                    (a.kind === 'sector' ? Math.cos(0.65) : Math.cos(1.1))
+                  (a.angleDegrees === 360 ||
+                    Math.cos(Math.atan2(u.y - a.y, u.x - a.x) - a.angle) >
+                      (a.angleDegrees
+                        ? Math.cos((a.angleDegrees * Math.PI) / 360)
+                        : a.kind === 'sector'
+                          ? Math.cos(0.65)
+                          : Math.cos(1.1)))
                 : patches.some((p) => dist(u, p) < p.radius);
+        const anchorVictim =
+          e.type === 'boss' && e.family === 'archive' && a.index === 0
+            ? party
+                .filter((u) => u.hp > 0 && !u.keeperHeld && hits(u) && this.line(e, u))
+                .sort((u, v) => Number(v.type === 'archer') - Number(u.type === 'archer'))[0]
+            : null;
+        const jawVictim =
+          e.type === 'boss' && e.family === 'mire' && a.index === 0 && !e.deathRoll
+            ? party.find(
+                (u) => u.hp > 0 && !(u.immune > 0) && !this.peace && hits(u) && this.line(e, u),
+              )
+            : null;
         for (const u of party)
           if (hits(u) && this.line(e, u)) {
-            const landed = this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
+            // The grabbed victim's Jaw Snap damage is distributed into roll
+            // ticks instead of being applied once now and a second time later.
+            const landed =
+              u === jawVictim
+                ? true
+                : this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
+            if (landed && u === jawVictim) {
+              // Exactly one jaw victim, then three evenly spaced roll impacts.
+              e.deathRoll = {
+                victim: u === this.hero ? 'hero' : u.id,
+                // Calculate the original single-hit loss once. Each of the
+                // three roll ticks is already mitigated; armor must not apply thrice.
+                totalDamage: Math.max(
+                  3,
+                  e.damage * a.coefficient -
+                    (u === this.hero
+                      ? this.armor()
+                      : ['soldier', 'archer'].includes(u.type)
+                        ? this.companionArmor(u.type)
+                        : 5 + this.hero.level * 0.5) *
+                      0.35,
+                ),
+                life: 1.5,
+                elapsed: 0,
+                hits: 0,
+              };
+              u.deathRollHeld = true;
+              this.event('warning', { family: 'mire', deathRoll: true });
+            }
+            if (landed && e.family === 'ridge' && e.type === 'boss' && a.index === 1 && u.hp > 0) {
+              const d = Math.max(1, dist(u, a));
+              const dest = this.safe(u.x + ((u.x - a.x) * 75) / d, u.y + ((u.y - a.y) * 75) / d);
+              if (this.clearSegment(u, dest)) {
+                u.x = dest.x;
+                u.y = dest.y;
+              }
+            }
+            if (landed && u === anchorVictim && u.hp > 0) {
+              const d = Math.max(1, dist(u, e));
+              const where = this.safe(e.x + ((u.x - e.x) * 62) / d, e.y + ((u.y - e.y) * 62) / d);
+              if (this.clearSegment(u, where)) {
+                u.x = where.x;
+                u.y = where.y;
+              }
+              u.keeperHeld = e.id;
+              e.hookedVictim = u === this.hero ? 'hero' : u.id;
+              this.event('warning', { family: 'archive', anchorCaptured: true });
+            }
             if (landed && ['cone', 'sector'].includes(a.kind))
               this.event('melee', {
                 actor: 'enemy',
@@ -632,7 +906,16 @@
               this.line(e, u)
             ) {
               a.hit.push(id);
-              this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
+              const landed = this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
+              if (landed && e.family === 'ridge' && a.index === 2 && u.hp > 0) {
+                const d = Math.max(1, dist(u, e));
+                const dest = this.safe(u.x + ((u.x - e.x) * 85) / d, u.y + ((u.y - e.y) * 85) / d);
+                if (this.clearSegment(u, dest)) {
+                  u.x = dest.x;
+                  u.y = dest.y;
+                }
+                this.applySlow(u, 2);
+              }
               if (
                 this.hero !== hero ||
                 this.zoneId !== zone ||
@@ -646,6 +929,8 @@
         // Axis fallback can report success for a zero-length clear segment.
         // A charge blocked by real geometry must end when it makes no progress.
         if (dist(e, a.target) < 1 || !moved || dist(before, e) < 0.000001 || a.life <= 0) {
+          if (a.captainSkill && e.captainProfile === 'supply-vale' && a.index === 0)
+            e.captainPursuit = 2.5;
           if (a.landing && dist(e, a.target) < 20) this.resolveArea(e, a);
           e.motion = null;
           e.cd =

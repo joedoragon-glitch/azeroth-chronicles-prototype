@@ -314,6 +314,31 @@
         return true;
       }
 
+      ashMovementFactor(unit) {
+        if (!unit) return 1;
+        const now = this.s.time;
+        const cloud = this.s.zones[this.s.zone]?.enemies.find(
+          (e) =>
+            e.type === 'boss' &&
+            e.family === 'warlord' &&
+            e.aggro &&
+            e.hp > 0 &&
+            e.ashCloud &&
+            e.ashCloud.expires > now &&
+            dist(unit, e.ashCloud) < 180,
+        );
+        if (cloud) unit.ashLastAt = now;
+        return cloud || (Number.isFinite(unit.ashLastAt) && now - unit.ashLastAt <= 2) ? 0.7 : 1;
+      }
+      mireBogMovementFactor(unit) {
+        if (!unit || !Number.isFinite(unit.mireBogLastAt)) return 1;
+        const away = Math.max(0, this.s.time - unit.mireBogLastAt);
+        if (away >= 2) return 1;
+        const seconds = unit.mireBogExposure || 0;
+        const inMudSpeed = seconds < 1 ? 0.75 : seconds < 2 ? 0.6 : seconds < 3 ? 0.45 : 0.35;
+        // When no longer standing in the bog, movement recovers smoothly over two seconds.
+        return 1 - (1 - inMudSpeed) * (away > 0.11 ? Math.max(0, 1 - away / 2) : 1);
+      }
       drainMana(u, fraction) {
         if (!R.resourceMode.manaEnabled) return 0;
         if (u !== this.hero || !fraction || u.mp <= 0 || this.peace) return 0;
@@ -358,6 +383,9 @@
         e.mercyProvoked = true;
         this.engage(e, true);
         if (source === 'hero') e.heroParticipated = true;
+        // Ash abrades eyes: attacks issued by a party member inside or recently
+        // outside Choking Ash have a 35% miss chance, without extra damage.
+        if (this.ashMovementFactor(origin) < 1 && this.random() < 0.35) return false;
         if (e.roomCaptain && e.captainGuard > 0) amount *= 0.7;
         if (e.roomCaptain) {
           const profile = this.captainProfile(e),
@@ -368,6 +396,16 @@
             amount *= 1 - guard;
           }
         }
+        // Mirejaw's crocodilian scales lose their protection permanently as health falls.
+        // At full health they stop 40%; by half health they stop none.
+        if (e.family === 'mire' && e.type === 'boss') {
+          e.mireLowestHpRatio = Math.min(
+            e.mireLowestHpRatio ?? 1,
+            Math.max(0, e.hp / Math.max(1, e.maxHp)),
+          );
+          const ratio = Math.max(0, Math.min(1, e.mireLowestHpRatio));
+          amount *= 1 - 0.4 * Math.max(0, Math.min(1, (ratio - 0.5) * 2));
+        }
         if (e.family === 'citadel' && e.open <= 0) amount *= 0.65;
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;
         // All hero/companion damage sources use this same resolver. This
@@ -375,14 +413,21 @@
         if (['thinking', 'travel', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase))
           amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
         amount = this.tacticalCompressDamage(e, amount);
-        const actualDamage = Math.min(e.hp, amount);
+        const actualDamage = Math.max(0, Math.min(e.hp, amount));
         e.hp = Math.max(0, e.hp - amount);
+        if (
+          e.captainProfile === 'supply-crown' &&
+          e.captainReflect > 0 &&
+          actualDamage > 0 &&
+          origin.hp > 0
+        )
+          this.hitParty(origin, actualDamage * 0.3, 0, null, true);
         this.tacticalRecordHit(e, source, actualDamage);
         this.effects.push({ type: 'hit', x: e.x, y: e.y, amount });
         if (e.hp === 0) this.kill(e);
         return true;
       }
-      hitParty(u, amount, manaDrain = 0, rangedSourceId = null) {
+      hitParty(u, amount, manaDrain = 0, rangedSourceId = null, alreadyMitigated = false) {
         if (this.peace || u.hp <= 0 || (u.immune || 0) > 0) return false;
         const armor =
           u === this.hero
@@ -391,7 +436,10 @@
               ? this.companionArmor(u.type)
               : 5 + this.hero.level * 0.5;
         const oldHp = u.hp;
-        u.hp = Math.max(0, u.hp - Math.max(3, amount - armor * 0.35));
+        u.hp = Math.max(
+          0,
+          u.hp - (alreadyMitigated ? Math.max(0, amount) : Math.max(3, amount - armor * 0.35)),
+        );
         if (R.resourceMode.manaEnabled && u === this.hero && manaDrain > 0)
           this.drainMana(u, manaDrain);
         // All life-steal uses actual HP lost after armor, immunity and overkill.
@@ -458,11 +506,18 @@
               continue;
             }
             const victim = this.combatTargets().find(
-              (u) => this.distanceToSegment(u, before, p) < 22,
+              (u) => this.distanceToSegment(u, before, p) < (p.style === 'cargo' ? 34 : 22),
             );
             if (victim) {
-              if (this.hitParty(victim, p.damage, p.manaDrain || 0, p.sourceId) && p.slow)
-                this.applySlow(victim, p.slow);
+              const landed = this.hitParty(victim, p.damage, p.manaDrain || 0, p.sourceId);
+              if (landed && p.slow) this.applySlow(victim, p.slow);
+              if (landed && victim.hp > 0 && p.style === 'cargo') {
+                const away = this.safe(victim.x + p.dx * 75, victim.y + p.dy * 75);
+                if (this.clearSegment(victim, away)) {
+                  victim.x = away.x;
+                  victim.y = away.y;
+                }
+              }
               this.enemyVfxProjectileImpact?.(p, {
                 x: victim.x,
                 y: victim.y,
@@ -544,6 +599,15 @@
           }
         }
         for (const a of [...this.s.hazards]) {
+          if (a.family === 'mire' && a.index === 2 && a.kind === 'circle') {
+            for (const u of this.combatTargets()) {
+              if (u.hp <= 0 || dist(u, a) >= a.radius) continue;
+              if ((u.mireBogLastAt || -100) < this.s.time - dt * 1.5) u.mireBogExposure = 0;
+              if (u.mireBogLastAt !== this.s.time)
+                u.mireBogExposure = Math.min(4, (u.mireBogExposure || 0) + dt);
+              u.mireBogLastAt = this.s.time;
+            }
+          }
           a.life -= dt;
           a.tick -= dt;
           a.age = (a.age || 0) + dt;

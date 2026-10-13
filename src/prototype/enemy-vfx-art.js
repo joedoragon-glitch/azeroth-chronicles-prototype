@@ -27,6 +27,7 @@
       ['channel', 'water'],
       ['pool', 'water'],
       ['call', 'spectral'],
+      ['seal', 'spectral'], // Cooldown Sabotage: targeted scholarly binding, no hit damage.
     ],
     ridge: [
       ['slam', 'steel'],
@@ -769,7 +770,13 @@
   function actors(ctx, screen, game, effects) {
     if (!active(game)) return;
     for (const e of game.zone().enemies)
-      if (e.hp > 0 && !e.returning && e.telegraph) {
+      if (
+        e.hp > 0 &&
+        !e.returning &&
+        e.telegraph &&
+        !e.telegraph.anonymousCast &&
+        !(e.family === 'ridge' && e.ledgerOpen)
+      ) {
         const a = e.telegraph,
           id = V.describe(e, a),
           rec = recipe(id, a, e);

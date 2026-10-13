@@ -16,7 +16,7 @@ const PrototypeData = {
       obstacle:
         'Dense thickets close direct shortcuts, but broad woodland paths remain walkable. The river, lake shore and mill pond are impassable water. Houses and fences shape streets without blocking exits.',
       exploration:
-        'Millhaven, Orchard Hamlet and the working mill remain a rural woodland country. Beyond the local goblin camps and skeleton territories, the Crypt Guardian oversees an unfinished seasonal retreat for the Dark Lord and his trusted friends. The Guardian is an outsider and trusted friend who acts as caretaker and project overseer. The Dark Lord owns these woods because he wanted a place here; Dark Crown remains his permanent seat.',
+        "Millhaven, Orchard Hamlet and the working mill remain rural woodland country. The Forest Crypt is becoming the Dark Lord's unfinished winter estate, under the care of the Lifebinder, his former adventuring companion. The Lifebinder binds the fallen into an enduring existence rather than restoring life; some Greenwood skeletons retain their own names and allegiances.",
       resource: 640,
       questgold: 160,
       questxp: 600,
@@ -158,7 +158,7 @@ const PrototypeData = {
       id: 'crypt',
       region: 'vale',
       kind: 'dungeon',
-      name: 'Crypt Guardian',
+      name: 'Lifebinder',
       level: 3,
       captive: 'Borin the Village Smith',
       service: 'Village weapon improvements and basic equipment crafting',
@@ -169,10 +169,10 @@ const PrototypeData = {
       xp: 55,
       place: 'Forest Crypt',
       attacks: [
-        'Bone sweep: frontal cone, 1.0 second warning and a safe rear arc.',
-        'Bone volley: three visible projectiles with 1.2 second windup; solid pillars block them.',
-        'Grave call: 1.6 second warning, then three skeletons; existing summons count toward the cap.',
-        'Draining ground: marks one patch for 1.6 seconds; it lasts 4 seconds and leaves a route around it.',
+        'Binding Sweep: frontal cone, 1.0 second warning and a safe rear arc.',
+        'Stay Alive: three visible projectiles with 1.2 second windup; solid pillars block them.',
+        'Call the Attendants: 1.6 second warning, then three estate attendants; each cast adds a new group up to the encounter safety ceiling.',
+        'Groundwork: marks four separated patches for 1.6 seconds; they last 4 seconds and leave escape routes.',
       ],
     },
     {
@@ -215,6 +215,7 @@ const PrototypeData = {
         'Water jets: two parallel lanes warn for 1.5 seconds and leave a safe channel.',
         'Undertow: one patch slows rather than immobilizes; 1.5 second warning and 4 second duration.',
         'Echo call: summons three drowned echoes after 1.7 seconds; the arena remains navigable.',
+        'Cooldown Sabotage: after a 1.5-second targeted warning, adds 3 seconds to an available healer or hero cooldown without dealing damage.',
       ],
     },
     {
@@ -235,10 +236,10 @@ const PrototypeData = {
       xp: 262,
       place: 'Mountain watchtower',
       attacks: [
-        'Hammer blow: frontal arc, 1.0 second warning.',
-        'Boulder throw: marks one landing point for 1.5 seconds.',
-        'Ridge charge: straight lane with 1.5 second warning and a 2 second recovery.',
-        'War cry: calls three ridge archers after 1.8 seconds; the summon action uses a short cooldown before replenishing losses.',
+        'Coinage Blow: frontal hammer arc with the normal attack timing.',
+        'Rolling Cargo: marks one landing point for 1.5 seconds.',
+        'Toll Collection: straight charge lane with a 1.5 second attack windup.',
+        'Payroll Order: calls three contracted archers after 1.8 seconds, subject to the summon cooldown.',
       ],
     },
     {
@@ -386,7 +387,7 @@ const PrototypeData = {
     ['vale', 'A Teacher Taken', 'Defeat Thornfang; free Mira', 45, 50],
     ['vale', 'Roads Under Threat', 'Defeat 5 outdoor enemies in Greenwood Vale', 25, 88],
     ['vale', 'Stolen Stores', "Recover 2 caches from Thornfang's Treasury", 35, 100],
-    ['vale', 'An Unfinished Retreat', 'Defeat Crypt Guardian; free Borin', 45, 137],
+    ['vale', 'An Unfinished Retreat', 'Defeat Lifebinder; free Borin', 45, 137],
     ['vale', 'Keeping Trade Open', 'Visit Mill bridge and wagon stand', 0, 50],
     ['vale', 'Who Owns the Woods?', 'Discover any 3 Greenwood Vale sites', 10, 175],
     ['march', 'The Island Prisoner', 'Defeat Mirejaw; free Sela', 100, 225],
