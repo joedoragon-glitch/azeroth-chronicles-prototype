@@ -319,7 +319,7 @@ The Dark Lord re-approved the previously established sound-first joke for three 
 
 ## 8. Documentation-only implementation preparation — straightforward work first (12 October 2026)
 
-**OWNER LIMIT, CRITICAL:** We may prepare and clarify plans, ledgers and precise requirements now. **Do not change game implementation now.** The only authorized repository work for this step is updating this existing draft documentation in #289. No \`src/\`, \`tests/\`, \`assets/\`, \`data/\`, service worker, workflow, build, runtime, scene or user-save changes, and no PR merge, deployment or new gameplay specification without separate permission. The tables below are a **future engineering handoff, not an implemented patch**. There is no deadline.
+**OWNER LIMIT, CRITICAL:** We may prepare and clarify plans, ledgers and precise requirements now. **Do not change game implementation now.** The only authorized repository work for this step is updating this existing draft documentation in #289. No `src/`, `tests/`, `assets/`, `data/`, service worker, workflow, build, runtime, scene or user-save changes, and no PR merge, deployment or new gameplay specification without separate permission. The tables below are a **future engineering handoff, not an implemented patch**. There is no deadline.
 
 ### 8A. What can genuinely be finished *now*, without game changes
 
@@ -334,49 +334,49 @@ The Dark Lord re-approved the previously established sound-first joke for three 
 
 ### 8B. Frozen technique-to-engine correspondence for later integration
 
-**Mapping convention:** \`regular #1\` means **zero-based attack index 0**. An \`existing-slot relabel\` can keep the inherited effect; a \`slot rework\` needs extra combat code and is **not** automatically complete when its label changes. The rogue basic/signature system is separate from regular attack arrays; Scornfang's 55%-HP phase is separate again.
+**Mapping convention:** `regular #1` means **zero-based attack index 0**. An `existing-slot relabel` can keep the inherited effect; a `slot rework` needs extra combat code and is **not** automatically complete when its label changes. The rogue basic/signature system is separate from regular attack arrays; Scornfang's 55%-HP phase is separate again.
 
-**Thornfang — \`family: thorn\`, \`src/prototype/data.js\` displayed names plus \`R.attacks.thorn\` and independent rogue configurations:**
+**Thornfang — `family: thorn`, `src/prototype/data.js` displayed names plus `R.attacks.thorn` and independent rogue configurations:**
 
 | Identity | Existing action/engine kind | Current approved label | Future integration class |
 | --- | --- | --- | --- |
-| Regular index 0 | Bite / warned \`cone\` | **Use-of-Force Escalation** | **Existing-slot relabel only** — current frontal arc and timing unchanged |
-| Regular index 1 | Pounce / \`circle\` landing | **Dynamic Entry** | **Existing-slot relabel only** — preserve 1.3-second warning and 0.375-second recovery after the leap |
-| Regular index 2 | Root Line / warned \`line\` + Slow | **Tripwire** | **Existing-slot relabel only** — same narrow line and slowing |
-| Regular index 3 | Den Howl / \`summon\` | **Quick Reaction Force** | **Existing-slot relabel only** — Normal summon count/cap and TRUE 4+2 composition intact |
-| Tactical rogue basic (not in \`R.attacks.thorn\`) | Pack Feint / tactical dash | **Break Contact** | **Rogue display-name relabel only**; same dash and trigger |
-| Tactical rogue signature (not in \`R.attacks.thorn\`) | Packbreaker Howl / warned forced scatter | **Crowd Dispersal** | **Rogue display-name relabel only**; same push/scatter including transient control |
+| Regular index 0 | Bite / warned `cone` | **Use-of-Force Escalation** | **Existing-slot relabel only** — current frontal arc and timing unchanged |
+| Regular index 1 | Pounce / `circle` landing | **Dynamic Entry** | **Existing-slot relabel only** — preserve 1.3-second warning and 0.375-second recovery after the leap |
+| Regular index 2 | Root Line / warned `line` + Slow | **Tripwire** | **Existing-slot relabel only** — same narrow line and slowing |
+| Regular index 3 | Den Howl / `summon` | **Quick Reaction Force** | **Existing-slot relabel only** — Normal summon count/cap and TRUE 4+2 composition intact |
+| Tactical rogue basic (not in `R.attacks.thorn`) | Pack Feint / tactical dash | **Break Contact** | **Rogue display-name relabel only**; same dash and trigger |
+| Tactical rogue signature (not in `R.attacks.thorn`) | Packbreaker Howl / warned forced scatter | **Crowd Dispersal** | **Rogue display-name relabel only**; same push/scatter including transient control |
 | Separate always-on passive (not a seventh move) | No existing passive implementation | **Rapid Deployment** | **New scoped modifier needed later**; only his owned summoned wolves +8%/+15% movement, never Thornfang |
 
-**Scornfang — \`roomCaptains['supply-vale']\`, \`src/prototype/rules.js\` (the referenced three-slot implementation is **unmerged #231**):**
+**Scornfang — `roomCaptains['supply-vale']`, `src/prototype/rules.js` (the referenced three-slot implementation is **unmerged #231**):**
 
 | Identity | Existing engine/source action | Current approved label | Future integration class |
 | --- | --- | --- | --- |
-| Captain regular index 0 | Hookfang Rush / warned charging \`line\` | **Selective Deconstruction** | **Existing-slot relabel only**; preserve hit and +20% pursuit for 2.5 seconds |
-| Captain regular index 1 | Briar Pot / \`circle\` persistent damaging + slowing pot | **Encapsulation** | **Existing-slot relabel only**; radius 100 **as approved**, preserve hit/status |
-| Captain regular index 2 | Pocket Sand / short \`cone\` | **Dust Entrainment** | **Existing-slot relabel only**; unchanged damage/slow |
+| Captain regular index 0 | Hookfang Rush / warned charging `line` | **Selective Deconstruction** | **Existing-slot relabel only**; preserve hit and +20% pursuit for 2.5 seconds |
+| Captain regular index 1 | Briar Pot / `circle` persistent damaging + slowing pot | **Encapsulation** | **Existing-slot relabel only**; radius 100 **as approved**, preserve hit/status |
+| Captain regular index 2 | Pocket Sand / short `cone` | **Dust Entrainment** | **Existing-slot relabel only**; unchanged damage/slow |
 | Captain regular index 3 | **No existing slot in #231** | **Cradle-to-Grave Tracking** | **NEW SPECIAL**: explicit numbered target, dodgeable warned sling shots, and bounded cleanup, numbers still undecided |
 | Captain regular index 4 | **No existing slot in #231** | **Hot Zone** | **NEW SPECIAL**: separated bounded temporary hazardous pads and escape lanes, numbers still undecided |
-| Captain phase, 55% HP (not regular index 5) | Scavenger's Nerve / \`scramble\` | **Corrective Action** | **Phase label only**; trigger once, no added heal or separate TRUE |
+| Captain phase, 55% HP (not regular index 5) | Scavenger's Nerve / `scramble` | **Corrective Action** | **Phase label only**; trigger once, no added heal or separate TRUE |
 | Tactical rogue basic | Pocket Trick / snare | **Impoundment** | **Rogue display-name relabel only**, NOT an extra captain regular slot |
 | Tactical rogue signature | Bait-and-Switch / slow + sidestep | **Emergency Egress** | **Rogue display-name relabel only**, NOT an extra captain regular slot |
 | Separate always-on passive | No existing passive implementation | **Prolonged Exposure** | **New Scornfang-regular-only slow-duration hook later** (1.10x → 1.20x after Corrective Action); do not alter global Slow or rogue skills |
 
-**Lifebinder — stable \`family: crypt\`, \`R.attacks.crypt\` with the **unmerged #230** existing four-slot expansion and #258 narrative work:**
+**Lifebinder — stable `family: crypt`, `R.attacks.crypt` with the **unmerged #230** existing four-slot expansion and #258 narrative work:**
 
 | Identity | Existing / draft action | Current approved label | Future integration class |
 | --- | --- | --- | --- |
-| Boss regular index 0 | Binding Sweep (draft #230; earlier Bone Sweep) / \`cone\` | **Excarnation** | **REWORK**, not simply text: modest frontal damage **and light pushback**, no prolonged lock |
-| Boss regular index 1 | Stay Alive / \`volley\` | **Stay Alive** | **REWORK** for the owner-requested Normal three **sequential** pillar-blockable projectiles; reconcile with existing TRUE volley stagger at 0.35s, preserve distinct TRUE behavior |
-| Boss regular index 2 | Call the Attendants / \`summon\` | **Clerk of Works** | **Existing #230 summon identity, roster and cap preserve/relabel**; Normal groups of 3 up to 12 living, TRUE four ordinary + two elite; reconcile #258 skeletal free-will canon |
-| Boss regular index 3 | Groundwork / \`circle\`, four simultaneous pads in #230 | **Differential Settlement** | **REWORK** to four snapshotted pads in **two successive pairs**; guard against \`a.name === 'Groundwork'\` code coupling |
-| Boss regular index 4 | **No existing slot in #230** | **Algor Mortis** | **NEW SPECIAL**: expanding warned **slow-only**, strictly zero direct HP damage; not a generic \`coefficient: 0\` attack |
+| Boss regular index 0 | Binding Sweep (draft #230; earlier Bone Sweep) / `cone` | **Excarnation** | **REWORK**, not simply text: modest frontal damage **and light pushback**, no prolonged lock |
+| Boss regular index 1 | Stay Alive / `volley` | **Stay Alive** | **REWORK** for the owner-requested Normal three **sequential** pillar-blockable projectiles; reconcile with existing TRUE volley stagger at 0.35s, preserve distinct TRUE behavior |
+| Boss regular index 2 | Call the Attendants / `summon` | **Clerk of Works** | **Existing #230 summon identity, roster and cap preserve/relabel**; Normal groups of 3 up to 12 living, TRUE four ordinary + two elite; reconcile #258 skeletal free-will canon |
+| Boss regular index 3 | Groundwork / `circle`, four simultaneous pads in #230 | **Differential Settlement** | **REWORK** to four snapshotted pads in **two successive pairs**; guard against `a.name === 'Groundwork'` code coupling |
+| Boss regular index 4 | **No existing slot in #230** | **Algor Mortis** | **NEW SPECIAL**: expanding warned **slow-only**, strictly zero direct HP damage; not a generic `coefficient: 0` attack |
 | Boss regular index 5 | **No existing slot in #230** | **Anastylosis** | **NEW SPECIAL**: self-only visible defensive state, 20% damage reduction for exactly four seconds |
 | Tactical rogue basic | Bone Hook / defensive shove | **Disarticulation** | **Rogue display-name relabel only**; don't change tactical shove logic |
 | Tactical rogue signature | Grave Threshold / slowed/binding warning | **Pressure Grouting** | **Rogue display-name relabel only**; don't change tactical control logic |
 | Separate always-on passive | No existing passive implementation | **Structural Consolidation** | **New Lifebinder-only mitigation hook later**, constant 6% Normal / 12% TRUE, independent of his timed special |
 
-**AV naming boundary:** Regular attacks' player-facing names come from boss/captain data and can have their own displayed attack narration. Their visual identities come from stable \`boss/<family>/<index>\`, \`captain/<profile>/<index>\` and \`rogue/...\` identifiers; don't rename those IDs or create gameplay effects by editing text. This is a **mapping recommendation for later code**, not a present code change.
+**AV naming boundary:** Regular attacks' player-facing names come from boss/captain data and can have their own displayed attack narration. Their visual identities come from stable `boss/<family>/<index>`, `captain/<profile>/<index>` and `rogue/...` identifiers; don't rename those IDs or create gameplay effects by editing text. This is a **mapping recommendation for later code**, not a present code change.
 
 ### 8C. Low-complexity future implementation order (NOT authorized now)
 
@@ -385,7 +385,7 @@ When the owner explicitly green-lights actual implementation, use separable revi
 1. **Integrate and reconcile existing drafted foundations first** (#230 boss/estate, #231 captain, #258 Lifebinder lore, plus current main). Compare real overlapping source, tests, combat identities, voice/display names, saved entities and TRUE titles before changing attack arrays. Do not merge source PRs blindly. The point of this dependency is to avoid implementing against a branch that does not contain the relevant feature.
 2. **Simple character, name and narrative changes next**: current display labels in their correct boss/rogue/captain registries, Scornfang and Thornfang professions including narrative-only K9 qualification, correctly worded Crypt stewardship and conscious Skeletons, existing quest text where appropriate. **Do not** make these look like newly implemented regular skills or passives. Keep original family IDs/slots and save identifiers. This is the first *potential future code slice*, **not** a slice performed in this documentation turn.
 3. **Existing numbers and invariant checks**: preserve Thornfang 1,200 base HP and pounce recovery, Scornfang 260 base HP with its one-time migration and 100-radius pot, Lifebinder 650/16 early Normal and 1,170 ordinary early TRUE, plus separate Awakening scaling, all captive/reward/quest/caches. Verify current branch tests before higher-risk work.
-4. **Scoped passives as isolated changes** with deterministic damage/status/summon-owner tests. Although conceptually small, \`Prolonged Exposure\` and \`Structural Consolidation\` enter shared combat paths and require **medium-risk code review**, not a global or visual-only flag.
+4. **Scoped passives as isolated changes** with deterministic damage/status/summon-owner tests. Although conceptually small, `Prolonged Exposure` and `Structural Consolidation` enter shared combat paths and require **medium-risk code review**, not a global or visual-only flag.
 5. **New/altered Lifebinder + Scornfang skills** as discrete resolver/selection/VFX/audio work, with engineering details decided in advance and solo/party fairness tests. Consider one move family per review slice; don't silently replace six moves with cosmetic labels on a four-slot scheduler.
 6. **Thornfang's extended navigable patrol and TRUE encounter integration**, followed by **verified** retired-prop reuse at Thornfang's Treasury. These have cross-system collision, leash, spawn, rescue, persistence and asset provenance risk; keep them after easier verified slices, not as a quick early rename.
 7. **Combined gameplay/CI/phone/save regression and owner-directed release decision** only after all approved included features actually work. No automatic merge, date or release number is implied.
