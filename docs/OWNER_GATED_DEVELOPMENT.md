@@ -18,6 +18,29 @@ The present development pause and the **single combined worldbuilding release ga
 6. **No continuous unattended coding promise.** Chat sessions do not keep implementing or self-recover after disconnection. Already-started GitHub Actions may continue independently. If a check has not completed, record it as pending. Resume from GitHub when the owner next requests project work; scheduled checks require separate setup and are not assumed.
 7. **No artificial urgency.** Pauses of hours, days, or months are acceptable. Technical interruptions do not require the owner to intervene. No arbitrary deadline, forced questionnaire pace, or routine troubleshooting assignment to the owner.
 
+## Zero-transcript recovery: new-chat default
+
+**Entry point:** [Recovery desk #297](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297). When the owner returns in a fresh conversation with a request such as *"I had you working on something and never saw the result"* or mentions a stream interruption, connection timeout, lost response, or conversation-length limit, **do not request a pasted chat, previous answer, ticket number or troubleshooting steps as the default**. Start investigating GitHub immediately.
+
+**Recover in this order:**
+
+1. Read #297 and the owner-gated policy, plus relevant central trackers (#232 and #251 for worldbuilding) and current `AGENTS.md`. Scan current open/draft PRs, linked issues and checkpoint notes, commits, branches, Actions runs and generated artifacts. The most recently updated PR is **not automatically the missing task**.
+2. Correlate the latest owner-approved objective, PR/issue activity, status, dependencies and unfinished tests. Identify the **best-supported interrupted task** rather than blindly choosing an unrelated PR. If several candidates exist, first take useful, safe investigative steps. Seek clarification only when a genuinely consequential ambiguity remains after searching the durable evidence.
+3. Determine whether a prior remote write succeeded, which SHA is actually committed, what CI checked at that SHA, and what is not saved. An interrupted stream is **not evidence of a failed write**, and chat output never substitutes for GitHub verification.
+4. **Continue the already authorized task in this conversation** as far as safely possible: resume the next pending implementation, audit, test or documentation step, fix bounded engineering failures, create a durable checkpoint, and put a concise result/link in the answer. Do not stop merely at a handoff summary if the work can be advanced now. Do not restart completed stages by default.
+5. Respect paused work and owner authority: checking status, preserving notes and continuing separately authorized documentation is permitted under the existing pause; a generic recovery request is **not blanket permission** to start previously paused gameplay work, invent new design decisions, merge, deploy or release. A release task can be prepared through the evidence gate but cannot be published without separate explicit approval.
+6. If the work was never committed and there is no durable copy, reconstruct it from the stored approved specification and current repository state when feasible. **Do not pretend unsaved data survived**. If both the task identity and needed design are genuinely unavailable from accessible records, explain the specific gap and ask only for the smallest indispensable fact—not an entire chat or a wholesale restart.
+
+**No session requires manual recovery by the owner.** The assistant owns the investigation, GitHub state reconciliation, bounded troubleshooting, and refreshed resume note. This is **on-demand** recovery when asked in a new chat, not uninterrupted background execution while offline.
+
+## Preventing missing results before they happen
+
+For any substantial authorized assignment, **record the task before lengthy work**, not only after it succeeds. Use its existing issue/PR or create a short owning issue if needed, with the owner's objective, approved specifications/constraints, branch or intended branch, progress state and next safe action. Include a pointer in [#297](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297) when a task lacks an obvious discovery trail. This initial issue note can safely exist **before** there is any code commit.
+
+As soon as meaningful edits exist, push a coherent branch commit **before** long tests, browser/asset runs or operations with high interruption risk. Periodically refresh the owning PR/issue after a meaningful milestone, failure, branch-head change or handoff; never leave completion, next action, or the tested SHA solely in a streaming chat response. For images, audio and generated content, commit usable assets (or retain exact recoverable links and preparation steps) rather than relying on expired session-only files. A failed or timed-out tool call must be checked against remote reality **before** retrying.
+
+The owning issue/PR checkpoint is the authoritative *specific task record*; #297 is the durable *discovery entrypoint*, not a second competing task database. When an interrupted task is recovered, record its current status at the owner, avoid stale duplicate tickets, and link to its next checkpoint. A task is marked **DONE** only after the deliverable exists in a retrievable place and the relevant checks are accurately recorded; posting prose that merely says "done" is insufficient.
+
 ## Four-stage milestone
 
 ### Stage 1 — Director's ballot and approved creative specification
