@@ -20,6 +20,18 @@ if (keyboardRevision) {
   ]);
   assert.match(keyboardRevision.source, /PR #269/);
 }
+// A separately reviewed charged-input change may supersede the approved
+// keyboard app hash, without weakening protection for simulation or visuals.
+const chargedRetargetRevision = manifest.approvedChargedRetargetRevision;
+if (chargedRetargetRevision) {
+  assert.deepEqual(Object.keys(chargedRetargetRevision.files).sort(), ['src/prototype/app.js']);
+  assert.match(chargedRetargetRevision.source, /PR #295/);
+  assert.equal(
+    chargedRetargetRevision.previousAppSha256,
+    keyboardRevision.files['src/prototype/app.js'],
+    'retarget review chains from the approved keyboard/UX source',
+  );
+}
 for (const [file, expected] of Object.entries(manifest.files)) {
   const actual = crypto
     .createHash('sha256')
@@ -27,7 +39,7 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    keyboardRevision?.files[file] || revision.files[file] || expected,
+    chargedRetargetRevision?.files[file] || keyboardRevision?.files[file] || revision.files[file] || expected,
     file + ' is protected against baseline / reviewed rendering revision ' + manifest.baseline,
   );
 }
