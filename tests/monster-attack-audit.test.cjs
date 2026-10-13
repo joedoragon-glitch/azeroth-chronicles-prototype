@@ -16,7 +16,7 @@ const baseline = Existing.audit();
 const report = Audit.report();
 assert.equal(report.totalVisualIdentities, baseline.total);
 assert.equal(report.counts.boss, 47);
-assert.equal(report.counts.captain, 16);
+assert.equal(report.counts.captain, 18);
 assert.equal(report.counts['captain-phase'], 5);
 assert.equal(report.counts.night, 2);
 assert.equal(report.counts.ranged, 18);

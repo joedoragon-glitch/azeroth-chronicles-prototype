@@ -2838,6 +2838,31 @@
             (plan.captainRadiusMultiplier || 1),
           sequence: [],
         };
+      if (plan.tracking) {
+        a.shotNumber = 1;
+        a.targetId = target === this.hero ? 'hero' : target.id;
+        for (let j = 2; j <= plan.shots; j++)
+          a.sequence.push({
+            ...a,
+            sequence: [],
+            shotNumber: j,
+            timer: plan.shotWarning,
+            total: plan.shotWarning,
+          });
+      }
+      if (plan.paired && e.captainProfile === 'supply-vale' && index === 4) {
+        const pads = this.attackPatches(a);
+        a.pairMarks = pads.slice(0, 2).map((p) => ({ x: p.x, y: p.y }));
+        a.count = 2;
+        a.sequence.push({
+          ...a,
+          sequence: [],
+          pairMarks: pads.slice(2).map((p) => ({ x: p.x, y: p.y })),
+          timer: plan.pairWarning,
+          total: plan.pairWarning,
+          name: plan.name + ' — second pair',
+        });
+      }
       if (plan.sequential && plan.kind === 'circle') {
         const patches = this.attackPatches(a);
         Object.assign(a, patches[0], { count: 1 });
@@ -3797,6 +3822,10 @@
         e.cd = Math.max(0, e.cd - dt);
         e.specialCd = Math.max(0, (e.specialCd || 0) - dt);
         e.summonCd = Math.max(0, (e.summonCd || 0) - dt);
+        if (e.family === 'crypt' && e.type === 'boss') {
+          e.anastylosis = Math.max(0, (e.anastylosis || 0) - dt);
+          e.anastylosisCd = Math.max(0, (e.anastylosisCd || 0) - dt);
+        }
         if (e.type === 'boss' && e.family === 'archive')
           e.sabotageCd = Math.max(0, (e.sabotageCd || 0) - dt);
         e.healCd = Math.max(0, (e.healCd || 0) - dt);
@@ -4012,7 +4041,7 @@
             this.resolveAttack(e);
             if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
               return;
-            e.telegraph = e.motion ? null : e.sequence?.shift() || null;
+            e.telegraph = e.motion ? null : this.advanceQueuedAttack(e);
             if (e.telegraph)
               this.event(
                 'warning',
@@ -4182,6 +4211,7 @@
             (e.type === 'boss' ? 145 : 175) *
               (e.form === 'ringleader' ? R.ringleaderScaling.pursuit : 1) *
               (e.captainPhaseMove || 1) *
+              this.ownedSummonMovementFactor(e) *
               (e.captainPursuit > 0 ? 1.2 : 1) *
               (e.quotaOvertime > 0 ? 1.15 : 1) *
               (e.slow > 0 ? 0.5 : 1) *

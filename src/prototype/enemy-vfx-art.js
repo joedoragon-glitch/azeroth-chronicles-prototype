@@ -15,6 +15,8 @@
       ['volley', 'bone'],
       ['call', 'bone'],
       ['seal', 'spectral'],
+      ['rupture', 'water'],
+      ['call', 'stone'],
     ],
     mire: [
       ['bite', 'mire'],
@@ -79,6 +81,8 @@
       ['rush', 'fur'],
       ['roots', 'root'],
       ['fan', 'dust'],
+      ['volley', 'stone'],
+      ['seal', 'ember'],
     ],
     'supply-march': [
       ['rush', 'mire'],

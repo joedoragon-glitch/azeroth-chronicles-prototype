@@ -406,6 +406,10 @@
           const ratio = Math.max(0, Math.min(1, e.mireLowestHpRatio));
           amount *= 1 - 0.4 * Math.max(0, Math.min(1, (ratio - 0.5) * 2));
         }
+        if (e.type === 'boss' && e.family === 'crypt')
+          amount *=
+            R.greenwoodPassives.structuralConsolidation[e.form === 'true' ? 'true' : 'normal'] *
+            (e.anastylosis > 0 ? R.attacks.crypt[5].defenseFactor : 1);
         if (e.family === 'citadel' && e.open <= 0) amount *= 0.65;
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;
         // All hero/companion damage sources use this same resolver. This
@@ -611,18 +615,23 @@
           }
           a.life -= dt;
           a.tick -= dt;
-          a.age = (a.age || 0) + dt;
+          const previousRadius = a.radius || 0;
+          a.age = a.slowOnly ? Math.min(a.waveLife, (a.age || 0) + dt) : (a.age || 0) + dt;
           if (a.kind === 'ring') {
-            a.radius = a.age * R.combatGeometry.ringSpeed;
+            a.radius = a.age * (a.waveSpeed || R.combatGeometry.ringSpeed);
             for (const u of this.combatTargets()) {
               const id = u === this.hero ? 'hero' : u.id;
               if (
                 !a.hit.includes(id) &&
-                Math.abs(dist(u, a) - a.radius) < R.combatGeometry.ringHalfWidth &&
+                (a.slowOnly
+                  ? dist(u, a) >= previousRadius - R.combatGeometry.ringHalfWidth &&
+                    dist(u, a) <= a.radius + R.combatGeometry.ringHalfWidth
+                  : Math.abs(dist(u, a) - a.radius) < R.combatGeometry.ringHalfWidth) &&
                 this.line(a, u)
               ) {
                 a.hit.push(id);
-                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null))
+                if (a.slowOnly) this.applySlow(u, a.slowDuration);
+                else if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null))
                   this.enemyVfxHazardImpact?.(a, u);
               }
             }
@@ -632,7 +641,15 @@
               if (dist(u, a) < a.radius && this.line({ x: a.fromX ?? a.x, y: a.fromY ?? a.y }, u)) {
                 if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null)) {
                   this.enemyVfxHazardImpact?.(a, u);
-                  if (a.slow) this.applySlow(u, a.slowSeconds || 3);
+                  if (a.slow)
+                    this.applySlow(
+                      u,
+                      this.regularSlowDuration(
+                        this.zone().enemies.find((e) => e.id === a.sourceId),
+                        a,
+                        a.slowSeconds || 3,
+                      ),
+                    );
                 }
               }
           }

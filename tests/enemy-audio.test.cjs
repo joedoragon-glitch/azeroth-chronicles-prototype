@@ -50,7 +50,9 @@ for (const b of C.data.bosses)
       for (const f of c.effects) a.effect(f);
       assert.equal(
         calls.filter((x) => x[0] === 'duck').length,
-        C.rules.attacks[b.id][i].kind === 'summon' ? 0 : 1,
+        C.rules.attacks[b.id][i].kind === 'summon' || C.rules.attacks[b.id][i].coefficient === 0
+          ? 0
+          : 1,
       );
       const n = calls.length;
       for (const f of c.effects) a.effect(f);

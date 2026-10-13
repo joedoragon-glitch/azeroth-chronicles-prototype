@@ -9,15 +9,22 @@ assert.equal(b.hp, 650);
 assert.equal(b.damage, 16);
 assert.deepEqual(
   b.attacks.map((s) => s.split(':')[0]),
-  ['Binding Sweep', 'Stay Alive', 'Call the Attendants', 'Groundwork'],
+  [
+    'Excarnation',
+    'Stay Alive',
+    'Clerk of Works',
+    'Differential Settlement',
+    'Algor Mortis',
+    'Anastylosis',
+  ],
 );
 assert.match(D.regions[0].exploration, /Lifebinder/);
 assert.match(D.regions[0].exploration, /winter estate/);
 assert.match(D.regions[0].exploration, /skeletons retain their own names and allegiances/);
 assert.match(R.dungeonLore.crypt, /six seats at the winter table/);
 assert.match(R.dungeonWorkstations.crypt.context, /BOUND and RELEASED/);
-assert.match(R.tacticalFoundation.rogueMoves.bosses.crypt.name, /Lifebinder/);
-assert.match(R.tacticalFoundation.rogueSignatures.bosses.crypt.name, /Lifebinder/);
+assert.equal(R.tacticalFoundation.rogueMoves.bosses.crypt.name, 'Disarticulation');
+assert.equal(R.tacticalFoundation.rogueSignatures.bosses.crypt.name, 'Pressure Grouting');
 assert(
   D.quests.some((q) => q.name === 'An Unfinished Retreat') ||
     JSON.stringify(D).includes('Defeat Lifebinder; free Borin'),

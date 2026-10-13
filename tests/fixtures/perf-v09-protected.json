@@ -85,16 +85,16 @@
     }
   },
   "approvedSnapshotEncounterRevision": {
-    "source": "Director #298; selective #230/#231/#280 foundations, family/slot dispatch and lifecycle cleanup; original hashes preserved; #293 Crag horned humanoid",
+    "source": "Director #298; selective #230/#231/#280 foundations, family/slot dispatch and lifecycle cleanup; original hashes preserved; #293 Crag horned humanoid; #289/#298 six Lifebinder techniques, five Scornfang techniques and three Greenwood passives",
     "baseline": "c5166c34f5ebe88a065665c05c833a4b0fcf657d",
     "files": {
-      "src/prototype/boss-combat.js": "45c30f80f6b0b5e6d8dc74318282a02799eecac2e538abcdb316cef27e8a9041",
-      "src/prototype/combat.js": "702bc23f1819b07a8e748b9fe8865bd53cb7e76fad63cc477f5db35355e32bdd",
-      "src/prototype/data.js": "bba5a5e454fa4cf39a37a06996f9b276432a75b5cfc175681d06d657076b9e3d",
-      "src/prototype/engine.js": "bc900287c0f32a873a443bdc5341389a19070fdec136b6b5cd847148c75eeeab",
+      "src/prototype/boss-combat.js": "3f918757703173b38a0a8510ae9fa7e535125c09b660bdbd0c3768a80e1e7715",
+      "src/prototype/combat.js": "9b9f68fed6c9aca805696ee8cc707a05d68f08f8d083cdcee94b54377f988e1c",
+      "src/prototype/data.js": "ee5a59f6525612b35984b61eeb50932a6e63d596783edcdf210071a38f12cc17",
+      "src/prototype/engine.js": "c33e32de7ba9184e7983a3ad9f647367de01d39002409187caf7163ae9b01cd8",
       "src/prototype/hero-combat.js": "08e4333d88965d789b5461feda63fb5240bfef97e566f354bc7d16d9d1db6108",
       "src/prototype/party.js": "ce4077278ef832d7e4eaf354081a2a07025c217f6395fad2ba4d5852160ad1b9",
-      "src/prototype/rules.js": "18f3d0e72fd28af6dc5478bea4988506c6c540e28746e6a1859bb934b8b99907",
+      "src/prototype/rules.js": "eb9130d1240a2e578920790570f88354c54961089c9560a20fc059796a372c5d",
       "src/prototype/save.js": "ddc48c63b2327d5305255fbc3e2d44802ab3e92810f3899ae5bfd64ed8f8f087"
     }
   }

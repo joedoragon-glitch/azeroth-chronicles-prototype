@@ -50,9 +50,17 @@
     );
   }
   function warningShapes(a, patches) {
-    if (a.kind === 'summon') return [];
+    if (a.kind === 'summon' || a.selfDefense) return [];
     if (a.kind === 'line' || a.kind === 'volley')
-      return (a.kind === 'volley' ? [-0.22, 0, 0.22] : a.count === 2 ? [-85, 85] : [0]).map((o) => {
+      return (
+        a.kind === 'volley'
+          ? a.tracking
+            ? [0]
+            : [-0.22, 0, 0.22]
+          : a.count === 2
+            ? [-85, 85]
+            : [0]
+      ).map((o) => {
         const angle = a.angle + (a.kind === 'volley' ? o : 0),
           offset = a.kind === 'volley' ? 0 : o,
           side = { x: -Math.sin(angle), y: Math.cos(angle) },
@@ -84,7 +92,9 @@
       return [
         circlePoints(
           { x: a.fromX, y: a.fromY },
-          G.ringSpeed * G.ringLife * R.bossCadence.areaRangeMultiplier + G.ringHalfWidth,
+          (a.slowOnly
+            ? a.waveSpeed * a.waveLife
+            : G.ringSpeed * G.ringLife * R.bossCadence.areaRangeMultiplier) + G.ringHalfWidth,
         ),
       ];
     return patches.map((p) => circlePoints(p, p.radius));
@@ -100,15 +110,17 @@
     ctx.stroke();
   }
   function hazardKind(a) {
-    return a.manaDrain
-      ? 'spectral'
-      : a.slow
-        ? 'mire'
-        : a.family === 'abyss' || a.family === 'cindermaw'
-          ? 'ember'
-          : a.family === 'mine' || a.family === 'ridge'
-            ? 'stone'
-            : 'ritual';
+    return a.slowOnly
+      ? 'cold'
+      : a.manaDrain
+        ? 'spectral'
+        : a.slow
+          ? 'mire'
+          : a.family === 'abyss' || a.family === 'cindermaw'
+            ? 'ember'
+            : a.family === 'mine' || a.family === 'ridge'
+              ? 'stone'
+              : 'ritual';
   }
   function ground(ctx, screen, game, pass = 'fill', time = 0) {
     const cue = pass === 'cue';
@@ -215,8 +227,18 @@
     for (const e of game
       .zone()
       .enemies.filter((e) => visibleWarning(e) && !(e.family === 'ridge' && e.ledgerOpen))) {
-      const a = e.telegraph,
-        shapes = warningShapes(a, game.attackPatches(a));
+      const a = e.telegraph;
+      if (cue && a.tracking) {
+        const p = screen(a);
+        ctx.strokeStyle = '#f4c984';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(p.x - 12, p.y - 29, 24, 21);
+        ctx.fillStyle = '#fff3c8';
+        ctx.font = 'bold 12px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText(String(a.shotNumber) + '/' + String(a.shots), p.x, p.y - 13);
+      }
+      const shapes = warningShapes(a, game.attackPatches(a));
       // Rogue warnings need an identity distinct from ordinary boss attacks:
       // cool outlines for basic disruption, brighter double-width for signature.
       ctx.strokeStyle = a.bossHeal
@@ -285,18 +307,35 @@
         lines.forEach((t, j) => ctx.fillText(t, left + w / 2, top + 16 + j * 15));
       }
     }
+    for (const e of game.zone().enemies) {
+      if (e.hp <= 0 || e.returning || !(e.anastylosis > 0 || e.telegraph?.selfDefense)) continue;
+      const p = screen(e),
+        active = e.anastylosis > 0;
+      ctx.strokeStyle = active ? '#b7ddd5' : '#9aafbf';
+      ctx.fillStyle = active ? '#81b8ad' : '#7a8d9a';
+      ctx.lineWidth = 1.5;
+      for (let j = 0; j < 6; j++) {
+        const angle = (j * Math.PI) / 3,
+          x = p.x + Math.cos(angle) * 27,
+          y = p.y - 25 + Math.sin(angle) * 12;
+        ctx.fillRect(x - 4, y - 5, 8, 10);
+        ctx.strokeRect(x - 4, y - 5, 8, 10);
+      }
+    }
     for (const a of game.s.hazards) {
       const kind = hazardKind(a),
         color =
-          kind === 'spectral'
-            ? '#bf94df'
-            : kind === 'mire'
-              ? '#b8bd77'
-              : kind === 'ember'
-                ? '#ff9b61'
-                : kind === 'stone'
-                  ? '#e0b587'
-                  : '#ee9675';
+          kind === 'cold'
+            ? '#acebf0'
+            : kind === 'spectral'
+              ? '#bf94df'
+              : kind === 'mire'
+                ? '#b8bd77'
+                : kind === 'ember'
+                  ? '#ff9b61'
+                  : kind === 'stone'
+                    ? '#e0b587'
+                    : '#ee9675';
       if (a.kind === 'ring') {
         polygon(ctx, screen, circlePoints(a, a.radius + G.ringHalfWidth));
         const inner = circlePoints(a, Math.max(0, a.radius - G.ringHalfWidth));
@@ -305,9 +344,9 @@
           j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
         });
         ctx.closePath();
-        ctx.fillStyle = '#e4683d35';
+        ctx.fillStyle = a.slowOnly ? '#8adaef35' : '#e4683d35';
         if (cue) {
-          ctx.strokeStyle = '#ffb783';
+          ctx.strokeStyle = a.slowOnly ? '#bceeff' : '#ffb783';
           ctx.lineWidth = 2;
           ctx.stroke();
         } else ctx.fill('evenodd');

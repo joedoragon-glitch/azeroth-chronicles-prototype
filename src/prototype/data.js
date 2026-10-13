@@ -169,10 +169,12 @@ const PrototypeData = {
       xp: 55,
       place: 'Forest Crypt',
       attacks: [
-        'Binding Sweep: frontal cone, 1.0 second warning and a safe rear arc.',
+        'Excarnation: frontal arc, 1.0 second warning, light backward push and a safe rear arc.',
         'Stay Alive: three visible projectiles with 1.2 second windup; solid pillars block them.',
-        'Call the Attendants: 1.6 second warning, then three estate attendants; each cast adds a new group up to the encounter safety ceiling.',
-        'Groundwork: marks four separated patches for 1.6 seconds; they last 4 seconds and leave escape routes.',
+        'Clerk of Works: 1.6 second warning, then three estate attendants; each cast adds a new group up to the encounter safety ceiling.',
+        'Differential Settlement: four separated eruptions in two warned pairs; each patch lasts 4 seconds with escape routes.',
+        'Algor Mortis: a warned expanding cold wave; contact causes no HP damage and 2 seconds of Slow.',
+        'Anastylosis: brief stone assembly, then 20% incoming damage reduction for exactly 4 seconds; no attack damage.',
       ],
     },
     {

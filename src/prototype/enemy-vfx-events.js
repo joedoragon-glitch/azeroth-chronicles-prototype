@@ -24,6 +24,13 @@
     'advance',
     'persistent',
     'nightSkill',
+    'slowOnly',
+    'selfDefense',
+    'tracking',
+    'shotNumber',
+    'shots',
+    'waveSpeed',
+    'waveLife',
     'rogueMove',
     'rogueSignature',
     'effect',
@@ -59,6 +66,7 @@
     if (game.enemyVfxEnabled === false || !e || e.hp <= 0) return null;
     if (stage === 'windup' && (a.anonymousCast || (e.family === 'ridge' && e.ledgerOpen)))
       return null;
+    if (stage === 'impact' && a.selfDefense) return null;
     const visual =
       identity ||
       (stage === 'phase'

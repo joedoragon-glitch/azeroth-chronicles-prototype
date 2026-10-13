@@ -25,6 +25,8 @@ for (const cls of ['paladin', 'mage', 'ranger'])
       const { c, e } = arena('crypt', cls, mode, form);
       const built = c.buildBossAttack(e, 3, c.hero);
       const before = c.attackPatches(built.first);
+      assert.equal(before.length, 2);
+      assert.equal(c.attackPatches(built.sequence[0]).length, 2);
       built.first.name = 'Localized replacement';
       assert.deepEqual(
         c.attackPatches(built.first),

@@ -24,10 +24,30 @@
       attack('summon', 1.5, 1.5, { species: 'wolf', ranged: false }),
     ],
     crypt: [
-      attack('cone', 1, 1),
-      attack('volley', 1.2, 1.4),
+      attack('cone', 1, 1, { push: 45 }),
+      attack('volley', 1.2, 1.4, { normalShotInterval: 0.55, trueShotInterval: 0.28 }),
       attack('summon', 1.6, 1.4, { species: 'crownguard', ranged: false, attendant: true }),
-      attack('circle', 1.6, 1.4, { count: 4, persistent: true, manaDrain: 0.05 }),
+      attack('circle', 1.6, 1.4, {
+        count: 4,
+        paired: true,
+        pairWarning: 0.85,
+        persistent: true,
+        manaDrain: 0.05,
+      }),
+      attack('ring', 1.1, 1.2, {
+        slowOnly: true,
+        coefficient: 0,
+        waveSpeed: 360,
+        waveLife: 1.2,
+        slowDuration: 2,
+      }),
+      attack('circle', 0.8, 1.1, {
+        selfDefense: true,
+        coefficient: 0,
+        defenseDuration: 4,
+        defenseFactor: 0.8,
+        defenseCooldown: 8,
+      }),
     ],
     mire: [
       attack('cone', 0.9, 1),
@@ -3775,6 +3795,11 @@
       crypt: { normalCap: 12, trueCap: 6, minions: 4, captains: 2 },
     },
   };
+  const greenwoodPassives = {
+    structuralConsolidation: { normal: 0.94, true: 0.88 },
+    rapidDeployment: { normal: 1.08, true: 1.15 },
+    prolongedExposure: { normal: 1.1, phase: 1.2 },
+  };
   const bossBehavior = {
     thorn: {
       close: [0],
@@ -3918,10 +3943,10 @@
       visualScale: 1.16,
       specialRange: 470,
       specialCooldown: 4.2,
-      phase: { threshold: 0.55, name: "Scavenger's Nerve", kind: 'scramble' },
+      phase: { threshold: 0.55, name: 'Corrective Action', kind: 'scramble' },
       attacks: [
         {
-          name: 'Hookfang Rush',
+          name: 'Selective Deconstruction',
           kind: 'line',
           warning: 0.9,
           recovery: 1.15,
@@ -3929,7 +3954,7 @@
           charge: true,
         },
         {
-          name: 'Briar Pot',
+          name: 'Encapsulation',
           kind: 'circle',
           warning: 1.15,
           recovery: 1.15,
@@ -3939,13 +3964,38 @@
           radius: 100,
         },
         {
-          name: 'Pocket Sand',
+          name: 'Dust Entrainment',
           kind: 'cone',
           warning: 0.7,
           recovery: 0.95,
           coefficient: 0.55,
           slow: true,
           radius: 135,
+        },
+        {
+          name: 'Cradle-to-Grave Tracking',
+          kind: 'volley',
+          tracking: true,
+          warning: 1,
+          shotWarning: 0.45,
+          shots: 4,
+          shotSpeed: 400,
+          shotLife: 1.8,
+          recovery: 1.1,
+          coefficient: 0.45,
+        },
+        {
+          name: 'Hot Zone',
+          kind: 'circle',
+          count: 4,
+          captainSpread: true,
+          paired: true,
+          pairWarning: 0.65,
+          warning: 0.95,
+          recovery: 1.1,
+          coefficient: 0.7,
+          persistent: true,
+          radius: 52,
         },
       ],
     },
@@ -4379,7 +4429,7 @@
       ogre: { name: 'Rockside Slam', style: 'shove', coefficient: 0.22 },
     },
     captains: {
-      'supply-vale': { name: 'Scornfang’s Pocket Trick', style: 'snare', coefficient: 0.2 },
+      'supply-vale': { name: 'Impoundment', style: 'snare', coefficient: 0.2 },
       'supply-march': { name: 'Direjaw’s Silt Hook', style: 'snare', coefficient: 0.2 },
       'supply-highlands': {
         name: 'Crag Tyrant’s Shoulder Feint',
@@ -4394,8 +4444,8 @@
       },
     },
     bosses: {
-      thorn: { name: 'Thornfang’s Pack Feint', style: 'dash', coefficient: 0.23 },
-      crypt: { name: 'Lifebinder’s Bone Hook', style: 'shove', coefficient: 0.24 },
+      thorn: { name: 'Break Contact', style: 'dash', coefficient: 0.23 },
+      crypt: { name: 'Disarticulation', style: 'shove', coefficient: 0.24 },
       mire: { name: 'Mirejaw’s Bog Snare', style: 'snare', coefficient: 0.23 },
       archive: { name: 'Drowned Keeper’s Undertow', style: 'shove', coefficient: 0.24 },
       ridge: { name: 'Ridge Tyrant’s Stone Feint', style: 'shove', coefficient: 0.24 },
@@ -4620,7 +4670,7 @@
   const rogueSignatures = {
     captains: {
       'supply-vale': {
-        name: 'Scornfang’s Bait-and-Switch',
+        name: 'Emergency Egress',
         effect: 'pivot',
         warning: 1.15,
         radius: 115,
@@ -4677,7 +4727,7 @@
     },
     bosses: {
       thorn: {
-        name: 'Thornfang’s Packbreaker Howl',
+        name: 'Crowd Dispersal',
         effect: 'scatter',
         warning: 1.25,
         radius: 165,
@@ -4685,7 +4735,7 @@
         coefficient: 0.08,
       },
       crypt: {
-        name: 'Lifebinder’s Grave Threshold',
+        name: 'Pressure Grouting',
         effect: 'bind',
         warning: 1.4,
         radius: 120,
@@ -4847,6 +4897,7 @@
     bossCadence,
     bossSummoning,
     bossBehavior,
+    greenwoodPassives,
     rangedEnemyCombat,
     chargedSkills,
     basicAttackCombo,

@@ -7,6 +7,7 @@ const P = require('../src/prototype/enemy-presentation.js');
 const assert = require('node:assert/strict');
 
 function expectedStages(plan) {
+  if (plan.selfDefense) return ['windup', 'release'];
   if (plan.kind === 'summon') return ['windup', 'release', 'spawn'];
   if (plan.kind === 'volley') return ['windup', 'release', 'travel', 'impact'];
   if (plan.charge || plan.landing || (plan.kind === 'line' && plan.advance))

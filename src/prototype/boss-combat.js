@@ -24,6 +24,8 @@
           'ledgerNextAt',
           'mireLowestHpRatio',
           'sabotageCd',
+          'anastylosis',
+          'anastylosisCd',
           'quotaTarget',
         ])
           delete e[key];
@@ -67,6 +69,43 @@
             delete u[key];
       }
 
+      advanceQueuedAttack(e) {
+        const a = e.sequence?.shift() || null;
+        if (a?.tracking) {
+          const target = this.combatTargets().find(
+            (u) => (u === this.hero ? 'hero' : u.id) === a.targetId && u.hp > 0,
+          );
+          if (!target) {
+            e.sequence = [];
+            return null;
+          }
+          Object.assign(a, {
+            x: target.x,
+            y: target.y,
+            fromX: e.x,
+            fromY: e.y,
+            angle: Math.atan2(target.y - e.y, target.x - e.x),
+          });
+        }
+        return a;
+      }
+      ownedSummonMovementFactor(e) {
+        if (!e.summon || e.species !== 'wolf') return 1;
+        const owner = this.zone().enemies.find(
+          (u) => u.id === e.owner && u.type === 'boss' && u.family === 'thorn' && u.hp > 0,
+        );
+        return owner
+          ? R.greenwoodPassives.rapidDeployment[owner.form === 'true' ? 'true' : 'normal']
+          : 1;
+      }
+      regularSlowDuration(e, a, seconds) {
+        return (
+          seconds *
+          (e?.captainProfile === 'supply-vale' && a.captainSkill && !a.rogueMove
+            ? R.greenwoodPassives.prolongedExposure[e.captainPhase ? 'phase' : 'normal']
+            : 1)
+        );
+      }
       trueSummonPlan(e) {
         const authored = R.attacks[e.family]?.find((a) => a.kind === 'summon');
         return authored
@@ -266,7 +305,10 @@
         if (kind === 'sector') return 280 * scale;
         // The moving ring's reach comes from speed × lifetime, not its
         // initially displayed radius (which is overwritten on every tick).
-        if (kind === 'ring') return R.combatGeometry.ringSpeed * R.combatGeometry.ringLife * scale;
+        if (kind === 'ring')
+          return plan.slowOnly
+            ? plan.waveSpeed * plan.waveLife
+            : R.combatGeometry.ringSpeed * R.combatGeometry.ringLife * scale;
         return null;
       }
       bossAttackWeights(e, target = this.hero, allowRepeat = false) {
@@ -286,6 +328,8 @@
             return 0;
           if (reach !== null && dist(e, attackTarget) > reach + 25) return 0;
           let w = 1;
+          if (plan.selfDefense && ((e.anastylosis || 0) > 0 || (e.anastylosisCd || 0) > 0))
+            return 0;
           if (plan.sabotage && (e.sabotageCd || 0) > 0) return 0;
           if (plan.kind === 'summon') {
             if (alive >= cap || (e.summonCd || 0) > 0) return 0;
@@ -347,7 +391,10 @@
           kind = plan.kind === 'sector' && e.hp > e.maxHp * 0.5 ? 'cone' : plan.kind,
           angle = Math.atan2(target.y - e.y, target.x - e.x),
           from = { x: e.x, y: e.y },
-          center = ['cone', 'ring', 'sector'].includes(kind) ? from : { x: target.x, y: target.y },
+          center =
+            plan.selfDefense || ['cone', 'ring', 'sector'].includes(kind)
+              ? from
+              : { x: target.x, y: target.y },
           a = {
             ...plan,
             family: e.family,
@@ -392,6 +439,18 @@
             { x: a.x - 185, y: a.y - 95 },
             { x: a.x + 185, y: a.y + 95 },
           ];
+        }
+        if (a.paired && e.family === 'crypt' && index === 3) {
+          const pads = this.attackPatches(a);
+          a.groundworkMarks = pads.slice(0, 2).map((p) => ({ x: p.x, y: p.y }));
+          a.count = 2;
+          sequence.push({
+            ...a,
+            groundworkMarks: pads.slice(2).map((p) => ({ x: p.x, y: p.y })),
+            timer: a.pairWarning,
+            total: a.pairWarning,
+            name: a.name + ' — second pair',
+          });
         }
         if (a.sequential && a.kind === 'circle') {
           const patches = this.attackPatches(a);
@@ -536,7 +595,9 @@
         return true;
       }
       attackPatches(a) {
-        if (a.family === 'crypt' && a.index === 3 && a.count === 4 && !a.captainSkill) {
+        if (a.pairMarks && a.captainProfile === 'supply-vale' && a.index === 4)
+          return a.pairMarks.map((p) => ({ ...a, ...p, radius: a.radius }));
+        if (a.family === 'crypt' && a.index === 3 && !a.captainSkill) {
           // A target-centered construction grid: four offset hazard pads,
           // leaving deliberate corridors rather than a solid damage carpet.
           const marks = a.groundworkMarks || [
@@ -545,7 +606,9 @@
             { x: a.x - 185, y: a.y - 95 },
             { x: a.x + 185, y: a.y + 95 },
           ];
-          return marks.map((mark) => ({ ...a, x: mark.x, y: mark.y, radius: 72 }));
+          return marks
+            .slice(0, a.count || 4)
+            .map((mark) => ({ ...a, x: mark.x, y: mark.y, radius: 72 }));
         }
         if (
           a.family === 'warlord' &&
@@ -604,6 +667,11 @@
       resolveAttack(e) {
         const a = e.telegraph;
         if (!a) return;
+        if (a.selfDefense && e.family === 'crypt' && a.index === 5) {
+          e.anastylosis = a.defenseDuration;
+          e.anastylosisCd = a.defenseCooldown;
+          return;
+        }
         if (a.rogueMove) {
           this.tacticalResolveRogueMove(e, a);
           return;
@@ -713,6 +781,39 @@
           }
           return;
         }
+        if (a.tracking && a.captainSkill && e.captainProfile === 'supply-vale' && a.index === 3) {
+          if (
+            !this.combatTargets().some(
+              (u) => (u === this.hero ? 'hero' : u.id) === a.targetId && u.hp > 0,
+            )
+          ) {
+            e.sequence = [];
+            return;
+          }
+          this.s.projectiles.push({
+            id: 'projectile-' + this.s.nextId++,
+            x: e.x,
+            y: e.y,
+            dx: Math.cos(a.angle),
+            dy: Math.sin(a.angle),
+            speed: a.shotSpeed,
+            life: a.shotLife,
+            damage: e.damage * a.coefficient,
+            source: 'enemy',
+            sourceId: e.id,
+            species: e.species,
+            style: 'stone',
+          });
+          this.event('projectileLaunch', {
+            actor: 'enemy',
+            source: e.id,
+            species: e.species,
+            style: 'stone',
+            x: e.x,
+            y: e.y,
+          });
+          return;
+        }
         if (a.kind === 'volley') {
           const style = e.projectileStyle || 'arrow';
           for (const [i, delta] of [-0.22, 0, 0.22].entries())
@@ -730,7 +831,12 @@
               sourceId: e.id,
               species: e.species,
               style,
-              delay: a.staggered ? i * 0.35 : 0,
+              delay:
+                e.family === 'crypt' && a.index === 1
+                  ? i * (e.form === 'true' ? a.trueShotInterval : a.normalShotInterval)
+                  : a.staggered
+                    ? i * 0.35
+                    : 0,
             });
           this.event('projectileLaunch', {
             actor: 'enemy',
@@ -753,9 +859,12 @@
             sourceId: e.id,
             x: e.x,
             y: e.y,
-            life: R.combatGeometry.ringLife * R.bossCadence.areaRangeMultiplier,
+            life: a.slowOnly
+              ? a.waveLife
+              : R.combatGeometry.ringLife * R.bossCadence.areaRangeMultiplier,
             tick: 0,
-            damage: e.damage,
+            damage: a.slowOnly ? 0 : e.damage,
+            radius: 0,
             age: 0,
             hit: [],
           });
@@ -848,6 +957,22 @@
               u.deathRollHeld = true;
               this.event('warning', { family: 'mire', deathRoll: true });
             }
+            if (
+              landed &&
+              e.type === 'boss' &&
+              e.family === 'crypt' &&
+              a.index === 0 &&
+              a.push > 0 &&
+              u.hp > 0
+            ) {
+              const d = Math.max(1, dist(u, e));
+              this.move(
+                u,
+                { x: u.x + ((u.x - e.x) * a.push) / d, y: u.y + ((u.y - e.y) * a.push) / d },
+                a.push / 0.15,
+                0.15,
+              );
+            }
             if (landed && e.family === 'ridge' && e.type === 'boss' && a.index === 1 && u.hp > 0) {
               const d = Math.max(1, dist(u, a));
               const dest = this.safe(u.x + ((u.x - a.x) * 75) / d, u.y + ((u.y - a.y) * 75) / d);
@@ -878,7 +1003,8 @@
                 y: u.y,
                 target: u === this.hero ? 'hero' : u.id,
               });
-            if (landed && (a.slow || a.slowDuration)) this.applySlow(u, a.slowDuration || 4);
+            if (landed && (a.slow || a.slowDuration))
+              this.applySlow(u, this.regularSlowDuration(e, a, a.slowDuration || 4));
             if (party[0] !== this.hero || this.s.challenge.pending || this.s.challenge.gameOver)
               return;
           }
@@ -945,7 +1071,7 @@
             (e.frenzy ? R.ringleaderScaling.frenzyCooldown : 1);
           if (a.opening)
             e.open = e.form === 'true' && e.family === 'citadel' ? a.opening / 2 : a.opening;
-          e.telegraph = e.sequence?.shift() || null;
+          e.telegraph = this.advanceQueuedAttack(e);
           if (e.telegraph) this.event('warning', { family: e.family });
           else e.basicDue = e.type === 'boss' && e.attackIndex % R.bossCadence.skillsPerBasic === 0;
         }
