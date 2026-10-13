@@ -13212,12 +13212,7 @@
     };
     const visible = (q) => {
       const p = screen(q);
-      return (
-        p.x > -150 &&
-        p.x < bounds.width + 150 &&
-        p.y > -150 &&
-        p.y < bounds.height + 150
-      );
+      return p.x > -150 && p.x < bounds.width + 150 && p.y > -150 && p.y < bounds.height + 150;
     };
     const strip = (kind, x1, x2, y1, y2) => {
       if (y2 <= y1) return;
@@ -13361,12 +13356,7 @@
           radius = 190 + (seed % 95),
           rx = radius * 0.76 * Math.SQRT2,
           ry = radius * 0.27 * Math.SQRT2;
-        if (
-          q.x + rx < 0 ||
-          q.x - rx > bounds.width ||
-          q.y + ry < 0 ||
-          q.y - ry > bounds.height
-        )
+        if (q.x + rx < 0 || q.x - rx > bounds.width || q.y + ry < 0 || q.y - ry > bounds.height)
           continue;
         ctx.save();
         ctx.translate(q.x, q.y);
