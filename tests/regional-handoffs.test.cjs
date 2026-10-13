@@ -145,7 +145,7 @@ for (const id of ids) {
     a = C.rules.treasuryArchitecture[z.id],
     captain = z.enemies.find((e) => e.roomCaptain);
   assert(a.walkable.some((r) => r.id === 'hearth-room'));
-  assert.equal(captain.species, 'wolf');
+  assert.equal(captain.species, 'ridge');
   assert(!captain.ranged);
   assert(
     z.props.filter(
