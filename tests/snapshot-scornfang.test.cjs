@@ -34,6 +34,21 @@ for (const cls of ['paladin', 'mage', 'ranger'])
       select(c, e, 3);
       assert.equal(e.telegraph.shotNumber, 1);
       assert.equal(e.sequence.length, 3);
+      const { createCanvas } = require('@napi-rs/canvas');
+      const canvas = createCanvas(375, 800),
+        ctx = canvas.getContext('2d');
+      const screen = (p) => ({ x: 188 + (p.x - c.hero.x) * 0.4, y: 330 + (p.y - c.hero.y) * 0.4 });
+      require('../src/prototype/combat-visuals.js').ground(ctx, screen, c, 'cue', 0);
+      const tag = ctx.getImageData(178, 345, 1, 1).data;
+      assert(
+        tag[3] > 240 && tag[0] < 60 && tag[1] < 60,
+        'number tag remains visible below the target, outside the caption',
+      );
+      const digits = ctx.getImageData(176, 345, 24, 16).data;
+      let lit = 0;
+      for (let i = 0; i < digits.length; i += 4)
+        if (digits[i] > 180 && digits[i + 1] > 160 && digits[i + 3] > 240) lit++;
+      assert(lit >= 10, 'actual counter glyphs survive the caption/aim lane rendering');
       assert.deepEqual(
         e.sequence.map((a) => a.shotNumber),
         [2, 3, 4],

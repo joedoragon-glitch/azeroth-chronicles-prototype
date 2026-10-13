@@ -228,16 +228,6 @@
       .zone()
       .enemies.filter((e) => visibleWarning(e) && !(e.family === 'ridge' && e.ledgerOpen))) {
       const a = e.telegraph;
-      if (cue && a.tracking) {
-        const p = screen(a);
-        ctx.strokeStyle = '#f4c984';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(p.x - 12, p.y - 29, 24, 21);
-        ctx.fillStyle = '#fff3c8';
-        ctx.font = 'bold 12px system-ui';
-        ctx.textAlign = 'center';
-        ctx.fillText(String(a.shotNumber) + '/' + String(a.shots), p.x, p.y - 13);
-      }
       const shapes = warningShapes(a, game.attackPatches(a));
       // Rogue warnings need an identity distinct from ordinary boss attacks:
       // cool outlines for basic disruption, brighter double-width for signature.
@@ -305,6 +295,19 @@
         ctx.strokeRect(left, top, w, h);
         ctx.fillStyle = a.rogueMove ? '#f2fbff' : '#fff3c8';
         lines.forEach((t, j) => ctx.fillText(t, left + w / 2, top + 16 + j * 15));
+      }
+      if (cue && a.tracking) {
+        const p = screen(a);
+        ctx.strokeStyle = '#f4c984';
+        ctx.lineWidth = 2;
+        // Below the target footprint, clear of the full attack caption above it.
+        ctx.fillStyle = '#241d1af2';
+        ctx.fillRect(p.x - 14, p.y + 12, 28, 22);
+        ctx.strokeRect(p.x - 14, p.y + 12, 28, 22);
+        ctx.fillStyle = '#fff3c8';
+        ctx.font = 'bold 12px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText(String(a.shotNumber) + '/' + String(a.shots), p.x, p.y + 29);
       }
     }
     for (const e of game.zone().enemies) {

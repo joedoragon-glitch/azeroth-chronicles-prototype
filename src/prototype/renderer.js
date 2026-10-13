@@ -1578,7 +1578,13 @@
                       : 'TRUE · ' + e.name.replace(/^TRUE\s+|\s+TRUE$/g, '')) +
                     ' · Lv ' +
                     e.level
-                  : e.name + ' · Lv ' + e.level
+                  : (e.estateAttendant
+                      ? (e.trueSummon ? 'TRUE ' : '') +
+                        'Attendant' +
+                        (e.trueSummonRole === 'captain' ? ' Ringleader' : '')
+                      : e.name) +
+                    ' · Lv ' +
+                    e.level
                 : e.renderKind === 'ally'
                   ? e.type || e.name
                   : '';

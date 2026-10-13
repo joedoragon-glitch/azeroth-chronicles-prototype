@@ -1152,7 +1152,7 @@
     "src/prototype/rules.js": "111a7d79fd2eee29417455d28477603c6f8c5e07156e8f20768733415227efc7",
     "src/prototype/data.js": "cba3a56e5b895a1783340fdf861e91f9dfd2e48341a06d5f327de92d6086eefa",
     "src/prototype/sprites.js": "157fae7b5bcb7883a9c0a107434deb2e1e2692e7905c358f237553d98118a774",
-    "src/prototype/renderer.js": "323e8ffcdaf2efb17eed959bd2f5fdc685bfc83db2c0dea2ec42f574726fac13"
+    "src/prototype/renderer.js": "fa35a20a0d57a9545e019bc5901ef2ab7fe524582a26d4e90cd104de67d61b61"
   },
   "limits": "Deterministic normal/Nightmare world samples support source-case classification; every actual art job still requires its exact current state/reference. Future summon/night/seed additions are not inferred from these samples."
 }
