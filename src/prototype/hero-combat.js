@@ -232,6 +232,18 @@
               : targets.find((e) => slot === 1 && e.id === this.s.heroTarget) ||
                 targets.sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0]);
         if ([1, 2, 6, 7, 8].includes(slot) && !target) return false;
+        // A rushing melee strike must be able to reach the foe without crossing terrain.
+        const dashFrom =
+          slot === 6 && this.hero.class === 'paladin' && dist(this.hero, target) > 120
+            ? { x: this.hero.x, y: this.hero.y }
+            : null;
+        const dashTo = dashFrom
+          ? {
+              x: target.x - ((target.x - dashFrom.x) / dist(dashFrom, target)) * 100,
+              y: target.y - ((target.y - dashFrom.y) / dist(dashFrom, target)) * 100,
+            }
+          : null;
+        if (dashTo && !this.clearSegment(this.hero, dashTo)) return false;
         if (slot === 3) {
           const living = [this.hero, ...this.activeLivingParty()].filter((u) => u.hp > 0);
           if (isCharged) {
@@ -243,6 +255,7 @@
         this.hero.mp -= cost;
         this.hero.cd[i] = this.skillCooldown(slot, isCharged);
         if (target && requiresTarget) this.s.heroTarget = selected?.id || target.id;
+        if (dashTo) this.move(this.hero, dashTo, dist(this.hero, dashTo) + 1, 1);
         const power = this.power();
         if (isCharged && slot === 1) {
           this.resetBasicCombo();
@@ -474,6 +487,58 @@
             x: this.hero.x,
             y: this.hero.y,
           });
+        } else if (slot === 5 && this.hero.class === 'ranger') {
+          // Radial volley: targets inside the existing area receive visible arrows.
+          // AoE-tagged impacts retain dust-cover eligibility and line-of-sight checks.
+          const radius = 350;
+          const enemies = this.zone()
+            .enemies.filter(
+              (e) =>
+                e.hp > 0 &&
+                !e.neutral &&
+                !e.returning &&
+                dist(e, this.hero) < radius &&
+                this.line(this.hero, e),
+            )
+            .sort((a, b) => this.idOrder(a, b));
+          enemies.forEach((e, index) => {
+            const d = Math.max(1, dist(this.hero, e));
+            this.s.projectiles.push({
+              id: 'projectile-' + this.s.nextId++,
+              x: this.hero.x,
+              y: this.hero.y,
+              dx: (e.x - this.hero.x) / d,
+              dy: (e.y - this.hero.y) / d,
+              target: e.id,
+              damage: power * 2.3 * scale,
+              source: 'hero',
+              speed: 850,
+              delay: (index % 4) * 0.04,
+              style: 'arrow',
+              slot,
+              area: true,
+              effect: 'arrow-volley',
+            });
+          });
+          this.event('spell', {
+            actor: 'hero',
+            class: 'ranger',
+            source: 'hero',
+            slot,
+            radius,
+            x: this.hero.x,
+            y: this.hero.y,
+          });
+          this.event('projectileLaunch', {
+            actor: 'hero',
+            class: 'ranger',
+            source: 'hero',
+            style: 'arrow',
+            slot,
+            count: enemies.length,
+            x: this.hero.x,
+            y: this.hero.y,
+          });
         } else if (slot === 5 || slot === 8 || (slot === 7 && this.hero.class !== 'ranger')) {
           for (const e of this.zone()
             .enemies.filter((e) => e.hp > 0 && dist(e, this.hero) < (slot === 5 ? 350 : 500))
@@ -550,6 +615,7 @@
               targetX: target.x,
               targetY: target.y,
               combo,
+              ...(dashFrom ? { dash: true, fromX: dashFrom.x, fromY: dashFrom.y } : {}),
             });
           } else {
             this.engage(target);
@@ -569,6 +635,7 @@
                 delay: j * 0.12,
                 style: this.hero.class === 'ranger' ? 'arrow' : 'magic',
                 slot,
+                ...(this.hero.class === 'ranger' && slot === 7 ? { piercing: true } : {}),
                 effect:
                   this.hero.class === 'mage' && slot === 2
                     ? 'frost'
