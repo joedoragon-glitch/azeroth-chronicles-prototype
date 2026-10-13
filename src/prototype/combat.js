@@ -375,7 +375,10 @@
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;
         // All hero/companion damage sources use this same resolver. This
         // reduction is exclusive to active travel; it ends on arrival or abort.
-        if (!piercing && ['thinking', 'travel', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase))
+        if (
+          !piercing &&
+          ['thinking', 'travel', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase)
+        )
           amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
         if (!piercing) amount = this.tacticalCompressDamage(e, amount);
         const actualDamage = Math.min(e.hp, amount);
