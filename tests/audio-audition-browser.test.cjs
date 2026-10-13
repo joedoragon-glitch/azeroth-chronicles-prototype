@@ -255,7 +255,7 @@ const root = path.resolve(__dirname, '..'),
         if (engine === 'chromium') await context.setOffline(true);
         await page.reload();
         await page.waitForFunction(() => window.AudioAudition?.audio.recordingManifest);
-        assert.equal(await page.title(), 'Azeroth Chronicles · Audio audition');
+        assert.equal(await page.title(), "So I Became the Dark Lord's Problem · Audio audition");
         assert.equal(outageRequests, 0);
         await page.locator('#source').selectOption('production');
         await press('#record-play');
