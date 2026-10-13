@@ -266,3 +266,87 @@ This is **not** part of the simplest preparation package because adding new heal
 - [ ] **Not started:** any gameplay code, real new tests, UI/VFX/SFX changes, passives in production, PR merge, CI certification of this plan, integration candidate or deployment.
 
 **No further owner action is required merely to keep these instructions on record. New code changes still require explicit implementation permission.**
+
+## 7. Complex remaining mechanics — source-level integration specification (no gameplay changes)
+
+**Status: DOCUMENTATION/PLANNING ONLY.** This section completes the other half of Section 6's safe-first preparation: the difficult parts of the owner-approved Flooded Marches update, **not** game implementation or a separate optional feature list. The final intended canon includes all owner-approved designs from PRs #230/#231 and this meeting. Any code integration still requires a new explicit authorization and #232's single combined publication gate.
+
+**Inspected unchanged branch heads (12 October 2026):** `main` `6f8089b2013647184efb04932fe6157f548238b9`, #230 `49be85ec89ac7201f72d3c2fd9308f215235ccad`, #231 `1e298f14299518186a9166cc658fb4b9a9979fce`. Re-read fresh heads when implementation begins. **No integrated build or gameplay simulation was run for this audit.**
+
+### 7.1 Mirejaw — Groundwater Recharge implementation contract
+
+**Do not change:** Normal 2% / TRUE 5% of *actual current encounter maximum HP* healed per second; only physical contact with Mirejaw's own active `Inundation` mud; patch lifetime four seconds; no patch stacking, special movement AI, proximity aura, arbitrary encounter healing cap, increase in cast frequency, changed mud damage/slow, or extension of attack lifetime. Inundation is his regular attack 3 (zero-based index **2**), not his rogue snare or a generic water tile. Preserve normal and TRUE damage, encounter multipliers, attacks and summons.
+
+**Verified existing engine support:**
+- `src/prototype/boss-combat.js` #230: `resolveArea(e,a)` creates persistent four-second circle hazards with `family: e.family`, `sourceId: e.id`, `index` inherited from `a`, `radius`, `x`, `y`, `life:4`, `tick:1`; three patches are produced by `count:3`.
+- `src/prototype/engine.js` #230: `tick(dt)` caps `dt` at **0.1s**, calls `updateParty(dt)`, `updateEnemies(dt)`, then `updateProjectiles(dt)`; therefore it can evaluate the *actual current boss position after normal combat movement* during hazard processing. Boss engagement already has distinct `mire` state; death-roll `continue` in enemy AI does not stop later global hazard updates.
+- `src/prototype/combat.js` #230: `updateProjectiles(dt)` iterates `this.s.hazards`, currently affecting **party/hero**, and decrements/removes hazard lifetime. It does not heal Mirejaw; the new effect must explicitly inspect Mirejaw's occupancy using existing live hazard metadata, not alter shared party hazard behavior.
+- `src/prototype/save.js` #230: snapshots clear `s.hazards` and restore living enemies at full HP, so hazard-contact healing must be encounter-transient and never resurrect removed mud on load.
+
+**Recommended engineering sequence (not code yet):**
+1. Fix the defensive *minimum HP* interaction **first** (Section 7.2). Otherwise healing can restore the wrong protection.
+2. In the existing projectile/hazard update stage, identify a currently alive, engaged `e.type === 'boss'`, `e.family === 'mire'` owner with `e.id === a.sourceId`, `!e.returning`, a valid current zone and form. Ignore defeated/neutral/peace/freed/disengaged owners and unrelated mud. Do not have the owner search for mud or reposition.
+3. For each owner, collect the *union* of all live circle hazards having `family === 'mire'`, `index === 2`, `sourceId === owner.id`; check the boss's actual position against `dist(e,a) < a.radius`. The boss is **not** part of `combatTargets()`, so checking only the existing hero/companion loop cannot implement the approved passive.
+4. Accrue healing once per **owner per update tick**, not once per hazard. The same boss occupying three overlapping mud patches still heals at **2% or 5% per second, never 6% or 15%**. No heal when not currently inside any active patch; multiple casts can offer later new opportunities, consistent with the owner's no-lifetime-cap decision.
+5. Resolve the boundary of the final hazard frame correctly: a hazard with only `0.03s` remaining and an update `dt=0.1s` may authorize **at most 0.03s** of healing (unless another active eligible hazard continues contact). Implement overlap across simultaneous patches with different remaining lifetimes by taking their **maximum eligible active overlap duration** within the tick, not summing them. Never heal from a patch already expired before that step. Prevent a just-created patch from granting more active time than it truly exists.
+6. Heal amount `min(e.maxHp-e.hp, e.maxHp * (e.form === 'true' ? 0.05 : 0.02) * eligibleDt)`; preserve fractional simulation values and let normal UI format them. Do not derive percentages from `baseHp` when Nightmare/night/TRUE modifiers alter `maxHp`; cap missing HP and never heal a dead boss.
+7. Emit restrained, truthful regeneration feedback only **when positive HP was actually recovered**, using current boss status/VFX/audio mechanisms where possible. Avoid a new large sprite/animation dependency, owner-redirection arrows or an area cue suggesting that an unrelated tile heals him. Test visibility but do not create redundant healing events for overlapping patches.
+
+**Semantics of player movement:** The owner explicitly accepts that the mud may rarely touch Mirejaw and does not want a forced healing opportunity. **No code needs to steer him into mud**; the existing chase, collision, charges and dodging make any contact emergent. A test should show that it is genuinely possible, not guaranteed. Do not alter the three existing player-targeted mark positions to favor Mirejaw.
+
+### 7.2 Mirejaw — health-dependent Hydraulic Resistance with healing
+
+**Confirmed candidate issue in #230:** `combat.js:damage(e,...)` records `e.mireLowestHpRatio` using `e.hp/e.maxHp` **before** applying the incoming hit. Once Groundwater Recharge is integrated, an in-between heal may erase a newly reached post-hit minimum from observation, incorrectly restoring past scale reduction.
+
+**Required correction, without changing the approved formula:**
+- Initialize the encounter's minimum ratio to 1 at real engagement and reset it **only on genuine encounter reset**. Preserve 40% reduction at full HP declining linearly to zero at 50% HP; calculate the current hit's mitigation based on the *previous/current* low-water mark as appropriate, not a post-hit retroactive adjustment.
+- **Immediately after subtracting damage**, update `mireLowestHpRatio = min(previousMinimum, max(0,e.hp/e.maxHp))`, before any regeneration can run. Don't revive a lethal hit. From then on, any healing leaves this minimum untouched. Keep this logic scoped to `type === 'boss' && family === 'mire'` and do not affect other damage types or unrelated anti-burst mechanics.
+- Reset/normalize the encounter floor on disengage, new spawn/respawn, reload/full-HP encounter reset and genuine TRUE transition. Do not persist a half-fight minimum in a state whose HP was reset by `Save.snapshot()`. Maintain compatibility with already-saved old objects where the field is absent.
+
+**Concrete regression:** At `1100 HP` take enough damage to reach `400 HP` (below 50%). Record 0%-remaining scales. Stand in an active mud patch to recover to `600 HP` (above 50%): the scales must still remain **0%**, not return to any positive reduction. After a real encounter reset, the fresh boss begins with the original 40% full-health reduction.
+
+### 7.3 Cross-branch reconciliation — identified method-level collisions
+
+#230 and #231 are **complementary**, but both edit several of the **same runtime methods**. Neither branch may be adopted wholesale at the expense of the other. Preserve at least the following *specific* parts when the eventual integration is authorized:
+
+| Shared source/method | #230 must survive | #231 must survive | Exact combined audit |
+| --- | --- | --- | --- |
+| `boss-combat.js:attackPatches(a)` | Crypt's specific four Groundwork pads; Warlord's six simultaneously marked bombardment circles; baseline fallback patch layout | `captainSpread` dedicated **four/five separated** hazard geometry, with **no stacking**, and captain radius adjustment in fallback | Single method branches by **feature/owner**, retaining all specialty layouts. Assert Mirejaw three patches, Keeper one patch, Crypt four pads, Warlord six circles, Direjaw four separated Silt Slick/Mud Pumping patches, Highlands captain five. Beware overlapping numerical `count/index` checks across families; don't accidentally route captain moves into a boss special-case. |
+| `combat.js:damage(e,...)` | Mirejaw's health-dependent scales, Warlord's source-side ash miss handling, relevant boss vulnerability and source-audited targeting | Captain guard/brood protection, damage compression and Dreadmaw's actual-damage reflection | Preserve **all** checks in one definitive damage resolver. Add new Direjaw Strain Hardening, Keeper Emergency Stabilization and Mirejaw post-hit floor **without** a second damage pipeline, shared base-damage change or side effect on other opponents. |
+| `engine.js:tick/updateEnemies` | Keeper healer target/capture/held cooldown state, Mirejaw Death Roll, Ridge ledger, Warlord ash, accurate cooldown-sabotage attempts | Captain HP migration, 55% phases/attack selection, `anonymousCast`/warninglessness, circular hazards and existing movement-rate behavior | Verify neither a new boss state nor an unrelated captain phase skips the other's cooldown/update logic. Keep the established update order and battle/interruption exits. |
+| `boss-combat.js` attack creation and resolution | Keeper's fifth sabotage attack/cooldown and Anchor replacement hold, four-owner-crypt wardens, Mirejaw roll and bog creation | `captainSpread` and captain attack/charge flags, cast bar anonymity and charge collision behavior | Test actual source-owned `index` and `sourceId`, not attack-name text. Preserve event timings, press/release, frame-state transitions and cues. |
+| `save.js` snapshot/restore | Lifebinder `crypt` normalization and #230 boss/estate save migrations; held-victim cleanup | Captain endurance marker/HP scaling; phase reset, Treasury cache identities | One normal/TRUE historical save path must retain **all** edits; never revert Crypt normalization in order to add captain migrations. |
+| `combat-visuals.js` / audio/VFX ownership | Keeper sabotage/captivity and Mirejaw's stage cues | Anonymous captain preparation bar; four-circle telegraphs; phase visuals | Correct warning footprint, cooldown labels and impact only when visible; no skill/target/audio leak before anonymous Flow Sliding. |
+
+**This is a dependency map**, not a request to change Greenwood/Crypt/Warlord/captain designs now. Those examples demonstrate why conflict reconciliation must be cross-region when source modules are shared.
+
+### 7.4 Remaining complex encounter-state and presentation scenarios
+
+- **Keeper restraint while shielded:** #230's Anchor Swing releases an earlier held target when the next Anchor Swing begins. His #230 healer-targeting and Cooldown Sabotage share the same attack scheduler; new Emergency Stabilization is a defensive timer **not** another fifth/sixth cast action. Check that a held Archer's heal cooldown freezes appropriately, then resumes on release, and that the shield doesn't delay attacks by adding a fabricated cast. Keeper death, disengagement, exit, load and normal/TRUE transitions must remove orphan holds.
+- **Direjaw at 55% health:** #231 heals 50% maximum HP and applies 20% movement on its `molt` phase; the new five-second Strain Hardening counter must be independent of that health recovery. Test correct one-time phase eligibility after real hit damage, cross-shield ordering and modern save reload (Section 6.4). Do not give a captain a new TRUE form or independent boss reward chain.
+- **Combat readability:** A new passive should produce a truthful short cue/status without disguising an incoming hit area or overriding existing entity art. Mirejaw's momentary heal should not look like a new harmful mud patch; Keeper's seal should not obscure Anchor captives or the arena lanes; Direjaw's resistance should not imply the next hit is wholly blocked. Keep existing artwork, score, SFX, generated coverage IDs, night/TRUE effects and production sprite fallbacks unless #257 identifies a concrete contradiction.
+- **Progression/identity:** `mire`, `archive`, and `supply-march` IDs remain stable. Preserve Sela/Neri rescues, key gates, 3 Treasury caches, existing Crown Peace, #266's *approved-not-shipped* ending, personal/role distinctions, and encounter order. No new regional positions or targets from roleplay color.
+
+### 7.5 Quantitative bounds and targeted test matrix
+
+| Scenario | Expected behavior |
+| --- | --- |
+| Normal Mirejaw with `maxHp=1100` inside one active mud patch for 2.0s | **44 HP** restored at 2%/s, clipped to missing HP |
+| TRUE Mirejaw with `maxHp=1980` inside for 2.0s | **198 HP** at 5%/s, clipped to missing HP |
+| Three overlapping active owner-created mud patches | **One** healing stream (2%/s Normal or 5%/s TRUE), not three |
+| Enter in final `0.03s` of a patch; simulation `dt=0.1s` | At most `0.03 × healRate × maxHp` HP from that patch, not the full 0.1s |
+| Mud belongs to a different boss, wrong attack slot, expired/peace, or Mirejaw is disengaged/dead | **0** Groundwater Recharge |
+| Drain Mirejaw below 50%, then heal above 50% | Hydraulic Resistance stays at **0%** (monotone defensive decay) |
+| Defeat/reset and fresh Mirejaw fight | Full expected base HP/scale protection, no stale regeneration or ownership |
+| Direjaw recurring damage through 55%-HP phase | Strain Hardening and Elastic Rebound remain separately correct; full-HP save round-trip doesn't strand prior `captainPhase` |
+| Keeper shields during Anchor/Heal cooldown sabotage pressure | Single after-hit 30%/6s or 40%/8s shield; player remains able to escape, get released and complete fight |
+| Combined special attack geometry | All specialty patch families preserved; warning/impact areas agree, no accidental overlapping captain damage |
+| 3 hero classes, Normal/Nightmare, field TRUE, Keeper early TRUE/TRUE, old v4 campaign import, phone/Desktop, offline | Full encounter/progression/asset compatibility must be demonstrated; none certified yet |
+
+**Balance validation without silent retuning:** The unrestricted number of potential recasts means Groundwater Recharge has **no theoretical encounter-total healing cap**. Its *real* effectiveness depends on cast frequency and accidental contact, which has not been measured in actual fights. Confirm that solo/squad characters at region-appropriate levels can complete Normal and TRUE fights, that the boss can actually overlap mud sometimes, and that sustained contact does not cause unreasonably prolonged or unwinnable fights. Record observed cast/contact counts, heal totals, time-to-kill, encounter resets, and a few representative mobile dodge paths. If evidence uncovers unfairness, **report it for owner choice instead of imposing a new cap, reducing 5%, changing positioning or reworking the agreed passive**.
+
+### 7.6 Completion and authority
+
+**Preparation DONE:** source-specific design for Mirejaw's contact, expiry, healing and scale floor; method-level PR #230/#231 conflict matrix; Keeper/Direjaw combination and reset risks; numeric deterministic expectations; required full-game and manual QA.
+
+**Implementation NOT STARTED:** no method edits, new automated tests, real scenario execution, build/release certification, gameplay balancing, merge, deployment or PR-branch integration were performed. This update is a continuation of documentation-only PR #290. **All approved canon is mandatory for the eventual integrated update**; these engineering steps do not postpone or cancel it.
