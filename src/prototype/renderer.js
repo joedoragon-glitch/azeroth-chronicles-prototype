@@ -1573,7 +1573,11 @@
             const label =
               e.renderKind === 'enemy'
                 ? isTrueBoss
-                  ? 'TRUE · ' + e.name.replace(/^TRUE\s+|\s+TRUE$/g, '') + ' · Lv ' + e.level
+                  ? (e.family === 'crypt'
+                      ? 'Lifebinder TRUE'
+                      : 'TRUE · ' + e.name.replace(/^TRUE\s+|\s+TRUE$/g, '')) +
+                    ' · Lv ' +
+                    e.level
                   : e.name + ' · Lv ' + e.level
                 : e.renderKind === 'ally'
                   ? e.type || e.name

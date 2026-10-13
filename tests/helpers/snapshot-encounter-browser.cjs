@@ -89,6 +89,31 @@ async function verifySnapshotEncounters(page, results, tag, capture = false) {
           });
       }
     }
+    await page.evaluate(() => {
+      const c = Prototype.game;
+      c.enter('crypt');
+      c.s.party = [];
+      c.effects = [];
+      const old = c.zone().enemies.find((e) => e.type === 'boss');
+      const e = c.bossEnemy(c.boss('crypt'), 'true', { x: old.x, y: old.y });
+      c.zone().enemies = [e];
+      Object.assign(c.hero, c.safe(e.x + 40, e.y + 50));
+      __snapshotEncounter.text = [];
+      Prototype.updateHUD();
+    });
+    await page.waitForFunction(() =>
+      __snapshotEncounter.text.some((t) => t.startsWith('Lifebinder TRUE')),
+    );
+    assert(
+      !(await page.evaluate(() =>
+        __snapshotEncounter.text.some((t) => /^TRUE.*Lifebinder/.test(t)),
+      )),
+      'TRUE suffix is actually rendered',
+    );
+    if (capture)
+      await page.screenshot({
+        path: path.join(results, 'snapshot-lifebinder-true-' + tag + '.png'),
+      });
     for (const scene of ['cold-wave', 'stone-defense', 'tracking', 'hot-zone']) {
       const summary = await page.evaluate((scene) => {
         const c = Prototype.game;
