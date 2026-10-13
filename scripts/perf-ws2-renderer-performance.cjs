@@ -61,6 +61,37 @@ const server = http.createServer((req, res) => {
 function prepare({ zone, width, height }) {
   const game = new Campaign('normal', 'paladin', () => 0.7);
   game.enter(zone === 'crowd' ? 'vale' : zone);
+  // This renderer benchmark compares the same content before/after rendering
+  // optimizations. Remove only the twelve explicitly approved snapshot props;
+  // their actual drawings are verified by the combined regional browser probe.
+  // Keep exact pixels/state in every region, not a whole-region exclusion.
+  const addedScenery = {
+    vale: {
+      'hamlet-orchard': ['fruit-tree', 'crate'],
+      'millhaven-carpentry': ['stacked-lumber', 'tool-rack'],
+    },
+    march: { 'reedport-catch': ['crate', 'cart'] },
+    frontier: { 'burned-hamlet-home': ['garden', 'laundry'] },
+  };
+  for (const region of ['vale', 'march', 'frontier']) {
+    const z = game.s.zones[region];
+    if (!z) continue;
+    z.props = z.props.filter(
+      (p) =>
+        !(
+          p.decorative === true &&
+          p.r === 0 &&
+          String(p.id || '').startsWith('regional-handoff-') &&
+          (addedScenery[region]?.[p.regionalDistrict]?.includes(p.structure) ||
+            (region === 'march' &&
+              p.regionalDistrict === 'camp-work' &&
+              p.structure === 'tool-rack' &&
+              p.sceneRole === 'boat-maintenance'))
+        ),
+    );
+    if (region === 'frontier' && z.regionalHandoffVersion === 1) delete z.regionalHandoffVersion;
+    else if (region !== 'frontier' && z.regionalHandoffVersion === 2) z.regionalHandoffVersion = 1;
+  }
   game.s.clock = 200;
   if (zone === 'crowd') {
     game.zone().enemies = [];
