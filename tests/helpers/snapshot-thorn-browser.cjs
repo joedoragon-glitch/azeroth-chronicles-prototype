@@ -6,12 +6,25 @@ async function verifyThornPatrol(page, results, tag, capture = false) {
     const c = Prototype.game;
     window.__thornBrowser = {
       state: c.s,
+      messages: c.messages,
+      notices: c.notices,
+      noticeId: c.noticeId,
+      random: c.random,
+      tactical: Object.fromEntries(
+        Object.keys(c)
+          .filter((k) => k.startsWith('_tactical'))
+          .map((k) => [k, c[k]]),
+      ),
       tick: c.tick,
       effects: c.effects,
       seen: new Set(),
       draw: PrototypeVisuals.draw,
     };
     c.s = new Campaign('normal', 'paladin', () => 0.5).s;
+    for (const k of Object.keys(c).filter((k) => k.startsWith('_tactical'))) delete c[k];
+    c.messages = [];
+    c.notices = [];
+    c.random = () => 0.5;
     c.tick = () => {};
     c.effects = [];
     PrototypeVisuals.draw = function (ctx, e, ...args) {
@@ -88,6 +101,12 @@ async function verifyThornPatrol(page, results, tag, capture = false) {
       c.s = b.state;
       c.tick = b.tick;
       c.effects = b.effects;
+      c.messages = b.messages;
+      c.notices = b.notices;
+      c.noticeId = b.noticeId;
+      c.random = b.random;
+      for (const k of Object.keys(c).filter((k) => k.startsWith('_tactical'))) delete c[k];
+      Object.assign(c, b.tactical);
       PrototypeVisuals.draw = b.draw;
       delete window.__thornBrowser;
       Prototype.updateHUD();

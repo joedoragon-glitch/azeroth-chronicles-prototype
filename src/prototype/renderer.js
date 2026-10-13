@@ -1605,7 +1605,7 @@
           }
         }
         if (e.renderKind === 'npc') {
-          const label = worldLabelVisible(e),
+          const label = !e.thornFootprint && worldLabelVisible(e),
             name =
               e.kind === 'mini'
                 ? e.name +
@@ -1614,14 +1614,19 @@
                     : game.miniCleared(e.mini)
                       ? ' · Cleared'
                       : ' · Guardians')
-                : e.name;
+                : e.presentation === 'mobile-captive'
+                  ? 'Mira · captive'
+                  : e.name;
           if (label) {
             ctx.font = 'bold 11px system-ui';
             ctx.fillStyle = '#ffe4a2';
             ctx.shadowColor = '#07140e';
             ctx.shadowBlur = 4;
             const width =
-              e.presentation === 'workstation' || e.kind === 'keeper' || e.kind === 'archive-record'
+              e.presentation === 'workstation' ||
+              e.presentation === 'mobile-captive' ||
+              e.kind === 'keeper' ||
+              e.kind === 'archive-record'
                 ? Math.min(ctx.measureText(name).width, canvas.width - 24)
                 : 0;
             const labelX = width

@@ -53,7 +53,7 @@ test('Normal skill MP costs stay modest while Mage Skill 3 is Self-Heal',()=>{co
 test('Only authored magical pressure drains MP; physical damage leaves MP unchanged',()=>{const c=fresh();c.hero.mp=c.hero.maxMp;const before=c.hero.mp;c.hitParty(c.hero,20);assert.equal(c.hero.mp,before,'physical hit does not drain MP');c.enter('march');c.s.clock=500;c.updateNight();const w=c.zone().enemies.find(e=>e.species==='wraith'&&e.nightOnly);c.s.party=[];Object.assign(c.hero,c.safe(w.x+80,w.y));c.hero.hp=10000;c.hero.maxHp=10000;c.hero.mp=c.hero.maxMp;c.startNightSkill(w,c.hero);w.telegraph.timer=0;const wBefore=c.hero.mp;c.resolveAttack(w);assert(Campaign.rules.resourceMode.manaEnabled?c.hero.mp<wBefore:c.hero.mp===wBefore,'Soul Drain resource effect respects mode');c.enter('crown');const d=boss(c,'darklord');c.s.party=[];Object.assign(c.hero,c.safe(d.x+80,d.y));c.hero.hp=10000;c.hero.maxHp=10000;c.hero.mp=c.hero.maxMp;d.attackIndex=3;c.startAttack(d,c.hero,3);const dBefore=c.hero.mp;c.resolveAttack(d);assert(Campaign.rules.resourceMode.manaEnabled?c.hero.mp<dBefore:c.hero.mp===dBefore,'Dark Lord drain respects mode');});
 test('Idle hostile monsters wander locally without moving their authored spawn points',()=>{const scenarios=[
  c=>c.zone().enemies.find(e=>e.type==='mob'&&!e.guard&&!e.ranged&&!e.captain&&e.hp>0),
- c=>c.zone().enemies.find(e=>e.type==='boss'&&e.hp>0),
+ c=>{c.enter('march');return c.zone().enemies.find(e=>e.type==='boss'&&e.hp>0);},
  c=>{c.enter('crypt');return c.zone().enemies.find(e=>e.guard&&e.hp>0);},
  c=>{c.enter('supply-vale');return c.zone().enemies.find(e=>e.roomCaptain&&e.hp>0);},
  c=>{c.enter('march');c.s.clock=500;c.updateNight();return c.zone().enemies.find(e=>e.nightOnly&&e.hp>0);}

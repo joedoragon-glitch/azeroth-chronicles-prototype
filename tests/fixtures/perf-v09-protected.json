@@ -123,7 +123,7 @@
     "source": "Director #289/#298: physical Thornfang/Mira circuit, joint den return, same rescue identity, static reports and real tracks. Previous hashes retained.",
     "baseline": "ada6716da523689baedad04906b76350931cf8ab",
     "files": {
-      "src/prototype/engine.js": "33900cf6ab226ef826f5e01b5ac467fa6d8333a4812abfcf75f044ed9e56f0e4",
+      "src/prototype/engine.js": "5cc5242017e88d2b1fccaf82a6b012db5de21decd9ffeb1dcaa02135fd1fda03",
       "src/prototype/world.js": "e617a3d81cc94275d7c7974315ecf22d47038f0e1ee9f1307d980f40c0d6c2a8",
       "src/prototype/navigation.js": "96d6d688d17b3474f770536de3006bd929d3ce25f6f9a2034246848c8b6beeee",
       "src/prototype/combat.js": "81b51decd6024d357d8b64d4ec3b29818dcd4b418412a74b354998f4518c1240",

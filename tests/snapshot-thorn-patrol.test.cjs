@@ -96,12 +96,16 @@ for (const cls of ['paladin', 'mage', 'ranger'])
       Object.assign(c.hero, waiting);
       assert(c.interact(n));
       assert(c.s.rescued.thorn);
+      assert(
+        !c.visibleNPCs().some((n) => n.id === 'cage-thorn'),
+        'freed captive presentation retires',
+      );
       assert.equal(c.zone().npcs.filter((n) => n.id === 'service-thorn').length, 1);
       c.updateEnemies(120);
       assert.equal(c.thornCaptive().x, waiting.x, 'liberated Mira stops following');
       cases++;
     }
-// Genuine historical and peace/pending contracts; raw restoration is idempotent.
+// Historical-state and peace/pending contracts; raw restoration is idempotent.
 {
   const { c, e, n } = fixture();
   delete n.presentation;

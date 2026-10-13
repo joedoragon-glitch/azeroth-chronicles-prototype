@@ -5,7 +5,7 @@
   "designId": "thorn-mobile-inspections",
   "name": "Thornfang and mobile Mira inspections",
   "kind": "mobile-captive-and-trail",
-  "nextAction": "Inspect actual Chromium/WebKit source captures, preserve references; no new sprites authorized.",
+  "nextAction": "Inspect pending hosted Chromium/WebKit captures and full candidate gate. Retained native375/1280 source captures and isolated Mira were inspected; no physical device or director appearance acceptance.",
   "context": {
     "originConversation": null,
     "decisionSummary": "Director #298 overrides fixed cage: same Mira travels with Thornfang, paid but compulsory inspections, real joint den return and physical clues.",
@@ -31,9 +31,12 @@
       "src/prototype/sprites.js"
     ],
     "exactEntityState": "vale NPC cage-thorn,presentation mobile-captive; teacher body with inspection papers. thorn-local-report teacher fallback; scout-tracks footprints.",
-    "isolatedReferencePath": null,
-    "isolatedReferenceHash": null,
-    "gameplayContextPaths": [],
+    "isolatedReferencePath": "tools/sprites/design-handoffs/references/thorn-mobile/mira-procedural.png",
+    "isolatedReferenceHash": "efa1f4a7c5982bfebd5ba3303d38de50a700eb808bfc0a18b0e1579f59177c2a",
+    "gameplayContextPaths": [
+      "tools/sprites/design-handoffs/references/thorn-mobile/patrol-375.png",
+      "tools/sprites/design-handoffs/references/thorn-mobile/patrol-1280.png"
+    ],
     "traitsToPreserve": [
       "Same Mira identity and regional instructor clothing",
       "Inspection papers instead of bars",
@@ -52,6 +55,10 @@
       {
         "path": "src/prototype/sprites.js",
         "sha256": "bbeeb27bcc912034f99824f6b86fbad41342c602149cde5fba6e794a7b4b8038"
+      },
+      {
+        "path": "src/prototype/renderer.js",
+        "sha256": "684c494b61e416b1cf672a5d6961e59b14e43df253279da9aad72ffa26474dfa"
       }
     ]
   },

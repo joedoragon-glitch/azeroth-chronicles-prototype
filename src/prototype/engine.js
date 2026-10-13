@@ -336,7 +336,8 @@
           !n.internalSite &&
           !this.bundleCollected(n) &&
           (n.kind !== 'keeper' || this.keeperAvailable()) &&
-          (!n.thornFootprint || n.expires > this.s.time),
+          (!n.thornFootprint || n.expires > this.s.time) &&
+          (n.id !== 'cage-thorn' || !this.s.rescued.thorn),
       );
     }
     siteDescription(n) {
