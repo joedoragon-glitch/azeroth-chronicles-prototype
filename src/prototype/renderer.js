@@ -1401,10 +1401,24 @@
       finishPhase('floor');
       if (authoredFloor) PrototypeVisuals.dungeonArchitecture(ctx, screen, game.zoneId, size);
       if (!game.isDungeon())
-        PrototypeVisuals.terrain(ctx, screen, i, size, optimized ? null : PrototypeMaterials);
-      PrototypeVisuals.roads(ctx, z.roads || [], screen, i, optimized ? null : PrototypeMaterials);
+        PrototypeVisuals.terrain(
+          ctx,
+          screen,
+          i,
+          size,
+          optimized ? null : PrototypeMaterials,
+          canvas,
+        );
+      PrototypeVisuals.roads(
+        ctx,
+        z.roads || [],
+        screen,
+        i,
+        optimized ? null : PrototypeMaterials,
+        canvas,
+      );
       if (!game.isDungeon())
-        PrototypeVisuals.bridges(ctx, screen, i, optimized ? null : PrototypeMaterials);
+        PrototypeVisuals.bridges(ctx, screen, i, optimized ? null : PrototypeMaterials, canvas);
       PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000);
       finishPhase('terrain');
       const boardCue = null,
