@@ -67,11 +67,15 @@ const server = http.createServer((req, res) => {
       window.__cooldownCasts = [];
       const cast = g.cast;
       g.cast = function (slot, target, charged, ...rest) {
+        const selectedAtCast = this.selectedHeroTarget()?.id ?? null;
+        const manualAtCast = this.manualHeroTargetId ?? null;
         const result = cast.call(this, slot, target, charged, ...rest);
         if (result)
           __cooldownCasts.push({
             slot,
             targetId: target ?? null,
+            selectedAtCast,
+            manualAtCast,
             charged: !!charged,
             cd: this.hero.cd[slot - 1],
             mp: this.hero.mp,
@@ -308,7 +312,7 @@ const server = http.createServer((req, res) => {
           assert.equal(
             result.casts[0].targetId,
             scenario === 'selected' ? result.foes.chosen : result.foes.nearer,
-            'retarget on player release, not to the disappeared enemy',
+            JSON.stringify({ cls, slot, scenario, result }),
           );
         }
     for (const scenario of ['no-target', 'locked-range', 'original-valid']) {
