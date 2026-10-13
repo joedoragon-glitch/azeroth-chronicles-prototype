@@ -1,5 +1,7 @@
 # Project working rules
 
+- Follow [`docs/OWNER_GATED_DEVELOPMENT.md`](docs/OWNER_GATED_DEVELOPMENT.md) for all current and future work: GitHub recoverable checkpoints, interruption-safe resumption, exact-head verification, the four-stage director ballot → implementation → readiness audit → owner approval gate, and no unauthorized merge or deployment. The existing worldbuilding pause in #232 stays active until explicitly lifted. Never imply background coding can continue after a disconnected session.
+
 - The multi-file Campaign application is canonical. Never require a self-contained HTML release or impose obsolete single-file limits.
 - Read `docs/ARCHITECTURE.md`, `docs/DEVELOPMENT_STATE.md` and relevant gameplay decisions before changing a subsystem. Preserve unfinished authored maps and the procedural sprite canon.
 - New visible content and lore follow `docs/DESIGN_TO_SPRITE_WORKFLOW.md`: retain the accepted procedural design, approval scope and per-design handoff so a later sprite request in any chat can resume from that canon. Reconcile assets for characters, hero classes, monsters, companions, NPCs, locations and objects; preserve stable IDs and record replacement/animation requirements. The implementing agent owns these records and technical work.
