@@ -10,6 +10,9 @@ async function verifySnapshotEncounters(page, results, tag, capture = false) {
       draw: PrototypeVisuals.draw,
       ground: PrototypeCombatVisuals.ground,
       effects: c.effects,
+      threat: structuredClone(c._tacticalThreat),
+      burst: structuredClone(c._tacticalBurstWindow),
+      partyTargets: structuredClone(c._tacticalPartyTargets),
       fillText: CanvasRenderingContext2D.prototype.fillText,
       seen: {},
       text: [],
@@ -254,6 +257,9 @@ async function verifySnapshotEncounters(page, results, tag, capture = false) {
       c.tick = __snapshotEncounter.tick;
       c.random = __snapshotEncounter.random;
       c.effects = __snapshotEncounter.effects;
+      c._tacticalThreat = __snapshotEncounter.threat;
+      c._tacticalBurstWindow = __snapshotEncounter.burst;
+      c._tacticalPartyTargets = __snapshotEncounter.partyTargets;
       PrototypeCombatVisuals.ground = __snapshotEncounter.ground;
       PrototypeVisuals.draw = __snapshotEncounter.draw;
       CanvasRenderingContext2D.prototype.fillText = __snapshotEncounter.fillText;
