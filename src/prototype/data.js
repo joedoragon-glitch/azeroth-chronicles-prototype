@@ -148,10 +148,10 @@ const PrototypeData = {
       xp: 30,
       place: 'Orchard den',
       attacks: [
-        'Bite: short frontal arc, 0.8 second warning and 0.8 second recovery.',
-        'Pounce: marks a landing circle for 1.3 seconds; after the leap ends (hit or miss), Thornfang has 0.375 seconds of normal recovery, with no extra exposed-core vulnerability.',
-        'Root line: a narrow ground line warns for 1.2 seconds and briefly slows on contact.',
-        'Den howl: warns for 1.5 seconds, then calls three low health pups; a maximum of three pups may be alive.',
+        'Use-of-Force Escalation: short frontal arc, 0.8 second warning and 0.8 second recovery.',
+        'Dynamic Entry: marks a landing circle for 1.3 seconds; after the leap ends (hit or miss), Thornfang has 0.375 seconds of normal recovery, with no extra exposed-core vulnerability.',
+        'Tripwire: a narrow ground line warns for 1.2 seconds and briefly slows on contact.',
+        'Quick Reaction Force: warns for 1.5 seconds, then calls three low health pups; a maximum of three pups may be alive.',
       ],
     },
     {

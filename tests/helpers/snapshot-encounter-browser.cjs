@@ -6,12 +6,19 @@ async function verifySnapshotEncounters(page, results, tag, capture = false) {
     const c = Prototype.game;
     window.__snapshotEncounter = {
       tick: c.tick,
+      random: c.random,
       draw: PrototypeVisuals.draw,
+      ground: PrototypeCombatVisuals.ground,
+      effects: c.effects,
       fillText: CanvasRenderingContext2D.prototype.fillText,
       seen: {},
       text: [],
     };
     c.tick = () => {};
+    PrototypeCombatVisuals.ground = function (ctx, screen, game, ...args) {
+      if (__snapshotEncounter.cast) __snapshotEncounter.groundSeen = true;
+      return __snapshotEncounter.ground(ctx, screen, game, ...args);
+    };
     PrototypeVisuals.draw = function (ctx, e, ...args) {
       __snapshotEncounter.seen[e.id] = {
         species: e.species,
@@ -82,11 +89,75 @@ async function verifySnapshotEncounters(page, results, tag, capture = false) {
           });
       }
     }
+    for (const scene of ['cold-wave', 'stone-defense', 'tracking', 'hot-zone']) {
+      const summary = await page.evaluate((scene) => {
+        const c = Prototype.game;
+        c.enter(scene === 'cold-wave' || scene === 'stone-defense' ? 'crypt' : 'supply-vale');
+        c.s.party = [];
+        c.effects = [];
+        c.s.clock = 200;
+        const e = c.zone().enemies.find((e) => e.type === 'boss' || e.roomCaptain);
+        c.zone().enemies = [e];
+        const point = Array.from({ length: 32 }, (_, i) => ({
+          x: e.x + 100 * Math.cos((i * Math.PI) / 16),
+          y: e.y + 100 * Math.sin((i * Math.PI) / 16),
+        })).find((p) => !c.blocked(p.x, p.y) && c.line(e, p));
+        if (!point) throw Error('No real cast lane: ' + scene);
+        Object.assign(c.hero, point, { hp: 10000, maxHp: 10000, immune: 0, slow: 0, order: null });
+        c.engage(e);
+        if (e.type === 'boss') c.startAttack(e, c.hero, scene === 'cold-wave' ? 4 : 5);
+        else {
+          const slot = scene === 'tracking' ? 3 : 4;
+          for (let i = 0; i < 100; i++) {
+            e.lastCaptainAttack = -1;
+            c.random = () => (i + 0.5) / 100;
+            c.startCaptainAttack(e, c.hero);
+            if (e.telegraph.index === slot) break;
+          }
+          if (e.telegraph.index !== slot) throw Error('New captain slot unavailable');
+        }
+        if (scene === 'cold-wave') {
+          c.resolveAttack(e);
+          e.telegraph = null;
+          c.updateProjectiles(0.3);
+        }
+        if (scene === 'stone-defense') {
+          c.resolveAttack(e);
+          e.telegraph = null;
+        }
+        __snapshotEncounter.cast = scene;
+        __snapshotEncounter.groundSeen = false;
+        __snapshotEncounter.text = [];
+        Prototype.updateHUD();
+        return {
+          hp: c.hero.hp,
+          slow: c.hero.slow,
+          defense: e.anastylosis || 0,
+          wave: c.s.hazards.some((h) => h.slowOnly),
+          shots: e.sequence.length,
+        };
+      }, scene);
+      await page.waitForFunction(() => __snapshotEncounter.groundSeen);
+      if (scene === 'cold-wave')
+        assert.deepEqual([summary.hp, summary.slow, summary.wave], [10000, 2, true]);
+      if (scene === 'stone-defense') assert.deepEqual([summary.hp, summary.defense], [10000, 4]);
+      if (scene === 'tracking') {
+        assert.equal(summary.shots, 3);
+        await page.waitForFunction(() => __snapshotEncounter.text.includes('1/4'));
+      }
+      if (capture)
+        await page.screenshot({
+          path: path.join(results, 'snapshot-cast-' + scene + '-' + tag + '.png'),
+        });
+    }
   } finally {
     await page.evaluate((state) => {
       const c = Prototype.game;
       c.s = state;
       c.tick = __snapshotEncounter.tick;
+      c.random = __snapshotEncounter.random;
+      c.effects = __snapshotEncounter.effects;
+      PrototypeCombatVisuals.ground = __snapshotEncounter.ground;
       PrototypeVisuals.draw = __snapshotEncounter.draw;
       CanvasRenderingContext2D.prototype.fillText = __snapshotEncounter.fillText;
       delete window.__snapshotEncounter;

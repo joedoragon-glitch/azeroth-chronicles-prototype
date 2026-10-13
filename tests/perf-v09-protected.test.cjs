@@ -45,6 +45,17 @@ if (encounterRevision) {
   ]);
   assert.match(encounterRevision.source, /#298.*#230.*#231.*#280/);
 }
+const greenwoodRevision = manifest.approvedSnapshotGreenwoodRevision;
+if (greenwoodRevision) {
+  assert.deepEqual(Object.keys(greenwoodRevision.files).sort(), [
+    'src/prototype/boss-combat.js',
+    'src/prototype/combat.js',
+    'src/prototype/data.js',
+    'src/prototype/engine.js',
+    'src/prototype/rules.js',
+  ]);
+  assert.match(greenwoodRevision.source, /#289.*#298/);
+}
 for (const [file, expected] of Object.entries(manifest.files)) {
   const actual = crypto
     .createHash('sha256')
@@ -52,7 +63,8 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    encounterRevision?.files[file] ||
+    greenwoodRevision?.files[file] ||
+      encounterRevision?.files[file] ||
       snapshotRevision?.files[file] ||
       keyboardRevision?.files[file] ||
       revision.files[file] ||

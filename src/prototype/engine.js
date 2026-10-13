@@ -2834,7 +2834,7 @@
           ...center,
           radius:
             (plan.radius || (plan.kind === 'cone' ? 145 : 85)) *
-            R.bossCadence.areaRangeMultiplier *
+            (plan.fixedRadius ? 1 : R.bossCadence.areaRangeMultiplier) *
             (plan.captainRadiusMultiplier || 1),
           sequence: [],
         };

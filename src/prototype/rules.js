@@ -3962,6 +3962,7 @@
           persistent: true,
           slow: true,
           radius: 100,
+          fixedRadius: true,
         },
         {
           name: 'Dust Entrainment',
