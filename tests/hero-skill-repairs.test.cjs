@@ -20,6 +20,8 @@ function arena(cls = 'paladin') {
     );
     e.hp = e.maxHp = 1000000;
     game.zone().enemies.push(e);
+    // Engage before measuring HP: encounter tier normalization changes max HP.
+    game.engage(e);
     return e;
   }
   return { game, enemy };
