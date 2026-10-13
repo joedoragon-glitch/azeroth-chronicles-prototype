@@ -253,7 +253,11 @@ const server = http.createServer((req, res) => {
               g.zone().enemies = [original, nearer, chosen];
               g.s.heroTarget = original.id;
               g.s.projectiles = [];
-              window.__retargetFoes = { original: original.id, nearer: nearer.id, chosen: chosen.id };
+              window.__retargetFoes = {
+                original: original.id,
+                nearer: nearer.id,
+                chosen: chosen.id,
+              };
               window.__cooldownCasts = [];
               Prototype.updateHUD();
             },
@@ -311,7 +315,8 @@ const server = http.createServer((req, res) => {
             { species: 'goblin', name, level: 1, hp: 10000, damage: 0, xp: 0, gold: 0 },
             { x, y: 900 },
           );
-        const original = make('Original', 680), near = make('Nearest', 650);
+        const original = make('Original', 680),
+          near = make('Nearest', 650);
         g.zone().enemies = [original, near];
         g.s.heroTarget = original.id;
         g.s.projectiles = [];
