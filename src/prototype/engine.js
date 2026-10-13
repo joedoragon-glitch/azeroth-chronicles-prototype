@@ -745,6 +745,7 @@
       captain.captainProfile = z.id;
       captain.captainMentor = profile.mentor;
       captain.captainVisualIdol = profile.visualIdol || profile.mentor;
+      if (profile.species) captain.species = profile.species;
       captain.visualScale = profile.visualScale || 1.16;
       captain.specialCd = Math.min(captain.specialCd ?? 1.25, 1.25);
       captain.roomCaptainVersion = 1;

@@ -691,10 +691,8 @@
             c.clearEncounterState(e);
             e.aggro = false;
             e.returning = 0;
-            if (e.hp > 0 && !e.neutral) {
-              Object.assign(e, e.home);
-              e.hp = e.maxHp;
-            }
+            // Raw historical restores retain wounds/dead state; snapshot() owns
+            // the ordinary resting-enemy serialization contract.
             // Rename the existing boss in historical saves; never change 'crypt'
             // save keys, rewards, quest/rescue flags or normal/TRUE progression.
             if (e.family === 'crypt' && e.type === 'boss')

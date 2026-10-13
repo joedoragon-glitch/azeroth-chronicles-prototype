@@ -1,5 +1,5 @@
 'use strict';
-// Compare the unchanged baseline directory with the complete candidate tree.
+// Compare original and current renderer pipelines with identical current content.
 // Both pages have no app shell, rAF, simulation ticks or audio; this is a warmed
 // frozen full-painter benchmark with forced Canvas readback, not active-play FPS.
 const fs = require('node:fs'),
@@ -22,6 +22,27 @@ assert(
   fs.existsSync(path.join(baselineRoot, 'src/prototype/renderer.js')),
   'Provide the unchanged baseline root',
 );
+// Approved content must match on both sides; retain original renderer/cache
+// implementations for performance measurement. No region or pixel exclusion.
+const sharedContent = new Set(
+  [
+    'engine',
+    'rules',
+    'data',
+    'world',
+    'navigation',
+    'party',
+    'combat',
+    'hero-combat',
+    'boss-combat',
+    'save',
+    'narration',
+    'visuals',
+    'combat-visuals',
+    'enemy-vfx-art',
+    'enemy-vfx-events',
+  ].map((n) => 'src/prototype/' + n + '.js'),
+);
 const roots = { baseline: baselineRoot, candidate: candidateRoot, control: baselineRoot },
   hash = (value) => crypto.createHash('sha256').update(value).digest('hex');
 const server = http.createServer((req, res) => {
@@ -38,9 +59,10 @@ const server = http.createServer((req, res) => {
     res.end('<!doctype html><title>Frozen full renderer benchmark</title>');
     return;
   }
-  const file = path.resolve(roots[which], name);
+  const contentRoot = sharedContent.has(name) ? candidateRoot : roots[which];
+  const file = path.resolve(contentRoot, name);
   if (
-    !file.startsWith(roots[which] + path.sep) ||
+    !file.startsWith(contentRoot + path.sep) ||
     !fs.existsSync(file) ||
     !fs.statSync(file).isFile()
   ) {
@@ -240,6 +262,7 @@ function summarize(samples) {
     const report = {
       baselineCommit: 'c6ce1af236bddd7ca881903499c4cf5de175f9e2',
       baselineRoot,
+      sharedContent: [...sharedContent],
       candidateRoot,
       engine,
       browserVersion: browser.version(),
@@ -258,7 +281,14 @@ function summarize(samples) {
           Object.fromEntries(
             ['renderer', 'visuals', 'ground-cache', 'sprites', 'materials'].map((name) => [
               name,
-              hash(fs.readFileSync(path.join(root, 'src/prototype/' + name + '.js'))),
+              hash(
+                fs.readFileSync(
+                  path.join(
+                    sharedContent.has('src/prototype/' + name + '.js') ? candidateRoot : root,
+                    'src/prototype/' + name + '.js',
+                  ),
+                ),
+              ),
             ]),
           ),
         ]),

@@ -415,6 +415,9 @@
         amount = this.tacticalCompressDamage(e, amount);
         const actualDamage = Math.max(0, Math.min(e.hp, amount));
         e.hp = Math.max(0, e.hp - amount);
+        this.tacticalRecordHit(e, source, actualDamage);
+        this.effects.push({ type: 'hit', x: e.x, y: e.y, amount });
+        if (e.hp === 0) this.kill(e);
         if (
           e.captainProfile === 'supply-crown' &&
           e.captainReflect > 0 &&
@@ -422,9 +425,7 @@
           origin.hp > 0
         )
           this.hitParty(origin, actualDamage * 0.3, 0, null, true);
-        this.tacticalRecordHit(e, source, actualDamage);
-        this.effects.push({ type: 'hit', x: e.x, y: e.y, amount });
-        if (e.hp === 0) this.kill(e);
+
         return true;
       }
       hitParty(u, amount, manaDrain = 0, rangedSourceId = null, alreadyMitigated = false) {

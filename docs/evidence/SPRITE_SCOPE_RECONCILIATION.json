@@ -9,6 +9,9 @@
   "families": {
     "decoration": [
       "torch",
+      "estate-rug",
+      "estate-hearth",
+      "estate-lounge",
       "coffin",
       "bones",
       "banner",
@@ -524,10 +527,10 @@
       "key": "terrain:floor:crypt",
       "owner": "floor/dungeonFloors",
       "palette": [
-        "#343c39",
-        "#414945",
-        "#2b3331",
-        "#a9b1a0"
+        "#453843",
+        "#57414a",
+        "#342b39",
+        "#c9a16e"
       ]
     },
     {
@@ -1087,6 +1090,14 @@
       "hybrid": true
     },
     {
+      "key": "enemy:ridge:captain-guard",
+      "species": "ridge",
+      "captain": true,
+      "guard": true,
+      "ranged": false,
+      "hybrid": false
+    },
+    {
       "key": "enemy:skeleton",
       "species": "skeleton",
       "captain": false,
@@ -1127,14 +1138,6 @@
       "hybrid": false
     },
     {
-      "key": "enemy:wolf:captain-guard",
-      "species": "wolf",
-      "captain": true,
-      "guard": true,
-      "ranged": false,
-      "hybrid": false
-    },
-    {
       "key": "enemy:wolf:guard",
       "species": "wolf",
       "captain": false,
@@ -1144,12 +1147,12 @@
     }
   ],
   "sources": {
-    "src/prototype/visuals.js": "3af6be2dfba6793253460a5e00e39314957319968a74d0577edbb7a65386bc0e",
+    "src/prototype/visuals.js": "87363150328c12a4af56731a7a5cd8373601e8a252d4ca2e503fd5a291d8a078",
     "src/prototype/world.js": "9c7d27d85c929dd34a9e181ea18280bd2904396b94f19d99fa0bfa7105b72104",
-    "src/prototype/rules.js": "75ee3b5cb29e7a75c9f3015c1e05c4c0e424ea87e812aaeb90aae1caebc9192f",
-    "src/prototype/data.js": "a82856323e155405e7fb68a027dc226b75d1563bd6b440450ccf584a9d7724b2",
+    "src/prototype/rules.js": "18f3d0e72fd28af6dc5478bea4988506c6c540e28746e6a1859bb934b8b99907",
+    "src/prototype/data.js": "bba5a5e454fa4cf39a37a06996f9b276432a75b5cfc175681d06d657076b9e3d",
     "src/prototype/sprites.js": "157fae7b5bcb7883a9c0a107434deb2e1e2692e7905c358f237553d98118a774",
-    "src/prototype/renderer.js": "56c386616a4aebd69d5226b7eec6bdfa9d72b560263b8720b2f8ccc999a33c5a"
+    "src/prototype/renderer.js": "d799865281f94538c736e4a71a880accc6f4620f7969e41794ff88998808545c"
   },
   "limits": "Deterministic normal/Nightmare world samples support source-case classification; every actual art job still requires its exact current state/reference. Future summon/night/seed additions are not inferred from these samples."
 }

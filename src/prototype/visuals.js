@@ -1018,33 +1018,10 @@
           for (const x of [19, 27, 35]) glint(x, -3, '#d9c984', 1.2);
           break;
         case 'ridge':
-          // Wolf disciple: quarry-metal collar and stone brow plates instead of humanoid armor.
-          line(
-            [
-              [-20, -8],
-              [18, -7],
-            ],
-            '#938b78',
-            4,
-          );
-          for (const x of [-11, 0, 11]) rect(x - 3, -11, 6, 6, '#6f7470');
-          poly(
-            [
-              [10, -23],
-              [18, -28],
-              [25, -22],
-              [18, -18],
-            ],
-            '#9a9b8d',
-          );
-          line(
-            [
-              [19, -26],
-              [27, -31],
-            ],
-            '#c9c3a4',
-            2,
-          );
+          // Horned humanoid disciple; ordinary Treasury Wolf guards keep their bodies.
+          rect(-16, -24, 32, 7, '#938b78');
+          for (const x of [-11, 0, 11]) rect(x - 3, -24, 6, 6, '#6f7470');
+          glint(0, -22, '#d9c984', 1.2);
           break;
         case 'darklord':
           // Dreadmaw preserves his original Dark Lord fanboy identity even though Cindermaw is now his combat mentor: obsidian harness and Crown sigil on the Ash-beast carapace.
@@ -11869,21 +11846,23 @@
       const role = allyBodyKind(e);
       if (role === 'goblin-archer') goblinArcher();
       else human(role);
-    } else if (e.type === 'boss') {
+    } else if (e.type === 'boss' || e.captainProfile === 'supply-highlands') {
       shade(
         e.form === 'true' ? 42 : 34,
         e.form === 'true' ? 13 : 10,
         e.form === 'true' ? 0.42 : 0.32,
       );
       const bossScale =
-        (e.family === 'darklord' ||
-        e.family === 'cindermaw' ||
-        e.family === 'mine' ||
-        e.family === 'abyss'
-          ? 1.36
-          : 1.3) * (e.form === 'true' ? 1.14 : 1);
+        e.captainProfile === 'supply-highlands'
+          ? 1
+          : (e.family === 'darklord' ||
+            e.family === 'cindermaw' ||
+            e.family === 'mine' ||
+            e.family === 'abyss'
+              ? 1.36
+              : 1.3) * (e.form === 'true' ? 1.14 : 1);
       ctx.scale(bossScale, bossScale);
-      switch (e.family) {
+      switch (e.captainProfile === 'supply-highlands' ? 'ridge' : e.family) {
         case 'thorn':
           wolf('#a08864', true);
           break;

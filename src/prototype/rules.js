@@ -3993,6 +3993,7 @@
     'supply-highlands': {
       mentor: 'ridge',
       name: 'Crag Tyrant',
+      species: 'ridge',
       enduranceHp: 1650,
       visualScale: 1.2,
       specialRange: 482,

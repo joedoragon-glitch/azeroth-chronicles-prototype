@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "crag-tyrant",
+  "name": "Crag Tyrant",
+  "kind": "named-captain",
+  "nextAction": "Retain horned humanoid correction and inspect CI captains/estate captures. New sprite production excluded.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Director #293/#298: same horned humanoid species as Ridge; ordinary Wolf guards unchanged.",
+    "decisionDate": "2026-10-13",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/300",
+    "contentDocuments": [
+      "docs/DIRECTOR_WORLD_BUILDING_SNAPSHOT_CANON_LOCK_20261012.md"
+    ],
+    "locationAndLore": "Ironroot Treasury captain. Stable ID and catalog048; no TRUE."
+  },
+  "decisions": {
+    "conceptAcceptance": "Approved #293/#298 correction",
+    "proceduralDesignAcceptance": "Faithful engineering implementation; subjective director appearance acceptance not claimed",
+    "spriteProductionAuthorization": "Excluded",
+    "generatedAppearanceAcceptance": null,
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "23e8ecc558381f8066bc600d302c2e32bfa275ec",
+    "sourceCommitNote": "Parent recovery head. This handoff is committed with following correction; exact inputs identified by hashes.",
+    "sourceHashes": {
+      "src/prototype/visuals.js": "87363150328c12a4af56731a7a5cd8373601e8a252d4ca2e503fd5a291d8a078",
+      "src/prototype/engine.js": "bc900287c0f32a873a443bdc5341389a19070fdec136b6b5cd847148c75eeeab",
+      "src/prototype/rules.js": "18f3d0e72fd28af6dc5478bea4988506c6c540e28746e6a1859bb934b8b99907"
+    },
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js",
+      "src/prototype/engine.js",
+      "src/prototype/rules.js"
+    ],
+    "exactEntityState": {
+      "id": "enemy-39",
+      "family": null,
+      "species": "ridge",
+      "name": "Crag Tyrant",
+      "icon": "🐺",
+      "form": "normal",
+      "type": "mob",
+      "level": 8,
+      "baseHp": 1650,
+      "baseDamage": 47,
+      "hp": 1650,
+      "maxHp": 1650,
+      "damage": 47,
+      "gold": 6,
+      "xp": 8,
+      "x": 760,
+      "y": 564.0192378864668,
+      "home": {
+        "x": 760,
+        "y": 564.0192378864668
+      },
+      "cd": 0,
+      "aggro": false,
+      "heroParticipated": false,
+      "noProgress": 0,
+      "attackIndex": 0,
+      "respawn": 0,
+      "neutral": false,
+      "open": 0,
+      "deathPaid": false,
+      "guard": true,
+      "roomGuard": true,
+      "pack": "supply-highlands-household",
+      "captain": true,
+      "roomCaptain": true,
+      "captainProfile": "supply-highlands",
+      "captainMentor": "ridge",
+      "captainVisualIdol": "ridge",
+      "visualScale": 1.2,
+      "specialCd": 1.25,
+      "roomCaptainVersion": 1,
+      "guardianBalanceVersion": 2,
+      "captainPhase": false,
+      "captainPhaseMove": 1,
+      "captainAttackRate": 1,
+      "captainGuard": 0,
+      "captainReflect": 0,
+      "captainOvertimeCd": 0,
+      "captainEnduranceVersion": 2,
+      "telegraph": null,
+      "sequence": [],
+      "motion": null,
+      "rangedAim": null,
+      "captainPursuit": 0,
+      "captainOpeningSummon": false,
+      "frozen": false
+    },
+    "isolatedReferencePath": "tools/sprites/design-handoffs/references/crag-tyrant/procedural.png",
+    "isolatedReferenceHash": "7c55955e56d828ef9b7479f97fa00cff447940c860bbd1e66df9655cd2eef0af",
+    "gameplayContextPaths": [
+      "tools/sprites/design-handoffs/references/crag-tyrant/context-1280.png",
+      "tools/sprites/design-handoffs/references/crag-tyrant/context-375.png"
+    ],
+    "contextHashes": {
+      "tools/sprites/design-handoffs/references/crag-tyrant/context-1280.png": "d5999cecaaa850081a520554f117c15533be5c7e1fd2fa9addfd84aaf2ee4605",
+      "tools/sprites/design-handoffs/references/crag-tyrant/context-375.png": "1ce926480b3f525acbaec7f27b0048f851f65db4a8e47bb773978e09602a0341"
+    },
+    "contextNote": "Actual engine and production renderer via Node Canvas at150%; not browser or physical-device certification. Dedicated CI captures follow.",
+    "traitsToPreserve": [
+      "Ridge horns, humanoid anatomy, armor and hammer",
+      "captain scale1.2 and quarry shoulder plates",
+      "ordinary Wolf guards retained"
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [
+      "048"
+    ],
+    "verifiedRuntimeKeys": [
+      "enemy:ridge:captain-guard"
+    ],
+    "supersededRuntimeKeys": [
+      "enemy:wolf:captain-guard"
+    ],
+    "requiredVisibleAssets": [
+      "Crag body"
+    ],
+    "reusedDesignIds": [
+      "ridge-tyrant"
+    ],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "Reuse existing Ridge procedural body; no new rasters"
+    ]
+  },
+  "animationRequirements": {
+    "status": "undecided",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

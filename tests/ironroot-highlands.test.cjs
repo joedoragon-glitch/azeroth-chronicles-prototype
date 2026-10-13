@@ -53,13 +53,18 @@ test('Ironroot production scenes leave homes, habitats, service spacing and road
   assert(c.zone().props.some((p) => p.structure === 'game-table'));
   assert(c.zone().props.some((p) => p.structure === 'ridge-hearth'));
 });
-test('Treasury keeps the Wolf household captain, home comforts and exact cache identity during migration', () => {
+test('Treasury keeps the horned humanoid captain and ordinary Wolf guards, home comforts and exact cache identity during migration', () => {
   const c = fresh();
   c.enter('supply-highlands');
   const z = c.zone();
   assert.equal(z.treasuryVersion, 4);
   const crag = z.enemies.find((e) => e.roomCaptain);
-  assert.equal(crag.species, 'wolf');
+  assert.equal(crag.species, 'ridge');
+  assert(z.enemies.filter((e) => e.roomGuard && !e.roomCaptain).every((e) => e.species === 'wolf'));
+  assert.equal(
+    require('../src/prototype/sprites.js').candidateKeys({ ...crag, renderKind: 'enemy' })[0],
+    'enemy:ridge:captain-guard',
+  );
   assert.equal(crag.name, 'Crag Tyrant');
   assert.equal(z.enemies.filter((e) => e.roomGuard).length, 4);
   const props = new Set(z.props.map((p) => p.structure));
@@ -93,7 +98,7 @@ test('Treasury keeps the Wolf household captain, home comforts and exact cache i
       .sort(),
     [0, 1],
   );
-  assert.equal(r.zone().enemies.find((e) => e.roomCaptain).species, 'wolf');
+  assert.equal(r.zone().enemies.find((e) => e.roomCaptain).species, 'ridge');
 });
 test('Mine production, historic cuts and repair forge have trap-free connected routes', () => {
   const c = fresh();

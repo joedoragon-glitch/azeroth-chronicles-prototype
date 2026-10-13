@@ -25,9 +25,9 @@
           'mireLowestHpRatio',
           'sabotageCd',
           'quotaTarget',
-          'quotaOvertime',
         ])
           delete e[key];
+        if (e.quotaOvertime !== undefined) e.quotaOvertime = 0;
         if (e.type === 'boss') {
           e.trueEntourageSpawned = false;
           e.trueHalfSummonWave = false;
@@ -47,6 +47,12 @@
         this.clearEncounterState(e);
         this.s.projectiles = this.s.projectiles.filter((p) => p.sourceId !== e.id);
         this.s.hazards = this.s.hazards.filter((h) => h.source !== e.id && h.sourceId !== e.id);
+        for (const u of this.zone().enemies)
+          if (u.summon && u.owner === e.id) {
+            u.hp = 0;
+            u.aggro = false;
+            this.clearEncounterState(u);
+          }
         this.zone().enemies = this.zone().enemies.filter((u) => !(u.summon && u.owner === e.id));
       }
       clearEncounterUnits(units = [this.hero, ...this.s.party]) {
