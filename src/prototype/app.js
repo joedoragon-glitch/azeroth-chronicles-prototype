@@ -1544,9 +1544,7 @@
     // Keep the original charge aim while valid. Resolve a replacement if
     // that enemy dies, disappears, or becomes unreachable before release.
     const original =
-      targetId !== null && targetId !== undefined
-        ? valid.find((e) => e.id === targetId)
-        : null;
+      targetId !== null && targetId !== undefined ? valid.find((e) => e.id === targetId) : null;
     if (original) return original;
     const selected = game.selectedHeroTarget();
     const selectedInRange = selected && valid.find((e) => e.id === selected.id);
