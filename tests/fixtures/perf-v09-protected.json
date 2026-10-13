@@ -73,5 +73,15 @@
     "appSha256": "e6ea0d525e4a827da13cdb95a2c6b1185432781bf269ab9b4370e6dd1b2f48e3",
     "inputSha256": "3b01e8b5df5b7b8fedc8deb24bba4f93f979ef111e2fa2fa55950891b58b5da5",
     "desktopCssSha256": "95fcb8bdad9f22c32950a1f1c6c51b1f2f886fc89e33d59248d3aef415137dac"
+  },
+  "approvedHeroSkillRevision": {
+    "source": "PR #302; author-directed 2026-10-13 hero skill repair, isolated from v0.9.1 performance and rendering baseline",
+    "scope": "Skill 6 unlock moves to Ironroot; Paladin rushing strike, Ranger visible volley and defensive piercing; no FPS/input/actor scheduling or save-format change.",
+    "files": {
+      "src/prototype/combat.js": "cf128540e74f53c4bc58f97eadd648b6736005dc35c6a51c0698c96b56859bd7",
+      "src/prototype/data.js": "053193b912513d1cf8d58f492981e76de4465173b1fdbeabe39e2ddaca77efea",
+      "src/prototype/hero-combat.js": "0a5518e8a07bb0cb13e08420f60650a70db384a52fd0eb2b532ea5837394cb3c",
+      "src/prototype/rules.js": "db5b980203c91f6de557dd7e2d1c899e2e374f7b861ea0c8c4c72d3dbf30a7f2"
+    }
   }
 }
