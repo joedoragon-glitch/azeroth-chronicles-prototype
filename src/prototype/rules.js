@@ -3672,8 +3672,8 @@
   const resourceDepositCounts = [4, 4, 4, 4, 4];
   const teachers = {
     thorn: { learn: [2], train: [1, 2], maxRank: 2 },
-    mire: { learn: [3, 4, 6], train: [1, 2, 3, 4, 6], maxRank: 3 },
-    ridge: { learn: [5], train: [1, 2, 3, 4, 5, 6], maxRank: 4 },
+    mire: { learn: [3, 4], train: [1, 2, 3, 4], maxRank: 3 },
+    ridge: { learn: [5, 6], train: [1, 2, 3, 4, 5, 6], maxRank: 4 },
     warlord: { learn: [7], train: [1, 2, 3, 4, 5, 6, 7], maxRank: 6 },
     citadel: { learn: [8], train: [1, 2, 3, 4, 5, 6, 7, 8], maxRank: 8 },
   };
