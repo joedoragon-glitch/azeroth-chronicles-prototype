@@ -9,6 +9,7 @@ const fs = require('node:fs'),
   assert = require('node:assert/strict'),
   pw = require(process.env.PLAYWRIGHT_MODULE || 'playwright'),
   sharp = require('sharp');
+const { approvedScenery } = require('./snapshot-scenery-comparison.cjs');
 const candidateRoot = path.resolve(
     process.env.PERF_WS2_CANDIDATE_ROOT || path.join(__dirname, '..'),
   ),
@@ -58,7 +59,7 @@ const server = http.createServer((req, res) => {
   );
   fs.createReadStream(file).pipe(res);
 });
-function prepare({ zone, width, height }) {
+function prepare({ zone, width, height, approvedScenery }) {
   const game = new Campaign('normal', 'paladin', () => 0.7);
   game.enter(zone === 'crowd' ? 'vale' : zone);
   game.s.clock = 200;
@@ -92,30 +93,28 @@ function prepare({ zone, width, height }) {
   // optimizations. Remove only the twelve explicitly approved snapshot props;
   // their actual drawings are verified by the combined regional browser probe.
   // Keep exact pixels/state in every region, not a whole-region exclusion.
-  const addedScenery = {
-    vale: {
-      'hamlet-orchard': ['fruit-tree', 'crate'],
-      'millhaven-carpentry': ['stacked-lumber', 'tool-rack'],
-    },
-    march: { 'reedport-catch': ['crate', 'cart'] },
-    frontier: { 'burned-hamlet-home': ['garden', 'laundry'] },
-  };
   for (const region of ['vale', 'march', 'frontier']) {
     const z = game.s.zones[region];
     if (!z) continue;
-    z.props = z.props.filter(
-      (p) =>
-        !(
-          p.decorative === true &&
-          p.r === 0 &&
-          String(p.id || '').startsWith('regional-handoff-') &&
-          (addedScenery[region]?.[p.regionalDistrict]?.includes(p.structure) ||
-            (region === 'march' &&
-              p.regionalDistrict === 'camp-work' &&
-              p.structure === 'tool-rack' &&
-              p.sceneRole === 'boat-maintenance'))
-        ),
-    );
+    const seen = new Set();
+    z.props = z.props.filter((p) => {
+      const added =
+        p.decorative === true &&
+        p.r === 0 &&
+        approvedScenery.some(
+          ([zone, id, structure, district, role]) =>
+            zone === region &&
+            p.id === id &&
+            p.structure === structure &&
+            p.regionalDistrict === district &&
+            p.sceneRole === role,
+        );
+      if (!added) return true;
+      if (seen.has(p.id))
+        throw new Error('Duplicate approved scenery identity: ' + region + '/' + p.id);
+      seen.add(p.id);
+      return false;
+    });
   }
   const canvas = document.createElement('canvas');
   canvas.width = width;
@@ -280,7 +279,7 @@ function summarize(samples) {
           initial = {};
         for (const which of ['baseline', 'candidate', 'control']) {
           const page = pages[which];
-          await page.evaluate(prepare, spec);
+          await page.evaluate(prepare, { ...spec, approvedScenery });
           await page.evaluate(async () => {
             const region = ['vale', 'march', 'highlands', 'frontier', 'crown'][
               __perfWs2.game.regionIndex()

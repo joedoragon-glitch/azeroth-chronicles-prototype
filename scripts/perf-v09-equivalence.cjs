@@ -17,30 +17,14 @@ const rng = () => {
 const json = (x) => JSON.parse(JSON.stringify(x));
 // Only the exact twelve approved decorative additions are normalized.
 // All other live/save fields and all rendered pixels remain protected.
-const addedScenery = {
-  vale: {
-    'hamlet-orchard': new Set(['fruit-tree', 'crate']),
-    'millhaven-carpentry': new Set(['stacked-lumber', 'tool-rack']),
-  },
-  march: { 'reedport-catch': new Set(['crate', 'cart']) },
-  frontier: { 'burned-hamlet-home': new Set(['garden', 'laundry']) },
-};
-const isAddedScenery = (p, region) =>
-  p.decorative === true &&
-  p.r === 0 &&
-  String(p.id || '').startsWith('regional-handoff-') &&
-  (addedScenery[region]?.[p.regionalDistrict]?.has(p.structure) ||
-    (region === 'march' &&
-      p.regionalDistrict === 'camp-work' &&
-      p.structure === 'tool-rack' &&
-      p.sceneRole === 'boat-maintenance'));
+const { removeApprovedScenery } = require('./snapshot-scenery-comparison.cjs');
 const withoutApprovedScenery = (value) => {
   const copy = json(value);
   for (const state of [copy.s, copy.snapshot, copy.snapshot?.s]) {
     for (const region of ['vale', 'march', 'frontier']) {
       const z = state?.zones?.[region];
       if (!z) continue;
-      z.props = z.props.filter((p) => !isAddedScenery(p, region));
+      z.props = removeApprovedScenery(z.props, region);
       if (region === 'frontier' && z.regionalHandoffVersion === 1) delete z.regionalHandoffVersion;
       else if (region !== 'frontier' && z.regionalHandoffVersion === 2)
         z.regionalHandoffVersion = 1;
@@ -152,7 +136,7 @@ for (const zone of [...A.data.regions.map((r) => r.id), ...A.dungeonIds])
         const C = load(root, 'engine'),
           c = new C('normal', 'paladin', rng());
         c.enter(zone);
-        c.zone().props = c.zone().props.filter((p) => !isAddedScenery(p, zone));
+        c.zone().props = removeApprovedScenery(c.zone().props, zone);
         c.s.clock = clock;
         Object.assign(c.hero, c.safe(800, 800));
         const before = JSON.stringify(live(c));

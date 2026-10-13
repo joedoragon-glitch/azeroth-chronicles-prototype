@@ -133,16 +133,31 @@ async function verifySnapshotScenery(page, results, tag, capture) {
           __snapshotSceneryProbe.seen = [];
           Prototype.updateHUD();
           Prototype.renderer.draw();
+          const painted = props.filter((p) => __snapshotSceneryProbe.seen.includes(p.id)).length;
+          const center = { x: sample.hero.x, y: sample.hero.y };
+          const individuallyPainted = [];
+          // Inspect each actual prop through the running camera/renderer, so a
+          // district cannot pass merely because one furnishing happens to draw.
+          for (const p of props) {
+            Object.assign(sample.hero, sample.safe(p.x, p.y + 120));
+            __snapshotSceneryProbe.seen = [];
+            Prototype.renderer.draw();
+            if (__snapshotSceneryProbe.seen.includes(p.id)) individuallyPainted.push(p.id);
+          }
+          Object.assign(sample.hero, center);
+          Prototype.renderer.draw();
           return {
             count: props.length,
             decorative: props.every((p) => p.r === 0 && p.decorative),
-            painted: props.filter((p) => __snapshotSceneryProbe.seen.includes(p.id)).length,
+            painted,
+            individuallyPainted: individuallyPainted.length,
           };
         },
         { region, district },
       );
       assert.equal(probe.count, count, region + '/' + district + ' precise prop count');
       assert(probe.decorative, 'new scenery is nonblocking');
+      assert.equal(probe.individuallyPainted, count, district + ' every prop actually paints');
       assert(
         probe.painted > 0,
         region + '/' + district + ' actually paints through procedural fallback',
