@@ -170,3 +170,99 @@ These are implementation acceptance examples, **not tests claimed to have passed
 - **NOT AUTHORIZED:** Gameplay implementation, making players chase/guide mud as a new rule, adding cooldown caps, arbitrary extra attacks, changing owner-approved passives, new administrations, modifying the independent #286 or #289 drafts, merging or deploying.
 
 **Audit conclusion:** The design is implementable using the current engine's existing hazard, shared damage, phase, timer, attack-slot and VFX systems. This is a source-level feasibility assessment, **not** a performance claim or permission to ship. Resolve the concrete issues above on a later owner-authorized implementation branch; preserve this PR as **documentation only**.
+
+## 6. Implementation preparation — straightforward work first (NO GAME CHANGES)
+
+**Purpose:** prewrite the *small, low-risk implementation slices* and their acceptance contracts **without implementing any of them now**. The owner instructed us to prepare the straightforward work first but **explicitly postponed changes to the playable game until a later implementation authorization**. This section is source-mapped instructions only, not a patch, production switch, tested branch or a new set of balance decisions.
+
+**Verified source boundaries at preparation:** `main` `6f8089b2013647184efb04932fe6157f548238b9`; boss mechanics PR #230 `49be85ec89ac7201f72d3c2fd9308f215235ccad`; captain mechanics PR #231 `1e298f14299518186a9166cc658fb4b9a9979fce`. Re-fetch these paths and branch heads before implementing; independent branches and visual fixes may have moved. This preparation remains part of **documentation-only draft PR #290**.
+
+### 6.1 Staging order, from easier to more interdependent
+
+| Preparation package | Relative effort | Source dependencies | Definition of a complete *future* implementation |
+| --- | --- | --- | --- |
+| **A. Exact name-display map** | Lowest: string/source ownership, with indexing guards | Existing main names plus #230/#231 mechanics where names are applied | All selected names show in their correct encounter slots; no internal IDs or behavior change; names are not leaked through warningless cues |
+| **B. Emergency Stabilization** — Keeper | Small, local defensive state plus VFX | #230's Keeper AI, capture and fifth attack; existing shared damage routine | One-time post-hit protection with exact Normal/TRUE values, clear effect timer and truthful readable seal; no shield on the triggering or lethal hit |
+| **C. Strain Hardening** — Direjaw | Small-to-moderate shared hit hook plus reset | #231's 680-HP captain migration, 55%-HP phase, current shared damage handling | Post-hit 4% stacks to 12% cap, five-second refresh/expiry, correct interplay with phase, cleanup on reset/save |
+| **D. Groundwater Recharge** — Mirejaw | Moderate: multi-object hazard occupancy + lowest-HP correction | #230's `mire` hazard ownership/expiry and Hydraulic Resistance | 2%/5% HP/s actual live mud contact and post-hit monotone scale floor; no added pursuit or patch changes |
+
+**Release boundary:** These are preparation *packages*, not permission to ship A–D as separate published game releases. When implementation is authorized, stage and test them on isolated branches as appropriate, then reconcile into #232's single owner-approved worldbuilding integration. Do not begin package B/C/D in code solely because their written contract is ready.
+
+### 6.2 Package A — final authoritative display-label map
+
+A clean implementation will change *text in the actual owner tables*, not replace arrays, move attack slots, modify `family` values or create alternate attacks.
+
+| Character / category | Actual owner in the candidate source | Existing string / target | Final string |
+| --- | --- | --- | --- |
+| Mirejaw regular 1–4 | PR #230 `src/prototype/data.js` — `D.bosses`, id `mire`, `attacks[0..3]` prefix before colon | Jaw snap / Mire rush / Bog spit / Brood call | **Fluvial Incision / Hydraulic Jump / Inundation / Flood-Pulse Recruitment** |
+| Mirejaw basic rogue | `src/prototype/rules.js` — `rogueMoves.bosses.mire.name` | Mirejaw's Bog Snare | **Matric Suction** |
+| Mirejaw rogue signature | `src/prototype/rules.js` — `rogueSignatures.bosses.mire.name` | Mirejaw's Sinking Bank | **Rotational Slump** |
+| Mirejaw triggered follow-up | PR #230 `boss-combat.js` and presentation/event coverage, **not** a `D.bosses.attacks` slot | Death Roll | **Vortex Shedding** |
+| Mirejaw existing scale trait | PR #230 `combat.js` and status/presentation coverage, **not** another attack | Scaly Hide | **Hydraulic Resistance** |
+| Mirejaw **new** passive | Future contact-healing integration and status cue; **not yet a slot** | Initial approved Hyporheic Exchange, later renamed | **Groundwater Recharge** |
+| Direjaw regular 1–3 | PR #231 `src/prototype/rules.js` — `roomCaptains['supply-march'].attacks[0..2].name` | Bog Skitter / Spatter Fan / Silt Slick | **Flow Sliding / Sand Boil / Mud Pumping** |
+| Direjaw basic rogue | `src/prototype/rules.js` — `rogueMoves.captains['supply-march'].name` | Direjaw's Silt Hook | **Pullout Resistance** |
+| Direjaw rogue signature | `src/prototype/rules.js` — `rogueSignatures.captains['supply-march'].name` | Direjaw's Silt Curtain | **Grout Curtain** |
+| Direjaw phase | PR #231 `src/prototype/rules.js` — `roomCaptains['supply-march'].phase.name` | Sloughskin (superseded proposal: Dilatancy) | **Elastic Rebound** |
+| Direjaw **new** passive | Future defensive hit integration and status cue; **not yet a slot** | First proposed as Cyclic Densification | **Strain Hardening** |
+| Drowned Keeper **all seven established skills** | PR #230 `data.js` regular attack descriptions / current `rogueMoves.bosses.archive` / `rogueSignatures.bosses.archive` | Current keeper repertoire | **RETAIN** Anchor Swing; Water Jets; Undertow; Echo Call; Cooldown Sabotage; Drowned Keeper's Undertow (rogue); Drowned Keeper's Floodgate Turn (rogue signature) |
+| Drowned Keeper **new** passive | Future defense + status cue, **not yet a slot** | Approved from the outset | **Emergency Stabilization** |
+
+**Important no-mechanics-change rules for A:**
+- Preserve order and length of existing regular arrays: Mirejaw **4**; Direjaw **3**; Keeper **5 on #230** (only **4** on released main). Their current `index` values are used by combat/animation/summon/hazard logic.
+- Do **not** replace display `name` changes with new `family`, captain profile, rogue configuration, save flag, `species`, boss type or room keys. In particular, `mire`, `archive` and `supply-march` must be stable.
+- The engine on #230 constructs boss attack telegraph names from the **text before the colon** in `D.bosses[id].attacks[index]`. Keep the colon and the truthful, originally approved timing/damage description after it. Validate displayed warning/status/help names against their real source.
+- **A name rename does not change an attack's stage visibility.** Direjaw's Flow Sliding must retain the #231 anonymous 0.9-second preparation (no actual attack name/footprint disclosed); skill labels may appear **only when the existing attack feedback rules allow**.
+- Check for name-sensitive logic before changing it: #230 has an unrelated `Groundwork` name-based check for the `crypt` family; do not generalize changes and accidentally break it. Mirejaw's bog occupancy must continue being identified by stable `family='mire'`, `index=2`, and `sourceId` rather than by the mutable text `Inundation`.
+- The Vortex Shedding follow-up, Hydraulic Resistance, and all three passives require **separate optional triggered/status visual labels** if the UI supports them; never fabricate extra castable regular techniques. Keep existing SFX/VFX ownership and source guardrails, including #257's eventual presentation audit.
+
+**A's ready-to-run future tests:** compare roster string arrays against this table, confirm slot counts/IDs, use the real boss/captain attack builders and rogue resolver to inspect labels, verify warning anonymity, assert identical hit/geometry/timing/summon/phase values before and after name substitution, and check source/doc/help/TRUE spellings. This document provides *expected strings*; it does not claim tests exist or pass.
+
+### 6.3 Package B — Keeper's Emergency Stabilization (smallest new stateful feature)
+
+**Single authoritative mechanic:** For `e.type === 'boss' && e.family === 'archive'`, after a **survived positive-damage hit** first lowers the Keeper to `hp <= 0.5 * maxHp`, activate exactly once per live encounter. Reduction applies to **later** valid hits, **0.30 for six seconds Normal** and **0.40 for eight seconds TRUE**. Do not reduce the threshold-crossing hit, rewind damage, restore HP or block a fatal blow. If already dead, nothing activates. Preserve mode/TRUE multipliers from `bossEnemy()` and original `archive` save/finale family.
+
+**Pre-implementation pseudocode, NOT new code:**
+```text
+incoming hit -> apply previously active defenses -> subtract actual damage
+if target survives and was not shield-triggered this encounter
+  and health <= 50%:
+    mark one-time trigger, set six/eight second timer, show conservation seal
+future incoming hit while timer positive -> apply 30%/40% reduction once
+timer reaches zero -> remove visible seal; no retrigger until true fresh encounter
+```
+
+The existing engine already has `combat.js:damage()`, timer updates in `engine.js` and condition-driven procedural VFX; choose exact future source hooks after integration review. Do not create a gameplay-facing boss-heal cast or consume an existing attack slot. Regression fixtures: **51% -> 49%** initial hit unmitigated, next hit reduced, instantaneous one-hit lethal crossing unprotected, exact six/eight second expiration, multiple companions' hits, no extra protection after expiration, correct no-op during peace, and full reset on real encounter restart. Actual Keeper healer focus/Anchor hold/Sabotage interaction must be checked together.
+
+### 6.4 Package C — Direjaw's Strain Hardening (small stateful feature)
+
+**Single authoritative mechanic:** For the unique `supply-march` **captain profile**, each attack that actually reduces Direjaw's HP contributes **one +4-percentage-point reduction stack AFTER the hit**. Maximum **three stacks = 12%**, duration **five seconds after the last qualifying hit**; stack count remains capped but a subsequent valid hit may refresh expiry. Only reduction of **subsequent** attacks is allowed. No new HP, separate boss form, extra summon, change to phase damage or retaliation.
+
+**Pre-implementation pseudocode, NOT new code:**
+```text
+on candidate incoming hit:
+  verify eligible live captain + real positive HP damage, after existing hit gating
+  calculate damage using existing stacks (0/1/2/3 => 0/4/8/12% reduction)
+  subtract that hit
+  if real hit landed and target survives: increment stack to min(3), refresh timer to 5s
+each simulation update: expire all stacks only after 5 seconds without new damage
+```
+
+Use shared `damage(e,...)` rather than creating a second damage pipeline; preserve existing burst-compression/defense ordering and annotate its exact future position in the implementation PR. **A missed, blocked, immune, zero-damage or stale hit must never add stacks**. A stack timer is an encounter transient, not a new player save reward.
+
+**High-yield save/phase fixture:** On #231 `Save.snapshot()` living enemies are restored at full HP but `captainPhase` is **not explicitly cleared for modern saves**, while `upgradeCaptainEndurance()` skips its migration cleanup when its version is current. This is a **concrete reset hazard** for the already-approved 55% Elastic Rebound, independent of the newly added passive. Test an existing-current-version Direjaw after his 55%-HP heal, save/reload, then damage him through 55% again: Elastic Rebound must fire **once** in the fresh fight, never zero or twice. New Strain Hardening stacks/timers must also clear. Disengagement, defeat, replay and Treasury re-entry should preserve existing quest/caches/dead captain facts, not leave stale bonuses.
+
+### 6.5 Package D — Mirejaw's Groundwater Recharge: retain as later integration work
+
+This is **not** part of the simplest preparation package because adding new healing to `mire` hazards creates interactions with damage computation and the already approved scale protection. The owner has rejected any approach that adds puddle-seeking, a special healing radius or separate cast controls. Keep exactly **2%/s Normal and 5%/s TRUE**, only for actual on-patch contact, and the existing **four-second** hazard lifetime; do not use the earlier unapproved lifetime heal caps. Resolve the HP floor bug described in Section 5.2(A) **before** enabling healing. The design is approved; sequencing is for engineering safety, **not a deferral or cancellation of the feature**.
+
+### 6.6 Handoff status — preparation complete, implementation untouched
+
+- [x] Existing final owner-approved names and mechanics consolidated in Section 2.
+- [x] Name-to-source-owner map prepared without changing code or asset IDs.
+- [x] Implementation order selected to prioritize display-only changes and the two simpler defensive passives.
+- [x] Minimal deterministic regression fixtures and save/reset precautions written for the future coder.
+- [x] Complex Mirejaw hazard/scales interaction explicitly reserved for its own verified integration step.
+- [ ] **Not started:** any gameplay code, real new tests, UI/VFX/SFX changes, passives in production, PR merge, CI certification of this plan, integration candidate or deployment.
+
+**No further owner action is required merely to keep these instructions on record. New code changes still require explicit implementation permission.**
