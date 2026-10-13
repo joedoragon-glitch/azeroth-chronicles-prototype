@@ -10,6 +10,8 @@ The next public-facing milestone for **So I Became the Dark Lord's Problem** is 
 
 ## Authority and required content
 
+**Implementation is already underway on isolated PRs, and their approved unmerged mechanics are intended snapshot canon.** The dependency/status and open-work inventory is [Community snapshot integration housekeeping](COMMUNITY_SNAPSHOT_INTEGRATION_HOUSEKEEPING_20261013.md). Do not treat a draft label or an older P0/P1 deferral as permission to omit a selected owner-approved feature; do not confuse partial integration #285 with the complete candidate.
+
 - [Director-approved snapshot canon lock, draft #298](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/298) is authoritative for this snapshot's **complete applicable approved worldbuilding**: 45 decisions, custom rulings and the listed compatible earlier regional/boss contributions. This is *not* permission to truncate approved content to hit a deadline.
 - [Master worldbuilding/integration tracker #232](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/232) owns the cross-branch integrated content and independent review. [#251](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/251), [#247](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/247), [#257](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/257) and [#266](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/266) remain relevant audits and finale constraints.
 - [Rebrand draft #282](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/282) supplies the new public title. Integrate it into the *single approved snapshot candidate*, reconciling any overlapping version/cache or app changes; do not independently deploy an outdated branding branch.
@@ -62,5 +64,7 @@ A trailer, countdown, mailing-list funnel, paid placement, formal beta registrat
 **Posting checklist:** Replace the placeholder link and amend current-build claims only from the exact deployed snapshot; confirm the founder forum/thread and its posting rules with the owner before posting. **Nothing has been posted to the forum by this document.**
 
 ## Progress status as of this decision
+
+**Implementation-status clarification (13 October):** many approved mechanics have working code in separate PRs, but are not yet reconciled on a single complete tested snapshot. The 45 decisions in #298 do not mean 45 already-shipped changes. Continue existing implementation work from its current checkpoints; the remaining owner sign-off is for the final exact release, not a request to repeat earlier authorial approvals.
 
 **Planning/documentation only.** The community snapshot has not been assembled, certified, authorized for release, or published by this note. The earlier broad beta promotional plan is paused; no prior validated release is erased.
