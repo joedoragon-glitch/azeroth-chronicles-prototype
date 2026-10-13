@@ -418,18 +418,13 @@
           amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
         amount = this.tacticalCompressDamage(e, amount);
         const actualDamage = Math.max(0, Math.min(e.hp, amount));
+        const reflected =
+          e.captainProfile === 'supply-crown' && e.captainReflect > 0 ? actualDamage * 0.3 : 0;
         e.hp = Math.max(0, e.hp - amount);
         this.tacticalRecordHit(e, source, actualDamage);
         this.effects.push({ type: 'hit', x: e.x, y: e.y, amount });
         if (e.hp === 0) this.kill(e);
-        if (
-          e.captainProfile === 'supply-crown' &&
-          e.captainReflect > 0 &&
-          actualDamage > 0 &&
-          origin.hp > 0
-        )
-          this.hitParty(origin, actualDamage * 0.3, 0, null, true);
-
+        if (reflected > 0 && origin.hp > 0) this.hitParty(origin, reflected, 0, null, true);
         return true;
       }
       hitParty(u, amount, manaDrain = 0, rangedSourceId = null, alreadyMitigated = false) {
@@ -493,7 +488,9 @@
         return dist(p, { x: a.x + t * dx, y: a.y + t * dy });
       }
       updateProjectiles(dt) {
-        const hero = this.hero;
+        const hero = this.hero,
+          zone = this.zoneId,
+          deaths = this.s.statistics.deaths;
         for (const p of [...this.s.projectiles]) {
           if (p.cancelledChargedOpener) continue;
           if (p.delay > 0) {
@@ -515,6 +512,8 @@
             );
             if (victim) {
               const landed = this.hitParty(victim, p.damage, p.manaDrain || 0, p.sourceId);
+              if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
+                return;
               if (landed && p.slow) this.applySlow(victim, p.slow);
               if (landed && victim.hp > 0 && p.style === 'cargo') {
                 const away = this.safe(victim.x + p.dx * 75, victim.y + p.dy * 75);
@@ -569,6 +568,8 @@
               p.source,
               p.encountersAtStart ? { encountersAtStart: p.encountersAtStart } : null,
             );
+            if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
+              return;
             if (p.cancelledChargedOpener) continue;
             if (landed && p.basicComboFinisher)
               this.basicComboFinisher(
@@ -631,15 +632,30 @@
               ) {
                 a.hit.push(id);
                 if (a.slowOnly) this.applySlow(u, a.slowDuration);
-                else if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null))
-                  this.enemyVfxHazardImpact?.(a, u);
+                else {
+                  const landed = this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null);
+                  if (
+                    this.hero !== hero ||
+                    this.zoneId !== zone ||
+                    this.s.statistics.deaths !== deaths
+                  )
+                    return;
+                  if (landed) this.enemyVfxHazardImpact?.(a, u);
+                }
               }
             }
           } else if (a.tick <= 0) {
             a.tick = 1;
             for (const u of this.combatTargets())
               if (dist(u, a) < a.radius && this.line({ x: a.fromX ?? a.x, y: a.fromY ?? a.y }, u)) {
-                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null)) {
+                const landed = this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null);
+                if (
+                  this.hero !== hero ||
+                  this.zoneId !== zone ||
+                  this.s.statistics.deaths !== deaths
+                )
+                  return;
+                if (landed) {
                   this.enemyVfxHazardImpact?.(a, u);
                   if (a.slow)
                     this.applySlow(

@@ -695,11 +695,15 @@
         }
         if (a.nightSkill === 'drain') {
           const hero = this.hero,
-            zone = this.zoneId;
+            zone = this.zoneId,
+            deaths = this.s.statistics.deaths;
           let hit = false;
           for (const u of this.combatTargets())
             if (dist(u, e) < a.radius && this.line(e, u)) {
-              if (this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id)) {
+              const landed = this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
+              if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
+                return;
+              if (landed) {
                 this.applySlow(u, a.slowDuration || 0);
                 hit = true;
               }
@@ -883,6 +887,9 @@
         this.resolveArea(e, a);
       }
       resolveArea(e, a) {
+        const hero = this.hero,
+          zone = this.zoneId,
+          deaths = this.s.statistics.deaths;
         const party = this.combatTargets(),
           patches = this.attackPatches(a),
           hits = (u) =>
@@ -934,6 +941,8 @@
               u === jawVictim
                 ? true
                 : this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
+            if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
+              return;
             if (landed && u === jawVictim) {
               // Exactly one jaw victim, then three evenly spaced roll impacts.
               e.deathRoll = {
@@ -1026,6 +1035,7 @@
         if (!a) return;
         const hero = this.hero,
           zone = this.zoneId,
+          deaths = this.s.statistics.deaths,
           before = { x: e.x, y: e.y };
         a.life -= dt;
         const moved = this.move(e, a.target, a.speed || a.pounceSpeed || 450, dt);
@@ -1039,6 +1049,8 @@
             ) {
               a.hit.push(id);
               const landed = this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
+              if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
+                return;
               if (landed && e.family === 'ridge' && a.index === 2 && u.hp > 0) {
                 const d = Math.max(1, dist(u, e));
                 const dest = this.safe(u.x + ((u.x - e.x) * 85) / d, u.y + ((u.y - e.y) * 85) / d);
@@ -1064,6 +1076,8 @@
           if (a.captainSkill && e.captainProfile === 'supply-vale' && a.index === 0)
             e.captainPursuit = 2.5;
           if (a.landing && dist(e, a.target) < 20) this.resolveArea(e, a);
+          if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
+            return;
           e.motion = null;
           e.cd =
             a.recovery *

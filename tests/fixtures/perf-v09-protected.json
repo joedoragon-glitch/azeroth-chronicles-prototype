@@ -102,8 +102,8 @@
     "source": "Director #289/#298: six Lifebinder slots, five Scornfang slots and three intrinsic Greenwood passives. Prior hashes retained.",
     "baseline": "81d7756aae322e23a6a4347d5bbceff097654d7f",
     "files": {
-      "src/prototype/boss-combat.js": "3f918757703173b38a0a8510ae9fa7e535125c09b660bdbd0c3768a80e1e7715",
-      "src/prototype/combat.js": "9b9f68fed6c9aca805696ee8cc707a05d68f08f8d083cdcee94b54377f988e1c",
+      "src/prototype/boss-combat.js": "d0b0af3456c399808d3096a3b41e955d6f3d1e67f2c97996528a237f4233c72e",
+      "src/prototype/combat.js": "f931cb99daf25c9bcc1c780962101577b343183a4059fef5cc9b6eb965393fd6",
       "src/prototype/data.js": "cba3a56e5b895a1783340fdf861e91f9dfd2e48341a06d5f327de92d6086eefa",
       "src/prototype/engine.js": "6f9fe9f84421085d48ee36021026282fe539fcbc1ed2833f1cbf691531c12ced",
       "src/prototype/rules.js": "111a7d79fd2eee29417455d28477603c6f8c5e07156e8f20768733415227efc7"
