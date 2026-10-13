@@ -1,0 +1,10 @@
+{
+  "tool": "image_gen.imagegen",
+  "source": "image-tool-original.png",
+  "sourceHash": "931d5094f11614bafae7f0f0d402b285cc7f38c5594a2ca54ac905977b6ccaf7",
+  "requestId": null,
+  "exactPrompt": null,
+  "resultFilename": null,
+  "missingMetadataReason": "Unuploaded metadata was removed by workspace maintenance during interrupted stream; untouched output recovered by exact Git blob SHA. This record does not invent the lost prompt or tool identifiers.",
+  "authorization": "Joel current task and issue #160."
+}

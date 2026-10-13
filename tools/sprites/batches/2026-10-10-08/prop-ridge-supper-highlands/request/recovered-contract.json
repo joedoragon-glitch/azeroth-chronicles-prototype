@@ -1,0 +1,28 @@
+{
+  "key": "prop:ridge-supper:highlands",
+  "catalogId": "242",
+  "canonHash": "7c3e575ffc7afe4bdc101343dd595eb692fe6a824619a92e2fa54e92e85d6a0d",
+  "catalogHash": "5328eef89fe8d34395c7d20159f622a6998ef4fd83bd1d7b92334120b7019685",
+  "entity": {
+    "renderKind": "prop",
+    "structure": "ridge-supper",
+    "decorative": true,
+    "id": "sprite-reference-242"
+  },
+  "region": 2,
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "canonicalReference": "tools/sprites/batches/2026-10-10-08/prop-ridge-supper-highlands/original-export-v1/canonical.png",
+  "canonicalReferenceHash": "f556a7c8246f34f81e4a6d0691471bf8959a76f098142fa7203fea98f611283a",
+  "originalSource": "tools/sprites/batches/2026-10-10-08/prop-ridge-supper-highlands/original-export-v1/source.png",
+  "originalHash": "458838400ac63cb9dc421927b784d57e1a3222462da46eab222ff1d563376848",
+  "preparedOutput": "tools/sprites/batches/2026-10-10-08/prop-ridge-supper-highlands/original-export-v1/candidate.png",
+  "preparedOutputHash": "a9110dd510d8c053b64be87f1d22a07c6c6b17f3e0e1e09a4d80a4ce25d7b171",
+  "historicalPrompt": "Use existing generation.json when retained. Missing exact tool prompts are not reconstructed.",
+  "recovery": "This current-source contract was recaptured after workspace maintenance; it is not a historical image-generation request."
+}

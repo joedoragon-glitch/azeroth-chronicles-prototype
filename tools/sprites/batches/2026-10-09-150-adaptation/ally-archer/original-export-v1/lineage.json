@@ -1,0 +1,31 @@
+{
+  "key": "ally:archer",
+  "original": "tools/sprites/batches/2026-10-08-01/ally-archer/image-tool-original.png",
+  "originalHash": "df7a370cb7d119c7d90a6b045c542930d0c2f8d68492aa43c0b4ad2fa8c7e238",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/sources/5152d566a86ddb5c03d52008002a78efcb42c8011a214c898ee781ea9438d721.png",
+  "intermediateHash": "5152d566a86ddb5c03d52008002a78efcb42c8011a214c898ee781ea9438d721",
+  "intermediateDimensions": [
+    1318,
+    1318
+  ],
+  "priorRevision": "9b9548bf117f33a4ef68b23be54e217def7f9cbd2fdb871747821846cfc00146",
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": 3,
+    "offsetY": 12,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": 32
+    }
+  },
+  "target": 576,
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact binding; no clip or variant bank. Retain prior revision for rollback."
+}

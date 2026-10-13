@@ -1,0 +1,29 @@
+{
+  "original": "tools/sprites/batches/2026-10-10-08/building-barracks-crown-full/image-tool-original.png",
+  "originalHash": "8d267a90a87dd64391ca289b85a197126014d150e7117d7ee1b988091eeda873",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "placement": {
+    "rasterScale": 4.25,
+    "offsetX": -1.411764705882353,
+    "offsetY": -0.23529411764705882,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": 107
+    }
+  },
+  "proceduralBounds": {
+    "x1": 20,
+    "y1": 89,
+    "x2": 170,
+    "y2": 167
+  },
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "alphaDeletion": false,
+  "crop": false,
+  "trim": false
+}

@@ -1,0 +1,28 @@
+{
+  "key": "prop:ridge-bed:highlands",
+  "catalogId": "245",
+  "canonHash": "38b4c2fd121dc29ee0e91bebb2fdcc5ee91409c4e7f5be7bcf2ea2fc495c9bb0",
+  "catalogHash": "4111c0c121d5c2cfba7806d0f49a300fcb2888c41619099a3d70f1a4901cbc86",
+  "entity": {
+    "renderKind": "prop",
+    "structure": "ridge-bed",
+    "decorative": true,
+    "id": "sprite-reference-245"
+  },
+  "region": 2,
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "canonicalReference": "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/original-export-v1/canonical.png",
+  "canonicalReferenceHash": "78715cbf5e3316059f75a20c7263bbb6dd1e0c49fc3dc1dc1f36285a1ff5ca8d",
+  "originalSource": "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/original-export-v1/source.png",
+  "originalHash": "931d5094f11614bafae7f0f0d402b285cc7f38c5594a2ca54ac905977b6ccaf7",
+  "preparedOutput": "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/original-export-v1/candidate.png",
+  "preparedOutputHash": "1f7cdf3d6fe69004deca5967a6c34768b97c0c33891d4648bd610d2d0ed21a3d",
+  "historicalPrompt": "Use existing generation.json when retained. Missing exact tool prompts are not reconstructed.",
+  "recovery": "This current-source contract was recaptured after workspace maintenance; it is not a historical image-generation request."
+}

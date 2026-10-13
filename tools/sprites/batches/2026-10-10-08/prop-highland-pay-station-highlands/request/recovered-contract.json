@@ -1,0 +1,28 @@
+{
+  "key": "prop:highland-pay-station:highlands",
+  "catalogId": "237",
+  "canonHash": "33888bf2168321ed27baea17a11e7cb02cb440b8a1685d4fd40b241e18b3b451",
+  "catalogHash": "7bfbf332aa71466de977755f79b3c3962830d19c76cf14419c92ed1ec9f37e55",
+  "entity": {
+    "renderKind": "prop",
+    "structure": "highland-pay-station",
+    "decorative": true,
+    "id": "sprite-reference-237"
+  },
+  "region": 2,
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "canonicalReference": "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/original-export-v1/canonical.png",
+  "canonicalReferenceHash": "4ab15a8027f20e107f2e501e8a021e30d4dd1106d356d613ed3e122d6c83d8bd",
+  "originalSource": "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/original-export-v1/source.png",
+  "originalHash": "cddbae61a204982aebc9aa62b3e22baecedc962feb8a0dcf029f4fb5faaa101f",
+  "preparedOutput": "tools/sprites/batches/2026-10-10-08/prop-highland-pay-station-highlands/original-export-v1/candidate.png",
+  "preparedOutputHash": "057bfd4ecadd9282f1ac404bd6f1a82c0ecfb4a2e77bec581797961bb3e96a61",
+  "historicalPrompt": "Use existing generation.json when retained. Missing exact tool prompts are not reconstructed.",
+  "recovery": "This current-source contract was recaptured after workspace maintenance; it is not a historical image-generation request."
+}

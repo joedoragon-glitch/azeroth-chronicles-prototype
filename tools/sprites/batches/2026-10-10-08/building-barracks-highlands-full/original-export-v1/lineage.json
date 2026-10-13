@@ -1,0 +1,29 @@
+{
+  "original": "tools/sprites/batches/2026-10-10-08/building-barracks-highlands-full/square-correction/image-tool-original.png",
+  "originalHash": "5d2f60a8b1d746bfa6bcf3b7065874ecdeb71579c147b37fb7dcba1f96b77701",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "placement": {
+    "rasterScale": 4.25,
+    "offsetX": -1.6470588235294117,
+    "offsetY": -0.9411764705882353,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": 90
+    }
+  },
+  "proceduralBounds": {
+    "x1": 20,
+    "y1": 89,
+    "x2": 170,
+    "y2": 167
+  },
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "alphaDeletion": false,
+  "crop": false,
+  "trim": false
+}

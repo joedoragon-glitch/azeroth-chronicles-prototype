@@ -1,0 +1,239 @@
+{
+  "version": 1,
+  "key": "building:barracks:crown:full",
+  "catalogId": "236",
+  "catalogHash": "e4e7a9fc4896afa1524009b477728f04076a2d47674c24b6181e2da993b1736f",
+  "canonHash": "546df8c92c218df9821b1cde98b65571127b733a598c61b3466a786d8a7ec375",
+  "sourceSnapshotHash": "6b36ab7ee5bd2d4f93af1d8960d7b02cb629c473074e07a66f7bac86510adc4d",
+  "authorization": "Planning capture only; does not authorize generation, approval or publication",
+  "prompt": "Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Dark Crown Full Barracks. Current Full expedition camp, same reserved footprint as Basic: low central open-flap tent, additional smaller sleeping tent on screen-left, extra bedrolls, open command canopy above a low map table, supply/gear corner on screen-right, shield, weapon rack, communal cookfire, banner/lamps and added seating/supplies. Regional materials: slate-purple canvas, restrained obsidian braces and small purple camp emblem. This is a camp, never a shop or masonry fort. All listed parts belong to this single current asset. Match the current reference proportions, orientation, equipment, palette and apparent gameplay size. Keep procedural grounding shadows out of the image; preserve intrinsic material marks only.\n\nJoel clarified that procedural primitives can create accidental anatomy and blocky forms. This applies to every candidate, including props, buildings, terrain and scenery. Preserve the intended identity, functional structure, proportions, palette, equipment and major silhouette; refine contours and joins to suit the actual material. Organic body parts, leaves, flowers, branches and natural rock can have natural contours. Curved manufactured parts can gain their intended curves. Hard edges remain appropriate for armor, quarried blocks, timber joints or machinery when those are the design. A coarse polygon is a reference for meaning, not a requirement to reproduce awkward geometry literally. This clarification governs the base and per-entry prompts below; include it in every actual generation request. It authorizes faithful shape refinement, not new species, loadouts, symbols, lore or changes to gameplay geometry. Review at native size against intended design and current scene context.\n\nViewing contract: 150% camera. The visible body is approximately 227 × 119 CSS pixels. Simplify tiny details to read at that size. Keep the full reference-frame proportions and root; do not fill transparent padding with a larger actor. Use enough source pixels for a 576 × 576 processed frame. Preserve identity, equipment and major silhouette; avoid fine texture that becomes noise.",
+  "promptHash": "183be6837adf6a581b13108c4c9e7b193f67b33592db75d3f6459ec847d84a18",
+  "reference": {
+    "file": "procedural-reference.png",
+    "hash": "d951d0903b5d7a6fa2597a9d9afcf8886a819325c706605ce0ce0a019b910d5d",
+    "entity": {
+      "renderKind": "building",
+      "kind": "barracks",
+      "progress": 4,
+      "full": true,
+      "id": "sprite-reference-236"
+    },
+    "region": 4
+  },
+  "target": {
+    "cameraZoom": 1.5,
+    "raster": {
+      "width": 816,
+      "height": 816,
+      "scale": 4.25
+    },
+    "runtime": {
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 88
+    },
+    "visibleBodyCSS": {
+      "width": 226.5,
+      "height": 118.5
+    },
+    "profiles": [
+      {
+        "width": 1280,
+        "height": 800,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      {
+        "width": 1024,
+        "height": 700,
+        "mode": "desktop",
+        "devicePixelRatio": 2
+      },
+      {
+        "width": 375,
+        "height": 800,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      {
+        "width": 393,
+        "height": 852,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      {
+        "width": 800,
+        "height": 375,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      },
+      {
+        "width": 844,
+        "height": 390,
+        "mode": "phone",
+        "devicePixelRatio": 1.5
+      }
+    ]
+  },
+  "replacement": null,
+  "contexts": [
+    {
+      "file": "context-1280x800-day.png",
+      "hash": "64f6ebcb639a595cabff2e176a09eda568d6d6fcc632eb0c3764ef65cb4986c0",
+      "width": 1280,
+      "height": 800,
+      "mode": "desktop",
+      "devicePixelRatio": 2,
+      "lighting": "day",
+      "cameraZoom": 1.5,
+      "ratio": 1.7116329922036442,
+      "pixelWidth": 2191,
+      "pixelHeight": 1369
+    },
+    {
+      "file": "context-1280x800-night.png",
+      "hash": "6fc2f04d554bb03b37ad9586a9b6dff5498a49e872e5ed06276c8bc49234d947",
+      "width": 1280,
+      "height": 800,
+      "mode": "desktop",
+      "devicePixelRatio": 2,
+      "lighting": "night",
+      "cameraZoom": 1.5,
+      "ratio": 1.7116329922036442,
+      "pixelWidth": 2191,
+      "pixelHeight": 1369
+    },
+    {
+      "file": "context-1024x700-day.png",
+      "hash": "ed86f13dce34d81567af3487c2a58710db7597d6fafdf43052c0f4e4d6524284",
+      "width": 1024,
+      "height": 700,
+      "mode": "desktop",
+      "devicePixelRatio": 2,
+      "lighting": "day",
+      "cameraZoom": 1.5,
+      "ratio": 2,
+      "pixelWidth": 2048,
+      "pixelHeight": 1400
+    },
+    {
+      "file": "context-1024x700-night.png",
+      "hash": "48be5611726da5994b03518ed5a781828433b4c120530c2d84aa0689de4f18a0",
+      "width": 1024,
+      "height": 700,
+      "mode": "desktop",
+      "devicePixelRatio": 2,
+      "lighting": "night",
+      "cameraZoom": 1.5,
+      "ratio": 2,
+      "pixelWidth": 2048,
+      "pixelHeight": 1400
+    },
+    {
+      "file": "context-375x800-day.png",
+      "hash": "595e02897c811560453ad4b3b2ae22137ecc431d8d63beabe41c6fb1ce875277",
+      "width": 375,
+      "height": 800,
+      "mode": "phone",
+      "devicePixelRatio": 1.5,
+      "lighting": "day",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 563,
+      "pixelHeight": 1200
+    },
+    {
+      "file": "context-375x800-night.png",
+      "hash": "e89520febf6330d8619c1e5b76907cf6f9aceecdcccef627882b93743063b992",
+      "width": 375,
+      "height": 800,
+      "mode": "phone",
+      "devicePixelRatio": 1.5,
+      "lighting": "night",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 563,
+      "pixelHeight": 1200
+    },
+    {
+      "file": "context-393x852-day.png",
+      "hash": "39dcde847934a59a697579eea8a0085c043f7fb82ffb4331f123d78da0c8154d",
+      "width": 393,
+      "height": 852,
+      "mode": "phone",
+      "devicePixelRatio": 1.5,
+      "lighting": "day",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 590,
+      "pixelHeight": 1278
+    },
+    {
+      "file": "context-393x852-night.png",
+      "hash": "bb33d88a32e5d5ca2da84ff9f1b65b40264f7c0c8a79fb5c9948e0fce9989ed0",
+      "width": 393,
+      "height": 852,
+      "mode": "phone",
+      "devicePixelRatio": 1.5,
+      "lighting": "night",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 590,
+      "pixelHeight": 1278
+    },
+    {
+      "file": "context-800x375-day.png",
+      "hash": "d6d88ead06055b26daad65ae28fa6bdc36a8099194f6c4c4678e689a9ff3d9ae",
+      "width": 800,
+      "height": 375,
+      "mode": "phone",
+      "devicePixelRatio": 1.5,
+      "lighting": "day",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 1200,
+      "pixelHeight": 563
+    },
+    {
+      "file": "context-800x375-night.png",
+      "hash": "d5e0f12ae548b9e2b62bb1828724f999762349920dd8aa23f2ffb9591aeedae1",
+      "width": 800,
+      "height": 375,
+      "mode": "phone",
+      "devicePixelRatio": 1.5,
+      "lighting": "night",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 1200,
+      "pixelHeight": 563
+    },
+    {
+      "file": "context-844x390-day.png",
+      "hash": "88c288f6c5be80b202eff0c7543a92fc1dd1da83ae3adc7e72ff7bc964553256",
+      "width": 844,
+      "height": 390,
+      "mode": "phone",
+      "devicePixelRatio": 1.5,
+      "lighting": "day",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 1266,
+      "pixelHeight": 585
+    },
+    {
+      "file": "context-844x390-night.png",
+      "hash": "0a2cfad7c3a1cb04ee7a8c3983e3a7085e079d10be46f36d9a64b4607029c8ab",
+      "width": 844,
+      "height": 390,
+      "mode": "phone",
+      "devicePixelRatio": 1.5,
+      "lighting": "night",
+      "cameraZoom": 1.5,
+      "ratio": 1.5,
+      "pixelWidth": 1266,
+      "pixelHeight": 585
+    }
+  ]
+}

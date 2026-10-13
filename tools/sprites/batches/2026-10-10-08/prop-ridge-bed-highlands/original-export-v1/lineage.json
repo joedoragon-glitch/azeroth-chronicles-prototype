@@ -1,0 +1,29 @@
+{
+  "original": "tools/sprites/batches/2026-10-10-08/prop-ridge-bed-highlands/image-tool-original.png",
+  "originalHash": "931d5094f11614bafae7f0f0d402b285cc7f38c5594a2ca54ac905977b6ccaf7",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -0.3333333333333333,
+    "offsetY": 8,
+    "normalization": {
+      "fullCanvasSize": 1252,
+      "padding": 32
+    }
+  },
+  "proceduralBounds": {
+    "x1": 64,
+    "y1": 120,
+    "x2": 127,
+    "y2": 161
+  },
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "alphaDeletion": false,
+  "crop": false,
+  "trim": false
+}

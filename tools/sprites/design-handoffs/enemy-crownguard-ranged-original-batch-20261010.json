@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "sprite-candidate",
+  "designId": "enemy:crownguard:ranged",
+  "name": "Crown ranged soldier",
+  "kind": "enemy",
+  "nextAction": "Inspect native browser day/night and combat evidence, then publish with prior-revision lease.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel requested a new autonomous sprite batch following the GitHub workflow while asleep.",
+    "decisionDate": "2026-10-10",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+    "contentDocuments": [
+      "docs/DESIGN_TO_SPRITE_WORKFLOW.md",
+      "docs/SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md",
+      "docs/PROPORTION_IMPLEMENTATION_CHECKPOINT.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": "Current authored procedural identity is the canonical translation reference.",
+    "proceduralDesignAcceptance": "Retain current procedural canon; this batch changes artwork only.",
+    "spriteProductionAuthorization": "Joel current task; autonomous faithful generation, implementation and release per issue #160.",
+    "generatedAppearanceAcceptance": {
+      "userAccepted": false,
+      "engineerReview": "pending native review",
+      "scope": "Authorized faithful implementation; no invented user appearance approval."
+    },
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "c6ce1af236bddd7ca881903499c4cf5de175f9e2",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js",
+      "src/prototype/sprites.js"
+    ],
+    "exactEntityState": {
+      "renderKind": "enemy",
+      "type": "mob",
+      "species": "crownguard",
+      "ranged": true,
+      "id": "sprite-reference-254",
+      "region": 4
+    },
+    "isolatedReferencePath": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/original-export-v1/canonical.png",
+    "isolatedReferenceHash": "398dce0b782e55455585d3fdfbd54ee88ff330e46b0c1175ebb9788fbb936a64",
+    "gameplayContextPaths": [
+      "tools/sprites/batches/2026-10-10-08/browser-review-webkit/evidence.json"
+    ],
+    "traitsToPreserve": [
+      "Compact Crown ranged humanoid, muted violet cloth (#62566e), gray steel (#939fa7), angular maroon-purple Crown helmet and small pale gold visor/chest marks; bow on screen-right, quiver and three arrow shafts at screen-left/back, small dark purple side cloth. No sword or shield. Preserve the current uniform rather than using the simpler Raider Archer.",
+      "Logical footprint and root; native 150% proportions"
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [
+      "254"
+    ],
+    "verifiedRuntimeKeys": [
+      "enemy:crownguard:ranged"
+    ],
+    "requiredVisibleAssets": [
+      "enemy:crownguard:ranged"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "Combat effects, world labels, grounding shadows, context work scenes and construction/basic camp states stay in their owning renderer."
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [
+      "static body fallback"
+    ],
+    "directions": [],
+    "pivotContract": {
+      "displayWidth": 192,
+      "displayHeight": 192,
+      "anchorX": 0.5,
+      "anchorY": 0.75,
+      "labelHeight": 54
+    },
+    "staticFallbackKey": "enemy:crownguard:ranged",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/original-export-v1/candidate.json"
+    ],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "key": "prop:ridge-game-corner:highlands",
+  "catalogId": "243",
+  "canonHash": "9da79d41603110d0a1fec0a784150f75590c055a66145dd99fe31712ed86b58a",
+  "catalogHash": "c0e2848c0f77930ae534bbea9a71363070743848d4735b5f51ce94eef8803b42",
+  "entity": {
+    "renderKind": "prop",
+    "structure": "ridge-game-corner",
+    "decorative": true,
+    "id": "sprite-reference-243"
+  },
+  "region": 2,
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "canonicalReference": "tools/sprites/batches/2026-10-10-08/prop-ridge-game-corner-highlands/original-export-v1/canonical.png",
+  "canonicalReferenceHash": "19e141bd6d8c44e508fe6222c2c329d4aeb32cc4281c73ae7de4e84805176dd5",
+  "originalSource": "tools/sprites/batches/2026-10-10-08/prop-ridge-game-corner-highlands/original-export-v1/source.png",
+  "originalHash": "ae40d2a671b07bfd4541809ece06ed56eff1bc2215ec1419650eb817c4fe212c",
+  "preparedOutput": "tools/sprites/batches/2026-10-10-08/prop-ridge-game-corner-highlands/original-export-v1/candidate.png",
+  "preparedOutputHash": "fc06adc2e24df257ab2a5a1a28963dd96376b906fe863c6cfccd7d0024951def",
+  "historicalPrompt": "Use existing generation.json when retained. Missing exact tool prompts are not reconstructed.",
+  "recovery": "This current-source contract was recaptured after workspace maintenance; it is not a historical image-generation request."
+}

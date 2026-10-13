@@ -1,0 +1,29 @@
+{
+  "original": "tools/sprites/batches/2026-10-10-08/prop-ridge-game-corner-highlands/image-tool-original.png",
+  "originalHash": "ae40d2a671b07bfd4541809ece06ed56eff1bc2215ec1419650eb817c4fe212c",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -3,
+    "offsetY": 13.333333333333334,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": 93
+    }
+  },
+  "proceduralBounds": {
+    "x1": 54,
+    "y1": 128,
+    "x2": 139,
+    "y2": 161
+  },
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "alphaDeletion": false,
+  "crop": false,
+  "trim": false
+}

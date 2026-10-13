@@ -1,0 +1,29 @@
+{
+  "original": "tools/sprites/batches/2026-10-10-08/prop-crag-rest-highlands/image-tool-original.png",
+  "originalHash": "b58902f38d964032c9d37b40d37ace35cc39c292415e4200c61bf0db146bd2fd",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "placement": {
+    "rasterScale": 3,
+    "offsetX": -0.6666666666666666,
+    "offsetY": 22.666666666666668,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": 267
+    }
+  },
+  "proceduralBounds": {
+    "x1": 66,
+    "y1": 133,
+    "x2": 133,
+    "y2": 160
+  },
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "alphaDeletion": false,
+  "crop": false,
+  "trim": false
+}

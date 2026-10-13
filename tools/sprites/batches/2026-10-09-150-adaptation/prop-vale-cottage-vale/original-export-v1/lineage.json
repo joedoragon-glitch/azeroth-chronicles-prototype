@@ -1,0 +1,31 @@
+{
+  "key": "prop:vale-cottage:vale",
+  "original": "tools/sprites/pilots/2026-10-08/prop-vale-cottage-vale/generated-original.png",
+  "originalHash": "6950d9ba5e8dd37162ca2a4fe4cc25e7282a621b149298b287361955404f298a",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "intermediate": "tools/sprites/sources/ee52d21f1f1d6a95fb1e545db3fa584a7b9ae86618f9277b1d475d9c1b3778e3.png",
+  "intermediateHash": "ee52d21f1f1d6a95fb1e545db3fa584a7b9ae86618f9277b1d475d9c1b3778e3",
+  "intermediateDimensions": [
+    1318,
+    1318
+  ],
+  "priorRevision": "3c35ef58fe76061f5fb4f017be965947afba71885b6897781d59b7253237cf15",
+  "placement": {
+    "rasterScale": 4.25,
+    "offsetX": 0,
+    "offsetY": -5.882352941176471,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": 32
+    }
+  },
+  "target": 816,
+  "untouchedOriginal": true,
+  "sourcePixelsEnlarged": false,
+  "intermediatePixelsUsed": false,
+  "resamplingPasses": 1,
+  "dependencies": "Static exact binding; no clip or variant bank. Retain prior revision for rollback."
+}

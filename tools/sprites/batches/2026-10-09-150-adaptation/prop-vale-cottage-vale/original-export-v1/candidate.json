@@ -1,0 +1,109 @@
+{
+  "version": 2,
+  "key": "prop:vale-cottage:vale",
+  "catalogId": "061",
+  "canonHash": "f33f2a6032756f75be031a7dea4c3832b1f08d123b0d20b5b9122b9acadd459e",
+  "canonSnapshotHash": "6b36ab7ee5bd2d4f93af1d8960d7b02cb629c473074e07a66f7bac86510adc4d",
+  "catalogHash": "b800662082d174a8139d9412cb87a9ca4eeb9c0ef7d2de1498b792c82c889c3d",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 252844,
+    "decodedBytes": 6290064,
+    "hash": "6950d9ba5e8dd37162ca2a4fe4cc25e7282a621b149298b287361955404f298a",
+    "pixelHash": "58a815f79e5d7f91400133803ff30f2e0ff4cda4acd4b6f67e21faf3eb5bd928",
+    "bounds": {
+      "x1": 0,
+      "y1": 0,
+      "x2": 1229,
+      "y2": 1108
+    },
+    "padding": 0,
+    "transparentPixels": 1417747,
+    "visiblePixels": 154769,
+    "lowAlphaPixels": 4312,
+    "materialBounds": {
+      "x1": 391,
+      "y1": 650,
+      "x2": 859,
+      "y2": 1105
+    }
+  },
+  "output": {
+    "file": "candidate.png",
+    "format": "png",
+    "width": 816,
+    "height": 816,
+    "bytes": 151368,
+    "decodedBytes": 2663424,
+    "hash": "21e8b38b7497f56b6c01f853f1100b16c78580703f546716db4e739432d68573",
+    "pixelHash": "fc514ecd2ffb92d72312dfb7851fd8ce596fbd1dfbb62075102bae20f06da150",
+    "bounds": {
+      "x1": 140,
+      "y1": 86,
+      "x2": 779,
+      "y2": 680
+    },
+    "padding": 36,
+    "transparentPixels": 606364,
+    "visiblePixels": 59492,
+    "lowAlphaPixels": 1793,
+    "materialBounds": {
+      "x1": 262,
+      "y1": 397,
+      "x2": 551,
+      "y2": 679
+    }
+  },
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1254,
+      1254
+    ],
+    "to": [
+      816,
+      816
+    ],
+    "rasterScale": 4.25,
+    "normalization": {
+      "fullCanvasSize": 1254,
+      "padding": {
+        "left": 32,
+        "right": 32,
+        "top": 32,
+        "bottom": 32
+      },
+      "virtualWidth": 1318,
+      "virtualHeight": 1318,
+      "input": "untouched-original",
+      "samplingPasses": 1,
+      "intermediatePixelsUsed": false
+    },
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": 0,
+      "y": -5.882352941176471,
+      "rasterX": 0,
+      "rasterY": -25,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "pending",
+    "reference": null
+  }
+}

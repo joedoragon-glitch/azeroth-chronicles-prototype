@@ -1,0 +1,29 @@
+{
+  "key": "enemy:crownguard:ranged",
+  "catalogId": "254",
+  "canonHash": "baebfbe7c7d24b6e4ffa03d671801f3543dd6d2b6cbc1ff0c1a0c87baa4d0f2c",
+  "catalogHash": "55308e0fbed5757a5c5bd71d3df28bfc05b520bac5494175528563950a27266b",
+  "entity": {
+    "renderKind": "enemy",
+    "type": "mob",
+    "species": "crownguard",
+    "ranged": true,
+    "id": "sprite-reference-254"
+  },
+  "region": 4,
+  "runtime": {
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 54
+  },
+  "canonicalReference": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/original-export-v1/canonical.png",
+  "canonicalReferenceHash": "398dce0b782e55455585d3fdfbd54ee88ff330e46b0c1175ebb9788fbb936a64",
+  "originalSource": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/original-export-v1/source.png",
+  "originalHash": "b19220550d32e171ecd009337a9cb494d90cd20bef08ec5749bbce57d42011de",
+  "preparedOutput": "tools/sprites/batches/2026-10-10-08/enemy-crownguard-ranged/original-export-v1/candidate.png",
+  "preparedOutputHash": "7eb74d2ee6370a4939d8271376aa52180e7b6be09638d589da7e6572ab90b94a",
+  "historicalPrompt": "Use existing generation.json when retained. Missing exact tool prompts are not reconstructed.",
+  "recovery": "This current-source contract was recaptured after workspace maintenance; it is not a historical image-generation request."
+}
