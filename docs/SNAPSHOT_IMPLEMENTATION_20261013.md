@@ -122,7 +122,7 @@ All 45 selections are accounted for below. This is complete **ballot indexing**,
 ## Conflict resolutions and batch 1 checkpoint
 
 - Latest #298 controls mobile Mira, sixth-companion fact, Loyal Air Marshal, Crag cooldown, Lifebinder TRUE suffix and detailed combat refinements. Earlier compatible mechanics remain in scope. Missing revelation timing is an open director presentation decision; no new scene invented.
-- First batch selectively applies #282 title hunks against current main, keeping historical release notes and URLs/identifiers. Old draft version/cache placeholders are discarded; this isolated development build is `0.9.1+snapshot.dev.1`.
+- First batch selectively applies #282 title hunks against current main, keeping historical release notes and URLs/identifiers. Old draft version/cache placeholders are discarded; this isolated development build is `0.9.1+snapshot.dev.2`.
 - #284/#286 both independently replace one world migration version test. Combined version is 2 for **both** vale and march; frontier starts its own version1. All original scenery and stable props remain.
 - Add 7Greenwood,3Marches,2Frontier nonblocking details (12 total). Reuse existing procedural structures; one fruit-tree procedural silhouette. No new sprite production.
 - Preserve exact source baseline guard hashes and add only scoped combined-source pins. Compare unchanged gameplay/save fields exactly; verify intentional prop additions separately and retain exact raster comparisons after removing only those specific additions from comparison renders.
@@ -132,3 +132,9 @@ All 45 selections are accounted for below. This is complete **ballot indexing**,
 **Next checkpoint:** finish first batch verification, preserve remote draft and resume evidence; then reconcile #230/#231/#280 foundations method-by-method, beginning with captain/encounter save cleanup and existing approved identities. Mobile patrols follow after stable lifecycle and real path tests.
 
 **Release gates still outstanding:** all45+custom+compatible regional mechanics on one exact head; allclasses/solo+party/Normal+TRUE+Nightmare/Succession/oldv4; naturalAI/collision/damage/status/warnings; phone+desktop; performance;PWAinstall/offline/update;second independent playable audit;separate director merge/release approval.
+
+## Batch1 validation correction
+
+The local full Node run passed104suites on tree d3064d8f92eff6e1a6e7e290a673d8d556cda818. The additional exact baseline/historical-save equivalence probe then caught real saved Marches scenery movement: the independent version2 proposals regenerated old decorations after later map migrations. Fixed the runtime upgrade to append new indices only, preserving original props and order. Added a regression for deliberately moved saved decorations. No broadened comparison exclusion. Focused checks and exact equivalence must pass again before this correction is certified; previous full-suite evidence remains bounded to its prior tree.
+
+Existing Chromium/WebKit regional helper now checks the real page title, exact scene counts and actual procedural drawing for all5scenery districts, with desktop/phone captures. No local browser PASS claimed; existing hosted CI must verify the updated head.

@@ -2,6 +2,7 @@
 const assert = require('node:assert/strict');
 const path = require('node:path');
 async function verifyRegional(page, results, tag, capture = false) {
+  await verifySnapshotScenery(page, results, tag, capture);
   const saved = await page.evaluate(() => Prototype.game.snapshot());
   await page.evaluate(() => {
     const c = Prototype.game;
@@ -81,4 +82,84 @@ async function verifyRegional(page, results, tag, capture = false) {
     }, saved);
   }
 }
+
+// Exercise the combined approved scenery with the real renderer on every existing
+// Chromium/WebKit device profile. Use fresh engine states because earlier UI
+// fixtures deliberately clear props. Restore the player's state and draw owner.
+async function verifySnapshotScenery(page, results, tag, capture) {
+  assert.equal(await page.title(), "So I Became the Dark Lord's Problem");
+  assert.equal(await page.locator('#hud h1').textContent(), "So I Became the Dark Lord's Problem");
+  const saved = await page.evaluate(() => Prototype.game.snapshot());
+  await page.evaluate(() => {
+    const c = Prototype.game,
+      original = PrototypeVisuals.draw;
+    window.__snapshotSceneryProbe = {
+      seen: [],
+      tick: c.tick,
+      restore() {
+        c.tick = this.tick;
+        PrototypeVisuals.draw = original;
+      },
+    };
+    c.tick = () => {};
+    PrototypeVisuals.draw = function (ctx, e, ...args) {
+      if (e.regionalDistrict) __snapshotSceneryProbe.seen.push(e.id);
+      return original.call(this, ctx, e, ...args);
+    };
+  });
+  try {
+    for (const [region, district, count] of [
+      ['vale', 'hamlet-orchard', 5],
+      ['vale', 'millhaven-carpentry', 2],
+      ['march', 'reedport-catch', 2],
+      ['march', 'camp-work', 2],
+      ['frontier', 'burned-hamlet-home', 2],
+    ]) {
+      const probe = await page.evaluate(
+        ({ region, district }) => {
+          let seed = 73129;
+          const rng = () => (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296;
+          const sample = new Prototype.game.constructor('normal', 'paladin', rng);
+          sample.enter(region);
+          const z = sample.zone(),
+            props = z.props.filter((p) => p.regionalDistrict === district);
+          z.enemies = [];
+          sample.s.party = [];
+          sample.s.clock = 120;
+          const x = props.reduce((n, p) => n + p.x, 0) / props.length,
+            y = props.reduce((n, p) => n + p.y, 0) / props.length;
+          Object.assign(sample.hero, sample.safe(x, y + 90));
+          Prototype.game.s = sample.s;
+          __snapshotSceneryProbe.seen = [];
+          Prototype.updateHUD();
+          Prototype.renderer.draw();
+          return {
+            count: props.length,
+            decorative: props.every((p) => p.r === 0 && p.decorative),
+            painted: props.filter((p) => __snapshotSceneryProbe.seen.includes(p.id)).length,
+          };
+        },
+        { region, district },
+      );
+      assert.equal(probe.count, count, region + '/' + district + ' precise prop count');
+      assert(probe.decorative, 'new scenery is nonblocking');
+      assert(
+        probe.painted > 0,
+        region + '/' + district + ' actually paints through procedural fallback',
+      );
+      if (capture)
+        await page.screenshot({
+          path: path.join(results, 'snapshot-' + district + '-' + tag + '.png'),
+        });
+    }
+  } finally {
+    await page.evaluate((state) => {
+      __snapshotSceneryProbe.restore();
+      delete window.__snapshotSceneryProbe;
+      Prototype.game.s = state;
+      Prototype.updateHUD();
+    }, saved);
+  }
+}
+
 module.exports = { verifyRegional };

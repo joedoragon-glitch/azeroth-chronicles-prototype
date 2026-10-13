@@ -80,7 +80,7 @@
     "files": {
       "src/prototype/app.js": "a77a429740cec0b183392f888bbacff9b6cbcf57104555be269af988da7fbe9a",
       "src/prototype/rules.js": "75ee3b5cb29e7a75c9f3015c1e05c4c0e424ea87e812aaeb90aae1caebc9192f",
-      "src/prototype/world.js": "f2dbdf3d1c8dfc47ca0d6b727019fb948810a94519de592aacf4754b4785aad0",
+      "src/prototype/world.js": "9c7d27d85c929dd34a9e181ea18280bd2904396b94f19d99fa0bfa7105b72104",
       "templates/game.html": "55267236efe69a8e8abebda9bfad3e9632851149704a530231376dca109ae58b"
     }
   }

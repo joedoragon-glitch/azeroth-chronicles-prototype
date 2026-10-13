@@ -1550,9 +1550,14 @@
         const version = ['vale', 'march'].includes(z.id) ? 2 : 1;
         if (!scenes || z.regionalHandoffVersion === version) return;
         const previous = this.s.zone;
+        // Version 1 props may have been placed before later road/settlement migrations.
+        // Preserve their saved positions/order; append only the newly approved details.
+        const appendOnly = version === 2 && z.regionalHandoffVersion === 1;
+        const previousCount = z.id === 'vale' ? 3 : z.id === 'march' ? 5 : 0;
         this.s.zone = z.id;
         try {
-          z.props = z.props.filter((p) => !String(p.id || '').startsWith('regional-handoff-'));
+          if (!appendOnly)
+            z.props = z.props.filter((p) => !String(p.id || '').startsWith('regional-handoff-'));
           const [townX, townY] = D.towns[this.regionIndex(z.id)];
           const futureServices = Object.values(R.serviceOffsets).map(([x, y]) =>
             this.safe(townX + x, townY + y, z.id),
@@ -1567,6 +1572,11 @@
               path.some((b, j) => j && this.distanceToSegment(p, path[j - 1], b) < 60),
             );
           for (const [j, [x, y, structure, district, sceneRole]] of scenes.entries()) {
+            if (
+              appendOnly &&
+              (j < previousCount || z.props.some((p) => p.id === 'regional-handoff-' + j))
+            )
+              continue;
             let point = null;
             for (const radius of [0, 50, 100, 150, 200]) {
               for (let n = 0; n < 16; n++) {

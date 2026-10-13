@@ -326,3 +326,31 @@ console.log('PASS unresolved summon and procedural furnishing contracts remain i
   assert.deepEqual(migrated.s.rescued, c.s.rescued, 'specialist state stays unchanged');
   console.log('PASS Marches fishing trade scenery, paths and historical-save compatibility');
 }
+
+// Modern version-1 saves keep the exact existing scenery, including deliberately
+// moved props and their place in the saved draw order. Only the new details append.
+for (const region of ['vale', 'march']) {
+  const c = new C();
+  c.enter(region);
+  const old = c.snapshot(),
+    z = old.zones[region];
+  const count = region === 'vale' ? 3 : 5;
+  z.regionalHandoffVersion = 1;
+  z.props = z.props.filter(
+    (p) =>
+      !String(p.id || '').startsWith('regional-handoff-') ||
+      Number(p.id.slice('regional-handoff-'.length)) < count,
+  );
+  const first = z.props.find((p) => p.id === 'regional-handoff-0');
+  first.x += 7;
+  first.y += 11;
+  const previous = JSON.parse(JSON.stringify(z.props));
+  const migrated = C.restore(old);
+  assert.deepEqual(
+    migrated.s.zones[region].props.slice(0, previous.length),
+    previous,
+    'append-only migration preserves existing props/order/positions in ' + region,
+  );
+  assert.equal(migrated.s.zones[region].regionalHandoffVersion, 2);
+}
+console.log('PASS exact existing scenery preserved during modern save upgrade');
