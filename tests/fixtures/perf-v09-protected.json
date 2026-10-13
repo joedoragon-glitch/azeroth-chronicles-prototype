@@ -73,5 +73,13 @@
     "appSha256": "e6ea0d525e4a827da13cdb95a2c6b1185432781bf269ab9b4370e6dd1b2f48e3",
     "inputSha256": "3b01e8b5df5b7b8fedc8deb24bba4f93f979ef111e2fa2fa55950891b58b5da5",
     "desktopCssSha256": "95fcb8bdad9f22c32950a1f1c6c51b1f2f886fc89e33d59248d3aef415137dac"
+  },
+  "approvedMobileJoystickRevision": {
+    "source": "Owner-reported intermittent iPhone/Android joystick lock; scoped input-shell fix in PR #301",
+    "scope": "Pointer and touch release recovery, new gesture ownership, resize/pagehide reset and browser regression tests; no simulation frame, movement speed, game rules, graphics layout or save schema changes.",
+    "previousAppSha256": "e6ea0d525e4a827da13cdb95a2c6b1185432781bf269ab9b4370e6dd1b2f48e3",
+    "files": {
+      "src/prototype/app.js": "41e46c1936fc12d76bada0359ac8f4c394195140d21dc796cc81428f71a2fc18"
+    }
   }
 }

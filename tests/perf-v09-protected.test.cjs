@@ -20,6 +20,13 @@ if (keyboardRevision) {
   ]);
   assert.match(keyboardRevision.source, /PR #269/);
 }
+// This owner-requested phone-input fix is only an app-shell exception; the
+// protected frame body, runtime and all other hashes remain unchanged.
+const joystickRevision = manifest.approvedMobileJoystickRevision;
+if (joystickRevision) {
+  assert.deepEqual(Object.keys(joystickRevision.files), ['src/prototype/app.js']);
+  assert.match(joystickRevision.source, /PR #301/);
+}
 for (const [file, expected] of Object.entries(manifest.files)) {
   const actual = crypto
     .createHash('sha256')
@@ -27,7 +34,7 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    keyboardRevision?.files[file] || revision.files[file] || expected,
+    joystickRevision?.files[file] || keyboardRevision?.files[file] || revision.files[file] || expected,
     file + ' is protected against baseline / reviewed rendering revision ' + manifest.baseline,
   );
 }
