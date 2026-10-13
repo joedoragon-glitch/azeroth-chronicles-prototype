@@ -5,6 +5,10 @@ const Campaign = require('../src/prototype/engine.js');
 const Visuals = require('../src/prototype/visuals.js');
 const Rules = require('../src/prototype/rules.js');
 
+// Animated water must share one presentation clock in an exact pixel comparison.
+const originalNow = performance.now;
+performance.now = () => 16000;
+
 // The new caller supplies the unzoomed viewport. A direct legacy caller
 // remains the comparison oracle; all pixels inside the viewport must match.
 function image(region, anchor, scale, clipped) {
@@ -77,4 +81,5 @@ function paintCalls(clipped) {
 }
 assert(paintCalls(false) > 0, 'Unculled roads and bridges issue paint commands');
 assert.equal(paintCalls(true), 0, 'Fully off-screen roads and bridges issue none');
+performance.now = originalNow;
 console.log('PASS ' + compared + ' exact terrain/roads/bridges raster comparisons and off-screen culling');
