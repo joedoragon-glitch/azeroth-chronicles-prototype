@@ -2,7 +2,7 @@
 
 **Date:** 12 October 2026  
 **Status:** Documentation-only candidate on an isolated branch. Not published gameplay; no merge, deployment, or auto-merge authorization.  
-**Tracking:** [master #232](../issues/232) · [Frontier #240](../issues/240) · [Abyss Dragon #243](../issues/243) · [boss/captain #247](../issues/247) · [audiovisual #257](../issues/257)
+**Tracking:** [master #232](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/232) · [Frontier #240](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/240) · [Abyss Dragon #243](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/243) · [boss/captain #247](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/247) · [audiovisual #257](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/257)
 
 ## 1. Owner's decision — what must survive the consolidated update
 
