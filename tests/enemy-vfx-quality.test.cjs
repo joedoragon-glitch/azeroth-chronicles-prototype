@@ -95,8 +95,8 @@ function fresh() {
   const epoch = c.enemyVfxEpoch();
   assert.equal(c.enter('not-a-zone'), false);
   assert.equal(c.enemyVfxEpoch(), epoch);
-  // A fatal persistent area can leave an existing mechanical hazard after instant revival.
-  // Its old resolution cannot bind visual/audio metadata into the revived encounter.
+  // Fatal persistent resolution ends before revival can inherit a hazard.
+  // Presentation enabled/disabled must preserve the same clean mechanical state.
   const runFatal = (enabled) => {
     const game = fresh();
     game.enemyVfxEnabled = enabled;
@@ -109,7 +109,7 @@ function fresh() {
     game.startAttack(enemy, game.hero, 3);
     game.resolveAttack(enemy);
     assert.equal(game.s.statistics.deaths, 1);
-    assert(game.s.hazards.length);
+    assert.equal(game.s.hazards.length, 0, 'fatal area cannot leave orphan beds');
     return game;
   };
   const on = runFatal(true),
