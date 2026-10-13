@@ -280,6 +280,132 @@
         }
         return moved;
       }
+      thornPatroller(e) {
+        return e?.type === 'boss' && e.family === 'thorn' && this.zoneId === 'vale';
+      }
+      thornCaptive(z = this.zone()) {
+        return z.npcs.find((n) => n.id === 'cage-thorn');
+      }
+      thornCaptiveFollowing() {
+        return !this.peace && !this.s.rescued.thorn && !this.s.keys.thorn;
+      }
+      migrateThornPatrol(z) {
+        if (z.id !== 'vale') return;
+        for (const e of z.enemies)
+          if (e.type === 'boss' && e.family === 'thorn' && e.form === 'true')
+            e.home = { ...this.fieldCenter(0) };
+        const n = this.thornCaptive(z);
+        if (n) {
+          n.presentation = 'mobile-captive';
+          n.workKind = 'teacher';
+          n.context =
+            'Mira is paid for compulsory security-compliance inspections under Thornfang’s supervision. Wages do not make her free.';
+        }
+        // Static trailheads remain useful when footprints have faded. They are
+        // physical clues, never destinations derived from the boss’s live position.
+        for (const [i, [x, y]] of R.thornPatrol.route.entries()) {
+          const id = 'thorn-trailhead-' + i;
+          if (!z.npcs.some((n) => n.id === id))
+            z.npcs.push({
+              id,
+              kind: 'landmark',
+              name: 'Scout tracks · ' + R.thornPatrol.names[i],
+              x,
+              y,
+              icon: '🐾',
+              presentation: 'scout-tracks',
+              thornTrail: i,
+            });
+        }
+        if (!z.npcs.some((n) => n.id === 'thorn-local-report')) {
+          const p = this.safe(900, 850, 'vale');
+          z.npcs.push({
+            id: 'thorn-local-report',
+            kind: 'patrol-report',
+            name: 'Orchard trail witness',
+            ...p,
+            icon: '🧑',
+            thornReport: true,
+          });
+        }
+      }
+      thornReport() {
+        if (this.s.rescued.thorn) return 'Mira is free. Find her teaching in Millhaven.';
+        if (this.s.keys.thorn) {
+          const n = this.thornCaptive(),
+            cfg = R.thornPatrol;
+          const i = n
+            ? cfg.route
+                .map(([x, y], i) => ({ i, d: dist(n, { x, y }) }))
+                .sort((a, b) => a.d - b.d)[0].i
+            : 0;
+          return (
+            'Thornfang was defeated. Mira waits near ' +
+            cfg.names[i] +
+            '. Your journal can guide you to her last known waiting place.'
+          );
+        }
+        return 'Thornfang once served as a Crown wilderness scout. He takes Mira from his temporary den through Goblin territory, the Mill crossing, Skeleton territory, the Forest Crypt perimeter and the Southern crossing. They avoid Millhaven. Mira performs paid but compulsory inspections. When the winter estate is finished and its inhabitants can keep it secure, he intends to return to his distant home.';
+      }
+      updateThornCaptive(dt) {
+        if (this.zoneId !== 'vale') return;
+        const z = this.zone(),
+          n = this.thornCaptive(z);
+        if (!n || !this.thornCaptiveFollowing()) return;
+        const e = z.enemies.find((u) => this.thornPatroller(u) && u.hp > 0 && !u.neutral);
+        if (e) this.follow(n, e, R.thornPatrol.captiveSpeed, dt, R.thornPatrol.separation);
+      }
+      updateThornPatrol(e, dt) {
+        if (!this.thornPatroller(e) || e.aggro || e.neutral || this.peace || e.hp <= 0)
+          return false;
+        if (e.thornReturn) {
+          this.disengage(e, dt);
+          return true;
+        }
+        const cfg = R.thornPatrol,
+          n = this.thornCaptive();
+        if (n && this.thornCaptiveFollowing() && dist(n, e) > cfg.waitForCaptive) return true;
+        e.thornPause = Math.max(0, (e.thornPause || 0) - dt);
+        if (e.thornPause) return true;
+        const i =
+          Number.isInteger(e.thornLeg) && e.thornLeg >= 0 && e.thornLeg < cfg.route.length
+            ? e.thornLeg
+            : 1;
+        const [x, y] = cfg.route[i];
+        const before = { x: e.x, y: e.y };
+        this.follow(e, { x, y }, cfg.speed * (e.slow > 0 ? 0.5 : 1), dt, cfg.arrival);
+        if (dist(before, e) > 0) this.recordThornTracks(e, before);
+        if (dist(e, { x, y }) <= cfg.arrival + 1e-7) {
+          e.thornLeg = (i + 1) % cfg.route.length;
+          e.thornPause = cfg.pause;
+          delete e.path;
+        } else e.thornLeg = i;
+        return true;
+      }
+      recordThornTracks(e, before) {
+        const z = this.zone(),
+          cfg = R.thornPatrol;
+        z.npcs = z.npcs.filter((n) => !n.thornFootprint || n.expires > this.s.time);
+        const prior = z.npcs.filter((n) => n.thornFootprint).at(-1);
+        if (prior && dist(prior, e) < cfg.trackSpacing) return;
+        z.npcs.push({
+          id: 'thorn-footprint-' + this.s.nextId++,
+          kind: 'landmark',
+          name: 'Scout footprints',
+          icon: '🐾',
+          presentation: 'scout-tracks',
+          thornFootprint: true,
+          x: e.x,
+          y: e.y,
+          angle: Math.atan2(e.y - before.y, e.x - before.x),
+          expires: this.s.time + cfg.trackLife,
+        });
+        const marks = z.npcs.filter((n) => n.thornFootprint);
+        const remove = new Set(
+          marks.slice(0, Math.max(0, marks.length - cfg.trackLimit)).map((n) => n.id),
+        );
+        z.npcs = z.npcs.filter((n) => !remove.has(n.id));
+      }
       follow(entity, target, speed, dt, stop = 45) {
         if (dist(entity, target) <= stop) return true;
         if (this.clearSegment(entity, target)) {

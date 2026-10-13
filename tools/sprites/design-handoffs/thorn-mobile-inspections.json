@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-design",
+  "designId": "thorn-mobile-inspections",
+  "name": "Thornfang and mobile Mira inspections",
+  "kind": "mobile-captive-and-trail",
+  "nextAction": "Inspect actual Chromium/WebKit source captures, preserve references; no new sprites authorized.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Director #298 overrides fixed cage: same Mira travels with Thornfang, paid but compulsory inspections, real joint den return and physical clues.",
+    "decisionDate": "2026-10-13",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/300",
+    "contentDocuments": [
+      "docs/DIRECTOR_WORLD_BUILDING_SNAPSHOT_CANON_LOCK_20261012.md"
+    ],
+    "locationAndLore": "Greenwood exterior8-leg circuit excluding Millhaven."
+  },
+  "decisions": {
+    "conceptAcceptance": "Selected director #298 rulings20A/21A/22C and custom mobileMira; implementation authorized.",
+    "proceduralDesignAcceptance": "Faithful engineering implementation; no director appearance acceptance claimed.",
+    "spriteProductionAuthorization": "Excluded from current snapshot.",
+    "generatedAppearanceAcceptance": "None",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "ada6716da523689baedad04906b76350931cf8ab (parent; source hashes identify this WIP)",
+    "ownerFilesAndBranches": [
+      "implementation/director-snapshot-20261013:src/prototype/visuals.js",
+      "src/prototype/navigation.js",
+      "src/prototype/sprites.js"
+    ],
+    "exactEntityState": "vale NPC cage-thorn,presentation mobile-captive; teacher body with inspection papers. thorn-local-report teacher fallback; scout-tracks footprints.",
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [],
+    "traitsToPreserve": [
+      "Same Mira identity and regional instructor clothing",
+      "Inspection papers instead of bars",
+      "Physical footprints, no collision or GPS",
+      "Existing Thornfang body unchanged"
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "b59d315de8fa35625b364a3feb87c76f93076031fd670824d77cda1682a085b9"
+      },
+      {
+        "path": "src/prototype/navigation.js",
+        "sha256": "96d6d688d17b3474f770536de3006bd929d3ce25f6f9a2034246848c8b6beeee"
+      },
+      {
+        "path": "src/prototype/sprites.js",
+        "sha256": "bbeeb27bcc912034f99824f6b86fbad41342c602149cde5fba6e794a7b4b8038"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "mobile Mira",
+      "local witness",
+      "physical scout footprints"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "Existing specialist body reused; inspection-paper and footprint overlays procedural. Old cage image binding deliberately bypassed."
+    ]
+  },
+  "animationRequirements": {
+    "status": "undecided",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

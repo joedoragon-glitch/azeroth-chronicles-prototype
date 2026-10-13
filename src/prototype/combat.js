@@ -356,6 +356,7 @@
           (!options?.area && !this.tacticalDirectTargetable(e)) ||
           this.peace ||
           e.returning ||
+          e.thornReturn ||
           !Number.isFinite(amount) ||
           amount <= 0
         )

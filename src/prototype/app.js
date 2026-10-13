@@ -1032,6 +1032,7 @@
         'cage',
         'bundle',
         'landmark',
+        'patrol-report',
         'dungeon',
         'exit',
         'fountain',
@@ -1210,7 +1211,7 @@
     ]);
     const places = game
       .visibleNPCs()
-      .filter((n) => game.isDungeon() || !hiddenServices.has(n.kind))
+      .filter((n) => !n.thornFootprint && (game.isDungeon() || !hiddenServices.has(n.kind)))
       .map((n) =>
         n.kind === 'rest' && n.id === 'rest'
           ? { ...n, name: region.town, icon: '🏘️' }
@@ -1223,7 +1224,7 @@
       icon: b.progress < 4 ? '🏗️' : '🏕️',
     }));
     const bosses = zone.enemies
-      .filter((e) => e.hp > 0 && e.type === 'boss' && !e.neutral)
+      .filter((e) => e.hp > 0 && e.type === 'boss' && !e.neutral && e.family !== 'thorn')
       .map((e) => ({
         ...e,
         name: e.name || game.boss(e.family)?.name || 'Boss',
@@ -2291,7 +2292,9 @@
           liveFieldTrue.name +
           ' is roaming ' +
           game.definition().name +
-          ' · Map: Z'
+          (liveFieldTrue.family === 'thorn'
+            ? ' · Scout tracks / Orchard trail witness'
+            : ' · Map: Z')
         : pendingField && !pendingField[1].active
           ? 'TRUE BOSS · ' +
             game.boss(pendingField[0]).name +

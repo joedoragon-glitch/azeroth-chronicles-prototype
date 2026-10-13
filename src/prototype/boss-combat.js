@@ -14,6 +14,7 @@
         e.motion = null;
         e.rangedAim = null;
         for (const key of [
+          'thornFightAnchor',
           'hookedVictim',
           'deathRoll',
           'ashCloud',

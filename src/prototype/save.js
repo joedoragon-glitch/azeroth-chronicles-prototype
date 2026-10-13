@@ -25,8 +25,16 @@
           u.order = null;
         });
         for (const z of Object.values(out.zones)) {
+          for (const n of z.npcs) {
+            if (n.id === 'cage-thorn') {
+              delete n.path;
+              delete n.routeAge;
+            }
+          }
           z.enemies = z.enemies.filter((e) => !e.summon);
           for (const e of z.enemies) {
+            if (e.family === 'thorn' && e.type === 'boss' && (e.aggro || e.returning))
+              e.thornReturn = true;
             this.clearEncounterState(e, [out.hero, ...out.party]);
             e.telegraph = null;
             e.motion = null;
@@ -40,7 +48,7 @@
             delete e.rogueDustCoverUntil;
             e.returning = 0;
             if (e.hp > 0 && !e.neutral) {
-              Object.assign(e, e.home);
+              if (!(e.family === 'thorn' && e.type === 'boss')) Object.assign(e, e.home);
               e.hp = e.maxHp;
               e.heroParticipated = false;
               e.mercyProvoked = false;
@@ -688,6 +696,8 @@
           z.props = z.props.filter((p) => !c.blocked(p.x, p.y, z.id, p.r || 0, true));
           c.roadNetwork(z);
           for (const e of z.enemies) {
+            if (e.family === 'thorn' && e.type === 'boss' && (e.aggro || e.returning))
+              e.thornReturn = true;
             c.clearEncounterState(e);
             e.aggro = false;
             e.returning = 0;
@@ -714,6 +724,7 @@
           for (const n of [...z.npcs, ...z.nodes, ...z.buildings])
             if (c.blocked(n.x, n.y, z.id)) Object.assign(n, c.safe(n.x, n.y, z.id));
           c.authoredPlaces(z);
+          c.migrateThornPatrol(z);
           const families = new Set();
           z.enemies = z.enemies.filter((e) => {
             if (

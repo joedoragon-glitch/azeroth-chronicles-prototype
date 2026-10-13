@@ -1457,12 +1457,22 @@
           (region?.name || 'Region') + ' · ' + (2 - pending.length) + '/2 rescued',
           ordered.map((boss) => {
             const destination =
-              here === boss.id
-                ? liveBoss(boss.id) || findNpc((n) => n.kind === 'cage' && n.family === boss.id)
-                : boss.kind === 'dungeon'
-                  ? findNpc((n) => n.kind === 'dungeon' && n.family === boss.id)
-                  : liveBoss(boss.id) || findNpc((n) => n.kind === 'cage' && n.family === boss.id);
-            return guideAction(boss.captive.split(' the ')[0] + ' · ' + boss.place, destination);
+              boss.id === 'thorn' && here === 'vale'
+                ? game.s.keys.thorn
+                  ? findNpc((n) => n.id === 'cage-thorn')
+                  : findNpc((n) => n.thornReport) || findNpc((n) => n.id === 'thorn-trailhead-0')
+                : here === boss.id
+                  ? liveBoss(boss.id) || findNpc((n) => n.kind === 'cage' && n.family === boss.id)
+                  : boss.kind === 'dungeon'
+                    ? findNpc((n) => n.kind === 'dungeon' && n.family === boss.id)
+                    : liveBoss(boss.id) ||
+                      findNpc((n) => n.kind === 'cage' && n.family === boss.id);
+            return guideAction(
+              boss.id === 'thorn' && !game.s.keys.thorn
+                ? 'Mira · ask the Orchard trail witness'
+                : boss.captive.split(' the ')[0] + ' · ' + boss.place,
+              destination,
+            );
           }),
         );
         return;

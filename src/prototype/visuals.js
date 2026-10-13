@@ -11611,6 +11611,41 @@
           2,
         );
       }
+    } else if (e.kind === 'patrol-report') {
+      specialist({ ...e, kind: 'teacher' });
+    } else if (e.presentation === 'scout-tracks') {
+      ctx.save();
+      ctx.rotate(e.angle || 0);
+      for (const [x, y] of [
+        [-12, -6],
+        [0, 6],
+        [12, -6],
+      ]) {
+        oval(x, y, 5, 3, '#bba889');
+        for (const dy of [-4, 0, 4]) oval(x + 5, y + dy, 1.7, 1.5, '#95846b');
+      }
+      ctx.restore();
+    } else if (e.kind === 'cage' && e.presentation === 'mobile-captive') {
+      if (!rescued) {
+        specialist({ ...e, kind: 'teacher' });
+        rect(10, -17, 9, 13, '#c9b78e');
+        line(
+          [
+            [12, -14],
+            [17, -14],
+          ],
+          '#726044',
+          1,
+        );
+        line(
+          [
+            [12, -10],
+            [17, -10],
+          ],
+          '#726044',
+          1,
+        );
+      }
     } else if (e.kind === 'cage' && e.presentation === 'workstation') {
       // A secured worker can remain mechanically a captive without being drawn behind cage bars.
       ctx.save();

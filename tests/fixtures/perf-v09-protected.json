@@ -118,5 +118,19 @@
       "src/prototype/data.js": "2f7ee5fee574879da97d45d9504ac8282d4f618994e91d539c5d53822d8d9317",
       "src/prototype/rules.js": "ffcc30c2ffa132045dc54f05c04132581c84214bc86dee31b725442380757aad"
     }
+  },
+  "approvedSnapshotThornRevision": {
+    "source": "Director #289/#298: physical Thornfang/Mira circuit, joint den return, same rescue identity, static reports and real tracks. Previous hashes retained.",
+    "baseline": "ada6716da523689baedad04906b76350931cf8ab",
+    "files": {
+      "src/prototype/engine.js": "33900cf6ab226ef826f5e01b5ac467fa6d8333a4812abfcf75f044ed9e56f0e4",
+      "src/prototype/world.js": "e617a3d81cc94275d7c7974315ecf22d47038f0e1ee9f1307d980f40c0d6c2a8",
+      "src/prototype/navigation.js": "96d6d688d17b3474f770536de3006bd929d3ce25f6f9a2034246848c8b6beeee",
+      "src/prototype/combat.js": "81b51decd6024d357d8b64d4ec3b29818dcd4b418412a74b354998f4518c1240",
+      "src/prototype/boss-combat.js": "f658392429d144c15357a80875e62c884000bb4e18a274f43e784e3467813b73",
+      "src/prototype/rules.js": "50cbd9716757fee28936acf9c83fa7fa7762e6d2c8dfab889b8ee98b445be153",
+      "src/prototype/save.js": "40a6d35085070f5e3a2f3225287c9e844cdc50c74add67ba583aab66fba7164e",
+      "src/prototype/app.js": "f8c5658d9d6624dc6839c51bd17cf04db3a47f751f53ae2ef7181b75440d94a9"
+    }
   }
 }

@@ -66,6 +66,8 @@ if (marchesRevision) {
   ]);
   assert.match(marchesRevision.source, /#290.*#298/);
 }
+const thornRevision = manifest.approvedSnapshotThornRevision;
+if (thornRevision) assert.match(thornRevision.source, /#289.*#298/);
 for (const [file, expected] of Object.entries(manifest.files)) {
   const actual = crypto
     .createHash('sha256')
@@ -73,6 +75,7 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
+    thornRevision?.files[file] ||
     marchesRevision?.files[file] ||
       greenwoodRevision?.files[file] ||
       encounterRevision?.files[file] ||

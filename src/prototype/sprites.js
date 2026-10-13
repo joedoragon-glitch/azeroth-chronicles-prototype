@@ -65,7 +65,13 @@
   }
 
   function candidateKeys(e, region = 0, rescued = false) {
-    if (!e || e.presentation === 'workstation' || e.sceneRole) return [];
+    if (
+      !e ||
+      ['workstation', 'mobile-captive', 'scout-tracks'].includes(e.presentation) ||
+      e.kind === 'patrol-report' ||
+      e.sceneRole
+    )
+      return [];
     const kind = e.renderKind;
     if (kind === 'hero') return ['hero:' + clean(e.class)];
     if (kind === 'ally') return ['ally:' + clean(e.class || e.type || 'worker')];

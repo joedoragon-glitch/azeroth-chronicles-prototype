@@ -335,7 +335,8 @@
         (n) =>
           !n.internalSite &&
           !this.bundleCollected(n) &&
-          (n.kind !== 'keeper' || this.keeperAvailable()),
+          (n.kind !== 'keeper' || this.keeperAvailable()) &&
+          (!n.thornFootprint || n.expires > this.s.time),
       );
     }
     siteDescription(n) {
@@ -1569,7 +1570,10 @@
       for (const z of Object.values(this.s.zones)) {
         z.enemies = z.enemies.filter((e) => !e.summon);
         for (const e of z.enemies) {
+          const thornReturn =
+            e.family === 'thorn' && e.type === 'boss' && (e.aggro || e.returning || e.thornReturn);
           this.clearEncounterState(e);
+          if (thornReturn) e.thornReturn = true;
           e.aggro = false;
           e.telegraph = null;
           e.sequence = [];
@@ -1578,7 +1582,7 @@
           e.frozen = false;
           delete e.rogueDustCoverUntil;
           if (e.hp > 0) {
-            Object.assign(e, e.home);
+            if (!(e.family === 'thorn' && e.type === 'boss')) Object.assign(e, e.home);
             e.hp = e.baseHp;
             e.maxHp = e.baseHp;
             e.damage = e.baseDamage;
@@ -1672,6 +1676,10 @@
     }
     interact(npc) {
       if (!npc || dist(npc, this.hero) > 115) return false;
+      if (npc.thornReport || npc.thornTrail !== undefined || npc.thornFootprint) {
+        this.say(this.thornReport());
+        return true;
+      }
       switch (npc.kind) {
         case 'cage':
           if (
@@ -1866,9 +1874,10 @@
     }
 
     engage(e, forced = true, spreadPack = true) {
-      if (e.aggro || e.neutral) return false;
+      if (e.aggro || e.neutral || e.returning || e.thornReturn) return false;
       if ((this.s.mercyTime || 0) > 0 && !forced && !e.mercyProvoked) return false;
       e.aggro = true;
+      if (this.thornPatroller(e)) e.thornFightAnchor = { x: e.x, y: e.y };
       e.frozen = true;
       delete e.idleWanderTarget;
       e.idleWanderWait = 0;
@@ -1925,6 +1934,8 @@
       if (this.s.lastEdge) this.s.recovery[this.s.lastEdge] = true;
       for (const z of Object.values(this.s.zones))
         for (const e of z.enemies) {
+          if (e.family === 'thorn' && e.type === 'boss' && (e.aggro || e.returning))
+            e.thornReturn = true;
           this.clearEncounterState(e);
           delete e.rogueDustCoverUntil;
           e.telegraph = null;
@@ -2129,6 +2140,13 @@
           if (other !== e && other.family === e.family) other.respawn = 0;
         if (e.form === 'true') delete this.s.pending[e.family];
         else if (this.s.pending[e.family]) e.respawn = 0;
+      }
+      if (this.thornPatroller(e)) {
+        const n = this.thornCaptive();
+        // The same Mira waits at her last physical position, never at a cloned cage.
+        if (n) {
+          delete n.path;
+        }
       }
       this.checkClear();
       this.checkMinis();
@@ -3109,6 +3127,7 @@
       });
     }
     tacticalRogueLeashAllows(e, target, territory) {
+      const home = this.thornPatroller(e) ? e.thornFightAnchor || e : e.home;
       const shift = this._tacticalRepositions?.get(e?.id);
       if (
         shift &&
@@ -3117,7 +3136,7 @@
         (shift.until > this.s.time ||
           (dist(e, shift.to) <= 250 &&
             dist(target, e) <= 350 &&
-            dist(target, e.home) <= territory + 250)) &&
+            dist(target, home) <= territory + 250)) &&
         dist(target, e) <= Math.max(territory, 550) &&
         dist(target, shift.to) <= Math.max(territory + 200, 650) &&
         this.distanceToSegment(target, shift.from, shift.to) <= Math.max(territory, 550)
@@ -3132,19 +3151,19 @@
         scatter.zone === this.zoneId &&
         scatter.victims.has(target === this.hero ? 'hero' : target?.id) &&
         (scatter.until > this.s.time ||
-          (dist(target, e) <= 350 && dist(target, e.home) <= territory + 250)) &&
+          (dist(target, e) <= 350 && dist(target, home) <= territory + 250)) &&
         dist(target, e) <= Math.max(territory + 250, 900) &&
         dist(target, scatter.anchor) <= Math.max(territory + 250, 900)
       )
         return true;
       const state = this.tacticalRogueRegroup(e);
-      if (!state) return dist(target, e.home) <= territory;
-      if (state.phase === 'thinking' && !state.anchor) return dist(target, e.home) <= territory;
+      if (!state) return dist(target, home) <= territory;
+      if (state.phase === 'thinking' && !state.anchor) return dist(target, home) <= territory;
       const separationLimit = R.tacticalFoundation.awarenessRadius + 200;
       if (dist(target, e) > separationLimit) return false;
       if (state.phase === 'travel')
         return (
-          this.distanceToSegment(target, state.retreatOrigin || e.home, state.destination) <=
+          this.distanceToSegment(target, state.retreatOrigin || home, state.destination) <=
           territory
         );
       return (
@@ -3811,6 +3830,10 @@
           this.move(e, { x: e.home.x + Math.cos(t) * 35, y: e.home.y + Math.sin(t) * 35 }, 12, dt);
           continue;
         }
+        if (this.thornPatroller(e) && (e.returning || e.thornReturn)) {
+          this.disengage(e, dt);
+          continue;
+        }
         e.slow = Math.max(0, (e.slow || 0) - dt);
         if (!e.aggro && !e.eliteNightBonus) {
           const m = this.multipliers(),
@@ -3981,7 +4004,7 @@
               ? this.hero
               : candidates.sort((a, b) => dist(e, a) - dist(b, e))[0]);
         if (!e.aggro && e.fieldCaptain) this.updateCaptainPatrol(e, dt);
-        else if (!e.aggro) this.updateIdleWander(e, dt);
+        else if (!e.aggro && !this.updateThornPatrol(e, dt)) this.updateIdleWander(e, dt);
         if (e.guard && !e.ranged && this.hero.hp > 0) {
           const screenFor = z.enemies.find(
             (u) => u !== e && u.guard && u.pack === e.pack && u.ranged && u.hp > 0,
@@ -4000,6 +4023,10 @@
             : true)
         )
           this.engage(e, false);
+        if (e.returning) {
+          this.disengage(e, dt);
+          continue;
+        }
         if (!e.aggro) continue;
         const territory =
           e.type === 'boss'
@@ -4225,6 +4252,7 @@
         else e.noProgress += dt;
         if (e.noProgress >= 12) this.disengage(e, dt);
       }
+      this.updateThornCaptive(dt);
     }
     disengage(e, dt) {
       if (!e.returning) {
@@ -4240,7 +4268,21 @@
         this.say(e.name + ' disengages.');
         this.event('reset');
       }
-      e.returning -= dt;
+      if (this.thornPatroller(e)) {
+        e.thornReturn = true;
+        e.aggro = false;
+        const before = { x: e.x, y: e.y },
+          n = this.thornCaptive();
+        const together =
+          !n || !this.thornCaptiveFollowing() || dist(n, e) <= R.thornPatrol.waitForCaptive;
+        if (together) this.follow(e, e.home, R.thornPatrol.speed, dt, 0);
+        if (dist(before, e) > 0) this.recordThornTracks(e, before);
+        if (dist(e, e.home) > 1e-7 || !together) return;
+        e.returning = 0;
+        delete e.thornReturn;
+        e.thornLeg = 1;
+        e.thornPause = R.thornPatrol.pause;
+      } else e.returning -= dt;
       if (e.returning <= 0) {
         Object.assign(e, e.home);
         e.aggro = false;
@@ -4453,6 +4495,7 @@
             e.maxHp = e.hp = e.baseHp * bonus.hp;
             e.damage = e.baseDamage * bonus.damage;
           }
+          if (key === 'thorn' && p.kind === 'field') e.home = { ...this.fieldCenter(0) };
           this.zone().enemies.push(e);
         }
         p.active = true;
@@ -4462,7 +4505,9 @@
             this.boss(key).name +
               ' TRUE has appeared elsewhere in ' +
               this.definition().name +
-              ' · Map: Z',
+              (key === 'thorn'
+                ? ' · Follow scout tracks and ask at the Orchard trail witness'
+                : ' · Map: Z'),
             6.5,
             '',
             'warning',
