@@ -137,9 +137,9 @@
             3: 'Restore hero health',
             4: 'Brief damage immunity',
             5: 'Holy area attack',
-            6: 'Frequent melee strike',
+            6: 'Collision-safe rushing melee strike · closes the distance before hitting'
             7: 'Powerful holy area attack',
-            8: 'Final holy area burst · restore health and gain brief protection',
+            8: 'Combat finisher · needs an enemy target · holy area burst, self-heal and brief immunity'
           },
           mage: {
             1: 'Ranged magic combo · third hit emits an arcane wave',
@@ -149,17 +149,17 @@
             5: 'Frost area burst · slows enemies',
             6: 'Frequent magic projectile · short slow',
             7: 'Powerful frost area spell · slows enemies',
-            8: 'Final arcane burst · restore health and gain brief protection',
+            8: 'Combat finisher · needs an enemy target · arcane area burst, self-heal and brief immunity'
           },
           ranger: {
             1: 'Bow combo · third hit scatters additional arrows',
             2: 'Double shot',
             3: 'Restore hero health',
             4: 'Temporary movement haste',
-            5: 'Area arrow attack',
+            5: 'Radial arrow volley · fires at enemies within 350 units'
             6: 'Rapid shot · temporary haste',
-            7: 'Advanced piercing arrow attack',
-            8: 'Final area attack · restore health and gain brief protection',
+            7: 'Armor-piercing shot · ignores enemy shield, guard and damage-reduction effects'
+            8: 'Combat finisher · needs an enemy target · arrow area burst, self-heal and brief immunity'
           },
         },
         charged = {
