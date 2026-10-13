@@ -21,8 +21,14 @@ const hash = (x) =>
     .createHash('sha256')
     .update(Buffer.isBuffer(x) ? x : JSON.stringify(x))
     .digest('hex');
+// Gameplay edits in PR #302 deliberately change these casts. Preserve exact
+// deterministic equivalence for every other skill and tick, instead of
+// misleadingly demanding byte-identical outcomes from changed abilities.
+const intentionallyChangedSkill = (cls, slot) =>
+  (cls === 'paladin' && slot === 6) || (cls === 'ranger' && [5, 7].includes(slot));
 const evidence = {
   baseline: 'c6ce1af236bddd7ca881903499c4cf5de175f9e2',
+  excludedSkillComparisons: { paladin: [6], mage: [], ranger: [5, 7] },
   scenarios: [],
   historical: [],
   scenes: [],
@@ -66,7 +72,10 @@ for (const mode of ['normal', 'nightmare'])
       for (let i = 0; i < 240; i++) {
         const input = { x: i % 60 < 30 ? 0.4 : -0.4, y: i % 80 < 40 ? 0.2 : -0.2 };
         for (const c of [a, b]) {
-          if (i % 20 === 0) c.cast(1 + ((i / 20) % 8), null, i % 40 === 0);
+          if (i % 20 === 0) {
+            const slot = 1 + ((i / 20) % 8);
+            if (!intentionallyChangedSkill(cls, slot)) c.cast(slot, null, i % 40 === 0);
+          }
           c.tick([0.016, 0.033, 0.05][i % 3], input);
         }
         compare('frame-' + i);
@@ -155,5 +164,5 @@ fs.writeFileSync(
   JSON.stringify(evidence, null, 2) + '\n',
 );
 console.log(
-  `PASS ${evidence.scenarios.length * 240} paired simulation frames, ${evidence.historical.length} historical saves, ${evidence.scenes.length} exact full-render images`,
+  `PASS ${evidence.scenarios.length * 240} paired unchanged-skill simulation frames (PR #302 edited slots explicitly excluded), ${evidence.historical.length} historical saves, ${evidence.scenes.length} exact full-render images`,
 );
