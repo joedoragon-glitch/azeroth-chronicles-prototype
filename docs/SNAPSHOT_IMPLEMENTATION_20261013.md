@@ -195,3 +195,6 @@ Final dev.7 hosted run38462357489 passed actual new phone cast/TRUE-label/estate
 
 
 Actual dev.7 WebKit screenshots were downloaded and inspected. Cold wave, assembly and TRUE suffix render as intended. The tracking tag was painted but obscured by the full caption; fixed its position below the target, added an opaque contrast plate and a375px actual Canvas pixel regression. Shortened only the display labels of the new estate attendants to reduce the observed TRUE-warband caption crowding; full saved names/IDs, roles, counts and stats remain intact. Runtime nowdev.8; final full gate is rerun on this source. This is an engineering readability correction to the new content, not subjective director acceptance or physical-device QA. All snapshot work beyond these batches remains outstanding.
+
+
+The full browser VFX catalog now builds the two new stateful Scornfang previews through startCaptainAttack and verifies their real one-shot/first-pair resolutions. It no longer supplies an incomplete synthetic plan with a missing tracking target or flattened four simultaneous beds. Every catalog scene and all existing negative controls remain required. Full sequence behavior is separately tested through naturalAI and actual scheduled updates.
