@@ -255,7 +255,10 @@ const server = http.createServer((req, res) => {
                 nearer = make('Nearest', 650),
                 chosen = make('Selected', 695);
               g.zone().enemies = [original, nearer, chosen];
-              g.s.heroTarget = original.id;
+              // Pin the initial aim before charging; ambient hero auto-combat
+              // can otherwise select the closer enemy between test actions.
+              if (g.cycleHeroTarget((e) => e.id === original.id)?.id !== original.id)
+                throw new Error('initial charged target must be the original foe');
               g.s.projectiles = [];
               window.__retargetFoes = {
                 original: original.id,
@@ -268,6 +271,11 @@ const server = http.createServer((req, res) => {
             { cls },
           );
           await press(slot);
+          assert.equal(
+            await page.evaluate(() => Prototype.chargePresentation()?.targetId),
+            await page.evaluate(() => __retargetFoes.original),
+            'charge must start with the original foe before fallback is tested',
+          );
           await page.waitForFunction(() => Prototype.chargePresentation()?.ready, null, {
             timeout: 3000,
           });
@@ -332,7 +340,8 @@ const server = http.createServer((req, res) => {
         const original = make('Original', 680),
           near = make('Nearest', 650);
         g.zone().enemies = [original, near];
-        g.s.heroTarget = original.id;
+        if (g.cycleHeroTarget((e) => e.id === original.id)?.id !== original.id)
+          throw new Error('initial charged target must be the original foe');
         g.s.projectiles = [];
         window.__retargetFoes = { original: original.id, nearer: near.id };
         window.__cooldownCasts = [];
