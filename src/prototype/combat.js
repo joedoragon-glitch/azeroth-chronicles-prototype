@@ -410,6 +410,24 @@
           amount *=
             R.greenwoodPassives.structuralConsolidation[e.form === 'true' ? 'true' : 'normal'] *
             (e.anastylosis > 0 ? R.attacks.crypt[5].defenseFactor : 1);
+        if (
+          e.roomCaptain &&
+          e.captainProfile === 'supply-march' &&
+          e.strainHardeningUntil > this.s.time
+        )
+          amount *=
+            1 -
+            Math.min(R.marchesPassives.strainHardening.maxStacks, e.strainHardeningStacks || 0) *
+              R.marchesPassives.strainHardening.perHit;
+        if (
+          e.type === 'boss' &&
+          e.family === 'archive' &&
+          e.emergencyStabilizationUntil > this.s.time
+        )
+          amount *=
+            1 -
+            R.marchesPassives.emergencyStabilization[e.form === 'true' ? 'true' : 'normal']
+              .reduction;
         if (e.family === 'citadel' && e.open <= 0) amount *= 0.65;
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;
         // All hero/companion damage sources use this same resolver. This
@@ -421,6 +439,7 @@
         const reflected =
           e.captainProfile === 'supply-crown' && e.captainReflect > 0 ? actualDamage * 0.3 : 0;
         e.hp = Math.max(0, e.hp - amount);
+        this.recordMarchesDamage(e, actualDamage);
         this.tacticalRecordHit(e, source, actualDamage);
         this.effects.push({ type: 'hit', x: e.x, y: e.y, amount });
         if (e.hp === 0) this.kill(e);
@@ -604,6 +623,7 @@
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
           }
         }
+        this.rechargeOwnMud(dt);
         for (const a of [...this.s.hazards]) {
           if (a.family === 'mire' && a.index === 2 && a.kind === 'circle') {
             for (const u of this.combatTargets()) {

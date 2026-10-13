@@ -175,6 +175,78 @@ async function verifySnapshotEncounters(page, results, tag, capture = false) {
           path: path.join(results, 'snapshot-cast-' + scene + '-' + tag + '.png'),
         });
     }
+    for (const scene of ['keeper-normal', 'keeper-true', 'direjaw', 'recharge']) {
+      const state = await page.evaluate((scene) => {
+        const c = Prototype.game,
+          family = scene === 'direjaw' ? 'supply-march' : scene === 'recharge' ? 'mire' : 'archive';
+        c.enter(family === 'mire' ? 'march' : family);
+        c.s.clock = 200;
+        c.s.party = [];
+        c.s.projectiles = [];
+        c.s.hazards = [];
+        c.s.mercyTime = 0;
+        c.random = () => 0.9;
+        const e =
+          family === 'supply-march'
+            ? c.zone().enemies.find((e) => e.roomCaptain)
+            : c.bossEnemy(
+                c.boss(family),
+                scene === 'keeper-true' ? 'true' : 'normal',
+                c.safe(850, 850),
+              );
+        c.zone().enemies = [e];
+        Object.assign(c.hero, c.safe(e.x + 45, e.y), { hp: 10000, maxHp: 10000, order: null });
+        c.engage(e);
+        let expected, actual;
+        if (scene === 'recharge') {
+          e.hp = e.maxHp * 0.7;
+          c.startAttack(e, c.hero, 2);
+          c.resolveAttack(e);
+          e.telegraph = null;
+          Object.assign(e, { x: c.s.hazards[0].x, y: c.s.hazards[0].y });
+          Object.assign(c.hero, c.safe(e.x + 45, e.y));
+          const before = e.hp;
+          c.updateProjectiles(0.25);
+          actual = e.hp - before;
+          expected = e.maxHp * 0.02 * 0.25;
+        } else {
+          e.hp = e.maxHp * 0.5 + 20;
+          const before = e.hp;
+          c.tacticalClearBurst(e);
+          c.damage(e, 20);
+          actual = before - e.hp;
+          expected = 20;
+        }
+        c.zone().enemies = [e];
+        __snapshotEncounter.cast = scene;
+        __snapshotEncounter.text = [];
+        __snapshotEncounter.groundSeen = false;
+        Prototype.updateHUD();
+        return {
+          actual,
+          expected,
+          label:
+            scene === 'recharge'
+              ? null
+              : scene === 'direjaw'
+                ? '4%'
+                : scene === 'keeper-true'
+                  ? '40%'
+                  : '30%',
+        };
+      }, scene);
+      assert(Math.abs(state.actual - state.expected) < 1e-7, 'real Marches damage/healing path');
+      await page.waitForFunction(() => __snapshotEncounter.groundSeen);
+      if (state.label)
+        await page.waitForFunction(
+          (label) => __snapshotEncounter.text.includes(label),
+          state.label,
+        );
+      if (capture)
+        await page.screenshot({
+          path: path.join(results, 'snapshot-passive-' + scene + '-' + tag + '.png'),
+        });
+    }
   } finally {
     await page.evaluate((state) => {
       const c = Prototype.game;

@@ -3800,6 +3800,15 @@
     rapidDeployment: { normal: 1.08, true: 1.15 },
     prolongedExposure: { normal: 1.1, phase: 1.2 },
   };
+  const marchesPassives = {
+    groundwaterRecharge: { normal: 0.02, true: 0.05 },
+    strainHardening: { perHit: 0.04, maxStacks: 3, duration: 5 },
+    emergencyStabilization: {
+      threshold: 0.5,
+      normal: { reduction: 0.3, duration: 6 },
+      true: { reduction: 0.4, duration: 8 },
+    },
+  };
   const bossBehavior = {
     thorn: {
       close: [0],
@@ -4007,10 +4016,10 @@
       visualScale: 1.18,
       specialRange: 437,
       specialCooldown: 4.4,
-      phase: { threshold: 0.55, name: 'Sloughskin', kind: 'molt' },
+      phase: { threshold: 0.55, name: 'Elastic Rebound', kind: 'molt' },
       attacks: [
         {
-          name: 'Bog Skitter',
+          name: 'Flow Sliding',
           kind: 'line',
           warning: 0,
           recovery: 1.2,
@@ -4018,7 +4027,7 @@
           charge: true,
         },
         {
-          name: 'Spatter Fan',
+          name: 'Sand Boil',
           angleDegrees: 196,
           kind: 'cone',
           warning: 1.0,
@@ -4028,7 +4037,7 @@
           radius: 150,
         },
         {
-          name: 'Silt Slick',
+          name: 'Mud Pumping',
           count: 4,
           captainSpread: true,
           kind: 'circle',
@@ -4431,7 +4440,7 @@
     },
     captains: {
       'supply-vale': { name: 'Impoundment', style: 'snare', coefficient: 0.2 },
-      'supply-march': { name: 'Direjaw’s Silt Hook', style: 'snare', coefficient: 0.2 },
+      'supply-march': { name: 'Pullout Resistance', style: 'snare', coefficient: 0.2 },
       'supply-highlands': {
         name: 'Crag Tyrant’s Shoulder Feint',
         style: 'shove',
@@ -4447,7 +4456,7 @@
     bosses: {
       thorn: { name: 'Break Contact', style: 'dash', coefficient: 0.23 },
       crypt: { name: 'Disarticulation', style: 'shove', coefficient: 0.24 },
-      mire: { name: 'Mirejaw’s Bog Snare', style: 'snare', coefficient: 0.23 },
+      mire: { name: 'Matric Suction', style: 'snare', coefficient: 0.23 },
       archive: { name: 'Drowned Keeper’s Undertow', style: 'shove', coefficient: 0.24 },
       ridge: { name: 'Ridge Tyrant’s Stone Feint', style: 'shove', coefficient: 0.24 },
       mine: { name: 'Stone Colossus’s Quarry Shift', style: 'shove', coefficient: 0.24 },
@@ -4680,7 +4689,7 @@
         coefficient: 0.09,
       },
       'supply-march': {
-        name: 'Direjaw’s Silt Curtain',
+        name: 'Grout Curtain',
         effect: 'bind',
         warning: 1.35,
         radius: 125,
@@ -4744,7 +4753,7 @@
         coefficient: 0.09,
       },
       mire: {
-        name: 'Mirejaw’s Sinking Bank',
+        name: 'Rotational Slump',
         effect: 'bind',
         warning: 1.45,
         radius: 145,
@@ -4899,6 +4908,7 @@
     bossSummoning,
     bossBehavior,
     greenwoodPassives,
+    marchesPassives,
     rangedEnemyCombat,
     chargedSkills,
     basicAttackCombo,

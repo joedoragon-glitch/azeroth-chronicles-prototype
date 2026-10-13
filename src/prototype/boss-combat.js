@@ -27,6 +27,10 @@
           'anastylosis',
           'anastylosisCd',
           'quotaTarget',
+          'strainHardeningStacks',
+          'strainHardeningUntil',
+          'emergencyStabilizationUsed',
+          'emergencyStabilizationUntil',
         ])
           delete e[key];
         if (e.quotaOvertime !== undefined) e.quotaOvertime = 0;
@@ -67,6 +71,63 @@
             'mireBogExposure',
           ])
             delete u[key];
+      }
+
+      rechargeOwnMud(dt) {
+        if (this.peace || dt <= 0) return;
+        for (const e of this.zone().enemies) {
+          if (
+            e.type !== 'boss' ||
+            e.family !== 'mire' ||
+            e.hp <= 0 ||
+            !e.aggro ||
+            e.returning ||
+            e.neutral
+          )
+            continue;
+          // Overlapping beds form one wet footprint, never multiple healing
+          // streams. Clip the final interval to the longest live owned bed.
+          let wetSeconds = 0;
+          for (const h of this.s.hazards)
+            if (
+              h.family === 'mire' &&
+              h.index === 2 &&
+              h.kind === 'circle' &&
+              h.sourceId === e.id &&
+              h.life > 0 &&
+              dist(e, h) < h.radius
+            )
+              wetSeconds = Math.max(wetSeconds, Math.min(dt, h.life));
+          const rate = R.marchesPassives.groundwaterRecharge[e.form === 'true' ? 'true' : 'normal'];
+          e.hp = Math.min(e.maxHp, e.hp + e.maxHp * rate * wetSeconds);
+        }
+      }
+
+      recordMarchesDamage(e, actualDamage) {
+        if (actualDamage <= 0 || e.hp <= 0) return;
+        if (e.type === 'boss' && e.family === 'mire')
+          e.mireLowestHpRatio = Math.min(e.mireLowestHpRatio ?? 1, e.hp / e.maxHp);
+        if (e.roomCaptain && e.captainProfile === 'supply-march') {
+          const p = R.marchesPassives.strainHardening,
+            active = (e.strainHardeningUntil || 0) > this.s.time;
+          e.strainHardeningStacks = Math.min(
+            p.maxStacks,
+            (active ? e.strainHardeningStacks || 0 : 0) + 1,
+          );
+          e.strainHardeningUntil = this.s.time + p.duration;
+        }
+        if (
+          e.type === 'boss' &&
+          e.family === 'archive' &&
+          !e.emergencyStabilizationUsed &&
+          e.hp <= e.maxHp * R.marchesPassives.emergencyStabilization.threshold
+        ) {
+          const p = R.marchesPassives.emergencyStabilization[e.form === 'true' ? 'true' : 'normal'];
+          e.emergencyStabilizationUsed = true;
+          e.emergencyStabilizationUntil = this.s.time + p.duration;
+          this.say(e.name + ' uses Emergency Stabilization.');
+          this.event('captainPhase', { profile: 'archive', name: 'Emergency Stabilization' });
+        }
       }
 
       advanceQueuedAttack(e) {
@@ -964,7 +1025,8 @@
                 hits: 0,
               };
               u.deathRollHeld = true;
-              this.event('warning', { family: 'mire', deathRoll: true });
+              this.say(e.name + ' commits to Vortex Shedding.');
+              this.event('warning', { family: 'mire', deathRoll: true, name: 'Vortex Shedding' });
             }
             if (
               landed &&

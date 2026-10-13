@@ -311,6 +311,37 @@
       }
     }
     for (const e of game.zone().enemies) {
+      if (cue && e.hp > 0 && !e.returning) {
+        const keeper =
+            e.type === 'boss' &&
+            e.family === 'archive' &&
+            e.emergencyStabilizationUntil > game.s.time,
+          direjaw =
+            e.roomCaptain &&
+            e.captainProfile === 'supply-march' &&
+            e.strainHardeningUntil > game.s.time;
+        if (keeper || direjaw) {
+          const p = screen(e),
+            reduction = keeper
+              ? R.marchesPassives.emergencyStabilization[e.form === 'true' ? 'true' : 'normal']
+                  .reduction
+              : Math.min(
+                  R.marchesPassives.strainHardening.maxStacks,
+                  e.strainHardeningStacks || 0,
+                ) * R.marchesPassives.strainHardening.perHit;
+          ctx.strokeStyle = keeper ? '#97cee9' : '#d0b477';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.ellipse(p.x, p.y - 22, 27, 31, 0, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.fillStyle = '#18252bf2';
+          ctx.fillRect(p.x - 17, p.y + 12, 34, 20);
+          ctx.fillStyle = keeper ? '#d6f3ff' : '#fff0c3';
+          ctx.font = 'bold 11px system-ui';
+          ctx.textAlign = 'center';
+          ctx.fillText(String(Math.round(reduction * 100)) + '%', p.x, p.y + 26);
+        }
+      }
       if (e.hp <= 0 || e.returning || !(e.anastylosis > 0 || e.telegraph?.selfDefense)) continue;
       const p = screen(e),
         active = e.anastylosis > 0;

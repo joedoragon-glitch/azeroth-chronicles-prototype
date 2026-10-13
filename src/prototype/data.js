@@ -192,10 +192,10 @@ const PrototypeData = {
       xp: 105,
       place: 'Marsh island',
       attacks: [
-        'Jaw snap: frontal bite with 0.9 second warning.',
-        'Mire rush: straight charge marked for 1.4 seconds; collisions end the charge.',
-        'Bog spit: three puddles warn for 1.5 seconds and slow for 4 seconds; damage ticks have a fixed interval.',
-        'Brood call: summons three mirelings after 1.6 seconds; no more than three remain alive.',
+        'Fluvial Incision: frontal bite with 0.9 second warning; a successful bite can trigger Vortex Shedding, the committed death roll.',
+        'Hydraulic Jump: straight charge marked for 1.4 seconds; collisions end the charge.',
+        'Inundation: three mud beds warn for 1.5 seconds and progressively slow for 4 seconds; damage ticks have a fixed interval.',
+        'Flood-Pulse Recruitment: summons three mirelings after 1.6 seconds; no more than three remain alive.',
       ],
     },
     {

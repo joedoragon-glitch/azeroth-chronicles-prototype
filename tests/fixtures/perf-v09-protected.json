@@ -108,5 +108,15 @@
       "src/prototype/engine.js": "6f9fe9f84421085d48ee36021026282fe539fcbc1ed2833f1cbf691531c12ced",
       "src/prototype/rules.js": "111a7d79fd2eee29417455d28477603c6f8c5e07156e8f20768733415227efc7"
     }
+  },
+  "approvedSnapshotMarchesRevision": {
+    "source": "Director #290/#298: Marches labels and three passives; exact post-hit/expiry/owned-mud contracts; previous hashes retained.",
+    "baseline": "1f6dd31f58727c9628a15730afedb6f0a73a82f2",
+    "files": {
+      "src/prototype/boss-combat.js": "b74098b1c4b42d2941067626571ca57b97832d247f734591995ff53558b029e8",
+      "src/prototype/combat.js": "1c3a9eb28c51558905757b82dd9b5089d42ee644c2989d00480847776c1e00d6",
+      "src/prototype/data.js": "2f7ee5fee574879da97d45d9504ac8282d4f618994e91d539c5d53822d8d9317",
+      "src/prototype/rules.js": "ffcc30c2ffa132045dc54f05c04132581c84214bc86dee31b725442380757aad"
+    }
   }
 }
