@@ -482,6 +482,9 @@
                       : 115) * R.bossCadence.areaRangeMultiplier,
           },
           sequence = [];
+        if (e.family === 'mine' && index === 2 && a.doubleWave) {
+          sequence.push({ ...a, timer: 0.7, total: 0.7, name: 'Dynamic Compaction — second wave' });
+        }
         if (e.family === 'crypt' && index === 3) {
           // Snapshot all Groundwork pads on cast. No chasing a dodging player.
           const heroMark =
@@ -549,16 +552,7 @@
               total: plan.warning,
               name: 'Shifting water channels',
             });
-          if (e.family === 'mine' && index === 1)
-            sequence.push({
-              ...a,
-              x: a.x + 150,
-              y: a.y + 50,
-              count: 1,
-              timer: plan.warning,
-              total: plan.warning,
-              name: 'Delayed rockfall',
-            });
+          // Progressive Collapse already sequences its three marked impacts in both forms.
           if (e.family === 'abyss' && index === 0)
             sequence.push({
               ...a,
@@ -653,6 +647,7 @@
         e.lastAttackIndex = selected;
         e.sequence = [...built.sequence, ...this.bossComboSequence(e, selected, actualTarget)];
         e.telegraph = built.first;
+        if (e.family === 'mine' && selected === 1) this.prepareMineWorksPreview(e);
         this.event('warning', { family: e.family, index: selected });
         return true;
       }
@@ -725,6 +720,107 @@
               ? 75 * R.bossCadence.areaRangeMultiplier
               : a.radius,
         }));
+      }
+      prepareMineWorksPreview(e) {
+        if (e.family !== 'mine' || e.telegraph?.index !== 1) return;
+        // Predict from the last marked impact, not the first one. This also
+        // works when Collapse is chained after a different engineering skill.
+        const lastCollapse = (e.sequence || []).filter((a) => a.index === 1).at(-1);
+        this.previewMineWorks(e, lastCollapse || e.telegraph);
+      }
+      previewMineWorks(e, attack) {
+        if (e.family !== 'mine' || this.s.zone !== 'mine') return;
+        const z = this.zone(),
+          existing = z.props.filter((p) => p.garunTemporary),
+          priorId = this.s.nextId;
+        this.raiseMineWorks(e, attack);
+        const planned = z.props.filter((p) => p.garunTemporary);
+        this.s.nextId = priorId;
+        z.props = z.props.filter((p) => !p.garunTemporary && !p.garunPreview);
+        z.props.push(...existing);
+        for (const [i, p] of planned.entries())
+          z.props.push({
+            id: 'garun-preview-' + e.id + '-' + i,
+            x: p.x,
+            y: p.y,
+            r: 0,
+            decorative: true,
+            structure: 'mine-old-markings',
+            dungeonDistrict: 'colossus-chamber',
+            sceneRole: 'construction-warning',
+            icon: '⚠️',
+            garunPreview: true,
+            expiresAt: this.s.time + 8,
+          });
+      }
+      raiseMineWorks(e, attack, reservedSites = null) {
+        if (e.family !== 'mine' || e.hp <= 0 || this.peace || this.s.zone !== 'mine') return 0;
+        const z = this.zone();
+        // A maximum of two pieces of temporary construction may obstruct the arena.
+        z.props = z.props.filter((p) => !p.garunTemporary && !p.garunPreview);
+        const captive = z.npcs.find((n) => n.family === 'mine' && n.kind === 'cage'),
+          exit = z.npcs.find((n) => n.kind === 'exit'),
+          targets = [this.hero, ...this.activeLivingParty(), e, captive, exit].filter(Boolean),
+          initiallyWalkable = targets.filter((u) => !this.blocked(u.x, u.y, z.id, 12)),
+          essentialRoutes = [
+            ...(exit ? targets.filter((u) => u !== exit).map((u) => [u, exit]) : []),
+            ...(captive ? [[this.hero, captive]] : []),
+          ].filter(([from, to]) => this.route(from, to).length > 0),
+          offsets = [
+            [-160, -100],
+            [160, -100],
+            [-180, 110],
+            [180, 110],
+            [-80, 185],
+            [80, 185],
+          ],
+          candidates =
+            reservedSites === null
+              ? offsets.map(([dx, dy]) => ({ x: attack.x + dx, y: attack.y + dy }))
+              : reservedSites,
+          newlyBuilt = [];
+        // At impact, only the previously previewed positions may become solid.
+        // Revalidate each one against moving occupants and routes; cancel an
+        // unsafe site rather than secretly constructing somewhere else.
+        for (const p of candidates) {
+          if (newlyBuilt.length >= 2) break;
+          if (
+            this.blocked(p.x, p.y, z.id, 28) ||
+            targets.some((u) => dist(u, p) < 110) ||
+            this.traps().some((t) =>
+              this.trapContains(
+                {
+                  ...t,
+                  radius: (t.radius || 0) + 40,
+                  length: (t.length || 0) + 80,
+                  halfWidth: (t.halfWidth || 0) + 40,
+                },
+                p,
+              ),
+            )
+          )
+            continue;
+          const prop = {
+            id: 'garun-work-' + this.s.nextId++,
+            x: p.x,
+            y: p.y,
+            r: 24,
+            structure: 'mine-supports',
+            icon: '🪨',
+            garunTemporary: true,
+            expiresAt: this.s.time + 9,
+          };
+          z.props.push(prop);
+          if (
+            initiallyWalkable.some((u) => this.blocked(u.x, u.y, z.id, 12)) ||
+            essentialRoutes.some(([from, to]) => !this.route(from, to).length)
+          ) {
+            z.props.pop();
+            continue;
+          }
+          newlyBuilt.push(prop);
+        }
+        return newlyBuilt.length;
       }
       resolveAttack(e) {
         const a = e.telegraph;
@@ -946,7 +1042,22 @@
           };
           return;
         }
+        const hero = this.hero,
+          zone = this.zoneId,
+          deaths = this.s.statistics.deaths;
         this.resolveArea(e, a);
+        if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
+          return;
+        if (
+          e.family === 'mine' &&
+          a.index === 1 &&
+          !(e.sequence || []).some((t) => t.index === 1)
+        ) {
+          const reserved = this.zone()
+            .props.filter((p) => p.garunPreview)
+            .map((p) => ({ x: p.x, y: p.y }));
+          this.raiseMineWorks(e, a, reserved);
+        }
       }
       resolveArea(e, a) {
         const hero = this.hero,
@@ -1149,6 +1260,8 @@
           if (a.opening)
             e.open = e.form === 'true' && e.family === 'citadel' ? a.opening / 2 : a.opening;
           e.telegraph = this.advanceQueuedAttack(e);
+          if (e.family === 'mine' && a.index !== 1 && e.telegraph?.index === 1)
+            this.prepareMineWorksPreview(e);
           if (e.telegraph) this.event('warning', { family: e.family });
           else e.basicDue = e.type === 'boss' && e.attackIndex % R.bossCadence.skillsPerBasic === 0;
         }

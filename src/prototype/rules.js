@@ -70,8 +70,8 @@
     ],
     mine: [
       attack('circle', 1.6, 2.5, { coefficient: 1.4, opening: 2.5 }),
-      attack('circle', 1.7, 1.5, { count: 3, coefficient: 1.4 }),
-      attack('ring', 1.6, 1.6),
+      attack('circle', 1.7, 1.5, { count: 3, sequential: true, coefficient: 1.4 }),
+      attack('ring', 1.6, 1.6, { slowDuration: 1.5, doubleWave: true }),
       attack('line', 1.7, 3, { charge: true, coefficient: 1.4, opening: 3 }),
       attack('summon', 1.8, 1.5, { species: 'ogre', ranged: false }),
     ],
@@ -2117,7 +2117,8 @@
       presentation: 'workstation',
       workKind: 'smith',
       workstation: 'equipment-repair',
-      context: 'Dara is compelled to repair cart axles, quarry tools and mine supports.',
+      context:
+        'Dara is kept here, but Garun pays for repairs and his odd little sculptures; the smith can move about the workshop, not leave the Mine.',
     },
   };
   const regionalHandoffScenes = {
@@ -3401,6 +3402,7 @@
     ],
   }; // Curated occupied spaces: each dungeon has an entrance, work/ritual zone, command markers and a boss approach.
   const dungeonLore = {
+    mine: 'The interregional roads and relocated settlements bear Garun the Firstborn’s geometric maker mark. The Dark Lord’s old companion inspects this Mine’s wardens and supports; the Ridge Tyrant handles wages. Past the forge, little machines and angular ornaments clutter his quiet workshop.',
     crypt:
       'An old ossuary opens onto unfinished Crown guest rooms. A building plan shows six seats at the winter table; the memorial stones give the dead names, not numbers.',
     abyss:
@@ -3511,6 +3513,9 @@
       [190, 1190, 'ridge-supper', 'repair-forge'],
       [900, 1150, 'rail', 'haulage-loop'],
       [1280, 1340, 'torch', 'colossus-chamber'],
+      [970, 1030, 'stone-seat', 'colossus-chamber', 'geometric-gallery'],
+      [1300, 1270, 'game-table', 'colossus-chamber', 'kinetic-collection'],
+      [1030, 1280, 'crystal', 'colossus-chamber', 'art-object'],
     ],
     abyss: [
       [300, 340, 'torch', 'rider-preparation'],
@@ -4459,7 +4464,12 @@
       mire: { name: 'Matric Suction', style: 'snare', coefficient: 0.23 },
       archive: { name: 'Drowned Keeper’s Undertow', style: 'shove', coefficient: 0.24 },
       ridge: { name: 'Ridge Tyrant’s Stone Feint', style: 'shove', coefficient: 0.24 },
-      mine: { name: 'Stone Colossus’s Quarry Shift', style: 'shove', coefficient: 0.24 },
+      mine: {
+        name: 'Garun’s Lateral Load Transfer',
+        style: 'slab',
+        coefficient: 0.6,
+        warning: 1.3,
+      },
       warlord: { name: 'Ashen Warlord’s Flank Command', style: 'dash', coefficient: 0.25 },
       abyss: { name: 'Abyss Dragon’s Ashwing Feint', style: 'dash', coefficient: 0.25 },
       citadel: { name: 'Ash Sentinel’s Reversal', style: 'shove', coefficient: 0.24 },
@@ -4786,7 +4796,7 @@
         reinforceName: 'Payroll watchguard',
       },
       mine: {
-        name: 'Stone Colossus’s Faultline Brace',
+        name: 'Garun’s Passive Earth Pressure',
         effect: 'sweep',
         warning: 1.65,
         radius: 195,

@@ -661,7 +661,10 @@
                     this.s.statistics.deaths !== deaths
                   )
                     return;
-                  if (landed) this.enemyVfxHazardImpact?.(a, u);
+                  if (landed) {
+                    this.enemyVfxHazardImpact?.(a, u);
+                    if (a.slowDuration && u.hp > 0) this.applySlow(u, a.slowDuration);
+                  }
                 }
               }
             }

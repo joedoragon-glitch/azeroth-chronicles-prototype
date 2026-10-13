@@ -68,6 +68,18 @@ if (marchesRevision) {
 }
 const thornRevision = manifest.approvedSnapshotThornRevision;
 if (thornRevision) assert.match(thornRevision.source, /#289.*#298/);
+const garunRevision = manifest.approvedSnapshotGarunRevision;
+if (garunRevision) {
+  assert.deepEqual(Object.keys(garunRevision.files).sort(), [
+    'src/prototype/boss-combat.js',
+    'src/prototype/combat.js',
+    'src/prototype/data.js',
+    'src/prototype/engine.js',
+    'src/prototype/rules.js',
+    'src/prototype/save.js',
+  ]);
+  assert.match(garunRevision.source, /#298.*#293.*#253.*#264.*#279/);
+}
 for (const [file, expected] of Object.entries(manifest.files)) {
   const actual = crypto
     .createHash('sha256')
@@ -75,8 +87,9 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    thornRevision?.files[file] ||
-    marchesRevision?.files[file] ||
+    garunRevision?.files[file] ||
+      thornRevision?.files[file] ||
+      marchesRevision?.files[file] ||
       greenwoodRevision?.files[file] ||
       encounterRevision?.files[file] ||
       snapshotRevision?.files[file] ||

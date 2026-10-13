@@ -25,6 +25,7 @@
           u.order = null;
         });
         for (const z of Object.values(out.zones)) {
+          z.props = z.props.filter((p) => !p.garunTemporary && !p.garunPreview);
           for (const n of z.npcs) {
             if (n.id === 'cage-thorn') {
               delete n.path;
@@ -693,7 +694,10 @@
         c.effects = [];
         for (const z of Object.values(c.s.zones)) {
           z.enemies = z.enemies.filter((e) => !e.summon);
-          z.props = z.props.filter((p) => !c.blocked(p.x, p.y, z.id, p.r || 0, true));
+          z.props = z.props.filter(
+            (p) =>
+              !p.garunTemporary && !p.garunPreview && !c.blocked(p.x, p.y, z.id, p.r || 0, true),
+          );
           c.roadNetwork(z);
           for (const e of z.enemies) {
             if (e.family === 'thorn' && e.type === 'boss' && (e.aggro || e.returning))

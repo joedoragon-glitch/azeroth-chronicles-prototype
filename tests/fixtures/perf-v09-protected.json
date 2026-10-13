@@ -132,5 +132,16 @@
       "src/prototype/save.js": "40a6d35085070f5e3a2f3225287c9e844cdc50c74add67ba583aab66fba7164e",
       "src/prototype/app.js": "f8c5658d9d6624dc6839c51bd17cf04db3a47f751f53ae2ef7181b75440d94a9"
     }
+  },
+  "approvedSnapshotGarunRevision": {
+    "source": "#298 / #293 Garun identity and seven exact moves, reconciled #253 -> #264 -> #279 with current fatal boundaries",
+    "files": {
+      "src/prototype/boss-combat.js": "b00e8da1b1255f2dfe05bcdec050663c1806db7561ebea0ebe0f410bca8ab43c",
+      "src/prototype/combat.js": "f8e27c477a5ee7076fa4ef5e8d740bce79db58e94135f1dd0d5fa1ac971acc3e",
+      "src/prototype/data.js": "0c2ba090463cb5e84db6afafd0bf878fafe3be4a406a8d8ac3e2469029f5632c",
+      "src/prototype/engine.js": "7396d07f9088c684568bdfc7887a9ca172d6d204761ce433121db6c8f4322888",
+      "src/prototype/rules.js": "e9710b2b6b4c1550b211c09dfef6a55e6077dd4a3378dedb4288ce9c1b61bdbb",
+      "src/prototype/save.js": "7b5696c4411b4cbbc8a5d15e91ec2962b97e8071ba62adbcde077276d0143048"
+    }
   }
 }
