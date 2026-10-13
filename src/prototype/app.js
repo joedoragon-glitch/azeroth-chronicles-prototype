@@ -110,9 +110,9 @@
   function installInstructions() {
     openMenu(
       'Install on phone',
-      'Install once, then Azeroth Chronicles launches from the home screen like an app and keeps its offline cache on that device.\n\nAndroid / Chrome: use the Install button when available. If Chrome does not offer it, open the browser menu and choose Install app or Add to Home screen.\n\niPhone / iPad: open the game in Safari, tap Share, choose Add to Home Screen, then Add.',
+      "Install once, then So I Became the Dark Lord's Problem launches from the home screen like an app and keeps its offline cache on that device.\n\nAndroid / Chrome: use the Install button when available. If Chrome does not offer it, open the browser menu and choose Install app or Add to Home screen.\n\niPhone / iPad: open the game in Safari, tap Share, choose Add to Home Screen, then Add.",
       installPrompt
-        ? [action('Install Azeroth Chronicles', installApp, 'Open the phone installation prompt')]
+        ? [action('Install game', installApp, 'Open the phone installation prompt')]
         : [],
       systemMenu,
     );
@@ -132,7 +132,7 @@
       await prompt.prompt();
       const choice = await prompt.userChoice;
       if (choice && choice.outcome === 'accepted') {
-        status('Azeroth Chronicles installed. Open it from your home screen.');
+        status('Game installed. Open it from your home screen.');
         closeMenu();
       } else installInstructions();
     } catch (_) {
@@ -849,7 +849,7 @@
       '',
       [
         ...(!runningAsApp() && platform.mode === 'phone'
-          ? [action('Install on phone', installApp, 'Add Azeroth Chronicles to the home screen')]
+          ? [action('Install on phone', installApp, 'Add the game to the home screen')]
           : []),
         ...(appRegistration
           ? [
@@ -2577,7 +2577,7 @@
   });
   addEventListener('appinstalled', () => {
     installPrompt = null;
-    status('Azeroth Chronicles installed. Open it from your home screen.');
+    status('Game installed. Open it from your home screen.');
   });
   if (
     location.protocol === 'https:' ||

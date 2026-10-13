@@ -73,5 +73,15 @@
     "appSha256": "e6ea0d525e4a827da13cdb95a2c6b1185432781bf269ab9b4370e6dd1b2f48e3",
     "inputSha256": "3b01e8b5df5b7b8fedc8deb24bba4f93f979ef111e2fa2fa55950891b58b5da5",
     "desktopCssSha256": "95fcb8bdad9f22c32950a1f1c6c51b1f2f886fc89e33d59248d3aef415137dac"
+  },
+  "approvedSnapshotPreparationRevision": {
+    "source": "Director #298: #282 official title; #284 Greenwood; #286 Marches; #287 Burned Hamlet. Isolated batch1; previous baseline and revision hashes retained.",
+    "baseline": "6f8089b2013647184efb04932fe6157f548238b9",
+    "files": {
+      "src/prototype/app.js": "a77a429740cec0b183392f888bbacff9b6cbcf57104555be269af988da7fbe9a",
+      "src/prototype/rules.js": "75ee3b5cb29e7a75c9f3015c1e05c4c0e424ea87e812aaeb90aae1caebc9192f",
+      "src/prototype/world.js": "f2dbdf3d1c8dfc47ca0d6b727019fb948810a94519de592aacf4754b4785aad0",
+      "templates/game.html": "55267236efe69a8e8abebda9bfad3e9632851149704a530231376dca109ae58b"
+    }
   }
 }

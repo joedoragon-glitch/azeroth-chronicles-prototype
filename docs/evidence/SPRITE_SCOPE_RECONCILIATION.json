@@ -103,6 +103,7 @@
       "bush",
       "marsh-bush",
       "wildflowers",
+      "fruit-tree",
       "sapling",
       "stump",
       "fallen-log",
@@ -1143,9 +1144,9 @@
     }
   ],
   "sources": {
-    "src/prototype/visuals.js": "ce4b60074e401bf619da708f9bbe1700b73c69a300c6d2b1c68e0ea3013733b9",
-    "src/prototype/world.js": "fd696a65bf4e1b9067291f6c6d3d57b508f2b2ecb7164c222299ef8fa5edaa53",
-    "src/prototype/rules.js": "2ea90233f249dbca6074a22ee564fe6a5cc3e158ca4a46a98241409ff15ffc7c",
+    "src/prototype/visuals.js": "3af6be2dfba6793253460a5e00e39314957319968a74d0577edbb7a65386bc0e",
+    "src/prototype/world.js": "f2dbdf3d1c8dfc47ca0d6b727019fb948810a94519de592aacf4754b4785aad0",
+    "src/prototype/rules.js": "75ee3b5cb29e7a75c9f3015c1e05c4c0e424ea87e812aaeb90aae1caebc9192f",
     "src/prototype/data.js": "a82856323e155405e7fb68a027dc226b75d1563bd6b440450ccf584a9d7724b2",
     "src/prototype/sprites.js": "157fae7b5bcb7883a9c0a107434deb2e1e2692e7905c358f237553d98118a774",
     "src/prototype/renderer.js": "56c386616a4aebd69d5226b7eec6bdfa9d72b560263b8720b2f8ccc999a33c5a"

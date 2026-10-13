@@ -2104,6 +2104,15 @@
       [2000, 2180, 'woodpile', 'estate-approach'],
       [2120, 2240, 'tool-rack', 'estate-approach'],
       [2240, 2180, 'supply-stack', 'estate-approach', 'construction'],
+      // A tiny working grove south of Orchard Hamlet; the named abandoned orchard stays wild.
+      [840, 1040, 'fruit-tree', 'hamlet-orchard'],
+      [910, 1040, 'fruit-tree', 'hamlet-orchard'],
+      [840, 1110, 'fruit-tree', 'hamlet-orchard'],
+      [910, 1110, 'fruit-tree', 'hamlet-orchard'],
+      [970, 1090, 'crate', 'hamlet-orchard', 'harvest'],
+      // Reuse the existing Millhaven workshop; do not create another building.
+      [230, 710, 'stacked-lumber', 'millhaven-carpentry'],
+      [275, 760, 'tool-rack', 'millhaven-carpentry'],
     ],
     march: [
       [2480, 2230, 'drying-rack', 'archive-relief', 'pages'],
@@ -2111,6 +2120,16 @@
       [2700, 2250, 'scroll-stack', 'archive-relief'],
       [650, 1040, 'fishing-net', 'shore-work'],
       [1090, 680, 'fish-rack', 'camp-work'],
+      // Small fishing-trade details in existing Reedport and Fisher Camp.
+      [740, 980, 'crate', 'reedport-catch', 'sorting'],
+      [730, 1170, 'cart', 'reedport-catch', 'delivery'],
+      [1150, 640, 'tool-rack', 'camp-work', 'boat-maintenance'],
+    ],
+    // A modest domestic corner beside Burned Hamlet's existing repairs.
+    // The ruins, houses, garrison and road network are unchanged.
+    frontier: [
+      [1270, 1240, 'garden', 'burned-hamlet-home'],
+      [1440, 1200, 'laundry', 'burned-hamlet-home'],
     ],
   };
   const dungeonWalls = {

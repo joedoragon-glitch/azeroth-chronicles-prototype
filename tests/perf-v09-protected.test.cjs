@@ -20,6 +20,17 @@ if (keyboardRevision) {
   ]);
   assert.match(keyboardRevision.source, /PR #269/);
 }
+// Preserve all previous hashes and allow only the exact reviewed batch source.
+const snapshotRevision = manifest.approvedSnapshotPreparationRevision;
+if (snapshotRevision) {
+  assert.deepEqual(Object.keys(snapshotRevision.files).sort(), [
+    'src/prototype/app.js',
+    'src/prototype/rules.js',
+    'src/prototype/world.js',
+    'templates/game.html',
+  ]);
+  assert.match(snapshotRevision.source, /#298.*#282.*#284.*#286.*#287/);
+}
 for (const [file, expected] of Object.entries(manifest.files)) {
   const actual = crypto
     .createHash('sha256')
@@ -27,7 +38,10 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    keyboardRevision?.files[file] || revision.files[file] || expected,
+    snapshotRevision?.files[file] ||
+      keyboardRevision?.files[file] ||
+      revision.files[file] ||
+      expected,
     file + ' is protected against baseline / reviewed rendering revision ' + manifest.baseline,
   );
 }
