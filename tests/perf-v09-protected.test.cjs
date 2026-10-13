@@ -20,6 +20,18 @@ if (keyboardRevision) {
   ]);
   assert.match(keyboardRevision.source, /PR #269/);
 }
+// Hero-skill repairs deliberately touch four protected gameplay tables/owners.
+// Keep the exception explicit, revision-pinned and limited to PR #302.
+const heroSkillRevision = manifest.approvedHeroSkillRevision;
+if (heroSkillRevision) {
+  assert.deepEqual(Object.keys(heroSkillRevision.files).sort(), [
+    'src/prototype/combat.js',
+    'src/prototype/data.js',
+    'src/prototype/hero-combat.js',
+    'src/prototype/rules.js',
+  ]);
+  assert.match(heroSkillRevision.source, /PR #302/);
+}
 for (const [file, expected] of Object.entries(manifest.files)) {
   const actual = crypto
     .createHash('sha256')
@@ -27,7 +39,7 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    keyboardRevision?.files[file] || revision.files[file] || expected,
+    heroSkillRevision?.files[file] || keyboardRevision?.files[file] || revision.files[file] || expected,
     file + ' is protected against baseline / reviewed rendering revision ' + manifest.baseline,
   );
 }
