@@ -1246,7 +1246,7 @@
           return;
         }
         if (e.family === 'darklord' && a.royalTaxation) {
-          const marked = this.combatTargets()
+          const marked = [this.hero, ...this.activeLivingParty()]
             .filter((unit) => unit.hp > 0 && dist(unit, a) <= a.radius && this.line(e, unit))
             .slice(0, 4)
             .map((unit) => (unit === this.hero ? 'hero' : unit.id));
