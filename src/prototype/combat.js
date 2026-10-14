@@ -444,6 +444,30 @@
         if (['thinking', 'travel', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase))
           amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
         amount = this.tacticalCompressDamage(e, amount);
+        let createdTaxShield = false;
+        if (e.family === 'darklord' && e.royalTaxation) {
+          const tax = e.royalTaxation;
+          if (this.s.time > tax.expires) e.royalTaxation = null;
+          else if (amount > 0 && tax.marked.includes(source)) {
+            // Distinct living sources when two are marked; a solo player
+            // must land two separate damaging hits instead of being excluded.
+            if (!tax.sources.includes(source)) tax.sources.push(source);
+            tax.hits = (tax.hits || 0) + 1;
+            if (
+              (tax.marked.length >= 2 && tax.sources.length >= 2) ||
+              (tax.marked.length === 1 && tax.hits >= 2)
+            ) {
+              e.royalTaxShield = e.maxHp * 0.03;
+              createdTaxShield = true;
+              e.royalTaxation = null;
+            }
+          }
+        }
+        if (e.family === 'darklord' && e.royalTaxShield > 0 && !createdTaxShield) {
+          const absorbed = Math.min(e.royalTaxShield, Math.max(0, amount));
+          e.royalTaxShield -= absorbed;
+          amount -= absorbed;
+        }
         const equipment = e.veraEquipment,
           minister = equipment && this.zone().enemies.find((u) => u.id === equipment.owner);
         if (
@@ -609,8 +633,24 @@
             continue;
           }
           if (d < step + 15) {
+            // Royal Prerogative only redirects actual approaching projectiles
+            // into an existing living Crown summon crossing the flight path.
+            const guard =
+              e.family === 'darklord' && this.s.time >= (e.royalPrerogativeReadyAt || 0)
+                ? this.zone().enemies.find(
+                    (unit) =>
+                      unit.owner === e.id &&
+                      unit.summon &&
+                      unit.hp > 0 &&
+                      dist(unit, e) < 165 &&
+                      this.distanceToSegment(unit, before, p) < 45 &&
+                      this.line(unit, e),
+                  )
+                : null;
+            const victim = guard || e;
+            if (guard) e.royalPrerogativeReadyAt = this.s.time + 18;
             const landed = this.damage(
-              e,
+              victim,
               p.damage,
               p.source,
               p.encountersAtStart ? { encountersAtStart: p.encountersAtStart } : null,
@@ -620,13 +660,13 @@
             if (p.cancelledChargedOpener) continue;
             if (landed && p.basicComboFinisher)
               this.basicComboFinisher(
-                e,
+                victim,
                 { x: p.finisherFromX, y: p.finisherFromY },
                 p.finisherBaseDamage,
                 p.source,
                 p.comboClass || this.hero.class,
               );
-            if (landed && p.slow) this.applySlow(e, p.slow);
+            if (landed && p.slow) this.applySlow(victim, p.slow);
             this.event('projectileImpact', {
               actor: p.source === 'hero' ? 'hero' : 'companion',
               class: p.source === 'hero' ? this.hero.class : undefined,
@@ -635,9 +675,9 @@
               style: p.style || 'arrow',
               effect: p.effect,
               slot: p.slot,
-              x: e.x,
-              y: e.y,
-              target: e.id,
+              x: victim.x,
+              y: victim.y,
+              target: victim.id,
               charged: !!p.charged,
             });
             if (p.charged && (!p.rapid || p.chargedBurst))
