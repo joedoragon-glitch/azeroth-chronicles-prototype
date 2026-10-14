@@ -387,8 +387,10 @@
         // Ash abrades eyes: attacks issued by a party member inside or recently
         // outside Choking Ash have a 35% miss chance, without extra damage.
         if (this.ashMovementFactor(origin) < 1 && this.random() < 0.35) return false;
-        if (e.roomCaptain && e.captainGuard > 0) amount *= 0.7;
-        if (e.roomCaptain) {
+        // Piercing bypasses defensive mitigation, not terrain, range or Ash misses.
+        const piercing = source === 'hero' && options?.piercing === true;
+        if (!piercing && e.roomCaptain && e.captainGuard > 0) amount *= 0.7;
+        if (!piercing && e.roomCaptain) {
           const profile = this.captainProfile(e),
             summon = profile?.summon;
           if (summon?.guardPerSummon) {
@@ -405,13 +407,14 @@
             Math.max(0, e.hp / Math.max(1, e.maxHp)),
           );
           const ratio = Math.max(0, Math.min(1, e.mireLowestHpRatio));
-          amount *= 1 - 0.4 * Math.max(0, Math.min(1, (ratio - 0.5) * 2));
+          if (!piercing) amount *= 1 - 0.4 * Math.max(0, Math.min(1, (ratio - 0.5) * 2));
         }
-        if (e.type === 'boss' && e.family === 'crypt')
+        if (!piercing && e.type === 'boss' && e.family === 'crypt')
           amount *=
             R.greenwoodPassives.structuralConsolidation[e.form === 'true' ? 'true' : 'normal'] *
             (e.anastylosis > 0 ? R.attacks.crypt[5].defenseFactor : 1);
         if (
+          !piercing &&
           e.roomCaptain &&
           e.captainProfile === 'supply-march' &&
           e.strainHardeningUntil > this.s.time
@@ -421,6 +424,7 @@
             Math.min(R.marchesPassives.strainHardening.maxStacks, e.strainHardeningStacks || 0) *
               R.marchesPassives.strainHardening.perHit;
         if (
+          !piercing &&
           e.type === 'boss' &&
           e.family === 'archive' &&
           e.emergencyStabilizationUntil > this.s.time
@@ -435,17 +439,20 @@
           const facing = e.secondWindFacing || 0,
             angle = Math.atan2(origin.y - e.y, origin.x - e.x);
           if (Math.cos(angle - facing) < -0.5) e.secondWindCancelled = true;
-          amount *= R.bossRecovery.darklord.damageMultiplier;
+          if (!piercing) amount *= R.bossRecovery.darklord.damageMultiplier;
         }
-        if (e.owner && e.royalFormationUntil > this.s.time && e.species === 'crownguard')
+        if (!piercing && e.owner && e.royalFormationUntil > this.s.time && e.species === 'crownguard')
           amount *= 0.8;
-        if (e.family === 'citadel' && e.open <= 0) amount *= 0.65;
+        if (!piercing && e.family === 'citadel' && e.open <= 0) amount *= 0.65;
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;
         // All hero/companion damage sources use this same resolver. This
         // reduction is exclusive to active travel; it ends on arrival or abort.
-        if (['thinking', 'travel', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase))
+        if (
+          !piercing &&
+          ['thinking', 'travel', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase)
+        )
           amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
-        amount = this.tacticalCompressDamage(e, amount);
+        if (!piercing) amount = this.tacticalCompressDamage(e, amount);
         let createdTaxShield = false;
         if (e.family === 'darklord' && e.royalTaxation) {
           const tax = e.royalTaxation;
@@ -465,7 +472,7 @@
             }
           }
         }
-        if (e.family === 'darklord' && e.royalTaxShield > 0 && !createdTaxShield) {
+        if (!piercing && e.family === 'darklord' && e.royalTaxShield > 0 && !createdTaxShield) {
           const absorbed = Math.min(e.royalTaxShield, Math.max(0, amount));
           e.royalTaxShield -= absorbed;
           amount -= absorbed;
@@ -473,6 +480,7 @@
         const equipment = e.veraEquipment,
           minister = equipment && this.zone().enemies.find((u) => u.id === equipment.owner);
         if (
+          !piercing &&
           equipment &&
           this.veraHeld() &&
           minister?.hp > 0 &&
@@ -617,7 +625,11 @@
             continue;
           }
           const e = this.zone().enemies.find(
-            (e) => e.id === p.target && e.hp > 0 && !e.neutral && this.tacticalDirectTargetable(e),
+            (e) =>
+              e.id === p.target &&
+              e.hp > 0 &&
+              !e.neutral &&
+              (p.area || this.tacticalDirectTargetable(e)),
           );
           if (!e || this.peace) {
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
@@ -638,6 +650,7 @@
             // Royal Prerogative only redirects actual approaching projectiles
             // into an existing living Crown summon crossing the flight path.
             const guard =
+              !p.piercing &&
               e.family === 'darklord' &&
               !this.invalidChargedOpener(e, p.encountersAtStart) &&
               this.s.time >= (e.royalPrerogativeReadyAt || 0)
@@ -657,7 +670,13 @@
               victim,
               p.damage,
               p.source,
-              p.encountersAtStart ? { encountersAtStart: p.encountersAtStart } : null,
+              p.encountersAtStart || p.area || p.piercing
+                ? {
+                    ...(p.encountersAtStart ? { encountersAtStart: p.encountersAtStart } : {}),
+                    ...(p.area ? { area: true } : {}),
+                    ...(p.piercing ? { piercing: true } : {}),
+                  }
+                : null,
             );
             if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
               return;

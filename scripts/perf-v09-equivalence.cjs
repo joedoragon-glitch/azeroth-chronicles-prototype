@@ -71,6 +71,10 @@ const hash = (x) =>
     .createHash('sha256')
     .update(Buffer.isBuffer(x) ? x : JSON.stringify(x))
     .digest('hex');
+// Only unchanged hero skills remain in the baseline simulation comparison;
+// dedicated PR #302 tests measure the intentionally changed skills.
+const intentionallyChangedSkill = (cls, slot) =>
+  (cls === 'paladin' && slot === 6) || (cls === 'ranger' && [5, 7].includes(slot));
 const evidence = {
   baseline: 'c6ce1af236bddd7ca881903499c4cf5de175f9e2',
   scope:
@@ -118,7 +122,10 @@ for (const mode of ['normal', 'nightmare'])
       for (let i = 0; i < 240; i++) {
         const input = { x: i % 60 < 30 ? 0.4 : -0.4, y: i % 80 < 40 ? 0.2 : -0.2 };
         for (const c of [a, b]) {
-          if (i % 20 === 0) c.cast(1 + ((i / 20) % 8), null, i % 40 === 0);
+          if (i % 20 === 0) {
+            const slot = 1 + ((i / 20) % 8);
+            if (!intentionallyChangedSkill(cls, slot)) c.cast(slot, null, i % 40 === 0);
+          }
           c.tick([0.016, 0.033, 0.05][i % 3], input);
         }
         compare('frame-' + i);

@@ -980,6 +980,28 @@
             combo = f.combo || 0;
           ctx.strokeStyle = '#f8e4a3';
           ctx.lineCap = 'round';
+          if (f.dash && Number.isFinite(f.fromX) && Number.isFinite(f.fromY)) {
+            const from = screen({ x: f.fromX, y: f.fromY }),
+              travelX = p.x - from.x,
+              travelY = p.y - from.y,
+              travelLength = Math.hypot(travelX, travelY) || 1,
+              sideX = -travelY / travelLength,
+              sideY = travelX / travelLength;
+            ctx.lineWidth = 7;
+            ctx.globalAlpha = a * 0.28;
+            ctx.beginPath();
+            ctx.moveTo(from.x, from.y);
+            ctx.lineTo(p.x, p.y);
+            ctx.stroke();
+            ctx.globalAlpha = a * 0.85;
+            ctx.lineWidth = 2;
+            for (const side of [-1, 1]) {
+              ctx.beginPath();
+              ctx.moveTo(from.x + sideX * side * 7, from.y + sideY * side * 7);
+              ctx.lineTo(p.x + sideX * side * 7, p.y + sideY * side * 7);
+              ctx.stroke();
+            }
+          }
           if (combo === 1 || combo === 2) {
             const side = combo === 1 ? 1 : -1,
               start = { x: p.x + px * 22 * side, y: p.y + py * 22 * side },
