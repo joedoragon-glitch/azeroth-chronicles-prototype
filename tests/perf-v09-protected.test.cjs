@@ -93,6 +93,7 @@ const cinderSupportRevision = manifest.approvedSnapshotCinderSupportRevision;
 if (cinderSupportRevision) {
   assert.deepEqual(Object.keys(cinderSupportRevision.files).sort(), [
     'src/prototype/boss-combat.js',
+    'src/prototype/data.js',
     'src/prototype/engine.js',
     'src/prototype/rules.js',
   ]);

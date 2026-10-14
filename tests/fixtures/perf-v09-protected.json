@@ -157,7 +157,8 @@
     "files": {
       "src/prototype/engine.js": "4fc04bb76612cc86c18844b7303011e431390b23ea23458401bbe9bf04a63ab4",
       "src/prototype/rules.js": "cc6827ad988888887779bd77fcabd9a549557319625ab49fcd7e45952c1e9ae8",
-      "src/prototype/boss-combat.js": "746332892e4fd6066ff213560d847507c1c0dd7990f1f6575c2c6f440878ca79"
+      "src/prototype/boss-combat.js": "746332892e4fd6066ff213560d847507c1c0dd7990f1f6575c2c6f440878ca79",
+      "src/prototype/data.js": "7d00f07472819aec5a885d6c093995714473daaa531d4a44c829807004ea1603"
     }
   }
 }

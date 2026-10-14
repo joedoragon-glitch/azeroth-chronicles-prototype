@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "cindermaw",
+  "name": "Cindermaw — ministerial support",
+  "kind": "boss",
+  "nextAction": "Complete combined support gates; next implement seven regular ministry moves and variable guarded Vera mobile forge/repair. New sprite production remains excluded.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Director #298/#288:1200-unit cover-sensitive anonymous Broodscreen; six ordinary native responders physically navigate independently of6Normal/8TRUEmagical staff. Existing boss body/workstation art retained.",
+    "decisionDate": "2026-10-13",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/300",
+    "contentDocuments": [
+      "docs/DIRECTOR_WORLD_BUILDING_SNAPSHOT_CANON_LOCK_20261012.md",
+      "docs/SNAPSHOT_IMPLEMENTATION_20261013.md"
+    ],
+    "locationAndLore": "Existing Dark Crown roost; ministerial mobile Vera and seven regular moves remain pending. These references show the bounded support stage, including the current fixed Vera workstation before its next authorized migration."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner-approved45-choice canon #298 and preserved ministry #288.",
+    "proceduralDesignAcceptance": "Engineer inspection only; actual director appearance acceptance has not occurred.",
+    "spriteProductionAuthorization": "Excluded from this snapshot.",
+    "generatedAppearanceAcceptance": null,
+    "pendingCorrections": [
+      "Full ministry regular attack and variable mobile-Vera package not implemented by this stage."
+    ]
+  },
+  "reference": {
+    "sourceCommit": "8d2e2d585cf0642cadae9006b8f6f911db4ef942",
+    "ownerFilesAndBranches": [
+      "src/prototype/engine.js",
+      "src/prototype/boss-combat.js",
+      "src/prototype/rules.js",
+      "src/prototype/combat-visuals.js",
+      "implementation/director-snapshot-20261013"
+    ],
+    "exactEntityState": "scripts/snapshot-cinder-reference.cjs; normal mage, real Crown roost/native spawn records; actual anonymous1.5s cast and six completed native response routes; native375/1280 Canvas renders.",
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [
+      "tools/sprites/design-handoffs/references/cinder-support/arrivals-1280.png",
+      "tools/sprites/design-handoffs/references/cinder-support/arrivals-375.png",
+      "tools/sprites/design-handoffs/references/cinder-support/warning-1280.png",
+      "tools/sprites/design-handoffs/references/cinder-support/warning-375.png"
+    ],
+    "traitsToPreserve": [
+      "Existing Cindermaw body, size, field-boss identity and7000HP",
+      "No changes to Vera body or rescue/service identity in support-only stage",
+      "Anonymous readable timed bar, no named/spatial Broodscreen warning",
+      "Native home/ID and owned summon ownership remain distinct"
+    ],
+    "assetSpecificDependencies": [
+      "tests/cindermaw-support.test.cjs",
+      "tests/helpers/snapshot-cinder-browser.cjs"
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": []
+  },
+  "animationRequirements": {
+    "status": "undecided",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  },
+  "outputs": [
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-support/arrivals-1280.png",
+      "sha256": "a9330b914b28d9db5740665eb1e1be2352d29495b98f293c84aea1917ce3baad"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-support/arrivals-375.png",
+      "sha256": "595513d8bedebcfd9f2fd49270e296c1423dccb68d20aa207004e89fa42b498f"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-support/warning-1280.png",
+      "sha256": "71f22465c17a6d6ecd7827e3191c337b4dbe94b69d12f6df853644048e1f3a07"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-support/warning-375.png",
+      "sha256": "7fb78e05aeab1f508db2789f8f0f266d8ca5330d3d0aa44b313850651acff51f"
+    }
+  ]
+}

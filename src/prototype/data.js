@@ -354,7 +354,7 @@ const PrototypeData = {
         'Cinder rend: broad frontal sweep with a 1.1 second warning.',
         'Ash rush: a straight burning charge marked for 1.5 seconds.',
         'Furnace spit: three hot landing circles warn for 1.6 seconds and briefly persist.',
-        'Brood command: calls three ash beasts after 1.8 seconds; no more than three remain alive.',
+        'Brood command: calls up to six ministry responders after 1.8 seconds; TRUE form keeps six minions and two elite captains, at most eight alive.',
       ],
     },
     {

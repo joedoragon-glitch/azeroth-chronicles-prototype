@@ -638,8 +638,20 @@ for (const actor of [
   assert(troop.hp > 0);
   const windup = c.effects.find((f) => f.stage === 'windup'),
     births = c.effects.filter((f) => f.stage === 'spawn');
-  assert(windup.dangerous);
-  assert.equal(P.route(windup).key, 'enemyWindup');
+  if (actor.family === 'cindermaw') {
+    assert.equal(windup, undefined, 'anonymous preparation has no spatial VFX windup');
+    const warning = c.effects.find((f) => f.type === 'warning' && f.anonymousCast);
+    assert(
+      warning && !warning.presentationHandled && !warning.name,
+      'legacy anonymous audio warning remains audible',
+    );
+    const anonymous = listener();
+    anonymous.a.effect(warning);
+    assert(anonymous.calls.length > 0, 'anonymous preparation retains real audible anticipation');
+  } else {
+    assert(windup.dangerous);
+    assert.equal(P.route(windup).key, 'enemyWindup');
+  }
   assert.equal(births.length, 1);
   assert.equal(births[0].target, troop.id);
   assert.deepEqual([births[0].x, births[0].y], [troop.home.x, troop.home.y]);
