@@ -269,6 +269,13 @@ if (chargedRetargetRevision) {
   assert.match(chargedRetargetRevision.source, /PR #295.*PR #300/);
   assert.match(chargedRetargetRevision.previousAppSha256, /^[a-f0-9]{64}$/);
 }
+// Snapshot #300 integrates the reviewed PR #301 joystick handler while preserving
+// other snapshot source guards and the protected frame-body hash below.
+const joystickSnapshotReceipt = manifest.snapshotMobileJoystick301Integration;
+if (joystickSnapshotReceipt) {
+  assert.deepEqual(Object.keys(joystickSnapshotReceipt.files), ['src/prototype/app.js']);
+  assert.match(joystickSnapshotReceipt.source, /PR #301.*PR #300/);
+}
 for (const [file, expected] of Object.entries(manifest.files)) {
   const actual = crypto
     .createHash('sha256')
@@ -276,7 +283,8 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    veyraRevision?.files[file] ||
+    joystickSnapshotReceipt?.files[file] ||
+      veyraRevision?.files[file] ||
       expansionRevision?.files[file] ||
       agricultureRevision?.files[file] ||
       veraRevision?.files[file] ||

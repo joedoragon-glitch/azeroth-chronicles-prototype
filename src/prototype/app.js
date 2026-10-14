@@ -40,7 +40,9 @@
     },
     statusUntil = 0,
     worldPointer = null,
-    pointer = null;
+    pointer = null,
+    joystickTouchId = null,
+    joystickStart = null;
   profile = persistence.loadProfile(profile);
   const audio = new PrototypeAudio(profile.audio);
   audio.setOptimizationMode(optimizationMode);
@@ -282,7 +284,10 @@
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
   }
   resize();
-  addEventListener('resize', resize);
+  addEventListener('resize', () => {
+    releaseJoystick();
+    resize();
+  });
   function activePlay() {
     return (
       started &&
@@ -407,15 +412,21 @@
       game.hero.path = [];
     }
   }
+  // Reset a released/orphaned contact and its visual thumb together.
+  function releaseJoystick() {
+    pointer = null;
+    joystickTouchId = null;
+    joystickStart = null;
+    joy = { x: 0, y: 0 };
+    $('stick').style.transform = '';
+  }
   function clearInput() {
     if (typeof Sprint !== 'undefined') Sprint.release();
     cancelCharge();
     cancelTargetPress();
     keys = {};
-    pointer = null;
+    releaseJoystick();
     cancelTravel();
-    joy = { x: 0, y: 0 };
-    $('stick').style.transform = '';
   }
   function action(label, fn, detail = '', disabled = false) {
     return { label, action: fn, detail, disabled };
@@ -2052,27 +2063,62 @@
     $('stick').style.transform = 'translate(' + joy.x * 24 + 'px,' + joy.y * 24 + 'px)';
   }
   joystick.onpointerdown = (e) => {
-    if (e.pointerType === 'mouse' || pointer !== null) return;
+    if (e.pointerType === 'mouse') return;
+    if (pointer !== null) {
+      // A new primary contact or missing old capture proves the old touch ended.
+      // A second finger must not steal the live joystick during combat.
+      if (e.isPrimary !== true && joystick.hasPointerCapture?.(pointer) !== false) return;
+      releaseJoystick();
+    }
     e.preventDefault();
     audio.unlock();
     cancelTravel();
     pointer = e.pointerId;
+    joystickStart = { x: e.clientX, y: e.clientY };
     joystick.setPointerCapture(pointer);
     joyUpdate(e);
   };
   joystick.onpointermove = (e) => {
     if (e.pointerId === pointer) joyUpdate(e);
   };
+  function finishJoystickPointer(e) {
+    if (e.pointerId === pointer) releaseJoystick();
+  }
   joystick.onpointerup =
     joystick.onpointercancel =
     joystick.onlostpointercapture =
+      finishJoystickPointer;
+  // Catch terminal pointer events that land outside the captured element.
+  for (const type of ['pointerup', 'pointercancel', 'lostpointercapture'])
+    document.addEventListener(type, finishJoystickPointer, true);
+  // iOS/WebKit may omit the pointer ending but still send the touch ending.
+  // Match Touch.identifier explicitly: it need not equal PointerEvent.pointerId.
+  joystick.addEventListener(
+    'touchstart',
+    (e) => {
+      if (pointer === null || joystickTouchId !== null || !joystickStart) return;
+      const contact = Array.from(e.changedTouches).find(
+        (touch) =>
+          Math.hypot(touch.clientX - joystickStart.x, touch.clientY - joystickStart.y) < 25,
+      );
+      if (contact) joystickTouchId = contact.identifier;
+    },
+    { passive: true },
+  );
+  for (const type of ['touchend', 'touchcancel'])
+    document.addEventListener(
+      type,
       (e) => {
-        if (e.pointerId === pointer) {
-          pointer = null;
-          joy = { x: 0, y: 0 };
-          $('stick').style.transform = '';
-        }
-      };
+        if (pointer === null) return;
+        if (
+          (joystickTouchId !== null &&
+            Array.from(e.changedTouches).some((touch) => touch.identifier === joystickTouchId)) ||
+          e.touches.length === 0
+        )
+          releaseJoystick();
+      },
+      true,
+    );
   canvas.onpointerdown = (e) => {
     if (!activePlay() || e.button > 0) {
       if (manaEnabled && activePlay() && e.pointerType === 'mouse' && e.button === 2) {
@@ -2152,6 +2198,7 @@
     }
   });
   addEventListener('pagehide', () => {
+    clearInput();
     save();
     audio.setPaused(true);
   });

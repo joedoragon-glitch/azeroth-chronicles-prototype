@@ -260,5 +260,13 @@
     "files": {
       "src/prototype/app.js": "32bc59c1311d4e45bf2ed3d4980387ee260d8e9fba2c1c9839df369a4f5ebbc9"
     }
+  },
+  "snapshotMobileJoystick301Integration": {
+    "source": "Owner-directed PR #301 joystick fix ported to still-in-development PR #300 on 2026-10-14",
+    "scope": "Scoped changes to browser joystick release/reset and tests only. This records the evolving snapshot app hash and does not certify other Snapshot changes; original game loop and protected frame checks remain gated.",
+    "previousAppSha256": "32bc59c1311d4e45bf2ed3d4980387ee260d8e9fba2c1c9839df369a4f5ebbc9",
+    "files": {
+      "src/prototype/app.js": "3df94a0371a20a2251517b666fd1292c31f7e6e7471c8e89344ad02291592ece"
+    }
   }
 }
