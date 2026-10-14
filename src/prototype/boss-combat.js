@@ -755,6 +755,8 @@
               total: 0.8,
               coefficient: 1.3,
               name: a.name + ' — final thrust',
+              royalSidestep: false,
+              royalSidestepDirection: 0,
             },
           );
         } else if (a.combo)
