@@ -890,7 +890,7 @@
     },
   ];
   const ironrootLore = {
-    ore: 'Ironroot became the crown-production province after the Dark Lord seized its mineral wealth. Sorted metal goes to Stonecross for processing and striking; finished crowns leave under guard. A miner gets a wage, but the mountain belongs to the regime.',
+    ore: 'Ironroot miners work separate silver-bearing and copper-bearing veins. At Quarry Outpost the two ores are sorted beside ordinary building stone; Stonecross refines both metals and strikes crowns with the Dark Lord’s portrait. Sealed wagons travel under Crown guard. Miners earn wages, but the mountains and their wealth belong to the regime.',
     'bridge-north':
       'Fresh stone repairs and spare hauling timbers keep mineral carts moving. The Master of Coin counts reliable roads as proof of better rule; traders welcome fewer delays without necessarily welcoming their ruler.',
     'bridge-south':
