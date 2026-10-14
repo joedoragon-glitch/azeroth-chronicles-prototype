@@ -458,15 +458,14 @@
           const tax = e.royalTaxation;
           if (this.s.time > tax.expires) e.royalTaxation = null;
           else if (amount > 0 && tax.marked.includes(source)) {
-            // Distinct living sources when two are marked; a solo player
-            // must land two separate damaging hits instead of being excluded.
+            // Four distinct sources in a full party. Smaller parties must
+            // still make four real hits in total, including one from each
+            // marked attacker. Four hits by just one member of a duo/trio
+            // never substitute for the other members' contributions.
             if (!tax.sources.includes(source)) tax.sources.push(source);
             tax.hits = (tax.hits || 0) + 1;
-            if (
-              (tax.marked.length >= 2 && tax.sources.length >= 2) ||
-              (tax.marked.length === 1 && tax.hits >= 2)
-            ) {
-              e.royalTaxShield = e.maxHp * 0.03;
+            if (tax.hits >= 4 && tax.sources.length === tax.marked.length) {
+              e.royalTaxShield = e.maxHp * 0.12;
               createdTaxShield = true;
               e.royalTaxation = null;
             }
