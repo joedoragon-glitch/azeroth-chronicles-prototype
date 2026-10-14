@@ -1244,6 +1244,8 @@
         return false;
       }
       this.s.rescued[family] = true;
+      if (family === 'cindermaw')
+        for (const z of Object.values(this.s.zones)) this.clearVeraRepairs(z);
       this.refreshNPCs();
       this.say(this.boss(family).captive + ' is free and returning to town.');
       this.notice(this.boss(family).captive + ' rescued · new services unlocked', 5.5);
@@ -1595,6 +1597,12 @@
             e.family === 'thorn' && e.type === 'boss' && (e.aggro || e.returning || e.thornReturn);
           this.clearEncounterState(e);
           if (thornReturn) e.thornReturn = true;
+          if (
+            e.family === 'cindermaw' &&
+            e.type === 'boss' &&
+            (e.aggro || e.returning || e.cinderReturn)
+          )
+            e.cinderReturn = true;
           e.aggro = false;
           e.telegraph = null;
           e.sequence = [];
@@ -1603,13 +1611,15 @@
           e.frozen = false;
           delete e.rogueDustCoverUntil;
           if (e.hp > 0) {
-            if (!(e.family === 'thorn' && e.type === 'boss')) Object.assign(e, e.home);
+            if (!((['thorn', 'cindermaw'].includes(e.family) && e.type === 'boss') || e.veraEscort))
+              Object.assign(e, e.home);
             e.hp = e.baseHp;
             e.maxHp = e.baseHp;
             e.damage = e.baseDamage;
           }
         }
       }
+      for (const z of Object.values(this.s.zones)) this.clearVeraRepairs(z);
       this.activatePending();
       this.discover('arrival');
       const dungeonLore = R.dungeonLore?.[zone],
@@ -1895,10 +1905,12 @@
     }
 
     engage(e, forced = true, spreadPack = true) {
-      if (e.aggro || e.neutral || e.returning || e.thornReturn) return false;
+      if (e.aggro || e.neutral || e.returning || e.thornReturn || e.cinderReturn) return false;
       if ((this.s.mercyTime || 0) > 0 && !forced && !e.mercyProvoked) return false;
       e.aggro = true;
       if (this.thornPatroller(e)) e.thornFightAnchor = { x: e.x, y: e.y };
+      if (this.cinderPatroller(e)) e.cinderFightAnchor = { x: e.x, y: e.y };
+      if (e.veraEscort) e.veraFightAnchor = { x: e.x, y: e.y };
       e.frozen = true;
       delete e.idleWanderTarget;
       e.idleWanderWait = 0;
@@ -1927,13 +1939,14 @@
         this.summonBossAdds(e, this.trueSummonPlan(e), this.bossSummonCap(e));
         if (first) this.say(e.name + ' calls a TRUE warband.');
       }
-      if (spreadPack)
+      if (spreadPack && !(e.veraEscort && this.veraHeld()))
         for (const ally of this.zone().enemies)
           if (ally.pack && ally.pack === e.pack && ally.hp > 0 && !ally.aggro)
             this.engage(ally, false);
     }
 
     die() {
+      for (const z of Object.values(this.s.zones)) this.clearVeraRepairs(z);
       for (const z of Object.values(this.s.zones))
         z.props = z.props.filter((p) => !p.garunTemporary && !p.garunPreview);
       this.clearEncounterUnits();
@@ -1959,6 +1972,8 @@
         for (const e of z.enemies) {
           if (e.family === 'thorn' && e.type === 'boss' && (e.aggro || e.returning))
             e.thornReturn = true;
+          if (e.family === 'cindermaw' && e.type === 'boss' && (e.aggro || e.returning))
+            e.cinderReturn = true;
           this.clearEncounterState(e);
           delete e.rogueDustCoverUntil;
           e.telegraph = null;
@@ -3215,7 +3230,11 @@
         if (owner?.hp > 0 && owner.aggro && !owner.returning && !owner.neutral)
           return target?.hp > 0 && dist(target, owner) <= 700 && dist(e, owner) <= 900;
       }
-      const home = this.thornPatroller(e) ? e.thornFightAnchor || e : e.home;
+      const home = this.thornPatroller(e)
+        ? e.thornFightAnchor || e
+        : this.cinderPatroller(e)
+          ? e.cinderFightAnchor || e
+          : e.home;
       const shift = this._tacticalRepositions?.get(e?.id);
       if (
         shift &&
@@ -4155,7 +4174,11 @@
           this.move(e, { x: e.home.x + Math.cos(t) * 35, y: e.home.y + Math.sin(t) * 35 }, 12, dt);
           continue;
         }
-        if (this.thornPatroller(e) && (e.returning || e.thornReturn)) {
+        if (
+          (this.thornPatroller(e) && (e.returning || e.thornReturn)) ||
+          (this.cinderPatroller(e) && (e.returning || e.cinderReturn)) ||
+          (e.veraEscort && e.returning && this.zoneId === 'crown')
+        ) {
           this.disengage(e, dt);
           continue;
         }
@@ -4333,7 +4356,14 @@
               ? this.hero
               : candidates.sort((a, b) => dist(e, a) - dist(b, e))[0]);
         if (!e.aggro && e.fieldCaptain) this.updateCaptainPatrol(e, dt);
-        else if (!e.aggro && !this.updateThornPatrol(e, dt)) this.updateIdleWander(e, dt);
+        else if (
+          !e.aggro &&
+          !e.veraEscort &&
+          !this.updateThornPatrol(e, dt) &&
+          !this.updateCinderInspection(e, dt) &&
+          !this.updateVeraEscort(e, dt)
+        )
+          this.updateIdleWander(e, dt);
         if (e.guard && !e.ranged && this.hero.hp > 0) {
           const screenFor = z.enemies.find(
             (u) => u !== e && u.guard && u.pack === e.pack && u.ranged && u.hp > 0,
@@ -4356,7 +4386,10 @@
           this.disengage(e, dt);
           continue;
         }
-        if (!e.aggro) continue;
+        if (!e.aggro) {
+          if (e.veraEscort) this.updateVeraEscort(e, dt);
+          continue;
+        }
         const territory =
           e.type === 'boss'
             ? this.isDungeon()
@@ -4584,6 +4617,7 @@
         if (e.noProgress >= 12) this.disengage(e, dt);
       }
       this.updateThornCaptive(dt);
+      this.updateVeraFieldwork(dt);
     }
     disengage(e, dt) {
       if (!e.returning) {
@@ -4615,9 +4649,30 @@
         delete e.thornReturn;
         e.thornLeg = 1;
         e.thornPause = R.thornPatrol.pause;
+      } else if (this.cinderPatroller(e)) {
+        e.cinderReturn = true;
+        e.aggro = false;
+        const together = this.cinderEntourageTogether(e);
+        if (together) this.follow(e, e.home, R.cinderInspection.speed, dt, 0);
+        if (dist(e, e.home) > 1e-7 || !together) return;
+        e.returning = 0;
+        delete e.cinderReturn;
+        delete e.cinderDestination;
+        e.cinderStop = 0;
+        e.cinderInspectionPause = R.cinderInspection.pauseMin;
+      } else if (e.veraEscort && this.zoneId === 'crown') {
+        e.aggro = false;
+        const minister =
+            this.veraHeld() &&
+            this.zone().enemies.find((u) => this.cinderPatroller(u) && u.hp > 0 && !u.neutral),
+          goal = minister || e.home,
+          stop = minister ? 65 : 0;
+        this.follow(e, goal, R.cinderInspection.guardSpeed, dt, stop);
+        if (dist(e, goal) > stop + 1e-7) return;
+        e.returning = 0;
       } else e.returning -= dt;
       if (e.returning <= 0) {
-        Object.assign(e, e.home);
+        if (!(e.veraEscort && this.zoneId === 'crown' && this.veraHeld())) Object.assign(e, e.home);
         e.aggro = false;
         delete e.ashCloud;
         delete e.ashNextAt;
@@ -4829,6 +4884,7 @@
             e.damage = e.baseDamage * bonus.damage;
           }
           if (key === 'thorn' && p.kind === 'field') e.home = { ...this.fieldCenter(0) };
+          if (key === 'cindermaw' && p.kind === 'field') e.home = { ...this.fieldCenter(4) };
           this.zone().enemies.push(e);
         }
         p.active = true;

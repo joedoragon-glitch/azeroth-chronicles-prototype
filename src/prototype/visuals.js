@@ -11625,6 +11625,21 @@
         for (const dy of [-4, 0, 4]) oval(x + 5, y + dy, 1.7, 1.5, '#95846b');
       }
       ctx.restore();
+    } else if (e.kind === 'cage' && e.presentation === 'mobile-forge') {
+      if (!rescued) {
+        ctx.save();
+        ctx.translate(34, 6);
+        rect(-20, -15, 40, 20, '#66544a');
+        rect(-17, -19, 34, 6, '#a7967b');
+        oval(-13, 8, 7, 7, '#302c2b');
+        oval(13, 8, 7, 7, '#302c2b');
+        rect(-12, -11, 24, 10, '#44352f');
+        oval(0, -7, 9, 4, '#de7e3a');
+        rect(-6, -31, 16, 7, '#5e6870');
+        rect(-2, -24, 6, 5, '#444d54');
+        ctx.restore();
+        specialist({ ...e, kind: 'smith' });
+      }
     } else if (e.kind === 'cage' && e.presentation === 'mobile-captive') {
       if (!rescued) {
         specialist({ ...e, kind: 'teacher' });

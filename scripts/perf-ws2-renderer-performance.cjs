@@ -35,6 +35,7 @@ const sharedContent = new Set(
     'combat',
     'hero-combat',
     'boss-combat',
+    'cindermaw-combat',
     'save',
     'narration',
     'visuals',
@@ -230,22 +231,7 @@ function summarize(samples) {
       pages[which] = page;
       page.on('pageerror', (e) => errors.push(which + ': ' + e.message));
       await page.goto('http://127.0.0.1:' + server.address().port + '/' + which + '/');
-      const inventory = require(path.join(roots[which], 'scripts/site-assets.cjs')).scripts,
-        files = inventory
-          .slice(1, inventory.indexOf('src/prototype/engine.js') + 1)
-          .concat(
-            [
-              'visuals',
-              'combat-visuals',
-              'enemy-vfx-art',
-              'sprite-format',
-              'sprites',
-              'material-contract',
-              'materials',
-              'ground-cache',
-              'renderer',
-            ].map((n) => 'src/prototype/' + n + '.js'),
-          );
+      const files = require(path.join(candidateRoot, 'scripts/perf-renderer-graph.cjs')).files;
       for (const file of files)
         await page.addScriptTag({
           url: 'http://127.0.0.1:' + server.address().port + '/' + which + '/' + file,

@@ -107,6 +107,7 @@ await check('Thornfang moving captive '+tag,async()=>{await require('./helpers/s
 await check('Garun actual construction and exposed core '+tag,async()=>{await require('./helpers/snapshot-garun-browser.cjs').verifyGarunWorks(page,results,tag,v.width===1280||v.width===375);assert.deepEqual(errors,[]);});
 await check('Veyrith actual flights and retreat '+tag,async()=>{await require('./helpers/snapshot-aviation-browser.cjs').verifyAviation(page,results,tag,v.width===1280||v.width===375);assert.deepEqual(errors,[]);});
 await check('Cindermaw actual native support '+tag,async()=>{await require('./helpers/snapshot-cinder-browser.cjs').verifyCinderSupport(page,results,tag,v.width===1280||v.width===375);assert.deepEqual(errors,[]);});
+await check('Vera mobile forge '+tag,async()=>{await require('./helpers/snapshot-vera-browser.cjs').verifyVeraInspection(page,results,tag,v.width===1280||v.width===375);assert.deepEqual(errors,[]);});
 await check('Snapshot encounter foundations '+tag,async()=>{await require('./helpers/snapshot-encounter-browser.cjs').verifySnapshotEncounters(page,results,tag,v.width===1280||v.width===375);assert.deepEqual(errors,[]);});
 await check('Regional workstations and residence walls render with readable captive labels '+tag,async()=>{await require('./helpers/regional-browser.cjs').verifyRegional(page,results,tag,v.width===1280||v.width===375);assert.deepEqual(errors,[],'regional renderer errors');});
 await check('Compact HUD and readable scrolling dialogs '+tag,async()=>{

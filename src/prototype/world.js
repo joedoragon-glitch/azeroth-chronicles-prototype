@@ -853,6 +853,7 @@
         this.roadNetwork(z);
         this.authoredPlaces(z);
         this.migrateThornPatrol(z);
+        this.migrateCinderInspection(z);
         this.clearStreetCorridors(z);
         this.regionalTravelSafety(z);
         this.refreshNPCs();

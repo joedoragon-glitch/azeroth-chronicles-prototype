@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-design",
+  "designId": "vera-mobile-inspections",
+  "name": "Vera guarded mobile forge and repairs",
+  "kind": "mobile-captive-and-forge",
+  "nextAction": "Complete current124Node/hosted Chromium/WebKit gates and inspect native375/1280captures; sprite production excluded.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Director #298 choices28C/29B/30C and #288: variable guarded Cindermaw inspections, same Vera mobile forge and limited actual nearby repairs.",
+    "decisionDate": "2026-10-14",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/300",
+    "contentDocuments": ["docs/DIRECTOR_WORLD_BUILDING_SNAPSHOT_CANON_LOCK_20261012.md"],
+    "locationAndLore": "Existing Dark Crown roost, Crownwatch outskirts, Ash Refuge, Ruined Foundry and Crown barracks; Vera is a paid but captive chief field engineer."
+  },
+  "decisions": {
+    "conceptAcceptance": "Director #298 28C/29B/30C; numerical defensive representation delegated under8A.",
+    "proceduralDesignAcceptance": "Faithful engineering implementation; no director appearance acceptance claimed.",
+    "spriteProductionAuthorization": "Excluded from current snapshot.",
+    "generatedAppearanceAcceptance": "None",
+    "pendingCorrections": ["Full current source regression/hosted browser validation pending."]
+  },
+  "reference": {
+    "sourceCommit": "3e67bf35092064ee9911f89e984d73a873f06c16 (parent; exact source hashes below identify current candidate)",
+    "ownerFilesAndBranches": [
+      "implementation/director-snapshot-20261013",
+      "src/prototype/cindermaw-combat.js",
+      "src/prototype/rules.js",
+      "src/prototype/engine.js",
+      "src/prototype/save.js",
+      "src/prototype/combat.js",
+      "src/prototype/visuals.js",
+      "src/prototype/sprites.js",
+      "src/prototype/renderer.js"
+    ],
+    "exactEntityState": "scripts/snapshot-vera-reference.cjs:75seconds actual physical variable Crown inspection; same cage-cindermaw smith/forge and two existing guards; actual damaged-equipment repair.",
+    "isolatedReferencePath": "tools/sprites/design-handoffs/references/vera-mobile/vera-forge-procedural.png",
+    "isolatedReferenceHash": "8644cb261028b04081f650190e33ae6a28b61fd8dcfce5f8d44c2faefa18e724",
+    "gameplayContextPaths": [
+      "tools/sprites/design-handoffs/references/vera-mobile/inspection-1280.png",
+      "tools/sprites/design-handoffs/references/vera-mobile/inspection-375.png",
+      "tools/sprites/design-handoffs/references/vera-mobile/repair-375.png",
+      "tools/sprites/design-handoffs/references/vera-mobile/repair-1280.png"
+    ],
+    "traitsToPreserve": [
+      "Same Vera identity and original Master Smith service",
+      "Paid but compulsory field engineer; no cage bars",
+      "Small mobile wheeled forge travels with Vera",
+      "Existing Cindermaw and two native Ash-beast bodies/IDs; no new troops",
+      "Gold finite defensive equipment bar and actual repair label"
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/cindermaw-combat.js",
+        "sha256": "0e3f9000b0a6e6c03562c5bd6aa6da085e51d71d949476f967288ed005f534f5"
+      },
+      {
+        "path": "src/prototype/rules.js",
+        "sha256": "41016ea8c62a10e415bf063e194779b29636813e175c50a8299c2f48736f2cba"
+      },
+      {
+        "path": "src/prototype/engine.js",
+        "sha256": "d91e83f1cecc99d2e72a0b6a92778757937708995fff8e2e4aaca36a6e8defdf"
+      },
+      {
+        "path": "src/prototype/save.js",
+        "sha256": "02116b281b98f272c71c4f8dc57db556d73c3ebff441e3abb55154a9080cf6f0"
+      },
+      {
+        "path": "src/prototype/combat.js",
+        "sha256": "cd9531b1fc09b22dfd8bc8d49507c86b476c70e0de69854da2a688050301a996"
+      },
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "065c4c940a6c8f40378d99b45a7707678122b44088c9f614bab043aaddf57cbd"
+      },
+      {
+        "path": "src/prototype/sprites.js",
+        "sha256": "e983eaef98f589c5bd0f2dca095ba9383df1978e502499592d6c5504ee02d5a6"
+      },
+      {
+        "path": "src/prototype/renderer.js",
+        "sha256": "abe3d43d97451a5eba8d3ddbf42daa22b835d3f392b401964358192dcb74fd08"
+      }
+    ],
+    "captureHashes": {
+      "tools/sprites/design-handoffs/references/vera-mobile/vera-forge-procedural.png": "8644cb261028b04081f650190e33ae6a28b61fd8dcfce5f8d44c2faefa18e724",
+      "tools/sprites/design-handoffs/references/vera-mobile/inspection-1280.png": "eae78c788624ee1a520ad7e85d950b3e7d1cb18bd80c67b99197021607bcac1a",
+      "tools/sprites/design-handoffs/references/vera-mobile/inspection-375.png": "5d7bd3e4086283b186f2e46c79cd9fe6909ce3dee7ce5f6db02125b1d7462b14",
+      "tools/sprites/design-handoffs/references/vera-mobile/repair-375.png": "40fb95811bec8e771bbecceb505eb78f0cdd2e3df54520abe4607f7efb6fcd57",
+      "tools/sprites/design-handoffs/references/vera-mobile/repair-1280.png": "773375d1f90ab5509c9f6689f4c8b3add647a65dfcd263ac52b8a56f7517a4c3"
+    }
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "Vera smith",
+      "attached mobile forge",
+      "existing two Ash-beast guards",
+      "actual repair indicator"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "Existing smith body plus small forge cart reused as one moving NPC presentation; old cage binding bypassed. Dynamic repair label/equipment bar reflect transient authoritative state."
+    ]
+  },
+  "animationRequirements": {
+    "status": "undecided",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

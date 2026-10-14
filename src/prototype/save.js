@@ -27,15 +27,20 @@
         for (const z of Object.values(out.zones)) {
           z.props = z.props.filter((p) => !p.garunTemporary && !p.garunPreview);
           for (const n of z.npcs) {
-            if (n.id === 'cage-thorn') {
+            if (['cage-thorn', 'cage-cindermaw'].includes(n.id)) {
               delete n.path;
               delete n.routeAge;
+              delete n.veraRepairDue;
+              delete n.veraRepairUntil;
+              delete n.veraRepairTarget;
             }
           }
           z.enemies = z.enemies.filter((e) => !e.summon);
           for (const e of z.enemies) {
             if (e.family === 'thorn' && e.type === 'boss' && (e.aggro || e.returning))
               e.thornReturn = true;
+            if (e.family === 'cindermaw' && e.type === 'boss' && (e.aggro || e.returning))
+              e.cinderReturn = true;
             this.clearEncounterState(e, [out.hero, ...out.party]);
             e.telegraph = null;
             e.motion = null;
@@ -49,7 +54,10 @@
             delete e.rogueDustCoverUntil;
             e.returning = 0;
             if (e.hp > 0 && !e.neutral) {
-              if (!(e.family === 'thorn' && e.type === 'boss')) Object.assign(e, e.home);
+              if (
+                !((['thorn', 'cindermaw'].includes(e.family) && e.type === 'boss') || e.veraEscort)
+              )
+                Object.assign(e, e.home);
               e.hp = e.maxHp;
               e.heroParticipated = false;
               e.mercyProvoked = false;
@@ -702,6 +710,8 @@
           for (const e of z.enemies) {
             if (e.family === 'thorn' && e.type === 'boss' && (e.aggro || e.returning))
               e.thornReturn = true;
+            if (e.family === 'cindermaw' && e.type === 'boss' && (e.aggro || e.returning))
+              e.cinderReturn = true;
             c.clearEncounterState(e);
             e.aggro = false;
             e.returning = 0;
@@ -729,6 +739,8 @@
             if (c.blocked(n.x, n.y, z.id)) Object.assign(n, c.safe(n.x, n.y, z.id));
           c.authoredPlaces(z);
           c.migrateThornPatrol(z);
+          c.migrateCinderInspection(z);
+          c.clearVeraRepairs(z);
           const families = new Set();
           z.enemies = z.enemies.filter((e) => {
             if (

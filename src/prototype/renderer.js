@@ -501,6 +501,17 @@
       ctx.fillRect(left, y, w * Math.max(0, Math.min(1, e.hp / e.maxHp)), 4);
       ctx.fillStyle = '#ffffff77';
       ctx.fillRect(left, y, w * Math.max(0, Math.min(1, e.hp / e.maxHp)), 1);
+      if (e.veraEquipment) {
+        ctx.fillStyle = '#3c3025dd';
+        ctx.fillRect(left, y + 7, w, 3);
+        ctx.fillStyle = '#e0b96e';
+        ctx.fillRect(
+          left,
+          y + 7,
+          w * Math.max(0, Math.min(1, e.veraEquipment.remaining / e.veraEquipment.max)),
+          3,
+        );
+      }
     }
     function projectileVector(p) {
       const dx = Number.isFinite(p.dx) ? p.dx : 1,
@@ -1614,9 +1625,13 @@
                     : game.miniCleared(e.mini)
                       ? ' · Cleared'
                       : ' · Guardians')
-                : e.presentation === 'mobile-captive'
-                  ? 'Mira · captive'
-                  : e.name;
+                : e.presentation === 'mobile-forge'
+                  ? e.veraRepairUntil > game.s.time
+                    ? 'Vera · repairing defenses'
+                    : 'Vera · captive field engineer'
+                  : e.presentation === 'mobile-captive'
+                    ? 'Mira · captive'
+                    : e.name;
           if (label) {
             ctx.font = 'bold 11px system-ui';
             ctx.fillStyle = '#ffe4a2';
@@ -1625,6 +1640,7 @@
             const width =
               e.presentation === 'workstation' ||
               e.presentation === 'mobile-captive' ||
+              e.presentation === 'mobile-forge' ||
               e.kind === 'keeper' ||
               e.kind === 'archive-record'
                 ? Math.min(ctx.measureText(name).width, canvas.width - 24)

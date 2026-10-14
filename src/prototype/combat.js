@@ -436,6 +436,25 @@
         if (['thinking', 'travel', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase))
           amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
         amount = this.tacticalCompressDamage(e, amount);
+        const equipment = e.veraEquipment,
+          minister = equipment && this.zone().enemies.find((u) => u.id === equipment.owner);
+        if (
+          equipment &&
+          this.veraHeld() &&
+          minister?.hp > 0 &&
+          minister.aggro &&
+          !minister.returning &&
+          e.species === 'ashbeast' &&
+          e.type === 'mob' &&
+          this.zoneId === 'crown'
+        ) {
+          const absorbed = Math.min(
+            equipment.remaining,
+            Math.max(0, amount) * R.cinderInspection.repairs.absorption,
+          );
+          equipment.remaining -= absorbed;
+          amount -= absorbed;
+        }
         const actualDamage = Math.max(0, Math.min(e.hp, amount));
         const reflected =
           e.captainProfile === 'supply-crown' && e.captainReflect > 0 ? actualDamage * 0.3 : 0;

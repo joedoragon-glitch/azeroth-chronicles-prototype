@@ -99,6 +99,30 @@ if (cinderSupportRevision) {
   ]);
   assert.match(cinderSupportRevision.source, /#298.*#288/);
 }
+const veraRevision = manifest.approvedSnapshotVeraInspectionRevision;
+if (veraRevision) {
+  assert.match(veraRevision.source, /#298.*28C.*29B.*30C.*#288/);
+  assert.deepEqual(Object.keys(veraRevision.files).sort(), [
+    'src/prototype/cindermaw-combat.js',
+    'src/prototype/combat.js',
+    'src/prototype/engine.js',
+    'src/prototype/renderer.js',
+    'src/prototype/rules.js',
+    'src/prototype/save.js',
+    'src/prototype/sprites.js',
+    'src/prototype/visuals.js',
+    'src/prototype/world.js',
+  ]);
+  for (const [file, expected] of Object.entries(veraRevision.files))
+    assert.equal(
+      crypto
+        .createHash('sha256')
+        .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
+        .digest('hex'),
+      expected,
+      file,
+    );
+}
 const institutionRevision = manifest.approvedSnapshotInstitutionsRevision;
 const ministryRevision = manifest.approvedSnapshotCinderMinistryRevision;
 const ministryPresentation = manifest.approvedSnapshotCinderMinistryPresentationRevision;
@@ -136,7 +160,7 @@ if (ministryRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
-      ministryPresentation?.files[file] || expected,
+      veraRevision?.files[file] || ministryPresentation?.files[file] || expected,
       file,
     );
 }
@@ -154,7 +178,7 @@ if (institutionRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
-      ministryRevision?.files[file] || expected,
+      veraRevision?.files[file] || ministryRevision?.files[file] || expected,
       file,
     );
 }
@@ -175,7 +199,8 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    ministryRevision?.files[file] ||
+    veraRevision?.files[file] ||
+      ministryRevision?.files[file] ||
       cinderRallyRevision?.files[file] ||
       cinderLifecycleRevision?.files[file] ||
       institutionRevision?.files[file] ||

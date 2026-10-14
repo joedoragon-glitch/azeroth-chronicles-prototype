@@ -34,6 +34,16 @@ assert(auditionEngine > 0);
 for (const file of auditionGraph.slice(0, auditionEngine + 1))
   vm.runInContext(fs.readFileSync(file, 'utf8'), auditionContext, { filename: file });
 assert.equal(typeof auditionContext.Campaign.prototype.updateCinderRegularState, 'function');
+// Exercise the exact independent frozen-renderer Campaign graph too.
+const frozenContext = vm.createContext({});
+frozenContext.window = frozenContext;
+const frozenGraph = require('../scripts/perf-renderer-graph.cjs');
+for (const file of frozenGraph.campaign)
+  vm.runInContext(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), frozenContext, {
+    filename: file,
+  });
+assert.equal(typeof frozenContext.Campaign.prototype.updateCinderRegularState, 'function');
+assert.equal(typeof frozenContext.Campaign.prototype.updateVeraFieldwork, 'function');
 const ownedMethods = new Set();
 for (const owner of ['combat', 'hero-combat', 'boss-combat', 'party', 'economy', 'rewards']) {
   assert(inventory.core.includes('src/prototype/' + owner + '.js'));

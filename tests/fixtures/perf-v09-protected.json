@@ -206,5 +206,19 @@
     "files": {
       "src/prototype/enemy-vfx-art.js": "1a71c1ff0bb985349731c537271ef81bc8f8c528798f6f477a6c374a2392d051"
     }
+  },
+  "approvedSnapshotVeraInspectionRevision": {
+    "source": "Director #298 choices28C/29B/30C and #288: actual variable Cindermaw routes, same Vera mobile forge, two existing native guards and bounded real defensive equipment/repairs with original services/save schema. Previous exact source pins retained.",
+    "files": {
+      "src/prototype/cindermaw-combat.js": "0e3f9000b0a6e6c03562c5bd6aa6da085e51d71d949476f967288ed005f534f5",
+      "src/prototype/combat.js": "cd9531b1fc09b22dfd8bc8d49507c86b476c70e0de69854da2a688050301a996",
+      "src/prototype/engine.js": "d91e83f1cecc99d2e72a0b6a92778757937708995fff8e2e4aaca36a6e8defdf",
+      "src/prototype/rules.js": "41016ea8c62a10e415bf063e194779b29636813e175c50a8299c2f48736f2cba",
+      "src/prototype/world.js": "9891ec09a05f2d8b6f5b91ad997a1481922f7be3c4586f52d0470291924f76ff",
+      "src/prototype/save.js": "02116b281b98f272c71c4f8dc57db556d73c3ebff441e3abb55154a9080cf6f0",
+      "src/prototype/visuals.js": "065c4c940a6c8f40378d99b45a7707678122b44088c9f614bab043aaddf57cbd",
+      "src/prototype/sprites.js": "e983eaef98f589c5bd0f2dca095ba9383df1978e502499592d6c5504ee02d5a6",
+      "src/prototype/renderer.js": "abe3d43d97451a5eba8d3ddbf42daa22b835d3f392b401964358192dcb74fd08"
+    }
   }
 }

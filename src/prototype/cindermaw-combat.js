@@ -29,6 +29,184 @@
         c.s.challenge.pending ||
         c.s.challenge.gameOver;
     class Ministry {
+      cinderPatroller(e) {
+        return isMinister(e) && this.zoneId === 'crown';
+      }
+      veraCaptive(z = this.zone()) {
+        return z.npcs.find((n) => n.id === 'cage-cindermaw');
+      }
+      veraHeld() {
+        return !this.peace && !this.s.rescued.cindermaw && !this.s.keys.cindermaw;
+      }
+      migrateCinderInspection(z) {
+        if (z.id !== 'crown') return;
+        const n = this.veraCaptive(z);
+        if (!n) return;
+        n.presentation = 'mobile-forge';
+        n.workKind = 'smith';
+        n.context =
+          'Vera is the paid but captive chief field engineer. Her guarded mobile forge travels on Cindermaw’s ministerial inspections. She repairs nearby Ash-beast defensive equipment, but cannot leave until freed.';
+        if (z.cinderInspectionVersion === 1) return;
+        // Designate existing ordinary residents once; no new troop or changed
+        // home, species, reward, population or respawn identity.
+        const home = this.fieldCenter(4);
+        const guards = z.enemies
+          .filter(
+            (u) =>
+              u.hp > 0 &&
+              u.type === 'mob' &&
+              u.species === 'ashbeast' &&
+              !u.summon &&
+              !u.guard &&
+              !u.mini &&
+              !u.strongholdResident,
+          )
+          .sort((a, b) => dist(a, home) - dist(b, home) || this.idOrder(a, b))
+          .slice(0, R.cinderInspection.guardCap);
+        n.escortGuardIds = guards.map((u) => u.id);
+        for (const u of guards) u.veraEscort = true;
+        for (const e of z.enemies) if (isMinister(e)) e.home = { ...home };
+        z.cinderInspectionVersion = 1;
+      }
+      cinderInspectionStops() {
+        return R.cinderInspection.stops.map((p) => ({ ...p, ...this.safe(p.x, p.y, 'crown') }));
+      }
+      cinderEntourageTogether(e) {
+        const n = this.veraCaptive(),
+          cfg = R.cinderInspection;
+        if (!n || !this.veraHeld()) return true;
+        if (dist(n, e) > cfg.waitForCaptive) return false;
+        return (n.escortGuardIds || []).every((id) => {
+          const u = this.zone().enemies.find((a) => a.id === id);
+          return !u || u.hp <= 0 || u.aggro || dist(u, e) <= cfg.waitForCaptive + 50;
+        });
+      }
+      updateCinderInspection(e, dt) {
+        if (!this.cinderPatroller(e) || e.aggro || e.neutral || this.peace || e.hp <= 0)
+          return false;
+        if (e.cinderReturn) {
+          this.disengage(e, dt);
+          return true;
+        }
+        if (!this.cinderEntourageTogether(e)) return true;
+        const cfg = R.cinderInspection;
+        e.cinderInspectionPause = Math.max(0, (e.cinderInspectionPause ?? cfg.pauseMin) - dt);
+        if (e.cinderInspectionPause > 0) return true;
+        if (!e.cinderDestination) {
+          const last = Number.isInteger(e.cinderStop) ? e.cinderStop : 0;
+          const choices = this.cinderInspectionStops()
+            .map((p, i) => ({ ...p, i }))
+            .filter((p) => p.i !== last && this.route(e, p).length);
+          if (!choices.length) {
+            e.cinderInspectionPause = cfg.pauseMin;
+            return true;
+          }
+          const p =
+            choices[Math.min(choices.length - 1, Math.floor(this.random() * choices.length))];
+          e.cinderDestination = { x: p.x, y: p.y, name: p.name, i: p.i };
+          delete e.path;
+        }
+        const p = e.cinderDestination;
+        this.follow(e, p, cfg.speed * (e.slow > 0 ? 0.5 : 1), dt, cfg.arrival);
+        if (dist(e, p) <= cfg.arrival + 1e-7) {
+          e.cinderStop = p.i;
+          delete e.cinderDestination;
+          delete e.path;
+          e.cinderInspectionPause = cfg.pauseMin + this.random() * (cfg.pauseMax - cfg.pauseMin);
+        }
+        return true;
+      }
+      updateVeraEscort(u, dt) {
+        if (
+          !u.veraEscort ||
+          this.zoneId !== 'crown' ||
+          u.hp <= 0 ||
+          u.aggro ||
+          u.neutral ||
+          u.returning
+        )
+          return false;
+        const e = this.zone().enemies.find((a) => isMinister(a) && a.hp > 0 && !a.neutral);
+        if (e && this.veraHeld() && !e.aggro) {
+          const captive = this.veraCaptive(),
+            index = captive?.escortGuardIds?.indexOf(u.id) ?? 0,
+            center = captive || e,
+            point = this.safe(center.x + (index === 0 ? -65 : 65), center.y + 35, 'crown');
+          this.follow(u, point, R.cinderInspection.guardSpeed, dt, 20);
+          return true;
+        }
+        // Liberation/victory cancels compulsory escort; surviving ordinary
+        // guards walk home rather than snapping back or spawning replacements.
+        if (dist(u, u.home) > 1) {
+          this.follow(u, u.home, R.cinderInspection.guardSpeed, dt, 0);
+          return true;
+        }
+        delete u.veraEscort;
+        return false;
+      }
+      updateVeraFieldwork(dt) {
+        if (this.zoneId !== 'crown') return;
+        const z = this.zone(),
+          n = this.veraCaptive(z),
+          e = z.enemies.find((a) => isMinister(a) && a.hp > 0 && !a.neutral);
+        if (
+          !n ||
+          !e ||
+          !this.veraHeld() ||
+          this.hero.hp <= 0 ||
+          this.s.challenge.pending ||
+          this.s.challenge.gameOver
+        ) {
+          this.clearVeraRepairs(z);
+          return;
+        }
+        // Reuse the established collision/follow machinery. Vera never joins
+        // the party, target lists or damage resolver.
+        this.follow(n, e, R.cinderInspection.captiveSpeed, dt, R.cinderInspection.separation);
+        if (!e.aggro || e.returning || e.cinderReturn) {
+          this.clearVeraRepairs(z);
+          return;
+        }
+        const cfg = R.cinderInspection.repairs;
+        const eligible = this.cinderAllies(e, cfg.radius + R.cinderInspection.separation).filter(
+          (u) => u.aggro && dist(u, n) <= cfg.radius && this.line(n, u),
+        );
+        for (const u of eligible)
+          if (!u.veraEquipment) {
+            const max = Math.min(
+              cfg.equipmentMax,
+              Math.max(cfg.equipmentMin, u.baseHp * cfg.equipmentHpFraction),
+            );
+            u.veraEquipment = { owner: e.id, max, remaining: max };
+          }
+        n.veraRepairDue = Math.max(0, (n.veraRepairDue ?? cfg.interval) - dt);
+        if (n.veraRepairDue > 0) return;
+        n.veraRepairDue = cfg.interval;
+        const target = eligible
+          .filter(
+            (u) =>
+              u.veraEquipment?.owner === e.id && u.veraEquipment.remaining < u.veraEquipment.max,
+          )
+          .sort(
+            (a, b) =>
+              a.veraEquipment.remaining / a.veraEquipment.max -
+                b.veraEquipment.remaining / b.veraEquipment.max || this.idOrder(a, b),
+          )[0];
+        if (!target) return;
+        const equipment = target.veraEquipment;
+        equipment.remaining = Math.min(
+          equipment.max,
+          equipment.remaining + equipment.max * cfg.restoreFraction,
+        );
+        n.veraRepairUntil = this.s.time + 0.7;
+        n.veraRepairTarget = target.id;
+      }
+      clearVeraRepairs(z = this.zone()) {
+        for (const u of z.enemies) delete u.veraEquipment;
+        const n = this.veraCaptive(z);
+        if (n)
+          for (const key of ['veraRepairDue', 'veraRepairUntil', 'veraRepairTarget']) delete n[key];
+      }
       cinderAllies(e, radius, ready = false) {
         return this.zone().enemies.filter(
           (u) =>
@@ -646,6 +824,25 @@
           owner = order && this.zone().enemies.find((u) => u.id === order.owner);
         if (order && alive(owner) && owner.cinderDelegation && target?.hp > 0)
           return dist(target, owner) <= 700 && dist(e, owner) <= 900;
+        if (
+          e.veraEscort &&
+          e.veraFightAnchor &&
+          this.zoneId === 'crown' &&
+          target?.hp > 0 &&
+          dist(target, e.veraFightAnchor) <= territory &&
+          dist(e, e.veraFightAnchor) <= territory + 200
+        )
+          return true;
+        if (e.veraEscort && this.zoneId === 'crown' && this.veraHeld()) {
+          const minister = this.zone().enemies.find((u) => isMinister(u) && alive(u) && u.aggro);
+          if (
+            minister &&
+            target?.hp > 0 &&
+            dist(e, minister) <= 700 &&
+            dist(target, minister) <= 700
+          )
+            return true;
+        }
         return previous.tacticalRogueLeashAllows.call(this, e, target, territory);
       }
       clearEncounterState(e, units) {
@@ -657,11 +854,15 @@
           'cinderGuard',
           'cinderDelegation',
           'cinderDelegate',
+          'veraEquipment',
+          'cinderFightAnchor',
+          'veraFightAnchor',
         ])
           delete e[key];
         return result;
       }
       cancelEncounter(e) {
+        if (isMinister(e)) this.clearVeraRepairs();
         if (e.cinderDelegate) {
           const owner = this.zone().enemies.find((u) => u.id === e.cinderDelegate.owner);
           if (owner) this.stopCinderDelegation(owner);
