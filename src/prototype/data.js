@@ -284,8 +284,8 @@ const PrototypeData = {
       xp: 525,
       place: 'Occupied checkpoint',
       attacks: [
-        'Cleaving combo: two marked frontal arcs with a safe interval; 1.2 second initial warning.',
-        'Banner bombardment: two marked circles warn for 1.8 seconds.',
+        'Cleaving combo: two marked frontal arcs with a safe interval; 1.2 second initial warning. While engaged, the Warlord also leaves stationary Choking Ash for six seconds, recurring every eighteen seconds: 180-unit cloud, reduced movement and accuracy, with a short lingering effect on exit.',
+        'Banner Bombardment: six separated, simultaneously marked impact circles warn for 1.8 seconds; dodge between their footprints.',
         'Guard command: calls four guards after 1.8 seconds; TRUE form commands a larger eight-unit warband.',
         'Pursuit charge: marks a lane for 1.6 seconds and leaves 2.5 seconds of recovery.',
       ],
