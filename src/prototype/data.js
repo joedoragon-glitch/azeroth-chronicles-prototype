@@ -68,7 +68,7 @@ const PrototypeData = {
       obstacle:
         'Cliffs divide the plateau into connected terraces. Switchbacks, a stone bridge and a timber crossing provide routes. Rock walls and pine thickets block movement and projectiles consistently.',
       exploration:
-        'The Dark Lord took these mineral-rich mountains long ago; Ironroot now supplies his crowns. His Master of Coin, the Ridge Tyrant, keeps ore, wages and caravans moving and calls it proof of better rule. Stonecross trades and raises families; Quarry Outpost sorts and hauls. Some welcome regular payday, others resent who owns the mountain. Wolves keep wild hunting grounds; Ogres work stone, cook, sleep and play at their own hearths.',
+        'The Dark Lord seized Ironroot’s silver-bearing and copper-bearing mountains long ago. The Master of Coin, Ridge Tyrant, supervises separate ore workings, wages, escorted shipments and Stonecross’s mint, which strikes crowns bearing the Dark Lord’s portrait. Quarry Outpost also cuts building stone, separately from the metal ores. Stonecross trades and raises families; some welcome regular payday while others resent ownership of the mountains. Wolves hunt the wild valleys and Ogres still live, cook, work stone and play at their own hearths.',
       resource: 640,
       questgold: 700,
       questxp: 1800,
