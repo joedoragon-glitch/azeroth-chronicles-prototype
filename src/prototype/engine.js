@@ -4754,6 +4754,10 @@
           delete e.secondWindUsed;
           delete e.secondWindCancelled;
           delete e.secondWindFacing;
+          delete e.royalTaxation;
+          delete e.royalTaxShield;
+          delete e.royalPrerogativeReadyAt;
+          delete e.crownDecreeZone;
           e.healCd = 0;
         }
         delete e.quotaTarget;
