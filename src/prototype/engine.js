@@ -4816,7 +4816,7 @@
               this.event(
                 'warning',
                 e.telegraph.anonymousCast
-                  ? { captain: e.captainProfile, anonymousCast: true }
+                  ? { family: e.family, anonymousCast: true }
                   : { family: e.family },
               );
             if (!e.telegraph && !e.motion) {
