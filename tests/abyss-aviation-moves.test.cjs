@@ -109,3 +109,39 @@ for (const cls of ['paladin', 'mage', 'ranger'])
       fatalCases++;
     }
 console.log('PASS '+fatalCases+' actual High Yo-Yo fatal class/mode/Succession boundaries');
+
+// Controlled high-health observation pilots use the unforced live scheduler.
+// Party pressure chooses Wingover; a separate advantaged solo encounter chooses
+// High Yo-Yo. These are boss-AI pilots, not full campaign/playability acceptance.
+let pilots = 0;
+for (const cls of ['paladin', 'mage', 'ranger'])
+  for (const mode of ['normal', 'nightmare'])
+    for (const form of ['normal', 'true']) {
+      const combined = new Set();
+      for (const opposition of ['party', 'solo']) {
+        const c = new C(mode, cls, () => 0.53);
+        c.enter('abyss'); c.s.mercyTime = 0;
+        const e = c.bossEnemy(c.boss('abyss'), form, {x:1150,y:1120});
+        e.maxHp = 1e6; e.hp = 4e5; c.zone().enemies = [e];
+        c.hero.level = e.level + (opposition === 'solo' ? 3 : 0);
+        c.hero.hp = c.hero.maxHp = 1e6; c.hero.immune = 1e6;
+        c.s.party = opposition === 'party' ? [c.unit('soldier',1140,1110),c.unit('archer',1130,1100)] : [];
+        for(const u of c.s.party)u.immune=1e6;
+        c.engage(e,true,false); let seed=12345;
+        c.random=()=>((seed=(Math.imul(seed,1664525)+1013904223)>>>0)/4294967296);
+        for(let i=0;i<1800;i++) {
+          // Clearing owned support through its real death path creates the
+          // authored depleted-support condition without changing rogue rules.
+          for(const u of [...c.zone().enemies]) if(u.summon&&u.owner===e.id){u.hp=0;c.kill(u);}
+          if(i%10===0){c.hero.immune=1e6;for(const u of c.s.party)u.immune=1e6;c.damage(e,5,'hero');}
+          c.tick(.1);
+          if(e.telegraph?.name)combined.add(e.telegraph.name);
+          if(e.motion?.aerial)combined.add(e.motion.aerial);
+          Object.assign(c.hero,c.safe(e.x+85,e.y));
+        }
+        pilots++;
+      }
+      for(const name of ['Compressor Surge','Wake Vortex','Lazy Eight','Scramble Order','high-yo-yo','wingover','go-around'])
+        assert(combined.has(name),cls+'/'+mode+'/'+form+' natural scheduler uses '+name);
+    }
+console.log('PASS '+pilots+' actual unforced solo/party aviation scheduler pilots across classes/modes/forms');

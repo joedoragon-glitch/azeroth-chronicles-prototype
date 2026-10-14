@@ -1,5 +1,7 @@
 # First snapshot checkpoint self-audit — 13 October 2026
 
+**Recovery notice:** This is the dated audit of the completed first title/scenery batch. Its final “next step” is historical. The current leading implementation branch and exact head, later foundation/regional/patrol/engineering/aviation packages, actual current gates and next action are recorded in [PR #300](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/300) and [the implementation ledger](SNAPSHOT_IMPLEMENTATION_20261013.md). Do not replay first-batch work or encounter foundations from this older audit. It remains evidence for its stated original tree only.
+
 **Scope:** audit the engineering preparation and title/scenery batch in draft [PR #300](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/300), before proceeding to encounter foundations. This is a self-review, not the independent second reviewer or complete playable snapshot audit required by canon.
 
 **Audited runtime:** `d275d0e034ffa89da848be28453cafe792e1cee1`, tree `136fa666b508bb27163a6adb6fc59239dae6f655`, development build `0.9.1+snapshot.dev.2`. Main remains `6f8089b2013647184efb04932fe6157f548238b9` / `0.9.1+update.1`. The audit corrections affect verification and documentation only; every runtime, CSS, manifest, package, generated entry and service-worker file remains identical to that verified runtime.
