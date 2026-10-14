@@ -127,7 +127,7 @@ if (expansionRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
-      expected,
+      veyraRevision?.files[file] || expected,
       file,
     );
 }
@@ -148,8 +148,7 @@ if (agricultureRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
-      veyraRevision?.files[file] ||
-      expansionRevision?.files[file] || expected,
+      veyraRevision?.files[file] || expansionRevision?.files[file] || expected,
       file,
     );
 }
@@ -174,7 +173,9 @@ if (veraRevision) {
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
       veyraRevision?.files[file] ||
-      expansionRevision?.files[file] || agricultureRevision?.files[file] || expected,
+        expansionRevision?.files[file] ||
+        agricultureRevision?.files[file] ||
+        expected,
       file,
     );
 }
@@ -190,7 +191,8 @@ if (ministryAV) {
       .createHash('sha256')
       .update(fs.readFileSync(path.resolve(__dirname, '..', 'src/prototype/enemy-vfx-art.js')))
       .digest('hex'),
-    agricultureRevision?.files['src/prototype/enemy-vfx-art.js'] ||
+    veyraRevision?.files['src/prototype/enemy-vfx-art.js'] ||
+      agricultureRevision?.files['src/prototype/enemy-vfx-art.js'] ||
       ministryAV.files['src/prototype/enemy-vfx-art.js'],
   );
 }
@@ -217,12 +219,10 @@ if (ministryRevision) {
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
       veyraRevision?.files[file] ||
-      expansionRevision?.files[file] ||
+        expansionRevision?.files[file] ||
         agricultureRevision?.files[file] ||
         veraRevision?.files[file] ||
         ministryPresentation?.files[file] ||
-        veyraRevision?.files[file] ||
-      expansionRevision?.files[file] ||
         expected,
       file,
     );
@@ -242,12 +242,10 @@ if (institutionRevision) {
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
       veyraRevision?.files[file] ||
-      expansionRevision?.files[file] ||
+        expansionRevision?.files[file] ||
         agricultureRevision?.files[file] ||
         veraRevision?.files[file] ||
         ministryRevision?.files[file] ||
-        veyraRevision?.files[file] ||
-      expansionRevision?.files[file] ||
         expected,
       file,
     );
