@@ -114,6 +114,40 @@ for (const mode of ['normal', 'nightmare'])
     );
   }
 
+// An enrolled response must not carry a frozen old warning across the map.
+{
+  const { c, e } = scene();
+  roar(c, e);
+  const troop = c
+    .zone()
+    .enemies.filter(
+      (u) => u.type === 'mob' && u.species === 'ashbeast' && u.form === 'normal' && !u.guard,
+    )
+    .sort((a, b) => distance(a, e) - distance(b, e))[0];
+  Object.assign(c.hero, c.safe(troop.x + 55, troop.y));
+  troop.aggro = true;
+  assert(c.tacticalRogueMove(troop, c.hero), 'actual native rogue attack prepares');
+  const warning = troop.telegraph,
+    timer = warning.timer;
+  c.resolveAttack(e);
+  e.telegraph = null;
+  assert(
+    !c._tacticalCinderResponses.has(troop.id),
+    'currently casting native is ineligible for remote response',
+  );
+  assert.equal(troop.telegraph, warning, 'its own current attack remains intact');
+  c.s.time += 0.05;
+  c.updateEnemies(0.05);
+  assert.equal(
+    warning.timer,
+    timer - 0.05,
+    'original native warning advances normally instead of freezing during travel',
+  );
+  console.log(
+    'PASS busy native keeps its actual advancing warning and is not forced into a response route',
+  );
+}
+
 // Solid geometry decides safety, including distant targets within the new radius.
 {
   const { c, e } = scene();

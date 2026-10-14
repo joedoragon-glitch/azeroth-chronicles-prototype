@@ -169,5 +169,11 @@
       "src/prototype/menus.js": "33e37882679dc036a7567bbf3d52de9517e5cf51fbe5d6197cb621ff0f711ee9",
       "src/prototype/rules.js": "bc27eca0e192b878c6da591999150f41abf323370e9ed4f5a01bda734bb9323e"
     }
+  },
+  "approvedSnapshotCinderSupportLifecycleRevision": {
+    "source": "Director #298 and #288; local scheduling follow-up: refuse already casting/moving native responders, preserving their original warnings/motion. Previous support hashes retained.",
+    "files": {
+      "src/prototype/engine.js": "86f5192d875b29eac4803b1709d8092326ed31efafbb80b596b5f6f050ddc310"
+    }
   }
 }

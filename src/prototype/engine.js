@@ -3588,7 +3588,14 @@
           u.home &&
           dist(u.home, e) <= cfg.radius,
         living = z.enemies.filter(
-          (u) => native(u) && u.hp > 0 && !u.returning && dist(u, e) <= cfg.radius,
+          (u) =>
+            native(u) &&
+            u.hp > 0 &&
+            !u.returning &&
+            !u.telegraph &&
+            !u.motion &&
+            !u.rangedAim &&
+            dist(u, e) <= cfg.radius,
         ),
         party = this.combatTargets();
       if (!this._tacticalCinderResponses) this._tacticalCinderResponses = new Map();
