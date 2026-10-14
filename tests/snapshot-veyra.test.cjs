@@ -6,6 +6,9 @@ game.enter('citadel');
 const boss = game.zone().enemies.find(e => e.family === 'citadel' && e.type === 'boss');
 assert(boss, 'canonical Citadel boss remains present');
 assert.equal(boss.name.includes('Veyra'), true);
+// Natural board-first selection applies when the hero is within combat range.
+game.hero.x=boss.home.x-130;
+game.hero.y=boss.home.y;
 const patterns = Array.from({length:5}, (_,i) => game.buildBossAttack(boss,i,game.hero).first);
 assert.deepEqual(patterns.map(a=>a.kind), ['canister','formation','pattern-charge','checkerboard','summon']);
 assert.equal(patterns[2].path.length,5,'continuous five-leg Contouring');

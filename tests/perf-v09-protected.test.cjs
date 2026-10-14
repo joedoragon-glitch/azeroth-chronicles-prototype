@@ -99,6 +99,18 @@ if (cinderSupportRevision) {
   ]);
   assert.match(cinderSupportRevision.source, /#298.*#288/);
 }
+const veyraRevision = manifest.approvedSnapshotVeyraRevision;
+if (veyraRevision) {
+  assert.match(veyraRevision.source, /#298.*#255.*#263.*#281/);
+  assert.deepEqual(Object.keys(veyraRevision.files).sort(), [
+    'src/prototype/boss-combat.js',
+    'src/prototype/combat-visuals.js',
+    'src/prototype/data.js',
+    'src/prototype/engine.js',
+    'src/prototype/rules.js',
+    'src/prototype/save.js',
+  ]);
+}
 const expansionRevision = manifest.approvedSnapshotTreasuryExpansionRevision;
 if (expansionRevision) {
   assert.match(expansionRevision.source, /Director14October.*expansion.*#298.*#288/);
@@ -134,6 +146,7 @@ if (agricultureRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
+      veyraRevision?.files[file] ||
       expansionRevision?.files[file] || expected,
       file,
     );
@@ -158,6 +171,7 @@ if (veraRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
+      veyraRevision?.files[file] ||
       expansionRevision?.files[file] || agricultureRevision?.files[file] || expected,
       file,
     );
@@ -200,11 +214,13 @@ if (ministryRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
+      veyraRevision?.files[file] ||
       expansionRevision?.files[file] ||
         agricultureRevision?.files[file] ||
         veraRevision?.files[file] ||
         ministryPresentation?.files[file] ||
-        expansionRevision?.files[file] ||
+        veyraRevision?.files[file] ||
+      expansionRevision?.files[file] ||
         expected,
       file,
     );
@@ -223,11 +239,13 @@ if (institutionRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
+      veyraRevision?.files[file] ||
       expansionRevision?.files[file] ||
         agricultureRevision?.files[file] ||
         veraRevision?.files[file] ||
         ministryRevision?.files[file] ||
-        expansionRevision?.files[file] ||
+        veyraRevision?.files[file] ||
+      expansionRevision?.files[file] ||
         expected,
       file,
     );
@@ -249,7 +267,8 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    expansionRevision?.files[file] ||
+    veyraRevision?.files[file] ||
+      expansionRevision?.files[file] ||
       agricultureRevision?.files[file] ||
       veraRevision?.files[file] ||
       ministryRevision?.files[file] ||

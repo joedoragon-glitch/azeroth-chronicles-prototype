@@ -239,5 +239,16 @@
       "src/prototype/rules.js": "811fad488ba06cd3926ef624ec3150e14b735331eb2f0abdc4a50e25bb1ba5c8",
       "src/prototype/dreadmaw-combat.js": "ef40f2043c187b10ec80584ff66522e064fbcbbfc28a6f93e80d8bc42d23e61b"
     }
+  },
+  "approvedSnapshotVeyraRevision": {
+    "source": "#298 #255 #263 #281 Veyra integrated candidate on PR #300; exact source hashes after 14 October court/save mechanics; no release certification",
+    "files": {
+      "src/prototype/boss-combat.js": "348ab64cdd70799f21340d10badfecb308cd4f4beff9f9207700cb8cd763f83c",
+      "src/prototype/combat-visuals.js": "5729b04bcf8c32d3f32c70ba87f1a7c858e9e2d8a7f12d61bfcad9e2d64cd4b4",
+      "src/prototype/data.js": "236ddbb0dfe03fc06d512014d482515070c827e4b2132bd1d0da5c57b9a5372e",
+      "src/prototype/engine.js": "9f1011a84f4bbc14748e0d1148c9c36dbd19d3dd45d2ea7dbba42aadfa80a2e7",
+      "src/prototype/rules.js": "0c1e7b9b0bdfaade5b42efce848b601d88c1f6adf03fbd9ec685ed75170d9df6",
+      "src/prototype/save.js": "d31672a56ff8f55e1355ee016b2a15e595e449903228c11f4e6d1bfcf3f8229d"
+    }
   }
 }
