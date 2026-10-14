@@ -4,6 +4,19 @@
 
 **Baseline:** current main `6f8089b2013647184efb04932fe6157f548238b9`, package `0.9.1+update.1`. Branch `implementation/director-snapshot-20261013`. Canon source `f10cc9129c831e956e630eacaed8c5ba82c38403`; copied without wording changes. Repository instructions: AGENTS.md, ARCHITECTURE.md, DEVELOPMENT_STATE.md, MECHANIC_DEVELOPMENT.md, DESIGN_TO_SPRITE_WORKFLOW.md and original-master export policy. Historical status documents do not override current fetched source.
 
+## Director-approved regression cadence — 14 October 2026
+
+**Standing implementation policy for PR #300 and successors; explicitly approved by the director.** Do not pause for full regression certification after every boss, attack, decorative addition or individual mechanic. Preserve pace without compromising existing save integrity or eventual release certification.
+
+1. **Each implementation increment:** Run fast, relevant focused tests and targeted invariant/save/death checks for the touched behavior. Record observed passes and failures honestly. Keep implementing unrelated approved work while lengthy broad checks or CI evidence maintenance are pending, where safe.
+2. **After coherent batches / major milestones:** Run the wider regression sweeps (combat, saves, migrations, bosses, rendering/audio, cross-system effects, and compatible-browser checks as appropriate). Resolve accumulated genuine failures before treating the milestone as certified.
+3. **Before any merge or release:** Run complete regression and required hosted/browser/package certification against the actual final candidate, with independent audit as previously planned. No certification inherited from an older runtime or assumed from partial green jobs.
+4. **Immediate stop exceptions:** A credible save-corruption, data-loss, progression blocker, security/integrity issue, or other critical cross-system failure must be contained and repaired promptly; don't accumulate known critical breakage just for speed.
+5. **Evidence-only failures:** Stale source-hash inventories, coverage manifests, catalog snapshots and similar accounting checks still matter for traceability but should be reconciled in planned sweeps, not treated as a reason to halt all unrelated boss development. Do not disable checks, silently change thresholds, invent passing evidence, or mark a failed suite green.
+6. **Reporting / authority:** Label each package as *implemented / targeted-tested / batch-certified / final-certified* accurately. Keep GitHub checkpoints on this same PR/branch. No merge to main, deployment, release, tag or publication without the director's explicit approval.
+
+**Operational interpretation:** Build continuously, test intelligently, certify at milestones. This policy supersedes earlier per-boss full-regression gating, but does not relax eventual release quality.
+
 ## Current recovery desk — continuation through agriculture batch12
 
 The exact branch head, full-CI result and next action are maintained in the latest checkpoint on [PR #300](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/300) and [tracker #232](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/232). Read that checkpoint before resuming: older chronological pending notes below are historical.
