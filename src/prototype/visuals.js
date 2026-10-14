@@ -13633,18 +13633,25 @@
     }
     if (!blocked) groundDetail(ctx, p, seed, region, room, dungeonId, colors);
   }
+  // Culling uses logical viewport units, not backing-store pixels.
+  function outsideScreen(points, viewport, margin = 0) {
+    return (
+      points.every((p) => p.x < -margin) ||
+      points.every((p) => p.x > viewport.width + margin) ||
+      points.every((p) => p.y < -margin) ||
+      points.every((p) => p.y > viewport.height + margin)
+    );
+  }
   // World-space surfaces avoid losing narrow barriers between coarse tile samples.
-  function terrain(ctx, screen, region = 0, size = 3000, materialLayer = null) {
+  function terrain(ctx, screen, region = 0, size = 3000, materialLayer = null, viewport = null) {
+    const bounds = viewport || {
+      width: ctx.canvas?.width || 10000,
+      height: ctx.canvas?.height || 10000,
+    };
     const time = (typeof performance !== 'undefined' ? performance.now() : 0) / 1000;
     const poly = (points, color, material = null) => {
       const ps = points.map(screen);
-      if (
-        ps.every((p) => p.x < -100) ||
-        ps.every((p) => p.x > (ctx.canvas?.width || 10000) + 100) ||
-        ps.every((p) => p.y < -100) ||
-        ps.every((p) => p.y > (ctx.canvas?.height || 10000) + 100)
-      )
-        return;
+      if (outsideScreen(ps, bounds, 100)) return;
       ctx.fillStyle = color;
       ctx.beginPath();
       ps.forEach((p, j) => (j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
@@ -13675,15 +13682,25 @@
     };
     const visible = (q) => {
       const p = screen(q);
-      return (
-        p.x > -150 &&
-        p.x < (ctx.canvas?.width || 10000) + 150 &&
-        p.y > -150 &&
-        p.y < (ctx.canvas?.height || 10000) + 150
-      );
+      return p.x > -150 && p.x < bounds.width + 150 && p.y > -150 && p.y < bounds.height + 150;
     };
     const strip = (kind, x1, x2, y1, y2) => {
       if (y2 <= y1) return;
+      // Skip channels fully outside the viewport before expanding their paths.
+      if (
+        viewport &&
+        outsideScreen(
+          [
+            { x: x1 - 10, y: y1 },
+            { x: x2 + 10, y: y1 },
+            { x: x1 - 10, y: y2 },
+            { x: x2 + 10, y: y2 },
+          ].map(screen),
+          bounds,
+          180,
+        )
+      )
+        return;
       const water = kind === 'water',
         lava = kind === 'lava',
         cliff = kind === 'cliff',
@@ -13809,12 +13826,7 @@
           radius = 190 + (seed % 95),
           rx = radius * 0.76 * Math.SQRT2,
           ry = radius * 0.27 * Math.SQRT2;
-        if (
-          q.x + rx < 0 ||
-          q.x - rx > (ctx.canvas?.width || 10000) ||
-          q.y + ry < 0 ||
-          q.y - ry > (ctx.canvas?.height || 10000)
-        )
+        if (q.x + rx < 0 || q.x - rx > bounds.width || q.y + ry < 0 || q.y - ry > bounds.height)
           continue;
         ctx.save();
         ctx.translate(q.x, q.y);
@@ -13872,6 +13884,18 @@
     for (const p of R.terrain[region]) {
       const kind = p.kind || 'cliff';
       if (p.r) {
+        if (viewport) {
+          const q = screen(p),
+            rx = p.r * 0.76 * Math.SQRT2 + 24,
+            ry = p.r * 0.27 * Math.SQRT2 + 24;
+          if (
+            q.x + rx < -160 ||
+            q.x - rx > bounds.width + 160 ||
+            q.y + ry < -160 ||
+            q.y - ry > bounds.height + 160
+          )
+            continue;
+        }
         const circle = (r) =>
             Array.from({ length: 48 }, (_, n) => {
               const a = (n * Math.PI) / 24;
@@ -13931,7 +13955,7 @@
     }
     ctx.restore();
   }
-  function bridges(ctx, screen, region = 0, materials = null) {
+  function bridges(ctx, screen, region = 0, materials = null, viewport = null) {
     const {
         bounds: [x1, x2],
         gaps,
@@ -13961,6 +13985,20 @@
     };
     ctx.save();
     for (const [lo, hi] of gaps) {
+      if (
+        viewport &&
+        outsideScreen(
+          [
+            { x: x1 - 30, y: lo - 24 },
+            { x: x2 + 30, y: lo - 24 },
+            { x: x1 - 30, y: hi + 24 },
+            { x: x2 + 30, y: hi + 24 },
+          ].map(screen),
+          viewport,
+          160,
+        )
+      )
+        continue;
       polygon(
         [
           { x: x1 - 24, y: lo - 8 },
@@ -14384,7 +14422,7 @@
     }
     return commands;
   }
-  function roads(ctx, paths, screen, region = 0, materials = null) {
+  function roads(ctx, paths, screen, region = 0, materials = null, viewport = null) {
     const barrier = R.barriers[region];
     let commands;
     if (roadCacheMatches(paths, region, barrier)) commands = roadCache.commands;
@@ -14416,10 +14454,11 @@
     ctx.lineCap = 'round';
     for (const command of commands) {
       if (command.points) {
+        const projected = command.points.map(screen);
+        if (viewport && outsideScreen(projected, viewport, 160)) continue;
         ctx.fillStyle = command.color;
         ctx.beginPath();
-        command.points.forEach((q, j) => {
-          const p = screen(q);
+        projected.forEach((p, j) => {
           j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
         });
         ctx.closePath();
@@ -14428,6 +14467,7 @@
       } else {
         const a = screen(command.a),
           b = screen(command.b);
+        if (viewport && outsideScreen([a, b], viewport, 160)) continue;
         ctx.strokeStyle = command.color;
         ctx.lineWidth = command.width;
         ctx.beginPath();
