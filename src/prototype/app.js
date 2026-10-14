@@ -662,7 +662,10 @@
     const done = Campaign.dungeonIds.filter((id) => game.s.true[id]).length;
     openMenu(
       'Awakening · Final objective',
-      'The TRUE Dark Lord is gone forever. Defeat every remaining TRUE dungeon guardian to end the war.\n\nProgress: ' +
+      (game.s.throneClaimed
+        ? 'Secure the remaining TRUE guardians, then Rest to finish the reign.'
+        : 'Claim the Throne at Dark Crown’s fortress courtyard first. Earlier TRUE victories already count.') +
+        '\n\nProgress: ' +
         done +
         '/5 TRUE guardians defeated.',
       awakeningChecklist().map((x) => action(x.label, () => {}, x.detail, true)),
@@ -678,7 +681,7 @@
     const done = Campaign.dungeonIds.filter((id) => game.s.true[id]).length;
     openMenu(
       'The Dungeons Awaken',
-      'The TRUE Dark Lord has fallen and will not return. His defeat has awakened the remaining TRUE guardians of the five great dungeons. Defeat every remaining TRUE dungeon guardian to end the war. Previously defeated TRUE guardians remain defeated.\n\nProgress: ' +
+      'The TRUE Dark Lord has fallen. Claim the Throne at the fortress courtyard in Dark Crown before taking power. Already-earned TRUE dungeon victories remain credited; only the others need defeating.\n\nProgress: ' +
         done +
         '/5 defeated.',
       [
@@ -1032,6 +1035,7 @@
         'cage',
         'bundle',
         'landmark',
+        'throne',
         'patrol-report',
         'dungeon',
         'exit',
@@ -2286,8 +2290,10 @@
         ([id, p]) => p.kind === 'field' && p.zone === game.zoneId && !game.s.true[id],
       );
     $('objective').textContent = game.peace
-      ? 'Peace for everyone. Explore the creatures’ new homes.'
-      : liveFieldTrue
+      ? 'PEACE · Rest at a refuge, preparation fountain or completed Barracks.'
+      : game.s.phase === 'awakening' && !game.s.throneClaimed
+        ? 'DARK CROWN · Claim the Throne · Fortress courtyard, near (3250, 3090) · Map: Z'
+        : liveFieldTrue
         ? 'TRUE BOSS · ' +
           liveFieldTrue.name +
           ' is roaming ' +
