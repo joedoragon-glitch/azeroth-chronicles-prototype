@@ -3921,6 +3921,9 @@
       warlord: { normalCap: 4, trueCap: 8, minions: 6, captains: 2 },
       cindermaw: { normalCap: 6, trueCap: 8, minions: 6, captains: 2 },
       crypt: { normalCap: 12, trueCap: 6, minions: 4, captains: 2 },
+      // Dark Lord's Royal Muster is larger than the generic field-boss cap.
+      // TRUE retains its previously approved six defender slots.
+      darklord: { normalCap: 4, trueCap: 6 },
     },
   };
   const greenwoodPassives = {
