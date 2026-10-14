@@ -34,11 +34,11 @@ const withoutApprovedScenery = (value) => {
 };
 const live = (c) => withoutApprovedScenery({ ...c, snapshot: c.snapshot() });
 // Intentional boss/world changes are covered by the mechanics and migration suites.
-// Compare original simulation on the unchanged Mine generic-combat fixture only.
+// Compare original simulation on the unchanged Citadel generic-combat fixture only.
 // Keep every active-zone actor, state field, event and serialized value exact.
 const simulation = (c) => {
   const copy = live(c);
-  for (const state of [copy.s, copy.snapshot]) state.zones = { mine: state.zones.mine };
+  for (const state of [copy.s, copy.snapshot]) state.zones = { citadel: state.zones.citadel };
   return copy;
 };
 const persistentHistory = (c) =>
@@ -74,7 +74,7 @@ const hash = (x) =>
 const evidence = {
   baseline: 'c6ce1af236bddd7ca881903499c4cf5de175f9e2',
   scope:
-    'Original simulation on unchanged generic Mine encounter; persistent historical contracts; old/new renderer with identical approved current content in every region. Authored mechanics have dedicated suites.',
+    'Original simulation on unchanged generic Citadel encounter; persistent historical contracts; old/new renderer with identical approved current content in every region. Authored mechanics have dedicated suites.',
   scenarios: [],
   historical: [],
   scenes: [],
@@ -88,7 +88,7 @@ for (const mode of ['normal', 'nightmare'])
         assert.deepEqual(simulation(b), simulation(a), `${mode}/${cls}/${succession}/${label}`);
       assert.deepEqual(persistentHistory(b), persistentHistory(a), 'fresh persistent contract');
       for (const c of [a, b]) {
-        c.enter('mine');
+        c.enter('citadel');
         c.s.mercyTime = 0;
         c.hero.skills = Array(8).fill(1);
         c.hero.hp = c.hero.maxHp = 100000;

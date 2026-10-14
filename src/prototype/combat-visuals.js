@@ -188,7 +188,9 @@
     }
     // Garun's projected works are passable plans; completed supports block travel.
     // These cues follow the actual props, not an invented damage footprint.
-    for (const prop of game.zone().props.filter((p) => p.garunPreview || p.garunTemporary)) {
+    for (const prop of (game.zone().props || []).filter(
+      (p) => p.garunPreview || p.garunTemporary,
+    )) {
       const solid = !!prop.garunTemporary;
       circlePath(ctx, screen, prop, solid ? Math.max(24, prop.r || 0) : 28);
       ctx.strokeStyle = solid ? '#e8b77b' : '#8bd9e4';

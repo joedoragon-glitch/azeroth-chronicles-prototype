@@ -9,7 +9,9 @@
   "context": {
     "decisionSummary": "#293/#298 preserve #253 \u2192 #264 \u2192 #279 seven exact engineering actions and loyal council architect biography.",
     "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/300",
-    "contentDocuments": ["docs/DIRECTOR_WORLD_BUILDING_SNAPSHOT_CANON_LOCK_20261012.md"],
+    "contentDocuments": [
+      "docs/DIRECTOR_WORLD_BUILDING_SNAPSHOT_CANON_LOCK_20261012.md"
+    ],
     "locationAndLore": "Colossus Mine; same Stone Colossus/Garun and Dara identity."
   },
   "decisions": {
@@ -45,7 +47,7 @@
       },
       {
         "path": "src/prototype/combat-visuals.js",
-        "sha256": "34b1f0d374e463f8d6da9158ded10a3931106834f013c51895a8d148c3b97566"
+        "sha256": "5d5aaba1e61b73772843ddbd9ac2cd15f7e41d48c1f1fc9eb25eb8421a8c5a19"
       },
       {
         "path": "src/prototype/rules.js",
@@ -76,7 +78,11 @@
     }
   ],
   "compatibility": {
-    "stableIDs": ["mine", "cage-mine", "service-mine"],
+    "stableIDs": [
+      "mine",
+      "cage-mine",
+      "service-mine"
+    ],
     "guardCount": 18,
     "trapCount": 18,
     "newSprites": false,
