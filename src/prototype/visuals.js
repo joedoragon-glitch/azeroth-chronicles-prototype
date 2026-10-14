@@ -11885,6 +11885,25 @@
         '#d0b079',
         3,
       );
+    } else if (e.kind === 'appointment') {
+      // Inhabited-dungeon command dais, visually separate from the boss altar.
+      oval(0, 11, 23, 8, '#7d7280');
+      rect(-16, -22, 32, 32, '#59516b');
+      rect(-19, -26, 38, 7, '#bca26f');
+      poly([[-9, -28], [-12, -37], [0, -46], [12, -37], [9, -28]], '#d8bd7d');
+      poly([[0, -37], [5, -31], [0, -25], [-5, -31]], '#b58cc2');
+    } else if (e.kind === 'dungeon-master') {
+      // A real named peaceful resident with identifiable military/field/
+      // specialist regalia. No hostile body or combat AI is spawned.
+      const mantle = e.masterGroup === 'captain'
+        ? '#626c76'
+        : e.masterGroup === 'field' ? '#6b5565' : '#57786c';
+      poly([[-13, -22], [-21, 9], [0, 12], [21, 9], [13, -22]], mantle);
+      humanoid('#a18a7d', '#b9b09d', 1);
+      poly([[-10, -18], [0, -24], [10, -18], [8, -5], [-8, -5]], mantle);
+      poly([[0, -16], [5, -11], [0, -6], [-5, -11]], '#dfbd76');
+      line([[-12, -40], [0, -45], [12, -40]], '#dcc58b', 2.3);
+      oval(0, -11, 2, 2, '#d8b4d7');
     } else if (e.kind === 'throne') {
       // Real interactable court furniture, distinctly different from an Ash
       // Citadel decoration; no collision, hitbox or new quest infrastructure.
