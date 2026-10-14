@@ -77,6 +77,7 @@
         endingAck: false,
         awakeningAck: false,
         throneClaimed: false,
+        finalRestCompleted: false,
         expeditionRank: 1,
         expeditionSkills: { sharedTraining: 0, sharedStrength: 0 },
         expeditionSupportVersion: 2,
@@ -1233,6 +1234,30 @@
         )
       );
     }
+    completeFinalRest(source, site) {
+      if (!this.peace || !this.s.throneClaimed || this.s.finalRestCompleted) return false;
+      if (
+        source === 'barracks' &&
+        !this.zone().buildings.some(
+          (b) => b.id === site?.id && b.kind === 'barracks' &&
+            b.progress >= 4 && dist(b, this.hero) <= 115,
+        )
+      ) return false;
+      if (!['refuge', 'fountain', 'barracks'].includes(source)) return false;
+      this.clearTonic();
+      this.hero.supportEffects = [];
+      this.hero.hp = this.hero.maxHp;
+      if (R.resourceMode.manaEnabled) this.hero.mp = this.hero.maxMp;
+      for (const u of this.activeParty()) if (u.hp > 0) {
+        u.hp = u.maxHp;
+        u.supportEffects = [];
+      }
+      this.s.finalRestCompleted = true;
+      this.notice('THE JOURNEY IS COMPLETE · CREDITS', 7);
+      this.say('At last, you can rest. The Crown is yours, and the war is over.');
+      this.event('finalRest', { source });
+      return true;
+    }
     rest() {
       const site = this.zone()
         .npcs.filter(
@@ -1248,7 +1273,7 @@
         this.say('Cannot rest while nearby enemies are engaged. Retreat and end the fight first.');
         return false;
       }
-      if (this.s.restCooldown > 0) {
+      if (this.s.restCooldown > 0 && !this.peace) {
         this.say('Refuge restoration ready in ' + Math.ceil(this.s.restCooldown) + ' seconds.');
         return false;
       }
@@ -1267,6 +1292,7 @@
         'Rested at the refuge. Hero and all living companions restored. Fallen companions require recovery through the Captain or a barracks.',
       );
       this.event('rest');
+      if (this.peace && !this.s.finalRestCompleted) this.completeFinalRest('refuge', site);
       return true;
     }
 
@@ -1843,6 +1869,8 @@
           if (npc.sideDungeon) this.discover(npc.id);
           return this.enter(npc.family);
         case 'fountain':
+          // Post-coronation Rest works even at a fountain consumed long ago.
+          if (this.peace) return this.completeFinalRest('fountain', npc) || this.s.finalRestCompleted;
           if (this.refugeThreat()) {
             this.say('Cannot use the preparation fountain during nearby combat.');
             return false;
@@ -2429,6 +2457,7 @@
         if (this.peace) return;
         this.s.phase = 'peace';
         this.s.endingAck = false;
+        this.s.finalRestCompleted = false;
         this.s.streak = { key: null, count: 0 };
         this.s.pending = {};
         this.s.projectiles = [];
