@@ -40,8 +40,9 @@
       this.basicComboClass = heroClass;
       this.basicComboTargetId = null;
       // Non-persistent test telemetry must not alter ordinary campaign state.
-      if (mode === 'developer')
+      if (mode === 'developer') {
         this.developerCombat = { incoming: [], outgoing: [], startedAt: 0 };
+      }
       this.s = {
         version: 4,
         mode,
