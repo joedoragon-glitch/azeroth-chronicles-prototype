@@ -10,6 +10,14 @@ runs:
     - name: Install locked development tools
       shell: bash
       run: npm ci --ignore-scripts
+    - name: Capture exact Prettier corrections for snapshot recovery (deliberately fail this diagnostic run)
+      shell: bash
+      run: |
+        npx prettier --write src/prototype/boss-combat.js src/prototype/combat-visuals.js src/prototype/engine.js src/prototype/save.js
+        echo 'VEYRA_FORMAT_PATCH_BEGIN'
+        git --no-pager diff --no-color -- src/prototype/boss-combat.js src/prototype/combat-visuals.js src/prototype/engine.js src/prototype/save.js
+        echo 'VEYRA_FORMAT_PATCH_END'
+        exit 1
     - name: Check formatting
       shell: bash
       run: npm run format:check
