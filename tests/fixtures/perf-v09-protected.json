@@ -145,7 +145,7 @@
     }
   },
   "approvedSnapshotAviationRevision": {
-    "source": "#298/#291 Loyal Air Marshal and seven real aviation moves, selective #254→#283 with shared fatal boundary preservation",
+    "source": "#298/#291 Loyal Air Marshal and seven real aviation moves, selective #254\u2192#283 with shared fatal boundary preservation",
     "files": {
       "src/prototype/boss-combat.js": "2ab3ba3e6306704a6dd61f905370017bed003e28d792050eadb92a2d05581339",
       "src/prototype/data.js": "a93a08064902df010013fd48fc9ed063bbfc2640698d4c05b895d7b996aa451b",
@@ -174,6 +174,12 @@
     "source": "Director #298 and #288; local scheduling follow-up: refuse already casting/moving native responders, preserving their original warnings/motion. Previous support hashes retained.",
     "files": {
       "src/prototype/engine.js": "86f5192d875b29eac4803b1709d8092326ed31efafbb80b596b5f6f050ddc310"
+    }
+  },
+  "approvedSnapshotCinderRallyRetentionRevision": {
+    "source": "Director #298 and #288: preserve original1.9s rally and.5sreadiness for the same joined natives on repeated Roar; original source pins retained.",
+    "files": {
+      "src/prototype/engine.js": "5243a19a8b49f0c39aa22af237b09be1eede707b75fd6005038d8e5d6d96ad5a"
     }
   }
 }

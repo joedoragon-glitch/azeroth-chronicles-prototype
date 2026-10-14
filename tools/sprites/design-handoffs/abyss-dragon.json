@@ -3,19 +3,19 @@
   "templateOnly": false,
   "status": "procedural-design",
   "designId": "abyss-dragon",
-  "name": "Abyss Dragon \u2014 Veyrith",
+  "name": "Abyss Dragon — Veyrith",
   "kind": "boss",
-  "nextAction": "Finish full121 Node run and exact hosted flight probes; native375/1280 actual warning and midflight images were inspected. No physical-device or director appearance acceptance.",
+  "nextAction": "Dev.17 full aviation/source browser gate passed; preserve existing purple personal-mount design. Continue the combined snapshot; no new sprites or physical-device/director appearance acceptance.",
   "context": {
     "originConversation": null,
-    "decisionSummary": "Latest #298/#291 locks Veyrith, Loyal Air Marshal: proud, disciplined and loyal; organized aerial patrols and military superiority secure lasting peace. Selective #254\u2192#283 real aviation implementation retained.",
+    "decisionSummary": "Latest #298/#291 locks Veyrith, Loyal Air Marshal: proud, disciplined and loyal; organized aerial patrols and military superiority secure lasting peace. Selective #254→#283 real aviation implementation retained.",
     "decisionDate": "2026-10-12",
     "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/243",
     "contentDocuments": [
       "docs/ABYSS_AIR_SUPERIORITY_CANON.md",
       "docs/DIRECTOR_WORLD_BUILDING_SNAPSHOT_CANON_LOCK_20261012.md"
     ],
-    "locationAndLore": "Dark Lord\u2019s purple personal mount and Loyal Air Marshal; existing Abyss Bastion royal aerie/hatchery/unfinished launch platform. Royal air program remains incomplete."
+    "locationAndLore": "Dark Lord’s purple personal mount and Loyal Air Marshal; existing Abyss Bastion royal aerie/hatchery/unfinished launch platform. Royal air program remains incomplete."
   },
   "decisions": {
     "conceptAcceptance": "Owner-approved latest #298 11B supersedes older pathfinder/extraction/safety-permit psychology.",
@@ -35,7 +35,10 @@
       "zone": "abyss",
       "family": "abyss",
       "type": "boss",
-      "forms": ["normal", "true"],
+      "forms": [
+        "normal",
+        "true"
+      ],
       "publicName": "Abyss Dragon",
       "proposedPersonalName": "Veyrith"
     },
@@ -45,7 +48,9 @@
       "tools/sprites/design-handoffs/references/aviation/warning-1280.png",
       "tools/sprites/design-handoffs/references/aviation/warning-375.png",
       "tools/sprites/design-handoffs/references/aviation/flight-375.png",
-      "tools/sprites/design-handoffs/references/aviation/flight-1280.png"
+      "tools/sprites/design-handoffs/references/aviation/flight-1280.png",
+      "tools/sprites/design-handoffs/references/aviation/browser-warning-375.png",
+      "tools/sprites/design-handoffs/references/aviation/browser-flight-375.png"
     ],
     "traitsToPreserve": [
       "Existing approved purple-dragon silhouette and size",
@@ -77,7 +82,9 @@
     "catalogIds": [],
     "verifiedRuntimeKeys": [],
     "requiredVisibleAssets": [],
-    "reusedDesignIds": ["Existing Abyss Dragon normal/TRUE procedural depiction"],
+    "reusedDesignIds": [
+      "Existing Abyss Dragon normal/TRUE procedural depiction"
+    ],
     "variantRequirements": [],
     "proceduralOwnersAndReasons": [
       "Current visuals.js and combat-visuals.js remain authoritative; no render changes requested."
@@ -85,7 +92,11 @@
   },
   "animationRequirements": {
     "status": "undecided",
-    "gameplayStates": ["Normal", "TRUE", "Awakening"],
+    "gameplayStates": [
+      "Normal",
+      "TRUE",
+      "Awakening"
+    ],
     "directions": [],
     "pivotContract": null,
     "staticFallbackKey": null,
@@ -116,6 +127,33 @@
     {
       "path": "tools/sprites/design-handoffs/references/aviation/flight-1280.png",
       "sha256": "1c9147b916f6580c8729fd8105913af818f766075a0871ce2985d1cad900d43f"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/aviation/browser-warning-375.png",
+      "sha256": "a4b08bb7119a5efc77c4a6b3a1d7e7fb1c24ba6155db41bac8fe750d2ec33ed5"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/aviation/browser-flight-375.png",
+      "sha256": "77a9f6ac5b228191197cbdb518d16a69c80ef08e686490a6bd93200956f7ac70"
     }
-  ]
+  ],
+  "browserEvidence": {
+    "sourceCommit": "7cdd7104bafe87059f41f6c6e164b09cfa0eccbd",
+    "sourceTree": "5408e6862c74cf671a6c4c387b9f2ab73f706273",
+    "runId": 38496624150,
+    "artifactId": 11863934884,
+    "profile": "actual WebKit375x800 phone presentation; controlled high-health/immune fixture, not physical device or full campaign acceptance",
+    "inspected": true,
+    "files": [
+      {
+        "path": "tools/sprites/design-handoffs/references/aviation/browser-warning-375.png",
+        "sha256": "a4b08bb7119a5efc77c4a6b3a1d7e7fb1c24ba6155db41bac8fe750d2ec33ed5"
+      },
+      {
+        "path": "tools/sprites/design-handoffs/references/aviation/browser-flight-375.png",
+        "sha256": "77a9f6ac5b228191197cbdb518d16a69c80ef08e686490a6bd93200956f7ac70"
+      }
+    ],
+    "limits": "Readable anonymous/LazyEight warnings and real movements. Cindermaw arrival fixture shows dense garrison/arrival labels; assess with upcoming ministerial patrol and final playable review. No director appearance acceptance."
+  }
 }

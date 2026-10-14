@@ -311,3 +311,17 @@ Correction to the runner diagnosis: the dev.16/dev.17 full logs DID contain thre
 
 
 Staffing expectation correction verification: all111Prototype scenarios now PASS (previous108successful scenarios plus the three repaired explicit Cindermaw assertions). Runtime remains unchanged at dev.17. Initial85suites on this exact runtime passed before Prototype; remaining36suites resume from pursuit-burst with per-file failure reporting. Exact current runtime equivalence also passes2880frames/6historical/40renders. No unchanged successful prefix is replayed solely because the last suite failed. The final hosted candidate remains required; local/browser/manual states are kept separate.
+
+
+## Combined dev.17 certification and retention follow-up
+
+Head7cdd7104bafe87059f41f6c6e164b09cfa0eccbd/tree5408e6862c74cf671a6c4c387b9f2ab73f706273 passed full hosted38496624150: all Node/Chromium, full phoneWebKit and clean package/exact-tree certification. The artifact11865040443 confirms that same tree (CI checkout synthetic merge f390197b; no real main merge occurred). Deployment/main-test were skipped. Local all122suites, corrected111Prototype, focused support/fatal/scheduler,2880frames/6historical/40renders also pass. This supersedes all dev.17 pending/failing notes for that exact source only.
+
+Current dev.18 preserves a missed secondary legacy behavior: after six native units arrive, a repeated Roar must refresh their original1.9s readiness/pursuit rally and bound cooldown to.5. A probe reproduced burst0/cooldown2 on the prior source. Added a local same-six joined response refresh, preserving their current warning/motion and cap; arrival now reads the actual authored rally duration rather than duplicating1.9in engine code. New four-mode/form repeated-rally assertions accompany the fix; the new source needs focused/full validation. No change to Dreadmaw or global Rogue radius.
+
+Bounded retired-Crypt audit: all30published baseline6f8089b2furnishing tuples remain in current Crypt40tuples, with all17original structures actually present in a fresh dungeon. No retired candidate is established by that transition; historical unused art outside the inspected transition remains an evidence gap. No active Crypt art is removed/relabeled; no manufactured salvage display or changed two Treasury cache IDs. Choice17Ais an explicit provenance gap, not a silently omitted feature.
+
+Next: validate/preserve dev.18 and actual hosted375px captures, then continue Cindermaw seven regular moves and guarded variable Vera/mobile forge/real defense repair, Dreadmaw, Veyra/DarkLord/remaining regions/finale/final independent audit. Full45+customscope intact. Explicit sixth reveal remains OPEN; physical-device/director manual acceptance absent. No merge/deploy/release/tag/forum action.
+
+
+Dev.17 actual375px WebKit preparation/arrival and warning/flight captures are now retained with SHA256in Cindermaw/Veyrith handoffs. Raw exact-tree certificate is preserved in docs/evidence/SNAPSHOT_RUNTIME_7CDD_20261013.json. Source inspection distinguishes readable cues from dense roost label crowding in the held fixture; no physical-device or director appearance acceptance inferred. Dev.18 focused repeat-rally/busy-native/all4forms/24fatal tests pass, pending full current gates.

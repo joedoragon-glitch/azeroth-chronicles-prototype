@@ -4,7 +4,7 @@
   "designId": "cindermaw",
   "name": "Cindermaw — ministerial support",
   "kind": "boss",
-  "nextAction": "Complete combined support gates; next implement seven regular ministry moves and variable guarded Vera mobile forge/repair. New sprite production remains excluded.",
+  "nextAction": "Validate retained-rally dev.18 combined source, then continue seven ministerial moves and guarded variable Vera/forge/defense repair; remaining full snapshot and independent playable audit retained.",
   "context": {
     "originConversation": null,
     "decisionSummary": "Director #298/#288:1200-unit cover-sensitive anonymous Broodscreen; six ordinary native responders physically navigate independently of6Normal/8TRUEmagical staff. Existing boss body/workstation art retained.",
@@ -41,7 +41,9 @@
       "tools/sprites/design-handoffs/references/cinder-support/arrivals-1280.png",
       "tools/sprites/design-handoffs/references/cinder-support/arrivals-375.png",
       "tools/sprites/design-handoffs/references/cinder-support/warning-1280.png",
-      "tools/sprites/design-handoffs/references/cinder-support/warning-375.png"
+      "tools/sprites/design-handoffs/references/cinder-support/warning-375.png",
+      "tools/sprites/design-handoffs/references/cinder-support/browser-anonymous-375.png",
+      "tools/sprites/design-handoffs/references/cinder-support/browser-native-arrivals-375.png"
     ],
     "traitsToPreserve": [
       "Existing Cindermaw body, size, field-boss identity and7000HP",
@@ -95,6 +97,33 @@
     {
       "path": "tools/sprites/design-handoffs/references/cinder-support/warning-375.png",
       "sha256": "7fb78e05aeab1f508db2789f8f0f266d8ca5330d3d0aa44b313850651acff51f"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-support/browser-anonymous-375.png",
+      "sha256": "59f5394d080155f8ace4eec57ede4143103c31093ed2d5d0fbf84f08b27c75bd"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-support/browser-native-arrivals-375.png",
+      "sha256": "b10d4970dcd5d02d2a27b1fd1c38b57cc66a9b6b8673af3f9811dc03f02e1e14"
     }
-  ]
+  ],
+  "browserEvidence": {
+    "sourceCommit": "7cdd7104bafe87059f41f6c6e164b09cfa0eccbd",
+    "sourceTree": "5408e6862c74cf671a6c4c387b9f2ab73f706273",
+    "runId": 38496624150,
+    "artifactId": 11863934884,
+    "profile": "actual WebKit375x800 phone presentation; controlled high-health/immune fixture, not physical device or full campaign acceptance",
+    "inspected": true,
+    "files": [
+      {
+        "path": "tools/sprites/design-handoffs/references/cinder-support/browser-anonymous-375.png",
+        "sha256": "59f5394d080155f8ace4eec57ede4143103c31093ed2d5d0fbf84f08b27c75bd"
+      },
+      {
+        "path": "tools/sprites/design-handoffs/references/cinder-support/browser-native-arrivals-375.png",
+        "sha256": "b10d4970dcd5d02d2a27b1fd1c38b57cc66a9b6b8673af3f9811dc03f02e1e14"
+      }
+    ],
+    "limits": "Readable anonymous/LazyEight warnings and real movements. Cindermaw arrival fixture shows dense garrison/arrival labels; assess with upcoming ministerial patrol and final playable review. No director appearance acceptance."
+  }
 }

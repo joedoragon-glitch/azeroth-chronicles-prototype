@@ -96,6 +96,18 @@ for (const mode of ['normal', 'nightmare'])
       if (joined === 6) break;
     }
     assert.equal(joined, 6, 'all six distant existing native responders really arrive');
+    for (const id of admitted) {
+      const u = c.zone().enemies.find((u) => u.id === id);
+      u.cd = 2;
+      u.pursuitBurst = 0;
+    }
+    c.cinderNativeResponse(e, a);
+    for (const id of admitted) {
+      const u = c.zone().enemies.find((u) => u.id === id);
+      assert.equal(u.pursuitBurst, 1.9, 'repeat Roar preserves the original native rally duration');
+      assert.equal(u.cd, 0.5, 'repeat Roar preserves the original readiness bound');
+    }
+
     const save = c.snapshot(),
       restored = C.restore(save, () => 0.9);
     assert(!JSON.stringify(save).includes('CinderResponses'), 'response orders are not serialized');

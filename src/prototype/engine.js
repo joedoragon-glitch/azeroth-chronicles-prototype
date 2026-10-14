@@ -3651,6 +3651,7 @@
           zone: this.zoneId,
           joined: false,
           remaining: cfg.travelSeconds,
+          rallySeconds: move.rallySeconds,
           stalled: 0,
         });
         u.path = [];
@@ -3659,6 +3660,16 @@
       }
       if (recruited)
         this.event('rogueSupport', { actor: e.id, allies: recruited, existingSpawns: true });
+      // Arrival does not replace the retained Broodscreen rally. A later
+      // roar refreshes the original readiness burst for the same joined six,
+      // without redirecting a busy unit or interrupting its current warning.
+      for (const [id, response] of this._tacticalCinderResponses) {
+        if (response.owner !== e.id || !response.joined || response.zone !== this.zoneId) continue;
+        const u = z.enemies.find((unit) => unit.id === id);
+        if (!u || u.hp <= 0 || u.neutral || u.returning || dist(u, e) > cfg.radius) continue;
+        u.pursuitBurst = Math.max(u.pursuitBurst || 0, move.rallySeconds);
+        u.cd = Math.min(u.cd || 0, 0.5);
+      }
       // Magical personnel retain independent ownership and cannot use up any
       // of the six ordinary response places.
       for (const u of this.bossOwnedSummons(e))
@@ -3702,7 +3713,7 @@
         u.path = [];
         u.routeAge = 0;
         this.engage(u, true, false);
-        u.pursuitBurst = Math.max(u.pursuitBurst || 0, 1.9);
+        u.pursuitBurst = Math.max(u.pursuitBurst || 0, state.rallySeconds);
         return false;
       }
       state.remaining -= dt;
