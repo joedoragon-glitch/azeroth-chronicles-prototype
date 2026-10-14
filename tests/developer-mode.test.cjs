@@ -31,6 +31,11 @@ assert.equal(summoned.neutral, false);
 assert.equal(summoned.aggro, true);
 assert.equal(summoned.developerSummon, true);
 assert.equal(summoned.summon, true);
+assert.equal(summoned.summonBalanceVersion, 1, 'native boss stats are not re-scaled as a minion');
+assert.equal(summoned.baseHp, dev.boss('thorn').hp * 1.8, 'TRUE boss retains production HP');
+const hpBeforeZoneRead = summoned.baseHp;
+dev.zone();
+assert.equal(summoned.baseHp, hpBeforeZoneRead, 'zone refresh cannot multiply test boss HP');
 dev.damage(summoned, 25, 'hero');
 assert(dev.developerCombatSnapshot().outgoing.last.length > 0);
 const kills = dev.s.statistics.kills;
@@ -43,7 +48,38 @@ const captain = dev.developerSummon('captain:supply-vale');
 assert(captain && captain.captain && captain.roomCaptain);
 assert.equal(captain.captainProfile, 'supply-vale');
 assert.equal(captain.aggro, true);
-assert(Campaign.restore(dev.snapshot()).s.mode === 'developer');
+assert(captain.guard && captain.roomGuard && !captain.fieldCaptain);
+assert.equal(captain.baseHp, Math.round(65 * 2 * Campaign.rules.guardianScaling[0].hp));
+const saved = dev.snapshot();
+assert(!saved.zones.vale.enemies.some((e) => e.developerSummon), 'test bosses/captains excluded from saves');
+assert(!saved.zones.vale.enemies.some((e) => e.owner === summoned.id), 'test adds excluded from saves');
+assert(Campaign.restore(saved).s.mode === 'developer');
+
+dev.enter('frontier');
+const originalOverseer = dev.zone().enemies.find((e) => e.fieldCaptain);
+assert(originalOverseer, 'native Frontier overseer exists for comparison');
+const overseer = dev.developerSummon('captain:frontier-overseer');
+assert(overseer && overseer.fieldCaptain && !overseer.roomCaptain);
+assert.equal(overseer.baseHp, originalOverseer.baseHp, 'overseer inherits native HP');
+assert.equal(overseer.baseDamage, originalOverseer.baseDamage, 'overseer inherits native damage');
+assert.equal(overseer.captainProfile, originalOverseer.captainProfile);
+assert.equal(overseer.aggro, true);
+assert.equal(overseer.summonBalanceVersion, 1);
+
+for (const region of Campaign.data.regions) {
+  dev.enter(region.id);
+  const options = dev.developerSummonOptions();
+  const bosses = Campaign.data.bosses.filter((b) => b.region === region.id);
+  for (const boss of bosses) {
+    for (const form of ['normal', 'true']) {
+      assert(options.some((entry) => entry.id === 'boss:' + boss.id + ':' + form),
+        region.name + ': ' + boss.name + ' ' + form);
+    }
+  }
+  assert(options.some((entry) => entry.kind === 'captain'), region.name + ' captain listed');
+}
+const t = dev.developerCombatSnapshot();
+assert(t && Array.isArray(t.incoming.last) && Array.isArray(t.outgoing.last));
 
 const store = new Map();
 const storage = {

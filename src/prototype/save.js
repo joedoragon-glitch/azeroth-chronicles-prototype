@@ -23,7 +23,17 @@
           delete u.path;
           u.order = null;
         });
-        for (const z of Object.values(out.zones))
+        for (const z of Object.values(out.zones)) {
+          if (this.s.mode === 'developer') {
+            // Keep test encounters ephemeral: no replayed bosses, persistent
+            // summons or saved combat debris in the underlying campaign.
+            const summoned = new Set(
+              z.enemies.filter((e) => e.developerSummon).map((e) => e.id),
+            );
+            z.enemies = z.enemies.filter(
+              (e) => !e.developerSummon && !(e.summon && summoned.has(e.owner)),
+            );
+          }
           for (const e of z.enemies) {
             e.telegraph = null;
             e.motion = null;
@@ -43,6 +53,7 @@
               e.mercyProvoked = false;
             }
           }
+        }
         return out;
       }
       static validate(data) {

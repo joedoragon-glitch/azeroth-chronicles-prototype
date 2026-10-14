@@ -1139,7 +1139,21 @@
       if (this.s.mode !== 'developer' || this.peace || this.hero.hp <= 0) return null;
       const option = this.developerSummonOptions().find((entry) => entry.id === id);
       if (!option) return null;
-      const p = this.safe(this.hero.x + 175, this.hero.y + 65, this.zoneId);
+      // Choose an unoccupied position so repeated tests do not stack actors.
+      const z = this.zone();
+      const offsets = [
+        [175, 65], [0, 190], [-175, 65], [175, -100],
+        [-175, -100], [0, -190], [255, 145], [-255, 145],
+      ];
+      const placements = offsets.map(([x, y]) =>
+        this.safe(this.hero.x + x, this.hero.y + y, this.zoneId),
+      );
+      const p =
+        placements.find(
+          (candidate) =>
+            dist(candidate, this.hero) >= 85 &&
+            !z.enemies.some((e) => e.hp > 0 && dist(candidate, e) < 85),
+        ) || placements[0];
       let enemy;
       if (option.kind === 'boss') {
         enemy = this.bossEnemy(this.boss(option.boss), option.form, p);
@@ -1147,38 +1161,63 @@
         const profile = R.roomCaptains[option.profile];
         const region = this.regionIndex();
         const species = D.species[region][0];
-        const original = this.s.zones[option.profile]?.enemies.find((e) => e.roomCaptain);
+        const field = option.profile === 'frontier-overseer';
+        const original = field
+          ? z.enemies.find((e) => e.fieldCaptain && e.captainProfile === option.profile)
+          : this.s.zones[option.profile]?.enemies.find((e) => e.roomCaptain);
+        // Match the production spawn formulas even when the treasury has not
+        // yet been visited. Existing originals retain their authored balance.
+        const scaling = field ? R.ordinaryMeleeScaling[region] : R.guardianScaling[region];
         enemy = this.makeEnemy(
           {
             species: original?.species || species[0],
             name: profile.name,
             icon: original?.icon || species[2],
             level: original?.level || region * 3 + 2,
-            hp: original?.baseHp || Math.round((65 + region * 105) * R.guardianScaling[region].hp),
-            damage:
-              original?.baseDamage ||
-              Math.round((7 + region * 8) * R.guardianScaling[region].damage),
+            hp: original?.baseHp ?? Math.round((65 + region * 105) * scaling.hp * 2),
+            damage: original?.baseDamage ?? Math.round((7 + region * 8) * scaling.damage * 1.25),
             gold: 0,
             xp: 0,
           },
           p,
         );
         enemy.captain = true;
-        enemy.roomCaptain = true;
         enemy.captainProfile = option.profile;
         enemy.captainMentor = profile.mentor;
         enemy.captainVisualIdol = profile.visualIdol || profile.mentor;
         enemy.visualScale = profile.visualScale || 1.16;
         enemy.specialCd = 0;
-        enemy.roomCaptainVersion = 1;
+        if (field) {
+          enemy.fieldCaptain = true;
+          enemy.fieldCaptainVersion = 1;
+          enemy.meleeBalanceVersion = 1;
+          enemy.captainPatrolIndex = 0;
+          enemy.captainPatrolWait = 0;
+          enemy.pack = 'frontier-overseer';
+        } else {
+          enemy.roomCaptain = true;
+          enemy.roomGuard = true;
+          enemy.guard = true;
+          enemy.guardianBalanceVersion = 2;
+          enemy.roomCaptainVersion = 1;
+          const formation = R.treasuryGuardFormations?.[option.profile] || [];
+          const captainIndex = formation.findIndex((slot) => slot.captain);
+          const slot = formation[captainIndex] || {};
+          enemy.pack = option.profile + '-' + (slot.group || 'guard-' + captainIndex);
+          if (original?.forcedRole || slot.role)
+            enemy.forcedRole = original?.forcedRole || slot.role;
+          this.configureEnemy(enemy, captainIndex < 0 ? 3 : captainIndex);
+        }
       }
       // Test spawns exercise authentic AI and attacks but cannot award campaign progress.
       enemy.developerSummon = true;
       enemy.summon = true;
+      // These are full native bosses/captains, not scaled minion summons.
+      enemy.summonBalanceVersion = 1;
       enemy.neutral = false;
       enemy.home = { ...p };
-      enemy.pack = 'developer-' + enemy.id;
-      this.zone().enemies.push(enemy);
+      if (!enemy.pack) enemy.pack = 'developer-' + enemy.id;
+      z.enemies.push(enemy);
       this.engage(enemy, true);
       this.say('Developer summon: ' + enemy.name + '.');
       return enemy;

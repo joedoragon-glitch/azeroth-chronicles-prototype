@@ -25,8 +25,10 @@ Normal/Nightmare campaign. v4 save compatibility is retained.
 - The Summon button appears near the phone joystick and at the lower desktop
   edge. The selector offers the current region's exclusive bosses in regular
   and TRUE forms, and its supply captain / Frontier overseer.
-- Summons reuse actual boss constructors and captain skill profiles, spawn
-  hostile, and do not award campaign kills, rewards, victories or respawn rights.
+- Summons reuse actual boss constructors, the region's native captain combat
+  profiles and production base stats. They spawn hostile but cannot award
+  campaign kills, rewards, victories or respawn rights. Test actors (including
+  their adds) are deliberately transient and excluded from saved campaigns.
 
 Verify each hero class, five regions, both boss forms, captains, phone and desktop
 controls, normal and lethal hits, Skill 1 across all input paths, other skills,
