@@ -6802,6 +6802,221 @@
               1,
             );
           break;
+        case 'silver-ore-face':
+          // Argentiferous dark ore, deliberately unlike the beige quarry rubble.
+          shade(42, 12, 0.15);
+          poly(
+            [
+              [-37, 13],
+              [-33, -15],
+              [-15, -40],
+              [16, -42],
+              [35, -16],
+              [39, 12],
+            ],
+            '#555f64',
+          );
+          poly(
+            [
+              [-16, -36],
+              [5, -31],
+              [22, -13],
+              [7, 10],
+              [-22, -2],
+            ],
+            '#727c81',
+          );
+          for (const [x, y] of [
+            [-22, -14],
+            [-5, -23],
+            [14, -10],
+            [24, 3],
+            [-8, 4],
+          ]) {
+            rect(x, y, 7, 5, '#aeb8bd');
+            rect(x + 2, y + 1, 3, 2, '#e0e5e5');
+          }
+          line(
+            [
+              [-30, 13],
+              [13, 14],
+            ],
+            '#887b65',
+            3,
+          );
+          break;
+        case 'copper-ore-face':
+          shade(42, 12, 0.15);
+          poly(
+            [
+              [-36, 13],
+              [-29, -29],
+              [-5, -42],
+              [25, -31],
+              [38, 12],
+            ],
+            '#6a625d',
+          );
+          for (const [x, y] of [
+            [-22, -12],
+            [-5, -29],
+            [13, -18],
+            [22, 3],
+          ]) {
+            oval(x, y, 9, 5, '#bd744b');
+            glint(x + 3, y - 2, '#d6a078', 1.4);
+          }
+          for (const [x, y] of [
+            [-14, 6],
+            [9, -2],
+          ])
+            oval(x, y, 6, 3, '#6b927c');
+          break;
+        case 'copper-sort-samples':
+          shade(37, 10, 0.13);
+          rect(-31, -12, 62, 28, '#766d5b');
+          rect(-27, -10, 54, 19, '#514d46');
+          for (const [x, y] of [
+            [-21, -5],
+            [-10, 1],
+            [4, -6],
+            [16, 2],
+          ]) {
+            oval(x, y, 7, 4, '#b9754e');
+            glint(x + 2, y - 2, '#d8a07b', 1.2);
+          }
+          break;
+        case 'silver-refining-hearth':
+          // A compact cupellation/assay station: oxidizing fire, cupel and silver buttons.
+          shade(43, 12, 0.17);
+          rect(-34, -8, 67, 22, '#756f65');
+          rect(-25, -33, 48, 27, '#989083');
+          rect(16, -49, 13, 36, '#6a655e');
+          oval(0, -9, 17, 7, '#443b38');
+          for (const x of [-11, 0, 11])
+            poly(
+              [
+                [x - 5, -8],
+                [x, -23],
+                [x + 5, -8],
+              ],
+              '#c57945',
+            );
+          oval(-24, 3, 10, 5, '#b7aa95');
+          oval(-24, 1, 6, 3, '#d8e0de');
+          for (const x of [10, 20]) {
+            rect(x - 4, 3, 8, 4, '#b7c4c5');
+            line(
+              [
+                [x - 3, 4],
+                [x + 3, 4],
+              ],
+              '#e6e9e5',
+              1,
+            );
+          }
+          oval(-1, 11, 8, 3, '#55524e');
+          break;
+        case 'silver-sort-samples':
+          // An ore-sorter's flat slate pans separate silver-bearing pieces from waste stone.
+          shade(37, 10, 0.13);
+          rect(-31, -12, 62, 28, '#766d5b');
+          rect(-27, -10, 24, 19, '#484f52');
+          for (const [x, y] of [
+            [-22, -5],
+            [-13, 0],
+            [-8, -6],
+            [-19, 5],
+          ]) {
+            rect(x, y, 6, 4, '#a6b8bc');
+            glint(x + 3, y, '#dce5e4', 1);
+          }
+          for (const [x, y] of [
+            [7, -4],
+            [16, 2],
+            [24, -5],
+          ])
+            oval(x, y, 5, 4, '#948876');
+          line(
+            [
+              [-31, 14],
+              [31, 14],
+            ],
+            localWood,
+            3,
+          );
+          break;
+        case 'silver-die-tray':
+          // A readable issue of Crown pieces next to the approved striking-bench sprite.
+          shade(40, 10, 0.14);
+          rect(-32, -10, 64, 25, localWood);
+          rect(-27, -13, 54, 20, '#625c54');
+          for (const [x, y] of [
+            [-20, -7],
+            [-9, -6],
+            [3, -7],
+            [16, -5],
+            [-14, 2],
+            [-1, 3],
+            [12, 4],
+          ]) {
+            oval(x, y, 6, 4, '#d3dcdd');
+            line(
+              [
+                [x - 3, y],
+                [x + 3, y],
+              ],
+              '#859ba1',
+              1,
+            );
+          }
+          // Coin die: the Dark Lord's profile, not a new heraldic emblem.
+          oval(0, -24, 9, 8, '#c5d1d1');
+          oval(-2, -25, 4, 6, '#718185');
+          poly(
+            [
+              [1, -24],
+              [8, -22],
+              [1, -20],
+            ],
+            '#718185',
+          );
+          break;
+        case 'sealed-crown-consignment':
+          // Distinct silver Crown seals; ordinary wagon/crate sprites remain unchanged.
+          shade(40, 11, 0.14);
+          rect(-32, -12, 63, 28, '#76654f');
+          rect(-28, -22, 55, 13, '#98836b');
+          for (const x of [-23, 21]) rect(x, -21, 5, 36, '#50585a');
+          rect(-9, -20, 17, 11, '#c3ced0');
+          oval(0, -17, 6, 5, '#edf0ed');
+          oval(-2, -18, 3, 4, '#708087');
+          poly(
+            [
+              [0, -18],
+              [5, -16],
+              [0, -14],
+            ],
+            '#708087',
+          );
+          line(
+            [
+              [-9, -8],
+              [8, -8],
+            ],
+            '#64757a',
+            2,
+          );
+          rect(12, -34, 18, 12, '#d6cbb0');
+          line(
+            [
+              [16, -30],
+              [25, -30],
+            ],
+            '#64757a',
+            2,
+          );
+          break;
         case 'highland-pay-station':
           shade(40, 12, 0.15);
           rect(-34, -6, 68, 22, localWood);
