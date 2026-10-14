@@ -386,6 +386,31 @@
         cue ? ctx.stroke() : a.kind !== 'ring' && ctx.fill();
       }
       ctx.setLineDash([]);
+      if (a.royalTerritory && a.kind === 'sector') {
+        // Opposite geometry is safe from this sector strike, not from
+        // all surrounding Crown soldiers or other attacks.
+        const protectedShapes = warningShapes(
+          { ...a, angle: a.protectedAngle },
+          game.attackPatches(a),
+        );
+        for (const points of protectedShapes) {
+          polygon(ctx, screen, points);
+          ctx.fillStyle = '#4c9f6730';
+          ctx.strokeStyle = '#a9e7b0';
+          ctx.lineWidth = 2;
+          cue ? ctx.stroke() : ctx.fill();
+        }
+        if (cue) {
+          const spot = screen({
+            x: e.x + Math.cos(a.protectedAngle) * Math.min(115, a.radius * 0.5),
+            y: e.y + Math.sin(a.protectedAngle) * Math.min(115, a.radius * 0.5),
+          });
+          ctx.fillStyle = '#bdf4bc';
+          ctx.font = 'bold 11px system-ui';
+          ctx.textAlign = 'center';
+          ctx.fillText('PROTECTED SIDE', spot.x, spot.y);
+        }
+      }
       if (cue) {
         const p = screen(a.kind === 'summon' ? e : a);
         ctx.font = 'bold 12px system-ui';
