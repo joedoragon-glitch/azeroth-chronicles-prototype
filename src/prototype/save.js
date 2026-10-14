@@ -260,6 +260,25 @@
             throw Error('Invalid victory identity');
         for (const id of Object.keys(s.true))
           if (!s.normal[id]) throw Error('TRUE victory without normal victory');
+        if (s.appointments === undefined) s.appointments = {};
+        if (!s.appointments || typeof s.appointments !== 'object' || Array.isArray(s.appointments))
+          throw Error('Invalid dungeon appointments');
+        const appointmentChoices = new Set([
+          ...D.bosses.filter((b) => b.kind === 'field').map((b) => 'field:' + b.id),
+          ...Object.keys(R.roomCaptains).map((id) => 'captain:' + id),
+          ...D.bosses.filter((b) => b.captive && s.rescued[b.id]).map((b) => 'specialist:' + b.id),
+        ]);
+        const appointed = Object.entries(s.appointments);
+        if (
+          appointed.length > dungeonIds.length ||
+          new Set(appointed.map(([, id]) => id)).size !== appointed.length ||
+          appointed.some(([id, candidate]) =>
+            !dungeonIds.includes(id) ||
+            !s.true[id] ||
+            !s.throneClaimed ||
+            !appointmentChoices.has(candidate)
+          )
+        ) throw Error('Invalid dungeon master selection');
         // Legacy v4 peaceful campaigns were already completed. Grandfather
         // them without forcing a new throne visit or replay of defeated bosses.
         if (s.throneClaimed === undefined) s.throneClaimed = s.phase === 'peace';
@@ -805,6 +824,7 @@
         }
         c.zone();
         c.refreshNPCs();
+        c.syncDungeonMasterStation();
         c.initializeQuests();
         c.checkQuests();
         c.restoreWeaponSelection();
