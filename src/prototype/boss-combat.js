@@ -1721,6 +1721,10 @@
           if (a.captainSkill && e.captainProfile === 'supply-vale' && a.index === 0)
             e.captainPursuit = 2.5;
           if (a.landing && dist(e, a.target) < 20) this.resolveArea(e, a);
+          if (a.royalSidestep) {
+            // The shield-feint arc resolves at the actual post-movement position.
+            this.resolveArea(e, { ...a, x: e.x, y: e.y, fromX: e.x, fromY: e.y });
+          }
           if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
             return;
           e.motion = null;
