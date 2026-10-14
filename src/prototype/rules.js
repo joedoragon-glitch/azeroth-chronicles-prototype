@@ -3477,6 +3477,8 @@
       'An old ossuary opens onto unfinished Crown guest rooms. A building plan shows six seats at the winter table; the memorial stones give the dead names, not numbers.',
     abyss:
       'Abyss Bastion is the Dark Lord’s air-superiority project. His purple dragon is his personal flying mount; the hatchery will grow his future air force. Riders prepare harnesses, supplies arrive, and the royal launch platform is still being built.',
+    citadel:
+      "The Citadel of Ashes is Marshal Veyra's academy and the headquarters of the Dark Lord's professional army. Its officers turn diverse irregulars into regiments. Her private quarters hold polished mirrors, cosmetic brushes and carefully arranged complexion jars beside her parade uniform.",
   };
   const dungeonDecor = {
     crypt: [
@@ -3635,6 +3637,7 @@
       [1000, 1070, 'citadel-forge-bay'],
       [1180, 1190, 'citadel-boss-approach'],
       [1320, 520, 'tax-post'],
+      [1080, 1280, 'citadel-vanity-quarters'],
     ],
   };
   const dungeonTrapTuning = {

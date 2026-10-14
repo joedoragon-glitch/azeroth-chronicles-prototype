@@ -319,6 +319,8 @@ const PrototypeData = {
       region: 'crown',
       kind: 'dungeon',
       name: 'Veyra, Ash Sentinel',
+      history:
+        "Marshal Veyra was a coastal road warden and practicing cosmetologist who joined the former hero as a regimental drillmaster. She made goblin, ogre, human and other irregular fighters into the Dark Lord's professional standing army, with ranks, shared drills, discipline, uniforms and officers. Veyra has exacting opinions on grooming, architecture and the appearance of military equipment: functional work should also be beautiful. The Stone Colossus is her good friend, and both enjoy discussing workmanship and proportion. She loyally serves the Dark Lord and dreads politics, believing she could not govern better than he does. Yet her officers and garrisons could support her as a military dictator who rules the five regions as one giant barracks.",
       level: 15,
       captive: 'Tovan the Final Instructor',
       service: 'Learn skill 8 and train learned skills to rank 8',

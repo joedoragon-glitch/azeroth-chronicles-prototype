@@ -8068,6 +8068,31 @@
             2,
           );
           break;
+        case 'citadel-vanity-quarters':
+          // Veyra's private dressing station and working cosmetology tools.
+          shade(45, 12, 0.17);
+          rect(-40, -4, 80, 15, '#665047');
+          rect(-37, -1, 74, 9, '#a77d5d');
+          rect(-26, -47, 52, 40, '#a47d57');
+          rect(-22, -43, 44, 32, '#8fadb0');
+          rect(-14, -39, 19, 3, '#d1e4dc');
+          rect(-30, 8, 4, 10, localWood);
+          rect(28, 8, 4, 10, localWood);
+          glint(-30, -4, '#f3c982', 2);
+          glint(30, -4, '#f3c982', 2);
+          rect(-24, -16, 11, 15, '#e9dcc3');
+          rect(-22, -20, 7, 4, gold);
+          rect(-7, -16, 11, 15, '#ba6370');
+          rect(-5, -20, 7, 4, gold);
+          rect(10, -16, 11, 15, '#83a09a');
+          rect(12, -20, 7, 4, gold);
+          rect(24, -32, 2, 16, '#bc9d77');
+          rect(28, -32, 2, 16, '#bc9d77');
+          rect(32, -32, 2, 16, '#bc9d77');
+          oval(28, -33, 9, 3, '#e2c9a7');
+          rect(-39, 11, 23, 9, '#bb7657');
+          rect(35, -24, 10, 38, '#77576d');
+          break;
         case 'citadel-boss-approach':
           shade(46, 10, 0.12);
           for (const x of [-35, 35]) {

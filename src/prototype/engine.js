@@ -995,6 +995,24 @@
           });
         }
       }
+      // Append Veyra's eighth dressing station to legacy v3 Citadel saves.
+      // Do not reset the dungeon, traps, guards or active encounter.
+      if (z.id === 'citadel' && z.dungeonVersion === targetVersion) {
+        const j = R.dungeonDecor.citadel.findIndex((row) => row[2] === 'citadel-vanity-quarters');
+        if (j !== -1 && !z.props.some((p) => p.id === 'decor-' + j)) {
+          const [x, y, structure, district, sceneRole] = R.dungeonDecor.citadel[j];
+          z.props.push({
+            id: 'decor-' + j,
+            ...this.safe(x, y, z.id),
+            r: 0,
+            decorative: true,
+            structure,
+            ...(district ? { dungeonDistrict: district } : {}),
+            ...(sceneRole ? { sceneRole } : {}),
+            icon: '🕯️',
+          });
+        }
+      }
       if (z.dungeonVersion === targetVersion) return;
       z.props = z.props.filter((p) => !p.decorative || !String(p.id).startsWith('decor-'));
       z.dungeonVersion = targetVersion;

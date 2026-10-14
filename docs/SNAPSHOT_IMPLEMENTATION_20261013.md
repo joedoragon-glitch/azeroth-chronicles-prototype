@@ -17,6 +17,12 @@
 
 **Operational interpretation:** Build continuously, test intelligently, certify at milestones. This policy supersedes earlier per-boss full-regression gating, but does not relax eventual release quality.
 
+## Veyra authored identity and Citadel eighth station — dev.30 targeted checkpoint, 14 October 2026
+
+Integrated the #255 approved Veyra biography into authoritative boss data, first-entry academy/Crown army/private-quarters lore into dungeon rules, and the original approved procedural vanity/mirror/cosmetics art into Citadel visuals. This is a decorative eighth station with no collisions, defenses, guards, traps, loot, rewards or interactions. New Citadel generations get the decoration normally. Existing v3 saves receive only missing `decor-7` on the next decoration pass; all prior seven station IDs, dungeonVersion/trap-hit keys, and active encounter state remain unchanged. The five integrated combat skills are unchanged. Bumped package/lock/build-info/PWA cache to `0.9.1+snapshot.dev.30` and added graphics coverage.
+
+**Per-increment focused verification:** source syntax, exported authored boss/lore/decor tables, unchanged skill kinds, idempotent decoration guard and version parity checked. Full browser/Node/sprite-scope/source-hash and clean-package regression remain for the next combined milestone under the 14 October testing policy; do not claim them passed for this candidate. Next: focused game-state/legacy-save inspection, then Dark Lord/regional/finale continuation; whole-snapshot and independent final audit still required.
+
 ## Current recovery desk — continuation through agriculture batch12
 
 The exact branch head, full-CI result and next action are maintained in the latest checkpoint on [PR #300](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/300) and [tracker #232](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/232). Read that checkpoint before resuming: older chronological pending notes below are historical.

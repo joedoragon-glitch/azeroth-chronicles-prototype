@@ -101,6 +101,7 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `citadel-barracks-bay` | PROCEDURAL — composed Citadel barracks/training station |
 | `citadel-forge-bay` | PROCEDURAL — composed Citadel forge/supply station |
 | `citadel-boss-approach` | PROCEDURAL — composed Citadel final-approach station |
+| `citadel-vanity-quarters` | PROCEDURAL — original approved Marshal Veyra dressing station, mirrored cosmetics and pressed uniform; no collision or interaction |
 | `animal-pen` | GENERATE 194 |
 | `drying-rack` | GENERATE 195/196 by region |
 | `tax-post` | GENERATE 219–223 by region |
