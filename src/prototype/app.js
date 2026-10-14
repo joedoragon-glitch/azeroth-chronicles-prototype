@@ -935,27 +935,41 @@
     if (started && !game.s.challenge.pending && !game.s.challenge.gameOver) talents();
   };
   function ending() {
+    if (!game.s.finalRestCompleted) return;
     profile.nightmareUnlocked = true;
     persistProfile();
-    openMenu(
-      'Peace for everyone',
-      'The evil is defeated. Every dungeon guardian has fallen. The war is over for people and creatures alike.\n\nCreatures are neutral and cannot harm or be harmed. The reclaimed dungeons are their homes.',
-      [
-        action('Continue in the peaceful world', () => {
-          game.s.endingAck = true;
-          save();
-          closeMenu();
-        }),
-        action('New game in Nightmare Mode', () => {
-          game.s.endingAck = true;
-          save();
-          chooseClass('nightmare');
-        }),
-        action('Export completed run', () =>
-          exportJSON(game.snapshot(), 'Azeroth_Chronicles_Completed.json'),
-        ),
-      ],
-    );
+    const crownedClass = { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger' }[game.hero.class] || 'Hero';
+    const credits =
+      'THE CROWN\n\n' +
+      'The ' + crownedClass + ' takes the throne.\n\n' +
+      'THE FIVE REGIONS\n\n' +
+      'Greenwood · Drowned Marches\nIronroot · Ashen Frontier · Dark Crown\n\n' +
+      'THE FORMER GUARDIANS\n\n' +
+      Campaign.dungeonIds.map((id) => game.boss(id).name).join(' · ') + '\n\n' +
+      'THE OLD WAR IS OVER\n\n' +
+      'The creatures return to their homes.\n\n' +
+      'So I Became the Dark Lord’s Problem\n\n' +
+      'Thank you for playing.';
+    openMenu('The Crown · Credits', credits, [
+      action('Continue in the peaceful world', () => {
+        game.s.endingAck = true;
+        save();
+        closeMenu();
+      }),
+      action('New game · Normal Mode', () => {
+        game.s.endingAck = true;
+        save();
+        chooseClass('normal');
+      }),
+      action('New game · Nightmare Mode', () => {
+        game.s.endingAck = true;
+        save();
+        chooseClass('nightmare');
+      }),
+      action('Export completed run', () =>
+        exportJSON(game.snapshot(), 'Azeroth_Chronicles_Completed.json'),
+      ),
+    ]);
   }
   function successionMenu() {
     openMenu(
