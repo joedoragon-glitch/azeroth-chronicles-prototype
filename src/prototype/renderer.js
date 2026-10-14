@@ -1457,7 +1457,11 @@
             continue;
           // Calculate scale from the same authored rule used by procedural art.
           // A registered sprite consumes visualScale itself; no source pixels change.
-          const visualEntity = { ...e, renderKind };
+          const visualEntity = {
+            ...e,
+            renderKind,
+            ...(renderKind === 'hero' && game.s.throneClaimed ? { crowned: true } : {}),
+          };
           const registered = PrototypeSprites?.definitionFor?.(
             visualEntity,
             game.regionIndex(),
