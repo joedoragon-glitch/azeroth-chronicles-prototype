@@ -78,7 +78,7 @@
     "source": "PR #304 · explicitly authorized Developer Mode mechanics, combat telemetry, opt-in UI and isolated persistence",
     "scope": "Eight intentionally changed simulation, save and interface owners; historical protected perf baseline remains immutable",
     "files": {
-      "src/prototype/app.js": "e2a7cab6df8a9c1d8f702eced780baa023e208909aea369f87754f8bccb616e3",
+      "src/prototype/app.js": "ce20fa1dca749acf507920984420a6105a193974efa94f9f9efdffe9cc909aa3",
       "src/prototype/combat.js": "0d8f619954b8dfbcf045d4402d2bb84e80d62f2b5dd22ed507da13063c5775ca",
       "src/prototype/engine.js": "7007562a94537e00dfd3df034376d3430646f676f4e50a810eb8d3aaf6638023",
       "src/prototype/hero-combat.js": "0ecebd3d9a2e4fac2aa6f7fb64afd6c55be367c52e1371c69fa4118699fee784",

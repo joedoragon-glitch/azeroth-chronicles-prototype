@@ -6,7 +6,7 @@
     ctx = canvas.getContext('2d'),
     D = Campaign.data,
     manaEnabled = PrototypeRules.resourceMode.manaEnabled,
-    developerEnabled = new URLSearchParams(window.location.search).get('developer') === '1';
+    developerEnabled = /(?:^|[?&])developer=1(?:&|$)/.test(window.location?.search || '');
   // A device-only display preference: never part of the campaign or profile export.
   const optimizationKey = 'azeroth-optimization-mode-v1';
   let optimizationMode = false;
