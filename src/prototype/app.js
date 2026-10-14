@@ -172,6 +172,12 @@
       save();
     } else game = new Campaign();
   }
+  // Older completed peaceful saves retain their already-earned Nightmare
+  // entitlement even if the local profile record was reset or imported.
+  if (game.peace && game.s.finalRestCompleted && !profile.nightmareUnlocked) {
+    profile.nightmareUnlocked = true;
+    persistProfile();
+  }
   let started = loaded;
   let storyRouteActive = false;
   const viewport = { width: innerWidth, height: innerHeight };
@@ -943,7 +949,7 @@
       'THE CROWN\n\n' +
       'The ' + crownedClass + ' takes the throne.\n\n' +
       'THE FIVE REGIONS\n\n' +
-      'Greenwood · Drowned Marches\nIronroot · Ashen Frontier · Dark Crown\n\n' +
+      'Greenwood · Flooded Marches\nIronroot · Ashen Frontier · Dark Crown\n\n' +
       'THE FORMER GUARDIANS\n\n' +
       Campaign.dungeonIds.map((id) => game.boss(id).name).join(' · ') + '\n\n' +
       'THE OLD WAR IS OVER\n\n' +
@@ -1098,6 +1104,7 @@
         'bundle',
         'landmark',
         'throne',
+        'dungeon-master',
         'patrol-report',
         'dungeon',
         'exit',
