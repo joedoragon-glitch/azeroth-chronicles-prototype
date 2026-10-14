@@ -453,7 +453,14 @@
         )
           amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
         if (!piercing) amount = this.tacticalCompressDamage(e, amount);
-        let createdTaxShield = false;
+        // Existing Royal Tax shields absorb first. A hit wholly stopped by
+        // that shield does NOT count as another qualifying taxation hit.
+        // A newly earned shield starts protecting only AFTER its triggering hit.
+        if (!piercing && e.family === 'darklord' && e.royalTaxShield > 0) {
+          const absorbed = Math.min(e.royalTaxShield, Math.max(0, amount));
+          e.royalTaxShield -= absorbed;
+          amount -= absorbed;
+        }
         if (e.family === 'darklord' && e.royalTaxation) {
           const tax = e.royalTaxation;
           if (this.s.time > tax.expires) e.royalTaxation = null;
@@ -466,15 +473,9 @@
             tax.hits = (tax.hits || 0) + 1;
             if (tax.hits >= 4 && tax.sources.length === tax.marked.length) {
               e.royalTaxShield = e.maxHp * 0.12;
-              createdTaxShield = true;
               e.royalTaxation = null;
             }
           }
-        }
-        if (!piercing && e.family === 'darklord' && e.royalTaxShield > 0 && !createdTaxShield) {
-          const absorbed = Math.min(e.royalTaxShield, Math.max(0, amount));
-          e.royalTaxShield -= absorbed;
-          amount -= absorbed;
         }
         const equipment = e.veraEquipment,
           minister = equipment && this.zone().enemies.find((u) => u.id === equipment.owner);
