@@ -421,8 +421,10 @@
     menu = { title, description, actions, back };
     $('modal').setAttribute(
       'data-view',
-      title === 'Adventure menu'
-        ? 'adventure'
+      title === 'The Crown · Credits'
+        ? 'credits'
+        : title === 'Adventure menu'
+          ? 'adventure'
         : title === 'Game and settings'
           ? 'settings'
           : 'default',
@@ -505,7 +507,7 @@
   let outsidePointerId = null;
   function dismissOutside() {
     if (!menu || !started || game.s.challenge.pending || game.s.challenge.gameOver) return;
-    if (game.peace && !game.s.endingAck) {
+    if (game.peace && game.s.finalRestCompleted && !game.s.endingAck) {
       game.s.endingAck = true;
       save();
     }
@@ -577,7 +579,7 @@
   );
   $('close-button').onclick = () => {
     audio.unlock().then(() => audio.interfaceSound('back'));
-    if (!game.s.endingAck && game.peace) {
+    if (!game.s.endingAck && game.peace && game.s.finalRestCompleted) {
       game.s.endingAck = true;
       save();
     }
@@ -1001,7 +1003,7 @@
       game = candidate;
       started = true;
       profile.activeMode = game.s.mode;
-      if (game.peace) profile.nightmareUnlocked = true;
+      if (game.peace && game.s.finalRestCompleted) profile.nightmareUnlocked = true;
       persistProfile();
       closeMenu();
       status('Imported successfully.');
@@ -2290,7 +2292,9 @@
         ([id, p]) => p.kind === 'field' && p.zone === game.zoneId && !game.s.true[id],
       );
     $('objective').textContent = game.peace
-      ? 'PEACE · Rest at a refuge, preparation fountain or completed Barracks.'
+      ? game.s.finalRestCompleted
+        ? 'PEACE · Journey complete. Explore the creatures’ new homes.'
+        : 'PEACE · Rest at a refuge, preparation fountain or completed Barracks.'
       : game.s.phase === 'awakening' && !game.s.throneClaimed
         ? 'DARK CROWN · Claim the Throne · Fortress courtyard, near (3250, 3090) · Map: Z'
         : liveFieldTrue
@@ -2544,7 +2548,7 @@
     if (game.s.challenge.pending && !gateDismissed && menu?.title !== 'Choose your successor')
       successionMenu();
     if (game.s.challenge.gameOver && !gateDismissed && !menu) gameOver();
-    if (game.peace && !game.s.endingAck && !menu) ending();
+    if (game.peace && game.s.finalRestCompleted && !game.s.endingAck && !menu) ending();
     hudTimer += dt;
     if (hudTimer > 0.15) {
       hudTimer = 0;
