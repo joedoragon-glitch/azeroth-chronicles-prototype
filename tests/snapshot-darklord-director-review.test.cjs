@@ -30,7 +30,7 @@ function renderCast(a) {
   Visuals.ground(ctx, (p) => p, {
     zone: () => zone, traps: () => [], attackPatches: () => [],
     hero: { x: 900, y: 900, hp: 100 }, activeLivingParty: () => [],
-    s: { time: 0 },
+    s: { time: 0, hazards: [], projectiles: [] },
   }, 'cue', 0);
   return calls;
 }
