@@ -64,6 +64,55 @@
     ctx.restore();
   }
 
+  // Veyrith's real world-coordinate movements deserve readable banking
+  // streaks, not fake airborne hitboxes or an invented altitude simulation.
+  // Cues are tied exclusively to active, existing flightPath/aerial motion.
+  function drawAbyssFlightCues(ctx, e, p, project) {
+    if (
+      e?.renderKind !== 'enemy' ||
+      e.family !== 'abyss' ||
+      e.type !== 'boss' ||
+      e.hp <= 0 ||
+      !e.motion ||
+      (!e.motion.flightPath?.length && !e.motion.aerial)
+    )
+      return false;
+    const waypoint = e.motion.flightPath?.[0] || e.motion.target;
+    if (!waypoint) return false;
+    const to = project(waypoint);
+    const dx = to.x - p.x,
+      dy = to.y - p.y,
+      length = Math.hypot(dx, dy);
+    if (length < 4) return false;
+    const ux = dx / length,
+      uy = dy / length,
+      sx = -uy,
+      sy = ux;
+    ctx.save();
+    ctx.strokeStyle = '#cfb8ec';
+    ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.78;
+    for (const wing of [-1, 1]) {
+      // A paired slant and drag line conveys a real changing bank.
+      const baseX = p.x + sx * wing * 17 - ux * 8,
+        baseY = p.y + sy * wing * 17 - 37 - uy * 8;
+      ctx.beginPath();
+      ctx.moveTo(baseX + sx * wing * 5, baseY - 9);
+      ctx.lineTo(baseX - ux * 14, baseY - uy * 14);
+      ctx.lineTo(baseX - ux * 36 - sx * wing * 8, baseY - uy * 36 + 6);
+      ctx.stroke();
+    }
+    // Short local speedline follows the actor, never the future impact spot.
+    ctx.strokeStyle = '#a3c6e6';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(p.x - ux * 14, p.y - 23 - uy * 14);
+    ctx.lineTo(p.x - ux * 40, p.y - 23 - uy * 40);
+    ctx.stroke();
+    ctx.restore();
+    return true;
+  }
+
   // Large foreground forms can cover actors under the existing depth sort.
   // Keep this list deliberately conservative: small clutter must not trigger UI.
   // Only explicitly decorative, nonblocking, small clutter is eligible for
@@ -1595,6 +1644,7 @@
           groundMarker(e, p);
           entityShadow(e, p);
           entityAura(e, p);
+          drawAbyssFlightCues(ctx, e, p, screen);
         }
         ctx.font = (e.renderKind === 'prop' ? 34 : 30) + 'px system-ui';
         ctx.textAlign = 'center';
@@ -1904,7 +1954,7 @@
       }),
     };
   }
-  const api = { create, drawCrownLoot, majorOccluder, occlusionPairs, optimizationClutter };
+  const api = { create, drawAbyssFlightCues, drawCrownLoot, majorOccluder, occlusionPairs, optimizationClutter };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeRenderer = api;
 })(typeof window !== 'undefined' ? window : globalThis);
