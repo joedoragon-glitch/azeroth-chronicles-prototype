@@ -25,10 +25,11 @@ for (const mode of ['normal', 'nightmare'])
       const moves = [];
       for (let stage = 0; stage < 3; stage++) {
         const a = lord.telegraph;
-        assert(a, 'all three strikes get separate actual warnings');
+        assert(a, 'all three strikes get separate real cast bars');
         assert.equal(a.total, [1.1, 0.5, 0.8][stage]);
-        const cue = Visuals.warningShapes(a, game.attackPatches(a));
-        assert.equal(cue.length, 1, 'one real readable cone per strike');
+        assert(a.anonymousCast, 'each sword stage has an anonymous cast bar');
+        assert.equal(Visuals.warningShapes(a, game.attackPatches(a)).length, 1,
+          'the physical hit geometry remains intact when the ground warning is hidden');
         const before = { x: lord.x, y: lord.y };
         assert.equal(a.x, before.x, 'warn at the real sword origin');
         assert.equal(a.y, before.y, 'warn at the real sword origin');
@@ -63,7 +64,7 @@ for (const mode of ['normal', 'nightmare'])
       blocked.clearSegment = () => false;
       for (let stage = 0; stage < 3; stage++) {
         const warn = stuck.telegraph;
-        assert(warn);
+        assert(warn && warn.anonymousCast);
         const origin = { x: stuck.x, y: stuck.y };
         blocked.resolveAttack(stuck);
         assert(!stuck.motion, 'blocked physical sidestep cannot be forced');
@@ -74,4 +75,4 @@ for (const mode of ['normal', 'nightmare'])
       assert(C.restore(blocked.snapshot()), 'blocked sequence still restores');
     }
 
-console.log('PASS 12 normal/TRUE class-mode sequences, 3 exact warned strikes, alternating physical sidesteps, blocked routes and v4 saves');
+console.log('PASS 12 normal/TRUE class-mode sequences, 3 anonymous cast stages, alternating physical sidesteps, blocked routes and v4 saves');
