@@ -1353,6 +1353,10 @@
               this.captainProfile(e)?.summon || { species: a.species, cap: a.summonCap || 3 },
             );
           else {
+            const priorGuards =
+              e.family === 'darklord'
+                ? new Set(this.bossOwnedSummons(e).map((unit) => unit.id))
+                : null;
             this.summonBossAdds(
               e,
               {
@@ -1364,6 +1368,10 @@
               },
               this.bossSummonCap(e),
             );
+            if (priorGuards)
+              for (const guard of this.bossOwnedSummons(e))
+                if (!priorGuards.has(guard.id) && guard.hp > 0)
+                  guard.royalFormationUntil = this.s.time + 3;
             e.summonCd =
               e.form === 'true' ? R.bossSummoning.trueCooldown : R.bossSummoning.normalCooldown;
           }
