@@ -126,6 +126,7 @@
         }
       }
       cancelEncounter(e) {
+        this.clearCinderResponses(e);
         this.clearEncounterState(e);
         this.s.projectiles = this.s.projectiles.filter((p) => p.sourceId !== e.id);
         this.s.hazards = this.s.hazards.filter((h) => h.source !== e.id && h.sourceId !== e.id);

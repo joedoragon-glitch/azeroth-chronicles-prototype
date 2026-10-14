@@ -3040,6 +3040,7 @@
       return this._tacticalRegroups?.get(e?.id) || null;
     }
     tacticalClearRogueRegroup(e = null) {
+      this.clearCinderResponses(e);
       if (e) {
         this._tacticalRegroups?.delete(e.id);
         this._tacticalRegroupUsed?.delete(e.id);
@@ -3208,6 +3209,12 @@
       });
     }
     tacticalRogueLeashAllows(e, target, territory) {
+      const response = this._tacticalCinderResponses?.get(e?.id);
+      if (response?.joined && response.zone === this.zoneId) {
+        const owner = this.zone().enemies.find((u) => u.id === response.owner);
+        if (owner?.hp > 0 && owner.aggro && !owner.returning && !owner.neutral)
+          return target?.hp > 0 && dist(target, owner) <= 700 && dist(e, owner) <= 900;
+      }
       const home = this.thornPatroller(e) ? e.thornFightAnchor || e : e.home;
       const shift = this._tacticalRepositions?.get(e?.id);
       if (
@@ -3489,6 +3496,7 @@
       e.telegraph = {
         rogueMove: true,
         rogueSignature: isSignature,
+        anonymousCast: !!(isSignature && profile.anonymousCast),
         kind: profile.style === 'slab' ? 'line' : effect === 'sweep' ? 'cone' : 'circle',
         name: profile.name,
         style: profile.style || null,
@@ -3526,7 +3534,12 @@
         total: warning,
         recovery: isSignature ? 1.05 : 0.8,
       };
-      this.event('warning', { family: e.family, rogue: true, name: profile.name });
+      this.event(
+        'warning',
+        e.telegraph.anonymousCast
+          ? { family: e.family, rogue: true, anonymousCast: true }
+          : { family: e.family, rogue: true, name: profile.name },
+      );
       this.event('rogueMove', {
         actor: e.id,
         name: profile.name,
@@ -3538,6 +3551,164 @@
     // Field commanders rally native ordinary-monster spawn records; Ridge Tyrant
     // instead rallies GUARD spawn records via tacticalRogueCommanderSupport.
     // Never manufacture new field enemies or count a boss's summoned warband.
+    clearCinderResponses(e = null) {
+      if (!this._tacticalCinderResponses) return;
+      const canceled = [];
+      for (const [id, state] of this._tacticalCinderResponses) {
+        if (e && e.id !== id && e.id !== state.owner) continue;
+        this._tacticalCinderResponses.delete(id);
+        const unit = this.zone().enemies.find((u) => u.id === id);
+        if (unit) {
+          unit.path = [];
+          unit.routeAge = 0;
+        }
+        if (e && e.id === state.owner && unit?.hp > 0 && !unit.returning) canceled.push(unit);
+      }
+      // Remove records before disengaging: the existing cancellation callback
+      // can then clear an individual unit without recursively canceling peers.
+      for (const unit of canceled) this.disengage(unit, 0);
+    }
+    cinderNativeResponse(e, move) {
+      if (this.peace || e.hp <= 0 || !e.aggro || e.returning || e.neutral) return true;
+      const z = this.zone(),
+        cfg = R.bossSummoning.cinderResponse,
+        native = (u) =>
+          u !== e &&
+          u.type === 'mob' &&
+          u.form === 'normal' &&
+          u.pack &&
+          u.species === 'ashbeast' &&
+          !u.guard &&
+          !u.summon &&
+          !u.neutral &&
+          !u.nightOnly &&
+          !u.captain &&
+          !u.roomCaptain &&
+          !u.mini &&
+          u.home &&
+          dist(u.home, e) <= cfg.radius,
+        living = z.enemies.filter(
+          (u) => native(u) && u.hp > 0 && !u.returning && dist(u, e) <= cfg.radius,
+        ),
+        party = this.combatTargets();
+      if (!this._tacticalCinderResponses) this._tacticalCinderResponses = new Map();
+      const admitted = () =>
+        [...this._tacticalCinderResponses.values()].filter(
+          (p) => p.owner === e.id && p.zone === this.zoneId,
+        ).length;
+      const candidates = [...living];
+      if (living.length <= move.reinforceBelow)
+        candidates.push(
+          ...z.enemies.filter(
+            (u) =>
+              native(u) &&
+              u.hp <= 0 &&
+              u.deathPaid &&
+              !this.blocked(u.home.x, u.home.y, z.id, 12) &&
+              party.every((a) => a.hp <= 0 || dist(a, u.home) >= 115),
+          ),
+        );
+      candidates.sort(
+        (a, b) =>
+          dist(a.hp > 0 ? a : a.home, e) - dist(b.hp > 0 ? b : b.home, e) || this.idOrder(a, b),
+      );
+      let recruited = 0;
+      for (const u of candidates) {
+        if (this._tacticalCinderResponses.has(u.id) || admitted() >= move.reinforceCap) continue;
+        const origin = u.hp > 0 ? u : u.home,
+          path = this.route(origin, e);
+        if (
+          !path.length ||
+          (!this.isDungeon() &&
+            path.some(
+              (p) =>
+                dist(p, { x: D.towns[this.regionIndex()][0], y: D.towns[this.regionIndex()][1] }) <
+                170,
+            ))
+        )
+          continue;
+        if (u.hp <= 0) {
+          Object.assign(u, u.home);
+          u.hp = u.maxHp = u.baseHp;
+          u.damage = u.baseDamage;
+          u.deathPaid = false;
+          u.heroParticipated = false;
+          u.aggro = false;
+          u.returning = 0;
+          this.clearEncounterState(u);
+          u.cd = 0.25;
+          u.noProgress = 0;
+        }
+        this._tacticalCinderResponses.set(u.id, {
+          owner: e.id,
+          zone: this.zoneId,
+          joined: false,
+          remaining: cfg.travelSeconds,
+          stalled: 0,
+        });
+        u.path = [];
+        u.routeAge = 0;
+        recruited++;
+      }
+      if (recruited)
+        this.event('rogueSupport', { actor: e.id, allies: recruited, existingSpawns: true });
+      // Magical personnel retain independent ownership and cannot use up any
+      // of the six ordinary response places.
+      for (const u of this.bossOwnedSummons(e))
+        if (
+          u.aggro &&
+          !u.returning &&
+          dist(u, e) <= R.tacticalFoundation.supportRadius &&
+          this.line(e, u)
+        ) {
+          u.pursuitBurst = Math.max(u.pursuitBurst || 0, move.rallySeconds);
+          u.cd = Math.min(u.cd || 0, 0.5);
+        }
+      return true;
+    }
+    updateCinderResponse(u, dt) {
+      const state = this._tacticalCinderResponses?.get(u.id);
+      if (!state) return false;
+      const owner = this.zone().enemies.find((e) => e.id === state.owner),
+        cfg = R.bossSummoning.cinderResponse;
+      if (
+        state.zone !== this.zoneId ||
+        !owner ||
+        owner.hp <= 0 ||
+        !owner.aggro ||
+        owner.returning ||
+        owner.neutral ||
+        this.peace ||
+        u.hp <= 0 ||
+        u.neutral ||
+        u.returning
+      ) {
+        this._tacticalCinderResponses.delete(u.id);
+        u.path = [];
+        u.routeAge = 0;
+        if (u.hp > 0 && !u.returning) this.disengage(u, dt);
+        return true;
+      }
+      if (state.joined) return false;
+      if (dist(u, owner) <= cfg.joinRadius && this.line(u, owner)) {
+        state.joined = true;
+        u.path = [];
+        u.routeAge = 0;
+        this.engage(u, true, false);
+        u.pursuitBurst = Math.max(u.pursuitBurst || 0, 1.9);
+        return false;
+      }
+      state.remaining -= dt;
+      const before = { x: u.x, y: u.y };
+      this.follow(u, owner, cfg.speed, dt, cfg.joinRadius - 20);
+      state.stalled = dist(before, u) > Math.max(0.1, dt * 10) ? 0 : state.stalled + dt;
+      u.noProgress = 0;
+      if (state.remaining <= 0 || state.stalled >= cfg.stallSeconds) {
+        this._tacticalCinderResponses.delete(u.id);
+        this.disengage(u, dt);
+      }
+      return true;
+    }
     tacticalRogueFieldSupport(e, move) {
       if (
         e.type !== 'boss' ||
@@ -3546,6 +3717,7 @@
         !move.reinforceCap
       )
         return false;
+      if (e.family === 'cindermaw') return this.cinderNativeResponse(e, move);
       const z = this.zone(),
         radius = 750,
         species = [move.reinforceSpecies, move.reinforceRangedSpecies].filter(Boolean),
@@ -3737,7 +3909,12 @@
             )
               continue;
             const destination = { x: unit.x + side * 100, y: unit.y };
-            const landed = this.hitParty(unit, e.damage * move.coefficient, 0, e.id);
+            const landed = this.hitParty(
+              unit,
+              e.damage * move.coefficient,
+              0,
+              e.family === 'cindermaw' ? e.id : undefined,
+            );
             if (
               this.hero !== hero ||
               this.zoneId !== zone ||
@@ -3814,7 +3991,15 @@
         startingZone = this.zoneId,
         startingDeaths = this.s.statistics.deaths;
       for (const unit of this.combatTargets().filter(inside)) {
-        if (!this.hitParty(unit, e.damage * move.coefficient)) continue;
+        if (
+          !this.hitParty(
+            unit,
+            e.damage * move.coefficient,
+            0,
+            e.family === 'cindermaw' ? e.id : undefined,
+          )
+        )
+          continue;
         if (
           this.hero !== startingHero ||
           this.zoneId !== startingZone ||
@@ -4076,6 +4261,7 @@
             continue;
           }
         }
+        if (this.updateCinderResponse(e, dt)) continue;
         const candidates = this.combatTargets();
         // Keeper focuses available archers, the healers, within normal combat reach.
         const ridgeOwner = e.summon
