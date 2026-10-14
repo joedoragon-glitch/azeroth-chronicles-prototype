@@ -200,5 +200,11 @@
     "files": {
       "src/prototype/combat-visuals.js": "e9f41d19c2996f498d19c0f53eaaeb70b9f4f0650fb1fe3a4504fabdbbba7516"
     }
+  },
+  "approvedSnapshotCinderMinistryAVRevision": {
+    "source": "Director #298 and #288: authored procedural recipes for all seven approved regular ministry slots; no new sprites or geometry change. Nondamaging protection/assembly never paints damage footprints. Earlier pins retained.",
+    "files": {
+      "src/prototype/enemy-vfx-art.js": "1a71c1ff0bb985349731c537271ef81bc8f8c528798f6f477a6c374a2392d051"
+    }
   }
 }

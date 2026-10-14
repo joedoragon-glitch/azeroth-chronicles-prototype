@@ -102,6 +102,18 @@ if (cinderSupportRevision) {
 const institutionRevision = manifest.approvedSnapshotInstitutionsRevision;
 const ministryRevision = manifest.approvedSnapshotCinderMinistryRevision;
 const ministryPresentation = manifest.approvedSnapshotCinderMinistryPresentationRevision;
+const ministryAV = manifest.approvedSnapshotCinderMinistryAVRevision;
+if (ministryAV) {
+  assert.match(ministryAV.source, /#298.*#288/);
+  assert.deepEqual(Object.keys(ministryAV.files), ['src/prototype/enemy-vfx-art.js']);
+  assert.equal(
+    crypto
+      .createHash('sha256')
+      .update(fs.readFileSync(path.resolve(__dirname, '..', 'src/prototype/enemy-vfx-art.js')))
+      .digest('hex'),
+    ministryAV.files['src/prototype/enemy-vfx-art.js'],
+  );
+}
 if (ministryPresentation) {
   assert.match(ministryPresentation.source, /#298.*#288/);
   assert.deepEqual(Object.keys(ministryPresentation.files), ['src/prototype/combat-visuals.js']);

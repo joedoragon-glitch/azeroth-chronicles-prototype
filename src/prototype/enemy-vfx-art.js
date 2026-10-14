@@ -64,9 +64,12 @@
       ['command', 'steel'],
     ],
     cindermaw: [
-      ['claw', 'ember'],
+      ['pressure', 'ember'],
       ['rush', 'ash'],
-      ['pool', 'ember'],
+      ['command', 'ember'],
+      ['seal', 'ember'],
+      ['seal', 'ash'],
+      ['rush', 'ash'],
       ['call', 'ember'],
     ],
     darklord: [
@@ -478,7 +481,7 @@
       rec = recipe(f.identity, a, f),
       fx = FX;
     if (!rec || !fx) return;
-    if (a.kind === 'summon' || a.kind === 'volley' || a.kind === 'ring') return;
+    if (a.selfDefense || a.kind === 'summon' || a.kind === 'volley' || a.kind === 'ring') return;
     const patches = game.attackPatches(a),
       shapes = fx.warningShapes(a, patches);
     ctx.save();

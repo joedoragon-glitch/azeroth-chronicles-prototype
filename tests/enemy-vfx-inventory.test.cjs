@@ -14,10 +14,18 @@ const rulesBefore = JSON.stringify({
 const report = Inventory.audit();
 assert.equal(
   report.counts.boss,
-  49,
-  'all currently authored boss actions (including Keeper sabotage) are inventoried',
+  52,
+  'all currently authored boss actions (including Keeper sabotage and seven ministry slots) are inventoried',
 );
 assert.equal(report.counts.captain, 18, 'all five captain movesets are inventoried');
+assert.deepEqual(
+  report.rows
+    .filter((r) => /^boss\/cindermaw\/[0-9]+$/.test(r.id))
+    .map((r) => r.id)
+    .sort(),
+  Array.from({ length: 7 }, (_, i) => 'boss/cindermaw/' + i),
+  'each approved regular ministry slot retains its own identity',
+);
 assert.equal(report.counts['captain-phase'], 5, 'captain second phases are independently listed');
 assert.equal(report.counts.night, 2);
 assert.equal(report.counts.ranged, 18);
