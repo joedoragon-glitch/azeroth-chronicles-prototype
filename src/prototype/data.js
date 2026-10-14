@@ -385,7 +385,7 @@ const PrototypeData = {
         'Royal Muster: summons up to four Crown guards in Normal form (six in TRUE); each newly summoned guard takes 20% less damage for six seconds.',
         'Freedom Has a Price: below half health, alternating prohibited and protected sectors receive separate warnings.',
         'No More Heroes: below thirty percent health, an anonymous 1.5-second cast bar precedes a narrow 1.5× finishing thrust; no ground warning, followed by two seconds of recovery.',
-        'Royal Taxation: temporarily marks up to two living allies; two distinct damaging sources may grant a brief Crown shield.',
+        'Royal Taxation: marks up to four living party members for ten seconds. Four damaging hits, including every marked member (four distinct attackers with a full party), grant a shield worth twelve percent maximum HP.',
       ],
     },
   ],
