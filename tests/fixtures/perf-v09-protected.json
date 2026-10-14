@@ -80,7 +80,7 @@
     "files": {
       "src/prototype/app.js": "ce20fa1dca749acf507920984420a6105a193974efa94f9f9efdffe9cc909aa3",
       "src/prototype/combat.js": "0d8f619954b8dfbcf045d4402d2bb84e80d62f2b5dd22ed507da13063c5775ca",
-      "src/prototype/engine.js": "7007562a94537e00dfd3df034376d3430646f676f4e50a810eb8d3aaf6638023",
+      "src/prototype/engine.js": "a8d118ae9e9a9907bedf2e06e63604a63e521230a1768d613c8522036c2430a7",
       "src/prototype/hero-combat.js": "0ecebd3d9a2e4fac2aa6f7fb64afd6c55be367c52e1371c69fa4118699fee784",
       "src/prototype/persistence.js": "b45a7650771fe9de54f096c038800b9d683899591406c6aa45425951396caf09",
       "src/prototype/save.js": "7601b03e71f9d1a3bee6a915488cd6a430a0dbdab4f60c782009a1f94c6aedcd",
