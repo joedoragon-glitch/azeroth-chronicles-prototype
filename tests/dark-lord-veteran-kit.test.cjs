@@ -19,12 +19,14 @@ for (const mode of ['normal', 'nightmare']) {
   for (const heroClass of Object.keys(C.classes)) {
     const { game, lord } = encounter(mode, heroClass);
     const repertoire = game.buildBossAttack(lord, 0, game.hero);
-    assert.equal(repertoire.sequence.length, 2, 'three individually warned sword arcs');
+    assert.equal(repertoire.sequence.length, 2, 'three individually timed sword casts');
     assert.deepEqual(
       [repertoire.first, ...repertoire.sequence].map((attack) => attack.timer),
       [1.1, 0.5, 0.8],
     );
     assert.equal(repertoire.sequence[0].royalSidestep, true);
+    assert([repertoire.first, ...repertoire.sequence].every((a) => a.anonymousCast),
+      'all three sword stages use cast bars, not ground warnings');
     const gambit = game.buildBossAttack(lord, 1, game.hero);
     assert.equal(gambit.sequence.length, 2, 'three marked landing moves');
     assert(
@@ -37,6 +39,7 @@ for (const mode of ['normal', 'nightmare']) {
     const finisher = game.buildBossAttack(lord, 4, game.hero).first;
     assert.equal(finisher.kind, 'line');
     assert.equal(finisher.warning, 1.5);
+    assert(finisher.anonymousCast, 'No More Heroes has an anonymous cast bar');
     assert.equal(finisher.recovery * C.rules.bossCadence.specialRecoveryMultiplier, 2);
     assert.equal(game.buildBossAttack(lord, 3, game.hero).first.royalTerritory, true);
 
@@ -47,8 +50,12 @@ for (const mode of ['normal', 'nightmare']) {
     game.tacticalRogueLeashAllows = () => true;
     assert(game.damage(lord, 80, 'hero'));
     assert(!lord.royalTaxShield, 'one solo attack does not create a shield');
-    assert(game.damage(lord, 80, 'hero'));
-    assert.equal(lord.royalTaxShield, lord.maxHp * 0.03, 'second solo hit grants one shield');
+    for (let i = 2; i < 4; i++) {
+      assert(game.damage(lord, 80, 'hero'));
+      if (i < 3) assert(!lord.royalTaxShield, 'fewer than four solo hits grant no shield');
+    }
+    assert.equal(lord.royalTaxShield, lord.maxHp * 0.12,
+      'fourth damaging solo hit grants twelve-percent shield');
     const hp = lord.hp;
     assert(game.damage(lord, 80, 'hero'));
     assert.equal(lord.hp, hp, 'shield absorbs the following hit');
@@ -63,8 +70,8 @@ for (const mode of ['normal', 'nightmare']) {
   lord.telegraph = game.buildBossAttack(lord, 2, game.hero).first;
   game.resolveAttack(lord);
   const guards = game.bossOwnedSummons(lord);
-  assert.equal(guards.length, 3, 'Royal Muster keeps the normal guard cap');
-  assert(guards.every((guard) => guard.royalFormationUntil === game.s.time + 3));
+  assert.equal(guards.length, 4, 'Royal Muster summons four Normal Crown guards');
+  assert(guards.every((guard) => guard.royalFormationUntil === game.s.time + 6));
   const guard = guards[0];
   Object.assign(guard, { x: 1050, y: 1100 });
   const guardHp = guard.hp;
