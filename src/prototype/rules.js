@@ -840,8 +840,11 @@
       id: 'stonecross',
       props: [
         [640, 1430, 'highland-pay-station'],
+        [930, 1250, 'silver-refining-hearth'],
         [1070, 1360, 'mint-workbench'],
+        [1065, 1240, 'silver-die-tray'],
         [1100, 1540, 'caravan-loading-bay'],
+        [1150, 1625, 'sealed-crown-consignment'],
         [700, 1690, 'ridge-supper'],
         [610, 1570, 'garden'],
       ],
@@ -850,6 +853,8 @@
       id: 'quarry',
       props: [
         [1510, 1020, 'ore-sorting-bay'],
+        [1640, 1080, 'silver-sort-samples'],
+        [1790, 1090, 'copper-sort-samples'],
         [1830, 980, 'mine-supports'],
         [1920, 1190, 'caravan-loading-bay'],
         [1630, 1270, 'ridge-supper'],
@@ -860,6 +865,7 @@
       id: 'caravan',
       props: [
         [3000, 620, 'caravan-loading-bay'],
+        [3010, 735, 'sealed-crown-consignment'],
         [3210, 620, 'supply-stack'],
         [3180, 390, 'animal-pen'],
       ],
@@ -867,6 +873,10 @@
     {
       id: 'roads',
       props: [
+        [1180, 530, 'silver-ore-face'],
+        [1290, 610, 'copper-ore-face'],
+        [2600, 2210, 'silver-ore-face'],
+        [2780, 2190, 'copper-ore-face'],
         [1160, 1040, 'mine-supports'],
         [1440, 1840, 'tool-rack'],
       ],
@@ -3561,8 +3571,12 @@
     ],
     mine: [
       [310, 315, 'ore-sorting-bay', 'receiving-haulage'],
+      [370, 350, 'silver-sort-samples', 'receiving-haulage'],
+      [450, 345, 'copper-sort-samples', 'receiving-haulage'],
       [535, 330, 'caravan-loading-bay', 'receiving-haulage'],
       [480, 470, 'mine-supports', 'standard-workings'],
+      [500, 555, 'silver-ore-face', 'standard-workings'],
+      [680, 555, 'copper-ore-face', 'standard-workings'],
       [700, 670, 'mine-supports', 'standard-workings'],
       [650, 800, 'rail', 'standard-workings'],
       [820, 920, 'rail', 'standard-workings'],
