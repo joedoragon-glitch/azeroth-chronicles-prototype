@@ -426,6 +426,8 @@
         guards = z.enemies.filter((e) => e.site === n.id && e.hp > 0 && !e.neutral).length,
         parts = [];
       if (z.id === 'highlands' && R.ironrootLore?.[n.id]) parts.push(R.ironrootLore[n.id]);
+      const crownLink = R.crownPeaceLinks?.[z.id]?.[n.id];
+      if (crownLink) parts.push(crownLink);
       if (n.id.startsWith('bridge-'))
         parts.push(
           'A crossing through the regional terrain. Walk across the connected road; no separate entrance.',
