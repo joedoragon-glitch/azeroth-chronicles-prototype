@@ -174,6 +174,67 @@
               ? 'stone'
               : 'ritual';
   }
+  // Presentation-only status for Royal Taxation. The marked recipients
+  // remain on the original combat roster, not a separate targeting list.
+  // These are actor labels, never false ground-impact warnings.
+  function royalTaxStatus(ctx, screen, game) {
+    let drawn = 0;
+    for (const lord of game.zone().enemies.filter(
+      (e) => e.family === 'darklord' && e.type === 'boss' && e.hp > 0,
+    )) {
+      const tax = lord.royalTaxation,
+        active = tax && tax.expires > game.s.time && tax.marked?.length;
+      if (active) {
+        for (const unit of [game.hero, ...game.activeLivingParty()]) {
+          const identity = unit === game.hero ? 'hero' : unit.id;
+          if (unit.hp <= 0 || !tax.marked.includes(identity)) continue;
+          const p = screen(unit);
+          ctx.save();
+          ctx.translate(p.x, p.y - 58);
+          ctx.fillStyle = '#e0c0fa';
+          ctx.strokeStyle = '#5b366b';
+          ctx.lineWidth = 1.8;
+          ctx.beginPath();
+          ctx.moveTo(0, -11);
+          ctx.lineTo(7, -4);
+          ctx.lineTo(0, 3);
+          ctx.lineTo(-7, -4);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+          ctx.font = 'bold 9px system-ui';
+          ctx.textAlign = 'center';
+          ctx.fillStyle = '#f1d9ff';
+          ctx.fillText('TAX', 0, -15);
+          ctx.restore();
+          drawn++;
+        }
+        const p = screen(lord);
+        ctx.save();
+        ctx.font = 'bold 10px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#f1d9ff';
+        ctx.fillText('ROYAL TAX · ' + Math.ceil(tax.expires - game.s.time) + 's', p.x, p.y - 82);
+        ctx.restore();
+      }
+      if (lord.royalTaxShield > 0) {
+        const p = screen(lord);
+        ctx.save();
+        ctx.strokeStyle = '#d6b7f2';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y - 14, 30, 34, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = '#f0d6ff';
+        ctx.font = 'bold 10px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('ROYAL SHIELD', p.x, p.y - 82);
+        ctx.restore();
+        drawn++;
+      }
+    }
+    return drawn;
+  }
   function ground(ctx, screen, game, pass = 'fill', time = 0) {
     const cue = pass === 'cue';
     ctx.save();
@@ -358,6 +419,7 @@
         ctx.fillStyle = '#fff1c7';
         ctx.fillText('Preparing…', p.x, y - 5);
       }
+    if (cue) royalTaxStatus(ctx, screen, game);
     // Ledger of Losses deliberately obscures Ridge's ground footprints,
     // including separate rogue moves. It must NEVER obscure the cast itself:
     // attach a high-contrast progress bar to the actual boss, not the terrain.
@@ -1025,6 +1087,7 @@
     capsulePoints,
     sectorPoints,
     warningShapes,
+    royalTaxStatus,
     ground,
     queue,
     contact,
