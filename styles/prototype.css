@@ -760,3 +760,19 @@ body.menu-open::before {
 #modal[data-view='settings'] #modal-description {
   display: none;
 }
+
+/* Finale credit movement is visual only. Text/actions stay real and accessible. */
+#modal[data-view='credits'] #modal-description {
+  white-space: pre-line;
+  text-align: center;
+  line-height: 1.9;
+  padding: 20px 12px 56px;
+  animation: crown-credits-roll 26s linear 1 both;
+}
+@keyframes crown-credits-roll {
+  from { transform: translateY(12%); }
+  to { transform: translateY(-12%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #modal[data-view='credits'] #modal-description { animation: none; }
+}
