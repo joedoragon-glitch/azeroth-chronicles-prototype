@@ -214,6 +214,12 @@
 
       advanceQueuedAttack(e) {
         const a = e.sequence?.shift() || null;
+        if (a && e.family === 'darklord' && a.index === 0) {
+          // A physical sidestep changes the origin of the NEXT warning.
+          // Sync the impact cone and its warning center with the actual
+          // actor position, not the first strike's stale snapshot.
+          Object.assign(a, { x: e.x, y: e.y, fromX: e.x, fromY: e.y });
+        }
         if (a?.tracking) {
           const target = this.combatTargets().find(
             (u) => (u === this.hero ? 'hero' : u.id) === a.targetId && u.hp > 0,
