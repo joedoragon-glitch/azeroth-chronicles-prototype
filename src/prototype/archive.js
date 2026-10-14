@@ -1,6 +1,8 @@
 /* Optional, read-only Archive reference. Figures come from live rules and Campaign queries. */
 (function (root) {
   'use strict';
+  const darkLordHistory =
+    "He once crossed the provinces with five companions, leaving victories and grieving villages behind. One day no one told them where to go next. He forged a peace in which rival peoples could trade; now he keeps it through levies, garrisons and captive labor. 'Freedom has a price,' he says.";
   function sections(game, { D, R }) {
     const number = (value) => Math.round(value * 100) / 100,
       percent = (value) => number(value * 100),
@@ -288,7 +290,7 @@
             boss.name,
             boss.place +
               '. ' +
-              (boss.history || '') +
+              (boss.history || (boss.id === 'darklord' ? darkLordHistory : '')) +
               '\n\nAttacks: ' +
               plans
                 .map(

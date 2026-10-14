@@ -4749,6 +4749,13 @@
         }
         e.quotaOvertime = 0;
         e.captainOpeningSummon = false;
+        if (e.family === 'darklord') {
+          // A complete leash return starts a genuinely new encounter.
+          delete e.secondWindUsed;
+          delete e.secondWindCancelled;
+          delete e.secondWindFacing;
+          e.healCd = 0;
+        }
         delete e.quotaTarget;
         delete e.idleWanderTarget;
         e.idleWanderWait = 1.5;

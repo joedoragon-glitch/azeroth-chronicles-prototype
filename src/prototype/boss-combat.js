@@ -835,12 +835,14 @@
         return null;
       }
       startBossRecovery(e) {
-        const cfg = !R.resourceMode.manaEnabled && R.bossRecovery[e.family];
+        const cfg =
+          (e.family === 'darklord' || !R.resourceMode.manaEnabled) && R.bossRecovery[e.family];
         if (
           !cfg ||
           e.type !== 'boss' ||
           e.hp <= 0 ||
-          e.hp >= e.maxHp * R.bossRecovery.threshold ||
+          e.hp >= e.maxHp * (cfg.threshold || R.bossRecovery.threshold) ||
+          (e.family === 'darklord' && e.secondWindUsed) ||
           (e.healCd || 0) > 0 ||
           e.telegraph ||
           e.motion
@@ -849,9 +851,15 @@
         // Go-Around must have a real escape path before spending its heal cast.
         if (e.family === 'abyss' && !this.abyssGoAroundPoint(e)) return false;
         e.healCd = cfg.cooldown;
+        if (e.family === 'darklord') {
+          e.secondWindUsed = true;
+          e.secondWindCancelled = false;
+          e.secondWindFacing = Math.atan2(this.hero.y - e.y, this.hero.x - e.x);
+        }
         e.telegraph = {
           kind: 'circle',
           bossHeal: true,
+          secondWind: e.family === 'darklord',
           name: cfg.name,
           healFraction: cfg.healFraction,
           x: e.x,
@@ -1095,7 +1103,7 @@
           return;
         }
         if (a.bossHeal) {
-          if (e.hp > 0) {
+          if (e.hp > 0 && (!a.secondWind || !e.secondWindCancelled)) {
             const amount = Math.min(e.maxHp - e.hp, e.maxHp * a.healFraction);
             if (amount > 0) {
               e.hp += amount;

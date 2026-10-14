@@ -429,6 +429,14 @@
             1 -
             R.marchesPassives.emergencyStabilization[e.form === 'true' ? 'true' : 'normal']
               .reduction;
+        if (e.family === 'darklord' && e.telegraph?.secondWind) {
+          // Front-facing stance mitigates damage; a real hit from behind
+          // interrupts healing without negating that hit.
+          const facing = e.secondWindFacing || 0,
+            angle = Math.atan2(origin.y - e.y, origin.x - e.x);
+          if (Math.cos(angle - facing) < -0.5) e.secondWindCancelled = true;
+          amount *= R.bossRecovery.darklord.damageMultiplier;
+        }
         if (e.family === 'citadel' && e.open <= 0) amount *= 0.65;
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;
         // All hero/companion damage sources use this same resolver. This

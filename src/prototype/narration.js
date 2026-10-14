@@ -9,7 +9,7 @@
     null, // 3
     {
       kind: 'narration',
-      text: 'The Lifebinder once traveled with the Dark Lord. He let the fallen live on as thinking skeletons, not restored flesh. Borin was forced to build their winter retreat.',
+      text: 'Borin found a travel ledger: six signatures, then “Victory.” The Lifebinder kept the fallen alive as thinking skeletons, not restored flesh. Borin was forced to build their winter retreat.',
     }, // 4
     {
       kind: 'narration',
