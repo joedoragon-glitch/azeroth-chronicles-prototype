@@ -787,7 +787,9 @@ body.menu-open::before {
   border-radius: 8px;
   background: #12241edf;
   color: #e7eacb;
-  font: 12px/1.55 ui-monospace, monospace;
+  font:
+    12px/1.55 ui-monospace,
+    monospace;
   white-space: pre-line;
   pointer-events: none;
 }

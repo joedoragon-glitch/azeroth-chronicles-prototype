@@ -73,5 +73,20 @@
     "appSha256": "e6ea0d525e4a827da13cdb95a2c6b1185432781bf269ab9b4370e6dd1b2f48e3",
     "inputSha256": "3b01e8b5df5b7b8fedc8deb24bba4f93f979ef111e2fa2fa55950891b58b5da5",
     "desktopCssSha256": "95fcb8bdad9f22c32950a1f1c6c51b1f2f886fc89e33d59248d3aef415137dac"
+  },
+  "approvedDeveloperRevision": {
+    "source": "PR #304 · explicitly authorized Developer Mode mechanics, combat telemetry, opt-in UI and isolated persistence",
+    "scope": "Eight intentionally changed simulation, save and interface owners; historical protected perf baseline remains immutable",
+    "files": {
+      "src/prototype/app.js": "e2a7cab6df8a9c1d8f702eced780baa023e208909aea369f87754f8bccb616e3",
+      "src/prototype/combat.js": "0d8f619954b8dfbcf045d4402d2bb84e80d62f2b5dd22ed507da13063c5775ca",
+      "src/prototype/engine.js": "7007562a94537e00dfd3df034376d3430646f676f4e50a810eb8d3aaf6638023",
+      "src/prototype/hero-combat.js": "0ecebd3d9a2e4fac2aa6f7fb64afd6c55be367c52e1371c69fa4118699fee784",
+      "src/prototype/persistence.js": "b45a7650771fe9de54f096c038800b9d683899591406c6aa45425951396caf09",
+      "src/prototype/save.js": "7601b03e71f9d1a3bee6a915488cd6a430a0dbdab4f60c782009a1f94c6aedcd",
+      "styles/phone.css": "91daee22cdc77bbf84d57ddc74744f03fc743cb3e27e25d528e883177b2292d6",
+      "styles/prototype.css": "2b58799e1ac2aa79a49cfd933adecf554fd90df922e18628c9dcd3e28fba1dc2"
+    },
+    "activeFrameBodySha256": "e3a2478135337e135deded60a8e1c6e7e2bc2ef8a36ff55446cb8427948a2537"
   }
 }

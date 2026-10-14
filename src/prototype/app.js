@@ -620,7 +620,9 @@
       return;
     }
     openMenu(
-      'New ' + (mode === 'nightmare' ? 'Nightmare' : mode === 'developer' ? 'Developer' : 'Normal') + ' adventure',
+      'New ' +
+        (mode === 'nightmare' ? 'Nightmare' : mode === 'developer' ? 'Developer' : 'Normal') +
+        ' adventure',
       'Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.',
       Object.entries(Campaign.classes).map(([id, c]) =>
         action(
@@ -752,7 +754,9 @@
           ),
         ),
         action('New Normal game', () => chooseClass('normal')),
-        ...(developerEnabled ? [action('New Developer Mode run', () => chooseClass('developer'))] : []),
+        ...(developerEnabled
+          ? [action('New Developer Mode run', () => chooseClass('developer'))]
+          : []),
         action(
           'New game in Nightmare Mode',
           () => chooseClass('nightmare'),
@@ -920,7 +924,9 @@
             ),
           ]
         : []),
-      ...(developerEnabled ? [action('New Developer Mode run', () => chooseClass('developer'))] : []),
+      ...(developerEnabled
+        ? [action('New Developer Mode run', () => chooseClass('developer'))]
+        : []),
       action('Game and settings', systemMenu),
     ]);
   }
@@ -2216,11 +2222,18 @@
       const telemetry = game.developerCombatSnapshot(),
         recent = (hits) => hits.map((hit) => Math.round(hit)).join(' / ') || '—';
       developerCombatMonitor.textContent =
-        'DEV · COMBAT MONITOR\\n' +
-        'Taken: ' + recent(telemetry.incoming.last) + '\\n' +
-        'Incoming DPS: ' + telemetry.incoming.dps.toFixed(1) + '\\n' +
-        'Dealt: ' + recent(telemetry.outgoing.last) + '\\n' +
-        'Outgoing DPS: ' + telemetry.outgoing.dps.toFixed(1);
+        'DEV · COMBAT MONITOR\n' +
+        'Taken: ' +
+        recent(telemetry.incoming.last) +
+        '\n' +
+        'Incoming DPS: ' +
+        telemetry.incoming.dps.toFixed(1) +
+        '\n' +
+        'Dealt: ' +
+        recent(telemetry.outgoing.last) +
+        '\n' +
+        'Outgoing DPS: ' +
+        telemetry.outgoing.dps.toFixed(1);
     }
     const h = game.hero,
       hp = Math.max(0, Math.min(100, (h.hp / h.maxHp) * 100)),
@@ -2419,21 +2432,21 @@
         ? 'OFF'
         : charging
           ? cast.state === 'waiting'
-          ? 'WAIT ' + cooldownText(cast.cooldown)
-          : cast.state === 'charging'
-            ? Math.min(99, Math.round(cast.progress * 100)) + '%'
-            : cast.state === 'need-mp'
-              ? 'NEED MP'
-              : cast.state === 'no-target'
-                ? 'NO TARGET'
-                : cast.state === 'no-heal'
-                  ? 'NO HEAL'
-                  : 'CHARGED'
-        : !rank
-          ? 'Locked'
-          : h.cd[i] > 0
-            ? cooldownText(h.cd[i])
-            : skillKeys()[i];
+            ? 'WAIT ' + cooldownText(cast.cooldown)
+            : cast.state === 'charging'
+              ? Math.min(99, Math.round(cast.progress * 100)) + '%'
+              : cast.state === 'need-mp'
+                ? 'NEED MP'
+                : cast.state === 'no-target'
+                  ? 'NO TARGET'
+                  : cast.state === 'no-heal'
+                    ? 'NO HEAL'
+                    : 'CHARGED'
+          : !rank
+            ? 'Locked'
+            : h.cd[i] > 0
+              ? cooldownText(h.cd[i])
+              : skillKeys()[i];
     }
     const n = nearestNPC();
     $('touch-interact-button').hidden = !n || !activePlay();

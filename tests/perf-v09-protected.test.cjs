@@ -20,6 +20,22 @@ if (keyboardRevision) {
   ]);
   assert.match(keyboardRevision.source, /PR #269/);
 }
+// Developer Mode changes core combat and shell behavior by explicit feature request.
+// Pin only the reviewed owners; preserve the original perf/keyboard baselines.
+const developerRevision = manifest.approvedDeveloperRevision;
+if (developerRevision) {
+  assert.deepEqual(Object.keys(developerRevision.files).sort(), [
+    'src/prototype/app.js',
+    'src/prototype/combat.js',
+    'src/prototype/engine.js',
+    'src/prototype/hero-combat.js',
+    'src/prototype/persistence.js',
+    'src/prototype/save.js',
+    'styles/phone.css',
+    'styles/prototype.css',
+  ]);
+  assert.match(developerRevision.source, /PR #304/);
+}
 for (const [file, expected] of Object.entries(manifest.files)) {
   const actual = crypto
     .createHash('sha256')
@@ -27,7 +43,7 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    keyboardRevision?.files[file] || revision.files[file] || expected,
+    developerRevision?.files[file] || keyboardRevision?.files[file] || revision.files[file] || expected,
     file + ' is protected against baseline / reviewed rendering revision ' + manifest.baseline,
   );
 }
@@ -39,7 +55,7 @@ const activeBody = frame.slice(
 );
 assert.equal(
   crypto.createHash('sha256').update(activeBody).digest('hex'),
-  revision.activeFrameBodySha256,
+  developerRevision?.activeFrameBodySha256 || revision.activeFrameBodySha256,
   'Original simulation/input/audio/effects/save/HUD callback body remains byte-for-byte intact',
 );
 console.log(

@@ -1086,14 +1086,21 @@
     developerCombatSnapshot() {
       if (this.s.mode !== 'developer') return null;
       const windowSeconds = 5;
-      const elapsed = Math.min(windowSeconds, Math.max(1, this.s.time - this.developerCombat.startedAt));
+      const elapsed = Math.min(
+        windowSeconds,
+        Math.max(1, this.s.time - this.developerCombat.startedAt),
+      );
       const read = (direction) => {
         const history = this.developerCombat[direction];
         return {
-          last: history.slice(-3).reverse().map((hit) => hit.damage),
-          dps: history
-            .filter((hit) => hit.time >= this.s.time - windowSeconds)
-            .reduce((sum, hit) => sum + hit.damage, 0) / elapsed,
+          last: history
+            .slice(-3)
+            .reverse()
+            .map((hit) => hit.damage),
+          dps:
+            history
+              .filter((hit) => hit.time >= this.s.time - windowSeconds)
+              .reduce((sum, hit) => sum + hit.damage, 0) / elapsed,
         };
       };
       return { incoming: read('incoming'), outgoing: read('outgoing') };
@@ -1114,7 +1121,10 @@
           })),
         );
       const captains = Object.entries(R.roomCaptains || {})
-        .filter(([id]) => id === 'supply-' + region || (region === 'frontier' && id === 'frontier-overseer'))
+        .filter(
+          ([id]) =>
+            id === 'supply-' + region || (region === 'frontier' && id === 'frontier-overseer'),
+        )
         .map(([id, profile]) => ({
           id: 'captain:' + id,
           label: profile.name + ' · Captain',
@@ -1143,7 +1153,9 @@
             icon: original?.icon || species[2],
             level: original?.level || region * 3 + 2,
             hp: original?.baseHp || Math.round((65 + region * 105) * R.guardianScaling[region].hp),
-            damage: original?.baseDamage || Math.round((7 + region * 8) * R.guardianScaling[region].damage),
+            damage:
+              original?.baseDamage ||
+              Math.round((7 + region * 8) * R.guardianScaling[region].damage),
             gold: 0,
             xp: 0,
           },
