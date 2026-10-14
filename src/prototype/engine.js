@@ -3217,8 +3217,12 @@
           recovery: 0.55,
         };
       } else if (e.species === 'stalker') {
+        // Preserve the full 0.7s cast without leaking the pounce target,
+        // named warning or ground hitbox. The shared anonymous cast bar
+        // remains visible above the enemy health plate.
         e.telegraph = {
           nightSkill: 'pounce',
+          anonymousCast: true,
           kind: 'circle',
           name: 'Shadow Pounce',
           x: target.x,
@@ -3234,7 +3238,9 @@
         };
       } else return false;
       e.specialCd = cfg.skillCooldown * (e.frenzy ? 0.7 : 1);
-      this.event('warning', { family: e.species });
+      // Wraith Soul Drain keeps its ordinary warning. Shadow Pounce is
+      // recognizable only by the generic cast bar until physical release.
+      if (e.species === 'wraith') this.event('warning', { family: e.species });
       return true;
     }
 
