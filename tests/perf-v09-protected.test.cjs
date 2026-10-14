@@ -101,6 +101,11 @@ if (cinderSupportRevision) {
 }
 const institutionRevision = manifest.approvedSnapshotInstitutionsRevision;
 const ministryRevision = manifest.approvedSnapshotCinderMinistryRevision;
+const ministryPresentation = manifest.approvedSnapshotCinderMinistryPresentationRevision;
+if (ministryPresentation) {
+  assert.match(ministryPresentation.source, /#298.*#288/);
+  assert.deepEqual(Object.keys(ministryPresentation.files), ['src/prototype/combat-visuals.js']);
+}
 if (ministryRevision) {
   assert.match(ministryRevision.source, /#298.*#288/);
   assert.deepEqual(Object.keys(ministryRevision.files).sort(), [
@@ -119,7 +124,7 @@ if (ministryRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
-      expected,
+      ministryPresentation?.files[file] || expected,
       file,
     );
 }

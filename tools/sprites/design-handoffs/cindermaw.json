@@ -4,7 +4,7 @@
   "designId": "cindermaw",
   "name": "Cindermaw \u2014 ministerial support and seven regular attacks",
   "kind": "boss",
-  "nextAction": "Validate coherent dev.19 seven-move candidate, then guarded variable Vera/mobile forge/nearby defense repair; full snapshot and independent audit remain.",
+  "nextAction": "Complete dev.20 full123Node/equivalence and exact hosted Chromium/WebKit gates; then guarded variable Vera/mobile forge/nearby defense repair. Full scope and final independent audit retained.",
   "context": {
     "originConversation": null,
     "decisionSummary": "Director #298/#288:1200-unit cover-sensitive anonymous Broodscreen; six ordinary native responders physically navigate independently of6Normal/8TRUEmagical staff. Existing boss body/workstation art retained.",
@@ -45,7 +45,11 @@
       "tools/sprites/design-handoffs/references/cinder-support/warning-1280.png",
       "tools/sprites/design-handoffs/references/cinder-support/warning-375.png",
       "tools/sprites/design-handoffs/references/cinder-support/browser-anonymous-375.png",
-      "tools/sprites/design-handoffs/references/cinder-support/browser-native-arrivals-375.png"
+      "tools/sprites/design-handoffs/references/cinder-support/browser-native-arrivals-375.png",
+      "tools/sprites/design-handoffs/references/cinder-ministry/cordon-1280.png",
+      "tools/sprites/design-handoffs/references/cinder-ministry/cordon-375.png",
+      "tools/sprites/design-handoffs/references/cinder-ministry/seals-1280.png",
+      "tools/sprites/design-handoffs/references/cinder-ministry/seals-375.png"
     ],
     "traitsToPreserve": [
       "Existing Cindermaw body, size, field-boss identity and7000HP",
@@ -108,6 +112,22 @@
     {
       "path": "tools/sprites/design-handoffs/references/cinder-support/browser-native-arrivals-375.png",
       "sha256": "b10d4970dcd5d02d2a27b1fd1c38b57cc66a9b6b8673af3f9811dc03f02e1e14"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-ministry/cordon-1280.png",
+      "sha256": "8274f33051b6a338af73ab169bc1d17757a16819308117fd5d5023f797dcddd4"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-ministry/cordon-375.png",
+      "sha256": "494ccac5f5af201186c5c0ca9861b519e67f0d1410d81c001e45f652b1a0bb70"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-ministry/seals-1280.png",
+      "sha256": "c568b6b21fd7750bb4ed7ed6c0f789fe04e012635216853c1c9dda248292d962"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-ministry/seals-375.png",
+      "sha256": "8ed9d423bf0bc9a49b1e4a8b5bdf3113002eb9a010d143f4035b4a768c203829"
     }
   ],
   "browserEvidence": {
@@ -128,5 +148,36 @@
       }
     ],
     "limits": "Readable anonymous/LazyEight warnings and real movements. Cindermaw arrival fixture shows dense garrison/arrival labels; assess with upcoming ministerial patrol and final playable review. No director appearance acceptance."
+  },
+  "ministryEvidence": {
+    "candidateVersion": "0.9.1+snapshot.dev.20",
+    "sourceBaseline": "9959ade60da82b49cc464b4888b2b4b0db40d872",
+    "sourceHashes": {
+      "src/prototype/cindermaw-combat.js": "4c60cb02a6a2835a3c839fc957c4366d75c194946cd391a87928bcd2f153b582",
+      "src/prototype/combat-visuals.js": "e9f41d19c2996f498d19c0f53eaaeb70b9f4f0650fb1fe3a4504fabdbbba7516",
+      "src/prototype/data.js": "ddea3dee91dd5661c578b89c5c1ba33d2b881850405d2c0818bc1cca43b4629a",
+      "src/prototype/rules.js": "20af532e6d7b2620e627a47e3687f3473473c64ebcd8f97ed8b097413522ec36"
+    },
+    "profile": "actual Normal mage Crown-roost source rendered with pinned NodeCanvas at1280x800 and375x800; held high-health/immune fixture",
+    "inspected": true,
+    "files": [
+      {
+        "path": "tools/sprites/design-handoffs/references/cinder-ministry/cordon-1280.png",
+        "sha256": "8274f33051b6a338af73ab169bc1d17757a16819308117fd5d5023f797dcddd4"
+      },
+      {
+        "path": "tools/sprites/design-handoffs/references/cinder-ministry/cordon-375.png",
+        "sha256": "494ccac5f5af201186c5c0ca9861b519e67f0d1410d81c001e45f652b1a0bb70"
+      },
+      {
+        "path": "tools/sprites/design-handoffs/references/cinder-ministry/seals-1280.png",
+        "sha256": "c568b6b21fd7750bb4ed7ed6c0f789fe04e012635216853c1c9dda248292d962"
+      },
+      {
+        "path": "tools/sprites/design-handoffs/references/cinder-ministry/seals-375.png",
+        "sha256": "8ed9d423bf0bc9a49b1e4a8b5bdf3113002eb9a010d143f4035b4a768c203829"
+      }
+    ],
+    "limits": "Readable next-opening caption stays in viewport, third-of-seven seal caption wraps. Roost garrison labels remain dense; mobile Vera/patrol and final playable audit pending. Not browser/physical-device/director acceptance."
   }
 }

@@ -194,5 +194,11 @@
       "src/prototype/rules.js": "20af532e6d7b2620e627a47e3687f3473473c64ebcd8f97ed8b097413522ec36",
       "templates/game.html": "87bf537fc910cd802bf7bbc557156750ed98ce70bed180f3650d8ede41174e8e"
     }
+  },
+  "approvedSnapshotCinderMinistryPresentationRevision": {
+    "source": "Director #298 and #288: keep actual next-opening caption inside375px viewport without changing ring geometry, timing, or other warning cues. Original ministry pins retained.",
+    "files": {
+      "src/prototype/combat-visuals.js": "e9f41d19c2996f498d19c0f53eaaeb70b9f4f0650fb1fe3a4504fabdbbba7516"
+    }
   }
 }

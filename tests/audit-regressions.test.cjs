@@ -52,7 +52,9 @@ test('F37 all normal and TRUE boss families preserve warnings while gaining mode
   const R=C.rules,scale=R.bossCadence.areaRangeMultiplier;
   assert.equal(scale,1.15);assert.equal(R.bossCadence.specialRange,600);
   for(const def of C.data.bosses)for(const form of ['normal','true']){
-    const c=fresh(),e=c.bossEnemy(def,form,{x:1100,y:1250});
+    const c=fresh();
+    if(def.id==='cindermaw')c.enter('crown');
+    const e=c.bossEnemy(def,form,def.id==='cindermaw'?{x:2200,y:1750}:{x:1100,y:1250});
     c.zone().enemies=[e];c.s.party=[];c.line=()=>true;
     Object.assign(c.hero,{x:e.x+160,y:e.y,maxHp:100000,hp:100000});
     for(let i=0;i<R.attacks[def.id].length;i++){
@@ -66,7 +68,12 @@ test('F37 all normal and TRUE boss families preserve warnings while gaining mode
       if(kind==='sector')assert.equal(a.radius,280*scale,def.id+' '+form+' sector');
       if(kind==='ring'){
         c.s.hazards=[];c.resolveAttack(e);
-        assert.equal(c.s.hazards.at(-1).life,plan.slowOnly?plan.waveLife:R.combatGeometry.ringLife*scale,def.id+' '+form+' actual expanding ring duration');
+        if(def.id==='cindermaw'&&i===0){
+          assert.equal(e.cinderCordon.life,plan.cordonLife,def.id+' '+form+' actual contracting cordon duration');
+          assert.equal(e.cinderCordon.radius,plan.initialRadius);
+          assert(Number.isFinite(e.cinderCordon.gapAngle)&&Number.isFinite(e.cinderCordon.nextGap));
+          assert.notEqual(e.cinderCordon.gapAngle,e.cinderCordon.nextGap);
+        }else assert.equal(c.s.hazards.at(-1).life,plan.slowOnly?plan.waveLife:R.combatGeometry.ringLife*scale,def.id+' '+form+' actual expanding ring duration');
       }
       if(a.count>1&&kind==='circle'){
         assert.equal(c.attackPatches(a)[0].radius, (def.id==='crypt'&&i===3)||(def.id==='warlord'&&i===1)?72:75*scale,def.id+' '+form+' multi-target reach');

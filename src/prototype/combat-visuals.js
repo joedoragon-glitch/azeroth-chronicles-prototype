@@ -389,10 +389,17 @@
           strokeWorld(ctx, screen, cordon, end, '#aef1d5', 3);
           ctx.setLineDash([]);
           const p = screen(end);
+          const scale = ctx.getTransform?.().a || 1,
+            width = (ctx.canvas?.width || 1280) / scale,
+            height = (ctx.canvas?.height || 800) / scale,
+            x = Math.max(56, Math.min(width - 56, p.x)),
+            y = Math.max(20, Math.min(height - 12, p.y - 10));
+          ctx.fillStyle = '#15271ff2';
+          ctx.fillRect(x - 54, y - 14, 108, 20);
           ctx.fillStyle = '#aef1d5';
           ctx.textAlign = 'center';
           ctx.font = 'bold 11px system-ui';
-          ctx.fillText('NEXT OPENING', p.x, p.y - 10);
+          ctx.fillText('NEXT OPENING', x, y);
         }
         // The final inner blast is announced throughout the contraction.
         if (cue) {
