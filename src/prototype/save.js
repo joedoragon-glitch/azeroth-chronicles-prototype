@@ -266,6 +266,14 @@
         if (typeof s.throneClaimed !== 'boolean' || (s.throneClaimed && !s.true.darklord))
           throw Error('Invalid coronation');
         if (s.phase === 'peace' && !s.throneClaimed) throw Error('Missing coronation');
+        // Old v4 peaceful saves already displayed their ending before Rest
+        // was introduced. Preserve that completed state, never replay credits.
+        if (s.finalRestCompleted === undefined) s.finalRestCompleted = s.phase === 'peace';
+        if (
+          typeof s.finalRestCompleted !== 'boolean' ||
+          (s.finalRestCompleted && s.phase !== 'peace')
+        )
+          throw Error('Invalid final Rest');
         if (s.phase !== 'adventure' && !s.true.darklord) throw Error('Invalid awakening');
         if (s.phase === 'peace' && !dungeonIds.every((id) => s.true[id]))
           throw Error('Invalid peace');
