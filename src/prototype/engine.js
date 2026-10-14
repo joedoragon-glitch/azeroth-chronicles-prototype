@@ -1707,6 +1707,7 @@
         oldZone.props = oldZone.props.filter((p) => !p.garunTemporary && !p.garunPreview);
       this.s.zone = zone;
       this.zone();
+      this.syncDungeonMasterStation();
       this.s.recallActive = false;
       this.s.squadEngagement = null;
       this.s.squadBoss = false;
@@ -2364,6 +2365,8 @@
       this.checkClear();
       this.checkMinis();
       this.checkEnding();
+      if (e.type === 'boss' && dungeonIds.includes(this.s.zone))
+        this.syncDungeonMasterStation();
     }
     fieldBossStreak(e) {
       if (
