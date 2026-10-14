@@ -1248,9 +1248,12 @@
         if (e.family === 'darklord' && a.royalTaxation) {
           const marked = this.combatTargets()
             .filter((unit) => unit.hp > 0 && dist(unit, a) <= a.radius && this.line(e, unit))
-            .slice(0, 2)
+            .slice(0, 4)
             .map((unit) => (unit === this.hero ? 'hero' : unit.id));
-          e.royalTaxation = { marked, expires: this.s.time + 5, sources: [] };
+          // Four damaging strikes during the ten-second levy: each marked
+          // living contributor must participate if fewer than four were
+          // targetable. A complete four-character party must hit from all four.
+          e.royalTaxation = { marked, expires: this.s.time + 10, sources: [], hits: 0 };
           return;
         }
         if (e.family === 'darklord' && a.royalSidestep) {
