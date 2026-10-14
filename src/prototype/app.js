@@ -5,7 +5,8 @@
     canvas = $('world'),
     ctx = canvas.getContext('2d'),
     D = Campaign.data,
-    manaEnabled = PrototypeRules.resourceMode.manaEnabled;
+    manaEnabled = PrototypeRules.resourceMode.manaEnabled,
+    developerEnabled = new URLSearchParams(window.location.search).get('developer') === '1';
   // A device-only display preference: never part of the campaign or profile export.
   const optimizationKey = 'azeroth-optimization-mode-v1';
   let optimizationMode = false;
@@ -164,7 +165,7 @@
     game = restored;
     return true;
   }
-  let loaded = load(profile.activeMode);
+  let loaded = (developerEnabled && load('developer')) || load(profile.activeMode);
   if (!loaded) {
     game = persistence.migrateLegacy();
     if (game) {
@@ -593,17 +594,20 @@
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   function start(mode, heroClass, succession) {
+    if (mode === 'developer' && !developerEnabled) return;
     if (mode === 'nightmare' && !profile.nightmareUnlocked) return;
     game = new Campaign(mode, heroClass, Math.random, { succession });
     started = true;
     if (typeof Sprint !== 'undefined') Sprint.reset();
     paused = false;
-    profile.activeMode = mode;
+    if (mode !== 'developer') profile.activeMode = mode;
     save();
     closeMenu();
     updateHUD();
   }
   function chooseClass(mode, succession) {
+    if (mode === 'developer' && !developerEnabled) return;
+    if (mode === 'developer') succession = false;
     if (succession === undefined) {
       openMenu(
         'Challenge condition',
@@ -616,7 +620,7 @@
       return;
     }
     openMenu(
-      'New ' + (mode === 'nightmare' ? 'Nightmare' : 'Normal') + ' adventure',
+      'New ' + (mode === 'nightmare' ? 'Nightmare' : mode === 'developer' ? 'Developer' : 'Normal') + ' adventure',
       'Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.',
       Object.entries(Campaign.classes).map(([id, c]) =>
         action(
@@ -748,6 +752,7 @@
           ),
         ),
         action('New Normal game', () => chooseClass('normal')),
+        ...(developerEnabled ? [action('New Developer Mode run', () => chooseClass('developer'))] : []),
         action(
           'New game in Nightmare Mode',
           () => chooseClass('nightmare'),
@@ -915,6 +920,7 @@
             ),
           ]
         : []),
+      ...(developerEnabled ? [action('New Developer Mode run', () => chooseClass('developer'))] : []),
       action('Game and settings', systemMenu),
     ]);
   }
@@ -994,11 +1000,13 @@
       if (file.size > 5 * 1024 * 1024) throw Error('too large');
       const data = JSON.parse(await file.text()),
         candidate = data.version === 2 ? Campaign.migrate(data) : Campaign.restore(data);
+      if (candidate.s.mode === 'developer' && !developerEnabled)
+        throw Error('Developer import disabled');
       persistence.writeCandidate(candidate);
       game = candidate;
       started = true;
-      profile.activeMode = game.s.mode;
-      if (game.peace) profile.nightmareUnlocked = true;
+      if (game.s.mode !== 'developer') profile.activeMode = game.s.mode;
+      if (game.peace && game.s.mode !== 'developer') profile.nightmareUnlocked = true;
       persistProfile();
       closeMenu();
       status('Imported successfully.');
@@ -1698,7 +1706,14 @@
   }
   function beginCharge(slot, source, pointerId = null) {
     const rank = game.hero.skills[slot - 1];
-    if (!chargeableSlots.has(slot) || !activePlay() || !rank || game.peace) return false;
+    if (
+      !chargeableSlots.has(slot) ||
+      !activePlay() ||
+      !rank ||
+      game.peace ||
+      (game.s.mode === 'developer' && slot === 1)
+    )
+      return false;
     if (charge) cancelCharge();
     const queued = game.hero.cd[slot - 1] > 0;
     charge = { slot, source, pointerId, queued, started: null, targetId: null };
@@ -1942,6 +1957,7 @@
     else if (actionId === 'quests') quests(false);
     else if (actionId.startsWith('skill')) {
       const slot = Number(actionId.slice(5));
+      if (game.s.mode === 'developer' && slot === 1) return;
       if (chargeableSlots.has(slot)) beginCharge(slot, 'keyboard');
       else game.cast(slot);
     }
@@ -2158,6 +2174,33 @@
         : '';
     else $('status').style.top = '';
   }
+  const developerSummonButton = document.createElement('button');
+  developerSummonButton.id = 'developer-summon';
+  developerSummonButton.textContent = 'Summon';
+  developerSummonButton.setAttribute('aria-label', 'Summon a regional boss or captain');
+  developerSummonButton.hidden = true;
+  document.body.append(developerSummonButton);
+  const developerCombatMonitor = document.createElement('aside');
+  developerCombatMonitor.id = 'developer-combat-monitor';
+  developerCombatMonitor.setAttribute('aria-label', 'Developer combat monitor');
+  developerCombatMonitor.hidden = true;
+  document.body.append(developerCombatMonitor);
+  function openDeveloperSummonMenu() {
+    if (!activePlay() || game.s.mode !== 'developer') return;
+    openMenu(
+      'Developer · Summon',
+      'Summon a hostile regional boss (regular or TRUE) or captain. No campaign rewards or victory progress.',
+      game.developerSummonOptions().map((entry) =>
+        action(entry.label, () => {
+          const enemy = game.developerSummon(entry.id);
+          closeMenu();
+          if (enemy) status('Summoned ' + enemy.name);
+        }),
+      ),
+      closeMenu,
+    );
+  }
+  developerSummonButton.onclick = openDeveloperSummonMenu;
   const hudMarkup = new Map();
   function setMarkup(id, html) {
     if (hudMarkup.get(id) !== html) {
@@ -2166,6 +2209,19 @@
     }
   }
   function updateHUD() {
+    const devActive = started && game.s.mode === 'developer';
+    developerSummonButton.hidden = !devActive;
+    developerCombatMonitor.hidden = !devActive;
+    if (devActive) {
+      const telemetry = game.developerCombatSnapshot(),
+        recent = (hits) => hits.map((hit) => Math.round(hit)).join(' / ') || '—';
+      developerCombatMonitor.textContent =
+        'DEV · COMBAT MONITOR\\n' +
+        'Taken: ' + recent(telemetry.incoming.last) + '\\n' +
+        'Incoming DPS: ' + telemetry.incoming.dps.toFixed(1) + '\\n' +
+        'Dealt: ' + recent(telemetry.outgoing.last) + '\\n' +
+        'Outgoing DPS: ' + telemetry.outgoing.dps.toFixed(1);
+    }
     const h = game.hero,
       hp = Math.max(0, Math.min(100, (h.hp / h.maxHp) * 100)),
       mp = manaEnabled ? Math.max(0, Math.min(100, (h.mp / h.maxMp) * 100)) : 0;
@@ -2321,7 +2377,8 @@
         rank = h.skills[i],
         charging = charge?.slot === slot,
         cast = charging ? chargePresentation() : null;
-      b.classList.toggle('locked', !rank);
+      b.disabled = game.s.mode === 'developer' && slot === 1;
+      b.classList.toggle('locked', !rank || b.disabled);
       b.classList.toggle('charging', charging);
       b.classList.toggle('skill-ready', !!rank && h.cd[i] <= 0 && !charging);
       const revealed = game.skillRevealed(slot),
@@ -2337,6 +2394,7 @@
           : '';
       b.title =
         (revealed ? skillNames[i] : 'Undiscovered skill') +
+        (b.disabled ? ' · Disabled in Developer Mode' : '') +
         (rank ? ' · Rank ' + rank : ' · Not learned') +
         chargeTip +
         (slot === 1
@@ -2357,8 +2415,10 @@
               (manaEnabled ? ' · charged cost ' + chargedManaPercent(slot) + ' percent max MP' : '')
             : ''),
       );
-      b.querySelector('small').textContent = charging
-        ? cast.state === 'waiting'
+      b.querySelector('small').textContent = b.disabled
+        ? 'OFF'
+        : charging
+          ? cast.state === 'waiting'
           ? 'WAIT ' + cooldownText(cast.cooldown)
           : cast.state === 'charging'
             ? Math.min(99, Math.round(cast.progress * 100)) + '%'
@@ -2474,6 +2534,7 @@
       game.tick(dt, { x, y, speedFactor });
       syncChargeReady();
       if (
+        game.s.mode !== 'developer' &&
         (x || y || was.order) &&
         charge?.slot !== 1 &&
         game.hero === movingHero &&
@@ -2569,7 +2630,7 @@
     fps.suspend();
   });
   updateHUD();
-  if (!loaded) chooseClass('normal');
+  if (!loaded) chooseClass(developerEnabled ? 'developer' : 'normal');
   requestAnimationFrame(frame);
   addEventListener('beforeinstallprompt', (event) => {
     event.preventDefault();

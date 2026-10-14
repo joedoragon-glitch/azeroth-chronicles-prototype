@@ -378,6 +378,7 @@
         const actualDamage = Math.min(e.hp, amount);
         e.hp = Math.max(0, e.hp - amount);
         this.tacticalRecordHit(e, source, actualDamage);
+        if (source === 'hero') this.recordDeveloperDamage('outgoing', actualDamage);
         this.effects.push({ type: 'hit', x: e.x, y: e.y, amount });
         if (e.hp === 0) this.kill(e);
         return true;
@@ -390,8 +391,10 @@
             : ['soldier', 'archer'].includes(u.type)
               ? this.companionArmor(u.type)
               : 5 + this.hero.level * 0.5;
-        const oldHp = u.hp;
-        u.hp = Math.max(0, u.hp - Math.max(3, amount - armor * 0.35));
+        const oldHp = u.hp,
+          mitigated = Math.max(3, amount - armor * 0.35);
+        u.hp = Math.max(0, u.hp - mitigated);
+        if (u === this.hero) this.recordDeveloperDamage('incoming', mitigated);
         if (R.resourceMode.manaEnabled && u === this.hero && manaDrain > 0)
           this.drainMana(u, manaDrain);
         // All life-steal uses actual HP lost after armor, immunity and overkill.
@@ -425,6 +428,10 @@
           }
         }
         this.event('hurt', { x: u.x, y: u.y, target: u === this.hero ? 'hero' : u.id });
+        if (u === this.hero && this.s.mode === 'developer' && u.hp === 0) {
+          u.hp = u.maxHp;
+          this.event('heal', { x: u.x, y: u.y, target: 'hero', amount: u.maxHp });
+        }
         if (u.hp === 0) {
           u.slow = 0;
           this.tacticalClearScatter(u);

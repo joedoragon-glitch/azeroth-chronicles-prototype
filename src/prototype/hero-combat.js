@@ -193,6 +193,7 @@
               : 480;
       }
       cast(slot, targetId, charged = false, encountersAtStart = null) {
+        if (this.s.mode === 'developer' && slot === 1) return false;
         const i = slot - 1,
           rank = this.hero.skills[i],
           isCharged = !!charged && (slot === 1 || slot === 2 || slot === 3);

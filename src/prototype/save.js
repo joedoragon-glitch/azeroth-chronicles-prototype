@@ -50,7 +50,7 @@
         if (
           !s ||
           s.version !== 4 ||
-          !['normal', 'nightmare'].includes(s.mode) ||
+          !['normal', 'nightmare', 'developer'].includes(s.mode) ||
           !['adventure', 'awakening', 'peace'].includes(s.phase) ||
           !classes[s.hero?.class]
         )

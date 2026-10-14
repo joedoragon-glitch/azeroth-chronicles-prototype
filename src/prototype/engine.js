@@ -27,7 +27,7 @@
     mercyStartRadius = R.balance.pursuit.mercyStartRadius;
   class Campaign {
     constructor(mode = 'normal', heroClass = 'paladin', random = Math.random, options = {}) {
-      if (!['normal', 'nightmare'].includes(mode) || !classes[heroClass])
+      if (!['normal', 'nightmare', 'developer'].includes(mode) || !classes[heroClass])
         throw Error('Unknown mode or class');
       this.random = random;
       this.formationHeading = { x: 0, y: 1 };
@@ -39,6 +39,8 @@
       this.basicComboAt = -1e9;
       this.basicComboClass = heroClass;
       this.basicComboTargetId = null;
+      // Non-persistent test telemetry, outside the v4 save schema.
+      this.developerCombat = { incoming: [], outgoing: [], startedAt: 0 };
       this.s = {
         version: 4,
         mode,
@@ -1074,6 +1076,99 @@
         deathPaid: false,
       };
     }
+    recordDeveloperDamage(direction, amount) {
+      if (this.s.mode !== 'developer' || !['incoming', 'outgoing'].includes(direction)) return;
+      if (!Number.isFinite(amount) || amount <= 0) return;
+      const history = this.developerCombat[direction];
+      history.push({ time: this.s.time, damage: amount });
+      while (history.length > 3 && history[0].time < this.s.time - 5) history.shift();
+    }
+    developerCombatSnapshot() {
+      if (this.s.mode !== 'developer') return null;
+      const windowSeconds = 5;
+      const elapsed = Math.min(windowSeconds, Math.max(1, this.s.time - this.developerCombat.startedAt));
+      const read = (direction) => {
+        const history = this.developerCombat[direction];
+        return {
+          last: history.slice(-3).reverse().map((hit) => hit.damage),
+          dps: history
+            .filter((hit) => hit.time >= this.s.time - windowSeconds)
+            .reduce((sum, hit) => sum + hit.damage, 0) / elapsed,
+        };
+      };
+      return { incoming: read('incoming'), outgoing: read('outgoing') };
+    }
+    developerSummonOptions() {
+      if (this.s.mode !== 'developer' || this.peace) return [];
+      const region = this.definition()?.id;
+      if (!region) return [];
+      const bosses = D.bosses
+        .filter((boss) => boss.region === region)
+        .flatMap((boss) =>
+          ['normal', 'true'].map((form) => ({
+            id: 'boss:' + boss.id + ':' + form,
+            label: boss.name + (form === 'true' ? ' · TRUE' : ' · Regular'),
+            kind: 'boss',
+            boss: boss.id,
+            form,
+          })),
+        );
+      const captains = Object.entries(R.roomCaptains || {})
+        .filter(([id]) => id === 'supply-' + region || (region === 'frontier' && id === 'frontier-overseer'))
+        .map(([id, profile]) => ({
+          id: 'captain:' + id,
+          label: profile.name + ' · Captain',
+          kind: 'captain',
+          profile: id,
+        }));
+      return [...bosses, ...captains];
+    }
+    developerSummon(id) {
+      if (this.s.mode !== 'developer' || this.peace || this.hero.hp <= 0) return null;
+      const option = this.developerSummonOptions().find((entry) => entry.id === id);
+      if (!option) return null;
+      const p = this.safe(this.hero.x + 175, this.hero.y + 65, this.zoneId);
+      let enemy;
+      if (option.kind === 'boss') {
+        enemy = this.bossEnemy(this.boss(option.boss), option.form, p);
+      } else {
+        const profile = R.roomCaptains[option.profile];
+        const region = this.regionIndex();
+        const species = D.species[region][0];
+        const original = this.s.zones[option.profile]?.enemies.find((e) => e.roomCaptain);
+        enemy = this.makeEnemy(
+          {
+            species: original?.species || species[0],
+            name: profile.name,
+            icon: original?.icon || species[2],
+            level: original?.level || region * 3 + 2,
+            hp: original?.baseHp || Math.round((65 + region * 105) * R.guardianScaling[region].hp),
+            damage: original?.baseDamage || Math.round((7 + region * 8) * R.guardianScaling[region].damage),
+            gold: 0,
+            xp: 0,
+          },
+          p,
+        );
+        enemy.captain = true;
+        enemy.roomCaptain = true;
+        enemy.captainProfile = option.profile;
+        enemy.captainMentor = profile.mentor;
+        enemy.captainVisualIdol = profile.visualIdol || profile.mentor;
+        enemy.visualScale = profile.visualScale || 1.16;
+        enemy.specialCd = 0;
+        enemy.roomCaptainVersion = 1;
+      }
+      // Test spawns exercise authentic AI and attacks but cannot award campaign progress.
+      enemy.developerSummon = true;
+      enemy.summon = true;
+      enemy.neutral = false;
+      enemy.home = { ...p };
+      enemy.pack = 'developer-' + enemy.id;
+      this.zone().enemies.push(enemy);
+      this.engage(enemy, true);
+      this.say('Developer summon: ' + enemy.name + '.');
+      return enemy;
+    }
     bossEnemy(b, form, p) {
       let hp = b.hp,
         damage = b.damage,
@@ -1990,6 +2085,10 @@
       e.rangedAim = null;
       e.sequence = [];
       if (e.summon) {
+        if (e.developerSummon)
+          this.zone().enemies.forEach((add) => {
+            if (add.summon && add.owner === e.id) add.hp = 0;
+          });
         return;
       }
       this.s.statistics.kills++;
@@ -2327,7 +2426,7 @@
       this.s.mercyTime = Math.max(0, (this.s.mercyTime || 0) - dt);
       if (this.s.mercyTime < 1e-9) this.s.mercyTime = 0;
       this.s.restCooldown = Math.max(0, (this.s.restCooldown || 0) - dt);
-      if (this.peace || this.s.mode === 'normal') this.s.clock = (this.s.clock + dt) % 600;
+      if (this.peace || this.s.mode !== 'nightmare') this.s.clock = (this.s.clock + dt) % 600;
       const h = this.hero,
         z = this.zone(),
         formationStart = { x: h.x, y: h.y };
