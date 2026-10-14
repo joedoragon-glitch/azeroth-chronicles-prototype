@@ -1063,6 +1063,17 @@
               ),
             ],
         baseActions = [
+          ...(getGame().peace && !getGame().s.finalRestCompleted
+            ? [
+                action(
+                  'Rest here · Complete the journey',
+                  () => {
+                    if (getGame().completeFinalRest('barracks', b)) closeMenu();
+                  },
+                  'Completed Barracks · recover and begin the ending credits',
+                ),
+              ]
+            : []),
           exp,
           ...(tonic ? [tonic] : []),
           ...respawnActions,
