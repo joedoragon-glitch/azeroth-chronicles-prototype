@@ -243,7 +243,7 @@
   "approvedSnapshotVeyraRevision": {
     "source": "#298 #255 #263 #281 Veyra integrated candidate on PR #300; exact source hashes after 14 October court/save mechanics; no release certification",
     "files": {
-      "src/prototype/boss-combat.js": "348ab64cdd70799f21340d10badfecb308cd4f4beff9f9207700cb8cd763f83c",
+      "src/prototype/boss-combat.js": "793e6e1a66e04a9bfd17854b6afaabc1d1516edd0426e7c932f09fb857e85dc7",
       "src/prototype/combat-visuals.js": "5729b04bcf8c32d3f32c70ba87f1a7c858e9e2d8a7f12d61bfcad9e2d64cd4b4",
       "src/prototype/data.js": "236ddbb0dfe03fc06d512014d482515070c827e4b2132bd1d0da5c57b9a5372e",
       "src/prototype/engine.js": "9f1011a84f4bbc14748e0d1148c9c36dbd19d3dd45d2ea7dbba42aadfa80a2e7",

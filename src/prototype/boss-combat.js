@@ -741,10 +741,10 @@
             });
         }
         if (e.family === 'citadel') {
-          if (index === 0) { a.kind = 'canister'; a.radius = 360; }
+          if (index === 0) { a.kind = 'canister'; a.radius = 360; a.opening = 0; }
           if (index === 1) { a.kind = 'formation'; a.radius = 230; }
           if (index === 2) {
-            a.kind = 'pattern-charge'; a.path = this.sentinelPatternPath(e); a.count = 1;
+            a.kind = 'pattern-charge'; a.path = this.sentinelPatternPath(e); a.count = 1; a.opening = 0;
             if (a.path.length) Object.assign(a, a.path[a.path.length-1]);
           }
           if (index === 3) {
