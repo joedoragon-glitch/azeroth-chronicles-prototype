@@ -730,6 +730,9 @@
           });
         }
         if (e.family === 'darklord' && index === 0) {
+          // Every sword beat has an anonymous preparation bar instead of
+          // a named or spatial warning. Retain the actual 1.1/.5/.8s timing.
+          a.anonymousCast = true;
           // The two lateral steps occur AFTER the first and second real hits,
           // before the NEXT warning. This keeps warned arc footprints honest:
           // each strike hits where the ruler stood while it was telegraphed.
@@ -767,6 +770,11 @@
             total: 0.8,
             name: a.name + ' — second arc',
           });
+        if (e.family === 'darklord' && index === 4) {
+          // No More Heroes keeps its 1.5s commitment and actual narrow
+          // hit geometry, but exposes only the shared anonymous cast bar.
+          a.anonymousCast = true;
+        }
         if (e.family === 'darklord' && index === 1) {
           // Warn the actual landing sites rather than teleporting to an aimed mark.
           const side = angle + Math.PI / 2;
@@ -981,7 +989,12 @@
         e.sequence = [...built.sequence, ...this.bossComboSequence(e, selected, actualTarget)];
         e.telegraph = built.first;
         if (e.family === 'mine' && selected === 1) this.prepareMineWorksPreview(e);
-        this.event('warning', { family: e.family, index: selected });
+        this.event(
+          'warning',
+          built.first.anonymousCast
+            ? { family: e.family, anonymousCast: true }
+            : { family: e.family, index: selected },
+        );
         return true;
       }
       attackPatches(a) {
@@ -1404,7 +1417,7 @@
             if (priorGuards)
               for (const guard of this.bossOwnedSummons(e))
                 if (!priorGuards.has(guard.id) && guard.hp > 0)
-                  guard.royalFormationUntil = this.s.time + 3;
+                  guard.royalFormationUntil = this.s.time + 6;
             e.summonCd =
               e.form === 'true' ? R.bossSummoning.trueCooldown : R.bossSummoning.normalCooldown;
           }
@@ -1779,7 +1792,12 @@
           e.telegraph = this.advanceQueuedAttack(e);
           if (e.family === 'mine' && a.index !== 1 && e.telegraph?.index === 1)
             this.prepareMineWorksPreview(e);
-          if (e.telegraph) this.event('warning', { family: e.family });
+          if (e.telegraph)
+            this.event('warning',
+              e.telegraph.anonymousCast
+                ? { family: e.family, anonymousCast: true }
+                : { family: e.family },
+            );
           else if (!a.rogueMove)
             e.basicDue = e.type === 'boss' && e.attackIndex % R.bossCadence.skillsPerBasic === 0;
         }
