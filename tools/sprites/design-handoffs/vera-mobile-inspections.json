@@ -5,7 +5,7 @@
   "designId": "vera-mobile-inspections",
   "name": "Vera guarded mobile forge and repairs",
   "kind": "mobile-captive-and-forge",
-  "nextAction": "Complete current124Node/hosted Chromium/WebKit gates and inspect native375/1280captures; sprite production excluded.",
+  "nextAction": "Complete dev.23 focused and full124/hosted gates, inspect actual browser captures; prior images preserved and sprite production excluded.",
   "context": {
     "originConversation": null,
     "decisionSummary": "Director #298 choices28C/29B/30C and #288: variable guarded Cindermaw inspections, same Vera mobile forge and limited actual nearby repairs.",
@@ -22,7 +22,7 @@
     "pendingCorrections": ["Full current source regression/hosted browser validation pending."]
   },
   "reference": {
-    "sourceCommit": "3e67bf35092064ee9911f89e984d73a873f06c16 (parent; exact source hashes below identify current candidate)",
+    "sourceCommit": "10cb9b3b3b937e03715916c93277d77beee265bc (parent; exact current source hashes below)",
     "ownerFilesAndBranches": [
       "implementation/director-snapshot-20261013",
       "src/prototype/cindermaw-combat.js",
@@ -38,10 +38,14 @@
     "isolatedReferencePath": "tools/sprites/design-handoffs/references/vera-mobile/vera-forge-procedural.png",
     "isolatedReferenceHash": "8644cb261028b04081f650190e33ae6a28b61fd8dcfce5f8d44c2faefa18e724",
     "gameplayContextPaths": [
+      "tools/sprites/design-handoffs/references/vera-mobile/repair-framed-375.png",
       "tools/sprites/design-handoffs/references/vera-mobile/inspection-1280.png",
       "tools/sprites/design-handoffs/references/vera-mobile/inspection-375.png",
       "tools/sprites/design-handoffs/references/vera-mobile/repair-375.png",
-      "tools/sprites/design-handoffs/references/vera-mobile/repair-1280.png"
+      "tools/sprites/design-handoffs/references/vera-mobile/inspection-framed-1280.png",
+      "tools/sprites/design-handoffs/references/vera-mobile/repair-1280.png",
+      "tools/sprites/design-handoffs/references/vera-mobile/repair-framed-1280.png",
+      "tools/sprites/design-handoffs/references/vera-mobile/inspection-framed-375.png"
     ],
     "traitsToPreserve": [
       "Same Vera identity and original Master Smith service",
@@ -53,7 +57,7 @@
     "assetSpecificDependencies": [
       {
         "path": "src/prototype/cindermaw-combat.js",
-        "sha256": "0e3f9000b0a6e6c03562c5bd6aa6da085e51d71d949476f967288ed005f534f5"
+        "sha256": "b201d136dca2181733ad0c5c9fb99dd4345bac0c8b2dbe0a3c0c131fa385a945"
       },
       {
         "path": "src/prototype/rules.js",
@@ -86,10 +90,14 @@
     ],
     "captureHashes": {
       "tools/sprites/design-handoffs/references/vera-mobile/vera-forge-procedural.png": "8644cb261028b04081f650190e33ae6a28b61fd8dcfce5f8d44c2faefa18e724",
+      "tools/sprites/design-handoffs/references/vera-mobile/repair-framed-375.png": "8d9d886bd58e95358fd4f9941bd7a1095fb2f687b99884c1f16f0012c8b44e11",
       "tools/sprites/design-handoffs/references/vera-mobile/inspection-1280.png": "eae78c788624ee1a520ad7e85d950b3e7d1cb18bd80c67b99197021607bcac1a",
       "tools/sprites/design-handoffs/references/vera-mobile/inspection-375.png": "5d7bd3e4086283b186f2e46c79cd9fe6909ce3dee7ce5f6db02125b1d7462b14",
       "tools/sprites/design-handoffs/references/vera-mobile/repair-375.png": "40fb95811bec8e771bbecceb505eb78f0cdd2e3df54520abe4607f7efb6fcd57",
-      "tools/sprites/design-handoffs/references/vera-mobile/repair-1280.png": "773375d1f90ab5509c9f6689f4c8b3add647a65dfcd263ac52b8a56f7517a4c3"
+      "tools/sprites/design-handoffs/references/vera-mobile/inspection-framed-1280.png": "c32cc1e168ef702ba2e3c071cbf3116b929b2d1e76cca576de22f8c5300b5297",
+      "tools/sprites/design-handoffs/references/vera-mobile/repair-1280.png": "773375d1f90ab5509c9f6689f4c8b3add647a65dfcd263ac52b8a56f7517a4c3",
+      "tools/sprites/design-handoffs/references/vera-mobile/repair-framed-1280.png": "a8a15657cf8d4f88c1deb7702ada61d1f6bc49ee4898c78af50b0ab6ede729fd",
+      "tools/sprites/design-handoffs/references/vera-mobile/inspection-framed-375.png": "0f7906cab5a33c3586f2f163cd0bdcd78fa2a35c3ef813d6f62d14f0bbccf943"
     }
   },
   "scope": {

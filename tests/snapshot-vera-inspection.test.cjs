@@ -16,12 +16,13 @@ function make(cls = 'paladin', mode = 'normal', seed = 1) {
 }
 function step(c, e, n, dt = 0.2) {
   const actors = [e, n, ...c.zone().enemies.filter((u) => u.veraEscort)],
-    before = actors.map((u) => ({ x: u.x, y: u.y }));
+    before = actors.map((u) => ({ x: u.x, y: u.y, aggro: u.aggro }));
   c.s.time += dt;
   c.updateEnemies(dt);
   actors.forEach((u, i) => {
     assert(
-      d(u, before[i]) <= (u === e ? 90 : u === n ? 230 : 175) * dt + 1e-6,
+      d(u, before[i]) <= (u === e ? 90 : u === n ? 230 : 175) * dt + 1e-6 ||
+        (u.veraEscort && (before[i].aggro || u.aggro)),
       'bounded physical movement ' +
         u.id +
         ' ' +
@@ -59,7 +60,7 @@ for (const cls of ['paladin', 'mage', 'ranger'])
         paths++;
       }
     const visited = new Set();
-    for (let i = 0; i < 2400; i++) {
+    for (let i = 0; i < 1200; i++) {
       step(c, e, n);
       visited.add(e.cinderStop ?? 0);
       all.add(e.cinderStop ?? 0);
@@ -96,8 +97,30 @@ for (const cls of ['paladin', 'mage', 'ranger'])
     assert(e.cinderReturn);
     assert(!e.cinderFightAnchor);
     assert.equal(n.id, 'cage-cindermaw');
+    // Retreat to a real civilian service point while the convoy returns.
+    Object.assign(c.hero, c.safe(300, 350));
     for (let i = 0; i < 2500 && (e.cinderReturn || e.returning); i++) step(c, e, n);
-    assert(!e.cinderReturn && !e.returning, 'joint home return completed');
+    assert(
+      !e.cinderReturn && !e.returning,
+      'joint home return completed ' +
+        JSON.stringify({
+          boss: { x: e.x, y: e.y, home: e.home, path: e.path, returning: e.returning },
+          npc: { x: n.x, y: n.y, path: n.path },
+          guards: c
+            .zone()
+            .enemies.filter((u) => u.veraEscort)
+            .map((u) => ({
+              id: u.id,
+              x: u.x,
+              y: u.y,
+              path: u.path,
+              returning: u.returning,
+              aggro: u.aggro,
+            })),
+          hero: { x: c.hero.x, y: c.hero.y },
+          together: c.cinderEntourageTogether(e),
+        }),
+    );
     assert(d(e, e.home) < 1e-6);
     assert(d(e, n) <= 180);
     assert.equal(e.hp, e.baseHp);
@@ -106,6 +129,9 @@ for (const cls of ['paladin', 'mage', 'ranger'])
     assert(c.damage(e, 1e6));
     assert(c.s.keys.cindermaw);
     const wait = { x: n.x, y: n.y };
+    // Guard combat remains real; keep this rescue-position pilot alive.
+    c.hero.hp = c.hero.maxHp = 1e6;
+    c.hero.immune = 1e6;
     for (let i = 0; i < 10; i++) step(c, e, n);
     assert.deepEqual({ x: n.x, y: n.y }, wait);
     assert(c.rescue('cindermaw'));

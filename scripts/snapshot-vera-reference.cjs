@@ -22,7 +22,7 @@ for (let i = 0; i < 750; i++) {
   c.updateEnemies(0.1);
 }
 assert(Math.hypot(e.x - e.home.x, e.y - e.home.y) > 500);
-Object.assign(c.hero, c.safe(n.x - 90, n.y + 170));
+Object.assign(c.hero, c.safe(n.x - 50, n.y + 40));
 function capture(stage) {
   for (const [width, height] of [
     [1280, 800],
@@ -46,7 +46,10 @@ function capture(stage) {
     r.draw();
     r.draw();
     assert.equal(JSON.stringify(c.s), before);
-    fs.writeFileSync(path.join(dir, stage + '-' + width + '.png'), canvas.toBuffer('image/png'));
+    fs.writeFileSync(
+      path.join(dir, stage + '-framed-' + width + '.png'),
+      canvas.toBuffer('image/png'),
+    );
   }
 }
 capture('inspection');

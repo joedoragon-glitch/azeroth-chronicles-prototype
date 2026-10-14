@@ -123,6 +123,14 @@ async function verifyCinderSupport(page, results, tag, capture = false) {
       const c = Prototype.game,
         e = c.zone().enemies.find((e) => e.family === 'cindermaw');
       c.disengage(e, 0);
+      c.s.mercyTime = 10;
+      // The ministry now returns with its entourage physically; a fixture
+      // cannot clear the old timer and leave the new return state stranded.
+      for (let i = 0; i < 2400 && (e.returning || e.cinderReturn); i++) {
+        c.s.time += 0.05;
+        c.updateEnemies(0.05);
+      }
+      if (e.returning || e.cinderReturn) throw Error('Ministry joint return did not complete');
       return c._tacticalCinderResponses.size;
     });
     assert.equal(canceled, 0);

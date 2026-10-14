@@ -127,11 +127,16 @@
         )
           return false;
         const e = this.zone().enemies.find((a) => isMinister(a) && a.hp > 0 && !a.neutral);
-        if (e && this.veraHeld() && !e.aggro) {
+        if (e && this.veraHeld()) {
           const captive = this.veraCaptive(),
             index = captive?.escortGuardIds?.indexOf(u.id) ?? 0,
             center = captive || e,
-            point = this.safe(center.x + (index === 0 ? -65 : 65), center.y + 35, 'crown');
+            preferred = this.safe(center.x + (index === 0 ? -65 : 65), center.y + 35, 'crown'),
+            // Near a large solid the nearest safe offset can land beyond the
+            // minister's wait radius. Collapse formation in that narrow space
+            // so correctly positioned guards cannot deadlock the itinerary.
+            point =
+              dist(preferred, e) <= R.cinderInspection.waitForCaptive + 20 ? preferred : center;
           this.follow(u, point, R.cinderInspection.guardSpeed, dt, 20);
           return true;
         }

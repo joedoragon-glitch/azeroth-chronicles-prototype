@@ -210,7 +210,7 @@
   "approvedSnapshotVeraInspectionRevision": {
     "source": "Director #298 choices28C/29B/30C and #288: actual variable Cindermaw routes, same Vera mobile forge, two existing native guards and bounded real defensive equipment/repairs with original services/save schema. Previous exact source pins retained.",
     "files": {
-      "src/prototype/cindermaw-combat.js": "0e3f9000b0a6e6c03562c5bd6aa6da085e51d71d949476f967288ed005f534f5",
+      "src/prototype/cindermaw-combat.js": "b201d136dca2181733ad0c5c9fb99dd4345bac0c8b2dbe0a3c0c131fa385a945",
       "src/prototype/combat.js": "cd9531b1fc09b22dfd8bc8d49507c86b476c70e0de69854da2a688050301a996",
       "src/prototype/engine.js": "d91e83f1cecc99d2e72a0b6a92778757937708995fff8e2e4aaca36a6e8defdf",
       "src/prototype/rules.js": "41016ea8c62a10e415bf063e194779b29636813e175c50a8299c2f48736f2cba",

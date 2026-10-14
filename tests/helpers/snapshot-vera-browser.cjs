@@ -40,7 +40,7 @@ async function verifyVeraInspection(page, results, tag, capture = false) {
       c.s.time += 0.1;
       c.updateEnemies(0.1);
     }
-    Object.assign(c.hero, c.safe(n.x - 90, n.y + 170));
+    Object.assign(c.hero, c.safe(n.x - 50, n.y + 40));
     PrototypeVisuals.draw = function (ctx, e, ...args) {
       __veraBrowser.seen.add(e.id);
       return __veraBrowser.draw(ctx, e, ...args);
