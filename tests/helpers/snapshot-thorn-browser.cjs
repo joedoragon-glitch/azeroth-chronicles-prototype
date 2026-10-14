@@ -9,6 +9,7 @@ async function verifyThornPatrol(page, results, tag, capture = false) {
       messages: c.messages,
       notices: c.notices,
       noticeId: c.noticeId,
+      notice: c.notice,
       random: c.random,
       tactical: Object.fromEntries(
         Object.keys(c)
@@ -24,6 +25,9 @@ async function verifyThornPatrol(page, results, tag, capture = false) {
     for (const k of Object.keys(c).filter((k) => k.startsWith('_tactical'))) delete c[k];
     c.messages = [];
     c.notices = [];
+    // This probe tests patrol/construction and rescue. Keep its simulated
+    // milestones out of the real shell notification queue and ID cursor.
+    c.notice = () => {};
     c.random = () => 0.5;
     c.tick = () => {};
     c.effects = [];
@@ -104,6 +108,7 @@ async function verifyThornPatrol(page, results, tag, capture = false) {
       c.messages = b.messages;
       c.notices = b.notices;
       c.noticeId = b.noticeId;
+      c.notice = b.notice;
       c.random = b.random;
       for (const k of Object.keys(c).filter((k) => k.startsWith('_tactical'))) delete c[k];
       Object.assign(c, b.tactical);

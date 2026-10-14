@@ -12,6 +12,7 @@ async function verifyGarunWorks(page, results, tag, capture = false) {
       messages: c.messages,
       notices: c.notices,
       noticeId: c.noticeId,
+      notice: c.notice,
       tactical: Object.fromEntries(
         Object.keys(c)
           .filter((k) => k.startsWith('_tactical'))
@@ -26,6 +27,9 @@ async function verifyGarunWorks(page, results, tag, capture = false) {
     c.effects = [];
     c.messages = [];
     c.notices = [];
+    // This probe tests patrol/construction and rescue. Keep its simulated
+    // milestones out of the real shell notification queue and ID cursor.
+    c.notice = () => {};
     for (const k of Object.keys(c).filter((k) => k.startsWith('_tactical'))) delete c[k];
     c.enter('mine');
     c.s.party = [];
@@ -100,6 +104,7 @@ async function verifyGarunWorks(page, results, tag, capture = false) {
       c.messages = b.messages;
       c.notices = b.notices;
       c.noticeId = b.noticeId;
+      c.notice = b.notice;
       for (const k of Object.keys(c).filter((k) => k.startsWith('_tactical'))) delete c[k];
       Object.assign(c, b.tactical);
       CanvasRenderingContext2D.prototype.fillText = b.fillText;
