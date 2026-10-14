@@ -724,8 +724,12 @@
           });
         }
         if (e.family === 'darklord' && index === 0) {
-          // Three independently warned strikes; the middle shield feint
-          // attempts a physical sidestep when a clear route exists.
+          // The two lateral steps occur AFTER the first and second real hits,
+          // before the NEXT warning. This keeps warned arc footprints honest:
+          // each strike hits where the ruler stood while it was telegraphed.
+          a.royalSidestep = true;
+          a.royalSidestepDirection = 1;
+          a.royalSidestepBaseAngle = angle;
           sequence.push(
             {
               ...a,
@@ -735,6 +739,8 @@
               coefficient: 0.85,
               name: a.name + ' — shield feint',
               royalSidestep: true,
+              royalSidestepDirection: -1,
+              royalSidestepBaseAngle: angle,
             },
             {
               ...a,
@@ -1227,13 +1233,29 @@
           return;
         }
         if (e.family === 'darklord' && a.royalSidestep) {
-          const sideways = a.angle + Math.PI / 2;
-          for (const dir of [1, -1]) {
+          // Inflict the warned strike at its ORIGINAL, visible footprint,
+          // then perform one short, collision-aware side movement before
+          // displaying the next warning. Never move the hit after the cue.
+          const hero = this.hero,
+            zone = this.zoneId,
+            deaths = this.s.statistics.deaths;
+          this.resolveArea(e, a);
+          if (this.hero !== hero || this.zoneId !== zone ||
+              this.s.statistics.deaths !== deaths || e.hp <= 0)
+            return;
+          const side = (a.royalSidestepBaseAngle ?? a.angle) + Math.PI / 2,
+            sign = a.royalSidestepDirection;
+          // Try shorter travel on the SAME side when space is tight. No
+          // opposite-side fallback, which would falsify left/right order.
+          for (const distance of [80, 55, 35]) {
             const goal = this.safe(
-              e.x + Math.cos(sideways) * 80 * dir,
-              e.y + Math.sin(sideways) * 80 * dir,
+              e.x + Math.cos(side) * distance * sign,
+              e.y + Math.sin(side) * distance * sign,
             );
-            if (dist(goal, e) >= 35 &&
+            const correctSide =
+              (goal.x - e.x) * Math.cos(side) * sign +
+              (goal.y - e.y) * Math.sin(side) * sign;
+            if (correctSide >= 30 &&
                 !this.blocked(goal.x, goal.y, this.zoneId, 15) &&
                 this.clearSegment(e, goal, 15)) {
               e.motion = {
@@ -1242,11 +1264,14 @@
                 hit: [],
                 speed: 280,
                 life: 0.5,
+                royalSidestepAfterStrike: true,
               };
               return;
             }
           }
-          // No passable lateral route: keep the warned arc but do not teleport.
+          // A completely blocked sidestep simply preserves the completed
+          // warned hit; normal queue advance runs without teleportation.
+          return;
         }
         if (a.cargo && e.family === 'ridge') {
           const d = Math.max(1, Math.hypot(a.x - e.x, a.y - e.y));
@@ -1729,8 +1754,9 @@
           if (a.captainSkill && e.captainProfile === 'supply-vale' && a.index === 0)
             e.captainPursuit = 2.5;
           if (a.landing && dist(e, a.target) < 20) this.resolveArea(e, a);
-          if (a.royalSidestep) {
-            // The shield-feint arc resolves at the actual post-movement position.
+          if (a.royalSidestep && !a.royalSidestepAfterStrike) {
+            // Compatibility with pre-change transient motion: active skill
+            // state must not lose its hit if it existed before this package.
             this.resolveArea(e, { ...a, x: e.x, y: e.y, fromX: e.x, fromY: e.y });
           }
           if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
