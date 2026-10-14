@@ -572,6 +572,7 @@
             return 0;
           if (!allowRepeat && index === e.lastAttackIndex && plans.length > 1) return 0;
           if (e.family === 'darklord' && index === 3 && !low) return 0;
+          if (e.family === 'darklord' && index === 4 && e.hp > e.maxHp * 0.3) return 0;
           const attackTarget = this.bossAttackTarget(e, target, index);
           const reach = this.bossCenteredReach(e, plan);
           // A special must have realistic coverage at the moment it is chosen.
@@ -722,7 +723,29 @@
             previousLanding = stage;
           });
         }
-        if (a.combo)
+        if (e.family === 'darklord' && index === 0) {
+          // Three independently warned strikes; the middle shield feint
+          // attempts a physical sidestep when a clear route exists.
+          sequence.push(
+            {
+              ...a,
+              angle: angle + 0.7,
+              timer: 0.5,
+              total: 0.5,
+              coefficient: 0.85,
+              name: a.name + ' — shield feint',
+              royalSidestep: true,
+            },
+            {
+              ...a,
+              angle: angle - 0.7,
+              timer: 0.8,
+              total: 0.8,
+              coefficient: 1.3,
+              name: a.name + ' — final thrust',
+            },
+          );
+        } else if (a.combo)
           sequence.push({
             ...a,
             angle: angle + 0.7,
@@ -730,6 +753,46 @@
             total: 0.8,
             name: a.name + ' — second arc',
           });
+        if (e.family === 'darklord' && index === 1) {
+          // Warn the actual landing sites rather than teleporting to an aimed mark.
+          const side = angle + Math.PI / 2;
+          const flank = this.safe(e.x + Math.cos(side) * 110, e.y + Math.sin(side) * 110);
+          const crossing = this.safe(
+            target.x - Math.cos(side) * 110,
+            target.y - Math.sin(side) * 110,
+          );
+          const planned = [flank, crossing, { x: target.x, y: target.y }];
+          let previous = e;
+          const route = planned.map((point) => {
+            const next = this.clearSegment(previous, point, 15) &&
+              !this.blocked(point.x, point.y, this.zoneId, 15)
+              ? point
+              : { x: previous.x, y: previous.y };
+            previous = next;
+            return next;
+          });
+          Object.assign(a, { x: route[0].x, y: route[0].y, coefficient: 0.55 });
+          sequence.push(
+            {
+              ...a,
+              x: route[1].x,
+              y: route[1].y,
+              timer: 0.85,
+              total: 0.85,
+              coefficient: 0.65,
+              name: a.name + ' — crossing',
+            },
+            {
+              ...a,
+              x: route[2].x,
+              y: route[2].y,
+              timer: 0.85,
+              total: 0.85,
+              coefficient: 1.4,
+              name: a.name + ' — flank strike',
+            },
+          );
+        }
         if (a.kind === 'sector') {
           a.angle = angle + Math.PI / 2;
           a.count = 1;
@@ -741,6 +804,11 @@
               total: plan.warning,
             });
         }
+        if (e.family === 'darklord' && index === 3)
+          for (const beat of [a, ...sequence]) {
+            beat.royalTerritory = true;
+            beat.protectedAngle = beat.angle + Math.PI;
+          }
         if (e.family === 'citadel') {
           if (index === 0) {
             a.kind = 'canister';
@@ -1149,6 +1217,36 @@
         if (a.nightSkill === 'pounce') {
           e.motion = { ...a, target: { x: a.x, y: a.y }, hit: [], speed: a.pounceSpeed, life: 2 };
           return;
+        }
+        if (e.family === 'darklord' && a.royalTaxation) {
+          const marked = this.combatTargets()
+            .filter((unit) => unit.hp > 0 && dist(unit, a) <= a.radius && this.line(e, unit))
+            .slice(0, 2)
+            .map((unit) => (unit === this.hero ? 'hero' : unit.id));
+          e.royalTaxation = { marked, expires: this.s.time + 5, sources: [] };
+          return;
+        }
+        if (e.family === 'darklord' && a.royalSidestep) {
+          const sideways = a.angle + Math.PI / 2;
+          for (const dir of [1, -1]) {
+            const goal = this.safe(
+              e.x + Math.cos(sideways) * 80 * dir,
+              e.y + Math.sin(sideways) * 80 * dir,
+            );
+            if (dist(goal, e) >= 35 &&
+                !this.blocked(goal.x, goal.y, this.zoneId, 15) &&
+                this.clearSegment(e, goal, 15)) {
+              e.motion = {
+                ...a,
+                target: goal,
+                hit: [],
+                speed: 280,
+                life: 0.5,
+              };
+              return;
+            }
+          }
+          // No passable lateral route: keep the warned arc but do not teleport.
         }
         if (a.cargo && e.family === 'ridge') {
           const d = Math.max(1, Math.hypot(a.x - e.x, a.y - e.y));
