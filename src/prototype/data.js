@@ -239,7 +239,7 @@ const PrototypeData = {
       place: 'Mountain watchtower',
       attacks: [
         'Coinage Blow: frontal hammer arc with the normal attack timing.',
-        'Rolling Cargo: marks one landing point for 1.5 seconds.',
+        'Rolling Cargo: winds up for 1.5 seconds, then sends actual moving cargo down the aimed lane; the projectile can be avoided or intercepted by cover.',
         'Toll Collection: straight charge lane with a 1.5 second attack windup.',
         'Payroll Order: calls three contracted archers after 1.8 seconds, subject to the summon cooldown.',
       ],
