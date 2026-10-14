@@ -248,7 +248,9 @@
       "src/prototype/data.js": "236ddbb0dfe03fc06d512014d482515070c827e4b2132bd1d0da5c57b9a5372e",
       "src/prototype/engine.js": "fbfe84cbe132fb73134ee8611485fe8f4334cc26c1065a2ae7f893946a05cc20",
       "src/prototype/rules.js": "3c69cc7c912e5b0582874a0f667685bb2cfc6b89bc9d8dbe57fb36e304cb245b",
-      "src/prototype/save.js": "d9820e59be4b9ef5592a5da1ad474978467e923c686f95dbed675b645a5263a4"
+      "src/prototype/save.js": "d9820e59be4b9ef5592a5da1ad474978467e923c686f95dbed675b645a5263a4",
+      "src/prototype/enemy-presentation.js": "e35de45beb8a5e499f9f1d19ffb8f08827412cf266cad95fa89e5cef96d15440",
+      "src/prototype/enemy-vfx-art.js": "b8b34832524108db20c85ea4b69dc80a59d5e36864b2c6364a1aa731bc10ed40"
     }
   }
 }

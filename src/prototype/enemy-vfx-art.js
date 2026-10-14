@@ -57,11 +57,11 @@
       ['call', 'ember'],
     ],
     citadel: [
-      ['slam', 'steel'],
-      ['channel', 'ash'],
-      ['advance', 'steel'],
-      ['furnace', 'ember'],
+      ['fan', 'steel'],
       ['command', 'steel'],
+      ['rush', 'steel'],
+      ['seal', 'ash'],
+      ['call', 'steel'],
     ],
     cindermaw: [
       ['pressure', 'ember'],
