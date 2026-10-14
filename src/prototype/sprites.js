@@ -73,7 +73,8 @@
     )
       return [];
     const kind = e.renderKind;
-    if (kind === 'hero') return ['hero:' + clean(e.class)];
+    // Authored crowned class outfits have procedural detail not present in base sprites.
+    if (kind === 'hero') return e.crowned ? [] : ['hero:' + clean(e.class)];
     if (kind === 'ally') return ['ally:' + clean(e.class || e.type || 'worker')];
     if (kind === 'enemy') {
       if (e.type === 'boss') return ['boss:' + clean(e.family)];
