@@ -749,7 +749,10 @@
       captain.captainVisualIdol = profile.visualIdol || profile.mentor;
       if (profile.species) captain.species = profile.species;
       captain.visualScale = profile.visualScale || 1.16;
-      captain.specialCd = Math.min(captain.specialCd ?? 1.25, 1.25);
+      // Population reconciliation is also called during active simulation. The
+      // agriculture selector's cooldown must survive these reads after setup.
+      if (z.id !== 'supply-crown' || captain.roomCaptainVersion !== 1)
+        captain.specialCd = Math.min(captain.specialCd ?? 1.25, 1.25);
       captain.roomCaptainVersion = 1;
       this.upgradeCaptainEndurance(captain, profile);
       if (captain.name !== profile.name) captain.name = profile.name;
@@ -5244,6 +5247,11 @@
       ? PrototypeCindermawCombat
       : require('./cindermaw-combat.js');
   CindermawCombat.install(Campaign, { D, R });
+  const DreadmawCombat =
+    typeof PrototypeDreadmawCombat !== 'undefined'
+      ? PrototypeDreadmawCombat
+      : require('./dreadmaw-combat.js');
+  DreadmawCombat.install(Campaign, { R });
   const Party = typeof PrototypeParty !== 'undefined' ? PrototypeParty : require('./party.js');
   Party.install(Campaign, { D, R });
   const Economy =

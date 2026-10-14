@@ -17,7 +17,7 @@ assert.equal(
   52,
   'all currently authored boss actions (including Keeper sabotage and seven ministry slots) are inventoried',
 );
-assert.equal(report.counts.captain, 18, 'all five captain movesets are inventoried');
+assert.equal(report.counts.captain, 21, 'all five captain movesets are inventoried');
 assert.deepEqual(
   report.rows
     .filter((r) => /^boss\/cindermaw\/[0-9]+$/.test(r.id))

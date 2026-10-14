@@ -99,6 +99,27 @@ if (cinderSupportRevision) {
   ]);
   assert.match(cinderSupportRevision.source, /#298.*#288/);
 }
+const agricultureRevision = manifest.approvedSnapshotDreadAgricultureRevision;
+if (agricultureRevision) {
+  assert.match(agricultureRevision.source, /#298.*#288.*#231/);
+  assert.deepEqual(Object.keys(agricultureRevision.files).sort(), [
+    'src/prototype/combat-visuals.js',
+    'src/prototype/dreadmaw-combat.js',
+    'src/prototype/enemy-vfx-art.js',
+    'src/prototype/engine.js',
+    'src/prototype/rules.js',
+    'templates/game.html',
+  ]);
+  for (const [file, expected] of Object.entries(agricultureRevision.files))
+    assert.equal(
+      crypto
+        .createHash('sha256')
+        .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
+        .digest('hex'),
+      expected,
+      file,
+    );
+}
 const veraRevision = manifest.approvedSnapshotVeraInspectionRevision;
 if (veraRevision) {
   assert.match(veraRevision.source, /#298.*28C.*29B.*30C.*#288/);
@@ -119,7 +140,7 @@ if (veraRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
-      expected,
+      agricultureRevision?.files[file] || expected,
       file,
     );
 }
@@ -135,7 +156,8 @@ if (ministryAV) {
       .createHash('sha256')
       .update(fs.readFileSync(path.resolve(__dirname, '..', 'src/prototype/enemy-vfx-art.js')))
       .digest('hex'),
-    ministryAV.files['src/prototype/enemy-vfx-art.js'],
+    agricultureRevision?.files['src/prototype/enemy-vfx-art.js'] ||
+      ministryAV.files['src/prototype/enemy-vfx-art.js'],
   );
 }
 if (ministryPresentation) {
@@ -160,7 +182,10 @@ if (ministryRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
-      veraRevision?.files[file] || ministryPresentation?.files[file] || expected,
+      agricultureRevision?.files[file] ||
+        veraRevision?.files[file] ||
+        ministryPresentation?.files[file] ||
+        expected,
       file,
     );
 }
@@ -178,7 +203,10 @@ if (institutionRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
-      veraRevision?.files[file] || ministryRevision?.files[file] || expected,
+      agricultureRevision?.files[file] ||
+        veraRevision?.files[file] ||
+        ministryRevision?.files[file] ||
+        expected,
       file,
     );
 }
@@ -199,7 +227,8 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    veraRevision?.files[file] ||
+    agricultureRevision?.files[file] ||
+      veraRevision?.files[file] ||
       ministryRevision?.files[file] ||
       cinderRallyRevision?.files[file] ||
       cinderLifecycleRevision?.files[file] ||

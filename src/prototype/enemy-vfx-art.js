@@ -98,10 +98,13 @@
       ['claw', 'fur'],
     ],
     'supply-crown': [
-      ['bombard', 'ember'],
+      ['fall', 'stone'],
       ['rush', 'ash'],
       ['fan', 'ash'],
       ['call', 'ember'],
+      ['seal', 'ash'],
+      ['command', 'ember'],
+      ['bombard', 'ember'],
     ],
     'frontier-overseer': [
       ['cleave', 'steel'],

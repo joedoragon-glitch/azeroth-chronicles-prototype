@@ -24,8 +24,9 @@ assert(
 );
 // Approved content must match on both sides; retain original renderer/cache
 // implementations for performance measurement. No region or pixel exclusion.
-const sharedContent = new Set(
-  [
+const sharedContent = new Set([
+  ...require('./perf-renderer-graph.cjs').campaign,
+  ...[
     'engine',
     'rules',
     'data',
@@ -43,7 +44,7 @@ const sharedContent = new Set(
     'enemy-vfx-art',
     'enemy-vfx-events',
   ].map((n) => 'src/prototype/' + n + '.js'),
-);
+]);
 const roots = { baseline: baselineRoot, candidate: candidateRoot, control: baselineRoot },
   hash = (value) => crypto.createHash('sha256').update(value).digest('hex');
 const server = http.createServer((req, res) => {

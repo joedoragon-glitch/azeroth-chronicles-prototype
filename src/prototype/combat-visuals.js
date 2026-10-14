@@ -64,6 +64,7 @@
   }
   function warningShapes(a, patches) {
     if (a.kind === 'summon' || a.selfDefense) return [];
+    if (a.dreadMechanic === 'closure') return dreadClosureShapes(a);
     if (a.cinderMechanic === 'cordon' && Number.isFinite(a.gapAngle))
       return [cordonPoints({ ...a, radius: a.initialRadius })];
     if (a.kind === 'line' || a.kind === 'volley')
@@ -88,7 +89,9 @@
             a.kind === 'volley'
               ? 22
               : a.charge
-                ? G.chargeHalfWidth
+                ? a.dreadMechanic === 'rush'
+                  ? a.radius
+                  : G.chargeHalfWidth
                 : a.count === 2
                   ? G.dualLineHalfWidth
                   : G.lineHalfWidth;
@@ -113,6 +116,24 @@
         ),
       ];
     return patches.map((p) => circlePoints(p, p.radius));
+  }
+  function dreadClosureShapes(a) {
+    const gaps = [...a.gaps]
+      .map((angle) => (angle + Math.PI * 2) % (Math.PI * 2))
+      .sort((x, y) => x - y);
+    return gaps.map((angle, index) => {
+      const start = angle + a.gapWidth / 2,
+        end =
+          gaps[(index + 1) % gaps.length] +
+          (index === gaps.length - 1 ? Math.PI * 2 : 0) -
+          a.gapWidth / 2,
+        arc = (radius, reverse) =>
+          Array.from({ length: 49 }, (_, j) => {
+            const t = start + (end - start) * (reverse ? 1 - j / 48 : j / 48);
+            return { x: a.x + Math.cos(t) * radius, y: a.y + Math.sin(t) * radius };
+          });
+      return [...arc(a.radius + a.width, false), ...arc(Math.max(0, a.radius - a.width), true)];
+    });
   }
   function strokeWorld(ctx, screen, a, b, color, width = 1) {
     const p = screen(a),
@@ -373,6 +394,65 @@
       }
     }
     for (const e of game.zone().enemies) {
+      if (e.hp > 0 && !e.returning) {
+        const closure =
+          e.dreadClosure || (e.telegraph?.dreadMechanic === 'closure' ? e.telegraph : null);
+        if (closure) {
+          for (const points of dreadClosureShapes(closure)) {
+            polygon(ctx, screen, points);
+            ctx.fillStyle = '#dd7e4650';
+            ctx.strokeStyle = '#ffc28a';
+            ctx.lineWidth = 2;
+            cue ? ctx.stroke() : ctx.fill();
+          }
+          if (cue) {
+            circlePath(ctx, screen, closure, closure.finalBlastRadius);
+            ctx.setLineDash([3, 5]);
+            ctx.strokeStyle = '#efb678';
+            ctx.stroke();
+            ctx.setLineDash([]);
+            for (const angle of closure.gaps) {
+              const end = {
+                x: closure.x + Math.cos(angle) * (closure.initialRadius + closure.width + 15),
+                y: closure.y + Math.sin(angle) * (closure.initialRadius + closure.width + 15),
+              };
+              strokeWorld(ctx, screen, closure, end, '#aef1d5', 2);
+            }
+          }
+        }
+        for (const vapor of e.dreadVapors || []) {
+          polygon(
+            ctx,
+            screen,
+            vapor.kind === 'cone'
+              ? sectorPoints(vapor, vapor.radius, vapor.angle, (vapor.angleDegrees * Math.PI) / 360)
+              : circlePoints(vapor, vapor.radius),
+          );
+          ctx.fillStyle = vapor.slow ? '#9eaf8050' : '#df965544';
+          ctx.strokeStyle = vapor.slow ? '#c7d8a1' : '#f7c293';
+          ctx.lineWidth = 1.5;
+          cue ? ctx.stroke() : ctx.fill();
+          if (cue) {
+            const p = screen(vapor);
+            ctx.font = 'bold 10px system-ui';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#fff0d4';
+            ctx.fillText(vapor.slow ? 'ENSILING VAPOR' : 'VENTING STEAM', p.x, p.y - 12);
+          }
+        }
+        if (cue && e.dreadFeedUntil > game.s.time) {
+          const p = screen(e);
+          ctx.strokeStyle = '#e9bf6c';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.ellipse(p.x, p.y - 20, 24, 28, 0, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.fillStyle = '#fbe7b8';
+          ctx.font = 'bold 10px system-ui';
+          ctx.textAlign = 'center';
+          ctx.fillText('FED BROOD', p.x, p.y + 18);
+        }
+      }
       const cordon = e.hp > 0 && !e.returning && e.cinderCordon;
       if (cordon) {
         polygon(ctx, screen, cordonPoints(cordon));
@@ -467,7 +547,10 @@
       if (
         e.hp <= 0 ||
         e.returning ||
-        !(e.anastylosis > 0 || (e.telegraph?.selfDefense && !e.telegraph.cinderMechanic))
+        !(
+          e.anastylosis > 0 ||
+          (e.telegraph?.selfDefense && !e.telegraph.cinderMechanic && !e.telegraph.dreadMechanic)
+        )
       )
         continue;
       const p = screen(e),

@@ -145,7 +145,7 @@
     }
   },
   "approvedSnapshotAviationRevision": {
-    "source": "#298/#291 Loyal Air Marshal and seven real aviation moves, selective #254\u2192#283 with shared fatal boundary preservation",
+    "source": "#298/#291 Loyal Air Marshal and seven real aviation moves, selective #254→#283 with shared fatal boundary preservation",
     "files": {
       "src/prototype/boss-combat.js": "2ab3ba3e6306704a6dd61f905370017bed003e28d792050eadb92a2d05581339",
       "src/prototype/data.js": "a93a08064902df010013fd48fc9ed063bbfc2640698d4c05b895d7b996aa451b",
@@ -219,6 +219,17 @@
       "src/prototype/visuals.js": "065c4c940a6c8f40378d99b45a7707678122b44088c9f614bab043aaddf57cbd",
       "src/prototype/sprites.js": "e983eaef98f589c5bd0f2dca095ba9383df1978e502499592d6c5504ee02d5a6",
       "src/prototype/renderer.js": "abe3d43d97451a5eba8d3ddbf42daa22b835d3f392b401964358192dcb74fd08"
+    }
+  },
+  "approvedSnapshotDreadAgricultureRevision": {
+    "source": "Director #298 38A/39A/40A, custom seven agricultural moves, #288/#231; tuning delegated under8A. Existing Rogue methods/rules retained. No release authorization.",
+    "files": {
+      "src/prototype/dreadmaw-combat.js": "25c2aee4c4bb447020a2acbccfe58b42dd2832a507edb86b4d412026e9d75d77",
+      "src/prototype/engine.js": "d67956096a588c4b5ee774dfdf0e84597c5dad5e0222315b0c7331291694f00a",
+      "src/prototype/rules.js": "05393aebfbed9cadc9b9569c068725e1843c65dcaee90c67b68b2469623617aa",
+      "src/prototype/combat-visuals.js": "a1b335b0b5fcb584f10751b94736e506ba034f7f41b19be257fa1ef66110a429",
+      "src/prototype/enemy-vfx-art.js": "f44958d68c2032188ba90d29c0946027673174be738f68d2a6d398b8d1058de8",
+      "templates/game.html": "fe2d39f4d28dbc6257ebb734576b3609d9744afe11903d4cfaf270aebc291ad7"
     }
   }
 }

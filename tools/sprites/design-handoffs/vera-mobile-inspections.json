@@ -5,13 +5,15 @@
   "designId": "vera-mobile-inspections",
   "name": "Vera guarded mobile forge and repairs",
   "kind": "mobile-captive-and-forge",
-  "nextAction": "Complete dev.23 focused and full124/hosted gates, inspect actual browser captures; prior images preserved and sprite production excluded.",
+  "nextAction": "Cindermaw/Vera dev.23 is fully certified at b87e22dc/tree1ba3291d/run38513099021. Preserve references; no sprite production or release. Continue remaining snapshot work on PR300.",
   "context": {
     "originConversation": null,
     "decisionSummary": "Director #298 choices28C/29B/30C and #288: variable guarded Cindermaw inspections, same Vera mobile forge and limited actual nearby repairs.",
     "decisionDate": "2026-10-14",
     "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/300",
-    "contentDocuments": ["docs/DIRECTOR_WORLD_BUILDING_SNAPSHOT_CANON_LOCK_20261012.md"],
+    "contentDocuments": [
+      "docs/DIRECTOR_WORLD_BUILDING_SNAPSHOT_CANON_LOCK_20261012.md"
+    ],
     "locationAndLore": "Existing Dark Crown roost, Crownwatch outskirts, Ash Refuge, Ruined Foundry and Crown barracks; Vera is a paid but captive chief field engineer."
   },
   "decisions": {
@@ -19,7 +21,9 @@
     "proceduralDesignAcceptance": "Faithful engineering implementation; no director appearance acceptance claimed.",
     "spriteProductionAuthorization": "Excluded from current snapshot.",
     "generatedAppearanceAcceptance": "None",
-    "pendingCorrections": ["Full current source regression/hosted browser validation pending."]
+    "pendingCorrections": [
+      "Full current source regression/hosted browser validation pending."
+    ]
   },
   "reference": {
     "sourceCommit": "10cb9b3b3b937e03715916c93277d77beee265bc (parent; exact current source hashes below)",
@@ -131,5 +135,33 @@
     "rollbackRevision": null,
     "releaseCommit": null,
     "releaseEvidence": null
-  }
+  },
+  "certification": {
+    "runtimeHead": "b87e22dc0ddd7e029ec132f6dd23bcb7c78044aa",
+    "tree": "1ba3291d2ebeb9f5a3eb91f231b191eea80eca81",
+    "runId": 38513099021,
+    "certificate": "docs/evidence/SNAPSHOT_RUNTIME_B87E_20261014.json",
+    "nodeSuites": 124,
+    "chromium": "success",
+    "webkit": "success",
+    "cleanPackage": "success",
+    "physicalDeviceAcceptance": false,
+    "directorAppearanceAcceptance": false
+  },
+  "hostedReferences": [
+    {
+      "path": "tools/sprites/design-handoffs/references/vera-mobile/hosted-webkit-forge-375.png",
+      "sha256": "abf729a917ea8d6c35f9b2dccde33408150d2dc560ee1e58659bd4e3bce1576b",
+      "runId": 38513099021,
+      "artifactId": 11871440524,
+      "inspection": "Actual WebKit phone forge/escort inspected."
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/vera-mobile/hosted-webkit-repairs-375.png",
+      "sha256": "56952267885d9a32bc3f52069fd69840352bfab87076ba99b720badcbf85e13e",
+      "runId": 38513099021,
+      "artifactId": 11871440524,
+      "inspection": "Actual browser repair state assertions pass; capture precedes repair-label redraw, so no repair-label visual acceptance inferred."
+    }
+  ]
 }
