@@ -437,6 +437,8 @@
           if (Math.cos(angle - facing) < -0.5) e.secondWindCancelled = true;
           amount *= R.bossRecovery.darklord.damageMultiplier;
         }
+        if (e.owner && e.royalFormationUntil > this.s.time && e.species === 'crownguard')
+          amount *= 0.8;
         if (e.family === 'citadel' && e.open <= 0) amount *= 0.65;
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;
         // All hero/companion damage sources use this same resolver. This
