@@ -233,6 +233,19 @@ fs.mkdirSync(out, { recursive: true });
                 throw Error('Tracking planner lacks its real four-shot state');
               if (a.paired && (a.count !== 2 || e.sequence.length !== 1))
                 throw Error('Hot Zone planner lacks its real staggered pair');
+            } else if (row.group === 'captain' && p[1] === 'supply-crown') {
+              // Agriculture warnings carry real planned gaps, motion endpoints
+              // and queued marks. Raw tuning rows cannot substitute for a cast.
+              e.roomCaptain = true;
+              if (Number(p[2]) === 5) c.summonCaptainAdds(e);
+              const built = c.buildDreadAttack(e, c.hero, Number(p[2]));
+              if (!built) throw Error('Actual agriculture planner missed ' + row.id);
+              a = built.first;
+              e.sequence = built.sequence;
+              if (a.dreadMechanic === 'closure' && a.gaps.length !== 2)
+                throw Error('Closure planner lacks its two escape openings');
+              if (a.dreadLeg === 1 && e.sequence.length !== 1)
+                throw Error('Transhumance planner lacks its second warned leg');
             } else if (row.group === 'captain') {
               a = {
                 ...a,
