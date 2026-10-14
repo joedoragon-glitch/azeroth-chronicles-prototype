@@ -243,12 +243,12 @@
   "approvedSnapshotVeyraRevision": {
     "source": "#298 #255 #263 #281 Veyra integrated candidate on PR #300; exact source hashes after 14 October court/save mechanics; no release certification",
     "files": {
-      "src/prototype/boss-combat.js": "793e6e1a66e04a9bfd17854b6afaabc1d1516edd0426e7c932f09fb857e85dc7",
-      "src/prototype/combat-visuals.js": "5729b04bcf8c32d3f32c70ba87f1a7c858e9e2d8a7f12d61bfcad9e2d64cd4b4",
+      "src/prototype/boss-combat.js": "7a69599faa187a73dd58306cb3249d46b0e66a4338531b8d09251a565a153092",
+      "src/prototype/combat-visuals.js": "a1973a4f9a2ded42bb3274f268e3a2857ababa33a39a58f44af2000a15f0821e",
       "src/prototype/data.js": "236ddbb0dfe03fc06d512014d482515070c827e4b2132bd1d0da5c57b9a5372e",
-      "src/prototype/engine.js": "9f1011a84f4bbc14748e0d1148c9c36dbd19d3dd45d2ea7dbba42aadfa80a2e7",
-      "src/prototype/rules.js": "0c1e7b9b0bdfaade5b42efce848b601d88c1f6adf03fbd9ec685ed75170d9df6",
-      "src/prototype/save.js": "d31672a56ff8f55e1355ee016b2a15e595e449903228c11f4e6d1bfcf3f8229d"
+      "src/prototype/engine.js": "fbfe84cbe132fb73134ee8611485fe8f4334cc26c1065a2ae7f893946a05cc20",
+      "src/prototype/rules.js": "3c69cc7c912e5b0582874a0f667685bb2cfc6b89bc9d8dbe57fb36e304cb245b",
+      "src/prototype/save.js": "d9820e59be4b9ef5592a5da1ad474978467e923c686f95dbed675b645a5263a4"
     }
   }
 }

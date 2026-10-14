@@ -88,10 +88,10 @@
       attack('summon', 2, 1.6, { species: 'ashbeast', ranged: false }),
     ],
     citadel: [
-      attack('circle', 1.6, 3, { coefficient: 1.4, opening: 3 }),
-      attack('line', 1.8, 1.6, { count: 2, manaDrain: 0.08 }),
-      attack('line', 1.8, 2.5, { charge: true, advance: true, coefficient: 1.4 }),
-      attack('circle', 2, 1.5, { count: 3, sequential: true, persistent: true, manaDrain: 0.1 }),
+      attack('canister', 1.6, 3, { coefficient: 1 }),
+      attack('formation', 1.8, 1.6, { coefficient: 0 }),
+      attack('pattern-charge', 1.8, 2.5, { charge: true, coefficient: 1 }),
+      attack('checkerboard', 2, 1.5, { coefficient: 0 }),
       attack('summon', 1.9, 1.5, { species: 'crownguard', ranged: true }),
     ],
     cindermaw: [

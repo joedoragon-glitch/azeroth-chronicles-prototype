@@ -42,11 +42,22 @@
             if (e.family === 'cindermaw' && e.type === 'boss' && (e.aggro || e.returning))
               e.cinderReturn = true;
             // Copy only the validated board beat: no live attack/motion receipts.
-            const board = e.family === 'citadel' && e.hp > 0 && e.board &&
-              Number.isFinite(e.board.timer) && e.board.timer > 0 && e.board.timer <= 1.9 &&
-              Number.isInteger(e.board.beat) && e.board.beat >= 0 && e.board.beat < 8 &&
-              ['warn','rest'].includes(e.board.phase) && e.board.size === 112 &&
-              e.board.x === e.home.x && e.board.y === e.home.y ? { ...e.board } : null;
+            const board =
+              e.family === 'citadel' &&
+              e.hp > 0 &&
+              e.board &&
+              Number.isFinite(e.board.timer) &&
+              e.board.timer > 0 &&
+              e.board.timer <= 1.9 &&
+              Number.isInteger(e.board.beat) &&
+              e.board.beat >= 0 &&
+              e.board.beat < 8 &&
+              ['warn', 'rest'].includes(e.board.phase) &&
+              e.board.size === 112 &&
+              e.board.x === e.home.x &&
+              e.board.y === e.home.y
+                ? { ...e.board }
+                : null;
             this.clearEncounterState(e, [out.hero, ...out.party]);
             if (board && out.phase !== 'peace') e.board = board;
             e.telegraph = null;
@@ -719,11 +730,22 @@
               e.thornReturn = true;
             if (e.family === 'cindermaw' && e.type === 'boss' && (e.aggro || e.returning))
               e.cinderReturn = true;
-            const board = e.family === 'citadel' && e.hp > 0 && e.board &&
-              Number.isFinite(e.board.timer) && e.board.timer > 0 && e.board.timer <= 1.9 &&
-              Number.isInteger(e.board.beat) && e.board.beat >= 0 && e.board.beat < 8 &&
-              ['warn','rest'].includes(e.board.phase) && e.board.size === 112 &&
-              e.board.x === e.home.x && e.board.y === e.home.y ? { ...e.board } : null;
+            const board =
+              e.family === 'citadel' &&
+              e.hp > 0 &&
+              e.board &&
+              Number.isFinite(e.board.timer) &&
+              e.board.timer > 0 &&
+              e.board.timer <= 1.9 &&
+              Number.isInteger(e.board.beat) &&
+              e.board.beat >= 0 &&
+              e.board.beat < 8 &&
+              ['warn', 'rest'].includes(e.board.phase) &&
+              e.board.size === 112 &&
+              e.board.x === e.home.x &&
+              e.board.y === e.home.y
+                ? { ...e.board }
+                : null;
             c.clearEncounterState(e);
             if (board && s.phase !== 'peace') e.board = board;
             e.aggro = false;

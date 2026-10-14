@@ -9,6 +9,17 @@ assert.equal(boss.name.includes('Veyra'), true);
 // Natural board-first selection applies when the hero is within combat range.
 game.hero.x=boss.home.x-130;
 game.hero.y=boss.home.y;
+const authoritative = Campaign.rules.attacks.citadel;
+assert.deepEqual(authoritative.map(plan=>plan.kind),
+  ['canister','formation','pattern-charge','checkerboard','summon'],
+  'authoritative rules must use the implemented five mechanics, not just display substitutions');
+assert.equal(authoritative[0].coefficient,1,'canister has no obsolete armor-slam multiplier');
+assert.equal(authoritative[2].coefficient,1,'five-leg charge uses approved one-hit coefficient');
+assert(!('opening' in authoritative[0]),'no inherited three-second canister opening');
+assert(!('manaDrain' in authoritative[1]) && !('manaDrain' in authoritative[3]),
+  'formation and board must not inherit obsolete mana drain');
+assert(!authoritative[3].sequential && !authoritative[3].persistent,
+  'board persistence belongs exclusively to its real active board lifecycle');
 const patterns = Array.from({length:5}, (_,i) => game.buildBossAttack(boss,i,game.hero).first);
 assert.deepEqual(patterns.map(a=>a.kind), ['canister','formation','pattern-charge','checkerboard','summon']);
 assert.equal(patterns[2].path.length,5,'continuous five-leg Contouring');

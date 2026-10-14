@@ -131,8 +131,8 @@
       cancelEncounter(e) {
         this.clearCinderResponses(e);
         this.clearEncounterState(e);
-        if (e.family === 'citadel') for (const u of this.zone().enemies)
-          if (u.dressPost?.owner === e.id) delete u.dressPost;
+        if (e.family === 'citadel')
+          for (const u of this.zone().enemies) if (u.dressPost?.owner === e.id) delete u.dressPost;
         this.s.projectiles = this.s.projectiles.filter((p) => p.sourceId !== e.id);
         this.s.hazards = this.s.hazards.filter((h) => h.source !== e.id && h.sourceId !== e.id);
         for (const u of this.zone().enemies)
@@ -460,9 +460,7 @@
           .flatMap((unit, i) => {
             const [dx, dy] = posts[i];
             const post = this.safe(e.x + dx, e.y + dy);
-            return dist(unit, post) <= 240 && this.clearSegment(unit, post)
-              ? [{ unit, post }]
-              : [];
+            return dist(unit, post) <= 240 && this.clearSegment(unit, post) ? [{ unit, post }] : [];
           });
       }
       sentinelPatternPath(e) {
@@ -568,8 +566,10 @@
           cap = this.bossSummonCap(e);
         return plans.map((plan, index) => {
           if (e.family === 'citadel' && index === 3 && e.board) return 0;
-          if (e.family === 'citadel' && index === 1 && !this.sentinelFormationOrders(e).length) return 0;
-          if (e.family === 'citadel' && index === 2 && !this.sentinelPatternPath(e).length) return 0;
+          if (e.family === 'citadel' && index === 1 && !this.sentinelFormationOrders(e).length)
+            return 0;
+          if (e.family === 'citadel' && index === 2 && !this.sentinelPatternPath(e).length)
+            return 0;
           if (!allowRepeat && index === e.lastAttackIndex && plans.length > 1) return 0;
           if (e.family === 'darklord' && index === 3 && !low) return 0;
           const attackTarget = this.bossAttackTarget(e, target, index);
@@ -599,7 +599,8 @@
       }
       chooseBossAttack(e, target = this.hero) {
         const plans = R.attacks[e.family] || [];
-        if (e.family === 'citadel' && !e.board && dist(e, target) <= R.bossCadence.specialRange) return 3;
+        if (e.family === 'citadel' && !e.board && dist(e, target) <= R.bossCadence.specialRange)
+          return 3;
         for (const allowRepeat of [false, true]) {
           const weights = this.bossAttackWeights(e, target, allowRepeat),
             total = weights.reduce((n, w) => n + w, 0);
@@ -741,14 +742,27 @@
             });
         }
         if (e.family === 'citadel') {
-          if (index === 0) { a.kind = 'canister'; a.radius = 360; a.opening = 0; }
-          if (index === 1) { a.kind = 'formation'; a.radius = 230; }
+          if (index === 0) {
+            a.kind = 'canister';
+            a.radius = 360;
+            a.opening = 0;
+          }
+          if (index === 1) {
+            a.kind = 'formation';
+            a.radius = 230;
+          }
           if (index === 2) {
-            a.kind = 'pattern-charge'; a.path = this.sentinelPatternPath(e); a.count = 1; a.opening = 0;
-            if (a.path.length) Object.assign(a, a.path[a.path.length-1]);
+            a.kind = 'pattern-charge';
+            a.path = this.sentinelPatternPath(e);
+            a.count = 1;
+            a.opening = 0;
+            if (a.path.length) Object.assign(a, a.path[a.path.length - 1]);
           }
           if (index === 3) {
-            a.kind = 'checkerboard'; a.x = e.home.x; a.y = e.home.y; a.count = 1;
+            a.kind = 'checkerboard';
+            a.x = e.home.x;
+            a.y = e.home.y;
+            a.count = 1;
           }
         }
         if (includeTrue && e.form === 'true') {
@@ -1554,7 +1568,10 @@
             }
           }
         if (a.kind === 'pattern-charge' && dist(e, a.target) < 10 && a.leg + 1 < a.path.length) {
-          a.leg++; a.target = { ...a.path[a.leg] }; a.hit = []; return;
+          a.leg++;
+          a.target = { ...a.path[a.leg] };
+          a.hit = [];
+          return;
         }
         // Axis fallback can report success for a zero-length clear segment.
         // A charge blocked by real geometry must end when it makes no progress.
