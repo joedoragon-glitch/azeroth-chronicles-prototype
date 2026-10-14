@@ -80,10 +80,10 @@
     "files": {
       "src/prototype/app.js": "ce20fa1dca749acf507920984420a6105a193974efa94f9f9efdffe9cc909aa3",
       "src/prototype/combat.js": "0d8f619954b8dfbcf045d4402d2bb84e80d62f2b5dd22ed507da13063c5775ca",
-      "src/prototype/engine.js": "e0df780d746e0fd39244e3191c6962c009b02fe11e9790fd307b0e453ff2a6da",
+      "src/prototype/engine.js": "25a59f2b636b73beadb65a21a93be7eebeb124b4934e6d82a7de28413146a05f",
       "src/prototype/hero-combat.js": "0ecebd3d9a2e4fac2aa6f7fb64afd6c55be367c52e1371c69fa4118699fee784",
       "src/prototype/persistence.js": "b45a7650771fe9de54f096c038800b9d683899591406c6aa45425951396caf09",
-      "src/prototype/save.js": "897966e2441c724026aafab59dde158c446873e8971645ac80fc43f85576e37f",
+      "src/prototype/save.js": "588c813bdd1de4d2bf9d1a2cfa82eb18e49eb31266729aca037c5926a60639ea",
       "styles/phone.css": "91daee22cdc77bbf84d57ddc74744f03fc743cb3e27e25d528e883177b2292d6",
       "styles/prototype.css": "2b58799e1ac2aa79a49cfd933adecf554fd90df922e18628c9dcd3e28fba1dc2"
     },

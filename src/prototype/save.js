@@ -27,9 +27,7 @@
           if (this.s.mode === 'developer') {
             // Keep test encounters ephemeral: no replayed bosses, persistent
             // summons or saved combat debris in the underlying campaign.
-            const summoned = new Set(
-              z.enemies.filter((e) => e.developerSummon).map((e) => e.id),
-            );
+            const summoned = new Set(z.enemies.filter((e) => e.developerSummon).map((e) => e.id));
             z.enemies = z.enemies.filter(
               (e) => !e.developerSummon && !(e.summon && summoned.has(e.owner)),
             );

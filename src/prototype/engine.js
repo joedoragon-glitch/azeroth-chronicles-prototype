@@ -1142,8 +1142,14 @@
       // Choose an unoccupied position so repeated tests do not stack actors.
       const z = this.zone();
       const offsets = [
-        [175, 65], [0, 190], [-175, 65], [175, -100],
-        [-175, -100], [0, -190], [255, 145], [-255, 145],
+        [175, 65],
+        [0, 190],
+        [-175, 65],
+        [175, -100],
+        [-175, -100],
+        [0, -190],
+        [255, 145],
+        [-255, 145],
       ];
       const placements = offsets.map(([x, y]) =>
         this.safe(this.hero.x + x, this.hero.y + y, this.zoneId),
