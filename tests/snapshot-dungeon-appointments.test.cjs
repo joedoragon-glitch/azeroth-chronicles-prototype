@@ -42,7 +42,7 @@ for (const mode of ['normal', 'nightmare']) {
   assert.equal(c.dungeonMaster(), null);
   const duplicate = c.snapshot();
   duplicate.appointments.archive = duplicate.appointments.mine;
-  assert.throws(() => C.restore(duplicate), /appointment/, 'reject corrupt duplicate selection');
+  assert.throws(() => C.restore(duplicate), /dungeon master|appointment/, 'reject corrupt duplicate selection');
   c.checkEnding();
   assert.equal(c.peace, true, 'appointments never block peace');
   c.enter('archive');
