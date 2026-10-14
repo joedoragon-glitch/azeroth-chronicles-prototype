@@ -858,6 +858,7 @@
         this.regionalTravelSafety(z);
         this.refreshNPCs();
         if (this.peace) this.makeHabitat(z);
+        this.syncDungeonMasterStation(z);
         return z;
       }
       regionalDestinations(z) {
