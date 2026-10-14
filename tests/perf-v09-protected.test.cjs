@@ -106,9 +106,9 @@ if (veyraRevision) {
     'src/prototype/boss-combat.js',
     'src/prototype/combat-visuals.js',
     'src/prototype/data.js',
-    'src/prototype/engine.js',
     'src/prototype/enemy-presentation.js',
     'src/prototype/enemy-vfx-art.js',
+    'src/prototype/engine.js',
     'src/prototype/rules.js',
     'src/prototype/save.js',
   ]);
