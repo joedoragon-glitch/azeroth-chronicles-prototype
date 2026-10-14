@@ -260,6 +260,12 @@
             throw Error('Invalid victory identity');
         for (const id of Object.keys(s.true))
           if (!s.normal[id]) throw Error('TRUE victory without normal victory');
+        // Legacy v4 peaceful campaigns were already completed. Grandfather
+        // them without forcing a new throne visit or replay of defeated bosses.
+        if (s.throneClaimed === undefined) s.throneClaimed = s.phase === 'peace';
+        if (typeof s.throneClaimed !== 'boolean' || (s.throneClaimed && !s.true.darklord))
+          throw Error('Invalid coronation');
+        if (s.phase === 'peace' && !s.throneClaimed) throw Error('Missing coronation');
         if (s.phase !== 'adventure' && !s.true.darklord) throw Error('Invalid awakening');
         if (s.phase === 'peace' && !dungeonIds.every((id) => s.true[id]))
           throw Error('Invalid peace');
