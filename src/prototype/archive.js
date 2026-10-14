@@ -256,6 +256,23 @@
       ],
     });
     shelves.push({
+      title: 'The Crown and its institutions',
+      intro: 'Ministries, former companions and the people living under Crown Peace.',
+      topics: [
+        ['Cindermaw — Interior and Welfare', D.bosses.find((b) => b.id === 'cindermaw').history],
+        ['Dreadmaw — Agriculture', R.roomCaptains['supply-crown'].history],
+        ['Scornfang — Reclamation', R.roomCaptains['supply-vale'].history],
+        [
+          'Companions from the Barracks',
+          'Lifebinder and the Drowned Keeper were originally recruited from the Barracks, through the same institution that supplies today’s Soldiers and Rangers. They belonged to different companion classes the present hero has not discovered. Their history does not make them Soldiers or Rangers.',
+        ],
+        [
+          'The Lantern Wraiths’ migration',
+          'The Lantern Wraiths left Ironroot when mining and mint production became intolerable. They now study in the Keeper’s Archive and help him; he cautions them to mind their lanterns. They resent the flooding, whose cause remains unknown. Cindermaw and Dreadmaw have grown fond of the Wraiths, and the feeling is mutual. They socialize when their different duties permit.',
+        ],
+      ],
+    });
+    shelves.push({
       title: 'Adversaries and their attacks',
       intro: 'Boss histories, attacks and creature statistics.',
       topics: [

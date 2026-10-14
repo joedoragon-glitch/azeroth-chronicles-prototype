@@ -3961,6 +3961,9 @@
     'supply-vale': {
       mentor: 'thorn',
       name: 'Scornfang',
+      office: 'Superintendent of Reclamation',
+      history:
+        'Thornfang’s Goblin disciple oversees local decommissioning, remediation, salvage and relocation. His office serves Greenwood’s estate works; it is not a new kingdom-wide ministry.',
       enduranceHp: 260,
       visualScale: 1.16,
       specialRange: 470,
@@ -4106,6 +4109,9 @@
       mentor: 'cindermaw',
       visualIdol: 'darklord',
       name: 'Dreadmaw',
+      office: 'Minister of Agriculture',
+      history:
+        'Cindermaw’s devoted disciple administers crops, livestock, meat, dairy, poultry, fisheries and their distribution across all five Crown provinces. He co-manages the whole Treasury with the Interior ministry while retaining the guarded Inner Vault. Ridge Tyrant remains Master of Coin, and the Drowned Keeper remains the archivist.',
       enduranceHp: 5000,
       visualScale: 1.19,
       specialRange: 493,

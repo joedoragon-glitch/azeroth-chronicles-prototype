@@ -341,6 +341,9 @@ const PrototypeData = {
       region: 'crown',
       kind: 'field',
       name: 'Cindermaw',
+      role: 'Minister of the Interior and Welfare',
+      history:
+        'The Dark Lord personally elevated Cindermaw for his aptitude in organizing Ash beasts and administering territory. Crownwatch, Ash Refuge, the Ruined Foundry and the road and supply network fall under his ministry. The Crown provides real food, shelter and safer travel while making residents dependent on its services. Cindermaw and Dreadmaw co-manage the whole Treasury; Dreadmaw still guards the Inner Vault. Vera is a paid but captive Master Smith whose liberation returns her independent services.',
       level: 14,
       captive: 'Vera the Master Smith',
       service: 'Final equipment improvements and Shared Strength training before the Dark Lord',

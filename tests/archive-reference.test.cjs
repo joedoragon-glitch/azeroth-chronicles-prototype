@@ -12,6 +12,20 @@ for (const mode of ['normal', 'nightmare'])
     assert.deepEqual(c.snapshot(), before, 'consulting creates no encounters or progression');
     assert.equal(JSON.stringify(c.effects), effects);
     assert.equal(sections.find((s) => s.title === 'Your skills').topics.length, 8);
+    const institutions = sections.find(s => s.title === 'The Crown and its institutions');
+    assert.equal(institutions.topics.length, 5);
+    const record = institutions.topics.map(t => t.join(' ')).join(' ');
+    for (const fact of ['personally elevated', 'Interior and Welfare', 'all five Crown provinces',
+      'co-manages the whole Treasury', 'Superintendent', 'decommissioning',
+      'different companion classes', 'cause remains unknown', 'mint production',
+      'mind their lanterns', 'feeling is mutual']) {
+      // Titles and office records may use their concise professional names.
+      assert(record.includes(fact) || (fact === 'Superintendent' && C.rules.roomCaptains['supply-vale'].office.includes(fact)), fact);
+    }
+    assert(!/caused the flood|the sixth companion|now recruit.*Lifebinder/i.test(record));
+    assert.deepEqual(Object.keys(C.classes).sort(), ['mage', 'paladin', 'ranger']);
+    assert.equal(C.rules.roomCaptains['supply-crown'].enduranceHp, 5000);
+
     const bosses = sections.find((s) => s.title === 'Adversaries and their attacks');
     for (const boss of C.data.bosses) assert(bosses.topics.some(([title]) => title === boss.name));
     assert(!sections.some((s) => s.title === 'The orders among the shelves'));

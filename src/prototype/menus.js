@@ -751,7 +751,7 @@
         (queueName
           ? 'Training ' + queueName + ' · ' + b.queue.toFixed(1) + 's remaining'
           : 'Recruit as many companions as you want') +
-          '. New recruits join the active group if this barracks can support another slot; otherwise they rest in reserve.',
+          '. New recruits join the active group if this barracks can support another slot; otherwise they rest in reserve. Lifebinder and the Drowned Keeper once joined through the Barracks, as companion classes you have not discovered.',
         [
           ...[
             ['soldier', 'Soldier'],

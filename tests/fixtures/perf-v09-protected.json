@@ -160,5 +160,14 @@
       "src/prototype/boss-combat.js": "746332892e4fd6066ff213560d847507c1c0dd7990f1f6575c2c6f440878ca79",
       "src/prototype/data.js": "7d00f07472819aec5a885d6c093995714473daaa531d4a44c829807004ea1603"
     }
+  },
+  "approvedSnapshotInstitutionsRevision": {
+    "source": "Director #298 and ministry #288: office/personal-elevation/co-management records and custom15D Barracks/Wraith relationships through existing Archive and recruitment menus only. Preserve prior support and other source pins.",
+    "files": {
+      "src/prototype/archive.js": "f489ccf00d97838ce81c7555f7900c35444b1332eb0f177164c0d5b85d170d23",
+      "src/prototype/data.js": "9e756f69533b8f34966e6e133b3265e2befc4ae0a1bded689eb7bc8a4aa93ce2",
+      "src/prototype/menus.js": "33e37882679dc036a7567bbf3d52de9517e5cf51fbe5d6197cb621ff0f711ee9",
+      "src/prototype/rules.js": "bc27eca0e192b878c6da591999150f41abf323370e9ed4f5a01bda734bb9323e"
+    }
   }
 }

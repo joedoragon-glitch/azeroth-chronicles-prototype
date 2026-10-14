@@ -99,6 +99,25 @@ if (cinderSupportRevision) {
   ]);
   assert.match(cinderSupportRevision.source, /#298.*#288/);
 }
+const institutionRevision = manifest.approvedSnapshotInstitutionsRevision;
+if (institutionRevision) {
+  assert.match(institutionRevision.source, /#298.*#288/);
+  assert.deepEqual(Object.keys(institutionRevision.files).sort(), [
+    'src/prototype/archive.js',
+    'src/prototype/data.js',
+    'src/prototype/menus.js',
+    'src/prototype/rules.js',
+  ]);
+  for (const [file, expected] of Object.entries(institutionRevision.files))
+    assert.equal(
+      crypto
+        .createHash('sha256')
+        .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
+        .digest('hex'),
+      expected,
+      file,
+    );
+}
 for (const [file, expected] of Object.entries(manifest.files)) {
   const actual = crypto
     .createHash('sha256')
@@ -106,7 +125,8 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    cinderSupportRevision?.files[file] ||
+    institutionRevision?.files[file] ||
+      cinderSupportRevision?.files[file] ||
       aviationRevision?.files[file] ||
       garunRevision?.files[file] ||
       thornRevision?.files[file] ||
