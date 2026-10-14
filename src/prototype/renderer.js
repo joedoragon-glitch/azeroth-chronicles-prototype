@@ -1,6 +1,69 @@
 /* Campaign presentation only. Rendering never owns simulation or saved state. */
 (function (root) {
   'use strict';
+  // Crowns are portrait-stamped coinage from Ironroot, not generic gold discs.
+  // This is intentionally paint-only: older loot objects still use the
+  // historical 'gold' amount key, pickup radius, rewards and save schema.
+  function drawCrownLoot(ctx, p) {
+    ctx.save();
+    ctx.translate(p.x, p.y - 3);
+    // Ground shadow and silvery minted face. A full coin is readable even
+    // against dark Crown terrain, and no new sprite manifest is required.
+    ctx.fillStyle = '#34363c99';
+    ctx.beginPath();
+    ctx.ellipse(0, 9, 12, 4.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#687982';
+    ctx.beginPath();
+    ctx.arc(0, 0, 10, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#cbd6d8';
+    ctx.beginPath();
+    ctx.arc(0, -0.4, 8.3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#ecf1ee';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    // The ruler's right-facing head and identifiable nose, chin and shoulder.
+    // The same portrait grammar is used on Stonecross's striking-die tray.
+    ctx.fillStyle = '#586d77';
+    ctx.beginPath();
+    ctx.moveTo(-5, -3);
+    ctx.lineTo(2, -5);
+    ctx.lineTo(4, -2);
+    ctx.lineTo(7, 0);
+    ctx.lineTo(4, 1);
+    ctx.lineTo(3, 4);
+    ctx.lineTo(1, 5);
+    ctx.lineTo(-3, 4);
+    ctx.lineTo(-6, 6);
+    ctx.lineTo(-7, 5);
+    ctx.lineTo(-4, 2);
+    ctx.closePath();
+    ctx.fill();
+    // Three familiar crown points over the profile, not a regional insignia.
+    ctx.fillStyle = '#4e646e';
+    ctx.beginPath();
+    ctx.moveTo(-5, -4);
+    ctx.lineTo(-7, -8);
+    ctx.lineTo(-2, -6);
+    ctx.lineTo(0, -9);
+    ctx.lineTo(3, -6);
+    ctx.lineTo(6, -8);
+    ctx.lineTo(5, -4);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#e3e9e7';
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(-4, -4);
+    ctx.lineTo(3, -4);
+    ctx.stroke();
+    ctx.fillStyle = '#e3e9e7';
+    ctx.fillRect(1, -2, 1.2, 1.2);
+    ctx.restore();
+  }
+
   // Large foreground forms can cover actors under the existing depth sort.
   // Keep this list deliberately conservative: small clutter must not trigger UI.
   // Only explicitly decorative, nonblocking, small clutter is eligible for
@@ -1688,24 +1751,8 @@
           ctx.fillText('Dark Lord Tribute', p.x, p.y - 25);
         }
       }
-      for (const l of game.s.loot.filter((l) => l.zone === game.zoneId)) {
-        const p = screen(l);
-        ctx.fillStyle = '#4e3823';
-        ctx.beginPath();
-        ctx.ellipse(p.x, p.y + 5, 11, 5, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#dcad54';
-        ctx.beginPath();
-        ctx.arc(p.x, p.y - 3, 7, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#f7dfa0';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y - 3, 4, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.fillStyle = '#fff0bb';
-        ctx.fillRect(p.x - 3, p.y - 8, 2, 2);
-      }
+      for (const l of game.s.loot.filter((l) => l.zone === game.zoneId))
+        drawCrownLoot(ctx, screen(l));
       finishPhase('entities');
       const ambientLights = [
         ...game
@@ -1821,7 +1868,7 @@
       }),
     };
   }
-  const api = { create, majorOccluder, occlusionPairs, optimizationClutter };
+  const api = { create, drawCrownLoot, majorOccluder, occlusionPairs, optimizationClutter };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeRenderer = api;
 })(typeof window !== 'undefined' ? window : globalThis);
