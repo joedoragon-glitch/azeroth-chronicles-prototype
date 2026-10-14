@@ -91,7 +91,7 @@ test('F38 all captains reject useless distant cones but can still threaten a ran
     assert(e,key+' captain exists');
     const cfg=R.roomCaptains[key];assert(cfg.specialRange>oldRange,key+' activation increased');
     e.captainOpeningSummon=true;c.random=()=>0;
-    const far={x:e.x+cfg.specialRange-8,y:e.y};
+    const far={x:e.x+(key==='supply-crown'?-1:1)*(cfg.specialRange-8),y:e.y};
     assert(c.startCaptainAttack(e,far),key+' has a viable distant special');
     assert.notEqual(e.telegraph.kind,'cone',key+' cannot waste distant cone');
     const cone=cfg.attacks.find(p=>p.kind==='cone');

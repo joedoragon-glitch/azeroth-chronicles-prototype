@@ -172,7 +172,7 @@
       const room = this.supplyRoom(id),
         side = this.sideDungeon(id);
       return room
-        ? 900
+        ? room.size || 900
         : side
           ? side.size || 1100
           : dungeonIds.includes(id)
@@ -616,7 +616,7 @@
     treasuryInterior(z) {
       const room = this.supplyRoom(z.id),
         layout = room && R.treasuryDecor?.[room.id],
-        targetVersion = ['supply-crown', 'supply-highlands'].includes(room?.id) ? 4 : 3;
+        targetVersion = room?.id === 'supply-crown' ? 5 : room?.id === 'supply-highlands' ? 4 : 3;
       if (!room || !layout || z.treasuryVersion === targetVersion) return;
       z.room = true;
       z.treasury = room.boss;

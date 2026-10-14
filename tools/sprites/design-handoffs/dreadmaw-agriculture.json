@@ -5,7 +5,7 @@
   "designId": "dreadmaw-agriculture",
   "name": "Dreadmaw seven agricultural actions",
   "kind": "combat-presentation",
-  "nextAction": "Complete combined125-suite Node, actual Chromium/WebKit, exact package certification. No sprite production or release.",
+  "nextAction": "Complete dev.25 expanded-Treasury combined126Node, actual Chromium/WebKit, exact package and compatibility; previous dev.24 source remains recoverable3d25d4fc. No release or sprite production.",
   "context": {
     "originConversation": null,
     "decisionSummary": "Director #298 38A/39A/40A and custom #288 seven regular agriculture attacks; numerical tuning delegated8A.",
@@ -14,7 +14,8 @@
     "contentDocuments": [
       "docs/DIRECTOR_WORLD_BUILDING_SNAPSHOT_CANON_LOCK_20261012.md"
     ],
-    "locationAndLore": "Existing Inner Vault of the whole shared Treasury. Dreadmaw remains Minister of Agriculture and Cindermaw’s devoted disciple."
+    "locationAndLore": "Existing volcanic Treasury expanded to suit shared Interior/Agriculture duties: dedicated agricultural stores, distribution gallery, larger hoard and substantial Inner Vault. Dreadmaw retains his post; no outdoor patrol.",
+    "locationExpansionAuthorization": "User14October: \u201cYou can reasonably expand the whole building if it serves the worldbuilding purpose. Same for all locations in the game.\u201d No chat URL available."
   },
   "decisions": {
     "conceptAcceptance": "Director #298/#288.",
@@ -24,17 +25,17 @@
     "pendingCorrections": []
   },
   "reference": {
-    "sourceCommit": "b87e22dc0ddd7e029ec132f6dd23bcb7c78044aa (parent; candidate owners hashed below)",
+    "sourceCommit": "3d25d4fc1632e63078d4353b51c7001b23c4ab3b (parent; dev.25 expansion owners hashed below)",
     "ownerFilesAndBranches": [
       {
         "path": "src/prototype/dreadmaw-combat.js",
         "branch": "implementation/director-snapshot-20261013",
-        "sha256": "25c2aee4c4bb447020a2acbccfe58b42dd2832a507edb86b4d412026e9d75d77"
+        "sha256": "ef40f2043c187b10ec80584ff66522e064fbcbbfc28a6f93e80d8bc42d23e61b"
       },
       {
         "path": "src/prototype/rules.js",
         "branch": "implementation/director-snapshot-20261013",
-        "sha256": "05393aebfbed9cadc9b9569c068725e1843c65dcaee90c67b68b2469623617aa"
+        "sha256": "811fad488ba06cd3926ef624ec3150e14b735331eb2f0abdc4a50e25bb1ba5c8"
       },
       {
         "path": "src/prototype/combat-visuals.js",
@@ -100,7 +101,52 @@
       "tools/sprites/design-handoffs/references/dread-agriculture/warning-5-375.png": "3c8cdcb58f1be9e5175702e17c25304fce757eed5bbc602f9b3f3df87d9e5ceb",
       "tools/sprites/design-handoffs/references/dread-agriculture/warning-6-1280.png": "65a204aa4c0e59a3b80d33ba8b66be74fe464b06bf5c38983d43f8506f341db5",
       "tools/sprites/design-handoffs/references/dread-agriculture/warning-6-375.png": "b56a7c82ff0fbd2fa7ebf5c7e65eac53aac0dfb84605b34e246290b230ce6dc1"
-    }
+    },
+    "expandedGameplayContextPaths": [
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/contracting-closure-1280.png",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/contracting-closure-375.png",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/ensiling-vapor-1280.png",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/ensiling-vapor-375.png",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/fed-brood-1280.png",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/fed-brood-375.png",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-0-1280.png",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-0-375.png",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-1-1280.png",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-1-375.png",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-2-1280.png",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-2-375.png",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-3-1280.png",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-3-375.png",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-4-1280.png",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-4-375.png",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-5-1280.png",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-5-375.png",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-6-1280.png",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-6-375.png"
+    ],
+    "expandedGameplayHashes": {
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/contracting-closure-1280.png": "753b5126a49cb39b3f05f6b68d6cd1e1da75712c59210e03ab12bccb2173cbdc",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/contracting-closure-375.png": "743c4d72c434de08409bbb1524411a84e13fd5b122d0dc72eb86634b59e523d7",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/ensiling-vapor-1280.png": "07dc8a595ff56abbfc0c0192298fc31c3c310326078f2e33835f49e0ebfef763",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/ensiling-vapor-375.png": "2d2bec664ab33af4bfd69ec975bf35e54c30242ddff3683ad74d09ab7e8b31e8",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/fed-brood-1280.png": "abc5dec36c0f7ad1652e8a9df9f4377a7217941ad9d5a885b3806fccfdf351cd",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/fed-brood-375.png": "ccf94ad731166223d09d40bff0c328b0bf16eea6530d4f086e23b9e495330342",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-0-1280.png": "7fe085262ed89031bf379832e254e19308c22ab70dbba96b8bf9419ad5ecf00f",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-0-375.png": "a8e857409e60a4e85177854f3869a6f77ba10198262f81c77c5e25dfc3b080bb",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-1-1280.png": "4eceed28d98b63f3322fec8e6f3393987a1a45a16da04dea792a92218715f0d8",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-1-375.png": "bad45d5d6b4bff5b8a1a112ce817353e312d94c8f7846b7fe96bcd8eaa6510b9",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-2-1280.png": "4d7c68e2df8689441d40e2689522fe791d41679355f08cf7c7dadcfeef3b2f2b",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-2-375.png": "c8002906c2ff6a30871ef8ca4b249c9d3f4d1a69518be6f6eccc37d4b4cd29d8",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-3-1280.png": "e5bb607afe599ca6e12bb9f4ca611b5d0ea70d03bcfc6535442dfe0308c39283",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-3-375.png": "e7ec5f814402b1dfc4564f07d3583f6beb692a1fd9f08f49c4aecccad07c5570",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-4-1280.png": "849e47ee7c05a6a22d4190d88b2984e050d32d4b9392fd901ea9c3a303acd204",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-4-375.png": "e131ba2343eba831b6a317554d890970ce23258999d9a187866e7c962204b18b",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-5-1280.png": "0d387f5ef1a04240ed871d3ee9216c79ab5abbf94d8ec172529352deffc0bc54",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-5-375.png": "0d846237b8a6b75b5054cc78c1a9cd7c9e5957785546443534f611eb2b2f9ced",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-6-1280.png": "bf4fd7cc923fd56123463bcdc1819d97ea0a8738398c2be36ff102e1656989bd",
+      "tools/sprites/design-handoffs/references/dread-agriculture-expanded/warning-6-375.png": "74ec51d32e50a719f9cbd57b8e5dde78f718f9ed050042778a44f42c1721aef6"
+    },
+    "expandedEntityState": "New1400unit shared Treasury, Dreadmaw985/980 in690\u00d7710Inner Vault. Same native1280/375source renderer and150%zoom. Full170unit ring and two170unit L legs fit authored post without downscaling. Previous20small-vault references preserved unchanged."
   },
   "scope": {
     "catalogIds": [],

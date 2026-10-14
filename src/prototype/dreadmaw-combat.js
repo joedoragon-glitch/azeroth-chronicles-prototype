@@ -110,9 +110,9 @@
               x: target.x + Math.cos(angle) * radius,
               y: target.y + Math.sin(angle) * radius,
             },
-            point = this.safe(raw.x, raw.y);
+            point = raw;
           if (
-            d(point, raw) > 30 ||
+            this.blocked(point.x, point.y, this.zoneId, 15) ||
             !this.line(e, point) ||
             !this.route(target, point).length ||
             points.some((p) => d(p, point) < separation)

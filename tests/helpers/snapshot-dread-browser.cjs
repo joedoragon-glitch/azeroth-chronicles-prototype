@@ -57,9 +57,9 @@ async function verifyDreadAgriculture(page, results, tag, capture = false) {
           b = __dreadBrowser,
           e = c.zone().enemies.find((u) => u.captainProfile === 'supply-crown');
         const destinations = [
-          { x: 785, y: 650 },
-          { x: 680, y: 700 },
-          { x: 650, y: 630 },
+          { x: e.home.x + 80, y: e.home.y },
+          { x: e.home.x - 25, y: e.home.y + 50 },
+          { x: e.home.x - 55, y: e.home.y - 20 },
         ];
         for (let i = 0; i < 8000; i++) {
           const a = e.telegraph;

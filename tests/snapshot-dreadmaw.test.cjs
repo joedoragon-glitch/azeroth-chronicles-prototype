@@ -327,9 +327,9 @@ for (let seed = 1; seed <= 12; seed++) {
   e.cd = 0;
   for (let frame = 0; frame < 3200; frame++) {
     const destinations = [
-      { x: 785, y: 650 },
-      { x: 680, y: 700 },
-      { x: 650, y: 630 },
+      { x: e.home.x + 80, y: e.home.y },
+      { x: e.home.x - 25, y: e.home.y + 50 },
+      { x: e.home.x - 55, y: e.home.y - 20 },
     ];
     c.move(c.hero, destinations[Math.floor(frame / 400) % destinations.length], 220, 0.05);
     if (frame % 700 === 699) {

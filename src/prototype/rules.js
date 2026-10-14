@@ -1181,6 +1181,7 @@
     },
     {
       id: 'supply-crown',
+      size: 1400,
       region: 'crown',
       boss: 'cindermaw',
       count: 3,
@@ -1256,10 +1257,10 @@
     ],
   };
   // Cindermaw's Treasury is a volcanic den rather than the generic supply-room rectangle.
-  // Overlapping chambers keep the room compact while giving the roost, hoard and inner vault distinct spaces.
+  // Shared Interior/Agriculture administration needs real storage, circulation and a substantial Inner Vault.
   const treasuryArchitecture = {
     'supply-crown': {
-      version: 1,
+      version: 2,
       walkable: [
         {
           id: 'entrance-cleft',
@@ -1271,7 +1272,7 @@
         },
         {
           id: 'hoard-chamber',
-          bounds: [540, 850, 120, 520],
+          bounds: [540, 1190, 120, 640],
         },
         {
           id: 'ash-den',
@@ -1279,16 +1280,18 @@
         },
         {
           id: 'ember-junction',
-          bounds: [350, 680, 340, 700],
+          bounds: [350, 1000, 340, 780],
         },
         {
           id: 'inner-vault',
-          bounds: [540, 850, 480, 830],
+          bounds: [620, 1310, 600, 1310],
         },
         {
           id: 'service-loop',
-          bounds: [420, 600, 650, 820],
+          bounds: [420, 700, 650, 1120],
         },
+        { id: 'agricultural-stores', bounds: [110, 580, 760, 1310] },
+        { id: 'distribution-gallery', bounds: [480, 1080, 480, 800] },
       ],
       partitions: [
         {
@@ -1305,14 +1308,14 @@
         },
         {
           id: 'vault-gate',
-          x1: 500,
-          x2: 850,
-          y1: 520,
-          y2: 560,
+          x1: 620,
+          x2: 1310,
+          y1: 580,
+          y2: 620,
           axis: 'x',
           gaps: [
-            [585, 680],
-            [750, 825],
+            [720, 940],
+            [1100, 1280],
           ],
         },
         {
@@ -1385,9 +1388,9 @@
       [545, 760],
     ],
     'supply-crown': [
-      [705, 285],
+      [860, 300],
       [270, 700],
-      [735, 725],
+      [1190, 1170],
     ],
   };
   const treasuryGuardFormations = {
@@ -1399,9 +1402,9 @@
     ],
     'supply-crown': [
       { x: 330, y: 260, role: 'melee', group: 'roost', name: 'Ash beast treasury guardian' },
-      { x: 585, y: 315, role: 'ranged', group: 'hoard', name: 'Ash beast cinder guardian' },
+      { x: 865, y: 390, role: 'ranged', group: 'hoard', name: 'Ash beast cinder guardian' },
       { x: 300, y: 520, role: 'melee', group: 'ash-den', name: 'Ash beast treasury guardian' },
-      { x: 705, y: 650, captain: true, group: 'inner-vault', name: 'Dreadmaw' },
+      { x: 985, y: 980, captain: true, group: 'inner-vault', name: 'Dreadmaw' },
     ],
   };
   const treasuryDecor = {
@@ -1448,12 +1451,17 @@
     ],
     'supply-crown': [
       [320, 220, 'ashbeast-roost-scene', 0],
-      [700, 285, 'cindermaw-hoard-scene', 0],
+      [865, 285, 'cindermaw-hoard-scene', 0],
       [265, 590, 'cindermaw-ash-den', 0],
       [485, 470, 'ember-pit', 18],
-      [655, 650, 'dreadmaw-vault-post', 0],
-      [800, 760, 'boss-chest', 20],
+      [935, 980, 'dreadmaw-vault-post', 0],
+      [1260, 1220, 'boss-chest', 20],
       [455, 740, 'obsidian', 0],
+      [265, 980, 'stolen-goods', 0],
+      [365, 1140, 'ration', 0],
+      [185, 1230, 'fish-rack', 18],
+      [740, 440, 'fishing-net', 0],
+      [680, 740, 'stolen-goods', 0],
     ],
   }; // Creature strongholds are centers of ordinary-monster life and territorial power, not resource wrappers.
   // Named sites reuse existing map destinations; unmarked holds fill quiet territory without adding map clutter.

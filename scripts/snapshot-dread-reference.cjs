@@ -7,7 +7,10 @@ const C = require('../src/prototype/engine'),
   V = require('../src/prototype/visuals'),
   CV = require('../src/prototype/combat-visuals'),
   Renderer = require('../src/prototype/renderer');
-const dir = path.join(__dirname, '../tools/sprites/design-handoffs/references/dread-agriculture');
+const dir = path.join(
+  __dirname,
+  '../tools/sprites/design-handoffs/references/dread-agriculture-expanded',
+);
 fs.mkdirSync(dir, { recursive: true });
 function capture(c, stage) {
   for (const [width, height] of [

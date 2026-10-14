@@ -231,5 +231,13 @@
       "src/prototype/enemy-vfx-art.js": "f44958d68c2032188ba90d29c0946027673174be738f68d2a6d398b8d1058de8",
       "templates/game.html": "fe2d39f4d28dbc6257ebb734576b3609d9744afe11903d4cfaf270aebc291ad7"
     }
+  },
+  "approvedSnapshotTreasuryExpansionRevision": {
+    "source": "Director14October allows reasonable building/location expansion for worldbuilding. Shared Treasury agriculture/Interior responsibilities; #298/#288; regular mechanics retained.",
+    "files": {
+      "src/prototype/engine.js": "191167aef066fb340f7656a3da382e0046525827d6f6fb9fdfb9e8d07bfd7536",
+      "src/prototype/rules.js": "811fad488ba06cd3926ef624ec3150e14b735331eb2f0abdc4a50e25bb1ba5c8",
+      "src/prototype/dreadmaw-combat.js": "ef40f2043c187b10ec80584ff66522e064fbcbbfc28a6f93e80d8bc42d23e61b"
+    }
   }
 }
