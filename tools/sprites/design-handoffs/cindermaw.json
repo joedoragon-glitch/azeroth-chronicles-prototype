@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "status": "procedural-design",
   "designId": "cindermaw",
-  "name": "Cindermaw — ministerial support",
+  "name": "Cindermaw \u2014 ministerial support and seven regular attacks",
   "kind": "boss",
-  "nextAction": "Validate retained-rally dev.18 combined source, then continue seven ministerial moves and guarded variable Vera/forge/defense repair; remaining full snapshot and independent playable audit retained.",
+  "nextAction": "Validate coherent dev.19 seven-move candidate, then guarded variable Vera/mobile forge/nearby defense repair; full snapshot and independent audit remain.",
   "context": {
     "originConversation": null,
     "decisionSummary": "Director #298/#288:1200-unit cover-sensitive anonymous Broodscreen; six ordinary native responders physically navigate independently of6Normal/8TRUEmagical staff. Existing boss body/workstation art retained.",
@@ -14,7 +14,7 @@
       "docs/DIRECTOR_WORLD_BUILDING_SNAPSHOT_CANON_LOCK_20261012.md",
       "docs/SNAPSHOT_IMPLEMENTATION_20261013.md"
     ],
-    "locationAndLore": "Existing Dark Crown roost; ministerial mobile Vera and seven regular moves remain pending. These references show the bounded support stage, including the current fixed Vera workstation before its next authorized migration."
+    "locationAndLore": "Existing Dark Crown roost; ministerial mobile Vera and seven regular moves remain pending. These references show the bounded support stage, including the current fixed Vera workstation before its next authorized migration. Dev.19 adds seven regular attacks using the same boss and Ash-beast bodies; no new sprite production."
   },
   "decisions": {
     "conceptAcceptance": "Owner-approved45-choice canon #298 and preserved ministry #288.",
@@ -22,13 +22,15 @@
     "spriteProductionAuthorization": "Excluded from this snapshot.",
     "generatedAppearanceAcceptance": null,
     "pendingCorrections": [
-      "Full ministry regular attack and variable mobile-Vera package not implemented by this stage."
+      "Seven ministry moves focused execution/fatal/scheduler pass; full regression and browser gate pending.",
+      "Guarded variable Vera, mobile forge and real nearby defense repair remain unfinished."
     ]
   },
   "reference": {
     "sourceCommit": "8d2e2d585cf0642cadae9006b8f6f911db4ef942",
     "ownerFilesAndBranches": [
       "src/prototype/engine.js",
+      "src/prototype/cindermaw-combat.js",
       "src/prototype/boss-combat.js",
       "src/prototype/rules.js",
       "src/prototype/combat-visuals.js",
@@ -53,7 +55,8 @@
     ],
     "assetSpecificDependencies": [
       "tests/cindermaw-support.test.cjs",
-      "tests/helpers/snapshot-cinder-browser.cjs"
+      "tests/helpers/snapshot-cinder-browser.cjs",
+      "tests/cindermaw-ministry.test.cjs"
     ]
   },
   "scope": {

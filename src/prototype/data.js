@@ -354,10 +354,13 @@ const PrototypeData = {
       xp: 900,
       place: "Cindermaw's roost",
       attacks: [
-        'Cinder rend: broad frontal sweep with a 1.1 second warning.',
-        'Ash rush: a straight burning charge marked for 1.5 seconds.',
-        'Furnace spit: three hot landing circles warn for 1.6 seconds and briefly persist.',
-        'Brood command: calls up to six ministry responders after 1.8 seconds; TRUE form keeps six minions and two elite captains, at most eight alive.',
+        'Cordon Sanitaire: a burning ring contracts; its wide opening moves once before the explosion.',
+        'Administrative Distraint: a marked physical claw lunge strips temporary immunity and an active Preparation Tonic; equipment and talents remain.',
+        'Parens Patriae: protect nearby Ash beasts for three seconds, with bounded fiery retaliation against qualifying attackers.',
+        'Index of Multiple Deprivation: seven separately warned seals erupt in clockwise progression around the party.',
+        'Horizontal Fiscal Equalisation: strike the healthiest party member and heal the weakest surviving Ash beast by actual damage dealt.',
+        'Devolution of Authority: up to four existing Ash beasts approach from different directions, attack in sequence, then Cindermaw finishes; disrupting delegates interrupts it.',
+        'Mutual Aid Agreement: up to six owned ministry responders; TRUE form keeps six minions and two elite captains, at most eight alive.',
       ],
     },
     {

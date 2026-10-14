@@ -12,6 +12,7 @@ const scripts = [
     'combat',
     'hero-combat',
     'boss-combat',
+    'cindermaw-combat',
     'party',
     'economy',
     'narration',

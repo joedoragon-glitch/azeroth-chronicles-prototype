@@ -49,8 +49,23 @@
       (e.telegraph.total > 0 || !e.telegraph.captainSkill)
     );
   }
+  function cordonPoints(a, filled = false) {
+    const center = a,
+      start = a.gapAngle + a.gapWidth / 2,
+      span = Math.PI * 2 - a.gapWidth,
+      outer = a.radius + a.width,
+      inner = filled ? 0 : Math.max(0, a.radius - a.width),
+      arc = (radius, reverse = false) =>
+        Array.from({ length: 65 }, (_, j) => {
+          const angle = start + span * (reverse ? 1 - j / 64 : j / 64);
+          return { x: center.x + Math.cos(angle) * radius, y: center.y + Math.sin(angle) * radius };
+        });
+    return [...arc(outer), ...arc(inner, true)];
+  }
   function warningShapes(a, patches) {
     if (a.kind === 'summon' || a.selfDefense) return [];
+    if (a.cinderMechanic === 'cordon' && Number.isFinite(a.gapAngle))
+      return [cordonPoints({ ...a, radius: a.initialRadius })];
     if (a.kind === 'line' || a.kind === 'volley')
       return (
         a.kind === 'volley'
@@ -304,7 +319,11 @@
           viewWidth = (ctx.canvas?.width || 1280) / scale,
           viewHeight = (ctx.canvas?.height || 800) / scale,
           maxWidth = Math.max(60, Math.min(240, viewWidth - 16)),
-          words = (a.name + (a.rogueMove ? '' : ' · ' + a.timer.toFixed(1))).split(' '),
+          words = (
+            a.name +
+            (a.stages ? ' · ' + a.stage + '/' + a.stages : '') +
+            (a.rogueMove ? '' : ' · ' + a.timer.toFixed(1))
+          ).split(' '),
           lines = [];
         let current = '';
         for (const word of words) {
@@ -354,6 +373,59 @@
       }
     }
     for (const e of game.zone().enemies) {
+      const cordon = e.hp > 0 && !e.returning && e.cinderCordon;
+      if (cordon) {
+        polygon(ctx, screen, cordonPoints(cordon));
+        ctx.strokeStyle = '#ffb783';
+        ctx.fillStyle = '#e4683d58';
+        ctx.lineWidth = 2;
+        cue ? ctx.stroke() : ctx.fill();
+        if (cue && cordon.warning) {
+          const end = {
+            x: cordon.x + Math.cos(cordon.nextGap) * (cordon.radius + cordon.width + 30),
+            y: cordon.y + Math.sin(cordon.nextGap) * (cordon.radius + cordon.width + 30),
+          };
+          ctx.setLineDash([5, 4]);
+          strokeWorld(ctx, screen, cordon, end, '#aef1d5', 3);
+          ctx.setLineDash([]);
+          const p = screen(end);
+          ctx.fillStyle = '#aef1d5';
+          ctx.textAlign = 'center';
+          ctx.font = 'bold 11px system-ui';
+          ctx.fillText('NEXT OPENING', p.x, p.y - 10);
+        }
+        // The final inner blast is announced throughout the contraction.
+        if (cue) {
+          polygon(ctx, screen, cordonPoints({ ...cordon, radius: cordon.finalRadius }, true));
+          ctx.setLineDash([3, 5]);
+          ctx.strokeStyle = '#f5c48988';
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      }
+      if (e.hp > 0 && game.cinderProtection?.(e)) {
+        const p = screen(e);
+        ctx.strokeStyle = '#ace5c4';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y - 23, 28, 33, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        if (cue) {
+          ctx.fillStyle = '#d4f7df';
+          ctx.font = 'bold 10px system-ui';
+          ctx.textAlign = 'center';
+          ctx.fillText('PROTECTED', p.x, p.y + 18);
+        }
+      }
+      if (cue && e.telegraph?.cinderMechanic === 'delegation')
+        for (const delegate of e.telegraph.delegates || []) {
+          circlePath(ctx, screen, delegate.point, 18);
+          ctx.strokeStyle = '#a5d5ed';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([3, 4]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
       if (cue && e.hp > 0 && !e.returning) {
         const keeper =
             e.type === 'boss' &&
@@ -385,7 +457,12 @@
           ctx.fillText(String(Math.round(reduction * 100)) + '%', p.x, p.y + 26);
         }
       }
-      if (e.hp <= 0 || e.returning || !(e.anastylosis > 0 || e.telegraph?.selfDefense)) continue;
+      if (
+        e.hp <= 0 ||
+        e.returning ||
+        !(e.anastylosis > 0 || (e.telegraph?.selfDefense && !e.telegraph.cinderMechanic))
+      )
+        continue;
       const p = screen(e),
         active = e.anastylosis > 0;
       ctx.strokeStyle = active ? '#b7ddd5' : '#9aafbf';

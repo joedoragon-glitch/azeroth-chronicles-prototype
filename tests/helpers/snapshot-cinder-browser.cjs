@@ -126,6 +126,89 @@ async function verifyCinderSupport(page, results, tag, capture = false) {
       return c._tacticalCinderResponses.size;
     });
     assert.equal(canceled, 0);
+    const ministry = await page.evaluate(() => {
+      const c = Prototype.game,
+        e = c.zone().enemies.find((e) => e.family === 'cindermaw');
+      Object.assign(e, e.home, { returning: 0 });
+      c.engage(e, true, false);
+      const built = c.buildBossAttack(e, 0, c.hero);
+      e.telegraph = built.first;
+      c.resolveAttack(e);
+      e.telegraph = null;
+      c.s.time += 0.9;
+      c.advanceCinderCordon(e, 0.9);
+      __cinderBrowser.text = [];
+      Prototype.updateHUD();
+      return {
+        radius: e.cinderCordon.radius,
+        initial: built.first.initialRadius,
+        next: e.cinderCordon.warning,
+        gap: built.first.gapAngle,
+        second: built.first.nextGap,
+      };
+    });
+    assert(ministry.radius < ministry.initial && ministry.next && ministry.gap !== ministry.second);
+    await page.waitForFunction(() => __cinderBrowser.text.includes('NEXT OPENING'));
+    if (capture)
+      await page.screenshot({ path: path.join(results, 'snapshot-cinder-cordon-' + tag + '.png') });
+    const seals = await page.evaluate(() => {
+      const c = Prototype.game,
+        e = c.zone().enemies.find((e) => e.family === 'cindermaw');
+      c.cancelEncounter(e);
+      c.engage(e, true, false);
+      Object.assign(c.hero, c.safe(e.x + 70, e.y));
+      const built = c.buildBossAttack(e, 3, c.hero);
+      e.telegraph = built.sequence[1];
+      __cinderBrowser.text = [];
+      Prototype.updateHUD();
+      return [built.first, ...built.sequence].map((a) => ({ x: a.x, y: a.y, stage: a.stage }));
+    });
+    assert.deepEqual(
+      seals.map((a) => a.stage),
+      [1, 2, 3, 4, 5, 6, 7],
+    );
+    assert.equal(new Set(seals.map((a) => a.x + ':' + a.y)).size, 7);
+    await page.waitForFunction(() => __cinderBrowser.text.some((t) => t.includes('3/7')));
+    if (capture)
+      await page.screenshot({ path: path.join(results, 'snapshot-cinder-seals-' + tag + '.png') });
+    const delegation = await page.evaluate(() => {
+      const c = Prototype.game,
+        e = c.zone().enemies.find((e) => e.family === 'cindermaw');
+      c.cancelEncounter(e);
+      c.engage(e, true, false);
+      c.summonBossAdds(e, c.trueSummonPlan(e), 6);
+      for (const u of c.bossOwnedSummons(e)) {
+        u.cd = 1e6;
+        u.telegraph = null;
+        u.motion = null;
+        u.slow = 0;
+      }
+      e.cd = 1e6;
+      c._tacticalRogueNext.set(e.id, 1e6);
+      const a = c.buildBossAttack(e, 5, c.hero).first;
+      const ids = c.zone().enemies.map((u) => u.id);
+      e.telegraph = a;
+      c.resolveAttack(e);
+      e.telegraph = null;
+      const count = e.cinderDelegation?.members.length || 0;
+      const stages = new Set();
+      let finish = false;
+      for (let n = 0; n < 350 && e.cinderDelegation; n++) {
+        c.s.time += 0.05;
+        c.updateEnemies(0.05);
+        for (const u of c.zone().enemies) if (u.telegraph?.cinderDelegate) stages.add(u.id);
+        finish ||=
+          e.telegraph?.cinderMechanic === 'finisher' || e.motion?.cinderMotion === 'finisher';
+      }
+      const done = !e.cinderDelegation,
+        stable = JSON.stringify(ids) === JSON.stringify(c.zone().enemies.map((u) => u.id));
+      const clean = !JSON.stringify(c.snapshot()).includes('cinderDeleg');
+      c.cancelEncounter(e);
+      return { count, warned: stages.size, finish, done, stable, clean };
+    });
+    assert(delegation.count > 0 && delegation.count <= 4);
+    assert.equal(delegation.warned, delegation.count);
+    assert(delegation.finish && delegation.done && delegation.stable && delegation.clean);
   } finally {
     await page.evaluate(() => {
       const c = Prototype.game,

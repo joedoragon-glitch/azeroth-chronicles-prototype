@@ -181,5 +181,18 @@
     "files": {
       "src/prototype/engine.js": "5243a19a8b49f0c39aa22af237b09be1eede707b75fd6005038d8e5d6d96ad5a"
     }
+  },
+  "approvedSnapshotCinderMinistryRevision": {
+    "source": "Director #298 and #288: seven ministerial regular slots in Cindermaw-only owner, truthful warning/stage identity and transient lifecycle. Earlier pins retained.",
+    "files": {
+      "src/prototype/cindermaw-combat.js": "4c60cb02a6a2835a3c839fc957c4366d75c194946cd391a87928bcd2f153b582",
+      "src/prototype/combat-visuals.js": "b1c211e8eca599d27c3b80f326b19d11c0faeb06ac4afd07129c44f518bab736",
+      "src/prototype/data.js": "ddea3dee91dd5661c578b89c5c1ba33d2b881850405d2c0818bc1cca43b4629a",
+      "src/prototype/enemy-vfx-events.js": "e7e95c77f5738b0e88ad2810e36259a1a9991286ce9296d787b752ddbc0e16c3",
+      "src/prototype/enemy-vfx.js": "67efb5a69b19da14b0c9850c4c5586670a10d138703125953c138089454b96d4",
+      "src/prototype/engine.js": "15b87b82c49ed2fd3e829a53f34d1866e572379803feca2a9b97c1ff66199ae7",
+      "src/prototype/rules.js": "20af532e6d7b2620e627a47e3687f3473473c64ebcd8f97ed8b097413522ec36",
+      "templates/game.html": "87bf537fc910cd802bf7bbc557156750ed98ce70bed180f3650d8ede41174e8e"
+    }
   }
 }

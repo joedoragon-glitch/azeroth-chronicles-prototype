@@ -3595,6 +3595,7 @@
             !u.telegraph &&
             !u.motion &&
             !u.rangedAim &&
+            !u.cinderDelegate &&
             dist(u, e) <= cfg.radius,
         ),
         party = this.combatTargets();
@@ -4279,6 +4280,9 @@
             continue;
           }
         }
+        const cinderAdvanced = this.updateCinderRegularState(e, dt);
+        if (this.s.statistics.deaths !== deaths) return;
+        if (cinderAdvanced) continue;
         if (this.updateCinderResponse(e, dt)) continue;
         const candidates = this.combatTargets();
         // Keeper focuses available archers, the healers, within normal combat reach.
@@ -5179,6 +5183,11 @@
   const BossCombat =
     typeof PrototypeBossCombat !== 'undefined' ? PrototypeBossCombat : require('./boss-combat.js');
   BossCombat.install(Campaign, { R });
+  const CindermawCombat =
+    typeof PrototypeCindermawCombat !== 'undefined'
+      ? PrototypeCindermawCombat
+      : require('./cindermaw-combat.js');
+  CindermawCombat.install(Campaign, { D, R });
   const Party = typeof PrototypeParty !== 'undefined' ? PrototypeParty : require('./party.js');
   Party.install(Campaign, { D, R });
   const Economy =

@@ -36,6 +36,16 @@
     'effect',
     'style',
     'kind',
+    'cinderMechanic',
+    'cinderDelegate',
+    'gapAngle',
+    'nextGap',
+    'gapWidth',
+    'initialRadius',
+    'finalRadius',
+    'width',
+    'stage',
+    'stages',
   ];
   function store(game) {
     let s = state.get(game);

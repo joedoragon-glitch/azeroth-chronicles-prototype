@@ -39,6 +39,8 @@ Rendering reads the campaign and holds only transient presentation state. Screen
 
 ## Device boundary
 
+`cindermaw-combat.js` extends existing boss/combat owners for Cindermaw's approved seven ministerial attacks only. Shared summon factories, targeting, geometry, death and save cleanup remain in their existing owners. Directed native orders, contracting cordons and three-second protection are transient actor fields cleared through `clearEncounterState`; snapshots clean copies and raw historical restores drop those fields. No new campaign store or browser dependency is introduced. Timing and tuning remain in `rules.js`; actual cues remain in `combat-visuals.js` and the existing observation-only VFX bridge.
+
 `styles/prototype.css` defines the shared theme. `desktop.css` and `phone.css` contain separate layouts scoped by the selected experience. A narrow desktop window keeps its desktop identity. Fine pointer plus hover support wins on hybrid laptops; coarse-only input chooses phone. An explicit setting or `?experience=desktop|phone` overrides detection. `phone.html` defaults to the phone presentation; an explicit saved screen choice survives relaunch. The compact phone HUD leaves the hero and skill controls clear. `phone.html` is the installed PWA launch entry.
 
 `templates/game.html` generates all three campaign entries (`index.html`, `prototype.html`, `phone.html`). They load the same script graph and share storage on the same origin. Phone-specific controls are absent from the desktop layout. Menus and HUD accept keyboard, mouse and touch independently of presentation. Input preferences use their own versioned storage key; campaign save schemas remain unchanged.
