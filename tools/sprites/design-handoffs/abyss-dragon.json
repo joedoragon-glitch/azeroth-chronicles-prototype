@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-design",
+  "designId": "abyss-dragon",
+  "name": "Abyss Dragon \u2014 Veyrith",
+  "kind": "boss",
+  "nextAction": "Verify actual seven-action aviation paths, lifecycle and desktop/phone hosted captures; preserve current purple-dragon procedural design. New sprite production excluded.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Latest #298/#291 locks Veyrith, Loyal Air Marshal: proud, disciplined and loyal; organized aerial patrols and military superiority secure lasting peace. Selective #254\u2192#283 real aviation implementation retained.",
+    "decisionDate": "2026-10-12",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/243",
+    "contentDocuments": [
+      "docs/ABYSS_AIR_SUPERIORITY_CANON.md",
+      "docs/DIRECTOR_WORLD_BUILDING_SNAPSHOT_CANON_LOCK_20261012.md"
+    ],
+    "locationAndLore": "Dark Lord\u2019s purple personal mount and Loyal Air Marshal; existing Abyss Bastion royal aerie/hatchery/unfinished launch platform. Royal air program remains incomplete."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner-approved latest #298 11B supersedes older pathfinder/extraction/safety-permit psychology.",
+    "proceduralDesignAcceptance": "Existing procedural Abyss Dragon appearance must be retained; no new appearance proposal or approval.",
+    "spriteProductionAuthorization": "Excluded",
+    "generatedAppearanceAcceptance": null,
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "8c259a511466c35a78b5523f2fa1f338e05c881a parent; exact dependencies identify this WIP",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js",
+      "src/prototype/rules.js",
+      "src/prototype/data.js"
+    ],
+    "exactEntityState": {
+      "zone": "abyss",
+      "family": "abyss",
+      "type": "boss",
+      "forms": ["normal", "true"],
+      "publicName": "Abyss Dragon",
+      "proposedPersonalName": "Veyrith"
+    },
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [],
+    "traitsToPreserve": [
+      "Existing approved purple-dragon silhouette and size",
+      "Same family abyss, Eren, personal mount and unfinished royal air force",
+      "Four regular slots, two separate rogue techniques, Go-Around",
+      "Collision-aware visible flights and individually warned landing circles",
+      "Existing Ash-beast summons,3Normal/6TRUE cap"
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "b59d315de8fa35625b364a3feb87c76f93076031fd670824d77cda1682a085b9"
+      },
+      {
+        "path": "src/prototype/boss-combat.js",
+        "sha256": "2ab3ba3e6306704a6dd61f905370017bed003e28d792050eadb92a2d05581339"
+      },
+      {
+        "path": "src/prototype/data.js",
+        "sha256": "a93a08064902df010013fd48fc9ed063bbfc2640698d4c05b895d7b996aa451b"
+      },
+      {
+        "path": "src/prototype/rules.js",
+        "sha256": "1959002cfdf3948cce14dc1dc6190539995643816d51539832280bed35e00d55"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [],
+    "reusedDesignIds": ["Existing Abyss Dragon normal/TRUE procedural depiction"],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "Current visuals.js and combat-visuals.js remain authoritative; no render changes requested."
+    ]
+  },
+  "animationRequirements": {
+    "status": "undecided",
+    "gameplayStates": ["Normal", "TRUE", "Awakening"],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

@@ -35,7 +35,7 @@ const polishedKeeps = new Map([
   ],
   [
     21,
-    'Eren is free. The dragons bred at Abyss Bastion are meant for an army. The Dark Lord has plans beyond his own mount.',
+    'Eren is free. The dragons bred at Abyss Bastion are meant for an army. Veyrith, the loyal Air Marshal, believes aerial supremacy will secure lasting peace.',
   ],
 ]);
 const authored = prose.filter(Boolean);

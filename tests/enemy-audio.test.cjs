@@ -571,6 +571,11 @@ for (const action of ['melee', 'circle']) {
     const id = V.describe(e, e.telegraph).id;
     ids.add(id);
     c.resolveAttack(e);
+    if (e.family === 'abyss' && e.motion) {
+      // High Yo-Yo finishes the already-warned strike after its aerial approach.
+      for (let tick = 0; tick < 350 && e.motion; tick++) c.advanceMotion(e, 0.02);
+      assert.equal(e.motion, null, 'High Yo-Yo must resolve before checking its impact');
+    }
     const events = c.effects.filter((f) => f.type === 'enemyVfx');
     assert(
       events.some((f) => f.stage === 'windup' && f.dangerous && P.route(f).key === 'enemyWindup'),

@@ -80,6 +80,15 @@ if (garunRevision) {
   ]);
   assert.match(garunRevision.source, /#298.*#293.*#253.*#264.*#279/);
 }
+const aviationRevision = manifest.approvedSnapshotAviationRevision;
+if (aviationRevision) {
+  assert.deepEqual(Object.keys(aviationRevision.files).sort(), [
+    'src/prototype/boss-combat.js',
+    'src/prototype/data.js',
+    'src/prototype/rules.js',
+  ]);
+  assert.match(aviationRevision.source, /#298.*#291.*#254.*#283/);
+}
 for (const [file, expected] of Object.entries(manifest.files)) {
   const actual = crypto
     .createHash('sha256')
@@ -87,7 +96,8 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    garunRevision?.files[file] ||
+    aviationRevision?.files[file] ||
+      garunRevision?.files[file] ||
       thornRevision?.files[file] ||
       marchesRevision?.files[file] ||
       greenwoodRevision?.files[file] ||

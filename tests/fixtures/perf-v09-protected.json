@@ -143,5 +143,13 @@
       "src/prototype/rules.js": "e9710b2b6b4c1550b211c09dfef6a55e6077dd4a3378dedb4288ce9c1b61bdbb",
       "src/prototype/save.js": "7b5696c4411b4cbbc8a5d15e91ec2962b97e8071ba62adbcde077276d0143048"
     }
+  },
+  "approvedSnapshotAviationRevision": {
+    "source": "#298/#291 Loyal Air Marshal and seven real aviation moves, selective #254\u2192#283 with shared fatal boundary preservation",
+    "files": {
+      "src/prototype/boss-combat.js": "2ab3ba3e6306704a6dd61f905370017bed003e28d792050eadb92a2d05581339",
+      "src/prototype/data.js": "a93a08064902df010013fd48fc9ed063bbfc2640698d4c05b895d7b996aa451b",
+      "src/prototype/rules.js": "1959002cfdf3948cce14dc1dc6190539995643816d51539832280bed35e00d55"
+    }
   }
 }

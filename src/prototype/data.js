@@ -295,6 +295,9 @@ const PrototypeData = {
       region: 'frontier',
       kind: 'dungeon',
       name: 'Abyss Dragon',
+      role: 'Veyrith, Loyal Air Marshal',
+      history:
+        'Veyrith is the Dark Lord’s proud, disciplined and loyal purple personal mount. He believes organized aerial patrols and military superiority secure lasting peace. Abyss Bastion is preparing the royal air force; its hatchery, harness stations and unfinished launch platform remain a military project in progress, not a completed fleet.',
       level: 12,
       captive: 'Eren the Runewright',
       service: 'Advanced weapon and armor improvements',
@@ -305,10 +308,10 @@ const PrototypeData = {
       xp: 725,
       place: 'Abyss Bastion',
       attacks: [
-        'Flame cone: 1.5 second warning with a safe flank.',
-        'Wing shockwave: an expanding ring follows a 1.7 second warning.',
-        'Shadow flight: two marked landing circles resolve sequentially after 1.8 second warnings.',
-        'Hatchling call: summons three hatchlings after 2 seconds; no more than three remain alive.',
+        'Compressor Surge: 1.5 second warning with a safe flank.',
+        'Wake Vortex: an expanding ring follows a 1.7 second warning.',
+        'Lazy Eight: two marked landing circles resolve sequentially after 1.8 second warnings.',
+        'Scramble Order: summons three Ash-beast defenders after 2 seconds; TRUE form replenishes its six-unit warband.',
       ],
     },
     {

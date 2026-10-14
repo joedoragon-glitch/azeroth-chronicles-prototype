@@ -50,7 +50,7 @@
     }, // 20
     {
       kind: 'narration',
-      text: 'Eren is free. The dragons bred at Abyss Bastion are meant for an army. The Dark Lord has plans beyond his own mount.',
+      text: 'Eren is free. The dragons bred at Abyss Bastion are meant for an army. Veyrith, the loyal Air Marshal, believes aerial supremacy will secure lasting peace.',
     }, // 21
     null, // 22
     {
