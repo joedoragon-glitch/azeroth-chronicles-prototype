@@ -74,9 +74,11 @@
     ],
     darklord: [
       ['cleave', 'shadow'],
-      ['bombard', 'shadow'],
+      ['landing', 'shadow'],
       ['command', 'steel'],
       ['sweep', 'shadow'],
+      ['rush', 'shadow'],
+      ['seal', 'shadow'],
     ],
   });
   const captains = Object.freeze({
