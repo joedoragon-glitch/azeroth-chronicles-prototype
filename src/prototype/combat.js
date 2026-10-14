@@ -638,7 +638,9 @@
             // Royal Prerogative only redirects actual approaching projectiles
             // into an existing living Crown summon crossing the flight path.
             const guard =
-              e.family === 'darklord' && this.s.time >= (e.royalPrerogativeReadyAt || 0)
+              e.family === 'darklord' &&
+              !this.invalidChargedOpener(e, p.encountersAtStart) &&
+              this.s.time >= (e.royalPrerogativeReadyAt || 0)
                 ? this.zone().enemies.find(
                     (unit) =>
                       unit.owner === e.id &&
