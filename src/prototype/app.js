@@ -1039,6 +1039,52 @@
           Math.hypot(b.x - game.hero.x, b.y - game.hero.y),
       )[0];
   }
+  function appointmentMenu(n, group = null) {
+    if (!game.s.throneClaimed || !game.s.true[game.zoneId] ||
+        !Campaign.dungeonIds.includes(game.zoneId)) {
+      status('Claim the throne and defeat this dungeon’s TRUE guardian first.');
+      return;
+    }
+    const current = game.dungeonMaster(),
+      groups = {
+        field: 'Field bosses',
+        captain: 'Named captains',
+        specialist: 'Rescued specialists',
+      },
+      candidates = game.dungeonMasterCandidates(),
+      usedElsewhere = (id) => Object.entries(game.s.appointments || {}).some(
+        ([dungeon, appointed]) => dungeon !== game.zoneId && appointed === id,
+      ),
+      description =
+        (current ? 'Current master: ' + current.name : 'No appointed master') +
+        '. Appointments are optional, peaceful and unique; defeated captains remain eligible.';
+    if (!group) {
+      openMenu('Appoint Dungeon Master', description, [
+        ...Object.entries(groups).map(([id, label]) =>
+          action(label, () => appointmentMenu(n, id),
+            candidates.filter((choice) => choice.group === id).length + ' eligible'),
+        ),
+        ...(current ? [action('Leave this dungeon unappointed', () => {
+          if (game.appointDungeonMaster(game.zoneId, null)) closeMenu();
+        })] : []),
+        action('Decide later', closeMenu),
+      ]);
+      return;
+    }
+    openMenu('Appoint Dungeon Master · ' + groups[group], description, [
+      ...candidates.filter((choice) => choice.group === group).map((choice) =>
+        action(
+          (current?.id === choice.id ? '✓ ' : '') + choice.name,
+          () => {
+            if (game.appointDungeonMaster(game.zoneId, choice.id)) closeMenu();
+          },
+          usedElsewhere(choice.id) ? 'Already appointed in another dungeon' : 'Permanent local resident; no new fight',
+          usedElsewhere(choice.id),
+        ),
+      ),
+      action('Back to appointment choices', () => appointmentMenu(n)),
+    ], () => appointmentMenu(n));
+  }
   function interact() {
     const n = nearestNPC();
     if (!n) {
@@ -1083,7 +1129,8 @@
       updateHUD();
       return;
     }
-    if (n.kind === 'barracks') barracksMenu(n);
+    if (n.kind === 'appointment') appointmentMenu(n);
+    else if (n.kind === 'barracks') barracksMenu(n);
     else if (n.kind === 'teacher') teacher(n);
     else if (n.kind === 'smith') smith(n);
     else if (n.kind === 'keeper') keeper();
