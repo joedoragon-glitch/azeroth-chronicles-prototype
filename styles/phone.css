@@ -552,3 +552,23 @@ body[data-experience='phone'] #modal[data-view='map'] #modal-description canvas 
     overscroll-behavior: contain;
   }
 }
+
+/* Developer controls stay beside the joystick and off the combat skill grid. */
+body[data-experience='phone'] #developer-summon {
+  left: calc(max(8px, env(safe-area-inset-left)) + 110px);
+  bottom: calc(64px + env(safe-area-inset-bottom));
+  width: 58px;
+  min-height: 42px;
+  padding: 4px;
+  font-size: 11px;
+  transform: scale(var(--phone-ui-fit, 1));
+  transform-origin: bottom left;
+}
+body[data-experience='phone'] #developer-combat-monitor {
+  left: auto;
+  right: max(8px, env(safe-area-inset-right));
+  top: calc(90px + env(safe-area-inset-top));
+  max-width: min(180px, 41vw);
+  padding: 5px 7px;
+  font-size: 10px;
+}

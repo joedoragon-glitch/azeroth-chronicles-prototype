@@ -761,6 +761,42 @@ body.menu-open::before {
   display: none;
 }
 
+/* Opt-in combat laboratory. Not visible in ordinary play. */
+#developer-summon {
+  position: fixed;
+  left: 12px;
+  bottom: 78px;
+  z-index: 7;
+  background: #233e35ee;
+  border-color: #c9b47c;
+  font-weight: 700;
+  text-align: center;
+}
+#developer-summon[hidden],
+#developer-combat-monitor[hidden] {
+  display: none !important;
+}
+#developer-combat-monitor {
+  position: fixed;
+  left: 12px;
+  top: 35%;
+  z-index: 6;
+  max-width: min(260px, 38vw);
+  padding: 9px 11px;
+  border: 1px solid #c9b47c99;
+  border-radius: 8px;
+  background: #12241edf;
+  color: #e7eacb;
+  font:
+    12px/1.55 ui-monospace,
+    monospace;
+  white-space: pre-line;
+  pointer-events: none;
+}
+body.menu-open #developer-summon {
+  visibility: hidden;
+}
+
 /* Finale credit movement is visual only. Text/actions stay real and accessible. */
 #modal[data-view='credits'] #modal-description {
   white-space: pre-line;

@@ -29,8 +29,8 @@
     function save(game, profile) {
       try {
         storage.setItem(saveKey(game.s.mode), JSON.stringify(game.snapshot()));
-        profile.activeMode = game.s.mode;
-        if (game.peace) profile.nightmareUnlocked = true;
+        if (game.s.mode !== 'developer') profile.activeMode = game.s.mode;
+        if (game.peace && game.s.mode !== 'developer') profile.nightmareUnlocked = true;
         if (!saveProfile(profile)) return false;
         status('Saved locally · export for a backup');
         return true;
