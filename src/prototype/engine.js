@@ -78,6 +78,7 @@
         awakeningAck: false,
         throneClaimed: false,
         finalRestCompleted: false,
+        appointments: {},
         expeditionRank: 1,
         expeditionSkills: { sharedTraining: 0, sharedStrength: 0 },
         expeditionSupportVersion: 2,
@@ -330,6 +331,84 @@
         );
         this.event('archiveKnowledge', { fact: 'keeperEvidence' });
       }
+      return true;
+    }
+    dungeonMasterCandidates() {
+      const result = [
+        ...D.bosses
+          .filter((b) => b.kind === 'field')
+          .map((b) => ({ id: 'field:' + b.id, name: b.name, group: 'field' })),
+        ...Object.entries(R.roomCaptains)
+          .map(([id, captain]) => ({
+            id: 'captain:' + id,
+            name: captain.name,
+            group: 'captain',
+          })),
+        ...D.bosses
+          .filter((b) => b.captive && this.s.rescued[b.id])
+          .map((b) => ({
+            id: 'specialist:' + b.id,
+            name: b.captive,
+            group: 'specialist',
+          })),
+      ];
+      return result;
+    }
+    dungeonMaster(dungeonId = this.s.zone) {
+      const id = this.s.appointments?.[dungeonId];
+      return this.dungeonMasterCandidates().find((c) => c.id === id) || null;
+    }
+    syncDungeonMasterStation(z = this.s.zones[this.s.zone]) {
+      if (!z || !dungeonIds.includes(z.id)) return;
+      z.npcs = z.npcs.filter((n) => !['dungeon-master-choice', 'dungeon-master-resident'].includes(n.id));
+      if (!this.s.throneClaimed || !this.s.true[z.id]) return;
+      const previous = this.s.zone;
+      this.s.zone = z.id;
+      try {
+        const podium = this.safe(980, 940, z.id);
+        z.npcs.push({
+          id: 'dungeon-master-choice',
+          kind: 'appointment',
+          name: 'Appoint Dungeon Master',
+          ...podium,
+          icon: '♜',
+        });
+        const master = this.dungeonMaster(z.id);
+        if (master) {
+          const p = this.safe(1120, 950, z.id);
+          z.npcs.push({
+            id: 'dungeon-master-resident',
+            kind: 'dungeon-master',
+            name: 'Dungeon Master: ' + master.name,
+            masterId: master.id,
+            masterGroup: master.group,
+            ...p,
+            icon: '♛',
+          });
+        }
+      } finally {
+        this.s.zone = previous;
+      }
+    }
+    appointDungeonMaster(dungeonId, candidateId = null) {
+      if (
+        !this.s.throneClaimed ||
+        this.s.zone !== dungeonId ||
+        !dungeonIds.includes(dungeonId) ||
+        !this.s.true[dungeonId] ||
+        (candidateId !== null && !this.dungeonMasterCandidates().some((c) => c.id === candidateId)) ||
+        (candidateId !== null &&
+          Object.entries(this.s.appointments || {}).some(
+            ([id, appointed]) => id !== dungeonId && appointed === candidateId,
+          ))
+      ) return false;
+      this.s.appointments = this.s.appointments || {};
+      if (candidateId === null) delete this.s.appointments[dungeonId];
+      else this.s.appointments[dungeonId] = candidateId;
+      this.syncDungeonMasterStation();
+      const chosen = this.dungeonMaster(dungeonId);
+      this.say(chosen ? chosen.name + ' now keeps the peaceful dungeon.' : 'The dungeon remains without an appointed master.');
+      this.event('dungeonMaster', { dungeonId, candidateId });
       return true;
     }
     visibleNPCs() {
@@ -1793,6 +1872,12 @@
           return this.rescue(npc.family);
         case 'rest':
           return this.rest();
+        case 'appointment':
+          this.say('Choose the dungeon master through the appointment menu.');
+          return false;
+        case 'dungeon-master':
+          this.say(npc.name + ' keeps the dungeon in peace, without new combat duties.');
+          return true;
         case 'throne': {
           if (this.s.zone !== 'crown' || npc.id !== 'dark-crown-throne') return false;
           if (!this.s.true.darklord) {
@@ -2465,7 +2550,10 @@
         this.hero.order = null;
         this.s.party.forEach((u) => (u.order = null));
         if (this.s.mode === 'nightmare') this.s.clock = 360;
-        for (const z of Object.values(this.s.zones)) this.makeHabitat(z);
+        for (const z of Object.values(this.s.zones)) {
+          this.makeHabitat(z);
+          this.syncDungeonMasterStation(z);
+        }
         for (const q of this.questDefs()) {
           const p = this.s.quests[q.id];
           if (
