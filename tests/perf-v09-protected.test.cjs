@@ -21,6 +21,12 @@ if (keyboardRevision) {
   assert.match(keyboardRevision.source, /PR #269/);
 }
 // Preserve all previous hashes and allow only the exact reviewed batch source.
+// Audited PR #304 Developer Mode layered onto PR #300's existing owners.
+const combinedRevision = manifest.approvedSnapshotDeveloperIntegrationRevision;
+if (combinedRevision) {
+  assert.deepEqual(Object.keys(combinedRevision.files).sort(), ["src/prototype/app.js","src/prototype/combat.js","src/prototype/engine.js","src/prototype/hero-combat.js","src/prototype/persistence.js","src/prototype/save.js","styles/phone.css","styles/prototype.css"]);
+  assert.match(combinedRevision.source, /PR #304.*PR #300/);
+}
 const snapshotRevision = manifest.approvedSnapshotPreparationRevision;
 if (snapshotRevision) {
   assert.deepEqual(Object.keys(snapshotRevision.files).sort(), [
@@ -113,6 +119,7 @@ if (veyraRevision) {
     'src/prototype/save.js',
   ]);
 }
+const chargedRetargetRevision = manifest.approvedChargedRetargetRevision;
 const expansionRevision = manifest.approvedSnapshotTreasuryExpansionRevision;
 if (expansionRevision) {
   assert.match(expansionRevision.source, /Director14October.*expansion.*#298.*#288/);
@@ -128,7 +135,8 @@ if (expansionRevision) {
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
       chargedRetargetRevision?.files[file] ||
-    veyraRevision?.files[file] || expected,
+    combinedRevision?.files[file] ||
+      veyraRevision?.files[file] || expected,
       file,
     );
 }
@@ -149,6 +157,7 @@ if (agricultureRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
+      combinedRevision?.files[file] ||
       veyraRevision?.files[file] || expansionRevision?.files[file] || expected,
       file,
     );
@@ -173,6 +182,7 @@ if (veraRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
+      combinedRevision?.files[file] ||
       veyraRevision?.files[file] ||
         expansionRevision?.files[file] ||
         agricultureRevision?.files[file] ||
@@ -219,6 +229,7 @@ if (ministryRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
+      combinedRevision?.files[file] ||
       veyraRevision?.files[file] ||
         expansionRevision?.files[file] ||
         agricultureRevision?.files[file] ||
@@ -242,6 +253,7 @@ if (institutionRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
+      combinedRevision?.files[file] ||
       veyraRevision?.files[file] ||
         expansionRevision?.files[file] ||
         agricultureRevision?.files[file] ||
@@ -263,7 +275,7 @@ if (cinderRallyRevision) {
 }
 // PR #295 integrates the manually released charged-skill retargeting into the
 // Community Snapshot without replacing the snapshot's prior revision history.
-const chargedRetargetRevision = manifest.approvedChargedRetargetRevision;
+// Charged retarget receipt declared above the expansion guards.
 if (chargedRetargetRevision) {
   assert.deepEqual(Object.keys(chargedRetargetRevision.files).sort(), ['src/prototype/app.js']);
   assert.match(chargedRetargetRevision.source, /PR #295.*PR #300/);
@@ -283,7 +295,9 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
+    combinedRevision?.files[file] ||
     joystickSnapshotReceipt?.files[file] ||
+      combinedRevision?.files[file] ||
       veyraRevision?.files[file] ||
       expansionRevision?.files[file] ||
       agricultureRevision?.files[file] ||
@@ -314,7 +328,7 @@ const activeBody = frame.slice(
 );
 assert.equal(
   crypto.createHash('sha256').update(activeBody).digest('hex'),
-  revision.activeFrameBodySha256,
+  combinedRevision?.activeFrameBodySha256 || revision.activeFrameBodySha256,
   'Original simulation/input/audio/effects/save/HUD callback body remains byte-for-byte intact',
 );
 console.log(

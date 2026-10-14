@@ -268,5 +268,20 @@
     "files": {
       "src/prototype/app.js": "3df94a0371a20a2251517b666fd1292c31f7e6e7471c8e89344ad02291592ece"
     }
+  },
+  "approvedSnapshotDeveloperIntegrationRevision": {
+    "source": "PR #304 audited Developer Mode integrated into PR #300 multi-file Worldbuilding Snapshot; preserve historical approvals",
+    "developerSourceCommit": "5256f6c72084b041230d0bf956a556973d12350d",
+    "files": {
+      "src/prototype/app.js": "64a6fe32583c415d90ba196be39edcf1b10efa013c210525ef4f7a82d422e537",
+      "src/prototype/combat.js": "fbc7fe31595081fc8943f7f84f6b5579cdf866a4751f64f9c871f460e6739b77",
+      "src/prototype/engine.js": "1bee3851e8f125c60f86fd99cc68b83b31f47a37a8e263c67a4c3514814f8076",
+      "src/prototype/hero-combat.js": "7f8c09648025475f251d7809b1454010f4e05b4a94312db1095ee73e746a1db4",
+      "src/prototype/persistence.js": "b45a7650771fe9de54f096c038800b9d683899591406c6aa45425951396caf09",
+      "src/prototype/save.js": "92f36afde47b23d9d6440c138b6e0ca6643d4082062c2263492898ee6c03dca3",
+      "styles/phone.css": "91daee22cdc77bbf84d57ddc74744f03fc743cb3e27e25d528e883177b2292d6",
+      "styles/prototype.css": "51cf55c9c881dc3416c021cac496cabb47921835626acaae73328c8d57692544"
+    },
+    "activeFrameBodySha256": "47dc6a866cf32ff6e9ed3de77d7af858edb8595c21d221158084ee90f0c8cbdc"
   }
 }
