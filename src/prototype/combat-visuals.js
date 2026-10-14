@@ -358,6 +358,33 @@
         ctx.fillStyle = '#fff1c7';
         ctx.fillText('Preparing…', p.x, y - 5);
       }
+    // Ledger of Losses deliberately obscures Ridge's ground footprints,
+    // including separate rogue moves. It must NEVER obscure the cast itself:
+    // attach a high-contrast progress bar to the actual boss, not the terrain.
+    if (cue)
+      for (const e of game.zone().enemies.filter(
+        (e) => e.family === 'ridge' && e.ledgerOpen && visibleWarning(e) && e.hp > 0,
+      )) {
+        const a = e.telegraph,
+          p = screen(e),
+          w = 84,
+          y = p.y - 82,
+          total = Math.max(0.001, a.total || a.timer || 1),
+          ready = Math.max(0, Math.min(1, 1 - a.timer / total));
+        ctx.fillStyle = '#182129eb';
+        ctx.fillRect(p.x - w / 2 - 3, y - 3, w + 6, 15);
+        ctx.fillStyle = '#6e5c3f';
+        ctx.fillRect(p.x - w / 2, y, w, 8);
+        ctx.fillStyle = a.rogueMove ? '#a8d7e6' : '#f4d085';
+        ctx.fillRect(p.x - w / 2, y, w * ready, 8);
+        ctx.strokeStyle = '#f4e4b5';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(p.x - w / 2, y, w, 8);
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 11px system-ui';
+        ctx.fillStyle = '#fff4d7';
+        ctx.fillText('LEDGER CAST', p.x, y - 8);
+      }
     for (const e of game
       .zone()
       .enemies.filter((e) => visibleWarning(e) && !(e.family === 'ridge' && e.ledgerOpen))) {
