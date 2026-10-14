@@ -900,6 +900,31 @@
     lookout:
       'The old keep predates the crown-production system. Its Ogre household borrows quarry tools, shares a hearth and plays games after hauling; it is a home, not another mint office.',
   };
+  // The same Crown roads and coinage connect five otherwise distinct cultures.
+  // Existing interactable landmarks carry these cues, with no new actors,
+  // currency resource, military spawns, travel permission or collision.
+  const crownPeaceLinks = {
+    vale: {
+      'bridge-north':
+        'A roadkeeper accepts Ironroot-minted crowns for timber and repairs. Goblin carts and the Crypt’s skeleton work crews can cross the same maintained bridge; inspections and compulsory estate work reveal the price of this calm.',
+    },
+    march: {
+      'bridge-lake':
+        'Reedport fish and paper for the Keeper’s Archive travel along this Crown-maintained causeway. Lantern Wraiths help preserve records and take care with their lamps; the Archive’s flooding remains unexplained.',
+    },
+    highlands: {
+      ore:
+        'Separate silver and copper loads leave for Stonecross’s portrait-crown mint, then guarded wagons serve the Ashen Frontier and Dark Crown. Quarry stone remains a distinct trade.',
+    },
+    frontier: {
+      convoy:
+        'This guarded convoy uses Ironroot crowns to pay for fuel, food and repairs on its way toward the capital. Orc troops and civilian work crews share the rebuilt road, but Crown inspections are compulsory.',
+    },
+    crown: {
+      siege:
+        'Ironroot portrait-crown shipments and Frontier repair wagons feed the final fortress works. Ash-beast, Orc and Crown-guard commands cooperate under one administration, while laborers have little freedom to refuse.',
+    },
+  };
   // Ashen Frontier gets a dedicated consolidation layer: civilians are rebuilding inside a functioning occupation corridor.
   // These are procedural road/livelihood details only; they do not change combat, rewards, progression or sprite policy.
   const frontierRoutes = [
@@ -5213,6 +5238,7 @@
     worldLifePlans,
     ironrootLife,
     ironrootLore,
+    crownPeaceLinks,
     frontierRoutes,
     frontierDistricts,
     crownRoutes,
