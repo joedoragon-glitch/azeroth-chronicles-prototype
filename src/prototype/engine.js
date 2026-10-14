@@ -76,6 +76,7 @@
         streak: { key: null, count: 0 },
         endingAck: false,
         awakeningAck: false,
+        throneClaimed: false,
         expeditionRank: 1,
         expeditionSkills: { sharedTraining: 0, sharedStrength: 0 },
         expeditionSupportVersion: 2,
@@ -1185,6 +1186,18 @@
           (n) =>
             !['teacher', 'smith', 'alchemist'].includes(n.kind) && !n.id.startsWith('service-'),
         );
+        if (id === 'crown' && !z.npcs.some((n) => n.id === 'dark-crown-throne')) {
+          // The actual fortress courtyard, not Veyra's Citadel. Idempotent
+          // for fresh worlds and historical v4 restores with cached regions.
+          const point = this.safe(3250, 3090, id);
+          z.npcs.push({
+            id: 'dark-crown-throne',
+            name: 'Claim the Throne',
+            kind: 'throne',
+            ...point,
+            icon: '♛',
+          });
+        }
         for (const b of D.bosses.filter((b) => b.region === id && b.captive)) {
           const kind = ceilings[b.id] ? 'teacher' : b.id === 'archive' ? 'alchemist' : 'smith',
             offset = R.serviceOffsets[kind] || [-120, -120],
@@ -1754,6 +1767,32 @@
           return this.rescue(npc.family);
         case 'rest':
           return this.rest();
+        case 'throne': {
+          if (this.s.zone !== 'crown' || npc.id !== 'dark-crown-throne') return false;
+          if (!this.s.true.darklord) {
+            this.say('The Dark Lord still holds the throne.');
+            return false;
+          }
+          if (this.s.throneClaimed) {
+            this.say('You already hold the Crown.');
+            return true;
+          }
+          if (this.refugeThreat()) {
+            this.say('The throne cannot be claimed while enemies are engaged nearby.');
+            return false;
+          }
+          this.s.throneClaimed = true;
+          const remaining = dungeonIds.filter((id) => !this.s.true[id]).length;
+          this.say(
+            remaining
+              ? 'You claim the crown. ' + remaining + ' old powers still hold their dungeons.'
+              : 'You claim the crown. The five former powers have already fallen.',
+          );
+          this.notice('THE CROWN IS YOURS', 6.5);
+          this.event('throneClaimed', { remaining });
+          this.checkEnding();
+          return true;
+        }
         case 'mini':
           this.checkMinis();
           this.say(this.miniStatus(npc.mini));
@@ -2359,11 +2398,9 @@
             }
       }
       this.say(
-        'The TRUE Dark Lord is gone forever. Returning dungeon bosses and guardians are fixed at level ' +
-          this.s.awakeningLevel +
-          '.',
+        'The Dark Lord has fallen. His throne stands empty, but the realm is not yet yours.',
       );
-      this.notice('AWAKENING · The five TRUE dungeon guardians have risen', 6.5);
+      this.notice('DARK CROWN · Claim the Throne in the fortress courtyard', 6.5);
       this.event('awakening', { level: this.s.awakeningLevel });
       this.checkEnding();
     }
@@ -2386,7 +2423,9 @@
       }
     }
     checkEnding() {
-      if (this.s.true.darklord && dungeonIds.every((id) => this.s.true[id])) {
+      // Previously earned TRUE victories count; peace cannot start until
+      // coronation occurs through the actual fortress throne interaction.
+      if (this.s.true.darklord && this.s.throneClaimed && dungeonIds.every((id) => this.s.true[id])) {
         if (this.peace) return;
         this.s.phase = 'peace';
         this.s.endingAck = false;
@@ -2410,7 +2449,7 @@
             p.active = false;
           }
         }
-        this.say('The war is over for people and creatures alike. Nightmare Mode is unlocked.');
+        this.say('The five old powers have fallen. The realm is peaceful. It is time to rest.');
         this.event('peace');
       }
     }
