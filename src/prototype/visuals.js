@@ -2508,6 +2508,38 @@
         oval(3, -6, 2, 2, gold);
       }
     }
+    function crownedHero(role) {
+      // Keep each class's weapon and readable silhouette; adapt the original
+      // ruler's violet mantle, gold three-point crown and amethyst diamond.
+      const purple = '#423c55', trim = '#e0bd73', gem = '#b48fbc';
+      if (role === 'paladin') {
+        // Royal plate and heavy ceremonial shoulder wings, sword still present.
+        for (const x of [-14, 14]) {
+          poly([[x - 5, -18], [x, -27], [x + 6, -15], [x, -10]], '#8c8699');
+          line([[x - 3, -17], [x + 3, -17]], trim, 2);
+        }
+        poly([[-9, -16], [0, -22], [9, -16], [7, -3], [-7, -3]], '#666077');
+        line([[-6, -8], [6, -8]], trim, 2);
+      } else if (role === 'mage') {
+        // An embroidered violet stole and a floating courtly collar.
+        poly([[-10, -19], [-17, 9], [-10, 12], [-4, -19]], purple);
+        poly([[5, -19], [10, 12], [17, 9], [10, -19]], purple);
+        for (const x of [-11, 11]) line([[x, -12], [x, 5]], trim, 1.5);
+        poly([[-13, -23], [0, -28], [13, -23], [8, -18], [-8, -18]], '#776582');
+      } else {
+        // The archer keeps a hood, bow and quiver; a short mantle and
+        // feathered gold clasp communicate rank without heavy armor.
+        poly([[-12, -18], [-22, 6], [-10, 5], [0, -10], [11, 5], [21, 6], [12, -18]], purple);
+        line([[-9, -16], [0, -10], [9, -16]], trim, 2);
+        poly([[10, -33], [18, -42], [17, -30], [12, -23]], '#bfabbf');
+      }
+      // Head silhouette is shorter than the former ruler's: crown sits over
+      // the existing face or hood without replacing its class-specific headgear.
+      poly([[-12, -44], [-17, -55], [-6, -50], [0, -60], [6, -50], [17, -55], [12, -44]], trim);
+      rect(-12, -46, 24, 4, '#957446');
+      poly([[0, -54], [4, -49], [0, -45], [-4, -49]], gem);
+      oval(0, -49, 1.8, 2, '#eed1f0');
+    }
     function specialist(e) {
       const style = {
         thorn: { cloth: '#62856c', cape: '#435b4c', hair: '#765d43', trim: '#d0be78' },
@@ -11853,6 +11885,16 @@
         '#d0b079',
         3,
       );
+    } else if (e.kind === 'throne') {
+      // Real interactable court furniture, distinctly different from an Ash
+      // Citadel decoration; no collision, hitbox or new quest infrastructure.
+      rect(-27, -32, 54, 44, '#343147');
+      rect(-23, -48, 46, 20, '#51455f');
+      poly([[-26, -48], [-31, -62], [-12, -54], [0, -67], [12, -54], [31, -62], [26, -48]], gold);
+      rect(-17, -27, 34, 31, '#68556c');
+      poly([[-9, -25], [0, -36], [9, -25], [0, -17]], '#b48fbc');
+      for (const x of [-30, 22]) rect(x, -22, 8, 32, '#817286');
+      rect(-25, 6, 50, 9, '#987850');
     } else if (e.kind === 'fountain') {
       oval(0, 5, 25, 10, '#9aa7a5');
       oval(0, 2, 20, 6, '#65999f');
@@ -11916,7 +11958,10 @@
           rect(-14, -10, 8, 14, '#cab483');
         }
       }
-    } else if (type === 'hero') hero(e.class || 'paladin');
+    } else if (type === 'hero') {
+      hero(e.class || 'paladin');
+      if (e.crowned) crownedHero(e.class || 'paladin');
+    }
     else if (type === 'ally') {
       const role = allyBodyKind(e);
       if (role === 'goblin-archer') goblinArcher();
