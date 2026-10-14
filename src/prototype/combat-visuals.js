@@ -67,6 +67,19 @@
     if (a.dreadMechanic === 'closure') return dreadClosureShapes(a);
     if (a.cinderMechanic === 'cordon' && Number.isFinite(a.gapAngle))
       return [cordonPoints({ ...a, radius: a.initialRadius })];
+    if (a.kind === 'pattern-charge') {
+      const points = [{ x: a.fromX, y: a.fromY }, ...(a.path || [])];
+      return points.slice(1).map((to, i) => capsulePoints(points[i], to, G.chargeHalfWidth));
+    }
+    if (a.kind === 'canister') {
+      const from = { x: a.fromX, y: a.fromY };
+      return Array.from({ length: 9 }, (_, i) => {
+        const angle = a.angle + (i - 4) * 0.115;
+        return capsulePoints(from, { x: from.x + Math.cos(angle) * a.radius,
+          y: from.y + Math.sin(angle) * a.radius }, 6);
+      });
+    }
+    if (a.kind === 'formation' || a.kind === 'checkerboard') return [];
     if (a.kind === 'line' || a.kind === 'volley')
       return (
         a.kind === 'volley'
@@ -264,6 +277,32 @@
         ctx.textAlign = 'center';
         ctx.fillText('CORE EXPOSED', p.x, p.y - 62);
       }
+    }
+    // Persistent board and real formation movement use the authoritative world positions.
+    for (const boss of game.zone().enemies.filter(
+      e => e.family === 'citadel' && e.hp > 0 && e.board && game.sentinelBoardCells
+    )) for (const cell of game.sentinelBoardCells(boss)) {
+      const h = cell.size / 2;
+      polygon(ctx, screen, [
+        {x:cell.x-h,y:cell.y-h}, {x:cell.x+h,y:cell.y-h},
+        {x:cell.x+h,y:cell.y+h}, {x:cell.x-h,y:cell.y+h},
+      ]);
+      const warning = cell.selected && boss.board.phase === 'warn';
+      const impact = cell.selected && boss.board.phase === 'rest';
+      ctx.lineWidth = warning || impact ? 2.2 : 1.1;
+      ctx.strokeStyle = warning ? '#fff1a7' : impact ? '#ff9267' : '#8794a766';
+      ctx.fillStyle = warning ? '#df795655' : impact ? '#e84b3d88' : '#536b8917';
+      if (!cue) ctx.fill();
+      ctx.stroke();
+    }
+    if (cue) for (const guard of game.zone().enemies.filter(
+      e => e.hp > 0 && e.dressPost && e.dressPost.expires > game.s.time
+    )) {
+      const from = screen(guard), to = screen(guard.dressPost);
+      ctx.strokeStyle = '#b8d5eb'; ctx.lineWidth = 1.5;
+      ctx.setLineDash([3, 5]); ctx.beginPath();
+      ctx.moveTo(from.x, from.y); ctx.lineTo(to.x, to.y); ctx.stroke();
+      ctx.setLineDash([]); circlePath(ctx, screen, guard.dressPost, 15); ctx.stroke();
     }
     for (const e of game.zone().enemies.filter((e) => e.rangedAim)) {
       const p = screen(e),

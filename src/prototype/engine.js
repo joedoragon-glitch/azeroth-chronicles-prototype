@@ -4172,6 +4172,20 @@
           }
           continue;
         }
+        if (e.family === 'citadel' && e.board && e.aggro && !e.returning) {
+          this.sentinelUpdateBoard(e, dt);
+          if (this.s.statistics.deaths !== deaths || z !== this.zone() ||
+              this.s.challenge.pending || this.s.challenge.gameOver) return;
+        }
+        if (e.dressPost) {
+          const post = e.dressPost;
+          if (post.expires <= this.s.time || e.returning ||
+              !z.enemies.some(b => b.id === post.owner && b.hp > 0 && b.aggro)) {
+            delete e.dressPost;
+          } else if (dist(e, post) > 7) {
+            this.move(e, post, 145, dt); e.noProgress = 0; continue;
+          } else delete e.dressPost;
+        }
         if (e.neutral) {
           const t = this.s.time * 0.1 + Number(e.id.split('-')[1]);
           this.move(e, { x: e.home.x + Math.cos(t) * 35, y: e.home.y + Math.sin(t) * 35 }, 12, dt);
