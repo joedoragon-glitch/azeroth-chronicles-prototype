@@ -252,5 +252,13 @@
       "src/prototype/enemy-presentation.js": "e35de45beb8a5e499f9f1d19ffb8f08827412cf266cad95fa89e5cef96d15440",
       "src/prototype/enemy-vfx-art.js": "b8b34832524108db20c85ea4b69dc80a59d5e36864b2c6364a1aa731bc10ed40"
     }
+  },
+  "approvedChargedRetargetRevision": {
+    "source": "PR #295 → PR #300: manual charged-skill release with valid fallback targeting",
+    "scope": "Charged Skills 1–2 select a legal replacement only upon manual key/pointer release if their original aim dies or leaves valid range/line of sight. Preserve explicitly locked boss safety, charged opener receipts, no-target cooldown behavior, Skill 3 healing and snapshot worldbuilding modules; no deployment.",
+    "previousAppSha256": "c18f8c02cd93cfc69885b344ee184f7d0a5d8c369029bb8514ff91a340c52e0b",
+    "files": {
+      "src/prototype/app.js": "32bc59c1311d4e45bf2ed3d4980387ee260d8e9fba2c1c9839df369a4f5ebbc9"
+    }
   }
 }

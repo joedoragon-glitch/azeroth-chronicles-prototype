@@ -1616,10 +1616,17 @@
             Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= range &&
             game.line(game.hero, e),
         );
-    if (targetId !== null && targetId !== undefined)
-      return valid.find((e) => e.id === targetId) || null;
+    // Keep the original charge aim while valid. Resolve a replacement if
+    // that enemy dies, disappears, or becomes unreachable before release.
+    const original =
+      targetId !== null && targetId !== undefined ? valid.find((e) => e.id === targetId) : null;
+    if (original) return original;
     const selected = game.selectedHeroTarget();
-    if (selected) return valid.find((e) => e.id === selected.id) || null;
+    const selectedInRange = selected && valid.find((e) => e.id === selected.id);
+    if (selectedInRange) return selectedInRange;
+    // Respect deliberate boss locks: a live locked boss that is out of
+    // reach must not redirect the attack into a nearby summon.
+    if (selected && game.manualHeroTargetLocked) return null;
     const preferred = valid.find((e) => e.id === game.s.heroTarget);
     return (
       preferred ||
@@ -1846,10 +1853,17 @@
       updateHUD();
       return false;
     }
+    // The charge is still released manually; only the aim is resolved now.
+    const releaseTarget = slot === 1 || slot === 2 ? chargeTarget(slot, targetId) : null;
     charge = null;
     const cast =
       activePlay() &&
-      game.cast(slot, slot === 1 || slot === 2 ? targetId : undefined, true, encountersAtStart);
+      game.cast(
+        slot,
+        slot === 1 || slot === 2 ? releaseTarget?.id : undefined,
+        true,
+        encountersAtStart,
+      );
     if (!cast && activePlay()) chargeFailureStatus(slot, true);
     updateHUD();
     return cast;

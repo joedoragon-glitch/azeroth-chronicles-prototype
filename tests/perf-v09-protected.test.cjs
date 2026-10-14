@@ -127,7 +127,8 @@ if (expansionRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
-      veyraRevision?.files[file] || expected,
+      chargedRetargetRevision?.files[file] ||
+    veyraRevision?.files[file] || expected,
       file,
     );
 }
@@ -259,6 +260,14 @@ const cinderRallyRevision = manifest.approvedSnapshotCinderRallyRetentionRevisio
 if (cinderRallyRevision) {
   assert.match(cinderRallyRevision.source, /#298.*#288/);
   assert.deepEqual(Object.keys(cinderRallyRevision.files), ['src/prototype/engine.js']);
+}
+// PR #295 integrates the manually released charged-skill retargeting into the
+// Community Snapshot without replacing the snapshot's prior revision history.
+const chargedRetargetRevision = manifest.approvedChargedRetargetRevision;
+if (chargedRetargetRevision) {
+  assert.deepEqual(Object.keys(chargedRetargetRevision.files).sort(), ['src/prototype/app.js']);
+  assert.match(chargedRetargetRevision.source, /PR #295.*PR #300/);
+  assert.match(chargedRetargetRevision.previousAppSha256, /^[a-f0-9]{64}$/);
 }
 for (const [file, expected] of Object.entries(manifest.files)) {
   const actual = crypto

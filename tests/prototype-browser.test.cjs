@@ -535,10 +535,20 @@ await check('Skill 2 and party-heal charge states are target-stable and honest '
  await page.evaluate(()=>{const c=Prototype.game,a=c.zone().enemies[0],b=c.zone().enemies[1];c.effects=[];c.hero.cd[1]=0;c.hero.mp=100;a.hp=a.maxHp;b.hp=b.maxHp;Object.assign(a,{x:720,y:900});Object.assign(b,{x:625,y:900});c.s.heroTarget=a.id;});
  await page.locator('#skill-2').evaluate(el=>{el.setPointerCapture=()=>{};el.onpointerdown({pointerType:'touch',pointerId:303,preventDefault(){}});});
  await page.waitForFunction(()=>Prototype.chargePresentation()?.state==='charging');
- await page.evaluate(()=>{const c=Prototype.game,id=Prototype.chargePresentation().targetId,e=c.zone().enemies.find(e=>e.id===id);e.x=1300;e.y=1300;});
+ // Lost original aim must redirect on manual release while a second foe is valid.
+ const secondAim=await page.evaluate(()=>Prototype.chargePresentation().targetId);
+ const replacement=await page.evaluate(id=>{const c=Prototype.game,e=c.zone().enemies.find(e=>e.id===id);e.x=1300;e.y=1300;return c.zone().enemies.find(other=>other.id!==id).id;},secondAim);
+ await page.waitForFunction(()=>document.querySelector('#skill-2 small')?.textContent==='CHARGED',{timeout:1800});
+ await page.locator('#skill-2').evaluate(el=>el.onpointerup({pointerType:'touch',pointerId:303}));
+ const redirected=await page.evaluate(()=>[...Prototype.game.s.statistics.events].reverse().find(e=>e.type==='chargedArea'&&e.slot===2));
+ assert.equal(redirected?.targetId,replacement,'Skill 2 redirects a released charge to another valid enemy');
+ assert(await page.evaluate(()=>Prototype.game.hero.cd[1]>0),'a redirected release enters normal cooldown');
+ // No valid enemy at all still shows NO TARGET and spends no resources.
+ await page.evaluate(()=>{const c=Prototype.game;c.hero.cd[1]=0;for(const e of c.zone().enemies){e.x=1400;e.y=1400;}});
+ await page.locator('#skill-2').evaluate(el=>{el.setPointerCapture=()=>{};el.onpointerdown({pointerType:'touch',pointerId:306,preventDefault(){}});});
  await page.waitForFunction(()=>document.querySelector('#skill-2 small')?.textContent==='NO TARGET',{timeout:1800});
  const beforeInvalid=await page.evaluate(()=>({mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[1]}));
- await page.locator('#skill-2').evaluate(el=>el.onpointerup({pointerType:'touch',pointerId:303}));
+ await page.locator('#skill-2').evaluate(el=>el.onpointerup({pointerType:'touch',pointerId:306}));
  const afterInvalid=await page.evaluate(()=>({mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[1]}));assert.deepEqual(afterInvalid,beforeInvalid,'NO TARGET release spends neither MP nor cooldown');
  await page.evaluate(()=>{const c=Prototype.game,e=c.zone().enemies[0];c.hero.cd[1]=0;c.hero.mp=100;Object.assign(e,{x:720,y:900,hp:e.maxHp});c.s.heroTarget=e.id;c.effects=[];});
  // Keep this boundary probe inside one browser turn: separate runner calls
