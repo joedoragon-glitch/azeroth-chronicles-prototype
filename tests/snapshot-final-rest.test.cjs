@@ -42,7 +42,7 @@ for (const mode of ['normal', 'nightmare']) {
   assert.equal(c.s.statistics.events.filter((e) => e.type === 'finalRest').length, 1);
 
   const b = peace(mode, 'mage', 'crown');
-  const site = { id: 'test-final-barracks', kind: 'barracks', progress: 2,
+  const site = { id: 'test-final-barracks', kind: 'barracks', progress: 2, queue: 0,
     x: b.hero.x + 40, y: b.hero.y };
   b.zone().buildings.push(site);
   assert.equal(b.completeFinalRest('barracks', site), false, 'unfinished Barracks rejected');
