@@ -1323,6 +1323,15 @@
         )
       ) return false;
       if (!['refuge', 'fountain', 'barracks'].includes(source)) return false;
+      if (source === 'fountain' &&
+        !this.zone().npcs.some(
+          (n) => n === site && n.kind === 'fountain' && dist(n, this.hero) <= 115,
+        )) return false;
+      if (source === 'refuge' &&
+        !this.zone().npcs.some(
+          (n) => n.id === site?.id && n.kind === 'rest' &&
+            Math.min(dist(n, this.hero), dist(n.servicePoint || n, this.hero)) <= 115,
+        )) return false;
       this.clearTonic();
       this.hero.supportEffects = [];
       this.hero.hp = this.hero.maxHp;
