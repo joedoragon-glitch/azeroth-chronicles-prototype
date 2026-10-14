@@ -5,7 +5,7 @@
   "designId": "abyss-dragon",
   "name": "Abyss Dragon \u2014 Veyrith",
   "kind": "boss",
-  "nextAction": "Verify actual seven-action aviation paths, lifecycle and desktop/phone hosted captures; preserve current purple-dragon procedural design. New sprite production excluded.",
+  "nextAction": "Finish full121 Node run and exact hosted flight probes; native375/1280 actual warning and midflight images were inspected. No physical-device or director appearance acceptance.",
   "context": {
     "originConversation": null,
     "decisionSummary": "Latest #298/#291 locks Veyrith, Loyal Air Marshal: proud, disciplined and loyal; organized aerial patrols and military superiority secure lasting peace. Selective #254\u2192#283 real aviation implementation retained.",
@@ -41,7 +41,12 @@
     },
     "isolatedReferencePath": null,
     "isolatedReferenceHash": null,
-    "gameplayContextPaths": [],
+    "gameplayContextPaths": [
+      "tools/sprites/design-handoffs/references/aviation/warning-1280.png",
+      "tools/sprites/design-handoffs/references/aviation/warning-375.png",
+      "tools/sprites/design-handoffs/references/aviation/flight-375.png",
+      "tools/sprites/design-handoffs/references/aviation/flight-1280.png"
+    ],
     "traitsToPreserve": [
       "Existing approved purple-dragon silhouette and size",
       "Same family abyss, Eren, personal mount and unfinished royal air force",
@@ -94,5 +99,23 @@
     "rollbackRevision": null,
     "releaseCommit": null,
     "releaseEvidence": null
-  }
+  },
+  "outputs": [
+    {
+      "path": "tools/sprites/design-handoffs/references/aviation/warning-1280.png",
+      "sha256": "381168991e93140863f76b761d2676f333dfba30f525524bccc6be96fc97b562"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/aviation/warning-375.png",
+      "sha256": "5a30fd9707f51059a2d0ee11dc16206f50537e641800e52f36112a80a14c051f"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/aviation/flight-375.png",
+      "sha256": "78db0eeb3773d420789eadae297117a117584d5cf6d6e0731df86c6a5d11af60"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/aviation/flight-1280.png",
+      "sha256": "1c9147b916f6580c8729fd8105913af818f766075a0871ce2985d1cad900d43f"
+    }
+  ]
 }

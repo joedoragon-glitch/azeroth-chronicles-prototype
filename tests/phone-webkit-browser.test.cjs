@@ -52,6 +52,7 @@ const server=http.createServer((req,res)=>{
  await require('./helpers/camera-browser.cjs').verifyCamera(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,true,size.width===375);
  await require('./helpers/snapshot-thorn-browser.cjs').verifyThornPatrol(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);
  await require('./helpers/snapshot-garun-browser.cjs').verifyGarunWorks(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);
+ await require('./helpers/snapshot-aviation-browser.cjs').verifyAviation(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);
  await require('./helpers/snapshot-encounter-browser.cjs').verifySnapshotEncounters(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);
  await require('./helpers/ironroot-browser.cjs').verifyIronroot(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);
  await require('./helpers/regional-browser.cjs').verifyRegional(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);
