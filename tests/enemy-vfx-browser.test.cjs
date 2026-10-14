@@ -361,7 +361,17 @@ fs.mkdirSync(out, { recursive: true });
         path.join(out, viewport.width + '-measurements.json'),
         JSON.stringify(results.report, null, 2),
       );
-      assert.equal(results.report.length, catalog.length + 49);
+      const expectedScenes = catalog.flatMap((row) =>
+        (row.group === 'boss' ? ['normal', 'true'] : ['normal']).map((form) => ({
+          id: row.id,
+          form,
+        })),
+      );
+      assert.deepEqual(
+        results.report.map(({ id, form }) => ({ id, form })),
+        expectedScenes,
+        'every catalog identity and every TRUE boss variant must render exactly once',
+      );
       assert.deepEqual(errors, []);
       console.log(
         'PASS ' +
