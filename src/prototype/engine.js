@@ -1327,7 +1327,9 @@
         const scaling = field ? R.ordinaryMeleeScaling[region] : R.guardianScaling[region];
         enemy = this.makeEnemy(
           {
-            species: original?.species || species[0],
+            // A named captain's locked identity outranks the region's generic
+            // fallback even when the actual Treasury has not been generated.
+            species: profile.species || original?.species || species[0],
             name: profile.name,
             icon: original?.icon || species[2],
             level: original?.level || region * 3 + 2,
