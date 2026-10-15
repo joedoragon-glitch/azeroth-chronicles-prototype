@@ -1506,6 +1506,7 @@
   const creatureStrongholds = [
     {
       id: 'goblin-road-fort',
+      defenseStyle: 'ruin',
       region: 'vale',
       site: 'goblin-camp',
       species: 'goblin',
@@ -1523,6 +1524,7 @@
     },
     {
       id: 'skeleton-watch',
+      defenseStyle: 'ruin',
       region: 'vale',
       center: [1820, 2260],
       species: 'skeleton',
@@ -1541,6 +1543,7 @@
 
     {
       id: 'mire-nest-hold',
+      defenseStyle: 'habitat',
       region: 'march',
       site: 'mire-nests',
       species: 'mireling',
@@ -1558,6 +1561,7 @@
     },
     {
       id: 'reedbeast-wallow-hold',
+      defenseStyle: 'habitat',
       region: 'march',
       center: [880, 1320],
       species: 'reedbeast',
@@ -1575,6 +1579,7 @@
     },
     {
       id: 'lantern-wraith-hold',
+      defenseStyle: 'ruin',
       region: 'march',
       site: 'night-site',
       nightSpecies: 'wraith',
@@ -1592,6 +1597,7 @@
 
     {
       id: 'wolf-packhold',
+      defenseStyle: 'ruin',
       region: 'highlands',
       site: 'wolf-den',
       reanchorSite: true,
@@ -1610,6 +1616,7 @@
     },
     {
       id: 'ogre-hearth-fort',
+      defenseStyle: 'ruin',
       region: 'highlands',
       site: 'ogre-hearth',
       species: 'ogre',
@@ -1628,6 +1635,7 @@
 
     {
       id: 'orc-road-fort',
+      defenseStyle: 'fort',
       region: 'frontier',
       site: 'orc-bivouac',
       species: 'orc',
@@ -1645,6 +1653,7 @@
     },
     {
       id: 'raider-drill-redoubt',
+      defenseStyle: 'fort',
       region: 'frontier',
       center: [3050, 950],
       species: 'archer',
@@ -1663,6 +1672,7 @@
     },
     {
       id: 'stalker-cinder-hold',
+      defenseStyle: 'ruin',
       region: 'frontier',
       site: 'overlook',
       nightSpecies: 'stalker',
@@ -1680,6 +1690,7 @@
 
     {
       id: 'ashbeast-roost-hold',
+      defenseStyle: 'ruin',
       region: 'crown',
       center: [1580, 3260],
       species: 'ashbeast',
@@ -1698,6 +1709,7 @@
     },
     {
       id: 'crown-field-barracks-hold',
+      defenseStyle: 'fort',
       region: 'crown',
       site: 'crown-barracks',
       species: 'crownguard',
@@ -1717,6 +1729,7 @@
     },
     {
       id: 'crown-toll-redoubt',
+      defenseStyle: 'fort',
       region: 'crown',
       center: [3370, 1820],
       species: 'crownguard',
