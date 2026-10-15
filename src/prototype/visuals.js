@@ -68,10 +68,70 @@
     if (height < Math.ceil(logicalHeight * density)) return 1;
     return target;
   }
+  // The authored sprite catalog contains profile artwork, not full 360-degree
+  // turnarounds. Use screen-space profile reversals and a slight natural lean.
+  // This cache belongs to presentation only: nothing enters campaign snapshots.
+  const actorFacingHistory = new WeakMap();
+  function actorFacing(e) {
+    if (!e || !['hero', 'ally', 'enemy'].includes(e.renderKind)) return null;
+    const actor = e.spriteIdentity || e;
+    const previous = actorFacingHistory.get(actor);
+    const at = Number.isFinite(e.x) && Number.isFinite(e.y)
+      ? { x: e.x, y: e.y } : null;
+    if (!at) return null;
+    const point = (p) => p && Number.isFinite(p.x) && Number.isFinite(p.y) ? p : null;
+    const a = e.telegraph;
+    let desired =
+      point(e.rangedAim) ||
+      (a && !['ring', 'summon', 'checkerboard', 'formation'].includes(a.kind)
+        ? point(a) : null) ||
+      point(e.motion?.target) || point(e.motion?.to) ||
+      point(e.order?.point) || point(e.order);
+    // A directed windup may be centered on the caster but have an angle.
+    if (desired && Math.hypot(desired.x - at.x, desired.y - at.y) < 7)
+      desired = Number.isFinite(a?.angle)
+        ? { x: at.x + Math.cos(a.angle) * 70, y: at.y + Math.sin(a.angle) * 70 }
+        : null;
+    const move = previous
+      ? { x: at.x + (at.x - previous.x), y: at.y + (at.y - previous.y) }
+      : null;
+    if (!desired && move && Math.hypot(move.x - at.x, move.y - at.y) > 0.2)
+      desired = move;
+    let side = previous?.side;
+    if (!side) {
+      // Parked populations should not all point right, but never randomize
+      // frame-to-frame or put a different pose in an older saved campaign.
+      const seed = String(e.id || e.class || e.type || 'hero');
+      let hash = 2166136261;
+      for (const c of seed) hash = Math.imul(hash ^ c.charCodeAt(0), 16777619);
+      side = e.renderKind === 'hero' ? 1 : hash & 1 ? -1 : 1;
+    }
+    let lean = previous?.lean || 0;
+    if (desired) {
+      const dx = desired.x - at.x, dy = desired.y - at.y,
+        screenX = 0.76 * (dx - dy),
+        screenY = 0.27 * (dx + dy);
+      // Straight-up/down travel has no meaningful left/right profile; keep the
+      // last silhouette instead of repeatedly flipping at a vertical crossing.
+      if (Math.abs(screenX) > 5) side = screenX < 0 ? -1 : 1;
+      lean = Math.max(-0.075, Math.min(0.075,
+        (screenY / Math.max(1, Math.abs(screenX) + Math.abs(screenY))) * 0.075));
+    }
+    const state = { x: at.x, y: at.y, side, lean };
+    actorFacingHistory.set(actor, state);
+    return state;
+  }
   function draw(ctx, e, p, region = 0, rescued = false) {
     if (e.kind === 'landmark' && e.id?.startsWith('bridge-')) return; // The full deck is drawn in world space.
     ctx.save();
     ctx.translate(p.x, p.y);
+    const facing = actorFacing(e);
+    if (facing) {
+      // Reverse only the BODY; world-space hitboxes, damage footprints, text
+      // and targeting continue through their original unrotated coordinates.
+      if (facing.side < 0) ctx.scale(-1, 1);
+      if (typeof ctx.rotate === 'function') ctx.rotate(facing.lean * facing.side);
+    }
     const scale =
       featureScale(e) > 1 && Number.isFinite(e.visualScale) && e.visualScale > 0
         ? e.visualScale
@@ -14736,6 +14796,7 @@
     barracksVisualState,
     featureScale,
     assetSafeScale,
+    actorFacing,
   };
   if (typeof module !== 'undefined') module.exports = root.PrototypeVisuals;
 })(typeof window !== 'undefined' ? window : globalThis);
