@@ -276,9 +276,16 @@
           .filter((u) => this.enemyHealTeammate(e, u) && inReach(u) &&
             u.hp / u.maxHp <= cfg.threshold)
           .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp || this.idOrder(a, b)),
-        // A boss with an authored self-recovery keeps that move authoritative;
-        // support can still restore its followers, but not double self-heal.
-        selfAllowed = (e.type === 'boss' && !R.bossRecovery[e.family]) ||
+        // Do not add a duplicate self-restoration route to a boss that
+        // already has authored recovery, vitality siphon, or self-restoring mud.
+        // Those bosses can still use this skill to treat their living followers.
+        establishedBossRecovery =
+          e.type === 'boss' &&
+          (Boolean(R.bossRecovery[e.family]) ||
+            R.vitalitySiphon.bossFamilies.includes(e.family) ||
+            e.family === 'mire'),
+        selfAllowed =
+          (e.type === 'boss' && !establishedBossRecovery) ||
           e.captain || e.roomCaptain || e.form === 'ringleader',
         self = selfAllowed && inReach(e) && e.hp / e.maxHp <= cfg.threshold ? e : null,
         target = injured[0] || self;
