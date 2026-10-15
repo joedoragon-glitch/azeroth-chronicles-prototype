@@ -3879,19 +3879,25 @@
         cfg = R.tacticalFoundation,
         profiles = cfg.rogueMoves,
         ranged = !!e.ranged,
+        // One cast per existing Rogue window: Crown members alternate their
+        // armored military doctrine with their own people's movement craft.
+        // Their HP, hit strength and regular attack timers are untouched.
+        crownDoctrineSpecies = e.crownTroop && e.crownAncestry
+          ? (e.crownRogueTurn || 0) % 2 ? 'crownguard' : e.crownAncestry
+          : e.species,
         basic =
           (e.type === 'boss' && profiles.bosses[e.family]) ||
           ((e.captain || e.roomCaptain) && profiles.captains[e.captainProfile]) ||
-          (tier === 'guardian' && ranged && profiles.rangedGuardian) ||
-          (ranged && (profiles.ranged[e.species] || profiles.rangedFallback)) ||
-          profiles.species[e.species] ||
+          (tier === 'guardian' && ranged && !e.crownTroop && profiles.rangedGuardian) ||
+          (ranged && (profiles.ranged[crownDoctrineSpecies] || profiles.rangedFallback)) ||
+          profiles.species[crownDoctrineSpecies] ||
           profiles[tier] ||
           profiles.ordinary,
         signature =
           (e.type === 'boss' && cfg.rogueSignatures.bosses[e.family]) ||
           ((e.captain || e.roomCaptain) && cfg.rogueSignatures.captains[e.captainProfile]) ||
           (tier === 'ringleader' &&
-            cfg.rogueRingleaderSignatures[ranged ? 'ranged' : 'melee'][e.species]),
+            cfg.rogueRingleaderSignatures[ranged ? 'ranged' : 'melee'][crownDoctrineSpecies]),
         pressured =
           fromRegroupAnchor ||
           this.tacticalRogueOutnumbered(e) ||
@@ -3987,6 +3993,8 @@
         style: effect || profile.style,
         signature: isSignature,
       });
+      if (e.crownTroop && e.crownAncestry)
+        e.crownRogueTurn = ((e.crownRogueTurn || 0) + 1) % 2;
       return true;
     }
     // Field commanders rally native ordinary-monster spawn records; Ridge Tyrant
@@ -5398,6 +5406,9 @@
             'reinforcement',
             'awakenedGuard',
             'mountedCrownRider',
+            'crownTroop',
+            'crownAncestry',
+            'crownRogueTurn',
             'trueSummon',
             'trueSummonRole',
           ])
