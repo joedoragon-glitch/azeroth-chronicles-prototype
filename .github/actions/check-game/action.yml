@@ -11,6 +11,10 @@ runs:
       shell: bash
       run: npm ci --ignore-scripts
     - name: Check formatting
+      id: formatting
+      # Keep the release gate strict, but don't let historical formatter drift
+      # hide game-regression results from the same overnight audit.
+      continue-on-error: true
       shell: bash
       run: npm run format:check
     - name: Check generated entries and all published JavaScript
@@ -97,3 +101,9 @@ runs:
     - name: Verify development sprite showroom
       shell: bash
       run: node tests/sprite-showroom-browser.test.cjs
+    - name: Enforce mandatory formatting for release certification
+      if: always() && steps.formatting.outcome != 'success'
+      shell: bash
+      run: |
+        echo '::error::Formatting failed. Any downstream checks ran for audit evidence only; this tree is not certified.'
+        exit 1
