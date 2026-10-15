@@ -9906,6 +9906,19 @@
             );
           }
           break;
+        case 'roadside-lantern':
+          // Existing material during the day, lit locally only by the
+          // shared night-grade source selection (no daytime magical glow).
+          oval(0, 12, 14, 5, '#656a68');
+          line([[0, 11], [0, -54]], '#767d81', 5);
+          rect(-9, -56, 18, 5, '#a9a7a0');
+          line([[-12, -51], [12, -51]], '#a3a6a1', 2);
+          poly([[-11, -55], [-8, -68], [8, -68], [11, -55]], '#676870');
+          poly([[-9, -52], [-7, -39], [7, -39], [9, -52]], '#d5b781');
+          rect(-5, -50, 10, 9, '#f0d597');
+          for (const x of [-9, 9]) line([[x, -53], [x, -38]], '#848b88', 1.5);
+          poly([[-12, -39], [12, -39], [8, -35], [-8, -35]], '#656a70');
+          break;
         case 'geothermal-heat-intake':
           // Insulated channel intake over safe rock, not a mineable lava prop.
           rect(-30, 4, 60, 14, '#55545a');
