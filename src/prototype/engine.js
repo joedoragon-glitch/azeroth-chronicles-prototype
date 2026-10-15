@@ -2408,6 +2408,9 @@
       this._tacticalPartyTargets?.clear();
       this.clearTonic();
       this.hero.supportEffects = [];
+      this.hero.shieldStance = 0;
+      this.hero.shieldRank = 0;
+      delete this.hero.silenceField;
       for (const u of this.s.party) u.supportEffects = [];
       const goldLost = this.applyDeathPenalty();
       this.s.statistics.deaths++;
