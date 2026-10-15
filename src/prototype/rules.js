@@ -4844,6 +4844,9 @@
   const chargedSkills = {
     holdSeconds: 0.65,
     tapSeconds: 0.2,
+    // Accumulate actual post-mitigation HP loss only during the fixed hold.
+    // A strong hit or several small hits can interrupt, but grazing damage cannot.
+    interrupt: { hpFraction: 0.07, minimumHp: 6, recoverySeconds: 0.5 },
     basicDamageMultiplier: 3,
     manaFractions: { 1: 0.2, 2: 0.3, 3: 0.35 },
     third: { effect: 'party-heal' },
