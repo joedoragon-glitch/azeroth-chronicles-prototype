@@ -311,6 +311,8 @@
         x: target.x, y: target.y, fromX: e.x, fromY: e.y,
         actor: 'enemy', resource: 'health', source: e.id, target: target.id, amount,
         skill, species: e.species, family: e.family,
+        form: e.form, boss: e.type === 'boss',
+        captain: !!(e.captain || e.roomCaptain), captainProfile: e.captainProfile,
       });
       // Named leaders and Ringleaders announce the skill; ordinary ranged
       // healers retain the green recovery cue without flooding combat messages.
