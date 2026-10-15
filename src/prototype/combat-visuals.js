@@ -819,6 +819,133 @@
     }
     ctx.restore();
   }
+  // Enemy support healing deliberately reuses the existing heal event rather
+  // than inventing a damaging spell/VFX identity. Keep these materials rooted
+  // in the actual creature and authored profession, never its display name.
+  const enemyHealColors = Object.freeze({
+    wolf: '#a5c8a1',
+    goblin: '#cbbf8e',
+    skeleton: '#d4d4c1',
+    wraith: '#aea9dc',
+    stalker: '#a79ad4',
+    mireling: '#80c5b5',
+    reedbeast: '#a4d2a8',
+    archer: '#bfce9a',
+    crownguard: '#d3d5b2',
+    ashbeast: '#eca779',
+    orc: '#cbb48c',
+    ogre: '#cabb9d',
+  });
+  function enemyHealMaterial(f) {
+    if (f.family === 'crypt') return 'bone';
+    if (f.family === 'mire' || f.family === 'archive') return 'water';
+    if (f.family === 'ridge' || f.captainProfile === 'supply-vale') return 'metal';
+    if (f.family === 'abyss') return 'aerial';
+    if (f.captainProfile === 'supply-march') return 'water';
+    if (f.captainProfile === 'supply-crown') return 'growth';
+    if (['skeleton'].includes(f.species)) return 'bone';
+    if (['mireling', 'reedbeast'].includes(f.species)) return 'water';
+    if (['wraith', 'stalker'].includes(f.species)) return 'spectral';
+    if (['ashbeast'].includes(f.species)) return 'ember';
+    if (['ogre', 'goblin'].includes(f.species)) return 'earth';
+    return 'growth';
+  }
+  function enemyHealColor(f) {
+    if (f.family === 'abyss') return '#b7a2df';
+    if (f.family === 'ridge' || f.captainProfile === 'supply-vale') return '#e3c68e';
+    if (f.family === 'archive') return '#a5c9dc';
+    return enemyHealColors[f.species] || '#add9b3';
+  }
+  function enemySupportHeal(ctx, screen, f) {
+    if (!Number.isFinite(f.x) || !Number.isFinite(f.y)) return;
+    const remaining = Math.max(0, Math.min(1, f.life / Math.max(0.01, f.max || 0.55))),
+      progress = 1 - remaining,
+      p = screen(f),
+      hue = enemyHealColor(f),
+      material = enemyHealMaterial(f),
+      strong = f.boss || f.captain || f.form === 'ringleader';
+    ctx.save();
+    ctx.strokeStyle = hue;
+    ctx.fillStyle = hue;
+    ctx.lineWidth = strong ? 2.8 : 2;
+    ctx.globalAlpha = remaining * 0.75;
+    // A fleeting, non-targeting link makes it immediately clear who healed
+    // whom. This is informational, not an attack beam or projectile.
+    if (Number.isFinite(f.fromX) && Number.isFinite(f.fromY)) {
+      const from = screen({ x: f.fromX, y: f.fromY });
+      if (Math.hypot(p.x - from.x, p.y - from.y) > 17) {
+        ctx.setLineDash([5, 7]);
+        ctx.lineDashOffset = -progress * 21;
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y - 9);
+        ctx.quadraticCurveTo((from.x + p.x) / 2, (from.y + p.y) / 2 - 29, p.x, p.y - 7);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+    ctx.lineWidth = strong ? 2.8 : 2;
+    ctx.beginPath();
+    ctx.ellipse(p.x, p.y + 9, 18 + progress * 12, 7 + progress * 5, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    // Readable at actual phone scale: five small material-specific marks rise
+    // around the living recipient instead of a full-screen green explosion.
+    for (let j = 0; j < 5; j++) {
+      const angle = j * Math.PI * 0.4 + progress * 1.2,
+        px = p.x + Math.cos(angle) * (10 + progress * 15),
+        py = p.y - 7 - progress * (11 + (j % 3) * 6) + Math.sin(angle) * 5;
+      ctx.beginPath();
+      if (material === 'water') {
+        ctx.ellipse(px, py, 2, 3.5, 0.25, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (material === 'bone' || material === 'metal') {
+        ctx.moveTo(px - 3, py + 2);
+        ctx.lineTo(px, py - 3);
+        ctx.lineTo(px + 3, py + 2);
+        ctx.stroke();
+      } else if (material === 'ember' || material === 'aerial') {
+        ctx.moveTo(px, py - 4);
+        ctx.lineTo(px + 3, py);
+        ctx.lineTo(px, py + 4);
+        ctx.lineTo(px - 3, py);
+        ctx.closePath();
+        ctx.fill();
+      } else {
+        ctx.ellipse(px, py, 3.5, 2, angle, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+  function enemySupportStatus(ctx, screen, game) {
+    const duration = R.enemySupportHealing?.duration || 5;
+    if (game.peace) return;
+    let visible = 0;
+    for (const u of game.zone().enemies) {
+      const support = u.supportHeal;
+      if (
+        !support || u.hp <= 0 || !u.aggro ||
+        !Number.isFinite(support.seconds) || support.seconds <= 0
+      ) continue;
+      if (++visible > 32) break;
+      const p = screen(u),
+        source = game.zone().enemies.find((e) => e.id === support.source),
+        hue = enemyHealColor(source || u),
+        progress = Math.max(0, Math.min(1, 1 - support.seconds / duration));
+      ctx.save();
+      ctx.globalAlpha = 0.35 + 0.3 * (1 - progress);
+      ctx.strokeStyle = hue;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(p.x, p.y + 9, 13, 5, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y - 16, 7, -Math.PI / 2, -Math.PI / 2 + progress * Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
   function queue(events, game, current = []) {
     const art =
       root.PrototypeEnemyVfxArt ||
@@ -853,7 +980,11 @@
       else if (e.type === 'hurt' && Number.isFinite(e.x)) push(e, 'hurt', 0.25, 2);
       else if (e.type === 'heal') {
         const target =
-          e.target === 'hero' ? game.hero : game.s.party.find((u) => u.id === e.target);
+          e.target === 'hero'
+            ? game.hero
+            : e.actor === 'enemy'
+              ? game.zone()?.enemies.find((u) => u.id === e.target)
+              : game.s.party.find((u) => u.id === e.target);
         push(
           {
             ...e,
@@ -1103,6 +1234,8 @@
     warningShapes,
     royalTaxStatus,
     ground,
+    enemySupportHeal,
+    enemySupportStatus,
     queue,
     contact,
     ability,
