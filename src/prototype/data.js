@@ -140,7 +140,7 @@ const PrototypeData = {
       name: 'Thornfang',
       role: 'Former Crown wilderness scout and Greenwood patrol chief',
       history:
-        'Thornfang learned Greenwood paths as a Crown wilderness scout. He now circles the estate approaches with Mira, the paid instructor who cannot leave without permission. His patrol returns to the den when a fight breaks off; the tracks he leaves through the woods are less secret than he thinks.',
+        'Thornfang learned Greenwood paths as a Crown wilderness scout. His professional K9 training covers canine handling, recall, scent-work and pack welfare. He now circles the estate approaches with Mira, the paid instructor who cannot leave without permission. His patrol returns to the den when a fight breaks off; the tracks he leaves through the woods are less secret than he thinks.',
       level: 2,
       captive: 'Mira the Village Instructor',
       service: 'Learn skill 2 and train skills 1 and 2 to rank 2',
@@ -163,7 +163,7 @@ const PrototypeData = {
       kind: 'dungeon',
       name: 'Lifebinder',
       history:
-        'The Lifebinder was one of the Dark Lord’s old companions. He binds the fallen into aware, enduring skeletons rather than bringing them back to life. Their work keeps the unfinished winter estate running; Borin was compelled to build and repair it.',
+        'The Lifebinder was one of the Dark Lord’s old companions. He binds the fallen into aware, enduring skeletons rather than bringing them back to life. His professional disciplines are Mortuary Science and Thanatology, and Architectural Conservation and Adaptive Reuse. Their work keeps the unfinished winter estate running; Borin was compelled to build and repair it.',
       level: 3,
       captive: 'Borin the Village Smith',
       service: 'Village weapon improvements and basic equipment crafting',
