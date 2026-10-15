@@ -4909,6 +4909,9 @@
       charged: { radius: 320, radiusStep: 10, targets: 5, arrowsPerTarget: 2, isolatedArrows: 3, damagePerArrow: 4 },
     },
   });
+  // Area hit limits are intentional: no repeatable spell clears an
+  // unlimited pack. Ranks improve damage/reach, not target-count caps.
+  const heroAreaTargetCaps = Object.freeze({ 5: { normal: 6, charged: 8 }, 7: { paladinNormal: 6, paladinCharged: 8 } });
   const advancedCharges = Object.freeze({
     5: {
       paladin: { radius: 365, radiusStep: 10, damage: 3.2, weaken: true },
@@ -5576,6 +5579,7 @@
     chargedSkills,
     heroTactics,
     advancedCharges,
+    heroAreaTargetCaps,
     classUltimates,
     basicAttackCombo,
     companionSkills,
