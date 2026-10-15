@@ -6242,20 +6242,6 @@
     function decoration(kind) {
       const localWood = ['#806044', '#71654f', '#71695b', '#614f46', '#555563'][region];
       switch (kind) {
-        case 'street-lantern':
-          // Existing street furniture by day; night-only light overlays are
-          // drawn later, independent of obstacles, combat and saved state.
-          shade(14, 4, 0.12);
-          rect(-9, 9, 18, 5, '#796f5d');
-          line([[0, 10], [0, -52]], '#716c62', 4.2);
-          line([[-8, -44], [8, -44]], '#9f9272', 2);
-          poly([[-11, -54], [0, -63], [12, -54]], '#666d70');
-          rect(-9, -54, 18, 22, '#7b7466');
-          rect(-6, -52, 12, 16, '#b3bbad');
-          line([[0, -51], [0, -36]], '#6c756e', 1.6);
-          poly([[-12, -32], [12, -32], [9, -29], [-9, -29]], '#ad9365');
-          oval(0, -26, 4, 3, '#ac9766');
-          break;
         case 'direwolf-kennel':
           poly([[-33,-7],[-18,-17],[28,-17],[34,-5],[28,15],[-26,15]],'#6b665b');
           poly([[-26,-6],[-8,-13],[26,-8],[22,9],[-22,9]],'#82938c');
