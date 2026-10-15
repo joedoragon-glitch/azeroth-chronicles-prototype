@@ -208,7 +208,7 @@
         : { hp: 1, damage: 1 };
     }
     // Authoritative enemy support healing. Only actual ranged ordinary roles,
-    // two authored ranged captains, and explicitly ranged-capable bosses qualify.
+    // authored ranged-aligned captains and the explicitly selected bosses qualify.
     enemyHealProfile(e) {
       const cfg = R.enemySupportHealing;
       if (!cfg || !e || e.neutral || e.hp <= 0) return null;
