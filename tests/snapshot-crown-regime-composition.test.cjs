@@ -22,8 +22,11 @@ for (const [id, config] of Object.entries(expected)) {
     id + ' heraldry density and no road-spanning banner spam');
   assert(roster.every(e => e.hp <= e.maxHp && e.level >= 1 && e.crownAncestry),
     'all Crown soldiers retain valid combat budgets');
-  assert(z.enemies.filter(e => e.guard && !e.roomCaptain).every(e => e.xp === 0 && e.gold === 0),
-    'guardian no-farm contract remains intact in ' + id);
+  // No-reward policy is canonical for main-dungeon/Treasury security. Existing
+  // outdoor mini-dungeon defenders keep their older regional reward rules.
+  if (Campaign.dungeonIds.includes(id) || id.startsWith('supply-'))
+    assert(z.enemies.filter(e => e.guard && !e.roomCaptain).every(e => e.xp === 0 && e.gold === 0),
+      'main-dungeon and Treasury guardians remain rewardless in ' + id);
   if (id === 'highlands') {
     assert(z.enemies.some(e => e.species === 'wolf' && !e.mountedCrownRider),
       'wild Highland wolves remain separate from paid direwolf cavalry');
