@@ -151,7 +151,10 @@ const server = http.createServer((req, res) => {
                 c.enter(scene.zone);
                 c.s.clock = night ? 480 : 120;
                 p.platform.selectCameraZoom(zoom);
-                Object.assign(c.hero, c.safe(scene.x, scene.y), { order: null });
+                const overview = /-(town|hamlet)$/.test(scene.name);
+                const anchor = overview ? scene : { x: scene.x - 65, y: scene.y + 25 };
+                c.s.party = []; // Solo inspection keeps the actual feature unobscured.
+                Object.assign(c.hero, c.safe(anchor.x, anchor.y), { order: null });
                 if (scene.aim) {
                   const e = c.zone().enemies.find((e) => e.id === scene.aim);
                   e.rangedAim = { x: c.hero.x, y: c.hero.y, timer: 1 };

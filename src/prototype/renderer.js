@@ -1573,7 +1573,8 @@
         size = game.zoneSize(),
         i = game.regionIndex(),
         authoredFloor =
-          Campaign.dungeonIds.includes(game.zoneId) || game.zoneId === 'supply-highlands';
+          Campaign.dungeonIds.includes(game.zoneId) ||
+          !!Campaign.rules?.treasuryArchitecture?.[game.zoneId];
       ctx.save();
       if (authoredFloor) {
         PrototypeVisuals.dungeonFloorPath(ctx, screen, game.zoneId, size);
