@@ -64,6 +64,8 @@
             e.motion = null;
             e.sequence = [];
             e.rangedAim = null;
+            delete e.supportHeal;
+            delete e.supportHealCd;
             e.aggro = false;
             e.frenzy = false;
             delete e.path;
@@ -327,6 +329,8 @@
           const seen = new Set();
           for (const e of z.enemies) {
             delete e.rogueDustCoverUntil;
+            delete e.supportHeal;
+            delete e.supportHealCd;
             if (seen.has(e.id) || (e.family && !ids.has(e.family))) throw Error('Invalid enemy');
             seen.add(e.id);
             for (const f of ['x', 'y', 'hp', 'maxHp', 'baseHp', 'baseDamage', 'gold', 'xp'])
