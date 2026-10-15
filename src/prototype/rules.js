@@ -4772,7 +4772,7 @@
   const cooldownBalance = Object.freeze({
     reductionPerTalentRank: 0.04,
     // Charged attacks are repeatable without MP; preserve a meaningful burst/heal interval.
-    chargedSeconds: Object.freeze({ 1: 3, 2: 6, 3: 20 }),
+    chargedSeconds: Object.freeze({ 1: 3, 2: 6, 3: 20, 4: 20 }),
   });
   // When MP is dormant, Ash-beast ranged hits feed their ember core using real HP loss.
   const ashFeeding = Object.freeze({ healFraction: 0.15 });
@@ -4853,6 +4853,28 @@
       ranger: { shape: 'line', range: 480, halfWidth: 55, effect: 'piercing-volley' },
     },
   };
+  // Secondary effects grow at even skill ranks. Damage continues to use
+  // the existing +15%-per-rank multiplier; no second damage multiplier.
+  const heroTactics = Object.freeze({
+    milestones: [2, 4, 6, 8],
+    paladin: {
+      weaken: { fraction: 0.12, step: 0.02, duration: 3, durationStep: 0.25 },
+      shield: { duration: 8, reduction: 0.65, reductionStep: 0.02, outgoing: 0.6 },
+      bash: { reach: 115, reachStep: 4, halfAngle: 0.7, push: 55, pushStep: 5, damage: 1.6, eliteDamage: 0.5 },
+      judgment: { range: 260, damage: 2.0, taunt: 3, tauntStep: 0.25 },
+      grandJudgment: { range: 310, radius: 160, radiusStep: 5, primaryDamage: 3.2, splashDamage: 2.0, taunt: 5, tauntStep: 0.25 },
+    },
+    mage: {
+      interrupt: { range: 460, rangeStep: 20, enemyRecovery: 1.1 },
+      silence: { radius: 165, radiusStep: 10, duration: 2, durationStep: 0.25 },
+      fracture: { range: 480, damage: 2.0, fraction: 0.15, fractionStep: 0.01, duration: 4, durationStep: 0.25 },
+      rupture: { range: 480, radius: 160, radiusStep: 5, primaryDamage: 3.2, splashDamage: 1.8, fraction: 0.20, fractionStep: 0.01, duration: 5, durationStep: 0.25 },
+    },
+    ranger: {
+      pin: { slow: 1.25, slowStep: 0.25 },
+      volley: { slow: 1.5, slowStep: 0.25 },
+    },
+  });
   const basicAttackCombo = {
     steps: 3,
     resetSeconds: 4,
@@ -5496,6 +5518,7 @@
     marchesPassives,
     rangedEnemyCombat,
     chargedSkills,
+    heroTactics,
     basicAttackCombo,
     companionSkills,
     ordinaryMeleeScaling,
