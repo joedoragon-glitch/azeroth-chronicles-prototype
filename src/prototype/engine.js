@@ -4301,6 +4301,14 @@
           ? this.hero
           : this.combatTargets().find((u) => u !== this.hero && u.id === move.targetId);
       if (move.mobileRogueCast) {
+        // Targeted Rogue actions must still be in the caster's actual reach
+        // on release. Reanchoring the target marker alone cannot create
+        // unlimited range against a player who escaped during preparation.
+        if (
+          move.effect !== 'scatter' &&
+          move.effect !== 'sweep' &&
+          (!target || target.hp <= 0 || dist(e, target) > move.radius || !this.line(e, target))
+        ) return;
         // No stale cast-origin circles: live caster/target positions at release
         // determine coverage, facing, collision and true escape opportunities.
         const centered = move.effect === 'scatter' || move.effect === 'sweep';
