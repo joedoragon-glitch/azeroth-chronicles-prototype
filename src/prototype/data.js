@@ -94,7 +94,7 @@ const PrototypeData = {
       obstacle:
         'A ravine still splits the scarred region. The guarded northern crossing and longer burned-forest route remain the practical alternatives; charred trunks, fort walls, repairs and collapsed masonry leave visible gaps rather than a healed landscape.',
       exploration:
-        'Ashen Frontier is a province recovering under oppression: Emberwatch functions under control, Burned Hamlet mixes ruins with repair and everyday survival, and roadside work yards, bivouacs, drill camps, inspection posts and checkpoint support spaces show the occupiers investing in reliable movement and supply. The Ruined Shrine barracks, ordinary-monster forts, night Stalker hold and guarded approach to the Dark Lord’s dragon-breeding and flight-preparation center preserve the damage and danger beneath that new order.',
+        'Ashen Frontier is an old battlefield slowly becoming inhabited country again. Red poppies bloom in disturbed ground, grass and young pale-trunk trees reclaim cool ash and abandoned blast scars, and burnt ruins stand beside new gardens, repairs and country roads; the ravine and true battle sites remain damaged. Emberwatch and Burned Hamlet recover under the Dark Lord’s military governor, whose repaired crossings, patrols and provisioning create real safety and trade, but whose inspections, levies and captive labor are compulsory. The Ruined Shrine barracks, forts, night Stalker hold, and guarded road to the unfinished Abyss Bastion preserve the coercion beneath useful reconstruction.',
       resource: 640,
       questgold: 1200,
       questxp: 2400,
@@ -120,7 +120,7 @@ const PrototypeData = {
       obstacle:
         'Lava channels, sheer ravines and fortress walls are impassable. Bridges, controlled roads and distributed border gates make access legible. Hazard patches sit beside viable safe routes; narrow combat spaces still permit retreat.',
       exploration:
-        "Dark Crown is the lived-in machinery of the regime: Crownwatch and its labor quarter, military command around the Citadel, Cindermaw's ash-beast domain, Crown barracks and toll redoubts, siege logistics, monster-held peripheral ground and the increasingly formal fortress approach. The ruined foundry, crystal shelf and transport roads show how supplies and tribute move through the same hierarchy the player is dismantling.",
+        "Dark Crown is the lived-in machinery of an authoritarian kingdom that actually functions: Crownwatch houses workers and maintains roads, services and guarded transport while the Citadel, Cindermaw’s administration and Crown barracks enforce the hierarchy. Live lava channels remain impassable and dangerous, but secure exchangers and insulated flues use nearby volcanic heat for glass and ceramic kilns, drying rooms, public washing and warmth during colder months. The ruined foundry, crystal shelf and fortress service roads show useful logistics and paid labor alongside compulsory work, levies, captive specialists and military rule. Winning the war helped the realm recover; it did not make its government benevolent to everyone.",
       resource: 640,
       questgold: 1900,
       questxp: 3000,
