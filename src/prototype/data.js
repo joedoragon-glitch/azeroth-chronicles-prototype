@@ -274,6 +274,9 @@ const PrototypeData = {
       region: 'frontier',
       kind: 'field',
       name: 'Ashen Warlord',
+      role: 'Military governor of the Ashen Frontier',
+      history:
+        'The Ashen Warlord governs the occupied Frontier as the Dark Lord’s military commander. Guarded caravans, repaired crossings and provisioned checkpoints keep Emberwatch and the military road functioning, though the same patrols demand compliance from the people rebuilding Burned Hamlet. He directs the province’s Orc warbands and guards the approach to the unfinished Abyss Bastion air project. Cinder Warlord is a roaming inspection captain who enforces orders along those roads, not another governor. Better trade and safer passage coexist with levies, captive labor and military rule.',
       level: 11,
       captive: 'Lyss the Advanced Instructor',
       service: 'Learn skill 7 and train learned skills to rank 6',
