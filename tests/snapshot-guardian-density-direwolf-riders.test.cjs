@@ -84,7 +84,7 @@ for (const mode of ['normal', 'nightmare']) {
   assert.equal(mount.telegraph.style, 'dash');
   assert(mount.telegraph.mobileRogueCast, 'rider uses the authorized mobile cast bar');
   assert.equal(mount.telegraph.radius, 165, 'longer-mounted-lunge reach, not extra damage');
-  const basic = Campaign.rules.tacticalFoundation.rogueMoves.guardian;
+  const basic = Campaign.rules.tacticalFoundation.rogueMoves.species.wolf;
   assert.equal(mount.telegraph.coefficient, basic.coefficient,
     'direwolf dash keeps the original guardian damage coefficient');
 
