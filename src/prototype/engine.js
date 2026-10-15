@@ -4940,6 +4940,9 @@
           !this.updateVeraEscort(e, dt)
         )
           this.updateIdleWander(e, dt);
+        // Bosses can be provoked for ordinary attacks, but must preserve
+        // their scripted special-target choice and arena rules.
+        const scriptedBossTarget = target;
         // Judgment provokes living targets without deleting boss telegraphs,
         // attack phases or the encounter's existing leash restrictions.
         if ((e.tauntUntil || 0) > this.s.time && this.hero.hp > 0 &&
@@ -5166,7 +5169,7 @@
           d < R.bossCadence.specialRange &&
           visible &&
           (!e.basicDue || d > 200) &&
-          this.startAttack(e, target)
+          this.startAttack(e, scriptedBossTarget)
         ) {
           opportunity = true;
         } else if (
