@@ -65,6 +65,10 @@ No tests, automated builds, device exercises, deployment or merges have been int
 
 Each future proposed skill should be distinctive compared with Skills 1–4, should scale across ranks under the existing teacher system, and should not reintroduce universally shared invulnerability. Avoid unavoidable crowd control against bosses, infinite taunt chains, exploitably long silences or unbounded 8-rank geometry growth. Evaluate sustained DPS, solo survivability, companion survivability, ordinary-versus-TRUE bosses, and Normal/Nightmare in the **single coordinated final test pass**, not piecemeal tests now.
 
+## Pending future decision: independent class passive skills
+
+The owner raised a follow-on design topic after the active Skill 1–8 charged-form work: consider **one independent passive per playable hero class** (Paladin, Mage, Ranger). Unlike the eight active abilities, these should not require a skill button or charged input. No passive name, effect, unlock, leveling, automatic scaling, rank system, save field or combat balance has been approved. The owner's sentence explicitly began reconsidering whether the passive effect should "level up," so **do not assume manual leveling or automatic hero-level scaling**. Treat progression as undecided and discuss designs only after the active skill work.
+
 ## Integration rule
 
 Do not merge this work before reconciliation with the latest PR #300 head, any additional owner-approved updates, and combined regression review. Keep the source tree **multi-file** for the GitHub Pages PWA. No single-file portable build restriction.
