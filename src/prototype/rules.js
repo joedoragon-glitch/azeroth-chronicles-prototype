@@ -4813,6 +4813,47 @@
     summon: { radius: 28, speed: 30, minPause: 2, maxPause: 5 },
   };
   const autoPotionThresholds = { health: 0.5, mana: 0.35 };
+  // Enemy restorative support parallels the Archer's ten-second Heal without
+  // altering existing boss self-recovery, lifesteal or specialist attack slots.
+  // Profiles use authored species/family IDs, never presentation labels.
+  const enemySupportHealing = Object.freeze({
+    fraction: 0.05,
+    cooldown: 10,
+    duration: 5,
+    threshold: 0.5,
+    range: 350,
+    species: Object.freeze({
+      wolf: 'Packbinding Howl',
+      goblin: 'Scrap Poultice',
+      skeleton: 'Bone Binding',
+      wraith: 'Spectral Restoration',
+      stalker: 'Shadow Mending',
+      mireling: 'Bog Renewal',
+      reedbeast: 'Reed Sap',
+      archer: 'Field Dressing',
+      crownguard: 'Crown First Aid',
+      ashbeast: 'Ember Rekindling',
+      orc: 'Warband Dressing',
+      ogre: 'Stone Salve',
+    }),
+    // These captains have actual ranged authored attacks in PR #300:
+    // Scornfang's tracked volley and Dreadmaw's ranged agricultural effects.
+    captains: Object.freeze({
+      'supply-vale': 'Reclamation Triage',
+      'supply-crown': 'Brood Provisioning',
+    }),
+    // Only explicitly ranged-capable authored boss repertoires are eligible.
+    bosses: Object.freeze({
+      crypt: 'Continuity Binding',
+      archive: 'Restorative Annotation',
+      ridge: 'Payroll Relief',
+      warlord: 'Field Recovery Order',
+      abyss: 'Aerial Recovery',
+      citadel: 'Recovery Formation',
+      cindermaw: 'Welfare Distribution',
+      darklord: 'Royal Relief',
+    }),
+  });
   const rangerSupport = {
     healThreshold: 0.5,
     manaThreshold: 0.35,
@@ -5518,6 +5559,7 @@
     idleWander,
     autoPotionThresholds,
     rangerSupport,
+    enemySupportHealing,
     movementBasicClasses,
     enemyProjectileMultiplier: 1.15,
     progression,
