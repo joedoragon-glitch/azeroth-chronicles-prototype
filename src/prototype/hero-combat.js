@@ -184,9 +184,7 @@
         const second = charged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null,
           secondaryMilestones = Math.floor((this.hero.skills[slot - 1] || 1) / 2);
         return second
-          ? second.range
-            ? second.range + secondaryMilestones * 5
-            : 480
+          ? (second.range || 480) + (second.range ? 5 * secondaryMilestones : 0)
           : this.hero.class === 'paladin' && slot < 3
             ? 120
             : slot === 1
@@ -210,22 +208,8 @@
           return false;
         }
         const scale = 1 + 0.15 * (rank - 1),
-          milestones = Math.floor(rank / 2),
-          // Charged Skill 2 preserves its every-rank damage growth while
-          // modestly expanding coverage and Mage Slow at ranks 2/4/6/8.
           chargedSecond =
-            isCharged && slot === 2
-              ? (() => {
-                  const base = R.chargedSkills.second?.[this.hero.class];
-                  return base && {
-                    ...base,
-                    ...(base.range ? { range: base.range + 5 * milestones } : {}),
-                    ...(base.radius ? { radius: base.radius + 5 * milestones } : {}),
-                    ...(base.halfWidth ? { halfWidth: base.halfWidth + 2 * milestones } : {}),
-                    ...(base.slow ? { slow: base.slow + 0.25 * milestones } : {}),
-                  };
-                })()
-              : null,
+            isCharged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null,
           range = this.heroSkillRange(slot, isCharged),
           selected = this.selectedHeroTarget(),
           targets = this.zone().enemies.filter(
@@ -372,7 +356,15 @@
           return true;
         }
         if (isCharged && slot === 2) {
-          const def = chargedSecond || R.chargedSkills.second[this.hero.class],
+          const base = chargedSecond || R.chargedSkills.second[this.hero.class],
+            milestones = Math.floor(rank / 2),
+            def = {
+              ...base,
+              range: base.range ? base.range + 5 * milestones : 0,
+              radius: base.radius ? base.radius + 5 * milestones : 0,
+              halfWidth: base.halfWidth ? base.halfWidth + 2 * milestones : 0,
+              slow: base.slow ? base.slow + 0.25 * milestones : 0,
+            },
             damage = power * (this.hero.class === 'ranger' ? 2.4 : 2.2) * scale,
             angle = Math.atan2(target.y - this.hero.y, target.x - this.hero.x),
             from = { x: this.hero.x, y: this.hero.y },
