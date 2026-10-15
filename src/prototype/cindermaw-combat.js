@@ -674,11 +674,11 @@
         }
         return true;
       }
-      updateCinderRegularState(e, dt) {
+      updateCinderRegularState(e, dt, recovery = this.cooldownRecoveryElapsed(e, dt, true)) {
         if (e.cinderGuard?.until <= this.s.time) delete e.cinderGuard;
         if (e.cinderDelegate) return this.updateCinderDelegate(e, dt);
         if (!isMinister(e)) return false;
-        e.cinderProtectionCd = Math.max(0, (e.cinderProtectionCd || 0) - dt);
+        e.cinderProtectionCd = Math.max(0, (e.cinderProtectionCd || 0) - recovery);
         if (e.cinderProtectionCast?.until <= this.s.time) {
           delete e.cinderProtectionCast;
           for (const u of this.zone().enemies)

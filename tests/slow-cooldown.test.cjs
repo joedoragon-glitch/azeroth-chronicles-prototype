@@ -4,6 +4,7 @@ const Campaign = require('../src/prototype/engine.js');
 
 const R = Campaign.rules;
 assert.equal(R.cooldownBalance.slowRecoveryMultiplier, 0.65);
+assert.equal(R.cooldownBalance.enemySlowRecoveryMultiplier, 0.85);
 const close = (value, expected, label) =>
   assert(Math.abs(value - expected) < 1e-8, label + ': expected ' + expected + ', got ' + value);
 
@@ -76,9 +77,9 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
   g.s.time += 0.1;
   g.updateEnemies(0.1);
   for (const [key, start] of [['cd', 5], ['specialCd', 6], ['summonCd', 7], ['healCd', 8]]) {
-    close(e[key], start - 0.065, 'slowed monster ' + key);
+    close(e[key], start - 0.085, 'slowed monster ' + key);
   }
-  close(g._tacticalRogueNext.get(e.id), before + 0.035, 'pending monster rogue cadence slows');
+  close(g._tacticalRogueNext.get(e.id), before + 0.015, 'pending monster rogue cadence slows');
 }
 {
   const g = new Campaign('normal', 'mage', () => 0.9);
@@ -87,5 +88,24 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
   const restored = Campaign.restore(g.snapshot(), () => 0.9);
   close(restored.hero.slow, 2.5, 'legacy slow duration survives save/load');
   close(restored.hero.cd[1], 4, 'no new save field is required for cooldown Slow');
+}
+{
+  const g = new Campaign('normal', 'mage', () => 0.9);
+  const foe = g.makeEnemy(
+    { species: 'goblin', name: 'New-cast target', level: 1, hp: 100000, damage: 0, gold: 0, xp: 0 },
+    { x: 570, y: 500 },
+  );
+  g.zone().enemies = [foe];
+  g.zone().props = [];
+  g.line = () => true;
+  Object.assign(g.hero, { x: 500, y: 500, slow: 2, immune: 0 });
+  g.hero.cd = Array(8).fill(0);
+  assert(g.cast(1, foe.id), 'new skill can be cast while already slowed');
+  const freshlyStarted = g.hero.cd[0];
+  assert(freshlyStarted > 0, 'freshly cast ability begins its normal cooldown');
+  g.updateEnemies = () => {};
+  g.updateParty = () => {};
+  g.tick(0.1);
+  close(g.hero.cd[0], freshlyStarted - 0.065, 'newly cast ability also recovers slowly');
 }
 console.log('PASS Slow reduces remaining skill recovery on heroes, companions, enemy and rogue cooldowns; immunity, expiry and save contract');

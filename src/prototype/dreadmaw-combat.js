@@ -371,7 +371,7 @@
           ? R.roomCaptains['supply-crown'].attacks[5].movementFactor
           : previous.ownedSummonMovementFactor.call(this, u);
       }
-      updateCinderRegularState(e, dt) {
+      updateCinderRegularState(e, dt, recovery = this.cooldownRecoveryElapsed(e, dt, true)) {
         if (e.dreadFeedUntil) {
           const owner = this.zone().enemies.find(
             (u) => u.id === e.owner && dread(u) && alive(u) && u.aggro,
@@ -380,15 +380,15 @@
           else
             e.cd = Math.max(
               0,
-              e.cd - dt * (R.roomCaptains['supply-crown'].attacks[5].readinessFactor - 1),
+              e.cd - recovery * (R.roomCaptains['supply-crown'].attacks[5].readinessFactor - 1),
             );
         }
-        if (!dread(e)) return previous.updateCinderRegularState.call(this, e, dt);
-        e.dreadFeedCd = Math.max(0, (e.dreadFeedCd || 0) - dt);
+        if (!dread(e)) return previous.updateCinderRegularState.call(this, e, dt, recovery);
+        e.dreadFeedCd = Math.max(0, (e.dreadFeedCd || 0) - recovery);
         if (!alive(e) || !e.aggro || this.peace) {
           delete e.dreadClosure;
           delete e.dreadVapors;
-          return previous.updateCinderRegularState.call(this, e, dt);
+          return previous.updateCinderRegularState.call(this, e, dt, recovery);
         }
         const hero = this.hero,
           zone = this.zoneId,
@@ -448,7 +448,7 @@
             }
           }
         }
-        return previous.updateCinderRegularState.call(this, e, dt);
+        return previous.updateCinderRegularState.call(this, e, dt, recovery);
       }
       clearEncounterState(e, units) {
         const result = previous.clearEncounterState.call(this, e, units);

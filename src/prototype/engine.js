@@ -4740,13 +4740,17 @@
           this.disengage(e, dt);
           continue;
         }
-        const recovery = this.cooldownRecoveryElapsed(e, dt);
+        const recovery = this.cooldownRecoveryElapsed(e, dt, true);
         e.slow = Math.max(0, (e.slow || 0) - dt);
         // Rogue manoeuvres use an encounter-clock deadline instead of a
         // remaining-seconds cooldown. Delay only a pending cooldown, not casts.
         const nextRogue = this._tacticalRogueNext?.get(e.id);
         if (nextRogue > this.s.time && recovery < dt)
           this._tacticalRogueNext.set(e.id, nextRogue + (dt - recovery));
+        // This projectile interception is a defensive ability with its own
+        // wall-clock readiness deadline, not a status-effect duration.
+        if (e.royalPrerogativeReadyAt > this.s.time && recovery < dt)
+          e.royalPrerogativeReadyAt += dt - recovery;
         if (!e.aggro && !e.eliteNightBonus) {
           const m = this.multipliers(),
             ratio = e.hp / e.maxHp;
@@ -4803,7 +4807,7 @@
         )
           for (const victim of this.combatTargets()) this.ashMovementFactor(victim);
         if (e.fieldCaptain && e.captainPhase && e.aggro && e.hp > 0) {
-          e.captainOvertimeCd = Math.max(0, (e.captainOvertimeCd ?? 12) - dt);
+          e.captainOvertimeCd = Math.max(0, (e.captainOvertimeCd ?? 12) - recovery);
           if (e.captainOvertimeCd === 0) {
             this.captainOvertimeRecruit(e);
             e.captainOvertimeCd = 12;
@@ -4867,7 +4871,7 @@
             continue;
           }
         }
-        const cinderAdvanced = this.updateCinderRegularState(e, dt);
+        const cinderAdvanced = this.updateCinderRegularState(e, dt, recovery);
         if (this.s.statistics.deaths !== deaths) return;
         if (cinderAdvanced) continue;
         if (this.updateCinderResponse(e, dt)) continue;

@@ -300,10 +300,13 @@
 
       // A timed Slow slows cooldown recovery without changing base cooldowns.
       // Split a frame at Slow's expiry so cooldown timing stays frame-rate stable.
-      cooldownRecoveryElapsed(unit, dt) {
+      cooldownRecoveryElapsed(unit, dt, enemy = false) {
         if (!Number.isFinite(dt) || dt <= 0) return 0;
         const slow = Number.isFinite(unit?.slow) ? Math.max(0, unit.slow) : 0;
-        return dt - Math.min(dt, slow) * (1 - R.cooldownBalance.slowRecoveryMultiplier);
+        const multiplier = enemy
+          ? R.cooldownBalance.enemySlowRecoveryMultiplier
+          : R.cooldownBalance.slowRecoveryMultiplier;
+        return dt - Math.min(dt, slow) * (1 - multiplier);
       }
 
       // One contract for the shared timed Slow condition: living, vulnerable
