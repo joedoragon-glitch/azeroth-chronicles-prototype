@@ -274,6 +274,7 @@
         delete z.frontierLayoutVersion;
         delete z.crownLayoutVersion;
         delete z.streetClearanceVersion;
+        delete z.townVisualClearanceVersion;
       }
       clearRoadBlockers(z) {
         const oldZone = this.s.zone;
@@ -313,6 +314,91 @@
           }
         } finally {
           this.s.zone = oldZone;
+        }
+      }
+      townVisualClearance(z) {
+        if (
+          dungeonIds.includes(z.id) ||
+          this.supplyRoom(z.id) ||
+          this.sideDungeon(z.id) ||
+          z.townVisualClearanceVersion === 1
+        ) return;
+        const previousZone = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          const i = this.regionIndex(z.id);
+          const centers = [D.towns[i], D.minors[i]].map(([x, y]) => ({ x, y }));
+          const houses = z.props
+            .filter((p) => p.roadBlocker && /house|cottage|workshop|boathouse|smithy|forgehouse/.test(p.structure || ''))
+            .sort((a, b) => String(a.id).localeCompare(String(b.id)));
+          const fixed = [];
+          const houseSet = new Set(houses);
+          const services = Object.values(R.serviceOffsets).map(([x, y]) => ({
+            x: D.towns[i][0] + x,
+            y: D.towns[i][1] + y,
+          }));
+          // Existing rescued specialists may be absent from the current zone.
+          // Keep their eventual staffed plots free on every save, not only
+          // after an instructor/blacksmith is rescued.
+          const clearance = (point, house) => {
+            if (this.blocked(point.x, point.y, z.id, 46, true)) return false;
+            if (this.distanceToRoad(z, point) < this.roadSetback(house)) return false;
+            if (services.some((n) => dist(point, n) < 165)) return false;
+            if (z.npcs.some((n) => dist(n, point) < (n.kind === 'landmark' ? 165 : 135)))
+              return false;
+            if (z.nodes.some((n) => dist(n, point) < 110)) return false;
+            if (z.buildings.some((b) => dist(b, point) < 235)) return false;
+            if (z.enemies.some((e) => e.hp > 0 && dist(e.home || e, point) < 195))
+              return false;
+            const touching = (other) => {
+              if (other === house || other.roadTrace || other.structure === 'road-ruts') return false;
+              const solid = other.roadBlocker ||
+                /house|cottage|workshop|forge|boathouse|smithy|barracks|hall|tower|tent|palisade|shelter|watchpost|large-tree/.test(other.structure || '');
+              if (solid) {
+                // Compare actual projected centers. Two roofs can overlap on
+                // screen even when their world-space circles do not collide.
+                const projectedX = (point.x - point.y - other.x + other.y) * 0.76;
+                const projectedY = (point.x + point.y - other.x - other.y) * 0.27;
+                return Math.abs(projectedX) < 145 && Math.abs(projectedY) < 104;
+              }
+              return dist(point, other) < (other.r || 0) + 65;
+            };
+            return !fixed.some(touching) &&
+              !z.props.some((p) => !houseSet.has(p) && touching(p));
+          };
+          // Prefer the town rear and lateral plots; do not squeeze another
+          // building onto the main street simply because the anchor is legal.
+          for (const house of houses) {
+            const base = { x: house.x, y: house.y };
+            if (clearance(base, house)) {
+              fixed.push(house);
+              continue;
+            }
+            const center = centers.slice().sort((a, b) => dist(a, base) - dist(b, base))[0];
+            const outward = dist(base, center) > 5
+              ? Math.atan2(base.y - center.y, base.x - center.x)
+              : -Math.PI / 2;
+            let found = null;
+            for (const radius of [110, 180, 260, 350, 450, 570, 700, 840, 980]) {
+              for (let j = 0; j < 32; j++) {
+                const fan = j === 0 ? 0 : Math.ceil(j / 2) * (j % 2 ? 1 : -1);
+                const angle = outward + fan * Math.PI / 16;
+                const point = {
+                  x: base.x + Math.cos(angle) * radius,
+                  y: base.y + Math.sin(angle) * radius,
+                };
+                if (!clearance(point, house)) continue;
+                found = point;
+                break;
+              }
+              if (found) break;
+            }
+            if (found) Object.assign(house, found);
+            fixed.push(house);
+          }
+          z.townVisualClearanceVersion = 1;
+        } finally {
+          this.s.zone = previousZone;
         }
       }
       distanceToRoad(z, point) {
@@ -476,6 +562,7 @@
           }
           this.authoredPlaces(z);
           this.clearStreetCorridors(z);
+          this.townVisualClearance(z);
           this.regionalTravelSafety(z);
           return z;
         }
@@ -864,6 +951,7 @@
         this.migrateThornPatrol(z);
         this.migrateCinderInspection(z);
         this.clearStreetCorridors(z);
+        this.townVisualClearance(z);
         this.regionalTravelSafety(z);
         this.refreshNPCs();
         if (this.peace) this.makeHabitat(z);
