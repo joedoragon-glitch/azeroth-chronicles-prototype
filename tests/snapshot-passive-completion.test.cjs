@@ -123,7 +123,7 @@ for (const form of ['normal', 'true']) {
   // The Treasury restores its authored population when zone() is accessed;
   // defeat actual living guards rather than replacing the entire zone roster.
   for (const u of c.zone().enemies)
-    if (u.roomGuard) u.hp = 0;
+    if (u.roomGuard && !u.roomCaptain) u.hp = 0;
   near(c.snapshotBossIncomingFactor(e), 1, 'Crag unprotected without a guard');
   const guard = add(c, e, 'wolf', { roomGuard: true, summon: false });
   near(c.snapshotBossIncomingFactor(e),
