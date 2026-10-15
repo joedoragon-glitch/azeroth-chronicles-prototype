@@ -1648,7 +1648,9 @@
   const canChargeSlot = (slot) => chargeableSlots.has(slot);
   // Ranger Skill 4 charges a companion rally: no enemy aim/lock required.
   const chargeNeedsTarget = (slot) =>
-    [1, 2, 6, 7, 8].includes(slot) || (slot === 4 && game.hero.class !== 'ranger');
+    [1, 2, 6, 7].includes(slot) ||
+    (slot === 8 && game.hero.class !== 'paladin') ||
+    (slot === 4 && game.hero.class !== 'ranger');
   const skillLabel = (slot) => {
     const labels = {
       paladin: { 2: 'Sundering Strike', 3: 'Shield Stance', 4: 'Judgment',
