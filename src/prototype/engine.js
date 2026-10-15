@@ -267,13 +267,15 @@
       ) return false;
       const inReach = (u) =>
           u.hp > 0 && u.hp < u.maxHp && !u.supportHeal &&
-          dist(e, u) <= cfg.range && this.line(e, u),
+          dist(e, u) <= cfg.range && (e === u || this.line(e, u)),
         injured = this.zone().enemies
           .filter((u) => this.enemyHealTeammate(e, u) && inReach(u) &&
             u.hp / u.maxHp <= cfg.threshold)
           .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp || this.idOrder(a, b)),
-        selfAllowed = e.type === 'boss' || e.captain || e.roomCaptain ||
-          e.form === 'ringleader',
+        // A boss with an authored self-recovery keeps that move authoritative;
+        // support can still restore its followers, but not double self-heal.
+        selfAllowed = (e.type === 'boss' && !R.bossRecovery[e.family]) ||
+          e.captain || e.roomCaptain || e.form === 'ringleader',
         self = selfAllowed && inReach(e) && e.hp / e.maxHp <= cfg.threshold ? e : null,
         target = injured[0] || self;
       if (!target) return false;
