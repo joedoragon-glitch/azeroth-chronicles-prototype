@@ -2,7 +2,7 @@
 (function (root) {
   'use strict';
   const darkLordHistory =
-    "He once crossed the provinces with five companions, leaving victories and grieving villages behind. One day no one told them where to go next. He forged a peace in which rival peoples could trade; now he keeps it through levies, garrisons and captive labor. 'Freedom has a price,' he says.";
+    "He once crossed the provinces with a close company of adventurers, leaving victories and grieving villages behind. One day no one told them where to go next. He forged a peace in which rival peoples could trade; now he keeps it through levies, garrisons and captive labor. 'Freedom has a price,' he says.";
   function sections(game, { D, R }) {
     const number = (value) => Math.round(value * 100) / 100,
       percent = (value) => number(value * 100),
@@ -58,7 +58,7 @@
         ],
         [
           'Enemies under pressure',
-          'A wounded or outmatched foe may use rogue tactics: withdraw toward allies, slow a pursuer, shove attackers away or rally defenders. Chase blindly and you may gather a larger fight. Leave the marked attack area; if the retreat draws you into fresh enemies, break pursuit and regroup. Goblin dust breaks direct targeting, but area attacks can still reach the goblin.',
+          'A wounded or outmatched foe may use rogue tactics: withdraw toward allies, slow a pursuer, shove attackers away or rally defenders. Chase blindly and you may gather a larger fight. Ordinary foes still show their marked Rogue warning. Guardians, ringleaders, captains and bosses instead show a moving cast bar on the caster: reposition or use real cover before the strike resolves. Goblin dust breaks direct targeting, but area attacks can still reach the goblin.',
           'Ordinary creatures, guardians and ringleaders can seek help below ' +
             percent(tactics.woundedThreshold) +
             '% HP. A foe at least ' +
@@ -74,7 +74,7 @@
             'A retreat seeks reachable allies within ' +
             tactics.awarenessRadius +
             ' paces; one ally is enough. Continued pursuit can lead to another local retreat and more allies. The foe takes half damage while preparing to withdraw, withdrawing or making a tactical escape; that protection ends when it settles or abandons the retreat.\n\n' +
-            'Ringleaders, captains and bosses have distinct basic maneuvers and stronger situational tricks. Watch the named warning: these are choices, not an automatic pair of attacks. Some commanders rally living troops or refill nearby defeated guard posts; their usual summoned creatures remain separate.',
+            'Ringleaders, captains and bosses have distinct basic maneuvers and stronger situational tricks. Watch the cast progress while they move: these are choices, not an automatic pair of attacks. Some commanders rally living troops or refill nearby defeated guard posts; their usual summoned creatures remain separate.',
         ],
       ],
     });
