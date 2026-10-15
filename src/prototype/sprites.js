@@ -659,22 +659,9 @@
       img = imageFor(entry);
     }
     if (!img) return false;
-    // Use exactly the same camera-relative profile treatment as procedural art.
-    // If a future asset supplies its own north/east/south/west clip, trust that
-    // authored direction rather than reversing an already directional frame.
-    const directed = /:(north|south|east|west)$/.test(animation.name),
-      facing = !directed ? root.PrototypeVisuals?.actorFacing?.(e) : null;
-    if (facing) {
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      if (facing.side < 0) ctx.scale(-1, 1);
-      if (typeof ctx.rotate === 'function') ctx.rotate(facing.lean * facing.side);
-      ctx.translate(-p.x, -p.y);
-    }
     paint(ctx, entry, frame, img, p, scale);
     // A mask pass needs body pixels, not the surrounding TRUE/ringleader aura.
     if (!options?.silhouette) overlay(ctx, e, p, entry, scale);
-    if (facing) ctx.restore();
     return true;
   }
 
