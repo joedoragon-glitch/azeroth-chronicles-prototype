@@ -193,8 +193,18 @@
         rank = g.hero.skills[slot - 1] || 0,
         formatCd = (value) => (Math.round(value * 10) / 10).toFixed(1),
         teacher = slot === 1 ? '' : g.boss(def[4]).captive,
-        learn = rank ? '' : '\nLearn from ' + teacher + ' · ' +
-          g.skillTrainingCost(slot, 0) + ' crowns';
+        nextTrainer = rank > 0 && rank < 8
+          ? Object.keys(Campaign.rules.teachers).find((id) =>
+              Campaign.rules.teachers[id].train.includes(slot) &&
+              Campaign.rules.teachers[id].maxRank >= rank + 1)
+          : null,
+        learn = rank === 8
+          ? '\nMaximum rank'
+          : rank
+            ? '\nNext rank: ' + (nextTrainer ? g.boss(nextTrainer).captive : 'rescued teacher') +
+              ' · ' + g.skillTrainingCost(slot, rank) + ' crowns'
+            : '\nLearn from ' + teacher + ' · ' +
+              g.skillTrainingCost(slot, 0) + ' crowns';
       openMenu(
         'Skill ' + slot + ' · ' + card.name,
         'Rank ' + rank + (rank ? ' · same rank for tap and charge' : ' · not learned') +
