@@ -69,6 +69,9 @@ await check('Approved responsive UI CSS is pixel-equivalent at fixed presentatio
   ["body[data-experience='phone'] #hud {\n    width: min(310px, 44vw);","body[data-experience='phone'] #hud {\n    width: min(252px, 44vw);"],
  ];
  for(const [before,after] of approvedPhoneDock){assert.equal(baseline.css.phone.split(before).length,2,'exact approved phone-dock reference rule');baseline.css.phone=baseline.css.phone.replace(before,after);}
+ // PR #308 explicitly changes joystick appearance and long phone notices.
+ // Transform only those exact rules in the copied historical reference.
+ for(const [before,after] of require('./fixtures/playtest-phone-css.json').changes){assert.equal(baseline.css.phone.split(before).length,2,'exact authorized playtest phone rule');baseline.css.phone=baseline.css.phone.replace(before,after);}
  // Stop the entire frame loop, including its closed-over HUD refresh. Freezing
  // tick/draw alone leaves DOM writes racing the stylesheet replacement.
  await page.evaluate(async()=>{const p=Prototype;window.__layoutRestore={tick:p.game.tick,draw:p.renderer.draw,raf:window.requestAnimationFrame.bind(window)};p.game.tick=()=>{};p.renderer.draw=()=>{};window.requestAnimationFrame=callback=>{__layoutRestore.callback=callback;return 0;};p.updateHUD();await document.fonts.ready;await new Promise(resolve=>__layoutRestore.raf(()=>__layoutRestore.raf(resolve)));});
