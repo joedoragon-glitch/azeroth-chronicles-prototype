@@ -286,8 +286,8 @@
         ],
         ...(game.s.throneClaimed
           ? [[
-              'The sixth mark — remembered at the throne',
-              'The six-signature ledger in Greenwood and the Keeper’s record of the final external command pointed to one missing adventurer. At the defeated ruler’s throne the sixth mark answered to you: you were the missing sixth companion of his former party. Your present Paladin, Mage or Ranger training does not overwrite that past, award a new class, or demand another dungeon victory.',
+              'The last mark — remembered at the throne',
+              'The six-signature ledger in Greenwood and the Keeper’s record of the final external command pointed to one missing adventurer. At the defeated ruler’s throne the last of seven marks answered to you: you were the missing sixth companion of his former party. Your present Paladin, Mage or Ranger training does not overwrite that past, award a new class, or demand another dungeon victory.',
             ]]
           : []),
         [
