@@ -35,4 +35,35 @@ assert(source.indexOf('groundMarker(e, p);') < source.indexOf('sprite(\n        
   'ground markers are drawn outside actor-local mirroring');
 assert(source.includes('if (facing < 0) target.restore()'),
   'canvas transform cannot leak into labels, cast bars, or next actors');
+
+// Explicit family matrix: a mirrored snout or weapon must face its actual
+// projected attack direction regardless of whether the body is procedural,
+// a PNG sprite, a rider on a direwolf or a much larger boss silhouette.
+const families = [
+  ...['paladin', 'mage', 'ranger'].map((name) => 'hero:' + name),
+  ...['soldier', 'archer'].map((name) => 'ally:' + name),
+  ...['goblin', 'skeleton', 'mireling', 'reedbeast', 'wolf', 'ogre',
+    'orc', 'archer', 'ashbeast', 'crownguard'].map((name) => 'enemy:' + name),
+  'enemy:crown-direwolf-lance-rider',
+  'enemy:crown-direwolf-archer',
+  ...require('../src/prototype/data.js').bosses.map((boss) => 'boss:' + boss.id),
+];
+for (const family of families) {
+  for (const [target, side] of [[east, 1], [west, -1], [north, 1], [south, -1]]) {
+    assert.equal(Painter.bodyFacingSide(actor, target), side,
+      family + ' profile faces the real isometric target, not a static east pose');
+  }
+}
+const visualSource = fs.readFileSync(path.join(__dirname, '../src/prototype/visuals.js'), 'utf8');
+const spriteSource = fs.readFileSync(path.join(__dirname, '../src/prototype/sprites.js'), 'utf8');
+assert(visualSource.includes("case 'mireling':") && visualSource.includes("crocodile('#687a61')"),
+  'Mireling procedural mouth is a forward-facing crocodilian snout');
+assert(visualSource.includes('crownDirewolfRider(!!e.ranged)'),
+  'the mounted wolf-rider body participates in enemy-facing rules');
+assert(spriteSource.includes('paint(ctx, entry, frame, img, p, scale)') &&
+  !spriteSource.includes('root.PrototypeVisuals?.actorFacing?.(e)'),
+  'registered sprites get exactly the shared renderer transform, never a second reversal');
+assert(!visualSource.includes('const actorFacingHistory = new WeakMap()'),
+  'procedural art does not apply a duplicate profile reversal');
+
 console.log('PASS facing intent/orientation for all actor families, isometric axes, and render isolation');
