@@ -4297,23 +4297,25 @@
   // Community Snapshot passive completion. These are additive to, not replacements
   // for, the director-approved Greenwood/Marches passives and authored attacks.
   const snapshotPassives = Object.freeze({
-    ridge: { perArcher: { normal: 0.06, true: 0.10 }, maxArchers: 3, radius: 400 },
+    ridge: { baseline: { normal: 0.08, true: 0.12 }, perArcher: { normal: 0.05, true: 0.06 }, maxArchers: 3, radius: 400 },
     mine: {
       shellReduction: { normal: 0.18, true: 0.28 },
       repairFraction: { normal: 0.04, true: 0.06 },
       repairCooldown: 18,
     },
     warlord: {
-      perOrc: { normal: 0.05, true: 0.08 },
+      baseline: { normal: 0.10, true: 0.15 },
+      perOrc: { normal: 0.04, true: 0.05 },
       maxOrcs: 3,
       radius: 380,
       orcDamage: { normal: 0.15, true: 0.25 },
     },
-    abyss: { reduction: { normal: 0.22, true: 0.32 }, duration: 4 },
-    citadel: { reduction: { normal: 0.20, true: 0.30 }, radius: 390 },
+    abyss: { baseline: { normal: 0.12, true: 0.18 }, reduction: { normal: 0.22, true: 0.32 }, duration: 4 },
+    citadel: { baseline: { normal: 0.10, true: 0.15 }, reduction: { normal: 0.20, true: 0.30 }, radius: 390 },
     cindermaw: {
       radius: 340,
       threshold: 0.7,
+      soloRegen: { normal: 0.005, true: 0.008 },
       bossRegen: { normal: 0.01, true: 0.016 },
       bossHealCap: { normal: 0.12, true: 0.20 },
       allyRegen: { normal: 0.008, true: 0.012 },
@@ -4327,7 +4329,7 @@
       cooldown: 12,
     },
     captains: {
-      'supply-highlands': { guardRadius: 320, selfReduction: 0.15, guardDamage: 0.20 },
+      'supply-highlands': { guardRadius: 320, baseline: 0.12, selfReduction: 0.13, guardDamage: 0.20 },
       'frontier-overseer': {
         perHitReduction: 0.05,
         maxStacks: 5,
