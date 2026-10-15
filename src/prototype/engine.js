@@ -4865,13 +4865,20 @@
                   (e.slow > 0 ? 0.5 : 1);
               if (gap > stop + 8) {
                 this.follow(e, castTarget, pace, dt, stop);
-              } else if (rangedCast && gap < 110) {
-                const retreat = {
-                  x: e.x + ((e.x - castTarget.x) / Math.max(1, gap)) * 75,
-                  y: e.y + ((e.y - castTarget.y) / Math.max(1, gap)) * 75,
-                };
-                if (dist(retreat, e.home) < territory && this.clearSegment(e, retreat, 12))
-                  this.move(e, retreat, R.rangedEnemyCombat.retreatSpeed, dt);
+              } else if (rangedCast) {
+                // Preserve a genuinely hittable release: an archer may
+                // withdraw while casting, but cannot drift outside the
+                // basic Rogue maneuver's own legal contact radius.
+                const keep = Math.min(110, Math.max(45, e.telegraph.radius - 12));
+                if (gap < keep) {
+                  const step = keep - gap;
+                  const retreat = {
+                    x: e.x + ((e.x - castTarget.x) / Math.max(1, gap)) * step,
+                    y: e.y + ((e.y - castTarget.y) / Math.max(1, gap)) * step,
+                  };
+                  if (dist(retreat, e.home) < territory && this.clearSegment(e, retreat, 12))
+                    this.move(e, retreat, R.rangedEnemyCombat.retreatSpeed, dt);
+                }
               }
             }
           }
