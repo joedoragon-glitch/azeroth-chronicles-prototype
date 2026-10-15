@@ -84,7 +84,7 @@ assert(
   const saved = Campaign.restore(snapshot);
   const migrated = saved.zone();
   const newHome = migrated.enemies.find((e) => e.id === originalId);
-  assert.equal(migrated.creatureStrongholdsVersion, 7);
+  assert.equal(migrated.creatureStrongholdsVersion, 9);
   assert.equal(newHome.hp, 0, 'migrating Raider fort does not revive dead residents');
   assert.equal(newHome.gold, originalReward);
   assert(
@@ -110,7 +110,7 @@ assert.deepEqual(wolfSite.slice(2), [340, 1020], 'Wolf home leaves the caravan a
   const formerXp = resident.xp;
   const loaded = Campaign.restore(old);
   const live = loaded.zone();
-  assert.equal(live.creatureStrongholdsVersion, 7);
+  assert.equal(live.creatureStrongholdsVersion, 9);
   assert.equal(live.npcs.find((n) => n.id === 'wolf-den').x, 340);
   assert.equal(live.npcs.find((n) => n.id === 'wolf-den').y, 1020);
   const moved = live.enemies.find((e) => e.id === id);
@@ -137,7 +137,7 @@ assert.deepEqual(wolfSite.slice(2), [340, 1020], 'Wolf home leaves the caravan a
   const loaded = Campaign.restore(old);
   const live = loaded.zone();
   const hold = R.creatureStrongholds.find((h) => h.id === 'ashbeast-roost-hold');
-  assert.equal(live.creatureStrongholdsVersion, 8);
+  assert.equal(live.creatureStrongholdsVersion, 10);
   assert.deepEqual(hold.center, [1580, 3260]);
   assert(!loaded.blocked(hold.center[0], hold.center[1], 'crown', 15));
   assert.equal(live.enemies.length, originalCount);
