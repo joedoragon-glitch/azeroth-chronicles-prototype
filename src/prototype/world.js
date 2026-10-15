@@ -275,6 +275,7 @@
         delete z.crownLayoutVersion;
         delete z.streetClearanceVersion;
         delete z.townVisualClearanceVersion;
+        delete z.landmarkRoadShoulderVersion;
       }
       clearRoadBlockers(z) {
         const oldZone = this.s.zone;
@@ -314,6 +315,51 @@
           }
         } finally {
           this.s.zone = oldZone;
+        }
+      }
+      clearNamedRoadMarkers(z) {
+        if (
+          dungeonIds.includes(z.id) ||
+          this.supplyRoom(z.id) ||
+          this.sideDungeon(z.id) ||
+          z.landmarkRoadShoulderVersion === 1
+        ) return;
+        const previousZone = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          for (const marker of z.npcs.filter((n) =>
+            n.kind === 'landmark' &&
+            !n.internalSite &&
+            !n.id.startsWith('bridge-') &&
+            !n.id.startsWith('crossing-') &&
+            !n.id.startsWith('thorn-trailhead-')
+          )) {
+            if (this.distanceToRoad(z, marker) >= 92) continue;
+            const original = { x: marker.x, y: marker.y };
+            let selected = null;
+            for (const radius of [75, 100, 125, 155, 185]) {
+              for (let j = 0; j < 24; j++) {
+                const angle = j * Math.PI / 12;
+                const p = {
+                  x: original.x + Math.cos(angle) * radius,
+                  y: original.y + Math.sin(angle) * radius,
+                };
+                if (this.blocked(p.x, p.y, z.id, 12, true) ||
+                    this.distanceToRoad(z, p) < 95 ||
+                    z.npcs.some((n) => n !== marker && dist(n, p) < 85) ||
+                    z.nodes.some((n) => dist(n, p) < 60) ||
+                    z.props.some((q) => q.roadBlocker && dist(q, p) < (q.r || 0) + 80))
+                  continue;
+                selected = p;
+                break;
+              }
+              if (selected) break;
+            }
+            if (selected) Object.assign(marker, selected);
+          }
+          z.landmarkRoadShoulderVersion = 1;
+        } finally {
+          this.s.zone = previousZone;
         }
       }
       townVisualClearance(z) {
@@ -562,6 +608,7 @@
           }
           this.authoredPlaces(z);
           this.clearStreetCorridors(z);
+          this.clearNamedRoadMarkers(z);
           this.townVisualClearance(z);
           this.regionalTravelSafety(z);
           return z;
@@ -951,6 +998,7 @@
         this.migrateThornPatrol(z);
         this.migrateCinderInspection(z);
         this.clearStreetCorridors(z);
+        this.clearNamedRoadMarkers(z);
         this.townVisualClearance(z);
         this.regionalTravelSafety(z);
         this.refreshNPCs();
