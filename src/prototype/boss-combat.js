@@ -1755,7 +1755,7 @@
               const hit = this.hitParty(victim, e.damage * move.coefficient, 0, e.id);
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
-              if (hit && victim.hp > 0) this.applySlow(victim, move.slowSeconds || 0.95);
+              if (hit && victim.hp > 0) this.applySlow(victim, move.slowSeconds || 2);
             }
           } else if (a.aerial === 'wingover' && completedFlight) {
             originalRogueMove.call(this, e, a.rogueAttack);
