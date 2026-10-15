@@ -96,3 +96,11 @@ All implementation remains on **the same draft PR #300**; do not merge to `main`
 5. Before completing the PR, crosswalk **every user request** to actual source/test/evidence or a plainly named open blocker. No silent omission.
 
 **Request count recorded:** (1) full worldbuilding execution audit; (2) human-sounding quest/lore integration; (3) Drowned Keeper Archive update; (4) town houses, roads and labels; (5) Greenwood cottages' correct 150% original-master sizing; (6) robust GitHub request preservation; plus the standing **defer comprehensive overnight audit**, **single PR**, **no merge/deploy**, **no duplicate work** constraints.
+
+
+
+## 15 October — newly added director visual corrections: compact HUD and all route vehicles
+
+The director additionally asked to shorten the **top-left HP/level/class information HUD**, now that the MP bar was removed, and to **improve every visible transport**, especially the Greenwood ↔ Flooded Marches merchant wagon and Flooded Marches ↔ Ironroot ferry; both formerly looked like primitive placeholder shapes. These are explicit owner requirements, not optional recommendations.
+
+**Implementation source now exists on the same PR, dev.48:** `styles/phone.css` uses a 252px phone dock and a full-width single HP resource column; `src/prototype/visuals.js` now paints a horse-drawn covered wagon, working marsh/highland ferries, pack caravan and civilian dragon tack instead of the old geometric stand-ins. The original route icons/IDs, harbor/arrivals, fares, mechanics and historical saves remain untouched; visible names have taller height allocation. Recovery report: [transport/HUD pre-audit](SNAPSHOT_TRANSPORT_AND_HUD_VISUAL_PREAUDIT_20261015.md). Authored `tests/snapshot-transport-hud-preaudit.test.cjs`; source syntax and five direct instrumented render paths checked. **Real browser/art quality not accepted; final overnight visual test remains pending.** No main/merge/deploy/publication permission.
