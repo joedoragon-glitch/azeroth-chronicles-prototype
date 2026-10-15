@@ -2047,6 +2047,30 @@
               return da - db || String(a.id).localeCompare(String(b.id));
             })
             .slice(0, 44);
+      // Use the carried glass's actual painted position, including facing,
+      // captain scale and idle bob; do not invent a second service lantern.
+      const carriedLanterns = entities
+        .filter(
+          (e) =>
+            e.renderKind === 'enemy' && e.species === 'wraith' && e.type !== 'boss' && e.hp > 0,
+        )
+        .map((e) => {
+          const p = visualPosition(e, screen(e)),
+            scale = e.captain || e.roomCaptain ? e.visualScale || 1.18 : 1;
+          return {
+            x: p.x + paintedFacing(e) * 22.5 * scale,
+            y: p.y + 1.5 * scale,
+            kind: 'carried-lantern',
+            id: e.id,
+          };
+        })
+        .sort(
+          (a, b) =>
+            Math.hypot(a.x - canvas.width / 2, a.y - canvas.height / 2) -
+              Math.hypot(b.x - canvas.width / 2, b.y - canvas.height / 2) ||
+            String(a.id).localeCompare(String(b.id)),
+        )
+        .slice(0, 8);
       PrototypeVisuals.atmosphere(ctx, canvas, i, {
         night: nightNow,
         peace: game.peace,
@@ -2054,7 +2078,7 @@
         room,
         optimized,
         hero: screen(game.hero),
-        lights: nightSources,
+        lights: [...carriedLanterns, ...nightSources],
       });
       // Choking Ash is intentionally visible and remains fixed where cast.
       for (const e of z.enemies)

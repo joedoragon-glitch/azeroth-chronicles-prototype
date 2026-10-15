@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "lantern-wraith-light",
+  "name": "Lantern Wraith carried glass illumination",
+  "nextAction": "Review in PR #308; no raster generation requested.",
+  "context": {
+    "decisionDate": "2026-10-15",
+    "originConversation": null,
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/308",
+    "decisionSummary": "Owner requests Lantern Wraith lanterns to illuminate."
+  },
+  "decisions": {
+    "proceduralDesignAcceptance": "Light correction authorized; appearance awaits play feedback.",
+    "spriteProductionAuthorization": "No raster production requested."
+  },
+  "reference": {
+    "sourceCommit": "f9b3a3c4dbe3e861971f7dcf6158f8b9d89144ed",
+    "ownerFilesAndBranches": [
+      "src/prototype/renderer.js:carriedLanterns",
+      "src/prototype/visuals.js:atmosphere"
+    ],
+    "exactEntityState": "Living non-boss enemy species wraith; actual hand lantern at local (22.5,1.5), mirrored with facing and scaled for captains.",
+    "gameplayContextPaths": [
+      "tools/sprites/design-handoffs/references/lantern-wraith/night-before.jpg",
+      "tools/sprites/design-handoffs/references/lantern-wraith/night-after.jpg",
+      "tools/sprites/design-handoffs/references/lantern-wraith/day-after.jpg",
+      "tools/sprites/design-handoffs/references/lantern-wraith/portrait-night.jpg"
+    ],
+    "traitsToPreserve": [
+      "Existing hooded spectral body and carried framed lantern remain unchanged.",
+      "Light follows the bobbed, mirrored lantern glass, not a floating extra fixture.",
+      "Small daylight bloom; 64-unit warm night pool and bright glass; keep in Optimization Mode.",
+      "No light for dead actors or unrelated stalkers/Archive boss bodies.",
+      "Future raster adaptation must retain the carried-glass anchor or supply an explicit replacement anchor.",
+      "Bound closest eight carried sources and retain the shared overall light budget; no AI/combat/save/light-visibility mechanics change."
+    ]
+  },
+  "scope": {
+    "proceduralOwnersAndReasons": [
+      "Existing actor-facing projection and atmosphere light owner; no new simulation subsystem or sprite replacement."
+    ]
+  }
+}

@@ -606,7 +606,7 @@
   "authorizedPostReleasePlaytestRevision": {
     "source": "Owner-authorized 15 October iPhone playtest corrections in PR #308; merge approval remains separate.",
     "audit": "docs/POST_SNAPSHOT_PLAYTEST_FIXES_20261015.md",
-    "auditSha256": "da8c14af4f8e57b4b39df9145db8ec25d313b186a8762f15b516cf432c55117b",
+    "auditSha256": "f6e2f3e09fa314e734c0590c69700e75941cbedb2ba545a45d4a77b129f04172",
     "files": {
       "src/prototype/app.js": "2708c672f5cd76a6721fa416acfc0edd938c7e16c6092e3ae362815fe0755b8a",
       "src/prototype/combat-visuals.js": "f77774833143a585cc9d7a093fbe1b04bed3337e4ab7ac883d7fb5371489aad4",
@@ -614,11 +614,11 @@
       "src/prototype/engine.js": "a071a9b818e7ec39d11a0c5827867650f485ad23874a89c61fe40acabe832618",
       "src/prototype/navigation.js": "4bac00164b5b3a2ec72ee756852132c0fef5663e9766e38b4276d6b490bd5fce",
       "src/prototype/party.js": "f39fb6c7b0cb876fdd85339fca5c579bff53fe819c2ac3204d4d70a2ee925178",
-      "src/prototype/renderer.js": "09dab0442ab9501ecb41775182769291da98f5f19d96fdba35f735e41c0cddcc",
+      "src/prototype/renderer.js": "fcd67847c8f881847d391724dfcb7ce8bd2fdca1b3d449d8c34efa579419bd1f",
       "src/prototype/rules.js": "f8d3c712dbb719efa86d773b3377c544297afb0973a9dc93ee24160b1ce0ccd0",
       "src/prototype/save.js": "0dabefbc8662a6fec5b7b0de581c5da1d468f23d609f9831656e416fd24d508f",
       "src/prototype/sprites.js": "c919e4df23fbcb7248008eb68d57be0653c6658b345b0e1965e98546aabb102a",
-      "src/prototype/visuals.js": "651dca633eab75ed82776ae489b540b44461240e30ae6a5c77bb0ea7cbed0611",
+      "src/prototype/visuals.js": "f15dd92af7f9ca5a4005aad762c45bc16d6805085bbab3e7862dd2ad234c9241",
       "styles/phone.css": "f37d65d9d606cf50d9769bffbe26d7f88dc7bd12cadd63eca06328db3a9169d2"
     }
   }

@@ -1,0 +1,42 @@
+{
+  "sourceBase": "f9b3a3c4dbe3e861971f7dcf6158f8b9d89144ed",
+  "method": "Actual Campaign natural Marches night spawn and native Canvas renderer; procedural art, fixed presentation clock, Optimization Mode, save-pure draws.",
+  "rows": [
+    {
+      "file": "night-before.jpg",
+      "viewport": [
+        800,
+        375
+      ],
+      "clock": 480,
+      "entity": "enemy-77"
+    },
+    {
+      "file": "night-after.jpg",
+      "viewport": [
+        800,
+        375
+      ],
+      "clock": 480,
+      "entity": "enemy-77"
+    },
+    {
+      "file": "day-after.jpg",
+      "viewport": [
+        800,
+        375
+      ],
+      "clock": 120,
+      "entity": "enemy-77"
+    },
+    {
+      "file": "portrait-night.jpg",
+      "viewport": [
+        393,
+        852
+      ],
+      "clock": 480,
+      "entity": "enemy-77"
+    }
+  ]
+}

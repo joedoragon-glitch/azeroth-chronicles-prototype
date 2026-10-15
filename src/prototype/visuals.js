@@ -16617,6 +16617,15 @@
       'rgba(32,20,35,.52)', // Frontier: ash dusk with working checkpoints
       'rgba(27,19,43,.54)', // Crown: rich night violet, still navigable
     ];
+    const glow = (p, r = 120, a = 0.22, c = '255,218,151') => {
+      if (!p) return;
+      const q = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
+      q.addColorStop(0, `rgba(${c},${a})`);
+      q.addColorStop(0.35, `rgba(${c},${a * 0.48})`);
+      q.addColorStop(1, `rgba(${c},0)`);
+      ctx.fillStyle = q;
+      ctx.fillRect(p.x - r, p.y - r, r * 2, r * 2);
+    };
     if (night) {
       const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
       g.addColorStop(0, nightTints[region] || nightTints[0]);
@@ -16625,28 +16634,21 @@
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       // Warm pools around the hero and inhabited field structures make night readable without flattening the whole scene.
       ctx.globalCompositeOperation = 'screen';
-      const glow = (p, r = 120, a = 0.22, c = '255,218,151') => {
-        if (!p) return;
-        const q = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
-        q.addColorStop(0, `rgba(${c},${a})`);
-        q.addColorStop(0.35, `rgba(${c},${a * 0.48})`);
-        q.addColorStop(1, `rgba(${c},0)`);
-        ctx.fillStyle = q;
-        ctx.fillRect(p.x - r, p.y - r, r * 2, r * 2);
-      };
       glow(hero, 145, peace ? 0.22 : 0.18, region === 4 ? '215,191,231' : '235,221,184');
       // Night sources are the current map's actual windows, services and fires.
       // Keep the soft lit ground distinct from the lamp itself. Only a small
       // radius for each source, with a larger effect at working kitchens/forges.
       const renderedLights = lights.slice(0, 36);
       for (const p of renderedLights) {
-        const window = p.kind === 'window',
+        const carried = p.kind === 'carried-lantern',
+          window = p.kind === 'window',
           fire = p.kind === 'fire' || p.kind === 'work-fire',
-          radius = window ? 70 : p.kind === 'work-fire' ? 105 : fire ? 90 : 85,
-          y = p.y - (p.fixture === 'post' ? 46 : window ? 32 : fire ? 13 : 28),
+          radius = carried ? 64 : window ? 70 : p.kind === 'work-fire' ? 105 : fire ? 90 : 85,
+          y = carried ? p.y : p.y - (p.fixture === 'post' ? 46 : window ? 32 : fire ? 13 : 28),
           source = { x: p.x, y },
           tint = region === 1 ? '245,208,150' : region === 4 ? '247,194,147' : '255,207,132';
         glow(source, radius, window ? 0.27 : fire ? 0.3 : 0.25, tint);
+        if (carried) glow(source, 10, 0.5, '255,221,150');
       }
       ctx.globalCompositeOperation = 'source-over';
       // Luminous windows and sheltered lantern glass are localized light
@@ -16706,6 +16708,14 @@
         ctx.fillStyle = sun;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
+    }
+    if (!night) {
+      // A lit hand lantern keeps a small bloom in daylight; broad illumination
+      // becomes visible after dark. Existing civic day/night lights stay off.
+      ctx.globalCompositeOperation = 'screen';
+      for (const p of lights.filter((p) => p.kind === 'carried-lantern').slice(0, 8))
+        glow(p, 22, 0.12, '255,221,150');
+      ctx.globalCompositeOperation = 'source-over';
     }
     // Keep the night safety grade and useful light pools, but omit purely
     // decorative pollen/mist/sparks and vignette in Optimization Mode.
