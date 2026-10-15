@@ -4891,20 +4891,22 @@
   // projectile, and threat mechanics; no new status types are introduced.
   const classUltimates = Object.freeze({
     paladin: {
-      normal: { radius: 320, damage: 3, heal: 0.15, wardReduction: 0.20, wardDuration: 3.5, wardStep: 0.25 },
-      charged: { radius: 420, radiusStep: 10, damage: 5.5, heal: 0.20,
+      normal: { radius: 320, maxTargets: 8, damage: 3, heal: 0.15, wardReduction: 0.20, wardDuration: 3.5, wardStep: 0.25 },
+      charged: { radius: 420, radiusStep: 10, maxTargets: 10, damage: 5.5, heal: 0.20,
         wardReduction: 0.30, wardDuration: 5, wardStep: 0.25, weaken: true },
     },
     mage: {
-      normal: { radius: 210, primaryDamage: 6, splashDamage: 3.5 },
-      charged: { radius: 260, radiusStep: 10, primaryDamage: 9, splashDamage: 5,
-        fracture: 0.12, fractureStep: 0.01, fractureDuration: 4.5 },
+      normal: { radius: 210, maxTargets: 5, primaryDamage: 6, splashDamage: 3.5 },
+      charged: { radius: 260, radiusStep: 10, maxTargets: 7, primaryDamage: 9, splashDamage: 5,
+        // Brief 25–29% burst window beats Skill 4's 20–24% fracture,
+        // but lasts only 2.5s; one nonstacking fracture applies.
+        fracture: 0.25, fractureStep: 0.01, fractureDuration: 2.5 },
       chain: { radius: 300, targets: 3, primaryDamage: 6.5, secondaryDamage: 4.5, tertiaryDamage: 3 },
       chargedChain: { radius: 380, radiusStep: 10, targets: 5, primaryDamage: 9, secondaryDamage: 6, extraDamage: 4 },
     },
     ranger: {
-      normal: { radius: 260, targets: 3, damagePerArrow: 5 },
-      charged: { radius: 320, radiusStep: 10, targets: 5, arrowsPerTarget: 2, damagePerArrow: 4 },
+      normal: { radius: 260, targets: 3, damagePerArrow: 5, isolatedArrows: 2 },
+      charged: { radius: 320, radiusStep: 10, targets: 5, arrowsPerTarget: 2, isolatedArrows: 3, damagePerArrow: 4 },
     },
   });
   const advancedCharges = Object.freeze({
