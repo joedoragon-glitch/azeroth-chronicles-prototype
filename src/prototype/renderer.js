@@ -1646,25 +1646,13 @@
       ctx.restore();
       finishPhase('floor');
       if (authoredFloor) PrototypeVisuals.dungeonArchitecture(ctx, screen, game.zoneId, size);
+      // Optional #294 viewport integration is disabled: exact art parity was
+      // restored, but paired controls did not establish a reliable speed gain.
       if (!game.isDungeon())
-        PrototypeVisuals.terrain(
-          ctx,
-          screen,
-          i,
-          size,
-          optimized ? null : PrototypeMaterials,
-          canvas,
-        );
-      PrototypeVisuals.roads(
-        ctx,
-        z.roads || [],
-        screen,
-        i,
-        optimized ? null : PrototypeMaterials,
-        canvas,
-      );
+        PrototypeVisuals.terrain(ctx, screen, i, size, optimized ? null : PrototypeMaterials);
+      PrototypeVisuals.roads(ctx, z.roads || [], screen, i, optimized ? null : PrototypeMaterials);
       if (!game.isDungeon())
-        PrototypeVisuals.bridges(ctx, screen, i, optimized ? null : PrototypeMaterials, canvas);
+        PrototypeVisuals.bridges(ctx, screen, i, optimized ? null : PrototypeMaterials);
       PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000);
       finishPhase('terrain');
       const boardCue = null,

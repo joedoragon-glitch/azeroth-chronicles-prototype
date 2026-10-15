@@ -21,6 +21,6 @@ module.exports = function reference(root, { originalOcclusion = true } = {}) {
     calls++;
     return '';
   });
-  assert.equal(calls, 3, 'reference removes only the three #294 viewport arguments');
+  assert.equal(calls, 0, 'optional #294 viewport integration remains disabled');
   return source.slice(0, a) + terrain + source.slice(b);
 };

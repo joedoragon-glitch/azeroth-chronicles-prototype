@@ -241,7 +241,7 @@ function summarize(samples) {
       presentationTimeMs: 16000,
       baselineControlRoot: baselineRoot,
       scope:
-        'Current art on both sides; same occlusion and no viewport culling vs integrated candidate. Paired warmed frozen full renderer.draw plus full Canvas getImageData readback at 150% camera; no app/simulation/audio or physical-device FPS claim.',
+        'Current art and occlusion on both sides; optional viewport integration disabled in candidate and control (no culling speedup claim). Paired warmed frozen full renderer.draw plus full Canvas getImageData readback at 150% camera; no app/simulation/audio or physical-device FPS claim.',
       sourceHashes: Object.fromEntries(
         Object.entries(roots).map(([which, root]) => [
           which,
