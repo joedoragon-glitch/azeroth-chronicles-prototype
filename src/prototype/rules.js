@@ -2455,6 +2455,41 @@
         'Dara is kept here, but Garun pays for repairs and his odd little sculptures; the smith can move about the workshop, not leave the Mine.',
     },
   };
+  // Greenwood remains primarily woodland. These modest smallhold details
+  // express everyday rural work, not a region-wide industrial grain belt.
+  // Author existing cottages, roads, abandoned orchard and monster homes unchanged.
+  const valeRuralHomesteads = [
+    {
+      id: 'millhaven-smallholding',
+      center: [595, 635],
+      props: [
+        [-135, 65, 'rural-crop-rows'],
+        [-35, 115, 'rural-hay-bales'],
+        [85, 70, 'rural-chicken-coop'],
+        [155, 145, 'rural-split-fence'],
+      ],
+    },
+    {
+      id: 'hamlet-kitchen-gardens',
+      center: [1060, 985],
+      props: [
+        [-175, 55, 'rural-crop-rows'],
+        [-65, 125, 'rural-crop-rows'],
+        [45, 65, 'rural-feed-trough'],
+        [155, 125, 'rural-split-fence'],
+      ],
+    },
+    {
+      id: 'woodland-smallholders',
+      center: [680, 1320],
+      props: [
+        [-90, -55, 'rural-hay-bales'],
+        [20, 10, 'rural-field-shelter'],
+        [125, 65, 'rural-split-fence'],
+        [40, 155, 'rural-grain-stook'],
+      ],
+    },
+  ];
   const regionalHandoffScenes = {
     vale: [
       [2000, 2180, 'woodpile', 'estate-approach'],
@@ -5550,6 +5585,7 @@
     travelArrivals,
     dungeonWorkstations,
     regionalHandoffScenes,
+    valeRuralHomesteads,
     greenwoodRuralScenes,
     dungeonWalls,
     dungeonArchitecture,
