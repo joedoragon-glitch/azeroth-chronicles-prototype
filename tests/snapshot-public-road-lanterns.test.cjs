@@ -13,6 +13,9 @@ for (const mode of ['normal', 'nightmare']) {
     game.enter(zoneId);
     const z = game.zone();
     const lights = z.props.filter((p) => p.id.startsWith('public-lantern-'));
+    assert(!z.props.some((p) => p.roadLamp ||
+      String(p.id).startsWith('night-road-lamp-')),
+    'superseded street posts must not duplicate the civic lights');
     assert.equal(lights.length, count, zoneId + ': appropriate sparse street lighting');
     assert.equal(new Set(lights.map((p) => p.id)).size, count);
     assert(lights.every((p) =>
@@ -33,8 +36,15 @@ for (const mode of ['normal', 'nightmare']) {
     if (victim) { victim.hp = 0; victim.deathPaid = true; }
     zone.props = zone.props.filter((p) => !p.id.startsWith('public-lantern-'));
     delete zone.roadsideLanternVersion;
+    // Unpublished dev.51 draft snapshots may contain the second light set.
+    zone.props.push({ id: 'night-road-lamp-' + zoneId + '-0', x: 500, y: 500,
+      r: 0, decorative: true, roadLamp: true, structure: 'street-lantern' });
+    zone.roadLampVersion = 1;
     const revived = Campaign.restore(old);
     revived.enter(zoneId);
+    assert(!revived.zone().props.some((p) => p.roadLamp ||
+      String(p.id).startsWith('night-road-lamp-')),
+    'restoring an unpublished dev.51 save discards old duplicate street posts');
     assert.equal(revived.zone().props.filter((p) =>
       p.id.startsWith('public-lantern-')).length, count,
     'older v4 zones receive civic lights exactly once');
