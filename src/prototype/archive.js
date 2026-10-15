@@ -154,6 +154,7 @@
               ? game.skillCooldown(slot, charged)
               : R.balance.skills.cooldowns[slot],
           shape = R.chargedSkills.second[game.hero.class],
+          milestones = Math.floor(rank / 2),
           effects = {
             1: 'Three normal strikes on the same foe build a finishing splash. Changing foes or waiting too long breaks the sequence; charging delivers a stronger strike.',
             2:
@@ -188,9 +189,11 @@
               ? '\nCharged ' +
                 shape.shape +
                 ': ' +
-                (shape.range ? 'reach ' + shape.range : 'radius ' + shape.radius) +
+                (shape.range
+                  ? 'reach ' + (shape.range + milestones * 5)
+                  : 'radius ' + (shape.radius + milestones * 5)) +
                 ' paces.' +
-                (shape.slow ? ' Slow lasts ' + shape.slow + ' seconds.' : '')
+                (shape.slow ? ' Slow lasts ' + (shape.slow + milestones * 0.25) + ' seconds.' : '')
               : '') +
             (slot <= 3
               ? '\nCharged recovery: ' +
