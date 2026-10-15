@@ -933,9 +933,13 @@
     for (const u of game.zone().enemies) {
       const support = u.supportHeal;
       if (
-        !support || u.hp <= 0 || !u.aggro ||
-        !Number.isFinite(support.seconds) || support.seconds <= 0
-      ) continue;
+        !support ||
+        u.hp <= 0 ||
+        !u.aggro ||
+        !Number.isFinite(support.seconds) ||
+        support.seconds <= 0
+      )
+        continue;
       if (++visible > 32) break;
       const p = screen(u),
         source = game.zone().enemies.find((e) => e.id === support.source),

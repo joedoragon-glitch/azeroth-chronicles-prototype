@@ -145,7 +145,7 @@
     }
   },
   "approvedSnapshotAviationRevision": {
-    "source": "#298/#291 Loyal Air Marshal and seven real aviation moves, selective #254\u2192#283 with shared fatal boundary preservation",
+    "source": "#298/#291 Loyal Air Marshal and seven real aviation moves, selective #254→#283 with shared fatal boundary preservation",
     "files": {
       "src/prototype/boss-combat.js": "2ab3ba3e6306704a6dd61f905370017bed003e28d792050eadb92a2d05581339",
       "src/prototype/data.js": "a93a08064902df010013fd48fc9ed063bbfc2640698d4c05b895d7b996aa451b",
@@ -254,8 +254,8 @@
     }
   },
   "approvedChargedRetargetRevision": {
-    "source": "PR #295 \u2192 PR #300: manual charged-skill release with valid fallback targeting",
-    "scope": "Charged Skills 1\u20132 select a legal replacement only upon manual key/pointer release if their original aim dies or leaves valid range/line of sight. Preserve explicitly locked boss safety, charged opener receipts, no-target cooldown behavior, Skill 3 healing and snapshot worldbuilding modules; no deployment.",
+    "source": "PR #295 → PR #300: manual charged-skill release with valid fallback targeting",
+    "scope": "Charged Skills 1–2 select a legal replacement only upon manual key/pointer release if their original aim dies or leaves valid range/line of sight. Preserve explicitly locked boss safety, charged opener receipts, no-target cooldown behavior, Skill 3 healing and snapshot worldbuilding modules; no deployment.",
     "previousAppSha256": "c18f8c02cd93cfc69885b344ee184f7d0a5d8c369029bb8514ff91a340c52e0b",
     "files": {
       "src/prototype/app.js": "32bc59c1311d4e45bf2ed3d4980387ee260d8e9fba2c1c9839df369a4f5ebbc9"
@@ -602,5 +602,16 @@
         "scope": "Certified dev.56 predecessor; preserved before owner-approved #289 biography-only completion. All combat, economy, save and world values remain identical."
       }
     ]
+  },
+  "candidateEnemyHealing306Revision": {
+    "source": "PR #306 enemy support healing after merged PR #300: authored ranged healers, transient state and localized recovery VFX; original historical source hashes retained.",
+    "files": {
+      "src/prototype/boss-combat.js": "ccd0449955f45cea563fa49ff4635648968b6b4be675711a0d95cc4277d24008",
+      "src/prototype/combat-visuals.js": "b1b0ad055817b4e13a56e23fc465ddc7b99c1521dc0bd6790331ee6ce2bfef4b",
+      "src/prototype/engine.js": "604ce9ce5b82d1a6f85b1c2f3614f87a540b21ca7f2e6d681deba403e9c855bb",
+      "src/prototype/renderer.js": "ba8b002e13ba1f3e80314a86f0c2348be99f0a89883171b9a96d375bc3c6a340",
+      "src/prototype/rules.js": "97e2c02a5d167d2e00ccceb950b633e4b948da3072214cb9d8aa56fbd9e4437f",
+      "src/prototype/save.js": "18973f51ae4587f8de8273906c7b1ad0aad130526a574e4bcafe2778750e7cbe"
+    }
   }
 }

@@ -223,23 +223,24 @@
       // reconstructed once for healing; e.damage/baseDamage contributes only
       // the encounter's live/frozen nighttime or owner-inherited factor.
       const i = Math.max(0, this.regionIndex()),
-        region = e.type === 'boss' || e.nightOnly
-          ? 1
-          : e.awakenedGuard
-            ? R.awakenedGuardianScaling.damage
-            : e.summon && !e.developerSummon
-              ? R.summonScaling[i]?.damage || 1
-              : e.guard
-                ? R.guardianScaling[i]?.damage || 1
-                : e.fieldCaptain
-                  ? R.ordinaryMeleeScaling[i]?.damage || 1
-                  // Ordinary ranged population scaling is deliberately
-                  // absent inside main boss dungeons and Treasury rooms.
-                  // Apply the same exclusion here, or support healing would
-                  // secretly gain a region multiplier that damage lacks.
-                  : dungeonIds.includes(this.zoneId) || this.supplyRoom()
-                    ? 1
-                    : R.ordinaryRangedScaling[i]?.damage || 1;
+        region =
+          e.type === 'boss' || e.nightOnly
+            ? 1
+            : e.awakenedGuard
+              ? R.awakenedGuardianScaling.damage
+              : e.summon && !e.developerSummon
+                ? R.summonScaling[i]?.damage || 1
+                : e.guard
+                  ? R.guardianScaling[i]?.damage || 1
+                  : e.fieldCaptain
+                    ? R.ordinaryMeleeScaling[i]?.damage || 1
+                    : // Ordinary ranged population scaling is deliberately
+                      // absent inside main boss dungeons and Treasury rooms.
+                      // Apply the same exclusion here, or support healing would
+                      // secretly gain a region multiplier that damage lacks.
+                      dungeonIds.includes(this.zoneId) || this.supplyRoom()
+                      ? 1
+                      : R.ordinaryRangedScaling[i]?.damage || 1;
       let factor = region;
       if (e.form === 'ringleader') factor *= R.ringleaderScaling.damage;
       // TRUE boss minions have a distinct 1.25 role budget; TRUE captains
@@ -272,15 +273,26 @@
       const cfg = R.enemySupportHealing,
         skill = this.enemyHealProfile(e);
       if (
-        !skill || this.peace || !e.aggro || e.returning || e.motion ||
-        e.telegraph || e.rangedAim || (e.supportHealCd || 0) > 0
-      ) return false;
+        !skill ||
+        this.peace ||
+        !e.aggro ||
+        e.returning ||
+        e.motion ||
+        e.telegraph ||
+        e.rangedAim ||
+        (e.supportHealCd || 0) > 0
+      )
+        return false;
       const inReach = (u) =>
-          u.hp > 0 && u.hp < u.maxHp && !u.supportHeal &&
-          dist(e, u) <= cfg.range && (e === u || this.line(e, u)),
-        injured = this.zone().enemies
-          .filter((u) => this.enemyHealTeammate(e, u) && inReach(u) &&
-            u.hp / u.maxHp <= cfg.threshold)
+          u.hp > 0 &&
+          u.hp < u.maxHp &&
+          !u.supportHeal &&
+          dist(e, u) <= cfg.range &&
+          (e === u || this.line(e, u)),
+        injured = this.zone()
+          .enemies.filter(
+            (u) => this.enemyHealTeammate(e, u) && inReach(u) && u.hp / u.maxHp <= cfg.threshold,
+          )
           .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp || this.idOrder(a, b)),
         // Do not add a duplicate self-restoration route to a boss that
         // already has authored recovery, vitality siphon, or self-restoring mud.
@@ -292,12 +304,16 @@
             e.family === 'mire'),
         selfAllowed =
           (e.type === 'boss' && !establishedBossRecovery) ||
-          e.captain || e.roomCaptain || e.form === 'ringleader',
+          e.captain ||
+          e.roomCaptain ||
+          e.form === 'ringleader',
         self = selfAllowed && inReach(e) && e.hp / e.maxHp <= cfg.threshold ? e : null,
         target = injured[0] || self;
       if (!target) return false;
-      const amount = Math.min(target.maxHp - target.hp,
-        target.maxHp * cfg.fraction * this.enemyHealMultiplier(e));
+      const amount = Math.min(
+        target.maxHp - target.hp,
+        target.maxHp * cfg.fraction * this.enemyHealMultiplier(e),
+      );
       if (!(amount > 0) || !Number.isFinite(amount)) return false;
       target.supportHeal = {
         source: e.id,
@@ -308,11 +324,22 @@
       e.supportHealCd = cfg.cooldown;
       e.noProgress = 0;
       this.event('heal', {
-        x: target.x, y: target.y, fromX: e.x, fromY: e.y,
-        actor: 'enemy', resource: 'health', source: e.id, target: target.id, amount,
-        skill, species: e.species, family: e.family,
-        form: e.form, boss: e.type === 'boss',
-        captain: !!(e.captain || e.roomCaptain), captainProfile: e.captainProfile,
+        x: target.x,
+        y: target.y,
+        fromX: e.x,
+        fromY: e.y,
+        actor: 'enemy',
+        resource: 'health',
+        source: e.id,
+        target: target.id,
+        amount,
+        skill,
+        species: e.species,
+        family: e.family,
+        form: e.form,
+        boss: e.type === 'boss',
+        captain: !!(e.captain || e.roomCaptain),
+        captainProfile: e.captainProfile,
       });
       // Named leaders and Ringleaders announce the skill; ordinary ranged
       // healers retain the green recovery cue without flooding combat messages.
@@ -324,10 +351,15 @@
       const h = e.supportHeal;
       if (!h) return;
       if (
-        this.peace || !e.aggro || e.returning ||
-        !Number.isFinite(h.seconds) || h.seconds <= 0 ||
-        !Number.isFinite(h.remaining) || h.remaining <= 0 ||
-        !Number.isFinite(e.hp) || e.hp <= 0
+        this.peace ||
+        !e.aggro ||
+        e.returning ||
+        !Number.isFinite(h.seconds) ||
+        h.seconds <= 0 ||
+        !Number.isFinite(h.remaining) ||
+        h.remaining <= 0 ||
+        !Number.isFinite(e.hp) ||
+        e.hp <= 0
       ) {
         delete e.supportHeal;
         return;
@@ -337,8 +369,7 @@
       if (amount > 0) e.hp = Math.min(e.maxHp, e.hp + amount);
       h.remaining = Math.max(0, h.remaining - Math.max(0, amount));
       h.seconds = Math.max(0, h.seconds - step);
-      if (h.seconds <= 0 || h.remaining <= 0 || e.hp >= e.maxHp)
-        delete e.supportHeal;
+      if (h.seconds <= 0 || h.remaining <= 0 || e.hp >= e.maxHp) delete e.supportHeal;
     }
     event(type, data = {}) {
       this.s.statistics.events.push({ time: Math.round(this.s.time), type, ...data });
@@ -4825,8 +4856,7 @@
           // Uninvolved actors must keep their original state shape and
           // deterministic non-healer simulation: don't create idle cooldown
           // fields for every monster during each ordinary combat tick.
-          if ((e.supportHealCd || 0) > 0)
-            e.supportHealCd = Math.max(0, e.supportHealCd - dt);
+          if ((e.supportHealCd || 0) > 0) e.supportHealCd = Math.max(0, e.supportHealCd - dt);
           if (e.supportHeal) this.advanceEnemySupportHeal(e, dt);
         } else if (e.supportHeal) delete e.supportHeal;
         if (e.hp <= 0) {
