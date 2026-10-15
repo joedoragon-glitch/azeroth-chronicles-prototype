@@ -34,7 +34,7 @@ for (const mode of ['normal', 'nightmare']) {
       assert(topics.has(name), mode + ' ' + cls + ' missing ' + name);
       assert(topics.get(name).length > 90);
     }
-    assert.match(topics.get('Crag Tyrant — Treasury captain'), /ordinary Wolf guards remain Wolves/);
+    assert.match(topics.get('Crag Tyrant — Treasury captain'), /paid Crown soldiers on armored direwolves/);
     assert.match(topics.get('Ashen Warlord — Frontier governor'), /military commander/);
     assert.match(topics.get('Cinder Warlord — Frontier inspector'), /Mandatory Overtime/);
     assert.equal(JSON.stringify(game.snapshot()), before, 'read-only Archive cannot change saves');
