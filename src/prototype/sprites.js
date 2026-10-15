@@ -77,6 +77,9 @@
     if (kind === 'hero') return e.crowned ? [] : ['hero:' + clean(e.class)];
     if (kind === 'ally') return ['ally:' + clean(e.class || e.type || 'worker')];
     if (kind === 'enemy') {
+      // New authored multiracial armor and mounted-direwolf silhouettes are
+      // procedural: the old generic guard/Wolf sprites cannot depict them.
+      if (e.crownTroop || e.mountedCrownRider) return [];
       if (e.type === 'boss') return ['boss:' + clean(e.family)];
       return [enemyKey(e)];
     }
