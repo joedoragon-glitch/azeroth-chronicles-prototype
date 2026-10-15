@@ -704,7 +704,11 @@
                 // Interrupt exactly the current warned action. An authored
                 // multi-stage boss sequence retains its later, separately
                 // warned attacks instead of silently losing the entire phase.
+                const interrupted = enemy.telegraph;
                 enemy.telegraph = this.advanceQueuedAttack(enemy);
+                if (enemy.family === 'mine' && interrupted.index !== 1 &&
+                    enemy.telegraph?.index === 1)
+                  this.prepareMineWorksPreview(enemy);
                 if (enemy.telegraph) {
                   this.event('warning', enemy.telegraph.anonymousCast
                     ? { family: enemy.family, anonymousCast: true }
