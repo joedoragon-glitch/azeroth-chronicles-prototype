@@ -98,11 +98,38 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
   escaped.hero.immune = 5;
   escaped.tacticalResolveRogueMove(chaser, failed);
   assert.equal(escaped.hero.slow, 0, 'immune actor cannot acquire Rogue Slow');
+
+  // A cast may complete, but a solid world obstacle must reject the hit and
+  // its Slow. This remains important now that elites move while casting.
+  const { game: covered, enemy: blocked } = encounter(cls, (g) => {
+    const e = g.makeEnemy(
+      { species: 'wolf', name: 'Covered ringleader', level: 5, hp: 10000, damage: 50, xp: 0, gold: 0 },
+      { x: 1400, y: 1700 },
+    );
+    e.form = 'ringleader';
+    return e;
+  });
+  assert(covered.tacticalRogueMove(blocked, covered.hero));
+  covered.zone().props.push({
+    id: 'rogue-test-solid-cover', x: blocked.x + 35, y: blocked.y, r: 12,
+  });
+  assert(!covered.line(blocked, covered.hero), cls + ' real cover blocks line of sight');
+  const beforeCoverHp = covered.hero.hp;
+  covered.tacticalResolveRogueMove(blocked, blocked.telegraph);
+  assert.equal(covered.hero.hp, beforeCoverHp, cls + ' protected target suffers no damage');
+  assert.equal(covered.hero.slow, 0, cls + ' protected target never receives Slow');
 }
 const t = Campaign.rules.tacticalFoundation;
 for (const section of [t.rogueRingleaderSignatures.melee, t.rogueRingleaderSignatures.ranged, t.rogueSignatures.captains, t.rogueSignatures.bosses])
   for (const skill of Object.values(section))
     if (skill.slowSeconds) assert(skill.slowSeconds >= 2.2, skill.name + ' distinct elite duration');
+const eliteSlows = [
+  ...Object.values(t.rogueRingleaderSignatures.melee),
+  ...Object.values(t.rogueRingleaderSignatures.ranged),
+  ...Object.values(t.rogueSignatures.captains),
+  ...Object.values(t.rogueSignatures.bosses),
+].map((skill) => skill.slowSeconds).filter((n) => n > 0);
+assert(new Set(eliteSlows).size >= 3, 'elite signature Slows retain individually differentiated lengths');
 assert.equal(t.rogueMoves.rangedGuardian.slowSeconds, 2);
 assert.equal(t.rogueMoves.rangedFallback.slowSeconds, 2);
 assert.equal(t.rogueMoves.ranged.goblin.blinds, 1.65, 'Blinding Dust cover is separate and locked');
