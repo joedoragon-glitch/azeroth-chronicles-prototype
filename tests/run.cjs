@@ -26,6 +26,7 @@ const quick = new Set([
 
   'enemy-audio',
   'enemy-vfx-inventory',
+  'enemy-support-healing',
   'terrain-effects',
   'first-boss-balance',
   'dungeon-pressure',
