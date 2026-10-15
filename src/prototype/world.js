@@ -1435,6 +1435,55 @@
           this.s.zone = oldZone;
         }
       }
+      // Appearance-only rural smallhold scenes. Stable props and versioned
+      // migration keep older saved towns, roads, rescues and actors unchanged.
+      greenwoodCountryLife(z) {
+        if (z.id !== 'vale' || z.greenwoodCountryVersion === 1) return;
+        const previous = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          z.props = z.props.filter((p) => !String(p.id || '').startsWith('greenwood-country-'));
+          const sites = R.greenwoodRuralScenes || [];
+          const [townX, townY] = D.towns[0],
+            futureServices = Object.values(R.serviceOffsets || {}).map(([dx, dy]) => ({
+              x: townX + dx, y: townY + dy,
+            }));
+          const fits = (p) =>
+            !this.blocked(p.x, p.y, z.id, 16) &&
+            this.distanceToRoad(z, p) >= 100 &&
+            !z.npcs.some((n) => dist(n, p) < 125) &&
+            !futureServices.some((n) => dist(n, p) < 125) &&
+            !z.nodes.some((n) => dist(n, p) < 90) &&
+            !z.enemies.some((e) => e.hp > 0 && dist(e.home || e, p) < 135) &&
+            !z.buildings.some((b) => dist(b, p) < 130) &&
+            !z.props.some((q) =>
+              dist(q, p) < (q.r || 0) + (q.roadBlocker ? 125 : 63));
+          for (const [j, [x, y, structure, district]] of sites.entries()) {
+            // Search a bounded neighborhood without moving established objects.
+            let point = null;
+            for (const radius of [0, 45, 85, 135, 190, 245]) {
+              for (let k = 0; k < (radius ? 16 : 1); k++) {
+                const theta = (k * Math.PI) / 8,
+                  p = { x: x + Math.cos(theta) * radius, y: y + Math.sin(theta) * radius };
+                if (fits(p)) { point = p; break; }
+              }
+              if (point) break;
+            }
+            if (!point) continue; // Better fewer real clearings than blocked roads.
+            z.props.push({
+              id: 'greenwood-country-' + j,
+              ...point,
+              r: 0,
+              structure,
+              decorative: true,
+              greenwoodCountry: district,
+            });
+          }
+          z.greenwoodCountryVersion = 1;
+        } finally {
+          this.s.zone = previous;
+        }
+      }
       ironrootLivelihood(z) {
         if (z.id !== 'highlands' || z.ironrootLifeVersion === 3) return;
         const oldZone = this.s.zone;
@@ -2055,6 +2104,7 @@
         this.fieldCaptainPopulation(z);
         this.finalBossPopulation(z);
         this.regionalHandoffLife(z);
+        this.greenwoodCountryLife(z);
         this.ironrootLivelihood(z);
         this.crownMilitaryRoster(z);
         this.regimeHeraldry(z);
