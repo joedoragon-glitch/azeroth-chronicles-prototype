@@ -1635,7 +1635,7 @@
 
     {
       id: 'orc-road-fort',
-      defenseStyle: 'fort',
+      defenseStyle: 'ruin',
       region: 'frontier',
       site: 'orc-bivouac',
       species: 'orc',
@@ -1709,7 +1709,7 @@
     },
     {
       id: 'crown-field-barracks-hold',
-      defenseStyle: 'fort',
+      defenseStyle: 'ruin',
       region: 'crown',
       site: 'crown-barracks',
       species: 'crownguard',
@@ -1729,7 +1729,7 @@
     },
     {
       id: 'crown-toll-redoubt',
-      defenseStyle: 'fort',
+      defenseStyle: 'ruin',
       region: 'crown',
       center: [3370, 1820],
       species: 'crownguard',
