@@ -555,66 +555,7 @@
           if (e.hybrid) glint(13, -2, '#b9d6b4', 1.8);
           break;
         case 'ogre':
-          poly(
-            [
-              [-15, -17],
-              [-23, -20],
-              [-24, -8],
-              [-14, -9],
-            ],
-            e.ranged ? '#686d65' : '#77786d',
-          );
-          line(
-            [
-              [-8, -24],
-              [7, -19],
-            ],
-            e.ranged ? '#8b755d' : '#735a48',
-            2,
-          );
-          line(
-            [
-              [-11, -31],
-              [-3, -26],
-              [5, -31],
-            ],
-            '#d1c49d',
-            1.3,
-          );
-          line(
-            [
-              [-5, -15],
-              [7, -8],
-            ],
-            e.ranged ? '#9b8060' : '#684d44',
-            1.5,
-          );
-          if (e.ranged) {
-            rect(-23, -2, 11, 12, '#725d49');
-            for (const [x, y, r] of [
-              [-19, -4, 4],
-              [-14, 2, 3],
-              [-21, 6, 3],
-            ])
-              oval(x, y, r, r * 0.7, '#898980');
-            line(
-              [
-                [15, -27],
-                [28, -9],
-              ],
-              '#ad8f65',
-              2,
-            );
-          } else
-            for (const y of [-19, -13])
-              line(
-                [
-                  [20, y],
-                  [31, y + 2],
-                ],
-                '#c2b28c',
-                1.5,
-              );
+          // Species detail and loadout are kept together in ogreBody.
           break;
         case 'orc':
           for (const x of [-4, 4])
@@ -1575,6 +1516,197 @@
         1,
       );
     }
+    // One organic species body for melee, thrower and guard variants.
+    function ogreBody(ranged) {
+      const hide = '#b2a684',
+        shadow = '#8b8063',
+        light = '#c8bb96';
+      const cloth = ranged ? '#777469' : '#8d7a5f';
+      const shape = (color, trace) => {
+        ctx.fillStyle = color;
+        ctx.strokeStyle = ink;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        trace();
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      };
+      // Weight-bearing legs and broad boots under a rounded, heavy torso.
+      for (const side of [-1, 1]) {
+        line(
+          [
+            [side * 8, -1],
+            [side * 10, 12],
+          ],
+          '#575548',
+          9,
+        );
+        oval(side * 10 + 1, 12, 8, 4, '#4d493e');
+      }
+      shape(cloth, () => {
+        ctx.moveTo(-17, -24);
+        ctx.bezierCurveTo(-12, -30, 11, -30, 18, -23);
+        ctx.bezierCurveTo(24, -13, 23, 0, 17, 5);
+        ctx.bezierCurveTo(5, 9, -11, 8, -19, 3);
+        ctx.bezierCurveTo(-23, -5, -24, -17, -17, -24);
+      });
+      fillOval(7, -10, 12, 15, '#e1cfa2', 0.13);
+      // Connected deltoids, elbows and curled hands, rather than stick arms.
+      for (const side of [-1, 1]) {
+        shape(side < 0 ? shadow : hide, () => {
+          ctx.moveTo(side * 15, -26);
+          ctx.bezierCurveTo(side * 24, -29, side * 29, -19, side * 27, -12);
+          ctx.bezierCurveTo(side * 32, -7, side * 31, 1, side * 25, 3);
+          ctx.bezierCurveTo(side * 19, 4, side * 18, -2, side * 20, -8);
+          ctx.bezierCurveTo(side * 17, -15, side * 12, -18, side * 15, -26);
+        });
+        line(
+          [
+            [side * 23, -3],
+            [side * 28, -2],
+          ],
+          '#776d53',
+          1,
+        );
+        line(
+          [
+            [side * 23, 0],
+            [side * 27, 1],
+          ],
+          '#776d53',
+          1,
+        );
+        fillOval(side * 22, -19, 3, 6, light, 0.23);
+      }
+      // Curved belt follows the belly; its buckle stays readable at game scale.
+      shape('#62513f', () => {
+        ctx.moveTo(-21, -2);
+        ctx.quadraticCurveTo(0, 4, 21, -2);
+        ctx.lineTo(20, 3);
+        ctx.quadraticCurveTo(0, 9, -20, 3);
+      });
+      rect(-3, 0, 6, 5, '#b69c67');
+      rect(-1.5, 1, 3, 2.5, '#665743');
+      // Ears, squat neck, broad bald skull and fleshy lower jaw.
+      oval(-13, -32, 5, 6, shadow);
+      oval(13, -32, 5, 6, hide);
+      oval(0, -26, 10, 9, shadow);
+      shape(hide, () => {
+        ctx.moveTo(-13, -33);
+        ctx.bezierCurveTo(-15, -48, 12, -49, 14, -35);
+        ctx.bezierCurveTo(18, -26, 11, -18, 0, -19);
+        ctx.bezierCurveTo(-10, -18, -16, -24, -13, -33);
+      });
+      fillOval(-4, -39, 7, 4, light, 0.4);
+      oval(-6, -32, 4, 2.3, '#706b53');
+      oval(6, -32, 4, 2.3, '#706b53');
+      oval(-6, -32, 1.2, 1.3, '#e4cf8f');
+      oval(6, -32, 1.2, 1.3, '#e4cf8f');
+      line(
+        [
+          [-10, -35],
+          [-3, -34],
+        ],
+        shadow,
+        3,
+      );
+      line(
+        [
+          [3, -34],
+          [10, -35],
+        ],
+        shadow,
+        3,
+      );
+      oval(0, -28, 5, 4, '#bcac83');
+      for (const x of [-2.5, 2.5]) fillOval(x, -27, 1.2, 1, '#615c48');
+      line(
+        [
+          [-8, -23],
+          [0, -24],
+          [8, -23],
+        ],
+        '#665d48',
+        1.6,
+      );
+      for (const side of [-1, 1])
+        shape(bone, () => {
+          ctx.moveTo(side * 7, -22);
+          ctx.quadraticCurveTo(side * 13, -24, side * 10, -30);
+          ctx.quadraticCurveTo(side * 8, -27, side * 5, -24);
+        });
+      // Preserve the existing weapon identities, without extra armor or lore.
+      if (ranged) {
+        shape('#68675e', () => {
+          ctx.moveTo(-16, -25);
+          ctx.quadraticCurveTo(-29, -28, -28, -14);
+          ctx.quadraticCurveTo(-20, -12, -12, -19);
+        });
+        line(
+          [
+            [-16, -21],
+            [14, 1],
+          ],
+          '#aa8b61',
+          3,
+        );
+        shape('#705946', () => {
+          ctx.moveTo(-28, -4);
+          ctx.quadraticCurveTo(-19, -8, -13, -1);
+          ctx.lineTo(-14, 12);
+          ctx.quadraticCurveTo(-22, 17, -29, 9);
+        });
+        for (const [x, y, r] of [
+          [-24, -3, 4],
+          [-18, -1, 3],
+          [-25, 3, 3],
+        ])
+          oval(x, y, r, r * 0.8, '#92918a');
+        line(
+          [
+            [27, -4],
+            [33, -25],
+            [29, -32],
+          ],
+          '#b69a70',
+          2,
+        );
+        oval(29, -32, 5, 4, '#85867f');
+      } else {
+        line(
+          [
+            [26, 2],
+            [30, -28],
+          ],
+          '#96744e',
+          6,
+        );
+        shape('#816647', () => {
+          ctx.moveTo(24, -23);
+          ctx.bezierCurveTo(17, -32, 22, -43, 31, -41);
+          ctx.bezierCurveTo(40, -39, 39, -29, 33, -22);
+        });
+        line(
+          [
+            [26, -36],
+            [27, -29],
+          ],
+          '#ad9161',
+          1.5,
+        );
+        for (const y of [-23, -19])
+          line(
+            [
+              [26, y],
+              [33, y + 1],
+            ],
+            '#c2b28c',
+            2,
+          );
+        oval(26, -2, 5, 4, hide);
+      }
+    }
     function skull(x = 0, y = -28, r = 8) {
       oval(x, y, r, r, bone);
       rect(x - r * 0.6, y + 4, r * 1.2, 6, bone);
@@ -1666,6 +1798,11 @@
     function crownDirewolfRider(ranged = false) {
       ctx.save();
       ctx.scale(1.14, 1.14);
+      // Scale the animal and its tack around the paws, keeping its ground anchor.
+      ctx.save();
+      ctx.translate(0, 13);
+      ctx.scale(1.22, 1.22);
+      ctx.translate(0, -13);
       wolf('#65717c', true);
       // Fur mane, armored cheek plate, leather reins and a working war saddle.
       poly(
@@ -1730,7 +1867,7 @@
       line(
         [
           [-15, -18],
-          [-11, 5],
+          [-11, -5],
         ],
         '#d2b67f',
         2.5,
@@ -1738,22 +1875,29 @@
       line(
         [
           [13, -21],
-          [17, 4],
+          [17, -6],
         ],
         '#d2b67f',
         2.5,
       );
       for (const x of [-16, 13]) {
-        oval(x, -6, 3, 4, '#c49d61');
+        oval(x, -14, 3, 4, '#c49d61');
         line(
           [
-            [x - 6, -2],
-            [x + 4, -2],
+            [x - 6, -10],
+            [x + 4, -10],
           ],
           '#4b4b4a',
           1.5,
         );
       }
+      ctx.restore();
+      // Fit the human to the enlarged saddle rather than enlarging both bodies.
+      // Both weapon variants share this seated scale and matching stirrup height.
+      ctx.save();
+      ctx.translate(0, -35);
+      ctx.scale(0.72, 0.72);
+      ctx.translate(0, 28);
       // Human legs remain on both flanks, armored boots in real stirrups.
       poly(
         [
@@ -1963,6 +2107,7 @@
           '#e2c371',
         );
       }
+      ctx.restore();
       ctx.restore();
     }
     function crocodile(c = '#71886a') {
@@ -14566,79 +14711,7 @@
           } else sword(12, -3);
           break;
         case 'ogre':
-          if (e.ranged) {
-            humanoid('#777469', '#b2a684', 1.5);
-            rect(-12, -3, 24, 7, '#80664d');
-            poly(
-              [
-                [-17, -18],
-                [-25, -12],
-                [-21, 3],
-                [-11, -4],
-              ],
-              '#6f655d',
-            );
-            line(
-              [
-                [-18, -8],
-                [13, 3],
-              ],
-              '#a08461',
-              4,
-            );
-            rect(-27, -2, 14, 17, '#705946');
-            for (const [x, y, r] of [
-              [-22, -6, 5],
-              [-17, 1, 4],
-              [-24, 7, 4],
-            ])
-              oval(x, y, r, r * 0.7, '#85867f');
-            line(
-              [
-                [18, -29],
-                [30, -11],
-              ],
-              '#b69a70',
-              2,
-            );
-            poly(
-              [
-                [27, -13],
-                [34, -17],
-                [36, -10],
-                [29, -7],
-              ],
-              '#81796d',
-            );
-          } else {
-            humanoid('#8d7a5f', '#b2a684', 1.5);
-            rect(-12, -3, 24, 7, '#6b5841');
-            line(
-              [
-                [25, -22],
-                [20, 14],
-              ],
-              '#96744e',
-              6,
-            );
-            oval(27, -25, 8, 15, '#816647');
-          }
-          poly(
-            [
-              [-4, -23],
-              [-5, -17],
-              [-1, -21],
-            ],
-            bone,
-          );
-          poly(
-            [
-              [4, -23],
-              [5, -17],
-              [1, -21],
-            ],
-            bone,
-          );
+          ogreBody(!!e.ranged);
           break;
         case 'archer':
           human('archer');

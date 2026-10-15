@@ -209,6 +209,8 @@ Joel clarified that procedural primitives can create accidental anatomy and bloc
 
 ### 021 — Ogre melee
 
+**15 October procedural correction:** Rounded heavy torso, connected muscular arms and hands, broad bald face, readable brow/nose and curved paired tusks replace the accidental blocky anatomy. Retain the exact existing species palette and loadout. Reference: `tools/sprites/design-handoffs/ogre-body-aesthetic.json`. This is an authorized procedural correction, not acceptance of an unseen generated sprite.
+
 **Canonical cues:** Very bulky humanoid, about 1.5 human bulk. Muted tan/olive skin, minimal dark brown waist belt, small paired tusk/horn marks around face, heavy wooden club/maul held on screen-right.
 
 **Image-generation prompt:**
@@ -296,6 +298,8 @@ Joel clarified that procedural primitives can create accidental anatomy and bloc
 > Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Reed-beast spitter exactly as described. Preserve the base frog-like body and add only the small canonical mouth/projection cue. No sacs, glands, horns, weapon or dramatic tongue.
 
 ### 032 — Ogre stone-thrower hybrid
+
+**15 October procedural correction:** Rounded heavy torso, connected muscular arms and hands, broad bald face, readable brow/nose and curved paired tusks replace the accidental blocky anatomy. Retain the exact existing species palette and loadout. Reference: `tools/sprites/design-handoffs/ogre-body-aesthetic.json`. This is an authorized procedural correction, not acceptance of an unseen generated sprite.
 
 **Canonical cues:** Same very bulky Ogre species and paired facial tusk marks, but a distinct ranged class. Gray-olive/brown clothing rather than the melee Ogre's warmer body treatment, an asymmetric shoulder wrap, diagonal throwing strap, and a large stone satchel on screen-left with visible stones. A simple throwing sling/stone tool is carried on screen-right. No melee club.
 
@@ -2190,6 +2194,8 @@ These entries were reconciled from current production code and authored placemen
 
 ### 258 — Ogre melee guard
 
+**15 October procedural correction:** Rounded heavy torso, connected muscular arms and hands, broad bald face, readable brow/nose and curved paired tusks replace the accidental blocky anatomy. Retain the exact existing species palette and loadout. Reference: `tools/sprites/design-handoffs/ogre-body-aesthetic.json`. This is an authorized procedural correction, not acceptance of an unseen generated sprite.
+
 **Canonical cues:** Very bulky humanoid, about 1.5 human bulk. Muted tan/olive skin, minimal dark brown waist belt, small paired tusk/horn marks around face, heavy wooden club/maul held on screen-right. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural.
 
 **Runtime sprite key:** `enemy:ogre:guard`
@@ -2199,6 +2205,8 @@ These entries were reconciled from current production code and authored placemen
 > Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Ogre melee guard. Very bulky humanoid, about 1.5 human bulk. Muted tan/olive skin, minimal dark brown waist belt, small paired tusk/horn marks around face, heavy wooden club/maul held on screen-right. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural. Omit the procedural ground chevron, targeting/elite indicators and shadows. No captain/officer additions, new equipment or bulk increase.
 
 ### 259 — Ogre ranged guard
+
+**15 October procedural correction:** Rounded heavy torso, connected muscular arms and hands, broad bald face, readable brow/nose and curved paired tusks replace the accidental blocky anatomy. Retain the exact existing species palette and loadout. Reference: `tools/sprites/design-handoffs/ogre-body-aesthetic.json`. This is an authorized procedural correction, not acceptance of an unseen generated sprite.
 
 **Canonical cues:** Same very bulky Ogre species and paired facial tusk marks, but a distinct ranged class. Gray-olive/brown clothing rather than the melee Ogre's warmer body treatment, an asymmetric shoulder wrap, diagonal throwing strap, and a large stone satchel on screen-left with visible stones. A simple throwing sling/stone tool is carried on screen-right. No melee club. Existing guard state adds a restrained pale-gold rectangular chest/role mark; preserve current species size and exact loadout. Ground guard chevrons remain procedural.
 

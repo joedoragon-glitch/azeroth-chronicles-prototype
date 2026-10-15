@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "ogre-body-aesthetic",
+  "name": "Ogre melee and stone thrower aesthetic correction",
+  "kind": "enemy",
+  "nextAction": "Review correction in the PR; merge only on owner instruction. Browser device paths run in normal CI.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel requests a decent aesthetic pass after reporting the Ogre appearance as horrible with a screenshot. Conversation URL unavailable.",
+    "decisionDate": "2026-10-15",
+    "repositoryIssueOrPR": null,
+    "contentDocuments": [
+      "docs/GRAPHICS_CANON_SPRITE_PROMPTS.md"
+    ],
+    "locationAndLore": "Existing Highlands Ogre melee/thrower bodies, Mine and Treasury guards; Crown Ogre ancestry retains issued uniform overlay."
+  },
+  "decisions": {
+    "conceptAcceptance": "Existing bulky tan/olive Ogre with paired tusks and earth-tone clothing retained.",
+    "proceduralDesignAcceptance": "Owner authorized aesthetic correction; revised appearance awaits feedback.",
+    "spriteProductionAuthorization": "No new raster generation requested.",
+    "generatedAppearanceAcceptance": "No generated raster.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "d7c878b992b35b72e2df2f7f44afb1f16ac21ff8",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js:ogreBody",
+      "fix/highlands-mounted-ogre-art"
+    ],
+    "exactEntityState": "species ogre, renderKind enemy, ranged false/true; guard/Crown variants share body",
+    "isolatedReferencePath": "tools/sprites/design-handoffs/references/ogre/after.png",
+    "isolatedReferenceHash": "a779c479a9dfcb2e00c7d6d913c724cc591633b3af39af45ab7b34b6957d7a11",
+    "gameplayContextPaths": [
+      "tools/sprites/design-handoffs/references/ogre/desktop-melee-100.jpg",
+      "tools/sprites/design-handoffs/references/ogre/desktop-melee-150.jpg",
+      "tools/sprites/design-handoffs/references/ogre/desktop-thrower-100.jpg",
+      "tools/sprites/design-handoffs/references/ogre/desktop-thrower-150.jpg",
+      "tools/sprites/design-handoffs/references/ogre/phone-melee-100.jpg",
+      "tools/sprites/design-handoffs/references/ogre/phone-melee-150.jpg",
+      "tools/sprites/design-handoffs/references/ogre/phone-thrower-100.jpg",
+      "tools/sprites/design-handoffs/references/ogre/phone-thrower-150.jpg"
+    ],
+    "traitsToPreserve": [
+      "Bulky heavy humanoid; muted tan/olive skin; bald head and paired tusks; warm melee and gray-olive ranged clothing",
+      "Melee wooden club; thrower asymmetric wrap, diagonal strap, left stone satchel and right throwing tool",
+      "Round organic anatomy, fingers and readable brows/eyes/nose; no added horns, tattoos or species lore"
+    ],
+    "assetSpecificDependencies": [
+      "Existing uniform/ringleader/guard/facing overlays; no gameplay or save changes."
+    ]
+  },
+  "scope": {
+    "catalogIds": [
+      "021",
+      "032",
+      "258",
+      "259"
+    ],
+    "verifiedRuntimeKeys": [
+      "enemy:ogre",
+      "enemy:ogre:ranged",
+      "enemy:ogre:guard",
+      "enemy:ogre:hybrid-ranged-guard"
+    ],
+    "requiredVisibleAssets": [],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Melee, thrower, guard, Crown and elite states share the organic body."
+    ],
+    "proceduralOwnersAndReasons": [
+      "visuals.js existing fallback; no registered Ogre art is active."
+    ]
+  },
+  "animationRequirements": {
+    "status": "undecided",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "d7c878b992b35b72e2df2f7f44afb1f16ac21ff8",
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

@@ -38,6 +38,7 @@
       waiting: [],
       active: [],
       rendered: '',
+      quietAfter: 0,
     },
     statusUntil = 0,
     worldPointer = null,
@@ -2259,6 +2260,7 @@
       state.waiting = [];
       state.active = [];
       state.rendered = '';
+      state.quietAfter = 0;
       host.replaceChildren();
     }
     // Consume all new notices in order. A third notice waits instead of replacing
@@ -2271,24 +2273,44 @@
         state.lastId = n.id;
       }
     state.active = state.active.filter((n) => now < n.until);
-    // Story prose is optional reading, never a combat overlay or a rival to urgent news.
-    const inCombat = game
-      .zone()
-      .enemies.some(
-        (e) =>
-          e.hp > 0 &&
-          e.aggro &&
-          !e.neutral &&
-          Math.hypot(e.x - game.hero.x, e.y - game.hero.y) < 720,
-      );
+    // Nonurgent reading waits for a quiet interval, including incoming shots and
+    // nearby lingering hazards after the last attacker falls or disengages.
+    const readers = [game.hero, ...game.activeLivingParty()];
+    const nearReaders = (e, radius) =>
+      readers.some((u) => Math.hypot(e.x - u.x, e.y - u.y) < radius);
+    const inCombat =
+      game
+        .zone()
+        .enemies.some(
+          (e) =>
+            e.hp > 0 &&
+            !e.neutral &&
+            !e.returning &&
+            (e.aggro || e.telegraph || e.rangedAim) &&
+            nearReaders(e, 900),
+        ) ||
+      game.s.projectiles.some((p) => p.source === 'enemy' && p.life > 0 && nearReaders(p, 900)) ||
+      game.s.hazards.some((a) => a.life > 0 && nearReaders(a, (a.radius || 0) + 220));
+    if (inCombat) state.quietAfter = now + 2500;
     const canNarrate =
       !inCombat &&
+      now >= state.quietAfter &&
+      game.hero.hp > 0 &&
       !menu &&
       !paused &&
       focused &&
       !document.hidden &&
       !game.s.challenge.pending &&
       !game.s.challenge.gameOver;
+    // Hide an already-visible nonurgent card as soon as danger resumes; preserve
+    // the notice and its full reading time for the next safe opportunity.
+    if (!canNarrate && state.active.some((n) => n.kind !== 'warning')) {
+      const interrupted = state.active
+        .filter((n) => n.kind !== 'warning')
+        .map(({ until, ...notice }) => notice);
+      state.active = state.active.filter((n) => n.kind === 'warning');
+      state.waiting.unshift(...interrupted);
+    }
     if (
       state.active.some((n) => n.kind === 'narration') &&
       (!canNarrate || state.waiting.some((n) => n.kind !== 'narration'))
@@ -2303,7 +2325,9 @@
       // Existing milestones retain their full duration. New warnings lead the
       // waiting queue, while a story is shown only when both slots are clear.
       const warningIndex = state.waiting.findIndex((n) => n.kind === 'warning');
-      const milestoneIndex = state.waiting.findIndex((n) => n.kind !== 'narration');
+      const milestoneIndex = canNarrate
+        ? state.waiting.findIndex((n) => n.kind !== 'narration')
+        : -1;
       const index = warningIndex >= 0 ? warningIndex : milestoneIndex;
       if (index < 0 && (!canNarrate || state.active.length)) break;
       const [notice] = state.waiting.splice(index < 0 ? 0 : index, 1);
@@ -2334,6 +2358,12 @@
       );
     }
     host.classList.toggle('visible', state.active.length > 0);
+    host.classList.toggle(
+      'wide-notice',
+      state.active.some(
+        (n) => n.kind === 'narration' || n.text.length + (n.detail?.length || 0) > 90,
+      ),
+    );
     // The separate short-lived phone status must stay below the amber stack.
     if (platform.mode === 'phone')
       $('status').style.top = state.active.length

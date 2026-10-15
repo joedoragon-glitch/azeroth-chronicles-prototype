@@ -410,6 +410,21 @@ body[data-experience='phone'] #message {
   top: calc(max(8px, env(safe-area-inset-top)) + 70px);
   transform: translate(-50%, 0);
 }
+/* Long reading uses the available width instead of a deep card over the hero. */
+body[data-experience='phone'] #message.wide-notice {
+  --notice-edge: max(8px, env(safe-area-inset-left), env(safe-area-inset-right));
+  width: calc(100vw - 2 * var(--notice-edge));
+}
+body[data-experience='phone'] #message.wide-notice .notice-card {
+  padding: 6px 9px;
+  border-radius: 6px;
+  overflow-wrap: anywhere;
+  line-height: 1.3;
+}
+body[data-experience='phone'] #message .notice-card.notice-narration::before {
+  display: inline;
+  margin: 0 6px 0 0;
+}
 body[data-experience='phone'] #modal-description,
 body[data-experience='phone'] #modal-actions button {
   font-size: 13px;

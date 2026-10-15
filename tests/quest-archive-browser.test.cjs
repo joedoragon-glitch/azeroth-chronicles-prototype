@@ -70,6 +70,13 @@ const server = http.createServer((req, res) => {
       await page.keyboard.press('f');
       await page.keyboard.press('f');
       await page.waitForFunction(() => document.querySelector('#modal').hidden);
+      await require('./helpers/notice-browser.cjs').verifyNoticeStrip(
+        page,
+        out,
+        tag,
+        phone,
+        viewport,
+      );
       const cuePlacement = await page.evaluate(() => {
         const c = Prototype.game,
           ctx = document.querySelector('canvas').getContext('2d');
