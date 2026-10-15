@@ -11,7 +11,8 @@
       }
       mageSilenceActive(unit) {
         const field = this.hero.silenceField;
-        return !!field && field.until > this.s.time && dist(unit, field) <= field.radius;
+        return !!field && field.zone === this.zoneId && field.until > this.s.time &&
+          dist(unit, field) <= field.radius;
       }
       weakenEnemy(e, rank) {
         const cfg = R.heroTactics.paladin.weaken,
@@ -549,7 +550,8 @@
             if (isCharged) {
               const cfg = R.heroTactics.mage.silence;
               this.hero.silenceField = {
-                x: this.hero.x, y: this.hero.y, radius: cfg.radius + steps * cfg.radiusStep,
+                x: this.hero.x, y: this.hero.y, zone: this.zoneId,
+                radius: cfg.radius + steps * cfg.radiusStep,
                 until: this.s.time + cfg.duration + steps * cfg.durationStep,
               };
               this.event('chargedArea', { actor: 'hero', class: 'mage', slot: 3,
