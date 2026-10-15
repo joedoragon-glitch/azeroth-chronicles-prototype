@@ -1395,7 +1395,18 @@
       };
       const h = game.hero,
         p = screen(h);
+      const ward = (unit, point, radius) => {
+        if ((unit.wardUntil || 0) <= game.s.time) return;
+        ctx.save();
+        ctx.strokeStyle = '#f5df9ecc';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(point.x, point.y - 8, radius, radius * 0.38, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      };
       if (h.immune > 0) guard(p, 29, h.class);
+      ward(h, p, 32);
       if (h.class === 'paladin' && (h.shieldStance || 0) > 0) {
         // Raised-shield silhouette cue, rendered over either the original
         // procedural hero or its canon-faithful static sprite.
@@ -1445,6 +1456,7 @@
       for (const u of game.activeLivingParty()) {
         const q = screen(u);
         if (u.immune > 0) guard(q, 24);
+        ward(u, q, 27);
         for (const effect of u.supportEffects || []) support(q, effect, 22);
       }
     }
@@ -1472,7 +1484,7 @@
     // while the player is holding an aimed skill; simulation owns the ranges.
     function targetGuidance() {
       const cast = chargePresentation(),
-        aimed = cast && (cast.slot === 1 || cast.slot === 2),
+        aimed = cast && [1, 2, 4, 6, 7, 8].includes(cast.slot),
         selected = game.selectedHeroTarget();
       if (cast?.slot === 3) {
         const p = screen(game.hero);
@@ -1481,10 +1493,16 @@
         ctx.globalAlpha = 0.8;
         ctx.lineWidth = 2.2;
         ctx.beginPath();
-        ctx.moveTo(p.x - 5, p.y - 34);
-        ctx.lineTo(p.x + 5, p.y - 34);
-        ctx.moveTo(p.x, p.y - 39);
-        ctx.lineTo(p.x, p.y - 29);
+        if (game.hero.class === 'ranger') {
+          ctx.moveTo(p.x - 5, p.y - 34);
+          ctx.lineTo(p.x + 5, p.y - 34);
+          ctx.moveTo(p.x, p.y - 39);
+          ctx.lineTo(p.x, p.y - 29);
+        } else {
+          ctx.arc(p.x, p.y - 23, 12, 0, Math.PI * 2);
+          ctx.moveTo(p.x - 7, p.y - 23);
+          ctx.lineTo(p.x + 7, p.y - 23);
+        }
         ctx.stroke();
         ctx.restore();
         return;
