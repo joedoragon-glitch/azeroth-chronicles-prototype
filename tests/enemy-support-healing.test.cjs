@@ -62,6 +62,14 @@ console.log('PASS twelve ranged species use individual identity and the Archer h
 }
 {
   const { g, mob } = fixture();
+  const ordinary = mob('goblin', { ranged: false });
+  assert(!Object.hasOwn(ordinary, 'supportHealCd'), 'ordinary enemy starts without a healing clock');
+  g.updateEnemies(0.1);
+  assert(!Object.hasOwn(ordinary, 'supportHealCd'), 'combat tick does not alter non-healer save shape');
+}
+
+{
+  const { g, mob } = fixture();
   const healer = mob('goblin', { ranged: true });
   mob('goblin', { hp: 400, pack: 'unrelated' });
   assert(!g.enemySupportHeal(healer), 'different engaged formation does not receive support');
