@@ -1899,6 +1899,8 @@
             e.crownTroop = true;
             e.crownAncestry = 'wolf';
             e.name = j % 2 ? 'Crown direwolf mounted archer' : 'Crown direwolf lance patrol';
+            e.forcedRole = j % 2 ? 'ranged' : 'melee';
+            this.configureEnemy(e, j);
             // Military posts use the no-farm contract while retaining the
             // original Wolf HP, damage, level and patrol/quest identity.
             e.gold = 0;
