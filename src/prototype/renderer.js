@@ -1494,7 +1494,9 @@
     // while the player is holding an aimed skill; simulation owns the ranges.
     function targetGuidance() {
       const cast = chargePresentation(),
-        aimed = cast && [1, 2, 4, 6, 7, 8].includes(cast.slot),
+        aimed = cast && ([1, 2, 6, 7].includes(cast.slot) ||
+          (cast.slot === 4 && game.hero.class !== 'ranger') ||
+          (cast.slot === 8 && game.hero.class !== 'paladin')),
         selected = game.selectedHeroTarget();
       if (cast?.slot === 3) {
         const p = screen(game.hero);
