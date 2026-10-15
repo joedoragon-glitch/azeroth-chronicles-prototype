@@ -207,6 +207,108 @@
         ? { hp: 1.1 + 0.03 * n, damage: 1.15 + 0.02 * n }
         : { hp: 1, damage: 1 };
     }
+    // Authoritative enemy support healing. Only actual ranged ordinary roles,
+    // two authored ranged captains, and explicitly ranged-capable bosses qualify.
+    enemyHealProfile(e) {
+      const cfg = R.enemySupportHealing;
+      if (!cfg || !e || e.neutral || e.hp <= 0) return null;
+      if (e.type === 'boss') return cfg.bosses[e.family] || null;
+      if (e.captain || e.roomCaptain) return cfg.captains[e.captainProfile] || null;
+      return e.ranged ? cfg.species[e.species] || null : null;
+    }
+    enemyHealMultiplier(e) {
+      // Population scaling is stored inside baseDamage, whereas nighttime
+      // scaling is applied on engage. Never apply the same layer twice.
+      const i = Math.max(0, this.regionIndex()),
+        region = e.awakenedGuard
+          ? R.awakenedGuardianScaling.damage
+          : e.summon
+            ? R.summonScaling[i]?.damage
+            : e.guard
+              ? R.guardianScaling[i]?.damage
+              : R.ordinaryRangedScaling[i]?.damage;
+      let factor = region || 1;
+      if (e.form === 'ringleader') factor *= R.ringleaderScaling.damage;
+      if (e.nightOnly) factor *= R.nightEnemyCombat[e.species]?.damage || 1;
+      if (e.type === 'boss' && e.form === 'true') {
+        const normal = D.bosses.find((b) => b.id === e.family)?.damage;
+        if (normal) factor *= e.baseDamage / normal;
+      }
+      // Fixed encounter snapshots also cover Nightmare and inherited night
+      // scaling on owned summons. Guard against malformed imported values.
+      const night = e.baseDamage > 0 ? e.damage / e.baseDamage : 1;
+      factor *= Number.isFinite(night) && night > 0 ? night : 1;
+      return Number.isFinite(factor) ? Math.max(0, factor) : 1;
+    }
+    enemyHealTeammate(e, u) {
+      if (!u || u === e || u.hp <= 0 || u.neutral || u.returning || !u.aggro) return false;
+      if (e.pack && e.pack === u.pack) return true;
+      if (e.owner && (e.owner === u.id || e.owner === u.owner)) return true;
+      if (u.owner === e.id) return true;
+      if (e.roomCaptain && u.roomGuard) return true;
+      if (e.fieldCaptain && u.guard && this.zoneId === 'frontier') return true;
+      if (e.type === 'boss' && u.guard) return true;
+      if (e.guard && u.type === 'boss') return true;
+      return !e.pack && !u.pack && e.species === u.species;
+    }
+    enemySupportHeal(e) {
+      const cfg = R.enemySupportHealing,
+        skill = this.enemyHealProfile(e);
+      if (
+        !skill || this.peace || !e.aggro || e.returning || e.motion ||
+        e.telegraph || e.rangedAim || (e.supportHealCd || 0) > 0
+      ) return false;
+      const inReach = (u) =>
+          u.hp > 0 && u.hp < u.maxHp && !u.supportHeal &&
+          dist(e, u) <= cfg.range && this.line(e, u),
+        injured = this.zone().enemies
+          .filter((u) => this.enemyHealTeammate(e, u) && inReach(u) &&
+            u.hp / u.maxHp <= cfg.threshold)
+          .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp || this.idOrder(a, b)),
+        selfAllowed = e.type === 'boss' || e.captain || e.roomCaptain ||
+          e.form === 'ringleader',
+        self = selfAllowed && inReach(e) && e.hp / e.maxHp <= cfg.threshold ? e : null,
+        target = injured[0] || self;
+      if (!target) return false;
+      const amount = Math.min(target.maxHp - target.hp,
+        target.maxHp * cfg.fraction * this.enemyHealMultiplier(e));
+      if (!(amount > 0) || !Number.isFinite(amount)) return false;
+      target.supportHeal = {
+        source: e.id,
+        skill,
+        remaining: amount,
+        seconds: cfg.duration,
+      };
+      e.supportHealCd = cfg.cooldown;
+      e.noProgress = 0;
+      this.event('heal', {
+        x: target.x, y: target.y, fromX: e.x, fromY: e.y,
+        resource: 'health', source: e.id, target: target.id, amount,
+        skill, species: e.species, family: e.family,
+      });
+      if (e.type === 'boss' || e.captain || e.roomCaptain)
+        this.say(e.name + ' uses ' + skill + ' on ' + target.name + '.');
+      return true;
+    }
+    advanceEnemySupportHeal(e, dt) {
+      const h = e.supportHeal;
+      if (!h) return;
+      if (
+        !Number.isFinite(h.seconds) || h.seconds <= 0 ||
+        !Number.isFinite(h.remaining) || h.remaining <= 0 ||
+        !Number.isFinite(e.hp) || e.hp <= 0
+      ) {
+        delete e.supportHeal;
+        return;
+      }
+      const step = Math.min(dt, h.seconds),
+        amount = Math.min(e.maxHp - e.hp, (h.remaining * step) / h.seconds);
+      if (amount > 0) e.hp = Math.min(e.maxHp, e.hp + amount);
+      h.remaining = Math.max(0, h.remaining - Math.max(0, amount));
+      h.seconds = Math.max(0, h.seconds - step);
+      if (h.seconds <= 0 || h.remaining <= 0 || e.hp >= e.maxHp)
+        delete e.supportHeal;
+    }
     event(type, data = {}) {
       this.s.statistics.events.push({ time: Math.round(this.s.time), type, ...data });
       if (this.s.statistics.events.length > 400) this.s.statistics.events.shift();
@@ -4756,6 +4858,8 @@
         if (e.type === 'boss' && e.family === 'archive')
           e.sabotageCd = Math.max(0, (e.sabotageCd || 0) - dt);
         e.healCd = Math.max(0, (e.healCd || 0) - dt);
+        e.supportHealCd = Math.max(0, (e.supportHealCd || 0) - dt);
+        this.advanceEnemySupportHeal(e, dt);
         e.pursuitBurst = Math.max(0, (e.pursuitBurst || 0) - dt);
         e.open = Math.max(0, (e.open || 0) - dt);
         e.captainGuard = Math.max(0, (e.captainGuard || 0) - dt);
@@ -4971,6 +5075,7 @@
           this.disengage(e, dt);
           continue;
         }
+        if (this.enemySupportHeal(e)) continue;
         // A short-lived rogue decision is distinct from normal aggro.
         if (this.tacticalAutoRogue(e, target)) continue;
         if (this.tacticalRogueRegroup(e) && this.tacticalAdvanceRogueRegroup(e, target, dt))
@@ -5284,6 +5389,8 @@
         e.rangedAim = null;
         e.hp = e.baseHp;
         e.maxHp = e.baseHp;
+        delete e.supportHeal;
+        e.supportHealCd = 0;
         e.damage = e.baseDamage;
         e.returning = 0;
         e.heroParticipated = false;
