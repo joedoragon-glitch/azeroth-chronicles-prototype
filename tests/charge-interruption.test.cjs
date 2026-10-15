@@ -144,7 +144,7 @@ console.log('PASS both companions: cumulative damage interruption and recovery w
 {
   const { game } = arena();
   assert(game.beginPartyCharge(game.hero, 1, performance.now() - 1));
-  game.hitParty(game.hero, 100, 0, null, true);
+  game.hitParty(game.hero, game.hero.maxHp * 0.2, 0, null, true);
   assert.equal(game.partyChargeState(game.hero).interrupted, false,
     'completed 0.65s preparation cannot be canceled by subsequent damage');
 }
