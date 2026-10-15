@@ -131,25 +131,28 @@
         2: 'Sundering Strike: a sword attack weakens one foe; charged Holy Cleave weakens every enemy struck in a short frontal cone.',
         3: 'Shield Stance: raise your shield for up to 8 seconds, greatly reducing incoming damage. Basic Skill 1 is disabled and other attacks deal 60% damage. Tap again to lower the shield and start its cooldown. Charged Shield Bash damages and pushes a nearby frontal group; bosses and captains take half bash damage.',
         4: 'Judgment: strike and provoke an enemy to attack you. Charged Grand Judgment damages and taunts a group around the target.',
-        5: 'Holy power strikes nearby enemies.',
-        6: 'A melee strike and short rush to a visible foe.',
-        7: 'A stronger holy attack strikes nearby enemies.',
+        5: 'Tap: a nearby holy area attack. Charge: Consecrated Wave reaches farther, hits harder, and weakens enemies for your defenders.',
+        6: 'Tap: rush toward a visible foe and strike. Charge: Vanguard Impact rushes into a short holy shockwave, striking and pushing nearby enemies.',
+        7: 'Tap: powerful holy area damage. Charge: Oath Strike extends the area and weakens enemies hit by its stronger strike.',
+        8: 'Tap: area damage, self-heal and short immunity (existing ultimate). Charge: Last Bastion creates a stronger holy area hit, self-heals and grants short damage-reduction wards to living active companions; it does not grant immunity.',
       },
       mage: {
         2: 'Frost Bolt slows one target; charged Frost Burst damages and slows enemies around the target.',
         3: 'Spell Interrupt: cancel one enemy attack while it is warned or being aimed. Charged Silence Field blocks special skills for enemies, the Mage and companions within the field, but allows movement and basic attacks.',
         4: 'Arcane Fracture: damage one enemy and increase all incoming hero and companion damage. Charged Arcane Rupture hits a group and applies a stronger, non-stacking vulnerability.',
-        5: 'A frost burst damages and slows nearby enemies.',
-        6: 'A magic projectile briefly slows its target.',
-        7: 'A stronger frost spell damages and slows nearby enemies.',
+        5: 'Tap: close-range frost burst and Slow. Charge: Winter Ring expands its area, increases damage and extends Slow.',
+        6: 'Tap: a slowing magic projectile. Charge: a concentrated arcane beam deals more damage and lengthens Slow on one foe.',
+        7: 'Tap: advanced frost area spell. Charge: Sigil Storm delivers a stronger, broader icy area attack with longer Slow.',
+        8: 'Tap: area damage, self-heal and short immunity (existing ultimate). Charge: Arcane Cataclysm unleashes a much stronger area explosion and leaves surviving enemies vulnerable to party attacks; it does not heal or grant immunity.',
       },
       ranger: {
         2: 'Pinning Shot fires two arrows and briefly slows the target; charged Pinning Volley pierces a line of enemies and slows those struck.',
         3: 'Tap to heal yourself; charge to heal wounded living companions too. Neither restores the fallen.',
         4: 'A burst of speed helps you escape or reposition. This skill has no charged form.',
-        5: 'Arrows strike enemies around you.',
-        6: 'A rapid shot also briefly hastens your movement.',
-        7: 'A piercing arrow follows your chosen foe.',
+        5: 'Tap: arrows strike nearby enemies. Charge: Arrow Rain sends stronger arrows into a wider area and briefly slows each foe struck.',
+        6: 'Tap: a quick shot with movement haste. Charge: Evasive Burst shoots three rapid arrows at one foe and extends movement haste.',
+        7: 'Tap: one targeted defense-piercing arrow. Charge: a stronger piercing shot also briefly slows its target.',
+        8: 'Tap: area damage, self-heal and short immunity (existing ultimate). Charge: Perfect Hunt fires a powerful defense-piercing shot at one foe, heals some HP and grants movement haste; it does not grant immunity.',
       },
     };
     shelves.push({
@@ -174,7 +177,6 @@
               'Charge this attack to spread it through a ' +
               shape.shape +
               (shape.slow ? ' and slow the foes it hits.' : '.'),
-            8: 'Strike nearby foes, restore some of your health and briefly become immune to damage.',
             ...skills[game.hero.class],
           };
         return [
@@ -205,7 +207,7 @@
                 ' paces.' +
                 (shape.slow ? ' Slow lasts ' + (shape.slow + 0.25 * milestones) + ' seconds.' : '')
               : '') +
-            (slot <= 3 || (slot === 4 && game.hero.class !== 'ranger')
+            (slot !== 4 || game.hero.class !== 'ranger'
               ? '\nCharged recovery: ' +
                 number(cooldown(true)) +
                 ' seconds' +
