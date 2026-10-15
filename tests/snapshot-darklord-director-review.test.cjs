@@ -102,7 +102,7 @@ for (const partySize of [1, 2, 3, 4]) {
   const hp = lord.hp;
   c.damage(lord, 80, 'hero');
   assert.equal(lord.hp, hp, 'new shield absorbs later damage');
-  assert.equal(lord.royalTaxShield, shield - 80);
+  assert.equal(lord.royalTaxShield, shield - 80 * c.snapshotBossIncomingFactor(lord));
 }
 
 // Four strikes from the same member must not satisfy a multi-member levy.

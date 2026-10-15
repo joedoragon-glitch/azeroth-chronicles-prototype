@@ -785,5 +785,20 @@
     "ledgerSha256": "84fdec90baf5875c6122ec8ee253f0bbc3b597e8cfb73d454f0c5f351b2fdbce",
     "previousActiveFrameBodySha256": "1831ce9ce3c518361bfcd53c00a55da51faa884c92ca9d6ed7d5ad9e4d22b086",
     "activeFrameBodySha256": "625bf68a6a71393c55788cdfd44788b30a463efd49c965c3c25de48041d956cc"
+  },
+  "authorizedCombinedValidationRepairsRevision": {
+    "source": "Owner-authorized combined validation repairs in PR #308, based on cb1607c3",
+    "ledger": "docs/COMBINED_VALIDATION_REPAIRS_20261015.md",
+    "ledgerSha256": "c617be829bf2e9a05f9ead0026485986e535c51bb62c0edbbdaaadf350207716",
+    "previousFiles": {
+      "src/prototype/combat.js": "c61f65325821bb89e78e6543cd5754308e6c93457a8434f05cbd08e4ccdb75e1",
+      "src/prototype/audio-catalog.js": "48c14ae8bc0882fa4dd756187d29275e4d0fdcda3c026d90739cde6d374834ef",
+      "src/prototype/audio-effects.js": "5d812d6f8b4afae70fa6f746856ed557b41946065a9aa9307b7b3f041df672f2"
+    },
+    "files": {
+      "src/prototype/combat.js": "942b15e6fdf8a93bfe8034bfa0a4f509bf3b765044b39024035d19302e8f9cdd",
+      "src/prototype/audio-catalog.js": "430e7214d5265faede364f308b503157bc96e117a31d6240246511a1c4d6e6f5",
+      "src/prototype/audio-effects.js": "114b131e8eb272b15143fc03bd3595fe48df37d7d9d7a471ea5705ca7db39559"
+    }
   }
 }

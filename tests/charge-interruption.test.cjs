@@ -27,6 +27,7 @@ function arena(type = 'soldier') {
     { x: type === 'soldier' ? 585 : 680, y: 500 },
   );
   game.zone().enemies = [e];
+  game.engage(e);
   return { game, u, e };
 }
 
@@ -241,6 +242,8 @@ for (const phase of ['enemy', 'projectile', 'trap']) {
 {
   const { game, u, e } = arena('archer');
   assert(game.companionUseSecondSkill(u, e));
+  e.aggro = false;
+  Object.assign(game.hero, {x:300,y:350});
   assert(game.restCompanion(u.id));
   assert(!game.partyChargeState(u), 'benching cancels immediately before any reactivation');
 }

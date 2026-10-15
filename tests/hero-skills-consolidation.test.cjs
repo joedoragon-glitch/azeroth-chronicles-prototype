@@ -38,26 +38,28 @@ function arena(cls = 'mage') {
 // The domain API intentionally permits direct charged resolution: shell timing
 // has its own keyboard/touch coverage. Here verify every resolver emits truthful
 // presentation and retains the common cooldown/rank contract.
-for (const cls of ['paladin', 'mage', 'ranger']) {
-  for (let slot = 1; slot <= 8; slot++) {
-    for (const charged of [false, true]) {
-      const { g, e } = arena(cls);
-      if (cls === 'mage' && slot === 3 && !charged)
-        e.rangedAim = { remaining: 0.4, max: 0.4, targetId: 'hero' };
-      const rank = g.hero.skills[slot - 1];
-      assert(g.cast(slot, e.id, charged), `${cls} ${slot} ${charged} admission`);
-      const event = g.effects.find((f) => f.type === 'heroSkillCast');
-      assert(event && event.slot === slot && event.charged === charged);
-      assert.equal(g.hero.skills[slot - 1], rank);
-      const cooldown =
-        cls === 'paladin' && slot === 3 && !charged ? 0 : g.skillCooldown(slot, charged);
-      near(g.hero.cd[slot - 1], cooldown);
-      const fx = Visuals.queue(g.effects, g, []);
-      assert(fx.some((f) => f.type === 'heroSkill' && f.slot === slot));
-      assert(Art.profile(event), 'every form has its own material/motif mapping');
+for (const skillRank of [1, 4, 8])
+  for (const cls of ['paladin', 'mage', 'ranger']) {
+    for (let slot = 1; slot <= 8; slot++) {
+      for (const charged of [false, true]) {
+        const { g, e } = arena(cls);
+        g.hero.skills.fill(skillRank);
+        if (cls === 'mage' && slot === 3 && !charged)
+          e.rangedAim = { remaining: 0.4, max: 0.4, targetId: 'hero' };
+        const rank = g.hero.skills[slot - 1];
+        assert(g.cast(slot, e.id, charged), `${cls} ${slot} ${charged} admission`);
+        const event = g.effects.find((f) => f.type === 'heroSkillCast');
+        assert(event && event.slot === slot && event.charged === charged);
+        assert.equal(g.hero.skills[slot - 1], rank);
+        const cooldown =
+          cls === 'paladin' && slot === 3 && !charged ? 0 : g.skillCooldown(slot, charged);
+        near(g.hero.cd[slot - 1], cooldown);
+        const fx = Visuals.queue(g.effects, g, []);
+        assert(fx.some((f) => f.type === 'heroSkill' && f.slot === slot));
+        assert(Art.profile(event), 'every form has its own material/motif mapping');
+      }
     }
   }
-}
 {
   const { g, e } = arena('paladin'),
     h = g.hero;

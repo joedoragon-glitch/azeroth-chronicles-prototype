@@ -24,7 +24,9 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
     assert(area.casts <= Math.ceil(120 / (area.cooldown + 0.65)), 'charge hold consumes time');
     const heal = throughput(cls, tier, rank, 3, true);
     const self = throughput(cls, tier, rank, 3, false);
-    assert(heal.hps < self.hps, 'party healing trades away rapid hero self-healing');
+    if (cls === 'ranger')
+      assert(heal.hps < self.hps, 'party healing trades away rapid hero self-healing');
+    else assert.equal(heal.hps + self.hps, 0, cls + ' Skill 3 is not a heal');
     assert(Math.abs(heal.partyHps - heal.hps * 6) < 0.001, 'each living companion gets one heal');
     assert(heal.casts <= Math.ceil(120 / (heal.cooldown + 0.65)));
   }

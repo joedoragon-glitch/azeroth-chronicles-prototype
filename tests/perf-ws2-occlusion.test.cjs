@@ -173,7 +173,7 @@ try {
           game = {
             hero: actorKind === 'hero' ? actor : { ...actor, id: 'camera', x: 250, y: 250 },
             zoneId: 'vale',
-            s: { rescued: {}, projectiles: [], loot: [], party: [] },
+            s: { time: 0, statistics: {deaths:0}, rescued: {}, projectiles: [], loot: [], party: [] },
             regionIndex: () => 0,
             zone: () => ({
               props,
@@ -190,6 +190,7 @@ try {
             night: () => false,
             manaCombatActive: () => false,
             selectedHeroTarget: () => null,
+            mageSilenceActive: () => false,
             peace: false,
           },
           visuals = {

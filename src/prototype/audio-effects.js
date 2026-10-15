@@ -70,6 +70,7 @@
         if (
           [
             'companionSkill',
+            'companionChargeStart',
             'hit',
             'rogueRegroup',
             'rogueMove',

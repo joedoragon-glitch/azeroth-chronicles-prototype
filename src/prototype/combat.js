@@ -118,7 +118,7 @@
         cast.lostHp += actualLostHp;
         const rule = R.chargedSkills.interrupt,
           threshold = Math.max(rule.minimumHp, (unit.maxHp || 1) * rule.hpFraction);
-        if (cast.lostHp < threshold && unit.hp > 0) return false;
+        if (cast.lostHp + 1e-9 < threshold && unit.hp > 0) return false;
         cast.interrupted = true;
         this.recoverPartyCharge(unit);
         if (unit !== this.hero)

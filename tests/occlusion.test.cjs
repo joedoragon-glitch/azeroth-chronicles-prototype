@@ -100,7 +100,8 @@ function rasterScene({ actorKind = 'hero', structure = 'house', foreground = tru
   const game = {
     hero: actorKind === 'hero' ? actor : obj('hero', 350, 350, { id: 'camera-hero', hp: 100, maxHp: 100 }),
     zoneId: 'vale',
-    s: { rescued: {}, projectiles: [], loot: [], party: [] },
+    s: { time: 0, statistics: {deaths:0}, rescued: {}, projectiles: [], loot: [], party: [] },
+    mageSilenceActive: () => false,
     regionIndex: () => 0,
     zone: () => ({ props: [obstacle], buildings: [], enemies: actorKind === 'enemy' ? [actor] : [], roads: [] }),
     supplyRoom: () => null,

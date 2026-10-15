@@ -140,7 +140,9 @@ jobs:
         if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         env:
           AUDIO_BROWSER_ENGINE: webkit
+          BROWSER_ENGINE: webkit
         run: |
+          node tests/hero-skills-browser.test.cjs
           node tests/audio-browser.test.cjs
           node tests/audio-audition-browser.test.cjs
       - name: Verify WebKit enemy VFX catalog and pilot captures

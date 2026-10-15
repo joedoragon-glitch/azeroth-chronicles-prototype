@@ -82,12 +82,12 @@ try {
   skill[5] = 39;
   R.balance.equipment.prices.weapon[1] = 101;
   menus.teacher({ family: 'thorn', name: 'Teacher' });
-  let a = opened.actions.find((a) => a.label.includes('Second attack'));
+  let a = opened.actions.find((a) => a.detail?.startsWith('Skill 2 ·'));
   assert(a.label.includes('47 crowns'));
   let gold = c.hero.gold;
   a.action();
   assert.equal(c.hero.gold, gold - 47);
-  a = opened.actions.find((a) => a.label.includes('Second attack'));
+  a = opened.actions.find((a) => a.detail?.startsWith('Skill 2 ·'));
   assert(a.label.includes('39 crowns'));
   gold = c.hero.gold;
   a.action();

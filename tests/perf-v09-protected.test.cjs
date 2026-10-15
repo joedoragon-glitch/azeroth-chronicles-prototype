@@ -52,10 +52,17 @@ if (heroRevision) {
   assert.deepEqual(heroRevision.introducedFiles.sort(), ['src/prototype/audio-hero.js', 'src/prototype/hero-presentation.js']);
   assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', heroRevision.ledger))).digest('hex'), heroRevision.ledgerSha256, 'exact combined hero source ledger');
 }
+const validationRepairs = manifest.authorizedCombinedValidationRepairsRevision;
+if (validationRepairs) {
+  assert.match(validationRepairs.source, /combined validation repairs in PR #308/);
+  for (const [file, hash] of Object.entries(validationRepairs.previousFiles))
+    assert.equal(hash, heroRevision.files[file] || timingRevision.files[file], file + ' retained original combined source');
+  assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', validationRepairs.ledger))).digest('hex'), validationRepairs.ledgerSha256);
+}
 const playtestRevision = originalPlaytestRevision && {
   ...originalPlaytestRevision,
   auditSha256: heroRevision?.auditSha256 || timingRevision?.auditSha256 || healingRevision?.auditSha256 || passiveRevision?.auditSha256 || originalPlaytestRevision.auditSha256,
-  files: { ...originalPlaytestRevision.files, ...passiveRevision?.files, ...healingRevision?.files, ...timingRevision?.files, ...heroRevision?.files },
+  files: { ...originalPlaytestRevision.files, ...passiveRevision?.files, ...healingRevision?.files, ...timingRevision?.files, ...heroRevision?.files, ...validationRepairs?.files },
 };
 if (playtestRevision) {
   assert.match(playtestRevision.source, /PR #308/);

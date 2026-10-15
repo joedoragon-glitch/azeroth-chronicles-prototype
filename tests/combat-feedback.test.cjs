@@ -54,7 +54,7 @@ console.log('PASS current engine event inventory is explicitly covered by audio 
 
 const calls=[];a.ctx={currentTime:1,state:'running'};a.steelImpact=(now,hero)=>calls.push(['steel',hero]);a.effect({type:'melee',actor:'hero',class:'paladin'});assert.deepEqual(calls,[['steel',true]]);
 a.ctx.currentTime+=.01;a.effect({type:'melee',actor:'hero',class:'paladin'});assert.equal(calls.length,1,'hero steel layer is crowd-throttled without deleting other sound families');
-a.ctx.currentTime+=.03;a.effect({type:'melee',actor:'hero',class:'paladin'});assert.equal(calls.length,2);
+a.ctx.currentTime+=.06;a.effect({type:'melee',actor:'hero',class:'paladin'});assert.equal(calls.length,2);
 a.settings.muted=true;a.ctx.currentTime+=1;a.effect({type:'melee',actor:'hero',class:'paladin'});assert.equal(calls.length,2);
 a.settings.muted=false;a.paused=true;a.effect({type:'melee',actor:'hero',class:'paladin'});assert.equal(calls.length,2);
 console.log('PASS contextual SFX routing gives Paladin steel, bows and magic distinct identities and obeys pause/mute');
