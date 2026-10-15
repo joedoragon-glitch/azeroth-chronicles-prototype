@@ -1882,6 +1882,22 @@
           this.dungeonWorkstation(z);
           this.decorateDungeon(z);
           this.abyssAviationProject(z);
+          // Existing Ironroot v4 saves may already have the current dungeon
+          // geometry version. Refurbish ONLY surviving/recorded native Wolf
+          // slots as mounted guards, never summon or revive replacement Wolves.
+          if (z.id === 'mine' && !this.peace) {
+            const native = z.enemies.filter((e) =>
+              e.guard && e.form === 'normal' && !e.reinforcement)
+              .sort((a, b) => this.idOrder(a, b));
+            for (const [j, e] of native.entries()) {
+              const post = R.dungeonGuardFormations.mine[j];
+              if (!post?.mountedCrownRider || e.species !== 'wolf') continue;
+              e.mountedCrownRider = true;
+              e.forcedRole = post.role;
+              e.name = post.name;
+              this.configureEnemy(e, j);
+            }
+          }
           for (const e of z.enemies) this.upgradeRingleader(e);
           this.guardianPopulation(z);
           this.guardianRewards(z);
