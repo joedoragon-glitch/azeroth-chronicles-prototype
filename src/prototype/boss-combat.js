@@ -552,7 +552,7 @@
               )
             )
               continue;
-            this.hitParty(u, e.damage, 0, e.id);
+            this.hitParty(u, this.weakenedEnemyDamage(e), 0, e.id);
             if (
               this.hero !== hero ||
               this.zoneId !== zone ||
@@ -1240,7 +1240,7 @@
           let hit = false;
           for (const u of this.combatTargets())
             if (dist(u, e) < a.radius && this.line(e, u)) {
-              const landed = this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
+              const landed = this.hitParty(u, this.weakenedEnemyDamage(e) * a.coefficient, a.manaDrain || 0, e.id);
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
               if (landed) {
@@ -1331,7 +1331,7 @@
             dy: (a.y - e.y) / d,
             speed: 260,
             life: 2,
-            damage: e.damage * a.coefficient,
+            damage: this.weakenedEnemyDamage(e) * a.coefficient,
             source: 'enemy',
             sourceId: e.id,
             species: 'cargo',
@@ -1385,7 +1385,7 @@
               dy: Math.sin(angle),
               speed: 490,
               life: 0.72, // 490 paces/s × 0.72 s remains inside the 360-pace warning.
-              damage: e.damage / 9, // At close range nine fragments cap at one raw boss hit.
+              damage: this.weakenedEnemyDamage(e) / 9, // At close range nine fragments cap at one raw boss hit.
               manaDrain: 0,
               source: 'enemy',
               sourceId: e.id,
@@ -1467,7 +1467,7 @@
             dy: Math.sin(a.angle),
             speed: a.shotSpeed,
             life: a.shotLife,
-            damage: e.damage * a.coefficient,
+            damage: this.weakenedEnemyDamage(e) * a.coefficient,
             source: 'enemy',
             sourceId: e.id,
             species: e.species,
@@ -1494,7 +1494,7 @@
               dy: Math.sin(a.angle + delta),
               speed: 260 * R.enemyProjectileMultiplier,
               life: 2.5 / R.enemyProjectileMultiplier,
-              damage: e.damage,
+              damage: this.weakenedEnemyDamage(e),
               manaDrain: a.manaDrain || 0,
               source: 'enemy',
               sourceId: e.id,
@@ -1532,7 +1532,7 @@
               ? a.waveLife
               : R.combatGeometry.ringLife * R.bossCadence.areaRangeMultiplier,
             tick: 0,
-            damage: a.slowOnly ? 0 : e.damage,
+            damage: a.slowOnly ? 0 : this.weakenedEnemyDamage(e),
             radius: 0,
             age: 0,
             hit: [],
@@ -1621,7 +1621,7 @@
             const landed =
               u === jawVictim
                 ? true
-                : this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
+                : this.hitParty(u, this.weakenedEnemyDamage(e) * a.coefficient, a.manaDrain || 0, e.id);
             if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
               return;
             if (landed && u === jawVictim) {
@@ -1632,7 +1632,7 @@
                 // three roll ticks is already mitigated; armor must not apply thrice.
                 totalDamage: Math.max(
                   3,
-                  e.damage * a.coefficient -
+                  this.weakenedEnemyDamage(e) * a.coefficient -
                     (u === this.hero
                       ? this.armor()
                       : ['soldier', 'archer'].includes(u.type)
@@ -1709,7 +1709,7 @@
               kind: 'circle',
               life: 4,
               tick: 1,
-              damage: e.damage * 0.25,
+              damage: this.weakenedEnemyDamage(e) * 0.25,
             });
       }
       advanceMotion(e, dt) {
@@ -1732,7 +1732,7 @@
               this.line(e, u)
             ) {
               a.hit.push(id);
-              const landed = this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
+              const landed = this.hitParty(u, this.weakenedEnemyDamage(e) * a.coefficient, a.manaDrain || 0, e.id);
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
               if (landed && e.family === 'ridge' && a.index === 2 && u.hp > 0) {
@@ -1776,7 +1776,7 @@
                   ? this.hero
                   : this.combatTargets().find((u) => u.id === move.targetId);
             if (victim?.hp > 0 && dist(victim, move) <= move.radius && this.line(e, victim)) {
-              const hit = this.hitParty(victim, e.damage * move.coefficient, 0, e.id);
+              const hit = this.hitParty(victim, this.weakenedEnemyDamage(e) * move.coefficient, 0, e.id);
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
               if (hit && victim.hp > 0) this.applySlow(victim, move.slowSeconds || 2);
