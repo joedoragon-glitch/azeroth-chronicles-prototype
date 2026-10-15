@@ -541,6 +541,10 @@
           mitigated *= 1 - Math.min(0.9,
             shield.reduction + Math.floor((u.shieldRank || 1) / 2) * shield.reductionStep);
         }
+        // Last Bastion reduces real incoming damage for its nearby allies.
+        // Unlike the old Skill 8 immunity, the ward never makes them invulnerable.
+        if ((u.wardUntil || 0) > this.s.time)
+          mitigated *= 1 - Math.min(0.75, u.wardReduction || 0);
         u.hp = Math.max(0, u.hp - mitigated);
         if (u === this.hero) this.recordDeveloperDamage('incoming', mitigated);
         if (R.resourceMode.manaEnabled && u === this.hero && manaDrain > 0)
