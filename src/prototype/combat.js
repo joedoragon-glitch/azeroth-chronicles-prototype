@@ -42,10 +42,15 @@
 
       // Per-actor pending friendly casts are transient simulation state, never save data.
       // The hit pipeline owns damage accounting so immunity, armor and overkill stay correct.
-      beginPartyCharge(unit, slot) {
+      beginPartyCharge(unit, slot, releaseAtMs = null) {
         if (!unit || unit.hp <= 0) return false;
         if (!this._pendingPartyCharges) this._pendingPartyCharges = new Map();
-        this._pendingPartyCharges.set(unit, { slot, lostHp: 0, interrupted: false });
+        this._pendingPartyCharges.set(unit, {
+          slot,
+          lostHp: 0,
+          interrupted: false,
+          releaseAtMs: Number.isFinite(releaseAtMs) ? releaseAtMs : null,
+        });
         return true;
       }
       partyChargeState(unit) {
@@ -57,6 +62,15 @@
       recordPartyChargeDamage(unit, actualLostHp) {
         const cast = this.partyChargeState(unit);
         if (!cast || cast.interrupted || !(actualLostHp > 0)) return false;
+        // The hero's fixed hold ends at releaseAtMs even if the button is
+        // intentionally held longer. Once fully charged, later hits cannot
+        // retroactively cancel the completed preparation.
+        if (
+          cast.releaseAtMs !== null &&
+          typeof performance !== 'undefined' &&
+          performance.now() >= cast.releaseAtMs
+        )
+          return false;
         cast.lostHp += actualLostHp;
         const rule = R.chargedSkills.interrupt;
         const threshold = Math.max(rule.minimumHp, (unit.maxHp || 1) * rule.hpFraction);
