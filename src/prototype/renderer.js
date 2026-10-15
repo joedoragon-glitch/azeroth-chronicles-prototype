@@ -1804,6 +1804,24 @@
                 : e,
             p,
           );
+        // Readable overhead preparation bar for damage-interruptible companion Skill 2.
+        // Its fraction is the same simulation countdown that controls release.
+        if (e.renderKind === 'ally') {
+          const preparing = game._companionCharges?.get(e.id);
+          if (preparing && preparing.unit.id === e.id && preparing.zone === game.zoneId) {
+            const fraction = Math.max(
+              0,
+              Math.min(1, 1 - preparing.remaining / Campaign.rules.chargedSkills.holdSeconds),
+            );
+            const y = p.y - spriteHeight(e) - 19;
+            ctx.save();
+            ctx.fillStyle = '#172030d9';
+            ctx.fillRect(p.x - 20, y, 40, 6);
+            ctx.fillStyle = e.type === 'archer' ? '#b7e4a0' : '#f7d68c';
+            ctx.fillRect(p.x - 19, y + 1, 38 * fraction, 4);
+            ctx.restore();
+          }
+        }
         if (e.renderKind === 'enemy' && e.family === 'ridge' && e.ledgerOpen) {
           // The Ledger of Losses remains visibly carried throughout the fight.
           ctx.save();
