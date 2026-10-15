@@ -884,8 +884,13 @@
                 ? enemy === target ? advanced.primaryDamage : advanced.splashDamage
                 : advanced.damage) * power * scale;
               if (this.damage(enemy, damage, 'hero', { area: isCharged, encountersAtStart })) {
+                // Captains and bosses keep their authored scripted specials;
+                // boss basic-target provocation is deliberately short-lived.
+                const tauntDuration = enemy.type === 'boss'
+                  ? Math.min(2.5, advanced.taunt + steps * advanced.tauntStep)
+                  : advanced.taunt + steps * advanced.tauntStep;
                 enemy.tauntUntil = Math.max(enemy.tauntUntil || 0,
-                  this.s.time + advanced.taunt + steps * advanced.tauntStep);
+                  this.s.time + tauntDuration);
                 hits++;
               }
             }
