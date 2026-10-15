@@ -701,12 +701,19 @@
                 enemy = this.tacticalSkillTarget(cfg.range + steps * cfg.rangeStep, true);
               if (!enemy) return false;
               if (enemy.telegraph) {
-                enemy.telegraph = null;
-                enemy.sequence = [];
-                enemy.cd = Math.max(enemy.cd || 0, cfg.enemyRecovery);
-                enemy.specialCd = Math.max(enemy.specialCd || 0, cfg.enemyRecovery);
-              }
-              if (enemy.rangedAim) {
+                // Interrupt exactly the current warned action. An authored
+                // multi-stage boss sequence retains its later, separately
+                // warned attacks instead of silently losing the entire phase.
+                enemy.telegraph = this.advanceQueuedAttack(enemy);
+                if (enemy.telegraph) {
+                  this.event('warning', enemy.telegraph.anonymousCast
+                    ? { family: enemy.family, anonymousCast: true }
+                    : { family: enemy.family });
+                } else {
+                  enemy.cd = Math.max(enemy.cd || 0, cfg.enemyRecovery);
+                  enemy.specialCd = Math.max(enemy.specialCd || 0, cfg.enemyRecovery);
+                }
+              } else if (enemy.rangedAim) {
                 enemy.rangedAim = null;
                 enemy.cd = Math.max(enemy.cd || 0, cfg.enemyRecovery);
               }
