@@ -1652,11 +1652,11 @@
   const skillLabel = (slot) => {
     const labels = {
       paladin: { 2: 'Sundering Strike', 3: 'Shield Stance', 4: 'Judgment',
-        5: 'Holy Area', 6: 'Vanguard Rush', 7: 'Holy Assault', 8: 'Final Special' },
+        5: 'Holy Area', 6: 'Vanguard Rush', 7: 'Holy Assault', 8: 'Sanctuary Oath / Last Bastion' },
       mage: { 2: 'Frost Bolt', 3: 'Spell Interrupt', 4: 'Arcane Fracture',
-        5: 'Frost Burst', 6: 'Magic Shot', 7: 'Frost Assault', 8: 'Final Special' },
+        5: 'Force Pulse / Force Wave', 6: 'Magic Shot', 7: 'Arcane Chain / Chainstorm', 8: 'Astral Detonation / Arcane Cataclysm' },
       ranger: { 2: 'Pinning Shot', 3: 'Self-Heal', 4: 'Movement Haste / Rally',
-        5: 'Arrow Volley', 6: 'Hasty Shot', 7: 'Piercing Arrow', 8: 'Final Special' },
+        5: 'Arrow Volley', 6: 'Repelling Shot / Volley', 7: 'Piercing Arrow', 8: 'Hunters Salvo / Grand Hunt' },
     };
     return labels[game.hero.class]?.[slot] || skillNames[slot - 1];
   };
