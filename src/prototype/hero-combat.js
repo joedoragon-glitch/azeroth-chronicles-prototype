@@ -439,7 +439,14 @@
           return true;
         }
         if (isCharged && slot === 2) {
-          const def = chargedSecond || R.chargedSkills.second[this.hero.class],
+          const base = chargedSecond || R.chargedSkills.second[this.hero.class],
+            def = {
+              ...base,
+              range: base.range ? base.range + steps * 5 : 0,
+              radius: base.radius ? base.radius + steps * 5 : 0,
+              halfWidth: base.halfWidth ? base.halfWidth + steps * 2 : 0,
+              slow: base.slow ? base.slow + steps * 0.25 : 0,
+            },
             damage = power * (this.hero.class === 'ranger' ? 2.4 : 2.2) * scale,
             angle = Math.atan2(target.y - this.hero.y, target.x - this.hero.x),
             from = { x: this.hero.x, y: this.hero.y },
@@ -466,6 +473,9 @@
             if (this.damage(e, damage, 'hero', { area: true, encountersAtStart })) {
               hits++;
               if (def.slow) this.applySlow(e, def.slow);
+              if (this.hero.class === 'paladin') this.weakenEnemy(e, rank);
+              if (this.hero.class === 'ranger')
+                this.applySlow(e, R.heroTactics.ranger.volley.slow + steps * R.heroTactics.ranger.volley.slowStep);
             }
           }
           this.event(this.hero.class === 'paladin' ? 'melee' : 'spell', {
@@ -501,115 +511,149 @@
           return true;
         }
         if (slot === 3) {
-          const amount = (45 + power * 0.5) * scale;
-          if (isCharged) {
-            const targets = [this.hero, ...this.activeLivingParty()].filter(
-              (u) => u.hp > 0 && u.hp < u.maxHp,
-            );
-            for (const u of targets) {
-              u.hp = Math.min(u.maxHp, u.hp + amount);
-              this.event('heal', {
-                x: u.x,
-                y: u.y,
-                resource: 'health',
-                target: u === this.hero ? 'hero' : u.id,
+          if (this.hero.class === 'paladin') {
+            const cfg = R.heroTactics.paladin;
+            if (isCharged) {
+              const facing = target || this.tacticalSkillTarget(cfg.bash.reach + steps * cfg.bash.reachStep),
+                angle = facing
+                  ? Math.atan2(facing.y - this.hero.y, facing.x - this.hero.x)
+                  : Math.atan2(this.formationHeading?.y || 1, this.formationHeading?.x || 0),
+                reach = cfg.bash.reach + steps * cfg.bash.reachStep,
+                push = cfg.bash.push + steps * cfg.bash.pushStep,
+                delta = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
+              let hits = 0;
+              for (const enemy of this.zone().enemies.filter((e) =>
+                e.hp > 0 && !e.neutral && !e.returning && dist(e, this.hero) <= reach &&
+                Math.abs(delta(Math.atan2(e.y - this.hero.y, e.x - this.hero.x), angle)) <= cfg.bash.halfAngle &&
+                this.line(this.hero, e)).sort((a, b) => this.idOrder(a, b))) {
+                const elite = enemy.type === 'boss' || enemy.captain || enemy.roomCaptain;
+                if (this.damage(enemy, power * cfg.bash.damage * scale *
+                  (elite ? cfg.bash.eliteDamage : 1), 'hero', { area: true, encountersAtStart })) {
+                  this.shieldPush(enemy, push);
+                  hits++;
+                }
+              }
+              this.event('chargedArea', {
+                actor: 'hero', class: 'paladin', slot: 3, effect: 'shield-bash', shape: 'cone',
+                x: this.hero.x, y: this.hero.y, fromX: this.hero.x, fromY: this.hero.y,
+                angle, range: reach, halfAngle: cfg.bash.halfAngle, hits,
               });
+            } else {
+              this.hero.shieldStance = cfg.shield.duration;
+              this.hero.shieldRank = rank;
+              this.resetBasicCombo();
+              this.event('spell', { actor: 'hero', class: 'paladin', slot: 3,
+                effect: 'shield-raised', x: this.hero.x, y: this.hero.y });
             }
-            this.event('chargedArea', {
-              slot,
-              class: this.hero.class,
-              effect: R.chargedSkills.third.effect,
-              shape: 'circle',
-              x: this.hero.x,
-              y: this.hero.y,
-              fromX: this.hero.x,
-              fromY: this.hero.y,
-              angle: 0,
-              radius: 240,
-              range: 0,
-              halfAngle: 0,
-              halfWidth: 0,
-              hits: targets.length,
-            });
+          } else if (this.hero.class === 'mage') {
+            if (isCharged) {
+              const cfg = R.heroTactics.mage.silence;
+              this.hero.silenceField = {
+                x: this.hero.x, y: this.hero.y, radius: cfg.radius + steps * cfg.radiusStep,
+                until: this.s.time + cfg.duration + steps * cfg.durationStep,
+              };
+              this.event('chargedArea', { actor: 'hero', class: 'mage', slot: 3,
+                effect: 'silence-field', shape: 'circle', x: this.hero.x, y: this.hero.y,
+                fromX: this.hero.x, fromY: this.hero.y, radius: this.hero.silenceField.radius,
+                hits: this.zone().enemies.filter((e) => e.hp > 0 && this.mageSilenceActive(e)).length });
+            } else {
+              const cfg = R.heroTactics.mage.interrupt,
+                enemy = this.tacticalSkillTarget(cfg.range + steps * cfg.rangeStep, true);
+              if (!enemy) return false;
+              if (enemy.telegraph) {
+                enemy.telegraph = null;
+                enemy.sequence = [];
+                enemy.cd = Math.max(enemy.cd || 0, cfg.enemyRecovery);
+                enemy.specialCd = Math.max(enemy.specialCd || 0, cfg.enemyRecovery);
+              }
+              if (enemy.rangedAim) {
+                enemy.rangedAim = null;
+                enemy.cd = Math.max(enemy.cd || 0, cfg.enemyRecovery);
+              }
+              this.event('spell', { actor: 'hero', class: 'mage', slot: 3,
+                effect: 'interrupt', x: enemy.x, y: enemy.y, target: enemy.id });
+            }
           } else {
-            this.hero.hp = Math.min(this.hero.maxHp, this.hero.hp + amount);
-            this.event('heal', {
-              x: this.hero.x,
-              y: this.hero.y,
-              resource: 'health',
-              target: 'hero',
-            });
+            const amount = (45 + power * 0.5) * scale;
+            if (isCharged) {
+              const targets = [this.hero, ...this.activeLivingParty()].filter(
+                (u) => u.hp > 0 && u.hp < u.maxHp,
+              );
+              for (const u of targets) {
+                u.hp = Math.min(u.maxHp, u.hp + amount);
+                this.event('heal', { x: u.x, y: u.y, resource: 'health',
+                  target: u === this.hero ? 'hero' : u.id });
+              }
+              this.event('chargedArea', {
+                slot, class: this.hero.class, effect: R.chargedSkills.third.effect,
+                shape: 'circle', x: this.hero.x, y: this.hero.y,
+                fromX: this.hero.x, fromY: this.hero.y,
+                angle: 0, radius: 240, range: 0, halfAngle: 0, halfWidth: 0,
+                hits: targets.length,
+              });
+            } else {
+              this.hero.hp = Math.min(this.hero.maxHp, this.hero.hp + amount);
+              this.event('heal', { x: this.hero.x, y: this.hero.y,
+                resource: 'health', target: 'hero' });
+            }
           }
         } else if (slot === 4) {
-          if (this.hero.class === 'ranger') this.hero.haste = Math.min(6, 4 + 0.25 * (rank - 1));
-          else
-            this.hero.immune = Math.min(
-              4,
-              Math.max(
-                this.hero.immune || 0,
-                (this.hero.class === 'paladin' ? 2.5 : 2) + 0.15 * (rank - 1),
-              ),
-            );
-          this.event('spell', {
-            actor: 'hero',
-            class: this.hero.class,
-            source: 'hero',
-            slot,
-            x: this.hero.x,
-            y: this.hero.y,
-          });
-        } else if (slot === 5 && this.hero.class === 'ranger') {
-          // Radial volley: targets inside the existing area receive visible arrows.
-          // AoE-tagged impacts retain dust-cover eligibility and line-of-sight checks.
-          const radius = 350;
-          const enemies = this.zone()
-            .enemies.filter(
-              (e) =>
-                e.hp > 0 &&
-                !e.neutral &&
-                !e.returning &&
-                dist(e, this.hero) < radius &&
-                this.line(this.hero, e),
-            )
-            .sort((a, b) => this.idOrder(a, b));
-          enemies.forEach((e, index) => {
-            const d = Math.max(1, dist(this.hero, e));
-            this.s.projectiles.push({
-              id: 'projectile-' + this.s.nextId++,
-              x: this.hero.x,
-              y: this.hero.y,
-              dx: (e.x - this.hero.x) / d,
-              dy: (e.y - this.hero.y) / d,
-              target: e.id,
-              damage: power * 2.3 * scale,
-              source: 'hero',
-              speed: 850,
-              delay: (index % 4) * 0.04,
-              style: 'arrow',
-              slot,
-              area: true,
-              effect: 'arrow-volley',
+          if (this.hero.class === 'ranger') {
+            this.hero.haste = Math.min(6, 4 + 0.25 * (rank - 1));
+            this.event('spell', { actor: 'hero', class: 'ranger', slot: 4, x: this.hero.x, y: this.hero.y });
+          } else if (this.hero.class === 'paladin') {
+            const cfg = R.heroTactics.paladin,
+              advanced = isCharged ? cfg.grandJudgment : cfg.judgment,
+              radius = isCharged ? advanced.radius + steps * advanced.radiusStep : 0,
+              targets = isCharged
+                ? this.zone().enemies.filter((e) => e.hp > 0 && !e.neutral &&
+                  dist(e, target) <= radius && this.line(this.hero, e)).sort((a, b) => this.idOrder(a, b))
+                : [target];
+            let hits = 0;
+            for (const enemy of targets) {
+              const damage = (isCharged
+                ? enemy === target ? advanced.primaryDamage : advanced.splashDamage
+                : advanced.damage) * power * scale;
+              if (this.damage(enemy, damage, 'hero', { area: isCharged, encountersAtStart })) {
+                enemy.tauntUntil = Math.max(enemy.tauntUntil || 0,
+                  this.s.time + advanced.taunt + steps * advanced.tauntStep);
+                hits++;
+              }
+            }
+            if (isCharged) this.event('chargedArea', {
+              actor: 'hero', class: 'paladin', slot: 4, effect: 'grand-judgment',
+              shape: 'circle', x: target.x, y: target.y, radius, hits,
+              fromX: this.hero.x, fromY: this.hero.y, targetId: target.id,
             });
-          });
-          this.event('spell', {
-            actor: 'hero',
-            class: 'ranger',
-            source: 'hero',
-            slot,
-            radius,
-            x: this.hero.x,
-            y: this.hero.y,
-          });
-          this.event('projectileLaunch', {
-            actor: 'hero',
-            class: 'ranger',
-            source: 'hero',
-            style: 'arrow',
-            slot,
-            count: enemies.length,
-            x: this.hero.x,
-            y: this.hero.y,
-          });
+            else this.event('melee', { actor: 'hero', class: 'paladin', slot: 4,
+              x: target.x, y: target.y, target: target.id, weapon: 'sword' });
+          } else {
+            const cfg = R.heroTactics.mage,
+              advanced = isCharged ? cfg.rupture : cfg.fracture,
+              radius = isCharged ? advanced.radius + steps * advanced.radiusStep : 0,
+              targets = isCharged
+                ? this.zone().enemies.filter((e) => e.hp > 0 && !e.neutral &&
+                  dist(e, target) <= radius && this.line(this.hero, e)).sort((a, b) => this.idOrder(a, b))
+                : [target];
+            let hits = 0;
+            for (const enemy of targets) {
+              const damage = power * scale * (isCharged
+                ? enemy === target ? advanced.primaryDamage : advanced.splashDamage
+                : advanced.damage);
+              if (this.damage(enemy, damage, 'hero', { area: isCharged, encountersAtStart })) {
+                this.fractureEnemy(enemy, advanced.fraction + steps * advanced.fractionStep,
+                  advanced.duration + steps * advanced.durationStep);
+                hits++;
+              }
+            }
+            if (isCharged) this.event('chargedArea', {
+              actor: 'hero', class: 'mage', slot: 4, effect: 'arcane-rupture',
+              shape: 'circle', x: target.x, y: target.y, radius, hits,
+              fromX: this.hero.x, fromY: this.hero.y, targetId: target.id,
+            });
+            else this.event('spell', { actor: 'hero', class: 'mage', slot: 4,
+              effect: 'arcane-fracture', x: target.x, y: target.y, target: target.id });
+          }
         } else if (slot === 5 || slot === 8 || (slot === 7 && this.hero.class !== 'ranger')) {
           for (const e of this.zone()
             .enemies.filter((e) => e.hp > 0 && dist(e, this.hero) < (slot === 5 ? 350 : 500))
@@ -655,6 +699,7 @@
           if (this.hero.class === 'paladin') {
             const landed = this.damage(target, dmg);
             if (landed) {
+              if (slot === 2) this.weakenEnemy(target, rank);
               this.event('melee', {
                 actor: 'hero',
                 class: 'paladin',
@@ -715,7 +760,11 @@
                       : undefined,
                 combo,
                 slow:
-                  this.hero.class === 'mage' && [2, 6].includes(slot) ? (slot === 2 ? 4 : 2) : 0,
+                  this.hero.class === 'mage' && [2, 6].includes(slot)
+                    ? (slot === 2 ? 4 + steps * 0.25 : 2)
+                    : this.hero.class === 'ranger' && slot === 2
+                      ? R.heroTactics.ranger.pin.slow + steps * R.heroTactics.ranger.pin.slowStep
+                      : 0,
                 ...(slot === 1 && combo === 3
                   ? {
                       basicComboFinisher: true,
