@@ -324,6 +324,7 @@
       const h = e.supportHeal;
       if (!h) return;
       if (
+        this.peace || !e.aggro || e.returning ||
         !Number.isFinite(h.seconds) || h.seconds <= 0 ||
         !Number.isFinite(h.remaining) || h.remaining <= 0 ||
         !Number.isFinite(e.hp) || e.hp <= 0
