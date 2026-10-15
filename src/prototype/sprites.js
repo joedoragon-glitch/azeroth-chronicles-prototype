@@ -50,6 +50,11 @@
 
   function enemyKey(e) {
     const base = 'enemy:' + clean(e.species || e.family || e.type);
+    // The reviewed Mireling ranged-guard image covers both native ranged AI
+    // variants. Reuse its exact canon sprite key without changing attack roles.
+    if (e.species === 'mireling' && e.guard && e.ranged && !e.hybrid &&
+        !e.captain && !e.roomCaptain && !e.fieldCaptain)
+      return 'enemy:mireling:hybrid-ranged-guard';
     if (e.captain || e.roomCaptain || e.fieldCaptain) {
       const tags = ['captain'];
       if (e.hybrid) tags.push('hybrid');

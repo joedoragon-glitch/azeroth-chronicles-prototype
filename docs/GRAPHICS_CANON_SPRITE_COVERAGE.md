@@ -31,6 +31,7 @@ Many broad procedural systems are classified here rather than receiving pointles
 - Bosses: 035–045.
 - Named captains with authored static additions: 046–050. Dreadmaw 049 uses Ash-beast anatomy with a retained Dark-Lord-idol captain treatment while Cindermaw remains his gameplay mentor.
 - Ringleader, Frenzy and TRUE presentation remain procedural. Non-military species keep the universal Ringleader overlay; military species use same-size officer hierarchy cues tied to their uniform instead of the generic crown treatment.
+- Pure ranged Mireling guards share the exact reviewed `enemy:mireling:hybrid-ranged-guard` static body; the existing prompt describes a ranged guard silhouette. This is an art-only canonical reuse, not a change to the melee/ranged/hybrid combat role. No duplicate ungenerated `enemy:mireling:ranged-guard` image is invented.
 - Guard ground identifiers remain procedural. Current guard bodies use exact entries 255–270, preserving their existing uniform/shield/role cues without increasing body scale. Crown ranged troops have separate entry 254. Base, ranged, hybrid and guard states never silently substitute for one another.
 
 ## Interaction/state coverage

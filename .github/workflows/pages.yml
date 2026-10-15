@@ -208,6 +208,13 @@ jobs:
           echo '<<<SNAPSHOT_PRETTIER_PATCH_START>>>'
           cat test-results/snapshot-format/prettier.patch
           echo '<<<SNAPSHOT_PRETTIER_PATCH_END>>>'
+      - name: Record current sprite-scope evidence for the final audit
+        shell: bash
+        run: |
+          node scripts/sprite-scope-audit.cjs > test-results/snapshot-format/sprite-scope.json
+          echo '<<<SNAPSHOT_SPRITE_SCOPE_START>>>'
+          cat test-results/snapshot-format/sprite-scope.json
+          echo '<<<SNAPSHOT_SPRITE_SCOPE_END>>>'
       - uses: actions/upload-artifact@v4
         if: always()
         with:
