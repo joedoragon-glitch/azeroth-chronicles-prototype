@@ -191,4 +191,21 @@ console.log('PASS region, night, progression, night-species, TRUE, and elite dam
   assert(!enemy.supportHeal && !enemy.supportHealCd, 'import drops forged heal state');
   assert(ally && healer, 'initial fixture remains unchanged');
 }
+{
+  const { g, mob } = fixture();
+  const healer = mob('goblin', { ranged: true });
+  const ally = mob('goblin', { hp: 400 });
+  g.updateEnemies(0.1);
+  assert(healer.supportHealCd > 9, 'live updateEnemies invokes automatic support healing');
+  assert(ally.supportHeal || ally.hp > 400, 'the live combat tick starts gradual ally healing');
+}
+{
+  const { g } = fixture('frontier');
+  const dragon = g.bossEnemy(g.boss('abyss'), 'normal', { x: 980, y: 900 });
+  dragon.aggro = true;
+  dragon.hp = dragon.maxHp * 0.25;
+  g.zone().enemies.push(dragon);
+  assert(g.enemyHealProfile(dragon), 'Abyss Dragon can support its ranged warband');
+  assert(!g.enemySupportHeal(dragon), 'authored recovery bosses do not gain duplicate self-healing');
+}
 console.log('PASS boss skill independence, support priority, and old v4 save compatibility');
