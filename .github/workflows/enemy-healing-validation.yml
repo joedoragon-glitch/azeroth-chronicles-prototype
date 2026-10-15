@@ -1,0 +1,29 @@
+name: Enemy healing integration validation
+on:
+  push:
+    branches:
+      - feature/enemy-healing-pr300-integration
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  enemy-support:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Enemy support healing unit tests
+        run: node tests/enemy-support-healing.test.cjs
+      - name: Full Node regression suites
+        run: npm test
+      - name: Source formatting and asset checks
+        run: |
+          npm run format:check
+          npm run check
