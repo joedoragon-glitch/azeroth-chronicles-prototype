@@ -1396,6 +1396,36 @@
       const h = game.hero,
         p = screen(h);
       if (h.immune > 0) guard(p, 29, h.class);
+      if (h.class === 'paladin' && (h.shieldStance || 0) > 0) {
+        // Raised-shield silhouette cue, rendered over either the original
+        // procedural hero or its canon-faithful static sprite.
+        ctx.save();
+        ctx.strokeStyle = '#beddfb';
+        ctx.fillStyle = '#477bb4bb';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(p.x - 24, p.y - 32);
+        ctx.lineTo(p.x - 40, p.y - 26);
+        ctx.lineTo(p.x - 39, p.y - 6);
+        ctx.lineTo(p.x - 26, p.y + 1);
+        ctx.lineTo(p.x - 17, p.y - 13);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
+      if (h.silenceField && h.silenceField.zone === game.zoneId &&
+          h.silenceField.until > game.s.time) {
+        const q = screen(h.silenceField);
+        ctx.save();
+        ctx.strokeStyle = '#bd9befaa';
+        ctx.fillStyle = '#9d72d013';
+        ctx.lineWidth = 2;
+        PrototypeCombatVisuals.circlePath(ctx, screen, h.silenceField, h.silenceField.radius);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
       if (h.haste > 0) {
         ctx.save();
         ctx.strokeStyle = '#d9f2ff99';
