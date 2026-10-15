@@ -264,6 +264,10 @@
         ['Cindermaw — Interior and Welfare', D.bosses.find((b) => b.id === 'cindermaw').history],
         ['Dreadmaw — Agriculture', R.roomCaptains['supply-crown'].history],
         ['Scornfang — Reclamation', R.roomCaptains['supply-vale'].history],
+        ['Ridge Tyrant — Master of Coin', D.bosses.find((b) => b.id === 'ridge').history],
+        ['Crag Tyrant — Treasury captain', R.roomCaptains['supply-highlands'].history],
+        ['Ashen Warlord — Frontier governor', D.bosses.find((b) => b.id === 'warlord').history],
+        ['Cinder Warlord — Frontier inspector', R.roomCaptains['frontier-overseer'].history],
         [
           'Companions from the Barracks',
           'Lifebinder and the Drowned Keeper were originally recruited from the Barracks, through the same institution that supplies today’s Soldiers and Rangers. They belonged to different companion classes the present hero has not discovered. Their history does not make them Soldiers or Rangers.',
