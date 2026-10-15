@@ -54,7 +54,7 @@ for (const [region, coords] of Object.entries(original)) {
   assert.equal(restored.hero.gold, 832, 'travel migration cannot change crowns');
   assert(migrated.props.length > 0 && priorProps > 0, region + ' retains original scenery');
   if (region === 'highlands') {
-    assert.equal(migrated.ironrootLifeVersion, 2);
+    assert.equal(migrated.ironrootLifeVersion, 3);
     assert(migrated.props.some((p) => p.ironrootDistrict === 'caravan' &&
       p.structure === 'caravan-loading-bay'), 'original Highlands caravan facilities restored');
     const boat = migrated.npcs.find((n) => n.id === 'return');

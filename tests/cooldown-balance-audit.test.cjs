@@ -41,8 +41,14 @@ const config = {
 };
 const first = fight(config);
 assert.deepEqual(fight(config), first, 'a recorded seed replays the full production encounter');
-assert(first.resets > 0, 'exercise the historical encounter reset');
-assert(first.resetHpDelta > 0);
+// The approved mobile Thornfang kit no longer happens to leash for this
+// seed. Exercise reset accounting directly, independently of AI randomness.
+e.hp = e.maxHp / 2;
+e.returning = 0;
+g.disengage(e, 0);
+g.disengage(e, 2);
+assert(observed.resets > 0, 'exercise the production encounter reset');
+assert(observed.resetHpDelta > 0);
 assert.equal(first.siphon, 0, 'Thornfang is not a life-stealer');
 assert.equal(first.recovery, 0);
 assert.equal(

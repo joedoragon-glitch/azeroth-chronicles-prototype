@@ -115,7 +115,7 @@ test('F39 boss selection respects actual ring reach, anti-repeat fallbacks and D
   assert.equal(c.startAttack(thorn,{x:thorn.x+620,y:thorn.y}),false,'invalid selection does not start a telegraph');
   const lord=c.bossEnemy(c.boss('darklord'),'normal',{x:1100,y:1200});
   c.zone().enemies=[lord];lord.summonCd=100;lord.lastAttackIndex=1;lord.hp=lord.maxHp*.8;
-  assert.equal(c.chooseBossAttack(lord,{x:lord.x+440,y:lord.y}),1,'repeat the only usable special rather than wasting a cone');
+  assert.equal(c.chooseBossAttack(lord,{x:lord.x+440,y:lord.y}),5,'choose the usable levy instead of repeating gambit or wasting a cone');
   lord.hp=lord.maxHp*.4;lord.lastAttackIndex=-1;
   assert(c.bossAttackWeights(lord,{x:lord.x+240,y:lord.y})[3]>0,'Crown sector available at low health');
 });

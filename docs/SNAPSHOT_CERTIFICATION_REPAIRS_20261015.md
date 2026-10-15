@@ -1,0 +1,50 @@
+# PR #300 overnight certification repair ledger — 15 October 2026
+
+Recovery: draft `implementation/director-snapshot-20261013`, authoritative handoff `e5893fbd45cf47af2c6f2262af0a6f18c7d3c162`, failed Actions run 38681781832. This is an implementation repair checkpoint, **not a final certificate**. Candidate version advances coherently to `0.9.1+snapshot.dev.53`. Main, release, deployment, director approval and draft status remain untouched.
+
+## Actual runtime repairs
+
+- Town roof placement previously silently accepted unresolved overlaps when all original search radii failed. The deterministic rear/side search now considers larger available parcels. All 65 original houses remain, with all-region roof/road/future-specialist clearance tests passing locally. Migration version advances to 2.
+- Stronghold labels were being moved onto road shoulders and then inadvertently used as the physical garrison center. Physical holds now retain their authored site coordinates independently of label layout. Guards whose homes are blocked or outside the hold are relocated inside the real perimeter without changing IDs, rewards, health/deaths or population. All 13 stronghold geometry suites pass locally. The Raider courtyard has five spaced interior plots; its continuous perimeter/gate is preserved by the tested 85-unit defensive-wall road shoulder. Domestic lean-tos retain their larger setbacks. The stronghold-clearance migration advances to 2, street audit to 3.
+- Mill pond labels retain a real shore constraint when moved off the road; their name continues to describe the adjacent water.
+- Ironroot livelihood migration retains valid existing scene positions and uses a 24-unit terrain footprint. Later banner/lighting additions cannot reroll an already placed scene. Correctness is checked by the existing deterministic migration and support-scene suites.
+- Restored Frontier regions could receive a fifth civic lamp although the fresh region held four. The existing civic-post generator now respects the approved per-region 3/4/4/4/6 ceiling. Its v4 restoration/dead-enemy/idempotence checks pass locally. The discarded second lamp generator remains retired.
+- Historical unnamed Treasury guards now receive the same species-specific Treasury names as newly authored formations; named formation slots retain their approved names. Captains, mounted ancestry, original actor IDs, wounds/deaths, cache identity and rewards remain intact.
+- Dungeon appointment, coronation and final Rest now have explicit short existing-synth event-note routes. No new recording, mix policy or campaign event is added.
+- Night-light source classification is exposed from its actual renderer owner so tests verify `warm-brazier`, hearth, forge and heatworks behavior rather than relying on unformatted source substrings. Render behavior is unchanged by the extraction.
+
+**Economy lock:** `rules.js`, `data.js`, `economy.js`, `rewards.js` and progression prices/XP/drop policy are unchanged from the authoritative handoff. No speculative balance repair is included.
+
+## Test repairs and provenance
+
+| Original failing suite(s) | Verified cause and retained contract |
+| --- | --- |
+| audio, dungeon-pressure, ending-matrix, mini-dungeons, prototype, snapshot-treasury-expansion | Old fixtures assumed earned victories immediately granted peace. They now physically interact with the Crown throne. The browser finale additionally requires real Rest before credits/Nightmare. All 1,024 ending combinations remain exercised. |
+| dark-lord-veteran-kit | Solo fixture delivered three hits while claiming four. It now lands four and still rejects fewer hits. Runtime four-hit/10-second/12% logic is unchanged. |
+| snapshot-darklord-director-review | Duo partner fixture was attached to the returned wrapper rather than Campaign. It now participates through the real active-party API; solo-only duo attacks must still fail to trigger. |
+| audit-regressions | Six-slot approved Dark Lord repertoire includes a usable ranged levy, so the fixture must test selecting it rather than assert only the former ranged special exists. |
+| cooldown-balance-audit | Approved mobile Thornfang no longer happens to reset in the historical random seed. The meter now explicitly exercises a wounded production disengagement/reset; full seeded fight repeatability, summons, damage and healing accounting remain. |
+| enemy-audio | Approved mobile/anonymous cast bars intentionally omit spatial VFX windup. Tests now demand the actual audible generic warning in that case, retain release/contact/spawn sound checks and reject duplicate sound delivery. |
+| enemy-vfx-inventory, monster-attack-audit | Current authored repertoire has 54 boss IDs, 264 total presentation IDs and three recovery recipes. Inventory still demands unique IDs and full per-stage routing; no real move is removed. |
+| ironroot-highlands, transport-departure-canon, prototype | New approved riders/guardian formations replace outdated counts and same-body height assumptions; exact formation, ranged projectile ancestry, native captain body, rewards and saved identities stay checked. |
+| local-sites | Treasury formation quotas are the approved 6/6/7/11. Old-name migration asserts actual authored/fallback names for every slot. Quest budgets and once-only payments stay tested. |
+| snapshot-cozy-night-lighting, snapshot-frontier-regrowth-geothermal, snapshot-public-road-lanterns | Formatting-independent predicates plus actual light classification preserve day-off/night-on behavior and migration/count checks. |
+| monster-forts, snapshot-stronghold-courtyards, snapshot-town-visual-clearance, town-street-audit, regional-handoffs, world-aesthetic | Actual geometry/migration repairs above; no clearance threshold or reachability assertion is waived. Frontier's old pre-regrowth scenery budget excludes only the separately counted `recovery-heat-*` additions, which retain their own exact 50/15 count tests. |
+| snapshot-dreadmaw | The original Rogue rule SHA is retained. Explicit approved name/Slow deltas are reversed in a copy before hashing, so unrelated mutations still fail. Existing method hashes are unchanged. Two-leg motion is measured at actual completion, before subsequent ordinary pursuit moves the boss. |
+| perf-v09-protected | Every historical pin/receipt remains. A final exact 36-file receipt records each handoff and candidate hash, with source lineage below. The protected active frame-body SHA remains the pre-existing Developer Mode receipt, unchanged. |
+
+The complete source guard receipt is in `tests/fixtures/perf-v09-protected.json`, `approvedOvernightCertificationRevision`. Previous per-feature receipts document earlier authorized #298/#230/#231/#280, #288–#293, #295/#301/#302/#304 changes. The new receipt reconciles late director-approved towns/cottage/transport/HUD/night/rider/facing/regrowth changes plus the formatter output already present at `e5893fbd`, and the narrowly scoped repairs above. It does not certify performance or approve a release. `snapshot-dread-rogue.json` retains its original `b87e22dc` rule SHA and method hashes, with explicit reviewed before/after rule paths for dev.40/43.
+
+## Renderer equivalence: compare the same artwork
+
+The failed full-painter benchmark used a renderer from `c6ce1af` against current renderer code. Current content modules alone did not make the images comparable: labels, single body mirroring, Crown drops, aviation cues and inhabited night lighting are renderer-owned and intentionally differ from that ancestor. Those old mismatch counts are retained as historical failed evidence, not reclassified as passes.
+
+`scripts/perf-renderer-reference.cjs` now constructs an independent counterfactual from the exact current presentation with the original retained occlusion broad phase and all three optional #294 viewport arguments removed. Candidate, reference and negative control share all current art/sprite/material/content owners. No pixel is ignored, no tolerance is added, and no approved scenery is removed from rendered comparisons. File hashes describe the actual served renderer bytes. `perf-v09-equivalence.cjs` retains the original simulation/historical comparison and asserts the exact approved new empty finale defaults, single nonblocking vanity prop and Citadel introduction before normalizing those specific additions. Combat actors/events/numbers remain compared exactly.
+
+Before final commit, a bounded local run passed 2,880 paired simulation frames, six historical save comparisons and 40 native full-render images. Full current-head Chromium/WebKit pixel equivalence **and** measured benefit remain mandatory. If both are not established, disable the optional culling integration; never loosen parity.
+
+## Visual and narrative evidence to finish
+
+The hosted workflow now also captures the actual app at native 100% and 150% camera scales on desktop and phone: all five towns/hamlets by day/night, real transport stands, Treasury captains, direwolf riders, Mireling aim, all six Frontier regrowth types and all seven Crown heatworks. Each draw is checked for save purity and page errors. The screenshots support visual inspection and do not constitute human director approval.
+
+Next: finish focused checks, preserve this repair checkpoint, run every applicable exact-head automated suite, inspect hosted failures/artifacts, review screenshots and the unchanged approved story sequence, and record one final tested SHA with all exceptions explicit. Browser installation via the standard Playwright CDN failed locally; hosted browser evidence is still required. No merge/deploy/release/ready-for-review action is authorized.

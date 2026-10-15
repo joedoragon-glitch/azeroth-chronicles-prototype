@@ -759,7 +759,10 @@
           e.crownAncestry = 'wolf';
         }
         if (slot.role) e.forcedRole = slot.role;
-        if (slot.name) e.name = slot.name;
+        e.name =
+          slot.name ||
+          (D.species[region].find((sp) => sp[0] === e.species)?.[1] || e.species) +
+            ' treasury guard';
         e.pack = z.id + '-' + (slot.group || 'guard-' + j);
         this.configureEnemy(e, j);
         e.gold = 0;

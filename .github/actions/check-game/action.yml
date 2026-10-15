@@ -133,6 +133,11 @@ runs:
       continue-on-error: true
       shell: bash
       run: node tests/sprite-showroom-browser.test.cjs
+    - name: Capture native snapshot visual audit
+      id: snapshot_visuals
+      continue-on-error: true
+      shell: bash
+      run: node scripts/snapshot-certification-visuals.cjs
     - name: Enforce every required check before release certification
       if: always()
       shell: bash

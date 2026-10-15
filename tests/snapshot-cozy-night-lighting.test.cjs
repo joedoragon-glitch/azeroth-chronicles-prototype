@@ -44,12 +44,12 @@ assert.doesNotThrow(() => probe(true, false, sources), 'full atmospheric mode pr
 // Source selection stays derived from existing houses, active work and services,
 // and deliberately does not add any flame props or gameplay blockers.
 const renderer = fs.readFileSync(path.join(__dirname, '../src/prototype/renderer.js'), 'utf8');
-assert(renderer.includes("const nightSources = !nightNow ? [] : ["),
+assert(/const nightSources = !nightNow\s*\? \[\]\s*:\s*\[/.test(renderer),
   'daytime avoids unnecessary nighttime lighting scans');
 for (const kind of ["'window'", "'fire'", "'work-fire'", "'lantern'"])
   assert(renderer.includes(kind), 'source classification supports ' + kind);
 for (const structure of ['cookfire', 'warm-brazier', 'ember-pit', 'forge', 'field-kitchen'])
-  assert(renderer.includes(structure), 'working ' + structure + ' produces light');
+  assert(['fire', 'work-fire'].includes(require('../src/prototype/renderer.js').nightLightKind(structure)), 'working ' + structure + ' produces light');
 const game = new Campaign();
 const before = JSON.stringify(game.snapshot());
 game.s.clock = 480;

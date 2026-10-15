@@ -568,7 +568,8 @@ for (const action of ['melee', 'circle']) {
     c.hero.level = e.level + 1;
     c.s.time = 30;
     assert(c.tacticalRogueMove(e, c.hero));
-    const id = V.describe(e, e.telegraph).id;
+    const cast = e.telegraph;
+    const id = V.describe(e, cast).id;
     ids.add(id);
     c.resolveAttack(e);
     if (e.family === 'abyss' && e.motion) {
@@ -577,9 +578,17 @@ for (const action of ['melee', 'circle']) {
       assert.equal(e.motion, null, 'High Yo-Yo must resolve before checking its impact');
     }
     const events = c.effects.filter((f) => f.type === 'enemyVfx');
-    assert(
-      events.some((f) => f.stage === 'windup' && f.dangerous && P.route(f).key === 'enemyWindup'),
-    );
+    if (cast.mobileRogueCast || cast.anonymousCast) {
+      assert(!events.some((f) => f.stage === 'windup'), 'cast bars do not emit a spatial windup');
+      assert(
+        c.effects.some((f) => f.type === 'warning'),
+        'mobile casts retain the existing audible warning',
+      );
+    } else {
+      assert(
+        events.some((f) => f.stage === 'windup' && f.dangerous && P.route(f).key === 'enemyWindup'),
+      );
+    }
     assert(events.some((f) => f.stage === 'release' && P.route(f).key === 'enemyRelease'));
     assert(
       events.some((f) => f.stage === 'impact' && f.contact && P.route(f).key === 'enemyImpact'),
@@ -648,6 +657,16 @@ for (const actor of [
     const anonymous = listener();
     anonymous.a.effect(warning);
     assert(anonymous.calls.length > 0, 'anonymous preparation retains real audible anticipation');
+  } else if (move.mobileRogueCast) {
+    assert.equal(windup, undefined, 'mobile cast bars have no spatial windup');
+    const warning = c.effects.find((f) => f.type === 'warning');
+    assert(warning && !warning.presentationHandled, 'cast-bar warning remains audible');
+    const mobile = listener();
+    mobile.a.effect(warning);
+    assert(
+      mobile.calls.some((x) => x[0] === 'duck'),
+      'real warning reaches audio',
+    );
   } else {
     assert(windup.dangerous);
     assert.equal(P.route(windup).key, 'enemyWindup');

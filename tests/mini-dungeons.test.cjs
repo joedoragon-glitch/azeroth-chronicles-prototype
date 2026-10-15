@@ -1,4 +1,5 @@
 'use strict';
+const claimThrone = require('./helpers/claim-throne.cjs');
 const assert=require('node:assert/strict'),C=require('../src/prototype/engine');
 const fresh=()=>new C('normal','paladin',()=>.9),kill=(c,e,hero=false)=>{e.hp=0;e.heroParticipated=hero;c.kill(e);};
 let passed=0;function test(name,fn){try{fn();passed++;console.log('PASS '+name);}catch(e){process.exitCode=1;console.error('FAIL '+name+' '+e.stack);}}
@@ -49,7 +50,7 @@ test('Side interiors replace failed resource-mini locations without becoming bos
 });
 
 test('Peace leaves tribute recoverable without paying an unearned field-compound quest',()=>{
- const c=fresh();assert(c.s.quests['quest-0'].active);c.s.keys.thorn=true;c.rescue('thorn');c.trainExpedition('thorn');for(const b of C.data.bosses)c.victory(b.id,'normal');for(const id of ['darklord',...C.dungeonIds])c.victory(id,'true');c.checkEnding();assert(c.s.quests['quest-0'].closedByPeace);c.checkQuests();assert(!c.claim('quest-0'));const node=c.visibleResourceNodes()[0];assert(node&&c.gather(node.id));assert(!c.traps().length);
+ const c=fresh();assert(c.s.quests['quest-0'].active);c.s.keys.thorn=true;c.rescue('thorn');c.trainExpedition('thorn');for(const b of C.data.bosses)c.victory(b.id,'normal');for(const id of ['darklord',...C.dungeonIds])c.victory(id,'true');claimThrone(c);c.checkEnding();assert(c.s.quests['quest-0'].closedByPeace);c.checkQuests();assert(!c.claim('quest-0'));const node=c.visibleResourceNodes()[0];assert(node&&c.gather(node.id));assert(!c.traps().length);
 });
 
 test('Malformed field-compound saves are rejected',()=>{for(const mutate of [s=>s.zones.vale.minis[0].id='bad',s=>s.zones.vale.minis[0].cleared='yes',s=>s.zones.vale.minis[0].trapPosts=[{x:NaN,y:1,kind:'spikes',index:100}]]){const s=fresh().snapshot();mutate(s);assert.throws(()=>C.restore(s));}});

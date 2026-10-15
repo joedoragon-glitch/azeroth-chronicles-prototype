@@ -1,4 +1,5 @@
 'use strict';
+const claimThrone = require('./helpers/claim-throne.cjs');
 const assert = require('node:assert/strict'),
   C = require('../src/prototype/engine');
 const size = 1400,
@@ -147,7 +148,7 @@ console.log(
   const c = new C('normal', 'mage', () => 0.6);
   for (const b of C.data.bosses) c.victory(b.id, 'normal');
   for (const id of ['darklord', ...C.dungeonIds]) c.victory(id, 'true');
-  c.checkEnding();
+  claimThrone(c);c.checkEnding();
   assert(c.peace);
   c.enter('supply-crown');
   const raw = c.snapshot();

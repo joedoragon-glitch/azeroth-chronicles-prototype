@@ -4,11 +4,18 @@ const C = require('../src/prototype/engine.js');
 const rogue = require('./fixtures/snapshot-dread-rogue.json'),
   crypto = require('node:crypto');
 const sha = (s) => crypto.createHash('sha256').update(s).digest('hex');
-assert.equal(
-  sha(JSON.stringify(C.rules.tacticalFoundation)),
-  rogue.ruleSha256,
-  'Rogue rule table remains exact',
-);
+// Reconstruct the protected original with only the documented director changes
+// reversed. Any other rule mutation still fails the original SHA assertion.
+const protectedRules = JSON.parse(JSON.stringify(C.rules.tacticalFoundation));
+for (const change of rogue.approvedRuleChanges?.changes || []) {
+  let owner = protectedRules;
+  for (const key of change.path.slice(0, -1)) owner = owner[key];
+  const key = change.path.at(-1);
+  assert.deepEqual(owner[key], change.after, change.path.join('.'));
+  owner[key] = change.before;
+}
+assert.equal(sha(JSON.stringify(protectedRules)), rogue.ruleSha256,
+  'Rogue rules remain original apart from the documented approved deltas');
 for (const [method, expected] of Object.entries(rogue.methods))
   assert.equal(
     sha(C.prototype[method].toString()),
@@ -68,7 +75,8 @@ for (const mode of ['normal', 'nightmare'])
         return event.call(this, type, data);
       };
       let legOne = null,
-        secondWarn = null;
+        secondWarn = null,
+        secondEnd = null;
       const before = { x: e.x, y: e.y };
       for (let frame = 0; frame < 260; frame++) {
         if (e.telegraph?.dreadLeg === 2) {
@@ -77,7 +85,9 @@ for (const mode of ['normal', 'nightmare'])
         }
         const old = { x: e.x, y: e.y };
         e.cd = 1e6;
+        const secondMotion = e.motion?.dreadLeg === 2;
         advance(c);
+        if (secondMotion && !e.motion) secondEnd = { x: e.x, y: e.y };
         assert(!c.blocked(e.x, e.y, c.zoneId, 15), 'captain stays on authored floor');
         assert(c.clearSegment(old, e, 15), 'each motion step remains collision safe');
       }
@@ -93,7 +103,7 @@ for (const mode of ['normal', 'nightmare'])
         assert.equal(secondWarn.fromX, legOne.x);
         assert.equal(secondWarn.fromY, legOne.y);
         const a = { x: legOne.x - before.x, y: legOne.y - before.y },
-          b = { x: e.x - legOne.x, y: e.y - legOne.y };
+          b = { x: secondEnd.x - legOne.x, y: secondEnd.y - legOne.y };
         assert(Math.abs(a.x * b.x + a.y * b.y) < 1e-5, 'two real perpendicular motion legs');
         assert(events.some((x) => x.type === 'warning' && x.index === 1));
       }

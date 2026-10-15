@@ -1161,11 +1161,11 @@
   ],
   "sources": {
     "src/prototype/visuals.js": "054b7ef99ea50bc185e42d25a956101ff0d1e64ee7d436c4cafa864c0d54d94a",
-    "src/prototype/world.js": "2478e241979bcdc9ba13a6a27147eb2fe72fd107d001efb3c34401a47ebd960d",
+    "src/prototype/world.js": "a9c6880898cb8555657750593271e9b4a65eec99a96a2201ac7051357b4e5581",
     "src/prototype/rules.js": "4e23cecf3f7b9d54c613d66fda4226b693a3bc6c8f957af99f98d625d71facca",
     "src/prototype/data.js": "5b3b745d1d6e7c21accf6899f7597d6394587704e58f884fc10f0047fe21eb19",
     "src/prototype/sprites.js": "9c50bc13067c29c5c0eb7833508d7cc73db0734c73653b7f8966a714ab571c79",
-    "src/prototype/renderer.js": "9fc80c07473d9131f007e4e3b79faa1ee3f397f77f586b6723ed0c7b5a0f201d"
+    "src/prototype/renderer.js": "61a82356c98dc00da85fbdbf222ee983a4e084c66736cd94019d4bfe522dc89d"
   },
   "limits": "Deterministic normal/Nightmare world samples support source-case classification; every actual art job still requires its exact current state/reference. Future summon/night/seed additions are not inferred from these samples."
 }

@@ -81,6 +81,6 @@ for (const [, , structure] of [...frontier, ...heat]) {
 const renderer = fs.readFileSync(path.join(__dirname,
   '../src/prototype/renderer.js'), 'utf8');
 assert(renderer.includes('thermal.test(structure)') &&
-  renderer.includes('const nightSources = !nightNow ? []'),
+  /const nightSources = !nightNow\s*\? \[\]/.test(renderer),
   'heatworks share bounded night-only work lighting without daytime glows');
 console.log('PASS regrowth (50), Crown thermal works (15), safe routes, artwork, old saves and night-only lighting');

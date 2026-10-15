@@ -10,6 +10,7 @@ const fs = require('node:fs'),
   pw = require(process.env.PLAYWRIGHT_MODULE || 'playwright'),
   sharp = require('sharp');
 const { approvedScenery } = require('./snapshot-scenery-comparison.cjs');
+const reference = require('./perf-renderer-reference.cjs');
 const candidateRoot = path.resolve(
     process.env.PERF_WS2_CANDIDATE_ROOT || path.join(__dirname, '..'),
   ),
@@ -25,6 +26,7 @@ assert(
 // Approved content must match on both sides; retain original renderer/cache
 // implementations for performance measurement. No region or pixel exclusion.
 const sharedContent = new Set([
+  ...require('./perf-renderer-graph.cjs').files.filter((f) => f !== 'src/prototype/renderer.js'),
   ...require('./perf-renderer-graph.cjs').campaign,
   ...[
     'engine',
@@ -81,6 +83,10 @@ const server = http.createServer((req, res) => {
       '.webp': 'image/webp',
     }[path.extname(file)] || 'application/octet-stream',
   );
+  if (which !== 'candidate' && name === 'src/prototype/renderer.js') {
+    res.end(reference(candidateRoot));
+    return;
+  }
   fs.createReadStream(file).pipe(res);
 });
 function prepare({ zone, width, height, approvedScenery }) {
@@ -112,33 +118,6 @@ function prepare({ zone, width, height, approvedScenery }) {
       e.aggro = true;
       game.zone().enemies.push(e);
     }
-  }
-  // This renderer benchmark compares the same content before/after rendering
-  // optimizations. Remove only the twelve explicitly approved snapshot props;
-  // their actual drawings are verified by the combined regional browser probe.
-  // Keep exact pixels/state in every region, not a whole-region exclusion.
-  for (const region of ['vale', 'march', 'frontier']) {
-    const z = game.s.zones[region];
-    if (!z) continue;
-    const seen = new Set();
-    z.props = z.props.filter((p) => {
-      const added =
-        p.decorative === true &&
-        p.r === 0 &&
-        approvedScenery.some(
-          ([zone, id, structure, district, role]) =>
-            zone === region &&
-            p.id === id &&
-            p.structure === structure &&
-            p.regionalDistrict === district &&
-            p.sceneRole === role,
-        );
-      if (!added) return true;
-      if (seen.has(p.id))
-        throw new Error('Duplicate approved scenery identity: ' + region + '/' + p.id);
-      seen.add(p.id);
-      return false;
-    });
   }
   const canvas = document.createElement('canvas');
   canvas.width = width;
@@ -247,7 +226,7 @@ function summarize(samples) {
       });
     }
     const report = {
-      baselineCommit: 'c6ce1af236bddd7ca881903499c4cf5de175f9e2',
+      baselineCommit: 'current content; c6ce1af original occlusion + #294 disabled',
       baselineRoot,
       sharedContent: [...sharedContent],
       candidateRoot,
@@ -261,7 +240,7 @@ function summarize(samples) {
       presentationTimeMs: 16000,
       baselineControlRoot: baselineRoot,
       scope:
-        'Paired warmed frozen full renderer.draw plus full Canvas getImageData readback at 150% camera; no app/simulation/audio or physical-device FPS claim.',
+        'Current art on both sides; original occlusion and no viewport culling vs integrated candidate. Paired warmed frozen full renderer.draw plus full Canvas getImageData readback at 150% camera; no app/simulation/audio or physical-device FPS claim.',
       sourceHashes: Object.fromEntries(
         Object.entries(roots).map(([which, root]) => [
           which,
@@ -269,12 +248,14 @@ function summarize(samples) {
             ['renderer', 'visuals', 'ground-cache', 'sprites', 'materials'].map((name) => [
               name,
               hash(
-                fs.readFileSync(
-                  path.join(
-                    sharedContent.has('src/prototype/' + name + '.js') ? candidateRoot : root,
-                    'src/prototype/' + name + '.js',
-                  ),
-                ),
+                name === 'renderer' && which !== 'candidate'
+                  ? reference(candidateRoot)
+                  : fs.readFileSync(
+                      path.join(
+                        sharedContent.has('src/prototype/' + name + '.js') ? candidateRoot : root,
+                        'src/prototype/' + name + '.js',
+                      ),
+                    ),
               ),
             ]),
           ),

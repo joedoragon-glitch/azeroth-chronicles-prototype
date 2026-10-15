@@ -115,11 +115,15 @@ test('Mine production, historic cuts and repair forge have trap-free connected r
     traps = c.traps();
   assert.equal(z.dungeonVersion, 3);
   assert.equal(z.enemies.filter((e) => e.guard).length, 18);
-  assert.equal(z.enemies.filter((e) => e.guard && e.ranged).length, 6);
+  assert.equal(z.enemies.filter((e) => e.guard && e.ranged).length, 9);
   assert(
     z.enemies
       .filter((e) => e.guard && e.ranged)
-      .every((e) => e.species === 'ogre' && e.projectileStyle === 'stone'),
+      .every(
+        (e) =>
+          (e.species === 'ogre' && e.projectileStyle === 'stone') ||
+          (e.mountedCrownRider && e.projectileStyle === 'arrow'),
+      ),
     'ranged guardians retain their stone-throwing identity',
   );
   assert(z.enemies.filter((e) => e.guard).every((e) => e.gold === 0 && e.xp === 0));

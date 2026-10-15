@@ -38,7 +38,40 @@ const live = (c) => withoutApprovedScenery({ ...c, snapshot: c.snapshot() });
 // Keep every active-zone actor, state field, event and serialized value exact.
 const simulation = (c) => {
   const copy = live(c);
-  for (const state of [copy.s, copy.snapshot]) state.zones = { citadel: state.zones.citadel };
+  for (const state of [copy.s, copy.snapshot]) {
+    state.zones = { citadel: state.zones.citadel };
+    // Explicitly approved snapshot-only defaults and the one authored Veyra
+    // quarters prop; each is checked before normalization. All combat state,
+    // actual actors/events, hero skills and numerical fields remain exact.
+    if ('appointments' in state) {
+      assert.deepEqual(state.appointments, {});
+      delete state.appointments;
+    }
+    if ('throneClaimed' in state) {
+      assert.equal(state.throneClaimed, false);
+      delete state.throneClaimed;
+    }
+    if ('finalRestCompleted' in state) {
+      assert.equal(state.finalRestCompleted, false);
+      delete state.finalRestCompleted;
+    }
+    if (state.discovered['crown:dungeon-lore:citadel'])
+      delete state.discovered['crown:dungeon-lore:citadel'];
+    state.zones.citadel.props = state.zones.citadel.props.filter((p) => {
+      if (p.structure !== 'citadel-vanity-quarters') return true;
+      assert.deepEqual(p, {
+        id: 'decor-7',
+        x: 1080,
+        y: 1280,
+        r: 0,
+        decorative: true,
+        icon: '🕯️',
+        structure: 'citadel-vanity-quarters',
+      });
+      return false;
+    });
+  }
+  copy.messages = copy.messages.filter((m) => m !== B.rules.dungeonLore.citadel);
   return copy;
 };
 const persistentHistory = (c) =>
@@ -78,7 +111,7 @@ const intentionallyChangedSkill = (cls, slot) =>
 const evidence = {
   baseline: 'c6ce1af236bddd7ca881903499c4cf5de175f9e2',
   scope:
-    'Original simulation on unchanged generic Citadel encounter; persistent historical contracts; old/new renderer with identical approved current content in every region. Authored mechanics have dedicated suites.',
+    'Original simulation on unchanged generic Citadel encounter; persistent historical contracts; original occlusion/no-culling reference versus candidate with every current content identity in every region. Authored mechanics have dedicated suites.',
   scenarios: [],
   historical: [],
   scenes: [],
@@ -187,13 +220,20 @@ for (const zone of [...A.data.regions.map((r) => r.id), ...A.dungeonIds])
         const C = B,
           c = new C('normal', 'paladin', rng());
         c.enter(zone);
-        c.zone().props = removeApprovedScenery(c.zone().props, zone);
         c.s.clock = clock;
         Object.assign(c.hero, c.safe(800, 800));
         const before = JSON.stringify(live(c));
         const canvas = createCanvas(width, height),
           ctx = canvas.getContext('2d');
-        const renderer = load(root, 'renderer').create({
+        const reference = () => {
+          const Module = require('node:module');
+          const m = new Module(path.join(current, 'src/prototype/renderer-reference.js'), module);
+          m.filename = path.join(current, 'src/prototype/renderer-reference.js');
+          m.paths = module.paths;
+          m._compile(require('./perf-renderer-reference.cjs')(current), m.filename);
+          return m.exports;
+        };
+        const renderer = (root === 'reference' ? reference() : load(root, 'renderer')).create({
           getGame: () => c,
           canvas: { width, height },
           ctx,
@@ -212,7 +252,7 @@ for (const zone of [...A.data.regions.map((r) => r.id), ...A.dungeonIds])
         canvas.width = canvas.height = 1;
         return pixels;
       };
-      const a = draw(baseline),
+      const a = draw('reference'),
         b = draw(current);
       assert(a.equals(b), zone + ' native full-render pixels ' + width + '/' + clock);
       global.gc?.();

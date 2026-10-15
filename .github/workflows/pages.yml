@@ -170,6 +170,11 @@ jobs:
           node tests/perf-ws1-roads-browser.test.cjs
           node tests/perf-ws2-occlusion-browser.test.cjs
           PERF_WS2_BASELINE_ROOT="$RUNNER_TEMP/perf-v09-baseline" node scripts/perf-ws2-renderer-performance.cjs test-results/perf/combined-webkit.json
+      - name: Capture native snapshot phone and desktop visual audit
+        if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
+        env:
+          SNAPSHOT_VISUAL_ENGINE: webkit
+        run: node scripts/snapshot-certification-visuals.cjs
       - name: Record completed full WebKit validation
         id: full
         if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'

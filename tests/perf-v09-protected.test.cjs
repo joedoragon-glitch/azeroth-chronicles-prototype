@@ -5,6 +5,20 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const manifest = require('./fixtures/perf-v09-protected.json');
 const revision = manifest.renderingRevision;
+const certificationRevision = manifest.approvedOvernightCertificationRevision;
+if (certificationRevision) {
+  assert.match(certificationRevision.source, /PR #300.*e5893fbd45cf/);
+  const guarded = new Set(Object.keys(manifest.files));
+  for (const [name, value] of Object.entries(manifest))
+    if (name !== 'approvedOvernightCertificationRevision' && value?.files)
+      for (const file of Object.keys(value.files)) guarded.add(file);
+  assert.deepEqual(Object.keys(certificationRevision.files).sort(), [...guarded].sort());
+  for (const [file, receipt] of Object.entries(certificationRevision.provenance)) {
+    assert.match(receipt.handoffSha256, /^[a-f0-9]{64}$/);
+    assert.equal(receipt.candidateSha256, certificationRevision.files[file]);
+    assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), receipt.candidateSha256, file + ' exact final source receipt');
+  }
+}
 assert.deepEqual(Object.keys(revision.files).sort(), [
   'src/prototype/app.js',
   'src/prototype/runtime.js',
@@ -134,8 +148,8 @@ if (expansionRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
-      chargedRetargetRevision?.files[file] ||
-    combinedRevision?.files[file] ||
+      certificationRevision?.files[file] || chargedRetargetRevision?.files[file] ||
+    certificationRevision?.files[file] || combinedRevision?.files[file] ||
       veyraRevision?.files[file] || expected,
       file,
     );
@@ -157,7 +171,7 @@ if (agricultureRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
-      combinedRevision?.files[file] ||
+      certificationRevision?.files[file] || combinedRevision?.files[file] ||
       veyraRevision?.files[file] || expansionRevision?.files[file] || expected,
       file,
     );
@@ -182,7 +196,7 @@ if (veraRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
-      combinedRevision?.files[file] ||
+      certificationRevision?.files[file] || combinedRevision?.files[file] ||
       veyraRevision?.files[file] ||
         expansionRevision?.files[file] ||
         agricultureRevision?.files[file] ||
@@ -202,7 +216,7 @@ if (ministryAV) {
       .createHash('sha256')
       .update(fs.readFileSync(path.resolve(__dirname, '..', 'src/prototype/enemy-vfx-art.js')))
       .digest('hex'),
-    veyraRevision?.files['src/prototype/enemy-vfx-art.js'] ||
+    certificationRevision?.files['src/prototype/enemy-vfx-art.js'] || veyraRevision?.files['src/prototype/enemy-vfx-art.js'] ||
       agricultureRevision?.files['src/prototype/enemy-vfx-art.js'] ||
       ministryAV.files['src/prototype/enemy-vfx-art.js'],
   );
@@ -229,7 +243,7 @@ if (ministryRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
-      combinedRevision?.files[file] ||
+      certificationRevision?.files[file] || combinedRevision?.files[file] ||
       veyraRevision?.files[file] ||
         expansionRevision?.files[file] ||
         agricultureRevision?.files[file] ||
@@ -253,7 +267,7 @@ if (institutionRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
-      combinedRevision?.files[file] ||
+      certificationRevision?.files[file] || combinedRevision?.files[file] ||
       veyraRevision?.files[file] ||
         expansionRevision?.files[file] ||
         agricultureRevision?.files[file] ||
@@ -295,9 +309,9 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    combinedRevision?.files[file] ||
+    certificationRevision?.files[file] || combinedRevision?.files[file] ||
     joystickSnapshotReceipt?.files[file] ||
-      combinedRevision?.files[file] ||
+      certificationRevision?.files[file] || combinedRevision?.files[file] ||
       veyraRevision?.files[file] ||
       expansionRevision?.files[file] ||
       agricultureRevision?.files[file] ||

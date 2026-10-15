@@ -15,7 +15,7 @@ for (const region of Campaign.data.regions) {
   const hamlet = { x: Campaign.data.minors[i][0], y: Campaign.data.minors[i][1] };
   assert.equal(zone.settlementLayoutVersion, 4, region.id + ' new parcel plan');
   assert.equal(zone.roadVersion, 16, region.id + ' connected roads');
-  assert.equal(zone.streetClearanceVersion, 2, region.id + ' full street audit');
+  assert.equal(zone.streetClearanceVersion, 3, region.id + ' full street audit');
   assert(zone.roads.length >= 4, region.id + ' real road links');
 
   const junctions = [town];
@@ -113,7 +113,7 @@ for (const region of Campaign.data.regions) {
   assert.equal(restored.hero.gold, originalGold, region.id + ' save currency');
   assert.equal(restoredZone.roadVersion, 16);
   assert.equal(restoredZone.settlementLayoutVersion, 4);
-  assert.equal(restoredZone.streetClearanceVersion, 2);
+  assert.equal(restoredZone.streetClearanceVersion, 3);
   const oldCart = restoredZone.props.find((p) => p.id === 'historical-cart-' + region.id);
   assert(oldCart, region.id + ' old scenery was preserved');
   assert(restored.distanceToRoad(restoredZone, oldCart) >= restored.roadSetback(oldCart),

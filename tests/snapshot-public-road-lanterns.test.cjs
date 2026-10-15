@@ -65,8 +65,8 @@ Visuals.draw(ctx, { renderKind: 'prop', structure: 'roadside-lantern',
 assert(ctx.fills >= 5 && ctx.strokes >= 5,
   'street fixture has an actual detailed silhouette');
 const renderer = fs.readFileSync(path.join(__dirname, '../src/prototype/renderer.js'), 'utf8');
-assert(renderer.includes("const nightSources = !nightNow ? []"),
+assert(/const nightSources = !nightNow\s*\? \[\]/.test(renderer),
   'road lamps only illuminate nighttime');
-assert(renderer.includes("lanterns.test(structure) ? 'lantern'"),
+assert(/lanterns\.test\(structure\)\s*\? 'lantern'/.test(renderer),
   'street lamp structure is captured by the existing night light owner');
 console.log('PASS 21 sparse night-only civic road lanterns, road clearance, saves and appearance');

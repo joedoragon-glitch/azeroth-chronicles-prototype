@@ -107,7 +107,7 @@ for (const partySize of [1, 2, 3, 4]) {
 
 // Four strikes from the same member must not satisfy a multi-member levy.
 const duo = encounter('normal', 'paladin');
-duo.activeLivingParty = () => [{ id: 'partner', hp: 100, x: 1190, y: 1110 }];
+duo.c.activeLivingParty = () => [{ id: 'partner', hp: 100, x: 1190, y: 1110 }];
 duo.lord.telegraph = duo.c.buildBossAttack(duo.lord, 5, duo.c.hero).first;
 duo.c.resolveAttack(duo.lord);
 for (let i = 0; i < 4; i++) duo.c.damage(duo.lord, 30, 'hero');
