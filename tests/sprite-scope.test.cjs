@@ -61,16 +61,19 @@ assert.deepEqual(
   ['enemy:mireling:hybrid-ranged-guard'],
   'the canonical ranged Mireling guard body covers both ranged AI variants',
 );
-assert.equal(pureRangedMirelingGuard.hybrid, false, 'sprite selection must never change combat roles');
+assert.equal(
+  pureRangedMirelingGuard.hybrid,
+  false,
+  'sprite selection must never change combat roles',
+);
 assert.deepEqual(
   Sprites.candidateKeys({ ...pureRangedMirelingGuard, guard: false }),
   ['enemy:mireling:ranged'],
   'ordinary ranged Mirelings retain their own artwork identity',
 );
-assert.deepEqual(
-  Sprites.candidateKeys({ ...pureRangedMirelingGuard, hybrid: true }),
-  ['enemy:mireling:hybrid-ranged-guard'],
-);
+assert.deepEqual(Sprites.candidateKeys({ ...pureRangedMirelingGuard, hybrid: true }), [
+  'enemy:mireling:hybrid-ranged-guard',
+]);
 console.log(
   'PASS current renderer/map coverage, exact guard/captain loadouts and future scope drift rejection',
 );
