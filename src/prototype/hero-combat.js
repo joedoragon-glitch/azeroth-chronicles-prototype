@@ -1057,7 +1057,7 @@
                 combo,
                 slow:
                   this.hero.class === 'mage' && [2, 6].includes(slot)
-                    ? (slot === 2 ? 4 + steps * 0.25 : 2)
+                    ? (slot === 2 ? 2 + steps * 0.05 : 2)
                     : this.hero.class === 'ranger' && slot === 2
                       ? R.heroTactics.ranger.pin.slow + steps * R.heroTactics.ranger.pin.slowStep
                       : 0,
