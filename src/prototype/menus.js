@@ -1083,6 +1083,8 @@
               ]
             : []),
           exp,
+          action('Hero skills', () => skillBook(returnHere),
+            'Tap / charged effects and cooldowns'),
           ...(tonic ? [tonic] : []),
           ...respawnActions,
           action(
@@ -1164,6 +1166,8 @@
             : 'Local death loss drops to 5%, including regional dungeons.'),
         [
           exp,
+          action('Hero skills', () => skillBook(returnHere),
+            'Tap / charged effects and cooldowns'),
           ...(tonic ? [tonic] : []),
           ...respawnActions,
           action(
