@@ -2414,6 +2414,10 @@
       for (const u of [this.hero, ...this.s.party]) {
         delete u.wardUntil;
         delete u.wardReduction;
+        delete u.rangerRallyUntil;
+        delete u.rangerRallyZone;
+        delete u.rangerRallyMovement;
+        delete u.rangerRallyAttack;
       }
       for (const u of this.s.party) u.supportEffects = [];
       const goldLost = this.applyDeathPenalty();
