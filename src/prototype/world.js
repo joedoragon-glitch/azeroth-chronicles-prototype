@@ -1890,7 +1890,7 @@
         return cfg.center ? { x: cfg.center[0], y: cfg.center[1] } : null;
       }
       creatureStrongholds(z) {
-        const strongholdVersion = { crown: 8, highlands: 7, frontier: 7 }[z.id] || 6;
+        const strongholdVersion = { crown: 9, highlands: 8, frontier: 8 }[z.id] || 7;
         if (
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
@@ -1940,6 +1940,7 @@
                 decorative: true,
                 structure,
                 stronghold: cfg.id,
+                strongholdDefenseStyle: cfg.defenseStyle || 'ruin',
               });
               placedStructures.add(structure);
               livedInCount++;
@@ -1982,6 +1983,7 @@
                   decorative: true,
                   structure,
                   stronghold: cfg.id,
+                  strongholdDefenseStyle: cfg.defenseStyle || 'ruin',
                 });
                 placedStructures.add(structure);
                 livedInCount++;
@@ -2014,6 +2016,8 @@
                 r: 26,
                 structure: cfg.wall || 'stockade',
                 stronghold: cfg.id,
+                strongholdDefenseStyle: cfg.defenseStyle || 'ruin',
+                fortCorner: (cfg.defenseStyle === 'fort' && [0, 3, 5, 8].includes(j)),
               });
               wallCount++;
             }
@@ -2044,9 +2048,51 @@
                   r: 26,
                   structure: cfg.wall || 'stockade',
                   stronghold: cfg.id,
+                  strongholdDefenseStyle: cfg.defenseStyle || 'ruin',
+                  fortCorner: cfg.defenseStyle === 'fort' && (j % 2 === 0),
                 });
                 if (++wallCount >= 3) break;
               }
+            }
+            // Existing camps sometimes squeeze six furnishings into a tiny
+            // cluster. Redistribute only their nonblocking domestic scenery.
+            // Existing site, enemy homes, boss patrols and encounter geometry
+            // stay where they are; tight/unsafe parcels are left untouched.
+            const living = z.props
+              .filter((p) => p.stronghold === cfg.id && p.decorative && !p.roadTrace)
+              .sort((a, b) => String(a.id).localeCompare(String(b.id)));
+            const resolved = [];
+            for (const item of living) {
+              const clear = (p) =>
+                dist(p, center) <= 151 &&
+                !this.blocked(p.x, p.y, z.id, 10, true) &&
+                !roadNear(p, 70) &&
+                !z.npcs.some((n) => dist(n, p) < 72) &&
+                !z.nodes.some((n) => n.amount > 0 && dist(n, p) < 65) &&
+                !z.props.some((wall) => wall.stronghold === cfg.id &&
+                  wall.r > 0 && dist(wall, p) < wall.r + 31) &&
+                !resolved.some((other) => dist(other, p) < 88);
+              if (!clear(item)) {
+                const old = { x: item.x, y: item.y };
+                let destination = null;
+                for (const radius of [95, 125, 148, 75, 45, 15]) {
+                  for (let j = 0; j < 24; j++) {
+                    const angle = j * Math.PI / 12;
+                    const p = {
+                      x: center.x + Math.cos(angle) * radius,
+                      y: center.y + Math.sin(angle) * radius,
+                    };
+                    if (clear(p)) {
+                      destination = p;
+                      break;
+                    }
+                  }
+                  if (destination) break;
+                }
+                if (destination) Object.assign(item, destination);
+                else Object.assign(item, old);
+              }
+              resolved.push(item);
             }
             if (cfg.night) continue;
             const candidates = z.enemies
