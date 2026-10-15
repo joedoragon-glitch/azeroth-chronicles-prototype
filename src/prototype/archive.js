@@ -64,11 +64,29 @@
           p.darklord.cooldown + 's.',
       },
       captainPassives = {
-        'supply-vale': 'Prolonged Exposure',
-        'supply-march': 'Strain Hardening',
-        'supply-highlands': 'Hazard Pay',
-        'frontier-overseer': 'Escalating Enforcement',
-        'supply-crown': 'Broodward',
+        'supply-vale': 'Prolonged Exposure: regular Slow +' +
+          pc(g.prolongedExposure.normal - 1) + ', phase +' +
+          pc(g.prolongedExposure.phase - 1) + '.',
+        'supply-march': 'Strain Hardening: ' + pc(m.strainHardening.perHit) +
+          ' mitigation per damaging hit, up to ' +
+          pc(m.strainHardening.perHit * m.strainHardening.maxStacks) +
+          ', refreshed for ' + m.strainHardening.duration + 's.',
+        'supply-highlands': 'Hazard Pay: ' +
+          pc(p.captains['supply-highlands'].baseline) +
+          ' base protection plus ' + pc(p.captains['supply-highlands'].selfReduction) +
+          ' with living nearby Treasury guards; guards deal +' +
+          pc(p.captains['supply-highlands'].guardDamage) + '.',
+        'frontier-overseer': 'Escalating Enforcement: ' +
+          pc(p.captains['frontier-overseer'].perHitReduction) +
+          ' mitigation per real hit, max ' +
+          pc(p.captains['frontier-overseer'].perHitReduction *
+            p.captains['frontier-overseer'].maxStacks) +
+          '; full stacks deal +' +
+          pc(p.captains['frontier-overseer'].maxStackDamage) + '.',
+        'supply-crown': 'Broodward: ' +
+          pc(R.roomCaptains['supply-crown'].summon.guardPerSummon) +
+          ' protection per living broodling, max ' +
+          pc(R.roomCaptains['supply-crown'].summon.guardCap) + '.',
       };
     shelves.push({
       title: 'Battle and protection',
