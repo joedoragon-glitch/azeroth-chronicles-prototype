@@ -128,6 +128,11 @@
           'strainHardeningUntil',
           'emergencyStabilizationUsed',
           'emergencyStabilizationUntil',
+          'tauntUntil',
+          'weakenUntil',
+          'weakenFraction',
+          'fractureUntil',
+          'fractureFraction',
         ])
           delete e[key];
         if (e.quotaOvertime !== undefined) e.quotaOvertime = 0;
