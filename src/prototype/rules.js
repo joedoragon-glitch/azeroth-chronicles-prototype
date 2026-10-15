@@ -1431,20 +1431,229 @@
       [1190, 1170],
     ],
   };
+  // Preserve the four original Treasury slots (including the captain) in every
+  // historical save; new non-reward guardians append after slot 3.
+  // Crown direwolf riders maintain mixed human-and-wolf posts and tack stores.
   const treasuryGuardFormations = {
-    'supply-highlands': [
-      { x: 300, y: 330, role: 'melee', group: 'entry', name: 'Wolf household guardian' },
-      { x: 530, y: 360, role: 'melee', group: 'study', name: 'Wolf household guardian' },
-      { x: 590, y: 655, role: 'melee', group: 'reserve', name: 'Wolf household guardian' },
-      { x: 745, y: 590, captain: true, group: 'household', name: 'Crag Tyrant' },
-    ],
-    'supply-crown': [
-      { x: 330, y: 260, role: 'melee', group: 'roost', name: 'Ash beast treasury guardian' },
-      { x: 865, y: 390, role: 'ranged', group: 'hoard', name: 'Ash beast cinder guardian' },
-      { x: 300, y: 520, role: 'melee', group: 'ash-den', name: 'Ash beast treasury guardian' },
-      { x: 985, y: 980, captain: true, group: 'inner-vault', name: 'Dreadmaw' },
-    ],
-  };
+  "supply-vale": [
+    {
+      "x": 320,
+      "y": 340,
+      "role": "melee",
+      "group": "entry"
+    },
+    {
+      "x": 530,
+      "y": 360,
+      "role": "melee",
+      "group": "stores"
+    },
+    {
+      "x": 590,
+      "y": 655,
+      "role": "melee",
+      "group": "reserve"
+    },
+    {
+      "x": 745,
+      "y": 590,
+      "group": "command",
+      "name": "Thornfang captain",
+      "captain": true
+    },
+    {
+      "x": 305,
+      "y": 625,
+      "role": "ranged",
+      "group": "entry",
+      "name": "Greenwood lookout guardian"
+    },
+    {
+      "x": 675,
+      "y": 265,
+      "role": "melee",
+      "group": "stores",
+      "name": "Greenwood treasury guardian"
+    }
+  ],
+  "supply-march": [
+    {
+      "x": 320,
+      "y": 340,
+      "role": "melee",
+      "group": "entry"
+    },
+    {
+      "x": 530,
+      "y": 360,
+      "role": "melee",
+      "group": "stores"
+    },
+    {
+      "x": 590,
+      "y": 655,
+      "role": "melee",
+      "group": "reserve"
+    },
+    {
+      "x": 745,
+      "y": 590,
+      "group": "command",
+      "name": "Mirejaw captain",
+      "captain": true
+    },
+    {
+      "x": 300,
+      "y": 645,
+      "role": "ranged",
+      "group": "entry",
+      "name": "Marsh watch guardian"
+    },
+    {
+      "x": 690,
+      "y": 270,
+      "role": "melee",
+      "group": "stores",
+      "name": "Marsh treasury guardian"
+    }
+  ],
+  "supply-highlands": [
+    {
+      "x": 300,
+      "y": 330,
+      "role": "melee",
+      "group": "entry",
+      "name": "Crown direwolf lance rider",
+      "mountedCrownRider": true
+    },
+    {
+      "x": 530,
+      "y": 360,
+      "role": "ranged",
+      "group": "study",
+      "name": "Crown direwolf archer",
+      "mountedCrownRider": true
+    },
+    {
+      "x": 590,
+      "y": 655,
+      "role": "melee",
+      "group": "reserve",
+      "name": "Crown direwolf lance rider",
+      "mountedCrownRider": true
+    },
+    {
+      "x": 745,
+      "y": 590,
+      "group": "household",
+      "name": "Crag Tyrant",
+      "captain": true
+    },
+    {
+      "x": 580,
+      "y": 255,
+      "role": "ranged",
+      "group": "study",
+      "name": "Crown direwolf archer",
+      "mountedCrownRider": true
+    },
+    {
+      "x": 300,
+      "y": 690,
+      "role": "melee",
+      "group": "reserve",
+      "name": "Crown direwolf lance rider",
+      "mountedCrownRider": true
+    },
+    {
+      "x": 760,
+      "y": 770,
+      "role": "ranged",
+      "group": "household",
+      "name": "Crown direwolf archer",
+      "mountedCrownRider": true
+    }
+  ],
+  "supply-crown": [
+    {
+      "x": 330,
+      "y": 260,
+      "role": "melee",
+      "group": "roost",
+      "name": "Ash beast treasury guardian"
+    },
+    {
+      "x": 865,
+      "y": 390,
+      "role": "ranged",
+      "group": "hoard",
+      "name": "Ash beast cinder guardian"
+    },
+    {
+      "x": 300,
+      "y": 520,
+      "role": "melee",
+      "group": "ash-den",
+      "name": "Ash beast treasury guardian"
+    },
+    {
+      "x": 985,
+      "y": 980,
+      "group": "inner-vault",
+      "name": "Dreadmaw",
+      "captain": true
+    },
+    {
+      "x": 1020,
+      "y": 265,
+      "role": "ranged",
+      "group": "hoard",
+      "name": "Ash beast hoard sentry"
+    },
+    {
+      "x": 500,
+      "y": 570,
+      "role": "melee",
+      "group": "junction",
+      "name": "Ash beast levy guardian"
+    },
+    {
+      "x": 690,
+      "y": 700,
+      "role": "ranged",
+      "group": "distribution",
+      "name": "Ash beast distribution sentry"
+    },
+    {
+      "x": 265,
+      "y": 975,
+      "role": "melee",
+      "group": "agriculture",
+      "name": "Ash beast livestock guardian"
+    },
+    {
+      "x": 515,
+      "y": 1050,
+      "role": "ranged",
+      "group": "agriculture",
+      "name": "Ash beast granary sentry"
+    },
+    {
+      "x": 1135,
+      "y": 1160,
+      "role": "melee",
+      "group": "inner-vault",
+      "name": "Ash beast vault guardian"
+    },
+    {
+      "x": 770,
+      "y": 870,
+      "role": "ranged",
+      "group": "inner-vault",
+      "name": "Ash beast inner-vault sentry"
+    }
+  ]
+};
   const treasuryDecor = {
     'supply-vale': [
       [155, 690, 'thorn-bed', 28],
@@ -2761,12 +2970,18 @@
         y: 350,
         group: 'receiving',
         species: 'wolf',
+        role: 'melee',
+        mountedCrownRider: true,
+        name: 'Crown direwolf lance rider',
       },
       {
         x: 490,
         y: 370,
         group: 'receiving',
         species: 'wolf',
+        role: 'ranged',
+        mountedCrownRider: true,
+        name: 'Crown direwolf archer',
       },
       {
         x: 420,
@@ -2785,12 +3000,18 @@
         y: 680,
         group: 'new-workings',
         species: 'wolf',
+        role: 'melee',
+        mountedCrownRider: true,
+        name: 'Crown direwolf lance rider',
       },
       {
         x: 620,
         y: 850,
         group: 'new-workings',
         species: 'wolf',
+        role: 'melee',
+        mountedCrownRider: true,
+        name: 'Crown direwolf lance rider',
       },
       {
         x: 900,
@@ -2809,12 +3030,18 @@
         y: 650,
         group: 'old-workings',
         species: 'wolf',
+        role: 'ranged',
+        mountedCrownRider: true,
+        name: 'Crown direwolf archer',
       },
       {
         x: 260,
         y: 780,
         group: 'collapse',
         species: 'wolf',
+        role: 'melee',
+        mountedCrownRider: true,
+        name: 'Crown direwolf lance rider',
       },
       {
         x: 280,
@@ -2833,12 +3060,18 @@
         y: 1160,
         group: 'repair',
         species: 'wolf',
+        role: 'melee',
+        mountedCrownRider: true,
+        name: 'Crown direwolf lance rider',
       },
       {
         x: 850,
         y: 1050,
         group: 'haulage',
         species: 'wolf',
+        role: 'ranged',
+        mountedCrownRider: true,
+        name: 'Crown direwolf archer',
       },
       {
         x: 1080,
@@ -2857,12 +3090,18 @@
         y: 1260,
         group: 'ancient',
         species: 'wolf',
+        role: 'melee',
+        mountedCrownRider: true,
+        name: 'Crown direwolf lance rider',
       },
       {
         x: 1280,
         y: 1280,
         group: 'ancient',
         species: 'wolf',
+        role: 'melee',
+        mountedCrownRider: true,
+        name: 'Crown direwolf lance rider',
       },
     ],
     abyss: [
@@ -4202,7 +4441,7 @@
       name: 'Crag Tyrant',
       office: 'Treasury captain and the Master of Coin’s disciple',
       history:
-        'Crag Tyrant is a horned humanoid mountain tyrant like Ridge Tyrant, not a Wolf. He holds his mentor’s Treasury household, guarding paid accounts, coin stores and the three separate caches. The ordinary Wolf guards remain Wolves. Crag believes steady wages and guarded shipments justify strict control, but he serves the Master of Coin rather than running the mint or governing a second province.',
+        'Crag Tyrant is a horned humanoid mountain tyrant like Ridge Tyrant, not a Wolf. He holds his mentor’s Treasury household, guarding paid accounts, coin stores and the three separate caches. His household security now comprises paid Crown soldiers on armored direwolves, with shared human bunks, direwolf bedding and saddle racks. Wild Highland wolves keep their own dens. Crag believes steady wages and guarded shipments justify strict control, but he serves the Master of Coin rather than running the mint or governing a second province.',
       species: 'ridge',
       enduranceHp: 1650,
       visualScale: 1.2,
