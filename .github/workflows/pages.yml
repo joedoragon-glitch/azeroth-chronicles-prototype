@@ -182,6 +182,40 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
 
+  # Draft PR #300 only: obtain a reproducible formatter correction while
+  # independently preserving the strict pr-check/release certificate gate.
+  snapshot-format-audit:
+    if: github.event_name == 'pull_request' && github.event.pull_request.number == 300
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked formatter
+        run: npm ci --ignore-scripts
+      - name: Generate formatting-only patch for audit
+        shell: bash
+        run: |
+          npm run format
+          mkdir -p test-results/snapshot-format
+          git diff --no-ext-diff --unified=3 > test-results/snapshot-format/prettier.patch
+          git diff --name-only > test-results/snapshot-format/changed-files.txt
+          git diff --stat
+          echo '<<<SNAPSHOT_PRETTIER_PATCH_START>>>'
+          cat test-results/snapshot-format/prettier.patch
+          echo '<<<SNAPSHOT_PRETTIER_PATCH_END>>>'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: snapshot-format-patch
+          retention-days: 7
+          path: test-results/snapshot-format/
+          if-no-files-found: warn
+
   certify-pr:
     if: github.event_name == 'pull_request' && needs.pr-check.outputs.full_validation == 'true' && needs.phone-webkit.outputs.full_validation == 'true'
     needs: [pr-check, phone-webkit]
