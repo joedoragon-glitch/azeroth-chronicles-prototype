@@ -1,0 +1,62 @@
+name: PR306 source formatting and receipts
+on:
+  push:
+    branches:
+      - qa/pr306-format-and-receipts-20261015
+permissions:
+  contents: write
+jobs:
+  finalize-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/enemy-healing-pr300-integration
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Format only changed feature modules
+        run: npx prettier --write src/prototype/engine.js src/prototype/renderer.js src/prototype/combat-visuals.js
+      - name: Record new source identities without modifying PR300 receipts
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const crypto = require('node:crypto');
+          const files = [
+            'src/prototype/boss-combat.js',
+            'src/prototype/combat-visuals.js',
+            'src/prototype/engine.js',
+            'src/prototype/renderer.js',
+            'src/prototype/rules.js',
+            'src/prototype/save.js',
+          ];
+          const digest = (file) => crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+          const file = 'tests/fixtures/perf-v09-protected.json';
+          const document = JSON.parse(fs.readFileSync(file, 'utf8'));
+          if (document.candidateEnemyHealing306Revision) throw Error('Unexpected prior feature receipt');
+          document.candidateEnemyHealing306Revision = {
+            source: 'PR #306 enemy support healing after merged PR #300: authored ranged healers, transient state and localized recovery VFX; original historical source hashes retained.',
+            files: Object.fromEntries(files.map((name) => [name, digest(name)])),
+          };
+          fs.writeFileSync(file, JSON.stringify(document, null, 2) + '\n');
+          const scopeFile = 'docs/evidence/SPRITE_SCOPE_RECONCILIATION.json';
+          const scope = require('./scripts/sprite-scope-audit.cjs').audit();
+          fs.writeFileSync(scopeFile, JSON.stringify(scope, null, 2) + '\n');
+          NODE
+      - name: Commit formatted sources and additive records to PR306
+        shell: bash
+        run: |
+          git config user.name "azeroth-chronicles-automation"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/prototype/engine.js src/prototype/renderer.js src/prototype/combat-visuals.js tests/fixtures/perf-v09-protected.json docs/evidence/SPRITE_SCOPE_RECONCILIATION.json
+          if git diff --cached --quiet; then
+            echo "No source receipt changes"
+          else
+            git commit -m "Format PR306 and record exact scoped source and sprite receipts"
+            git push origin HEAD:refs/heads/feature/enemy-healing-pr300-integration
+          fi
