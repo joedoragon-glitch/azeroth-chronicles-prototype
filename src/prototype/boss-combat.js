@@ -7,14 +7,14 @@
     class BossCombat {
     // Each role is explicitly checked: species/name collisions cannot grant a trait.
     snapshotBossIncomingFactor(e) {
-      if (!e || !e.aggro || e.hp <= 0 || e.returning) return 1;
+      if (!e || !e.aggro || e.hp <= 0 || e.returning || e.neutral) return 1;
       const p = R.snapshotPassives,
         form = e.form === 'true' ? 'true' : 'normal',
         near = (u, radius) => dist(u, e) <= radius,
         owned = (species, radius) =>
           this.zone().enemies.filter(
             (u) =>
-              u.hp > 0 &&
+              u.hp > 0 && u.aggro && !u.returning && !u.neutral &&
               u.summon &&
               u.owner === e.id &&
               u.species === species &&
@@ -48,7 +48,7 @@
       if (e.roomCaptain && e.captainProfile === 'supply-highlands') {
         const cfg = p.captains['supply-highlands'],
           hasGuard = this.zone().enemies.some(
-            (u) => u !== e && u.hp > 0 && u.roomGuard &&
+            (u) => u !== e && u.hp > 0 && !u.neutral && !u.returning && u.roomGuard &&
               near(u, cfg.guardRadius),
           );
         return 1 - cfg.baseline - (hasGuard ? cfg.selfReduction : 0);
@@ -62,12 +62,12 @@
       return 1;
     }
     snapshotPassiveOutgoingFactor(source) {
-      if (!source || source.hp <= 0 || !source.aggro || source.returning) return 1;
+      if (!source || source.hp <= 0 || !source.aggro || source.returning || source.neutral) return 1;
       const p = R.snapshotPassives;
       if (source.summon && source.species === 'orc') {
         const owner = this.zone().enemies.find(
           (e) => e.id === source.owner && e.type === 'boss' &&
-            e.family === 'warlord' && e.hp > 0 && e.aggro &&
+            e.family === 'warlord' && e.hp > 0 && e.aggro && !e.returning && !e.neutral &&
             dist(source, e) <= p.warlord.radius,
         );
         if (owner) return 1 + p.warlord.orcDamage[owner.form === 'true' ? 'true' : 'normal'];
@@ -76,7 +76,8 @@
         const cfg = p.captains['supply-highlands'],
           captain = this.zone().enemies.find(
             (e) => e.roomCaptain && e.captainProfile === 'supply-highlands' &&
-              e.hp > 0 && e.aggro && dist(source, e) <= cfg.guardRadius,
+              e.hp > 0 && e.aggro && !e.returning && !e.neutral &&
+              dist(source, e) <= cfg.guardRadius,
           );
         if (captain) return 1 + cfg.guardDamage;
       }
