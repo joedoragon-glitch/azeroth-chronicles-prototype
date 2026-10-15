@@ -37,6 +37,10 @@ The overview teaches the shared **0.65s hold**, shared rank/cooldown slot and **
 - **Not yet a passive-skill UI:** independent class passives have been deferred until gameplay balance testing. Do not present empty passive slots or promise future passive effects.
 - **Do not accidentally expose spoilers:** only already-revealed skills appear in the overview; unrevealed skills still follow `game.skillRevealed` discovery conditions. A revealed but unlearned skill may show the teacher and cost.
 
+## Maintenance caution
+
+Skill effect wording exists in three user-facing surfaces: the brief `menus.js` skill cards, the longer optional `archive.js` topic text, and the HUD skill labels in `app.js`. The combat rules remain authoritative; the copy has been reconciled with the current redesign but is not yet derived automatically from a single localization catalog. Any future gameplay changes must update those three presentation surfaces together. Avoid introducing a new tutorial framework or text-heavy UI solely to solve copy reuse during the audiovisual workstream. The Paladin Shield Stance detail explicitly notes cooldown begins when the shield lowers; Ranger Rally describes **ordinary basic-attack speed**, not special-skill cooldown acceleration.
+
 ## Deferred combined QA checklist (NOT executed)
 
 - A fresh game shows Skill 1 with accurate normal/charge and cooldown information; advancing to each region reveals appropriate skills without displaying future locked spoilers prematurely.
