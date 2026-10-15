@@ -1740,6 +1740,15 @@
   function chargeHealNeeded() {
     return [game.hero, ...game.activeLivingParty()].some((u) => u.hp > 0 && u.hp < u.maxHp);
   }
+  function chargeRallyAvailable() {
+    if (game.hero.class !== 'ranger') return false;
+    const rank = game.hero.skills[3] || 1,
+      rally = PrototypeRules.heroTactics.ranger.rally,
+      radius = rally.radius + Math.floor(rank / 2) * rally.radiusStep;
+    return game.activeLivingParty().some((u) =>
+      Math.hypot(u.x - game.hero.x, u.y - game.hero.y) <= radius &&
+      game.line(game.hero, u));
+  }
   function startChargeClock() {
     if (!charge || charge.started !== null) return false;
     charge.started = performance.now();
@@ -1825,6 +1834,20 @@
         targetId: charge.targetId ?? null,
         color,
       };
+    if (charge.slot === 4 && game.hero.class === 'ranger' && !chargeRallyAvailable())
+      return {
+        slot: charge.slot,
+        state: 'no-allies',
+        elapsed,
+        progress,
+        ready: false,
+        waiting: false,
+        cooldown: 0,
+        cost,
+        enoughMana: true,
+        targetId: null,
+        color,
+      };
     if (charge.slot === 3 && game.hero.class === 'ranger' && !chargeHealNeeded())
       return {
         slot: charge.slot,
@@ -1885,6 +1908,10 @@
       status('No target in range.');
       return;
     }
+    if (slot === 4 && charged && game.hero.class === 'ranger' && !chargeRallyAvailable()) {
+      status('No living companions in Rally range.');
+      return;
+    }
     if (slot === 3 && game.hero.class === 'ranger') status('No healing needed.');
     if (slot === 3 && game.hero.class === 'mage') status('No casting enemy to interrupt.');
   }
@@ -1899,6 +1926,9 @@
     }
     if (cast.state === 'no-heal') {
       status('No healing needed.');
+    }
+    if (cast.state === 'no-allies') {
+      status('No living companions in Rally range.');
     }
   }
   function releaseCharge(slot, source) {
@@ -2637,6 +2667,8 @@
                   ? 'NO TARGET'
                   : cast.state === 'no-heal'
                     ? 'NO HEAL'
+                  : cast.state === 'no-allies'
+                    ? 'NO ALLIES'
                     : 'CHARGED'
           : (slot === 3 && h.class === 'paladin' && h.shieldStance > 0)
             ? 'SHIELD ' + cooldownText(h.shieldStance)
