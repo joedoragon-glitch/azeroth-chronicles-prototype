@@ -275,6 +275,7 @@
         delete z.crownLayoutVersion;
         delete z.streetClearanceVersion;
         delete z.townVisualClearanceVersion;
+        delete z.strongholdCourtyardSpacingVersion;
         delete z.landmarkRoadShoulderVersion;
       }
       clearRoadBlockers(z) {
@@ -315,6 +316,68 @@
           }
         } finally {
           this.s.zone = oldZone;
+        }
+      }
+      strongholdCourtyardClearance(z) {
+        if (
+          dungeonIds.includes(z.id) ||
+          this.supplyRoom(z.id) ||
+          this.sideDungeon(z.id) ||
+          z.strongholdCourtyardSpacingVersion === 1
+        ) return;
+        const before = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          for (const cfg of (R.creatureStrongholds || []).filter((c) => c.region === z.id)) {
+            const center = this.creatureStrongholdCenter(z, cfg);
+            if (!center) continue;
+            const locals = z.props.filter((p) => p.stronghold === cfg.id && p.decorative)
+              .sort((a, b) => String(a.id).localeCompare(String(b.id)));
+            const fixed = [];
+            const walls = z.props.filter((p) => p.stronghold === cfg.id && p.r > 0);
+            const radiusMax = cfg.defenseStyle === 'fort' ? 135 : 330;
+            const open = (p) =>
+              dist(p, center) <= radiusMax &&
+              !this.blocked(p.x, p.y, z.id, 8, true) &&
+              this.distanceToRoad(z, p) >= 80 &&
+              !z.npcs.some((n) => dist(n, p) < 78) &&
+              !z.nodes.some((n) => n.amount > 0 && dist(n, p) < 60) &&
+              !z.buildings.some((b) => dist(b, p) < 140) &&
+              !walls.some((w) => dist(w, p) < (w.r || 0) + 40) &&
+              !fixed.some((q) => dist(q, p) < 93);
+            for (const item of locals) {
+              if (!open(item)) {
+                let candidate = null;
+                for (const radius of cfg.defenseStyle === 'fort'
+                  ? [65, 100, 127]
+                  : [90, 130, 165, 205, 250, 290, 320]) {
+                  for (let j = 0; j < 36; j++) {
+                    const angle = (j * Math.PI) / 18;
+                    const p = {
+                      x: center.x + radius * Math.cos(angle),
+                      y: center.y + radius * Math.sin(angle),
+                    };
+                    if (open(p)) {
+                      candidate = p;
+                      break;
+                    }
+                  }
+                  if (candidate) break;
+                }
+                if (candidate) Object.assign(item, candidate);
+                else if (fixed.length >= 5) {
+                  // Preserve the five readable lived-in objects and omit
+                  // redundant clutter rather than produce intersecting art.
+                  z.props.splice(z.props.indexOf(item), 1);
+                  continue;
+                }
+              }
+              fixed.push(item);
+            }
+          }
+          z.strongholdCourtyardSpacingVersion = 1;
+        } finally {
+          this.s.zone = before;
         }
       }
       clearNamedRoadMarkers(z) {
@@ -610,6 +673,7 @@
           this.clearStreetCorridors(z);
           this.clearNamedRoadMarkers(z);
           this.townVisualClearance(z);
+          this.strongholdCourtyardClearance(z);
           this.regionalTravelSafety(z);
           return z;
         }
@@ -1000,6 +1064,7 @@
         this.clearStreetCorridors(z);
         this.clearNamedRoadMarkers(z);
         this.townVisualClearance(z);
+        this.strongholdCourtyardClearance(z);
         this.regionalTravelSafety(z);
         this.refreshNPCs();
         if (this.peace) this.makeHabitat(z);
