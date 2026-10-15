@@ -1635,6 +1635,58 @@
       if (z.escort) add([{ ...z.escort, icon: '🧑‍🌾', name: 'Supply escort' }], 'ally');
       entities.sort((a, b) => a.x + a.y - b.x - b.y);
       stats.entitiesDrawn = entities.length;
+      // Reserve nameplates once in screen space, with interactable NPCs and
+      // bosses first. Entity draw/depth order must not decide which nearby
+      // title wins when two names would occupy the same pixels.
+      const labelSlots = new Map();
+      const claimedLabels = [];
+      const labelText = (e) => {
+        if (e.renderKind === 'npc')
+          return e.presentation === 'mobile-captive' ? 'Mira · captive'
+            : e.presentation === 'mobile-forge' ? 'Vera · captive field engineer'
+              : e.name || '';
+        if (e.renderKind === 'building') return e.name || 'Barracks';
+        if (e.renderKind === 'node') return 'Dark Lord Tribute';
+        if (e.renderKind === 'enemy') return e.name || '';
+        if (e.renderKind === 'ally') return e.type || e.name || '';
+        return '';
+      };
+      const labelPriority = (e) =>
+        e.renderKind === 'npc' ? 0 :
+        e.renderKind === 'enemy' && e.type === 'boss' ? 1 :
+        e.renderKind === 'ally' ? 2 :
+        e.renderKind === 'enemy' ? 3 :
+        e.renderKind === 'building' ? 4 : 5;
+      for (const e of entities.slice().sort((a, b) => labelPriority(a) - labelPriority(b))) {
+        if (!['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) ||
+            !worldLabelVisible(e)) continue;
+        const name = labelText(e);
+        if (!name) continue;
+        const anchor = screen(e);
+        if (anchor.x < -40 || anchor.x > canvas.width + 40 ||
+            anchor.y < -100 || anchor.y > canvas.height + 100) continue;
+        const w = Math.min(canvas.width - 20, Math.max(62, name.length * 6.7 + 10));
+        const h = 17;
+        const baseY = e.renderKind === 'node' ? anchor.y - 25 :
+          anchor.y - spriteHeight(e) - 5;
+        let slot = null;
+        for (const dy of [0, -20, -40, -60, -80, 20, 40, 60, -100]) {
+          for (const dx of [0, -42, 42, -84, 84]) {
+            const x = Math.max(w / 2 + 6, Math.min(canvas.width - w / 2 - 6, anchor.x + dx));
+            const y = baseY + dy;
+            if (y < 18 || y > canvas.height - 8) continue;
+            const box = { l: x - w / 2 - 3, r: x + w / 2 + 3, t: y - h, b: y + 3 };
+            if (claimedLabels.some((q) =>
+              box.l < q.r && box.r > q.l && box.t < q.b && box.b > q.t))
+              continue;
+            slot = { x, y, width: w };
+            claimedLabels.push(box);
+            break;
+          }
+          if (slot) break;
+        }
+        if (slot) labelSlots.set(e, slot);
+      }
 
       for (const e of entities) {
         const p = screen(e);
@@ -1752,7 +1804,8 @@
                 : e.renderKind === 'ally'
                   ? e.type || e.name
                   : '';
-            ctx.fillText(label, p.x, p.y - spriteHeight(e) - 7);
+            const slot = labelSlots.get(e);
+            if (slot) ctx.fillText(label, slot.x, slot.y, slot.width);
             if (isTrueBoss) {
               const w = ctx.measureText('TRUE').width + 12,
                 y = p.y - spriteHeight(e) - 25;
@@ -1801,7 +1854,8 @@
             const labelX = width
               ? Math.max(width / 2 + 12, Math.min(canvas.width - width / 2 - 12, p.x))
               : p.x;
-            ctx.fillText(name, labelX, p.y - spriteHeight(e) - 4, width || undefined);
+            const slot = labelSlots.get(e);
+            if (slot) ctx.fillText(name, slot.x, slot.y, Math.min(slot.width, width || slot.width));
             ctx.shadowBlur = 0;
           }
           const cue =
@@ -1824,17 +1878,20 @@
           ctx.fillStyle = '#e8ddb8';
           ctx.shadowColor = '#07140e';
           ctx.shadowBlur = 3;
-          ctx.fillText(
+          const slot = labelSlots.get(e);
+          if (slot) ctx.fillText(
             e.name || (/^barracks/.test(e.id || '') ? 'Barracks' : 'Building'),
-            p.x,
-            p.y - spriteHeight(e) - 4,
+            slot.x,
+            slot.y,
+            slot.width,
           );
           ctx.shadowBlur = 0;
         }
         if (e.renderKind === 'node') {
           ctx.font = '10px system-ui';
           ctx.fillStyle = '#f5e7b8';
-          ctx.fillText('Dark Lord Tribute', p.x, p.y - 25);
+          const slot = labelSlots.get(e);
+          if (slot) ctx.fillText('Dark Lord Tribute', slot.x, slot.y, slot.width);
         }
       }
       for (const l of game.s.loot.filter((l) => l.zone === game.zoneId))
