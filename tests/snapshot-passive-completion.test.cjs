@@ -120,8 +120,10 @@ for (const form of ['normal', 'true']) {
   const e = c.zone().enemies.find(u => u.roomCaptain && u.captainProfile === 'supply-highlands');
   assert(e, 'real Crag captain exists');
   e.aggro = true;
-  const old = c.zone().enemies;
-  c.zone().enemies = [e];
+  // The Treasury restores its authored population when zone() is accessed;
+  // defeat actual living guards rather than replacing the entire zone roster.
+  for (const u of c.zone().enemies)
+    if (u.roomGuard) u.hp = 0;
   near(c.snapshotBossIncomingFactor(e), 1, 'Crag unprotected without a guard');
   const guard = add(c, e, 'wolf', { roomGuard: true, summon: false });
   near(c.snapshotBossIncomingFactor(e),
@@ -130,7 +132,6 @@ for (const form of ['normal', 'true']) {
     1 + R.snapshotPassives.captains['supply-highlands'].guardDamage, 'hired soldier offense');
   guard.hp = 0;
   near(c.snapshotBossIncomingFactor(e), 1, 'hired guard defeat removes protection');
-  c.zone().enemies = old;
 }
 {
   const c = new C('normal', 'paladin', () => 0.9);
