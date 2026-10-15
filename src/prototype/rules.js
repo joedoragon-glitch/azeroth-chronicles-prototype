@@ -4836,22 +4836,20 @@
       orc: 'Warband Dressing',
       ogre: 'Stone Salve',
     }),
-    // These captains have actual ranged authored attacks in PR #300:
-    // Scornfang's tracked volley and Dreadmaw's ranged agricultural effects.
+    // Explicit PR #300 repertoire review, not generic captain/boss status.
+    // Named ranged techniques and authored support expertise are intentional
+    // exceptions to the ordinary mobs' strict e.ranged AI flag.
     captains: Object.freeze({
-      'supply-vale': 'Reclamation Triage',
-      'supply-crown': 'Brood Provisioning',
+      'supply-vale': 'Reclamation Triage',     // Scornfang: tracking volley / zone control
+      'supply-march': 'Wetland Recuperation',   // Direjaw: water and mud projection
+      'supply-crown': 'Agrarian Restoration',  // Dreadmaw: distributed brood care
     }),
-    // Only explicitly ranged-capable authored boss repertoires are eligible.
     bosses: Object.freeze({
-      crypt: 'Continuity Binding',
-      archive: 'Restorative Annotation',
-      ridge: 'Payroll Relief',
-      warlord: 'Field Recovery Order',
-      abyss: 'Aerial Recovery',
-      citadel: 'Recovery Formation',
-      cindermaw: 'Welfare Distribution',
-      darklord: 'Royal Relief',
+      crypt: 'Continuity Binding',            // Lifebinder: bolts and estate warding
+      mire: 'Watershed Recovery',              // Mirejaw: hydrological ranged effects
+      archive: 'Restorative Annotation',       // Drowned Keeper: ranged water magic
+      ridge: 'Payroll Relief',                 // Ridge Tyrant: ranged cargo/archer command
+      abyss: 'Wingman Recovery',               // Veyrith: aerial battlefield support
     }),
   });
   const rangerSupport = {
