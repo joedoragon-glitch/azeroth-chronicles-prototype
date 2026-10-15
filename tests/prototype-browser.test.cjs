@@ -104,7 +104,7 @@ await check('Terrain and effects module renders Citadel walls, normal abilities 
  const saved=await page.evaluate(()=>Prototype.game.snapshot());
  await page.evaluate(()=>{const c=Prototype.game;c.enter('citadel');c.s.party=[];c.zone().enemies=[];c.s.clock=600;c.s.mercyTime=10;Object.assign(c.hero,c.safe(800,800));Object.assign(c.hero,{class:'mage',skills:Array(8).fill(1),mp:1000,maxMp:1000,hp:100000,maxHp:100000,order:null});c.hero.cd[4]=0;
   const probe=window.__terrainProbe={walls:0,cues:0,abilities:0},wall=PrototypeVisuals.dungeonArchitecture,ground=PrototypeCombatVisuals.ground,ability=PrototypeCombatVisuals.ability;probe.restore=()=>{PrototypeVisuals.dungeonArchitecture=wall;PrototypeCombatVisuals.ground=ground;PrototypeCombatVisuals.ability=ability;};
-  PrototypeVisuals.dungeonArchitecture=function(...args){if(args[2]==='citadel')probe.walls++;return wall(...args);};PrototypeCombatVisuals.ground=function(...args){if(args[3]==='cue')probe.cues++;return ground(...args);};PrototypeCombatVisuals.ability=function(...args){if(args[2].class==='mage'&&args[2].slot===5)probe.abilities++;return ability(...args);};
+  PrototypeVisuals.dungeonArchitecture=function(...args){if(args[2]==='citadel')probe.walls++;return wall(...args);};PrototypeCombatVisuals.ground=function(...args){if(args[3]==='underlay-cue')probe.cues++;return ground(...args);};PrototypeCombatVisuals.ability=function(...args){if(args[2].class==='mage'&&args[2].slot===5)probe.abilities++;return ability(...args);};
   if(!c.cast(5))throw Error('Normal area skill did not cast');
  });
  await page.waitForFunction(()=>__terrainProbe.walls>0&&__terrainProbe.cues>0&&__terrainProbe.abilities>0);

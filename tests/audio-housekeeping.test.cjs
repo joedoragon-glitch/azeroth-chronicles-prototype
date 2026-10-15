@@ -6,9 +6,22 @@ const assert = require('node:assert/strict'),
 const Audio = require('../src/prototype/audio'),
   Campaign = require('../src/prototype/engine');
 const evidence = require('./helpers/audio-preservation.cjs');
-assert.deepEqual(evidence(Audio), require('./fixtures/audio-v0886.json').audio);
+const { recipesByKind, ...currentAudio } = evidence(Audio, true),
+  bladeRevision = require('./fixtures/audio-paladin-playtest.json');
+assert.deepEqual(Object.keys(bladeRevision.authorizedKinds).sort(), [
+  'heroSteelImpact',
+  'swordSwing',
+]);
+assert.deepEqual(currentAudio, {
+  ...require('./fixtures/audio-v0886.json').audio,
+  effectRecipes: bladeRevision.effectRecipes,
+});
+assert.deepEqual(recipesByKind, {
+  ...bladeRevision.originalKinds,
+  ...bladeRevision.authorizedKinds,
+});
 console.log(
-  'PASS existing catalog, all arrangement note schedules, effects and routing match v0.8.86',
+  'PASS existing catalog, all arrangement note schedules, routing and all effects except the exact authorized Paladin blade recipes match v0.8.86',
 );
 function harness() {
   const nodes = [],

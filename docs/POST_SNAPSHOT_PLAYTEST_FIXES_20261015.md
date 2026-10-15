@@ -39,6 +39,15 @@ This record covers every request visible in the playtest conversation, including
 
 The initial dev.58 [automatic run](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38708396982) failed. Its Node failures were stale protected-source/sprite-scope receipts and an announcement test expecting immediate combat-to-prose delivery. Its browser failures were a 0.5-second notice expiring during screenshot capture before an interruption probe, and a keyboard test expecting a nonurgent level-up milestone while enemies remained engaged. The fixtures now preserve the historical receipts, explicitly record this owner-authorized batch, wait through the new quiet interval, give the screenshot probe a real reading window, and isolate the keyboard test from combat. Required job names and workflows are unchanged.
 
+The complete dev.59 [automatic run](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38713358549) passed the new focused regressions and Chromium quest/announcement, Rogue, audio, sprite, terrain and VFX paths. WebKit passed phone gestures, save upgrades, quest/announcements, Rogue effects, audio, VFX, actor idles/combat, terrain and performance before its final captures. The main job exposed four remaining older Node expectations and a browser render probe:
+
+- Audio housekeeping now retains the original v0.8.86 catalog/music/routing receipt and per-kind hashes for every original sound. Exactly `heroSteelImpact` and `swordSwing` have separate authorized recipe hashes; unrelated effects still fail if changed.
+- The Dreadmaw protection test reconstructs the original Rogue table by removing only the explicitly recorded new 0.4 movement factor. All older protected fields and method hashes remain enforced. The complete 42-cast/lifecycle Dreadmaw suite passed locally.
+- Node and Chromium terrain probes now assert the authored ground-underlay/caption split rather than requiring warning outlines above actors.
+- First-boss scenarios still defeat the same 1200-HP Thornfang without deaths or potions. Daylight Mage/Ranger finish in 15.6/16.3 seconds instead of 18.8/19.3 with the old engine timer path: they stop evading the no-longer-frozen cast sooner. Their minimum timing bound is now 15 seconds; the other four scenarios retain 17 seconds. The 120-second ceiling, win, death, supply and historic HP-upgrade assertions remain. No game code was changed to satisfy this result.
+
+All four formerly failing Node suites passed locally after these test-only corrections. The next automatic head run remains the final integrated gate; passing subsets do not certify the old failed run.
+
 The notice geometry/interruption helper and concise witness shell check remain in existing Chromium/WebKit paths. Local browser binaries could not be obtained (empty/truncated downloads), so no local browser pass is claimed. Final automatic CI must pass at the complete new PR head before this candidate is called merge-ready. The latest run/head and remaining action belong in the PR resume comment, avoiding a self-referential commit hash here.
 
 ## Compatibility and retained canon
