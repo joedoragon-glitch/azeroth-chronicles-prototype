@@ -28,7 +28,8 @@ const near = (a, b, message) => assert(Math.abs(a - b) < 1e-8, message + ': ' + 
 assert.equal(R.enemySupportHealing.cooldown, R.rangerSupport.cooldown);
 assert.equal(R.enemySupportHealing.duration, R.rangerSupport.duration);
 assert.equal(R.enemySupportHealing.fraction, 0.05);
-assert.deepEqual(Object.keys(R.enemySupportHealing.captains).sort(), ['supply-crown', 'supply-vale']);
+assert.deepEqual(Object.keys(R.enemySupportHealing.captains).sort(), ['supply-crown', 'supply-march', 'supply-vale']);
+assert.deepEqual(Object.keys(R.enemySupportHealing.bosses).sort(), ['abyss', 'archive', 'crypt', 'mire', 'ridge']);
 for (const species of ['wolf', 'goblin', 'skeleton', 'wraith', 'stalker', 'mireling',
   'reedbeast', 'archer', 'crownguard', 'ashbeast', 'orc', 'ogre']) {
   const { g, mob } = fixture();
@@ -96,11 +97,40 @@ console.log('PASS twelve ranged species use individual identity and the Archer h
     captain: true, roomCaptain: true, captainProfile: 'supply-crown', ranged: false, hp: 100,
   });
   const ally = mob('ashbeast', { hp: 300, owner: leader.id });
-  assert.equal(g.enemyHealProfile(leader), 'Brood Provisioning');
+  assert.equal(g.enemyHealProfile(leader), 'Agrarian Restoration');
   assert(g.enemySupportHeal(leader), 'Dreadmaw prioritizes his wounded brood');
   assert(ally.supportHeal && !leader.supportHeal);
 }
-console.log('PASS two authored ranged captains prioritize <50% allies before self');
+{
+  const { g, mob } = fixture('march');
+  const direjaw = mob('mireling', {
+    captain: true, roomCaptain: true, captainProfile: 'supply-march', hp: 110,
+  });
+  const wounded = mob('mireling', { hp: 300 });
+  assert.equal(g.enemyHealProfile(direjaw), 'Wetland Recuperation');
+  assert(g.enemySupportHeal(direjaw), 'Direjaw heals the more wounded companion first');
+  assert(wounded.supportHeal && !direjaw.supportHeal);
+  direjaw.supportHealCd = 0;
+  delete wounded.supportHeal;
+  wounded.hp = wounded.maxHp;
+  assert(g.enemySupportHeal(direjaw), 'Direjaw may treat his own wounds');
+}
+for (const profile of ['supply-highlands', 'frontier-overseer']) {
+  const { g, mob } = fixture();
+  const leader = mob('ogre', { captain: true, captainProfile: profile, ranged: false, hp: 100 });
+  mob('ogre', { hp: 200 });
+  assert(!g.enemyHealProfile(leader), profile + ' melee-centered captain is not a healer');
+}
+{
+  const { g, mob } = fixture('crown');
+  const dreadmaw = mob('ashbeast', {
+    captain: true, roomCaptain: true, captainProfile: 'supply-crown', hp: 300,
+  });
+  mob('ashbeast', { hp: 800 });
+  assert(g.enemySupportHeal(dreadmaw), 'Dreadmaw can use agricultural self-treatment');
+  assert(dreadmaw.supportHeal, 'Dreadmaw really heals himself, not just broodmates');
+}
+console.log('PASS three authored hybrid/ranged captains prioritize <50% allies before self');
 
 for (let i = 0; i < 5; i++) {
   const region = ['vale', 'march', 'highlands', 'frontier', 'crown'][i];
@@ -150,7 +180,18 @@ for (let i = 0; i < 5; i++) {
   near(g.enemyHealMultiplier(elite), R.summonScaling[0].damage * 1.5,
     'TRUE captain summons gain one elite multiplier, not two');
 }
-console.log('PASS region, night, progression, night-species, TRUE, and elite damage scaling');
+{
+  const { g } = fixture('march');
+  for (const id of ['crypt', 'mire', 'archive', 'ridge', 'abyss']) {
+    const boss = g.bossEnemy(g.boss(id), 'normal', { x: 980, y: 900 });
+    assert(g.enemyHealProfile(boss), id + ' ranged/lore-centered authored healing');
+  }
+  for (const id of ['thorn', 'mine', 'warlord', 'citadel', 'cindermaw', 'darklord']) {
+    const boss = g.bossEnemy(g.boss(id), 'normal', { x: 980, y: 900 });
+    assert.equal(g.enemyHealProfile(boss), null, id + ' is deliberately excluded');
+  }
+}
+console.log('PASS region, night, progression, night-species, TRUE, elite scaling and boss eligibility');
 
 {
   const { g, mob } = fixture();
