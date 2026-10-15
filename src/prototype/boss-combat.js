@@ -5,6 +5,231 @@
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     const originalRogueMove = Campaign.prototype.tacticalResolveRogueMove;
     class BossCombat {
+      // Each role is explicitly checked: species/name collisions cannot grant a trait.
+      snapshotBossIncomingFactor(e) {
+        if (!e || !e.aggro || e.hp <= 0 || e.returning || e.neutral) return 1;
+        const p = R.snapshotPassives,
+          form = e.form === 'true' ? 'true' : 'normal',
+          near = (u, radius) => dist(u, e) <= radius,
+          owned = (species, radius) =>
+            this.zone().enemies.filter(
+              (u) =>
+                u.hp > 0 &&
+                u.aggro &&
+                !u.returning &&
+                !u.neutral &&
+                u.summon &&
+                u.owner === e.id &&
+                u.species === species &&
+                near(u, radius),
+            ).length;
+        if (e.type === 'boss') {
+          if (e.family === 'ridge')
+            return (
+              1 -
+              p.ridge.baseline[form] -
+              Math.min(p.ridge.maxArchers, owned('archer', p.ridge.radius)) *
+                p.ridge.perArcher[form]
+            );
+          if (e.family === 'mine' && !(e.open > 0)) return 1 - p.mine.shellReduction[form];
+          if (e.family === 'warlord')
+            return (
+              1 -
+              p.warlord.baseline[form] -
+              Math.min(p.warlord.maxOrcs, owned('orc', p.warlord.radius)) * p.warlord.perOrc[form]
+            );
+          if (e.family === 'abyss')
+            return (
+              1 -
+              (e.passiveAerialUntil > this.s.time
+                ? p.abyss.reduction[form]
+                : p.abyss.baseline[form])
+            );
+          if (e.family === 'citadel') {
+            const formed =
+              e.dressUntil > this.s.time &&
+              this.zone().enemies.some(
+                (u) =>
+                  u !== e &&
+                  u.hp > 0 &&
+                  !u.neutral &&
+                  u.species === 'crownguard' &&
+                  near(u, p.citadel.radius),
+              );
+            return 1 - (formed ? p.citadel.reduction[form] : p.citadel.baseline[form]);
+          }
+          if (e.family === 'darklord' && e.passiveVeteranUntil > this.s.time)
+            return 1 - p.darklord.reduction[form];
+        }
+        if (e.roomCaptain && e.captainProfile === 'supply-highlands') {
+          const cfg = p.captains['supply-highlands'],
+            hasGuard = this.zone().enemies.some(
+              (u) =>
+                u !== e &&
+                u.hp > 0 &&
+                !u.neutral &&
+                !u.returning &&
+                u.roomGuard &&
+                near(u, cfg.guardRadius),
+            );
+          return 1 - cfg.baseline - (hasGuard ? cfg.selfReduction : 0);
+        }
+        if (
+          e.fieldCaptain &&
+          e.captainProfile === 'frontier-overseer' &&
+          e.passiveViolationUntil > this.s.time
+        )
+          return (
+            1 -
+            Math.min(p.captains['frontier-overseer'].maxStacks, e.passiveViolationStacks || 0) *
+              p.captains['frontier-overseer'].perHitReduction
+          );
+        return 1;
+      }
+      snapshotPassiveOutgoingFactor(source) {
+        if (!source || source.hp <= 0 || !source.aggro || source.returning || source.neutral)
+          return 1;
+        const p = R.snapshotPassives;
+        if (source.summon && source.species === 'orc') {
+          const owner = this.zone().enemies.find(
+            (e) =>
+              e.id === source.owner &&
+              e.type === 'boss' &&
+              e.family === 'warlord' &&
+              e.hp > 0 &&
+              e.aggro &&
+              !e.returning &&
+              !e.neutral &&
+              dist(source, e) <= p.warlord.radius,
+          );
+          if (owner) return 1 + p.warlord.orcDamage[owner.form === 'true' ? 'true' : 'normal'];
+        }
+        if (source.roomGuard) {
+          const cfg = p.captains['supply-highlands'],
+            captain = this.zone().enemies.find(
+              (e) =>
+                e.roomCaptain &&
+                e.captainProfile === 'supply-highlands' &&
+                e.hp > 0 &&
+                e.aggro &&
+                !e.returning &&
+                !e.neutral &&
+                dist(source, e) <= cfg.guardRadius,
+            );
+          if (captain) return 1 + cfg.guardDamage;
+        }
+        if (
+          source.fieldCaptain &&
+          source.captainProfile === 'frontier-overseer' &&
+          source.passiveViolationUntil > this.s.time &&
+          (source.passiveViolationStacks || 0) >= p.captains['frontier-overseer'].maxStacks
+        )
+          return 1 + p.captains['frontier-overseer'].maxStackDamage;
+        return 1;
+      }
+      snapshotPassiveRecordHit(e, actualDamage, source) {
+        if (!e || actualDamage <= 0 || e.hp <= 0 || !e.aggro || e.returning) return;
+        const now = this.s.time,
+          p = R.snapshotPassives;
+        if (e.type === 'boss' && e.family === 'darklord') {
+          const cfg = p.darklord;
+          if (e.passiveVeteranUntil > now || e.passiveVeteranReadyAt > now) return;
+          const hits = (e.passiveVeteranHits || []).filter((h) => now - h.time <= cfg.window);
+          hits.push({ time: now, source });
+          e.passiveVeteranHits = hits;
+          const unique = new Set(hits.map((h) => h.source)).size;
+          if (
+            hits.length >= cfg.triggerHits &&
+            (this.activeLivingParty().length === 0 || unique >= 2)
+          ) {
+            e.passiveVeteranUntil = now + cfg.duration;
+            e.passiveVeteranReadyAt = now + cfg.cooldown;
+            e.passiveVeteranHits = [];
+            this.say('The Dark Lord reads the party\u2019s attack pattern.');
+          }
+        }
+        if (e.fieldCaptain && e.captainProfile === 'frontier-overseer') {
+          const cfg = p.captains['frontier-overseer'],
+            active = (e.passiveViolationUntil || 0) > now;
+          e.passiveViolationStacks = Math.min(
+            cfg.maxStacks,
+            (active ? e.passiveViolationStacks || 0 : 0) + 1,
+          );
+          e.passiveViolationUntil = now + cfg.duration;
+        }
+      }
+      snapshotPassiveCoreRelock(e) {
+        if (
+          !e ||
+          e.type !== 'boss' ||
+          e.family !== 'mine' ||
+          !e.aggro ||
+          e.hp <= 0 ||
+          e.returning ||
+          (e.passiveRepairReadyAt || 0) > this.s.time
+        )
+          return;
+        const cfg = R.snapshotPassives.mine,
+          amount = Math.min(
+            e.maxHp - e.hp,
+            e.maxHp * cfg.repairFraction[e.form === 'true' ? 'true' : 'normal'],
+          );
+        if (amount <= 0) return;
+        e.hp += amount;
+        e.passiveRepairReadyAt = this.s.time + cfg.repairCooldown;
+        this.event('heal', {
+          x: e.x,
+          y: e.y,
+          source: e.id,
+          target: e.id,
+          resource: 'health',
+          amount,
+        });
+      }
+      snapshotPassiveRegen(dt) {
+        if (this.peace || dt <= 0) return;
+        const cfg = R.snapshotPassives.cindermaw;
+        for (const e of this.zone().enemies) {
+          if (
+            e.type !== 'boss' ||
+            e.family !== 'cindermaw' ||
+            e.hp <= 0 ||
+            !e.aggro ||
+            e.returning ||
+            e.neutral
+          )
+            continue;
+          const allies = this.zone()
+            .enemies.filter(
+              (u) =>
+                u !== e &&
+                u.hp > 0 &&
+                !u.neutral &&
+                u.species === 'ashbeast' &&
+                dist(u, e) <= cfg.radius,
+            )
+            .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp);
+          const form = e.form === 'true' ? 'true' : 'normal';
+          if (e.hp < e.maxHp * cfg.threshold) {
+            const budget = e.maxHp * cfg.bossHealCap[form] - (e.passiveRegenTotal || 0),
+              heal = Math.max(
+                0,
+                Math.min(
+                  e.maxHp - e.hp,
+                  e.maxHp * (allies.length ? cfg.bossRegen[form] : cfg.soloRegen[form]) * dt,
+                  budget,
+                ),
+              );
+            if (heal > 0) {
+              e.hp += heal;
+              e.passiveRegenTotal = (e.passiveRegenTotal || 0) + heal;
+            }
+          }
+          for (const ally of allies.slice(0, cfg.allyCap))
+            if (ally.hp < ally.maxHp)
+              ally.hp = Math.min(ally.maxHp, ally.hp + ally.maxHp * cfg.allyRegen[form] * dt);
+        }
+      }
       abyssFlightLegs(e, target, sign = 1) {
         const dx = target.x - e.x,
           dy = target.y - e.y,
@@ -106,6 +331,10 @@
         e.sequence = [];
         e.motion = null;
         e.rangedAim = null;
+        // Enemy support healing is encounter-transient, never an enduring
+        // restoration across leash resets, defeat, travel or save snapshots.
+        delete e.supportHeal;
+        delete e.supportHealCd;
         for (const key of [
           'board',
           'dressUntil',
@@ -128,6 +357,19 @@
           'strainHardeningUntil',
           'emergencyStabilizationUsed',
           'emergencyStabilizationUntil',
+          'tauntUntil',
+          'weakenUntil',
+          'weakenFraction',
+          'fractureUntil',
+          'fractureFraction',
+          'passiveAerialUntil',
+          'passiveRepairReadyAt',
+          'passiveVeteranUntil',
+          'passiveVeteranReadyAt',
+          'passiveVeteranHits',
+          'passiveRegenTotal',
+          'passiveViolationUntil',
+          'passiveViolationStacks',
         ])
           delete e[key];
         if (e.quotaOvertime !== undefined) e.quotaOvertime = 0;
@@ -149,6 +391,8 @@
       cancelEncounter(e) {
         this.clearCinderResponses(e);
         this.clearEncounterState(e);
+        for (const u of this.zone().enemies)
+          if (u.supportHeal?.source === e.id) delete u.supportHeal;
         if (e.family === 'citadel')
           for (const u of this.zone().enemies) if (u.dressPost?.owner === e.id) delete u.dressPost;
         this.s.projectiles = this.s.projectiles.filter((p) => p.sourceId !== e.id);
@@ -552,7 +796,7 @@
               )
             )
               continue;
-            this.hitParty(u, e.damage, 0, e.id);
+            this.hitParty(u, this.weakenedEnemyDamage(e), 0, e.id);
             if (
               this.hero !== hero ||
               this.zoneId !== zone ||
@@ -1240,7 +1484,12 @@
           let hit = false;
           for (const u of this.combatTargets())
             if (dist(u, e) < a.radius && this.line(e, u)) {
-              const landed = this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
+              const landed = this.hitParty(
+                u,
+                this.weakenedEnemyDamage(e) * a.coefficient,
+                a.manaDrain || 0,
+                e.id,
+              );
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
               if (landed) {
@@ -1331,7 +1580,7 @@
             dy: (a.y - e.y) / d,
             speed: 260,
             life: 2,
-            damage: e.damage * a.coefficient,
+            damage: this.weakenedEnemyDamage(e) * a.coefficient,
             source: 'enemy',
             sourceId: e.id,
             species: 'cargo',
@@ -1385,7 +1634,7 @@
               dy: Math.sin(angle),
               speed: 490,
               life: 0.72, // 490 paces/s × 0.72 s remains inside the 360-pace warning.
-              damage: e.damage / 9, // At close range nine fragments cap at one raw boss hit.
+              damage: this.weakenedEnemyDamage(e) / 9, // At close range nine fragments cap at one raw boss hit.
               manaDrain: 0,
               source: 'enemy',
               sourceId: e.id,
@@ -1467,7 +1716,7 @@
             dy: Math.sin(a.angle),
             speed: a.shotSpeed,
             life: a.shotLife,
-            damage: e.damage * a.coefficient,
+            damage: this.weakenedEnemyDamage(e) * a.coefficient,
             source: 'enemy',
             sourceId: e.id,
             species: e.species,
@@ -1494,7 +1743,7 @@
               dy: Math.sin(a.angle + delta),
               speed: 260 * R.enemyProjectileMultiplier,
               life: 2.5 / R.enemyProjectileMultiplier,
-              damage: e.damage,
+              damage: this.weakenedEnemyDamage(e),
               manaDrain: a.manaDrain || 0,
               source: 'enemy',
               sourceId: e.id,
@@ -1532,7 +1781,7 @@
               ? a.waveLife
               : R.combatGeometry.ringLife * R.bossCadence.areaRangeMultiplier,
             tick: 0,
-            damage: a.slowOnly ? 0 : e.damage,
+            damage: a.slowOnly ? 0 : this.weakenedEnemyDamage(e),
             radius: 0,
             age: 0,
             hit: [],
@@ -1621,7 +1870,12 @@
             const landed =
               u === jawVictim
                 ? true
-                : this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
+                : this.hitParty(
+                    u,
+                    this.weakenedEnemyDamage(e) * a.coefficient,
+                    a.manaDrain || 0,
+                    e.id,
+                  );
             if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
               return;
             if (landed && u === jawVictim) {
@@ -1632,7 +1886,7 @@
                 // three roll ticks is already mitigated; armor must not apply thrice.
                 totalDamage: Math.max(
                   3,
-                  e.damage * a.coefficient -
+                  this.weakenedEnemyDamage(e) * a.coefficient -
                     (u === this.hero
                       ? this.armor()
                       : ['soldier', 'archer'].includes(u.type)
@@ -1709,7 +1963,7 @@
               kind: 'circle',
               life: 4,
               tick: 1,
-              damage: e.damage * 0.25,
+              damage: this.weakenedEnemyDamage(e) * 0.25,
             });
       }
       advanceMotion(e, dt) {
@@ -1732,7 +1986,12 @@
               this.line(e, u)
             ) {
               a.hit.push(id);
-              const landed = this.hitParty(u, e.damage * a.coefficient, a.manaDrain || 0, e.id);
+              const landed = this.hitParty(
+                u,
+                this.weakenedEnemyDamage(e) * a.coefficient,
+                a.manaDrain || 0,
+                e.id,
+              );
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
               if (landed && e.family === 'ridge' && a.index === 2 && u.hp > 0) {
@@ -1769,6 +2028,17 @@
           a.life <= 0
         ) {
           const completedFlight = !a.flightPath?.length && dist(e, a.target) < 10;
+          // Aerial Superiority rewards a completed offensive flight, never Go-Around
+          // healing or a collision-aborted route.
+          if (
+            e.type === 'boss' &&
+            e.family === 'abyss' &&
+            e.hp > 0 &&
+            completedFlight &&
+            a.flightPath &&
+            a.aerial !== 'go-around'
+          )
+            e.passiveAerialUntil = this.s.time + R.snapshotPassives.abyss.duration;
           if (a.aerial === 'high-yo-yo' && completedFlight) {
             const move = a.rogueAttack,
               victim =
@@ -1776,7 +2046,12 @@
                   ? this.hero
                   : this.combatTargets().find((u) => u.id === move.targetId);
             if (victim?.hp > 0 && dist(victim, move) <= move.radius && this.line(e, victim)) {
-              const hit = this.hitParty(victim, e.damage * move.coefficient, 0, e.id);
+              const hit = this.hitParty(
+                victim,
+                this.weakenedEnemyDamage(e) * move.coefficient,
+                0,
+                e.id,
+              );
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
               if (hit && victim.hp > 0) this.applySlow(victim, move.slowSeconds || 2);

@@ -84,6 +84,14 @@
       e.sceneRole
     )
       return [];
+    // Living scenery is composed of independently moving, harmless bodies.
+    if (
+      root.PrototypeRules?.ambientLife?.[e.structure || e.id] ||
+      ['pasture-sheep', 'poultry-yard', 'animal-pen', 'pup-nest', 'mire-nests'].includes(
+        e.structure || e.id,
+      )
+    )
+      return [];
     const kind = e.renderKind;
     // Authored crowned class outfits have procedural detail not present in base sprites.
     if (kind === 'hero') return e.crowned ? [] : ['hero:' + clean(e.class)];

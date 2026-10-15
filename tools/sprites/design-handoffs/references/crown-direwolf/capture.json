@@ -1,0 +1,87 @@
+{
+  "sourceBase": "d7c878b992b35b72e2df2f7f44afb1f16ac21ff8",
+  "method": "Actual Campaign/renderer on native Canvas; procedural fallback assets, no browser session; JPEG review captures, not pixel-parity fixtures",
+  "savePure": true,
+  "rows": [
+    {
+      "file": "desktop-lance-100.jpg",
+      "id": "enemy-62",
+      "ranged": false,
+      "viewport": [
+        1280,
+        800
+      ],
+      "zoom": 1
+    },
+    {
+      "file": "desktop-lance-150.jpg",
+      "id": "enemy-62",
+      "ranged": false,
+      "viewport": [
+        1280,
+        800
+      ],
+      "zoom": 1.5
+    },
+    {
+      "file": "desktop-archer-100.jpg",
+      "id": "enemy-60",
+      "ranged": true,
+      "viewport": [
+        1280,
+        800
+      ],
+      "zoom": 1
+    },
+    {
+      "file": "desktop-archer-150.jpg",
+      "id": "enemy-60",
+      "ranged": true,
+      "viewport": [
+        1280,
+        800
+      ],
+      "zoom": 1.5
+    },
+    {
+      "file": "phone-lance-100.jpg",
+      "id": "enemy-62",
+      "ranged": false,
+      "viewport": [
+        393,
+        852
+      ],
+      "zoom": 1
+    },
+    {
+      "file": "phone-lance-150.jpg",
+      "id": "enemy-62",
+      "ranged": false,
+      "viewport": [
+        393,
+        852
+      ],
+      "zoom": 1.5
+    },
+    {
+      "file": "phone-archer-100.jpg",
+      "id": "enemy-60",
+      "ranged": true,
+      "viewport": [
+        393,
+        852
+      ],
+      "zoom": 1
+    },
+    {
+      "file": "phone-archer-150.jpg",
+      "id": "enemy-60",
+      "ranged": true,
+      "viewport": [
+        393,
+        852
+      ],
+      "zoom": 1.5
+    }
+  ]
+}

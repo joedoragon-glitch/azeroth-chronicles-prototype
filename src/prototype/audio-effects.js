@@ -70,6 +70,7 @@
         if (
           [
             'companionSkill',
+            'companionChargeStart',
             'hit',
             'rogueRegroup',
             'rogueMove',
@@ -91,6 +92,7 @@
       supportsType(type) {
         return (
           type === 'enemyVfx' ||
+          ['heroSkillCast', 'heroProjectileFlight', 'heroCharge', 'heroDisplace'].includes(type) ||
           contextualEffectTypes.has(type) ||
           Object.prototype.hasOwnProperty.call(eventNotes, type)
         );
@@ -103,6 +105,18 @@
       }
       steelImpact(now, hero = false, weight = 1) {
         const boost = Math.max(0.75, Math.min(1.65, weight));
+        if (hero) {
+          this.noiseBurst(now, 0.045, 0.065 * boost, 'highpass', 1600, 0.7);
+          for (const [pitch, level] of [
+            [89.65, 0.052],
+            [96.7, 0.035],
+            [103.43, 0.023],
+            [110.3, 0.014],
+          ])
+            this.tone(pitch, now, 0.14, level * boost, 'sine', 'effects', 0.002);
+          this.tone(58, now, 0.035, 0.022 * boost, 'sine', 'effects', 0.002);
+          return;
+        }
         this.noiseBurst(
           now,
           0.075 * (0.9 + boost * 0.1),
@@ -246,6 +260,8 @@
         }
       }
       renderEffect(input) {
+        if (input?.type === 'heal' && input.skillPresentation) return;
+        if (input && typeof input === 'object' && this.heroSkillEffect?.(input)) return;
         if (!this.ctx || this.paused || this.settings.muted || this.ctx.state !== 'running') return;
         const e = typeof input === 'string' ? { type: input } : input || {},
           type = e.type,
@@ -291,6 +307,12 @@
           this.finaleUntil = now + 12;
           this.key = null;
         }
+        if (kind === 'chargeInterrupted') {
+          if (!this.allowSfx('chargeInterrupted', now, 0.08)) return;
+          this.sweep(74, 46, now, 0.12, 0.025, 'triangle');
+          this.noiseBurst(now, 0.045, 0.012, 'highpass', 1500, 0.6);
+          return;
+        }
         if (kind === 'footstep' && !this.allowSfx('footstep', now, 0.16)) return;
         if (this.playSoundEvent('effect.' + kind, e)) return;
         if (kind === 'heroSteelImpact') {
@@ -316,15 +338,8 @@
         }
         if (kind === 'swordSwing') {
           const boost = e.combo === 3 ? 1.25 : e.combo === 2 ? 1.08 : 1;
-          this.noiseBurst(now, 0.085, 0.045 * boost, 'bandpass', e.combo === 3 ? 1250 : 1450, 1);
-          this.sweep(
-            e.combo === 3 ? 58 : 61,
-            e.combo === 3 ? 43 : 48,
-            now,
-            e.combo === 3 ? 0.11 : 0.09,
-            0.025 * boost,
-            'triangle',
-          );
+          this.noiseBurst(now, 0.11, 0.05 * boost, 'highpass', 1800, 0.7);
+          this.tone(97.6, now, 0.065, 0.008 * boost, 'sine', 'effects', 0.004);
           return;
         }
         if (kind === 'heroBow') {

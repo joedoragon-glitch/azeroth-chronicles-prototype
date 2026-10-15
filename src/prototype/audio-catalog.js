@@ -557,10 +557,13 @@
     'charged',
     'chargedArea',
     'chargedImpact',
+    'chargeInterrupted',
     'hurt',
     'hit',
     'basicComboFinisher',
     'companionSkill',
+    // Preparation is visible; concrete release and interruption own the sound.
+    'companionChargeStart',
     // UI/save bookkeeping has no separate sound cue.
     'actionFailed',
     'archiveKnowledge',

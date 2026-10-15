@@ -1,7 +1,7 @@
 'use strict';
 const crypto = require('node:crypto');
 const hash = (value) => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
-module.exports = function evidence(Audio) {
+module.exports = function evidence(Audio, byKind = false) {
   const music = [];
   for (const theme of Audio.themes)
     for (const peace of [false, true])
@@ -16,6 +16,7 @@ module.exports = function evidence(Audio) {
             a.schedule();
           }
         }
+  const recipesByKind = {};
   const effects = [],
     routes = [];
   const events = [
@@ -97,12 +98,29 @@ module.exports = function evidence(Audio) {
   for (const event of events) {
     const a = new Audio();
     a.ctx = { currentTime: 1, state: 'running' };
+    const kind = a.soundKind(event),
+      calls = [];
     for (const method of ['tone', 'noiseBurst', 'sweep'])
-      a[method] = (...args) => effects.push([method, ...args]);
-    routes.push(a.soundKind(event));
+      a[method] = (...args) => {
+        effects.push([method, ...args]);
+        calls.push([method, ...args]);
+      };
+    routes.push(kind);
+    // Preserve the old catalog/recipes as historical evidence. The explicitly
+    // replaced hero AV dispatcher is exercised by the combined hero suite;
+    // bypass only that additive owner here, leaving every legacy recipe guarded.
+    a.heroSkillEffect = () => false;
     a.effect(event);
+    (recipesByKind[kind] ??= []).push(calls);
   }
   return {
+    ...(byKind
+      ? {
+          recipesByKind: Object.fromEntries(
+            Object.entries(recipesByKind).map(([k, v]) => [k, hash(v)]),
+          ),
+        }
+      : {}),
     catalog: hash(Audio.themes),
     defaults: hash(Audio.defaults),
     scheduledMusic: hash(music),

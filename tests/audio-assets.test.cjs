@@ -114,6 +114,8 @@ async function offlineContract(checkout) {
     'src/prototype/audio-runtime.js',
     'src/prototype/audio-score.js',
     'src/prototype/audio-effects.js',
+    'src/prototype/audio-hero.js',
+    'src/prototype/hero-presentation.js',
   ]) {
     let p;
     handlers.fetch({

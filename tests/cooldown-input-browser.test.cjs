@@ -83,25 +83,27 @@ const server = http.createServer((req, res) => {
         return result;
       };
     });
+    // Exercise the shipped desktop bindings: slots 6–8 use Space, Shift and B.
+    const desktopKey = (slot) => [null, '1', '2', '3', '4', '5', 'Space', 'ShiftLeft', 'b'][slot];
     const press = async (slot) => {
       if (webkit)
         await page.locator('#skill-' + slot).evaluate((el) => {
           el.setPointerCapture = () => {};
           el.onpointerdown({ pointerType: 'touch', pointerId: 91, preventDefault() {} });
         });
-      else await page.keyboard.down(String(slot));
+      else await page.keyboard.down(desktopKey(slot));
     };
     const release = async (slot) => {
       if (webkit)
         await page
           .locator('#skill-' + slot)
           .evaluate((el) => el.onpointerup({ pointerType: 'touch', pointerId: 91 }));
-      else await page.keyboard.up(String(slot));
+      else await page.keyboard.up(desktopKey(slot));
     };
     let count = 0;
     for (const cls of ['paladin', 'mage', 'ranger'])
       for (let rank = 0; rank <= 5; rank++)
-        for (const slot of [1, 2, 3]) {
+        for (const slot of [1, 2, 3, 4, 5, 6, 7, 8]) {
           await page.evaluate(
             ({ cls, rank, slot }) => {
               const g = Prototype.game,
@@ -117,6 +119,11 @@ const server = http.createServer((req, res) => {
                 maxHp: 500,
               });
               h.skills = Array(8).fill(1);
+              h.shieldStance = 0;
+              h.shieldRank = 0;
+              delete h.silenceField;
+              g.clearPartyCharges();
+              g.s.party = cls === 'ranger' && slot === 4 ? [g.unit('soldier', 620, 900)] : [];
               h.talents = [0, rank, 0, 0];
               h.cd = Array(8).fill(0);
               h.cd[slot - 1] = 5;
@@ -143,8 +150,9 @@ const server = http.createServer((req, res) => {
           await press(slot);
           const waiting = await page.evaluate(() => Prototype.chargePresentation());
           assert(
-            waiting.waiting && waiting.progress === 0,
-            'queued charge does not preload its hold',
+            waiting?.waiting && waiting.progress === 0,
+            'queued charge does not preload its hold: ' +
+              JSON.stringify({ cls, rank, slot, waiting }),
           );
           assert.equal(await page.evaluate(() => __cooldownCasts.length), 0);
           await page.evaluate((slot) => {
@@ -159,7 +167,7 @@ const server = http.createServer((req, res) => {
           assert.equal(rows.length, 1, JSON.stringify({ cls, rank, slot, rows }));
           assert(rows[0].charged);
           assert.equal(rows[0].mp, 0);
-          const expected = [0, 3, 6, 20][slot] * (1 - 0.04 * rank);
+          const expected = [0, 3, 6, 20, 20, 18, 12, 25, 40][slot] * (1 - 0.04 * rank);
           assert(
             Math.abs(rows[0].cd - expected) < 1e-9,
             JSON.stringify({ cls, rank, slot, rows, expected }),
@@ -381,6 +389,101 @@ const server = http.createServer((req, res) => {
         assert.equal(outcome.cooldown, 0, scenario + ' must not spend cooldown');
       }
     }
+    // Actual keyboard/touch input: small HP hits preserve the 0.65s charge;
+    // cumulative post-mitigation loss breaks it without spending cooldown.
+    for (const kind of ['weak', 'interrupt']) {
+      await page.evaluate(() => {
+        const g = Prototype.game;
+        Object.assign(g.hero, {
+          class: 'paladin',
+          x: 600,
+          y: 900,
+          hp: 100,
+          maxHp: 100,
+          order: null,
+          immune: 0,
+        });
+        g.hero.skills = Array(8).fill(1);
+        g.hero.cd = Array(8).fill(0);
+        g.s.mercyTime = 0;
+        g.manualHeroTargetId = null;
+        g.manualHeroTargetLocked = false;
+        const enemy = g.makeEnemy(
+          {
+            species: 'goblin',
+            name: 'Interrupt target',
+            level: 1,
+            hp: 10000,
+            damage: 0,
+            xp: 0,
+            gold: 0,
+          },
+          { x: 680, y: 900 },
+        );
+        g.zone().enemies = [enemy];
+        g.s.heroTarget = enemy.id;
+        window.__cooldownCasts = [];
+        Prototype.updateHUD();
+      });
+      await press(1);
+      assert.equal(await page.evaluate(() => Prototype.chargePresentation()?.state), 'charging');
+      await page.evaluate((kind) => {
+        const g = Prototype.game;
+        g.hitParty(g.hero, 3, 0, null, true);
+        if (kind === 'interrupt') g.hitParty(g.hero, 4, 0, null, true);
+      }, kind);
+      if (kind === 'weak') {
+        await page.waitForFunction(() => Prototype.chargePresentation()?.ready, null, {
+          timeout: 3000,
+        });
+        await release(1);
+        assert.equal(await page.evaluate(() => __cooldownCasts.length), 1);
+        assert.equal(await page.evaluate(() => __cooldownCasts[0].charged), true);
+      } else {
+        await page.waitForTimeout(280);
+        await release(1);
+        assert.equal(
+          await page.evaluate(() => __cooldownCasts.length),
+          0,
+          'interrupted charged input must not fire any skill',
+        );
+        assert.equal(
+          await page.evaluate(() => Prototype.game.hero.cd[0]),
+          0,
+          'interrupted hold preserves full skill cooldown',
+        );
+      }
+    }
+    // Normal taps stay normal during the short charged-cast recovery.
+    await press(1);
+    await release(1);
+    assert.equal(await page.evaluate(() => __cooldownCasts.at(-1)?.charged), false);
+    // A real menu pause freezes companion preparation on the shared active clock.
+    await page.evaluate(() => {
+      const g = Prototype.game;
+      g.clearPartyCharges();
+      g.hero.skills[1] = 1;
+      g.s.companionCombatTraining = 2;
+      const u = g.unit('archer', 600, 900),
+        target = g.zone().enemies[0];
+      g.s.party = [u];
+      g.line = () => true;
+      if (!g.companionUseSecondSkill(u, target)) throw Error('Pause fixture did not begin');
+      Prototype.openMenu('Preparation pause probe');
+      window.__pausedCharge = g.partyChargeProgress(u);
+    });
+    await page.waitForTimeout(800);
+    assert.equal(
+      await page.evaluate(() => Prototype.game.partyChargeProgress(Prototype.game.s.party[0])),
+      await page.evaluate(() => window.__pausedCharge),
+      'menu time cannot finish preparation',
+    );
+    assert.equal(await page.evaluate(() => Prototype.game.s.party[0].skill2Cd), 0);
+    await page.evaluate(() => Prototype.closeMenu());
+    await page.waitForFunction(() => Prototype.game.s.party[0].skill2Cd > 0);
+    await page.evaluate(() => {
+      Prototype.game.s.party = [];
+    });
     // Releasing a queued hold before readiness never spends or resets the slot.
     await page.evaluate(() => {
       Prototype.game.hero.cd[0] = 5;

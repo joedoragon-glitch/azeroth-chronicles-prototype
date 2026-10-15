@@ -284,10 +284,11 @@
       "stage": "release",
       "seed": 9301,
       "seconds": 0.24,
-      "noiseHz": 1450,
+      "noiseHz": 6000,
       "fromHz": 490,
       "toHz": 220,
-      "guide": "Quick dry sword air with faint steel ring; preserve combo accents live."
+      "guide": "Short airy sword swish with a faint high steel edge. No falling pitched wooden thump. Preserve combo accents live.",
+      "profile": "blade-air"
     },
     {
       "id": "sfx-hero-steel-impact",
@@ -295,10 +296,12 @@
       "stage": "impact",
       "seed": 9302,
       "seconds": 0.3,
-      "noiseHz": 1900,
+      "noiseHz": 5200,
       "fromHz": 740,
       "toHz": 165,
-      "guide": "Firm dry steel contact, upper ring and short body. No huge bass boom."
+      "guide": "Crisp tempered-steel sword contact: bright inharmonic upper partials, brief edge scrape and a restrained low body. Short mono-compatible ring, no wooden knock or bass boom. Preserve combo accents live.",
+      "profile": "blade-contact",
+      "partialsHz": [1450, 2179, 3217, 4783]
     },
     {
       "id": "sfx-power-strike",

@@ -150,16 +150,16 @@
     "last": -0.0
   },
   "sfx-hero-steel-swing": {
-    "peak": 0.280906,
-    "rms": 0.033845,
-    "first": -0.0,
-    "last": -0.0
+    "peak": 0.076963,
+    "rms": 0.013507,
+    "first": 0.0,
+    "last": 0.0
   },
   "sfx-hero-steel-impact": {
-    "peak": 0.300585,
-    "rms": 0.03333,
-    "first": -0.0,
-    "last": -0.0
+    "peak": 0.183291,
+    "rms": 0.021143,
+    "first": 0.0,
+    "last": 0.0
   },
   "sfx-power-strike": {
     "peak": 0.245396,

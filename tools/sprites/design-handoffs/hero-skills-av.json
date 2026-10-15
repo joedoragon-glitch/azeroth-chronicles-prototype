@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-design",
+  "designId": "hero-skills-av",
+  "name": "All hero active skill presentation",
+  "kind": "procedural-vfx",
+  "nextAction": "Owner-authorized combined verification after workstream consolidation; no raster generation or deployment in this work item.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Owner authorized complete audiovisual implementation for all 24 active skills and both forms on a separate branch, preserving mechanics and deferring tests. Conversation URL unavailable; dated decision retained here and in repository documents.",
+    "decisionDate": "2026-10-15",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/232",
+    "contentDocuments": [
+      "docs/HERO_SKILL_AV_IMPLEMENTATION_20261015.md",
+      "docs/HERO_SKILL_AV_DEVELOPMENT_LEDGER_20261015.md",
+      "docs/HERO_SKILL_AV_COMBINED_VERIFICATION_20261015.md"
+    ],
+    "locationAndLore": "Existing hero classes in the current PR #300-based multi-file campaign; no new lore or entity designs."
+  },
+  "decisions": {
+    "conceptAcceptance": "Implementation authorized by owner task on 2026-10-15.",
+    "proceduralDesignAcceptance": "Implemented by delegated judgment; not visually reviewed in a running game or separately accepted as finished art.",
+    "spriteProductionAuthorization": "No raster production needed or performed.",
+    "generatedAppearanceAcceptance": "None; no generated raster images.",
+    "pendingCorrections": [
+      "Deferred combined device, audio and warning-legibility acceptance."
+    ]
+  },
+  "reference": {
+    "sourceCommit": "1d142ea7936e4004e697fb9ebbb7205eb6d33cf5",
+    "ownerFilesAndBranches": [
+      "feature/hero-skill-av-20261015",
+      "src/prototype/hero-presentation.js",
+      "src/prototype/audio-hero.js",
+      "src/prototype/renderer.js",
+      "src/prototype/combat-visuals.js"
+    ],
+    "exactEntityState": "Paladin/Mage/Ranger \u00d7 slots 1\u20138 \u00d7 normal/charged; charge progress, actual projectiles and existing status lifetimes.",
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [],
+    "traitsToPreserve": [
+      "Steel and bounded holy gold; protection without invulnerability.",
+      "Distinct frost, teal force, purple arcane control and explosion silhouettes.",
+      "Visible arrow shafts and restrained green support; Rally is not a dash.",
+      "Boss warnings above hero effects; source geometry and fixed 0.65-second hold."
+    ],
+    "assetSpecificDependencies": [
+      "Existing hero body sprites/procedural fallback",
+      "Existing combat projection/effect queue",
+      "Existing audio effects bus/voice lifecycle"
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "48 procedural skill forms, projectile/contact art, charge and status cues"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Normal and charged forms",
+      "Reduced-motion and optimization variants"
+    ],
+    "proceduralOwnersAndReasons": [
+      "hero-presentation.js: dynamic geometry, thin silhouettes and bounded particles must match existing mechanics.",
+      "audio-hero.js: original synthesis reuses existing mixer/offline runtime without external assets."
+    ]
+  },
+  "animationRequirements": {
+    "status": "procedural-implemented-unverified",
+    "gameplayStates": [
+      "cast",
+      "charge",
+      "ready",
+      "cancel",
+      "flight",
+      "impact",
+      "displacement",
+      "status"
+    ],
+    "directions": [
+      "World-projected directions from existing simulation vectors"
+    ],
+    "pivotContract": "Existing screen projection and body grounding; no sprite pivots changed.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

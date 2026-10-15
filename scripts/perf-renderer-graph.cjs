@@ -7,6 +7,7 @@ const campaign = inventory.slice(1, inventory.indexOf('src/prototype/engine.js')
 const presentation = [
   'visuals',
   'combat-visuals',
+  'hero-presentation',
   'enemy-vfx-art',
   'sprite-format',
   'sprites',

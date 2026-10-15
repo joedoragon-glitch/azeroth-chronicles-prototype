@@ -5,6 +5,24 @@
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 
     class Party {
+      rangerRallyActive(u) {
+        return (
+          !!u &&
+          u.hp > 0 &&
+          u.active !== false &&
+          u.rangerRallyZone === this.zoneId &&
+          (u.rangerRallyUntil || 0) > this.s.time
+        );
+      }
+      companionRallyMoveSpeed(u, base) {
+        return (
+          this.companionMoveSpeed(base) *
+          (this.rangerRallyActive(u) ? 1 + Math.min(0.25, u.rangerRallyMovement || 0) : 1)
+        );
+      }
+      companionRallyAttackSpeed(u) {
+        return this.rangerRallyActive(u) ? 1 + Math.min(0.2, u.rangerRallyAttack || 0) : 1;
+      }
       companionAttackDamage(u) {
         return u.damage + this.hero.level * 2 + this.companionInheritedDamageBonus();
       }
@@ -124,7 +142,43 @@
         });
         return true;
       }
+      // The second companion skill is charged, not an instantaneous AoE.
+      // The actor keeps the aim for 0.65s and releases only after surviving damage.
       companionUseSecondSkill(u, target, targets = this.companionSecondSkillTargets(u, target)) {
+        if (
+          !this.companionSecondSkillUnlocked() ||
+          !R.companionSkills.second?.[u.type] ||
+          !target ||
+          (u.skill2Cd || 0) > 0 ||
+          !targets.length ||
+          this.mageSilenceActive(u) ||
+          this._companionCharges?.has(u.id) ||
+          !this.beginPartyCharge(u, 2)
+        )
+          return false;
+        if (!this._companionCharges) this._companionCharges = new Map();
+        this._companionCharges.set(u.id, {
+          unit: u,
+          zone: this.zoneId,
+          targetId: target.id,
+          readyAt: this.partyChargeState(u).readyAt,
+        });
+        this.event('companionChargeStart', {
+          source: u.id,
+          unitType: u.type,
+          targetId: target.id,
+          slot: 2,
+          duration: R.chargedSkills.holdSeconds,
+          x: u.x,
+          y: u.y,
+        });
+        return true;
+      }
+      resolveCompanionSecondSkill(
+        u,
+        target,
+        targets = this.companionSecondSkillTargets(u, target),
+      ) {
         const cfg = R.companionSkills?.second,
           def = cfg?.[u.type];
         if (
@@ -198,8 +252,53 @@
         });
         return true;
       }
+      resolveCompanionCharges() {
+        const z = this.zone();
+        for (const [id, pending] of this._companionCharges || []) {
+          const u = pending.unit,
+            observation = this.partyChargeState(u);
+          const valid =
+            pending.zone === this.zoneId &&
+            this.s.party.includes(u) &&
+            u.active !== false &&
+            u.hp > 0 &&
+            !u.deathRollHeld &&
+            !u.keeperHeld &&
+            !this.mageSilenceActive(u) &&
+            !this._tacticalScatter?.has(u.id) &&
+            !this.peace &&
+            !this.s.recallActive;
+          if (!valid || !observation || observation.interrupted) {
+            this.clearPartyCharge(u);
+            continue;
+          }
+          if (this.partyChargeNow() + 1e-9 < pending.readyAt) continue;
+          const selected = z.enemies.find(
+            (foe) =>
+              foe.id === pending.targetId &&
+              foe.hp > 0 &&
+              !foe.neutral &&
+              this.tacticalDirectTargetable(foe) &&
+              this.line(u, foe),
+          );
+          this.clearPartyCharge(u);
+          if (!selected || !this.resolveCompanionSecondSkill(u, selected)) {
+            this.recoverPartyCharge(u);
+            u.skillGlobalCd = Math.max(
+              u.skillGlobalCd || 0,
+              R.chargedSkills.interrupt.recoverySeconds,
+            );
+          }
+        }
+      }
       companionTrySkill(u, target) {
-        if (!target || (u.skillGlobalCd || 0) > 0) return false;
+        if (
+          !target ||
+          (u.skillGlobalCd || 0) > 0 ||
+          this.mageSilenceActive(u) ||
+          this._companionCharges?.has(u.id)
+        )
+          return false;
         const secondReady = this.companionSecondSkillUnlocked() && (u.skill2Cd || 0) <= 0,
           secondTargets = secondReady ? this.companionSecondSkillTargets(u, target) : [];
         if (
@@ -295,7 +394,7 @@
           this.s.challenge.gameOver
         )
           return false;
-        const rangers = this.availableRangers(type),
+        const rangers = this.availableRangers(type).filter((u) => !this.mageSilenceActive(u)),
           key = type === 'health' ? 'healCd' : 'manaCd';
         if (!rangers.length) {
           if (manual) {
@@ -461,8 +560,11 @@
         const id = dead.id,
           active = dead.active !== false,
           u = this.unit(dead.type, this.hero.x + 40, this.hero.y);
+        this.clearPartyCharge(dead);
+        this._partyChargeRecovery?.delete(dead);
         this.tacticalClearScatter(dead);
         Object.assign(dead, u, { id, active, slow: 0 });
+        delete dead.rogueSlow;
         return true;
       }
       treatCompanions() {
@@ -492,6 +594,7 @@
       restCompanion(id) {
         const u = this.s.party.find((u) => u.id === id && u.active !== false);
         if (!u || this.refugeThreat()) return false;
+        this.clearPartyCharge(u);
         u.active = false;
         u.order = null;
         u.path = [];
@@ -622,6 +725,7 @@
         this.s.recallActive = true;
         this.hero.order = null;
         for (const u of this.activeLivingParty()) {
+          this.clearPartyCharge(u);
           u.order = null;
           u.path = [];
           u.routeAge = 0;
@@ -697,8 +801,8 @@
       followPartyMember(u, living, dt) {
         const d = dist(u, this.hero),
           speed =
-            this.companionMoveSpeed(d > 650 ? 500 : d > 350 ? 390 : d > 200 ? 315 : 255) *
-            (u.slow > 0 ? 0.65 : 1) *
+            this.companionRallyMoveSpeed(u, d > 650 ? 500 : d > 350 ? 390 : d > 200 ? 315 : 255) *
+            this.slowMovementFactor(u) *
             this.mireBogMovementFactor(u) *
             this.ashMovementFactor(u);
         return this.follow(u, this.partyFollowPoint(u, living), speed, dt, 45);
@@ -756,6 +860,18 @@
           living = this.activeLivingParty(),
           context = this.syncSquadDoctrine(),
           claimed = new Set();
+        // Pending casts cannot survive removal, a zone change, death or benching.
+        for (const [id, cast] of this._companionCharges || []) {
+          if (
+            cast.zone !== this.zoneId ||
+            !this.s.party.includes(cast.unit) ||
+            cast.unit.hp <= 0 ||
+            cast.unit.active === false
+          ) {
+            this._companionCharges.delete(id);
+            this.clearPartyCharge(cast.unit);
+          }
+        }
         // Target intent is transient: active selection, not proximity or party size.
         this._tacticalPartyTargets = new Map();
         for (const u of living)
@@ -763,6 +879,7 @@
             context.engaged &&
             u.type === 'soldier' &&
             u.hp <= u.maxHp * 0.5 &&
+            !this.mageSilenceActive(u) &&
             (u.survivalCd || 0) <= 0
           ) {
             u.survivalCd = 14;
@@ -781,14 +898,42 @@
                 dist(a, u) - dist(b, u),
             )[0] || null;
         for (const u of living) {
+          const recovery = this.cooldownRecoveryElapsed(u, dt);
           u.slow = Math.max(0, (u.slow || 0) - dt);
-          u.cd = Math.max(0, u.cd - dt);
-          u.skill1Cd = Math.max(0, (u.skill1Cd || 0) - dt);
-          u.skill2Cd = Math.max(0, (u.skill2Cd || 0) - dt);
-          u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - dt);
+          if (u.rogueSlow > 0) {
+            u.rogueSlow = Math.max(0, u.rogueSlow - dt);
+            if (!u.rogueSlow) delete u.rogueSlow;
+          }
+          u.cd = Math.max(0, u.cd - recovery);
+          u.skill1Cd = Math.max(0, (u.skill1Cd || 0) - recovery);
+          u.skill2Cd = Math.max(0, (u.skill2Cd || 0) - recovery);
+          u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - recovery);
           // Thornfang scatter overrides orders, doctrine and combat until
           // forced movement ends; then the unit resumes its normal assignment.
-          if (u.deathRollHeld || u.keeperHeld || this.tacticalAdvanceScatter(u, dt)) continue;
+          if (u.deathRollHeld || u.keeperHeld || this.tacticalAdvanceScatter(u, dt)) {
+            if (this._companionCharges?.has(u.id)) {
+              this._companionCharges.delete(u.id);
+              this.clearPartyCharge(u);
+            }
+            continue;
+          }
+          const pending = this._companionCharges?.get(u.id);
+          if (pending) {
+            const observation = this.partyChargeState(u);
+            if (
+              pending.unit !== u ||
+              !observation ||
+              observation.interrupted ||
+              this.mageSilenceActive(u)
+            ) {
+              this._companionCharges.delete(u.id);
+              this.clearPartyCharge(u);
+              continue;
+            }
+            // Resolution belongs after enemy/projectile/trap damage in tick().
+            // Waiting here prevents another skill or basic during preparation.
+            continue;
+          }
           if (u.order?.type === 'build') {
             const b = z.buildings.find((b) => b.id === u.order.id);
             if (b && b.progress < 4) {
@@ -796,8 +941,8 @@
                 this.follow(
                   u,
                   b,
-                  this.companionMoveSpeed(230) *
-                    (u.slow > 0 ? 0.65 : 1) *
+                  this.companionRallyMoveSpeed(u, 230) *
+                    this.slowMovementFactor(u) *
                     this.mireBogMovementFactor(u) *
                     this.ashMovementFactor(u),
                   dt,
@@ -822,8 +967,8 @@
                 this.follow(
                   u,
                   b,
-                  this.companionMoveSpeed(230) *
-                    (u.slow > 0 ? 0.65 : 1) *
+                  this.companionRallyMoveSpeed(u, 230) *
+                    this.slowMovementFactor(u) *
                     this.mireBogMovementFactor(u) *
                     this.ashMovementFactor(u),
                   dt,
@@ -849,8 +994,8 @@
                 this.follow(
                   u,
                   n,
-                  this.companionMoveSpeed(230) *
-                    (u.slow > 0 ? 0.65 : 1) *
+                  this.companionRallyMoveSpeed(u, 230) *
+                    this.slowMovementFactor(u) *
                     this.mireBogMovementFactor(u) *
                     this.ashMovementFactor(u),
                   dt,
@@ -873,8 +1018,8 @@
               this.follow(
                 u,
                 deposit,
-                this.companionMoveSpeed(230) *
-                  (u.slow > 0 ? 0.65 : 1) *
+                this.companionRallyMoveSpeed(u, 230) *
+                  this.slowMovementFactor(u) *
                   this.mireBogMovementFactor(u) *
                   this.ashMovementFactor(u),
                 dt,
@@ -972,8 +1117,8 @@
               this.follow(
                 u,
                 this.archerFallbackPoint(u, e, living),
-                this.companionMoveSpeed(270) *
-                  (u.slow > 0 ? 0.65 : 1) *
+                this.companionRallyMoveSpeed(u, 270) *
+                  this.slowMovementFactor(u) *
                   this.mireBogMovementFactor(u) *
                   this.ashMovementFactor(u),
                 dt,
@@ -985,8 +1130,8 @@
               this.follow(
                 u,
                 this.archerCombatPoint(u, e, living),
-                this.companionMoveSpeed(260) *
-                  (u.slow > 0 ? 0.65 : 1) *
+                this.companionRallyMoveSpeed(u, 260) *
+                  this.slowMovementFactor(u) *
                   this.mireBogMovementFactor(u) *
                   this.ashMovementFactor(u),
                 dt,
@@ -998,8 +1143,8 @@
               this.follow(
                 u,
                 anchor,
-                this.companionMoveSpeed(245) *
-                  (u.slow > 0 ? 0.65 : 1) *
+                this.companionRallyMoveSpeed(u, 245) *
+                  this.slowMovementFactor(u) *
                   this.mireBogMovementFactor(u) *
                   this.ashMovementFactor(u),
                 dt,
@@ -1009,7 +1154,7 @@
             }
             if (this.companionTrySkill(u, e)) continue;
             if (u.cd <= 0) {
-              u.cd = 0.85;
+              u.cd = 0.85 / this.companionRallyAttackSpeed(u);
               const shot = Math.max(1, d);
               this.s.projectiles.push({
                 id: 'projectile-' + this.s.nextId++,
@@ -1040,15 +1185,15 @@
             this.follow(
               u,
               e,
-              this.companionMoveSpeed(250) *
-                (u.slow > 0 ? 0.65 : 1) *
+              this.companionRallyMoveSpeed(u, 250) *
+                this.slowMovementFactor(u) *
                 this.mireBogMovementFactor(u) *
                 this.ashMovementFactor(u),
               dt,
               this.line(u, e) ? 55 : 0,
             );
           else if (u.cd <= 0) {
-            u.cd = 0.85;
+            u.cd = 0.85 / this.companionRallyAttackSpeed(u);
             if (this.damage(e, this.companionAttackDamage(u), u.id))
               this.event('melee', {
                 actor: 'companion',

@@ -40,6 +40,102 @@
         );
       }
 
+      // One active-time clock for every friendly preparation. The shell injects
+      // a pause-aware monotonic clock; headless callers advance the same clock
+      // through tick(). No browser clock, actor field or timestamp is saved.
+      partyChargeNow() {
+        return this._partyChargeClock
+          ? this._partyChargeClock()
+          : (this._partyChargeTime ?? this.s.time);
+      }
+      setPartyChargeClock(clock) {
+        this._partyChargeClock = clock;
+      }
+      advancePartyChargeClock(seconds) {
+        if (!this._partyChargeClock && Number.isFinite(seconds) && seconds > 0)
+          this._partyChargeTime = this.partyChargeNow() + seconds;
+      }
+      partyChargeRecovery(unit) {
+        const remaining = Math.max(
+          0,
+          (this._partyChargeRecovery?.get(unit) || 0) - this.partyChargeNow(),
+        );
+        if (!remaining) this._partyChargeRecovery?.delete(unit);
+        return remaining;
+      }
+      partyChargeProgress(unit) {
+        const cast = this.partyChargeState(unit);
+        return cast
+          ? Math.min(
+              1,
+              Math.max(0, (this.partyChargeNow() - cast.started) / R.chargedSkills.holdSeconds),
+            )
+          : 0;
+      }
+      beginPartyCharge(unit, slot) {
+        if (!unit || unit.hp <= 0 || this.partyChargeRecovery(unit) > 0) return false;
+        if (!this._pendingPartyCharges) this._pendingPartyCharges = new Map();
+        const started = this.partyChargeNow();
+        this._pendingPartyCharges.set(unit, {
+          slot,
+          started,
+          readyAt: started + R.chargedSkills.holdSeconds,
+          zone: this.zoneId,
+          lostHp: 0,
+          interrupted: false,
+        });
+        return true;
+      }
+      partyChargeState(unit) {
+        return this._pendingPartyCharges?.get(unit) || null;
+      }
+      clearPartyCharge(unit) {
+        this._pendingPartyCharges?.delete(unit);
+        this._companionCharges?.delete(unit?.id);
+      }
+      clearPartyCharges() {
+        this._pendingPartyCharges?.clear();
+        this._companionCharges?.clear();
+        this._partyChargeRecovery?.clear();
+      }
+      recoverPartyCharge(unit) {
+        if (!this._partyChargeRecovery) this._partyChargeRecovery = new Map();
+        this._partyChargeRecovery.set(
+          unit,
+          this.partyChargeNow() + R.chargedSkills.interrupt.recoverySeconds,
+        );
+      }
+      recordPartyChargeDamage(unit, actualLostHp) {
+        const cast = this.partyChargeState(unit);
+        if (!cast || cast.interrupted || !(actualLostHp > 0)) return false;
+        // Completion wins an exact deadline tie for both actors. Damage after
+        // readiness cannot break preparation; death still clears an unreleased
+        // action before respawn/Developer immortality can revive the actor.
+        if (this.partyChargeNow() + 1e-9 >= cast.readyAt) {
+          if (unit.hp <= 0) this.clearPartyCharge(unit);
+          return false;
+        }
+        cast.lostHp += actualLostHp;
+        const rule = R.chargedSkills.interrupt,
+          threshold = Math.max(rule.minimumHp, (unit.maxHp || 1) * rule.hpFraction);
+        if (cast.lostHp + 1e-9 < threshold && unit.hp > 0) return false;
+        cast.interrupted = true;
+        this.recoverPartyCharge(unit);
+        if (unit !== this.hero)
+          unit.skillGlobalCd = Math.max(unit.skillGlobalCd || 0, rule.recoverySeconds);
+        this.event('chargeInterrupted', {
+          zone: this.zoneId,
+          actor: unit === this.hero ? 'hero' : 'companion',
+          target: unit === this.hero ? 'hero' : unit.id,
+          slot: cast.slot,
+          damage: cast.lostHp,
+          threshold,
+          x: unit.x,
+          y: unit.y,
+        });
+        return true;
+      }
+
       // Shared tactical observations and authored damage/targeting safeguards.
       tacticalClearBurst(e = null) {
         if (!this._tacticalBurstWindow) return;
@@ -150,6 +246,12 @@
         return count;
       }
 
+      weakenedEnemyDamage(e) {
+        return (
+          e.damage *
+          ((e.weakenUntil || 0) > this.s.time ? 1 - Math.min(0.8, e.weakenFraction || 0) : 1)
+        );
+      }
       tacticalHighestThreatTarget(e, fallback = this.hero) {
         const candidates = this.combatTargets().filter(
           (u) => u.hp > 0 && dist(e, u) <= (e.type === 'boss' ? 500 : 360) && this.line(e, u),
@@ -298,6 +400,28 @@
         return depleted && (pressured || cunning);
       }
 
+      // A timed Slow slows cooldown recovery without changing base cooldowns.
+      // Split a frame at Slow's expiry so cooldown timing stays frame-rate stable.
+      cooldownRecoveryElapsed(unit, dt, enemy = false) {
+        if (!Number.isFinite(dt) || dt <= 0) return 0;
+        const slow = Number.isFinite(unit?.slow) ? Math.max(0, unit.slow) : 0;
+        const multiplier = enemy
+          ? R.cooldownBalance.enemySlowRecoveryMultiplier
+          : R.cooldownBalance.slowRecoveryMultiplier;
+        return dt - Math.min(dt, slow) * (1 - multiplier);
+      }
+
+      // Absolute encounter-clock readiness deadlines need the same recovery
+      // adjustment as remaining-second timers, including when a deadline falls
+      // inside the current frame. Never extend an already-ready ability.
+      slowCooldownReadyAt(unit, readyAt, dt, enemy = false) {
+        if (!Number.isFinite(readyAt) || !Number.isFinite(dt) || dt <= 0) return readyAt;
+        const frameStart = this.s.time - dt;
+        if (readyAt <= frameStart) return readyAt;
+        const remaining = readyAt - frameStart;
+        return this.s.time + Math.max(0, remaining - this.cooldownRecoveryElapsed(unit, dt, enemy));
+      }
+
       // One contract for the shared timed Slow condition: living, vulnerable
       // targets only; repeat hits refresh duration but never shorten it.
       applySlow(unit, seconds) {
@@ -312,6 +436,17 @@
           return false;
         unit.slow = Math.max(unit.slow || 0, seconds);
         return true;
+      }
+
+      applyRogueSlow(unit, seconds) {
+        if (!this.applySlow(unit, seconds)) return false;
+        unit.rogueSlow = Math.max(unit.rogueSlow || 0, seconds);
+        return true;
+      }
+
+      slowMovementFactor(unit) {
+        if (!(unit?.slow > 0)) return 1;
+        return unit.rogueSlow > 0 ? R.tacticalFoundation.rogueSlowMovementFactor : 0.65;
       }
 
       ashMovementFactor(unit) {
@@ -450,6 +585,9 @@
           amount *= 0.8;
         if (!piercing && e.family === 'citadel' && e.open <= 0) amount *= 0.65;
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;
+        // Individual passive defenses run before burst compression and remain
+        // bypassable by the existing explicit piercing contract.
+        if (!piercing) amount *= this.snapshotBossIncomingFactor(e);
         // All hero/companion damage sources use this same resolver. This
         // reduction is exclusive to active travel; it ends on arrival or abort.
         if (
@@ -502,11 +640,17 @@
           equipment.remaining -= absorbed;
           amount -= absorbed;
         }
+        // Shield Stance sacrifices Paladin offense; Arcane Fracture increases
+        // actual damage from both the hero and companions, once per hit.
+        if (source === 'hero' && this.hero.class === 'paladin' && (this.hero.shieldStance || 0) > 0)
+          amount *= R.heroTactics.paladin.shield.outgoing;
+        if ((e.fractureUntil || 0) > this.s.time) amount *= 1 + (e.fractureFraction || 0);
         const actualDamage = Math.max(0, Math.min(e.hp, amount));
         const reflected =
           e.captainProfile === 'supply-crown' && e.captainReflect > 0 ? actualDamage * 0.3 : 0;
         e.hp = Math.max(0, e.hp - amount);
         this.recordMarchesDamage(e, actualDamage);
+        this.snapshotPassiveRecordHit(e, actualDamage, source);
         this.tacticalRecordHit(e, source, actualDamage);
         if (source === 'hero') this.recordDeveloperDamage('outgoing', actualDamage);
         this.effects.push({ type: 'hit', x: e.x, y: e.y, amount });
@@ -516,15 +660,41 @@
       }
       hitParty(u, amount, manaDrain = 0, rangedSourceId = null, alreadyMitigated = false) {
         if (this.peace || u.hp <= 0 || (u.immune || 0) > 0) return false;
+        // Real source IDs also cover melee now. Passive bonuses never apply to
+        // environment hazards, reflected damage, or unrelated named species.
+        const attacker = rangedSourceId
+          ? this.zone().enemies.find((e) => e.id === rangedSourceId)
+          : null;
+        if (!alreadyMitigated) amount *= this.snapshotPassiveOutgoingFactor(attacker);
         const armor =
           u === this.hero
             ? this.armor()
             : ['soldier', 'archer'].includes(u.type)
               ? this.companionArmor(u.type)
               : 5 + this.hero.level * 0.5;
-        const oldHp = u.hp,
-          mitigated = alreadyMitigated ? Math.max(0, amount) : Math.max(3, amount - armor * 0.35);
+        const oldHp = u.hp;
+        let mitigated = alreadyMitigated ? Math.max(0, amount) : Math.max(3, amount - armor * 0.35);
+        // Hero Shield Stance and the party ward share a mitigation layer:
+        // apply the STRONGER one, not both multiplicatively. Last Bastion
+        // still protects companions, while a tank cannot stack two defenses
+        // into near-immunity. Enemy weakening remains an offensive debuff.
+        let defensiveFactor = 1;
+        if (u === this.hero && u.class === 'paladin' && (u.shieldStance || 0) > 0) {
+          const shield = R.heroTactics.paladin.shield;
+          defensiveFactor = Math.min(
+            defensiveFactor,
+            1 -
+              Math.min(
+                0.9,
+                shield.reduction + Math.floor((u.shieldRank || 1) / 2) * shield.reductionStep,
+              ),
+          );
+        }
+        if ((u.wardUntil || 0) > this.s.time)
+          defensiveFactor = Math.min(defensiveFactor, 1 - Math.min(0.75, u.wardReduction || 0));
+        mitigated *= defensiveFactor;
         u.hp = Math.max(0, u.hp - mitigated);
+        this.recordPartyChargeDamage(u, oldHp - u.hp);
         if (u === this.hero) this.recordDeveloperDamage('incoming', mitigated);
         if (R.resourceMode.manaEnabled && u === this.hero && manaDrain > 0)
           this.drainMana(u, manaDrain);
@@ -644,6 +814,22 @@
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
             continue;
           }
+          // Additive transient observation, after the existing stagger delay.
+          if (p.source === 'hero' && !p.heroFlightPresented) {
+            p.heroFlightPresented = true;
+            this.event('heroProjectileFlight', {
+              actor: 'hero',
+              class: hero.class,
+              slot: p.slot || 1,
+              x: p.x,
+              y: p.y,
+              target: p.target,
+              style: p.style,
+              charged: !!p.charged,
+              piercing: !!p.piercing,
+              effect: p.effect,
+            });
+          }
           const before = { x: p.x, y: p.y },
             d = dist(p, e),
             step = Math.min(p.speed * dt, d);
@@ -652,6 +838,20 @@
           p.x += p.dx * step;
           p.y += p.dy * step;
           if (!this.clearSegment(before, p, 0)) {
+            if (p.source === 'hero')
+              this.event('projectileImpact', {
+                actor: 'hero',
+                source: 'hero',
+                class: hero.class,
+                slot: p.slot || 1,
+                style: p.style,
+                effect: p.effect,
+                charged: !!p.charged,
+                x: before.x,
+                y: before.y,
+                landed: false,
+                blocked: true,
+              });
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
             continue;
           }
@@ -674,6 +874,7 @@
                   )
                 : null;
             const victim = guard || e;
+            const contactPoint = { x: victim.x, y: victim.y };
             if (guard) e.royalPrerogativeReadyAt = this.s.time + 18;
             const landed = this.damage(
               victim,
@@ -699,6 +900,8 @@
                 p.comboClass || this.hero.class,
               );
             if (landed && p.slow) this.applySlow(victim, p.slow);
+            if (landed && p.push && victim.hp > 0 && p.source === 'hero')
+              this.shieldPush(victim, p.push);
             this.event('projectileImpact', {
               actor: p.source === 'hero' ? 'hero' : 'companion',
               class: p.source === 'hero' ? this.hero.class : undefined,
@@ -707,10 +910,14 @@
               style: p.style || 'arrow',
               effect: p.effect,
               slot: p.slot,
-              x: victim.x,
-              y: victim.y,
+              x: contactPoint.x,
+              y: contactPoint.y,
               target: victim.id,
               charged: !!p.charged,
+              landed: !!landed,
+              piercing: !!p.piercing,
+              directionX: p.dx,
+              directionY: p.dy,
             });
             if (p.charged && (!p.rapid || p.chargedBurst))
               this.event('chargedImpact', {
@@ -724,6 +931,7 @@
           }
         }
         this.rechargeOwnMud(dt);
+        this.snapshotPassiveRegen(dt);
         for (const a of [...this.s.hazards]) {
           if (a.family === 'mire' && a.index === 2 && a.kind === 'circle') {
             for (const u of this.combatTargets()) {

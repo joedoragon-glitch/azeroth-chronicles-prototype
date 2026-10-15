@@ -1,0 +1,36 @@
+{
+  "scope": "Paladin auto attack release/contact; same event IDs, duration, gains and combo routing. Revised recordings and cold fallback.",
+  "request": "Owner reports wooden tone; request proper sword sound.",
+  "method": "Original deterministic synthesis, bright inharmonic steel partials, short edge scrape and airy release; no third-party audio.",
+  "listeningStatus": "Subjective iPhone listening remains owner review; automated PCM metrics do not prove perceptual quality.",
+  "metrics": {
+    "sfx-hero-steel-swing": {
+      "before": {
+        "peak": 0.28088,
+        "rms": 0.03384,
+        "energyAbove1kHz": 0.156,
+        "seconds": 0.24
+      },
+      "after": {
+        "peak": 0.07693,
+        "rms": 0.0135,
+        "energyAbove1kHz": 0.9948,
+        "seconds": 0.24
+      }
+    },
+    "sfx-hero-steel-impact": {
+      "before": {
+        "peak": 0.30057,
+        "rms": 0.03332,
+        "energyAbove1kHz": 0.2345,
+        "seconds": 0.3
+      },
+      "after": {
+        "peak": 0.18326,
+        "rms": 0.02114,
+        "energyAbove1kHz": 0.9806,
+        "seconds": 0.3
+      }
+    }
+  }
+}

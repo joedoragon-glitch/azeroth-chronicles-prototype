@@ -235,8 +235,135 @@
     }
     return drawn;
   }
+  // Floating cast information is separate from floor warnings, so danger
+  // geometry can sit beneath every actor/prop without burying the cast clock.
+  function actorCues(ctx, screen, game) {
+    ctx.save();
+    for (const e of game
+      .zone()
+      .enemies.filter((e) => e.telegraph?.anonymousCast || e.telegraph?.mobileRogueCast)) {
+      const a = e.telegraph,
+        p = screen(e);
+      const width = 70,
+        height = 8,
+        x = p.x - width / 2,
+        y = p.y - 65;
+      const fill = Math.max(0, Math.min(1, 1 - a.timer / a.total));
+      ctx.fillStyle = '#1b233080';
+      ctx.fillRect(x - 2, y - 2, width + 4, height + 4);
+      ctx.fillStyle = '#e5b963';
+      ctx.fillRect(x, y, width * fill, height);
+      ctx.strokeStyle = '#f2d99b';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(x, y, width, height);
+      ctx.font = 'bold 11px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#fff1c7';
+      ctx.fillText(a.anonymousCast ? 'Preparing…' : 'ROGUE CAST', p.x, y - 5);
+    }
+    royalTaxStatus(ctx, screen, game);
+    // Ledger of Losses deliberately obscures Ridge's ground footprints,
+    // including separate rogue moves. It must NEVER obscure the cast itself:
+    // attach a high-contrast progress bar to the actual boss, not the terrain.
+    for (const e of game
+      .zone()
+      .enemies.filter(
+        (e) =>
+          e.family === 'ridge' &&
+          e.ledgerOpen &&
+          !e.telegraph?.mobileRogueCast &&
+          visibleWarning(e) &&
+          e.hp > 0,
+      )) {
+      const a = e.telegraph,
+        p = screen(e),
+        w = 84,
+        y = p.y - 82,
+        total = Math.max(0.001, a.total || a.timer || 1),
+        ready = Math.max(0, Math.min(1, 1 - a.timer / total));
+      ctx.fillStyle = '#18212980';
+      ctx.fillRect(p.x - w / 2 - 3, y - 3, w + 6, 15);
+      ctx.fillStyle = '#6e5c3f';
+      ctx.fillRect(p.x - w / 2, y, w, 8);
+      ctx.fillStyle = a.rogueMove ? '#a8d7e6' : '#f4d085';
+      ctx.fillRect(p.x - w / 2, y, w * ready, 8);
+      ctx.strokeStyle = '#f4e4b5';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(p.x - w / 2, y, w, 8);
+      ctx.textAlign = 'center';
+      ctx.font = 'bold 11px system-ui';
+      ctx.fillStyle = '#fff4d7';
+      ctx.fillText('LEDGER CAST', p.x, y - 8);
+    }
+    for (const e of game
+      .zone()
+      .enemies.filter(
+        (e) =>
+          visibleWarning(e) &&
+          !e.telegraph?.mobileRogueCast &&
+          !(e.family === 'ridge' && e.ledgerOpen),
+      )) {
+      const a = e.telegraph;
+      // The skill belongs to the caster, not the player's marked landing point.
+      const p = screen(e);
+      ctx.font = 'bold 12px system-ui';
+      ctx.textAlign = 'center';
+      const transform = ctx.getTransform?.(),
+        scale = transform?.a || 1,
+        viewWidth = (ctx.canvas?.width || 1280) / scale,
+        viewHeight = (ctx.canvas?.height || 800) / scale,
+        maxWidth = Math.max(60, Math.min(240, viewWidth - 16)),
+        words = (
+          a.name +
+          (a.stages ? ' · ' + a.stage + '/' + a.stages : '') +
+          (a.rogueMove ? '' : ' · ' + Math.max(0, a.timer).toFixed(1) + 's')
+        ).split(' '),
+        lines = [];
+      let current = '';
+      for (const word of words) {
+        const next = current ? current + ' ' + word : word;
+        if (current && ctx.measureText(next).width > maxWidth - 16) {
+          lines.push(current);
+          current = word;
+        } else current = next;
+      }
+      if (current) lines.push(current);
+      if (a.rogueMove)
+        lines.push(
+          (a.rogueSignature ? 'SIGNATURE' : 'ROGUE') +
+            ' · ' +
+            Math.max(0, a.timer).toFixed(1) +
+            's',
+        );
+      const w = Math.min(maxWidth, Math.max(...lines.map((t) => ctx.measureText(t).width)) + 16),
+        h = 8 + lines.length * 15,
+        left = Math.max(4, Math.min(viewWidth - w - 4, p.x - w / 2)),
+        top = Math.max(
+          4,
+          Math.min(
+            viewHeight - h - 4,
+            p.y - (e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 78 : 65) - h,
+          ),
+        );
+      ctx.fillStyle = a.rogueMove ? '#192a367a' : '#241d1a7a';
+      ctx.fillRect(left, top, w, h);
+      ctx.strokeStyle =
+        a.kind === 'summon'
+          ? '#a8bb9b'
+          : a.rogueSignature
+            ? '#9cf1f0'
+            : a.rogueMove
+              ? '#8ecde6'
+              : '#f4c984';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(left, top, w, h);
+      ctx.fillStyle = a.rogueMove ? '#f2fbff' : '#fff3c8';
+      lines.forEach((t, j) => ctx.fillText(t, left + w / 2, top + 16 + j * 15));
+    }
+    ctx.restore();
+  }
   function ground(ctx, screen, game, pass = 'fill', time = 0) {
-    const cue = pass === 'cue';
+    const cue = pass === 'cue' || pass === 'underlay-cue';
     ctx.save();
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
@@ -398,64 +525,6 @@
         ctx.stroke();
       }
     }
-    if (cue)
-      for (const e of game
-        .zone()
-        .enemies.filter((e) => e.telegraph?.anonymousCast || e.telegraph?.mobileRogueCast)) {
-        const a = e.telegraph,
-          p = screen(e);
-        const width = 70,
-          height = 8,
-          x = p.x - width / 2,
-          y = p.y - 65;
-        const fill = Math.max(0, Math.min(1, 1 - a.timer / a.total));
-        ctx.fillStyle = '#1b2330dd';
-        ctx.fillRect(x - 2, y - 2, width + 4, height + 4);
-        ctx.fillStyle = '#e5b963';
-        ctx.fillRect(x, y, width * fill, height);
-        ctx.strokeStyle = '#f2d99b';
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(x, y, width, height);
-        ctx.font = 'bold 11px system-ui';
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#fff1c7';
-        ctx.fillText(a.anonymousCast ? 'Preparing…' : 'ROGUE CAST', p.x, y - 5);
-      }
-    if (cue) royalTaxStatus(ctx, screen, game);
-    // Ledger of Losses deliberately obscures Ridge's ground footprints,
-    // including separate rogue moves. It must NEVER obscure the cast itself:
-    // attach a high-contrast progress bar to the actual boss, not the terrain.
-    if (cue)
-      for (const e of game
-        .zone()
-        .enemies.filter(
-          (e) =>
-            e.family === 'ridge' &&
-            e.ledgerOpen &&
-            !e.telegraph?.mobileRogueCast &&
-            visibleWarning(e) &&
-            e.hp > 0,
-        )) {
-        const a = e.telegraph,
-          p = screen(e),
-          w = 84,
-          y = p.y - 82,
-          total = Math.max(0.001, a.total || a.timer || 1),
-          ready = Math.max(0, Math.min(1, 1 - a.timer / total));
-        ctx.fillStyle = '#182129eb';
-        ctx.fillRect(p.x - w / 2 - 3, y - 3, w + 6, 15);
-        ctx.fillStyle = '#6e5c3f';
-        ctx.fillRect(p.x - w / 2, y, w, 8);
-        ctx.fillStyle = a.rogueMove ? '#a8d7e6' : '#f4d085';
-        ctx.fillRect(p.x - w / 2, y, w * ready, 8);
-        ctx.strokeStyle = '#f4e4b5';
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(p.x - w / 2, y, w, 8);
-        ctx.textAlign = 'center';
-        ctx.font = 'bold 11px system-ui';
-        ctx.fillStyle = '#fff4d7';
-        ctx.fillText('LEDGER CAST', p.x, y - 8);
-      }
     for (const e of game
       .zone()
       .enemies.filter(
@@ -513,54 +582,6 @@
           ctx.textAlign = 'center';
           ctx.fillText('PROTECTED SIDE', spot.x, spot.y);
         }
-      }
-      if (cue) {
-        const p = screen(a.kind === 'summon' ? e : a);
-        ctx.font = 'bold 12px system-ui';
-        ctx.textAlign = 'center';
-        const transform = ctx.getTransform?.(),
-          scale = transform?.a || 1,
-          viewWidth = (ctx.canvas?.width || 1280) / scale,
-          viewHeight = (ctx.canvas?.height || 800) / scale,
-          maxWidth = Math.max(60, Math.min(240, viewWidth - 16)),
-          words = (
-            a.name +
-            (a.stages ? ' · ' + a.stage + '/' + a.stages : '') +
-            (a.rogueMove ? '' : ' · ' + a.timer.toFixed(1))
-          ).split(' '),
-          lines = [];
-        let current = '';
-        for (const word of words) {
-          const next = current ? current + ' ' + word : word;
-          if (current && ctx.measureText(next).width > maxWidth - 16) {
-            lines.push(current);
-            current = word;
-          } else current = next;
-        }
-        if (current) lines.push(current);
-        if (a.rogueMove)
-          lines.push((a.rogueSignature ? 'SIGNATURE' : 'ROGUE') + ' · ' + a.timer.toFixed(1) + 's');
-        const w = Math.min(maxWidth, Math.max(...lines.map((t) => ctx.measureText(t).width)) + 16),
-          h = 8 + lines.length * 15,
-          left = Math.max(4, Math.min(viewWidth - w - 4, p.x - w / 2)),
-          top = Math.max(
-            4,
-            Math.min(viewHeight - h - 4, p.y - (a.kind === 'summon' ? 72 : 31) - h + 21),
-          );
-        ctx.fillStyle = a.rogueMove ? '#192a36f2' : '#241d1af2';
-        ctx.fillRect(left, top, w, h);
-        ctx.strokeStyle =
-          a.kind === 'summon'
-            ? '#a8bb9b'
-            : a.rogueSignature
-              ? '#9cf1f0'
-              : a.rogueMove
-                ? '#8ecde6'
-                : '#f4c984';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(left, top, w, h);
-        ctx.fillStyle = a.rogueMove ? '#f2fbff' : '#fff3c8';
-        lines.forEach((t, j) => ctx.fillText(t, left + w / 2, top + 16 + j * 15));
       }
       if (cue && a.tracking) {
         const p = screen(a);
@@ -817,6 +838,172 @@
         }
       }
     }
+    if (pass === 'cue') actorCues(ctx, screen, game);
+    ctx.restore();
+  }
+  // Enemy support healing deliberately reuses the existing heal event rather
+  // than inventing a damaging spell/VFX identity. Keep these materials rooted
+  // in the actual creature and authored profession, never its display name.
+  const enemyHealColors = Object.freeze({
+    wolf: '#a5c8a1',
+    goblin: '#cbbf8e',
+    skeleton: '#d4d4c1',
+    wraith: '#aea9dc',
+    stalker: '#a79ad4',
+    mireling: '#80c5b5',
+    reedbeast: '#a4d2a8',
+    archer: '#bfce9a',
+    crownguard: '#d3d5b2',
+    ashbeast: '#eca779',
+    orc: '#cbb48c',
+    ogre: '#cabb9d',
+  });
+  function enemyHealMaterial(f) {
+    if (f.family === 'crypt') return 'bone';
+    if (f.family === 'mire' || f.family === 'archive') return 'water';
+    if (f.family === 'ridge' || f.captainProfile === 'supply-vale') return 'metal';
+    if (f.family === 'abyss') return 'aerial';
+    if (f.captainProfile === 'supply-march') return 'water';
+    if (f.captainProfile === 'supply-crown') return 'growth';
+    if (['skeleton'].includes(f.species)) return 'bone';
+    if (['mireling', 'reedbeast'].includes(f.species)) return 'water';
+    if (['wraith', 'stalker'].includes(f.species)) return 'spectral';
+    if (['ashbeast'].includes(f.species)) return 'ember';
+    if (['archer', 'crownguard', 'orc'].includes(f.species)) return 'military';
+    if (['ogre', 'goblin'].includes(f.species)) return 'earth';
+    return 'growth';
+  }
+  function enemyHealColor(f) {
+    if (f.family === 'abyss') return '#b7a2df';
+    if (f.family === 'ridge' || f.captainProfile === 'supply-vale') return '#e3c68e';
+    if (f.family === 'archive') return '#a5c9dc';
+    return enemyHealColors[f.species] || '#add9b3';
+  }
+  function enemySupportHeal(ctx, screen, f) {
+    if (!Number.isFinite(f.x) || !Number.isFinite(f.y)) return;
+    const remaining = Math.max(0, Math.min(1, f.life / Math.max(0.01, f.max || 0.55))),
+      progress = 1 - remaining,
+      p = screen(f),
+      hue = enemyHealColor(f),
+      material = enemyHealMaterial(f),
+      strong = f.boss || f.captain || f.form === 'ringleader';
+    ctx.save();
+    ctx.strokeStyle = hue;
+    ctx.fillStyle = hue;
+    ctx.lineWidth = strong ? 2.8 : 2;
+    ctx.globalAlpha = remaining * 0.75;
+    // A fleeting, non-targeting link makes it immediately clear who healed
+    // whom. This is informational, not an attack beam or projectile.
+    if (Number.isFinite(f.fromX) && Number.isFinite(f.fromY)) {
+      const from = screen({ x: f.fromX, y: f.fromY });
+      if (Math.hypot(p.x - from.x, p.y - from.y) > 17) {
+        ctx.setLineDash([5, 7]);
+        ctx.lineDashOffset = -progress * 21;
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y - 9);
+        ctx.quadraticCurveTo((from.x + p.x) / 2, (from.y + p.y) / 2 - 29, p.x, p.y - 7);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+    ctx.lineWidth = strong ? 2.8 : 2;
+    ctx.beginPath();
+    ctx.ellipse(p.x, p.y + 9, 18 + progress * 12, 7 + progress * 5, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    // Readable at actual phone scale: five small material-specific marks rise
+    // around the living recipient instead of a full-screen green explosion.
+    for (let j = 0; j < 5; j++) {
+      const angle = j * Math.PI * 0.4 + progress * 1.2,
+        px = p.x + Math.cos(angle) * (10 + progress * 15),
+        py = p.y - 7 - progress * (11 + (j % 3) * 6) + Math.sin(angle) * 5;
+      ctx.beginPath();
+      if (material === 'water') {
+        ctx.ellipse(px, py, 2, 3.5, 0.25, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (material === 'bone' || material === 'metal') {
+        ctx.moveTo(px - 3, py + 2);
+        ctx.lineTo(px, py - 3);
+        ctx.lineTo(px + 3, py + 2);
+        ctx.stroke();
+      } else if (material === 'ember' || material === 'aerial') {
+        ctx.moveTo(px, py - 4);
+        ctx.lineTo(px + 3, py);
+        ctx.lineTo(px, py + 4);
+        ctx.lineTo(px - 3, py);
+        ctx.closePath();
+        ctx.fill();
+      } else if (material === 'military') {
+        ctx.moveTo(px - 3, py - 2);
+        ctx.lineTo(px, py + 2);
+        ctx.lineTo(px + 3, py - 2);
+        ctx.stroke();
+      } else if (material === 'earth') {
+        ctx.ellipse(px, py, 2.8, 2.4, angle, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.ellipse(px, py, 3.5, 2, angle, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+  function enemySupportStatus(ctx, screen, game) {
+    const duration = R.enemySupportHealing?.duration || 5;
+    if (game.peace) return;
+    let visible = 0;
+    for (const u of game.zone().enemies) {
+      const support = u.supportHeal;
+      if (
+        !support ||
+        u.hp <= 0 ||
+        !u.aggro ||
+        !Number.isFinite(support.seconds) ||
+        support.seconds <= 0
+      )
+        continue;
+      if (++visible > 32) break;
+      const p = screen(u),
+        source = game.zone().enemies.find((e) => e.id === support.source),
+        hue = enemyHealColor(source || u),
+        progress = Math.max(0, Math.min(1, 1 - support.seconds / duration));
+      ctx.save();
+      ctx.globalAlpha = 0.35 + 0.3 * (1 - progress);
+      ctx.strokeStyle = hue;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(p.x, p.y + 9, 13, 5, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y - 16, 7, -Math.PI / 2, -Math.PI / 2 + progress * Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+  function chargeInterrupted(ctx, screen, f) {
+    const p = screen(f),
+      fade = Math.max(0, f.life / f.max);
+    ctx.save();
+    ctx.globalAlpha = fade * 0.85;
+    ctx.strokeStyle = '#efba91';
+    ctx.lineWidth = 2;
+    // Two broken arcs and a tiny crossed spark, never a covering rectangle.
+    for (const side of [-1, 1]) {
+      ctx.beginPath();
+      ctx.arc(
+        p.x + side * (1 - fade) * 9,
+        p.y - 20,
+        10,
+        side < 0 ? 1.9 : -1.2,
+        side < 0 ? 4.3 : 1.2,
+      );
+      ctx.stroke();
+    }
+    ctx.font = 'bold 10px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffe1c4';
+    ctx.fillText('Interrupted', p.x, p.y - 37 - (1 - fade) * 5);
     ctx.restore();
   }
   function queue(events, game, current = []) {
@@ -835,7 +1022,12 @@
       ),
       push = (e, type, duration, priority) =>
         next.push({ ...e, type, life: duration, max: duration, priority });
+    const heroArt =
+      root.PrototypeHeroPresentation ||
+      (typeof require === 'function' ? require('./hero-presentation.js') : null);
+    heroArt?.queue(events, push);
     for (const e of events) {
+      if (heroArt?.owns(e)) continue;
       if (e.type === 'hit' && Number.isFinite(e.x) && !contacts.has(e.x + ':' + e.y))
         push(e, 'impact', 0.2, 1);
       else if (
@@ -850,10 +1042,16 @@
         )
       )
         push(e, 'contact', 0.32, 1);
+      else if (e.type === 'chargeInterrupted' && (!e.zone || e.zone === game.zoneId))
+        push(e, 'chargeInterrupted', 0.45, 5);
       else if (e.type === 'hurt' && Number.isFinite(e.x)) push(e, 'hurt', 0.25, 2);
       else if (e.type === 'heal') {
         const target =
-          e.target === 'hero' ? game.hero : game.s.party.find((u) => u.id === e.target);
+          e.target === 'hero'
+            ? game.hero
+            : e.actor === 'enemy'
+              ? game.zone()?.enemies.find((u) => u.id === e.target)
+              : game.s.party.find((u) => u.id === e.target);
         push(
           {
             ...e,
@@ -1103,6 +1301,10 @@
     warningShapes,
     royalTaxStatus,
     ground,
+    actorCues,
+    enemySupportHeal,
+    enemySupportStatus,
+    chargeInterrupted,
     queue,
     contact,
     ability,

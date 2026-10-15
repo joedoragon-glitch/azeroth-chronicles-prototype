@@ -67,7 +67,7 @@
           "darklord",
           "name"
         ],
-        "before": "Dark Lord’s Crown Grasp",
+        "before": "Dark Lord\u2019s Crown Grasp",
         "after": "Writ of Restraint"
       },
       {
@@ -329,6 +329,18 @@
         ],
         "before": 1.9,
         "after": 2.7
+      }
+    ]
+  },
+  "authorizedPlaytestChanges": {
+    "source": "PR #308 owner requests meaningful ordinary Rogue Slow; durations and damage remain authored.",
+    "changes": [
+      {
+        "path": [
+          "rogueSlowMovementFactor"
+        ],
+        "added": true,
+        "after": 0.4
       }
     ]
   }

@@ -1,4 +1,4 @@
-# Combat conditions and secondary effects · v0.9 audit
+# Combat conditions and secondary effects · current consolidated source
 
 **Scope:** player skills, companion specials/support, ordinary and ranged monsters,
 night threats, ringleaders, captains, normal/TRUE bosses, traps, hazards and tactical
@@ -10,20 +10,45 @@ The supported GitHub Pages/PWA game is multi-file. The version-4 save model and
 existing procedural/sprite graphics remain canonical. Continue the v0.9 stabilization
 release gate rather than reopening content or balance.
 
+## Current update and where players learn it · 15 October 2026
+
+PR #308 now includes the complete hero Skills 1–8 and audiovisual sources, Slow
+cooldown recovery, charged damage interruption, enemy healing and boss passives.
+This is source documentation, **not a tested or deployed release**. No tests,
+builds, browser sessions or CI are authorized yet. The historical v0.9 findings
+below retain their original context; the current table supersedes older hero
+immunity, Haste and missing-Silence statements.
+
+Players can use **Hero skills → Combat conditions** (Adventure, either Barracks,
+or a teacher's Review hero skills), or **Controls → Combat conditions**. That
+reference offers one short explanation per selected effect. The Drowned Keeper's
+**Conditions and recovery** shelf uses those same definitions, with detailed live
+rules behind **Show me the figures**. Its existing pact/availability gate stays.
+Skill cards remain concise; teacher purchases, Keeper boss/captain passive records
+and observed healer profiles are reconciled without long compulsory NPC lectures.
+
 ## Vocabulary: not every side effect is a status ailment
 
 | Canonical concept | Representation and current behavior | Authors / entry points |
 | --- | --- | --- |
-| **Slow** (timed condition) | `unit.slow` is **remaining seconds**, not a speed multiplier. Hero and companions move at 65% while slowed; monsters' ordinary pursuit/retreat moves at 50%. Scripted charges, leaps and forced scatter use their own authored movement speeds. The longest remaining duration wins. Slow does not freeze movement, prevent skills or modify cooldowns. | Mage frost projectile/charged area/area spells; reedbeast/mireling spitter projectiles; Thornfang Root line, Mirejaw bog, Keeper Undertow, night Wraith/Stalker, captain attacks, rogue snares/binds/pivots, persistent patches and seal traps |
-| **Haste** (timed self-buff) | `hero.haste` speeds the hero's movement to 125% during direct input **and ordered following**. Skill 4 Ranger and Skill 6 Ranger grant it. It is not an attack-rate or cooldown buff. | `hero-combat.js`, `engine.js` |
-| **Damage immunity / guard** (timed defensive condition) | `unit.immune` blocks `hitParty` damage and **on-hit conditions**. Paladin/Mage Skill 4 and Skill 8 can grant hero immunity; a Soldier's automatic survival guard grants 2.5s. Reapplication does not shorten longer remaining protection. Immunity does not change collision or environmental impassability. | `hero-combat.js`, `party.js`, `combat.js` |
+| **Slow** (timed condition) | `unit.slow` is **remaining seconds**, not a speed multiplier. Hero and companions move at 65% under ordinary Slow, or 40% under stronger Rogue Slow; monsters' ordinary pursuit/retreat moves at 50%. Scripted charges, leaps and forced scatter use their own authored movement speeds. The longest remaining duration wins. Slow does not freeze movement or prevent skills; while it lasts, hero and companion skill cooldowns recover at 65% of normal speed; slowed enemy skill cooldowns recover at 85% to avoid overly amplifying Mage frost against bosses. This affects cooldowns started both before and during Slow, with normal recovery resuming at expiry. | Mage frost/slow projectiles and charged Frost Burst; Ranger pinning/charged slowing arrows; reedbeast/mireling spitter projectiles; Thornfang Root line, Mirejaw bog, Keeper Undertow, night Wraith/Stalker, captain attacks, rogue snares/binds/pivots, persistent patches and seal traps |
+| **Haste** (timed self-buff) | `hero.haste` speeds the hero's movement to 125% during direct input **and ordered following**. Ranger Skill 4 tap grants it; Skill 6 repels instead and grants no haste. It is not an attack-rate or cooldown buff. | `hero-combat.js`, `engine.js` |
+| **Damage immunity / guard** (timed defensive condition) | `unit.immune` blocks `hitParty` damage and **on-hit conditions**. A Soldier's automatic survival guard grants 2.5s while active. The hero overhaul removes the old Paladin/Mage Skill 4 and shared Skill 8 immunity; Paladin stance/wards reduce damage instead. Reapplication does not shorten longer remaining protection. Immunity does not change collision or environmental impassability. | `hero-combat.js`, `party.js`, `combat.js` |
+| **Silence** (field-based skill restriction) | Mage Skill 3 charged creates a fixed, zone-bound field for 2–3s by rank. Enemies, hero and companions inside cannot activate special skills; movement and ordinary attacks remain possible. Pending enemy telegraphs wait; unfinished companion charged skills cannot release. Existing projectiles, committed motion and ongoing healing continue. Cooldowns recover normally apart from any independent Slow. It ends on leaving/expiry and is not an on-hit status that damage immunity prevents. | `mageSilenceActive`, hero/shared combat, `updateEnemies`, party special/support activation |
+| **Charged interruption** (cancellation event) | During the fixed 0.65s preparation, cumulative actual HP loss after mitigation cancels at max(6 HP, 7% max HP); lethal damage prevents release. Zero-loss/immunity/mana-only/other-actor hits do not contribute. Completed preparation cannot be retroactively interrupted. No full skill cooldown is paid; 0.5s charged retry recovery applies. Mage Spell Interrupt separately cancels one current enemy warning/aim, preserving later queued attacks. | `recordPartyChargeDamage`, shared transient maps/active clock, shell and post-damage companion completion |
+| **Weaken** (enemy outgoing-damage debuff) | Paladin strikes temporarily reduce affected enemy damage, not movement or cooldown speed. Refreshes preserve the stronger active weakening; durations/rank progression stay authored. | `weakenEnemy`, `weakenedEnemyDamage` |
+| **Fracture** (incoming-damage vulnerability) | Mage Fracture/Rupture and charged Cataclysm use one strongest active vulnerability, never additive percentages; applies to hero and companion damage. It does not slow, silence or itself interrupt. | `fractureEnemy`, `damage` |
+| **Taunt** (target preference) | Judgment draws ordinary attacks toward a living reachable Paladin; boss attention capped at 2.5s. Scripted boss special targets, phases and leashes stay independent. | hero tactics, pre-taunt special target in `updateEnemies` |
+| **Shield Stance / ward** (mitigation buffs) | After armor, only the stronger reduction applies; never multiplicative stance + ward. Stance lasts 8s, disables Skill 1, reduces other outgoing damage to 60%, and starts Skill 3 cooldown on end. Ward protects nearby living recipients for its authored duration. Neither grants immunity. | `hero-combat.js`, `hitParty`, `engine.js` |
+| **Companion Rally** (timed allied buff) | Charged Ranger Skill 4 gives nearby living companions 15–19% movement and 8–12% ordinary attack speed by rank, for 4–5s. No dash, faster special preparation or special/heal cooldown recovery. No recipient means no full cooldown. Slow remains independent. | hero tactics, party Rally helpers |
 | **Dust cover** (temporary direct-target exclusion) | `enemy.rogueDustCoverUntil` is an absolute encounter-clock deadline. Affected Goblins cannot be *directly selected or homed onto* until it expires, and existing direct orders/locks/projectiles are dropped. They **remain vulnerable to area attacks**. This is neither invisibility nor total invulnerability. | Blinding Dust tactical maneuvers; `tacticalDirectTargetable` / `tacticalDropDustTarget` in `combat.js` |
 | **Forced scatter** (timed control override) | Thornfang's Packbreaker Howl moves the struck hero/companions outward during a transient **0.6s** control override. Direct hero input, manual orders and companion AI cannot cancel it during that interval; world collision and bounded boss leash exceptions still apply. No saved status is created. | `tacticalBeginScatter` / `tacticalAdvanceScatter`, `engine.js` |
 | **Shove / sweep** (instant displacement) | Successful rogue shove/scatter/sweep hits move the victim through the existing collision-aware movement function. Unlike Thornfang's special scatter, these are not a general timed loss-of-control status. | Rogue move and signature resolvers, `engine.js` |
 | **Charge / leap / pursuit / withdrawal** (actor motion) | An enemy moves along a marked trajectory or repositions/retreats; charge contact can deal damage. These are movement actions by the **attacker**, not automatically knockback or paralysis of the target. | `boss-combat.js`, `engine.js`, `rules.js` |
 | **HP siphon** (damage-dependent recovery) | Cinder Spitters, eligible supernatural boss attacks and Wraiths regain **15% of HP actually removed**, after mitigation, immunity and overkill. Each successfully hit living party member contributes; healing cannot exceed attacker max HP. This is not a persistent status on the victim. | `hitParty` in `combat.js`; `ashFeeding` and `vitalitySiphon` rules |
 | **Independent self-recovery** (warned heal action) | Abyss Dragon's Ember Renewal heals 8% max HP; Ash Sentinel's Ash Reforge heals 10%, when below 60% HP, on their 24s/28s independent cooldowns. They are not damage or siphon effects. | `bossRecovery` and `boss-combat.js` |
-| **Ranger Heal / recovery over time** (support effect) | Ranger healing can restore the hero or wounded **living** active companions over its duration; it cannot revive fallen units. Ordinary Skill 3 heals hero only; charged Skill 3 heals living active party. | `party.js`, `hero-combat.js` |
+| **Ranger Heal / recovery over time** (support effect) | Ranger healing can restore the hero or wounded **living** active companions over its duration; it cannot revive fallen units. Ranger hero Skill 3 heals hero only on tap or the living active party when charged; Paladin/Mage Skill 3 are shield/interrupt instead. | `party.js`, `hero-combat.js` |
+| **Enemy support healing** (gradual restoration) | Eligible ranged species and selected captains/bosses prioritize injured living allies at ≤50% HP, with eligible leaders self-healing as fallback. Base 5% of recipient max HP over 5s on a 10s cooldown, with existing encounter scaling. Silence blocks activation; Slow delays readiness but not ongoing pulses. Authored self-recovery/siphon remain independent. | `enemySupportHeal`, `advanceEnemySupportHeal`, `enemySupportHealing` |
 | **Patches, traps, rings and other hazards** (world effect) | Warned geometry can deal direct or periodic damage; certain patches add on-hit Slow. A hazard has its own timer, geometry and hit/tick accounting: it is **not itself** a status condition. | `boss-combat.js`, `combat.js`, `engine.js` |
 | **Rally, summon, phase guard, frenzy, threat and burst compression** (AI/encounter modifiers) | Tactical rally changes engaged defenders' pursuit; summons add actors; captain/boss guards and frenzy adjust combat parameters; threat and burst compression affect AI and damage. These are **not** debuffs on the hero. | `engine.js`, `boss-combat.js`, `combat.js`, `rules.js` |
 
@@ -36,7 +61,7 @@ source caused the state change.
 
 | Source family | Resolved effects and exclusions | Owner |
 | --- | --- | --- |
-| Hero skills | Mage frost hits and charged Frost Burst add Slow; Ranger mobility skills add Haste; Paladin/Mage defenses and the learned Skill 8 protection use immunity; Skill 3 heals. Charged party healing affects **living** active allies. Other attacks can damage or cleave without applying a condition. | `hero-combat.js` / `combat.js` |
+| Hero skills | Mage frost/selected shots and Ranger pinning apply Slow; Mage Skill 3 interrupts or creates bilateral Silence; Skill 4 Fracture increases damage received. Paladin Weakens, taunts and protects through nonstacking stance/wards. Ranger Skill 4 owns Haste/Rally, Skill 6 repels, and Skill 3 heals **living** actors. No reworked Skill 8 grants immunity. Other attacks can damage or cleave without applying a condition. | `hero-combat.js` / `combat.js` |
 | Companion actions | Soldier survival guard briefly makes the Soldier immune; Ranger party support applies a timed Heal. Power Strike, Triple Shot, Holy Cleave and Piercing Volley are damage/area skills, **not automatic stuns, blinds or roots**. Doctrine and Recall are commands, not status ailments. | `party.js` / `rules.js` |
 | Ordinary/ranged enemies | Reedbeast and Mireling spitters apply timed Slow on successful projectile contact. Ash-beast cinder attacks can feed HP to the attacking spitter; spectral Wraith projectiles may siphon HP. All ordinary tactical rogue manoeuvres require actual contact and retain the authored snare/shove/withdraw behaviors. | `engine.js` / `combat.js` |
 | Night encounters | Wraith Soul Drain hits an area, adds Slow and siphons actual lost HP in cooldown-only mode. Stalker Shadow Pounce moves the attacker to a warned landing location and can Slow on successful area impact; it does **not** automatically force the victim to move. | `engine.js` / `boss-combat.js` |
@@ -79,7 +104,7 @@ exceptions disable these hostile trap sources.
 
 **Separate mechanisms:** physical world collision prevents passage;
 hazards and trap pulses resolve HP damage; on-hit Slow changes movement
-speed; scatter overrides controls; dust cover prevents direct targeting.
+and cooldown recovery; scatter overrides controls; dust cover prevents direct targeting.
 These must not be collapsed into a generic “disabled” state.
 
 The companion/Hero and dungeon/side/outdoor trap matrix is exercised by
@@ -95,11 +120,11 @@ A player should be able to tell whether a hazard will merely damage them,
 Slow their movement, force displacement, prevent attacks, or prevent
 target selection. If the actual condition is not visually legible, log an
 **effect-feedback/UI finding** separately from the implementation bug.
-`renderer.js` currently has distinct immunity/haste/support cues, but
-Slow has no equivalent explicitly named persistent actor status overlay
-in that renderer. Treat clarity of Slow, seal warning-vs-active phases,
-Knockback direction and Goblin dust expiry as manual desktop/phone
-acceptance checks; do not substitute graphics changes for mechanical fixes.
+The current renderer has immunity/haste/support cues plus true-state hero
+status glyphs and a compact Slow movement/recovery HUD badge. Silence and charged
+interruption have distinct cues. Their readability, seal warning-versus-active
+phases, knockback direction and Goblin dust expiry remain deferred desktop/phone
+acceptance checks; source implementation is not visual certification.
 
 ### Existing authoring keys (keep names stable during v0.9)
 
@@ -122,7 +147,7 @@ does not silently approve additional named ailments or a new damage balance.
 | --- | --- | --- |
 | Rising **spikes** | Brief injury **Slow** on valid contact (35% of region's seal Slow), secondary HP damage | Verify movement impairment reads as a puncture effect. No Bleed/Root/Stun. |
 | Long lane of erupting **flame jets** | **Perpendicular blast movement** toward a clear lane if unobstructed, secondary HP damage | Improve blast cue and assess safe landings under crowding. No Burning status. |
-| Diamond-shaped **magical seal** | Longer regional **Slow** (2.5–3.5 s), secondary HP damage | Clarify visually that movement is impaired, not spellcasting. Do not turn a slowing seal into a hard Root. |
+| Diamond-shaped **magical seal** | Longer regional **Slow** (2.5–3.5 s), secondary HP damage | Clarify that movement and skill recovery are impaired without interrupting a cast. Do not turn a slowing seal into a hard Root. |
 
 The mappings are **implemented on this branch** as a playtest balance proposal.
 The author specifically set Citadel warning at 0.8 s, requested proportionally
@@ -155,7 +180,7 @@ and v4 saves are release constraints.
 5. Live balance is authored in `rules.js` or its existing subsystem table. Do not change slow strengths, class skills, warning lengths, boss healing amounts or chase rules incidentally while fixing condition bookkeeping.
 6. Visual and audio descriptions must reflect the actual resolver. An animation called a "bind" does not prove immobilization; a draining attack in active cooldown mode may mean **HP siphon**, not MP drain.
 
-## Focused v0.9 findings
+## Historical v0.9 findings · before the hero overhaul
 
 - **Corrected on this branch:** Immediate boss AoE, periodic slow hazards and trap seals previously could Slow an immune unit despite `hitParty` rejecting the hit. These now require successful damage resolution and a living victim; trap and hazard Slow also preserve longer existing durations. `combat.js` centralizes timed Slow application.
 - **Corrected on this branch:** A shorter hero defensive cast could replace a longer existing immunity. Reapplication now preserves the longer remaining duration, capped at the existing four seconds.
@@ -163,10 +188,10 @@ and v4 saves are release constraints.
 - **Already intentional:** Goblin dust does not prevent AoE; enemy charges are attacker movement; all enemies have role-appropriate tactical moves/signatures; Thornfang scatter temporarily overrides hero/AI controls, but ordinary shove does not.
 - **Already intentional:** MP drain is dormant, active Wraith/supernatural/cinder siphon is HP-based, and Dragon/Sentinel use independent recovery skills. No retune is authorized.
 
-## Validation and remaining release evidence
+## Historical v0.9 validation scope · current shared gate still deferred
 
 The new `tests/combat-conditions.test.cjs` covers Slow/immunity interaction across Normal and Nightmare immediate areas, recurring hazards, seals, duration stacking, companion death, defensive buff refresh, and dust-vs-AoE. The existing `rogue-integration`, `cooldown-healing-contract`, `dungeon-pressure`, `targeting`, `rts`, `cooldown-only` and browser suites remain required.
 
-Before claiming **v0.9 certified**, run the exact-head format/build/check/test gates, then desktop Chromium, phone Chromium/WebKit, old-v4-save reload/import, PWA upgrade/offline, and a manual representative Normal/Nightmare/TRUE encounter pass: Mage frost, Ranger haste, Paladin/Mage immunity, Soldier guard, spitter projectiles, Wraith siphon, boss slow patches, Goblin dust, knockback/scatter near walls, and trap seals. Verify hostile/status feedback remains legible at gameplay scale and on phone. Automated tests are evidence, not a substitute for practical control and clarity checks.
+Before claiming **v0.9 certified**, run the exact-head format/build/check/test gates, then desktop Chromium, phone Chromium/WebKit, old-v4-save reload/import, PWA upgrade/offline, and a manual representative Normal/Nightmare/TRUE encounter pass: Mage frost/Silence/Fracture, Ranger Haste/Rally, Paladin stance/ward/Weaken/taunt, Soldier guard, spitter projectiles, Wraith siphon, boss slow patches, Goblin dust, knockback/scatter near walls, and trap seals. Verify hostile/status feedback remains legible at gameplay scale and on phone. Automated tests are evidence, not a substitute for practical control and clarity checks.
 
-**Not currently authored as generalized conditions:** stun, silence, mind control, hard root, fear, player taunt or universal stealth. Do not promise testers these effects solely because an attack name implies them. New conditions should first define target types, application eligibility, timer/stack rules, immunity interaction, UI/audio notice, save lifecycle and regression coverage.
+**Not currently authored as generalized conditions:** stun, mind control, hard root, fear or universal stealth. Silence and Paladin enemy taunt are now explicitly authored above; ordinary slowing seals still do not silence or hard-root. Do not promise testers these effects solely because an attack name implies them. New conditions should first define target types, application eligibility, timer/stack rules, immunity interaction, UI/audio notice, save lifecycle and regression coverage.

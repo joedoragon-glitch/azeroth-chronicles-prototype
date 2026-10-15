@@ -8,7 +8,32 @@ const baseline = path.resolve(process.argv[2] || ''),
   current = path.resolve(__dirname, '..');
 assert(process.argv[2], 'Provide untouched c6ce1af baseline checkout');
 const load = (root, name) => require(path.join(root, 'src/prototype', name + '.js'));
-const A = load(baseline, 'engine'),
+// The authorized mechanic overhaul supersedes the 9 October simulation. Keep
+// the original renderer oracle below; compare current mechanics to its exact
+// pre-validation integrated parent, not to retired shared hero skills.
+const simulationRoot = process.env.COMBINED_SIMULATION_ROOT
+  ? path.resolve(process.env.COMBINED_SIMULATION_ROOT)
+  : baseline;
+if (process.env.COMBINED_SIMULATION_ROOT) {
+  const guarded =
+    require('../tests/fixtures/perf-v09-protected.json').authorizedHeroSkillsConsolidationRevision;
+  for (const file of [
+    'src/prototype/combat.js',
+    'src/prototype/engine.js',
+    'src/prototype/hero-combat.js',
+    'src/prototype/party.js',
+    'src/prototype/rules.js',
+  ])
+    assert.equal(
+      crypto
+        .createHash('sha256')
+        .update(fs.readFileSync(path.join(simulationRoot, file)))
+        .digest('hex'),
+      guarded.files[file],
+      'exact pre-validation integrated mechanic source ' + file,
+    );
+}
+const A = load(simulationRoot, 'engine'),
   B = load(current, 'engine');
 const rng = () => {
   let state = 73129;
@@ -104,12 +129,16 @@ const hash = (x) =>
     .createHash('sha256')
     .update(Buffer.isBuffer(x) ? x : JSON.stringify(x))
     .digest('hex');
-// Only unchanged hero skills remain in the baseline simulation comparison;
-// dedicated PR #302 tests measure the intentionally changed skills.
+// The legacy oracle excludes its explicitly changed skills. The integrated
+// parent oracle exercises every current skill without an exclusion.
 const intentionallyChangedSkill = (cls, slot) =>
-  (cls === 'paladin' && slot === 6) || (cls === 'ranger' && [5, 7].includes(slot));
+  !process.env.COMBINED_SIMULATION_ROOT &&
+  ((cls === 'paladin' && slot === 6) || (cls === 'ranger' && [5, 7].includes(slot)));
 const evidence = {
   baseline: 'c6ce1af236bddd7ca881903499c4cf5de175f9e2',
+  simulationBaseline: process.env.COMBINED_SIMULATION_ROOT
+    ? 'cb1607c3a149d3ae51e01ceef615f0eca1ffdf18'
+    : 'c6ce1af236bddd7ca881903499c4cf5de175f9e2',
   scope:
     'Original simulation on unchanged generic Citadel encounter; persistent historical contracts; original occlusion/no-culling reference versus candidate with every current content identity in every region. Authored mechanics have dedicated suites.',
   scenarios: [],
@@ -146,6 +175,10 @@ for (const mode of ['normal', 'nightmare'])
             c.safe(555 + i * 30, 530),
           );
           c.configureEnemy(e, i);
+          // Baseline equivalence specifically protects non-healer combat.
+          // Ranged ally restoration is the authorized new gameplay delta,
+          // verified by its dedicated enemy-support-healing regression suite.
+          e.ranged = false;
           c.zone().enemies.push(e);
           c.engage(e, true, false);
         }

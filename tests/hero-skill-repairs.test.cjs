@@ -79,10 +79,9 @@ console.log('PASS Paladin Skill 6 dash hit, trail and wall safety');
   const protectedFromDirect = side;
   protectedFromDirect.rogueDustCoverUntil = game.s.time + 5;
   assert(game.cast(5), 'Ranger Skill 5 launches radial volley');
-  const arrows = game.s.projectiles.filter((p) => p.source === 'hero' && p.slot === 5);
-  assert.equal(arrows.length, 2, 'Only enemies within the real area receive arrows');
-  assert(arrows.every((p) => p.style === 'arrow' && p.area), 'Volley is visual and tagged as area damage');
-  for (let step = 0; step < 15; step++) game.updateProjectiles(0.1);
+  assert.equal(game.s.projectiles.length, 0, 'approved normal volley resolves instant area damage');
+  const area = game.effects.find(e => e.type === 'spell' && e.slot === 5);
+  assert.equal(area.contacts.length, 2, 'only successful real-area contacts receive cosmetic shafts');
   assert(near.hp < near.maxHp, 'First arrow hits');
   assert(side.hp < side.maxHp, 'Area arrow can strike dust-covered target');
   assert.equal(far.hp, far.maxHp, 'Volley does not damage outside its footprint');
@@ -116,6 +115,7 @@ console.log('PASS Ranger Skill 7 defensive penetration without changing ordinary
   assert(!game.cast(8), 'Skill 8 cannot heal outside an encounter');
   const foe = enemy(720, 500);
   assert(game.cast(8, foe.id), 'Skill 8 remains an offensive-combined combat move');
-  assert(game.hero.immune > 0 && game.hero.hp > game.hero.maxHp - 100);
+  assert.equal(game.hero.immune, 0);
+  assert.equal(game.hero.hp, game.hero.maxHp - 100, 'Mage ultimate has no invented self-heal');
 }
 console.log('PASS Skill 8 target requirement remains combat-only');

@@ -166,7 +166,7 @@ for (const [width, height] of [
     { x: 3300, y: 3300 },
   ])
     for (const scale of P.cameraScales) {
-      const g = { hero },
+      const g = { hero, s: { statistics: { deaths: 0 } } },
         renderer = Renderer.create({
           canvas: { width, height },
           ctx: {},

@@ -107,9 +107,9 @@ for (const mode of ['normal', 'nightmare']) {
 
 {
   const game = new Campaign('normal', 'paladin', () => 0.9);
-  game.hero.skills[3] = 1;
+  game.hero.skills[2] = 1;
   game.hero.immune = 3.5;
-  assert(game.cast(4), 'Paladin guard can be activated');
+  assert(game.cast(3), 'Paladin Shield Stance can be activated');
   assert.equal(game.hero.immune, 3.5, 'a shorter guard cannot cancel a longer immunity');
 }
 

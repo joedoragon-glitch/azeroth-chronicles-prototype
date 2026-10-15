@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "friendly-charge-interruption",
+  "name": "Friendly preparation and interrupted-cast feedback",
+  "nextAction": "Validate with the single PR #308 candidate; no raster production requested.",
+  "context": {
+    "decisionDate": "2026-10-15",
+    "originConversation": null,
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/308",
+    "decisionSummary": "Integrate #310 and add restrained, understandable hero/companion interruption feedback."
+  },
+  "decisions": {
+    "proceduralDesignAcceptance": "Code-level restrained feedback authorized; device/aesthetic acceptance pending.",
+    "spriteProductionAuthorization": "No raster production requested."
+  },
+  "reference": {
+    "sourceCommit": "695ac81d78a6788c00a7f75141370941392b0ae6",
+    "ownerFilesAndBranches": [
+      "src/prototype/renderer.js:healthBar",
+      "src/prototype/combat-visuals.js:chargeInterrupted",
+      "src/prototype/audio-effects.js:renderEffect"
+    ],
+    "exactEntityState": "Per-actor transient 0.65s friendly preparation; interrupted event carries actor, target ID, slot and world position.",
+    "gameplayContextPaths": [
+      "tests/charge-interruption.test.cjs",
+      "tests/cooldown-input-browser.test.cjs",
+      "docs/CHARGE_SLOW_CONSOLIDATION_20261015.md"
+    ],
+    "traitsToPreserve": [
+      "Compact overhead companion progress from the shared authoritative clock.",
+      "Two broken arcs and small Interrupted text for 0.45s; no broad covering rectangle.",
+      "Short falling synth/tiny noise release, crowd-rate-limited; preserve existing music and effect recipes.",
+      "Retain actor/world anchors and bounded existing FX queue. No damage geometry or timing belongs to the visual.",
+      "Future animation adaptation must preserve feedback meaning and pause behavior; no new animation system."
+    ]
+  },
+  "scope": {
+    "proceduralOwnersAndReasons": [
+      "Existing health-bar, FX queue and audio synthesis owners; no sprite registry or new animation subsystem."
+    ]
+  }
+}

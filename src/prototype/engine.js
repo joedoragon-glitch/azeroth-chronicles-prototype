@@ -207,6 +207,171 @@
         ? { hp: 1.1 + 0.03 * n, damage: 1.15 + 0.02 * n }
         : { hp: 1, damage: 1 };
     }
+    // Authoritative enemy support healing. Only actual ranged ordinary roles,
+    // authored ranged-aligned captains and the explicitly selected bosses qualify.
+    enemyHealProfile(e) {
+      const cfg = R.enemySupportHealing;
+      if (!cfg || !e || e.neutral || e.hp <= 0) return null;
+      if (e.type === 'boss') return cfg.bosses[e.family] || null;
+      if (e.captain || e.roomCaptain) return cfg.captains[e.captainProfile] || null;
+      return e.ranged ? cfg.species[e.species] || null : null;
+    }
+    enemyHealMultiplier(e) {
+      // Mirror the damage *escalation layers* that apply to this actor, not
+      // individual attack coefficients or its absolute attack value.
+      // Population modifiers already included in baseDamage are deliberately
+      // reconstructed once for healing; e.damage/baseDamage contributes only
+      // the encounter's live/frozen nighttime or owner-inherited factor.
+      const i = Math.max(0, this.regionIndex()),
+        region =
+          e.type === 'boss' || e.nightOnly
+            ? 1
+            : e.awakenedGuard
+              ? R.awakenedGuardianScaling.damage
+              : e.summon && !e.developerSummon
+                ? R.summonScaling[i]?.damage || 1
+                : e.guard
+                  ? R.guardianScaling[i]?.damage || 1
+                  : e.fieldCaptain
+                    ? R.ordinaryMeleeScaling[i]?.damage || 1
+                    : // Ordinary ranged population scaling is deliberately
+                      // absent inside main boss dungeons and Treasury rooms.
+                      // Apply the same exclusion here, or support healing would
+                      // secretly gain a region multiplier that damage lacks.
+                      dungeonIds.includes(this.zoneId) || this.supplyRoom()
+                      ? 1
+                      : R.ordinaryRangedScaling[i]?.damage || 1;
+      let factor = region;
+      if (e.form === 'ringleader') factor *= R.ringleaderScaling.damage;
+      // TRUE boss minions have a distinct 1.25 role budget; TRUE captains
+      // already use the Ringleader's 1.50 factor above.
+      if (e.trueSummon && e.trueSummonRole === 'minion')
+        factor *= R.trueBossSummons.minionScaling.damage;
+      // Night-exclusive monster strength is separate from global nightPoints;
+      // it is already baked into baseDamage for these spawned species.
+      if (e.nightOnly) factor *= R.nightEnemyCombat[e.species]?.damage || 1;
+      if (e.type === 'boss' && e.form === 'true') {
+        const normalDamage = D.bosses.find((b) => b.id === e.family)?.damage;
+        if (normalDamage > 0) factor *= e.baseDamage / normalDamage;
+      }
+      const encounter = e.baseDamage > 0 ? e.damage / e.baseDamage : 1;
+      factor *= Number.isFinite(encounter) && encounter > 0 ? encounter : 1;
+      return Number.isFinite(factor) && factor > 0 ? factor : 1;
+    }
+    enemyHealTeammate(e, u) {
+      if (!u || u === e || u.hp <= 0 || u.neutral || u.returning || !u.aggro) return false;
+      if (e.pack && e.pack === u.pack) return true;
+      if (e.owner && (e.owner === u.id || e.owner === u.owner)) return true;
+      if (u.owner === e.id) return true;
+      if (e.roomCaptain && u.roomGuard) return true;
+      if (e.fieldCaptain && u.guard && this.zoneId === 'frontier') return true;
+      if (e.type === 'boss' && u.guard) return true;
+      if (e.guard && u.type === 'boss') return true;
+      return !e.pack && !u.pack && e.species === u.species;
+    }
+    enemySupportHeal(e) {
+      const cfg = R.enemySupportHealing,
+        skill = this.enemyHealProfile(e);
+      if (
+        !skill ||
+        this.mageSilenceActive(e) ||
+        this.peace ||
+        !e.aggro ||
+        e.returning ||
+        e.motion ||
+        e.telegraph ||
+        e.rangedAim ||
+        (e.supportHealCd || 0) > 0
+      )
+        return false;
+      const inReach = (u) =>
+          u.hp > 0 &&
+          u.hp < u.maxHp &&
+          !u.supportHeal &&
+          dist(e, u) <= cfg.range &&
+          (e === u || this.line(e, u)),
+        injured = this.zone()
+          .enemies.filter(
+            (u) => this.enemyHealTeammate(e, u) && inReach(u) && u.hp / u.maxHp <= cfg.threshold,
+          )
+          .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp || this.idOrder(a, b)),
+        // Do not add a duplicate self-restoration route to a boss that
+        // already has authored recovery, vitality siphon, or self-restoring mud.
+        // Those bosses can still use this skill to treat their living followers.
+        establishedBossRecovery =
+          e.type === 'boss' &&
+          (Boolean(R.bossRecovery[e.family]) ||
+            R.vitalitySiphon.bossFamilies.includes(e.family) ||
+            e.family === 'mire'),
+        selfAllowed =
+          (e.type === 'boss' && !establishedBossRecovery) ||
+          e.captain ||
+          e.roomCaptain ||
+          e.form === 'ringleader',
+        self = selfAllowed && inReach(e) && e.hp / e.maxHp <= cfg.threshold ? e : null,
+        target = injured[0] || self;
+      if (!target) return false;
+      const amount = Math.min(
+        target.maxHp - target.hp,
+        target.maxHp * cfg.fraction * this.enemyHealMultiplier(e),
+      );
+      if (!(amount > 0) || !Number.isFinite(amount)) return false;
+      target.supportHeal = {
+        source: e.id,
+        skill,
+        remaining: amount,
+        seconds: cfg.duration,
+      };
+      e.supportHealCd = cfg.cooldown;
+      e.noProgress = 0;
+      this.event('heal', {
+        x: target.x,
+        y: target.y,
+        fromX: e.x,
+        fromY: e.y,
+        actor: 'enemy',
+        resource: 'health',
+        source: e.id,
+        target: target.id,
+        amount,
+        skill,
+        species: e.species,
+        family: e.family,
+        form: e.form,
+        boss: e.type === 'boss',
+        captain: !!(e.captain || e.roomCaptain),
+        captainProfile: e.captainProfile,
+      });
+      // Named leaders and Ringleaders announce the skill; ordinary ranged
+      // healers retain the green recovery cue without flooding combat messages.
+      if (e.type === 'boss' || e.captain || e.roomCaptain || e.form === 'ringleader')
+        this.say(e.name + ' uses ' + skill + ' on ' + target.name + '.');
+      return true;
+    }
+    advanceEnemySupportHeal(e, dt) {
+      const h = e.supportHeal;
+      if (!h) return;
+      if (
+        this.peace ||
+        !e.aggro ||
+        e.returning ||
+        !Number.isFinite(h.seconds) ||
+        h.seconds <= 0 ||
+        !Number.isFinite(h.remaining) ||
+        h.remaining <= 0 ||
+        !Number.isFinite(e.hp) ||
+        e.hp <= 0
+      ) {
+        delete e.supportHeal;
+        return;
+      }
+      const step = Math.min(dt, h.seconds),
+        amount = Math.min(e.maxHp - e.hp, (h.remaining * step) / h.seconds);
+      if (amount > 0) e.hp = Math.min(e.maxHp, e.hp + amount);
+      h.remaining = Math.max(0, h.remaining - Math.max(0, amount));
+      h.seconds = Math.max(0, h.seconds - step);
+      if (h.seconds <= 0 || h.remaining <= 0 || e.hp >= e.maxHp) delete e.supportHeal;
+    }
     event(type, data = {}) {
       this.s.statistics.events.push({ time: Math.round(this.s.time), type, ...data });
       if (this.s.statistics.events.length > 400) this.s.statistics.events.shift();
@@ -1963,6 +2128,7 @@
               : dungeonIds.includes(zone)
                 ? { x: 160, y: 240 }
                 : { x: D.towns[i][0], y: D.towns[i][1] });
+      this.clearPartyCharges();
       this.tacticalClearThreat(); // Transient observations never survive zone travel.
       this.tacticalClearBurst();
       this.tacticalClearRogueRegroup();
@@ -2116,7 +2282,9 @@
     interact(npc) {
       if (!npc || dist(npc, this.hero) > 115) return false;
       if (npc.thornReport || npc.thornTrail !== undefined || npc.thornFootprint) {
-        this.say(this.thornReport());
+        const report = this.thornReport(!!npc.thornReport);
+        this.say(report);
+        if (npc.thornReport) this.notice('Trail witness', 6, report, 'narration');
         return true;
       }
       switch (npc.kind) {
@@ -2395,6 +2563,7 @@
     }
 
     die() {
+      this.clearPartyCharges();
       for (const z of Object.values(this.s.zones)) this.clearVeraRepairs(z);
       for (const z of Object.values(this.s.zones))
         z.props = z.props.filter((p) => !p.garunTemporary && !p.garunPreview);
@@ -2408,6 +2577,17 @@
       this._tacticalPartyTargets?.clear();
       this.clearTonic();
       this.hero.supportEffects = [];
+      this.hero.shieldStance = 0;
+      this.hero.shieldRank = 0;
+      delete this.hero.silenceField;
+      for (const u of [this.hero, ...this.s.party]) {
+        delete u.wardUntil;
+        delete u.wardReduction;
+        delete u.rangerRallyUntil;
+        delete u.rangerRallyZone;
+        delete u.rangerRallyMovement;
+        delete u.rangerRallyAttack;
+      }
       for (const u of this.s.party) u.supportEffects = [];
       const goldLost = this.applyDeathPenalty();
       this.s.statistics.deaths++;
@@ -2454,6 +2634,7 @@
       this.hero.tonic = false;
       this.hero.immune = 0;
       this.hero.slow = 0;
+      delete this.hero.rogueSlow;
       this.hero.haste = 0;
       const chosen = this.selectedBarracksRespawn();
       if (chosen) {
@@ -2906,6 +3087,7 @@
         this.s.challenge?.gameOver
       )
         return;
+      this.advancePartyChargeClock(dt);
       dt = Math.min(dt, 0.1);
       this.s.time += dt;
       this.s.mercyTime = Math.max(0, (this.s.mercyTime || 0) - dt);
@@ -2943,12 +3125,30 @@
         )
           unit.deathRollHeld = false;
       }
-      h.cd = h.cd.map((c) => Math.max(0, c - dt));
+      const heroRecovery = this.cooldownRecoveryElapsed(h, dt);
+      h.cd = h.cd.map((c) => Math.max(0, c - heroRecovery));
+      if ((h.shieldStance || 0) > 0) {
+        h.shieldStance = Math.max(0, h.shieldStance - dt);
+        if (h.shieldStance === 0) {
+          h.shieldRank = 0;
+          h.cd[2] = this.skillCooldown(3);
+        }
+      }
+      if (
+        h.silenceField &&
+        (h.silenceField.until <= this.s.time || h.silenceField.zone !== this.zoneId)
+      )
+        delete h.silenceField;
       for (const f of ['immune', 'haste', 'potionCd', 'slow']) h[f] = Math.max(0, h[f] - dt);
+      if (h.rogueSlow > 0) {
+        h.rogueSlow = Math.max(0, h.rogueSlow - dt);
+        if (!h.rogueSlow) delete h.rogueSlow;
+      }
       for (const u of this.s.party) {
-        if (!u.keeperHeld) u.healCd = Math.max(0, (u.healCd || 0) - dt);
-        u.manaCd = Math.max(0, (u.manaCd || 0) - dt);
-        u.survivalCd = Math.max(0, (u.survivalCd || 0) - dt);
+        const recovery = this.cooldownRecoveryElapsed(u, dt);
+        if (!u.keeperHeld) u.healCd = Math.max(0, (u.healCd || 0) - recovery);
+        u.manaCd = Math.max(0, (u.manaCd || 0) - recovery);
+        u.survivalCd = Math.max(0, (u.survivalCd || 0) - recovery);
         u.immune = Math.max(0, (u.immune || 0) - dt);
       }
       this.syncCompanionLevelStats();
@@ -2962,7 +3162,7 @@
           speed =
             (h.speed + this.heroTalentSpeedBonus()) *
             (h.haste > 0 ? 1.25 : 1) *
-            (h.slow > 0 ? 0.65 : 1) *
+            this.slowMovementFactor(h) *
             this.mireBogMovementFactor(h) *
             this.ashMovementFactor(h) *
             clamp(input.speedFactor || 1, 1, 1.35);
@@ -2985,7 +3185,7 @@
               target,
               (h.speed + this.heroTalentSpeedBonus()) *
                 (h.haste > 0 ? 1.25 : 1) *
-                (h.slow > 0 ? 0.65 : 1) *
+                this.slowMovementFactor(h) *
                 this.mireBogMovementFactor(h) *
                 this.ashMovementFactor(h),
               dt,
@@ -3049,6 +3249,15 @@
       this.updatePacks(dt);
       this.updateGuardianReinforcements(dt);
       this.updateTraps(dt);
+      if (
+        h !== this.hero ||
+        z !== this.zone() ||
+        this.s.challenge.pending ||
+        this.s.challenge.gameOver
+      )
+        return;
+      // Friendly preparation resolves only after every damage phase above.
+      this.resolveCompanionCharges();
       if (
         h !== this.hero ||
         z !== this.zone() ||
@@ -4475,7 +4684,7 @@
             const destination = { x: unit.x + side * 100, y: unit.y };
             const landed = this.hitParty(
               unit,
-              e.damage * move.coefficient,
+              this.weakenedEnemyDamage(e) * move.coefficient,
               0,
               e.family === 'cindermaw' ? e.id : undefined,
             );
@@ -4492,46 +4701,53 @@
           }
           return;
         }
-        // All other rogue basics remain single-target and cover-sensitive.
-        if (!target || target.hp <= 0 || dist(target, move) > move.radius || !this.line(e, target))
-          return;
+        // Ordinary ground-marked basics cover the entire fixed warning circle.
+        // Actor-only elite basics retain their targeted, reach-limited contract.
+        const victims = (move.mobileRogueCast ? [target] : this.combatTargets()).filter(
+          (unit) => unit && unit.hp > 0 && dist(unit, move) <= move.radius && this.line(e, unit),
+        );
+        if (!victims.length) return;
+        const contactTarget = victims.includes(target) ? target : victims[0];
         const startingHero = this.hero,
           startingZone = this.zoneId,
           startingDeaths = this.s.statistics.deaths;
-        if (move.style === 'dash' && dist(e, target) > 95) {
+        if (move.style === 'dash' && dist(e, contactTarget) > 95) {
           const previous = { x: e.x, y: e.y };
           this.move(
             e,
-            target,
+            contactTarget,
             e.mountedCrownRider ? 395 : 300,
             e.mountedCrownRider ? 0.36 : 0.3,
             85,
           );
-          this.tacticalRecordRogueReposition(e, previous, target);
+          this.tacticalRecordRogueReposition(e, previous, contactTarget);
         }
-        if (!this.hitParty(target, e.damage * move.coefficient)) return;
-        if (
-          this.hero !== startingHero ||
-          this.zoneId !== startingZone ||
-          this.s.statistics.deaths !== startingDeaths ||
-          this.s.challenge.pending ||
-          this.s.challenge.gameOver
-        )
-          return;
-        // A successful lethal companion hit still grants the caster's authored
-        // dust/withdrawal, but cannot slow or shove the fallen victim.
-        if (target.hp > 0) {
+        let landedAny = false;
+        for (const victim of victims) {
+          if (!this.hitParty(victim, this.weakenedEnemyDamage(e) * move.coefficient, 0, e.id))
+            continue;
+          landedAny = true;
+          if (
+            this.hero !== startingHero ||
+            this.zoneId !== startingZone ||
+            this.s.statistics.deaths !== startingDeaths ||
+            this.s.challenge.pending ||
+            this.s.challenge.gameOver
+          )
+            return;
+          if (victim.hp <= 0) continue;
           if (move.style === 'shove') {
-            const d = Math.max(1, dist(e, target)),
+            const d = Math.max(1, dist(e, victim)),
               point = {
-                x: target.x + ((target.x - e.x) / d) * 55,
-                y: target.y + ((target.y - e.y) / d) * 55,
+                x: victim.x + ((victim.x - e.x) / d) * 55,
+                y: victim.y + ((victim.y - e.y) / d) * 55,
               };
-            this.move(target, point, 220, 0.25);
+            this.move(victim, point, 220, 0.25);
           } else {
-            this.applySlow(target, move.slowSeconds || 2);
+            this.applyRogueSlow(victim, move.slowSeconds || 2);
           }
         }
+        if (!landedAny) return;
         if (move.blinds > 0) {
           // Dust blinds the victim narratively: the goblin briefly cannot be
           // DIRECTLY targeted, but is still vulnerable to area damage.
@@ -4540,10 +4756,10 @@
           this.tacticalDropDustTarget(e);
         }
         if (move.style === 'withdraw' && move.retreat > 0) {
-          const d = Math.max(1, dist(e, target)),
+          const d = Math.max(1, dist(e, contactTarget)),
             point = {
-              x: e.x + ((e.x - target.x) / d) * move.retreat,
-              y: e.y + ((e.y - target.y) / d) * move.retreat,
+              x: e.x + ((e.x - contactTarget.x) / d) * move.retreat,
+              y: e.y + ((e.y - contactTarget.y) / d) * move.retreat,
             };
           if (this.clearSegment(e, point, 12)) this.move(e, point, 350, 0.35);
         }
@@ -4564,7 +4780,7 @@
         if (
           !this.hitParty(
             unit,
-            e.damage * move.coefficient,
+            this.weakenedEnemyDamage(e) * move.coefficient,
             0,
             e.family === 'cindermaw' ? e.id : undefined,
           )
@@ -4591,7 +4807,7 @@
               y: unit.y + ((unit.y - e.y) / d) * push,
             };
           this.move(unit, point, 250, 0.36);
-        } else this.applySlow(unit, move.slowSeconds || 2.4);
+        } else this.applyRogueSlow(unit, move.slowSeconds || 2.4);
       }
       if (
         move.rallySeconds > 0 &&
@@ -4686,6 +4902,33 @@
       const z = this.zone(),
         deaths = this.s.statistics.deaths;
       for (const e of [...z.enemies]) {
+        const recovery = this.cooldownRecoveryElapsed(e, dt, true);
+        // Read remaining Slow before consuming it, including the final partial
+        // frame. Apply readiness debt once even on scripted/early-continue paths.
+        if (e.hp > 0) {
+          const nextRogue = this._tacticalRogueNext?.get(e.id);
+          if (recovery < dt && nextRogue > this.s.time - dt)
+            this._tacticalRogueNext.set(e.id, this.slowCooldownReadyAt(e, nextRogue, dt, true));
+          if (recovery < dt)
+            for (const key of [
+              'royalPrerogativeReadyAt',
+              'passiveRepairReadyAt',
+              'passiveVeteranReadyAt',
+              'ledgerNextAt',
+              'ashNextAt',
+            ])
+              if (e[key] > this.s.time - dt) e[key] = this.slowCooldownReadyAt(e, e[key], dt, true);
+          if (e.slow > 0) e.slow = Math.max(0, e.slow - dt);
+        }
+        // Advance existing restorative pulses even if a boss is holding a
+        // board, scripted movement or other early-continuation state.
+        if (e.hp > 0) {
+          // Uninvolved actors must keep their original state shape and
+          // deterministic non-healer simulation: don't create idle cooldown
+          // fields for every monster during each ordinary combat tick.
+          if ((e.supportHealCd || 0) > 0) e.supportHealCd = Math.max(0, e.supportHealCd - recovery);
+          if (e.supportHeal) this.advanceEnemySupportHeal(e, dt);
+        } else if (e.supportHeal) delete e.supportHeal;
         if (e.hp <= 0) {
           if (e.respawn > 0 && !this.peace) {
             e.respawn -= dt;
@@ -4738,7 +4981,7 @@
           this.disengage(e, dt);
           continue;
         }
-        e.slow = Math.max(0, (e.slow || 0) - dt);
+        e.slow = Math.max(0, e.slow || 0);
         if (!e.aggro && !e.eliteNightBonus) {
           const m = this.multipliers(),
             ratio = e.hp / e.maxHp;
@@ -4746,18 +4989,21 @@
           e.hp = e.maxHp * ratio;
           e.damage = e.baseDamage * m.damage;
         }
-        e.cd = Math.max(0, e.cd - dt);
-        e.specialCd = Math.max(0, (e.specialCd || 0) - dt);
-        e.summonCd = Math.max(0, (e.summonCd || 0) - dt);
+        e.cd = Math.max(0, e.cd - recovery);
+        e.specialCd = Math.max(0, (e.specialCd || 0) - recovery);
+        e.summonCd = Math.max(0, (e.summonCd || 0) - recovery);
         if (e.family === 'crypt' && e.type === 'boss') {
           e.anastylosis = Math.max(0, (e.anastylosis || 0) - dt);
-          e.anastylosisCd = Math.max(0, (e.anastylosisCd || 0) - dt);
+          e.anastylosisCd = Math.max(0, (e.anastylosisCd || 0) - recovery);
         }
         if (e.type === 'boss' && e.family === 'archive')
-          e.sabotageCd = Math.max(0, (e.sabotageCd || 0) - dt);
-        e.healCd = Math.max(0, (e.healCd || 0) - dt);
+          e.sabotageCd = Math.max(0, (e.sabotageCd || 0) - recovery);
+        e.healCd = Math.max(0, (e.healCd || 0) - recovery);
         e.pursuitBurst = Math.max(0, (e.pursuitBurst || 0) - dt);
-        e.open = Math.max(0, (e.open || 0) - dt);
+        const openBefore = e.open || 0;
+        e.open = Math.max(0, openBefore - dt);
+        if (e.type === 'boss' && e.family === 'mine' && openBefore > 0 && e.open === 0)
+          this.snapshotPassiveCoreRelock(e);
         e.captainGuard = Math.max(0, (e.captainGuard || 0) - dt);
         if (e.captain || e.roomCaptain) {
           e.captainReflect = Math.max(0, (e.captainReflect || 0) - dt);
@@ -4795,7 +5041,7 @@
         )
           for (const victim of this.combatTargets()) this.ashMovementFactor(victim);
         if (e.fieldCaptain && e.captainPhase && e.aggro && e.hp > 0) {
-          e.captainOvertimeCd = Math.max(0, (e.captainOvertimeCd ?? 12) - dt);
+          e.captainOvertimeCd = Math.max(0, (e.captainOvertimeCd ?? 12) - recovery);
           if (e.captainOvertimeCd === 0) {
             this.captainOvertimeRecruit(e);
             e.captainOvertimeCd = 12;
@@ -4859,7 +5105,7 @@
             continue;
           }
         }
-        const cinderAdvanced = this.updateCinderRegularState(e, dt);
+        const cinderAdvanced = this.updateCinderRegularState(e, dt, recovery);
         if (this.s.statistics.deaths !== deaths) return;
         if (cinderAdvanced) continue;
         if (this.updateCinderResponse(e, dt)) continue;
@@ -4920,6 +5166,18 @@
           !this.updateVeraEscort(e, dt)
         )
           this.updateIdleWander(e, dt);
+        // Bosses can be provoked for ordinary attacks, but must preserve
+        // their scripted special-target choice and arena rules.
+        const scriptedBossTarget = target;
+        // Judgment provokes living targets without deleting boss telegraphs,
+        // attack phases or the encounter's existing leash restrictions.
+        if (
+          (e.tauntUntil || 0) > this.s.time &&
+          this.hero.hp > 0 &&
+          dist(e, this.hero) <= 620 &&
+          this.line(e, this.hero)
+        )
+          target = this.hero;
         if (e.guard && !e.ranged && this.hero.hp > 0) {
           const screenFor = z.enemies.find(
             (u) => u !== e && u.guard && u.pack === e.pack && u.ranged && u.hp > 0,
@@ -4971,10 +5229,26 @@
           this.disengage(e, dt);
           continue;
         }
+        if (this.enemySupportHeal(e)) continue;
         // A short-lived rogue decision is distinct from normal aggro.
-        if (this.tacticalAutoRogue(e, target)) continue;
-        if (this.tacticalRogueRegroup(e) && this.tacticalAdvanceRogueRegroup(e, target, dt))
+        if (!this.mageSilenceActive(e) && this.tacticalAutoRogue(e, target)) continue;
+        // A committed attack owns its warning/release clock. Regroup holds and
+        // retreat decisions must not suspend it when the victim moves away.
+        if (
+          !e.telegraph &&
+          !e.motion &&
+          !e.rangedAim &&
+          this.tacticalRogueRegroup(e) &&
+          this.tacticalAdvanceRogueRegroup(e, target, dt)
+        )
           continue;
+        if (e.telegraph && this.mageSilenceActive(e)) {
+          // Existing warned specials remain queued, but cannot resolve
+          // inside a Silence Field. Pausing the warning preserves boss
+          // phase/sequence integrity rather than erasing authored attacks.
+          e.noProgress = 0;
+          continue;
+        }
         if (e.telegraph) {
           if (e.telegraph.rogueMove && e.telegraph.mobileRogueCast) {
             // Cast preparation does not create an extra strike or freeze the
@@ -5069,7 +5343,7 @@
                 dy: Math.sin(angle),
                 speed: (e.shotSpeed || 260) * pace.projectileMultiplier,
                 life: 2.5 / pace.projectileMultiplier,
-                damage: e.damage * (e.hybrid ? 0.85 : 1),
+                damage: this.weakenedEnemyDamage(e) * (e.hybrid ? 0.85 : 1),
                 style,
                 slow: e.projectileSlow || 0,
                 manaDrain: R.manaBalance.rangedDrain[e.species] || 0,
@@ -5111,6 +5385,7 @@
         let opportunity = false;
         if (
           (e.captain || e.roomCaptain) &&
+          !this.mageSilenceActive(e) &&
           e.specialCd <= 0 &&
           visible &&
           d < (this.captainProfile(e)?.specialRange || 420) &&
@@ -5119,6 +5394,7 @@
           opportunity = true;
         } else if (
           e.type === 'boss' &&
+          !this.mageSilenceActive(e) &&
           e.cd <= 0 &&
           visible &&
           d < R.bossCadence.specialRange &&
@@ -5127,15 +5403,17 @@
           opportunity = true;
         } else if (
           e.type === 'boss' &&
+          !this.mageSilenceActive(e) &&
           e.cd <= 0 &&
           d < R.bossCadence.specialRange &&
           visible &&
           (!e.basicDue || d > 200) &&
-          this.startAttack(e, target)
+          this.startAttack(e, scriptedBossTarget)
         ) {
           opportunity = true;
         } else if (
           e.nightOnly &&
+          !this.mageSilenceActive(e) &&
           e.specialCd <= 0 &&
           visible &&
           d < (e.species === 'wraith' ? R.nightEnemyCombat.wraith.radius : 360) &&
@@ -5173,7 +5451,7 @@
                 (e.quotaOvertime > 0 ? 0.8 : 1),
             };
           } else {
-            if (this.hitParty(target, e.damage))
+            if (this.hitParty(target, this.weakenedEnemyDamage(e), 0, e.id))
               this.event('melee', {
                 actor: 'enemy',
                 source: e.id,
@@ -5284,6 +5562,8 @@
         e.rangedAim = null;
         e.hp = e.baseHp;
         e.maxHp = e.baseHp;
+        delete e.supportHeal;
+        e.supportHealCd = 0;
         e.damage = e.baseDamage;
         e.returning = 0;
         e.heroParticipated = false;
@@ -5292,6 +5572,17 @@
         e.pursuitBurstUsed = false;
         e.frozen = false;
         e.frenzy = false;
+        for (const key of [
+          'passiveAerialUntil',
+          'passiveRepairReadyAt',
+          'passiveVeteranUntil',
+          'passiveVeteranReadyAt',
+          'passiveVeteranHits',
+          'passiveRegenTotal',
+          'passiveViolationUntil',
+          'passiveViolationStacks',
+        ])
+          delete e[key];
         e.captainPhase = false;
         e.captainPhaseMove = 1;
         e.captainAttackRate = 1;

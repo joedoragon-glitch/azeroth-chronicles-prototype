@@ -4294,6 +4294,68 @@
       true: { reduction: 0.4, duration: 8 },
     },
   };
+  // Community Snapshot passive completion. These are additive to, not replacements
+  // for, the director-approved Greenwood/Marches passives and authored attacks.
+  const snapshotPassives = Object.freeze({
+    ridge: {
+      baseline: { normal: 0.08, true: 0.12 },
+      perArcher: { normal: 0.05, true: 0.06 },
+      maxArchers: 3,
+      radius: 400,
+    },
+    mine: {
+      shellReduction: { normal: 0.18, true: 0.28 },
+      repairFraction: { normal: 0.04, true: 0.06 },
+      repairCooldown: 18,
+    },
+    warlord: {
+      baseline: { normal: 0.1, true: 0.15 },
+      perOrc: { normal: 0.04, true: 0.05 },
+      maxOrcs: 3,
+      radius: 380,
+      orcDamage: { normal: 0.15, true: 0.25 },
+    },
+    abyss: {
+      baseline: { normal: 0.12, true: 0.18 },
+      reduction: { normal: 0.22, true: 0.32 },
+      duration: 4,
+    },
+    citadel: {
+      baseline: { normal: 0.1, true: 0.15 },
+      reduction: { normal: 0.2, true: 0.3 },
+      radius: 390,
+    },
+    cindermaw: {
+      radius: 340,
+      threshold: 0.7,
+      soloRegen: { normal: 0.005, true: 0.008 },
+      bossRegen: { normal: 0.01, true: 0.016 },
+      bossHealCap: { normal: 0.12, true: 0.2 },
+      allyRegen: { normal: 0.008, true: 0.012 },
+      allyCap: 3,
+    },
+    darklord: {
+      reduction: { normal: 0.25, true: 0.35 },
+      window: 4,
+      triggerHits: 4,
+      duration: 6,
+      cooldown: 12,
+    },
+    captains: {
+      'supply-highlands': {
+        guardRadius: 320,
+        baseline: 0.12,
+        selfReduction: 0.13,
+        guardDamage: 0.2,
+      },
+      'frontier-overseer': {
+        perHitReduction: 0.05,
+        maxStacks: 5,
+        duration: 5,
+        maxStackDamage: 0.15,
+      },
+    },
+  });
   const bossBehavior = {
     thorn: {
       close: [0],
@@ -4771,8 +4833,12 @@
   const resourceMode = Object.freeze({ manaEnabled: false });
   const cooldownBalance = Object.freeze({
     reductionPerTalentRank: 0.04,
+    // Hostile slows hinder hero/companion casting more than sustained Mage frost
+    // hinders enemy skills; both use the same temporary recovery mechanic.
+    slowRecoveryMultiplier: 0.65,
+    enemySlowRecoveryMultiplier: 0.85,
     // Charged attacks are repeatable without MP; preserve a meaningful burst/heal interval.
-    chargedSeconds: Object.freeze({ 1: 3, 2: 6, 3: 20 }),
+    chargedSeconds: Object.freeze({ 1: 3, 2: 6, 3: 20, 4: 20, 5: 18, 6: 12, 7: 25, 8: 40 }),
   });
   // When MP is dormant, Ash-beast ranged hits feed their ember core using real HP loss.
   const ashFeeding = Object.freeze({ healFraction: 0.15 });
@@ -4823,6 +4889,45 @@
     healUpgradeCost: 50,
     manaUpgradeCost: 40,
   };
+  // Enemy restorative support parallels the Archer's ten-second Heal without
+  // altering existing boss self-recovery, lifesteal or specialist attack slots.
+  // Profiles use authored species/family IDs, never presentation labels.
+  const enemySupportHealing = Object.freeze({
+    fraction: 0.05,
+    cooldown: rangerSupport.cooldown,
+    duration: rangerSupport.duration,
+    threshold: rangerSupport.healThreshold,
+    range: 350,
+    species: Object.freeze({
+      wolf: 'Packheart Howl',
+      goblin: 'Scrap Poultice',
+      skeleton: 'Bonebind',
+      wraith: 'Echo Mend',
+      stalker: 'Shadow Stitch',
+      mireling: 'Bog Balm',
+      reedbeast: 'Sapburst',
+      archer: 'Field Dressing',
+      crownguard: 'Crown Triage',
+      ashbeast: 'Emberheart',
+      orc: 'Warband Rally',
+      ogre: 'Stone Salve',
+    }),
+    // Named eligibility follows the canonical attack repertoire and expertise,
+    // not the generic boss/captain rank. Their authored ranged techniques and
+    // restorative roles do not require the ordinary mob e.ranged flag.
+    captains: Object.freeze({
+      'supply-vale': 'Salvage Surge', // Scornfang: tracking volley / zone control
+      'supply-march': 'Silt Pulse', // Direjaw: water and mud projection
+      'supply-crown': 'Grafting', // Dreadmaw: distributed brood care
+    }),
+    bosses: Object.freeze({
+      crypt: 'Reconstitution', // Lifebinder: bolts and estate warding
+      mire: 'Baseflow', // Mirejaw: hydrological ranged effects
+      archive: 'Rebinding', // Drowned Keeper: ranged water magic
+      ridge: 'Bailout', // Ridge Tyrant: ranged cargo/archer command
+      abyss: 'Wingman Rally', // Veyrith: aerial battlefield support
+    }),
+  });
   // Boss telegraphs stay readable, but idle gaps are short and basic attacks only interrupt sustained special pressure occasionally.
   const bossCadence = {
     specialRecoveryMultiplier: 0.25,
@@ -4844,15 +4949,184 @@
   const chargedSkills = {
     holdSeconds: 0.65,
     tapSeconds: 0.2,
+    // Accumulate actual post-mitigation HP loss only during the fixed hold.
+    // A strong hit or several small hits can interrupt, but grazing damage cannot.
+    interrupt: { hpFraction: 0.07, minimumHp: 6, recoverySeconds: 0.5 },
     basicDamageMultiplier: 3,
     manaFractions: { 1: 0.2, 2: 0.3, 3: 0.35 },
     third: { effect: 'party-heal' },
     second: {
       paladin: { shape: 'cone', range: 185, halfAngle: 0.8, effect: 'holy-cleave' },
-      mage: { shape: 'circle', radius: 160, effect: 'frost-burst', slow: 4 },
+      mage: { shape: 'circle', radius: 160, effect: 'frost-burst', slow: 3.2 },
       ranger: { shape: 'line', range: 480, halfWidth: 55, effect: 'piercing-volley' },
     },
   };
+  // Secondary effects grow at even skill ranks. Damage continues to use
+  // the existing +15%-per-rank multiplier; no second damage multiplier.
+  const heroTactics = Object.freeze({
+    milestones: [2, 4, 6, 8],
+    paladin: {
+      weaken: { fraction: 0.12, step: 0.02, duration: 1.8, durationStep: 0.1 },
+      shield: { duration: 8, reduction: 0.65, reductionStep: 0.02, outgoing: 0.6 },
+      bash: {
+        reach: 115,
+        reachStep: 4,
+        halfAngle: 0.7,
+        push: 55,
+        pushStep: 5,
+        damage: 1.6,
+        eliteDamage: 0.5,
+      },
+      judgment: { range: 260, damage: 2.0, taunt: 3, tauntStep: 0.25 },
+      grandJudgment: {
+        range: 310,
+        radius: 160,
+        radiusStep: 5,
+        primaryDamage: 3.2,
+        splashDamage: 2.0,
+        taunt: 5,
+        tauntStep: 0.25,
+      },
+    },
+    mage: {
+      interrupt: { range: 460, rangeStep: 20, enemyRecovery: 1.1 },
+      silence: { radius: 165, radiusStep: 10, duration: 2, durationStep: 0.25 },
+      fracture: {
+        range: 480,
+        damage: 2.0,
+        fraction: 0.15,
+        fractionStep: 0.01,
+        duration: 4,
+        durationStep: 0.25,
+      },
+      rupture: {
+        range: 480,
+        radius: 160,
+        radiusStep: 5,
+        primaryDamage: 3.2,
+        splashDamage: 1.8,
+        fraction: 0.2,
+        fractionStep: 0.01,
+        duration: 5,
+        durationStep: 0.25,
+      },
+    },
+    ranger: {
+      pin: { slow: 1.25, slowStep: 0.25 },
+      volley: { slow: 1.5, slowStep: 0.25 },
+      // Charged Skill 4: simple nearby-companion rally, not a dash or dodge.
+      // Attack speed affects ordinary swings/shots only, not special cooldowns.
+      rally: {
+        radius: 350,
+        radiusStep: 10,
+        duration: 4,
+        durationStep: 0.25,
+        movementBonus: 0.15,
+        movementStep: 0.01,
+        attackSpeedBonus: 0.08,
+        attackSpeedStep: 0.01,
+      },
+    },
+  });
+  // Charged versions of advanced hero skills share the 0.65s input hold.
+  // They use the same trained rank and +15%-of-base damage growth as their
+  // normal versions; effects increase modestly at ranks 2, 4, 6 and 8.
+  // Skill 8 is no longer a shared area/heal/immunity template.
+  // These distinct class capstones build on existing mitigation, fracture,
+  // projectile, and threat mechanics; no new status types are introduced.
+  const classUltimates = Object.freeze({
+    paladin: {
+      normal: {
+        radius: 320,
+        maxTargets: 8,
+        damage: 3,
+        heal: 0.15,
+        wardReduction: 0.2,
+        wardDuration: 3.5,
+        wardStep: 0.25,
+      },
+      charged: {
+        radius: 420,
+        radiusStep: 10,
+        maxTargets: 10,
+        damage: 5.5,
+        heal: 0.2,
+        wardReduction: 0.3,
+        wardDuration: 5,
+        wardStep: 0.25,
+        weaken: true,
+      },
+    },
+    mage: {
+      normal: { radius: 210, maxTargets: 5, primaryDamage: 6, splashDamage: 3.5 },
+      charged: {
+        radius: 260,
+        radiusStep: 10,
+        maxTargets: 7,
+        primaryDamage: 9,
+        splashDamage: 5,
+        // Brief 25–29% burst window beats Skill 4's 20–24% fracture,
+        // but lasts only 2.5s; one nonstacking fracture applies.
+        fracture: 0.25,
+        fractureStep: 0.01,
+        fractureDuration: 2.5,
+      },
+      chain: {
+        radius: 300,
+        targets: 3,
+        primaryDamage: 6.5,
+        secondaryDamage: 4.5,
+        tertiaryDamage: 3,
+      },
+      chargedChain: {
+        radius: 380,
+        radiusStep: 10,
+        targets: 5,
+        primaryDamage: 9,
+        secondaryDamage: 6,
+        extraDamage: 4,
+      },
+    },
+    ranger: {
+      normal: { radius: 260, targets: 3, damagePerArrow: 5, isolatedArrows: 2 },
+      charged: {
+        radius: 320,
+        radiusStep: 10,
+        targets: 5,
+        arrowsPerTarget: 2,
+        isolatedArrows: 3,
+        damagePerArrow: 4,
+      },
+    },
+  });
+  // Area hit limits are intentional: no repeatable spell clears an
+  // unlimited pack. Ranks improve damage/reach, not target-count caps.
+  const heroAreaTargetCaps = Object.freeze({
+    5: { normal: 6, charged: 8 },
+    7: { paladinNormal: 6, paladinCharged: 8 },
+  });
+  const advancedCharges = Object.freeze({
+    5: {
+      paladin: { radius: 365, radiusStep: 10, damage: 3.2, weaken: true },
+      mage: { radius: 370, radiusStep: 10, damage: 3.0, push: 45, pushStep: 3 },
+      ranger: { radius: 370, radiusStep: 10, damage: 2.9, slow: 1.25, slowStep: 0.2 },
+    },
+    6: {
+      paladin: { radius: 120, radiusStep: 5, damage: 3.4, push: 35, pushStep: 4 },
+      mage: { damage: 3.0, slow: 2.5, slowStep: 0.25 },
+      ranger: { arrows: 3, damage: 4.2, push: 65, pushStep: 5 },
+    },
+    7: {
+      paladin: { radius: 500, radiusStep: 10, damage: 7.2, weaken: true },
+      mage: { radius: 380, radiusStep: 10, damage: 9, chain: true },
+      ranger: { damage: 12, slow: 1.5, slowStep: 0.25 },
+    },
+    8: {
+      paladin: { ...classUltimates.paladin.charged },
+      mage: { ...classUltimates.mage.charged },
+      ranger: { ...classUltimates.ranger.charged },
+    },
+  });
   const basicAttackCombo = {
     steps: 3,
     resetSeconds: 4,
@@ -5453,6 +5727,9 @@
     supportRadius: 195,
     presenceRadius: 540,
     moveCooldownSeconds: 6,
+    // Rogue disruption must create an escape edge even against baseline sprint.
+    // Durations remain authored per move; ordinary non-Rogue Slow stays unchanged.
+    rogueSlowMovementFactor: 0.4,
     thinkingSeconds: 0.8,
     escapeSeconds: 5.5,
     rogueMoves,
@@ -5494,8 +5771,13 @@
     bossBehavior,
     greenwoodPassives,
     marchesPassives,
+    snapshotPassives,
     rangedEnemyCombat,
     chargedSkills,
+    heroTactics,
+    advancedCharges,
+    heroAreaTargetCaps,
+    classUltimates,
     basicAttackCombo,
     companionSkills,
     ordinaryMeleeScaling,
@@ -5518,6 +5800,7 @@
     idleWander,
     autoPotionThresholds,
     rangerSupport,
+    enemySupportHealing,
     movementBasicClasses,
     enemyProjectileMultiplier: 1.15,
     progression,
@@ -5625,6 +5908,14 @@
     travelArrivals,
     dungeonWorkstations,
     regionalHandoffScenes,
+    // Harmless scenery creatures use the paused presentation clock, not combat RNG.
+    ambientLife: {
+      'pasture-sheep': { radius: 24, walk: 4.5, rest: 5 },
+      'poultry-yard': { radius: 25, walk: 3.2, rest: 3.5 },
+      'animal-pen': { radius: 5, walk: 3.5, rest: 5 },
+      'pup-nest': { radius: 4, walk: 3.8, rest: 6 },
+      'mire-nests': { radius: 4, walk: 4, rest: 5 },
+    },
     greenwoodRuralScenes,
     frontierRecoveryScenes,
     crownThermalWorksScenes,

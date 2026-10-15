@@ -70,6 +70,13 @@ const server = http.createServer((req, res) => {
       await page.keyboard.press('f');
       await page.keyboard.press('f');
       await page.waitForFunction(() => document.querySelector('#modal').hidden);
+      await require('./helpers/notice-browser.cjs').verifyNoticeStrip(
+        page,
+        out,
+        tag,
+        phone,
+        viewport,
+      );
       const cuePlacement = await page.evaluate(() => {
         const c = Prototype.game,
           ctx = document.querySelector('canvas').getContext('2d');
@@ -147,7 +154,12 @@ const server = http.createServer((req, res) => {
           'Fallen companions need Barracks',
         ),
       );
-      assert((await page.locator('#modal-description').textContent()).includes('charged Skill 3'));
+      assert((await page.locator('#modal-description').textContent()).includes('Shield Bash'));
+      await page.getByRole('button', { name: 'Combat conditions', exact: true }).click();
+      await page.getByRole('button', { name: 'Slow', exact: true }).click();
+      assert((await page.locator('#modal-description').textContent()).includes('cooldown'));
+      await page.keyboard.press('Escape');
+      await page.keyboard.press('Escape');
       await page.keyboard.press('Escape');
       await page.evaluate(() => {
         const c = Prototype.game;
@@ -184,11 +196,7 @@ const server = http.createServer((req, res) => {
       );
       await page.getByRole('button', { name: 'Your skills', exact: false }).click();
       await page.getByRole('button', { name: /Skill 3 ·/ }).click();
-      assert(
-        (await page.locator('#modal-description').textContent()).includes(
-          'wounded living companions',
-        ),
-      );
+      assert((await page.locator('#modal-description').textContent()).includes('Shield Bash'));
       await page.screenshot({ path: path.join(out, 'keeper-counsel-' + tag + '.png') });
       await page.keyboard.press('Escape');
       await page.keyboard.press('Escape');

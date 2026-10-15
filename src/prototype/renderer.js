@@ -260,6 +260,11 @@
     let game = getGame(),
       visualFx = [],
       origin = null;
+    const heroArt =
+      root.PrototypeHeroPresentation ||
+      (typeof require === 'function' ? require('./hero-presentation.js') : null);
+    const motionPreference = root.matchMedia?.('(prefers-reduced-motion: reduce)');
+    const reducedMotion = () => !!motionPreference?.matches;
     const groundCache = PrototypeGroundCache ? new PrototypeGroundCache() : null;
     let cacheGround = true,
       optimized = false;
@@ -686,6 +691,20 @@
             ctx.strokeRect(left - 0.5, cy - 0.5, w + 1, 4);
           }
         }
+      } else if (e.renderKind === 'ally') {
+        const preparing = game._companionCharges?.get(e.id);
+        if (preparing) {
+          const fraction = Math.max(0, Math.min(1, game.partyChargeProgress(preparing.unit)));
+          const cy = y - 9;
+          ctx.fillStyle = '#07100ddd';
+          ctx.fillRect(left - 2, cy - 2, w + 4, 7);
+          ctx.fillStyle = '#36413b';
+          ctx.fillRect(left, cy, w, 3);
+          ctx.fillStyle = e.type === 'archer' ? '#cfe59a' : '#f6d77a';
+          ctx.fillRect(left, cy, w * fraction, 3);
+          ctx.fillStyle = '#ffffffaa';
+          ctx.fillRect(left, cy, w * fraction, 1);
+        }
       }
       ctx.fillStyle = '#0c1a19dd';
       ctx.fillRect(left - 2, y - 2, w + 4, 8);
@@ -718,6 +737,8 @@
       return { q, ux: vx / len, uy: vy / len, px: -vy / len, py: vx / len };
     }
     function drawProjectile(p) {
+      if (p.delay > 0) return;
+      if (heroArt?.projectile(ctx, screen, p, game.hero.class, reducedMotion())) return;
       if (p.style !== 'cargo' && PrototypeEnemyVfxArt?.projectile(ctx, screen, p, game)) return;
       const { q, ux, uy, px, py } = projectileVector(p),
         style = p.style || 'magic',
@@ -1022,7 +1043,16 @@
       }
       ctx.restore();
     }
+    let visualScene = { game, zone: game.zoneId, deaths: game.s.statistics.deaths };
     function queueVisualFx(events) {
+      if (
+        visualScene.game !== game ||
+        visualScene.zone !== game.zoneId ||
+        visualScene.deaths !== game.s.statistics.deaths
+      ) {
+        visualFx = [];
+        visualScene = { game, zone: game.zoneId, deaths: game.s.statistics.deaths };
+      }
       visualFx = PrototypeCombatVisuals.queue(events, game, visualFx);
     }
     function updateVisualFx(dt) {
@@ -1033,8 +1063,17 @@
       for (const f of visualFx) {
         const a = Math.max(0, f.life / f.max),
           p = screen(f),
-          grow = 1 - a;
+          grow = reducedMotion() ? 0.5 : 1 - a;
         if (f.type === 'enemyVfx') continue;
+        if (f.type === 'heroSkill') {
+          heroArt?.draw(ctx, screen, f, {
+            reduced: reducedMotion(),
+            optimized,
+            width: canvas.width,
+            height: canvas.height,
+          });
+          continue;
+        }
         ctx.save();
         ctx.globalAlpha = a;
         if (f.type === 'ability') {
@@ -1068,35 +1107,41 @@
           ctx.moveTo(p.x - 8 - grow * 5, p.y - 9);
           ctx.lineTo(p.x + 9 + grow * 4, p.y + 6);
           ctx.stroke();
+        } else if (f.type === 'chargeInterrupted') {
+          PrototypeCombatVisuals.chargeInterrupted?.(ctx, screen, f);
         } else if (f.type === 'heal') {
-          const mana = f.resource === 'mana',
-            c = mana ? '#9fcfff' : '#a9e7b0';
-          ctx.strokeStyle = c;
-          ctx.fillStyle = c;
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.ellipse(p.x, p.y + 7, 20 + grow * 13, 8 + grow * 4, 0, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.globalAlpha = a * 0.45;
-          ctx.beginPath();
-          ctx.ellipse(p.x, p.y + 7, 13 + grow * 8, 5 + grow * 2, 0, 0, Math.PI * 2);
-          ctx.stroke();
-          for (let j = 0; j < 5; j++) {
-            const angle = j * 1.26 + grow * 2.2,
-              x = p.x + Math.cos(angle) * (8 + j * 2),
-              y = p.y - 8 - grow * (12 + j * 3) + Math.sin(angle) * 3;
-            ctx.globalAlpha = a * 0.75;
+          if (f.actor === 'enemy' && f.resource !== 'mana') {
+            PrototypeCombatVisuals.enemySupportHeal?.(ctx, screen, f);
+          } else {
+            const mana = f.resource === 'mana',
+              c = mana ? '#9fcfff' : '#a9e7b0';
+            ctx.strokeStyle = c;
+            ctx.fillStyle = c;
+            ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.arc(x, y, mana ? 1.8 : 2.1, 0, Math.PI * 2);
-            ctx.fill();
-            if (!mana && j < 3) {
-              ctx.lineWidth = 1;
+            ctx.ellipse(p.x, p.y + 7, 20 + grow * 13, 8 + grow * 4, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.globalAlpha = a * 0.45;
+            ctx.beginPath();
+            ctx.ellipse(p.x, p.y + 7, 13 + grow * 8, 5 + grow * 2, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            for (let j = 0; j < 5; j++) {
+              const angle = j * 1.26 + grow * 2.2,
+                x = p.x + Math.cos(angle) * (8 + j * 2),
+                y = p.y - 8 - grow * (12 + j * 3) + Math.sin(angle) * 3;
+              ctx.globalAlpha = a * 0.75;
               ctx.beginPath();
-              ctx.moveTo(x - 3, y);
-              ctx.lineTo(x + 3, y);
-              ctx.moveTo(x, y - 3);
-              ctx.lineTo(x, y + 3);
-              ctx.stroke();
+              ctx.arc(x, y, mana ? 1.8 : 2.1, 0, Math.PI * 2);
+              ctx.fill();
+              if (!mana && j < 3) {
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(x - 3, y);
+                ctx.lineTo(x + 3, y);
+                ctx.moveTo(x, y - 3);
+                ctx.lineTo(x, y + 3);
+                ctx.stroke();
+              }
             }
           }
         } else if (f.type === 'swing') {
@@ -1357,7 +1402,7 @@
       }
       const guard = (q, r, cls = 'paladin') => {
         ctx.save();
-        const pulse = 0.65 + Math.sin(now() / 160) * 0.15;
+        const pulse = 0.65 + (reducedMotion() ? 0 : Math.sin(now() / 160)) * 0.15;
         ctx.globalAlpha = pulse;
         ctx.strokeStyle = cls === 'mage' ? '#b3dfff' : '#f6dda0';
         ctx.fillStyle = cls === 'mage' ? '#b3dfff18' : '#f6dda018';
@@ -1385,7 +1430,7 @@
         ctx.stroke();
         ctx.globalAlpha = 0.45;
         for (let j = 0; j < 3; j++) {
-          const an = now() / 550 + j * 2.09;
+          const an = (reducedMotion() ? 0 : now() / 550) + j * 2.09;
           ctx.fillStyle = mana ? '#b8ddff' : '#c1efc6';
           ctx.beginPath();
           ctx.arc(q.x + Math.cos(an) * r * 0.6, q.y - 7 + Math.sin(an) * 5, 1.8, 0, Math.PI * 2);
@@ -1395,7 +1440,51 @@
       };
       const h = game.hero,
         p = screen(h);
+      const ward = (unit, point, radius) => {
+        if ((unit.wardUntil || 0) <= game.s.time) return;
+        ctx.save();
+        ctx.strokeStyle = '#f5df9ecc';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(point.x, point.y - 8, radius, radius * 0.38, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      };
       if (h.immune > 0) guard(p, 29, h.class);
+      ward(h, p, 32);
+      if (h.class === 'paladin' && (h.shieldStance || 0) > 0) {
+        // Raised-shield silhouette cue, rendered over either the original
+        // procedural hero or its canon-faithful static sprite.
+        ctx.save();
+        ctx.strokeStyle = '#beddfb';
+        ctx.fillStyle = '#477bb4bb';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(p.x - 24, p.y - 32);
+        ctx.lineTo(p.x - 40, p.y - 26);
+        ctx.lineTo(p.x - 39, p.y - 6);
+        ctx.lineTo(p.x - 26, p.y + 1);
+        ctx.lineTo(p.x - 17, p.y - 13);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
+      if (
+        h.silenceField &&
+        h.silenceField.zone === game.zoneId &&
+        h.silenceField.until > game.s.time
+      ) {
+        const q = screen(h.silenceField);
+        ctx.save();
+        ctx.strokeStyle = '#bd9befaa';
+        ctx.fillStyle = '#9d72d013';
+        ctx.lineWidth = 2;
+        PrototypeCombatVisuals.circlePath(ctx, screen, h.silenceField, h.silenceField.radius);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
       if (h.haste > 0) {
         ctx.save();
         ctx.strokeStyle = '#d9f2ff99';
@@ -1415,6 +1504,16 @@
       for (const u of game.activeLivingParty()) {
         const q = screen(u);
         if (u.immune > 0) guard(q, 24);
+        ward(u, q, 27);
+        if (u.rangerRallyZone === game.zoneId && (u.rangerRallyUntil || 0) > game.s.time) {
+          ctx.save();
+          ctx.strokeStyle = '#b9e7a8bb';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.ellipse(q.x, q.y + 7, 26, 10, 0, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        }
         for (const effect of u.supportEffects || []) support(q, effect, 22);
       }
     }
@@ -1442,7 +1541,11 @@
     // while the player is holding an aimed skill; simulation owns the ranges.
     function targetGuidance() {
       const cast = chargePresentation(),
-        aimed = cast && (cast.slot === 1 || cast.slot === 2),
+        aimed =
+          cast &&
+          ([1, 2, 6, 7].includes(cast.slot) ||
+            (cast.slot === 4 && game.hero.class !== 'ranger') ||
+            (cast.slot === 8 && game.hero.class !== 'paladin')),
         selected = game.selectedHeroTarget();
       if (cast?.slot === 3) {
         const p = screen(game.hero);
@@ -1451,10 +1554,16 @@
         ctx.globalAlpha = 0.8;
         ctx.lineWidth = 2.2;
         ctx.beginPath();
-        ctx.moveTo(p.x - 5, p.y - 34);
-        ctx.lineTo(p.x + 5, p.y - 34);
-        ctx.moveTo(p.x, p.y - 39);
-        ctx.lineTo(p.x, p.y - 29);
+        if (game.hero.class === 'ranger') {
+          ctx.moveTo(p.x - 5, p.y - 34);
+          ctx.lineTo(p.x + 5, p.y - 34);
+          ctx.moveTo(p.x, p.y - 39);
+          ctx.lineTo(p.x, p.y - 29);
+        } else {
+          ctx.arc(p.x, p.y - 23, 12, 0, Math.PI * 2);
+          ctx.moveTo(p.x - 7, p.y - 23);
+          ctx.lineTo(p.x + 7, p.y - 23);
+        }
         ctx.stroke();
         ctx.restore();
         return;
@@ -1654,6 +1763,9 @@
       if (!game.isDungeon())
         PrototypeVisuals.bridges(ctx, screen, i, optimized ? null : PrototypeMaterials);
       PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000);
+      // All warning footprints/outlines belong to the floor, below characters,
+      // companions, monsters and scenery. Floating cast captions render later.
+      PrototypeCombatVisuals.ground(ctx, screen, game, 'underlay-cue', game.s.time);
       finishPhase('terrain');
       const boardCue = null,
         captainCue = game.zoneId === 'vale' && game.s.party.length <= 2;
@@ -1680,6 +1792,9 @@
             ...e,
             renderKind,
             ...(renderKind === 'hero' && game.s.throneClaimed ? { crowned: true } : {}),
+            ...(Campaign.rules?.ambientLife?.[e.structure || e.id]
+              ? { ambientTime: (PrototypeSprites?.timeMs?.() ?? now()) / 1000 }
+              : {}),
           };
           const registered = PrototypeSprites?.definitionFor?.(
             visualEntity,
@@ -1739,6 +1854,7 @@
       for (const e of entities.slice().sort((a, b) => labelPriority(a) - labelPriority(b))) {
         if (
           !['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) ||
+          e.presentation === 'scout-tracks' ||
           !worldLabelVisible(e)
         )
           continue;
@@ -1773,7 +1889,11 @@
         if (slot) labelSlots.set(e, slot);
       }
 
+      // Tracks are flat ground decals. Draw them before every standing object,
+      // without the NPC shadow, selection ring, aura or idle motion treatment.
+      for (const e of entities) if (e.presentation === 'scout-tracks') sprite(e, screen(e));
       for (const e of entities) {
+        if (e.presentation === 'scout-tracks') continue;
         const p = screen(e);
         if (p.x < -180 || p.x > canvas.width + 180 || p.y < -180 || p.y > canvas.height + 180)
           continue;
@@ -2036,6 +2156,30 @@
               return da - db || String(a.id).localeCompare(String(b.id));
             })
             .slice(0, 44);
+      // Use the carried glass's actual painted position, including facing,
+      // captain scale and idle bob; do not invent a second service lantern.
+      const carriedLanterns = entities
+        .filter(
+          (e) =>
+            e.renderKind === 'enemy' && e.species === 'wraith' && e.type !== 'boss' && e.hp > 0,
+        )
+        .map((e) => {
+          const p = visualPosition(e, screen(e)),
+            scale = e.captain || e.roomCaptain ? e.visualScale || 1.18 : 1;
+          return {
+            x: p.x + paintedFacing(e) * 22.5 * scale,
+            y: p.y + 1.5 * scale,
+            kind: 'carried-lantern',
+            id: e.id,
+          };
+        })
+        .sort(
+          (a, b) =>
+            Math.hypot(a.x - canvas.width / 2, a.y - canvas.height / 2) -
+              Math.hypot(b.x - canvas.width / 2, b.y - canvas.height / 2) ||
+            String(a.id).localeCompare(String(b.id)),
+        )
+        .slice(0, 8);
       PrototypeVisuals.atmosphere(ctx, canvas, i, {
         night: nightNow,
         peace: game.peace,
@@ -2043,7 +2187,7 @@
         room,
         optimized,
         hero: screen(game.hero),
-        lights: nightSources,
+        lights: [...carriedLanterns, ...nightSources],
       });
       // Choking Ash is intentionally visible and remains fixed where cast.
       for (const e of z.enemies)
@@ -2074,7 +2218,10 @@
       PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx);
       for (const p of game.s.projectiles) drawProjectile(p);
       drawVisualFx();
-      PrototypeCombatVisuals.ground(ctx, screen, game, 'cue', game.s.time);
+      heroArt?.statuses(ctx, screen, game, canvas.width, canvas.height);
+      heroArt?.charge(ctx, screen, game.hero, chargePresentation(), reducedMotion());
+      PrototypeCombatVisuals.enemySupportStatus?.(ctx, screen, game);
+      PrototypeCombatVisuals.actorCues?.(ctx, screen, game);
       targetGuidance();
       drawNavigationRoute();
       if (isPaused()) {

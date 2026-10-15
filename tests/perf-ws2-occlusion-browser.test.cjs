@@ -58,6 +58,7 @@ const server = http.createServer((req, res) => {
           [
             'visuals',
             'combat-visuals',
+            'hero-presentation',
             'enemy-vfx-art',
             'sprite-format',
             'sprites',

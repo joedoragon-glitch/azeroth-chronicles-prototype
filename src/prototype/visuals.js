@@ -68,6 +68,33 @@
     if (height < Math.ceil(logicalHeight * density)) return 1;
     return target;
   }
+  // Each animal takes short steps then pauses near its authored home. This is
+  // read-only presentation: no targetable actors, hit points or combat randomness.
+  function ambientAnimalPose(e, index, seconds = 0) {
+    const cfg = R.ambientLife?.[e.structure || e.id];
+    if (!cfg) return { x: 0, y: 0, facing: 1, walking: false };
+    let seed = 2166136261;
+    for (const ch of String(e.id || e.structure) + ':' + index)
+      seed = Math.imul(seed ^ ch.charCodeAt(0), 16777619) >>> 0;
+    const time = Math.max(0, seconds) + (seed % 2000) / 100,
+      period = cfg.walk + cfg.rest,
+      step = Math.floor(time / period),
+      progress = Math.min(1, (time % period) / cfg.walk),
+      point = (n) => ({
+        x: Math.cos(seed * 0.001 + n * 2.39996) * cfg.radius,
+        y: Math.sin(seed * 0.0017 + n * 2.39996) * cfg.radius,
+      }),
+      from = point(step),
+      to = point(step + 1),
+      x = from.x + (to.x - from.x) * progress,
+      y = from.y + (to.y - from.y) * progress;
+    return {
+      x: (x - y) * 0.76,
+      y: (x + y) * 0.27,
+      facing: to.x - from.x - (to.y - from.y) < 0 ? -1 : 1,
+      walking: progress < 1,
+    };
+  }
   function draw(ctx, e, p, region = 0, rescued = false) {
     if (e.kind === 'landmark' && e.id?.startsWith('bridge-')) return; // The full deck is drawn in world space.
     ctx.save();
@@ -555,66 +582,7 @@
           if (e.hybrid) glint(13, -2, '#b9d6b4', 1.8);
           break;
         case 'ogre':
-          poly(
-            [
-              [-15, -17],
-              [-23, -20],
-              [-24, -8],
-              [-14, -9],
-            ],
-            e.ranged ? '#686d65' : '#77786d',
-          );
-          line(
-            [
-              [-8, -24],
-              [7, -19],
-            ],
-            e.ranged ? '#8b755d' : '#735a48',
-            2,
-          );
-          line(
-            [
-              [-11, -31],
-              [-3, -26],
-              [5, -31],
-            ],
-            '#d1c49d',
-            1.3,
-          );
-          line(
-            [
-              [-5, -15],
-              [7, -8],
-            ],
-            e.ranged ? '#9b8060' : '#684d44',
-            1.5,
-          );
-          if (e.ranged) {
-            rect(-23, -2, 11, 12, '#725d49');
-            for (const [x, y, r] of [
-              [-19, -4, 4],
-              [-14, 2, 3],
-              [-21, 6, 3],
-            ])
-              oval(x, y, r, r * 0.7, '#898980');
-            line(
-              [
-                [15, -27],
-                [28, -9],
-              ],
-              '#ad8f65',
-              2,
-            );
-          } else
-            for (const y of [-19, -13])
-              line(
-                [
-                  [20, y],
-                  [31, y + 2],
-                ],
-                '#c2b28c',
-                1.5,
-              );
+          // Species detail and loadout are kept together in ogreBody.
           break;
         case 'orc':
           for (const x of [-4, 4])
@@ -1575,6 +1543,197 @@
         1,
       );
     }
+    // One organic species body for melee, thrower and guard variants.
+    function ogreBody(ranged) {
+      const hide = '#b2a684',
+        shadow = '#8b8063',
+        light = '#c8bb96';
+      const cloth = ranged ? '#777469' : '#8d7a5f';
+      const shape = (color, trace) => {
+        ctx.fillStyle = color;
+        ctx.strokeStyle = ink;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        trace();
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      };
+      // Weight-bearing legs and broad boots under a rounded, heavy torso.
+      for (const side of [-1, 1]) {
+        line(
+          [
+            [side * 8, -1],
+            [side * 10, 12],
+          ],
+          '#575548',
+          9,
+        );
+        oval(side * 10 + 1, 12, 8, 4, '#4d493e');
+      }
+      shape(cloth, () => {
+        ctx.moveTo(-17, -24);
+        ctx.bezierCurveTo(-12, -30, 11, -30, 18, -23);
+        ctx.bezierCurveTo(24, -13, 23, 0, 17, 5);
+        ctx.bezierCurveTo(5, 9, -11, 8, -19, 3);
+        ctx.bezierCurveTo(-23, -5, -24, -17, -17, -24);
+      });
+      fillOval(7, -10, 12, 15, '#e1cfa2', 0.13);
+      // Connected deltoids, elbows and curled hands, rather than stick arms.
+      for (const side of [-1, 1]) {
+        shape(side < 0 ? shadow : hide, () => {
+          ctx.moveTo(side * 15, -26);
+          ctx.bezierCurveTo(side * 24, -29, side * 29, -19, side * 27, -12);
+          ctx.bezierCurveTo(side * 32, -7, side * 31, 1, side * 25, 3);
+          ctx.bezierCurveTo(side * 19, 4, side * 18, -2, side * 20, -8);
+          ctx.bezierCurveTo(side * 17, -15, side * 12, -18, side * 15, -26);
+        });
+        line(
+          [
+            [side * 23, -3],
+            [side * 28, -2],
+          ],
+          '#776d53',
+          1,
+        );
+        line(
+          [
+            [side * 23, 0],
+            [side * 27, 1],
+          ],
+          '#776d53',
+          1,
+        );
+        fillOval(side * 22, -19, 3, 6, light, 0.23);
+      }
+      // Curved belt follows the belly; its buckle stays readable at game scale.
+      shape('#62513f', () => {
+        ctx.moveTo(-21, -2);
+        ctx.quadraticCurveTo(0, 4, 21, -2);
+        ctx.lineTo(20, 3);
+        ctx.quadraticCurveTo(0, 9, -20, 3);
+      });
+      rect(-3, 0, 6, 5, '#b69c67');
+      rect(-1.5, 1, 3, 2.5, '#665743');
+      // Ears, squat neck, broad bald skull and fleshy lower jaw.
+      oval(-13, -32, 5, 6, shadow);
+      oval(13, -32, 5, 6, hide);
+      oval(0, -26, 10, 9, shadow);
+      shape(hide, () => {
+        ctx.moveTo(-13, -33);
+        ctx.bezierCurveTo(-15, -48, 12, -49, 14, -35);
+        ctx.bezierCurveTo(18, -26, 11, -18, 0, -19);
+        ctx.bezierCurveTo(-10, -18, -16, -24, -13, -33);
+      });
+      fillOval(-4, -39, 7, 4, light, 0.4);
+      oval(-6, -32, 4, 2.3, '#706b53');
+      oval(6, -32, 4, 2.3, '#706b53');
+      oval(-6, -32, 1.2, 1.3, '#e4cf8f');
+      oval(6, -32, 1.2, 1.3, '#e4cf8f');
+      line(
+        [
+          [-10, -35],
+          [-3, -34],
+        ],
+        shadow,
+        3,
+      );
+      line(
+        [
+          [3, -34],
+          [10, -35],
+        ],
+        shadow,
+        3,
+      );
+      oval(0, -28, 5, 4, '#bcac83');
+      for (const x of [-2.5, 2.5]) fillOval(x, -27, 1.2, 1, '#615c48');
+      line(
+        [
+          [-8, -23],
+          [0, -24],
+          [8, -23],
+        ],
+        '#665d48',
+        1.6,
+      );
+      for (const side of [-1, 1])
+        shape(bone, () => {
+          ctx.moveTo(side * 7, -22);
+          ctx.quadraticCurveTo(side * 13, -24, side * 10, -30);
+          ctx.quadraticCurveTo(side * 8, -27, side * 5, -24);
+        });
+      // Preserve the existing weapon identities, without extra armor or lore.
+      if (ranged) {
+        shape('#68675e', () => {
+          ctx.moveTo(-16, -25);
+          ctx.quadraticCurveTo(-29, -28, -28, -14);
+          ctx.quadraticCurveTo(-20, -12, -12, -19);
+        });
+        line(
+          [
+            [-16, -21],
+            [14, 1],
+          ],
+          '#aa8b61',
+          3,
+        );
+        shape('#705946', () => {
+          ctx.moveTo(-28, -4);
+          ctx.quadraticCurveTo(-19, -8, -13, -1);
+          ctx.lineTo(-14, 12);
+          ctx.quadraticCurveTo(-22, 17, -29, 9);
+        });
+        for (const [x, y, r] of [
+          [-24, -3, 4],
+          [-18, -1, 3],
+          [-25, 3, 3],
+        ])
+          oval(x, y, r, r * 0.8, '#92918a');
+        line(
+          [
+            [27, -4],
+            [33, -25],
+            [29, -32],
+          ],
+          '#b69a70',
+          2,
+        );
+        oval(29, -32, 5, 4, '#85867f');
+      } else {
+        line(
+          [
+            [26, 2],
+            [30, -28],
+          ],
+          '#96744e',
+          6,
+        );
+        shape('#816647', () => {
+          ctx.moveTo(24, -23);
+          ctx.bezierCurveTo(17, -32, 22, -43, 31, -41);
+          ctx.bezierCurveTo(40, -39, 39, -29, 33, -22);
+        });
+        line(
+          [
+            [26, -36],
+            [27, -29],
+          ],
+          '#ad9161',
+          1.5,
+        );
+        for (const y of [-23, -19])
+          line(
+            [
+              [26, y],
+              [33, y + 1],
+            ],
+            '#c2b28c',
+            2,
+          );
+        oval(26, -2, 5, 4, hide);
+      }
+    }
     function skull(x = 0, y = -28, r = 8) {
       oval(x, y, r, r, bone);
       rect(x - r * 0.6, y + 4, r * 1.2, 6, bone);
@@ -1666,6 +1825,11 @@
     function crownDirewolfRider(ranged = false) {
       ctx.save();
       ctx.scale(1.14, 1.14);
+      // Scale the animal and its tack around the paws, keeping its ground anchor.
+      ctx.save();
+      ctx.translate(0, 13);
+      ctx.scale(1.22, 1.22);
+      ctx.translate(0, -13);
       wolf('#65717c', true);
       // Fur mane, armored cheek plate, leather reins and a working war saddle.
       poly(
@@ -1730,7 +1894,7 @@
       line(
         [
           [-15, -18],
-          [-11, 5],
+          [-11, -5],
         ],
         '#d2b67f',
         2.5,
@@ -1738,22 +1902,29 @@
       line(
         [
           [13, -21],
-          [17, 4],
+          [17, -6],
         ],
         '#d2b67f',
         2.5,
       );
       for (const x of [-16, 13]) {
-        oval(x, -6, 3, 4, '#c49d61');
+        oval(x, -14, 3, 4, '#c49d61');
         line(
           [
-            [x - 6, -2],
-            [x + 4, -2],
+            [x - 6, -10],
+            [x + 4, -10],
           ],
           '#4b4b4a',
           1.5,
         );
       }
+      ctx.restore();
+      // Fit the human to the enlarged saddle rather than enlarging both bodies.
+      // Both weapon variants share this seated scale and matching stirrup height.
+      ctx.save();
+      ctx.translate(0, -35);
+      ctx.scale(0.72, 0.72);
+      ctx.translate(0, 28);
       // Human legs remain on both flanks, armored boots in real stirrups.
       poly(
         [
@@ -1963,6 +2134,7 @@
           '#e2c371',
         );
       }
+      ctx.restore();
       ctx.restore();
     }
     function crocodile(c = '#71886a') {
@@ -8915,11 +9087,13 @@
             localWood,
             3,
           );
-          for (const [x, y] of [
+          for (const [index, [x, y]] of [
             [-9, 5],
             [7, 7],
-          ])
-            oval(x, y, 7, 4, '#8c8062');
+          ].entries()) {
+            const motion = ambientAnimalPose(e, index, e.ambientTime);
+            oval(x + motion.x, y + motion.y, 7, 4, '#8c8062');
+          }
           break;
         case 'drying-rack':
           for (const x of [-22, 22])
@@ -9202,11 +9376,13 @@
               '#a28d62',
               2,
             );
-          for (const [x, y] of [
+          for (const [index, [x, y]] of [
             [-8, 3],
             [8, 4],
-          ])
-            oval(x, y, 5, 3, '#8c775d');
+          ].entries()) {
+            const motion = ambientAnimalPose(e, index, e.ambientTime);
+            oval(x + motion.x, y + motion.y, 5, 3, '#8c775d');
+          }
           break;
         case 'fishing-net':
           for (const x of [-22, 22])
@@ -10963,14 +11139,15 @@
           break;
         case 'pasture-sheep':
           // Two real small livestock silhouettes; sheep are domestic, not mobs.
-          shade(38, 8, 0.11);
-          for (const [x, y, size] of [
+          for (const [index, [x, y, size]] of [
             [-13, 2, 1],
             [18, -2, 0.78],
-          ]) {
+          ].entries()) {
             ctx.save();
-            ctx.translate(x, y);
-            ctx.scale(size, size);
+            const motion = ambientAnimalPose(e, index, e.ambientTime);
+            ctx.translate(x + motion.x, y + motion.y);
+            ctx.scale(size * motion.facing, size);
+            shade(15, 4, 0.11);
             for (const dx of [-9, 8]) {
               line(
                 [
@@ -11005,14 +11182,15 @@
           break;
         case 'poultry-yard':
           // Scattered hens and feed make a tiny farmyard immediately legible.
-          for (const [x, y, scale] of [
+          for (const [index, [x, y, scale]] of [
             [-19, 4, 1],
             [11, 8, 0.86],
             [19, -10, 0.78],
-          ]) {
+          ].entries()) {
             ctx.save();
-            ctx.translate(x, y);
-            ctx.scale(scale, scale);
+            const motion = ambientAnimalPose(e, index, e.ambientTime);
+            ctx.translate(x + motion.x, y + motion.y);
+            ctx.scale(scale * motion.facing, scale);
             oval(-2, 1, 9, 6, '#c6ab7f');
             poly(
               [
@@ -12484,8 +12662,13 @@
               '#82785e',
               2,
             );
-          oval(-8, 3, 7, 5, '#7c876d');
-          oval(9, 4, 6, 4, '#6f7c66');
+          for (const [index, [x, y, r, color]] of [
+            [-8, 3, 7, '#7c876d'],
+            [9, 4, 6, '#6f7c66'],
+          ].entries()) {
+            const motion = ambientAnimalPose(e, index, e.ambientTime);
+            oval(x + motion.x, y + motion.y, r, r * 0.7, color);
+          }
           break;
         case 'wolf-den':
           poly(
@@ -13144,17 +13327,108 @@
         );
       }
     } else if (e.kind === 'patrol-report') {
-      specialist({ ...e, kind: 'teacher' });
+      // A practical trail scout: moss cloak, copper clasp and worn field gear.
+      poly(
+        [
+          [-14, -26],
+          [-23, 11],
+          [-8, 15],
+          [1, 9],
+          [17, 13],
+          [15, -25],
+        ],
+        '#4f6453',
+      );
+      humanoid('#78866a', skin, 0.95);
+      oval(0, -31, 11, 13, '#43594c');
+      oval(0, -29, 7, 8, '#d3ad88');
+      poly(
+        [
+          [-13, -36],
+          [-8, -43],
+          [5, -42],
+          [13, -34],
+          [6, -35],
+          [0, -38],
+          [-6, -35],
+        ],
+        '#60745b',
+      );
+      line(
+        [
+          [-5, -29],
+          [-3, -29],
+        ],
+        '#25312d',
+        1.3,
+      );
+      line(
+        [
+          [3, -29],
+          [5, -29],
+        ],
+        '#25312d',
+        1.3,
+      );
+      line(
+        [
+          [-3, -24],
+          [3, -24],
+        ],
+        '#8d6653',
+        1,
+      );
+      poly(
+        [
+          [-10, -21],
+          [9, -22],
+          [6, -15],
+          [-6, -17],
+        ],
+        '#b98c5e',
+      );
+      oval(6, -20, 2.4, 2.4, '#cfaa69');
+      line(
+        [
+          [-10, -17],
+          [11, 0],
+        ],
+        '#7d5d40',
+        3.5,
+      );
+      rect(-19, -4, 10, 12, '#8c6b47');
+      rect(-19, -4, 10, 4, '#b59a6b');
+      line(
+        [
+          [19, -28],
+          [21, 14],
+        ],
+        '#92734f',
+        3,
+      );
+      line(
+        [
+          [18, -29],
+          [22, -28],
+        ],
+        '#bba27b',
+        2,
+      );
+      rect(11, -7, 5, 13, '#c6b58e');
     } else if (e.presentation === 'scout-tracks') {
       ctx.save();
+      // Impressions lie in the isometric ground plane, not upright little feet.
+      ctx.transform(0.76, 0.27, -0.76, 0.27, 0, 0);
       ctx.rotate(e.angle || 0);
+      ctx.scale(0.75, 0.75);
+      ctx.globalAlpha *= 0.48;
       for (const [x, y] of [
         [-12, -6],
         [0, 6],
         [12, -6],
       ]) {
-        oval(x, y, 5, 3, '#bba889');
-        for (const dy of [-4, 0, 4]) oval(x + 5, y + dy, 1.7, 1.5, '#95846b');
+        fillOval(x, y, 5, 3, '#786b54');
+        for (const dy of [-4, 0, 4]) fillOval(x + 5, y + dy, 1.7, 1.5, '#74674f');
       }
       ctx.restore();
     } else if (e.kind === 'cage' && e.presentation === 'mobile-forge') {
@@ -14566,79 +14840,7 @@
           } else sword(12, -3);
           break;
         case 'ogre':
-          if (e.ranged) {
-            humanoid('#777469', '#b2a684', 1.5);
-            rect(-12, -3, 24, 7, '#80664d');
-            poly(
-              [
-                [-17, -18],
-                [-25, -12],
-                [-21, 3],
-                [-11, -4],
-              ],
-              '#6f655d',
-            );
-            line(
-              [
-                [-18, -8],
-                [13, 3],
-              ],
-              '#a08461',
-              4,
-            );
-            rect(-27, -2, 14, 17, '#705946');
-            for (const [x, y, r] of [
-              [-22, -6, 5],
-              [-17, 1, 4],
-              [-24, 7, 4],
-            ])
-              oval(x, y, r, r * 0.7, '#85867f');
-            line(
-              [
-                [18, -29],
-                [30, -11],
-              ],
-              '#b69a70',
-              2,
-            );
-            poly(
-              [
-                [27, -13],
-                [34, -17],
-                [36, -10],
-                [29, -7],
-              ],
-              '#81796d',
-            );
-          } else {
-            humanoid('#8d7a5f', '#b2a684', 1.5);
-            rect(-12, -3, 24, 7, '#6b5841');
-            line(
-              [
-                [25, -22],
-                [20, 14],
-              ],
-              '#96744e',
-              6,
-            );
-            oval(27, -25, 8, 15, '#816647');
-          }
-          poly(
-            [
-              [-4, -23],
-              [-5, -17],
-              [-1, -21],
-            ],
-            bone,
-          );
-          poly(
-            [
-              [4, -23],
-              [5, -17],
-              [1, -21],
-            ],
-            bone,
-          );
+          ogreBody(!!e.ranged);
           break;
         case 'archer':
           human('archer');
@@ -16415,6 +16617,15 @@
       'rgba(32,20,35,.52)', // Frontier: ash dusk with working checkpoints
       'rgba(27,19,43,.54)', // Crown: rich night violet, still navigable
     ];
+    const glow = (p, r = 120, a = 0.22, c = '255,218,151') => {
+      if (!p) return;
+      const q = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
+      q.addColorStop(0, `rgba(${c},${a})`);
+      q.addColorStop(0.35, `rgba(${c},${a * 0.48})`);
+      q.addColorStop(1, `rgba(${c},0)`);
+      ctx.fillStyle = q;
+      ctx.fillRect(p.x - r, p.y - r, r * 2, r * 2);
+    };
     if (night) {
       const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
       g.addColorStop(0, nightTints[region] || nightTints[0]);
@@ -16423,28 +16634,21 @@
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       // Warm pools around the hero and inhabited field structures make night readable without flattening the whole scene.
       ctx.globalCompositeOperation = 'screen';
-      const glow = (p, r = 120, a = 0.22, c = '255,218,151') => {
-        if (!p) return;
-        const q = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
-        q.addColorStop(0, `rgba(${c},${a})`);
-        q.addColorStop(0.35, `rgba(${c},${a * 0.48})`);
-        q.addColorStop(1, `rgba(${c},0)`);
-        ctx.fillStyle = q;
-        ctx.fillRect(p.x - r, p.y - r, r * 2, r * 2);
-      };
       glow(hero, 145, peace ? 0.22 : 0.18, region === 4 ? '215,191,231' : '235,221,184');
       // Night sources are the current map's actual windows, services and fires.
       // Keep the soft lit ground distinct from the lamp itself. Only a small
       // radius for each source, with a larger effect at working kitchens/forges.
       const renderedLights = lights.slice(0, 36);
       for (const p of renderedLights) {
-        const window = p.kind === 'window',
+        const carried = p.kind === 'carried-lantern',
+          window = p.kind === 'window',
           fire = p.kind === 'fire' || p.kind === 'work-fire',
-          radius = window ? 70 : p.kind === 'work-fire' ? 105 : fire ? 90 : 85,
-          y = p.y - (p.fixture === 'post' ? 46 : window ? 32 : fire ? 13 : 28),
+          radius = carried ? 64 : window ? 70 : p.kind === 'work-fire' ? 105 : fire ? 90 : 85,
+          y = carried ? p.y : p.y - (p.fixture === 'post' ? 46 : window ? 32 : fire ? 13 : 28),
           source = { x: p.x, y },
           tint = region === 1 ? '245,208,150' : region === 4 ? '247,194,147' : '255,207,132';
         glow(source, radius, window ? 0.27 : fire ? 0.3 : 0.25, tint);
+        if (carried) glow(source, 10, 0.5, '255,221,150');
       }
       ctx.globalCompositeOperation = 'source-over';
       // Luminous windows and sheltered lantern glass are localized light
@@ -16504,6 +16708,14 @@
         ctx.fillStyle = sun;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
+    }
+    if (!night) {
+      // A lit hand lantern keeps a small bloom in daylight; broad illumination
+      // becomes visible after dark. Existing civic day/night lights stay off.
+      ctx.globalCompositeOperation = 'screen';
+      for (const p of lights.filter((p) => p.kind === 'carried-lantern').slice(0, 8))
+        glow(p, 22, 0.12, '255,221,150');
+      ctx.globalCompositeOperation = 'source-over';
     }
     // Keep the night safety grade and useful light pools, but omit purely
     // decorative pollen/mist/sparks and vignette in Optimization Mode.
@@ -16569,6 +16781,7 @@
     barracksVisualState,
     featureScale,
     assetSafeScale,
+    ambientAnimalPose,
   };
   if (typeof module !== 'undefined') module.exports = root.PrototypeVisuals;
 })(typeof window !== 'undefined' ? window : globalThis);

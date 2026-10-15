@@ -2212,7 +2212,7 @@
       "kind": "effect",
       "src": "./assets/audio/effects/sfx-hero-steel-swing.wav",
       "duration": 0.24,
-      "sha256": "4a9a03af1d743479c8e0c4415b347b5475e695849d0e0a5a595d502f4af49a48",
+      "sha256": "7a512d23e27e90764e45dffd37953e027bb258ef837bb125d426b8110c785f89",
       "credits": {
         "author": "Azeroth Chronicles original synthesis",
         "license": "CC0-1.0"
@@ -2220,7 +2220,7 @@
       "managedBy": "sfx-book",
       "creationMethod": "deterministic-spectral-synthesis",
       "title": "Hero Steel Swing",
-      "generationGuide": "Quick dry sword air with faint steel ring; preserve combo accents live.",
+      "generationGuide": "Short airy sword swish with a faint high steel edge. No falling pitched wooden thump. Preserve combo accents live.",
       "recipe": {
         "source": "tools/audio/sfx-book.json",
         "id": "sfx-hero-steel-swing",
@@ -2231,7 +2231,7 @@
       "kind": "effect",
       "src": "./assets/audio/effects/sfx-hero-steel-impact.wav",
       "duration": 0.3,
-      "sha256": "9f87ef8c9eb0670c774b67266e659367bb09166ee30c54902e661ef0f06fd4c2",
+      "sha256": "4a20b5b39db35f80108db4729c8520298c1a99d67c4a6a0c34a37a996b8c9e3a",
       "credits": {
         "author": "Azeroth Chronicles original synthesis",
         "license": "CC0-1.0"
@@ -2239,7 +2239,7 @@
       "managedBy": "sfx-book",
       "creationMethod": "deterministic-spectral-synthesis",
       "title": "Hero Steel Impact",
-      "generationGuide": "Firm dry steel contact, upper ring and short body. No huge bass boom.",
+      "generationGuide": "Crisp tempered-steel sword contact: bright inharmonic upper partials, brief edge scrape and a restrained low body. Short mono-compatible ring, no wooden knock or bass boom. Preserve combo accents live.",
       "recipe": {
         "source": "tools/audio/sfx-book.json",
         "id": "sfx-hero-steel-impact",

@@ -10,7 +10,7 @@ const classes = ['paladin', 'mage', 'ranger'];
 
 function targetArena(cls) {
   const g = new Campaign('normal', cls, () => 0.9);
-  g.s.party = [];
+  g.s.party = [g.unit('soldier', 510, 500)];
   g.zone().props = [];
   g.hero.skills = Array(8).fill(1);
   g.hero.cd = Array(8).fill(0);
@@ -43,9 +43,7 @@ for (const cls of classes) {
     const ratio = 1 - 0.04 * talentRank;
     for (const [slot, charged] of [
       ...Array.from({ length: 8 }, (_, i) => [i + 1, false]),
-      [1, true],
-      [2, true],
-      [3, true],
+      ...Array.from({ length: 8 }, (_, i) => [i + 1, true]),
     ]) {
       const { g, foe } = targetArena(cls);
       g.hero.talents[1] = talentRank;
@@ -57,17 +55,21 @@ for (const cls of classes) {
         Math.abs(g.skillCooldown(slot, charged) - expected) < 1e-9,
         cls + ' rank ' + talentRank + ' slot ' + slot + ' charged ' + charged + ' cooldown',
       );
+      if (cls === 'mage' && slot === 3 && !charged)
+        foe.rangedAim = { remaining: 0.4, max: 0.4, targetId: 'hero' };
       const before = g.hero.mp;
       assert(g.cast(slot, foe.id, charged), cls + ' slot ' + slot + ' casts without MP');
       assert.equal(g.hero.mp, before, cls + ' no resource consumed');
+      if (cls === 'paladin' && slot === 3 && !charged) {
+        assert.equal(g.hero.cd[2], 0, 'stance cooldown waits for lowering');
+        assert(g.cast(3));
+      }
       assert(Math.abs(g.hero.cd[slot - 1] - expected) < 1e-9, 'cooldown begins with correct value');
       assert(!g.cast(slot, foe.id, charged), 'cooldown rejects immediate repeat');
     }
   }
 }
-console.log(
-  'PASS three hero classes × all eight normal and three charged skills × six talent ranks',
-);
+console.log('PASS three hero classes × all eight normal and charged skills × six talent ranks');
 
 for (const cls of classes) {
   const g = new Campaign('normal', cls, () => 0.9);
@@ -347,7 +349,7 @@ for (const slot of [5, 7]) {
   g.zone().enemies.push(neutral);
   const neutralHp = neutral.hp;
   assert(g.cast(slot, foe.id), 'Mage frost area ' + slot + ' casts');
-  assert.equal(foe.slow, slot === 5 ? 5 : 6, 'successful area hit applies frost');
+  assert.equal(foe.slow || 0, 0, 'force and chain do not invent frost');
   assert.equal(neutral.hp, neutralHp, 'neutral target receives no damage');
   assert.equal(neutral.slow || 0, 0, 'neutral target does not receive frost');
 
@@ -361,7 +363,7 @@ for (const slot of [5, 7]) {
   assert(g.cast(2, foe.id), 'Mage frost projectile launches');
   g.updateProjectiles(0.2);
   assert.equal(g.s.projectiles.length, 0);
-  assert.equal(foe.slow, 4, 'landed frost projectile applies slow');
+  assert.equal(foe.slow, 2, 'landed frost projectile applies slow');
 }
 {
   const { g, foe } = targetArena('mage');
