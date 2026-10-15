@@ -150,6 +150,11 @@
         return count;
       }
 
+      weakenedEnemyDamage(e) {
+        return e.damage * ((e.weakenUntil || 0) > this.s.time
+          ? 1 - Math.min(0.8, e.weakenFraction || 0)
+          : 1);
+      }
       tacticalHighestThreatTarget(e, fallback = this.hero) {
         const candidates = this.combatTargets().filter(
           (u) => u.hp > 0 && dist(e, u) <= (e.type === 'boss' ? 500 : 360) && this.line(e, u),
@@ -502,6 +507,13 @@
           equipment.remaining -= absorbed;
           amount -= absorbed;
         }
+        // Shield Stance sacrifices Paladin offense; Arcane Fracture increases
+        // actual damage from both the hero and companions, once per hit.
+        if (source === 'hero' && this.hero.class === 'paladin' &&
+            (this.hero.shieldStance || 0) > 0)
+          amount *= R.heroTactics.paladin.shield.outgoing;
+        if ((e.fractureUntil || 0) > this.s.time)
+          amount *= 1 + (e.fractureFraction || 0);
         const actualDamage = Math.max(0, Math.min(e.hp, amount));
         const reflected =
           e.captainProfile === 'supply-crown' && e.captainReflect > 0 ? actualDamage * 0.3 : 0;
@@ -522,8 +534,13 @@
             : ['soldier', 'archer'].includes(u.type)
               ? this.companionArmor(u.type)
               : 5 + this.hero.level * 0.5;
-        const oldHp = u.hp,
-          mitigated = alreadyMitigated ? Math.max(0, amount) : Math.max(3, amount - armor * 0.35);
+        const oldHp = u.hp;
+        let mitigated = alreadyMitigated ? Math.max(0, amount) : Math.max(3, amount - armor * 0.35);
+        if (u === this.hero && u.class === 'paladin' && (u.shieldStance || 0) > 0) {
+          const shield = R.heroTactics.paladin.shield;
+          mitigated *= 1 - Math.min(0.9,
+            shield.reduction + Math.floor((u.shieldRank || 1) / 2) * shield.reductionStep);
+        }
         u.hp = Math.max(0, u.hp - mitigated);
         if (u === this.hero) this.recordDeveloperDamage('incoming', mitigated);
         if (R.resourceMode.manaEnabled && u === this.hero && manaDrain > 0)
