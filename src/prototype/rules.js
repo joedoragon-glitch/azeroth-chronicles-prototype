@@ -4294,6 +4294,48 @@
       true: { reduction: 0.4, duration: 8 },
     },
   };
+  // Community Snapshot passive completion. These are additive to, not replacements
+  // for, the director-approved Greenwood/Marches passives and authored attacks.
+  const snapshotPassives = Object.freeze({
+    ridge: { perArcher: { normal: 0.06, true: 0.10 }, maxArchers: 3, radius: 400 },
+    mine: {
+      shellReduction: { normal: 0.18, true: 0.28 },
+      repairFraction: { normal: 0.04, true: 0.06 },
+      repairCooldown: 18,
+    },
+    warlord: {
+      perOrc: { normal: 0.05, true: 0.08 },
+      maxOrcs: 3,
+      radius: 380,
+      orcDamage: { normal: 0.15, true: 0.25 },
+    },
+    abyss: { reduction: { normal: 0.22, true: 0.32 }, duration: 4 },
+    citadel: { reduction: { normal: 0.20, true: 0.30 }, radius: 390 },
+    cindermaw: {
+      radius: 340,
+      threshold: 0.7,
+      bossRegen: { normal: 0.01, true: 0.016 },
+      bossHealCap: { normal: 0.12, true: 0.20 },
+      allyRegen: { normal: 0.008, true: 0.012 },
+      allyCap: 3,
+    },
+    darklord: {
+      reduction: { normal: 0.25, true: 0.35 },
+      window: 4,
+      triggerHits: 4,
+      duration: 6,
+      cooldown: 12,
+    },
+    captains: {
+      'supply-highlands': { guardRadius: 320, selfReduction: 0.15, guardDamage: 0.20 },
+      'frontier-overseer': {
+        perHitReduction: 0.05,
+        maxStacks: 5,
+        duration: 5,
+        maxStackDamage: 0.15,
+      },
+    },
+  });
   const bossBehavior = {
     thorn: {
       close: [0],
@@ -5494,6 +5536,7 @@
     bossBehavior,
     greenwoodPassives,
     marchesPassives,
+    snapshotPassives,
     rangedEnemyCombat,
     chargedSkills,
     basicAttackCombo,
