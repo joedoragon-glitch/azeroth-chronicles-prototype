@@ -720,6 +720,8 @@
                 p.comboClass || this.hero.class,
               );
             if (landed && p.slow) this.applySlow(victim, p.slow);
+            if (landed && p.push && victim.hp > 0 && p.source === 'hero')
+              this.shieldPush(victim, p.push);
             this.event('projectileImpact', {
               actor: p.source === 'hero' ? 'hero' : 'companion',
               class: p.source === 'hero' ? this.hero.class : undefined,
