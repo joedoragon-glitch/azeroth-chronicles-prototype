@@ -847,6 +847,7 @@
     if (['mireling', 'reedbeast'].includes(f.species)) return 'water';
     if (['wraith', 'stalker'].includes(f.species)) return 'spectral';
     if (['ashbeast'].includes(f.species)) return 'ember';
+    if (['archer', 'crownguard', 'orc'].includes(f.species)) return 'military';
     if (['ogre', 'goblin'].includes(f.species)) return 'earth';
     return 'growth';
   }
@@ -909,6 +910,14 @@
         ctx.lineTo(px, py + 4);
         ctx.lineTo(px - 3, py);
         ctx.closePath();
+        ctx.fill();
+      } else if (material === 'military') {
+        ctx.moveTo(px - 3, py - 2);
+        ctx.lineTo(px, py + 2);
+        ctx.lineTo(px + 3, py - 2);
+        ctx.stroke();
+      } else if (material === 'earth') {
+        ctx.ellipse(px, py, 2.8, 2.4, angle, 0, Math.PI * 2);
         ctx.fill();
       } else {
         ctx.ellipse(px, py, 3.5, 2, angle, 0, Math.PI * 2);
