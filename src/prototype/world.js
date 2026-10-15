@@ -1885,6 +1885,26 @@
         }[z.id];
         if (!anchors) return;
         const distance = (e) => Math.min(...anchors.map(([x, y]) => Math.hypot(e.home?.x - x, e.home?.y - y)));
+        // Existing Wolves nearest the Crown mint/convoy roads can be trained
+        // mounts. Independent Wolf dens/strongholds and ordinary mountain
+        // society are deliberately excluded; this creates no new population.
+        if (z.id === 'highlands') {
+          const riders = z.enemies.filter((e) =>
+            e.species === 'wolf' && e.type === 'mob' && e.form === 'normal' &&
+            !e.guard && !e.summon && !e.mini && !e.nightOnly &&
+            !e.strongholdResident && !e.site && !e.neutral && distance(e) < 1100)
+            .sort((a, b) => distance(a) - distance(b) || this.idOrder(a, b)).slice(0, 4);
+          for (const [j, e] of riders.entries()) {
+            e.mountedCrownRider = true;
+            e.crownTroop = true;
+            e.crownAncestry = 'wolf';
+            e.name = j % 2 ? 'Crown direwolf mounted archer' : 'Crown direwolf lance patrol';
+            // Military posts use the no-farm contract while retaining the
+            // original Wolf HP, damage, level and patrol/quest identity.
+            e.gold = 0;
+            e.xp = 0;
+          }
+        }
         const quota = { highlands: 5, frontier: 10, crown: 12 }[z.id];
         const soldiers = z.enemies.filter((e) =>
           e.type === 'mob' && e.form === 'normal' && !e.guard && !e.summon &&
