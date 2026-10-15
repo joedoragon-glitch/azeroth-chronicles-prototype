@@ -6,6 +6,51 @@
     const costs = R.balance.skills.costs,
       cooldowns = R.balance.skills.cooldowns;
     class HeroCombat {
+      tacticMilestones(rank) {
+        return Math.floor(Math.max(1, rank || 1) / 2);
+      }
+      mageSilenceActive(unit) {
+        const field = this.hero.silenceField;
+        return !!field && field.until > this.s.time && dist(unit, field) <= field.radius;
+      }
+      weakenEnemy(e, rank) {
+        const cfg = R.heroTactics.paladin.weaken,
+          steps = this.tacticMilestones(rank);
+        e.weakenUntil = Math.max(e.weakenUntil || 0, this.s.time + cfg.duration + steps * cfg.durationStep);
+        e.weakenFraction = Math.max(e.weakenFraction || 0, cfg.fraction + steps * cfg.step);
+      }
+      fractureEnemy(e, fraction, duration) {
+        // One strongest fracture applies at a time. A weaker repeat never downgrades it.
+        if ((e.fractureUntil || 0) <= this.s.time || fraction >= (e.fractureFraction || 0)) {
+          e.fractureFraction = fraction;
+          e.fractureUntil = this.s.time + duration;
+        }
+      }
+      shieldPush(e, push) {
+        // Respect solid terrain and the original boss arena. Never teleport or
+        // override a scripted charge already in motion.
+        if (e.motion || e.returning || e.thornReturn) return false;
+        const d = Math.max(1, dist(this.hero, e)),
+          direction = { x: (e.x - this.hero.x) / d, y: (e.y - this.hero.y) / d };
+        for (let fraction = 1; fraction >= 0.25; fraction -= 0.25) {
+          const point = { x: e.x + direction.x * push * fraction, y: e.y + direction.y * push * fraction };
+          if (this.clearSegment(e, point, 12) &&
+              this.tacticalRogueLeashAllows(e, point, e.type === 'boss' ? (this.isDungeon() ? 1800 : 700) : 500)) {
+            this.move(e, point, push * 5, 0.25);
+            return true;
+          }
+        }
+        return false;
+      }
+      tacticalSkillTarget(range, warningOnly = false) {
+        const selected = this.selectedHeroTarget();
+        const valid = (e) => e.hp > 0 && !e.neutral && !e.returning &&
+          this.tacticalDirectTargetable(e) && dist(e, this.hero) <= range && this.line(this.hero, e) &&
+          (!warningOnly || e.telegraph || e.rangedAim);
+        const targets = this.zone().enemies.filter(valid).sort((a, b) =>
+          dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b));
+        return targets.find((e) => e.id === selected?.id) || targets[0] || null;
+      }
       nextBasicCombo(targetId) {
         const cfg = R.basicAttackCombo || { steps: 3, resetSeconds: 4, multipliers: [1, 1.1, 1.2] };
         if (
@@ -181,9 +226,13 @@
         return target;
       }
       heroSkillRange(slot, charged = false) {
-        const second = charged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null;
+        const second = charged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null,
+          steps = this.tacticMilestones(this.hero.skills[slot - 1]);
+        if (slot === 4 && this.hero.class === 'paladin')
+          return charged ? R.heroTactics.paladin.grandJudgment.range : R.heroTactics.paladin.judgment.range;
+        if (slot === 4 && this.hero.class === 'mage') return R.heroTactics.mage.fracture.range;
         return second
-          ? second.range || 480
+          ? second.range ? second.range + steps * 5 : 480
           : this.hero.class === 'paladin' && slot < 3
             ? 120
             : slot === 1
@@ -196,7 +245,9 @@
         if (this.s.mode === 'developer' && slot === 1) return false;
         const i = slot - 1,
           rank = this.hero.skills[i],
-          isCharged = !!charged && (slot === 1 || slot === 2 || slot === 3);
+          isCharged = !!charged &&
+            (slot === 1 || slot === 2 || slot === 3 ||
+              (slot === 4 && this.hero.class !== 'ranger'));
         if (
           this.s.challenge.pending ||
           this.s.challenge.gameOver ||
@@ -205,11 +256,25 @@
           this.hero.keeperHeld
         )
           return false;
+        // A second tap lowers the shield immediately. The cooldown starts
+        // only when the stance ends, not when it begins.
+        if (slot === 3 && this.hero.class === 'paladin' && !isCharged &&
+            (this.hero.shieldStance || 0) > 0) {
+          this.hero.shieldStance = 0;
+          this.hero.shieldRank = 0;
+          this.hero.cd[2] = this.skillCooldown(3);
+          this.event('spell', { actor: 'hero', class: 'paladin', slot: 3, effect: 'shield-lowered', x: this.hero.x, y: this.hero.y });
+          return true;
+        }
         if (!rank || this.hero.cd[i] > 0 || this.peace) {
           if (!rank) this.say('This skill must be learned from a rescued instructor.');
           return false;
         }
+        if (this.mageSilenceActive(this.hero) && (slot !== 1 || isCharged)) return false;
+        if (this.hero.class === 'paladin' && (this.hero.shieldStance || 0) > 0 &&
+            (slot === 1 || (slot === 3 && isCharged))) return false;
         const scale = 1 + 0.15 * (rank - 1),
+          steps = this.tacticMilestones(rank),
           chargedSecond =
             isCharged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null,
           range = this.heroSkillRange(slot, isCharged),
@@ -226,7 +291,7 @@
             targetId ??
             selected?.id ??
             (slot === 1 ? (this.basicComboTargetId ?? this.s.heroTarget) : null),
-          requiresTarget = [1, 2, 6, 7, 8].includes(slot),
+          requiresTarget = [1, 2, 4, 6, 7, 8].includes(slot),
           lockedOut = !targetId && selected && requiresTarget,
           target =
             targets.find((e) => e.id === preferredTargetId) ||
@@ -234,7 +299,7 @@
               ? null
               : targets.find((e) => slot === 1 && e.id === this.s.heroTarget) ||
                 targets.sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0]);
-        if ([1, 2, 6, 7, 8].includes(slot) && !target) return false;
+        if (requiresTarget && !target) return false;
         // A rushing melee strike must be able to reach the foe without crossing terrain.
         const dashFrom =
           slot === 6 && this.hero.class === 'paladin' && dist(this.hero, target) > 120
@@ -247,16 +312,19 @@
             }
           : null;
         if (dashTo && !this.clearSegment(this.hero, dashTo)) return false;
-        if (slot === 3) {
+        if (slot === 3 && this.hero.class === 'ranger') {
           const living = [this.hero, ...this.activeLivingParty()].filter((u) => u.hp > 0);
           if (isCharged) {
             if (living.every((u) => u.hp >= u.maxHp)) return false;
           } else if (this.hero.hp >= this.hero.maxHp) return false;
         }
+        if (slot === 3 && this.hero.class === 'mage' && !isCharged &&
+            !this.tacticalSkillTarget(R.heroTactics.mage.interrupt.range + steps * R.heroTactics.mage.interrupt.rangeStep, true)) return false;
         const cost = this.skillManaCost(slot, rank, isCharged);
         if (this.hero.mp < cost) return false;
         this.hero.mp -= cost;
-        this.hero.cd[i] = this.skillCooldown(slot, isCharged);
+        this.hero.cd[i] = slot === 3 && this.hero.class === 'paladin' && !isCharged
+          ? 0 : this.skillCooldown(slot, isCharged);
         if (target && requiresTarget) this.s.heroTarget = selected?.id || target.id;
         if (dashTo) this.move(this.hero, dashTo, dist(this.hero, dashTo) + 1, 1);
         const power = this.power();
