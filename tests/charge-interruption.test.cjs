@@ -132,4 +132,20 @@ console.log('PASS both companions: cumulative damage interruption and recovery w
   const restored = Campaign.restore(saved);
   assert(!restored._companionCharges, 'restored campaign has no phantom pending cast');
 }
+{
+  const { game, u, e } = arena();
+  u.hp = 1;
+  assert(game.companionUseSecondSkill(u, e));
+  assert(game.hitParty(u, 1, 0, null, true), 'lethal contact removes actual remaining HP');
+  assert(game.partyChargeState(u).interrupted, 'lethal hit always cancels even below threshold');
+  game.updateParty(0.65);
+  assert.equal(e.hp, e.maxHp, 'defeated companion cannot release a charged attack');
+}
+{
+  const { game } = arena();
+  assert(game.beginPartyCharge(game.hero, 1, performance.now() - 1));
+  game.hitParty(game.hero, 100, 0, null, true);
+  assert.equal(game.partyChargeState(game.hero).interrupted, false,
+    'completed 0.65s preparation cannot be canceled by subsequent damage');
+}
 console.log('PASS independent actors, immunity, target loss, and save compatibility');
