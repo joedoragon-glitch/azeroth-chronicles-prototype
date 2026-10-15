@@ -1,0 +1,26 @@
+name: Enemy healing QA
+on:
+  push:
+    branches:
+      - qa/enemy-healing-pr306-20261015
+permissions:
+  contents: read
+jobs:
+  node-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: Focused healing contract tests
+        run: node tests/enemy-support-healing.test.cjs
+      - name: All Node regression suites
+        run: npm test
+      - name: Formatting and build/asset coverage
+        run: |
+          npm run format:check
+          npm run check
