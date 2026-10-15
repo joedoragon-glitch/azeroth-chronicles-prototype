@@ -73,6 +73,29 @@ Repository provenance: work intentionally continues on `feature/hero-skills-2-4-
 
 Pending combined verification specifically includes combat-cast interruption, partial charged holds, paladin shield re-tap, Skill 6 rush geometry, projectile arrival timing, taunt vs special boss targeting, silence's interactions with independently scheduled specials, status reset on death/save, focus/touch controls, Sprite/Canvas visuals and PWA offline. The current source changes are **not certified**.
 
+## Final static handoff — no-test development checkpoint
+
+**Current source checkpoint:** `6e91e3c08b1f6de0f5252a059ac6836c3029877b` on `feature/hero-skills-2-4-on-snapshot-20261015`. This source branch is the authoritative implementation handoff; PR #305's original `main`-based draft has a GitHub Conversation comment linking here to prevent accidental wholesale merge. The PR #300 snapshot's worldbuilding, actor AI, UX and source changes are intentionally the base.
+
+### Source-review repairs after the initial Skills 2–8 coding pass
+
+1. A Mage Silence Field now freezes the countdown of **already warned specials** for actors inside the field, preventing the special from resolving while silenced without deleting the boss's phases, preexisting active projectiles, or hazards. Ordinary/basic attacks and movement remain valid.
+2. Mage Skill 3 Interrupt cancels **one current** warned/aimed attack. If the boss has subsequent authored queued warnings, the next warning is advanced and surfaced rather than discarding every step of a multi-part encounter. This includes preserving the Mine's special preview handoff when its next stage begins.
+3. The Paladin's Skill 2 weakening effect resets its stored strength once expired, so a new lower-ranked application does not erroneously inherit a previous stronger debuff. Active stronger effects still aren't downgraded.
+4. The earlier source pass included version-4 save cleanup for temporary Shield Stance, Silence Field and Last Bastion wards, explicit charged-8 self-heal vs tap immunity distinction, collision-aware knockback, taunt targeting and status/talent fields. All require final integrated verification.
+
+### Explicit risks reserved for the one final combined QA
+
+- **Input:** keyboard/touch/pointer quick taps, charged 0.65-second holds and partial cancels across **all eight** slots, especially Ranger tap-only Skill 4; paused-screen, lost-focus and queued-cooldown behavior.
+- **Boss-special integrations:** each region's standalone scripted special owner (Thornfang, Cindermaw/Dreadmaw, Keeper, Dark Lord, captains, night specials), existing warnings, charged openers and special-case damage sources. Silence must not destroy required encounter progression.
+- **Movement and defense:** Paladin shield stance versus movement autoattacks, summoned pressure, HP siphons and environmental traps; Shield Bash push against corridor corners, walls, encounter leashes and active boss motions; Vanguard Impact after rush.
+- **Status overlap:** higher-rank Paladin weaken/taunt, Mage fracture/Slow/silence, Ranger pinning slows, stacking, expiry, damage mitigation and cleanup in both normal and TRUE forms.
+- **Save/recovery:** historical v4 imports, class Succession, changing class, defeated/returning foes, older cooldown talents, serialized status stripping and offline PWA reopen.
+- **Visual/audio/performance:** new `chargedArea` effect names and projector effects, screen-space feedback, sprite/procedural fallback, browser/mobile affordances and offline service worker.
+- **Balance:** compare normal vs charged Skills 1–8 across classes and ranks 1–8, representative solo and mixed-party scenarios on Normal/Nightmare; confirm 20s/18s/12s/25s/40s cooldown proposals against battle rhythm, avoid permanently locked/warned bosses or control loops.
+
+**No tests or builds were executed for these changes**, per the user's explicit request to combine feature updates first. No merge, deployment, release, automatic QA trigger, or publication has been authorized. These source edits are development-only and should not be described as functioning on a real device until that combined pass.
+
 ## Pending future decision: independent class passive skills
 
 The owner raised a follow-on design topic after the active Skill 1–8 charged-form work: consider **one independent passive per playable hero class** (Paladin, Mage, Ranger). Unlike the eight active abilities, these should not require a skill button or charged input. No passive name, effect, unlock, leveling, automatic scaling, rank system, save field or combat balance has been approved. The owner's sentence explicitly began reconsidering whether the passive effect should "level up," so **do not assume manual leveling or automatic hero-level scaling**. Treat progression as undecided and discuss designs only after the active skill work.
