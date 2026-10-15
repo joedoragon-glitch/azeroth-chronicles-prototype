@@ -4813,14 +4813,24 @@
     summon: { radius: 28, speed: 30, minPause: 2, maxPause: 5 },
   };
   const autoPotionThresholds = { health: 0.5, mana: 0.35 };
+  const rangerSupport = {
+    healThreshold: 0.5,
+    manaThreshold: 0.35,
+    cooldown: 10,
+    duration: 5,
+    healAmounts: [60, 150],
+    manaAmounts: [40, 100],
+    healUpgradeCost: 50,
+    manaUpgradeCost: 40,
+  };
   // Enemy restorative support parallels the Archer's ten-second Heal without
   // altering existing boss self-recovery, lifesteal or specialist attack slots.
   // Profiles use authored species/family IDs, never presentation labels.
   const enemySupportHealing = Object.freeze({
     fraction: 0.05,
-    cooldown: 10,
-    duration: 5,
-    threshold: 0.5,
+    cooldown: rangerSupport.cooldown,
+    duration: rangerSupport.duration,
+    threshold: rangerSupport.healThreshold,
     range: 350,
     species: Object.freeze({
       wolf: 'Pack Recovery Howl',
@@ -4840,28 +4850,18 @@
     // Named ranged techniques and authored support expertise are intentional
     // exceptions to the ordinary mobs' strict e.ranged AI flag.
     captains: Object.freeze({
-      'supply-vale': 'Reclamation Triage',     // Scornfang: tracking volley / zone control
-      'supply-march': 'Sediment Rehydration',   // Direjaw: water and mud projection
-      'supply-crown': 'Husbandry Poultice',  // Dreadmaw: distributed brood care
+      'supply-vale': 'Reclamation Triage', // Scornfang: tracking volley / zone control
+      'supply-march': 'Sediment Rehydration', // Direjaw: water and mud projection
+      'supply-crown': 'Husbandry Poultice', // Dreadmaw: distributed brood care
     }),
     bosses: Object.freeze({
-      crypt: 'Preservation Binding',            // Lifebinder: bolts and estate warding
-      mire: 'Siltwater Mending',              // Mirejaw: hydrological ranged effects
-      archive: 'Archive Preservation',       // Drowned Keeper: ranged water magic
-      ridge: 'Contracted Care',                 // Ridge Tyrant: ranged cargo/archer command
-      abyss: 'Wingman Recovery',               // Veyrith: aerial battlefield support
+      crypt: 'Preservation Binding', // Lifebinder: bolts and estate warding
+      mire: 'Siltwater Mending', // Mirejaw: hydrological ranged effects
+      archive: 'Archive Preservation', // Drowned Keeper: ranged water magic
+      ridge: 'Contracted Care', // Ridge Tyrant: ranged cargo/archer command
+      abyss: 'Wingman Recovery', // Veyrith: aerial battlefield support
     }),
   });
-  const rangerSupport = {
-    healThreshold: 0.5,
-    manaThreshold: 0.35,
-    cooldown: 10,
-    duration: 5,
-    healAmounts: [60, 150],
-    manaAmounts: [40, 100],
-    healUpgradeCost: 50,
-    manaUpgradeCost: 40,
-  };
   // Boss telegraphs stay readable, but idle gaps are short and basic attacks only interrupt sustained special pressure occasionally.
   const bossCadence = {
     specialRecoveryMultiplier: 0.25,
