@@ -36,7 +36,7 @@
         for (let fraction = 1; fraction >= 0.25; fraction -= 0.25) {
           const point = { x: e.x + direction.x * push * fraction, y: e.y + direction.y * push * fraction };
           if (this.clearSegment(e, point, 12) &&
-              this.tacticalRogueLeashAllows(e, point, e.type === 'boss' ? (this.isDungeon() ? 1800 : 700) : 500)) {
+              this.tacticalRogueLeashAllows(e, { ...point, hp: e.hp }, e.type === 'boss' ? (this.isDungeon() ? 1800 : 700) : 500)) {
             this.move(e, point, push * 5, 0.25);
             return true;
           }
