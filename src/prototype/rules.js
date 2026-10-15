@@ -4187,6 +4187,9 @@
     'supply-highlands': {
       mentor: 'ridge',
       name: 'Crag Tyrant',
+      office: 'Treasury captain and the Master of Coin’s disciple',
+      history:
+        'Crag Tyrant is a horned humanoid mountain tyrant like Ridge Tyrant, not a Wolf. He holds his mentor’s Treasury household, guarding paid accounts, coin stores and the three separate caches. The ordinary Wolf guards remain Wolves. Crag believes steady wages and guarded shipments justify strict control, but he serves the Master of Coin rather than running the mint or governing a second province.',
       species: 'ridge',
       enduranceHp: 1650,
       visualScale: 1.2,
@@ -4362,6 +4365,9 @@
     'frontier-overseer': {
       mentor: 'warlord',
       name: 'Cinder Warlord',
+      office: 'Frontier inspection captain',
+      history:
+        'Cinder Warlord is the Ashen Warlord’s roaming inspector and regional middle manager, not the military governor. His patrol checks roads, work details and occupied settlements. Mandatory Overtime orders at most seven already-present nearby workers into the fight; it cannot create troops from an empty or cleared road. The province still has working markets and repair crews under a compulsory military bureaucracy.',
       enduranceHp: 3000,
       visualScale: 1.18,
       specialRange: 493,
