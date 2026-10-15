@@ -74,7 +74,8 @@
         cast.lostHp += actualLostHp;
         const rule = R.chargedSkills.interrupt;
         const threshold = Math.max(rule.minimumHp, (unit.maxHp || 1) * rule.hpFraction);
-        if (cast.lostHp < threshold) return false;
+        // Death always stops preparation, even if little HP remained to lose.
+        if (cast.lostHp < threshold && unit.hp > 0) return false;
         cast.interrupted = true;
         this.event('chargeInterrupted', {
           target: unit === this.hero ? 'hero' : unit.id,
