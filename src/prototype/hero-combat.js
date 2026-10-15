@@ -52,6 +52,139 @@
           dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b));
         return targets.find((e) => e.id === selected?.id) || targets[0] || null;
       }
+      castChargedAdvanced(slot, target, rank, scale, steps, power, encountersAtStart) {
+        const cfg = R.advancedCharges?.[slot]?.[this.hero.class];
+        if (!cfg) return false;
+        const hero = this.hero;
+        const start = { x: hero.x, y: hero.y };
+        const radius = (cfg.radius || 0) + (cfg.radiusStep || 0) * steps;
+        const eligible = (enemy, center = hero, range = radius) =>
+          enemy.hp > 0 && !enemy.neutral && !enemy.returning &&
+          dist(enemy, center) <= range && this.line(hero, enemy);
+        const foes = radius
+          ? this.zone().enemies.filter((enemy) => eligible(enemy)).sort((a, b) => this.idOrder(a, b))
+          : [];
+        const deal = (enemy, amount, area = false, piercing = false) =>
+          this.damage(enemy, amount, 'hero', {
+            area,
+            ...(piercing ? { piercing: true } : {}),
+            ...(encountersAtStart ? { encountersAtStart } : {}),
+          });
+        const pulse = (effect, hits, x = hero.x, y = hero.y, r = radius) =>
+          this.event('chargedArea', {
+            slot, class: hero.class, actor: 'hero', source: 'hero', effect,
+            shape: 'circle', x, y, radius: r,
+            fromX: hero.x, fromY: hero.y, hits,
+          });
+        const launch = (enemy, damage, style, extra = {}) => {
+          const d = Math.max(1, dist(hero, enemy));
+          this.s.projectiles.push({
+            id: 'projectile-' + this.s.nextId++,
+            x: hero.x, y: hero.y,
+            dx: (enemy.x - hero.x) / d, dy: (enemy.y - hero.y) / d,
+            target: enemy.id, damage, source: 'hero', slot,
+            speed: style === 'beam' ? 1000 : 620, style, charged: true,
+            ...(style === 'beam' ? { originX: hero.x, originY: hero.y } : {}),
+            ...(encountersAtStart ? { encountersAtStart } : {}),
+            ...extra,
+          });
+          this.event('projectileLaunch', {
+            actor: 'hero', class: hero.class, source: 'hero', slot, charged: true,
+            style: style === 'beam' ? 'magic' : style, beam: style === 'beam',
+            x: hero.x, y: hero.y, target: enemy.id,
+          });
+        };
+        if (slot === 5) {
+          let hits = 0;
+          for (const enemy of foes) {
+            if (hero.class === 'ranger') {
+              launch(enemy, power * cfg.damage * scale, 'arrow', {
+                area: true, slow: cfg.slow + cfg.slowStep * steps,
+              });
+              hits++;
+            } else if (deal(enemy, power * cfg.damage * scale, true)) {
+              if (hero.class === 'paladin' && cfg.weaken) this.weakenEnemy(enemy, rank);
+              if (hero.class === 'mage') this.applySlow(enemy, cfg.slow + cfg.slowStep * steps);
+              hits++;
+            }
+          }
+          pulse(hero.class === 'paladin' ? 'consecrated-wave'
+            : hero.class === 'mage' ? 'winter-ring' : 'arrow-rain', hits);
+          return true;
+        }
+        if (slot === 6) {
+          if (hero.class === 'paladin') {
+            let hits = 0;
+            for (const enemy of this.zone().enemies.filter((e) =>
+              eligible(e, hero, cfg.radius + cfg.radiusStep * steps)).sort((a, b) => this.idOrder(a, b))) {
+              if (deal(enemy, power * cfg.damage * scale, true)) {
+                if (enemy.hp > 0) this.shieldPush(enemy, cfg.push + cfg.pushStep * steps);
+                hits++;
+              }
+            }
+            pulse('vanguard-impact', hits, start.x, start.y, cfg.radius + cfg.radiusStep * steps);
+          } else if (hero.class === 'mage') {
+            launch(target, power * cfg.damage * scale, 'beam', {
+              slow: cfg.slow + cfg.slowStep * steps,
+            });
+            this.event('charged', { actor: 'hero', class: 'mage', slot,
+              x: hero.x, y: hero.y, targetX: target.x, targetY: target.y });
+          } else {
+            for (let j = 0; j < cfg.arrows; j++)
+              launch(target, power * cfg.damage * scale / cfg.arrows, 'arrow',
+                { delay: j * 0.08, rapid: true, chargedBurst: j === cfg.arrows - 1 });
+            hero.haste = Math.max(hero.haste || 0, cfg.haste + cfg.hasteStep * steps);
+            this.event('charged', { actor: 'hero', class: 'ranger', slot,
+              x: hero.x, y: hero.y, targetX: target.x, targetY: target.y });
+          }
+          return true;
+        }
+        if (slot === 7) {
+          if (hero.class === 'ranger') {
+            launch(target, power * cfg.damage * scale, 'arrow', {
+              piercing: true, slow: cfg.slow + cfg.slowStep * steps,
+            });
+          } else {
+            let hits = 0;
+            for (const enemy of foes) if (deal(enemy, power * cfg.damage * scale, true)) {
+              if (hero.class === 'paladin') this.weakenEnemy(enemy, rank);
+              else this.applySlow(enemy, cfg.slow + cfg.slowStep * steps);
+              hits++;
+            }
+            pulse(hero.class === 'paladin' ? 'oath-strike' : 'sigil-storm', hits);
+          }
+          return true;
+        }
+        if (slot === 8) {
+          if (hero.class === 'ranger') {
+            launch(target, power * cfg.damage * scale, 'arrow', { piercing: true });
+            hero.haste = Math.max(hero.haste || 0, cfg.haste + cfg.hasteStep * steps);
+            hero.hp = Math.min(hero.maxHp, hero.hp + hero.maxHp * cfg.heal);
+            this.event('heal', { x: hero.x, y: hero.y, resource: 'health', target: 'hero' });
+            return true;
+          }
+          let hits = 0;
+          for (const enemy of foes) if (deal(enemy, power * cfg.damage * scale, true)) {
+            if (hero.class === 'mage')
+              this.fractureEnemy(enemy, cfg.fracture + cfg.fractureStep * steps,
+                cfg.fractureDuration);
+            hits++;
+          }
+          if (hero.class === 'paladin') {
+            hero.hp = Math.min(hero.maxHp, hero.hp + hero.maxHp * cfg.heal);
+            const allies = [hero, ...this.activeLivingParty()];
+            for (const ally of allies) {
+              ally.wardUntil = Math.max(ally.wardUntil || 0,
+                this.s.time + cfg.wardDuration + cfg.wardStep * steps);
+              ally.wardReduction = Math.max(ally.wardReduction || 0, cfg.wardReduction);
+            }
+            this.event('heal', { x: hero.x, y: hero.y, resource: 'health', target: 'hero' });
+          }
+          pulse(hero.class === 'paladin' ? 'last-bastion' : 'arcane-cataclysm', hits);
+          return true;
+        }
+        return false;
+      }
       nextBasicCombo(targetId) {
         const cfg = R.basicAttackCombo || { steps: 3, resetSeconds: 4, multipliers: [1, 1.1, 1.2] };
         if (
@@ -247,8 +380,8 @@
         const i = slot - 1,
           rank = this.hero.skills[i],
           isCharged = !!charged &&
-            (slot === 1 || slot === 2 || slot === 3 ||
-              (slot === 4 && this.hero.class !== 'ranger'));
+            ((slot >= 1 && slot <= 8) &&
+              (slot !== 4 || this.hero.class !== 'ranger'));
         if (
           this.s.challenge.pending ||
           this.s.challenge.gameOver ||
@@ -330,6 +463,8 @@
         if (target && requiresTarget) this.s.heroTarget = selected?.id || target.id;
         if (dashTo) this.move(this.hero, dashTo, dist(this.hero, dashTo) + 1, 1);
         const power = this.power();
+        if (isCharged && slot >= 5 && slot <= 8)
+          return this.castChargedAdvanced(slot, target, rank, scale, steps, power, encountersAtStart);
         if (isCharged && slot === 1) {
           this.resetBasicCombo();
           const d = Math.max(1, dist(this.hero, target)),
