@@ -4996,6 +4996,13 @@
         if (!this.mageSilenceActive(e) && this.tacticalAutoRogue(e, target)) continue;
         if (this.tacticalRogueRegroup(e) && this.tacticalAdvanceRogueRegroup(e, target, dt))
           continue;
+        if (e.telegraph && this.mageSilenceActive(e)) {
+          // Existing warned specials remain queued, but cannot resolve
+          // inside a Silence Field. Pausing the warning preserves boss
+          // phase/sequence integrity rather than erasing authored attacks.
+          e.noProgress = 0;
+          continue;
+        }
         if (e.telegraph) {
           if (e.telegraph.rogueMove && e.telegraph.mobileRogueCast) {
             // Cast preparation does not create an extra strike or freeze the
