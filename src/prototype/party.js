@@ -230,7 +230,8 @@
         return true;
       }
       companionTrySkill(u, target) {
-        if (!target || (u.skillGlobalCd || 0) > 0) return false;
+        if (!target || (u.skillGlobalCd || 0) > 0 || this._companionCharges?.has(u.id))
+          return false;
         const secondReady = this.companionSecondSkillUnlocked() && (u.skill2Cd || 0) <= 0,
           secondTargets = secondReady ? this.companionSecondSkillTargets(u, target) : [];
         if (
