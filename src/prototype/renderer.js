@@ -113,6 +113,16 @@
     return true;
   }
 
+  // Projected isometric horizontal direction: a world-space target can lie
+  // northwest yet appear screen-right. Only turn the painted body; no gameplay
+  // facing, attack geometry or saved campaign field is introduced.
+  function bodyFacingSide(from, toward, previous = 1) {
+    if (!from || !toward || !Number.isFinite(toward.x) || !Number.isFinite(toward.y))
+      return previous;
+    const dx = (toward.x - from.x) - (toward.y - from.y);
+    return Math.abs(dx) < 8 ? previous : dx < 0 ? -1 : 1;
+  }
+
   // Large foreground forms can cover actors under the existing depth sort.
   // Keep this list deliberately conservative: small clutter must not trigger UI.
   // Only explicitly decorative, nonblocking, small clutter is eligible for
@@ -376,22 +386,71 @@
         y: p.y + Math.sin(t * (busy ? 5.2 : 2.4) + phase) * amp,
       };
     }
+    // Original live actors, not per-frame render copies, own ephemeral facing.
+    // Attack intent outranks footsteps, so Mirelings never fire through their
+    // tails. Idle social/wilderness actors retain their last visible heading.
+    const actorFacingMemory = new WeakMap();
+    function paintedFacing(e) {
+      if (!['hero', 'ally', 'enemy'].includes(e.renderKind)) return 1;
+      const owner = e.spriteIdentity || e,
+        old = actorFacingMemory.get(owner) || { x: e.x, y: e.y, side: 1 };
+      const moved = Math.hypot(e.x - old.x, e.y - old.y) > 0.7;
+      let target = null;
+      if (e.renderKind === 'hero') {
+        target = game.selectedHeroTarget?.() ||
+          (e.order?.type === 'attack'
+            ? game.zone().enemies.find((u) => u.id === e.order.id && u.hp > 0)
+            : null);
+      } else if (e.renderKind === 'ally') {
+        const id = e.order?.type === 'attack' ? e.order.id : game._tacticalPartyTargets?.get(e.id);
+        target = id ? game.zone().enemies.find((u) => u.id === id && u.hp > 0) : null;
+      } else if (e.hp > 0 && !e.returning) {
+        const id = e.telegraph?.targetId || e.rangedAim?.targetId;
+        if (id === 'hero') target = game.hero;
+        else if (id) target = game.s.party.find((u) => u.id === id && u.hp > 0);
+        if (!target && e.rangedAim) target = e.rangedAim;
+        if (!target && e.aggro) {
+          const combatants = [game.hero, ...game.s.party].filter((u) => u.hp > 0);
+          target = combatants.sort((a, b) =>
+            Math.hypot(a.x - e.x, a.y - e.y) - Math.hypot(b.x - e.x, b.y - e.y))[0];
+        }
+      }
+      if (!target && e.motion?.target) target = e.motion.target;
+      if (!target && e.path?.length) target = e.path[0];
+      if (!target && moved)
+        target = { x: e.x + (e.x - old.x) * 4, y: e.y + (e.y - old.y) * 4 };
+      const side = bodyFacingSide(e, target, old.side);
+      actorFacingMemory.set(owner, { x: e.x, y: e.y, side });
+      return side;
+    }
     function sprite(e, p, target = ctx, bodyOnly = false) {
       const q = visualPosition(e, p),
         rescued = !!game.s.rescued[e.family];
-      if (
-        PrototypeSprites &&
-        PrototypeSprites.draw(
-          target,
-          e,
-          q,
-          game.regionIndex(),
-          rescued,
-          bodyOnly ? { silhouette: true } : undefined,
-        )
-      )
-        return;
-      PrototypeVisuals.draw(target, e, q, game.regionIndex(), rescued);
+      const facing = paintedFacing(e);
+      // Mirror about the foot anchor, never about the canvas origin. This
+      // works for registered images and procedural body drawings alike, while
+      // keeping labels, cast bars, hitboxes, shadows and VFX untransformed.
+      if (facing < 0) {
+        target.save();
+        target.translate(2 * q.x, 0);
+        target.scale(-1, 1);
+      }
+      try {
+        if (
+          PrototypeSprites &&
+          PrototypeSprites.draw(
+            target,
+            e,
+            q,
+            game.regionIndex(),
+            rescued,
+            bodyOnly ? { silhouette: true } : undefined,
+          )
+        ) return;
+        PrototypeVisuals.draw(target, e, q, game.regionIndex(), rescued);
+      } finally {
+        if (facing < 0) target.restore();
+      }
     }
     function spriteHeight(e) {
       const fallback =
@@ -2011,7 +2070,7 @@
       }),
     };
   }
-  const api = { create, drawAbyssFlightCues, drawCrownLoot, majorOccluder, occlusionPairs, optimizationClutter };
+  const api = { create, bodyFacingSide, drawAbyssFlightCues, drawCrownLoot, majorOccluder, occlusionPairs, optimizationClutter };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeRenderer = api;
 })(typeof window !== 'undefined' ? window : globalThis);
