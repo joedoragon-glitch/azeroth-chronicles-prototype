@@ -2488,6 +2488,25 @@
       [1440, 1200, 'laundry', 'burned-hamlet-home'],
     ],
   };
+  // Small inhabited clearings, not another plantation or a second orchard.
+  // Scattered household cultivation and animal care make Greenwood feel rural
+  // while leaving its forests, native wolf dens and the abandoned orchard alone.
+  const greenwoodRuralScenes = [
+    [620, 530, 'hay-rick', 'millhaven-smallhold'],
+    [710, 575, 'pasture-sheep', 'millhaven-smallhold'],
+    [790, 530, 'feed-trough', 'millhaven-smallhold'],
+    [540, 760, 'furrow-plot', 'millhaven-gardens'],
+    [650, 790, 'poultry-yard', 'millhaven-gardens'],
+    [735, 825, 'farm-tool-rack', 'millhaven-gardens'],
+    [820, 870, 'hay-rick', 'orchard-homestead'],
+    [1055, 900, 'pasture-sheep', 'orchard-homestead'],
+    [1130, 980, 'poultry-yard', 'orchard-homestead'],
+    [875, 1185, 'furrow-plot', 'hamlet-kitchen-plots'],
+    [1020, 1205, 'feed-trough', 'hamlet-kitchen-plots'],
+    [1125, 1155, 'farm-tool-rack', 'hamlet-kitchen-plots'],
+    [1350, 815, 'hay-rick', 'eastern-pasture'],
+    [1450, 935, 'pasture-sheep', 'eastern-pasture'],
+  ];
   const dungeonWalls = {
     crypt: [
       710,
@@ -5531,6 +5550,7 @@
     travelArrivals,
     dungeonWorkstations,
     regionalHandoffScenes,
+    greenwoodRuralScenes,
     dungeonWalls,
     dungeonArchitecture,
     pillars,
