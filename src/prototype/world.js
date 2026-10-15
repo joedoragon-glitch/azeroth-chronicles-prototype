@@ -1591,6 +1591,14 @@
       // Sparse civil road lighting—working roads and settlement approaches,
       // not a continuous line of torches through untouched wilderness.
       roadsideLanternLife(z) {
+        // Reconcile older unpublished dev.51 saves to the existing 21
+        // public lanterns; the redundant fifteen-lamp pass is retired.
+        if (z.props?.some((p) => p.roadLamp ||
+            String(p.id || '').startsWith('night-road-lamp-'))) {
+          z.props = z.props.filter((p) => !p.roadLamp &&
+            !String(p.id || '').startsWith('night-road-lamp-'));
+          delete z.roadLampVersion;
+        }
         if (z.roadsideLanternVersion === 1 ||
             dungeonIds.includes(z.id) || this.supplyRoom(z.id) || this.sideDungeon(z.id))
           return;
@@ -2098,80 +2106,7 @@
           e.name = label(e);
         }
       }
-      // Sparse authored standards at state-operated infrastructure, never a
-      // repetitive blanket banner grid or a new physical road obstacle.
-      // A few proper lamp-posts complement lit homes and working fires.
-      // Only main town/hamlet/transport or government roads receive these.
-      // This is actual street furniture, never an extra collision/AI system.
-      regionalRoadLamps(z) {
-        const i = D.regions.findIndex((r) => r.id === z.id);
-        if (i < 0 || z.roadLampVersion === 1) return;
-        const paths = z.roads || [];
-        if (!paths.length) return;
-        const stops = [
-          { x: D.towns[i][0], y: D.towns[i][1] },
-          { x: D.minors[i][0], y: D.minors[i][1] },
-          { x: D.ports[i][0], y: D.ports[i][1] },
-          ...(i === 3 || i === 4
-            ? [{ x: D.fields[i][0], y: D.fields[i][1] }] : []),
-        ];
-        const planned = [];
-        const oldZone = this.s.zone;
-        this.s.zone = z.id;
-        try {
-          z.props = z.props.filter((p) => !String(p.id || '').startsWith('night-road-lamp-'));
-          const candidates = paths.flatMap((path) =>
-            path.slice(1).map((point, j) => ({ point, from: path[j] })));
-          for (const [index, center] of stops.entries()) {
-            // Select near a real traversable road, not an arbitrary map cell.
-            const ordered = candidates.slice().sort((a, b) =>
-              dist(a.point, center) - dist(b.point, center));
-            let chosen = null;
-            for (const edge of ordered.slice(0, 32)) {
-              if (dist(edge.point, center) > 480) break;
-              const dx = edge.point.x - edge.from.x,
-                dy = edge.point.y - edge.from.y,
-                length = Math.hypot(dx, dy);
-              if (length < 3) continue;
-              for (const side of [1, -1]) {
-                for (const margin of [85, 115, 145]) {
-                  const p = {
-                    x: edge.point.x + side * (-dy / length) * margin,
-                    y: edge.point.y + side * (dx / length) * margin,
-                  };
-                  const roadDistance = this.distanceToRoad(z, p);
-                  if (roadDistance < 60 || roadDistance > 175 ||
-                    this.blocked(p.x, p.y, z.id, 15, true) ||
-                    z.npcs.some((n) => dist(n, p) < 110) ||
-                    z.nodes.some((n) => dist(n, p) < 85) ||
-                    z.buildings.some((b) => dist(b, p) < 125) ||
-                    z.props.some((q) => dist(q, p) < (q.r || 0) + 70) ||
-                    z.enemies.some((e) => e.hp > 0 && dist(e.home || e, p) < 90) ||
-                    planned.some((q) => dist(q, p) < 240)) continue;
-                  chosen = p;
-                  break;
-                }
-                if (chosen) break;
-              }
-              if (chosen) break;
-            }
-            if (!chosen) continue;
-            const lamp = {
-              id: 'night-road-lamp-' + z.id + '-' + index,
-              ...chosen,
-              r: 0,
-              structure: 'street-lantern',
-              decorative: true,
-              roadLamp: true,
-            };
-            z.props.push(lamp);
-            planned.push(lamp);
-          }
-          z.roadLampVersion = 1;
-        } finally {
-          this.s.zone = oldZone;
-        }
-      }
+      // Sparse state heraldry is decorative and avoids road obstructions.
       regimeHeraldry(z) {
         const anchors = {
           highlands: [[1100, 1370], [1850, 1080], [3090, 590], [770, 1680]],
@@ -2309,7 +2244,6 @@
         this.ironrootLivelihood(z);
         this.crownMilitaryRoster(z);
         this.regimeHeraldry(z);
-        this.regionalRoadLamps(z);
         this.recoveryAndThermalLife(z);
         this.roadsideLanternLife(z);
       }
