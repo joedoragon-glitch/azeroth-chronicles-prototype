@@ -128,19 +128,25 @@
     });
     const skills = {
       paladin: {
-        4: 'You become briefly immune to damage.',
+        2: 'Sundering Strike: a sword attack weakens one foe; charged Holy Cleave weakens every enemy struck in a short frontal cone.',
+        3: 'Shield Stance: raise your shield for up to 8 seconds, greatly reducing incoming damage. Basic Skill 1 is disabled and other attacks deal 60% damage. Tap again to lower the shield and start its cooldown. Charged Shield Bash damages and pushes a nearby frontal group; bosses and captains take half bash damage.',
+        4: 'Judgment: strike and provoke an enemy to attack you. Charged Grand Judgment damages and taunts a group around the target.',
         5: 'Holy power strikes nearby enemies.',
-        6: 'A melee strike with a short recovery.',
+        6: 'A melee strike and short rush to a visible foe.',
         7: 'A stronger holy attack strikes nearby enemies.',
       },
       mage: {
-        4: 'Your barrier grants brief immunity to damage.',
+        2: 'Frost Bolt slows one target; charged Frost Burst damages and slows enemies around the target.',
+        3: 'Spell Interrupt: cancel one enemy attack while it is warned or being aimed. Charged Silence Field blocks special skills for enemies, the Mage and companions within the field, but allows movement and basic attacks.',
+        4: 'Arcane Fracture: damage one enemy and increase all incoming hero and companion damage. Charged Arcane Rupture hits a group and applies a stronger, non-stacking vulnerability.',
         5: 'A frost burst damages and slows nearby enemies.',
         6: 'A magic projectile briefly slows its target.',
         7: 'A stronger frost spell damages and slows nearby enemies.',
       },
       ranger: {
-        4: 'A burst of speed helps you escape or reposition.',
+        2: 'Pinning Shot fires two arrows and briefly slows the target; charged Pinning Volley pierces a line of enemies and slows those struck.',
+        3: 'Tap to heal yourself; charge to heal wounded living companions too. Neither restores the fallen.',
+        4: 'A burst of speed helps you escape or reposition. This skill has no charged form.',
         5: 'Arrows strike enemies around you.',
         6: 'A rapid shot also briefly hastens your movement.',
         7: 'A piercing arrow follows your chosen foe.',
@@ -156,18 +162,23 @@
               ? game.skillCooldown(slot, charged)
               : R.balance.skills.cooldowns[slot],
           shape = R.chargedSkills.second[game.hero.class],
+          milestones = Math.floor(rank / 2),
+          labels = {
+            paladin: { 2: 'Sundering Strike', 3: 'Shield Stance / Shield Bash', 4: 'Judgment' },
+            mage: { 2: 'Frost Bolt', 3: 'Spell Interrupt / Silence Field', 4: 'Arcane Fracture' },
+            ranger: { 2: 'Pinning Shot', 3: 'Healing', 4: 'Movement Haste' },
+          },
           effects = {
             1: 'Three normal strikes on the same foe build a finishing splash. Changing foes or waiting too long breaks the sequence; charging delivers a stronger strike.',
             2:
               'Charge this attack to spread it through a ' +
               shape.shape +
               (shape.slow ? ' and slow the foes it hits.' : '.'),
-            3: 'Tap to heal yourself; charge to heal wounded living companions too. Neither restores the fallen.',
             8: 'Strike nearby foes, restore some of your health and briefly become immune to damage.',
             ...skills[game.hero.class],
           };
         return [
-          'Skill ' + slot + ' · ' + title,
+          'Skill ' + slot + ' · ' + (labels[game.hero.class]?.[slot] || title),
           effects[slot],
           'Your ' +
             game.hero.class +
@@ -190,11 +201,11 @@
               ? '\nCharged ' +
                 shape.shape +
                 ': ' +
-                (shape.range ? 'reach ' + shape.range : 'radius ' + shape.radius) +
+                (shape.range ? 'reach ' + (shape.range + 5 * milestones) : 'radius ' + (shape.radius + 5 * milestones)) +
                 ' paces.' +
-                (shape.slow ? ' Slow lasts ' + shape.slow + ' seconds.' : '')
+                (shape.slow ? ' Slow lasts ' + (shape.slow + 0.25 * milestones) + ' seconds.' : '')
               : '') +
-            (slot <= 3
+            (slot <= 3 || (slot === 4 && game.hero.class !== 'ranger')
               ? '\nCharged recovery: ' +
                 number(cooldown(true)) +
                 ' seconds' +
