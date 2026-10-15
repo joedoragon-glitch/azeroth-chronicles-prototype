@@ -1718,6 +1718,7 @@
   }
   function startChargeClock() {
     if (!charge || charge.started !== null) return false;
+    if (!game.beginPartyCharge(game.hero, charge.slot)) return false;
     charge.started = performance.now();
     // Record which protected encounters were active at the instant charging began.
     charge.encountersAtStart = game.chargedEncounterSnapshot();
@@ -1742,6 +1743,20 @@
           : game.hero.class === 'ranger'
             ? '#cfe59a'
             : '#f6d77a';
+    if (charge.started !== null && game.partyChargeState(game.hero)?.interrupted)
+      return {
+        slot: charge.slot,
+        state: 'interrupted',
+        elapsed: Math.max(0, (performance.now() - charge.started) / 1000),
+        progress: 0,
+        ready: false,
+        waiting: false,
+        cooldown: 0,
+        cost,
+        enoughMana,
+        targetId: charge.targetId ?? null,
+        color,
+      };
     if (charge.started === null)
       return {
         slot: charge.slot,
@@ -1888,12 +1903,13 @@
       return false;
     }
     const held = (performance.now() - charge.started) / 1000,
+      interrupted = !!game.partyChargeState(game.hero)?.interrupted,
       wasQueued = charge.queued,
       targetId = charge.targetId,
       encountersAtStart = charge.encountersAtStart;
     if (held < chargeSeconds()) {
       const quickTap = !wasQueued && held < chargeTapSeconds();
-      charge = null;
+      cancelCharge();
       if (!quickTap) {
         updateHUD();
         return false;
@@ -1904,15 +1920,16 @@
       return cast;
     }
     const state = chargePresentation();
-    if (!state.ready) {
-      charge = null;
-      chargeStateStatus(state);
+    if (interrupted || !state.ready) {
+      cancelCharge();
+      if (interrupted) status('Charged skill interrupted by damage.');
+      else chargeStateStatus(state);
       updateHUD();
       return false;
     }
     // The charge is still released manually; only the aim is resolved now.
     const releaseTarget = slot === 1 || slot === 2 ? chargeTarget(slot, targetId) : null;
-    charge = null;
+    cancelCharge();
     const cast =
       activePlay() &&
       game.cast(
@@ -1927,6 +1944,7 @@
   }
   function cancelCharge() {
     if (!charge) return;
+    game.clearPartyCharge(game.hero);
     charge = null;
     if (started) updateHUD();
   }
@@ -2602,7 +2620,9 @@
             ? 'WAIT ' + cooldownText(cast.cooldown)
             : cast.state === 'charging'
               ? Math.min(99, Math.round(cast.progress * 100)) + '%'
-              : cast.state === 'need-mp'
+              : cast.state === 'interrupted'
+                ? 'BROKEN'
+                : cast.state === 'need-mp'
                 ? 'NEED MP'
                 : cast.state === 'no-target'
                   ? 'NO TARGET'
@@ -2713,6 +2733,16 @@
         };
       game.tick(dt, { x, y, speedFactor });
       syncChargeReady();
+      // A held charged skill must not secretly resume after a damaging hit.
+      // A genuine sub-0.2s tap is still an ordinary, immediate skill.
+      if (
+        charge?.started !== null &&
+        game.partyChargeState(game.hero)?.interrupted &&
+        (performance.now() - charge.started) / 1000 >= chargeTapSeconds()
+      ) {
+        cancelCharge();
+        status('Charged skill interrupted by damage.');
+      }
       if (
         game.s.mode !== 'developer' &&
         (x || y || was.order) &&
