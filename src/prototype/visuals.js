@@ -68,6 +68,33 @@
     if (height < Math.ceil(logicalHeight * density)) return 1;
     return target;
   }
+  // Each animal takes short steps then pauses near its authored home. This is
+  // read-only presentation: no targetable actors, hit points or combat randomness.
+  function ambientAnimalPose(e, index, seconds = 0) {
+    const cfg = R.ambientLife?.[e.structure || e.id];
+    if (!cfg) return { x: 0, y: 0, facing: 1, walking: false };
+    let seed = 2166136261;
+    for (const ch of String(e.id || e.structure) + ':' + index)
+      seed = Math.imul(seed ^ ch.charCodeAt(0), 16777619) >>> 0;
+    const time = Math.max(0, seconds) + (seed % 2000) / 100,
+      period = cfg.walk + cfg.rest,
+      step = Math.floor(time / period),
+      progress = Math.min(1, (time % period) / cfg.walk),
+      point = (n) => ({
+        x: Math.cos(seed * 0.001 + n * 2.39996) * cfg.radius,
+        y: Math.sin(seed * 0.0017 + n * 2.39996) * cfg.radius,
+      }),
+      from = point(step),
+      to = point(step + 1),
+      x = from.x + (to.x - from.x) * progress,
+      y = from.y + (to.y - from.y) * progress;
+    return {
+      x: (x - y) * 0.76,
+      y: (x + y) * 0.27,
+      facing: to.x - from.x - (to.y - from.y) < 0 ? -1 : 1,
+      walking: progress < 1,
+    };
+  }
   function draw(ctx, e, p, region = 0, rescued = false) {
     if (e.kind === 'landmark' && e.id?.startsWith('bridge-')) return; // The full deck is drawn in world space.
     ctx.save();
@@ -9060,11 +9087,13 @@
             localWood,
             3,
           );
-          for (const [x, y] of [
+          for (const [index, [x, y]] of [
             [-9, 5],
             [7, 7],
-          ])
-            oval(x, y, 7, 4, '#8c8062');
+          ].entries()) {
+            const motion = ambientAnimalPose(e, index, e.ambientTime);
+            oval(x + motion.x, y + motion.y, 7, 4, '#8c8062');
+          }
           break;
         case 'drying-rack':
           for (const x of [-22, 22])
@@ -9347,11 +9376,13 @@
               '#a28d62',
               2,
             );
-          for (const [x, y] of [
+          for (const [index, [x, y]] of [
             [-8, 3],
             [8, 4],
-          ])
-            oval(x, y, 5, 3, '#8c775d');
+          ].entries()) {
+            const motion = ambientAnimalPose(e, index, e.ambientTime);
+            oval(x + motion.x, y + motion.y, 5, 3, '#8c775d');
+          }
           break;
         case 'fishing-net':
           for (const x of [-22, 22])
@@ -11108,14 +11139,15 @@
           break;
         case 'pasture-sheep':
           // Two real small livestock silhouettes; sheep are domestic, not mobs.
-          shade(38, 8, 0.11);
-          for (const [x, y, size] of [
+          for (const [index, [x, y, size]] of [
             [-13, 2, 1],
             [18, -2, 0.78],
-          ]) {
+          ].entries()) {
             ctx.save();
-            ctx.translate(x, y);
-            ctx.scale(size, size);
+            const motion = ambientAnimalPose(e, index, e.ambientTime);
+            ctx.translate(x + motion.x, y + motion.y);
+            ctx.scale(size * motion.facing, size);
+            shade(15, 4, 0.11);
             for (const dx of [-9, 8]) {
               line(
                 [
@@ -11150,14 +11182,15 @@
           break;
         case 'poultry-yard':
           // Scattered hens and feed make a tiny farmyard immediately legible.
-          for (const [x, y, scale] of [
+          for (const [index, [x, y, scale]] of [
             [-19, 4, 1],
             [11, 8, 0.86],
             [19, -10, 0.78],
-          ]) {
+          ].entries()) {
             ctx.save();
-            ctx.translate(x, y);
-            ctx.scale(scale, scale);
+            const motion = ambientAnimalPose(e, index, e.ambientTime);
+            ctx.translate(x + motion.x, y + motion.y);
+            ctx.scale(scale * motion.facing, scale);
             oval(-2, 1, 9, 6, '#c6ab7f');
             poly(
               [
@@ -12629,8 +12662,13 @@
               '#82785e',
               2,
             );
-          oval(-8, 3, 7, 5, '#7c876d');
-          oval(9, 4, 6, 4, '#6f7c66');
+          for (const [index, [x, y, r, color]] of [
+            [-8, 3, 7, '#7c876d'],
+            [9, 4, 6, '#6f7c66'],
+          ].entries()) {
+            const motion = ambientAnimalPose(e, index, e.ambientTime);
+            oval(x + motion.x, y + motion.y, r, r * 0.7, color);
+          }
           break;
         case 'wolf-den':
           poly(
@@ -13289,17 +13327,108 @@
         );
       }
     } else if (e.kind === 'patrol-report') {
-      specialist({ ...e, kind: 'teacher' });
+      // A practical trail scout: moss cloak, copper clasp and worn field gear.
+      poly(
+        [
+          [-14, -26],
+          [-23, 11],
+          [-8, 15],
+          [1, 9],
+          [17, 13],
+          [15, -25],
+        ],
+        '#4f6453',
+      );
+      humanoid('#78866a', skin, 0.95);
+      oval(0, -31, 11, 13, '#43594c');
+      oval(0, -29, 7, 8, '#d3ad88');
+      poly(
+        [
+          [-13, -36],
+          [-8, -43],
+          [5, -42],
+          [13, -34],
+          [6, -35],
+          [0, -38],
+          [-6, -35],
+        ],
+        '#60745b',
+      );
+      line(
+        [
+          [-5, -29],
+          [-3, -29],
+        ],
+        '#25312d',
+        1.3,
+      );
+      line(
+        [
+          [3, -29],
+          [5, -29],
+        ],
+        '#25312d',
+        1.3,
+      );
+      line(
+        [
+          [-3, -24],
+          [3, -24],
+        ],
+        '#8d6653',
+        1,
+      );
+      poly(
+        [
+          [-10, -21],
+          [9, -22],
+          [6, -15],
+          [-6, -17],
+        ],
+        '#b98c5e',
+      );
+      oval(6, -20, 2.4, 2.4, '#cfaa69');
+      line(
+        [
+          [-10, -17],
+          [11, 0],
+        ],
+        '#7d5d40',
+        3.5,
+      );
+      rect(-19, -4, 10, 12, '#8c6b47');
+      rect(-19, -4, 10, 4, '#b59a6b');
+      line(
+        [
+          [19, -28],
+          [21, 14],
+        ],
+        '#92734f',
+        3,
+      );
+      line(
+        [
+          [18, -29],
+          [22, -28],
+        ],
+        '#bba27b',
+        2,
+      );
+      rect(11, -7, 5, 13, '#c6b58e');
     } else if (e.presentation === 'scout-tracks') {
       ctx.save();
+      // Impressions lie in the isometric ground plane, not upright little feet.
+      ctx.transform(0.76, 0.27, -0.76, 0.27, 0, 0);
       ctx.rotate(e.angle || 0);
+      ctx.scale(0.75, 0.75);
+      ctx.globalAlpha *= 0.48;
       for (const [x, y] of [
         [-12, -6],
         [0, 6],
         [12, -6],
       ]) {
-        oval(x, y, 5, 3, '#bba889');
-        for (const dy of [-4, 0, 4]) oval(x + 5, y + dy, 1.7, 1.5, '#95846b');
+        fillOval(x, y, 5, 3, '#786b54');
+        for (const dy of [-4, 0, 4]) fillOval(x + 5, y + dy, 1.7, 1.5, '#74674f');
       }
       ctx.restore();
     } else if (e.kind === 'cage' && e.presentation === 'mobile-forge') {
@@ -16642,6 +16771,7 @@
     barracksVisualState,
     featureScale,
     assetSafeScale,
+    ambientAnimalPose,
   };
   if (typeof module !== 'undefined') module.exports = root.PrototypeVisuals;
 })(typeof window !== 'undefined' ? window : globalThis);

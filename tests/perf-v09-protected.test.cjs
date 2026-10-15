@@ -5,7 +5,21 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const manifest = require('./fixtures/perf-v09-protected.json');
 const revision = manifest.renderingRevision;
-const certificationRevision = manifest.approvedOvernightCertificationRevision;
+const playtestRevision = manifest.authorizedPostReleasePlaytestRevision;
+if (playtestRevision) {
+  assert.match(playtestRevision.source, /PR #308/);
+  assert.equal(playtestRevision.audit, 'docs/POST_SNAPSHOT_PLAYTEST_FIXES_20261015.md');
+  assert.match(playtestRevision.auditSha256, /^[a-f0-9]{64}$/);
+  assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', playtestRevision.audit))).digest('hex'), playtestRevision.auditSha256, 'exact playtest audit receipt');
+  for (const [file, expected] of Object.entries(playtestRevision.files))
+    assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), expected, file + ' exact authorized playtest source');
+}
+// Keep the historical receipts intact; the explicit authorized post-release
+// correction supersedes only its listed files in current-source comparisons.
+const certificationRevision = manifest.approvedOvernightCertificationRevision && {
+  ...manifest.approvedOvernightCertificationRevision,
+  files: { ...manifest.approvedOvernightCertificationRevision.files, ...playtestRevision?.files },
+};
 if (certificationRevision) {
   assert.match(certificationRevision.source, /PR #300.*e5893fbd45cf/);
   const guarded = new Set(Object.keys(manifest.files));
@@ -15,8 +29,8 @@ if (certificationRevision) {
   assert.deepEqual(Object.keys(certificationRevision.files).sort(), [...guarded].sort());
   for (const [file, receipt] of Object.entries(certificationRevision.provenance)) {
     assert.match(receipt.handoffSha256, /^[a-f0-9]{64}$/);
-    assert.equal(receipt.candidateSha256, certificationRevision.files[file]);
-    assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), receipt.candidateSha256, file + ' exact final source receipt');
+    assert.equal(receipt.candidateSha256, manifest.approvedOvernightCertificationRevision.files[file]);
+    assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), playtestRevision?.files[file] || receipt.candidateSha256, file + ' exact final source receipt');
   }
 }
 assert.deepEqual(Object.keys(revision.files).sort(), [

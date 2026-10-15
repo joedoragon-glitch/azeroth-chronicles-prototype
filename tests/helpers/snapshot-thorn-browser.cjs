@@ -78,8 +78,12 @@ async function verifyThornPatrol(page, results, tag, capture = false) {
     await page.locator('#touch-interact-button').evaluate((el) => el.click());
     assert(
       await page.evaluate(() =>
-        Prototype.game.messages.some((m) => String(m.text || m).includes('Crown wilderness scout')),
+        Prototype.game.messages.some((m) => String(m.text || m).includes('Last sighting:')),
       ),
+    );
+    assert(
+      await page.locator('#modal').evaluate((el) => el.hidden),
+      'short witness clue keeps action running',
     );
     const outcome = await page.evaluate(() => {
       const c = Prototype.game,

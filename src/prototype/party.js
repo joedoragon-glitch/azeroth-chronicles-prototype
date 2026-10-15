@@ -463,6 +463,7 @@
           u = this.unit(dead.type, this.hero.x + 40, this.hero.y);
         this.tacticalClearScatter(dead);
         Object.assign(dead, u, { id, active, slow: 0 });
+        delete dead.rogueSlow;
         return true;
       }
       treatCompanions() {
@@ -698,7 +699,7 @@
         const d = dist(u, this.hero),
           speed =
             this.companionMoveSpeed(d > 650 ? 500 : d > 350 ? 390 : d > 200 ? 315 : 255) *
-            (u.slow > 0 ? 0.65 : 1) *
+            this.slowMovementFactor(u) *
             this.mireBogMovementFactor(u) *
             this.ashMovementFactor(u);
         return this.follow(u, this.partyFollowPoint(u, living), speed, dt, 45);
@@ -782,6 +783,10 @@
             )[0] || null;
         for (const u of living) {
           u.slow = Math.max(0, (u.slow || 0) - dt);
+          if (u.rogueSlow > 0) {
+            u.rogueSlow = Math.max(0, u.rogueSlow - dt);
+            if (!u.rogueSlow) delete u.rogueSlow;
+          }
           u.cd = Math.max(0, u.cd - dt);
           u.skill1Cd = Math.max(0, (u.skill1Cd || 0) - dt);
           u.skill2Cd = Math.max(0, (u.skill2Cd || 0) - dt);
@@ -797,7 +802,7 @@
                   u,
                   b,
                   this.companionMoveSpeed(230) *
-                    (u.slow > 0 ? 0.65 : 1) *
+                    this.slowMovementFactor(u) *
                     this.mireBogMovementFactor(u) *
                     this.ashMovementFactor(u),
                   dt,
@@ -823,7 +828,7 @@
                   u,
                   b,
                   this.companionMoveSpeed(230) *
-                    (u.slow > 0 ? 0.65 : 1) *
+                    this.slowMovementFactor(u) *
                     this.mireBogMovementFactor(u) *
                     this.ashMovementFactor(u),
                   dt,
@@ -850,7 +855,7 @@
                   u,
                   n,
                   this.companionMoveSpeed(230) *
-                    (u.slow > 0 ? 0.65 : 1) *
+                    this.slowMovementFactor(u) *
                     this.mireBogMovementFactor(u) *
                     this.ashMovementFactor(u),
                   dt,
@@ -874,7 +879,7 @@
                 u,
                 deposit,
                 this.companionMoveSpeed(230) *
-                  (u.slow > 0 ? 0.65 : 1) *
+                  this.slowMovementFactor(u) *
                   this.mireBogMovementFactor(u) *
                   this.ashMovementFactor(u),
                 dt,
@@ -973,7 +978,7 @@
                 u,
                 this.archerFallbackPoint(u, e, living),
                 this.companionMoveSpeed(270) *
-                  (u.slow > 0 ? 0.65 : 1) *
+                  this.slowMovementFactor(u) *
                   this.mireBogMovementFactor(u) *
                   this.ashMovementFactor(u),
                 dt,
@@ -986,7 +991,7 @@
                 u,
                 this.archerCombatPoint(u, e, living),
                 this.companionMoveSpeed(260) *
-                  (u.slow > 0 ? 0.65 : 1) *
+                  this.slowMovementFactor(u) *
                   this.mireBogMovementFactor(u) *
                   this.ashMovementFactor(u),
                 dt,
@@ -999,7 +1004,7 @@
                 u,
                 anchor,
                 this.companionMoveSpeed(245) *
-                  (u.slow > 0 ? 0.65 : 1) *
+                  this.slowMovementFactor(u) *
                   this.mireBogMovementFactor(u) *
                   this.ashMovementFactor(u),
                 dt,
@@ -1041,7 +1046,7 @@
               u,
               e,
               this.companionMoveSpeed(250) *
-                (u.slow > 0 ? 0.65 : 1) *
+                this.slowMovementFactor(u) *
                 this.mireBogMovementFactor(u) *
                 this.ashMovementFactor(u),
               dt,

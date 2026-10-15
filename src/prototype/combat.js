@@ -314,6 +314,17 @@
         return true;
       }
 
+      applyRogueSlow(unit, seconds) {
+        if (!this.applySlow(unit, seconds)) return false;
+        unit.rogueSlow = Math.max(unit.rogueSlow || 0, seconds);
+        return true;
+      }
+
+      slowMovementFactor(unit) {
+        if (!(unit?.slow > 0)) return 1;
+        return unit.rogueSlow > 0 ? R.tacticalFoundation.rogueSlowMovementFactor : 0.65;
+      }
+
       ashMovementFactor(unit) {
         if (!unit) return 1;
         const now = this.s.time;

@@ -55,14 +55,16 @@ assert.equal(banner.children[0].textContent,'TRUE BOSS · danger','warning bypas
 assert(banner.children[0].className.includes('notice-warning'),'warning has its own visual tier');
 hostile.aggro=prevHostile.aggro;hostile.x=prevHostile.x;hostile.y=prevHostile.y;
 announcementNow=650;scope.Prototype.updateHUD();
+assert.equal(banner.children.length,0,'story waits through the quiet interval');
+announcementNow=3050;scope.Prototype.updateHUD();
 assert.equal(banner.children[0].textContent,'The orchard road has a history.','story appears after danger passes');
 assert(banner.children[0].className.includes('notice-narration'),'narration is visibly distinct');
 ng.notice('LEVEL 2 · Training point',.1);
 scope.Prototype.updateHUD();
 assert.equal(banner.children[0].textContent,'LEVEL 2 · Training point','milestone takes precedence');
-announcementNow=760;scope.Prototype.updateHUD();
+announcementNow=3160;scope.Prototype.updateHUD();
 assert.equal(banner.children[0].textContent,'The orchard road has a history.','interrupted story resumes once safe');
-announcementNow=1100;scope.Prototype.updateHUD();
+announcementNow=3500;scope.Prototype.updateHUD();
 assert.equal(banner.children.length,0,'story expires after its own resumed display duration');
 scope.performance.now=announcementClock;
 console.log('PASS tiered narration waits for combat, warnings and milestones');

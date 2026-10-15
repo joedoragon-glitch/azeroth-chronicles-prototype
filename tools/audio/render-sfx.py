@@ -20,6 +20,21 @@ def render(cue,rate):
     result=(noise*.10*np.exp(-t/.055)+np.sin(phase)*.12*np.exp(-t/.085))*attack*tail
     if cue['material'] in ['steel','bone','holy']:
         for ratio in [1,1.47,2.09]: result+=.035*np.sin(2*np.pi*start*ratio*t)*np.exp(-t/.08)*attack*tail
+    # Dedicated Paladin blade profiles replace the generic falling body tone.
+    # Keep the same event IDs, duration, mono master and conservative headroom.
+    if cue.get('profile') in ['blade-contact','blade-air']:
+        bright=np.fft.irfft(np.fft.rfft(rng.normal(0,1,n)) *
+            np.exp(-(freq/cue['noiseHz'])**4) * (1-np.exp(-(freq/1250)**4)),n=n)
+        bright/=max(np.sqrt(np.mean(bright**2)),1e-9)
+        if cue['profile']=='blade-contact':
+            result=bright*.06*np.exp(-t/.022)*attack*tail
+            for hz,level in zip(cue['partialsHz'],[.075,.05,.034,.02]):
+                result+=level*np.sin(2*np.pi*hz*t)*np.exp(-t/.12)*attack*tail
+            result+=.025*np.sin(2*np.pi*240*t)*np.exp(-t/.025)*attack*tail
+        else:
+            whoosh=np.sin(np.pi*np.minimum(t/.18,1))**1.5
+            result=bright*.075*whoosh*tail
+            result+=.014*np.sin(2*np.pi*2300*t)*np.exp(-t/.055)*attack*tail
     if cue['material']=='wet':result+=.045*np.sin(phase*1.72)*np.exp(-t/.045)*attack*tail
     if cue['material']=='warning':
         result*=.22

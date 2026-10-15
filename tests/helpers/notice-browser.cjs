@@ -14,7 +14,7 @@ async function verifyNoticeStrip(page, out, tag, phone, viewport) {
     c.s.projectiles = [];
     c.s.hazards = [];
     Prototype.closeMenu();
-    c.notice(text, 0.5, '', 'narration');
+    c.notice(text, 4, '', 'narration');
     Prototype.updateHUD();
   }, text);
   try {
@@ -88,7 +88,9 @@ async function verifyNoticeStrip(page, out, tag, phone, viewport) {
       text,
       'same story resumes once after disengagement',
     );
-    await page.waitForFunction(() => !document.querySelector('#message .notice-card'));
+    await page.waitForFunction(() => !document.querySelector('#message .notice-card'), null, {
+      timeout: 7000,
+    });
   } finally {
     await page.evaluate(() => {
       const c = Prototype.game;

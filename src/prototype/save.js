@@ -609,6 +609,12 @@
           if (z.awakenedGuardWave !== undefined && z.awakenedGuardWave !== s.awakeningLevel)
             throw Error('Invalid guardian return level');
         if (s.hero.slow !== undefined) finite(s.hero.slow, 0, 60);
+        // Optional v4 condition detail; older saves simply use ordinary Slow.
+        for (const unit of [s.hero, ...s.party])
+          if (unit.rogueSlow !== undefined) {
+            finite(unit.rogueSlow, 0, 60);
+            unit.rogueSlow = Math.min(unit.rogueSlow, unit.slow || 0);
+          }
         if (s.refugeSite) {
           if (
             !D.regions.some((r) => r.id === s.refugeSite.zone) ||

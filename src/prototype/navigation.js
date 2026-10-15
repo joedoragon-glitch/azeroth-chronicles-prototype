@@ -329,7 +329,7 @@
           });
         }
       }
-      thornReport() {
+      thornReport(concise = false) {
         if (this.s.rescued.thorn) return 'Mira is free. Find her teaching in Millhaven.';
         if (this.s.keys.thorn) {
           const n = this.thornCaptive(),
@@ -345,7 +345,64 @@
             '. Your journal can guide you to her last known waiting place.'
           );
         }
-        return 'Thornfang once served as a Crown wilderness scout. He takes Mira from his temporary den through Goblin territory, the Mill crossing, Skeleton territory, the Forest Crypt perimeter and the Southern crossing. They avoid Millhaven. Mira performs paid but compulsory inspections. When the winter estate is finished and its inhabitants can keep it secure, he intends to return to his distant home.';
+        const z = this.s.zones.vale,
+          cfg = R.thornPatrol,
+          scout = z?.enemies.find(
+            (e) => e.family === 'thorn' && e.type === 'boss' && e.hp > 0 && !e.neutral,
+          ),
+          fresh = z?.npcs
+            .filter((n) => n.thornFootprint && n.expires > this.s.time)
+            .sort((a, b) => b.expires - a.expires)[0];
+        let clue = '';
+        if (scout) {
+          const nearest = cfg.route
+            .map(([x, y], i) => ({ i, d: dist(scout, { x, y }) }))
+            .sort((a, b) => a.d - b.d)[0].i;
+          const leg =
+            Number.isInteger(scout.thornLeg) &&
+            scout.thornLeg >= 0 &&
+            scout.thornLeg < cfg.route.length
+              ? scout.thornLeg
+              : 1;
+          clue =
+            scout.returning || scout.thornReturn
+              ? 'The patrol is returning to the temporary den. The tracks loop back there. '
+              : scout.aggro
+                ? 'There is fighting near ' +
+                  cfg.names[nearest] +
+                  '. Approach carefully; Mira is still with the patrol. '
+                : 'The latest trail report puts the patrol near ' +
+                  cfg.names[nearest] +
+                  ', heading toward ' +
+                  cfg.names[leg] +
+                  '. ';
+        }
+        if (concise) {
+          if (!scout) return 'No fresh sighting. Follow the pawprints from the temporary den.';
+          if (scout.returning || scout.thornReturn)
+            return 'Thornfang is returning to the temporary den with Mira.';
+          const nearest = cfg.route
+            .map(([x, y], i) => ({ i, d: dist(scout, { x, y }) }))
+            .sort((a, b) => a.d - b.d)[0].i;
+          const leg =
+            Number.isInteger(scout.thornLeg) &&
+            scout.thornLeg >= 0 &&
+            scout.thornLeg < cfg.route.length
+              ? scout.thornLeg
+              : 1;
+          return scout.aggro
+            ? 'Fighting near ' + cfg.names[nearest] + '. Mira is still with Thornfang.'
+            : 'Last sighting: ' +
+                cfg.names[nearest] +
+                ', heading for ' +
+                cfg.names[leg] +
+                '. Mira is with him.';
+        }
+        if (fresh) clue += 'Fresh pawprints mark the route; follow their direction. ';
+        return (
+          clue +
+          'Thornfang once served as a Crown wilderness scout. He takes Mira from his temporary den through Goblin territory, the Mill crossing, Skeleton territory, the Forest Crypt perimeter and the Southern crossing. They avoid Millhaven. Mira performs paid but compulsory inspections. When the winter estate is finished and its inhabitants can keep it secure, he intends to return to his distant home.'
+        );
       }
       updateThornCaptive(dt) {
         if (this.zoneId !== 'vale') return;

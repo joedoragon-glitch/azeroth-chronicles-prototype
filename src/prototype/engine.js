@@ -2116,7 +2116,9 @@
     interact(npc) {
       if (!npc || dist(npc, this.hero) > 115) return false;
       if (npc.thornReport || npc.thornTrail !== undefined || npc.thornFootprint) {
-        this.say(this.thornReport());
+        const report = this.thornReport(!!npc.thornReport);
+        this.say(report);
+        if (npc.thornReport) this.notice('Trail witness', 6, report, 'narration');
         return true;
       }
       switch (npc.kind) {
@@ -2454,6 +2456,7 @@
       this.hero.tonic = false;
       this.hero.immune = 0;
       this.hero.slow = 0;
+      delete this.hero.rogueSlow;
       this.hero.haste = 0;
       const chosen = this.selectedBarracksRespawn();
       if (chosen) {
@@ -2945,6 +2948,10 @@
       }
       h.cd = h.cd.map((c) => Math.max(0, c - dt));
       for (const f of ['immune', 'haste', 'potionCd', 'slow']) h[f] = Math.max(0, h[f] - dt);
+      if (h.rogueSlow > 0) {
+        h.rogueSlow = Math.max(0, h.rogueSlow - dt);
+        if (!h.rogueSlow) delete h.rogueSlow;
+      }
       for (const u of this.s.party) {
         if (!u.keeperHeld) u.healCd = Math.max(0, (u.healCd || 0) - dt);
         u.manaCd = Math.max(0, (u.manaCd || 0) - dt);
@@ -2962,7 +2969,7 @@
           speed =
             (h.speed + this.heroTalentSpeedBonus()) *
             (h.haste > 0 ? 1.25 : 1) *
-            (h.slow > 0 ? 0.65 : 1) *
+            this.slowMovementFactor(h) *
             this.mireBogMovementFactor(h) *
             this.ashMovementFactor(h) *
             clamp(input.speedFactor || 1, 1, 1.35);
@@ -2985,7 +2992,7 @@
               target,
               (h.speed + this.heroTalentSpeedBonus()) *
                 (h.haste > 0 ? 1.25 : 1) *
-                (h.slow > 0 ? 0.65 : 1) *
+                this.slowMovementFactor(h) *
                 this.mireBogMovementFactor(h) *
                 this.ashMovementFactor(h),
               dt,
@@ -4492,46 +4499,52 @@
           }
           return;
         }
-        // All other rogue basics remain single-target and cover-sensitive.
-        if (!target || target.hp <= 0 || dist(target, move) > move.radius || !this.line(e, target))
-          return;
+        // Ordinary ground-marked basics cover the entire fixed warning circle.
+        // Actor-only elite basics retain their targeted, reach-limited contract.
+        const victims = (move.mobileRogueCast ? [target] : this.combatTargets()).filter(
+          (unit) => unit && unit.hp > 0 && dist(unit, move) <= move.radius && this.line(e, unit),
+        );
+        if (!victims.length) return;
+        const contactTarget = victims.includes(target) ? target : victims[0];
         const startingHero = this.hero,
           startingZone = this.zoneId,
           startingDeaths = this.s.statistics.deaths;
-        if (move.style === 'dash' && dist(e, target) > 95) {
+        if (move.style === 'dash' && dist(e, contactTarget) > 95) {
           const previous = { x: e.x, y: e.y };
           this.move(
             e,
-            target,
+            contactTarget,
             e.mountedCrownRider ? 395 : 300,
             e.mountedCrownRider ? 0.36 : 0.3,
             85,
           );
-          this.tacticalRecordRogueReposition(e, previous, target);
+          this.tacticalRecordRogueReposition(e, previous, contactTarget);
         }
-        if (!this.hitParty(target, e.damage * move.coefficient)) return;
-        if (
-          this.hero !== startingHero ||
-          this.zoneId !== startingZone ||
-          this.s.statistics.deaths !== startingDeaths ||
-          this.s.challenge.pending ||
-          this.s.challenge.gameOver
-        )
-          return;
-        // A successful lethal companion hit still grants the caster's authored
-        // dust/withdrawal, but cannot slow or shove the fallen victim.
-        if (target.hp > 0) {
+        let landedAny = false;
+        for (const victim of victims) {
+          if (!this.hitParty(victim, e.damage * move.coefficient)) continue;
+          landedAny = true;
+          if (
+            this.hero !== startingHero ||
+            this.zoneId !== startingZone ||
+            this.s.statistics.deaths !== startingDeaths ||
+            this.s.challenge.pending ||
+            this.s.challenge.gameOver
+          )
+            return;
+          if (victim.hp <= 0) continue;
           if (move.style === 'shove') {
-            const d = Math.max(1, dist(e, target)),
+            const d = Math.max(1, dist(e, victim)),
               point = {
-                x: target.x + ((target.x - e.x) / d) * 55,
-                y: target.y + ((target.y - e.y) / d) * 55,
+                x: victim.x + ((victim.x - e.x) / d) * 55,
+                y: victim.y + ((victim.y - e.y) / d) * 55,
               };
-            this.move(target, point, 220, 0.25);
+            this.move(victim, point, 220, 0.25);
           } else {
-            this.applySlow(target, move.slowSeconds || 2);
+            this.applyRogueSlow(victim, move.slowSeconds || 2);
           }
         }
+        if (!landedAny) return;
         if (move.blinds > 0) {
           // Dust blinds the victim narratively: the goblin briefly cannot be
           // DIRECTLY targeted, but is still vulnerable to area damage.
@@ -4540,10 +4553,10 @@
           this.tacticalDropDustTarget(e);
         }
         if (move.style === 'withdraw' && move.retreat > 0) {
-          const d = Math.max(1, dist(e, target)),
+          const d = Math.max(1, dist(e, contactTarget)),
             point = {
-              x: e.x + ((e.x - target.x) / d) * move.retreat,
-              y: e.y + ((e.y - target.y) / d) * move.retreat,
+              x: e.x + ((e.x - contactTarget.x) / d) * move.retreat,
+              y: e.y + ((e.y - contactTarget.y) / d) * move.retreat,
             };
           if (this.clearSegment(e, point, 12)) this.move(e, point, 350, 0.35);
         }
@@ -4591,7 +4604,7 @@
               y: unit.y + ((unit.y - e.y) / d) * push,
             };
           this.move(unit, point, 250, 0.36);
-        } else this.applySlow(unit, move.slowSeconds || 2.4);
+        } else this.applyRogueSlow(unit, move.slowSeconds || 2.4);
       }
       if (
         move.rallySeconds > 0 &&
@@ -4973,7 +4986,15 @@
         }
         // A short-lived rogue decision is distinct from normal aggro.
         if (this.tacticalAutoRogue(e, target)) continue;
-        if (this.tacticalRogueRegroup(e) && this.tacticalAdvanceRogueRegroup(e, target, dt))
+        // A committed attack owns its warning/release clock. Regroup holds and
+        // retreat decisions must not suspend it when the victim moves away.
+        if (
+          !e.telegraph &&
+          !e.motion &&
+          !e.rangedAim &&
+          this.tacticalRogueRegroup(e) &&
+          this.tacticalAdvanceRogueRegroup(e, target, dt)
+        )
           continue;
         if (e.telegraph) {
           if (e.telegraph.rogueMove && e.telegraph.mobileRogueCast) {

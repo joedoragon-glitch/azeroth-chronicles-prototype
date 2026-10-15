@@ -1654,6 +1654,9 @@
       if (!game.isDungeon())
         PrototypeVisuals.bridges(ctx, screen, i, optimized ? null : PrototypeMaterials);
       PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000);
+      // All warning footprints/outlines belong to the floor, below characters,
+      // companions, monsters and scenery. Floating cast captions render later.
+      PrototypeCombatVisuals.ground(ctx, screen, game, 'underlay-cue', game.s.time);
       finishPhase('terrain');
       const boardCue = null,
         captainCue = game.zoneId === 'vale' && game.s.party.length <= 2;
@@ -1680,6 +1683,9 @@
             ...e,
             renderKind,
             ...(renderKind === 'hero' && game.s.throneClaimed ? { crowned: true } : {}),
+            ...(Campaign.rules?.ambientLife?.[e.structure || e.id]
+              ? { ambientTime: (PrototypeSprites?.timeMs?.() ?? now()) / 1000 }
+              : {}),
           };
           const registered = PrototypeSprites?.definitionFor?.(
             visualEntity,
@@ -1739,6 +1745,7 @@
       for (const e of entities.slice().sort((a, b) => labelPriority(a) - labelPriority(b))) {
         if (
           !['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) ||
+          e.presentation === 'scout-tracks' ||
           !worldLabelVisible(e)
         )
           continue;
@@ -1773,7 +1780,11 @@
         if (slot) labelSlots.set(e, slot);
       }
 
+      // Tracks are flat ground decals. Draw them before every standing object,
+      // without the NPC shadow, selection ring, aura or idle motion treatment.
+      for (const e of entities) if (e.presentation === 'scout-tracks') sprite(e, screen(e));
       for (const e of entities) {
+        if (e.presentation === 'scout-tracks') continue;
         const p = screen(e);
         if (p.x < -180 || p.x > canvas.width + 180 || p.y < -180 || p.y > canvas.height + 180)
           continue;
@@ -2074,7 +2085,7 @@
       PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx);
       for (const p of game.s.projectiles) drawProjectile(p);
       drawVisualFx();
-      PrototypeCombatVisuals.ground(ctx, screen, game, 'cue', game.s.time);
+      PrototypeCombatVisuals.actorCues?.(ctx, screen, game);
       targetGuidance();
       drawNavigationRoute();
       if (isPaused()) {

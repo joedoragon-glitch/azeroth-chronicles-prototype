@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "thornfang-scout-tracks",
+  "name": "Thornfang scout pawprint impressions",
+  "nextAction": "Owner review in PR #308; no generated sprite requested.",
+  "context": {
+    "decisionDate": "2026-10-15",
+    "originConversation": null,
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/308",
+    "decisionSummary": "Joel requests subtler footsteps with no shadows."
+  },
+  "decisions": {
+    "proceduralDesignAcceptance": "Correction authorized; revised appearance awaits feedback.",
+    "spriteProductionAuthorization": "No raster generation requested."
+  },
+  "reference": {
+    "sourceCommit": "1460f303f29f302850f7be2ac2ed620a95cc1ffb",
+    "ownerFilesAndBranches": [
+      "src/prototype/renderer.js",
+      "src/prototype/visuals.js"
+    ],
+    "exactEntityState": "NPC landmark; presentation scout-tracks; thornFootprint true",
+    "gameplayContextPaths": [
+      "tools/sprites/design-handoffs/references/scout-tracks/before.jpg",
+      "tools/sprites/design-handoffs/references/scout-tracks/after.jpg"
+    ],
+    "traitsToPreserve": [
+      "Pawprints trace existing Thornfang route; original identities, angles, spacing, lifetime and interactions retained.",
+      "Flat isometric muddy impressions, smaller and semi-transparent; no rings or shadows."
+    ]
+  },
+  "scope": {
+    "proceduralOwnersAndReasons": [
+      "Ground decal drawn before standing objects; no sprite registration change."
+    ]
+  }
+}

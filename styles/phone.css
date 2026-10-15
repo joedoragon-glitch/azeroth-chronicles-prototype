@@ -94,8 +94,8 @@ body[data-experience='phone'] #joystick {
 body[data-experience='phone'] #stick {
   width: 44px;
   height: 44px;
-  left: 27px;
-  top: 27px;
+  left: calc(50% - 22px);
+  top: calc(50% - 22px);
 }
 body[data-experience='phone'] #skills {
   left: auto;
@@ -384,13 +384,15 @@ body[data-experience='phone'] #squad-button {
   min-height: 44px;
 }
 body[data-experience='phone'] #joystick {
-  border-color: #91b1ad;
-  border-width: 2px;
-  background: radial-gradient(circle at 45% 40%, #42676bba, #132c35bb 73%);
+  border-color: #bdd8cc66;
+  border-width: 1px;
+  background: #17333226;
+  box-shadow: none;
 }
 body[data-experience='phone'] #stick {
-  border-color: #b5d1c7;
-  background: radial-gradient(circle at 35% 30%, #a8c5b6, #4f827d 73%);
+  border: 1px solid #d0e3d57a;
+  background: radial-gradient(circle at 35% 30%, #b5d2c36b, #56867c59 73%);
+  box-shadow: none;
 }
 body[data-experience='phone'] #hero-stats .hero-title {
   font-size: 12px;

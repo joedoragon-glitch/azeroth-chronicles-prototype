@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "ambient-harmless-wander",
+  "name": "Harmless local animal wandering",
+  "nextAction": "Review in PR #308; merge only on owner instruction. No raster production requested.",
+  "context": {
+    "decisionDate": "2026-10-15",
+    "originConversation": null,
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/308",
+    "decisionSummary": "Joel requests existing non-monster animals to wander locally and remain unharmed."
+  },
+  "decisions": {
+    "proceduralDesignAcceptance": "Correction authorized; revised appearance awaits feedback.",
+    "spriteProductionAuthorization": "No raster generation requested."
+  },
+  "reference": {
+    "sourceCommit": "1460f303f29f302850f7be2ac2ed620a95cc1ffb",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js:ambientAnimalPose",
+      "src/prototype/renderer.js",
+      "src/prototype/rules.js:ambientLife",
+      "src/prototype/sprites.js"
+    ],
+    "exactEntityState": "Existing pasture-sheep, poultry-yard, animal-pen, pup-nest props and mire-nests NPC landmark.",
+    "gameplayContextPaths": [
+      "tools/sprites/design-handoffs/references/ambient-life/motion-contact-sheet.jpg"
+    ],
+    "traitsToPreserve": [
+      "Keep all original species, counts, palette, feeding/pen/nest structures and stable IDs.",
+      "Individual animals walk and rest in bounded patches; confined creatures stay within pen/nest.",
+      "Presentation time owns motion, frozen during pause; no combat targets, HP or damage callbacks.",
+      "Future sprites must animate individuals separately from the stationary composite."
+    ]
+  },
+  "scope": {
+    "proceduralOwnersAndReasons": [
+      "src/prototype/visuals.js:ambientAnimalPose",
+      "src/prototype/renderer.js",
+      "src/prototype/rules.js:ambientLife",
+      "src/prototype/sprites.js"
+    ]
+  }
+}

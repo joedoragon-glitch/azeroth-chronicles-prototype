@@ -235,8 +235,135 @@
     }
     return drawn;
   }
+  // Floating cast information is separate from floor warnings, so danger
+  // geometry can sit beneath every actor/prop without burying the cast clock.
+  function actorCues(ctx, screen, game) {
+    ctx.save();
+    for (const e of game
+      .zone()
+      .enemies.filter((e) => e.telegraph?.anonymousCast || e.telegraph?.mobileRogueCast)) {
+      const a = e.telegraph,
+        p = screen(e);
+      const width = 70,
+        height = 8,
+        x = p.x - width / 2,
+        y = p.y - 65;
+      const fill = Math.max(0, Math.min(1, 1 - a.timer / a.total));
+      ctx.fillStyle = '#1b233080';
+      ctx.fillRect(x - 2, y - 2, width + 4, height + 4);
+      ctx.fillStyle = '#e5b963';
+      ctx.fillRect(x, y, width * fill, height);
+      ctx.strokeStyle = '#f2d99b';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(x, y, width, height);
+      ctx.font = 'bold 11px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#fff1c7';
+      ctx.fillText(a.anonymousCast ? 'Preparing…' : 'ROGUE CAST', p.x, y - 5);
+    }
+    royalTaxStatus(ctx, screen, game);
+    // Ledger of Losses deliberately obscures Ridge's ground footprints,
+    // including separate rogue moves. It must NEVER obscure the cast itself:
+    // attach a high-contrast progress bar to the actual boss, not the terrain.
+    for (const e of game
+      .zone()
+      .enemies.filter(
+        (e) =>
+          e.family === 'ridge' &&
+          e.ledgerOpen &&
+          !e.telegraph?.mobileRogueCast &&
+          visibleWarning(e) &&
+          e.hp > 0,
+      )) {
+      const a = e.telegraph,
+        p = screen(e),
+        w = 84,
+        y = p.y - 82,
+        total = Math.max(0.001, a.total || a.timer || 1),
+        ready = Math.max(0, Math.min(1, 1 - a.timer / total));
+      ctx.fillStyle = '#18212980';
+      ctx.fillRect(p.x - w / 2 - 3, y - 3, w + 6, 15);
+      ctx.fillStyle = '#6e5c3f';
+      ctx.fillRect(p.x - w / 2, y, w, 8);
+      ctx.fillStyle = a.rogueMove ? '#a8d7e6' : '#f4d085';
+      ctx.fillRect(p.x - w / 2, y, w * ready, 8);
+      ctx.strokeStyle = '#f4e4b5';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(p.x - w / 2, y, w, 8);
+      ctx.textAlign = 'center';
+      ctx.font = 'bold 11px system-ui';
+      ctx.fillStyle = '#fff4d7';
+      ctx.fillText('LEDGER CAST', p.x, y - 8);
+    }
+    for (const e of game
+      .zone()
+      .enemies.filter(
+        (e) =>
+          visibleWarning(e) &&
+          !e.telegraph?.mobileRogueCast &&
+          !(e.family === 'ridge' && e.ledgerOpen),
+      )) {
+      const a = e.telegraph;
+      // The skill belongs to the caster, not the player's marked landing point.
+      const p = screen(e);
+      ctx.font = 'bold 12px system-ui';
+      ctx.textAlign = 'center';
+      const transform = ctx.getTransform?.(),
+        scale = transform?.a || 1,
+        viewWidth = (ctx.canvas?.width || 1280) / scale,
+        viewHeight = (ctx.canvas?.height || 800) / scale,
+        maxWidth = Math.max(60, Math.min(240, viewWidth - 16)),
+        words = (
+          a.name +
+          (a.stages ? ' · ' + a.stage + '/' + a.stages : '') +
+          (a.rogueMove ? '' : ' · ' + Math.max(0, a.timer).toFixed(1) + 's')
+        ).split(' '),
+        lines = [];
+      let current = '';
+      for (const word of words) {
+        const next = current ? current + ' ' + word : word;
+        if (current && ctx.measureText(next).width > maxWidth - 16) {
+          lines.push(current);
+          current = word;
+        } else current = next;
+      }
+      if (current) lines.push(current);
+      if (a.rogueMove)
+        lines.push(
+          (a.rogueSignature ? 'SIGNATURE' : 'ROGUE') +
+            ' · ' +
+            Math.max(0, a.timer).toFixed(1) +
+            's',
+        );
+      const w = Math.min(maxWidth, Math.max(...lines.map((t) => ctx.measureText(t).width)) + 16),
+        h = 8 + lines.length * 15,
+        left = Math.max(4, Math.min(viewWidth - w - 4, p.x - w / 2)),
+        top = Math.max(
+          4,
+          Math.min(
+            viewHeight - h - 4,
+            p.y - (e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 78 : 65) - h,
+          ),
+        );
+      ctx.fillStyle = a.rogueMove ? '#192a367a' : '#241d1a7a';
+      ctx.fillRect(left, top, w, h);
+      ctx.strokeStyle =
+        a.kind === 'summon'
+          ? '#a8bb9b'
+          : a.rogueSignature
+            ? '#9cf1f0'
+            : a.rogueMove
+              ? '#8ecde6'
+              : '#f4c984';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(left, top, w, h);
+      ctx.fillStyle = a.rogueMove ? '#f2fbff' : '#fff3c8';
+      lines.forEach((t, j) => ctx.fillText(t, left + w / 2, top + 16 + j * 15));
+    }
+    ctx.restore();
+  }
   function ground(ctx, screen, game, pass = 'fill', time = 0) {
-    const cue = pass === 'cue';
+    const cue = pass === 'cue' || pass === 'underlay-cue';
     ctx.save();
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
@@ -398,64 +525,6 @@
         ctx.stroke();
       }
     }
-    if (cue)
-      for (const e of game
-        .zone()
-        .enemies.filter((e) => e.telegraph?.anonymousCast || e.telegraph?.mobileRogueCast)) {
-        const a = e.telegraph,
-          p = screen(e);
-        const width = 70,
-          height = 8,
-          x = p.x - width / 2,
-          y = p.y - 65;
-        const fill = Math.max(0, Math.min(1, 1 - a.timer / a.total));
-        ctx.fillStyle = '#1b2330dd';
-        ctx.fillRect(x - 2, y - 2, width + 4, height + 4);
-        ctx.fillStyle = '#e5b963';
-        ctx.fillRect(x, y, width * fill, height);
-        ctx.strokeStyle = '#f2d99b';
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(x, y, width, height);
-        ctx.font = 'bold 11px system-ui';
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#fff1c7';
-        ctx.fillText(a.anonymousCast ? 'Preparing…' : 'ROGUE CAST', p.x, y - 5);
-      }
-    if (cue) royalTaxStatus(ctx, screen, game);
-    // Ledger of Losses deliberately obscures Ridge's ground footprints,
-    // including separate rogue moves. It must NEVER obscure the cast itself:
-    // attach a high-contrast progress bar to the actual boss, not the terrain.
-    if (cue)
-      for (const e of game
-        .zone()
-        .enemies.filter(
-          (e) =>
-            e.family === 'ridge' &&
-            e.ledgerOpen &&
-            !e.telegraph?.mobileRogueCast &&
-            visibleWarning(e) &&
-            e.hp > 0,
-        )) {
-        const a = e.telegraph,
-          p = screen(e),
-          w = 84,
-          y = p.y - 82,
-          total = Math.max(0.001, a.total || a.timer || 1),
-          ready = Math.max(0, Math.min(1, 1 - a.timer / total));
-        ctx.fillStyle = '#182129eb';
-        ctx.fillRect(p.x - w / 2 - 3, y - 3, w + 6, 15);
-        ctx.fillStyle = '#6e5c3f';
-        ctx.fillRect(p.x - w / 2, y, w, 8);
-        ctx.fillStyle = a.rogueMove ? '#a8d7e6' : '#f4d085';
-        ctx.fillRect(p.x - w / 2, y, w * ready, 8);
-        ctx.strokeStyle = '#f4e4b5';
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(p.x - w / 2, y, w, 8);
-        ctx.textAlign = 'center';
-        ctx.font = 'bold 11px system-ui';
-        ctx.fillStyle = '#fff4d7';
-        ctx.fillText('LEDGER CAST', p.x, y - 8);
-      }
     for (const e of game
       .zone()
       .enemies.filter(
@@ -513,54 +582,6 @@
           ctx.textAlign = 'center';
           ctx.fillText('PROTECTED SIDE', spot.x, spot.y);
         }
-      }
-      if (cue) {
-        const p = screen(a.kind === 'summon' ? e : a);
-        ctx.font = 'bold 12px system-ui';
-        ctx.textAlign = 'center';
-        const transform = ctx.getTransform?.(),
-          scale = transform?.a || 1,
-          viewWidth = (ctx.canvas?.width || 1280) / scale,
-          viewHeight = (ctx.canvas?.height || 800) / scale,
-          maxWidth = Math.max(60, Math.min(240, viewWidth - 16)),
-          words = (
-            a.name +
-            (a.stages ? ' · ' + a.stage + '/' + a.stages : '') +
-            (a.rogueMove ? '' : ' · ' + a.timer.toFixed(1))
-          ).split(' '),
-          lines = [];
-        let current = '';
-        for (const word of words) {
-          const next = current ? current + ' ' + word : word;
-          if (current && ctx.measureText(next).width > maxWidth - 16) {
-            lines.push(current);
-            current = word;
-          } else current = next;
-        }
-        if (current) lines.push(current);
-        if (a.rogueMove)
-          lines.push((a.rogueSignature ? 'SIGNATURE' : 'ROGUE') + ' · ' + a.timer.toFixed(1) + 's');
-        const w = Math.min(maxWidth, Math.max(...lines.map((t) => ctx.measureText(t).width)) + 16),
-          h = 8 + lines.length * 15,
-          left = Math.max(4, Math.min(viewWidth - w - 4, p.x - w / 2)),
-          top = Math.max(
-            4,
-            Math.min(viewHeight - h - 4, p.y - (a.kind === 'summon' ? 72 : 31) - h + 21),
-          );
-        ctx.fillStyle = a.rogueMove ? '#192a36f2' : '#241d1af2';
-        ctx.fillRect(left, top, w, h);
-        ctx.strokeStyle =
-          a.kind === 'summon'
-            ? '#a8bb9b'
-            : a.rogueSignature
-              ? '#9cf1f0'
-              : a.rogueMove
-                ? '#8ecde6'
-                : '#f4c984';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(left, top, w, h);
-        ctx.fillStyle = a.rogueMove ? '#f2fbff' : '#fff3c8';
-        lines.forEach((t, j) => ctx.fillText(t, left + w / 2, top + 16 + j * 15));
       }
       if (cue && a.tracking) {
         const p = screen(a);
@@ -817,6 +838,7 @@
         }
       }
     }
+    if (pass === 'cue') actorCues(ctx, screen, game);
     ctx.restore();
   }
   function queue(events, game, current = []) {
@@ -1103,6 +1125,7 @@
     warningShapes,
     royalTaxStatus,
     ground,
+    actorCues,
     queue,
     contact,
     ability,

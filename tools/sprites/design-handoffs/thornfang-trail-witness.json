@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "thornfang-trail-witness",
+  "name": "Orchard trail witness scout appearance",
+  "nextAction": "Review in PR #308; merge only on owner instruction. No raster production requested.",
+  "context": {
+    "decisionDate": "2026-10-15",
+    "originConversation": null,
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/308",
+    "decisionSummary": "Joel requests useful live patrol feedback and a more stylish witness; explicitly requests concise wording with no action pause."
+  },
+  "decisions": {
+    "proceduralDesignAcceptance": "Correction authorized; revised appearance awaits feedback.",
+    "spriteProductionAuthorization": "No raster generation requested."
+  },
+  "reference": {
+    "sourceCommit": "1460f303f29f302850f7be2ac2ed620a95cc1ffb",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js:patrol-report",
+      "src/prototype/navigation.js:thornReport",
+      "src/prototype/engine.js:interact"
+    ],
+    "exactEntityState": "NPC thorn-local-report; kind patrol-report; name Orchard trail witness.",
+    "gameplayContextPaths": [
+      "tools/sprites/design-handoffs/references/witness/before.jpg",
+      "tools/sprites/design-handoffs/references/witness/after.jpg",
+      "tools/sprites/design-handoffs/references/witness/comparison.jpg"
+    ],
+    "traitsToPreserve": [
+      "Moss hood/cloak, copper clasp, scarf, satchel, staff and rolled field chart.",
+      "Keep identity, orchard location and interact radius.",
+      "Short current route/next-leg clue; fighting, return, defeated and rescued variants.",
+      "No modal or pause; narration queue waits until combat is quiet."
+    ]
+  },
+  "scope": {
+    "proceduralOwnersAndReasons": [
+      "src/prototype/visuals.js:patrol-report",
+      "src/prototype/navigation.js:thornReport",
+      "src/prototype/engine.js:interact"
+    ]
+  }
+}

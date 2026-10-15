@@ -313,7 +313,7 @@ await check('Rebinding updates real input, menus and labels and survives reload 
  assert((await page.locator('#desktop-hints').textContent()).includes('↑'));
  assert((await page.locator('#talent-button').getAttribute('title')).includes('press L'));
  const beforeLevel=await page.evaluate(()=>Prototype.game.snapshot());
- await page.evaluate(()=>Prototype.game.xp(Prototype.game.xpRequired()));
+ await page.evaluate(()=>{const c=Prototype.game;c.zone().enemies=[];c.s.party=[];c.s.projectiles=[];c.s.hazards=[];c.xp(c.xpRequired());});
  await page.waitForFunction(()=>[...document.querySelectorAll('#message .notice-card')].some(n=>n.textContent.includes('Training point')));
  assert(!(await page.locator('#status').textContent()).includes('Training point'),'level-up belongs to amber only');
  await page.evaluate(state=>{Prototype.game.s=state;},beforeLevel);

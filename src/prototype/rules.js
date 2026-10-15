@@ -5453,6 +5453,9 @@
     supportRadius: 195,
     presenceRadius: 540,
     moveCooldownSeconds: 6,
+    // Rogue disruption must create an escape edge even against baseline sprint.
+    // Durations remain authored per move; ordinary non-Rogue Slow stays unchanged.
+    rogueSlowMovementFactor: 0.4,
     thinkingSeconds: 0.8,
     escapeSeconds: 5.5,
     rogueMoves,
@@ -5625,6 +5628,14 @@
     travelArrivals,
     dungeonWorkstations,
     regionalHandoffScenes,
+    // Harmless scenery creatures use the paused presentation clock, not combat RNG.
+    ambientLife: {
+      'pasture-sheep': { radius: 24, walk: 4.5, rest: 5 },
+      'poultry-yard': { radius: 25, walk: 3.2, rest: 3.5 },
+      'animal-pen': { radius: 5, walk: 3.5, rest: 5 },
+      'pup-nest': { radius: 4, walk: 3.8, rest: 6 },
+      'mire-nests': { radius: 4, walk: 4, rest: 5 },
+    },
     greenwoodRuralScenes,
     frontierRecoveryScenes,
     crownThermalWorksScenes,
