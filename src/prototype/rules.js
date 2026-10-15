@@ -4852,13 +4852,13 @@
     captains: Object.freeze({
       'supply-vale': 'Salvage Surge', // Scornfang: tracking volley / zone control
       'supply-march': 'Silt Pulse', // Direjaw: water and mud projection
-      'supply-crown': 'Harvest Vigor', // Dreadmaw: distributed brood care
+      'supply-crown': 'Grafting', // Dreadmaw: distributed brood care
     }),
     bosses: Object.freeze({
-      crypt: 'Marrowbind', // Lifebinder: bolts and estate warding
-      mire: 'Aquifer Rise', // Mirejaw: hydrological ranged effects
-      archive: 'Vellum Mend', // Drowned Keeper: ranged water magic
-      ridge: 'Golden Dividend', // Ridge Tyrant: ranged cargo/archer command
+      crypt: 'Reconstitution', // Lifebinder: bolts and estate warding
+      mire: 'Baseflow', // Mirejaw: hydrological ranged effects
+      archive: 'Rebinding', // Drowned Keeper: ranged water magic
+      ridge: 'Bailout', // Ridge Tyrant: ranged cargo/archer command
       abyss: 'Wingman Rally', // Veyrith: aerial battlefield support
     }),
   });
