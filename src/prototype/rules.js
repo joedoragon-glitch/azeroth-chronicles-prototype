@@ -4315,8 +4315,16 @@
       radius: 380,
       orcDamage: { normal: 0.15, true: 0.25 },
     },
-    abyss: { baseline: { normal: 0.12, true: 0.18 }, reduction: { normal: 0.22, true: 0.32 }, duration: 4 },
-    citadel: { baseline: { normal: 0.10, true: 0.15 }, reduction: { normal: 0.20, true: 0.30 }, radius: 390 },
+    abyss: {
+      baseline: { normal: 0.12, true: 0.18 },
+      reduction: { normal: 0.22, true: 0.32 },
+      duration: 4,
+    },
+    citadel: {
+      baseline: { normal: 0.10, true: 0.15 },
+      reduction: { normal: 0.20, true: 0.30 },
+      radius: 390,
+    },
     cindermaw: {
       radius: 340,
       threshold: 0.7,
@@ -4334,7 +4342,12 @@
       cooldown: 12,
     },
     captains: {
-      'supply-highlands': { guardRadius: 320, baseline: 0.12, selfReduction: 0.13, guardDamage: 0.20 },
+      'supply-highlands': {
+        guardRadius: 320,
+        baseline: 0.12,
+        selfReduction: 0.13,
+        guardDamage: 0.20,
+      },
       'frontier-overseer': {
         perHitReduction: 0.05,
         maxStacks: 5,
