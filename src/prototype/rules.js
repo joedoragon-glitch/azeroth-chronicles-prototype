@@ -4297,7 +4297,12 @@
   // Community Snapshot passive completion. These are additive to, not replacements
   // for, the director-approved Greenwood/Marches passives and authored attacks.
   const snapshotPassives = Object.freeze({
-    ridge: { baseline: { normal: 0.08, true: 0.12 }, perArcher: { normal: 0.05, true: 0.06 }, maxArchers: 3, radius: 400 },
+    ridge: {
+      baseline: { normal: 0.08, true: 0.12 },
+      perArcher: { normal: 0.05, true: 0.06 },
+      maxArchers: 3,
+      radius: 400,
+    },
     mine: {
       shellReduction: { normal: 0.18, true: 0.28 },
       repairFraction: { normal: 0.04, true: 0.06 },
