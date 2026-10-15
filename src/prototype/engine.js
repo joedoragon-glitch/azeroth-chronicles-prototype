@@ -4822,9 +4822,13 @@
         // Advance existing restorative pulses even if a boss is holding a
         // board, scripted movement or other early-continuation state.
         if (e.hp > 0) {
-          e.supportHealCd = Math.max(0, (e.supportHealCd || 0) - dt);
-          this.advanceEnemySupportHeal(e, dt);
-        } else delete e.supportHeal;
+          // Uninvolved actors must keep their original state shape and
+          // deterministic non-healer simulation: don't create idle cooldown
+          // fields for every monster during each ordinary combat tick.
+          if ((e.supportHealCd || 0) > 0)
+            e.supportHealCd = Math.max(0, e.supportHealCd - dt);
+          if (e.supportHeal) this.advanceEnemySupportHeal(e, dt);
+        } else if (e.supportHeal) delete e.supportHeal;
         if (e.hp <= 0) {
           if (e.respawn > 0 && !this.peace) {
             e.respawn -= dt;
