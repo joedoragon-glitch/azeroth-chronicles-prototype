@@ -736,7 +736,7 @@
         game.xpRequired(h.level) +
         '\nHero progression only. Troops, resources and construction are managed at town Captains or your barracks.',
       [
-        action('Skills and teachers', () => skillBook(characterMenu)),
+        action('Hero skills', () => skillBook(characterMenu)),
         action('Talents', () => talents(characterMenu)),
       ],
       openMain,
