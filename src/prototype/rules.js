@@ -4833,33 +4833,33 @@
     threshold: rangerSupport.healThreshold,
     range: 350,
     species: Object.freeze({
-      wolf: 'Pack Recovery Howl',
+      wolf: 'Packheart Howl',
       goblin: 'Scrap Poultice',
-      skeleton: 'Bone Rebinding',
-      wraith: 'Echo Mending',
-      stalker: 'Shadow Respite',
+      skeleton: 'Bonebind',
+      wraith: 'Echo Mend',
+      stalker: 'Shadow Stitch',
       mireling: 'Bog Balm',
-      reedbeast: 'Reed-Sap Dressing',
+      reedbeast: 'Sapburst',
       archer: 'Field Dressing',
-      crownguard: 'Regimental First Aid',
-      ashbeast: 'Ember Rekindling',
-      orc: 'Warband First Aid',
-      ogre: 'Stoneground Poultice',
+      crownguard: 'Crown Triage',
+      ashbeast: 'Emberheart',
+      orc: 'Warband Rally',
+      ogre: 'Stone Salve',
     }),
     // Named eligibility follows the canonical attack repertoire and expertise,
     // not the generic boss/captain rank. Their authored ranged techniques and
     // restorative roles do not require the ordinary mob e.ranged flag.
     captains: Object.freeze({
-      'supply-vale': 'Reclamation Triage', // Scornfang: tracking volley / zone control
-      'supply-march': 'Sediment Rehydration', // Direjaw: water and mud projection
-      'supply-crown': 'Husbandry Poultice', // Dreadmaw: distributed brood care
+      'supply-vale': 'Salvage Surge', // Scornfang: tracking volley / zone control
+      'supply-march': 'Silt Pulse', // Direjaw: water and mud projection
+      'supply-crown': 'Harvest Vigor', // Dreadmaw: distributed brood care
     }),
     bosses: Object.freeze({
-      crypt: 'Preservation Binding', // Lifebinder: bolts and estate warding
-      mire: 'Siltwater Mending', // Mirejaw: hydrological ranged effects
-      archive: 'Archive Preservation', // Drowned Keeper: ranged water magic
-      ridge: 'Contracted Care', // Ridge Tyrant: ranged cargo/archer command
-      abyss: 'Wingman Recovery', // Veyrith: aerial battlefield support
+      crypt: 'Marrowbind', // Lifebinder: bolts and estate warding
+      mire: 'Aquifer Rise', // Mirejaw: hydrological ranged effects
+      archive: 'Vellum Mend', // Drowned Keeper: ranged water magic
+      ridge: 'Golden Dividend', // Ridge Tyrant: ranged cargo/archer command
+      abyss: 'Wingman Rally', // Veyrith: aerial battlefield support
     }),
   });
   // Boss telegraphs stay readable, but idle gaps are short and basic attacks only interrupt sustained special pressure occasionally.
