@@ -182,9 +182,15 @@ Pending combined verification specifically includes combat-cast interruption, pa
 
 The charged Ranger Skill 4 now checks for a **living active companion within the rank-scaled 350–390-unit radius and clear line of sight before spending the 20s base cooldown**. The hold UI marks the unavailable state as **NO ALLIES**. This prevents an empty companion-only ability from consuming its cooldown in a solo encounter. The normal hero-only Haste still activates without companions. Static source review only; no tests were run.
 
-## Pending future decision: independent class passive skills
+## Deferred class passives — revisit after combined skill testing
 
-The owner raised a follow-on design topic after the active Skill 1–8 charged-form work: consider **one independent passive per playable hero class** (Paladin, Mage, Ranger). Unlike the eight active abilities, these should not require a skill button or charged input. No passive name, effect, unlock, leveling, automatic scaling, rank system, save field or combat balance has been approved. The owner's sentence explicitly began reconsidering whether the passive effect should "level up," so **do not assume manual leveling or automatic hero-level scaling**. Treat progression as undecided and discuss designs only after the active skill work.
+**Owner decision, 15 October 2026:** Defer independent class passives. First complete the coordinated validation and hands-on playtesting of all eight normal/charged active skills for Paladin, Mage and Ranger. Assess each class's performance, survival, damage, party contribution and skill-rotation patterns across ordinary enemies, captains, normal/TRUE bosses and difficulty modes.
+
+**Purpose if later needed:** Treat one potential class-specific passive per hero class as a *class-wide balancing lever*, rather than repeatedly changing individual damage numbers, cooldowns and skill effects when evidence points to a broader class imbalance. This is a possible cleaner second-stage approach, **not** approval to add passive buffs now. Any class passive should preserve clear class identity, enemy counterplay and meaningful difficulty; avoid automatically compensating for a specific overpowered or broken skill through an unrelated global passive.
+
+**Explicit non-decisions:** No passive names, mechanics, positive/negative modifiers, unlocks, ranks, manual upgrades, automatic level scaling, save changes or skill interactions are specified or authorized. A class may need no new passive if testing shows a healthy balance. Review balance evidence and propose targeted class-wide options only after the combined test pass; seek owner approval before implementing them.
+
+**Current implementation consequence:** Do not add, tune or document speculative passives as if already playable. Leave all active skill code and 0.65-second charged input untouched by this decision. Continue the multi-file GitHub Pages/PWA workflow and the already-requested no-tests-until-consolidation policy.
 
 ## Integration rule
 
