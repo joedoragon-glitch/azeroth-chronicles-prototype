@@ -184,4 +184,53 @@ assert.equal(R.roomCaptains['supply-crown'].summon.guardPerSummon, 0.25);
   near(e.hp - before, e.maxHp * R.snapshotPassives.cindermaw.bossRegen.normal * 0.1,
     'actual projectile/hazard tick advances finite provisioning');
 }
+ // Matrix covers the high-pressure scenario the passive completion exists for:
+ // three classes, two difficulties, Normal/TRUE and solo/full party.
+ for (const heroClass of ['paladin', 'mage', 'ranger'])
+   for (const mode of ['normal', 'nightmare'])
+     for (const form of ['normal', 'true'])
+       for (const partyCount of [0, 6]) {
+         const c = new C(mode, heroClass, () => 0.9);
+         c.s.party = Array.from({ length: partyCount }, (_, i) =>
+           c.unit(i % 2 ? 'archer' : 'soldier', c.hero.x, c.hero.y),
+         );
+         const profiles = ['ridge', 'mine', 'warlord', 'abyss', 'citadel'];
+         for (const family of profiles) {
+           const e = c.bossEnemy(c.boss(family), form, c.safe(850, 850));
+           Object.assign(e, { aggro: true, neutral: false });
+           c.zone().enemies = [e];
+           const defense = c.snapshotBossIncomingFactor(e);
+           assert(
+             defense > 0.5 && defense < 1,
+             family + ' has meaningful but bounded opening protection in ' +
+               heroClass + '/' + mode + '/' + form + '/' + partyCount,
+           );
+           assert.equal(
+             c.snapshotBossIncomingFactor({ ...e, type: 'mob' }),
+             1,
+             'same family name on ordinary enemy is not a boss passive',
+           );
+           if (form === 'true') {
+             const normal = { ...e, form: 'normal' };
+             assert(
+               defense < c.snapshotBossIncomingFactor(normal),
+               family + ' TRUE passive strictly improves on normal form',
+             );
+           }
+         }
+         const lord = c.bossEnemy(c.boss('darklord'), form, c.safe(850, 850));
+         c.zone().enemies = [lord];
+         Object.assign(lord, { aggro: true, neutral: false });
+         const source2 = c.s.party[0]?.id || 'hero';
+         for (const source of ['hero', source2, 'hero', source2])
+           c.snapshotPassiveRecordHit(lord, 20, source);
+         const expected = partyCount
+           ? 1 - R.snapshotPassives.darklord.reduction[form]
+           : 1 - R.snapshotPassives.darklord.reduction[form];
+         near(
+           c.snapshotBossIncomingFactor(lord),
+           expected,
+           'veteran counter protects in solo and full party combat',
+         );
+       }
 console.log('PASS Snapshot completion: 7 Normal/TRUE boss passives and 2 captain passives; original 4+3 preserved');
