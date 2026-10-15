@@ -1857,6 +1857,91 @@
         }
         z.flightProjectVersion = 1;
       }
+      // The Dark Lord's paid state soldiery is multiracial, while wild wolves,
+      // local civilian life and independent monster households remain native.
+      // Only visual/doctrine metadata and readable names change: never HP,
+      // damage, level, rewards, spawn count, home or saved enemy identity.
+      crownMilitaryRoster(z) {
+        if (this.peace) return;
+        const lineages = ['crownguard', 'goblin', 'orc', 'archer', 'ogre'];
+        const label = (e) =>
+          'Crown ' + (e.crownAncestry === 'crownguard' ? 'shield' : e.crownAncestry) +
+          (e.ranged ? ' marksman' : ' guard');
+        if (z.id === 'citadel') {
+          const native = z.enemies.filter((e) => e.guard && e.form === 'normal' && !e.reinforcement)
+            .sort((a, b) => this.idOrder(a, b));
+          for (const [j, e] of native.entries()) {
+            if (e.species !== 'crownguard') continue;
+            e.crownTroop = true;
+            e.crownAncestry = lineages[j % lineages.length];
+            e.name = label(e);
+          }
+          return;
+        }
+        const anchors = {
+          highlands: [[1050, 1360], [1850, 1160], [2950, 720]],
+          frontier: [[155, 615], [2600, 1650], [3000, 2700], [1700, 1250]],
+          crown: [[720, 900], [2580, 900], [3050, 2320], [3200, 2860]],
+        }[z.id];
+        if (!anchors) return;
+        const distance = (e) => Math.min(...anchors.map(([x, y]) => Math.hypot(e.home?.x - x, e.home?.y - y)));
+        const quota = { highlands: 5, frontier: 10, crown: 12 }[z.id];
+        const soldiers = z.enemies.filter((e) =>
+          e.type === 'mob' && e.form === 'normal' && !e.guard && !e.summon &&
+          !e.mini && !e.captain && !e.roomCaptain && !e.fieldCaptain &&
+          !e.nightOnly && !e.neutral && !e.strongholdResident &&
+          ['crownguard', 'goblin', 'orc', 'archer', 'ogre'].includes(e.species) &&
+          distance(e) < 880)
+          .sort((a, b) => distance(a) - distance(b) || this.idOrder(a, b))
+          .slice(0, quota);
+        for (const [j, e] of soldiers.entries()) {
+          e.crownTroop = true;
+          e.crownAncestry = e.species === 'crownguard' ? lineages[j % lineages.length] : e.species;
+          e.name = label(e);
+        }
+      }
+      // Sparse authored standards at state-operated infrastructure, never a
+      // repetitive blanket banner grid or a new physical road obstacle.
+      regimeHeraldry(z) {
+        const anchors = {
+          highlands: [[1100, 1370], [1850, 1080], [3090, 590], [770, 1680]],
+          frontier: [[260, 650], [1720, 1200], [2570, 1600], [2940, 2570], [3130, 570]],
+          crown: [[735, 850], [2550, 850], [3030, 2290], [3250, 2850], [3300, 3110], [300, 1530]],
+        }[z.id];
+        if (!anchors || z.regimeHeraldryVersion === 1) return;
+        const before = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          z.props = z.props.filter((p) => !String(p.id || '').startsWith('regime-banner-'));
+          const nearRoad = (p) => this.distanceToRoad(z, p) < 72;
+          for (const [index, [x, y]] of anchors.entries()) {
+            let chosen = null;
+            for (const radius of [0, 60, 105, 160, 215]) {
+              for (let k = 0; k < (radius ? 12 : 1); k++) {
+                const angle = k * Math.PI / 6,
+                  p = { x: x + Math.cos(angle) * radius, y: y + Math.sin(angle) * radius };
+                if (this.blocked(p.x, p.y, z.id, 12, true) || nearRoad(p) ||
+                    z.npcs.some((n) => Math.hypot(n.x - p.x, n.y - p.y) < 78) ||
+                    z.nodes.some((n) => Math.hypot(n.x - p.x, n.y - p.y) < 65) ||
+                    z.buildings.some((b) => Math.hypot(b.x - p.x, b.y - p.y) < 85) ||
+                    z.props.some((other) => Math.hypot(other.x - p.x, other.y - p.y) < (other.r || 0) + 60))
+                  continue;
+                chosen = p;
+                break;
+              }
+              if (chosen) break;
+            }
+            if (chosen) z.props.push({
+              id: 'regime-banner-' + z.id + '-' + index,
+              ...chosen, r: 0, decorative: true, structure: 'crown-banner',
+              regimeHeraldry: true,
+            });
+          }
+          z.regimeHeraldryVersion = 1;
+        } finally {
+          this.s.zone = before;
+        }
+      }
       authoredPlaces(z) {
         if (this.supplyRoom(z.id)) {
           this.treasuryInterior(z);
@@ -1901,6 +1986,7 @@
           for (const e of z.enemies) this.upgradeRingleader(e);
           this.guardianPopulation(z);
           this.guardianRewards(z);
+          this.crownMilitaryRoster(z);
           return;
         }
         if (z.placesVersion !== 2) {
@@ -1948,6 +2034,8 @@
         this.finalBossPopulation(z);
         this.regionalHandoffLife(z);
         this.ironrootLivelihood(z);
+        this.crownMilitaryRoster(z);
+        this.regimeHeraldry(z);
       }
       spaceQuestBoard(z) {
         if (dungeonIds.includes(z.id) || z.boardPositionVersion === 2) return;
