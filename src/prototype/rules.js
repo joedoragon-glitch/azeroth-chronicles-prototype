@@ -4885,7 +4885,7 @@
       ranger: { radius: 370, radiusStep: 10, damage: 2.9, slow: 1.25, slowStep: 0.2 },
     },
     6: {
-      paladin: { radius: 120, radiusStep: 5, damage: 2.4, push: 35, pushStep: 4 },
+      paladin: { radius: 120, radiusStep: 5, damage: 3.4, push: 35, pushStep: 4 },
       mage: { damage: 3.0, slow: 2.5, slowStep: 0.25 },
       ranger: { arrows: 3, damage: 3.3, haste: 3, hasteStep: 0.2 },
     },
@@ -4895,8 +4895,8 @@
       ranger: { damage: 12, slow: 1.5, slowStep: 0.25 },
     },
     8: {
-      paladin: { radius: 500, radiusStep: 10, damage: 5.1, heal: 0.25, wardReduction: 0.25, wardDuration: 4, wardStep: 0.25 },
-      mage: { radius: 500, radiusStep: 10, damage: 5.5, fracture: 0.12, fractureStep: 0.01, fractureDuration: 4.5 },
+      paladin: { radius: 500, radiusStep: 10, damage: 8, heal: 0.25, wardReduction: 0.25, wardDuration: 4, wardStep: 0.25 },
+      mage: { radius: 500, radiusStep: 10, damage: 8, fracture: 0.12, fractureStep: 0.01, fractureDuration: 4.5 },
       ranger: { damage: 15, haste: 4, hasteStep: 0.25, heal: 0.2 },
     },
   });
