@@ -37,13 +37,18 @@ for (const species of ['wolf', 'goblin', 'skeleton', 'wraith', 'stalker', 'mirel
   const ally = mob(species, { hp: 400 });
   assert(g.enemyHealProfile(healer), species + ' has an authored healing identity');
   assert(g.enemySupportHeal(healer), species + ' heals a wounded companion');
-  near(ally.supportHeal.remaining, 50, species + ' 5% recovery at the base tier');
+  // The live zone may normalize ally max HP as its ordinary population
+  // migrates; assert against the recipient's actual post-normalization values.
+  const budget = Math.min(ally.maxHp - ally.hp,
+    ally.maxHp * R.enemySupportHealing.fraction * g.enemyHealMultiplier(healer));
+  const before = ally.hp;
+  near(ally.supportHeal.remaining, budget, species + ' 5% of recipient maximum HP');
   near(healer.supportHealCd, 10, species + ' ten-second cooldown');
   assert(!g.enemySupportHeal(healer), species + ' cannot duplicate the cast');
   g.advanceEnemySupportHeal(ally, 2);
-  near(ally.hp, 420, species + ' partial five-second heal');
+  near(ally.hp, before + budget * 2 / 5, species + ' partial five-second heal');
   g.advanceEnemySupportHeal(ally, 3);
-  near(ally.hp, 450, species + ' full heal');
+  near(ally.hp, before + budget, species + ' full heal');
   assert(!ally.supportHeal, species + ' effect completes');
 }
 console.log('PASS twelve ranged species use individual identity and the Archer healing interval');
