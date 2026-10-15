@@ -548,6 +548,15 @@
         }
         if (slot === 3 && this.hero.class === 'mage' && !isCharged &&
             !this.tacticalSkillTarget(R.heroTactics.mage.interrupt.range + steps * R.heroTactics.mage.interrupt.rangeStep, true)) return false;
+        // A companion-only rally needs an eligible recipient. Unlike tap
+        // Haste, charged Ranger Skill 4 should never waste 20s in solo play.
+        if (slot === 4 && this.hero.class === 'ranger' && isCharged) {
+          const radius = R.heroTactics.ranger.rally.radius +
+            steps * R.heroTactics.ranger.rally.radiusStep;
+          if (!this.activeLivingParty().some((ally) =>
+            dist(ally, this.hero) <= radius && this.line(this.hero, ally)))
+            return false;
+        }
         const cost = this.skillManaCost(slot, rank, isCharged);
         if (this.hero.mp < cost) return false;
         this.hero.mp -= cost;
