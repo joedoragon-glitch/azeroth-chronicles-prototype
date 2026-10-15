@@ -78,3 +78,48 @@ The notice geometry/interruption helper and concise witness shell check remain i
 The v4 save version and existing keys remain compatible. An optional bounded `rogueSlow` remaining-time field distinguishes the authorized stronger Rogue condition; old saves without it retain ordinary Slow behavior. Death/recovery/expiration clear it. No economy, loot, training, quest payout or per-victim damage coefficient changes were made. The ordinary Rogue area correction intentionally changes who is struck to match its existing visible circle.
 
 Per-design handoffs: `crown-direwolf-riders.json`, `ogre-body-aesthetic.json`, `thornfang-scout-tracks.json`, `ambient-harmless-wander.json`, `thornfang-trail-witness.json`, and `lantern-wraith-light.json` in `tools/sprites/design-handoffs`. These preserve procedural owners, stable identity, revision references and future animation requirements. No generated raster replacement or owner acceptance of new aesthetics is implied.
+
+## Selected hero audiovisual addition — awaiting the hero skill handoff
+
+The owner selected `feature/hero-skill-av-20261015` at
+`3687c17b78c499d509454edf71bfb99dc202aa81` for this same PR #308 and said the
+remaining hero skill overhaul handoff is coming next. GitHub source and ancestry
+were retrieved, not just the chat summary. The AV source has two presentation
+commits above active-skill parent `1d142ea7936e4004e697fb9ebbb7205eb6d33cf5`.
+The currently retrieved active-skill branch
+`feature/hero-skills-2-4-on-snapshot-20261015` is at
+`2300d7e9c9e7142595956ae3dca4d3acdbe37f15`; its later commits add concise
+player-facing skill references. Both descend from the same active-skill parent.
+Historical PR #305 is excluded.
+
+**Selected, not yet merged into the runtime.** The AV branch depends on the full
+new Skills 1–8 implementation. A whole ancestry merge now would also import the
+hero gameplay overhaul before its promised handoff; porting only its visual hooks
+would leave some effects describing skills absent from the combined runtime.
+Preserve the existing combined implementation until that dependency is supplied.
+The exact source [48-form mapping](HERO_SKILL_AV_IMPLEMENTATION_20261015.md),
+[development ledger](HERO_SKILL_AV_DEVELOPMENT_LEDGER_20261015.md),
+[combined verification plan](HERO_SKILL_AV_COMBINED_VERIFICATION_20261015.md), and
+`tools/sprites/design-handoffs/hero-skills-av.json` are retained here unchanged as
+source handoff records. Their statements describe the source branch, not completed
+integration or validation of #308.
+
+When the hero handoff arrives, establish its latest authoritative commit first,
+then merge that source and AV by ancestry into this branch. Keep the shared
+0.65-second active clock, actual-HP interruption accounting after final mitigation,
+short recovery, 65%/85% Slow cooldown recovery, post-damage companion completion,
+healing/passives and all iPhone fixes. Reconcile shell charge rise/ready/cancel
+feedback against the shared clock (the AV source still uses `performance.now()`),
+avoid double interruption audio/visuals, retain the warning underlay and separate
+actor captions rather than restoring the old ground cue pass, and keep enemy and
+companion presentation paths. New script inventory, load order, entry pages and
+service worker must be reconciled at one combined version; do not copy the older
+AV package/cache identifiers over dev.63. The eventual authorized regeneration
+and validation must include all 48 forms, reduced motion, sound limits, device
+performance, historical saves and PWA/offline behavior. No balance or 0.65-second
+change is authorized by this AV addition.
+
+This documentation-only checkpoint does not change runtime/generated artifacts or
+source receipts. No tests, builds, browser sessions, CI, merge into main or
+deployment were initiated. Continue this same PR; do not create an AV PR or treat
+this dependency record as completed incorporation.
