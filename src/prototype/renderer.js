@@ -1961,14 +1961,16 @@
       // fires/forges illuminate their own work. All sources are presentational:
       // no generated actors, blockers, saved flags or combat visibility changes.
       const domestic = /(?:^|[-_])(?:house|cottage|workshop|boathouse|smithy|forgehouse|watchhouse|hut|lodge|longhouse|dwelling)(?:$|[-_])/i;
-      const fires = /(?:^|[-_])(?:cookfire|fireplace|campfire|hearth|warm-brazier|ember-pit|forge|field-kitchen|torch|lantern)(?:$|[-_])/i;
+      const fires = /(?:^|[-_])(?:cookfire|fireplace|campfire|hearth|brazier|ember-pit|forge|field-kitchen|torch|furnace)(?:$|[-_])/i;
+      const lanterns = /(?:^|[-_])(?:lantern|grave-lamp)(?:$|[-_])/i;
       const nightNow = game.night();
       const nightSources = !nightNow ? [] : [
         ...z.props.flatMap((prop) => {
           const structure = String(prop.structure || '');
           const kind = domestic.test(structure) ? 'window'
-            : fires.test(structure) ? /forge|field-kitchen/.test(structure) ? 'work-fire' : 'fire'
-              : null;
+            : lanterns.test(structure) ? 'lantern'
+              : fires.test(structure) ? /forge|field-kitchen/.test(structure) ? 'work-fire' : 'fire'
+                : null;
           return kind ? [{ ...screen(prop), kind, id: prop.id }] : [];
         }),
         ...z.buildings.filter((b) => b.progress >= 4)
