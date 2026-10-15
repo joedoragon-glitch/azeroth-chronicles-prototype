@@ -854,10 +854,14 @@
               let allies = 0;
               for (const ally of this.activeLivingParty()) {
                 if (dist(ally, this.hero) > radius || !this.line(this.hero, ally)) continue;
-                ally.rangerRallyUntil = Math.max(ally.rangerRallyUntil || 0, until);
+                const previousActive = ally.rangerRallyZone === this.zoneId &&
+                  (ally.rangerRallyUntil || 0) > this.s.time;
+                ally.rangerRallyUntil = Math.max(previousActive ? ally.rangerRallyUntil : 0, until);
                 ally.rangerRallyZone = this.zoneId;
-                ally.rangerRallyMovement = Math.max(ally.rangerRallyMovement || 0, movement);
-                ally.rangerRallyAttack = Math.max(ally.rangerRallyAttack || 0, attackSpeed);
+                ally.rangerRallyMovement = Math.max(
+                  previousActive ? ally.rangerRallyMovement || 0 : 0, movement);
+                ally.rangerRallyAttack = Math.max(
+                  previousActive ? ally.rangerRallyAttack || 0 : 0, attackSpeed);
                 allies++;
               }
               this.event('chargedArea', {
