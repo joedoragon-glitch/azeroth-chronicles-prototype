@@ -10,7 +10,7 @@ function probe(night, optimized = true, sources = []) {
   const calls = { radial: 0, gradient: 0, fills: 0, lanternFrames: 0 };
   const ctx = {
     save() {}, restore() {}, beginPath() {}, moveTo() {}, lineTo() {},
-    stroke() {}, fill() {}, arc() {}, ellipse() {},
+    stroke() {}, strokeRect() {}, fill() {}, arc() {}, ellipse() {},
     fillRect(x, y, w, h) { calls.fills++; if (w === 12 && h === 12) calls.lanternFrames++; },
     createLinearGradient() { calls.gradient++; return { addColorStop() {} }; },
     createRadialGradient() { calls.radial++; return { addColorStop() {} }; },
