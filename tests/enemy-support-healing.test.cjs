@@ -102,7 +102,7 @@ console.log('PASS twelve ranged species use individual identity and the Archer h
     captain: true, roomCaptain: true, captainProfile: 'supply-crown', ranged: false, hp: 100,
   });
   const ally = mob('ashbeast', { hp: 300, owner: leader.id });
-  assert.equal(g.enemyHealProfile(leader), 'Harvest Vigor');
+  assert.equal(g.enemyHealProfile(leader), 'Grafting');
   assert(g.enemySupportHeal(leader), 'Dreadmaw prioritizes his wounded brood');
   assert(ally.supportHeal && !leader.supportHeal);
 }
