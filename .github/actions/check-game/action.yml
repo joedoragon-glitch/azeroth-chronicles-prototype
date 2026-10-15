@@ -41,7 +41,10 @@ runs:
         git fetch --depth=1 origin c6ce1af236bddd7ca881903499c4cf5de175f9e2
         mkdir -p "$RUNNER_TEMP/perf-v09-baseline"
         git archive c6ce1af236bddd7ca881903499c4cf5de175f9e2 | tar -x -C "$RUNNER_TEMP/perf-v09-baseline"
-        node --expose-gc scripts/perf-v09-equivalence.cjs "$RUNNER_TEMP/perf-v09-baseline"
+        git fetch --depth=1 origin cb1607c3a149d3ae51e01ceef615f0eca1ffdf18
+        mkdir -p "$RUNNER_TEMP/combined-simulation-baseline"
+        git archive cb1607c3a149d3ae51e01ceef615f0eca1ffdf18 | tar -x -C "$RUNNER_TEMP/combined-simulation-baseline"
+        COMBINED_SIMULATION_ROOT="$RUNNER_TEMP/combined-simulation-baseline" node --expose-gc scripts/perf-v09-equivalence.cjs "$RUNNER_TEMP/perf-v09-baseline"
     - name: Reproduce cooldown balance evidence summary
       id: cooldown_summary
       continue-on-error: true

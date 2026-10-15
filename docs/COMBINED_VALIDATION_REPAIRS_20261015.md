@@ -25,6 +25,22 @@ certification. PR #308 remains the only candidate. Nothing is merged or deployed
 - Dark Lord shield expectations account for the already approved passive mitigation.
   Shared audio foley checks use the new owner's actual throttle interval.
 
+- The performance harness retains its original c6ce1af rendering oracle and exact
+  same-content pixels. Its simulation oracle is the exact integrated cb1607c3
+  parent, checked against historical source hashes, so all eight current skills
+  can be compared without expecting the retired shared skills. The 2,880 paired
+  frames, six historical save continuations and 40 full-render comparisons pass.
+  Full terrain/collision, save values and actual damage remain compared; this is
+  not an exception that suppresses arbitrary mechanics differences. Frozen browser
+  performance harnesses also load the new hero presentation owner on both sides.
+
+- WebKit now collects independent browser failures before its existing final
+  certificate, matching Chromium's batch policy. The final gate requires every
+  mandatory browser step to succeed and rejects any failed optional performance
+  check. Continuing collection cannot set the validated output or authorize a
+  release after failure. This prevents the first obsolete Archive assertion from
+  hiding the rest of the integrated audiovisual/browser results.
+
 ## Combined evidence and limits
 
 Canonical regeneration of dev.64 reproduced its generated tree exactly; formatting

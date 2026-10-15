@@ -170,6 +170,8 @@ const server = http.createServer((req, res) => {
                   need(renderer.metrics().transientEffects <= 40, 'FX ceiling');
                   maxFx = Math.max(maxFx, renderer.metrics().transientEffects);
                   if (rank === 4) {
+                    platform.cameraZoom = 1.5;
+                    renderer.draw();
                     const col = ci * 2 + Number(charged),
                       row = slot - 1;
                     sc.drawImage(canvas, col * 200, row * 120, 200, 120);

@@ -57,6 +57,33 @@ for (const skillRank of [1, 4, 8])
         const fx = Visuals.queue(g.effects, g, []);
         assert(fx.some((f) => f.type === 'heroSkill' && f.slot === slot));
         assert(Art.profile(event), 'every form has its own material/motif mapping');
+        const audio = new (require('../src/prototype/audio.js'))(),
+          sounds = [];
+        audio.ctx = { currentTime: 1, state: 'running' };
+        audio.playSoundEvent = () => false;
+        for (const method of [
+          'tone',
+          'sweep',
+          'noiseBurst',
+          'bowRelease',
+          'rapidBow',
+          'steelImpact',
+        ])
+          audio[method] = (...args) => sounds.push([method, ...args]);
+        const observed = [...g.effects];
+        for (let step = 0; step < 12; step++) {
+          g.effects = [];
+          g.updateProjectiles(0.05);
+          observed.push(...g.effects);
+        }
+        for (const receipt of observed) {
+          audio.ctx.currentTime += 0.1;
+          audio.effect(receipt);
+        }
+        assert(
+          sounds.length > 0,
+          `${cls} ${slot} ${charged} rank ${skillRank} actual cast/flight/contact audio`,
+        );
       }
     }
   }
