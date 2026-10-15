@@ -211,9 +211,19 @@ console.log('PASS region, night, progression, night-species, TRUE, elite scaling
   delete attendant.supportHeal;
   attendant.hp = attendant.maxHp;
   boss.healCd = 8;
-  assert(g.enemySupportHeal(boss), 'boss may self-heal when allies no longer need it');
-  near(boss.healCd, 8, 'separate authored boss recovery cooldown survives');
-  near(boss.supportHealCd, 10, 'boss support cast consumes its own cooldown');
+  assert(!g.enemySupportHeal(boss), 'Lifebinder keeps existing vitality siphon instead of duplicate self-healing');
+  near(boss.healCd, 8, 'existing boss recovery and support remain independent');
+  near(boss.supportHealCd, 0, 'ineligible duplicate self-cast does not spend support cooldown');
+}
+{
+  const { g } = fixture('highlands');
+  const ridge = g.bossEnemy(g.boss('ridge'), 'normal', { x: 980, y: 900 });
+  ridge.aggro = true;
+  ridge.hp = ridge.maxHp * 0.25;
+  g.zone().enemies.push(ridge);
+  assert(g.enemySupportHeal(ridge), 'Ridge Tyrant can self-heal without duplicate authored recovery');
+  assert(ridge.supportHeal && ridge.supportHeal.skill === 'Bailout');
+  near(ridge.supportHealCd, R.rangerSupport.cooldown, 'Ridge self-heal uses Archer cooldown');
 }
 {
   const { g, mob } = fixture();
