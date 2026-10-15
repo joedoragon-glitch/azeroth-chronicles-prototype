@@ -126,38 +126,40 @@
         ],
       ],
     });
+    // Optional Keeper reference: one short tap/charge distinction per skill.
+    // The Adventure → Hero Skills menu is the primary quick reference.
     const skills = {
       paladin: {
-        2: 'Sundering Strike: 2.2× Power damages one foe and reduces its outgoing damage by 12–20% for 1.8–2.2s; charged Holy Cleave applies the same weakening to foes in a frontal cone. The duration is shorter than the skill cooldown to prevent a permanent single-button weaken loop.',
-        3: 'Shield Stance: raise your shield for up to 8 seconds, greatly reducing incoming damage. Basic Skill 1 is disabled and other attacks deal 60% damage. Tap again to lower the shield and start its cooldown. Charged Shield Bash damages and pushes a nearby frontal group; bosses and captains take half bash damage.',
-        4: 'Judgment: strike and provoke an enemy to attack you. Charged Grand Judgment damages and taunts a group around the target.',
-        5: 'Tap: a 2.3× Power holy area attack, up to 6 nearby foes. Charge: Consecrated Wave hits up to 8 foes with 3.2× Power per target and briefly weakens them. Both share one skill rank and cooldown slot.',
-        6: 'Tap: rush toward a visible foe and strike. Charge: Vanguard Impact rushes into a short holy shockwave, striking and pushing nearby enemies.',
-        7: 'Tap: 6× Power holy area damage to up to 6 reachable enemies. Charge: Oath Strike hits up to 8 foes for 7.2× Power each and weakens those struck. Locked chosen targets take priority; large packs cannot all be erased instantly.',
-        8: 'Tap Sanctuary Oath: holy area damage (3× Power) within 320 units, up to 8 foes, self-heal 15% max HP, grant the hero and nearby living companions 20% incoming damage reduction for 3.5s (longer with skill rank). Charge Last Bastion: 5.5× Power holy area damage within 420+ units, up to 10 foes, self-heal 20%, weaken struck enemies, and grant a 30% party ward for 5s+. Ward and Shield Stance never multiply; only the stronger reduction protects the hero. Neither version grants immunity.',
+        2: 'Tap Sundering Strike: hit and weaken one enemy. Charge Holy Cleave: weaken a frontal group.',
+        3: 'Tap Shield Stance: guard for 8s; basic attacks stop and other damage drops. Tap again to lower. Charge Shield Bash: push nearby enemies.',
+        4: 'Tap Judgment: strike and taunt one foe. Charge Grand Judgment: hit and taunt a group. Boss specials keep their own targets.',
+        5: 'Tap: holy area damage to 6 enemies. Charge Consecrated Wave: stronger holy damage and weaken up to 8.',
+        6: 'Tap Vanguard Rush: approach and strike. Charge Vanguard Impact: rush, then push nearby enemies.',
+        7: 'Tap: holy damage to 6 enemies. Charge Oath Strike: stronger holy damage and weaken up to 8.',
+        8: 'Tap Sanctuary Oath: heal 15% and protect nearby allies with a 20% ward. Charge Last Bastion: heal 20%, grant 30% ward and weaken enemies. No immunity.',
       },
       mage: {
-        2: 'Frost Bolt deals 2.2× Power and slows one target for 2.0–2.2s; charged Frost Burst deals 2.2× Power per enemy in a circular area, slowing them for 3.2–4.2s. Cooldown gaps keep the same Frost attack from suppressing movement indefinitely.',
-        3: 'Spell Interrupt: cancel one enemy attack while it is warned or being aimed. Charged Silence Field blocks special skills for enemies, the Mage and companions within the field, but allows movement and basic attacks.',
-        4: 'Arcane Fracture: damage one enemy and increase all incoming hero and companion damage. Charged Arcane Rupture hits a group and applies a stronger, non-stacking vulnerability.',
-        5: 'Tap Force Pulse: 2.3× Power area damage within 350 units, up to 6 foes, with collision-safe knockback. Charge Force Wave: 3× Power area damage within 370+ units, up to 8 foes, with larger knockback. Neither version applies Slow.',
-        6: 'Tap: a slowing magic projectile. Charge: a concentrated arcane beam deals more damage and lengthens Slow on one foe.',
-        7: 'Tap Arcane Chain: strikes up to 3 targets around the selected enemy, dealing 6.5×/4.5×/3× Power in sequence. Charge Chainstorm: strikes up to 5 targets with 9×/6×/4× Power; no Slow or new status.',
-        8: 'Tap Astral Detonation: targeted area explosion within 210 units of the enemy, up to 5 foes; primary target takes 6× Power and other enemies 3.5×. Charge Arcane Cataclysm: radius 260+, up to 7 foes; primary takes 9× and others 5× Power, plus 25–29% incoming-damage vulnerability for only 2.5s. This uses the existing nonstacking Fracture status. Neither version heals or grants immunity.',
+        2: 'Tap Frost Bolt: damage and slow one foe for 2–2.2s. Charge Frost Burst: slow nearby enemies for 3.2–4.2s.',
+        3: 'Tap Spell Interrupt: cancel one warned attack. Charge Silence Field: block special skills for enemies, you and companions inside.',
+        4: 'Tap Arcane Fracture: damage and increase incoming damage to one foe. Charge Arcane Rupture: stronger vulnerability on a group; no stacking.',
+        5: 'Tap Force Pulse: knock back up to 6 enemies. Charge Force Wave: stronger push on up to 8. Neither slows.',
+        6: 'Tap: a slowing magic shot. Charge: stronger focused beam and longer slow.',
+        7: 'Tap Arcane Chain: strike up to 3 foes. Charge Chainstorm: stronger chain against up to 5. No slow.',
+        8: 'Tap Astral Detonation: targeted blast, up to 5 foes. Charge Arcane Cataclysm: stronger blast, up to 7, with brief 25–29% vulnerability. No immunity.',
       },
       ranger: {
-        2: 'Pinning Shot fires two arrows and briefly slows the target; charged Pinning Volley pierces a line of enemies and slows those struck.',
-        3: 'Tap to heal yourself; charge to heal wounded living companions too. Neither restores the fallen.',
-        4: 'Tap Movement Haste: hero moves 25% faster for 4–5.75s. Charge Companion Rally: nearby living active companions within 350–390 units gain 15–19% movement speed and 8–12% ordinary attack speed for 4–5s. Requires at least one living active companion within range, otherwise the cast is unavailable without cooldown cost. No dash, invulnerability, or special cooldown acceleration.',
-        5: 'Tap: 2.3× Power area damage to up to 6 nearby enemies. Charge Arrow Rain: real 2.9× Power projectiles at up to 8 foes in a wider area, each briefly slowing the target on impact. The arrows may be obstructed or miss a moving target.',
-        6: 'Tap Repelling Shot: ranged attack plus a 45–65-unit push on hit, without haste. Charge Repelling Volley: three rapid shots totaling 4.2× Power, with a final collision-safe push of 65–85 units. Neither changes movement or attack speed.',
-        7: 'Tap: one targeted defense-piercing arrow. Charge: a stronger piercing shot also briefly slows its target.',
-        8: 'Tap Hunter’s Salvo: fires one 5× Power arrow at each of up to 3 enemies within radius 260 of the selected target; if exactly one eligible enemy remains, it fires 2 arrows at that foe instead. Charge Grand Hunt: fires two 4× Power arrows at each of up to 5 enemies within radius 320–360; if only one eligible enemy remains, 3 arrows strike that target instead. No piercing, invulnerability, healing, or haste; Skill 7 remains the superior single-boss specialist.',
+        2: 'Tap Pinning Shot: two slowing arrows. Charge Pinning Volley: slow enemies along a line.',
+        3: 'Tap: heal yourself. Charge: heal you and wounded living companions. Neither revives the fallen.',
+        4: 'Tap Movement Haste: move 25% faster. Charge Companion Rally: nearby allies move 15–19% faster and attack 8–12% faster briefly.',
+        5: 'Tap: hit up to 6 nearby enemies. Charge Arrow Rain: fire stronger slowing arrows at up to 8.',
+        6: 'Tap Repelling Shot: push one enemy with an arrow. Charge Repelling Volley: three arrows and a stronger final push; no haste.',
+        7: 'Tap Piercing Arrow: one guard-piercing strike. Charge: stronger piercing strike plus slow.',
+        8: 'Tap Hunter’s Salvo: arrows at up to 3 foes. Charge Grand Hunt: two arrows each at up to 5. Extra arrow against a lone foe; no piercing.',
       },
     };
     shelves.push({
       title: 'Your skills',
-      intro: 'Effects first; current ranks and timing on request.',
+      intro: 'Quick effects here; select a skill, then ask for figures. Hero Skills is also in the Adventure menu.',
       topics: D.skills.map(([slot, title]) => {
         const rank = game.hero.skills[slot - 1] || 1,
           cooldown = (charged) =>
