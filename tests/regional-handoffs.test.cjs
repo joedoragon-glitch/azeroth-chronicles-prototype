@@ -30,8 +30,8 @@ for (const mode of ['normal', 'nightmare'])
     assert.equal(z.enemies.filter((e) => e.guard).length, C.data.regions[c.regionIndex()].guards);
     assert(z.enemies.filter((e) => e.guard).every((e) => e.gold === 0 && e.xp === 0));
     assert(
-      z.enemies.filter((e) => e.species === 'wolf').every((e) => !e.ranged),
-      'Wolves retain their existing melee identity',
+      z.enemies.filter((e) => e.species === 'wolf' && !e.mountedCrownRider).every((e) => !e.ranged),
+      'Wild Wolves retain their melee identity; Crown-mounted archers are distinct',
     );
     assert(z.props.some((p) => p.dungeonDistrict === a.walkable[0].id));
     const traps = c.traps(),
@@ -173,7 +173,7 @@ for (const id of ids) {
   assert(!r.blocked(r.hero.x, r.hero.y));
   assert(r.activeParty().every((e) => !r.blocked(e.x, e.y)));
   console.log(
-    'PASS Highlands residence preserves Wolf captain, raid circulation and saved cache/death state',
+    'PASS Highlands residence preserves Crag, mounted Crown guards, raid circulation and saved cache/death state',
   );
 }
 for (const region of ['vale', 'march', 'highlands']) {
