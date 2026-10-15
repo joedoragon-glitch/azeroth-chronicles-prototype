@@ -194,7 +194,11 @@
           enemy.hp > 0 && !enemy.neutral && !enemy.returning &&
           dist(enemy, center) <= range && this.line(hero, enemy);
         const foes = radius
-          ? this.zone().enemies.filter((enemy) => eligible(enemy)).sort((a, b) => this.idOrder(a, b))
+          ? this.zone().enemies.filter((enemy) => eligible(enemy))
+            .sort((a, b) => dist(a, hero) - dist(b, hero) || this.idOrder(a, b))
+            .slice(0, slot === 5 ? R.heroAreaTargetCaps[5].charged
+              : slot === 7 && hero.class === 'paladin'
+                ? R.heroAreaTargetCaps[7].paladinCharged : Infinity)
           : [];
         const deal = (enemy, amount, area = false, piercing = false) =>
           this.damage(enemy, amount, 'hero', {
@@ -956,9 +960,19 @@
               effect: 'arcane-fracture', x: target.x, y: target.y, target: target.id });
           }
         } else if (slot === 5 || (slot === 7 && this.hero.class === 'paladin')) {
+          // Repeatable area attacks prioritize the chosen foe when relevant,
+          // then the closest threats. Excess enemies remain dangerous.
+          const areaLimit = slot === 5
+            ? R.heroAreaTargetCaps[5].normal
+            : R.heroAreaTargetCaps[7].paladinNormal;
           for (const e of this.zone()
-            .enemies.filter((e) => e.hp > 0 && dist(e, this.hero) < (slot === 5 ? 350 : 500))
-            .sort((a, b) => this.idOrder(a, b))) {
+            .enemies.filter((e) => e.hp > 0 && !e.neutral && !e.returning &&
+              dist(e, this.hero) < (slot === 5 ? 350 : 500))
+            .sort((a, b) =>
+              (slot === 7 && b === target ? 1 : 0) -
+              (slot === 7 && a === target ? 1 : 0) ||
+              dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b))
+            .slice(0, areaLimit)) {
             const landed = this.damage(
               e,
               (slot === 7 ? power * 6 : power * 2.3) * scale,
