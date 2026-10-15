@@ -233,7 +233,13 @@
                 ? R.guardianScaling[i]?.damage || 1
                 : e.fieldCaptain
                   ? R.ordinaryMeleeScaling[i]?.damage || 1
-                  : R.ordinaryRangedScaling[i]?.damage || 1;
+                  // Ordinary ranged population scaling is deliberately
+                  // absent inside main boss dungeons and Treasury rooms.
+                  // Apply the same exclusion here, or support healing would
+                  // secretly gain a region multiplier that damage lacks.
+                  : dungeonIds.includes(this.zoneId) || this.supplyRoom()
+                    ? 1
+                    : R.ordinaryRangedScaling[i]?.damage || 1;
       let factor = region;
       if (e.form === 'ringleader') factor *= R.ringleaderScaling.damage;
       // TRUE boss minions have a distinct 1.25 role budget; TRUE captains
