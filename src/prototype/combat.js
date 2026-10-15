@@ -314,6 +314,31 @@
         return true;
       }
 
+      ashMovementFactor(unit) {
+        if (!unit) return 1;
+        const now = this.s.time;
+        const cloud = this.s.zones[this.s.zone]?.enemies.find(
+          (e) =>
+            e.type === 'boss' &&
+            e.family === 'warlord' &&
+            e.aggro &&
+            e.hp > 0 &&
+            e.ashCloud &&
+            e.ashCloud.expires > now &&
+            dist(unit, e.ashCloud) < 180,
+        );
+        if (cloud) unit.ashLastAt = now;
+        return cloud || (Number.isFinite(unit.ashLastAt) && now - unit.ashLastAt <= 2) ? 0.7 : 1;
+      }
+      mireBogMovementFactor(unit) {
+        if (!unit || !Number.isFinite(unit.mireBogLastAt)) return 1;
+        const away = Math.max(0, this.s.time - unit.mireBogLastAt);
+        if (away >= 2) return 1;
+        const seconds = unit.mireBogExposure || 0;
+        const inMudSpeed = seconds < 1 ? 0.75 : seconds < 2 ? 0.6 : seconds < 3 ? 0.45 : 0.35;
+        // When no longer standing in the bog, movement recovers smoothly over two seconds.
+        return 1 - (1 - inMudSpeed) * (away > 0.11 ? Math.max(0, 1 - away / 2) : 1);
+      }
       drainMana(u, fraction) {
         if (!R.resourceMode.manaEnabled) return 0;
         if (u !== this.hero || !fraction || u.mp <= 0 || this.peace) return 0;
@@ -331,6 +356,7 @@
           (!options?.area && !this.tacticalDirectTargetable(e)) ||
           this.peace ||
           e.returning ||
+          e.thornReturn ||
           !Number.isFinite(amount) ||
           amount <= 0
         )
@@ -358,8 +384,13 @@
         e.mercyProvoked = true;
         this.engage(e, true);
         if (source === 'hero') e.heroParticipated = true;
-        if (e.roomCaptain && e.captainGuard > 0) amount *= 0.7;
-        if (e.roomCaptain) {
+        // Ash abrades eyes: attacks issued by a party member inside or recently
+        // outside Choking Ash have a 35% miss chance, without extra damage.
+        if (this.ashMovementFactor(origin) < 1 && this.random() < 0.35) return false;
+        // Piercing bypasses defensive mitigation, not terrain, range or Ash misses.
+        const piercing = source === 'hero' && options?.piercing === true;
+        if (!piercing && e.roomCaptain && e.captainGuard > 0) amount *= 0.7;
+        if (!piercing && e.roomCaptain) {
           const profile = this.captainProfile(e),
             summon = profile?.summon;
           if (summon?.guardPerSummon) {
@@ -368,21 +399,122 @@
             amount *= 1 - guard;
           }
         }
-        if (e.family === 'citadel' && e.open <= 0) amount *= 0.65;
+        // Mirejaw's crocodilian scales lose their protection permanently as health falls.
+        // At full health they stop 40%; by half health they stop none.
+        if (e.family === 'mire' && e.type === 'boss') {
+          e.mireLowestHpRatio = Math.min(
+            e.mireLowestHpRatio ?? 1,
+            Math.max(0, e.hp / Math.max(1, e.maxHp)),
+          );
+          const ratio = Math.max(0, Math.min(1, e.mireLowestHpRatio));
+          if (!piercing) amount *= 1 - 0.4 * Math.max(0, Math.min(1, (ratio - 0.5) * 2));
+        }
+        if (!piercing && e.type === 'boss' && e.family === 'crypt')
+          amount *=
+            R.greenwoodPassives.structuralConsolidation[e.form === 'true' ? 'true' : 'normal'] *
+            (e.anastylosis > 0 ? R.attacks.crypt[5].defenseFactor : 1);
+        if (
+          !piercing &&
+          e.roomCaptain &&
+          e.captainProfile === 'supply-march' &&
+          e.strainHardeningUntil > this.s.time
+        )
+          amount *=
+            1 -
+            Math.min(R.marchesPassives.strainHardening.maxStacks, e.strainHardeningStacks || 0) *
+              R.marchesPassives.strainHardening.perHit;
+        if (
+          !piercing &&
+          e.type === 'boss' &&
+          e.family === 'archive' &&
+          e.emergencyStabilizationUntil > this.s.time
+        )
+          amount *=
+            1 -
+            R.marchesPassives.emergencyStabilization[e.form === 'true' ? 'true' : 'normal']
+              .reduction;
+        if (e.family === 'darklord' && e.telegraph?.secondWind) {
+          // Front-facing stance mitigates damage; a real hit from behind
+          // interrupts healing without negating that hit.
+          const facing = e.secondWindFacing || 0,
+            angle = Math.atan2(origin.y - e.y, origin.x - e.x);
+          if (Math.cos(angle - facing) < -0.5) e.secondWindCancelled = true;
+          if (!piercing) amount *= R.bossRecovery.darklord.damageMultiplier;
+        }
+        if (
+          !piercing &&
+          e.owner &&
+          e.royalFormationUntil > this.s.time &&
+          e.species === 'crownguard'
+        )
+          amount *= 0.8;
+        if (!piercing && e.family === 'citadel' && e.open <= 0) amount *= 0.65;
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;
         // All hero/companion damage sources use this same resolver. This
         // reduction is exclusive to active travel; it ends on arrival or abort.
-        if (['thinking', 'travel', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase))
+        if (
+          !piercing &&
+          ['thinking', 'travel', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase)
+        )
           amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
-        amount = this.tacticalCompressDamage(e, amount);
-        const actualDamage = Math.min(e.hp, amount);
+        if (!piercing) amount = this.tacticalCompressDamage(e, amount);
+        // Existing Royal Tax shields absorb first. A hit wholly stopped by
+        // that shield does NOT count as another qualifying taxation hit.
+        // A newly earned shield starts protecting only AFTER its triggering hit.
+        if (!piercing && e.family === 'darklord' && e.royalTaxShield > 0) {
+          const absorbed = Math.min(e.royalTaxShield, Math.max(0, amount));
+          e.royalTaxShield -= absorbed;
+          amount -= absorbed;
+        }
+        if (e.family === 'darklord' && e.royalTaxation) {
+          const tax = e.royalTaxation;
+          if (this.s.time > tax.expires) e.royalTaxation = null;
+          else if (amount > 0 && tax.marked.includes(source)) {
+            // Four distinct sources in a full party. Smaller parties must
+            // still make four real hits in total, including one from each
+            // marked attacker. Four hits by just one member of a duo/trio
+            // never substitute for the other members' contributions.
+            if (!tax.sources.includes(source)) tax.sources.push(source);
+            tax.hits = (tax.hits || 0) + 1;
+            if (tax.hits >= 4 && tax.sources.length === tax.marked.length) {
+              e.royalTaxShield = e.maxHp * 0.12;
+              e.royalTaxation = null;
+            }
+          }
+        }
+        const equipment = e.veraEquipment,
+          minister = equipment && this.zone().enemies.find((u) => u.id === equipment.owner);
+        if (
+          !piercing &&
+          equipment &&
+          this.veraHeld() &&
+          minister?.hp > 0 &&
+          minister.aggro &&
+          !minister.returning &&
+          e.species === 'ashbeast' &&
+          e.type === 'mob' &&
+          this.zoneId === 'crown'
+        ) {
+          const absorbed = Math.min(
+            equipment.remaining,
+            Math.max(0, amount) * R.cinderInspection.repairs.absorption,
+          );
+          equipment.remaining -= absorbed;
+          amount -= absorbed;
+        }
+        const actualDamage = Math.max(0, Math.min(e.hp, amount));
+        const reflected =
+          e.captainProfile === 'supply-crown' && e.captainReflect > 0 ? actualDamage * 0.3 : 0;
         e.hp = Math.max(0, e.hp - amount);
+        this.recordMarchesDamage(e, actualDamage);
         this.tacticalRecordHit(e, source, actualDamage);
+        if (source === 'hero') this.recordDeveloperDamage('outgoing', actualDamage);
         this.effects.push({ type: 'hit', x: e.x, y: e.y, amount });
         if (e.hp === 0) this.kill(e);
+        if (reflected > 0 && origin.hp > 0) this.hitParty(origin, reflected, 0, null, true);
         return true;
       }
-      hitParty(u, amount, manaDrain = 0, rangedSourceId = null) {
+      hitParty(u, amount, manaDrain = 0, rangedSourceId = null, alreadyMitigated = false) {
         if (this.peace || u.hp <= 0 || (u.immune || 0) > 0) return false;
         const armor =
           u === this.hero
@@ -390,8 +522,10 @@
             : ['soldier', 'archer'].includes(u.type)
               ? this.companionArmor(u.type)
               : 5 + this.hero.level * 0.5;
-        const oldHp = u.hp;
-        u.hp = Math.max(0, u.hp - Math.max(3, amount - armor * 0.35));
+        const oldHp = u.hp,
+          mitigated = alreadyMitigated ? Math.max(0, amount) : Math.max(3, amount - armor * 0.35);
+        u.hp = Math.max(0, u.hp - mitigated);
+        if (u === this.hero) this.recordDeveloperDamage('incoming', mitigated);
         if (R.resourceMode.manaEnabled && u === this.hero && manaDrain > 0)
           this.drainMana(u, manaDrain);
         // All life-steal uses actual HP lost after armor, immunity and overkill.
@@ -425,6 +559,10 @@
           }
         }
         this.event('hurt', { x: u.x, y: u.y, target: u === this.hero ? 'hero' : u.id });
+        if (u === this.hero && this.s.mode === 'developer' && u.hp === 0) {
+          u.hp = u.maxHp;
+          this.event('heal', { x: u.x, y: u.y, target: 'hero', amount: u.maxHp });
+        }
         if (u.hp === 0) {
           u.slow = 0;
           this.tacticalClearScatter(u);
@@ -440,7 +578,9 @@
         return dist(p, { x: a.x + t * dx, y: a.y + t * dy });
       }
       updateProjectiles(dt) {
-        const hero = this.hero;
+        const hero = this.hero,
+          zone = this.zoneId,
+          deaths = this.s.statistics.deaths;
         for (const p of [...this.s.projectiles]) {
           if (p.cancelledChargedOpener) continue;
           if (p.delay > 0) {
@@ -458,11 +598,20 @@
               continue;
             }
             const victim = this.combatTargets().find(
-              (u) => this.distanceToSegment(u, before, p) < 22,
+              (u) => this.distanceToSegment(u, before, p) < (p.style === 'cargo' ? 34 : 22),
             );
             if (victim) {
-              if (this.hitParty(victim, p.damage, p.manaDrain || 0, p.sourceId) && p.slow)
-                this.applySlow(victim, p.slow);
+              const landed = this.hitParty(victim, p.damage, p.manaDrain || 0, p.sourceId);
+              if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
+                return;
+              if (landed && p.slow) this.applySlow(victim, p.slow);
+              if (landed && victim.hp > 0 && p.style === 'cargo') {
+                const away = this.safe(victim.x + p.dx * 75, victim.y + p.dy * 75);
+                if (this.clearSegment(victim, away)) {
+                  victim.x = away.x;
+                  victim.y = away.y;
+                }
+              }
               this.enemyVfxProjectileImpact?.(p, {
                 x: victim.x,
                 y: victim.y,
@@ -485,7 +634,11 @@
             continue;
           }
           const e = this.zone().enemies.find(
-            (e) => e.id === p.target && e.hp > 0 && !e.neutral && this.tacticalDirectTargetable(e),
+            (e) =>
+              e.id === p.target &&
+              e.hp > 0 &&
+              !e.neutral &&
+              (p.area || this.tacticalDirectTargetable(e)),
           );
           if (!e || this.peace) {
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
@@ -503,22 +656,49 @@
             continue;
           }
           if (d < step + 15) {
+            // Royal Prerogative only redirects actual approaching projectiles
+            // into an existing living Crown summon crossing the flight path.
+            const guard =
+              !p.piercing &&
+              e.family === 'darklord' &&
+              !this.invalidChargedOpener(e, p.encountersAtStart) &&
+              this.s.time >= (e.royalPrerogativeReadyAt || 0)
+                ? this.zone().enemies.find(
+                    (unit) =>
+                      unit.owner === e.id &&
+                      unit.summon &&
+                      unit.hp > 0 &&
+                      dist(unit, e) < 165 &&
+                      this.distanceToSegment(unit, before, p) < 45 &&
+                      this.line(unit, e),
+                  )
+                : null;
+            const victim = guard || e;
+            if (guard) e.royalPrerogativeReadyAt = this.s.time + 18;
             const landed = this.damage(
-              e,
+              victim,
               p.damage,
               p.source,
-              p.encountersAtStart ? { encountersAtStart: p.encountersAtStart } : null,
+              p.encountersAtStart || p.area || p.piercing
+                ? {
+                    ...(p.encountersAtStart ? { encountersAtStart: p.encountersAtStart } : {}),
+                    ...(p.area ? { area: true } : {}),
+                    ...(p.piercing ? { piercing: true } : {}),
+                  }
+                : null,
             );
+            if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
+              return;
             if (p.cancelledChargedOpener) continue;
             if (landed && p.basicComboFinisher)
               this.basicComboFinisher(
-                e,
+                victim,
                 { x: p.finisherFromX, y: p.finisherFromY },
                 p.finisherBaseDamage,
                 p.source,
                 p.comboClass || this.hero.class,
               );
-            if (landed && p.slow) this.applySlow(e, p.slow);
+            if (landed && p.slow) this.applySlow(victim, p.slow);
             this.event('projectileImpact', {
               actor: p.source === 'hero' ? 'hero' : 'companion',
               class: p.source === 'hero' ? this.hero.class : undefined,
@@ -527,9 +707,9 @@
               style: p.style || 'arrow',
               effect: p.effect,
               slot: p.slot,
-              x: e.x,
-              y: e.y,
-              target: e.id,
+              x: victim.x,
+              y: victim.y,
+              target: victim.id,
               charged: !!p.charged,
             });
             if (p.charged && (!p.rapid || p.chargedBurst))
@@ -543,31 +723,72 @@
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
           }
         }
+        this.rechargeOwnMud(dt);
         for (const a of [...this.s.hazards]) {
+          if (a.family === 'mire' && a.index === 2 && a.kind === 'circle') {
+            for (const u of this.combatTargets()) {
+              if (u.hp <= 0 || dist(u, a) >= a.radius) continue;
+              if ((u.mireBogLastAt || -100) < this.s.time - dt * 1.5) u.mireBogExposure = 0;
+              if (u.mireBogLastAt !== this.s.time)
+                u.mireBogExposure = Math.min(4, (u.mireBogExposure || 0) + dt);
+              u.mireBogLastAt = this.s.time;
+            }
+          }
           a.life -= dt;
           a.tick -= dt;
-          a.age = (a.age || 0) + dt;
+          const previousRadius = a.radius || 0;
+          a.age = a.slowOnly ? Math.min(a.waveLife, (a.age || 0) + dt) : (a.age || 0) + dt;
           if (a.kind === 'ring') {
-            a.radius = a.age * R.combatGeometry.ringSpeed;
+            a.radius = a.age * (a.waveSpeed || R.combatGeometry.ringSpeed);
             for (const u of this.combatTargets()) {
               const id = u === this.hero ? 'hero' : u.id;
               if (
                 !a.hit.includes(id) &&
-                Math.abs(dist(u, a) - a.radius) < R.combatGeometry.ringHalfWidth &&
+                (a.slowOnly
+                  ? dist(u, a) >= previousRadius - R.combatGeometry.ringHalfWidth &&
+                    dist(u, a) <= a.radius + R.combatGeometry.ringHalfWidth
+                  : Math.abs(dist(u, a) - a.radius) < R.combatGeometry.ringHalfWidth) &&
                 this.line(a, u)
               ) {
                 a.hit.push(id);
-                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null))
-                  this.enemyVfxHazardImpact?.(a, u);
+                if (a.slowOnly) this.applySlow(u, a.slowDuration);
+                else {
+                  const landed = this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null);
+                  if (
+                    this.hero !== hero ||
+                    this.zoneId !== zone ||
+                    this.s.statistics.deaths !== deaths
+                  )
+                    return;
+                  if (landed) {
+                    this.enemyVfxHazardImpact?.(a, u);
+                    if (a.slowDuration && u.hp > 0) this.applySlow(u, a.slowDuration);
+                  }
+                }
               }
             }
           } else if (a.tick <= 0) {
             a.tick = 1;
             for (const u of this.combatTargets())
               if (dist(u, a) < a.radius && this.line({ x: a.fromX ?? a.x, y: a.fromY ?? a.y }, u)) {
-                if (this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null)) {
+                const landed = this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null);
+                if (
+                  this.hero !== hero ||
+                  this.zoneId !== zone ||
+                  this.s.statistics.deaths !== deaths
+                )
+                  return;
+                if (landed) {
                   this.enemyVfxHazardImpact?.(a, u);
-                  if (a.slow) this.applySlow(u, a.slowSeconds || 3);
+                  if (a.slow)
+                    this.applySlow(
+                      u,
+                      this.regularSlowDuration(
+                        this.zone().enemies.find((e) => e.id === a.sourceId),
+                        a,
+                        a.slowSeconds || 3,
+                      ),
+                    );
                 }
               }
           }

@@ -801,19 +801,20 @@
     },
     {
       "catalogId": "048",
-      "key": "enemy:wolf:captain-guard",
+      "key": "enemy:ridge:captain-guard",
       "region": 2,
       "entity": {
         "renderKind": "enemy",
         "type": "mob",
-        "species": "wolf",
+        "species": "ridge",
         "id": "sprite-reference-048",
         "captain": true,
         "roomCaptain": true,
         "guard": true,
         "captainMentor": "ridge",
         "captainVisualIdol": "ridge",
-        "visualScale": 1.2
+        "visualScale": 1.2,
+        "captainProfile": "supply-highlands"
       },
       "canvas": {
         "width": 192,
@@ -1283,7 +1284,7 @@
       "region": 0,
       "entity": {
         "renderKind": "prop",
-        "icon": "🪨",
+        "icon": "\ud83e\udea8",
         "id": "sprite-reference-295"
       },
       "canvas": {
@@ -1299,7 +1300,7 @@
       "region": 2,
       "entity": {
         "renderKind": "prop",
-        "icon": "🪨",
+        "icon": "\ud83e\udea8",
         "id": "sprite-reference-296"
       },
       "canvas": {

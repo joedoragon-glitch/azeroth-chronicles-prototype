@@ -137,9 +137,9 @@
             3: 'Restore hero health',
             4: 'Brief damage immunity',
             5: 'Holy area attack',
-            6: 'Frequent melee strike',
+            6: 'Collision-safe rushing melee strike · closes the distance before hitting',
             7: 'Powerful holy area attack',
-            8: 'Final holy area burst · restore health and gain brief protection',
+            8: 'Combat finisher · needs an enemy target · holy area burst, self-heal and brief immunity',
           },
           mage: {
             1: 'Ranged magic combo · third hit emits an arcane wave',
@@ -149,17 +149,17 @@
             5: 'Frost area burst · slows enemies',
             6: 'Frequent magic projectile · short slow',
             7: 'Powerful frost area spell · slows enemies',
-            8: 'Final arcane burst · restore health and gain brief protection',
+            8: 'Combat finisher · needs an enemy target · arcane area burst, self-heal and brief immunity',
           },
           ranger: {
             1: 'Bow combo · third hit scatters additional arrows',
             2: 'Double shot',
             3: 'Restore hero health',
             4: 'Temporary movement haste',
-            5: 'Area arrow attack',
+            5: 'Radial arrow volley · fires at enemies within 350 units',
             6: 'Rapid shot · temporary haste',
-            7: 'Advanced piercing arrow attack',
-            8: 'Final area attack · restore health and gain brief protection',
+            7: 'Armor-piercing shot · ignores enemy shield, guard and damage-reduction effects',
+            8: 'Combat finisher · needs an enemy target · arrow area burst, self-heal and brief immunity',
           },
         },
         charged = {
@@ -751,7 +751,7 @@
         (queueName
           ? 'Training ' + queueName + ' · ' + b.queue.toFixed(1) + 's remaining'
           : 'Recruit as many companions as you want') +
-          '. New recruits join the active group if this barracks can support another slot; otherwise they rest in reserve.',
+          '. New recruits join the active group if this barracks can support another slot; otherwise they rest in reserve. Lifebinder and the Drowned Keeper once joined through the Barracks, as companion classes you have not discovered.',
         [
           ...[
             ['soldier', 'Soldier'],
@@ -1063,6 +1063,17 @@
               ),
             ],
         baseActions = [
+          ...(getGame().peace && !getGame().s.finalRestCompleted
+            ? [
+                action(
+                  'Rest here · Complete the journey',
+                  () => {
+                    if (getGame().completeFinalRest('barracks', b)) closeMenu();
+                  },
+                  'Completed Barracks · recover and begin the ending credits',
+                ),
+              ]
+            : []),
           exp,
           ...(tonic ? [tonic] : []),
           ...respawnActions,
@@ -1457,12 +1468,22 @@
           (region?.name || 'Region') + ' · ' + (2 - pending.length) + '/2 rescued',
           ordered.map((boss) => {
             const destination =
-              here === boss.id
-                ? liveBoss(boss.id) || findNpc((n) => n.kind === 'cage' && n.family === boss.id)
-                : boss.kind === 'dungeon'
-                  ? findNpc((n) => n.kind === 'dungeon' && n.family === boss.id)
-                  : liveBoss(boss.id) || findNpc((n) => n.kind === 'cage' && n.family === boss.id);
-            return guideAction(boss.captive.split(' the ')[0] + ' · ' + boss.place, destination);
+              boss.id === 'thorn' && here === 'vale'
+                ? game.s.keys.thorn
+                  ? findNpc((n) => n.id === 'cage-thorn')
+                  : findNpc((n) => n.thornReport) || findNpc((n) => n.id === 'thorn-trailhead-0')
+                : here === boss.id
+                  ? liveBoss(boss.id) || findNpc((n) => n.kind === 'cage' && n.family === boss.id)
+                  : boss.kind === 'dungeon'
+                    ? findNpc((n) => n.kind === 'dungeon' && n.family === boss.id)
+                    : liveBoss(boss.id) ||
+                      findNpc((n) => n.kind === 'cage' && n.family === boss.id);
+            return guideAction(
+              boss.id === 'thorn' && !game.s.keys.thorn
+                ? 'Mira · ask the Orchard trail witness'
+                : boss.captive.split(' the ')[0] + ' · ' + boss.place,
+              destination,
+            );
           }),
         );
         return;

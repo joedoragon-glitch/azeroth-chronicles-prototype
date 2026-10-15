@@ -164,12 +164,22 @@
               x: district.center[0],
               y: district.center[1],
             })),
-            ...(z.id === 'highlands' ? R.ironrootLife || [] : []).map((district) => ({
-              id: district.id,
-              name: district.id,
-              x: district.props.reduce((total, p) => total + p[0], 0) / district.props.length,
-              y: district.props.reduce((total, p) => total + p[1], 0) / district.props.length,
-            })),
+            ...(z.id === 'highlands' ? R.ironrootLife || [] : []).map((district) => {
+              // Newly added ore and mint decorations cannot move old road
+              // destinations. Preserve the original district centroid.
+              const routed = district.props.filter(
+                ([, , kind]) =>
+                  !/^(silver|copper)-(ore-face|sort-samples|refining-hearth|die-tray)$/.test(
+                    kind,
+                  ) && kind !== 'sealed-crown-consignment',
+              );
+              return {
+                id: district.id,
+                name: district.id,
+                x: routed.reduce((total, p) => total + p[0], 0) / routed.length,
+                y: routed.reduce((total, p) => total + p[1], 0) / routed.length,
+              };
+            }),
           ],
           props = z.props,
           blockers = z.props
@@ -265,6 +275,10 @@
         delete z.frontierLayoutVersion;
         delete z.crownLayoutVersion;
         delete z.streetClearanceVersion;
+        delete z.townVisualClearanceVersion;
+        delete z.strongholdCourtyardSpacingVersion;
+        delete z.landmarkRoadShoulderVersion;
+        delete z.roadLampVersion;
       }
       clearRoadBlockers(z) {
         const oldZone = this.s.zone;
@@ -306,6 +320,266 @@
           this.s.zone = oldZone;
         }
       }
+      strongholdCourtyardClearance(z) {
+        if (
+          dungeonIds.includes(z.id) ||
+          this.supplyRoom(z.id) ||
+          this.sideDungeon(z.id) ||
+          z.strongholdCourtyardSpacingVersion === 2
+        )
+          return;
+        const before = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          for (const cfg of (R.creatureStrongholds || []).filter((c) => c.region === z.id)) {
+            const center = this.creatureStrongholdCenter(z, cfg);
+            if (!center) continue;
+            const locals = z.props
+              .filter((p) => p.stronghold === cfg.id && p.decorative)
+              .sort((a, b) => String(a.id).localeCompare(String(b.id)));
+            const fixed = [];
+            const walls = z.props.filter((p) => p.stronghold === cfg.id && p.r > 0);
+            const radiusMax = cfg.defenseStyle === 'fort' ? 135 : 330;
+            let currentItem;
+            const open = (p) =>
+              dist(p, center) <= radiusMax &&
+              !this.blocked(p.x, p.y, z.id, 8, true) &&
+              this.distanceToRoad(z, p) >= this.roadSetback(currentItem) &&
+              !z.npcs.some((n) => dist(n, p) < 78) &&
+              !z.nodes.some((n) => n.amount > 0 && dist(n, p) < 60) &&
+              !z.buildings.some((b) => dist(b, p) < 140) &&
+              !walls.some((w) => dist(w, p) < (w.r || 0) + 40) &&
+              !fixed.some((q) => dist(q, p) < 93);
+            for (const item of locals) {
+              currentItem = item;
+              if (cfg.defenseStyle === 'fort' && fixed.length < 5) {
+                const [dx, dy] = [
+                  [0, 0],
+                  [-70, 70],
+                  [70, -70],
+                  [-70, -70],
+                  [70, 70],
+                ][fixed.length];
+                const plot = { x: center.x + dx, y: center.y + dy };
+                if (open(plot)) Object.assign(item, plot);
+              }
+              if (!open(item)) {
+                let candidate = null;
+                for (const radius of cfg.defenseStyle === 'fort'
+                  ? [65, 100, 127]
+                  : [90, 130, 165, 205, 250, 290, 320]) {
+                  for (let j = 0; j < 36; j++) {
+                    const angle = (j * Math.PI) / 18;
+                    const p = {
+                      x: center.x + radius * Math.cos(angle),
+                      y: center.y + radius * Math.sin(angle),
+                    };
+                    if (open(p)) {
+                      candidate = p;
+                      break;
+                    }
+                  }
+                  if (candidate) break;
+                }
+                if (candidate) Object.assign(item, candidate);
+                else if (fixed.length >= 5) {
+                  // Preserve the five readable lived-in objects and omit
+                  // redundant clutter rather than produce intersecting art.
+                  z.props.splice(z.props.indexOf(item), 1);
+                  continue;
+                }
+              }
+              fixed.push(item);
+            }
+          }
+          for (const cfg of (R.creatureStrongholds || []).filter((c) => c.region === z.id)) {
+            const center = this.creatureStrongholdCenter(z, cfg);
+            if (!center) continue;
+            const placed = [];
+            for (const enemy of z.enemies.filter((e) => e.stronghold === cfg.id)) {
+              const valid = (p) =>
+                dist(p, center) <= 150 &&
+                !this.blocked(p.x, p.y, z.id, 15) &&
+                !placed.some((q) => dist(p, q) < 38);
+              if (!valid(enemy.home)) {
+                const points = [];
+                for (const radius of [60, 100, 135, 30])
+                  for (let j = 0; j < 24; j++)
+                    points.push({
+                      x: center.x + radius * Math.cos((j * Math.PI) / 12),
+                      y: center.y + radius * Math.sin((j * Math.PI) / 12),
+                    });
+                const home = points.find(valid);
+                if (home) {
+                  enemy.home = { ...home };
+                  if (enemy.hp > 0 && !enemy.aggro) Object.assign(enemy, home);
+                }
+              }
+              placed.push(enemy.home);
+            }
+          }
+          z.strongholdCourtyardSpacingVersion = 2;
+        } finally {
+          this.s.zone = before;
+        }
+      }
+      clearNamedRoadMarkers(z) {
+        if (
+          dungeonIds.includes(z.id) ||
+          this.supplyRoom(z.id) ||
+          this.sideDungeon(z.id) ||
+          z.landmarkRoadShoulderVersion === 3
+        )
+          return;
+        const previousZone = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          for (const marker of z.npcs.filter(
+            (n) =>
+              n.kind === 'landmark' &&
+              !n.internalSite &&
+              !n.id.startsWith('bridge-') &&
+              !n.id.startsWith('crossing-') &&
+              !n.id.startsWith('thorn-trailhead-'),
+          )) {
+            const water =
+              marker.id === 'mill-pond'
+                ? R.terrain[this.regionIndex(z.id)].find((t) => t.r && t.kind === 'water')
+                : null;
+            const onShore = (p) =>
+              !water || (dist(p, water) > water.r && dist(p, water) < water.r + 70);
+            if (this.distanceToRoad(z, marker) >= 92 && onShore(marker)) continue;
+            const original = { x: marker.x, y: marker.y };
+            const candidates = [];
+            if (water) {
+              // Search the actual bank, not an expanding circle that can
+              // leave a pond marker hundreds of units from its water.
+              for (const radius of [water.r + 18, water.r + 32, water.r + 48, water.r + 64])
+                for (let j = 0; j < 72; j++)
+                  candidates.push({
+                    x: water.x + Math.cos((j * Math.PI) / 36) * radius,
+                    y: water.y + Math.sin((j * Math.PI) / 36) * radius,
+                  });
+              candidates.sort((a, b) => dist(a, original) - dist(b, original));
+            } else {
+              for (const radius of [75, 100, 125, 155, 185])
+                for (let j = 0; j < 24; j++)
+                  candidates.push({
+                    x: original.x + Math.cos((j * Math.PI) / 12) * radius,
+                    y: original.y + Math.sin((j * Math.PI) / 12) * radius,
+                  });
+            }
+            const selected = candidates.find(
+              (p) =>
+                !this.blocked(p.x, p.y, z.id, 12, true) &&
+                this.distanceToRoad(z, p) >= 95 &&
+                onShore(p) &&
+                !z.npcs.some((n) => n !== marker && dist(n, p) < 85) &&
+                !z.nodes.some((n) => dist(n, p) < 60) &&
+                !z.props.some((q) => q.roadBlocker && dist(q, p) < (q.r || 0) + 80),
+            );
+            if (selected) Object.assign(marker, selected);
+          }
+          z.landmarkRoadShoulderVersion = 3;
+        } finally {
+          this.s.zone = previousZone;
+        }
+      }
+      townVisualClearance(z) {
+        if (
+          dungeonIds.includes(z.id) ||
+          this.supplyRoom(z.id) ||
+          this.sideDungeon(z.id) ||
+          z.townVisualClearanceVersion === 2
+        )
+          return;
+        const previousZone = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          const i = this.regionIndex(z.id);
+          const centers = [D.towns[i], D.minors[i]].map(([x, y]) => ({ x, y }));
+          const houses = z.props
+            .filter(
+              (p) =>
+                p.roadBlocker &&
+                /house|cottage|workshop|boathouse|smithy|forgehouse/.test(p.structure || ''),
+            )
+            .sort((a, b) => String(a.id).localeCompare(String(b.id)));
+          const fixed = [];
+          const houseSet = new Set(houses);
+          const services = Object.values(R.serviceOffsets).map(([x, y]) => ({
+            x: D.towns[i][0] + x,
+            y: D.towns[i][1] + y,
+          }));
+          // Existing rescued specialists may be absent from the current zone.
+          // Keep their eventual staffed plots free on every save, not only
+          // after an instructor/blacksmith is rescued.
+          const clearance = (point, house) => {
+            if (this.blocked(point.x, point.y, z.id, 46, true)) return false;
+            if (this.distanceToRoad(z, point) < this.roadSetback(house)) return false;
+            if (services.some((n) => dist(point, n) < 165)) return false;
+            if (z.npcs.some((n) => dist(n, point) < (n.kind === 'landmark' ? 165 : 135)))
+              return false;
+            if (z.nodes.some((n) => dist(n, point) < 110)) return false;
+            if (z.buildings.some((b) => dist(b, point) < 235)) return false;
+            if (z.enemies.some((e) => e.hp > 0 && dist(e.home || e, point) < 195)) return false;
+            const touching = (other) => {
+              if (other === house || other.roadTrace || other.structure === 'road-ruts')
+                return false;
+              const solid =
+                other.roadBlocker ||
+                /house|cottage|workshop|forge|boathouse|smithy|barracks|hall|tower|tent|palisade|shelter|watchpost|large-tree/.test(
+                  other.structure || '',
+                );
+              if (solid) {
+                // Compare actual projected centers. Two roofs can overlap on
+                // screen even when their world-space circles do not collide.
+                const projectedX = (point.x - point.y - other.x + other.y) * 0.76;
+                const projectedY = (point.x + point.y - other.x - other.y) * 0.27;
+                return Math.abs(projectedX) < 145 && Math.abs(projectedY) < 104;
+              }
+              return dist(point, other) < (other.r || 0) + 65;
+            };
+            return !fixed.some(touching) && !z.props.some((p) => !houseSet.has(p) && touching(p));
+          };
+          // Prefer the town rear and lateral plots; do not squeeze another
+          // building onto the main street simply because the anchor is legal.
+          for (const house of houses) {
+            const base = { x: house.x, y: house.y };
+            if (clearance(base, house)) {
+              fixed.push(house);
+              continue;
+            }
+            const center = centers.slice().sort((a, b) => dist(a, base) - dist(b, base))[0];
+            const outward =
+              dist(base, center) > 5
+                ? Math.atan2(base.y - center.y, base.x - center.x)
+                : -Math.PI / 2;
+            let found = null;
+            for (const radius of [
+              110, 180, 260, 350, 450, 570, 700, 840, 980, 1150, 1350, 1550, 1800,
+            ]) {
+              for (let j = 0; j < 32; j++) {
+                const fan = j === 0 ? 0 : Math.ceil(j / 2) * (j % 2 ? 1 : -1);
+                const angle = outward + (fan * Math.PI) / 16;
+                const point = {
+                  x: base.x + Math.cos(angle) * radius,
+                  y: base.y + Math.sin(angle) * radius,
+                };
+                if (!clearance(point, house)) continue;
+                found = point;
+                break;
+              }
+              if (found) break;
+            }
+            if (found) Object.assign(house, found);
+            fixed.push(house);
+          }
+          z.townVisualClearanceVersion = 2;
+        } finally {
+          this.s.zone = previousZone;
+        }
+      }
       distanceToRoad(z, point) {
         let nearest = Infinity;
         for (const path of z.roads || [])
@@ -314,6 +588,7 @@
         return nearest;
       }
       roadSetback(p) {
+        if (p.stronghold && p.r > 0) return 85;
         if (p.roadTrace) return 0; // Only deliberately flat road ruts/repairs.
         // Building anchors sit below much of their painted roof; reserve more
         // than the collision circle so rooftops do not cover carriageways.
@@ -333,7 +608,7 @@
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
           this.sideDungeon(z.id) ||
-          z.streetClearanceVersion === 2
+          z.streetClearanceVersion === 3
         )
           return;
         const oldZone = this.s.zone;
@@ -453,7 +728,7 @@
             .filter((p) => this.distanceToRoad(z, p) < this.roadSetback(p))
             .sort((a, b) => (b.r || 0) - (a.r || 0) || a.id.localeCompare(b.id));
           for (const prop of affected) moveOffRoad(prop, this.roadSetback(prop));
-          z.streetClearanceVersion = 2;
+          z.streetClearanceVersion = 3;
         } finally {
           this.s.zone = oldZone;
         }
@@ -467,6 +742,9 @@
           }
           this.authoredPlaces(z);
           this.clearStreetCorridors(z);
+          this.clearNamedRoadMarkers(z);
+          this.townVisualClearance(z);
+          this.strongholdCourtyardClearance(z);
           this.regionalTravelSafety(z);
           return z;
         }
@@ -547,6 +825,11 @@
                 );
               e.guard = true;
               e.roomGuard = true;
+              e.mountedCrownRider = !!slot.mountedCrownRider;
+              if (e.mountedCrownRider) {
+                e.crownTroop = true;
+                e.crownAncestry = 'wolf';
+              }
               e.pack = id + '-' + (slot.group || 'guard-' + j);
               if (slot.role) e.forcedRole = slot.role;
               if (captain) {
@@ -564,6 +847,7 @@
             }
           }
           this.treasuryInterior(z);
+          this.treasuryGuardPopulation(z);
           this.guardianPopulation(z);
           this.roomCaptainPopulation(z);
           return z;
@@ -827,6 +1111,7 @@
           );
           e.pack = dungeon ? g.pack : id + '-pack-' + pack;
           e.guard = dungeon;
+          if (g?.mountedCrownRider) e.mountedCrownRider = true;
           if (g?.role) e.forcedRole = g.role;
           if (dungeon) this.configureEnemy(e, j);
           z.enemies.push(e);
@@ -852,10 +1137,16 @@
         this.regionalDestinations(z);
         this.roadNetwork(z);
         this.authoredPlaces(z);
+        this.migrateThornPatrol(z);
+        this.migrateCinderInspection(z);
         this.clearStreetCorridors(z);
+        this.clearNamedRoadMarkers(z);
+        this.townVisualClearance(z);
+        this.strongholdCourtyardClearance(z);
         this.regionalTravelSafety(z);
         this.refreshNPCs();
         if (this.peace) this.makeHabitat(z);
+        this.syncDungeonMasterStation(z);
         return z;
       }
       regionalDestinations(z) {
@@ -1219,11 +1510,64 @@
           this.s.zone = oldZone;
         }
       }
+      // Appearance-only rural smallhold scenes. Stable props and versioned
+      // migration keep older saved towns, roads, rescues and actors unchanged.
+      greenwoodCountryLife(z) {
+        if (z.id !== 'vale' || z.greenwoodCountryVersion === 1) return;
+        const previous = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          z.props = z.props.filter((p) => !String(p.id || '').startsWith('greenwood-country-'));
+          const sites = R.greenwoodRuralScenes || [];
+          const [townX, townY] = D.towns[0],
+            futureServices = Object.values(R.serviceOffsets || {}).map(([dx, dy]) => ({
+              x: townX + dx,
+              y: townY + dy,
+            }));
+          const fits = (p) =>
+            !this.blocked(p.x, p.y, z.id, 16) &&
+            this.distanceToRoad(z, p) >= 100 &&
+            !z.npcs.some((n) => dist(n, p) < 125) &&
+            !futureServices.some((n) => dist(n, p) < 125) &&
+            !z.nodes.some((n) => dist(n, p) < 90) &&
+            !z.enemies.some((e) => e.hp > 0 && dist(e.home || e, p) < 135) &&
+            !z.buildings.some((b) => dist(b, p) < 130) &&
+            !z.props.some((q) => dist(q, p) < (q.r || 0) + (q.roadBlocker ? 125 : 63));
+          for (const [j, [x, y, structure, district]] of sites.entries()) {
+            // Search a bounded neighborhood without moving established objects.
+            let point = null;
+            for (const radius of [0, 45, 85, 135, 190, 245]) {
+              for (let k = 0; k < (radius ? 16 : 1); k++) {
+                const theta = (k * Math.PI) / 8,
+                  p = { x: x + Math.cos(theta) * radius, y: y + Math.sin(theta) * radius };
+                if (fits(p)) {
+                  point = p;
+                  break;
+                }
+              }
+              if (point) break;
+            }
+            if (!point) continue; // Better fewer real clearings than blocked roads.
+            z.props.push({
+              id: 'greenwood-country-' + j,
+              ...point,
+              r: 0,
+              structure,
+              decorative: true,
+              greenwoodCountry: district,
+            });
+          }
+          z.greenwoodCountryVersion = 1;
+        } finally {
+          this.s.zone = previous;
+        }
+      }
       ironrootLivelihood(z) {
-        if (z.id !== 'highlands' || z.ironrootLifeVersion === 2) return;
+        if (z.id !== 'highlands' || z.ironrootLifeVersion === 3) return;
         const oldZone = this.s.zone;
         this.s.zone = z.id;
         try {
+          const prior = new Map(z.props.filter((p) => p.ironrootDistrict).map((p) => [p.id, p]));
           z.props = z.props.filter((p) => !String(p.id || '').startsWith('ironroot-life-'));
           const [townX, townY] = D.towns[this.regionIndex(z.id)];
           const futureServices = Object.values(R.serviceOffsets).map(([x, y]) =>
@@ -1231,7 +1575,8 @@
           );
           for (const district of R.ironrootLife || []) {
             for (const [j, [x, y, structure]] of district.props.entries()) {
-              const candidates = [{ x, y }];
+              const old = prior.get('ironroot-life-' + district.id + '-' + j);
+              const candidates = [...(old ? [{ x: old.x, y: old.y }] : []), { x, y }];
               for (let d = 35; d <= 175; d += 35)
                 for (let k = 0; k < 12; k++) {
                   const angle = (k * Math.PI) / 6;
@@ -1239,14 +1584,19 @@
                 }
               const p = candidates.find(
                 (p) =>
-                  !this.blocked(p.x, p.y, z.id, 8, true) &&
+                  !this.blocked(p.x, p.y, z.id, 24, true) &&
                   !z.npcs.some((n) => dist(n, p) < 85) &&
                   !futureServices.some((n) => dist(n, p) < 85) &&
                   !z.nodes.some((n) => dist(n, p) < 65) &&
                   !z.roads?.some((path) =>
                     path.some((b, k) => k && this.distanceToSegment(p, path[k - 1], b) < 72),
                   ) &&
-                  !z.props.some((q) => dist(q, p) < (q.r || 0) + 45),
+                  !z.props.some(
+                    (q) =>
+                      !q.regimeHeraldry &&
+                      !String(q.id || '').startsWith('public-lantern-') &&
+                      dist(q, p) < (q.r || 0) + 45,
+                  ),
               );
               if (!p) continue;
               z.props.push({
@@ -1259,7 +1609,165 @@
               });
             }
           }
-          z.ironrootLifeVersion = 2;
+          z.ironrootLifeVersion = 3;
+        } finally {
+          this.s.zone = oldZone;
+        }
+      }
+      // Worldbuilding-only successor growth on Verdun-like old battle scars
+      // and practical heatworks around the two Crown lava channels. The heat
+      // collectors sit on safe rock; no one moves through active lava.
+      recoveryAndThermalLife(z) {
+        const plan =
+          z.id === 'frontier'
+            ? R.frontierRecoveryScenes
+            : z.id === 'crown'
+              ? R.crownThermalWorksScenes
+              : null;
+        if (!plan || z.recoveryAndHeatVersion === 1) return;
+        const oldZone = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          z.props = z.props.filter((p) => !String(p.id || '').startsWith('recovery-heat-'));
+          const nearRoad = (p) => this.distanceToRoad(z, p) < 56;
+          const valid = (p) =>
+            !this.blocked(p.x, p.y, z.id, 17, true) &&
+            !nearRoad(p) &&
+            !z.npcs.some((n) => dist(n, p) < 120) &&
+            !z.nodes.some((n) => dist(n, p) < 95) &&
+            !z.buildings.some((b) => dist(b, p) < 120) &&
+            !z.enemies.some((e) => e.hp > 0 && dist(e.home || e, p) < 82) &&
+            !z.props.some(
+              (other) => dist(other, p) < (other.r || 0) + (other.roadBlocker ? 130 : 62),
+            );
+          for (const [j, [x, y, structure, district]] of plan.entries()) {
+            let point = null;
+            for (const radius of [0, 55, 100, 145, 195, 250]) {
+              const steps = radius ? 16 : 1;
+              for (let k = 0; k < steps; k++) {
+                const theta = (k * Math.PI) / 8,
+                  p = {
+                    x: x + Math.cos(theta) * radius,
+                    y: y + Math.sin(theta) * radius,
+                  };
+                if (valid(p)) {
+                  point = p;
+                  break;
+                }
+              }
+              if (point) break;
+            }
+            // A skipped prop is safer than forcing a tree into lava, a road
+            // or a rescuer/boss interaction zone.
+            if (!point) continue;
+            z.props.push({
+              id: 'recovery-heat-' + z.id + '-' + j,
+              ...point,
+              r: 0,
+              decorative: true,
+              structure,
+              regionalRecovery: z.id === 'frontier' ? district : undefined,
+              thermalPurpose: z.id === 'crown' ? district : undefined,
+            });
+          }
+          z.recoveryAndHeatVersion = 1;
+        } finally {
+          this.s.zone = oldZone;
+        }
+      }
+      // Sparse civil road lighting—working roads and settlement approaches,
+      // not a continuous line of torches through untouched wilderness.
+      roadsideLanternLife(z) {
+        // Reconcile older unpublished dev.51 saves to the existing 21
+        // public lanterns; the redundant fifteen-lamp pass is retired.
+        if (z.props?.some((p) => p.roadLamp || String(p.id || '').startsWith('night-road-lamp-'))) {
+          z.props = z.props.filter(
+            (p) => !p.roadLamp && !String(p.id || '').startsWith('night-road-lamp-'),
+          );
+          delete z.roadLampVersion;
+        }
+        if (
+          z.roadsideLanternVersion === 1 ||
+          dungeonIds.includes(z.id) ||
+          this.supplyRoom(z.id) ||
+          this.sideDungeon(z.id)
+        )
+          return;
+        const i = this.regionIndex(z.id),
+          town = D.towns[i],
+          minor = D.minors[i],
+          special =
+            {
+              vale: [[1190, 760]],
+              march: [
+                [2120, 695],
+                [1020, 530],
+              ],
+              highlands: [
+                [1670, 1120],
+                [2800, 700],
+              ],
+              frontier: [
+                [1720, 1380],
+                [2590, 1600],
+                [2980, 2650],
+              ],
+              crown: [
+                [2550, 900],
+                [3030, 2310],
+                [3210, 2830],
+                [2600, 1370],
+              ],
+            }[z.id] || [],
+          anchors = [town, minor, ...special],
+          oldZone = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          z.props = z.props.filter((p) => !String(p.id || '').startsWith('public-lantern-'));
+          let index = 0;
+          const roads = z.roads?.flat() || [];
+          for (const [x, y] of anchors) {
+            if (index >= ({ vale: 3, march: 4, highlands: 4, frontier: 4, crown: 6 }[z.id] || 0))
+              break;
+            if (!roads.length) break;
+            const center = roads.reduce(
+              (best, p) => (!best || dist(p, { x, y }) < dist(best, { x, y }) ? p : best),
+              null,
+            );
+            if (!center || dist(center, { x, y }) > 600) continue;
+            let found = null;
+            for (const radius of [65, 83, 100]) {
+              for (let k = 0; k < 16; k++) {
+                const a = (k * Math.PI) / 8,
+                  p = { x: center.x + Math.cos(a) * radius, y: center.y + Math.sin(a) * radius },
+                  shoulder = this.distanceToRoad(z, p);
+                if (
+                  shoulder < 38 ||
+                  shoulder > 105 ||
+                  this.blocked(p.x, p.y, z.id, 10, true) ||
+                  z.npcs.some((n) => dist(n, p) < 83) ||
+                  z.nodes.some((n) => dist(n, p) < 72) ||
+                  z.buildings.some((b) => dist(b, p) < 105) ||
+                  z.props.some((q) => dist(q, p) < (q.r || 0) + 62) ||
+                  z.enemies.some((e) => e.hp > 0 && dist(e.home || e, p) < 90)
+                )
+                  continue;
+                found = p;
+                break;
+              }
+              if (found) break;
+            }
+            if (!found) continue;
+            z.props.push({
+              id: 'public-lantern-' + z.id + '-' + index++,
+              ...found,
+              structure: 'roadside-lantern',
+              r: 0,
+              decorative: true,
+              publicWorks: 'maintained-road-light',
+            });
+          }
+          z.roadsideLanternVersion = 1;
         } finally {
           this.s.zone = oldZone;
         }
@@ -1547,11 +2055,17 @@
       }
       regionalHandoffLife(z) {
         const scenes = R.regionalHandoffScenes?.[z.id];
-        if (!scenes || z.regionalHandoffVersion === 1) return;
+        const version = ['vale', 'march'].includes(z.id) ? 2 : 1;
+        if (!scenes || z.regionalHandoffVersion === version) return;
         const previous = this.s.zone;
+        // Version 1 props may have been placed before later road/settlement migrations.
+        // Preserve their saved positions/order; append only the newly approved details.
+        const appendOnly = version === 2 && z.regionalHandoffVersion === 1;
+        const previousCount = z.id === 'vale' ? 3 : z.id === 'march' ? 5 : 0;
         this.s.zone = z.id;
         try {
-          z.props = z.props.filter((p) => !String(p.id || '').startsWith('regional-handoff-'));
+          if (!appendOnly)
+            z.props = z.props.filter((p) => !String(p.id || '').startsWith('regional-handoff-'));
           const [townX, townY] = D.towns[this.regionIndex(z.id)];
           const futureServices = Object.values(R.serviceOffsets).map(([x, y]) =>
             this.safe(townX + x, townY + y, z.id),
@@ -1566,6 +2080,11 @@
               path.some((b, j) => j && this.distanceToSegment(p, path[j - 1], b) < 60),
             );
           for (const [j, [x, y, structure, district, sceneRole]] of scenes.entries()) {
+            if (
+              appendOnly &&
+              (j < previousCount || z.props.some((p) => p.id === 'regional-handoff-' + j))
+            )
+              continue;
             let point = null;
             for (const radius of [0, 50, 100, 150, 200]) {
               for (let n = 0; n < 16; n++) {
@@ -1589,7 +2108,7 @@
                 ...(sceneRole ? { sceneRole } : {}),
               });
           }
-          z.regionalHandoffVersion = 1;
+          z.regionalHandoffVersion = version;
         } finally {
           this.s.zone = previous;
         }
@@ -1630,9 +2149,193 @@
         }
         z.flightProjectVersion = 1;
       }
+      // The Dark Lord's paid state soldiery is multiracial, while wild wolves,
+      // local civilian life and independent monster households remain native.
+      // Only visual/doctrine metadata and readable names change: never HP,
+      // damage, level, rewards, spawn count, home or saved enemy identity.
+      crownMilitaryRoster(z) {
+        if (this.peace) return;
+        const lineages = ['crownguard', 'goblin', 'orc', 'archer', 'ogre'];
+        const label = (e) =>
+          'Crown ' +
+          (e.crownAncestry === 'crownguard' ? 'shield' : e.crownAncestry) +
+          (e.ranged ? ' marksman' : ' guard');
+        if (z.id === 'citadel') {
+          const native = z.enemies
+            .filter((e) => e.guard && e.form === 'normal' && !e.reinforcement)
+            .sort((a, b) => this.idOrder(a, b));
+          for (const [j, e] of native.entries()) {
+            if (e.species !== 'crownguard') continue;
+            e.crownTroop = true;
+            e.crownAncestry = lineages[j % lineages.length];
+            e.name = label(e);
+          }
+          return;
+        }
+        const anchors = {
+          highlands: [
+            [1050, 1360],
+            [1850, 1160],
+            [2950, 720],
+          ],
+          frontier: [
+            [155, 615],
+            [2600, 1650],
+            [3000, 2700],
+            [1700, 1250],
+          ],
+          crown: [
+            [720, 900],
+            [2580, 900],
+            [3050, 2320],
+            [3200, 2860],
+          ],
+        }[z.id];
+        if (!anchors) return;
+        const distance = (e) =>
+          Math.min(...anchors.map(([x, y]) => Math.hypot(e.home?.x - x, e.home?.y - y)));
+        // Existing Wolves nearest the Crown mint/convoy roads can be trained
+        // mounts. Independent Wolf dens/strongholds and ordinary mountain
+        // society are deliberately excluded; this creates no new population.
+        if (z.id === 'highlands') {
+          const riders = z.enemies
+            .filter(
+              (e) =>
+                e.species === 'wolf' &&
+                e.type === 'mob' &&
+                e.form === 'normal' &&
+                !e.guard &&
+                !e.summon &&
+                !e.mini &&
+                !e.nightOnly &&
+                !e.strongholdResident &&
+                !e.site &&
+                !e.neutral &&
+                distance(e) < 1100,
+            )
+            .sort((a, b) => distance(a) - distance(b) || this.idOrder(a, b))
+            .slice(0, 4);
+          for (const [j, e] of riders.entries()) {
+            e.mountedCrownRider = true;
+            e.crownTroop = true;
+            e.crownAncestry = 'wolf';
+            e.name = j % 2 ? 'Crown direwolf mounted archer' : 'Crown direwolf lance patrol';
+            e.forcedRole = j % 2 ? 'ranged' : 'melee';
+            this.configureEnemy(e, j);
+            // Military posts use the no-farm contract while retaining the
+            // original Wolf HP, damage, level and patrol/quest identity.
+            e.gold = 0;
+            e.xp = 0;
+          }
+        }
+        const quota = { highlands: 5, frontier: 10, crown: 12 }[z.id];
+        const soldiers = z.enemies
+          .filter(
+            (e) =>
+              e.type === 'mob' &&
+              e.form === 'normal' &&
+              !e.summon &&
+              !e.captain &&
+              !e.roomCaptain &&
+              !e.fieldCaptain &&
+              !e.nightOnly &&
+              !e.neutral &&
+              // Crown soldier posts remain Crown even when assigned to a named
+              // redoubt. Do not turn local monster habitats into generic soldiery.
+              (z.id === 'crown'
+                ? e.species === 'crownguard'
+                : !e.guard &&
+                  !e.mini &&
+                  !e.strongholdResident &&
+                  ['crownguard', 'goblin', 'orc', 'archer', 'ogre'].includes(e.species)) &&
+              distance(e) < (z.id === 'crown' ? 1550 : 880),
+          )
+          .sort((a, b) => distance(a) - distance(b) || this.idOrder(a, b))
+          .slice(0, quota);
+        for (const [j, e] of soldiers.entries()) {
+          e.crownTroop = true;
+          e.crownAncestry = e.species === 'crownguard' ? lineages[j % lineages.length] : e.species;
+          if (z.id === 'crown') {
+            // Existing open-capital troops had all defaulted to archery;
+            // half now screen the rest with shields without stat inflation.
+            e.forcedRole = j % 2 === 0 ? 'melee' : 'ranged';
+            this.configureEnemy(e, j);
+          }
+          e.name = label(e);
+        }
+      }
+      // Sparse state heraldry is decorative and avoids road obstructions.
+      regimeHeraldry(z) {
+        const anchors = {
+          highlands: [
+            [1100, 1370],
+            [1850, 1080],
+            [3090, 590],
+            [770, 1680],
+          ],
+          frontier: [
+            [260, 650],
+            [1720, 1200],
+            [2570, 1600],
+            [2940, 2570],
+            [3130, 570],
+          ],
+          crown: [
+            [735, 850],
+            [2550, 850],
+            [3030, 2290],
+            [3250, 2850],
+            [3300, 3110],
+            [300, 1530],
+          ],
+        }[z.id];
+        if (!anchors || z.regimeHeraldryVersion === 1) return;
+        const before = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          z.props = z.props.filter((p) => !String(p.id || '').startsWith('regime-banner-'));
+          const nearRoad = (p) => this.distanceToRoad(z, p) < 72;
+          for (const [index, [x, y]] of anchors.entries()) {
+            let chosen = null;
+            for (const radius of [0, 60, 105, 160, 215]) {
+              for (let k = 0; k < (radius ? 12 : 1); k++) {
+                const angle = (k * Math.PI) / 6,
+                  p = { x: x + Math.cos(angle) * radius, y: y + Math.sin(angle) * radius };
+                if (
+                  this.blocked(p.x, p.y, z.id, 12, true) ||
+                  nearRoad(p) ||
+                  z.npcs.some((n) => Math.hypot(n.x - p.x, n.y - p.y) < 78) ||
+                  z.nodes.some((n) => Math.hypot(n.x - p.x, n.y - p.y) < 65) ||
+                  z.buildings.some((b) => Math.hypot(b.x - p.x, b.y - p.y) < 85) ||
+                  z.props.some(
+                    (other) => Math.hypot(other.x - p.x, other.y - p.y) < (other.r || 0) + 60,
+                  )
+                )
+                  continue;
+                chosen = p;
+                break;
+              }
+              if (chosen) break;
+            }
+            if (chosen)
+              z.props.push({
+                id: 'regime-banner-' + z.id + '-' + index,
+                ...chosen,
+                r: 0,
+                decorative: true,
+                structure: 'crown-banner',
+                regimeHeraldry: true,
+              });
+          }
+          z.regimeHeraldryVersion = 1;
+        } finally {
+          this.s.zone = before;
+        }
+      }
       authoredPlaces(z) {
         if (this.supplyRoom(z.id)) {
           this.treasuryInterior(z);
+          this.treasuryGuardPopulation(z);
           this.combatPopulation(z);
           this.guardianPopulation(z);
           this.roomCaptainPopulation(z);
@@ -1654,9 +2357,28 @@
           this.dungeonWorkstation(z);
           this.decorateDungeon(z);
           this.abyssAviationProject(z);
+          // Existing Ironroot v4 saves may already have the current dungeon
+          // geometry version. Refurbish ONLY surviving/recorded native Wolf
+          // slots as mounted guards, never summon or revive replacement Wolves.
+          if (z.id === 'mine' && !this.peace) {
+            const native = z.enemies
+              .filter((e) => e.guard && e.form === 'normal' && !e.reinforcement)
+              .sort((a, b) => this.idOrder(a, b));
+            for (const [j, e] of native.entries()) {
+              const post = R.dungeonGuardFormations.mine[j];
+              if (!post?.mountedCrownRider || e.species !== 'wolf') continue;
+              e.mountedCrownRider = true;
+              e.crownTroop = true;
+              e.crownAncestry = 'wolf';
+              e.forcedRole = post.role;
+              e.name = post.name;
+              this.configureEnemy(e, j);
+            }
+          }
           for (const e of z.enemies) this.upgradeRingleader(e);
           this.guardianPopulation(z);
           this.guardianRewards(z);
+          this.crownMilitaryRoster(z);
           return;
         }
         if (z.placesVersion !== 2) {
@@ -1703,7 +2425,12 @@
         this.fieldCaptainPopulation(z);
         this.finalBossPopulation(z);
         this.regionalHandoffLife(z);
+        this.greenwoodCountryLife(z);
         this.ironrootLivelihood(z);
+        this.crownMilitaryRoster(z);
+        this.regimeHeraldry(z);
+        this.recoveryAndThermalLife(z);
+        this.roadsideLanternLife(z);
       }
       spaceQuestBoard(z) {
         if (dungeonIds.includes(z.id) || z.boardPositionVersion === 2) return;
@@ -1725,13 +2452,13 @@
       }
       creatureStrongholdCenter(z, cfg) {
         if (cfg.site) {
-          const n = z.npcs.find((n) => n.id === cfg.site);
-          if (n) return { x: n.x, y: n.y };
+          const site = R.sites[this.regionIndex(z.id)].find(([id]) => id === cfg.site);
+          if (site) return { x: site[2], y: site[3] };
         }
         return cfg.center ? { x: cfg.center[0], y: cfg.center[1] } : null;
       }
       creatureStrongholds(z) {
-        const strongholdVersion = { crown: 8, highlands: 7, frontier: 7 }[z.id] || 6;
+        const strongholdVersion = { crown: 10, highlands: 9, frontier: 9 }[z.id] || 8;
         if (
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
@@ -1781,6 +2508,7 @@
                 decorative: true,
                 structure,
                 stronghold: cfg.id,
+                strongholdDefenseStyle: cfg.defenseStyle || 'ruin',
               });
               placedStructures.add(structure);
               livedInCount++;
@@ -1823,23 +2551,36 @@
                   decorative: true,
                   structure,
                   stronghold: cfg.id,
+                  strongholdDefenseStyle: cfg.defenseStyle || 'ruin',
                 });
                 placedStructures.add(structure);
                 livedInCount++;
               }
             }
-            const ring = [
-              [-145, -105],
-              [-70, -145],
-              [70, -145],
-              [145, -105],
-              [155, 20],
-              [115, 120],
-              [40, 155],
-              [-40, 155],
-              [-115, 120],
-              [-155, 20],
-            ];
+            const ring =
+              cfg.defenseStyle === 'fort'
+                ? [
+                    // Raider redoubt: a real collision-bearing perimeter with
+                    // a single north gate wide enough for the existing squad.
+                    ...Array.from({ length: 7 }, (_, k) => [-150 + k * 50, -150]).filter(
+                      ([x]) => x !== 0 && x !== 50,
+                    ),
+                    ...Array.from({ length: 7 }, (_, k) => [-150 + k * 50, 150]),
+                    ...Array.from({ length: 5 }, (_, k) => [-150, -100 + k * 50]),
+                    ...Array.from({ length: 5 }, (_, k) => [150, -100 + k * 50]),
+                  ]
+                : [
+                    [-145, -105],
+                    [-70, -145],
+                    [70, -145],
+                    [145, -105],
+                    [155, 20],
+                    [115, 120],
+                    [40, 155],
+                    [-40, 155],
+                    [-115, 120],
+                    [-155, 20],
+                  ];
             let wallCount = 0;
             for (const [j, [dx, dy]] of ring.entries()) {
               let p = { x: center.x + dx, y: center.y + dy };
@@ -1855,6 +2596,9 @@
                 r: 26,
                 structure: cfg.wall || 'stockade',
                 stronghold: cfg.id,
+                strongholdDefenseStyle: cfg.defenseStyle || 'ruin',
+                fortCorner:
+                  cfg.defenseStyle === 'fort' && Math.abs(dx) === 150 && Math.abs(dy) === 150,
               });
               wallCount++;
             }
@@ -1885,9 +2629,60 @@
                   r: 26,
                   structure: cfg.wall || 'stockade',
                   stronghold: cfg.id,
+                  strongholdDefenseStyle: cfg.defenseStyle || 'ruin',
+                  fortCorner: cfg.defenseStyle === 'fort' && j % 2 === 0,
                 });
                 if (++wallCount >= 3) break;
               }
+            }
+            // Existing camps sometimes squeeze six furnishings into a tiny
+            // cluster. Redistribute only their nonblocking domestic scenery.
+            // Existing site, enemy homes, boss patrols and encounter geometry
+            // stay where they are; tight/unsafe parcels are left untouched.
+            const living = z.props
+              .filter((p) => p.stronghold === cfg.id && p.decorative && !p.roadTrace)
+              .sort((a, b) => String(a.id).localeCompare(String(b.id)));
+            const resolved = [];
+            for (const item of living) {
+              const maxLivingRadius = cfg.defenseStyle === 'fort' ? 135 : 255;
+              const clear = (p) =>
+                dist(p, center) <= maxLivingRadius &&
+                !this.blocked(p.x, p.y, z.id, 10, true) &&
+                !roadNear(p, 70) &&
+                !z.npcs.some((n) => dist(n, p) < 72) &&
+                !z.nodes.some((n) => n.amount > 0 && dist(n, p) < 65) &&
+                !z.props.some(
+                  (wall) => wall.stronghold === cfg.id && wall.r > 0 && dist(wall, p) < wall.r + 31,
+                ) &&
+                !resolved.some((other) => dist(other, p) < 88);
+              if (!clear(item)) {
+                const old = { x: item.x, y: item.y };
+                let destination = null;
+                for (const radius of cfg.defenseStyle === 'fort'
+                  ? [90, 110, 125, 65, 35]
+                  : [120, 150, 180, 215, 245, 95, 65, 35]) {
+                  for (let j = 0; j < 24; j++) {
+                    const angle = (j * Math.PI) / 12;
+                    const p = {
+                      x: center.x + Math.cos(angle) * radius,
+                      y: center.y + Math.sin(angle) * radius,
+                    };
+                    if (clear(p)) {
+                      destination = p;
+                      break;
+                    }
+                  }
+                  if (destination) break;
+                }
+                if (destination) Object.assign(item, destination);
+                else if (resolved.length >= 5) {
+                  // Avoid cramming a sixth/seventh nonfunctional prop on top
+                  // of established domestic scenes in an unsuitable corner.
+                  z.props.splice(z.props.indexOf(item), 1);
+                  continue;
+                } else Object.assign(item, old);
+              }
+              resolved.push(item);
             }
             if (cfg.night) continue;
             const candidates = z.enemies

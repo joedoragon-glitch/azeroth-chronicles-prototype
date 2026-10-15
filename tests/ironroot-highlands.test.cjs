@@ -53,15 +53,24 @@ test('Ironroot production scenes leave homes, habitats, service spacing and road
   assert(c.zone().props.some((p) => p.structure === 'game-table'));
   assert(c.zone().props.some((p) => p.structure === 'ridge-hearth'));
 });
-test('Treasury keeps the Wolf household captain, home comforts and exact cache identity during migration', () => {
+test('Treasury keeps Crag and Crown direwolf guards, mixed lodging and exact cache identity during migration', () => {
   const c = fresh();
   c.enter('supply-highlands');
   const z = c.zone();
-  assert.equal(z.treasuryVersion, 4);
+  assert.equal(z.treasuryVersion, 5);
   const crag = z.enemies.find((e) => e.roomCaptain);
-  assert.equal(crag.species, 'wolf');
+  assert.equal(crag.species, 'ridge');
+  assert(
+    z.enemies
+      .filter((e) => e.roomGuard && !e.roomCaptain)
+      .every((e) => e.species === 'wolf' && e.mountedCrownRider && e.gold === 0 && e.xp === 0),
+  );
+  assert.equal(
+    require('../src/prototype/sprites.js').candidateKeys({ ...crag, renderKind: 'enemy' })[0],
+    'enemy:ridge:captain-guard',
+  );
   assert.equal(crag.name, 'Crag Tyrant');
-  assert.equal(z.enemies.filter((e) => e.roomGuard).length, 4);
+  assert.equal(z.enemies.filter((e) => e.roomGuard).length, 7);
   const props = new Set(z.props.map((p) => p.structure));
   for (const s of [
     'ridge-hearth',
@@ -70,6 +79,9 @@ test('Treasury keeps the Wolf household captain, home comforts and exact cache i
     'ridge-game-corner',
     'ridge-study',
     'crag-rest',
+    'direwolf-kennel',
+    'rider-bunk',
+    'rider-tack-rack',
     'boss-chest',
   ])
     assert(props.has(s));
@@ -93,7 +105,7 @@ test('Treasury keeps the Wolf household captain, home comforts and exact cache i
       .sort(),
     [0, 1],
   );
-  assert.equal(r.zone().enemies.find((e) => e.roomCaptain).species, 'wolf');
+  assert.equal(r.zone().enemies.find((e) => e.roomCaptain).species, 'ridge');
 });
 test('Mine production, historic cuts and repair forge have trap-free connected routes', () => {
   const c = fresh();
@@ -103,11 +115,15 @@ test('Mine production, historic cuts and repair forge have trap-free connected r
     traps = c.traps();
   assert.equal(z.dungeonVersion, 3);
   assert.equal(z.enemies.filter((e) => e.guard).length, 18);
-  assert.equal(z.enemies.filter((e) => e.guard && e.ranged).length, 6);
+  assert.equal(z.enemies.filter((e) => e.guard && e.ranged).length, 9);
   assert(
     z.enemies
       .filter((e) => e.guard && e.ranged)
-      .every((e) => e.species === 'ogre' && e.projectileStyle === 'stone'),
+      .every(
+        (e) =>
+          (e.species === 'ogre' && e.projectileStyle === 'stone') ||
+          (e.mountedCrownRider && e.projectileStyle === 'arrow'),
+      ),
     'ranged guardians retain their stone-throwing identity',
   );
   assert(z.enemies.filter((e) => e.guard).every((e) => e.gold === 0 && e.xp === 0));

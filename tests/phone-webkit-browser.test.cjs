@@ -50,6 +50,13 @@ const server=http.createServer((req,res)=>{
  await page.keyboard.press('Escape');await page.getByRole('button',{name:'Game and settings',exact:true}).tap();assert(await page.getByRole('button',{name:'Screen and performance',exact:true}).isVisible(),'outside dismissal cannot swallow the next legitimate Settings tap');await page.keyboard.press('Escape');await page.keyboard.press('Escape');
  await page.evaluate(()=>Prototype.save());assert(!(await page.locator('#status').textContent()).includes('Saved locally'));
  await require('./helpers/camera-browser.cjs').verifyCamera(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,true,size.width===375);
+ await require('./helpers/snapshot-thorn-browser.cjs').verifyThornPatrol(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);
+ await require('./helpers/snapshot-garun-browser.cjs').verifyGarunWorks(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);
+ await require('./helpers/snapshot-aviation-browser.cjs').verifyAviation(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);
+ await require('./helpers/snapshot-cinder-browser.cjs').verifyCinderSupport(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);
+ await require('./helpers/snapshot-vera-browser.cjs').verifyVeraInspection(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);
+ await require('./helpers/snapshot-dread-browser.cjs').verifyDreadAgriculture(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);
+ await require('./helpers/snapshot-encounter-browser.cjs').verifySnapshotEncounters(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);
  await require('./helpers/ironroot-browser.cjs').verifyIronroot(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);
  await require('./helpers/regional-browser.cjs').verifyRegional(page,path.join(root,'test-results'),'webkit-'+size.width+'x'+size.height,size.width===375);
  assert.deepEqual(errors,[]);await page.screenshot({path:path.join(root,'test-results','webkit-phone-'+size.width+'x'+size.height+'.png')});

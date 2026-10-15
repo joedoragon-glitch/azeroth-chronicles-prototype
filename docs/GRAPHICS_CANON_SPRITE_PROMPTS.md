@@ -431,13 +431,13 @@ Joel clarified that procedural primitives can create accidental anatomy and bloc
 
 ### 048 — Crag Tyrant
 
-**Canonical cues:** Wolf captain: same gray Wolf body, moderately larger. Canon additions: quarry-metal collar across shoulders/neck with three rectangular plates, pale stone brow plate near head and a small pale protruding line. Procedural captain ground ring excluded. The current guard role also retains its small pale-gold body mark. Exclude all captain rings and guard ground chevrons from the raster.
+**Canonical cues:** Director #293/#298: same horned humanoid species and base procedural body as Ridge Tyrant, moderately enlarged captain with existing quarry-metal shoulder plates. Ordinary Treasury Wolf guards remain Wolves. Original Wolf captain source is historical, superseded only for this named captain.
 
-**Runtime sprite key:** `enemy:wolf:captain-guard`
+**Runtime sprite key:** `enemy:ridge:captain-guard`
 
 **Image-generation prompt:**
 
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Crag Tyrant. Wolf captain: same gray Wolf body, moderately larger. Canon additions: quarry-metal collar across shoulders/neck with three rectangular plates, pale stone brow plate near head and a small pale protruding line. Procedural captain ground ring excluded. The current guard role also retains its small pale-gold body mark. Exclude all captain rings and guard ground chevrons from the raster. Preserve the exact current loadout, source silhouette and existing captain scale. Do not add anatomy, equipment, a new uniform, scenery or ground effects.
+> Translate the current procedural Crag Tyrant reference as one isolated transparent sprite. Preserve the Ridge-like horned humanoid anatomy, existing armor, hammer, quarry-metal shoulder plates and captain scale. Exclude rings, health bars, labels, ground shadows and scenery. Do not use the superseded Wolf body. Sprite production remains paused; capture the current approved procedural reference before any future generation.
 
 ### 049 — Dreadmaw
 

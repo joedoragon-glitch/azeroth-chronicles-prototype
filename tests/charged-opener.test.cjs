@@ -88,6 +88,15 @@ for (const heroClass of ['paladin', 'mage', 'ranger']) {
   const stale = c.chargedEncounterSnapshot();
   c.engage(e);
   c.disengage(e, 1);
+  // Thornfang now waits for the same Mira and returns physically; a new
+  // encounter starts only when that authorized lifecycle completes.
+  for (let i = 0; i < 1000 && e.returning; i++) {
+    c.s.time += .1;
+    c.disengage(e, .1);
+    c.updateThornCaptive(.1);
+  }
+  assert(!e.returning && !e.thornReturn, 'joint return completed before new encounter');
+  Object.assign(c.hero, c.safe(e.x - 80, e.y));
   c.s.time += 1;
   c.engage(e);
   const hp = e.hp;

@@ -6,7 +6,7 @@ const kill=(c,e)=>{e.heroParticipated=true;e.hp=0;c.kill(e);};
 function test(name,fn){try{fn();passed++;console.log('PASS '+name);}catch(e){process.exitCode=1;console.error('FAIL '+name+' '+e.stack);}}
 test('F01 normal-normal-TRUE cycle uses the five-second remote transition and leaves one normal field boss',()=>{const c=fresh(),e=boss(c);c.zone().enemies=[e];kill(c,e);c.updateEnemies(121);kill(c,e);c.updateElites(4.9);assert(!c.zone().enemies.some(x=>x.form==='true'&&x.hp>0));c.updateElites(.2);const t=c.zone().enemies.find(x=>x.form==='true'&&x.hp>0);assert(t);kill(c,t);c.updateEnemies(121);assert.equal(c.zone().enemies.filter(x=>x.hp>0&&!x.summon).length,1);});
 test('F02 sealed boss resets and no attack shape damages through terrain',()=>{const c=fresh(),e=boss(c);c.s.party=[];c.zone().enemies=[e];Object.assign(e,{x:1100,y:1000,home:{x:1100,y:1000}});Object.assign(c.hero,{x:1300,y:1000});c.zone().props.push({x:1100,y:930,r:45},{x:1100,y:1070,r:45},{x:1030,y:1000,r:45});c.engage(e);const hp=c.hero.hp;for(const kind of ['circle','line','cone','sector'])c.resolveArea(e,{kind,x:1300,y:1000,fromX:1100,fromY:1000,angle:0,radius:400,coefficient:1});assert.equal(c.hero.hp,hp);const original=c.follow;c.follow=()=>false;for(let i=0;i<140;i++)c.updateEnemies(.1);c.follow=original;assert(c.s.statistics.events.some(x=>x.type==='reset'));assert(!e.aggro);});
-test('F03 TRUE crypt volleys stagger and family follow-ups retain full warnings',()=>{for(const [id,index]of [['crypt',1],['archive',1],['mine',1],['abyss',0]]){const c=fresh();c.enter(id);const e=c.bossEnemy(c.boss(id),'true',{x:1050,y:1100});c.zone().enemies=[e];Object.assign(c.hero,{x:1200,y:1100});e.attackIndex=0;c.startAttack(e,c.hero,index);if(id==='crypt'){c.resolveAttack(e);assert.deepEqual(c.s.projectiles.map(x=>x.delay),[0,.35,.7]);assert.equal(c.s.hazards.length,0);}else{assert(e.sequence.length);assert(e.sequence.every(a=>a.timer>=1.5));if(id==='abyss')assert(e.sequence.some(a=>a.kind==='circle'&&a.persistent));}}});
+test('F03 TRUE crypt volleys stagger and family follow-ups retain full warnings',()=>{for(const [id,index]of [['crypt',1],['archive',1],['mine',1],['abyss',0]]){const c=fresh();c.enter(id);const e=c.bossEnemy(c.boss(id),'true',{x:1050,y:1100});c.zone().enemies=[e];Object.assign(c.hero,{x:1200,y:1100});e.attackIndex=0;c.startAttack(e,c.hero,index);if(id==='crypt'){c.resolveAttack(e);assert.deepEqual(c.s.projectiles.map(x=>x.delay),[0,.28,.56]);assert.equal(c.s.hazards.length,0);}else{assert(e.sequence.length);assert(e.sequence.every(a=>a.timer>=1.5));if(id==='abyss')assert(e.sequence.some(a=>a.kind==='circle'&&a.persistent));}}});
 test('F04 rejects fractional equipment and missing Nightmare victory records before restore',()=>{const c=fresh('mage','nightmare');for(const mutate of [s=>s.hero.weapon=.5,s=>delete s.victories,s=>delete s.pending]){const s=c.snapshot();mutate(s);assert.throws(()=>C.restore(s));}C.restore(c.snapshot());});
 test('F06 class effects retain ice, double shot, haste, distinct burst and final protection',()=>{for(const cls of ['mage','ranger','paladin']){const c=fresh(cls),e=c.makeEnemy({name:'fixture',species:'goblin',level:1,hp:10000,damage:1,gold:0,xp:0},{x:350,y:350});c.zone().enemies=[e];c.hero.skills=Array(8).fill(1);c.hero.maxMp=c.hero.mp=1000;c.cast(2,e.id);assert.equal(c.s.projectiles.length,cls==='ranger'?2:cls==='mage'?1:0);for(let i=0;i<10;i++)c.updateProjectiles(.1);if(cls==='mage')assert.equal(e.slow,4);c.cast(6,e.id);if(cls==='ranger')assert(c.hero.haste>0);c.hero.hp=1;c.cast(8,e.id);assert(c.hero.hp>1);assert(c.hero.immune>=3);}});
 test('F07 fortress objective requires both Crown specialists and night observation needs its site',()=>{const c=fresh();c.enter('crown');c.accept('quest-29');c.discover('port');assert(!c.s.quests['quest-29'].done);c.discover('fortress-gate');assert(!c.s.quests['quest-29'].done,'fortress gate alone does not bypass the two Crown specialist rescues');c.s.keys.cindermaw=true;assert(c.rescue('cindermaw'));assert(!c.s.quests['quest-29'].done,'Vera alone is not enough');c.s.keys.citadel=true;assert(c.rescue('citadel'));assert(c.s.quests['quest-29'].done,'both Crown specialists plus the fortress gate complete the approach');c.enter('march');c.accept('quest-10');c.s.clock=500;c.updateNight();c.s.quests['quest-10'].count=2;c.checkQuests();assert(!c.s.quests['quest-10'].done);c.discover('night-site');assert(c.s.quests['quest-10'].done);});
@@ -52,7 +52,9 @@ test('F37 all normal and TRUE boss families preserve warnings while gaining mode
   const R=C.rules,scale=R.bossCadence.areaRangeMultiplier;
   assert.equal(scale,1.15);assert.equal(R.bossCadence.specialRange,600);
   for(const def of C.data.bosses)for(const form of ['normal','true']){
-    const c=fresh(),e=c.bossEnemy(def,form,{x:1100,y:1250});
+    const c=fresh();
+    if(def.id==='cindermaw')c.enter('crown');
+    const e=c.bossEnemy(def,form,def.id==='cindermaw'?{x:2200,y:1750}:{x:1100,y:1250});
     c.zone().enemies=[e];c.s.party=[];c.line=()=>true;
     Object.assign(c.hero,{x:e.x+160,y:e.y,maxHp:100000,hp:100000});
     for(let i=0;i<R.attacks[def.id].length;i++){
@@ -66,10 +68,15 @@ test('F37 all normal and TRUE boss families preserve warnings while gaining mode
       if(kind==='sector')assert.equal(a.radius,280*scale,def.id+' '+form+' sector');
       if(kind==='ring'){
         c.s.hazards=[];c.resolveAttack(e);
-        assert.equal(c.s.hazards.at(-1).life,R.combatGeometry.ringLife*scale,def.id+' '+form+' actual expanding ring duration');
+        if(def.id==='cindermaw'&&i===0){
+          assert.equal(e.cinderCordon.life,plan.cordonLife,def.id+' '+form+' actual contracting cordon duration');
+          assert.equal(e.cinderCordon.radius,plan.initialRadius);
+          assert(Number.isFinite(e.cinderCordon.gapAngle)&&Number.isFinite(e.cinderCordon.nextGap));
+          assert.notEqual(e.cinderCordon.gapAngle,e.cinderCordon.nextGap);
+        }else assert.equal(c.s.hazards.at(-1).life,plan.slowOnly?plan.waveLife:R.combatGeometry.ringLife*scale,def.id+' '+form+' actual expanding ring duration');
       }
       if(a.count>1&&kind==='circle'){
-        assert.equal(c.attackPatches(a)[0].radius,75*scale,def.id+' '+form+' multi-target reach');
+        assert.equal(c.attackPatches(a)[0].radius, (def.id==='crypt'&&i===3)||(def.id==='warlord'&&i===1)?72:75*scale,def.id+' '+form+' multi-target reach');
       }
     }
   }
@@ -84,7 +91,7 @@ test('F38 all captains reject useless distant cones but can still threaten a ran
     assert(e,key+' captain exists');
     const cfg=R.roomCaptains[key];assert(cfg.specialRange>oldRange,key+' activation increased');
     e.captainOpeningSummon=true;c.random=()=>0;
-    const far={x:e.x+cfg.specialRange-8,y:e.y};
+    const far={x:e.x+(key==='supply-crown'?-1:1)*(cfg.specialRange-8),y:e.y};
     assert(c.startCaptainAttack(e,far),key+' has a viable distant special');
     assert.notEqual(e.telegraph.kind,'cone',key+' cannot waste distant cone');
     const cone=cfg.attacks.find(p=>p.kind==='cone');
@@ -108,7 +115,7 @@ test('F39 boss selection respects actual ring reach, anti-repeat fallbacks and D
   assert.equal(c.startAttack(thorn,{x:thorn.x+620,y:thorn.y}),false,'invalid selection does not start a telegraph');
   const lord=c.bossEnemy(c.boss('darklord'),'normal',{x:1100,y:1200});
   c.zone().enemies=[lord];lord.summonCd=100;lord.lastAttackIndex=1;lord.hp=lord.maxHp*.8;
-  assert.equal(c.chooseBossAttack(lord,{x:lord.x+440,y:lord.y}),1,'repeat the only usable special rather than wasting a cone');
+  assert.equal(c.chooseBossAttack(lord,{x:lord.x+440,y:lord.y}),5,'choose the usable levy instead of repeating gambit or wasting a cone');
   lord.hp=lord.maxHp*.4;lord.lastAttackIndex=-1;
   assert(c.bossAttackWeights(lord,{x:lord.x+240,y:lord.y})[3]>0,'Crown sector available at low health');
 });
@@ -573,13 +580,13 @@ test('F72 close-range boss signatures are not wasted against distant backline pr
  c.tacticalRogueOutnumbered=()=>true;
  Object.assign(c.hero,{x:1770,y:1700,hp:10000,maxHp:10000});
  assert(c.tacticalRogueMove(e,c.hero));
- assert.equal(e.telegraph.name,'Thornfang’s Pack Feint','a distant lone target receives basic ranged disruption');
+ assert.equal(e.telegraph.name,'Break Contact','a distant lone target receives basic ranged disruption');
  assert(!e.telegraph.rogueSignature,'no point-blank howl against an empty nearby area');
  e.telegraph=null;
  const soldier=c.unit('soldier',1470,1700);c.s.party=[soldier];
  c.tacticalHighestThreatTarget=()=>c.hero;
  assert(c.tacticalRogueMove(e,c.hero));
- assert.equal(e.telegraph.name,'Thornfang’s Packbreaker Howl');
+ assert.equal(e.telegraph.name,'Crowd Dispersal');
  assert.equal(e.telegraph.targetId,soldier.id,'a close soldier is selected over an unreachable high-threat hero');
  assert(e.telegraph.rogueSignature,'the local circle can affect at least one attacker');
 });

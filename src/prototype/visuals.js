@@ -1018,33 +1018,10 @@
           for (const x of [19, 27, 35]) glint(x, -3, '#d9c984', 1.2);
           break;
         case 'ridge':
-          // Wolf disciple: quarry-metal collar and stone brow plates instead of humanoid armor.
-          line(
-            [
-              [-20, -8],
-              [18, -7],
-            ],
-            '#938b78',
-            4,
-          );
-          for (const x of [-11, 0, 11]) rect(x - 3, -11, 6, 6, '#6f7470');
-          poly(
-            [
-              [10, -23],
-              [18, -28],
-              [25, -22],
-              [18, -18],
-            ],
-            '#9a9b8d',
-          );
-          line(
-            [
-              [19, -26],
-              [27, -31],
-            ],
-            '#c9c3a4',
-            2,
-          );
+          // Horned humanoid disciple; ordinary Treasury Wolf guards keep their bodies.
+          rect(-16, -24, 32, 7, '#938b78');
+          for (const x of [-11, 0, 11]) rect(x - 3, -24, 6, 6, '#6f7470');
+          glint(0, -22, '#d9c984', 1.2);
           break;
         case 'darklord':
           // Dreadmaw preserves his original Dark Lord fanboy identity even though Cindermaw is now his combat mentor: obsidian harness and Crown sigil on the Ash-beast carapace.
@@ -1683,6 +1660,310 @@
           3,
         );
       }
+    }
+    // Crown military direwolf mount: the wolf is larger but still an animal,
+    // with a visible armored HUMAN rider. No independent summon is depicted.
+    function crownDirewolfRider(ranged = false) {
+      ctx.save();
+      ctx.scale(1.14, 1.14);
+      wolf('#65717c', true);
+      // Fur mane, armored cheek plate, leather reins and a working war saddle.
+      poly(
+        [
+          [-25, -12],
+          [-16, -26],
+          [-4, -22],
+          [10, -14],
+        ],
+        '#77878e',
+      );
+      poly(
+        [
+          [7, -21],
+          [15, -27],
+          [27, -20],
+          [28, -7],
+          [12, -9],
+        ],
+        '#697c84',
+      );
+      line(
+        [
+          [11, -14],
+          [28, -11],
+          [32, -5],
+        ],
+        '#cfaa70',
+        2.2,
+      );
+      poly(
+        [
+          [14, -17],
+          [30, -16],
+          [34, -11],
+          [17, -10],
+        ],
+        '#adb4af',
+      );
+      for (const x of [-17, -5, 9])
+        poly(
+          [
+            [x, -16],
+            [x + 7, -21],
+            [x + 13, -16],
+            [x + 8, -8],
+          ],
+          '#8c9699',
+        );
+      // Saddle straps continue below the body to avoid a floating rider.
+      poly(
+        [
+          [-17, -21],
+          [-13, -30],
+          [7, -32],
+          [16, -22],
+          [5, -17],
+          [-9, -17],
+        ],
+        '#624c42',
+      );
+      line(
+        [
+          [-15, -18],
+          [-11, 5],
+        ],
+        '#d2b67f',
+        2.5,
+      );
+      line(
+        [
+          [13, -21],
+          [17, 4],
+        ],
+        '#d2b67f',
+        2.5,
+      );
+      for (const x of [-16, 13]) {
+        oval(x, -6, 3, 4, '#c49d61');
+        line(
+          [
+            [x - 6, -2],
+            [x + 4, -2],
+          ],
+          '#4b4b4a',
+          1.5,
+        );
+      }
+      // Human legs remain on both flanks, armored boots in real stirrups.
+      poly(
+        [
+          [-16, -31],
+          [-22, -14],
+          [-24, -8],
+          [-17, -8],
+          [-9, -23],
+        ],
+        '#535b69',
+      );
+      poly(
+        [
+          [11, -29],
+          [17, -13],
+          [20, -7],
+          [12, -6],
+          [4, -24],
+        ],
+        '#596779',
+      );
+      line(
+        [
+          [-25, -9],
+          [-16, -9],
+        ],
+        '#c7af7b',
+        2,
+      );
+      line(
+        [
+          [13, -7],
+          [22, -8],
+        ],
+        '#c7af7b',
+        2,
+      );
+      // Riding torso, fitted silver breastplate and gold Crown insignia.
+      poly(
+        [
+          [-13, -47],
+          [-5, -56],
+          [6, -55],
+          [16, -46],
+          [12, -27],
+          [-12, -28],
+        ],
+        '#3f5368',
+      );
+      poly(
+        [
+          [-10, -46],
+          [10, -47],
+          [12, -34],
+          [0, -28],
+          [-11, -34],
+        ],
+        '#adb9bd',
+      );
+      poly(
+        [
+          [-5, -43],
+          [0, -49],
+          [5, -43],
+          [2, -40],
+          [-2, -40],
+        ],
+        '#e3c779',
+      );
+      line(
+        [
+          [-10, -36],
+          [10, -36],
+        ],
+        '#6f747d',
+        2,
+      );
+      oval(0, -59, 8, 9, '#a7aeb6');
+      poly(
+        [
+          [-10, -64],
+          [-7, -71],
+          [0, -75],
+          [8, -70],
+          [11, -62],
+          [8, -57],
+          [-8, -57],
+        ],
+        '#596c7b',
+      );
+      poly(
+        [
+          [-13, -61],
+          [12, -62],
+          [9, -57],
+          [-9, -57],
+        ],
+        '#d0bd8b',
+      );
+      line(
+        [
+          [0, -73],
+          [0, -79],
+        ],
+        '#e2c374',
+        2,
+      );
+      poly(
+        [
+          [0, -79],
+          [-5, -83],
+          [0, -87],
+          [5, -83],
+        ],
+        '#ddba6e',
+      );
+      if (ranged) {
+        // Bow and blue fletching: unmistakably a mobile mounted archer.
+        line(
+          [
+            [15, -45],
+            [31, -54],
+            [34, -31],
+            [17, -21],
+          ],
+          '#b99a67',
+          2.8,
+        );
+        line(
+          [
+            [31, -54],
+            [38, -44],
+            [34, -31],
+          ],
+          '#e6d6b2',
+          1.5,
+        );
+        line(
+          [
+            [9, -40],
+            [40, -42],
+          ],
+          '#d5c9a2',
+          2,
+        );
+        poly(
+          [
+            [40, -42],
+            [33, -46],
+            [33, -38],
+          ],
+          '#a4c2d3',
+        );
+        rect(-17, -42, 8, 23, '#705842');
+        for (const y of [-38, -32, -26])
+          line(
+            [
+              [-15, y],
+              [-22, y - 6],
+            ],
+            '#a6c3da',
+            1.5,
+          );
+      } else {
+        // Blunted practice lance doubles as a real combat dash cue.
+        line(
+          [
+            [16, -38],
+            [36, -55],
+            [51, -66],
+          ],
+          '#ccb080',
+          4,
+        );
+        poly(
+          [
+            [48, -64],
+            [61, -77],
+            [56, -60],
+            [50, -56],
+          ],
+          '#adb9be',
+        );
+        line(
+          [
+            [-21, -43],
+            [-30, -33],
+          ],
+          '#a6b4b8',
+          3,
+        );
+        poly(
+          [
+            [-34, -41],
+            [-22, -44],
+            [-17, -30],
+            [-29, -28],
+          ],
+          '#59748a',
+        );
+        poly(
+          [
+            [-30, -39],
+            [-25, -45],
+            [-20, -39],
+          ],
+          '#e2c371',
+        );
+      }
+      ctx.restore();
     }
     function crocodile(c = '#71886a') {
       poly(
@@ -2530,6 +2811,150 @@
         }
         oval(3, -6, 2, 2, gold);
       }
+    }
+    function crownedHero(role) {
+      // Keep each class's weapon and readable silhouette; adapt the original
+      // ruler's violet mantle, gold three-point crown and amethyst diamond.
+      const purple = '#423c55',
+        trim = '#e0bd73',
+        gem = '#b48fbc';
+      if (role === 'paladin') {
+        // Royal plate and heavy ceremonial shoulder wings, sword still present.
+        for (const x of [-14, 14]) {
+          poly(
+            [
+              [x - 5, -18],
+              [x, -27],
+              [x + 6, -15],
+              [x, -10],
+            ],
+            '#8c8699',
+          );
+          line(
+            [
+              [x - 3, -17],
+              [x + 3, -17],
+            ],
+            trim,
+            2,
+          );
+        }
+        poly(
+          [
+            [-9, -16],
+            [0, -22],
+            [9, -16],
+            [7, -3],
+            [-7, -3],
+          ],
+          '#666077',
+        );
+        line(
+          [
+            [-6, -8],
+            [6, -8],
+          ],
+          trim,
+          2,
+        );
+      } else if (role === 'mage') {
+        // An embroidered violet stole and a floating courtly collar.
+        poly(
+          [
+            [-10, -19],
+            [-17, 9],
+            [-10, 12],
+            [-4, -19],
+          ],
+          purple,
+        );
+        poly(
+          [
+            [5, -19],
+            [10, 12],
+            [17, 9],
+            [10, -19],
+          ],
+          purple,
+        );
+        for (const x of [-11, 11])
+          line(
+            [
+              [x, -12],
+              [x, 5],
+            ],
+            trim,
+            1.5,
+          );
+        poly(
+          [
+            [-13, -23],
+            [0, -28],
+            [13, -23],
+            [8, -18],
+            [-8, -18],
+          ],
+          '#776582',
+        );
+      } else {
+        // The archer keeps a hood, bow and quiver; a short mantle and
+        // feathered gold clasp communicate rank without heavy armor.
+        poly(
+          [
+            [-12, -18],
+            [-22, 6],
+            [-10, 5],
+            [0, -10],
+            [11, 5],
+            [21, 6],
+            [12, -18],
+          ],
+          purple,
+        );
+        line(
+          [
+            [-9, -16],
+            [0, -10],
+            [9, -16],
+          ],
+          trim,
+          2,
+        );
+        poly(
+          [
+            [10, -33],
+            [18, -42],
+            [17, -30],
+            [12, -23],
+          ],
+          '#bfabbf',
+        );
+      }
+      // Head silhouette is shorter than the former ruler's: crown sits over
+      // the existing face or hood without replacing its class-specific headgear.
+      poly(
+        [
+          [-12, -44],
+          [-17, -55],
+          [-6, -50],
+          [0, -60],
+          [6, -50],
+          [17, -55],
+          [12, -44],
+        ],
+        trim,
+      );
+      rect(-12, -46, 24, 4, '#957446');
+      poly(
+        [
+          [0, -54],
+          [4, -49],
+          [0, -45],
+          [-4, -49],
+        ],
+        gem,
+      );
+      oval(0, -49, 1.8, 2, '#eed1f0');
     }
     function specialist(e) {
       const style = {
@@ -6179,6 +6604,93 @@
     function decoration(kind) {
       const localWood = ['#806044', '#71654f', '#71695b', '#614f46', '#555563'][region];
       switch (kind) {
+        case 'direwolf-kennel':
+          poly(
+            [
+              [-33, -7],
+              [-18, -17],
+              [28, -17],
+              [34, -5],
+              [28, 15],
+              [-26, 15],
+            ],
+            '#6b665b',
+          );
+          poly(
+            [
+              [-26, -6],
+              [-8, -13],
+              [26, -8],
+              [22, 9],
+              [-22, 9],
+            ],
+            '#82938c',
+          );
+          for (const x of [-21, 0, 20])
+            line(
+              [
+                [x, -4],
+                [x + 5, 10],
+              ],
+              '#aab2a2',
+              2,
+            );
+          oval(19, 9, 6, 3, '#c1a573');
+          break;
+        case 'rider-tack-rack':
+          for (const x of [-24, 24])
+            line(
+              [
+                [x, 12],
+                [x, -34],
+              ],
+              '#756048',
+              4,
+            );
+          line(
+            [
+              [-25, -29],
+              [25, -29],
+            ],
+            '#9f8156',
+            4,
+          );
+          poly(
+            [
+              [-18, -26],
+              [-10, -39],
+              [5, -40],
+              [17, -26],
+              [9, -15],
+              [-10, -16],
+            ],
+            '#694e40',
+          );
+          for (const x of [-15, 0, 14])
+            line(
+              [
+                [x, -19],
+                [x + 5, 12],
+              ],
+              '#d4ba87',
+              2,
+            );
+          oval(-20, 7, 6, 6, '#b59b66');
+          oval(22, 6, 6, 5, '#9a9d9b');
+          break;
+        case 'rider-bunk':
+          rect(-25, -10, 50, 25, '#665445');
+          rect(-21, -14, 43, 22, '#557080');
+          rect(-20, -13, 13, 13, '#c9b99a');
+          line(
+            [
+              [-28, 17],
+              [28, 17],
+            ],
+            '#b39668',
+            2,
+          );
+          break;
         case 'torch':
           line(
             [
@@ -6205,6 +6717,74 @@
               [4, -7],
             ],
             '#f2cf7c',
+          );
+          break;
+        case 'estate-rug':
+          // Finished Crown luxury, deliberately non-colliding with the original route.
+          poly(
+            [
+              [-42, -4],
+              [8, -20],
+              [45, -5],
+              [-4, 12],
+            ],
+            '#4c2d40',
+          );
+          poly(
+            [
+              [-32, -4],
+              [7, -16],
+              [36, -5],
+              [-4, 8],
+            ],
+            '#7d4655',
+          );
+          line(
+            [
+              [-30, -3],
+              [7, -15],
+              [34, -5],
+              [-4, 7],
+            ],
+            '#c8a671',
+            2,
+          );
+          break;
+        case 'estate-hearth':
+          rect(-28, -34, 56, 43, '#57454a');
+          rect(-21, -27, 42, 31, '#2b2329');
+          poly(
+            [
+              [-12, 0],
+              [-6, -22],
+              [0, -11],
+              [7, -27],
+              [16, 0],
+            ],
+            '#d58b47',
+          );
+          poly(
+            [
+              [-7, 0],
+              [0, -15],
+              [8, 0],
+            ],
+            '#ffd17e',
+          );
+          rect(-33, -39, 66, 7, '#9b8280');
+          break;
+        case 'estate-lounge':
+          rect(-27, -21, 54, 20, '#513343');
+          rect(-26, -10, 52, 20, '#77505c');
+          rect(-28, 0, 7, 14, '#856e60');
+          rect(21, 0, 7, 14, '#856e60');
+          line(
+            [
+              [-22, -12],
+              [22, -12],
+            ],
+            '#d4b57b',
+            2,
           );
           break;
         case 'coffin':
@@ -6724,6 +7304,221 @@
               '#9b8b6c',
               1,
             );
+          break;
+        case 'silver-ore-face':
+          // Argentiferous dark ore, deliberately unlike the beige quarry rubble.
+          shade(42, 12, 0.15);
+          poly(
+            [
+              [-37, 13],
+              [-33, -15],
+              [-15, -40],
+              [16, -42],
+              [35, -16],
+              [39, 12],
+            ],
+            '#555f64',
+          );
+          poly(
+            [
+              [-16, -36],
+              [5, -31],
+              [22, -13],
+              [7, 10],
+              [-22, -2],
+            ],
+            '#727c81',
+          );
+          for (const [x, y] of [
+            [-22, -14],
+            [-5, -23],
+            [14, -10],
+            [24, 3],
+            [-8, 4],
+          ]) {
+            rect(x, y, 7, 5, '#aeb8bd');
+            rect(x + 2, y + 1, 3, 2, '#e0e5e5');
+          }
+          line(
+            [
+              [-30, 13],
+              [13, 14],
+            ],
+            '#887b65',
+            3,
+          );
+          break;
+        case 'copper-ore-face':
+          shade(42, 12, 0.15);
+          poly(
+            [
+              [-36, 13],
+              [-29, -29],
+              [-5, -42],
+              [25, -31],
+              [38, 12],
+            ],
+            '#6a625d',
+          );
+          for (const [x, y] of [
+            [-22, -12],
+            [-5, -29],
+            [13, -18],
+            [22, 3],
+          ]) {
+            oval(x, y, 9, 5, '#bd744b');
+            glint(x + 3, y - 2, '#d6a078', 1.4);
+          }
+          for (const [x, y] of [
+            [-14, 6],
+            [9, -2],
+          ])
+            oval(x, y, 6, 3, '#6b927c');
+          break;
+        case 'copper-sort-samples':
+          shade(37, 10, 0.13);
+          rect(-31, -12, 62, 28, '#766d5b');
+          rect(-27, -10, 54, 19, '#514d46');
+          for (const [x, y] of [
+            [-21, -5],
+            [-10, 1],
+            [4, -6],
+            [16, 2],
+          ]) {
+            oval(x, y, 7, 4, '#b9754e');
+            glint(x + 2, y - 2, '#d8a07b', 1.2);
+          }
+          break;
+        case 'silver-refining-hearth':
+          // A compact cupellation/assay station: oxidizing fire, cupel and silver buttons.
+          shade(43, 12, 0.17);
+          rect(-34, -8, 67, 22, '#756f65');
+          rect(-25, -33, 48, 27, '#989083');
+          rect(16, -49, 13, 36, '#6a655e');
+          oval(0, -9, 17, 7, '#443b38');
+          for (const x of [-11, 0, 11])
+            poly(
+              [
+                [x - 5, -8],
+                [x, -23],
+                [x + 5, -8],
+              ],
+              '#c57945',
+            );
+          oval(-24, 3, 10, 5, '#b7aa95');
+          oval(-24, 1, 6, 3, '#d8e0de');
+          for (const x of [10, 20]) {
+            rect(x - 4, 3, 8, 4, '#b7c4c5');
+            line(
+              [
+                [x - 3, 4],
+                [x + 3, 4],
+              ],
+              '#e6e9e5',
+              1,
+            );
+          }
+          oval(-1, 11, 8, 3, '#55524e');
+          break;
+        case 'silver-sort-samples':
+          // An ore-sorter's flat slate pans separate silver-bearing pieces from waste stone.
+          shade(37, 10, 0.13);
+          rect(-31, -12, 62, 28, '#766d5b');
+          rect(-27, -10, 24, 19, '#484f52');
+          for (const [x, y] of [
+            [-22, -5],
+            [-13, 0],
+            [-8, -6],
+            [-19, 5],
+          ]) {
+            rect(x, y, 6, 4, '#a6b8bc');
+            glint(x + 3, y, '#dce5e4', 1);
+          }
+          for (const [x, y] of [
+            [7, -4],
+            [16, 2],
+            [24, -5],
+          ])
+            oval(x, y, 5, 4, '#948876');
+          line(
+            [
+              [-31, 14],
+              [31, 14],
+            ],
+            localWood,
+            3,
+          );
+          break;
+        case 'silver-die-tray':
+          // A readable issue of Crown pieces next to the approved striking-bench sprite.
+          shade(40, 10, 0.14);
+          rect(-32, -10, 64, 25, localWood);
+          rect(-27, -13, 54, 20, '#625c54');
+          for (const [x, y] of [
+            [-20, -7],
+            [-9, -6],
+            [3, -7],
+            [16, -5],
+            [-14, 2],
+            [-1, 3],
+            [12, 4],
+          ]) {
+            oval(x, y, 6, 4, '#d3dcdd');
+            line(
+              [
+                [x - 3, y],
+                [x + 3, y],
+              ],
+              '#859ba1',
+              1,
+            );
+          }
+          // Coin die: the Dark Lord's profile, not a new heraldic emblem.
+          oval(0, -24, 9, 8, '#c5d1d1');
+          oval(-2, -25, 4, 6, '#718185');
+          poly(
+            [
+              [1, -24],
+              [8, -22],
+              [1, -20],
+            ],
+            '#718185',
+          );
+          break;
+        case 'sealed-crown-consignment':
+          // Distinct silver Crown seals; ordinary wagon/crate sprites remain unchanged.
+          shade(40, 11, 0.14);
+          rect(-32, -12, 63, 28, '#76654f');
+          rect(-28, -22, 55, 13, '#98836b');
+          for (const x of [-23, 21]) rect(x, -21, 5, 36, '#50585a');
+          rect(-9, -20, 17, 11, '#c3ced0');
+          oval(0, -17, 6, 5, '#edf0ed');
+          oval(-2, -18, 3, 4, '#708087');
+          poly(
+            [
+              [0, -18],
+              [5, -16],
+              [0, -14],
+            ],
+            '#708087',
+          );
+          line(
+            [
+              [-9, -8],
+              [8, -8],
+            ],
+            '#64757a',
+            2,
+          );
+          rect(12, -34, 18, 12, '#d6cbb0');
+          line(
+            [
+              [16, -30],
+              [25, -30],
+            ],
+            '#64757a',
+            2,
+          );
           break;
         case 'highland-pay-station':
           shade(40, 12, 0.15);
@@ -8023,6 +8818,31 @@
             2,
           );
           break;
+        case 'citadel-vanity-quarters':
+          // Veyra's private dressing station and working cosmetology tools.
+          shade(45, 12, 0.17);
+          rect(-40, -4, 80, 15, '#665047');
+          rect(-37, -1, 74, 9, '#a77d5d');
+          rect(-26, -47, 52, 40, '#a47d57');
+          rect(-22, -43, 44, 32, '#8fadb0');
+          rect(-14, -39, 19, 3, '#d1e4dc');
+          rect(-30, 8, 4, 10, localWood);
+          rect(28, 8, 4, 10, localWood);
+          glint(-30, -4, '#f3c982', 2);
+          glint(30, -4, '#f3c982', 2);
+          rect(-24, -16, 11, 15, '#e9dcc3');
+          rect(-22, -20, 7, 4, gold);
+          rect(-7, -16, 11, 15, '#ba6370');
+          rect(-5, -20, 7, 4, gold);
+          rect(10, -16, 11, 15, '#83a09a');
+          rect(12, -20, 7, 4, gold);
+          rect(24, -32, 2, 16, '#bc9d77');
+          rect(28, -32, 2, 16, '#bc9d77');
+          rect(32, -32, 2, 16, '#bc9d77');
+          oval(28, -33, 9, 3, '#e2c9a7');
+          rect(-39, 11, 23, 9, '#bb7657');
+          rect(35, -24, 10, 38, '#77576d');
+          break;
         case 'citadel-boss-approach':
           shade(46, 10, 0.12);
           for (const x of [-35, 35]) {
@@ -9106,6 +9926,163 @@
             oval(x, y, r, r * 0.65, '#5d7662');
           for (const x of [-5, 5]) glint(x, -4, '#b7c69d', 1);
           break;
+        case 'battlefield-poppies':
+          // Red corn poppies recolonize disturbed but cooled old battlefield soil.
+          oval(0, 10, 28, 8, '#586c4c');
+          for (const [x, y] of [
+            [-19, -1],
+            [-11, -10],
+            [-1, 0],
+            [7, -13],
+            [17, -5],
+            [23, 3],
+            [-25, 5],
+            [1, -19],
+          ]) {
+            line(
+              [
+                [x, 9],
+                [x, y],
+              ],
+              '#547b4a',
+              1.8,
+            );
+            for (const dx of [-3.5, 3.5]) oval(x + dx, y - 2, 3.9, 3.2, '#c92e39');
+            oval(x, y - 5.5, 3.5, 3.5, '#e84a4b');
+            oval(x, y - 2, 1.6, 1.6, '#34352c');
+          }
+          break;
+        case 'pioneer-grasses':
+          oval(0, 9, 25, 7, '#566a4d');
+          for (const x of [-20, -15, -9, -2, 5, 12, 19]) {
+            line(
+              [
+                [x, 9],
+                [x + (x % 3) * 2 - 3, -11 - (x % 4) * 2],
+              ],
+              '#7e9361',
+              2,
+            );
+            line(
+              [
+                [x, 8],
+                [x + 5, -1],
+              ],
+              '#9baa70',
+              1.2,
+            );
+          }
+          break;
+        case 'pioneer-brush':
+          for (const [x, y, radius] of [
+            [-15, 2, 11],
+            [0, -8, 14],
+            [17, 4, 11],
+          ])
+            oval(x, y, radius, 7, '#658355');
+          for (const x of [-16, 3, 17]) {
+            line(
+              [
+                [x, 9],
+                [x + 2, -13],
+              ],
+              '#6b664d',
+              2,
+            );
+            oval(x + 2, -9, 6, 4, '#84966a');
+          }
+          break;
+        case 'regrowth-birch':
+          // Skinny pale-trunk pioneer tree; not a mature, uniform forest canopy.
+          line(
+            [
+              [0, 14],
+              [2, -53],
+            ],
+            '#c8c5b1',
+            6,
+          );
+          for (const [y, offset] of [
+            [-15, -22],
+            [-31, 20],
+            [-43, -14],
+          ])
+            line(
+              [
+                [1, y],
+                [offset, y - 15],
+              ],
+              '#aaa89a',
+              3,
+            );
+          for (const [x, y, rx] of [
+            [-17, -36, 15],
+            [15, -45, 15],
+            [0, -56, 18],
+          ])
+            oval(x, y, rx, 10, '#78945d');
+          for (const y of [-9, -24, -39])
+            line(
+              [
+                [-1, y],
+                [4, y - 2],
+              ],
+              '#62675b',
+              1.3,
+            );
+          break;
+        case 'regrowth-willow':
+          line(
+            [
+              [0, 15],
+              [-1, -45],
+            ],
+            '#8f836b',
+            7,
+          );
+          for (const [x, y, rx] of [
+            [-18, -39, 18],
+            [17, -39, 17],
+            [0, -57, 20],
+          ])
+            oval(x, y, rx, 11, '#6f8865');
+          for (const x of [-25, -12, 1, 14, 26])
+            line(
+              [
+                [x, -35],
+                [x + (x < 0 ? -4 : 4), -7],
+              ],
+              '#80996d',
+              1.7,
+            );
+          break;
+        case 'mossy-basalt':
+          poly(
+            [
+              [-24, 9],
+              [-21, -7],
+              [-3, -18],
+              [17, -12],
+              [27, 8],
+            ],
+            '#505451',
+          );
+          poly(
+            [
+              [-21, -7],
+              [-3, -18],
+              [9, -3],
+              [-24, 9],
+            ],
+            '#747970',
+          );
+          for (const [x, y, rx] of [
+            [-13, -7, 7],
+            [3, -10, 6],
+            [14, 1, 8],
+          ])
+            oval(x, y, rx, 3.1, '#658365');
+          break;
         case 'wildflowers':
           for (const [x, c] of [
             [-8, '#d8b47a'],
@@ -9122,6 +10099,23 @@
               1,
             );
             glint(x, -5, c, 1.8);
+          }
+          break;
+        case 'fruit-tree':
+          rect(-3, -12, 6, 26, '#76573d');
+          for (const [x, y] of [
+            [-10, -23],
+            [1, -28],
+            [12, -21],
+          ]) {
+            oval(x, y, 11, 9, '#58794f');
+          }
+          for (const [x, y] of [
+            [-10, -20],
+            [2, -31],
+            [13, -18],
+          ]) {
+            glint(x, y, '#cf8a67', 2);
           }
           break;
         case 'sapling':
@@ -9451,6 +10445,253 @@
             );
           }
           break;
+        case 'roadside-lantern':
+          // Existing material during the day, lit locally only by the
+          // shared night-grade source selection (no daytime magical glow).
+          oval(0, 12, 14, 5, '#656a68');
+          line(
+            [
+              [0, 11],
+              [0, -54],
+            ],
+            '#767d81',
+            5,
+          );
+          rect(-9, -56, 18, 5, '#a9a7a0');
+          line(
+            [
+              [-12, -51],
+              [12, -51],
+            ],
+            '#a3a6a1',
+            2,
+          );
+          poly(
+            [
+              [-11, -55],
+              [-8, -68],
+              [8, -68],
+              [11, -55],
+            ],
+            '#676870',
+          );
+          poly(
+            [
+              [-9, -52],
+              [-7, -39],
+              [7, -39],
+              [9, -52],
+            ],
+            '#d5b781',
+          );
+          rect(-5, -50, 10, 9, '#f0d597');
+          for (const x of [-9, 9])
+            line(
+              [
+                [x, -53],
+                [x, -38],
+              ],
+              '#848b88',
+              1.5,
+            );
+          poly(
+            [
+              [-12, -39],
+              [12, -39],
+              [8, -35],
+              [-8, -35],
+            ],
+            '#656a70',
+          );
+          break;
+        case 'geothermal-heat-intake':
+          // Insulated channel intake over safe rock, not a mineable lava prop.
+          rect(-30, 4, 60, 14, '#55545a');
+          rect(-22, -11, 44, 18, '#777e7e');
+          for (const x of [-18, -7, 5, 16]) rect(x - 2, -9, 5, 10, '#c39f66');
+          rect(-8, -37, 16, 28, '#6b7277');
+          line(
+            [
+              [-18, -18],
+              [16, -18],
+            ],
+            '#c0a470',
+            4,
+          );
+          glint(0, -15, '#eb9b52', 2.4);
+          break;
+        case 'thermal-flue':
+          rect(-26, 2, 52, 13, '#63646b');
+          rect(-23, -7, 46, 12, '#8b8e8a');
+          for (const x of [-19, -2, 16]) {
+            rect(x - 4, -17, 8, 11, '#7b7a73');
+            oval(x, -19, 4, 2.3, '#a9b2b4');
+          }
+          line(
+            [
+              [-27, 7],
+              [27, 7],
+            ],
+            '#d1a26e',
+            3.5,
+          );
+          break;
+        case 'crown-glass-kiln':
+          rect(-31, -19, 62, 34, '#78757a');
+          poly(
+            [
+              [-35, -20],
+              [-19, -38],
+              [21, -38],
+              [35, -20],
+            ],
+            '#6a6065',
+          );
+          rect(-18, -10, 36, 19, '#4f4145');
+          poly(
+            [
+              [-15, 6],
+              [-10, -6],
+              [10, -6],
+              [15, 6],
+            ],
+            '#c97940',
+          );
+          line(
+            [
+              [-12, -6],
+              [12, -6],
+            ],
+            '#f4c16f',
+            2.5,
+          );
+          rect(19, -46, 11, 27, '#767a7a');
+          for (const [x, y] of [
+            [-25, 10],
+            [23, 12],
+          ])
+            oval(x, y, 5, 3, '#b9c6ba');
+          break;
+        case 'crown-ceramic-kiln':
+          oval(0, 9, 31, 11, '#70665c');
+          poly(
+            [
+              [-28, 8],
+              [-23, -18],
+              [-12, -32],
+              [14, -32],
+              [26, -16],
+              [29, 7],
+            ],
+            '#8e7770',
+          );
+          poly(
+            [
+              [-19, 7],
+              [-13, -15],
+              [13, -15],
+              [19, 7],
+            ],
+            '#533e39',
+          );
+          poly(
+            [
+              [-13, 5],
+              [-6, -10],
+              [6, -10],
+              [14, 5],
+            ],
+            '#bb7547',
+          );
+          for (const x of [-27, 27]) oval(x, 7, 5, 4, '#bba489');
+          glint(0, -2, '#efb76d', 2);
+          break;
+        case 'heat-distribution-post':
+          rect(-20, 7, 40, 9, '#777c7c');
+          for (const x of [-15, 15])
+            line(
+              [
+                [x, 8],
+                [x, -29],
+              ],
+              '#8d9694',
+              4,
+            );
+          rect(-25, -33, 50, 9, '#6b7174');
+          for (const x of [-17, 0, 17]) rect(x - 4, -43, 8, 12, '#aa8861');
+          line(
+            [
+              [-26, 11],
+              [26, 11],
+            ],
+            '#d4a56c',
+            2,
+          );
+          break;
+        case 'heated-drying-shed':
+          for (const x of [-27, 27])
+            line(
+              [
+                [x, 14],
+                [x, -27],
+              ],
+              '#77675a',
+              4,
+            );
+          poly(
+            [
+              [-33, -30],
+              [-16, -44],
+              [18, -44],
+              [34, -30],
+            ],
+            '#87847d',
+          );
+          line(
+            [
+              [-30, -23],
+              [30, -23],
+            ],
+            '#b39e79',
+            3,
+          );
+          for (const x of [-19, -5, 9, 22]) {
+            line(
+              [
+                [x, -23],
+                [x, 8],
+              ],
+              '#b99b74',
+              1.5,
+            );
+            rect(x - 5, -4, 10, 9, '#9b7959');
+          }
+          rect(-29, 11, 58, 5, '#66666b');
+          break;
+        case 'heated-washhouse':
+          rect(-29, -11, 58, 26, '#89817b');
+          oval(0, -6, 25, 12, '#a8c3bc');
+          oval(0, -7, 19, 7, '#5b898b');
+          for (const x of [-17, 17])
+            line(
+              [
+                [x, 5],
+                [x, -24],
+              ],
+              '#847160',
+              3,
+            );
+          line(
+            [
+              [-20, -25],
+              [20, -25],
+            ],
+            '#bca985',
+            3,
+          );
+          rect(-17, -23, 12, 11, '#d3c5ad');
+          rect(4, -23, 13, 11, '#9bb4ad');
+          break;
         case 'fumarole':
           oval(0, 7, 13, 5, '#4d484f');
           ctx.save();
@@ -9635,6 +10876,275 @@
               2,
             );
           }
+          break;
+        case 'hay-rick':
+          // Straw under a simple tied thatch: harvested fields, not new buildings.
+          shade(35, 9, 0.13);
+          poly(
+            [
+              [-29, 10],
+              [-22, -7],
+              [-7, -26],
+              [12, -23],
+              [29, -2],
+              [32, 11],
+            ],
+            '#b79754',
+          );
+          poly(
+            [
+              [-21, -5],
+              [-8, -26],
+              [11, -22],
+              [25, -4],
+            ],
+            '#d3b96e',
+          );
+          for (const y of [-8, 1, 8])
+            line(
+              [
+                [-22, y],
+                [24, y + 2],
+              ],
+              y === 1 ? '#8b724b' : '#e5cb82',
+              1.6,
+            );
+          for (const x of [-12, 2, 14])
+            line(
+              [
+                [x, -14],
+                [x + 6, 9],
+              ],
+              '#a28a54',
+              1,
+            );
+          line(
+            [
+              [-25, -5],
+              [28, -3],
+            ],
+            '#90754d',
+            2.5,
+          );
+          break;
+        case 'furrow-plot':
+          // A modest vegetable plot: short parallel rows with young green leaves.
+          shade(36, 10, 0.12);
+          poly(
+            [
+              [-33, 10],
+              [-18, -10],
+              [24, -16],
+              [35, 8],
+            ],
+            '#695c3d',
+          );
+          for (const y of [-8, -1, 6]) {
+            line(
+              [
+                [-19, y + 1],
+                [25, y - 5],
+              ],
+              '#a18451',
+              3.4,
+            );
+            for (const x of [-13, 0, 13]) {
+              oval(x, y - 3 - x * 0.09, 3.5, 2.5, '#6c9255');
+              line(
+                [
+                  [x, y],
+                  [x + 2, y - 5],
+                ],
+                '#4f7749',
+                1.5,
+              );
+            }
+          }
+          break;
+        case 'pasture-sheep':
+          // Two real small livestock silhouettes; sheep are domestic, not mobs.
+          shade(38, 8, 0.11);
+          for (const [x, y, size] of [
+            [-13, 2, 1],
+            [18, -2, 0.78],
+          ]) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(size, size);
+            for (const dx of [-9, 8]) {
+              line(
+                [
+                  [dx, 4],
+                  [dx - 1, 13],
+                ],
+                '#6a6254',
+                3.2,
+              );
+              oval(dx - 1, 13, 2.4, 1.5, '#524e47');
+            }
+            oval(-1, -3, 16, 11, '#d9d4bd');
+            for (const [dx, dy] of [
+              [-12, -5],
+              [-5, -11],
+              [6, -9],
+              [12, -3],
+            ])
+              oval(dx, dy, 5, 4, '#e8e2c9');
+            oval(17, -8, 7, 6, '#847a67');
+            poly(
+              [
+                [13, -11],
+                [11, -17],
+                [18, -13],
+              ],
+              '#a39b83',
+            );
+            oval(20, -9, 1.6, 1.5, '#252927');
+            ctx.restore();
+          }
+          break;
+        case 'poultry-yard':
+          // Scattered hens and feed make a tiny farmyard immediately legible.
+          for (const [x, y, scale] of [
+            [-19, 4, 1],
+            [11, 8, 0.86],
+            [19, -10, 0.78],
+          ]) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+            oval(-2, 1, 9, 6, '#c6ab7f');
+            poly(
+              [
+                [-9, -1],
+                [-14, -10],
+                [-9, -8],
+                [-5, -4],
+              ],
+              '#a98a60',
+            );
+            oval(6, -5, 4.5, 4.2, '#e2c9a1');
+            poly(
+              [
+                [9, -4],
+                [16, -2],
+                [10, 1],
+              ],
+              '#d6a85a',
+            );
+            poly(
+              [
+                [4, -10],
+                [6, -14],
+                [9, -10],
+              ],
+              '#ad5540',
+            );
+            oval(8, -6, 1.2, 1.2, '#31342a');
+            for (const dx of [-5, 2])
+              line(
+                [
+                  [dx, 5],
+                  [dx - 1, 11],
+                ],
+                '#ac8150',
+                1.4,
+              );
+            ctx.restore();
+          }
+          for (const [x, y] of [
+            [-5, -7],
+            [1, 14],
+            [-26, 13],
+          ])
+            oval(x, y, 2.3, 1.3, '#b7a16a');
+          break;
+        case 'feed-trough':
+          // Feeding and watering imply routine husbandry, not just a fence.
+          shade(31, 8, 0.1);
+          poly(
+            [
+              [-29, -7],
+              [28, -7],
+              [22, 13],
+              [-21, 13],
+            ],
+            '#82654a',
+          );
+          poly(
+            [
+              [-25, -9],
+              [25, -9],
+              [20, -3],
+              [-20, -3],
+            ],
+            '#b2986a',
+          );
+          rect(-21, -4, 42, 10, '#71826b');
+          for (const x of [-15, -4, 8, 17])
+            line(
+              [
+                [x, -3],
+                [x + 5, -9],
+              ],
+              '#9cb081',
+              2,
+            );
+          for (const x of [-22, 18]) rect(x, 10, 5, 8, '#6e553d');
+          break;
+        case 'farm-tool-rack':
+          for (const x of [-24, 24])
+            line(
+              [
+                [x, 14],
+                [x, -29],
+              ],
+              '#896a4c',
+              3.5,
+            );
+          line(
+            [
+              [-27, -23],
+              [27, -23],
+            ],
+            '#ac8657',
+            4,
+          );
+          for (const x of [-16, 2, 17])
+            line(
+              [
+                [x, -23],
+                [x, 13],
+              ],
+              '#b29a68',
+              2.4,
+            );
+          for (const dx of [-4, 0, 4])
+            line(
+              [
+                [-16 + dx, -12],
+                [-16 + dx, -22],
+              ],
+              '#727a69',
+              1.8,
+            );
+          poly(
+            [
+              [-2, 1],
+              [5, -1],
+              [8, 11],
+              [-6, 11],
+            ],
+            '#9eaca6',
+          );
+          line(
+            [
+              [13, 14],
+              [22, 14],
+            ],
+            '#b0a886',
+            2,
+          );
           break;
         case 'garden':
           for (const x of [-14, -7, 0, 7, 14]) {
@@ -11356,6 +12866,90 @@
             4,
           );
         }
+        // Stronghold walls have deliberate local histories. A frontier fort
+        // retains solid matching defensive wood/stone; a disused keep exposes
+        // cracks and rubble; a swamp habitat is a woven animal enclosure.
+        // All dressing remains inside the existing wall footprint.
+        if (e.strongholdDefenseStyle === 'fort') {
+          rect(-28, -38, 56, 10, e.structure === 'stonewall' ? '#aeb6ab' : '#b59468');
+          for (const x of [-24, -10, 4, 18])
+            rect(x, -44, 11, 8, e.structure === 'stonewall' ? '#8c978e' : '#9c7951');
+          if (e.fortCorner) {
+            rect(-21, -59, 42, 30, e.structure === 'stonewall' ? '#778579' : '#886849');
+            poly(
+              [
+                [-24, -59],
+                [0, -75],
+                [24, -59],
+              ],
+              e.structure === 'stonewall' ? '#68776b' : '#634b37',
+            );
+            for (const x of [-12, 12]) rect(x - 4, -52, 8, 15, '#2b3830');
+            rect(-25, -28, 50, 8, '#514e43');
+          }
+        } else if (e.strongholdDefenseStyle === 'ruin') {
+          poly(
+            [
+              [-27, -31],
+              [-18, -45],
+              [-8, -34],
+              [2, -42],
+              [11, -30],
+              [21, -38],
+              [28, -25],
+            ],
+            e.structure === 'stonewall' ? '#7b817a' : '#8d765b',
+          );
+          line(
+            [
+              [-19, -26],
+              [-13, -17],
+              [-17, -8],
+              [-4, 0],
+            ],
+            '#494c45',
+            2.5,
+          );
+          line(
+            [
+              [12, -30],
+              [8, -15],
+              [21, -4],
+            ],
+            '#484a45',
+            2,
+          );
+          oval(-19, 13, 10, 4, '#716c60');
+          oval(20, 14, 9, 4, '#7f7b6c');
+        } else if (e.strongholdDefenseStyle === 'habitat') {
+          for (const x of [-21, -9, 3, 15, 24]) {
+            line(
+              [
+                [x, -30],
+                [x + 4, -43],
+              ],
+              '#aa946d',
+              3,
+            );
+            line(
+              [
+                [x, -25],
+                [x - 7, -35],
+              ],
+              '#819777',
+              2,
+            );
+          }
+          line(
+            [
+              [-27, -14],
+              [27, -11],
+            ],
+            '#827154',
+            3,
+          );
+          oval(16, 12, 11, 3, '#58664c');
+        }
       } else if (e.structure === 'pillar') {
         rect(-13, -44, 26, 58, '#9ca49a');
         rect(-18, -48, 36, 8, '#bac0ad');
@@ -11549,6 +13143,56 @@
           2,
         );
       }
+    } else if (e.kind === 'patrol-report') {
+      specialist({ ...e, kind: 'teacher' });
+    } else if (e.presentation === 'scout-tracks') {
+      ctx.save();
+      ctx.rotate(e.angle || 0);
+      for (const [x, y] of [
+        [-12, -6],
+        [0, 6],
+        [12, -6],
+      ]) {
+        oval(x, y, 5, 3, '#bba889');
+        for (const dy of [-4, 0, 4]) oval(x + 5, y + dy, 1.7, 1.5, '#95846b');
+      }
+      ctx.restore();
+    } else if (e.kind === 'cage' && e.presentation === 'mobile-forge') {
+      if (!rescued) {
+        ctx.save();
+        ctx.translate(34, 6);
+        rect(-20, -15, 40, 20, '#66544a');
+        rect(-17, -19, 34, 6, '#a7967b');
+        oval(-13, 8, 7, 7, '#302c2b');
+        oval(13, 8, 7, 7, '#302c2b');
+        rect(-12, -11, 24, 10, '#44352f');
+        oval(0, -7, 9, 4, '#de7e3a');
+        rect(-6, -31, 16, 7, '#5e6870');
+        rect(-2, -24, 6, 5, '#444d54');
+        ctx.restore();
+        specialist({ ...e, kind: 'smith' });
+      }
+    } else if (e.kind === 'cage' && e.presentation === 'mobile-captive') {
+      if (!rescued) {
+        specialist({ ...e, kind: 'teacher' });
+        rect(10, -17, 9, 13, '#c9b78e');
+        line(
+          [
+            [12, -14],
+            [17, -14],
+          ],
+          '#726044',
+          1,
+        );
+        line(
+          [
+            [12, -10],
+            [17, -10],
+          ],
+          '#726044',
+          1,
+        );
+      }
     } else if (e.kind === 'cage' && e.presentation === 'workstation') {
       // A secured worker can remain mechanically a captive without being drawn behind cage bars.
       ctx.save();
@@ -11610,92 +13254,515 @@
     } else if (e.kind === 'dungeon' && e.treasury) treasuryEntrance(e.treasuryBoss);
     else if (e.kind === 'dungeon' || e.kind === 'exit') gate(e.family);
     else if (e.kind === 'transport') {
+      // Visual-only regional vehicles. Travel identifiers, fares and collision do not change.
       if (e.icon === '🐉' || /Dragon/.test(e.name)) {
-        dragon('#8f9470');
-        rect(-9, -23, 18, 10, '#997148');
-      } else if (e.icon === '⛵') {
+        dragon('#8b9980');
+        // Leather courier saddle, rope tack, supply panniers and wind pennant.
         poly(
           [
-            [-39, 0],
-            [37, 0],
-            [22, 17],
-            [-24, 17],
+            [-17, -29],
+            [-8, -36],
+            [12, -34],
+            [20, -25],
+            [9, -21],
+            [-12, -22],
           ],
-          '#9a7954',
+          '#74543d',
+        );
+        poly(
+          [
+            [-12, -33],
+            [9, -33],
+            [16, -28],
+            [-9, -26],
+          ],
+          '#c7a776',
         );
         line(
           [
-            [-31, 5],
-            [30, 5],
+            [-23, -15],
+            [-10, -19],
+            [14, -17],
+            [27, -10],
           ],
-          '#c1a776',
+          '#ddc396',
+          2.5,
         );
+        for (const x of [-17, 17]) {
+          rect(x - 5, -18, 10, 14, '#806043');
+          line(
+            [
+              [x - 5, -12],
+              [x + 5, -12],
+            ],
+            '#d3b17a',
+            2,
+          );
+          glint(x, -11, '#f5d996', 1.5);
+        }
         line(
           [
-            [0, -48],
-            [0, 2],
+            [7, -34],
+            [10, -51],
           ],
-          '#c2ab7c',
+          '#d3bc8b',
+          2,
+        );
+        poly(
+          [
+            [10, -51],
+            [31, -46],
+            [11, -40],
+          ],
+          '#a98252',
+        );
+      } else if (e.icon === '⛵') {
+        const marsh = region === 1,
+          rim = marsh ? '#b9a178' : '#b6b9ae';
+        // Shallow working ferry, with a real keel, planked deck and steering pole.
+        for (const y of [12, 22])
+          line(
+            [
+              [-52, y],
+              [-36, y + 2],
+              [28, y + 1],
+              [50, y],
+            ],
+            marsh ? '#689da0' : '#88b7bd',
+            2,
+          );
+        poly(
+          [
+            [-51, -4],
+            [47, -6],
+            [36, 20],
+            [-37, 21],
+          ],
+          marsh ? '#604a38' : '#53606a',
+        );
+        poly(
+          [
+            [-52, -5],
+            [47, -7],
+            [35, 7],
+            [-38, 9],
+          ],
+          marsh ? '#af9368' : '#9b9784',
+        );
+        poly(
+          [
+            [-38, 10],
+            [35, 8],
+            [29, 16],
+            [-32, 18],
+          ],
+          '#534438',
+        );
+        for (const y of [-3, 2])
+          line(
+            [
+              [-38, y],
+              [34, y - 2],
+            ],
+            '#d6bb83',
+            1.6,
+          );
+        for (const x of [-29, -12, 5, 22])
+          line(
+            [
+              [x, -3],
+              [x + 3, 7],
+            ],
+            '#71583e',
+            1.3,
+          );
+        // Rail and mooring fenders.
+        for (const x of [-38, 34]) {
+          line(
+            [
+              [x, -4],
+              [x, -24],
+            ],
+            rim,
+            3,
+          );
+          oval(x + 4, 12, 4, 6, '#896c48');
+          oval(x, -5, 3, 2, '#d8bb82');
+        }
+        line(
+          [
+            [-38, -23],
+            [34, -25],
+          ],
+          rim,
           3,
         );
-        poly(
-          [
-            [3, -46],
-            [3, -8],
-            [31, -8],
-          ],
-          '#e2d6b1',
-        );
-      } else if (e.icon === '🐫') {
-        oval(0, -3, 27, 15, '#a28d66');
-        oval(-7, -14, 10, 10, '#ac9770');
-        for (const x of [-17, 13])
-          line(
-            [
-              [x, 4],
-              [x, 25],
-            ],
-            '#9c835e',
-            5,
-          );
         line(
           [
-            [22, -5],
-            [27, -33],
+            [-37, -14],
+            [33, -16],
           ],
-          '#b39b6d',
-          9,
+          '#76583c',
+          1.6,
         );
-        oval(32, -34, 11, 6, '#b39b6d');
-        rect(-14, -25, 25, 13, '#876e52');
-        rect(-24, -12, 12, 20, '#9d7155');
-      } else {
-        rect(-27, -13, 54, 23, '#a4845c');
-        for (const x of [-17, 17]) {
-          oval(x, 12, 8, 8, '#4f564e');
+        // Tied cargo and a working ferryman in a regional coat.
+        rect(5, -14, 18, 15, '#967248');
+        line(
+          [
+            [7, -13],
+            [22, 0],
+          ],
+          '#d7c093',
+          2,
+        );
+        oval(29, -13, 7, 8, '#9d7d55');
+        poly(
+          [
+            [-24, -17],
+            [-13, -17],
+            [-11, -32],
+            [-20, -33],
+          ],
+          marsh ? '#557c6a' : '#677f92',
+        );
+        oval(-17, -39, 6, 7, '#c4a683');
+        poly(
+          [
+            [-29, -44],
+            [-12, -44],
+            [-9, -41],
+            [-29, -40],
+          ],
+          '#695741',
+        );
+        line(
+          [
+            [-13, -25],
+            [-2, -34],
+            [11, -65],
+          ],
+          '#cfb58a',
+          3,
+        );
+        line(
+          [
+            [-40, -22],
+            [-40, -38],
+          ],
+          '#9f7c4d',
+          2,
+        );
+        oval(-40, -42, 4, 5, '#d4a45b');
+        glint(-40, -42, '#ffe4a6', 2);
+        line(
+          [
+            [38, -12],
+            [46, -22],
+          ],
+          '#ba9d75',
+          2.5,
+        );
+        if (!marsh) {
+          rect(-2, -14, 10, 11, '#606a6c');
           line(
             [
-              [x - 5, 12],
-              [x + 5, 12],
+              [-29, 2],
+              [-23, -10],
             ],
-            '#b4a57d',
+            '#aebabc',
+            2,
           );
+        }
+      } else if (e.icon === '🐫') {
+        // Ironroot-frontier caravan: beast, leg joints, saddle, loads and tack.
+        shade(47, 10, 0.18);
+        for (const x of [-25, -8, 14, 30]) {
+          line(
+            [
+              [x, -1],
+              [x + (x < 0 ? -5 : 4), 22],
+            ],
+            '#8b7654',
+            6,
+          );
+          oval(x + (x < 0 ? -5 : 4), 24, 6, 3, '#494039');
         }
         poly(
           [
-            [-30, -15],
-            [-18, -37],
-            [18, -37],
-            [30, -15],
+            [-39, -10],
+            [-20, -29],
+            [12, -27],
+            [34, -10],
+            [29, 6],
+            [-33, 8],
           ],
-          '#c9bc93',
+          '#ab9671',
+        );
+        oval(-15, -27, 12, 13, '#c0a982');
+        oval(12, -26, 12, 12, '#b69f77');
+        poly(
+          [
+            [-26, -33],
+            [-21, -43],
+            [14, -42],
+            [25, -30],
+            [13, -19],
+            [-21, -19],
+          ],
+          '#715844',
+        );
+        poly(
+          [
+            [-19, -40],
+            [13, -40],
+            [16, -34],
+            [-20, -34],
+          ],
+          '#d0ae79',
+        );
+        for (const x of [-30, 17]) {
+          rect(x, -28, 15, 24, x < 0 ? '#76543f' : '#826047');
+          line(
+            [
+              [x + 7, -26],
+              [x + 7, -6],
+            ],
+            '#d3b788',
+            2,
+          );
+          glint(x + 7, -15, '#efd596', 2);
+        }
+        poly(
+          [
+            [29, -10],
+            [40, -33],
+            [53, -42],
+            [61, -36],
+            [51, -10],
+            [42, 2],
+          ],
+          '#b7a17b',
+        );
+        oval(58, -42, 12, 7, '#bfaa81');
+        oval(65, -39, 6, 4, '#927958');
+        eye(60, -44, '#2b2d26');
+        line(
+          [
+            [54, -38],
+            [64, -30],
+            [47, -11],
+          ],
+          '#cfb381',
+          2,
         );
         line(
           [
-            [-19, -35],
-            [19, -35],
+            [-7, -31],
+            [39, -33],
+            [56, -33],
           ],
-          '#e1d3ab',
+          '#e0c89c',
+          2,
+        );
+        line(
+          [
+            [-9, -42],
+            [-9, -59],
+          ],
+          '#ac8957',
+          2,
+        );
+        poly(
+          [
+            [-9, -59],
+            [11, -54],
+            [-9, -49],
+          ],
+          '#b58b5a',
+        );
+      } else {
+        // Greenwood merchant wagon: a canvas-covered cart, real spoke wheels,
+        // sacks, rear lantern, reins and a four-legged draft horse.
+        shade(58, 10, 0.17);
+        for (const x of [-30, 17]) {
+          oval(x, 16, 12, 12, '#423c33');
+          oval(x, 16, 9, 9, '#a98c5f');
+          for (let i = 0; i < 8; i++) {
+            const ang = (i * Math.PI) / 4;
+            line(
+              [
+                [x, 16],
+                [x + Math.cos(ang) * 8, 16 + Math.sin(ang) * 8],
+              ],
+              '#5c4935',
+              1.6,
+            );
+          }
+          oval(x, 16, 3, 3, '#d9c497');
+        }
+        poly(
+          [
+            [-49, -18],
+            [27, -19],
+            [31, 6],
+            [-45, 8],
+          ],
+          '#78553b',
+        );
+        poly(
+          [
+            [-46, -16],
+            [25, -17],
+            [22, -4],
+            [-43, -2],
+          ],
+          '#a48158',
+        );
+        line(
+          [
+            [-44, 0],
+            [24, -1],
+          ],
+          '#d8b887',
+          2.4,
+        );
+        for (const x of [-31, -13, 4, 19])
+          line(
+            [
+              [x, -13],
+              [x + 2, 4],
+            ],
+            '#60442c',
+            1.5,
+          );
+        rect(-44, -22, 13, 17, '#936a47');
+        oval(-38, -20, 7, 7, '#c9a679');
+        poly(
+          [
+            [-53, -20],
+            [-43, -41],
+            [-27, -51],
+            [7, -51],
+            [27, -39],
+            [32, -19],
+          ],
+          '#c1a97d',
+        );
+        poly(
+          [
+            [-48, -21],
+            [-39, -38],
+            [-22, -44],
+            [5, -44],
+            [24, -35],
+            [28, -20],
+          ],
+          '#e4d2a5',
+        );
+        for (const x of [-34, -8, 18])
+          line(
+            [
+              [x - 3, -43],
+              [x + 4, -20],
+            ],
+            '#a38a64',
+            2,
+          );
+        poly(
+          [
+            [23, -36],
+            [31, -19],
+            [28, -7],
+            [22, -8],
+          ],
+          '#65503d',
+        );
+        line(
+          [
+            [-52, -20],
+            [31, -20],
+          ],
+          '#896b4c',
+          2.5,
+        );
+        line(
+          [
+            [-46, -18],
+            [-54, -12],
+          ],
+          '#c3a275',
+          2,
+        );
+        oval(-55, -11, 4, 5, '#e1b664');
+        glint(-55, -11, '#ffdf98', 2);
+        for (const pts of [
+          [
+            [28, -3],
+            [54, -9],
+          ],
+          [
+            [28, 5],
+            [54, 0],
+          ],
+        ])
+          line(pts, '#947953', 3);
+        for (const x of [46, 64]) {
+          line(
+            [
+              [x, -2],
+              [x - 4, 20],
+            ],
+            '#785e46',
+            5,
+          );
+          oval(x - 4, 21, 5, 3, '#3e3730');
+        }
+        oval(56, -17, 21, 13, '#9c8060');
+        poly(
+          [
+            [66, -19],
+            [75, -39],
+            [84, -37],
+            [83, -18],
+            [77, -11],
+          ],
+          '#ac9472',
+        );
+        oval(85, -35, 10, 7, '#b39c77');
+        poly(
+          [
+            [78, -39],
+            [77, -51],
+            [84, -42],
+          ],
+          '#7e6349',
+        );
+        poly(
+          [
+            [88, -40],
+            [91, -51],
+            [93, -36],
+          ],
+          '#7e6349',
+        );
+        eye(89, -37, '#252c26');
+        line(
+          [
+            [75, -28],
+            [90, -28],
+            [93, -24],
+          ],
+          '#dbc397',
+          2,
+        );
+        line(
+          [
+            [33, -18],
+            [64, -25],
+            [83, -27],
+          ],
+          '#d3bb8e',
+          1.7,
         );
       }
     } else if (e.kind === 'bundle') {
@@ -11716,6 +13783,104 @@
         '#d0b079',
         3,
       );
+    } else if (e.kind === 'appointment') {
+      // Inhabited-dungeon command dais, visually separate from the boss altar.
+      oval(0, 11, 23, 8, '#7d7280');
+      rect(-16, -22, 32, 32, '#59516b');
+      rect(-19, -26, 38, 7, '#bca26f');
+      poly(
+        [
+          [-9, -28],
+          [-12, -37],
+          [0, -46],
+          [12, -37],
+          [9, -28],
+        ],
+        '#d8bd7d',
+      );
+      poly(
+        [
+          [0, -37],
+          [5, -31],
+          [0, -25],
+          [-5, -31],
+        ],
+        '#b58cc2',
+      );
+    } else if (e.kind === 'dungeon-master') {
+      // A real named peaceful resident with identifiable military/field/
+      // specialist regalia. No hostile body or combat AI is spawned.
+      const mantle =
+        e.masterGroup === 'captain' ? '#626c76' : e.masterGroup === 'field' ? '#6b5565' : '#57786c';
+      poly(
+        [
+          [-13, -22],
+          [-21, 9],
+          [0, 12],
+          [21, 9],
+          [13, -22],
+        ],
+        mantle,
+      );
+      humanoid('#a18a7d', '#b9b09d', 1);
+      poly(
+        [
+          [-10, -18],
+          [0, -24],
+          [10, -18],
+          [8, -5],
+          [-8, -5],
+        ],
+        mantle,
+      );
+      poly(
+        [
+          [0, -16],
+          [5, -11],
+          [0, -6],
+          [-5, -11],
+        ],
+        '#dfbd76',
+      );
+      line(
+        [
+          [-12, -40],
+          [0, -45],
+          [12, -40],
+        ],
+        '#dcc58b',
+        2.3,
+      );
+      oval(0, -11, 2, 2, '#d8b4d7');
+    } else if (e.kind === 'throne') {
+      // Real interactable court furniture, distinctly different from an Ash
+      // Citadel decoration; no collision, hitbox or new quest infrastructure.
+      rect(-27, -32, 54, 44, '#343147');
+      rect(-23, -48, 46, 20, '#51455f');
+      poly(
+        [
+          [-26, -48],
+          [-31, -62],
+          [-12, -54],
+          [0, -67],
+          [12, -54],
+          [31, -62],
+          [26, -48],
+        ],
+        gold,
+      );
+      rect(-17, -27, 34, 31, '#68556c');
+      poly(
+        [
+          [-9, -25],
+          [0, -36],
+          [9, -25],
+          [0, -17],
+        ],
+        '#b48fbc',
+      );
+      for (const x of [-30, 22]) rect(x, -22, 8, 32, '#817286');
+      rect(-25, 6, 50, 9, '#987850');
     } else if (e.kind === 'fountain') {
       oval(0, 5, 25, 10, '#9aa7a5');
       oval(0, 2, 20, 6, '#65999f');
@@ -11779,26 +13944,30 @@
           rect(-14, -10, 8, 14, '#cab483');
         }
       }
-    } else if (type === 'hero') hero(e.class || 'paladin');
-    else if (type === 'ally') {
+    } else if (type === 'hero') {
+      hero(e.class || 'paladin');
+      if (e.crowned) crownedHero(e.class || 'paladin');
+    } else if (type === 'ally') {
       const role = allyBodyKind(e);
       if (role === 'goblin-archer') goblinArcher();
       else human(role);
-    } else if (e.type === 'boss') {
+    } else if (e.type === 'boss' || e.captainProfile === 'supply-highlands') {
       shade(
         e.form === 'true' ? 42 : 34,
         e.form === 'true' ? 13 : 10,
         e.form === 'true' ? 0.42 : 0.32,
       );
       const bossScale =
-        (e.family === 'darklord' ||
-        e.family === 'cindermaw' ||
-        e.family === 'mine' ||
-        e.family === 'abyss'
-          ? 1.36
-          : 1.3) * (e.form === 'true' ? 1.14 : 1);
+        e.captainProfile === 'supply-highlands'
+          ? 1
+          : (e.family === 'darklord' ||
+            e.family === 'cindermaw' ||
+            e.family === 'mine' ||
+            e.family === 'abyss'
+              ? 1.36
+              : 1.3) * (e.form === 'true' ? 1.14 : 1);
       ctx.scale(bossScale, bossScale);
-      switch (e.family) {
+      switch (e.captainProfile === 'supply-highlands' ? 'ridge' : e.family) {
         case 'thorn':
           wolf('#a08864', true);
           break;
@@ -12238,7 +14407,8 @@
           else sword(15, -9);
           break;
         case 'wolf':
-          wolf();
+          if (e.mountedCrownRider) crownDirewolfRider(!!e.ranged);
+          else wolf();
           break;
         case 'mireling':
           if (e.ranged) {
@@ -12556,108 +14726,160 @@
           break;
         case 'crownguard':
           {
-            const cloth = e.guard ? '#51495d' : '#62566e',
-              metal = e.guard ? '#aab2b5' : '#939fa7';
-            humanoid(cloth, metal, 1.03);
-            poly(
-              [
-                [-12, -32],
-                [-9, -42],
-                [0, -47],
-                [10, -41],
-                [13, -31],
-                [7, -35],
-                [-7, -35],
-              ],
-              '#6d5260',
-            );
-            fillPoly(
-              [
-                [-12, -32],
-                [-9, -42],
-                [0, -47],
-                [0, -32],
-              ],
-              '#2f2938',
-              0.28,
-            );
-            line(
-              [
-                [-7, -29],
-                [7, -29],
-              ],
-              '#d2b77b',
-              2,
-            );
-            rect(-8, -17, 16, 15, metal);
-            fillPoly(
-              [
-                [-8, -17],
-                [0, -17],
-                [0, -2],
-                [-8, -2],
-              ],
-              '#2e3440',
-              0.18,
-            );
-            if (e.ranged) {
-              bow(17, -7);
-              line(
-                [
-                  [-15, -29],
-                  [-19, 5],
-                ],
-                '#7b604f',
-                5,
-              );
-              for (const y of [-29, -23, -17])
-                line(
-                  [
-                    [-20, y],
-                    [-13, y - 5],
-                  ],
-                  '#e5d4ad',
-                  1,
-                );
+            if (e.estateAttendant) {
+              // Winter-estate household retainer: Crown colors, lighter apron and
+              // soft cap, no full legionary helm or heavy frontline shield.
+              humanoid('#493038', '#aa9381', 0.91);
               poly(
                 [
-                  [-11, -14],
-                  [-18, 8],
-                  [-6, 6],
+                  [-13, -29],
+                  [0, -40],
+                  [13, -29],
+                  [9, -24],
+                  [-9, -24],
                 ],
-                '#4d4259',
+                '#6d343e',
+              );
+              rect(-11, -21, 22, 24, '#322b37');
+              rect(-8, -18, 16, 19, '#72535a');
+              line(
+                [
+                  [-8, -16],
+                  [8, -16],
+                ],
+                '#b79c67',
+                2.4,
+              );
+              poly(
+                [
+                  [-8, -42],
+                  [0, -48],
+                  [8, -42],
+                  [8, -38],
+                  [-8, -38],
+                ],
+                '#563944',
+              );
+              line(
+                [
+                  [15, -17],
+                  [16, 7],
+                ],
+                '#988373',
+                3,
+              );
+              line(
+                [
+                  [-15, -15],
+                  [-15, 7],
+                ],
+                '#7a5653',
+                3,
               );
             } else {
-              shield(-17, -1, '#7e4f56');
-              sword(16, -6);
-            }
-            if (e.guard) {
+              const cloth = e.guard ? '#51495d' : '#62566e',
+                metal = e.guard ? '#aab2b5' : '#939fa7';
+              humanoid(cloth, metal, 1.03);
               poly(
                 [
-                  [-13, -19],
-                  [-22, -18],
-                  [-18, -10],
-                  [-10, -11],
+                  [-12, -32],
+                  [-9, -42],
+                  [0, -47],
+                  [10, -41],
+                  [13, -31],
+                  [7, -35],
+                  [-7, -35],
                 ],
-                '#858e91',
+                '#6d5260',
               );
-              poly(
+              fillPoly(
                 [
-                  [13, -19],
-                  [22, -18],
-                  [18, -10],
-                  [10, -11],
+                  [-12, -32],
+                  [-9, -42],
+                  [0, -47],
+                  [0, -32],
                 ],
-                '#858e91',
+                '#2f2938',
+                0.28,
               );
               line(
                 [
-                  [-8, -24],
-                  [8, -24],
+                  [-7, -29],
+                  [7, -29],
                 ],
-                '#e0c989',
+                '#d2b77b',
                 2,
               );
+              rect(-8, -17, 16, 15, metal);
+              fillPoly(
+                [
+                  [-8, -17],
+                  [0, -17],
+                  [0, -2],
+                  [-8, -2],
+                ],
+                '#2e3440',
+                0.18,
+              );
+              if (e.ranged) {
+                bow(17, -7);
+                line(
+                  [
+                    [-15, -29],
+                    [-19, 5],
+                  ],
+                  '#7b604f',
+                  5,
+                );
+                for (const y of [-29, -23, -17])
+                  line(
+                    [
+                      [-20, y],
+                      [-13, y - 5],
+                    ],
+                    '#e5d4ad',
+                    1,
+                  );
+                poly(
+                  [
+                    [-11, -14],
+                    [-18, 8],
+                    [-6, 6],
+                  ],
+                  '#4d4259',
+                );
+              } else {
+                shield(-17, -1, '#7e4f56');
+                sword(16, -6);
+              }
+              if (e.guard) {
+                poly(
+                  [
+                    [-13, -19],
+                    [-22, -18],
+                    [-18, -10],
+                    [-10, -11],
+                  ],
+                  '#858e91',
+                );
+                poly(
+                  [
+                    [13, -19],
+                    [22, -18],
+                    [18, -10],
+                    [10, -11],
+                  ],
+                  '#858e91',
+                );
+                line(
+                  [
+                    [-8, -24],
+                    [8, -24],
+                  ],
+                  '#e0c989',
+                  2,
+                );
+              }
             }
           }
           break;
@@ -12694,6 +14916,165 @@
           break;
         default:
           humanoid('#919b81');
+      }
+      if (e.crownTroop && !e.mountedCrownRider) {
+        // All ranks share a single Crown-issued steel, violet-and-oxblood
+        // livery. Helm silhouettes reveal the people inside the armor rather
+        // than painting Orcs, Ogres and Goblins as identical human soldiers.
+        const ancestry = e.crownAncestry || e.species;
+        const armor = '#9da9b0',
+          cloth = '#54485f',
+          wine = '#74434e';
+        if (ancestry === 'ogre') {
+          for (const x of [-23, 23]) oval(x, -19, 10, 12, armor);
+          poly(
+            [
+              [-21, -38],
+              [-16, -52],
+              [0, -55],
+              [17, -51],
+              [21, -38],
+            ],
+            '#767e8a',
+          );
+          for (const x of [-11, 11])
+            poly(
+              [
+                [x - 3, -39],
+                [x, -34],
+                [x + 4, -39],
+              ],
+              '#d9c49e',
+            );
+        } else if (ancestry === 'goblin') {
+          for (const side of [-1, 1]) {
+            poly(
+              [
+                [side * 10, -39],
+                [side * 24, -43],
+                [side * 13, -31],
+              ],
+              '#9ca77b',
+            );
+            poly(
+              [
+                [side * 13, -38],
+                [side * 20, -41],
+                [side * 14, -35],
+              ],
+              '#7d856e',
+            );
+          }
+          poly(
+            [
+              [-12, -39],
+              [-10, -50],
+              [0, -53],
+              [11, -48],
+              [13, -39],
+            ],
+            '#75828a',
+          );
+        } else if (ancestry === 'orc') {
+          poly(
+            [
+              [-16, -38],
+              [-11, -51],
+              [0, -54],
+              [12, -50],
+              [17, -38],
+            ],
+            '#727c85',
+          );
+          for (const x of [-8, 8])
+            poly(
+              [
+                [x - 3, -31],
+                [x, -38],
+                [x + 3, -31],
+              ],
+              '#e2d4b5',
+            );
+        } else {
+          poly(
+            [
+              [-13, -39],
+              [-9, -52],
+              [0, -57],
+              [10, -50],
+              [13, -39],
+            ],
+            '#75808b',
+          );
+        }
+        // Shoulder plates, cuirass and royal seal have identical color and
+        // location across the diverse units, even when their sizes differ.
+        for (const side of [-1, 1])
+          poly(
+            [
+              [side * 10, -27],
+              [side * 22, -26],
+              [side * 23, -16],
+              [side * 12, -13],
+            ],
+            armor,
+          );
+        poly(
+          [
+            [-13, -24],
+            [13, -24],
+            [11, -5],
+            [-11, -5],
+          ],
+          cloth,
+        );
+        poly(
+          [
+            [-8, -23],
+            [8, -23],
+            [8, -9],
+            [-8, -9],
+          ],
+          '#808e9b',
+        );
+        poly(
+          [
+            [0, -24],
+            [6, -18],
+            [0, -11],
+            [-6, -18],
+          ],
+          wine,
+        );
+        glint(0, -18, '#e8cf94', 2.5);
+        line(
+          [
+            [-11, -5],
+            [11, -5],
+          ],
+          '#dfc997',
+          2,
+        );
+        if (e.ranged) {
+          line(
+            [
+              [18, -36],
+              [23, -16],
+              [20, 4],
+            ],
+            '#987c57',
+            4,
+          );
+          for (const y of [-32, -25, -18])
+            line(
+              [
+                [21, y],
+                [27, y - 6],
+              ],
+              '#e1c695',
+              1.5,
+            );
+        } else shield(-20, -1, '#774a59');
       }
       enemyFinish();
       captainFinish();
@@ -12822,6 +15203,7 @@
     ctx.restore();
   }
   function unscaledHeight(e) {
+    if (e.mountedCrownRider) return 99;
     if (e.type === 'boss') return 102;
     if (e.captain || e.roomCaptain) return 68;
     if (e.renderKind === 'building' && e.kind === 'barracks') return 88;
@@ -12846,7 +15228,8 @@
     )
       return 76;
     if ((e.renderKind === 'hero' && e.class === 'mage') || e.renderKind === 'prop') return 64;
-    if (['dungeon', 'exit', 'transport'].includes(e.kind)) return 64;
+    if (e.kind === 'transport') return e.icon === '🐉' ? 82 : e.icon === '⛵' ? 76 : 70;
+    if (['dungeon', 'exit'].includes(e.kind)) return 64;
     return 54;
   }
   function height(e) {
@@ -12864,7 +15247,7 @@
     ['#343644', '#414351', '#2c2f3c', '#a09b9e'],
   ];
   const dungeonFloors = {
-    crypt: ['#343c39', '#414945', '#2b3331', '#a9b1a0'],
+    crypt: ['#453843', '#57414a', '#342b39', '#c9a16e'],
     archive: ['#30464a', '#3b5558', '#283d42', '#8fb6b4'],
     mine: ['#44433b', '#524f43', '#39382f', '#ada88c'],
     abyss: ['#44373b', '#544349', '#382f34', '#c09a89'],
@@ -13163,18 +15546,25 @@
     }
     if (!blocked) groundDetail(ctx, p, seed, region, room, dungeonId, colors);
   }
+  // Culling uses logical viewport units, not backing-store pixels.
+  function outsideScreen(points, viewport, margin = 0) {
+    return (
+      points.every((p) => p.x < -margin) ||
+      points.every((p) => p.x > viewport.width + margin) ||
+      points.every((p) => p.y < -margin) ||
+      points.every((p) => p.y > viewport.height + margin)
+    );
+  }
   // World-space surfaces avoid losing narrow barriers between coarse tile samples.
-  function terrain(ctx, screen, region = 0, size = 3000, materialLayer = null) {
+  function terrain(ctx, screen, region = 0, size = 3000, materialLayer = null, viewport = null) {
+    const bounds = viewport || {
+      width: ctx.canvas?.width || 10000,
+      height: ctx.canvas?.height || 10000,
+    };
     const time = (typeof performance !== 'undefined' ? performance.now() : 0) / 1000;
     const poly = (points, color, material = null) => {
       const ps = points.map(screen);
-      if (
-        ps.every((p) => p.x < -100) ||
-        ps.every((p) => p.x > (ctx.canvas?.width || 10000) + 100) ||
-        ps.every((p) => p.y < -100) ||
-        ps.every((p) => p.y > (ctx.canvas?.height || 10000) + 100)
-      )
-        return;
+      if (outsideScreen(ps, bounds, 100)) return;
       ctx.fillStyle = color;
       ctx.beginPath();
       ps.forEach((p, j) => (j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
@@ -13205,15 +15595,25 @@
     };
     const visible = (q) => {
       const p = screen(q);
-      return (
-        p.x > -150 &&
-        p.x < (ctx.canvas?.width || 10000) + 150 &&
-        p.y > -150 &&
-        p.y < (ctx.canvas?.height || 10000) + 150
-      );
+      return p.x > -150 && p.x < bounds.width + 150 && p.y > -150 && p.y < bounds.height + 150;
     };
     const strip = (kind, x1, x2, y1, y2) => {
       if (y2 <= y1) return;
+      // Skip channels fully outside the viewport before expanding their paths.
+      if (
+        viewport &&
+        outsideScreen(
+          [
+            { x: x1 - 10, y: y1 },
+            { x: x2 + 10, y: y1 },
+            { x: x1 - 10, y: y2 },
+            { x: x2 + 10, y: y2 },
+          ].map(screen),
+          bounds,
+          180,
+        )
+      )
+        return;
       const water = kind === 'water',
         lava = kind === 'lava',
         cliff = kind === 'cliff',
@@ -13339,12 +15739,7 @@
           radius = 190 + (seed % 95),
           rx = radius * 0.76 * Math.SQRT2,
           ry = radius * 0.27 * Math.SQRT2;
-        if (
-          q.x + rx < 0 ||
-          q.x - rx > (ctx.canvas?.width || 10000) ||
-          q.y + ry < 0 ||
-          q.y - ry > (ctx.canvas?.height || 10000)
-        )
+        if (q.x + rx < 0 || q.x - rx > bounds.width || q.y + ry < 0 || q.y - ry > bounds.height)
           continue;
         ctx.save();
         ctx.translate(q.x, q.y);
@@ -13402,6 +15797,18 @@
     for (const p of R.terrain[region]) {
       const kind = p.kind || 'cliff';
       if (p.r) {
+        if (viewport) {
+          const q = screen(p),
+            rx = p.r * 0.76 * Math.SQRT2 + 24,
+            ry = p.r * 0.27 * Math.SQRT2 + 24;
+          if (
+            q.x + rx < -160 ||
+            q.x - rx > bounds.width + 160 ||
+            q.y + ry < -160 ||
+            q.y - ry > bounds.height + 160
+          )
+            continue;
+        }
         const circle = (r) =>
             Array.from({ length: 48 }, (_, n) => {
               const a = (n * Math.PI) / 24;
@@ -13461,7 +15868,7 @@
     }
     ctx.restore();
   }
-  function bridges(ctx, screen, region = 0, materials = null) {
+  function bridges(ctx, screen, region = 0, materials = null, viewport = null) {
     const {
         bounds: [x1, x2],
         gaps,
@@ -13491,6 +15898,20 @@
     };
     ctx.save();
     for (const [lo, hi] of gaps) {
+      if (
+        viewport &&
+        outsideScreen(
+          [
+            { x: x1 - 30, y: lo - 24 },
+            { x: x2 + 30, y: lo - 24 },
+            { x: x1 - 30, y: hi + 24 },
+            { x: x2 + 30, y: hi + 24 },
+          ].map(screen),
+          viewport,
+          160,
+        )
+      )
+        continue;
       polygon(
         [
           { x: x1 - 24, y: lo - 8 },
@@ -13639,11 +16060,13 @@
         ? { top: '#857965', side: '#52483d', edge: '#b2a28a' }
         : dungeonId === 'abyss'
           ? { top: '#6f5b5d', side: '#463b3d', edge: '#a77a6b' }
-          : dungeonId === 'archive'
-            ? { top: '#697978', side: '#3e5458', edge: '#9eb2ac' }
-            : dungeonId === 'mine'
-              ? { top: '#797567', side: '#4b4a42', edge: '#a7a187' }
-              : { top: '#667078', side: '#3f484e', edge: '#9ba7aa' };
+          : dungeonId === 'crypt'
+            ? { top: '#69565d', side: '#41343f', edge: '#bf9870' }
+            : dungeonId === 'archive'
+              ? { top: '#697978', side: '#3e5458', edge: '#9eb2ac' }
+              : dungeonId === 'mine'
+                ? { top: '#797567', side: '#4b4a42', edge: '#a7a187' }
+                : { top: '#667078', side: '#3f484e', edge: '#9ba7aa' };
     const poly = (pts, fill, stroke, width = 1) => {
       ctx.fillStyle = fill;
       ctx.beginPath();
@@ -13912,7 +16335,7 @@
     }
     return commands;
   }
-  function roads(ctx, paths, screen, region = 0, materials = null) {
+  function roads(ctx, paths, screen, region = 0, materials = null, viewport = null) {
     const barrier = R.barriers[region];
     let commands;
     if (roadCacheMatches(paths, region, barrier)) commands = roadCache.commands;
@@ -13944,10 +16367,11 @@
     ctx.lineCap = 'round';
     for (const command of commands) {
       if (command.points) {
+        const projected = command.points.map(screen);
+        if (viewport && outsideScreen(projected, viewport, 160)) continue;
         ctx.fillStyle = command.color;
         ctx.beginPath();
-        command.points.forEach((q, j) => {
-          const p = screen(q);
+        projected.forEach((p, j) => {
           j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
         });
         ctx.closePath();
@@ -13956,6 +16380,7 @@
       } else {
         const a = screen(command.a),
           b = screen(command.b);
+        if (viewport && outsideScreen([a, b], viewport, 160)) continue;
         ctx.strokeStyle = command.color;
         ctx.lineWidth = command.width;
         ctx.beginPath();
@@ -13984,16 +16409,16 @@
       'rgba(166,146,196,.05)',
     ];
     const nightTints = [
-      'rgba(8,18,38,.64)',
-      'rgba(8,28,40,.61)',
-      'rgba(15,22,38,.62)',
-      'rgba(26,14,30,.62)',
-      'rgba(20,12,36,.66)',
+      'rgba(11,25,42,.48)', // Greenwood: moonlit blue-greens, not a blackout
+      'rgba(12,32,44,.48)', // Marches: wet blue reflections
+      'rgba(19,29,42,.50)', // Ironroot: cool altitude, warm occupied windows
+      'rgba(32,20,35,.52)', // Frontier: ash dusk with working checkpoints
+      'rgba(27,19,43,.54)', // Crown: rich night violet, still navigable
     ];
     if (night) {
       const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
       g.addColorStop(0, nightTints[region] || nightTints[0]);
-      g.addColorStop(1, peace ? 'rgba(22,31,49,.36)' : 'rgba(3,8,20,.72)');
+      g.addColorStop(1, peace ? 'rgba(22,31,49,.30)' : 'rgba(9,17,30,.58)');
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       // Warm pools around the hero and inhabited field structures make night readable without flattening the whole scene.
@@ -14007,15 +16432,67 @@
         ctx.fillStyle = q;
         ctx.fillRect(p.x - r, p.y - r, r * 2, r * 2);
       };
-      glow(hero, 145, peace ? 0.24 : 0.2, region === 4 ? '215,186,238' : '255,221,158');
-      for (const p of lights.slice(0, 12))
-        glow(
-          p,
-          88,
-          0.16,
-          region === 1 ? '180,226,211' : region === 4 ? '204,170,229' : '255,198,125',
-        );
+      glow(hero, 145, peace ? 0.22 : 0.18, region === 4 ? '215,191,231' : '235,221,184');
+      // Night sources are the current map's actual windows, services and fires.
+      // Keep the soft lit ground distinct from the lamp itself. Only a small
+      // radius for each source, with a larger effect at working kitchens/forges.
+      const renderedLights = lights.slice(0, 36);
+      for (const p of renderedLights) {
+        const window = p.kind === 'window',
+          fire = p.kind === 'fire' || p.kind === 'work-fire',
+          radius = window ? 70 : p.kind === 'work-fire' ? 105 : fire ? 90 : 85,
+          y = p.y - (p.fixture === 'post' ? 46 : window ? 32 : fire ? 13 : 28),
+          source = { x: p.x, y },
+          tint = region === 1 ? '245,208,150' : region === 4 ? '247,194,147' : '255,207,132';
+        glow(source, radius, window ? 0.27 : fire ? 0.3 : 0.25, tint);
+      }
       ctx.globalCompositeOperation = 'source-over';
+      // Luminous windows and sheltered lantern glass are localized light
+      // sources, not new scenery obstacles. Fires already have drawn flames.
+      for (const p of renderedLights) {
+        if (p.kind === 'window') {
+          ctx.fillStyle = '#483d31';
+          ctx.fillRect(p.x - 15, p.y - 43, 10, 13);
+          ctx.fillRect(p.x + 6, p.y - 43, 10, 13);
+          ctx.fillStyle = '#f2cb81';
+          ctx.fillRect(p.x - 13, p.y - 41, 7, 9);
+          ctx.fillRect(p.x + 8, p.y - 41, 7, 9);
+          ctx.strokeStyle = '#8d6543';
+          ctx.lineWidth = 1.3;
+          ctx.beginPath();
+          for (const x of [p.x - 9, p.x + 12]) {
+            ctx.moveTo(x, p.y - 42);
+            ctx.lineTo(x, p.y - 32);
+          }
+          ctx.stroke();
+        } else if (p.kind === 'lantern' && p.fixture === 'post') {
+          // Illuminate the glass already painted on the actual post. Do not
+          // manufacture a second floating service lantern beside it.
+          ctx.fillStyle = '#f4c57e';
+          ctx.fillRect(p.x - 5, p.y - 50, 10, 9);
+        } else if (p.kind === 'lantern') {
+          // A modest iron hook and glazed hanging lamp by the service stand.
+          const x = p.x + 19,
+            y = p.y - 22;
+          ctx.strokeStyle = '#817c69';
+          ctx.lineWidth = 2.2;
+          ctx.beginPath();
+          ctx.moveTo(x - 7, y + 17);
+          ctx.lineTo(x - 7, y - 14);
+          ctx.lineTo(x + 1, y - 14);
+          ctx.lineTo(x + 1, y - 9);
+          ctx.stroke();
+          ctx.fillStyle = '#574b40';
+          ctx.fillRect(x - 6, y - 9, 14, 4);
+          ctx.fillStyle = '#f4c57e';
+          ctx.fillRect(x - 5, y - 5, 12, 12);
+          ctx.strokeStyle = '#635a4b';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(x - 5, y - 5, 12, 12);
+          ctx.fillStyle = '#7a6450';
+          ctx.fillRect(x - 6, y + 7, 14, 3);
+        }
+      }
     } else {
       ctx.fillStyle = dayTints[region] || dayTints[0];
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -14064,7 +16541,7 @@
       Math.max(canvas.width, canvas.height) * 0.72,
     );
     v.addColorStop(0, 'rgba(0,0,0,0)');
-    v.addColorStop(1, night ? 'rgba(0,0,0,.24)' : 'rgba(5,15,10,.12)');
+    v.addColorStop(1, night ? 'rgba(0,0,0,.15)' : 'rgba(5,15,10,.12)');
     ctx.fillStyle = v;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.restore();

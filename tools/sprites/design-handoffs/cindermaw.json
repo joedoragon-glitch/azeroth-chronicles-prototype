@@ -1,0 +1,183 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "cindermaw",
+  "name": "Cindermaw \u2014 ministerial support and seven regular attacks",
+  "kind": "boss",
+  "nextAction": "Complete dev.22 combined ministry/Vera124Node and hosted Chromium/WebKit/package gate; then Dreadmaw and remaining snapshot scope.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Director #298/#288:1200-unit cover-sensitive anonymous Broodscreen; six ordinary native responders physically navigate independently of6Normal/8TRUEmagical staff. Existing boss body/workstation art retained.",
+    "decisionDate": "2026-10-13",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/300",
+    "contentDocuments": [
+      "docs/DIRECTOR_WORLD_BUILDING_SNAPSHOT_CANON_LOCK_20261012.md",
+      "docs/SNAPSHOT_IMPLEMENTATION_20261013.md"
+    ],
+    "locationAndLore": "Existing Dark Crown roost; ministerial mobile Vera and seven regular moves remain pending. These references show the bounded support stage, including the current fixed Vera workstation before its next authorized migration. Dev.19 adds seven regular attacks using the same boss and Ash-beast bodies; no new sprite production. Dev.22 migrates same Vera into a guarded mobile forge/variable existing-facility inspection. Historical support captures remain evidence for their recorded source."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner-approved45-choice canon #298 and preserved ministry #288.",
+    "proceduralDesignAcceptance": "Engineer inspection only; actual director appearance acceptance has not occurred.",
+    "spriteProductionAuthorization": "Excluded from this snapshot.",
+    "generatedAppearanceAcceptance": null,
+    "pendingCorrections": [
+      "Full dev.22 combined certification pending; Vera handoff in vera-mobile-inspections.json."
+    ]
+  },
+  "reference": {
+    "sourceCommit": "8d2e2d585cf0642cadae9006b8f6f911db4ef942",
+    "ownerFilesAndBranches": [
+      "src/prototype/engine.js",
+      "src/prototype/cindermaw-combat.js",
+      "src/prototype/boss-combat.js",
+      "src/prototype/rules.js",
+      "src/prototype/combat-visuals.js",
+      "implementation/director-snapshot-20261013"
+    ],
+    "exactEntityState": "scripts/snapshot-cinder-reference.cjs; normal mage, real Crown roost/native spawn records; actual anonymous1.5s cast and six completed native response routes; native375/1280 Canvas renders.",
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [
+      "tools/sprites/design-handoffs/references/cinder-support/arrivals-1280.png",
+      "tools/sprites/design-handoffs/references/cinder-support/arrivals-375.png",
+      "tools/sprites/design-handoffs/references/cinder-support/warning-1280.png",
+      "tools/sprites/design-handoffs/references/cinder-support/warning-375.png",
+      "tools/sprites/design-handoffs/references/cinder-support/browser-anonymous-375.png",
+      "tools/sprites/design-handoffs/references/cinder-support/browser-native-arrivals-375.png",
+      "tools/sprites/design-handoffs/references/cinder-ministry/cordon-1280.png",
+      "tools/sprites/design-handoffs/references/cinder-ministry/cordon-375.png",
+      "tools/sprites/design-handoffs/references/cinder-ministry/seals-1280.png",
+      "tools/sprites/design-handoffs/references/cinder-ministry/seals-375.png"
+    ],
+    "traitsToPreserve": [
+      "Existing Cindermaw body, size, field-boss identity and7000HP",
+      "No changes to Vera body or rescue/service identity in support-only stage",
+      "Anonymous readable timed bar, no named/spatial Broodscreen warning",
+      "Native home/ID and owned summon ownership remain distinct"
+    ],
+    "assetSpecificDependencies": [
+      "tests/cindermaw-support.test.cjs",
+      "tests/helpers/snapshot-cinder-browser.cjs",
+      "tests/cindermaw-ministry.test.cjs"
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": []
+  },
+  "animationRequirements": {
+    "status": "undecided",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  },
+  "outputs": [
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-support/arrivals-1280.png",
+      "sha256": "a9330b914b28d9db5740665eb1e1be2352d29495b98f293c84aea1917ce3baad"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-support/arrivals-375.png",
+      "sha256": "595513d8bedebcfd9f2fd49270e296c1423dccb68d20aa207004e89fa42b498f"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-support/warning-1280.png",
+      "sha256": "71f22465c17a6d6ecd7827e3191c337b4dbe94b69d12f6df853644048e1f3a07"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-support/warning-375.png",
+      "sha256": "7fb78e05aeab1f508db2789f8f0f266d8ca5330d3d0aa44b313850651acff51f"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-support/browser-anonymous-375.png",
+      "sha256": "59f5394d080155f8ace4eec57ede4143103c31093ed2d5d0fbf84f08b27c75bd"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-support/browser-native-arrivals-375.png",
+      "sha256": "b10d4970dcd5d02d2a27b1fd1c38b57cc66a9b6b8673af3f9811dc03f02e1e14"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-ministry/cordon-1280.png",
+      "sha256": "6713e4df1a57dba112096250f5661b8900fbd0c74000b14abc63d3518e93c5a7"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-ministry/cordon-375.png",
+      "sha256": "d1be19af34a902cf7b23436b0aa66913767b5fc154ea98efa24eda5dc0c2f825"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-ministry/seals-1280.png",
+      "sha256": "aa8791afa8ce75556c4c785e2170471ac4c5b805acdd9329c9a5218b0fa7e8e0"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/cinder-ministry/seals-375.png",
+      "sha256": "3174a435e16bc0854b42d259e4f715002b074aa62f317bc488aa46bf7c2a22c4"
+    }
+  ],
+  "browserEvidence": {
+    "sourceCommit": "7cdd7104bafe87059f41f6c6e164b09cfa0eccbd",
+    "sourceTree": "5408e6862c74cf671a6c4c387b9f2ab73f706273",
+    "runId": 38496624150,
+    "artifactId": 11863934884,
+    "profile": "actual WebKit375x800 phone presentation; controlled high-health/immune fixture, not physical device or full campaign acceptance",
+    "inspected": true,
+    "files": [
+      {
+        "path": "tools/sprites/design-handoffs/references/cinder-support/browser-anonymous-375.png",
+        "sha256": "59f5394d080155f8ace4eec57ede4143103c31093ed2d5d0fbf84f08b27c75bd"
+      },
+      {
+        "path": "tools/sprites/design-handoffs/references/cinder-support/browser-native-arrivals-375.png",
+        "sha256": "b10d4970dcd5d02d2a27b1fd1c38b57cc66a9b6b8673af3f9811dc03f02e1e14"
+      }
+    ],
+    "limits": "Readable anonymous/LazyEight warnings and real movements. Cindermaw arrival fixture shows dense garrison/arrival labels; assess with upcoming ministerial patrol and final playable review. No director appearance acceptance."
+  },
+  "ministryEvidence": {
+    "candidateVersion": "0.9.1+snapshot.dev.21",
+    "sourceBaseline": "9959ade60da82b49cc464b4888b2b4b0db40d872",
+    "sourceHashes": {
+      "src/prototype/cindermaw-combat.js": "4c60cb02a6a2835a3c839fc957c4366d75c194946cd391a87928bcd2f153b582",
+      "src/prototype/combat-visuals.js": "e9f41d19c2996f498d19c0f53eaaeb70b9f4f0650fb1fe3a4504fabdbbba7516",
+      "src/prototype/data.js": "ddea3dee91dd5661c578b89c5c1ba33d2b881850405d2c0818bc1cca43b4629a",
+      "src/prototype/rules.js": "20af532e6d7b2620e627a47e3687f3473473c64ebcd8f97ed8b097413522ec36",
+      "src/prototype/enemy-vfx-art.js": "1a71c1ff0bb985349731c537271ef81bc8f8c528798f6f477a6c374a2392d051"
+    },
+    "profile": "actual Normal mage Crown-roost source rendered with pinned NodeCanvas at1280x800 and375x800; held high-health/immune fixture",
+    "inspected": true,
+    "files": [
+      {
+        "path": "tools/sprites/design-handoffs/references/cinder-ministry/cordon-1280.png",
+        "sha256": "6713e4df1a57dba112096250f5661b8900fbd0c74000b14abc63d3518e93c5a7"
+      },
+      {
+        "path": "tools/sprites/design-handoffs/references/cinder-ministry/cordon-375.png",
+        "sha256": "d1be19af34a902cf7b23436b0aa66913767b5fc154ea98efa24eda5dc0c2f825"
+      },
+      {
+        "path": "tools/sprites/design-handoffs/references/cinder-ministry/seals-1280.png",
+        "sha256": "aa8791afa8ce75556c4c785e2170471ac4c5b805acdd9329c9a5218b0fa7e8e0"
+      },
+      {
+        "path": "tools/sprites/design-handoffs/references/cinder-ministry/seals-375.png",
+        "sha256": "3174a435e16bc0854b42d259e4f715002b074aa62f317bc488aa46bf7c2a22c4"
+      }
+    ],
+    "limits": "Readable next-opening caption stays in viewport, third-of-seven seal caption wraps. Roost garrison labels remain dense; mobile Vera/patrol and final playable audit pending. Not browser/physical-device/director acceptance."
+  }
+}

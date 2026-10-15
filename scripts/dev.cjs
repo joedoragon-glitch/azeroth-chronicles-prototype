@@ -45,5 +45,5 @@ http
     }
   })
   .listen(port, '127.0.0.1', () =>
-    console.log('Azeroth Chronicles: http://127.0.0.1:' + port + ' · phone: /phone.html'),
+    console.log("Dark Lord's Problem: http://127.0.0.1:" + port + ' · phone: /phone.html'),
   );

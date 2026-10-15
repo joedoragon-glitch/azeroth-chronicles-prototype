@@ -73,5 +73,534 @@
     "appSha256": "e6ea0d525e4a827da13cdb95a2c6b1185432781bf269ab9b4370e6dd1b2f48e3",
     "inputSha256": "3b01e8b5df5b7b8fedc8deb24bba4f93f979ef111e2fa2fa55950891b58b5da5",
     "desktopCssSha256": "95fcb8bdad9f22c32950a1f1c6c51b1f2f886fc89e33d59248d3aef415137dac"
+  },
+  "approvedSnapshotPreparationRevision": {
+    "source": "Director #298: #282 official title; #284 Greenwood; #286 Marches; #287 Burned Hamlet. Isolated batch1; previous baseline and revision hashes retained.",
+    "baseline": "6f8089b2013647184efb04932fe6157f548238b9",
+    "files": {
+      "src/prototype/app.js": "a77a429740cec0b183392f888bbacff9b6cbcf57104555be269af988da7fbe9a",
+      "src/prototype/rules.js": "75ee3b5cb29e7a75c9f3015c1e05c4c0e424ea87e812aaeb90aae1caebc9192f",
+      "src/prototype/world.js": "9c7d27d85c929dd34a9e181ea18280bd2904396b94f19d99fa0bfa7105b72104",
+      "templates/game.html": "55267236efe69a8e8abebda9bfad3e9632851149704a530231376dca109ae58b"
+    }
+  },
+  "approvedSnapshotEncounterRevision": {
+    "source": "Director #298; selective #230/#231/#280 foundations, family/slot dispatch and lifecycle cleanup; original hashes preserved; #293 Crag horned humanoid",
+    "baseline": "c5166c34f5ebe88a065665c05c833a4b0fcf657d",
+    "files": {
+      "src/prototype/boss-combat.js": "45c30f80f6b0b5e6d8dc74318282a02799eecac2e538abcdb316cef27e8a9041",
+      "src/prototype/combat.js": "702bc23f1819b07a8e748b9fe8865bd53cb7e76fad63cc477f5db35355e32bdd",
+      "src/prototype/data.js": "bba5a5e454fa4cf39a37a06996f9b276432a75b5cfc175681d06d657076b9e3d",
+      "src/prototype/engine.js": "bc900287c0f32a873a443bdc5341389a19070fdec136b6b5cd847148c75eeeab",
+      "src/prototype/hero-combat.js": "08e4333d88965d789b5461feda63fb5240bfef97e566f354bc7d16d9d1db6108",
+      "src/prototype/party.js": "ce4077278ef832d7e4eaf354081a2a07025c217f6395fad2ba4d5852160ad1b9",
+      "src/prototype/rules.js": "18f3d0e72fd28af6dc5478bea4988506c6c540e28746e6a1859bb934b8b99907",
+      "src/prototype/save.js": "ddc48c63b2327d5305255fbc3e2d44802ab3e92810f3899ae5bfd64ed8f8f087"
+    }
+  },
+  "approvedSnapshotGreenwoodRevision": {
+    "source": "Director #289/#298: six Lifebinder slots, five Scornfang slots and three intrinsic Greenwood passives. Prior hashes retained.",
+    "baseline": "81d7756aae322e23a6a4347d5bbceff097654d7f",
+    "files": {
+      "src/prototype/boss-combat.js": "d0b0af3456c399808d3096a3b41e955d6f3d1e67f2c97996528a237f4233c72e",
+      "src/prototype/combat.js": "f931cb99daf25c9bcc1c780962101577b343183a4059fef5cc9b6eb965393fd6",
+      "src/prototype/data.js": "cba3a56e5b895a1783340fdf861e91f9dfd2e48341a06d5f327de92d6086eefa",
+      "src/prototype/engine.js": "6f9fe9f84421085d48ee36021026282fe539fcbc1ed2833f1cbf691531c12ced",
+      "src/prototype/rules.js": "111a7d79fd2eee29417455d28477603c6f8c5e07156e8f20768733415227efc7"
+    }
+  },
+  "approvedSnapshotMarchesRevision": {
+    "source": "Director #290/#298: Marches labels and three passives; exact post-hit/expiry/owned-mud contracts; previous hashes retained.",
+    "baseline": "1f6dd31f58727c9628a15730afedb6f0a73a82f2",
+    "files": {
+      "src/prototype/boss-combat.js": "b74098b1c4b42d2941067626571ca57b97832d247f734591995ff53558b029e8",
+      "src/prototype/combat.js": "1c3a9eb28c51558905757b82dd9b5089d42ee644c2989d00480847776c1e00d6",
+      "src/prototype/data.js": "2f7ee5fee574879da97d45d9504ac8282d4f618994e91d539c5d53822d8d9317",
+      "src/prototype/rules.js": "ffcc30c2ffa132045dc54f05c04132581c84214bc86dee31b725442380757aad"
+    }
+  },
+  "approvedSnapshotThornRevision": {
+    "source": "Director #289/#298: physical Thornfang/Mira circuit, joint den return, same rescue identity, static reports and real tracks. Previous hashes retained.",
+    "baseline": "ada6716da523689baedad04906b76350931cf8ab",
+    "files": {
+      "src/prototype/engine.js": "5cc5242017e88d2b1fccaf82a6b012db5de21decd9ffeb1dcaa02135fd1fda03",
+      "src/prototype/world.js": "e617a3d81cc94275d7c7974315ecf22d47038f0e1ee9f1307d980f40c0d6c2a8",
+      "src/prototype/navigation.js": "96d6d688d17b3474f770536de3006bd929d3ce25f6f9a2034246848c8b6beeee",
+      "src/prototype/combat.js": "81b51decd6024d357d8b64d4ec3b29818dcd4b418412a74b354998f4518c1240",
+      "src/prototype/boss-combat.js": "f658392429d144c15357a80875e62c884000bb4e18a274f43e784e3467813b73",
+      "src/prototype/rules.js": "50cbd9716757fee28936acf9c83fa7fa7762e6d2c8dfab889b8ee98b445be153",
+      "src/prototype/save.js": "40a6d35085070f5e3a2f3225287c9e844cdc50c74add67ba583aab66fba7164e",
+      "src/prototype/app.js": "f8c5658d9d6624dc6839c51bd17cf04db3a47f751f53ae2ef7181b75440d94a9"
+    }
+  },
+  "approvedSnapshotGarunRevision": {
+    "source": "#298 / #293 Garun identity and seven exact moves, reconciled #253 -> #264 -> #279 with current fatal boundaries",
+    "files": {
+      "src/prototype/boss-combat.js": "b00e8da1b1255f2dfe05bcdec050663c1806db7561ebea0ebe0f410bca8ab43c",
+      "src/prototype/combat.js": "f8e27c477a5ee7076fa4ef5e8d740bce79db58e94135f1dd0d5fa1ac971acc3e",
+      "src/prototype/data.js": "0c2ba090463cb5e84db6afafd0bf878fafe3be4a406a8d8ac3e2469029f5632c",
+      "src/prototype/engine.js": "7396d07f9088c684568bdfc7887a9ca172d6d204761ce433121db6c8f4322888",
+      "src/prototype/rules.js": "e9710b2b6b4c1550b211c09dfef6a55e6077dd4a3378dedb4288ce9c1b61bdbb",
+      "src/prototype/save.js": "7b5696c4411b4cbbc8a5d15e91ec2962b97e8071ba62adbcde077276d0143048"
+    }
+  },
+  "approvedSnapshotAviationRevision": {
+    "source": "#298/#291 Loyal Air Marshal and seven real aviation moves, selective #254\u2192#283 with shared fatal boundary preservation",
+    "files": {
+      "src/prototype/boss-combat.js": "2ab3ba3e6306704a6dd61f905370017bed003e28d792050eadb92a2d05581339",
+      "src/prototype/data.js": "a93a08064902df010013fd48fc9ed063bbfc2640698d4c05b895d7b996aa451b",
+      "src/prototype/rules.js": "1959002cfdf3948cce14dc1dc6190539995643816d51539832280bed35e00d55"
+    }
+  },
+  "approvedSnapshotCinderSupportRevision": {
+    "source": "Director #298 and royal ministry #288, same PR300; Cindermaw-only1200 cover-sensitive anonymous Broodscreen, bounded six native physical responses and independent6/8 magical staff. Earlier revision hashes retained.",
+    "files": {
+      "src/prototype/engine.js": "4fc04bb76612cc86c18844b7303011e431390b23ea23458401bbe9bf04a63ab4",
+      "src/prototype/rules.js": "cc6827ad988888887779bd77fcabd9a549557319625ab49fcd7e45952c1e9ae8",
+      "src/prototype/boss-combat.js": "746332892e4fd6066ff213560d847507c1c0dd7990f1f6575c2c6f440878ca79",
+      "src/prototype/data.js": "7d00f07472819aec5a885d6c093995714473daaa531d4a44c829807004ea1603"
+    }
+  },
+  "approvedSnapshotInstitutionsRevision": {
+    "source": "Director #298 and ministry #288: office/personal-elevation/co-management records and custom15D Barracks/Wraith relationships through existing Archive and recruitment menus only. Preserve prior support and other source pins.",
+    "files": {
+      "src/prototype/archive.js": "f489ccf00d97838ce81c7555f7900c35444b1332eb0f177164c0d5b85d170d23",
+      "src/prototype/data.js": "9e756f69533b8f34966e6e133b3265e2befc4ae0a1bded689eb7bc8a4aa93ce2",
+      "src/prototype/menus.js": "33e37882679dc036a7567bbf3d52de9517e5cf51fbe5d6197cb621ff0f711ee9",
+      "src/prototype/rules.js": "bc27eca0e192b878c6da591999150f41abf323370e9ed4f5a01bda734bb9323e"
+    }
+  },
+  "approvedSnapshotCinderSupportLifecycleRevision": {
+    "source": "Director #298 and #288; local scheduling follow-up: refuse already casting/moving native responders, preserving their original warnings/motion. Previous support hashes retained.",
+    "files": {
+      "src/prototype/engine.js": "86f5192d875b29eac4803b1709d8092326ed31efafbb80b596b5f6f050ddc310"
+    }
+  },
+  "approvedSnapshotCinderRallyRetentionRevision": {
+    "source": "Director #298 and #288: preserve original1.9s rally and.5sreadiness for the same joined natives on repeated Roar; original source pins retained.",
+    "files": {
+      "src/prototype/engine.js": "5243a19a8b49f0c39aa22af237b09be1eede707b75fd6005038d8e5d6d96ad5a"
+    }
+  },
+  "approvedSnapshotCinderMinistryRevision": {
+    "source": "Director #298 and #288: seven ministerial regular slots in Cindermaw-only owner, truthful warning/stage identity and transient lifecycle. Earlier pins retained.",
+    "files": {
+      "src/prototype/cindermaw-combat.js": "4c60cb02a6a2835a3c839fc957c4366d75c194946cd391a87928bcd2f153b582",
+      "src/prototype/combat-visuals.js": "b1c211e8eca599d27c3b80f326b19d11c0faeb06ac4afd07129c44f518bab736",
+      "src/prototype/data.js": "ddea3dee91dd5661c578b89c5c1ba33d2b881850405d2c0818bc1cca43b4629a",
+      "src/prototype/enemy-vfx-events.js": "e7e95c77f5738b0e88ad2810e36259a1a9991286ce9296d787b752ddbc0e16c3",
+      "src/prototype/enemy-vfx.js": "67efb5a69b19da14b0c9850c4c5586670a10d138703125953c138089454b96d4",
+      "src/prototype/engine.js": "15b87b82c49ed2fd3e829a53f34d1866e572379803feca2a9b97c1ff66199ae7",
+      "src/prototype/rules.js": "20af532e6d7b2620e627a47e3687f3473473c64ebcd8f97ed8b097413522ec36",
+      "templates/game.html": "87bf537fc910cd802bf7bbc557156750ed98ce70bed180f3650d8ede41174e8e"
+    }
+  },
+  "approvedSnapshotCinderMinistryPresentationRevision": {
+    "source": "Director #298 and #288: keep actual next-opening caption inside375px viewport without changing ring geometry, timing, or other warning cues. Original ministry pins retained.",
+    "files": {
+      "src/prototype/combat-visuals.js": "e9f41d19c2996f498d19c0f53eaaeb70b9f4f0650fb1fe3a4504fabdbbba7516"
+    }
+  },
+  "approvedSnapshotCinderMinistryAVRevision": {
+    "source": "Director #298 and #288: authored procedural recipes for all seven approved regular ministry slots; no new sprites or geometry change. Nondamaging protection/assembly never paints damage footprints. Earlier pins retained.",
+    "files": {
+      "src/prototype/enemy-vfx-art.js": "1a71c1ff0bb985349731c537271ef81bc8f8c528798f6f477a6c374a2392d051"
+    }
+  },
+  "approvedSnapshotVeraInspectionRevision": {
+    "source": "Director #298 choices28C/29B/30C and #288: actual variable Cindermaw routes, same Vera mobile forge, two existing native guards and bounded real defensive equipment/repairs with original services/save schema. Previous exact source pins retained.",
+    "files": {
+      "src/prototype/cindermaw-combat.js": "b201d136dca2181733ad0c5c9fb99dd4345bac0c8b2dbe0a3c0c131fa385a945",
+      "src/prototype/combat.js": "cd9531b1fc09b22dfd8bc8d49507c86b476c70e0de69854da2a688050301a996",
+      "src/prototype/engine.js": "d91e83f1cecc99d2e72a0b6a92778757937708995fff8e2e4aaca36a6e8defdf",
+      "src/prototype/rules.js": "41016ea8c62a10e415bf063e194779b29636813e175c50a8299c2f48736f2cba",
+      "src/prototype/world.js": "9891ec09a05f2d8b6f5b91ad997a1481922f7be3c4586f52d0470291924f76ff",
+      "src/prototype/save.js": "02116b281b98f272c71c4f8dc57db556d73c3ebff441e3abb55154a9080cf6f0",
+      "src/prototype/visuals.js": "065c4c940a6c8f40378d99b45a7707678122b44088c9f614bab043aaddf57cbd",
+      "src/prototype/sprites.js": "e983eaef98f589c5bd0f2dca095ba9383df1978e502499592d6c5504ee02d5a6",
+      "src/prototype/renderer.js": "abe3d43d97451a5eba8d3ddbf42daa22b835d3f392b401964358192dcb74fd08"
+    }
+  },
+  "approvedSnapshotDreadAgricultureRevision": {
+    "source": "Director #298 38A/39A/40A, custom seven agricultural moves, #288/#231; tuning delegated under8A. Existing Rogue methods/rules retained. No release authorization.",
+    "files": {
+      "src/prototype/dreadmaw-combat.js": "25c2aee4c4bb447020a2acbccfe58b42dd2832a507edb86b4d412026e9d75d77",
+      "src/prototype/engine.js": "d67956096a588c4b5ee774dfdf0e84597c5dad5e0222315b0c7331291694f00a",
+      "src/prototype/rules.js": "05393aebfbed9cadc9b9569c068725e1843c65dcaee90c67b68b2469623617aa",
+      "src/prototype/combat-visuals.js": "a1b335b0b5fcb584f10751b94736e506ba034f7f41b19be257fa1ef66110a429",
+      "src/prototype/enemy-vfx-art.js": "f44958d68c2032188ba90d29c0946027673174be738f68d2a6d398b8d1058de8",
+      "templates/game.html": "fe2d39f4d28dbc6257ebb734576b3609d9744afe11903d4cfaf270aebc291ad7"
+    }
+  },
+  "approvedSnapshotTreasuryExpansionRevision": {
+    "source": "Director14October allows reasonable building/location expansion for worldbuilding. Shared Treasury agriculture/Interior responsibilities; #298/#288; regular mechanics retained.",
+    "files": {
+      "src/prototype/engine.js": "191167aef066fb340f7656a3da382e0046525827d6f6fb9fdfb9e8d07bfd7536",
+      "src/prototype/rules.js": "811fad488ba06cd3926ef624ec3150e14b735331eb2f0abdc4a50e25bb1ba5c8",
+      "src/prototype/dreadmaw-combat.js": "ef40f2043c187b10ec80584ff66522e064fbcbbfc28a6f93e80d8bc42d23e61b"
+    }
+  },
+  "approvedSnapshotVeyraRevision": {
+    "source": "#298 #255 #263 #281 Veyra integrated candidate on PR #300; exact source hashes after 14 October court/save mechanics; no release certification",
+    "files": {
+      "src/prototype/boss-combat.js": "7a69599faa187a73dd58306cb3249d46b0e66a4338531b8d09251a565a153092",
+      "src/prototype/combat-visuals.js": "a1973a4f9a2ded42bb3274f268e3a2857ababa33a39a58f44af2000a15f0821e",
+      "src/prototype/data.js": "236ddbb0dfe03fc06d512014d482515070c827e4b2132bd1d0da5c57b9a5372e",
+      "src/prototype/engine.js": "fbfe84cbe132fb73134ee8611485fe8f4334cc26c1065a2ae7f893946a05cc20",
+      "src/prototype/rules.js": "3c69cc7c912e5b0582874a0f667685bb2cfc6b89bc9d8dbe57fb36e304cb245b",
+      "src/prototype/save.js": "d9820e59be4b9ef5592a5da1ad474978467e923c686f95dbed675b645a5263a4",
+      "src/prototype/enemy-presentation.js": "e35de45beb8a5e499f9f1d19ffb8f08827412cf266cad95fa89e5cef96d15440",
+      "src/prototype/enemy-vfx-art.js": "b8b34832524108db20c85ea4b69dc80a59d5e36864b2c6364a1aa731bc10ed40"
+    }
+  },
+  "approvedChargedRetargetRevision": {
+    "source": "PR #295 \u2192 PR #300: manual charged-skill release with valid fallback targeting",
+    "scope": "Charged Skills 1\u20132 select a legal replacement only upon manual key/pointer release if their original aim dies or leaves valid range/line of sight. Preserve explicitly locked boss safety, charged opener receipts, no-target cooldown behavior, Skill 3 healing and snapshot worldbuilding modules; no deployment.",
+    "previousAppSha256": "c18f8c02cd93cfc69885b344ee184f7d0a5d8c369029bb8514ff91a340c52e0b",
+    "files": {
+      "src/prototype/app.js": "32bc59c1311d4e45bf2ed3d4980387ee260d8e9fba2c1c9839df369a4f5ebbc9"
+    }
+  },
+  "snapshotMobileJoystick301Integration": {
+    "source": "Owner-directed PR #301 joystick fix ported to still-in-development PR #300 on 2026-10-14",
+    "scope": "Scoped changes to browser joystick release/reset and tests only. This records the evolving snapshot app hash and does not certify other Snapshot changes; original game loop and protected frame checks remain gated.",
+    "previousAppSha256": "32bc59c1311d4e45bf2ed3d4980387ee260d8e9fba2c1c9839df369a4f5ebbc9",
+    "files": {
+      "src/prototype/app.js": "3df94a0371a20a2251517b666fd1292c31f7e6e7471c8e89344ad02291592ece"
+    }
+  },
+  "approvedSnapshotDeveloperIntegrationRevision": {
+    "source": "PR #304 audited Developer Mode integrated into PR #300 multi-file Worldbuilding Snapshot; preserve historical approvals",
+    "developerSourceCommit": "5256f6c72084b041230d0bf956a556973d12350d",
+    "files": {
+      "src/prototype/app.js": "64a6fe32583c415d90ba196be39edcf1b10efa013c210525ef4f7a82d422e537",
+      "src/prototype/combat.js": "fbc7fe31595081fc8943f7f84f6b5579cdf866a4751f64f9c871f460e6739b77",
+      "src/prototype/engine.js": "1bee3851e8f125c60f86fd99cc68b83b31f47a37a8e263c67a4c3514814f8076",
+      "src/prototype/hero-combat.js": "7f8c09648025475f251d7809b1454010f4e05b4a94312db1095ee73e746a1db4",
+      "src/prototype/persistence.js": "b45a7650771fe9de54f096c038800b9d683899591406c6aa45425951396caf09",
+      "src/prototype/save.js": "92f36afde47b23d9d6440c138b6e0ca6643d4082062c2263492898ee6c03dca3",
+      "styles/phone.css": "91daee22cdc77bbf84d57ddc74744f03fc743cb3e27e25d528e883177b2292d6",
+      "styles/prototype.css": "51cf55c9c881dc3416c021cac496cabb47921835626acaae73328c8d57692544"
+    },
+    "activeFrameBodySha256": "47dc6a866cf32ff6e9ed3de77d7af858edb8595c21d221158084ee90f0c8cbdc"
+  },
+  "approvedOvernightCertificationRevision": {
+    "source": "PR #300 authorized overnight repair of e5893fbd45cf; no economy changes; complete provenance in docs/SNAPSHOT_CERTIFICATION_REPAIRS_20261015.md; subsequent owner-approved #289 biography-only completion from certified 2dacdb9e is recorded in the same ledger; no non-history data changes",
+    "files": {
+      "src/prototype/engine.js": "c2607beae1c95e4a206cde37b71dd7dc8874e0300d79a434c9b857c6d1e8cd31",
+      "src/prototype/world.js": "330ee56c7eb6ad464c6d15d9516b6b15c3edcb66e319e78df574cc7931443a3d",
+      "src/prototype/navigation.js": "96d6d688d17b3474f770536de3006bd929d3ce25f6f9a2034246848c8b6beeee",
+      "src/prototype/party.js": "ce4077278ef832d7e4eaf354081a2a07025c217f6395fad2ba4d5852160ad1b9",
+      "src/prototype/combat.js": "e045cb47080a47c04aee914416b592ba327e24e7fcddec14210fbfca88077004",
+      "src/prototype/hero-combat.js": "7f8c09648025475f251d7809b1454010f4e05b4a94312db1095ee73e746a1db4",
+      "src/prototype/boss-combat.js": "5242b31c4ac9ceda28cb01d7427b3a02eeb512450fc2d091d6703c070702e05e",
+      "src/prototype/progression.js": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
+      "src/prototype/economy.js": "081440c4f0167d3e4b1129f9e605a7b7177bf68fb83cb8a824aa309b52774fb5",
+      "src/prototype/rewards.js": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525",
+      "src/prototype/rules.js": "4e23cecf3f7b9d54c613d66fda4226b693a3bc6c8f957af99f98d625d71facca",
+      "src/prototype/data.js": "4157051826bb5afcf0ecf33a284e3364290867d173c2717135f60e25f09f50a6",
+      "src/prototype/save.js": "09dd8747bd414348333466be9e15c4c76656e7d7d9af9d843b17963e2336be0a",
+      "src/prototype/input.js": "3b01e8b5df5b7b8fedc8deb24bba4f93f979ef111e2fa2fa55950891b58b5da5",
+      "src/prototype/platform.js": "60107014425663a4607a239ea68359b04d0f0cfbf0eca7e9dc2fcc1a1180710d",
+      "src/prototype/runtime.js": "953bbc9a92e9576e7ea6e7620cffe6d473c7d721cabb7878dbe04d23283dda43",
+      "src/prototype/app.js": "42aa84f088d41f659d14b2ff392bf88618af4dd6484e6bde50cac0ee0ea31185",
+      "src/prototype/persistence.js": "b45a7650771fe9de54f096c038800b9d683899591406c6aa45425951396caf09",
+      "styles/prototype.css": "4d23fa615054e0318a69166be1b3f405b330991cb084bea02eca3dd55a5873f1",
+      "styles/desktop.css": "95fcb8bdad9f22c32950a1f1c6c51b1f2f886fc89e33d59248d3aef415137dac",
+      "styles/phone.css": "edc7cbe9436fff8936c6e90fb31824898f3ec1168ef35b0dffe7c5e85300fe5c",
+      "templates/game.html": "fe2d39f4d28dbc6257ebb734576b3609d9744afe11903d4cfaf270aebc291ad7",
+      "assets/sprites/manifest.json": "4eb384d124c35727098b71d66dbea0dda5f0ab16c52c4d36b39af524274af10f",
+      "assets/materials/manifest.json": "c06e89ba4ed2058681ae3156eaac8f7eb577d1b5af61e272f40d316f855cad41",
+      "src/prototype/archive.js": "14757ab587b53c5017b6c5da934d37f7f0a7f9a6cb1d49298f19cc7211892d0e",
+      "src/prototype/menus.js": "67edfc0bb873d2b438065a242cec5db21538c94a6414ae8384fb75559613b450",
+      "src/prototype/cindermaw-combat.js": "b201d136dca2181733ad0c5c9fb99dd4345bac0c8b2dbe0a3c0c131fa385a945",
+      "src/prototype/combat-visuals.js": "51d444b94eacb83081431af90874dcd823caf97d7adf337f2f305e43da477c9d",
+      "src/prototype/enemy-vfx-events.js": "21d9e09838d4ca9621f147e43d8c791aaae3070ed644cb231c097a15abc43db4",
+      "src/prototype/enemy-vfx.js": "67efb5a69b19da14b0c9850c4c5586670a10d138703125953c138089454b96d4",
+      "src/prototype/enemy-vfx-art.js": "78effa26838842aaac21069ce427d41bec374b107c4b15a4b1626df5d39de81c",
+      "src/prototype/visuals.js": "630f9a93761b1085558f54afa10f7cfa61f81e043acdfd148a4484a97ef9525e",
+      "src/prototype/sprites.js": "9c50bc13067c29c5c0eb7833508d7cc73db0734c73653b7f8966a714ab571c79",
+      "src/prototype/renderer.js": "c5dcdaca09f9e0c77fe055b1a4b56ec1ccd3cc49ab67f982aca4f0365f53a67d",
+      "src/prototype/dreadmaw-combat.js": "ef40f2043c187b10ec80584ff66522e064fbcbbfc28a6f93e80d8bc42d23e61b",
+      "src/prototype/enemy-presentation.js": "e35de45beb8a5e499f9f1d19ffb8f08827412cf266cad95fa89e5cef96d15440"
+    },
+    "provenance": {
+      "src/prototype/engine.js": {
+        "handoffSha256": "c70ead40701d761197af1f13ff468f393d7b125eb1b7951225fc39f0672fbc50",
+        "candidateSha256": "c2607beae1c95e4a206cde37b71dd7dc8874e0300d79a434c9b857c6d1e8cd31"
+      },
+      "src/prototype/world.js": {
+        "handoffSha256": "2478e241979bcdc9ba13a6a27147eb2fe72fd107d001efb3c34401a47ebd960d",
+        "candidateSha256": "330ee56c7eb6ad464c6d15d9516b6b15c3edcb66e319e78df574cc7931443a3d"
+      },
+      "src/prototype/navigation.js": {
+        "handoffSha256": "96d6d688d17b3474f770536de3006bd929d3ce25f6f9a2034246848c8b6beeee",
+        "candidateSha256": "96d6d688d17b3474f770536de3006bd929d3ce25f6f9a2034246848c8b6beeee"
+      },
+      "src/prototype/party.js": {
+        "handoffSha256": "ce4077278ef832d7e4eaf354081a2a07025c217f6395fad2ba4d5852160ad1b9",
+        "candidateSha256": "ce4077278ef832d7e4eaf354081a2a07025c217f6395fad2ba4d5852160ad1b9"
+      },
+      "src/prototype/combat.js": {
+        "handoffSha256": "e045cb47080a47c04aee914416b592ba327e24e7fcddec14210fbfca88077004",
+        "candidateSha256": "e045cb47080a47c04aee914416b592ba327e24e7fcddec14210fbfca88077004"
+      },
+      "src/prototype/hero-combat.js": {
+        "handoffSha256": "7f8c09648025475f251d7809b1454010f4e05b4a94312db1095ee73e746a1db4",
+        "candidateSha256": "7f8c09648025475f251d7809b1454010f4e05b4a94312db1095ee73e746a1db4"
+      },
+      "src/prototype/boss-combat.js": {
+        "handoffSha256": "5242b31c4ac9ceda28cb01d7427b3a02eeb512450fc2d091d6703c070702e05e",
+        "candidateSha256": "5242b31c4ac9ceda28cb01d7427b3a02eeb512450fc2d091d6703c070702e05e"
+      },
+      "src/prototype/progression.js": {
+        "handoffSha256": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
+        "candidateSha256": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550"
+      },
+      "src/prototype/economy.js": {
+        "handoffSha256": "081440c4f0167d3e4b1129f9e605a7b7177bf68fb83cb8a824aa309b52774fb5",
+        "candidateSha256": "081440c4f0167d3e4b1129f9e605a7b7177bf68fb83cb8a824aa309b52774fb5"
+      },
+      "src/prototype/rewards.js": {
+        "handoffSha256": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525",
+        "candidateSha256": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525"
+      },
+      "src/prototype/rules.js": {
+        "handoffSha256": "4e23cecf3f7b9d54c613d66fda4226b693a3bc6c8f957af99f98d625d71facca",
+        "candidateSha256": "4e23cecf3f7b9d54c613d66fda4226b693a3bc6c8f957af99f98d625d71facca"
+      },
+      "src/prototype/data.js": {
+        "handoffSha256": "5b3b745d1d6e7c21accf6899f7597d6394587704e58f884fc10f0047fe21eb19",
+        "candidateSha256": "4157051826bb5afcf0ecf33a284e3364290867d173c2717135f60e25f09f50a6"
+      },
+      "src/prototype/save.js": {
+        "handoffSha256": "09dd8747bd414348333466be9e15c4c76656e7d7d9af9d843b17963e2336be0a",
+        "candidateSha256": "09dd8747bd414348333466be9e15c4c76656e7d7d9af9d843b17963e2336be0a"
+      },
+      "src/prototype/input.js": {
+        "handoffSha256": "3b01e8b5df5b7b8fedc8deb24bba4f93f979ef111e2fa2fa55950891b58b5da5",
+        "candidateSha256": "3b01e8b5df5b7b8fedc8deb24bba4f93f979ef111e2fa2fa55950891b58b5da5"
+      },
+      "src/prototype/platform.js": {
+        "handoffSha256": "60107014425663a4607a239ea68359b04d0f0cfbf0eca7e9dc2fcc1a1180710d",
+        "candidateSha256": "60107014425663a4607a239ea68359b04d0f0cfbf0eca7e9dc2fcc1a1180710d"
+      },
+      "src/prototype/runtime.js": {
+        "handoffSha256": "953bbc9a92e9576e7ea6e7620cffe6d473c7d721cabb7878dbe04d23283dda43",
+        "candidateSha256": "953bbc9a92e9576e7ea6e7620cffe6d473c7d721cabb7878dbe04d23283dda43"
+      },
+      "src/prototype/app.js": {
+        "handoffSha256": "42aa84f088d41f659d14b2ff392bf88618af4dd6484e6bde50cac0ee0ea31185",
+        "candidateSha256": "42aa84f088d41f659d14b2ff392bf88618af4dd6484e6bde50cac0ee0ea31185"
+      },
+      "src/prototype/persistence.js": {
+        "handoffSha256": "b45a7650771fe9de54f096c038800b9d683899591406c6aa45425951396caf09",
+        "candidateSha256": "b45a7650771fe9de54f096c038800b9d683899591406c6aa45425951396caf09"
+      },
+      "styles/prototype.css": {
+        "handoffSha256": "4d23fa615054e0318a69166be1b3f405b330991cb084bea02eca3dd55a5873f1",
+        "candidateSha256": "4d23fa615054e0318a69166be1b3f405b330991cb084bea02eca3dd55a5873f1"
+      },
+      "styles/desktop.css": {
+        "handoffSha256": "95fcb8bdad9f22c32950a1f1c6c51b1f2f886fc89e33d59248d3aef415137dac",
+        "candidateSha256": "95fcb8bdad9f22c32950a1f1c6c51b1f2f886fc89e33d59248d3aef415137dac"
+      },
+      "styles/phone.css": {
+        "handoffSha256": "edc7cbe9436fff8936c6e90fb31824898f3ec1168ef35b0dffe7c5e85300fe5c",
+        "candidateSha256": "edc7cbe9436fff8936c6e90fb31824898f3ec1168ef35b0dffe7c5e85300fe5c"
+      },
+      "templates/game.html": {
+        "handoffSha256": "fe2d39f4d28dbc6257ebb734576b3609d9744afe11903d4cfaf270aebc291ad7",
+        "candidateSha256": "fe2d39f4d28dbc6257ebb734576b3609d9744afe11903d4cfaf270aebc291ad7"
+      },
+      "assets/sprites/manifest.json": {
+        "handoffSha256": "4eb384d124c35727098b71d66dbea0dda5f0ab16c52c4d36b39af524274af10f",
+        "candidateSha256": "4eb384d124c35727098b71d66dbea0dda5f0ab16c52c4d36b39af524274af10f"
+      },
+      "assets/materials/manifest.json": {
+        "handoffSha256": "c06e89ba4ed2058681ae3156eaac8f7eb577d1b5af61e272f40d316f855cad41",
+        "candidateSha256": "c06e89ba4ed2058681ae3156eaac8f7eb577d1b5af61e272f40d316f855cad41"
+      },
+      "src/prototype/archive.js": {
+        "handoffSha256": "14757ab587b53c5017b6c5da934d37f7f0a7f9a6cb1d49298f19cc7211892d0e",
+        "candidateSha256": "14757ab587b53c5017b6c5da934d37f7f0a7f9a6cb1d49298f19cc7211892d0e"
+      },
+      "src/prototype/menus.js": {
+        "handoffSha256": "67edfc0bb873d2b438065a242cec5db21538c94a6414ae8384fb75559613b450",
+        "candidateSha256": "67edfc0bb873d2b438065a242cec5db21538c94a6414ae8384fb75559613b450"
+      },
+      "src/prototype/cindermaw-combat.js": {
+        "handoffSha256": "b201d136dca2181733ad0c5c9fb99dd4345bac0c8b2dbe0a3c0c131fa385a945",
+        "candidateSha256": "b201d136dca2181733ad0c5c9fb99dd4345bac0c8b2dbe0a3c0c131fa385a945"
+      },
+      "src/prototype/combat-visuals.js": {
+        "handoffSha256": "51d444b94eacb83081431af90874dcd823caf97d7adf337f2f305e43da477c9d",
+        "candidateSha256": "51d444b94eacb83081431af90874dcd823caf97d7adf337f2f305e43da477c9d"
+      },
+      "src/prototype/enemy-vfx-events.js": {
+        "handoffSha256": "21d9e09838d4ca9621f147e43d8c791aaae3070ed644cb231c097a15abc43db4",
+        "candidateSha256": "21d9e09838d4ca9621f147e43d8c791aaae3070ed644cb231c097a15abc43db4"
+      },
+      "src/prototype/enemy-vfx.js": {
+        "handoffSha256": "67efb5a69b19da14b0c9850c4c5586670a10d138703125953c138089454b96d4",
+        "candidateSha256": "67efb5a69b19da14b0c9850c4c5586670a10d138703125953c138089454b96d4"
+      },
+      "src/prototype/enemy-vfx-art.js": {
+        "handoffSha256": "78effa26838842aaac21069ce427d41bec374b107c4b15a4b1626df5d39de81c",
+        "candidateSha256": "78effa26838842aaac21069ce427d41bec374b107c4b15a4b1626df5d39de81c"
+      },
+      "src/prototype/visuals.js": {
+        "handoffSha256": "054b7ef99ea50bc185e42d25a956101ff0d1e64ee7d436c4cafa864c0d54d94a",
+        "candidateSha256": "630f9a93761b1085558f54afa10f7cfa61f81e043acdfd148a4484a97ef9525e"
+      },
+      "src/prototype/sprites.js": {
+        "handoffSha256": "9c50bc13067c29c5c0eb7833508d7cc73db0734c73653b7f8966a714ab571c79",
+        "candidateSha256": "9c50bc13067c29c5c0eb7833508d7cc73db0734c73653b7f8966a714ab571c79"
+      },
+      "src/prototype/renderer.js": {
+        "handoffSha256": "9fc80c07473d9131f007e4e3b79faa1ee3f397f77f586b6723ed0c7b5a0f201d",
+        "candidateSha256": "c5dcdaca09f9e0c77fe055b1a4b56ec1ccd3cc49ab67f982aca4f0365f53a67d"
+      },
+      "src/prototype/dreadmaw-combat.js": {
+        "handoffSha256": "ef40f2043c187b10ec80584ff66522e064fbcbbfc28a6f93e80d8bc42d23e61b",
+        "candidateSha256": "ef40f2043c187b10ec80584ff66522e064fbcbbfc28a6f93e80d8bc42d23e61b"
+      },
+      "src/prototype/enemy-presentation.js": {
+        "handoffSha256": "e35de45beb8a5e499f9f1d19ffb8f08827412cf266cad95fa89e5cef96d15440",
+        "candidateSha256": "e35de45beb8a5e499f9f1d19ffb8f08827412cf266cad95fa89e5cef96d15440"
+      }
+    },
+    "history": [
+      {
+        "commit": "d8066c1f7556a5afe8b05bf4ddaf2a891c543dd2",
+        "files": {
+          "src/prototype/engine.js": "c2607beae1c95e4a206cde37b71dd7dc8874e0300d79a434c9b857c6d1e8cd31",
+          "src/prototype/world.js": "a9c6880898cb8555657750593271e9b4a65eec99a96a2201ac7051357b4e5581",
+          "src/prototype/navigation.js": "96d6d688d17b3474f770536de3006bd929d3ce25f6f9a2034246848c8b6beeee",
+          "src/prototype/party.js": "ce4077278ef832d7e4eaf354081a2a07025c217f6395fad2ba4d5852160ad1b9",
+          "src/prototype/combat.js": "e045cb47080a47c04aee914416b592ba327e24e7fcddec14210fbfca88077004",
+          "src/prototype/hero-combat.js": "7f8c09648025475f251d7809b1454010f4e05b4a94312db1095ee73e746a1db4",
+          "src/prototype/boss-combat.js": "5242b31c4ac9ceda28cb01d7427b3a02eeb512450fc2d091d6703c070702e05e",
+          "src/prototype/progression.js": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
+          "src/prototype/economy.js": "081440c4f0167d3e4b1129f9e605a7b7177bf68fb83cb8a824aa309b52774fb5",
+          "src/prototype/rewards.js": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525",
+          "src/prototype/rules.js": "4e23cecf3f7b9d54c613d66fda4226b693a3bc6c8f957af99f98d625d71facca",
+          "src/prototype/data.js": "5b3b745d1d6e7c21accf6899f7597d6394587704e58f884fc10f0047fe21eb19",
+          "src/prototype/save.js": "09dd8747bd414348333466be9e15c4c76656e7d7d9af9d843b17963e2336be0a",
+          "src/prototype/input.js": "3b01e8b5df5b7b8fedc8deb24bba4f93f979ef111e2fa2fa55950891b58b5da5",
+          "src/prototype/platform.js": "60107014425663a4607a239ea68359b04d0f0cfbf0eca7e9dc2fcc1a1180710d",
+          "src/prototype/runtime.js": "953bbc9a92e9576e7ea6e7620cffe6d473c7d721cabb7878dbe04d23283dda43",
+          "src/prototype/app.js": "42aa84f088d41f659d14b2ff392bf88618af4dd6484e6bde50cac0ee0ea31185",
+          "src/prototype/persistence.js": "b45a7650771fe9de54f096c038800b9d683899591406c6aa45425951396caf09",
+          "styles/prototype.css": "4d23fa615054e0318a69166be1b3f405b330991cb084bea02eca3dd55a5873f1",
+          "styles/desktop.css": "95fcb8bdad9f22c32950a1f1c6c51b1f2f886fc89e33d59248d3aef415137dac",
+          "styles/phone.css": "edc7cbe9436fff8936c6e90fb31824898f3ec1168ef35b0dffe7c5e85300fe5c",
+          "templates/game.html": "fe2d39f4d28dbc6257ebb734576b3609d9744afe11903d4cfaf270aebc291ad7",
+          "assets/sprites/manifest.json": "4eb384d124c35727098b71d66dbea0dda5f0ab16c52c4d36b39af524274af10f",
+          "assets/materials/manifest.json": "c06e89ba4ed2058681ae3156eaac8f7eb577d1b5af61e272f40d316f855cad41",
+          "src/prototype/archive.js": "14757ab587b53c5017b6c5da934d37f7f0a7f9a6cb1d49298f19cc7211892d0e",
+          "src/prototype/menus.js": "67edfc0bb873d2b438065a242cec5db21538c94a6414ae8384fb75559613b450",
+          "src/prototype/cindermaw-combat.js": "b201d136dca2181733ad0c5c9fb99dd4345bac0c8b2dbe0a3c0c131fa385a945",
+          "src/prototype/combat-visuals.js": "51d444b94eacb83081431af90874dcd823caf97d7adf337f2f305e43da477c9d",
+          "src/prototype/enemy-vfx-events.js": "21d9e09838d4ca9621f147e43d8c791aaae3070ed644cb231c097a15abc43db4",
+          "src/prototype/enemy-vfx.js": "67efb5a69b19da14b0c9850c4c5586670a10d138703125953c138089454b96d4",
+          "src/prototype/enemy-vfx-art.js": "78effa26838842aaac21069ce427d41bec374b107c4b15a4b1626df5d39de81c",
+          "src/prototype/visuals.js": "054b7ef99ea50bc185e42d25a956101ff0d1e64ee7d436c4cafa864c0d54d94a",
+          "src/prototype/sprites.js": "9c50bc13067c29c5c0eb7833508d7cc73db0734c73653b7f8966a714ab571c79",
+          "src/prototype/renderer.js": "61a82356c98dc00da85fbdbf222ee983a4e084c66736cd94019d4bfe522dc89d",
+          "src/prototype/dreadmaw-combat.js": "ef40f2043c187b10ec80584ff66522e064fbcbbfc28a6f93e80d8bc42d23e61b",
+          "src/prototype/enemy-presentation.js": "e35de45beb8a5e499f9f1d19ffb8f08827412cf266cad95fa89e5cef96d15440"
+        }
+      },
+      {
+        "commit": "977c7b16fd479bf5a402bdf31cb8d917bfa0af4d",
+        "files": {
+          "src/prototype/engine.js": "c2607beae1c95e4a206cde37b71dd7dc8874e0300d79a434c9b857c6d1e8cd31",
+          "src/prototype/world.js": "330ee56c7eb6ad464c6d15d9516b6b15c3edcb66e319e78df574cc7931443a3d",
+          "src/prototype/navigation.js": "96d6d688d17b3474f770536de3006bd929d3ce25f6f9a2034246848c8b6beeee",
+          "src/prototype/party.js": "ce4077278ef832d7e4eaf354081a2a07025c217f6395fad2ba4d5852160ad1b9",
+          "src/prototype/combat.js": "e045cb47080a47c04aee914416b592ba327e24e7fcddec14210fbfca88077004",
+          "src/prototype/hero-combat.js": "7f8c09648025475f251d7809b1454010f4e05b4a94312db1095ee73e746a1db4",
+          "src/prototype/boss-combat.js": "5242b31c4ac9ceda28cb01d7427b3a02eeb512450fc2d091d6703c070702e05e",
+          "src/prototype/progression.js": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
+          "src/prototype/economy.js": "081440c4f0167d3e4b1129f9e605a7b7177bf68fb83cb8a824aa309b52774fb5",
+          "src/prototype/rewards.js": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525",
+          "src/prototype/rules.js": "4e23cecf3f7b9d54c613d66fda4226b693a3bc6c8f957af99f98d625d71facca",
+          "src/prototype/data.js": "5b3b745d1d6e7c21accf6899f7597d6394587704e58f884fc10f0047fe21eb19",
+          "src/prototype/save.js": "09dd8747bd414348333466be9e15c4c76656e7d7d9af9d843b17963e2336be0a",
+          "src/prototype/input.js": "3b01e8b5df5b7b8fedc8deb24bba4f93f979ef111e2fa2fa55950891b58b5da5",
+          "src/prototype/platform.js": "60107014425663a4607a239ea68359b04d0f0cfbf0eca7e9dc2fcc1a1180710d",
+          "src/prototype/runtime.js": "953bbc9a92e9576e7ea6e7620cffe6d473c7d721cabb7878dbe04d23283dda43",
+          "src/prototype/app.js": "42aa84f088d41f659d14b2ff392bf88618af4dd6484e6bde50cac0ee0ea31185",
+          "src/prototype/persistence.js": "b45a7650771fe9de54f096c038800b9d683899591406c6aa45425951396caf09",
+          "styles/prototype.css": "4d23fa615054e0318a69166be1b3f405b330991cb084bea02eca3dd55a5873f1",
+          "styles/desktop.css": "95fcb8bdad9f22c32950a1f1c6c51b1f2f886fc89e33d59248d3aef415137dac",
+          "styles/phone.css": "edc7cbe9436fff8936c6e90fb31824898f3ec1168ef35b0dffe7c5e85300fe5c",
+          "templates/game.html": "fe2d39f4d28dbc6257ebb734576b3609d9744afe11903d4cfaf270aebc291ad7",
+          "assets/sprites/manifest.json": "4eb384d124c35727098b71d66dbea0dda5f0ab16c52c4d36b39af524274af10f",
+          "assets/materials/manifest.json": "c06e89ba4ed2058681ae3156eaac8f7eb577d1b5af61e272f40d316f855cad41",
+          "src/prototype/archive.js": "14757ab587b53c5017b6c5da934d37f7f0a7f9a6cb1d49298f19cc7211892d0e",
+          "src/prototype/menus.js": "67edfc0bb873d2b438065a242cec5db21538c94a6414ae8384fb75559613b450",
+          "src/prototype/cindermaw-combat.js": "b201d136dca2181733ad0c5c9fb99dd4345bac0c8b2dbe0a3c0c131fa385a945",
+          "src/prototype/combat-visuals.js": "51d444b94eacb83081431af90874dcd823caf97d7adf337f2f305e43da477c9d",
+          "src/prototype/enemy-vfx-events.js": "21d9e09838d4ca9621f147e43d8c791aaae3070ed644cb231c097a15abc43db4",
+          "src/prototype/enemy-vfx.js": "67efb5a69b19da14b0c9850c4c5586670a10d138703125953c138089454b96d4",
+          "src/prototype/enemy-vfx-art.js": "78effa26838842aaac21069ce427d41bec374b107c4b15a4b1626df5d39de81c",
+          "src/prototype/visuals.js": "630f9a93761b1085558f54afa10f7cfa61f81e043acdfd148a4484a97ef9525e",
+          "src/prototype/sprites.js": "9c50bc13067c29c5c0eb7833508d7cc73db0734c73653b7f8966a714ab571c79",
+          "src/prototype/renderer.js": "74526c7be987a3c2d90bc55bbbb276e0228217dd38bdc9dd0459b87266ba0757",
+          "src/prototype/dreadmaw-combat.js": "ef40f2043c187b10ec80584ff66522e064fbcbbfc28a6f93e80d8bc42d23e61b",
+          "src/prototype/enemy-presentation.js": "e35de45beb8a5e499f9f1d19ffb8f08827412cf266cad95fa89e5cef96d15440"
+        }
+      },
+      {
+        "commit": "fc764433076267569203829aa31c2e140ef2b84e",
+        "files": {
+          "src/prototype/engine.js": "c2607beae1c95e4a206cde37b71dd7dc8874e0300d79a434c9b857c6d1e8cd31",
+          "src/prototype/world.js": "330ee56c7eb6ad464c6d15d9516b6b15c3edcb66e319e78df574cc7931443a3d",
+          "src/prototype/navigation.js": "96d6d688d17b3474f770536de3006bd929d3ce25f6f9a2034246848c8b6beeee",
+          "src/prototype/party.js": "ce4077278ef832d7e4eaf354081a2a07025c217f6395fad2ba4d5852160ad1b9",
+          "src/prototype/combat.js": "e045cb47080a47c04aee914416b592ba327e24e7fcddec14210fbfca88077004",
+          "src/prototype/hero-combat.js": "7f8c09648025475f251d7809b1454010f4e05b4a94312db1095ee73e746a1db4",
+          "src/prototype/boss-combat.js": "5242b31c4ac9ceda28cb01d7427b3a02eeb512450fc2d091d6703c070702e05e",
+          "src/prototype/progression.js": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
+          "src/prototype/economy.js": "081440c4f0167d3e4b1129f9e605a7b7177bf68fb83cb8a824aa309b52774fb5",
+          "src/prototype/rewards.js": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525",
+          "src/prototype/rules.js": "4e23cecf3f7b9d54c613d66fda4226b693a3bc6c8f957af99f98d625d71facca",
+          "src/prototype/data.js": "5b3b745d1d6e7c21accf6899f7597d6394587704e58f884fc10f0047fe21eb19",
+          "src/prototype/save.js": "09dd8747bd414348333466be9e15c4c76656e7d7d9af9d843b17963e2336be0a",
+          "src/prototype/input.js": "3b01e8b5df5b7b8fedc8deb24bba4f93f979ef111e2fa2fa55950891b58b5da5",
+          "src/prototype/platform.js": "60107014425663a4607a239ea68359b04d0f0cfbf0eca7e9dc2fcc1a1180710d",
+          "src/prototype/runtime.js": "953bbc9a92e9576e7ea6e7620cffe6d473c7d721cabb7878dbe04d23283dda43",
+          "src/prototype/app.js": "42aa84f088d41f659d14b2ff392bf88618af4dd6484e6bde50cac0ee0ea31185",
+          "src/prototype/persistence.js": "b45a7650771fe9de54f096c038800b9d683899591406c6aa45425951396caf09",
+          "styles/prototype.css": "4d23fa615054e0318a69166be1b3f405b330991cb084bea02eca3dd55a5873f1",
+          "styles/desktop.css": "95fcb8bdad9f22c32950a1f1c6c51b1f2f886fc89e33d59248d3aef415137dac",
+          "styles/phone.css": "edc7cbe9436fff8936c6e90fb31824898f3ec1168ef35b0dffe7c5e85300fe5c",
+          "templates/game.html": "fe2d39f4d28dbc6257ebb734576b3609d9744afe11903d4cfaf270aebc291ad7",
+          "assets/sprites/manifest.json": "4eb384d124c35727098b71d66dbea0dda5f0ab16c52c4d36b39af524274af10f",
+          "assets/materials/manifest.json": "c06e89ba4ed2058681ae3156eaac8f7eb577d1b5af61e272f40d316f855cad41",
+          "src/prototype/archive.js": "14757ab587b53c5017b6c5da934d37f7f0a7f9a6cb1d49298f19cc7211892d0e",
+          "src/prototype/menus.js": "67edfc0bb873d2b438065a242cec5db21538c94a6414ae8384fb75559613b450",
+          "src/prototype/cindermaw-combat.js": "b201d136dca2181733ad0c5c9fb99dd4345bac0c8b2dbe0a3c0c131fa385a945",
+          "src/prototype/combat-visuals.js": "51d444b94eacb83081431af90874dcd823caf97d7adf337f2f305e43da477c9d",
+          "src/prototype/enemy-vfx-events.js": "21d9e09838d4ca9621f147e43d8c791aaae3070ed644cb231c097a15abc43db4",
+          "src/prototype/enemy-vfx.js": "67efb5a69b19da14b0c9850c4c5586670a10d138703125953c138089454b96d4",
+          "src/prototype/enemy-vfx-art.js": "78effa26838842aaac21069ce427d41bec374b107c4b15a4b1626df5d39de81c",
+          "src/prototype/visuals.js": "630f9a93761b1085558f54afa10f7cfa61f81e043acdfd148a4484a97ef9525e",
+          "src/prototype/sprites.js": "9c50bc13067c29c5c0eb7833508d7cc73db0734c73653b7f8966a714ab571c79",
+          "src/prototype/renderer.js": "500dbd2c3106088b29b044c91051a6f6fd6e0f34d8cf8a251af0f6d76c2ee16f",
+          "src/prototype/dreadmaw-combat.js": "ef40f2043c187b10ec80584ff66522e064fbcbbfc28a6f93e80d8bc42d23e61b",
+          "src/prototype/enemy-presentation.js": "e35de45beb8a5e499f9f1d19ffb8f08827412cf266cad95fa89e5cef96d15440"
+        }
+      },
+      {
+        "commit": "2dacdb9ec5148069d52d07f12a499d703a8259ed",
+        "files": {
+          "src/prototype/data.js": "5b3b745d1d6e7c21accf6899f7597d6394587704e58f884fc10f0047fe21eb19"
+        },
+        "scope": "Certified dev.56 predecessor; preserved before owner-approved #289 biography-only completion. All combat, economy, save and world values remain identical."
+      }
+    ]
   }
 }

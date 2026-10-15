@@ -67,10 +67,15 @@ const server = http.createServer((req, res) => {
       window.__cooldownCasts = [];
       const cast = g.cast;
       g.cast = function (slot, target, charged, ...rest) {
+        const selectedAtCast = this.selectedHeroTarget()?.id ?? null;
+        const manualAtCast = this.manualHeroTargetId ?? null;
         const result = cast.call(this, slot, target, charged, ...rest);
         if (result)
           __cooldownCasts.push({
             slot,
+            targetId: target ?? null,
+            selectedAtCast,
+            manualAtCast,
             charged: !!charged,
             cd: this.hero.cd[slot - 1],
             mp: this.hero.mp,
@@ -225,6 +230,156 @@ const server = http.createServer((req, res) => {
         return { hp: e.hp, maxHp: e.maxHp, aggro: e.aggro };
       });
       assert(valid.aggro && valid.hp < earlierHit.hp, kind + ' accepts in-combat charges');
+    }
+    // A charge never fires on its own. If the initial aim is lost, the
+    // player release retargets to the selected eligible foe, then the nearest.
+    // Preserve existing live boss locks instead of hitting their summons.
+    for (const cls of ['paladin', 'mage', 'ranger'])
+      for (const slot of [1, 2])
+        for (const scenario of ['selected', 'nearest']) {
+          await page.evaluate(
+            ({ cls }) => {
+              const g = Prototype.game;
+              Object.assign(g.hero, { class: cls, x: 600, y: 900, order: null });
+              g.hero.skills = Array(8).fill(1);
+              g.hero.cd = Array(8).fill(0);
+              g.manualHeroTargetId = null;
+              g.manualHeroTargetZone = null;
+              g.manualHeroTargetLocked = false;
+              const make = (name, x) =>
+                g.makeEnemy(
+                  { species: 'goblin', name, level: 1, hp: 10000, damage: 0, xp: 0, gold: 0 },
+                  { x, y: 900 },
+                );
+              const original = make('Original', 680),
+                nearer = make('Nearest', 650),
+                chosen = make('Selected', 695);
+              g.zone().enemies = [original, nearer, chosen];
+              // Pin the initial aim before charging; ambient hero auto-combat
+              // can otherwise select the closer enemy between test actions.
+              if (g.cycleHeroTarget((e) => e.id === original.id)?.id !== original.id)
+                throw new Error('initial charged target must be the original foe');
+              g.s.projectiles = [];
+              window.__retargetFoes = {
+                original: original.id,
+                nearer: nearer.id,
+                chosen: chosen.id,
+              };
+              window.__cooldownCasts = [];
+              Prototype.updateHUD();
+            },
+            { cls },
+          );
+          await press(slot);
+          assert.equal(
+            await page.evaluate(() => Prototype.chargePresentation()?.targetId),
+            await page.evaluate(() => __retargetFoes.original),
+            'charge must start with the original foe before fallback is tested',
+          );
+          await page.waitForFunction(() => Prototype.chargePresentation()?.ready, null, {
+            timeout: 3000,
+          });
+          assert.equal(
+            await page.evaluate(() => __cooldownCasts.length),
+            0,
+            'charged ability does not auto-fire at 100%',
+          );
+          await page.evaluate((scenario) => {
+            const g = Prototype.game;
+            g.zone().enemies = g.zone().enemies.filter((e) => e.id !== __retargetFoes.original);
+            if (scenario === 'selected') {
+              // Use the public player targeting action rather than inserting
+              // synthetic targeting state directly into the running game.
+              const selected = g.cycleHeroTarget((e) => e.id === __retargetFoes.chosen);
+              window.__selectedRetargetId = selected?.id ?? null;
+            } else {
+              g.manualHeroTargetId = null;
+              g.manualHeroTargetZone = null;
+              g.manualHeroTargetLocked = false;
+              g.s.heroTarget = null;
+            }
+          }, scenario);
+          if (scenario === 'selected') {
+            const selectedId = await page.evaluate(
+              () => Prototype.game.selectedHeroTarget()?.id ?? null,
+            );
+            assert.equal(
+              selectedId,
+              await page.evaluate(() => __retargetFoes.chosen),
+              'selected fallback must be a valid player target before release',
+            );
+          }
+          assert.equal(await page.evaluate(() => Prototype.chargePresentation()?.state), 'ready');
+          await release(slot);
+          const result = await page.evaluate(() => ({
+            casts: __cooldownCasts,
+            foes: __retargetFoes,
+          }));
+          assert.equal(result.casts.length, 1, JSON.stringify({ cls, slot, scenario, result }));
+          assert.equal(result.casts[0].charged, true);
+          assert.equal(
+            result.casts[0].targetId,
+            scenario === 'selected' ? result.foes.chosen : result.foes.nearer,
+            JSON.stringify({ cls, slot, scenario, result }),
+          );
+        }
+    for (const scenario of ['no-target', 'locked-range', 'original-valid']) {
+      await page.evaluate(() => {
+        const g = Prototype.game;
+        Object.assign(g.hero, { class: 'paladin', x: 600, y: 900, order: null });
+        g.hero.skills = Array(8).fill(1);
+        g.hero.cd = Array(8).fill(0);
+        g.manualHeroTargetId = null;
+        g.manualHeroTargetZone = null;
+        g.manualHeroTargetLocked = false;
+        const make = (name, x) =>
+          g.makeEnemy(
+            { species: 'goblin', name, level: 1, hp: 10000, damage: 0, xp: 0, gold: 0 },
+            { x, y: 900 },
+          );
+        const original = make('Original', 680),
+          near = make('Nearest', 650);
+        g.zone().enemies = [original, near];
+        if (g.cycleHeroTarget((e) => e.id === original.id)?.id !== original.id)
+          throw new Error('initial charged target must be the original foe');
+        g.s.projectiles = [];
+        window.__retargetFoes = { original: original.id, nearer: near.id };
+        window.__cooldownCasts = [];
+        Prototype.updateHUD();
+      });
+      await press(1);
+      await page.waitForFunction(() => Prototype.chargePresentation()?.ready, null, {
+        timeout: 3000,
+      });
+      await page.evaluate((scenario) => {
+        const g = Prototype.game;
+        if (scenario === 'no-target') g.zone().enemies = [];
+        if (scenario === 'locked-range') {
+          const e = g.zone().enemies.find((enemy) => enemy.id === __retargetFoes.original);
+          e.x = 850; // Out of charged Skill 1 range, still a live locked foe.
+          g.manualHeroTargetId = e.id;
+          g.manualHeroTargetZone = g.zoneId;
+          g.manualHeroTargetLocked = true;
+        }
+      }, scenario);
+      assert.equal(
+        await page.evaluate(() => Prototype.chargePresentation()?.state),
+        scenario === 'original-valid' ? 'ready' : 'no-target',
+        scenario,
+      );
+      await release(1);
+      const outcome = await page.evaluate(() => ({
+        casts: __cooldownCasts,
+        cooldown: Prototype.game.hero.cd[0],
+        originalId: __retargetFoes.original,
+      }));
+      if (scenario === 'original-valid') {
+        assert.equal(outcome.casts.length, 1);
+        assert.equal(outcome.casts[0].targetId, outcome.originalId);
+      } else {
+        assert.equal(outcome.casts.length, 0, scenario + ' must not fire at an arbitrary foe');
+        assert.equal(outcome.cooldown, 0, scenario + ' must not spend cooldown');
+      }
     }
     // Releasing a queued hold before readiness never spends or resets the slot.
     await page.evaluate(() => {

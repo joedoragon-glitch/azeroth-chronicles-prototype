@@ -46,6 +46,8 @@ jobs:
       full_validation: ${{ steps.full.outcome == 'success' && steps.scope.outputs.docs_only != 'true' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Determine check scope
         id: scope
         run: node .github/scripts/check-scope.cjs
@@ -73,6 +75,8 @@ jobs:
       full_validation: ${{ steps.full.outputs.validated }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Reuse successful full browser validation
         if: needs.release-plan.outputs.reuse == 'true'
         env:
@@ -170,6 +174,11 @@ jobs:
           node tests/perf-ws1-roads-browser.test.cjs
           node tests/perf-ws2-occlusion-browser.test.cjs
           PERF_WS2_BASELINE_ROOT="$RUNNER_TEMP/perf-v09-baseline" node scripts/perf-ws2-renderer-performance.cjs test-results/perf/combined-webkit.json
+      - name: Capture native snapshot phone and desktop visual audit
+        if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
+        env:
+          SNAPSHOT_VISUAL_ENGINE: webkit
+        run: node scripts/snapshot-certification-visuals.cjs
       - name: Record completed full WebKit validation
         id: full
         if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
@@ -181,6 +190,49 @@ jobs:
           retention-days: 3
           path: test-results/
           if-no-files-found: ignore
+
+  # Draft PR #300 only: obtain a reproducible formatter correction while
+  # independently preserving the strict pr-check/release certificate gate.
+  snapshot-format-audit:
+    if: github.event_name == 'pull_request' && github.event.pull_request.number == 300
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked formatter
+        run: npm ci --ignore-scripts
+      - name: Generate formatting-only patch for audit
+        shell: bash
+        run: |
+          npm run format
+          mkdir -p test-results/snapshot-format
+          git diff --no-ext-diff --unified=3 > test-results/snapshot-format/prettier.patch
+          git diff --name-only > test-results/snapshot-format/changed-files.txt
+          git diff --stat
+          echo '<<<SNAPSHOT_PRETTIER_PATCH_START>>>'
+          cat test-results/snapshot-format/prettier.patch
+          echo '<<<SNAPSHOT_PRETTIER_PATCH_END>>>'
+      - name: Record current sprite-scope evidence for the final audit
+        shell: bash
+        run: |
+          node scripts/sprite-scope-audit.cjs > test-results/snapshot-format/sprite-scope.json
+          echo '<<<SNAPSHOT_SPRITE_SCOPE_START>>>'
+          cat test-results/snapshot-format/sprite-scope.json
+          echo '<<<SNAPSHOT_SPRITE_SCOPE_END>>>'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: snapshot-format-patch
+          retention-days: 7
+          path: test-results/snapshot-format/
+          if-no-files-found: warn
 
   certify-pr:
     if: github.event_name == 'pull_request' && needs.pr-check.outputs.full_validation == 'true' && needs.phone-webkit.outputs.full_validation == 'true'

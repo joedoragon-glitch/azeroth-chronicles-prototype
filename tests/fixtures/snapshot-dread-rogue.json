@@ -1,0 +1,335 @@
+{
+  "sourceCommit": "b87e22dc0ddd7e029ec132f6dd23bcb7c78044aa",
+  "ruleSha256": "c77b46e67b51dd023b71edec3faca99888e60bf1db21ce680ea27f76becb4792",
+  "methods": {
+    "tacticalRogueRegroup": "606c97cbdd515d888c36d0a83f23f49033e61560e90a1bf25b005c0bed728739",
+    "tacticalClearRogueRegroup": "b9c7b6a98bb7a8eb72b0aa98eba6e49777c77760d742d04e3289c3567a052562",
+    "tacticalStopRogueRegroup": "5235cc04ca6ba49e86d7ab57bb96d493c7d7246ab4d923d4d03c16519f7b7df3",
+    "tacticalBeginRogueRegroup": "b345a550d1e40632f21a128de227f1b09db69a5acbeffe5a7adfa36cdf8d9050",
+    "tacticalScatterState": "3386507c836cf8ceb49ac567490e3ba52bb22515ed7b1afa607fdb41dd62d84c",
+    "tacticalClearScatter": "dbba7ffe67569c9a112f77f051b793b1fa3b83f606a3bb55f6a3e88550a03d14",
+    "tacticalBeginScatter": "11d2475f521febb38c70215350e2460d0bf213e4b02d368cc41370d3761b5639",
+    "tacticalAdvanceScatter": "d50ce2b5d9b43f3074801cdad2cd0a99ed6e211ba8f4573bc8b1dd4ab5643755",
+    "tacticalRecordRogueReposition": "6eb7c6b1268ce8937f4cf25044f5c612553b753c8252d2f62d5c9622d0eb8bb8",
+    "tacticalRogueLeashAllows": "db433cd8321dc72f77c278ceb3ec26c0ad6abba0aa5f5788b81f3546892777e8",
+    "tacticalSeekRogueSupport": "a5dd9321c2b3803b2d7ccfe2786e6f82cf5929045a1b91fb42111c2a7f99b705",
+    "tacticalRogueOutnumbered": "7506eec70ff2ecd8963fc55b2d80f5043535a20241bd595460e2379671f0d34f",
+    "tacticalAdvanceRogueRegroup": "28b124922dd678f033c4a5205bb2901323c4b78b67d6b69ba5ae288af1eb7421",
+    "tacticalRogueMove": "cd05b5d64109ff60d030411ab914578e54327e7ef94ef9151ec2abf353f7b6be",
+    "tacticalRogueFieldSupport": "cd05b5d64109ff60d030411ab914578e54327e7ef94ef9151ec2abf353f7b6be",
+    "tacticalRogueCommanderSupport": "cd05b5d64109ff60d030411ab914578e54327e7ef94ef9151ec2abf353f7b6be",
+    "tacticalResolveRogueMove": "cd05b5d64109ff60d030411ab914578e54327e7ef94ef9151ec2abf353f7b6be",
+    "tacticalRecruitRegroupAllies": "24dcd1e6e6ba68824acaa981f10c84f76f0737ef10065885611aa5417718d546",
+    "tacticalAutoRogue": "351218afa34473be5f1a689f6ea86cf098ebaf05b96d9d673ab5854584cfb2fc",
+    "tacticalClearBurst": "69c5ae14129118e02d5866dcd098beb7e10a0a012173b3da5fbf82ba5710d450",
+    "tacticalCompressDamage": "b22f4725ad0f2f793d40c4e2baf580a62744cd1a733014e72f00a1ff4ac6f1d3",
+    "tacticalClearThreat": "cfc55490afaca27c6fe6521406c4e629c3fc6b6fd5b5877dba72ebbb7d0854a0",
+    "tacticalPruneThreat": "8b966a763fb26b1a6bbafaab5d42de89673170cc3eb8492888733b6e1ba15d0f",
+    "tacticalThreatSnapshot": "f5d2c29e736357c87e37ccd11f8a4e23231da16a77cf8d7df0868d0978ed4f28",
+    "tacticalRecordHit": "693e9259f5fff6fa3593c076e7959e65442052aa4f2206eabb9e587902fa4022",
+    "tacticalActiveTargetCount": "10b9a15fa52008d2632cb9e177bc8e903028066fdb6cd0b52ef66e599ea8c2ed",
+    "tacticalHighestThreatTarget": "d001eb1cb366e1535a3a02fbd1e58d86c9e3bfa676a0eefa02b32dedf9ddd692",
+    "tacticalDirectTargetable": "19e0934961951e057fd0abe23bda7c088a445888bb9a9a50c47e23a48bcadaec",
+    "tacticalDropDustTarget": "e28eb718dbd283e22cd2bdd1f57e57be9f54844932ba3d1a15aae314b5b2c042",
+    "tacticalProtectionTier": "aeb6a25c524a937d2d8a2322a2fcad90e15d679e392b501a0a3608bb1e1de600",
+    "tacticalRegroupCandidates": "3159628432252c4d27e4ca92ad5c563a2b905a5c8c9b2b458ce49b6f5e4d3d77",
+    "tacticalRegroupGroups": "270f5bd252ffbcfe9e1949007155995b572933cc2938262d9244de2dc3ca300f",
+    "tacticalPresentOpponents": "4979bd47e6c0d0eed64c8d74d1528999a42f07fa95ac5da7b5fcf04d9551cdcd",
+    "tacticalLocalSupport": "e284c55eabc5a9ae060d5dfa2127b761ea6a9d4b6055ff14a1ac208a62ad0332",
+    "tacticalRogueWounded": "4adebc855738d0d7d86329dba15aa84b03f0173084d707f5336670dd60fe9b29",
+    "tacticalRogueEligibility": "c44c1f27b081de3be5d0665f54ba8f17ab4bac177c79b859cc5228a54795ee29"
+  },
+  "approvedRuleChanges": {
+    "source": "PR #300 director dev.40/43: Writ of Restraint and approved two-second basic/differentiated signature Slow; see 5061243 and docs/SNAPSHOT_IMPLEMENTATION_20261013.md",
+    "changes": [
+      {
+        "path": [
+          "rogueMoves",
+          "rangedGuardian",
+          "slowSeconds"
+        ],
+        "before": 1.2,
+        "after": 2
+      },
+      {
+        "path": [
+          "rogueMoves",
+          "rangedFallback",
+          "slowSeconds"
+        ],
+        "before": 1,
+        "after": 2
+      },
+      {
+        "path": [
+          "rogueMoves",
+          "bosses",
+          "darklord",
+          "name"
+        ],
+        "before": "Dark Lord’s Crown Grasp",
+        "after": "Writ of Restraint"
+      },
+      {
+        "path": [
+          "rogueRingleaderSignatures",
+          "melee",
+          "goblin",
+          "slowSeconds"
+        ],
+        "before": 1.35,
+        "after": 2.45
+      },
+      {
+        "path": [
+          "rogueRingleaderSignatures",
+          "melee",
+          "wraith",
+          "slowSeconds"
+        ],
+        "before": 1.6,
+        "after": 2.6
+      },
+      {
+        "path": [
+          "rogueRingleaderSignatures",
+          "melee",
+          "mireling",
+          "slowSeconds"
+        ],
+        "before": 1.7,
+        "after": 2.6
+      },
+      {
+        "path": [
+          "rogueRingleaderSignatures",
+          "ranged",
+          "wolf",
+          "slowSeconds"
+        ],
+        "before": 1.3,
+        "after": 2.45
+      },
+      {
+        "path": [
+          "rogueRingleaderSignatures",
+          "ranged",
+          "goblin",
+          "slowSeconds"
+        ],
+        "before": 1.6,
+        "after": 2.6
+      },
+      {
+        "path": [
+          "rogueRingleaderSignatures",
+          "ranged",
+          "skeleton",
+          "slowSeconds"
+        ],
+        "before": 1.7,
+        "after": 2.6
+      },
+      {
+        "path": [
+          "rogueRingleaderSignatures",
+          "ranged",
+          "wraith",
+          "slowSeconds"
+        ],
+        "before": 1.6,
+        "after": 2.6
+      },
+      {
+        "path": [
+          "rogueRingleaderSignatures",
+          "ranged",
+          "stalker",
+          "slowSeconds"
+        ],
+        "before": 1.3,
+        "after": 2.45
+      },
+      {
+        "path": [
+          "rogueRingleaderSignatures",
+          "ranged",
+          "mireling",
+          "slowSeconds"
+        ],
+        "before": 1.8,
+        "after": 2.6
+      },
+      {
+        "path": [
+          "rogueRingleaderSignatures",
+          "ranged",
+          "reedbeast",
+          "slowSeconds"
+        ],
+        "before": 1.7,
+        "after": 2.6
+      },
+      {
+        "path": [
+          "rogueRingleaderSignatures",
+          "ranged",
+          "archer",
+          "slowSeconds"
+        ],
+        "before": 1.5,
+        "after": 2.6
+      },
+      {
+        "path": [
+          "rogueRingleaderSignatures",
+          "ranged",
+          "crownguard",
+          "slowSeconds"
+        ],
+        "before": 1.6,
+        "after": 2.6
+      },
+      {
+        "path": [
+          "rogueRingleaderSignatures",
+          "ranged",
+          "ashbeast",
+          "slowSeconds"
+        ],
+        "before": 1.5,
+        "after": 2.6
+      },
+      {
+        "path": [
+          "rogueRingleaderSignatures",
+          "ranged",
+          "orc",
+          "slowSeconds"
+        ],
+        "before": 1.5,
+        "after": 2.6
+      },
+      {
+        "path": [
+          "rogueRingleaderSignatures",
+          "ranged",
+          "ogre",
+          "slowSeconds"
+        ],
+        "before": 1.5,
+        "after": 2.6
+      },
+      {
+        "path": [
+          "rogueSignatures",
+          "captains",
+          "supply-vale",
+          "slowSeconds"
+        ],
+        "before": 1.3,
+        "after": 2.45
+      },
+      {
+        "path": [
+          "rogueSignatures",
+          "captains",
+          "supply-march",
+          "slowSeconds"
+        ],
+        "before": 2,
+        "after": 2.7
+      },
+      {
+        "path": [
+          "rogueSignatures",
+          "captains",
+          "supply-highlands",
+          "slowSeconds"
+        ],
+        "before": 0.8,
+        "after": 2.2
+      },
+      {
+        "path": [
+          "rogueSignatures",
+          "captains",
+          "frontier-overseer",
+          "slowSeconds"
+        ],
+        "before": 1,
+        "after": 2.2
+      },
+      {
+        "path": [
+          "rogueSignatures",
+          "bosses",
+          "crypt",
+          "slowSeconds"
+        ],
+        "before": 1.8,
+        "after": 2.6
+      },
+      {
+        "path": [
+          "rogueSignatures",
+          "bosses",
+          "mire",
+          "slowSeconds"
+        ],
+        "before": 2.2,
+        "after": 2.7
+      },
+      {
+        "path": [
+          "rogueSignatures",
+          "bosses",
+          "archive",
+          "slowSeconds"
+        ],
+        "before": 1.6,
+        "after": 2.6
+      },
+      {
+        "path": [
+          "rogueSignatures",
+          "bosses",
+          "ridge",
+          "slowSeconds"
+        ],
+        "before": 0.9,
+        "after": 2.2
+      },
+      {
+        "path": [
+          "rogueSignatures",
+          "bosses",
+          "warlord",
+          "slowSeconds"
+        ],
+        "before": 0.85,
+        "after": 2.2
+      },
+      {
+        "path": [
+          "rogueSignatures",
+          "bosses",
+          "citadel",
+          "slowSeconds"
+        ],
+        "before": 1.15,
+        "after": 2.45
+      },
+      {
+        "path": [
+          "rogueSignatures",
+          "bosses",
+          "darklord",
+          "slowSeconds"
+        ],
+        "before": 1.9,
+        "after": 2.7
+      }
+    ]
+  }
+}

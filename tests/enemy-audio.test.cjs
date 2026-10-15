@@ -50,7 +50,9 @@ for (const b of C.data.bosses)
       for (const f of c.effects) a.effect(f);
       assert.equal(
         calls.filter((x) => x[0] === 'duck').length,
-        C.rules.attacks[b.id][i].kind === 'summon' ? 0 : 1,
+        C.rules.attacks[b.id][i].kind === 'summon' || C.rules.attacks[b.id][i].coefficient === 0
+          ? 0
+          : 1,
       );
       const n = calls.length;
       for (const f of c.effects) a.effect(f);
@@ -566,13 +568,27 @@ for (const action of ['melee', 'circle']) {
     c.hero.level = e.level + 1;
     c.s.time = 30;
     assert(c.tacticalRogueMove(e, c.hero));
-    const id = V.describe(e, e.telegraph).id;
+    const cast = e.telegraph;
+    const id = V.describe(e, cast).id;
     ids.add(id);
     c.resolveAttack(e);
+    if (e.family === 'abyss' && e.motion) {
+      // High Yo-Yo finishes the already-warned strike after its aerial approach.
+      for (let tick = 0; tick < 350 && e.motion; tick++) c.advanceMotion(e, 0.02);
+      assert.equal(e.motion, null, 'High Yo-Yo must resolve before checking its impact');
+    }
     const events = c.effects.filter((f) => f.type === 'enemyVfx');
-    assert(
-      events.some((f) => f.stage === 'windup' && f.dangerous && P.route(f).key === 'enemyWindup'),
-    );
+    if (cast.mobileRogueCast || cast.anonymousCast) {
+      assert(!events.some((f) => f.stage === 'windup'), 'cast bars do not emit a spatial windup');
+      assert(
+        c.effects.some((f) => f.type === 'warning'),
+        'mobile casts retain the existing audible warning',
+      );
+    } else {
+      assert(
+        events.some((f) => f.stage === 'windup' && f.dangerous && P.route(f).key === 'enemyWindup'),
+      );
+    }
     assert(events.some((f) => f.stage === 'release' && P.route(f).key === 'enemyRelease'));
     assert(
       events.some((f) => f.stage === 'impact' && f.contact && P.route(f).key === 'enemyImpact'),
@@ -631,8 +647,30 @@ for (const actor of [
   assert(troop.hp > 0);
   const windup = c.effects.find((f) => f.stage === 'windup'),
     births = c.effects.filter((f) => f.stage === 'spawn');
-  assert(windup.dangerous);
-  assert.equal(P.route(windup).key, 'enemyWindup');
+  if (actor.family === 'cindermaw') {
+    assert.equal(windup, undefined, 'anonymous preparation has no spatial VFX windup');
+    const warning = c.effects.find((f) => f.type === 'warning' && f.anonymousCast);
+    assert(
+      warning && !warning.presentationHandled && !warning.name,
+      'legacy anonymous audio warning remains audible',
+    );
+    const anonymous = listener();
+    anonymous.a.effect(warning);
+    assert(anonymous.calls.length > 0, 'anonymous preparation retains real audible anticipation');
+  } else if (move.mobileRogueCast) {
+    assert.equal(windup, undefined, 'mobile cast bars have no spatial windup');
+    const warning = c.effects.find((f) => f.type === 'warning');
+    assert(warning && !warning.presentationHandled, 'cast-bar warning remains audible');
+    const mobile = listener();
+    mobile.a.effect(warning);
+    assert(
+      mobile.calls.some((x) => x[0] === 'duck'),
+      'real warning reaches audio',
+    );
+  } else {
+    assert(windup.dangerous);
+    assert.equal(P.route(windup).key, 'enemyWindup');
+  }
   assert.equal(births.length, 1);
   assert.equal(births[0].target, troop.id);
   assert.deepEqual([births[0].x, births[0].y], [troop.home.x, troop.home.y]);

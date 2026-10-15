@@ -211,6 +211,41 @@ fs.mkdirSync(out, { recursive: true });
             if (row.group === 'boss') {
               c.startAttack(e, c.hero, Number(p[2]));
               a = e.telegraph;
+            } else if (row.group === 'captain' && p[1] === 'supply-vale' && Number(p[2]) >= 3) {
+              // New stateful slots must use the real planner, not an incomplete
+              // synthetic plan that cancels tracking or flattens the two pairs.
+              const oldRandom = c.random;
+              for (let attempt = 0; attempt < 100; attempt++) {
+                c.effects = [];
+                e.lastCaptainAttack = -1;
+                c.random = () => (attempt + 0.5) / 100;
+                c.startCaptainAttack(e, c.hero);
+                if (e.telegraph.index === Number(p[2])) break;
+              }
+              c.random = oldRandom;
+              a = e.telegraph;
+              if (a.index !== Number(p[2]))
+                throw Error('Actual Scornfang planner missed ' + row.id);
+              if (
+                a.tracking &&
+                (a.targetId !== 'hero' || a.shotNumber !== 1 || e.sequence.length !== 3)
+              )
+                throw Error('Tracking planner lacks its real four-shot state');
+              if (a.paired && (a.count !== 2 || e.sequence.length !== 1))
+                throw Error('Hot Zone planner lacks its real staggered pair');
+            } else if (row.group === 'captain' && p[1] === 'supply-crown') {
+              // Agriculture warnings carry real planned gaps, motion endpoints
+              // and queued marks. Raw tuning rows cannot substitute for a cast.
+              e.roomCaptain = true;
+              if (Number(p[2]) === 5) c.summonCaptainAdds(e);
+              const built = c.buildDreadAttack(e, c.hero, Number(p[2]));
+              if (!built) throw Error('Actual agriculture planner missed ' + row.id);
+              a = built.first;
+              e.sequence = built.sequence;
+              if (a.dreadMechanic === 'closure' && a.gaps.length !== 2)
+                throw Error('Closure planner lacks its two escape openings');
+              if (a.dreadLeg === 1 && e.sequence.length !== 1)
+                throw Error('Transhumance planner lacks its second warned leg');
             } else if (row.group === 'captain') {
               a = {
                 ...a,
@@ -275,6 +310,10 @@ fs.mkdirSync(out, { recursive: true });
             ) {
               e.telegraph = a;
               c.resolveAttack(e);
+              if (row.id === 'captain/supply-vale/3' && c.s.projectiles.length !== 1)
+                throw Error('Tracking release must create a real sling projectile');
+              if (row.id === 'captain/supply-vale/4' && c.s.hazards.length !== 2)
+                throw Error('Hot Zone first pair must create two actual beds');
               e.telegraph = null;
               if (e.motion) for (let j = 0; j < 30 && e.motion; j++) c.advanceMotion(e, 0.05);
               c.updateProjectiles(0.12);
@@ -335,7 +374,17 @@ fs.mkdirSync(out, { recursive: true });
         path.join(out, viewport.width + '-measurements.json'),
         JSON.stringify(results.report, null, 2),
       );
-      assert.equal(results.report.length, catalog.length + 46);
+      const expectedScenes = catalog.flatMap((row) =>
+        (row.group === 'boss' ? ['normal', 'true'] : ['normal']).map((form) => ({
+          id: row.id,
+          form,
+        })),
+      );
+      assert.deepEqual(
+        results.report.map(({ id, form }) => ({ id, form })),
+        expectedScenes,
+        'every catalog identity and every TRUE boss variant must render exactly once',
+      );
       assert.deepEqual(errors, []);
       console.log(
         'PASS ' +

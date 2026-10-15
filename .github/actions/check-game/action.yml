@@ -11,15 +11,25 @@ runs:
       shell: bash
       run: npm ci --ignore-scripts
     - name: Check formatting
+      id: formatting
+      # Keep the release gate strict, but don't let historical formatter drift
+      # hide game-regression results from the same overnight audit.
+      continue-on-error: true
       shell: bash
       run: npm run format:check
     - name: Check generated entries and all published JavaScript
+      id: source_checks
+      continue-on-error: true
       shell: bash
       run: npm run check
     - name: Full regression suite
+      id: node_regressions
+      continue-on-error: true
       shell: bash
       run: npm test
     - name: Verify performance equivalence when present
+      id: perf_equivalence
+      continue-on-error: true
       if: hashFiles('tests/perf-v09-protected.test.cjs') != ''
       shell: bash
       run: |
@@ -28,11 +38,15 @@ runs:
         git archive c6ce1af236bddd7ca881903499c4cf5de175f9e2 | tar -x -C "$RUNNER_TEMP/perf-v09-baseline"
         node --expose-gc scripts/perf-v09-equivalence.cjs "$RUNNER_TEMP/perf-v09-baseline"
     - name: Reproduce cooldown balance evidence summary
+      id: cooldown_summary
+      continue-on-error: true
       shell: bash
       run: |
         python3 scripts/summarize-cooldown-balance.py docs/evidence/COOLDOWN_BALANCE_20261009.json.gz "$RUNNER_TEMP/cooldown-summary.json"
         cmp docs/evidence/COOLDOWN_BALANCE_20261009_SUMMARY.json "$RUNNER_TEMP/cooldown-summary.json"
     - name: Use runner Chrome for full browser matrix
+      id: browser_setup
+      continue-on-error: true
       shell: bash
       run: |
         CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
@@ -42,12 +56,18 @@ runs:
           npx playwright install chromium
         fi
     - name: Test full desktop and mobile matrix
+      id: browser_matrix
+      continue-on-error: true
       shell: bash
       run: node tests/prototype-browser.test.cjs
     - name: Verify FPS settings and rendering-only scheduling
+      id: fps_check
+      continue-on-error: true
       shell: bash
       run: node tests/frame-rate-browser.test.cjs
     - name: Verify cooldown charge queues and save upgrade
+      id: save_upgrade
+      continue-on-error: true
       shell: bash
       run: |
         node tests/cooldown-input-browser.test.cjs
@@ -59,32 +79,46 @@ runs:
         BETA_PREVIOUS_ROOT="$RUNNER_TEMP/cooldown-v118" BETA_FIXTURE_DIR=test-results/beta-historical node scripts/beta-history-audit.cjs > test-results/beta-history-report.json
         BETA_FIXTURE_DIR=test-results/beta-historical node tests/beta-campaign-browser.test.cjs
     - name: Verify quest completion and Keeper Archive interaction
+      id: quest_archive
+      continue-on-error: true
       shell: bash
       run: node tests/quest-archive-browser.test.cjs
     - name: Audit integrated rogue warnings and effects in browsers
+      id: rogue_browser
+      continue-on-error: true
       shell: bash
       run: node tests/rogue-browser.test.cjs
     - name: Verify audio playback and lifecycle
+      id: audio_browser
+      continue-on-error: true
       shell: bash
       run: |
         node tests/audio-browser.test.cjs
         node tests/audio-audition-browser.test.cjs
     - name: Verify original-master actor idles and combat
+      id: sprite_browser
+      continue-on-error: true
       shell: bash
       run: |
         node scripts/sprite-production-browser-review.cjs local test-results/sprite-pilot-ci chromium
         node scripts/sprite-nature-browser-review.cjs local test-results/sprite-nature-ci chromium
     - name: Verify terrain material rendering
+      id: terrain_browser
+      continue-on-error: true
       shell: bash
       run: |
         node tests/materials-browser.test.cjs
         node tests/ground-cache-browser.test.cjs
     - name: Verify full enemy VFX catalog and pilot captures
+      id: vfx_browser
+      continue-on-error: true
       shell: bash
       run: |
         node tests/enemy-vfx-browser.test.cjs
         VFX_CAPTURE_TAG=ci VFX_CAPTURE_SMOKE=1 VFX_CAPTURE_VISUAL_ONLY=1 node scripts/enemy-vfx-capture.cjs
     - name: Verify Chromium performance changes when present
+      id: chromium_perf
+      continue-on-error: true
       if: hashFiles('tests/perf-v09-protected.test.cjs') != ''
       shell: bash
       env:
@@ -95,5 +129,32 @@ runs:
         node tests/perf-ws2-occlusion-browser.test.cjs
         PERF_WS2_BASELINE_ROOT="$RUNNER_TEMP/perf-v09-baseline" node scripts/perf-ws2-renderer-performance.cjs test-results/perf/combined-chromium.json
     - name: Verify development sprite showroom
+      id: sprite_showroom
+      continue-on-error: true
       shell: bash
       run: node tests/sprite-showroom-browser.test.cjs
+    - name: Capture native snapshot visual audit
+      id: snapshot_visuals
+      continue-on-error: true
+      shell: bash
+      run: node scripts/snapshot-certification-visuals.cjs
+    - name: Enforce every required check before release certification
+      if: always()
+      shell: bash
+      env:
+        SNAPSHOT_CHECK_STATES: ${{ toJSON(steps) }}
+      run: |
+        node <<'NODE'
+        const states = JSON.parse(process.env.SNAPSHOT_CHECK_STATES || '{}');
+        const essential = ['formatting', 'source_checks', 'node_regressions'];
+        const failed = Object.entries(states)
+          .filter(([name, value]) => value.outcome === 'failure')
+          .map(([name]) => name);
+        for (const id of essential)
+          if (states[id]?.outcome !== 'success' && !failed.includes(id)) failed.push(id);
+        if (failed.length) {
+          console.error('::error::Snapshot certification blocked by: ' + failed.join(', '));
+          process.exit(1);
+        }
+        console.log('All required checks passed; separate PR release authorization still needed.');
+        NODE

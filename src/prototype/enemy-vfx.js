@@ -36,6 +36,11 @@
     // Recovery uses its green, non-damaging telegraph and normal heal feedback.
     // Do not route it through a damaging circle's art/audio identity.
     if (attack.bossHeal) return null;
+    if (attack.cinderDelegate)
+      return describe(
+        { ...enemy, type: 'boss', family: 'cindermaw', ranged: false },
+        { ...attack, cinderDelegate: false, index: 5 },
+      );
     const tier = tierOf(enemy),
       role = enemy.ranged ? 'ranged' : 'melee',
       family = safePart(enemy.family),

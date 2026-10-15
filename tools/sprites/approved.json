@@ -636,58 +636,58 @@
       "key": "prop:vale-cottage:vale",
       "catalogId": "061",
       "canonHash": "f33f2a6032756f75be031a7dea4c3832b1f08d123b0d20b5b9122b9acadd459e",
-      "canonSnapshotHash": "698426129edfdaaaee0f2d2c11f552c9debd6f3dfa8eda567995d0c9a7ee36a6",
+      "canonSnapshotHash": "6b36ab7ee5bd2d4f93af1d8960d7b02cb629c473074e07a66f7bac86510adc4d",
       "catalogHash": "b800662082d174a8139d9412cb87a9ca4eeb9c0ef7d2de1498b792c82c889c3d",
       "source": {
-        "file": "ee52d21f1f1d6a95fb1e545db3fa584a7b9ae86618f9277b1d475d9c1b3778e3.png",
+        "file": "6950d9ba5e8dd37162ca2a4fe4cc25e7282a621b149298b287361955404f298a.png",
         "format": "png",
-        "width": 1318,
-        "height": 1318,
-        "bytes": 350170,
-        "decodedBytes": 6948496,
-        "hash": "ee52d21f1f1d6a95fb1e545db3fa584a7b9ae86618f9277b1d475d9c1b3778e3",
-        "pixelHash": "495d84f4da1fd18b09a8747181df386a6aab222a104fb70eb229f9191de4cd23",
+        "width": 1254,
+        "height": 1254,
+        "bytes": 252844,
+        "decodedBytes": 6290064,
+        "hash": "6950d9ba5e8dd37162ca2a4fe4cc25e7282a621b149298b287361955404f298a",
+        "pixelHash": "58a815f79e5d7f91400133803ff30f2e0ff4cda4acd4b6f67e21faf3eb5bd928",
         "bounds": {
-          "x1": 32,
-          "y1": 32,
-          "x2": 1261,
-          "y2": 1140
+          "x1": 0,
+          "y1": 0,
+          "x2": 1229,
+          "y2": 1108
         },
-        "padding": 32,
-        "transparentPixels": 1582355,
+        "padding": 0,
+        "transparentPixels": 1417747,
         "visiblePixels": 154769,
         "lowAlphaPixels": 4312,
         "materialBounds": {
-          "x1": 423,
-          "y1": 682,
-          "x2": 891,
-          "y2": 1137
+          "x1": 391,
+          "y1": 650,
+          "x2": 859,
+          "y2": 1105
         }
       },
       "output": {
-        "file": "prop-vale-cottage-vale-d94098c0186d31ce1b16815a3092957b5e428e35117729a9f2ffd9d8ec79ff3a.png",
+        "file": "prop-vale-cottage-vale-21e8b38b7497f56b6c01f853f1100b16c78580703f546716db4e739432d68573.png",
         "format": "png",
-        "width": 192,
-        "height": 192,
-        "bytes": 10582,
-        "decodedBytes": 147456,
-        "hash": "d94098c0186d31ce1b16815a3092957b5e428e35117729a9f2ffd9d8ec79ff3a",
-        "pixelHash": "d7a51fa3e4e10c7d7a40d1edf56e1eee636a7f831737a5d674dc7c19598e026a",
+        "width": 816,
+        "height": 816,
+        "bytes": 151368,
+        "decodedBytes": 2663424,
+        "hash": "21e8b38b7497f56b6c01f853f1100b16c78580703f546716db4e739432d68573",
+        "pixelHash": "fc514ecd2ffb92d72312dfb7851fd8ce596fbd1dfbb62075102bae20f06da150",
         "bounds": {
-          "x1": 62,
-          "y1": 94,
-          "x2": 129,
-          "y2": 160
+          "x1": 140,
+          "y1": 86,
+          "x2": 779,
+          "y2": 680
         },
-        "padding": 31,
-        "transparentPixels": 33608,
-        "visiblePixels": 3256,
-        "lowAlphaPixels": 86,
+        "padding": 36,
+        "transparentPixels": 606364,
+        "visiblePixels": 59492,
+        "lowAlphaPixels": 1793,
         "materialBounds": {
-          "x1": 62,
-          "y1": 94,
-          "x2": 129,
-          "y2": 159
+          "x1": 262,
+          "y1": 397,
+          "x2": 551,
+          "y2": 679
         }
       },
       "runtime": {
@@ -701,25 +701,47 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [1318, 1318],
-        "to": [192, 192],
+        "from": [1254, 1254],
+        "to": [816, 816],
+        "rasterScale": 4.25,
+        "normalization": {
+          "fullCanvasSize": 1254,
+          "padding": {
+            "left": 32,
+            "right": 32,
+            "top": 32,
+            "bottom": 32
+          },
+          "virtualWidth": 1318,
+          "virtualHeight": 1318,
+          "input": "untouched-original",
+          "samplingPasses": 1,
+          "intermediatePixelsUsed": false
+        },
         "crop": false,
         "trim": false,
         "colorConversion": false,
         "translation": {
           "x": 0,
-          "y": -6,
+          "y": -5.882352941176471,
+          "rasterX": 0,
+          "rasterY": -25,
           "visiblePixelsDiscarded": 0
         }
       },
       "review": {
         "status": "approved",
-        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
-        "scope": "Accepted pilot direction; technical placement and faithful implementation authorized by Joel",
-        "chatLink": null,
-        "technicalReview": "Native/context review required before release"
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/300",
+        "kind": "engineer-authorized",
+        "userAppearanceAcceptance": false,
+        "nativeScale": true,
+        "scope": "Selective implementation of the director-requested original-master 150% cottage adaptation; existing approved cottage design, grounding and static identity retained. Final physical device and director appearance review remain open.",
+        "evidence": [
+          "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/blob/813ecab1f539316257aa400f4f0ab6368ea17d11/tools/sprites/batches/2026-10-09-150-adaptation/prop-vale-cottage-vale/original-export-v1/review-scenes/comparison.json",
+          "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/blob/813ecab1f539316257aa400f4f0ab6368ea17d11/tools/sprites/batches/2026-10-09-150-adaptation/prop-vale-cottage-vale/original-export-v1/lineage.json"
+        ]
       },
-      "revision": "3c35ef58fe76061f5fb4f017be965947afba71885b6897781d59b7253237cf15"
+      "revision": "9488050207a6be3c5a5ca364266d838d7937e0b68e91e31744ffef06da6951d3"
     },
     "hero:mage": {
       "version": 2,
@@ -6575,6 +6597,98 @@
           "notes": "Reuses retained Vale master because live fixed icon-rock geometry/palette is identical across regions. 200 IDs and all native desktop/phone day/night scenes verified. No invented moss variation. Original sources and procedural rollback retained."
         },
         "revision": "25c391d966fe234e2951e6dadd402d8ed8d6d493fdb6844f3e100cf1e52b3cdf"
+      }
+    },
+    "prop:vale-cottage:vale": {
+      "3c35ef58fe76061f5fb4f017be965947afba71885b6897781d59b7253237cf15": {
+        "version": 2,
+        "key": "prop:vale-cottage:vale",
+        "catalogId": "061",
+        "canonHash": "f33f2a6032756f75be031a7dea4c3832b1f08d123b0d20b5b9122b9acadd459e",
+        "canonSnapshotHash": "698426129edfdaaaee0f2d2c11f552c9debd6f3dfa8eda567995d0c9a7ee36a6",
+        "catalogHash": "b800662082d174a8139d9412cb87a9ca4eeb9c0ef7d2de1498b792c82c889c3d",
+        "source": {
+          "file": "ee52d21f1f1d6a95fb1e545db3fa584a7b9ae86618f9277b1d475d9c1b3778e3.png",
+          "format": "png",
+          "width": 1318,
+          "height": 1318,
+          "bytes": 350170,
+          "decodedBytes": 6948496,
+          "hash": "ee52d21f1f1d6a95fb1e545db3fa584a7b9ae86618f9277b1d475d9c1b3778e3",
+          "pixelHash": "495d84f4da1fd18b09a8747181df386a6aab222a104fb70eb229f9191de4cd23",
+          "bounds": {
+            "x1": 32,
+            "y1": 32,
+            "x2": 1261,
+            "y2": 1140
+          },
+          "padding": 32,
+          "transparentPixels": 1582355,
+          "visiblePixels": 154769,
+          "lowAlphaPixels": 4312,
+          "materialBounds": {
+            "x1": 423,
+            "y1": 682,
+            "x2": 891,
+            "y2": 1137
+          }
+        },
+        "output": {
+          "file": "prop-vale-cottage-vale-d94098c0186d31ce1b16815a3092957b5e428e35117729a9f2ffd9d8ec79ff3a.png",
+          "format": "png",
+          "width": 192,
+          "height": 192,
+          "bytes": 10582,
+          "decodedBytes": 147456,
+          "hash": "d94098c0186d31ce1b16815a3092957b5e428e35117729a9f2ffd9d8ec79ff3a",
+          "pixelHash": "d7a51fa3e4e10c7d7a40d1edf56e1eee636a7f831737a5d674dc7c19598e026a",
+          "bounds": {
+            "x1": 62,
+            "y1": 94,
+            "x2": 129,
+            "y2": 160
+          },
+          "padding": 31,
+          "transparentPixels": 33608,
+          "visiblePixels": 3256,
+          "lowAlphaPixels": 86,
+          "materialBounds": {
+            "x1": 62,
+            "y1": 94,
+            "x2": 129,
+            "y2": 159
+          }
+        },
+        "runtime": {
+          "displayWidth": 192,
+          "displayHeight": 192,
+          "anchorX": 0.5,
+          "anchorY": 0.75,
+          "labelHeight": 64
+        },
+        "processing": {
+          "tool": "sharp",
+          "version": "0.35.5",
+          "kernel": "nearest",
+          "from": [1318, 1318],
+          "to": [192, 192],
+          "crop": false,
+          "trim": false,
+          "colorConversion": false,
+          "translation": {
+            "x": 0,
+            "y": -6,
+            "visiblePixelsDiscarded": 0
+          }
+        },
+        "review": {
+          "status": "approved",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+          "scope": "Accepted pilot direction; technical placement and faithful implementation authorized by Joel",
+          "chatLink": null,
+          "technicalReview": "Native/context review required before release"
+        },
+        "revision": "3c35ef58fe76061f5fb4f017be965947afba71885b6897781d59b7253237cf15"
       }
     }
   }

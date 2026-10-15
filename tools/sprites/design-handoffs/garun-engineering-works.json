@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-design",
+  "designId": "garun-engineering-works",
+  "name": "Garun construction, gallery and real core openings",
+  "kind": "encounter-and-environment",
+  "nextAction": "Finish exact combined Node/browser gates; inspect actual hosted captures. New sprite production is excluded.",
+  "context": {
+    "decisionSummary": "#293/#298 preserve #253 \u2192 #264 \u2192 #279 seven exact engineering actions and loyal council architect biography.",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/300",
+    "contentDocuments": [
+      "docs/DIRECTOR_WORLD_BUILDING_SNAPSHOT_CANON_LOCK_20261012.md"
+    ],
+    "locationAndLore": "Colossus Mine; same Stone Colossus/Garun and Dara identity."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner-approved; implementation authorized by continuation.",
+    "proceduralDesignAcceptance": "Native source images inspected by engineering; director appearance acceptance not claimed.",
+    "spriteProductionAuthorization": "Excluded",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "42035536b1991640e93076981e061a7d057db08e parent, exact owner hashes below identify WIP",
+    "exactEntityState": "boss family mine; garunPreview passable cyan planning marks; garunTemporary collision-bearing supports; e.open actual exposed core timer",
+    "gameplayContextPaths": [
+      "tools/sprites/design-handoffs/references/garun/built-1280.png",
+      "tools/sprites/design-handoffs/references/garun/built-375.png",
+      "tools/sprites/design-handoffs/references/garun/planned-1280.png",
+      "tools/sprites/design-handoffs/references/garun/planned-375.png"
+    ],
+    "traitsToPreserve": [
+      "existing angular stone body/heartstone",
+      "only previewed supports may become solid",
+      "clear visual distinction between planned and blocked",
+      "temporary core cue only while actual opening timer is positive",
+      "three nonblocking gallery props"
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/engine.js",
+        "sha256": "7396d07f9088c684568bdfc7887a9ca172d6d204761ce433121db6c8f4322888"
+      },
+      {
+        "path": "src/prototype/boss-combat.js",
+        "sha256": "b00e8da1b1255f2dfe05bcdec050663c1806db7561ebea0ebe0f410bca8ab43c"
+      },
+      {
+        "path": "src/prototype/combat-visuals.js",
+        "sha256": "5d5aaba1e61b73772843ddbd9ac2cd15f7e41d48c1f1fc9eb25eb8421a8c5a19"
+      },
+      {
+        "path": "src/prototype/rules.js",
+        "sha256": "e9710b2b6b4c1550b211c09dfef6a55e6077dd4a3378dedb4288ce9c1b61bdbb"
+      },
+      {
+        "path": "src/prototype/save.js",
+        "sha256": "7b5696c4411b4cbbc8a5d15e91ec2962b97e8071ba62adbcde077276d0143048"
+      }
+    ]
+  },
+  "outputs": [
+    {
+      "path": "tools/sprites/design-handoffs/references/garun/built-1280.png",
+      "sha256": "85c8b8df4ec29e8513687e99791e9a2110328fcfba821b7b3508ff9813a5a8e1"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/garun/built-375.png",
+      "sha256": "d0ae5e69355fe34e511c7995ffce5abe16669a47fddd1cf87c1e457c3d8d38a1"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/garun/planned-1280.png",
+      "sha256": "e759e2211fc0e176a471a424880526e4e9d48ea9824d88d5ae9adc92679d6644"
+    },
+    {
+      "path": "tools/sprites/design-handoffs/references/garun/planned-375.png",
+      "sha256": "45c75cecea29bfbf17d94b88c17c9f31253712c84308b609da62f4f1e3c34fdc"
+    }
+  ],
+  "compatibility": {
+    "stableIDs": [
+      "mine",
+      "cage-mine",
+      "service-mine"
+    ],
+    "guardCount": 18,
+    "trapCount": 18,
+    "newSprites": false,
+    "remaining": "Hosted Chromium/WebKit/PWA and full combined audit pending."
+  }
+}

@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Azeroth Chronicles",
-  "short_name": "Azeroth",
-  "description": "Offline RPG adventure with a dedicated phone layout, progression and companions.",
+  "name": "So I Became the Dark Lord's Problem",
+  "short_name": "Lord's Problem",
+  "description": "An offline single-player fantasy RPG across five regions. Rescue specialists, build your expedition, and challenge the Dark Lord.",
   "lang": "en",
   "start_url": "./phone.html",
   "scope": "./",

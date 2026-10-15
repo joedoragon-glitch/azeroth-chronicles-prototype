@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "greenwood-fruit-tree",
+  "name": "Orchard Hamlet productive fruit tree",
+  "kind": "scenery",
+  "nextAction": "Retain procedural rendering and these immutable source/context references. Director appearance acceptance remains unclaimed; sprite production is excluded from this snapshot.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Director handoff13Oct authorizes faithful isolated implementation of #298 choice6A / approved small scenery#284.",
+    "decisionDate": "2026-10-13",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/284",
+    "contentDocuments": [
+      "docs/DIRECTOR_WORLD_BUILDING_SNAPSHOT_CANON_LOCK_20261012.md",
+      "docs/SNAPSHOT_IMPLEMENTATION_20261013.md"
+    ],
+    "locationAndLore": "One tiny productive grove south of Orchard Hamlet; separate from named Abandoned Orchard."
+  },
+  "decisions": {
+    "conceptAcceptance": "#2986A accepts #284 small scenery.",
+    "proceduralDesignAcceptance": "Faithful implementation authorized; no claim of director approval of unseen rendered result.",
+    "spriteProductionAuthorization": "Excluded; no new raster production authorized.",
+    "generatedAppearanceAcceptance": null,
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "d275d0e034ffa89da848be28453cafe792e1cee1",
+    "ownerFilesAndBranches": [
+      "src/prototype/rules.js:regionalHandoffScenes.vale",
+      "src/prototype/world.js:regionalHandoffLife",
+      "src/prototype/visuals.js:structure fruit-tree"
+    ],
+    "exactEntityState": {
+      "renderKind": "prop",
+      "structure": "fruit-tree",
+      "regionalDistrict": "hamlet-orchard",
+      "decorative": true,
+      "r": 0,
+      "id": "regional-handoff-3",
+      "visualScale": 1.3
+    },
+    "isolatedReferencePath": "tools/sprites/design-handoffs/references/greenwood-fruit-tree-20261013/isolated-procedural.png",
+    "isolatedReferenceHash": "dc40780bdc8cadef60e7d0772a9cdccf2ac542a7b0c37d90d74848930f622750",
+    "gameplayContextPaths": [
+      "tools/sprites/design-handoffs/references/greenwood-fruit-tree-20261013/webkit-phone-context.png",
+      "tools/sprites/design-handoffs/references/greenwood-fruit-tree-20261013/native-desktop-context.png"
+    ],
+    "traitsToPreserve": [
+      "small organic green canopy",
+      "warm coral fruit",
+      "brown trunk",
+      "zero collision",
+      "four-tree grove"
+    ],
+    "assetSpecificDependencies": [
+      "existing procedural structure rendering/fallback"
+    ],
+    "sourceHashes": {
+      "src/prototype/rules.js": "75ee3b5cb29e7a75c9f3015c1e05c4c0e424ea87e812aaeb90aae1caebc9192f",
+      "src/prototype/world.js": "9c7d27d85c929dd34a9e181ea18280bd2904396b94f19d99fa0bfa7105b72104",
+      "src/prototype/visuals.js": "3af6be2dfba6793253460a5e00e39314957319968a74d0577edbb7a65386bc0e"
+    },
+    "gameplayContextHashes": {
+      "tools/sprites/design-handoffs/references/greenwood-fruit-tree-20261013/webkit-phone-context.png": "a3afd4189ac5706ef074a88e8e933a5c4835450527772f288ba32d05909c0de0",
+      "tools/sprites/design-handoffs/references/greenwood-fruit-tree-20261013/native-desktop-context.png": "0b70824c7eec7f68521266b8868e365afa0d3892315de1d4c4880e03cf168fa7"
+    },
+    "captureEvidence": {
+      "phone": "Actual WebKit 375x800 screenshot from CI run 38349470015, artifact11790632246; seeded fresh normal Paladin, clock120, enemies/party cleared for scenery inspection.",
+      "desktop": "Actual native full procedural renderer at1280x800, seeded fresh normal Paladin, clock120; no shell or loaded raster sprites. Not browser/device certification.",
+      "isolated": "Actual PrototypeVisuals.draw at150% camera scale and existing1.3 feature multiplier; transparent procedural capture, not newly generated or activated sprite art."
+    }
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "procedural fruit-tree structure"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "src/prototype/visuals.js; source-owned tiny grove silhouette; no registered sprite needed"
+    ]
+  },
+  "animationRequirements": {
+    "status": "static-procedural",
+    "gameplayStates": [
+      "day",
+      "night"
+    ],
+    "directions": [],
+    "pivotContract": "Existing structure transform.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

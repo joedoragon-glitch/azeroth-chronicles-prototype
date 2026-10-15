@@ -22,7 +22,7 @@ Generate exactly one opaque, seamless square material texture per call, flat top
 | T008 | `terrain:road:highlands` | Ironroot Highlands road material |
 | T009 | `terrain:road:frontier` | Ashen Frontier road material |
 | T010 | `terrain:road:crown` | Dark Crown road material |
-| T011 | `terrain:floor:crypt` | Crypt floor material |
+| T011 | `terrain:floor:crypt` | Lifebinder winter estate floor material |
 | T012 | `terrain:floor:archive` | Archive floor material |
 | T013 | `terrain:floor:mine` | Mine floor material |
 | T014 | `terrain:floor:abyss` | Abyss floor material |

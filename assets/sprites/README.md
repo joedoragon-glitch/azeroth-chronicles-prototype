@@ -1,4 +1,4 @@
-# Azeroth Chronicles canonical static sprites
+# So I Became the Dark Lord's Problem canonical static sprites
 
 This directory holds approved static raster sprites for the GitHub Pages/PWA game.
 

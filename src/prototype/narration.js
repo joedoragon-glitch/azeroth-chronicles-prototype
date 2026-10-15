@@ -9,7 +9,7 @@
     null, // 3
     {
       kind: 'narration',
-      text: "The Dark Lord wanted a woodland retreat. The Crypt Guardian supervised construction, and Borin wasn't exactly there by choice.",
+      text: 'Borin found six signatures beneath “Victory” in an old ledger. The Lifebinder’s skeleton workers remembered their lives. Borin built the winter house because he had to.',
     }, // 4
     {
       kind: 'narration',
@@ -36,12 +36,12 @@
     null, // 15
     {
       kind: 'narration',
-      text: "The Dark Lord's Master of Coin lives rather comfortably. The Ridge Tyrant controls Ironroot's wages and caravans—and it shows.",
+      text: 'Crag kept the Treasury for Ridge Tyrant. Crown riders tended their direwolves beside the barracks. The account books also recorded who was allowed to leave.',
     }, // 16
     null, // 17
     {
       kind: 'narration',
-      text: "So that's where the crowns come from. The ore goes to Stonecross; the finished crowns leave by guarded caravan.",
+      text: 'Silver and copper arrive separately at Stonecross. They leave as crowns stamped with the Dark Lord’s face, while armed guards count the sealed crates.',
     }, // 18
     null, // 19
     {
@@ -50,12 +50,12 @@
     }, // 20
     {
       kind: 'narration',
-      text: 'Eren is free. The dragons bred at Abyss Bastion are meant for an army. The Dark Lord has plans beyond his own mount.',
+      text: 'Eren is free. The dragons bred at Abyss Bastion are meant for an army. Veyrith, the loyal Air Marshal, believes aerial supremacy will secure lasting peace.',
     }, // 21
     null, // 22
     {
       kind: 'narration',
-      text: 'People are patching up homes in the Frontier while the army keeps its convoys moving. Same roads, very different priorities.',
+      text: 'The repaired roads serve villagers and soldiers alike. The Ashen Warlord commands the occupation; his inspector still counts every wagon.',
     }, // 23
     {
       kind: 'narration',
@@ -67,7 +67,7 @@
     null, // 28
     {
       kind: 'narration',
-      text: 'Crownwatch collects the levies. Guarded wagons carry tribute and supplies toward the fortress and its siege works.',
+      text: 'Rations arrive under Cindermaw’s seal. Levies leave under armed guard. Crownwatch calls both deliveries.',
     }, // 29
     {
       kind: 'milestone',

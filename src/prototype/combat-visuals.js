@@ -42,10 +42,57 @@
       }),
     ];
   }
+  function visibleWarning(e) {
+    return (
+      e.telegraph &&
+      !e.telegraph.anonymousCast &&
+      (e.telegraph.total > 0 || !e.telegraph.captainSkill)
+    );
+  }
+  function cordonPoints(a, filled = false) {
+    const center = a,
+      start = a.gapAngle + a.gapWidth / 2,
+      span = Math.PI * 2 - a.gapWidth,
+      outer = a.radius + a.width,
+      inner = filled ? 0 : Math.max(0, a.radius - a.width),
+      arc = (radius, reverse = false) =>
+        Array.from({ length: 65 }, (_, j) => {
+          const angle = start + span * (reverse ? 1 - j / 64 : j / 64);
+          return { x: center.x + Math.cos(angle) * radius, y: center.y + Math.sin(angle) * radius };
+        });
+    return [...arc(outer), ...arc(inner, true)];
+  }
   function warningShapes(a, patches) {
-    if (a.kind === 'summon') return [];
+    if (a.kind === 'summon' || a.selfDefense) return [];
+    if (a.dreadMechanic === 'closure') return dreadClosureShapes(a);
+    if (a.cinderMechanic === 'cordon' && Number.isFinite(a.gapAngle))
+      return [cordonPoints({ ...a, radius: a.initialRadius })];
+    if (a.kind === 'pattern-charge') {
+      const points = [{ x: a.fromX, y: a.fromY }, ...(a.path || [])];
+      return points.slice(1).map((to, i) => capsulePoints(points[i], to, G.chargeHalfWidth));
+    }
+    if (a.kind === 'canister') {
+      const from = { x: a.fromX, y: a.fromY };
+      return Array.from({ length: 9 }, (_, i) => {
+        const angle = a.angle + (i - 4) * 0.115;
+        return capsulePoints(
+          from,
+          { x: from.x + Math.cos(angle) * a.radius, y: from.y + Math.sin(angle) * a.radius },
+          6,
+        );
+      });
+    }
+    if (a.kind === 'formation' || a.kind === 'checkerboard') return [];
     if (a.kind === 'line' || a.kind === 'volley')
-      return (a.kind === 'volley' ? [-0.22, 0, 0.22] : a.count === 2 ? [-85, 85] : [0]).map((o) => {
+      return (
+        a.kind === 'volley'
+          ? a.tracking
+            ? [0]
+            : [-0.22, 0, 0.22]
+          : a.count === 2
+            ? [-85, 85]
+            : [0]
+      ).map((o) => {
         const angle = a.angle + (a.kind === 'volley' ? o : 0),
           offset = a.kind === 'volley' ? 0 : o,
           side = { x: -Math.sin(angle), y: Math.cos(angle) },
@@ -58,22 +105,51 @@
             a.kind === 'volley'
               ? 22
               : a.charge
-                ? G.chargeHalfWidth
+                ? a.dreadMechanic === 'rush'
+                  ? a.radius
+                  : G.chargeHalfWidth
                 : a.count === 2
                   ? G.dualLineHalfWidth
                   : G.lineHalfWidth;
         return capsulePoints(from, to, width);
       });
-    if (a.kind === 'cone' || a.kind === 'sector')
-      return [sectorPoints(a, a.radius, a.angle, a.kind === 'sector' ? 0.65 : 1.1)];
+    if (a.kind === 'cone' || a.kind === 'sector') {
+      if (a.angleDegrees === 360) return [circlePoints(a, a.radius)];
+      const halfAngle = a.angleDegrees
+        ? (a.angleDegrees * Math.PI) / 360
+        : a.kind === 'sector'
+          ? 0.65
+          : 1.1;
+      return [sectorPoints(a, a.radius, a.angle, halfAngle)];
+    }
     if (a.kind === 'ring')
       return [
         circlePoints(
           { x: a.fromX, y: a.fromY },
-          G.ringSpeed * G.ringLife * R.bossCadence.areaRangeMultiplier + G.ringHalfWidth,
+          (a.slowOnly
+            ? a.waveSpeed * a.waveLife
+            : G.ringSpeed * G.ringLife * R.bossCadence.areaRangeMultiplier) + G.ringHalfWidth,
         ),
       ];
     return patches.map((p) => circlePoints(p, p.radius));
+  }
+  function dreadClosureShapes(a) {
+    const gaps = [...a.gaps]
+      .map((angle) => (angle + Math.PI * 2) % (Math.PI * 2))
+      .sort((x, y) => x - y);
+    return gaps.map((angle, index) => {
+      const start = angle + a.gapWidth / 2,
+        end =
+          gaps[(index + 1) % gaps.length] +
+          (index === gaps.length - 1 ? Math.PI * 2 : 0) -
+          a.gapWidth / 2,
+        arc = (radius, reverse) =>
+          Array.from({ length: 49 }, (_, j) => {
+            const t = start + (end - start) * (reverse ? 1 - j / 48 : j / 48);
+            return { x: a.x + Math.cos(t) * radius, y: a.y + Math.sin(t) * radius };
+          });
+      return [...arc(a.radius + a.width, false), ...arc(Math.max(0, a.radius - a.width), true)];
+    });
   }
   function strokeWorld(ctx, screen, a, b, color, width = 1) {
     const p = screen(a),
@@ -86,15 +162,78 @@
     ctx.stroke();
   }
   function hazardKind(a) {
-    return a.manaDrain
-      ? 'spectral'
-      : a.slow
-        ? 'mire'
-        : a.family === 'abyss' || a.family === 'cindermaw'
-          ? 'ember'
-          : a.family === 'mine' || a.family === 'ridge'
-            ? 'stone'
-            : 'ritual';
+    return a.slowOnly
+      ? 'cold'
+      : a.manaDrain
+        ? 'spectral'
+        : a.slow
+          ? 'mire'
+          : a.family === 'abyss' || a.family === 'cindermaw'
+            ? 'ember'
+            : a.family === 'mine' || a.family === 'ridge'
+              ? 'stone'
+              : 'ritual';
+  }
+  // Presentation-only status for Royal Taxation. The marked recipients
+  // remain on the original combat roster, not a separate targeting list.
+  // These are actor labels, never false ground-impact warnings.
+  function royalTaxStatus(ctx, screen, game) {
+    let drawn = 0;
+    for (const lord of game
+      .zone()
+      .enemies.filter((e) => e.family === 'darklord' && e.type === 'boss' && e.hp > 0)) {
+      const tax = lord.royalTaxation,
+        active = tax && tax.expires > game.s.time && tax.marked?.length;
+      if (active) {
+        for (const unit of [game.hero, ...game.activeLivingParty()]) {
+          const identity = unit === game.hero ? 'hero' : unit.id;
+          if (unit.hp <= 0 || !tax.marked.includes(identity)) continue;
+          const p = screen(unit);
+          ctx.save();
+          ctx.translate(p.x, p.y - 58);
+          ctx.fillStyle = '#e0c0fa';
+          ctx.strokeStyle = '#5b366b';
+          ctx.lineWidth = 1.8;
+          ctx.beginPath();
+          ctx.moveTo(0, -11);
+          ctx.lineTo(7, -4);
+          ctx.lineTo(0, 3);
+          ctx.lineTo(-7, -4);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+          ctx.font = 'bold 9px system-ui';
+          ctx.textAlign = 'center';
+          ctx.fillStyle = '#f1d9ff';
+          ctx.fillText('TAX', 0, -15);
+          ctx.restore();
+          drawn++;
+        }
+        const p = screen(lord);
+        ctx.save();
+        ctx.font = 'bold 10px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#f1d9ff';
+        ctx.fillText('ROYAL TAX · ' + Math.ceil(tax.expires - game.s.time) + 's', p.x, p.y - 82);
+        ctx.restore();
+      }
+      if (lord.royalTaxShield > 0) {
+        const p = screen(lord);
+        ctx.save();
+        ctx.strokeStyle = '#d6b7f2';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y - 14, 30, 34, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = '#f0d6ff';
+        ctx.font = 'bold 10px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('ROYAL SHIELD', p.x, p.y - 82);
+        ctx.restore();
+        drawn++;
+      }
+    }
+    return drawn;
   }
   function ground(ctx, screen, game, pass = 'fill', time = 0) {
     const cue = pass === 'cue';
@@ -160,6 +299,88 @@
           }
       }
     }
+    // Garun's projected works are passable plans; completed supports block travel.
+    // These cues follow the actual props, not an invented damage footprint.
+    for (const prop of (game.zone().props || []).filter(
+      (p) => p.garunPreview || p.garunTemporary,
+    )) {
+      const solid = !!prop.garunTemporary;
+      circlePath(ctx, screen, prop, solid ? Math.max(24, prop.r || 0) : 28);
+      ctx.strokeStyle = solid ? '#e8b77b' : '#8bd9e4';
+      ctx.lineWidth = solid ? 3 : 1.8;
+      ctx.setLineDash(solid ? [] : [5, 5]);
+      if (!cue && solid) {
+        ctx.fillStyle = '#b77d4d58';
+        ctx.fill();
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+      if (cue) {
+        const p = screen(prop);
+        ctx.font = 'bold 10px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = solid ? '#ffe4b5' : '#b8f5ff';
+        ctx.fillText(solid ? 'BLOCKED' : 'PLANNED', p.x, p.y - 18);
+      }
+    }
+    // The core's combat opening is a genuine e.open timer, so never show it
+    // simply because Garun is charging or an unrelated effect is resolving.
+    for (const boss of game
+      .zone()
+      .enemies.filter((e) => e.family === 'mine' && e.hp > 0 && e.open > 0)) {
+      circlePath(ctx, screen, boss, 44);
+      ctx.strokeStyle = '#aef0ff';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([4, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      if (cue) {
+        const p = screen(boss);
+        ctx.fillStyle = '#d9faff';
+        ctx.font = 'bold 11px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('CORE EXPOSED', p.x, p.y - 62);
+      }
+    }
+    // Persistent board and real formation movement use the authoritative world positions.
+    for (const boss of game
+      .zone()
+      .enemies.filter(
+        (e) => e.family === 'citadel' && e.hp > 0 && e.board && game.sentinelBoardCells,
+      ))
+      for (const cell of game.sentinelBoardCells(boss)) {
+        const h = cell.size / 2;
+        polygon(ctx, screen, [
+          { x: cell.x - h, y: cell.y - h },
+          { x: cell.x + h, y: cell.y - h },
+          { x: cell.x + h, y: cell.y + h },
+          { x: cell.x - h, y: cell.y + h },
+        ]);
+        const warning = cell.selected && boss.board.phase === 'warn';
+        const impact = cell.selected && boss.board.phase === 'rest';
+        ctx.lineWidth = warning || impact ? 2.2 : 1.1;
+        ctx.strokeStyle = warning ? '#fff1a7' : impact ? '#ff9267' : '#8794a766';
+        ctx.fillStyle = warning ? '#df795655' : impact ? '#e84b3d88' : '#536b8917';
+        if (!cue) ctx.fill();
+        ctx.stroke();
+      }
+    if (cue)
+      for (const guard of game
+        .zone()
+        .enemies.filter((e) => e.hp > 0 && e.dressPost && e.dressPost.expires > game.s.time)) {
+        const from = screen(guard),
+          to = screen(guard.dressPost);
+        ctx.strokeStyle = '#b8d5eb';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([3, 5]);
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y);
+        ctx.lineTo(to.x, to.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        circlePath(ctx, screen, guard.dressPost, 15);
+        ctx.stroke();
+      }
     for (const e of game.zone().enemies.filter((e) => e.rangedAim)) {
       const p = screen(e),
         q = screen(e.rangedAim);
@@ -177,9 +398,74 @@
         ctx.stroke();
       }
     }
-    for (const e of game.zone().enemies.filter((e) => e.telegraph)) {
-      const a = e.telegraph,
-        shapes = warningShapes(a, game.attackPatches(a));
+    if (cue)
+      for (const e of game
+        .zone()
+        .enemies.filter((e) => e.telegraph?.anonymousCast || e.telegraph?.mobileRogueCast)) {
+        const a = e.telegraph,
+          p = screen(e);
+        const width = 70,
+          height = 8,
+          x = p.x - width / 2,
+          y = p.y - 65;
+        const fill = Math.max(0, Math.min(1, 1 - a.timer / a.total));
+        ctx.fillStyle = '#1b2330dd';
+        ctx.fillRect(x - 2, y - 2, width + 4, height + 4);
+        ctx.fillStyle = '#e5b963';
+        ctx.fillRect(x, y, width * fill, height);
+        ctx.strokeStyle = '#f2d99b';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(x, y, width, height);
+        ctx.font = 'bold 11px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#fff1c7';
+        ctx.fillText(a.anonymousCast ? 'Preparing…' : 'ROGUE CAST', p.x, y - 5);
+      }
+    if (cue) royalTaxStatus(ctx, screen, game);
+    // Ledger of Losses deliberately obscures Ridge's ground footprints,
+    // including separate rogue moves. It must NEVER obscure the cast itself:
+    // attach a high-contrast progress bar to the actual boss, not the terrain.
+    if (cue)
+      for (const e of game
+        .zone()
+        .enemies.filter(
+          (e) =>
+            e.family === 'ridge' &&
+            e.ledgerOpen &&
+            !e.telegraph?.mobileRogueCast &&
+            visibleWarning(e) &&
+            e.hp > 0,
+        )) {
+        const a = e.telegraph,
+          p = screen(e),
+          w = 84,
+          y = p.y - 82,
+          total = Math.max(0.001, a.total || a.timer || 1),
+          ready = Math.max(0, Math.min(1, 1 - a.timer / total));
+        ctx.fillStyle = '#182129eb';
+        ctx.fillRect(p.x - w / 2 - 3, y - 3, w + 6, 15);
+        ctx.fillStyle = '#6e5c3f';
+        ctx.fillRect(p.x - w / 2, y, w, 8);
+        ctx.fillStyle = a.rogueMove ? '#a8d7e6' : '#f4d085';
+        ctx.fillRect(p.x - w / 2, y, w * ready, 8);
+        ctx.strokeStyle = '#f4e4b5';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(p.x - w / 2, y, w, 8);
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 11px system-ui';
+        ctx.fillStyle = '#fff4d7';
+        ctx.fillText('LEDGER CAST', p.x, y - 8);
+      }
+    for (const e of game
+      .zone()
+      .enemies.filter(
+        (e) =>
+          visibleWarning(e) &&
+          !e.telegraph?.mobileRogueCast &&
+          !(e.family === 'ridge' && e.ledgerOpen),
+      )) {
+      const a = e.telegraph;
+      const shapes = warningShapes(a, game.attackPatches(a));
       // Rogue warnings need an identity distinct from ordinary boss attacks:
       // cool outlines for basic disruption, brighter double-width for signature.
       ctx.strokeStyle = a.bossHeal
@@ -203,6 +489,31 @@
         cue ? ctx.stroke() : a.kind !== 'ring' && ctx.fill();
       }
       ctx.setLineDash([]);
+      if (a.royalTerritory && a.kind === 'sector') {
+        // Opposite geometry is safe from this sector strike, not from
+        // all surrounding Crown soldiers or other attacks.
+        const protectedShapes = warningShapes(
+          { ...a, angle: a.protectedAngle },
+          game.attackPatches(a),
+        );
+        for (const points of protectedShapes) {
+          polygon(ctx, screen, points);
+          ctx.fillStyle = '#4c9f6730';
+          ctx.strokeStyle = '#a9e7b0';
+          ctx.lineWidth = 2;
+          cue ? ctx.stroke() : ctx.fill();
+        }
+        if (cue) {
+          const spot = screen({
+            x: e.x + Math.cos(a.protectedAngle) * Math.min(115, a.radius * 0.5),
+            y: e.y + Math.sin(a.protectedAngle) * Math.min(115, a.radius * 0.5),
+          });
+          ctx.fillStyle = '#bdf4bc';
+          ctx.font = 'bold 11px system-ui';
+          ctx.textAlign = 'center';
+          ctx.fillText('PROTECTED SIDE', spot.x, spot.y);
+        }
+      }
       if (cue) {
         const p = screen(a.kind === 'summon' ? e : a);
         ctx.font = 'bold 12px system-ui';
@@ -212,7 +523,11 @@
           viewWidth = (ctx.canvas?.width || 1280) / scale,
           viewHeight = (ctx.canvas?.height || 800) / scale,
           maxWidth = Math.max(60, Math.min(240, viewWidth - 16)),
-          words = (a.name + (a.rogueMove ? '' : ' · ' + a.timer.toFixed(1))).split(' '),
+          words = (
+            a.name +
+            (a.stages ? ' · ' + a.stage + '/' + a.stages : '') +
+            (a.rogueMove ? '' : ' · ' + a.timer.toFixed(1))
+          ).split(' '),
           lines = [];
         let current = '';
         for (const word of words) {
@@ -247,19 +562,207 @@
         ctx.fillStyle = a.rogueMove ? '#f2fbff' : '#fff3c8';
         lines.forEach((t, j) => ctx.fillText(t, left + w / 2, top + 16 + j * 15));
       }
+      if (cue && a.tracking) {
+        const p = screen(a);
+        ctx.strokeStyle = '#f4c984';
+        ctx.lineWidth = 2;
+        // Below the target footprint, clear of the full attack caption above it.
+        ctx.fillStyle = '#241d1af2';
+        ctx.fillRect(p.x - 14, p.y + 12, 28, 22);
+        ctx.strokeRect(p.x - 14, p.y + 12, 28, 22);
+        ctx.fillStyle = '#fff3c8';
+        ctx.font = 'bold 12px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText(String(a.shotNumber) + '/' + String(a.shots), p.x, p.y + 29);
+      }
+    }
+    for (const e of game.zone().enemies) {
+      if (e.hp > 0 && !e.returning) {
+        const closure =
+          e.dreadClosure || (e.telegraph?.dreadMechanic === 'closure' ? e.telegraph : null);
+        if (closure) {
+          for (const points of dreadClosureShapes(closure)) {
+            polygon(ctx, screen, points);
+            ctx.fillStyle = '#dd7e4650';
+            ctx.strokeStyle = '#ffc28a';
+            ctx.lineWidth = 2;
+            cue ? ctx.stroke() : ctx.fill();
+          }
+          if (cue) {
+            circlePath(ctx, screen, closure, closure.finalBlastRadius);
+            ctx.setLineDash([3, 5]);
+            ctx.strokeStyle = '#efb678';
+            ctx.stroke();
+            ctx.setLineDash([]);
+            for (const angle of closure.gaps) {
+              const end = {
+                x: closure.x + Math.cos(angle) * (closure.initialRadius + closure.width + 15),
+                y: closure.y + Math.sin(angle) * (closure.initialRadius + closure.width + 15),
+              };
+              strokeWorld(ctx, screen, closure, end, '#aef1d5', 2);
+            }
+          }
+        }
+        for (const vapor of e.dreadVapors || []) {
+          polygon(
+            ctx,
+            screen,
+            vapor.kind === 'cone'
+              ? sectorPoints(vapor, vapor.radius, vapor.angle, (vapor.angleDegrees * Math.PI) / 360)
+              : circlePoints(vapor, vapor.radius),
+          );
+          ctx.fillStyle = vapor.slow ? '#9eaf8050' : '#df965544';
+          ctx.strokeStyle = vapor.slow ? '#c7d8a1' : '#f7c293';
+          ctx.lineWidth = 1.5;
+          cue ? ctx.stroke() : ctx.fill();
+          if (cue) {
+            const p = screen(vapor);
+            ctx.font = 'bold 10px system-ui';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#fff0d4';
+            ctx.fillText(vapor.slow ? 'ENSILING VAPOR' : 'VENTING STEAM', p.x, p.y - 12);
+          }
+        }
+        if (cue && e.dreadFeedUntil > game.s.time) {
+          const p = screen(e);
+          ctx.strokeStyle = '#e9bf6c';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.ellipse(p.x, p.y - 20, 24, 28, 0, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.fillStyle = '#fbe7b8';
+          ctx.font = 'bold 10px system-ui';
+          ctx.textAlign = 'center';
+          ctx.fillText('FED BROOD', p.x, p.y + 18);
+        }
+      }
+      const cordon = e.hp > 0 && !e.returning && e.cinderCordon;
+      if (cordon) {
+        polygon(ctx, screen, cordonPoints(cordon));
+        ctx.strokeStyle = '#ffb783';
+        ctx.fillStyle = '#e4683d58';
+        ctx.lineWidth = 2;
+        cue ? ctx.stroke() : ctx.fill();
+        if (cue && cordon.warning) {
+          const end = {
+            x: cordon.x + Math.cos(cordon.nextGap) * (cordon.radius + cordon.width + 30),
+            y: cordon.y + Math.sin(cordon.nextGap) * (cordon.radius + cordon.width + 30),
+          };
+          ctx.setLineDash([5, 4]);
+          strokeWorld(ctx, screen, cordon, end, '#aef1d5', 3);
+          ctx.setLineDash([]);
+          const p = screen(end);
+          const scale = ctx.getTransform?.().a || 1,
+            width = (ctx.canvas?.width || 1280) / scale,
+            height = (ctx.canvas?.height || 800) / scale,
+            x = Math.max(56, Math.min(width - 56, p.x)),
+            y = Math.max(20, Math.min(height - 12, p.y - 10));
+          ctx.fillStyle = '#15271ff2';
+          ctx.fillRect(x - 54, y - 14, 108, 20);
+          ctx.fillStyle = '#aef1d5';
+          ctx.textAlign = 'center';
+          ctx.font = 'bold 11px system-ui';
+          ctx.fillText('NEXT OPENING', x, y);
+        }
+        // The final inner blast is announced throughout the contraction.
+        if (cue) {
+          polygon(ctx, screen, cordonPoints({ ...cordon, radius: cordon.finalRadius }, true));
+          ctx.setLineDash([3, 5]);
+          ctx.strokeStyle = '#f5c48988';
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      }
+      if (e.hp > 0 && game.cinderProtection?.(e)) {
+        const p = screen(e);
+        ctx.strokeStyle = '#ace5c4';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y - 23, 28, 33, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        if (cue) {
+          ctx.fillStyle = '#d4f7df';
+          ctx.font = 'bold 10px system-ui';
+          ctx.textAlign = 'center';
+          ctx.fillText('PROTECTED', p.x, p.y + 18);
+        }
+      }
+      if (cue && e.telegraph?.cinderMechanic === 'delegation')
+        for (const delegate of e.telegraph.delegates || []) {
+          circlePath(ctx, screen, delegate.point, 18);
+          ctx.strokeStyle = '#a5d5ed';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([3, 4]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      if (cue && e.hp > 0 && !e.returning) {
+        const keeper =
+            e.type === 'boss' &&
+            e.family === 'archive' &&
+            e.emergencyStabilizationUntil > game.s.time,
+          direjaw =
+            e.roomCaptain &&
+            e.captainProfile === 'supply-march' &&
+            e.strainHardeningUntil > game.s.time;
+        if (keeper || direjaw) {
+          const p = screen(e),
+            reduction = keeper
+              ? R.marchesPassives.emergencyStabilization[e.form === 'true' ? 'true' : 'normal']
+                  .reduction
+              : Math.min(
+                  R.marchesPassives.strainHardening.maxStacks,
+                  e.strainHardeningStacks || 0,
+                ) * R.marchesPassives.strainHardening.perHit;
+          ctx.strokeStyle = keeper ? '#97cee9' : '#d0b477';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.ellipse(p.x, p.y - 22, 27, 31, 0, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.fillStyle = '#18252bf2';
+          ctx.fillRect(p.x - 17, p.y + 12, 34, 20);
+          ctx.fillStyle = keeper ? '#d6f3ff' : '#fff0c3';
+          ctx.font = 'bold 11px system-ui';
+          ctx.textAlign = 'center';
+          ctx.fillText(String(Math.round(reduction * 100)) + '%', p.x, p.y + 26);
+        }
+      }
+      if (
+        e.hp <= 0 ||
+        e.returning ||
+        !(
+          e.anastylosis > 0 ||
+          (e.telegraph?.selfDefense && !e.telegraph.cinderMechanic && !e.telegraph.dreadMechanic)
+        )
+      )
+        continue;
+      const p = screen(e),
+        active = e.anastylosis > 0;
+      ctx.strokeStyle = active ? '#b7ddd5' : '#9aafbf';
+      ctx.fillStyle = active ? '#81b8ad' : '#7a8d9a';
+      ctx.lineWidth = 1.5;
+      for (let j = 0; j < 6; j++) {
+        const angle = (j * Math.PI) / 3,
+          x = p.x + Math.cos(angle) * 27,
+          y = p.y - 25 + Math.sin(angle) * 12;
+        ctx.fillRect(x - 4, y - 5, 8, 10);
+        ctx.strokeRect(x - 4, y - 5, 8, 10);
+      }
     }
     for (const a of game.s.hazards) {
       const kind = hazardKind(a),
         color =
-          kind === 'spectral'
-            ? '#bf94df'
-            : kind === 'mire'
-              ? '#b8bd77'
-              : kind === 'ember'
-                ? '#ff9b61'
-                : kind === 'stone'
-                  ? '#e0b587'
-                  : '#ee9675';
+          kind === 'cold'
+            ? '#acebf0'
+            : kind === 'spectral'
+              ? '#bf94df'
+              : kind === 'mire'
+                ? '#b8bd77'
+                : kind === 'ember'
+                  ? '#ff9b61'
+                  : kind === 'stone'
+                    ? '#e0b587'
+                    : '#ee9675';
       if (a.kind === 'ring') {
         polygon(ctx, screen, circlePoints(a, a.radius + G.ringHalfWidth));
         const inner = circlePoints(a, Math.max(0, a.radius - G.ringHalfWidth));
@@ -268,9 +771,9 @@
           j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
         });
         ctx.closePath();
-        ctx.fillStyle = '#e4683d35';
+        ctx.fillStyle = a.slowOnly ? '#8adaef35' : '#e4683d35';
         if (cue) {
-          ctx.strokeStyle = '#ffb783';
+          ctx.strokeStyle = a.slowOnly ? '#bceeff' : '#ffb783';
           ctx.lineWidth = 2;
           ctx.stroke();
         } else ctx.fill('evenodd');
@@ -598,6 +1101,7 @@
     capsulePoints,
     sectorPoints,
     warningShapes,
+    royalTaxStatus,
     ground,
     queue,
     contact,

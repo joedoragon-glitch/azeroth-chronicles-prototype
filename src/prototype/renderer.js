@@ -1,6 +1,128 @@
 /* Campaign presentation only. Rendering never owns simulation or saved state. */
 (function (root) {
   'use strict';
+  // Crowns are portrait-stamped coinage from Ironroot, not generic gold discs.
+  // This is intentionally paint-only: older loot objects still use the
+  // historical 'gold' amount key, pickup radius, rewards and save schema.
+  function drawCrownLoot(ctx, p) {
+    ctx.save();
+    ctx.translate(p.x, p.y - 3);
+    // Ground shadow and silvery minted face. A full coin is readable even
+    // against dark Crown terrain, and no new sprite manifest is required.
+    ctx.fillStyle = '#34363c99';
+    ctx.beginPath();
+    ctx.ellipse(0, 9, 12, 4.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#687982';
+    ctx.beginPath();
+    ctx.arc(0, 0, 10, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#cbd6d8';
+    ctx.beginPath();
+    ctx.arc(0, -0.4, 8.3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#ecf1ee';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    // The ruler's right-facing head and identifiable nose, chin and shoulder.
+    // The same portrait grammar is used on Stonecross's striking-die tray.
+    ctx.fillStyle = '#586d77';
+    ctx.beginPath();
+    ctx.moveTo(-5, -3);
+    ctx.lineTo(2, -5);
+    ctx.lineTo(4, -2);
+    ctx.lineTo(7, 0);
+    ctx.lineTo(4, 1);
+    ctx.lineTo(3, 4);
+    ctx.lineTo(1, 5);
+    ctx.lineTo(-3, 4);
+    ctx.lineTo(-6, 6);
+    ctx.lineTo(-7, 5);
+    ctx.lineTo(-4, 2);
+    ctx.closePath();
+    ctx.fill();
+    // Three familiar crown points over the profile, not a regional insignia.
+    ctx.fillStyle = '#4e646e';
+    ctx.beginPath();
+    ctx.moveTo(-5, -4);
+    ctx.lineTo(-7, -8);
+    ctx.lineTo(-2, -6);
+    ctx.lineTo(0, -9);
+    ctx.lineTo(3, -6);
+    ctx.lineTo(6, -8);
+    ctx.lineTo(5, -4);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#e3e9e7';
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(-4, -4);
+    ctx.lineTo(3, -4);
+    ctx.stroke();
+    ctx.fillStyle = '#e3e9e7';
+    ctx.fillRect(1, -2, 1.2, 1.2);
+    ctx.restore();
+  }
+
+  // Veyrith's real world-coordinate movements deserve readable banking
+  // streaks, not fake airborne hitboxes or an invented altitude simulation.
+  // Cues are tied exclusively to active, existing flightPath/aerial motion.
+  function drawAbyssFlightCues(ctx, e, p, project) {
+    if (
+      e?.renderKind !== 'enemy' ||
+      e.family !== 'abyss' ||
+      e.type !== 'boss' ||
+      e.hp <= 0 ||
+      !e.motion ||
+      (!e.motion.flightPath?.length && !e.motion.aerial)
+    )
+      return false;
+    const waypoint = e.motion.flightPath?.[0] || e.motion.target;
+    if (!waypoint) return false;
+    const to = project(waypoint);
+    const dx = to.x - p.x,
+      dy = to.y - p.y,
+      length = Math.hypot(dx, dy);
+    if (length < 4) return false;
+    const ux = dx / length,
+      uy = dy / length,
+      sx = -uy,
+      sy = ux;
+    ctx.save();
+    ctx.strokeStyle = '#cfb8ec';
+    ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.78;
+    for (const wing of [-1, 1]) {
+      // A paired slant and drag line conveys a real changing bank.
+      const baseX = p.x + sx * wing * 17 - ux * 8,
+        baseY = p.y + sy * wing * 17 - 37 - uy * 8;
+      ctx.beginPath();
+      ctx.moveTo(baseX + sx * wing * 5, baseY - 9);
+      ctx.lineTo(baseX - ux * 14, baseY - uy * 14);
+      ctx.lineTo(baseX - ux * 36 - sx * wing * 8, baseY - uy * 36 + 6);
+      ctx.stroke();
+    }
+    // Short local speedline follows the actor, never the future impact spot.
+    ctx.strokeStyle = '#a3c6e6';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(p.x - ux * 14, p.y - 23 - uy * 14);
+    ctx.lineTo(p.x - ux * 40, p.y - 23 - uy * 40);
+    ctx.stroke();
+    ctx.restore();
+    return true;
+  }
+
+  // Projected isometric horizontal direction: a world-space target can lie
+  // northwest yet appear screen-right. Only turn the painted body; no gameplay
+  // facing, attack geometry or saved campaign field is introduced.
+  function bodyFacingSide(from, toward, previous = 1) {
+    if (!from || !toward || !Number.isFinite(toward.x) || !Number.isFinite(toward.y))
+      return previous;
+    const dx = toward.x - from.x - (toward.y - from.y);
+    return Math.abs(dx) < 8 ? previous : dx < 0 ? -1 : 1;
+  }
+
   // Large foreground forms can cover actors under the existing depth sort.
   // Keep this list deliberately conservative: small clutter must not trigger UI.
   // Only explicitly decorative, nonblocking, small clutter is eligible for
@@ -36,6 +158,27 @@
 
   // The sorted draw order remains authoritative: an obstacle only hides an actor
   // when it is actually painted after that actor.
+  function nightLightKind(structure) {
+    const domestic =
+      /(?:^|[-_])(?:house|cottage|workshop|boathouse|smithy|forgehouse|watchhouse|hut|lodge|longhouse|dwelling)(?:$|[-_])/i;
+    const fires =
+      /(?:^|[-_])(?:cookfire|fireplace|campfire|hearth|brazier|ember-pit|forge|field-kitchen|torch|furnace)(?:$|[-_])/i;
+    const lanterns = /(?:^|[-_])(?:lantern|grave-lamp)(?:$|[-_])/i;
+    const thermal =
+      /^(?:geothermal-heat-intake|crown-glass-kiln|crown-ceramic-kiln|heat-distribution-post|heated-drying-shed|heated-washhouse|thermal-flue)$/;
+    return domestic.test(structure)
+      ? 'window'
+      : lanterns.test(structure)
+        ? 'lantern'
+        : thermal.test(structure)
+          ? 'work-fire'
+          : fires.test(structure)
+            ? /forge|field-kitchen/.test(structure)
+              ? 'work-fire'
+              : 'fire'
+            : null;
+  }
+
   function occlusionPairs(entities, project, height) {
     const pairs = [],
       actors = [],
@@ -264,22 +407,73 @@
         y: p.y + Math.sin(t * (busy ? 5.2 : 2.4) + phase) * amp,
       };
     }
+    // Original live actors, not per-frame render copies, own ephemeral facing.
+    // Attack intent outranks footsteps, so Mirelings never fire through their
+    // tails. Idle social/wilderness actors retain their last visible heading.
+    const actorFacingMemory = new WeakMap();
+    function paintedFacing(e) {
+      if (!['hero', 'ally', 'enemy'].includes(e.renderKind)) return 1;
+      const owner = e.spriteIdentity || e,
+        old = actorFacingMemory.get(owner) || { x: e.x, y: e.y, side: 1 };
+      const moved = Math.hypot(e.x - old.x, e.y - old.y) > 0.7;
+      let target = null;
+      if (e.renderKind === 'hero') {
+        target =
+          game.selectedHeroTarget?.() ||
+          (e.order?.type === 'attack'
+            ? game.zone().enemies.find((u) => u.id === e.order.id && u.hp > 0)
+            : null);
+      } else if (e.renderKind === 'ally') {
+        const id = e.order?.type === 'attack' ? e.order.id : game._tacticalPartyTargets?.get(e.id);
+        target = id ? game.zone().enemies.find((u) => u.id === id && u.hp > 0) : null;
+      } else if (e.hp > 0 && !e.returning) {
+        const id = e.telegraph?.targetId || e.rangedAim?.targetId;
+        if (id === 'hero') target = game.hero;
+        else if (id) target = game.s.party.find((u) => u.id === id && u.hp > 0);
+        if (!target && e.rangedAim) target = e.rangedAim;
+        if (!target && e.aggro) {
+          const combatants = [game.hero, ...game.s.party].filter((u) => u.hp > 0);
+          target = combatants.sort(
+            (a, b) => Math.hypot(a.x - e.x, a.y - e.y) - Math.hypot(b.x - e.x, b.y - e.y),
+          )[0];
+        }
+      }
+      if (!target && e.motion?.target) target = e.motion.target;
+      if (!target && e.path?.length) target = e.path[0];
+      if (!target && moved) target = { x: e.x + (e.x - old.x) * 4, y: e.y + (e.y - old.y) * 4 };
+      const side = bodyFacingSide(e, target, old.side);
+      actorFacingMemory.set(owner, { x: e.x, y: e.y, side });
+      return side;
+    }
     function sprite(e, p, target = ctx, bodyOnly = false) {
       const q = visualPosition(e, p),
         rescued = !!game.s.rescued[e.family];
-      if (
-        PrototypeSprites &&
-        PrototypeSprites.draw(
-          target,
-          e,
-          q,
-          game.regionIndex(),
-          rescued,
-          bodyOnly ? { silhouette: true } : undefined,
+      const facing = paintedFacing(e);
+      // Mirror about the foot anchor, never about the canvas origin. This
+      // works for registered images and procedural body drawings alike, while
+      // keeping labels, cast bars, hitboxes, shadows and VFX untransformed.
+      if (facing < 0) {
+        target.save();
+        target.translate(2 * q.x, 0);
+        target.scale(-1, 1);
+      }
+      try {
+        if (
+          PrototypeSprites &&
+          PrototypeSprites.draw(
+            target,
+            e,
+            q,
+            game.regionIndex(),
+            rescued,
+            bodyOnly ? { silhouette: true } : undefined,
+          )
         )
-      )
-        return;
-      PrototypeVisuals.draw(target, e, q, game.regionIndex(), rescued);
+          return;
+        PrototypeVisuals.draw(target, e, q, game.regionIndex(), rescued);
+      } finally {
+        if (facing < 0) target.restore();
+      }
     }
     function spriteHeight(e) {
       const fallback =
@@ -501,6 +695,17 @@
       ctx.fillRect(left, y, w * Math.max(0, Math.min(1, e.hp / e.maxHp)), 4);
       ctx.fillStyle = '#ffffff77';
       ctx.fillRect(left, y, w * Math.max(0, Math.min(1, e.hp / e.maxHp)), 1);
+      if (e.veraEquipment) {
+        ctx.fillStyle = '#3c3025dd';
+        ctx.fillRect(left, y + 7, w, 3);
+        ctx.fillStyle = '#e0b96e';
+        ctx.fillRect(
+          left,
+          y + 7,
+          w * Math.max(0, Math.min(1, e.veraEquipment.remaining / e.veraEquipment.max)),
+          3,
+        );
+      }
     }
     function projectileVector(p) {
       const dx = Number.isFinite(p.dx) ? p.dx : 1,
@@ -513,7 +718,7 @@
       return { q, ux: vx / len, uy: vy / len, px: -vy / len, py: vx / len };
     }
     function drawProjectile(p) {
-      if (PrototypeEnemyVfxArt?.projectile(ctx, screen, p, game)) return;
+      if (p.style !== 'cargo' && PrototypeEnemyVfxArt?.projectile(ctx, screen, p, game)) return;
       const { q, ux, uy, px, py } = projectileVector(p),
         style = p.style || 'magic',
         combo = p.combo || 0;
@@ -525,6 +730,24 @@
       }
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
+      if (style === 'cargo') {
+        ctx.translate(q.x, q.y);
+        ctx.rotate(Math.atan2(uy, ux));
+        ctx.fillStyle = '#5e4e40';
+        ctx.fillRect(-23, -13, 46, 26);
+        ctx.fillStyle = '#98846b';
+        ctx.fillRect(-19, -17, 38, 10);
+        ctx.fillStyle = '#443a35';
+        for (const x of [-14, 14]) {
+          ctx.beginPath();
+          ctx.arc(x, 14, 6, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.strokeStyle = '#c3b097';
+        ctx.strokeRect(-23, -13, 46, 26);
+        ctx.restore();
+        return;
+      }
       if (p.effect === 'frost') {
         ctx.strokeStyle = '#b5edf3';
         ctx.lineWidth = 1.5;
@@ -888,6 +1111,28 @@
             combo = f.combo || 0;
           ctx.strokeStyle = '#f8e4a3';
           ctx.lineCap = 'round';
+          if (f.dash && Number.isFinite(f.fromX) && Number.isFinite(f.fromY)) {
+            const from = screen({ x: f.fromX, y: f.fromY }),
+              travelX = p.x - from.x,
+              travelY = p.y - from.y,
+              travelLength = Math.hypot(travelX, travelY) || 1,
+              sideX = -travelY / travelLength,
+              sideY = travelX / travelLength;
+            ctx.lineWidth = 7;
+            ctx.globalAlpha = a * 0.28;
+            ctx.beginPath();
+            ctx.moveTo(from.x, from.y);
+            ctx.lineTo(p.x, p.y);
+            ctx.stroke();
+            ctx.globalAlpha = a * 0.85;
+            ctx.lineWidth = 2;
+            for (const side of [-1, 1]) {
+              ctx.beginPath();
+              ctx.moveTo(from.x + sideX * side * 7, from.y + sideY * side * 7);
+              ctx.lineTo(p.x + sideX * side * 7, p.y + sideY * side * 7);
+              ctx.stroke();
+            }
+          }
           if (combo === 1 || combo === 2) {
             const side = combo === 1 ? 1 : -1,
               start = { x: p.x + px * 22 * side, y: p.y + py * 22 * side },
@@ -1328,7 +1573,8 @@
         size = game.zoneSize(),
         i = game.regionIndex(),
         authoredFloor =
-          Campaign.dungeonIds.includes(game.zoneId) || game.zoneId === 'supply-highlands';
+          Campaign.dungeonIds.includes(game.zoneId) ||
+          !!Campaign.rules?.treasuryArchitecture?.[game.zoneId];
       ctx.save();
       if (authoredFloor) {
         PrototypeVisuals.dungeonFloorPath(ctx, screen, game.zoneId, size);
@@ -1400,6 +1646,8 @@
       ctx.restore();
       finishPhase('floor');
       if (authoredFloor) PrototypeVisuals.dungeonArchitecture(ctx, screen, game.zoneId, size);
+      // Optional #294 viewport integration is disabled: exact art parity was
+      // restored, but paired controls did not establish a reliable speed gain.
       if (!game.isDungeon())
         PrototypeVisuals.terrain(ctx, screen, i, size, optimized ? null : PrototypeMaterials);
       PrototypeVisuals.roads(ctx, z.roads || [], screen, i, optimized ? null : PrototypeMaterials);
@@ -1428,7 +1676,11 @@
             continue;
           // Calculate scale from the same authored rule used by procedural art.
           // A registered sprite consumes visualScale itself; no source pixels change.
-          const visualEntity = { ...e, renderKind };
+          const visualEntity = {
+            ...e,
+            renderKind,
+            ...(renderKind === 'hero' && game.s.throneClaimed ? { crowned: true } : {}),
+          };
           const registered = PrototypeSprites?.definitionFor?.(
             visualEntity,
             game.regionIndex(),
@@ -1454,6 +1706,72 @@
       if (z.escort) add([{ ...z.escort, icon: '🧑‍🌾', name: 'Supply escort' }], 'ally');
       entities.sort((a, b) => a.x + a.y - b.x - b.y);
       stats.entitiesDrawn = entities.length;
+      // Reserve nameplates once in screen space, with interactable NPCs and
+      // bosses first. Entity draw/depth order must not decide which nearby
+      // title wins when two names would occupy the same pixels.
+      const labelSlots = new Map();
+      const claimedLabels = [];
+      const labelText = (e) => {
+        if (e.renderKind === 'npc')
+          return e.presentation === 'mobile-captive'
+            ? 'Mira · captive'
+            : e.presentation === 'mobile-forge'
+              ? 'Vera · captive field engineer'
+              : e.name || '';
+        if (e.renderKind === 'building') return e.name || 'Barracks';
+        if (e.renderKind === 'node') return 'Dark Lord Tribute';
+        if (e.renderKind === 'enemy') return e.name || '';
+        if (e.renderKind === 'ally') return e.type || e.name || '';
+        return '';
+      };
+      const labelPriority = (e) =>
+        e.renderKind === 'npc'
+          ? 0
+          : e.renderKind === 'enemy' && e.type === 'boss'
+            ? 1
+            : e.renderKind === 'ally'
+              ? 2
+              : e.renderKind === 'enemy'
+                ? 3
+                : e.renderKind === 'building'
+                  ? 4
+                  : 5;
+      for (const e of entities.slice().sort((a, b) => labelPriority(a) - labelPriority(b))) {
+        if (
+          !['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) ||
+          !worldLabelVisible(e)
+        )
+          continue;
+        const name = labelText(e);
+        if (!name) continue;
+        const anchor = screen(e);
+        if (
+          anchor.x < -40 ||
+          anchor.x > canvas.width + 40 ||
+          anchor.y < -100 ||
+          anchor.y > canvas.height + 100
+        )
+          continue;
+        const w = Math.min(canvas.width - 20, Math.max(62, name.length * 6.7 + 10));
+        const h = 17;
+        const baseY = e.renderKind === 'node' ? anchor.y - 25 : anchor.y - spriteHeight(e) - 5;
+        let slot = null;
+        for (const dy of [0, -20, -40, -60, -80, 20, 40, 60, -100]) {
+          for (const dx of [0, -42, 42, -84, 84]) {
+            const x = Math.max(w / 2 + 6, Math.min(canvas.width - w / 2 - 6, anchor.x + dx));
+            const y = baseY + dy;
+            if (y < 18 || y > canvas.height - 8) continue;
+            const box = { l: x - w / 2 - 3, r: x + w / 2 + 3, t: y - h, b: y + 3 };
+            if (claimedLabels.some((q) => box.l < q.r && box.r > q.l && box.t < q.b && box.b > q.t))
+              continue;
+            slot = { x, y, width: w };
+            claimedLabels.push(box);
+            break;
+          }
+          if (slot) break;
+        }
+        if (slot) labelSlots.set(e, slot);
+      }
 
       for (const e of entities) {
         const p = screen(e);
@@ -1463,6 +1781,7 @@
           groundMarker(e, p);
           entityShadow(e, p);
           entityAura(e, p);
+          drawAbyssFlightCues(ctx, e, p, screen);
         }
         ctx.font = (e.renderKind === 'prop' ? 34 : 30) + 'px system-ui';
         ctx.textAlign = 'center';
@@ -1485,6 +1804,41 @@
                 : e,
             p,
           );
+        if (e.renderKind === 'enemy' && e.family === 'ridge' && e.ledgerOpen) {
+          // The Ledger of Losses remains visibly carried throughout the fight.
+          ctx.save();
+          ctx.fillStyle = '#49312c';
+          ctx.strokeStyle = '#dcba80';
+          ctx.lineWidth = 2;
+          ctx.fillRect(p.x + 16, p.y - 53, 23, 28);
+          ctx.strokeRect(p.x + 16, p.y - 53, 23, 28);
+          ctx.strokeStyle = '#be9674';
+          for (let k = 0; k < 3; k++) {
+            ctx.beginPath();
+            ctx.moveTo(p.x + 21, p.y - 46 + 7 * k);
+            ctx.lineTo(p.x + 34, p.y - 46 + 7 * k);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+        if (
+          ['hero', 'ally'].includes(e.renderKind) &&
+          z.enemies.some(
+            (b) =>
+              b.family === 'ridge' &&
+              b.hp > 0 &&
+              b.ledgerMarkUntil > game.s.time &&
+              b.ledgerMarkedId === (e.renderKind === 'hero' ? 'hero' : e.id),
+          )
+        ) {
+          ctx.save();
+          ctx.strokeStyle = '#ebc479';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.ellipse(p.x, p.y + 3, 23, 10, 0, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        }
         if (e.renderKind === 'npc' && e.kind === 'keeper') {
           // A roomy iron cage, drawn around the visible captive, not a tiny icon.
           ctx.strokeStyle = '#d4bea0';
@@ -1520,12 +1874,23 @@
             const label =
               e.renderKind === 'enemy'
                 ? isTrueBoss
-                  ? 'TRUE · ' + e.name.replace(/\s+TRUE$/, '') + ' · Lv ' + e.level
-                  : e.name + ' · Lv ' + e.level
+                  ? (e.family === 'crypt'
+                      ? 'Lifebinder TRUE'
+                      : 'TRUE · ' + e.name.replace(/^TRUE\s+|\s+TRUE$/g, '')) +
+                    ' · Lv ' +
+                    e.level
+                  : (e.estateAttendant
+                      ? (e.trueSummon ? 'TRUE ' : '') +
+                        'Attendant' +
+                        (e.trueSummonRole === 'captain' ? ' Ringleader' : '')
+                      : e.name) +
+                    ' · Lv ' +
+                    e.level
                 : e.renderKind === 'ally'
                   ? e.type || e.name
                   : '';
-            ctx.fillText(label, p.x, p.y - spriteHeight(e) - 7);
+            const slot = labelSlots.get(e);
+            if (slot) ctx.fillText(label, slot.x, slot.y, slot.width);
             if (isTrueBoss) {
               const w = ctx.measureText('TRUE').width + 12,
                 y = p.y - spriteHeight(e) - 25;
@@ -1542,7 +1907,7 @@
           }
         }
         if (e.renderKind === 'npc') {
-          const label = worldLabelVisible(e),
+          const label = !e.thornFootprint && worldLabelVisible(e),
             name =
               e.kind === 'mini'
                 ? e.name +
@@ -1551,20 +1916,31 @@
                     : game.miniCleared(e.mini)
                       ? ' · Cleared'
                       : ' · Guardians')
-                : e.name;
+                : e.presentation === 'mobile-forge'
+                  ? e.veraRepairUntil > game.s.time
+                    ? 'Vera · repairing defenses'
+                    : 'Vera · captive field engineer'
+                  : e.presentation === 'mobile-captive'
+                    ? 'Mira · captive'
+                    : e.name;
           if (label) {
             ctx.font = 'bold 11px system-ui';
             ctx.fillStyle = '#ffe4a2';
             ctx.shadowColor = '#07140e';
             ctx.shadowBlur = 4;
             const width =
-              e.presentation === 'workstation' || e.kind === 'keeper' || e.kind === 'archive-record'
+              e.presentation === 'workstation' ||
+              e.presentation === 'mobile-captive' ||
+              e.presentation === 'mobile-forge' ||
+              e.kind === 'keeper' ||
+              e.kind === 'archive-record'
                 ? Math.min(ctx.measureText(name).width, canvas.width - 24)
                 : 0;
             const labelX = width
               ? Math.max(width / 2 + 12, Math.min(canvas.width - width / 2 - 12, p.x))
               : p.x;
-            ctx.fillText(name, labelX, p.y - spriteHeight(e) - 4, width || undefined);
+            const slot = labelSlots.get(e);
+            if (slot) ctx.fillText(name, slot.x, slot.y, Math.min(slot.width, width || slot.width));
             ctx.shadowBlur = 0;
           }
           const cue =
@@ -1587,68 +1963,111 @@
           ctx.fillStyle = '#e8ddb8';
           ctx.shadowColor = '#07140e';
           ctx.shadowBlur = 3;
-          ctx.fillText(
-            e.name || (/^barracks/.test(e.id || '') ? 'Barracks' : 'Building'),
-            p.x,
-            p.y - spriteHeight(e) - 4,
-          );
+          const slot = labelSlots.get(e);
+          if (slot)
+            ctx.fillText(
+              e.name || (/^barracks/.test(e.id || '') ? 'Barracks' : 'Building'),
+              slot.x,
+              slot.y,
+              slot.width,
+            );
           ctx.shadowBlur = 0;
         }
         if (e.renderKind === 'node') {
           ctx.font = '10px system-ui';
           ctx.fillStyle = '#f5e7b8';
-          ctx.fillText('Dark Lord Tribute', p.x, p.y - 25);
+          const slot = labelSlots.get(e);
+          if (slot) ctx.fillText('Dark Lord Tribute', slot.x, slot.y, slot.width);
         }
       }
-      for (const l of game.s.loot.filter((l) => l.zone === game.zoneId)) {
-        const p = screen(l);
-        ctx.fillStyle = '#4e3823';
-        ctx.beginPath();
-        ctx.ellipse(p.x, p.y + 5, 11, 5, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#dcad54';
-        ctx.beginPath();
-        ctx.arc(p.x, p.y - 3, 7, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#f7dfa0';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y - 3, 4, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.fillStyle = '#fff0bb';
-        ctx.fillRect(p.x - 3, p.y - 8, 2, 2);
-      }
+      for (const l of game.s.loot.filter((l) => l.zone === game.zoneId))
+        drawCrownLoot(ctx, screen(l));
       finishPhase('entities');
-      const ambientLights = [
-        ...game
-          .visibleNPCs()
-          .filter((n) => ['rest', 'supplier', 'recruiter', 'quests', 'fountain'].includes(n.kind)),
-        ...z.buildings.filter((b) => b.progress >= 4),
-        ...z.props.filter((p) =>
-          [
-            'torch',
-            'warm-brazier',
-            'ember-pit',
-            'fumarole',
-            'house',
-            'workshop',
-            'market',
-          ].includes(p.structure),
-        ),
-      ]
-        .map(screen)
-        .filter(
-          (p) => p.x > -120 && p.x < canvas.width + 120 && p.y > -120 && p.y < canvas.height + 120,
-        );
+      // Regional night life is not a blanket of torches. Real homes carry
+      // occupied window light, services have sheltered lanterns, and existing
+      // fires/forges illuminate their own work. All sources are presentational:
+      // no generated actors, blockers, saved flags or combat visibility changes.
+      const nightNow = game.night();
+      const nightSources = !nightNow
+        ? []
+        : [
+            ...z.props.flatMap((prop) => {
+              const structure = String(prop.structure || '');
+              const kind = nightLightKind(structure);
+              return kind
+                ? [
+                    {
+                      ...screen(prop),
+                      kind,
+                      id: prop.id,
+                      ...(structure === 'roadside-lantern' ? { fixture: 'post' } : {}),
+                    },
+                  ]
+                : [];
+            }),
+            ...z.buildings
+              .filter((b) => b.progress >= 4)
+              .map((b) => ({ ...screen(b), kind: 'window', id: b.id })),
+            ...game
+              .visibleNPCs()
+              .filter(
+                (n) =>
+                  [
+                    'rest',
+                    'supplier',
+                    'recruiter',
+                    'quests',
+                    'fountain',
+                    'transport',
+                    'smith',
+                    'teacher',
+                    'alchemist',
+                  ].includes(n.kind) && !n.interactionOnly,
+              )
+              .map((n) => ({ ...screen(n), kind: 'lantern', id: n.id })),
+          ]
+            .filter(
+              (p) =>
+                p.x > -140 && p.x < canvas.width + 140 && p.y > -160 && p.y < canvas.height + 140,
+            )
+            .sort((a, b) => {
+              const da = (a.x - canvas.width / 2) ** 2 + (a.y - canvas.height / 2) ** 2;
+              const db = (b.x - canvas.width / 2) ** 2 + (b.y - canvas.height / 2) ** 2;
+              return da - db || String(a.id).localeCompare(String(b.id));
+            })
+            .slice(0, 44);
       PrototypeVisuals.atmosphere(ctx, canvas, i, {
-        night: game.night(),
+        night: nightNow,
         peace: game.peace,
         dungeon,
         room,
         optimized,
         hero: screen(game.hero),
-        lights: ambientLights,
+        lights: nightSources,
       });
+      // Choking Ash is intentionally visible and remains fixed where cast.
+      for (const e of z.enemies)
+        if (
+          e.type === 'boss' &&
+          e.family === 'warlord' &&
+          e.aggro &&
+          e.hp > 0 &&
+          e.ashCloud &&
+          e.ashCloud.expires > game.s.time
+        ) {
+          const center = screen(e.ashCloud);
+          const edge = screen({ x: e.ashCloud.x + 180, y: e.ashCloud.y });
+          const span = Math.max(35, Math.abs(edge.x - center.x));
+          ctx.save();
+          ctx.fillStyle = '#786d64a0';
+          ctx.strokeStyle = '#d4bba088';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.ellipse(center.x, center.y, span, span * 0.48, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+        }
       PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx);
       drawOcclusionOutlines(entities);
       // Critical outlines and transient effects retain contrast through the night grade.
@@ -1710,7 +2129,16 @@
       }),
     };
   }
-  const api = { create, majorOccluder, occlusionPairs, optimizationClutter };
+  const api = {
+    create,
+    nightLightKind,
+    bodyFacingSide,
+    drawAbyssFlightCues,
+    drawCrownLoot,
+    majorOccluder,
+    occlusionPairs,
+    optimizationClutter,
+  };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeRenderer = api;
 })(typeof window !== 'undefined' ? window : globalThis);

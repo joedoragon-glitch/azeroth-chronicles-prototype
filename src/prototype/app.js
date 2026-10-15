@@ -5,7 +5,8 @@
     canvas = $('world'),
     ctx = canvas.getContext('2d'),
     D = Campaign.data,
-    manaEnabled = PrototypeRules.resourceMode.manaEnabled;
+    manaEnabled = PrototypeRules.resourceMode.manaEnabled,
+    developerEnabled = /(?:^|[?&])developer=1(?:&|$)/.test(window.location?.search || '');
   // A device-only display preference: never part of the campaign or profile export.
   const optimizationKey = 'azeroth-optimization-mode-v1';
   let optimizationMode = false;
@@ -40,7 +41,9 @@
     },
     statusUntil = 0,
     worldPointer = null,
-    pointer = null;
+    pointer = null,
+    joystickTouchId = null,
+    joystickStart = null;
   profile = persistence.loadProfile(profile);
   const audio = new PrototypeAudio(profile.audio);
   audio.setOptimizationMode(optimizationMode);
@@ -110,9 +113,9 @@
   function installInstructions() {
     openMenu(
       'Install on phone',
-      'Install once, then Azeroth Chronicles launches from the home screen like an app and keeps its offline cache on that device.\n\nAndroid / Chrome: use the Install button when available. If Chrome does not offer it, open the browser menu and choose Install app or Add to Home screen.\n\niPhone / iPad: open the game in Safari, tap Share, choose Add to Home Screen, then Add.',
+      "Install once, then So I Became the Dark Lord's Problem launches from the home screen like an app and keeps its offline cache on that device.\n\nAndroid / Chrome: use the Install button when available. If Chrome does not offer it, open the browser menu and choose Install app or Add to Home screen.\n\niPhone / iPad: open the game in Safari, tap Share, choose Add to Home Screen, then Add.",
       installPrompt
-        ? [action('Install Azeroth Chronicles', installApp, 'Open the phone installation prompt')]
+        ? [action('Install game', installApp, 'Open the phone installation prompt')]
         : [],
       systemMenu,
     );
@@ -132,7 +135,7 @@
       await prompt.prompt();
       const choice = await prompt.userChoice;
       if (choice && choice.outcome === 'accepted') {
-        status('Azeroth Chronicles installed. Open it from your home screen.');
+        status('Game installed. Open it from your home screen.');
         closeMenu();
       } else installInstructions();
     } catch (_) {
@@ -164,13 +167,19 @@
     game = restored;
     return true;
   }
-  let loaded = load(profile.activeMode);
+  let loaded = (developerEnabled && load('developer')) || load(profile.activeMode);
   if (!loaded) {
     game = persistence.migrateLegacy();
     if (game) {
       loaded = true;
       save();
     } else game = new Campaign();
+  }
+  // Older completed peaceful saves retain their already-earned Nightmare
+  // entitlement even if the local profile record was reset or imported.
+  if (game.peace && game.s.finalRestCompleted && !profile.nightmareUnlocked) {
+    profile.nightmareUnlocked = true;
+    persistProfile();
   }
   let started = loaded;
   let storyRouteActive = false;
@@ -276,7 +285,10 @@
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
   }
   resize();
-  addEventListener('resize', resize);
+  addEventListener('resize', () => {
+    releaseJoystick();
+    resize();
+  });
   function activePlay() {
     return (
       started &&
@@ -401,15 +413,21 @@
       game.hero.path = [];
     }
   }
+  // Reset a released/orphaned contact and its visual thumb together.
+  function releaseJoystick() {
+    pointer = null;
+    joystickTouchId = null;
+    joystickStart = null;
+    joy = { x: 0, y: 0 };
+    $('stick').style.transform = '';
+  }
   function clearInput() {
     if (typeof Sprint !== 'undefined') Sprint.release();
     cancelCharge();
     cancelTargetPress();
     keys = {};
-    pointer = null;
+    releaseJoystick();
     cancelTravel();
-    joy = { x: 0, y: 0 };
-    $('stick').style.transform = '';
   }
   function action(label, fn, detail = '', disabled = false) {
     return { label, action: fn, detail, disabled };
@@ -421,11 +439,13 @@
     menu = { title, description, actions, back };
     $('modal').setAttribute(
       'data-view',
-      title === 'Adventure menu'
-        ? 'adventure'
-        : title === 'Game and settings'
-          ? 'settings'
-          : 'default',
+      title === 'The Crown · Credits'
+        ? 'credits'
+        : title === 'Adventure menu'
+          ? 'adventure'
+          : title === 'Game and settings'
+            ? 'settings'
+            : 'default',
     );
     // Small interactions need a small dialog; longer service catalogs keep a readable width.
     const compact =
@@ -505,7 +525,7 @@
   let outsidePointerId = null;
   function dismissOutside() {
     if (!menu || !started || game.s.challenge.pending || game.s.challenge.gameOver) return;
-    if (game.peace && !game.s.endingAck) {
+    if (game.peace && game.s.finalRestCompleted && !game.s.endingAck) {
       game.s.endingAck = true;
       save();
     }
@@ -577,7 +597,7 @@
   );
   $('close-button').onclick = () => {
     audio.unlock().then(() => audio.interfaceSound('back'));
-    if (!game.s.endingAck && game.peace) {
+    if (!game.s.endingAck && game.peace && game.s.finalRestCompleted) {
       game.s.endingAck = true;
       save();
     }
@@ -593,17 +613,20 @@
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   function start(mode, heroClass, succession) {
+    if (mode === 'developer' && !developerEnabled) return;
     if (mode === 'nightmare' && !profile.nightmareUnlocked) return;
     game = new Campaign(mode, heroClass, Math.random, { succession });
     started = true;
     if (typeof Sprint !== 'undefined') Sprint.reset();
     paused = false;
-    profile.activeMode = mode;
+    if (mode !== 'developer') profile.activeMode = mode;
     save();
     closeMenu();
     updateHUD();
   }
   function chooseClass(mode, succession) {
+    if (mode === 'developer' && !developerEnabled) return;
+    if (mode === 'developer') succession = false;
     if (succession === undefined) {
       openMenu(
         'Challenge condition',
@@ -616,7 +639,9 @@
       return;
     }
     openMenu(
-      'New ' + (mode === 'nightmare' ? 'Nightmare' : 'Normal') + ' adventure',
+      'New ' +
+        (mode === 'nightmare' ? 'Nightmare' : mode === 'developer' ? 'Developer' : 'Normal') +
+        ' adventure',
       'Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.',
       Object.entries(Campaign.classes).map(([id, c]) =>
         action(
@@ -662,7 +687,10 @@
     const done = Campaign.dungeonIds.filter((id) => game.s.true[id]).length;
     openMenu(
       'Awakening · Final objective',
-      'The TRUE Dark Lord is gone forever. Defeat every remaining TRUE dungeon guardian to end the war.\n\nProgress: ' +
+      (game.s.throneClaimed
+        ? 'Secure the remaining TRUE guardians, then Rest to finish the reign.'
+        : 'Claim the Throne at Dark Crown’s fortress courtyard first. Earlier TRUE victories already count.') +
+        '\n\nProgress: ' +
         done +
         '/5 TRUE guardians defeated.',
       awakeningChecklist().map((x) => action(x.label, () => {}, x.detail, true)),
@@ -678,7 +706,7 @@
     const done = Campaign.dungeonIds.filter((id) => game.s.true[id]).length;
     openMenu(
       'The Dungeons Awaken',
-      'The TRUE Dark Lord has fallen and will not return. His defeat has awakened the remaining TRUE guardians of the five great dungeons. Defeat every remaining TRUE dungeon guardian to end the war. Previously defeated TRUE guardians remain defeated.\n\nProgress: ' +
+      'The TRUE Dark Lord has fallen. Claim the Throne at the fortress courtyard in Dark Crown before taking power. Already-earned TRUE dungeon victories remain credited; only the others need defeating.\n\nProgress: ' +
         done +
         '/5 defeated.',
       [
@@ -748,6 +776,9 @@
           ),
         ),
         action('New Normal game', () => chooseClass('normal')),
+        ...(developerEnabled
+          ? [action('New Developer Mode run', () => chooseClass('developer'))]
+          : []),
         action(
           'New game in Nightmare Mode',
           () => chooseClass('nightmare'),
@@ -849,7 +880,7 @@
       '',
       [
         ...(!runningAsApp() && platform.mode === 'phone'
-          ? [action('Install on phone', installApp, 'Add Azeroth Chronicles to the home screen')]
+          ? [action('Install on phone', installApp, 'Add the game to the home screen')]
           : []),
         ...(appRegistration
           ? [
@@ -915,6 +946,9 @@
             ),
           ]
         : []),
+      ...(developerEnabled
+        ? [action('New Developer Mode run', () => chooseClass('developer'))]
+        : []),
       action('Game and settings', systemMenu),
     ]);
   }
@@ -930,27 +964,45 @@
     if (started && !game.s.challenge.pending && !game.s.challenge.gameOver) talents();
   };
   function ending() {
+    if (!game.s.finalRestCompleted) return;
     profile.nightmareUnlocked = true;
     persistProfile();
-    openMenu(
-      'Peace for everyone',
-      'The evil is defeated. Every dungeon guardian has fallen. The war is over for people and creatures alike.\n\nCreatures are neutral and cannot harm or be harmed. The reclaimed dungeons are their homes.',
-      [
-        action('Continue in the peaceful world', () => {
-          game.s.endingAck = true;
-          save();
-          closeMenu();
-        }),
-        action('New game in Nightmare Mode', () => {
-          game.s.endingAck = true;
-          save();
-          chooseClass('nightmare');
-        }),
-        action('Export completed run', () =>
-          exportJSON(game.snapshot(), 'Azeroth_Chronicles_Completed.json'),
-        ),
-      ],
-    );
+    const crownedClass =
+      { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger' }[game.hero.class] || 'Hero';
+    const credits =
+      'THE CROWN\n\n' +
+      'The ' +
+      crownedClass +
+      ' takes the throne.\n\n' +
+      'THE FIVE REGIONS\n\n' +
+      'Greenwood · Flooded Marches\nIronroot · Ashen Frontier · Dark Crown\n\n' +
+      'THE FORMER GUARDIANS\n\n' +
+      Campaign.dungeonIds.map((id) => game.boss(id).name).join(' · ') +
+      '\n\n' +
+      'THE OLD WAR IS OVER\n\n' +
+      'The creatures return to their homes.\n\n' +
+      'So I Became the Dark Lord’s Problem\n\n' +
+      'Thank you for playing.';
+    openMenu('The Crown · Credits', credits, [
+      action('Continue in the peaceful world', () => {
+        game.s.endingAck = true;
+        save();
+        closeMenu();
+      }),
+      action('New game · Normal Mode', () => {
+        game.s.endingAck = true;
+        save();
+        chooseClass('normal');
+      }),
+      action('New game · Nightmare Mode', () => {
+        game.s.endingAck = true;
+        save();
+        chooseClass('nightmare');
+      }),
+      action('Export completed run', () =>
+        exportJSON(game.snapshot(), 'Azeroth_Chronicles_Completed.json'),
+      ),
+    ]);
   }
   function successionMenu() {
     openMenu(
@@ -994,11 +1046,14 @@
       if (file.size > 5 * 1024 * 1024) throw Error('too large');
       const data = JSON.parse(await file.text()),
         candidate = data.version === 2 ? Campaign.migrate(data) : Campaign.restore(data);
+      if (candidate.s.mode === 'developer' && !developerEnabled)
+        throw Error('Developer import disabled');
       persistence.writeCandidate(candidate);
       game = candidate;
       started = true;
-      profile.activeMode = game.s.mode;
-      if (game.peace) profile.nightmareUnlocked = true;
+      if (game.s.mode !== 'developer') profile.activeMode = game.s.mode;
+      if (game.peace && game.s.finalRestCompleted && game.s.mode !== 'developer')
+        profile.nightmareUnlocked = true;
       persistProfile();
       closeMenu();
       status('Imported successfully.');
@@ -1020,6 +1075,72 @@
           Math.hypot(b.x - game.hero.x, b.y - game.hero.y),
       )[0];
   }
+  function appointmentMenu(n, group = null) {
+    if (
+      !game.s.throneClaimed ||
+      !game.s.true[game.zoneId] ||
+      !Campaign.dungeonIds.includes(game.zoneId)
+    ) {
+      status('Claim the throne and defeat this dungeon’s TRUE guardian first.');
+      return;
+    }
+    const current = game.dungeonMaster(),
+      groups = {
+        field: 'Field bosses',
+        captain: 'Named captains',
+        specialist: 'Rescued specialists',
+      },
+      candidates = game.dungeonMasterCandidates(),
+      usedElsewhere = (id) =>
+        Object.entries(game.s.appointments || {}).some(
+          ([dungeon, appointed]) => dungeon !== game.zoneId && appointed === id,
+        ),
+      description =
+        (current ? 'Current master: ' + current.name : 'No appointed master') +
+        '. Appointments are optional, peaceful and unique; defeated captains remain eligible.';
+    if (!group) {
+      openMenu('Appoint Dungeon Master', description, [
+        ...Object.entries(groups).map(([id, label]) =>
+          action(
+            label,
+            () => appointmentMenu(n, id),
+            candidates.filter((choice) => choice.group === id).length + ' eligible',
+          ),
+        ),
+        ...(current
+          ? [
+              action('Leave this dungeon unappointed', () => {
+                if (game.appointDungeonMaster(game.zoneId, null)) closeMenu();
+              }),
+            ]
+          : []),
+        action('Decide later', closeMenu),
+      ]);
+      return;
+    }
+    openMenu(
+      'Appoint Dungeon Master · ' + groups[group],
+      description,
+      [
+        ...candidates
+          .filter((choice) => choice.group === group)
+          .map((choice) =>
+            action(
+              (current?.id === choice.id ? '✓ ' : '') + choice.name,
+              () => {
+                if (game.appointDungeonMaster(game.zoneId, choice.id)) closeMenu();
+              },
+              usedElsewhere(choice.id)
+                ? 'Already appointed in another dungeon'
+                : 'Permanent local resident; no new fight',
+              usedElsewhere(choice.id),
+            ),
+          ),
+        action('Back to appointment choices', () => appointmentMenu(n)),
+      ],
+      () => appointmentMenu(n),
+    );
+  }
   function interact() {
     const n = nearestNPC();
     if (!n) {
@@ -1032,6 +1153,9 @@
         'cage',
         'bundle',
         'landmark',
+        'throne',
+        'dungeon-master',
+        'patrol-report',
         'dungeon',
         'exit',
         'fountain',
@@ -1062,7 +1186,8 @@
       updateHUD();
       return;
     }
-    if (n.kind === 'barracks') barracksMenu(n);
+    if (n.kind === 'appointment') appointmentMenu(n);
+    else if (n.kind === 'barracks') barracksMenu(n);
     else if (n.kind === 'teacher') teacher(n);
     else if (n.kind === 'smith') smith(n);
     else if (n.kind === 'keeper') keeper();
@@ -1210,7 +1335,7 @@
     ]);
     const places = game
       .visibleNPCs()
-      .filter((n) => game.isDungeon() || !hiddenServices.has(n.kind))
+      .filter((n) => !n.thornFootprint && (game.isDungeon() || !hiddenServices.has(n.kind)))
       .map((n) =>
         n.kind === 'rest' && n.id === 'rest'
           ? { ...n, name: region.town, icon: '🏘️' }
@@ -1223,7 +1348,7 @@
       icon: b.progress < 4 ? '🏗️' : '🏕️',
     }));
     const bosses = zone.enemies
-      .filter((e) => e.hp > 0 && e.type === 'boss' && !e.neutral)
+      .filter((e) => e.hp > 0 && e.type === 'boss' && !e.neutral && e.family !== 'thorn')
       .map((e) => ({
         ...e,
         name: e.name || game.boss(e.family)?.name || 'Boss',
@@ -1541,10 +1666,17 @@
             Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= range &&
             game.line(game.hero, e),
         );
-    if (targetId !== null && targetId !== undefined)
-      return valid.find((e) => e.id === targetId) || null;
+    // Keep the original charge aim while valid. Resolve a replacement if
+    // that enemy dies, disappears, or becomes unreachable before release.
+    const original =
+      targetId !== null && targetId !== undefined ? valid.find((e) => e.id === targetId) : null;
+    if (original) return original;
     const selected = game.selectedHeroTarget();
-    if (selected) return valid.find((e) => e.id === selected.id) || null;
+    const selectedInRange = selected && valid.find((e) => e.id === selected.id);
+    if (selectedInRange) return selectedInRange;
+    // Respect deliberate boss locks: a live locked boss that is out of
+    // reach must not redirect the attack into a nearby summon.
+    if (selected && game.manualHeroTargetLocked) return null;
     const preferred = valid.find((e) => e.id === game.s.heroTarget);
     return (
       preferred ||
@@ -1698,7 +1830,14 @@
   }
   function beginCharge(slot, source, pointerId = null) {
     const rank = game.hero.skills[slot - 1];
-    if (!chargeableSlots.has(slot) || !activePlay() || !rank || game.peace) return false;
+    if (
+      !chargeableSlots.has(slot) ||
+      !activePlay() ||
+      !rank ||
+      game.peace ||
+      (game.s.mode === 'developer' && slot === 1)
+    )
+      return false;
     if (charge) cancelCharge();
     const queued = game.hero.cd[slot - 1] > 0;
     charge = { slot, source, pointerId, queued, started: null, targetId: null };
@@ -1771,10 +1910,17 @@
       updateHUD();
       return false;
     }
+    // The charge is still released manually; only the aim is resolved now.
+    const releaseTarget = slot === 1 || slot === 2 ? chargeTarget(slot, targetId) : null;
     charge = null;
     const cast =
       activePlay() &&
-      game.cast(slot, slot === 1 || slot === 2 ? targetId : undefined, true, encountersAtStart);
+      game.cast(
+        slot,
+        slot === 1 || slot === 2 ? releaseTarget?.id : undefined,
+        true,
+        encountersAtStart,
+      );
     if (!cast && activePlay()) chargeFailureStatus(slot, true);
     updateHUD();
     return cast;
@@ -1942,6 +2088,7 @@
     else if (actionId === 'quests') quests(false);
     else if (actionId.startsWith('skill')) {
       const slot = Number(actionId.slice(5));
+      if (game.s.mode === 'developer' && slot === 1) return;
       if (chargeableSlots.has(slot)) beginCharge(slot, 'keyboard');
       else game.cast(slot);
     }
@@ -1963,27 +2110,62 @@
     $('stick').style.transform = 'translate(' + joy.x * 24 + 'px,' + joy.y * 24 + 'px)';
   }
   joystick.onpointerdown = (e) => {
-    if (e.pointerType === 'mouse' || pointer !== null) return;
+    if (e.pointerType === 'mouse') return;
+    if (pointer !== null) {
+      // A new primary contact or missing old capture proves the old touch ended.
+      // A second finger must not steal the live joystick during combat.
+      if (e.isPrimary !== true && joystick.hasPointerCapture?.(pointer) !== false) return;
+      releaseJoystick();
+    }
     e.preventDefault();
     audio.unlock();
     cancelTravel();
     pointer = e.pointerId;
+    joystickStart = { x: e.clientX, y: e.clientY };
     joystick.setPointerCapture(pointer);
     joyUpdate(e);
   };
   joystick.onpointermove = (e) => {
     if (e.pointerId === pointer) joyUpdate(e);
   };
+  function finishJoystickPointer(e) {
+    if (e.pointerId === pointer) releaseJoystick();
+  }
   joystick.onpointerup =
     joystick.onpointercancel =
     joystick.onlostpointercapture =
+      finishJoystickPointer;
+  // Catch terminal pointer events that land outside the captured element.
+  for (const type of ['pointerup', 'pointercancel', 'lostpointercapture'])
+    document.addEventListener(type, finishJoystickPointer, true);
+  // iOS/WebKit may omit the pointer ending but still send the touch ending.
+  // Match Touch.identifier explicitly: it need not equal PointerEvent.pointerId.
+  joystick.addEventListener(
+    'touchstart',
+    (e) => {
+      if (pointer === null || joystickTouchId !== null || !joystickStart) return;
+      const contact = Array.from(e.changedTouches).find(
+        (touch) =>
+          Math.hypot(touch.clientX - joystickStart.x, touch.clientY - joystickStart.y) < 25,
+      );
+      if (contact) joystickTouchId = contact.identifier;
+    },
+    { passive: true },
+  );
+  for (const type of ['touchend', 'touchcancel'])
+    document.addEventListener(
+      type,
       (e) => {
-        if (e.pointerId === pointer) {
-          pointer = null;
-          joy = { x: 0, y: 0 };
-          $('stick').style.transform = '';
-        }
-      };
+        if (pointer === null) return;
+        if (
+          (joystickTouchId !== null &&
+            Array.from(e.changedTouches).some((touch) => touch.identifier === joystickTouchId)) ||
+          e.touches.length === 0
+        )
+          releaseJoystick();
+      },
+      true,
+    );
   canvas.onpointerdown = (e) => {
     if (!activePlay() || e.button > 0) {
       if (manaEnabled && activePlay() && e.pointerType === 'mouse' && e.button === 2) {
@@ -2063,6 +2245,7 @@
     }
   });
   addEventListener('pagehide', () => {
+    clearInput();
     save();
     audio.setPaused(true);
   });
@@ -2158,6 +2341,33 @@
         : '';
     else $('status').style.top = '';
   }
+  const developerSummonButton = document.createElement('button');
+  developerSummonButton.id = 'developer-summon';
+  developerSummonButton.textContent = 'Summon';
+  developerSummonButton.setAttribute('aria-label', 'Summon a regional boss or captain');
+  developerSummonButton.hidden = true;
+  document.body.append(developerSummonButton);
+  const developerCombatMonitor = document.createElement('aside');
+  developerCombatMonitor.id = 'developer-combat-monitor';
+  developerCombatMonitor.setAttribute('aria-label', 'Developer combat monitor');
+  developerCombatMonitor.hidden = true;
+  document.body.append(developerCombatMonitor);
+  function openDeveloperSummonMenu() {
+    if (!activePlay() || game.s.mode !== 'developer') return;
+    openMenu(
+      'Developer · Summon',
+      'Summon a hostile regional boss (regular or TRUE) or captain. No campaign rewards or victory progress.',
+      game.developerSummonOptions().map((entry) =>
+        action(entry.label, () => {
+          const enemy = game.developerSummon(entry.id);
+          closeMenu();
+          if (enemy) status('Summoned ' + enemy.name);
+        }),
+      ),
+      closeMenu,
+    );
+  }
+  developerSummonButton.onclick = openDeveloperSummonMenu;
   const hudMarkup = new Map();
   function setMarkup(id, html) {
     if (hudMarkup.get(id) !== html) {
@@ -2166,6 +2376,26 @@
     }
   }
   function updateHUD() {
+    const devActive = started && game.s.mode === 'developer';
+    developerSummonButton.hidden = !devActive;
+    developerCombatMonitor.hidden = !devActive;
+    if (devActive) {
+      const telemetry = game.developerCombatSnapshot(),
+        recent = (hits) => hits.map((hit) => Math.round(hit)).join(' / ') || '—';
+      developerCombatMonitor.textContent =
+        'DEV · COMBAT MONITOR\n' +
+        'Taken: ' +
+        recent(telemetry.incoming.last) +
+        '\n' +
+        'Incoming DPS: ' +
+        telemetry.incoming.dps.toFixed(1) +
+        '\n' +
+        'Dealt: ' +
+        recent(telemetry.outgoing.last) +
+        '\n' +
+        'Outgoing DPS: ' +
+        telemetry.outgoing.dps.toFixed(1);
+    }
     const h = game.hero,
       hp = Math.max(0, Math.min(100, (h.hp / h.maxHp) * 100)),
       mp = manaEnabled ? Math.max(0, Math.min(100, (h.mp / h.maxMp) * 100)) : 0;
@@ -2285,24 +2515,30 @@
         ([id, p]) => p.kind === 'field' && p.zone === game.zoneId && !game.s.true[id],
       );
     $('objective').textContent = game.peace
-      ? 'Peace for everyone. Explore the creatures’ new homes.'
-      : liveFieldTrue
-        ? 'TRUE BOSS · ' +
-          liveFieldTrue.name +
-          ' is roaming ' +
-          game.definition().name +
-          ' · Map: Z'
-        : pendingField && !pendingField[1].active
+      ? game.s.finalRestCompleted
+        ? 'PEACE · Journey complete. Explore the creatures’ new homes.'
+        : 'PEACE · Rest at a refuge, preparation fountain or completed Barracks.'
+      : game.s.phase === 'awakening' && !game.s.throneClaimed
+        ? 'DARK CROWN · Claim the Throne · Fortress courtyard, near (3250, 3090) · Map: Z'
+        : liveFieldTrue
           ? 'TRUE BOSS · ' +
-            game.boss(pendingField[0]).name +
-            ' TRUE emerging in ' +
-            Math.max(0, Math.ceil(pendingField[1].delay)) +
-            's'
-          : game.s.phase === 'awakening'
-            ? 'AWAKENING · Final objective · ' +
-              (5 - remaining.length) +
-              '/5 TRUE guardians defeated · Map: Z'
-            : regionalSpecialistObjective();
+            liveFieldTrue.name +
+            ' is roaming ' +
+            game.definition().name +
+            (liveFieldTrue.family === 'thorn'
+              ? ' · Scout tracks / Orchard trail witness'
+              : ' · Map: Z')
+          : pendingField && !pendingField[1].active
+            ? 'TRUE BOSS · ' +
+              game.boss(pendingField[0]).name +
+              ' TRUE emerging in ' +
+              Math.max(0, Math.ceil(pendingField[1].delay)) +
+              's'
+            : game.s.phase === 'awakening'
+              ? 'AWAKENING · Final objective · ' +
+                (5 - remaining.length) +
+                '/5 TRUE guardians defeated · Map: Z'
+              : regionalSpecialistObjective();
     $('objective').title = $('objective').textContent;
     const doctrine = game.squadDoctrineLabel(),
       squad = $('squad-button');
@@ -2321,7 +2557,8 @@
         rank = h.skills[i],
         charging = charge?.slot === slot,
         cast = charging ? chargePresentation() : null;
-      b.classList.toggle('locked', !rank);
+      b.disabled = game.s.mode === 'developer' && slot === 1;
+      b.classList.toggle('locked', !rank || b.disabled);
       b.classList.toggle('charging', charging);
       b.classList.toggle('skill-ready', !!rank && h.cd[i] <= 0 && !charging);
       const revealed = game.skillRevealed(slot),
@@ -2337,6 +2574,7 @@
           : '';
       b.title =
         (revealed ? skillNames[i] : 'Undiscovered skill') +
+        (b.disabled ? ' · Disabled in Developer Mode' : '') +
         (rank ? ' · Rank ' + rank : ' · Not learned') +
         chargeTip +
         (slot === 1
@@ -2357,23 +2595,25 @@
               (manaEnabled ? ' · charged cost ' + chargedManaPercent(slot) + ' percent max MP' : '')
             : ''),
       );
-      b.querySelector('small').textContent = charging
-        ? cast.state === 'waiting'
-          ? 'WAIT ' + cooldownText(cast.cooldown)
-          : cast.state === 'charging'
-            ? Math.min(99, Math.round(cast.progress * 100)) + '%'
-            : cast.state === 'need-mp'
-              ? 'NEED MP'
-              : cast.state === 'no-target'
-                ? 'NO TARGET'
-                : cast.state === 'no-heal'
-                  ? 'NO HEAL'
-                  : 'CHARGED'
-        : !rank
-          ? 'Locked'
-          : h.cd[i] > 0
-            ? cooldownText(h.cd[i])
-            : skillKeys()[i];
+      b.querySelector('small').textContent = b.disabled
+        ? 'OFF'
+        : charging
+          ? cast.state === 'waiting'
+            ? 'WAIT ' + cooldownText(cast.cooldown)
+            : cast.state === 'charging'
+              ? Math.min(99, Math.round(cast.progress * 100)) + '%'
+              : cast.state === 'need-mp'
+                ? 'NEED MP'
+                : cast.state === 'no-target'
+                  ? 'NO TARGET'
+                  : cast.state === 'no-heal'
+                    ? 'NO HEAL'
+                    : 'CHARGED'
+          : !rank
+            ? 'Locked'
+            : h.cd[i] > 0
+              ? cooldownText(h.cd[i])
+              : skillKeys()[i];
     }
     const n = nearestNPC();
     $('touch-interact-button').hidden = !n || !activePlay();
@@ -2474,6 +2714,7 @@
       game.tick(dt, { x, y, speedFactor });
       syncChargeReady();
       if (
+        game.s.mode !== 'developer' &&
         (x || y || was.order) &&
         charge?.slot !== 1 &&
         game.hero === movingHero &&
@@ -2535,7 +2776,7 @@
     if (game.s.challenge.pending && !gateDismissed && menu?.title !== 'Choose your successor')
       successionMenu();
     if (game.s.challenge.gameOver && !gateDismissed && !menu) gameOver();
-    if (game.peace && !game.s.endingAck && !menu) ending();
+    if (game.peace && game.s.finalRestCompleted && !game.s.endingAck && !menu) ending();
     hudTimer += dt;
     if (hudTimer > 0.15) {
       hudTimer = 0;
@@ -2569,7 +2810,7 @@
     fps.suspend();
   });
   updateHUD();
-  if (!loaded) chooseClass('normal');
+  if (!loaded) chooseClass(developerEnabled ? 'developer' : 'normal');
   requestAnimationFrame(frame);
   addEventListener('beforeinstallprompt', (event) => {
     event.preventDefault();
@@ -2577,7 +2818,7 @@
   });
   addEventListener('appinstalled', () => {
     installPrompt = null;
-    status('Azeroth Chronicles installed. Open it from your home screen.');
+    status('Game installed. Open it from your home screen.');
   });
   if (
     location.protocol === 'https:' ||

@@ -542,6 +542,9 @@
     expeditionSupport: [60, 67, 72],
     expeditionRank: [60, 67, 72, 79],
     rest: [55, 60, 64],
+    finalRest: [48, 55, 60],
+    dungeonMaster: [60, 67, 72],
+    throneClaimed: [48, 55, 60, 67],
     tributeDiscovery: [72, 79, 84],
     sideInteriorDiscovery: [52, 59, 64],
   };

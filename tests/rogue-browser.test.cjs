@@ -69,6 +69,9 @@ const server = http.createServer((req, res) => {
         Prototype.game.tick = () => {};
       });
       for (const night of [false, true]) {
+        // Elite signatures are now mobile, actor-anchored progress bars.
+        // Protect rendered placement and cast progress instead of the retired
+        // spatial SIGNATURE countdown/name panel.
         const probe = await page.evaluate((night) => {
           const p = Prototype,
             c = p.game;
@@ -80,54 +83,98 @@ const server = http.createServer((req, res) => {
           const e = c.bossEnemy(c.boss('warlord'), 'normal', { x: 1400, y: 1700 });
           e.aggro = true;
           c.zone().enemies = [e];
-          c.tacticalRogueMove(e, c.hero, true);
+          if (!c.tacticalRogueMove(e, c.hero, true)) throw Error('Warlord signature did not start');
+          const cast = e.telegraph;
           const canvas = document.querySelector('#world'),
-            ctx = canvas.getContext('2d'),
-            labels = [];
-          const fillText = ctx.fillText;
-          ctx.fillText = function (text, x, y, ...rest) {
-            if (
-              String(text).includes('Warlord’s') ||
-              String(text).includes('Withdrawal') ||
-              String(text).includes('SIGNATURE')
-            ) {
-              const t = this.getTransform(),
-                width = this.measureText(text).width;
-              labels.push({
-                text,
-                left: t.a * (x - width / 2) + t.e,
-                right: t.a * (x + width / 2) + t.e,
-                top: t.d * (y - 12) + t.f,
-                bottom: t.d * y + t.f,
-              });
+            ctx = canvas.getContext('2d');
+          function capture() {
+            const labels = [],
+              bars = [],
+              fills = [],
+              originalText = ctx.fillText,
+              originalStroke = ctx.strokeRect,
+              originalFill = ctx.fillRect;
+            ctx.fillText = function (value, x, y, ...rest) {
+              const label = String(value);
+              if (label === 'ROGUE CAST' || label === 'Preparing…' ||
+                  label.includes('SIGNATURE') || label.includes('Withdrawal')) {
+                const transform = this.getTransform(),
+                  width = this.measureText(value).width;
+                labels.push({
+                  text: label,
+                  left: transform.a * (x - width / 2) + transform.e,
+                  right: transform.a * (x + width / 2) + transform.e,
+                  top: transform.d * (y - 12) + transform.f,
+                  bottom: transform.d * y + transform.f,
+                });
+              }
+              return originalText.call(this, value, x, y, ...rest);
+            };
+            ctx.strokeRect = function (x, y, w, h) {
+              if (Math.abs(w - 70) < 0.01 && Math.abs(h - 8) < 0.01) {
+                const t = this.getTransform();
+                bars.push({
+                  center: t.a * (x + w / 2) + t.e,
+                  top: t.d * y + t.f,
+                  bottom: t.d * (y + h) + t.f,
+                  width: t.a * w,
+                });
+              }
+              return originalStroke.call(this, x, y, w, h);
+            };
+            ctx.fillRect = function (x, y, w, h) {
+              if (this.fillStyle === '#e5b963' && Math.abs(h - 8) < 0.01) {
+                const t = this.getTransform();
+                fills.push({ width: t.a * w, center: t.a * (x + w / 2) + t.e });
+              }
+              return originalFill.call(this, x, y, w, h);
+            };
+            try {
+              p.renderer.draw();
+            } finally {
+              ctx.fillText = originalText;
+              ctx.strokeRect = originalStroke;
+              ctx.fillRect = originalFill;
             }
-            return fillText.call(this, text, x, y, ...rest);
-          };
-          try {
-            p.renderer.draw();
-          } finally {
-            ctx.fillText = fillText;
+            return { labels, bars, fills };
           }
-          return { labels, width: canvas.width, height: canvas.height, name: e.telegraph.name };
+          const before = capture();
+          // Move the actual enemy and advance its real warning fraction. The
+          // bar must move with it instead of staying at an old ground marker.
+          e.x += 65;
+          cast.timer = cast.total * 0.5;
+          const moved = capture();
+          return {
+            before, moved, width: canvas.width, height: canvas.height,
+            name: cast.name,
+            mobile: cast.mobileRogueCast,
+            signature: cast.rogueSignature,
+            remaining: cast.timer,
+            total: cast.total,
+          };
         }, night);
         assert.equal(probe.name, 'Ashen Warlord’s Shielded Withdrawal');
-        assert(
-          probe.labels.some((x) => x.text.includes('SIGNATURE')),
-          'signature countdown rendered',
-        );
-        assert(
-          probe.labels.some((x) => x.text.includes('Withdrawal')),
-          'full move name survives wrapping',
-        );
-        for (const label of probe.labels)
-          assert(
-            label.left >= 0 &&
-              label.right <= probe.width &&
-              label.top >= 0 &&
-              label.bottom <= probe.height,
-            'rogue text fits physical DPR canvas: ' +
-              JSON.stringify({ label, width: probe.width, height: probe.height }),
-          );
+        assert(probe.mobile && probe.signature, 'Warlord signature uses actor-only mobile cast');
+        assert.equal(probe.remaining, probe.total * 0.5, 'cast retains authored warning duration');
+        for (const stage of [probe.before, probe.moved]) {
+          const label = stage.labels.filter((x) => x.text === 'ROGUE CAST');
+          assert.equal(label.length, 1, 'one readable actor-anchored Rogue cast label');
+          assert.equal(stage.bars.length, 1, 'one real 70x8 progress border');
+          assert(!stage.labels.some((x) => x.text.includes('SIGNATURE') ||
+                  x.text.includes('Withdrawal')), 'old spatial signature caption retired');
+          assert(Math.abs((label[0].left + label[0].right) / 2 - stage.bars[0].center) < 2,
+            'cast label centered over current actor bar');
+          for (const item of [label[0], stage.bars[0]]) {
+            assert((item.left === undefined || item.left >= 0) &&
+              (item.right === undefined || item.right <= probe.width) &&
+              item.top >= 0 && item.bottom <= probe.height,
+            'Rogue cast stays inside physical DPR viewport: ' + JSON.stringify(item));
+          }
+        }
+        assert(Math.abs(probe.moved.bars[0].center - probe.before.bars[0].center) > 2,
+          'cast bar follows physical actor relocation');
+        assert(probe.moved.fills.some((x) => Math.abs(x.width -
+          probe.moved.bars[0].width / 2) < 2), 'warning progress visually fills halfway');
         await page.screenshot({
           path: path.join(
             results,
@@ -188,7 +235,7 @@ const server = http.createServer((req, res) => {
       console.log(
         'PASS ' +
           engine +
-          ' rogue warning/DPR day/night, dust locks and scatter recovery ' +
+          ' mobile Rogue cast/DPR day-night, dust locks and scatter recovery ' +
           viewport.width +
           'x' +
           viewport.height,

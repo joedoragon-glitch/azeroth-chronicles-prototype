@@ -50,6 +50,18 @@
 
   function enemyKey(e) {
     const base = 'enemy:' + clean(e.species || e.family || e.type);
+    // The reviewed Mireling ranged-guard image covers both native ranged AI
+    // variants. Reuse its exact canon sprite key without changing attack roles.
+    if (
+      e.species === 'mireling' &&
+      e.guard &&
+      e.ranged &&
+      !e.hybrid &&
+      !e.captain &&
+      !e.roomCaptain &&
+      !e.fieldCaptain
+    )
+      return 'enemy:mireling:hybrid-ranged-guard';
     if (e.captain || e.roomCaptain || e.fieldCaptain) {
       const tags = ['captain'];
       if (e.hybrid) tags.push('hybrid');
@@ -65,11 +77,21 @@
   }
 
   function candidateKeys(e, region = 0, rescued = false) {
-    if (!e || e.presentation === 'workstation' || e.sceneRole) return [];
+    if (
+      !e ||
+      ['workstation', 'mobile-captive', 'mobile-forge', 'scout-tracks'].includes(e.presentation) ||
+      e.kind === 'patrol-report' ||
+      e.sceneRole
+    )
+      return [];
     const kind = e.renderKind;
-    if (kind === 'hero') return ['hero:' + clean(e.class)];
+    // Authored crowned class outfits have procedural detail not present in base sprites.
+    if (kind === 'hero') return e.crowned ? [] : ['hero:' + clean(e.class)];
     if (kind === 'ally') return ['ally:' + clean(e.class || e.type || 'worker')];
     if (kind === 'enemy') {
+      // New authored multiracial armor and mounted-direwolf silhouettes are
+      // procedural: the old generic guard/Wolf sprites cannot depict them.
+      if (e.crownTroop || e.mountedCrownRider) return [];
       if (e.type === 'boss') return ['boss:' + clean(e.family)];
       return [enemyKey(e)];
     }

@@ -44,8 +44,20 @@ const files = fs
       (!process.argv.includes('--quick') || quick.has(name.replace('.test.cjs', ''))),
   )
   .sort();
+const failures = [];
 for (const file of files) {
   const result = cp.spawnSync(process.execPath, [path.join(__dirname, file)], { stdio: 'inherit' });
-  if (result.status !== 0) process.exit(result.status || 1);
+  if (result.status !== 0) {
+    console.error(
+      'FAIL ' + file + ': ' + (result.error?.message || result.signal || 'exit ' + result.status),
+    );
+    failures.push(file);
+  }
 }
-console.log('\nPASS ' + files.length + ' regression suites');
+if (failures.length) {
+  console.error('\nFAIL ' + failures.length + ' of ' + files.length + ' regression suites:');
+  console.error(failures.join(', '));
+  process.exitCode = 1;
+} else {
+  console.log('\nPASS ' + files.length + ' regression suites');
+}

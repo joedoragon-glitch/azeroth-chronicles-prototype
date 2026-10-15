@@ -19,12 +19,47 @@
         delete out.holdFire;
         out.projectiles = [];
         out.hazards = [];
+        this.clearEncounterUnits([out.hero, ...out.party]);
         out.party.forEach((u) => {
           delete u.path;
           u.order = null;
         });
-        for (const z of Object.values(out.zones))
+        for (const z of Object.values(out.zones)) {
+          z.props = z.props.filter((p) => !p.garunTemporary && !p.garunPreview);
+          for (const n of z.npcs) {
+            if (['cage-thorn', 'cage-cindermaw'].includes(n.id)) {
+              delete n.path;
+              delete n.routeAge;
+              delete n.veraRepairDue;
+              delete n.veraRepairUntil;
+              delete n.veraRepairTarget;
+            }
+          }
+          z.enemies = z.enemies.filter((e) => !e.summon);
           for (const e of z.enemies) {
+            if (e.family === 'thorn' && e.type === 'boss' && (e.aggro || e.returning))
+              e.thornReturn = true;
+            if (e.family === 'cindermaw' && e.type === 'boss' && (e.aggro || e.returning))
+              e.cinderReturn = true;
+            // Copy only the validated board beat: no live attack/motion receipts.
+            const board =
+              e.family === 'citadel' &&
+              e.hp > 0 &&
+              e.board &&
+              Number.isFinite(e.board.timer) &&
+              e.board.timer > 0 &&
+              e.board.timer <= 1.9 &&
+              Number.isInteger(e.board.beat) &&
+              e.board.beat >= 0 &&
+              e.board.beat < 8 &&
+              ['warn', 'rest'].includes(e.board.phase) &&
+              e.board.size === 112 &&
+              e.board.x === e.home.x &&
+              e.board.y === e.home.y
+                ? { ...e.board }
+                : null;
+            this.clearEncounterState(e, [out.hero, ...out.party]);
+            if (board && out.phase !== 'peace') e.board = board;
             e.telegraph = null;
             e.motion = null;
             e.sequence = [];
@@ -37,12 +72,16 @@
             delete e.rogueDustCoverUntil;
             e.returning = 0;
             if (e.hp > 0 && !e.neutral) {
-              Object.assign(e, e.home);
+              if (
+                !((['thorn', 'cindermaw'].includes(e.family) && e.type === 'boss') || e.veraEscort)
+              )
+                Object.assign(e, e.home);
               e.hp = e.maxHp;
               e.heroParticipated = false;
               e.mercyProvoked = false;
             }
           }
+        }
         return out;
       }
       static validate(data) {
@@ -50,7 +89,7 @@
         if (
           !s ||
           s.version !== 4 ||
-          !['normal', 'nightmare'].includes(s.mode) ||
+          !['normal', 'nightmare', 'developer'].includes(s.mode) ||
           !['adventure', 'awakening', 'peace'].includes(s.phase) ||
           !classes[s.hero?.class]
         )
@@ -221,6 +260,41 @@
             throw Error('Invalid victory identity');
         for (const id of Object.keys(s.true))
           if (!s.normal[id]) throw Error('TRUE victory without normal victory');
+        if (s.appointments === undefined) s.appointments = {};
+        if (!s.appointments || typeof s.appointments !== 'object' || Array.isArray(s.appointments))
+          throw Error('Invalid dungeon appointments');
+        const appointmentChoices = new Set([
+          ...D.bosses.filter((b) => b.kind === 'field').map((b) => 'field:' + b.id),
+          ...Object.keys(R.roomCaptains).map((id) => 'captain:' + id),
+          ...D.bosses.filter((b) => b.captive && s.rescued[b.id]).map((b) => 'specialist:' + b.id),
+        ]);
+        const appointed = Object.entries(s.appointments);
+        if (
+          appointed.length > dungeonIds.length ||
+          new Set(appointed.map(([, id]) => id)).size !== appointed.length ||
+          appointed.some(
+            ([id, candidate]) =>
+              !dungeonIds.includes(id) ||
+              !s.true[id] ||
+              !s.throneClaimed ||
+              !appointmentChoices.has(candidate),
+          )
+        )
+          throw Error('Invalid dungeon master selection');
+        // Legacy v4 peaceful campaigns were already completed. Grandfather
+        // them without forcing a new throne visit or replay of defeated bosses.
+        if (s.throneClaimed === undefined) s.throneClaimed = s.phase === 'peace';
+        if (typeof s.throneClaimed !== 'boolean' || (s.throneClaimed && !s.true.darklord))
+          throw Error('Invalid coronation');
+        if (s.phase === 'peace' && !s.throneClaimed) throw Error('Missing coronation');
+        // Old v4 peaceful saves already displayed their ending before Rest
+        // was introduced. Preserve that completed state, never replay credits.
+        if (s.finalRestCompleted === undefined) s.finalRestCompleted = s.phase === 'peace';
+        if (
+          typeof s.finalRestCompleted !== 'boolean' ||
+          (s.finalRestCompleted && s.phase !== 'peace')
+        )
+          throw Error('Invalid final Rest');
         if (s.phase !== 'adventure' && !s.true.darklord) throw Error('Invalid awakening');
         if (s.phase === 'peace' && !dungeonIds.every((id) => s.true[id]))
           throw Error('Invalid peace');
@@ -607,6 +681,7 @@
         const s = Campaign.validate(data),
           c = new Campaign(s.mode, s.hero.class, random);
         c.s = s;
+        c.clearEncounterUnits();
         c.hero.potions = { health: 0, mana: 0, greater_health: 0, greater_mana: 0 };
         delete c.hero.legacyPotions;
         for (const u of c.s.party)
@@ -679,9 +754,43 @@
         c.messages = [];
         c.effects = [];
         for (const z of Object.values(c.s.zones)) {
-          z.props = z.props.filter((p) => !c.blocked(p.x, p.y, z.id, p.r || 0, true));
+          z.enemies = z.enemies.filter((e) => !e.summon);
+          z.props = z.props.filter(
+            (p) =>
+              !p.garunTemporary && !p.garunPreview && !c.blocked(p.x, p.y, z.id, p.r || 0, true),
+          );
           c.roadNetwork(z);
           for (const e of z.enemies) {
+            if (e.family === 'thorn' && e.type === 'boss' && (e.aggro || e.returning))
+              e.thornReturn = true;
+            if (e.family === 'cindermaw' && e.type === 'boss' && (e.aggro || e.returning))
+              e.cinderReturn = true;
+            const board =
+              e.family === 'citadel' &&
+              e.hp > 0 &&
+              e.board &&
+              Number.isFinite(e.board.timer) &&
+              e.board.timer > 0 &&
+              e.board.timer <= 1.9 &&
+              Number.isInteger(e.board.beat) &&
+              e.board.beat >= 0 &&
+              e.board.beat < 8 &&
+              ['warn', 'rest'].includes(e.board.phase) &&
+              e.board.size === 112 &&
+              e.board.x === e.home.x &&
+              e.board.y === e.home.y
+                ? { ...e.board }
+                : null;
+            c.clearEncounterState(e);
+            if (board && s.phase !== 'peace') e.board = board;
+            e.aggro = false;
+            e.returning = 0;
+            // Raw historical restores retain wounds/dead state; snapshot() owns
+            // the ordinary resting-enemy serialization contract.
+            // Rename the existing boss in historical saves; never change 'crypt'
+            // save keys, rewards, quest/rescue flags or normal/TRUE progression.
+            if (e.family === 'crypt' && e.type === 'boss')
+              e.name = e.form === 'true' ? 'Lifebinder TRUE' : 'Lifebinder';
             if (e.family === 'thorn' && e.type === 'boss') {
               const base = c.boss('thorn').hp * (e.form === 'true' ? 1.8 : 1),
                 fraction = e.hp / e.maxHp,
@@ -699,6 +808,9 @@
           for (const n of [...z.npcs, ...z.nodes, ...z.buildings])
             if (c.blocked(n.x, n.y, z.id)) Object.assign(n, c.safe(n.x, n.y, z.id));
           c.authoredPlaces(z);
+          c.migrateThornPatrol(z);
+          c.migrateCinderInspection(z);
+          c.clearVeraRepairs(z);
           const families = new Set();
           z.enemies = z.enemies.filter((e) => {
             if (
@@ -714,6 +826,7 @@
         }
         c.zone();
         c.refreshNPCs();
+        c.syncDungeonMasterStation();
         c.initializeQuests();
         c.checkQuests();
         c.restoreWeaponSelection();

@@ -1,6 +1,8 @@
 /* Optional, read-only Archive reference. Figures come from live rules and Campaign queries. */
 (function (root) {
   'use strict';
+  const darkLordHistory =
+    "He once crossed the provinces with a close company of adventurers, leaving victories and grieving villages behind. One day no one told them where to go next. He forged a peace in which rival peoples could trade; now he keeps it through levies, garrisons and captive labor. 'Freedom has a price,' he says.";
   function sections(game, { D, R }) {
     const number = (value) => Math.round(value * 100) / 100,
       percent = (value) => number(value * 100),
@@ -56,7 +58,7 @@
         ],
         [
           'Enemies under pressure',
-          'A wounded or outmatched foe may use rogue tactics: withdraw toward allies, slow a pursuer, shove attackers away or rally defenders. Chase blindly and you may gather a larger fight. Leave the marked attack area; if the retreat draws you into fresh enemies, break pursuit and regroup. Goblin dust breaks direct targeting, but area attacks can still reach the goblin.',
+          'A wounded or outmatched foe may use rogue tactics: withdraw toward allies, slow a pursuer, shove attackers away or rally defenders. Chase blindly and you may gather a larger fight. Ordinary foes still show their marked Rogue warning. Guardians, ringleaders, captains and bosses instead show a moving cast bar: use real cover, or break pursuit if they draw in more enemies. Goblin dust breaks direct targeting, but area attacks can still reach the goblin.',
           'Ordinary creatures, guardians and ringleaders can seek help below ' +
             percent(tactics.woundedThreshold) +
             '% HP. A foe at least ' +
@@ -72,7 +74,7 @@
             'A retreat seeks reachable allies within ' +
             tactics.awarenessRadius +
             ' paces; one ally is enough. Continued pursuit can lead to another local retreat and more allies. The foe takes half damage while preparing to withdraw, withdrawing or making a tactical escape; that protection ends when it settles or abandons the retreat.\n\n' +
-            'Ringleaders, captains and bosses have distinct basic maneuvers and stronger situational tricks. Watch the named warning: these are choices, not an automatic pair of attacks. Some commanders rally living troops or refill nearby defeated guard posts; their usual summoned creatures remain separate.',
+            'Ringleaders, captains and bosses have distinct basic maneuvers and stronger situational tricks. Watch the cast progress while they move: these are choices, not an automatic pair of attacks. Some commanders rally living troops or refill nearby defeated guard posts; their usual summoned creatures remain separate.',
         ],
       ],
     });
@@ -256,6 +258,51 @@
       ],
     });
     shelves.push({
+      title: 'The Crown and its institutions',
+      intro: 'Ministries, former companions and the people living under Crown Peace.',
+      topics: [
+        ['Cindermaw — Interior and Welfare', D.bosses.find((b) => b.id === 'cindermaw').history],
+        ['Dreadmaw — Agriculture', R.roomCaptains['supply-crown'].history],
+        ['Scornfang — Reclamation', R.roomCaptains['supply-vale'].history],
+        ['Ridge Tyrant — Master of Coin', D.bosses.find((b) => b.id === 'ridge').history],
+        ['Crag Tyrant — Treasury captain', R.roomCaptains['supply-highlands'].history],
+        ['Ashen Warlord — Frontier governor', D.bosses.find((b) => b.id === 'warlord').history],
+        ['Cinder Warlord — Frontier inspector', R.roomCaptains['frontier-overseer'].history],
+        [
+          'Garun — the old roads',
+          'Garun built roads and defensible settlements before he chose the fitted stone body around his heart. The bridges still carry food and trade between the provinces. Dara gets paid for repairs inside the Mine, but cannot leave.',
+        ],
+        [
+          'Veyrith — the unfinished sky',
+          'Veyrith carried the Dark Lord in the old days. Abyss Bastion now has harness stations and a training ground, but the royal air fleet is unfinished. Veyrith wants enough patrols overhead that no enemy can surprise the roads below.',
+        ],
+        [
+          'Veyra — the common drill',
+          'Veyra taught Goblins, Ogres and Crown soldiers to hold one line, obey the same commands and care for their equipment. She and Garun both take craft seriously. Her disciplined Citadel could command the realm if the throne stood empty.',
+        ],
+        [
+          'Whose peace?',
+          'Reedport fish can reach inland markets, and Ironroot miners receive regular crowns. Those same guarded roads move levies and captive workers. The trade works. The people who keep it working do not all get to choose.',
+        ],
+        ...(game.s.throneClaimed
+          ? [
+              [
+                'The last mark — remembered at the throne',
+                'The six-signature ledger in Greenwood and the Keeper’s record of the final external command pointed to one missing adventurer. At the defeated ruler’s throne the last of seven marks answered to you: you were the missing sixth companion of his former party. Your present Paladin, Mage or Ranger training does not overwrite that past, award a new class, or demand another dungeon victory.',
+              ],
+            ]
+          : []),
+        [
+          'Companions from the Barracks',
+          'Lifebinder and the Drowned Keeper were originally recruited from the Barracks, through the same institution that supplies today’s Soldiers and Rangers. They belonged to different companion classes the present hero has not discovered. Their history does not make them Soldiers or Rangers.',
+        ],
+        [
+          'The Lantern Wraiths’ migration',
+          'The Lantern Wraiths left Ironroot when mining and mint production became intolerable. They now study in the Keeper’s Archive and help him; he cautions them to mind their lanterns. They resent the flooding, whose cause remains unknown. Cindermaw and Dreadmaw have grown fond of the Wraiths, and the feeling is mutual. They socialize when their different duties permit.',
+        ],
+      ],
+    });
+    shelves.push({
       title: 'Adversaries and their attacks',
       intro: 'Boss histories, attacks and creature statistics.',
       topics: [
@@ -271,7 +318,7 @@
             boss.name,
             boss.place +
               '. ' +
-              (boss.history || '') +
+              (boss.history || (boss.id === 'darklord' ? darkLordHistory : '')) +
               '\n\nAttacks: ' +
               plans
                 .map(

@@ -262,11 +262,11 @@ body[data-experience='phone'][data-phone-layout='left-hand'] #squad-button {
   }
 }
 
-/* Phone: show HP, MP, class and level without a full-width banner. */
+/* Phone: keep the single HP bar, class and level in a narrow corner dock. */
 body[data-experience='phone'] #hud {
   left: max(8px, env(safe-area-inset-left));
   right: auto;
-  width: min(310px, calc(100vw - 16px));
+  width: min(252px, calc(100vw - 16px));
   padding: 6px 7px;
   grid-template-columns: minmax(0, 1fr) 42px;
   gap: 6px;
@@ -274,7 +274,9 @@ body[data-experience='phone'] #hud {
   background: linear-gradient(155deg, #172b36ec, #10212bde);
 }
 body[data-experience='phone'] #hero-stats {
-  gap: 2px 7px;
+  /* MP is dormant. Give the one HP meter the entire text column. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2px;
 }
 body[data-experience='phone'] #hero-stats .hero-title {
   margin: 0 0 1px;
@@ -338,7 +340,7 @@ body[data-experience='phone'] #message {
 }
 @media (max-height: 500px) and (min-width: 480px) {
   body[data-experience='phone'] #hud {
-    width: min(310px, 44vw);
+    width: min(252px, 44vw);
   }
   body[data-experience='phone'] #modal {
     top: 46%;
@@ -551,4 +553,24 @@ body[data-experience='phone'] #modal[data-view='map'] #modal-description canvas 
     overflow-y: auto;
     overscroll-behavior: contain;
   }
+}
+
+/* Developer controls stay beside the joystick and off the combat skill grid. */
+body[data-experience='phone'] #developer-summon {
+  left: calc(max(8px, env(safe-area-inset-left)) + 110px);
+  bottom: calc(64px + env(safe-area-inset-bottom));
+  width: 58px;
+  min-height: 42px;
+  padding: 4px;
+  font-size: 11px;
+  transform: scale(var(--phone-ui-fit, 1));
+  transform-origin: bottom left;
+}
+body[data-experience='phone'] #developer-combat-monitor {
+  left: auto;
+  right: max(8px, env(safe-area-inset-right));
+  top: calc(90px + env(safe-area-inset-top));
+  max-width: min(180px, 41vw);
+  padding: 5px 7px;
+  font-size: 10px;
 }

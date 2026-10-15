@@ -24,11 +24,28 @@
     'advance',
     'persistent',
     'nightSkill',
+    'slowOnly',
+    'selfDefense',
+    'tracking',
+    'shotNumber',
+    'shots',
+    'waveSpeed',
+    'waveLife',
     'rogueMove',
     'rogueSignature',
     'effect',
     'style',
     'kind',
+    'cinderMechanic',
+    'cinderDelegate',
+    'gapAngle',
+    'nextGap',
+    'gapWidth',
+    'initialRadius',
+    'finalRadius',
+    'width',
+    'stage',
+    'stages',
   ];
   function store(game) {
     let s = state.get(game);
@@ -57,6 +74,12 @@
   }
   function emit(game, e, a, stage, point = null, identity = null) {
     if (game.enemyVfxEnabled === false || !e || e.hp <= 0) return null;
+    if (
+      stage === 'windup' &&
+      (a.anonymousCast || a.mobileRogueCast || (e.family === 'ridge' && e.ledgerOpen))
+    )
+      return null;
+    if (stage === 'impact' && a.selfDefense) return null;
     const visual =
       identity ||
       (stage === 'phase'

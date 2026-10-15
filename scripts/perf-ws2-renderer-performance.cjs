@@ -1,5 +1,5 @@
 'use strict';
-// Compare the unchanged baseline directory with the complete candidate tree.
+// Compare original and current renderer pipelines with identical current content.
 // Both pages have no app shell, rAF, simulation ticks or audio; this is a warmed
 // frozen full-painter benchmark with forced Canvas readback, not active-play FPS.
 const fs = require('node:fs'),
@@ -9,6 +9,8 @@ const fs = require('node:fs'),
   assert = require('node:assert/strict'),
   pw = require(process.env.PLAYWRIGHT_MODULE || 'playwright'),
   sharp = require('sharp');
+const { approvedScenery } = require('./snapshot-scenery-comparison.cjs');
+const reference = require('./perf-renderer-reference.cjs');
 const candidateRoot = path.resolve(
     process.env.PERF_WS2_CANDIDATE_ROOT || path.join(__dirname, '..'),
   ),
@@ -21,6 +23,30 @@ assert(
   fs.existsSync(path.join(baselineRoot, 'src/prototype/renderer.js')),
   'Provide the unchanged baseline root',
 );
+// Approved content must match on both sides; retain original renderer/cache
+// implementations for performance measurement. No region or pixel exclusion.
+const sharedContent = new Set([
+  ...require('./perf-renderer-graph.cjs').files.filter((f) => f !== 'src/prototype/renderer.js'),
+  ...require('./perf-renderer-graph.cjs').campaign,
+  ...[
+    'engine',
+    'rules',
+    'data',
+    'world',
+    'navigation',
+    'party',
+    'combat',
+    'hero-combat',
+    'boss-combat',
+    'cindermaw-combat',
+    'save',
+    'narration',
+    'visuals',
+    'combat-visuals',
+    'enemy-vfx-art',
+    'enemy-vfx-events',
+  ].map((n) => 'src/prototype/' + n + '.js'),
+]);
 const roots = { baseline: baselineRoot, candidate: candidateRoot, control: baselineRoot },
   hash = (value) => crypto.createHash('sha256').update(value).digest('hex');
 const server = http.createServer((req, res) => {
@@ -37,9 +63,11 @@ const server = http.createServer((req, res) => {
     res.end('<!doctype html><title>Frozen full renderer benchmark</title>');
     return;
   }
-  const file = path.resolve(roots[which], name);
+  const contentRoot =
+    sharedContent.has(name) || name.startsWith('assets/') ? candidateRoot : roots[which];
+  const file = path.resolve(contentRoot, name);
   if (
-    !file.startsWith(roots[which] + path.sep) ||
+    !file.startsWith(contentRoot + path.sep) ||
     !fs.existsSync(file) ||
     !fs.statSync(file).isFile()
   ) {
@@ -56,9 +84,13 @@ const server = http.createServer((req, res) => {
       '.webp': 'image/webp',
     }[path.extname(file)] || 'application/octet-stream',
   );
+  if (which !== 'candidate' && name === 'src/prototype/renderer.js') {
+    res.end(reference(candidateRoot, { originalOcclusion: false }));
+    return;
+  }
   fs.createReadStream(file).pipe(res);
 });
-function prepare({ zone, width, height }) {
+function prepare({ zone, width, height, approvedScenery }) {
   const game = new Campaign('normal', 'paladin', () => 0.7);
   game.enter(zone === 'crowd' ? 'vale' : zone);
   game.s.clock = 200;
@@ -129,9 +161,19 @@ async function proof() {
       Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', data)), (n) =>
         n.toString(16).padStart(2, '0'),
       ).join('');
+  // Normalize version metadata only in the copied comparison state. Keeping
+  // the live engine's current markers prevents it from regenerating removed
+  // comparison props whenever a draw calls zone(). All other state stays exact.
+  const state = JSON.parse(JSON.stringify(s.game));
+  for (const region of ['vale', 'march', 'frontier']) {
+    const z = state.s?.zones?.[region];
+    if (!z) continue;
+    if (region === 'frontier' && z.regionalHandoffVersion === 1) delete z.regionalHandoffVersion;
+    else if (region !== 'frontier' && z.regionalHandoffVersion === 2) z.regionalHandoffVersion = 1;
+  }
   return {
     pixels: await digest(bytes),
-    state: await digest(new TextEncoder().encode(JSON.stringify(s.game))),
+    state: await digest(new TextEncoder().encode(JSON.stringify(state))),
     render: s.renderer.metrics(),
     sprites: PrototypeSprites.status(),
     materials: PrototypeMaterials.status(),
@@ -170,22 +212,7 @@ function summarize(samples) {
       pages[which] = page;
       page.on('pageerror', (e) => errors.push(which + ': ' + e.message));
       await page.goto('http://127.0.0.1:' + server.address().port + '/' + which + '/');
-      const inventory = require(path.join(roots[which], 'scripts/site-assets.cjs')).scripts,
-        files = inventory
-          .slice(1, inventory.indexOf('src/prototype/engine.js') + 1)
-          .concat(
-            [
-              'visuals',
-              'combat-visuals',
-              'enemy-vfx-art',
-              'sprite-format',
-              'sprites',
-              'material-contract',
-              'materials',
-              'ground-cache',
-              'renderer',
-            ].map((n) => 'src/prototype/' + n + '.js'),
-          );
+      const files = require(path.join(candidateRoot, 'scripts/perf-renderer-graph.cjs')).files;
       for (const file of files)
         await page.addScriptTag({
           url: 'http://127.0.0.1:' + server.address().port + '/' + which + '/' + file,
@@ -200,8 +227,9 @@ function summarize(samples) {
       });
     }
     const report = {
-      baselineCommit: 'c6ce1af236bddd7ca881903499c4cf5de175f9e2',
+      baselineCommit: 'current content and current occlusion; only #294 viewport culling disabled',
       baselineRoot,
+      sharedContent: [...sharedContent, 'assets/** (including manifests and originals)'],
       candidateRoot,
       engine,
       browserVersion: browser.version(),
@@ -213,14 +241,23 @@ function summarize(samples) {
       presentationTimeMs: 16000,
       baselineControlRoot: baselineRoot,
       scope:
-        'Paired warmed frozen full renderer.draw plus full Canvas getImageData readback at 150% camera; no app/simulation/audio or physical-device FPS claim.',
+        'Current art and occlusion on both sides; optional viewport integration disabled in candidate and control (no culling speedup claim). Paired warmed frozen full renderer.draw plus full Canvas getImageData readback at 150% camera; no app/simulation/audio or physical-device FPS claim.',
       sourceHashes: Object.fromEntries(
         Object.entries(roots).map(([which, root]) => [
           which,
           Object.fromEntries(
             ['renderer', 'visuals', 'ground-cache', 'sprites', 'materials'].map((name) => [
               name,
-              hash(fs.readFileSync(path.join(root, 'src/prototype/' + name + '.js'))),
+              hash(
+                name === 'renderer' && which !== 'candidate'
+                  ? reference(candidateRoot, { originalOcclusion: false })
+                  : fs.readFileSync(
+                      path.join(
+                        sharedContent.has('src/prototype/' + name + '.js') ? candidateRoot : root,
+                        'src/prototype/' + name + '.js',
+                      ),
+                    ),
+              ),
             ]),
           ),
         ]),
@@ -241,7 +278,7 @@ function summarize(samples) {
           initial = {};
         for (const which of ['baseline', 'candidate', 'control']) {
           const page = pages[which];
-          await page.evaluate(prepare, spec);
+          await page.evaluate(prepare, { ...spec, approvedScenery });
           await page.evaluate(async () => {
             const region = ['vale', 'march', 'highlands', 'frontier', 'crown'][
               __perfWs2.game.regionIndex()

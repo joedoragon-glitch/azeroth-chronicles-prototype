@@ -15,6 +15,8 @@
       ['volley', 'bone'],
       ['call', 'bone'],
       ['seal', 'spectral'],
+      ['rupture', 'water'],
+      ['call', 'stone'],
     ],
     mire: [
       ['bite', 'mire'],
@@ -27,6 +29,7 @@
       ['channel', 'water'],
       ['pool', 'water'],
       ['call', 'spectral'],
+      ['seal', 'spectral'], // Cooldown Sabotage: targeted scholarly binding, no hit damage.
     ],
     ridge: [
       ['slam', 'steel'],
@@ -54,23 +57,28 @@
       ['call', 'ember'],
     ],
     citadel: [
-      ['slam', 'steel'],
-      ['channel', 'ash'],
-      ['advance', 'steel'],
-      ['furnace', 'ember'],
+      ['fan', 'steel'],
       ['command', 'steel'],
+      ['rush', 'steel'],
+      ['seal', 'ash'],
+      ['call', 'steel'],
     ],
     cindermaw: [
-      ['claw', 'ember'],
+      ['pressure', 'ember'],
       ['rush', 'ash'],
-      ['pool', 'ember'],
+      ['command', 'ember'],
+      ['seal', 'ember'],
+      ['seal', 'ash'],
+      ['rush', 'ash'],
       ['call', 'ember'],
     ],
     darklord: [
       ['cleave', 'shadow'],
-      ['bombard', 'shadow'],
+      ['landing', 'shadow'],
       ['command', 'steel'],
       ['sweep', 'shadow'],
+      ['rush', 'shadow'],
+      ['seal', 'shadow'],
     ],
   });
   const captains = Object.freeze({
@@ -78,6 +86,8 @@
       ['rush', 'fur'],
       ['roots', 'root'],
       ['fan', 'dust'],
+      ['volley', 'stone'],
+      ['seal', 'ember'],
     ],
     'supply-march': [
       ['rush', 'mire'],
@@ -90,10 +100,13 @@
       ['claw', 'fur'],
     ],
     'supply-crown': [
-      ['bombard', 'ember'],
+      ['fall', 'stone'],
       ['rush', 'ash'],
       ['fan', 'ash'],
       ['call', 'ember'],
+      ['seal', 'ash'],
+      ['command', 'ember'],
+      ['bombard', 'ember'],
     ],
     'frontier-overseer': [
       ['cleave', 'steel'],
@@ -473,7 +486,7 @@
       rec = recipe(f.identity, a, f),
       fx = FX;
     if (!rec || !fx) return;
-    if (a.kind === 'summon' || a.kind === 'volley' || a.kind === 'ring') return;
+    if (a.selfDefense || a.kind === 'summon' || a.kind === 'volley' || a.kind === 'ring') return;
     const patches = game.attackPatches(a),
       shapes = fx.warningShapes(a, patches);
     ctx.save();
@@ -769,7 +782,13 @@
   function actors(ctx, screen, game, effects) {
     if (!active(game)) return;
     for (const e of game.zone().enemies)
-      if (e.hp > 0 && !e.returning && e.telegraph) {
+      if (
+        e.hp > 0 &&
+        !e.returning &&
+        e.telegraph &&
+        !e.telegraph.anonymousCast &&
+        !(e.family === 'ridge' && e.ledgerOpen)
+      ) {
         const a = e.telegraph,
           id = V.describe(e, a),
           rec = recipe(id, a, e);
