@@ -4771,6 +4771,8 @@
   const resourceMode = Object.freeze({ manaEnabled: false });
   const cooldownBalance = Object.freeze({
     reductionPerTalentRank: 0.04,
+    // A slowed actor recovers only 65% of skill cooldown time while Slow lasts.
+    slowRecoveryMultiplier: 0.65,
     // Charged attacks are repeatable without MP; preserve a meaningful burst/heal interval.
     chargedSeconds: Object.freeze({ 1: 3, 2: 6, 3: 20 }),
   });

@@ -2943,12 +2943,14 @@
         )
           unit.deathRollHeld = false;
       }
-      h.cd = h.cd.map((c) => Math.max(0, c - dt));
+      const heroRecovery = this.cooldownRecoveryElapsed(h, dt);
+      h.cd = h.cd.map((c) => Math.max(0, c - heroRecovery));
       for (const f of ['immune', 'haste', 'potionCd', 'slow']) h[f] = Math.max(0, h[f] - dt);
       for (const u of this.s.party) {
-        if (!u.keeperHeld) u.healCd = Math.max(0, (u.healCd || 0) - dt);
-        u.manaCd = Math.max(0, (u.manaCd || 0) - dt);
-        u.survivalCd = Math.max(0, (u.survivalCd || 0) - dt);
+        const recovery = this.cooldownRecoveryElapsed(u, dt);
+        if (!u.keeperHeld) u.healCd = Math.max(0, (u.healCd || 0) - recovery);
+        u.manaCd = Math.max(0, (u.manaCd || 0) - recovery);
+        u.survivalCd = Math.max(0, (u.survivalCd || 0) - recovery);
         u.immune = Math.max(0, (u.immune || 0) - dt);
       }
       this.syncCompanionLevelStats();
@@ -4738,7 +4740,13 @@
           this.disengage(e, dt);
           continue;
         }
+        const recovery = this.cooldownRecoveryElapsed(e, dt);
         e.slow = Math.max(0, (e.slow || 0) - dt);
+        // Rogue manoeuvres use an encounter-clock deadline instead of a
+        // remaining-seconds cooldown. Delay only a pending cooldown, not casts.
+        const nextRogue = this._tacticalRogueNext?.get(e.id);
+        if (nextRogue > this.s.time && recovery < dt)
+          this._tacticalRogueNext.set(e.id, nextRogue + (dt - recovery));
         if (!e.aggro && !e.eliteNightBonus) {
           const m = this.multipliers(),
             ratio = e.hp / e.maxHp;
@@ -4746,16 +4754,16 @@
           e.hp = e.maxHp * ratio;
           e.damage = e.baseDamage * m.damage;
         }
-        e.cd = Math.max(0, e.cd - dt);
-        e.specialCd = Math.max(0, (e.specialCd || 0) - dt);
-        e.summonCd = Math.max(0, (e.summonCd || 0) - dt);
+        e.cd = Math.max(0, e.cd - recovery);
+        e.specialCd = Math.max(0, (e.specialCd || 0) - recovery);
+        e.summonCd = Math.max(0, (e.summonCd || 0) - recovery);
         if (e.family === 'crypt' && e.type === 'boss') {
           e.anastylosis = Math.max(0, (e.anastylosis || 0) - dt);
-          e.anastylosisCd = Math.max(0, (e.anastylosisCd || 0) - dt);
+          e.anastylosisCd = Math.max(0, (e.anastylosisCd || 0) - recovery);
         }
         if (e.type === 'boss' && e.family === 'archive')
-          e.sabotageCd = Math.max(0, (e.sabotageCd || 0) - dt);
-        e.healCd = Math.max(0, (e.healCd || 0) - dt);
+          e.sabotageCd = Math.max(0, (e.sabotageCd || 0) - recovery);
+        e.healCd = Math.max(0, (e.healCd || 0) - recovery);
         e.pursuitBurst = Math.max(0, (e.pursuitBurst || 0) - dt);
         e.open = Math.max(0, (e.open || 0) - dt);
         e.captainGuard = Math.max(0, (e.captainGuard || 0) - dt);

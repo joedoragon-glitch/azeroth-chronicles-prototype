@@ -781,11 +781,12 @@
                 dist(a, u) - dist(b, u),
             )[0] || null;
         for (const u of living) {
+          const recovery = this.cooldownRecoveryElapsed(u, dt);
           u.slow = Math.max(0, (u.slow || 0) - dt);
-          u.cd = Math.max(0, u.cd - dt);
-          u.skill1Cd = Math.max(0, (u.skill1Cd || 0) - dt);
-          u.skill2Cd = Math.max(0, (u.skill2Cd || 0) - dt);
-          u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - dt);
+          u.cd = Math.max(0, u.cd - recovery);
+          u.skill1Cd = Math.max(0, (u.skill1Cd || 0) - recovery);
+          u.skill2Cd = Math.max(0, (u.skill2Cd || 0) - recovery);
+          u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - recovery);
           // Thornfang scatter overrides orders, doctrine and combat until
           // forced movement ends; then the unit resumes its normal assignment.
           if (u.deathRollHeld || u.keeperHeld || this.tacticalAdvanceScatter(u, dt)) continue;
