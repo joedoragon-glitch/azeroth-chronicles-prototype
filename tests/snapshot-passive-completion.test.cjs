@@ -148,4 +148,39 @@ for (const form of ['normal', 'true']) {
 assert.deepEqual(R.greenwoodPassives.rapidDeployment, { normal: 1.08, true: 1.15 });
 assert.deepEqual(R.marchesPassives.groundwaterRecharge, { normal: 0.02, true: 0.05 });
 assert.equal(R.roomCaptains['supply-crown'].summon.guardPerSummon, 0.25);
+// Actual integration paths: damage(), updateEnemies(), updateProjectiles() and
+// the immutable save snapshot must use the same mechanics as the helper tests.
+{
+  const { c, e } = arena('darklord');
+  c.s.party = [];
+  Object.assign(c.hero, { x: e.x + 25, y: e.y, hp: 100000, maxHp: 100000 });
+  c.s.mercyTime = 0;
+  c.line = () => true;
+  c.tacticalDirectTargetable = () => true;
+  c.tacticalRogueLeashAllows = () => true;
+  for (let i = 0; i < 4; i++) assert(c.damage(e, 30, 'hero'), 'actual hero damage lands');
+  near(c.snapshotBossIncomingFactor(e), 0.75, 'the integrated damage resolver triggers veteran defense');
+  const stored = c.snapshot().zones.crown.enemies.find(u => u.id === e.id);
+  assert(!stored.passiveVeteranUntil && !stored.passiveVeteranHits,
+    'v4 snapshot drops temporary veteran state');
+}
+{
+  const { c, e } = arena('mine');
+  e.hp = e.maxHp * 0.5;
+  e.open = 0.03;
+  const before = e.hp;
+  c.updateEnemies(0.1);
+  near(e.hp - before, e.maxHp * R.snapshotPassives.mine.repairFraction.normal,
+    'real world tick triggers Garun repair on relock');
+}
+{
+  const { c, e } = arena('cindermaw');
+  e.hp = e.maxHp * 0.5;
+  const ally = add(c, e, 'ashbeast');
+  ally.hp = ally.maxHp * 0.5;
+  const before = e.hp;
+  c.updateProjectiles(0.1);
+  near(e.hp - before, e.maxHp * R.snapshotPassives.cindermaw.bossRegen.normal * 0.1,
+    'actual projectile/hazard tick advances finite provisioning');
+}
 console.log('PASS Snapshot completion: 7 Normal/TRUE boss passives and 2 captain passives; original 4+3 preserved');
