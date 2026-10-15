@@ -193,14 +193,14 @@
         rank = g.hero.skills[slot - 1] || 0,
         formatCd = (value) => (Math.round(value * 10) / 10).toFixed(1),
         teacher = slot === 1 ? '' : g.boss(def[4]).captive,
-        learn = rank ? '' : '\\nLearn from ' + teacher + ' · ' +
+        learn = rank ? '' : '\nLearn from ' + teacher + ' · ' +
           g.skillTrainingCost(slot, 0) + ' crowns';
       openMenu(
         'Skill ' + slot + ' · ' + card.name,
         'Rank ' + rank + (rank ? ' · same rank for tap and charge' : ' · not learned') +
-          '\\nTap · ' + formatCd(g.skillCooldown(slot)) + 's: ' + card.tap +
-          '\\nCharge · ' + formatCd(g.skillCooldown(slot, true)) + 's: ' + card.charge +
-          (card.note ? '\\n' + card.note : '') + learn,
+          '\nTap · ' + formatCd(g.skillCooldown(slot)) + 's: ' + card.tap +
+          '\nCharge · ' + formatCd(g.skillCooldown(slot, true)) + 's: ' + card.charge +
+          (card.note ? '\n' + card.note : '') + learn,
         [],
         back,
       );
@@ -219,7 +219,7 @@
       openMenu(
         'Hero skills',
         'Tap for normal · hold ' + Campaign.rules.chargedSkills.holdSeconds +
-          's for charged. Each form shares a rank and cooldown slot.',
+          's for charged. One rank, one cooldown slot; damaging skills gain +15% base damage per rank.',
         [
           ...choices,
           action('Training and companions', () => skillTrainingOverview(() => skillBook(back)),
