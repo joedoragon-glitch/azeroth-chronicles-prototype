@@ -51,3 +51,7 @@
 - Triage list of further user-submitted bugs and balance concerns: append as received.
 
 **Preparation checkpoint:** one documented source audit and an inert draft pet roster, not an implemented or tested feature. Review `tools/community-snapshot/pet-roster-draft.json` before making it live.
+
+## Independent preparation audit and implementation blockers
+
+**Required companion read:** [`COMMUNITY_SNAPSHOT_PREPARATION_AUDIT_20261015.md`](COMMUNITY_SNAPSHOT_PREPARATION_AUDIT_20261015.md). The initial handoff is a source-only plan; the independent audit identifies **three critical pet integration hazards** (automatic Soldier combat fallback for non-Archer units, humanoid procedural ally fallback, and pet identity loss/rejection in factory/save/recovery/progression), plus Barracks queue, formation, permanent entitlement and user-information pitfalls. The Work-mode developer **must address F01–F06 explicitly** before treating pet integration as correct. Do not presume the pet design IDs are runtime `unit.type` values. Historical TRUE entitlements should derive from `s.true` even for saves with missing `s.victories` detail. Audit and handoff were made with **no tests, builds or workflow dispatch**.
