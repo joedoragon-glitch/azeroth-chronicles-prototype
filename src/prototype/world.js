@@ -754,6 +754,7 @@
                 );
               e.guard = true;
               e.roomGuard = true;
+              e.mountedCrownRider = !!slot.mountedCrownRider;
               e.pack = id + '-' + (slot.group || 'guard-' + j);
               if (slot.role) e.forcedRole = slot.role;
               if (captain) {
@@ -771,6 +772,7 @@
             }
           }
           this.treasuryInterior(z);
+          this.treasuryGuardPopulation(z);
           this.guardianPopulation(z);
           this.roomCaptainPopulation(z);
           return z;
@@ -1034,6 +1036,7 @@
           );
           e.pack = dungeon ? g.pack : id + '-pack-' + pack;
           e.guard = dungeon;
+          if (g?.mountedCrownRider) e.mountedCrownRider = true;
           if (g?.role) e.forcedRole = g.role;
           if (dungeon) this.configureEnemy(e, j);
           z.enemies.push(e);
@@ -1857,6 +1860,7 @@
       authoredPlaces(z) {
         if (this.supplyRoom(z.id)) {
           this.treasuryInterior(z);
+          this.treasuryGuardPopulation(z);
           this.combatPopulation(z);
           this.guardianPopulation(z);
           this.roomCaptainPopulation(z);
